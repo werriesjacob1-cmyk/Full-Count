@@ -1,12 +1,14 @@
 # PROJECT-GRIDIRON — MLB Daily Betting Pipeline
 
-Fully automated MLB player-prop research + picks pipeline. A GitHub Actions
-workflow runs every morning with no manual step required: `mlb_daily.py`
-pulls lineups, weather, injuries, umpire assignments, splits, and ~88 sections
-of FanGraphs/Statcast/MLB Stats API data, then `generate_picks.py` hands that
-full research package to Claude, which reasons over all of it and writes out
-the day's top 10 player-prop ideas. Both files land in `output/`, committed
-back to this repo automatically.
+Fully automated MLB player-prop research + picks pipeline. GitHub Actions does
+all of it, unattended, with **no LLM call and no API key to manage**:
+`mlb_daily.py` pulls lineups, weather, injuries, umpire assignments, splits,
+and ~88 sections of FanGraphs/Statcast/MLB Stats API data, then
+`generate_picks.py` scores tonight's actual candidates with an explicit,
+deterministic weighted formula and writes out the day's top 10 player-prop
+ideas. Both files land in `output/`, committed back to this repo
+automatically. GitHub is the interpreter here, not an external model — the
+scoring logic is plain, readable Python, not a prompt.
 
 This repo does **not** touch Jacob's separate `mlb-betting-analyst` Claude.ai
 skill (still versioned independently), does not scrape Fanatics odds/lines,
@@ -24,36 +26,14 @@ Jacob to act on manually.
 - **Manual**: Actions tab → "MLB Daily Pipeline" → **Run workflow**. Two
   optional toggles: "Dry run" (fast subset — lineups/injuries/weather/umpires
   only, ~1 min, skips picks generation and doesn't commit) and "Skip picks"
-  (run the full ~15-20 min data pull but skip the Claude API call — useful for
-  testing the data side without spending tokens).
+  (run the full ~15-20 min data pull but skip the scoring step — useful for
+  testing the data side in isolation).
 - **Output**: `output/mlb_daily_YYYY-MM-DD.txt` (full research) and
   `output/top10_picks_YYYY-MM-DD.md` (the day's picks) — open either in the
   GitHub app or browser. `output/run_log_YYYY-MM-DD.json` ships alongside for
   the research package — see "Run log" below.
-
-## One-time setup: add your Anthropic API key
-
-Picks generation needs an API key. Without one, the workflow still runs and
-commits the full research package every day — it just skips the picks step
-with a clear log message, so nothing breaks if you skip this.
-
-1. Get a key from [console.anthropic.com](https://console.anthropic.com).
-2. In this repo: **Settings → Secrets and variables → Actions → New repository
-   secret**.
-3. Name: `ANTHROPIC_API_KEY`. Value: your key. Save.
-
-That's the only secret this pipeline needs. Every data source it scrapes is
-free/public.
-
-### Cost
-
-Each full run sends the entire research package (research documents run large
-— see "Run log" for actual size once you've had a few runs) as input to one
-Claude API call, plus a bounded ~6,000-token output. Check current per-token
-pricing at [anthropic.com/pricing](https://anthropic.com/pricing) and multiply
-by your typical input size to estimate daily cost; it runs once a day unless
-you trigger extra manual runs. `PICKS_MODEL` (default `claude-sonnet-5`) is
-overridable via workflow env if you want to trade quality for cost.
+- **No secrets required.** Every data source is free/public, and picks
+  generation is local scoring, not an API call.
 
 ## Repo layout
 
@@ -61,7 +41,7 @@ overridable via workflow env if you want to trade quality for cost.
 mlb-daily-pipeline/
 ├── .github/workflows/mlb-daily.yml   # schedule + manual trigger
 ├── mlb_daily.py                      # data pipeline (single file, ~88 sections)
-├── generate_picks.py                 # reads the research package, asks Claude for top 10 picks
+├── generate_picks.py                 # deterministic scoring -> top 10 picks, no LLM
 ├── requirements.txt                  # pinned dependency versions
 ├── README.md
 └── output/                           # generated .txt / .md / run_log .json land here
@@ -93,20 +73,34 @@ in the `.txt` for the error message.
 
 `generate_picks.py` is deliberately a separate script from `mlb_daily.py`:
 the data pipeline's job is exhaustive, unopinionated data generation; the
-picks step is the opinionated synthesis layered on top. If picks generation
-fails for any reason (no key configured yet, a transient API error), it
-degrades gracefully and does **not** block the research package from being
-committed — data generation succeeding is the more important half of this
-pipeline.
+picks step is the opinionated scoring layered on top. **No LLM call, no
+external API, no key to configure** — it's plain Python implementing this
+pipeline's own synthesis framework (see `mlb_daily.py` Section 87) as an
+explicit weighted formula instead of prose:
 
-The prompt (in `generate_picks.py`) is built from this pipeline's own
-synthesis framework (matchup/recent-form/environment/baseline-skill/context
-weighting, edge-stacking rules for K/HR/hit props, negative-edge screening)
-rather than Jacob's separate `mlb-betting-analyst` skill, which isn't
-accessible from this automation. Per explicit direction: picks are driven
-primarily by **trend/data convergence** (how many independent signals point
-the same way) rather than a narrow computed statistical edge — an edge still
-informs confidence, it just isn't the sole filter.
+- **35% Matchup** — platoon (batter's bat side vs. pitcher's throwing hand,
+  fetched via a batched MLB Stats API call) + opposing pitcher/lineup quality
+- **25% Recent form** — L7 rolling exit velo/barrel rate for hitters, L14 K
+  rate for pitchers
+- **15% Environment** — wind vs. park orientation, park HR index, temperature
+- **15% Baseline skill** — season-long wRC+/ISO/Barrel% (hitters), K%/CSW%/
+  Stuff+ (pitchers)
+- **10% Context** — lineup slot for hitters, HP umpire zone accuracy +
+  opposing lineup handedness composition for pitchers
+
+Weighted toward **trend/data convergence** (how many independent signals
+point the same way) rather than a single computed statistical edge, per
+explicit direction — an edge still matters, it just isn't the sole filter.
+A negative-edge screen actively penalizes patterns like a hot batting average
+unconfirmed by underlying contact quality (BABIP luck, not skill).
+
+It reuses `mlb_daily.py`'s already-defined fetchers/constants (`STADIUMS`,
+`retry_get`, the fixed bullpen-fatigue fetcher, `fg_bat`/`fg_pit`, etc.)
+rather than parsing the finished `.txt` report back into structured data —
+pybaseball's on-disk cache (shared within one job run) means this doesn't
+mean doubling network calls for what `mlb_daily.py` already pulled. If picks
+generation fails for any reason, it degrades gracefully and does **not**
+block the research package from being committed.
 
 **No live sportsbook odds are fetched.** This pipeline currently has no
 Fanatics line data (deliberately out of scope — see below), so picks are
@@ -118,9 +112,9 @@ Treat this as a research shortlist, not a finished bet slip.
 
 ```bash
 pip install -r requirements.txt
-python3 mlb_daily.py                                    # full run, ~15-20 min
-python3 mlb_daily.py --dry-run                           # fast subset, ~1 min — same as DRY_RUN=1
-ANTHROPIC_API_KEY=sk-... python3 generate_picks.py       # picks from today's already-generated output/
+python3 mlb_daily.py                # full run, ~15-20 min
+python3 mlb_daily.py --dry-run       # fast subset, ~1 min — same as DRY_RUN=1
+python3 generate_picks.py           # scores today's slate and writes top10_picks_*.md
 ```
 
 ## What changed from the prior manual script
@@ -204,6 +198,31 @@ verified live against each source as of this rebuild:
   half the league from the "exhaustive" sections. Raised to 500 — enough to
   cover effectively every regularly-used player without blowing up the
   document size picks generation reasons over.
+- **Every lineup's batting order was silently broken** — the biggest find
+  while wiring up the picks scorer. The MLB Stats API's lineup objects are
+  flat (`{"id","fullName","primaryPosition":{...}}`), not nested under
+  `"person"`/`"position"`/`"batSide"` the way the original parsing assumed —
+  verified against a live response. Section 1's batting orders printed a
+  literal `?` for every name/position/handedness on every game where the
+  primary lineup source was used (i.e. most games, most runs), for as long as
+  this script has existed. There's also no per-player `battingOrder` field in
+  this hydrate — array position *is* the order. Handedness isn't in this
+  hydrate at all; now backfilled with one batched `/api/v1/people` call per
+  ~100 discovered players (covering both lineup batters and probable
+  pitchers) rather than one call per player.
+- **Statcast's `player_name` column on raw pitch-by-pitch pulls is the
+  pitcher, not the batter** — a well-known but easy-to-miss quirk. The
+  picks scorer's L7 rolling-form fetch initially grouped by that column,
+  silently building a pitcher-keyed table that never matched a single batter
+  lookup. Fixed to group by the numeric `batter` ID column instead, which
+  lineup entries already carry.
+- **The FanGraphs-blocked Statcast fallback tables renamed their name column
+  to "Name" without reformatting the values** — they stayed in Statcast's
+  native "Last, First" order while every downstream name-based lookup (and
+  the report's own display) expected "First Last," so lookups against the
+  fallback silently missed and the report displayed names backwards whenever
+  FanGraphs was down. Fixed at the source so both the report text and the
+  picks scorer see correctly formatted names.
 
 Section 32 (multi-year Statcast aging curves) is legitimately slow due to data
 volume — left as-is, not a bug. UmpScorecards sections returning "not in

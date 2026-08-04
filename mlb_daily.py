@@ -293,7 +293,7 @@ def fetch_lineups(date):
     except Exception as e:
         warn(f"MLB API: {e}"); return "  API unavailable.\n", [], {}
 
-    lines=[]; game_meta=[]; player_ids={}; missing_teams=[]
+    lines=[]; game_meta=[]; player_ids={}; missing_teams=[]; bats_patch=[]
     for g in games:
         away,home = g["teams"]["away"],g["teams"]["home"]
         at=away["team"]["name"]; ht=home["team"]["name"]
@@ -327,7 +327,12 @@ def fetch_lineups(date):
                           "away_sp_id":ap_id,"home_sp_id":hp_id,
                           "series_game":series_num,"series_len":series_len,
                           "is_getaway":is_getaway,"is_opener":is_series_opener,
-                          "game_pk":g.get("gamePk")})
+                          "game_pk":g.get("gamePk"),
+                          "away_team":at,"home_team":ht,
+                          # Structured lineups (name/id/pos/bats/order), populated below —
+                          # kept alongside the human-readable text report so downstream
+                          # scoring (generate_picks.py) doesn't have to parse text back out.
+                          "away_lineup":[], "home_lineup":[]})
 
         context_flags=[]
         if is_getaway: context_flags.append("🚌 GETAWAY DAY")
@@ -348,20 +353,29 @@ def fetch_lineups(date):
         lups=g.get("lineups",{})
         for key,name in [("awayPlayers",at),("homePlayers",ht)]:
             players=lups.get(key,[])
+            lineup_key = "away_lineup" if key=="awayPlayers" else "home_lineup"
             if players:
                 lines.append(f"\n  {name} Batting Order:")
-                for p in players:
-                    pid=p.get("person",{}).get("id")
-                    pname=p.get("person",{}).get("fullName","?")
-                    pos=p.get("position",{}).get("abbreviation","?")
-                    bats=p.get("batSide",{}).get("code","?")
-                    order=p.get("battingOrder","?")
-                    try:
-                        pa_proj=ORDER_PA.get(int(str(order).replace(".0","").replace("?","5")) if order else 5, 630)
-                    except:
-                        pa_proj=630
+                for order,p in enumerate(players,1):
+                    # Verified live: this hydrate's lineup player objects are flat
+                    # ({"id","fullName","primaryPosition":{...}}), not nested under
+                    # "person"/"position"/"batSide" — the old code read paths that
+                    # never existed on any version, so every name/position/bats here
+                    # printed "?" whenever the primary API lineup path was used (i.e.
+                    # most games, most runs). There's also no per-player battingOrder
+                    # field in this hydrate — array position (1-indexed) IS the order.
+                    # Bat handedness isn't in this hydrate at all; backfilled below via
+                    # a batched /api/v1/people call after all games are parsed.
+                    pid=p.get("id")
+                    pname=p.get("fullName","?")
+                    pos=p.get("primaryPosition",{}).get("abbreviation","?")
+                    pa_proj=ORDER_PA.get(min(order,9),630)
                     if pid: player_ids[pname]=pid
-                    lines.append(f"    {order}. {pname} ({bats}) — {pos}  [proj ~{pa_proj} PA/yr]")
+                    line_idx=len(lines)
+                    lines.append(f"    {order}. {pname} (BATS) — {pos}  [proj ~{pa_proj} PA/yr]")
+                    entry={"name":pname,"id":pid,"pos":pos,"bats":"?","order":order}
+                    game_meta[-1][lineup_key].append(entry)
+                    if pid: bats_patch.append((line_idx, entry))
             else:
                 idx=len(lines)
                 lines.append(f"\n  {name}: lineup not yet posted")
@@ -373,32 +387,69 @@ def fetch_lineups(date):
     # Tier 2: Rotowire daily-lineups (server-rendered too, but Rotowire-internal player IDs
     #         only — can't populate player_ids — genuine last resort)
     if missing_teams:
+        gm_by_pk = {gm.get("game_pk"): gm for gm in game_meta}
         mlbcom = fetch_mlb_dated_lineups_fallback(date)
         still_missing=[]
-        for m in missing_teams:
-            gp = mlbcom.get(m["game_pk"])
-            side_players = gp.get(m["side"]) if gp else None
+        for miss in missing_teams:
+            gp = mlbcom.get(miss["game_pk"])
+            side_players = gp.get(miss["side"]) if gp else None
             if side_players:
-                block=[f"\n  {m['name']} Batting Order  (source: MLB.com fallback):"]
+                block=[f"\n  {miss['name']} Batting Order  (source: MLB.com fallback):"]
+                gm_entry = gm_by_pk.get(miss["game_pk"])
+                lineup_key = "away_lineup" if miss["side"]=="away" else "home_lineup"
                 for i,p in enumerate(side_players,1):
                     pa_proj=ORDER_PA.get(i,630)
                     block.append(f"    {i}. {p['name']} ({p.get('bats','?')}) — {p.get('pos','?')}  [proj ~{pa_proj} PA/yr]")
                     if p.get("id"): player_ids[p["name"]]=p["id"]
-                lines[m["idx"]]="\n".join(block)
+                    if gm_entry is not None:
+                        gm_entry[lineup_key].append({"name":p["name"],"id":p.get("id"),"pos":p.get("pos","?"),"bats":p.get("bats","?"),"order":i})
+                lines[miss["idx"]]="\n".join(block)
             else:
-                still_missing.append(m)
+                still_missing.append(miss)
         if still_missing:
             teams_by_name = {t["name"]:t["abbr"] for t in get_team_ids()}
             rotowire = fetch_rotowire_lineups_by_team()
-            for m in still_missing:
-                abbr = teams_by_name.get(m["name"])
+            for miss in still_missing:
+                abbr = teams_by_name.get(miss["name"])
                 rw_players = rotowire.get(abbr) if abbr else None
                 if rw_players:
-                    block=[f"\n  {m['name']} Batting Order  (source: Rotowire fallback, best-effort):"]
+                    block=[f"\n  {miss['name']} Batting Order  (source: Rotowire fallback, best-effort):"]
+                    gm_entry = gm_by_pk.get(miss["game_pk"])
+                    lineup_key = "away_lineup" if miss["side"]=="away" else "home_lineup"
                     for i,p in enumerate(rw_players,1):
                         pa_proj=ORDER_PA.get(i,630)
                         block.append(f"    {i}. {p['name']} ({p.get('bats','?')}) — {p.get('pos','?')}  [proj ~{pa_proj} PA/yr]")
-                    lines[m["idx"]]="\n".join(block)
+                        if gm_entry is not None:
+                            gm_entry[lineup_key].append({"name":p["name"],"id":None,"pos":p.get("pos","?"),"bats":p.get("bats","?"),"order":i})
+                    lines[miss["idx"]]="\n".join(block)
+
+    # Batch-fetch bat/pitch handedness for every player discovered (lineup batters +
+    # probable pitchers) in as few calls as possible. Confirmed live: the lineups
+    # hydrate above has no batSide field at all, so this is the only way to get it.
+    hand_ids={pid for pid in player_ids.values() if pid} | {e["id"] for _,e in bats_patch if e["id"]}
+    hand_ids=[i for i in hand_ids if i]
+    hand_by_id={}
+    for start in range(0, len(hand_ids), 100):
+        chunk=hand_ids[start:start+100]
+        try:
+            r=retry_get("https://statsapi.mlb.com/api/v1/people",
+                       params={"personIds":",".join(str(i) for i in chunk)},
+                       headers={"User-Agent":"Mozilla/5.0"},timeout=20)
+            if r.status_code==200:
+                for person in r.json().get("people",[]):
+                    hand_by_id[person["id"]]={"bats":person.get("batSide",{}).get("code","?"),
+                                              "throws":person.get("pitchHand",{}).get("code","?")}
+        except Exception as e:
+            warn(f"Handedness batch fetch: {e}")
+
+    for line_idx, entry in bats_patch:
+        bats=hand_by_id.get(entry["id"],{}).get("bats","?")
+        entry["bats"]=bats
+        lines[line_idx]=lines[line_idx].replace("(BATS)", f"({bats})", 1)
+    for gm in game_meta:
+        gm["away_sp_hand"]=hand_by_id.get(gm.get("away_sp_id"),{}).get("throws","?")
+        gm["home_sp_hand"]=hand_by_id.get(gm.get("home_sp_id"),{}).get("throws","?")
+
     return "\n".join(lines)+"\n", game_meta, player_ids
 
 
@@ -1273,6 +1324,20 @@ PIT_COLS=[
     "Stuff+","Location+","Pitching+",
 ]
 
+def _normalize_last_first(df, col="Name"):
+    """Statcast endpoints use "Last, First" in their name column; FanGraphs (and
+    this pipeline's lineup data) use "First Last". Renaming the column to "Name"
+    without also reformatting the values left every name-based lookup against
+    the fallback tables silently broken (0 matches) whenever FanGraphs was down."""
+    if col not in df.columns: return df
+    def swap(n):
+        if isinstance(n,str) and "," in n:
+            last,first=[p.strip() for p in n.split(",",1)]
+            return f"{first} {last}"
+        return n
+    df[col]=df[col].apply(swap)
+    return df
+
 def _fg_statcast_bat_fallback(yr):
     """When FanGraphs is fully blocked (Cloudflare bot-challenge — verified: UA
     rotation alone doesn't bypass it), reroute season batting through Statcast
@@ -1282,6 +1347,7 @@ def _fg_statcast_bat_fallback(yr):
         if exp is None or exp.empty: return pd.DataFrame()
         df=exp.rename(columns={"last_name, first_name":"Name","ba":"AVG",
                                 "est_ba":"xBA","est_woba":"xwOBA","woba":"wOBA"})
+        df=_normalize_last_first(df)
         try:
             ev=pyb.statcast_batter_exitvelo_barrels(yr,minBBE=MIN_BBE)
             if ev is not None and not ev.empty and "player_id" in ev.columns:
@@ -1332,6 +1398,7 @@ def _fg_statcast_pit_fallback(yr):
         if exp is None or exp.empty: return pd.DataFrame()
         df=exp.rename(columns={"last_name, first_name":"Name","era":"ERA","xera":"xERA",
                                 "ba":"AVG_against","est_ba":"xBA_against","est_woba":"xwOBA_against"})
+        df=_normalize_last_first(df)
         if "ERA" in df.columns: df=df.sort_values("ERA").reset_index(drop=True); df.index+=1
         return df
     except Exception: return pd.DataFrame()

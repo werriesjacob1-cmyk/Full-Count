@@ -17,7 +17,7 @@ on:
         type: boolean
         default: false
       skip_picks:
-        description: "Skip the Claude picks-generation step (data package only) — useful for testing the data pull without spending API tokens"
+        description: "Skip the picks-scoring step (data package only) — useful when testing the data pull in isolation"
         required: false
         type: boolean
         default: false
@@ -63,16 +63,11 @@ jobs:
           DRY_RUN: ${{ (github.event_name == 'workflow_dispatch' && inputs.dry_run) && '1' || '0' }}
         run: python3 mlb_daily.py
 
-      - name: Generate top 10 picks (Claude)
-        # Skipped on dry runs (no full data package to reason over yet) and
-        # when skip_picks is set (e.g. testing the data pull without spending
-        # API tokens). Missing/invalid ANTHROPIC_API_KEY degrades gracefully
-        # inside generate_picks.py rather than failing the job — the data
-        # package is the more important half of this pipeline and must still
-        # get committed even if picks generation isn't configured yet.
+      - name: Generate top 10 picks
+        # Deterministic weighted scoring — no external API call, no LLM in the
+        # loop, no secret to configure. Skipped on dry runs (no full data
+        # package to score against yet) and when skip_picks is set.
         if: ${{ !(github.event_name == 'workflow_dispatch' && (inputs.dry_run || inputs.skip_picks)) }}
-        env:
-          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         run: python3 generate_picks.py
 
       - name: Commit generated output
