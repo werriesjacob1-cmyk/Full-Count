@@ -3,12 +3,20 @@
 Fully automated MLB player-prop research + picks pipeline. GitHub Actions does
 all of it, unattended, with **no LLM call and no API key to manage**:
 `mlb_daily.py` pulls lineups, weather, injuries, umpire assignments, splits,
-and ~88 sections of FanGraphs/Statcast/MLB Stats API data, then
-`generate_picks.py` scores tonight's actual candidates with an explicit,
-deterministic weighted formula and writes out the day's top 10 player-prop
-ideas. Both files land in `output/`, committed back to this repo
-automatically. GitHub is the interpreter here, not an external model — the
-scoring logic is plain, readable Python, not a prompt.
+and ~88 sections of FanGraphs/Statcast/MLB Stats API data. `generate_picks.py`
+scores tonight's actual candidates with an explicit, deterministic weighted
+formula — including non-obvious signals a typical bettor wouldn't compute by
+hand (pitch-type-specific exploits, a bat-speed leading indicator, times-
+through-order matchups) and a "public-awareness discount" that deliberately
+downweights picks built on nothing but "star player, high average," since the
+market already prices that in. Every pick commits to a real projected number,
+not just a category label. `grade_results.py` then closes the loop: each
+morning it fetches the actual box scores for yesterday's picks and grades
+them, building a running accuracy record in `results/history.json` — so the
+system's performance is measured, not assumed. All three land their output in
+`output/`/`results/`, committed back to this repo automatically. GitHub is
+the interpreter here, not an external model — the scoring logic is plain,
+readable Python, not a prompt.
 
 This repo does **not** touch Jacob's separate `mlb-betting-analyst` Claude.ai
 skill (still versioned independently), does not scrape Fanatics odds/lines,
@@ -28,12 +36,13 @@ Jacob to act on manually.
   only, ~1 min, skips picks generation and doesn't commit) and "Skip picks"
   (run the full ~15-20 min data pull but skip the scoring step — useful for
   testing the data side in isolation).
-- **Output**: `output/mlb_daily_YYYY-MM-DD.txt` (full research) and
-  `output/top10_picks_YYYY-MM-DD.md` (the day's picks) — open either in the
-  GitHub app or browser. `output/run_log_YYYY-MM-DD.json` ships alongside for
-  the research package — see "Run log" below.
+- **Output**: `output/mlb_daily_YYYY-MM-DD.txt` (full research),
+  `output/top10_picks_YYYY-MM-DD.md` (the day's picks, human-readable), and
+  `output/picks_YYYY-MM-DD.json` (the same picks, structured — what
+  `grade_results.py` reads the next morning). `output/run_log_YYYY-MM-DD.json`
+  ships alongside the research package — see "Run log" below.
 - **No secrets required.** Every data source is free/public, and picks
-  generation is local scoring, not an API call.
+  generation and grading are local computation, not API calls.
 
 ## Repo layout
 
@@ -42,9 +51,11 @@ mlb-daily-pipeline/
 ├── .github/workflows/mlb-daily.yml   # schedule + manual trigger
 ├── mlb_daily.py                      # data pipeline (single file, ~88 sections)
 ├── generate_picks.py                 # deterministic scoring -> top 10 picks, no LLM
+├── grade_results.py                  # grades yesterday's picks against real box scores
 ├── requirements.txt                  # pinned dependency versions
 ├── README.md
-└── output/                           # generated .txt / .md / run_log .json land here
+├── output/                           # generated .txt / .md / .json land here
+└── results/                          # grades_YYYY-MM-DD.json + running history.json
 ```
 
 ## Run log
@@ -80,8 +91,15 @@ explicit weighted formula instead of prose:
 
 - **35% Matchup** — platoon (batter's bat side vs. pitcher's throwing hand,
   fetched via a batched MLB Stats API call) + opposing pitcher/lineup quality
+  + a **pitch-type-specific exploit check**: the batter's actual run-value
+  track record against each pitch type the opposing pitcher throws >=15% of
+  the time, not just their overall stat line
 - **25% Recent form** — L7 rolling exit velo/barrel rate for hitters, L14 K
-  rate for pitchers
+  rate for pitchers, plus a **bat-speed trend** signal (2nd-half-of-window vs.
+  1st-half mean bat speed) — this is a *leading* indicator, since rising bat
+  speed tends to precede a batting-average uptick rather than just confirming
+  a player who's already hot — and a **times-through-order** check for
+  pitchers (does K rate hold up or collapse the 3rd time through the lineup)
 - **15% Environment** — wind vs. park orientation, park HR index, temperature
 - **15% Baseline skill** — season-long wRC+/ISO/Barrel% (hitters), K%/CSW%/
   Stuff+ (pitchers)
@@ -94,6 +112,24 @@ explicit direction — an edge still matters, it just isn't the sole filter.
 A negative-edge screen actively penalizes patterns like a hot batting average
 unconfirmed by underlying contact quality (BABIP luck, not skill).
 
+**Public-awareness discount.** Nothing stops a purely stat-driven model from
+just repeatedly picking whoever has the highest season average — but the
+market already prices in "this player is good," so that's not a useful
+signal on its own. Every candidate's non-obvious converging signals (pitch-
+type exploit, bat-speed trend, TTO exploit, extreme park/weather, elite
+umpire zone) are counted; a pick built on an obviously-elite season profile
+*with none* of those gets scored down, while a pick built from 2+ of them —
+even on a more middling player — gets a small boost. This is the actual
+mechanism for surfacing "niche" picks rather than just adding more stats.
+
+**Every pick commits to a real number**, not a category label — e.g. "Over
+1.5 Total Bases (proj. 2.1 TB)" or "Over 6.0 Strikeouts (proj. 6.5)." The
+projection blends recent form and season skill (total bases uses the
+AVG+ISO sabermetric identity for expected TB/AB; strikeouts blend L14 K% with
+a league-average batters-faced-per-start estimate). This makes picks more
+concrete *and* is what makes them gradeable the next morning without a real
+sportsbook line — see "Results tracking" below.
+
 It reuses `mlb_daily.py`'s already-defined fetchers/constants (`STADIUMS`,
 `retry_get`, the fixed bullpen-fatigue fetcher, `fg_bat`/`fg_pit`, etc.)
 rather than parsing the finished `.txt` report back into structured data —
@@ -102,11 +138,52 @@ mean doubling network calls for what `mlb_daily.py` already pulled. If picks
 generation fails for any reason, it degrades gracefully and does **not**
 block the research package from being committed.
 
-**No live sportsbook odds are fetched.** This pipeline currently has no
-Fanatics line data (deliberately out of scope — see below), so picks are
-statistical/trend-based, not price-verified +EV bets. Every pick in the
-output explicitly says to check the current line on Fanatics before betting.
-Treat this as a research shortlist, not a finished bet slip.
+**No live sportsbook odds are fetched.** A live-odds integration (FanDuel via
+a licensed odds-data provider, not direct scraping — see below for why) was
+evaluated and shelved: even the free tier of a legitimate odds API doesn't
+cover a full daily slate's player props without paying, and that's off the
+table for now. So picks are statistical/trend-based, not price-verified +EV
+bets. Every pick in the output explicitly says to check the current line
+before betting. Treat this as a research shortlist, not a finished bet slip.
+
+### Why FanDuel/Fanatics odds aren't scraped directly
+
+Evaluated and rejected. Both are regulated real-money sportsbooks whose Terms
+of Service prohibit automated/bot access, and books actively detect and
+restrict accounts suspected of using scraping or betting-automation tools —
+that's a real risk to an actual account, not just an engineering hurdle. The
+legitimate path is a licensed odds-data provider (e.g. The Odds API), which
+does carry FanDuel as a bookmaker and does support MLB player-prop markets —
+verified live against their docs. The blocker is purely cost: player-prop
+odds are billed per-market-per-game on that API, and even a single market
+(e.g. just home runs) across a 15-game slate burns roughly the entire 500
+credit/month free-tier allowance in under two weeks. Paid tiers start at
+$30/month for full coverage. Revisit if that tradeoff changes.
+
+## Results tracking — closing the feedback loop
+
+`grade_results.py` runs each morning, before that day's new picks are
+generated. It reads the previous day's `output/picks_YYYY-MM-DD.json`, checks
+each game's actual status via the MLB Stats API (a pick is only graded once
+its game is confirmed `Final` — grading against an in-progress or
+not-yet-started game would silently score every open pick as a false "miss,"
+verified against a real edge case while building this), fetches the real box
+score, and grades each pick's own projection as a hit or miss (actual stat >
+projection − 0.5, the same "Over X.5" convention the pick's own text commits
+to — this is a self-consistency check against the model's own call, not a
+market-beating claim, since no real sportsbook line is available to grade
+against).
+
+Output:
+- `results/grades_YYYY-MM-DD.json` — per-pick detail for that day
+- `results/history.json` — running total (hits/misses/ungraded), overall hit
+  rate, and a rolling last-14-day hit rate so a slow start doesn't
+  permanently anchor the headline number
+
+This is the mechanism that makes "getting more accurate over time" a
+measurable claim instead of an assumption — every scoring change going
+forward can be checked against whether it actually moved the hit rate, not
+just whether it sounds more sophisticated.
 
 ## Manual run (local)
 
@@ -114,7 +191,8 @@ Treat this as a research shortlist, not a finished bet slip.
 pip install -r requirements.txt
 python3 mlb_daily.py                # full run, ~15-20 min
 python3 mlb_daily.py --dry-run       # fast subset, ~1 min — same as DRY_RUN=1
-python3 generate_picks.py           # scores today's slate and writes top10_picks_*.md
+python3 generate_picks.py           # scores today's slate, writes top10_picks_*.md + picks_*.json
+python3 grade_results.py            # grades yesterday's picks against real box scores
 ```
 
 ## What changed from the prior manual script
@@ -228,6 +306,27 @@ Section 32 (multi-year Statcast aging curves) is legitimately slow due to data
 volume — left as-is, not a bug. UmpScorecards sections returning "not in
 career database" close to game time is expected (same-day assignments often
 aren't posted until game morning), not a scrape failure.
+
+**`pybaseball`'s `statcast_catcher_framing()` is currently broken upstream**
+(confirmed live: a CSV-parsing error, not a threshold/argument issue — Baseball
+Savant appears to have changed that export's format). A catcher-framing signal
+for the picks scorer was planned and dropped for this reason rather than
+building a detector on a dead source; Section 77 in the daily report has the
+same underlying issue and was already failing silently before this. Worth
+revisiting if pybaseball patches it upstream.
+
+## What's next
+
+Explicitly deferred from this pass, not forgotten:
+- **Wider prop universe** — stolen bases, walks, runs/RBI, doubles, pitcher
+  unders, NRFI/YRFI. Currently picks are total-bases/hits/HR for hitters and
+  strikeouts for pitchers only.
+- **Defensive-positioning mismatch** — cross-referencing a hitter's pull%
+  against the opposing team's actual defensive positioning/range metrics.
+- **Per-player historical data files** (`data/players/`) — persisting a
+  structured snapshot per player per day, beyond the current L7/L14 windows,
+  to enable genuine multi-week trend detection and give every pick a full
+  audit trail back to its inputs.
 
 ## Non-goals (out of scope, by design)
 

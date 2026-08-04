@@ -1,0 +1,162 @@
+#!/usr/bin/env python3
+"""
+grade_results.py — grades yesterday's picks against actual box scores.
+
+Reads output/picks_{YESTERDAY}.json (written by generate_picks.py), fetches
+each pick's actual result via MLB Stats API boxscore_data (keyed by the
+game_pk already stored on each pick), compares against the pick's own
+projection, and writes:
+  - results/grades_{YESTERDAY}.json   (per-pick grade detail)
+  - results/history.json              (running accumulated accuracy record)
+
+Grading uses each pick's own projected number as the threshold (projection -
+0.5, the same "Over X.5" convention generate_picks.py commits to when writing
+the prop text) rather than a real sportsbook line, since none is fetched by
+this pipeline. This is a self-consistency check — "did the model's own call
+turn out right" — not a market-beating claim.
+
+Runs each morning before that day's picks are generated. If yesterday's picks
+file doesn't exist (first run, or picks generation failed/was skipped that
+day), this is a no-op — it must never block the rest of the pipeline.
+"""
+import os, sys, json
+from datetime import datetime, timedelta
+
+import mlb_daily as m
+
+OUTPUT_DIR = os.environ.get("OUTPUT_DIR", "output")
+RESULTS_DIR = os.environ.get("RESULTS_DIR", "results")
+os.makedirs(RESULTS_DIR, exist_ok=True)
+
+YESTERDAY = os.environ.get("GRADE_DATE") or (datetime.now() - timedelta(days=1)).strftime("%Y-%m-%d")
+PICKS_JSON = os.path.join(OUTPUT_DIR, f"picks_{YESTERDAY}.json")
+GRADES_FILE = os.path.join(RESULTS_DIR, f"grades_{YESTERDAY}.json")
+HISTORY_FILE = os.path.join(RESULTS_DIR, "history.json")
+
+
+def fetch_game_statuses(date):
+    """Verified live: grading a game before it's Final silently reads an
+    all-zeros box score line and would score every pick on it as a false
+    "miss" — this gates grading on the schedule's actual game status first."""
+    try:
+        r = m.retry_get("https://statsapi.mlb.com/api/v1/schedule", params={"sportId": 1, "date": date},
+                        headers={"User-Agent": "Mozilla/5.0"}, timeout=20)
+        r.raise_for_status()
+        games = r.json().get("dates", [{}])[0].get("games", [])
+        return {g["gamePk"]: g.get("status", {}) for g in games}
+    except Exception as e:
+        m.warn(f"Grading: couldn't fetch game statuses for {date}: {e}")
+        return {}
+
+
+def is_final(status):
+    if not status: return False
+    coded = status.get("codedGameState", "")
+    detailed = status.get("detailedState", "")
+    return coded in ("F", "O") or "final" in detailed.lower() or "completed" in detailed.lower()
+
+
+def get_box_line(game_pk, player_id, is_pitcher):
+    try:
+        box = m.statsapi.boxscore_data(game_pk)
+    except Exception as e:
+        return None, str(e)[:150]
+    sides = ["awayPitchers", "homePitchers"] if is_pitcher else ["awayBatters", "homeBatters"]
+    for side in sides:
+        for row in box.get(side, []):
+            if row.get("personId") == player_id:
+                return row, None
+    return None, "player not found in box score (scratched or DNP)"
+
+
+def grade_pick(pick, game_statuses):
+    game_pk = pick.get("game_pk")
+    player_id = pick.get("player_id")
+    if not game_pk or not player_id:
+        return {**pick, "grade": "ungraded", "reason": "missing game_pk/player_id"}
+    status = game_statuses.get(game_pk)
+    if not is_final(status):
+        detail = (status or {}).get("detailedState", "unknown")
+        return {**pick, "grade": "ungraded", "reason": f"game not final yet (status: {detail})"}
+    is_pitcher = pick["type"] == "pitcher"
+    row, err = get_box_line(game_pk, player_id, is_pitcher)
+    if row is None:
+        return {**pick, "grade": "ungraded", "reason": err}
+    try:
+        if is_pitcher:
+            actual = float(row.get("k", 0) or 0)
+            actual_stat = "strikeouts"
+        else:
+            h = int(row.get("h", 0) or 0)
+            d = int(row.get("doubles", 0) or 0)
+            t = int(row.get("triples", 0) or 0)
+            hr = int(row.get("hr", 0) or 0)
+            actual = (h - d - t - hr) * 1 + d * 2 + t * 3 + hr * 4
+            actual_stat = "total_bases"
+    except (TypeError, ValueError):
+        return {**pick, "grade": "ungraded", "reason": "unparseable box score line"}
+
+    proj = (pick.get("projection") or {}).get("value")
+    if proj is None:
+        return {**pick, "grade": "ungraded", "reason": "no projection on pick"}
+    threshold = proj - 0.5
+    hit = actual > threshold
+    return {**pick, "grade": "hit" if hit else "miss", "actual": actual,
+            "actual_stat": actual_stat, "threshold": threshold}
+
+
+def main() -> int:
+    if not os.path.exists(PICKS_JSON):
+        print(f"No picks file for {YESTERDAY} ({PICKS_JSON}) — nothing to grade.")
+        return 0
+    with open(PICKS_JSON, encoding="utf-8") as f:
+        payload = json.load(f)
+    picks = payload.get("picks", [])
+    if not picks:
+        print(f"No picks recorded for {YESTERDAY} — nothing to grade.")
+        return 0
+
+    game_statuses = fetch_game_statuses(YESTERDAY)
+    graded = [grade_pick(p, game_statuses) for p in picks]
+    hits = sum(1 for g in graded if g["grade"] == "hit")
+    misses = sum(1 for g in graded if g["grade"] == "miss")
+    ungraded = sum(1 for g in graded if g["grade"] == "ungraded")
+
+    with open(GRADES_FILE, "w", encoding="utf-8") as f:
+        json.dump({"date": YESTERDAY, "hits": hits, "misses": misses, "ungraded": ungraded,
+                   "picks": graded}, f, indent=2)
+
+    history = {"days": []}
+    if os.path.exists(HISTORY_FILE):
+        with open(HISTORY_FILE, encoding="utf-8") as f:
+            history = json.load(f)
+    history["days"] = [d for d in history.get("days", []) if d["date"] != YESTERDAY]  # avoid dup on reruns
+    history["days"].append({"date": YESTERDAY, "hits": hits, "misses": misses, "ungraded": ungraded})
+    history["days"].sort(key=lambda d: d["date"])
+
+    totals = {"hits": sum(d["hits"] for d in history["days"]),
+              "misses": sum(d["misses"] for d in history["days"]),
+              "ungraded": sum(d["ungraded"] for d in history["days"])}
+    history["totals"] = totals
+    graded_total = totals["hits"] + totals["misses"]
+    history["overall_hit_rate"] = round(totals["hits"] / graded_total, 3) if graded_total else None
+
+    # Rolling last-14-day rate, so a slow start doesn't permanently anchor the headline number
+    recent = history["days"][-14:]
+    recent_graded = sum(d["hits"] + d["misses"] for d in recent)
+    history["last_14_days_hit_rate"] = (
+        round(sum(d["hits"] for d in recent) / recent_graded, 3) if recent_graded else None
+    )
+
+    with open(HISTORY_FILE, "w", encoding="utf-8") as f:
+        json.dump(history, f, indent=2)
+
+    day_rate = round(hits / (hits + misses), 3) if (hits + misses) else "n/a"
+    print(f"Graded {YESTERDAY}: {hits} hits / {misses} misses / {ungraded} ungraded (day rate: {day_rate})")
+    print(f"Overall to date: {totals['hits']} hits / {totals['misses']} misses "
+          f"(rate: {history['overall_hit_rate']}, last 14 days: {history['last_14_days_hit_rate']})")
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

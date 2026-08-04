@@ -58,6 +58,17 @@ jobs:
           restore-keys: |
             pybaseball-cache-
 
+      - name: Grade yesterday's picks
+        # Fetches yesterday's actual box scores and grades every pick this
+        # pipeline made against them, before generating anything new — this is
+        # the feedback loop that makes "more accurate over time" measurable
+        # instead of a guess. Reads output/picks_YYYY-MM-DD.json (committed by
+        # a prior run) and writes results/history.json. No-op if yesterday's
+        # picks file doesn't exist (first run, or picks were skipped that day)
+        # — never blocks the rest of the pipeline.
+        if: ${{ !(github.event_name == 'workflow_dispatch' && inputs.dry_run) }}
+        run: python3 grade_results.py
+
       - name: Run daily pipeline
         env:
           DRY_RUN: ${{ (github.event_name == 'workflow_dispatch' && inputs.dry_run) && '1' || '0' }}
@@ -77,7 +88,7 @@ jobs:
         run: |
           git config user.name "mlb-pipeline-bot"
           git config user.email "actions@github.com"
-          git add output/mlb_daily_*.txt output/run_log_*.json output/top10_picks_*.md
+          git add output/mlb_daily_*.txt output/run_log_*.json output/top10_picks_*.md output/picks_*.json results/*.json
           git diff --cached --quiet || git commit -m "Daily MLB data package + picks $(date -u +%F)"
           git push
 
@@ -90,5 +101,7 @@ jobs:
             output/mlb_daily_*.txt
             output/run_log_*.json
             output/top10_picks_*.md
+            output/picks_*.json
+            results/*.json
           retention-days: 14
           if-no-files-found: ignore
