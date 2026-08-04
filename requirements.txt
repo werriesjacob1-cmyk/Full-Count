@@ -1,0 +1,12 @@
+# Pinned to versions verified against this pipeline (2026-08). The v5->v15 breakage
+# this pipeline recovered from was caused by exactly this kind of silent upstream
+# version drift (mlb-statsapi renamed/removed kwargs on a minor bump) — pin with
+# ~= (patch-level updates only) rather than leaving these floating.
+pybaseball~=2.2.7
+requests~=2.34.2
+pandas~=3.0.5
+numpy~=2.4.6
+beautifulsoup4~=4.15.0
+lxml~=6.1.1
+mlb-statsapi~=1.9.0
+scikit-learn~=1.9.0

@@ -1,0 +1,81 @@
+name: MLB Daily Pipeline
+
+on:
+  schedule:
+    # 14:30 UTC = 10:30 AM EDT. MLB's regular season runs entirely within U.S.
+    # daylight saving time (late March - early October), so this cron is
+    # accurate for the season. It will run at 9:30 AM CT-equivalent (10:30 AM
+    # EST) if ever triggered outside DST (e.g. a manual re-run in November) —
+    # see README for the tradeoff; resolving DST dynamically in cron YAML
+    # isn't worth the complexity for a two-outing-a-year edge case.
+    - cron: '30 14 * * *'
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Dry run (fast subset: lineups, injuries, weather, umpires) instead of the full ~15-20min pipeline"
+        required: false
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+concurrency:
+  group: mlb-daily-pipeline
+  cancel-in-progress: false
+
+jobs:
+  run-pipeline:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      # Speeds up reruns within the same week (Chadwick player-ID table,
+      # season-to-date FanGraphs/Statcast pulls that don't change intraday).
+      # Keyed by ISO week so it self-refreshes regularly rather than growing
+      # stale all season.
+      - name: Cache pybaseball data
+        uses: actions/cache@v4
+        with:
+          path: ~/.pybaseball/cache
+          key: pybaseball-cache-${{ github.run_id }}
+          restore-keys: |
+            pybaseball-cache-
+
+      - name: Run daily pipeline
+        env:
+          DRY_RUN: ${{ (github.event_name == 'workflow_dispatch' && inputs.dry_run) && '1' || '0' }}
+        run: python3 mlb_daily.py
+
+      - name: Commit generated output
+        # Skip committing on dry runs — those are for validating the pipeline
+        # mechanics, not for adding to the daily-package history.
+        if: ${{ !(github.event_name == 'workflow_dispatch' && inputs.dry_run) }}
+        run: |
+          git config user.name "mlb-pipeline-bot"
+          git config user.email "actions@github.com"
+          git add output/mlb_daily_*.txt output/run_log_*.json
+          git diff --cached --quiet || git commit -m "Daily MLB data package $(date -u +%F)"
+          git push
+
+      - name: Upload run artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: mlb-daily-output-${{ github.run_id }}
+          path: |
+            output/mlb_daily_*.txt
+            output/run_log_*.json
+          retention-days: 14
+          if-no-files-found: ignore
