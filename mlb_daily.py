@@ -24,6 +24,7 @@
 import os, sys, re, json, math, warnings, requests, pandas as pd, numpy as np
 from datetime import datetime, timedelta
 from collections import defaultdict
+from concurrent.futures import ThreadPoolExecutor
 from bs4 import BeautifulSoup
 
 warnings.filterwarnings("ignore")
@@ -213,7 +214,14 @@ def warn(m):  print(f"    ⚠  {m}", flush=True)
 def H(n,t):   return f"\n{DIV}\n  SECTION {n}: {t}\n{DIV}\n"
 def safe(df,cols): return df[[c for c in cols if c in df.columns]] if not df.empty else df
 
-def fmt(df, mx=300):
+def fmt(df, mx=500):
+    # Bumped from 300: full-season leaderboards (qual=50 PA / 10 IP) regularly
+    # run 600-900+ qualified players, and 300 was silently dropping a large
+    # chunk of them. Not raised all the way to "every row" — tables are
+    # already sorted by the stat that matters (wRC+, ERA, etc.) before
+    # truncation, so the cut rows are fringe/replacement-level players least
+    # likely to matter for tonight's props, and the automated picks step
+    # feeding on this output has its own context/cost budget to respect.
     if df is None or df.empty: return "  [No data]\n"
     pd.set_option("display.max_columns",80)
     pd.set_option("display.width",240)
@@ -835,56 +843,84 @@ def compute_player_state_indicators():
         warn(f"State indicators: {e}"); return f"  Failed: {e}\n"
 
 
+def _bullpen_fetch_one(args):
+    team_name, team_id = args
+    try:
+        # statsapi.schedule()'s team kwarg is literally `team`, not `teamId` — the
+        # old `teamId=` call raised "unexpected keyword argument" on current
+        # mlb-statsapi (verified against installed 1.9.0 signature).
+        schedule=statsapi.schedule(start_date=L7_START,end_date=TODAY,team=team_id)
+        game_ids=[g["game_id"] for g in schedule[:7]]
+        usage=defaultdict(lambda:{"IP":0.0,"apps":0,"pitches":0})
+        for gid in game_ids[:5]:
+            try:
+                box=statsapi.boxscore_data(gid)
+                # box["away"]/box["home"]["pitchers"] is just a list of person IDs, not
+                # stat lines — verified live: the actual per-pitcher box score rows are
+                # under the top-level "awayPitchers"/"homePitchers" keys, each a list of
+                # dicts keyed "name"/"ip"/"p" (pitches, not "numberOfPitches") with a
+                # personId==0 header row to skip. The original code read box[side]["pitchers"]
+                # as if it were a dict of stat objects — it never was, on any version.
+                away_id=box.get("away",{}).get("team",{}).get("id")
+                side_key="awayPitchers" if away_id==team_id else "homePitchers"
+                for pdata in box.get(side_key,[]):
+                    if not pdata.get("personId"): continue  # skip team-header row
+                    pname=pdata.get("name","?").split(",")[0].strip()
+                    try: ip=float(pdata.get("ip",0) or 0)
+                    except (TypeError,ValueError): ip=0.0
+                    try: pitches=int(pdata.get("p",0) or 0)
+                    except (TypeError,ValueError): pitches=0
+                    usage[pname]["IP"]+=ip
+                    usage[pname]["apps"]+=1
+                    usage[pname]["pitches"]+=pitches
+            except Exception: pass
+        return (team_name, usage, None)
+    except Exception as e:
+        return (team_name, None, str(e)[:50])
+
 def fetch_bullpen_fatigue(game_meta):
+    # Up to 30 teams x up to 6 sequential statsapi calls each (schedule + up to
+    # 5 boxscores) was the single slowest section in the pipeline — several
+    # minutes serial. Fetched concurrently instead (network-bound I/O, GIL
+    # releases during the wait) since an unattended daily run needs to reliably
+    # finish inside the Actions job timeout. Also dropped a roster() call that
+    # was fetched but never actually used.
     step("Bullpen fatigue (L7 usage, L/R availability)...")
-    lines=[]
-    matchups_done=set()
+    matchups_done=set(); jobs=[]; job_matchup={}
     for gm in game_meta:
         matchup=gm["matchup"]
         if matchup in matchups_done: continue
         matchups_done.add(matchup)
-        lines.append(f"\n  {matchup}:")
-        # Get each team from matchup
         parts=matchup.split(" @ ")
-        teams_in_game=parts if len(parts)==2 else [matchup]
-        for team_name in teams_in_game:
+        for team_name in (parts if len(parts)==2 else [matchup]):
             try:
                 team_data=statsapi.lookup_team(team_name)
                 if not team_data: continue
-                team_id=team_data[0]["id"]
-                # Get roster
-                roster=statsapi.roster(team_id,rosterType="active")
-                # Get recent game logs
-                # statsapi.schedule()'s team kwarg is literally `team`, not `teamId` —
-                # the old `teamId=` call raised "unexpected keyword argument" on
-                # current mlb-statsapi (verified against installed 1.9.0 signature).
-                schedule=statsapi.schedule(start_date=L7_START,end_date=TODAY,team=team_id)
-                game_ids=[g["game_id"] for g in schedule[:7]]
-                usage=defaultdict(lambda:{"IP":0,"apps":0,"pitches":0,"last_app":None,"hand":"?"})
-                for gid in game_ids[:5]:
-                    try:
-                        box=statsapi.boxscore_data(gid)
-                        for side in ["away","home"]:
-                            t=box.get(side,{})
-                            if t.get("team",{}).get("id")==team_id:
-                                for pid_str,pdata in t.get("pitchers",{}).items():
-                                    pname=pdata.get("namefield","?").split(",")[0].strip() if "," in pdata.get("namefield","?") else pdata.get("namefield","?")
-                                    inning_outs=pdata.get("outs",0)
-                                    pitches=pdata.get("numberOfPitches",0)
-                                    usage[pname]["IP"]+=round(inning_outs/3,1)
-                                    usage[pname]["apps"]+=1
-                                    usage[pname]["pitches"]+=pitches
-                    except: pass
-                if usage:
-                    lines.append(f"    {team_name} relievers (L7):")
-                    sorted_usage=sorted(usage.items(),key=lambda x:x[1]["pitches"],reverse=True)
-                    for pname,u in sorted_usage[:12]:
-                        fatigue="🔴 FATIGUED" if u["pitches"]>60 else ("🟡 MODERATE" if u["pitches"]>30 else "🟢 FRESH")
-                        lines.append(f"      {pname:<25} IP:{u['IP']:.1f}  Apps:{u['apps']}  Pitches:{u['pitches']}  {fatigue}")
-                else:
-                    lines.append(f"    {team_name}: No recent usage data")
-            except Exception as e:
-                lines.append(f"    {team_name}: {str(e)[:50]}")
+                job=(team_name, team_data[0]["id"])
+                jobs.append(job); job_matchup[team_name]=matchup
+            except Exception:
+                job_matchup[team_name]=matchup
+
+    results_by_matchup=defaultdict(list)
+    if jobs:
+        with ThreadPoolExecutor(max_workers=10) as ex:
+            for team_name, usage, err in ex.map(_bullpen_fetch_one, jobs):
+                results_by_matchup[job_matchup[team_name]].append((team_name, usage, err))
+
+    lines=[]
+    for matchup in sorted(matchups_done, key=lambda m: [gm["matchup"] for gm in game_meta].index(m)):
+        lines.append(f"\n  {matchup}:")
+        for team_name, usage, err in results_by_matchup.get(matchup, []):
+            if err:
+                lines.append(f"    {team_name}: {err}")
+            elif usage:
+                lines.append(f"    {team_name} relievers (L7):")
+                sorted_usage=sorted(usage.items(),key=lambda x:x[1]["pitches"],reverse=True)
+                for pname,u in sorted_usage[:12]:
+                    fatigue="🔴 FATIGUED" if u["pitches"]>60 else ("🟡 MODERATE" if u["pitches"]>30 else "🟢 FRESH")
+                    lines.append(f"      {pname:<25} IP:{u['IP']:.1f}  Apps:{u['apps']}  Pitches:{u['pitches']}  {fatigue}")
+            else:
+                lines.append(f"    {team_name}: No recent usage data")
     return "\n".join(lines)+"\n" if lines else "  No bullpen data available.\n"
 
 

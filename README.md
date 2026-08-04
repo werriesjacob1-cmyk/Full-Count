@@ -1,44 +1,70 @@
 # PROJECT-GRIDIRON — MLB Daily Betting Pipeline
 
-Automated data-generation half of Jacob's MLB player-prop research pipeline.
-A GitHub Actions workflow runs `mlb_daily.py` every morning, pulls lineups,
-weather, injuries, umpire assignments, and ~88 sections of FanGraphs/Statcast/
-MLB Stats API data, and commits the result to this repo as a single text file
-Jacob pastes into his Claude.ai `mlb-betting-analyst` project.
+Fully automated MLB player-prop research + picks pipeline. A GitHub Actions
+workflow runs every morning with no manual step required: `mlb_daily.py`
+pulls lineups, weather, injuries, umpire assignments, splits, and ~88 sections
+of FanGraphs/Statcast/MLB Stats API data, then `generate_picks.py` hands that
+full research package to Claude, which reasons over all of it and writes out
+the day's top 10 player-prop ideas. Both files land in `output/`, committed
+back to this repo automatically.
 
-This repo owns **data generation only**. It does not touch the betting-analyst
-skill (versioned separately by Jacob), does not scrape closing lines, and does
-not place or size bets.
+This repo does **not** touch Jacob's separate `mlb-betting-analyst` Claude.ai
+skill (still versioned independently), does not scrape Fanatics odds/lines,
+and does not place or size bets — it produces research and a shortlist for
+Jacob to act on manually.
 
 ## How it runs
 
 - **Scheduled**: every day at 10:30 AM ET (`.github/workflows/mlb-daily.yml`,
-  cron `30 14 * * *` = 14:30 UTC). This is pinned to EDT (UTC-4). MLB's regular
+  cron `30 14 * * *` = 14:30 UTC). Pinned to EDT (UTC-4) — MLB's regular
   season runs entirely within U.S. daylight saving time, so this is accurate
-  for every in-season day. If you ever manually re-run this in the off-season
-  (outside DST), the run will fire an hour earlier than 10:30 local — not
-  worth the YAML complexity of resolving DST dynamically for a non-issue.
-- **Manual**: Actions tab → "MLB Daily Pipeline" → **Run workflow**. Check the
-  "Dry run" box to validate the pipeline (lineups, injuries, weather, umpires
-  only, ~1 minute) without waiting on the full ~15-20 minute run or committing
-  anything. Use this from GitHub mobile if the scheduled run fails or lineups
-  shift after 10:30.
-- **Output**: `output/mlb_daily_YYYY-MM-DD.txt` — open it in the GitHub app or
-  browser, select all, copy, paste into the Claude.ai betting session exactly
-  like before. `output/run_log_YYYY-MM-DD.json` ships alongside it — see
-  "Run log" below.
+  for every in-season day. A manual off-season re-run would fire an hour
+  early — not worth the YAML complexity of resolving DST dynamically for a
+  non-issue.
+- **Manual**: Actions tab → "MLB Daily Pipeline" → **Run workflow**. Two
+  optional toggles: "Dry run" (fast subset — lineups/injuries/weather/umpires
+  only, ~1 min, skips picks generation and doesn't commit) and "Skip picks"
+  (run the full ~15-20 min data pull but skip the Claude API call — useful for
+  testing the data side without spending tokens).
+- **Output**: `output/mlb_daily_YYYY-MM-DD.txt` (full research) and
+  `output/top10_picks_YYYY-MM-DD.md` (the day's picks) — open either in the
+  GitHub app or browser. `output/run_log_YYYY-MM-DD.json` ships alongside for
+  the research package — see "Run log" below.
 
-No secrets are required. Every data source is free/public.
+## One-time setup: add your Anthropic API key
+
+Picks generation needs an API key. Without one, the workflow still runs and
+commits the full research package every day — it just skips the picks step
+with a clear log message, so nothing breaks if you skip this.
+
+1. Get a key from [console.anthropic.com](https://console.anthropic.com).
+2. In this repo: **Settings → Secrets and variables → Actions → New repository
+   secret**.
+3. Name: `ANTHROPIC_API_KEY`. Value: your key. Save.
+
+That's the only secret this pipeline needs. Every data source it scrapes is
+free/public.
+
+### Cost
+
+Each full run sends the entire research package (research documents run large
+— see "Run log" for actual size once you've had a few runs) as input to one
+Claude API call, plus a bounded ~6,000-token output. Check current per-token
+pricing at [anthropic.com/pricing](https://anthropic.com/pricing) and multiply
+by your typical input size to estimate daily cost; it runs once a day unless
+you trigger extra manual runs. `PICKS_MODEL` (default `claude-sonnet-5`) is
+overridable via workflow env if you want to trade quality for cost.
 
 ## Repo layout
 
 ```
 mlb-daily-pipeline/
 ├── .github/workflows/mlb-daily.yml   # schedule + manual trigger
-├── mlb_daily.py                      # the pipeline (single file, ~88 sections)
+├── mlb_daily.py                      # data pipeline (single file, ~88 sections)
+├── generate_picks.py                 # reads the research package, asks Claude for top 10 picks
 ├── requirements.txt                  # pinned dependency versions
 ├── README.md
-└── output/                           # generated .txt + run_log .json land here
+└── output/                           # generated .txt / .md / run_log .json land here
 ```
 
 ## Run log
@@ -63,12 +89,38 @@ assignments before game morning, a lineup nobody's confirmed yet) — not a
 scrape failure. `failed` means an exception was caught; check the section body
 in the `.txt` for the error message.
 
+## How picks are generated
+
+`generate_picks.py` is deliberately a separate script from `mlb_daily.py`:
+the data pipeline's job is exhaustive, unopinionated data generation; the
+picks step is the opinionated synthesis layered on top. If picks generation
+fails for any reason (no key configured yet, a transient API error), it
+degrades gracefully and does **not** block the research package from being
+committed — data generation succeeding is the more important half of this
+pipeline.
+
+The prompt (in `generate_picks.py`) is built from this pipeline's own
+synthesis framework (matchup/recent-form/environment/baseline-skill/context
+weighting, edge-stacking rules for K/HR/hit props, negative-edge screening)
+rather than Jacob's separate `mlb-betting-analyst` skill, which isn't
+accessible from this automation. Per explicit direction: picks are driven
+primarily by **trend/data convergence** (how many independent signals point
+the same way) rather than a narrow computed statistical edge — an edge still
+informs confidence, it just isn't the sole filter.
+
+**No live sportsbook odds are fetched.** This pipeline currently has no
+Fanatics line data (deliberately out of scope — see below), so picks are
+statistical/trend-based, not price-verified +EV bets. Every pick in the
+output explicitly says to check the current line on Fanatics before betting.
+Treat this as a research shortlist, not a finished bet slip.
+
 ## Manual run (local)
 
 ```bash
 pip install -r requirements.txt
-python3 mlb_daily.py              # full run, ~15-20 min
-python3 mlb_daily.py --dry-run    # fast subset, ~1 min — same as DRY_RUN=1
+python3 mlb_daily.py                                    # full run, ~15-20 min
+python3 mlb_daily.py --dry-run                           # fast subset, ~1 min — same as DRY_RUN=1
+ANTHROPIC_API_KEY=sk-... python3 generate_picks.py       # picks from today's already-generated output/
 ```
 
 ## What changed from the prior manual script
@@ -134,9 +186,24 @@ verified live against each source as of this rebuild:
   computed from Statcast data instead of pointing at other sections. Added a
   new team-level K% section (distinct from the existing per-batter K% table).
 - **Reliability**: retry/backoff wrapper for flaky endpoints, a job-level
-  30-minute Actions timeout so a hung Statcast pull doesn't burn the whole
+  35-minute Actions timeout so a hung Statcast pull doesn't burn the whole
   Actions minute budget, and a run log (see above) so failures/empties are
   visible at a glance instead of discovered mid-analysis.
+- **Bullpen fatigue was silently dead**: `box[side]["pitchers"]` (the
+  boxscore field the original code read) is just a list of player IDs, not
+  the stat lines it was treated as — verified live against a real box score.
+  The actual per-pitcher lines live under top-level `awayPitchers`/
+  `homePitchers` keys, with pitch count as `p`, not `numberOfPitches`. Every
+  team in every run silently printed "No recent usage data." Fixed, and while
+  in there, parallelized the ~30 teams x up to 6 sequential API calls each
+  (this was the single slowest section, several minutes serial) since an
+  unattended daily run needs to reliably finish inside the job timeout —
+  cut to well under a minute.
+- **Season leaderboard tables were truncated to 300 rows** even when 600-900+
+  players qualify at the script's PA/IP thresholds, silently dropping close to
+  half the league from the "exhaustive" sections. Raised to 500 — enough to
+  cover effectively every regularly-used player without blowing up the
+  document size picks generation reasons over.
 
 Section 32 (multi-year Statcast aging curves) is legitimately slow due to data
 volume — left as-is, not a bug. UmpScorecards sections returning "not in
@@ -146,5 +213,8 @@ aren't posted until game morning), not a scrape failure.
 ## Non-goals (out of scope, by design)
 
 - Modifying the `mlb-betting-analyst` Claude.ai skill or its reference files.
-- Fanatics closing-line scraping / CLV automation — separate, deferred effort.
-- Any bet placement, sizing, or bankroll logic. This repo produces data only.
+- Fanatics closing-line/odds scraping or CLV automation — a separate, deferred
+  effort. This is also *why* picks aren't priced against a real line yet (see
+  "How picks are generated").
+- Any bet placement, sizing, or bankroll logic. This repo produces research
+  and a shortlist — Jacob decides and executes manually.

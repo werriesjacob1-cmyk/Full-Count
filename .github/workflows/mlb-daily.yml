@@ -16,6 +16,11 @@ on:
         required: false
         type: boolean
         default: false
+      skip_picks:
+        description: "Skip the Claude picks-generation step (data package only) — useful for testing the data pull without spending API tokens"
+        required: false
+        type: boolean
+        default: false
 
 permissions:
   contents: write
@@ -58,6 +63,18 @@ jobs:
           DRY_RUN: ${{ (github.event_name == 'workflow_dispatch' && inputs.dry_run) && '1' || '0' }}
         run: python3 mlb_daily.py
 
+      - name: Generate top 10 picks (Claude)
+        # Skipped on dry runs (no full data package to reason over yet) and
+        # when skip_picks is set (e.g. testing the data pull without spending
+        # API tokens). Missing/invalid ANTHROPIC_API_KEY degrades gracefully
+        # inside generate_picks.py rather than failing the job — the data
+        # package is the more important half of this pipeline and must still
+        # get committed even if picks generation isn't configured yet.
+        if: ${{ !(github.event_name == 'workflow_dispatch' && (inputs.dry_run || inputs.skip_picks)) }}
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: python3 generate_picks.py
+
       - name: Commit generated output
         # Skip committing on dry runs — those are for validating the pipeline
         # mechanics, not for adding to the daily-package history.
@@ -65,8 +82,8 @@ jobs:
         run: |
           git config user.name "mlb-pipeline-bot"
           git config user.email "actions@github.com"
-          git add output/mlb_daily_*.txt output/run_log_*.json
-          git diff --cached --quiet || git commit -m "Daily MLB data package $(date -u +%F)"
+          git add output/mlb_daily_*.txt output/run_log_*.json output/top10_picks_*.md
+          git diff --cached --quiet || git commit -m "Daily MLB data package + picks $(date -u +%F)"
           git push
 
       - name: Upload run artifacts
@@ -77,5 +94,6 @@ jobs:
           path: |
             output/mlb_daily_*.txt
             output/run_log_*.json
+            output/top10_picks_*.md
           retention-days: 14
           if-no-files-found: ignore
