@@ -86,9 +86,15 @@ jobs:
         # mechanics, not for adding to the daily-package history.
         if: ${{ !(github.event_name == 'workflow_dispatch' && inputs.dry_run) }}
         run: |
+          # nullglob: an unmatched glob (e.g. results/*.json before any grading has
+          # run) expands to nothing instead of being passed to git add literally —
+          # verified live that without this, "git add results/*.json" with zero
+          # matches fails hard under this step's `bash -e` and aborts the whole
+          # commit, silently dropping every other file the step meant to add too.
+          shopt -s nullglob
           git config user.name "mlb-pipeline-bot"
           git config user.email "actions@github.com"
-          git add output/mlb_daily_*.txt output/run_log_*.json output/top10_picks_*.md output/picks_*.json results/*.json
+          git add output/mlb_daily_*.txt output/run_log_*.json output/top10_picks_*.md output/picks_*.json results/*.json data/players/*.json
           git diff --cached --quiet || git commit -m "Daily MLB data package + picks $(date -u +%F)"
           git push
 
@@ -102,6 +108,7 @@ jobs:
             output/run_log_*.json
             output/top10_picks_*.md
             output/picks_*.json
+            results/*.json
             results/*.json
           retention-days: 14
           if-no-files-found: ignore

@@ -54,7 +54,10 @@ OUTPUT_DIR = os.environ.get("OUTPUT_DIR", "output")
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 PICKS_FILE = os.path.join(OUTPUT_DIR, f"top10_picks_{m.TODAY}.md")
 PICKS_JSON_FILE = os.path.join(OUTPUT_DIR, f"picks_{m.TODAY}.json")
+PLAYERS_DIR = os.environ.get("PLAYERS_DIR", "data/players")
 MAX_PICKS_PER_GAME = 3
+MAX_PICKS_PER_PROP_TYPE = 4
+PLAYER_SNAPSHOT_HISTORY_DAYS = 60  # bounds each player file's growth over a season
 LEAGUE_AVG_TB_PA = 0.38     # league-average total bases per PA, used when no player data is available
 LEAGUE_AVG_BF_PER_START = 22  # league-average batters faced per start, used to convert K% into a projected K count
 
@@ -223,6 +226,57 @@ def fetch_l14_pitcher_form(pitcher_ids):
                     entry["tto1_k_pct"] = k1
                     entry["tto3_k_pct"] = k3
             out[name] = entry
+        except Exception:
+            continue
+    return out
+
+
+def fetch_sprint_speed():
+    """Season sprint speed (ft/s), keyed by MLBAM id. Verified live."""
+    try:
+        df = m.pyb.statcast_sprint_speed(m.YEAR, min_opp=5)
+        if df is None or df.empty: return {}
+        return dict(zip(df["player_id"], df["sprint_speed"]))
+    except Exception as e:
+        m.warn(f"Picks sprint speed: {e}")
+        return {}
+
+
+def fetch_catcher_poptime():
+    """Season catcher pop-time-to-2B on stolen base attempts, keyed by MLBAM
+    id. Lower = faster/stronger arm = worse for the runner. Verified live."""
+    try:
+        df = m.pyb.statcast_catcher_poptime(m.YEAR, min_2b_att=3, min_3b_att=0)
+        if df is None or df.empty: return {}
+        return dict(zip(df["entity_id"], df["pop_2b_sba"]))
+    except Exception as e:
+        m.warn(f"Picks catcher poptime: {e}")
+        return {}
+
+
+def fetch_first_inning_form(pitcher_ids):
+    """Real per-start first-inning results (not season-wide) for tonight's
+    starters, via the same targeted Statcast pull mlb_daily.py's Section 38
+    uses — reused here in structured form instead of parsing that section's
+    text. Keyed by pitcher name (consistent with fetch_l14_pitcher_form)."""
+    out = {}
+    for name, pid in pitcher_ids.items():
+        if not pid: continue
+        try:
+            df = m.pyb.statcast_pitcher(start_dt=m.L14_START, end_dt=m.L14_END, player_id=pid)
+            if df is None or df.empty or "inning" not in df.columns: continue
+            i1 = df[df["inning"] == 1].copy()
+            if i1.empty: continue
+            n_starts = i1["game_date"].nunique()
+            if n_starts < 2: continue
+            if all(c in i1.columns for c in ["bat_score", "post_bat_score"]):
+                runs_per_game = i1.groupby("game_date").apply(
+                    lambda g: g["post_bat_score"].max() - g["bat_score"].min())
+                runs_per_game = runs_per_game.dropna()
+                if len(runs_per_game) >= 2:
+                    out[name] = {"n_starts": int(n_starts),
+                                 "runs_per_1st_inning": round(runs_per_game.mean(), 2),
+                                 "yrfi_rate": round((runs_per_game > 0).mean() * 100, 1)}
         except Exception:
             continue
     return out
@@ -555,6 +609,112 @@ def score_pitcher(sp_name, sp_id, sp_hand, gm, side, pit_season_lookup, l14_form
     }
 
 
+LEAGUE_AVG_SPRINT = 27.0     # ft/s
+LEAGUE_AVG_POPTIME = 2.0     # seconds, catcher pop time to 2B
+LEAGUE_AVG_BB_PCT = 8.5
+
+def score_stolen_base(batter, gm, opp_catcher_poptime, sprint_speed, batter_season):
+    """Speed (skill) is the dominant signal here — a player has to be a real
+    stolen-base threat before the matchup context matters at all. Verified
+    live against Statcast sprint speed + catcher pop-time data."""
+    bid = batter.get("id")
+    if not sprint_speed or sprint_speed < 27.3:
+        return None  # not a plausible SB threat regardless of matchup
+    notable_signals = 0
+    skill = scale(sprint_speed, 27.3, 30.5)
+    matchup = scale(opp_catcher_poptime, 2.25, 1.90) if opp_catcher_poptime else 50
+    if opp_catcher_poptime and opp_catcher_poptime >= 2.10: notable_signals += 1
+    bs = batter_season or {}
+    season_sb = bs.get("SB")
+    context = scale(season_sb, 3, 25) if season_sb is not None else 50
+    if season_sb and season_sb >= 15: notable_signals += 1
+
+    score = skill * 0.55 + matchup * 0.30 + context * 0.15
+    why = [f"Sprint speed {sprint_speed:.1f}ft/s (league ~{LEAGUE_AVG_SPRINT})"]
+    if opp_catcher_poptime: why.append(f"Opposing catcher pop time {opp_catcher_poptime:.2f}s to 2B (league ~{LEAGUE_AVG_POPTIME}s)")
+    if season_sb is not None: why.append(f"Season SB: {season_sb}")
+    watchouts = []
+    if not opp_catcher_poptime: watchouts.append("Opposing catcher pop time unavailable — matchup component defaulted to neutral")
+
+    return {
+        "type": "batter", "name": batter["name"], "player_id": bid, "team": batter.get("team"),
+        "matchup": gm["matchup"], "game_pk": gm.get("game_pk"), "prop": "To Steal a Base",
+        "projection": {"stat": "stolen_base", "value": 1}, "score": round(score, 1),
+        "why": why, "watchouts": watchouts, "notable_signals": notable_signals,
+        "confidence": "High" if score >= 70 else ("Medium" if score >= 55 else "Low"),
+    }
+
+
+def score_walk(batter, gm, opp_sp_row, ump_scores, batter_season):
+    """A patient hitter facing a wild pitcher and a loose-zone umpire — a
+    genuine convergent signal most bettors don't compute, since none of the
+    three inputs alone screams "walk prop." """
+    bs = batter_season or {}
+    bb_pct = bs.get("BB%")
+    sp_bb_pct = opp_sp_row.get("BB%") if opp_sp_row else None
+    if bb_pct is None and sp_bb_pct is None:
+        return None  # no real signal to work with (typically FanGraphs-blocked)
+    notable_signals = 0
+    skill = scale(bb_pct, 6, 15) if bb_pct is not None else 50
+    matchup = scale(sp_bb_pct, 6, 12) if sp_bb_pct is not None else 50
+    if sp_bb_pct and sp_bb_pct >= 10: notable_signals += 1
+    ump = ump_scores.get(gm["matchup"], {})
+    # Lower umpire accuracy tends to mean a looser/less consistent zone -> more walks
+    context = scale(ump.get("accuracy"), 96, 90) if ump.get("accuracy") else 50
+    if ump.get("accuracy") and ump["accuracy"] <= 92: notable_signals += 1
+
+    score = skill * 0.4 + matchup * 0.4 + context * 0.2
+    why = []
+    if bb_pct is not None: why.append(f"Season BB% {bb_pct} (league ~{LEAGUE_AVG_BB_PCT}%)")
+    if sp_bb_pct is not None: why.append(f"Opposing SP BB% {sp_bb_pct}")
+    if ump.get("accuracy"): why.append(f"HP ump accuracy {ump['accuracy']:.1f}% (lower = looser zone)")
+
+    return {
+        "type": "batter", "name": batter["name"], "player_id": batter.get("id"), "team": batter.get("team"),
+        "matchup": gm["matchup"], "game_pk": gm.get("game_pk"), "prop": "Over 0.5 Walks",
+        "projection": {"stat": "walks", "value": 0.7}, "score": round(score, 1),
+        "why": why, "watchouts": [], "notable_signals": notable_signals,
+        "confidence": "High" if score >= 70 else ("Medium" if score >= 55 else "Low"),
+    }
+
+
+def score_first_inning(sp_name, sp_id, gm, side, fi_form):
+    """NRFI/YRFI lean per starter, from real per-start first-inning results
+    (not season aggregates) — reuses the same targeted pull mlb_daily.py's
+    Section 38 already validates, in structured form.
+
+    Bug found while verifying live: scale()'s linear extrapolation isn't
+    clamped on the input side, only the output — a 0% yrfi_rate with a tight
+    [15,55] input band extrapolated past 100 and got clamped there, so every
+    scoreless-first-inning starter (not rare in an L14/2-start sample) tied
+    at exactly 100 and swept the top 10 by insertion order, regardless of how
+    thin the sample backing it was. Fixed with a full 0-100 input band (no
+    extrapolation) plus an explicit small-sample penalty — 2 starts in 14
+    days is the norm for this window, not a deep sample, and shouldn't alone
+    produce a maximum-confidence score."""
+    fi = fi_form.get(sp_name)
+    if not fi: return None
+    yrfi_rate = fi["yrfi_rate"]
+    n_starts = fi["n_starts"]
+    lean = "YRFI" if yrfi_rate >= 38 else "NRFI"
+    score = scale(yrfi_rate, 0, 100) if lean == "YRFI" else scale(yrfi_rate, 100, 0)
+    sample_penalty = max(0, (4 - n_starts) * 8)  # 2 starts (the common case): -16; 4+: none
+    score = clamp(score - sample_penalty)
+    notable_signals = 1 if (yrfi_rate >= 55 or yrfi_rate <= 10) and n_starts >= 3 else 0
+    why = [f"1st-inning runs/start {fi['runs_per_1st_inning']} across {n_starts} starts (L14)",
+           f"YRFI rate {yrfi_rate}%"]
+    watchouts = []
+    if n_starts < 3: watchouts.append(f"Only {n_starts} starts in the L14 window — thin sample for a first-inning read")
+    return {
+        "type": "pitcher", "name": sp_name, "player_id": sp_id,
+        "team": gm["away_team"] if side == "away" else gm["home_team"],
+        "matchup": gm["matchup"], "game_pk": gm.get("game_pk"),
+        "prop": f"{lean} lean (his starts)", "projection": {"stat": "first_inning_run", "value": yrfi_rate},
+        "score": round(score, 1), "why": why, "watchouts": watchouts, "notable_signals": notable_signals,
+        "confidence": "High" if score >= 70 and n_starts >= 3 else ("Medium" if score >= 55 else "Low"),
+    }
+
+
 # ══════════════════════════════════════════════════════════════════════════
 #  MAIN
 # ══════════════════════════════════════════════════════════════════════════
@@ -581,6 +741,15 @@ def main() -> int:
     l7_form = fetch_l7_batter_form()
     bat_speed_trend = fetch_bat_speed_trends()
     batter_arsenal, pitcher_arsenal = fetch_pitch_type_exploits()
+    sprint_speed = fetch_sprint_speed()
+    catcher_poptime = fetch_catcher_poptime()
+
+    catcher_by_team = {}
+    for gm in game_meta:
+        for side, team_key in [("away_lineup", "away_team"), ("home_lineup", "home_team")]:
+            for p in gm.get(side, []):
+                if p.get("pos") == "C" and p.get("id"):
+                    catcher_by_team[gm[team_key]] = p["id"]
 
     batter_lookup = name_lookup(bat_season_df)
     pitcher_lookup = name_lookup(pit_season_df)
@@ -594,6 +763,7 @@ def main() -> int:
         if gm.get("away_sp_id"): starter_ids[gm["away_sp"]] = gm["away_sp_id"]
         if gm.get("home_sp_id"): starter_ids[gm["home_sp"]] = gm["home_sp_id"]
     l14_pitcher_form = fetch_l14_pitcher_form(starter_ids)
+    fi_form = fetch_first_inning_form(starter_ids)
 
     candidates = []
 
@@ -601,42 +771,61 @@ def main() -> int:
         opp_sp_row_for_away_batters = pitcher_lookup.get(gm["home_sp"], {})
         opp_sp_row_for_home_batters = pitcher_lookup.get(gm["away_sp"], {})
         wx = park_wx.get(gm["matchup"])
+        away_opp_catcher_pop = catcher_poptime.get(catcher_by_team.get(gm["home_team"]))
+        home_opp_catcher_pop = catcher_poptime.get(catcher_by_team.get(gm["away_team"]))
 
         for batter in gm.get("away_lineup", []):
             batter["team"] = gm["away_team"]
-            c = score_batter(batter, gm, opp_sp_row_for_away_batters, gm.get("home_sp_id"), gm.get("home_sp_hand"),
-                              wx, batter_lookup.get(batter["name"]), l7_form.get(batter.get("id")),
-                              bat_speed_trend, batter_arsenal, pitcher_arsenal)
-            candidates.append(c)
+            bseason = batter_lookup.get(batter["name"])
+            candidates.append(score_batter(batter, gm, opp_sp_row_for_away_batters, gm.get("home_sp_id"), gm.get("home_sp_hand"),
+                              wx, bseason, l7_form.get(batter.get("id")), bat_speed_trend, batter_arsenal, pitcher_arsenal))
+            for c in (score_stolen_base(batter, gm, away_opp_catcher_pop, sprint_speed.get(batter.get("id")), bseason),
+                      score_walk(batter, gm, opp_sp_row_for_away_batters, ump_scores, bseason)):
+                if c: candidates.append(c)
         for batter in gm.get("home_lineup", []):
             batter["team"] = gm["home_team"]
-            c = score_batter(batter, gm, opp_sp_row_for_home_batters, gm.get("away_sp_id"), gm.get("away_sp_hand"),
-                              wx, batter_lookup.get(batter["name"]), l7_form.get(batter.get("id")),
-                              bat_speed_trend, batter_arsenal, pitcher_arsenal)
-            candidates.append(c)
+            bseason = batter_lookup.get(batter["name"])
+            candidates.append(score_batter(batter, gm, opp_sp_row_for_home_batters, gm.get("away_sp_id"), gm.get("away_sp_hand"),
+                              wx, bseason, l7_form.get(batter.get("id")), bat_speed_trend, batter_arsenal, pitcher_arsenal))
+            for c in (score_stolen_base(batter, gm, home_opp_catcher_pop, sprint_speed.get(batter.get("id")), bseason),
+                      score_walk(batter, gm, opp_sp_row_for_home_batters, ump_scores, bseason)):
+                if c: candidates.append(c)
 
         if gm["away_sp"] != "TBD" and gm.get("away_sp_id"):
             opp_k = team_k_lookup.get(gm["home_team"])
             candidates.append(score_pitcher(gm["away_sp"], gm["away_sp_id"], gm.get("away_sp_hand"),
                                              gm, "away", pitcher_lookup, l14_pitcher_form,
                                              gm.get("home_lineup", []), opp_k, ump_scores))
+            fi = score_first_inning(gm["away_sp"], gm["away_sp_id"], gm, "away", fi_form)
+            if fi: candidates.append(fi)
         if gm["home_sp"] != "TBD" and gm.get("home_sp_id"):
             opp_k = team_k_lookup.get(gm["away_team"])
             candidates.append(score_pitcher(gm["home_sp"], gm["home_sp_id"], gm.get("home_sp_hand"),
                                              gm, "home", pitcher_lookup, l14_pitcher_form,
                                              gm.get("away_lineup", []), opp_k, ump_scores))
+            fi = score_first_inning(gm["home_sp"], gm["home_sp_id"], gm, "home", fi_form)
+            if fi: candidates.append(fi)
 
     candidates.sort(key=lambda c: c["score"], reverse=True)
 
     top10 = []
     per_game_count = defaultdict(int)
+    per_prop_count = defaultdict(int)
     skipped = []
     for c in candidates:
         if len(top10) >= 10: break
         if per_game_count[c["matchup"]] >= MAX_PICKS_PER_GAME:
             continue
+        # Diversity cap by prop category: without this, a prop type that
+        # happens to score consistently high across the slate (verified live
+        # — NRFI leans did exactly this) can sweep the entire top 10 on its
+        # own, which isn't useful even when each individual score is fair.
+        prop_category = c.get("projection", {}).get("stat", "unknown")
+        if per_prop_count[prop_category] >= MAX_PICKS_PER_PROP_TYPE:
+            continue
         top10.append(c)
         per_game_count[c["matchup"]] += 1
+        per_prop_count[prop_category] += 1
     for c in candidates:
         if len(skipped) >= 2: break
         if c not in top10 and c["score"] >= 55:
@@ -644,6 +833,7 @@ def main() -> int:
 
     write_markdown(top10, skipped, game_meta, bullpen_scores)
     write_json(top10)
+    persist_player_snapshots(candidates)
     print(f"Wrote {len(top10)} picks to {PICKS_FILE} and {PICKS_JSON_FILE}")
     return 0
 
@@ -663,6 +853,42 @@ def write_json(top10):
     }
     with open(PICKS_JSON_FILE, "w", encoding="utf-8") as f:
         json.dump(payload, f, indent=2)
+
+
+def persist_player_snapshots(candidates):
+    """One JSON file per player (data/players/{id}.json), appended to daily —
+    not just the top 10. This is the longitudinal dataset that goes beyond the
+    current L7/L14 windows: an audit trail for any pick ("what did we know
+    about this player on this date"), and the substrate for genuine multi-
+    week trend detection in a future pass. Bounded to the last
+    PLAYER_SNAPSHOT_HISTORY_DAYS entries per player so file size doesn't grow
+    unbounded over a season."""
+    os.makedirs(PLAYERS_DIR, exist_ok=True)
+    by_player = defaultdict(list)
+    for c in candidates:
+        if c.get("player_id"):
+            by_player[c["player_id"]].append(c)
+
+    for pid, entries in by_player.items():
+        path = os.path.join(PLAYERS_DIR, f"{pid}.json")
+        history = {"player_id": pid, "name": entries[0]["name"], "snapshots": []}
+        if os.path.exists(path):
+            try:
+                with open(path, encoding="utf-8") as f:
+                    history = json.load(f)
+            except (json.JSONDecodeError, OSError):
+                pass
+        history["name"] = entries[0]["name"]  # keep the latest known name
+        history["snapshots"] = [s for s in history.get("snapshots", []) if s["date"] != m.TODAY]
+        history["snapshots"].append({
+            "date": m.TODAY,
+            "evaluations": [{"prop": c["prop"], "type": c["type"], "score": c["score"],
+                             "notable_signals": c["notable_signals"], "matchup": c["matchup"]}
+                            for c in entries],
+        })
+        history["snapshots"] = history["snapshots"][-PLAYER_SNAPSHOT_HISTORY_DAYS:]
+        with open(path, "w", encoding="utf-8") as f:
+            json.dump(history, f, indent=2)
 
 
 def write_markdown(top10, skipped, game_meta, bullpen_scores):

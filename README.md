@@ -55,7 +55,8 @@ mlb-daily-pipeline/
 ├── requirements.txt                  # pinned dependency versions
 ├── README.md
 ├── output/                           # generated .txt / .md / .json land here
-└── results/                          # grades_YYYY-MM-DD.json + running history.json
+├── results/                          # grades_YYYY-MM-DD.json + running history.json
+└── data/players/                     # {player_id}.json — longitudinal per-player snapshot history
 ```
 
 ## Run log
@@ -129,6 +130,38 @@ AVG+ISO sabermetric identity for expected TB/AB; strikeouts blend L14 K% with
 a league-average batters-faced-per-start estimate). This makes picks more
 concrete *and* is what makes them gradeable the next morning without a real
 sportsbook line — see "Results tracking" below.
+
+### Prop universe
+
+Six prop types, each with its own signal set — not just "whoever has the
+highest average":
+- **Total bases / hits / home run** — the matchup/form/skill formula above
+- **Stolen base** — dominated by sprint speed (a real threat needs to clear a
+  minimum speed threshold before matchup context matters at all), then the
+  opposing catcher's pop time to 2B and season SB rate as secondary signals
+- **Walks** — batter BB% vs. opposing pitcher BB%, plus HP umpire accuracy
+  (a less accurate/looser zone tends to mean more walks) — degrades to "no
+  pick" when FanGraphs is blocked, since neither BB% input is available from
+  the Statcast fallback
+- **Strikeouts** (pitcher) — as described above
+- **NRFI/YRFI lean** — real per-start first-inning results (not a season
+  aggregate) for tonight's starters
+
+A **prop-type diversity cap** (max 4 picks per prop category, same idea as
+the existing max-3-picks-per-game cap) keeps the top 10 from being swept by
+one category — found this the hard way: an early version of the NRFI scoring
+had a scaling bug that tied every scoreless-first-inning starter at exactly
+100 and let NRFI leans fill all 10 slots. Fixed the underlying bug (see git
+history) and added the cap as a second line of defense regardless.
+
+### Per-player history
+
+Every candidate evaluated each night — not just the top 10 — gets a snapshot
+appended to `data/players/{player_id}.json`: what props were considered, what
+they scored, and why. This is the audit trail for any pick ("what did the
+model know about this player on this date") and the beginning of a
+longitudinal dataset beyond the current L7/L14 windows, bounded to a rolling
+60-day history per player so file size doesn't grow unbounded over a season.
 
 It reuses `mlb_daily.py`'s already-defined fetchers/constants (`STADIUMS`,
 `retry_get`, the fixed bullpen-fatigue fetcher, `fg_bat`/`fg_pit`, etc.)
@@ -317,16 +350,20 @@ revisiting if pybaseball patches it upstream.
 
 ## What's next
 
-Explicitly deferred from this pass, not forgotten:
-- **Wider prop universe** — stolen bases, walks, runs/RBI, doubles, pitcher
-  unders, NRFI/YRFI. Currently picks are total-bases/hits/HR for hitters and
-  strikeouts for pitchers only.
-- **Defensive-positioning mismatch** — cross-referencing a hitter's pull%
+Explicitly deferred, not forgotten:
+- **Runs/RBI, doubles, and pitcher-unders (ER/H/BB allowed) props** — the
+  current prop universe (TB/hits/HR, stolen base, walks, strikeouts,
+  NRFI/YRFI) is real but not exhaustive.
+- **Defensive-positioning mismatch** — cross-referencing a hitter's Pull%
   against the opposing team's actual defensive positioning/range metrics.
-- **Per-player historical data files** (`data/players/`) — persisting a
-  structured snapshot per player per day, beyond the current L7/L14 windows,
-  to enable genuine multi-week trend detection and give every pick a full
-  audit trail back to its inputs.
+  Dropped for the last pass specifically because Pull% isn't available from
+  the Statcast fallback data used whenever FanGraphs is blocked — revisit
+  once there's a Statcast-native Pull%-equivalent or FanGraphs access
+  improves.
+- **Using the per-player history now being collected** — `data/players/` is
+  accumulating real data every run, but nothing reads it back yet for
+  genuine multi-week trend detection beyond the current L7/L14 windows. That
+  becomes possible once there's a few weeks of history to work with.
 
 ## Non-goals (out of scope, by design)
 
