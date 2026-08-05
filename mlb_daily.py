@@ -21,7 +21,7 @@
 ╚══════════════════════════════════════════════════════════════════════════════╝
 """
 
-import os, sys, re, json, math, warnings, requests, pandas as pd, numpy as np
+import os, sys, re, json, math, warnings, unicodedata, requests, pandas as pd, numpy as np
 from datetime import datetime, timedelta
 from collections import defaultdict
 from concurrent.futures import ThreadPoolExecutor
@@ -409,6 +409,14 @@ def fetch_lineups(date):
         if still_missing:
             teams_by_name = {t["name"]:t["abbr"] for t in get_team_ids()}
             rotowire = fetch_rotowire_lineups_by_team()
+            # Rotowire has no MLBAM IDs of its own (Rotowire-internal only) — found
+            # live that this silently broke nearly every per-player Statcast lookup
+            # downstream in generate_picks.py (L7 form, bat speed, sprint speed,
+            # pitch-type exploits all key off MLBAM id) whenever a lineup fell all
+            # the way through to this last-resort tier, with no visible error, just
+            # thin-looking data. Backfilled by name against the full active-roster
+            # endpoint — one call for the whole league, not one lookup per player.
+            roster = fetch_active_roster_by_name() if still_missing else {"exact":{}, "normalized":{}}
             for miss in still_missing:
                 abbr = teams_by_name.get(miss["name"])
                 rw_players = rotowire.get(abbr) if abbr else None
@@ -418,9 +426,15 @@ def fetch_lineups(date):
                     lineup_key = "away_lineup" if miss["side"]=="away" else "home_lineup"
                     for i,p in enumerate(rw_players,1):
                         pa_proj=ORDER_PA.get(i,630)
-                        block.append(f"    {i}. {p['name']} ({p.get('bats','?')}) — {p.get('pos','?')}  [proj ~{pa_proj} PA/yr]")
+                        roster_hit = roster["exact"].get(p["name"]) or roster["normalized"].get(_normalize_name_for_match(p["name"]))
+                        pid = roster_hit["id"] if roster_hit else None
+                        bats = p.get("bats","?")
+                        if bats == "?" and roster_hit: bats = roster_hit.get("bats","?")
+                        if pid: player_ids[p["name"]]=pid
+                        block.append(f"    {i}. {p['name']} ({bats}) — {p.get('pos','?')}  [proj ~{pa_proj} PA/yr]"
+                                      + ("" if pid else "  [MLBAM id not matched — per-player Statcast signals unavailable]"))
                         if gm_entry is not None:
-                            gm_entry[lineup_key].append({"name":p["name"],"id":None,"pos":p.get("pos","?"),"bats":p.get("bats","?"),"order":i})
+                            gm_entry[lineup_key].append({"name":p["name"],"id":pid,"pos":p.get("pos","?"),"bats":bats,"order":i})
                     lines[miss["idx"]]="\n".join(block)
 
     # Batch-fetch bat/pitch handedness for every player discovered (lineup batters +
@@ -535,6 +549,39 @@ def fetch_rotowire_lineups_by_team():
     except Exception as e:
         warn(f"Rotowire lineups: {e}")
     return result
+
+def _normalize_name_for_match(name):
+    """Strips accents (Rotowire renders 'Jose Ramirez' for 'José Ramírez',
+    'Julio Rodriguez' for 'Julio Rodríguez' — verified live against tonight's
+    actual slate) and common generational suffixes ('Bobby Witt' for 'Bobby
+    Witt Jr.', 'Fernando Tatis' for 'Fernando Tatis Jr.') so a name-based
+    roster match isn't defeated by cosmetic differences between sources."""
+    if not name: return name
+    ascii_name = unicodedata.normalize("NFKD", name).encode("ascii", "ignore").decode("ascii")
+    return re.sub(r"\s+(Jr\.?|Sr\.?|II|III|IV)$", "", ascii_name.strip(), flags=re.IGNORECASE).strip().lower()
+
+def fetch_active_roster_by_name():
+    """Full active-roster name->{id,bats} lookup, one call for the whole league.
+    Verified live: /api/v1/sports/1/players returns ~1350 active players with
+    fullName, id, and batSide.code — used to backfill MLBAM IDs for lineup
+    sources (Rotowire) that only carry names, not IDs, of their own. Keyed
+    both by exact fullName and by a normalized (accent/suffix-stripped) form,
+    since Rotowire's own names diverge from the MLB roster's exact spelling
+    on both counts — verified live against a real slate (Ramirez/Rodriguez/
+    Acuna missing accents, Witt/Tatis missing "Jr.") before adding this."""
+    try:
+        r = retry_get("https://statsapi.mlb.com/api/v1/sports/1/players",
+                      params={"season": YEAR}, headers={"User-Agent": "Mozilla/5.0"}, timeout=25)
+        r.raise_for_status()
+        people = r.json().get("people", [])
+    except Exception as e:
+        warn(f"Active roster lookup: {e}")
+        return {}
+    exact = {p["fullName"]: {"id": p.get("id"), "bats": p.get("batSide", {}).get("code", "?")}
+             for p in people}
+    normalized = {_normalize_name_for_match(p["fullName"]):
+                  {"id": p.get("id"), "bats": p.get("batSide", {}).get("code", "?")} for p in people}
+    return {"exact": exact, "normalized": normalized}
 
 IL_STATUS_CODES = {"D7":"7-Day IL","D10":"10-Day IL","D15":"15-Day IL","D60":"60-Day IL","DRS":"Restricted-Injured"}
 

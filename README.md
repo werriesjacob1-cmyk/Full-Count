@@ -104,7 +104,8 @@ explicit weighted formula instead of prose:
 - **15% Environment** — wind vs. park orientation, park HR index, temperature
 - **15% Baseline skill** — season-long wRC+/ISO/Barrel% (hitters), K%/CSW%/
   Stuff+ (pitchers)
-- **10% Context** — lineup slot for hitters, HP umpire zone accuracy +
+- **10% Context** — lineup slot for hitters (blended with opposing bullpen
+  fatigue when the sample is real — see below), HP umpire zone accuracy +
   opposing lineup handedness composition for pitchers
 
 **Opposing K% has two independent sources.** FanGraphs' *team*-level batting
@@ -125,6 +126,36 @@ point the same way) rather than a single computed statistical edge, per
 explicit direction — an edge still matters, it just isn't the sole filter.
 A negative-edge screen actively penalizes patterns like a hot batting average
 unconfirmed by underlying contact quality (BABIP luck, not skill).
+
+**Opposing bullpen fatigue** — a real gap found on review: this data was
+already being fetched every run (L7 reliever usage/pitch counts, via the same
+verified box-score parsing as the main report) but never actually used in
+scoring anywhere. Now blended into a hitter's context component when the
+opposing bullpen has a real tracked sample (3+ relievers): a heavily fatigued
+pen (40%+ of tracked relievers over 60 pitches in L7) is a genuine,
+non-obvious edge — tired relief is more hittable — that most casual bettors
+don't check before betting.
+
+**Weather is cross-checked against a second source.** Open-Meteo is the
+primary weather feed; the National Weather Service (`api.weather.gov`, free,
+no key, verified live) is pulled as an independent check for every non-dome
+park (all in the US — dome games skip weather entirely). When both sources
+agree, temp/wind are averaged for a steadier read; when they disagree by
+10°F+, that disagreement itself becomes a watch-out on the pick rather than
+silently trusting one source.
+
+**Sharp-money divergence** — a genuinely different signal type (market-
+derived, not stats-derived), from Action Network's public scoreboard data
+(unofficial API, no auth, verified live with real per-team tickets%/money%
+splits — e.g. a real slate showed the Angels at 41 points and the Orioles at
+-41 points of money%-vs-tickets% divergence on the same night). tickets% is
+the share of individual bets on a side; money% is the share of dollars
+wagered — when money% runs well ahead of tickets%, professional money is
+backing that side despite less public support. Deliberately kept outside the
+core weighted formula (capped at ±5 points, only triggers on a real 10+ point
+gap) so a market signal can nudge a stats-driven pick but never override it,
+per explicit direction that edge "should not be completely ignored" but
+isn't the primary filter.
 
 **Public-awareness discount.** Nothing stops a purely stat-driven model from
 just repeatedly picking whoever has the highest season average — but the
@@ -260,6 +291,21 @@ verified live against each source as of this rebuild:
 - **Rotowire lineup scraper**: rebuilt against the live site's current
   structure (`div.lineup__box` → `div.lineup__abbr` + `ul.lineup__list`), and
   demoted to a **last-resort** fallback, called once globally — never per-team.
+- **Rotowire fallback silently dropping every batter ID** — the single
+  biggest bug found in a night of continued hardening. Rotowire has no MLBAM
+  IDs of its own, and every per-player Statcast lookup in `generate_picks.py`
+  (L7 form, bat-speed trend, sprint speed, pitch-type exploits, per-player
+  history persistence) keys off that ID. Whenever a lineup fell all the way
+  through to Rotowire — verified live, an entire slate did exactly this on
+  one real run — those signals didn't error, they just silently went empty,
+  showing up as generic "thin sample" notes instead of the real cause. Fixed
+  by backfilling IDs from the full active-roster endpoint
+  (`/api/v1/sports/1/players`, one call for the whole league) matched by
+  name, with a normalized fallback match (strips accents and Jr./Sr./II/III
+  suffixes) since Rotowire's own names diverge from the roster's exact
+  spelling on both counts (`José Ramírez` → `Jose Ramirez`, `Bobby Witt Jr.`
+  → `Bobby Witt`). Verified live against a real slate: 230 of 261 batters
+  missing an ID before the fix, 1 after.
 - **Primary + preferred fallback for lineups**: MLB Stats API stays primary.
   When a team's lineup isn't posted yet, the pipeline now tries the MLB.com
   dated `starting-lineups` page first (server-rendered, keyed by the same

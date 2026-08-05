@@ -89,9 +89,36 @@ def scale(value, lo, hi, out_lo=0, out_hi=100):
 #  DATA COLLECTION — tonight-scoped, reusing mlb_daily.py's fetchers
 # ══════════════════════════════════════════════════════════════════════════
 
+NWS_UA = {"User-Agent": "(project-gridiron-mlb-pipeline, contact: github.com/werriesjacob1-cmyk/PROJECT-GRIDIRON)"}
+
+def fetch_nws_weather(lat, lon, hour):
+    """Second, independent weather source (National Weather Service — free,
+    no key, US-only; every non-dome MLB park is in the US, and dome parks
+    never reach this call). Verified live: api.weather.gov requires a
+    descriptive User-Agent or it 403s, otherwise no auth needed. Used to
+    cross-check Open-Meteo rather than trusted alone — either source can have
+    stale or wrong grid data for a given hour, and disagreement itself is a
+    signal worth surfacing rather than silently picking one."""
+    try:
+        r = m.retry_get(f"https://api.weather.gov/points/{lat},{lon}", headers=NWS_UA, timeout=15, retries=2)
+        r.raise_for_status()
+        hourly_url = r.json()["properties"]["forecastHourly"]
+        r2 = m.retry_get(hourly_url, headers=NWS_UA, timeout=15, retries=2)
+        r2.raise_for_status()
+        periods = r2.json()["properties"]["periods"]
+        target = next((p for p in periods
+                        if datetime.fromisoformat(p["startTime"]).hour == hour), periods[0])
+        wind_mph = float(target["windSpeed"].split()[0]) if target.get("windSpeed") else None
+        return {"temp": target.get("temperature"), "wind_mph": wind_mph}
+    except Exception as e:
+        m.warn(f"NWS weather cross-check: {e}")
+        return None
+
+
 def fetch_park_weather(game_meta):
     """Per-matchup weather + park HR index. Same sources/logic as mlb_daily.py's
-    Section 5, kept independent here rather than parsing that section's text."""
+    Section 5, kept independent here rather than parsing that section's text.
+    Cross-checked against a second source (NWS) below — see fetch_nws_weather."""
     out = {}
     seen = set()
     for gm in game_meta:
@@ -118,6 +145,18 @@ def fetch_park_weather(game_meta):
             idx = min(max(gm["hour"], 0), 23)
             temp = h["temperature_2m"][idx]; wsp = h["windspeed_10m"][idx]
             wdir = h["winddirection_10m"][idx]; humid = h["relativehumidity_2m"][idx]
+
+            wx_disagreement = None
+            nws = fetch_nws_weather(lat, lon, gm["hour"])
+            if nws and nws.get("temp") is not None:
+                temp_diff = abs(nws["temp"] - temp)
+                if temp_diff >= 10:
+                    wx_disagreement = f"Open-Meteo {temp:.0f}F vs NWS {nws['temp']:.0f}F — sources disagree, treat weather read with caution"
+                else:
+                    temp = round((temp + nws["temp"]) / 2, 1)  # reconcile: average when sources agree
+                if nws.get("wind_mph") is not None and (wx_disagreement is None):
+                    wsp = round((wsp + nws["wind_mph"]) / 2, 1)
+
             wvf = m.wind_vs_field(wdir, cf_deg, dome)
             dens = m.air_density_pct(elev, temp, humid)
             idx_score = 50
@@ -128,7 +167,8 @@ def fetch_park_weather(game_meta):
             idx_score += (1.0 - dens) * 100 * 0.3
             wind_effect = "out" if "OUT" in wvf.upper() else ("in" if "IN" in wvf.upper() else "neutral")
             out[gm["matchup"]] = {"dome": False, "park_hr_index": round(clamp(idx_score), 1),
-                                   "wind_effect": wind_effect, "temp": temp, "wind_mph": wsp}
+                                   "wind_effect": wind_effect, "temp": temp, "wind_mph": wsp,
+                                   "wx_disagreement": wx_disagreement}
         except Exception as e:
             m.warn(f"Picks weather {sk}: {e}")
             out[gm["matchup"]] = {"dome": False, "park_hr_index": 50, "wind_effect": "unknown", "temp": None}
@@ -151,6 +191,48 @@ def fetch_umpire_scores(game_meta):
         if u:
             out[gm["matchup"]] = {"accuracy": u.get("overall_accuracy_wmean"),
                                    "consistency": u.get("consistency_wmean")}
+    return out
+
+
+def fetch_public_betting_bias(game_meta):
+    """Public vs. sharp-money divergence on the moneyline, from Action
+    Network's public scoreboard API — unofficial (no published docs) but
+    openly served to their own website with no auth, verified live: real
+    per-team tickets%/money% data confirmed on a live slate, team names
+    ('Athletics', 'New York Mets', etc.) matching this pipeline's own naming
+    exactly, no mapping table needed.
+
+    tickets% = share of individual bets on a side; money% = share of dollars
+    wagered. When money% runs well ahead of tickets% on a side, professional
+    ('sharp') money is backing it despite less public support — a genuinely
+    different signal type than anything else here (market-derived, not
+    stats-derived). Used as a small, transparent nudge only, per explicit
+    direction: edge 'should not be completely ignored' but isn't the primary
+    filter — this is not folded into the weighted formula's core components."""
+    out = {}
+    try:
+        r = m.retry_get("https://api.actionnetwork.com/web/v2/scoreboard/mlb",
+                        params={"bookIds": 15, "date": m.TODAY.replace("-", "")},
+                        headers={"User-Agent": "Mozilla/5.0"}, timeout=20, retries=2)
+        r.raise_for_status()
+        games = r.json().get("games", [])
+    except Exception as e:
+        m.warn(f"Public betting bias (Action Network): {e}")
+        return out
+    for g in games:
+        teams = {t.get("id"): t.get("full_name") for t in g.get("teams", [])}
+        try:
+            ml = g["markets"]["15"]["event"]["moneyline"]
+        except (KeyError, TypeError):
+            continue
+        for entry in ml:
+            team_name = teams.get(entry.get("team_id"))
+            bi = entry.get("bet_info", {})
+            tickets = bi.get("tickets", {}).get("percent")
+            money = bi.get("money", {}).get("percent")
+            if team_name and tickets is not None and money is not None:
+                out[team_name] = {"tickets_pct": tickets, "money_pct": money,
+                                   "sharp_divergence": money - tickets}
     return out
 
 
@@ -455,7 +537,7 @@ def project_pitcher_ks(ps, l14):
 LEAGUE_AVG_EV = 88.5
 
 def score_batter(batter, gm, opp_sp_row, opp_sp_id, opp_sp_hand, park_wx, batter_season, batter_l7,
-                  bat_speed_trend, batter_arsenal, pitcher_arsenal):
+                  bat_speed_trend, batter_arsenal, pitcher_arsenal, opp_bullpen=None, sharp_bias=None):
     name = batter["name"]
     bid = batter.get("id")
     order = batter.get("order") or 9
@@ -496,14 +578,42 @@ def score_batter(batter, gm, opp_sp_row, opp_sp_id, opp_sp_hand, park_wx, batter
              + scale(bs.get("Barrel%"), 3, 18) * 0.3)
     star_profile = (bs.get("wRC+") or 100) >= 130  # season-obvious, already priced in by the market
 
-    # CONTEXT (10%) — lineup slot
-    context = scale(10 - order, 1, 9)
+    # CONTEXT (10%) — lineup slot + opposing bullpen fatigue. fetch_bullpen_scores()
+    # was previously computed every run and never actually used anywhere in
+    # scoring — a real gap found on review, since a tired opposing bullpen is a
+    # genuine, non-obvious edge (more innings against shaky relief once the
+    # starter comes out) that most casual bettors don't check before betting.
+    lineup_context = scale(10 - order, 1, 9)
+    bullpen = opp_bullpen or {}
+    tracked = bullpen.get("tracked", 0)
+    fatigued = bullpen.get("fatigued_relievers", 0)
+    bullpen_fatigue_pct = (fatigued / tracked * 100) if tracked >= 3 else None
+    if bullpen_fatigue_pct is not None:
+        context = clamp(lineup_context * 0.7 + scale(bullpen_fatigue_pct, 0, 60) * 0.3)
+        if bullpen_fatigue_pct >= 40:
+            notable_signals += 1
+    else:
+        context = lineup_context
 
     score = matchup * 0.35 + form * 0.25 + env * 0.15 + skill * 0.15 + context * 0.10
+
+    # Sharp-money nudge: a small, capped adjustment from a genuinely different
+    # signal type (market-derived, not stats-derived) — deliberately not part
+    # of the weighted formula above so it can't dominate a stats-driven pick,
+    # per explicit direction that edge shouldn't be ignored but isn't the
+    # primary filter. Only acts on a real divergence (10+ points), not noise.
+    sharp_divergence = (sharp_bias or {}).get("sharp_divergence")
+    if sharp_divergence is not None and abs(sharp_divergence) >= 10:
+        score = clamp(score + clamp(sharp_divergence / 3, -5, 5))
+        if sharp_divergence >= 10: notable_signals += 1
 
     watchouts = []
     if low_sample:
         watchouts.append(f"L7 sample is thin ({l7_pa} PA) — treat recent-form read with caution")
+    if park_wx and park_wx.get("wx_disagreement"):
+        watchouts.append(park_wx["wx_disagreement"])
+    if sharp_divergence is not None and sharp_divergence <= -10:
+        watchouts.append(f"Public heavy on {batter.get('team')} (money% trails tickets% by {abs(sharp_divergence)} pts) — sharp money is fading this side")
     if l7.get("AVG", 0) and l7.get("AVG", 0) > 0.320 and l7.get("barrel_pct", 0) < 6 and l7_pa >= 8:
         score -= 12
         watchouts.append(f"L7 AVG {l7.get('AVG')} isn't backed by barrel rate ({l7.get('barrel_pct')}%) — likely BABIP-driven, due to cool off")
@@ -539,6 +649,12 @@ def score_batter(batter, gm, opp_sp_row, opp_sp_id, opp_sp_hand, park_wx, batter
     if not park_wx or park_wx.get("dome"): why.append("Dome — weather neutral")
     elif park_wx.get("wind_effect") == "out": why.append(f"Wind blowing OUT ({park_wx.get('wind_mph',0):.0f}mph) — HR boost")
     elif park_wx.get("wind_effect") == "in": why.append("Wind blowing IN — power suppressed")
+    if bullpen_fatigue_pct is not None:
+        why.append(f"Opposing bullpen fatigue: {fatigued}/{tracked} relievers over 60 pitches in L7 "
+                    f"({'tired pen — favorable late' if bullpen_fatigue_pct >= 40 else 'fresh pen'})")
+    if sharp_divergence is not None and abs(sharp_divergence) >= 10:
+        why.append(f"Sharp money {'backing' if sharp_divergence > 0 else 'fading'} {batter.get('team')} "
+                    f"(money% {'+' if sharp_divergence>0 else ''}{sharp_divergence} pts vs ticket%)")
 
     return {
         "type": "batter", "name": name, "player_id": bid, "team": batter.get("team"), "matchup": gm["matchup"],
@@ -772,6 +888,7 @@ def main() -> int:
     park_wx = fetch_park_weather(game_meta)
     ump_scores = fetch_umpire_scores(game_meta)
     bullpen_scores = fetch_bullpen_scores(game_meta)
+    sharp_bias = fetch_public_betting_bias(game_meta)
     l7_form = fetch_l7_batter_form()
     bat_speed_trend = fetch_bat_speed_trends()
     batter_arsenal, pitcher_arsenal = fetch_pitch_type_exploits()
@@ -807,12 +924,15 @@ def main() -> int:
         wx = park_wx.get(gm["matchup"])
         away_opp_catcher_pop = catcher_poptime.get(catcher_by_team.get(gm["home_team"]))
         home_opp_catcher_pop = catcher_poptime.get(catcher_by_team.get(gm["away_team"]))
+        away_opp_bullpen = bullpen_scores.get(gm["home_team"])  # away batters face the home team's pen
+        home_opp_bullpen = bullpen_scores.get(gm["away_team"])
 
         for batter in gm.get("away_lineup", []):
             batter["team"] = gm["away_team"]
             bseason = batter_lookup.get(batter["name"])
             candidates.append(score_batter(batter, gm, opp_sp_row_for_away_batters, gm.get("home_sp_id"), gm.get("home_sp_hand"),
-                              wx, bseason, l7_form.get(batter.get("id")), bat_speed_trend, batter_arsenal, pitcher_arsenal))
+                              wx, bseason, l7_form.get(batter.get("id")), bat_speed_trend, batter_arsenal, pitcher_arsenal,
+                              away_opp_bullpen, sharp_bias.get(gm["away_team"])))
             for c in (score_stolen_base(batter, gm, away_opp_catcher_pop, sprint_speed.get(batter.get("id")), bseason),
                       score_walk(batter, gm, opp_sp_row_for_away_batters, ump_scores, bseason)):
                 if c: candidates.append(c)
@@ -820,7 +940,8 @@ def main() -> int:
             batter["team"] = gm["home_team"]
             bseason = batter_lookup.get(batter["name"])
             candidates.append(score_batter(batter, gm, opp_sp_row_for_home_batters, gm.get("away_sp_id"), gm.get("away_sp_hand"),
-                              wx, bseason, l7_form.get(batter.get("id")), bat_speed_trend, batter_arsenal, pitcher_arsenal))
+                              wx, bseason, l7_form.get(batter.get("id")), bat_speed_trend, batter_arsenal, pitcher_arsenal,
+                              home_opp_bullpen, sharp_bias.get(gm["home_team"])))
             for c in (score_stolen_base(batter, gm, home_opp_catcher_pop, sprint_speed.get(batter.get("id")), bseason),
                       score_walk(batter, gm, opp_sp_row_for_home_batters, ump_scores, bseason)):
                 if c: candidates.append(c)
