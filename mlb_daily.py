@@ -913,12 +913,21 @@ def fetch_yesterday_statcast():
         df=pyb.statcast(start_dt=YESTERDAY,end_dt=YESTERDAY)
         if df is None or df.empty: return "  No data.\n", pd.DataFrame()
         step(f"  {len(df)} pitches, {df['game_pk'].nunique()} games")
+        # Statcast's "player_name" column on raw pitch-by-pitch data is the
+        # PITCHER on that pitch, not the batter (verified live elsewhere in
+        # this file — see compute_hit_streaks) — grouping "batters who got
+        # hits" by it silently credited the pitcher who allowed the hit.
+        # Fixed to group by the numeric "batter" id and resolve names via
+        # the cached active-roster id->name map.
         hits=df[df["events"].isin(["single","double","triple","home_run"])].copy()
-        hit_sum=hits.groupby("player_name").agg(
+        hit_sum=hits.groupby("batter").agg(
             H=("events","count"),HR=("events",lambda x:(x=="home_run").sum()),
             avg_EV=("launch_speed","mean"),max_EV=("launch_speed","max"),
             avg_LA=("launch_angle","mean")
         ).round(1).sort_values("H",ascending=False).reset_index()
+        by_id=fetch_active_roster_by_name().get("by_id",{})
+        hit_sum["batter"]=hit_sum["batter"].apply(lambda pid: by_id.get(pid,f"MLBAM#{int(pid)}"))
+        hit_sum=hit_sum.rename(columns={"batter":"Batter"})
         hit_sum.index+=1
         out=f"  Yesterday ({YESTERDAY}): {len(df)} pitches | {df['game_pk'].nunique()} games\n\n"
         out+=f"  BATTERS WHO GOT HITS YESTERDAY:\n{fmt(hit_sum.head(60))}\n"
@@ -984,7 +993,12 @@ def compute_rolling_form():
         df=pyb.statcast(start_dt=L7_START,end_dt=L7_END)
         if df is None or df.empty: return "  No data.\n"
         batted=df[df["launch_speed"].notna()].copy()
-        form=batted.groupby("player_name").agg(
+        # Statcast's "player_name" is the pitcher on that pitch, not the
+        # batter who put the ball in play (verified live — see
+        # compute_hit_streaks) — grouping "batter form" by it silently
+        # attributed every batted-ball EV/LA/hit to the pitcher who allowed
+        # it. Group by the numeric "batter" id and resolve names instead.
+        form=batted.groupby("batter").agg(
             PA=("at_bat_number","count"),
             H=("events",lambda x:x.isin(["single","double","triple","home_run"]).sum()),
             HR=("events",lambda x:(x=="home_run").sum()),
@@ -998,6 +1012,9 @@ def compute_rolling_form():
         form["barrel_pct"]=form.apply(lambda r: round(r["barrel_cnt"]/r["PA"]*100,1) if r["PA"]>0 else 0,axis=1)
         form["LA_consistency"]=form["stdev_LA"].apply(lambda x: "🟢 consistent" if x<8 else ("🟡 moderate" if x<15 else "🔴 erratic"))
         form=form[form["PA"]>=5].sort_values("avg_EV",ascending=False).reset_index()
+        by_id=fetch_active_roster_by_name().get("by_id",{})
+        form["batter"]=form["batter"].apply(lambda pid: by_id.get(pid,f"MLBAM#{int(pid)}"))
+        form=form.rename(columns={"batter":"player_name"})
         form.index+=1
         step(f"  {len(form)} batters with 5+ PA in L7")
         return fmt(form.head(100))
@@ -1011,21 +1028,29 @@ def compute_player_state_indicators():
     try:
         df=pyb.statcast(start_dt=L3_START,end_dt=L3_END)
         if df is None or df.empty: return "  No data.\n"
+        # Chase rate / first-pitch swing rate are batter swing-decision
+        # stats, but this grouped by Statcast's "player_name" (the pitcher
+        # on that pitch, not the batter deciding to swing — verified live
+        # elsewhere in this file, see compute_hit_streaks). Fixed to group
+        # by the numeric "batter" id and resolve names via the roster map.
+        by_id=fetch_active_roster_by_name().get("by_id",{})
         # Chase rate = swings on pitches outside zone
         chase=df[df["zone"].between(11,14,inclusive="both") | ~df["zone"].between(1,9,inclusive="both")].copy()
-        l3_chase=chase.groupby("player_name").agg(
+        l3_chase=chase.groupby("batter").agg(
             pitches_out=("zone","count"),
             swings_out=("description",lambda x:x.isin(["swinging_strike","foul","hit_into_play"]).sum())
         )
         l3_chase["L3_chase_rate"]=l3_chase.apply(lambda r: round(r["swings_out"]/r["pitches_out"]*100,1) if r["pitches_out"]>5 else None,axis=1)
         # First pitch swing rate L3
-        fp=df[df["pitch_number"]==1].groupby("player_name").agg(
+        fp=df[df["pitch_number"]==1].groupby("batter").agg(
             fp_pitches=("pitch_number","count"),
             fp_swings=("description",lambda x:x.isin(["swinging_strike","foul","hit_into_play"]).sum())
         )
         fp["L3_first_pitch_swing_pct"]=fp.apply(lambda r:round(r["fp_swings"]/r["fp_pitches"]*100,1) if r["fp_pitches"]>3 else None,axis=1)
         result=l3_chase[["L3_chase_rate"]].join(fp[["L3_first_pitch_swing_pct"]],how="outer")
         result=result[result["L3_chase_rate"].notna()].sort_values("L3_chase_rate",ascending=False).reset_index()
+        result["batter"]=result["batter"].apply(lambda pid: by_id.get(pid,f"MLBAM#{int(pid)}"))
+        result=result.rename(columns={"batter":"player_name"})
         result.index+=1
         step(f"  {len(result)} batters analyzed")
         return fmt(result.head(60))
@@ -1723,24 +1748,31 @@ def compute_count_decisions():
     try:
         df=pyb.statcast(start_dt=L14_START,end_dt=L14_END)
         if df is None or df.empty: return "  No data.\n"
+        # These are all batter swing-decision stats, but were grouped by
+        # Statcast's "player_name" column, which on raw pitch-by-pitch data
+        # is the PITCHER on that pitch, not the batter deciding whether to
+        # swing (verified live elsewhere in this file — see
+        # compute_hit_streaks). Fixed to group by the numeric "batter" id
+        # and resolve display names via the cached roster id->name map.
+        by_id=fetch_active_roster_by_name().get("by_id",{})
         swing_desc=["swinging_strike","swinging_strike_blocked","foul","foul_tip","hit_into_play","foul_bunt"]
         # First pitch swing
         fp=df[df["pitch_number"]==1].copy()
         fp["swing"]=fp["description"].isin(swing_desc)
-        fp_rate=fp.groupby("player_name")["swing"].agg(["sum","count"])
+        fp_rate=fp.groupby("batter")["swing"].agg(["sum","count"])
         fp_rate.columns=["fp_swings","fp_pitches"]
         fp_rate["fp_swing_pct"]=round(fp_rate["fp_swings"]/fp_rate["fp_pitches"]*100,1)
         # 2-strike out-of-zone swing (chase in pressure)
         two_k=df[(df["strikes"]==2)].copy()
         two_k_out=two_k[~two_k["zone"].between(1,9,inclusive="both")]
         two_k_out["swing"]=two_k_out["description"].isin(swing_desc)
-        ts_chase=two_k_out.groupby("player_name")["swing"].agg(["sum","count"])
+        ts_chase=two_k_out.groupby("batter")["swing"].agg(["sum","count"])
         ts_chase.columns=["ts_chases","ts_pitches"]
         ts_chase["two_strike_chase_pct"]=round(ts_chase["ts_chases"]/ts_chase["ts_pitches"]*100,1)
         # RISP swing on borderline pitches (zone 11-14)
         risp=df[(df["on_2b"].notna()|df["on_3b"].notna())&df["zone"].between(11,14,inclusive="both")].copy()
         risp["swing"]=risp["description"].isin(swing_desc)
-        risp_rate=risp.groupby("player_name")["swing"].agg(["sum","count"])
+        risp_rate=risp.groupby("batter")["swing"].agg(["sum","count"])
         risp_rate.columns=["risp_swings","risp_pitches"]
         risp_rate["risp_protect_swing_pct"]=round(risp_rate["risp_swings"]/risp_rate["risp_pitches"]*100,1)
         # Merge
@@ -1748,6 +1780,8 @@ def compute_count_decisions():
             ts_chase[["two_strike_chase_pct"]],how="outer").join(
             risp_rate[["risp_protect_swing_pct"]],how="outer")
         result=result[result["fp_swing_pct"].notna()].sort_values("two_strike_chase_pct",ascending=False).reset_index()
+        result["batter"]=result["batter"].apply(lambda pid: by_id.get(pid,f"MLBAM#{int(pid)}"))
+        result=result.rename(columns={"batter":"player_name"})
         result.index+=1
         step(f"  {len(result)} batters")
         return fmt(result.head(80))
@@ -1858,20 +1892,26 @@ def compute_hitter_ingame_degradation():
         if df is None or df.empty: return "  No data.\n"
         df=df[df["at_bat_number"].notna() & df["launch_speed"].notna()].copy()
         df["ab_bucket"]=pd.cut(df["at_bat_number"],bins=[0,1,2,3,4,9],labels=["1st","2nd","3rd","4th","5th+"])
-        by_ab=df.groupby(["player_name","ab_bucket"],observed=True).agg(
+        # "player_name" is the pitcher on that pitch, not the hitter whose
+        # in-game degradation this section claims to measure (verified live
+        # elsewhere in this file — see compute_hit_streaks). Group by the
+        # numeric "batter" id and resolve display names via the roster map.
+        by_ab=df.groupby(["batter","ab_bucket"],observed=True).agg(
             avg_EV=("launch_speed","mean"),
             avg_LA=("launch_angle","mean"),
             count=("launch_speed","count")
         ).round(2)
+        by_id=fetch_active_roster_by_name().get("by_id",{})
         # Find players who degrade significantly
         lines=["  Hitter performance by plate appearance number (L14, min 5 balls in play):"]
-        for player,grp in by_ab.groupby(level=0):
+        for player_id,grp in by_ab.groupby(level=0):
             grp=grp.droplevel(0)
             if len(grp)>=3 and grp["count"].sum()>=10:
                 first_ev=grp.iloc[0]["avg_EV"] if len(grp)>0 else None
                 last_ev=grp.iloc[-1]["avg_EV"] if len(grp)>0 else None
                 if first_ev and last_ev and abs(first_ev-last_ev)>3:
                     flag="🔴 DEGRADES" if first_ev>last_ev else "🟢 IMPROVES"
+                    player=by_id.get(player_id,f"MLBAM#{int(player_id)}")
                     lines.append(f"    {player}: 1st AB EV={first_ev:.1f} → Last EV={last_ev:.1f}  {flag}")
         if len(lines)==1: lines.append("  No significant degradation patterns found in L14")
         return "\n".join(lines[:50])+"\n"
