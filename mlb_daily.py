@@ -936,6 +936,20 @@ def compute_hit_streaks():
     # ALL his plate appearances (not just games with a hit), then walk backward
     # from his most recent game and stop at the first hitless one — the correct
     # definition of an active streak, independent of calendar gaps.
+    # Second bug found on review, confirmed live: grouped by Statcast's
+    # "player_name" column, which on raw pitch-by-pitch data is the
+    # PITCHER on that pitch, not the batter — the same well-documented
+    # Statcast quirk this project already found and fixed once in the picks
+    # scorer's L7 rolling-form fetch (see README), recurring here
+    # independently. Verified live: the top "hit streak" this produced
+    # before the fix was "Peralta, Wandy" at 7 games — Wandy Peralta is a
+    # relief pitcher; pulling that exact row showed pitcher id 593974
+    # (Peralta) and batter id 682998 (Corbin Carroll, per the play
+    # description) on the same row. Every "streak" this section reported
+    # was actually a pitcher's opponents' hitting streak against him, not
+    # any individual batter's own streak. Fixed to group by the numeric
+    # "batter" id column instead (as the rest of this codebase already
+    # does post-fix) and resolve names via the active-roster id->name map.
     step("Active hit streaks (L14 Statcast)...")
     try:
         df=pyb.statcast(start_dt=L14_START,end_dt=L14_END)
@@ -943,17 +957,19 @@ def compute_hit_streaks():
         pa=df[df["events"].notna()].copy()
         pa["game_date"]=pd.to_datetime(pa["game_date"])
         pa["got_hit"]=pa["events"].isin(["single","double","triple","home_run"])
-        per_game=pa.groupby(["player_name","game_date"])["got_hit"].max().reset_index()
+        per_game=pa.groupby(["batter","game_date"])["got_hit"].max().reset_index()
         streaks={}
-        for player,grp in per_game.groupby("player_name"):
+        for player_id,grp in per_game.groupby("batter"):
             grp=grp.sort_values("game_date",ascending=False)
             streak=0
             for got_hit in grp["got_hit"]:
                 if got_hit: streak+=1
                 else: break
-            if streak>=3: streaks[player]=streak
+            if streak>=3: streaks[player_id]=streak
         if not streaks: return "  No 3+ game hit streaks.\n"
-        sdf=pd.DataFrame(list(streaks.items()),columns=["Player","Hit_Streak"]).sort_values("Hit_Streak",ascending=False).reset_index(drop=True)
+        by_id=fetch_active_roster_by_name().get("by_id",{})
+        sdf=pd.DataFrame([(by_id.get(pid,f"MLBAM#{int(pid)}"),s) for pid,s in streaks.items()],
+                          columns=["Player","Hit_Streak"]).sort_values("Hit_Streak",ascending=False).reset_index(drop=True)
         sdf.index+=1
         step(f"  {len(sdf)} players with 3+ game streaks")
         return fmt(sdf)
