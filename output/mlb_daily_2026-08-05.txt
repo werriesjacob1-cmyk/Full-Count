@@ -1,5 +1,5 @@
 MLB DAILY DATA PACKAGE V5 — 2026-08-05
-Generated : 2026-08-05  14:45:41
+Generated : 2026-08-05  15:16:47
 Season    : 2026
 Windows   : L3 2026-08-02→2026-08-05 | L7 2026-07-29→2026-08-05 | L14 2026-07-22→2026-08-05 | L30 2026-07-06→2026-08-05
 Sources   : FanGraphs | Statcast/Baseball Savant | MLB Stats API | UmpScorecards | FIC | Open-Meteo | Covers.com
@@ -9,10 +9,11 @@ Sources   : FanGraphs | Statcast/Baseball Savant | MLB Stats API | UmpScorecards
   SECTION 0: RUN SUMMARY — what's missing at a glance (see run_log JSON for machine-readable form)
 ════════════════════════════════════════════════════════════════════════
 
-  88 sections attempted  |  76 OK  |  12 empty  |  0 failed
+  88 sections attempted  |  75 OK  |  13 empty  |  0 failed
 
 
   EMPTY sections (no data returned — often expected, e.g. HP umpire TBD before game morning):
+    Section   7: HP UMPIRE OVER/UNDER BETTING RECORDS (Covers.com)
     Section  10: BvP MATCHUP TABLE — 2026-08-05 (FantasyInfoCentral)
     Section  36: CSW% LEADERBOARD — K prop edge table (sorted highest CSW%)
     Section  45: OPPOSING LINEUP K% per GAME (K prop matchup context)
@@ -64,21 +65,21 @@ Sources   : FanGraphs | Statcast/Baseball Savant | MLB Stats API | UmpScorecards
 
 ────────────────────────────────────────────────────────────
   Los Angeles Dodgers (69-45)  @  Chicago Cubs (65-49)
-  2:20 PM ET  |  Wrigley Field  |  Scheduled
+  2:20 PM ET  |  Wrigley Field  |  Pre-Game
   Series: Game 3 of 3  🚌 GETAWAY DAY  📋 GAME 3 (full adjustment)
-  HP Ump : TBD
+  HP Ump : Erich Bacchus
   SP Away: Eric Lauer  
   SP Home: Shota Imanaga  
 
-  Los Angeles Dodgers Batting Order  (source: Rotowire fallback, best-effort):
+  Los Angeles Dodgers Batting Order:
     1. Shohei Ohtani (L) — DH  [proj ~750 PA/yr]
     2. Andy Pages (R) — CF  [proj ~732 PA/yr]
-    3. Tommy Edman (S) — 2B  [proj ~714 PA/yr]
-    4. Freddie Freeman (L) — 1B  [proj ~693 PA/yr]
-    5. Mookie Betts (R) — SS  [proj ~672 PA/yr]
-    6. Kyle Tucker (L) — RF  [proj ~651 PA/yr]
-    7. Teoscar Hernandez (R) — LF  [proj ~630 PA/yr]
-    8. Enrique Hernandez (R) — 3B  [proj ~609 PA/yr]
+    3. Freddie Freeman (L) — 1B  [proj ~714 PA/yr]
+    4. Tommy Edman (S) — LF  [proj ~693 PA/yr]
+    5. Kyle Tucker (L) — RF  [proj ~672 PA/yr]
+    6. Mookie Betts (R) — SS  [proj ~651 PA/yr]
+    7. Max Muncy (L) — 3B  [proj ~630 PA/yr]
+    8. Miguel Rojas (R) — 2B  [proj ~609 PA/yr]
     9. Hunter Feduccia (L) — C  [proj ~585 PA/yr]
 
   Chicago Cubs Batting Order  (source: Rotowire fallback, best-effort):
@@ -403,12 +404,13 @@ Sources   : FanGraphs | Statcast/Baseball Savant | MLB Stats API | UmpScorecards
   Pittsburgh Pirates Batting Order  (source: Rotowire fallback, best-effort):
     1. Spencer Horwitz (L) — 1B  [proj ~750 PA/yr]
     2. Nick Gonzales (R) — 3B  [proj ~732 PA/yr]
-    3. Bryan Reynolds (S) — LF  [proj ~714 PA/yr]
+    3. Bryan Reynolds (S) — DH  [proj ~714 PA/yr]
     4. Esmerlyn Valdez (R) — RF  [proj ~693 PA/yr]
     5. Brandon Lowe (L) — 2B  [proj ~672 PA/yr]
-    6. Jake Mangum (S) — CF  [proj ~651 PA/yr]
-    7. Jared Triolo (R) — SS  [proj ~630 PA/yr]
-    8. Henry Davis (R) — C  [proj ~609 PA/yr]
+    6. Endy Rodriguez (S) — C  [proj ~651 PA/yr]
+    7. Jake Mangum (S) — CF  [proj ~630 PA/yr]
+    8. Ronny Simon (S) — LF  [proj ~609 PA/yr]  [MLBAM id not matched — per-player Statcast signals unavailable]
+    9. Jared Triolo (R) — SS  [proj ~585 PA/yr]
 
   Milwaukee Brewers Batting Order  (source: Rotowire fallback, best-effort):
     1. Brice Turang (L) — 2B  [proj ~750 PA/yr]
@@ -828,7 +830,7 @@ Sources   : FanGraphs | Statcast/Baseball Savant | MLB Stats API | UmpScorecards
   vs Field: diagonal (125° off CF)
   AirDens : 0.9432  →  ball carries 5.7% FARTHER vs sea-level
   Humidor : No
-  HP Ump  : TBD
+  HP Ump  : Erich Bacchus
 
 ──────────────────────────────────────────────────
   San Francisco Giants @ Texas Rangers
@@ -853,7 +855,7 @@ Sources   : FanGraphs | Statcast/Baseball Savant | MLB Stats API | UmpScorecards
   Los Angeles Angels @ Baltimore Orioles
   Venue   : Camden Yards  |  Elev: 20ft  |  Surface: grass
   Temp    : 82°F  |  Humidity: 83%
-  Rain%   : 11%  (0.00in expected)
+  Rain%   : 8%  (0.00in expected)
   Wind    : 2mph from SSW (207°)
   vs Field: diagonal (132° off CF)
   AirDens : 0.9532  →  ball carries 4.7% FARTHER vs sea-level
@@ -864,7 +866,7 @@ Sources   : FanGraphs | Statcast/Baseball Savant | MLB Stats API | UmpScorecards
   New York Mets @ Cleveland Guardians
   Venue   : Progressive Field  |  Elev: 653ft  |  Surface: grass
   Temp    : 82°F  |  Humidity: 59%
-  Rain%   : 6%  (0.00in expected)
+  Rain%   : 7%  (0.00in expected)
   Wind    : 8mph from N (357°)
   vs Field: blowing R→L crossfield
   AirDens : 0.9321  →  ball carries 6.8% FARTHER vs sea-level
@@ -887,13 +889,12 @@ Sources   : FanGraphs | Statcast/Baseball Savant | MLB Stats API | UmpScorecards
   Washington Nationals @ Philadelphia Phillies
   Venue   : Citizens Bank Park  |  Elev: 20ft  |  Surface: grass
   Temp    : 80°F  |  Humidity: 88%
-  Rain%   : 41%  (0.00in expected)
+  Rain%   : 24%  (0.00in expected)
   Wind    : 6mph from SE (126°)
   vs Field: blowing L→R crossfield
   AirDens : 0.9556  →  ball carries 4.4% FARTHER vs sea-level
   Humidor : No
   HP Ump  : TBD
-  ⚠ FLAGS : 🚨 RAIN 41%
 
 ──────────────────────────────────────────────────
   St. Louis Cardinals @ New York Yankees
@@ -961,14 +962,21 @@ Sources   : FanGraphs | Statcast/Baseball Savant | MLB Stats API | UmpScorecards
   SECTION 6: HP UMPIRE CAREER STATS — K%, BB%, accuracy, favor, zone size (UmpScorecards)
 ════════════════════════════════════════════════════════════════════════
 
-  No HP umpires found.
+  Umpire               Matchup                                       Accur%  Consis%  RunImpact  Challng  Overturn
+  ------------------------------------------------------------------------------------------------------------------
+  Erich Bacchus        Los Angeles Dodgers @ Chicago Cubs              93.9     93.8        1.2       62        26
+
+  Accur%=career ball/strike call accuracy  Consis%=zone consistency start-to-start
+  RunImpact=avg runs added/removed by missed calls (higher=more impactful misses)
+  Challng/Overturn=2026 ABS Challenge System career totals — cross-ref Section 9
+  Large accuracy + high consistency → tight zone → walks/hits UP, K props DOWN
 
 
 ════════════════════════════════════════════════════════════════════════
   SECTION 7: HP UMPIRE OVER/UNDER BETTING RECORDS (Covers.com)
 ════════════════════════════════════════════════════════════════════════
 
-  No HP umpires.
+  Covers.com umpire table not found (may require JS).
 
 
 ════════════════════════════════════════════════════════════════════════
@@ -8559,14 +8567,6 @@ San Francisco Giants 48 66 .421 21.0 28
     vs Left              AVG:.280  OBP:.372  SLG:.492  HR:5  PA:137 🟡 MED SAMPLE
     vs Right             AVG:.263  OBP:.317  SLG:.439  HR:13  PA:350 🟢
 
-  Tommy Edman:
-    Home Games           AVG:.263  OBP:.344  SLG:.333  HR:0  PA:66 🟡 MED SAMPLE
-    Away Games           AVG:.318  OBP:.392  SLG:.545  HR:3  PA:74 🟡 MED SAMPLE
-    Day Games            AVG:.200  OBP:.259  SLG:.200  HR:0  PA:27 🔴 LOW SAMPLE
-    Night Games          AVG:.316  OBP:.396  SLG:.510  HR:3  PA:113 🟡 MED SAMPLE
-    vs Left              AVG:.243  OBP:.364  SLG:.459  HR:2  PA:44 🔴 LOW SAMPLE
-    vs Right             AVG:.314  OBP:.372  SLG:.442  HR:1  PA:96 🟡 MED SAMPLE
-
   Freddie Freeman:
     Home Games           AVG:.276  OBP:.329  SLG:.405  HR:7  PA:231 🟢
     Away Games           AVG:.343  OBP:.437  SLG:.567  HR:8  PA:247 🟢
@@ -8575,13 +8575,13 @@ San Francisco Giants 48 66 .421 21.0 28
     vs Left              AVG:.265  OBP:.340  SLG:.397  HR:4  PA:153 🟢
     vs Right             AVG:.331  OBP:.406  SLG:.528  HR:11  PA:325 🟢
 
-  Mookie Betts:
-    Home Games           AVG:.214  OBP:.275  SLG:.371  HR:5  PA:153 🟢
-    Away Games           AVG:.231  OBP:.285  SLG:.406  HR:8  PA:172 🟢
-    Day Games            AVG:.226  OBP:.317  SLG:.340  HR:2  PA:60 🟡 MED SAMPLE
-    Night Games          AVG:.223  OBP:.272  SLG:.401  HR:11  PA:265 🟢
-    vs Left              AVG:.170  OBP:.240  SLG:.277  HR:2  PA:104 🟡 MED SAMPLE
-    vs Right             AVG:.248  OBP:.299  SLG:.442  HR:11  PA:221 🟢
+  Tommy Edman:
+    Home Games           AVG:.263  OBP:.344  SLG:.333  HR:0  PA:66 🟡 MED SAMPLE
+    Away Games           AVG:.318  OBP:.392  SLG:.545  HR:3  PA:74 🟡 MED SAMPLE
+    Day Games            AVG:.200  OBP:.259  SLG:.200  HR:0  PA:27 🔴 LOW SAMPLE
+    Night Games          AVG:.316  OBP:.396  SLG:.510  HR:3  PA:113 🟡 MED SAMPLE
+    vs Left              AVG:.243  OBP:.364  SLG:.459  HR:2  PA:44 🔴 LOW SAMPLE
+    vs Right             AVG:.314  OBP:.372  SLG:.442  HR:1  PA:96 🟡 MED SAMPLE
 
   Kyle Tucker:
     Home Games           AVG:.209  OBP:.302  SLG:.299  HR:2  PA:212 🟢
@@ -8591,21 +8591,29 @@ San Francisco Giants 48 66 .421 21.0 28
     vs Left              AVG:.261  OBP:.359  SLG:.414  HR:2  PA:131 🟡 MED SAMPLE
     vs Right             AVG:.236  OBP:.333  SLG:.367  HR:8  PA:309 🟢
 
-  Teoscar Hernandez:
-    Home Games           AVG:.246  OBP:.316  SLG:.399  HR:5  PA:152 🟢
-    Away Games           AVG:.266  OBP:.329  SLG:.434  HR:6  PA:161 🟢
-    Day Games            AVG:.259  OBP:.349  SLG:.352  HR:1  PA:63 🟡 MED SAMPLE
-    Night Games          AVG:.256  OBP:.316  SLG:.432  HR:10  PA:250 🟢
-    vs Left              AVG:.289  OBP:.375  SLG:.487  HR:4  PA:88 🟡 MED SAMPLE
-    vs Right             AVG:.244  OBP:.302  SLG:.390  HR:7  PA:225 🟢
+  Mookie Betts:
+    Home Games           AVG:.214  OBP:.275  SLG:.371  HR:5  PA:153 🟢
+    Away Games           AVG:.231  OBP:.285  SLG:.406  HR:8  PA:172 🟢
+    Day Games            AVG:.226  OBP:.317  SLG:.340  HR:2  PA:60 🟡 MED SAMPLE
+    Night Games          AVG:.223  OBP:.272  SLG:.401  HR:11  PA:265 🟢
+    vs Left              AVG:.170  OBP:.240  SLG:.277  HR:2  PA:104 🟡 MED SAMPLE
+    vs Right             AVG:.248  OBP:.299  SLG:.442  HR:11  PA:221 🟢
 
-  Enrique Hernandez:
-    Home Games           AVG:.385  OBP:.385  SLG:.769  HR:1  PA:13 🔴 LOW SAMPLE
-    Away Games           AVG:.000  OBP:.000  SLG:.000  HR:0  PA:3 🔴 LOW SAMPLE
-    Day Games            AVG:.000  OBP:.000  SLG:.000  HR:0  PA:1 🔴 LOW SAMPLE
-    Night Games          AVG:.333  OBP:.333  SLG:.667  HR:1  PA:15 🔴 LOW SAMPLE
-    vs Left              AVG:.273  OBP:.273  SLG:.636  HR:1  PA:11 🔴 LOW SAMPLE
-    vs Right             AVG:.400  OBP:.400  SLG:.600  HR:0  PA:5 🔴 LOW SAMPLE
+  Max Muncy:
+    Home Games           AVG:.229  OBP:.309  SLG:.446  HR:10  PA:175 🟢
+    Away Games           AVG:.273  OBP:.379  SLG:.524  HR:11  PA:219 🟢
+    Day Games            AVG:.278  OBP:.387  SLG:.506  HR:5  PA:93 🟡 MED SAMPLE
+    Night Games          AVG:.245  OBP:.336  SLG:.483  HR:16  PA:301 🟢
+    vs Left              AVG:.256  OBP:.330  SLG:.488  HR:5  PA:91 🟡 MED SAMPLE
+    vs Right             AVG:.252  OBP:.353  SLG:.489  HR:16  PA:303 🟢
+
+  Miguel Rojas:
+    Home Games           AVG:.308  OBP:.345  SLG:.436  HR:1  PA:84 🟡 MED SAMPLE
+    Away Games           AVG:.247  OBP:.292  SLG:.364  HR:2  PA:91 🟡 MED SAMPLE
+    Day Games            AVG:.143  OBP:.256  SLG:.171  HR:0  PA:43 🔴 LOW SAMPLE
+    Night Games          AVG:.317  OBP:.338  SLG:.467  HR:3  PA:132 🟡 MED SAMPLE
+    vs Left              AVG:.306  OBP:.352  SLG:.480  HR:3  PA:108 🟡 MED SAMPLE
+    vs Right             AVG:.228  OBP:.262  SLG:.263  HR:0  PA:67 🟡 MED SAMPLE
 
   Hunter Feduccia:
     Home Games           AVG:.239  OBP:.307  SLG:.388  HR:2  PA:77 🟡 MED SAMPLE
@@ -9111,17 +9119,6 @@ San Francisco Giants 48 66 .421 21.0 28
   2026-08-03   CHC    4   1   0   0    0   0   .270
   2026-08-04   CHC    4   0   0   0    0   0   .268
 
-  Tommy Edman — Game Logs L14:
-  Date         Opp    AB  H   HR  RBI  BB  K   AVG
-  -------------------------------------------------------
-  2026-07-28   SEA    4   2   0   1    0   0   .343
-  2026-07-29   SEA    4   0   0   0    0   2   .330
-  2026-07-30   SEA    3   0   0   0    1   1   .321
-  2026-08-01   BOS    3   0   0   0    1   1   .313
-  2026-08-02   BOS    4   0   0   0    0   1   .302
-  2026-08-03   CHC    4   1   1   3    0   2   .300
-  2026-08-04   CHC    3   0   0   0    0   0   .293
-
   Freddie Freeman — Game Logs L14:
   Date         Opp    AB  H   HR  RBI  BB  K   AVG
   -------------------------------------------------------
@@ -9133,16 +9130,16 @@ San Francisco Giants 48 66 .421 21.0 28
   2026-08-03   CHC    4   1   0   0    0   1   .309
   2026-08-04   CHC    3   1   0   0    1   1   .310
 
-  Mookie Betts — Game Logs L14:
+  Tommy Edman — Game Logs L14:
   Date         Opp    AB  H   HR  RBI  BB  K   AVG
   -------------------------------------------------------
-  2026-07-29   SEA    4   1   0   0    0   1   .229
-  2026-07-30   SEA    4   2   0   2    0   1   .232
-  2026-07-31   BOS    4   1   0   0    0   1   .233
-  2026-08-01   BOS    1   0   0   0    0   0   .232
-  2026-08-02   BOS    4   0   0   0    0   0   .229
-  2026-08-03   CHC    4   0   0   0    0   0   .226
-  2026-08-04   CHC    3   0   0   0    0   0   .223
+  2026-07-28   SEA    4   2   0   1    0   0   .343
+  2026-07-29   SEA    4   0   0   0    0   2   .330
+  2026-07-30   SEA    3   0   0   0    1   1   .321
+  2026-08-01   BOS    3   0   0   0    1   1   .313
+  2026-08-02   BOS    4   0   0   0    0   1   .302
+  2026-08-03   CHC    4   1   1   3    0   2   .300
+  2026-08-04   CHC    3   0   0   0    0   0   .293
 
   Kyle Tucker — Game Logs L14:
   Date         Opp    AB  H   HR  RBI  BB  K   AVG
@@ -9155,16 +9152,27 @@ San Francisco Giants 48 66 .421 21.0 28
   2026-08-03   CHC    3   2   0   0    1   0   .240
   2026-08-04   CHC    3   2   1   1    0   0   .243
 
-  Teoscar Hernandez — Game Logs L14:
+  Mookie Betts — Game Logs L14:
   Date         Opp    AB  H   HR  RBI  BB  K   AVG
   -------------------------------------------------------
-  2026-07-29   SEA    4   1   0   0    0   1   .247
-  2026-07-30   SEA    3   2   1   1    1   0   .252
-  2026-07-31   BOS    4   0   0   0    0   1   .248
-  2026-08-01   BOS    4   3   1   2    0   0   .256
-  2026-08-02   BOS    4   1   0   0    0   0   .255
-  2026-08-03   CHC    4   2   1   1    0   0   .259
-  2026-08-04   CHC    3   0   0   0    0   1   .256
+  2026-07-29   SEA    4   1   0   0    0   1   .229
+  2026-07-30   SEA    4   2   0   2    0   1   .232
+  2026-07-31   BOS    4   1   0   0    0   1   .233
+  2026-08-01   BOS    1   0   0   0    0   0   .232
+  2026-08-02   BOS    4   0   0   0    0   0   .229
+  2026-08-03   CHC    4   0   0   0    0   0   .226
+  2026-08-04   CHC    3   0   0   0    0   0   .223
+
+  Max Muncy — Game Logs L14:
+  Date         Opp    AB  H   HR  RBI  BB  K   AVG
+  -------------------------------------------------------
+  2026-07-28   SEA    4   1   1   1    1   0   .256
+  2026-07-29   SEA    4   1   0   0    0   1   .256
+  2026-07-30   SEA    4   0   0   0    0   3   .253
+  2026-07-31   BOS    1   0   0   0    1   0   .252
+  2026-08-01   BOS    4   1   0   0    0   3   .252
+  2026-08-02   BOS    4   2   0   0    0   0   .255
+  2026-08-04   CHC    3   0   0   0    1   2   .253
 
 
 ════════════════════════════════════════════════════════════════════════
@@ -9193,12 +9201,12 @@ San Francisco Giants 48 66 .421 21.0 28
   Cam Smith                         0.258        0.291  -0.033 🟢 DUE UP
   Shohei Ohtani                     0.342        0.327  +0.015 🟡 Normal
   Andy Pages                        0.303        0.305  -0.002 🟡 Normal
-  Tommy Edman                       0.359        0.293  +0.066 🔴 DUE DOWN
   Freddie Freeman                   0.347        0.341  +0.006 🟡 Normal
-  Mookie Betts                      0.217        0.295  -0.078 🟢 DUE UP
+  Tommy Edman                       0.359        0.293  +0.066 🔴 DUE DOWN
   Kyle Tucker                       0.285        0.284  +0.001 🟡 Normal
-  Teoscar Hernandez                 0.319        0.325  -0.006 🟡 Normal
-  Enrique Hernandez                 0.333        0.268  +0.065 🔴 DUE DOWN
+  Mookie Betts                      0.217        0.295  -0.078 🟢 DUE UP
+  Max Muncy                         0.292        0.256  +0.036 🔴 DUE DOWN
+  Miguel Rojas                      0.284        0.286  -0.002 🟡 Normal
   Hunter Feduccia                   0.323        0.287  +0.036 🔴 DUE DOWN
   Pete Crow-Armstrong               0.357        0.301  +0.056 🔴 DUE DOWN
   Seiya Suzuki                      0.338        0.330  +0.008 🟡 Normal
@@ -11388,10 +11396,11 @@ San Francisco Giants 48 66 .421 21.0 28
   Los Angeles Dodgers @ Chicago Cubs — Wrigley Field:
   LF(355ft/15ft wall)  CF(400ft)  RF(353ft/11ft wall)
   Surface: grass  Humidor: No  Batter Eye: medium
-  Air density: 0.9432  Altitude bonus: 1.1405
-  Wind pull-side boost: 0.976  Oppo-side boost: 1.024
-  PULL HITTERS HR INDEX: 1.181
-  OPPO HITTERS HR INDEX: 1.238
+  Air density: 0.9531  Altitude bonus: 1.1405
+  Wind pull-side boost: 1.015  Oppo-side boost: 0.985
+  PULL HITTERS HR INDEX: 1.215
+  OPPO HITTERS HR INDEX: 1.179
+  ⚠️  Weather fetch failed — using league-average estimate (72°F, 5mph), not the real forecast
 
   San Francisco Giants @ Texas Rangers — Globe Life Field:
   LF(332ft/8ft wall)  CF(407ft)  RF(326ft/8ft wall)
@@ -11495,10 +11504,11 @@ San Francisco Giants 48 66 .421 21.0 28
   Detroit Tigers @ Seattle Mariners — T-Mobile Park:
   LF(331ft/8ft wall)  CF(401ft)  RF(326ft/8ft wall)
   Surface: grass  Humidor: No  Batter Eye: medium
-  Air density: 0.9747  Altitude bonus: 1.0000
-  Wind pull-side boost: 1.011  Oppo-side boost: 0.989
-  PULL HITTERS HR INDEX: 1.037
-  OPPO HITTERS HR INDEX: 1.015
+  Air density: 0.9730  Altitude bonus: 1.0000
+  Wind pull-side boost: 1.015  Oppo-side boost: 0.985
+  PULL HITTERS HR INDEX: 1.043
+  OPPO HITTERS HR INDEX: 1.012
+  ⚠️  Weather fetch failed — using league-average estimate (72°F, 5mph), not the real forecast
 
 
 ════════════════════════════════════════════════════════════════════════
@@ -11536,13 +11546,13 @@ San Francisco Giants 48 66 .421 21.0 28
   Slot  Player                    ProjPA/yr  OBP ahead  Protected by
   --------------------------------------------------------------------------------
   1     Shohei Ohtani                   750  n/a        Andy Pages
-  2     Andy Pages                      732  n/a        Tommy Edman
-  3     Tommy Edman                     714  n/a        Freddie Freeman
-  4     Freddie Freeman                 693  n/a        Mookie Betts
-  5     Mookie Betts                    672  n/a        Kyle Tucker
-  6     Kyle Tucker                     651  n/a        Teoscar Hernandez
-  7     Teoscar Hernandez               630  n/a        Enrique Hernandez
-  8     Enrique Hernandez               609  n/a        Hunter Feduccia
+  2     Andy Pages                      732  n/a        Freddie Freeman
+  3     Freddie Freeman                 714  n/a        Tommy Edman
+  4     Tommy Edman                     693  n/a        Kyle Tucker
+  5     Kyle Tucker                     672  n/a        Mookie Betts
+  6     Mookie Betts                    651  n/a        Max Muncy
+  7     Max Muncy                       630  n/a        Miguel Rojas
+  8     Miguel Rojas                    609  n/a        Hunter Feduccia
   9     Hunter Feduccia                 585  n/a        Shohei Ohtani
 
   Chicago Cubs lineup context:
@@ -11825,10 +11835,11 @@ San Francisco Giants 48 66 .421 21.0 28
   2     Nick Gonzales                   732  n/a        Bryan Reynolds
   3     Bryan Reynolds                  714  n/a        Esmerlyn Valdez
   4     Esmerlyn Valdez                 693  n/a        Brandon Lowe
-  5     Brandon Lowe                    672  n/a        Jake Mangum
-  6     Jake Mangum                     651  n/a        Jared Triolo
-  7     Jared Triolo                    630  n/a        Henry Davis
-  8     Henry Davis                     609  n/a        Spencer Horwitz
+  5     Brandon Lowe                    672  n/a        Endy Rodriguez
+  6     Endy Rodriguez                  651  n/a        Jake Mangum
+  7     Jake Mangum                     630  n/a        Ronny Simon
+  8     Ronny Simon                     609  n/a        Jared Triolo
+  9     Jared Triolo                    585  n/a        Spencer Horwitz
 
   Milwaukee Brewers lineup context:
   Slot  Player                    ProjPA/yr  OBP ahead  Protected by
@@ -16345,7 +16356,7 @@ San Francisco Giants 48 66 .421 21.0 28
   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
   Los Angeles Dodgers @ Chicago Cubs
   SP Away: Eric Lauer  vs  SP Home: Shota Imanaga
-  HP Umpire: TBD
+  HP Umpire: Erich Bacchus
   Park: Wrigley Field  |  Dome: No  |  Surface: grass  |  Humidor: No
   Dimensions: LF355/CF400/RF353  Wall: LF15ft/RF11ft
   Batter eye: medium  |  Retractable roof: No
