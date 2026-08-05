@@ -1,6 +1,6 @@
 {
   "date": "2026-08-05",
-  "generated": "2026-08-05T10:30:38.467126",
+  "generated": "2026-08-05T13:11:32.855817",
   "picks": [
     {
       "rank": 1,
@@ -10,11 +10,13 @@
       "team": "Texas Rangers",
       "matchup": "San Francisco Giants @ Texas Rangers",
       "game_pk": 822866,
+      "side": null,
       "prop": "To Steal a Base",
       "projection": {
         "stat": "stolen_base",
         "value": 1
       },
+      "lean": null,
       "score": 92.5,
       "confidence": "High",
       "notable_signals": 0
@@ -27,11 +29,13 @@
       "team": "Athletics",
       "matchup": "Athletics @ Cincinnati Reds",
       "game_pk": 824482,
+      "side": null,
       "prop": "To Steal a Base",
       "projection": {
         "stat": "stolen_base",
         "value": 1
       },
+      "lean": null,
       "score": 83.9,
       "confidence": "High",
       "notable_signals": 0
@@ -44,11 +48,13 @@
       "team": "Kansas City Royals",
       "matchup": "Minnesota Twins @ Kansas City Royals",
       "game_pk": 824082,
+      "side": null,
       "prop": "To Steal a Base",
       "projection": {
         "stat": "stolen_base",
         "value": 1
       },
+      "lean": null,
       "score": 83.9,
       "confidence": "High",
       "notable_signals": 0
@@ -61,11 +67,13 @@
       "team": "Washington Nationals",
       "matchup": "Washington Nationals @ Philadelphia Phillies",
       "game_pk": 823429,
+      "side": null,
       "prop": "To Steal a Base",
       "projection": {
         "stat": "stolen_base",
         "value": 1
       },
+      "lean": null,
       "score": 80.5,
       "confidence": "High",
       "notable_signals": 0
@@ -78,11 +86,13 @@
       "team": "Milwaukee Brewers",
       "matchup": "Pittsburgh Pirates @ Milwaukee Brewers",
       "game_pk": 823753,
+      "side": null,
       "prop": "To Steal a Base",
       "projection": {
         "stat": "stolen_base",
         "value": 1
       },
+      "lean": null,
       "score": 80.5,
       "confidence": "High",
       "notable_signals": 0
@@ -95,11 +105,13 @@
       "team": "Colorado Rockies",
       "matchup": "Tampa Bay Rays @ Colorado Rockies",
       "game_pk": 824322,
+      "side": null,
       "prop": "To Steal a Base",
       "projection": {
         "stat": "stolen_base",
         "value": 1
       },
+      "lean": null,
       "score": 75.3,
       "confidence": "High",
       "notable_signals": 0
@@ -112,11 +124,13 @@
       "team": "New York Mets",
       "matchup": "New York Mets @ Cleveland Guardians",
       "game_pk": 824402,
+      "side": null,
       "prop": "To Steal a Base",
       "projection": {
         "stat": "stolen_base",
         "value": 1
       },
+      "lean": null,
       "score": 75.3,
       "confidence": "High",
       "notable_signals": 0
@@ -129,11 +143,13 @@
       "team": "Miami Marlins",
       "matchup": "Miami Marlins @ Atlanta Braves",
       "game_pk": 824889,
+      "side": null,
       "prop": "Home Run / 2+ Total Bases (proj. 2.38 TB)",
       "projection": {
         "stat": "total_bases",
         "value": 2.38
       },
+      "lean": null,
       "score": 75.1,
       "confidence": "High",
       "notable_signals": 3
@@ -141,35 +157,39 @@
     {
       "rank": 9,
       "type": "batter",
-      "name": "Jac Caglianone",
-      "player_id": 695506,
-      "team": "Kansas City Royals",
-      "matchup": "Minnesota Twins @ Kansas City Royals",
-      "game_pk": 824082,
-      "prop": "Over 1.5 Total Bases (proj. 1.69 TB)",
-      "projection": {
-        "stat": "total_bases",
-        "value": 1.69
-      },
-      "score": 74.6,
-      "confidence": "High",
-      "notable_signals": 2
-    },
-    {
-      "rank": 10,
-      "type": "batter",
       "name": "Abimelec Ortiz",
       "player_id": 694673,
       "team": "Washington Nationals",
       "matchup": "Washington Nationals @ Philadelphia Phillies",
       "game_pk": 823429,
+      "side": null,
       "prop": "Over 1.5 Total Bases (proj. 2.61 TB)",
       "projection": {
         "stat": "total_bases",
         "value": 2.61
       },
-      "score": 74.3,
+      "lean": null,
+      "score": 73.7,
       "confidence": "Medium",
+      "notable_signals": 0
+    },
+    {
+      "rank": 10,
+      "type": "batter",
+      "name": "Jose Siri",
+      "player_id": 642350,
+      "team": "Los Angeles Angels",
+      "matchup": "Los Angeles Angels @ Baltimore Orioles",
+      "game_pk": 824806,
+      "side": null,
+      "prop": "To Steal a Base",
+      "projection": {
+        "stat": "stolen_base",
+        "value": 1
+      },
+      "lean": null,
+      "score": 73.6,
+      "confidence": "High",
       "notable_signals": 0
     }
   ]
