@@ -754,7 +754,7 @@ def fetch_umpire_ou_records(game_meta):
     umps={gm["hp_ump"]:gm["matchup"] for gm in game_meta if gm["hp_ump"]!="TBD"}
     if not umps: return "  No HP umpires.\n"
     try:
-        r=requests.get("https://www.covers.com/sport/baseball/mlb/umpires",headers=BROWSER,timeout=20)
+        r=retry_get("https://www.covers.com/sport/baseball/mlb/umpires",headers=BROWSER,timeout=20,retries=2)
         if r.status_code!=200: return f"  Covers.com returned {r.status_code}\n"
         soup=BeautifulSoup(r.text,"lxml")
         tables=soup.find_all("table")
@@ -1712,17 +1712,26 @@ def compute_directional_hr_score(game_meta, bat_df=None):
         d=STADIUMS[sk]
         lat,lon,dome,team,cf_deg,elev,lf,cf_d,rf,lfw,cfw,rfw,foul,surf,humidor,eye,retract=d
         # Get weather if available
+        wx_is_estimate=False
         try:
-            r=requests.get("https://api.open-meteo.com/v1/forecast",params={
+            # retry_get instead of a bare call: this Open-Meteo endpoint was
+            # confirmed to time out on a real run ("Read timed out" for
+            # Wrigley Field) in the separate weather fetch generate_picks.py
+            # already hardened — this function hits the same API with the
+            # same zero-retry pattern that call had, silently falling
+            # through to fake-but-plausible defaults with no indication
+            # those weren't the real forecast. fetch_weather() (Section 5,
+            # this file) already uses retry_get; this one didn't.
+            r=retry_get("https://api.open-meteo.com/v1/forecast",params={
                 "latitude":lat,"longitude":lon,
                 "hourly":"temperature_2m,windspeed_10m,winddirection_10m,relativehumidity_2m",
                 "temperature_unit":"fahrenheit","windspeed_unit":"mph","timezone":"auto","forecast_days":1
-            },timeout=10); r.raise_for_status()
+            },timeout=15,retries=2); r.raise_for_status()
             h=r.json()["hourly"]
             idx=min(max(gm["hour"],0),23)
             temp=h["temperature_2m"][idx]; wsp=h["windspeed_10m"][idx]; wdir=h["winddirection_10m"][idx]; humid=h["relativehumidity_2m"][idx]
-        except:
-            temp=72; wsp=5; wdir=cf_deg; humid=50
+        except Exception:
+            temp=72; wsp=5; wdir=cf_deg; humid=50; wx_is_estimate=True
         dens=air_density_pct(elev,temp,humid)
         # Wind boost for pull vs oppo hitters
         diff=(wdir-cf_deg+360)%360
@@ -1736,6 +1745,8 @@ def compute_directional_hr_score(game_meta, bat_df=None):
         lines.append(f"  Wind pull-side boost: {lf_wind_boost:.3f}  Oppo-side boost: {rf_wind_boost:.3f}")
         lines.append(f"  PULL HITTERS HR INDEX: {round(lf_wind_boost*alt_bonus/dens,3)}")
         lines.append(f"  OPPO HITTERS HR INDEX: {round(rf_wind_boost*alt_bonus/dens,3)}")
+        if wx_is_estimate:
+            lines.append(f"  ⚠️  Weather fetch failed — using league-average estimate (72°F, 5mph), not the real forecast")
         if not dome:
             if wsp>=10 and abs(diff-180)<30: lines.append(f"  🔴 WIND IN — suppresses all HRs ({wsp:.0f}mph from CF)")
             elif wsp>=10 and (diff<30 or diff>330): lines.append(f"  🔴 WIND IN — HR suppressed ({wsp:.0f}mph from CF)")
@@ -1862,11 +1873,11 @@ def compute_threshold_flags(game_meta):
         lat,lon,dome=d[0],d[1],d[2]
         if dome: continue
         try:
-            r=requests.get("https://api.open-meteo.com/v1/forecast",params={
+            r=retry_get("https://api.open-meteo.com/v1/forecast",params={
                 "latitude":lat,"longitude":lon,
                 "hourly":"temperature_2m,windspeed_10m,winddirection_10m",
                 "temperature_unit":"fahrenheit","windspeed_unit":"mph","timezone":"auto","forecast_days":1
-            },timeout=10); r.raise_for_status()
+            },timeout=15,retries=2); r.raise_for_status()
             h=r.json()["hourly"]
             idx=min(max(gm["hour"],0),23)
             temp=h["temperature_2m"][idx]; wsp=h["windspeed_10m"][idx]
@@ -1894,9 +1905,9 @@ def fetch_mlb_leaders():
     lines=[]
     for cat in cats:
         try:
-            r=requests.get("https://statsapi.mlb.com/api/v1/stats/leaders",
-                           params={"leaderCategories":cat,"season":YEAR,"sportId":1,"limit":10},
-                           headers={"User-Agent":"Mozilla/5.0"},timeout=15)
+            r=retry_get("https://statsapi.mlb.com/api/v1/stats/leaders",
+                       params={"leaderCategories":cat,"season":YEAR,"sportId":1,"limit":10},
+                       headers={"User-Agent":"Mozilla/5.0"},timeout=15,retries=2)
             if r.status_code!=200: continue
             data=r.json().get("leagueLeaders",[])
             if not data: continue
@@ -1972,10 +1983,10 @@ def fetch_mlb_splits_pitchers(game_meta):
             if sp_name=="TBD" or sp_name in pitchers_done or not sp_id: continue
             pitchers_done.add(sp_name)
             try:
-                r=requests.get(f"https://statsapi.mlb.com/api/v1/people/{sp_id}/stats",
-                               params={"stats":"statSplits","group":"pitching","season":YEAR,
-                                       "sitCodes":"vl,vr,h,a,d,n"},
-                               headers={"User-Agent":"Mozilla/5.0"},timeout=15)
+                r=retry_get(f"https://statsapi.mlb.com/api/v1/people/{sp_id}/stats",
+                           params={"stats":"statSplits","group":"pitching","season":YEAR,
+                                   "sitCodes":"vl,vr,h,a,d,n"},
+                           headers={"User-Agent":"Mozilla/5.0"},timeout=15,retries=2)
                 if r.status_code!=200: continue
                 stats=r.json().get("stats",[])
                 if not stats: continue

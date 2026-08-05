@@ -157,6 +157,21 @@ limit). A real gap, not forgotten — noted here rather than shipped
 half-verified, consistent with this project's rule of not trusting a source
 that hasn't been checked live.
 
+**Statcast catcher framing, root-caused precisely.** Previously just noted
+as "broken upstream in pybaseball"; traced it further this pass. Baseball
+Savant's `csv=true` export parameter — which every other Statcast
+leaderboard `pybaseball` uses still honors (verified live against the
+sprint-speed leaderboard, which returns real CSV) — now returns a plain
+HTML page instead of CSV specifically for the catcher-framing leaderboard,
+which is what breaks `pybaseball`'s parser (`Expected 1 fields in line 38,
+saw 4`, since it's trying to parse an HTML `<meta>` tag as a CSV row). This
+is a genuine change on Baseball Savant's side for this one leaderboard, not
+a stale URL or a missing header — checked both the un-prefixed and
+`/leaderboard/`-prefixed URL variants, and neither returns CSV. No
+JSON API was found backing the page's current frontend either. Left
+unshipped rather than building a fragile HTML-table scraper for one
+secondary metric.
+
 **Team bullpen quality (ERA)** — initially deferred (see git history) for
 the same reason FanGraphs' team-level page can't be trusted: it's a separate
 endpoint from the individual leaderboards and fails independently of them.
@@ -408,6 +423,17 @@ verified live against each source as of this rebuild:
   along the way in the same function: the game-log API's `opponent` field
   has no `abbreviation` key (only `id`/`name`), so the opponent column was
   always "?" — now resolved through the same team-ID list used elsewhere.
+- **Five more zero-retry raw API calls hardened**, found on a systematic
+  sweep for the same fragile pattern that caused two other real bugs
+  tonight: `compute_directional_hr_score` and `compute_threshold_flags`
+  each independently call Open-Meteo (the same endpoint that logged a real
+  "Read timed out" failure for Wrigley Field elsewhere tonight) with no
+  retry at all; `fetch_umpire_ou_records` (Covers.com), `fetch_mlb_leaders`,
+  and `fetch_mlb_splits_pitchers` had the same gap against their own APIs.
+  All five switched to `retry_get`. `compute_directional_hr_score` also now
+  explicitly flags in its own output when it had to fall back to
+  league-average weather estimates instead of silently presenting a guess
+  as if it were the real forecast.
 - **Section 52 (batter splits vs starters/relievers) hard-failing** — the one
   section a real run_log ever marked `failed` rather than `empty`, i.e. an
   actual uncaught-then-caught exception, not just no data. Root cause: it
