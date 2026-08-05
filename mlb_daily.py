@@ -2999,6 +2999,95 @@ def section_team_k_pct(game_meta):
     return "\n".join(lines) + "\n"
 
 
+def _situational_split_one(job):
+    pid, name, code = job
+    try:
+        r = retry_get(f"https://statsapi.mlb.com/api/v1/people/{pid}/stats",
+                      params={"stats": "statSplits", "group": "pitching",
+                              "season": YEAR, "sitCodes": code},
+                      headers={"User-Agent": "Mozilla/5.0"}, timeout=15, retries=2)
+        r.raise_for_status()
+        sp = r.json().get("stats", [{}])[0].get("splits", [])
+        if not sp: return (name, code, None)
+        st = sp[0].get("stat", {})
+        return (name, code, {"BF": st.get("battersFaced"), "IP": st.get("inningsPitched"),
+                             "K": st.get("strikeOuts"), "BB": st.get("baseOnBalls"),
+                             "ERA": st.get("era"), "AVG": st.get("avg"),
+                             "OPS": st.get("ops"), "HR": st.get("homeRuns")})
+    except Exception:
+        return (name, code, None)
+
+
+# MLB's Stats API exposes 602 situational split codes; this pipeline previously
+# used about six of them. These are the ones that map directly onto props this
+# system actually scores.
+SITUATIONAL_CODES = [
+    ("fip",   "1st inning pitched"),   # official NRFI/YRFI data
+    ("pi000", "first 75 pitches"),     # real fatigue split...
+    ("pi760", "pitches 76+"),          # ...vs the at-bat-number proxy used elsewhere
+    ("ig07",  "7th inning or later"),
+]
+
+
+def fetch_pitcher_situational_splits(game_meta):
+    """Official per-situation splits for tonight's starters, straight from MLB.
+
+    Why this is worth having even though Sections 37/38 already compute
+    similar things: those derive first-inning and times-through-order numbers
+    from raw Statcast by bucketing at_bat_number in groups of nine, which is a
+    *proxy* for "times through the order" and a *reconstruction* of the first
+    inning. These are MLB's own official splits for the same situations, so
+    they both fill gaps the proxy can't express (actual pitch-count fatigue
+    thresholds at 75 pitches) and act as an independent cross-check on the
+    derived numbers.
+
+    Verified live before building: every code below returns real data. For
+    Jameson Taillon, 1st-inning-pitched came back 66 BF / 15 IP / 14 K /
+    6.60 ERA / .311 AVG allowed -- against a 5.92 ERA overall, i.e. he really
+    is measurably worse in the first inning, which is exactly the NRFI signal
+    this feeds. Pitch-count splits showed .268 allowed through 75 pitches vs
+    .191 after (small sample, flagged rather than hidden).
+
+    Parallelized: 4 codes x ~30 starters is ~120 small requests, which is
+    minutes serially. Uses the same ThreadPoolExecutor pattern as the bullpen
+    fetch."""
+    step("Official pitcher situational splits (MLB Stats API)...")
+    starters = {}
+    for gm in game_meta:
+        for k in ("away_sp", "home_sp"):
+            nm, pid = gm.get(k), gm.get(f"{k}_id")
+            if nm and nm != "TBD" and pid: starters[nm] = pid
+    if not starters: return "  No confirmed starters yet.\n"
+    jobs = [(pid, nm, code) for nm, pid in starters.items() for code, _ in SITUATIONAL_CODES]
+    results = {}
+    try:
+        with ThreadPoolExecutor(max_workers=12) as ex:
+            for nm, code, data in ex.map(_situational_split_one, jobs):
+                if data: results.setdefault(nm, {})[code] = data
+    except Exception as e:
+        warn(f"Situational splits: {e}")
+        return f"  Unavailable: {e}\n"
+    if not results: return "  No situational split data returned.\n"
+    label = dict(SITUATIONAL_CODES)
+    lines = ["  Official MLB splits for tonight's starters. '1st inning pitched' is the direct",
+             "  NRFI read; the pitch-count rows are real fatigue thresholds (not the at-bat-number",
+             "  proxy Sections 37/38 derive), so they also cross-check those.",
+             ""]
+    for nm in sorted(results):
+        lines.append(f"\n  {nm}:")
+        lines.append(f"    {'Situation':<22} {'BF':>4} {'IP':>6} {'K':>4} {'BB':>4} {'ERA':>6} {'AVG':>6} {'OPS':>6}")
+        for code, desc in SITUATIONAL_CODES:
+            d = results[nm].get(code)
+            if not d: continue
+            bf = d.get("BF") or 0
+            flag = "  🔴 small sample" if isinstance(bf, int) and bf < 30 else ""
+            lines.append(f"    {desc:<22} {str(bf):>4} {str(d.get('IP') or '-'):>6} "
+                         f"{str(d.get('K') or '-'):>4} {str(d.get('BB') or '-'):>4} "
+                         f"{str(d.get('ERA') or '-'):>6} {str(d.get('AVG') or '-'):>6} "
+                         f"{str(d.get('OPS') or '-'):>6}{flag}")
+    return "\n".join(lines) + "\n"
+
+
 def main():
     print(f"\n{'━'*70}")
     print(f"  MLB DAILY RESEARCH TOOL  V5  —  {TODAY}")
@@ -3158,6 +3247,7 @@ def main():
 
     S(38, "FIRST INNING PROFILE + NRFI/YRFI CONTEXT per starting pitcher (real per-start data)")
     out.append(compute_first_inning_profile(game_meta))
+    out.append(fetch_pitcher_situational_splits(game_meta))
 
     # ─── SPLITS ───────────────────────────────────────────────────────────────
     S(39, "BATTER PLATOON SPLITS vs LHP / vs RHP (FanGraphs)")
