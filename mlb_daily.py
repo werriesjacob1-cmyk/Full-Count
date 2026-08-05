@@ -2122,24 +2122,27 @@ def compute_risp_splits():
         warn(f"RISP splits: {e}"); return f"  Failed: {e}\n"
 
 
-def fetch_sp_rp_splits():
+def fetch_sp_rp_splits(pit_season):
+    """Reuses Section 33's already-fetched pit_season (fg_pit(), which already
+    has its own legacy->modern->Statcast-fallback chain) instead of making a
+    separate raw pyb.pitching_stats() call with no fallback of its own — found
+    on review: this was the one section marked "failed" (not just "empty") in
+    a real run_log, a real exception from hitting FanGraphs directly a second
+    time with none of fg_pit()'s protection. Statcast's fallback shape doesn't
+    carry GS/G, so this degrades to unavailable in that case, same discipline
+    as everything else here, rather than crashing or guessing at roles."""
     step("Batter splits vs starters vs relievers + leverage...")
-    try:
-        df_pit=pyb.pitching_stats(YEAR, qual=0)
-        if df_pit is None or df_pit.empty: return "  No data.\n"
-        # Separate starters vs relievers using GS column
-        if "GS" in df_pit.columns and "G" in df_pit.columns:
-            starters=df_pit[df_pit["GS"]>=df_pit["G"]*0.5]
-            relievers=df_pit[df_pit["GS"]<df_pit["G"]*0.5]
-            lines=[f"  SP avg ERA: {starters['ERA'].mean():.2f}  SP K/9: {starters.get('K/9',pd.Series([0])).mean():.2f}"]
-            lines.append(f"  RP avg ERA: {relievers['ERA'].mean():.2f}  RP K/9: {relievers.get('K/9',pd.Series([0])).mean():.2f}")
-            lines.append(f"\n  Note: Batter-specific SP/RP splits available via FanGraphs splits tool")
-            lines.append(f"  Key insight: Most hitters perform worse vs relievers (velocity/whiff rate higher)")
-            lines.append(f"  High-K hitters vs known 'spin-heavy' relievers = K prop caution")
-            return "\n".join(lines)+"\n"
-        return "  SP/RP split columns not available.\n"
-    except Exception as e:
-        warn(f"SP/RP splits: {e}"); return f"  Failed: {e}\n"
+    if pit_season is None or pit_season.empty: return "  No data.\n"
+    if "GS" in pit_season.columns and "G" in pit_season.columns:
+        starters=pit_season[pit_season["GS"]>=pit_season["G"]*0.5]
+        relievers=pit_season[pit_season["GS"]<pit_season["G"]*0.5]
+        lines=[f"  SP avg ERA: {starters['ERA'].mean():.2f}  SP K/9: {starters.get('K/9',pd.Series([0])).mean():.2f}"]
+        lines.append(f"  RP avg ERA: {relievers['ERA'].mean():.2f}  RP K/9: {relievers.get('K/9',pd.Series([0])).mean():.2f}")
+        lines.append(f"\n  Note: Batter-specific SP/RP splits available via FanGraphs splits tool")
+        lines.append(f"  Key insight: Most hitters perform worse vs relievers (velocity/whiff rate higher)")
+        lines.append(f"  High-K hitters vs known 'spin-heavy' relievers = K prop caution")
+        return "\n".join(lines)+"\n"
+    return "  SP/RP split columns not available (FanGraphs pitching data fell back to Statcast this run, which doesn't carry GS/G).\n"
 
 
 def compute_umpire_3way(game_meta):
@@ -2659,7 +2662,7 @@ def main():
     out.append(fmt(fg_team_field(YEAR)))
 
     S(52, "BATTER SPLITS VS STARTERS vs RELIEVERS + HIGH/LOW LEVERAGE")
-    out.append(fetch_sp_rp_splits())
+    out.append(fetch_sp_rp_splits(pit_season))
 
     S(53, "REGIME DETECTION — league environment (pitcher vs hitter month)")
     out.append(compute_regime_detection())

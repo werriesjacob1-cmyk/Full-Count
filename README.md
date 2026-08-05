@@ -353,6 +353,17 @@ verified live against each source as of this rebuild:
   spelling on both counts (`José Ramírez` → `Jose Ramirez`, `Bobby Witt Jr.`
   → `Bobby Witt`). Verified live against a real slate: 230 of 261 batters
   missing an ID before the fix, 1 after.
+- **Section 52 (batter splits vs starters/relievers) hard-failing** — the one
+  section a real run_log ever marked `failed` rather than `empty`, i.e. an
+  actual uncaught-then-caught exception, not just no data. Root cause: it
+  made its own raw `pyb.pitching_stats()` call straight to FanGraphs instead
+  of reusing `fg_pit()`'s already-built legacy→modern→Statcast-fallback
+  chain, so it had zero protection against exactly the FanGraphs blocks
+  every other pitching section already handles. Fixed to consume Section
+  33's already-fetched `pit_season` instead of fetching its own copy —
+  degrades to "unavailable" (not a crash) on the rare case that even that
+  fell back to Statcast, since Statcast's shape doesn't carry the GS/G
+  columns this needs to split starters from relievers.
 - **Primary + preferred fallback for lineups**: MLB Stats API stays primary.
   When a team's lineup isn't posted yet, the pipeline now tries the MLB.com
   dated `starting-lineups` page first (server-rendered, keyed by the same
