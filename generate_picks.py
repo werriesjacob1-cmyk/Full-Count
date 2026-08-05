@@ -857,10 +857,11 @@ def score_first_inning(sp_name, sp_id, gm, side, fi_form):
     if n_starts < 3: watchouts.append(f"Only {n_starts} starts in the L14 window — thin sample for a first-inning read")
     return {
         "type": "pitcher", "name": sp_name, "player_id": sp_id,
-        "team": gm["away_team"] if side == "away" else gm["home_team"],
+        "team": gm["away_team"] if side == "away" else gm["home_team"], "side": side,
         "matchup": gm["matchup"], "game_pk": gm.get("game_pk"),
         "prop": f"{lean} lean (his starts)", "projection": {"stat": "first_inning_run", "value": yrfi_rate},
-        "score": round(score, 1), "why": why, "watchouts": watchouts, "notable_signals": notable_signals,
+        "lean": lean, "score": round(score, 1), "why": why, "watchouts": watchouts,
+        "notable_signals": notable_signals,
         "confidence": "High" if score >= 70 and n_starts >= 3 else ("Medium" if score >= 55 else "Low"),
     }
 
@@ -995,8 +996,8 @@ def write_json(top10):
         "generated": datetime.now().isoformat(),
         "picks": [{
             "rank": i, "type": c["type"], "name": c["name"], "player_id": c["player_id"],
-            "team": c["team"], "matchup": c["matchup"], "game_pk": c["game_pk"],
-            "prop": c["prop"], "projection": c["projection"], "score": c["score"],
+            "team": c["team"], "matchup": c["matchup"], "game_pk": c["game_pk"], "side": c.get("side"),
+            "prop": c["prop"], "projection": c["projection"], "lean": c.get("lean"), "score": c["score"],
             "confidence": c["confidence"], "notable_signals": c["notable_signals"],
         } for i, c in enumerate(top10, 1)],
     }

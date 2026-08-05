@@ -268,6 +268,24 @@ measurable claim instead of an assumption — every scoring change going
 forward can be checked against whether it actually moved the hit rate, not
 just whether it sounds more sophisticated.
 
+**Correction, 2026-08-05:** the first version of `grade_pick()` only knew
+two prop shapes — every non-pitcher pick was graded as `total_bases` and
+every pitcher pick as `strikeouts`, regardless of the pick's actual prop.
+That silently mis-graded stolen-base, walk, and NRFI/YRFI picks the moment
+those prop types shipped. Worst case: an NRFI pick's projection (a YRFI rate
+like `0.0`) fed into the old threshold math as `0.0 - 0.5 = -0.5`, and the
+old code then compared actual strikeouts against that — a real pitcher's K
+count is never negative, so **every NRFI pick was guaranteed to grade "hit"
+regardless of what actually happened in the game.** 2026-08-04's recorded
+80% hit rate was inflated by this bug (4 of its 10 picks were NRFI leans).
+Fixed to dispatch on the pick's actual `projection.stat`, added a linescore-
+based first-inning check for NRFI/YRFI, and re-graded 2026-08-04 against
+real box scores with the corrected logic: the honest result is 2 hits / 4
+misses / 4 ungraded (the 4 NRFI picks from before this fix don't carry the
+`side`/`lean` fields the corrected grader needs, so they're correctly left
+ungraded rather than guessed at) — `results/history.json` reflects the
+corrected number, not the original inflated one.
+
 ## Manual run (local)
 
 ```bash

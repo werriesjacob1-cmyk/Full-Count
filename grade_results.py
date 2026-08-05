@@ -69,6 +69,30 @@ def get_box_line(game_pk, player_id, is_pitcher):
     return None, "player not found in box score (scratched or DNP)"
 
 
+_LINESCORE_CACHE = {}
+
+def fetch_first_inning_linescore(game_pk):
+    """Cached per game_pk (multiple NRFI picks can share a game). Real bug found
+    on review: grade_pick() used to grade every non-pitcher pick as total_bases
+    and every pitcher pick as strikeouts, regardless of the pick's actual prop —
+    silently mis-grading stolen-base/walk picks against total bases and NRFI/YRFI
+    picks against a strikeout threshold that never made sense. This is the correct
+    per-prop path for first_inning_run instead."""
+    if game_pk in _LINESCORE_CACHE:
+        return _LINESCORE_CACHE[game_pk]
+    result = None
+    try:
+        r = m.retry_get(f"https://statsapi.mlb.com/api/v1.1/game/{game_pk}/feed/live",
+                        headers={"User-Agent": "Mozilla/5.0"}, timeout=20)
+        r.raise_for_status()
+        innings = r.json().get("liveData", {}).get("linescore", {}).get("innings", [])
+        result = innings[0] if innings else None
+    except Exception as e:
+        m.warn(f"Grading: couldn't fetch linescore for game {game_pk}: {e}")
+    _LINESCORE_CACHE[game_pk] = result
+    return result
+
+
 def grade_pick(pick, game_statuses):
     game_pk = pick.get("game_pk")
     player_id = pick.get("player_id")
@@ -78,21 +102,48 @@ def grade_pick(pick, game_statuses):
     if not is_final(status):
         detail = (status or {}).get("detailedState", "unknown")
         return {**pick, "grade": "ungraded", "reason": f"game not final yet (status: {detail})"}
+
+    stat = (pick.get("projection") or {}).get("stat")
+
+    if stat == "first_inning_run":
+        # away_sp pitches to the home team in the bottom of the 1st (after the away
+        # team bats top 1st); home_sp pitches to the away team in the top of the 1st.
+        side = pick.get("side")
+        inning1 = fetch_first_inning_linescore(game_pk)
+        if not inning1 or side not in ("away", "home"):
+            return {**pick, "grade": "ungraded", "reason": "linescore or side unavailable"}
+        runs_against = inning1.get("home" if side == "away" else "away", {}).get("runs")
+        lean = pick.get("lean")
+        if runs_against is None or lean not in ("YRFI", "NRFI"):
+            return {**pick, "grade": "ungraded", "reason": "missing runs/lean data"}
+        actual_yrfi = runs_against > 0
+        hit = actual_yrfi if lean == "YRFI" else not actual_yrfi
+        return {**pick, "grade": "hit" if hit else "miss", "actual": runs_against,
+                "actual_stat": "first_inning_runs_allowed"}
+
     is_pitcher = pick["type"] == "pitcher"
     row, err = get_box_line(game_pk, player_id, is_pitcher)
     if row is None:
         return {**pick, "grade": "ungraded", "reason": err}
     try:
-        if is_pitcher:
+        if stat == "strikeouts":
             actual = float(row.get("k", 0) or 0)
             actual_stat = "strikeouts"
-        else:
+        elif stat == "stolen_base":
+            actual = float(row.get("sb", 0) or 0)
+            actual_stat = "stolen_bases"
+        elif stat == "walks":
+            actual = float(row.get("bb", 0) or 0)
+            actual_stat = "walks"
+        elif stat == "total_bases":
             h = int(row.get("h", 0) or 0)
             d = int(row.get("doubles", 0) or 0)
             t = int(row.get("triples", 0) or 0)
             hr = int(row.get("hr", 0) or 0)
             actual = (h - d - t - hr) * 1 + d * 2 + t * 3 + hr * 4
             actual_stat = "total_bases"
+        else:
+            return {**pick, "grade": "ungraded", "reason": f"unrecognized projection stat '{stat}'"}
     except (TypeError, ValueError):
         return {**pick, "grade": "ungraded", "reason": "unparseable box score line"}
 
