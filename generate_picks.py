@@ -1092,6 +1092,66 @@ def score_batter(batter, gm, opp_sp_row, opp_sp_id, opp_sp_hand, park_wx, batter
         score -= 12
         watchouts.append(f"L7 AVG {l7.get('AVG')} isn't backed by barrel rate ({l7.get('barrel_pct')}%) — likely BABIP-driven, due to cool off")
 
+    # REGRESSION SIGNAL — expected-vs-actual gap, as a bounded two-sided
+    # adjustment OUTSIDE the weighted formula.
+    #
+    # Placement is deliberate. This is not another estimate of how good the
+    # hitter is — the formula's BASELINE SKILL component already uses his
+    # actual results. It is a statement about how much those results are
+    # likely to MOVE, which is a different kind of claim, so it belongs
+    # outside the components and capped, exactly like the sharp-money nudge
+    # (+/-5) rather than folded into one of the five weights.
+    #
+    # Inputs are already present, no extra fetch: the season frame carries
+    # est_ba_minus_ba_diff and est_woba_minus_woba_diff. Sign verified
+    # numerically against real rows tonight rather than trusted from the
+    # column name (the name reads "est minus ba", but the values are
+    # ACTUAL minus EXPECTED: Abimelec Ortiz AVG .400 / xBA .393 -> +.007, and
+    # a second row wOBA .xxx - xwOBA .xxx reproduced its diff exactly). So
+    # POSITIVE = outperforming his batted-ball quality = FADE, NEGATIVE =
+    # underperforming with better contact than results = BUY.
+    #
+    # Thresholds are the MEASURED distribution, not chosen: across the 409
+    # batters with 100+ PA in tonight's real pull, est_ba_minus_ba_diff has
+    # mean .0000 and SD .0228 (p10 -.027, p90 +.028), and
+    # est_woba_minus_woba_diff mean .0007, SD .0247 (p10 -.030, p90 +.032).
+    # A gap only counts as a signal past ~1 SD, and the adjustment is scaled
+    # so that a 2-SD gap (roughly the extremes of the real distribution, min
+    # -.107 / max +.061) reaches the +/-6 cap. 6 is chosen to sit just above
+    # the sharp-money nudge's 5 — a stats-derived regression read should
+    # outweigh a market nudge — while still being unable to overturn a
+    # genuine multi-signal edge on its own.
+    reg_adj = 0.0
+    reg_notes = []
+    ba_gap = bs.get("est_ba_minus_ba_diff")
+    woba_gap = bs.get("est_woba_minus_woba_diff")
+    season_pa = bs.get("pa") or 0
+    if season_pa >= 100:   # below this the gap is mostly sampling noise
+        for gap, sd, label, actual, expected in (
+                (ba_gap, 0.0228, "AVG vs xBA", bs.get("AVG"), bs.get("xBA")),
+                (woba_gap, 0.0247, "wOBA vs xwOBA", bs.get("wOBA"), bs.get("xwOBA"))):
+            if gap is None or gap != gap: continue
+            try: gap = float(gap)
+            except (TypeError, ValueError): continue
+            if abs(gap) < sd: continue          # inside one SD — no signal
+            # -6 for a 2-SD overperformer, +6 for a 2-SD underperformer.
+            reg_adj += clamp(-gap / (2 * sd) * 6, -6, 6) / 2   # /2: two metrics, shared budget
+            if gap > 0:
+                reg_notes.append(f"{label}: {actual:.3f} vs {expected:.3f} (+{gap:.3f}) — "
+                                  f"outperforming his contact quality, regression risk")
+            else:
+                reg_notes.append(f"{label}: {actual:.3f} vs {expected:.3f} ({gap:.3f}) — "
+                                  f"underperforming his contact quality, positive regression candidate")
+    reg_why_notes = []
+    if reg_adj:
+        reg_adj = clamp(reg_adj, -6, 6)
+        score = clamp(score + reg_adj)
+        if reg_adj > 0:
+            reg_why_notes = reg_notes           # merged into `why` once it exists, below
+            if reg_adj >= 3: notable_signals += 1   # a genuine non-obvious BUY the market underrates
+        else:
+            watchouts.extend(reg_notes)
+
     # Public-awareness discount: a pick leaning entirely on "star + high average,"
     # with no other converging signal, is exactly what the market already prices —
     # not useful. Downweight it. A pick with 2+ non-obvious signals gets a small
@@ -1104,9 +1164,6 @@ def score_batter(batter, gm, opp_sp_row, opp_sp_id, opp_sp_hand, park_wx, batter
 
     projected_tb = project_batter_tb(bs, l7, order, implied_total)
     projected_pa = project_batter_pa(order, implied_total)
-    why.append(f"Projected {projected_pa} PA (slot {order}"
-                + (f", {implied_total}-run implied team total)" if implied_total is not None
-                   else ", league-average run environment — no market total available)"))
     if exploit and exploit["hard_hit_percent"] and (exploit["hard_hit_percent"] >= 45 or projected_tb >= 1.8):
         prop = f"Home Run / 2+ Total Bases (proj. {projected_tb} TB)"
     elif (bs.get("K%") or 30) <= 18:
@@ -1115,6 +1172,10 @@ def score_batter(batter, gm, opp_sp_row, opp_sp_id, opp_sp_hand, park_wx, batter
         prop = f"Over 1.5 Total Bases (proj. {projected_tb} TB)"
 
     why = []
+    why.extend(reg_why_notes)
+    why.append(f"Projected {projected_pa} PA (slot {order}"
+                + (f", {implied_total}-run implied team total)" if implied_total is not None
+                   else ", league-average run environment — no market total available)"))
     why.append(f"Platoon: {bats} bat vs {opp_sp_hand or '?'}HP ({'favorable' if platoon>=65 else 'unfavorable'})")
     if exploit:
         why.append(f"Pitch-type exploit: RV/100 {exploit['run_value_per_100']:+.1f} vs {exploit['pitch_type']} "
@@ -1260,10 +1321,67 @@ LEAGUE_AVG_SPRINT = 27.0     # ft/s
 LEAGUE_AVG_POPTIME = 2.0     # seconds, catcher pop time to 2B
 LEAGUE_AVG_BB_PCT = 8.5
 
+# On-base baselines, MEASURED live from tonight's real season-batting pull
+# (Statcast-fallback shape, 409 batters with 100+ PA — the shape that actually
+# ships, since FanGraphs 403s on most real runs):
+#     wOBA  mean .3126  SD .0399  p10 .2608  p90 .3650
+# The p10-p90 band is used as the scale, so a genuinely average on-base bat
+# lands mid-scale by construction rather than by a chosen number.
+LEAGUE_WOBA_MEAN = 0.3126
+WOBA_P10, WOBA_P90 = 0.2608, 0.3650
+OBP_P10, OBP_P90 = 0.290, 0.370   # standard OBP band, used only on the FanGraphs path
+
+
+def _on_base_score(bs):
+    """0-100 'how often does this man actually reach base' score, plus a
+    human-readable note. Returns (score|None, note|None).
+
+    Prefers real OBP when FanGraphs is reachable, but the COMMON case is the
+    Statcast fallback, which carries no OBP at all — verified live tonight:
+    the season-batting frame came back with columns
+    [Name, player_id, year, pa, bip, AVG, xBA, est_ba_minus_ba_diff, slg,
+     est_slg, est_slg_minus_slg_diff, wOBA, xwOBA, est_woba_minus_woba_diff,
+     Barrel%, HardHit%] — no OBP, no BB%, and no SB. wOBA is present and is a
+    direct weighted on-base rate, so it is the fallback."""
+    bs = bs or {}
+    obp = bs.get("OBP")
+    if obp is not None and obp == obp:
+        return scale(obp, OBP_P10, OBP_P90), f"OBP {obp:.3f}"
+    woba = bs.get("wOBA")
+    if woba is not None and woba == woba:
+        # Thin samples produce absurd wOBA (a 1-PA batter showed .698 tonight).
+        pa = bs.get("pa") or 0
+        if pa and pa >= 40:
+            return scale(woba, WOBA_P10, WOBA_P90), f"wOBA {woba:.3f} (league ~{LEAGUE_WOBA_MEAN:.3f})"
+    return None, None
+
+
 def score_stolen_base(batter, gm, opp_catcher_poptime, sprint_speed, batter_season):
-    """Speed (skill) is the dominant signal here — a player has to be a real
-    stolen-base threat before the matchup context matters at all. Verified
-    live against Statcast sprint speed + catcher pop-time data."""
+    """Speed is the dominant SKILL signal, but it is not the gating one: a
+    player has to REACH BASE before speed and catcher pop time matter at all.
+    Elite speed attached to a .280 OBP is far fewer steal chances than the
+    same speed attached to a .360 OBP, and the previous version of this
+    function had no on-base term whatsoever.
+
+    Worse, the term it did have was dead on the common path. `context` was
+    scale(season SB), and the Statcast-fallback season frame — which is what
+    actually ships, since FanGraphs 403s on most real runs — carries no SB
+    column at all, so bs.get("SB") was None and context silently defaulted to
+    a flat 50 for every runner in the slate. Verified live tonight against
+    the real 613-row fallback frame. On-base ability replaces it as the third
+    component because, unlike season SB, it is genuinely available on the
+    fallback path (via wOBA).
+
+    Weights: speed .50 / catcher matchup .28 / on-base .22. On-base gets real
+    weight because it gates opportunity, but stays below speed because the
+    sprint-speed filter above is what makes a candidate plausible at all.
+    Season SB, when it IS available (FanGraphs path), is kept as a converging
+    signal rather than as a scored component.
+
+    The projection stays at exactly 1 deliberately. grade_results.py grades
+    stolen_base as actual >= projection - 0.5, so any fractional expected-SB
+    number below 0.5 would make a 0-steal night grade as a HIT. The
+    opportunity read belongs in the reasoning, not in that field."""
     bid = batter.get("id")
     if not sprint_speed or sprint_speed < 27.3:
         return None  # not a plausible SB threat regardless of matchup
@@ -1273,15 +1391,24 @@ def score_stolen_base(batter, gm, opp_catcher_poptime, sprint_speed, batter_seas
     if opp_catcher_poptime and opp_catcher_poptime >= 2.10: notable_signals += 1
     bs = batter_season or {}
     season_sb = bs.get("SB")
-    context = scale(season_sb, 3, 25) if season_sb is not None else 50
-    if season_sb and season_sb >= 15: notable_signals += 1
+    on_base, on_base_note = _on_base_score(bs)
+    context = on_base if on_base is not None else 50
 
-    score = skill * 0.55 + matchup * 0.30 + context * 0.15
+    score = skill * 0.50 + matchup * 0.28 + context * 0.22
+    if season_sb and season_sb >= 15: notable_signals += 1
+    if on_base is not None and on_base >= 75: notable_signals += 1
+
     why = [f"Sprint speed {sprint_speed:.1f}ft/s (league ~{LEAGUE_AVG_SPRINT})"]
     if opp_catcher_poptime: why.append(f"Opposing catcher pop time {opp_catcher_poptime:.2f}s to 2B (league ~{LEAGUE_AVG_POPTIME}s)")
+    if on_base_note: why.append(f"On-base ability: {on_base_note} — gates how often he's on first to run at all")
     if season_sb is not None: why.append(f"Season SB: {season_sb}")
     watchouts = []
     if not opp_catcher_poptime: watchouts.append("Opposing catcher pop time unavailable — matchup component defaulted to neutral")
+    if on_base is None:
+        watchouts.append("No usable on-base rate (no OBP, and wOBA sample under 40 PA) — "
+                          "steal-opportunity component defaulted to neutral")
+    elif on_base <= 25:
+        watchouts.append("Fast, but a weak on-base rate means materially fewer times on first to steal from")
 
     return {
         "type": "batter", "name": batter["name"], "player_id": bid, "team": batter.get("team"),
