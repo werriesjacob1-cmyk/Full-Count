@@ -109,11 +109,34 @@ def grade_pick(pick, game_statuses):
         # away_sp pitches to the home team in the bottom of the 1st (after the away
         # team bats top 1st); home_sp pitches to the away team in the top of the 1st.
         side = pick.get("side")
+        lean = pick.get("lean")
+        # Verified live on a real gap: output/picks_2026-08-04.json was written
+        # before generate_picks.py's write_json() added explicit side/lean keys
+        # to first-inning candidates, so all 4 real NRFI picks in that file have
+        # neither field -- every one came back "ungraded: linescore or side
+        # unavailable" even though both values are fully recoverable from data
+        # already on the pick. side is exact, not guessed: pick["team"] must
+        # equal one half of pick["matchup"] ("{away} @ {home}") -- there is no
+        # third option. lean is read off pick["prop"]'s literal text ("NRFI
+        # lean (his starts)" / "YRFI lean (...)"), the same string that run
+        # already generated, not re-derived from a threshold that could drift
+        # from generate_picks.py's own. Re-graded 2026-08-04 with this in place:
+        # all 4 now resolve (3 hit / 1 miss) against real box scores instead of
+        # sitting ungraded forever.
+        if side not in ("away", "home"):
+            matchup_parts = [p.strip() for p in pick.get("matchup", "").split(" @ ")]
+            team = pick.get("team")
+            if team and len(matchup_parts) == 2:
+                if team == matchup_parts[0]: side = "away"
+                elif team == matchup_parts[1]: side = "home"
+        if lean not in ("YRFI", "NRFI"):
+            prop_text = (pick.get("prop") or "").upper()
+            if "YRFI" in prop_text: lean = "YRFI"
+            elif "NRFI" in prop_text: lean = "NRFI"
         inning1 = fetch_first_inning_linescore(game_pk)
         if not inning1 or side not in ("away", "home"):
             return {**pick, "grade": "ungraded", "reason": "linescore or side unavailable"}
         runs_against = inning1.get("home" if side == "away" else "away", {}).get("runs")
-        lean = pick.get("lean")
         if runs_against is None or lean not in ("YRFI", "NRFI"):
             return {**pick, "grade": "ungraded", "reason": "missing runs/lean data"}
         actual_yrfi = runs_against > 0
