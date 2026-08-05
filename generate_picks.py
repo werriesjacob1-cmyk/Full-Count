@@ -24,6 +24,15 @@ rather than a single computed statistical edge, per explicit direction — and
 negative-edge patterns (hot form contradicted by weak underlying batted-ball
 quality) are actively penalized, not ignored.
 
+The top 10 is a pure score ranking across every candidate in tonight's slate
+(batters and pitchers, every prop type together) — no per-game or per-prop-
+type cap. Per explicit direction, forced category variety is not a goal:
+if the best 10 picks tonight all happen to be the same prop type, that's
+what ships. The corollary is that every scoring function has to be honest
+about uncertainty on its own terms (sample-size penalties, confidence caps)
+rather than relying on a downstream diversity cap to paper over an
+overconfident score.
+
 A "public-awareness discount" also actively de-emphasizes picks built mostly
 on "star player, high season average" — the whole betting market already
 prices that in — in favor of picks built from multiple non-obvious converging
@@ -55,8 +64,6 @@ os.makedirs(OUTPUT_DIR, exist_ok=True)
 PICKS_FILE = os.path.join(OUTPUT_DIR, f"top10_picks_{m.TODAY}.md")
 PICKS_JSON_FILE = os.path.join(OUTPUT_DIR, f"picks_{m.TODAY}.json")
 PLAYERS_DIR = os.environ.get("PLAYERS_DIR", "data/players")
-MAX_PICKS_PER_GAME = 3
-MAX_PICKS_PER_PROP_TYPE = 4
 PLAYER_SNAPSHOT_HISTORY_DAYS = 60  # bounds each player file's growth over a season
 LEAGUE_AVG_TB_PA = 0.38     # league-average total bases per PA, used when no player data is available
 LEAGUE_AVG_BF_PER_START = 22  # league-average batters faced per start, used to convert K% into a projected K count
@@ -357,6 +364,24 @@ def find_pitch_type_exploit(batter_id, pitcher_id, batter_arsenal, pitcher_arsen
     return best
 
 
+def estimate_lineup_k_pct(lineup, batter_lookup):
+    """Fallback for opposing-team K% when FanGraphs' team-batting page is
+    unreachable. Verified live: this is a real, frequent failure independent
+    of the individual batting/pitching leaderboards — FanGraphs' team-level
+    endpoints (pyb.team_batting / fg_team_batting_data) came back empty on a
+    run where the individual per-player pages (which already carry their own
+    Statcast fallback) succeeded fine. Rather than add a third team-level
+    source, derive the number directly from tonight's confirmed lineup's own
+    K% (already fetched, per player) — arguably more accurate than a season
+    team average anyway, since it reflects who's actually in the lineup
+    tonight rather than the full-season roster."""
+    vals = [row["K%"] for b in lineup
+            if (row := batter_lookup.get(b.get("name"))) and row.get("K%") is not None]
+    if not vals:
+        return None, 0
+    return round(sum(vals) / len(vals), 1), len(vals)
+
+
 def name_lookup(df, name_col_candidates=("Name", "last_name, first_name")):
     """Build a {player_name: row_dict} lookup from a FanGraphs/Statcast DataFrame,
     handling the "Last, First" format Statcast endpoints use vs FanGraphs "First Last"."""
@@ -524,7 +549,7 @@ def score_batter(batter, gm, opp_sp_row, opp_sp_id, opp_sp_hand, park_wx, batter
 
 
 def score_pitcher(sp_name, sp_id, sp_hand, gm, side, pit_season_lookup, l14_form,
-                   opp_lineup, opp_team_k_pct, ump_scores):
+                   opp_lineup, opp_team_k_pct, ump_scores, opp_k_source=None):
     ps = pit_season_lookup.get(sp_name, {})
     k_pct = ps.get("K%")
     csw = ps.get("CSW%")
@@ -589,7 +614,12 @@ def score_pitcher(sp_name, sp_id, sp_hand, gm, side, pit_season_lookup, l14_form
 
     projected_ks = project_pitcher_ks(ps, l14)
 
-    why = [f"Opposing team K% {opp_team_k_pct:.1f}" if opp_team_k_pct else "Opposing team K% unavailable"]
+    if opp_team_k_pct is not None:
+        k_note = (f"Opposing team K% {opp_team_k_pct:.1f}" if opp_k_source == "team"
+                   else f"Opposing lineup K% {opp_team_k_pct:.1f} (avg of {opp_k_source} confirmed batters — FanGraphs team page unreachable)")
+    else:
+        k_note = "Opposing team K% unavailable (FanGraphs team page down and no confirmed lineup batters matched)"
+    why = [k_note]
     why.append(f"{same_hand}/{known} known-hand opposing batters same-handed" if known else "Opposing lineup handedness mostly unknown")
     if k_pct: why.append(f"Season K% {k_pct}")
     if csw: why.append(f"CSW% {csw}")
@@ -687,19 +717,23 @@ def score_first_inning(sp_name, sp_id, gm, side, fi_form):
     clamped on the input side, only the output — a 0% yrfi_rate with a tight
     [15,55] input band extrapolated past 100 and got clamped there, so every
     scoreless-first-inning starter (not rare in an L14/2-start sample) tied
-    at exactly 100 and swept the top 10 by insertion order, regardless of how
-    thin the sample backing it was. Fixed with a full 0-100 input band (no
-    extrapolation) plus an explicit small-sample penalty — 2 starts in 14
-    days is the norm for this window, not a deep sample, and shouldn't alone
-    produce a maximum-confidence score."""
+    at exactly 100 and swept the top 10, regardless of how thin the sample
+    backing it was. Fixed with a full 0-100 input band (no extrapolation)
+    plus a steep small-sample penalty and a hard confidence cap below 3
+    starts — since top 10 selection is now pure score ranking with no
+    per-category cap (per explicit direction: "we want the best picks," not
+    forced variety), a thin 2-start sample must not be able to out-score a
+    real multi-signal read just because it happened to land on 0 runs."""
     fi = fi_form.get(sp_name)
     if not fi: return None
     yrfi_rate = fi["yrfi_rate"]
     n_starts = fi["n_starts"]
     lean = "YRFI" if yrfi_rate >= 38 else "NRFI"
     score = scale(yrfi_rate, 0, 100) if lean == "YRFI" else scale(yrfi_rate, 100, 0)
-    sample_penalty = max(0, (4 - n_starts) * 8)  # 2 starts (the common case): -16; 4+: none
+    sample_penalty = max(0, (5 - n_starts) * 15)  # 2 starts: -45; 3: -30; 4: -15; 5+: none
     score = clamp(score - sample_penalty)
+    if n_starts < 3:
+        score = min(score, 55)  # a 2-start read is never more than a low/medium-confidence lean
     notable_signals = 1 if (yrfi_rate >= 55 or yrfi_rate <= 10) and n_starts >= 3 else 0
     why = [f"1st-inning runs/start {fi['runs_per_1st_inning']} across {n_starts} starts (L14)",
            f"YRFI rate {yrfi_rate}%"]
@@ -792,44 +826,38 @@ def main() -> int:
                 if c: candidates.append(c)
 
         if gm["away_sp"] != "TBD" and gm.get("away_sp_id"):
-            opp_k = team_k_lookup.get(gm["home_team"])
+            opp_k, opp_k_source = team_k_lookup.get(gm["home_team"]), "team"
+            if opp_k is None:
+                opp_k, n = estimate_lineup_k_pct(gm.get("home_lineup", []), batter_lookup)
+                opp_k_source = n
             candidates.append(score_pitcher(gm["away_sp"], gm["away_sp_id"], gm.get("away_sp_hand"),
                                              gm, "away", pitcher_lookup, l14_pitcher_form,
-                                             gm.get("home_lineup", []), opp_k, ump_scores))
+                                             gm.get("home_lineup", []), opp_k, ump_scores, opp_k_source))
             fi = score_first_inning(gm["away_sp"], gm["away_sp_id"], gm, "away", fi_form)
             if fi: candidates.append(fi)
         if gm["home_sp"] != "TBD" and gm.get("home_sp_id"):
-            opp_k = team_k_lookup.get(gm["away_team"])
+            opp_k, opp_k_source = team_k_lookup.get(gm["away_team"]), "team"
+            if opp_k is None:
+                opp_k, n = estimate_lineup_k_pct(gm.get("away_lineup", []), batter_lookup)
+                opp_k_source = n
             candidates.append(score_pitcher(gm["home_sp"], gm["home_sp_id"], gm.get("home_sp_hand"),
                                              gm, "home", pitcher_lookup, l14_pitcher_form,
-                                             gm.get("away_lineup", []), opp_k, ump_scores))
+                                             gm.get("away_lineup", []), opp_k, ump_scores, opp_k_source))
             fi = score_first_inning(gm["home_sp"], gm["home_sp_id"], gm, "home", fi_form)
             if fi: candidates.append(fi)
 
+    # Pure score ranking, no per-game or per-prop-type cap — per explicit
+    # direction, the top 10 doesn't have to be diverse across categories or
+    # games; forcing variety just to have variety would mean swapping out a
+    # genuinely better pick for a worse one, which is the opposite of the
+    # goal. If the 10 best-scoring picks all happen to be the same prop type
+    # or the same game, that's what goes out. (This is why score_first_inning
+    # carries a hard confidence cap on thin samples — with no cap here to
+    # catch it, an inflated score from a weak signal would otherwise be free
+    # to sweep the list on its own.)
     candidates.sort(key=lambda c: c["score"], reverse=True)
-
-    top10 = []
-    per_game_count = defaultdict(int)
-    per_prop_count = defaultdict(int)
-    skipped = []
-    for c in candidates:
-        if len(top10) >= 10: break
-        if per_game_count[c["matchup"]] >= MAX_PICKS_PER_GAME:
-            continue
-        # Diversity cap by prop category: without this, a prop type that
-        # happens to score consistently high across the slate (verified live
-        # — NRFI leans did exactly this) can sweep the entire top 10 on its
-        # own, which isn't useful even when each individual score is fair.
-        prop_category = c.get("projection", {}).get("stat", "unknown")
-        if per_prop_count[prop_category] >= MAX_PICKS_PER_PROP_TYPE:
-            continue
-        top10.append(c)
-        per_game_count[c["matchup"]] += 1
-        per_prop_count[prop_category] += 1
-    for c in candidates:
-        if len(skipped) >= 2: break
-        if c not in top10 and c["score"] >= 55:
-            skipped.append(c)
+    top10 = candidates[:10]
+    skipped = [c for c in candidates[10:12] if c["score"] >= 55]
 
     write_markdown(top10, skipped, game_meta, bullpen_scores)
     write_json(top10)

@@ -107,6 +107,19 @@ explicit weighted formula instead of prose:
 - **10% Context** — lineup slot for hitters, HP umpire zone accuracy +
   opposing lineup handedness composition for pitchers
 
+**Opposing K% has two independent sources.** FanGraphs' *team*-level batting
+page is a separate endpoint from its individual leaderboards and fails on its
+own schedule — verified live: on one real run, every individual batting/
+pitching leaderboard succeeded while the team-batting/team-pitching/team-
+fielding pages all came back empty, which is what was producing "Opposing
+team K% unavailable" on pitcher picks. Rather than add a third team-level
+source, the fallback is tonight's actual confirmed lineup: when the team page
+is down, opposing K% is derived from the mean K% of the specific batters in
+tonight's lineup (already fetched per-player, with its own Statcast fallback)
+— arguably more accurate than a season team average anyway, since it reflects
+who's actually playing tonight rather than the full-season roster. Every
+pitcher pick's "why" states which source was used.
+
 Weighted toward **trend/data convergence** (how many independent signals
 point the same way) rather than a single computed statistical edge, per
 explicit direction — an edge still matters, it just isn't the sole filter.
@@ -147,12 +160,18 @@ highest average":
 - **NRFI/YRFI lean** — real per-start first-inning results (not a season
   aggregate) for tonight's starters
 
-A **prop-type diversity cap** (max 4 picks per prop category, same idea as
-the existing max-3-picks-per-game cap) keeps the top 10 from being swept by
-one category — found this the hard way: an early version of the NRFI scoring
-had a scaling bug that tied every scoreless-first-inning starter at exactly
-100 and let NRFI leans fill all 10 slots. Fixed the underlying bug (see git
-history) and added the cap as a second line of defense regardless.
+The top 10 is a **pure score ranking** across every candidate in the slate —
+no per-game or per-prop-type cap. An earlier version capped picks per prop
+category to stop one category from sweeping the list (found the hard way:
+a scaling bug tied every scoreless-first-inning starter at exactly 100 and
+NRFI leans filled all 10 slots). Per explicit direction, that cap was
+removed — forcing category variety just to have variety means swapping a
+genuinely better pick for a worse one, which defeats the point. Instead the
+underlying scaling bug was fixed at the source, and `score_first_inning` now
+carries a steep small-sample penalty plus a hard confidence cap below 3
+starts, so a thin sample can't out-score a real multi-signal read just
+because it landed on 0 runs. If the 10 best-scoring picks tonight are all
+the same prop type or the same game, that's what ships.
 
 ### Per-player history
 
