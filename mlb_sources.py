@@ -581,3 +581,89 @@ def platoon_quality_of_contact(min_pa=20):
                "Barrel%": barrel_pct, "HardHit%": hardhit_pct}
         out.setdefault(int(bid), {})[hand] = row
     return out
+
+
+# ══════════════════════════════════════════════════════════════════════════
+#  HANDEDNESS-SPLIT PARK FACTORS  (derived empirically — see limitation below)
+# ══════════════════════════════════════════════════════════════════════════
+
+# Statcast's home_team abbreviation differs from this pipeline's STADIUMS
+# abbreviation for exactly one park (verified live: every other one of the
+# 30 matched directly) — Arizona is "AZ" in Statcast pitch data, "ARI" in
+# STADIUMS (mlb_daily.py, not touched by this file).
+_SC_ABBR_ALIAS = {"AZ": "ARI"}
+
+
+def park_hand_factors(min_bbe=100):
+    """Handedness-split HR park factors — the generic single park HR index
+    (mlb_daily.STADIUMS) can't express that a short RF porch (e.g. Yankee
+    Stadium) inflates LEFT-handed power specifically while doing nothing
+    for righties. Two real sources were checked first and both are genuine
+    dead ends, verified live rather than assumed:
+
+      - pybaseball.park_codes(): raises a hard ValueError on call (column
+        count mismatch, 1 vs 9) — confirmed broken, not just undocumented,
+        by actually calling it.
+      - Baseball Savant's statscast-park-factors leaderboard csv=true
+        export: returns HTTP 200 text/html (not text/csv) for every
+        parameter combination tried (type=year, type=batter-hand, bare),
+        while the sprint_speed leaderboard's csv=true on the same session
+        returned real text/csv — so this is the SAME csv-export-disabled
+        pattern already documented on catcher_framing() above, now
+        confirmed live to also cover park factors, not just framing.
+
+    With both primary sources dead, this is DERIVED empirically from the
+    cached season Statcast pull: HR rate per batted-ball event (BBE),
+    grouped by (home-park, batter stand), indexed to 100 = that handedness'
+    league-average HR/BBE rate across all parks.
+
+    HONEST LIMITATION (stated per this project's discipline, not papered
+    over): this is a naive rate, not a true park factor. Real park-factor
+    methodology compares each team's OWN hitters' production at home vs. on
+    the road to net out who plays there; this instead pools whichever
+    batters happened to hit at each park this season, so a park's index is
+    partly the park and partly its home team's actual player pool (e.g. a
+    park that hosts several true left-handed sluggers this year will read
+    as a bigger lefty park than its physical dimensions alone justify).
+    Treat this as a real but confounded signal, not a validated park
+    factor — say so to any consumer.
+
+    Keyed by park name matching mlb_daily.STADIUMS keys where the team's
+    home_team abbreviation resolves (all 30 parks verified to resolve live,
+    one alias needed: Statcast's 'AZ' -> STADIUMS' 'ARI')."""
+    df = m.fetch_season_statcast()
+    if df is None or df.empty:
+        return {}
+    need = {"home_team", "stand", "type", "events"}
+    if not need.issubset(df.columns):
+        m.warn("Park hand factors: Statcast is missing home_team/stand/type columns")
+        return {}
+    abbr_to_park = {}
+    for park_name, v in m.STADIUMS.items():
+        abbr_to_park[v[3]] = park_name
+    for sc_abbr, stad_abbr in _SC_ABBR_ALIAS.items():
+        if stad_abbr in abbr_to_park:
+            abbr_to_park[sc_abbr] = abbr_to_park[stad_abbr]
+
+    bb = df[df["type"] == "X"].copy()
+    if bb.empty:
+        return {}
+    bb["is_hr"] = bb["events"] == "home_run"
+    g = bb.groupby(["home_team", "stand"]).agg(BBE=("is_hr", "size"), HR=("is_hr", "sum"))
+    g = g[g["BBE"] >= min_bbe]
+    if g.empty:
+        return {}
+    league_avg = bb.groupby("stand").apply(
+        lambda x: (x["events"] == "home_run").sum() / len(x) * 100 if len(x) else None)
+
+    out = {}
+    for (abbr, stand), row in g.iterrows():
+        park = abbr_to_park.get(abbr)
+        if not park:
+            continue
+        hr_pct = row["HR"] / row["BBE"] * 100
+        avg = league_avg.get(stand)
+        index = float(round(hr_pct / avg * 100, 1)) if avg else None
+        out.setdefault(park, {})[stand] = {"BBE": int(row["BBE"]), "HR": int(row["HR"]),
+                                            "HR%": float(round(hr_pct, 2)), "Index": index}
+    return out
