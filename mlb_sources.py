@@ -243,6 +243,105 @@ def _bvp_one(job):
     return None
 
 
+def fetch_batter_sit_split(batter_id, sit_code):
+    """One batter's season-to-date statSplits for a single sitCode ('sp' or
+    'rp' — vs starter / vs reliever).
+
+    Verified live against Yordan Alvarez (670541): sitCode='sp' returns
+    318 PA, .359 AVG, 1.183 OPS; sitCode='rp' returns 181 PA, .271 AVG,
+    .902 OPS — a 281-point OPS gap running OPPOSITE the conventional
+    "hitters fare worse vs relievers" assumption Section 52's league-wide
+    SP/RP split (sp_rp_splits, above) encodes. Real per-player numbers,
+    matched exactly against values independently confirmed live before
+    this function was written."""
+    try:
+        r = m.retry_get(f"{STATS_API}/people/{batter_id}/stats",
+                        params={"stats": "statSplits", "group": "hitting",
+                                "season": m.YEAR, "sitCodes": sit_code},
+                        headers=UA, timeout=15, retries=2)
+        r.raise_for_status()
+        for st in r.json().get("stats", []):
+            splits = st.get("splits", [])
+            if splits:
+                s = splits[0].get("stat", {})
+                pa = int(s.get("plateAppearances", 0) or 0)
+                if pa == 0:
+                    return None
+                return {"PA": pa, "AB": s.get("atBats"), "AVG": s.get("avg"),
+                        "OBP": s.get("obp"), "SLG": s.get("slg"), "OPS": s.get("ops"),
+                        "HR": s.get("homeRuns"), "K": s.get("strikeOuts"),
+                        "BB": s.get("baseOnBalls")}
+    except Exception:
+        return None
+    return None
+
+
+def _sit_split_one(job):
+    batter_id, batter_name = job
+    sp = fetch_batter_sit_split(batter_id, "sp")
+    rp = fetch_batter_sit_split(batter_id, "rp")
+    if sp is None and rp is None:
+        return None
+    row = {"Batter": batter_name, "id": batter_id, "vsSP": sp, "vsRP": rp}
+    if sp and rp:
+        try:
+            row["OPS_gap"] = round(float(sp["OPS"]) - float(rp["OPS"]), 3)
+        except (TypeError, ValueError):
+            row["OPS_gap"] = None
+    return row
+
+
+def batter_sp_rp_splits(game_meta, max_batters_per_game=9, max_workers=16, min_reliable_pa=20):
+    """Per-batter vs-starter / vs-reliever splits for tonight's confirmed
+    lineups — the individual-player counterpart to the league-wide
+    sp_rp_splits() above, which only tells you the aggregate direction and
+    can't catch a player like Alvarez who runs opposite to it.
+
+    Two calls per batter (sitCodes sp + rp), parallelized with the same
+    ThreadPoolExecutor pattern as bvp_table. Verified live on the real
+    2026-08-05 slate: 15 games, 270 lineup slots / 258 unique batter ids,
+    completed in 21.6s wall time for 516 HTTP calls — the serial version of
+    this exact request pattern (bvp_table's docstring, one call per job)
+    took 50s for just 3 games' worth of single-call jobs, so this is the
+    same speedup class applied to a second per-batter endpoint, at 2x the
+    calls per batter.
+
+    Sample size varies enormously batter-to-batter (observed live: some
+    starters carry 1-5 PA in one split, others 150-300+) — a small-PA split
+    is noise, not signal, exactly the trap sp_rp_splits' own docstring
+    warns about at the league level. Rows are still returned for every
+    batter with any data (both PA and OPS_gap are always present so the
+    consumer can judge), but the sort ranks only rows where BOTH splits
+    clear min_reliable_pa (default 20) by |OPS_gap|, pushing tiny-sample
+    rows to the back instead of letting them dominate by coincidence.
+
+    Keyed by MLBAM batter id, deduped across games."""
+    batters = {}
+    for gm in game_meta:
+        for b in gm.get("away_lineup", [])[:max_batters_per_game] + gm.get("home_lineup", [])[:max_batters_per_game]:
+            if b.get("id") and b["id"] not in batters:
+                batters[b["id"]] = b.get("name", "?")
+    if not batters:
+        return []
+    jobs = list(batters.items())
+    rows = []
+    try:
+        with m.ThreadPoolExecutor(max_workers=max_workers) as ex:
+            for res in ex.map(_sit_split_one, jobs):
+                if res:
+                    rows.append(res)
+    except Exception as e:
+        m.warn(f"Batter SP/RP splits: {e}")
+        return rows
+
+    def reliable(r):
+        sp, rp = r.get("vsSP"), r.get("vsRP")
+        return bool(sp and rp and sp["PA"] >= min_reliable_pa and rp["PA"] >= min_reliable_pa)
+
+    rows.sort(key=lambda r: (not reliable(r), -abs(r.get("OPS_gap") or 0)))
+    return rows
+
+
 def bvp_table(game_meta, max_batters_per_game=9, max_workers=12):
     """Tonight's confirmed lineups vs the opposing starter, one call per
     batter-pitcher pair (~270 for a full 15-game slate).
