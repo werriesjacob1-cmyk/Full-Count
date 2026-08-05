@@ -2371,27 +2371,42 @@ def fetch_sp_rp_splits(pit_season):
 
 
 def compute_umpire_3way(game_meta):
+    # Rebuilt after finding two live-confirmed bugs on review: (1) fg_df was
+    # re-fetched with a raw, unprotected pyb.pitching_stats() call INSIDE the
+    # per-pitcher loop (up to ~30x/run) instead of once, and with FanGraphs
+    # currently blocked (verified live: real 403 on every attempt right now)
+    # that raised inside the try and was swallowed by a bare `except: pass`
+    # that drops the entire per-pitcher block -- confirmed live against
+    # tonight's real slate: this function returned zero per-pitcher rows,
+    # only the two header lines, for all 15 games. (2) Even when FanGraphs
+    # is reachable, it matched fg_df["IDfg"] (FanGraphs' own player ID)
+    # against `pid` (the MLBAM id game_meta carries) -- two different ID
+    # spaces that were never going to match (this is exactly why this
+    # project's own playerid_lookup crosswalk exists, and was found broken,
+    # earlier tonight). Every other FanGraphs row lookup in this file
+    # matches by exact player Name instead (see compute_opposing_lineup_k,
+    # compute_csw_leaderboard) since no ID crosswalk is available -- this
+    # function is rebuilt to follow that same established, working pattern:
+    # one fg_pit() call (already has the legacy->modern->Statcast fallback
+    # chain other sections rely on) outside the loop, matched by Name.
     step("Umpire + catcher + pitcher three-way zone interaction...")
     lines=["  Three-way interaction score: Umpire zone size × Catcher framing × Pitcher Zone%"]
     lines.append("  Higher = more strikes called = K props UP | Lower = walks/hits UP\n")
+    fg_df = fg_pit(YEAR, "3way", qual=0)
+    zone_by_name = {}
+    if fg_df is not None and not fg_df.empty and "Name" in fg_df.columns and "Zone%" in fg_df.columns:
+        zone_by_name = fg_df.set_index("Name")["Zone%"].to_dict()
     for gm in game_meta:
         for sp_name in [gm["away_sp"],gm["home_sp"]]:
             if sp_name=="TBD": continue
-            try:
-                pid = gm["away_sp_id"] if sp_name == gm["away_sp"] else gm["home_sp_id"]
-                if not pid: continue
-                fg_df=pyb.pitching_stats(YEAR,qual=0)
-                if fg_df is None or fg_df.empty: continue
-                # Get pitcher zone%
-                p_row=fg_df[fg_df.get("IDfg",pd.Series()).astype(str)==str(pid)] if "IDfg" in fg_df.columns else pd.DataFrame()
-                zone_pct=p_row["Zone%"].iloc[0] if not p_row.empty and "Zone%" in p_row.columns else 0.47
-                # Ump info from game_meta
-                ump=gm["hp_ump"]
-                lines.append(f"  {sp_name} ({gm['matchup']}) | HP Ump: {ump}")
-                lines.append(f"    Pitcher Zone%: {zone_pct:.3f}  (source: FanGraphs)")
-                lines.append(f"    → Cross-reference with ump zone size (Section 4) + catcher framing (Section 79)")
-                lines.append(f"    → Three-way score = zone_pct × ump_zone_factor × catcher_frames")
-            except: pass
+            ump=gm["hp_ump"]
+            lines.append(f"  {sp_name} ({gm['matchup']}) | HP Ump: {ump}")
+            if sp_name in zone_by_name:
+                lines.append(f"    Pitcher Zone%: {zone_by_name[sp_name]:.3f}  (source: FanGraphs)")
+            else:
+                lines.append(f"    Pitcher Zone%: unavailable (FanGraphs unreachable or no name match)")
+            lines.append(f"    → Cross-reference with ump zone size (Section 6) + catcher framing (Section 79)")
+            lines.append(f"    → Three-way score = zone_pct × ump_zone_factor × catcher_frames")
     return "\n".join(lines)+"\n"
 
 
