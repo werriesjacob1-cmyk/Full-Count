@@ -210,8 +210,18 @@ def main() -> int:
     if not os.path.exists(PICKS_JSON):
         print(f"No picks file for {YESTERDAY} ({PICKS_JSON}) — nothing to grade.")
         return 0
-    with open(PICKS_JSON, encoding="utf-8") as f:
-        payload = json.load(f)
+    # generate_picks.py writes this file with a direct json.dump (no temp-file +
+    # atomic rename), so a process kill mid-write (OOM, step timeout) can leave it
+    # truncated/invalid. Same "must never block the rest of the pipeline" contract
+    # as the missing-file case above -- a decode failure degrades to a no-op
+    # instead of an uncaught exception that would kill this step and, with no
+    # continue-on-error on it, the "Run daily pipeline" step behind it.
+    try:
+        with open(PICKS_JSON, encoding="utf-8") as f:
+            payload = json.load(f)
+    except (json.JSONDecodeError, OSError) as e:
+        print(f"Picks file for {YESTERDAY} unreadable ({e}) — nothing to grade.")
+        return 0
     picks = payload.get("picks", [])
     if not picks:
         print(f"No picks recorded for {YESTERDAY} — nothing to grade.")
