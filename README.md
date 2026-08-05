@@ -369,6 +369,29 @@ verified live against each source as of this rebuild:
   spelling on both counts (`José Ramírez` → `Jose Ramirez`, `Bobby Witt Jr.`
   → `Bobby Witt`). Verified live against a real slate: 230 of 261 batters
   missing an ID before the fix, 1 after.
+- **Two stale stadium names silently breaking weather for those games** —
+  `STADIUMS` still keyed the Astros' park as `"Minute Maid Park"` and the
+  Athletics' as `"Oakland Coliseum"`; the live MLB API now returns `"Daikin
+  Park"` (the Astros' park was renamed) and `"Sutter Health Park"` (the
+  Athletics relocated) — neither is a substring match for the old key, so
+  the lookup failed outright and those games got no weather data at all.
+  Cross-checked all 30 teams' current venue names against `STADIUMS` live
+  (not just tonight's slate) to confirm these were the only two stale
+  entries. Fixed both; Sutter Health Park's coordinates are confirmed but
+  its wall dimensions are a best-effort estimate for this AAA park, not
+  independently verified like the rest of the table.
+- **Section 67 (lineup context table) made its own separate, fallback-free
+  raw MLB API call instead of reusing the already-fetched, already-3-tier-
+  fallback-protected `game_meta`** — and its parsing assumed lineup player
+  objects are nested under `"person"`/`"battingOrder"`, the exact same
+  wrong-structure assumption that was the original biggest bug fixed early
+  in this project (in `fetch_lineups()` itself, on a different code path).
+  Whenever lineups weren't posted by the primary MLB API tier yet — the
+  normal case for a morning run — that combination guaranteed this section
+  was empty every time. Rewritten to reuse `game_meta`'s lineups directly,
+  and it now actually computes the "OBP ahead" context the section's own
+  title always promised but never delivered (`bat_season` was accepted as
+  a parameter and silently never used).
 - **Section 52 (batter splits vs starters/relievers) hard-failing** — the one
   section a real run_log ever marked `failed` rather than `empty`, i.e. an
   actual uncaught-then-caught exception, not just no data. Root cause: it

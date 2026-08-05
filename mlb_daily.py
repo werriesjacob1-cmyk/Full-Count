@@ -184,9 +184,9 @@ STADIUMS = {
     "Target Field":            (44.9817,-93.2781,False,"MIN",315,841,339,404,328, 8,  8, 8,  "avg",  "grass",False,"medium",False),
     "Nationals Park":          (38.8730,-77.0074,False,"WSH",30, 25, 336,402,335, 8,  8, 8,  "avg",  "grass",False,"easy",  False),
     "Globe Life Field":        (32.7473,-97.0822,True, "TEX",0,  571,332,407,326, 8,  8, 8,  "avg",  "grass",True, "easy",  True),
-    "Minute Maid Park":        (29.7573,-95.3555,True, "HOU",0,  43, 315,435,326, 21, 21,7,  "avg",  "grass",False,"medium",True),
+    "Daikin Park":             (29.7573,-95.3555,True, "HOU",0,  43, 315,435,326, 21, 21,7,  "avg",  "grass",False,"medium",True),  # renamed from Minute Maid Park — verified live: MLB API now returns "Daikin Park" as the venue name
     "Angel Stadium":           (33.8003,-117.883,False,"LAA",270,160,330,396,330, 8,  8, 8,  "large","grass",False,"easy",  False),
-    "Oakland Coliseum":        (37.7516,-122.201,False,"ATH",270,25, 330,400,330, 8,  8, 8,  "large","grass",False,"hard",  False),
+    "Sutter Health Park":      (38.5805,-121.512,False,"ATH",270,25, 330,403,325, 8,  8, 8,  "large","grass",False,"hard",  False),  # A's relocated from Oakland Coliseum — verified live via MLB API team.venue.name; coordinates confirmed (West Sacramento), wall dimensions/cf_deg are best-effort estimates for this AAA park, not independently verified like the rest of this table
     "Dodger Stadium":          (34.0739,-118.240,False,"LAD",315,512,330,395,330, 8,  8, 8,  "avg",  "grass",False,"easy",  False),
     "Petco Park":              (32.7076,-117.157,False,"SD", 315,13, 336,396,322, 8,  8, 8,  "large","grass",False,"medium",False),
     "Oracle Park":             (37.7786,-122.389,False,"SF", 270,10, 339,399,309, 8,  25,8,  "large","grass",False,"hard",  False),
@@ -1745,35 +1745,45 @@ def compute_directional_hr_score(game_meta, bat_df=None):
 
 
 def compute_lineup_context(game_meta, bat_season=None):
+    """Rewritten after finding two real, stacked bugs on review: this made its
+    own separate, fallback-free raw MLB API call instead of reusing the
+    already-populated, already-3-tier-fallback-protected game_meta this
+    function is already handed as a parameter — and its parsing assumed
+    lineup player objects are nested under "person"/"battingOrder" (the
+    exact same wrong-structure assumption that was the original biggest bug
+    fixed early in this project, in fetch_lineups() itself). Whenever
+    lineups weren't posted by the primary MLB API tier yet (the normal case
+    for a morning run), that combination guaranteed this section was empty
+    every single time. Now reuses game_meta's away_lineup/home_lineup
+    directly. Also actually implements the "OBP ahead" the section title
+    always promised but never delivered — bat_season was accepted as a
+    parameter and silently never used."""
     step("Lineup context (OBP ahead, protection behind, projected PA)...")
+    obp_by_name = {}
+    if bat_season is not None and not bat_season.empty and "OBP" in bat_season.columns:
+        name_col = "Name" if "Name" in bat_season.columns else None
+        if name_col:
+            obp_by_name = dict(zip(bat_season[name_col], bat_season["OBP"]))
     lines=[]
-    try:
-        url="https://statsapi.mlb.com/api/v1/schedule"
-        params={"sportId":1,"date":TODAY,"hydrate":"lineups,probablePitcher,team"}
-        r=requests.get(url,params=params,headers={"User-Agent":"Mozilla/5.0"},timeout=20)
-        if r.status_code!=200: return "  Lineup context unavailable.\n"
-        dates=r.json().get("dates",[])
-        if not dates: return "  No games.\n"
-        games=dates[0].get("games",[])
-        for g in games:
-            for side in ["away","home"]:
-                team=g["teams"][side]["team"]["name"]
-                lups=g.get("lineups",{}).get("awayPlayers" if side=="away" else "homePlayers",[])
-                if not lups: continue
-                lines.append(f"\n  {team} lineup context:")
-                lines.append(f"  {'Slot':<5} {'Player':<25} {'ProjPA/yr':>9} {'OBP_behind_context'}")
-                lines.append("  "+"-"*65)
-                for i,p in enumerate(lups):
-                    order=p.get("battingOrder",i+1)
-                    name=p.get("person",{}).get("fullName","?")
-                    slot=int(str(order).replace(".0","")) if order else i+1
-                    pa_proj=ORDER_PA.get(slot,630)
-                    next_idx=(i+1)%len(lups)
-                    protection=lups[next_idx].get("person",{}).get("fullName","?") if next_idx!=i else "—"
-                    lines.append(f"  {slot:<5} {name:<25} {pa_proj:>9}  Protected by: {protection}")
-    except Exception as e:
-        warn(f"Lineup context: {e}")
-        lines.append(f"  Failed: {e}")
+    for gm in game_meta:
+        for team_key, lineup_key in [("away_team","away_lineup"), ("home_team","home_lineup")]:
+            lups = gm.get(lineup_key, [])
+            if not lups: continue
+            lines.append(f"\n  {gm[team_key]} lineup context:")
+            lines.append(f"  {'Slot':<5} {'Player':<25} {'ProjPA/yr':>9}  {'OBP ahead':<10} Protected by")
+            lines.append("  "+"-"*80)
+            for i, p in enumerate(lups):
+                slot = p.get("order") or i+1
+                name = p.get("name","?")
+                pa_proj = ORDER_PA.get(min(slot,9), 630)
+                prev_name = lups[i-1].get("name") if len(lups) > 1 else None
+                obp_ahead = obp_by_name.get(prev_name) if prev_name else None
+                obp_str = f"{obp_ahead:.3f}" if obp_ahead is not None else "n/a"
+                next_idx = (i+1) % len(lups)
+                protection = lups[next_idx].get("name","?") if next_idx != i else "—"
+                lines.append(f"  {slot:<5} {name:<25} {pa_proj:>9}  {obp_str:<10} {protection}")
+    if not lines:
+        return "  Lineup context unavailable — no confirmed lineups yet.\n"
     return "\n".join(lines)+"\n"
 
 
@@ -2726,7 +2736,7 @@ def main():
     out.append(compute_directional_hr_score(game_meta))
 
     S(67, "LINEUP CONTEXT TABLE  (OBP ahead · protection behind · projected PA per slot)")
-    out.append(compute_lineup_context(game_meta))
+    out.append(compute_lineup_context(game_meta, bat_season))
 
     # ─── STATCAST PITCHERS ────────────────────────────────────────────────────
     S(68, f"STATCAST PITCHER EXPECTED STATS {YEAR}  (xERA · xBA allowed · Barrel% allowed)")
