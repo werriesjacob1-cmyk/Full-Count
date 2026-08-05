@@ -222,7 +222,16 @@ def fmt(df, mx=500):
     # truncation, so the cut rows are fringe/replacement-level players least
     # likely to matter for tonight's props, and the automated picks step
     # feeding on this output has its own context/cost budget to respect.
-    if df is None or df.empty: return "  [No data]\n"
+    if df is None or df.empty:
+        # fg_bat_range/fg_pit_range (the only producers that ever set this)
+        # scrape baseball-reference.com, not FanGraphs, despite the "fg_"
+        # naming — verified live it's blocked by its own Cloudflare
+        # challenge, separate from FanGraphs' own block, with no fallback
+        # of its own. Without this, an actual fetch failure and a
+        # genuinely-empty window (e.g. no qualifying PAs) were both
+        # silently rendered as the identical, undiagnosable "[No data]".
+        reason = getattr(df, "attrs", {}).get("fetch_error") if df is not None else None
+        return f"  [No data — fetch failed: {reason}]\n" if reason else "  [No data]\n"
     pd.set_option("display.max_columns",80)
     pd.set_option("display.width",240)
     pd.set_option("display.max_colwidth",25)
@@ -285,7 +294,7 @@ def fetch_lineups(date):
     params = {"sportId":1,"date":date,
               "hydrate":"lineups,probablePitcher(note),linescore,team,weather,venue,officials,seriesStatus"}
     try:
-        r = requests.get(url,params=params,headers={"User-Agent":"Mozilla/5.0"},timeout=25)
+        r = retry_get(url,params=params,headers={"User-Agent":"Mozilla/5.0"},timeout=25)
         r.raise_for_status()
         dates = r.json().get("dates",[])
         if not dates: return "  No games.\n", [], {}
@@ -782,6 +791,16 @@ def fetch_umpire_stats(game_meta):
 
 
 def fetch_umpire_ou_records(game_meta):
+    # Covers.com restructured this page (verified live): soup.find_all("table")
+    # on the aggregate /umpires page returns zero tables now — it's a plain
+    # name index (div.covers-RefereeTable > a per umpire, "Last, First" text,
+    # href to that umpire's own page), not an inline stats table anymore.
+    # The real O/U records live on each umpire's individual page instead
+    # (verified live: e.g. /umpires/2026/18023 has 4 real tables, one of
+    # which has an "Overall" row paired with a real W-L O/U record whose
+    # game count matches that umpire's "Games Officiated" from the same
+    # page). Since we only need tonight's actual HP umpires (a handful),
+    # fetch the index once, then each relevant umpire's own page.
     step("Umpire O/U betting records (Covers.com)...")
     umps={gm["hp_ump"]:gm["matchup"] for gm in game_meta if gm["hp_ump"]!="TBD"}
     if not umps: return "  No HP umpires.\n"
@@ -789,16 +808,43 @@ def fetch_umpire_ou_records(game_meta):
         r=retry_get("https://www.covers.com/sport/baseball/mlb/umpires",headers=BROWSER,timeout=20,retries=2)
         if r.status_code!=200: return f"  Covers.com returned {r.status_code}\n"
         soup=BeautifulSoup(r.text,"lxml")
-        tables=soup.find_all("table")
-        if not tables: return "  Covers.com umpire table not found (may require JS).\n"
-        lines=[]
-        for row in tables[0].find_all("tr")[1:]:
-            cells=[td.get_text(strip=True) for td in row.find_all(["td","th"])]
-            if cells: lines.append("  "+"  |  ".join(cells[:8]))
-        return "\n".join(lines[:50])+"\n" if lines else "  No umpire O/U data found.\n"
+        idx={}
+        for a in soup.select("div.covers-RefereeTable a"):
+            txt=a.get_text(strip=True); href=a.get("href","")
+            if "," in txt and href:
+                last,first=[p.strip() for p in txt.split(",",1)]
+                idx[f"{first} {last}"]=href
+        if not idx: return "  Covers.com umpire index not found (site structure may have changed again).\n"
     except Exception as e:
-        warn(f"Covers umpire: {e}")
+        warn(f"Covers umpire index: {e}")
         return f"  Covers.com unavailable: {e}\n"
+    lines=[f"  {'Umpire':<20} {'Matchup':<44} {'Season O/U (Over-Under)':<24}"]
+    lines.append("  "+"-"*92)
+    found=0
+    for name,matchup in umps.items():
+        href=idx.get(name)
+        if not href:
+            lines.append(f"  {name:<20} {matchup:<44} not found in Covers.com index")
+            continue
+        try:
+            r2=retry_get(f"https://www.covers.com{href}",headers=BROWSER,timeout=20,retries=2)
+            if r2.status_code!=200:
+                lines.append(f"  {name:<20} {matchup:<44} HTTP {r2.status_code}")
+                continue
+            soup2=BeautifulSoup(r2.text,"lxml")
+            record="N/A"
+            for t in soup2.find_all("table"):
+                for row in t.find_all("tr"):
+                    cells=[td.get_text(strip=True) for td in row.find_all(["td","th"])]
+                    if len(cells)>=2 and cells[0]=="Overall":
+                        record=cells[1]; break
+                if record!="N/A": break
+            lines.append(f"  {name:<20} {matchup:<44} {record:<24}")
+            if record!="N/A": found+=1
+        except Exception as e:
+            lines.append(f"  {name:<20} {matchup:<44} fetch failed: {e}")
+    step(f"  {found}/{len(umps)} umpires matched to O/U records")
+    return "\n".join(lines)+"\n"
 
 
 def fetch_bvp(date=None):
@@ -852,8 +898,9 @@ def fetch_travel(game_meta):
             home_name=matchup.split(" @ ")[1] if " @ " in matchup else ""
             # Map to abbreviations (simplified)
             venue_team=None
+            venue_lower=gm["venue"].lower()
             for k,d in STADIUMS.items():
-                if k==gm["venue"]: venue_team=d[3]; break
+                if k.lower() in venue_lower or venue_lower in k.lower(): venue_team=d[3]; break
             if venue_team:
                 venue_tz=tz_map.get(venue_team,-4)
                 flag=""
@@ -875,12 +922,21 @@ def fetch_yesterday_statcast():
         df=pyb.statcast(start_dt=YESTERDAY,end_dt=YESTERDAY)
         if df is None or df.empty: return "  No data.\n", pd.DataFrame()
         step(f"  {len(df)} pitches, {df['game_pk'].nunique()} games")
+        # Statcast's "player_name" column on raw pitch-by-pitch data is the
+        # PITCHER on that pitch, not the batter (verified live elsewhere in
+        # this file — see compute_hit_streaks) — grouping "batters who got
+        # hits" by it silently credited the pitcher who allowed the hit.
+        # Fixed to group by the numeric "batter" id and resolve names via
+        # the cached active-roster id->name map.
         hits=df[df["events"].isin(["single","double","triple","home_run"])].copy()
-        hit_sum=hits.groupby("player_name").agg(
+        hit_sum=hits.groupby("batter").agg(
             H=("events","count"),HR=("events",lambda x:(x=="home_run").sum()),
             avg_EV=("launch_speed","mean"),max_EV=("launch_speed","max"),
             avg_LA=("launch_angle","mean")
         ).round(1).sort_values("H",ascending=False).reset_index()
+        by_id=fetch_active_roster_by_name().get("by_id",{})
+        hit_sum["batter"]=hit_sum["batter"].apply(lambda pid: by_id.get(pid,f"MLBAM#{int(pid)}"))
+        hit_sum=hit_sum.rename(columns={"batter":"Batter"})
         hit_sum.index+=1
         out=f"  Yesterday ({YESTERDAY}): {len(df)} pitches | {df['game_pk'].nunique()} games\n\n"
         out+=f"  BATTERS WHO GOT HITS YESTERDAY:\n{fmt(hit_sum.head(60))}\n"
@@ -898,6 +954,20 @@ def compute_hit_streaks():
     # ALL his plate appearances (not just games with a hit), then walk backward
     # from his most recent game and stop at the first hitless one — the correct
     # definition of an active streak, independent of calendar gaps.
+    # Second bug found on review, confirmed live: grouped by Statcast's
+    # "player_name" column, which on raw pitch-by-pitch data is the
+    # PITCHER on that pitch, not the batter — the same well-documented
+    # Statcast quirk this project already found and fixed once in the picks
+    # scorer's L7 rolling-form fetch (see README), recurring here
+    # independently. Verified live: the top "hit streak" this produced
+    # before the fix was "Peralta, Wandy" at 7 games — Wandy Peralta is a
+    # relief pitcher; pulling that exact row showed pitcher id 593974
+    # (Peralta) and batter id 682998 (Corbin Carroll, per the play
+    # description) on the same row. Every "streak" this section reported
+    # was actually a pitcher's opponents' hitting streak against him, not
+    # any individual batter's own streak. Fixed to group by the numeric
+    # "batter" id column instead (as the rest of this codebase already
+    # does post-fix) and resolve names via the active-roster id->name map.
     step("Active hit streaks (L14 Statcast)...")
     try:
         df=pyb.statcast(start_dt=L14_START,end_dt=L14_END)
@@ -905,17 +975,19 @@ def compute_hit_streaks():
         pa=df[df["events"].notna()].copy()
         pa["game_date"]=pd.to_datetime(pa["game_date"])
         pa["got_hit"]=pa["events"].isin(["single","double","triple","home_run"])
-        per_game=pa.groupby(["player_name","game_date"])["got_hit"].max().reset_index()
+        per_game=pa.groupby(["batter","game_date"])["got_hit"].max().reset_index()
         streaks={}
-        for player,grp in per_game.groupby("player_name"):
+        for player_id,grp in per_game.groupby("batter"):
             grp=grp.sort_values("game_date",ascending=False)
             streak=0
             for got_hit in grp["got_hit"]:
                 if got_hit: streak+=1
                 else: break
-            if streak>=3: streaks[player]=streak
+            if streak>=3: streaks[player_id]=streak
         if not streaks: return "  No 3+ game hit streaks.\n"
-        sdf=pd.DataFrame(list(streaks.items()),columns=["Player","Hit_Streak"]).sort_values("Hit_Streak",ascending=False).reset_index(drop=True)
+        by_id=fetch_active_roster_by_name().get("by_id",{})
+        sdf=pd.DataFrame([(by_id.get(pid,f"MLBAM#{int(pid)}"),s) for pid,s in streaks.items()],
+                          columns=["Player","Hit_Streak"]).sort_values("Hit_Streak",ascending=False).reset_index(drop=True)
         sdf.index+=1
         step(f"  {len(sdf)} players with 3+ game streaks")
         return fmt(sdf)
@@ -930,7 +1002,12 @@ def compute_rolling_form():
         df=pyb.statcast(start_dt=L7_START,end_dt=L7_END)
         if df is None or df.empty: return "  No data.\n"
         batted=df[df["launch_speed"].notna()].copy()
-        form=batted.groupby("player_name").agg(
+        # Statcast's "player_name" is the pitcher on that pitch, not the
+        # batter who put the ball in play (verified live — see
+        # compute_hit_streaks) — grouping "batter form" by it silently
+        # attributed every batted-ball EV/LA/hit to the pitcher who allowed
+        # it. Group by the numeric "batter" id and resolve names instead.
+        form=batted.groupby("batter").agg(
             PA=("at_bat_number","count"),
             H=("events",lambda x:x.isin(["single","double","triple","home_run"]).sum()),
             HR=("events",lambda x:(x=="home_run").sum()),
@@ -944,6 +1021,9 @@ def compute_rolling_form():
         form["barrel_pct"]=form.apply(lambda r: round(r["barrel_cnt"]/r["PA"]*100,1) if r["PA"]>0 else 0,axis=1)
         form["LA_consistency"]=form["stdev_LA"].apply(lambda x: "🟢 consistent" if x<8 else ("🟡 moderate" if x<15 else "🔴 erratic"))
         form=form[form["PA"]>=5].sort_values("avg_EV",ascending=False).reset_index()
+        by_id=fetch_active_roster_by_name().get("by_id",{})
+        form["batter"]=form["batter"].apply(lambda pid: by_id.get(pid,f"MLBAM#{int(pid)}"))
+        form=form.rename(columns={"batter":"player_name"})
         form.index+=1
         step(f"  {len(form)} batters with 5+ PA in L7")
         return fmt(form.head(100))
@@ -957,21 +1037,29 @@ def compute_player_state_indicators():
     try:
         df=pyb.statcast(start_dt=L3_START,end_dt=L3_END)
         if df is None or df.empty: return "  No data.\n"
+        # Chase rate / first-pitch swing rate are batter swing-decision
+        # stats, but this grouped by Statcast's "player_name" (the pitcher
+        # on that pitch, not the batter deciding to swing — verified live
+        # elsewhere in this file, see compute_hit_streaks). Fixed to group
+        # by the numeric "batter" id and resolve names via the roster map.
+        by_id=fetch_active_roster_by_name().get("by_id",{})
         # Chase rate = swings on pitches outside zone
         chase=df[df["zone"].between(11,14,inclusive="both") | ~df["zone"].between(1,9,inclusive="both")].copy()
-        l3_chase=chase.groupby("player_name").agg(
+        l3_chase=chase.groupby("batter").agg(
             pitches_out=("zone","count"),
             swings_out=("description",lambda x:x.isin(["swinging_strike","foul","hit_into_play"]).sum())
         )
         l3_chase["L3_chase_rate"]=l3_chase.apply(lambda r: round(r["swings_out"]/r["pitches_out"]*100,1) if r["pitches_out"]>5 else None,axis=1)
         # First pitch swing rate L3
-        fp=df[df["pitch_number"]==1].groupby("player_name").agg(
+        fp=df[df["pitch_number"]==1].groupby("batter").agg(
             fp_pitches=("pitch_number","count"),
             fp_swings=("description",lambda x:x.isin(["swinging_strike","foul","hit_into_play"]).sum())
         )
         fp["L3_first_pitch_swing_pct"]=fp.apply(lambda r:round(r["fp_swings"]/r["fp_pitches"]*100,1) if r["fp_pitches"]>3 else None,axis=1)
         result=l3_chase[["L3_chase_rate"]].join(fp[["L3_first_pitch_swing_pct"]],how="outer")
         result=result[result["L3_chase_rate"].notna()].sort_values("L3_chase_rate",ascending=False).reset_index()
+        result["batter"]=result["batter"].apply(lambda pid: by_id.get(pid,f"MLBAM#{int(pid)}"))
+        result=result.rename(columns={"batter":"player_name"})
         result.index+=1
         step(f"  {len(result)} batters analyzed")
         return fmt(result.head(60))
@@ -1061,27 +1149,50 @@ def fetch_bullpen_fatigue(game_meta):
 
 
 def fetch_starter_game_logs(game_meta):
+    # statsapi.player_stats() (the text-formatting wrapper originally used
+    # here) calls player_stat_data(personId, group, type, season)
+    # POSITIONALLY internally — but player_stat_data's real signature is
+    # (personId, group, type, sportId, season), so that "season" argument
+    # actually lands in the sportId slot, and the real season kwarg stays
+    # None. Verified live: calling it exactly as this function did
+    # (group="pitching", type="gameLog", season=YEAR) returned only the
+    # player's one-line bio ('Jameson "Jamo" Taillon, P (2016-)') with zero
+    # game rows, for every pitcher, every run — the "/" or "-" line filter
+    # then grabbed that bio line itself as if it were a game log row.
+    # Separately verified live that passing season= explicitly to
+    # type="gameLog" raises outright ("season parameter is only valid...
+    # 'season' type") — gameLog isn't supposed to take a season kwarg at
+    # all; omitting it still returns the current season's games (MLB API's
+    # own default). Fixed to call the raw hydrated person endpoint directly
+    # (bypassing both the broken wrapper and the fragile text-line
+    # filtering) and build the table from real structured per-game fields.
     step("Tonight's starters last 5 game logs...")
     lines=[]
     pitchers_done=set()
+    team_abbr={t["id"]:t["abbr"] for t in get_team_ids()}
     for gm in game_meta:
         for sp_name, sp_id in [(gm["away_sp"],gm.get("away_sp_id")), (gm["home_sp"],gm.get("home_sp_id"))]:
             if sp_name=="TBD" or sp_name in pitchers_done: continue
             pitchers_done.add(sp_name)
             if not sp_id: lines.append(f"\n  {sp_name}: no player ID"); continue
             try:
-                # statsapi.player_stats()'s real signature (verified against installed
-                # mlb-statsapi 1.9.0) is (personId, group, type, season) — no sportId
-                # kwarg and no catch-all **params, so the old sportId=1 call raised
-                # "unexpected keyword argument 'sportId'" on every run.
-                logs=statsapi.player_stats(sp_id,group="pitching",type="gameLog",season=YEAR)
+                r=statsapi.get("person",{"personId":sp_id,"hydrate":"stats(group=pitching,type=gameLog,sportId=1)"})
+                stat_blocks=r.get("people",[{}])[0].get("stats",[])
+                splits=stat_blocks[0].get("splits",[]) if stat_blocks else []
                 lines.append(f"\n  {sp_name} — Last 5 Starts:")
                 lines.append(f"  {'Date':<12} {'Opp':<8} {'IP':<5} {'H':<4} {'R':<4} {'ER':<4} {'BB':<4} {'K':<4} {'HR':<4} {'PC':>4}")
                 lines.append("  "+"-"*65)
-                # Parse the text logs
-                log_lines=[l for l in logs.split("\n") if "/" in l or "-" in l]
-                for line in log_lines[-5:]:
-                    lines.append(f"  {line}")
+                if not splits:
+                    lines.append("  No game log entries this season yet.")
+                    continue
+                for s in splits[-5:]:
+                    st=s.get("stat",{})
+                    opp=team_abbr.get(s.get("opponent",{}).get("id"), s.get("opponent",{}).get("name","?")[:8])
+                    date=s.get("date","?")
+                    ip=st.get("inningsPitched","?"); h=st.get("hits","?"); rns=st.get("runs","?")
+                    er=st.get("earnedRuns","?"); bb=st.get("baseOnBalls","?"); k=st.get("strikeOuts","?")
+                    hr=st.get("homeRuns","?"); pc=st.get("numberOfPitches","?")
+                    lines.append(f"  {date:<12} {opp:<8} {str(ip):<5} {str(h):<4} {str(rns):<4} {str(er):<4} {str(bb):<4} {str(k):<4} {str(hr):<4} {str(pc):>4}")
             except Exception as e:
                 lines.append(f"\n  {sp_name}: {str(e)[:50]}")
     return "\n".join(lines)+"\n"
@@ -1356,7 +1467,13 @@ def compute_catcher_pitch_calling(game_meta):
         )
         catcher_fp["fp_fastball_pct"]=round(catcher_fp["fastball_fp"]/catcher_fp["total_fp"]*100,1)
         catcher_fp=catcher_fp[catcher_fp["total_fp"]>=20].sort_values("fp_fastball_pct",ascending=False).reset_index()
-        # Try to get catcher names
+        # Resolve catcher MLBAM ids to real names — this comment used to
+        # promise "Try to get catcher names" with no code actually doing
+        # it, verified live: the table printed raw fielder_2 ids (683679,
+        # 596142, ...) instead of catcher names on every run.
+        by_id=fetch_active_roster_by_name().get("by_id",{})
+        catcher_fp["fielder_2"]=catcher_fp["fielder_2"].apply(lambda pid: by_id.get(pid,f"MLBAM#{int(pid)}"))
+        catcher_fp=catcher_fp.rename(columns={"fielder_2":"Catcher"})
         lines.append("  Catcher first-pitch fastball% (L14, min 20 caught first pitches):")
         lines.append(fmt(catcher_fp.head(30)))
         lines.append("  HIGH% = calls lots of first-pitch fastballs → hitters ready for FB")
@@ -1459,6 +1576,16 @@ def fg_bat(yr, label="", qual=MIN_PA):
     return df
 
 def fg_bat_range(s,e,label):
+    # batting_stats_range() scrapes baseball-reference.com (not FanGraphs,
+    # despite this function's name) with zero fallback. Verified live: it's
+    # blocked by its own Cloudflare bot challenge (same "Just a moment..."
+    # page as FanGraphs' block, confirmed via a direct request to the same
+    # URL this hits) — get_table() does soup.find_all("table")[0] against
+    # that challenge page's zero tables and raises IndexError, previously
+    # swallowed into a bare empty DataFrame indistinguishable from a
+    # legitimately empty window. The real error is now attached via
+    # df.attrs so fmt() can surface it instead of silently printing
+    # "[No data]" for a real fetch failure.
     step(f"FG batting {label}...")
     try:
         df=pyb.batting_stats_range(s,e)
@@ -1469,7 +1596,10 @@ def fg_bat_range(s,e,label):
             df=df.sort_values("wRC+",ascending=False).reset_index(drop=True); df.index+=1
         step(f"  {len(df)} batters")
         return df
-    except Exception as e: warn(f"FG bat {label}: {e}"); return pd.DataFrame()
+    except Exception as e:
+        warn(f"FG bat {label}: {e}")
+        empty=pd.DataFrame(); empty.attrs["fetch_error"]=str(e)
+        return empty
 
 def _fg_statcast_pit_fallback(yr):
     """Statcast fallback for season pitching when FanGraphs is fully blocked."""
@@ -1503,6 +1633,8 @@ def fg_pit(yr, label="", qual=MIN_IP):
     return df
 
 def fg_pit_range(s,e,label):
+    # Same baseball-reference.com Cloudflare-block gap as fg_bat_range —
+    # see its comment. Real error attached via df.attrs for fmt() to show.
     step(f"FG pitching {label}...")
     try:
         df=pyb.pitching_stats_range(s,e)
@@ -1512,7 +1644,10 @@ def fg_pit_range(s,e,label):
             df=df.sort_values("ERA").reset_index(drop=True); df.index+=1
         step(f"  {len(df)} pitchers")
         return df
-    except Exception as e: warn(f"FG pit {label}: {e}"); return pd.DataFrame()
+    except Exception as e:
+        warn(f"FG pit {label}: {e}")
+        empty=pd.DataFrame(); empty.attrs["fetch_error"]=str(e)
+        return empty
 
 def fg_team_bat(yr):
     step(f"FG team batting {yr}...")
@@ -1669,24 +1804,31 @@ def compute_count_decisions():
     try:
         df=pyb.statcast(start_dt=L14_START,end_dt=L14_END)
         if df is None or df.empty: return "  No data.\n"
+        # These are all batter swing-decision stats, but were grouped by
+        # Statcast's "player_name" column, which on raw pitch-by-pitch data
+        # is the PITCHER on that pitch, not the batter deciding whether to
+        # swing (verified live elsewhere in this file — see
+        # compute_hit_streaks). Fixed to group by the numeric "batter" id
+        # and resolve display names via the cached roster id->name map.
+        by_id=fetch_active_roster_by_name().get("by_id",{})
         swing_desc=["swinging_strike","swinging_strike_blocked","foul","foul_tip","hit_into_play","foul_bunt"]
         # First pitch swing
         fp=df[df["pitch_number"]==1].copy()
         fp["swing"]=fp["description"].isin(swing_desc)
-        fp_rate=fp.groupby("player_name")["swing"].agg(["sum","count"])
+        fp_rate=fp.groupby("batter")["swing"].agg(["sum","count"])
         fp_rate.columns=["fp_swings","fp_pitches"]
         fp_rate["fp_swing_pct"]=round(fp_rate["fp_swings"]/fp_rate["fp_pitches"]*100,1)
         # 2-strike out-of-zone swing (chase in pressure)
         two_k=df[(df["strikes"]==2)].copy()
         two_k_out=two_k[~two_k["zone"].between(1,9,inclusive="both")]
         two_k_out["swing"]=two_k_out["description"].isin(swing_desc)
-        ts_chase=two_k_out.groupby("player_name")["swing"].agg(["sum","count"])
+        ts_chase=two_k_out.groupby("batter")["swing"].agg(["sum","count"])
         ts_chase.columns=["ts_chases","ts_pitches"]
         ts_chase["two_strike_chase_pct"]=round(ts_chase["ts_chases"]/ts_chase["ts_pitches"]*100,1)
         # RISP swing on borderline pitches (zone 11-14)
         risp=df[(df["on_2b"].notna()|df["on_3b"].notna())&df["zone"].between(11,14,inclusive="both")].copy()
         risp["swing"]=risp["description"].isin(swing_desc)
-        risp_rate=risp.groupby("player_name")["swing"].agg(["sum","count"])
+        risp_rate=risp.groupby("batter")["swing"].agg(["sum","count"])
         risp_rate.columns=["risp_swings","risp_pitches"]
         risp_rate["risp_protect_swing_pct"]=round(risp_rate["risp_swings"]/risp_rate["risp_pitches"]*100,1)
         # Merge
@@ -1694,6 +1836,8 @@ def compute_count_decisions():
             ts_chase[["two_strike_chase_pct"]],how="outer").join(
             risp_rate[["risp_protect_swing_pct"]],how="outer")
         result=result[result["fp_swing_pct"].notna()].sort_values("two_strike_chase_pct",ascending=False).reset_index()
+        result["batter"]=result["batter"].apply(lambda pid: by_id.get(pid,f"MLBAM#{int(pid)}"))
+        result=result.rename(columns={"batter":"player_name"})
         result.index+=1
         step(f"  {len(result)} batters")
         return fmt(result.head(80))
@@ -1804,20 +1948,26 @@ def compute_hitter_ingame_degradation():
         if df is None or df.empty: return "  No data.\n"
         df=df[df["at_bat_number"].notna() & df["launch_speed"].notna()].copy()
         df["ab_bucket"]=pd.cut(df["at_bat_number"],bins=[0,1,2,3,4,9],labels=["1st","2nd","3rd","4th","5th+"])
-        by_ab=df.groupby(["player_name","ab_bucket"],observed=True).agg(
+        # "player_name" is the pitcher on that pitch, not the hitter whose
+        # in-game degradation this section claims to measure (verified live
+        # elsewhere in this file — see compute_hit_streaks). Group by the
+        # numeric "batter" id and resolve display names via the roster map.
+        by_ab=df.groupby(["batter","ab_bucket"],observed=True).agg(
             avg_EV=("launch_speed","mean"),
             avg_LA=("launch_angle","mean"),
             count=("launch_speed","count")
         ).round(2)
+        by_id=fetch_active_roster_by_name().get("by_id",{})
         # Find players who degrade significantly
         lines=["  Hitter performance by plate appearance number (L14, min 5 balls in play):"]
-        for player,grp in by_ab.groupby(level=0):
+        for player_id,grp in by_ab.groupby(level=0):
             grp=grp.droplevel(0)
             if len(grp)>=3 and grp["count"].sum()>=10:
                 first_ev=grp.iloc[0]["avg_EV"] if len(grp)>0 else None
                 last_ev=grp.iloc[-1]["avg_EV"] if len(grp)>0 else None
                 if first_ev and last_ev and abs(first_ev-last_ev)>3:
                     flag="🔴 DEGRADES" if first_ev>last_ev else "🟢 IMPROVES"
+                    player=by_id.get(player_id,f"MLBAM#{int(player_id)}")
                     lines.append(f"    {player}: 1st AB EV={first_ev:.1f} → Last EV={last_ev:.1f}  {flag}")
         if len(lines)==1: lines.append("  No significant degradation patterns found in L14")
         return "\n".join(lines[:50])+"\n"
@@ -2333,27 +2483,42 @@ def fetch_sp_rp_splits(pit_season):
 
 
 def compute_umpire_3way(game_meta):
+    # Rebuilt after finding two live-confirmed bugs on review: (1) fg_df was
+    # re-fetched with a raw, unprotected pyb.pitching_stats() call INSIDE the
+    # per-pitcher loop (up to ~30x/run) instead of once, and with FanGraphs
+    # currently blocked (verified live: real 403 on every attempt right now)
+    # that raised inside the try and was swallowed by a bare `except: pass`
+    # that drops the entire per-pitcher block -- confirmed live against
+    # tonight's real slate: this function returned zero per-pitcher rows,
+    # only the two header lines, for all 15 games. (2) Even when FanGraphs
+    # is reachable, it matched fg_df["IDfg"] (FanGraphs' own player ID)
+    # against `pid` (the MLBAM id game_meta carries) -- two different ID
+    # spaces that were never going to match (this is exactly why this
+    # project's own playerid_lookup crosswalk exists, and was found broken,
+    # earlier tonight). Every other FanGraphs row lookup in this file
+    # matches by exact player Name instead (see compute_opposing_lineup_k,
+    # compute_csw_leaderboard) since no ID crosswalk is available -- this
+    # function is rebuilt to follow that same established, working pattern:
+    # one fg_pit() call (already has the legacy->modern->Statcast fallback
+    # chain other sections rely on) outside the loop, matched by Name.
     step("Umpire + catcher + pitcher three-way zone interaction...")
     lines=["  Three-way interaction score: Umpire zone size × Catcher framing × Pitcher Zone%"]
     lines.append("  Higher = more strikes called = K props UP | Lower = walks/hits UP\n")
+    fg_df = fg_pit(YEAR, "3way", qual=0)
+    zone_by_name = {}
+    if fg_df is not None and not fg_df.empty and "Name" in fg_df.columns and "Zone%" in fg_df.columns:
+        zone_by_name = fg_df.set_index("Name")["Zone%"].to_dict()
     for gm in game_meta:
         for sp_name in [gm["away_sp"],gm["home_sp"]]:
             if sp_name=="TBD": continue
-            try:
-                pid = gm["away_sp_id"] if sp_name == gm["away_sp"] else gm["home_sp_id"]
-                if not pid: continue
-                fg_df=pyb.pitching_stats(YEAR,qual=0)
-                if fg_df is None or fg_df.empty: continue
-                # Get pitcher zone%
-                p_row=fg_df[fg_df.get("IDfg",pd.Series()).astype(str)==str(pid)] if "IDfg" in fg_df.columns else pd.DataFrame()
-                zone_pct=p_row["Zone%"].iloc[0] if not p_row.empty and "Zone%" in p_row.columns else 0.47
-                # Ump info from game_meta
-                ump=gm["hp_ump"]
-                lines.append(f"  {sp_name} ({gm['matchup']}) | HP Ump: {ump}")
-                lines.append(f"    Pitcher Zone%: {zone_pct:.3f}  (source: FanGraphs)")
-                lines.append(f"    → Cross-reference with ump zone size (Section 4) + catcher framing (Section 79)")
-                lines.append(f"    → Three-way score = zone_pct × ump_zone_factor × catcher_frames")
-            except: pass
+            ump=gm["hp_ump"]
+            lines.append(f"  {sp_name} ({gm['matchup']}) | HP Ump: {ump}")
+            if sp_name in zone_by_name:
+                lines.append(f"    Pitcher Zone%: {zone_by_name[sp_name]:.3f}  (source: FanGraphs)")
+            else:
+                lines.append(f"    Pitcher Zone%: unavailable (FanGraphs unreachable or no name match)")
+            lines.append(f"    → Cross-reference with ump zone size (Section 6) + catcher framing (Section 79)")
+            lines.append(f"    → Three-way score = zone_pct × ump_zone_factor × catcher_frames")
     return "\n".join(lines)+"\n"
 
 
@@ -2363,13 +2528,22 @@ def compute_umpire_3way(game_meta):
 # ══════════════════════════════════════════════════════════════════════════════
 
 def compute_multiyear_baseline():
+    # Was calling raw pyb.batting_stats(yr, qual=50) directly, once per
+    # year, with no retry and no fallback -- the same anti-pattern already
+    # found and fixed elsewhere in this file (fetch_sp_rp_splits, "reuse
+    # fg_pit()'s fallback chain, don't bypass it"). Verified live: with
+    # FanGraphs currently blocked, this returned "No multi-year data." on
+    # every one of the 3 years, silently, when fg_bat()'s legacy->modern
+    # retry chain (used by every other FanGraphs batting pull in this file)
+    # would have gotten at least a real attempt at a second endpoint before
+    # giving up. Routed through fg_bat() for consistency and resilience.
     step(f"Multi-year weighted career baseline ({YEAR_2YR}/{YEAR_PREV}/{YEAR})...")
     try:
         dfs=[]
         weights=[(YEAR_2YR,0.2),(YEAR_PREV,0.3),(YEAR,0.5)]
         for yr,w in weights:
             try:
-                df=pyb.batting_stats(yr,qual=50)
+                df=fg_bat(yr,f"multiyear-{yr}",qual=50)
                 if df is not None and not df.empty:
                     df["season"]=yr; df["weight"]=w
                     dfs.append(df)
