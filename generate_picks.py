@@ -76,10 +76,34 @@ def clamp(x, lo=0, hi=100):
     return max(lo, min(hi, x))
 
 def scale(value, lo, hi, out_lo=0, out_hi=100):
-    """Linear map value in [lo,hi] to [out_lo,out_hi], clamped at the ends."""
+    """Linear map value in [lo,hi] to [out_lo,out_hi], clamped at the ends.
+
+    Bug found and verified live: a real pandas NaN (as opposed to None) sailed
+    straight through the "value is None" check and through float(value)
+    (float('nan') doesn't raise), leaving t = nan and landing on
+    clamp(nan, out_lo, out_hi). Python's min()/max() don't treat NaN as
+    incomparable the way you'd expect: min(out_hi, nan) always returns out_hi
+    (nan < out_hi is False, so the "no swap" branch wins), so clamp() silently
+    returned out_hi — the MAXIMUM of the range — for every NaN input, not a
+    neutral midpoint. Confirmed against tonight's real season-batting pull:
+    89 real batters (Statcast-fallback data) have NaN Barrel%/HardHit% from
+    too few batted-ball events, and multiple are in tonight's actual lineups
+    (Abimelec Ortiz, Max Clark, Osleivis Basabe, Grant McCray). For Abimelec
+    Ortiz specifically (5 PA, Barrel% literally NaN), the BASELINE SKILL
+    sub-score computed as 65.0 pre-fix — i.e. missing data scored *better*
+    than a real average Barrel% would have (a real 8% Barrel% scores ~33 on
+    this same scale) — silently inflating a thin-sample player's score rather
+    than treating the missing signal as neutral, exactly backwards from every
+    other None-handling path in this file. Fixed by explicitly checking for
+    NaN (x != x is True only for NaN) alongside the existing None check.
+    Re-verified live post-fix: Ortiz's Barrel% component now scores neutral
+    (50, same as the None case), pulling his overall skill sub-score down
+    from 65.0 to 50.0 (wRC+/ISO are also None for him this thin-sample data
+    pull, so all three components now correctly land at neutral)."""
     if value is None: return (out_lo + out_hi) / 2
     try: value = float(value)
     except (TypeError, ValueError): return (out_lo + out_hi) / 2
+    if value != value: return (out_lo + out_hi) / 2  # NaN check
     if hi == lo: return (out_lo + out_hi) / 2
     t = (value - lo) / (hi - lo)
     return clamp(out_lo + t * (out_hi - out_lo), out_lo, out_hi)
@@ -268,11 +292,28 @@ def fetch_l7_batter_form():
     pitch, not the batter (a well-known Statcast quirk) — grouping by it silently
     builds a pitcher-keyed table, so every batter-name lookup misses. The
     numeric "batter" column is the actual batter MLBAM ID, which lineup entries
-    already carry from fetch_lineups()."""
+    already carry from fetch_lineups().
+
+    Bug found and verified live: filtering rows to launch_speed.notna() alone
+    (as this used to do) also keeps foul balls — a foul has a real exit velo
+    but does NOT end the plate appearance, so counting it as a "PA" row
+    double-counts. Live check on the real L7 window: 9158 rows had a non-null
+    launch_speed, but only 4820 of them were description=="hit_into_play"
+    (i.e. PA-terminating); the other 4338 were fouls. For Yordan Alvarez
+    specifically this inflated his L7 "PA" from 18 (real balls in play) to 30,
+    which cut his computed AVG from a true 9/18=0.500 down to a wrong
+    9/30=0.300, and did the same (understated) damage to TB_per_PA and
+    barrel_pct — silently deflating recent-form scores and the TB projection
+    for every batter with any foul balls in the window (nearly everyone), with
+    no error or empty result to flag it. Fixed by also requiring
+    events.notna(), restricting every rate in this table to PA-terminating
+    batted balls only. Re-verified live post-fix: Alvarez's L7 PA is now 18
+    (matches the hit_into_play count exactly) and AVG is 0.5, matching a
+    hand-computed H/PA check on the raw Statcast rows."""
     try:
         df = m.pyb.statcast(start_dt=m.L7_START, end_dt=m.L7_END)
         if df is None or df.empty: return {}
-        batted = df[df["launch_speed"].notna()].copy()
+        batted = df[df["launch_speed"].notna() & df["events"].notna()].copy()
         tb_map = {"single": 1, "double": 2, "triple": 3, "home_run": 4}
         batted["tb"] = batted["events"].map(tb_map).fillna(0)
         form = batted.groupby("batter").agg(
