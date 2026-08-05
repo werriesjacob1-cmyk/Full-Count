@@ -488,3 +488,96 @@ def pitch_quality(min_pa=50):
         df = df.sort_values("run_value_per_100").reset_index(drop=True)
         df.index += 1
     return df
+
+
+# ══════════════════════════════════════════════════════════════════════════
+#  STATCAST-DERIVED  (platoon-specific quality of contact)
+# ══════════════════════════════════════════════════════════════════════════
+
+def platoon_quality_of_contact(min_pa=20):
+    """Per-batter quality of contact split by opposing-pitcher handedness
+    (vs LHP / vs RHP) — the scoring engine's platoon logic is currently a
+    crude binary (80 if opposite-handed, 35 if same, per generate_picks.py);
+    this gives real per-player numbers to replace that flat assumption.
+
+    Source: the cached season Statcast pull (m.fetch_season_statcast()).
+    Verified live before writing this: 'p_throws' exists on every row (0
+    nulls across 540,342 rows) with exactly two values, 'R' (384,503 rows)
+    and 'L' (155,839 rows) — matches the real ~70/30 RHP/LHP split in MLB
+    and confirms it's safe to group on directly.
+
+    Metrics returned per batter x handedness:
+      - xwOBA: mean of 'estimated_woba_using_speedangle' over PA-ending
+        rows. Verified this is a genuine full-PA expected wOBA, not a
+        batted-balls-only figure as first assumed — its live non-null count
+        (127,684) matches 'woba_denom's PA-ending count (128,788) almost
+        exactly, and spot-checking Yordan Alvarez's own rows returned 473
+        PA-ending events (351 vs RHP / 122 vs LHP) against the real
+        318+181=499 PA from his SP/RP splits (fetch_batter_sit_split) —
+        close enough (season-pull start date / sac-bunt exclusions account
+        for the gap) to trust the PA-ending row count as real.
+      - wOBA: real (not expected) wOBA = sum(woba_value)/sum(woba_denom) —
+        the actual-outcome counterpart to xwOBA, included so a consumer can
+        see the over/underperformance gap the same way xba_gap already does
+        elsewhere in this pipeline.
+      - Barrel%: share of batted-ball events (type=='X') where Statcast's
+        own 'launch_speed_angle' field equals 6. Verified live this is the
+        real Statcast barrel classification, not a derived approximation:
+        bucket-6 rows had launch_speed 97.5-119.0 mph (mean 104.7) and were
+        overwhelmingly home runs/doubles (3,578 HR / 1,343 2B out of ~7,439
+        rows) — exactly what "barrel" should look like, straight from
+        Statcast's own encoding rather than a hand-rolled formula.
+      - HardHit%: share of batted-ball events with launch_speed >= 95, the
+        standard Statcast threshold.
+
+    min_pa (default 20) is applied per split independently — a batter can
+    clear the threshold vs RHP but not vs LHP (common for bench/platoon
+    players who rarely face same-side pitching), in which case only the
+    reliable side is returned. Sample size (PA and BBE) is always included
+    alongside every split so the consumer can judge trust rather than
+    treating all rows as equally solid.
+
+    LIMITATION stated honestly: this is platoon quality of contact, not a
+    park-adjusted or league-adjusted split — a batter's vs-LHP sample may
+    be concentrated against a handful of teams/parks this season. Keyed by
+    MLBAM batter id (int)."""
+    df = m.fetch_season_statcast()
+    if df is None or df.empty:
+        return {}
+    need = {"batter", "p_throws", "estimated_woba_using_speedangle", "woba_value",
+            "woba_denom", "type", "launch_speed", "launch_speed_angle"}
+    if not need.issubset(df.columns):
+        m.warn("Platoon quality of contact: Statcast is missing required columns")
+        return {}
+
+    pa = df[df["estimated_woba_using_speedangle"].notna()].copy()
+    if pa.empty:
+        return {}
+    bb = df[df["type"] == "X"].copy()  # batted-ball events, for barrel%/hard-hit%
+    bb["is_barrel"] = bb["launch_speed_angle"] == 6
+    bb["is_hardhit"] = bb["launch_speed"] >= 95
+
+    pa_g = pa.groupby(["batter", "p_throws"]).agg(
+        PA=("estimated_woba_using_speedangle", "size"),
+        xwOBA=("estimated_woba_using_speedangle", "mean"),
+        woba_num=("woba_value", "sum"), woba_den=("woba_denom", "sum"))
+    bb_g = bb.groupby(["batter", "p_throws"]).agg(
+        BBE=("is_barrel", "size"), Barrels=("is_barrel", "sum"), HardHit=("is_hardhit", "sum"))
+
+    out = {}
+    for (bid, hand), r in pa_g.iterrows():
+        n_pa = int(r["PA"])
+        if n_pa < min_pa:
+            continue
+        woba = float(round(r["woba_num"] / r["woba_den"], 3)) if r["woba_den"] else None
+        n_bbe = barrel_pct = hardhit_pct = None
+        if (bid, hand) in bb_g.index:
+            br = bb_g.loc[(bid, hand)]
+            n_bbe = int(br["BBE"])
+            if n_bbe:
+                barrel_pct = float(round(br["Barrels"] / n_bbe * 100, 1))
+                hardhit_pct = float(round(br["HardHit"] / n_bbe * 100, 1))
+        row = {"PA": n_pa, "BBE": n_bbe, "xwOBA": float(round(r["xwOBA"], 3)), "wOBA": woba,
+               "Barrel%": barrel_pct, "HardHit%": hardhit_pct}
+        out.setdefault(int(bid), {})[hand] = row
+    return out
