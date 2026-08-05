@@ -392,6 +392,22 @@ verified live against each source as of this rebuild:
   and it now actually computes the "OBP ahead" context the section's own
   title always promised but never delivered (`bat_season` was accepted as
   a parameter and silently never used).
+- **Three sections (56, 58, 59) silently querying pitchers for hitting
+  stats, every run** — `fetch_mlb_splits_batters`, `fetch_mlb_game_logs`,
+  and `fetch_babip_career_compare` all took the flat `player_ids` dict and
+  sliced its first N entries. `player_ids` mixes probable-pitcher IDs and
+  lineup-batter IDs, with pitchers inserted first in `fetch_lineups()` — on
+  a normal 15-game slate that's up to 30 pitcher IDs, exactly filling a
+  `[:30]` slice every time. Since all three ask the MLB API for *hitting*
+  splits — structurally empty for any pitcher — they silently processed 30
+  pitchers, got 200 OK responses with zero real rows every time, and
+  reported "unavailable." Verified live: `player_ids` had 290 real entries
+  and every API call succeeded; 30 of the first 30 were starters, not
+  batters. Fixed all three to build a real batter-only ID map from
+  `game_meta`'s lineups directly. Also fixed a related cosmetic bug found
+  along the way in the same function: the game-log API's `opponent` field
+  has no `abbreviation` key (only `id`/`name`), so the opponent column was
+  always "?" — now resolved through the same team-ID list used elsewhere.
 - **Section 52 (batter splits vs starters/relievers) hard-failing** — the one
   section a real run_log ever marked `failed` rather than `empty`, i.e. an
   actual uncaught-then-caught exception, not just no data. Root cause: it

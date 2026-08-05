@@ -1913,17 +1913,33 @@ def fetch_mlb_leaders():
     return "\n".join(lines)+"\n" if lines else "  MLB leaders API unavailable.\n"
 
 
-def fetch_mlb_splits_batters(player_ids):
-    step(f"MLB Stats API batter splits (vs LHP/RHP, Home/Away, Day/Night) for {min(len(player_ids),30)} players...")
+def fetch_mlb_splits_batters(game_meta):
+    """Takes game_meta (structured lineups) instead of the flat player_ids
+    dict this used to take. Real bug found on review: player_ids mixes
+    probable-pitcher IDs and lineup-batter IDs in one dict, with pitchers
+    inserted first in fetch_lineups() — on a normal 15-game slate that's up
+    to 30 pitcher IDs, exactly filling the old `list(player_ids.items())[:30]`
+    slice every time. This function asks the MLB API for *hitting* splits,
+    which are structurally empty for a pitcher, so it silently processed 30
+    pitchers, got 0 real rows, and returned "unavailable" on every run —
+    verified live: player_ids had 290 real entries and the API calls all
+    succeeded (200 OK), but 30/30 of the first 30 were starters, not
+    batters. Fixed to build a real batter-only {name: id} map from
+    game_meta's lineups directly."""
+    batter_ids = {}
+    for gm in game_meta:
+        for b in gm.get("away_lineup", []) + gm.get("home_lineup", []):
+            if b.get("id") and b.get("name") not in batter_ids:
+                batter_ids[b["name"]] = b["id"]
+    step(f"MLB Stats API batter splits (vs LHP/RHP, Home/Away, Day/Night) for {min(len(batter_ids),30)} players...")
     lines=[]
     count=0
-    for name, pid in list(player_ids.items())[:30]:
-        if not pid: continue
+    for name, pid in list(batter_ids.items())[:30]:
         try:
-            r=requests.get(f"https://statsapi.mlb.com/api/v1/people/{pid}/stats",
-                           params={"stats":"statSplits","group":"hitting","season":YEAR,
-                                   "sitCodes":"vl,vr,h,a,d,n"},
-                           headers={"User-Agent":"Mozilla/5.0"},timeout=15)
+            r=retry_get(f"https://statsapi.mlb.com/api/v1/people/{pid}/stats",
+                       params={"stats":"statSplits","group":"hitting","season":YEAR,
+                               "sitCodes":"vl,vr,h,a,d,n"},
+                       headers={"User-Agent":"Mozilla/5.0"},timeout=15,retries=2)
             if r.status_code!=200: continue
             stats=r.json().get("stats",[])
             if not stats: continue
@@ -1941,8 +1957,8 @@ def fetch_mlb_splits_batters(player_ids):
                 for split_name,sv in player_splits.items():
                     conf=confidence_flag(sv.get("PA",0))
                     lines.append(f"    {split_name:<20} AVG:{sv['AVG']}  OBP:{sv['OBP']}  SLG:{sv['SLG']}  HR:{sv['HR']}  PA:{sv['PA']} {conf}")
-            count+=1
-        except: pass
+                count+=1
+        except Exception: pass
     step(f"  {count} players with splits")
     return "\n".join(lines)+"\n" if lines else "  Batter splits unavailable.\n"
 
@@ -1977,17 +1993,30 @@ def fetch_mlb_splits_pitchers(game_meta):
     return "\n".join(lines)+"\n" if lines else "  Pitcher splits unavailable.\n"
 
 
-def fetch_mlb_game_logs(player_ids):
+def fetch_mlb_game_logs(game_meta):
+    """Takes game_meta instead of the flat player_ids dict — same fix, same
+    reason as fetch_mlb_splits_batters: player_ids has probable-pitcher IDs
+    inserted before lineup-batter IDs, so slicing its first N entries for a
+    *hitting* game log silently grabbed starters instead of batters on
+    every real run."""
+    batter_ids = {}
+    for gm in game_meta:
+        for b in gm.get("away_lineup", []) + gm.get("home_lineup", []):
+            if b.get("id") and b.get("name") not in batter_ids:
+                batter_ids[b["name"]] = b["id"]
+    # Verified live: the gameLog API's "opponent" object has no "abbreviation"
+    # key (only id/name/link), so the old code's .get("abbreviation","?") was
+    # always "?". Built from the same team-ID list used elsewhere instead.
+    abbr_by_team_id = {t["id"]: t["abbr"] for t in get_team_ids()}
     step(f"MLB Stats API player game logs L14 (tonight's players)...")
     lines=[]
     count=0
-    for name, pid in list(player_ids.items())[:25]:
-        if not pid: continue
+    for name, pid in list(batter_ids.items())[:25]:
         try:
-            r=requests.get(f"https://statsapi.mlb.com/api/v1/people/{pid}/stats",
-                           params={"stats":"gameLog","group":"hitting","season":YEAR,
-                                   "startDate":L14_START,"endDate":TODAY},
-                           headers={"User-Agent":"Mozilla/5.0"},timeout=15)
+            r=retry_get(f"https://statsapi.mlb.com/api/v1/people/{pid}/stats",
+                       params={"stats":"gameLog","group":"hitting","season":YEAR,
+                               "startDate":L14_START,"endDate":TODAY},
+                       headers={"User-Agent":"Mozilla/5.0"},timeout=15,retries=2)
             if r.status_code!=200: continue
             stats=r.json().get("stats",[])
             if not stats: continue
@@ -1997,33 +2026,41 @@ def fetch_mlb_game_logs(player_ids):
             lines.append(f"  {'Date':<12} {'Opp':<6} {'AB':<3} {'H':<3} {'HR':<3} {'RBI':<4} {'BB':<3} {'K':<3} {'AVG'}")
             lines.append("  "+"-"*55)
             for sp in splits[-7:]:
-                date=sp.get("date","?"); opp=sp.get("opponent",{}).get("abbreviation","?")
+                date=sp.get("date","?"); opp=abbr_by_team_id.get(sp.get("opponent",{}).get("id"), "?")
                 stat=sp.get("stat",{})
                 lines.append(f"  {date:<12} {opp:<6} {stat.get('atBats','?'):<3} {stat.get('hits','?'):<3} "
                              f"{stat.get('homeRuns','?'):<3} {stat.get('rbi','?'):<4} {stat.get('baseOnBalls','?'):<3} "
                              f"{stat.get('strikeOuts','?'):<3} {stat.get('avg','?')}")
             count+=1
-        except: pass
+        except Exception: pass
     step(f"  {count} players with game logs")
     return "\n".join(lines)+"\n" if lines else "  Game logs unavailable.\n"
 
 
-def fetch_babip_career_compare(player_ids):
+def fetch_babip_career_compare(game_meta):
+    """Takes game_meta instead of the flat player_ids dict — same fix, same
+    reason as fetch_mlb_splits_batters/fetch_mlb_game_logs: BABIP is a
+    hitting stat, and player_ids' pitcher-first ordering meant this was
+    silently querying starters' (nonexistent) hitting BABIP on every run."""
+    batter_ids = {}
+    for gm in game_meta:
+        for b in gm.get("away_lineup", []) + gm.get("home_lineup", []):
+            if b.get("id") and b.get("name") not in batter_ids:
+                batter_ids[b["name"]] = b["id"]
     step("BABIP vs career average (regression signals)...")
     lines=[f"  {'Player':<28} {'2026_BABIP':>10} {'Career_BABIP':>12} {'Delta':>7} {'Signal'}"]
     lines.append("  "+"-"*70)
     count=0
-    for name, pid in list(player_ids.items())[:30]:
-        if not pid: continue
+    for name, pid in list(batter_ids.items())[:30]:
         try:
             # Current season
-            r1=requests.get(f"https://statsapi.mlb.com/api/v1/people/{pid}/stats",
-                            params={"stats":"season","group":"hitting","season":YEAR},
-                            headers={"User-Agent":"Mozilla/5.0"},timeout=10)
+            r1=retry_get(f"https://statsapi.mlb.com/api/v1/people/{pid}/stats",
+                        params={"stats":"season","group":"hitting","season":YEAR},
+                        headers={"User-Agent":"Mozilla/5.0"},timeout=10,retries=2)
             # Career
-            r2=requests.get(f"https://statsapi.mlb.com/api/v1/people/{pid}/stats",
-                            params={"stats":"career","group":"hitting"},
-                            headers={"User-Agent":"Mozilla/5.0"},timeout=10)
+            r2=retry_get(f"https://statsapi.mlb.com/api/v1/people/{pid}/stats",
+                        params={"stats":"career","group":"hitting"},
+                        headers={"User-Agent":"Mozilla/5.0"},timeout=10,retries=2)
             if r1.status_code==200 and r2.status_code==200:
                 s1=r1.json().get("stats",[{}])[0].get("splits",[{}])
                 s2=r2.json().get("stats",[{}])[0].get("splits",[{}])
@@ -2681,16 +2718,16 @@ def main():
     out.append(fetch_standings(YEAR))
 
     S(56, "MLB STATS API — BATTER SPLITS vs LHP/RHP + Home/Away + Day/Night (tonight's players)")
-    out.append(fetch_mlb_splits_batters(player_ids))
+    out.append(fetch_mlb_splits_batters(game_meta))
 
     S(57, "MLB STATS API — PITCHER SPLITS vs LHB/RHB + Home/Away + Day/Night (tonight's starters)")
     out.append(fetch_mlb_splits_pitchers(game_meta))
 
     S(58, "MLB STATS API — PLAYER GAME LOGS L14 (same-day, tonight's confirmed players)")
-    out.append(fetch_mlb_game_logs(player_ids))
+    out.append(fetch_mlb_game_logs(game_meta))
 
     S(59, "BABIP vs CAREER AVERAGE — regression identification")
-    out.append(fetch_babip_career_compare(player_ids))
+    out.append(fetch_babip_career_compare(game_meta))
 
     # ─── STATCAST BATTERS ─────────────────────────────────────────────────────
     S(60, f"STATCAST BATTER EXPECTED STATS {YEAR}  (xwOBA · xBA · xSLG · Barrel% · HardHit%)")
