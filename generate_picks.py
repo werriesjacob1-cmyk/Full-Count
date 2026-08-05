@@ -65,7 +65,14 @@ PICKS_FILE = os.path.join(OUTPUT_DIR, f"top10_picks_{m.TODAY}.md")
 PICKS_JSON_FILE = os.path.join(OUTPUT_DIR, f"picks_{m.TODAY}.json")
 PLAYERS_DIR = os.environ.get("PLAYERS_DIR", "data/players")
 PLAYER_SNAPSHOT_HISTORY_DAYS = 60  # bounds each player file's growth over a season
-LEAGUE_AVG_TB_PA = 0.38     # league-average total bases per PA, used when no player data is available
+# Measured live from 93 completed games (7 days ending 2026-08-05) via
+# statsapi.boxscore_data: 6227 AB / 6848 PA / 2397 TB.
+#   AB/PA 0.9093 | league SLG (TB/AB) 0.3849 | league TB/PA 0.3500
+# The previous LEAGUE_AVG_TB_PA of 0.38 was on the SLG (per-AB) scale despite
+# being multiplied by plate appearances — the same per-AB/per-PA conflation
+# fixed in project_batter_tb.
+LEAGUE_AVG_TB_PA = 0.350    # league-average total bases per PA (measured)
+AB_PER_PA = 0.9093          # measured; converts a per-AB rate (SLG) to per-PA
 # LEAGUE_AVG_BF_PER_START is defined next to project_pitcher_workload(), with
 # the measurement that produced it.
 
@@ -863,13 +870,42 @@ def project_batter_tb(bs, l7, order, implied_total=None):
     available (Statcast-fallback season data has no ISO column), approximate
     from AVG with a league-average power multiplier instead of silently
     defaulting to a flat rate."""
+    # TB rate per PLATE APPEARANCE. Two real errors were fixed here, both
+    # invisible from reading the code and both found by checking real values:
+    #
+    # (1) SLG was being approximated when it was sitting right there. The
+    #     Statcast-fallback season frame — the shape that actually ships, since
+    #     FanGraphs 403s on most runs — has no ISO, so this fell to
+    #     `avg * 1.35`. But that frame DOES carry `slg`, and slugging IS total
+    #     bases per at-bat by definition, so no approximation is needed at all.
+    #     Measured on tonight's real frame: Kyle Schwarber AVG .246 / SLG .532
+    #     — the approximation returned .332, understating his true TB rate by
+    #     38%. Bryce Harper .344 vs .502 (-31%), Yordan Alvarez .447 vs .649
+    #     (-31%). Every batter TB projection on the common path was low by
+    #     roughly a third, which also silently defeated the point of the new
+    #     expected-PA model, since PA only scales whatever rate it multiplies.
+    #
+    # (2) SLG is per AT-BAT, but it was multiplied by projected PLATE
+    #     APPEARANCES. PA includes walks and HBP, so this over-counted by the
+    #     PA/AB ratio. Measured from 93 real completed games (7 days ending
+    #     2026-08-05, statsapi.boxscore_data): 6227 AB / 6848 PA, so
+    #     AB/PA = 0.9093, league SLG .3849, and league TB/PA .3500. The
+    #     conversion is applied explicitly below.
+    #
+    # The L7 rate is NOT converted — fetch_l7_batter_form computes TB_per_PA
+    # from real PA-ending Statcast rows, so it is already per plate appearance.
     season_rate = None
     if bs:
-        avg = bs.get("AVG"); iso = bs.get("ISO")
-        if avg is not None and iso is not None:
-            season_rate = avg + iso
-        elif avg is not None:
-            season_rate = avg * 1.35  # approximation when ISO isn't available
+        avg = bs.get("AVG"); iso = bs.get("ISO"); slg = bs.get("slg")
+        slg_per_ab = None
+        if slg is not None and slg == slg:
+            slg_per_ab = slg                      # exact: SLG == TB/AB
+        elif avg is not None and iso is not None:
+            slg_per_ab = avg + iso                # exact on the FanGraphs path
+        elif avg is not None and avg == avg:
+            slg_per_ab = avg * 1.35               # last-resort approximation
+        if slg_per_ab is not None and slg_per_ab == slg_per_ab:
+            season_rate = slg_per_ab * AB_PER_PA  # TB/AB -> TB/PA
     l7 = l7 or {}
     l7_pa = l7.get("PA", 0)
     l7_rate = l7.get("TB_per_PA") if l7_pa >= 5 else None
