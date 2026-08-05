@@ -2843,6 +2843,162 @@ def compute_team_k_pct(game_meta, team_bat=None):
 #  MAIN — ORCHESTRATE ALL SECTIONS
 # ══════════════════════════════════════════════════════════════════════════════
 
+# ══════════════════════════════════════════════════════════════════════════════
+#  SOURCE-FALLBACK WRAPPERS — mlb_sources.py integration
+#
+#  Each of these keeps the ORIGINAL source primary where it still works, and
+#  falls back to mlb_sources.py (MLB's official Stats API / raw Statcast) only
+#  when the original comes back empty. That ordering matters: FanGraphs carries
+#  metrics the fallbacks genuinely don't (wRC+, Stuff+), so it should still win
+#  when it's reachable — but it is Cloudflare-blocked on most real GitHub
+#  Actions runs, which is exactly when these fallbacks earn their keep.
+#
+#  Every section wired here was previously EMPTY on real runs. Each fallback
+#  was verified live against real data before being wired (see mlb_sources.py
+#  docstrings for the observed values).
+#
+#  mlb_sources is imported lazily inside each function on purpose: mlb_sources
+#  does `import mlb_daily as m` at module scope, so a module-level import here
+#  would be circular.
+# ══════════════════════════════════════════════════════════════════════════════
+
+def _src():
+    import mlb_sources
+    return mlb_sources
+
+
+def _fallback_note(what):
+    return f"  [FanGraphs unavailable this run — {what} via MLB Stats API / Statcast instead]\n"
+
+
+def section_team_batting():
+    df = fg_team_bat(YEAR)
+    if df is not None and not df.empty: return fmt(df)
+    rows = _src().team_batting_table()
+    if not rows: return "  Team batting unavailable from both sources.\n"
+    return _fallback_note("official team batting") + fmt(pd.DataFrame(rows))
+
+
+def section_team_pitching():
+    df = fg_team_pit(YEAR)
+    if df is not None and not df.empty: return fmt(df)
+    rows = _src().team_pitching_table()
+    if not rows: return "  Team pitching unavailable from both sources.\n"
+    return _fallback_note("official team pitching") + fmt(pd.DataFrame(rows))
+
+
+def section_team_fielding():
+    df = fg_team_field(YEAR)
+    if df is not None and not df.empty: return fmt(df)
+    rows = _src().team_fielding_table()
+    if not rows: return "  Team fielding unavailable from both sources.\n"
+    return _fallback_note("official team fielding (errors/Fld%/range factor)") + fmt(pd.DataFrame(rows))
+
+
+def section_individual_fielding():
+    df = fg_field(YEAR)
+    if df is not None and not df.empty: return fmt(df)
+    rows = _src().player_fielding_table()
+    if not rows: return "  Individual fielding unavailable from both sources.\n"
+    return ("  [DRS/UZR are proprietary (BIS/FanGraphs) and unavailable — these are MLB's official\n"
+            "   fielding stats. Statcast Outs Above Average in Section 82 is the advanced equivalent.]\n"
+            + fmt(pd.DataFrame(rows).head(80)))
+
+
+def section_pitch_quality(pit_season):
+    if pit_season is not None and not pit_season.empty and "Stuff+" in pit_season.columns:
+        t = pit_season[[c for c in ["Name","Team","Stuff+","Location+","Pitching+","ERA","K%"] if c in pit_season.columns]]
+        return fmt(t.sort_values("Stuff+", ascending=False).head(50))
+    df = _src().pitch_quality()
+    if df is None or df.empty: return "  Pitch quality unavailable from both sources.\n"
+    return ("  [Stuff+ is a proprietary FanGraphs model with no public source. These are the OBSERVED\n"
+            "   per-pitch-type outcomes a stuff model exists to predict — run value/100, whiff%,\n"
+            "   put-away% — sorted by run value (most effective first). Different metric, not a\n"
+            "   Stuff+ estimate.]\n" + fmt(df.head(60)))
+
+
+def section_catcher_framing():
+    df = sc_framing(YEAR)
+    if df is not None and not df.empty: return fmt(df)
+    fr = _src().catcher_framing()
+    if not fr: return "  Catcher framing unavailable from both sources.\n"
+    by_id = fetch_active_roster_by_name().get("by_id", {})
+    rows = [{"Catcher": by_id.get(cid, f"MLBAM {cid}"), **v} for cid, v in fr.items()]
+    t = pd.DataFrame(rows).sort_values("Steal%", ascending=False).reset_index(drop=True)
+    t.index += 1
+    return ("  [Baseball Savant disabled the CSV export for its catcher-framing leaderboard\n"
+            "   specifically, so this is computed from raw Statcast pitch data instead: share of\n"
+            "   TAKEN pitches outside the zone (zones 11-14) called strikes = strikes stolen.]\n"
+            + fmt(t.head(60)))
+
+
+def section_pull_tendency(game_meta):
+    pr = _src().pull_rates()
+    if not pr: return "  Pull% unavailable — season Statcast pull failed.\n"
+    lineup_ids = {}
+    for gm in game_meta:
+        for b in gm.get("away_lineup", []) + gm.get("home_lineup", []):
+            if b.get("id"): lineup_ids[b["id"]] = (b.get("name"), gm["matchup"])
+    rows = []
+    for bid, (name, matchup) in lineup_ids.items():
+        v = pr.get(bid)
+        if v: rows.append({"Batter": name, "Matchup": matchup, **v})
+    if not rows: return "  No pull-tendency data for tonight's confirmed lineups.\n"
+    t = pd.DataFrame(rows).sort_values("Pull%", ascending=False).reset_index(drop=True)
+    t.index += 1
+    return ("  [Computed from Statcast batted-ball spray angle, mirrored by batter handedness so\n"
+            "   'pull' means the same for LHB and RHB. Extreme pull hitters face the most shifted\n"
+            "   alignments; extreme oppo hitters beat them.]\n" + fmt(t))
+
+
+def section_bvp(game_meta):
+    """MLB's official vsPlayer API is PRIMARY here, not a fallback: the previous
+    FantasyInfoCentral scrape returns 403 from GitHub Actions' IP range (works
+    locally, fails in CI — which is where this actually runs). Cross-validated
+    live: MLB's API returned Benintendi 29AB/11H/1HR/.379 vs Sonny Gray, matching
+    the scrape digit-for-digit from a fully independent source."""
+    rows = _src().bvp_table(game_meta)
+    if rows:
+        t = pd.DataFrame(rows).reset_index(drop=True); t.index += 1
+        return ("  Source: MLB Stats API official batter-vs-pitcher history (min 3 career AB).\n"
+                + fmt(t))
+    return fetch_bvp(TODAY)
+
+
+def section_sp_rp_splits(pit_season):
+    txt = fetch_sp_rp_splits(pit_season)
+    if txt and "not available" not in txt.lower() and "no data" not in txt.lower():
+        return txt
+    sr = _src().sp_rp_splits()
+    if not sr or not sr.get("SP") or not sr.get("RP"):
+        return "  SP/RP splits unavailable from both sources.\n"
+    sp, rp = sr["SP"], sr["RP"]
+    return (_fallback_note("real SP/RP splits") +
+            f"  Starters ({sp['n']} pitchers, {sp['IP']} IP): ERA {sp['ERA']}  K/9 {sp['K/9']}  BB/9 {sp['BB/9']}  WHIP {sp['WHIP']}\n"
+            f"  Relievers ({rp['n']} pitchers, {rp['IP']} IP): ERA {rp['ERA']}  K/9 {rp['K/9']}  BB/9 {rp['BB/9']}  WHIP {rp['WHIP']}\n"
+            f"\n  K/9 gap (RP - SP): {round(rp['K/9'] - sp['K/9'], 2)} — relievers miss more bats per inning,\n"
+            f"  which is why late-game PAs are worse for contact props and better for K props.\n")
+
+
+def section_team_k_pct(game_meta):
+    txt = compute_team_k_pct(game_meta, team_bat=None)
+    if txt and "no team batting data" not in txt.lower() and "not in team batting" not in txt.lower():
+        return txt
+    rows = _src().team_batting_table()
+    if not rows: return "  Team K% unavailable from both sources.\n"
+    k_by_team = {r["Team"]: r.get("K%") for r in rows if r.get("K%") is not None}
+    if not k_by_team: return "  Team K% unavailable from both sources.\n"
+    lines = [_fallback_note("official team K%").rstrip()]
+    for gm in game_meta:
+        for sp_key, opp_key in [("away_sp", "home_team"), ("home_sp", "away_team")]:
+            if gm.get(sp_key) == "TBD": continue
+            k = k_by_team.get(gm[opp_key])
+            if k is None: continue
+            flag = " 🎯 high-K lineup" if k >= 23 else (" ⚠️ contact lineup" if k <= 19 else "")
+            lines.append(f"  {gm[sp_key]:<24} vs {gm[opp_key]:<24} team K% {k}{flag}")
+    return "\n".join(lines) + "\n"
+
+
 def main():
     print(f"\n{'━'*70}")
     print(f"  MLB DAILY RESEARCH TOOL  V5  —  {TODAY}")
@@ -2903,7 +3059,7 @@ def main():
                "  Sharp angle: Home teams use challenges more aggressively — home favorite edge on NRFI props\n")
 
     S(10, f"BvP MATCHUP TABLE — {TODAY} (FantasyInfoCentral)")
-    out.append(fetch_bvp(TODAY))
+    out.append(section_bvp(game_meta))
 
     S(11, "HEAD-TO-HEAD PITCH-BY-PITCH AB HISTORY (tonight's matchups via Statcast)")
     out.append("  Full pitch-by-pitch BvP history available in Statcast via statcast_batter() per matchup.\n"
@@ -3052,16 +3208,16 @@ def main():
 
     # ─── TEAM STATS ───────────────────────────────────────────────────────────
     S(49, f"FANGRAPHS TEAM BATTING {YEAR}")
-    out.append(fmt(fg_team_bat(YEAR)))
+    out.append(section_team_batting())
 
     S(50, f"FANGRAPHS TEAM PITCHING {YEAR}")
-    out.append(fmt(fg_team_pit(YEAR)))
+    out.append(section_team_pitching())
 
     S(51, f"FANGRAPHS TEAM FIELDING {YEAR} + error rates")
-    out.append(fmt(fg_team_field(YEAR)))
+    out.append(section_team_fielding())
 
     S(52, "BATTER SPLITS VS STARTERS vs RELIEVERS + HIGH/LOW LEVERAGE")
-    out.append(fetch_sp_rp_splits(pit_season))
+    out.append(section_sp_rp_splits(pit_season))
 
     S(53, "REGIME DETECTION — league environment (pitcher vs hitter month)")
     out.append(compute_regime_detection())
@@ -3157,19 +3313,14 @@ def main():
                "  Elite slider sweep (high HB) vs same-side hitters = dominant platoon split.\n")
 
     S(75, f"STUFF+ LEADERBOARD  (FanGraphs — pitch quality score)")
-    if not pit_season.empty and "Stuff+" in pit_season.columns:
-        stuff=pit_season[["Name","Team","ERA","FIP","xFIP","Stuff+","Location+"]].dropna(subset=["Stuff+"]).sort_values("Stuff+",ascending=False).reset_index(drop=True)
-        stuff.index+=1
-        out.append(fmt(stuff.head(50)))
-    else:
-        out.append("  Stuff+ not in FanGraphs data pull (may require different stat type parameter).\n")
+    out.append(section_pitch_quality(pit_season))
 
     S(76, "PITCHER ARCHETYPE CLUSTERS  (KMeans on arsenal profile — tonight's starters)")
     out.append(compute_pitcher_archetype_clusters())
 
     # ─── FIELDING & MISC ──────────────────────────────────────────────────────
     S(77, f"STATCAST CATCHER FRAMING {YEAR}  (strikes stolen above average)")
-    out.append(fmt(sc_framing(YEAR)))
+    out.append(section_catcher_framing())
 
     S(78, f"STATCAST CATCHER POP TIME {YEAR}  (SB prevention)")
     out.append(fmt(sc_poptime(YEAR)))
@@ -3187,7 +3338,7 @@ def main():
             pull.index+=1
             out.append("  High Pull% batters most affected by LF defensive positioning:\n"+fmt(pull.head(60)))
         else:
-            out.append("  Pull% not available.\n")
+            out.append(section_pull_tendency(game_meta))
     except Exception as e:
         out.append(f"  Failed: {e}\n")
 
@@ -3195,7 +3346,7 @@ def main():
     out.append(fmt(sc_oaa(YEAR)))
 
     S(83, f"FANGRAPHS INDIVIDUAL FIELDING {YEAR}  (DRS · UZR)")
-    out.append(fmt(fg_field(YEAR)))
+    out.append(section_individual_fielding())
 
     S(84, f"STATCAST SPRINT SPEED {YEAR}")
     out.append(fmt(sc_sprint(YEAR)))
@@ -3261,7 +3412,7 @@ def main():
 
     # ─── NEW: TEAM K% (distinct from Section 45's individual-batter K% table) ──
     S(88, "TEAM K% — tonight's opposing lineups, team-level (FanGraphs team batting)")
-    out.append(compute_team_k_pct(game_meta, team_bat=None))
+    out.append(section_team_k_pct(game_meta))
 
     # ─── WRITE OUTPUT ─────────────────────────────────────────────────────────
     run_log = build_run_log(out)
