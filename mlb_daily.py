@@ -1774,8 +1774,30 @@ def sc_poptime(yr):
     except Exception as e: warn(f"{e}"); return pd.DataFrame()
 
 def sc_oaa(yr):
+    # Verified live: statcast_outs_above_average() takes one required position
+    # per call (no "all positions" option -- pybaseball raises ValueError for
+    # catcher, unsupported on this specific Savant leaderboard) and this was
+    # only ever called with pos=9 (right field). Checked a real report (Section
+    # 82, 2026-08-05): every row's primary_pos_formatted was RF -- infielders,
+    # CF/LF, and everyone else were silently absent from a section titled
+    # "OUTS ABOVE AVERAGE — FIELDING" with no "right field only" qualifier
+    # anywhere. Looping across every position this leaderboard supports and
+    # combining delivers what the title actually promises; verified live that
+    # each (player, position) pair is a genuinely distinct OAA computation on
+    # Savant's own site (a multi-position player's OAA differs by which
+    # position was queried), not a duplicate row to dedupe away.
     step(f"Statcast OAA fielding {yr}...")
-    try: df=pyb.statcast_outs_above_average(yr, pos=9); step(f"  {len(df)}"); return df
+    try:
+        dfs=[]
+        for pos in [3,4,5,6,7,8,9]:
+            try:
+                d=pyb.statcast_outs_above_average(yr, pos)
+                if d is not None and not d.empty: dfs.append(d)
+            except Exception: pass
+        if not dfs: return pd.DataFrame()
+        df=pd.concat(dfs, ignore_index=True)
+        step(f"  {len(df)}")
+        return df
     except Exception as e: warn(f"{e}"); return pd.DataFrame()
 
 def sc_of_oaa(yr):
@@ -2405,26 +2427,45 @@ def compute_score_differential_splits():
         if df is None or df.empty: return "  No data.\n"
         if "bat_score" not in df.columns or "fld_score" not in df.columns:
             return "  Score columns not available in this Statcast pull.\n"
-        df["score_diff"]=df["bat_score"]-df["fld_score"]
+        # Verified live: raw pyb.statcast() rows are pitch-level, and "player_name"
+        # on them is the PITCHER (checked against a real row -- player_name
+        # "De Jesus, Enmanuel" resolved via statsapi.lookup_player to a pitcher,
+        # id 646241, distinct from the "batter" id column, 703607, which has no
+        # name column of its own in this pull at all). Grouping by player_name
+        # here was always grouping by pitcher, not batter, despite being labeled
+        # "Players" -- relabeled to say what it actually is (EV allowed by the
+        # pitcher, split by score state) instead of implying batter data.
+        # score_diff is also flipped to the pitcher's own team's perspective
+        # (fld_score - bat_score, "fld" being the fielding/pitching team) so
+        # "Down 3+"/"Up 3+" read correctly for a pitcher-labeled section --
+        # the original bat_score - fld_score was the batting team's deficit,
+        # which is the *opposite* sign of the pitcher's own team's game state.
+        df["score_diff"]=df["fld_score"]-df["bat_score"]
         df["game_state"]=pd.cut(df["score_diff"],bins=[-50,-3,-1,1,3,50],
                                 labels=["Down 3+","Down 1-2","Tied/Close","Up 1-2","Up 3+"])
         batted=df[df["launch_speed"].notna()].copy()
         by_state=batted.groupby(["player_name","game_state"],observed=True).agg(
             avg_EV=("launch_speed","mean"),
-            K_rate=("events",lambda x:(x=="strikeout").sum()/len(x)*100),
             count=("launch_speed","count")
         ).round(2)
-        # Find interesting splits
-        lines=["  Players with notable score-differential performance differences (L14):"]
-        for player,grp in by_state.groupby(level=0):
+        # Find interesting splits. Verified live: pd.cut's real category labels are
+        # "Down 3+"/"Down 1-2"/"Tied/Close"/"Up 1-2"/"Up 3+" (checked the actual
+        # by_state index against a live L14 pull) -- the literal strings "Tied" and
+        # "Down 2+" this used to check for don't exist under either name, so this
+        # `if` was False for every player on every run and the section always fell
+        # through to "No major score-state performance differences found," which is
+        # exactly what a real 2026-08-05 report showed, regardless of what the
+        # actual data contained.
+        lines=["  Pitchers with notable EV-allowed differences by their own team's score state (L14):"]
+        for pitcher,grp in by_state.groupby(level=0):
             grp=grp.droplevel(0)
             if grp["count"].sum()<10: continue
-            if "Tied" in grp.index and "Down 2+" in grp.index:
-                ev_tied=grp.loc["Tied","avg_EV"] if "Tied" in grp.index else None
-                ev_down=grp.loc["Down 2+","avg_EV"] if "Down 2+" in grp.index else None
+            if "Tied/Close" in grp.index and "Down 3+" in grp.index:
+                ev_tied=grp.loc["Tied/Close","avg_EV"] if "Tied/Close" in grp.index else None
+                ev_down=grp.loc["Down 3+","avg_EV"] if "Down 3+" in grp.index else None
                 if ev_tied and ev_down and abs(ev_tied-ev_down)>5:
-                    flag="🟢 ELEVATES when behind" if ev_down>ev_tied else "🔴 DECLINES when behind"
-                    lines.append(f"    {player}: EV tied={ev_tied:.1f} EV down={ev_down:.1f}  {flag}")
+                    flag="🔴 GETS HIT HARDER when his team trails big" if ev_down>ev_tied else "🟢 GETS HIT SOFTER when his team trails big"
+                    lines.append(f"    {pitcher}: EV allowed (close)={ev_tied:.1f} EV allowed (down 3+)={ev_down:.1f}  {flag}")
         if len(lines)==1: lines.append("  No major score-state performance differences found in L14 sample")
         return "\n".join(lines[:40])+"\n"
     except Exception as e:
@@ -2432,7 +2473,18 @@ def compute_score_differential_splits():
 
 
 def compute_risp_splits():
-    step("RISP + pressure performance splits...")
+    # Verified live (same check as compute_score_differential_splits, same real
+    # row): raw pyb.statcast() rows are pitch-level and "player_name" on them is
+    # the PITCHER, not the batter -- the "batter" column is an ID with no name
+    # attached in this pull. This was grouping by pitcher all along despite its
+    # own step() log literally calling the result "batters" and the header
+    # framing it as clutch-hitting performance ("performs BETTER with RISP").
+    # What it actually computes is real and coherent -- opponent AVG allowed by
+    # each pitcher, with runners in scoring position vs empty bases -- just
+    # mislabeled. Relabeled to describe what's actually being measured rather
+    # than claim batter data a raw pitch-level Statcast pull doesn't carry a
+    # batter name for.
+    step("RISP + pressure performance splits (opponent AVG allowed by pitcher)...")
     try:
         df=pyb.statcast(start_dt=L14_START,end_dt=L14_END)
         if df is None or df.empty: return "  No data.\n"
@@ -2443,16 +2495,17 @@ def compute_risp_splits():
             PA=("events","count"),
             avg_EV=("launch_speed","mean")
         ).round(3)
-        risp_perf["AVG"]=round(risp_perf["H"]/risp_perf["PA"],3)
+        risp_perf["AVG_allowed"]=round(risp_perf["H"]/risp_perf["PA"],3)
         # Pivot to compare RISP vs non-RISP
-        pivot=risp_perf["AVG"].unstack("risp")
-        pivot.columns=["empty_bases","RISP"]
+        pivot=risp_perf["AVG_allowed"].unstack("risp")
+        pivot.columns=["AVG_allowed_empty_bases","AVG_allowed_RISP"]
         pivot=pivot.dropna().reset_index()
-        pivot["RISP_delta"]=round(pivot["RISP"]-pivot["empty_bases"],3)
+        pivot=pivot.rename(columns={"player_name":"pitcher"})
+        pivot["RISP_delta"]=round(pivot["AVG_allowed_RISP"]-pivot["AVG_allowed_empty_bases"],3)
         pivot=pivot.sort_values("RISP_delta",ascending=False).reset_index(drop=True)
         pivot.index+=1
-        step(f"  {len(pivot)} batters")
-        out="  Positive delta = performs BETTER with RISP  |  Negative = struggles under pressure\n\n"
+        step(f"  {len(pivot)} pitchers")
+        out="  Positive delta = pitcher allows a HIGHER AVG with RISP (struggles under pressure)  |  Negative = tightens up with RISP\n\n"
         out+=fmt(pivot.head(60))
         return out
     except Exception as e:
