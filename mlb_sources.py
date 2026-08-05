@@ -744,3 +744,149 @@ def fetch_umpire_run_environment(game_meta):
             "successful_challenge_rate": u.get("successful_challenge_rate"),
         }
     return out
+
+
+# ══════════════════════════════════════════════════════════════════════════
+#  REST / USAGE  (batters and starters, from real MLB game logs)
+# ══════════════════════════════════════════════════════════════════════════
+
+import datetime as _dt
+
+
+def _parse_dates(splits):
+    """Sorted ascending list of real datetime.date objects from gameLog splits."""
+    out = []
+    for sp in splits:
+        d = sp.get("date")
+        if not d:
+            continue
+        try:
+            out.append(_dt.datetime.strptime(d, "%Y-%m-%d").date())
+        except ValueError:
+            continue
+    return sorted(out)
+
+
+def _consecutive_streak(dates):
+    """Games played in a row with no calendar-day gap >1 (i.e. no off day
+    in between; a same-day doubleheader — gap 0 — still counts as
+    consecutive), counted backward from the most recent game."""
+    if not dates:
+        return 0
+    streak = 1
+    for i in range(len(dates) - 1, 0, -1):
+        gap = (dates[i] - dates[i - 1]).days
+        if gap <= 1:
+            streak += 1
+        else:
+            break
+    return streak
+
+
+def _rest_batter_one(job):
+    pid, name = job
+    today = _dt.datetime.strptime(m.TODAY, "%Y-%m-%d").date()
+    try:
+        r = m.retry_get(f"{STATS_API}/people/{pid}/stats",
+                        params={"stats": "gameLog", "group": "hitting", "season": m.YEAR},
+                        headers=UA, timeout=15, retries=2)
+        r.raise_for_status()
+        stats = r.json().get("stats", [])
+        if not stats:
+            return None
+        dates = _parse_dates(stats[0].get("splits", []))
+        if not dates:
+            return None
+    except Exception:
+        return None
+    last = dates[-1]
+    return {"Name": name, "id": pid,
+            "days_since_last_game": (today - last).days,
+            "consecutive_games": _consecutive_streak(dates),
+            "games_last_7d": sum(1 for d in dates if 0 <= (today - d).days <= 7)}
+
+
+def _rest_pitcher_one(job):
+    pid, name = job
+    today = _dt.datetime.strptime(m.TODAY, "%Y-%m-%d").date()
+    try:
+        r = m.retry_get(f"{STATS_API}/people/{pid}/stats",
+                        params={"stats": "gameLog", "group": "pitching", "season": m.YEAR},
+                        headers=UA, timeout=15, retries=2)
+        r.raise_for_status()
+        stats = r.json().get("stats", [])
+        if not stats:
+            return None
+        splits = stats[0].get("splits", [])
+        # Only rows that were actual starts (a starter can also appear in
+        # relief; those rows have gamesStarted==0 and would understate rest).
+        start_splits = [sp for sp in splits if int(sp.get("stat", {}).get("gamesStarted", 0) or 0) > 0]
+        dates = _parse_dates(start_splits)
+        if not dates:
+            return None
+    except Exception:
+        return None
+    last = dates[-1]
+    return {"Name": name, "id": pid, "days_since_last_start": (today - last).days,
+            "starts_this_season": len(dates)}
+
+
+def rest_and_usage(game_meta, max_batters_per_game=9, max_workers=16):
+    """Rest/usage signals for tonight's confirmed lineup batters and
+    probable starters, from real MLB game logs (stats=gameLog) — the same
+    endpoint shape as mlb_daily.fetch_mlb_game_logs, reused here for a
+    different purpose (rest, not recent performance).
+
+    Motivation stated in the task: fatigue predicts both reduced
+    effectiveness AND outright scratches (this pipeline currently models
+    neither — a scratch voids a bet with no adjustment). This does not
+    predict scratches itself (no source here exposes injury/lineup-change
+    probability), it only surfaces the real usage pattern a human or a
+    downstream model needs to judge that risk: a batter who has started
+    every game for two straight weeks, or a starter throwing on short
+    rest, is a real and verifiable fatigue signal even without a scratch
+    prediction model.
+
+    Batters: days_since_last_game, consecutive_games (streak with no
+    calendar-day gap, so a scheduled off-day resets it — same-day double-
+    headers do NOT break the streak), games_last_7d.
+    Starters: days_since_last_start, computed only from game-log rows
+    where gamesStarted==1 — verified live this matters: a starter's own
+    game log can carry relief-appearance rows (gamesStarted==0) which
+    would silently understate true rest if not filtered out.
+
+    Parallelized with the same ThreadPoolExecutor pattern as bvp_table/
+    batter_sp_rp_splits (one gameLog call per player). Verified live on
+    the real 2026-08-05 slate: 258 unique lineup batters + up to 30
+    probable starters fetched concurrently.
+
+    Returns {"batters": {id: {...}}, "starters": {id: {...}}} — dict-keyed
+    by MLBAM id per the project convention, not a list, since this is
+    meant to be looked up per player rather than iterated/sorted."""
+    batters = {}
+    starters = {}
+    for gm in game_meta:
+        for b in gm.get("away_lineup", [])[:max_batters_per_game] + gm.get("home_lineup", [])[:max_batters_per_game]:
+            if b.get("id") and b["id"] not in batters:
+                batters[b["id"]] = b.get("name", "?")
+        for sp_key in ("away_sp", "home_sp"):
+            sp_id = gm.get(f"{sp_key}_id")
+            sp_name = gm.get(sp_key)
+            if sp_id and sp_name != "TBD" and sp_id not in starters:
+                starters[sp_id] = sp_name
+
+    out = {"batters": {}, "starters": {}}
+    try:
+        if batters:
+            with m.ThreadPoolExecutor(max_workers=max_workers) as ex:
+                for res in ex.map(_rest_batter_one, list(batters.items())):
+                    if res:
+                        out["batters"][res["id"]] = res
+        if starters:
+            with m.ThreadPoolExecutor(max_workers=max_workers) as ex:
+                for res in ex.map(_rest_pitcher_one, list(starters.items())):
+                    if res:
+                        out["starters"][res["id"]] = res
+    except Exception as e:
+        m.warn(f"Rest/usage: {e}")
+    return out
