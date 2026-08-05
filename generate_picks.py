@@ -268,11 +268,28 @@ def fetch_l7_batter_form():
     pitch, not the batter (a well-known Statcast quirk) — grouping by it silently
     builds a pitcher-keyed table, so every batter-name lookup misses. The
     numeric "batter" column is the actual batter MLBAM ID, which lineup entries
-    already carry from fetch_lineups()."""
+    already carry from fetch_lineups().
+
+    Bug found and verified live: filtering rows to launch_speed.notna() alone
+    (as this used to do) also keeps foul balls — a foul has a real exit velo
+    but does NOT end the plate appearance, so counting it as a "PA" row
+    double-counts. Live check on the real L7 window: 9158 rows had a non-null
+    launch_speed, but only 4820 of them were description=="hit_into_play"
+    (i.e. PA-terminating); the other 4338 were fouls. For Yordan Alvarez
+    specifically this inflated his L7 "PA" from 18 (real balls in play) to 30,
+    which cut his computed AVG from a true 9/18=0.500 down to a wrong
+    9/30=0.300, and did the same (understated) damage to TB_per_PA and
+    barrel_pct — silently deflating recent-form scores and the TB projection
+    for every batter with any foul balls in the window (nearly everyone), with
+    no error or empty result to flag it. Fixed by also requiring
+    events.notna(), restricting every rate in this table to PA-terminating
+    batted balls only. Re-verified live post-fix: Alvarez's L7 PA is now 18
+    (matches the hit_into_play count exactly) and AVG is 0.5, matching a
+    hand-computed H/PA check on the raw Statcast rows."""
     try:
         df = m.pyb.statcast(start_dt=m.L7_START, end_dt=m.L7_END)
         if df is None or df.empty: return {}
-        batted = df[df["launch_speed"].notna()].copy()
+        batted = df[df["launch_speed"].notna() & df["events"].notna()].copy()
         tb_map = {"single": 1, "double": 2, "triple": 3, "home_run": 4}
         batted["tb"] = batted["events"].map(tb_map).fillna(0)
         form = batted.groupby("batter").agg(
