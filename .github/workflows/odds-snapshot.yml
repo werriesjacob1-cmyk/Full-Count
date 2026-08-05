@@ -1,0 +1,84 @@
+name: Odds Snapshot
+
+# Captures the betting market hourly across the game-relevant window.
+#
+# Separate from the main pipeline on purpose. Line movement is the one input
+# in this project that CANNOT be backfilled -- box scores, Statcast, weather
+# and player stats can all be re-fetched for any past date, but the path a
+# line took only exists if something recorded it while it happened. So it
+# needs a cadence the 15-20 minute main pipeline can't provide, and it must
+# not be coupled to that pipeline's failures.
+#
+# Windowed 14:00-02:00 UTC rather than a flat hourly, deliberately: GitHub's
+# free tier for private repos is 2000 Actions-minutes/month, and the main
+# pipeline already consumes roughly 1200 of those (~20 min x 2 daily windows
+# x 30 days). A flat 24/7 hourly snapshot would be ~720 more and put the
+# account near its ceiling; this window is ~13 runs/day at well under a
+# minute each, which covers morning lines through late West Coast games at a
+# fraction of the cost.
+on:
+  schedule:
+    - cron: '0 14-23,0-2 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+# Distinct from the main pipeline's concurrency group so a long data run
+# never blocks a snapshot -- a missed interval is a permanent hole in the
+# series, whereas a delayed pipeline run just finishes later.
+concurrency:
+  group: odds-snapshot
+  cancel-in-progress: false
+
+jobs:
+  snapshot:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      # Only needs requests -- deliberately not installing requirements.txt
+      # (pybaseball/pandas/scikit-learn), which would take minutes and defeat
+      # the point of a lightweight job.
+      - name: Install minimal deps
+        run: pip install --quiet requests
+
+      - name: Capture odds snapshot
+        run: python3 odds_snapshot.py
+
+      - name: Commit snapshot
+        run: |
+          shopt -s nullglob
+          git config user.name "mlb-pipeline-bot"
+          git config user.email "actions@github.com"
+          git add data/odds/*.json
+          if git diff --cached --quiet; then
+            echo "No new odds data to commit."
+            exit 0
+          fi
+          git commit -m "Odds snapshot $(date -u +'%F %H:%M') UTC"
+          # Same retry-with-rebase as the main pipeline: this job runs hourly
+          # and WILL collide with the main pipeline's own commits and with
+          # manual pushes. Snapshots only ever append to data/odds/, which
+          # nothing else writes, so a rebase resolves cleanly; abort loudly
+          # rather than leave a half-rebased tree if it somehow doesn't.
+          for attempt in 1 2 3 4 5; do
+            if git push; then
+              echo "Pushed on attempt $attempt."
+              exit 0
+            fi
+            echo "Push rejected (attempt $attempt/5) — rebasing onto origin/main."
+            git fetch origin main
+            if ! git rebase origin/main; then
+              echo "::error::Rebase conflict — aborting rather than leaving a broken tree."
+              git rebase --abort
+              exit 1
+            fi
+          done
+          echo "::error::Failed to push odds snapshot after 5 attempts."
+          exit 1
