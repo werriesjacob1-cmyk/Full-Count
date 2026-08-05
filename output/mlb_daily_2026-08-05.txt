@@ -1,5 +1,5 @@
 MLB DAILY DATA PACKAGE V5 — 2026-08-05
-Generated : 2026-08-05  13:27:13
+Generated : 2026-08-05  13:44:01
 Season    : 2026
 Windows   : L3 2026-08-02→2026-08-05 | L7 2026-07-29→2026-08-05 | L14 2026-07-22→2026-08-05 | L30 2026-07-06→2026-08-05
 Sources   : FanGraphs | Statcast/Baseball Savant | MLB Stats API | UmpScorecards | FIC | Open-Meteo | Covers.com
@@ -9,7 +9,7 @@ Sources   : FanGraphs | Statcast/Baseball Savant | MLB Stats API | UmpScorecards
   SECTION 0: RUN SUMMARY — what's missing at a glance (see run_log JSON for machine-readable form)
 ════════════════════════════════════════════════════════════════════════
 
-  88 sections attempted  |  73 OK  |  15 empty  |  0 failed
+  88 sections attempted  |  74 OK  |  14 empty  |  0 failed
 
 
   EMPTY sections (no data returned — often expected, e.g. HP umpire TBD before game morning):
@@ -22,7 +22,6 @@ Sources   : FanGraphs | Statcast/Baseball Savant | MLB Stats API | UmpScorecards
     Section  52: BATTER SPLITS VS STARTERS vs RELIEVERS + HIGH/LOW LEVERAGE
     Section  56: MLB STATS API — BATTER SPLITS vs LHP/RHP + Home/Away + Day/Night (tonight's players)
     Section  58: MLB STATS API — PLAYER GAME LOGS L14 (same-day, tonight's confirmed players)
-    Section  67: LINEUP CONTEXT TABLE  (OBP ahead · protection behind · projected PA per slot)
     Section  75: STUFF+ LEADERBOARD  (FanGraphs — pitch quality score)
     Section  77: STATCAST CATCHER FRAMING 2026  (strikes stolen above average)
     Section  81: INFIELD PULL TENDENCY CROSS-MATCH  (Pull% vs defensive positioning)
@@ -776,7 +775,7 @@ Sources   : FanGraphs | Statcast/Baseball Savant | MLB Stats API | UmpScorecards
   Park                         Team    LF   CF   RF  LFw  RFw Surf   Dome  Humdr  ElevFt Foul   BatEye  Roof 
   --------------------------------------------------------------------------------------------------------------
   Chase Field                  ARI    330  407  334    7    7 grass  ✅     ✅        1086 avg    easy    ✅    
-  Oakland Coliseum             ATH    330  400  330    8    8 grass  —     —          25 large  hard    —    
+  Sutter Health Park           ATH    330  403  325    8    8 grass  —     —          25 large  hard    —    
   Truist Park                  ATL    335  400  325    8    8 grass  ✅     —        1050 avg    easy    ✅    
   Camden Yards                 BAL    333  410  318    7    7 grass  —     —          20 avg    easy    —    
   Fenway Park                  BOS    310  420  302   37    5 grass  —     —          20 small  medium  —    
@@ -786,7 +785,7 @@ Sources   : FanGraphs | Statcast/Baseball Savant | MLB Stats API | UmpScorecards
   Coors Field                  COL    347  415  350    8    8 grass  —     ✅        5200 large  easy    —    
   Guaranteed Rate Field        CWS    330  400  335    8    8 grass  —     —         595 avg    easy    —    
   Comerica Park                DET    345  420  330   14    8 grass  —     —         585 large  easy    —    
-  Minute Maid Park             HOU    315  435  326   21    7 grass  ✅     —          43 avg    medium  ✅    
+  Daikin Park                  HOU    315  435  326   21    7 grass  ✅     —          43 avg    medium  ✅    
   Kauffman Stadium             KC     330  410  330    9    9 grass  —     —         909 large  easy    —    
   Angel Stadium                LAA    330  396  330    8    8 grass  —     —         160 large  easy    —    
   Dodger Stadium               LAD    330  395  330    8    8 grass  —     —         512 avg    easy    —    
@@ -816,13 +815,18 @@ Sources   : FanGraphs | Statcast/Baseball Savant | MLB Stats API | UmpScorecards
 ════════════════════════════════════════════════════════════════════════
 
 
-  Toronto Blue Jays @ Houston Astros — stadium not found: Daikin Park
+──────────────────────────────────────────────────
+  Toronto Blue Jays @ Houston Astros
+  Venue  : Daikin Park (DOME — weather irrelevant)
+  Humidor: No
+  Surface: grass
+  HP Ump : TBD
 
 ──────────────────────────────────────────────────
   Los Angeles Dodgers @ Chicago Cubs
   Venue   : Wrigley Field  |  Elev: 595ft  |  Surface: grass
   Temp    : 81°F  |  Humidity: 67%
-  Rain%   : 13%  (0.00in expected)
+  Rain%   : 15%  (0.00in expected)
   Wind    : 8mph from SW (218°)
   vs Field: blowing OUT to CF 🔴 hitter-friendly ⚡
   AirDens : 0.9362  →  ball carries 6.4% FARTHER vs sea-level
@@ -852,7 +856,7 @@ Sources   : FanGraphs | Statcast/Baseball Savant | MLB Stats API | UmpScorecards
   Los Angeles Angels @ Baltimore Orioles
   Venue   : Camden Yards  |  Elev: 20ft  |  Surface: grass
   Temp    : 83°F  |  Humidity: 84%
-  Rain%   : 20%  (0.00in expected)
+  Rain%   : 11%  (0.00in expected)
   Wind    : 4mph from S (187°)
   vs Field: blowing L→R crossfield
   AirDens : 0.9513  →  ball carries 4.9% FARTHER vs sea-level
@@ -863,7 +867,7 @@ Sources   : FanGraphs | Statcast/Baseball Savant | MLB Stats API | UmpScorecards
   New York Mets @ Cleveland Guardians
   Venue   : Progressive Field  |  Elev: 653ft  |  Surface: grass
   Temp    : 82°F  |  Humidity: 55%
-  Rain%   : 7%  (0.00in expected)
+  Rain%   : 6%  (0.00in expected)
   Wind    : 9mph from N (359°)
   vs Field: blowing R→L crossfield
   AirDens : 0.9321  →  ball carries 6.8% FARTHER vs sea-level
@@ -886,19 +890,19 @@ Sources   : FanGraphs | Statcast/Baseball Savant | MLB Stats API | UmpScorecards
   Washington Nationals @ Philadelphia Phillies
   Venue   : Citizens Bank Park  |  Elev: 20ft  |  Surface: grass
   Temp    : 80°F  |  Humidity: 92%
-  Rain%   : 31%  (0.00in expected)
+  Rain%   : 41%  (0.00in expected)
   Wind    : 4mph from WNW (291°)
   vs Field: diagonal (231° off CF)
   AirDens : 0.9558  →  ball carries 4.4% FARTHER vs sea-level
   Humidor : No
   HP Ump  : TBD
-  ⚠ FLAGS : 🚨 RAIN 31%
+  ⚠ FLAGS : 🚨 RAIN 41%
 
 ──────────────────────────────────────────────────
   St. Louis Cardinals @ New York Yankees
   Venue   : Yankee Stadium  |  Elev: 55ft  |  Surface: grass
   Temp    : 78°F  |  Humidity: 66%
-  Rain%   : 7%  (0.00in expected)
+  Rain%   : 8%  (0.00in expected)
   Wind    : 6mph from SE (144°)
   vs Field: blowing L→R crossfield
   AirDens : 0.9604  →  ball carries 4.0% FARTHER vs sea-level
@@ -1014,6 +1018,8 @@ Sources   : FanGraphs | Statcast/Baseball Savant | MLB Stats API | UmpScorecards
 
   Team       Home_TZ  Today_TZ  TZ_Cross  Notes
   ------------------------------------------------------------
+  Jameson Ta   EST       -5UTC         —  
+  Hunter Bro   EST       -5UTC         —  
   Eric Lauer   EST       -5UTC         —  
   Shota Iman   EST       -5UTC         —  
   Carson Whi   EST       -5UTC         —  
@@ -10835,6 +10841,14 @@ San Francisco Giants 48 66 .421 21.0 28
 ════════════════════════════════════════════════════════════════════════
 
 
+  Toronto Blue Jays @ Houston Astros — Daikin Park:
+  LF(315ft/21ft wall)  CF(435ft)  RF(326ft/7ft wall)
+  Surface: grass  Humidor: No  Batter Eye: medium
+  Air density: 0.9279  Altitude bonus: 1.0000
+  Wind pull-side boost: 0.979  Oppo-side boost: 1.021
+  PULL HITTERS HR INDEX: 1.055
+  OPPO HITTERS HR INDEX: 1.1
+
   Los Angeles Dodgers @ Chicago Cubs — Wrigley Field:
   LF(355ft/15ft wall)  CF(400ft)  RF(353ft/11ft wall)
   Surface: grass  Humidor: No  Batter Eye: medium
@@ -10956,6 +10970,382 @@ San Francisco Giants 48 66 .421 21.0 28
 ════════════════════════════════════════════════════════════════════════
 
 
+  Toronto Blue Jays lineup context:
+  Slot  Player                    ProjPA/yr  OBP ahead  Protected by
+  --------------------------------------------------------------------------------
+  1     Nathan Lukes                    750  n/a        Vladimir Guerrero
+  2     Vladimir Guerrero               732  n/a        Kazuma Okamoto
+  3     Kazuma Okamoto                  714  n/a        George Springer
+  4     George Springer                 693  n/a        Alejandro Kirk
+  5     Alejandro Kirk                  672  n/a        Jesus Sanchez
+  6     Jesus Sanchez                   651  n/a        Ernie Clement
+  7     Ernie Clement                   630  n/a        Andres Gimenez
+  8     Andres Gimenez                  609  n/a        Myles Straw
+  9     Myles Straw                     585  n/a        Nathan Lukes
+
+  Houston Astros lineup context:
+  Slot  Player                    ProjPA/yr  OBP ahead  Protected by
+  --------------------------------------------------------------------------------
+  1     Jeremy Pena                     750  n/a        Yordan Alvarez
+  2     Yordan Alvarez                  732  n/a        Isaac Paredes
+  3     Isaac Paredes                   714  n/a        Daulton Varsho
+  4     Daulton Varsho                  693  n/a        Christian Walker
+  5     Christian Walker                672  n/a        Jose Altuve
+  6     Jose Altuve                     651  n/a        Taylor Trammell
+  7     Taylor Trammell                 630  n/a        Yainer Diaz
+  8     Yainer Diaz                     609  n/a        Cam Smith
+  9     Cam Smith                       585  n/a        Jeremy Pena
+
+  Los Angeles Dodgers lineup context:
+  Slot  Player                    ProjPA/yr  OBP ahead  Protected by
+  --------------------------------------------------------------------------------
+  1     Shohei Ohtani                   750  n/a        Andy Pages
+  2     Andy Pages                      732  n/a        Tommy Edman
+  3     Tommy Edman                     714  n/a        Freddie Freeman
+  4     Freddie Freeman                 693  n/a        Mookie Betts
+  5     Mookie Betts                    672  n/a        Kyle Tucker
+  6     Kyle Tucker                     651  n/a        Teoscar Hernandez
+  7     Teoscar Hernandez               630  n/a        Enrique Hernandez
+  8     Enrique Hernandez               609  n/a        Ben Rortvedt
+  9     Ben Rortvedt                    585  n/a        Shohei Ohtani
+
+  Chicago Cubs lineup context:
+  Slot  Player                    ProjPA/yr  OBP ahead  Protected by
+  --------------------------------------------------------------------------------
+  1     Pete Crow-Armstrong             750  n/a        Seiya Suzuki
+  2     Seiya Suzuki                    732  n/a        Alex Bregman
+  3     Alex Bregman                    714  n/a        Carson Kelly
+  4     Carson Kelly                    693  n/a        Michael Busch
+  5     Michael Busch                   672  n/a        Nico Hoerner
+  6     Nico Hoerner                    651  n/a        Tyrone Taylor
+  7     Tyrone Taylor                   630  n/a        Pedro Ramirez
+  8     Pedro Ramirez                   609  n/a        Dansby Swanson
+  9     Dansby Swanson                  585  n/a        Pete Crow-Armstrong
+
+  San Francisco Giants lineup context:
+  Slot  Player                    ProjPA/yr  OBP ahead  Protected by
+  --------------------------------------------------------------------------------
+  1     Bryce Eldridge                  750  n/a        Jung Hoo Lee
+  2     Jung Hoo Lee                    732  n/a        Rafael Devers
+  3     Rafael Devers                   714  n/a        Willy Adames
+  4     Willy Adames                    693  n/a        Drew Cavanaugh
+  5     Drew Cavanaugh                  672  n/a        Drew Gilbert
+  6     Drew Gilbert                    651  n/a        Osleivis Basabe
+  7     Osleivis Basabe                 630  n/a        Grant McCray
+  8     Grant McCray                    609  n/a        Christian Koss
+  9     Christian Koss                  585  n/a        Bryce Eldridge
+
+  Texas Rangers lineup context:
+  Slot  Player                    ProjPA/yr  OBP ahead  Protected by
+  --------------------------------------------------------------------------------
+  1     Wyatt Langford                  750  n/a        Corey Seager
+  2     Corey Seager                    732  n/a        Ezequiel Duran
+  3     Ezequiel Duran                  714  n/a        Brandon Nimmo
+  4     Brandon Nimmo                   693  n/a        Jake Burger
+  5     Jake Burger                     672  n/a        Justin Foscue
+  6     Justin Foscue                   651  n/a        Cam Cauley
+  7     Cam Cauley                      630  n/a        Nicky Lopez
+  8     Nicky Lopez                     609  n/a        Elias Diaz
+  9     Elias Diaz                      585  n/a        Wyatt Langford
+
+  Tampa Bay Rays lineup context:
+  Slot  Player                    ProjPA/yr  OBP ahead  Protected by
+  --------------------------------------------------------------------------------
+  1     Yandy Diaz                      750  n/a        Jonathan Aranda
+  2     Jonathan Aranda                 732  n/a        Junior Caminero
+  3     Junior Caminero                 714  n/a        Liam Hicks
+  4     Liam Hicks                      693  n/a        Cedric Mullins
+  5     Cedric Mullins                  672  n/a        Victor Mesa
+  6     Victor Mesa                     651  n/a        Chandler Simpson
+  7     Chandler Simpson                630  n/a        Richie Palacios
+  8     Richie Palacios                 609  n/a        Taylor Walls
+  9     Taylor Walls                    585  n/a        Yandy Diaz
+
+  Colorado Rockies lineup context:
+  Slot  Player                    ProjPA/yr  OBP ahead  Protected by
+  --------------------------------------------------------------------------------
+  1     Jake McCarthy                   750  n/a        Mickey Moniak
+  2     Mickey Moniak                   732  n/a        Hunter Goodman
+  3     Hunter Goodman                  714  n/a        TJ Rumfield
+  4     TJ Rumfield                     693  n/a        Kyle Karros
+  5     Kyle Karros                     672  n/a        Cole Carrigg
+  6     Cole Carrigg                    651  n/a        Willi Castro
+  7     Willi Castro                    630  n/a        Troy Johnston
+  8     Troy Johnston                   609  n/a        Ezequiel Tovar
+  9     Ezequiel Tovar                  585  n/a        Jake McCarthy
+
+  Los Angeles Angels lineup context:
+  Slot  Player                    ProjPA/yr  OBP ahead  Protected by
+  --------------------------------------------------------------------------------
+  1     Zach Neto                       750  n/a        Mike Trout
+  2     Mike Trout                      732  n/a        Nolan Schanuel
+  3     Nolan Schanuel                  714  n/a        Vaughn Grissom
+  4     Vaughn Grissom                  693  n/a        Denzer Guzman
+  5     Denzer Guzman                   672  n/a        Moises Ballesteros
+  6     Moises Ballesteros              651  n/a        Jose Siri
+  7     Jose Siri                       630  n/a        Travis d'Arnaud
+  8     Travis d'Arnaud                 609  n/a        Wade Meckler
+  9     Wade Meckler                    585  n/a        Zach Neto
+
+  Baltimore Orioles lineup context:
+  Slot  Player                    ProjPA/yr  OBP ahead  Protected by
+  --------------------------------------------------------------------------------
+  1     Dylan Beavers                   750  n/a        Pete Alonso
+  2     Pete Alonso                     732  n/a        Gunnar Henderson
+  3     Gunnar Henderson                714  n/a        Coby Mayo
+  4     Coby Mayo                       693  n/a        Jackson Holliday
+  5     Jackson Holliday                672  n/a        Christian Encarnacion-Strand
+  6     Christian Encarnacion-Strand       651  n/a        Colton Cowser
+  7     Colton Cowser                   630  n/a        Leody Taveras
+  8     Leody Taveras                   609  n/a        Carlos Narvaez
+  9     Carlos Narvaez                  585  n/a        Dylan Beavers
+
+  New York Mets lineup context:
+  Slot  Player                    ProjPA/yr  OBP ahead  Protected by
+  --------------------------------------------------------------------------------
+  1     A.J. Ewing                      750  n/a        Francisco Lindor
+  2     Francisco Lindor                732  n/a        Bo Bichette
+  3     Bo Bichette                     714  n/a        Carson Benge
+  4     Carson Benge                    693  n/a        Luis Robert
+  5     Luis Robert                     672  n/a        Jared Young
+  6     Jared Young                     651  n/a        Marcus Semien
+  7     Marcus Semien                   630  n/a        Jorge Polanco
+  8     Jorge Polanco                   609  n/a        Francisco Alvarez
+  9     Francisco Alvarez               585  n/a        A.J. Ewing
+
+  Cleveland Guardians lineup context:
+  Slot  Player                    ProjPA/yr  OBP ahead  Protected by
+  --------------------------------------------------------------------------------
+  1     Steven Kwan                     750  n/a        Jose Ramirez
+  2     Jose Ramirez                    732  n/a        Chase DeLauter
+  3     Chase DeLauter                  714  n/a        Travis Bazzana
+  4     Travis Bazzana                  693  n/a        Jo Adell
+  5     Jo Adell                        672  n/a        Nathaniel Lowe
+  6     Nathaniel Lowe                  651  n/a        Angel Genao
+  7     Angel Genao                     630  n/a        Angel Martinez
+  8     Angel Martinez                  609  n/a        Patrick Bailey
+  9     Patrick Bailey                  585  n/a        Steven Kwan
+
+  Athletics lineup context:
+  Slot  Player                    ProjPA/yr  OBP ahead  Protected by
+  --------------------------------------------------------------------------------
+  1     Lawrence Butler                 750  n/a        Jacob Wilson
+  2     Jacob Wilson                    732  n/a        Tyler Soderstrom
+  3     Tyler Soderstrom                714  n/a        Jonah Heim
+  4     Jonah Heim                      693  n/a        Jeff McNeil
+  5     Jeff McNeil                     672  n/a        Tommy White
+  6     Tommy White                     651  n/a        Donovan Walton
+  7     Donovan Walton                  630  n/a        Carlos Cortes
+  8     Carlos Cortes                   609  n/a        Henry Bolte
+  9     Henry Bolte                     585  n/a        Lawrence Butler
+
+  Cincinnati Reds lineup context:
+  Slot  Player                    ProjPA/yr  OBP ahead  Protected by
+  --------------------------------------------------------------------------------
+  1     Elly De La Cruz                 750  n/a        Sal Stewart
+  2     Sal Stewart                     732  n/a        JJ Bleday
+  3     JJ Bleday                       714  n/a        Eugenio Suarez
+  4     Eugenio Suarez                  693  n/a        Tyler Stephenson
+  5     Tyler Stephenson                672  n/a        Noelvi Marte
+  6     Noelvi Marte                    651  n/a        Dane Myers
+  7     Dane Myers                      630  n/a        Matt McLain
+  8     Matt McLain                     609  n/a        Ke'Bryan Hayes
+  9     Ke'Bryan Hayes                  585  n/a        Elly De La Cruz
+
+  Washington Nationals lineup context:
+  Slot  Player                    ProjPA/yr  OBP ahead  Protected by
+  --------------------------------------------------------------------------------
+  1     Daylen Lile                     750  n/a        Abimelec Ortiz
+  2     Abimelec Ortiz                  732  n/a        Dylan Crews
+  3     Dylan Crews                     714  n/a        CJ Abrams
+  4     CJ Abrams                       693  n/a        Keibert Ruiz
+  5     Keibert Ruiz                    672  n/a        Jose Tena
+  6     Jose Tena                       651  n/a        Nasim Nunez
+  7     Nasim Nunez                     630  n/a        Jorbit Vivas
+  8     Jorbit Vivas                    609  n/a        Jacob Young
+  9     Jacob Young                     585  n/a        Daylen Lile
+
+  Philadelphia Phillies lineup context:
+  Slot  Player                    ProjPA/yr  OBP ahead  Protected by
+  --------------------------------------------------------------------------------
+  1     Trea Turner                     750  n/a        Luis Arraez
+  2     Luis Arraez                     732  n/a        Kyle Schwarber
+  3     Kyle Schwarber                  714  n/a        Bryce Harper
+  4     Bryce Harper                    693  n/a        Alec Bohm
+  5     Alec Bohm                       672  n/a        Brandon Marsh
+  6     Brandon Marsh                   651  n/a        Bryson Stott
+  7     Bryson Stott                    630  n/a        J.T. Realmuto
+  8     J.T. Realmuto                   609  n/a        Justin Crawford
+  9     Justin Crawford                 585  n/a        Trea Turner
+
+  St. Louis Cardinals lineup context:
+  Slot  Player                    ProjPA/yr  OBP ahead  Protected by
+  --------------------------------------------------------------------------------
+  1     JJ Wetherholt                   750  n/a        Jordan Walker
+  2     Jordan Walker                   732  n/a        Alec Burleson
+  3     Alec Burleson                   714  n/a        Ivan Herrera
+  4     Ivan Herrera                    693  n/a        Bryan Torres
+  5     Bryan Torres                    672  n/a        Masyn Winn
+  6     Masyn Winn                      651  n/a        Nathan Church
+  7     Nathan Church                   630  n/a        Blaze Jordan
+  8     Blaze Jordan                    609  n/a        Jimmy Crooks
+  9     Jimmy Crooks                    585  n/a        JJ Wetherholt
+
+  New York Yankees lineup context:
+  Slot  Player                    ProjPA/yr  OBP ahead  Protected by
+  --------------------------------------------------------------------------------
+  1     Trent Grisham                   750  n/a        Ben Rice
+  2     Ben Rice                        732  n/a        Luis Garcia
+  3     Luis Garcia                     714  n/a        Spencer Jones
+  4     Spencer Jones                   693  n/a        Heliot Ramos
+  5     Heliot Ramos                    672  n/a        Jazz Chisholm
+  6     Jazz Chisholm                   651  n/a        Ryan McMahon
+  7     Ryan McMahon                    630  n/a        George Lombard
+  8     George Lombard                  609  n/a        Austin Wells
+  9     Austin Wells                    585  n/a        Trent Grisham
+
+  Chicago White Sox lineup context:
+  Slot  Player                    ProjPA/yr  OBP ahead  Protected by
+  --------------------------------------------------------------------------------
+  1     Sam Antonacci                   750  n/a        Munetaka Murakami
+  2     Munetaka Murakami               732  n/a        Miguel Vargas
+  3     Miguel Vargas                   714  n/a        Colson Montgomery
+  4     Colson Montgomery               693  n/a        Andrew Benintendi
+  5     Andrew Benintendi               672  n/a        Braden Montgomery
+  6     Braden Montgomery               651  n/a        Tristan Peters
+  7     Tristan Peters                  630  n/a        Chase Meidroth
+  8     Chase Meidroth                  609  n/a        Joey Bart
+  9     Joey Bart                       585  n/a        Sam Antonacci
+
+  Boston Red Sox lineup context:
+  Slot  Player                    ProjPA/yr  OBP ahead  Protected by
+  --------------------------------------------------------------------------------
+  1     Anthony Seigler                 750  n/a        Ceddanne Rafaela
+  2     Ceddanne Rafaela                732  n/a        Wilyer Abreu
+  3     Wilyer Abreu                    714  n/a        Willson Contreras
+  4     Willson Contreras               693  n/a        Masataka Yoshida
+  5     Masataka Yoshida                672  n/a        Caleb Durbin
+  6     Caleb Durbin                    651  n/a        Andruw Monasterio
+  7     Andruw Monasterio               630  n/a        Jarren Duran
+  8     Jarren Duran                    609  n/a        Connor Wong
+  9     Connor Wong                     585  n/a        Anthony Seigler
+
+  Miami Marlins lineup context:
+  Slot  Player                    ProjPA/yr  OBP ahead  Protected by
+  --------------------------------------------------------------------------------
+  1     Otto Lopez                      750  n/a        Kyle Stowers
+  2     Kyle Stowers                    732  n/a        Griffin Conine
+  3     Griffin Conine                  714  n/a        Xavier Edwards
+  4     Xavier Edwards                  693  n/a        Owen Caissie
+  5     Owen Caissie                    672  n/a        Heriberto Hernandez
+  6     Heriberto Hernandez             651  n/a        Jakob Marsee
+  7     Jakob Marsee                    630  n/a        Joe Mack
+  8     Joe Mack                        609  n/a        Javier Sanoja
+  9     Javier Sanoja                   585  n/a        Otto Lopez
+
+  Atlanta Braves lineup context:
+  Slot  Player                    ProjPA/yr  OBP ahead  Protected by
+  --------------------------------------------------------------------------------
+  1     Drake Baldwin                   750  n/a        Ronald Acuna
+  2     Ronald Acuna                    732  n/a        Matt Olson
+  3     Matt Olson                      714  n/a        Michael Harris
+  4     Michael Harris                  693  n/a        Ozzie Albies
+  5     Ozzie Albies                    672  n/a        Mauricio Dubon
+  6     Mauricio Dubon                  651  n/a        Mike Yastrzemski
+  7     Mike Yastrzemski                630  n/a        Austin Riley
+  8     Austin Riley                    609  n/a        Jim Jarvis
+  9     Jim Jarvis                      585  n/a        Drake Baldwin
+
+  Minnesota Twins lineup context:
+  Slot  Player                    ProjPA/yr  OBP ahead  Protected by
+  --------------------------------------------------------------------------------
+  1     Austin Martin                   750  n/a        Royce Lewis
+  2     Royce Lewis                     732  n/a        Ryan Jeffers
+  3     Ryan Jeffers                    714  n/a        Josh Bell
+  4     Josh Bell                       693  n/a        Victor Caratini
+  5     Victor Caratini                 672  n/a        Luke Keaschall
+  6     Luke Keaschall                  651  n/a        Brooks Lee
+  7     Brooks Lee                      630  n/a        Ryan Kreidler
+  8     Ryan Kreidler                   609  n/a        Alan Roden
+  9     Alan Roden                      585  n/a        Austin Martin
+
+  Kansas City Royals lineup context:
+  Slot  Player                    ProjPA/yr  OBP ahead  Protected by
+  --------------------------------------------------------------------------------
+  1     Carter Jensen                   750  n/a        Bobby Witt
+  2     Bobby Witt                      732  n/a        Jac Caglianone
+  3     Jac Caglianone                  714  n/a        Salvador Perez
+  4     Salvador Perez                  693  n/a        Michael Massey
+  5     Michael Massey                  672  n/a        Isaac Collins
+  6     Isaac Collins                   651  n/a        John Rave
+  7     John Rave                       630  n/a        Nick Loftin
+  8     Nick Loftin                     609  n/a        Kyle Isbel
+  9     Kyle Isbel                      585  n/a        Carter Jensen
+
+  Pittsburgh Pirates lineup context:
+  Slot  Player                    ProjPA/yr  OBP ahead  Protected by
+  --------------------------------------------------------------------------------
+  1     Spencer Horwitz                 750  n/a        Nick Gonzales
+  2     Nick Gonzales                   732  n/a        Bryan Reynolds
+  3     Bryan Reynolds                  714  n/a        Esmerlyn Valdez
+  4     Esmerlyn Valdez                 693  n/a        Brandon Lowe
+  5     Brandon Lowe                    672  n/a        Marcell Ozuna
+  6     Marcell Ozuna                   651  n/a        Jake Mangum
+  7     Jake Mangum                     630  n/a        Jared Triolo
+  8     Jared Triolo                    609  n/a        Henry Davis
+  9     Henry Davis                     585  n/a        Spencer Horwitz
+
+  Milwaukee Brewers lineup context:
+  Slot  Player                    ProjPA/yr  OBP ahead  Protected by
+  --------------------------------------------------------------------------------
+  1     Brice Turang                    750  n/a        Jackson Chourio
+  2     Jackson Chourio                 732  n/a        Christian Yelich
+  3     Christian Yelich                714  n/a        William Contreras
+  4     William Contreras               693  n/a        Andrew Vaughn
+  5     Andrew Vaughn                   672  n/a        Garrett Mitchell
+  6     Garrett Mitchell                651  n/a        Luis Lara
+  7     Luis Lara                       630  n/a        Cooper Pratt
+  8     Cooper Pratt                    609  n/a        David Hamilton
+  9     David Hamilton                  585  n/a        Brice Turang
+
+  San Diego Padres lineup context:
+  Slot  Player                    ProjPA/yr  OBP ahead  Protected by
+  --------------------------------------------------------------------------------
+  1     Fernando Tatis                  750  n/a        Luis Rengifo
+  2     Luis Rengifo                    732  n/a        Manny Machado
+  3     Manny Machado                   714  n/a        Ty France
+  4     Ty France                       693  n/a        Jackson Merrill
+  5     Jackson Merrill                 672  n/a        Luis Campusano
+  6     Luis Campusano                  651  n/a        Xander Bogaerts
+  7     Xander Bogaerts                 630  n/a        Jase Bowen
+  8     Jase Bowen                      609  n/a        Freddy Fermin
+  9     Freddy Fermin                   585  n/a        Fernando Tatis
+
+  Detroit Tigers lineup context:
+  Slot  Player                    ProjPA/yr  OBP ahead  Protected by
+  --------------------------------------------------------------------------------
+  1     Kevin McGonigle                 750  n/a        Gleyber Torres
+  2     Gleyber Torres                  732  n/a        Dillon Dingler
+  3     Dillon Dingler                  714  n/a        Riley Greene
+  4     Riley Greene                    693  n/a        Colt Keith
+  5     Colt Keith                      672  n/a        Spencer Torkelson
+  6     Spencer Torkelson               651  n/a        Max Clark
+  7     Max Clark                       630  n/a        Javier Baez
+  8     Javier Baez                     609  n/a        Zach McKinstry
+  9     Zach McKinstry                  585  n/a        Kevin McGonigle
+
+  Seattle Mariners lineup context:
+  Slot  Player                    ProjPA/yr  OBP ahead  Protected by
+  --------------------------------------------------------------------------------
+  1     Cole Young                      750  n/a        Randy Arozarena
+  2     Randy Arozarena                 732  n/a        Dominic Canzone
+  3     Dominic Canzone                 714  n/a        Julio Rodriguez
+  4     Julio Rodriguez                 693  n/a        Josh Naylor
+  5     Josh Naylor                     672  n/a        Taylor Ward
+  6     Taylor Ward                     651  n/a        Cal Raleigh
+  7     Cal Raleigh                     630  n/a        Brendan Donovan
+  8     Brendan Donovan                 609  n/a        Colt Emerson
+  9     Colt Emerson                    585  n/a        Cole Young
 
 
 ════════════════════════════════════════════════════════════════════════
@@ -15412,6 +15802,9 @@ San Francisco Giants 48 66 .421 21.0 28
   Toronto Blue Jays @ Houston Astros
   SP Away: Jameson Taillon  vs  SP Home: Hunter Brown
   HP Umpire: TBD
+  Park: Daikin Park  |  Dome: YES  |  Surface: grass  |  Humidor: No
+  Dimensions: LF315/CF435/RF326  Wall: LF21ft/RF7ft
+  Batter eye: medium  |  Retractable roof: YES
   Series: Game 3 of 3  GETAWAY DAY  GAME 3 — full adjustment
 
   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
