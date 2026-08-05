@@ -218,7 +218,27 @@ def main() -> int:
         return 0
 
     game_statuses = fetch_game_statuses(YESTERDAY)
-    graded = [grade_pick(p, game_statuses) for p in picks]
+    # Verified live: grade_pick() reads pick["type"] via direct bracket access (kept
+    # that way deliberately -- see below), and this module's docstring commits to
+    # "never block the rest of the pipeline". But before this, nothing stood between
+    # a single malformed pick record and the whole batch: a pick missing "type"
+    # raised an uncaught KeyError that propagated straight out of this
+    # comprehension, out of main(), and killed grade_results.py's own exit code.
+    # Since the workflow's "Grade yesterday's picks" step has no continue-on-error,
+    # that failure would have stopped the job before "Run daily pipeline" ever ran
+    # -- the exact opposite of the documented guarantee, for the exact kind of
+    # schema-drift bug this project already hit once for real (the missing
+    # side/lean fields fixed above). Deliberately NOT papering over pick["type"]
+    # with .get() -- a pick missing a required field should surface as a visible
+    # "ungraded: grader error" below, not silently default to batter semantics and
+    # grade nonsense data as a real hit/miss. One bad pick record now degrades to a
+    # single ungraded entry instead of taking down the whole run.
+    graded = []
+    for p in picks:
+        try:
+            graded.append(grade_pick(p, game_statuses))
+        except Exception as e:
+            graded.append({**p, "grade": "ungraded", "reason": f"grader error: {e}"})
     hits = sum(1 for g in graded if g["grade"] == "hit")
     misses = sum(1 for g in graded if g["grade"] == "miss")
     ungraded = sum(1 for g in graded if g["grade"] == "ungraded")
