@@ -465,6 +465,49 @@ def estimate_lineup_k_pct(lineup, batter_lookup):
     return round(sum(vals) / len(vals), 1), len(vals)
 
 
+def compute_bullpen_era(pit_season_df):
+    """Team bullpen quality (IP-weighted ERA of relievers, GS==0), aggregated
+    from individual pitcher season data we already fetch — rather than
+    depending on FanGraphs' team-pitching page, which is unreliable
+    independent of the individual leaderboards it would need instead (found
+    on review: FanGraphs' team-level endpoints failed on every real run
+    tonight while the individual pages worked fine; a second scraped source,
+    Baseball-Reference, was checked live and is equally blocked, so another
+    external team-level page isn't a real fix here — deriving from data we
+    already have and already trust is). Distinguishes bullpen *quality* from
+    bullpen *fatigue* (fetch_bullpen_scores): a tired elite bullpen and a
+    tired bad bullpen are not the same matchup. Returns {} when the columns
+    this needs aren't present — i.e. FanGraphs individual pitching itself
+    fell back to Statcast, which doesn't carry Team/G/GS — same
+    degrade-gracefully discipline as every other signal here."""
+    if pit_season_df is None or pit_season_df.empty:
+        return {}
+    needed = {"Team", "G", "GS", "ERA", "IP"}
+    if not needed.issubset(pit_season_df.columns):
+        return {}
+    relievers = pit_season_df[(pit_season_df["GS"] == 0) & (pit_season_df["IP"] > 0)]
+    by_abbr = {}
+    for team, grp in relievers.groupby("Team"):
+        total_ip = grp["IP"].sum()
+        if total_ip < 30:  # too thin a sample to trust a team ERA read
+            continue
+        era = round((grp["ERA"] * grp["IP"]).sum() / total_ip, 2)
+        by_abbr[team] = {"era": era, "ip": round(total_ip, 1), "n_relievers": len(grp)}
+    # FanGraphs' "Team" column uses its own abbreviations, which diverge from
+    # the MLB Stats API's in a handful of known cases (CHW/CWS, KCR/KC, SDP/SD,
+    # SFG/SF, TBR/TB, WSN/WSH) — bridged here rather than assumed, so this
+    # doesn't silently never match tonight's games.
+    fg_to_official_abbr = {"CHW": "CWS", "KCR": "KC", "SDP": "SD", "SFG": "SF", "TBR": "TB", "WSN": "WSH"}
+    abbr_to_name = {t["abbr"]: t["name"] for t in m.get_team_ids()}
+    out = {}
+    for fg_abbr, data in by_abbr.items():
+        official_abbr = fg_to_official_abbr.get(fg_abbr, fg_abbr)
+        team_name = abbr_to_name.get(official_abbr)
+        if team_name:
+            out[team_name] = data
+    return out
+
+
 def name_lookup(df, name_col_candidates=("Name", "last_name, first_name")):
     """Build a {player_name: row_dict} lookup from a FanGraphs/Statcast DataFrame,
     handling the "Last, First" format Statcast endpoints use vs FanGraphs "First Last"."""
@@ -537,8 +580,11 @@ def project_pitcher_ks(ps, l14):
 
 LEAGUE_AVG_EV = 88.5
 
+LEAGUE_AVG_BULLPEN_ERA = 4.10
+
 def score_batter(batter, gm, opp_sp_row, opp_sp_id, opp_sp_hand, park_wx, batter_season, batter_l7,
-                  bat_speed_trend, batter_arsenal, pitcher_arsenal, opp_bullpen=None, sharp_bias=None):
+                  bat_speed_trend, batter_arsenal, pitcher_arsenal, opp_bullpen=None, sharp_bias=None,
+                  opp_bullpen_quality=None):
     name = batter["name"]
     bid = batter.get("id")
     order = batter.get("order") or 9
@@ -595,6 +641,18 @@ def score_batter(batter, gm, opp_sp_row, opp_sp_id, opp_sp_hand, park_wx, batter
             notable_signals += 1
     else:
         context = lineup_context
+
+    # Bullpen *quality* is a separate axis from *fatigue* above — a tired
+    # elite bullpen and a tired bad bullpen are not the same matchup. Blended
+    # in lightly (not part of the weighted formula's core, same treatment as
+    # sharp money below) since it's aggregated from a fallback-prone source
+    # (FanGraphs individual pitching -> Statcast, no team split) and should
+    # nudge, not drive, the score.
+    bp_era = (opp_bullpen_quality or {}).get("era")
+    bullpen_era_diff = (bp_era - LEAGUE_AVG_BULLPEN_ERA) if bp_era is not None else None
+    if bullpen_era_diff is not None and abs(bullpen_era_diff) >= 0.5:
+        context = clamp(context + clamp(bullpen_era_diff * 8, -8, 8))
+        if bullpen_era_diff >= 0.5: notable_signals += 1
 
     score = matchup * 0.35 + form * 0.25 + env * 0.15 + skill * 0.15 + context * 0.10
 
@@ -653,6 +711,9 @@ def score_batter(batter, gm, opp_sp_row, opp_sp_id, opp_sp_hand, park_wx, batter
     if bullpen_fatigue_pct is not None:
         why.append(f"Opposing bullpen fatigue: {fatigued}/{tracked} relievers over 60 pitches in L7 "
                     f"({'tired pen — favorable late' if bullpen_fatigue_pct >= 40 else 'fresh pen'})")
+    if bullpen_era_diff is not None and abs(bullpen_era_diff) >= 0.5:
+        why.append(f"Opposing bullpen ERA {bp_era} (league ~{LEAGUE_AVG_BULLPEN_ERA}, "
+                    f"{'shaky' if bullpen_era_diff > 0 else 'elite'} pen)")
     if sharp_divergence is not None and abs(sharp_divergence) >= 10:
         why.append(f"Sharp money {'backing' if sharp_divergence > 0 else 'fading'} {batter.get('team')} "
                     f"(money% {'+' if sharp_divergence>0 else ''}{sharp_divergence} pts vs ticket%)")
@@ -890,6 +951,7 @@ def main() -> int:
     park_wx = fetch_park_weather(game_meta)
     ump_scores = fetch_umpire_scores(game_meta)
     bullpen_scores = fetch_bullpen_scores(game_meta)
+    bullpen_quality = compute_bullpen_era(pit_season_df)
     sharp_bias = fetch_public_betting_bias(game_meta)
     l7_form = fetch_l7_batter_form()
     bat_speed_trend = fetch_bat_speed_trends()
@@ -928,13 +990,15 @@ def main() -> int:
         home_opp_catcher_pop = catcher_poptime.get(catcher_by_team.get(gm["away_team"]))
         away_opp_bullpen = bullpen_scores.get(gm["home_team"])  # away batters face the home team's pen
         home_opp_bullpen = bullpen_scores.get(gm["away_team"])
+        away_opp_bullpen_quality = bullpen_quality.get(gm["home_team"])
+        home_opp_bullpen_quality = bullpen_quality.get(gm["away_team"])
 
         for batter in gm.get("away_lineup", []):
             batter["team"] = gm["away_team"]
             bseason = batter_lookup.get(batter["name"])
             candidates.append(score_batter(batter, gm, opp_sp_row_for_away_batters, gm.get("home_sp_id"), gm.get("home_sp_hand"),
                               wx, bseason, l7_form.get(batter.get("id")), bat_speed_trend, batter_arsenal, pitcher_arsenal,
-                              away_opp_bullpen, sharp_bias.get(gm["away_team"])))
+                              away_opp_bullpen, sharp_bias.get(gm["away_team"]), away_opp_bullpen_quality))
             for c in (score_stolen_base(batter, gm, away_opp_catcher_pop, sprint_speed.get(batter.get("id")), bseason),
                       score_walk(batter, gm, opp_sp_row_for_away_batters, ump_scores, bseason)):
                 if c: candidates.append(c)
@@ -943,7 +1007,7 @@ def main() -> int:
             bseason = batter_lookup.get(batter["name"])
             candidates.append(score_batter(batter, gm, opp_sp_row_for_home_batters, gm.get("away_sp_id"), gm.get("away_sp_hand"),
                               wx, bseason, l7_form.get(batter.get("id")), bat_speed_trend, batter_arsenal, pitcher_arsenal,
-                              home_opp_bullpen, sharp_bias.get(gm["home_team"])))
+                              home_opp_bullpen, sharp_bias.get(gm["home_team"]), home_opp_bullpen_quality))
             for c in (score_stolen_base(batter, gm, home_opp_catcher_pop, sprint_speed.get(batter.get("id")), bseason),
                       score_walk(batter, gm, opp_sp_row_for_home_batters, ump_scores, bseason)):
                 if c: candidates.append(c)

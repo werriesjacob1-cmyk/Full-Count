@@ -134,7 +134,9 @@ scoring anywhere. Now blended into a hitter's context component when the
 opposing bullpen has a real tracked sample (3+ relievers): a heavily fatigued
 pen (40%+ of tracked relievers over 60 pitches in L7) is a genuine,
 non-obvious edge — tired relief is more hittable — that most casual bettors
-don't check before betting.
+don't check before betting. Blended alongside, but kept distinct: bullpen
+*quality* (ERA — see below), since a tired elite bullpen and a tired bad
+bullpen are not the same matchup.
 
 **Weather is cross-checked against a second source.** Open-Meteo is the
 primary weather feed; the National Weather Service (`api.weather.gov`, free,
@@ -151,13 +153,25 @@ than threaded through every scoring function separately.
 **Investigated and deliberately not shipped:** ESPN's scoreboard/summary API
 as a third lineup source (would help — it carries real player IDs — but
 returned a hard 403/access-denied from this environment, not a soft rate
-limit); team-level bullpen quality (ERA) from FanGraphs' team pitching page,
-skipped because that endpoint is unreliable exactly when it'd be needed (it
-was down on a live test tonight while the individual leaderboards it would
-need instead lack team/role columns on their Statcast fallback). Both are
-real gaps, not forgotten — noted here rather than shipped half-verified,
-consistent with this project's rule of not trusting a source that hasn't
-been checked live.
+limit). A real gap, not forgotten — noted here rather than shipped
+half-verified, consistent with this project's rule of not trusting a source
+that hasn't been checked live.
+
+**Team bullpen quality (ERA)** — initially deferred (see git history) for
+the same reason FanGraphs' team-level page can't be trusted: it's a separate
+endpoint from the individual leaderboards and fails independently of them.
+Checking whether Baseball-Reference could substitute for FanGraphs' team
+page found the same failure mode there too (403, plus the pybaseball wrapper
+for it is itself broken against B-Ref's current page structure) — so another
+scraped leaderboard site isn't a real fix, just the same risk with extra
+steps. Solved instead by never touching a team-level page at all:
+`compute_bullpen_era()` aggregates it from the individual pitcher data
+that's already fetched (GS==0 filter for relievers, IP-weighted ERA),
+bridging FanGraphs' own non-standard team abbreviations (CHW/KCR/SDP/SFG/
+TBR/WSN) to the MLB Stats API's official ones so it actually matches
+tonight's games. Degrades to unavailable — same discipline as everything
+else here — when the individual pitching pull itself fell back to Statcast,
+since that fallback doesn't carry Team/G/GS columns to aggregate from.
 
 **Sharp-money divergence** — a genuinely different signal type (market-
 derived, not stats-derived), from Action Network's public scoreboard data
