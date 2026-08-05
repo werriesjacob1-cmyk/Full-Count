@@ -65,8 +65,16 @@ PICKS_FILE = os.path.join(OUTPUT_DIR, f"top10_picks_{m.TODAY}.md")
 PICKS_JSON_FILE = os.path.join(OUTPUT_DIR, f"picks_{m.TODAY}.json")
 PLAYERS_DIR = os.environ.get("PLAYERS_DIR", "data/players")
 PLAYER_SNAPSHOT_HISTORY_DAYS = 60  # bounds each player file's growth over a season
-LEAGUE_AVG_TB_PA = 0.38     # league-average total bases per PA, used when no player data is available
-LEAGUE_AVG_BF_PER_START = 22  # league-average batters faced per start, used to convert K% into a projected K count
+# Measured live from 93 completed games (7 days ending 2026-08-05) via
+# statsapi.boxscore_data: 6227 AB / 6848 PA / 2397 TB.
+#   AB/PA 0.9093 | league SLG (TB/AB) 0.3849 | league TB/PA 0.3500
+# The previous LEAGUE_AVG_TB_PA of 0.38 was on the SLG (per-AB) scale despite
+# being multiplied by plate appearances — the same per-AB/per-PA conflation
+# fixed in project_batter_tb.
+LEAGUE_AVG_TB_PA = 0.350    # league-average total bases per PA (measured)
+AB_PER_PA = 0.9093          # measured; converts a per-AB rate (SLG) to per-PA
+# LEAGUE_AVG_BF_PER_START is defined next to project_pitcher_workload(), with
+# the measurement that produced it.
 
 # ══════════════════════════════════════════════════════════════════════════
 #  SCORING HELPERS
@@ -219,6 +227,109 @@ def fetch_umpire_scores(game_meta):
     return out
 
 
+# ── Team run-scoring distribution, MEASURED (not assumed) ────────────────
+# Measured live from 186 completed MLB games (372 team-games) in the 14 days
+# ending 2026-08-05, via m.statsapi.boxscore_data:
+#     mean team runs/game = 4.245, variance = 9.679
+# Variance/mean = 2.28, so team runs are strongly OVER-DISPERSED relative to
+# Poisson — a Poisson inversion of a betting line would be materially wrong.
+# A negative binomial with var = mu + mu^2/k matches both moments at
+#     k = mu^2 / (var - mu) = 4.245^2 / (9.679 - 4.245) = 3.317
+# k is held fixed and mu solved for; that is the only free parameter.
+LEAGUE_TEAM_RUNS_MEAN = 4.245
+LEAGUE_TEAM_RUNS_VAR = 9.679
+TEAM_RUNS_NB_K = 3.317
+
+
+def _american_to_prob(o):
+    """American odds -> implied probability (still vig-inclusive)."""
+    try: o = float(o)
+    except (TypeError, ValueError): return None
+    if o != o or o == 0: return None
+    return (-o) / ((-o) + 100) if o < 0 else 100 / (o + 100)
+
+
+def _implied_total_from_line(line, over_odds, under_odds):
+    """Convert a per-team runs line (always a half-run, e.g. 3.5/4.5) plus its
+    two-sided American odds into an actual implied expected runs total.
+
+    The raw line alone is far too coarse to use directly: on tonight's real
+    slate, 9 of 15 games priced BOTH teams at 3.5 or both at 4.5, so the line
+    by itself cannot distinguish a 3.1-run team from a 3.9-run team. The odds
+    carry that information. Verified live tonight: Toronto over 3.5 is +114 /
+    under 3.5 is -145 (a team the market expects BELOW 3.5), while Houston
+    over 4.5 is -125 / under 4.5 is +110 (expected ABOVE 4.5). Same slate,
+    lines one run apart, but the true gap is wider than one run.
+
+    Method: de-vig the two-sided price to a fair P(runs > line), then solve
+    numerically for the negative-binomial mean mu that reproduces that
+    probability, with the dispersion fixed at the MEASURED league value above.
+    No fitted-to-results constants; the only inputs are tonight's live prices
+    and a run distribution measured from real box scores.
+
+    The negative binomial itself was validated against the same 372 real
+    team-games before being used (empirical P(R>=n) vs NB prediction):
+        R>=3  .6640 / .6673   R>=5  .3978 / .3920   R>=7  .2070 / .2032
+    Poisson, by contrast, is badly wrong in the tail that matters here
+    (R>=7: .1377 predicted vs .2070 actual), which is why it isn't used.
+
+    KNOWN BIAS, found by verification and corrected by the caller: this
+    solver run on raw prices returns team totals that are systematically ~0.34
+    runs/team HIGH. Measured on tonight's live slate — across the 12 games
+    with a clean two-sided pair for both teams, the summed team implieds
+    averaged 9.304 against a mean game total of 8.625 (+0.68/game). The cause
+    is that the dispersion measured above is the MARGINAL variance across all
+    team-games, which includes between-game variation in the true mean; the
+    within-game conditional distribution is tighter, and a tighter, less
+    right-skewed distribution maps a given P(over) to a lower mean. Rather
+    than invent a conditional dispersion, the caller renormalizes each game's
+    two team totals to sum to that game's own game-total line (see
+    fetch_public_betting_bias) — the market's own anchor, exact per game, and
+    it leaves this solver responsible only for the SPLIT between the two
+    teams, which is far less sensitive to the dispersion constant.
+
+    Returns None (never a guessed number) if odds are missing."""
+    if line is None or over_odds is None or under_odds is None:
+        return None
+    try:
+        line = float(line); over_odds = float(over_odds); under_odds = float(under_odds)
+    except (TypeError, ValueError):
+        return None
+    if line != line or over_odds != over_odds or under_odds != under_odds:
+        return None  # NaN guard (see scale() docstring — NaN has bitten this file before)
+
+    p_over_raw = _american_to_prob(over_odds)
+    p_under_raw = _american_to_prob(under_odds)
+    if not p_over_raw or not p_under_raw: return None
+    p_over = p_over_raw / (p_over_raw + p_under_raw)   # de-vig
+    # Guard against a degenerate price producing an absurd mean.
+    p_over = min(max(p_over, 0.02), 0.98)
+
+    try:
+        from scipy.stats import nbinom
+    except Exception:
+        # Graceful degradation: without scipy, fall back to the raw line.
+        return round(line, 2)
+
+    k = TEAM_RUNS_NB_K
+    # P(X > line) with a half-run line == P(X >= ceil(line)) == sf(floor(line))
+    import math
+    floor_line = math.floor(line)
+
+    def p_over_at(mu):
+        # nbinom(n=k, p) with mean mu -> p = k/(k+mu)
+        return float(nbinom.sf(floor_line, k, k / (k + mu)))
+
+    lo, hi = 0.3, 12.0
+    if p_over_at(lo) > p_over: return round(lo, 2)
+    if p_over_at(hi) < p_over: return round(hi, 2)
+    for _ in range(60):
+        mid = (lo + hi) / 2
+        if p_over_at(mid) < p_over: lo = mid
+        else: hi = mid
+    return round((lo + hi) / 2, 2)
+
+
 def fetch_public_betting_bias(game_meta):
     """Public vs. sharp-money divergence on the moneyline, from Action
     Network's public scoreboard API — unofficial (no published docs) but
@@ -233,7 +344,27 @@ def fetch_public_betting_bias(game_meta):
     different signal type than anything else here (market-derived, not
     stats-derived). Used as a small, transparent nudge only, per explicit
     direction: edge 'should not be completely ignored' but isn't the primary
-    filter — this is not folded into the weighted formula's core components."""
+    filter — this is not folded into the weighted formula's core components.
+
+    ALSO parses the implied team totals carried in the *same* response, which
+    this function previously downloaded and threw away every single run. Under
+    g['markets']['15']['event'] the response also carries 'total' (the game
+    over/under) and 'core_bet_type_6_team_score' (per-team runs lines, each
+    entry with team_id / side / value / odds). Verified live on tonight's real
+    slate: 15/15 games returned both, all 30 team names matching this
+    pipeline's own naming with no mapping table needed.
+
+    An implied team total is the single most information-dense environment
+    input available here: it is the market's own forecast of runs scored by
+    that specific team tonight, and it already prices park, weather, the
+    opposing starter, the opposing bullpen and lineup strength simultaneously
+    — all of which this file otherwise estimates piecemeal and independently.
+
+    Each team entry gets: implied_total (de-vigged, see
+    _implied_total_from_line), implied_total_line (the raw half-run line),
+    and game_total. The sharp-money keys are unchanged and are still written
+    even when the totals markets are absent, so the existing divergence signal
+    is untouched by this addition."""
     out = {}
     try:
         r = m.retry_get("https://api.actionnetwork.com/web/v2/scoreboard/mlb",
@@ -247,17 +378,79 @@ def fetch_public_betting_bias(game_meta):
     for g in games:
         teams = {t.get("id"): t.get("full_name") for t in g.get("teams", [])}
         try:
-            ml = g["markets"]["15"]["event"]["moneyline"]
+            ev = g["markets"]["15"]["event"]
         except (KeyError, TypeError):
             continue
-        for entry in ml:
+
+        # -- existing sharp-money signal (unchanged) --
+        for entry in (ev.get("moneyline") or []):
             team_name = teams.get(entry.get("team_id"))
             bi = entry.get("bet_info", {})
             tickets = bi.get("tickets", {}).get("percent")
             money = bi.get("money", {}).get("percent")
             if team_name and tickets is not None and money is not None:
-                out[team_name] = {"tickets_pct": tickets, "money_pct": money,
-                                   "sharp_divergence": money - tickets}
+                out.setdefault(team_name, {}).update(
+                    {"tickets_pct": tickets, "money_pct": money,
+                     "sharp_divergence": money - tickets})
+
+        # -- implied team totals (new; same response, previously discarded) --
+        # The 'total' market can carry an ALT line alongside the main one
+        # (verified live tonight: 4 of 15 games listed two, e.g. TOR@HOU
+        # quoted both 8 and 9.5). Picking by frequency or by min/max both
+        # pick wrong. The main line is the one priced closest to even money,
+        # since that is what a book balances its total to; an alt line sits
+        # far off 50/50 (TOR@HOU: the 8 was -114/-108, the 9.5 was +130/-174).
+        game_total = None
+        by_val = defaultdict(dict)
+        for e in (ev.get("total") or []):
+            v, s, o = e.get("value"), e.get("side"), e.get("odds")
+            if v is not None and s in ("over", "under") and o is not None:
+                by_val[v][s] = o
+        best_skew = None
+        for v, sides in by_val.items():
+            if "over" not in sides or "under" not in sides: continue
+            po = _american_to_prob(sides["over"]); pu = _american_to_prob(sides["under"])
+            if not po or not pu: continue
+            skew = abs(po / (po + pu) - 0.5)
+            if best_skew is None or skew < best_skew:
+                best_skew, game_total = skew, v
+        # Group the per-team runs market by team, keeping only entries whose
+        # over and under share the same line (a mismatched pair is an alt line
+        # and cannot be de-vigged against each other).
+        by_team = defaultdict(dict)
+        for e in (ev.get("core_bet_type_6_team_score") or []):
+            tn = teams.get(e.get("team_id"))
+            side = e.get("side")
+            if not tn or side not in ("over", "under"): continue
+            by_team[tn][side] = (e.get("value"), e.get("odds"))
+        raw = {}
+        for tn, sides in by_team.items():
+            rec = out.setdefault(tn, {})
+            if game_total is not None:
+                rec["game_total"] = game_total
+            ov, un = sides.get("over"), sides.get("under")
+            if not ov or not un or ov[0] != un[0]:
+                continue
+            implied = _implied_total_from_line(ov[0], ov[1], un[1])
+            if implied is not None:
+                rec["implied_total_line"] = ov[0]
+                raw[tn] = implied
+
+        # Renormalize to the market's own game total (see the KNOWN BIAS note
+        # in _implied_total_from_line). Only possible when BOTH teams priced
+        # cleanly and a game total exists; otherwise keep the raw solve and
+        # flag it, rather than silently shipping a differently-scaled number
+        # next to normalized ones.
+        s = sum(raw.values())
+        if len(raw) == 2 and game_total and s > 0:
+            f = game_total / s
+            for tn, v in raw.items():
+                out[tn]["implied_total"] = round(v * f, 2)
+                out[tn]["implied_total_normalized"] = True
+        else:
+            for tn, v in raw.items():
+                out[tn]["implied_total"] = v
+                out[tn]["implied_total_normalized"] = False
     return out
 
 
@@ -347,6 +540,27 @@ def fetch_l14_pitcher_form(pitcher_ids):
             if len(pa) == 0: continue
             k_pct = round((pa["events"] == "strikeout").sum() / len(pa) * 100, 1)
             entry = {"l14_k_pct": k_pct, "l14_pa": len(pa)}
+
+            # Per-pitcher WORKLOAD (batters faced per start). Free — this is
+            # the same dataframe already pulled above, no extra network.
+            #
+            # A game_date is only counted as a START if the pitcher appears in
+            # inning 1. This filter is not cosmetic: verified live tonight,
+            # grouping naively by game_date put Drew Anderson at "5 starts,
+            # 5.2 BF/start" (he is a reliever who made zero starts in the L14
+            # window) and dragged Will Warren to 14.7 BF/start by mixing a
+            # 4-batter relief outing in with two real starts. Across tonight's
+            # 30 listed starters, the naive mean was 21.18 BF/start; filtered
+            # to real starts it is 23.10 — the relief contamination alone was
+            # worth ~2 batters faced, i.e. roughly half a strikeout.
+            if "inning" in pa.columns:
+                bf_per_start = []
+                for _, sub in pa.groupby("game_date"):
+                    if sub["inning"].min() == 1:      # was in the game from the 1st
+                        bf_per_start.append(len(sub))
+                if bf_per_start:
+                    entry["bf_per_start"] = round(sum(bf_per_start) / len(bf_per_start), 1)
+                    entry["n_starts"] = len(bf_per_start)
             if "at_bat_number" in pa.columns:
                 pa["tto"] = ((pa["at_bat_number"] - 1) // 9 + 1).clip(upper=3).astype(int)
                 tto3 = pa[pa["tto"] == 3]
@@ -571,19 +785,127 @@ def name_lookup(df, name_col_candidates=("Name", "last_name, first_name")):
 #  without needing a real sportsbook line.
 # ══════════════════════════════════════════════════════════════════════════
 
-def project_batter_tb(bs, l7, order):
+# ── Expected plate appearances: MEASURED, not assumed ────────────────────
+# Derived from the SAME 186-game / 372-team-game live box-score pull described
+# at LEAGUE_TEAM_RUNS_MEAN (m.statsapi.boxscore_data, 14 days ending
+# 2026-08-05). For every team-game, every lineup slot's total PA (starter plus
+# any substitute batting in that slot) was counted from the real box score and
+# regressed on that team's real runs scored in that game.
+#
+# WHAT WAS ACTUALLY MEASURED (real numbers, n=372 team-games per slot):
+#   slot | mean PA | observed range | old ORDER_PA/162
+#     1  |  4.511  |     3-6        |     4.630
+#     2  |  4.435  |     3-7        |     4.519
+#     3  |  4.325  |     2-6        |     4.407
+#     4  |  4.237  |     2-6        |     4.278
+#     5  |  4.121  |     2-6        |     4.148
+#     6  |  3.978  |     2-6        |     4.019
+#     7  |  3.863  |     2-6        |     3.889
+#     8  |  3.745  |     2-6        |     3.759
+#     9  |  3.599  |     1-6        |     3.611
+# Total lineup PA/game 36.81. Note the old static table was NOT badly wrong at
+# league-average scoring — it sits within 0.12 PA of measured at every slot,
+# and within 0.03 at slots 4-9. The static table's real defect is that it has
+# no run-environment term at all, so it returns the same number for a leadoff
+# hitter in a 3-run game and a 6-run game.
+#
+# Per-slot OLS of PA on runs gave slopes of 0.081-0.111 PA per run, tightly
+# clustered with no slope trend across slots (mean 0.1006). The per-slot
+# slopes are noisy at n=372 each, so the POOLED slope 0.1006 is used for all
+# slots and only the intercept varies by slot, back-solved from each slot's
+# measured mean at the measured league mean of 4.245 runs:
+#     intercept_s = mean_PA_s - 0.1006 * 4.245
+#
+# HONEST SIZE OF THE EFFECT: the README's handoff estimated "leadoff on a
+# 5.5-run team ~4.6 PA, 9-hole on a 3.5-run team ~3.7, a ~25% swing." The
+# measurement only partly supports that. The slot term is real and large
+# (4.51 down to 3.60, a 25% spread on its own). The run-environment term is
+# much smaller than assumed: at 0.1006 PA per run, going from a 3.0-run team
+# to a 5.5-run team moves a leadoff hitter only 4.38 -> 4.63 PA, about 6%.
+# The joint range across slot AND environment is ~34% (3.48 to 4.65). So this
+# model's gain over the static table is real but modest, and claiming 25% from
+# run environment alone would have been wrong.
+#
+# CAVEAT (stated rather than hidden): runs and PA are mutually causal — more
+# PA produce more runs as well as the reverse — so this is a descriptive
+# conditional expectation E[PA | runs], not a causal coefficient. That is
+# nonetheless exactly the right object here, because by the tower property
+# E[PA] = a + b * E[runs], so evaluating the fit at the market's implied team
+# total gives the correct expected PA as long as the relationship is close to
+# linear over the range used, which the per-slot fits support.
+PA_BY_SLOT_INTERCEPT = {1: 4.084, 2: 4.008, 3: 3.898, 4: 3.810, 5: 3.694,
+                        6: 3.551, 7: 3.436, 8: 3.318, 9: 3.172}
+PA_PER_RUN = 0.1006
+
+
+def project_batter_pa(order, implied_total=None):
+    """Expected plate appearances tonight for a given lineup slot, given the
+    team's expected run environment. See the measurement block above.
+
+    Degrades gracefully: with no implied total (Action Network unreachable,
+    or a team the book hasn't priced) it evaluates at the measured league mean
+    of 4.245 runs, which reproduces the measured per-slot means almost exactly
+    — i.e. the no-data path is the old static table's behaviour, not a
+    degraded one.
+
+    The implied total is clamped to 2.0-7.5 runs before use so a stale or
+    garbage line can't extrapolate the fit outside the range it was measured
+    over. At those bounds a leadoff hitter spans 4.29 to 4.84 PA."""
+    slot = min(max(int(order or 9), 1), 9)
+    a = PA_BY_SLOT_INTERCEPT[slot]
+    t = implied_total
+    if t is None or t != t:
+        t = LEAGUE_TEAM_RUNS_MEAN
+    else:
+        try: t = float(t)
+        except (TypeError, ValueError): t = LEAGUE_TEAM_RUNS_MEAN
+        if t != t: t = LEAGUE_TEAM_RUNS_MEAN
+        t = clamp(t, 2.0, 7.5)
+    return round(a + PA_PER_RUN * t, 2)
+
+
+def project_batter_tb(bs, l7, order, implied_total=None):
     """Projected total bases for tonight, blending L7 form and season skill.
     TB/AB = AVG + ISO is a standard sabermetric identity; when ISO isn't
     available (Statcast-fallback season data has no ISO column), approximate
     from AVG with a league-average power multiplier instead of silently
     defaulting to a flat rate."""
+    # TB rate per PLATE APPEARANCE. Two real errors were fixed here, both
+    # invisible from reading the code and both found by checking real values:
+    #
+    # (1) SLG was being approximated when it was sitting right there. The
+    #     Statcast-fallback season frame — the shape that actually ships, since
+    #     FanGraphs 403s on most runs — has no ISO, so this fell to
+    #     `avg * 1.35`. But that frame DOES carry `slg`, and slugging IS total
+    #     bases per at-bat by definition, so no approximation is needed at all.
+    #     Measured on tonight's real frame: Kyle Schwarber AVG .246 / SLG .532
+    #     — the approximation returned .332, understating his true TB rate by
+    #     38%. Bryce Harper .344 vs .502 (-31%), Yordan Alvarez .447 vs .649
+    #     (-31%). Every batter TB projection on the common path was low by
+    #     roughly a third, which also silently defeated the point of the new
+    #     expected-PA model, since PA only scales whatever rate it multiplies.
+    #
+    # (2) SLG is per AT-BAT, but it was multiplied by projected PLATE
+    #     APPEARANCES. PA includes walks and HBP, so this over-counted by the
+    #     PA/AB ratio. Measured from 93 real completed games (7 days ending
+    #     2026-08-05, statsapi.boxscore_data): 6227 AB / 6848 PA, so
+    #     AB/PA = 0.9093, league SLG .3849, and league TB/PA .3500. The
+    #     conversion is applied explicitly below.
+    #
+    # The L7 rate is NOT converted — fetch_l7_batter_form computes TB_per_PA
+    # from real PA-ending Statcast rows, so it is already per plate appearance.
     season_rate = None
     if bs:
-        avg = bs.get("AVG"); iso = bs.get("ISO")
-        if avg is not None and iso is not None:
-            season_rate = avg + iso
-        elif avg is not None:
-            season_rate = avg * 1.35  # approximation when ISO isn't available
+        avg = bs.get("AVG"); iso = bs.get("ISO"); slg = bs.get("slg")
+        slg_per_ab = None
+        if slg is not None and slg == slg:
+            slg_per_ab = slg                      # exact: SLG == TB/AB
+        elif avg is not None and iso is not None:
+            slg_per_ab = avg + iso                # exact on the FanGraphs path
+        elif avg is not None and avg == avg:
+            slg_per_ab = avg * 1.35               # last-resort approximation
+        if slg_per_ab is not None and slg_per_ab == slg_per_ab:
+            season_rate = slg_per_ab * AB_PER_PA  # TB/AB -> TB/PA
     l7 = l7 or {}
     l7_pa = l7.get("PA", 0)
     l7_rate = l7.get("TB_per_PA") if l7_pa >= 5 else None
@@ -596,15 +918,73 @@ def project_batter_tb(bs, l7, order):
         rate = l7_rate
     else:
         rate = LEAGUE_AVG_TB_PA
-    pa_est = m.ORDER_PA.get(min(order or 9, 9), 630) / 162
+    # Was: m.ORDER_PA[slot] / 162 — a static season-PA table with no game
+    # context. Now a measured slot x run-environment model (project_batter_pa).
+    pa_est = project_batter_pa(order, implied_total)
     return round(rate * pa_est, 2)
 
 
+# ── Pitcher workload: MEASURED per-start batters faced ───────────────────
+# Measured live from tonight's own 30 listed starters, L14 Statcast pulls,
+# counting only real starts (in the game from inning 1):
+#     n = 49 starts, mean 23.10 BF/start, median 23.0, SD 2.85, range 17-30
+# The old flat constant of 22 was close to the league mean but hid the whole
+# point: per-pitcher means tonight run 19.5 (Reid Detmers) to 27.5 (Tanner
+# Bibee), a 41% spread that scales every strikeout projection linearly.
+#
+# HOW MUCH OF THAT SPREAD IS REAL, measured rather than assumed. Variance
+# decomposition over the 27 starters with 2+ starts:
+#     within-pitcher variance  6.068  (SD 2.46)
+#     variance of pitcher means 5.351
+#     between-pitcher variance  2.317  (SD 1.52)  [= 5.351 - 6.068/2]
+# So MOST start-to-start variation in batters faced is noise, not pitcher
+# identity. The empirical-Bayes shrinkage constant follows directly:
+#     n0 = within / between = 6.068 / 2.317 = 2.62
+# and the weight on a pitcher's own observed mean is n / (n + 2.62):
+#     1 start 0.28 | 2 starts 0.43 | 3 starts 0.53 | 5 starts 0.66
+# This is the same hard-won lesson as score_first_inning's sample penalty —
+# an L14 window usually holds only 2-3 starts, and taken at face value a
+# single long or short outing would swing a K projection by a full strikeout.
+# Here the correction is derived from the measured variance rather than a
+# chosen penalty, so it needs no separate cap.
+LEAGUE_AVG_BF_PER_START = 23.1   # measured (was a flat 22, unsourced)
+BF_SHRINK_N0 = 2.62              # measured empirical-Bayes constant, see above
+
+
+def project_pitcher_workload(l14):
+    """Expected batters faced tonight for this starter.
+
+    Shrinks the pitcher's own measured BF/start toward the measured league
+    mean by n/(n+2.62), where n is his real starts in the L14 window.
+    Degrades gracefully: with no workload data at all (Statcast pull empty, a
+    rookie's first start, a pitcher who only relieved in the window) it
+    returns the measured league mean, which is the honest neutral answer.
+
+    Returns (expected_bf, n_starts, observed_bf_per_start | None)."""
+    l14 = l14 or {}
+    obs = l14.get("bf_per_start")
+    n = l14.get("n_starts") or 0
+    if obs is None or n <= 0:
+        return LEAGUE_AVG_BF_PER_START, 0, None
+    try: obs = float(obs)
+    except (TypeError, ValueError): return LEAGUE_AVG_BF_PER_START, 0, None
+    if obs != obs: return LEAGUE_AVG_BF_PER_START, 0, None   # NaN guard
+    w = n / (n + BF_SHRINK_N0)
+    bf = w * obs + (1 - w) * LEAGUE_AVG_BF_PER_START
+    # Never project outside the real observed range of a start (17-30 tonight,
+    # widened slightly); a shrunk estimate can't reach these, but a future
+    # data change shouldn't be able to produce an absurd workload silently.
+    return clamp(bf, 12.0, 30.0), n, obs
+
+
 def project_pitcher_ks(ps, l14):
-    """Projected strikeouts for tonight's start, blending L14 form and season
-    K%, scaled by a league-average batters-faced-per-start estimate (Statcast-
-    fallback season data doesn't carry innings/BF, so this is an explicit
-    approximation, not a precise per-pitcher workload model)."""
+    """Projected strikeouts for tonight's start: K rate x expected batters
+    faced, where the workload is now a real per-pitcher estimate rather than
+    a flat league constant (see project_pitcher_workload).
+
+    This gates every strikeout prop. A pitcher averaging 19.5 batters faced
+    cannot reach the same K total as one averaging 27.5 at the same K rate,
+    and the old flat 22 asserted that he could."""
     l14 = l14 or {}
     if l14.get("l14_pa", 0) >= 15:
         k_pct = l14["l14_k_pct"]
@@ -612,7 +992,8 @@ def project_pitcher_ks(ps, l14):
         k_pct = ps["K%"]
     else:
         k_pct = 22.5
-    return round(k_pct / 100 * LEAGUE_AVG_BF_PER_START, 1)
+    exp_bf, _, _ = project_pitcher_workload(l14)
+    return round(k_pct / 100 * exp_bf, 1)
 
 
 # ══════════════════════════════════════════════════════════════════════════
@@ -656,9 +1037,38 @@ def score_batter(batter, gm, opp_sp_row, opp_sp_id, opp_sp_hand, park_wx, batter
         form = clamp(form + scale(bs_trend, 1.0, 3.0, 0, 15))
         notable_signals += 1
 
-    # ENVIRONMENT (15%)
-    env = park_wx.get("park_hr_index", 50) if park_wx else 50
-    if env >= 70 or env <= 30: notable_signals += 1
+    # ENVIRONMENT (15%) — park/weather HR index blended with the market's own
+    # implied team total. The implied total is the strongest single
+    # environment input available: it is a live forecast of how many runs
+    # THIS team scores TONIGHT, and it already prices park, weather, the
+    # opposing starter, the opposing bullpen and lineup strength at once,
+    # where park_hr_index captures only the park-and-weather slice.
+    #
+    # Weighted 55/45 in the implied total's favour, inside the existing
+    # ENVIRONMENT component rather than as an outside nudge, because it is
+    # measuring exactly what this component is for (run environment) — unlike
+    # the sharp-money divergence, which measures market *disagreement* and is
+    # therefore kept outside and capped. Net effect on a pick is bounded by
+    # ENVIRONMENT's own 15% weight.
+    #
+    # Band: scale() maps 3.0 -> 0 and 5.6 -> 100. Those are not round numbers
+    # picked by feel — 3.0 and 5.6 are ~1 SD either side of the measured
+    # league mean team total of 4.245 runs/game (measured SD of team runs
+    # actually scored is 3.11, but the spread of *expected* totals is far
+    # narrower; tonight's real implied totals after normalization run 3.07 to
+    # 6.25 across the 27 teams priced, mean 4.314 vs the 4.245 measured league
+    # mean — so this band covers the bulk of a live slate, with only genuine
+    # extremes (a Coors game) clipping at the top). A team at the measured
+    # league mean lands at 48, i.e. essentially neutral, by construction.
+    park_env = park_wx.get("park_hr_index", 50) if park_wx else 50
+    implied_total = (sharp_bias or {}).get("implied_total")
+    if implied_total is not None:
+        run_env = scale(implied_total, 3.0, 5.6)
+        env = clamp(park_env * 0.45 + run_env * 0.55)
+        if implied_total >= 5.2 or implied_total <= 3.5: notable_signals += 1
+    else:
+        env = park_env
+    if park_env >= 70 or park_env <= 30: notable_signals += 1
 
     # BASELINE SKILL (15%)
     bs = batter_season or {}
@@ -718,6 +1128,66 @@ def score_batter(batter, gm, opp_sp_row, opp_sp_id, opp_sp_hand, park_wx, batter
         score -= 12
         watchouts.append(f"L7 AVG {l7.get('AVG')} isn't backed by barrel rate ({l7.get('barrel_pct')}%) — likely BABIP-driven, due to cool off")
 
+    # REGRESSION SIGNAL — expected-vs-actual gap, as a bounded two-sided
+    # adjustment OUTSIDE the weighted formula.
+    #
+    # Placement is deliberate. This is not another estimate of how good the
+    # hitter is — the formula's BASELINE SKILL component already uses his
+    # actual results. It is a statement about how much those results are
+    # likely to MOVE, which is a different kind of claim, so it belongs
+    # outside the components and capped, exactly like the sharp-money nudge
+    # (+/-5) rather than folded into one of the five weights.
+    #
+    # Inputs are already present, no extra fetch: the season frame carries
+    # est_ba_minus_ba_diff and est_woba_minus_woba_diff. Sign verified
+    # numerically against real rows tonight rather than trusted from the
+    # column name (the name reads "est minus ba", but the values are
+    # ACTUAL minus EXPECTED: Abimelec Ortiz AVG .400 / xBA .393 -> +.007, and
+    # a second row wOBA .xxx - xwOBA .xxx reproduced its diff exactly). So
+    # POSITIVE = outperforming his batted-ball quality = FADE, NEGATIVE =
+    # underperforming with better contact than results = BUY.
+    #
+    # Thresholds are the MEASURED distribution, not chosen: across the 409
+    # batters with 100+ PA in tonight's real pull, est_ba_minus_ba_diff has
+    # mean .0000 and SD .0228 (p10 -.027, p90 +.028), and
+    # est_woba_minus_woba_diff mean .0007, SD .0247 (p10 -.030, p90 +.032).
+    # A gap only counts as a signal past ~1 SD, and the adjustment is scaled
+    # so that a 2-SD gap (roughly the extremes of the real distribution, min
+    # -.107 / max +.061) reaches the +/-6 cap. 6 is chosen to sit just above
+    # the sharp-money nudge's 5 — a stats-derived regression read should
+    # outweigh a market nudge — while still being unable to overturn a
+    # genuine multi-signal edge on its own.
+    reg_adj = 0.0
+    reg_notes = []
+    ba_gap = bs.get("est_ba_minus_ba_diff")
+    woba_gap = bs.get("est_woba_minus_woba_diff")
+    season_pa = bs.get("pa") or 0
+    if season_pa >= 100:   # below this the gap is mostly sampling noise
+        for gap, sd, label, actual, expected in (
+                (ba_gap, 0.0228, "AVG vs xBA", bs.get("AVG"), bs.get("xBA")),
+                (woba_gap, 0.0247, "wOBA vs xwOBA", bs.get("wOBA"), bs.get("xwOBA"))):
+            if gap is None or gap != gap: continue
+            try: gap = float(gap)
+            except (TypeError, ValueError): continue
+            if abs(gap) < sd: continue          # inside one SD — no signal
+            # -6 for a 2-SD overperformer, +6 for a 2-SD underperformer.
+            reg_adj += clamp(-gap / (2 * sd) * 6, -6, 6) / 2   # /2: two metrics, shared budget
+            if gap > 0:
+                reg_notes.append(f"{label}: {actual:.3f} vs {expected:.3f} (+{gap:.3f}) — "
+                                  f"outperforming his contact quality, regression risk")
+            else:
+                reg_notes.append(f"{label}: {actual:.3f} vs {expected:.3f} ({gap:.3f}) — "
+                                  f"underperforming his contact quality, positive regression candidate")
+    reg_why_notes = []
+    if reg_adj:
+        reg_adj = clamp(reg_adj, -6, 6)
+        score = clamp(score + reg_adj)
+        if reg_adj > 0:
+            reg_why_notes = reg_notes           # merged into `why` once it exists, below
+            if reg_adj >= 3: notable_signals += 1   # a genuine non-obvious BUY the market underrates
+        else:
+            watchouts.extend(reg_notes)
+
     # Public-awareness discount: a pick leaning entirely on "star + high average,"
     # with no other converging signal, is exactly what the market already prices —
     # not useful. Downweight it. A pick with 2+ non-obvious signals gets a small
@@ -728,7 +1198,8 @@ def score_batter(batter, gm, opp_sp_row, opp_sp_id, opp_sp_hand, park_wx, batter
     elif notable_signals >= 2:
         score = clamp(score + 5)
 
-    projected_tb = project_batter_tb(bs, l7, order)
+    projected_tb = project_batter_tb(bs, l7, order, implied_total)
+    projected_pa = project_batter_pa(order, implied_total)
     if exploit and exploit["hard_hit_percent"] and (exploit["hard_hit_percent"] >= 45 or projected_tb >= 1.8):
         prop = f"Home Run / 2+ Total Bases (proj. {projected_tb} TB)"
     elif (bs.get("K%") or 30) <= 18:
@@ -737,6 +1208,10 @@ def score_batter(batter, gm, opp_sp_row, opp_sp_id, opp_sp_hand, park_wx, batter
         prop = f"Over 1.5 Total Bases (proj. {projected_tb} TB)"
 
     why = []
+    why.extend(reg_why_notes)
+    why.append(f"Projected {projected_pa} PA (slot {order}"
+                + (f", {implied_total}-run implied team total)" if implied_total is not None
+                   else ", league-average run environment — no market total available)"))
     why.append(f"Platoon: {bats} bat vs {opp_sp_hand or '?'}HP ({'favorable' if platoon>=65 else 'unfavorable'})")
     if exploit:
         why.append(f"Pitch-type exploit: RV/100 {exploit['run_value_per_100']:+.1f} vs {exploit['pitch_type']} "
@@ -746,6 +1221,10 @@ def score_batter(batter, gm, opp_sp_row, opp_sp_id, opp_sp_hand, park_wx, batter
     if l7.get("barrel_pct") is not None: why.append(f"L7 barrel% {l7['barrel_pct']}")
     if bs_trend is not None and bs_trend >= 1.0: why.append(f"Bat speed trending up L14 ({bs_trend:+.1f}mph 2nd-half vs 1st-half)")
     if bs.get("wRC+"): why.append(f"Season wRC+ {bs['wRC+']:.0f}")
+    if implied_total is not None:
+        why.append(f"Market implied team total {implied_total} runs "
+                    f"(league avg {LEAGUE_TEAM_RUNS_MEAN}; line {(sharp_bias or {}).get('implied_total_line')}, "
+                    f"game total {(sharp_bias or {}).get('game_total')})")
     if not park_wx or park_wx.get("dome"): why.append("Dome — weather neutral")
     elif park_wx.get("wind_effect") == "out": why.append(f"Wind blowing OUT ({park_wx.get('wind_mph',0):.0f}mph) — HR boost")
     elif park_wx.get("wind_effect") == "in": why.append("Wind blowing IN — power suppressed")
@@ -832,6 +1311,23 @@ def score_pitcher(sp_name, sp_id, sp_hand, gm, side, pit_season_lookup, l14_form
         score = clamp(score + 5)
 
     projected_ks = project_pitcher_ks(ps, l14)
+    exp_bf, bf_n_starts, obs_bf = project_pitcher_workload(l14)
+    workload_note = None   # merged into `why` once it exists, further down
+    if obs_bf is not None:
+        workload_note = (f"Expected workload {exp_bf:.1f} batters faced "
+                    f"(his own {obs_bf:.1f}/start over {bf_n_starts} real start{'s' if bf_n_starts != 1 else ''}, "
+                    f"shrunk toward the {LEAGUE_AVG_BF_PER_START} league mean)")
+        if bf_n_starts < 3:
+            watchouts.append(f"Workload estimate rests on only {bf_n_starts} start"
+                              f"{'s' if bf_n_starts != 1 else ''} in the L14 window — most start-to-start "
+                              f"variation in batters faced is noise, so this is shrunk heavily toward league average")
+        if exp_bf <= 20.5:
+            watchouts.append(f"Short-outing profile ({exp_bf:.1f} expected batters faced) — caps the realistic "
+                              f"strikeout ceiling regardless of K rate")
+    else:
+        workload_note = (f"Expected workload {exp_bf:.1f} batters faced (league average — no real start "
+                    f"found for him in the L14 window)")
+        watchouts.append("No L14 start found for this pitcher — workload defaulted to the league average")
 
     if opp_team_k_pct is not None:
         k_note = (f"Opposing team K% {opp_team_k_pct:.1f}" if opp_k_source == "team"
@@ -839,6 +1335,7 @@ def score_pitcher(sp_name, sp_id, sp_hand, gm, side, pit_season_lookup, l14_form
     else:
         k_note = "Opposing team K% unavailable (FanGraphs team page down and no confirmed lineup batters matched)"
     why = [k_note]
+    if workload_note: why.append(workload_note)
     why.append(f"{same_hand}/{known} known-hand opposing batters same-handed" if known else "Opposing lineup handedness mostly unknown")
     if k_pct: why.append(f"Season K% {k_pct}")
     if csw: why.append(f"CSW% {csw}")
@@ -862,10 +1359,67 @@ LEAGUE_AVG_SPRINT = 27.0     # ft/s
 LEAGUE_AVG_POPTIME = 2.0     # seconds, catcher pop time to 2B
 LEAGUE_AVG_BB_PCT = 8.5
 
+# On-base baselines, MEASURED live from tonight's real season-batting pull
+# (Statcast-fallback shape, 409 batters with 100+ PA — the shape that actually
+# ships, since FanGraphs 403s on most real runs):
+#     wOBA  mean .3126  SD .0399  p10 .2608  p90 .3650
+# The p10-p90 band is used as the scale, so a genuinely average on-base bat
+# lands mid-scale by construction rather than by a chosen number.
+LEAGUE_WOBA_MEAN = 0.3126
+WOBA_P10, WOBA_P90 = 0.2608, 0.3650
+OBP_P10, OBP_P90 = 0.290, 0.370   # standard OBP band, used only on the FanGraphs path
+
+
+def _on_base_score(bs):
+    """0-100 'how often does this man actually reach base' score, plus a
+    human-readable note. Returns (score|None, note|None).
+
+    Prefers real OBP when FanGraphs is reachable, but the COMMON case is the
+    Statcast fallback, which carries no OBP at all — verified live tonight:
+    the season-batting frame came back with columns
+    [Name, player_id, year, pa, bip, AVG, xBA, est_ba_minus_ba_diff, slg,
+     est_slg, est_slg_minus_slg_diff, wOBA, xwOBA, est_woba_minus_woba_diff,
+     Barrel%, HardHit%] — no OBP, no BB%, and no SB. wOBA is present and is a
+    direct weighted on-base rate, so it is the fallback."""
+    bs = bs or {}
+    obp = bs.get("OBP")
+    if obp is not None and obp == obp:
+        return scale(obp, OBP_P10, OBP_P90), f"OBP {obp:.3f}"
+    woba = bs.get("wOBA")
+    if woba is not None and woba == woba:
+        # Thin samples produce absurd wOBA (a 1-PA batter showed .698 tonight).
+        pa = bs.get("pa") or 0
+        if pa and pa >= 40:
+            return scale(woba, WOBA_P10, WOBA_P90), f"wOBA {woba:.3f} (league ~{LEAGUE_WOBA_MEAN:.3f})"
+    return None, None
+
+
 def score_stolen_base(batter, gm, opp_catcher_poptime, sprint_speed, batter_season):
-    """Speed (skill) is the dominant signal here — a player has to be a real
-    stolen-base threat before the matchup context matters at all. Verified
-    live against Statcast sprint speed + catcher pop-time data."""
+    """Speed is the dominant SKILL signal, but it is not the gating one: a
+    player has to REACH BASE before speed and catcher pop time matter at all.
+    Elite speed attached to a .280 OBP is far fewer steal chances than the
+    same speed attached to a .360 OBP, and the previous version of this
+    function had no on-base term whatsoever.
+
+    Worse, the term it did have was dead on the common path. `context` was
+    scale(season SB), and the Statcast-fallback season frame — which is what
+    actually ships, since FanGraphs 403s on most real runs — carries no SB
+    column at all, so bs.get("SB") was None and context silently defaulted to
+    a flat 50 for every runner in the slate. Verified live tonight against
+    the real 613-row fallback frame. On-base ability replaces it as the third
+    component because, unlike season SB, it is genuinely available on the
+    fallback path (via wOBA).
+
+    Weights: speed .50 / catcher matchup .28 / on-base .22. On-base gets real
+    weight because it gates opportunity, but stays below speed because the
+    sprint-speed filter above is what makes a candidate plausible at all.
+    Season SB, when it IS available (FanGraphs path), is kept as a converging
+    signal rather than as a scored component.
+
+    The projection stays at exactly 1 deliberately. grade_results.py grades
+    stolen_base as actual >= projection - 0.5, so any fractional expected-SB
+    number below 0.5 would make a 0-steal night grade as a HIT. The
+    opportunity read belongs in the reasoning, not in that field."""
     bid = batter.get("id")
     if not sprint_speed or sprint_speed < 27.3:
         return None  # not a plausible SB threat regardless of matchup
@@ -875,15 +1429,24 @@ def score_stolen_base(batter, gm, opp_catcher_poptime, sprint_speed, batter_seas
     if opp_catcher_poptime and opp_catcher_poptime >= 2.10: notable_signals += 1
     bs = batter_season or {}
     season_sb = bs.get("SB")
-    context = scale(season_sb, 3, 25) if season_sb is not None else 50
-    if season_sb and season_sb >= 15: notable_signals += 1
+    on_base, on_base_note = _on_base_score(bs)
+    context = on_base if on_base is not None else 50
 
-    score = skill * 0.55 + matchup * 0.30 + context * 0.15
+    score = skill * 0.50 + matchup * 0.28 + context * 0.22
+    if season_sb and season_sb >= 15: notable_signals += 1
+    if on_base is not None and on_base >= 75: notable_signals += 1
+
     why = [f"Sprint speed {sprint_speed:.1f}ft/s (league ~{LEAGUE_AVG_SPRINT})"]
     if opp_catcher_poptime: why.append(f"Opposing catcher pop time {opp_catcher_poptime:.2f}s to 2B (league ~{LEAGUE_AVG_POPTIME}s)")
+    if on_base_note: why.append(f"On-base ability: {on_base_note} — gates how often he's on first to run at all")
     if season_sb is not None: why.append(f"Season SB: {season_sb}")
     watchouts = []
     if not opp_catcher_poptime: watchouts.append("Opposing catcher pop time unavailable — matchup component defaulted to neutral")
+    if on_base is None:
+        watchouts.append("No usable on-base rate (no OBP, and wOBA sample under 40 PA) — "
+                          "steal-opportunity component defaulted to neutral")
+    elif on_base <= 25:
+        watchouts.append("Fast, but a weak on-base rate means materially fewer times on first to steal from")
 
     return {
         "type": "batter", "name": batter["name"], "player_id": bid, "team": batter.get("team"),
