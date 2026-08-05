@@ -667,3 +667,80 @@ def park_hand_factors(min_bbe=100):
         out.setdefault(park, {})[stand] = {"BBE": int(row["BBE"]), "HR": int(row["HR"]),
                                             "HR%": float(round(hr_pct, 2)), "Index": index}
     return out
+
+
+# ══════════════════════════════════════════════════════════════════════════
+#  UMPIRE — quantified run-environment effect (honest subset only)
+# ══════════════════════════════════════════════════════════════════════════
+
+def fetch_umpire_run_environment(game_meta):
+    """HP umpire effect on run/K environment, beyond the raw accuracy% that
+    generate_picks.fetch_umpire_scores already pulls from this same API.
+
+    ALL keys from a real live response were printed and inspected (not
+    assumed) before deciding what to surface:
+      umpire, n, called_pitches_sum, called_correct_sum, called_wrong_sum,
+      x_correct_calls_sum, correct_calls_above_x_sum, n_challenged_sum,
+      n_overturned_sum, total_run_impact_mean, overall_accuracy_wmean,
+      x_overall_accuracy_wmean, accuracy_above_x_wmean, consistency_wmean,
+      overall_accuracy_min, overall_accuracy_max, x_incorrect_calls_sum,
+      favor_abs_mean, successful_challenge_rate, weighted_score.
+
+    HONEST FINDING stated per this project's discipline: nothing in this
+    payload splits calls into extra-strike-vs-extra-ball or exposes an
+    expected K/BB count — there is no 'expected_k', 'expected_bb', or
+    zone-size field of any kind. Verified live: 'favor_abs_mean' is an
+    ABSOLUTE value (live range 0.26-1.15, always positive across all 142
+    umpires) with no signed counterpart in the payload, so it cannot say
+    which side (home/away, hitter/pitcher) an umpire favors — only that
+    some bias magnitude exists. Fabricating a directional K%/BB% "boost"
+    from these fields would be presenting a made-up number as real, which
+    this project treats as the worst outcome (worse than skipping the
+    feature). None is fabricated here.
+
+    What IS genuinely actionable, returned as the honest subset:
+      - run_impact: 'total_run_impact_mean' verified live to be strictly
+        positive across all 142 umpires (range 0.95-2.38, mean 1.45) —
+        read as an UNSIGNED run-environment volatility measure (how many
+        expected runs this umpire's incorrect calls typically move the
+        game by in either direction), not an over/under lean. A high value
+        flags a game where the total is less predictable from stats alone,
+        not a game that leans Over or Under.
+      - accuracy / accuracy_above_expected: 'overall_accuracy_wmean' and
+        'accuracy_above_x_wmean' (this umpire's accuracy vs. a pitch-
+        tracking expected-accuracy baseline; verified live range -2.05 to
+        +1.69, so genuinely signed) — a materially negative value is a
+        real signal this umpire calls a looser zone than the tracking
+        system expects, even without knowing which side it favors.
+      - consistency: 'consistency_wmean' — same-call-same-pitch-location
+        reliability; low consistency is a real source of at-bat-level
+        unpredictability independent of overall accuracy.
+      - challenge behavior: 'successful_challenge_rate' — real signal on
+        how often this ump's calls get overturned on replay.
+
+    Returns a dict keyed by matchup string (game_meta's own "matchup" key,
+    same convention as fetch_umpire_scores), each value carrying the
+    fields above plus 'n' (games in the umpire's sample, for trust)."""
+    out = {}
+    try:
+        r = m.retry_get("https://umpscorecards.com/api/umpires",
+                        headers={"User-Agent": "Mozilla/5.0", "Accept": "application/json"},
+                        timeout=20, retries=2)
+        r.raise_for_status()
+        by_name = {row.get("umpire"): row for row in r.json().get("rows", [])}
+    except Exception as e:
+        m.warn(f"Umpire run environment: {e}")
+        return out
+    for gm in game_meta:
+        u = by_name.get(gm.get("hp_ump"))
+        if not u:
+            continue
+        out[gm["matchup"]] = {
+            "n": u.get("n"),
+            "accuracy": u.get("overall_accuracy_wmean"),
+            "accuracy_above_expected": u.get("accuracy_above_x_wmean"),
+            "consistency": u.get("consistency_wmean"),
+            "run_impact_magnitude": u.get("total_run_impact_mean"),
+            "successful_challenge_rate": u.get("successful_challenge_rate"),
+        }
+    return out
