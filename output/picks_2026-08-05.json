@@ -1,6 +1,6 @@
 {
   "date": "2026-08-05",
-  "generated": "2026-08-05T13:49:18.425216",
+  "generated": "2026-08-05T14:50:23.783721",
   "picks": [
     {
       "rank": 1,
@@ -100,25 +100,6 @@
     {
       "rank": 6,
       "type": "batter",
-      "name": "Abimelec Ortiz",
-      "player_id": 694673,
-      "team": "Washington Nationals",
-      "matchup": "Washington Nationals @ Philadelphia Phillies",
-      "game_pk": 823429,
-      "side": null,
-      "prop": "Over 1.5 Total Bases (proj. 2.61 TB)",
-      "projection": {
-        "stat": "total_bases",
-        "value": 2.61
-      },
-      "lean": null,
-      "score": 75.9,
-      "confidence": "Medium",
-      "notable_signals": 0
-    },
-    {
-      "rank": 7,
-      "type": "batter",
       "name": "Jake McCarthy",
       "player_id": 664983,
       "team": "Colorado Rockies",
@@ -136,7 +117,7 @@
       "notable_signals": 0
     },
     {
-      "rank": 8,
+      "rank": 7,
       "type": "batter",
       "name": "A.J. Ewing",
       "player_id": 805999,
@@ -153,6 +134,25 @@
       "score": 75.3,
       "confidence": "High",
       "notable_signals": 0
+    },
+    {
+      "rank": 8,
+      "type": "batter",
+      "name": "Royce Lewis",
+      "player_id": 668904,
+      "team": "Minnesota Twins",
+      "matchup": "Minnesota Twins @ Kansas City Royals",
+      "game_pk": 824082,
+      "side": null,
+      "prop": "Over 1.5 Total Bases (proj. 2.18 TB)",
+      "projection": {
+        "stat": "total_bases",
+        "value": 2.18
+      },
+      "lean": null,
+      "score": 75.3,
+      "confidence": "High",
+      "notable_signals": 1
     },
     {
       "rank": 9,
@@ -176,20 +176,20 @@
     {
       "rank": 10,
       "type": "batter",
-      "name": "Jose Siri",
-      "player_id": 642350,
-      "team": "Los Angeles Angels",
-      "matchup": "Los Angeles Angels @ Baltimore Orioles",
-      "game_pk": 824806,
+      "name": "Abimelec Ortiz",
+      "player_id": 694673,
+      "team": "Washington Nationals",
+      "matchup": "Washington Nationals @ Philadelphia Phillies",
+      "game_pk": 823429,
       "side": null,
-      "prop": "To Steal a Base",
+      "prop": "Over 1.5 Total Bases (proj. 2.61 TB)",
       "projection": {
-        "stat": "stolen_base",
-        "value": 1
+        "stat": "total_bases",
+        "value": 2.61
       },
       "lean": null,
-      "score": 73.6,
-      "confidence": "High",
+      "score": 73.8,
+      "confidence": "Medium",
       "notable_signals": 0
     }
   ]
