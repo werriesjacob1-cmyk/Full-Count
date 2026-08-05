@@ -2501,13 +2501,22 @@ def compute_umpire_3way(game_meta):
 # ══════════════════════════════════════════════════════════════════════════════
 
 def compute_multiyear_baseline():
+    # Was calling raw pyb.batting_stats(yr, qual=50) directly, once per
+    # year, with no retry and no fallback -- the same anti-pattern already
+    # found and fixed elsewhere in this file (fetch_sp_rp_splits, "reuse
+    # fg_pit()'s fallback chain, don't bypass it"). Verified live: with
+    # FanGraphs currently blocked, this returned "No multi-year data." on
+    # every one of the 3 years, silently, when fg_bat()'s legacy->modern
+    # retry chain (used by every other FanGraphs batting pull in this file)
+    # would have gotten at least a real attempt at a second endpoint before
+    # giving up. Routed through fg_bat() for consistency and resilience.
     step(f"Multi-year weighted career baseline ({YEAR_2YR}/{YEAR_PREV}/{YEAR})...")
     try:
         dfs=[]
         weights=[(YEAR_2YR,0.2),(YEAR_PREV,0.3),(YEAR,0.5)]
         for yr,w in weights:
             try:
-                df=pyb.batting_stats(yr,qual=50)
+                df=fg_bat(yr,f"multiyear-{yr}",qual=50)
                 if df is not None and not df.empty:
                     df["season"]=yr; df["weight"]=w
                     dfs.append(df)
