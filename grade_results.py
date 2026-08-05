@@ -159,12 +159,34 @@ def grade_pick(pick, game_statuses):
             actual = float(row.get("bb", 0) or 0)
             actual_stat = "walks"
         elif stat == "total_bases":
-            h = int(row.get("h", 0) or 0)
-            d = int(row.get("doubles", 0) or 0)
-            t = int(row.get("triples", 0) or 0)
-            hr = int(row.get("hr", 0) or 0)
-            actual = (h - d - t - hr) * 1 + d * 2 + t * 3 + hr * 4
-            actual_stat = "total_bases"
+            # Verified against generate_picks.py's own prop-text branches (the three
+            # f-strings feeding off project_batter_tb(), ~line 690-696): unlike
+            # strikeouts -- where the number shown to the user IS proj-0.5, e.g.
+            # f"Over {projected_ks-0.5} Strikeouts" -- none of "Home Run / 2+ Total
+            # Bases", "Over 1.5 Hits", or "Over 1.5 Total Bases" ever interpolates the
+            # projection into its line; all three are hardcoded fixed lines, and only
+            # the "(proj. X TB)" parenthetical moves with the model's number. Grading
+            # this against the generic proj-0.5 formula was silently wrong in both
+            # directions and contradicted this file's own docstring promise to grade
+            # "the same convention...commits to when writing the prop text": a real
+            # 2026-08-04 pick (Griffin Conine, proj 2.6 TB, "2+ Total Bases") got
+            # threshold 2.1 -- requiring 3+ TB to grade a hit though the displayed line
+            # only needs 2+ -- and a low-projection pick (proj < 1.5, still routed into
+            # the "Over 1.5 TB" branch) would let a mere single (1 TB) grade as a false
+            # hit. "Over 1.5 Hits" is a different stat entirely (literal hit count, not
+            # total bases) that generate_picks.py still tags "total_bases" (all three
+            # branches share one projection dict) -- route it to the real box-score
+            # field instead of total bases.
+            if "Hits" in pick.get("prop", "").split("(")[0]:
+                actual = float(row.get("h", 0) or 0)
+                actual_stat = "hits"
+            else:
+                h = int(row.get("h", 0) or 0)
+                d = int(row.get("doubles", 0) or 0)
+                t = int(row.get("triples", 0) or 0)
+                hr = int(row.get("hr", 0) or 0)
+                actual = (h - d - t - hr) * 1 + d * 2 + t * 3 + hr * 4
+                actual_stat = "total_bases"
         else:
             return {**pick, "grade": "ungraded", "reason": f"unrecognized projection stat '{stat}'"}
     except (TypeError, ValueError):
@@ -173,7 +195,12 @@ def grade_pick(pick, game_statuses):
     proj = (pick.get("projection") or {}).get("value")
     if proj is None:
         return {**pick, "grade": "ungraded", "reason": "no projection on pick"}
-    threshold = proj - 0.5
+    # total_bases/hits grade against the fixed 1.5 line generate_picks.py actually
+    # displays (see above) -- strikeouts/stolen_base/walks genuinely are
+    # proj-0.5 per their own f-strings ("Over {ks-0.5} Strikeouts", stolen_base's
+    # fixed value=1 -> 0.5, walks' fixed value=0.7 -> 0.2, all matching their
+    # displayed "Over 0.5"-style lines exactly).
+    threshold = 1.5 if stat == "total_bases" else proj - 0.5
     hit = actual > threshold
     return {**pick, "grade": "hit" if hit else "miss", "actual": actual,
             "actual_stat": actual_stat, "threshold": threshold}
