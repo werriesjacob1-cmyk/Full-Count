@@ -46,10 +46,19 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
-      # Speeds up reruns within the same week (Chadwick player-ID table,
-      # season-to-date FanGraphs/Statcast pulls that don't change intraday).
-      # Keyed by ISO week so it self-refreshes regularly rather than growing
-      # stale all season.
+      # Speeds up reruns (Chadwick player-ID table, season-to-date FanGraphs/
+      # Statcast pulls that don't change intraday). The save key includes
+      # github.run_id, which is unique to this run, so it never collides with
+      # an existing cache entry -- every run saves a brand-new one; the prior
+      # comment here claimed this was "keyed by ISO week", which the key
+      # expression below does not actually do (verified: no week/date
+      # component in it at all). restore-keys' prefix match still warms the
+      # cache from the single most recent prior run's save (freshest
+      # available, never stale), so this isn't a correctness bug -- but it
+      # does mean a new cache entry accumulates every single day with nothing
+      # in this workflow ever reusing/overwriting a prior day's key, relying
+      # entirely on GitHub's own account-level eviction (7-day-unused, 10GB
+      # total) to bound growth rather than anything scoped here.
       - name: Cache pybaseball data
         uses: actions/cache@v4
         with:
@@ -104,10 +113,20 @@ jobs:
           # push to main landing while this run was mid-flight (~15-20 min of
           # work) causes a plain `git push` to be rejected outright here,
           # silently discarding the whole run's generated output since the
-          # rejection wasn't handled at all. Data-only commits from this step
-          # never touch the same files a code push does, so a rebase should
-          # always apply cleanly; abort loudly instead of guessing if it ever
-          # doesn't.
+          # rejection wasn't handled at all. Most of the time a manual/code
+          # push touches different files than this step's output files, so
+          # the rebase applies cleanly. But that's not guaranteed -- a manual
+          # or bug-fix commit CAN touch the same results/*.json files this
+          # step also writes (e.g. a grade_results.py fix that re-grades and
+          # commits a corrected results/history.json directly, which happened
+          # for real during this project's own development). Reproduced that
+          # exact case locally (two branches editing the same JSON line):
+          # `git rebase origin/main` fails with a real CONFLICT as expected,
+          # the check below catches it, and `git rebase --abort` leaves the
+          # working tree clean (verified via `git status` after) rather than
+          # half-rebased -- so aborting loudly here is a tested, safe outcome,
+          # not a guess, even though it does mean this run's output is lost
+          # and must be picked up by the next scheduled run or a manual retry.
           for attempt in 1 2 3 4 5; do
             if git push; then
               echo "Pushed on attempt $attempt."
@@ -134,7 +153,6 @@ jobs:
             output/run_log_*.json
             output/top10_picks_*.md
             output/picks_*.json
-            results/*.json
             results/*.json
           retention-days: 14
           if-no-files-found: ignore
