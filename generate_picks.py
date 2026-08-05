@@ -1276,8 +1276,9 @@ def score_pitcher(sp_name, sp_id, sp_hand, gm, side, pit_season_lookup, l14_form
 
     projected_ks = project_pitcher_ks(ps, l14)
     exp_bf, bf_n_starts, obs_bf = project_pitcher_workload(l14)
+    workload_note = None   # merged into `why` once it exists, further down
     if obs_bf is not None:
-        why.append(f"Expected workload {exp_bf:.1f} batters faced "
+        workload_note = (f"Expected workload {exp_bf:.1f} batters faced "
                     f"(his own {obs_bf:.1f}/start over {bf_n_starts} real start{'s' if bf_n_starts != 1 else ''}, "
                     f"shrunk toward the {LEAGUE_AVG_BF_PER_START} league mean)")
         if bf_n_starts < 3:
@@ -1288,7 +1289,7 @@ def score_pitcher(sp_name, sp_id, sp_hand, gm, side, pit_season_lookup, l14_form
             watchouts.append(f"Short-outing profile ({exp_bf:.1f} expected batters faced) — caps the realistic "
                               f"strikeout ceiling regardless of K rate")
     else:
-        why.append(f"Expected workload {exp_bf:.1f} batters faced (league average — no real start "
+        workload_note = (f"Expected workload {exp_bf:.1f} batters faced (league average — no real start "
                     f"found for him in the L14 window)")
         watchouts.append("No L14 start found for this pitcher — workload defaulted to the league average")
 
@@ -1298,6 +1299,7 @@ def score_pitcher(sp_name, sp_id, sp_hand, gm, side, pit_season_lookup, l14_form
     else:
         k_note = "Opposing team K% unavailable (FanGraphs team page down and no confirmed lineup batters matched)"
     why = [k_note]
+    if workload_note: why.append(workload_note)
     why.append(f"{same_hand}/{known} known-hand opposing batters same-handed" if known else "Opposing lineup handedness mostly unknown")
     if k_pct: why.append(f"Season K% {k_pct}")
     if csw: why.append(f"CSW% {csw}")
