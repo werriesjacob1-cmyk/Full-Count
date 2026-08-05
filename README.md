@@ -18,6 +18,106 @@ system's performance is measured, not assumed. All three land their output in
 the interpreter here, not an external model — the scoring logic is plain,
 readable Python, not a prompt.
 
+---
+
+## ⚠️ Current state — session paused at a clean point (2026-08-05 ~16:10 UTC)
+
+A long bug-hunting/hardening session was interrupted by an API session limit.
+Nothing is lost: all work is committed and pushed. Pick up here.
+
+### 1. UNRESOLVED AND IMPORTANT: the daily schedule has never fired
+
+Verified: **all 13 workflow runs to date were manual `workflow_dispatch`. The
+`schedule` trigger has fired zero times.** The workflow landed on `main` at
+2026-08-04 20:07 UTC, cron is `30 14 * * *` (14:30 UTC), and as of 16:05 UTC
+on 2026-08-05 the first scheduled window had passed ~95 minutes earlier with
+no run. GitHub reports the workflow `state: active`, and nothing was running
+at 14:30 to block it via the concurrency group.
+
+This matters more than any single data fix: **the entire value of this project
+is the accuracy record, and that record only accumulates if the pipeline runs
+unattended every day.** Right now it demonstrably has not.
+
+Not yet diagnosed. Candidates worth checking, in order:
+- GitHub delays or silently drops scheduled runs under load — documented
+  behavior, delays of 10-60+ min are common and runs can be skipped entirely.
+  Check whether it fires late, or on subsequent days, before assuming it's broken.
+- Consider a **redundant second cron** a few hours later as a safety net.
+- **`grade_results.py` only ever grades *yesterday*.** If a day's run is missed,
+  that day's picks are never graded and that accuracy data is permanently lost.
+  A catch-up pass (grade any ungraded prior day that has a picks file) would make
+  missed days recoverable and is probably the single highest-value fix here.
+
+### 2. Preserved work: 19 bug fixes on two unmerged branches
+
+Both branches are pushed to the remote. **Not reviewed, not merged, not
+independently verified by the coordinator** — the standing rule in this project
+is that a fix isn't trusted until its evidence is re-checked against live data.
+
+`worktree-agent-ae0bbf867acdfd4a2` — mlb_daily.py Sections 1-45 (10 commits)
+`worktree-agent-ae81d329067af391a` — Sections 46-88 + grade_results.py + workflow (9 commits)
+
+The last commit on the second branch is explicitly marked **WIP (UNVERIFIED)**
+— the agent was cut off mid-verification. Treat it accordingly.
+
+**A systemic pattern worth noting:** raw `pyb.statcast()` rows are pitch-level,
+and their `player_name` column is the *pitcher*, not the batter. This single
+misunderstanding produced confirmed bugs across Sections 13, 14, 15, 16, 43, 44,
+46, 47, and the bat-tracking leaderboard — batter stats published under pitcher
+names, silently, every run. Two more instances of it were separately confirmed
+and fixed earlier in `generate_picks.py`. **When touching any code that groups
+raw Statcast output, group by the `batter` / `pitcher` ID column, never by
+`player_name`.** Assume more instances exist.
+
+Four `grade_results.py` fixes are on that branch, including one where
+total-bases picks were graded against the wrong threshold. Since that file
+produces the accuracy record, verify those especially carefully.
+
+### 3. Built but not yet wired in
+
+`mlb_sources.py` is complete and live-verified, but **its fetchers are not yet
+called by any report section.** It recovers data previously thought unavailable
+(team stats, real SP/RP splits, official batter-vs-pitcher, catcher framing,
+Pull%) via MLB's own Stats API and raw Statcast. Wiring it into `mlb_daily.py`'s
+section call sites is a straightforward follow-up.
+
+### 4. Analytics roadmap — agreed, not started
+
+Ten improvements were prioritized; agents building them were terminated before
+writing any code. In priority order, highest value first:
+
+1. **Implied team totals** — already downloaded every run and thrown away.
+   `fetch_public_betting_bias()` parses only the moneyline, but the same
+   response carries `total` (game total) and `core_bet_type_6_team_score`
+   (per-team implied runs) under `g['markets']['15']['event']`. The market's
+   own run-environment forecast, free.
+2. **Real expected-PA model** — `ORDER_PA` is static; actual PAs depend on
+   lineup slot × run environment. Scales every batter prop linearly.
+3. **Expected pitcher workload** — `project_pitcher_ks` uses a flat
+   batters-faced constant. A 5.1-IP pitcher cannot reach 7 Ks regardless of
+   K rate. Gates every strikeout prop.
+4. Handedness-split park factors  5. Platoon-specific xwOBA
+6. Per-batter vs SP/RP (verified available: Alvarez .359/1.183 vs starters
+   vs .271/.902 vs relievers — a 281-point OPS gap, running *opposite* to
+   conventional wisdom)  7. Quantified umpire effect  8. Rest/usage patterns
+9. Real steal-opportunity model (must gate on OBP — elite speed with a .280
+   OBP is far fewer chances than current scoring assumes)
+10. Wire BABIP/xBA regression indicators into scoring (currently computed in
+    the report but never reaching the scoring engine)
+
+**A constraint that must survive this handoff:** the accuracy record currently
+holds one day and six graded picks. That is far too little to tune against.
+Coefficients must be grounded in measured baselines or explicit reasoning —
+never fitted to make recent picks look better, because there is no signal in a
+sample of six, only noise.
+
+Also queued: a transparent pitch-quality model to replace FanGraphs' proprietary
+Stuff+ (all its Statcast inputs are already available), and MLB's 602
+situational split codes, of which this pipeline uses roughly six.
+
+---
+
+
 This repo does **not** touch Jacob's separate `mlb-betting-analyst` Claude.ai
 skill (still versioned independently), does not scrape Fanatics odds/lines,
 and does not place or size bets — it produces research and a shortlist for
