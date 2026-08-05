@@ -1140,27 +1140,50 @@ def fetch_bullpen_fatigue(game_meta):
 
 
 def fetch_starter_game_logs(game_meta):
+    # statsapi.player_stats() (the text-formatting wrapper originally used
+    # here) calls player_stat_data(personId, group, type, season)
+    # POSITIONALLY internally — but player_stat_data's real signature is
+    # (personId, group, type, sportId, season), so that "season" argument
+    # actually lands in the sportId slot, and the real season kwarg stays
+    # None. Verified live: calling it exactly as this function did
+    # (group="pitching", type="gameLog", season=YEAR) returned only the
+    # player's one-line bio ('Jameson "Jamo" Taillon, P (2016-)') with zero
+    # game rows, for every pitcher, every run — the "/" or "-" line filter
+    # then grabbed that bio line itself as if it were a game log row.
+    # Separately verified live that passing season= explicitly to
+    # type="gameLog" raises outright ("season parameter is only valid...
+    # 'season' type") — gameLog isn't supposed to take a season kwarg at
+    # all; omitting it still returns the current season's games (MLB API's
+    # own default). Fixed to call the raw hydrated person endpoint directly
+    # (bypassing both the broken wrapper and the fragile text-line
+    # filtering) and build the table from real structured per-game fields.
     step("Tonight's starters last 5 game logs...")
     lines=[]
     pitchers_done=set()
+    team_abbr={t["id"]:t["abbr"] for t in get_team_ids()}
     for gm in game_meta:
         for sp_name, sp_id in [(gm["away_sp"],gm.get("away_sp_id")), (gm["home_sp"],gm.get("home_sp_id"))]:
             if sp_name=="TBD" or sp_name in pitchers_done: continue
             pitchers_done.add(sp_name)
             if not sp_id: lines.append(f"\n  {sp_name}: no player ID"); continue
             try:
-                # statsapi.player_stats()'s real signature (verified against installed
-                # mlb-statsapi 1.9.0) is (personId, group, type, season) — no sportId
-                # kwarg and no catch-all **params, so the old sportId=1 call raised
-                # "unexpected keyword argument 'sportId'" on every run.
-                logs=statsapi.player_stats(sp_id,group="pitching",type="gameLog",season=YEAR)
+                r=statsapi.get("person",{"personId":sp_id,"hydrate":"stats(group=pitching,type=gameLog,sportId=1)"})
+                stat_blocks=r.get("people",[{}])[0].get("stats",[])
+                splits=stat_blocks[0].get("splits",[]) if stat_blocks else []
                 lines.append(f"\n  {sp_name} — Last 5 Starts:")
                 lines.append(f"  {'Date':<12} {'Opp':<8} {'IP':<5} {'H':<4} {'R':<4} {'ER':<4} {'BB':<4} {'K':<4} {'HR':<4} {'PC':>4}")
                 lines.append("  "+"-"*65)
-                # Parse the text logs
-                log_lines=[l for l in logs.split("\n") if "/" in l or "-" in l]
-                for line in log_lines[-5:]:
-                    lines.append(f"  {line}")
+                if not splits:
+                    lines.append("  No game log entries this season yet.")
+                    continue
+                for s in splits[-5:]:
+                    st=s.get("stat",{})
+                    opp=team_abbr.get(s.get("opponent",{}).get("id"), s.get("opponent",{}).get("name","?")[:8])
+                    date=s.get("date","?")
+                    ip=st.get("inningsPitched","?"); h=st.get("hits","?"); rns=st.get("runs","?")
+                    er=st.get("earnedRuns","?"); bb=st.get("baseOnBalls","?"); k=st.get("strikeOuts","?")
+                    hr=st.get("homeRuns","?"); pc=st.get("numberOfPitches","?")
+                    lines.append(f"  {date:<12} {opp:<8} {str(ip):<5} {str(h):<4} {str(rns):<4} {str(er):<4} {str(bb):<4} {str(k):<4} {str(hr):<4} {str(pc):>4}")
             except Exception as e:
                 lines.append(f"\n  {sp_name}: {str(e)[:50]}")
     return "\n".join(lines)+"\n"
