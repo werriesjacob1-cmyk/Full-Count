@@ -1,6 +1,6 @@
 {
   "date": "2026-08-05",
-  "generated": "2026-08-05T16:32:36.294568",
+  "generated": "2026-08-05T19:58:49.231279",
   "picks": [
     {
       "rank": 1,
@@ -55,14 +55,14 @@
         "value": 1
       },
       "lean": null,
-      "score": 83.9,
+      "score": 84.8,
       "confidence": "High",
       "notable_signals": 0
     },
     {
       "rank": 4,
       "type": "batter",
-      "name": "Bobby Witt",
+      "name": "Bobby Witt Jr.",
       "player_id": 677951,
       "team": "Kansas City Royals",
       "matchup": "Minnesota Twins @ Kansas City Royals",
@@ -138,24 +138,43 @@
     {
       "rank": 8,
       "type": "batter",
-      "name": "Bryce Harper",
-      "player_id": 547180,
-      "team": "Philadelphia Phillies",
-      "matchup": "Washington Nationals @ Philadelphia Phillies",
-      "game_pk": 823429,
+      "name": "Jake McCarthy",
+      "player_id": 664983,
+      "team": "Colorado Rockies",
+      "matchup": "Tampa Bay Rays @ Colorado Rockies",
+      "game_pk": 824322,
       "side": null,
-      "prop": "Home Run / 2+ Total Bases (proj. 3.03 TB)",
+      "prop": "To Steal a Base",
       "projection": {
-        "stat": "total_bases",
-        "value": 3.03
+        "stat": "stolen_base",
+        "value": 1
       },
       "lean": null,
-      "score": 80.3,
+      "score": 79.6,
+      "confidence": "High",
+      "notable_signals": 0
+    },
+    {
+      "rank": 9,
+      "type": "batter",
+      "name": "Yordan Alvarez",
+      "player_id": 670541,
+      "team": "Houston Astros",
+      "matchup": "Toronto Blue Jays @ Houston Astros",
+      "game_pk": 824158,
+      "side": null,
+      "prop": "Home Run / 2+ Total Bases (proj. 2.64 TB)",
+      "projection": {
+        "stat": "total_bases",
+        "value": 2.64
+      },
+      "lean": null,
+      "score": 79.1,
       "confidence": "High",
       "notable_signals": 2
     },
     {
-      "rank": 9,
+      "rank": 10,
       "type": "batter",
       "name": "Kyle Schwarber",
       "player_id": 656941,
@@ -163,34 +182,15 @@
       "matchup": "Washington Nationals @ Philadelphia Phillies",
       "game_pk": 823429,
       "side": null,
-      "prop": "Over 1.5 Total Bases (proj. 0.95 TB)",
+      "prop": "Over 1.5 Total Bases (proj. 1.0 TB)",
       "projection": {
         "stat": "total_bases",
-        "value": 0.95
+        "value": 1.0
       },
       "lean": null,
-      "score": 79.5,
+      "score": 78.9,
       "confidence": "Medium",
       "notable_signals": 2
-    },
-    {
-      "rank": 10,
-      "type": "batter",
-      "name": "Alec Burleson",
-      "player_id": 676475,
-      "team": "St. Louis Cardinals",
-      "matchup": "St. Louis Cardinals @ New York Yankees",
-      "game_pk": 823516,
-      "side": null,
-      "prop": "Home Run / 2+ Total Bases (proj. 3.18 TB)",
-      "projection": {
-        "stat": "total_bases",
-        "value": 3.18
-      },
-      "lean": null,
-      "score": 79.4,
-      "confidence": "High",
-      "notable_signals": 3
     }
   ]
 }
