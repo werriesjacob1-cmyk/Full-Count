@@ -219,6 +219,109 @@ def fetch_umpire_scores(game_meta):
     return out
 
 
+# ── Team run-scoring distribution, MEASURED (not assumed) ────────────────
+# Measured live from 186 completed MLB games (372 team-games) in the 14 days
+# ending 2026-08-05, via m.statsapi.boxscore_data:
+#     mean team runs/game = 4.245, variance = 9.679
+# Variance/mean = 2.28, so team runs are strongly OVER-DISPERSED relative to
+# Poisson — a Poisson inversion of a betting line would be materially wrong.
+# A negative binomial with var = mu + mu^2/k matches both moments at
+#     k = mu^2 / (var - mu) = 4.245^2 / (9.679 - 4.245) = 3.317
+# k is held fixed and mu solved for; that is the only free parameter.
+LEAGUE_TEAM_RUNS_MEAN = 4.245
+LEAGUE_TEAM_RUNS_VAR = 9.679
+TEAM_RUNS_NB_K = 3.317
+
+
+def _american_to_prob(o):
+    """American odds -> implied probability (still vig-inclusive)."""
+    try: o = float(o)
+    except (TypeError, ValueError): return None
+    if o != o or o == 0: return None
+    return (-o) / ((-o) + 100) if o < 0 else 100 / (o + 100)
+
+
+def _implied_total_from_line(line, over_odds, under_odds):
+    """Convert a per-team runs line (always a half-run, e.g. 3.5/4.5) plus its
+    two-sided American odds into an actual implied expected runs total.
+
+    The raw line alone is far too coarse to use directly: on tonight's real
+    slate, 9 of 15 games priced BOTH teams at 3.5 or both at 4.5, so the line
+    by itself cannot distinguish a 3.1-run team from a 3.9-run team. The odds
+    carry that information. Verified live tonight: Toronto over 3.5 is +114 /
+    under 3.5 is -145 (a team the market expects BELOW 3.5), while Houston
+    over 4.5 is -125 / under 4.5 is +110 (expected ABOVE 4.5). Same slate,
+    lines one run apart, but the true gap is wider than one run.
+
+    Method: de-vig the two-sided price to a fair P(runs > line), then solve
+    numerically for the negative-binomial mean mu that reproduces that
+    probability, with the dispersion fixed at the MEASURED league value above.
+    No fitted-to-results constants; the only inputs are tonight's live prices
+    and a run distribution measured from real box scores.
+
+    The negative binomial itself was validated against the same 372 real
+    team-games before being used (empirical P(R>=n) vs NB prediction):
+        R>=3  .6640 / .6673   R>=5  .3978 / .3920   R>=7  .2070 / .2032
+    Poisson, by contrast, is badly wrong in the tail that matters here
+    (R>=7: .1377 predicted vs .2070 actual), which is why it isn't used.
+
+    KNOWN BIAS, found by verification and corrected by the caller: this
+    solver run on raw prices returns team totals that are systematically ~0.34
+    runs/team HIGH. Measured on tonight's live slate — across the 12 games
+    with a clean two-sided pair for both teams, the summed team implieds
+    averaged 9.304 against a mean game total of 8.625 (+0.68/game). The cause
+    is that the dispersion measured above is the MARGINAL variance across all
+    team-games, which includes between-game variation in the true mean; the
+    within-game conditional distribution is tighter, and a tighter, less
+    right-skewed distribution maps a given P(over) to a lower mean. Rather
+    than invent a conditional dispersion, the caller renormalizes each game's
+    two team totals to sum to that game's own game-total line (see
+    fetch_public_betting_bias) — the market's own anchor, exact per game, and
+    it leaves this solver responsible only for the SPLIT between the two
+    teams, which is far less sensitive to the dispersion constant.
+
+    Returns None (never a guessed number) if odds are missing."""
+    if line is None or over_odds is None or under_odds is None:
+        return None
+    try:
+        line = float(line); over_odds = float(over_odds); under_odds = float(under_odds)
+    except (TypeError, ValueError):
+        return None
+    if line != line or over_odds != over_odds or under_odds != under_odds:
+        return None  # NaN guard (see scale() docstring — NaN has bitten this file before)
+
+    p_over_raw = _american_to_prob(over_odds)
+    p_under_raw = _american_to_prob(under_odds)
+    if not p_over_raw or not p_under_raw: return None
+    p_over = p_over_raw / (p_over_raw + p_under_raw)   # de-vig
+    # Guard against a degenerate price producing an absurd mean.
+    p_over = min(max(p_over, 0.02), 0.98)
+
+    try:
+        from scipy.stats import nbinom
+    except Exception:
+        # Graceful degradation: without scipy, fall back to the raw line.
+        return round(line, 2)
+
+    k = TEAM_RUNS_NB_K
+    # P(X > line) with a half-run line == P(X >= ceil(line)) == sf(floor(line))
+    import math
+    floor_line = math.floor(line)
+
+    def p_over_at(mu):
+        # nbinom(n=k, p) with mean mu -> p = k/(k+mu)
+        return float(nbinom.sf(floor_line, k, k / (k + mu)))
+
+    lo, hi = 0.3, 12.0
+    if p_over_at(lo) > p_over: return round(lo, 2)
+    if p_over_at(hi) < p_over: return round(hi, 2)
+    for _ in range(60):
+        mid = (lo + hi) / 2
+        if p_over_at(mid) < p_over: lo = mid
+        else: hi = mid
+    return round((lo + hi) / 2, 2)
+
+
 def fetch_public_betting_bias(game_meta):
     """Public vs. sharp-money divergence on the moneyline, from Action
     Network's public scoreboard API — unofficial (no published docs) but
@@ -233,7 +336,27 @@ def fetch_public_betting_bias(game_meta):
     different signal type than anything else here (market-derived, not
     stats-derived). Used as a small, transparent nudge only, per explicit
     direction: edge 'should not be completely ignored' but isn't the primary
-    filter — this is not folded into the weighted formula's core components."""
+    filter — this is not folded into the weighted formula's core components.
+
+    ALSO parses the implied team totals carried in the *same* response, which
+    this function previously downloaded and threw away every single run. Under
+    g['markets']['15']['event'] the response also carries 'total' (the game
+    over/under) and 'core_bet_type_6_team_score' (per-team runs lines, each
+    entry with team_id / side / value / odds). Verified live on tonight's real
+    slate: 15/15 games returned both, all 30 team names matching this
+    pipeline's own naming with no mapping table needed.
+
+    An implied team total is the single most information-dense environment
+    input available here: it is the market's own forecast of runs scored by
+    that specific team tonight, and it already prices park, weather, the
+    opposing starter, the opposing bullpen and lineup strength simultaneously
+    — all of which this file otherwise estimates piecemeal and independently.
+
+    Each team entry gets: implied_total (de-vigged, see
+    _implied_total_from_line), implied_total_line (the raw half-run line),
+    and game_total. The sharp-money keys are unchanged and are still written
+    even when the totals markets are absent, so the existing divergence signal
+    is untouched by this addition."""
     out = {}
     try:
         r = m.retry_get("https://api.actionnetwork.com/web/v2/scoreboard/mlb",
@@ -247,17 +370,79 @@ def fetch_public_betting_bias(game_meta):
     for g in games:
         teams = {t.get("id"): t.get("full_name") for t in g.get("teams", [])}
         try:
-            ml = g["markets"]["15"]["event"]["moneyline"]
+            ev = g["markets"]["15"]["event"]
         except (KeyError, TypeError):
             continue
-        for entry in ml:
+
+        # -- existing sharp-money signal (unchanged) --
+        for entry in (ev.get("moneyline") or []):
             team_name = teams.get(entry.get("team_id"))
             bi = entry.get("bet_info", {})
             tickets = bi.get("tickets", {}).get("percent")
             money = bi.get("money", {}).get("percent")
             if team_name and tickets is not None and money is not None:
-                out[team_name] = {"tickets_pct": tickets, "money_pct": money,
-                                   "sharp_divergence": money - tickets}
+                out.setdefault(team_name, {}).update(
+                    {"tickets_pct": tickets, "money_pct": money,
+                     "sharp_divergence": money - tickets})
+
+        # -- implied team totals (new; same response, previously discarded) --
+        # The 'total' market can carry an ALT line alongside the main one
+        # (verified live tonight: 4 of 15 games listed two, e.g. TOR@HOU
+        # quoted both 8 and 9.5). Picking by frequency or by min/max both
+        # pick wrong. The main line is the one priced closest to even money,
+        # since that is what a book balances its total to; an alt line sits
+        # far off 50/50 (TOR@HOU: the 8 was -114/-108, the 9.5 was +130/-174).
+        game_total = None
+        by_val = defaultdict(dict)
+        for e in (ev.get("total") or []):
+            v, s, o = e.get("value"), e.get("side"), e.get("odds")
+            if v is not None and s in ("over", "under") and o is not None:
+                by_val[v][s] = o
+        best_skew = None
+        for v, sides in by_val.items():
+            if "over" not in sides or "under" not in sides: continue
+            po = _american_to_prob(sides["over"]); pu = _american_to_prob(sides["under"])
+            if not po or not pu: continue
+            skew = abs(po / (po + pu) - 0.5)
+            if best_skew is None or skew < best_skew:
+                best_skew, game_total = skew, v
+        # Group the per-team runs market by team, keeping only entries whose
+        # over and under share the same line (a mismatched pair is an alt line
+        # and cannot be de-vigged against each other).
+        by_team = defaultdict(dict)
+        for e in (ev.get("core_bet_type_6_team_score") or []):
+            tn = teams.get(e.get("team_id"))
+            side = e.get("side")
+            if not tn or side not in ("over", "under"): continue
+            by_team[tn][side] = (e.get("value"), e.get("odds"))
+        raw = {}
+        for tn, sides in by_team.items():
+            rec = out.setdefault(tn, {})
+            if game_total is not None:
+                rec["game_total"] = game_total
+            ov, un = sides.get("over"), sides.get("under")
+            if not ov or not un or ov[0] != un[0]:
+                continue
+            implied = _implied_total_from_line(ov[0], ov[1], un[1])
+            if implied is not None:
+                rec["implied_total_line"] = ov[0]
+                raw[tn] = implied
+
+        # Renormalize to the market's own game total (see the KNOWN BIAS note
+        # in _implied_total_from_line). Only possible when BOTH teams priced
+        # cleanly and a game total exists; otherwise keep the raw solve and
+        # flag it, rather than silently shipping a differently-scaled number
+        # next to normalized ones.
+        s = sum(raw.values())
+        if len(raw) == 2 and game_total and s > 0:
+            f = game_total / s
+            for tn, v in raw.items():
+                out[tn]["implied_total"] = round(v * f, 2)
+                out[tn]["implied_total_normalized"] = True
+        else:
+            for tn, v in raw.items():
+                out[tn]["implied_total"] = v
+                out[tn]["implied_total_normalized"] = False
     return out
 
 
@@ -571,7 +756,86 @@ def name_lookup(df, name_col_candidates=("Name", "last_name, first_name")):
 #  without needing a real sportsbook line.
 # ══════════════════════════════════════════════════════════════════════════
 
-def project_batter_tb(bs, l7, order):
+# ── Expected plate appearances: MEASURED, not assumed ────────────────────
+# Derived from the SAME 186-game / 372-team-game live box-score pull described
+# at LEAGUE_TEAM_RUNS_MEAN (m.statsapi.boxscore_data, 14 days ending
+# 2026-08-05). For every team-game, every lineup slot's total PA (starter plus
+# any substitute batting in that slot) was counted from the real box score and
+# regressed on that team's real runs scored in that game.
+#
+# WHAT WAS ACTUALLY MEASURED (real numbers, n=372 team-games per slot):
+#   slot | mean PA | observed range | old ORDER_PA/162
+#     1  |  4.511  |     3-6        |     4.630
+#     2  |  4.435  |     3-7        |     4.519
+#     3  |  4.325  |     2-6        |     4.407
+#     4  |  4.237  |     2-6        |     4.278
+#     5  |  4.121  |     2-6        |     4.148
+#     6  |  3.978  |     2-6        |     4.019
+#     7  |  3.863  |     2-6        |     3.889
+#     8  |  3.745  |     2-6        |     3.759
+#     9  |  3.599  |     1-6        |     3.611
+# Total lineup PA/game 36.81. Note the old static table was NOT badly wrong at
+# league-average scoring — it sits within 0.12 PA of measured at every slot,
+# and within 0.03 at slots 4-9. The static table's real defect is that it has
+# no run-environment term at all, so it returns the same number for a leadoff
+# hitter in a 3-run game and a 6-run game.
+#
+# Per-slot OLS of PA on runs gave slopes of 0.081-0.111 PA per run, tightly
+# clustered with no slope trend across slots (mean 0.1006). The per-slot
+# slopes are noisy at n=372 each, so the POOLED slope 0.1006 is used for all
+# slots and only the intercept varies by slot, back-solved from each slot's
+# measured mean at the measured league mean of 4.245 runs:
+#     intercept_s = mean_PA_s - 0.1006 * 4.245
+#
+# HONEST SIZE OF THE EFFECT: the README's handoff estimated "leadoff on a
+# 5.5-run team ~4.6 PA, 9-hole on a 3.5-run team ~3.7, a ~25% swing." The
+# measurement only partly supports that. The slot term is real and large
+# (4.51 down to 3.60, a 25% spread on its own). The run-environment term is
+# much smaller than assumed: at 0.1006 PA per run, going from a 3.0-run team
+# to a 5.5-run team moves a leadoff hitter only 4.38 -> 4.63 PA, about 6%.
+# The joint range across slot AND environment is ~34% (3.48 to 4.65). So this
+# model's gain over the static table is real but modest, and claiming 25% from
+# run environment alone would have been wrong.
+#
+# CAVEAT (stated rather than hidden): runs and PA are mutually causal — more
+# PA produce more runs as well as the reverse — so this is a descriptive
+# conditional expectation E[PA | runs], not a causal coefficient. That is
+# nonetheless exactly the right object here, because by the tower property
+# E[PA] = a + b * E[runs], so evaluating the fit at the market's implied team
+# total gives the correct expected PA as long as the relationship is close to
+# linear over the range used, which the per-slot fits support.
+PA_BY_SLOT_INTERCEPT = {1: 4.084, 2: 4.008, 3: 3.898, 4: 3.810, 5: 3.694,
+                        6: 3.551, 7: 3.436, 8: 3.318, 9: 3.172}
+PA_PER_RUN = 0.1006
+
+
+def project_batter_pa(order, implied_total=None):
+    """Expected plate appearances tonight for a given lineup slot, given the
+    team's expected run environment. See the measurement block above.
+
+    Degrades gracefully: with no implied total (Action Network unreachable,
+    or a team the book hasn't priced) it evaluates at the measured league mean
+    of 4.245 runs, which reproduces the measured per-slot means almost exactly
+    — i.e. the no-data path is the old static table's behaviour, not a
+    degraded one.
+
+    The implied total is clamped to 2.0-7.5 runs before use so a stale or
+    garbage line can't extrapolate the fit outside the range it was measured
+    over. At those bounds a leadoff hitter spans 4.29 to 4.84 PA."""
+    slot = min(max(int(order or 9), 1), 9)
+    a = PA_BY_SLOT_INTERCEPT[slot]
+    t = implied_total
+    if t is None or t != t:
+        t = LEAGUE_TEAM_RUNS_MEAN
+    else:
+        try: t = float(t)
+        except (TypeError, ValueError): t = LEAGUE_TEAM_RUNS_MEAN
+        if t != t: t = LEAGUE_TEAM_RUNS_MEAN
+        t = clamp(t, 2.0, 7.5)
+    return round(a + PA_PER_RUN * t, 2)
+
+
+def project_batter_tb(bs, l7, order, implied_total=None):
     """Projected total bases for tonight, blending L7 form and season skill.
     TB/AB = AVG + ISO is a standard sabermetric identity; when ISO isn't
     available (Statcast-fallback season data has no ISO column), approximate
@@ -596,7 +860,9 @@ def project_batter_tb(bs, l7, order):
         rate = l7_rate
     else:
         rate = LEAGUE_AVG_TB_PA
-    pa_est = m.ORDER_PA.get(min(order or 9, 9), 630) / 162
+    # Was: m.ORDER_PA[slot] / 162 — a static season-PA table with no game
+    # context. Now a measured slot x run-environment model (project_batter_pa).
+    pa_est = project_batter_pa(order, implied_total)
     return round(rate * pa_est, 2)
 
 
@@ -656,9 +922,38 @@ def score_batter(batter, gm, opp_sp_row, opp_sp_id, opp_sp_hand, park_wx, batter
         form = clamp(form + scale(bs_trend, 1.0, 3.0, 0, 15))
         notable_signals += 1
 
-    # ENVIRONMENT (15%)
-    env = park_wx.get("park_hr_index", 50) if park_wx else 50
-    if env >= 70 or env <= 30: notable_signals += 1
+    # ENVIRONMENT (15%) — park/weather HR index blended with the market's own
+    # implied team total. The implied total is the strongest single
+    # environment input available: it is a live forecast of how many runs
+    # THIS team scores TONIGHT, and it already prices park, weather, the
+    # opposing starter, the opposing bullpen and lineup strength at once,
+    # where park_hr_index captures only the park-and-weather slice.
+    #
+    # Weighted 55/45 in the implied total's favour, inside the existing
+    # ENVIRONMENT component rather than as an outside nudge, because it is
+    # measuring exactly what this component is for (run environment) — unlike
+    # the sharp-money divergence, which measures market *disagreement* and is
+    # therefore kept outside and capped. Net effect on a pick is bounded by
+    # ENVIRONMENT's own 15% weight.
+    #
+    # Band: scale() maps 3.0 -> 0 and 5.6 -> 100. Those are not round numbers
+    # picked by feel — 3.0 and 5.6 are ~1 SD either side of the measured
+    # league mean team total of 4.245 runs/game (measured SD of team runs
+    # actually scored is 3.11, but the spread of *expected* totals is far
+    # narrower; tonight's real implied totals after normalization run 3.07 to
+    # 6.25 across the 27 teams priced, mean 4.314 vs the 4.245 measured league
+    # mean — so this band covers the bulk of a live slate, with only genuine
+    # extremes (a Coors game) clipping at the top). A team at the measured
+    # league mean lands at 48, i.e. essentially neutral, by construction.
+    park_env = park_wx.get("park_hr_index", 50) if park_wx else 50
+    implied_total = (sharp_bias or {}).get("implied_total")
+    if implied_total is not None:
+        run_env = scale(implied_total, 3.0, 5.6)
+        env = clamp(park_env * 0.45 + run_env * 0.55)
+        if implied_total >= 5.2 or implied_total <= 3.5: notable_signals += 1
+    else:
+        env = park_env
+    if park_env >= 70 or park_env <= 30: notable_signals += 1
 
     # BASELINE SKILL (15%)
     bs = batter_season or {}
@@ -728,7 +1023,11 @@ def score_batter(batter, gm, opp_sp_row, opp_sp_id, opp_sp_hand, park_wx, batter
     elif notable_signals >= 2:
         score = clamp(score + 5)
 
-    projected_tb = project_batter_tb(bs, l7, order)
+    projected_tb = project_batter_tb(bs, l7, order, implied_total)
+    projected_pa = project_batter_pa(order, implied_total)
+    why.append(f"Projected {projected_pa} PA (slot {order}"
+                + (f", {implied_total}-run implied team total)" if implied_total is not None
+                   else ", league-average run environment — no market total available)"))
     if exploit and exploit["hard_hit_percent"] and (exploit["hard_hit_percent"] >= 45 or projected_tb >= 1.8):
         prop = f"Home Run / 2+ Total Bases (proj. {projected_tb} TB)"
     elif (bs.get("K%") or 30) <= 18:
@@ -746,6 +1045,10 @@ def score_batter(batter, gm, opp_sp_row, opp_sp_id, opp_sp_hand, park_wx, batter
     if l7.get("barrel_pct") is not None: why.append(f"L7 barrel% {l7['barrel_pct']}")
     if bs_trend is not None and bs_trend >= 1.0: why.append(f"Bat speed trending up L14 ({bs_trend:+.1f}mph 2nd-half vs 1st-half)")
     if bs.get("wRC+"): why.append(f"Season wRC+ {bs['wRC+']:.0f}")
+    if implied_total is not None:
+        why.append(f"Market implied team total {implied_total} runs "
+                    f"(league avg {LEAGUE_TEAM_RUNS_MEAN}; line {(sharp_bias or {}).get('implied_total_line')}, "
+                    f"game total {(sharp_bias or {}).get('game_total')})")
     if not park_wx or park_wx.get("dome"): why.append("Dome — weather neutral")
     elif park_wx.get("wind_effect") == "out": why.append(f"Wind blowing OUT ({park_wx.get('wind_mph',0):.0f}mph) — HR boost")
     elif park_wx.get("wind_effect") == "in": why.append("Wind blowing IN — power suppressed")
