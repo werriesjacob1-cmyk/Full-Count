@@ -1,5 +1,5 @@
 MLB DAILY DATA PACKAGE V5 — 2026-08-05
-Generated : 2026-08-05  15:16:47
+Generated : 2026-08-05  15:27:44
 Season    : 2026
 Windows   : L3 2026-08-02→2026-08-05 | L7 2026-07-29→2026-08-05 | L14 2026-07-22→2026-08-05 | L30 2026-07-06→2026-08-05
 Sources   : FanGraphs | Statcast/Baseball Savant | MLB Stats API | UmpScorecards | FIC | Open-Meteo | Covers.com
@@ -9,14 +9,12 @@ Sources   : FanGraphs | Statcast/Baseball Savant | MLB Stats API | UmpScorecards
   SECTION 0: RUN SUMMARY — what's missing at a glance (see run_log JSON for machine-readable form)
 ════════════════════════════════════════════════════════════════════════
 
-  88 sections attempted  |  75 OK  |  13 empty  |  0 failed
+  88 sections attempted  |  77 OK  |  11 empty  |  0 failed
 
 
   EMPTY sections (no data returned — often expected, e.g. HP umpire TBD before game morning):
     Section   7: HP UMPIRE OVER/UNDER BETTING RECORDS (Covers.com)
     Section  10: BvP MATCHUP TABLE — 2026-08-05 (FantasyInfoCentral)
-    Section  36: CSW% LEADERBOARD — K prop edge table (sorted highest CSW%)
-    Section  45: OPPOSING LINEUP K% per GAME (K prop matchup context)
     Section  49: FANGRAPHS TEAM BATTING 2026
     Section  50: FANGRAPHS TEAM PITCHING 2026
     Section  51: FANGRAPHS TEAM FIELDING 2026 + error rates
@@ -5924,7 +5922,7 @@ pc_bucket
     Velo: 88.8→89.1 (+0.2mph)  Spin: 2115→2189 (+74)  Ext: 6.69→6.70 (+0.01ft)
     ✅ Stable profile YOY
 
-  Christian Scott: 90.1mph avg (no prior year comparison)
+  Christian Scott: Error tokenizing data. C error: Expected 1 fields 
 
   Tanner Bibee (2025→2026):
     Velo: 88.1→87.8 (-0.4mph)  Spin: 2388→2301 (-87)  Ext: 6.63→6.64 (+0.01ft)
@@ -5986,7 +5984,7 @@ pc_bucket
     Velo: 90.7→90.1 (-0.6mph)  Spin: 2043→2104 (+61)  Ext: 6.90→6.81 (-0.10ft)
     ✅ Stable profile YOY
 
-  Mitch Bratt: 86.7mph avg (no prior year comparison)
+  Mitch Bratt: Error tokenizing data. C error: Expected 1 fields 
 
   Drew Anderson: 90.3mph avg (no prior year comparison)
 
@@ -7488,8 +7486,58 @@ pc_bucket
   SECTION 36: CSW% LEADERBOARD — K prop edge table (sorted highest CSW%)
 ════════════════════════════════════════════════════════════════════════
 
-  CSW% not in pitching data.
-
+  FanGraphs unavailable this run — computed directly from Statcast pitch-level data instead (CSW% = called strikes + whiffs / total pitches, min 200 pitches):
+                  Name  Pitches   CSW%     K%   PA
+1         Mason Miller      775 39.700 47.800  184
+2          Cade Horton      232 35.800 25.000   68
+3       Anthony Bender      575 35.000 28.900  149
+4    Jacob Misiorowski     1979 34.900 39.600  500
+5         Andrés Muñoz      746 34.500 36.600  186
+6           Josh Hader      363 34.400 38.200   89
+7            Dylan Lee      810 33.800 33.500  197
+8        Fernando Cruz      871 33.200 29.400  214
+9         Tanner Scott      727 32.900 33.000  191
+10       Tyler Glasnow      771 32.900 35.900  184
+11       Robert Garcia      201 32.800 26.100   46
+12      Pete Fairbanks      673 32.700 30.100  163
+13           Jake Bird      587 32.700 24.800  149
+14         Aaron Ashby     1197 32.700 31.200  292
+15        Jeff Hoffman      914 32.500 34.200  219
+16      Adrian Morejon     1006 32.500 27.800  259
+17       Trevor Megill      667 32.500 30.900  178
+18       Jordan Romano      415 32.300 28.100   96
+19      Brendon Little      269 32.300 30.400   69
+20      Tyler Ferguson      227 32.200 27.000   63
+21        Grant Taylor      947 32.200 32.600  236
+22       Austin Warren      670 31.800 24.800  161
+23      Brandyn Garcia      485 31.800 29.000  131
+24      Gavin Williams     2317 31.700 31.700  593
+25         Sam Bachman      797 31.700 23.400  209
+26     Raisel Iglesias      665 31.600 27.700  177
+27         Tyler Wells      827 31.600 26.200  214
+28  Cristopher Sánchez     2252 31.600 27.800  619
+29        Ryan Helsley      322 31.400 33.800   77
+30         Abner Uribe      729 31.400 25.900  185
+31          Jacob Webb      883 31.400 26.000  219
+32       Julian Garcia      328 31.400 24.700   81
+33          Chris Sale     2028 31.300 29.100  516
+34     Gavin Hollowell      265 31.300 21.200   66
+35       Jesús Luzardo     2394 31.200 28.500  613
+36       Joey Cantillo     2112 31.200 25.500  530
+37        Tejay Antone      631 31.100 22.400  161
+38      George Soriano      863 31.100 23.900  218
+39         JoJo Romero      747 31.100 24.000  192
+40         Dylan Cease     2119 31.000 35.800  503
+41     Samy Natera Jr.      471 31.000 38.100  105
+42         Yuki Matsui      719 30.900 26.300  179
+43     Graham Ashcraft      488 30.900 30.300  119
+44      Devin Williams      727 30.800 29.200  178
+45          Alex Vesia      747 30.800 31.600  174
+46        Drey Jameson      266 30.800 17.100   76
+47        Tarik Skubal     1590 30.800 30.400  418
+48       Shohei Ohtani     1482 30.700 29.400  374
+49     Colin Holderman      689 30.600 25.700  179
+50       Chase Shugart      660 30.600 28.400  162
 
 ════════════════════════════════════════════════════════════════════════
   SECTION 37: PITCHER TIMES-THROUGH-ORDER SPLITS (TTO) — K%/BB%/AVG by 1st/2nd/3rd time through
@@ -8069,7 +8117,350 @@ pc_bucket
   SECTION 45: OPPOSING LINEUP K% per GAME (K prop matchup context)
 ════════════════════════════════════════════════════════════════════════
 
-  K% table unavailable.
+  Source: Statcast pitch-level data (FanGraphs unavailable this run), min 15 PA. Sorted by K% within each lineup:
+
+  Toronto Blue Jays @ Houston Astros — Houston Astros lineup facing Jameson Taillon (avg K% 20.6):
+  Batter                        K%    BB%
+  Taylor Trammell             30.2    9.3 🎯 K prop target
+  Christian Walker            24.3    8.0
+  Cam Smith                   23.6    7.9
+  Jose Altuve                 21.4    7.7
+  Daulton Varsho              19.0    8.6
+  Jeremy Pena                 18.6    6.9
+  Yordan Alvarez              17.4   15.7
+  Yainer Diaz                 16.0    3.5
+  Isaac Paredes               15.1    9.8
+
+  Toronto Blue Jays @ Houston Astros — Toronto Blue Jays lineup facing Hunter Brown (avg K% 17.1):
+  Batter                        K%    BB%
+  Kazuma Okamoto              30.5    8.8 🎯 K prop target
+  Jesus Sanchez               22.0    4.6
+  George Springer             18.3   10.2
+  Andres Gimenez              18.3    3.5
+  Alejandro Kirk              15.1   10.8
+  Nathan Lukes                14.0    6.8
+  Vladimir Guerrero           13.5   10.1
+  Myles Straw                 12.3    6.6
+  Ernie Clement                9.8    3.3
+
+  Los Angeles Dodgers @ Chicago Cubs — Chicago Cubs lineup facing Eric Lauer (avg K% 19.5):
+  Batter                        K%    BB%
+  Pete Crow-Armstrong         26.5   12.0 🎯 K prop target
+  Seiya Suzuki                25.7   12.3 🎯 K prop target
+  Dansby Swanson              23.6    9.5
+  Michael Busch               22.4   12.9
+  Tyrone Taylor               19.8    5.1
+  Carson Kelly                16.6   11.1
+  Alex Bregman                16.2   10.8
+  Pedro Ramirez               15.9    8.7
+  Nico Hoerner                 8.8    7.8
+
+  Los Angeles Dodgers @ Chicago Cubs — Los Angeles Dodgers lineup facing Shota Imanaga (avg K% 19.3):
+  Batter                        K%    BB%
+  Hunter Feduccia             30.5    8.6 🎯 K prop target
+  Max Muncy                   24.8   12.1
+  Shohei Ohtani               22.9   13.9
+  Tommy Edman                 20.0    7.1
+  Andy Pages                  19.5    8.1
+  Kyle Tucker                 19.0   12.4
+  Freddie Freeman             16.2   10.8
+  Mookie Betts                11.6    8.7
+  Miguel Rojas                 9.4    5.7
+
+  San Francisco Giants @ Texas Rangers — Texas Rangers lineup facing Carson Whisenhunt (avg K% 23.0):
+  Batter                        K%    BB%
+  Justin Foscue               27.9    7.1 🎯 K prop target
+  Corey Seager                27.0   12.9 🎯 K prop target
+  Jake Burger                 26.8    7.3 🎯 K prop target
+  Ezequiel Duran              23.0    6.5
+  Wyatt Langford              22.1    7.0
+  Brandon Nimmo               21.8    8.4
+  Elias Diaz                  21.6    3.0
+  Cam Cauley                  21.1   10.5
+  Nicky Lopez                 15.3    5.4
+
+  San Francisco Giants @ Texas Rangers — San Francisco Giants lineup facing Cody Bradford (avg K% 20.8):
+  Batter                        K%    BB%
+  Willy Adames                27.9    7.0 🎯 K prop target
+  Bryce Eldridge              27.4   13.2 🎯 K prop target
+  Rafael Devers               26.6    9.8 🎯 K prop target
+  Drew Cavanaugh              21.9   15.6
+  Grant McCray                21.6   21.6
+  Christian Koss              20.9    4.5
+  Drew Gilbert                16.0    9.3
+  Osleivis Basabe             15.4    0.0
+  Jung Hoo Lee                 9.9    4.4
+
+  Tampa Bay Rays @ Colorado Rockies — Colorado Rockies lineup facing Nick Martinez (avg K% 22.3):
+  Batter                        K%    BB%
+  Hunter Goodman              32.4    8.5 🎯 K prop target
+  Willi Castro                27.5    8.2 🎯 K prop target
+  Mickey Moniak               26.2    5.0 🎯 K prop target
+  Ezequiel Tovar              25.2    5.7 🎯 K prop target
+  Kyle Karros                 20.9   12.0
+  Cole Carrigg                19.5   11.4
+  Troy Johnston               18.1    8.3
+  Jake McCarthy               17.3    4.4
+  TJ Rumfield                 14.0    9.3
+
+  Tampa Bay Rays @ Colorado Rockies — Tampa Bay Rays lineup facing Tomoyuki Sugano (avg K% 18.1):
+  Batter                        K%    BB%
+  Taylor Walls                25.2   10.9 🎯 K prop target
+  Victor Mesa                 24.5   10.2
+  Jonathan Aranda             22.8   11.0
+  Cedric Mullins              20.8    8.9
+  Richie Palacios             18.4   11.6
+  Junior Caminero             18.2   11.9
+  Yandy Diaz                  14.9    8.9
+  Liam Hicks                   9.3    9.7
+  Chandler Simpson             9.0    4.5
+
+  Los Angeles Angels @ Baltimore Orioles — Baltimore Orioles lineup facing Reid Detmers (avg K% 26.4):
+  Batter                        K%    BB%
+  Coby Mayo                   33.6    8.1 🎯 K prop target
+  Carlos Narvaez              32.4    6.9 🎯 K prop target
+  Colton Cowser               30.4   13.6 🎯 K prop target
+  Leody Taveras               25.8    9.8 🎯 K prop target
+  Jackson Holliday            25.3   14.1 🎯 K prop target
+  Pete Alonso                 24.6   11.3
+  Dylan Beavers               23.5    9.8
+  Gunnar Henderson            23.0    8.0
+  Christian Encarnacion-Strand   19.1    8.5
+
+  Los Angeles Angels @ Baltimore Orioles — Los Angeles Angels lineup facing Trevor Rogers (avg K% 22.9):
+  Batter                        K%    BB%
+  Zach Neto                   32.0    9.8 🎯 K prop target
+  Jose Siri                   28.0    6.1 🎯 K prop target
+  Mike Trout                  25.3   18.0 🎯 K prop target
+  Denzer Guzman               24.5    6.1
+  Travis d'Arnaud             23.6    9.1
+  Wade Meckler                22.0    9.8
+  Moises Ballesteros          20.8   10.2
+  Vaughn Grissom              15.9    7.6
+  Nolan Schanuel              14.4    9.9
+
+  New York Mets @ Cleveland Guardians — Cleveland Guardians lineup facing Christian Scott (avg K% 19.2):
+  Batter                        K%    BB%
+  Jo Adell                    24.8    3.5
+  Nathaniel Lowe              24.4    9.8
+  Patrick Bailey              24.4    6.9
+  Travis Bazzana              22.1   11.7
+  Angel Martinez              21.9    2.8
+  Chase DeLauter              13.9   10.9
+  Jose Ramirez                12.5   12.5
+  Steven Kwan                 10.0   13.8
+
+  New York Mets @ Cleveland Guardians — New York Mets lineup facing Tanner Bibee (avg K% 22.3):
+  Batter                        K%    BB%
+  Francisco Alvarez           26.6   10.2 🎯 K prop target
+  Luis Robert                 25.6   10.6 🎯 K prop target
+  A.J. Ewing                  25.3    9.1 🎯 K prop target
+  Jorge Polanco               22.4    7.5
+  Carson Benge                22.1    7.8
+  Marcus Semien               22.1    7.4
+  Jared Young                 20.5    7.4
+  Francisco Lindor            18.0    9.8
+  Bo Bichette                 17.8    6.5
+
+  Athletics @ Cincinnati Reds — Cincinnati Reds lineup facing Jacob Lopez (avg K% 25.5):
+  Batter                        K%    BB%
+  Eugenio Suarez              36.6    9.5 🎯 K prop target
+  Elly De La Cruz             27.0   10.7 🎯 K prop target
+  Matt McLain                 26.2   11.0 🎯 K prop target
+  Tyler Stephenson            26.1   10.9 🎯 K prop target
+  Dane Myers                  26.0   12.0 🎯 K prop target
+  Noelvi Marte                25.9    5.1 🎯 K prop target
+  Sal Stewart                 21.5   11.0
+  JJ Bleday                   21.1   14.1
+  Ke'Bryan Hayes              19.0    7.1
+
+  Athletics @ Cincinnati Reds — Athletics lineup facing Rhett Lowder (avg K% 18.3):
+  Batter                        K%    BB%
+  Lawrence Butler             27.1   11.8 🎯 K prop target
+  Henry Bolte                 27.1    7.3 🎯 K prop target
+  Tyler Soderstrom            19.0   11.6
+  Jonah Heim                  18.3    6.6
+  Tommy White                 18.2    6.5
+  Donovan Walton              17.4   10.1
+  Carlos Cortes               15.4    8.8
+  Jeff McNeil                 11.5    6.8
+  Jacob Wilson                10.9    3.7
+
+  Washington Nationals @ Philadelphia Phillies — Philadelphia Phillies lineup facing Jake Irvin (avg K% 20.2):
+  Batter                        K%    BB%
+  Kyle Schwarber              34.4   14.5 🎯 K prop target
+  Brandon Marsh               25.7    5.2 🎯 K prop target
+  Trea Turner                 21.9    5.9
+  Bryce Harper                21.5   14.3
+  J.T. Realmuto               21.2    8.0
+  Justin Crawford             19.8    5.5
+  Bryson Stott                17.7    8.0
+  Alec Bohm                   14.8    6.0
+  Luis Arraez                  4.4    5.3
+
+  Washington Nationals @ Philadelphia Phillies — Washington Nationals lineup facing Andrew Painter (avg K% 19.6):
+  Batter                        K%    BB%
+  Jose Tena                   28.4    7.6 🎯 K prop target
+  Dylan Crews                 23.4    7.5
+  CJ Abrams                   22.3    8.7
+  Nasim Nunez                 20.9   11.5
+  Daylen Lile                 18.1    5.9
+  Jacob Young                 17.9    7.4
+  Jorbit Vivas                14.7    9.9
+  Keibert Ruiz                11.1    4.1
+
+  St. Louis Cardinals @ New York Yankees — New York Yankees lineup facing Andre Pallante (avg K% 27.2):
+  Batter                        K%    BB%
+  Spencer Jones               35.2   10.7 🎯 K prop target
+  Jazz Chisholm               30.6    9.8 🎯 K prop target
+  Ryan McMahon                30.3    6.3 🎯 K prop target
+  Heliot Ramos                26.7    5.0 🎯 K prop target
+  Austin Wells                26.6   11.6 🎯 K prop target
+  Ben Rice                    24.9   11.5
+  Trent Grisham               16.4   13.3
+
+  St. Louis Cardinals @ New York Yankees — St. Louis Cardinals lineup facing Will Warren (avg K% 20.1):
+  Batter                        K%    BB%
+  Jimmy Crooks                33.3    6.9 🎯 K prop target
+  Jordan Walker               25.3    7.8 🎯 K prop target
+  Masyn Winn                  20.4    9.8
+  Bryan Torres                20.0    7.0
+  Nathan Church               19.5    5.8
+  Ivan Herrera                17.5   10.4
+  Alec Burleson               15.8    8.5
+  JJ Wetherholt               15.5   10.6
+  Blaze Jordan                13.5    3.5
+
+  Chicago White Sox @ Boston Red Sox — Boston Red Sox lineup facing Sean Burke (avg K% 19.9):
+  Batter                        K%    BB%
+  Jarren Duran                28.1    7.0 🎯 K prop target
+  Willson Contreras           25.0   10.6 🎯 K prop target
+  Connor Wong                 22.0    9.9
+  Andruw Monasterio           21.3    6.7
+  Wilyer Abreu                20.9    9.5
+  Ceddanne Rafaela            20.3    4.5
+  Anthony Seigler             17.3    8.3
+  Caleb Durbin                13.5    7.0
+  Masataka Yoshida            10.8    9.0
+
+  Chicago White Sox @ Boston Red Sox — Chicago White Sox lineup facing Sonny Gray (avg K% 23.5):
+  Batter                        K%    BB%
+  Colson Montgomery           32.8    8.3 🎯 K prop target
+  Munetaka Murakami           32.6   17.0 🎯 K prop target
+  Joey Bart                   28.7    5.1 🎯 K prop target
+  Andrew Benintendi           24.3    8.4
+  Chase Meidroth              22.1    9.6
+  Braden Montgomery           20.3    9.3
+  Tristan Peters              18.3    6.9
+  Miguel Vargas               17.6   13.0
+  Sam Antonacci               15.0    7.4
+
+  Miami Marlins @ Atlanta Braves — Atlanta Braves lineup facing Eury Pérez (avg K% 20.6):
+  Batter                        K%    BB%
+  Austin Riley                30.0    7.9 🎯 K prop target
+  Mike Yastrzemski            24.9    9.6
+  Matt Olson                  24.3    9.7
+  Ronald Acuna                22.7   14.4
+  Drake Baldwin               20.9   11.2
+  Michael Harris              18.7    3.8
+  Jim Jarvis                  16.0    5.3
+  Ozzie Albies                14.6    6.5
+  Mauricio Dubon              13.3    5.9
+
+  Miami Marlins @ Atlanta Braves — Miami Marlins lineup facing Bryce Elder (avg K% 23.1):
+  Batter                        K%    BB%
+  Owen Caissie                38.8    8.0 🎯 K prop target
+  Kyle Stowers                31.3    9.4 🎯 K prop target
+  Griffin Conine              28.9   10.1 🎯 K prop target
+  Heriberto Hernandez         26.2   10.2 🎯 K prop target
+  Joe Mack                    25.2    6.0 🎯 K prop target
+  Jakob Marsee                22.3   12.4
+  Otto Lopez                  13.5    4.7
+  Xavier Edwards              13.5   11.3
+  Javier Sanoja                8.1    5.2
+
+  Minnesota Twins @ Kansas City Royals — Kansas City Royals lineup facing Dean Kremer (avg K% 21.2):
+  Batter                        K%    BB%
+  Carter Jensen               29.2   10.0 🎯 K prop target
+  Jac Caglianone              27.9    6.7 🎯 K prop target
+  Isaac Collins               22.5   11.7
+  Kyle Isbel                  21.0    6.0
+  Salvador Perez              20.7    3.7
+  John Rave                   20.5    6.8
+  Bobby Witt                  18.2    9.6
+  Michael Massey              16.7    5.2
+  Nick Loftin                 14.3    9.4
+
+  Minnesota Twins @ Kansas City Royals — Minnesota Twins lineup facing Noah Cameron (avg K% 18.2):
+  Batter                        K%    BB%
+  Royce Lewis                 24.4    9.3
+  Josh Bell                   22.1    7.7
+  Victor Caratini             20.9    8.4
+  Ryan Kreidler               19.0    6.3
+  Austin Martin               17.4   14.0
+  Brooks Lee                  16.1    7.2
+  Ryan Jeffers                15.2   12.2
+  Luke Keaschall              14.5    9.4
+  Alan Roden                  14.1   12.5
+
+  Pittsburgh Pirates @ Milwaukee Brewers — Milwaukee Brewers lineup facing Paul Skenes (avg K% 22.5):
+  Batter                        K%    BB%
+  Garrett Mitchell            33.0   11.3 🎯 K prop target
+  Christian Yelich            26.9   10.0 🎯 K prop target
+  Jake Bauers                 25.1   13.5 🎯 K prop target
+  Jackson Chourio             24.2    7.3
+  Brice Turang                24.0   12.4
+  David Hamilton              21.2    9.2
+  Cooper Pratt                19.7   13.4
+  William Contreras           14.3    8.2
+  Andrew Vaughn               14.1   11.2
+
+  Pittsburgh Pirates @ Milwaukee Brewers — Pittsburgh Pirates lineup facing Kyle Harrison (avg K% 23.3):
+  Batter                        K%    BB%
+  Esmerlyn Valdez             36.1   15.0 🎯 K prop target
+  Brandon Lowe                27.5    9.0 🎯 K prop target
+  Endy Rodriguez              25.7   15.1 🎯 K prop target
+  Bryan Reynolds              23.9   13.9
+  Jared Triolo                21.9    8.1
+  Jake Mangum                 19.2    4.9
+  Nick Gonzales               17.5    6.0
+  Spencer Horwitz             14.5   12.9
+
+  San Diego Padres @ Arizona Diamondbacks — San Diego Padres lineup facing Mitch Bratt (avg K% 21.9):
+  Batter                        K%    BB%
+  Jase Bowen                  36.5    2.4 🎯 K prop target
+  Jackson Merrill             23.7    6.4
+  Luis Campusano              23.0   14.1
+  Manny Machado               22.4   10.8
+  Ty France                   22.3    4.9
+  Fernando Tatis              20.2    9.5
+  Xander Bogaerts             18.5   11.6
+  Freddy Fermin               18.3    8.7
+  Luis Rengifo                11.8    9.8
+
+  Detroit Tigers @ Seattle Mariners — Seattle Mariners lineup facing Drew Anderson (avg K% 21.1):
+  Batter                        K%    BB%
+  Cal Raleigh                 32.8   11.3 🎯 K prop target
+  Colt Emerson                32.3    7.5 🎯 K prop target
+  Randy Arozarena             21.1    9.8
+  Taylor Ward                 20.3   17.1
+  Julio Rodriguez             20.2    7.6
+  Dominic Canzone             19.9    8.9
+  Cole Young                  16.6    6.4
+  Brendan Donovan             14.5   10.7
+  Josh Naylor                 12.4    7.6
+
+  Detroit Tigers @ Seattle Mariners — Detroit Tigers lineup facing Bryan Woo (avg K% 21.6):
+  Batter                        K%    BB%
+  Spencer Torkelson           29.7    9.9 🎯 K prop target
+  Max Clark                   28.6   23.8 🎯 K prop target
+  Riley Greene                26.4   12.0 🎯 K prop target
+  Dillon Dingler              21.2    5.7
+  Gleyber Torres              20.5   15.4
+  Javier Baez                 19.5    3.3
+  Colt Keith                  18.4    6.7
+  Zach McKinstry              16.1    9.0
+  Kevin McGonigle             13.8   14.4
 
 
 ════════════════════════════════════════════════════════════════════════
@@ -11396,11 +11787,10 @@ San Francisco Giants 48 66 .421 21.0 28
   Los Angeles Dodgers @ Chicago Cubs — Wrigley Field:
   LF(355ft/15ft wall)  CF(400ft)  RF(353ft/11ft wall)
   Surface: grass  Humidor: No  Batter Eye: medium
-  Air density: 0.9531  Altitude bonus: 1.1405
-  Wind pull-side boost: 1.015  Oppo-side boost: 0.985
-  PULL HITTERS HR INDEX: 1.215
-  OPPO HITTERS HR INDEX: 1.179
-  ⚠️  Weather fetch failed — using league-average estimate (72°F, 5mph), not the real forecast
+  Air density: 0.9432  Altitude bonus: 1.1405
+  Wind pull-side boost: 0.976  Oppo-side boost: 1.024
+  PULL HITTERS HR INDEX: 1.181
+  OPPO HITTERS HR INDEX: 1.238
 
   San Francisco Giants @ Texas Rangers — Globe Life Field:
   LF(332ft/8ft wall)  CF(407ft)  RF(326ft/8ft wall)
@@ -11479,26 +11869,29 @@ San Francisco Giants 48 66 .421 21.0 28
   Minnesota Twins @ Kansas City Royals — Kauffman Stadium:
   LF(330ft/9ft wall)  CF(410ft)  RF(330ft/9ft wall)
   Surface: grass  Humidor: No  Batter Eye: easy
-  Air density: 0.9184  Altitude bonus: 1.1311
-  Wind pull-side boost: 1.020  Oppo-side boost: 0.980
-  PULL HITTERS HR INDEX: 1.257
-  OPPO HITTERS HR INDEX: 1.207
+  Air density: 0.9425  Altitude bonus: 1.1311
+  Wind pull-side boost: 1.015  Oppo-side boost: 0.985
+  PULL HITTERS HR INDEX: 1.218
+  OPPO HITTERS HR INDEX: 1.182
+  ⚠️  Weather fetch failed — using league-average estimate (72°F, 5mph), not the real forecast
 
   Pittsburgh Pirates @ Milwaukee Brewers — American Family Field:
   LF(344ft/8ft wall)  CF(400ft)  RF(345ft/8ft wall)
   Surface: grass  Humidor: No  Batter Eye: easy
-  Air density: 0.9528  Altitude bonus: 1.0000
-  Wind pull-side boost: 0.981  Oppo-side boost: 1.019
-  PULL HITTERS HR INDEX: 1.03
-  OPPO HITTERS HR INDEX: 1.069
+  Air density: 0.9518  Altitude bonus: 1.0000
+  Wind pull-side boost: 1.015  Oppo-side boost: 0.985
+  PULL HITTERS HR INDEX: 1.066
+  OPPO HITTERS HR INDEX: 1.035
+  ⚠️  Weather fetch failed — using league-average estimate (72°F, 5mph), not the real forecast
 
   San Diego Padres @ Arizona Diamondbacks — Chase Field:
   LF(330ft/7ft wall)  CF(407ft)  RF(334ft/7ft wall)
   Surface: grass  Humidor: YES  Batter Eye: easy
-  Air density: 0.9017  Altitude bonus: 1.0000
-  Wind pull-side boost: 1.030  Oppo-side boost: 0.970
-  PULL HITTERS HR INDEX: 1.143
-  OPPO HITTERS HR INDEX: 1.075
+  Air density: 0.9365  Altitude bonus: 1.0000
+  Wind pull-side boost: 1.015  Oppo-side boost: 0.985
+  PULL HITTERS HR INDEX: 1.084
+  OPPO HITTERS HR INDEX: 1.052
+  ⚠️  Weather fetch failed — using league-average estimate (72°F, 5mph), not the real forecast
   ✅ HUMIDOR: ball stored at ~50°F/50% humidity — reduces carry vs dry conditions
 
   Detroit Tigers @ Seattle Mariners — T-Mobile Park:
