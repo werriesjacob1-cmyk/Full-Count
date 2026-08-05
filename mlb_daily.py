@@ -782,6 +782,16 @@ def fetch_umpire_stats(game_meta):
 
 
 def fetch_umpire_ou_records(game_meta):
+    # Covers.com restructured this page (verified live): soup.find_all("table")
+    # on the aggregate /umpires page returns zero tables now — it's a plain
+    # name index (div.covers-RefereeTable > a per umpire, "Last, First" text,
+    # href to that umpire's own page), not an inline stats table anymore.
+    # The real O/U records live on each umpire's individual page instead
+    # (verified live: e.g. /umpires/2026/18023 has 4 real tables, one of
+    # which has an "Overall" row paired with a real W-L O/U record whose
+    # game count matches that umpire's "Games Officiated" from the same
+    # page). Since we only need tonight's actual HP umpires (a handful),
+    # fetch the index once, then each relevant umpire's own page.
     step("Umpire O/U betting records (Covers.com)...")
     umps={gm["hp_ump"]:gm["matchup"] for gm in game_meta if gm["hp_ump"]!="TBD"}
     if not umps: return "  No HP umpires.\n"
@@ -789,16 +799,43 @@ def fetch_umpire_ou_records(game_meta):
         r=retry_get("https://www.covers.com/sport/baseball/mlb/umpires",headers=BROWSER,timeout=20,retries=2)
         if r.status_code!=200: return f"  Covers.com returned {r.status_code}\n"
         soup=BeautifulSoup(r.text,"lxml")
-        tables=soup.find_all("table")
-        if not tables: return "  Covers.com umpire table not found (may require JS).\n"
-        lines=[]
-        for row in tables[0].find_all("tr")[1:]:
-            cells=[td.get_text(strip=True) for td in row.find_all(["td","th"])]
-            if cells: lines.append("  "+"  |  ".join(cells[:8]))
-        return "\n".join(lines[:50])+"\n" if lines else "  No umpire O/U data found.\n"
+        idx={}
+        for a in soup.select("div.covers-RefereeTable a"):
+            txt=a.get_text(strip=True); href=a.get("href","")
+            if "," in txt and href:
+                last,first=[p.strip() for p in txt.split(",",1)]
+                idx[f"{first} {last}"]=href
+        if not idx: return "  Covers.com umpire index not found (site structure may have changed again).\n"
     except Exception as e:
-        warn(f"Covers umpire: {e}")
+        warn(f"Covers umpire index: {e}")
         return f"  Covers.com unavailable: {e}\n"
+    lines=[f"  {'Umpire':<20} {'Matchup':<44} {'Season O/U (Over-Under)':<24}"]
+    lines.append("  "+"-"*92)
+    found=0
+    for name,matchup in umps.items():
+        href=idx.get(name)
+        if not href:
+            lines.append(f"  {name:<20} {matchup:<44} not found in Covers.com index")
+            continue
+        try:
+            r2=retry_get(f"https://www.covers.com{href}",headers=BROWSER,timeout=20,retries=2)
+            if r2.status_code!=200:
+                lines.append(f"  {name:<20} {matchup:<44} HTTP {r2.status_code}")
+                continue
+            soup2=BeautifulSoup(r2.text,"lxml")
+            record="N/A"
+            for t in soup2.find_all("table"):
+                for row in t.find_all("tr"):
+                    cells=[td.get_text(strip=True) for td in row.find_all(["td","th"])]
+                    if len(cells)>=2 and cells[0]=="Overall":
+                        record=cells[1]; break
+                if record!="N/A": break
+            lines.append(f"  {name:<20} {matchup:<44} {record:<24}")
+            if record!="N/A": found+=1
+        except Exception as e:
+            lines.append(f"  {name:<20} {matchup:<44} fetch failed: {e}")
+    step(f"  {found}/{len(umps)} umpires matched to O/U records")
+    return "\n".join(lines)+"\n"
 
 
 def fetch_bvp(date=None):
