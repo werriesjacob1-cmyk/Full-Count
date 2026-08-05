@@ -560,6 +560,7 @@ def _normalize_name_for_match(name):
     ascii_name = unicodedata.normalize("NFKD", name).encode("ascii", "ignore").decode("ascii")
     return re.sub(r"\s+(Jr\.?|Sr\.?|II|III|IV)$", "", ascii_name.strip(), flags=re.IGNORECASE).strip().lower()
 
+_ROSTER_CACHE = None
 def fetch_active_roster_by_name():
     """Full active-roster name->{id,bats} lookup, one call for the whole league.
     Verified live: /api/v1/sports/1/players returns ~1350 active players with
@@ -568,7 +569,13 @@ def fetch_active_roster_by_name():
     both by exact fullName and by a normalized (accent/suffix-stripped) form,
     since Rotowire's own names diverge from the MLB roster's exact spelling
     on both counts — verified live against a real slate (Ramirez/Rodriguez/
-    Acuna missing accents, Witt/Tatis missing "Jr.") before adding this."""
+    Acuna missing accents, Witt/Tatis missing "Jr.") before adding this.
+    Also keyed by id->name (by_id) for the reverse lookup Statcast-derived
+    leaderboards need (Statcast rows are ID-keyed, not name-keyed). Cached
+    module-level since multiple sections now share this same roster call."""
+    global _ROSTER_CACHE
+    if _ROSTER_CACHE is not None:
+        return _ROSTER_CACHE
     try:
         r = retry_get("https://statsapi.mlb.com/api/v1/sports/1/players",
                       params={"season": YEAR}, headers={"User-Agent": "Mozilla/5.0"}, timeout=25)
@@ -576,12 +583,37 @@ def fetch_active_roster_by_name():
         people = r.json().get("people", [])
     except Exception as e:
         warn(f"Active roster lookup: {e}")
-        return {}
+        return {"exact": {}, "normalized": {}, "by_id": {}}
     exact = {p["fullName"]: {"id": p.get("id"), "bats": p.get("batSide", {}).get("code", "?")}
              for p in people}
     normalized = {_normalize_name_for_match(p["fullName"]):
                   {"id": p.get("id"), "bats": p.get("batSide", {}).get("code", "?")} for p in people}
-    return {"exact": exact, "normalized": normalized}
+    by_id = {p["id"]: p["fullName"] for p in people if p.get("id")}
+    _ROSTER_CACHE = {"exact": exact, "normalized": normalized, "by_id": by_id}
+    return _ROSTER_CACHE
+
+
+_SEASON_STATCAST_CACHE = None
+def fetch_season_statcast():
+    """Leaguewide season-long pitch-by-pitch Statcast pull, cached module-
+    level (one pull, reused by every section that needs it). Verified live
+    before building on this: a full-season pull is ~480K rows and completes
+    in ~50s — well within this pipeline's budget, not the timeout risk it
+    was assumed to be when CSW%/batter K% were first left as FanGraphs-only
+    gaps. Used as the real fallback for metrics that live only on FanGraphs'
+    pages (CSW%, batter K%/BB%) and have no equivalent field in the
+    lighter-weight Statcast "expected stats" endpoints already used
+    elsewhere as the batting/pitching fallback."""
+    global _SEASON_STATCAST_CACHE
+    if _SEASON_STATCAST_CACHE is not None:
+        return _SEASON_STATCAST_CACHE
+    try:
+        df = pyb.statcast(start_dt=f"{YEAR}-03-15", end_dt=TODAY)
+        _SEASON_STATCAST_CACHE = df if df is not None else pd.DataFrame()
+    except Exception as e:
+        warn(f"Season Statcast pull: {e}")
+        _SEASON_STATCAST_CACHE = pd.DataFrame()
+    return _SEASON_STATCAST_CACHE
 
 IL_STATUS_CODES = {"D7":"7-Day IL","D10":"10-Day IL","D15":"15-Day IL","D60":"60-Day IL","DRS":"Restricted-Injured"}
 
@@ -1669,6 +1701,102 @@ def compute_count_decisions():
         warn(f"Count decisions: {e}"); return f"  Failed: {e}\n"
 
 
+def compute_csw_leaderboard(pit_season):
+    """CSW% has no equivalent field in the Statcast "expected stats" shape
+    fg_pit() falls back to when FanGraphs is unreachable — this used to
+    just report "not in pitching data" on those nights, every time. Real
+    fallback: computed directly from the shared season-long Statcast pull
+    (fetch_season_statcast()) — CSW% = (called strikes + whiffs, including
+    blocked swings) / total pitches, the standard definition, verified live
+    against real Statcast "description" values before building this. Only
+    used when FanGraphs' own CSW% column isn't available; when it is, that
+    real column is used as before, unchanged."""
+    if pit_season is not None and not pit_season.empty and "CSW%" in pit_season.columns:
+        csw=pit_season[["Name","Team","ERA","K%","CSW%","SwStr%","BB%","WAR"]].sort_values("CSW%",ascending=False).reset_index(drop=True)
+        csw.index+=1
+        return fmt(csw.head(50))
+    df = fetch_season_statcast()
+    if df is None or df.empty or "pitcher" not in df.columns or "description" not in df.columns:
+        return "  CSW% unavailable — FanGraphs down and season Statcast pull failed.\n"
+    csw_mask = df["description"].isin(["called_strike", "swinging_strike", "swinging_strike_blocked"])
+    total_pitches = df.groupby("pitcher").size()
+    csw_pitches = df[csw_mask].groupby("pitcher").size()
+    pa_df = df[df["events"].notna()] if "events" in df.columns else df.iloc[0:0]
+    pa_total = pa_df.groupby("pitcher").size()
+    k_total = pa_df[pa_df["events"].isin(["strikeout", "strikeout_double_play"])].groupby("pitcher").size()
+    by_id = fetch_active_roster_by_name()["by_id"]
+    rows = []
+    for pid, n in total_pitches.items():
+        if n < 200: continue  # min pitch threshold to keep the leaderboard meaningful
+        pa = int(pa_total.get(pid, 0))
+        rows.append({"Name": by_id.get(pid, f"MLBAM {pid}"), "Pitches": int(n),
+                     "CSW%": round(csw_pitches.get(pid, 0) / n * 100, 1),
+                     "K%": round(k_total.get(pid, 0) / pa * 100, 1) if pa >= 20 else None, "PA": pa})
+    if not rows:
+        return "  CSW% unavailable — no pitchers met the 200-pitch threshold.\n"
+    table = pd.DataFrame(rows).sort_values("CSW%", ascending=False).reset_index(drop=True)
+    table.index += 1
+    return ("  FanGraphs unavailable this run — computed directly from Statcast pitch-level data "
+            "instead (CSW% = called strikes + whiffs / total pitches, min 200 pitches):\n"
+            + fmt(table.head(50)))
+
+
+def compute_opposing_lineup_k(game_meta, bat_season=None):
+    """Rebuilt after finding two real problems on review: batter K% has no
+    equivalent field in the Statcast fallback shape bat_season falls back
+    to (same gap as CSW% above), AND — independent of that — the section's
+    own title ("per GAME... matchup context") was never actually delivered:
+    the old implementation just printed a leaguewide top-60 K% table with
+    zero connection to tonight's actual games or opposing lineups. Rebuilt
+    to genuinely match the title: for each of tonight's games, each team's
+    confirmed lineup batters (already reliably ID'd via game_meta) shown
+    against the opposing starter, with K%/BB% from FanGraphs when available
+    or computed from the shared season Statcast pull when it isn't."""
+    obp_source = None
+    if bat_season is not None and not bat_season.empty and "K%" in bat_season.columns and "Name" in bat_season.columns:
+        obp_source = bat_season.set_index("Name")[["K%","BB%"]].to_dict("index")
+    df = None
+    pa_total = k_total = bb_total = None
+    if obp_source is None:
+        df = fetch_season_statcast()
+        if df is not None and not df.empty and "batter" in df.columns and "events" in df.columns:
+            pa_df = df[df["events"].notna()]
+            pa_total = pa_df.groupby("batter").size()
+            k_total = pa_df[pa_df["events"].isin(["strikeout", "strikeout_double_play"])].groupby("batter").size()
+            bb_total = pa_df[pa_df["events"].isin(["walk", "intent_walk"])].groupby("batter").size()
+
+    lines = []
+    for gm in game_meta:
+        for sp_key, opp_lineup_key, opp_team_key in [("away_sp","home_lineup","home_team"), ("home_sp","away_lineup","away_team")]:
+            sp_name = gm.get(sp_key)
+            lineup = gm.get(opp_lineup_key, [])
+            if sp_name == "TBD" or not lineup: continue
+            rows = []
+            for b in lineup:
+                name = b.get("name")
+                k_pct = bb_pct = pa = None
+                if obp_source is not None and name in obp_source:
+                    k_pct = obp_source[name].get("K%"); bb_pct = obp_source[name].get("BB%")
+                elif pa_total is not None and b.get("id") in pa_total.index:
+                    pa = int(pa_total.get(b["id"], 0))
+                    if pa >= 15:
+                        k_pct = round(k_total.get(b["id"], 0) / pa * 100, 1)
+                        bb_pct = round(bb_total.get(b["id"], 0) / pa * 100, 1)
+                if k_pct is not None:
+                    rows.append((name, k_pct, bb_pct, pa))
+            if not rows: continue
+            avg_k = round(sum(r[1] for r in rows) / len(rows), 1)
+            lines.append(f"\n  {gm['matchup']} — {gm[opp_team_key]} lineup facing {sp_name} (avg K% {avg_k}):")
+            lines.append(f"  {'Batter':<25} {'K%':>6} {'BB%':>6}")
+            for name, k_pct, bb_pct, pa in sorted(rows, key=lambda r: -r[1]):
+                flag = " 🎯 K prop target" if k_pct >= 25 else ""
+                lines.append(f"  {name:<25} {k_pct:>6.1f} {bb_pct if bb_pct is not None else 0:>6.1f}{flag}")
+    if not lines:
+        return "  Opposing lineup K% unavailable — no confirmed lineups with enough data yet.\n"
+    source_note = "FanGraphs season K%/BB%" if obp_source is not None else "Statcast pitch-level data (FanGraphs unavailable this run), min 15 PA"
+    return f"  Source: {source_note}. Sorted by K% within each lineup:\n" + "\n".join(lines) + "\n"
+
+
 def compute_hitter_ingame_degradation():
     step("Hitter in-game degradation (bat speed/launch angle by PA number)...")
     try:
@@ -2638,12 +2766,7 @@ def main():
 
     S(36, "CSW% LEADERBOARD — K prop edge table (sorted highest CSW%)")
     try:
-        if not pit_season.empty and "CSW%" in pit_season.columns:
-            csw=pit_season[["Name","Team","ERA","K%","CSW%","SwStr%","BB%","WAR"]].sort_values("CSW%",ascending=False).reset_index(drop=True)
-            csw.index+=1
-            out.append(fmt(csw.head(50)))
-        else:
-            out.append("  CSW% not in pitching data.\n")
+        out.append(compute_csw_leaderboard(pit_season))
     except Exception as e:
         out.append(f"  Failed: {e}\n")
 
@@ -2683,12 +2806,7 @@ def main():
 
     S(45, f"OPPOSING LINEUP K% per GAME (K prop matchup context)")
     try:
-        if not bat_season.empty and "K%" in bat_season.columns:
-            k_table=bat_season[["Name","Team","K%","BB%","O-Swing%","Contact%","SwStr%"]].sort_values("K%",ascending=False).reset_index(drop=True)
-            k_table.index+=1
-            out.append("  Sorted by K% — highest K rate hitters are best targets for K props:\n"+fmt(k_table.head(60)))
-        else:
-            out.append("  K% table unavailable.\n")
+        out.append(compute_opposing_lineup_k(game_meta, bat_season))
     except Exception as e:
         out.append(f"  Failed: {e}\n")
 

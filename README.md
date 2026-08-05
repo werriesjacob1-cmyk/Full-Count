@@ -434,6 +434,27 @@ verified live against each source as of this rebuild:
   explicitly flags in its own output when it had to fall back to
   league-average weather estimates instead of silently presenting a guess
   as if it were the real forecast.
+- **CSW% (Section 36) and opposing-lineup K% (Section 45) — corrected, not
+  left as gaps.** Both are FanGraphs-only columns with no equivalent in the
+  lighter "expected stats" endpoint the batting/pitching fallback uses, and
+  an earlier pass left them as accepted gaps on the assumption that a real
+  fix — a full leaguewide season Statcast pull — would be too slow for this
+  pipeline's time budget. That assumption was never actually checked. It
+  was wrong: verified live, a full-season leaguewide pull is ~480K rows and
+  completes in ~50 seconds. Built `fetch_season_statcast()` (cached
+  module-level, one pull shared by both sections — confirmed live: 44s
+  cold, 0.2s warm on the second call) and compute real CSW%/K% from it
+  (CSW% = called strikes + whiffs / total pitches; K% = strikeouts / real
+  plate appearances, both verified against actual Statcast `description`/
+  `events` values first) whenever FanGraphs' own columns aren't available;
+  when they are, the real FanGraphs numbers are used unchanged, confirmed
+  live to skip the Statcast pull entirely in that case (near-zero added
+  time). Also fixed a real design mismatch found in Section 45 along the
+  way: its title always promised "per GAME... matchup context," but the
+  code just printed a leaguewide top-60 K% table with no connection to
+  tonight's actual games. Rebuilt to genuinely deliver what the title
+  promises — each of tonight's games, each team's confirmed lineup shown
+  against the opposing starter, sorted by K% within that lineup.
 - **Section 52 (batter splits vs starters/relievers) hard-failing** — the one
   section a real run_log ever marked `failed` rather than `empty`, i.e. an
   actual uncaught-then-caught exception, not just no data. Root cause: it
