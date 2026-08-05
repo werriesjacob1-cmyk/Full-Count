@@ -66,7 +66,8 @@ PICKS_JSON_FILE = os.path.join(OUTPUT_DIR, f"picks_{m.TODAY}.json")
 PLAYERS_DIR = os.environ.get("PLAYERS_DIR", "data/players")
 PLAYER_SNAPSHOT_HISTORY_DAYS = 60  # bounds each player file's growth over a season
 LEAGUE_AVG_TB_PA = 0.38     # league-average total bases per PA, used when no player data is available
-LEAGUE_AVG_BF_PER_START = 22  # league-average batters faced per start, used to convert K% into a projected K count
+# LEAGUE_AVG_BF_PER_START is defined next to project_pitcher_workload(), with
+# the measurement that produced it.
 
 # ══════════════════════════════════════════════════════════════════════════
 #  SCORING HELPERS
@@ -532,6 +533,27 @@ def fetch_l14_pitcher_form(pitcher_ids):
             if len(pa) == 0: continue
             k_pct = round((pa["events"] == "strikeout").sum() / len(pa) * 100, 1)
             entry = {"l14_k_pct": k_pct, "l14_pa": len(pa)}
+
+            # Per-pitcher WORKLOAD (batters faced per start). Free — this is
+            # the same dataframe already pulled above, no extra network.
+            #
+            # A game_date is only counted as a START if the pitcher appears in
+            # inning 1. This filter is not cosmetic: verified live tonight,
+            # grouping naively by game_date put Drew Anderson at "5 starts,
+            # 5.2 BF/start" (he is a reliever who made zero starts in the L14
+            # window) and dragged Will Warren to 14.7 BF/start by mixing a
+            # 4-batter relief outing in with two real starts. Across tonight's
+            # 30 listed starters, the naive mean was 21.18 BF/start; filtered
+            # to real starts it is 23.10 — the relief contamination alone was
+            # worth ~2 batters faced, i.e. roughly half a strikeout.
+            if "inning" in pa.columns:
+                bf_per_start = []
+                for _, sub in pa.groupby("game_date"):
+                    if sub["inning"].min() == 1:      # was in the game from the 1st
+                        bf_per_start.append(len(sub))
+                if bf_per_start:
+                    entry["bf_per_start"] = round(sum(bf_per_start) / len(bf_per_start), 1)
+                    entry["n_starts"] = len(bf_per_start)
             if "at_bat_number" in pa.columns:
                 pa["tto"] = ((pa["at_bat_number"] - 1) // 9 + 1).clip(upper=3).astype(int)
                 tto3 = pa[pa["tto"] == 3]
@@ -866,11 +888,67 @@ def project_batter_tb(bs, l7, order, implied_total=None):
     return round(rate * pa_est, 2)
 
 
+# ── Pitcher workload: MEASURED per-start batters faced ───────────────────
+# Measured live from tonight's own 30 listed starters, L14 Statcast pulls,
+# counting only real starts (in the game from inning 1):
+#     n = 49 starts, mean 23.10 BF/start, median 23.0, SD 2.85, range 17-30
+# The old flat constant of 22 was close to the league mean but hid the whole
+# point: per-pitcher means tonight run 19.5 (Reid Detmers) to 27.5 (Tanner
+# Bibee), a 41% spread that scales every strikeout projection linearly.
+#
+# HOW MUCH OF THAT SPREAD IS REAL, measured rather than assumed. Variance
+# decomposition over the 27 starters with 2+ starts:
+#     within-pitcher variance  6.068  (SD 2.46)
+#     variance of pitcher means 5.351
+#     between-pitcher variance  2.317  (SD 1.52)  [= 5.351 - 6.068/2]
+# So MOST start-to-start variation in batters faced is noise, not pitcher
+# identity. The empirical-Bayes shrinkage constant follows directly:
+#     n0 = within / between = 6.068 / 2.317 = 2.62
+# and the weight on a pitcher's own observed mean is n / (n + 2.62):
+#     1 start 0.28 | 2 starts 0.43 | 3 starts 0.53 | 5 starts 0.66
+# This is the same hard-won lesson as score_first_inning's sample penalty —
+# an L14 window usually holds only 2-3 starts, and taken at face value a
+# single long or short outing would swing a K projection by a full strikeout.
+# Here the correction is derived from the measured variance rather than a
+# chosen penalty, so it needs no separate cap.
+LEAGUE_AVG_BF_PER_START = 23.1   # measured (was a flat 22, unsourced)
+BF_SHRINK_N0 = 2.62              # measured empirical-Bayes constant, see above
+
+
+def project_pitcher_workload(l14):
+    """Expected batters faced tonight for this starter.
+
+    Shrinks the pitcher's own measured BF/start toward the measured league
+    mean by n/(n+2.62), where n is his real starts in the L14 window.
+    Degrades gracefully: with no workload data at all (Statcast pull empty, a
+    rookie's first start, a pitcher who only relieved in the window) it
+    returns the measured league mean, which is the honest neutral answer.
+
+    Returns (expected_bf, n_starts, observed_bf_per_start | None)."""
+    l14 = l14 or {}
+    obs = l14.get("bf_per_start")
+    n = l14.get("n_starts") or 0
+    if obs is None or n <= 0:
+        return LEAGUE_AVG_BF_PER_START, 0, None
+    try: obs = float(obs)
+    except (TypeError, ValueError): return LEAGUE_AVG_BF_PER_START, 0, None
+    if obs != obs: return LEAGUE_AVG_BF_PER_START, 0, None   # NaN guard
+    w = n / (n + BF_SHRINK_N0)
+    bf = w * obs + (1 - w) * LEAGUE_AVG_BF_PER_START
+    # Never project outside the real observed range of a start (17-30 tonight,
+    # widened slightly); a shrunk estimate can't reach these, but a future
+    # data change shouldn't be able to produce an absurd workload silently.
+    return clamp(bf, 12.0, 30.0), n, obs
+
+
 def project_pitcher_ks(ps, l14):
-    """Projected strikeouts for tonight's start, blending L14 form and season
-    K%, scaled by a league-average batters-faced-per-start estimate (Statcast-
-    fallback season data doesn't carry innings/BF, so this is an explicit
-    approximation, not a precise per-pitcher workload model)."""
+    """Projected strikeouts for tonight's start: K rate x expected batters
+    faced, where the workload is now a real per-pitcher estimate rather than
+    a flat league constant (see project_pitcher_workload).
+
+    This gates every strikeout prop. A pitcher averaging 19.5 batters faced
+    cannot reach the same K total as one averaging 27.5 at the same K rate,
+    and the old flat 22 asserted that he could."""
     l14 = l14 or {}
     if l14.get("l14_pa", 0) >= 15:
         k_pct = l14["l14_k_pct"]
@@ -878,7 +956,8 @@ def project_pitcher_ks(ps, l14):
         k_pct = ps["K%"]
     else:
         k_pct = 22.5
-    return round(k_pct / 100 * LEAGUE_AVG_BF_PER_START, 1)
+    exp_bf, _, _ = project_pitcher_workload(l14)
+    return round(k_pct / 100 * exp_bf, 1)
 
 
 # ══════════════════════════════════════════════════════════════════════════
@@ -1135,6 +1214,22 @@ def score_pitcher(sp_name, sp_id, sp_hand, gm, side, pit_season_lookup, l14_form
         score = clamp(score + 5)
 
     projected_ks = project_pitcher_ks(ps, l14)
+    exp_bf, bf_n_starts, obs_bf = project_pitcher_workload(l14)
+    if obs_bf is not None:
+        why.append(f"Expected workload {exp_bf:.1f} batters faced "
+                    f"(his own {obs_bf:.1f}/start over {bf_n_starts} real start{'s' if bf_n_starts != 1 else ''}, "
+                    f"shrunk toward the {LEAGUE_AVG_BF_PER_START} league mean)")
+        if bf_n_starts < 3:
+            watchouts.append(f"Workload estimate rests on only {bf_n_starts} start"
+                              f"{'s' if bf_n_starts != 1 else ''} in the L14 window — most start-to-start "
+                              f"variation in batters faced is noise, so this is shrunk heavily toward league average")
+        if exp_bf <= 20.5:
+            watchouts.append(f"Short-outing profile ({exp_bf:.1f} expected batters faced) — caps the realistic "
+                              f"strikeout ceiling regardless of K rate")
+    else:
+        why.append(f"Expected workload {exp_bf:.1f} batters faced (league average — no real start "
+                    f"found for him in the L14 window)")
+        watchouts.append("No L14 start found for this pitcher — workload defaulted to the league average")
 
     if opp_team_k_pct is not None:
         k_note = (f"Opposing team K% {opp_team_k_pct:.1f}" if opp_k_source == "team"
