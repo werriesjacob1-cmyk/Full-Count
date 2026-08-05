@@ -2908,7 +2908,21 @@ def build_run_log(out_list):
     """Post-processes the assembled output to classify each section as ok/empty/failed
     by scanning its body text for known failure markers. Runs after the fact rather
     than instrumenting all ~88 individual section call sites — same information,
-    far less invasive to a script this size."""
+    far less invasive to a script this size.
+
+    Real bug found on review: the marker check used to scan the WHOLE body
+    regardless of length, so a single legitimate per-player caveat embedded
+    in an otherwise rich section (e.g. "no Statcast data" for the one backup
+    pitcher without a Statcast profile, inside a section with real data for
+    a dozen other pitchers) was enough to flag the ENTIRE section "empty" —
+    verified live: Section 20 had a real, 16,656-character body full of
+    actual velocity/spin data and was still marked empty this way. Every
+    genuinely-empty section in a real run's actual output was ≤202
+    characters (just the bare "X unavailable."-style message and nothing
+    else); gated the marker checks on body length so a substantial body
+    can't be downgraded by an incidental phrase inside it, while a real
+    short failure message is still caught correctly."""
+    SHORT_BODY_THRESHOLD = 250
     full_text = "\n".join(out_list)
     pattern = re.compile(re.escape(DIV) + r"\n  SECTION (\d+): (.+?)\n" + re.escape(DIV))
     matches = list(pattern.finditer(full_text))
@@ -2920,11 +2934,12 @@ def build_run_log(out_list):
         body_end = matches[i+1].start() if i+1 < len(matches) else len(full_text)
         body = full_text[body_start:body_end].strip()
         body_lower = body.lower()
+        is_short = len(body) < SHORT_BODY_THRESHOLD
         if not body:
             status = "empty"
-        elif any(k in body_lower for k in ("failed:", "api unavailable", "unreachable", "endpoint error")):
+        elif is_short and any(k in body_lower for k in ("failed:", "api unavailable", "unreachable", "endpoint error")):
             status = "failed"
-        elif (any(k in body_lower for k in ("no data.", "[no data]", "not yet posted", "not found", "unavailable",
+        elif is_short and (any(k in body_lower for k in ("no data.", "[no data]", "not yet posted", "not found", "unavailable",
                                              "no active injuries", "not in career database", "not available",
                                              "not in ", "no games."))
               or re.search(r"\bno\b[\w\s]{0,25}\bdata\b", body_lower)):

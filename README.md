@@ -380,6 +380,24 @@ verified live against each source as of this rebuild:
   degrades to "unavailable" (not a crash) on the rare case that even that
   fell back to Statcast, since Statcast's shape doesn't carry the GS/G
   columns this needs to split starters from relievers.
+- **The run_log status classifier itself was misreporting healthy sections
+  as "empty"** — worth flagging clearly, since this has been the tool used
+  all night to decide what needed fixing. `build_run_log()` scans each
+  section's body text for failure-marker phrases, but did so across the
+  *whole* body regardless of length — so one legitimate per-player caveat
+  buried inside an otherwise rich section (e.g. "no Statcast data" for the
+  one backup pitcher without a Statcast profile, alongside real data for a
+  dozen other pitchers) was enough to flag the entire section "empty."
+  Verified live: Section 20 had a real, 16,656-character body full of
+  genuine velocity/spin data — misclassified as empty on that basis alone.
+  Cross-checked every genuinely-empty section in a real run's actual output
+  and found they're all ≤202 characters (just the bare "X unavailable."
+  message and nothing else), so the marker checks are now gated on a
+  250-character threshold: a substantial body can no longer be downgraded
+  by an incidental phrase inside it, while a real short failure message is
+  still caught correctly. Re-run against tonight's actual captured output:
+  70 ok / 18 empty / 0 failed → **73 ok / 15 empty / 0 failed**, with the
+  remaining 15 confirmed genuinely empty, not further false positives.
 - **Workflow's own commit step losing an entire run's output on a push
   race** — a real run failed live tonight (run #7): a manual code push
   landed on `main` while that run's ~15-20 min of data collection was still
