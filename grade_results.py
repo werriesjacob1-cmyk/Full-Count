@@ -137,6 +137,107 @@ def fetch_first_inning_linescore(game_pk):
     return result
 
 
+def _game_innings(game_pk):
+    """Innings actually played. A rain-shortened or 7-inning doubleheader game
+    gives every batter fewer chances than the pick assumed, which is context
+    a bare hit/miss can't express."""
+    try:
+        r = m.retry_get(f"https://statsapi.mlb.com/api/v1.1/game/{game_pk}/feed/live",
+                        headers={"User-Agent": "Mozilla/5.0"}, timeout=20, retries=2)
+        r.raise_for_status()
+        return len(r.json().get("liveData", {}).get("linescore", {}).get("innings", []))
+    except Exception:
+        return None
+
+
+def _num(v, default=0):
+    try: return float(v)
+    except (TypeError, ValueError): return default
+
+
+def opportunity_context(pick, row, game_pk):
+    """Did this pick actually get a fair test?
+
+    Grading answers "was the pick right". It does NOT answer "did the pick
+    get a real chance to be right", and conflating those two corrupts every
+    conclusion drawn from the record. A batter who pinch-hits once in the 8th
+    and makes an out is a miss identical, in the data, to one who started and
+    went 0-for-5 -- but only the second is evidence the model was wrong. The
+    first is evidence of nothing at all.
+
+    This matters specifically because the point of the accuracy record is to
+    learn which SIGNALS work. If circumstance-invalidated picks are mixed in
+    with genuine misses, signals get blamed for outcomes they never had a
+    chance to influence, and the weights derived from that are wrong.
+
+    Deliberately does NOT alter hit/miss. A miss stays a miss -- this only
+    annotates, so analysis can ask "of picks that got a full opportunity,
+    what's the rate?" without anyone having license to quietly discard
+    inconvenient losses.
+    """
+    ctx = {}
+    innings = _game_innings(game_pk)
+    if innings is not None:
+        ctx["game_innings"] = innings
+        # Fewer than 9 means a shortened game (7-inning doubleheader, rain,
+        # or a called game). Note 8.5 is normal -- a home team leading doesn't
+        # bat in the 9th -- so 8 is NOT automatically short.
+        ctx["shortened_game"] = innings < 8
+
+    if pick.get("type") == "pitcher":
+        ip = _num(row.get("ip"), None) if row else None
+        if ip is not None:
+            ctx["actual_ip"] = ip
+        if row and row.get("p"):
+            ctx["pitch_count"] = _num(row.get("p"))
+        stat = (pick.get("projection") or {}).get("stat")
+        if stat == "first_inning_run":
+            # An NRFI/YRFI lean resolves in the 1st inning, which every game
+            # reaches -- it always gets a fair test regardless of workload.
+            ctx["fair_test"] = True
+            ctx["opportunity"] = "full (first inning always played)"
+        elif ip is None:
+            ctx["fair_test"] = None
+            ctx["opportunity"] = "unknown (no IP recorded)"
+        elif ip < 4.0:
+            ctx["fair_test"] = False
+            ctx["opportunity"] = (f"limited — only {ip} IP; a strikeout prop can't be judged "
+                                  f"when the start ended early (injury, blowout, or quick hook)")
+        else:
+            ctx["fair_test"] = True
+            ctx["opportunity"] = f"full ({ip} IP)"
+        return ctx
+
+    # Batter
+    if not row:
+        ctx["fair_test"] = False
+        ctx["opportunity"] = "none — did not appear"
+        return ctx
+    ab = _num(row.get("ab")); bb = _num(row.get("bb"))
+    pa = ab + bb  # close enough; HBP/SF are rare and not exposed per-row here
+    ctx["actual_ab"] = int(ab); ctx["actual_pa_est"] = int(pa)
+    ctx["was_substitute"] = bool(row.get("substitution"))
+    bo = row.get("battingOrder")
+    if bo:
+        try: ctx["batting_order"] = int(int(bo) / 100)
+        except (TypeError, ValueError): pass
+    if pa == 0:
+        ctx["fair_test"] = False
+        ctx["opportunity"] = "none — appeared but recorded no plate appearance"
+    elif ctx["was_substitute"] and pa <= 2:
+        ctx["fair_test"] = False
+        ctx["opportunity"] = (f"limited — entered as a substitute with only {int(pa)} PA; "
+                              f"the pick assumed a starter's workload")
+    elif pa <= 2:
+        ctx["fair_test"] = False
+        ctx["opportunity"] = (f"limited — only {int(pa)} PA (early exit, shortened game, "
+                              f"or removed for a pinch hitter)")
+    else:
+        ctx["fair_test"] = True
+        ctx["opportunity"] = f"full ({int(pa)} PA)"
+    return ctx
+
+
 def grade_pick(pick, game_statuses):
     game_pk = pick.get("game_pk")
     player_id = pick.get("player_id")
@@ -186,12 +287,14 @@ def grade_pick(pick, game_statuses):
         actual_yrfi = runs_against > 0
         hit = actual_yrfi if lean == "YRFI" else not actual_yrfi
         return {**pick, "grade": "hit" if hit else "miss", "actual": runs_against,
-                "actual_stat": "first_inning_runs_allowed"}
+                "actual_stat": "first_inning_runs_allowed",
+                **opportunity_context(pick, None, game_pk)}
 
     is_pitcher = pick["type"] == "pitcher"
     row, err = get_box_line(game_pk, player_id, is_pitcher)
     if row is None:
-        return {**pick, "grade": "ungraded", "reason": err}
+        return {**pick, "grade": "ungraded", "reason": err,
+                **opportunity_context(pick, None, game_pk)}
     try:
         if stat == "strikeouts":
             actual = float(row.get("k", 0) or 0)
@@ -247,7 +350,8 @@ def grade_pick(pick, game_statuses):
     threshold = 1.5 if stat == "total_bases" else proj - 0.5
     hit = actual > threshold
     return {**pick, "grade": "hit" if hit else "miss", "actual": actual,
-            "actual_stat": actual_stat, "threshold": threshold}
+            "actual_stat": actual_stat, "threshold": threshold,
+            **opportunity_context(pick, row, game_pk)}
 
 
 def grade_day(date) -> bool:
@@ -300,9 +404,17 @@ def grade_day(date) -> bool:
     hits = sum(1 for g in graded if g["grade"] == "hit")
     misses = sum(1 for g in graded if g["grade"] == "miss")
     ungraded = sum(1 for g in graded if g["grade"] == "ungraded")
+    # Tracked alongside, never instead of, the raw numbers. A pick that never
+    # got a real chance (2 PA off the bench, a start cut short) is evidence
+    # about circumstance, not about whether the model's read was right --
+    # counting it as a signal failure teaches the wrong lesson. Raw stays the
+    # headline so nothing can be quietly excused.
+    fair_hits = sum(1 for g in graded if g["grade"] == "hit" and g.get("fair_test"))
+    fair_misses = sum(1 for g in graded if g["grade"] == "miss" and g.get("fair_test"))
 
     with open(GRADES_FILE, "w", encoding="utf-8") as f:
         json.dump({"date": YESTERDAY, "hits": hits, "misses": misses, "ungraded": ungraded,
+                   "fair_hits": fair_hits, "fair_misses": fair_misses,
                    "picks": graded}, f, indent=2)
 
     history = {"days": []}
@@ -310,7 +422,8 @@ def grade_day(date) -> bool:
         with open(HISTORY_FILE, encoding="utf-8") as f:
             history = json.load(f)
     history["days"] = [d for d in history.get("days", []) if d["date"] != YESTERDAY]  # avoid dup on reruns
-    history["days"].append({"date": YESTERDAY, "hits": hits, "misses": misses, "ungraded": ungraded})
+    history["days"].append({"date": YESTERDAY, "hits": hits, "misses": misses, "ungraded": ungraded,
+                            "fair_hits": fair_hits, "fair_misses": fair_misses})
     history["days"].sort(key=lambda d: d["date"])
 
     totals = {"hits": sum(d["hits"] for d in history["days"]),
@@ -319,6 +432,10 @@ def grade_day(date) -> bool:
     history["totals"] = totals
     graded_total = totals["hits"] + totals["misses"]
     history["overall_hit_rate"] = round(totals["hits"] / graded_total, 3) if graded_total else None
+    fh = sum(d.get("fair_hits", 0) for d in history["days"])
+    fm = sum(d.get("fair_misses", 0) for d in history["days"])
+    history["fair_test_totals"] = {"hits": fh, "misses": fm}
+    history["fair_test_hit_rate"] = round(fh / (fh + fm), 3) if (fh + fm) else None
 
     # Rolling last-14-day rate, so a slow start doesn't permanently anchor the headline number
     recent = history["days"][-14:]
@@ -331,7 +448,9 @@ def grade_day(date) -> bool:
         json.dump(history, f, indent=2)
 
     day_rate = round(hits / (hits + misses), 3) if (hits + misses) else "n/a"
+    fair_rate = round(fair_hits / (fair_hits + fair_misses), 3) if (fair_hits + fair_misses) else "n/a"
     print(f"Graded {YESTERDAY}: {hits} hits / {misses} misses / {ungraded} ungraded (day rate: {day_rate})")
+    print(f"  Of picks that got a fair test: {fair_hits} hits / {fair_misses} misses (rate: {fair_rate})")
     print(f"Overall to date: {totals['hits']} hits / {totals['misses']} misses "
           f"(rate: {history['overall_hit_rate']}, last 14 days: {history['last_14_days_hit_rate']})")
     return True

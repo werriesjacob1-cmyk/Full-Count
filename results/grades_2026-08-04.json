@@ -3,6 +3,8 @@
   "hits": 5,
   "misses": 5,
   "ungraded": 0,
+  "fair_hits": 5,
+  "fair_misses": 3,
   "picks": [
     {
       "rank": 1,
@@ -22,7 +24,11 @@
       "notable_signals": 0,
       "grade": "hit",
       "actual": 0,
-      "actual_stat": "first_inning_runs_allowed"
+      "actual_stat": "first_inning_runs_allowed",
+      "game_innings": 9,
+      "shortened_game": false,
+      "fair_test": true,
+      "opportunity": "full (first inning always played)"
     },
     {
       "rank": 2,
@@ -42,7 +48,11 @@
       "notable_signals": 0,
       "grade": "hit",
       "actual": 0,
-      "actual_stat": "first_inning_runs_allowed"
+      "actual_stat": "first_inning_runs_allowed",
+      "game_innings": 9,
+      "shortened_game": false,
+      "fair_test": true,
+      "opportunity": "full (first inning always played)"
     },
     {
       "rank": 3,
@@ -62,7 +72,11 @@
       "notable_signals": 0,
       "grade": "hit",
       "actual": 0,
-      "actual_stat": "first_inning_runs_allowed"
+      "actual_stat": "first_inning_runs_allowed",
+      "game_innings": 9,
+      "shortened_game": false,
+      "fair_test": true,
+      "opportunity": "full (first inning always played)"
     },
     {
       "rank": 4,
@@ -82,7 +96,11 @@
       "notable_signals": 0,
       "grade": "miss",
       "actual": 1,
-      "actual_stat": "first_inning_runs_allowed"
+      "actual_stat": "first_inning_runs_allowed",
+      "game_innings": 9,
+      "shortened_game": false,
+      "fair_test": true,
+      "opportunity": "full (first inning always played)"
     },
     {
       "rank": 5,
@@ -103,7 +121,15 @@
       "grade": "hit",
       "actual": 1.0,
       "actual_stat": "stolen_bases",
-      "threshold": 0.5
+      "threshold": 0.5,
+      "game_innings": 9,
+      "shortened_game": false,
+      "actual_ab": 4,
+      "actual_pa_est": 4,
+      "was_substitute": false,
+      "batting_order": 9,
+      "fair_test": true,
+      "opportunity": "full (4 PA)"
     },
     {
       "rank": 6,
@@ -124,7 +150,15 @@
       "grade": "miss",
       "actual": 0.0,
       "actual_stat": "stolen_bases",
-      "threshold": 0.5
+      "threshold": 0.5,
+      "game_innings": 9,
+      "shortened_game": false,
+      "actual_ab": 5,
+      "actual_pa_est": 5,
+      "was_substitute": false,
+      "batting_order": 2,
+      "fair_test": true,
+      "opportunity": "full (5 PA)"
     },
     {
       "rank": 7,
@@ -145,7 +179,15 @@
       "grade": "miss",
       "actual": 0,
       "actual_stat": "total_bases",
-      "threshold": 1.5
+      "threshold": 1.5,
+      "game_innings": 9,
+      "shortened_game": false,
+      "actual_ab": 3,
+      "actual_pa_est": 4,
+      "was_substitute": false,
+      "batting_order": 2,
+      "fair_test": true,
+      "opportunity": "full (4 PA)"
     },
     {
       "rank": 8,
@@ -166,7 +208,15 @@
       "grade": "miss",
       "actual": 0.0,
       "actual_stat": "stolen_bases",
-      "threshold": 0.5
+      "threshold": 0.5,
+      "game_innings": 9,
+      "shortened_game": false,
+      "actual_ab": 2,
+      "actual_pa_est": 2,
+      "was_substitute": false,
+      "batting_order": 9,
+      "fair_test": false,
+      "opportunity": "limited \u2014 only 2 PA (early exit, shortened game, or removed for a pinch hitter)"
     },
     {
       "rank": 9,
@@ -187,7 +237,15 @@
       "grade": "miss",
       "actual": 0.0,
       "actual_stat": "stolen_bases",
-      "threshold": 0.5
+      "threshold": 0.5,
+      "game_innings": 9,
+      "shortened_game": false,
+      "actual_ab": 2,
+      "actual_pa_est": 2,
+      "was_substitute": false,
+      "batting_order": 8,
+      "fair_test": false,
+      "opportunity": "limited \u2014 only 2 PA (early exit, shortened game, or removed for a pinch hitter)"
     },
     {
       "rank": 10,
@@ -208,7 +266,15 @@
       "grade": "hit",
       "actual": 2,
       "actual_stat": "total_bases",
-      "threshold": 1.5
+      "threshold": 1.5,
+      "game_innings": 9,
+      "shortened_game": false,
+      "actual_ab": 4,
+      "actual_pa_est": 4,
+      "was_substitute": false,
+      "batting_order": 4,
+      "fair_test": true,
+      "opportunity": "full (4 PA)"
     }
   ]
 }
