@@ -1639,8 +1639,30 @@ def sc_poptime(yr):
     except Exception as e: warn(f"{e}"); return pd.DataFrame()
 
 def sc_oaa(yr):
+    # Verified live: statcast_outs_above_average() takes one required position
+    # per call (no "all positions" option -- pybaseball raises ValueError for
+    # catcher, unsupported on this specific Savant leaderboard) and this was
+    # only ever called with pos=9 (right field). Checked a real report (Section
+    # 82, 2026-08-05): every row's primary_pos_formatted was RF -- infielders,
+    # CF/LF, and everyone else were silently absent from a section titled
+    # "OUTS ABOVE AVERAGE — FIELDING" with no "right field only" qualifier
+    # anywhere. Looping across every position this leaderboard supports and
+    # combining delivers what the title actually promises; verified live that
+    # each (player, position) pair is a genuinely distinct OAA computation on
+    # Savant's own site (a multi-position player's OAA differs by which
+    # position was queried), not a duplicate row to dedupe away.
     step(f"Statcast OAA fielding {yr}...")
-    try: df=pyb.statcast_outs_above_average(yr, pos=9); step(f"  {len(df)}"); return df
+    try:
+        dfs=[]
+        for pos in [3,4,5,6,7,8,9]:
+            try:
+                d=pyb.statcast_outs_above_average(yr, pos)
+                if d is not None and not d.empty: dfs.append(d)
+            except Exception: pass
+        if not dfs: return pd.DataFrame()
+        df=pd.concat(dfs, ignore_index=True)
+        step(f"  {len(df)}")
+        return df
     except Exception as e: warn(f"{e}"); return pd.DataFrame()
 
 def sc_of_oaa(yr):
