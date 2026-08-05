@@ -29,9 +29,53 @@ RESULTS_DIR = os.environ.get("RESULTS_DIR", "results")
 os.makedirs(RESULTS_DIR, exist_ok=True)
 
 YESTERDAY = os.environ.get("GRADE_DATE") or (datetime.now() - timedelta(days=1)).strftime("%Y-%m-%d")
-PICKS_JSON = os.path.join(OUTPUT_DIR, f"picks_{YESTERDAY}.json")
-GRADES_FILE = os.path.join(RESULTS_DIR, f"grades_{YESTERDAY}.json")
 HISTORY_FILE = os.path.join(RESULTS_DIR, "history.json")
+
+# How far back a catch-up pass will look. Bounded so a long-running season
+# doesn't re-walk hundreds of days every morning, and so genuinely
+# unresolvable days (a pick whose player was scratched, say) stop being
+# retried forever.
+CATCHUP_WINDOW_DAYS = 14
+
+
+def picks_path(date):  return os.path.join(OUTPUT_DIR, f"picks_{date}.json")
+def grades_path(date): return os.path.join(RESULTS_DIR, f"grades_{date}.json")
+
+
+def dates_needing_grading():
+    """Every date with a picks file that isn't fully graded yet.
+
+    The pipeline used to grade *only* yesterday. That silently made missed
+    runs unrecoverable: if a day's workflow didn't fire (verified as a real
+    risk -- GitHub delayed a scheduled run by ~43 minutes, and documents that
+    it drops them entirely under load), that day's picks were never graded,
+    and since the next morning only ever looked at ITS yesterday, that day's
+    accuracy data was lost permanently. The accuracy record is the whole
+    point of this project, so losing days to a scheduling hiccup is the one
+    failure that actually compounds.
+
+    Also re-grades days that are only PARTIALLY graded (ungraded > 0). Those
+    are usually games that hadn't gone Final when grading ran -- a
+    suspended/postponed game finishing the next day is exactly the case that
+    should resolve on a later pass rather than sit ungraded forever.
+    """
+    today = datetime.now()
+    out = []
+    for back in range(1, CATCHUP_WINDOW_DAYS + 1):
+        d = (today - timedelta(days=back)).strftime("%Y-%m-%d")
+        if not os.path.exists(picks_path(d)):
+            continue
+        gp = grades_path(d)
+        if not os.path.exists(gp):
+            out.append(d); continue
+        try:
+            with open(gp, encoding="utf-8") as f:
+                prev = json.load(f)
+            if prev.get("ungraded", 0) > 0:
+                out.append(d)
+        except (json.JSONDecodeError, OSError):
+            out.append(d)  # unreadable grades file -> regrade it
+    return sorted(out)
 
 
 def fetch_game_statuses(date):
@@ -206,7 +250,11 @@ def grade_pick(pick, game_statuses):
             "actual_stat": actual_stat, "threshold": threshold}
 
 
-def main() -> int:
+def grade_day(date) -> bool:
+    """Grade one date. Returns True if it wrote grades, False if it no-opped."""
+    PICKS_JSON = picks_path(date)
+    GRADES_FILE = grades_path(date)
+    YESTERDAY = date  # local alias: this function used to be hardcoded to yesterday
     if not os.path.exists(PICKS_JSON):
         print(f"No picks file for {YESTERDAY} ({PICKS_JSON}) — nothing to grade.")
         return 0
@@ -225,7 +273,7 @@ def main() -> int:
     picks = payload.get("picks", [])
     if not picks:
         print(f"No picks recorded for {YESTERDAY} — nothing to grade.")
-        return 0
+        return False
 
     game_statuses = fetch_game_statuses(YESTERDAY)
     # Verified live: grade_pick() reads pick["type"] via direct bracket access (kept
@@ -286,6 +334,29 @@ def main() -> int:
     print(f"Graded {YESTERDAY}: {hits} hits / {misses} misses / {ungraded} ungraded (day rate: {day_rate})")
     print(f"Overall to date: {totals['hits']} hits / {totals['misses']} misses "
           f"(rate: {history['overall_hit_rate']}, last 14 days: {history['last_14_days_hit_rate']})")
+    return True
+
+
+def main() -> int:
+    """Grades yesterday plus any earlier day left ungraded (see
+    dates_needing_grading). An explicit GRADE_DATE env var still forces a
+    single specific day, which is what manual re-grades use."""
+    if os.environ.get("GRADE_DATE"):
+        grade_day(os.environ["GRADE_DATE"])
+        return 0
+    pending = dates_needing_grading()
+    if not pending:
+        print("Nothing to grade — all recent days with picks are already fully graded.")
+        return 0
+    if len(pending) > 1:
+        print(f"Catch-up: {len(pending)} day(s) need grading: {', '.join(pending)}")
+    for d in pending:
+        try:
+            grade_day(d)
+        except Exception as e:
+            # One bad day must not stop the others, and must never fail the
+            # workflow step -- same contract as the rest of this module.
+            m.warn(f"Grading {d} failed: {e}")
     return 0
 
 
