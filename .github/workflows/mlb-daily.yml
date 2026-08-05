@@ -9,6 +9,20 @@ on:
     # see README for the tradeoff; resolving DST dynamically in cron YAML
     # isn't worth the complexity for a two-outing-a-year edge case.
     - cron: '30 14 * * *'
+    # Backup window, 1 hour later. Added after verifying that the 14:30 slot
+    # did NOT fire on its first scheduled day (13/13 runs to that point were
+    # manual workflow_dispatch; the workflow was state:active and nothing was
+    # holding the concurrency group). GitHub documents that scheduled runs are
+    # delayed under load and can be dropped entirely, so a single daily window
+    # is a single point of failure for the one thing that compounds here — the
+    # accuracy record, which only grows if this runs unattended every day.
+    #
+    # Deliberately 15:30 UTC and not later: first pitch is ~18:10 UTC at the
+    # earliest, so a backup run still generates picks pre-game. If BOTH windows
+    # fire, the second is harmless and arguably better — it regenerates against
+    # fresher confirmed lineups, and grade_results.py already de-duplicates by
+    # date when writing results/history.json, so accuracy isn't double-counted.
+    - cron: '30 15 * * *'
   workflow_dispatch:
     inputs:
       dry_run:
