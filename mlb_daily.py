@@ -1458,7 +1458,13 @@ def compute_catcher_pitch_calling(game_meta):
         )
         catcher_fp["fp_fastball_pct"]=round(catcher_fp["fastball_fp"]/catcher_fp["total_fp"]*100,1)
         catcher_fp=catcher_fp[catcher_fp["total_fp"]>=20].sort_values("fp_fastball_pct",ascending=False).reset_index()
-        # Try to get catcher names
+        # Resolve catcher MLBAM ids to real names — this comment used to
+        # promise "Try to get catcher names" with no code actually doing
+        # it, verified live: the table printed raw fielder_2 ids (683679,
+        # 596142, ...) instead of catcher names on every run.
+        by_id=fetch_active_roster_by_name().get("by_id",{})
+        catcher_fp["fielder_2"]=catcher_fp["fielder_2"].apply(lambda pid: by_id.get(pid,f"MLBAM#{int(pid)}"))
+        catcher_fp=catcher_fp.rename(columns={"fielder_2":"Catcher"})
         lines.append("  Catcher first-pitch fastball% (L14, min 20 caught first pitches):")
         lines.append(fmt(catcher_fp.head(30)))
         lines.append("  HIGH% = calls lots of first-pitch fastballs → hitters ready for FB")
