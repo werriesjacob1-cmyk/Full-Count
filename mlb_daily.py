@@ -3257,14 +3257,37 @@ def main():
         step(f"Statcast bat tracking {YEAR}...")
         df=pyb.statcast(start_dt=f"{YEAR}-04-01",end_dt=TODAY)
         if df is not None and not df.empty:
-            bat_cols=[c for c in ["player_name","bat_speed","swing_length","attack_angle","launch_angle"] if c in df.columns]
             if "bat_speed" in df.columns:
-                bt=df[df["bat_speed"].notna()].groupby("player_name").agg(
+                # Verified live and severe: raw pyb.statcast() rows are pitch-level
+                # and "player_name" on them is the PITCHER, not the batter --
+                # confirmed by resolving a real row's batter ID (650859) against
+                # its play description ("Luis Rengifo grounds out...") and
+                # player_name ("Garcia, Brandyn"): Brandyn Garcia is a pitcher,
+                # Rengifo is the batter whose bat_speed/swing_length/attack_angle
+                # this row actually measured. Grouping this leaderboard by
+                # player_name was silently attributing every batter's bat-tracking
+                # numbers to whichever pitcher happened to be on the mound for that
+                # swing -- a real leaderboard of plausible-looking speeds under
+                # completely wrong names, every single run. Fixed to group by the
+                # "batter" ID column instead and resolve real names via
+                # statsapi.lookup_player("") -- one bulk call that returns the
+                # full ~1,300-player active list in ~1.5s (verified live), not a
+                # per-player lookup loop, so it's cheap even though hundreds of
+                # batters accumulate bat-tracking rows over a full season.
+                id_to_name = {}
+                try:
+                    id_to_name = {p["id"]: (p.get("nameFirstLast") or p.get("fullName"))
+                                  for p in statsapi.lookup_player("")}
+                except Exception as e:
+                    warn(f"Bat tracking name lookup: {e}")
+                bt=df[df["bat_speed"].notna()].groupby("batter").agg(
                     avg_bat_speed=("bat_speed","mean"),
                     avg_swing_len=("swing_length","mean") if "swing_length" in df.columns else ("bat_speed","count"),
                     avg_attack_ang=("attack_angle","mean") if "attack_angle" in df.columns else ("bat_speed","count"),
                     swings=("bat_speed","count")
                 ).round(2).sort_values("avg_bat_speed",ascending=False).reset_index()
+                bt["player_name"]=bt["batter"].apply(lambda bid: id_to_name.get(bid, f"Batter #{bid}"))
+                bt=bt[["player_name","avg_bat_speed","avg_swing_len","avg_attack_ang","swings"]]
                 bt.index+=1
                 bt["fast_swing"]=bt["avg_bat_speed"].apply(lambda x:"🔥 FAST" if x>=75 else ("✅" if x>=70 else ""))
                 out.append(fmt(bt[bt["swings"]>=50].head(80)))
