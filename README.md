@@ -142,7 +142,22 @@ no key, verified live) is pulled as an independent check for every non-dome
 park (all in the US — dome games skip weather entirely). When both sources
 agree, temp/wind are averaged for a steadier read; when they disagree by
 10°F+, that disagreement itself becomes a watch-out on the pick rather than
-silently trusting one source.
+silently trusting one source. Open-Meteo's hourly feed also carries
+precipitation probability, applied as a watch-out (50%+ chance) uniformly to
+every pick in a game — a delay or postponement affects a batter prop, a
+pitcher prop, and an NRFI lean alike, so this is applied once per game rather
+than threaded through every scoring function separately.
+
+**Investigated and deliberately not shipped:** ESPN's scoreboard/summary API
+as a third lineup source (would help — it carries real player IDs — but
+returned a hard 403/access-denied from this environment, not a soft rate
+limit); team-level bullpen quality (ERA) from FanGraphs' team pitching page,
+skipped because that endpoint is unreliable exactly when it'd be needed (it
+was down on a live test tonight while the individual leaderboards it would
+need instead lack team/role columns on their Statcast fallback). Both are
+real gaps, not forgotten — noted here rather than shipped half-verified,
+consistent with this project's rule of not trusting a source that hasn't
+been checked live.
 
 **Sharp-money divergence** — a genuinely different signal type (market-
 derived, not stats-derived), from Action Network's public scoreboard data

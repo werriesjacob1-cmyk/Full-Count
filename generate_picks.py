@@ -136,7 +136,7 @@ def fetch_park_weather(game_meta):
         try:
             r = m.retry_get("https://api.open-meteo.com/v1/forecast", params={
                 "latitude": lat, "longitude": lon,
-                "hourly": "temperature_2m,windspeed_10m,winddirection_10m,relativehumidity_2m",
+                "hourly": "temperature_2m,windspeed_10m,winddirection_10m,relativehumidity_2m,precipitation_probability",
                 "temperature_unit": "fahrenheit", "windspeed_unit": "mph",
                 "timezone": "auto", "forecast_days": 1,
             }, timeout=20, retries=2)
@@ -145,6 +145,7 @@ def fetch_park_weather(game_meta):
             idx = min(max(gm["hour"], 0), 23)
             temp = h["temperature_2m"][idx]; wsp = h["windspeed_10m"][idx]
             wdir = h["winddirection_10m"][idx]; humid = h["relativehumidity_2m"][idx]
+            precip_prob = h.get("precipitation_probability", [None]*24)[idx]
 
             wx_disagreement = None
             nws = fetch_nws_weather(lat, lon, gm["hour"])
@@ -168,7 +169,7 @@ def fetch_park_weather(game_meta):
             wind_effect = "out" if "OUT" in wvf.upper() else ("in" if "IN" in wvf.upper() else "neutral")
             out[gm["matchup"]] = {"dome": False, "park_hr_index": round(clamp(idx_score), 1),
                                    "wind_effect": wind_effect, "temp": temp, "wind_mph": wsp,
-                                   "wx_disagreement": wx_disagreement}
+                                   "wx_disagreement": wx_disagreement, "precip_prob": precip_prob}
         except Exception as e:
             m.warn(f"Picks weather {sk}: {e}")
             out[gm["matchup"]] = {"dome": False, "park_hr_index": 50, "wind_effect": "unknown", "temp": None}
@@ -967,6 +968,17 @@ def main() -> int:
                                              gm.get("away_lineup", []), opp_k, ump_scores, opp_k_source))
             fi = score_first_inning(gm["home_sp"], gm["home_sp_id"], gm, "home", fi_form)
             if fi: candidates.append(fi)
+
+    # Rain risk applies to every prop type in a game equally (a postponement
+    # or delay affects the batter and the pitcher and the NRFI lean alike),
+    # so it's applied once here as a uniform watchout rather than threaded
+    # through every score_* signature separately. Informational only — not
+    # folded into score, since "check before betting" is the honest framing
+    # for a probability that's still hours out and can shift either way.
+    for c in candidates:
+        wx = park_wx.get(c["matchup"])
+        if wx and not wx.get("dome") and (wx.get("precip_prob") or 0) >= 50:
+            c["watchouts"].append(f"Rain risk tonight ({wx['precip_prob']}% precipitation probability) — game could be delayed or postponed")
 
     # Pure score ranking, no per-game or per-prop-type cap — per explicit
     # direction, the top 10 doesn't have to be diverse across categories or
