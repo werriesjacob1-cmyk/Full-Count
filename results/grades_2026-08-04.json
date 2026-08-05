@@ -1,0 +1,218 @@
+{
+  "date": "2026-08-04",
+  "hits": 8,
+  "misses": 2,
+  "ungraded": 0,
+  "picks": [
+    {
+      "rank": 1,
+      "type": "pitcher",
+      "name": "Sean Manaea",
+      "player_id": 640455,
+      "team": "New York Mets",
+      "matchup": "New York Mets @ Cleveland Guardians",
+      "game_pk": 824403,
+      "prop": "NRFI lean (his starts)",
+      "projection": {
+        "stat": "first_inning_run",
+        "value": 0.0
+      },
+      "score": 84,
+      "confidence": "Medium",
+      "notable_signals": 0,
+      "grade": "hit",
+      "actual": 7.0,
+      "actual_stat": "strikeouts",
+      "threshold": -0.5
+    },
+    {
+      "rank": 2,
+      "type": "pitcher",
+      "name": "Joey Cantillo",
+      "player_id": 676282,
+      "team": "Cleveland Guardians",
+      "matchup": "New York Mets @ Cleveland Guardians",
+      "game_pk": 824403,
+      "prop": "NRFI lean (his starts)",
+      "projection": {
+        "stat": "first_inning_run",
+        "value": 0.0
+      },
+      "score": 84,
+      "confidence": "Medium",
+      "notable_signals": 0,
+      "grade": "hit",
+      "actual": 5.0,
+      "actual_stat": "strikeouts",
+      "threshold": -0.5
+    },
+    {
+      "rank": 3,
+      "type": "pitcher",
+      "name": "Brady Singer",
+      "player_id": 663903,
+      "team": "Cincinnati Reds",
+      "matchup": "Athletics @ Cincinnati Reds",
+      "game_pk": 824484,
+      "prop": "NRFI lean (his starts)",
+      "projection": {
+        "stat": "first_inning_run",
+        "value": 0.0
+      },
+      "score": 84,
+      "confidence": "Medium",
+      "notable_signals": 0,
+      "grade": "hit",
+      "actual": 6.0,
+      "actual_stat": "strikeouts",
+      "threshold": -0.5
+    },
+    {
+      "rank": 4,
+      "type": "pitcher",
+      "name": "Carson Palmquist",
+      "player_id": 687223,
+      "team": "Washington Nationals",
+      "matchup": "Washington Nationals @ Philadelphia Phillies",
+      "game_pk": 823432,
+      "prop": "NRFI lean (his starts)",
+      "projection": {
+        "stat": "first_inning_run",
+        "value": 0.0
+      },
+      "score": 84,
+      "confidence": "Medium",
+      "notable_signals": 0,
+      "grade": "hit",
+      "actual": 0.0,
+      "actual_stat": "strikeouts",
+      "threshold": -0.5
+    },
+    {
+      "rank": 5,
+      "type": "batter",
+      "name": "Henry Bolte",
+      "player_id": 703607,
+      "team": "Athletics",
+      "matchup": "Athletics @ Cincinnati Reds",
+      "game_pk": 824484,
+      "prop": "To Steal a Base",
+      "projection": {
+        "stat": "stolen_base",
+        "value": 1
+      },
+      "score": 83.9,
+      "confidence": "High",
+      "notable_signals": 0,
+      "grade": "hit",
+      "actual": 3,
+      "actual_stat": "total_bases",
+      "threshold": 0.5
+    },
+    {
+      "rank": 6,
+      "type": "batter",
+      "name": "Bobby Witt Jr.",
+      "player_id": 677951,
+      "team": "Kansas City Royals",
+      "matchup": "Minnesota Twins @ Kansas City Royals",
+      "game_pk": 824084,
+      "prop": "To Steal a Base",
+      "projection": {
+        "stat": "stolen_base",
+        "value": 1
+      },
+      "score": 83.9,
+      "confidence": "High",
+      "notable_signals": 0,
+      "grade": "hit",
+      "actual": 4,
+      "actual_stat": "total_bases",
+      "threshold": 0.5
+    },
+    {
+      "rank": 7,
+      "type": "batter",
+      "name": "Griffin Conine",
+      "player_id": 665052,
+      "team": "Miami Marlins",
+      "matchup": "Miami Marlins @ Atlanta Braves",
+      "game_pk": 824888,
+      "prop": "Home Run / 2+ Total Bases (proj. 2.6 TB)",
+      "projection": {
+        "stat": "total_bases",
+        "value": 2.6
+      },
+      "score": 76.4,
+      "confidence": "High",
+      "notable_signals": 2,
+      "grade": "miss",
+      "actual": 0,
+      "actual_stat": "total_bases",
+      "threshold": 2.1
+    },
+    {
+      "rank": 8,
+      "type": "batter",
+      "name": "Luisangel Acu\u00f1a",
+      "player_id": 682668,
+      "team": "Chicago White Sox",
+      "matchup": "Chicago White Sox @ Boston Red Sox",
+      "game_pk": 824731,
+      "prop": "To Steal a Base",
+      "projection": {
+        "stat": "stolen_base",
+        "value": 1
+      },
+      "score": 74.5,
+      "confidence": "High",
+      "notable_signals": 0,
+      "grade": "hit",
+      "actual": 1,
+      "actual_stat": "total_bases",
+      "threshold": 0.5
+    },
+    {
+      "rank": 9,
+      "type": "batter",
+      "name": "Jose Siri",
+      "player_id": 642350,
+      "team": "Los Angeles Angels",
+      "matchup": "Los Angeles Angels @ Baltimore Orioles",
+      "game_pk": 824805,
+      "prop": "To Steal a Base",
+      "projection": {
+        "stat": "stolen_base",
+        "value": 1
+      },
+      "score": 73.6,
+      "confidence": "High",
+      "notable_signals": 0,
+      "grade": "miss",
+      "actual": 0,
+      "actual_stat": "total_bases",
+      "threshold": 0.5
+    },
+    {
+      "rank": 10,
+      "type": "batter",
+      "name": "Randal Grichuk",
+      "player_id": 545341,
+      "team": "Chicago White Sox",
+      "matchup": "Chicago White Sox @ Boston Red Sox",
+      "game_pk": 824731,
+      "prop": "Home Run / 2+ Total Bases (proj. 1.53 TB)",
+      "projection": {
+        "stat": "total_bases",
+        "value": 1.53
+      },
+      "score": 67.5,
+      "confidence": "Medium",
+      "notable_signals": 2,
+      "grade": "hit",
+      "actual": 2,
+      "actual_stat": "total_bases",
+      "threshold": 1.03
+    }
+  ]
+}
