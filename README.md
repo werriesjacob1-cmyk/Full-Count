@@ -338,9 +338,25 @@ verified live against each source as of this rebuild:
 - **Rotowire lineup scraper**: rebuilt against the live site's current
   structure (`div.lineup__box` → `div.lineup__abbr` + `ul.lineup__list`), and
   demoted to a **last-resort** fallback, called once globally — never per-team.
-- **Rotowire fallback silently dropping every batter ID** — the single
-  biggest bug found in a night of continued hardening. Rotowire has no MLBAM
-  IDs of its own, and every per-player Statcast lookup in `generate_picks.py`
+- **`pyb.playerid_lookup()` completely broken in this environment, silently
+  killing 10 report sections** — the biggest-scope bug found in a night of
+  continued hardening. `playerid_lookup()` downloads and reads a cached
+  Chadwick player-ID register as a zip file; that download is corrupted in
+  this environment ("File is not a zip file"), and it fails the same way
+  every single time, for every pitcher — verified live against 6 real
+  tonight's-starters, 0 succeeded. Ten functions (pitcher velocity/spin/
+  extension trends, pitch tunneling, in-game micro-fatigue, VAA/HAA,
+  pitcher complexity, umpire/catcher/pitcher 3-way, aging curves, tempo
+  profiles, TTO splits, first-inning profile) all used this exact same
+  pattern to resolve a starter's name to an MLBAM ID before pulling their
+  Statcast data — despite the MLB Stats API already handing this pipeline
+  that exact ID directly (`away_sp_id`/`home_sp_id` on every `game_meta`
+  entry) at the point lineups are fetched. Fixed all 10 call sites to use
+  the ID already in hand instead of re-deriving it through a broken lookup.
+  Verified live end-to-end post-fix: all 10 now return real per-pitcher data
+  for tonight's actual starters.
+- **Rotowire fallback silently dropping every batter ID** — Rotowire has no
+  MLBAM IDs of its own, and every per-player Statcast lookup in `generate_picks.py`
   (L7 form, bat-speed trend, sprint speed, pitch-type exploits, per-player
   history persistence) keys off that ID. Whenever a lineup fell all the way
   through to Rotowire — verified live, an entire slate did exactly this on

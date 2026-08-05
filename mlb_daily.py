@@ -770,11 +770,17 @@ def fetch_umpire_ou_records(game_meta):
 
 
 def fetch_bvp(date=None):
+    """Verified live: the site and table-parsing logic both work fine (a
+    direct test returned 171 real rows) — the "empty" status seen on a real
+    run was this using a bare requests.get() with zero retries, unlike every
+    other fetcher here, which all go through retry_get()'s backoff/UA-
+    rotation. A single transient hiccup was enough to kill this section for
+    the whole run. Fixed to match the rest of the codebase's resilience."""
     step("BvP matchup table (FantasyInfoCentral)...")
     date_str=date or TODAY
     url=f"https://www.fantasyinfocentral.com/mlb/daily-matchups?date={date_str}"
     try:
-        r=requests.get(url,headers=BROWSER,timeout=25); r.raise_for_status()
+        r=retry_get(url,headers=BROWSER,timeout=25,retries=3); r.raise_for_status()
         soup=BeautifulSoup(r.text,"lxml")
         tables=soup.find_all("table")
         if not tables: return "  BvP table not found.\n"
@@ -1058,9 +1064,8 @@ def compute_pitcher_velocity_trends(game_meta):
             if sp_name=="TBD" or sp_name in pitchers_done: continue
             pitchers_done.add(sp_name)
             try:
-                lkp=pyb.playerid_lookup(sp_name.split()[-1],sp_name.split()[0])
-                if lkp.empty: lines.append(f"\n  {sp_name}: not found in lookup"); continue
-                pid=int(lkp["key_mlbam"].iloc[0])
+                pid = gm["away_sp_id"] if sp_name == gm["away_sp"] else gm["home_sp_id"]
+                if not pid: lines.append(f"\n  {sp_name}: no MLBAM id available"); continue
                 df=pyb.statcast_pitcher(start_dt=L30_START,end_dt=L30_END,player_id=pid)
                 if df is None or df.empty: lines.append(f"\n  {sp_name}: no Statcast data"); continue
                 # Group by game date
@@ -1111,9 +1116,8 @@ def compute_pitch_tunneling(game_meta):
             if sp_name=="TBD" or sp_name in pitchers_done: continue
             pitchers_done.add(sp_name)
             try:
-                lkp=pyb.playerid_lookup(sp_name.split()[-1],sp_name.split()[0])
-                if lkp.empty: continue
-                pid=int(lkp["key_mlbam"].iloc[0])
+                pid = gm["away_sp_id"] if sp_name == gm["away_sp"] else gm["home_sp_id"]
+                if not pid: continue
                 df=pyb.statcast_pitcher(start_dt=L30_START,end_dt=L30_END,player_id=pid)
                 if df is None or df.empty: continue
 
@@ -1189,9 +1193,8 @@ def compute_ingame_micro_fatigue(game_meta):
             if sp_name=="TBD" or sp_name in pitchers_done: continue
             pitchers_done.add(sp_name)
             try:
-                lkp=pyb.playerid_lookup(sp_name.split()[-1],sp_name.split()[0])
-                if lkp.empty: continue
-                pid=int(lkp["key_mlbam"].iloc[0])
+                pid = gm["away_sp_id"] if sp_name == gm["away_sp"] else gm["home_sp_id"]
+                if not pid: continue
                 df=pyb.statcast_pitcher(start_dt=L14_START,end_dt=L14_END,player_id=pid)
                 if df is None or df.empty: continue
                 df=df[df["inning"].notna()]
@@ -1238,9 +1241,8 @@ def compute_vaa_haa(game_meta):
             if sp_name=="TBD" or sp_name in pitchers_done: continue
             pitchers_done.add(sp_name)
             try:
-                lkp=pyb.playerid_lookup(sp_name.split()[-1],sp_name.split()[0])
-                if lkp.empty: continue
-                pid=int(lkp["key_mlbam"].iloc[0])
+                pid = gm["away_sp_id"] if sp_name == gm["away_sp"] else gm["home_sp_id"]
+                if not pid: continue
                 df=pyb.statcast_pitcher(start_dt=L14_START,end_dt=L14_END,player_id=pid)
                 if df is None or df.empty: continue
                 vaa_col="vaa" if "vaa" in df.columns else "pfx_z"
@@ -1273,9 +1275,8 @@ def compute_pitcher_complexity(game_meta):
             if sp_name=="TBD" or sp_name in pitchers_done: continue
             pitchers_done.add(sp_name)
             try:
-                lkp=pyb.playerid_lookup(sp_name.split()[-1],sp_name.split()[0])
-                if lkp.empty: continue
-                pid=int(lkp["key_mlbam"].iloc[0])
+                pid = gm["away_sp_id"] if sp_name == gm["away_sp"] else gm["home_sp_id"]
+                if not pid: continue
                 df=pyb.statcast_pitcher(start_dt=L30_START,end_dt=L30_END,player_id=pid)
                 if df is None or df.empty: continue
                 # Pitch type count (complexity)
@@ -2153,9 +2154,8 @@ def compute_umpire_3way(game_meta):
         for sp_name in [gm["away_sp"],gm["home_sp"]]:
             if sp_name=="TBD": continue
             try:
-                lkp=pyb.playerid_lookup(sp_name.split()[-1],sp_name.split()[0])
-                if lkp.empty: continue
-                pid=int(lkp["key_mlbam"].iloc[0])
+                pid = gm["away_sp_id"] if sp_name == gm["away_sp"] else gm["home_sp_id"]
+                if not pid: continue
                 fg_df=pyb.pitching_stats(YEAR,qual=0)
                 if fg_df is None or fg_df.empty: continue
                 # Get pitcher zone%
@@ -2227,9 +2227,8 @@ def compute_aging_curves(game_meta):
             if sp_name=="TBD" or sp_name in pitchers_done: continue
             pitchers_done.add(sp_name)
             try:
-                lkp=pyb.playerid_lookup(sp_name.split()[-1],sp_name.split()[0])
-                if lkp.empty: continue
-                pid=int(lkp["key_mlbam"].iloc[0])
+                pid = gm["away_sp_id"] if sp_name == gm["away_sp"] else gm["home_sp_id"]
+                if not pid: continue
                 # Current year
                 cur=pyb.statcast_pitcher(start_dt=f"{YEAR}-04-01",end_dt=TODAY,player_id=pid)
                 # Prior year
@@ -2277,9 +2276,8 @@ def compute_pitcher_tempo(game_meta):
             if sp_name=="TBD" or sp_name in pitchers_done: continue
             pitchers_done.add(sp_name)
             try:
-                lkp=pyb.playerid_lookup(sp_name.split()[-1],sp_name.split()[0])
-                if lkp.empty: continue
-                pid=int(lkp["key_mlbam"].iloc[0])
+                pid = gm["away_sp_id"] if sp_name == gm["away_sp"] else gm["home_sp_id"]
+                if not pid: continue
                 df=pyb.statcast_pitcher(start_dt=L14_START,end_dt=L14_END,player_id=pid)
                 if df is None or df.empty or "game_date" not in df.columns: continue
                 # Statcast doesn't have direct timestamps between pitches publicly
@@ -2323,9 +2321,8 @@ def compute_tto_splits(game_meta):
             if sp_name=="TBD" or sp_name in pitchers_done: continue
             pitchers_done.add(sp_name)
             try:
-                lkp=pyb.playerid_lookup(sp_name.split()[-1],sp_name.split()[0])
-                if lkp.empty: continue
-                pid=int(lkp["key_mlbam"].iloc[0])
+                pid = gm["away_sp_id"] if sp_name == gm["away_sp"] else gm["home_sp_id"]
+                if not pid: continue
                 df=pyb.statcast_pitcher(start_dt=L30_START,end_dt=L30_END,player_id=pid)
                 if df is None or df.empty or "at_bat_number" not in df.columns: continue
                 df=df[df["at_bat_number"].notna()].copy()
@@ -2373,9 +2370,8 @@ def compute_first_inning_profile(game_meta):
             if sp_name=="TBD" or sp_name in pitchers_done: continue
             pitchers_done.add(sp_name)
             try:
-                lkp=pyb.playerid_lookup(sp_name.split()[-1],sp_name.split()[0])
-                if lkp.empty: continue
-                pid=int(lkp["key_mlbam"].iloc[0])
+                pid = gm["away_sp_id"] if sp_name == gm["away_sp"] else gm["home_sp_id"]
+                if not pid: continue
                 df=pyb.statcast_pitcher(start_dt=L30_START,end_dt=L30_END,player_id=pid)
                 if df is None or df.empty or "inning" not in df.columns: continue
                 i1=df[df["inning"]==1].copy()
