@@ -95,8 +95,34 @@ jobs:
           git config user.name "mlb-pipeline-bot"
           git config user.email "actions@github.com"
           git add output/mlb_daily_*.txt output/run_log_*.json output/top10_picks_*.md output/picks_*.json results/*.json data/players/*.json
-          git diff --cached --quiet || git commit -m "Daily MLB data package + picks $(date -u +%F)"
-          git push
+          if git diff --cached --quiet; then
+            echo "Nothing to commit."
+            exit 0
+          fi
+          git commit -m "Daily MLB data package + picks $(date -u +%F)"
+          # Retry with rebase on push rejection: verified live that a manual
+          # push to main landing while this run was mid-flight (~15-20 min of
+          # work) causes a plain `git push` to be rejected outright here,
+          # silently discarding the whole run's generated output since the
+          # rejection wasn't handled at all. Data-only commits from this step
+          # never touch the same files a code push does, so a rebase should
+          # always apply cleanly; abort loudly instead of guessing if it ever
+          # doesn't.
+          for attempt in 1 2 3 4 5; do
+            if git push; then
+              echo "Pushed on attempt $attempt."
+              exit 0
+            fi
+            echo "Push rejected (attempt $attempt/5) — main moved while this run was working. Rebasing onto origin/main and retrying."
+            git fetch origin main
+            if ! git rebase origin/main; then
+              echo "::error::Rebase hit a real conflict — aborting rather than leaving the repo in a broken state. This run's generated output was NOT saved."
+              git rebase --abort
+              exit 1
+            fi
+          done
+          echo "::error::Failed to push generated output after 5 attempts."
+          exit 1
 
       - name: Upload run artifacts
         if: always()
