@@ -2323,7 +2323,18 @@ def compute_score_differential_splits():
 
 
 def compute_risp_splits():
-    step("RISP + pressure performance splits...")
+    # Verified live (same check as compute_score_differential_splits, same real
+    # row): raw pyb.statcast() rows are pitch-level and "player_name" on them is
+    # the PITCHER, not the batter -- the "batter" column is an ID with no name
+    # attached in this pull. This was grouping by pitcher all along despite its
+    # own step() log literally calling the result "batters" and the header
+    # framing it as clutch-hitting performance ("performs BETTER with RISP").
+    # What it actually computes is real and coherent -- opponent AVG allowed by
+    # each pitcher, with runners in scoring position vs empty bases -- just
+    # mislabeled. Relabeled to describe what's actually being measured rather
+    # than claim batter data a raw pitch-level Statcast pull doesn't carry a
+    # batter name for.
+    step("RISP + pressure performance splits (opponent AVG allowed by pitcher)...")
     try:
         df=pyb.statcast(start_dt=L14_START,end_dt=L14_END)
         if df is None or df.empty: return "  No data.\n"
@@ -2334,16 +2345,17 @@ def compute_risp_splits():
             PA=("events","count"),
             avg_EV=("launch_speed","mean")
         ).round(3)
-        risp_perf["AVG"]=round(risp_perf["H"]/risp_perf["PA"],3)
+        risp_perf["AVG_allowed"]=round(risp_perf["H"]/risp_perf["PA"],3)
         # Pivot to compare RISP vs non-RISP
-        pivot=risp_perf["AVG"].unstack("risp")
-        pivot.columns=["empty_bases","RISP"]
+        pivot=risp_perf["AVG_allowed"].unstack("risp")
+        pivot.columns=["AVG_allowed_empty_bases","AVG_allowed_RISP"]
         pivot=pivot.dropna().reset_index()
-        pivot["RISP_delta"]=round(pivot["RISP"]-pivot["empty_bases"],3)
+        pivot=pivot.rename(columns={"player_name":"pitcher"})
+        pivot["RISP_delta"]=round(pivot["AVG_allowed_RISP"]-pivot["AVG_allowed_empty_bases"],3)
         pivot=pivot.sort_values("RISP_delta",ascending=False).reset_index(drop=True)
         pivot.index+=1
-        step(f"  {len(pivot)} batters")
-        out="  Positive delta = performs BETTER with RISP  |  Negative = struggles under pressure\n\n"
+        step(f"  {len(pivot)} pitchers")
+        out="  Positive delta = pitcher allows a HIGHER AVG with RISP (struggles under pressure)  |  Negative = tightens up with RISP\n\n"
         out+=fmt(pivot.head(60))
         return out
     except Exception as e:
