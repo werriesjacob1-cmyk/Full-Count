@@ -852,8 +852,9 @@ def fetch_travel(game_meta):
             home_name=matchup.split(" @ ")[1] if " @ " in matchup else ""
             # Map to abbreviations (simplified)
             venue_team=None
+            venue_lower=gm["venue"].lower()
             for k,d in STADIUMS.items():
-                if k==gm["venue"]: venue_team=d[3]; break
+                if k.lower() in venue_lower or venue_lower in k.lower(): venue_team=d[3]; break
             if venue_team:
                 venue_tz=tz_map.get(venue_team,-4)
                 flag=""
