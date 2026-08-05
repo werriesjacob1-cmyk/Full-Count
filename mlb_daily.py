@@ -222,7 +222,16 @@ def fmt(df, mx=500):
     # truncation, so the cut rows are fringe/replacement-level players least
     # likely to matter for tonight's props, and the automated picks step
     # feeding on this output has its own context/cost budget to respect.
-    if df is None or df.empty: return "  [No data]\n"
+    if df is None or df.empty:
+        # fg_bat_range/fg_pit_range (the only producers that ever set this)
+        # scrape baseball-reference.com, not FanGraphs, despite the "fg_"
+        # naming — verified live it's blocked by its own Cloudflare
+        # challenge, separate from FanGraphs' own block, with no fallback
+        # of its own. Without this, an actual fetch failure and a
+        # genuinely-empty window (e.g. no qualifying PAs) were both
+        # silently rendered as the identical, undiagnosable "[No data]".
+        reason = getattr(df, "attrs", {}).get("fetch_error") if df is not None else None
+        return f"  [No data — fetch failed: {reason}]\n" if reason else "  [No data]\n"
     pd.set_option("display.max_columns",80)
     pd.set_option("display.width",240)
     pd.set_option("display.max_colwidth",25)
@@ -1567,6 +1576,16 @@ def fg_bat(yr, label="", qual=MIN_PA):
     return df
 
 def fg_bat_range(s,e,label):
+    # batting_stats_range() scrapes baseball-reference.com (not FanGraphs,
+    # despite this function's name) with zero fallback. Verified live: it's
+    # blocked by its own Cloudflare bot challenge (same "Just a moment..."
+    # page as FanGraphs' block, confirmed via a direct request to the same
+    # URL this hits) — get_table() does soup.find_all("table")[0] against
+    # that challenge page's zero tables and raises IndexError, previously
+    # swallowed into a bare empty DataFrame indistinguishable from a
+    # legitimately empty window. The real error is now attached via
+    # df.attrs so fmt() can surface it instead of silently printing
+    # "[No data]" for a real fetch failure.
     step(f"FG batting {label}...")
     try:
         df=pyb.batting_stats_range(s,e)
@@ -1577,7 +1596,10 @@ def fg_bat_range(s,e,label):
             df=df.sort_values("wRC+",ascending=False).reset_index(drop=True); df.index+=1
         step(f"  {len(df)} batters")
         return df
-    except Exception as e: warn(f"FG bat {label}: {e}"); return pd.DataFrame()
+    except Exception as e:
+        warn(f"FG bat {label}: {e}")
+        empty=pd.DataFrame(); empty.attrs["fetch_error"]=str(e)
+        return empty
 
 def _fg_statcast_pit_fallback(yr):
     """Statcast fallback for season pitching when FanGraphs is fully blocked."""
@@ -1611,6 +1633,8 @@ def fg_pit(yr, label="", qual=MIN_IP):
     return df
 
 def fg_pit_range(s,e,label):
+    # Same baseball-reference.com Cloudflare-block gap as fg_bat_range —
+    # see its comment. Real error attached via df.attrs for fmt() to show.
     step(f"FG pitching {label}...")
     try:
         df=pyb.pitching_stats_range(s,e)
@@ -1620,7 +1644,10 @@ def fg_pit_range(s,e,label):
             df=df.sort_values("ERA").reset_index(drop=True); df.index+=1
         step(f"  {len(df)} pitchers")
         return df
-    except Exception as e: warn(f"FG pit {label}: {e}"); return pd.DataFrame()
+    except Exception as e:
+        warn(f"FG pit {label}: {e}")
+        empty=pd.DataFrame(); empty.attrs["fetch_error"]=str(e)
+        return empty
 
 def fg_team_bat(yr):
     step(f"FG team batting {yr}...")
