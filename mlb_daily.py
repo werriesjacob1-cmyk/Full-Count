@@ -285,7 +285,7 @@ def fetch_lineups(date):
     params = {"sportId":1,"date":date,
               "hydrate":"lineups,probablePitcher(note),linescore,team,weather,venue,officials,seriesStatus"}
     try:
-        r = requests.get(url,params=params,headers={"User-Agent":"Mozilla/5.0"},timeout=25)
+        r = retry_get(url,params=params,headers={"User-Agent":"Mozilla/5.0"},timeout=25)
         r.raise_for_status()
         dates = r.json().get("dates",[])
         if not dates: return "  No games.\n", [], {}
