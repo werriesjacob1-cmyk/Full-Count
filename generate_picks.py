@@ -2473,6 +2473,7 @@ def write_json(top10):
             "prop": c["prop"], "projection": c["projection"], "lean": c.get("lean"), "score": c["score"],
             "confidence": c["confidence"], "notable_signals": c["notable_signals"],
             "hit_probability": c.get("hit_probability"),
+            "signals": c.get("signals") or {},
             "base_rate": c.get("base_rate"), "lift": c.get("lift"),
             "raw_hit_probability": c.get("raw_hit_probability"),
             "calibrated_by": c.get("calibrated_by"),
@@ -2518,8 +2519,25 @@ def persist_player_snapshots(candidates):
         history["snapshots"] = [s for s in history.get("snapshots", []) if s["date"] != m.TODAY]
         history["snapshots"].append({
             "date": m.TODAY,
+            # SIGNALS ARE PERSISTED, and this was the gap that made them
+            # pointless. Ten capabilities were wired into scoring and recorded
+            # onto each candidate via _sig, specifically so backtest/signals.py
+            # could measure whether they separate hits from misses. But the
+            # snapshot written to disk kept only the score and the converging-
+            # signal count, so every individual signal was discarded the moment
+            # the run ended. The measurement they exist for was impossible.
+            #
+            # Also carried: the calibrated probability and the market read, so
+            # a graded pick can later be traced back to exactly what was known
+            # and what was believed at the time it was made.
             "evaluations": [{"prop": c["prop"], "type": c["type"], "score": c["score"],
-                             "notable_signals": c["notable_signals"], "matchup": c["matchup"]}
+                             "notable_signals": c["notable_signals"], "matchup": c["matchup"],
+                             "signals": c.get("signals") or {},
+                             "hit_probability": c.get("hit_probability"),
+                             "raw_hit_probability": c.get("raw_hit_probability"),
+                             "lift": c.get("lift"), "reliability": c.get("reliability"),
+                             "sample_n": c.get("sample_n"),
+                             "projection": c.get("projection")}
                             for c in entries],
         })
         history["snapshots"] = history["snapshots"][-PLAYER_SNAPSHOT_HISTORY_DAYS:]
