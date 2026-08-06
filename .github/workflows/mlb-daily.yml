@@ -92,11 +92,6 @@ jobs:
         if: ${{ !(github.event_name == 'workflow_dispatch' && inputs.dry_run) }}
         run: python3 grade_results.py
 
-      - name: Run daily pipeline
-        env:
-          DRY_RUN: ${{ (github.event_name == 'workflow_dispatch' && inputs.dry_run) && '1' || '0' }}
-        run: python3 mlb_daily.py
-
       - name: Generate top 10 picks
         # Deterministic weighted scoring — no external API call, no LLM in the
         # loop, no secret to configure. Skipped on dry runs (no full data
@@ -104,10 +99,61 @@ jobs:
         if: ${{ !(github.event_name == 'workflow_dispatch' && (inputs.dry_run || inputs.skip_picks)) }}
         run: python3 generate_picks.py
 
-      - name: Commit generated output
+      - name: Commit picks immediately
+        # PICKS ARE COMMITTED BEFORE THE LONG REPORT RUNS, deliberately.
+        #
+        # Two scheduled runs on 2026-08-06 were cancelled by the runner at
+        # almost exactly 15 minutes, mid-pipeline. Successful runs take 5-8
+        # minutes, and the job timeout is 35, so nothing in this workflow
+        # explains the cut-off -- but the consequence was entirely of our own
+        # making: the single commit step ran last, so a run killed partway
+        # through delivered NOTHING, even though the picks themselves had
+        # already been computed.
+        #
+        # generate_picks.py imports functions from mlb_daily.py but never reads
+        # its output files -- it fetches its own lineups and stats -- so the
+        # picks do not depend on the 88-section report in any way. Ordering
+        # picks first and committing them straight away means a run that dies
+        # later still delivers the part that is actually bet on. The report is
+        # valuable, but it is not what gets read at 9am.
+        if: ${{ !(github.event_name == 'workflow_dispatch' && (inputs.dry_run || inputs.skip_picks)) }}
+        run: |
+          shopt -s nullglob
+          git config user.name "mlb-pipeline-bot"
+          git config user.email "actions@github.com"
+          git add output/top10_picks_*.md output/picks_*.json results/*.json data/players/*.json
+          if git diff --cached --quiet; then
+            echo "No picks to commit."
+            exit 0
+          fi
+          git commit -m "Picks $(date -u +%F)"
+          for attempt in 1 2 3 4 5; do
+            if git push; then
+              echo "Pushed picks on attempt $attempt."
+              exit 0
+            fi
+            echo "Push rejected (attempt $attempt/5) — rebasing onto origin/main."
+            git fetch origin main
+            if ! git rebase origin/main; then
+              echo "::error::Rebase conflict while committing picks — aborting."
+              git rebase --abort
+              exit 1
+            fi
+          done
+          echo "::error::Failed to push picks after 5 attempts."
+          exit 1
+
+      - name: Run daily pipeline
+        env:
+          DRY_RUN: ${{ (github.event_name == 'workflow_dispatch' && inputs.dry_run) && '1' || '0' }}
+        run: python3 mlb_daily.py
+
+      - name: Commit the full report
         # Skip committing on dry runs — those are for validating the pipeline
         # mechanics, not for adding to the daily-package history.
-        if: ${{ !(github.event_name == 'workflow_dispatch' && inputs.dry_run) }}
+        # Picks are already safely committed by the step above, so a
+        # failure here costs the report only -- never the picks.
+        if: ${{ always() && !(github.event_name == 'workflow_dispatch' && inputs.dry_run) }}
         run: |
           # nullglob: an unmatched glob (e.g. results/*.json before any grading has
           # run) expands to nothing instead of being passed to git add literally —
@@ -117,12 +163,12 @@ jobs:
           shopt -s nullglob
           git config user.name "mlb-pipeline-bot"
           git config user.email "actions@github.com"
-          git add output/mlb_daily_*.txt output/run_log_*.json output/top10_picks_*.md output/picks_*.json results/*.json data/players/*.json
+          git add output/mlb_daily_*.txt output/run_log_*.json
           if git diff --cached --quiet; then
             echo "Nothing to commit."
             exit 0
           fi
-          git commit -m "Daily MLB data package + picks $(date -u +%F)"
+          git commit -m "Daily MLB data package $(date -u +%F)"
           # Retry with rebase on push rejection: verified live that a manual
           # push to main landing while this run was mid-flight (~15-20 min of
           # work) causes a plain `git push` to be rejected outright here,
