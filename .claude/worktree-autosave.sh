@@ -21,8 +21,14 @@ set -uo pipefail
 cd /home/user/PROJECT-GRIDIRON || exit 1
 
 git worktree list --porcelain | awk '/^worktree /{print $2}' | while read -r wt; do
-  # Skip the primary checkout: main is committed deliberately, not on a timer.
-  [ "$wt" = "/home/user/PROJECT-GRIDIRON" ] && continue
+  # The primary checkout gets a NARROWER rule, applied further down: only
+  # untracked (brand-new) files are autosaved there, never modifications to
+  # tracked files. An agent spawned without worktree isolation writes straight
+  # into main, so leaving main entirely unprotected loses that agent's work --
+  # but auto-committing edits to existing tracked code on the primary branch
+  # would be far worse than the problem it solves.
+  primary=0
+  [ "$wt" = "/home/user/PROJECT-GRIDIRON" ] && primary=1
   [ -d "$wt" ] || continue
 
   branch=$(git -C "$wt" branch --show-current 2>/dev/null) || continue
@@ -30,7 +36,17 @@ git worktree list --porcelain | awk '/^worktree /{print $2}' | while read -r wt;
   git -C "$wt" diff --quiet && git -C "$wt" diff --cached --quiet \
     && [ -z "$(git -C "$wt" ls-files --others --exclude-standard)" ] && continue
 
-  git -C "$wt" add -A >/dev/null 2>&1
+  if [ "$primary" -eq 1 ]; then
+    # New files only. Anything already tracked is deliberate work in progress
+    # and belongs to whoever is editing it.
+    untracked=$(git -C "$wt" ls-files --others --exclude-standard)
+    [ -n "$untracked" ] || continue
+    echo "$untracked" | while read -r f; do
+      [ -n "$f" ] && git -C "$wt" add -- "$f" >/dev/null 2>&1
+    done
+  else
+    git -C "$wt" add -A >/dev/null 2>&1
+  fi
   if git -C "$wt" diff --cached --quiet; then continue; fi
 
   n=$(git -C "$wt" diff --cached --numstat | wc -l)
