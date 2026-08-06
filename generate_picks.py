@@ -1597,6 +1597,16 @@ def score_walk(batter, gm, opp_sp_row, ump_scores, batter_season):
         "type": "batter", "name": batter["name"], "player_id": batter.get("id"), "team": batter.get("team"),
         "matchup": gm["matchup"], "game_pk": gm.get("game_pk"), "prop": "Over 0.5 Walks",
         "projection": {"stat": "walks", "value": 0.7}, "signals": signals, "score": round(score, 1),
+        # attach_hit_probabilities() prices a walk prop as
+        # P(>=1 BB in projected_pa trials) and needs the trial count. Without
+        # this key it read None and EVERY walks candidate shipped with a null
+        # hit_probability -- found by backtest/engine.py, which prices the same
+        # candidates offline and had 432 of 432 walk rows come back unpriced.
+        # Since the board now RANKS by chance of cashing, an unpriced candidate
+        # sorts behind everything that could be priced, so this silently
+        # buried the entire prop type. Same call the other two batter scorers
+        # already make.
+        "projected_pa": project_batter_pa(batter.get("order"), None),
         "why": why, "watchouts": [], "notable_signals": notable_signals,
         "confidence": "High" if score >= 70 else ("Medium" if score >= 55 else "Low"),
     }

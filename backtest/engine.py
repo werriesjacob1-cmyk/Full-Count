@@ -872,19 +872,44 @@ def _line_and_needs(pick):
         return None, None
     if stat == "total_bases":
         return 1.5, 2
+    if stat in ("walks", "stolen_base"):
+        # Fixed lines, matching the text these scorers actually display
+        # ("Over 0.5 Walks", "To Steal a Base"). Their `value` fields are 0.7
+        # and 1, chosen so grade_pick's proj-0.5 threshold lands correctly --
+        # reporting `line` as 0.2 from that arithmetic would be a number no
+        # book posts and no reader would recognise. Same grade either way:
+        # actual > 0.2 and actual > 0.5 are the same condition on an integer.
+        return 0.5, 1
     line = float(value) - 0.5
     return line, int(math.ceil(line))
 
 
-def to_row(date, pick, graded):
-    """One backtest row, per backtest/SCHEMA.md."""
+class Unusable(Exception):
+    """A candidate that cannot become a row, with the reason, so coverage
+    reporting can say WHY rather than just showing a smaller number."""
+
+
+def to_row(date, pick, graded, keep_unpriced=False):
+    """One backtest row, per backtest/SCHEMA.md. Raises Unusable with a
+    reason instead of returning None, so nothing is dropped silently."""
     stat = ((pick.get("projection") or {}).get("stat"))
     prop_type = PROP_TYPE_BY_STAT.get(stat)
     if prop_type is None:
-        return None
+        raise Unusable(f"prop type not in the schema's vocabulary: {stat!r}")
     grade = graded.get("grade")
     if grade not in ("hit", "miss"):
-        return None                      # SCHEMA: ungradeable rows are omitted
+        # SCHEMA: ungradeable rows are omitted entirely, never encoded as 0.
+        raise Unusable(str(graded.get("reason") or "ungraded")[:80])
+    if pick.get("hit_probability") is None and not keep_unpriced:
+        # The pipeline could not price this candidate (almost always a batter
+        # under the 30-PA floor the PA-composition table needs). Emitting the
+        # row with a null predicted_prob is not free: backtest/calibration.py
+        # reads that field with float() and would raise on the first null, so
+        # a null here is not 'honest missing data', it is an output that does
+        # not plug into its own consumer. Dropped and counted instead --
+        # --keep-unpriced restores them for signal-fitting-only use, which
+        # tolerates the null.
+        raise Unusable("no predicted_prob (pipeline could not price this candidate)")
     line, needs = _line_and_needs(pick)
     actual = graded.get("actual")
     row = {
@@ -915,7 +940,8 @@ def to_row(date, pick, graded):
     return row
 
 
-def simulate_date(date, store, use_weather=True, use_bullpen=True, verbose=True) -> DateResult:
+def simulate_date(date, store, use_weather=True, use_bullpen=True, keep_unpriced=False,
+                  verbose=True) -> DateResult:
     """Reconstruct, score and grade one past date. Never raises for data
     problems — a failed date is reported, not fatal, so a 60-day run does not
     die on one bad slate."""
@@ -961,16 +987,11 @@ def simulate_date(date, store, use_weather=True, use_bullpen=True, verbose=True)
                 res.n_ungraded += 1
                 res.ungraded_reasons[f"grader error: {type(e).__name__}"] += 1
                 continue
-            if graded.get("grade") != "hit" and graded.get("grade") != "miss":
+            try:
+                res.rows.append(to_row(date, c, graded, keep_unpriced=keep_unpriced))
+            except Unusable as u:
                 res.n_ungraded += 1
-                res.ungraded_reasons[str(graded.get("reason"))[:80]] += 1
-                continue
-            row = to_row(date, c, graded)
-            if row is None:
-                res.n_ungraded += 1
-                res.ungraded_reasons["unmapped prop type"] += 1
-                continue
-            res.rows.append(row)
+                res.ungraded_reasons[str(u)] += 1
     except Exception as e:
         res.status = "failed"
         res.reason = f"grading: {type(e).__name__}: {e}"
@@ -1175,7 +1196,8 @@ def dates_already_in_output(out_path):
 
 
 def run_backtest(start, end, out_path, store=None, sleep=DEFAULT_SLEEP,
-                 use_weather=True, use_bullpen=True, force=False, verbose=True):
+                 use_weather=True, use_bullpen=True, keep_unpriced=False,
+                 force=False, verbose=True):
     dates = date_range(start, end)
     os.makedirs(os.path.dirname(os.path.abspath(out_path)) or ".", exist_ok=True)
 
@@ -1213,7 +1235,8 @@ def run_backtest(start, end, out_path, store=None, sleep=DEFAULT_SLEEP,
                 print(f"\n[{i}/{len(dates)}] {d}", flush=True)
             t0 = time.time()
             res = simulate_date(d, store, use_weather=use_weather,
-                                use_bullpen=use_bullpen, verbose=verbose)
+                                use_bullpen=use_bullpen, keep_unpriced=keep_unpriced,
+                                verbose=verbose)
             elapsed = round(time.time() - t0, 1)
 
             if res.status == "no_games":
@@ -1295,11 +1318,11 @@ def coverage_report(out_path, state=None):
     if total_cand:
         lines += ["",
                   f"  candidates scored : {total_cand}",
-                  f"  graded rows kept  : {len(rows)}",
-                  f"  dropped ungraded  : {total_ungraded} "
+                  f"  rows emitted      : {len(rows)}",
+                  f"  candidates dropped: {total_ungraded} "
                   f"({total_ungraded / total_cand * 100:.1f}%)"]
         if ungraded:
-            lines.append("  why rows were dropped (SCHEMA.md: ungradeable rows are omitted, "
+            lines.append("  why they were dropped (SCHEMA.md: ungradeable rows are omitted, "
                          "never encoded as 0):")
             for reason, n in sorted(ungraded.items(), key=lambda kv: -kv[1])[:10]:
                 lines.append(f"    {n:>6}  {reason}")
@@ -1357,6 +1380,10 @@ def main(argv=None) -> int:
                     help="skip historical weather; every park scores neutral")
     ap.add_argument("--no-bullpen", action="store_true",
                     help="skip bullpen fatigue (the slowest input, ~150 box scores/date)")
+    ap.add_argument("--keep-unpriced", action="store_true",
+                    help="keep candidates the pipeline could not price. They carry a "
+                         "null predicted_prob, which backtest/calibration.py cannot "
+                         "read — useful for signal fitting only")
     ap.add_argument("--force", action="store_true",
                     help="ignore existing state and re-simulate every date "
                          "(truncates the output file)")
@@ -1394,7 +1421,7 @@ def main(argv=None) -> int:
     summary, state = run_backtest(
         args.start, args.end, args.out, store=store, sleep=args.sleep,
         use_weather=not args.no_weather, use_bullpen=not args.no_bullpen,
-        force=args.force, verbose=verbose)
+        keep_unpriced=args.keep_unpriced, force=args.force, verbose=verbose)
 
     print(coverage_report(args.out, state))
     print(f"\nWrote {summary['rows']} new rows to {args.out}")
