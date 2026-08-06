@@ -296,9 +296,66 @@ def p_stolen_base(times_on_base, attempt_rate, success_rate):
 # the estimated prices below as a band, not a quote.
 MIN_USEFUL_PROB = 0.50
 
-# The -350 equivalent. Above this a prop is priced too short to be worth
-# betting regardless of how likely it is to land.
-MAX_USEFUL_PROB = 0.75
+# NOT A PRICE CAP. This was briefly set to 0.75 (the -350 equivalent) to keep
+# the board off unbettable favourites, and that was a design error: it solved
+# a price problem by discarding a probability estimate. A 0.90 calibrated
+# probability is a fact about the player; whether it is bettable is a fact
+# about the book, and the book may well post a derivative line near even
+# money. Throwing away the estimate loses information that no price lookup
+# can give back.
+#
+# The replacement is max_acceptable_price() below: keep the full estimate,
+# publish the worst price at which the bet still makes sense, and reject at
+# the sportsbook against the real number.
+#
+# A ceiling still exists, but only to exclude the genuinely degenerate -- a
+# prop the model puts above 97% is almost always a data error rather than a
+# free bet.
+MAX_USEFUL_PROB = 0.97
+
+
+# The user's own hard floor on price: never bet worse than this regardless of
+# how strong the read is.
+USER_MAX_PRICE = -350
+
+
+def max_acceptable_price(prob, user_limit=USER_MAX_PRICE, margin=0.0):
+    """The worst American price at which this bet is still worth taking.
+
+    Two constraints, and the tighter one wins:
+
+    1. FAIR VALUE. Betting a price worse than the model's own fair odds is
+       negative expectation by construction, however likely the bet is. A 68%
+       shot is fair at -213; taking it at -300 loses money over time.
+    2. THE USER'S LIMIT. An independent preference for near-even prices,
+       applied regardless of what the model thinks.
+
+    Returns the American price to compare against the book: if the posted
+    price is this number or better, the bet clears; if worse, skip it.
+
+    `margin` demands a cushion below fair value (0.05 requires the book to be
+    5 points of probability better than fair) for those who want more than a
+    break-even edge."""
+    p = float(prob)
+    if p <= 0.0 or p >= 1.0:
+        return None
+    target = min(0.999, p - margin) if margin else p
+    if target <= 0.0:
+        return None
+    fair = american_odds(target, include_vig=False)
+    if fair is None:
+        return None
+    # "Better" means further toward the underdog side, so the tighter of the
+    # two limits is simply the larger number on the American scale.
+    return max(fair, user_limit)
+
+
+def price_is_acceptable(posted_odds, prob, user_limit=USER_MAX_PRICE, margin=0.0):
+    """Does a real posted price clear the bar for this probability?"""
+    limit = max_acceptable_price(prob, user_limit, margin)
+    if limit is None or posted_odds is None:
+        return None
+    return float(posted_odds) >= float(limit)
 
 # Half of a typical 7% two-way prop hold, added to a true probability to
 # approximate what the book will post.
