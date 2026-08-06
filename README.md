@@ -336,7 +336,62 @@ highest average":
 - **NRFI/YRFI lean** — real per-start first-inning results (not a season
   aggregate) for tonight's starters
 
-The top 10 is a **pure score ranking** across every candidate in the slate —
+### Ranking: chance of cashing, not score
+
+The board is sorted by **how likely each bet is to hit**, which is the
+stated objective. That is a different question from the one the 0-100
+quality score answers, and the two came apart badly enough to be worth
+recording. The 2026-08-05 board, ranked on score:
+
+| | pick | score | real chance of cashing |
+|---|---|---|---|
+| #1 | Bobby Witt Jr. — To Steal a Base | 88.1 | ~28% |
+| — | Yordan Alvarez — Over 0.5 Hits | unranked | ~79% |
+
+The score was not wrong about Witt: he genuinely has the best steal profile
+on the slate — elite sprint speed, a weak-armed catcher, a good on-base
+rate. It was answering "which pick has the strongest signals behind it",
+not "which bet is most likely to win", and only the second question was
+being asked.
+
+Each probability blends two independent reads, both reported on every pick:
+
+- **Empirical (60%)** — the fraction of that player's real games this
+  season in which he actually cleared the line, straight from MLB game
+  logs. This is not a model of the prop, it *is* the prop, measured. It
+  needs no assumption about plate-appearance independence or projected PA
+  counts, and it automatically includes everything a model never sees:
+  early exits, blowouts, pinch-hit removals. Small samples use the Wilson
+  lower bound, so a 4-for-5 week cannot outrank a season of evidence.
+- **Modelled (40%)** — a per-plate-appearance outcome distribution built
+  from real hit composition (singles/doubles/triples/homers, not a
+  league-average guess), convolved over tonight's projected PAs. This is
+  the half that knows about tonight's catcher, park and opposing starter,
+  which the empirical rate structurally cannot.
+
+The 60/40 split is a starting position, not a fitted result.
+`backtest/signals.py` exists to replace it with a measured one.
+
+**The quality score is now a floor, not the ordering.** A pick must score
+55+ to make the board. Without that gate, ranking on probability alone puts
+a 70% prop on a player in an awful spot above a 68% prop with every signal
+behind it — the score is the part that knows about tonight.
+
+**Thresholds are chosen, not assigned.** Prop lines used to come from rules
+unrelated to whether they land: a season K% under 18 got "Over 1.5 Hits"
+regardless of whether that hitter ever clears two hits. The same board
+shipped Kyle Schwarber at *"Over 1.5 Total Bases (proj. 1.45 TB)"* — the
+pipeline recommending a line its own projection missed. Every standard line
+is now evaluated and the most-likely-to-cash one is taken, with the
+rejected alternatives printed alongside so the choice is auditable.
+
+**This says nothing about value.** These rankings ignore price completely.
+Books price likely outcomes short, and a 79% prop at heavy juice is not
+automatically a good bet. `MAX_USEFUL_PROB` caps the band at 92% so the
+list does not fill with near-certainties, but beyond that the output makes
+no value claim and says so.
+
+Beneath the probability ordering there is
 no per-game or per-prop-type cap. An earlier version capped picks per prop
 category to stop one category from sweeping the list (found the hard way:
 a scaling bug tied every scoreless-first-inning starter at exactly 100 and
