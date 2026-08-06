@@ -305,6 +305,12 @@ def grade_pick(pick, game_statuses):
         elif stat == "walks":
             actual = float(row.get("bb", 0) or 0)
             actual_stat = "walks"
+        elif stat == "hits":
+            actual = float(row.get("h", 0) or 0)
+            actual_stat = "hits"
+        elif stat == "home_runs":
+            actual = float(row.get("hr", 0) or 0)
+            actual_stat = "home_runs"
         elif stat == "total_bases":
             # Verified against generate_picks.py's own prop-text branches (the three
             # f-strings feeding off project_batter_tb(), ~line 690-696): unlike
@@ -347,7 +353,19 @@ def grade_pick(pick, game_statuses):
     # proj-0.5 per their own f-strings ("Over {ks-0.5} Strikeouts", stolen_base's
     # fixed value=1 -> 0.5, walks' fixed value=0.7 -> 0.2, all matching their
     # displayed "Over 0.5"-style lines exactly).
-    threshold = 1.5 if stat == "total_bases" else proj - 0.5
+    # A pick made after the hit-probability pass carries the integer count it
+    # actually needs ("needs": 2 for an Over 1.5), because the threshold is now
+    # CHOSEN by which line is most likely to cash rather than inferred from a
+    # projection. When it's there, use it -- it is the recommendation itself,
+    # not a reconstruction of one, and it removes the whole class of bug where
+    # the graded threshold and the displayed line disagreed.
+    needs = (pick.get("projection") or {}).get("needs")
+    if needs is not None:
+        threshold = float(needs) - 0.5
+    else:
+        # Legacy picks (generated before thresholds were chosen by probability)
+        # keep the old reconstruction, which is documented at length above.
+        threshold = 1.5 if stat == "total_bases" else proj - 0.5
     hit = actual > threshold
     return {**pick, "grade": "hit" if hit else "miss", "actual": actual,
             "actual_stat": actual_stat, "threshold": threshold,

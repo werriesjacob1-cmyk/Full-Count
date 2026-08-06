@@ -58,6 +58,7 @@ from collections import defaultdict
 import pandas as pd
 
 import mlb_daily as m
+import prop_probability as pp
 
 OUTPUT_DIR = os.environ.get("OUTPUT_DIR", "output")
 os.makedirs(OUTPUT_DIR, exist_ok=True)
@@ -1241,6 +1242,7 @@ def score_batter(batter, gm, opp_sp_row, opp_sp_id, opp_sp_hand, park_wx, batter
     return {
         "type": "batter", "name": name, "player_id": bid, "team": batter.get("team"), "matchup": gm["matchup"],
         "game_pk": gm.get("game_pk"), "prop": prop, "projection": {"stat": "total_bases", "value": projected_tb},
+        "projected_pa": projected_pa, "projected_tb": projected_tb,
         "score": round(score, 1), "why": why, "watchouts": watchouts, "notable_signals": notable_signals,
         "confidence": "High" if score >= 70 and not low_sample else ("Medium" if score >= 55 else "Low"),
     }
@@ -1350,6 +1352,8 @@ def score_pitcher(sp_name, sp_id, sp_hand, gm, side, pit_season_lookup, l14_form
         "matchup": gm["matchup"], "game_pk": gm.get("game_pk"),
         "prop": f"Over {max(projected_ks - 0.5, 0.5):.1f} Strikeouts (proj. {projected_ks})",
         "projection": {"stat": "strikeouts", "value": projected_ks},
+        "expected_bf": exp_bf,
+        "k_rate": (l14["l14_k_pct"] if l14.get("l14_pa", 0) >= 15 else (k_pct or 22.5)) / 100,
         "score": round(score, 1), "why": why, "watchouts": watchouts, "notable_signals": notable_signals,
         "confidence": "High" if score >= 70 and not low_sample_form else ("Medium" if score >= 55 else "Low"),
     }
@@ -1451,7 +1455,9 @@ def score_stolen_base(batter, gm, opp_catcher_poptime, sprint_speed, batter_seas
     return {
         "type": "batter", "name": batter["name"], "player_id": bid, "team": batter.get("team"),
         "matchup": gm["matchup"], "game_pk": gm.get("game_pk"), "prop": "To Steal a Base",
-        "projection": {"stat": "stolen_base", "value": 1}, "score": round(score, 1),
+        "projection": {"stat": "stolen_base", "value": 1},
+        "projected_pa": project_batter_pa(batter.get("order"), None),
+        "score": round(score, 1),
         "why": why, "watchouts": watchouts, "notable_signals": notable_signals,
         "confidence": "High" if score >= 70 else ("Medium" if score >= 55 else "Low"),
     }
@@ -1657,9 +1663,53 @@ def main() -> int:
     # carries a hard confidence cap on thin samples — with no cap here to
     # catch it, an inflated score from a weak signal would otherwise be free
     # to sweep the list on its own.)
-    candidates.sort(key=lambda c: c["score"], reverse=True)
-    top10 = candidates[:10]
-    skipped = [c for c in candidates[10:12] if c["score"] >= 55]
+    # ── Chance of cashing ────────────────────────────────────────────────
+    # Fetched here rather than up front because both tables only need the
+    # players who actually produced a candidate, which is a fraction of the
+    # slate. Measured: 6 batters in 0.8s, so a full board is a few seconds.
+    comp_table, emp_batters, emp_pitchers = {}, {}, {}
+    try:
+        import mlb_sources as _src
+        comp_table = _src.batter_pa_composition()
+        bat_ids = [c["player_id"] for c in candidates
+                   if c.get("type") == "batter" and c.get("player_id")]
+        pit_ids = [c["player_id"] for c in candidates
+                   if c.get("type") == "pitcher" and c.get("player_id")]
+        emp_batters = _src.empirical_batter_prop_rates(bat_ids)
+        emp_pitchers = _src.empirical_pitcher_k_rates(pit_ids)
+        print(f"    Hit-probability inputs: {len(comp_table)} batter rate lines, "
+              f"{len(emp_batters)} batter game logs, {len(emp_pitchers)} pitcher game logs")
+    except Exception as e:
+        m.warn(f"Hit-probability inputs unavailable ({e}) — "
+               f"falling back to score-only ranking")
+
+    attach_hit_probabilities(candidates, comp_table, emp_batters, emp_pitchers)
+
+    # RANKING. The board is sorted by chance of cashing, which is the stated
+    # objective, with the quality score demoted to a GATE rather than the
+    # ordering. Both parts matter:
+    #
+    #   - Without the gate, this ranks a 70% prop on a player in an awful
+    #     spot above a 68% prop with every signal behind it, purely because
+    #     of the base rate. The score is what knows about tonight.
+    #   - Without probability ordering, the board ranks by a 0-100 quality
+    #     number that is not a probability and does not behave like one --
+    #     which is how a 28% stolen base finished #1 while a 79% hits prop
+    #     went unranked.
+    #
+    # A candidate that could not be priced at all keeps its place in the
+    # score order behind everything that could, rather than being dropped:
+    # an unpriced pick is a gap in coverage, not evidence against the pick.
+    gated = [c for c in candidates if c["score"] >= MIN_QUALITY_SCORE]
+    priced = [c for c in gated if c.get("hit_probability") is not None]
+    unpriced = [c for c in gated if c.get("hit_probability") is None]
+    priced.sort(key=lambda c: (c["hit_probability"], c["score"]), reverse=True)
+    unpriced.sort(key=lambda c: c["score"], reverse=True)
+    ranked = priced + unpriced
+    if not ranked:   # nothing cleared the gate — fall back rather than ship nothing
+        ranked = sorted(candidates, key=lambda c: c["score"], reverse=True)
+    top10 = ranked[:10]
+    skipped = [c for c in ranked[10:13] if c["score"] >= 55][:2]
 
     write_markdown(top10, skipped, game_meta, bullpen_scores)
     write_json(top10)
@@ -1679,6 +1729,10 @@ def write_json(top10):
             "team": c["team"], "matchup": c["matchup"], "game_pk": c["game_pk"], "side": c.get("side"),
             "prop": c["prop"], "projection": c["projection"], "lean": c.get("lean"), "score": c["score"],
             "confidence": c["confidence"], "notable_signals": c["notable_signals"],
+            "hit_probability": c.get("hit_probability"),
+            "probability_basis": c.get("probability_basis"),
+            "probability_detail": c.get("probability_detail"),
+            "alternatives": c.get("alternatives"),
         } for i, c in enumerate(top10, 1)],
     }
     with open(PICKS_JSON_FILE, "w", encoding="utf-8") as f:
@@ -1721,28 +1775,288 @@ def persist_player_snapshots(candidates):
             json.dump(history, f, indent=2)
 
 
+# ══════════════════════════════════════════════════════════════════════════
+#  HIT PROBABILITY — the number the board is actually ranked on
+# ══════════════════════════════════════════════════════════════════════════
+#
+# The 0-100 score is a QUALITY ranking: it says a pick has good matchup,
+# form and environment signals behind it. It is not, and never was, a
+# probability. Those two things come apart badly, and the board shipped on
+# 2026-08-05 is the proof:
+#
+#   #1  Bobby Witt Jr.  To Steal a Base   score 88.1   real chance ~28%
+#   --  Yordan Alvarez  Over 0.5 Hits     unranked     real chance ~79%
+#
+# Both reads are defensible on their own terms. Witt really does have the
+# best steal profile on the slate -- elite speed, a weak-armed catcher, a
+# good on-base rate -- so the quality score is not wrong about what it
+# measures. It is just answering a different question than "which of these
+# bets is most likely to cash", and that is the question being asked.
+#
+# So the score keeps its job as a QUALITY GATE (a high-probability prop on a
+# player in a terrible spot is still a bad bet), and the ordering within the
+# gate is by probability of hitting.
+#
+# THRESHOLD SELECTION IS PART OF THIS. The old code chose a prop type from
+# rules unrelated to the odds of it landing -- season K% under 18 got "Over
+# 1.5 Hits" regardless of whether that player clears two hits. On the same
+# board that shipped Kyle Schwarber at "Over 1.5 Total Bases (proj. 1.45
+# TB)": the pipeline recommending a line its own projection does not reach.
+# Thresholds are now chosen by which one has the best chance of cashing.
+
+# Below this the score is too weak to trust regardless of how probable the
+# prop is -- a near-certain prop on a player in a bad spot with no
+# converging signals is how you end up betting -400 juice on a coin flip.
+MIN_QUALITY_SCORE = 55.0
+
+# Empirical rates need a real sample before they outrank a model that at
+# least accounts for tonight. Below this the model carries the estimate.
+MIN_EMPIRICAL_GAMES = 25
+
+# How much weight the empirical (backward-looking, assumption-free) rate
+# gets against the modelled (context-aware, assumption-heavy) one. The
+# empirical read anchors because it is measured rather than derived, but it
+# cannot see tonight's catcher, park or opposing starter, so the model keeps
+# a real share. This split is a starting position, not a fitted result --
+# backtest/signals.py exists to replace it with something measured.
+EMPIRICAL_WEIGHT = 0.6
+
+
+def _blend(empirical, modelled):
+    """Combine the measured rate and the modelled one, preferring whichever
+    is actually available. Returns (probability, basis_label)."""
+    if empirical is not None and modelled is not None:
+        return (EMPIRICAL_WEIGHT * empirical + (1 - EMPIRICAL_WEIGHT) * modelled,
+                "blended")
+    if empirical is not None:
+        return empirical, "empirical"
+    if modelled is not None:
+        return modelled, "modelled"
+    return None, "unavailable"
+
+
+def _batter_options(c, comp, emp):
+    """Every standard prop this batter could be bet on tonight, each with its
+    chance of hitting. Returns a list of option dicts, best first."""
+    options = []
+    pa = c.get("projected_pa")
+    dist = None
+    if comp:
+        dist = pp.pa_outcome_distribution(
+            singles_rate=comp.get("singles_rate"), double_rate=comp.get("double_rate"),
+            triple_rate=comp.get("triple_rate"), hr_rate=comp.get("hr_rate"))
+    rates = (emp or {}).get("rates") or {}
+    enough = (emp or {}).get("games", 0) >= MIN_EMPIRICAL_GAMES
+
+    def emp_p(key):
+        r = rates.get(key)
+        if not r or not enough:
+            return None
+        # The Wilson lower bound, not the raw rate: a player who went 4-for-5
+        # in a short sample should not outrank one with a season behind him.
+        return r["p_lo"]
+
+    families = [
+        ("hits", "Hits", [(0.5, 1), (1.5, 2), (2.5, 3)],
+         (lambda k: pp.p_at_least_hits(k, dist, pa)) if dist and pa else None),
+        ("total_bases", "Total Bases", [(1.5, 2), (2.5, 3), (3.5, 4)],
+         (lambda k: pp.p_at_least_total_bases(k, dist, pa)) if dist and pa else None),
+        ("home_runs", "Home Runs", [(0.5, 1)],
+         (lambda k: pp.p_at_least_home_runs(k, dist, pa)) if dist and pa else None),
+    ]
+    for stat, label, lines, fn in families:
+        for line, need in lines:
+            modelled = None
+            if fn is not None:
+                try:
+                    modelled = float(fn(need))
+                except Exception:
+                    modelled = None
+            empirical = emp_p(f"{stat}_{need}plus")
+            prob, basis = _blend(empirical, modelled)
+            if prob is None:
+                continue
+            options.append({
+                "stat": stat, "line": line, "needs": need,
+                "label": f"Over {line} {label}",
+                "prob": round(prob, 4), "basis": basis,
+                "empirical": None if empirical is None else round(empirical, 4),
+                "modelled": None if modelled is None else round(modelled, 4),
+            })
+    options.sort(key=lambda o: o["prob"], reverse=True)
+    return options
+
+
+def attach_hit_probabilities(candidates, comp_table, emp_batters, emp_pitchers):
+    """Give every candidate a real chance-of-cashing number, and let the
+    batter props re-choose their threshold to maximise it.
+
+    Anything this cannot price keeps its original prop and gets a null
+    probability rather than a guess -- an invented number here would rank
+    against real ones, which is worse than an honest gap."""
+    for c in candidates:
+        pid = c.get("player_id")
+        stat = (c.get("projection") or {}).get("stat")
+
+        if c.get("type") == "batter" and stat == "total_bases":
+            opts = _batter_options(c, comp_table.get(pid), emp_batters.get(pid))
+            usable = [o for o in opts
+                      if pp.MIN_USEFUL_PROB <= o["prob"] <= pp.MAX_USEFUL_PROB]
+            best = (usable or opts or [None])[0]
+            if not best:
+                c["hit_probability"] = None
+                continue
+            # The projection field is what grade_results.py grades against, so
+            # it has to be the line we are actually recommending. Previously it
+            # held a continuous projection while the label held a fixed line,
+            # and the two could disagree -- a double could be graded a miss
+            # against a 2.11 threshold on an "Over 1.5" recommendation.
+            c["prop"] = best["label"]
+            c["projection"] = {"stat": best["stat"], "value": best["line"],
+                               "needs": best["needs"]}
+            c["hit_probability"] = best["prob"]
+            c["probability_basis"] = best["basis"]
+            c["probability_detail"] = {"empirical": best["empirical"],
+                                       "modelled": best["modelled"]}
+            c["alternatives"] = [o for o in opts if o is not best][:3]
+
+        elif stat == "stolen_base":
+            emp = emp_batters.get(pid) or {}
+            comp = comp_table.get(pid) or {}
+            empirical = None
+            r = (emp.get("rates") or {}).get("stolen_bases_1plus")
+            if r and emp.get("games", 0) >= MIN_EMPIRICAL_GAMES:
+                empirical = r["p_lo"]
+            modelled = None
+            if comp.get("attempt_rate") and c.get("projected_pa"):
+                tob = (comp.get("obp") or 0.31) * c["projected_pa"]
+                modelled = pp.p_stolen_base(tob, comp["attempt_rate"], comp["success_rate"])
+            prob, basis = _blend(empirical, modelled)
+            c["hit_probability"] = None if prob is None else round(prob, 4)
+            c["probability_basis"] = basis
+            c["probability_detail"] = {
+                "empirical": None if empirical is None else round(empirical, 4),
+                "modelled": None if modelled is None else round(modelled, 4)}
+
+        elif stat == "strikeouts":
+            emp = emp_pitchers.get(pid) or {}
+            rates = emp.get("rates") or {}
+            bf, kr = c.get("expected_bf"), c.get("k_rate")
+            opts = []
+            for t in (4, 5, 6, 7, 8):
+                empirical = None
+                r = rates.get(f"strikeouts_{t}plus")
+                if r and emp.get("starts", 0) >= 5:
+                    empirical = r["p_lo"]
+                modelled = None
+                if bf and kr:
+                    try:
+                        modelled = float(pp.p_at_least_strikeouts(t, bf, kr))
+                    except Exception:
+                        modelled = None
+                prob, basis = _blend(empirical, modelled)
+                if prob is None:
+                    continue
+                opts.append({"line": t - 0.5, "needs": t, "prob": round(prob, 4),
+                             "basis": basis,
+                             "empirical": None if empirical is None else round(empirical, 4),
+                             "modelled": None if modelled is None else round(modelled, 4)})
+            opts.sort(key=lambda o: o["prob"], reverse=True)
+            usable = [o for o in opts
+                      if pp.MIN_USEFUL_PROB <= o["prob"] <= pp.MAX_USEFUL_PROB]
+            best = (usable or opts or [None])[0]
+            if best:
+                c["prop"] = f"Over {best['line']} Strikeouts"
+                c["projection"] = {"stat": "strikeouts", "value": best["line"],
+                                   "needs": best["needs"]}
+                c["hit_probability"] = best["prob"]
+                c["probability_basis"] = best["basis"]
+                c["probability_detail"] = {"empirical": best["empirical"],
+                                           "modelled": best["modelled"]}
+                c["alternatives"] = [o for o in opts if o is not best][:3]
+            else:
+                c["hit_probability"] = None
+
+        elif stat == "walks":
+            emp = emp_batters.get(pid) or {}
+            comp = comp_table.get(pid) or {}
+            empirical = None
+            r = (emp.get("rates") or {}).get("walks_1plus")
+            if r and emp.get("games", 0) >= MIN_EMPIRICAL_GAMES:
+                empirical = r["p_lo"]
+            modelled = None
+            if comp.get("bb_rate") and c.get("projected_pa"):
+                modelled = pp.p_at_least_walks(1, c["projected_pa"], comp["bb_rate"])
+            prob, basis = _blend(empirical, modelled)
+            c["hit_probability"] = None if prob is None else round(prob, 4)
+            c["probability_basis"] = basis
+
+        elif stat == "first_inning_run":
+            # NRFI is already a probability by construction -- score_first_inning
+            # computes it from real per-start first-inning results. The lean
+            # decides which side of it is being recommended.
+            yrfi = (c.get("projection") or {}).get("value")
+            if yrfi is not None:
+                c["hit_probability"] = round(
+                    (yrfi if (c.get("lean") or "").upper().startswith("Y") else 1 - yrfi), 4)
+                c["probability_basis"] = "empirical"
+            else:
+                c["hit_probability"] = None
+        else:
+            c.setdefault("hit_probability", None)
+    return candidates
+
+
 def write_markdown(top10, skipped, game_meta, bullpen_scores):
     lines = [f"# MLB Top 10 Picks — {m.TODAY}", "",
-             "_Generated by deterministic weighted scoring over today's research pull — "
-             "no LLM in the loop. No live sportsbook odds were fetched: these are "
-             "direction/confidence calls grounded in stats and trends, not priced bets. "
-             "**Check the current line and availability before betting.** Every pick's "
-             "projection is graded against the actual box score the next morning — see "
-             "results/history.json for the running accuracy record._", ""]
+             "_Generated by deterministic scoring over today's research pull — no LLM "
+             "in the loop. No sportsbook odds were used: these are ranked purely by "
+             "how likely each bet is to CASH, with no consideration of price or edge. "
+             "A high percentage here does not mean good value — the book prices the "
+             "likely ones short. **Check the current line and availability before "
+             "betting.** Every pick is graded against the actual box score the next "
+             "morning — see results/history.json for the running accuracy record._", ""]
 
     lines.append(f"**Slate:** {len(game_meta)} games. "
-                 f"Methodology: 35% matchup / 25% recent form / 15% environment / "
-                 f"15% baseline skill / 10% context, with a public-awareness discount "
-                 f"applied against star-power-only picks (see README).")
+                 f"**Ranked by chance of cashing**, not by edge. Each pick's "
+                 f"percentage blends how often the player has actually cleared that "
+                 f"line in real games this season (weighted "
+                 f"{int(EMPIRICAL_WEIGHT*100)}%) with a model of tonight's specific "
+                 f"matchup ({100-int(EMPIRICAL_WEIGHT*100)}%). The 0-100 quality "
+                 f"score (35% matchup / 25% recent form / 15% environment / 15% "
+                 f"baseline skill / 10% context) is used only as a floor — a pick "
+                 f"must score {MIN_QUALITY_SCORE:.0f}+ to make the board at all.")
     lines.append("")
 
     if not top10:
         lines.append("No candidates scored high enough today (thin slate, lineups mostly "
                      "unconfirmed, or data pulls came back empty) — check the run log.")
     for i, c in enumerate(top10, 1):
-        lines.append(f"### {i}. {c['name']} ({c['team']}) — {c['prop']}")
+        hp = c.get("hit_probability")
+        head = f"### {i}. {c['name']} ({c['team']}) — {c['prop']}"
+        if hp is not None:
+            head += f"  ·  **{hp*100:.0f}% to hit**"
+        lines.append(head)
         lines.append(f"- **Matchup:** {c['matchup']}")
-        lines.append(f"- **Score:** {c['score']}/100  |  **Confidence:** {c['confidence']}  |  "
+        if hp is not None:
+            det = c.get("probability_detail") or {}
+            parts = []
+            if det.get("empirical") is not None:
+                parts.append(f"cleared it in {det['empirical']*100:.0f}% of his games")
+            if det.get("modelled") is not None:
+                parts.append(f"model says {det['modelled']*100:.0f}% tonight")
+            basis = f" ({'; '.join(parts)})" if parts else ""
+            lines.append(f"- **Chance of hitting:** {hp*100:.1f}%{basis}")
+            alts = c.get("alternatives") or []
+            if alts:
+                alt_s = ", ".join(f"{a['label'] if 'label' in a else 'Over ' + str(a['line']) + ' Ks'}"
+                                  f" {a['prob']*100:.0f}%" for a in alts)
+                lines.append(f"- **Other lines on this player:** {alt_s} "
+                             f"— the one above was chosen because it cashes most often.")
+        else:
+            lines.append("- **Chance of hitting:** not priced — no game-log or rate data "
+                          "for this player, so this pick is ranked on quality score alone.")
+        lines.append(f"- **Quality score:** {c['score']}/100  |  **Confidence:** {c['confidence']}  |  "
                      f"**Converging signals:** {c['notable_signals']}")
         lines.append(f"- **Why:** {'; '.join(c['why'])}.")
         if c["watchouts"]:
@@ -1756,7 +2070,9 @@ def write_markdown(top10, skipped, game_meta, bullpen_scores):
         for c in skipped:
             reason = "; ".join(c["watchouts"]) if c["watchouts"] else \
                 "strong on one signal but did not converge with the others"
-            lines.append(f"- {c['name']} ({c['prop']}, score {c['score']}) — {reason}.")
+            hp = c.get("hit_probability")
+            pct = f", {hp*100:.0f}% to hit" if hp is not None else ""
+            lines.append(f"- {c['name']} ({c['prop']}{pct}, score {c['score']}) — {reason}.")
         lines.append("")
 
     with open(PICKS_FILE, "w", encoding="utf-8") as f:
