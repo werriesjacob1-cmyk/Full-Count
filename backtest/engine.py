@@ -1089,6 +1089,22 @@ def verify_no_lookahead(date, store, use_weather=False, use_bullpen=False, verbo
             guard_ok = False
         ok(guard_ok, f"a Statcast read with end_dt={date} is refused by the guard")
 
+        # Every mlb_daily date global, checked as a group. This is what makes
+        # the inputs that DON'T go through the Statcast wrapper safe -- most
+        # importantly bullpen fatigue, which reads L7_START/TODAY straight out
+        # of this module dict to bound a statsapi schedule + box-score walk,
+        # inside worker threads. Asserting the globals covers every such
+        # consumer at once, including ones added later.
+        globals_now = {k: getattr(m, k, None) for k in
+                       ("TODAY", "YESTERDAY", "L7_START", "L7_END",
+                        "L14_START", "L14_END", "L30_START", "L30_END")}
+        bad_globals = {k: v for k, v in globals_now.items() if v and dstr(v) >= date}
+        ok(not bad_globals,
+           f"every mlb_daily date global points before {date} "
+           f"(TODAY={globals_now['TODAY']}, L7={globals_now['L7_START']}..{globals_now['L7_END']}, "
+           f"L14={globals_now['L14_START']}..{globals_now['L14_END']})"
+           + (f" — VIOLATIONS: {bad_globals}" if bad_globals else ""))
+
     # ---- 1. no read touched D or later ----------------------------------
     violations = []
     for r in reads:
