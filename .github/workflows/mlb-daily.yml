@@ -144,6 +144,10 @@ jobs:
           shopt -s nullglob
           git config user.name "mlb-pipeline-bot"
           git config user.email "actions@github.com"
+          # picks_DATE_TIMESTAMP.json archives are included by the glob above.
+          # They are the record of every board generated that day, kept because
+          # a later run overwrites the live file and the earlier board may be
+          # the one that was actually bet.
           git add output/top10_picks_*.md output/picks_*.json results/*.json data/players/*.json
           if git diff --cached --quiet; then
             echo "No picks to commit."
