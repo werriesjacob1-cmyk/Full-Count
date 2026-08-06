@@ -535,3 +535,69 @@ def value_verdict(prob, american, prob_lo=None, min_roi=MIN_ROI):
         out["why"] = (f"{roi*100:+.1f}% expected return; break-even is "
                       f"{breakeven*100:.1f}% and the model says {float(prob)*100:.1f}%")
     return out
+
+
+# ══════════════════════════════════════════════════════════════════════════
+#  DE-VIGGING AND MARKET AGREEMENT
+# ══════════════════════════════════════════════════════════════════════════
+#
+# A posted price is not the book's estimate of the probability. It is that
+# estimate plus hold. Comparing a model number directly against implied
+# probability therefore compares apples to apples plus a tax, and makes every
+# bet look worse than it is -- which is why the whole board appeared to be
+# 7-14 points of "negative edge" when much of that was simply the vig.
+#
+# Removing it needs both sides of the market. Two-way props (over/under, yes/
+# no) sum to more than 100% by exactly the hold, and dividing each side by
+# that sum recovers the book's actual view. FanDuel's feed carries only the
+# YES side for most player props, so the hold is estimated from the
+# league-wide relationship instead and stated as an estimate.
+#
+# WHY THIS MATTERS BEYOND ARITHMETIC. The de-vigged price is the sharpest
+# free probability estimate in existence for these events -- it is what a
+# firm with far more data and far more at stake believes. Treating it as a
+# SECOND OPINION rather than an obstacle turns it into immediate validation:
+# where this model and the market agree, both are probably close; where they
+# diverge wildly, the base rate strongly favours the market being right and
+# the model being broken. That is a confidence signal available tonight,
+# without waiting for bets to settle.
+
+# Typical two-way hold on MLB player props, as a fraction. Props are held far
+# harder than game lines (which run 4-5%); 8% is a conservative middle for
+# the popular batter markets.
+ASSUMED_PROP_HOLD = 0.08
+
+
+def devig(implied, hold=ASSUMED_PROP_HOLD):
+    """The book's own probability estimate, with hold removed.
+
+    Proportional method: the posted implied probability is scaled down by the
+    overround. Exact when both sides are known; an approximation here, and
+    labelled as such, because the feed exposes only one side."""
+    return max(0.0, min(1.0, float(implied) / (1.0 + hold)))
+
+
+def market_agreement(model_prob, american, hold=ASSUMED_PROP_HOLD):
+    """Compare the model against the de-vigged market. A confidence signal.
+
+    Returns the two probabilities, the gap, and a verdict on what the gap
+    means. Large disagreement is treated as evidence against the MODEL, not
+    as an opportunity -- a firm pricing thousands of these with money at risk
+    is the stronger prior, and this project has already seen what happens
+    when that assumption is skipped (a 2x disagreement on CJ Abrams' home-run
+    rate that was almost certainly the model missing tonight's context)."""
+    implied = implied_probability(american)
+    fair = devig(implied, hold)
+    gap = float(model_prob) - fair
+    a = abs(gap)
+    if a <= 0.03:
+        verdict, note = "AGREE", "model and market are within 3 points — both are probably close"
+    elif a <= 0.07:
+        verdict, note = ("LEAN", "a real but modest disagreement — the kind that is "
+                                 "occasionally right and worth tracking")
+    else:
+        verdict, note = ("SUSPECT", "a large disagreement with a sharper estimator — "
+                                    "far more often a gap in the model than an edge in the market")
+    return {"implied": round(implied, 4), "market_fair": round(fair, 4),
+            "model": round(float(model_prob), 4), "gap": round(gap, 4),
+            "agreement": verdict, "note": note}

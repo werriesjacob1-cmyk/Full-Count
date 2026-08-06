@@ -80,13 +80,38 @@ UA = {"User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
 # names are marketing copy and change, while these type constants are stable,
 # and a silent mis-mapping here would price a prop against the wrong line.
 MARKET_MAP = {
+    # Hits
     "PLAYER_TO_RECORD_A_HIT":   ("hits", 1),
     "PLAYER_TO_RECORD_2+_HITS": ("hits", 2),
     "PLAYER_TO_RECORD_3+_HITS": ("hits", 3),
+    "PLAYER_TO_RECORD_4+_HITS": ("hits", 4),
+    # Total bases
     "TO_RECORD_2+_TOTAL_BASES": ("total_bases", 2),
     "TO_RECORD_3+_TOTAL_BASES": ("total_bases", 3),
     "TO_RECORD_4+_TOTAL_BASES": ("total_bases", 4),
+    # Home runs
     "TO_HIT_A_HOME_RUN":        ("home_runs", 1),
+    "TO_HIT_2+_HOME_RUNS":      ("home_runs", 2),
+    # Runs, RBIs and steals. These were the largest omission: the empirical
+    # table has always computed rates for all three, and FanDuel prices ~720
+    # lines a night across them, so they were being modelled and then thrown
+    # away. Stolen bases matter most -- this project has a dedicated steal
+    # model gating on times-on-base, attempt rate and success rate, and 106
+    # priced lines a night were going unexamined.
+    "TO_RECORD_A_RUN":          ("runs", 1),
+    "TO_RECORD_2+_RUNS":        ("runs", 2),
+    "TO_RECORD_AN_RBI":         ("rbis", 1),
+    "TO_RECORD_2+_RBIS":        ("rbis", 2),
+    "TO_RECORD_3+_RBIS":        ("rbis", 3),
+    "TO_RECORD_A_STOLEN_BASE":  ("stolen_bases", 1),
+    # Hit-type props. Deliberately NOT mapped onto total_bases: "to hit a
+    # double" means exactly one double, which is a different event from
+    # clearing two total bases (a home run clears 2+ TB and is not a double).
+    # Mapping them together would grade the wrong outcome, so they carry their
+    # own stat names and are only screened once a matching rate exists.
+    "TO_HIT_A_SINGLE":          ("singles", 1),
+    "TO_HIT_A_DOUBLE":          ("doubles", 1),
+    "TO_HIT_A_TRIPLE":          ("triples", 1),
 }
 
 

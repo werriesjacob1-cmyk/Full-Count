@@ -1098,14 +1098,25 @@ def _as_float(v):
 # model supplying tonight's adjustment. Both are reported separately so a
 # large disagreement is visible rather than averaged away.
 
+# Thresholds computed for every batter. Extended to match what FanDuel
+# actually prices: singles, doubles and triples are separate markets there,
+# and runs/RBIs/steals were already being computed here but never compared to
+# a price. Each extra threshold is free -- it is another comparison over game
+# logs already fetched.
 _PROP_THRESHOLDS = {
-    "hits":         [1, 2, 3],
+    "hits":         [1, 2, 3, 4],
     "total_bases":  [1, 2, 3, 4],
-    "home_runs":    [1],
+    "home_runs":    [1, 2],
     "stolen_bases": [1],
     "walks":        [1],
     "runs":         [1, 2],
-    "rbis":         [1, 2],
+    "rbis":         [1, 2, 3],
+    # Hit TYPES, kept distinct from total bases on purpose: "hit a double"
+    # is a different event from "clear two total bases", since a home run
+    # does the latter and not the former.
+    "singles":      [1],
+    "doubles":      [1],
+    "triples":      [1],
 }
 
 
@@ -1140,7 +1151,12 @@ def _empirical_batter_one(job):
             continue
         h = int(st.get("hits") or 0)
         tb = int(st.get("totalBases") or 0)
+        d2 = int(st.get("doubles") or 0)
+        t3 = int(st.get("triples") or 0)
+        hr_ = int(st.get("homeRuns") or 0)
         games.append({
+            "singles": max(0, h - d2 - t3 - hr_),
+            "doubles": d2, "triples": t3,
             "hits": h, "total_bases": tb,
             "home_runs": int(st.get("homeRuns") or 0),
             "stolen_bases": int(st.get("stolenBases") or 0),
