@@ -1650,6 +1650,9 @@ def score_first_inning(sp_name, sp_id, gm, side, fi_form):
         "prop": (f"{opp_team} to score in the 1st" if lean == "YRFI"
                  else f"{opp_team} scoreless in the 1st"),
         "projection": {"stat": "first_inning_run", "value": yrfi_rate},
+        # attach_hit_probabilities re-picks the side once the rate has been
+        # shrunk, and has to be able to rebuild this label for the other side.
+        "fi_opp_team": opp_team,
         "signals": {"yrfi_rate": round(float(yrfi_rate), 4), "fi_n_starts": float(n_starts)},
         "lean": lean, "score": round(score, 1), "why": why, "watchouts": watchouts,
         "notable_signals": notable_signals,
@@ -2195,7 +2198,29 @@ def attach_hit_probabilities(candidates, comp_table, emp_batters, emp_pitchers):
                 raw = max(0.0, min(1.0, float(yrfi_pct) / 100.0))
                 shrunk = ((raw * n_starts + FI_PRIOR_STARTS * slate_yrfi)
                           / (n_starts + FI_PRIOR_STARTS)) if (n_starts + FI_PRIOR_STARTS) else slate_yrfi
-                is_yrfi = (c.get("lean") or "").upper().startswith("Y")
+                # PICK THE SIDE FROM THE SHRUNK RATE, NOT THE RAW ONE.
+                #
+                # score_first_inning commits to a side at raw yrfi_rate >= 38%,
+                # but the number this board is RANKED on is the shrunk rate, and
+                # shrinkage moves the 50/50 point a long way. Solving
+                # (raw*n + 5*slate)/(n+5) = 0.5 at slate=0.27, the raw rate the
+                # YRFI side actually needs is:
+                #     n=2 starts 107.5%  n=3 88.3%  n=4 78.8%  n=5 73.0%  n=8 64.4%
+                # against a lean that flips at 38%. Every raw rate in between
+                # produced a pick labelled YRFI and advertised at UNDER 50% while
+                # the NRFI side of the identical number sat above it. Enumerated
+                # over raw in {0,20,33,38,40,50,60,67,75,80,100}% x n in 2..6:
+                # 31 of 55 combinations recommended the losing side -- e.g. 2 of
+                # 4 starts scored on shipped as "YRFI, 37.2%" when "NRFI, 62.8%"
+                # was the same evidence read the right way round. At n=2 the YRFI
+                # side is unreachable at ANY raw rate, so every 2-start YRFI lean
+                # was wrong by construction.
+                is_yrfi = shrunk >= 0.5
+                c["lean"] = "YRFI" if is_yrfi else "NRFI"
+                opp = c.get("fi_opp_team")
+                if opp:
+                    c["prop"] = (f"{opp} to score in the 1st" if is_yrfi
+                                 else f"{opp} scoreless in the 1st")
                 c["hit_probability"] = round(shrunk if is_yrfi else 1.0 - shrunk, 4)
                 c["probability_basis"] = "empirical"
                 c["probability_detail"] = {
