@@ -2092,6 +2092,7 @@ def main() -> int:
     # Calibrate BEFORE ranking and before the positive-read floor, so both
     # operate on the honest number rather than the overstated one.
     apply_calibration(candidates, load_calibrator())
+    attach_reliability(candidates, emp_batters, emp_pitchers)
 
     # RANKING. The board is sorted by chance of cashing, which is the stated
     # objective, with the quality score demoted to a GATE rather than the
@@ -2108,6 +2109,10 @@ def main() -> int:
     # A candidate that could not be priced at all keeps its place in the
     # score order behind everything that could, rather than being dropped:
     # an unpriced pick is a gap in coverage, not evidence against the pick.
+    # Untrustworthy INPUTS are rejected before anything is ranked -- that is a
+    # different question from whether the model likes the pick.
+    candidates, _qc_rejected = quality_control(candidates, game_meta, park_wx, emp_pitchers)
+
     gated = [c for c in candidates if c["score"] >= MIN_QUALITY_SCORE]
 
     # POSITIVE-READ FLOOR. A pick has to beat the league base rate for its own
@@ -2197,6 +2202,12 @@ def write_json(top10):
             "confidence": c["confidence"], "notable_signals": c["notable_signals"],
             "hit_probability": c.get("hit_probability"),
             "base_rate": c.get("base_rate"), "lift": c.get("lift"),
+            "raw_hit_probability": c.get("raw_hit_probability"),
+            "calibrated_by": c.get("calibrated_by"),
+            "prob_ci": c.get("prob_ci"), "sample_n": c.get("sample_n"),
+            "reliability": c.get("reliability"),
+            "max_acceptable_price": (pp.max_acceptable_price(c["hit_probability"])
+                                     if c.get("hit_probability") is not None else None),
             "estimated_odds": (pp.american_odds(c["hit_probability"])
                                if c.get("hit_probability") is not None else None),
             "probability_basis": c.get("probability_basis"),
@@ -2846,6 +2857,143 @@ def attach_hit_probabilities(candidates, comp_table, emp_batters, emp_pitchers,
     return candidates
 
 
+# ── How much to trust each number ─────────────────────────────────────────
+#
+# A probability with no interval around it invites being read as precise when
+# it is not. Two picks can both say 68% while one rests on 110 games and the
+# other on 22, and nothing in the headline number distinguishes them.
+#
+# The interval reported is the one around the EMPIRICAL component, which is
+# the part with a real sample size behind it. The modelled component's
+# uncertainty is not included and cannot honestly be folded in without
+# assumptions about its own error, so the interval is presented as what it is:
+# a lower bound on the true uncertainty, not the whole of it.
+RELIABILITY_TIERS = [
+    (80, "A", "season-long sample"),
+    (45, "B", "solid sample"),
+    (25, "C", "thin sample — treat the number as approximate"),
+    (0,  "D", "very thin sample — the number is barely more than a base rate"),
+]
+
+
+def _wilson_interval(hits, n, z=1.96):
+    """Wilson score interval — stays sensible at the extremes, where the
+    normal approximation collapses to zero width."""
+    if n <= 0:
+        return (0.0, 1.0)
+    p = hits / n
+    d = 1 + z * z / n
+    centre = (p + z * z / (2 * n)) / d
+    margin = z * ((p * (1 - p) / n + z * z / (4 * n * n)) ** 0.5) / d
+    return (max(0.0, centre - margin), min(1.0, centre + margin))
+
+
+def attach_reliability(candidates, emp_batters, emp_pitchers):
+    """Give every pick a sample size, a confidence interval and a letter grade."""
+    for c in candidates:
+        pid = c.get("player_id")
+        stat = (c.get("projection") or {}).get("stat")
+        needs = (c.get("projection") or {}).get("needs")
+        emp = (emp_pitchers if stat == "strikeouts" else emp_batters).get(pid) or {}
+        n = emp.get("games") or emp.get("starts") or 0
+        rate = None
+        if needs is not None and emp.get("rates"):
+            key = ("strikeouts_%dplus" % needs if stat == "strikeouts"
+                   else "%s_%dplus" % (stat, needs))
+            rate = (emp["rates"] or {}).get(key)
+        elif stat == "first_inning_run":
+            n = int((c.get("signals") or {}).get("fi_n_starts") or 0)
+        if rate:
+            lo, hi = _wilson_interval(rate.get("hit", 0), rate.get("n", n) or 1)
+            c["prob_ci"] = [round(lo, 4), round(hi, 4)]
+        c["sample_n"] = int(n)
+        for floor, grade, blurb in RELIABILITY_TIERS:
+            if n >= floor:
+                c["reliability"] = grade
+                c["reliability_note"] = blurb
+                break
+    return candidates
+
+# ── Quality control ───────────────────────────────────────────────────────
+#
+# Rejecting a pick for a reason that has nothing to do with the model. These
+# are conditions under which the INPUTS are untrustworthy, which is different
+# from the model being unconvinced, and they have to be checked separately
+# because a confident number built on a stale lineup is still wrong.
+#
+# Every rejection is reported rather than silently applied. A filter that
+# quietly removes candidates is how an entire prop type once vanished with no
+# error anywhere.
+
+# A "starter" who faces this few batters per outing is being used as an
+# opener, and a strikeout prop on him is a different bet than the model
+# thinks. Measured on the season pull: of appearances beginning in the first
+# inning, the 5th percentile faces 8 batters and the median 22.
+OPENER_BF_THRESHOLD = 15
+
+# Rain risk above which a game's props carry real postponement/shortening
+# risk rather than a note.
+QC_PRECIP_REJECT = 70
+
+
+def quality_control(candidates, game_meta, park_wx, emp_pitchers):
+    """Reject candidates whose inputs cannot be trusted, and say why.
+
+    Returns (kept, rejected)."""
+    lineups_confirmed = {}
+    for gm in game_meta:
+        for side in ("away", "home"):
+            lu = gm.get(f"{side}_lineup") or []
+            # A real posted lineup is nine hitters. Anything shorter is a
+            # projection or a partial scrape, and a batter prop resting on a
+            # guessed lineup slot is resting on the single strongest signal
+            # in the whole model being invented.
+            lineups_confirmed[(gm.get("game_pk"), side)] = len(lu) >= 9
+
+    kept, rejected = [], []
+    for c in candidates:
+        stat = (c.get("projection") or {}).get("stat")
+        reason = None
+
+        if stat == "strikeouts":
+            emp = emp_pitchers.get(c.get("player_id")) or {}
+            starts = emp.get("starts", 0)
+            avg_bf = emp.get("avg_bf")
+            if avg_bf is not None and avg_bf < OPENER_BF_THRESHOLD:
+                reason = (f"used as an opener ({avg_bf:.0f} batters faced per outing) — "
+                          f"a strikeout prop on him is not the bet the model priced")
+            elif starts and starts < 3:
+                reason = f"only {starts} start(s) of evidence"
+
+        if reason is None and c.get("type") == "batter":
+            gp = c.get("game_pk")
+            side = "away" if c.get("team") == next(
+                (g.get("away_team") for g in game_meta if g.get("game_pk") == gp), None) else "home"
+            if lineups_confirmed.get((gp, side)) is False:
+                reason = ("lineup not confirmed — the batting-order slot is a guess, "
+                          "and slot is the strongest single signal in the model")
+
+        if reason is None:
+            wx = park_wx.get(c.get("matchup")) or {}
+            if not wx.get("dome") and (wx.get("precip_prob") or 0) >= QC_PRECIP_REJECT:
+                reason = (f"{wx['precip_prob']}% rain risk — real chance of a "
+                          f"postponement or a shortened game")
+
+        if reason:
+            c["qc_reason"] = reason
+            rejected.append(c)
+        else:
+            kept.append(c)
+
+    if rejected:
+        print(f"    Quality control rejected {len(rejected)} candidate(s):")
+        by_reason = defaultdict(int)
+        for c in rejected:
+            by_reason[c["qc_reason"].split(" — ")[0].split(" (")[0]] += 1
+        for r, n in sorted(by_reason.items(), key=lambda kv: -kv[1]):
+            print(f"      {n:4d}  {r}")
+    return kept, rejected
+
 def write_markdown(top10, skipped, game_meta, bullpen_scores, all_ranked=()):
     lines = [f"# MLB Top 10 Picks — {m.TODAY}", "",
              "_Generated by deterministic scoring over today's research pull — no LLM "
@@ -2898,6 +3046,19 @@ def write_markdown(top10, skipped, game_meta, bullpen_scores, all_ranked=()):
                 lift_s = (f" — **{lift*100:+.1f} pts** vs the {base*100:.0f}% league base "
                           f"rate for this market")
             lines.append(f"- **Chance of hitting:** {hp*100:.1f}%{basis}{lift_s}")
+            ci = c.get("prob_ci"); grade = c.get("reliability")
+            if ci or grade:
+                bits = []
+                if ci:
+                    bits.append(f"95% CI {ci[0]*100:.0f}–{ci[1]*100:.0f}%")
+                if grade:
+                    bits.append(f"data grade **{grade}** ({c.get('sample_n')} "
+                                f"games/starts — {c.get('reliability_note')})")
+                lines.append(f"- **Reliability:** {' · '.join(bits)}")
+            lines.append(f"- **Price to beat:** {pp.max_acceptable_price(hp):+d} "
+                          f"— bet only if the book is this price or better "
+                          f"(fair value {pp.american_odds(hp, include_vig=False):+d}, "
+                          f"your limit {pp.USER_MAX_PRICE:+d})")
             lines.append(f"- **Estimated price:** ~{pp.format_odds(hp)} "
                           f"(no free source for prop prices exists, so this is derived "
                           f"from the probability plus a typical prop hold — treat it as "

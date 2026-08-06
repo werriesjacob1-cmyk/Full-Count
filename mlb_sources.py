@@ -1287,7 +1287,7 @@ def _empirical_pitcher_one(job):
         splits = _game_log(pid, "pitching")
     except Exception:
         return pid, None
-    starts = []
+    starts, bfs = [], []
     for s in splits:
         st = s.get("stat") or {}
         # Strikeout props are bet on STARTS. A reliever appearance in the same
@@ -1299,10 +1299,24 @@ def _empirical_pitcher_one(job):
         if gs < 1:
             continue
         starts.append(int(st.get("strikeOuts") or 0))
+        # Batters faced per outing, so an opener can be told from a starter.
+        bf = st.get("battersFaced")
+        if bf is None:
+            ip = str(st.get("inningsPitched") or "0")
+            try:
+                whole, _, frac = ip.partition(".")
+                bf = int(whole) * 3 + int(frac or 0) + int(st.get("hits") or 0) \
+                     + int(st.get("baseOnBalls") or 0)
+            except (TypeError, ValueError):
+                bf = None
+        if bf is not None:
+            try: bfs.append(int(bf))
+            except (TypeError, ValueError): pass
     n = len(starts)
     if n < min_starts:
         return pid, None
-    out = {"starts": n, "avg_k": round(sum(starts) / n, 2), "rates": {}}
+    out = {"starts": n, "avg_k": round(sum(starts) / n, 2),
+           "avg_bf": round(sum(bfs) / len(bfs), 1) if bfs else None, "rates": {}}
     for t in (4, 5, 6, 7, 8, 9):
         hits = sum(1 for k in starts if k >= t)
         out["rates"][f"strikeouts_{t}plus"] = {
