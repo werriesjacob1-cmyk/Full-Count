@@ -84,6 +84,36 @@ AB_PER_PA = 0.9093          # measured; converts a per-AB rate (SLG) to per-PA
 def clamp(x, lo=0, hi=100):
     return max(lo, min(hi, x))
 
+
+def _sig(bag, name, raw, scaled):
+    """Record one named signal on a candidate — ONLY when its underlying input
+    actually existed.
+
+    Added for backtest/engine.py, which needs the individual 0-100 sub-scores
+    the weighted formula is built from (backtest/SCHEMA.md's `signals` field)
+    so signal weights can be re-fit and pruned against real outcomes. Nothing
+    here changes any score: every value recorded is the same number the
+    scoring expression right above it already computed.
+
+    ABSENT IS NOT ZERO AND NOT NEUTRAL. scale() deliberately returns the 0-100
+    midpoint for a missing input, which is the right thing for *scoring* (a
+    missing signal shouldn't push a pick either way) but is actively wrong for
+    *fitting*: recording 50 for "no data" teaches the fitter that missing data
+    is a real, average reading. So a signal whose raw input is None/NaN is
+    simply not present in the bag — see SCHEMA.md and backtest/signals.py's
+    impute-plus-indicator handling, which depends on that distinction."""
+    if raw is None:
+        return
+    try:
+        if float(raw) != float(raw):   # NaN
+            return
+    except (TypeError, ValueError):
+        pass
+    try:
+        bag[name] = round(float(scaled), 4)
+    except (TypeError, ValueError):
+        return
+
 def scale(value, lo, hi, out_lo=0, out_hi=100):
     """Linear map value in [lo,hi] to [out_lo,out_hi], clamped at the ends.
 
@@ -1031,11 +1061,17 @@ def score_batter(batter, gm, opp_sp_row, opp_sp_id, opp_sp_hand, park_wx, batter
     # RECENT FORM (25%) — L7 contact quality + bat-speed trend (leading indicator)
     l7 = batter_l7 or {}
     l7_pa = l7.get("PA", 0)
-    form = scale(l7.get("avg_EV"), 85, 93) * 0.6 + scale(l7.get("barrel_pct"), 2, 16) * 0.4
+    # Split into named sub-scores (same two scale() calls, same weights, same
+    # result) so backtest/engine.py can record them individually — see _sig().
+    sc_l7_ev = scale(l7.get("avg_EV"), 85, 93)
+    sc_l7_barrel = scale(l7.get("barrel_pct"), 2, 16)
+    form = sc_l7_ev * 0.6 + sc_l7_barrel * 0.4
     low_sample = l7_pa < 8
     bs_trend = bat_speed_trend.get(bid) if bid else None
+    bat_speed_bonus = None
     if bs_trend is not None and bs_trend >= 1.0:
-        form = clamp(form + scale(bs_trend, 1.0, 3.0, 0, 15))
+        bat_speed_bonus = scale(bs_trend, 1.0, 3.0, 0, 15)
+        form = clamp(form + bat_speed_bonus)
         notable_signals += 1
 
     # ENVIRONMENT (15%) — park/weather HR index blended with the market's own
@@ -1073,8 +1109,10 @@ def score_batter(batter, gm, opp_sp_row, opp_sp_id, opp_sp_hand, park_wx, batter
 
     # BASELINE SKILL (15%)
     bs = batter_season or {}
-    skill = (scale(bs.get("wRC+"), 70, 140) * 0.4 + scale(bs.get("ISO"), 0.10, 0.28) * 0.3
-             + scale(bs.get("Barrel%"), 3, 18) * 0.3)
+    sc_wrc = scale(bs.get("wRC+"), 70, 140)
+    sc_iso = scale(bs.get("ISO"), 0.10, 0.28)
+    sc_barrel = scale(bs.get("Barrel%"), 3, 18)
+    skill = sc_wrc * 0.4 + sc_iso * 0.3 + sc_barrel * 0.3
     star_profile = (bs.get("wRC+") or 100) >= 130  # season-obvious, already priced in by the market
 
     # CONTEXT (10%) — lineup slot + opposing bullpen fatigue. fetch_bullpen_scores()
@@ -1087,8 +1125,9 @@ def score_batter(batter, gm, opp_sp_row, opp_sp_id, opp_sp_hand, park_wx, batter
     tracked = bullpen.get("tracked", 0)
     fatigued = bullpen.get("fatigued_relievers", 0)
     bullpen_fatigue_pct = (fatigued / tracked * 100) if tracked >= 3 else None
+    sc_bullpen_fatigue = scale(bullpen_fatigue_pct, 0, 60) if bullpen_fatigue_pct is not None else None
     if bullpen_fatigue_pct is not None:
-        context = clamp(lineup_context * 0.7 + scale(bullpen_fatigue_pct, 0, 60) * 0.3)
+        context = clamp(lineup_context * 0.7 + sc_bullpen_fatigue * 0.3)
         if bullpen_fatigue_pct >= 40:
             notable_signals += 1
     else:
@@ -1239,10 +1278,26 @@ def score_batter(batter, gm, opp_sp_row, opp_sp_id, opp_sp_hand, park_wx, batter
         why.append(f"Sharp money {'backing' if sharp_divergence > 0 else 'fading'} {batter.get('team')} "
                     f"(money% {'+' if sharp_divergence>0 else ''}{sharp_divergence} pts vs ticket%)")
 
+    signals = {}
+    _sig(signals, "platoon", bats if bats in ("L", "R") else None, platoon)
+    _sig(signals, "sp_era_weak", sp_era, sp_weak)
+    if exploit: _sig(signals, "pitch_exploit", exploit.get("run_value_per_100"), exploit_bonus)
+    _sig(signals, "l7_avg_ev", l7.get("avg_EV"), sc_l7_ev)
+    _sig(signals, "l7_barrel_pct", l7.get("barrel_pct"), sc_l7_barrel)
+    _sig(signals, "bat_speed_trend", bat_speed_bonus, bat_speed_bonus)
+    _sig(signals, "park_hr_index", (park_wx or {}).get("park_hr_index"), park_env)
+    _sig(signals, "wrc_plus", bs.get("wRC+"), sc_wrc)
+    _sig(signals, "iso", bs.get("ISO"), sc_iso)
+    _sig(signals, "season_barrel_pct", bs.get("Barrel%"), sc_barrel)
+    _sig(signals, "lineup_slot", order, lineup_context)
+    _sig(signals, "bullpen_fatigue", bullpen_fatigue_pct, sc_bullpen_fatigue)
+    if bullpen_era_diff is not None and abs(bullpen_era_diff) >= 0.5:
+        _sig(signals, "bullpen_era_diff", bullpen_era_diff, clamp(bullpen_era_diff * 8, -8, 8))
+
     return {
         "type": "batter", "name": name, "player_id": bid, "team": batter.get("team"), "matchup": gm["matchup"],
         "game_pk": gm.get("game_pk"), "prop": prop, "projection": {"stat": "total_bases", "value": projected_tb},
-        "projected_pa": projected_pa, "projected_tb": projected_tb,
+        "projected_pa": projected_pa, "projected_tb": projected_tb, "signals": signals,
         "score": round(score, 1), "why": why, "watchouts": watchouts, "notable_signals": notable_signals,
         "confidence": "High" if score >= 70 and not low_sample else ("Medium" if score >= 55 else "Low"),
     }
@@ -1264,24 +1319,32 @@ def score_pitcher(sp_name, sp_id, sp_hand, gm, side, pit_season_lookup, l14_form
             known += 1
             if b["bats"] == sp_hand: same_hand += 1
     same_hand_ratio = (same_hand / known) if known else 0.4
-    matchup = scale(opp_team_k_pct, 17, 27) * 0.65 + scale(same_hand_ratio * 100, 20, 60) * 0.35
+    sc_opp_k = scale(opp_team_k_pct, 17, 27)
+    sc_same_hand = scale(same_hand_ratio * 100, 20, 60)
+    matchup = sc_opp_k * 0.65 + sc_same_hand * 0.35
 
     # RECENT FORM (25%) — L14 K rate vs season K rate (trend) + TTO-specific exploit
     l14 = l14_form.get(sp_name, {})
+    form_l14_raw = None
     if l14 and l14.get("l14_pa", 0) >= 15:
-        form = scale(l14.get("l14_k_pct"), 15, 32)
+        form_l14_raw = scale(l14.get("l14_k_pct"), 15, 32)
+        form = form_l14_raw
         low_sample_form = False
     else:
         form = scale(k_pct, 15, 32) if k_pct else 50
         low_sample_form = True
     tto_note = None
+    tto_penalty = None
+    tto_adjustment = None
     if l14.get("tto3_k_pct") is not None and l14.get("tto1_k_pct") is not None:
         tto_penalty = l14["tto1_k_pct"] - l14["tto3_k_pct"]
         if tto_penalty <= -3:  # maintains or improves K rate deep into starts
+            tto_adjustment = 8
             form = clamp(form + 8)
             notable_signals += 1
             tto_note = f"Maintains K rate through the order (TTO1 {l14['tto1_k_pct']}% -> TTO3 {l14['tto3_k_pct']}%)"
         elif tto_penalty >= 8:
+            tto_adjustment = -8
             form = clamp(form - 8)
             tto_note = f"Significant TTO K% drop-off (TTO1 {l14['tto1_k_pct']}% -> TTO3 {l14['tto3_k_pct']}%) — caution deep into the start"
 
@@ -1289,7 +1352,10 @@ def score_pitcher(sp_name, sp_id, sp_hand, gm, side, pit_season_lookup, l14_form
     env = 50
 
     # BASELINE SKILL (15%)
-    skill = scale(k_pct, 15, 32) * 0.4 + scale(csw, 24, 34) * 0.3 + scale(stuff, 80, 130) * 0.3
+    sc_season_k = scale(k_pct, 15, 32)
+    sc_csw = scale(csw, 24, 34)
+    sc_stuff = scale(stuff, 80, 130)
+    skill = sc_season_k * 0.4 + sc_csw * 0.3 + sc_stuff * 0.3
     star_profile = (k_pct or 0) >= 28 and (era or 5) <= 3.2
 
     # CONTEXT (10%) — tight-zone umpire favors called strikes -> more Ks
@@ -1346,12 +1412,24 @@ def score_pitcher(sp_name, sp_id, sp_hand, gm, side, pit_season_lookup, l14_form
     if tto_note and "Maintains" in tto_note: why.append(tto_note)
     if ump.get("accuracy"): why.append(f"HP ump accuracy {ump['accuracy']:.1f}%")
 
+    signals = {}
+    _sig(signals, "opp_team_k_pct", opp_team_k_pct, sc_opp_k)
+    _sig(signals, "same_hand_ratio", same_hand_ratio if known else None, sc_same_hand)
+    if not low_sample_form:
+        _sig(signals, "l14_k_pct", l14.get("l14_k_pct"), form_l14_raw)
+    _sig(signals, "tto_penalty", tto_adjustment, tto_adjustment)
+    signals["env_neutral"] = 50.0   # hard-coded neutral in production; always present
+    _sig(signals, "season_k_pct", k_pct, sc_season_k)
+    _sig(signals, "csw_pct", csw, sc_csw)
+    _sig(signals, "stuff_plus", stuff, sc_stuff)
+    _sig(signals, "ump_accuracy", ump.get("accuracy"), context)
+
     return {
         "type": "pitcher", "name": sp_name, "player_id": sp_id,
         "team": gm["away_team"] if side == "away" else gm["home_team"],
         "matchup": gm["matchup"], "game_pk": gm.get("game_pk"),
         "prop": f"Over {max(projected_ks - 0.5, 0.5):.1f} Strikeouts (proj. {projected_ks})",
-        "projection": {"stat": "strikeouts", "value": projected_ks},
+        "projection": {"stat": "strikeouts", "value": projected_ks}, "signals": signals,
         "expected_bf": exp_bf,
         "k_rate": (l14["l14_k_pct"] if l14.get("l14_pa", 0) >= 15 else (k_pct or 22.5)) / 100,
         "score": round(score, 1), "why": why, "watchouts": watchouts, "notable_signals": notable_signals,
@@ -1452,10 +1530,21 @@ def score_stolen_base(batter, gm, opp_catcher_poptime, sprint_speed, batter_seas
     elif on_base <= 25:
         watchouts.append("Fast, but a weak on-base rate means materially fewer times on first to steal from")
 
+    signals = {}
+    _sig(signals, "sprint_speed", sprint_speed, skill)
+    _sig(signals, "catcher_poptime", opp_catcher_poptime, matchup)
+    # The third scored component is on-base ability, NOT season SB — season SB
+    # is only a converging-signal flag on this path (see this function's
+    # docstring). backtest/signals.py's CURRENT_WEIGHTS still calls the slot
+    # "season_sb"; recording what the code actually scores under its real name
+    # is the honest emit, and a name the fitter doesn't recognise surfaces as a
+    # coverage warning there rather than silently mislabelling the input.
+    _sig(signals, "on_base", on_base, context)
+
     return {
         "type": "batter", "name": batter["name"], "player_id": bid, "team": batter.get("team"),
         "matchup": gm["matchup"], "game_pk": gm.get("game_pk"), "prop": "To Steal a Base",
-        "projection": {"stat": "stolen_base", "value": 1},
+        "projection": {"stat": "stolen_base", "value": 1}, "signals": signals,
         "projected_pa": project_batter_pa(batter.get("order"), None),
         "score": round(score, 1),
         "why": why, "watchouts": watchouts, "notable_signals": notable_signals,
@@ -1487,10 +1576,15 @@ def score_walk(batter, gm, opp_sp_row, ump_scores, batter_season):
     if sp_bb_pct is not None: why.append(f"Opposing SP BB% {sp_bb_pct}")
     if ump.get("accuracy"): why.append(f"HP ump accuracy {ump['accuracy']:.1f}% (lower = looser zone)")
 
+    signals = {}
+    _sig(signals, "batter_bb_pct", bb_pct, skill)
+    _sig(signals, "sp_bb_pct", sp_bb_pct, matchup)
+    _sig(signals, "ump_accuracy", ump.get("accuracy"), context)
+
     return {
         "type": "batter", "name": batter["name"], "player_id": batter.get("id"), "team": batter.get("team"),
         "matchup": gm["matchup"], "game_pk": gm.get("game_pk"), "prop": "Over 0.5 Walks",
-        "projection": {"stat": "walks", "value": 0.7}, "score": round(score, 1),
+        "projection": {"stat": "walks", "value": 0.7}, "signals": signals, "score": round(score, 1),
         "why": why, "watchouts": [], "notable_signals": notable_signals,
         "confidence": "High" if score >= 70 else ("Medium" if score >= 55 else "Low"),
     }
@@ -1532,6 +1626,7 @@ def score_first_inning(sp_name, sp_id, gm, side, fi_form):
         "team": gm["away_team"] if side == "away" else gm["home_team"], "side": side,
         "matchup": gm["matchup"], "game_pk": gm.get("game_pk"),
         "prop": f"{lean} lean (his starts)", "projection": {"stat": "first_inning_run", "value": yrfi_rate},
+        "signals": {"yrfi_rate": round(float(yrfi_rate), 4), "fi_n_starts": float(n_starts)},
         "lean": lean, "score": round(score, 1), "why": why, "watchouts": watchouts,
         "notable_signals": notable_signals,
         "confidence": "High" if score >= 70 and n_starts >= 3 else ("Medium" if score >= 55 else "Low"),

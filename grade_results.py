@@ -100,11 +100,28 @@ def is_final(status):
     return coded in ("F", "O") or "final" in detailed.lower() or "completed" in detailed.lower()
 
 
+_BOX_CACHE = {}
+
 def get_box_line(game_pk, player_id, is_pitcher):
-    try:
-        box = m.statsapi.boxscore_data(game_pk)
-    except Exception as e:
-        return None, str(e)[:150]
+    # Cached per game_pk. Live this saves ~10 duplicate boxscore pulls a
+    # morning (several picks routinely share a game); it becomes load-bearing
+    # for backtest/engine.py, which grades every candidate on the slate rather
+    # than the top 10 -- ~600 picks across ~15 games, i.e. 600 identical
+    # boxscore fetches per date without this. Cached by game only: the
+    # per-player scan below still runs on every call, so behaviour is
+    # unchanged.
+    if game_pk in _BOX_CACHE:
+        box, err = _BOX_CACHE[game_pk]
+        if box is None:
+            return None, err
+    else:
+        try:
+            box = m.statsapi.boxscore_data(game_pk)
+            _BOX_CACHE[game_pk] = (box, None)
+        except Exception as e:
+            err = str(e)[:150]
+            _BOX_CACHE[game_pk] = (None, err)
+            return None, err
     sides = ["awayPitchers", "homePitchers"] if is_pitcher else ["awayBatters", "homeBatters"]
     for side in sides:
         for row in box.get(side, []):
@@ -137,15 +154,25 @@ def fetch_first_inning_linescore(game_pk):
     return result
 
 
+_INNINGS_CACHE = {}
+
 def _game_innings(game_pk):
     """Innings actually played. A rain-shortened or 7-inning doubleheader game
     gives every batter fewer chances than the pick assumed, which is context
-    a bare hit/miss can't express."""
+    a bare hit/miss can't express.
+
+    Cached per game_pk for the same reason get_box_line is -- this is called
+    once per graded pick, and every pick in a game gets the same answer."""
+    if game_pk in _INNINGS_CACHE:
+        return _INNINGS_CACHE[game_pk]
+    _INNINGS_CACHE[game_pk] = None   # negative-cache a failure too, don't retry per pick
     try:
         r = m.retry_get(f"https://statsapi.mlb.com/api/v1.1/game/{game_pk}/feed/live",
                         headers={"User-Agent": "Mozilla/5.0"}, timeout=20, retries=2)
         r.raise_for_status()
-        return len(r.json().get("liveData", {}).get("linescore", {}).get("innings", []))
+        n = len(r.json().get("liveData", {}).get("linescore", {}).get("innings", []))
+        _INNINGS_CACHE[game_pk] = n
+        return n
     except Exception:
         return None
 
