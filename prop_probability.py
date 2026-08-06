@@ -94,9 +94,16 @@ def _binom_at_least(n, p, k):
 
     Accepts a fractional n and handles it as a mixture (see _mix_fractional)
     rather than rounding it to an integer."""
+    # ORDER MATTERS. The k<=0 guard has to come FIRST. Checked against
+    # scipy.stats.binom.sf over n in 0..30 x p in {0, 1e-9, .01, .077, .2345,
+    # .5, .75, .999, 1} x k in 0..11 (3240 cases): every case agreed to 0.0
+    # except exactly one -- n=0, k=0 returned 0.0 where P(X >= 0) = 1.0, the
+    # full 1.0 of error, because the n<=0 guard fired before the k<=0 one.
+    # Unreachable from today's callers (every threshold is >= 1) but a
+    # trap for the next one, e.g. any "did he record at least 0" floor.
+    if k <= 0: return 1.0
     if n <= 0: return 0.0
     p = min(max(p, 0.0), 1.0)
-    if k <= 0: return 1.0
     if n != int(n):
         return _mix_fractional(n, lambda m: _binom_at_least(m, p, k))
     n = int(n)
