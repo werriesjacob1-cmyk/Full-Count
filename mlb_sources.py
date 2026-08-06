@@ -1105,18 +1105,24 @@ def _as_float(v):
 # logs already fetched.
 _PROP_THRESHOLDS = {
     "hits":         [1, 2, 3, 4],
-    "total_bases":  [1, 2, 3, 4],
+    "total_bases":  [1, 2, 3, 4, 5],
     "home_runs":    [1, 2],
-    "stolen_bases": [1],
+    "stolen_bases": [1, 2],
     "walks":        [1],
-    "runs":         [1, 2],
-    "rbis":         [1, 2, 3],
+    "runs":         [1, 2, 3],
+    "rbis":         [1, 2, 3, 4],
     # Hit TYPES, kept distinct from total bases on purpose: "hit a double"
     # is a different event from "clear two total bases", since a home run
     # does the latter and not the former.
     "singles":      [1],
     "doubles":      [1],
     "triples":      [1],
+    # Hits+Runs+RBIs, one of the most heavily priced markets on the board
+    # (roughly 450 lines a night across four thresholds) and trivially
+    # derivable from the same game log every other rate here uses. It was
+    # being ignored only because nothing had enumerated what the book
+    # actually offers.
+    "hits_runs_rbis": [1, 2, 3, 4],
 }
 
 
@@ -1154,7 +1160,13 @@ def _empirical_batter_one(job):
         d2 = int(st.get("doubles") or 0)
         t3 = int(st.get("triples") or 0)
         hr_ = int(st.get("homeRuns") or 0)
+        runs_ = int(st.get("runs") or 0)
+        rbi_ = int(st.get("rbi") or 0)
         games.append({
+            # The market is literally the sum, including the double-count when
+            # a player drives himself in on a home run -- that is how the book
+            # settles it, so that is how it must be computed.
+            "hits_runs_rbis": h + runs_ + rbi_,
             "singles": max(0, h - d2 - t3 - hr_),
             "doubles": d2, "triples": t3,
             "hits": h, "total_bases": tb,

@@ -112,6 +112,43 @@ MARKET_MAP = {
     "TO_HIT_A_SINGLE":          ("singles", 1),
     "TO_HIT_A_DOUBLE":          ("doubles", 1),
     "TO_HIT_A_TRIPLE":          ("triples", 1),
+    # Thresholds the book prices that were simply never enumerated.
+    "TO_RECORD_5+_TOTAL_BASES": ("total_bases", 5),
+    "TO_RECORD_4+_RBIS":        ("rbis", 4),
+    "TO_RECORD_3+_RUNS":        ("runs", 3),
+    "TO_RECORD_2+_STOLEN_BASES": ("stolen_bases", 2),
+    # Hits+Runs+RBIs: ~450 priced lines a night, and the single largest
+    # market this pipeline was ignoring.
+    "PLAYER_TO_RECORD_1+_HITS+RUNS+RBIS": ("hits_runs_rbis", 1),
+    "PLAYER_TO_RECORD_2+_HITS+RUNS+RBIS": ("hits_runs_rbis", 2),
+    "PLAYER_TO_RECORD_3+_HITS+RUNS+RBIS": ("hits_runs_rbis", 3),
+    "PLAYER_TO_RECORD_4+_HITS+RUNS+RBIS": ("hits_runs_rbis", 4),
+}
+
+# Markets deliberately NOT mapped, and why. Listing them is the point: an
+# unmapped market should be a decision on record, not an oversight.
+#
+#   PLAYERS_TO_COMBINE_FOR_*  — two or more players in one bet. Pricing these
+#     honestly needs the JOINT distribution, and teammates' outcomes are
+#     correlated (same game, same pitcher, same run environment). Multiplying
+#     two independent probabilities would overstate every one of them, which
+#     is exactly the kind of plausible-looking error this project keeps
+#     finding. ~640 lines a night, left alone until correlation is modelled.
+#   RESULT_OF_FIRST_PITCH, BATTER_UP_*, FIRST_SCORING_PLAY — single-pitch and
+#     single-plate-appearance micro markets. No rate is computed for them and
+#     none could be estimated from game logs.
+#   PLAYER_TO_HIT_A_LASER_(110+_MPH) — genuinely modelable from Statcast exit
+#     velocity, which this project already pulls, but the per-game rate is not
+#     computed yet. A real gap rather than an impossibility.
+#   PITCHER_*_STRIKEOUTS — these are line markets (over/under N) rather than
+#     yes/no, so they need different parsing. empirical_pitcher_k_rates
+#     already produces the rates; only the mapping is missing.
+UNMAPPED_REASONS = {
+    "PLAYERS_TO_COMBINE_FOR": "needs a joint distribution — teammates are correlated",
+    "RESULT_OF_FIRST_PITCH": "single-pitch market, no rate exists",
+    "BATTER_UP": "single-plate-appearance micro market, no rate exists",
+    "LASER": "modelable from Statcast exit velo — not yet computed",
+    "PITCHER_": "line market, needs different parsing — rates already exist",
 }
 
 
