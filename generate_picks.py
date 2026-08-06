@@ -1751,7 +1751,26 @@ def score_walk(batter, gm, opp_sp_row, ump_scores, batter_season):
     context = scale(ump.get("accuracy"), 96, 90) if ump.get("accuracy") else 50
     if ump.get("accuracy") and ump["accuracy"] <= 92: notable_signals += 1
 
-    score = skill * 0.4 + matchup * 0.4 + context * 0.2
+    # WEIGHTS FITTED, NOT GUESSED. These were 0.4 / 0.4 / 0.2, invented. Fitted
+    # by logistic regression on 5,634 backtested walk props (1,676 events, 419
+    # events per parameter -- adequately powered), the batter's own walk rate
+    # dominates the opposing starter's by roughly 3:1, not the 1:1 assumed:
+    #
+    #     batter_bb_pct   coef +0.2270   p ~ 0        sign stable in 100% of bootstraps
+    #     sp_bb_pct       coef +0.0843   p = 0.0035   sign stable in  99%
+    #     -> normalised weights 0.729 / 0.271
+    #
+    # This is the ONE market where fitted weights demonstrably beat the
+    # hand-picked ones on held-out later dates: AUC 0.591 vs 0.576, with the
+    # paired-bootstrap CI on the difference [0.0029, 0.0288] excluding zero.
+    # On hits the same comparison came back inside the noise (CI [-0.0058,
+    # 0.0442], contains zero), so those weights were deliberately left alone.
+    #
+    # Umpire context keeps a small share rather than being fitted: it was not
+    # in the backtest's signal set, so there is no evidence either way, and
+    # dropping a plausible signal on the basis of untested absence would be
+    # the same mistake as keeping one on the basis of untested presence.
+    score = skill * 0.66 + matchup * 0.24 + context * 0.10
     why = []
     if bb_pct is not None: why.append(f"Season BB% {bb_pct} (league ~{LEAGUE_AVG_BB_PCT}%)")
     if sp_bb_pct is not None: why.append(f"Opposing SP BB% {sp_bb_pct}")
