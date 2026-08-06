@@ -2129,6 +2129,60 @@ MIN_EMPIRICAL_GAMES = 25
 # cannot see tonight's catcher, park or opposing starter, so the model keeps
 # a real share. This split is a starting position, not a fitted result --
 # backtest/signals.py exists to replace it with something measured.
+#
+# ── AUDIT, 2026-08-06: MEASURED. NOT YET ACTED ON. ────────────────────────
+# Out-of-sample test on 244 batters with 250+ PA: both inputs fitted on each
+# batter's first 60% of games (chronological), scored on his last 40%.
+# Held-out mean log loss, and every configuration below fixed a priori so
+# none of these numbers carry grid-selection bias:
+#
+#   prop                league  model   empir.  SHIPPED   model shrunk 50%
+#                       -only   only    only    .6/.4     toward league
+#   hits_1plus          .66943  .66848  .66864  .66780    .66580
+#   hits_2plus          .53246  .53265  .53135  .53117    .52916
+#   total_bases_2plus   .65623  .65886  .65675  .65702    .65401
+#   total_bases_3plus   .52483  .52942  .52584  .52653    .52294
+#   home_runs_1plus     .37973  .39705  .37829  .38011    .37576
+#
+# THE FINDING: on all five props the shipped blend is statistically
+# INDISTINGUISHABLE from predicting the league rate for every player. Paired
+# bootstrap over players (600 resamples) puts SHIPPED - league_only between
+# -0.0016 and +0.0017 with every 95% CI straddling zero. The blend of two
+# inputs is not, as it stands, earning its keep over a constant.
+#
+# WHY: both inputs are individually OVERCONFIDENT -- they spread players too
+# far apart. model_only is actually worse than the constant on three of five
+# props (notably home runs, .39705 vs .37973). Averaging two overconfident
+# estimates just yields a third overconfident estimate; arithmetic averaging
+# reduces variance between the inputs, not the shared overconfidence.
+#
+# THE FIX THAT DOES WORK, and the recommendation: shrink the MODELLED
+# probability toward the league rate for that same threshold, and drop the
+# empirical term from the combination entirely. Sweeping the shrink fraction
+# k, held-out loss is minimised at k = 0.5-0.6 on every prop independently
+# (pooled optimum k=0.5, pooled loss .54953 at k=0.5 vs .55729 at k=0 and
+# .55254 at k=1). Unlike the shipped blend this beats the constant with CIs
+# that exclude zero on four of the five props.
+#
+# ON SAMPLE-SIZE-DEPENDENT WEIGHTS -- asked for, and the answer is NO. The
+# empirical input is ALREADY sample-size adjusted by _apply_shrinkage, so a
+# second n-dependent weight double-counts the same correction. Measured: the
+# best w and the shrinkage prior n0 trade off along a flat ridge (at n0=0 the
+# best w is 0.00; n0=10 -> 0.25; n0=20 -> 0.45; n0=35 -> 0.60; n0=90 -> 0.65;
+# n0=1200 -> 0.45), i.e. w and n0 are not two knobs, they are one knob --
+# total shrinkage toward the league rate. Bucketing players by training-sample
+# size gave best w of 0.90 / 0.30 / 0.25 for 34-52 / 52-64 / 64-69 games, i.e.
+# non-monotone and in the OPPOSITE direction to the intuition, on loss
+# differences of 0.0003 that are inside the noise.
+#
+# ON LOG-ODDS AVERAGING -- also asked for, and arithmetic is right here.
+# At equal weight the two agree to 1.8e-05 - 4.8e-04 in held-out log loss on
+# every prop except home runs, because the two inputs are close to begin with
+# (mean |empirical - modelled| is 0.015-0.032). Where they diverge, log-odds
+# is WORSE, not better: pooled best 0.55030 vs 0.54953 arithmetic, and on
+# home runs 0.37750 vs 0.37573. Log-odds averaging is multiplicative in the
+# tails and drags low-probability props further down, which is the wrong
+# direction for exactly the props where the model is already overconfident.
 EMPIRICAL_WEIGHT = 0.6
 
 
