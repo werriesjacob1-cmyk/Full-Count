@@ -52,7 +52,7 @@ cache (already enabled, same cache dir within one job run), re-calling shared
 fetchers here does not mean a second round of network traffic for anything
 mlb_daily.py already pulled.
 """
-import os, sys, json, re
+import os, sys, json, re, unicodedata
 from datetime import datetime
 from collections import defaultdict
 import pandas as pd
@@ -757,7 +757,8 @@ def estimate_lineup_k_pct(lineup, batter_lookup):
     team average anyway, since it reflects who's actually in the lineup
     tonight rather than the full-season roster."""
     vals = [row["K%"] for b in lineup
-            if (row := batter_lookup.get(b.get("name"))) and row.get("K%") is not None]
+            if (row := lookup_player(batter_lookup, b.get("name"), b.get("id")))
+            and row.get("K%") is not None]
     if not vals:
         return None, 0
     return round(sum(vals) / len(vals), 1), len(vals)
@@ -806,20 +807,126 @@ def compute_bullpen_era(pit_season_df):
     return out
 
 
+_NAME_SUFFIX_RE = re.compile(r"\s+(jr|sr|ii|iii|iv|v)\.?$", re.I)
+
+
+def _norm_name_key(n):
+    """Accent-folded, suffix-stripped, lowercase form of a player name.
+
+    Exists because the two sides of every season-stats lookup spell names
+    differently and neither side is under our control:
+      - the season frames (Statcast expected-stats fallback, which is the path
+        that actually ships since FanGraphs 403s) carry the full diacritics
+        and generational suffix: "Ronald Acuña Jr.", "Bobby Witt Jr.",
+        "Carlos Narváez", "Michael Harris II";
+      - tonight's lineups come from the MLB.com / Rotowire fallback scrapers,
+        which strip both: "Ronald Acuna", "Bobby Witt", "Carlos Narvaez",
+        "Michael Harris".
+    A plain dict .get() on the raw name therefore misses exactly the players
+    with accented or suffixed names — see name_lookup() for the measurement."""
+    n = unicodedata.normalize("NFD", str(n))
+    n = "".join(c for c in n if unicodedata.category(c) != "Mn")
+    n = n.replace(".", "").replace("'", "").replace("-", " ")
+    n = _NAME_SUFFIX_RE.sub("", n.strip())
+    return " ".join(n.lower().split())
+
+
 def name_lookup(df, name_col_candidates=("Name", "last_name, first_name")):
-    """Build a {player_name: row_dict} lookup from a FanGraphs/Statcast DataFrame,
-    handling the "Last, First" format Statcast endpoints use vs FanGraphs "First Last"."""
+    """Build a lookup from a FanGraphs/Statcast DataFrame, handling the
+    "Last, First" format Statcast endpoints use vs FanGraphs "First Last".
+
+    Keyed three ways, in the order lookup_player() tries them:
+      1. MLBAM player_id (int) when the frame carries one — the only key that
+         cannot be ambiguous or misspelled;
+      2. the exact name string, as before;
+      3. a normalized name (see _norm_name_key), registered only when it maps
+         to a single row so a fold can never return the wrong player.
+
+    BUG THIS FIXES, measured on tonight's real slate (2026-08-06, 11 games,
+    189 lineup slots, Statcast-fallback season frame of 613 batters):
+    16 of 189 lineup batters (8.5%) got NO season row at all from the exact-
+    name .get(), even though every one of them was present in the frame —
+    the names simply didn't match character-for-character:
+        Ronald Acuna / Ronald Acuña Jr.        Bobby Witt / Bobby Witt Jr.
+        Fernando Tatis / Fernando Tatis Jr.    Julio Rodriguez / Julio Rodríguez
+        Michael Harris / Michael Harris II     Eugenio Suarez / Eugenio Suárez
+        Andres Gimenez / Andrés Giménez        Jesus Sanchez / Jesús Sánchez
+        Carlos Narvaez / Carlos Narváez        Mauricio Dubon / Mauricio Dubón
+        Moises Ballesteros / Moisés Ballesteros  Endy Rodriguez / Endy Rodríguez
+        Jose Tena / José Tena                  Nasim Nunez / Nasim Nuñez
+        Heriberto Hernandez / Heriberto Hernández  Rafael Flores / Rafael Flores Jr.
+    i.e. it silently deleted the season line of several of the best hitters in
+    baseball. Every downstream consumer then ran on `bs = {}`:
+      - project_batter_tb fell through to LEAGUE_AVG_TB_PA. Measured error in
+        projected total bases (shipped vs. correct): Michael Harris II 1.48 vs
+        1.88 (-21%), Heriberto Hernández 1.44 vs 1.75 (-18%), Bobby Witt Jr.
+        1.55 vs 1.82 (-15%) — and in the other direction Nasim Nuñez 1.35 vs
+        0.97 (+39%) and Carlos Narváez 1.26 vs 0.90 (+40%), i.e. weak hitters
+        projected as league average and promoted onto the board.
+      - BASELINE SKILL scored a flat neutral 50 for all 16 instead of their
+        real values (Acuña 57.4, Nuñez 35.0, Giménez 36.4, Dubón 37.6).
+      - the AVG-vs-xBA / wOBA-vs-xwOBA regression adjustment was skipped
+        entirely (it gates on bs["pa"] >= 100, and pa was absent).
+    Starters were unaffected on this slate (22/22 matched) because their names
+    come from statsapi's probable-pitcher field rather than the scrapers, but
+    the same fold protects them the first night an accented starter is listed.
+
+    The player_id key also fixes a real ambiguity the name keys cannot: the
+    frame holds TWO different players named exactly "Max Muncy" (613 rows
+    collapse to 612 name keys), so whichever row came last silently won every
+    "Max Muncy" lookup."""
     if df is None or df.empty: return {}
     name_col = next((c for c in name_col_candidates if c in df.columns), None)
     if not name_col: return {}
+    id_col = next((c for c in ("player_id", "mlbam_id", "MLBAMID") if c in df.columns), None)
     out = {}
+    norm_counts, norm_added = {}, set()
     for _, row in df.iterrows():
         n = row[name_col]
         if name_col == "last_name, first_name" and isinstance(n, str) and "," in n:
             last, first = [p.strip() for p in n.split(",", 1)]
             n = f"{first} {last}"
-        out[n] = row.to_dict()
+        rec = row.to_dict()
+        out[n] = rec
+        if id_col is not None:
+            try: out[int(row[id_col])] = rec
+            except (TypeError, ValueError): pass
+        k = _norm_name_key(n)
+        norm_counts[k] = norm_counts.get(k, 0) + 1
+        if k not in out:
+            out[k] = rec
+            norm_added.add(k)
+    # Ambiguous folds are withdrawn rather than resolved arbitrarily: returning
+    # the wrong player's season line is strictly worse than returning none.
+    # Measured on tonight's frame: exactly one fold is ambiguous ("max muncy",
+    # two distinct real players), so this costs one name and protects the rest.
+    for k, cnt in norm_counts.items():
+        if cnt > 1 and k in norm_added:
+            out.pop(k, None)
     return out
+
+
+def lookup_player(lookup, name, player_id=None, default=None):
+    """Resolve one player's season row: MLBAM id first, then exact name, then
+    the accent/suffix-folded name. See name_lookup() for the measured miss
+    rate the fold exists to close."""
+    if not lookup:
+        return default
+    if player_id is not None:
+        try:
+            row = lookup.get(int(player_id))
+        except (TypeError, ValueError):
+            row = None
+        if row is not None:
+            return row
+    if name is not None:
+        row = lookup.get(name)
+        if row is not None:
+            return row
+        row = lookup.get(_norm_name_key(name))
+        if row is not None:
+            return row
+    return default
 
 
 # ══════════════════════════════════════════════════════════════════════════
@@ -1317,7 +1424,7 @@ def score_batter(batter, gm, opp_sp_row, opp_sp_id, opp_sp_hand, park_wx, batter
 
 def score_pitcher(sp_name, sp_id, sp_hand, gm, side, pit_season_lookup, l14_form,
                    opp_lineup, opp_team_k_pct, ump_scores, opp_k_source=None):
-    ps = pit_season_lookup.get(sp_name, {})
+    ps = lookup_player(pit_season_lookup, sp_name, sp_id, {})
     k_pct = ps.get("K%")
     csw = ps.get("CSW%")
     stuff = ps.get("Stuff+")
@@ -1702,8 +1809,8 @@ def build_candidates(game_meta, *, batter_lookup, pitcher_lookup, team_k_lookup,
                     catcher_by_team[gm[team_key]] = p["id"]
 
     for gm in game_meta:
-        opp_sp_row_for_away_batters = pitcher_lookup.get(gm["home_sp"], {})
-        opp_sp_row_for_home_batters = pitcher_lookup.get(gm["away_sp"], {})
+        opp_sp_row_for_away_batters = lookup_player(pitcher_lookup, gm["home_sp"], gm.get("home_sp_id"), {})
+        opp_sp_row_for_home_batters = lookup_player(pitcher_lookup, gm["away_sp"], gm.get("away_sp_id"), {})
         wx = park_wx.get(gm["matchup"])
         away_opp_catcher_pop = catcher_poptime.get(catcher_by_team.get(gm["home_team"]))
         home_opp_catcher_pop = catcher_poptime.get(catcher_by_team.get(gm["away_team"]))
@@ -1714,7 +1821,7 @@ def build_candidates(game_meta, *, batter_lookup, pitcher_lookup, team_k_lookup,
 
         for batter in gm.get("away_lineup", []):
             batter["team"] = gm["away_team"]
-            bseason = batter_lookup.get(batter["name"])
+            bseason = lookup_player(batter_lookup, batter["name"], batter.get("id"))
             candidates.append(score_batter(batter, gm, opp_sp_row_for_away_batters, gm.get("home_sp_id"), gm.get("home_sp_hand"),
                               wx, bseason, l7_form.get(batter.get("id")), bat_speed_trend, batter_arsenal, pitcher_arsenal,
                               away_opp_bullpen, sharp_bias.get(gm["away_team"]), away_opp_bullpen_quality))
@@ -1723,7 +1830,7 @@ def build_candidates(game_meta, *, batter_lookup, pitcher_lookup, team_k_lookup,
                 if c: candidates.append(c)
         for batter in gm.get("home_lineup", []):
             batter["team"] = gm["home_team"]
-            bseason = batter_lookup.get(batter["name"])
+            bseason = lookup_player(batter_lookup, batter["name"], batter.get("id"))
             candidates.append(score_batter(batter, gm, opp_sp_row_for_home_batters, gm.get("away_sp_id"), gm.get("away_sp_hand"),
                               wx, bseason, l7_form.get(batter.get("id")), bat_speed_trend, batter_arsenal, pitcher_arsenal,
                               home_opp_bullpen, sharp_bias.get(gm["home_team"]), home_opp_bullpen_quality))
