@@ -9,6 +9,29 @@ on:
     # see README for the tradeoff; resolving DST dynamically in cron YAML
     # isn't worth the complexity for a two-outing-a-year edge case.
     - cron: '30 14 * * *'
+    # LATER RUNS EXIST BECAUSE LINEUPS DO NOT EXIST YET AT 14:30.
+    #
+    # Batting-order slot is the strongest single signal in the whole model
+    # (AUC 0.554 across 5,654 backtested hits props, against everything else
+    # at 0.52 or indistinguishable from noise), and quality control now
+    # rejects any batter prop whose lineup is not confirmed -- a nine-man
+    # posted lineup. At 14:30 UTC (10:30am ET) almost no lineup for an evening
+    # game has been posted, so the early runs are working from projections for
+    # exactly the input that matters most.
+    #
+    # MLB games run 17:05 UTC through roughly 02:10 UTC, and lineups appear
+    # two to three hours before each first pitch. These two extra runs cover
+    # the afternoon and prime-time slates with real posted lineups. Each run
+    # overwrites the day's picks, so the last run before you bet is the one
+    # built on the best information.
+    #
+    # This costs Actions minutes, which is why it was not done earlier: on a
+    # private repo the account has 2,000 minutes a month and the pipeline uses
+    # about 11 per run. The repository is now public, and public repositories
+    # get unlimited free Actions minutes, so the constraint that shaped the
+    # old schedule no longer applies.
+    - cron: '0 20 * * *'
+    - cron: '30 22 * * *'
     # Backup window, 1 hour later. Added after verifying that the 14:30 slot
     # did NOT fire on its first scheduled day (13/13 runs to that point were
     # manual workflow_dispatch; the workflow was state:active and nothing was

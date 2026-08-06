@@ -18,7 +18,13 @@ name: Odds Snapshot
 # fraction of the cost.
 on:
   schedule:
-    - cron: '0 14-23,0-2 * * *'
+    # Was windowed 14:00-02:00 UTC purely to stay inside the 2,000-minute
+    # free tier for a PRIVATE repo. The repository is now public, so Actions
+    # minutes are unlimited and the window no longer buys anything. Hourly
+    # around the clock captures the overnight drift that the old window cut
+    # off -- and line movement is the one input in this project that cannot
+    # be backfilled, so every hour not captured is permanently missing.
+    - cron: '0 * * * *'
   workflow_dispatch:
 
 permissions:
