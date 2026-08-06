@@ -426,3 +426,112 @@ def rank_by_hit_probability(candidates):
     actually cashing."""
     return sorted(candidates,
                   key=lambda c: (c.get("hit_probability") or 0.0), reverse=True)
+
+
+# ══════════════════════════════════════════════════════════════════════════
+#  VALUE SCREEN — where a good read and a fair price actually meet
+# ══════════════════════════════════════════════════════════════════════════
+#
+# THE INTUITION THIS CORRECTS. It feels as though a near-certain prop earns
+# some flexibility on price: if it is going to hit anyway, who cares about
+# paying up? The arithmetic says the reverse, and not by a little.
+#
+# Return on a bet is p*d - 1, where d is the decimal price. At -300 (d=1.333)
+# a bet must clear 75% just to break even, so a 78% read returns +4% while a
+# 74% read LOSES 1.3%. Four points of estimation error flips the sign. At
+# +200 (d=3.0) break-even is 33.3%, and the same four-point error moves a 40%
+# read from +20% to +8% -- still comfortably profitable.
+#
+# Short prices amplify estimation error because the stake is large relative to
+# the win. So the edge required to justify a bet GROWS as the price shortens,
+# and "it is a lock" is an argument for more discipline on price, not less.
+#
+#     price    break-even    p needed for +5% ROI    edge required
+#     +200        33.3%            35.0%                +1.7 pts
+#     -150        60.0%            63.0%                +3.0 pts
+#     -300        75.0%            78.8%                +3.8 pts
+#     -500        83.3%            87.5%                +4.2 pts
+#
+# A FIXED EDGE THRESHOLD IN PROBABILITY POINTS IS THEREFORE THE WRONG TOOL.
+# "Accept anything with +5 points of edge" is far too loose at -500 and
+# needlessly strict at +200. Screening on ROI applies the right standard at
+# every price automatically.
+#
+# THE SECOND TEST, which matters more than the first. This model's own
+# uncertainty is not small: a season-long empirical rate carries a 95%
+# interval roughly +/-8 points wide. An edge of +5 points against a number
+# that uncertain is not an edge, it is noise wearing an edge's clothing. So a
+# bet must ALSO still be positive expectation when evaluated at the
+# PESSIMISTIC end of its own confidence interval. That is what separates a
+# real disagreement with the market from a rounding error.
+
+# Minimum return on stake for a bet to be worth making. 5% is deliberately
+# modest: prop markets hold 10-15%, so clearing the hold at all is the hard
+# part, and demanding a large ROI on top mostly selects for estimation error.
+MIN_ROI = 0.05
+
+
+def decimal_odds(american):
+    a = float(american)
+    return 1.0 + (100.0 / -a if a < 0 else a / 100.0)
+
+
+def expected_roi(prob, american):
+    """Return per unit staked. Positive means the bet makes money long-run."""
+    return float(prob) * decimal_odds(american) - 1.0
+
+
+def kelly_fraction(prob, american):
+    """Fraction of bankroll Kelly would stake. Returned for sizing context,
+    NOT as a recommendation to bet full Kelly -- full Kelly assumes the
+    probability is exactly right, which is precisely the assumption this
+    model cannot make. Most practitioners use a quarter to a half of it."""
+    d = decimal_odds(american)
+    if d <= 1.0:
+        return 0.0
+    f = (float(prob) * d - 1.0) / (d - 1.0)
+    return max(0.0, f)
+
+
+def value_verdict(prob, american, prob_lo=None, min_roi=MIN_ROI):
+    """Does a good read and a fair price meet on this prop?
+
+    prob     — the calibrated model probability
+    american — the real posted price
+    prob_lo  — pessimistic end of the model's interval, if known
+
+    Returns a dict with the verdict and the arithmetic behind it. Both tests
+    must pass: the bet must clear min_roi at the model's estimate, AND still
+    be positive expectation at the bottom of its own confidence interval."""
+    d = decimal_odds(american)
+    implied = implied_probability(american)
+    roi = expected_roi(prob, american)
+    breakeven = 1.0 / d
+    out = {
+        "american": int(american), "decimal": round(d, 3),
+        "implied": round(implied, 4), "model": round(float(prob), 4),
+        "edge_pts": round((float(prob) - implied) * 100, 1),
+        "roi": round(roi, 4), "breakeven_prob": round(breakeven, 4),
+        "kelly": round(kelly_fraction(prob, american), 4),
+        "prob_needed_for_min_roi": round((1.0 + min_roi) / d, 4),
+    }
+    robust = None
+    if prob_lo is not None:
+        robust = expected_roi(prob_lo, american) > 0
+        out["roi_at_worst_case"] = round(expected_roi(prob_lo, american), 4)
+        out["robust_to_uncertainty"] = bool(robust)
+    if roi < min_roi:
+        out["verdict"] = "NO BET"
+        out["why"] = (f"{roi*100:+.1f}% return is under the {min_roi*100:.0f}% floor — "
+                      f"needs {out['prob_needed_for_min_roi']*100:.1f}% to clear it, "
+                      f"model says {float(prob)*100:.1f}%")
+    elif robust is False:
+        out["verdict"] = "NO BET"
+        out["why"] = ("edge disappears at the pessimistic end of the model's own "
+                      "confidence interval — the disagreement with the market is "
+                      "inside our margin of error")
+    else:
+        out["verdict"] = "BET"
+        out["why"] = (f"{roi*100:+.1f}% expected return; break-even is "
+                      f"{breakeven*100:.1f}% and the model says {float(prob)*100:.1f}%")
+    return out
