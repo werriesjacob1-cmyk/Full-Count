@@ -890,3 +890,266 @@ def rest_and_usage(game_meta, max_batters_per_game=9, max_workers=16):
     except Exception as e:
         m.warn(f"Rest/usage: {e}")
     return out
+
+
+def batter_pa_composition(limit=2000, min_pa=30):
+    """Exact per-plate-appearance outcome rates for every batter, keyed by
+    MLBAM id: singles, doubles, triples, homers, walks, strikeouts.
+
+    WHY THIS IS NEEDED AT ALL. prop_probability.py computes the real chance a
+    prop hits by convolving a per-PA outcome distribution over the projected
+    number of PAs. That requires knowing how a batter's hits BREAK DOWN, not
+    just how many he gets. Nothing the pipeline already pulls carries that:
+    the FanGraphs frame is 403'd on most runs, and the Statcast expected-stats
+    fallback that actually ships carries only ba/slg/woba aggregates. With
+    aggregates alone the distribution has to be guessed from league-average
+    hit composition, which is precisely the assumption that makes a power
+    hitter and a slap hitter with identical SLG look identical -- and they are
+    not remotely the same bet on "over 1.5 total bases".
+
+    MLB's own season hitting endpoint has the exact counts, free, in one call.
+    Verified live: 687 batters returned with full doubles/triples/homeRuns
+    breakdowns.
+
+    Rates are per PLATE APPEARANCE (not per at-bat) because that is the unit
+    the convolution steps over -- a walk is a real PA that produces zero total
+    bases, and dividing by AB would silently drop those and overstate every
+    per-PA rate by the PA/AB ratio."""
+    rows = fetch_player_stats("hitting", limit=limit)
+    out = {}
+    for r in rows:
+        st = r.get("stat") or {}
+        pid = (r.get("player") or {}).get("id")
+        try:
+            pa = int(st.get("plateAppearances") or 0)
+        except (TypeError, ValueError):
+            continue
+        if not pid or pa < min_pa:
+            continue
+
+        def n(key):
+            try: return int(st.get(key) or 0)
+            except (TypeError, ValueError): return 0
+
+        hits, dbl, tpl, hr = n("hits"), n("doubles"), n("triples"), n("homeRuns")
+        singles = max(0, hits - dbl - tpl - hr)
+        out[int(pid)] = {
+            "name": (r.get("player") or {}).get("fullName"),
+            "PA": pa,
+            "singles_rate": singles / pa,
+            "double_rate": dbl / pa,
+            "triple_rate": tpl / pa,
+            "hr_rate": hr / pa,
+            "bb_rate": n("baseOnBalls") / pa,
+            "k_rate": n("strikeOuts") / pa,
+            # On-base is what gates steal opportunities, and it is the official
+            # figure here rather than a reconstruction.
+            "obp": _as_float(st.get("obp")),
+            "avg": _as_float(st.get("avg")),
+            "slg": _as_float(st.get("slg")),
+            # Steal props need three separate things, and conflating them is
+            # how a speed-only model overrates a fast player who never gets
+            # on: how often he reaches (obp), how often he TRIES once there,
+            # and how often he succeeds. attempt_rate is per time-on-base,
+            # which is the denominator that actually matters -- raw SB totals
+            # confound "runs a lot" with "bats a lot".
+            "SB": n("stolenBases"),
+            "CS": n("caughtStealing"),
+            "times_on_base": n("hits") + n("baseOnBalls") + n("hitByPitch"),
+        }
+        e = out[int(pid)]
+        tob, att = e["times_on_base"], e["SB"] + e["CS"]
+        e["attempt_rate"] = (att / tob) if tob > 0 else 0.0
+        e["success_rate"] = (e["SB"] / att) if att > 0 else 0.0
+    return out
+
+
+def _as_float(v):
+    try:
+        return float(v)
+    except (TypeError, ValueError):
+        return None
+
+
+# ══════════════════════════════════════════════════════════════════════════
+#  EMPIRICAL PROP HIT RATES — how often the bet ACTUALLY cashed
+# ══════════════════════════════════════════════════════════════════════════
+#
+# The stated objective for this system is the props with the best chance of
+# HITTING. There are two ways to answer that, and they are not equally good.
+#
+# The modelled way -- build a per-PA outcome distribution, convolve it over
+# projected plate appearances, read off P(>= threshold) -- is what
+# prop_probability.py does. It is principled, it adjusts for tonight's
+# context, and it is entirely dependent on its assumptions being right. It
+# assumes PAs are independent, that season rates are the true rates, and that
+# the projected PA count is correct. Every one of those is an approximation,
+# and the errors compound multiplicatively.
+#
+# The empirical way is to count. A player's game log says exactly how many of
+# his games produced at least one stolen base, at least two total bases, at
+# least one home run. That is not a model of the prop -- it IS the prop,
+# measured. It needs no independence assumption, no PA projection, and no
+# distributional form, because the real games already folded all of that in,
+# including the things a model never sees: how often he was lifted for a
+# pinch hitter, how often the game was a blowout, how often he sat at 2 PA.
+#
+# WHY THIS WAS WORTH BUILDING, measured rather than argued. Bobby Witt Jr.
+# shipped as the #1 pick on the board at a modelled 36.4% to steal a base.
+# His actual game log: 27 of 96 games with at least one steal, 28.1%. The
+# modelled number was eight points high, and the pick it produced was topping
+# a list that is supposed to be sorted by chance of cashing.
+#
+# Neither method wins outright, so this does not replace the model:
+#   - Empirical is unbiased but backward-looking. It cannot know that tonight
+#     the opposing catcher has a 1.89s pop time, or that the starter is a
+#     6.63 ERA lefty.
+#   - Modelled is context-aware but only as good as its assumptions.
+# The consumer blends them, with the empirical rate as the anchor and the
+# model supplying tonight's adjustment. Both are reported separately so a
+# large disagreement is visible rather than averaged away.
+
+_PROP_THRESHOLDS = {
+    "hits":         [1, 2, 3],
+    "total_bases":  [1, 2, 3, 4],
+    "home_runs":    [1],
+    "stolen_bases": [1],
+    "walks":        [1],
+    "runs":         [1, 2],
+    "rbis":         [1, 2],
+}
+
+
+def _game_log(player_id, group, season=None):
+    season = season or m.YEAR
+    r = m.retry_get(f"{STATS_API}/people/{player_id}/stats",
+                    params={"stats": "gameLog", "group": group,
+                            "season": season, "sportId": 1},
+                    headers=UA, timeout=25, retries=2)
+    r.raise_for_status()
+    stats = r.json().get("stats") or []
+    return (stats[0].get("splits") or []) if stats else []
+
+
+def _empirical_batter_one(job):
+    pid, min_games = job
+    try:
+        splits = _game_log(pid, "hitting")
+    except Exception:
+        return pid, None
+    games = []
+    for s in splits:
+        st = s.get("stat") or {}
+        try:
+            pa = int(st.get("plateAppearances") or 0)
+        except (TypeError, ValueError):
+            pa = 0
+        # A game he did not really play in is not evidence about a prop he
+        # would not have been bet in. Pinch-run and defensive-replacement
+        # appearances would otherwise drag every rate down.
+        if pa < 1:
+            continue
+        h = int(st.get("hits") or 0)
+        tb = int(st.get("totalBases") or 0)
+        games.append({
+            "hits": h, "total_bases": tb,
+            "home_runs": int(st.get("homeRuns") or 0),
+            "stolen_bases": int(st.get("stolenBases") or 0),
+            "walks": int(st.get("baseOnBalls") or 0),
+            "runs": int(st.get("runs") or 0),
+            "rbis": int(st.get("rbi") or 0),
+            "pa": pa,
+        })
+    n = len(games)
+    if n < min_games:
+        return pid, None
+    out = {"games": n, "avg_pa": round(sum(g["pa"] for g in games) / n, 2), "rates": {}}
+    for prop, thresholds in _PROP_THRESHOLDS.items():
+        for t in thresholds:
+            hits = sum(1 for g in games if g[prop] >= t)
+            out["rates"][f"{prop}_{t}plus"] = {
+                "p": round(hits / n, 4), "n": n, "hit": hits,
+                # Wilson lower bound at 95%. A 3-for-4 start is not a 75%
+                # prop, and a raw rate presents it as one; the interval is
+                # what keeps a tiny sample from ranking above a real one.
+                "p_lo": round(_wilson_lower(hits, n), 4),
+            }
+    return pid, out
+
+
+def _wilson_lower(hits, n, z=1.96):
+    """Lower bound of the Wilson score interval — the conservative read of a
+    proportion. Chosen over the normal approximation because it stays sane at
+    the extremes (0-for-12 and 12-for-12 both have finite, sensible bounds,
+    where the normal approximation gives a zero-width interval)."""
+    if n <= 0:
+        return 0.0
+    p = hits / n
+    d = 1 + z * z / n
+    centre = p + z * z / (2 * n)
+    margin = z * ((p * (1 - p) / n + z * z / (4 * n * n)) ** 0.5)
+    return max(0.0, (centre - margin) / d)
+
+
+def empirical_batter_prop_rates(batter_ids, min_games=20, max_workers=16):
+    """Per-batter empirical rate of clearing each standard prop threshold, from
+    real game logs. Keyed by MLBAM id.
+
+    Verified live: Bobby Witt Jr. returns 27/96 games with a steal (0.281)
+    against a modelled 0.364 -- the gap this table exists to expose."""
+    from concurrent.futures import ThreadPoolExecutor
+    ids = [int(b) for b in dict.fromkeys(batter_ids) if b]
+    out = {}
+    if not ids:
+        return out
+    with ThreadPoolExecutor(max_workers=max_workers) as ex:
+        for pid, res in ex.map(_empirical_batter_one, [(i, min_games) for i in ids]):
+            if res:
+                out[pid] = res
+    return out
+
+
+def _empirical_pitcher_one(job):
+    pid, min_starts = job
+    try:
+        splits = _game_log(pid, "pitching")
+    except Exception:
+        return pid, None
+    starts = []
+    for s in splits:
+        st = s.get("stat") or {}
+        # Strikeout props are bet on STARTS. A reliever appearance in the same
+        # log is a different event and would collapse every rate.
+        try:
+            gs = int(st.get("gamesStarted") or 0)
+        except (TypeError, ValueError):
+            gs = 0
+        if gs < 1:
+            continue
+        starts.append(int(st.get("strikeOuts") or 0))
+    n = len(starts)
+    if n < min_starts:
+        return pid, None
+    out = {"starts": n, "avg_k": round(sum(starts) / n, 2), "rates": {}}
+    for t in (4, 5, 6, 7, 8, 9):
+        hits = sum(1 for k in starts if k >= t)
+        out["rates"][f"strikeouts_{t}plus"] = {
+            "p": round(hits / n, 4), "n": n, "hit": hits,
+            "p_lo": round(_wilson_lower(hits, n), 4),
+        }
+    return pid, out
+
+
+def empirical_pitcher_k_rates(pitcher_ids, min_starts=5, max_workers=12):
+    """Per-starter empirical rate of reaching each strikeout threshold, counted
+    over real starts only (relief appearances excluded)."""
+    from concurrent.futures import ThreadPoolExecutor
+    ids = [int(p) for p in dict.fromkeys(pitcher_ids) if p]
+    out = {}
+    if not ids:
+        return out
+    with ThreadPoolExecutor(max_workers=max_workers) as ex:
+        for pid, res in ex.map(_empirical_pitcher_one, [(i, min_starts) for i in ids]):
+            if res:
+                out[pid] = res
+    return out
