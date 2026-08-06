@@ -2340,6 +2340,50 @@ def _blend(empirical, modelled):
     return None, "unavailable"
 
 
+# Minimum chance of cashing a recommended line must still carry. Above this
+# floor the line is chosen by LIFT rather than by probability -- see
+# _pick_line for why the old probability-maximising rule was selecting
+# against the model's own information.
+MIN_LINE_PROB = 0.60
+
+
+def _pick_line(opts):
+    """Choose which line to recommend, from the lines available for a player.
+
+    THE RULE THIS REPLACES SELECTED AGAINST ITS OWN INFORMATION. It took the
+    highest-probability line inside a usable band. Within any market the
+    easiest line always carries both the highest probability and the least
+    room for a read to show, so maximising probability reliably picked the
+    line the model knew least about. Measured on Cristopher Sanchez:
+
+        over 3.5 K   91.5%   lift +20.0   <- what the old rule chose
+        over 4.5 K   86.4%   lift +32.4
+        over 5.5 K   80.6%   lift +42.9   <- what this rule chooses
+
+    He remains an 80.6% bet. This is not trading probability away for
+    information; it is collecting information that was being discarded for
+    eleven points of probability. Every "the model has no read on this pick"
+    complaint traced back to the old rule.
+
+    The floor is what keeps the objective intact: the recommendation still has
+    to be likely, and only among likely lines does the strength of the read
+    break the tie. Lines whose lift cannot be computed fall back to
+    probability order, since an unknown base rate is missing information about
+    the market rather than evidence against the line."""
+    if not opts:
+        return None
+    eligible = [o for o in opts
+                if MIN_LINE_PROB <= o["prob"] <= pp.MAX_USEFUL_PROB]
+    if not eligible:
+        # Nothing clears the floor -- fall back to the most likely line
+        # available rather than recommending nothing.
+        return max(opts, key=lambda o: o["prob"])
+    with_lift = [o for o in eligible if o.get("lift") is not None]
+    if with_lift:
+        return max(with_lift, key=lambda o: (o["lift"], o["prob"]))
+    return max(eligible, key=lambda o: o["prob"])
+
+
 def _batter_options(c, comp, emp, league=None):
     """Every standard prop this batter could be bet on tonight, each with its
     chance of hitting. Returns a list of option dicts, best first."""
@@ -2501,9 +2545,7 @@ def attach_hit_probabilities(candidates, comp_table, emp_batters, emp_pitchers,
         if c.get("type") == "batter" and stat == "total_bases":
             opts = _batter_options(c, comp_table.get(pid), emp_batters.get(pid),
                                    league_rates)
-            usable = [o for o in opts
-                      if pp.MIN_USEFUL_PROB <= o["prob"] <= pp.MAX_USEFUL_PROB]
-            best = (usable or opts or [None])[0]
+            best = _pick_line(opts)
             if not best:
                 c["hit_probability"] = None
                 continue
@@ -2569,9 +2611,7 @@ def attach_hit_probabilities(candidates, comp_table, emp_batters, emp_pitchers,
                              "empirical": None if empirical is None else round(empirical, 4),
                              "modelled": None if modelled is None else round(modelled, 4)})
             opts.sort(key=lambda o: o["prob"], reverse=True)
-            usable = [o for o in opts
-                      if pp.MIN_USEFUL_PROB <= o["prob"] <= pp.MAX_USEFUL_PROB]
-            best = (usable or opts or [None])[0]
+            best = _pick_line(opts)
             if best:
                 c["prop"] = f"Over {best['line']} Strikeouts"
                 c["projection"] = {"stat": "strikeouts", "value": best["line"],
