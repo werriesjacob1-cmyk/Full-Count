@@ -1610,6 +1610,9 @@ def score_first_inning(sp_name, sp_id, gm, side, fi_form):
     if not fi: return None
     yrfi_rate = fi["yrfi_rate"]
     n_starts = fi["n_starts"]
+    # The lineup this starter faces -- an away starter works the bottom of the
+    # first against the home team, and vice versa.
+    opp_team = gm["home_team"] if side == "away" else gm["away_team"]
     lean = "YRFI" if yrfi_rate >= 38 else "NRFI"
     score = scale(yrfi_rate, 0, 100) if lean == "YRFI" else scale(yrfi_rate, 100, 0)
     sample_penalty = max(0, (5 - n_starts) * 15)  # 2 starts: -45; 3: -30; 4: -15; 5+: none
@@ -1617,15 +1620,24 @@ def score_first_inning(sp_name, sp_id, gm, side, fi_form):
     if n_starts < 3:
         score = min(score, 55)  # a 2-start read is never more than a low/medium-confidence lean
     notable_signals = 1 if (yrfi_rate >= 55 or yrfi_rate <= 10) and n_starts >= 3 else 0
-    why = [f"1st-inning runs/start {fi['runs_per_1st_inning']} across {n_starts} starts (L14)",
-           f"YRFI rate {yrfi_rate}%"]
+    why = [f"1st-inning runs allowed/start {fi['runs_per_1st_inning']} across {n_starts} starts (L14)",
+           f"Scored on in the 1st in {yrfi_rate}% of those starts",
+           f"This is the one-sided market ({opp_team} only) — not a both-teams NRFI"]
     watchouts = []
     if n_starts < 3: watchouts.append(f"Only {n_starts} starts in the L14 window — thin sample for a first-inning read")
     return {
         "type": "pitcher", "name": sp_name, "player_id": sp_id,
         "team": gm["away_team"] if side == "away" else gm["home_team"], "side": side,
         "matchup": gm["matchup"], "game_pk": gm.get("game_pk"),
-        "prop": f"{lean} lean (his starts)", "projection": {"stat": "first_inning_run", "value": yrfi_rate},
+        # NAME THE ACTUAL MARKET. This measures runs allowed by THIS pitcher in
+        # the first inning, so it is the one-sided team market ("does the
+        # opposing lineup score in the 1st"), NOT the standard NRFI that books
+        # list, which requires BOTH teams to be held scoreless and prices very
+        # differently. Labelling it "NRFI lean" invited betting a ~75% number
+        # into a ~55% market.
+        "prop": (f"{opp_team} to score in the 1st" if lean == "YRFI"
+                 else f"{opp_team} scoreless in the 1st"),
+        "projection": {"stat": "first_inning_run", "value": yrfi_rate},
         "signals": {"yrfi_rate": round(float(yrfi_rate), 4), "fi_n_starts": float(n_starts)},
         "lean": lean, "score": round(score, 1), "why": why, "watchouts": watchouts,
         "notable_signals": notable_signals,
@@ -1983,6 +1995,18 @@ def _batter_options(c, comp, emp):
     return options
 
 
+# Starts of slate-average evidence mixed into each pitcher's own first-inning
+# record. Deliberately heavier relative to sample size than the batter prior:
+# the L14 window gives most starters only 2-3 first innings, so almost all of
+# these rates are near-worthless on their own.
+FI_PRIOR_STARTS = 5.0
+
+# Fallback only, used when the slate has no first-inning data at all to
+# average. Roughly the league rate at which a starting pitcher allows a run
+# in the first.
+LEAGUE_YRFI_RATE = 0.27
+
+
 def attach_hit_probabilities(candidates, comp_table, emp_batters, emp_pitchers):
     """Give every candidate a real chance-of-cashing number, and let the
     batter props re-choose their threshold to maximise it.
@@ -1990,6 +2014,19 @@ def attach_hit_probabilities(candidates, comp_table, emp_batters, emp_pitchers):
     Anything this cannot price keeps its original prop and gets a null
     probability rather than a guess -- an invented number here would rank
     against real ones, which is worse than an honest gap."""
+    # The slate's own average first-inning scoring rate, start-weighted. Using
+    # tonight's starters rather than a hardcoded constant keeps the prior
+    # tracking the real run environment.
+    fi_runs = fi_starts = 0.0
+    for c in candidates:
+        if (c.get("projection") or {}).get("stat") == "first_inning_run":
+            n = (c.get("signals") or {}).get("fi_n_starts") or 0
+            v = (c.get("projection") or {}).get("value")
+            if n and v is not None:
+                fi_runs += max(0.0, min(1.0, float(v) / 100.0)) * n
+                fi_starts += n
+    slate_yrfi = (fi_runs / fi_starts) if fi_starts else LEAGUE_YRFI_RATE
+
     for c in candidates:
         pid = c.get("player_id")
         stat = (c.get("projection") or {}).get("stat")
@@ -2088,16 +2125,36 @@ def attach_hit_probabilities(candidates, comp_table, emp_batters, emp_pitchers):
             c["probability_basis"] = basis
 
         elif stat == "first_inning_run":
-            # NRFI is already a probability by construction -- score_first_inning
-            # computes it from real per-start first-inning results. The lean
-            # decides which side of it is being recommended.
-            yrfi = (c.get("projection") or {}).get("value")
-            if yrfi is not None:
-                c["hit_probability"] = round(
-                    (yrfi if (c.get("lean") or "").upper().startswith("Y") else 1 - yrfi), 4)
-                c["probability_basis"] = "empirical"
-            else:
+            # NRFI/YRFI is already a frequency by construction -- score_first_inning
+            # counts real first innings from real starts. Two things still have to
+            # be done to it before it is a probability.
+            #
+            # SCALE. yrfi_rate is stored as a PERCENTAGE (100.0, not 1.0). Reading
+            # it as a fraction produced a pick advertised at "10000% to hit", and
+            # the NRFI side computed 1 - 100 = -99, which sorted last instead of
+            # first. Both were visible the moment the board was ranked on it.
+            #
+            # SAMPLE. A starter with 2 first innings and no runs allowed has a
+            # measured YRFI rate of exactly 0%, which reads as a 100% certain
+            # NRFI. That is not a strong pick, it is an absence of evidence, and
+            # ranking on probability puts it straight at the top of the board --
+            # five of tonight's first six picks were 2-start NRFI leans at a
+            # literal 100%. Shrunk toward the slate's own average the same way
+            # every other empirical rate here is.
+            yrfi_pct = (c.get("projection") or {}).get("value")
+            n_starts = (c.get("signals") or {}).get("fi_n_starts") or 0
+            if yrfi_pct is None:
                 c["hit_probability"] = None
+            else:
+                raw = max(0.0, min(1.0, float(yrfi_pct) / 100.0))
+                shrunk = ((raw * n_starts + FI_PRIOR_STARTS * slate_yrfi)
+                          / (n_starts + FI_PRIOR_STARTS)) if (n_starts + FI_PRIOR_STARTS) else slate_yrfi
+                is_yrfi = (c.get("lean") or "").upper().startswith("Y")
+                c["hit_probability"] = round(shrunk if is_yrfi else 1.0 - shrunk, 4)
+                c["probability_basis"] = "empirical"
+                c["probability_detail"] = {
+                    "empirical": round(raw if is_yrfi else 1.0 - raw, 4),
+                    "modelled": None}
         else:
             c.setdefault("hit_probability", None)
     return candidates
