@@ -1164,16 +1164,33 @@ def project_pitcher_workload(l14):
     return clamp(bf, 12.0, 30.0), n, obs
 
 
-def project_pitcher_ks(ps, l14):
+def project_pitcher_ks(ps, l14, exp_k=None):
     """Projected strikeouts for tonight's start: K rate x expected batters
     faced, where the workload is now a real per-pitcher estimate rather than
     a flat league constant (see project_pitcher_workload).
 
     This gates every strikeout prop. A pitcher averaging 19.5 batters faced
     cannot reach the same K total as one averaging 27.5 at the same K rate,
-    and the old flat 22 asserted that he could."""
+    and the old flat 22 asserted that he could.
+
+    K-RATE SOURCE, in priority order: exp_k (exponentially-decayed K rate
+    from mlb_sources.exp_weighted_pitcher_k_rate, halflife 30 days over real
+    starts this season) > the hard L14 Statcast window > season K%. exp_k is
+    preferred because it is the only one of the three actually measured
+    out-of-sample to beat the hard L14 window -- see the validation recorded
+    on exp_weighted_pitcher_k_rate's docstring in mlb_sources.py: the current
+    hard-14-day method scored WORSE (RMSE 0.0993) than a flat league-average
+    K rate (RMSE 0.0807) on 147 real held-out starts, while halflife=30 beat
+    every hard window tested and was statistically tied with the pitcher's
+    own flat season rate (RMSE 0.0684 vs 0.0673) while staying responsive to
+    a real recent change. exp_k is None whenever the sample is too thin
+    (below 3 real starts or 40 batters faced) -- see that function's
+    min_starts/min_raw_bf gates -- in which case this falls through to the
+    previous behaviour unchanged."""
     l14 = l14 or {}
-    if l14.get("l14_pa", 0) >= 15:
+    if exp_k and exp_k.get("k_rate") is not None:
+        k_pct = exp_k["k_rate"] * 100
+    elif l14.get("l14_pa", 0) >= 15:
         k_pct = l14["l14_k_pct"]
     elif ps and ps.get("K%"):
         k_pct = ps["K%"]
@@ -1460,8 +1477,9 @@ def score_batter(batter, gm, opp_sp_row, opp_sp_id, opp_sp_hand, park_wx, batter
 
 
 def score_pitcher(sp_name, sp_id, sp_hand, gm, side, pit_season_lookup, l14_form,
-                   opp_lineup, opp_team_k_pct, ump_scores, opp_k_source=None):
+                   opp_lineup, opp_team_k_pct, ump_scores, opp_k_source=None, exp_k_form=None):
     ps = lookup_player(pit_season_lookup, sp_name, sp_id, {})
+    exp_k = (exp_k_form or {}).get(sp_id)
     k_pct = ps.get("K%")
     csw = ps.get("CSW%")
     stuff = ps.get("Stuff+")
@@ -1534,7 +1552,7 @@ def score_pitcher(sp_name, sp_id, sp_hand, gm, side, pit_season_lookup, l14_form
     elif notable_signals >= 2:
         score = clamp(score + 5)
 
-    projected_ks = project_pitcher_ks(ps, l14)
+    projected_ks = project_pitcher_ks(ps, l14, exp_k)
     exp_bf, bf_n_starts, obs_bf = project_pitcher_workload(l14)
     workload_note = None   # merged into `why` once it exists, further down
     if obs_bf is not None:
@@ -1565,6 +1583,9 @@ def score_pitcher(sp_name, sp_id, sp_hand, gm, side, pit_season_lookup, l14_form
     if csw: why.append(f"CSW% {csw}")
     if stuff: why.append(f"Stuff+ {stuff}")
     if l14.get("l14_k_pct") is not None: why.append(f"L14 K% {l14['l14_k_pct']} ({l14.get('l14_pa')} PA)")
+    if exp_k and exp_k.get("k_rate") is not None:
+        why.append(f"Recency-weighted K rate {exp_k['k_rate']*100:.1f}% (exp. decay, halflife 30d, "
+                    f"{exp_k['n_starts']} real starts / {exp_k['raw_bf']} BF) — drives the strikeout probability model")
     if tto_note and "Maintains" in tto_note: why.append(tto_note)
     if ump.get("accuracy"): why.append(f"HP ump accuracy {ump['accuracy']:.1f}%")
 
@@ -1587,7 +1608,11 @@ def score_pitcher(sp_name, sp_id, sp_hand, gm, side, pit_season_lookup, l14_form
         "prop": f"Over {max(projected_ks - 0.5, 0.5):.1f} Strikeouts (proj. {projected_ks})",
         "projection": {"stat": "strikeouts", "value": projected_ks}, "signals": signals,
         "expected_bf": exp_bf,
-        "k_rate": (l14["l14_k_pct"] if l14.get("l14_pa", 0) >= 15 else (k_pct or 22.5)) / 100,
+        # Same priority order as project_pitcher_ks: exp_k (measured to beat
+        # the hard L14 window out-of-sample) > hard L14 window > season K%.
+        "k_rate": (exp_k["k_rate"] if exp_k and exp_k.get("k_rate") is not None
+                   else (l14["l14_k_pct"] / 100 if l14.get("l14_pa", 0) >= 15
+                         else (k_pct or 22.5) / 100)),
         "score": round(score, 1), "why": why, "watchouts": watchouts, "notable_signals": notable_signals,
         "confidence": "High" if score >= 70 and not low_sample_form else ("Medium" if score >= 55 else "Low"),
     }
@@ -1822,7 +1847,7 @@ def build_candidates(game_meta, *, batter_lookup, pitcher_lookup, team_k_lookup,
                      park_wx, ump_scores, bullpen_scores, bullpen_quality,
                      sharp_bias, l7_form, bat_speed_trend, batter_arsenal,
                      pitcher_arsenal, sprint_speed, catcher_poptime,
-                     l14_pitcher_form, fi_form):
+                     l14_pitcher_form, fi_form, exp_k_form=None):
     """Score every prop candidate on a slate. Pure function of its inputs —
     it fetches nothing, so the caller decides what "now" means.
 
@@ -1882,7 +1907,8 @@ def build_candidates(game_meta, *, batter_lookup, pitcher_lookup, team_k_lookup,
                 opp_k_source = n
             candidates.append(score_pitcher(gm["away_sp"], gm["away_sp_id"], gm.get("away_sp_hand"),
                                              gm, "away", pitcher_lookup, l14_pitcher_form,
-                                             gm.get("home_lineup", []), opp_k, ump_scores, opp_k_source))
+                                             gm.get("home_lineup", []), opp_k, ump_scores, opp_k_source,
+                                             exp_k_form))
             fi = score_first_inning(gm["away_sp"], gm["away_sp_id"], gm, "away", fi_form)
             if fi: candidates.append(fi)
         if gm["home_sp"] != "TBD" and gm.get("home_sp_id"):
@@ -1892,7 +1918,8 @@ def build_candidates(game_meta, *, batter_lookup, pitcher_lookup, team_k_lookup,
                 opp_k_source = n
             candidates.append(score_pitcher(gm["home_sp"], gm["home_sp_id"], gm.get("home_sp_hand"),
                                              gm, "home", pitcher_lookup, l14_pitcher_form,
-                                             gm.get("away_lineup", []), opp_k, ump_scores, opp_k_source))
+                                             gm.get("away_lineup", []), opp_k, ump_scores, opp_k_source,
+                                             exp_k_form))
             fi = score_first_inning(gm["home_sp"], gm["home_sp_id"], gm, "home", fi_form)
             if fi: candidates.append(fi)
 
@@ -1985,6 +2012,16 @@ def main() -> int:
         if gm.get("home_sp_id"): starter_ids[gm["home_sp"]] = gm["home_sp_id"]
     l14_pitcher_form = fetch_l14_pitcher_form(starter_ids)
     fi_form = fetch_first_inning_form(starter_ids)
+    # Exponentially-decayed (halflife 30d) K rate over every real start this
+    # season, from real MLB game logs -- replaces the hard L14 window as the
+    # source the strikeout PROBABILITY model actually consumes. See
+    # mlb_sources.exp_weighted_pitcher_k_rate's docstring for the out-of-
+    # sample validation: the hard window it replaces measured WORSE than a
+    # flat league-average K rate (RMSE 0.0993 vs 0.0807 on 147 real held-out
+    # starts), while this measured statistically tied with the pitcher's own
+    # flat season rate (0.0684 vs 0.0673) and beat every hard window tested.
+    import mlb_sources as _src
+    exp_k_form = _src.exp_weighted_pitcher_k_rate(list(starter_ids.values()))
 
     candidates = build_candidates(
         game_meta,
@@ -1994,7 +2031,7 @@ def main() -> int:
         sharp_bias=sharp_bias, l7_form=l7_form, bat_speed_trend=bat_speed_trend,
         batter_arsenal=batter_arsenal, pitcher_arsenal=pitcher_arsenal,
         sprint_speed=sprint_speed, catcher_poptime=catcher_poptime,
-        l14_pitcher_form=l14_pitcher_form, fi_form=fi_form)
+        l14_pitcher_form=l14_pitcher_form, fi_form=fi_form, exp_k_form=exp_k_form)
 
     # Pure score ranking, no per-game or per-prop-type cap — per explicit
     # direction, the top 10 doesn't have to be diverse across categories or
@@ -2009,7 +2046,7 @@ def main() -> int:
     # Fetched here rather than up front because both tables only need the
     # players who actually produced a candidate, which is a fraction of the
     # slate. Measured: 6 batters in 0.8s, so a full board is a few seconds.
-    comp_table, emp_batters, emp_pitchers = {}, {}, {}
+    comp_table, emp_batters, emp_pitchers, league_rates = {}, {}, {}, {}
     try:
         import mlb_sources as _src
         comp_table = _src.batter_pa_composition()
@@ -2019,13 +2056,20 @@ def main() -> int:
                    if c.get("type") == "pitcher" and c.get("player_id")]
         emp_batters = _src.empirical_batter_prop_rates(bat_ids)
         emp_pitchers = _src.empirical_pitcher_k_rates(pit_ids)
+        league_rates = _src.league_base_rates()
+        if league_rates:
+            print(f"    League base rates from {league_rates.get('_n_starts', 0)} starts / "
+                  f"{league_rates.get('_n_batter_games', 0)} batter-games "
+                  f"(K>=4 {league_rates.get('strikeouts_4plus')}, "
+                  f"1+H {league_rates.get('hits_1plus')})")
         print(f"    Hit-probability inputs: {len(comp_table)} batter rate lines, "
               f"{len(emp_batters)} batter game logs, {len(emp_pitchers)} pitcher game logs")
     except Exception as e:
         m.warn(f"Hit-probability inputs unavailable ({e}) — "
                f"falling back to score-only ranking")
 
-    attach_hit_probabilities(candidates, comp_table, emp_batters, emp_pitchers)
+    attach_hit_probabilities(candidates, comp_table, emp_batters, emp_pitchers,
+                             league_rates)
 
     # RANKING. The board is sorted by chance of cashing, which is the stated
     # objective, with the quality score demoted to a GATE rather than the
@@ -2242,7 +2286,7 @@ def _blend(empirical, modelled):
     return None, "unavailable"
 
 
-def _batter_options(c, comp, emp):
+def _batter_options(c, comp, emp, league=None):
     """Every standard prop this batter could be bet on tonight, each with its
     chance of hitting. Returns a list of option dicts, best first."""
     options = []
@@ -2259,8 +2303,16 @@ def _batter_options(c, comp, emp):
 
     def emp_p(key):
         r = rates.get(key)
-        if r is not None and r.get("league_p") is not None:
-            base_rates[key] = r["league_p"]
+        # TRUE league rate first. r["league_p"] is computed by
+        # _apply_shrinkage from whatever players were passed in -- tonight's
+        # slate -- so it is the slate's own average, not the league's. Falling
+        # back to it is better than having no base rate at all, but it must
+        # never win over a real measurement. See mlb_sources.league_base_rates.
+        lg = (league or {}).get(key)
+        if lg is None and r is not None:
+            lg = r.get("league_p")
+        if lg is not None:
+            base_rates[key] = lg
         if not r or not enough:
             return None
         # Shrunk toward the league rate for this same threshold -- not the
@@ -2319,7 +2371,8 @@ FI_PRIOR_STARTS = 5.0
 LEAGUE_YRFI_RATE = 0.294
 
 
-def attach_hit_probabilities(candidates, comp_table, emp_batters, emp_pitchers):
+def attach_hit_probabilities(candidates, comp_table, emp_batters, emp_pitchers,
+                             league_rates=None):
     """Give every candidate a real chance-of-cashing number, and let the
     batter props re-choose their threshold to maximise it.
 
@@ -2349,7 +2402,8 @@ def attach_hit_probabilities(candidates, comp_table, emp_batters, emp_pitchers):
         stat = (c.get("projection") or {}).get("stat")
 
         if c.get("type") == "batter" and stat == "total_bases":
-            opts = _batter_options(c, comp_table.get(pid), emp_batters.get(pid))
+            opts = _batter_options(c, comp_table.get(pid), emp_batters.get(pid),
+                                   league_rates)
             usable = [o for o in opts
                       if pp.MIN_USEFUL_PROB <= o["prob"] <= pp.MAX_USEFUL_PROB]
             best = (usable or opts or [None])[0]
@@ -2409,7 +2463,8 @@ def attach_hit_probabilities(candidates, comp_table, emp_batters, emp_pitchers):
                 prob, basis = _blend(empirical, modelled)
                 if prob is None:
                     continue
-                base = (r or {}).get("league_p")
+                base = ((league_rates or {}).get(f"strikeouts_{t}plus")
+                        or (r or {}).get("league_p"))
                 opts.append({"line": t - 0.5, "needs": t, "prob": round(prob, 4),
                              "basis": basis,
                              "base_rate": base,

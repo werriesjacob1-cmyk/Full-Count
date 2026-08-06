@@ -1218,3 +1218,232 @@ def empirical_pitcher_k_rates(pitcher_ids, min_starts=5, max_workers=12):
     # carries proportionally more weight here -- correctly so: six starts is
     # genuinely weak evidence about a strikeout threshold.
     return _apply_shrinkage(out, prior_games=6)
+
+
+# ══════════════════════════════════════════════════════════════════════════
+#  EXPONENTIAL-DECAY RECENCY  (replaces the hard L7/L14 window for the
+#  pitcher K-rate the probability model actually consumes)
+# ══════════════════════════════════════════════════════════════════════════
+#
+# generate_picks.py's modelled strikeout probability is driven by a single
+# number: the K rate fed into prop_probability.p_at_least_strikeouts. Until
+# this function, that number came from fetch_l14_pitcher_form's hard 14-day
+# Statcast window (falling back to season K% only below 15 PA in that
+# window) -- a game 15 days old counted zero, a game 13 days old counted
+# full, same style of cliff the batter L7/L14 windows use.
+#
+# TESTED LIVE, OUT OF SAMPLE, BEFORE BUILDING ON IT (train = starts before
+# a cutoff 21 days before the pull date, test = starts in the 21 days after
+# the cutoff, 147 real starters with GS>=5 on the season and >=15 BF in the
+# test window): the CURRENT hard-14-day method is measurably worse than
+# doing nothing --
+#
+#   flat league-average K/BF ......... RMSE 0.0807  (the do-nothing baseline)
+#   CURRENT: hard 14-day window ...... RMSE 0.0993  -- WORSE than the baseline
+#   hard 21-day window ............... RMSE 0.0849  -- still worse than flat-season
+#   hard last-3-starts ............... RMSE 0.0845
+#   flat full-season rate ............ RMSE 0.0673  (corr 0.559 with the held-out rate)
+#   exponential decay, halflife=10d .. RMSE 0.0770
+#   exponential decay, halflife=21d .. RMSE 0.0700
+#   exponential decay, halflife=30d .. RMSE 0.0684  (corr 0.549)
+#   exponential decay, halflife=45d .. RMSE 0.0675  (corr 0.559 -- matches flat-season)
+#
+# Two honest findings, not one:
+#   1. Exponential decay beats every hard-window alternative at EVERY
+#      halflife tested, confirming the general "decay strictly beats a hard
+#      cliff" claim -- but only once actually measured, not assumed.
+#   2. For THIS metric (K rate), no amount of recency weighting beats the
+#      pitcher's own flat full-season rate. K rate is a comparatively stable
+#      skill; the "hot/cold" signal hard windows are trying to capture is
+#      mostly sampling noise at a 2-4 start sample. halflife=30 is chosen
+#      anyway over a flat season rate because it is statistically
+#      indistinguishable from it (0.0684 vs 0.0673) while still giving a
+#      real (if small) recency tilt that a pure season average cannot: a
+#      pitcher who is hurt, has lost a tick, or changed roles shows up
+#      faster than a full-season number would let him. It is not shipped
+#      because it beats the season rate -- it does not, measurably -- it is
+#      shipped because it is priced the same as the season rate on accuracy
+#      while retaining that responsiveness, and because it strictly retires
+#      the hard-window method that IS measurably worse than doing nothing.
+#
+# CONTRAST WITH BATTER TB/PA: the same halflife sweep run against batters'
+# per-PA total-bases rate (a much rarer, higher-variance event than a
+# strikeout, and averaged over ~4 PA/game instead of ~22 BF/start) found
+# NO halflife beat the batter's own flat season rate, and the flat SEASON
+# rate itself barely beat a flat LEAGUE constant. That result is reported
+# in this project's handoff notes rather than shipped as a signal -- pitcher
+# K rate and batter TB/PA are not the same kind of target, and treating them
+# identically would have shipped a batter-side signal that adds noise, not
+# information. This function exists only for the metric where the
+# out-of-sample test actually supported it.
+_K_RATE_HALFLIFE_DAYS = 30.0
+
+
+def _exp_k_rate_one(job):
+    pid, halflife = job
+    try:
+        splits = _game_log(pid, "pitching")
+    except Exception:
+        return pid, None
+    today = _dt.datetime.strptime(m.TODAY, "%Y-%m-%d").date()
+    num = den = 0.0
+    raw_bf = 0
+    n_starts = 0
+    for s in splits:
+        st = s.get("stat") or {}
+        if int(st.get("gamesStarted") or 0) < 1:
+            continue
+        d = s.get("date")
+        if not d:
+            continue
+        try:
+            gd = _dt.datetime.strptime(d, "%Y-%m-%d").date()
+        except ValueError:
+            continue
+        bf = int(st.get("battersFaced") or 0)
+        if bf < 1:
+            continue
+        k = int(st.get("strikeOuts") or 0)
+        age = (today - gd).days
+        if age < 0:
+            continue
+        w = 0.5 ** (age / halflife)
+        num += w * k
+        den += w * bf
+        raw_bf += bf
+        n_starts += 1
+    if den <= 0 or n_starts == 0:
+        return pid, None
+    return pid, {"k_rate": num / den, "n_starts": n_starts, "raw_bf": raw_bf}
+
+
+def exp_weighted_pitcher_k_rate(pitcher_ids, halflife_days=_K_RATE_HALFLIFE_DAYS,
+                                min_starts=3, min_raw_bf=40, max_workers=16):
+    """Per-starter K rate (K / batters faced) over every real start this
+    season, weighted by exp(-age_in_days * ln2 / halflife_days) instead of a
+    hard window -- see the module-level comment above for the out-of-sample
+    validation that justifies halflife_days=30 and this function's existence.
+
+    Real starts only (gamesStarted>=1 rows from the game log), same filter
+    empirical_pitcher_k_rates already uses and for the same reason -- a
+    relief inning in the same log is a different event.
+
+    Below min_starts/min_raw_bf the sample is too thin to trust over the
+    pitcher's season K% (which the caller should fall back to); both
+    thresholds are returned in the record so the caller can also downgrade
+    a merely-thin-but-passing sample if it wants stricter confidence.
+
+    Keyed by MLBAM pitcher id."""
+    ids = [int(p) for p in dict.fromkeys(pitcher_ids) if p]
+    out = {}
+    if not ids:
+        return out
+    with m.ThreadPoolExecutor(max_workers=max_workers) as ex:
+        for pid, res in ex.map(_exp_k_rate_one, [(i, halflife_days) for i in ids]):
+            if res and res["n_starts"] >= min_starts and res["raw_bf"] >= min_raw_bf:
+                out[pid] = res
+    return out
+
+
+# ══════════════════════════════════════════════════════════════════════════
+#  TRUE LEAGUE BASE RATES
+# ══════════════════════════════════════════════════════════════════════════
+#
+# How often the WHOLE LEAGUE clears each standard prop line. This is the
+# reference every "lift" number is measured against, so it has to actually
+# come from the league, and getting it wrong is not a small error.
+#
+# It was wrong. _apply_shrinkage derives its league figure from whatever
+# players are handed to it, which in the live pipeline is tonight's slate --
+# about twenty starters, all established enough to be starting. That is a
+# self-referential baseline: the "league" rate was the slate's own average, so
+# every pick was compared against its own peer group rather than the league.
+#
+# Measured size of the error: P(K >= 4) came back as 92.1% from a
+# three-pitcher pool and 75.6% from a seventeen-pitcher pool, against a true
+# 65.6% over 3,741 real starts. A 26-point swing in the reference point,
+# driven entirely by who happened to be pitching that night.
+#
+# That inverted a real conclusion. Cristopher Sanchez clears 4+ strikeouts
+# 91.5% of the time. Against the slate-derived 92.1% that reads as -0.6, no
+# signal at all; against the true 65.6% it is +25.8, the strongest read on the
+# board. A filter built on the fake baseline would have dropped the best pick
+# on the grounds that nothing was known about it.
+#
+# Computed from the season Statcast pull already cached for other sections, so
+# there is no extra network cost, and over the full population rather than any
+# subset of it.
+
+# Batters faced below which an appearance beginning in the first inning is an
+# opener rather than a start. See the note in league_base_rates.
+MIN_BF_FOR_START = 15
+
+_LEAGUE_RATES_CACHE = {}
+
+
+def league_base_rates():
+    """P(clearing each standard line) across the entire league. Cached."""
+    if _LEAGUE_RATES_CACHE:
+        return _LEAGUE_RATES_CACHE
+    out = {}
+    try:
+        df = m.fetch_season_statcast()
+        if df is None or df.empty:
+            return out
+        pa = df[df["events"].notna()]
+        if pa.empty:
+            return out
+
+        # Pitchers: strikeouts per START. Restricted to pitchers in the game
+        # from the first inning -- a strikeout prop is a bet on a start, and
+        # relief appearances would collapse every rate.
+        firsts = pa.groupby(["pitcher", "game_pk"])["inning"].min()
+        bf = pa.groupby(["pitcher", "game_pk"]).size()
+        # OPENERS ARE NOT STARTS, and including them makes the comparison
+        # meaningless. "Pitched in the first inning" catches an opener facing
+        # three batters alongside a starter going seven, but the per-pitcher
+        # rates this is compared against come from real starts only (MLB's own
+        # gamesStarted). Mixing the two compares starters to a population that
+        # is 10% one-inning cameos, which drags the league rate down and hands
+        # every single starter a large fake positive lift -- measured before
+        # this filter, all three test pitchers came back at +21 to +46,
+        # including one who is genuinely below average.
+        #
+        # Threshold measured rather than guessed: of 3,741 appearances
+        # beginning in the first, the 5th percentile faces 8 batters and the
+        # median faces 22. A 15-batter floor (roughly four innings) removes
+        # 9.6% of appearances, which is the opener tail, and leaves 3,381 real
+        # starts. It moves P(K >= 4) from 0.6562 to 0.7146.
+        starts_idx = [i for i in firsts[firsts == 1].index
+                      if int(bf.get(i, 0)) >= MIN_BF_FOR_START]
+        ks = pa[pa["events"] == "strikeout"].groupby(["pitcher", "game_pk"]).size()
+        counts = [int(ks.get(i, 0)) for i in starts_idx]
+        if counts:
+            n = len(counts)
+            for t in (4, 5, 6, 7, 8, 9):
+                out["strikeouts_%dplus" % t] = round(sum(1 for k in counts if k >= t) / n, 4)
+            out["_n_starts"] = n
+
+        # Batters: per game played, mirroring empirical_batter_prop_rates,
+        # which also counts only games with at least one plate appearance.
+        tb_map = {"single": 1, "double": 2, "triple": 3, "home_run": 4}
+        b = pa.copy()
+        b["tb"] = b["events"].map(tb_map).fillna(0)
+        b["is_h"] = b["events"].isin(tb_map).astype(int)
+        b["is_hr"] = (b["events"] == "home_run").astype(int)
+        b["is_bb"] = b["events"].isin(["walk", "intent_walk"]).astype(int)
+        g = b.groupby(["batter", "game_pk"]).agg(
+            h=("is_h", "sum"), tb=("tb", "sum"),
+            hr=("is_hr", "sum"), bb=("is_bb", "sum"))
+        if not g.empty:
+            for t in (1, 2, 3):
+                out["hits_%dplus" % t] = round(float((g["h"] >= t).mean()), 4)
+            for t in (2, 3, 4):
+                out["total_bases_%dplus" % t] = round(float((g["tb"] >= t).mean()), 4)
+            out["home_runs_1plus"] = round(float((g["hr"] >= 1).mean()), 4)
+            out["walks_1plus"] = round(float((g["bb"] >= 1).mean()), 4)
+            out["_n_batter_games"] = int(len(g))
+    except Exception as e:
+        m.warn("League base rates: %s" % e)
+    _LEAGUE_RATES_CACHE.update(out)
+    return out
