@@ -1947,9 +1947,10 @@ def _batter_options(c, comp, emp):
         r = rates.get(key)
         if not r or not enough:
             return None
-        # The Wilson lower bound, not the raw rate: a player who went 4-for-5
-        # in a short sample should not outrank one with a season behind him.
-        return r["p_lo"]
+        # Shrunk toward the league rate for this same threshold -- not the
+        # raw proportion (overfits a short sample) and not the confidence
+        # bound (biased low at every sample size). See _apply_shrinkage.
+        return r.get("p_hat", r["p"])
 
     families = [
         ("hits", "Hits", [(0.5, 1), (1.5, 2), (2.5, 3)],
@@ -2021,7 +2022,7 @@ def attach_hit_probabilities(candidates, comp_table, emp_batters, emp_pitchers):
             empirical = None
             r = (emp.get("rates") or {}).get("stolen_bases_1plus")
             if r and emp.get("games", 0) >= MIN_EMPIRICAL_GAMES:
-                empirical = r["p_lo"]
+                empirical = r.get("p_hat", r["p"])
             modelled = None
             if comp.get("attempt_rate") and c.get("projected_pa"):
                 tob = (comp.get("obp") or 0.31) * c["projected_pa"]
@@ -2042,7 +2043,7 @@ def attach_hit_probabilities(candidates, comp_table, emp_batters, emp_pitchers):
                 empirical = None
                 r = rates.get(f"strikeouts_{t}plus")
                 if r and emp.get("starts", 0) >= 5:
-                    empirical = r["p_lo"]
+                    empirical = r.get("p_hat", r["p"])
                 modelled = None
                 if bf and kr:
                     try:
@@ -2078,7 +2079,7 @@ def attach_hit_probabilities(candidates, comp_table, emp_batters, emp_pitchers):
             empirical = None
             r = (emp.get("rates") or {}).get("walks_1plus")
             if r and emp.get("games", 0) >= MIN_EMPIRICAL_GAMES:
-                empirical = r["p_lo"]
+                empirical = r.get("p_hat", r["p"])
             modelled = None
             if comp.get("bb_rate") and c.get("projected_pa"):
                 modelled = pp.p_at_least_walks(1, c["projected_pa"], comp["bb_rate"])

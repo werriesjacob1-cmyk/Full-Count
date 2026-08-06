@@ -1069,12 +1069,51 @@ def _empirical_batter_one(job):
             hits = sum(1 for g in games if g[prop] >= t)
             out["rates"][f"{prop}_{t}plus"] = {
                 "p": round(hits / n, 4), "n": n, "hit": hits,
-                # Wilson lower bound at 95%. A 3-for-4 start is not a 75%
-                # prop, and a raw rate presents it as one; the interval is
-                # what keeps a tiny sample from ranking above a real one.
+                # Wilson lower bound at 95%, reported but NOT used as the
+                # estimate -- see _apply_shrinkage for why.
                 "p_lo": round(_wilson_lower(hits, n), 4),
             }
     return pid, out
+
+
+# Games of league-average evidence mixed into every player's own record. At
+# 20, a player with a full season (100+ games) barely moves, while a 25-game
+# sample is pulled about 44% of the way to league average -- roughly the
+# right amount of scepticism for that much evidence.
+SHRINKAGE_PRIOR_GAMES = 20
+
+
+def _apply_shrinkage(table, prior_games=SHRINKAGE_PRIOR_GAMES):
+    """Shrink each player's observed rate toward the league rate for that same
+    threshold, in place, writing "p_hat" as the estimate to actually use.
+
+    WHY NOT THE RAW RATE, AND WHY NOT THE CONFIDENCE BOUND. Both were tried.
+    The raw proportion overfits a short sample -- a hitter who has cleared a
+    line in 4 of 5 games is not an 80% prop. The Wilson lower bound fixes
+    that, but it is the wrong tool here: it answers "what is the pessimistic
+    case", not "what is the best estimate", and it is biased low at EVERY
+    sample size rather than only small ones. Measured on real game logs:
+    Bobby Witt Jr. has a hit in 74.0% of his 96 games, and the lower bound
+    reports 64.4%. Nearly ten points of understatement on a full season of
+    evidence, on a number whose whole purpose is to be read as the chance of
+    the bet cashing.
+
+    Shrinkage toward the league rate fits the problem: it is centred rather
+    than pessimistic, it corrects hardest exactly where the evidence is
+    thinnest, and it converges on the observed rate as the sample grows."""
+    keys = set()
+    for e in table.values():
+        keys.update((e.get("rates") or {}).keys())
+    for key in keys:
+        entries = [e["rates"][key] for e in table.values() if key in (e.get("rates") or {})]
+        total_hits = sum(r["hit"] for r in entries)
+        total_n = sum(r["n"] for r in entries)
+        league = (total_hits / total_n) if total_n else 0.0
+        for r in entries:
+            r["league_p"] = round(league, 4)
+            r["p_hat"] = round((r["hit"] + prior_games * league) /
+                               (r["n"] + prior_games), 4)
+    return table
 
 
 def _wilson_lower(hits, n, z=1.96):
@@ -1106,7 +1145,7 @@ def empirical_batter_prop_rates(batter_ids, min_games=20, max_workers=16):
         for pid, res in ex.map(_empirical_batter_one, [(i, min_games) for i in ids]):
             if res:
                 out[pid] = res
-    return out
+    return _apply_shrinkage(out)
 
 
 def _empirical_pitcher_one(job):
@@ -1152,4 +1191,7 @@ def empirical_pitcher_k_rates(pitcher_ids, min_starts=5, max_workers=12):
         for pid, res in ex.map(_empirical_pitcher_one, [(i, min_starts) for i in ids]):
             if res:
                 out[pid] = res
-    return out
+    # Starters make far fewer starts than batters play games, so the prior
+    # carries proportionally more weight here -- correctly so: six starts is
+    # genuinely weak evidence about a strikeout threshold.
+    return _apply_shrinkage(out, prior_games=6)
