@@ -57,17 +57,38 @@ jobs:
       - name: Capture odds snapshot
         run: python3 odds_snapshot.py
 
+      - name: Capture player-prop prices
+        # THE ONLY PATH TO VALIDATING THE VALUE SCREEN.
+        #
+        # Every other component here was validated by replaying history:
+        # box scores, Statcast, weather and season stats can all be
+        # re-fetched for any past date, so the backtest engine can
+        # reconstruct what the model would have said in May and grade it.
+        # Prices cannot. FanDuel publishes what a prop costs right now and
+        # nothing publishes what it cost last Tuesday -- there is no archive
+        # to buy and none to scrape.
+        #
+        # So the value screen can only be validated FORWARD, against prices
+        # captured while they were live, and that dataset does not exist
+        # until something writes it. Every hour without a capture is an hour
+        # permanently missing from that validation.
+        #
+        # Never allowed to fail the job: a missed hour is bad, a broken
+        # workflow that stops every future hour is far worse.
+        continue-on-error: true
+        run: python3 prop_snapshot.py
+
       - name: Commit snapshot
         run: |
           shopt -s nullglob
           git config user.name "mlb-pipeline-bot"
           git config user.email "actions@github.com"
-          git add data/odds/*.json
+          git add data/odds/*.json data/props/*.json
           if git diff --cached --quiet; then
             echo "No new odds data to commit."
             exit 0
           fi
-          git commit -m "Odds snapshot $(date -u +'%F %H:%M') UTC"
+          git commit -m "Odds + prop-price snapshot $(date -u +'%F %H:%M') UTC"
           # Same retry-with-rebase as the main pipeline: this job runs hourly
           # and WILL collide with the main pipeline's own commits and with
           # manual pushes. Snapshots only ever append to data/odds/, which
