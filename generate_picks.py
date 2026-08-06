@@ -2551,20 +2551,50 @@ LEAGUE_YRFI_RATE = 0.294
 # an earlier version of the scorer. It should be refitted whenever scoring
 # changes materially, and the raw uncalibrated figure is kept on every pick so
 # the two can always be compared.
+# ONE CURVE PER MARKET, not one curve for everything. Measured on held-out
+# later dates, a dedicated calibrator beat the pooled one in all four markets:
+#
+#     market              raw     pooled      own
+#     hits             0.2363     0.2371   0.2329
+#     walks            0.2077     0.2067   0.2063
+#     strikeouts       0.2802     0.2606   0.2394
+#     first_inning     0.2047     0.2056   0.2044
+#
+# The pooled curve was actively HARMING the two largest markets: on hits and
+# on first-inning props it scored worse than applying no calibration at all,
+# because it was averaging away corrections that run in opposite directions.
+# Strikeouts gain most, 15% over raw, which makes sense -- a starter's
+# strikeout distribution has nothing in common with a batter's chance of a
+# hit, and forcing them through one curve fits neither.
 CALIBRATOR_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)),
                                "backtest", "calibrator.json")
+CALIBRATORS_BY_MARKET_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                          "backtest", "calibrators_by_market.json")
 
 
 def load_calibrator():
-    """Load the fitted calibrator, or None if unavailable. Never fatal: an
+    """Load the calibrators, or None if unavailable. Never fatal: an
     uncalibrated board is worse than a calibrated one but far better than no
-    board at all."""
+    board at all.
+
+    Returns (per_market_dict, global_fallback). A market with its own fitted
+    curve uses it; anything else falls back to the pooled curve, which is
+    still better than nothing for a market that had too few rows to fit."""
     try:
         sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "backtest"))
         import calibration as _cal
-        if not os.path.exists(CALIBRATOR_PATH):
+        per_market = {}
+        if os.path.exists(CALIBRATORS_BY_MARKET_PATH):
+            try:
+                per_market = _cal.load_calibrators(CALIBRATORS_BY_MARKET_PATH) or {}
+            except Exception as e:
+                m.warn(f"Per-market calibrators unreadable ({e}) — using the pooled curve")
+        glob = None
+        if os.path.exists(CALIBRATOR_PATH):
+            glob = _cal.Calibrator.load(CALIBRATOR_PATH)
+        if not per_market and glob is None:
             return None
-        return _cal.Calibrator.load(CALIBRATOR_PATH)
+        return (per_market, glob)
     except Exception as e:
         m.warn(f"Calibrator unavailable ({e}) — shipping raw model probabilities")
         return None
@@ -2572,26 +2602,34 @@ def load_calibrator():
 
 def apply_calibration(candidates, calibrator):
     """Replace each stated probability with its calibrated value, keeping the
-    raw one alongside for comparison."""
+    raw one alongside for comparison. Each market uses its own curve where one
+    was fitted, falling back to the pooled curve otherwise."""
     if calibrator is None:
         return candidates
-    n = 0
+    per_market, glob = calibrator
+    used = defaultdict(int)
     for c in candidates:
         p = c.get("hit_probability")
         if p is None:
             continue
+        stat = (c.get("projection") or {}).get("stat")
+        fn = per_market.get(stat) or glob
+        if fn is None:
+            continue
         try:
-            cp = float(calibrator(p))
+            cp = float(fn(p))
         except Exception:
             continue
         c["raw_hit_probability"] = p
         c["hit_probability"] = round(cp, 4)
+        c["calibrated_by"] = stat if stat in per_market else "pooled"
         # Lift has to move with it, or the two disagree about the same pick.
         if c.get("base_rate") is not None:
             c["lift"] = round(c["hit_probability"] - c["base_rate"], 4)
-        n += 1
-    print(f"    Calibration applied to {n} candidate(s) "
-          f"(fitted on 12,582 backtested picks)")
+        used[c["calibrated_by"]] += 1
+    if used:
+        detail = ", ".join(f"{k}:{v}" for k, v in sorted(used.items()))
+        print(f"    Calibration applied ({detail})")
     return candidates
 
 def attach_hit_probabilities(candidates, comp_table, emp_batters, emp_pitchers,
