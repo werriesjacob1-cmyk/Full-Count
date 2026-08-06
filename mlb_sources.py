@@ -558,7 +558,37 @@ def platoon_quality_of_contact(min_pa=20):
     LIMITATION stated honestly: this is platoon quality of contact, not a
     park-adjusted or league-adjusted split — a batter's vs-LHP sample may
     be concentrated against a handful of teams/parks this season. Keyed by
-    MLBAM batter id (int)."""
+    MLBAM batter id (int).
+
+    TESTED FOR THE PROBABILITY MODEL AND NOT WIRED IN THERE — negative
+    result, recorded here rather than silently dropped. The natural use of
+    this table is adjusting a batter's modelled per-PA outcome distribution
+    (prop_probability.pa_outcome_distribution) by his real split against
+    tonight's specific starter's handedness, instead of his hand-blind
+    season rate. Tested out-of-sample before wiring it in: split-half the
+    season, per batter-hand combo with >=30 PA in both halves, does the
+    first half's hand-specific TB/PA (or hit-rate) predict the second half's
+    same-hand rate better than that batter's own hand-BLIND flat rate?
+
+      TB/PA:      flat league RMSE 0.1062 | own flat-season RMSE 0.1240 |
+                   hand-specific split RMSE 0.1373 (WORSE, not better)
+      hit-rate:   flat league RMSE 0.0514 | own flat-season RMSE 0.0588 |
+                   hand-specific split RMSE 0.0667 (also WORSE)
+
+    Heavy empirical-Bayes shrinkage of the hand split toward the batter's
+    own flat rate (weight = PA/(PA+k)) only reaches parity with the
+    hand-blind rate at k>=300 — i.e. the split needs so much regularization
+    toward "ignore the split" that using it adds no information a flat rate
+    didn't already have, at the sample sizes one season provides. The mean
+    |vs-L minus vs-R| gap is a real 0.105 TB/PA in raw form, so the platoon
+    EFFECT is real; the problem is that any one batter's OWN observed split
+    is too noisy, at his own PA volumes, to trust as a personalized
+    adjustment. (A league-wide/aggregate platoon effect, applied uniformly
+    rather than per-batter, was not separately tested and might fare
+    better — generate_picks.py's existing flat 80/35 platoon score already
+    does something in that spirit.) Do not wire this into the probability
+    model without re-testing; a signal that fails this test is dilution,
+    not information, per this project's own standard."""
     df = m.fetch_season_statcast()
     if df is None or df.empty:
         return {}
@@ -648,7 +678,43 @@ def park_hand_factors(min_bbe=100):
 
     Keyed by park name matching mlb_daily.STADIUMS keys where the team's
     home_team abbreviation resolves (all 30 parks verified to resolve live,
-    one alias needed: Statcast's 'AZ' -> STADIUMS' 'ARI')."""
+    one alias needed: Statcast's 'AZ' -> STADIUMS' 'ARI').
+
+    TESTED FOR EXTENSION TO OTHER OUTCOME TYPES AND FOR WIRING INTO THE
+    PROBABILITY MODEL — negative result, recorded rather than dropped
+    silently. The task this was built for was extending this per-outcome
+    (doubles inflated/HR suppressed at a park like Fenway is a real,
+    physically-grounded pattern — verified live: Fenway/L index is 2B 107.0
+    vs HR 69.3, Great American/L is the mirror image, 2B 92.8 vs HR 124.9;
+    correlation between the HR index and the 2B index across all 60
+    park-hand combos is only 0.14, so this genuinely is a different
+    dimension per outcome type, not one park-quality number in disguise)
+    and then wiring the result into a batter's modelled per-PA distribution
+    for tonight's specific park.
+
+    That second step failed an out-of-sample check and was NOT shipped.
+    Split the season in half; does the first half's park-hand index (for
+    either 2B or HR) predict the second half's REAL rate at that same
+    park+hand better than assuming no park effect at all (a flat league
+    rate)? Measured, hand-split (60 combos, median ~790 BBE/half):
+
+      2B:  flat-league RMSE 1.078 | raw park-hand index RMSE 1.226 (worse)
+      HR:  flat-league RMSE 1.134 | raw park-hand index RMSE 1.376 (worse)
+
+    Only very heavy shrinkage toward 100 (weight = BBE/(BBE+k)) claws back
+    to flat-league parity — 2B needs k~1000-2000 to just barely beat flat
+    (RMSE 1.071, a ~1% edge), and HR never beats flat at ANY shrinkage level
+    tested up to k=8000. Coarsening to park-only (both hands pooled, ~1580
+    BBE/half) helps a little — 2B beats flat by ~3% at k~2000 (RMSE 0.848
+    vs 0.875) — but HR still never beats flat pooled either (best RMSE
+    1.078 vs flat 0.947). This matches the standard sabermetric finding
+    that HR park factors are the noisiest component and need multiple
+    SEASONS to stabilize, not one; a single-season split-hand index is
+    mostly noise at the sample sizes real Statcast data provides in a
+    season. Do not wire a per-game park adjustment into the probability
+    model from single-season data without either (a) a multi-year pull, or
+    (b) shrinkage heavy enough that it stops meaningfully differentiating
+    parks in practice, which defeats the purpose."""
     df = m.fetch_season_statcast()
     if df is None or df.empty:
         return {}
