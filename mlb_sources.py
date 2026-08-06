@@ -129,13 +129,31 @@ def team_fielding_table():
 #  MLB STATS API — PLAYER-LEVEL  (SP/RP splits, fielding)
 # ══════════════════════════════════════════════════════════════════════════
 
-def fetch_player_stats(group, limit=1500):
+def fetch_player_stats(group, limit=1500, start_date=None, end_date=None):
     """Leaguewide player-level season stats. Verified live: returns 780
-    pitching rows / 1500 fielding rows with playerPool=All."""
+    pitching rows / 1500 fielding rows with playerPool=All.
+
+    POINT-IN-TIME MODE. Passing start_date/end_date switches the query from
+    `stats=season` (which always means "through today") to
+    `stats=byDateRange`, which MLB serves for an arbitrary window. This is the
+    difference between a stat that includes the game you are trying to predict
+    and one that does not, and it is the only reason backtest/engine.py can
+    reuse this fetcher instead of reimplementing it -- see backtest/SCHEMA.md
+    on lookahead. Verified live against the same endpoint: byDateRange +
+    playerPool=ALL returns 598 hitters / 687 pitchers for a mid-June cutoff,
+    with the same per-split shape as the season query, so every caller's
+    parsing works unchanged.
+
+    Live callers pass neither and get exactly the previous behaviour."""
+    params = {"group": group, "season": m.YEAR, "sportId": 1,
+              "limit": limit, "playerPool": "All"}
+    if start_date and end_date:
+        params.update({"stats": "byDateRange", "startDate": start_date,
+                       "endDate": end_date, "gameType": "R"})
+    else:
+        params["stats"] = "season"
     try:
-        r = m.retry_get(f"{STATS_API}/stats",
-                        params={"stats": "season", "group": group, "season": m.YEAR,
-                                "sportId": 1, "limit": limit, "playerPool": "All"},
+        r = m.retry_get(f"{STATS_API}/stats", params=params,
                         headers=UA, timeout=30, retries=2)
         r.raise_for_status()
         return r.json().get("stats", [{}])[0].get("splits", [])
@@ -892,7 +910,7 @@ def rest_and_usage(game_meta, max_batters_per_game=9, max_workers=16):
     return out
 
 
-def batter_pa_composition(limit=2000, min_pa=30):
+def batter_pa_composition(limit=2000, min_pa=30, start_date=None, end_date=None):
     """Exact per-plate-appearance outcome rates for every batter, keyed by
     MLBAM id: singles, doubles, triples, homers, walks, strikeouts.
 
@@ -914,8 +932,13 @@ def batter_pa_composition(limit=2000, min_pa=30):
     Rates are per PLATE APPEARANCE (not per at-bat) because that is the unit
     the convolution steps over -- a walk is a real PA that produces zero total
     bases, and dividing by AB would silently drop those and overstate every
-    per-PA rate by the PA/AB ratio."""
-    rows = fetch_player_stats("hitting", limit=limit)
+    per-PA rate by the PA/AB ratio.
+
+    start_date/end_date are passed straight through to fetch_player_stats and
+    bound the window (see its docstring): backtest/engine.py needs these rates
+    as of the morning of a past date, not as of today."""
+    rows = fetch_player_stats("hitting", limit=limit,
+                              start_date=start_date, end_date=end_date)
     out = {}
     for r in rows:
         st = r.get("stat") or {}
