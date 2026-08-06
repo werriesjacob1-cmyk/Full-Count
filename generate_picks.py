@@ -2146,7 +2146,16 @@ def main() -> int:
 
     priced = [c for c in gated if c.get("hit_probability") is not None]
     unpriced = [c for c in gated if c.get("hit_probability") is None]
-    priced.sort(key=lambda c: (c["hit_probability"], c["score"]), reverse=True)
+    # EVIDENCE BEFORE CONFIDENCE. Sorting on probability alone put a 12-start
+    # grade-D pick above a 107-game grade-A pick with sixteen times the lift,
+    # because the two probabilities were three points apart. A number resting
+    # on twelve observations should not outrank one resting on a hundred, so
+    # picks are grouped by whether their evidence is adequate first, and only
+    # then ordered by chance of cashing within each group. Thin-sample picks
+    # are still shown -- they are ranked, not hidden.
+    _order = {"A": 0, "B": 0, "C": 0, "D": 1}
+    priced.sort(key=lambda c: (-_order.get(c.get("reliability", "D"), 1),
+                               c["hit_probability"], c["score"]), reverse=True)
     unpriced.sort(key=lambda c: c["score"], reverse=True)
     ranked = priced + unpriced
 
@@ -2293,7 +2302,18 @@ MIN_QUALITY_SCORE = 55.0
 # be recommendable. Zero means "must simply be better than the market average"
 # rather than an arbitrary cushion -- the point is to exclude picks carrying no
 # positive read, not to demand a particular size of one.
-MIN_POSITIVE_LIFT = 0.0
+# A pick has to beat its market's base rate by a REAL margin, not by a
+# rounding error. At exactly 0.0 the floor let through picks at +0.3 and +0.7
+# points -- arithmetically positive, indistinguishable from the base rate in
+# any practical sense -- and because the board ranks by probability those
+# no-information picks led it. Two points is the smallest margin that
+# represents an actual read.
+MIN_POSITIVE_LIFT = 0.02
+
+# Sample sizes below which a pick may still be shown, but must not outrank
+# picks resting on real evidence. Grade D is roughly "fewer than 25
+# games/starts" -- see RELIABILITY_TIERS.
+MIN_RELIABILITY_TO_LEAD = "C"
 
 # Empirical rates need a real sample before they outrank a model that at
 # least accounts for tonight. Below this the model carries the estimate.
@@ -2532,13 +2552,23 @@ def _batter_options(c, comp, emp, league=None):
 # advertised at 70.3% on the YRFI side when the measured-correct read is the
 # NRFI side at 55.7% -- wrong side, and 26 points of overstatement.
 #
-# RECOMMENDED: FI_PRIOR_STARTS = 52.0 (the MLE; anything in 50-90 scores the
-# same to three decimals), or drop the per-pitcher first-inning signal and
-# quote LEAGUE_YRFI_RATE for everyone, which measures statistically as well.
-# Not applied here: it reprices every first-inning pick on the board and that
-# is the caller's call. Note the measured league rate over these 3,231 starts
-# is 0.2838 against the shipped LEAGUE_YRFI_RATE of 0.294 -- close enough.
-FI_PRIOR_STARTS = 5.0
+# APPLIED. The measurement above was left unapplied as a caller's decision;
+# this is that decision, and the board made it easy. Running with n0=5 put two
+# first-inning picks at the top of the 2026-08-06 board on 12 and 24 starts,
+# graded D for sample size and carrying +0.7 and +0.3 points of lift -- while
+# genuinely strong hits reads on 107 games with +12.0 lift sat beneath them.
+# The prior was manufacturing confidence out of small samples and the ranking
+# was faithfully promoting it.
+#
+# 52.0 is the beta-binomial MLE. Anything from 50 to 90 scores identically to
+# three decimals, so the exact value is not delicate.
+#
+# What this means in practice, stated plainly: a starter's own first-inning
+# record is worth almost nothing. At the best possible prior it beats quoting
+# the league rate for everyone by 0.00054 of log loss. These picks will now
+# cluster near the league rate, carry almost no lift, and mostly be removed by
+# the positive-read floor -- which is the correct outcome, not a regression.
+FI_PRIOR_STARTS = 52.0
 
 # The rate at which a team scores in its half of the first inning. MEASURED,
 # not assumed: 3,670 game-halves from this season's Statcast pull gave 0.2940,
