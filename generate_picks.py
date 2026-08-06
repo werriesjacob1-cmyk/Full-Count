@@ -178,6 +178,26 @@ def fetch_nws_weather(lat, lon, hour):
         return None
 
 
+def park_hr_index(temp, wsp, wdir, humid, cf_deg, elev, dome):
+    """The park/weather HR index itself, 0-100, plus the wind-effect label.
+
+    Extracted verbatim from fetch_park_weather so backtest/engine.py can score
+    a past date from historical weather observations without carrying a second
+    copy of the formula — the only difference between the two callers is where
+    temp/wind/humidity come from (a forecast tonight, an archive back then).
+    Returns (index, wind_effect)."""
+    wvf = m.wind_vs_field(wdir, cf_deg, dome)
+    dens = m.air_density_pct(elev, temp, humid)
+    idx_score = 50
+    if "OUT" in wvf.upper(): idx_score += min(wsp * 2.5, 30)
+    elif "IN" in wvf.upper(): idx_score -= min(wsp * 2.5, 25)
+    if temp >= 85: idx_score += 8
+    elif temp <= 45: idx_score -= 10
+    idx_score += (1.0 - dens) * 100 * 0.3
+    wind_effect = "out" if "OUT" in wvf.upper() else ("in" if "IN" in wvf.upper() else "neutral")
+    return round(clamp(idx_score), 1), wind_effect
+
+
 def fetch_park_weather(game_meta):
     """Per-matchup weather + park HR index. Same sources/logic as mlb_daily.py's
     Section 5, kept independent here rather than parsing that section's text.
@@ -221,16 +241,8 @@ def fetch_park_weather(game_meta):
                 if nws.get("wind_mph") is not None and (wx_disagreement is None):
                     wsp = round((wsp + nws["wind_mph"]) / 2, 1)
 
-            wvf = m.wind_vs_field(wdir, cf_deg, dome)
-            dens = m.air_density_pct(elev, temp, humid)
-            idx_score = 50
-            if "OUT" in wvf.upper(): idx_score += min(wsp * 2.5, 30)
-            elif "IN" in wvf.upper(): idx_score -= min(wsp * 2.5, 25)
-            if temp >= 85: idx_score += 8
-            elif temp <= 45: idx_score -= 10
-            idx_score += (1.0 - dens) * 100 * 0.3
-            wind_effect = "out" if "OUT" in wvf.upper() else ("in" if "IN" in wvf.upper() else "neutral")
-            out[gm["matchup"]] = {"dome": False, "park_hr_index": round(clamp(idx_score), 1),
+            idx_score, wind_effect = park_hr_index(temp, wsp, wdir, humid, cf_deg, elev, dome)
+            out[gm["matchup"]] = {"dome": False, "park_hr_index": idx_score,
                                    "wind_effect": wind_effect, "temp": temp, "wind_mph": wsp,
                                    "wx_disagreement": wx_disagreement, "precip_prob": precip_prob}
         except Exception as e:
@@ -1646,58 +1658,35 @@ def score_first_inning(sp_name, sp_id, gm, side, fi_form):
 
 
 # ══════════════════════════════════════════════════════════════════════════
-#  MAIN
+#  CANDIDATE ASSEMBLY
 # ══════════════════════════════════════════════════════════════════════════
 
-def main() -> int:
-    print("Generating top 10 picks (deterministic scoring, no LLM call)...")
+def build_candidates(game_meta, *, batter_lookup, pitcher_lookup, team_k_lookup,
+                     park_wx, ump_scores, bullpen_scores, bullpen_quality,
+                     sharp_bias, l7_form, bat_speed_trend, batter_arsenal,
+                     pitcher_arsenal, sprint_speed, catcher_poptime,
+                     l14_pitcher_form, fi_form):
+    """Score every prop candidate on a slate. Pure function of its inputs —
+    it fetches nothing, so the caller decides what "now" means.
 
-    lineup_text, game_meta, player_ids = m.fetch_lineups(m.TODAY)
-    if not game_meta:
-        with open(PICKS_FILE, "w", encoding="utf-8") as f:
-            f.write(f"# MLB Top 10 Picks — {m.TODAY}\n\nNo games found today.\n")
-        with open(PICKS_JSON_FILE, "w", encoding="utf-8") as f:
-            json.dump({"date": m.TODAY, "picks": []}, f, indent=2)
-        print("No games today — wrote placeholder picks files.")
-        return 0
+    Lifted out of main() unchanged so backtest/engine.py can drive the REAL
+    scoring path with point-in-time inputs instead of maintaining a parallel
+    copy of this loop. A backtest of a reimplementation tests the
+    reimplementation, not this file. main() calls it with today's live
+    fetches; the backtest calls it with tables rebuilt as of a past morning.
+    Every fetch that used to sit inline above this loop stayed in main().
 
-    print(f"{len(game_meta)} games found. Pulling scoring inputs...")
-    bat_season_df = m.fg_bat(m.YEAR)
-    pit_season_df = m.fg_pit(m.YEAR)
-    team_bat_df = m.fg_team_bat(m.YEAR)
-    park_wx = fetch_park_weather(game_meta)
-    ump_scores = fetch_umpire_scores(game_meta)
-    bullpen_scores = fetch_bullpen_scores(game_meta)
-    bullpen_quality = compute_bullpen_era(pit_season_df)
-    sharp_bias = fetch_public_betting_bias(game_meta)
-    l7_form = fetch_l7_batter_form()
-    bat_speed_trend = fetch_bat_speed_trends()
-    batter_arsenal, pitcher_arsenal = fetch_pitch_type_exploits()
-    sprint_speed = fetch_sprint_speed()
-    catcher_poptime = fetch_catcher_poptime()
-
+    An input the caller cannot reconstruct honestly is passed empty ({}), and
+    each scorer already degrades to neutral on a missing signal — which is
+    exactly the behaviour a backtest needs, versus silently substituting a
+    present-day value."""
+    candidates = []
     catcher_by_team = {}
     for gm in game_meta:
         for side, team_key in [("away_lineup", "away_team"), ("home_lineup", "home_team")]:
             for p in gm.get(side, []):
                 if p.get("pos") == "C" and p.get("id"):
                     catcher_by_team[gm[team_key]] = p["id"]
-
-    batter_lookup = name_lookup(bat_season_df)
-    pitcher_lookup = name_lookup(pit_season_df)
-    team_k_lookup = {}
-    if team_bat_df is not None and not team_bat_df.empty and "K%" in team_bat_df.columns:
-        name_col = "Team" if "Team" in team_bat_df.columns else team_bat_df.columns[0]
-        team_k_lookup = dict(zip(team_bat_df[name_col].astype(str), team_bat_df["K%"]))
-
-    starter_ids = {}
-    for gm in game_meta:
-        if gm.get("away_sp_id"): starter_ids[gm["away_sp"]] = gm["away_sp_id"]
-        if gm.get("home_sp_id"): starter_ids[gm["home_sp"]] = gm["home_sp_id"]
-    l14_pitcher_form = fetch_l14_pitcher_form(starter_ids)
-    fi_form = fetch_first_inning_form(starter_ids)
-
-    candidates = []
 
     for gm in game_meta:
         opp_sp_row_for_away_batters = pitcher_lookup.get(gm["home_sp"], {})
@@ -1760,6 +1749,63 @@ def main() -> int:
         wx = park_wx.get(c["matchup"])
         if wx and not wx.get("dome") and (wx.get("precip_prob") or 0) >= 50:
             c["watchouts"].append(f"Rain risk tonight ({wx['precip_prob']}% precipitation probability) — game could be delayed or postponed")
+    return candidates
+
+
+# ══════════════════════════════════════════════════════════════════════════
+#  MAIN
+# ══════════════════════════════════════════════════════════════════════════
+
+def main() -> int:
+    print("Generating top 10 picks (deterministic scoring, no LLM call)...")
+
+    lineup_text, game_meta, player_ids = m.fetch_lineups(m.TODAY)
+    if not game_meta:
+        with open(PICKS_FILE, "w", encoding="utf-8") as f:
+            f.write(f"# MLB Top 10 Picks — {m.TODAY}\n\nNo games found today.\n")
+        with open(PICKS_JSON_FILE, "w", encoding="utf-8") as f:
+            json.dump({"date": m.TODAY, "picks": []}, f, indent=2)
+        print("No games today — wrote placeholder picks files.")
+        return 0
+
+    print(f"{len(game_meta)} games found. Pulling scoring inputs...")
+    bat_season_df = m.fg_bat(m.YEAR)
+    pit_season_df = m.fg_pit(m.YEAR)
+    team_bat_df = m.fg_team_bat(m.YEAR)
+    park_wx = fetch_park_weather(game_meta)
+    ump_scores = fetch_umpire_scores(game_meta)
+    bullpen_scores = fetch_bullpen_scores(game_meta)
+    bullpen_quality = compute_bullpen_era(pit_season_df)
+    sharp_bias = fetch_public_betting_bias(game_meta)
+    l7_form = fetch_l7_batter_form()
+    bat_speed_trend = fetch_bat_speed_trends()
+    batter_arsenal, pitcher_arsenal = fetch_pitch_type_exploits()
+    sprint_speed = fetch_sprint_speed()
+    catcher_poptime = fetch_catcher_poptime()
+
+    batter_lookup = name_lookup(bat_season_df)
+    pitcher_lookup = name_lookup(pit_season_df)
+    team_k_lookup = {}
+    if team_bat_df is not None and not team_bat_df.empty and "K%" in team_bat_df.columns:
+        name_col = "Team" if "Team" in team_bat_df.columns else team_bat_df.columns[0]
+        team_k_lookup = dict(zip(team_bat_df[name_col].astype(str), team_bat_df["K%"]))
+
+    starter_ids = {}
+    for gm in game_meta:
+        if gm.get("away_sp_id"): starter_ids[gm["away_sp"]] = gm["away_sp_id"]
+        if gm.get("home_sp_id"): starter_ids[gm["home_sp"]] = gm["home_sp_id"]
+    l14_pitcher_form = fetch_l14_pitcher_form(starter_ids)
+    fi_form = fetch_first_inning_form(starter_ids)
+
+    candidates = build_candidates(
+        game_meta,
+        batter_lookup=batter_lookup, pitcher_lookup=pitcher_lookup,
+        team_k_lookup=team_k_lookup, park_wx=park_wx, ump_scores=ump_scores,
+        bullpen_scores=bullpen_scores, bullpen_quality=bullpen_quality,
+        sharp_bias=sharp_bias, l7_form=l7_form, bat_speed_trend=bat_speed_trend,
+        batter_arsenal=batter_arsenal, pitcher_arsenal=pitcher_arsenal,
+        sprint_speed=sprint_speed, catcher_poptime=catcher_poptime,
+        l14_pitcher_form=l14_pitcher_form, fi_form=fi_form)
 
     # Pure score ranking, no per-game or per-prop-type cap — per explicit
     # direction, the top 10 doesn't have to be diverse across categories or
