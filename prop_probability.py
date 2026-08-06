@@ -590,14 +590,26 @@ def market_agreement(model_prob, american, hold=ASSUMED_PROP_HOLD):
     fair = devig(implied, hold)
     gap = float(model_prob) - fair
     a = abs(gap)
-    if a <= 0.03:
+    # ABSOLUTE POINTS ARE NOT ENOUGH ON RARE EVENTS. A model saying 8.9%
+    # against a de-vigged 4.3% is only 4.6 points apart and passes any
+    # sensible absolute threshold -- while being a 2x disagreement. That
+    # loophole put three CJ Abrams longshots at +1300 to +2200 on the board
+    # with "edges" of +78% to +104%, which is not what real edge looks like.
+    # The ratio catches on rare events what the difference catches on common
+    # ones, and a prop must survive both.
+    ratio = (float(model_prob) / fair) if fair > 0.005 else float("inf")
+    if a <= 0.03 and 0.8 <= ratio <= 1.25:
         verdict, note = "AGREE", "model and market are within 3 points — both are probably close"
-    elif a <= 0.07:
+    elif a <= 0.07 and 0.65 <= ratio <= 1.5:
         verdict, note = ("LEAN", "a real but modest disagreement — the kind that is "
                                  "occasionally right and worth tracking")
     else:
-        verdict, note = ("SUSPECT", "a large disagreement with a sharper estimator — "
-                                    "far more often a gap in the model than an edge in the market")
+        why = (f"{ratio:.1f}x the market's estimate" if (ratio > 1.5 or ratio < 0.65)
+               else f"{a*100:.1f} points from the market")
+        verdict, note = ("SUSPECT", f"{why} — a large disagreement with a sharper "
+                                    "estimator is far more often a gap in the model "
+                                    "than an edge in the market")
     return {"implied": round(implied, 4), "market_fair": round(fair, 4),
             "model": round(float(model_prob), 4), "gap": round(gap, 4),
+            "ratio": round(ratio, 3) if ratio != float("inf") else None,
             "agreement": verdict, "note": note}

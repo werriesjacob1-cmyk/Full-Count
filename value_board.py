@@ -48,6 +48,9 @@ from datetime import datetime
 import prop_probability as pp
 import odds_fanduel as fd
 
+# Minimum real occurrences before a player's rate for a market is trusted.
+MIN_EVENTS = 4
+
 
 def model_probabilities(prices, min_games=40):
     """Calibrated model probability for every player the book prices."""
@@ -95,6 +98,15 @@ def model_probabilities(prices, min_games=40):
             r = (e.get("rates") or {}).get(f"{stat}_{needs}plus")
             if not r:
                 continue
+            # A RATE NEEDS EVENTS BEHIND IT, not just games. For rare markets
+            # (4+ RBIs, 5+ total bases) a player often has zero or one
+            # occurrence all season, so p_hat is essentially the shrinkage
+            # prior wearing a player's name. Comparing that to a +17500 price
+            # produced "edges" of +200% -- pure artefact. Requiring a handful
+            # of real occurrences is what separates a measured rate from a
+            # prior with a decoration.
+            if r.get("hit", 0) < MIN_EVENTS:
+                continue
             raw = r.get("p_hat", r["p"])
             prob = raw
             prob_lo = r.get("p_lo")
@@ -107,13 +119,31 @@ def model_probabilities(prices, min_games=40):
     return out
 
 
-def screen(entries, min_roi=pp.MIN_ROI, require_robust=True):
+def screen(entries, min_roi=pp.MIN_ROI, require_robust=True, reject_suspect=True):
     bets, near, rejected = [], [], []
     for k, e in entries.items():
         v = pp.value_verdict(e["prob"], e["american"],
                              prob_lo=e["prob_lo"] if require_robust else None,
                              min_roi=min_roi)
-        row = {**e, **v}
+        # THE MARKET IS A SHARPER ESTIMATOR THAN THIS MODEL, and a large
+        # disagreement with it is evidence against the model rather than an
+        # opportunity. A firm pricing thousands of these with money at risk
+        # knows tonight's pitcher, park and lineup slot; a season-long
+        # empirical rate does not. Gaps above 7 points against the de-vigged
+        # price are therefore rejected, not celebrated -- this is the check
+        # that was missing when CJ Abrams' home run showed 23.2% against a
+        # de-vigged 10.3% and was nearly presented as a bet.
+        agree = pp.market_agreement(e["prob"], e["american"])
+        row = {**e, **v, **{"agreement": agree["agreement"],
+                            "market_fair": agree["market_fair"],
+                            "gap_vs_market": agree["gap"]}}
+        if reject_suspect and agree["agreement"] == "SUSPECT":
+            row["verdict"] = "NO BET"
+            row["why"] = ("model is " + f"{agree['gap']*100:+.1f}" +
+                          " pts from the de-vigged market — that is a gap in "
+                          "the model far more often than an edge in the market")
+            rejected.append(row)
+            continue
         if v["verdict"] == "BET":
             bets.append(row)
         elif v["roi"] > 0:
@@ -125,9 +155,13 @@ def screen(entries, min_roi=pp.MIN_ROI, require_robust=True):
     return bets, near, rejected
 
 
-LABEL = {("hits", 1): "1+ hits", ("hits", 2): "2+ hits", ("hits", 3): "3+ hits",
-         ("total_bases", 2): "2+ TB", ("total_bases", 3): "3+ TB",
-         ("total_bases", 4): "4+ TB", ("home_runs", 1): "home run"}
+SHORT = {"hits": "H", "total_bases": "TB", "home_runs": "HR", "runs": "R",
+         "rbis": "RBI", "stolen_bases": "SB", "walks": "BB", "singles": "1B",
+         "doubles": "2B", "triples": "3B", "hits_runs_rbis": "H+R+RBI"}
+
+
+def label(stat, needs):
+    return f"{needs}+ {SHORT.get(stat, stat)}"
 
 
 def main():
@@ -138,6 +172,8 @@ def main():
                     help="skip the confidence-interval test (shows more, trust less)")
     ap.add_argument("--max-price", type=int, default=None,
                     help="ignore anything priced worse than this")
+    ap.add_argument("--allow-suspect", action="store_true",
+                    help="keep props that disagree wildly with the de-vigged market")
     ap.add_argument("--json", help="write results here")
     args = ap.parse_args()
 
@@ -155,7 +191,8 @@ def main():
     entries = model_probabilities(prices)
     print(f"  {len(entries)} props have both a price and a usable model read")
 
-    bets, near, rejected = screen(entries, args.min_roi, not args.no_robust)
+    bets, near, rejected = screen(entries, args.min_roi, not args.no_robust,
+                                  reject_suspect=not args.allow_suspect)
 
     print(f"\n{'='*78}")
     print(f"VALUE BOARD — {datetime.now().strftime('%Y-%m-%d %H:%M')}")
@@ -166,7 +203,7 @@ def main():
         print(f"  {'player':22s}{'prop':11s}{'price':>7s}{'model':>8s}{'implied':>9s}"
               f"{'ROI':>8s}{'kelly':>7s}")
         for b in bets:
-            print(f"  {b['player'][:22]:22s}{LABEL.get((b['stat'],b['needs']),'?'):11s}"
+            print(f"  {b['player'][:22]:22s}{label(b['stat'],b['needs']):11s}"
                   f"{b['american']:+7d}{b['prob']*100:7.1f}%{b['implied']*100:8.1f}%"
                   f"{b['roi']*100:+7.1f}%{b['kelly']*100:6.1f}%")
     else:
@@ -182,7 +219,7 @@ def main():
             reason = ("inside our margin of error"
                       if b.get("robust_to_uncertainty") is False
                       else f"return {b['roi']*100:+.1f}% under the floor")
-            print(f"  {b['player'][:22]:22s}{LABEL.get((b['stat'],b['needs']),'?'):11s}"
+            print(f"  {b['player'][:22]:22s}{label(b['stat'],b['needs']):11s}"
                   f"{b['american']:+7d}  {b['roi']*100:+.1f}% — {reason}")
 
     print(f"\nScreened {len(entries)} priced props: {len(bets)} bet, "
