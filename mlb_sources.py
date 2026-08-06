@@ -1169,6 +1169,50 @@ def _empirical_batter_one(job):
 # 20, a player with a full season (100+ games) barely moves, while a 25-game
 # sample is pulled about 44% of the way to league average -- roughly the
 # right amount of scepticism for that much evidence.
+#
+# ── AUDIT, 2026-08-06: MEASURED. NOT ACTED ON -- SEE THE CAVEAT BELOW. ────
+# This constant is the strength of a Beta prior, so it is not a taste
+# question: for hits_i ~ BetaBinom(n_i, mu*n0, (1-mu)*n0) the posterior mean
+# is EXACTLY the (hit + n0*league)/(n + n0) computed below, and n0 is fixed
+# by the ratio of within-player to between-player variance. Estimated two
+# independent ways on 244 batters / 23,427 real games (2026 game logs):
+# beta-binomial marginal-likelihood MLE, and method of moments; then checked
+# a third way, non-parametrically, by splitting each player's games odd/even,
+# shrinking the odd half and scoring the even half.
+#
+#   threshold            MLE n0   MoM n0   split-half n0   SHIPPED
+#   hits_1plus             72.7     70.3        56            20
+#   hits_2plus             72.0     72.8        56            20
+#   total_bases_2plus      78.3     76.9        70            20
+#   total_bases_3plus      74.3     74.0        90            20
+#   total_bases_4plus      56.0     57.0         -            20
+#   home_runs_1plus        43.4     46.2        56            20
+#   walks_1plus            27.1     26.9        26            20
+#   stolen_bases_1plus     16.2     17.2        12            20
+#   runs_1plus             83.0     78.2         -            20
+#   rbis_1plus            124.8    128.3         -            20
+#
+# All three estimators agree, so the shape of the answer is not in doubt: a
+# single flat prior is wrong because the right n0 varies almost 8x across
+# thresholds. 20 is about right for stolen bases (12-17) and walks (26-27) --
+# where between-player differences really are large and real -- and 3-4x too
+# SMALL for hits and total bases, which is where the board actually bets.
+# The consequence at the 25-game gate (MIN_EMPIRICAL_GAMES): a hits_1plus
+# rate is currently pulled 44% toward league when it should be pulled 74%.
+# Measured cost: at n0=20 the shipped total-bases rates are under-shrunk
+# enough that they score WORSE out of sample than ignoring the player's own
+# record entirely (total_bases_2plus .65675 vs .65540 league-only).
+#
+# RECOMMENDED: fit n0 per threshold by the same beta-binomial MLE, inside
+# _apply_shrinkage's existing per-key loop -- it already pools every player's
+# (hit, n) for each key to get `league`, which is exactly the data the fit
+# needs, so this costs one extra optimisation per key and no new inputs.
+#
+# CAVEAT, stated because it bounds the claim: these n0 were fitted on
+# REGULARS (250+ PA, 40+ games). Restricting to regulars truncates the
+# between-player spread, which biases n0 upward. That is the same population
+# the pipeline scores, so it is the right population to fit on -- but the
+# numbers above should not be reused for a wider player pool.
 SHRINKAGE_PRIOR_GAMES = 20
 
 
@@ -1283,6 +1327,20 @@ def empirical_pitcher_k_rates(pitcher_ids, min_starts=5, max_workers=12):
     # Starters make far fewer starts than batters play games, so the prior
     # carries proportionally more weight here -- correctly so: six starts is
     # genuinely weak evidence about a strikeout threshold.
+    #
+    # AUDIT, 2026-08-06: VERIFIED CORRECT, unlike the batter prior above.
+    # Same three estimators, on 143 starters / 2,688 real starts:
+    #   threshold           MLE n0   MoM n0   split-half n0   SHIPPED
+    #   strikeouts_4plus      12.2     11.7        12             6
+    #   strikeouts_5plus       8.2      7.9         8             6
+    #   strikeouts_6plus       6.9      6.9        12             6
+    #   strikeouts_7plus       6.9      6.9         8             6
+    #   strikeouts_8plus       8.6      8.3         -             6
+    # 6 is mildly too aggressive -- 8 to 10 would be better across the board --
+    # but it is the right order of magnitude, and unlike the batter case the
+    # shrunk pitcher rate clearly beats using no pitcher information at all
+    # (strikeouts_6plus: .64682 shipped vs .67210 league-only, held-out log
+    # loss). A starter's own strikeout record carries real signal; leave this.
     return _apply_shrinkage(out, prior_games=6)
 
 

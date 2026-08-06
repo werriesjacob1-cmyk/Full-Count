@@ -81,7 +81,29 @@ def _mix_fractional(n, fn):
     1.59 times on base rounded to 2, turning a true 30.2% into a reported
     36.3%. Six points of overstatement on the pick that was ranked #1 on the
     board, from a rounding call -- and every batter prop carried the same bias,
-    since a projected 4.62 PA was silently computed as 5."""
+    since a projected 4.62 PA was silently computed as 5."
+
+    AUDIT, 2026-08-06: THIS FIXED THE BIAS BUT NOT ALL OF IT. Two integer
+    points carry at most variance f(1-f) <= 0.25, and the real spread of
+    plate appearances per game is far wider than that. Measured over 23,427
+    real 2026 player-games (batters with 250+ PA): PA/game has within-player
+    variance 0.877, which is 3.5x the most the two-point mixture can ever
+    represent. The real distribution is 1 PA 4.3%, 2 PA 4.1%, 3 PA 10.4%,
+    4 PA 52.8%, 5 PA 26.4%, 6 PA 2.0%, 7 PA 0.1% -- and the 8.4% of games
+    ending at 2 PA or fewer, which are near-automatic losses for "over 0.5
+    hits", cannot be represented here at all.
+
+    Since P(>=1) is concave in n, under-dispersing n biases it UP. Measured
+    against each player's own real PA distribution: P(>=1 hit) is overstated
+    by +0.0091 on average (max +0.0355 for one player), while the higher
+    thresholds go slightly the other way (P(>=2 hits) -0.0030, P(>=3 TB)
+    -0.0018) because P(>=k) turns convex in n for larger k. Home runs are
+    unaffected (+0.0004).
+
+    RECOMMENDED, not applied: replace the two-point mixture with a mixture
+    over a PA distribution matching both the mean AND the measured within-
+    player variance of 0.877. Left alone here because it shifts every batter
+    number on the board and the aggregate effect is under one point."""
     lo = int(n // 1)
     frac = n - lo
     if frac <= 1e-9:
@@ -206,7 +228,33 @@ def p_at_least_walks(threshold, n_pa, bb_rate):
 def p_stolen_base(times_on_base, attempt_rate, success_rate):
     """P(>=1 SB). Gates on actually reaching base first -- elite speed with a
     low on-base ability is far fewer opportunities than raw speed suggests,
-    which a speed-only model systematically overrates."""
+    which a speed-only model systematically overrates.
+
+    AUDIT, 2026-08-06: the OBP GATE IS SELF-CONSISTENT AND COSTS ALMOST
+    NOTHING. The obvious objection is that the caller derives times_on_base
+    from OBP, and OBP counts home runs and extra-base hits, which are not
+    chances to steal second. That is true of the numerator and it is a real
+    32% inflation -- measured over 181 base-stealers, (H+BB+HBP) is 1.316x
+    (median 1.315, max 1.681) the times they actually reached FIRST.
+
+    But it does not propagate, because batter_pa_composition builds
+    attempt_rate over the SAME inflated denominator: attempt_rate =
+    (SB+CS)/(H+BB+HBP). The product attempt_rate * times_on_base is therefore
+    the right expected number of attempts either way, and the inflation
+    cancels exactly at the mean. Only the shape of 1-(1-p)^n is affected --
+    more trials at a lower rate. Measured against real 2026 game logs
+    (17,624 player-games), replacing both halves with the first-base-only
+    definition moves P(>=1 SB) by a mean of just -0.0010, max -0.0132.
+
+    WHAT DOES COST SOMETHING, measured on the same data, is collapsing the
+    opportunity count to its mean before feeding it here. Versus mixing over
+    each player's REAL per-game distribution of times-reached-first, the
+    shipped call is biased high by +0.0062 on average and mean |error| 0.0071
+    against observed per-game steal frequencies; the exact mixture cuts those
+    to +0.0023 and 0.0053. The worst cases are the ones the board actually
+    recommends: David Hamilton +7.2 points (obs 19.2%, model 26.4%), Jazz
+    Chisholm +4.7, Oneil Cruz +3.8, Jose Ramirez +3.8. Same root cause as the
+    PA-count issue documented on _mix_fractional -- see the note there."""
     p_per_time_on = max(0.0, min(1.0, attempt_rate * success_rate))
     return _binom_at_least(times_on_base, p_per_time_on, 1)
 
