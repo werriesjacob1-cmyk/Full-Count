@@ -1,6 +1,6 @@
 {
   "date": "2026-08-06",
-  "generated": "2026-08-06T13:57:47.327832",
+  "generated": "2026-08-06T14:04:11.267335",
   "picks": [
     {
       "rank": 1,
@@ -21,44 +21,44 @@
       "score": 59.0,
       "confidence": "Medium",
       "notable_signals": 0,
-      "hit_probability": 0.9128,
-      "base_rate": 0.7049,
-      "lift": 0.2079,
+      "hit_probability": 0.8964,
+      "base_rate": 0.7146,
+      "lift": 0.1818,
       "probability_basis": "blended",
       "probability_detail": {
         "empirical": 0.87,
-        "modelled": 0.9771
+        "modelled": 0.936
       },
       "alternatives": [
         {
           "line": 4.5,
           "needs": 5,
-          "prob": 0.8591,
+          "prob": 0.8239,
           "basis": "blended",
-          "base_rate": 0.5792,
-          "lift": 0.2799,
+          "base_rate": 0.5395,
+          "lift": 0.2844,
           "empirical": 0.8095,
-          "modelled": 0.9335
+          "modelled": 0.8454
         },
         {
           "line": 5.5,
           "needs": 6,
-          "prob": 0.7846,
+          "prob": 0.7268,
           "basis": "blended",
-          "base_rate": 0.418,
-          "lift": 0.3666,
+          "base_rate": 0.3774,
+          "lift": 0.3494,
           "empirical": 0.7417,
-          "modelled": 0.8489
+          "modelled": 0.7045
         },
         {
           "line": 6.5,
           "needs": 7,
-          "prob": 0.6341,
+          "prob": 0.5589,
           "basis": "blended",
-          "base_rate": 0.2923,
-          "lift": 0.3418,
+          "base_rate": 0.2461,
+          "lift": 0.3128,
           "empirical": 0.5777,
-          "modelled": 0.7188
+          "modelled": 0.5307
         }
       ]
     },
@@ -81,44 +81,44 @@
       "score": 68.6,
       "confidence": "Medium",
       "notable_signals": 0,
-      "hit_probability": 0.8601,
-      "base_rate": 0.418,
-      "lift": 0.4421,
+      "hit_probability": 0.867,
+      "base_rate": 0.3774,
+      "lift": 0.4896,
       "probability_basis": "blended",
       "probability_detail": {
         "empirical": 0.8272,
-        "modelled": 0.9094
+        "modelled": 0.9266
       },
       "alternatives": [
         {
           "line": 3.5,
           "needs": 4,
-          "prob": 0.9547,
+          "prob": 0.9559,
           "basis": "blended",
-          "base_rate": 0.7049,
-          "lift": 0.2498,
+          "base_rate": 0.7146,
+          "lift": 0.2413,
           "empirical": 0.9319,
-          "modelled": 0.989
+          "modelled": 0.9918
         },
         {
           "line": 4.5,
           "needs": 5,
-          "prob": 0.9274,
+          "prob": 0.9306,
           "basis": "blended",
-          "base_rate": 0.5792,
-          "lift": 0.3482,
+          "base_rate": 0.5395,
+          "lift": 0.3911,
           "empirical": 0.9029,
-          "modelled": 0.9642
+          "modelled": 0.9722
         },
         {
           "line": 6.5,
           "needs": 7,
-          "prob": 0.758,
+          "prob": 0.7698,
           "basis": "blended",
-          "base_rate": 0.2923,
-          "lift": 0.4657,
+          "base_rate": 0.2461,
+          "lift": 0.5237,
           "empirical": 0.7213,
-          "modelled": 0.8131
+          "modelled": 0.8426
         }
       ]
     },
@@ -181,66 +181,6 @@
     {
       "rank": 5,
       "type": "pitcher",
-      "name": "Brandon Young",
-      "player_id": 687064,
-      "team": "Baltimore Orioles",
-      "matchup": "Los Angeles Angels @ Baltimore Orioles",
-      "game_pk": 824804,
-      "side": null,
-      "prop": "Over 3.5 Strikeouts",
-      "projection": {
-        "stat": "strikeouts",
-        "value": 3.5,
-        "needs": 4
-      },
-      "lean": null,
-      "score": 55.1,
-      "confidence": "Medium",
-      "notable_signals": 1,
-      "hit_probability": 0.7801,
-      "base_rate": 0.7049,
-      "lift": 0.0752,
-      "probability_basis": "blended",
-      "probability_detail": {
-        "empirical": 0.7596,
-        "modelled": 0.8108
-      },
-      "alternatives": [
-        {
-          "line": 4.5,
-          "needs": 5,
-          "prob": 0.6427,
-          "basis": "blended",
-          "base_rate": 0.5792,
-          "lift": 0.0635,
-          "empirical": 0.6448,
-          "modelled": 0.6394
-        },
-        {
-          "line": 5.5,
-          "needs": 6,
-          "prob": 0.3406,
-          "basis": "blended",
-          "base_rate": 0.418,
-          "lift": -0.0774,
-          "empirical": 0.2712,
-          "modelled": 0.4446
-        },
-        {
-          "line": 6.5,
-          "needs": 7,
-          "prob": 0.2266,
-          "basis": "blended",
-          "base_rate": 0.2923,
-          "lift": -0.0657,
-          "empirical": 0.1981,
-          "modelled": 0.2693
-        }
-      ]
-    },
-    {
-      "rank": 6,
-      "type": "pitcher",
       "name": "Cristopher S\u00e1nchez",
       "player_id": 650911,
       "team": "Philadelphia Phillies",
@@ -267,7 +207,7 @@
       "alternatives": null
     },
     {
-      "rank": 7,
+      "rank": 6,
       "type": "pitcher",
       "name": "Michael Wacha",
       "player_id": 608379,
@@ -293,6 +233,66 @@
         "modelled": null
       },
       "alternatives": null
+    },
+    {
+      "rank": 7,
+      "type": "pitcher",
+      "name": "Mason Barnett",
+      "player_id": 686930,
+      "team": "Athletics",
+      "matchup": "Athletics @ Cincinnati Reds",
+      "game_pk": 824481,
+      "side": null,
+      "prop": "Over 3.5 Strikeouts",
+      "projection": {
+        "stat": "strikeouts",
+        "value": 3.5,
+        "needs": 4
+      },
+      "lean": null,
+      "score": 55.2,
+      "confidence": "Medium",
+      "notable_signals": 0,
+      "hit_probability": 0.7693,
+      "base_rate": 0.7146,
+      "lift": 0.0547,
+      "probability_basis": "modelled",
+      "probability_detail": {
+        "empirical": null,
+        "modelled": 0.7693
+      },
+      "alternatives": [
+        {
+          "line": 4.5,
+          "needs": 5,
+          "prob": 0.5814,
+          "basis": "modelled",
+          "base_rate": 0.5395,
+          "lift": 0.0419,
+          "empirical": null,
+          "modelled": 0.5814
+        },
+        {
+          "line": 5.5,
+          "needs": 6,
+          "prob": 0.383,
+          "basis": "modelled",
+          "base_rate": 0.3774,
+          "lift": 0.0056,
+          "empirical": null,
+          "modelled": 0.383
+        },
+        {
+          "line": 6.5,
+          "needs": 7,
+          "prob": 0.2177,
+          "basis": "modelled",
+          "base_rate": 0.2461,
+          "lift": -0.0284,
+          "empirical": null,
+          "modelled": 0.2177
+        }
+      ]
     },
     {
       "rank": 8,
@@ -353,30 +353,62 @@
     {
       "rank": 10,
       "type": "pitcher",
-      "name": "Bailey Ober",
-      "player_id": 641927,
-      "team": "Minnesota Twins",
-      "matchup": "Minnesota Twins @ Kansas City Royals",
-      "game_pk": 824080,
-      "side": "away",
-      "prop": "Kansas City Royals scoreless in the 1st",
+      "name": "Brandon Young",
+      "player_id": 687064,
+      "team": "Baltimore Orioles",
+      "matchup": "Los Angeles Angels @ Baltimore Orioles",
+      "game_pk": 824804,
+      "side": null,
+      "prop": "Over 3.5 Strikeouts",
       "projection": {
-        "stat": "first_inning_run",
-        "value": 22.2
+        "stat": "strikeouts",
+        "value": 3.5,
+        "needs": 4
       },
-      "lean": "NRFI",
-      "score": 77.8,
-      "confidence": "High",
-      "notable_signals": 0,
-      "hit_probability": 0.7623,
-      "base_rate": 0.706,
-      "lift": 0.0563,
-      "probability_basis": "empirical",
+      "lean": null,
+      "score": 64.0,
+      "confidence": "Medium",
+      "notable_signals": 2,
+      "hit_probability": 0.7629,
+      "base_rate": 0.7146,
+      "lift": 0.0483,
+      "probability_basis": "blended",
       "probability_detail": {
-        "empirical": 0.778,
-        "modelled": null
+        "empirical": 0.7596,
+        "modelled": 0.7679
       },
-      "alternatives": null
+      "alternatives": [
+        {
+          "line": 4.5,
+          "needs": 5,
+          "prob": 0.6192,
+          "basis": "blended",
+          "base_rate": 0.5395,
+          "lift": 0.0797,
+          "empirical": 0.6448,
+          "modelled": 0.5808
+        },
+        {
+          "line": 5.5,
+          "needs": 6,
+          "prob": 0.3162,
+          "basis": "blended",
+          "base_rate": 0.3774,
+          "lift": -0.0612,
+          "empirical": 0.2712,
+          "modelled": 0.3837
+        },
+        {
+          "line": 6.5,
+          "needs": 7,
+          "prob": 0.2066,
+          "basis": "blended",
+          "base_rate": 0.2461,
+          "lift": -0.0395,
+          "empirical": 0.1981,
+          "modelled": 0.2193
+        }
+      ]
     }
   ]
 }
