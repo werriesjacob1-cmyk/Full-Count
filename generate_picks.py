@@ -2016,12 +2016,33 @@ def main() -> int:
     priced.sort(key=lambda c: (c["hit_probability"], c["score"]), reverse=True)
     unpriced.sort(key=lambda c: c["score"], reverse=True)
     ranked = priced + unpriced
+
+    # CANDIDATE POOL DIAGNOSTIC. Prints what was actually CONSIDERED, not just
+    # what won. Without it, a board that comes out all one market is
+    # ambiguous: it could mean that market genuinely had the best picks, or
+    # that another market's candidates were never priced and got silently
+    # buried. That exact failure already happened once -- every walk prop
+    # shipped with a null probability because score_walk omitted projected_pa,
+    # and under probability ranking an unpriced candidate sorts behind
+    # everything, so the whole prop type vanished with no error anywhere.
+    pool = defaultdict(lambda: {"n": 0, "priced": 0, "best": 0.0})
+    for c in candidates:
+        st = (c.get("projection") or {}).get("stat") or "?"
+        e = pool[st]
+        e["n"] += 1
+        if c.get("hit_probability") is not None:
+            e["priced"] += 1
+            e["best"] = max(e["best"], c["hit_probability"])
+    print("    Candidate pool by market (considered / priced / best prob):")
+    for st, e in sorted(pool.items(), key=lambda kv: -kv[1]["best"]):
+        flag = "" if e["priced"] == e["n"] else "   <-- UNPRICED CANDIDATES"
+        print(f"      {st:18s} {e['n']:4d} / {e['priced']:4d}   best={e['best']:.3f}{flag}")
     if not ranked:   # nothing cleared the gate — fall back rather than ship nothing
         ranked = sorted(candidates, key=lambda c: c["score"], reverse=True)
     top10 = ranked[:10]
     skipped = [c for c in ranked[10:13] if c["score"] >= 55][:2]
 
-    write_markdown(top10, skipped, game_meta, bullpen_scores)
+    write_markdown(top10, skipped, game_meta, bullpen_scores, ranked)
     write_json(top10)
     persist_player_snapshots(candidates)
     print(f"Wrote {len(top10)} picks to {PICKS_FILE} and {PICKS_JSON_FILE}")
@@ -2040,6 +2061,7 @@ def write_json(top10):
             "prop": c["prop"], "projection": c["projection"], "lean": c.get("lean"), "score": c["score"],
             "confidence": c["confidence"], "notable_signals": c["notable_signals"],
             "hit_probability": c.get("hit_probability"),
+            "base_rate": c.get("base_rate"), "lift": c.get("lift"),
             "probability_basis": c.get("probability_basis"),
             "probability_detail": c.get("probability_detail"),
             "alternatives": c.get("alternatives"),
@@ -2158,8 +2180,12 @@ def _batter_options(c, comp, emp):
     rates = (emp or {}).get("rates") or {}
     enough = (emp or {}).get("games", 0) >= MIN_EMPIRICAL_GAMES
 
+    base_rates = {}
+
     def emp_p(key):
         r = rates.get(key)
+        if r is not None and r.get("league_p") is not None:
+            base_rates[key] = r["league_p"]
         if not r or not enough:
             return None
         # Shrunk toward the league rate for this same threshold -- not the
@@ -2187,10 +2213,17 @@ def _batter_options(c, comp, emp):
             prob, basis = _blend(empirical, modelled)
             if prob is None:
                 continue
+            base = base_rates.get(f"{stat}_{need}plus")
             options.append({
                 "stat": stat, "line": line, "needs": need,
                 "label": f"Over {line} {label}",
                 "prob": round(prob, 4), "basis": basis,
+                # How far above the LEAGUE rate for this exact line this
+                # player sits. See the note on lift in write_markdown: the
+                # probability says how likely the bet is, the lift says
+                # whether the model actually has an opinion about it.
+                "base_rate": base,
+                "lift": None if base is None else round(prob - base, 4),
                 "empirical": None if empirical is None else round(empirical, 4),
                 "modelled": None if modelled is None else round(modelled, 4),
             })
@@ -2258,6 +2291,8 @@ def attach_hit_probabilities(candidates, comp_table, emp_batters, emp_pitchers):
                                "needs": best["needs"]}
             c["hit_probability"] = best["prob"]
             c["probability_basis"] = best["basis"]
+            c["base_rate"] = best.get("base_rate")
+            c["lift"] = best.get("lift")
             c["probability_detail"] = {"empirical": best["empirical"],
                                        "modelled": best["modelled"]}
             c["alternatives"] = [o for o in opts if o is not best][:3]
@@ -2382,6 +2417,9 @@ def attach_hit_probabilities(candidates, comp_table, emp_batters, emp_pitchers):
                     c["prop"] = (f"{opp} to score in the 1st" if is_yrfi
                                  else f"{opp} scoreless in the 1st")
                 c["hit_probability"] = round(shrunk if is_yrfi else 1.0 - shrunk, 4)
+                c["base_rate"] = round(LEAGUE_YRFI_RATE if is_yrfi
+                                       else 1.0 - LEAGUE_YRFI_RATE, 4)
+                c["lift"] = round(c["hit_probability"] - c["base_rate"], 4)
                 c["probability_basis"] = "empirical"
                 c["probability_detail"] = {
                     "empirical": round(raw if is_yrfi else 1.0 - raw, 4),
@@ -2391,7 +2429,7 @@ def attach_hit_probabilities(candidates, comp_table, emp_batters, emp_pitchers):
     return candidates
 
 
-def write_markdown(top10, skipped, game_meta, bullpen_scores):
+def write_markdown(top10, skipped, game_meta, bullpen_scores, all_ranked=()):
     lines = [f"# MLB Top 10 Picks — {m.TODAY}", "",
              "_Generated by deterministic scoring over today's research pull — no LLM "
              "in the loop. No sportsbook odds were used: these are ranked purely by "
@@ -2430,7 +2468,12 @@ def write_markdown(top10, skipped, game_meta, bullpen_scores):
             if det.get("modelled") is not None:
                 parts.append(f"model says {det['modelled']*100:.0f}% tonight")
             basis = f" ({'; '.join(parts)})" if parts else ""
-            lines.append(f"- **Chance of hitting:** {hp*100:.1f}%{basis}")
+            lift = c.get("lift"); base = c.get("base_rate")
+            lift_s = ""
+            if lift is not None and base is not None:
+                lift_s = (f" — **{lift*100:+.1f} pts** vs the {base*100:.0f}% league base "
+                          f"rate for this market")
+            lines.append(f"- **Chance of hitting:** {hp*100:.1f}%{basis}{lift_s}")
             alts = c.get("alternatives") or []
             if alts:
                 alt_s = ", ".join(f"{a['label'] if 'label' in a else 'Over ' + str(a['line']) + ' Ks'}"
@@ -2448,6 +2491,67 @@ def write_markdown(top10, skipped, game_meta, bullpen_scores):
         lines.append("- **Line check:** verify the current line/availability before betting — "
                       "no live odds were used to generate this pick.")
         lines.append("")
+
+    # ── Best in each market ──────────────────────────────────────────────
+    # WHY THIS SECTION EXISTS. Ranking strictly by chance of cashing does
+    # exactly what it says, and that has a structural consequence: prop types
+    # with a high BASE RATE crowd out everything else, every single day. A
+    # team is held scoreless in the first 70.6% of the time before anyone
+    # looks at the pitcher, so first-inning picks start 70 points ahead of a
+    # coin flip and a hitter's best line cannot catch them. The 2026-08-06
+    # board came out seven first-inning picks and three strikeout props, with
+    # no batter prop at all -- not because the model disliked the hitters, but
+    # because it was ranking markets rather than picks.
+    #
+    # This is NOT the forced-diversity rule that was deliberately removed. The
+    # top 10 above is still a pure probability ranking with no caps, and if it
+    # is all one market that is what ships. This section is additional: the
+    # best available pick WITHIN each market, so a day's board is never
+    # silently reduced to one bet type.
+    #
+    # LIFT is the number to read here. Probability says how likely the bet is;
+    # lift says how much of that is the market being easy versus this pick
+    # being good. An 80% first-inning pick is +9 over its base rate, while a
+    # 72% hits prop is +7 over its own -- far closer than the raw percentages
+    # suggest, and the comparison the percentages alone actively hide.
+    by_market = defaultdict(list)
+    for c in all_ranked:
+        stat = (c.get("projection") or {}).get("stat")
+        if stat and c.get("hit_probability") is not None:
+            by_market[stat].append(c)
+    shown = {id(c) for c in top10}
+    market_names = {"hits": "Hits", "total_bases": "Total Bases",
+                    "home_runs": "Home Runs", "strikeouts": "Strikeouts",
+                    "stolen_base": "Stolen Bases", "walks": "Walks",
+                    "first_inning_run": "First Inning"}
+    extra = []
+    for stat, group in by_market.items():
+        best = [c for c in group if id(c) not in shown][:2]
+        if best:
+            extra.append((market_names.get(stat, stat), best))
+    if extra:
+        lines.append("## Best in each market")
+        lines.append("")
+        lines.append("_The top 10 above is a pure probability ranking, so the markets with "
+                     "the highest natural base rates dominate it. These are the best "
+                     "picks in every OTHER market, for when you don't want the whole card "
+                     "on one bet type. **Lift** is how far above that market's league base "
+                     "rate the pick sits — it's the part that reflects an actual read, "
+                     "rather than the market simply being easy._")
+        lines.append("")
+        for market, picks in sorted(extra):
+            lines.append(f"**{market}**")
+            for c in picks:
+                hp = c["hit_probability"]
+                lift = c.get("lift")
+                lift_s = ""
+                if lift is not None:
+                    base = c.get("base_rate")
+                    lift_s = (f"  ·  lift {lift*100:+.1f} pts"
+                              + (f" over a {base*100:.0f}% base rate" if base is not None else ""))
+                lines.append(f"- {c['name']} ({c['team']}) — {c['prop']} — "
+                             f"**{hp*100:.0f}%**{lift_s}")
+            lines.append("")
 
     if skipped:
         lines.append("**What I'd skip tonight:**")
