@@ -2256,6 +2256,49 @@ def _batter_options(c, comp, emp):
 # record. Deliberately heavier relative to sample size than the batter prior:
 # the L14 window gives most starters only 2-3 first innings, so almost all of
 # these rates are near-worthless on their own.
+#
+# ── AUDIT, 2026-08-06: THIS IS THE LARGEST REMAINING ERROR ON THE BOARD. ──
+# This value was chosen when fetch_first_inning_form pulled the L14 window and
+# a pitcher had 2-3 first innings, where a prior of 5 starts genuinely did
+# dominate. That is no longer true: the fetcher now pulls SEASON data, so a
+# starter arrives with 16-25 first innings and a prior of 5 carries only
+# 5/(20+5) = 20% of the weight. The pitcher's own rate now drives the number
+# almost entirely -- and measured against real results, that rate is worthless.
+#
+# MEASURED on 185 starters / 3,231 real 2026 starts, first-inning runs scored
+# off season Statcast. Non-parametric: shrink each pitcher's odd-numbered
+# starts, score his even-numbered ones. Held-out mean log loss:
+#
+#     n0=0    0.80384        n0=35    0.59597
+#     n0=2    0.63312        n0=52    0.59535
+#     n0=5    0.61507  <-- SHIPPED    n0=90    0.59513   <-- best
+#     n0=10   0.60443        n0=150   0.59520
+#     n0=20   0.59820        league rate only  0.59567
+#
+# The shipped prior scores 0.01940 WORSE than giving every starter the league
+# rate and ignoring his record entirely -- 95% CI [+0.00480, +0.03467] over
+# 600 bootstrap resamples, excluding zero. A starter's own first-inning record
+# carries essentially no predictive signal even across a full season: the best
+# n0 (90) beats league-only by 0.00054, which is nothing. Two independent
+# parametric fits agree: beta-binomial MLE n0 = 52.3, method of moments 23.6.
+#
+# WHAT IT COSTS TONIGHT. The rates now spread 0-75% across the slate, so this
+# is not a rounding matter -- it changes which side gets picked:
+#
+#   raw 50% over 20 starts:  shipped NRFI 54.3%  | at n0=52 NRFI 65.6%
+#   raw 65% over 20 starts:  shipped YRFI 57.7%  | at n0=52 NRFI 61.5%  (FLIPS)
+#   raw 79% over 24 starts:  shipped YRFI 70.3%  | at n0=52 NRFI 55.7%  (FLIPS)
+#
+# So the most confident first-inning pick the board can currently produce is
+# advertised at 70.3% on the YRFI side when the measured-correct read is the
+# NRFI side at 55.7% -- wrong side, and 26 points of overstatement.
+#
+# RECOMMENDED: FI_PRIOR_STARTS = 52.0 (the MLE; anything in 50-90 scores the
+# same to three decimals), or drop the per-pitcher first-inning signal and
+# quote LEAGUE_YRFI_RATE for everyone, which measures statistically as well.
+# Not applied here: it reprices every first-inning pick on the board and that
+# is the caller's call. Note the measured league rate over these 3,231 starts
+# is 0.2838 against the shipped LEAGUE_YRFI_RATE of 0.294 -- close enough.
 FI_PRIOR_STARTS = 5.0
 
 # The rate at which a team scores in its half of the first inning. MEASURED,
