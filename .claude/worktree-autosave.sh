@@ -42,7 +42,22 @@ git worktree list --porcelain | awk '/^worktree /{print $2}' | while read -r wt;
     untracked=$(git -C "$wt" ls-files --others --exclude-standard)
     [ -n "$untracked" ] || continue
     echo "$untracked" | while read -r f; do
-      [ -n "$f" ] && git -C "$wt" add -- "$f" >/dev/null 2>&1
+      [ -n "$f" ] || continue
+      # SIZE GATE. Source is small; generated data is big. Without this the
+      # watchdog tracks regenerable artifacts, and once a file is tracked
+      # .gitignore no longer applies to it, so it keeps getting committed on
+      # a 3-minute timer forever. This has already happened twice: a 3.4MB
+      # Statcast parquet cache and a 6.1MB backtest rows.jsonl, both of which
+      # had gitignore rules added only AFTER the watchdog had already picked
+      # them up. Losing an unsaved multi-megabyte generated file is cheap --
+      # it regenerates. Losing unsaved source is not, and source is never
+      # this large.
+      sz=$(stat -c%s "$wt/$f" 2>/dev/null || echo 0)
+      if [ "$sz" -gt 1048576 ]; then
+        echo "$(date -u +%H:%M:%S)   skipped $f ($((sz/1024))KB — regenerable, not source)"
+        continue
+      fi
+      git -C "$wt" add -- "$f" >/dev/null 2>&1
     done
   else
     git -C "$wt" add -A >/dev/null 2>&1
