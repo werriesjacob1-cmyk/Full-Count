@@ -2043,6 +2043,36 @@ def main() -> int:
     # score order behind everything that could, rather than being dropped:
     # an unpriced pick is a gap in coverage, not evidence against the pick.
     gated = [c for c in candidates if c["score"] >= MIN_QUALITY_SCORE]
+
+    # POSITIVE-READ FLOOR. A pick has to beat the league base rate for its own
+    # market before it can be recommended at all, and only then does chance of
+    # cashing decide the order.
+    #
+    # This exists because ranking on probability alone selects, systematically,
+    # for picks the model knows nothing about. The easiest line in a market
+    # always carries the highest probability AND the least room for skill to
+    # show, so the sort key and the strength of the read pull in opposite
+    # directions. Live on 2026-08-06: the #1 pick was Cristopher Sanchez over
+    # 3.5 strikeouts at 91.3%, which is 0.6 points BELOW the league rate for a
+    # starter clearing that line -- the model held no positive information
+    # about him, and that is precisely why he ranked first. Dylan Cease at 6+
+    # strikeouts, +16.9 points over base rate, ranked beneath him.
+    #
+    # The ordering is still purely by chance of cashing, as intended. The floor
+    # only removes bets where the number comes from the market being easy
+    # rather than from anything known about the player.
+    #
+    # A pick whose lift cannot be computed is NOT dropped: an unknown base rate
+    # is missing information about the market, not evidence against the pick.
+    with_read = [c for c in gated
+                 if c.get("lift") is None or c["lift"] >= MIN_POSITIVE_LIFT]
+    no_read = [c for c in gated if c not in with_read]
+    if with_read:
+        gated = with_read
+    else:
+        m.warn("No candidate cleared the positive-read floor — falling back to "
+               "the full pool so the board is not empty.")
+
     priced = [c for c in gated if c.get("hit_probability") is not None]
     unpriced = [c for c in gated if c.get("hit_probability") is None]
     priced.sort(key=lambda c: (c["hit_probability"], c["score"]), reverse=True)
@@ -2065,6 +2095,13 @@ def main() -> int:
         if c.get("hit_probability") is not None:
             e["priced"] += 1
             e["best"] = max(e["best"], c["hit_probability"])
+    if no_read:
+        top_cut = sorted(no_read, key=lambda c: -(c.get("hit_probability") or 0))[:3]
+        print(f"    Positive-read floor removed {len(no_read)} candidate(s) at or "
+              f"below their market's base rate:")
+        for c in top_cut:
+            print(f"      {c['name'][:22]:22s} {c['prop'][:34]:34s} "
+                  f"{(c.get('hit_probability') or 0)*100:5.1f}%  lift {c.get('lift'):+.3f}")
     print("    Candidate pool by market (considered / priced / best prob):")
     for st, e in sorted(pool.items(), key=lambda kv: -kv[1]["best"]):
         flag = "" if e["priced"] == e["n"] else "   <-- UNPRICED CANDIDATES"
@@ -2172,6 +2209,12 @@ def persist_player_snapshots(candidates):
 # prop is -- a near-certain prop on a player in a bad spot with no
 # converging signals is how you end up betting -400 juice on a coin flip.
 MIN_QUALITY_SCORE = 55.0
+
+# A pick must clear its own market's league base rate by at least this much to
+# be recommendable. Zero means "must simply be better than the market average"
+# rather than an arbitrary cushion -- the point is to exclude picks carrying no
+# positive read, not to demand a particular size of one.
+MIN_POSITIVE_LIFT = 0.0
 
 # Empirical rates need a real sample before they outrank a model that at
 # least accounts for tonight. Below this the model carries the estimate.
@@ -2490,7 +2533,10 @@ def write_markdown(top10, skipped, game_meta, bullpen_scores, all_ranked=()):
                  f"matchup ({100-int(EMPIRICAL_WEIGHT*100)}%). The 0-100 quality "
                  f"score (35% matchup / 25% recent form / 15% environment / 15% "
                  f"baseline skill / 10% context) is used only as a floor — a pick "
-                 f"must score {MIN_QUALITY_SCORE:.0f}+ to make the board at all.")
+                 f"must score {MIN_QUALITY_SCORE:.0f}+ to make the board at all. "
+                 f"A pick must ALSO beat its own market's league base rate, so "
+                 f"nothing is recommended purely because its market is easy. "
+                 f"**Lift** shows by how much.")
     lines.append("")
 
     if not top10:
