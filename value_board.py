@@ -151,6 +151,20 @@ def model_probabilities(prices, min_games=40, use_pipeline=True):
     return entries
 
 
+# TIERS, NOT A PASS/FAIL GATE.
+#
+# A single BET/NO-BET verdict throws away most of what the screen knows. On a
+# night when nothing clears every test, "0 bets" is technically honest and
+# practically useless -- it hides a ranking that was computed anyway. The
+# information is not binary, so the output should not be either.
+TIER_NOTE = {
+    "A": "model, price and market all agree",
+    "B": "priced acceptably by the model, but the market disagrees — size down",
+    "C": "positive return, but the edge is inside our margin of error",
+    "D": "price is worse than the tolerance allows",
+}
+
+
 def screen(entries, min_roi=pp.MIN_ROI, require_robust=True, reject_suspect=True):
     bets, near, rejected = [], [], []
     for k, e in entries.items():
