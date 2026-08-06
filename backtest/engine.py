@@ -100,6 +100,24 @@ absent from the emitted rows:
     for (uncalibrated model output), but it is not identical to what the live
     board ships.
 
+ONE RESIDUAL LEAK THAT CANNOT BE REMOVED, ONLY DISCLOSED
+────────────────────────────────────────────────────────
+
+generate_picks.py carries hardcoded league constants that were MEASURED on
+2026 data — LEAGUE_YRFI_RATE, LEAGUE_AVG_TB_PA, AB_PER_PA,
+LEAGUE_AVG_BF_PER_START, BF_SHRINK_N0, LEAGUE_TEAM_RUNS_MEAN/VAR, the wOBA
+percentile band — and the measurement windows overlap the dates being
+replayed. Backtesting the real scoring code means backtesting those constants,
+and rolling them back per-date would mean forking every scorer, which defeats
+the point of reusing them.
+
+The exposure is small and worth naming precisely rather than waving at: these
+are single league-wide scalars, not player-specific or game-specific values.
+Knowing that the league scores in the first inning 29.4% of the season cannot
+tell the model whether THIS starter is scored on tonight. It shifts a prior,
+not a prediction. But it is not zero, and a hit rate should not be read to the
+last decimal place because of it.
+
 And one approximation that is used rather than dropped, flagged because it is
 a genuine departure:
 
