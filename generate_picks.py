@@ -643,30 +643,67 @@ def fetch_catcher_poptime():
 
 
 def fetch_first_inning_form(pitcher_ids):
-    """Real per-start first-inning results (not season-wide) for tonight's
-    starters, via the same targeted Statcast pull mlb_daily.py's Section 38
-    uses — reused here in structured form instead of parsing that section's
-    text. Keyed by pitcher name (consistent with fetch_l14_pitcher_form)."""
+    """Per-starter first-inning results over the FULL SEASON, keyed by pitcher
+    name (consistent with fetch_l14_pitcher_form).
+
+    WHY THIS USES THE SEASON AND NOT THE L14 WINDOW. It used to reuse the same
+    14-day pull as the other recent-form tables, which for a starting pitcher
+    is two or three starts. Two starts cannot express a rate: the only values
+    representable are 0%, 50% and 100%, so every starter came back at one of
+    three numbers and most came back at exactly 0% -- a "100% certain" NRFI
+    read built on two innings of evidence.
+
+    That was not a cosmetic problem. Once the board began ranking on
+    probability, EIGHT of the ten picks were first-inning leans carrying the
+    identical figure of 0.8308, because with no real information in any of
+    them the estimate collapsed to the prior for all eight. Eight identical
+    numbers is the model reporting that it has no opinion, dressed as
+    conviction.
+
+    Measured on the season pull instead (62,481 first-inning pitch rows, 3,670
+    game-halves): 214 starters have 5+ first innings, median 17, max 26, and
+    the rate actually spreads -- p10 0.125, p25 0.182, p50 0.280, p75 0.382,
+    p90 0.488. That spread is the signal, and the 14-day window was
+    structurally incapable of seeing it.
+
+    Costs nothing extra: fetch_season_statcast() is already pulled and cached
+    for other sections, so this is a groupby over data that is in memory."""
     out = {}
-    for name, pid in pitcher_ids.items():
-        if not pid: continue
-        try:
-            df = m.pyb.statcast_pitcher(start_dt=m.L14_START, end_dt=m.L14_END, player_id=pid)
-            if df is None or df.empty or "inning" not in df.columns: continue
-            i1 = df[df["inning"] == 1].copy()
-            if i1.empty: continue
-            n_starts = i1["game_date"].nunique()
-            if n_starts < 2: continue
-            if all(c in i1.columns for c in ["bat_score", "post_bat_score"]):
-                runs_per_game = i1.groupby("game_date").apply(
-                    lambda g: g["post_bat_score"].max() - g["bat_score"].min())
-                runs_per_game = runs_per_game.dropna()
-                if len(runs_per_game) >= 2:
-                    out[name] = {"n_starts": int(n_starts),
-                                 "runs_per_1st_inning": round(runs_per_game.mean(), 2),
-                                 "yrfi_rate": round((runs_per_game > 0).mean() * 100, 1)}
-        except Exception:
-            continue
+    try:
+        df = m.fetch_season_statcast()
+        if df is None or df.empty:
+            return out
+        need = {"inning", "pitcher", "game_pk", "bat_score", "post_bat_score"}
+        if not need.issubset(df.columns):
+            m.warn("First-inning form: season Statcast is missing required columns")
+            return out
+        i1 = df[df["inning"] == 1]
+        if i1.empty:
+            return out
+        # Vectorised on purpose. The equivalent groupby().apply() with a lambda
+        # over 62k rows did not finish inside two minutes; .agg() of two
+        # built-in reducers returns in seconds.
+        g = i1.groupby(["pitcher", "game_pk"]).agg(
+            hi=("post_bat_score", "max"), lo=("bat_score", "min"))
+        g["runs"] = g["hi"] - g["lo"]
+        g = g.dropna(subset=["runs"])
+        if g.empty:
+            return out
+        g["yrfi"] = (g["runs"] > 0).astype(float)
+        per = g.groupby("pitcher")["yrfi"].agg(["size", "mean"])
+        runs_per = g.groupby("pitcher")["runs"].mean()
+        by_id = {}
+        for pid, row in per.iterrows():
+            if row["size"] < 2:
+                continue
+            by_id[int(pid)] = {"n_starts": int(row["size"]),
+                               "runs_per_1st_inning": round(float(runs_per.loc[pid]), 2),
+                               "yrfi_rate": round(float(row["mean"]) * 100, 1)}
+        for name, pid in pitcher_ids.items():
+            if pid and int(pid) in by_id:
+                out[name] = by_id[int(pid)]
+    except Exception as e:
+        m.warn(f"First-inning season form: {e}")
     return out
 
 
@@ -2167,10 +2204,11 @@ def _batter_options(c, comp, emp):
 # these rates are near-worthless on their own.
 FI_PRIOR_STARTS = 5.0
 
-# Fallback only, used when the slate has no first-inning data at all to
-# average. Roughly the league rate at which a starting pitcher allows a run
-# in the first.
-LEAGUE_YRFI_RATE = 0.27
+# The rate at which a team scores in its half of the first inning. MEASURED,
+# not assumed: 3,670 game-halves from this season's Statcast pull gave 0.2940,
+# i.e. a team is held scoreless in the first 70.6% of the time. Recompute this
+# from data rather than nudging it by hand.
+LEAGUE_YRFI_RATE = 0.294
 
 
 def attach_hit_probabilities(candidates, comp_table, emp_batters, emp_pitchers):
@@ -2183,15 +2221,20 @@ def attach_hit_probabilities(candidates, comp_table, emp_batters, emp_pitchers):
     # The slate's own average first-inning scoring rate, start-weighted. Using
     # tonight's starters rather than a hardcoded constant keeps the prior
     # tracking the real run environment.
-    fi_runs = fi_starts = 0.0
-    for c in candidates:
-        if (c.get("projection") or {}).get("stat") == "first_inning_run":
-            n = (c.get("signals") or {}).get("fi_n_starts") or 0
-            v = (c.get("projection") or {}).get("value")
-            if n and v is not None:
-                fi_runs += max(0.0, min(1.0, float(v) / 100.0)) * n
-                fi_starts += n
-    slate_yrfi = (fi_runs / fi_starts) if fi_starts else LEAGUE_YRFI_RATE
+    # THE PRIOR MUST NOT BE COMPUTED FROM THE THING IT IS CORRECTING.
+    #
+    # This used to average the candidates' own first-inning rates and shrink
+    # them toward that. Those rates came from 2-start samples, and
+    # score_first_inning only emits a candidate when the read already looks
+    # good, so the "league average" was a selection-biased average of the very
+    # numbers it was supposed to discipline. It reported that a team is held
+    # scoreless in the first 83.1% of the time.
+    #
+    # Measured from the real season pull (3,670 game-halves): a team scores in
+    # its half of the first 29.40% of the time, so the true scoreless rate is
+    # 70.60%. The self-referential prior overstated every first-inning pick by
+    # 12.5 points, and eight of them were on the board.
+    slate_yrfi = LEAGUE_YRFI_RATE
 
     for c in candidates:
         pid = c.get("player_id")
