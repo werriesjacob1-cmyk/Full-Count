@@ -2003,7 +2003,23 @@ def main() -> int:
         print("No games today — wrote placeholder picks files.")
         return 0
 
-    print(f"{len(game_meta)} games found. Pulling scoring inputs...")
+    # Drop games that can no longer be bet BEFORE any scoring work happens.
+    allow_started = os.environ.get("ALLOW_STARTED_GAMES") == "1"
+    game_meta, not_bettable = bettable_games(game_meta, allow_started)
+    if not_bettable:
+        print(f"    Skipping {len(not_bettable)} game(s) already underway or final:")
+        for gm in not_bettable[:6]:
+            print(f"      {gm['matchup']}  ({gm.get('status')})")
+        if not game_meta:
+            print("Every game on the slate has already started — nothing left to bet.")
+            archive_existing_picks(m.TODAY)
+            return 0
+
+    archived = archive_existing_picks(m.TODAY)
+    if archived:
+        print(f"    Archived the previous board to {archived}")
+
+    print(f"{len(game_meta)} bettable game(s). Pulling scoring inputs...")
     bat_season_df = m.fg_bat(m.YEAR)
     pit_season_df = m.fg_pit(m.YEAR)
     team_bat_df = m.fg_team_bat(m.YEAR)
@@ -3023,6 +3039,74 @@ def quality_control(candidates, game_meta, park_wx, emp_pitchers):
         for r, n in sorted(by_reason.items(), key=lambda kv: -kv[1]):
             print(f"      {n:4d}  {r}")
     return kept, rejected
+
+# ── Safe to run at any hour ───────────────────────────────────────────────
+#
+# The pipeline can be run mid-slate, after some games have started or
+# finished. Three separate things go wrong if that is not handled, and only
+# one of them is obvious.
+#
+# 1. UNBETTABLE PICKS. A game already underway cannot be bet at the pregame
+#    price, and a finished one cannot be bet at all. Recommending either is
+#    noise at best.
+#
+# 2. A CORRUPTED ACCURACY RECORD, which is the serious one. grade_results.py
+#    grades every pick in the day's file against the final box score. A pick
+#    generated for a game that had ALREADY FINISHED would be graded as a hit
+#    or a miss exactly like a real one -- scoring the model on a bet nobody
+#    could have placed, with the outcome already known when the "prediction"
+#    was made. That is not a small bias; it is the model marking its own
+#    homework with the answers in front of it.
+#
+# 3. DESTROYED PICKS. Each run overwrites the day's picks file. Re-running at
+#    8pm silently replaces the board generated at 11am -- the one that was
+#    actually bet -- so the record no longer reflects what was wagered.
+#
+# Games are considered bettable only in a genuine pregame state. Delays and
+# postponements are deliberately included: a delayed game has not started, so
+# its props are still live.
+BETTABLE_STATES = {
+    "scheduled", "pre-game", "warmup", "delayed start", "postponed",
+    "delayed", "pre game",
+}
+
+
+def bettable_games(game_meta, allow_started=False):
+    """Split tonight's games into those still bettable and those that are not."""
+    live, done = [], []
+    for gm in game_meta:
+        state = (gm.get("status") or "").strip().lower()
+        # An unknown or missing status is treated as bettable rather than
+        # dropped: the schedule endpoint occasionally omits it, and silently
+        # discarding a whole game over a missing field would be a worse
+        # failure than including one that has just started.
+        if allow_started or not state or state in BETTABLE_STATES:
+            live.append(gm)
+        else:
+            done.append(gm)
+    return live, done
+
+
+def archive_existing_picks(date):
+    """Preserve any picks already written for this date before overwriting.
+
+    A re-run must never destroy the board that was actually bet. Archived
+    copies are timestamped and kept alongside the live file so the day's
+    history is recoverable and grading can be pointed at the right one."""
+    if not os.path.exists(PICKS_JSON_FILE):
+        return None
+    try:
+        with open(PICKS_JSON_FILE, encoding="utf-8") as f:
+            prior = json.load(f)
+        stamp = (prior.get("generated") or datetime.now().isoformat())[:19].replace(":", "")
+        archive = os.path.join(OUTPUT_DIR, f"picks_{date}_{stamp}.json")
+        if not os.path.exists(archive):
+            with open(archive, "w", encoding="utf-8") as f:
+                json.dump(prior, f, indent=2)
+            return archive
+    except (json.JSONDecodeError, OSError) as e:
+        m.warn(f"Could not archive prior picks ({e}) — continuing")
+    return None
 
 def write_markdown(top10, skipped, game_meta, bullpen_scores, all_ranked=()):
     lines = [f"# MLB Top 10 Picks — {m.TODAY}", "",

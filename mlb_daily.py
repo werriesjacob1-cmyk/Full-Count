@@ -337,6 +337,13 @@ def fetch_lineups(date):
                           "series_game":series_num,"series_len":series_len,
                           "is_getaway":is_getaway,"is_opener":is_series_opener,
                           "game_pk":g.get("gamePk"),
+                          # Live status and scheduled first pitch, so anything
+                          # downstream can tell a game that has not started
+                          # from one already underway or finished. Without
+                          # these, a pipeline run made mid-slate cannot know
+                          # which games are still bettable.
+                          "status":status,
+                          "game_start_utc":g.get("gameDate",""),
                           "away_team":at,"home_team":ht,
                           # Structured lineups (name/id/pos/bats/order), populated below —
                           # kept alongside the human-readable text report so downstream
