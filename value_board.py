@@ -97,6 +97,15 @@ def model_probabilities(prices, min_games=40, use_pipeline=True):
         except Exception as e:
             print(f"  (pipeline scoring unavailable: {e} — falling back to season rates)")
 
+    # Exit-velocity markets live in Statcast, not in game logs, so they are
+    # fetched separately and merged into the same rate structure.
+    hard_hit = {}
+    if any(stat.startswith("hard_hit") for mk in prices.values() for stat, _ in mk):
+        try:
+            hard_hit = src_mod.hard_hit_game_rates()
+        except Exception as e:
+            print(f"  (hard-hit rates unavailable: {e})")
+
     comp = src_mod.batter_pa_composition()
     by_norm = {fd.normalize_name(v.get("name") or ""): (pid, v)
                for pid, v in comp.items() if v.get("name")}
@@ -114,6 +123,8 @@ def model_probabilities(prices, min_games=40, use_pipeline=True):
             continue
         for (stat, needs), american in markets.items():
             r = (e.get("rates") or {}).get(f"{stat}_{needs}plus")
+            if not r and stat.startswith("hard_hit"):
+                r = ((hard_hit.get(pid) or {}).get("rates") or {}).get(f"{stat}_{needs}plus")
             if not r:
                 continue
             # A rate needs EVENTS behind it, not just games. On rare markets a
@@ -178,7 +189,8 @@ def screen(entries, min_roi=pp.MIN_ROI, require_robust=True, reject_suspect=True
 
 SHORT = {"hits": "H", "total_bases": "TB", "home_runs": "HR", "runs": "R",
          "rbis": "RBI", "stolen_bases": "SB", "walks": "BB", "singles": "1B",
-         "doubles": "2B", "triples": "3B", "hits_runs_rbis": "H+R+RBI"}
+         "doubles": "2B", "triples": "3B", "hits_runs_rbis": "H+R+RBI",
+         "hard_hit_110": "110+mph", "hard_hit_105": "105+mph"}
 
 
 def label(stat, needs):
@@ -193,6 +205,12 @@ def main():
                     help="skip the confidence-interval test (shows more, trust less)")
     ap.add_argument("--max-price", type=int, default=None,
                     help="ignore anything priced worse than this")
+    ap.add_argument("--mode", choices=("value", "reasonable"), default="reasonable",
+                    help="'value' demands positive expected return (beat the book). "
+                         "'reasonable' (default) demands a real read at a price that "
+                         "is not offensive — achievable, and does NOT claim +EV.")
+    ap.add_argument("--max-tax", type=float, default=pp.MAX_ACCEPTABLE_TAX,
+                    help="worst return accepted in reasonable mode (default %(default)s)")
     ap.add_argument("--allow-suspect", action="store_true",
                     help="keep props that disagree wildly with the de-vigged market")
     ap.add_argument("--json", help="write results here")
@@ -212,8 +230,22 @@ def main():
     entries = model_probabilities(prices)
     print(f"  {len(entries)} props have both a price and a usable model read")
 
-    bets, near, rejected = screen(entries, args.min_roi, not args.no_robust,
+    if args.mode == "reasonable":
+        # A read the model actually likes, at a price that is not the reason
+        # to decline. Explicitly not a claim of positive expectation.
+        min_roi_used = args.max_tax
+    else:
+        min_roi_used = args.min_roi
+    bets, near, rejected = screen(entries, min_roi_used, not args.no_robust,
                                   reject_suspect=not args.allow_suspect)
+    if args.mode == "reasonable":
+        print(f"\n  MODE: reasonable — a real read at a price no worse than "
+              f"{args.max_tax*100:.0f}% return.")
+        print(f"  This does NOT claim positive expectation. Prop markets hold "
+              f"6-15%; beating that")
+        print(f"  consistently is a different and much harder claim. These are "
+              f"strong reads whose")
+        print(f"  price is not the reason to pass.")
 
     print(f"\n{'='*78}")
     print(f"VALUE BOARD — {datetime.now().strftime('%Y-%m-%d %H:%M')}")

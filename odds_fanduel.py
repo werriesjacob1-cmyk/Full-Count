@@ -123,6 +123,14 @@ MARKET_MAP = {
     "PLAYER_TO_RECORD_2+_HITS+RUNS+RBIS": ("hits_runs_rbis", 2),
     "PLAYER_TO_RECORD_3+_HITS+RUNS+RBIS": ("hits_runs_rbis", 3),
     "PLAYER_TO_RECORD_4+_HITS+RUNS+RBIS": ("hits_runs_rbis", 4),
+    # Exit-velocity markets. Measurable from the Statcast pull already cached
+    # (MLB's box score carries no exit velocity, so game logs cannot produce
+    # these), and the spread is the widest of any market on the board: the
+    # league hits a 110+ mph ball in 3.9% of games while Giancarlo Stanton
+    # does it in 40%. A market where the best and the average differ tenfold
+    # is one where a read can actually matter.
+    "PLAYER_TO_HIT_A_LASER_(110+_MPH)": ("hard_hit_110", 1),
+    "TO_HIT_A_LASER_(105+_MPH)":        ("hard_hit_105", 1),
 }
 
 # Markets deliberately NOT mapped, and why. Listing them is the point: an

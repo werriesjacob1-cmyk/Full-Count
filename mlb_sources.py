@@ -1613,3 +1613,51 @@ def league_base_rates():
         m.warn("League base rates: %s" % e)
     _LEAGUE_RATES_CACHE.update(out)
     return out
+
+
+def hard_hit_game_rates(min_games=30, thresholds=(105, 110)):
+    """Per-game rate of hitting a ball at or above a given exit velocity.
+
+    FanDuel prices "to hit a laser" at 105+ and 110+ mph, several hundred
+    lines a night, and this is the rate those markets settle on. It cannot
+    come from game logs -- MLB's box score has no exit velocity -- but it is
+    directly measurable from the Statcast pull this pipeline already caches,
+    so it costs nothing but a groupby.
+
+    The unit is the GAME, not the batted ball: the market asks whether a
+    player hits ONE, so a three-laser game counts once. Computing it per
+    batted ball would badly understate a slugger who concentrates his hard
+    contact.
+
+    Only games with at least one batted ball are counted, matching how
+    empirical_batter_prop_rates treats a game a player did not really play.
+    A player who was on the bench cannot hit a laser, and including those
+    games would drag every rate down by a factor unrelated to hitting."""
+    df = m.fetch_season_statcast()
+    if df is None or df.empty:
+        return {}
+    need = {"batter", "game_pk", "launch_speed"}
+    if not need.issubset(df.columns):
+        m.warn("Hard-hit rates: Statcast is missing launch_speed")
+        return {}
+    bb = df[df["launch_speed"].notna()]
+    if bb.empty:
+        return {}
+    peak = bb.groupby(["batter", "game_pk"])["launch_speed"].max()
+    out = {}
+    for thr in thresholds:
+        cleared = (peak >= thr).groupby("batter").agg(["sum", "size"])
+        for bid, row in cleared.iterrows():
+            n = int(row["size"])
+            if n < min_games:
+                continue
+            e = out.setdefault(int(bid), {"games": n, "rates": {}})
+            hits = int(row["sum"])
+            e["rates"][f"hard_hit_{thr}_1plus"] = {
+                "p": round(hits / n, 4), "n": n, "hit": hits,
+                "p_lo": round(_wilson_lower(hits, n), 4),
+            }
+    # Shrunk toward the league rate for the same threshold, exactly as every
+    # other empirical rate here is -- a 30-game sample of a rare event is
+    # otherwise mostly noise.
+    return _apply_shrinkage(out, prior_games=20)

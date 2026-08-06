@@ -642,3 +642,79 @@ def devig_two_sided(over_american, under_american):
     if total <= 0:
         return None, None, None
     return io / total, iu / total, total - 1.0
+
+
+# ══════════════════════════════════════════════════════════════════════════
+#  ACCEPTABLE PRICE — a bar that can actually be cleared
+# ══════════════════════════════════════════════════════════════════════════
+#
+# Requiring positive expected value means requiring that this model beat a
+# firm that prices thousands of these daily with money at risk. That is the
+# right bar for a syndicate and the wrong one here: prop markets hold 6-15%,
+# so demanding to beat the hold on top of being right means most nights
+# produce nothing, which is not a usable product.
+#
+# The realistic bar is different and worth stating plainly: DO NOT TRY TO
+# BEAT THE PRICE, JUST REFUSE TO PAY A BAD ONE. A bettor who consistently
+# takes strong reads at close-to-fair prices is doing something achievable,
+# and is doing far better than one who takes the same reads at -380.
+#
+# So a prop qualifies on two independent conditions:
+#
+#   1. THE READ. The model has to actually like it -- a real probability, on
+#      a real sample, that beats the market's base rate for that market.
+#   2. THE PRICE. The posted number must be within a stated tolerance of
+#      fair value. Paying a small tax is accepted; paying a large one is not.
+#
+# The tolerance is expressed as return, not as probability points, for the
+# same reason the value screen is: at -300 a two-point error costs far more
+# than at +200, so a fixed points-based tolerance would be far too permissive
+# on favourites.
+#
+# This does NOT claim positive expectation. A prop cleared at -8% return is
+# expected to lose 8 cents per dollar over the long run, and the output says
+# so. What it claims is that among props worth betting, these are the ones
+# whose price is not the reason to decline.
+
+# Worst return accepted in "reasonable price" mode. -8% roughly corresponds
+# to paying about half a typical prop hold: not free money, but not the -380
+# that quietly destroys a bankroll either.
+MAX_ACCEPTABLE_TAX = -0.08
+
+
+def price_quality(prob, american, hold=ASSUMED_PROP_HOLD):
+    """How good or bad the posted price is, relative to fair.
+
+    Returns the return at this price, the return at a perfectly fair price
+    (zero), and the gap -- which is the tax being paid for the privilege of
+    betting it. Negative tax means the price is better than fair."""
+    roi = expected_roi(prob, american)
+    fair_price = american_odds(prob, include_vig=False)
+    return {"roi": round(roi, 4), "fair_price": fair_price,
+            "posted": int(american),
+            "tax": round(-roi, 4) if roi < 0 else 0.0,
+            "better_than_fair": roi > 0}
+
+
+def acceptable(prob, american, base_rate=None, max_tax=MAX_ACCEPTABLE_TAX,
+               min_lift=0.02):
+    """Is this a strong enough read at a price that is not offensive?
+
+    Deliberately weaker than value_verdict(), and honest about it. This does
+    not assert positive expectation; it asserts that the read is real and the
+    price is not the reason to pass."""
+    roi = expected_roi(prob, american)
+    lift = None if base_rate is None else float(prob) - float(base_rate)
+    if lift is not None and lift < min_lift:
+        return {"ok": False, "roi": round(roi, 4), "lift": round(lift, 4),
+                "why": (f"no real read: {lift*100:+.1f} pts against this market's "
+                        f"base rate")}
+    if roi < max_tax:
+        return {"ok": False, "roi": round(roi, 4),
+                "lift": None if lift is None else round(lift, 4),
+                "why": (f"price too expensive: {roi*100:+.1f}% return is worse than "
+                        f"the {max_tax*100:.0f}% floor")}
+    return {"ok": True, "roi": round(roi, 4),
+            "lift": None if lift is None else round(lift, 4),
+            "why": (f"{roi*100:+.1f}% return"
+                    + ("" if roi >= 0 else " — paying a small tax on a real read"))}
