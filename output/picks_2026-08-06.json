@@ -1,6 +1,6 @@
 {
   "date": "2026-08-06",
-  "generated": "2026-08-06T03:42:12.888978",
+  "generated": "2026-08-06T13:42:54.602418",
   "picks": [
     {
       "rank": 1,
@@ -18,7 +18,7 @@
         "needs": 4
       },
       "lean": null,
-      "score": 68.6,
+      "score": 59.0,
       "confidence": "Medium",
       "notable_signals": 0,
       "hit_probability": 0.9128,
@@ -109,25 +109,25 @@
     {
       "rank": 3,
       "type": "pitcher",
-      "name": "Ryan Johnson",
-      "player_id": 696270,
-      "team": "Los Angeles Angels",
-      "matchup": "Los Angeles Angels @ Baltimore Orioles",
-      "game_pk": 824804,
+      "name": "Walker Buehler",
+      "player_id": 621111,
+      "team": "San Diego Padres",
+      "matchup": "San Diego Padres @ Arizona Diamondbacks",
+      "game_pk": 825053,
       "side": "away",
-      "prop": "Baltimore Orioles scoreless in the 1st",
+      "prop": "Arizona Diamondbacks scoreless in the 1st",
       "projection": {
         "stat": "first_inning_run",
-        "value": 0.0
+        "value": 16.7
       },
       "lean": "NRFI",
-      "score": 55,
-      "confidence": "Medium",
+      "score": 83.3,
+      "confidence": "High",
       "notable_signals": 0,
-      "hit_probability": 0.8308,
+      "hit_probability": 0.8111,
       "probability_basis": "empirical",
       "probability_detail": {
-        "empirical": 1.0,
+        "empirical": 0.833,
         "modelled": null
       },
       "alternatives": null
@@ -135,25 +135,25 @@
     {
       "rank": 4,
       "type": "pitcher",
-      "name": "Andrew Abbott",
-      "player_id": 671096,
-      "team": "Cincinnati Reds",
-      "matchup": "Athletics @ Cincinnati Reds",
-      "game_pk": 824481,
+      "name": "Bryce Miller",
+      "player_id": 682243,
+      "team": "Seattle Mariners",
+      "matchup": "Detroit Tigers @ Seattle Mariners",
+      "game_pk": 823105,
       "side": "home",
-      "prop": "Athletics scoreless in the 1st",
+      "prop": "Detroit Tigers scoreless in the 1st",
       "projection": {
         "stat": "first_inning_run",
-        "value": 0.0
+        "value": 16.7
       },
       "lean": "NRFI",
-      "score": 55,
-      "confidence": "Medium",
+      "score": 83.3,
+      "confidence": "High",
       "notable_signals": 0,
-      "hit_probability": 0.8308,
+      "hit_probability": 0.7956,
       "probability_basis": "empirical",
       "probability_detail": {
-        "empirical": 1.0,
+        "empirical": 0.833,
         "modelled": null
       },
       "alternatives": null
@@ -161,135 +161,57 @@
     {
       "rank": 5,
       "type": "pitcher",
-      "name": "Nolan McLean",
-      "player_id": 690997,
-      "team": "New York Mets",
-      "matchup": "New York Mets @ Cleveland Guardians",
-      "game_pk": 824401,
-      "side": "away",
-      "prop": "Cleveland Guardians scoreless in the 1st",
+      "name": "Brandon Young",
+      "player_id": 687064,
+      "team": "Baltimore Orioles",
+      "matchup": "Los Angeles Angels @ Baltimore Orioles",
+      "game_pk": 824804,
+      "side": null,
+      "prop": "Over 3.5 Strikeouts",
       "projection": {
-        "stat": "first_inning_run",
-        "value": 0.0
+        "stat": "strikeouts",
+        "value": 3.5,
+        "needs": 4
       },
-      "lean": "NRFI",
-      "score": 55,
+      "lean": null,
+      "score": 55.1,
       "confidence": "Medium",
-      "notable_signals": 0,
-      "hit_probability": 0.8308,
-      "probability_basis": "empirical",
+      "notable_signals": 1,
+      "hit_probability": 0.7801,
+      "probability_basis": "blended",
       "probability_detail": {
-        "empirical": 1.0,
-        "modelled": null
+        "empirical": 0.7596,
+        "modelled": 0.8108
       },
-      "alternatives": null
+      "alternatives": [
+        {
+          "line": 4.5,
+          "needs": 5,
+          "prob": 0.6427,
+          "basis": "blended",
+          "empirical": 0.6448,
+          "modelled": 0.6394
+        },
+        {
+          "line": 5.5,
+          "needs": 6,
+          "prob": 0.3406,
+          "basis": "blended",
+          "empirical": 0.2712,
+          "modelled": 0.4446
+        },
+        {
+          "line": 6.5,
+          "needs": 7,
+          "prob": 0.2266,
+          "basis": "blended",
+          "empirical": 0.1981,
+          "modelled": 0.2693
+        }
+      ]
     },
     {
       "rank": 6,
-      "type": "pitcher",
-      "name": "Braxton Ashcraft",
-      "player_id": 677952,
-      "team": "Pittsburgh Pirates",
-      "matchup": "Pittsburgh Pirates @ Milwaukee Brewers",
-      "game_pk": 823754,
-      "side": "away",
-      "prop": "Milwaukee Brewers scoreless in the 1st",
-      "projection": {
-        "stat": "first_inning_run",
-        "value": 0.0
-      },
-      "lean": "NRFI",
-      "score": 55,
-      "confidence": "Medium",
-      "notable_signals": 0,
-      "hit_probability": 0.8308,
-      "probability_basis": "empirical",
-      "probability_detail": {
-        "empirical": 1.0,
-        "modelled": null
-      },
-      "alternatives": null
-    },
-    {
-      "rank": 7,
-      "type": "pitcher",
-      "name": "Dustin May",
-      "player_id": 669160,
-      "team": "Milwaukee Brewers",
-      "matchup": "Pittsburgh Pirates @ Milwaukee Brewers",
-      "game_pk": 823754,
-      "side": "home",
-      "prop": "Pittsburgh Pirates scoreless in the 1st",
-      "projection": {
-        "stat": "first_inning_run",
-        "value": 0.0
-      },
-      "lean": "NRFI",
-      "score": 55,
-      "confidence": "Medium",
-      "notable_signals": 0,
-      "hit_probability": 0.8308,
-      "probability_basis": "empirical",
-      "probability_detail": {
-        "empirical": 1.0,
-        "modelled": null
-      },
-      "alternatives": null
-    },
-    {
-      "rank": 8,
-      "type": "pitcher",
-      "name": "Dylan Cease",
-      "player_id": 656302,
-      "team": "Toronto Blue Jays",
-      "matchup": "Toronto Blue Jays @ Chicago Cubs",
-      "game_pk": 824664,
-      "side": "away",
-      "prop": "Chicago Cubs scoreless in the 1st",
-      "projection": {
-        "stat": "first_inning_run",
-        "value": 0.0
-      },
-      "lean": "NRFI",
-      "score": 55,
-      "confidence": "Medium",
-      "notable_signals": 0,
-      "hit_probability": 0.8308,
-      "probability_basis": "empirical",
-      "probability_detail": {
-        "empirical": 1.0,
-        "modelled": null
-      },
-      "alternatives": null
-    },
-    {
-      "rank": 9,
-      "type": "pitcher",
-      "name": "David Peterson",
-      "player_id": 656849,
-      "team": "Chicago Cubs",
-      "matchup": "Toronto Blue Jays @ Chicago Cubs",
-      "game_pk": 824664,
-      "side": "home",
-      "prop": "Toronto Blue Jays scoreless in the 1st",
-      "projection": {
-        "stat": "first_inning_run",
-        "value": 0.0
-      },
-      "lean": "NRFI",
-      "score": 55,
-      "confidence": "Medium",
-      "notable_signals": 0,
-      "hit_probability": 0.8308,
-      "probability_basis": "empirical",
-      "probability_detail": {
-        "empirical": 1.0,
-        "modelled": null
-      },
-      "alternatives": null
-    },
-    {
-      "rank": 10,
       "type": "pitcher",
       "name": "Cristopher S\u00e1nchez",
       "player_id": 650911,
@@ -300,16 +222,120 @@
       "prop": "Washington Nationals scoreless in the 1st",
       "projection": {
         "stat": "first_inning_run",
-        "value": 0.0
+        "value": 20.8
       },
       "lean": "NRFI",
-      "score": 55,
-      "confidence": "Medium",
+      "score": 79.2,
+      "confidence": "High",
       "notable_signals": 0,
-      "hit_probability": 0.8308,
+      "hit_probability": 0.7772,
       "probability_basis": "empirical",
       "probability_detail": {
-        "empirical": 1.0,
+        "empirical": 0.792,
+        "modelled": null
+      },
+      "alternatives": null
+    },
+    {
+      "rank": 7,
+      "type": "pitcher",
+      "name": "Michael Wacha",
+      "player_id": 608379,
+      "team": "Kansas City Royals",
+      "matchup": "Minnesota Twins @ Kansas City Royals",
+      "game_pk": 824080,
+      "side": "home",
+      "prop": "Minnesota Twins scoreless in the 1st",
+      "projection": {
+        "stat": "first_inning_run",
+        "value": 20.8
+      },
+      "lean": "NRFI",
+      "score": 79.2,
+      "confidence": "High",
+      "notable_signals": 0,
+      "hit_probability": 0.7772,
+      "probability_basis": "empirical",
+      "probability_detail": {
+        "empirical": 0.792,
+        "modelled": null
+      },
+      "alternatives": null
+    },
+    {
+      "rank": 8,
+      "type": "pitcher",
+      "name": "Foster Griffin",
+      "player_id": 656492,
+      "team": "Cleveland Guardians",
+      "matchup": "New York Mets @ Cleveland Guardians",
+      "game_pk": 824401,
+      "side": "home",
+      "prop": "New York Mets scoreless in the 1st",
+      "projection": {
+        "stat": "first_inning_run",
+        "value": 21.7
+      },
+      "lean": "NRFI",
+      "score": 78.3,
+      "confidence": "High",
+      "notable_signals": 0,
+      "hit_probability": 0.7692,
+      "probability_basis": "empirical",
+      "probability_detail": {
+        "empirical": 0.783,
+        "modelled": null
+      },
+      "alternatives": null
+    },
+    {
+      "rank": 9,
+      "type": "pitcher",
+      "name": "Braxton Ashcraft",
+      "player_id": 677952,
+      "team": "Pittsburgh Pirates",
+      "matchup": "Pittsburgh Pirates @ Milwaukee Brewers",
+      "game_pk": 823754,
+      "side": "away",
+      "prop": "Milwaukee Brewers scoreless in the 1st",
+      "projection": {
+        "stat": "first_inning_run",
+        "value": 21.7
+      },
+      "lean": "NRFI",
+      "score": 78.3,
+      "confidence": "High",
+      "notable_signals": 0,
+      "hit_probability": 0.7692,
+      "probability_basis": "empirical",
+      "probability_detail": {
+        "empirical": 0.783,
+        "modelled": null
+      },
+      "alternatives": null
+    },
+    {
+      "rank": 10,
+      "type": "pitcher",
+      "name": "Bailey Ober",
+      "player_id": 641927,
+      "team": "Minnesota Twins",
+      "matchup": "Minnesota Twins @ Kansas City Royals",
+      "game_pk": 824080,
+      "side": "away",
+      "prop": "Kansas City Royals scoreless in the 1st",
+      "projection": {
+        "stat": "first_inning_run",
+        "value": 22.2
+      },
+      "lean": "NRFI",
+      "score": 77.8,
+      "confidence": "High",
+      "notable_signals": 0,
+      "hit_probability": 0.7623,
+      "probability_basis": "empirical",
+      "probability_detail": {
+        "empirical": 0.778,
         "modelled": null
       },
       "alternatives": null
