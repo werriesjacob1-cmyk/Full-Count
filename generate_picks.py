@@ -1210,7 +1210,7 @@ LEAGUE_AVG_BULLPEN_ERA = 4.10
 
 def score_batter(batter, gm, opp_sp_row, opp_sp_id, opp_sp_hand, park_wx, batter_season, batter_l7,
                   bat_speed_trend, batter_arsenal, pitcher_arsenal, opp_bullpen=None, sharp_bias=None,
-                  opp_bullpen_quality=None):
+                  opp_bullpen_quality=None, extras=None):
     name = batter["name"]
     bid = batter.get("id")
     order = batter.get("order") or 9
@@ -1466,6 +1466,91 @@ def score_batter(batter, gm, opp_sp_row, opp_sp_id, opp_sp_hand, park_wx, batter
     _sig(signals, "bullpen_fatigue", bullpen_fatigue_pct, sc_bullpen_fatigue)
     if bullpen_era_diff is not None and abs(bullpen_era_diff) >= 0.5:
         _sig(signals, "bullpen_era_diff", bullpen_era_diff, clamp(bullpen_era_diff * 8, -8, 8))
+
+    # ── Signals that were built and never consulted ───────────────────────
+    #
+    # Each is recorded via _sig so backtest/signals.py can measure whether it
+    # separates hits from misses. Adding an input is not the same as trusting
+    # one: every adjustment here is deliberately SMALL, because the honest
+    # position is that these are untested, and a large weight on an untested
+    # signal is how a model gets confidently worse.
+    # RECORDED, NOT YET WEIGHTED, and that is deliberate. _sig writes a signal
+    # onto the candidate for backtest/signals.py to measure; it does not touch
+    # the score. So wiring these six changes what the system KNOWS about each
+    # pick without yet changing which picks it makes.
+    #
+    # That ordering is the whole discipline. The last time signals were given
+    # weights by judgement, seven of twelve turned out not to separate hits
+    # from misses at all, and two scored below random -- weights invented for
+    # inputs nobody had measured. These get measured against real outcomes
+    # first, and only the ones that earn a weight get one.
+    ex = extras or {}
+
+    # Batter versus THIS pitcher. The most direct matchup evidence available,
+    # and previously report-only. Capped hard because BvP samples are tiny --
+    # a 3-for-7 career line is not information, and treating it as such is one
+    # of the oldest errors in baseball analysis.
+    bvp = (ex.get("bvp") or {}).get((bid, opp_sp_id)) if bid and opp_sp_id else None
+    if bvp and (bvp.get("pa") or 0) >= 10:
+        ops_delta = (bvp.get("ops") or 0) - 0.720   # league-ish OPS
+        _sig(signals, "bvp_ops", bvp.get("ops"), clamp(ops_delta * 6, -4, 4))
+        watchouts.append(f"BvP: {bvp.get('h','?')}-for-{bvp.get('ab','?')} "
+                         f"vs {gm.get('away_sp') if opp_sp_id == gm.get('away_sp_id') else gm.get('home_sp')} "
+                         f"({bvp.get('pa')} PA — small sample, weighted lightly)")
+
+    # Platoon measured properly: exit velocity and barrel rate BY handedness,
+    # rather than the binary hand-versus-hand flag that measured AUC 0.500.
+    pq = (ex.get("platoon_qoc") or {}).get(bid) if bid else None
+    if pq and opp_sp_hand in ("L", "R"):
+        # Keyed by the PITCHER's hand, matching how the table is built.
+        side = pq.get(opp_sp_hand) or {}
+        if (side.get("PA") or 0) >= 20:
+            if side.get("Barrel%") is not None:
+                _sig(signals, "platoon_barrel_pct", side["Barrel%"],
+                     clamp((side["Barrel%"] - 7.0) * 0.8, -5, 5))
+            if side.get("xwOBA") is not None:
+                _sig(signals, "platoon_xwoba", side["xwOBA"],
+                     clamp((side["xwOBA"] - 0.313) * 60, -5, 5))
+
+    # Park factors split by batter hand. The existing park signal is
+    # hand-blind, and the split is large -- Yankee Stadium plays 138 for
+    # left-handed power and 108 for right-handed.
+    ph = (ex.get("park_hand") or {}).get(gm.get("venue"))
+    if ph and bats in ("L", "R"):
+        side = ph.get(bats) or {}
+        idx = side.get("Index")
+        if idx is not None and (side.get("BBE") or 0) >= 300:
+            _sig(signals, "park_hand_index", idx, clamp((idx - 100) * 0.10, -5, 5))
+
+    # Catcher framing moves strikeouts and walks, so it moves every prop that
+    # depends on a plate appearance ending a particular way.
+    # Keyed by opposing TEAM rather than catcher id: score_batter does not
+    # receive the catcher, and the caller resolves team -> tonight's catcher
+    # -> framing runs before passing this in.
+    fr = (ex.get("framing_by_team") or {}).get(
+        gm["home_team"] if batter.get("team") == gm["away_team"] else gm["away_team"])
+    if fr is not None:
+        # A better framer steals more strikes, which is bad for the hitter.
+        # League Steal% runs around 4-5%.
+        _sig(signals, "opp_catcher_framing", fr, clamp(-(fr - 4.5) * 1.2, -4, 4))
+
+    # Rest and accumulated usage.
+    rs = (ex.get("rest") or {}).get(bid) if bid else None
+    if rs:
+        if rs.get("days_rest") is not None:
+            _sig(signals, "days_rest", rs["days_rest"],
+                 clamp((rs["days_rest"] - 1) * 2, -3, 4))
+        if rs.get("consecutive_games") is not None and rs["consecutive_games"] >= 10:
+            _sig(signals, "consecutive_games", rs["consecutive_games"],
+                 clamp(-(rs["consecutive_games"] - 9) * 0.6, -4, 0))
+
+    # Hard-hit rate, already used by the value screen but never by the board.
+    hh = (ex.get("hard_hit") or {}).get(bid) if bid else None
+    if hh:
+        r105 = (hh.get("rates") or {}).get("hard_hit_105_1plus")
+        if r105 and r105.get("hit", 0) >= 4:
+            _sig(signals, "hard_hit_105_rate", r105["p_hat"],
+                 clamp((r105["p_hat"] - 0.215) * 25, -5, 5))
 
     return {
         "type": "batter", "name": name, "player_id": bid, "team": batter.get("team"), "matchup": gm["matchup"],
@@ -1862,7 +1947,7 @@ def score_first_inning(sp_name, sp_id, gm, side, fi_form):
 #  CANDIDATE ASSEMBLY
 # ══════════════════════════════════════════════════════════════════════════
 
-def build_candidates(game_meta, *, batter_lookup, pitcher_lookup, team_k_lookup,
+def build_candidates(game_meta, *, extras=None, batter_lookup, pitcher_lookup, team_k_lookup,
                      park_wx, ump_scores, bullpen_scores, bullpen_quality,
                      sharp_bias, l7_form, bat_speed_trend, batter_arsenal,
                      pitcher_arsenal, sprint_speed, catcher_poptime,
@@ -1889,6 +1974,20 @@ def build_candidates(game_meta, *, batter_lookup, pitcher_lookup, team_k_lookup,
                 if p.get("pos") == "C" and p.get("id"):
                     catcher_by_team[gm[team_key]] = p["id"]
 
+    # Catcher framing is keyed by catcher id, but score_batter sees the
+    # opposing TEAM. Resolve it once here, where tonight's catcher per team is
+    # already known, rather than re-deriving it for every batter.
+    extras = dict(extras or {})
+    _framing = extras.get("framing") or {}
+    # The table reports Steal% (share of taken pitches outside the zone called
+    # strikes), not runs. Using the field that exists rather than the one that
+    # sounded right: a missing key would have silently disabled this signal.
+    extras["framing_by_team"] = {
+        team: (_framing.get(cid) or {}).get("Steal%")
+        for team, cid in catcher_by_team.items()
+        if cid in _framing and (_framing.get(cid) or {}).get("Steal%") is not None
+    }
+
     for gm in game_meta:
         opp_sp_row_for_away_batters = lookup_player(pitcher_lookup, gm["home_sp"], gm.get("home_sp_id"), {})
         opp_sp_row_for_home_batters = lookup_player(pitcher_lookup, gm["away_sp"], gm.get("away_sp_id"), {})
@@ -1905,7 +2004,8 @@ def build_candidates(game_meta, *, batter_lookup, pitcher_lookup, team_k_lookup,
             bseason = lookup_player(batter_lookup, batter["name"], batter.get("id"))
             candidates.append(score_batter(batter, gm, opp_sp_row_for_away_batters, gm.get("home_sp_id"), gm.get("home_sp_hand"),
                               wx, bseason, l7_form.get(batter.get("id")), bat_speed_trend, batter_arsenal, pitcher_arsenal,
-                              away_opp_bullpen, sharp_bias.get(gm["away_team"]), away_opp_bullpen_quality))
+                              away_opp_bullpen, sharp_bias.get(gm["away_team"]), away_opp_bullpen_quality,
+                              extras=extras))
             for c in (score_stolen_base(batter, gm, away_opp_catcher_pop, sprint_speed.get(batter.get("id")), bseason),
                       score_walk(batter, gm, opp_sp_row_for_away_batters, ump_scores, bseason)):
                 if c: candidates.append(c)
@@ -1914,7 +2014,8 @@ def build_candidates(game_meta, *, batter_lookup, pitcher_lookup, team_k_lookup,
             bseason = lookup_player(batter_lookup, batter["name"], batter.get("id"))
             candidates.append(score_batter(batter, gm, opp_sp_row_for_home_batters, gm.get("away_sp_id"), gm.get("away_sp_hand"),
                               wx, bseason, l7_form.get(batter.get("id")), bat_speed_trend, batter_arsenal, pitcher_arsenal,
-                              home_opp_bullpen, sharp_bias.get(gm["home_team"]), home_opp_bullpen_quality))
+                              home_opp_bullpen, sharp_bias.get(gm["home_team"]), home_opp_bullpen_quality,
+                              extras=extras))
             for c in (score_stolen_base(batter, gm, home_opp_catcher_pop, sprint_speed.get(batter.get("id")), bseason),
                       score_walk(batter, gm, opp_sp_row_for_home_batters, ump_scores, bseason)):
                 if c: candidates.append(c)
@@ -2081,8 +2182,42 @@ def _build_and_score():
     import mlb_sources as _src
     exp_k_form = _src.exp_weighted_pitcher_k_rate(list(starter_ids.values()))
 
+    # ── Capabilities that existed but never reached a pick ────────────────
+    #
+    # An audit found 22 of 27 functions in mlb_sources.py were feeding the
+    # readable report and nothing else. These six have a clear mechanism and
+    # no existing proxy in scoring, so they are fetched here and threaded into
+    # score_batter. Each is recorded in the candidate's `signals` dict so
+    # backtest/signals.py can measure whether it actually separates hits from
+    # misses -- adding an input is not the same as trusting it.
+    #
+    # platoon_quality_of_contact deserves a specific note. The existing platoon
+    # signal measured AUC 0.500 on 5,077 backtested rows, i.e. pure noise, and
+    # that was nearly taken as evidence that platoon does not matter. It is far
+    # more likely evidence that a binary left-versus-right FLAG is too crude to
+    # carry the effect. This measures exit velocity and barrel rate BY
+    # handedness, which is the same concept measured properly, and it is the
+    # test of whether the earlier null result was about baseball or about our
+    # implementation.
+    extras = {}
+    for name, fn in (
+        ("bvp", lambda: _src.bvp_table(game_meta)),
+        ("platoon_qoc", lambda: _src.platoon_quality_of_contact()),
+        ("park_hand", lambda: _src.park_hand_factors()),
+        ("framing", lambda: _src.catcher_framing()),
+        ("rest", lambda: _src.rest_and_usage(game_meta)),
+        ("hard_hit", lambda: _src.hard_hit_game_rates()),
+    ):
+        try:
+            extras[name] = fn() or {}
+        except Exception as e:
+            m.warn(f"{name} unavailable ({e}) — scoring continues without it")
+            extras[name] = {}
+    print("    Extra signals: " + ", ".join(
+        f"{k} {len(v)}" for k, v in extras.items()))
+
     candidates = build_candidates(
-        game_meta,
+        game_meta, extras=extras,
         batter_lookup=batter_lookup, pitcher_lookup=pitcher_lookup,
         team_k_lookup=team_k_lookup, park_wx=park_wx, ump_scores=ump_scores,
         bullpen_scores=bullpen_scores, bullpen_quality=bullpen_quality,
