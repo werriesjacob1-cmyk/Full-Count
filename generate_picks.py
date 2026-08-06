@@ -1212,6 +1212,9 @@ def score_batter(batter, gm, opp_sp_row, opp_sp_id, opp_sp_hand, park_wx, batter
                   bat_speed_trend, batter_arsenal, pitcher_arsenal, opp_bullpen=None, sharp_bias=None,
                   opp_bullpen_quality=None, extras=None):
     name = batter["name"]
+    # Which starter this batter actually faces, by name, for the BvP lookup.
+    opp_sp_name = (gm.get("home_sp") if batter.get("team") == gm.get("away_team")
+                   else gm.get("away_sp"))
     bid = batter.get("id")
     order = batter.get("order") or 9
     bats = batter.get("bats", "?")
@@ -1490,13 +1493,20 @@ def score_batter(batter, gm, opp_sp_row, opp_sp_id, opp_sp_hand, park_wx, batter
     # and previously report-only. Capped hard because BvP samples are tiny --
     # a 3-for-7 career line is not information, and treating it as such is one
     # of the oldest errors in baseball analysis.
-    bvp = (ex.get("bvp") or {}).get((bid, opp_sp_id)) if bid and opp_sp_id else None
-    if bvp and (bvp.get("pa") or 0) >= 10:
-        ops_delta = (bvp.get("ops") or 0) - 0.720   # league-ish OPS
-        _sig(signals, "bvp_ops", bvp.get("ops"), clamp(ops_delta * 6, -4, 4))
-        watchouts.append(f"BvP: {bvp.get('h','?')}-for-{bvp.get('ab','?')} "
-                         f"vs {gm.get('away_sp') if opp_sp_id == gm.get('away_sp_id') else gm.get('home_sp')} "
-                         f"({bvp.get('pa')} PA — small sample, weighted lightly)")
+    # bvp_table returns a LIST of rows with Batter/Pitcher NAMES and AB/H/OPS
+    # -- not a dict keyed by ids, and there is no PA column. Indexed by name
+    # pair at the caller. Requires 10+ AB because a 3-for-7 career line is the
+    # most over-read number in baseball.
+    bvp = (ex.get("bvp_by_pair") or {}).get((name, opp_sp_name)) if opp_sp_name else None
+    if bvp and (bvp.get("AB") or 0) >= 10:
+        try:
+            ops = float(bvp.get("OPS"))
+        except (TypeError, ValueError):
+            ops = None
+        if ops is not None:
+            _sig(signals, "bvp_ops", ops, clamp((ops - 0.720) * 6, -4, 4))
+            watchouts.append(f"BvP: {bvp.get('H','?')}-for-{bvp.get('AB','?')} "
+                             f"vs {opp_sp_name} (small sample, weighted lightly)")
 
     # Platoon measured properly: exit velocity and barrel rate BY handedness,
     # rather than the binary hand-versus-hand flag that measured AUC 0.500.
@@ -1535,11 +1545,15 @@ def score_batter(batter, gm, opp_sp_row, opp_sp_id, opp_sp_hand, park_wx, batter
         _sig(signals, "opp_catcher_framing", fr, clamp(-(fr - 4.5) * 1.2, -4, 4))
 
     # Rest and accumulated usage.
-    rs = (ex.get("rest") or {}).get(bid) if bid else None
+    # rest_and_usage nests under 'batters'/'starters', and the field is
+    # days_since_last_game -- not a flat id map with days_rest. Looking up an
+    # integer id in {'batters':..., 'starters':...} returned None for every
+    # batter, so this signal never once fired.
+    rs = ((ex.get("rest") or {}).get("batters") or {}).get(bid) if bid else None
     if rs:
-        if rs.get("days_rest") is not None:
-            _sig(signals, "days_rest", rs["days_rest"],
-                 clamp((rs["days_rest"] - 1) * 2, -3, 4))
+        if rs.get("days_since_last_game") is not None:
+            _sig(signals, "days_rest", rs["days_since_last_game"],
+                 clamp((rs["days_since_last_game"] - 1) * 2, -3, 4))
         if rs.get("consecutive_games") is not None and rs["consecutive_games"] >= 10:
             _sig(signals, "consecutive_games", rs["consecutive_games"],
                  clamp(-(rs["consecutive_games"] - 9) * 0.6, -4, 0))
@@ -2243,7 +2257,12 @@ def _build_and_score():
         ("pitch_q", lambda: _src.pitch_quality()),
     ):
         try:
-            extras[name] = fn() or {}
+            # NOT `fn() or {}`: several of these return DataFrames, and the
+            # truthiness of a DataFrame raises rather than being falsy. That
+            # exception was being swallowed by the handler below, silently
+            # leaving pitch_quality empty on every run.
+            got = fn()
+            extras[name] = {} if got is None else got
         except Exception as e:
             m.warn(f"{name} unavailable ({e}) — scoring continues without it")
             extras[name] = {}
@@ -2257,6 +2276,9 @@ def _build_and_score():
         except (TypeError, ValueError):
             return None
 
+    extras["bvp_by_pair"] = {(r.get("Batter"), r.get("Pitcher")): r
+                             for r in (extras.get("bvp") or [])
+                             if r.get("Batter") and r.get("Pitcher")}
     extras["cs_pct_by_team"] = {r["Team"]: _f(r.get("CS%"))
                                 for r in (extras.get("team_field") or [])
                                 if _f(r.get("CS%")) is not None}
