@@ -1,0 +1,766 @@
+{
+  "date": "2026-08-06",
+  "generated": "2026-08-06T19:52:05.851793",
+  "picks": [
+    {
+      "rank": 1,
+      "type": "batter",
+      "name": "Otto Lopez",
+      "player_id": 672640,
+      "team": "Miami Marlins",
+      "matchup": "Miami Marlins @ Atlanta Braves",
+      "game_pk": 824885,
+      "side": null,
+      "prop": "Over 0.5 Hits",
+      "projection": {
+        "stat": "hits",
+        "value": 0.5,
+        "needs": 1
+      },
+      "lean": null,
+      "score": 64.3,
+      "confidence": "Medium",
+      "notable_signals": 3,
+      "hit_probability": 0.6708,
+      "base_rate": 0.5505,
+      "lift": 0.1203,
+      "raw_hit_probability": 0.7565,
+      "calibrated_by": "hits",
+      "prob_ci": [
+        0.6692,
+        0.8271
+      ],
+      "sample_n": 111,
+      "reliability": "A",
+      "max_acceptable_price": -204,
+      "estimated_odds": -240,
+      "probability_basis": "blended",
+      "probability_detail": {
+        "empirical": 0.7339,
+        "modelled": 0.7905
+      },
+      "alternatives": [
+        {
+          "stat": "total_bases",
+          "line": 1.5,
+          "needs": 2,
+          "label": "Over 1.5 Total Bases",
+          "prob": 0.4947,
+          "basis": "blended",
+          "base_rate": 0.3115,
+          "lift": 0.1832,
+          "empirical": 0.4744,
+          "modelled": 0.5252
+        },
+        {
+          "stat": "hits",
+          "line": 1.5,
+          "needs": 2,
+          "label": "Over 1.5 Hits",
+          "prob": 0.382,
+          "basis": "blended",
+          "base_rate": 0.1818,
+          "lift": 0.2002,
+          "empirical": 0.3687,
+          "modelled": 0.4021
+        },
+        {
+          "stat": "total_bases",
+          "line": 2.5,
+          "needs": 3,
+          "label": "Over 2.5 Total Bases",
+          "prob": 0.2867,
+          "basis": "blended",
+          "base_rate": 0.1798,
+          "lift": 0.1069,
+          "empirical": 0.2686,
+          "modelled": 0.3138
+        }
+      ]
+    },
+    {
+      "rank": 2,
+      "type": "batter",
+      "name": "Luis Arraez",
+      "player_id": 650333,
+      "team": "Philadelphia Phillies",
+      "matchup": "Washington Nationals @ Philadelphia Phillies",
+      "game_pk": 823430,
+      "side": null,
+      "prop": "Over 0.5 Hits",
+      "projection": {
+        "stat": "hits",
+        "value": 0.5,
+        "needs": 1
+      },
+      "lean": null,
+      "score": 68.3,
+      "confidence": "Medium",
+      "notable_signals": 2,
+      "hit_probability": 0.6707,
+      "base_rate": 0.5505,
+      "lift": 0.1202,
+      "raw_hit_probability": 0.7564,
+      "calibrated_by": "hits",
+      "prob_ci": [
+        0.6778,
+        0.8364
+      ],
+      "sample_n": 107,
+      "reliability": "A",
+      "max_acceptable_price": -204,
+      "estimated_odds": -240,
+      "probability_basis": "blended",
+      "probability_detail": {
+        "empirical": 0.7412,
+        "modelled": 0.7791
+      },
+      "alternatives": [
+        {
+          "stat": "total_bases",
+          "line": 1.5,
+          "needs": 2,
+          "label": "Over 1.5 Total Bases",
+          "prob": 0.4739,
+          "basis": "blended",
+          "base_rate": 0.3115,
+          "lift": 0.1624,
+          "empirical": 0.4657,
+          "modelled": 0.4861
+        },
+        {
+          "stat": "hits",
+          "line": 1.5,
+          "needs": 2,
+          "label": "Over 1.5 Hits",
+          "prob": 0.3722,
+          "basis": "blended",
+          "base_rate": 0.1818,
+          "lift": 0.1904,
+          "empirical": 0.3645,
+          "modelled": 0.3837
+        },
+        {
+          "stat": "total_bases",
+          "line": 2.5,
+          "needs": 3,
+          "label": "Over 2.5 Total Bases",
+          "prob": 0.2728,
+          "basis": "blended",
+          "base_rate": 0.1798,
+          "lift": 0.093,
+          "empirical": 0.2771,
+          "modelled": 0.2665
+        }
+      ]
+    },
+    {
+      "rank": 3,
+      "type": "batter",
+      "name": "Ceddanne Rafaela",
+      "player_id": 678882,
+      "team": "Boston Red Sox",
+      "matchup": "Chicago White Sox @ Boston Red Sox",
+      "game_pk": 824729,
+      "side": null,
+      "prop": "Over 0.5 Hits",
+      "projection": {
+        "stat": "hits",
+        "value": 0.5,
+        "needs": 1
+      },
+      "lean": null,
+      "score": 58.0,
+      "confidence": "Medium",
+      "notable_signals": 2,
+      "hit_probability": 0.6642,
+      "base_rate": 0.5505,
+      "lift": 0.1137,
+      "raw_hit_probability": 0.7415,
+      "calibrated_by": "hits",
+      "prob_ci": [
+        0.6678,
+        0.8284
+      ],
+      "sample_n": 107,
+      "reliability": "A",
+      "max_acceptable_price": -198,
+      "estimated_odds": -232,
+      "probability_basis": "blended",
+      "probability_detail": {
+        "empirical": 0.7334,
+        "modelled": 0.7536
+      },
+      "alternatives": [
+        {
+          "stat": "total_bases",
+          "line": 1.5,
+          "needs": 2,
+          "label": "Over 1.5 Total Bases",
+          "prob": 0.4859,
+          "basis": "blended",
+          "base_rate": 0.3115,
+          "lift": 0.1744,
+          "empirical": 0.4736,
+          "modelled": 0.5044
+        },
+        {
+          "stat": "hits",
+          "line": 1.5,
+          "needs": 2,
+          "label": "Over 1.5 Hits",
+          "prob": 0.3121,
+          "basis": "blended",
+          "base_rate": 0.1818,
+          "lift": 0.1303,
+          "empirical": 0.2858,
+          "modelled": 0.3516
+        },
+        {
+          "stat": "total_bases",
+          "line": 2.5,
+          "needs": 3,
+          "label": "Over 2.5 Total Bases",
+          "prob": 0.2676,
+          "basis": "blended",
+          "base_rate": 0.1798,
+          "lift": 0.0878,
+          "empirical": 0.2377,
+          "modelled": 0.3124
+        }
+      ]
+    },
+    {
+      "rank": 4,
+      "type": "batter",
+      "name": "Bobby Witt Jr.",
+      "player_id": 677951,
+      "team": "Kansas City Royals",
+      "matchup": "Minnesota Twins @ Kansas City Royals",
+      "game_pk": 824080,
+      "side": null,
+      "prop": "Over 0.5 Hits",
+      "projection": {
+        "stat": "hits",
+        "value": 0.5,
+        "needs": 1
+      },
+      "lean": null,
+      "score": 67.3,
+      "confidence": "Medium",
+      "notable_signals": 2,
+      "hit_probability": 0.6536,
+      "base_rate": 0.5505,
+      "lift": 0.1031,
+      "raw_hit_probability": 0.7178,
+      "calibrated_by": "hits",
+      "prob_ci": [
+        0.6438,
+        0.8169
+      ],
+      "sample_n": 96,
+      "reliability": "A",
+      "max_acceptable_price": -189,
+      "estimated_odds": -221,
+      "probability_basis": "blended",
+      "probability_detail": {
+        "empirical": 0.7167,
+        "modelled": 0.7194
+      },
+      "alternatives": [
+        {
+          "stat": "total_bases",
+          "line": 1.5,
+          "needs": 2,
+          "label": "Over 1.5 Total Bases",
+          "prob": 0.4507,
+          "basis": "blended",
+          "base_rate": 0.3115,
+          "lift": 0.1392,
+          "empirical": 0.4495,
+          "modelled": 0.4524
+        },
+        {
+          "stat": "hits",
+          "line": 1.5,
+          "needs": 2,
+          "label": "Over 1.5 Hits",
+          "prob": 0.2907,
+          "basis": "blended",
+          "base_rate": 0.1818,
+          "lift": 0.1089,
+          "empirical": 0.2784,
+          "modelled": 0.3092
+        },
+        {
+          "stat": "total_bases",
+          "line": 2.5,
+          "needs": 3,
+          "label": "Over 2.5 Total Bases",
+          "prob": 0.2514,
+          "basis": "blended",
+          "base_rate": 0.1798,
+          "lift": 0.0716,
+          "empirical": 0.243,
+          "modelled": 0.2639
+        }
+      ]
+    },
+    {
+      "rank": 5,
+      "type": "batter",
+      "name": "Michael Harris",
+      "player_id": 671739,
+      "team": "Atlanta Braves",
+      "matchup": "Miami Marlins @ Atlanta Braves",
+      "game_pk": 824885,
+      "side": null,
+      "prop": "Over 0.5 Hits",
+      "projection": {
+        "stat": "hits",
+        "value": 0.5,
+        "needs": 1
+      },
+      "lean": null,
+      "score": 66.5,
+      "confidence": "Medium",
+      "notable_signals": 2,
+      "hit_probability": 0.6466,
+      "base_rate": 0.5505,
+      "lift": 0.0961,
+      "raw_hit_probability": 0.7022,
+      "calibrated_by": "hits",
+      "prob_ci": [
+        0.5925,
+        0.7651
+      ],
+      "sample_n": 108,
+      "reliability": "A",
+      "max_acceptable_price": -183,
+      "estimated_odds": -214,
+      "probability_basis": "blended",
+      "probability_detail": {
+        "empirical": 0.6729,
+        "modelled": 0.7463
+      },
+      "alternatives": [
+        {
+          "stat": "total_bases",
+          "line": 1.5,
+          "needs": 2,
+          "label": "Over 1.5 Total Bases",
+          "prob": 0.4576,
+          "basis": "blended",
+          "base_rate": 0.3115,
+          "lift": 0.1461,
+          "empirical": 0.4386,
+          "modelled": 0.486
+        },
+        {
+          "stat": "hits",
+          "line": 1.5,
+          "needs": 2,
+          "label": "Over 1.5 Hits",
+          "prob": 0.3057,
+          "basis": "blended",
+          "base_rate": 0.1818,
+          "lift": 0.1239,
+          "empirical": 0.2836,
+          "modelled": 0.3388
+        },
+        {
+          "stat": "total_bases",
+          "line": 2.5,
+          "needs": 3,
+          "label": "Over 2.5 Total Bases",
+          "prob": 0.2819,
+          "basis": "blended",
+          "base_rate": 0.1798,
+          "lift": 0.1021,
+          "empirical": 0.2671,
+          "modelled": 0.304
+        }
+      ]
+    },
+    {
+      "rank": 6,
+      "type": "batter",
+      "name": "Ryan Jeffers",
+      "player_id": 680777,
+      "team": "Minnesota Twins",
+      "matchup": "Minnesota Twins @ Kansas City Royals",
+      "game_pk": 824080,
+      "side": null,
+      "prop": "Over 0.5 Hits",
+      "projection": {
+        "stat": "hits",
+        "value": 0.5,
+        "needs": 1
+      },
+      "lean": null,
+      "score": 56.8,
+      "confidence": "Medium",
+      "notable_signals": 2,
+      "hit_probability": 0.6461,
+      "base_rate": 0.5505,
+      "lift": 0.0956,
+      "raw_hit_probability": 0.7011,
+      "calibrated_by": "hits",
+      "prob_ci": [
+        0.6042,
+        0.8356
+      ],
+      "sample_n": 53,
+      "reliability": "B",
+      "max_acceptable_price": -183,
+      "estimated_odds": -214,
+      "probability_basis": "blended",
+      "probability_detail": {
+        "empirical": 0.7005,
+        "modelled": 0.7021
+      },
+      "alternatives": [
+        {
+          "stat": "total_bases",
+          "line": 1.5,
+          "needs": 2,
+          "label": "Over 1.5 Total Bases",
+          "prob": 0.4189,
+          "basis": "blended",
+          "base_rate": 0.3115,
+          "lift": 0.1074,
+          "empirical": 0.3992,
+          "modelled": 0.4484
+        },
+        {
+          "stat": "total_bases",
+          "line": 2.5,
+          "needs": 3,
+          "label": "Over 2.5 Total Bases",
+          "prob": 0.2501,
+          "basis": "blended",
+          "base_rate": 0.1798,
+          "lift": 0.0703,
+          "empirical": 0.2218,
+          "modelled": 0.2925
+        },
+        {
+          "stat": "hits",
+          "line": 1.5,
+          "needs": 2,
+          "label": "Over 1.5 Hits",
+          "prob": 0.2252,
+          "basis": "blended",
+          "base_rate": 0.1818,
+          "lift": 0.0434,
+          "empirical": 0.1821,
+          "modelled": 0.2898
+        }
+      ]
+    },
+    {
+      "rank": 7,
+      "type": "batter",
+      "name": "Fernando Tatis",
+      "player_id": 665487,
+      "team": "San Diego Padres",
+      "matchup": "San Diego Padres @ Arizona Diamondbacks",
+      "game_pk": 825053,
+      "side": null,
+      "prop": "Over 0.5 Hits",
+      "projection": {
+        "stat": "hits",
+        "value": 0.5,
+        "needs": 1
+      },
+      "lean": null,
+      "score": 70.4,
+      "confidence": "High",
+      "notable_signals": 0,
+      "hit_probability": 0.646,
+      "base_rate": 0.5505,
+      "lift": 0.0955,
+      "raw_hit_probability": 0.701,
+      "calibrated_by": "hits",
+      "prob_ci": [
+        0.6091,
+        0.776
+      ],
+      "sample_n": 113,
+      "reliability": "A",
+      "max_acceptable_price": -182,
+      "estimated_odds": -213,
+      "probability_basis": "blended",
+      "probability_detail": {
+        "empirical": 0.6852,
+        "modelled": 0.7246
+      },
+      "alternatives": [
+        {
+          "stat": "total_bases",
+          "line": 1.5,
+          "needs": 2,
+          "label": "Over 1.5 Total Bases",
+          "prob": 0.4067,
+          "basis": "blended",
+          "base_rate": 0.3115,
+          "lift": 0.0952,
+          "empirical": 0.3921,
+          "modelled": 0.4287
+        },
+        {
+          "stat": "hits",
+          "line": 1.5,
+          "needs": 2,
+          "label": "Over 1.5 Hits",
+          "prob": 0.286,
+          "basis": "blended",
+          "base_rate": 0.1818,
+          "lift": 0.1042,
+          "empirical": 0.2654,
+          "modelled": 0.3168
+        },
+        {
+          "stat": "total_bases",
+          "line": 2.5,
+          "needs": 3,
+          "label": "Over 2.5 Total Bases",
+          "prob": 0.2091,
+          "basis": "blended",
+          "base_rate": 0.1798,
+          "lift": 0.0293,
+          "empirical": 0.1969,
+          "modelled": 0.2275
+        }
+      ]
+    },
+    {
+      "rank": 8,
+      "type": "batter",
+      "name": "Matt Olson",
+      "player_id": 621566,
+      "team": "Atlanta Braves",
+      "matchup": "Miami Marlins @ Atlanta Braves",
+      "game_pk": 824885,
+      "side": null,
+      "prop": "Over 0.5 Hits",
+      "projection": {
+        "stat": "hits",
+        "value": 0.5,
+        "needs": 1
+      },
+      "lean": null,
+      "score": 62.6,
+      "confidence": "Medium",
+      "notable_signals": 1,
+      "hit_probability": 0.6447,
+      "base_rate": 0.5505,
+      "lift": 0.0942,
+      "raw_hit_probability": 0.6981,
+      "calibrated_by": "hits",
+      "prob_ci": [
+        0.6307,
+        0.7936
+      ],
+      "sample_n": 114,
+      "reliability": "A",
+      "max_acceptable_price": -181,
+      "estimated_odds": -212,
+      "probability_basis": "blended",
+      "probability_detail": {
+        "empirical": 0.7025,
+        "modelled": 0.6915
+      },
+      "alternatives": [
+        {
+          "stat": "total_bases",
+          "line": 1.5,
+          "needs": 2,
+          "label": "Over 1.5 Total Bases",
+          "prob": 0.4945,
+          "basis": "blended",
+          "base_rate": 0.3115,
+          "lift": 0.183,
+          "empirical": 0.5011,
+          "modelled": 0.4847
+        },
+        {
+          "stat": "total_bases",
+          "line": 2.5,
+          "needs": 3,
+          "label": "Over 2.5 Total Bases",
+          "prob": 0.3353,
+          "basis": "blended",
+          "base_rate": 0.1798,
+          "lift": 0.1555,
+          "empirical": 0.3372,
+          "modelled": 0.3325
+        },
+        {
+          "stat": "hits",
+          "line": 1.5,
+          "needs": 2,
+          "label": "Over 1.5 Hits",
+          "prob": 0.2692,
+          "basis": "blended",
+          "base_rate": 0.1818,
+          "lift": 0.0874,
+          "empirical": 0.2634,
+          "modelled": 0.2779
+        }
+      ]
+    },
+    {
+      "rank": 9,
+      "type": "batter",
+      "name": "Brandon Marsh",
+      "player_id": 669016,
+      "team": "Philadelphia Phillies",
+      "matchup": "Washington Nationals @ Philadelphia Phillies",
+      "game_pk": 823430,
+      "side": null,
+      "prop": "Over 0.5 Hits",
+      "projection": {
+        "stat": "hits",
+        "value": 0.5,
+        "needs": 1
+      },
+      "lean": null,
+      "score": 70.3,
+      "confidence": "High",
+      "notable_signals": 3,
+      "hit_probability": 0.6386,
+      "base_rate": 0.5505,
+      "lift": 0.0881,
+      "raw_hit_probability": 0.6847,
+      "calibrated_by": "hits",
+      "prob_ci": [
+        0.5864,
+        0.7592
+      ],
+      "sample_n": 109,
+      "reliability": "A",
+      "max_acceptable_price": -177,
+      "estimated_odds": -206,
+      "probability_basis": "blended",
+      "probability_detail": {
+        "empirical": 0.6677,
+        "modelled": 0.7102
+      },
+      "alternatives": [
+        {
+          "stat": "total_bases",
+          "line": 1.5,
+          "needs": 2,
+          "label": "Over 1.5 Total Bases",
+          "prob": 0.401,
+          "basis": "blended",
+          "base_rate": 0.3115,
+          "lift": 0.0895,
+          "empirical": 0.3887,
+          "modelled": 0.4194
+        },
+        {
+          "stat": "hits",
+          "line": 1.5,
+          "needs": 2,
+          "label": "Over 1.5 Hits",
+          "prob": 0.2626,
+          "basis": "blended",
+          "base_rate": 0.1818,
+          "lift": 0.0808,
+          "empirical": 0.2426,
+          "modelled": 0.2927
+        },
+        {
+          "stat": "total_bases",
+          "line": 2.5,
+          "needs": 3,
+          "label": "Over 2.5 Total Bases",
+          "prob": 0.2399,
+          "basis": "blended",
+          "base_rate": 0.1798,
+          "lift": 0.0601,
+          "empirical": 0.234,
+          "modelled": 0.2488
+        }
+      ]
+    },
+    {
+      "rank": 10,
+      "type": "batter",
+      "name": "Drake Baldwin",
+      "player_id": 686948,
+      "team": "Atlanta Braves",
+      "matchup": "Miami Marlins @ Atlanta Braves",
+      "game_pk": 824885,
+      "side": null,
+      "prop": "Over 0.5 Hits",
+      "projection": {
+        "stat": "hits",
+        "value": 0.5,
+        "needs": 1
+      },
+      "lean": null,
+      "score": 80.8,
+      "confidence": "High",
+      "notable_signals": 2,
+      "hit_probability": 0.6382,
+      "base_rate": 0.5505,
+      "lift": 0.0877,
+      "raw_hit_probability": 0.6838,
+      "calibrated_by": "hits",
+      "prob_ci": [
+        0.5799,
+        0.768
+      ],
+      "sample_n": 91,
+      "reliability": "A",
+      "max_acceptable_price": -176,
+      "estimated_odds": -206,
+      "probability_basis": "blended",
+      "probability_detail": {
+        "empirical": 0.6679,
+        "modelled": 0.7077
+      },
+      "alternatives": [
+        {
+          "stat": "total_bases",
+          "line": 1.5,
+          "needs": 2,
+          "label": "Over 1.5 Total Bases",
+          "prob": 0.4093,
+          "basis": "blended",
+          "base_rate": 0.3115,
+          "lift": 0.0978,
+          "empirical": 0.4067,
+          "modelled": 0.4132
+        },
+        {
+          "stat": "hits",
+          "line": 1.5,
+          "needs": 2,
+          "label": "Over 1.5 Hits",
+          "prob": 0.2937,
+          "basis": "blended",
+          "base_rate": 0.1818,
+          "lift": 0.1119,
+          "empirical": 0.2909,
+          "modelled": 0.2979
+        },
+        {
+          "stat": "total_bases",
+          "line": 2.5,
+          "needs": 3,
+          "label": "Over 2.5 Total Bases",
+          "prob": 0.2588,
+          "basis": "blended",
+          "base_rate": 0.1798,
+          "lift": 0.079,
+          "empirical": 0.254,
+          "modelled": 0.266
+        }
+      ]
+    }
+  ]
+}

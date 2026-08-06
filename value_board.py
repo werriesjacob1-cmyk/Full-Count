@@ -52,40 +52,58 @@ import odds_fanduel as fd
 MIN_EVENTS = 4
 
 
-def model_probabilities(prices, min_games=40):
-    """Calibrated model probability for every player the book prices."""
-    import mlb_sources as src
+def model_probabilities(prices, min_games=40, use_pipeline=True):
+    """Model probability for every player the book prices.
 
-    # THE PIPELINE'S CALIBRATOR MUST NOT BE APPLIED HERE. It was fitted to map
-    # generate_picks.py's OWN predicted probabilities onto outcomes, and that
-    # distribution is concentrated between roughly 0.2 and 0.9. Raw empirical
-    # game-log rates are a different distribution entirely, and feeding the
-    # rare ones through a sigmoid fitted elsewhere produces nonsense:
-    #
-    #     market      raw     through the calibrator
-    #     2+ hits    20.9%          40.8%
-    #     3+ hits     4.2%          33.1%
-    #     home run   11.2%          18.4%
-    #
-    # A hitter who records three hits in 4.2% of his games is not a 33% shot,
-    # and that single misapplication turned 22 plausible edges into 195 fake
-    # ones -- a screen claiming to beat a 10-15% hold market on 38% of its
-    # props, which is on its face impossible.
-    #
-    # Raw empirical rates are used instead. They are backward-looking and take
-    # no account of tonight's pitcher or park, which is a real limitation
-    # stated plainly rather than papered over with a correction that does not
-    # apply. A calibrator FOR these rates would have to be fitted on these
-    # rates against outcomes; that is a separate piece of work and until it
-    # exists the honest number is the measured one.
-    comp = src.batter_pa_composition()
+    TWO PATHS, AND THE DEFAULT ONE IS THE PIPELINE.
+
+    This screen originally read season game-log rates directly. That made it
+    blind to everything the daily pipeline already knows about tonight -- who
+    is pitching, the park, the weather, the batting-order slot, the bullpen --
+    and it is why every disagreement with a price looked like the market
+    knowing something we did not. It was not a data gap; it was this module
+    ignoring data the system already had.
+
+    The pipeline path scores each batter through generate_picks.score_batter,
+    which consumes the opposing starter, his handedness and arsenal, park and
+    weather, projected plate appearances from the lineup slot and implied team
+    total, bullpen quality and fatigue -- then calibrates. That is the number
+    to compare against a price.
+
+    The season-rate path remains as a fallback for players the pipeline could
+    not score (not in a confirmed lineup, no game context), because a
+    backward-looking rate beats no read at all. Which path produced each
+    number is recorded on every row rather than blended silently away.
+    """
+    import mlb_sources as src_mod
+
+    entries = {}
+    pipeline_probs = {}
+    if use_pipeline:
+        try:
+            import generate_picks as gp
+            cands, _ctx = gp.score_slate()
+            for c in cands:
+                nm = fd.normalize_name(c.get("name") or "")
+                p = c.get("hit_probability")
+                proj = c.get("projection") or {}
+                if nm and p is not None and proj.get("stat"):
+                    # Keyed by the exact market so a 2+ hits price is never
+                    # compared against a 1+ hits probability.
+                    pipeline_probs[(nm, proj["stat"], proj.get("needs"))] = {
+                        "prob": p, "ci": c.get("prob_ci"),
+                        "games": c.get("sample_n"), "source": "pipeline",
+                    }
+        except Exception as e:
+            print(f"  (pipeline scoring unavailable: {e} — falling back to season rates)")
+
+    comp = src_mod.batter_pa_composition()
     by_norm = {fd.normalize_name(v.get("name") or ""): (pid, v)
                for pid, v in comp.items() if v.get("name")}
     ids = [by_norm[n][0] for n in prices if n in by_norm]
-    emp = src.empirical_batter_prop_rates(ids)
-    league = src.league_base_rates()
+    emp = src_mod.empirical_batter_prop_rates(ids)
+    league = src_mod.league_base_rates()
 
-    out = {}
     for name_n, markets in prices.items():
         hit = by_norm.get(name_n)
         if not hit:
@@ -98,51 +116,28 @@ def model_probabilities(prices, min_games=40):
             r = (e.get("rates") or {}).get(f"{stat}_{needs}plus")
             if not r:
                 continue
-            # A RATE NEEDS EVENTS BEHIND IT, not just games. For rare markets
-            # (4+ RBIs, 5+ total bases) a player often has zero or one
-            # occurrence all season, so p_hat is essentially the shrinkage
-            # prior wearing a player's name. Comparing that to a +17500 price
-            # produced "edges" of +200% -- pure artefact. Requiring a handful
-            # of real occurrences is what separates a measured rate from a
-            # prior with a decoration.
+            # A rate needs EVENTS behind it, not just games. On rare markets a
+            # player often has zero or one occurrence all season, so the shrunk
+            # rate is the prior wearing a player's name -- and against a +17500
+            # price that produced apparent edges above +200%.
             if r.get("hit", 0) < MIN_EVENTS:
                 continue
-            raw = r.get("p_hat", r["p"])
-            prob = raw
-            prob_lo = r.get("p_lo")
-            out[(name_n, stat, needs)] = {
+            season_p = r.get("p_hat", r["p"])
+            pl = pipeline_probs.get((name_n, stat, needs))
+            prob = pl["prob"] if pl else season_p
+            source = "pipeline" if pl else "season-rate"
+            entries[(name_n, stat, needs)] = {
                 "player": meta.get("name"), "stat": stat, "needs": needs,
-                "american": american, "prob": prob, "prob_lo": prob_lo,
-                "raw": raw, "games": e.get("games"),
+                "american": american, "prob": prob,
+                "prob_lo": r.get("p_lo"), "season_prob": season_p,
+                "source": source, "games": e.get("games"),
                 "base_rate": (league or {}).get(f"{stat}_{needs}plus"),
             }
-    return out
-
-
-# TIERS, NOT A PASS/FAIL GATE.
-#
-# A single BET/NO-BET verdict throws away most of what the screen knows. On a
-# night when nothing clears every test, "0 bets" is technically honest and
-# practically useless -- it hides the ranking that was computed anyway. The
-# information is not binary, so the output should not be either.
-#
-#   A  clears the return floor, survives its own confidence interval, and
-#      agrees with the de-vigged market. Everything lines up.
-#   B  clears the return floor and the interval, but the market disagrees.
-#      The market is usually right, so these are shown with that stated
-#      rather than suppressed.
-#   C  positive expected return, but the edge sits inside the model's own
-#      margin of error. Real candidates, thin evidence.
-#   D  negative expected return at the posted price. Shown only on request.
-#
-# Tiers A and B are bets. C is a watchlist. Nothing here is hidden, and the
-# reason each pick sits where it does travels with it.
-TIER_NOTE = {
-    "A": "model, price and market all agree",
-    "B": "priced well by the model, but the market disagrees — size down",
-    "C": "positive return, but the edge is inside our margin of error",
-    "D": "negative expected return at this price",
-}
+    n_pipe = sum(1 for v in entries.values() if v["source"] == "pipeline")
+    if entries:
+        print(f"  {n_pipe}/{len(entries)} scored with full game context "
+              f"(opposing SP, park, lineup slot); the rest on season rates")
+    return entries
 
 
 def screen(entries, min_roi=pp.MIN_ROI, require_robust=True, reject_suspect=True):

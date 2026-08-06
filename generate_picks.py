@@ -1991,8 +1991,31 @@ def build_candidates(game_meta, *, batter_lookup, pitcher_lookup, team_k_lookup,
 #  MAIN
 # ══════════════════════════════════════════════════════════════════════════
 
-def main() -> int:
-    print("Generating top 10 picks (deterministic scoring, no LLM call)...")
+def score_slate():
+    """Score every candidate on tonight's slate, with full game context.
+
+    EXTRACTED SO THAT NOTHING ELSE HAS TO RE-DERIVE THIS. value_board.py
+    originally read season game-log rates directly, which left the value
+    screen blind to the opposing starter, the park, the weather, the
+    batting-order slot and the bullpen -- every one of which the pipeline
+    already knows and feeds into score_batter(). That was not a gap in the
+    system's data; it was a second code path ignoring data the system
+    already had, and it is why every price disagreement looked like "the
+    market knows tonight and we do not".
+
+    Returns (candidates, context), candidates carrying calibrated
+    probabilities, reliability and lift exactly as the daily board sees them.
+    """
+    return _build_and_score()
+
+
+def _build_and_score():
+    """The whole scoring pass: fetch, score, price, calibrate.
+
+    Everything up to (but not including) ranking. Both the daily board
+    and the value screen consume this, so neither can drift from the
+    other's idea of what a candidate is worth.
+    """
 
     lineup_text, game_meta, player_ids = m.fetch_lineups(m.TODAY)
     if not game_meta:
@@ -2001,7 +2024,7 @@ def main() -> int:
         with open(PICKS_JSON_FILE, "w", encoding="utf-8") as f:
             json.dump({"date": m.TODAY, "picks": []}, f, indent=2)
         print("No games today — wrote placeholder picks files.")
-        return 0
+        return None
 
     # Drop games that can no longer be bet BEFORE any scoring work happens.
     allow_started = os.environ.get("ALLOW_STARTED_GAMES") == "1"
@@ -2013,7 +2036,7 @@ def main() -> int:
         if not game_meta:
             print("Every game on the slate has already started — nothing left to bet.")
             archive_existing_picks(m.TODAY)
-            return 0
+            return None
 
     archived = archive_existing_picks(m.TODAY)
     if archived:
@@ -2109,6 +2132,23 @@ def main() -> int:
     # operate on the honest number rather than the overstated one.
     apply_calibration(candidates, load_calibrator())
     attach_reliability(candidates, emp_batters, emp_pitchers)
+    return candidates, {
+        "game_meta": game_meta, "park_wx": park_wx,
+        "bullpen_scores": bullpen_scores, "emp_batters": emp_batters,
+        "emp_pitchers": emp_pitchers, "comp_table": comp_table,
+        "league_rates": league_rates,
+    }
+
+
+def main() -> int:
+    print("Generating top 10 picks (deterministic scoring, no LLM call)...")
+    result = _build_and_score()
+    if result is None:
+        return 0
+    candidates, ctx = result
+    game_meta = ctx['game_meta']; park_wx = ctx['park_wx']
+    bullpen_scores = ctx['bullpen_scores']
+    emp_batters = ctx['emp_batters']; emp_pitchers = ctx['emp_pitchers']
 
     # RANKING. The board is sorted by chance of cashing, which is the stated
     # objective, with the quality score demoted to a GATE rather than the
