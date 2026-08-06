@@ -267,8 +267,70 @@ def p_stolen_base(times_on_base, attempt_rate, success_rate):
 # model ranks it. Above the ceiling, the line is so easy the book prices it
 # at heavy juice and it stops being worth betting -- so an "always hits"
 # result is not automatically the best recommendation.
+# ── The price band, expressed as probability ──────────────────────────────
+#
+# No free source of player-prop PRICES exists (verified: Action Network
+# exposes only game markets, The Odds API charges for props). That turns out
+# not to block a price constraint, because probability and price are the same
+# statement. A book posts a prop near its fair value plus hold, so a model
+# probability implies a price whether or not anyone looks it up.
+#
+#     American odds     implied prob    approx true prob after prop vig
+#        +100 (even)        50.0%                 ~52%
+#        -150               60.0%                 ~57%
+#        -250               71.4%                 ~68%
+#        -350               77.8%                 ~74%
+#        -700               87.5%                 ~84%
+#
+# The ceiling is therefore a PRICE ceiling in disguise. At 0.92 the model was
+# recommending props priced around -700 to -900: bets that win nine times in
+# ten and still lose money, because -700 needs 87.5% just to break even. The
+# ceiling is now the -350 equivalent, which is the worst price worth taking.
+#
+# The vig adjustment is an assumption and is stated as one. Two-way prop
+# markets typically hold 5-8%, so roughly half of that sits on each side, and
+# the true probability behind a posted price runs a few points below its
+# implied probability. Longshot props hold considerably more -- Bobby Witt Jr.
+# to steal a base priced at +320 implies 23.8% against a measured 28.1% from
+# his own game log, which is a much wider gap than a favourite carries. Treat
+# the estimated prices below as a band, not a quote.
 MIN_USEFUL_PROB = 0.50
-MAX_USEFUL_PROB = 0.92
+
+# The -350 equivalent. Above this a prop is priced too short to be worth
+# betting regardless of how likely it is to land.
+MAX_USEFUL_PROB = 0.75
+
+# Half of a typical 7% two-way prop hold, added to a true probability to
+# approximate what the book will post.
+ASSUMED_HALF_VIG = 0.035
+
+
+def implied_probability(american_odds):
+    """Book-implied probability (vig included) for an American price."""
+    o = float(american_odds)
+    return (-o) / ((-o) + 100.0) if o < 0 else 100.0 / (o + 100.0)
+
+
+def american_odds(prob, include_vig=True):
+    """Approximate American price for a true probability.
+
+    Returns the price a book would plausibly POST (vig included) by default,
+    or the fair no-vig price with include_vig=False. Approximate by
+    construction -- see the note on hold above."""
+    p = float(prob)
+    if include_vig:
+        p = min(0.995, p + ASSUMED_HALF_VIG)
+    if p <= 0.0 or p >= 1.0:
+        return None
+    return round(-100.0 * p / (1.0 - p)) if p >= 0.5 else round(100.0 * (1.0 - p) / p)
+
+
+def format_odds(prob):
+    """Human-readable estimated price, e.g. '-215' or '+140'."""
+    o = american_odds(prob)
+    if o is None:
+        return "n/a"
+    return f"{'+' if o > 0 else ''}{int(o)}"
 
 
 def best_threshold(prop_type, prob_fn, lines=None,

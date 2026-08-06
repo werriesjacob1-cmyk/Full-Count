@@ -2175,6 +2175,8 @@ def write_json(top10):
             "confidence": c["confidence"], "notable_signals": c["notable_signals"],
             "hit_probability": c.get("hit_probability"),
             "base_rate": c.get("base_rate"), "lift": c.get("lift"),
+            "estimated_odds": (pp.american_odds(c["hit_probability"])
+                               if c.get("hit_probability") is not None else None),
             "probability_basis": c.get("probability_basis"),
             "probability_detail": c.get("probability_detail"),
             "alternatives": c.get("alternatives"),
@@ -2728,7 +2730,11 @@ def write_markdown(top10, skipped, game_meta, bullpen_scores, all_ranked=()):
                  f"must score {MIN_QUALITY_SCORE:.0f}+ to make the board at all. "
                  f"A pick must ALSO beat its own market's league base rate, so "
                  f"nothing is recommended purely because its market is easy. "
-                 f"**Lift** shows by how much.")
+                 f"**Lift** shows by how much. Lines are capped at "
+                 f"{pp.MAX_USEFUL_PROB*100:.0f}% — the ~{pp.format_odds(pp.MAX_USEFUL_PROB)} "
+                 f"equivalent — because a prop priced shorter than that needs a "
+                 f"hit rate above what any model can reliably deliver just to "
+                 f"break even.")
     lines.append("")
 
     if not top10:
@@ -2755,6 +2761,10 @@ def write_markdown(top10, skipped, game_meta, bullpen_scores, all_ranked=()):
                 lift_s = (f" — **{lift*100:+.1f} pts** vs the {base*100:.0f}% league base "
                           f"rate for this market")
             lines.append(f"- **Chance of hitting:** {hp*100:.1f}%{basis}{lift_s}")
+            lines.append(f"- **Estimated price:** ~{pp.format_odds(hp)} "
+                          f"(no free source for prop prices exists, so this is derived "
+                          f"from the probability plus a typical prop hold — treat it as "
+                          f"a band, not a quote, and check the book)")
             alts = c.get("alternatives") or []
             if alts:
                 alt_s = ", ".join(f"{a['label'] if 'label' in a else 'Over ' + str(a['line']) + ' Ks'}"
@@ -2831,7 +2841,7 @@ def write_markdown(top10, skipped, game_meta, bullpen_scores, all_ranked=()):
                     lift_s = (f"  ·  lift {lift*100:+.1f} pts"
                               + (f" over a {base*100:.0f}% base rate" if base is not None else ""))
                 lines.append(f"- {c['name']} ({c['team']}) — {c['prop']} — "
-                             f"**{hp*100:.0f}%**{lift_s}")
+                             f"**{hp*100:.0f}%** (~{pp.format_odds(hp)}){lift_s}")
             lines.append("")
 
     if skipped:
