@@ -1902,6 +1902,38 @@ def build_candidates(game_meta, *, batter_lookup, pitcher_lookup, team_k_lookup,
     # through every score_* signature separately. Informational only — not
     # folded into score, since "check before betting" is the honest framing
     # for a probability that's still hours out and can shift either way.
+    # NEGATIVE LIFT IS A REAL WATCHOUT, and it is invisible in the headline
+    # percentage. A pick can carry a high chance of cashing purely because its
+    # market is easy, while the model holds no positive information about the
+    # player at all. Live example from 2026-08-06: the board's #1 pick was
+    # Cristopher Sanchez over 3.5 strikeouts at 91.3%, which is 0.6 points
+    # BELOW the league rate for a starter clearing that line -- so the number
+    # that put him first was the market, not the read.
+    #
+    # This is structural rather than incidental, because threshold selection
+    # maximises probability and the easiest line is always the one with the
+    # least room for skill to show. Sanchez's own alternatives run +2.2 at
+    # over 4.5 and +7.6 at over 5.5 against -0.6 at the line chosen.
+    #
+    # The ranking is deliberately NOT changed here: chance of cashing is the
+    # stated objective and it stays the sort key. But shipping a
+    # negative-lift pick without saying so presents an easy market as a
+    # strong read, which is the one thing the headline number cannot
+    # distinguish on its own.
+    for c in candidates:
+        lift = c.get("lift")
+        if lift is not None and lift < 0:
+            base = c.get("base_rate")
+            c["watchouts"].append(
+                f"No positive read here: {abs(lift)*100:.1f} pts BELOW the "
+                f"{base*100:.0f}% league base rate for this market"
+                if base is not None else
+                f"No positive read here: {abs(lift)*100:.1f} pts below this market's base rate")
+        elif lift is not None and lift < 0.02:
+            c["watchouts"].append(
+                "Barely above this market's base rate — the high percentage is "
+                "mostly the market being easy, not a strong read on this player")
+
     for c in candidates:
         wx = park_wx.get(c["matchup"])
         if wx and not wx.get("dome") and (wx.get("precip_prob") or 0) >= 50:
@@ -2334,8 +2366,11 @@ def attach_hit_probabilities(candidates, comp_table, emp_batters, emp_pitchers):
                 prob, basis = _blend(empirical, modelled)
                 if prob is None:
                     continue
+                base = (r or {}).get("league_p")
                 opts.append({"line": t - 0.5, "needs": t, "prob": round(prob, 4),
                              "basis": basis,
+                             "base_rate": base,
+                             "lift": None if base is None else round(prob - base, 4),
                              "empirical": None if empirical is None else round(empirical, 4),
                              "modelled": None if modelled is None else round(modelled, 4)})
             opts.sort(key=lambda o: o["prob"], reverse=True)
@@ -2348,6 +2383,14 @@ def attach_hit_probabilities(candidates, comp_table, emp_batters, emp_pitchers):
                                    "needs": best["needs"]}
                 c["hit_probability"] = best["prob"]
                 c["probability_basis"] = best["basis"]
+                # Strikeout props were the one market shipping without a base
+                # rate, which made them incomparable to everything else on the
+                # board -- and they were ranked 1st, 2nd and 5th. The top pick
+                # sat at 91.3% with no indication of how much of that was the
+                # market being easy: a starter clearing 3.5 strikeouts is a
+                # high base rate before anyone looks at WHICH starter.
+                c["base_rate"] = best.get("base_rate")
+                c["lift"] = best.get("lift")
                 c["probability_detail"] = {"empirical": best["empirical"],
                                            "modelled": best["modelled"]}
                 c["alternatives"] = [o for o in opts if o is not best][:3]
