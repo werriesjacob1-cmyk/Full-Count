@@ -1129,6 +1129,33 @@ def verify_no_lookahead(date, store, use_weather=False, use_bullpen=False, verbo
        f"every rolling Statcast window ends on or before {cutoff} "
        f"(observed ends: {sorted(ends) if ends else 'none'})")
 
+    # ---- 4b. the SEASON-WIDE Statcast pull is bounded too ---------------
+    # Named explicitly because it is the newest and least obvious lookahead
+    # surface in the pipeline. fetch_first_inning_form() was rewritten to read
+    # m.fetch_season_statcast(), which issues pyb.statcast(start_dt=YEAR-03-15,
+    # end_dt=TODAY) and memoises the result in a module global. Two things had
+    # to be true for that to be safe here and both are asserted rather than
+    # assumed: TODAY is repointed to D-1 so the pull itself is bounded, and the
+    # module-level cache is cleared on entering each simulated date so a frame
+    # fetched for a later date can never be reused for an earlier one.
+    #
+    # This check requires the read to have HAPPENED. A version of it that only
+    # said "no season pull went past the cutoff" would pass trivially if the
+    # call were skipped, which is exactly how a leak hides.
+    season_pulls = [r for r in rolling
+                    if r["start"] and dstr(r["start"]) <= f"{year}-03-20" and r["rows"]]
+    ok(season_pulls and all(dstr(r["end"]) <= cutoff for r in season_pulls),
+       f"the season-wide Statcast pull behind first-inning form is bounded: "
+       f"{len(season_pulls)} pull(s), ending "
+       f"{sorted({dstr(r['end']) for r in season_pulls}) if season_pulls else 'never issued'} "
+       f"(latest row {max((r['max_game_date'] or '-') for r in season_pulls) if season_pulls else '-'})")
+    ok(getattr(m, "_SEASON_STATCAST_CACHE", None) is None
+       or str(pd.DataFrame(m._SEASON_STATCAST_CACHE)["game_date"].max())[:10] < date
+       if getattr(m, "_SEASON_STATCAST_CACHE", None) is not None else True,
+       "mlb_daily's season-Statcast memo holds nothing dated on or after "
+       f"{date} (it is cleared on entering every simulated date, so a frame "
+       f"pulled for a later date cannot be reused for an earlier one)")
+
     # ---- 6. outcomes are on D -------------------------------------------
     pks = {c.get("game_pk") for c in candidates if c.get("game_pk")}
     sched_pks = set(gr.fetch_game_statuses(date).keys())
