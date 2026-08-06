@@ -1544,6 +1544,20 @@ def score_batter(batter, gm, opp_sp_row, opp_sp_id, opp_sp_hand, park_wx, batter
             _sig(signals, "consecutive_games", rs["consecutive_games"],
                  clamp(-(rs["consecutive_games"] - 9) * 0.6, -4, 0))
 
+    # Pull rate, which only means something ALONGSIDE the park. A pull-heavy
+    # left-handed hitter in a park that plays 138 for left-handed power is a
+    # different proposition from the same hitter in a neutral yard, and
+    # neither number carries that on its own.
+    pl = (ex.get("pull") or {}).get(bid) if bid else None
+    if pl and (pl.get("BBE") or 0) >= 40 and ph and bats in ("L", "R"):
+        park_idx = ((ph.get(bats) or {}).get("Index"))
+        if park_idx is not None:
+            # Interaction, not two separate nudges: pull% above league only
+            # helps in a park that rewards that side.
+            synergy = (pl["Pull%"] - 40.0) * (park_idx - 100) / 100.0
+            _sig(signals, "pull_park_synergy", round(synergy, 2),
+                 clamp(synergy * 0.35, -4, 4))
+
     # Hard-hit rate, already used by the value screen but never by the board.
     hh = (ex.get("hard_hit") or {}).get(bid) if bid else None
     if hh:
@@ -1742,7 +1756,8 @@ def _on_base_score(bs):
     return None, None
 
 
-def score_stolen_base(batter, gm, opp_catcher_poptime, sprint_speed, batter_season):
+def score_stolen_base(batter, gm, opp_catcher_poptime, sprint_speed, batter_season,
+                      opp_cs_pct=None):
     """Speed is the dominant SKILL signal, but it is not the gating one: a
     player has to REACH BASE before speed and catcher pop time matter at all.
     Elite speed attached to a .280 OBP is far fewer steal chances than the
@@ -1789,6 +1804,9 @@ def score_stolen_base(batter, gm, opp_catcher_poptime, sprint_speed, batter_seas
     if on_base_note: why.append(f"On-base ability: {on_base_note} — gates how often he's on first to run at all")
     if season_sb is not None: why.append(f"Season SB: {season_sb}")
     watchouts = []
+    if opp_cs_pct is not None and opp_cs_pct >= 0.30:
+        watchouts.append(f"Opposing team throws out {opp_cs_pct*100:.0f}% of runners "
+                          f"(league ~25%) — a genuinely hard team to run on")
     if not opp_catcher_poptime: watchouts.append("Opposing catcher pop time unavailable — matchup component defaulted to neutral")
     if on_base is None:
         watchouts.append("No usable on-base rate (no OBP, and wOBA sample under 40 PA) — "
@@ -1797,6 +1815,15 @@ def score_stolen_base(batter, gm, opp_catcher_poptime, sprint_speed, batter_seas
         watchouts.append("Fast, but a weak on-base rate means materially fewer times on first to steal from")
 
     signals = {}
+    # THE OPPOSING TEAM'S ACTUAL CAUGHT-STEALING RATE. Pop time is a proxy for
+    # this; CS% is the outcome itself, and folds in what pop time misses --
+    # the pitcher's time to the plate, how well he holds runners, the
+    # catcher's accuracy rather than just arm speed. It was dismissed as
+    # redundant without being looked at, which was wrong: nothing else in the
+    # steal model measures it, and teams range from .195 to .324 this season.
+    if opp_cs_pct is not None:
+        _sig(signals, "opp_team_cs_pct", opp_cs_pct,
+             clamp(-(opp_cs_pct - 0.25) * 60, -6, 6))
     _sig(signals, "sprint_speed", sprint_speed, skill)
     _sig(signals, "catcher_poptime", opp_catcher_poptime, matchup)
     # The third scored component is on-base ability, NOT season SB — season SB
@@ -2006,7 +2033,8 @@ def build_candidates(game_meta, *, extras=None, batter_lookup, pitcher_lookup, t
                               wx, bseason, l7_form.get(batter.get("id")), bat_speed_trend, batter_arsenal, pitcher_arsenal,
                               away_opp_bullpen, sharp_bias.get(gm["away_team"]), away_opp_bullpen_quality,
                               extras=extras))
-            for c in (score_stolen_base(batter, gm, away_opp_catcher_pop, sprint_speed.get(batter.get("id")), bseason),
+            for c in (score_stolen_base(batter, gm, away_opp_catcher_pop, sprint_speed.get(batter.get("id")), bseason,
+                                        opp_cs_pct=(extras or {}).get("cs_pct_by_team", {}).get(gm["home_team"])),
                       score_walk(batter, gm, opp_sp_row_for_away_batters, ump_scores, bseason)):
                 if c: candidates.append(c)
         for batter in gm.get("home_lineup", []):
@@ -2016,7 +2044,8 @@ def build_candidates(game_meta, *, extras=None, batter_lookup, pitcher_lookup, t
                               wx, bseason, l7_form.get(batter.get("id")), bat_speed_trend, batter_arsenal, pitcher_arsenal,
                               home_opp_bullpen, sharp_bias.get(gm["home_team"]), home_opp_bullpen_quality,
                               extras=extras))
-            for c in (score_stolen_base(batter, gm, home_opp_catcher_pop, sprint_speed.get(batter.get("id")), bseason),
+            for c in (score_stolen_base(batter, gm, home_opp_catcher_pop, sprint_speed.get(batter.get("id")), bseason,
+                                        opp_cs_pct=(extras or {}).get("cs_pct_by_team", {}).get(gm["away_team"])),
                       score_walk(batter, gm, opp_sp_row_for_home_batters, ump_scores, bseason)):
                 if c: candidates.append(c)
 
@@ -2207,14 +2236,35 @@ def _build_and_score():
         ("framing", lambda: _src.catcher_framing()),
         ("rest", lambda: _src.rest_and_usage(game_meta)),
         ("hard_hit", lambda: _src.hard_hit_game_rates()),
+        # Second batch, each verified against its real structure before use.
+        ("team_field", lambda: _src.team_fielding_table()),
+        ("team_bat", lambda: _src.team_batting_table()),
+        ("pull", lambda: _src.pull_rates()),
+        ("pitch_q", lambda: _src.pitch_quality()),
     ):
         try:
             extras[name] = fn() or {}
         except Exception as e:
             m.warn(f"{name} unavailable ({e}) — scoring continues without it")
             extras[name] = {}
+    # Both team tables arrive as lists of rows with SOME RATES AS STRINGS --
+    # CS% comes back as '.267', not 0.267. Converting here rather than at each
+    # use site, because a string silently compares false against every numeric
+    # threshold and the signal would simply never fire.
+    def _f(v):
+        try:
+            return float(v)
+        except (TypeError, ValueError):
+            return None
+
+    extras["cs_pct_by_team"] = {r["Team"]: _f(r.get("CS%"))
+                                for r in (extras.get("team_field") or [])
+                                if _f(r.get("CS%")) is not None}
+    extras["team_k_pct"] = {r["Team"]: _f(r.get("K%"))
+                            for r in (extras.get("team_bat") or [])
+                            if _f(r.get("K%")) is not None}
     print("    Extra signals: " + ", ".join(
-        f"{k} {len(v)}" for k, v in extras.items()))
+        f"{k} {len(v)}" for k, v in extras.items() if hasattr(v, "__len__")))
 
     candidates = build_candidates(
         game_meta, extras=extras,
