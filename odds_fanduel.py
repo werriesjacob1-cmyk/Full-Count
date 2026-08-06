@@ -193,6 +193,87 @@ def list_games():
     return out
 
 
+# Two-sided line markets: a handicap plus an Over and an Under, rather than a
+# yes/no. Pitcher strikeouts are the important ones here, and they are the
+# BEST-priced markets on the board for our purposes -- because both sides are
+# quoted, the hold can be measured exactly instead of assumed, which removes
+# the largest source of error in judging whether a price is fair.
+TWO_SIDED_MARKETS = {
+    "PITCHER_A_TOTAL_STRIKEOUTS", "PITCHER_B_TOTAL_STRIKEOUTS",
+    "PITCHER_C_TOTAL_STRIKEOUTS", "PITCHER_D_TOTAL_STRIKEOUTS",
+    "PITCHER_E_TOTAL_STRIKEOUTS", "PITCHER_F_TOTAL_STRIKEOUTS",
+    "PITCHER_A_STRIKEOUTS", "PITCHER_B_STRIKEOUTS", "PITCHER_C_STRIKEOUTS",
+    "PITCHER_D_STRIKEOUTS", "PITCHER_E_STRIKEOUTS", "PITCHER_F_STRIKEOUTS",
+}
+
+
+def _parse_two_sided(market):
+    """Pull (player, line, over_odds, under_odds) from a handicap market.
+
+    The runner name carries the side as a suffix ("Janson Junk Over"), and the
+    line lives on the runner's handicap field. Both sides are required: a
+    one-sided capture would silently fall back to an assumed hold, which is
+    exactly the imprecision this market type lets us avoid."""
+    line = None
+    sides = {}
+    player = None
+    for rn in (market.get("runners") or []):
+        name = rn.get("runnerName") or ""
+        result = ((rn.get("result") or {}).get("type") or "").upper()
+        if not result:
+            result = "OVER" if name.strip().endswith("Over") else (
+                     "UNDER" if name.strip().endswith("Under") else "")
+        if result not in ("OVER", "UNDER"):
+            continue
+        odds = ((rn.get("winRunnerOdds") or {})
+                .get("americanDisplayOdds", {}) or {}).get("americanOddsInt")
+        if odds is None:
+            continue
+        if rn.get("handicap") is not None:
+            line = float(rn["handicap"])
+        if player is None:
+            player = re.sub(r"\s+(Over|Under)$", "", name).strip()
+        sides[result] = int(odds)
+    if player is None or line is None or "OVER" not in sides or "UNDER" not in sides:
+        return None
+    return player, line, sides["OVER"], sides["UNDER"]
+
+
+def fetch_pitcher_strikeouts(max_workers=8):
+    """Two-sided strikeout markets for tonight's starters.
+
+    Returns {normalized_name: {"line": float, "over": int, "under": int,
+                               "needs": int, "true_over": float, "hold": float}}
+    where true_over is de-vigged EXACTLY from both sides."""
+    import prop_probability as pp
+    out = {}
+    for event_id, name, _start in list_games():
+        for tab in ("pitcher-props", "popular"):
+            try:
+                d = _get(f"event-page?eventId={event_id}&tab={tab}&_ak={AK}")
+            except Exception:
+                continue
+            for m in (d.get("attachments", {}).get("markets") or {}).values():
+                if m.get("marketType") not in TWO_SIDED_MARKETS:
+                    continue
+                if m.get("inPlay"):
+                    continue
+                parsed = _parse_two_sided(m)
+                if not parsed:
+                    continue
+                player, line, over, under = parsed
+                t_over, t_under, hold = pp.devig_two_sided(over, under)
+                out[normalize_name(player)] = {
+                    "player": player, "line": line,
+                    # "Over 3.5" settles on 4 or more.
+                    "needs": int(line) + 1 if float(line).is_integer() else int(line + 0.5),
+                    "over": over, "under": under,
+                    "true_over": t_over, "true_under": t_under, "hold": hold,
+                    "game": name,
+                }
+    return out
+
+
 def _event_props(event_id):
     rows = []
     for tab in ("batter-props", "popular"):

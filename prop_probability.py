@@ -613,3 +613,32 @@ def market_agreement(model_prob, american, hold=ASSUMED_PROP_HOLD):
             "model": round(float(model_prob), 4), "gap": round(gap, 4),
             "ratio": round(ratio, 3) if ratio != float("inf") else None,
             "agreement": verdict, "note": note}
+
+
+def devig_two_sided(over_american, under_american):
+    """Exact de-vig when BOTH sides of a market are priced.
+
+    This is the honest version of devig(). The one-sided helper has to assume
+    a hold, because FanDuel's yes/no batter props expose only the yes side --
+    and an assumed 8% is a guess that lands differently on every market.
+
+    Where both sides exist the hold is not a guess at all. The two implied
+    probabilities sum to 1 + hold, so dividing each by that sum recovers the
+    book's actual estimate exactly:
+
+        Over 3.5   -111  -> implied 0.526
+        Under 3.5  -115  -> implied 0.535
+        sum 1.061, so the hold is 6.1% and the true Over is 0.526/1.061 = 0.496
+
+    That matters more than it sounds. Pitcher strikeout markets are two-sided,
+    and a 6.1% measured hold against an 8% assumption is nearly two points of
+    probability -- enough to flip a marginal bet's sign, in a market where
+    break-even sits near 50% and small errors are expensive.
+
+    Returns (over_prob, under_prob, hold)."""
+    io = implied_probability(over_american)
+    iu = implied_probability(under_american)
+    total = io + iu
+    if total <= 0:
+        return None, None, None
+    return io / total, iu / total, total - 1.0
