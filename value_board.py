@@ -119,6 +119,32 @@ def model_probabilities(prices, min_games=40):
     return out
 
 
+# TIERS, NOT A PASS/FAIL GATE.
+#
+# A single BET/NO-BET verdict throws away most of what the screen knows. On a
+# night when nothing clears every test, "0 bets" is technically honest and
+# practically useless -- it hides the ranking that was computed anyway. The
+# information is not binary, so the output should not be either.
+#
+#   A  clears the return floor, survives its own confidence interval, and
+#      agrees with the de-vigged market. Everything lines up.
+#   B  clears the return floor and the interval, but the market disagrees.
+#      The market is usually right, so these are shown with that stated
+#      rather than suppressed.
+#   C  positive expected return, but the edge sits inside the model's own
+#      margin of error. Real candidates, thin evidence.
+#   D  negative expected return at the posted price. Shown only on request.
+#
+# Tiers A and B are bets. C is a watchlist. Nothing here is hidden, and the
+# reason each pick sits where it does travels with it.
+TIER_NOTE = {
+    "A": "model, price and market all agree",
+    "B": "priced well by the model, but the market disagrees — size down",
+    "C": "positive return, but the edge is inside our margin of error",
+    "D": "negative expected return at this price",
+}
+
+
 def screen(entries, min_roi=pp.MIN_ROI, require_robust=True, reject_suspect=True):
     bets, near, rejected = [], [], []
     for k, e in entries.items():
@@ -137,21 +163,21 @@ def screen(entries, min_roi=pp.MIN_ROI, require_robust=True, reject_suspect=True
         row = {**e, **v, **{"agreement": agree["agreement"],
                             "market_fair": agree["market_fair"],
                             "gap_vs_market": agree["gap"]}}
-        if reject_suspect and agree["agreement"] == "SUSPECT":
-            row["verdict"] = "NO BET"
-            row["why"] = ("model is " + f"{agree['gap']*100:+.1f}" +
-                          " pts from the de-vigged market — that is a gap in "
-                          "the model far more often than an edge in the market")
-            rejected.append(row)
-            continue
-        if v["verdict"] == "BET":
-            bets.append(row)
+        clears_roi = v["roi"] >= min_roi
+        robust = v.get("robust_to_uncertainty", True)
+        if clears_roi and robust and agree["agreement"] != "SUSPECT":
+            row["tier"] = "A"
+        elif clears_roi and robust:
+            row["tier"] = "B"
         elif v["roi"] > 0:
-            near.append(row)
+            row["tier"] = "C"
         else:
-            rejected.append(row)
-    bets.sort(key=lambda r: -r["roi"])
-    near.sort(key=lambda r: -r["roi"])
+            row["tier"] = "D"
+        row["tier_note"] = TIER_NOTE[row["tier"]]
+        (bets if row["tier"] in ("A", "B") else
+         near if row["tier"] == "C" else rejected).append(row)
+    for lst in (bets, near, rejected):
+        lst.sort(key=lambda r: (-{"A": 2, "B": 1}.get(r.get("tier"), 0), -r["roi"]))
     return bets, near, rejected
 
 
@@ -197,33 +223,44 @@ def main():
     print(f"\n{'='*78}")
     print(f"VALUE BOARD — {datetime.now().strftime('%Y-%m-%d %H:%M')}")
     print(f"{'='*78}")
-    if bets:
-        print(f"\nBET ({len(bets)}) — clears {args.min_roi*100:.0f}% return AND survives "
-              f"the model's own confidence interval\n")
-        print(f"  {'player':22s}{'prop':11s}{'price':>7s}{'model':>8s}{'implied':>9s}"
-              f"{'ROI':>8s}{'kelly':>7s}")
-        for b in bets:
-            print(f"  {b['player'][:22]:22s}{label(b['stat'],b['needs']):11s}"
-                  f"{b['american']:+7d}{b['prob']*100:7.1f}%{b['implied']*100:8.1f}%"
-                  f"{b['roi']*100:+7.1f}%{b['kelly']*100:6.1f}%")
-    else:
-        print("\nBET (0)\n")
-        print("  Nothing cleared both tests. That is a real result, not a failure:")
-        print("  prop markets hold 10-15%, so most nights most props are not")
-        print("  bettable by anyone. A screen that always finds plays is finding")
-        print("  estimation error.")
 
-    if near:
-        print(f"\nCLOSE ({len(near)}) — positive return but failed a test\n")
-        for b in near[:8]:
-            reason = ("inside our margin of error"
-                      if b.get("robust_to_uncertainty") is False
-                      else f"return {b['roi']*100:+.1f}% under the floor")
+    def show(rows, title, note):
+        if not rows:
+            return
+        print(f"\n{title} ({len(rows)}) — {note}\n")
+        print(f"  {'player':22s}{'prop':11s}{'price':>7s}{'model':>8s}{'mkt':>7s}"
+              f"{'ROI':>8s}{'kelly':>7s}  n")
+        for b in rows:
             print(f"  {b['player'][:22]:22s}{label(b['stat'],b['needs']):11s}"
-                  f"{b['american']:+7d}  {b['roi']*100:+.1f}% — {reason}")
+                  f"{b['american']:+7d}{b['prob']*100:7.1f}%"
+                  f"{b['market_fair']*100:6.1f}%{b['roi']*100:+7.1f}%"
+                  f"{b['kelly']*100:6.1f}%  {b.get('games','?')}")
 
-    print(f"\nScreened {len(entries)} priced props: {len(bets)} bet, "
-          f"{len(near)} close, {len(rejected)} negative expectation.")
+    a = [b for b in bets if b["tier"] == "A"]
+    bb = [b for b in bets if b["tier"] == "B"]
+    show(a, "TIER A", TIER_NOTE["A"])
+    show(bb, "TIER B", TIER_NOTE["B"])
+    show(near[:12], "TIER C", TIER_NOTE["C"] + " — watchlist, size small")
+    if not a and not bb:
+        print("\n  No tier A or B tonight. Tier C is what the model likes on price")
+        print("  where the evidence is thinner than we would want.")
+
+    # Home runs get their own section on request: they are the market with the
+    # widest prices, so a small probability error moves ROI a long way, and
+    # they deserve to be read with their sample size in view.
+    hrs = sorted((r for r in (bets + near) if r["stat"] == "home_runs"),
+                 key=lambda r: -r["roi"])
+    if hrs:
+        print(f"\n{'-'*78}\nHOME RUNS — best available, all tiers\n")
+        print(f"  {'player':22s}{'line':8s}{'price':>7s}{'model':>8s}{'mkt':>7s}"
+              f"{'ROI':>8s}  tier  games")
+        for h in hrs[:10]:
+            print(f"  {h['player'][:22]:22s}{label(h['stat'],h['needs']):8s}"
+                  f"{h['american']:+7d}{h['prob']*100:7.1f}%{h['market_fair']*100:6.1f}%"
+                  f"{h['roi']*100:+7.1f}%   {h['tier']}    {h.get('games','?')}")
+
+    print(f"\nScreened {len(entries)} priced props: {len(a)} tier A, {len(bb)} tier B, "
+          f"{len(near)} tier C, {len(rejected)} negative.")
 
     if args.json:
         with open(args.json, "w", encoding="utf-8") as f:
