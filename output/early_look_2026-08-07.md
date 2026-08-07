@@ -9,7 +9,7 @@ Every player below is projected into last night's/his last game's batting slot f
 - **Corbin Carroll** (Arizona Diamondbacks) — Over 0.5 Hits — 61.4% [Los Angeles Dodgers @ Arizona Diamondbacks]
 - **Nolan Arenado** (Arizona Diamondbacks) — Over 0.5 Hits — 60.7% [Los Angeles Dodgers @ Arizona Diamondbacks]
 - **Geraldo Perdomo** (Arizona Diamondbacks) — Over 0.5 Hits — 60.0% [Los Angeles Dodgers @ Arizona Diamondbacks]
-- **Max Kepler** (Arizona Diamondbacks) — Over 0.5 Hits+Runs+RBIs — 56.2% [Los Angeles Dodgers @ Arizona Diamondbacks]
+- **Max Kepler** (Arizona Diamondbacks) — Over 0.5 Hits+Runs+RBIs — 56.1% [Los Angeles Dodgers @ Arizona Diamondbacks]
 - **Tim Tawa** (Arizona Diamondbacks) — Over 0.5 Hits+Runs+RBIs — 55.6% [Los Angeles Dodgers @ Arizona Diamondbacks]
 - **Corbin Carroll** (Arizona Diamondbacks) — To Steal a Base — 19.1% [Los Angeles Dodgers @ Arizona Diamondbacks]
 - **Ryan Waldschmidt** (Arizona Diamondbacks) — To Steal a Base — 17.8% [Los Angeles Dodgers @ Arizona Diamondbacks]
