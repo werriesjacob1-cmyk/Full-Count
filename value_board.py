@@ -85,11 +85,26 @@ def model_probabilities(prices, min_games=40, use_pipeline=True):
             cands, _ctx = gp.score_slate()
             for c in cands:
                 nm = fd.normalize_name(c.get("name") or "")
-                p = c.get("hit_probability")
+                if not nm:
+                    continue
                 proj = c.get("projection") or {}
-                if nm and p is not None and proj.get("stat"):
-                    # Keyed by the exact market so a 2+ hits price is never
-                    # compared against a 1+ hits probability.
+                p = c.get("hit_probability")
+                # EVERY THRESHOLD THE MODEL PRICED, not just the one it chose
+                # to recommend. The market prices 1+ hits and 2+ hits and 3+
+                # hits; the board recommends one of them. Keying only on the
+                # recommendation meant a 2+ hits price had no model number to
+                # compare against and silently fell back to a season rate.
+                # Measured before this change: 7 of 440 priced props got a
+                # pipeline probability, and all 7 were hits/1+.
+                for o in (c.get("line_options") or []):
+                    if o.get("stat") and o.get("needs") is not None and o.get("prob") is not None:
+                        pipeline_probs[(nm, o["stat"], o["needs"])] = {
+                            "prob": o["prob"], "ci": None,
+                            "games": c.get("sample_n"), "source": "pipeline",
+                        }
+                # The recommended line last, so its calibrated probability
+                # wins over the same line's raw entry in the options list.
+                if p is not None and proj.get("stat"):
                     pipeline_probs[(nm, proj["stat"], proj.get("needs"))] = {
                         "prob": p, "ci": c.get("prob_ci"),
                         "games": c.get("sample_n"), "source": "pipeline",

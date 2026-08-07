@@ -2817,6 +2817,40 @@ def _blend(empirical, modelled):
 MIN_LINE_PROB = 0.60
 
 
+def _keep_options(opts, default_stat=None):
+    """Keep the WHOLE probability curve, not just the line we recommend.
+
+    THE MODEL ALREADY COMPUTES THIS AND THREW IT AWAY. _pick_line() below
+    chooses one threshold per player per stat, and everything else computed
+    alongside it was discarded. That is right for the board — a board offers
+    one recommendation — and quietly disastrous for pricing, because the
+    market prices every threshold.
+
+    Measured on the 2026-08-07 slate: FanDuel priced 440 lines across 245
+    (player, stat) groups, and the value screen could attach a real model
+    probability to SEVEN of them. All seven were `hits, needs=1`, the line
+    the model happened to pick. Matt Olson's hits were priced at 1+ and 2+;
+    the model had a number for both and offered only 1+. So 433 of 440 props
+    were screened on season rates — blind to the opposing starter, the park,
+    the weather and the batting-order slot, which is exactly the failure
+    value_board's own docstring claims to have fixed.
+
+    Nothing here is a new calculation. It is the same list _pick_line is
+    handed, trimmed to what a consumer needs to price a market line.
+
+    default_stat exists because the two callers build options differently:
+    _batter_options() puts a 'stat' on every row, and the strikeout loop does
+    not — it knows the stat from context. Checked rather than assumed, since
+    a silently-None stat would key every strikeout option to (name, None,
+    needs) and match nothing, reproducing the exact bug this fixes."""
+    return [{"stat": o.get("stat") or default_stat,
+             "needs": o.get("needs"), "line": o.get("line"),
+             "prob": o.get("prob"), "base_rate": o.get("base_rate"),
+             "lift": o.get("lift"), "basis": o.get("basis")}
+            for o in (opts or []) if o.get("needs") is not None
+            and o.get("prob") is not None]
+
+
 def _pick_line(opts):
     """Choose which line to recommend, from the lines available for a player.
 
@@ -3152,6 +3186,7 @@ def attach_hit_probabilities(candidates, comp_table, emp_batters, emp_pitchers,
             c["prop"] = best["label"]
             c["projection"] = {"stat": best["stat"], "value": best["line"],
                                "needs": best["needs"]}
+            c["line_options"] = _keep_options(opts, best["stat"])
             c["hit_probability"] = best["prob"]
             c["probability_basis"] = best["basis"]
             c["base_rate"] = best.get("base_rate")
@@ -3211,6 +3246,7 @@ def attach_hit_probabilities(candidates, comp_table, emp_batters, emp_pitchers,
                 c["prop"] = f"Over {best['line']} Strikeouts"
                 c["projection"] = {"stat": "strikeouts", "value": best["line"],
                                    "needs": best["needs"]}
+                c["line_options"] = _keep_options(opts, "strikeouts")
                 c["hit_probability"] = best["prob"]
                 c["probability_basis"] = best["basis"]
                 # Strikeout props were the one market shipping without a base
