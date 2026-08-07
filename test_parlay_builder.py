@@ -198,7 +198,33 @@ check(risky_dial["legs"] == [] and risky_dial["shortfalls"],
       "dialing risk_level to 100 excludes safe-band candidates that don't belong in a risky parlay",
       f"legs={risky_dial['legs']} shortfalls={risky_dial['shortfalls']}")
 
-head("5. format_parlay_text -- the CLI output")
+head("5. build_best_available_parlay -- no specific prop request")
+
+d = batter("D. Batter", "Dodgers", "Dodgers @ Giants", 2, "hits", 0.68)
+mixed_pool = [a, b, p_own_team, d]  # a=0.70 hits, b=0.65 hits, p_own_team=0.68 K, d=0.68 hits (diff game)
+best3 = pb.build_best_available_parlay(pool=mixed_pool, n=3, risk_level=0, price_legs=False)
+check(len(best3["legs"]) == 3 and not best3["shortfalls"],
+      "fills up to n legs from across ANY stat family, not just one",
+      f"legs={[l['name'] for l in best3['legs']]}")
+check([l["hit_probability"] for l in best3["legs"]] == sorted(
+      [l["hit_probability"] for l in best3["legs"]], reverse=True),
+      "legs come back ordered highest probability first",
+      f"{[l['hit_probability'] for l in best3['legs']]}")
+
+best_n_too_high = pb.build_best_available_parlay(pool=[a, b], n=5, risk_level=0, price_legs=False)
+check(len(best_n_too_high["legs"]) == 2 and best_n_too_high["shortfalls"],
+      "asking for more legs than the pool can supply reports an honest shortfall, not padding",
+      f"legs={len(best_n_too_high['legs'])} shortfalls={best_n_too_high['shortfalls']}")
+
+# p_opposing (Pirates SP facing the Mets) should be skipped in favor of a
+# lower-probability but non-conflicting leg, same correlation discipline as
+# a specific request.
+best_corr = pb.build_best_available_parlay(pool=[c, p_opposing], n=2, risk_level=0, price_legs=False)
+check(len(best_corr["legs"]) == 1,
+      "the negatively-correlated pair is never both included, even with no specific stat request",
+      f"legs={[l['name'] for l in best_corr['legs']]}")
+
+head("6. format_parlay_text -- the CLI output")
 
 req_fmt = pb.ParlayRequest(prop_counts={"hits": 1, "strikeouts": 1}, risk_tier="safest")
 res_fmt = pb.build_parlay(req_fmt, pool=[a, b, p_own_team], price_legs=False)
@@ -216,7 +242,7 @@ check("No legs could be filled" in empty_text and "triples" in empty_text,
       "an unfillable request explains itself in the text output rather than printing nothing useful",
       empty_text)
 
-head("6. sanity against today's real pool, if it exists")
+head("7. sanity against today's real pool, if it exists")
 try:
     pool_real = pb.load_todays_pool()
     if pool_real:

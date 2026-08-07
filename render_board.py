@@ -301,21 +301,31 @@ footer {{ max-width: 1180px; margin: 0 auto; padding: 0 clamp(16px, 4vw, 40px) 4
 """
 
 
-def main():
-    args = [a for a in sys.argv[1:] if not a.startswith("--")]
-    date = args[0] if args else datetime.now().strftime("%Y-%m-%d")
-    out_path = None
-    for a in sys.argv[1:]:
-        if a.startswith("--out="):
-            out_path = a.split("=", 1)[1]
-    in_path = os.path.join(OUTPUT_DIR, f"picks_{date}.json")
+def write_board(date=None, in_path=None, out_path=None):
+    """Programmatic entry point -- what main() does, callable directly (e.g.
+    from generate_picks.py's own pipeline) without a subprocess. Reads only
+    the JSON already on disk, same as the CLI, so there is exactly one code
+    path for turning a picks file into a board regardless of caller."""
+    date = date or datetime.now().strftime("%Y-%m-%d")
+    in_path = in_path or os.path.join(OUTPUT_DIR, f"picks_{date}.json")
     with open(in_path, encoding="utf-8") as f:
         payload = json.load(f)
     html_out = render(payload, date)
     out_path = out_path or os.path.join(OUTPUT_DIR, f"board_{date}.html")
     with open(out_path, "w", encoding="utf-8") as f:
         f.write(html_out)
-    print(f"Wrote {out_path}")
+    return out_path
+
+
+def main():
+    args = [a for a in sys.argv[1:] if not a.startswith("--")]
+    date = args[0] if args else None
+    out_path = None
+    for a in sys.argv[1:]:
+        if a.startswith("--out="):
+            out_path = a.split("=", 1)[1]
+    written = write_board(date=date, out_path=out_path)
+    print(f"Wrote {written}")
 
 
 if __name__ == "__main__":

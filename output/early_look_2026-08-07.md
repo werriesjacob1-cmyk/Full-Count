@@ -4,7 +4,7 @@ Every player below is projected into last night's/his last game's batting slot f
 
 - **Geraldo Perdomo** (Arizona Diamondbacks) — Over 0.5 Hits+Runs+RBIs — 66.3% [Los Angeles Dodgers @ Arizona Diamondbacks]
 - **Corbin Carroll** (Arizona Diamondbacks) — Over 0.5 Hits+Runs+RBIs — 64.5% [Los Angeles Dodgers @ Arizona Diamondbacks]
-- **Lars Nootbaar** (Arizona Diamondbacks) — Over 0.5 Hits+Runs+RBIs — 64.2% [Los Angeles Dodgers @ Arizona Diamondbacks]
+- **Lars Nootbaar** (Arizona Diamondbacks) — Over 0.5 Hits+Runs+RBIs — 64.1% [Los Angeles Dodgers @ Arizona Diamondbacks]
 - **Nolan Arenado** (Arizona Diamondbacks) — Over 0.5 Hits+Runs+RBIs — 62.6% [Los Angeles Dodgers @ Arizona Diamondbacks]
 - **Gabriel Moreno** (Arizona Diamondbacks) — Over 0.5 Hits — 61.5% [Los Angeles Dodgers @ Arizona Diamondbacks]
 - **Ryan Waldschmidt** (Arizona Diamondbacks) — Over 0.5 Hits — 60.4% [Los Angeles Dodgers @ Arizona Diamondbacks]

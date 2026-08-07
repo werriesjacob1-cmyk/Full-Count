@@ -2888,6 +2888,41 @@ def main() -> int:
     write_json(top10, moonshots, by_category)
     persist_player_snapshots(candidates)
     print(f"Wrote {len(top10)} picks to {PICKS_FILE} and {PICKS_JSON_FILE}")
+
+    # Readable board + a couple of real example parlays, generated every run
+    # instead of left as a manual step someone has to remember. Never fatal:
+    # a rendering failure shouldn't take down a pipeline that already
+    # successfully wrote the picks that actually matter.
+    try:
+        import render_board as rb
+        board_path = rb.write_board(date=m.TODAY)
+        print(f"Wrote readable board to {board_path}")
+    except Exception as e:
+        m.warn(f"Board rendering failed ({e}) — picks JSON/markdown are unaffected")
+
+    try:
+        import parlay_builder as pbuild
+        import render_parlay as rparlay
+        pool = pbuild.load_todays_pool(date=m.TODAY)
+        # Two examples, not a claim these are "the" picks -- a concrete
+        # preview of the parlay product (the "free picks" idea) built from
+        # the exact same engine a real customer request would use.
+        for label, risk_level in (("safest", 0), ("risky", 100)):
+            # price_legs=True here is a deliberate small extra fetch (3-6
+            # players, not the whole slate) -- load_todays_pool() reads
+            # persisted snapshots, which never carry market_odds (see
+            # persist_player_snapshots), so without this every example would
+            # show no price and no payout at all.
+            result = pbuild.build_best_available_parlay(pool=pool, n=3, risk_level=risk_level,
+                                                         price_legs=True)
+            out_path = os.path.join(OUTPUT_DIR, f"parlay_example_{label}_{m.TODAY}.html")
+            html_out = rparlay.render(result, request_text=f"Today's best {label} 3-leg parlay")
+            with open(out_path, "w", encoding="utf-8") as f:
+                f.write(html_out)
+            print(f"Wrote example {label} parlay ({len(result['legs'])} legs) to {out_path}")
+    except Exception as e:
+        m.warn(f"Example parlay generation failed ({e}) — picks JSON/markdown are unaffected")
+
     return 0
 
 

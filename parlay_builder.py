@@ -277,22 +277,12 @@ def _select_legs(pool, prop_counts, risk_level):
     return legs, shortfalls
 
 
-def build_parlay(request, pool=None, price_legs=True):
-    """The real engine. `request` is a ParlayRequest (or plain dict with the
-    same keys). Returns a result dict -- never raises for a request that
-    can't be fully satisfied; that's a shortfall, reported honestly."""
-    if isinstance(request, dict):
-        request = ParlayRequest(**request)
-    pool = pool if pool is not None else load_todays_pool()
-
-    candidates = pool
-    if request.game_filter:
-        candidates = [c for c in candidates
-                     if all(name.lower() in (c.get("matchup") or "").lower()
-                            for name in request.game_filter)]
-
-    legs, shortfalls = _select_legs(candidates, request.prop_counts, request.effective_risk_level())
-
+def _finalize(request, legs, shortfalls, price_legs):
+    """Everything after leg SELECTION is decided: pricing, the naive combined
+    probability, correlation notes, payout. Shared by build_parlay() (a
+    specific prop_counts request) and build_best_available_parlay() (no
+    specific asks, just the best legs at a risk level) so the two never
+    silently diverge on how a result gets priced or summarized."""
     if price_legs and legs:
         try:
             import odds_fanduel as fd
@@ -342,6 +332,62 @@ def build_parlay(request, pool=None, price_legs=True):
         "estimated_payout_if_priced": payout_note,
         "correlation_notes": notes,
     }
+
+
+def build_parlay(request, pool=None, price_legs=True):
+    """The real engine. `request` is a ParlayRequest (or plain dict with the
+    same keys). Returns a result dict -- never raises for a request that
+    can't be fully satisfied; that's a shortfall, reported honestly."""
+    if isinstance(request, dict):
+        request = ParlayRequest(**request)
+    pool = pool if pool is not None else load_todays_pool()
+
+    candidates = pool
+    if request.game_filter:
+        candidates = [c for c in candidates
+                     if all(name.lower() in (c.get("matchup") or "").lower()
+                            for name in request.game_filter)]
+
+    legs, shortfalls = _select_legs(candidates, request.prop_counts, request.effective_risk_level())
+    return _finalize(request, legs, shortfalls, price_legs)
+
+
+def build_best_available_parlay(pool=None, n=3, risk_level=0, stake=None,
+                                target_payout=None, game_filter=None, price_legs=True):
+    """No specific prop request -- just the N best-available legs (any stat
+    family) at a risk level, correlation-screened the same as a specific
+    request. This is the natural "give me your best parlay" ask, and doubles
+    as the daily free-tier preview: the picks a customer would see before
+    ever typing a request at all.
+
+    Greedy by hit_probability across the WHOLE pool rather than per-stat, so
+    two different families can both show up if they're both strong tonight --
+    unlike _select_legs, which only ever looks within the one family asked
+    for."""
+    pool = pool if pool is not None else load_todays_pool()
+    candidates = pool
+    if game_filter:
+        candidates = [c for c in candidates
+                     if all(name.lower() in (c.get("matchup") or "").lower() for name in game_filter)]
+
+    lo, hi = risk_band(risk_level)
+    eligible = sorted([c for c in candidates if lo <= c["hit_probability"] < hi],
+                      key=lambda c: c["hit_probability"], reverse=True)
+
+    legs = []
+    for cand in eligible:
+        if len(legs) >= n:
+            break
+        if any(cand["player_id"] == leg["player_id"] for leg in legs):
+            continue
+        if any(corr.classify(cand, existing).label in ("negative", "redundant") for existing in legs):
+            continue
+        legs.append(cand)
+    shortfalls = ([{"stat": "any", "requested": n, "found": len(legs)}] if len(legs) < n else [])
+
+    request = ParlayRequest(prop_counts={}, risk_level=risk_level, stake=stake,
+                            target_payout=target_payout, game_filter=game_filter or [])
+    return _finalize(request, legs, shortfalls, price_legs)
 
 
 def _fmt_odds(n):
