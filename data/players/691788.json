@@ -44,7 +44,7 @@
         {
           "prop": "Over 0.5 Hits+Runs+RBIs",
           "type": "batter",
-          "score": 77.1,
+          "score": 76.9,
           "notable_signals": 2,
           "matchup": "Los Angeles Angels @ Miami Marlins",
           "game_pk": 823836,
@@ -65,7 +65,7 @@
             "platoon_barrel_pct": 1.84,
             "platoon_xwoba": 1.32,
             "park_hand_index": -1.5,
-            "opp_catcher_framing": 1.08,
+            "opp_catcher_framing": -1.32,
             "days_rest": 2.0,
             "pull_park_synergy": -0.9502,
             "hard_hit_105_rate": 0.67,
@@ -74,11 +74,13 @@
             "getaway_day": 0.0,
             "series_game": 0.0,
             "sp_rp_ops_gap": 1.0,
-            "vs_rp_ops": 0.948
+            "vs_rp_ops": 0.948,
+            "ump_k_pct": 0.132,
+            "ump_bb_pct": 0.684
           },
-          "hit_probability": 0.5888,
-          "raw_hit_probability": 0.6339,
-          "lift": -0.0868,
+          "hit_probability": 0.588,
+          "raw_hit_probability": 0.633,
+          "lift": -0.084,
           "reliability": "B",
           "sample_n": 66,
           "projection": {

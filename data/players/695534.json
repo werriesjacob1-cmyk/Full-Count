@@ -8,7 +8,7 @@
         {
           "prop": "Over 3.5 Strikeouts",
           "type": "pitcher",
-          "score": 34.0,
+          "score": 38.6,
           "notable_signals": 0,
           "matchup": "Cincinnati Reds @ Washington Nationals",
           "game_pk": 822699,
@@ -16,9 +16,12 @@
           "side": null,
           "lean": null,
           "signals": {
-            "same_hand_ratio": 21.4286,
+            "same_hand_ratio": 75.0,
             "l14_k_pct": 0.0,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 30.0848,
+            "ump_k_pct": 0.108,
+            "ump_bb_pct": -0.252
           },
           "hit_probability": 0.5565,
           "raw_hit_probability": 0.4253,
@@ -44,7 +47,8 @@
           "signals": {
             "yrfi_rate": 0.0,
             "fi_n_starts": 2.0,
-            "park_hr_index": 83.4
+            "ump_run_impact": 47.7389,
+            "park_hr_index": 82.5
           },
           "hit_probability": 0.6916,
           "raw_hit_probability": 0.7169,

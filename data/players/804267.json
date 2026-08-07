@@ -8,7 +8,7 @@
         {
           "prop": "Over 3.5 Strikeouts",
           "type": "pitcher",
-          "score": 31.4,
+          "score": 35.8,
           "notable_signals": 0,
           "matchup": "New York Mets @ Pittsburgh Pirates",
           "game_pk": 823349,
@@ -16,13 +16,16 @@
           "side": null,
           "lean": null,
           "signals": {
-            "same_hand_ratio": 0.0,
+            "same_hand_ratio": 33.3333,
             "l14_k_pct": 0.0,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 53.2189,
+            "ump_k_pct": -0.624,
+            "ump_bb_pct": 0.384
           },
-          "hit_probability": 0.6037,
-          "raw_hit_probability": 0.5925,
-          "lift": -0.1102,
+          "hit_probability": 0.6039,
+          "raw_hit_probability": 0.5932,
+          "lift": -0.11,
           "reliability": "D",
           "sample_n": 6,
           "projection": {
@@ -44,7 +47,8 @@
           "signals": {
             "yrfi_rate": 71.4,
             "fi_n_starts": 7.0,
-            "park_hr_index": 52.0
+            "ump_run_impact": 28.037,
+            "park_hr_index": 37.6
           },
           "hit_probability": 0.6777,
           "raw_hit_probability": 0.6562,

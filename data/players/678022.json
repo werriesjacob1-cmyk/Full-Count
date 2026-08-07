@@ -8,7 +8,7 @@
         {
           "prop": "Over 3.5 Strikeouts",
           "type": "pitcher",
-          "score": 62.3,
+          "score": 61.7,
           "notable_signals": 0,
           "matchup": "Athletics @ Boston Red Sox",
           "game_pk": 824727,
@@ -16,13 +16,16 @@
           "side": null,
           "lean": null,
           "signals": {
-            "same_hand_ratio": 100.0,
+            "same_hand_ratio": 92.8571,
             "l14_k_pct": 74.7059,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 52.7412,
+            "ump_k_pct": 0.324,
+            "ump_bb_pct": 0.144
           },
-          "hit_probability": 0.6862,
-          "raw_hit_probability": 0.9043,
-          "lift": -0.0277,
+          "hit_probability": 0.6864,
+          "raw_hit_probability": 0.9049,
+          "lift": -0.0275,
           "reliability": "D",
           "sample_n": 9,
           "projection": {
@@ -44,7 +47,8 @@
           "signals": {
             "yrfi_rate": 55.6,
             "fi_n_starts": 9.0,
-            "park_hr_index": 59.8
+            "ump_run_impact": 31.7214,
+            "park_hr_index": 59.7
           },
           "hit_probability": 0.6802,
           "raw_hit_probability": 0.6673,

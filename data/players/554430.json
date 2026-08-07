@@ -8,7 +8,7 @@
         {
           "prop": "Over 5.5 Strikeouts",
           "type": "pitcher",
-          "score": 68.6,
+          "score": 64.7,
           "notable_signals": 0,
           "matchup": "Toronto Blue Jays @ Philadelphia Phillies",
           "game_pk": 823428,
@@ -16,12 +16,15 @@
           "side": null,
           "lean": null,
           "signals": {
-            "same_hand_ratio": 100.0,
+            "same_hand_ratio": 61.1111,
             "l14_k_pct": 100.0,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 58.7843,
+            "ump_k_pct": 0.024,
+            "ump_bb_pct": 0.336
           },
           "hit_probability": 0.6133,
-          "raw_hit_probability": 0.6275,
+          "raw_hit_probability": 0.6273,
           "lift": 0.2366,
           "reliability": "D",
           "sample_n": 18,
@@ -44,6 +47,7 @@
           "signals": {
             "yrfi_rate": 16.7,
             "fi_n_starts": 18.0,
+            "ump_run_impact": 22.7458,
             "park_hr_index": 59.8
           },
           "hit_probability": 0.6965,

@@ -8,21 +8,24 @@
         {
           "prop": "Over 3.5 Strikeouts",
           "type": "pitcher",
-          "score": 50.0,
-          "notable_signals": 0,
+          "score": 48.4,
+          "notable_signals": 1,
           "matchup": "Colorado Rockies @ St. Louis Cardinals",
           "game_pk": 823024,
           "team": "St. Louis Cardinals",
           "side": null,
           "lean": null,
           "signals": {
-            "same_hand_ratio": 57.1429,
+            "same_hand_ratio": 21.4286,
             "l14_k_pct": 46.4706,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 77.964,
+            "ump_k_pct": 0.264,
+            "ump_bb_pct": 0.192
           },
-          "hit_probability": 0.6342,
-          "raw_hit_probability": 0.7043,
-          "lift": -0.0797,
+          "hit_probability": 0.6343,
+          "raw_hit_probability": 0.7046,
+          "lift": -0.0796,
           "reliability": "D",
           "sample_n": 21,
           "projection": {
@@ -44,7 +47,8 @@
           "signals": {
             "yrfi_rate": 18.2,
             "fi_n_starts": 22.0,
-            "park_hr_index": 50.0
+            "ump_run_impact": 14.2374,
+            "park_hr_index": 61.7
           },
           "hit_probability": 0.6967,
           "raw_hit_probability": 0.7393,

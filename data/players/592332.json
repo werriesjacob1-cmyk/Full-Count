@@ -1,0 +1,66 @@
+{
+  "player_id": 592332,
+  "name": "Kevin Gausman",
+  "snapshots": [
+    {
+      "date": "2026-08-07",
+      "evaluations": [
+        {
+          "prop": "Over 4.5 Strikeouts",
+          "type": "pitcher",
+          "score": 54.0,
+          "notable_signals": 1,
+          "matchup": "Chicago Cubs @ Kansas City Royals",
+          "game_pk": 824081,
+          "team": "Chicago Cubs",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "same_hand_ratio": 100.0,
+            "l14_k_pct": 31.7647,
+            "env_neutral": 50.0,
+            "ump_accuracy": 74.7674,
+            "ump_k_pct": 0.0,
+            "ump_bb_pct": -0.216
+          },
+          "hit_probability": 0.6143,
+          "raw_hit_probability": 0.6311,
+          "lift": 0.075,
+          "reliability": "D",
+          "sample_n": 23,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 4.5,
+            "needs": 5
+          }
+        },
+        {
+          "prop": "Kansas City Royals scoreless in the 1st",
+          "type": "pitcher",
+          "score": 66.7,
+          "notable_signals": 0,
+          "matchup": "Chicago Cubs @ Kansas City Royals",
+          "game_pk": 824081,
+          "team": "Chicago Cubs",
+          "side": "away",
+          "lean": "NRFI",
+          "signals": {
+            "yrfi_rate": 33.3,
+            "fi_n_starts": 24.0,
+            "ump_run_impact": 11.7123,
+            "park_hr_index": 43.6
+          },
+          "hit_probability": 0.6863,
+          "raw_hit_probability": 0.6937,
+          "lift": -0.0197,
+          "reliability": "D",
+          "sample_n": 24,
+          "projection": {
+            "stat": "first_inning_run",
+            "value": 33.3
+          }
+        }
+      ]
+    }
+  ]
+}

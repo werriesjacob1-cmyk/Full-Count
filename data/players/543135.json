@@ -8,8 +8,8 @@
         {
           "prop": "Over 5.5 Strikeouts",
           "type": "pitcher",
-          "score": 56.7,
-          "notable_signals": 0,
+          "score": 59.9,
+          "notable_signals": 1,
           "matchup": "Baltimore Orioles @ Texas Rangers",
           "game_pk": 822863,
           "team": "Texas Rangers",
@@ -18,11 +18,14 @@
           "signals": {
             "same_hand_ratio": 75.0,
             "l14_k_pct": 64.7059,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 81.8429,
+            "ump_k_pct": 0.456,
+            "ump_bb_pct": 0.588
           },
-          "hit_probability": 0.6174,
-          "raw_hit_probability": 0.6422,
-          "lift": 0.2407,
+          "hit_probability": 0.6173,
+          "raw_hit_probability": 0.642,
+          "lift": 0.2406,
           "reliability": "D",
           "sample_n": 21,
           "projection": {
@@ -44,6 +47,7 @@
           "signals": {
             "yrfi_rate": 31.8,
             "fi_n_starts": 22.0,
+            "ump_run_impact": 7.0617,
             "park_hr_index": 50.0
           },
           "hit_probability": 0.6875,
