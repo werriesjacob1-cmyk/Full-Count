@@ -3305,6 +3305,20 @@ def _batter_options(c, comp, emp, league=None):
                 except Exception:
                     modelled = None
             empirical = emp_p(f"{stat}_{need}plus")
+            # EXPERIMENTAL A/B TOGGLE, gated behind an env var so it cannot
+            # affect the live board or a normal backtest run by accident.
+            # Testing the 2026-08-06 audit's recommendation (shrink modelled
+            # toward the league rate at k=0.5-0.6, drop empirical) against
+            # the metric that actually matters -- top-10-vs-random
+            # discrimination and quintile calibration, not the held-out log
+            # loss the audit itself used. true_league_rates only (never
+            # base_rates), same reasoning as the manufactured-fallback fix
+            # above: a real season measurement, never the slate-scoped one.
+            shrink_k = float(os.environ.get("SHRINK_MODEL_K", "0") or 0)
+            if shrink_k and modelled is not None:
+                lg = true_league_rates.get(f"{stat}_{need}plus")
+                if lg is not None:
+                    modelled = shrink_k * lg + (1 - shrink_k) * modelled
             prob, basis = _blend(empirical, modelled)
             base = base_rates.get(f"{stat}_{need}plus")
             if prob is None:
