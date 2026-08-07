@@ -362,14 +362,21 @@ head("8. best_threshold")
 seen = {}
 def fake(need):
     seen[need] = True
-    return {1: 0.97, 2: 0.61, 3: 0.24}.get(need, 0.0)
+    # 0.99, not 0.97: MAX_USEFUL_PROB is 0.97 itself and best_threshold's
+    # band check is inclusive (min_prob <= p <= max_prob), same convention
+    # generate_picks.py's _pick_line uses. A fake value exactly AT the cap
+    # was being wrongly asserted as excluded -- it was actually included
+    # (0.97 <= 0.97), so this test was checking arithmetic that doesn't
+    # match the function's own documented, deliberate boundary. Moved
+    # off the boundary so the test asserts what it always meant to.
+    return {1: 0.99, 2: 0.61, 3: 0.24}.get(need, 0.0)
 
 line, prob, ev = pp.best_threshold("hits", fake)
 check(sorted(seen) == [1, 2, 3], "'over 0.5/1.5/2.5' map to needing 1/2/3",
       "ceil(line) is the integer threshold, not round(line)")
 check(line == 1.5 and close(prob, 0.61),
       "picks the highest probability INSIDE the usable band, not the highest overall",
-      "0.97 is above MAX_USEFUL_PROB and is correctly skipped")
+      "0.99 is above MAX_USEFUL_PROB and is correctly skipped")
 check(pp.MIN_USEFUL_PROB <= prob <= pp.MAX_USEFUL_PROB, "the chosen line is inside the band")
 
 line, prob, ev = pp.best_threshold("hits", lambda k: {1: 0.3, 2: 0.2, 3: 0.1}[k])
