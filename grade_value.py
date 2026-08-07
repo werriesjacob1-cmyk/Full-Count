@@ -106,17 +106,64 @@ def actual_results(date, player_names):
     return out
 
 
+def board_reads(date):
+    """The model's reads for a date, as they were recorded THAT DAY.
+
+    THE BUG THIS REPLACES. settle() used to call value_board.model_probabilities,
+    which calls generate_picks.score_slate() — and score_slate scores the
+    CURRENT slate. Settling 2026-08-06 therefore took today's lineups, today's
+    starting pitchers, today's weather and today's batting orders, matched them
+    to that past date's prices, and graded them against that past date's box
+    scores. For a player who was not even in a game today it produced a read
+    from nothing at all.
+
+    That would not have failed loudly. It would have produced a plausible ROI
+    number that meant nothing, which is the worst possible outcome for the one
+    tool whose job is to say whether the screen works.
+
+    It was also unbounded work: one full pipeline scoring per date settled, so
+    the daily job's cost grew with every day of captured prices.
+
+    Reads are now taken from output/value_board_DATE.json, written by the daily
+    run at the time the board was actually made. No file means no settlement —
+    a date is skipped rather than invented.
+    """
+    path = os.path.join(os.environ.get("OUTPUT_DIR", "output"),
+                        f"value_board_{date}.json")
+    if not os.path.exists(path):
+        return None
+    try:
+        with open(path, encoding="utf-8") as f:
+            payload = json.load(f)
+    except (json.JSONDecodeError, OSError):
+        return None
+    out = {}
+    for row in payload.get("entries") or []:
+        norm, stat, needs = row.get("player_norm"), row.get("stat"), row.get("needs")
+        if norm and stat and needs is not None and row.get("prob") is not None:
+            out[(norm, stat, needs)] = row
+    return out or None
+
+
 def settle(date, min_roi=pp.MIN_ROI):
     """Grade every prop the screen would have flagged on this date."""
     import value_board as vb
     prices = closing_prices(date)
     if not prices:
         return None
-    # Rebuild the screen's view from the closing prices.
-    as_screen = defaultdict(dict)
-    for (norm, stat, needs), info in prices.items():
-        as_screen[norm][(stat, needs)] = info["american"]
-    entries = vb.model_probabilities(as_screen)
+    reads = board_reads(date)
+    if not reads:
+        return {"date": date, "no_reads": True}
+    # Re-screen the day's OWN reads against the closing price. The price is
+    # the market's final word and the number a bettor would really have got;
+    # the read has to be the one that was actually made at the time.
+    entries = {}
+    for key, info in prices.items():
+        r = reads.get(key)
+        if r:
+            entries[key] = {**r, "american": info["american"]}
+    if not entries:
+        return {"date": date, "no_reads": True}
     bets, near, _ = vb.screen(entries, min_roi, require_robust=True)
 
     results = actual_results(date, {b["player"] and vb.fd.normalize_name(b["player"])
@@ -159,6 +206,13 @@ def main():
     print(f"{'date':12s}{'flagged':>9s}{'settled':>9s}{'hit':>8s}{'ROI':>9s}")
     for d in dates:
         r = settle(d, args.min_roi)
+        if r and r.get("no_reads"):
+            # Prices were captured but no board was persisted that day, so
+            # there is no point-in-time read to settle. Named explicitly
+            # rather than shown as a dash, because it is a gap in OUR record
+            # and not a quiet day in the market.
+            print(f"{d:12s}{'no board':>9s}{'0':>9s}{'—':>8s}{'—':>9s}")
+            continue
         if not r or not r["settled"]:
             print(f"{d:12s}{'—':>9s}{'0':>9s}{'—':>8s}{'—':>9s}")
             continue

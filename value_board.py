@@ -305,8 +305,24 @@ def main():
 
     if args.json:
         with open(args.json, "w", encoding="utf-8") as f:
+            # EVERY SCREENED PROP, not just the ones that cleared.
+            #
+            # grade_value.py settles this screen forward, and to do that it
+            # needs the model's read AS IT WAS ON THE DAY. It used to re-derive
+            # those reads by scoring the CURRENT slate, which meant settling a
+            # past date against today's lineups, starters and weather — for
+            # players who may not even have been playing. Persisting the reads
+            # here is what makes an honest settlement possible.
+            #
+            # Rejected rows are included because settlement re-screens at
+            # CLOSING prices: a prop that missed at the generation price can
+            # clear at the close, and dropping it would quietly bias the record
+            # toward whatever the earlier price happened to favour.
             json.dump({"generated": datetime.now().isoformat(),
-                       "bets": bets, "near": near}, f, indent=2, default=str)
+                       "bets": bets, "near": near,
+                       "entries": [{**v, "player_norm": k[0]}
+                                   for k, v in entries.items()]},
+                      f, indent=2, default=str)
         print(f"Wrote {args.json}")
     return 0
 
