@@ -2959,6 +2959,35 @@ def _batter_options(c, comp, emp, league=None):
          (lambda k: pp.p_at_least_total_bases(k, dist, pa)) if dist and pa else None),
         ("home_runs", "Home Runs", [(0.5, 1)],
          (lambda k: pp.p_at_least_home_runs(k, dist, pa)) if dist and pa else None),
+        # THE SIX MARKETS THE MODEL COULD NOT PRICE.
+        #
+        # FanDuel prices nine batter families; this list built three. Measured
+        # on the 2026-08-07 slate: total_bases 114, hits_runs_rbis 62, hits 61,
+        # rbis 57, runs 56, singles 31, home_runs 29, doubles 29, triples 2 —
+        # so 237 of 441 priced props, 54%, could never receive a model
+        # probability no matter how good the lineups were.
+        #
+        # The rates were never missing. mlb_sources._PROP_THRESHOLDS has
+        # carried runs 1-3, rbis 1-4, singles/doubles/triples and
+        # hits_runs_rbis 1-4 all along, and empirical_batter_prop_rates()
+        # returns them shrunk toward the league rate like every other family.
+        # This loop simply never asked for them. Same failure as everything
+        # else found today: computed, then discarded.
+        #
+        # EMPIRICAL ONLY, and that is a statement of fact rather than a
+        # shortcut. Hits, total bases and home runs derive from a batter's own
+        # plate-appearance distribution, so they have an honest modelled
+        # counterpart. Runs and RBIs do not — they depend on whether teammates
+        # reach base and drive him in, which no per-batter distribution
+        # contains. Passing None here means _blend() uses the empirical rate
+        # and records basis accordingly, instead of inventing a model term to
+        # fill the column.
+        ("runs", "Runs", [(0.5, 1), (1.5, 2)], None),
+        ("rbis", "RBIs", [(0.5, 1), (1.5, 2)], None),
+        ("hits_runs_rbis", "Hits+Runs+RBIs", [(0.5, 1), (1.5, 2), (2.5, 3)], None),
+        ("singles", "Singles", [(0.5, 1)], None),
+        ("doubles", "Doubles", [(0.5, 1)], None),
+        ("triples", "Triples", [(0.5, 1)], None),
     ]
     for stat, label, lines, fn in families:
         for line, need in lines:
