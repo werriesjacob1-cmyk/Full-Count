@@ -3668,11 +3668,31 @@ def attach_hit_probabilities(candidates, comp_table, emp_batters, emp_pitchers,
                         modelled = float(pp.p_at_least_strikeouts(t, bf, kr))
                     except Exception:
                         modelled = None
-                prob, basis = _blend(empirical, modelled)
-                if prob is None:
-                    continue
                 base = ((league_rates or {}).get(f"strikeouts_{t}plus")
                         or (r or {}).get("league_p"))
+                # Checked live against the same 5-day backtest slice used to
+                # validate the hits/total_bases/home_runs fix: strikeouts'
+                # shipped 60/40 blend has a NEGATIVE Brier skill score
+                # (-0.144 -- worse than always predicting the base rate) and
+                # an expected calibration error of 0.184, both far worse than
+                # anything found in the batter props. [0.6-0.7) and
+                # [0.7-0.8) are large enough samples (n=34, n=54) to trust,
+                # and both show real overconfidence (gaps of -0.16, -0.20).
+                # Same fix, same reasoning as the batter one: shrink modelled
+                # toward the TRUE league rate (league_rates specifically,
+                # never r["league_p"] -- see Check 1) and drop empirical.
+                # Pitcher game logs are thin (starts, not games), which is
+                # likely exactly why empirical hurts more here than it did
+                # for batters.
+                STRIKEOUT_SHRINK_K = 0.5
+                lg = (league_rates or {}).get(f"strikeouts_{t}plus")
+                if modelled is not None and lg is not None:
+                    prob = STRIKEOUT_SHRINK_K * lg + (1 - STRIKEOUT_SHRINK_K) * modelled
+                    basis = "modelled_shrunk"
+                else:
+                    prob, basis = _blend(empirical, modelled)
+                if prob is None:
+                    continue
                 opts.append({"line": t - 0.5, "needs": t, "prob": round(prob, 4),
                              "basis": basis,
                              "base_rate": base,
