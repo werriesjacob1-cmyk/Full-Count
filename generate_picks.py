@@ -3103,15 +3103,28 @@ def _batter_options(c, comp, emp, league=None):
     enough = (emp or {}).get("games", 0) >= MIN_EMPIRICAL_GAMES
 
     base_rates = {}
+    # Separate from base_rates on purpose. base_rates mixes the TRUE league
+    # rate (mlb_sources.league_base_rates(), a real season-long measurement)
+    # with r["league_p"] (mlb_sources._apply_shrinkage's target, computed
+    # from whichever players were passed into empirical_batter_prop_rates --
+    # tonight's ~250-300 batters, not the league) whenever the true rate is
+    # unavailable for a given key. That mixing is fine for "lift", which is
+    # display-only and always has a real player probability to compare
+    # against. It is NOT fine for the league-only fallback below, which
+    # MANUFACTURES a probability from nothing else -- letting that draw on
+    # a slate-scoped average would repeat, in a smaller way, the exact
+    # mistake already found and fixed once in this file: a "league" prior
+    # computed from a narrow, non-representative sample (there, the first-
+    # inning bug shipped 83.1% scoreless against a true season measurement
+    # of 70.6%). true_league_rates holds ONLY entries sourced from the real
+    # league dict, so the fallback can never draw on the circular one.
+    true_league_rates = {}
 
     def emp_p(key):
         r = rates.get(key)
-        # TRUE league rate first. r["league_p"] is computed by
-        # _apply_shrinkage from whatever players were passed in -- tonight's
-        # slate -- so it is the slate's own average, not the league's. Falling
-        # back to it is better than having no base rate at all, but it must
-        # never win over a real measurement. See mlb_sources.league_base_rates.
         lg = (league or {}).get(key)
+        if lg is not None:
+            true_league_rates[key] = lg
         if lg is None and r is not None:
             lg = r.get("league_p")
         if lg is not None:
@@ -3172,22 +3185,25 @@ def _batter_options(c, comp, emp, league=None):
             prob, basis = _blend(empirical, modelled)
             base = base_rates.get(f"{stat}_{need}plus")
             if prob is None:
-                # NO PROP GOES UNSCORED. A batter with no Statcast composition
-                # (dist is None -- no modelled term) and fewer than
-                # MIN_EMPIRICAL_GAMES games this season (no empirical term,
-                # e.g. a recent call-up) used to fall out of EVERY family
-                # here, and _pick_line's `if not opts: return None` upstream
-                # turned that into a candidate with no price at all -- the
-                # entire reason 9 total_bases candidates showed 9/0 on
-                # 2026-08-07. The league base rate for this exact line is
-                # already sitting in base_rates (computed from the whole
-                # slate, not this player), so falling back to it instead of
-                # skipping means every batter gets a real, non-invented
-                # number -- just one with no player-specific signal in it,
-                # which the "league_only" basis says plainly.
-                if base is None:
+                # NO PROP GOES UNSCORED, but ONLY from a real season-long
+                # measurement -- true_league_rates, never base_rates (which
+                # can hold the slate-scoped r["league_p"] instead; see its
+                # definition above). A batter with no Statcast composition
+                # and fewer than MIN_EMPIRICAL_GAMES games this season used
+                # to fall out of every family here, which is what produced
+                # 9 unscored total_bases candidates on 2026-08-07. Restricted
+                # to true_league_rates specifically covers hits, total_bases,
+                # home_runs, singles, doubles and triples (all six are real
+                # entries in mlb_sources.league_base_rates(), verified live).
+                # runs, rbis and hits_runs_rbis have no entry there at all,
+                # so this correctly leaves them unscored rather than
+                # manufacturing a number from a ~250-batter slate average --
+                # absent stays absent instead of becoming a fake neutral
+                # reading, same principle as everywhere else _sig is used.
+                true_base = true_league_rates.get(f"{stat}_{need}plus")
+                if true_base is None:
                     continue
-                prob, basis = base, "league_only"
+                prob, basis = true_base, "league_only"
             options.append({
                 "stat": stat, "line": line, "needs": need,
                 "label": f"Over {line} {label}",
