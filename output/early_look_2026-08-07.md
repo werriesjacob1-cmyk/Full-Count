@@ -10,7 +10,7 @@ Every player below is projected into last night's/his last game's batting slot f
 - **Ryan Waldschmidt** (Arizona Diamondbacks) — Over 0.5 Hits — 60.4% [Los Angeles Dodgers @ Arizona Diamondbacks]
 - **Ketel Marte** (Arizona Diamondbacks) — Over 0.5 Hits — 60.1% [Los Angeles Dodgers @ Arizona Diamondbacks]
 - **Max Kepler** (Arizona Diamondbacks) — Over 0.5 Hits+Runs+RBIs — 56.1% [Los Angeles Dodgers @ Arizona Diamondbacks]
-- **Tim Tawa** (Arizona Diamondbacks) — Over 0.5 Hits+Runs+RBIs — 55.6% [Los Angeles Dodgers @ Arizona Diamondbacks]
+- **Tim Tawa** (Arizona Diamondbacks) — Over 0.5 Hits+Runs+RBIs — 55.5% [Los Angeles Dodgers @ Arizona Diamondbacks]
 - **Corbin Carroll** (Arizona Diamondbacks) — To Steal a Base — 19.1% [Los Angeles Dodgers @ Arizona Diamondbacks]
 - **Ryan Waldschmidt** (Arizona Diamondbacks) — To Steal a Base — 17.8% [Los Angeles Dodgers @ Arizona Diamondbacks]
 - **Tim Tawa** (Arizona Diamondbacks) — To Steal a Base — 15.0% [Los Angeles Dodgers @ Arizona Diamondbacks]

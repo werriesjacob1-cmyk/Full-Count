@@ -262,13 +262,21 @@ def opportunity_context(pick, row, game_pk):
         # bat in the 9th -- so 8 is NOT automatically short.
         ctx["shortened_game"] = innings < 8
 
+    stat = (pick.get("projection") or {}).get("stat")
+    if stat == "nrfi_combined":
+        # Both-teams NRFI/YRFI resolves in the 1st inning, same as the
+        # one-sided read below -- every game reaches it regardless of how
+        # either start actually went.
+        ctx["fair_test"] = True
+        ctx["opportunity"] = "full (first inning always played)"
+        return ctx
+
     if pick.get("type") == "pitcher":
         ip = _num(row.get("ip"), None) if row else None
         if ip is not None:
             ctx["actual_ip"] = ip
         if row and row.get("p"):
             ctx["pitch_count"] = _num(row.get("p"))
-        stat = (pick.get("projection") or {}).get("stat")
         if stat == "first_inning_run":
             # An NRFI/YRFI lean resolves in the 1st inning, which every game
             # reaches -- it always gets a fair test regardless of workload.
@@ -366,6 +374,24 @@ def grade_pick(pick, game_statuses):
         hit = actual_yrfi if lean == "YRFI" else not actual_yrfi
         return {**pick, "grade": "hit" if hit else "miss", "actual": runs_against,
                 "actual_stat": "first_inning_runs_allowed",
+                **opportunity_context(pick, None, game_pk)}
+
+    if stat == "nrfi_combined":
+        # The real both-teams market: hit only if BOTH halves match the
+        # lean (both scoreless for NRFI; at least one team scores for YRFI).
+        lean = pick.get("lean")
+        inning1 = fetch_first_inning_linescore(game_pk)
+        if not inning1 or lean not in ("YRFI", "NRFI"):
+            return {**pick, "grade": "ungraded", "reason": "linescore or lean unavailable"}
+        away_runs = inning1.get("away", {}).get("runs")
+        home_runs = inning1.get("home", {}).get("runs")
+        if away_runs is None or home_runs is None:
+            return {**pick, "grade": "ungraded", "reason": "missing runs data"}
+        actual_yrfi = (away_runs > 0) or (home_runs > 0)
+        hit = actual_yrfi if lean == "YRFI" else not actual_yrfi
+        return {**pick, "grade": "hit" if hit else "miss",
+                "actual": away_runs + home_runs,
+                "actual_stat": "first_inning_runs_total",
                 **opportunity_context(pick, None, game_pk)}
 
     is_pitcher = pick["type"] == "pitcher"

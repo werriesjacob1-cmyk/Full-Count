@@ -2572,6 +2572,7 @@ CATEGORY_LABELS = {
     "singles": "Singles", "doubles": "Doubles", "triples": "Triples",
     "stolen_base": "Stolen Base", "strikeouts": "Strikeouts",
     "walks": "Walks", "first_inning_run": "First Inning",
+    "nrfi_combined": "NRFI/YRFI (Both Teams)",
 }
 
 
@@ -2633,7 +2634,7 @@ def select_best_by_category(candidates, prices, fd, n_per_category=1):
                     "probability_basis": best.get("basis"),
                     "probability_detail": {"empirical": None, "modelled": None},
                 })
-        elif c.get("type") in ("batter", "pitcher"):
+        elif c.get("type") in ("batter", "pitcher", "game"):
             stat = (c.get("projection") or {}).get("stat")
             if stat not in CATEGORY_LABELS or c.get("hit_probability") is None:
                 continue
@@ -2887,6 +2888,12 @@ def write_json(top10, moonshots=(), by_category=None):
             "probability_basis": c.get("probability_basis"),
             "probability_detail": c.get("probability_detail"),
             "alternatives": c.get("alternatives"),
+            # Readable reasoning, not just the raw signal dict -- these were
+            # computed on every candidate all along but dropped at this exact
+            # boundary, so nothing that read the JSON back (a future
+            # dashboard, a customer-facing view) could ever show WHY a pick
+            # was made without re-deriving it from raw signals by hand.
+            "why": c.get("why"), "watchouts": c.get("watchouts"),
         }
     category_flat = [c for entries in (by_category or {}).values() for c in entries]
     picks = [_row(i, c) for i, c in enumerate(top10, 1)]
@@ -3794,7 +3801,115 @@ def attach_hit_probabilities(candidates, comp_table, emp_batters, emp_pitchers,
                     "modelled": None}
         else:
             c.setdefault("hit_probability", None)
+
+    candidates.extend(_build_combined_nrfi(candidates))
     return candidates
+
+
+def _build_combined_nrfi(candidates):
+    """The REAL, books-comparable NRFI/YRFI -- BOTH starters' halves of the
+    1st combined, not the one-sided "this team scores off this pitcher" read
+    score_first_inning reports per starter (see its own docstring: the prop
+    text is deliberately "Team X to/scoreless in the 1st", never "NRFI",
+    for exactly this reason -- real books require BOTH teams held scoreless).
+
+    Built here, AFTER the per-side first_inning_run candidates above already
+    have their properly shrunk hit_probability (FI_PRIOR_STARTS=52, see the
+    2026-08-06 audit above this function) -- this reuses that shrunk number
+    rather than recomputing from the raw rate, so the combined read inherits
+    the same sample-size discipline instead of a second, looser one.
+
+    HONEST EXPECTATION, STATED UP FRONT because it will look strange
+    otherwise: that same audit already measured that a starter's own
+    first-inning record carries close to zero predictive signal even across
+    a full season (the best possible shrinkage prior beats "ignore the
+    pitcher, use the league rate" by 0.00054 of log loss -- nothing).
+    Combining two numbers that are each already shrunk almost to the league
+    rate produces a combined number that will itself sit close to
+    (1 - LEAGUE_YRFI_RATE) ** 2 ~= 0.498 for nearly every game, regardless of
+    which two starters are on the mound. That is not a bug introduced here --
+    it is the honest, correct consequence of what was already measured, and
+    it is a large part of why real books price NRFI close to a coinflip too.
+    This function exists so a customer asking for "the NRFI" gets a real,
+    correctly-computed number for the market they actually mean, not to
+    manufacture a strong pick where the evidence has none.
+
+    Needs both starters confirmed with a real first-inning read; a TBD
+    starter or a pitcher with no first-inning form leaves this game out
+    rather than inventing a rate for the missing half."""
+    by_game = defaultdict(dict)
+    for c in candidates:
+        stat = (c.get("projection") or {}).get("stat")
+        if stat != "first_inning_run" or c.get("hit_probability") is None:
+            continue
+        if c.get("side") in ("away", "home"):
+            by_game[c.get("game_pk")][c["side"]] = c
+
+    def _p_opp_scores(c):
+        # hit_probability is for whichever side (YRFI/NRFI) score_first_inning
+        # picked; reconstruct P(the opposing lineup scores) independent of
+        # which side that happened to be.
+        return c["hit_probability"] if c.get("lean") == "YRFI" else 1.0 - c["hit_probability"]
+
+    combined = []
+    for game_pk, sides in by_game.items():
+        away_c, home_c = sides.get("away"), sides.get("home")
+        if not away_c or not home_c:
+            continue  # both starters need a real read -- no guessing the other half
+
+        # away_c is the AWAY starter's own read -- he pitches to HOME batters
+        # in the bottom of the 1st, so this is P(home team scores). home_c is
+        # the HOME starter's read -- he pitches to AWAY batters in the top of
+        # the 1st, so this is P(away team scores).
+        n_away_sp_starts = int((away_c.get("signals") or {}).get("fi_n_starts") or 0)
+        n_home_sp_starts = int((home_c.get("signals") or {}).get("fi_n_starts") or 0)
+        p_home_team_scores = _p_opp_scores(away_c)
+        p_away_team_scores = _p_opp_scores(home_c)
+        p_nrfi = (1.0 - p_home_team_scores) * (1.0 - p_away_team_scores)
+        p_yrfi = 1.0 - p_nrfi
+        lean = "YRFI" if p_yrfi >= 0.5 else "NRFI"
+        hit_probability = p_yrfi if lean == "YRFI" else p_nrfi
+
+        n_min = min(n_away_sp_starts, n_home_sp_starts)
+        sample_penalty = max(0, (5 - n_min) * 15)
+        score = clamp(hit_probability * 100 - sample_penalty)
+        if n_min < 3:
+            score = min(score, 55)
+        base_rate = round((1 - LEAGUE_YRFI_RATE) ** 2 if lean == "NRFI"
+                          else 1 - (1 - LEAGUE_YRFI_RATE) ** 2, 4)
+
+        combined.append({
+            "type": "game",
+            "name": f"{away_c['team']} @ {home_c['team']} — 1st Inning (Both Teams)",
+            "player_id": f"nrfi_{game_pk}", "team": None, "side": "both",
+            "matchup": away_c.get("matchup"), "game_pk": game_pk,
+            "prop": ("A run scores in the 1st (either team)" if lean == "YRFI"
+                     else "No runs in the 1st (both teams)"),
+            "projection": {"stat": "nrfi_combined", "value": round(hit_probability * 100, 1)},
+            "lean": lean, "hit_probability": round(hit_probability, 4),
+            "score": round(score, 1),
+            "confidence": "High" if score >= 70 and n_min >= 3 else ("Medium" if score >= 55 else "Low"),
+            "notable_signals": 1 if (hit_probability >= 0.65 and n_min >= 3) else 0,
+            "signals": {"home_team_scores_p": round(p_home_team_scores, 4),
+                       "away_team_scores_p": round(p_away_team_scores, 4),
+                       "fi_n_starts": float(n_min)},
+            "why": [f"{home_c['team']} scores off {away_c['name']} (away SP) in the bottom 1st: "
+                    f"{round(p_home_team_scores * 100, 1)}% (shrunk, {n_away_sp_starts} starts)",
+                    f"{away_c['team']} scores off {home_c['name']} (home SP) in the top 1st: "
+                    f"{round(p_away_team_scores * 100, 1)}% (shrunk, {n_home_sp_starts} starts)",
+                    "This is the real both-teams NRFI/YRFI market -- combines both "
+                    "starters' halves of the 1st, not a one-sided team read."],
+            "watchouts": (["Thin first-inning sample on at least one starter"]
+                         if n_min < 3 else []),
+            "base_rate": base_rate, "lift": round(hit_probability - base_rate, 4),
+            "probability_basis": "combined_shrunk",
+            "probability_detail": {"empirical": None, "modelled": None},
+            "raw_hit_probability": None, "calibrated_by": None, "prob_ci": None,
+            "sample_n": n_min, "reliability": None,
+            "market_odds": None, "market_implied": None, "market_edge": None,
+            "price_clears": None, "alternatives": None,
+        })
+    return combined
 
 
 # ── How much to trust each number ─────────────────────────────────────────
@@ -3841,7 +3956,7 @@ def attach_reliability(candidates, emp_batters, emp_pitchers):
             key = ("strikeouts_%dplus" % needs if stat == "strikeouts"
                    else "%s_%dplus" % (stat, needs))
             rate = (emp["rates"] or {}).get(key)
-        elif stat == "first_inning_run":
+        elif stat in ("first_inning_run", "nrfi_combined"):
             n = int((c.get("signals") or {}).get("fi_n_starts") or 0)
         if rate:
             lo, hi = _wilson_interval(rate.get("hit", 0), rate.get("n", n) or 1)

@@ -887,6 +887,7 @@ PROP_TYPE_BY_STAT = {
     "walks": "walks",
     "stolen_base": "stolen_base",
     "first_inning_run": "first_inning_run",
+    "nrfi_combined": "nrfi_combined",
 }
 
 
@@ -898,10 +899,11 @@ def _line_and_needs(pick):
     stat = proj.get("stat")
     needs = proj.get("needs")
     value = proj.get("value")
-    if stat == "first_inning_run":
-        # A one-sided team market: does the opposing lineup score off him in
-        # the 1st. Expressed as over/under 0.5 runs, with `lean` carrying which
-        # side was recommended.
+    if stat in ("first_inning_run", "nrfi_combined"):
+        # first_inning_run: a one-sided team market (does the opposing lineup
+        # score off him in the 1st). nrfi_combined: the real both-teams
+        # market. Both expressed as over/under 0.5 runs, with `lean` carrying
+        # which side was recommended.
         return 0.5, 1
     if needs is not None:
         return (float(needs) - 0.5), int(needs)
