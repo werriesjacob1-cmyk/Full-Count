@@ -1959,7 +1959,19 @@ def score_stolen_base(batter, gm, opp_catcher_poptime, sprint_speed, batter_seas
 def score_walk(batter, gm, opp_sp_row, ump_scores, batter_season, ump_kbb=None):
     """A patient hitter facing a wild pitcher and a loose-zone umpire — a
     genuine convergent signal most bettors don't compute, since none of the
-    three inputs alone screams "walk prop." """
+    three inputs alone screams "walk prop."
+
+    NO LONGER CALLED FROM build_candidates(). Verified live against
+    FanDuel's raw API (2026-08-07, every tab: batter-props, popular,
+    pitching, specials, pitcher-props, innings, across two different
+    games): there is no "Player to Draw a Walk" market anywhere. This
+    function was generating real, scored candidates for a bet that cannot
+    actually be placed. The model itself is real and fitted (see the
+    weights comment below -- AUC 0.591 vs 0.576 on held-out dates, a
+    genuine improvement over the hand-picked weights), so the function is
+    left in place rather than deleted: if a book ever lists this market,
+    reconnecting it is a one-line change in build_candidates(), not a
+    rebuild."""
     bs = batter_season or {}
     bb_pct = bs.get("BB%")
     sp_bb_pct = opp_sp_row.get("BB%") if opp_sp_row else None
@@ -2177,11 +2189,11 @@ def build_candidates(game_meta, *, extras=None, batter_lookup, pitcher_lookup, t
                               wx, bseason, l7_form.get(batter.get("id")), bat_speed_trend, batter_arsenal, pitcher_arsenal,
                               away_opp_bullpen, sharp_bias.get(gm["away_team"]), away_opp_bullpen_quality,
                               extras=extras))
-            for c in (score_stolen_base(batter, gm, away_opp_catcher_pop, sprint_speed.get(batter.get("id")), bseason,
-                                        opp_cs_pct=(extras or {}).get("cs_pct_by_team", {}).get(gm["home_team"])),
-                      score_walk(batter, gm, opp_sp_row_for_away_batters, ump_scores, bseason,
-                                 extras.get("ump_kbb"))):
-                if c: candidates.append(c)
+            # score_walk() is deliberately not called -- see its own docstring:
+            # no "Player to Draw a Walk" market exists on FanDuel to bet it on.
+            c = score_stolen_base(batter, gm, away_opp_catcher_pop, sprint_speed.get(batter.get("id")), bseason,
+                                  opp_cs_pct=(extras or {}).get("cs_pct_by_team", {}).get(gm["home_team"]))
+            if c: candidates.append(c)
         for batter in gm.get("home_lineup", []):
             batter["team"] = gm["home_team"]
             bseason = lookup_player(batter_lookup, batter["name"], batter.get("id"))
@@ -2189,11 +2201,11 @@ def build_candidates(game_meta, *, extras=None, batter_lookup, pitcher_lookup, t
                               wx, bseason, l7_form.get(batter.get("id")), bat_speed_trend, batter_arsenal, pitcher_arsenal,
                               home_opp_bullpen, sharp_bias.get(gm["home_team"]), home_opp_bullpen_quality,
                               extras=extras))
-            for c in (score_stolen_base(batter, gm, home_opp_catcher_pop, sprint_speed.get(batter.get("id")), bseason,
-                                        opp_cs_pct=(extras or {}).get("cs_pct_by_team", {}).get(gm["away_team"])),
-                      score_walk(batter, gm, opp_sp_row_for_home_batters, ump_scores, bseason,
-                                 extras.get("ump_kbb"))):
-                if c: candidates.append(c)
+            # score_walk() is deliberately not called -- see its own docstring:
+            # no "Player to Draw a Walk" market exists on FanDuel to bet it on.
+            c = score_stolen_base(batter, gm, home_opp_catcher_pop, sprint_speed.get(batter.get("id")), bseason,
+                                  opp_cs_pct=(extras or {}).get("cs_pct_by_team", {}).get(gm["away_team"]))
+            if c: candidates.append(c)
 
         if gm["away_sp"] != "TBD" and gm.get("away_sp_id"):
             opp_k, opp_k_source = team_k_lookup.get(gm["home_team"]), "team"
@@ -2566,12 +2578,17 @@ def select_moonshots(candidates, prices, fd, n=5):
 # home_runs is deliberately absent -- select_moonshots() already owns that
 # category at n=5 with its own framing ("Moonshots"); listing it again here
 # would just be the same players under a second heading.
+# "walks" and "first_inning_run" (the one-sided per-pitcher read) are
+# deliberately absent -- verified live against FanDuel's raw API that
+# neither corresponds to a real, bettable market (see score_walk's and
+# _build_combined_nrfi's docstrings). first_inning_run still runs
+# internally as nrfi_combined's input; it just never becomes a candidate
+# a customer could see as a standalone pick.
 CATEGORY_LABELS = {
     "hits": "Hits", "total_bases": "Total Bases",
     "runs": "Runs", "rbis": "RBIs", "hits_runs_rbis": "Hits+Runs+RBIs",
     "singles": "Singles", "doubles": "Doubles", "triples": "Triples",
     "stolen_base": "Stolen Base", "strikeouts": "Strikeouts",
-    "walks": "Walks", "first_inning_run": "First Inning",
     "nrfi_combined": "NRFI/YRFI (Both Teams)",
 }
 
@@ -2593,9 +2610,9 @@ def select_best_by_category(candidates, prices, fd, n_per_category=1, k_prices=N
       PLAYER PER FAMILY here so "this player's best total-bases line" is
       chosen the same way the main board chooses anything, then rank
       across players.
-    - stolen_base/strikeouts/walks/first_inning_run are never re-priced at
-      multiple thresholds -- each candidate already IS the one number for
-      that player, so it's used directly.
+    - stolen_base/strikeouts/nrfi_combined are never re-priced at multiple
+      thresholds -- each candidate already IS the one number for that
+      player (or game, for nrfi_combined), so it's used directly.
 
     Same MIN_QUALITY_SCORE floor as everything else on this board, and
     deliberately NO MIN_LINE_PROB floor -- the floor is what makes an
@@ -2856,7 +2873,12 @@ def main() -> int:
             k_prices = _fd.fetch_pitcher_strikeouts()
         except Exception:
             k_prices = {}
-        _, n_priced = _fd.attach_market_prices(candidates, prices=prices, k_prices=k_prices)
+        try:
+            fi_prices = _fd.fetch_first_inning_totals()
+        except Exception:
+            fi_prices = {}
+        _, n_priced = _fd.attach_market_prices(candidates, prices=prices, k_prices=k_prices,
+                                               fi_prices=fi_prices)
         print(f"    Real market prices attached to {n_priced} of {len(candidates)} candidates")
         # PER-MARKET REAL-PRICE COVERAGE. The pool diagnostic above only ever
         # showed whether the MODEL had a probability, which is a different
@@ -3807,20 +3829,6 @@ def attach_hit_probabilities(candidates, comp_table, emp_batters, emp_pitchers,
             else:
                 c["hit_probability"] = None
 
-        elif stat == "walks":
-            emp = emp_batters.get(pid) or {}
-            comp = comp_table.get(pid) or {}
-            empirical = None
-            r = (emp.get("rates") or {}).get("walks_1plus")
-            if r and emp.get("games", 0) >= MIN_EMPIRICAL_GAMES:
-                empirical = r.get("p_hat", r["p"])
-            modelled = None
-            if comp.get("bb_rate") and c.get("projected_pa"):
-                modelled = pp.p_at_least_walks(1, c["projected_pa"], comp["bb_rate"])
-            prob, basis = _blend(empirical, modelled)
-            c["hit_probability"] = None if prob is None else round(prob, 4)
-            c["probability_basis"] = basis
-
         elif stat == "first_inning_run":
             # NRFI/YRFI is already a frequency by construction -- score_first_inning
             # counts real first innings from real starts. Two things still have to
@@ -3880,7 +3888,18 @@ def attach_hit_probabilities(candidates, comp_table, emp_batters, emp_pitchers,
         else:
             c.setdefault("hit_probability", None)
 
-    candidates.extend(_build_combined_nrfi(candidates))
+    combined_nrfi = _build_combined_nrfi(candidates)
+    # first_inning_run candidates never become a standalone board pick --
+    # verified live against FanDuel's raw API (every tab, two different
+    # games) that no one-sided "Team X scoreless in the 1st" market exists;
+    # see _build_combined_nrfi's own docstring. Their shrunk hit_probability
+    # was needed as nrfi_combined's input (just computed above, reading the
+    # candidates list before this filter runs) -- that's the only thing
+    # they're for now, so they're dropped here rather than ever reaching
+    # ranking, the category board, persistence, or grading as their own pick.
+    candidates[:] = [c for c in candidates
+                     if (c.get("projection") or {}).get("stat") != "first_inning_run"]
+    candidates.extend(combined_nrfi)
     return candidates
 
 
@@ -4336,8 +4355,7 @@ def write_markdown(top10, skipped, game_meta, bullpen_scores, all_ranked=(), moo
     shown = {id(c) for c in top10}
     market_names = {"hits": "Hits", "total_bases": "Total Bases",
                     "home_runs": "Home Runs", "strikeouts": "Strikeouts",
-                    "stolen_base": "Stolen Bases", "walks": "Walks",
-                    "first_inning_run": "First Inning"}
+                    "stolen_base": "Stolen Bases"}
     extra = []
     for stat, group in by_market.items():
         best = [c for c in group if id(c) not in shown][:2]

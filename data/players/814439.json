@@ -1,0 +1,85 @@
+{
+  "player_id": 814439,
+  "name": "Ryan Waldschmidt",
+  "snapshots": [
+    {
+      "date": "2026-08-07",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 52.6,
+          "notable_signals": 2,
+          "matchup": "Los Angeles Dodgers @ Arizona Diamondbacks",
+          "game_pk": 825051,
+          "team": "Arizona Diamondbacks",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 61.1429,
+            "pitch_exploit": 11.4286,
+            "l7_avg_ev": 51.7969,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 15.0,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 28.6667,
+            "lineup_slot": 0.0,
+            "bullpen_fatigue": 44.4444,
+            "platoon_barrel_pct": 0.08,
+            "platoon_xwoba": -0.9,
+            "park_hand_index": -0.6,
+            "opp_catcher_framing": 1.2,
+            "days_rest": 0.0,
+            "pull_park_synergy": -0.2184,
+            "hard_hit_105_rate": -1.6575,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": 3.544,
+            "vs_rp_ops": 3.072,
+            "ump_k_pct": -0.192,
+            "ump_bb_pct": -0.06
+          },
+          "hit_probability": 0.6036,
+          "raw_hit_probability": 0.6096,
+          "lift": 0.0526,
+          "reliability": "B",
+          "sample_n": 49,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 52.1,
+          "notable_signals": 0,
+          "matchup": "Los Angeles Dodgers @ Arizona Diamondbacks",
+          "game_pk": 825051,
+          "team": "Arizona Diamondbacks",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "opp_team_cs_pct": 2.4,
+            "sprint_speed": 50.0,
+            "on_base": 59.6929
+          },
+          "hit_probability": 0.1784,
+          "raw_hit_probability": 0.1036,
+          "lift": null,
+          "reliability": "B",
+          "sample_n": 49,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
+    }
+  ]
+}
