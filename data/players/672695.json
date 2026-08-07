@@ -6,9 +6,9 @@
       "date": "2026-08-07",
       "evaluations": [
         {
-          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "prop": "Over 0.5 Hits",
           "type": "batter",
-          "score": 56.8,
+          "score": 56.9,
           "notable_signals": 1,
           "matchup": "Los Angeles Dodgers @ Arizona Diamondbacks",
           "game_pk": 825051,
@@ -38,13 +38,13 @@
             "ump_k_pct": -0.192,
             "ump_bb_pct": -0.06
           },
-          "hit_probability": 0.6628,
-          "raw_hit_probability": 0.7229,
-          "lift": -0.0083,
+          "hit_probability": 0.6,
+          "raw_hit_probability": 0.6021,
+          "lift": 0.049,
           "reliability": "A",
           "sample_n": 112,
           "projection": {
-            "stat": "hits_runs_rbis",
+            "stat": "hits",
             "value": 0.5,
             "needs": 1
           }
