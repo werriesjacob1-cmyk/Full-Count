@@ -1661,3 +1661,98 @@ def hard_hit_game_rates(min_games=30, thresholds=(105, 110)):
     # other empirical rate here is -- a 30-game sample of a rare event is
     # otherwise mostly noise.
     return _apply_shrinkage(out, prior_games=20)
+
+
+def line_movement(date=None, odds_dir="data/odds"):
+    """How each team's market has MOVED since the first capture of the day.
+
+    THE ONE INPUT THAT CANNOT BE BACKFILLED, AND IT WAS NEVER READ. This
+    project runs an hourly snapshot job specifically because line movement
+    exists only if something records it while it happens -- box scores and
+    Statcast can be re-fetched for any past date, a line's path cannot. That
+    job has been writing faithfully and nothing consumed the output.
+
+    WHY MOVEMENT IS DIFFERENT FROM THE SPLIT ALREADY USED. Scoring already
+    reads the tickets%-versus-money% divergence, which says whether sharp
+    money disagrees with public money RIGHT NOW. Movement says what the book
+    did about it. A line drifting toward a side while the public piles on the
+    other is a far more specific statement than the split alone, and it is
+    only visible across time.
+
+    Returns {team: {"open": float, "current": float, "move": float,
+                    "hours": float, "tickets_pct": int, "money_pct": int}}
+    for the implied team-total market, which is the one that bears directly on
+    a batter's expected plate appearances and run environment.
+
+    Pregame only. Once a game starts the book switches to in-game pricing,
+    which is a different quantity, and mixing the two would read the
+    transition itself as a huge move."""
+    # json is NOT imported at module level here -- mlb_sources leans on
+    # mlb_daily for shared imports, and assuming otherwise raised NameError
+    # inside both the try and its own except clause.
+    import json
+    import os
+    date = date or m.TODAY
+    path = os.path.join(odds_dir, f"odds_{date}.json")
+    if not os.path.exists(path):
+        return {}
+    try:
+        with open(path, encoding="utf-8") as f:
+            payload = json.load(f)
+    except (json.JSONDecodeError, OSError) as e:
+        m.warn(f"Line movement: {path} unreadable ({e})")
+        return {}
+    snaps = sorted(payload.get("snapshots", []), key=lambda s: s.get("taken_at", ""))
+    if len(snaps) < 2:
+        return {}   # a single observation is a price, not a movement
+
+    def team_totals(snap):
+        out = {}
+        for r in snap.get("rows", []):
+            if r.get("is_live"):
+                continue
+            if r.get("market") != "core_bet_type_6_team_score":
+                continue
+            team, val = r.get("team"), r.get("value")
+            if team is None or val is None:
+                continue
+            out[team] = {"value": float(val),
+                         "tickets_pct": r.get("tickets_pct"),
+                         "money_pct": r.get("money_pct")}
+        return out
+
+    # THE OPEN IS THE FIRST SNAPSHOT THAT CARRIES THIS MARKET, not the first
+    # snapshot of the day. Team totals are posted later than moneylines --
+    # measured on real captures: the 01:28 sweep had moneyline, spread and
+    # total but no team totals, while the 04:55 sweep had all four. Taking
+    # snaps[0] unconditionally intersected an empty market against a full one
+    # and returned movement for zero teams, silently, on every call.
+    first = {}
+    for sn in snaps:
+        got = team_totals(sn)
+        if got:
+            first = got
+            first_at = sn.get("taken_at")
+            break
+    last = team_totals(snaps[-1])
+    if not first or not last:
+        return {}
+    try:
+        from datetime import datetime as _dt
+        t0 = _dt.fromisoformat(first_at.replace("Z", "+00:00"))
+        t1 = _dt.fromisoformat(snaps[-1]["taken_at"].replace("Z", "+00:00"))
+        hours = round((t1 - t0).total_seconds() / 3600.0, 2)
+    except Exception:
+        hours = None
+
+    out = {}
+    for team, cur in last.items():
+        op = first.get(team)
+        if not op:
+            continue
+        out[team] = {"open": op["value"], "current": cur["value"],
+                     "move": round(cur["value"] - op["value"], 2),
+                     "hours": hours,
+                     "tickets_pct": cur.get("tickets_pct"),
+                     "money_pct": cur.get("money_pct")}
+    return out
