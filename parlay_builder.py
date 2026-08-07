@@ -45,6 +45,7 @@ import glob
 import json
 import os
 import re
+import sys
 from collections import defaultdict
 from dataclasses import dataclass, field
 from datetime import datetime
@@ -341,3 +342,77 @@ def build_parlay(request, pool=None, price_legs=True):
         "estimated_payout_if_priced": payout_note,
         "correlation_notes": notes,
     }
+
+
+def _fmt_odds(n):
+    if n is None:
+        return "n/a"
+    return f"+{int(n)}" if n > 0 else str(int(n))
+
+
+def format_parlay_text(result):
+    """Render a build_parlay() result as readable terminal text -- the same
+    "absent, not guessed" honesty as everywhere else: a shortfall is spelled
+    out, not hidden, and the combined number is always labelled as the floor
+    it is, never presented as a clean single probability."""
+    req = result["request"]
+    lines = []
+    tier_bit = (f"risk level {req.risk_level:.0f}/100" if req.risk_level is not None
+               else f"risk tier '{req.risk_tier}'")
+    lines.append(f"YOUR PARLAY  ({tier_bit})")
+    lines.append("=" * 60)
+
+    if not result["legs"]:
+        lines.append("No legs could be filled from today's real board.")
+    for i, leg in enumerate(result["legs"], 1):
+        pct = f"{leg['hit_probability'] * 100:.1f}%"
+        odds = _fmt_odds(leg.get("market_odds"))
+        lines.append(f"{i}. {leg.get('name', '—')} -- {leg.get('prop', '—')}  ({pct}, market {odds})")
+        lines.append(f"   {leg.get('matchup', '—')}")
+
+    if result["shortfalls"]:
+        lines.append("")
+        lines.append("COULD NOT FULLY FILL:")
+        for s in result["shortfalls"]:
+            lines.append(f"  - {s['stat']}: asked for {s['requested']}, found {s['found']} "
+                        f"real candidate(s) at this risk level")
+
+    if result["correlation_notes"]:
+        lines.append("")
+        lines.append("WHY THESE GO TOGETHER:")
+        for n in result["correlation_notes"]:
+            lines.append(f"  - {n}")
+
+    if result["legs"]:
+        lines.append("")
+        lines.append(f"Naive combined probability (floor, not a promise): "
+                    f"{result['naive_combined_probability'] * 100:.1f}%")
+        if result["combined_decimal_odds"]:
+            lines.append(f"Combined odds (all legs priced): {result['combined_decimal_odds']}x")
+            if result["estimated_payout_if_priced"]:
+                lines.append(f"${req.stake:.2f} -> ${result['estimated_payout_if_priced']:.2f} "
+                            f"if every leg hits")
+        else:
+            n_unpriced = sum(1 for l in result["legs"] if l.get("market_odds") is None)
+            if n_unpriced:
+                lines.append(f"No combined payout shown -- {n_unpriced} of {len(result['legs'])} "
+                            f"leg(s) has no real market price today")
+    return "\n".join(lines)
+
+
+def main():
+    """    /tmp/mlbvenv/bin/python3 parlay_builder.py "2 home runs, 1 double, 1 triple"
+    /tmp/mlbvenv/bin/python3 parlay_builder.py "$5 to $1000, riskier, Pirates Mets game"
+    """
+    text = " ".join(sys.argv[1:]).strip()
+    if not text:
+        print(main.__doc__)
+        return 1
+    request = parse_request(text)
+    result = build_parlay(request)
+    print(format_parlay_text(result))
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

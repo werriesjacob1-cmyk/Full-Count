@@ -198,7 +198,25 @@ check(risky_dial["legs"] == [] and risky_dial["shortfalls"],
       "dialing risk_level to 100 excludes safe-band candidates that don't belong in a risky parlay",
       f"legs={risky_dial['legs']} shortfalls={risky_dial['shortfalls']}")
 
-head("5. sanity against today's real pool, if it exists")
+head("5. format_parlay_text -- the CLI output")
+
+req_fmt = pb.ParlayRequest(prop_counts={"hits": 1, "strikeouts": 1}, risk_tier="safest")
+res_fmt = pb.build_parlay(req_fmt, pool=[a, b, p_own_team], price_legs=False)
+text_fmt = pb.format_parlay_text(res_fmt)
+check(a["name"] in text_fmt or b["name"] in text_fmt,
+      "a filled leg's player name appears in the formatted text")
+check("Naive combined probability" in text_fmt,
+      "the combined probability is labelled as the floor it is, not a bare number")
+
+empty_res = pb.build_parlay(
+    pb.ParlayRequest(prop_counts={"triples": 3}, risk_tier="safest"),
+    pool=[a, b, p_own_team], price_legs=False)
+empty_text = pb.format_parlay_text(empty_res)
+check("No legs could be filled" in empty_text and "triples" in empty_text,
+      "an unfillable request explains itself in the text output rather than printing nothing useful",
+      empty_text)
+
+head("6. sanity against today's real pool, if it exists")
 try:
     pool_real = pb.load_todays_pool()
     if pool_real:
