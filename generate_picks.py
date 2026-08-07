@@ -1624,6 +1624,34 @@ def score_batter(batter, gm, opp_sp_row, opp_sp_id, opp_sp_hand, park_wx, batter
     # see umpire_k_bb_rates() for why the raw numbers are three-quarters
     # noise. A high-strikeout umpire is bad for a hitter's contract with the
     # ball: more called third strikes, fewer balls in play to turn into hits.
+    # HOW THIS HITTER HANDLES RELIEVERS, WHICH IS NOT A NICHE SPLIT.
+    #
+    # A hits or total-bases prop plays out over roughly four plate
+    # appearances, and only about two or three of those come against the
+    # starter — the rest are against a bullpen. Yet essentially every
+    # matchup signal in this function is about the opposing STARTER: his
+    # ERA, his arsenal, the platoon edge against him, the times-through-the-
+    # order penalty. Half the bet has been priced off the wrong pitcher.
+    #
+    # sp_rp_splits() at the league level only gives the aggregate direction
+    # and cannot catch a hitter who runs opposite to it, which is precisely
+    # the hitter this would misprice.
+    sr = (ex.get("sp_rp_by_id") or {}).get(bid) if bid else None
+    if sr and sr.get("OPS_gap") is not None:
+        vsp, vrp = sr.get("vsSP") or {}, sr.get("vsRP") or {}
+        # Both halves need real evidence. A 5-PA split is noise, and the
+        # function's own docstring flags exactly this trap.
+        if (vsp.get("PA") or 0) >= 20 and (vrp.get("PA") or 0) >= 20:
+            # Positive OPS_gap means better against starters than relievers,
+            # so a bullpen-heavy remainder of the game works against him.
+            _sig(signals, "sp_rp_ops_gap", sr["OPS_gap"],
+                 clamp(-sr["OPS_gap"] * 8, -5, 5))
+            try:
+                _sig(signals, "vs_rp_ops", round(float(vrp["OPS"]), 3),
+                     clamp((float(vrp["OPS"]) - 0.720) * 12, -5, 5))
+            except (TypeError, ValueError, KeyError):
+                pass
+
     uk = (ex.get("ump_kbb") or {}).get(gm.get("hp_ump"))
     if uk and uk.get("k_pct") is not None:
         _sig(signals, "ump_k_pct", uk["k_pct"],
@@ -2342,6 +2370,9 @@ def _build_and_score():
         # officials hydrate joined to season Statcast. Reuses the cached
         # season pull, so it costs one extra HTTP request, not a download.
         ("ump_kbb", lambda: _src.umpire_k_bb_rates()),
+        # Batter vs starters versus batter vs relievers. See the signal in
+        # score_batter for why this is not a niche split.
+        ("sp_rp", lambda: _src.batter_sp_rp_splits(game_meta)),
     ):
         try:
             # NOT `fn() or {}`: several of these return DataFrames, and the
@@ -2366,6 +2397,11 @@ def _build_and_score():
     extras["bvp_by_pair"] = {(r.get("Batter"), r.get("Pitcher")): r
                              for r in (extras.get("bvp") or [])
                              if r.get("Batter") and r.get("Pitcher")}
+    # batter_sp_rp_splits returns a LIST of rows keyed by 'id', not an id map
+    # — the same shape that crashed a run when bvp_table was assumed to be a
+    # dict. Re-keyed once here rather than at the use site.
+    extras["sp_rp_by_id"] = {r["id"]: r for r in (extras.get("sp_rp") or [])
+                             if r.get("id")}
     extras["cs_pct_by_team"] = {r["Team"]: _f(r.get("CS%"))
                                 for r in (extras.get("team_field") or [])
                                 if _f(r.get("CS%")) is not None}
