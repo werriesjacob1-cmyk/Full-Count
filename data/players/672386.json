@@ -42,10 +42,10 @@
       "date": "2026-08-07",
       "evaluations": [
         {
-          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "prop": "Over 0.5 Hits",
           "type": "batter",
-          "score": 44.9,
-          "notable_signals": 2,
+          "score": 49.0,
+          "notable_signals": 3,
           "matchup": "Toronto Blue Jays @ Philadelphia Phillies",
           "game_pk": 823428,
           "team": "Toronto Blue Jays",
@@ -57,9 +57,9 @@
             "l7_avg_ev": 55.7353,
             "l7_barrel_pct": 100.0,
             "bat_speed_trend": 1.35,
-            "park_hr_index": 59.9,
+            "park_hr_index": 80.1,
             "season_barrel_pct": 0.0,
-            "lineup_slot": 50.0,
+            "lineup_slot": 87.5,
             "bullpen_fatigue": 51.2821,
             "bvp_ops": -2.136,
             "platoon_barrel_pct": -3.92,
@@ -74,15 +74,17 @@
             "getaway_day": 0.0,
             "series_game": 0.0,
             "sp_rp_ops_gap": -0.928,
-            "vs_rp_ops": -0.972
+            "vs_rp_ops": -0.972,
+            "ump_k_pct": -0.024,
+            "ump_bb_pct": -0.336
           },
-          "hit_probability": 0.5917,
-          "raw_hit_probability": 0.6373,
-          "lift": -0.0839,
+          "hit_probability": 0.6041,
+          "raw_hit_probability": 0.6107,
+          "lift": 0.0531,
           "reliability": "C",
           "sample_n": 42,
           "projection": {
-            "stat": "hits_runs_rbis",
+            "stat": "hits",
             "value": 0.5,
             "needs": 1
           }

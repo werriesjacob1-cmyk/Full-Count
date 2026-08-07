@@ -1,0 +1,36 @@
+{
+  "player_id": "nrfi_824727",
+  "name": "Athletics @ Boston Red Sox \u2014 1st Inning (Both Teams)",
+  "snapshots": [
+    {
+      "date": "2026-08-07",
+      "evaluations": [
+        {
+          "prop": "A run scores in the 1st (either team)",
+          "type": "game",
+          "score": 53.6,
+          "notable_signals": 0,
+          "matchup": "Athletics @ Boston Red Sox",
+          "game_pk": 824727,
+          "team": null,
+          "side": "both",
+          "lean": "YRFI",
+          "signals": {
+            "home_team_scores_p": 0.3327,
+            "away_team_scores_p": 0.304,
+            "fi_n_starts": 9.0
+          },
+          "hit_probability": 0.5023,
+          "raw_hit_probability": 0.5356,
+          "lift": 0.0007,
+          "reliability": "D",
+          "sample_n": 9,
+          "projection": {
+            "stat": "nrfi_combined",
+            "value": 53.6
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -8,7 +8,7 @@
         {
           "prop": "Over 4.5 Strikeouts",
           "type": "pitcher",
-          "score": 61.7,
+          "score": 59.3,
           "notable_signals": 0,
           "matchup": "Atlanta Braves @ New York Yankees",
           "game_pk": 823515,
@@ -16,9 +16,12 @@
           "side": null,
           "lean": null,
           "signals": {
-            "same_hand_ratio": 43.75,
+            "same_hand_ratio": 12.5,
             "l14_k_pct": 100.0,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 63.6272,
+            "ump_k_pct": 0.024,
+            "ump_bb_pct": -0.312
           },
           "hit_probability": 0.6256,
           "raw_hit_probability": 0.6724,
@@ -44,7 +47,8 @@
           "signals": {
             "yrfi_rate": 28.6,
             "fi_n_starts": 14.0,
-            "park_hr_index": 50.0
+            "ump_run_impact": 20.7375,
+            "park_hr_index": 81.9
           },
           "hit_probability": 0.6895,
           "raw_hit_probability": 0.7077,

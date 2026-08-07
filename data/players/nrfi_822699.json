@@ -1,0 +1,36 @@
+{
+  "player_id": "nrfi_822699",
+  "name": "Cincinnati Reds @ Washington Nationals \u2014 1st Inning (Both Teams)",
+  "snapshots": [
+    {
+      "date": "2026-08-07",
+      "evaluations": [
+        {
+          "prop": "No runs in the 1st (both teams)",
+          "type": "game",
+          "score": 6.9,
+          "notable_signals": 0,
+          "matchup": "Cincinnati Reds @ Washington Nationals",
+          "game_pk": 822699,
+          "team": null,
+          "side": "both",
+          "lean": "NRFI",
+          "signals": {
+            "home_team_scores_p": 0.2831,
+            "away_team_scores_p": 0.2765,
+            "fi_n_starts": 2.0
+          },
+          "hit_probability": 0.4873,
+          "raw_hit_probability": 0.5187,
+          "lift": -0.0111,
+          "reliability": "D",
+          "sample_n": 2,
+          "projection": {
+            "stat": "nrfi_combined",
+            "value": 51.9
+          }
+        }
+      ]
+    }
+  ]
+}

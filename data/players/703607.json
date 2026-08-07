@@ -63,9 +63,9 @@
       "date": "2026-08-07",
       "evaluations": [
         {
-          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "prop": "Over 0.5 Hits",
           "type": "batter",
-          "score": 61.4,
+          "score": 66.6,
           "notable_signals": 2,
           "matchup": "Athletics @ Boston Red Sox",
           "game_pk": 824727,
@@ -77,14 +77,14 @@
             "sp_era_weak": 22.8571,
             "l7_avg_ev": 100.0,
             "l7_barrel_pct": 100.0,
-            "park_hr_index": 59.8,
+            "park_hr_index": 59.7,
             "season_barrel_pct": 30.0,
-            "lineup_slot": 25.0,
+            "lineup_slot": 100.0,
             "bullpen_fatigue": 76.9231,
             "platoon_barrel_pct": 5.0,
             "platoon_xwoba": 0.36,
             "park_hand_index": -1.96,
-            "opp_catcher_framing": 0.84,
+            "opp_catcher_framing": 0.6,
             "days_rest": 0.0,
             "pull_park_synergy": -0.2195,
             "hard_hit_105_rate": 3.9475,
@@ -93,15 +93,17 @@
             "getaway_day": 0.0,
             "series_game": 0.0,
             "sp_rp_ops_gap": -0.912,
-            "vs_rp_ops": -1.2
+            "vs_rp_ops": -1.2,
+            "ump_k_pct": -0.324,
+            "ump_bb_pct": -0.144
           },
-          "hit_probability": 0.5932,
-          "raw_hit_probability": 0.639,
-          "lift": -0.0824,
+          "hit_probability": 0.6049,
+          "raw_hit_probability": 0.6123,
+          "lift": 0.0539,
           "reliability": "B",
           "sample_n": 70,
           "projection": {
-            "stat": "hits_runs_rbis",
+            "stat": "hits",
             "value": 0.5,
             "needs": 1
           }
@@ -109,7 +111,7 @@
         {
           "prop": "To Steal a Base",
           "type": "batter",
-          "score": 83.0,
+          "score": 84.6,
           "notable_signals": 0,
           "matchup": "Athletics @ Boston Red Sox",
           "game_pk": 824727,
@@ -119,11 +121,11 @@
           "signals": {
             "opp_team_cs_pct": 4.86,
             "sprint_speed": 100.0,
-            "catcher_poptime": 80.0,
+            "catcher_poptime": 85.7143,
             "on_base": 48.1766
           },
-          "hit_probability": 0.216,
-          "raw_hit_probability": 0.1706,
+          "hit_probability": 0.2229,
+          "raw_hit_probability": 0.1819,
           "lift": null,
           "reliability": "B",
           "sample_n": 70,

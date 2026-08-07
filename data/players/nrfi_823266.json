@@ -1,0 +1,36 @@
+{
+  "player_id": "nrfi_823266",
+  "name": "Houston Astros @ San Diego Padres \u2014 1st Inning (Both Teams)",
+  "snapshots": [
+    {
+      "date": "2026-08-07",
+      "evaluations": [
+        {
+          "prop": "No runs in the 1st (both teams)",
+          "type": "game",
+          "score": 22.3,
+          "notable_signals": 0,
+          "matchup": "Houston Astros @ San Diego Padres",
+          "game_pk": 823266,
+          "team": null,
+          "side": "both",
+          "lean": "NRFI",
+          "signals": {
+            "home_team_scores_p": 0.2961,
+            "away_team_scores_p": 0.2572,
+            "fi_n_starts": 3.0
+          },
+          "hit_probability": 0.4911,
+          "raw_hit_probability": 0.5229,
+          "lift": -0.0073,
+          "reliability": "D",
+          "sample_n": 3,
+          "projection": {
+            "stat": "nrfi_combined",
+            "value": 52.3
+          }
+        }
+      ]
+    }
+  ]
+}

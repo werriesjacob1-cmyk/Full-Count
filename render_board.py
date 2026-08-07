@@ -106,7 +106,7 @@ def _card(p, big=False):
       <p class="prop">{_e(p.get('prop', '—'))}</p>
       <p class="matchup">{_e(p.get('team') or '')} · {_e(p.get('matchup', '—'))}</p>
       <div class="meta">
-        {f'<span>{_e(price)}</span>' if price else ''}
+        {f'<span>{price}</span>' if price else ''}
         {lift_bit}
         {f'<span class="sample">{_e(sample_bit)}</span>' if sample_bit else ''}
       </div>

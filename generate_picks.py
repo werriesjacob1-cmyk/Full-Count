@@ -2576,7 +2576,7 @@ CATEGORY_LABELS = {
 }
 
 
-def select_best_by_category(candidates, prices, fd, n_per_category=1):
+def select_best_by_category(candidates, prices, fd, n_per_category=1, k_prices=None):
     """The single best (by hit probability) candidate in EVERY prop family
     the pipeline can price, not just whichever ones happened to win the
     main board's overall ranking. Direct request: "the best available of
@@ -2622,6 +2622,14 @@ def select_best_by_category(candidates, prices, fd, n_per_category=1):
                 # Assumed richer once, live run threw KeyError('label') on the
                 # first real slate -- rebuilt the label from stat+line instead
                 # of trusting the assumption.
+                # Reliability/sample_n/prob_ci are PLAYER-level (from
+                # emp_batters, keyed by player id) so they hold regardless of
+                # which of his lines got picked here -- carried over. But
+                # raw_hit_probability/calibrated_by describe apply_calibration's
+                # one pass over c["hit_probability"] specifically, which this
+                # alternate line's own `best["prob"]` never went through, so
+                # those two stay honestly absent rather than borrowing a
+                # number that was never actually computed for this line.
                 by_category[stat].append({
                     "type": "batter", "name": c["name"], "player_id": c.get("player_id"),
                     "team": c.get("team"), "matchup": c.get("matchup"), "game_pk": c.get("game_pk"),
@@ -2633,11 +2641,24 @@ def select_best_by_category(candidates, prices, fd, n_per_category=1):
                     "base_rate": best.get("base_rate"), "lift": best.get("lift"),
                     "probability_basis": best.get("basis"),
                     "probability_detail": {"empirical": None, "modelled": None},
+                    "prob_ci": c.get("prob_ci"), "sample_n": c.get("sample_n"),
+                    "reliability": c.get("reliability"),
+                    "why": c.get("why"), "watchouts": c.get("watchouts"),
+                    "_needs_price_lookup": True,
                 })
         elif c.get("type") in ("batter", "pitcher", "game"):
             stat = (c.get("projection") or {}).get("stat")
             if stat not in CATEGORY_LABELS or c.get("hit_probability") is None:
                 continue
+            # This IS the exact same line c was already priced on (single-line
+            # families never get re-priced at an alternate threshold, unlike
+            # the line_options branch above) -- reuse attach_market_prices()'s
+            # own result directly instead of recomputing it from a one-sided
+            # feed that doesn't even cover strikeouts. Real bug found live:
+            # this recompute used to run unconditionally against `prices`
+            # only, so every strikeout candidate here showed market_odds=null
+            # even when odds_fanduel.attach_market_prices had already found a
+            # real two-sided price on `c` moments earlier in the same run.
             by_category[stat].append({
                 "type": c["type"], "name": c["name"], "player_id": c.get("player_id"),
                 "team": c.get("team"), "matchup": c.get("matchup"), "game_pk": c.get("game_pk"),
@@ -2649,18 +2670,36 @@ def select_best_by_category(candidates, prices, fd, n_per_category=1):
                 "base_rate": c.get("base_rate"), "lift": c.get("lift"),
                 "probability_basis": c.get("probability_basis"),
                 "probability_detail": c.get("probability_detail"),
+                "raw_hit_probability": c.get("raw_hit_probability"),
+                "calibrated_by": c.get("calibrated_by"),
+                "prob_ci": c.get("prob_ci"), "sample_n": c.get("sample_n"),
+                "reliability": c.get("reliability"), "alternatives": c.get("alternatives"),
+                "why": c.get("why"), "watchouts": c.get("watchouts"),
+                "market_odds": c.get("market_odds"), "market_implied": c.get("market_implied"),
+                "market_edge": c.get("market_edge"), "price_clears": c.get("price_clears"),
+                "_needs_price_lookup": False,
             })
 
     for stat, entries in by_category.items():
         for e in entries:
-            needs = (e.get("projection") or {}).get("needs")
-            market_stat = _fd_stat_alias(stat)
-            odds = (prices.get(fd.normalize_name(e["name"])) or {}).get((market_stat, needs))
-            implied = round(pp.implied_probability(odds), 4) if odds is not None else None
-            e["market_odds"] = odds
-            e["market_implied"] = implied
-            e["market_edge"] = None if implied is None else round(e["hit_probability"] - implied, 4)
-            e["price_clears"] = pp.price_is_acceptable(odds, e["hit_probability"])
+            if e.pop("_needs_price_lookup", True):
+                needs = (e.get("projection") or {}).get("needs")
+                market_stat = _fd_stat_alias(stat)
+                if market_stat == "strikeouts" and k_prices is not None:
+                    # Same two-sided lookup odds_fanduel.attach_market_prices
+                    # uses -- FanDuel posts one line per starter, so this only
+                    # hits when our recommended threshold is the one they
+                    # offered.
+                    k = k_prices.get(fd.normalize_name(e["name"]))
+                    odds = k["over"] if (k and k.get("needs") == needs) else None
+                    implied = round(k["true_over"], 4) if odds is not None else None
+                else:
+                    odds = (prices.get(fd.normalize_name(e["name"])) or {}).get((market_stat, needs))
+                    implied = round(pp.implied_probability(odds), 4) if odds is not None else None
+                e["market_odds"] = odds
+                e["market_implied"] = implied
+                e["market_edge"] = None if implied is None else round(e["hit_probability"] - implied, 4)
+                e["price_clears"] = pp.price_is_acceptable(odds, e["hit_probability"])
             e["category"] = "best_of_category"
             e["clears_main_board_floor"] = e["hit_probability"] >= MIN_LINE_PROB
 
@@ -2813,7 +2852,11 @@ def main() -> int:
         # Fetching it twice would mean two full FanDuel sweeps of a 15-game
         # slate for the same data.
         prices = _fd.fetch_prop_prices()
-        _, n_priced = _fd.attach_market_prices(candidates, prices=prices)
+        try:
+            k_prices = _fd.fetch_pitcher_strikeouts()
+        except Exception:
+            k_prices = {}
+        _, n_priced = _fd.attach_market_prices(candidates, prices=prices, k_prices=k_prices)
         print(f"    Real market prices attached to {n_priced} of {len(candidates)} candidates")
         # PER-MARKET REAL-PRICE COVERAGE. The pool diagnostic above only ever
         # showed whether the MODEL had a probability, which is a different
@@ -2835,7 +2878,7 @@ def main() -> int:
             print(f"      {st:18s} {e['n']:4d} / {e['priced']:4d}{flag}")
         moonshots = select_moonshots(candidates, prices, _fd, n=5)
         print(f"    {len(moonshots)} moonshot(s) selected (home runs, priced, ranked by hit probability)")
-        by_category = select_best_by_category(candidates, prices, _fd, n_per_category=1)
+        by_category = select_best_by_category(candidates, prices, _fd, n_per_category=1, k_prices=k_prices)
         print(f"    Best-of-category board: {len(by_category)} of {len(CATEGORY_LABELS)} "
               f"families had a candidate tonight")
     except Exception as e:
