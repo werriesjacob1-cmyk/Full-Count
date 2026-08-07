@@ -2531,7 +2531,9 @@ def main() -> int:
     # an unpriced pick is a gap in coverage, not evidence against the pick.
     # Untrustworthy INPUTS are rejected before anything is ranked -- that is a
     # different question from whether the model likes the pick.
-    candidates, _qc_rejected = quality_control(candidates, game_meta, park_wx, emp_pitchers)
+    candidates, _qc_rejected, assumed_lineup = quality_control(candidates, game_meta, park_wx, emp_pitchers)
+    if assumed_lineup:
+        write_early_look(assumed_lineup)
 
     gated = [c for c in candidates if c["score"] >= MIN_QUALITY_SCORE]
 
@@ -2695,6 +2697,44 @@ def write_json(top10):
     }
     with open(PICKS_JSON_FILE, "w", encoding="utf-8") as f:
         json.dump(payload, f, indent=2)
+
+
+EARLY_LOOK_FILE = os.path.join(OUTPUT_DIR, f"early_look_{m.TODAY}.md")
+
+
+def write_early_look(assumed_lineup):
+    """Prep-only board for batters whose lineup slot is ASSUMED (tier-4
+    fallback: last known batting order, not a real posted lineup) --
+    written by direct request, so there's something to look at hours before
+    real lineups post, understanding it will change.
+
+    Deliberately separate from PICKS_FILE/PICKS_JSON_FILE and never
+    persisted through persist_player_snapshots: grade_results.py reads the
+    picks JSON and grades every entry in it against the final box score,
+    and a guessed batting slot is not a bet anyone could actually place --
+    mixing it into the graded record would score the model against its own
+    guess instead of a real decision. This file is not graded, not read by
+    anything else in the pipeline, and is overwritten every run."""
+    ranked = sorted(assumed_lineup,
+                    key=lambda c: (c.get("hit_probability") or 0, c["score"]), reverse=True)
+    lines = [f"# Early Look — {m.TODAY} (ASSUMED lineups, not yet posted)", "",
+             "Every player below is projected into last night's/his last game's batting "
+             "slot for his team, because no real lineup — not MLB's own API, not MLB.com, "
+             "not Rotowire — has been posted for tonight yet. These are NOT picks: the "
+             "batting order can and does change (a day off, a platoon swap, a late "
+             "scratch), and none of this is graded or fed back into the accuracy record. "
+             "Read it as \"who to watch once real lineups post,\" not as a board to bet.",
+             ""]
+    for c in ranked[:25]:
+        p = c.get("hit_probability")
+        p_str = f"{p*100:.1f}%" if p is not None else "unscored"
+        lines.append(f"- **{c['name']}** ({c['team']}) — {c['prop']} — {p_str} "
+                    f"[{c['matchup']}]")
+    if not ranked:
+        lines.append("_(none)_")
+    with open(EARLY_LOOK_FILE, "w", encoding="utf-8") as f:
+        f.write("\n".join(lines) + "\n")
+    print(f"    Wrote {len(ranked)} assumed-lineup candidate(s) to {EARLY_LOOK_FILE} (not graded)")
 
 
 def persist_player_snapshots(candidates):
@@ -3554,21 +3594,36 @@ QC_PRECIP_REJECT = 70
 def quality_control(candidates, game_meta, park_wx, emp_pitchers):
     """Reject candidates whose inputs cannot be trusted, and say why.
 
-    Returns (kept, rejected)."""
-    lineups_confirmed = {}
+    Returns (kept, rejected, assumed_lineup). `assumed_lineup` is new: a
+    batter whose lineup came from fetch_last_known_lineup (mlb_daily.py's
+    tier-4 fallback, tagged assumed=True on every entry) is neither a real
+    read (kept) nor a genuine reject (rejected alongside rain/openers) --
+    it is a real player and a real matchup with a GUESSED batting slot,
+    kept ONLY out of the graded board (grade_results.py must never score a
+    guess as if it were a real bet) and surfaced separately instead, per
+    direct request: an early, clearly-labelled look is worth more than
+    nothing while real lineups are still hours from posting."""
+    lineup_state = {}
     for gm in game_meta:
         for side in ("away", "home"):
             lu = gm.get(f"{side}_lineup") or []
             # A real posted lineup is nine hitters. Anything shorter is a
-            # projection or a partial scrape, and a batter prop resting on a
-            # guessed lineup slot is resting on the single strongest signal
-            # in the whole model being invented.
-            lineups_confirmed[(gm.get("game_pk"), side)] = len(lu) >= 9
+            # partial scrape and gets the same "missing" treatment as no
+            # lineup at all -- only a full 9-entry lineup is ever assumed=True
+            # (see fetch_last_known_lineup), so a short list here is never a
+            # partially-assumed one, just an incomplete real one.
+            if len(lu) >= 9 and any(e.get("assumed") for e in lu):
+                lineup_state[(gm.get("game_pk"), side)] = "assumed"
+            elif len(lu) >= 9:
+                lineup_state[(gm.get("game_pk"), side)] = "confirmed"
+            else:
+                lineup_state[(gm.get("game_pk"), side)] = "missing"
 
-    kept, rejected = [], []
+    kept, rejected, assumed_lineup = [], [], []
     for c in candidates:
         stat = (c.get("projection") or {}).get("stat")
         reason = None
+        is_assumed = False
 
         if stat == "strikeouts":
             emp = emp_pitchers.get(c.get("player_id")) or {}
@@ -3584,9 +3639,12 @@ def quality_control(candidates, game_meta, park_wx, emp_pitchers):
             gp = c.get("game_pk")
             side = "away" if c.get("team") == next(
                 (g.get("away_team") for g in game_meta if g.get("game_pk") == gp), None) else "home"
-            if lineups_confirmed.get((gp, side)) is False:
+            state = lineup_state.get((gp, side))
+            if state == "missing":
                 reason = ("lineup not confirmed — the batting-order slot is a guess, "
                           "and slot is the strongest single signal in the model")
+            elif state == "assumed":
+                is_assumed = True
 
         if reason is None:
             wx = park_wx.get(c.get("matchup")) or {}
@@ -3597,6 +3655,9 @@ def quality_control(candidates, game_meta, park_wx, emp_pitchers):
         if reason:
             c["qc_reason"] = reason
             rejected.append(c)
+        elif is_assumed:
+            c["lineup_assumed"] = True
+            assumed_lineup.append(c)
         else:
             kept.append(c)
 
@@ -3607,7 +3668,10 @@ def quality_control(candidates, game_meta, park_wx, emp_pitchers):
             by_reason[c["qc_reason"].split(" — ")[0].split(" (")[0]] += 1
         for r, n in sorted(by_reason.items(), key=lambda kv: -kv[1]):
             print(f"      {n:4d}  {r}")
-    return kept, rejected
+    if assumed_lineup:
+        print(f"    {len(assumed_lineup)} candidate(s) held out to the early-look board "
+              f"(lineup ASSUMED from last known batting order, not yet posted for tonight)")
+    return kept, rejected, assumed_lineup
 
 # ── Safe to run at any hour ───────────────────────────────────────────────
 #

@@ -424,7 +424,9 @@ def fetch_lineups(date):
                 still_missing.append(miss)
         if still_missing:
             teams_by_name = {t["name"]:t["abbr"] for t in get_team_ids()}
+            ids_by_name = {t["name"]:t["id"] for t in get_team_ids()}
             rotowire = fetch_rotowire_lineups_by_team()
+            still_still_missing = []
             # Rotowire has no MLBAM IDs of its own (Rotowire-internal only) — found
             # live that this silently broke nearly every per-player Statcast lookup
             # downstream in generate_picks.py (L7 form, bat speed, sprint speed,
@@ -451,6 +453,56 @@ def fetch_lineups(date):
                                       + ("" if pid else "  [MLBAM id not matched — per-player Statcast signals unavailable]"))
                         if gm_entry is not None:
                             gm_entry[lineup_key].append({"name":p["name"],"id":pid,"pos":p.get("pos","?"),"bats":bats,"order":i})
+                    lines[miss["idx"]]="\n".join(block)
+                else:
+                    still_still_missing.append(miss)
+
+            # Tier 4: last known lineup, explicitly ASSUMED rather than
+            # confirmed. Only reached when MLB Stats API, MLB.com and
+            # Rotowire have ALL come up empty for a team -- almost always
+            # because it's still hours before any site has posted anything,
+            # not because the game itself is in doubt.
+            if still_still_missing:
+                assumed_by_miss = {}
+                for miss in still_still_missing:
+                    team_id = ids_by_name.get(miss["name"])
+                    a = fetch_last_known_lineup(team_id, date) if team_id else None
+                    if a:
+                        assumed_by_miss[miss["idx"]] = a
+                # Resolve handedness now, not deferred through bats_patch --
+                # this tier's block is one joined multi-line string per team
+                # (like the MLB.com/Rotowire tiers above), not the one-line-
+                # per-player layout bats_patch's index-replace assumes.
+                assumed_ids = [p["id"] for a in assumed_by_miss.values() for p in a if p.get("id")]
+                assumed_hand = {}
+                for start in range(0, len(assumed_ids), 100):
+                    chunk = assumed_ids[start:start+100]
+                    try:
+                        r = retry_get("https://statsapi.mlb.com/api/v1/people",
+                                     params={"personIds": ",".join(str(i) for i in chunk)},
+                                     headers={"User-Agent": "Mozilla/5.0"}, timeout=20)
+                        if r.status_code == 200:
+                            for person in r.json().get("people", []):
+                                assumed_hand[person["id"]] = person.get("batSide", {}).get("code", "?")
+                    except Exception as e:
+                        warn(f"Assumed-lineup handedness batch: {e}")
+                for miss in still_still_missing:
+                    assumed = assumed_by_miss.get(miss["idx"])
+                    if not assumed:
+                        continue
+                    block=[f"\n  {miss['name']} Batting Order  (source: last KNOWN lineup from "
+                           f"gamePk {assumed[0]['assumed_from_game_pk']} — ASSUMED, not yet posted "
+                           f"for tonight, will change if the real lineup differs):"]
+                    gm_entry = gm_by_pk.get(miss["game_pk"])
+                    lineup_key = "away_lineup" if miss["side"]=="away" else "home_lineup"
+                    for p in assumed:
+                        p["bats"] = assumed_hand.get(p.get("id"), "?")
+                        pa_proj=ORDER_PA.get(p["order"],630)
+                        if p.get("id"): player_ids[p["name"]]=p["id"]
+                        block.append(f"    {p['order']}. {p['name']} ({p['bats']}) — {p['pos']}  "
+                                    f"[proj ~{pa_proj} PA/yr]  [ASSUMED]")
+                        if gm_entry is not None:
+                            gm_entry[lineup_key].append(dict(p))
                     lines[miss["idx"]]="\n".join(block)
 
     # Batch-fetch bat/pitch handedness for every player discovered (lineup batters +
@@ -481,6 +533,65 @@ def fetch_lineups(date):
         gm["home_sp_hand"]=hand_by_id.get(gm.get("home_sp_id"),{}).get("throws","?")
 
     return "\n".join(lines)+"\n", game_meta, player_ids
+
+
+def fetch_last_known_lineup(team_id, before_date):
+    """This team's batting order from its own most recent COMPLETED game, as
+    an ASSUMED lineup for a game whose real one hasn't posted anywhere yet.
+
+    Not a fourth guess at "the real lineup" -- MLB.com and Rotowire are both
+    that, and both were tried first. This is a different, explicitly weaker
+    claim: "here is the 9 that batted last time," offered only so a prop
+    board can exist several hours before first pitch when literally no site
+    has published anything, per direct request ("I understand the system
+    can't run correctly since lineups aren't out... it gives us information
+    on even more players"). Every entry this returns is tagged
+    assumed=True, and it is the caller's job to keep that distinct from a
+    real posted lineup rather than let it silently pass as one -- see
+    quality_control() in generate_picks.py, which now treats the two
+    differently rather than by lineup length alone.
+
+    Verified live against the real boxscore endpoint (not assumed): a
+    completed game's boxscore always carries battingOrder as a flat list of
+    9 player IDs in order, keyed under teams.{away,home}.battingOrder, with
+    names/positions in the sibling players dict."""
+    try:
+        r = retry_get("https://statsapi.mlb.com/api/v1/schedule",
+                      params={"sportId": 1, "teamId": team_id, "gameType": "R",
+                              "startDate": (datetime.strptime(before_date, "%Y-%m-%d")
+                                            - timedelta(days=12)).strftime("%Y-%m-%d"),
+                              "endDate": (datetime.strptime(before_date, "%Y-%m-%d")
+                                          - timedelta(days=1)).strftime("%Y-%m-%d")},
+                      headers={"User-Agent": "Mozilla/5.0"}, timeout=20)
+        r.raise_for_status()
+        games = [g for d in r.json().get("dates", []) for g in d.get("games", [])
+                if g.get("status", {}).get("detailedState") == "Final"]
+        if not games:
+            return None
+        gp = games[-1]["gamePk"]
+        r2 = retry_get(f"https://statsapi.mlb.com/api/v1/game/{gp}/boxscore",
+                       headers={"User-Agent": "Mozilla/5.0"}, timeout=20)
+        r2.raise_for_status()
+        teams = r2.json().get("teams", {})
+        side = next((s for s in ("away", "home")
+                    if teams.get(s, {}).get("team", {}).get("id") == team_id), None)
+        if side is None:
+            return None
+        team = teams[side]
+        order = (team.get("battingOrder") or [])[:9]
+        if len(order) < 9:
+            return None
+        out = []
+        for i, pid in enumerate(order, 1):
+            p = team.get("players", {}).get(f"ID{pid}", {})
+            out.append({"name": p.get("person", {}).get("fullName", "?"), "id": pid,
+                       "pos": p.get("position", {}).get("abbreviation", "?"),
+                       "bats": "?", "order": i, "assumed": True,
+                       "assumed_from_game_pk": gp})
+        return out
+    except Exception as e:
+        warn(f"Last-known-lineup fallback for team {team_id}: {e}")
+        return None
 
 
 def fetch_mlb_dated_lineups_fallback(date):

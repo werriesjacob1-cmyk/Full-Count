@@ -1,6 +1,6 @@
 {
   "date": "2026-08-07",
-  "generated": "2026-08-07T14:29:48.941251",
+  "generated": "2026-08-07T14:20:40.080508",
   "picks": [
     {
       "rank": 1,
@@ -21,7 +21,7 @@
       "score": 56.9,
       "confidence": "Medium",
       "notable_signals": 2,
-      "hit_probability": 0.6692,
+      "hit_probability": 0.6691,
       "signals": {
         "platoon": 35.0,
         "sp_era_weak": 100.0,
@@ -48,8 +48,8 @@
         "vs_rp_ops": 1.668
       },
       "base_rate": 0.551,
-      "lift": 0.1182,
-      "raw_hit_probability": 0.7528,
+      "lift": 0.1181,
+      "raw_hit_probability": 0.7527,
       "calibrated_by": "hits",
       "prob_ci": [
         0.672,
@@ -61,11 +61,11 @@
       "estimated_odds": -238,
       "market_odds": -310,
       "market_implied": 0.7561,
-      "market_edge": -0.0869,
+      "market_edge": -0.087,
       "price_clears": false,
       "probability_basis": "blended",
       "probability_detail": {
-        "empirical": 0.7358,
+        "empirical": 0.7357,
         "modelled": 0.7783
       },
       "alternatives": [
@@ -74,11 +74,11 @@
           "line": 0.5,
           "needs": 1,
           "label": "Over 0.5 Hits+Runs+RBIs",
-          "prob": 0.7767,
+          "prob": 0.7766,
           "basis": "empirical",
-          "base_rate": 0.6761,
-          "lift": 0.1006,
-          "empirical": 0.7767,
+          "base_rate": 0.6752,
+          "lift": 0.1014,
+          "empirical": 0.7766,
           "modelled": null
         },
         {
@@ -86,11 +86,11 @@
           "line": 1.5,
           "needs": 2,
           "label": "Over 1.5 Hits+Runs+RBIs",
-          "prob": 0.6154,
+          "prob": 0.6153,
           "basis": "empirical",
-          "base_rate": 0.4616,
-          "lift": 0.1538,
-          "empirical": 0.6154,
+          "base_rate": 0.4611,
+          "lift": 0.1542,
+          "empirical": 0.6153,
           "modelled": null
         },
         {
@@ -98,11 +98,11 @@
           "line": 0.5,
           "needs": 1,
           "label": "Over 0.5 Singles",
-          "prob": 0.5977,
+          "prob": 0.5978,
           "basis": "empirical",
           "base_rate": 0.4022,
-          "lift": 0.1955,
-          "empirical": 0.5977,
+          "lift": 0.1956,
+          "empirical": 0.5978,
           "modelled": null
         }
       ]
@@ -178,11 +178,11 @@
           "line": 0.5,
           "needs": 1,
           "label": "Over 0.5 Hits+Runs+RBIs",
-          "prob": 0.7697,
+          "prob": 0.7696,
           "basis": "empirical",
-          "base_rate": 0.6761,
-          "lift": 0.0936,
-          "empirical": 0.7697,
+          "base_rate": 0.6752,
+          "lift": 0.0944,
+          "empirical": 0.7696,
           "modelled": null
         },
         {
@@ -190,11 +190,11 @@
           "line": 1.5,
           "needs": 2,
           "label": "Over 1.5 Hits+Runs+RBIs",
-          "prob": 0.5643,
+          "prob": 0.5642,
           "basis": "empirical",
-          "base_rate": 0.4616,
-          "lift": 0.1027,
-          "empirical": 0.5643,
+          "base_rate": 0.4611,
+          "lift": 0.1031,
+          "empirical": 0.5642,
           "modelled": null
         },
         {
@@ -245,7 +245,6 @@
         "platoon_barrel_pct": 2.48,
         "platoon_xwoba": 4.62,
         "park_hand_index": -0.99,
-        "opp_catcher_framing": 0.12,
         "days_rest": 2.0,
         "pull_park_synergy": -0.4435,
         "hard_hit_105_rate": 0.66,
@@ -283,11 +282,11 @@
           "line": 0.5,
           "needs": 1,
           "label": "Over 0.5 Hits+Runs+RBIs",
-          "prob": 0.7918,
+          "prob": 0.7917,
           "basis": "empirical",
-          "base_rate": 0.6761,
-          "lift": 0.1157,
-          "empirical": 0.7918,
+          "base_rate": 0.6752,
+          "lift": 0.1165,
+          "empirical": 0.7917,
           "modelled": null
         },
         {
@@ -295,11 +294,11 @@
           "line": 0.5,
           "needs": 1,
           "label": "Over 0.5 Singles",
-          "prob": 0.5674,
+          "prob": 0.5675,
           "basis": "empirical",
           "base_rate": 0.4022,
-          "lift": 0.1652,
-          "empirical": 0.5674,
+          "lift": 0.1653,
+          "empirical": 0.5675,
           "modelled": null
         },
         {
@@ -307,11 +306,11 @@
           "line": 1.5,
           "needs": 2,
           "label": "Over 1.5 Hits+Runs+RBIs",
-          "prob": 0.5245,
+          "prob": 0.5244,
           "basis": "empirical",
-          "base_rate": 0.4616,
-          "lift": 0.0629,
-          "empirical": 0.5245,
+          "base_rate": 0.4611,
+          "lift": 0.0633,
+          "empirical": 0.5244,
           "modelled": null
         }
       ]
@@ -343,7 +342,7 @@
         "l7_avg_ev": 61.25,
         "l7_barrel_pct": 100.0,
         "bat_speed_trend": 4.5,
-        "park_hr_index": 63.1,
+        "park_hr_index": 61.9,
         "season_barrel_pct": 66.6667,
         "lineup_slot": 87.5,
         "bullpen_fatigue": 59.5238,
@@ -389,11 +388,11 @@
           "line": 0.5,
           "needs": 1,
           "label": "Over 0.5 Hits+Runs+RBIs",
-          "prob": 0.7673,
+          "prob": 0.7672,
           "basis": "empirical",
-          "base_rate": 0.6761,
-          "lift": 0.0912,
-          "empirical": 0.7673,
+          "base_rate": 0.6752,
+          "lift": 0.092,
+          "empirical": 0.7672,
           "modelled": null
         },
         {
@@ -401,11 +400,11 @@
           "line": 1.5,
           "needs": 2,
           "label": "Over 1.5 Hits+Runs+RBIs",
-          "prob": 0.5896,
+          "prob": 0.5895,
           "basis": "empirical",
-          "base_rate": 0.4616,
-          "lift": 0.128,
-          "empirical": 0.5896,
+          "base_rate": 0.4611,
+          "lift": 0.1284,
+          "empirical": 0.5895,
           "modelled": null
         },
         {
@@ -484,7 +483,7 @@
       "price_clears": false,
       "probability_basis": "blended",
       "probability_detail": {
-        "empirical": 0.724,
+        "empirical": 0.7239,
         "modelled": 0.7263
       },
       "alternatives": [
@@ -493,11 +492,11 @@
           "line": 0.5,
           "needs": 1,
           "label": "Over 0.5 Hits+Runs+RBIs",
-          "prob": 0.7774,
+          "prob": 0.7773,
           "basis": "empirical",
-          "base_rate": 0.6761,
-          "lift": 0.1013,
-          "empirical": 0.7774,
+          "base_rate": 0.6752,
+          "lift": 0.1021,
+          "empirical": 0.7773,
           "modelled": null
         },
         {
@@ -519,8 +518,8 @@
           "label": "Over 1.5 Hits+Runs+RBIs",
           "prob": 0.5666,
           "basis": "empirical",
-          "base_rate": 0.4616,
-          "lift": 0.105,
+          "base_rate": 0.4611,
+          "lift": 0.1055,
           "empirical": 0.5666,
           "modelled": null
         }
@@ -542,7 +541,7 @@
         "needs": 1
       },
       "lean": null,
-      "score": 67.2,
+      "score": 66.5,
       "confidence": "Medium",
       "notable_signals": 0,
       "hit_probability": 0.655,
@@ -550,7 +549,7 @@
         "platoon": 65.0,
         "l7_avg_ev": 100.0,
         "l7_barrel_pct": 100.0,
-        "park_hr_index": 52.4,
+        "park_hr_index": 42.4,
         "season_barrel_pct": 62.0,
         "lineup_slot": 87.5,
         "bullpen_fatigue": 59.5238,
@@ -591,11 +590,11 @@
           "line": 0.5,
           "needs": 1,
           "label": "Over 0.5 Hits+Runs+RBIs",
-          "prob": 0.7651,
+          "prob": 0.765,
           "basis": "empirical",
-          "base_rate": 0.6761,
-          "lift": 0.089,
-          "empirical": 0.7651,
+          "base_rate": 0.6752,
+          "lift": 0.0898,
+          "empirical": 0.765,
           "modelled": null
         },
         {
@@ -603,11 +602,11 @@
           "line": 1.5,
           "needs": 2,
           "label": "Over 1.5 Hits+Runs+RBIs",
-          "prob": 0.549,
+          "prob": 0.5489,
           "basis": "empirical",
-          "base_rate": 0.4616,
-          "lift": 0.0874,
-          "empirical": 0.549,
+          "base_rate": 0.4611,
+          "lift": 0.0878,
+          "empirical": 0.5489,
           "modelled": null
         },
         {
@@ -640,7 +639,7 @@
         "needs": 1
       },
       "lean": null,
-      "score": 65.1,
+      "score": 65.0,
       "confidence": "Medium",
       "notable_signals": 3,
       "hit_probability": 0.6545,
@@ -648,7 +647,7 @@
         "platoon": 65.0,
         "l7_avg_ev": 44.1447,
         "l7_barrel_pct": 100.0,
-        "park_hr_index": 29.6,
+        "park_hr_index": 28.3,
         "season_barrel_pct": 26.6667,
         "lineup_slot": 100.0,
         "bullpen_fatigue": 66.6667,
@@ -689,11 +688,11 @@
           "line": 0.5,
           "needs": 1,
           "label": "Over 0.5 Hits+Runs+RBIs",
-          "prob": 0.8208,
+          "prob": 0.8206,
           "basis": "empirical",
-          "base_rate": 0.6761,
-          "lift": 0.1447,
-          "empirical": 0.8208,
+          "base_rate": 0.6752,
+          "lift": 0.1454,
+          "empirical": 0.8206,
           "modelled": null
         },
         {
@@ -713,11 +712,11 @@
           "line": 1.5,
           "needs": 2,
           "label": "Over 1.5 Hits+Runs+RBIs",
-          "prob": 0.5132,
+          "prob": 0.5131,
           "basis": "empirical",
-          "base_rate": 0.4616,
-          "lift": 0.0516,
-          "empirical": 0.5132,
+          "base_rate": 0.4611,
+          "lift": 0.052,
+          "empirical": 0.5131,
           "modelled": null
         }
       ]
@@ -785,7 +784,7 @@
       "price_clears": false,
       "probability_basis": "blended",
       "probability_detail": {
-        "empirical": 0.6909,
+        "empirical": 0.6908,
         "modelled": 0.7408
       },
       "alternatives": [
@@ -794,11 +793,11 @@
           "line": 0.5,
           "needs": 1,
           "label": "Over 0.5 Hits+Runs+RBIs",
-          "prob": 0.7637,
+          "prob": 0.7636,
           "basis": "empirical",
-          "base_rate": 0.6761,
-          "lift": 0.0876,
-          "empirical": 0.7637,
+          "base_rate": 0.6752,
+          "lift": 0.0884,
+          "empirical": 0.7636,
           "modelled": null
         },
         {
@@ -808,8 +807,8 @@
           "label": "Over 1.5 Hits+Runs+RBIs",
           "prob": 0.5599,
           "basis": "empirical",
-          "base_rate": 0.4616,
-          "lift": 0.0983,
+          "base_rate": 0.4611,
+          "lift": 0.0988,
           "empirical": 0.5599,
           "modelled": null
         },
@@ -898,11 +897,11 @@
           "line": 0.5,
           "needs": 1,
           "label": "Over 0.5 Hits+Runs+RBIs",
-          "prob": 0.7502,
+          "prob": 0.75,
           "basis": "empirical",
-          "base_rate": 0.6761,
-          "lift": 0.0741,
-          "empirical": 0.7502,
+          "base_rate": 0.6752,
+          "lift": 0.0748,
+          "empirical": 0.75,
           "modelled": null
         },
         {
@@ -912,8 +911,8 @@
           "label": "Over 1.5 Hits+Runs+RBIs",
           "prob": 0.539,
           "basis": "empirical",
-          "base_rate": 0.4616,
-          "lift": 0.0774,
+          "base_rate": 0.4611,
+          "lift": 0.0779,
           "empirical": 0.539,
           "modelled": null
         },
@@ -922,11 +921,11 @@
           "line": 0.5,
           "needs": 1,
           "label": "Over 0.5 Singles",
-          "prob": 0.4843,
+          "prob": 0.4844,
           "basis": "empirical",
           "base_rate": 0.4022,
-          "lift": 0.0821,
-          "empirical": 0.4843,
+          "lift": 0.0822,
+          "empirical": 0.4844,
           "modelled": null
         }
       ]
@@ -964,7 +963,6 @@
         "platoon_barrel_pct": 5.0,
         "platoon_xwoba": 5.0,
         "park_hand_index": -0.99,
-        "opp_catcher_framing": 0.12,
         "days_rest": 2.0,
         "pull_park_synergy": -0.6445,
         "hard_hit_105_rate": 5.0,
@@ -977,7 +975,7 @@
       },
       "base_rate": 0.551,
       "lift": 0.0989,
-      "raw_hit_probability": 0.7096,
+      "raw_hit_probability": 0.7095,
       "calibrated_by": "hits",
       "prob_ci": [
         0.6215,
@@ -993,7 +991,7 @@
       "price_clears": false,
       "probability_basis": "blended",
       "probability_detail": {
-        "empirical": 0.697,
+        "empirical": 0.6969,
         "modelled": 0.7285
       },
       "alternatives": [
@@ -1002,11 +1000,11 @@
           "line": 0.5,
           "needs": 1,
           "label": "Over 0.5 Hits+Runs+RBIs",
-          "prob": 0.7482,
+          "prob": 0.748,
           "basis": "empirical",
-          "base_rate": 0.6761,
-          "lift": 0.0721,
-          "empirical": 0.7482,
+          "base_rate": 0.6752,
+          "lift": 0.0728,
+          "empirical": 0.748,
           "modelled": null
         },
         {
@@ -1014,11 +1012,11 @@
           "line": 1.5,
           "needs": 2,
           "label": "Over 1.5 Hits+Runs+RBIs",
-          "prob": 0.5539,
+          "prob": 0.5538,
           "basis": "empirical",
-          "base_rate": 0.4616,
-          "lift": 0.0923,
-          "empirical": 0.5539,
+          "base_rate": 0.4611,
+          "lift": 0.0927,
+          "empirical": 0.5538,
           "modelled": null
         },
         {
