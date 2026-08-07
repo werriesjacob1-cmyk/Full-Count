@@ -46,7 +46,7 @@
         {
           "prop": "Over 0.5 Hits+Runs+RBIs",
           "type": "batter",
-          "score": 57.8,
+          "score": 57.6,
           "notable_signals": 3,
           "matchup": "Detroit Tigers @ San Francisco Giants",
           "game_pk": 823191,
@@ -71,8 +71,8 @@
             "sp_rp_ops_gap": -0.384,
             "vs_rp_ops": -1.464
           },
-          "hit_probability": 0.5812,
-          "raw_hit_probability": 0.6251,
+          "hit_probability": 0.5811,
+          "raw_hit_probability": 0.625,
           "lift": -0.0941,
           "reliability": "A",
           "sample_n": 88,
@@ -85,7 +85,7 @@
         {
           "prop": "To Steal a Base",
           "type": "batter",
-          "score": 39.1,
+          "score": 41.2,
           "notable_signals": 0,
           "matchup": "Detroit Tigers @ San Francisco Giants",
           "game_pk": 823191,
@@ -96,7 +96,7 @@
             "opp_team_cs_pct": 0.78,
             "sprint_speed": 18.75,
             "catcher_poptime": 100.0,
-            "on_base": 7.8695
+            "on_base": 17.4664
           },
           "hit_probability": 0.138,
           "raw_hit_probability": 0.0179,
@@ -105,7 +105,8 @@
           "sample_n": 88,
           "projection": {
             "stat": "stolen_base",
-            "value": 1
+            "value": 1,
+            "needs": 1
           }
         }
       ]

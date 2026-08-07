@@ -2596,6 +2596,24 @@ def main() -> int:
         import odds_fanduel as _fd
         _, n_priced = _fd.attach_market_prices(candidates)
         print(f"    Real market prices attached to {n_priced} of {len(candidates)} candidates")
+        # PER-MARKET REAL-PRICE COVERAGE. The pool diagnostic above only ever
+        # showed whether the MODEL had a probability, which is a different
+        # question from whether FanDuel's price was actually found and
+        # attached -- stolen_base sat at 141/0 real prices for weeks while
+        # printing 141/138 "priced" above, because "priced" there means
+        # hit_probability is not None. Printed separately, after attach
+        # runs, since the pool table above is built before this call.
+        price_pool = defaultdict(lambda: {"n": 0, "priced": 0})
+        for c in candidates:
+            st = (c.get("projection") or {}).get("stat") or "?"
+            e = price_pool[st]
+            e["n"] += 1
+            if c.get("market_odds") is not None:
+                e["priced"] += 1
+        print("    Real market-price coverage by market (considered / priced):")
+        for st, e in sorted(price_pool.items(), key=lambda kv: -kv[1]["n"]):
+            flag = "" if e["priced"] == e["n"] else "   <-- UNPRICED CANDIDATES"
+            print(f"      {st:18s} {e['n']:4d} / {e['priced']:4d}{flag}")
     except Exception as e:
         m.warn(f"Market prices unavailable ({e}) — board ships without them")
 
@@ -3271,6 +3289,14 @@ def attach_hit_probabilities(candidates, comp_table, emp_batters, emp_pitchers,
             c["probability_detail"] = {
                 "empirical": None if empirical is None else round(empirical, 4),
                 "modelled": None if modelled is None else round(modelled, 4)}
+            # attach_market_prices() keys on (stat, needs); this projection
+            # has carried "value" since it was created (score_stolen_base,
+            # above) but never "needs", so the lookup key was always
+            # (stat, None) and every one of these candidates was skipped
+            # before a price could ever be checked. p_stolen_base models
+            # P(>=1 steal), which is FanDuel's TO_RECORD_A_STOLEN_BASE line --
+            # needs=1, not the 2+ market.
+            c["projection"]["needs"] = 1
 
         elif stat == "strikeouts":
             emp = emp_pitchers.get(pid) or {}

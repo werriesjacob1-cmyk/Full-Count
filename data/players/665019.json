@@ -65,7 +65,7 @@
         {
           "prop": "Over 0.5 Hits",
           "type": "batter",
-          "score": 50.3,
+          "score": 50.2,
           "notable_signals": 1,
           "matchup": "Minnesota Twins @ Milwaukee Brewers",
           "game_pk": 823750,
@@ -78,7 +78,7 @@
             "l7_avg_ev": 83.0556,
             "l7_barrel_pct": 100.0,
             "park_hr_index": 50.0,
-            "season_barrel_pct": 59.3333,
+            "season_barrel_pct": 57.3333,
             "lineup_slot": 50.0,
             "bullpen_fatigue": 64.1026,
             "platoon_barrel_pct": 4.72,
@@ -109,7 +109,7 @@
         {
           "prop": "To Steal a Base",
           "type": "batter",
-          "score": 48.2,
+          "score": 48.3,
           "notable_signals": 0,
           "matchup": "Minnesota Twins @ Milwaukee Brewers",
           "game_pk": 823750,
@@ -118,9 +118,9 @@
           "lean": null,
           "signals": {
             "opp_team_cs_pct": -6.0,
-            "sprint_speed": 15.625,
+            "sprint_speed": 18.75,
             "catcher_poptime": 91.4286,
-            "on_base": 67.3704
+            "on_base": 60.6526
           },
           "hit_probability": 0.166,
           "raw_hit_probability": 0.0792,
@@ -129,7 +129,8 @@
           "sample_n": 100,
           "projection": {
             "stat": "stolen_base",
-            "value": 1
+            "value": 1,
+            "needs": 1
           }
         }
       ]

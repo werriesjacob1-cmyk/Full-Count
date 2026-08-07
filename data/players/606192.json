@@ -46,7 +46,7 @@
         {
           "prop": "Over 0.5 Hits",
           "type": "batter",
-          "score": 57.1,
+          "score": 57.0,
           "notable_signals": 1,
           "matchup": "Los Angeles Dodgers @ Arizona Diamondbacks",
           "game_pk": 825051,
@@ -60,7 +60,7 @@
             "l7_avg_ev": 81.9118,
             "l7_barrel_pct": 100.0,
             "park_hr_index": 50.0,
-            "season_barrel_pct": 43.3333,
+            "season_barrel_pct": 42.6667,
             "lineup_slot": 12.5,
             "bullpen_fatigue": 64.1026,
             "platoon_barrel_pct": 3.84,
@@ -90,7 +90,7 @@
         {
           "prop": "To Steal a Base",
           "type": "batter",
-          "score": 43.4,
+          "score": 41.0,
           "notable_signals": 0,
           "matchup": "Los Angeles Dodgers @ Arizona Diamondbacks",
           "game_pk": 825051,
@@ -99,8 +99,8 @@
           "lean": null,
           "signals": {
             "opp_team_cs_pct": 3.3,
-            "sprint_speed": 31.25,
-            "on_base": 62.572
+            "sprint_speed": 28.125,
+            "on_base": 58.7332
           },
           "hit_probability": 0.1431,
           "raw_hit_probability": 0.0299,
@@ -109,7 +109,8 @@
           "sample_n": 80,
           "projection": {
             "stat": "stolen_base",
-            "value": 1
+            "value": 1,
+            "needs": 1
           }
         }
       ]

@@ -46,8 +46,8 @@
         {
           "prop": "Over 0.5 Hits",
           "type": "batter",
-          "score": 51.6,
-          "notable_signals": 1,
+          "score": 49.8,
+          "notable_signals": 0,
           "matchup": "Chicago Cubs @ Kansas City Royals",
           "game_pk": 824081,
           "team": "Chicago Cubs",
@@ -88,7 +88,7 @@
         {
           "prop": "To Steal a Base",
           "type": "batter",
-          "score": 51.9,
+          "score": 54.3,
           "notable_signals": 0,
           "matchup": "Chicago Cubs @ Kansas City Royals",
           "game_pk": 824081,
@@ -97,9 +97,9 @@
           "lean": null,
           "signals": {
             "opp_team_cs_pct": -5.22,
-            "sprint_speed": 31.25,
+            "sprint_speed": 34.375,
             "catcher_poptime": 100.0,
-            "on_base": 37.62
+            "on_base": 41.4587
           },
           "hit_probability": 0.1953,
           "raw_hit_probability": 0.135,
@@ -108,7 +108,8 @@
           "sample_n": 114,
           "projection": {
             "stat": "stolen_base",
-            "value": 1
+            "value": 1,
+            "needs": 1
           }
         }
       ]

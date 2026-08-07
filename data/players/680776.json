@@ -65,7 +65,7 @@
         {
           "prop": "Over 0.5 Hits+Runs+RBIs",
           "type": "batter",
-          "score": 72.3,
+          "score": 72.1,
           "notable_signals": 4,
           "matchup": "Athletics @ Boston Red Sox",
           "game_pk": 824727,
@@ -97,7 +97,7 @@
           },
           "hit_probability": 0.6223,
           "raw_hit_probability": 0.6733,
-          "lift": -0.053,
+          "lift": -0.0529,
           "reliability": "A",
           "sample_n": 107,
           "projection": {
@@ -109,7 +109,7 @@
         {
           "prop": "To Steal a Base",
           "type": "batter",
-          "score": 48.6,
+          "score": 48.9,
           "notable_signals": 0,
           "matchup": "Athletics @ Boston Red Sox",
           "game_pk": 824727,
@@ -119,8 +119,8 @@
           "signals": {
             "opp_team_cs_pct": -1.32,
             "sprint_speed": 53.125,
-            "catcher_poptime": 77.1429,
-            "on_base": 2.1113
+            "catcher_poptime": 74.2857,
+            "on_base": 6.9098
           },
           "hit_probability": 0.1981,
           "raw_hit_probability": 0.1399,
@@ -129,7 +129,8 @@
           "sample_n": 107,
           "projection": {
             "stat": "stolen_base",
-            "value": 1
+            "value": 1,
+            "needs": 1
           }
         }
       ]

@@ -65,7 +65,7 @@
         {
           "prop": "Over 0.5 Hits+Runs+RBIs",
           "type": "batter",
-          "score": 55.0,
+          "score": 56.6,
           "notable_signals": 1,
           "matchup": "Baltimore Orioles @ Texas Rangers",
           "game_pk": 822863,
@@ -78,7 +78,7 @@
             "l7_avg_ev": 57.2917,
             "l7_barrel_pct": 100.0,
             "park_hr_index": 50.0,
-            "season_barrel_pct": 47.3333,
+            "season_barrel_pct": 50.0,
             "lineup_slot": 25.0,
             "bullpen_fatigue": 55.5556,
             "platoon_barrel_pct": 3.36,
@@ -97,7 +97,7 @@
           },
           "hit_probability": 0.4823,
           "raw_hit_probability": 0.513,
-          "lift": -0.193,
+          "lift": -0.1929,
           "reliability": "A",
           "sample_n": 96,
           "projection": {
@@ -109,7 +109,7 @@
         {
           "prop": "To Steal a Base",
           "type": "batter",
-          "score": 44.0,
+          "score": 43.1,
           "notable_signals": 0,
           "matchup": "Baltimore Orioles @ Texas Rangers",
           "game_pk": 822863,
@@ -120,7 +120,7 @@
             "opp_team_cs_pct": 1.92,
             "sprint_speed": 18.75,
             "catcher_poptime": 100.0,
-            "on_base": 29.9424
+            "on_base": 26.1036
           },
           "hit_probability": 0.1705,
           "raw_hit_probability": 0.0883,
@@ -129,7 +129,8 @@
           "sample_n": 96,
           "projection": {
             "stat": "stolen_base",
-            "value": 1
+            "value": 1,
+            "needs": 1
           }
         }
       ]

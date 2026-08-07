@@ -44,7 +44,7 @@
         {
           "prop": "Over 0.5 Hits",
           "type": "batter",
-          "score": 77.1,
+          "score": 76.9,
           "notable_signals": 4,
           "matchup": "Athletics @ Boston Red Sox",
           "game_pk": 824727,
@@ -54,11 +54,11 @@
           "signals": {
             "platoon": 35.0,
             "sp_era_weak": 100.0,
-            "pitch_exploit": 7.4286,
+            "pitch_exploit": 6.8571,
             "l7_avg_ev": 100.0,
             "l7_barrel_pct": 100.0,
             "park_hr_index": 74.3,
-            "season_barrel_pct": 75.3333,
+            "season_barrel_pct": 76.6667,
             "lineup_slot": 62.5,
             "bullpen_fatigue": 66.6667,
             "platoon_barrel_pct": 4.64,
@@ -83,6 +83,33 @@
           "projection": {
             "stat": "hits",
             "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 42.8,
+          "notable_signals": 1,
+          "matchup": "Athletics @ Boston Red Sox",
+          "game_pk": 824727,
+          "team": "Boston Red Sox",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "opp_team_cs_pct": -1.32,
+            "sprint_speed": 0.0,
+            "catcher_poptime": 74.2857,
+            "on_base": 100.0
+          },
+          "hit_probability": 0.1445,
+          "raw_hit_probability": 0.033,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 104,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
             "needs": 1
           }
         }

@@ -46,7 +46,7 @@
         {
           "prop": "Over 0.5 Hits",
           "type": "batter",
-          "score": 45.8,
+          "score": 45.7,
           "notable_signals": 1,
           "matchup": "Baltimore Orioles @ Texas Rangers",
           "game_pk": 822863,
@@ -60,11 +60,11 @@
             "l7_barrel_pct": 100.0,
             "bat_speed_trend": 2.625,
             "park_hr_index": 50.0,
-            "season_barrel_pct": 24.0,
+            "season_barrel_pct": 23.3333,
             "lineup_slot": 25.0,
             "bullpen_fatigue": 44.4444,
             "platoon_barrel_pct": 1.04,
-            "platoon_xwoba": -0.18,
+            "platoon_xwoba": -0.12,
             "park_hand_index": 0.64,
             "opp_catcher_framing": -0.48,
             "days_rest": 2.0,
@@ -78,9 +78,9 @@
             "sp_rp_ops_gap": 0.584,
             "vs_rp_ops": 1.32
           },
-          "hit_probability": 0.6248,
-          "raw_hit_probability": 0.6548,
-          "lift": 0.0738,
+          "hit_probability": 0.625,
+          "raw_hit_probability": 0.6552,
+          "lift": 0.074,
           "reliability": "A",
           "sample_n": 104,
           "projection": {
@@ -92,8 +92,8 @@
         {
           "prop": "To Steal a Base",
           "type": "batter",
-          "score": 64.5,
-          "notable_signals": 0,
+          "score": 65.7,
+          "notable_signals": 1,
           "matchup": "Baltimore Orioles @ Texas Rangers",
           "game_pk": 822863,
           "team": "Texas Rangers",
@@ -102,8 +102,8 @@
           "signals": {
             "opp_team_cs_pct": -3.6,
             "sprint_speed": 53.125,
-            "catcher_poptime": 77.1429,
-            "on_base": 74.0883
+            "catcher_poptime": 80.0,
+            "on_base": 76.0077
           },
           "hit_probability": 0.1685,
           "raw_hit_probability": 0.0843,
@@ -112,7 +112,8 @@
           "sample_n": 104,
           "projection": {
             "stat": "stolen_base",
-            "value": 1
+            "value": 1,
+            "needs": 1
           }
         }
       ]

@@ -41,7 +41,7 @@
             "l7_barrel_pct": 100.0,
             "bat_speed_trend": 15.0,
             "park_hr_index": 50.0,
-            "season_barrel_pct": 6.0,
+            "season_barrel_pct": 5.3333,
             "lineup_slot": 50.0,
             "bullpen_fatigue": 64.1026,
             "platoon_barrel_pct": -1.2,
@@ -60,7 +60,7 @@
           },
           "hit_probability": 0.6034,
           "raw_hit_probability": 0.6509,
-          "lift": -0.0719,
+          "lift": -0.0718,
           "reliability": "A",
           "sample_n": 96,
           "projection": {
@@ -72,7 +72,7 @@
         {
           "prop": "To Steal a Base",
           "type": "batter",
-          "score": 33.5,
+          "score": 31.7,
           "notable_signals": 0,
           "matchup": "Tampa Bay Rays @ Seattle Mariners",
           "game_pk": 823103,
@@ -81,9 +81,9 @@
           "lean": null,
           "signals": {
             "opp_team_cs_pct": 0.9,
-            "sprint_speed": 15.625,
+            "sprint_speed": 12.5,
             "catcher_poptime": 74.2857,
-            "on_base": 22.2649
+            "on_base": 21.3052
           },
           "hit_probability": 0.2058,
           "raw_hit_probability": 0.1533,
@@ -92,7 +92,8 @@
           "sample_n": 96,
           "projection": {
             "stat": "stolen_base",
-            "value": 1
+            "value": 1,
+            "needs": 1
           }
         }
       ]

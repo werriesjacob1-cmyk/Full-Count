@@ -46,8 +46,8 @@
         {
           "prop": "Over 0.5 Hits+Runs+RBIs",
           "type": "batter",
-          "score": 42.7,
-          "notable_signals": 1,
+          "score": 41.2,
+          "notable_signals": 0,
           "matchup": "New York Mets @ Pittsburgh Pirates",
           "game_pk": 823349,
           "team": "Pittsburgh Pirates",
@@ -56,7 +56,6 @@
           "signals": {
             "platoon": 80.0,
             "sp_era_weak": 10.8571,
-            "pitch_exploit": 2.2857,
             "l7_avg_ev": 81.75,
             "l7_barrel_pct": 0.0,
             "park_hr_index": 52.0,
@@ -80,7 +79,7 @@
           },
           "hit_probability": 0.5892,
           "raw_hit_probability": 0.6344,
-          "lift": -0.0861,
+          "lift": -0.086,
           "reliability": "B",
           "sample_n": 47,
           "projection": {
@@ -112,7 +111,8 @@
           "sample_n": 47,
           "projection": {
             "stat": "stolen_base",
-            "value": 1
+            "value": 1,
+            "needs": 1
           }
         }
       ]

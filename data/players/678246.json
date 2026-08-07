@@ -65,7 +65,7 @@
         {
           "prop": "Over 0.5 Hits",
           "type": "batter",
-          "score": 73.4,
+          "score": 72.8,
           "notable_signals": 4,
           "matchup": "Cleveland Guardians @ Chicago White Sox",
           "game_pk": 824566,
@@ -75,11 +75,11 @@
           "signals": {
             "platoon": 80.0,
             "sp_era_weak": 2.0,
-            "pitch_exploit": 3.4286,
+            "pitch_exploit": 2.8571,
             "l7_avg_ev": 81.5833,
             "l7_barrel_pct": 100.0,
             "park_hr_index": 51.9,
-            "season_barrel_pct": 77.3333,
+            "season_barrel_pct": 75.3333,
             "lineup_slot": 75.0,
             "bullpen_fatigue": 47.619,
             "platoon_barrel_pct": 5.0,
@@ -108,7 +108,7 @@
         {
           "prop": "To Steal a Base",
           "type": "batter",
-          "score": 61.1,
+          "score": 59.7,
           "notable_signals": 1,
           "matchup": "Cleveland Guardians @ Chicago White Sox",
           "game_pk": 824566,
@@ -118,8 +118,8 @@
           "signals": {
             "opp_team_cs_pct": 6.0,
             "sprint_speed": 31.25,
-            "catcher_poptime": 91.4286,
-            "on_base": 90.4031
+            "catcher_poptime": 88.5714,
+            "on_base": 87.524
           },
           "hit_probability": 0.1772,
           "raw_hit_probability": 0.1013,
@@ -128,7 +128,8 @@
           "sample_n": 113,
           "projection": {
             "stat": "stolen_base",
-            "value": 1
+            "value": 1,
+            "needs": 1
           }
         }
       ]
