@@ -142,6 +142,22 @@ jobs:
         if: ${{ !(github.event_name == 'workflow_dispatch' && (inputs.dry_run || inputs.skip_picks)) }}
         run: python3 generate_picks.py
 
+      - name: Re-check the board for late scratches
+        # quality_control() rejects a batter whose lineup was never confirmed,
+        # but it runs ONCE, when picks are generated. This workflow generates
+        # at 14:30, 15:30, 20:00 and 22:30 UTC; games start later. A player
+        # confirmed in the early lineup and scratched in warmups was a valid
+        # pick when made and is a dead bet by first pitch, and nothing looked
+        # again.
+        #
+        # On the later runs this re-checks the board that already exists
+        # against lineups as they stand now. It reports only — regenerating
+        # the board would reshuffle nine correct picks against a partly
+        # started slate, which is the hazard bettable_games() exists to
+        # prevent.
+        if: ${{ !(github.event_name == 'workflow_dispatch' && (inputs.dry_run || inputs.skip_picks)) }}
+        run: python3 check_scratches.py || true
+
       - name: Commit picks immediately
         # PICKS ARE COMMITTED BEFORE THE LONG REPORT RUNS, deliberately.
         #
@@ -168,7 +184,7 @@ jobs:
           # They are the record of every board generated that day, kept because
           # a later run overwrites the live file and the earlier board may be
           # the one that was actually bet.
-          git add output/top10_picks_*.md output/picks_*.json results/*.json data/players/*.json
+          git add output/top10_picks_*.md output/picks_*.json output/scratches_*.json results/*.json data/players/*.json
           if git diff --cached --quiet; then
             echo "No picks to commit."
             exit 0
