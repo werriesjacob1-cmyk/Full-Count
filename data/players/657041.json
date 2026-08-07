@@ -46,8 +46,8 @@
         {
           "prop": "Over 0.5 Hits+Runs+RBIs",
           "type": "batter",
-          "score": 56.1,
-          "notable_signals": 1,
+          "score": 64.1,
+          "notable_signals": 2,
           "matchup": "Atlanta Braves @ New York Yankees",
           "game_pk": 823515,
           "team": "Atlanta Braves",
@@ -58,7 +58,7 @@
             "sp_era_weak": 17.7143,
             "l7_avg_ev": 67.375,
             "l7_barrel_pct": 100.0,
-            "park_hr_index": 32.7,
+            "park_hr_index": 77.1,
             "season_barrel_pct": 24.6667,
             "lineup_slot": 25.0,
             "bullpen_fatigue": 64.1026,
@@ -66,7 +66,7 @@
             "platoon_barrel_pct": -2.16,
             "platoon_xwoba": 2.16,
             "park_hand_index": 0.68,
-            "opp_catcher_framing": -2.28,
+            "opp_catcher_framing": -0.6,
             "days_rest": 0.0,
             "pull_park_synergy": 0.3665,
             "hard_hit_105_rate": -0.5475,
@@ -77,9 +77,9 @@
             "sp_rp_ops_gap": -1.008,
             "vs_rp_ops": -0.864
           },
-          "hit_probability": 0.5468,
-          "raw_hit_probability": 0.5857,
-          "lift": -0.1296,
+          "hit_probability": 0.5467,
+          "raw_hit_probability": 0.5856,
+          "lift": -0.1289,
           "reliability": "A",
           "sample_n": 97,
           "projection": {
@@ -91,7 +91,7 @@
         {
           "prop": "To Steal a Base",
           "type": "batter",
-          "score": 54.6,
+          "score": 62.2,
           "notable_signals": 0,
           "matchup": "Atlanta Braves @ New York Yankees",
           "game_pk": 823515,
@@ -101,10 +101,11 @@
           "signals": {
             "opp_team_cs_pct": 2.04,
             "sprint_speed": 56.25,
+            "catcher_poptime": 77.1429,
             "on_base": 56.8138
           },
           "hit_probability": 0.1613,
-          "raw_hit_probability": 0.0696,
+          "raw_hit_probability": 0.0695,
           "lift": null,
           "reliability": "A",
           "sample_n": 97,
