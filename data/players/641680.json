@@ -42,10 +42,10 @@
       "date": "2026-08-07",
       "evaluations": [
         {
-          "prop": "Over 0.5 Hits",
+          "prop": "Over 0.5 Hits+Runs+RBIs",
           "type": "batter",
-          "score": 54.9,
-          "notable_signals": 3,
+          "score": 53.6,
+          "notable_signals": 2,
           "matchup": "Athletics @ Boston Red Sox",
           "game_pk": 824727,
           "team": "Athletics",
@@ -55,8 +55,8 @@
             "sp_era_weak": 22.8571,
             "l7_avg_ev": 34.0278,
             "l7_barrel_pct": 100.0,
-            "park_hr_index": 75.3,
-            "season_barrel_pct": 28.6667,
+            "park_hr_index": 59.8,
+            "season_barrel_pct": 26.6667,
             "lineup_slot": 75.0,
             "bullpen_fatigue": 76.9231,
             "platoon_barrel_pct": 2.8,
@@ -71,13 +71,13 @@
             "sp_rp_ops_gap": -1.072,
             "vs_rp_ops": -0.072
           },
-          "hit_probability": 0.6021,
-          "raw_hit_probability": 0.6064,
-          "lift": 0.0511,
+          "hit_probability": 0.6056,
+          "raw_hit_probability": 0.6535,
+          "lift": -0.07,
           "reliability": "B",
           "sample_n": 68,
           "projection": {
-            "stat": "hits",
+            "stat": "hits_runs_rbis",
             "value": 0.5,
             "needs": 1
           }

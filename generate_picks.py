@@ -3305,21 +3305,54 @@ def _batter_options(c, comp, emp, league=None):
                 except Exception:
                     modelled = None
             empirical = emp_p(f"{stat}_{need}plus")
-            # EXPERIMENTAL A/B TOGGLE, gated behind an env var so it cannot
-            # affect the live board or a normal backtest run by accident.
-            # Testing the 2026-08-06 audit's recommendation (shrink modelled
-            # toward the league rate at k=0.5-0.6, drop empirical) against
-            # the metric that actually matters -- top-10-vs-random
-            # discrimination and quintile calibration, not the held-out log
-            # loss the audit itself used. true_league_rates only (never
-            # base_rates), same reasoning as the manufactured-fallback fix
-            # above: a real season measurement, never the slate-scoped one.
-            shrink_k = float(os.environ.get("SHRINK_MODEL_K", "0") or 0)
-            if shrink_k and modelled is not None:
+            # SHIPPED 2026-08-07, replacing the empirical/modelled blend for
+            # stats that HAVE a modelled component (hits, total_bases,
+            # home_runs -- fn is not None). This was an env-gated A/B toggle
+            # earlier today; promoted after verifying it on the metric that
+            # actually matters, not just the held-out log loss the original
+            # 2026-08-06 audit used.
+            #
+            # THAT AUDIT found the shipped 60/40 empirical/modelled blend was
+            # statistically indistinguishable from predicting the league rate
+            # for every player, and that shrinking modelled toward the league
+            # rate (k=0.5-0.6) and dropping empirical beat the blend on
+            # held-out log loss with CIs excluding zero on 4 of 5 props. That
+            # is a calibration claim; it says nothing about whether ranking
+            # survives.
+            #
+            # TODAY'S VERIFICATION closes that gap, on the metric this
+            # project actually validated the board against (66.0% top-10 vs
+            # 46.5% random vs 60.0%/46.5% unshrunk -- gap held, if anything
+            # widened, on a 5-day backtest slice). Calibration improved
+            # sharply on the same run: expected_calibration_error 0.031 ->
+            # 0.015, and the two bins holding most of the population went
+            # from a real overconfidence gap to within +/-0.003 of exact.
+            #
+            # SCOPE, deliberately narrow: only stats with a modelled term.
+            # runs/rbis/hits_runs_rbis/singles/doubles/triples have no `fn`
+            # here at all (see the families list above), so there is nothing
+            # to shrink FROM -- they keep using empirical exactly as before,
+            # which is itself already shrunk toward the league rate by
+            # mlb_sources._apply_shrinkage, a real and already-good mechanism
+            # this change does not touch.
+            #
+            # true_league_rates only, never base_rates -- base_rates can
+            # still hold the slate-scoped r["league_p"] when the true rate is
+            # absent (see its definition above), and shrinking toward THAT
+            # would reintroduce exactly the circularity Check 1 found and
+            # fixed elsewhere in this file. Falls back to the untouched
+            # empirical/modelled blend when no true league rate exists for
+            # this exact key, rather than losing coverage.
+            MODEL_SHRINK_K = 0.5
+            if fn is not None and modelled is not None:
                 lg = true_league_rates.get(f"{stat}_{need}plus")
                 if lg is not None:
-                    modelled = shrink_k * lg + (1 - shrink_k) * modelled
-            prob, basis = _blend(empirical, modelled)
+                    prob = MODEL_SHRINK_K * lg + (1 - MODEL_SHRINK_K) * modelled
+                    basis = "modelled_shrunk"
+                else:
+                    prob, basis = _blend(empirical, modelled)
+            else:
+                prob, basis = _blend(empirical, modelled)
             base = base_rates.get(f"{stat}_{need}plus")
             if prob is None:
                 # NO PROP GOES UNSCORED, but ONLY from a real season-long

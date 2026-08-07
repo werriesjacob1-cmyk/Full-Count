@@ -44,10 +44,10 @@
       "date": "2026-08-07",
       "evaluations": [
         {
-          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "prop": "Over 0.5 Hits",
           "type": "batter",
-          "score": 48.6,
-          "notable_signals": 1,
+          "score": 54.9,
+          "notable_signals": 2,
           "matchup": "Cincinnati Reds @ Washington Nationals",
           "game_pk": 822699,
           "team": "Washington Nationals",
@@ -59,8 +59,8 @@
             "pitch_exploit": 5.7143,
             "l7_avg_ev": 0.0,
             "l7_barrel_pct": 50.7143,
-            "park_hr_index": 59.6,
-            "season_barrel_pct": 34.0,
+            "park_hr_index": 83.4,
+            "season_barrel_pct": 33.3333,
             "lineup_slot": 37.5,
             "bullpen_fatigue": 64.1026,
             "platoon_barrel_pct": 0.08,
@@ -75,13 +75,13 @@
             "sp_rp_ops_gap": 2.28,
             "vs_rp_ops": 1.584
           },
-          "hit_probability": 0.4963,
-          "raw_hit_probability": 0.5288,
-          "lift": -0.1801,
+          "hit_probability": 0.5918,
+          "raw_hit_probability": 0.5849,
+          "lift": 0.0408,
           "reliability": "A",
           "sample_n": 85,
           "projection": {
-            "stat": "hits_runs_rbis",
+            "stat": "hits",
             "value": 0.5,
             "needs": 1
           }
@@ -89,7 +89,7 @@
         {
           "prop": "To Steal a Base",
           "type": "batter",
-          "score": 36.4,
+          "score": 36.7,
           "notable_signals": 0,
           "matchup": "Cincinnati Reds @ Washington Nationals",
           "game_pk": 822699,
@@ -98,12 +98,12 @@
           "lean": null,
           "signals": {
             "opp_team_cs_pct": 4.44,
-            "sprint_speed": 12.5,
+            "sprint_speed": 15.625,
             "catcher_poptime": 71.4286,
-            "on_base": 46.2572
+            "on_base": 40.499
           },
-          "hit_probability": 0.1504,
-          "raw_hit_probability": 0.0463,
+          "hit_probability": 0.1503,
+          "raw_hit_probability": 0.0461,
           "lift": null,
           "reliability": "A",
           "sample_n": 85,

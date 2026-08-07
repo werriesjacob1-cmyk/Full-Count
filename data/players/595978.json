@@ -18,9 +18,9 @@
       "date": "2026-08-07",
       "evaluations": [
         {
-          "prop": "Over 0.5 Hits",
+          "prop": "Over 0.5 Hits+Runs+RBIs",
           "type": "batter",
-          "score": 63.7,
+          "score": 69.4,
           "notable_signals": 2,
           "matchup": "Cleveland Guardians @ Chicago White Sox",
           "game_pk": 824566,
@@ -34,8 +34,8 @@
             "l7_avg_ev": 100.0,
             "l7_barrel_pct": 100.0,
             "bat_speed_trend": 11.1,
-            "park_hr_index": 64.9,
-            "season_barrel_pct": 12.0,
+            "park_hr_index": 69.4,
+            "season_barrel_pct": 11.3333,
             "lineup_slot": 12.5,
             "bullpen_fatigue": 59.5238,
             "platoon_barrel_pct": -3.28,
@@ -50,13 +50,13 @@
             "sp_rp_ops_gap": -0.864,
             "vs_rp_ops": -0.552
           },
-          "hit_probability": 0.6054,
-          "raw_hit_probability": 0.6134,
-          "lift": 0.0544,
+          "hit_probability": 0.611,
+          "raw_hit_probability": 0.6599,
+          "lift": -0.0646,
           "reliability": "B",
           "sample_n": 52,
           "projection": {
-            "stat": "hits",
+            "stat": "hits_runs_rbis",
             "value": 0.5,
             "needs": 1
           }

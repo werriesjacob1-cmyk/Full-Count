@@ -42,9 +42,9 @@
       "date": "2026-08-07",
       "evaluations": [
         {
-          "prop": "Over 0.5 Hits",
+          "prop": "Over 0.5 Hits+Runs+RBIs",
           "type": "batter",
-          "score": 70.0,
+          "score": 75.0,
           "notable_signals": 1,
           "matchup": "Los Angeles Angels @ Miami Marlins",
           "game_pk": 823836,
@@ -58,7 +58,7 @@
             "l7_barrel_pct": 100.0,
             "bat_speed_trend": 15.0,
             "park_hr_index": 50.0,
-            "season_barrel_pct": 61.3333,
+            "season_barrel_pct": 58.6667,
             "lineup_slot": 87.5,
             "bullpen_fatigue": 55.5556,
             "platoon_barrel_pct": 5.0,
@@ -75,13 +75,13 @@
             "sp_rp_ops_gap": 1.288,
             "vs_rp_ops": 1.74
           },
-          "hit_probability": 0.605,
-          "raw_hit_probability": 0.6125,
-          "lift": 0.054,
+          "hit_probability": 0.6054,
+          "raw_hit_probability": 0.6533,
+          "lift": -0.0702,
           "reliability": "A",
           "sample_n": 91,
           "projection": {
-            "stat": "hits",
+            "stat": "hits_runs_rbis",
             "value": 0.5,
             "needs": 1
           }

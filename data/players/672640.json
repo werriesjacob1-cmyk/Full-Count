@@ -63,10 +63,10 @@
       "date": "2026-08-07",
       "evaluations": [
         {
-          "prop": "Over 0.5 Hits",
+          "prop": "Over 1.5 Hits+Runs+RBIs",
           "type": "batter",
-          "score": 51.9,
-          "notable_signals": 1,
+          "score": 62.1,
+          "notable_signals": 2,
           "matchup": "Los Angeles Angels @ Miami Marlins",
           "game_pk": 823836,
           "team": "Miami Marlins",
@@ -75,11 +75,12 @@
           "signals": {
             "platoon": 35.0,
             "sp_era_weak": 100.0,
+            "pitch_exploit": 0.5714,
             "l7_avg_ev": 73.0,
             "l7_barrel_pct": 100.0,
             "bat_speed_trend": 3.375,
             "park_hr_index": 50.0,
-            "season_barrel_pct": 24.0,
+            "season_barrel_pct": 22.0,
             "lineup_slot": 75.0,
             "bullpen_fatigue": 55.5556,
             "platoon_barrel_pct": -0.48,
@@ -96,21 +97,21 @@
             "sp_rp_ops_gap": 0.448,
             "vs_rp_ops": 1.668
           },
-          "hit_probability": 0.6692,
-          "raw_hit_probability": 0.7528,
-          "lift": 0.1182,
+          "hit_probability": 0.5727,
+          "raw_hit_probability": 0.6153,
+          "lift": 0.1117,
           "reliability": "A",
           "sample_n": 112,
           "projection": {
-            "stat": "hits",
-            "value": 0.5,
-            "needs": 1
+            "stat": "hits_runs_rbis",
+            "value": 1.5,
+            "needs": 2
           }
         },
         {
           "prop": "To Steal a Base",
           "type": "batter",
-          "score": 61.7,
+          "score": 62.6,
           "notable_signals": 1,
           "matchup": "Los Angeles Angels @ Miami Marlins",
           "game_pk": 823836,
@@ -119,12 +120,12 @@
           "lean": null,
           "signals": {
             "opp_team_cs_pct": 3.24,
-            "sprint_speed": 34.375,
+            "sprint_speed": 37.5,
             "catcher_poptime": 85.7143,
-            "on_base": 93.2821
+            "on_base": 90.4031
           },
-          "hit_probability": 0.2163,
-          "raw_hit_probability": 0.1711,
+          "hit_probability": 0.2162,
+          "raw_hit_probability": 0.171,
           "lift": null,
           "reliability": "A",
           "sample_n": 112,

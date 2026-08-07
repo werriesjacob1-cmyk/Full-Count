@@ -44,10 +44,10 @@
       "date": "2026-08-07",
       "evaluations": [
         {
-          "prop": "Over 0.5 Hits",
+          "prop": "Over 0.5 Hits+Runs+RBIs",
           "type": "batter",
-          "score": 57.9,
-          "notable_signals": 1,
+          "score": 63.0,
+          "notable_signals": 2,
           "matchup": "Los Angeles Dodgers @ Arizona Diamondbacks",
           "game_pk": 825051,
           "team": "Los Angeles Dodgers",
@@ -60,7 +60,7 @@
             "l7_avg_ev": 81.9118,
             "l7_barrel_pct": 100.0,
             "park_hr_index": 50.0,
-            "season_barrel_pct": 43.3333,
+            "season_barrel_pct": 42.6667,
             "lineup_slot": 25.0,
             "bullpen_fatigue": 64.1026,
             "platoon_barrel_pct": 3.84,
@@ -70,20 +70,20 @@
             "days_rest": 2.0,
             "pull_park_synergy": -0.0861,
             "hard_hit_105_rate": -0.29,
-            "team_total_move": 0.0,
-            "team_total_open": 4.0,
+            "team_total_move": -6.0,
+            "team_total_open": 0.0,
             "getaway_day": 0.0,
             "series_game": 0.0,
             "sp_rp_ops_gap": -0.832,
             "vs_rp_ops": -0.504
           },
-          "hit_probability": 0.6104,
-          "raw_hit_probability": 0.624,
-          "lift": 0.0594,
+          "hit_probability": 0.6154,
+          "raw_hit_probability": 0.6651,
+          "lift": -0.0602,
           "reliability": "A",
           "sample_n": 80,
           "projection": {
-            "stat": "hits",
+            "stat": "hits_runs_rbis",
             "value": 0.5,
             "needs": 1
           }
@@ -91,7 +91,7 @@
         {
           "prop": "To Steal a Base",
           "type": "batter",
-          "score": 57.4,
+          "score": 55.0,
           "notable_signals": 0,
           "matchup": "Los Angeles Dodgers @ Arizona Diamondbacks",
           "game_pk": 825051,
@@ -100,12 +100,12 @@
           "lean": null,
           "signals": {
             "opp_team_cs_pct": 3.3,
-            "sprint_speed": 31.25,
+            "sprint_speed": 28.125,
             "catcher_poptime": 100.0,
-            "on_base": 62.572
+            "on_base": 58.7332
           },
           "hit_probability": 0.1432,
-          "raw_hit_probability": 0.0301,
+          "raw_hit_probability": 0.03,
           "lift": null,
           "reliability": "A",
           "sample_n": 80,

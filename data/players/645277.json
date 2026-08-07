@@ -42,10 +42,10 @@
       "date": "2026-08-07",
       "evaluations": [
         {
-          "prop": "Over 0.5 Hits",
+          "prop": "Over 0.5 Hits+Runs+RBIs",
           "type": "batter",
-          "score": 41.0,
-          "notable_signals": 1,
+          "score": 38.3,
+          "notable_signals": 0,
           "matchup": "Atlanta Braves @ New York Yankees",
           "game_pk": 823515,
           "team": "Atlanta Braves",
@@ -55,13 +55,13 @@
             "sp_era_weak": 17.7143,
             "l7_avg_ev": 0.0,
             "l7_barrel_pct": 100.0,
-            "park_hr_index": 32.7,
-            "season_barrel_pct": 8.0,
+            "park_hr_index": 51.4,
+            "season_barrel_pct": 9.3333,
             "lineup_slot": 62.5,
             "bullpen_fatigue": 64.1026,
             "platoon_barrel_pct": -2.56,
             "platoon_xwoba": -1.38,
-            "opp_catcher_framing": -2.28,
+            "opp_catcher_framing": -0.6,
             "days_rest": 0.0,
             "hard_hit_105_rate": -2.085,
             "team_total_move": 0.0,
@@ -71,13 +71,13 @@
             "sp_rp_ops_gap": 0.344,
             "vs_rp_ops": 0.636
           },
-          "hit_probability": 0.6317,
-          "raw_hit_probability": 0.6696,
-          "lift": 0.0807,
+          "hit_probability": 0.6797,
+          "raw_hit_probability": 0.7445,
+          "lift": 0.0041,
           "reliability": "A",
           "sample_n": 115,
           "projection": {
-            "stat": "hits",
+            "stat": "hits_runs_rbis",
             "value": 0.5,
             "needs": 1
           }
