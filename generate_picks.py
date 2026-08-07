@@ -1620,6 +1620,21 @@ def score_batter(batter, gm, opp_sp_row, opp_sp_id, opp_sp_hand, park_wx, batter
         _sig(signals, "series_game", gm["series_game"],
              clamp((gm["series_game"] - 1) * 1.0, 0, 3))
 
+    # The home-plate umpire's own strikeout and walk tendency. Shrunk hard —
+    # see umpire_k_bb_rates() for why the raw numbers are three-quarters
+    # noise. A high-strikeout umpire is bad for a hitter's contract with the
+    # ball: more called third strikes, fewer balls in play to turn into hits.
+    uk = (ex.get("ump_kbb") or {}).get(gm.get("hp_ump"))
+    if uk and uk.get("k_pct") is not None:
+        _sig(signals, "ump_k_pct", uk["k_pct"],
+             clamp(-(uk["k_pct"] - uk["league_k_pct"]) * 120, -4, 4))
+    if uk and uk.get("bb_pct") is not None:
+        # A walk-friendly umpire cuts both ways for a hitter: more free passes
+        # is good for reaching base and bad for a HITS or TOTAL BASES line,
+        # since a walk is neither. Recorded, direction left to the fitter.
+        _sig(signals, "ump_bb_pct", uk["bb_pct"],
+             clamp((uk["bb_pct"] - uk["league_bb_pct"]) * 120, -4, 4))
+
     return {
         "type": "batter", "name": name, "player_id": bid, "team": batter.get("team"), "matchup": gm["matchup"],
         "game_pk": gm.get("game_pk"), "prop": prop, "projection": {"stat": "total_bases", "value": projected_tb},
@@ -1630,7 +1645,8 @@ def score_batter(batter, gm, opp_sp_row, opp_sp_id, opp_sp_hand, park_wx, batter
 
 
 def score_pitcher(sp_name, sp_id, sp_hand, gm, side, pit_season_lookup, l14_form,
-                   opp_lineup, opp_team_k_pct, ump_scores, opp_k_source=None, exp_k_form=None):
+                   opp_lineup, opp_team_k_pct, ump_scores, opp_k_source=None, exp_k_form=None,
+                   ump_kbb=None):
     ps = lookup_player(pit_season_lookup, sp_name, sp_id, {})
     exp_k = (exp_k_form or {}).get(sp_id)
     k_pct = ps.get("K%")
@@ -1753,6 +1769,19 @@ def score_pitcher(sp_name, sp_id, sp_hand, gm, side, pit_season_lookup, l14_form
     _sig(signals, "csw_pct", csw, sc_csw)
     _sig(signals, "stuff_plus", stuff, sc_stuff)
     _sig(signals, "ump_accuracy", ump.get("accuracy"), context)
+    # Accuracy was the only umpire number this pipeline had, and it is the
+    # wrong one for a strikeout prop: an umpire can call a big zone
+    # accurately or a small one badly, so accuracy says nothing about how
+    # many strikeouts a game produces. This is the number that does.
+    uk = (ump_kbb or {}).get(gm.get("hp_ump"))
+    if uk and uk.get("k_pct") is not None:
+        _sig(signals, "ump_k_pct", uk["k_pct"],
+             clamp((uk["k_pct"] - uk["league_k_pct"]) * 120, -4, 4))
+    if uk and uk.get("bb_pct") is not None:
+        # Walks end plate appearances without a strikeout and inflate the
+        # pitch count, so a walk-friendly zone shortens the start.
+        _sig(signals, "ump_bb_pct", uk["bb_pct"],
+             clamp(-(uk["bb_pct"] - uk["league_bb_pct"]) * 120, -4, 4))
 
     return {
         "type": "pitcher", "name": sp_name, "player_id": sp_id,
@@ -1899,7 +1928,7 @@ def score_stolen_base(batter, gm, opp_catcher_poptime, sprint_speed, batter_seas
     }
 
 
-def score_walk(batter, gm, opp_sp_row, ump_scores, batter_season):
+def score_walk(batter, gm, opp_sp_row, ump_scores, batter_season, ump_kbb=None):
     """A patient hitter facing a wild pitcher and a loose-zone umpire — a
     genuine convergent signal most bettors don't compute, since none of the
     three inputs alone screams "walk prop." """
@@ -1946,6 +1975,14 @@ def score_walk(batter, gm, opp_sp_row, ump_scores, batter_season):
     _sig(signals, "batter_bb_pct", bb_pct, skill)
     _sig(signals, "sp_bb_pct", sp_bb_pct, matchup)
     _sig(signals, "ump_accuracy", ump.get("accuracy"), context)
+    # The most direct umpire signal anywhere in this file: this prop IS a
+    # walk, and this is that umpire's measured walk rate. Accuracy was
+    # standing in for it, and accuracy does not distinguish a tight zone
+    # called well from a wide one called well.
+    uk = (ump_kbb or {}).get(gm.get("hp_ump"))
+    if uk and uk.get("bb_pct") is not None:
+        _sig(signals, "ump_bb_pct", uk["bb_pct"],
+             clamp((uk["bb_pct"] - uk["league_bb_pct"]) * 150, -5, 5))
 
     return {
         "type": "batter", "name": batter["name"], "player_id": batter.get("id"), "team": batter.get("team"),
@@ -2089,7 +2126,8 @@ def build_candidates(game_meta, *, extras=None, batter_lookup, pitcher_lookup, t
                               extras=extras))
             for c in (score_stolen_base(batter, gm, away_opp_catcher_pop, sprint_speed.get(batter.get("id")), bseason,
                                         opp_cs_pct=(extras or {}).get("cs_pct_by_team", {}).get(gm["home_team"])),
-                      score_walk(batter, gm, opp_sp_row_for_away_batters, ump_scores, bseason)):
+                      score_walk(batter, gm, opp_sp_row_for_away_batters, ump_scores, bseason,
+                                 extras.get("ump_kbb"))):
                 if c: candidates.append(c)
         for batter in gm.get("home_lineup", []):
             batter["team"] = gm["home_team"]
@@ -2100,7 +2138,8 @@ def build_candidates(game_meta, *, extras=None, batter_lookup, pitcher_lookup, t
                               extras=extras))
             for c in (score_stolen_base(batter, gm, home_opp_catcher_pop, sprint_speed.get(batter.get("id")), bseason,
                                         opp_cs_pct=(extras or {}).get("cs_pct_by_team", {}).get(gm["away_team"])),
-                      score_walk(batter, gm, opp_sp_row_for_home_batters, ump_scores, bseason)):
+                      score_walk(batter, gm, opp_sp_row_for_home_batters, ump_scores, bseason,
+                                 extras.get("ump_kbb"))):
                 if c: candidates.append(c)
 
         if gm["away_sp"] != "TBD" and gm.get("away_sp_id"):
@@ -2111,7 +2150,7 @@ def build_candidates(game_meta, *, extras=None, batter_lookup, pitcher_lookup, t
             candidates.append(score_pitcher(gm["away_sp"], gm["away_sp_id"], gm.get("away_sp_hand"),
                                              gm, "away", pitcher_lookup, l14_pitcher_form,
                                              gm.get("home_lineup", []), opp_k, ump_scores, opp_k_source,
-                                             exp_k_form))
+                                             exp_k_form, extras.get("ump_kbb")))
             fi = score_first_inning(gm["away_sp"], gm["away_sp_id"], gm, "away", fi_form)
             if fi: candidates.append(fi)
         if gm["home_sp"] != "TBD" and gm.get("home_sp_id"):
@@ -2122,7 +2161,7 @@ def build_candidates(game_meta, *, extras=None, batter_lookup, pitcher_lookup, t
             candidates.append(score_pitcher(gm["home_sp"], gm["home_sp_id"], gm.get("home_sp_hand"),
                                              gm, "home", pitcher_lookup, l14_pitcher_form,
                                              gm.get("away_lineup", []), opp_k, ump_scores, opp_k_source,
-                                             exp_k_form))
+                                             exp_k_form, extras.get("ump_kbb")))
             fi = score_first_inning(gm["home_sp"], gm["home_sp_id"], gm, "home", fi_form)
             if fi: candidates.append(fi)
 
@@ -2299,6 +2338,10 @@ def _build_and_score():
         # odds_snapshot.py has been writing hourly captures since the start
         # precisely so this would exist, and nothing has ever read them.
         ("line_move", lambda: _src.line_movement()),
+        # Umpire K%/BB%, which no source publishes — built from the schedule's
+        # officials hydrate joined to season Statcast. Reuses the cached
+        # season pull, so it costs one extra HTTP request, not a download.
+        ("ump_kbb", lambda: _src.umpire_k_bb_rates()),
     ):
         try:
             # NOT `fn() or {}`: several of these return DataFrames, and the
