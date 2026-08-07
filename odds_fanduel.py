@@ -326,29 +326,77 @@ def fetch_prop_prices(max_workers=8):
     return out
 
 
-def attach_market_prices(candidates, prices=None):
+# This pipeline's internal stat name -> the market's stat name, wherever the
+# two differ. "stolen_base" (singular) is baked into grade_results.py,
+# backtest/signals.py's weight table, and every display label in
+# generate_picks.py -- renaming it everywhere to match FanDuel's own
+# "stolen_bases" (see MARKET_MAP above, and mlb_sources._PROP_THRESHOLDS)
+# would touch far more than this bug requires. It is one market with two
+# spellings; translate at the boundary instead of renaming it live in three
+# files. Verified against a real snapshot (data/props/props_2026-08-07.json):
+# every stolen_bases row there uses the plural, needs 1 or 2.
+STAT_ALIASES = {"stolen_base": "stolen_bases"}
+
+
+def attach_market_prices(candidates, prices=None, k_prices=None):
     """Attach the real posted price to every candidate that has one.
 
     Sets `market_odds`, `market_implied`, and `market_edge` (model probability
     minus the price's implied probability). Leaves them absent rather than
     guessing when the prop is not offered -- an unpriced prop is a gap in
-    coverage, not a bet at some assumed number."""
+    coverage, not a bet at some assumed number.
+
+    Consults TWO price feeds, not one. `prices` (fetch_prop_prices) is the
+    one-sided batter feed; pitcher strikeouts are a separate, two-sided
+    market (fetch_pitcher_strikeouts) that this function used to never even
+    request, which is the entire reason 27 strikeout candidates priced at
+    zero -- not a naming mismatch like stolen_base, a missing feed."""
     import prop_probability as pp
     if prices is None:
         try:
             prices = fetch_prop_prices()
         except Exception:
-            # ALWAYS a (candidates, matched) pair. This path used to return
-            # the bare list while the success path returned a tuple, so any
-            # caller unpacking the result — the only sane way to read the
-            # match count — would raise on exactly the failure it was trying
-            # to survive. Nothing caught it before because nothing called this
-            # function at all.
-            return candidates, 0
+            prices = {}
+    if k_prices is None:
+        try:
+            k_prices = fetch_pitcher_strikeouts()
+        except Exception:
+            k_prices = {}
     matched = 0
     for c in candidates:
         proj = c.get("projection") or {}
-        key = (proj.get("stat"), proj.get("needs"))
+        stat = STAT_ALIASES.get(proj.get("stat"), proj.get("stat"))
+        needs = proj.get("needs")
+
+        if stat == "strikeouts":
+            # Two-sided market: FanDuel posts exactly one line per starter,
+            # so a price only exists when our recommended threshold happens
+            # to be the one line FanDuel offered. market_implied uses the
+            # de-vigged true_over rather than a naive single-side reading --
+            # with both sides quoted, the exact hold is knowable instead of
+            # assumed.
+            k = k_prices.get(normalize_name(c.get("name")))
+            if k is None or needs is None or k.get("needs") != needs:
+                continue
+            c["market_odds"] = k["over"]
+            c["market_implied"] = round(k["true_over"], 4)
+            c["market_hold"] = round(k["hold"], 4)
+            p = c.get("hit_probability")
+            if p is not None:
+                c["market_edge"] = round(p - c["market_implied"], 4)
+                # NOT a raw >= against max_acceptable_price: that returns
+                # None outside (0,1) exclusive -- true at the extremes
+                # low-probability markets (stolen bases, home runs) actually
+                # live in -- and `int >= None` raises TypeError, which
+                # crashed this whole function the first time a candidate
+                # with a probability near either edge reached it live.
+                # price_is_acceptable already exists and handles exactly
+                # this.
+                c["price_clears"] = pp.price_is_acceptable(k["over"], p)
+            matched += 1
+            continue
+
+        key = (stat, needs)
         if None in key:
             continue
         odds = (prices.get(normalize_name(c.get("name"))) or {}).get(key)
@@ -359,7 +407,6 @@ def attach_market_prices(candidates, prices=None):
         p = c.get("hit_probability")
         if p is not None:
             c["market_edge"] = round(p - c["market_implied"], 4)
-            c["price_clears"] = bool(
-                odds >= pp.max_acceptable_price(p))
+            c["price_clears"] = pp.price_is_acceptable(odds, p)
         matched += 1
     return candidates, matched

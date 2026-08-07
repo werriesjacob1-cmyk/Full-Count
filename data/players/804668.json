@@ -18,9 +18,9 @@
       "date": "2026-08-07",
       "evaluations": [
         {
-          "prop": "Over 1.5 Total Bases (proj. 1.44 TB)",
+          "prop": "Over 0.5 Hits",
           "type": "batter",
-          "score": 39.9,
+          "score": 39.1,
           "notable_signals": 0,
           "matchup": "New York Mets @ Pittsburgh Pirates",
           "game_pk": 823349,
@@ -43,14 +43,15 @@
             "getaway_day": 0.0,
             "series_game": 0.0
           },
-          "hit_probability": null,
-          "raw_hit_probability": null,
-          "lift": null,
+          "hit_probability": 0.5755,
+          "raw_hit_probability": 0.551,
+          "lift": 0.0245,
           "reliability": "D",
           "sample_n": 0,
           "projection": {
-            "stat": "total_bases",
-            "value": 1.44
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
           }
         }
       ]

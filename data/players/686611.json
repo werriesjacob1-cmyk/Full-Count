@@ -46,8 +46,8 @@
         {
           "prop": "Over 0.5 Hits",
           "type": "batter",
-          "score": 61.8,
-          "notable_signals": 1,
+          "score": 69.9,
+          "notable_signals": 2,
           "matchup": "Cincinnati Reds @ Washington Nationals",
           "game_pk": 822699,
           "team": "Washington Nationals",
@@ -58,7 +58,7 @@
             "l7_avg_ev": 70.6579,
             "l7_barrel_pct": 100.0,
             "bat_speed_trend": 0.3,
-            "park_hr_index": 59.9,
+            "park_hr_index": 82.6,
             "season_barrel_pct": 47.3333,
             "lineup_slot": 75.0,
             "bullpen_fatigue": 64.1026,
@@ -73,7 +73,7 @@
             "vs_rp_ops": -0.204
           },
           "hit_probability": 0.6066,
-          "raw_hit_probability": 0.6159,
+          "raw_hit_probability": 0.616,
           "lift": 0.0556,
           "reliability": "B",
           "sample_n": 63,
@@ -86,7 +86,7 @@
         {
           "prop": "To Steal a Base",
           "type": "batter",
-          "score": 61.0,
+          "score": 59.3,
           "notable_signals": 0,
           "matchup": "Cincinnati Reds @ Washington Nationals",
           "game_pk": 822699,
@@ -97,7 +97,7 @@
             "opp_team_cs_pct": 4.44,
             "sprint_speed": 62.5,
             "catcher_poptime": 71.4286,
-            "on_base": 44.3378
+            "on_base": 36.6603
           },
           "hit_probability": 0.1791,
           "raw_hit_probability": 0.1051,
@@ -106,7 +106,8 @@
           "sample_n": 63,
           "projection": {
             "stat": "stolen_base",
-            "value": 1
+            "value": 1,
+            "needs": 1
           }
         }
       ]

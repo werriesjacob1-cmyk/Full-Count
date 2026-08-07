@@ -2031,7 +2031,7 @@ def score_walk(batter, gm, opp_sp_row, ump_scores, batter_season, ump_kbb=None):
     }
 
 
-def score_first_inning(sp_name, sp_id, gm, side, fi_form):
+def score_first_inning(sp_name, sp_id, gm, side, fi_form, ump_env=None, park_wx=None):
     """NRFI/YRFI lean per starter, from real per-start first-inning results
     (not season aggregates) — reuses the same targeted pull mlb_daily.py's
     Section 38 already validates, in structured form.
@@ -2066,6 +2066,31 @@ def score_first_inning(sp_name, sp_id, gm, side, fi_form):
            f"This is the one-sided market ({opp_team} only) — not a both-teams NRFI"]
     watchouts = []
     if n_starts < 3: watchouts.append(f"Only {n_starts} starts in the L14 window — thin sample for a first-inning read")
+
+    # fetch_umpire_run_environment's own docstring is explicit that
+    # run_impact_magnitude is UNSIGNED volatility (verified live: strictly
+    # positive across all 142 umpires) -- it says how much this umpire's
+    # incorrect calls tend to move a game's total in EITHER direction, not
+    # whether that direction is toward more or fewer 1st-inning runs. Using
+    # it to push the YRFI/NRFI score would be inventing a lean this data
+    # cannot support. Recorded only, same as the other signals awaiting
+    # measurement -- score is untouched below.
+    signals = {"yrfi_rate": round(float(yrfi_rate), 4), "fi_n_starts": float(n_starts)}
+    ump_run_impact = ((ump_env or {}).get(gm["matchup"]) or {}).get("run_impact_magnitude")
+    _sig(signals, "ump_run_impact", ump_run_impact,
+         scale(ump_run_impact, 0.95, 2.38) if ump_run_impact is not None else None)
+    # park_hr_index is already fetched for every batter prop on the slate
+    # (fetch_park_weather) and was never passed into this function at all --
+    # first-inning props carried 2 signals against 18+ on batter props purely
+    # because nothing wired an existing input through, not because nothing
+    # existed. Already a 0-100 index (park_hr_index scales itself, see
+    # park_hr_index() / fetch_park_weather above), so recorded as-is rather
+    # than re-scaled. Recorded only, same reasoning as ump_run_impact: this
+    # is a HR-scoring index, not a validated 1st-inning read, so it must earn
+    # its way into the score through measure_signals.py first.
+    wx = (park_wx or {}).get(gm["matchup"]) or {}
+    _sig(signals, "park_hr_index", wx.get("park_hr_index"), wx.get("park_hr_index"))
+
     return {
         "type": "pitcher", "name": sp_name, "player_id": sp_id,
         "team": gm["away_team"] if side == "away" else gm["home_team"], "side": side,
@@ -2082,7 +2107,7 @@ def score_first_inning(sp_name, sp_id, gm, side, fi_form):
         # attach_hit_probabilities re-picks the side once the rate has been
         # shrunk, and has to be able to rebuild this label for the other side.
         "fi_opp_team": opp_team,
-        "signals": {"yrfi_rate": round(float(yrfi_rate), 4), "fi_n_starts": float(n_starts)},
+        "signals": signals,
         "lean": lean, "score": round(score, 1), "why": why, "watchouts": watchouts,
         "notable_signals": notable_signals,
         "confidence": "High" if score >= 70 and n_starts >= 3 else ("Medium" if score >= 55 else "Low"),
@@ -2179,7 +2204,8 @@ def build_candidates(game_meta, *, extras=None, batter_lookup, pitcher_lookup, t
                                              gm, "away", pitcher_lookup, l14_pitcher_form,
                                              gm.get("home_lineup", []), opp_k, ump_scores, opp_k_source,
                                              exp_k_form, extras.get("ump_kbb")))
-            fi = score_first_inning(gm["away_sp"], gm["away_sp_id"], gm, "away", fi_form)
+            fi = score_first_inning(gm["away_sp"], gm["away_sp_id"], gm, "away", fi_form,
+                                    extras.get("ump_env"), park_wx)
             if fi: candidates.append(fi)
         if gm["home_sp"] != "TBD" and gm.get("home_sp_id"):
             opp_k, opp_k_source = team_k_lookup.get(gm["away_team"]), "team"
@@ -2190,7 +2216,8 @@ def build_candidates(game_meta, *, extras=None, batter_lookup, pitcher_lookup, t
                                              gm, "home", pitcher_lookup, l14_pitcher_form,
                                              gm.get("away_lineup", []), opp_k, ump_scores, opp_k_source,
                                              exp_k_form, extras.get("ump_kbb")))
-            fi = score_first_inning(gm["home_sp"], gm["home_sp_id"], gm, "home", fi_form)
+            fi = score_first_inning(gm["home_sp"], gm["home_sp_id"], gm, "home", fi_form,
+                                    extras.get("ump_env"), park_wx)
             if fi: candidates.append(fi)
 
     # Rain risk applies to every prop type in a game equally (a postponement
@@ -2373,6 +2400,13 @@ def _build_and_score():
         # Batter vs starters versus batter vs relievers. See the signal in
         # score_batter for why this is not a niche split.
         ("sp_rp", lambda: _src.batter_sp_rp_splits(game_meta)),
+        # HP umpire run-environment volatility, wired into score_first_inning.
+        # fetch_umpire_run_environment's own docstring is explicit that
+        # run_impact_magnitude is unsigned (verified live: positive across
+        # all 142 umpires) -- a volatility measure, not an over/under lean --
+        # so it is recorded via _sig for future measurement and does not
+        # touch the YRFI/NRFI score.
+        ("ump_env", lambda: _src.fetch_umpire_run_environment(game_meta)),
     ):
         try:
             # NOT `fn() or {}`: several of these return DataFrames, and the
@@ -2470,6 +2504,64 @@ def _build_and_score():
     }
 
 
+def select_moonshots(candidates, prices, fd, n=5):
+    """Best home-run bets by hit probability, priced against FanDuel's real
+    line, for batters who already cleared quality_control but whose HR
+    number never wins _pick_line -- hits and total bases are always more
+    likely than a home run, so HR never becomes a batter's CHOSEN
+    projection under the existing selection rule. It survives only in
+    `line_options`, the full probability curve _keep_options preserves
+    specifically so nothing computed gets thrown away. Ranked by hit
+    probability, same principle as the main board -- "best chance of
+    cashing," just drawn from the pool the floor excludes rather than the
+    pool it allows.
+
+    Deliberately OUTSIDE MIN_LINE_PROB. That floor (0.60) is what makes
+    home runs and 2+ total bases unrecommendable on the main board -- 1+ HR
+    runs 10-25%, 2+ TB ~40%, both permanently below it -- and that is the
+    floor working as specified, not a bug. Raised as a real tension against
+    liking HR bets and confirmed: a separate always-longshot category, not
+    a lowered floor. This does not touch MIN_LINE_PROB or anything that
+    feeds the main board -- only the quality gate (MIN_QUALITY_SCORE)
+    still applies, same floor every other candidate has to clear."""
+    out = []
+    for c in candidates:
+        if c.get("type") != "batter":
+            continue
+        hr_opt = next((o for o in (c.get("line_options") or [])
+                      if o.get("stat") == "home_runs" and o.get("needs") == 1), None)
+        if not hr_opt or hr_opt.get("prob") is None:
+            continue
+        if c.get("score", 0) < MIN_QUALITY_SCORE:
+            continue
+        odds = (prices.get(fd.normalize_name(c.get("name"))) or {}).get(("home_runs", 1))
+        implied = round(pp.implied_probability(odds), 4) if odds is not None else None
+        # Full candidate shape, not a stripped-down dict -- write_json appends
+        # these into the same `picks` list grade_results.py already knows how
+        # to grade (it reads pick["type"], pick["projection"]["stat"]/["needs"]
+        # by direct access), so the moonshot category gets tracked over time
+        # through the exact same proven grading path instead of a second one.
+        out.append({
+            "type": "batter", "name": c["name"], "player_id": c.get("player_id"),
+            "team": c.get("team"), "matchup": c.get("matchup"), "game_pk": c.get("game_pk"),
+            "side": c.get("side"), "prop": "Home Run",
+            "projection": {"stat": "home_runs", "value": 1, "needs": 1},
+            "lean": None, "score": c.get("score"), "confidence": c.get("confidence"),
+            "notable_signals": c.get("notable_signals", 0),
+            "hit_probability": hr_opt["prob"],
+            "signals": c.get("signals") or {},
+            "base_rate": hr_opt.get("base_rate"), "lift": hr_opt.get("lift"),
+            "probability_basis": hr_opt.get("basis"),
+            "probability_detail": {"empirical": hr_opt.get("empirical"), "modelled": hr_opt.get("modelled")},
+            "market_odds": odds, "market_implied": implied,
+            "market_edge": None if implied is None else round(hr_opt["prob"] - implied, 4),
+            "price_clears": pp.price_is_acceptable(odds, hr_opt["prob"]),
+            "category": "moonshot",
+        })
+    out.sort(key=lambda o: o["hit_probability"], reverse=True)
+    return out[:n]
+
+
 def main() -> int:
     print("Generating top 10 picks (deterministic scoring, no LLM call)...")
     result = _build_and_score()
@@ -2497,7 +2589,9 @@ def main() -> int:
     # an unpriced pick is a gap in coverage, not evidence against the pick.
     # Untrustworthy INPUTS are rejected before anything is ranked -- that is a
     # different question from whether the model likes the pick.
-    candidates, _qc_rejected = quality_control(candidates, game_meta, park_wx, emp_pitchers)
+    candidates, _qc_rejected, assumed_lineup = quality_control(candidates, game_meta, park_wx, emp_pitchers)
+    if assumed_lineup:
+        write_early_look(assumed_lineup)
 
     gated = [c for c in candidates if c["score"] >= MIN_QUALITY_SCORE]
 
@@ -2592,31 +2686,65 @@ def main() -> int:
     #
     # Never fatal: an unpriced prop leaves the fields absent rather than
     # guessing, and a failed fetch leaves the board exactly as it was.
+    moonshots = []
     try:
         import odds_fanduel as _fd
-        _, n_priced = _fd.attach_market_prices(candidates)
+        # Fetched once, explicitly, rather than left for attach_market_prices
+        # to fetch internally -- the moonshot selection below needs this same
+        # dict to look up HOME RUN prices, which live_options carries but the
+        # chosen `projection` almost never does (see select_moonshots).
+        # Fetching it twice would mean two full FanDuel sweeps of a 15-game
+        # slate for the same data.
+        prices = _fd.fetch_prop_prices()
+        _, n_priced = _fd.attach_market_prices(candidates, prices=prices)
         print(f"    Real market prices attached to {n_priced} of {len(candidates)} candidates")
+        # PER-MARKET REAL-PRICE COVERAGE. The pool diagnostic above only ever
+        # showed whether the MODEL had a probability, which is a different
+        # question from whether FanDuel's price was actually found and
+        # attached -- stolen_base sat at 141/0 real prices for weeks while
+        # printing 141/138 "priced" above, because "priced" there means
+        # hit_probability is not None. Printed separately, after attach
+        # runs, since the pool table above is built before this call.
+        price_pool = defaultdict(lambda: {"n": 0, "priced": 0})
+        for c in candidates:
+            st = (c.get("projection") or {}).get("stat") or "?"
+            e = price_pool[st]
+            e["n"] += 1
+            if c.get("market_odds") is not None:
+                e["priced"] += 1
+        print("    Real market-price coverage by market (considered / priced):")
+        for st, e in sorted(price_pool.items(), key=lambda kv: -kv[1]["n"]):
+            flag = "" if e["priced"] == e["n"] else "   <-- UNPRICED CANDIDATES"
+            print(f"      {st:18s} {e['n']:4d} / {e['priced']:4d}{flag}")
+        moonshots = select_moonshots(candidates, prices, _fd, n=5)
+        print(f"    {len(moonshots)} moonshot(s) selected (home runs, priced, ranked by hit probability)")
     except Exception as e:
         m.warn(f"Market prices unavailable ({e}) — board ships without them")
 
-    write_markdown(top10, skipped, game_meta, bullpen_scores, ranked)
-    write_json(top10)
+    write_markdown(top10, skipped, game_meta, bullpen_scores, ranked, moonshots)
+    write_json(top10, moonshots)
     persist_player_snapshots(candidates)
     print(f"Wrote {len(top10)} picks to {PICKS_FILE} and {PICKS_JSON_FILE}")
     return 0
 
 
-def write_json(top10):
+def write_json(top10, moonshots=()):
     """Structured pick data for grade_results.py — never parse the markdown
-    back into data, same lesson learned from mlb_daily.py's report text."""
-    payload = {
-        "date": m.TODAY,
-        "generated": datetime.now().isoformat(),
-        "picks": [{
+    back into data, same lesson learned from mlb_daily.py's report text.
+
+    Moonshots are appended into the SAME `picks` list, tagged
+    category="moonshot" (top10 entries carry no category key, i.e. the
+    primary board), rank continuing past 10 rather than restarting. They
+    ride the exact grading path grade_results.py already has for
+    home_runs -- a parallel path would be a second thing to keep correct
+    forever for no reason, when this one is already proven."""
+    def _row(i, c):
+        return {
             "rank": i, "type": c["type"], "name": c["name"], "player_id": c["player_id"],
             "team": c["team"], "matchup": c["matchup"], "game_pk": c["game_pk"], "side": c.get("side"),
             "prop": c["prop"], "projection": c["projection"], "lean": c.get("lean"), "score": c["score"],
             "confidence": c["confidence"], "notable_signals": c["notable_signals"],
+            "category": c.get("category"),
             "hit_probability": c.get("hit_probability"),
             "signals": c.get("signals") or {},
             "base_rate": c.get("base_rate"), "lift": c.get("lift"),
@@ -2639,10 +2767,53 @@ def write_json(top10):
             "probability_basis": c.get("probability_basis"),
             "probability_detail": c.get("probability_detail"),
             "alternatives": c.get("alternatives"),
-        } for i, c in enumerate(top10, 1)],
+        }
+    payload = {
+        "date": m.TODAY,
+        "generated": datetime.now().isoformat(),
+        "picks": ([_row(i, c) for i, c in enumerate(top10, 1)]
+                 + [_row(i, c) for i, c in enumerate(moonshots, len(top10) + 1)]),
     }
     with open(PICKS_JSON_FILE, "w", encoding="utf-8") as f:
         json.dump(payload, f, indent=2)
+
+
+EARLY_LOOK_FILE = os.path.join(OUTPUT_DIR, f"early_look_{m.TODAY}.md")
+
+
+def write_early_look(assumed_lineup):
+    """Prep-only board for batters whose lineup slot is ASSUMED (tier-4
+    fallback: last known batting order, not a real posted lineup) --
+    written by direct request, so there's something to look at hours before
+    real lineups post, understanding it will change.
+
+    Deliberately separate from PICKS_FILE/PICKS_JSON_FILE and never
+    persisted through persist_player_snapshots: grade_results.py reads the
+    picks JSON and grades every entry in it against the final box score,
+    and a guessed batting slot is not a bet anyone could actually place --
+    mixing it into the graded record would score the model against its own
+    guess instead of a real decision. This file is not graded, not read by
+    anything else in the pipeline, and is overwritten every run."""
+    ranked = sorted(assumed_lineup,
+                    key=lambda c: (c.get("hit_probability") or 0, c["score"]), reverse=True)
+    lines = [f"# Early Look — {m.TODAY} (ASSUMED lineups, not yet posted)", "",
+             "Every player below is projected into last night's/his last game's batting "
+             "slot for his team, because no real lineup — not MLB's own API, not MLB.com, "
+             "not Rotowire — has been posted for tonight yet. These are NOT picks: the "
+             "batting order can and does change (a day off, a platoon swap, a late "
+             "scratch), and none of this is graded or fed back into the accuracy record. "
+             "Read it as \"who to watch once real lineups post,\" not as a board to bet.",
+             ""]
+    for c in ranked[:25]:
+        p = c.get("hit_probability")
+        p_str = f"{p*100:.1f}%" if p is not None else "unscored"
+        lines.append(f"- **{c['name']}** ({c['team']}) — {c['prop']} — {p_str} "
+                    f"[{c['matchup']}]")
+    if not ranked:
+        lines.append("_(none)_")
+    with open(EARLY_LOOK_FILE, "w", encoding="utf-8") as f:
+        f.write("\n".join(lines) + "\n")
+    print(f"    Wrote {len(ranked)} assumed-lineup candidate(s) to {EARLY_LOOK_FILE} (not graded)")
 
 
 def persist_player_snapshots(candidates):
@@ -2999,9 +3170,24 @@ def _batter_options(c, comp, emp, league=None):
                     modelled = None
             empirical = emp_p(f"{stat}_{need}plus")
             prob, basis = _blend(empirical, modelled)
-            if prob is None:
-                continue
             base = base_rates.get(f"{stat}_{need}plus")
+            if prob is None:
+                # NO PROP GOES UNSCORED. A batter with no Statcast composition
+                # (dist is None -- no modelled term) and fewer than
+                # MIN_EMPIRICAL_GAMES games this season (no empirical term,
+                # e.g. a recent call-up) used to fall out of EVERY family
+                # here, and _pick_line's `if not opts: return None` upstream
+                # turned that into a candidate with no price at all -- the
+                # entire reason 9 total_bases candidates showed 9/0 on
+                # 2026-08-07. The league base rate for this exact line is
+                # already sitting in base_rates (computed from the whole
+                # slate, not this player), so falling back to it instead of
+                # skipping means every batter gets a real, non-invented
+                # number -- just one with no player-specific signal in it,
+                # which the "league_only" basis says plainly.
+                if base is None:
+                    continue
+                prob, basis = base, "league_only"
             options.append({
                 "stat": stat, "line": line, "needs": need,
                 "label": f"Over {line} {label}",
@@ -3271,6 +3457,14 @@ def attach_hit_probabilities(candidates, comp_table, emp_batters, emp_pitchers,
             c["probability_detail"] = {
                 "empirical": None if empirical is None else round(empirical, 4),
                 "modelled": None if modelled is None else round(modelled, 4)}
+            # attach_market_prices() keys on (stat, needs); this projection
+            # has carried "value" since it was created (score_stolen_base,
+            # above) but never "needs", so the lookup key was always
+            # (stat, None) and every one of these candidates was skipped
+            # before a price could ever be checked. p_stolen_base models
+            # P(>=1 steal), which is FanDuel's TO_RECORD_A_STOLEN_BASE line --
+            # needs=1, not the 2+ market.
+            c["projection"]["needs"] = 1
 
         elif stat == "strikeouts":
             emp = emp_pitchers.get(pid) or {}
@@ -3479,21 +3673,36 @@ QC_PRECIP_REJECT = 70
 def quality_control(candidates, game_meta, park_wx, emp_pitchers):
     """Reject candidates whose inputs cannot be trusted, and say why.
 
-    Returns (kept, rejected)."""
-    lineups_confirmed = {}
+    Returns (kept, rejected, assumed_lineup). `assumed_lineup` is new: a
+    batter whose lineup came from fetch_last_known_lineup (mlb_daily.py's
+    tier-4 fallback, tagged assumed=True on every entry) is neither a real
+    read (kept) nor a genuine reject (rejected alongside rain/openers) --
+    it is a real player and a real matchup with a GUESSED batting slot,
+    kept ONLY out of the graded board (grade_results.py must never score a
+    guess as if it were a real bet) and surfaced separately instead, per
+    direct request: an early, clearly-labelled look is worth more than
+    nothing while real lineups are still hours from posting."""
+    lineup_state = {}
     for gm in game_meta:
         for side in ("away", "home"):
             lu = gm.get(f"{side}_lineup") or []
             # A real posted lineup is nine hitters. Anything shorter is a
-            # projection or a partial scrape, and a batter prop resting on a
-            # guessed lineup slot is resting on the single strongest signal
-            # in the whole model being invented.
-            lineups_confirmed[(gm.get("game_pk"), side)] = len(lu) >= 9
+            # partial scrape and gets the same "missing" treatment as no
+            # lineup at all -- only a full 9-entry lineup is ever assumed=True
+            # (see fetch_last_known_lineup), so a short list here is never a
+            # partially-assumed one, just an incomplete real one.
+            if len(lu) >= 9 and any(e.get("assumed") for e in lu):
+                lineup_state[(gm.get("game_pk"), side)] = "assumed"
+            elif len(lu) >= 9:
+                lineup_state[(gm.get("game_pk"), side)] = "confirmed"
+            else:
+                lineup_state[(gm.get("game_pk"), side)] = "missing"
 
-    kept, rejected = [], []
+    kept, rejected, assumed_lineup = [], [], []
     for c in candidates:
         stat = (c.get("projection") or {}).get("stat")
         reason = None
+        is_assumed = False
 
         if stat == "strikeouts":
             emp = emp_pitchers.get(c.get("player_id")) or {}
@@ -3509,9 +3718,12 @@ def quality_control(candidates, game_meta, park_wx, emp_pitchers):
             gp = c.get("game_pk")
             side = "away" if c.get("team") == next(
                 (g.get("away_team") for g in game_meta if g.get("game_pk") == gp), None) else "home"
-            if lineups_confirmed.get((gp, side)) is False:
+            state = lineup_state.get((gp, side))
+            if state == "missing":
                 reason = ("lineup not confirmed — the batting-order slot is a guess, "
                           "and slot is the strongest single signal in the model")
+            elif state == "assumed":
+                is_assumed = True
 
         if reason is None:
             wx = park_wx.get(c.get("matchup")) or {}
@@ -3522,6 +3734,9 @@ def quality_control(candidates, game_meta, park_wx, emp_pitchers):
         if reason:
             c["qc_reason"] = reason
             rejected.append(c)
+        elif is_assumed:
+            c["lineup_assumed"] = True
+            assumed_lineup.append(c)
         else:
             kept.append(c)
 
@@ -3532,7 +3747,10 @@ def quality_control(candidates, game_meta, park_wx, emp_pitchers):
             by_reason[c["qc_reason"].split(" — ")[0].split(" (")[0]] += 1
         for r, n in sorted(by_reason.items(), key=lambda kv: -kv[1]):
             print(f"      {n:4d}  {r}")
-    return kept, rejected
+    if assumed_lineup:
+        print(f"    {len(assumed_lineup)} candidate(s) held out to the early-look board "
+              f"(lineup ASSUMED from last known batting order, not yet posted for tonight)")
+    return kept, rejected, assumed_lineup
 
 # ── Safe to run at any hour ───────────────────────────────────────────────
 #
@@ -3602,7 +3820,7 @@ def archive_existing_picks(date):
         m.warn(f"Could not archive prior picks ({e}) — continuing")
     return None
 
-def write_markdown(top10, skipped, game_meta, bullpen_scores, all_ranked=()):
+def write_markdown(top10, skipped, game_meta, bullpen_scores, all_ranked=(), moonshots=()):
     lines = [f"# MLB Top 10 Picks — {m.TODAY}", "",
              "_Generated by deterministic scoring over today's research pull — no LLM "
              "in the loop. No sportsbook odds were used: these are ranked purely by "
@@ -3758,6 +3976,22 @@ def write_markdown(top10, skipped, game_meta, bullpen_scores, all_ranked=()):
             hp = c.get("hit_probability")
             pct = f", {hp*100:.0f}% to hit" if hp is not None else ""
             lines.append(f"- {c['name']} ({c['prop']}{pct}, score {c['score']}) — {reason}.")
+        lines.append("")
+
+    if moonshots:
+        lines.append("## 🎰 Moonshots")
+        lines.append("_Home runs never clear the main board's floor (MIN_LINE_PROB=60%) --"
+                     " 1+ HR runs 10-25% even for the best hitters alive, so it can't be"
+                     " reached by the same rule that governs everything else here. This"
+                     " section exists on purpose, separately, still ranked by chance of"
+                     " cashing among home-run bets specifically, not by price or edge._")
+        lines.append("")
+        for i, c in enumerate(moonshots, 1):
+            hp = c.get("hit_probability")
+            odds = c.get("market_odds")
+            odds_s = f" · **{odds:+d}** at FanDuel" if odds is not None else " · unpriced"
+            lines.append(f"{i}. **{c['name']}** ({c['team']}) — {c['matchup']} — "
+                         f"**{hp*100:.1f}%** to hit a HR{odds_s}")
         lines.append("")
 
     with open(PICKS_FILE, "w", encoding="utf-8") as f:

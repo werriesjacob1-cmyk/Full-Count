@@ -44,9 +44,9 @@
       "date": "2026-08-07",
       "evaluations": [
         {
-          "prop": "Over 1.5 Total Bases (proj. 3.22 TB)",
+          "prop": "Over 0.5 Hits",
           "type": "batter",
-          "score": 39.9,
+          "score": 39.6,
           "notable_signals": 1,
           "matchup": "Detroit Tigers @ San Francisco Giants",
           "game_pk": 823191,
@@ -58,7 +58,7 @@
             "sp_era_weak": 19.1429,
             "l7_avg_ev": 53.75,
             "l7_barrel_pct": 100.0,
-            "park_hr_index": 28.3,
+            "park_hr_index": 29.6,
             "lineup_slot": 25.0,
             "bullpen_fatigue": 64.1026,
             "park_hand_index": -0.42,
@@ -67,20 +67,21 @@
             "getaway_day": 0.0,
             "series_game": 0.0
           },
-          "hit_probability": null,
-          "raw_hit_probability": null,
-          "lift": null,
+          "hit_probability": 0.5755,
+          "raw_hit_probability": 0.551,
+          "lift": 0.0245,
           "reliability": "D",
           "sample_n": 0,
           "projection": {
-            "stat": "total_bases",
-            "value": 3.22
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
           }
         },
         {
           "prop": "To Steal a Base",
           "type": "batter",
-          "score": 48.4,
+          "score": 42.1,
           "notable_signals": 0,
           "matchup": "Detroit Tigers @ San Francisco Giants",
           "game_pk": 823191,
@@ -89,7 +90,7 @@
           "lean": null,
           "signals": {
             "opp_team_cs_pct": -0.48,
-            "sprint_speed": 18.75,
+            "sprint_speed": 6.25,
             "catcher_poptime": 100.0
           },
           "hit_probability": null,
@@ -99,7 +100,8 @@
           "sample_n": 0,
           "projection": {
             "stat": "stolen_base",
-            "value": 1
+            "value": 1,
+            "needs": 1
           }
         }
       ]

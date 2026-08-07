@@ -30,9 +30,9 @@
       "date": "2026-08-07",
       "evaluations": [
         {
-          "prop": "Over 1.5 Total Bases (proj. 3.3 TB)",
+          "prop": "Over 0.5 Hits",
           "type": "batter",
-          "score": 58.3,
+          "score": 58.7,
           "notable_signals": 3,
           "matchup": "Detroit Tigers @ San Francisco Giants",
           "game_pk": 823191,
@@ -43,7 +43,7 @@
             "platoon": 65.0,
             "l7_avg_ev": 29.5,
             "l7_barrel_pct": 100.0,
-            "park_hr_index": 28.3,
+            "park_hr_index": 29.6,
             "lineup_slot": 25.0,
             "bullpen_fatigue": 66.6667,
             "park_hand_index": -4.06,
@@ -52,14 +52,15 @@
             "getaway_day": 0.0,
             "series_game": 0.0
           },
-          "hit_probability": null,
-          "raw_hit_probability": null,
-          "lift": null,
+          "hit_probability": 0.5755,
+          "raw_hit_probability": 0.551,
+          "lift": 0.0245,
           "reliability": "D",
           "sample_n": 0,
           "projection": {
-            "stat": "total_bases",
-            "value": 3.3
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
           }
         }
       ]

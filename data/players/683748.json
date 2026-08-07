@@ -27,7 +27,7 @@
         {
           "prop": "Over 0.5 Hits+Runs+RBIs",
           "type": "batter",
-          "score": 69.2,
+          "score": 67.4,
           "notable_signals": 3,
           "matchup": "Tampa Bay Rays @ Seattle Mariners",
           "game_pk": 823103,
@@ -41,7 +41,7 @@
             "l7_barrel_pct": 100.0,
             "bat_speed_trend": 7.725,
             "park_hr_index": 50.0,
-            "season_barrel_pct": 57.3333,
+            "season_barrel_pct": 60.0,
             "lineup_slot": 37.5,
             "bullpen_fatigue": 64.1026,
             "platoon_barrel_pct": 5.0,
@@ -58,9 +58,9 @@
             "sp_rp_ops_gap": -2.456,
             "vs_rp_ops": -1.884
           },
-          "hit_probability": 0.5552,
-          "raw_hit_probability": 0.5953,
-          "lift": -0.1201,
+          "hit_probability": 0.5556,
+          "raw_hit_probability": 0.5957,
+          "lift": -0.1208,
           "reliability": "C",
           "sample_n": 43,
           "projection": {
@@ -72,7 +72,7 @@
         {
           "prop": "To Steal a Base",
           "type": "batter",
-          "score": 39.1,
+          "score": 43.0,
           "notable_signals": 0,
           "matchup": "Tampa Bay Rays @ Seattle Mariners",
           "game_pk": 823103,
@@ -81,9 +81,9 @@
           "lean": null,
           "signals": {
             "opp_team_cs_pct": 0.9,
-            "sprint_speed": 18.75,
+            "sprint_speed": 21.875,
             "catcher_poptime": 74.2857,
-            "on_base": 40.499
+            "on_base": 51.0557
           },
           "hit_probability": 0.1732,
           "raw_hit_probability": 0.0936,
@@ -92,7 +92,8 @@
           "sample_n": 43,
           "projection": {
             "stat": "stolen_base",
-            "value": 1
+            "value": 1,
+            "needs": 1
           }
         }
       ]

@@ -65,7 +65,7 @@
         {
           "prop": "Over 0.5 Hits+Runs+RBIs",
           "type": "batter",
-          "score": 48.5,
+          "score": 48.2,
           "notable_signals": 1,
           "matchup": "Los Angeles Angels @ Miami Marlins",
           "game_pk": 823836,
@@ -75,11 +75,11 @@
           "signals": {
             "platoon": 80.0,
             "sp_era_weak": 100.0,
-            "pitch_exploit": 2.8571,
+            "pitch_exploit": 3.4286,
             "l7_avg_ev": 30.4167,
             "l7_barrel_pct": 0.0,
             "park_hr_index": 50.0,
-            "season_barrel_pct": 86.6667,
+            "season_barrel_pct": 84.0,
             "lineup_slot": 37.5,
             "bullpen_fatigue": 55.5556,
             "platoon_barrel_pct": 5.0,
@@ -96,9 +96,9 @@
             "sp_rp_ops_gap": -0.248,
             "vs_rp_ops": -0.156
           },
-          "hit_probability": 0.5705,
-          "raw_hit_probability": 0.6128,
-          "lift": -0.1048,
+          "hit_probability": 0.5707,
+          "raw_hit_probability": 0.613,
+          "lift": -0.1057,
           "reliability": "A",
           "sample_n": 82,
           "projection": {
@@ -110,7 +110,7 @@
         {
           "prop": "To Steal a Base",
           "type": "batter",
-          "score": 50.4,
+          "score": 48.7,
           "notable_signals": 0,
           "matchup": "Los Angeles Angels @ Miami Marlins",
           "game_pk": 823836,
@@ -121,7 +121,7 @@
             "opp_team_cs_pct": 3.24,
             "sprint_speed": 28.125,
             "catcher_poptime": 85.7143,
-            "on_base": 55.8541
+            "on_base": 48.1766
           },
           "hit_probability": 0.155,
           "raw_hit_probability": 0.0563,
@@ -130,7 +130,8 @@
           "sample_n": 82,
           "projection": {
             "stat": "stolen_base",
-            "value": 1
+            "value": 1,
+            "needs": 1
           }
         }
       ]

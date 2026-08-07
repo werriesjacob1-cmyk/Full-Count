@@ -46,8 +46,8 @@
         {
           "prop": "Over 0.5 Hits+Runs+RBIs",
           "type": "batter",
-          "score": 45.2,
-          "notable_signals": 1,
+          "score": 49.8,
+          "notable_signals": 2,
           "matchup": "Cincinnati Reds @ Washington Nationals",
           "game_pk": 822699,
           "team": "Washington Nationals",
@@ -58,8 +58,8 @@
             "l7_avg_ev": 1.7708,
             "l7_barrel_pct": 45.0,
             "bat_speed_trend": 15.0,
-            "park_hr_index": 59.9,
-            "season_barrel_pct": 23.3333,
+            "park_hr_index": 82.6,
+            "season_barrel_pct": 22.0,
             "lineup_slot": 0.0,
             "bullpen_fatigue": 64.1026,
             "park_hand_index": 0.95,
@@ -72,9 +72,9 @@
             "sp_rp_ops_gap": 0.256,
             "vs_rp_ops": 0.06
           },
-          "hit_probability": 0.5982,
-          "raw_hit_probability": 0.6448,
-          "lift": -0.0771,
+          "hit_probability": 0.5983,
+          "raw_hit_probability": 0.645,
+          "lift": -0.0781,
           "reliability": "A",
           "sample_n": 94,
           "projection": {
@@ -86,7 +86,7 @@
         {
           "prop": "To Steal a Base",
           "type": "batter",
-          "score": 58.4,
+          "score": 60.5,
           "notable_signals": 0,
           "matchup": "Cincinnati Reds @ Washington Nationals",
           "game_pk": 822699,
@@ -97,16 +97,17 @@
             "opp_team_cs_pct": 4.44,
             "sprint_speed": 59.375,
             "catcher_poptime": 71.4286,
-            "on_base": 39.5393
+            "on_base": 49.1363
           },
-          "hit_probability": 0.1867,
-          "raw_hit_probability": 0.1193,
+          "hit_probability": 0.1866,
+          "raw_hit_probability": 0.1192,
           "lift": null,
           "reliability": "A",
           "sample_n": 94,
           "projection": {
             "stat": "stolen_base",
-            "value": 1
+            "value": 1,
+            "needs": 1
           }
         }
       ]

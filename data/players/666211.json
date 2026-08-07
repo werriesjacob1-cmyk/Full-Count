@@ -46,7 +46,7 @@
         {
           "prop": "Over 0.5 Hits+Runs+RBIs",
           "type": "batter",
-          "score": 29.3,
+          "score": 29.9,
           "notable_signals": 1,
           "matchup": "Houston Astros @ San Diego Padres",
           "game_pk": 823266,
@@ -59,8 +59,8 @@
             "l7_avg_ev": 1.8382,
             "l7_barrel_pct": 100.0,
             "bat_speed_trend": 8.1,
-            "park_hr_index": 39.6,
-            "season_barrel_pct": 55.3333,
+            "park_hr_index": 40.3,
+            "season_barrel_pct": 58.0,
             "lineup_slot": 0.0,
             "bullpen_fatigue": 64.1026,
             "platoon_barrel_pct": -5.0,
@@ -77,9 +77,9 @@
             "sp_rp_ops_gap": -3.464,
             "vs_rp_ops": -2.808
           },
-          "hit_probability": 0.5285,
-          "raw_hit_probability": 0.565,
-          "lift": -0.1468,
+          "hit_probability": 0.5287,
+          "raw_hit_probability": 0.5653,
+          "lift": -0.1477,
           "reliability": "B",
           "sample_n": 57,
           "projection": {
@@ -91,7 +91,7 @@
         {
           "prop": "To Steal a Base",
           "type": "batter",
-          "score": 36.3,
+          "score": 35.7,
           "notable_signals": 0,
           "matchup": "Houston Astros @ San Diego Padres",
           "game_pk": 823266,
@@ -101,8 +101,8 @@
           "signals": {
             "opp_team_cs_pct": -4.44,
             "sprint_speed": 3.125,
-            "catcher_poptime": 80.0,
-            "on_base": 55.8541
+            "catcher_poptime": 77.1429,
+            "on_base": 56.8138
           },
           "hit_probability": 0.1525,
           "raw_hit_probability": 0.0509,
@@ -111,7 +111,8 @@
           "sample_n": 57,
           "projection": {
             "stat": "stolen_base",
-            "value": 1
+            "value": 1,
+            "needs": 1
           }
         }
       ]

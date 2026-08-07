@@ -230,7 +230,7 @@ jobs:
           # They are the record of every board generated that day, kept because
           # a later run overwrites the live file and the earlier board may be
           # the one that was actually bet.
-          git add output/top10_picks_*.md output/picks_*.json output/scratches_*.json output/value_board_*.json results/*.json data/players/*.json
+          git add output/top10_picks_*.md output/picks_*.json output/scratches_*.json output/value_board_*.json output/early_look_*.md results/*.json data/players/*.json
           if git diff --cached --quiet; then
             echo "No picks to commit."
             exit 0

@@ -46,7 +46,7 @@
         {
           "prop": "Over 0.5 Hits",
           "type": "batter",
-          "score": 38.3,
+          "score": 38.2,
           "notable_signals": 1,
           "matchup": "Baltimore Orioles @ Texas Rangers",
           "game_pk": 822863,
@@ -78,7 +78,7 @@
             "vs_rp_ops": -1.248
           },
           "hit_probability": 0.6025,
-          "raw_hit_probability": 0.6073,
+          "raw_hit_probability": 0.6074,
           "lift": 0.0515,
           "reliability": "B",
           "sample_n": 61,
@@ -91,7 +91,7 @@
         {
           "prop": "To Steal a Base",
           "type": "batter",
-          "score": 33.2,
+          "score": 34.4,
           "notable_signals": 0,
           "matchup": "Baltimore Orioles @ Texas Rangers",
           "game_pk": 822863,
@@ -101,8 +101,8 @@
           "signals": {
             "opp_team_cs_pct": -3.6,
             "sprint_speed": 12.5,
-            "catcher_poptime": 77.1429,
-            "on_base": 24.1843
+            "catcher_poptime": 80.0,
+            "on_base": 26.1036
           },
           "hit_probability": 0.1618,
           "raw_hit_probability": 0.0706,
@@ -111,7 +111,8 @@
           "sample_n": 61,
           "projection": {
             "stat": "stolen_base",
-            "value": 1
+            "value": 1,
+            "needs": 1
           }
         }
       ]

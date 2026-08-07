@@ -65,8 +65,8 @@
         {
           "prop": "Over 0.5 Hits+Runs+RBIs",
           "type": "batter",
-          "score": 72.3,
-          "notable_signals": 4,
+          "score": 71.2,
+          "notable_signals": 3,
           "matchup": "Athletics @ Boston Red Sox",
           "game_pk": 824727,
           "team": "Boston Red Sox",
@@ -77,7 +77,7 @@
             "sp_era_weak": 100.0,
             "l7_avg_ev": 27.25,
             "l7_barrel_pct": 100.0,
-            "park_hr_index": 74.3,
+            "park_hr_index": 59.8,
             "season_barrel_pct": 46.0,
             "lineup_slot": 25.0,
             "bullpen_fatigue": 66.6667,
@@ -95,9 +95,9 @@
             "sp_rp_ops_gap": 1.096,
             "vs_rp_ops": -0.3
           },
-          "hit_probability": 0.6223,
-          "raw_hit_probability": 0.6733,
-          "lift": -0.053,
+          "hit_probability": 0.6225,
+          "raw_hit_probability": 0.6735,
+          "lift": -0.0539,
           "reliability": "A",
           "sample_n": 107,
           "projection": {
@@ -109,7 +109,7 @@
         {
           "prop": "To Steal a Base",
           "type": "batter",
-          "score": 48.6,
+          "score": 48.9,
           "notable_signals": 0,
           "matchup": "Athletics @ Boston Red Sox",
           "game_pk": 824727,
@@ -119,8 +119,8 @@
           "signals": {
             "opp_team_cs_pct": -1.32,
             "sprint_speed": 53.125,
-            "catcher_poptime": 77.1429,
-            "on_base": 2.1113
+            "catcher_poptime": 74.2857,
+            "on_base": 6.9098
           },
           "hit_probability": 0.1981,
           "raw_hit_probability": 0.1399,
@@ -129,7 +129,8 @@
           "sample_n": 107,
           "projection": {
             "stat": "stolen_base",
-            "value": 1
+            "value": 1,
+            "needs": 1
           }
         }
       ]

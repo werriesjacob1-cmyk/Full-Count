@@ -1596,10 +1596,14 @@ def league_base_rates():
         b = pa.copy()
         b["tb"] = b["events"].map(tb_map).fillna(0)
         b["is_h"] = b["events"].isin(tb_map).astype(int)
+        b["is_1b"] = (b["events"] == "single").astype(int)
+        b["is_2b"] = (b["events"] == "double").astype(int)
+        b["is_3b"] = (b["events"] == "triple").astype(int)
         b["is_hr"] = (b["events"] == "home_run").astype(int)
         b["is_bb"] = b["events"].isin(["walk", "intent_walk"]).astype(int)
         g = b.groupby(["batter", "game_pk"]).agg(
             h=("is_h", "sum"), tb=("tb", "sum"),
+            singles=("is_1b", "sum"), doubles=("is_2b", "sum"), triples=("is_3b", "sum"),
             hr=("is_hr", "sum"), bb=("is_bb", "sum"))
         if not g.empty:
             for t in (1, 2, 3):
@@ -1608,6 +1612,13 @@ def league_base_rates():
                 out["total_bases_%dplus" % t] = round(float((g["tb"] >= t).mean()), 4)
             out["home_runs_1plus"] = round(float((g["hr"] >= 1).mean()), 4)
             out["walks_1plus"] = round(float((g["bb"] >= 1).mean()), 4)
+            # Singles/doubles/triples: previously absent here, so a batter with
+            # no per-player empirical sample got no league fallback for these
+            # three families either -- computed the same way as hits/total
+            # bases above, from the same per-batter-game frame, not guessed.
+            out["singles_1plus"] = round(float((g["singles"] >= 1).mean()), 4)
+            out["doubles_1plus"] = round(float((g["doubles"] >= 1).mean()), 4)
+            out["triples_1plus"] = round(float((g["triples"] >= 1).mean()), 4)
             out["_n_batter_games"] = int(len(g))
     except Exception as e:
         m.warn("League base rates: %s" % e)

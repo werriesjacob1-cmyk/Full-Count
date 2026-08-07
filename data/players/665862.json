@@ -46,7 +46,7 @@
         {
           "prop": "Over 0.5 Hits+Runs+RBIs",
           "type": "batter",
-          "score": 64.5,
+          "score": 64.3,
           "notable_signals": 1,
           "matchup": "Atlanta Braves @ New York Yankees",
           "game_pk": 823515,
@@ -58,8 +58,8 @@
             "sp_era_weak": 75.1429,
             "l7_avg_ev": 100.0,
             "l7_barrel_pct": 100.0,
-            "park_hr_index": 59.7,
-            "season_barrel_pct": 42.0,
+            "park_hr_index": 59.6,
+            "season_barrel_pct": 41.3333,
             "lineup_slot": 37.5,
             "bullpen_fatigue": 75.7576,
             "platoon_barrel_pct": 3.12,
@@ -76,9 +76,9 @@
             "sp_rp_ops_gap": 0.352,
             "vs_rp_ops": -0.036
           },
-          "hit_probability": 0.6223,
-          "raw_hit_probability": 0.6733,
-          "lift": -0.053,
+          "hit_probability": 0.6225,
+          "raw_hit_probability": 0.6735,
+          "lift": -0.0539,
           "reliability": "A",
           "sample_n": 107,
           "projection": {
@@ -90,7 +90,7 @@
         {
           "prop": "To Steal a Base",
           "type": "batter",
-          "score": 37.7,
+          "score": 38.3,
           "notable_signals": 0,
           "matchup": "Atlanta Braves @ New York Yankees",
           "game_pk": 823515,
@@ -100,7 +100,7 @@
           "signals": {
             "opp_team_cs_pct": 5.28,
             "sprint_speed": 31.25,
-            "on_base": 36.6603
+            "on_base": 39.5393
           },
           "hit_probability": 0.253,
           "raw_hit_probability": 0.2286,
@@ -109,7 +109,8 @@
           "sample_n": 107,
           "projection": {
             "stat": "stolen_base",
-            "value": 1
+            "value": 1,
+            "needs": 1
           }
         }
       ]
