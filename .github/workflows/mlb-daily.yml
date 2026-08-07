@@ -115,6 +115,26 @@ jobs:
         if: ${{ !(github.event_name == 'workflow_dispatch' && inputs.dry_run) }}
         run: python3 grade_results.py
 
+      - name: Measure signals against outcomes
+        # The other half of the feedback loop. grade_results.py above settles
+        # the ten published picks; this settles EVERY candidate that was
+        # scored -- roughly 420 a day, persisted to data/players with their
+        # individual signals -- and reports how well each signal separates
+        # hits from misses.
+        #
+        # Seventeen signals are currently recorded without affecting any
+        # score, on the promise that they would be measured before being
+        # weighted. Nothing could keep that promise: the backtest cannot
+        # rebuild their season-to-date inputs point-in-time, and ten graded
+        # picks a day cannot resolve seventeen signals. This step is the
+        # measurement, and it only gets more decisive the longer it runs.
+        #
+        # Runs after grading so the box scores it needs are already final,
+        # and never blocks the pipeline -- an empty result is the expected
+        # answer on day one, not an error.
+        if: ${{ !(github.event_name == 'workflow_dispatch' && inputs.dry_run) }}
+        run: python3 measure_signals.py || true
+
       - name: Generate top 10 picks
         # Deterministic weighted scoring — no external API call, no LLM in the
         # loop, no secret to configure. Skipped on dry runs (no full data

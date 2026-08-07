@@ -2619,6 +2619,17 @@ def persist_player_snapshots(candidates):
             # and what was believed at the time it was made.
             "evaluations": [{"prop": c["prop"], "type": c["type"], "score": c["score"],
                              "notable_signals": c["notable_signals"], "matchup": c["matchup"],
+                             # WITHOUT game_pk NOTHING HERE CAN EVER BE GRADED.
+                             # grade_results.grade_pick() keys on (game_pk,
+                             # player_id) to pull a box-score line, and the
+                             # snapshot carried the projection but not the
+                             # game — so the signals persisted above could be
+                             # read back but never matched to what happened.
+                             # team/side/lean come along for the same reason:
+                             # first-inning props are graded off the linescore
+                             # by side, not off a batting line.
+                             "game_pk": c.get("game_pk"), "team": c.get("team"),
+                             "side": c.get("side"), "lean": c.get("lean"),
                              "signals": c.get("signals") or {},
                              "hit_probability": c.get("hit_probability"),
                              "raw_hit_probability": c.get("raw_hit_probability"),
