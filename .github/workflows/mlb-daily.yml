@@ -46,6 +46,24 @@ on:
     # fresher confirmed lineups, and grade_results.py already de-duplicates by
     # date when writing results/history.json, so accuracy isn't double-counted.
     - cron: '30 15 * * *'
+    # TWO MORE ATTEMPTS, because the schedule is the thing that has actually
+    # been failing — not the code.
+    #
+    # Measured, not assumed: of the first 19 runs of this pipeline, only three
+    # came from the schedule at all, and two of those were cancelled after
+    # sitting fifteen minutes in the queue without ever being assigned a
+    # runner (runner_id 0, empty runner_name, no steps array — the job never
+    # started, so nothing in this repository could have prevented it). Every
+    # other successful run was launched by hand.
+    #
+    # There is no fix on our side for a runner that never arrives. There is
+    # only more chances to be assigned one. Public repositories get unlimited
+    # Actions minutes, so extra attempts cost nothing, and the concurrency
+    # group below means a slot that fires while another run is going queues
+    # behind it rather than colliding. Spacing stays at 60+ minutes so this
+    # never queues against itself.
+    - cron: '0 17 * * *'
+    - cron: '30 23 * * *'
   workflow_dispatch:
     inputs:
       dry_run:

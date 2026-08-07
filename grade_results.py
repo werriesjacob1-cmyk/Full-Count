@@ -19,7 +19,7 @@ Runs each morning before that day's picks are generated. If yesterday's picks
 file doesn't exist (first run, or picks generation failed/was skipped that
 day), this is a no-op — it must never block the rest of the pipeline.
 """
-import os, sys, json
+import glob, os, sys, json
 from datetime import datetime, timedelta
 
 import mlb_daily as m
@@ -76,6 +76,57 @@ def dates_needing_grading():
         except (json.JSONDecodeError, OSError):
             out.append(d)  # unreadable grades file -> regrade it
     return sorted(out)
+
+
+def days_with_no_board():
+    """Past days on which a slate existed but this pipeline produced nothing.
+
+    THE FAILURE THIS MAKES VISIBLE. dates_needing_grading() above skips any
+    day with no picks file, because there is nothing to grade. That is right
+    for grading and completely wrong for monitoring: a day the workflow never
+    ran looks exactly like a day that was already handled. The record simply
+    has a hole in it and nothing ever says so.
+
+    That is not a hypothetical. Of the first 19 runs of this pipeline, only
+    THREE were triggered by the schedule and two of those were cancelled
+    after sitting fifteen minutes in the queue without ever being assigned a
+    runner (runner_id 0, no steps array — the job never started). Every other
+    successful run was launched by hand. A system whose whole value is an
+    unattended daily record was, in practice, running when someone remembered
+    to press the button.
+
+    Reports rather than fixes, because the cause is on GitHub's side of the
+    line. What it buys is knowing on the next run that yesterday was missed,
+    instead of discovering weeks later that the accuracy record has gaps.
+    """
+    today = datetime.now()
+    # Only days after the first board this pipeline ever produced can be
+    # "missed". Before that there was nothing to miss, and reporting those as
+    # gaps would mean eleven false alarms on the first run — a monitor that
+    # cries wolf on day one is a monitor that gets ignored by day three.
+    existing = sorted(glob.glob(os.path.join(OUTPUT_DIR, "picks_[0-9]*.json")))
+    if not existing:
+        return []
+    first = os.path.basename(existing[0])[6:16]
+
+    missing = []
+    for back in range(1, CATCHUP_WINDOW_DAYS + 1):
+        d = (today - timedelta(days=back)).strftime("%Y-%m-%d")
+        if d < first or os.path.exists(picks_path(d)):
+            continue
+        # No picks file. Distinguish "we missed it" from "there was no
+        # baseball": an off-day with no games is not a gap in the record.
+        try:
+            r = m.retry_get(f"https://statsapi.mlb.com/api/v1/schedule",
+                            params={"sportId": 1, "date": d},
+                            headers={"User-Agent": "Mozilla/5.0"},
+                            timeout=20, retries=1)
+            n_games = sum(len(x.get("games", [])) for x in (r.json() or {}).get("dates", []))
+        except Exception:
+            continue  # cannot tell — say nothing rather than cry wolf
+        if n_games:
+            missing.append((d, n_games))
+    return missing
 
 
 def fetch_game_statuses(date):
@@ -508,6 +559,19 @@ def main() -> int:
     if os.environ.get("GRADE_DATE"):
         grade_day(os.environ["GRADE_DATE"])
         return 0
+    # Report gaps BEFORE grading, so a missed day is the first thing seen in
+    # the log rather than something to be inferred from its absence.
+    gaps = days_with_no_board()
+    if gaps:
+        print(f"  MISSED DAYS ({len(gaps)}) — a slate was played and this pipeline "
+              f"produced no board:")
+        for d, n in gaps:
+            print(f"    {d}  ({n} games)")
+        print("  These cannot be recovered: picks are a point-in-time read and")
+        print("  the lineups, prices and weather behind them are gone. Check")
+        print("  whether the scheduled run was assigned a runner at all.")
+        print()
+
     pending = dates_needing_grading()
     if not pending:
         print("Nothing to grade — all recent days with picks are already fully graded.")
