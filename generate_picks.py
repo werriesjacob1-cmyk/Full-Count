@@ -2562,6 +2562,121 @@ def select_moonshots(candidates, prices, fd, n=5):
     return out[:n]
 
 
+# Every prop family this board can price, and the display label for each.
+# home_runs is deliberately absent -- select_moonshots() already owns that
+# category at n=5 with its own framing ("Moonshots"); listing it again here
+# would just be the same players under a second heading.
+CATEGORY_LABELS = {
+    "hits": "Hits", "total_bases": "Total Bases",
+    "runs": "Runs", "rbis": "RBIs", "hits_runs_rbis": "Hits+Runs+RBIs",
+    "singles": "Singles", "doubles": "Doubles", "triples": "Triples",
+    "stolen_base": "Stolen Base", "strikeouts": "Strikeouts",
+    "walks": "Walks", "first_inning_run": "First Inning",
+}
+
+
+def select_best_by_category(candidates, prices, fd, n_per_category=1):
+    """The single best (by hit probability) candidate in EVERY prop family
+    the pipeline can price, not just whichever ones happened to win the
+    main board's overall ranking. Direct request: "the best available of
+    EACH and EVERY prop type."
+
+    Two different shapes of input, handled separately:
+
+    - hits/total_bases/runs/rbis/hits_runs_rbis/singles/doubles/triples all
+      live inside `line_options` -- the whole probability curve
+      _keep_options preserves per batter, most of which a batter's own
+      `projection` never becomes (hits/total_bases almost always beat the
+      other seven on raw probability, same reason home_runs never wins
+      _pick_line either -- see select_moonshots). Re-run _pick_line PER
+      PLAYER PER FAMILY here so "this player's best total-bases line" is
+      chosen the same way the main board chooses anything, then rank
+      across players.
+    - stolen_base/strikeouts/walks/first_inning_run are never re-priced at
+      multiple thresholds -- each candidate already IS the one number for
+      that player, so it's used directly.
+
+    Same MIN_QUALITY_SCORE floor as everything else on this board, and
+    deliberately NO MIN_LINE_PROB floor -- the floor is what makes an
+    entire family (home runs, 2+ total bases) structurally unable to
+    appear here at all, which is the opposite of "show me the best
+    available in every category." A pick below that floor is still
+    labelled with its real probability; nothing is hidden, only ranked
+    honestly against however good the category's own ceiling is tonight."""
+    by_category = defaultdict(list)
+    for c in candidates:
+        if c.get("score", 0) < MIN_QUALITY_SCORE:
+            continue
+        if c.get("type") == "batter" and c.get("line_options"):
+            stats_here = {o["stat"] for o in c["line_options"] if o.get("stat") in CATEGORY_LABELS}
+            for stat in stats_here:
+                fam_opts = [o for o in c["line_options"] if o.get("stat") == stat]
+                best = _pick_line(fam_opts)
+                if not best or best.get("prob") is None:
+                    continue
+                # _keep_options' trimmed shape (stat/needs/line/prob/base_rate/
+                # lift/basis only -- verified live, no "label"/"empirical"/
+                # "modelled" keys here, unlike the richer dicts _batter_options
+                # builds before trimming) is what line_options actually holds.
+                # Assumed richer once, live run threw KeyError('label') on the
+                # first real slate -- rebuilt the label from stat+line instead
+                # of trusting the assumption.
+                by_category[stat].append({
+                    "type": "batter", "name": c["name"], "player_id": c.get("player_id"),
+                    "team": c.get("team"), "matchup": c.get("matchup"), "game_pk": c.get("game_pk"),
+                    "side": c.get("side"), "prop": f"Over {best['line']} {CATEGORY_LABELS.get(stat, stat)}",
+                    "projection": {"stat": stat, "value": best["line"], "needs": best["needs"]},
+                    "lean": None, "score": c.get("score"), "confidence": c.get("confidence"),
+                    "notable_signals": c.get("notable_signals", 0),
+                    "hit_probability": best["prob"], "signals": c.get("signals") or {},
+                    "base_rate": best.get("base_rate"), "lift": best.get("lift"),
+                    "probability_basis": best.get("basis"),
+                    "probability_detail": {"empirical": None, "modelled": None},
+                })
+        elif c.get("type") in ("batter", "pitcher"):
+            stat = (c.get("projection") or {}).get("stat")
+            if stat not in CATEGORY_LABELS or c.get("hit_probability") is None:
+                continue
+            by_category[stat].append({
+                "type": c["type"], "name": c["name"], "player_id": c.get("player_id"),
+                "team": c.get("team"), "matchup": c.get("matchup"), "game_pk": c.get("game_pk"),
+                "side": c.get("side"), "prop": c.get("prop"),
+                "projection": c.get("projection"),
+                "lean": c.get("lean"), "score": c.get("score"), "confidence": c.get("confidence"),
+                "notable_signals": c.get("notable_signals", 0),
+                "hit_probability": c["hit_probability"], "signals": c.get("signals") or {},
+                "base_rate": c.get("base_rate"), "lift": c.get("lift"),
+                "probability_basis": c.get("probability_basis"),
+                "probability_detail": c.get("probability_detail"),
+            })
+
+    for stat, entries in by_category.items():
+        for e in entries:
+            needs = (e.get("projection") or {}).get("needs")
+            market_stat = _fd_stat_alias(stat)
+            odds = (prices.get(fd.normalize_name(e["name"])) or {}).get((market_stat, needs))
+            implied = round(pp.implied_probability(odds), 4) if odds is not None else None
+            e["market_odds"] = odds
+            e["market_implied"] = implied
+            e["market_edge"] = None if implied is None else round(e["hit_probability"] - implied, 4)
+            e["price_clears"] = pp.price_is_acceptable(odds, e["hit_probability"])
+            e["category"] = "best_of_category"
+            e["clears_main_board_floor"] = e["hit_probability"] >= MIN_LINE_PROB
+
+    out = {}
+    for stat, entries in by_category.items():
+        entries.sort(key=lambda e: e["hit_probability"], reverse=True)
+        out[stat] = entries[:n_per_category]
+    return out
+
+
+def _fd_stat_alias(stat):
+    """odds_fanduel.STAT_ALIASES, without importing odds_fanduel at module
+    load (it's only ever imported lazily inside main(), same as everywhere
+    else prices are looked up)."""
+    return {"stolen_base": "stolen_bases"}.get(stat, stat)
+
+
 def main() -> int:
     print("Generating top 10 picks (deterministic scoring, no LLM call)...")
     result = _build_and_score()
@@ -2687,6 +2802,7 @@ def main() -> int:
     # Never fatal: an unpriced prop leaves the fields absent rather than
     # guessing, and a failed fetch leaves the board exactly as it was.
     moonshots = []
+    by_category = {}
     try:
         import odds_fanduel as _fd
         # Fetched once, explicitly, rather than left for attach_market_prices
@@ -2718,26 +2834,30 @@ def main() -> int:
             print(f"      {st:18s} {e['n']:4d} / {e['priced']:4d}{flag}")
         moonshots = select_moonshots(candidates, prices, _fd, n=5)
         print(f"    {len(moonshots)} moonshot(s) selected (home runs, priced, ranked by hit probability)")
+        by_category = select_best_by_category(candidates, prices, _fd, n_per_category=1)
+        print(f"    Best-of-category board: {len(by_category)} of {len(CATEGORY_LABELS)} "
+              f"families had a candidate tonight")
     except Exception as e:
         m.warn(f"Market prices unavailable ({e}) — board ships without them")
 
-    write_markdown(top10, skipped, game_meta, bullpen_scores, ranked, moonshots)
-    write_json(top10, moonshots)
+    write_markdown(top10, skipped, game_meta, bullpen_scores, ranked, moonshots, by_category)
+    write_json(top10, moonshots, by_category)
     persist_player_snapshots(candidates)
     print(f"Wrote {len(top10)} picks to {PICKS_FILE} and {PICKS_JSON_FILE}")
     return 0
 
 
-def write_json(top10, moonshots=()):
+def write_json(top10, moonshots=(), by_category=None):
     """Structured pick data for grade_results.py — never parse the markdown
     back into data, same lesson learned from mlb_daily.py's report text.
 
-    Moonshots are appended into the SAME `picks` list, tagged
-    category="moonshot" (top10 entries carry no category key, i.e. the
-    primary board), rank continuing past 10 rather than restarting. They
-    ride the exact grading path grade_results.py already has for
-    home_runs -- a parallel path would be a second thing to keep correct
-    forever for no reason, when this one is already proven."""
+    Moonshots and the best-of-category board are appended into the SAME
+    `picks` list, tagged category="moonshot" / "best_of_category" (top10
+    entries carry no category key, i.e. the primary board), rank
+    continuing past 10 rather than restarting. They ride the exact grading
+    path grade_results.py already has -- a parallel path would be a second
+    thing to keep correct forever for no reason, when this one is already
+    proven."""
     def _row(i, c):
         return {
             "rank": i, "type": c["type"], "name": c["name"], "player_id": c["player_id"],
@@ -2768,11 +2888,14 @@ def write_json(top10, moonshots=()):
             "probability_detail": c.get("probability_detail"),
             "alternatives": c.get("alternatives"),
         }
+    category_flat = [c for entries in (by_category or {}).values() for c in entries]
+    picks = [_row(i, c) for i, c in enumerate(top10, 1)]
+    picks += [_row(i, c) for i, c in enumerate(moonshots, len(picks) + 1)]
+    picks += [_row(i, c) for i, c in enumerate(category_flat, len(picks) + 1)]
     payload = {
         "date": m.TODAY,
         "generated": datetime.now().isoformat(),
-        "picks": ([_row(i, c) for i, c in enumerate(top10, 1)]
-                 + [_row(i, c) for i, c in enumerate(moonshots, len(top10) + 1)]),
+        "picks": picks,
     }
     with open(PICKS_JSON_FILE, "w", encoding="utf-8") as f:
         json.dump(payload, f, indent=2)
@@ -3103,15 +3226,28 @@ def _batter_options(c, comp, emp, league=None):
     enough = (emp or {}).get("games", 0) >= MIN_EMPIRICAL_GAMES
 
     base_rates = {}
+    # Separate from base_rates on purpose. base_rates mixes the TRUE league
+    # rate (mlb_sources.league_base_rates(), a real season-long measurement)
+    # with r["league_p"] (mlb_sources._apply_shrinkage's target, computed
+    # from whichever players were passed into empirical_batter_prop_rates --
+    # tonight's ~250-300 batters, not the league) whenever the true rate is
+    # unavailable for a given key. That mixing is fine for "lift", which is
+    # display-only and always has a real player probability to compare
+    # against. It is NOT fine for the league-only fallback below, which
+    # MANUFACTURES a probability from nothing else -- letting that draw on
+    # a slate-scoped average would repeat, in a smaller way, the exact
+    # mistake already found and fixed once in this file: a "league" prior
+    # computed from a narrow, non-representative sample (there, the first-
+    # inning bug shipped 83.1% scoreless against a true season measurement
+    # of 70.6%). true_league_rates holds ONLY entries sourced from the real
+    # league dict, so the fallback can never draw on the circular one.
+    true_league_rates = {}
 
     def emp_p(key):
         r = rates.get(key)
-        # TRUE league rate first. r["league_p"] is computed by
-        # _apply_shrinkage from whatever players were passed in -- tonight's
-        # slate -- so it is the slate's own average, not the league's. Falling
-        # back to it is better than having no base rate at all, but it must
-        # never win over a real measurement. See mlb_sources.league_base_rates.
         lg = (league or {}).get(key)
+        if lg is not None:
+            true_league_rates[key] = lg
         if lg is None and r is not None:
             lg = r.get("league_p")
         if lg is not None:
@@ -3172,22 +3308,25 @@ def _batter_options(c, comp, emp, league=None):
             prob, basis = _blend(empirical, modelled)
             base = base_rates.get(f"{stat}_{need}plus")
             if prob is None:
-                # NO PROP GOES UNSCORED. A batter with no Statcast composition
-                # (dist is None -- no modelled term) and fewer than
-                # MIN_EMPIRICAL_GAMES games this season (no empirical term,
-                # e.g. a recent call-up) used to fall out of EVERY family
-                # here, and _pick_line's `if not opts: return None` upstream
-                # turned that into a candidate with no price at all -- the
-                # entire reason 9 total_bases candidates showed 9/0 on
-                # 2026-08-07. The league base rate for this exact line is
-                # already sitting in base_rates (computed from the whole
-                # slate, not this player), so falling back to it instead of
-                # skipping means every batter gets a real, non-invented
-                # number -- just one with no player-specific signal in it,
-                # which the "league_only" basis says plainly.
-                if base is None:
+                # NO PROP GOES UNSCORED, but ONLY from a real season-long
+                # measurement -- true_league_rates, never base_rates (which
+                # can hold the slate-scoped r["league_p"] instead; see its
+                # definition above). A batter with no Statcast composition
+                # and fewer than MIN_EMPIRICAL_GAMES games this season used
+                # to fall out of every family here, which is what produced
+                # 9 unscored total_bases candidates on 2026-08-07. Restricted
+                # to true_league_rates specifically covers hits, total_bases,
+                # home_runs, singles, doubles and triples (all six are real
+                # entries in mlb_sources.league_base_rates(), verified live).
+                # runs, rbis and hits_runs_rbis have no entry there at all,
+                # so this correctly leaves them unscored rather than
+                # manufacturing a number from a ~250-batter slate average --
+                # absent stays absent instead of becoming a fake neutral
+                # reading, same principle as everywhere else _sig is used.
+                true_base = true_league_rates.get(f"{stat}_{need}plus")
+                if true_base is None:
                     continue
-                prob, basis = base, "league_only"
+                prob, basis = true_base, "league_only"
             options.append({
                 "stat": stat, "line": line, "needs": need,
                 "label": f"Over {line} {label}",
@@ -3820,7 +3959,7 @@ def archive_existing_picks(date):
         m.warn(f"Could not archive prior picks ({e}) — continuing")
     return None
 
-def write_markdown(top10, skipped, game_meta, bullpen_scores, all_ranked=(), moonshots=()):
+def write_markdown(top10, skipped, game_meta, bullpen_scores, all_ranked=(), moonshots=(), by_category=None):
     lines = [f"# MLB Top 10 Picks — {m.TODAY}", "",
              "_Generated by deterministic scoring over today's research pull — no LLM "
              "in the loop. No sportsbook odds were used: these are ranked purely by "
@@ -3992,6 +4131,33 @@ def write_markdown(top10, skipped, game_meta, bullpen_scores, all_ranked=(), moo
             odds_s = f" · **{odds:+d}** at FanDuel" if odds is not None else " · unpriced"
             lines.append(f"{i}. **{c['name']}** ({c['team']}) — {c['matchup']} — "
                          f"**{hp*100:.1f}%** to hit a HR{odds_s}")
+        lines.append("")
+
+    if by_category:
+        lines.append("## Best of Every Category")
+        lines.append("_One line per prop family this pipeline can price -- whatever the single best "
+                     "pick is tonight, even where it falls short of the main board's 60% floor. Score "
+                     "is the 0-100 quality rating (35% matchup / 25% recent form / 15% environment / "
+                     "15% baseline skill / 10% context); every entry here already cleared the "
+                     f"{MIN_QUALITY_SCORE:.0f}+ quality floor, same as the main board. Entries marked "
+                     "⚠ sit below the 60% cash-probability floor -- shown because you asked to see "
+                     "the category's ceiling regardless, not because they're a recommendation at the "
+                     "same bar as the top 10._")
+        lines.append("")
+        lines.append("| Category | Player | Prop | Prob | Score | FanDuel |")
+        lines.append("|---|---|---|---|---|---|")
+        for stat in sorted(CATEGORY_LABELS, key=lambda s: CATEGORY_LABELS[s]):
+            entries = by_category.get(stat)
+            if not entries:
+                lines.append(f"| {CATEGORY_LABELS[stat]} | _no candidate tonight_ | | | | |")
+                continue
+            c = entries[0]
+            hp = c.get("hit_probability")
+            odds = c.get("market_odds")
+            flag = "" if c.get("clears_main_board_floor") else " ⚠"
+            odds_s = f"{odds:+d}" if odds is not None else "unpriced"
+            lines.append(f"| {CATEGORY_LABELS[stat]} | {c['name']} ({c['team']}) | {c['prop']} | "
+                         f"{hp*100:.1f}%{flag} | {c.get('score', '?')} | {odds_s} |")
         lines.append("")
 
     with open(PICKS_FILE, "w", encoding="utf-8") as f:
