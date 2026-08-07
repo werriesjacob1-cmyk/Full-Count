@@ -2504,6 +2504,64 @@ def _build_and_score():
     }
 
 
+def select_moonshots(candidates, prices, fd, n=5):
+    """Best home-run bets by hit probability, priced against FanDuel's real
+    line, for batters who already cleared quality_control but whose HR
+    number never wins _pick_line -- hits and total bases are always more
+    likely than a home run, so HR never becomes a batter's CHOSEN
+    projection under the existing selection rule. It survives only in
+    `line_options`, the full probability curve _keep_options preserves
+    specifically so nothing computed gets thrown away. Ranked by hit
+    probability, same principle as the main board -- "best chance of
+    cashing," just drawn from the pool the floor excludes rather than the
+    pool it allows.
+
+    Deliberately OUTSIDE MIN_LINE_PROB. That floor (0.60) is what makes
+    home runs and 2+ total bases unrecommendable on the main board -- 1+ HR
+    runs 10-25%, 2+ TB ~40%, both permanently below it -- and that is the
+    floor working as specified, not a bug. Raised as a real tension against
+    liking HR bets and confirmed: a separate always-longshot category, not
+    a lowered floor. This does not touch MIN_LINE_PROB or anything that
+    feeds the main board -- only the quality gate (MIN_QUALITY_SCORE)
+    still applies, same floor every other candidate has to clear."""
+    out = []
+    for c in candidates:
+        if c.get("type") != "batter":
+            continue
+        hr_opt = next((o for o in (c.get("line_options") or [])
+                      if o.get("stat") == "home_runs" and o.get("needs") == 1), None)
+        if not hr_opt or hr_opt.get("prob") is None:
+            continue
+        if c.get("score", 0) < MIN_QUALITY_SCORE:
+            continue
+        odds = (prices.get(fd.normalize_name(c.get("name"))) or {}).get(("home_runs", 1))
+        implied = round(pp.implied_probability(odds), 4) if odds is not None else None
+        # Full candidate shape, not a stripped-down dict -- write_json appends
+        # these into the same `picks` list grade_results.py already knows how
+        # to grade (it reads pick["type"], pick["projection"]["stat"]/["needs"]
+        # by direct access), so the moonshot category gets tracked over time
+        # through the exact same proven grading path instead of a second one.
+        out.append({
+            "type": "batter", "name": c["name"], "player_id": c.get("player_id"),
+            "team": c.get("team"), "matchup": c.get("matchup"), "game_pk": c.get("game_pk"),
+            "side": c.get("side"), "prop": "Home Run",
+            "projection": {"stat": "home_runs", "value": 1, "needs": 1},
+            "lean": None, "score": c.get("score"), "confidence": c.get("confidence"),
+            "notable_signals": c.get("notable_signals", 0),
+            "hit_probability": hr_opt["prob"],
+            "signals": c.get("signals") or {},
+            "base_rate": hr_opt.get("base_rate"), "lift": hr_opt.get("lift"),
+            "probability_basis": hr_opt.get("basis"),
+            "probability_detail": {"empirical": hr_opt.get("empirical"), "modelled": hr_opt.get("modelled")},
+            "market_odds": odds, "market_implied": implied,
+            "market_edge": None if implied is None else round(hr_opt["prob"] - implied, 4),
+            "price_clears": pp.price_is_acceptable(odds, hr_opt["prob"]),
+            "category": "moonshot",
+        })
+    out.sort(key=lambda o: o["hit_probability"], reverse=True)
+    return out[:n]
+
+
 def main() -> int:
     print("Generating top 10 picks (deterministic scoring, no LLM call)...")
     result = _build_and_score()
@@ -2628,9 +2686,17 @@ def main() -> int:
     #
     # Never fatal: an unpriced prop leaves the fields absent rather than
     # guessing, and a failed fetch leaves the board exactly as it was.
+    moonshots = []
     try:
         import odds_fanduel as _fd
-        _, n_priced = _fd.attach_market_prices(candidates)
+        # Fetched once, explicitly, rather than left for attach_market_prices
+        # to fetch internally -- the moonshot selection below needs this same
+        # dict to look up HOME RUN prices, which live_options carries but the
+        # chosen `projection` almost never does (see select_moonshots).
+        # Fetching it twice would mean two full FanDuel sweeps of a 15-game
+        # slate for the same data.
+        prices = _fd.fetch_prop_prices()
+        _, n_priced = _fd.attach_market_prices(candidates, prices=prices)
         print(f"    Real market prices attached to {n_priced} of {len(candidates)} candidates")
         # PER-MARKET REAL-PRICE COVERAGE. The pool diagnostic above only ever
         # showed whether the MODEL had a probability, which is a different
@@ -2650,27 +2716,35 @@ def main() -> int:
         for st, e in sorted(price_pool.items(), key=lambda kv: -kv[1]["n"]):
             flag = "" if e["priced"] == e["n"] else "   <-- UNPRICED CANDIDATES"
             print(f"      {st:18s} {e['n']:4d} / {e['priced']:4d}{flag}")
+        moonshots = select_moonshots(candidates, prices, _fd, n=5)
+        print(f"    {len(moonshots)} moonshot(s) selected (home runs, priced, ranked by hit probability)")
     except Exception as e:
         m.warn(f"Market prices unavailable ({e}) — board ships without them")
 
-    write_markdown(top10, skipped, game_meta, bullpen_scores, ranked)
-    write_json(top10)
+    write_markdown(top10, skipped, game_meta, bullpen_scores, ranked, moonshots)
+    write_json(top10, moonshots)
     persist_player_snapshots(candidates)
     print(f"Wrote {len(top10)} picks to {PICKS_FILE} and {PICKS_JSON_FILE}")
     return 0
 
 
-def write_json(top10):
+def write_json(top10, moonshots=()):
     """Structured pick data for grade_results.py — never parse the markdown
-    back into data, same lesson learned from mlb_daily.py's report text."""
-    payload = {
-        "date": m.TODAY,
-        "generated": datetime.now().isoformat(),
-        "picks": [{
+    back into data, same lesson learned from mlb_daily.py's report text.
+
+    Moonshots are appended into the SAME `picks` list, tagged
+    category="moonshot" (top10 entries carry no category key, i.e. the
+    primary board), rank continuing past 10 rather than restarting. They
+    ride the exact grading path grade_results.py already has for
+    home_runs -- a parallel path would be a second thing to keep correct
+    forever for no reason, when this one is already proven."""
+    def _row(i, c):
+        return {
             "rank": i, "type": c["type"], "name": c["name"], "player_id": c["player_id"],
             "team": c["team"], "matchup": c["matchup"], "game_pk": c["game_pk"], "side": c.get("side"),
             "prop": c["prop"], "projection": c["projection"], "lean": c.get("lean"), "score": c["score"],
             "confidence": c["confidence"], "notable_signals": c["notable_signals"],
+            "category": c.get("category"),
             "hit_probability": c.get("hit_probability"),
             "signals": c.get("signals") or {},
             "base_rate": c.get("base_rate"), "lift": c.get("lift"),
@@ -2693,7 +2767,12 @@ def write_json(top10):
             "probability_basis": c.get("probability_basis"),
             "probability_detail": c.get("probability_detail"),
             "alternatives": c.get("alternatives"),
-        } for i, c in enumerate(top10, 1)],
+        }
+    payload = {
+        "date": m.TODAY,
+        "generated": datetime.now().isoformat(),
+        "picks": ([_row(i, c) for i, c in enumerate(top10, 1)]
+                 + [_row(i, c) for i, c in enumerate(moonshots, len(top10) + 1)]),
     }
     with open(PICKS_JSON_FILE, "w", encoding="utf-8") as f:
         json.dump(payload, f, indent=2)
@@ -3741,7 +3820,7 @@ def archive_existing_picks(date):
         m.warn(f"Could not archive prior picks ({e}) — continuing")
     return None
 
-def write_markdown(top10, skipped, game_meta, bullpen_scores, all_ranked=()):
+def write_markdown(top10, skipped, game_meta, bullpen_scores, all_ranked=(), moonshots=()):
     lines = [f"# MLB Top 10 Picks — {m.TODAY}", "",
              "_Generated by deterministic scoring over today's research pull — no LLM "
              "in the loop. No sportsbook odds were used: these are ranked purely by "
@@ -3897,6 +3976,22 @@ def write_markdown(top10, skipped, game_meta, bullpen_scores, all_ranked=()):
             hp = c.get("hit_probability")
             pct = f", {hp*100:.0f}% to hit" if hp is not None else ""
             lines.append(f"- {c['name']} ({c['prop']}{pct}, score {c['score']}) — {reason}.")
+        lines.append("")
+
+    if moonshots:
+        lines.append("## 🎰 Moonshots")
+        lines.append("_Home runs never clear the main board's floor (MIN_LINE_PROB=60%) --"
+                     " 1+ HR runs 10-25% even for the best hitters alive, so it can't be"
+                     " reached by the same rule that governs everything else here. This"
+                     " section exists on purpose, separately, still ranked by chance of"
+                     " cashing among home-run bets specifically, not by price or edge._")
+        lines.append("")
+        for i, c in enumerate(moonshots, 1):
+            hp = c.get("hit_probability")
+            odds = c.get("market_odds")
+            odds_s = f" · **{odds:+d}** at FanDuel" if odds is not None else " · unpriced"
+            lines.append(f"{i}. **{c['name']}** ({c['team']}) — {c['matchup']} — "
+                         f"**{hp*100:.1f}%** to hit a HR{odds_s}")
         lines.append("")
 
     with open(PICKS_FILE, "w", encoding="utf-8") as f:

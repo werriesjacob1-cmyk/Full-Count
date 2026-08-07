@@ -384,7 +384,15 @@ def attach_market_prices(candidates, prices=None, k_prices=None):
             p = c.get("hit_probability")
             if p is not None:
                 c["market_edge"] = round(p - c["market_implied"], 4)
-                c["price_clears"] = bool(k["over"] >= pp.max_acceptable_price(p))
+                # NOT a raw >= against max_acceptable_price: that returns
+                # None outside (0,1) exclusive -- true at the extremes
+                # low-probability markets (stolen bases, home runs) actually
+                # live in -- and `int >= None` raises TypeError, which
+                # crashed this whole function the first time a candidate
+                # with a probability near either edge reached it live.
+                # price_is_acceptable already exists and handles exactly
+                # this.
+                c["price_clears"] = pp.price_is_acceptable(k["over"], p)
             matched += 1
             continue
 
@@ -399,7 +407,6 @@ def attach_market_prices(candidates, prices=None, k_prices=None):
         p = c.get("hit_probability")
         if p is not None:
             c["market_edge"] = round(p - c["market_implied"], 4)
-            c["price_clears"] = bool(
-                odds >= pp.max_acceptable_price(p))
+            c["price_clears"] = pp.price_is_acceptable(odds, p)
         matched += 1
     return candidates, matched
