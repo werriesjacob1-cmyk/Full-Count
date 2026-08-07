@@ -25,6 +25,59 @@
           "matchup": "Los Angeles Dodgers @ Chicago Cubs"
         }
       ]
+    },
+    {
+      "date": "2026-08-07",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 79.2,
+          "notable_signals": 2,
+          "matchup": "Los Angeles Dodgers @ Arizona Diamondbacks",
+          "game_pk": 825051,
+          "team": "Los Angeles Dodgers",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 72.5714,
+            "pitch_exploit": 2.8571,
+            "l7_avg_ev": 100.0,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 69.3333,
+            "lineup_slot": 62.5,
+            "bullpen_fatigue": 64.1026,
+            "bvp_ops": 2.724,
+            "platoon_barrel_pct": 5.0,
+            "platoon_xwoba": 2.94,
+            "park_hand_index": -0.99,
+            "opp_catcher_framing": 0.12,
+            "days_rest": 2.0,
+            "pull_park_synergy": -0.8766,
+            "hard_hit_105_rate": 1.96,
+            "team_total_move": -6.0,
+            "team_total_open": 0.0,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": -1.68,
+            "vs_rp_ops": 0.036,
+            "ump_k_pct": -0.192,
+            "ump_bb_pct": -0.06
+          },
+          "hit_probability": 0.6025,
+          "raw_hit_probability": 0.6074,
+          "lift": 0.0515,
+          "reliability": "A",
+          "sample_n": 104,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

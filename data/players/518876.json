@@ -8,7 +8,7 @@
         {
           "prop": "Over 3.5 Strikeouts",
           "type": "pitcher",
-          "score": 49.1,
+          "score": 48.4,
           "notable_signals": 0,
           "matchup": "Los Angeles Dodgers @ Arizona Diamondbacks",
           "game_pk": 825051,
@@ -18,11 +18,14 @@
           "signals": {
             "same_hand_ratio": 43.75,
             "l14_k_pct": 49.4118,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 42.892,
+            "ump_k_pct": 0.192,
+            "ump_bb_pct": 0.06
           },
-          "hit_probability": 0.6027,
-          "raw_hit_probability": 0.589,
-          "lift": -0.1112,
+          "hit_probability": 0.603,
+          "raw_hit_probability": 0.59,
+          "lift": -0.1109,
           "reliability": "D",
           "sample_n": 20,
           "projection": {
@@ -44,6 +47,7 @@
           "signals": {
             "yrfi_rate": 36.4,
             "fi_n_starts": 22.0,
+            "ump_run_impact": 40.391,
             "park_hr_index": 50.0
           },
           "hit_probability": 0.6844,

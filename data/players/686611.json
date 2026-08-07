@@ -44,10 +44,10 @@
       "date": "2026-08-07",
       "evaluations": [
         {
-          "prop": "Over 0.5 Hits",
+          "prop": "Over 0.5 Hits+Runs+RBIs",
           "type": "batter",
-          "score": 61.6,
-          "notable_signals": 2,
+          "score": 54.3,
+          "notable_signals": 1,
           "matchup": "Cincinnati Reds @ Washington Nationals",
           "game_pk": 822699,
           "team": "Washington Nationals",
@@ -59,7 +59,7 @@
             "l7_avg_ev": 70.6579,
             "l7_barrel_pct": 100.0,
             "bat_speed_trend": 0.3,
-            "park_hr_index": 82.5,
+            "park_hr_index": 59.7,
             "season_barrel_pct": 47.3333,
             "lineup_slot": 50.0,
             "bullpen_fatigue": 64.1026,
@@ -77,13 +77,13 @@
             "ump_k_pct": -0.108,
             "ump_bb_pct": 0.252
           },
-          "hit_probability": 0.6032,
-          "raw_hit_probability": 0.6087,
-          "lift": 0.0522,
+          "hit_probability": 0.6668,
+          "raw_hit_probability": 0.728,
+          "lift": -0.0043,
           "reliability": "B",
           "sample_n": 63,
           "projection": {
-            "stat": "hits",
+            "stat": "hits_runs_rbis",
             "value": 0.5,
             "needs": 1
           }
@@ -105,7 +105,7 @@
             "on_base": 44.3378
           },
           "hit_probability": 0.1782,
-          "raw_hit_probability": 0.1032,
+          "raw_hit_probability": 0.1033,
           "lift": null,
           "reliability": "B",
           "sample_n": 63,
