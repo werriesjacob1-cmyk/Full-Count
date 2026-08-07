@@ -30,7 +30,7 @@
       "date": "2026-08-07",
       "evaluations": [
         {
-          "prop": "Over 1.5 Total Bases (proj. 2.92 TB)",
+          "prop": "Over 0.5 Hits",
           "type": "batter",
           "score": 39.3,
           "notable_signals": 1,
@@ -44,7 +44,7 @@
             "sp_era_weak": 75.1429,
             "l7_avg_ev": 0.0,
             "l7_barrel_pct": 100.0,
-            "park_hr_index": 50.0,
+            "park_hr_index": 47.9,
             "lineup_slot": 25.0,
             "bullpen_fatigue": 75.7576,
             "park_hand_index": 0.68,
@@ -55,14 +55,15 @@
             "getaway_day": 0.0,
             "series_game": 0.0
           },
-          "hit_probability": null,
-          "raw_hit_probability": null,
-          "lift": null,
+          "hit_probability": 0.5755,
+          "raw_hit_probability": 0.551,
+          "lift": 0.0245,
           "reliability": "D",
           "sample_n": 0,
           "projection": {
-            "stat": "total_bases",
-            "value": 2.92
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
           }
         }
       ]

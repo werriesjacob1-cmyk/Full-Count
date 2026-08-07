@@ -2031,7 +2031,7 @@ def score_walk(batter, gm, opp_sp_row, ump_scores, batter_season, ump_kbb=None):
     }
 
 
-def score_first_inning(sp_name, sp_id, gm, side, fi_form):
+def score_first_inning(sp_name, sp_id, gm, side, fi_form, ump_env=None, park_wx=None):
     """NRFI/YRFI lean per starter, from real per-start first-inning results
     (not season aggregates) — reuses the same targeted pull mlb_daily.py's
     Section 38 already validates, in structured form.
@@ -2066,6 +2066,31 @@ def score_first_inning(sp_name, sp_id, gm, side, fi_form):
            f"This is the one-sided market ({opp_team} only) — not a both-teams NRFI"]
     watchouts = []
     if n_starts < 3: watchouts.append(f"Only {n_starts} starts in the L14 window — thin sample for a first-inning read")
+
+    # fetch_umpire_run_environment's own docstring is explicit that
+    # run_impact_magnitude is UNSIGNED volatility (verified live: strictly
+    # positive across all 142 umpires) -- it says how much this umpire's
+    # incorrect calls tend to move a game's total in EITHER direction, not
+    # whether that direction is toward more or fewer 1st-inning runs. Using
+    # it to push the YRFI/NRFI score would be inventing a lean this data
+    # cannot support. Recorded only, same as the other signals awaiting
+    # measurement -- score is untouched below.
+    signals = {"yrfi_rate": round(float(yrfi_rate), 4), "fi_n_starts": float(n_starts)}
+    ump_run_impact = ((ump_env or {}).get(gm["matchup"]) or {}).get("run_impact_magnitude")
+    _sig(signals, "ump_run_impact", ump_run_impact,
+         scale(ump_run_impact, 0.95, 2.38) if ump_run_impact is not None else None)
+    # park_hr_index is already fetched for every batter prop on the slate
+    # (fetch_park_weather) and was never passed into this function at all --
+    # first-inning props carried 2 signals against 18+ on batter props purely
+    # because nothing wired an existing input through, not because nothing
+    # existed. Already a 0-100 index (park_hr_index scales itself, see
+    # park_hr_index() / fetch_park_weather above), so recorded as-is rather
+    # than re-scaled. Recorded only, same reasoning as ump_run_impact: this
+    # is a HR-scoring index, not a validated 1st-inning read, so it must earn
+    # its way into the score through measure_signals.py first.
+    wx = (park_wx or {}).get(gm["matchup"]) or {}
+    _sig(signals, "park_hr_index", wx.get("park_hr_index"), wx.get("park_hr_index"))
+
     return {
         "type": "pitcher", "name": sp_name, "player_id": sp_id,
         "team": gm["away_team"] if side == "away" else gm["home_team"], "side": side,
@@ -2082,7 +2107,7 @@ def score_first_inning(sp_name, sp_id, gm, side, fi_form):
         # attach_hit_probabilities re-picks the side once the rate has been
         # shrunk, and has to be able to rebuild this label for the other side.
         "fi_opp_team": opp_team,
-        "signals": {"yrfi_rate": round(float(yrfi_rate), 4), "fi_n_starts": float(n_starts)},
+        "signals": signals,
         "lean": lean, "score": round(score, 1), "why": why, "watchouts": watchouts,
         "notable_signals": notable_signals,
         "confidence": "High" if score >= 70 and n_starts >= 3 else ("Medium" if score >= 55 else "Low"),
@@ -2179,7 +2204,8 @@ def build_candidates(game_meta, *, extras=None, batter_lookup, pitcher_lookup, t
                                              gm, "away", pitcher_lookup, l14_pitcher_form,
                                              gm.get("home_lineup", []), opp_k, ump_scores, opp_k_source,
                                              exp_k_form, extras.get("ump_kbb")))
-            fi = score_first_inning(gm["away_sp"], gm["away_sp_id"], gm, "away", fi_form)
+            fi = score_first_inning(gm["away_sp"], gm["away_sp_id"], gm, "away", fi_form,
+                                    extras.get("ump_env"), park_wx)
             if fi: candidates.append(fi)
         if gm["home_sp"] != "TBD" and gm.get("home_sp_id"):
             opp_k, opp_k_source = team_k_lookup.get(gm["away_team"]), "team"
@@ -2190,7 +2216,8 @@ def build_candidates(game_meta, *, extras=None, batter_lookup, pitcher_lookup, t
                                              gm, "home", pitcher_lookup, l14_pitcher_form,
                                              gm.get("away_lineup", []), opp_k, ump_scores, opp_k_source,
                                              exp_k_form, extras.get("ump_kbb")))
-            fi = score_first_inning(gm["home_sp"], gm["home_sp_id"], gm, "home", fi_form)
+            fi = score_first_inning(gm["home_sp"], gm["home_sp_id"], gm, "home", fi_form,
+                                    extras.get("ump_env"), park_wx)
             if fi: candidates.append(fi)
 
     # Rain risk applies to every prop type in a game equally (a postponement
@@ -2373,6 +2400,13 @@ def _build_and_score():
         # Batter vs starters versus batter vs relievers. See the signal in
         # score_batter for why this is not a niche split.
         ("sp_rp", lambda: _src.batter_sp_rp_splits(game_meta)),
+        # HP umpire run-environment volatility, wired into score_first_inning.
+        # fetch_umpire_run_environment's own docstring is explicit that
+        # run_impact_magnitude is unsigned (verified live: positive across
+        # all 142 umpires) -- a volatility measure, not an over/under lean --
+        # so it is recorded via _sig for future measurement and does not
+        # touch the YRFI/NRFI score.
+        ("ump_env", lambda: _src.fetch_umpire_run_environment(game_meta)),
     ):
         try:
             # NOT `fn() or {}`: several of these return DataFrames, and the
@@ -3017,9 +3051,24 @@ def _batter_options(c, comp, emp, league=None):
                     modelled = None
             empirical = emp_p(f"{stat}_{need}plus")
             prob, basis = _blend(empirical, modelled)
-            if prob is None:
-                continue
             base = base_rates.get(f"{stat}_{need}plus")
+            if prob is None:
+                # NO PROP GOES UNSCORED. A batter with no Statcast composition
+                # (dist is None -- no modelled term) and fewer than
+                # MIN_EMPIRICAL_GAMES games this season (no empirical term,
+                # e.g. a recent call-up) used to fall out of EVERY family
+                # here, and _pick_line's `if not opts: return None` upstream
+                # turned that into a candidate with no price at all -- the
+                # entire reason 9 total_bases candidates showed 9/0 on
+                # 2026-08-07. The league base rate for this exact line is
+                # already sitting in base_rates (computed from the whole
+                # slate, not this player), so falling back to it instead of
+                # skipping means every batter gets a real, non-invented
+                # number -- just one with no player-specific signal in it,
+                # which the "league_only" basis says plainly.
+                if base is None:
+                    continue
+                prob, basis = base, "league_only"
             options.append({
                 "stat": stat, "line": line, "needs": need,
                 "label": f"Over {line} {label}",

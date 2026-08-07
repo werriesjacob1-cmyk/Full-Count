@@ -1,9 +1,110 @@
 {
   "date": "2026-08-07",
-  "generated": "2026-08-07T14:20:40.080508",
+  "generated": "2026-08-07T13:58:32.571346",
   "picks": [
     {
       "rank": 1,
+      "type": "batter",
+      "name": "Luis Arraez",
+      "player_id": 650333,
+      "team": "Philadelphia Phillies",
+      "matchup": "Toronto Blue Jays @ Philadelphia Phillies",
+      "game_pk": 823428,
+      "side": null,
+      "prop": "Over 0.5 Hits",
+      "projection": {
+        "stat": "hits",
+        "value": 0.5,
+        "needs": 1
+      },
+      "lean": null,
+      "score": 58.9,
+      "confidence": "Medium",
+      "notable_signals": 1,
+      "hit_probability": 0.6701,
+      "signals": {
+        "platoon": 80.0,
+        "sp_era_weak": 22.5714,
+        "pitch_exploit": 19.4286,
+        "l7_avg_ev": 67.6875,
+        "l7_barrel_pct": 92.8571,
+        "park_hr_index": 59.8,
+        "season_barrel_pct": 0.0,
+        "lineup_slot": 62.5,
+        "bullpen_fatigue": 64.1026,
+        "platoon_barrel_pct": -4.56,
+        "platoon_xwoba": 0.72,
+        "park_hand_index": 1.95,
+        "opp_catcher_framing": -0.84,
+        "days_rest": 0.0,
+        "pull_park_synergy": 0.1843,
+        "team_total_move": 0.0,
+        "team_total_open": 0.0,
+        "getaway_day": 0.0,
+        "series_game": 0.0
+      },
+      "base_rate": 0.551,
+      "lift": 0.1191,
+      "raw_hit_probability": 0.7549,
+      "calibrated_by": "hits",
+      "prob_ci": [
+        0.6806,
+        0.838
+      ],
+      "sample_n": 108,
+      "reliability": "A",
+      "max_acceptable_price": -203,
+      "estimated_odds": -239,
+      "market_odds": -350,
+      "market_implied": 0.7778,
+      "market_edge": -0.1077,
+      "price_clears": false,
+      "probability_basis": "blended",
+      "probability_detail": {
+        "empirical": 0.7431,
+        "modelled": 0.7727
+      },
+      "alternatives": [
+        {
+          "stat": "hits_runs_rbis",
+          "line": 0.5,
+          "needs": 1,
+          "label": "Over 0.5 Hits+Runs+RBIs",
+          "prob": 0.793,
+          "basis": "empirical",
+          "base_rate": 0.6752,
+          "lift": 0.1178,
+          "empirical": 0.793,
+          "modelled": null
+        },
+        {
+          "stat": "singles",
+          "line": 0.5,
+          "needs": 1,
+          "label": "Over 0.5 Singles",
+          "prob": 0.6242,
+          "basis": "empirical",
+          "base_rate": 0.4452,
+          "lift": 0.179,
+          "empirical": 0.6242,
+          "modelled": null
+        },
+        {
+          "stat": "hits_runs_rbis",
+          "line": 1.5,
+          "needs": 2,
+          "label": "Over 1.5 Hits+Runs+RBIs",
+          "prob": 0.5486,
+          "basis": "empirical",
+          "base_rate": 0.4611,
+          "lift": 0.0875,
+          "empirical": 0.5486,
+          "modelled": null
+        }
+      ]
+    },
+    {
+      "rank": 2,
       "type": "batter",
       "name": "Otto Lopez",
       "player_id": 672640,
@@ -18,10 +119,10 @@
         "needs": 1
       },
       "lean": null,
-      "score": 56.9,
+      "score": 57.4,
       "confidence": "Medium",
       "notable_signals": 2,
-      "hit_probability": 0.6691,
+      "hit_probability": 0.6694,
       "signals": {
         "platoon": 35.0,
         "sp_era_weak": 100.0,
@@ -48,8 +149,8 @@
         "vs_rp_ops": 1.668
       },
       "base_rate": 0.551,
-      "lift": 0.1181,
-      "raw_hit_probability": 0.7527,
+      "lift": 0.1184,
+      "raw_hit_probability": 0.7533,
       "calibrated_by": "hits",
       "prob_ci": [
         0.672,
@@ -59,14 +160,14 @@
       "reliability": "A",
       "max_acceptable_price": -202,
       "estimated_odds": -238,
-      "market_odds": -310,
-      "market_implied": 0.7561,
-      "market_edge": -0.087,
+      "market_odds": -320,
+      "market_implied": 0.7619,
+      "market_edge": -0.0925,
       "price_clears": false,
       "probability_basis": "blended",
       "probability_detail": {
         "empirical": 0.7357,
-        "modelled": 0.7783
+        "modelled": 0.7797
       },
       "alternatives": [
         {
@@ -100,15 +201,15 @@
           "label": "Over 0.5 Singles",
           "prob": 0.5978,
           "basis": "empirical",
-          "base_rate": 0.4022,
-          "lift": 0.1956,
+          "base_rate": 0.4452,
+          "lift": 0.1526,
           "empirical": 0.5978,
           "modelled": null
         }
       ]
     },
     {
-      "rank": 2,
+      "rank": 3,
       "type": "batter",
       "name": "Ceddanne Rafaela",
       "player_id": 678882,
@@ -123,9 +224,9 @@
         "needs": 1
       },
       "lean": null,
-      "score": 67.1,
+      "score": 68.0,
       "confidence": "Medium",
-      "notable_signals": 3,
+      "notable_signals": 4,
       "hit_probability": 0.6653,
       "signals": {
         "platoon": 35.0,
@@ -133,7 +234,7 @@
         "pitch_exploit": 19.4286,
         "l7_avg_ev": 55.0,
         "l7_barrel_pct": 100.0,
-        "park_hr_index": 59.8,
+        "park_hr_index": 74.3,
         "season_barrel_pct": 17.3333,
         "lineup_slot": 87.5,
         "bullpen_fatigue": 66.6667,
@@ -204,15 +305,15 @@
           "label": "Over 0.5 Singles",
           "prob": 0.5227,
           "basis": "empirical",
-          "base_rate": 0.4022,
-          "lift": 0.1205,
+          "base_rate": 0.4452,
+          "lift": 0.0775,
           "empirical": 0.5227,
           "modelled": null
         }
       ]
     },
     {
-      "rank": 3,
+      "rank": 4,
       "type": "batter",
       "name": "Freddie Freeman",
       "player_id": 518692,
@@ -296,8 +397,8 @@
           "label": "Over 0.5 Singles",
           "prob": 0.5675,
           "basis": "empirical",
-          "base_rate": 0.4022,
-          "lift": 0.1653,
+          "base_rate": 0.4452,
+          "lift": 0.1223,
           "empirical": 0.5675,
           "modelled": null
         },
@@ -316,7 +417,7 @@
       ]
     },
     {
-      "rank": 4,
+      "rank": 5,
       "type": "batter",
       "name": "Jordan Walker",
       "player_id": 691023,
@@ -331,7 +432,7 @@
         "needs": 1
       },
       "lean": null,
-      "score": 71.8,
+      "score": 71.7,
       "confidence": "High",
       "notable_signals": 2,
       "hit_probability": 0.6571,
@@ -342,7 +443,7 @@
         "l7_avg_ev": 61.25,
         "l7_barrel_pct": 100.0,
         "bat_speed_trend": 4.5,
-        "park_hr_index": 61.9,
+        "park_hr_index": 60.6,
         "season_barrel_pct": 66.6667,
         "lineup_slot": 87.5,
         "bullpen_fatigue": 59.5238,
@@ -414,15 +515,15 @@
           "label": "Over 0.5 Singles",
           "prob": 0.5412,
           "basis": "empirical",
-          "base_rate": 0.4022,
-          "lift": 0.139,
+          "base_rate": 0.4452,
+          "lift": 0.096,
           "empirical": 0.5412,
           "modelled": null
         }
       ]
     },
     {
-      "rank": 5,
+      "rank": 6,
       "type": "batter",
       "name": "Jackson Chourio",
       "player_id": 694192,
@@ -506,8 +607,8 @@
           "label": "Over 0.5 Singles",
           "prob": 0.5832,
           "basis": "empirical",
-          "base_rate": 0.4022,
-          "lift": 0.181,
+          "base_rate": 0.4452,
+          "lift": 0.138,
           "empirical": 0.5832,
           "modelled": null
         },
@@ -526,7 +627,7 @@
       ]
     },
     {
-      "rank": 6,
+      "rank": 7,
       "type": "batter",
       "name": "Bobby Witt",
       "player_id": 677951,
@@ -541,7 +642,7 @@
         "needs": 1
       },
       "lean": null,
-      "score": 66.5,
+      "score": 66.6,
       "confidence": "Medium",
       "notable_signals": 0,
       "hit_probability": 0.655,
@@ -549,7 +650,7 @@
         "platoon": 65.0,
         "l7_avg_ev": 100.0,
         "l7_barrel_pct": 100.0,
-        "park_hr_index": 42.4,
+        "park_hr_index": 43.4,
         "season_barrel_pct": 62.0,
         "lineup_slot": 87.5,
         "bullpen_fatigue": 59.5238,
@@ -616,15 +717,15 @@
           "label": "Over 0.5 Singles",
           "prob": 0.5376,
           "basis": "empirical",
-          "base_rate": 0.4022,
-          "lift": 0.1354,
+          "base_rate": 0.4452,
+          "lift": 0.0924,
           "empirical": 0.5376,
           "modelled": null
         }
       ]
     },
     {
-      "rank": 7,
+      "rank": 8,
       "type": "batter",
       "name": "Kevin McGonigle",
       "player_id": 805808,
@@ -639,10 +740,10 @@
         "needs": 1
       },
       "lean": null,
-      "score": 65.0,
+      "score": 64.7,
       "confidence": "Medium",
       "notable_signals": 3,
-      "hit_probability": 0.6545,
+      "hit_probability": 0.6544,
       "signals": {
         "platoon": 65.0,
         "l7_avg_ev": 44.1447,
@@ -662,8 +763,8 @@
         "vs_rp_ops": 0.384
       },
       "base_rate": 0.551,
-      "lift": 0.1035,
-      "raw_hit_probability": 0.7198,
+      "lift": 0.1034,
+      "raw_hit_probability": 0.7195,
       "calibrated_by": "hits",
       "prob_ci": [
         0.6596,
@@ -675,12 +776,12 @@
       "estimated_odds": -222,
       "market_odds": -260,
       "market_implied": 0.7222,
-      "market_edge": -0.0677,
+      "market_edge": -0.0678,
       "price_clears": false,
       "probability_basis": "blended",
       "probability_detail": {
         "empirical": 0.7261,
-        "modelled": 0.7104
+        "modelled": 0.7096
       },
       "alternatives": [
         {
@@ -702,8 +803,8 @@
           "label": "Over 0.5 Singles",
           "prob": 0.5794,
           "basis": "empirical",
-          "base_rate": 0.4022,
-          "lift": 0.1772,
+          "base_rate": 0.4452,
+          "lift": 0.1342,
           "empirical": 0.5794,
           "modelled": null
         },
@@ -722,7 +823,7 @@
       ]
     },
     {
-      "rank": 8,
+      "rank": 9,
       "type": "batter",
       "name": "Yandy Diaz",
       "player_id": 650490,
@@ -819,113 +920,9 @@
           "label": "Over 0.5 Singles",
           "prob": 0.5341,
           "basis": "empirical",
-          "base_rate": 0.4022,
-          "lift": 0.1319,
+          "base_rate": 0.4452,
+          "lift": 0.0889,
           "empirical": 0.5341,
-          "modelled": null
-        }
-      ]
-    },
-    {
-      "rank": 9,
-      "type": "batter",
-      "name": "Junior Caminero",
-      "player_id": 691406,
-      "team": "Tampa Bay Rays",
-      "matchup": "Tampa Bay Rays @ Seattle Mariners",
-      "game_pk": 823103,
-      "side": null,
-      "prop": "Over 0.5 Hits",
-      "projection": {
-        "stat": "hits",
-        "value": 0.5,
-        "needs": 1
-      },
-      "lean": null,
-      "score": 65.7,
-      "confidence": "Medium",
-      "notable_signals": 3,
-      "hit_probability": 0.65,
-      "signals": {
-        "platoon": 35.0,
-        "sp_era_weak": 27.4286,
-        "pitch_exploit": 1.7143,
-        "l7_avg_ev": 100.0,
-        "l7_barrel_pct": 100.0,
-        "park_hr_index": 50.0,
-        "season_barrel_pct": 73.3333,
-        "lineup_slot": 75.0,
-        "bullpen_fatigue": 64.1026,
-        "platoon_barrel_pct": 5.0,
-        "platoon_xwoba": 3.0,
-        "park_hand_index": 0.03,
-        "opp_catcher_framing": 0.6,
-        "days_rest": 2.0,
-        "pull_park_synergy": 0.0198,
-        "hard_hit_105_rate": 5.0,
-        "team_total_move": 0.0,
-        "team_total_open": -4.0,
-        "getaway_day": 0.0,
-        "series_game": 0.0,
-        "sp_rp_ops_gap": -1.08,
-        "vs_rp_ops": 1.536
-      },
-      "base_rate": 0.551,
-      "lift": 0.099,
-      "raw_hit_probability": 0.7097,
-      "calibrated_by": "hits",
-      "prob_ci": [
-        0.6492,
-        0.809
-      ],
-      "sample_n": 114,
-      "reliability": "A",
-      "max_acceptable_price": -186,
-      "estimated_odds": -217,
-      "market_odds": -240,
-      "market_implied": 0.7059,
-      "market_edge": -0.0559,
-      "price_clears": false,
-      "probability_basis": "blended",
-      "probability_detail": {
-        "empirical": 0.7173,
-        "modelled": 0.6983
-      },
-      "alternatives": [
-        {
-          "stat": "hits_runs_rbis",
-          "line": 0.5,
-          "needs": 1,
-          "label": "Over 0.5 Hits+Runs+RBIs",
-          "prob": 0.75,
-          "basis": "empirical",
-          "base_rate": 0.6752,
-          "lift": 0.0748,
-          "empirical": 0.75,
-          "modelled": null
-        },
-        {
-          "stat": "hits_runs_rbis",
-          "line": 1.5,
-          "needs": 2,
-          "label": "Over 1.5 Hits+Runs+RBIs",
-          "prob": 0.539,
-          "basis": "empirical",
-          "base_rate": 0.4611,
-          "lift": 0.0779,
-          "empirical": 0.539,
-          "modelled": null
-        },
-        {
-          "stat": "singles",
-          "line": 0.5,
-          "needs": 1,
-          "label": "Over 0.5 Singles",
-          "prob": 0.4844,
-          "basis": "empirical",
-          "base_rate": 0.4022,
-          "lift": 0.0822,
-          "empirical": 0.4844,
           "modelled": null
         }
       ]
@@ -933,11 +930,11 @@
     {
       "rank": 10,
       "type": "batter",
-      "name": "Shohei Ohtani",
-      "player_id": 660271,
-      "team": "Los Angeles Dodgers",
-      "matchup": "Los Angeles Dodgers @ Arizona Diamondbacks",
-      "game_pk": 825051,
+      "name": "Jacob Wilson",
+      "player_id": 805779,
+      "team": "Athletics",
+      "matchup": "Athletics @ Boston Red Sox",
+      "game_pk": 824727,
       "side": null,
       "prop": "Over 0.5 Hits",
       "projection": {
@@ -946,53 +943,53 @@
         "needs": 1
       },
       "lean": null,
-      "score": 75.4,
-      "confidence": "High",
-      "notable_signals": 1,
-      "hit_probability": 0.6499,
+      "score": 55.2,
+      "confidence": "Medium",
+      "notable_signals": 3,
+      "hit_probability": 0.6504,
       "signals": {
         "platoon": 80.0,
-        "sp_era_weak": 72.5714,
-        "pitch_exploit": 10.2857,
-        "l7_avg_ev": 68.2353,
+        "sp_era_weak": 22.8571,
+        "l7_avg_ev": 13.8393,
         "l7_barrel_pct": 100.0,
-        "park_hr_index": 50.0,
-        "season_barrel_pct": 91.3333,
+        "park_hr_index": 74.3,
+        "season_barrel_pct": 0.0,
         "lineup_slot": 100.0,
-        "bullpen_fatigue": 64.1026,
-        "platoon_barrel_pct": 5.0,
-        "platoon_xwoba": 5.0,
-        "park_hand_index": -0.99,
+        "bullpen_fatigue": 76.9231,
+        "platoon_barrel_pct": -4.72,
+        "platoon_xwoba": -2.7,
+        "park_hand_index": -1.96,
+        "opp_catcher_framing": 0.84,
         "days_rest": 2.0,
-        "pull_park_synergy": -0.6445,
-        "hard_hit_105_rate": 5.0,
-        "team_total_move": 0.0,
-        "team_total_open": 4.0,
+        "pull_park_synergy": -0.3842,
+        "hard_hit_105_rate": -2.6825,
+        "team_total_move": -6.0,
+        "team_total_open": -6.0,
         "getaway_day": 0.0,
         "series_game": 0.0,
-        "sp_rp_ops_gap": -1.536,
-        "vs_rp_ops": 1.392
+        "sp_rp_ops_gap": -0.208,
+        "vs_rp_ops": -0.504
       },
       "base_rate": 0.551,
-      "lift": 0.0989,
-      "raw_hit_probability": 0.7095,
+      "lift": 0.0994,
+      "raw_hit_probability": 0.7107,
       "calibrated_by": "hits",
       "prob_ci": [
-        0.6215,
-        0.7919
+        0.6144,
+        0.8151
       ],
-      "sample_n": 105,
-      "reliability": "A",
+      "sample_n": 73,
+      "reliability": "B",
       "max_acceptable_price": -186,
-      "estimated_odds": -217,
-      "market_odds": -360,
-      "market_implied": 0.7826,
-      "market_edge": -0.1327,
+      "estimated_odds": -218,
+      "market_odds": -280,
+      "market_implied": 0.7368,
+      "market_edge": -0.0864,
       "price_clears": false,
       "probability_basis": "blended",
       "probability_detail": {
-        "empirical": 0.6969,
-        "modelled": 0.7285
+        "empirical": 0.7002,
+        "modelled": 0.7264
       },
       "alternatives": [
         {
@@ -1000,23 +997,11 @@
           "line": 0.5,
           "needs": 1,
           "label": "Over 0.5 Hits+Runs+RBIs",
-          "prob": 0.748,
+          "prob": 0.7474,
           "basis": "empirical",
           "base_rate": 0.6752,
-          "lift": 0.0728,
-          "empirical": 0.748,
-          "modelled": null
-        },
-        {
-          "stat": "hits_runs_rbis",
-          "line": 1.5,
-          "needs": 2,
-          "label": "Over 1.5 Hits+Runs+RBIs",
-          "prob": 0.5538,
-          "basis": "empirical",
-          "base_rate": 0.4611,
-          "lift": 0.0927,
-          "empirical": 0.5538,
+          "lift": 0.0722,
+          "empirical": 0.7474,
           "modelled": null
         },
         {
@@ -1024,11 +1009,23 @@
           "line": 0.5,
           "needs": 1,
           "label": "Over 0.5 Singles",
-          "prob": 0.5032,
+          "prob": 0.5904,
           "basis": "empirical",
-          "base_rate": 0.4022,
-          "lift": 0.101,
-          "empirical": 0.5032,
+          "base_rate": 0.4452,
+          "lift": 0.1452,
+          "empirical": 0.5904,
+          "modelled": null
+        },
+        {
+          "stat": "hits_runs_rbis",
+          "line": 1.5,
+          "needs": 2,
+          "label": "Over 1.5 Hits+Runs+RBIs",
+          "prob": 0.5185,
+          "basis": "empirical",
+          "base_rate": 0.4611,
+          "lift": 0.0574,
+          "empirical": 0.5185,
           "modelled": null
         }
       ]

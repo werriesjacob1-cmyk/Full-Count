@@ -44,9 +44,9 @@
       "date": "2026-08-07",
       "evaluations": [
         {
-          "prop": "Over 0.5 Hits",
+          "prop": "Over 0.5 Hits+Runs+RBIs",
           "type": "batter",
-          "score": 24.3,
+          "score": 24.0,
           "notable_signals": 1,
           "matchup": "Detroit Tigers @ San Francisco Giants",
           "game_pk": 823191,
@@ -73,13 +73,13 @@
             "sp_rp_ops_gap": 0.608,
             "vs_rp_ops": -3.408
           },
-          "hit_probability": 0.5285,
-          "raw_hit_probability": 0.4552,
-          "lift": -0.0225,
+          "hit_probability": 0.6239,
+          "raw_hit_probability": 0.6752,
+          "lift": -0.0513,
           "reliability": "D",
           "sample_n": 20,
           "projection": {
-            "stat": "hits",
+            "stat": "hits_runs_rbis",
             "value": 0.5,
             "needs": 1
           }

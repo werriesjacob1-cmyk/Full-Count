@@ -30,9 +30,9 @@
       "date": "2026-08-07",
       "evaluations": [
         {
-          "prop": "Over 1.5 Total Bases (proj. 0.36 TB)",
+          "prop": "Over 0.5 Hits",
           "type": "batter",
-          "score": 60.7,
+          "score": 60.4,
           "notable_signals": 1,
           "matchup": "Atlanta Braves @ New York Yankees",
           "game_pk": 823515,
@@ -44,7 +44,7 @@
             "sp_era_weak": 17.7143,
             "l7_avg_ev": 93.75,
             "l7_barrel_pct": 100.0,
-            "park_hr_index": 50.0,
+            "park_hr_index": 47.9,
             "lineup_slot": 0.0,
             "bullpen_fatigue": 64.1026,
             "park_hand_index": 0.68,
@@ -55,14 +55,15 @@
             "getaway_day": 0.0,
             "series_game": 0.0
           },
-          "hit_probability": null,
-          "raw_hit_probability": null,
-          "lift": null,
+          "hit_probability": 0.5755,
+          "raw_hit_probability": 0.551,
+          "lift": 0.0245,
           "reliability": "D",
           "sample_n": 0,
           "projection": {
-            "stat": "total_bases",
-            "value": 0.36
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
           }
         }
       ]

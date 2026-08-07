@@ -63,7 +63,7 @@
       "date": "2026-08-07",
       "evaluations": [
         {
-          "prop": "Over 0.5 Hits",
+          "prop": "Over 0.5 Hits+Runs+RBIs",
           "type": "batter",
           "score": 45.5,
           "notable_signals": 0,
@@ -91,13 +91,13 @@
             "sp_rp_ops_gap": 4.0,
             "vs_rp_ops": 2.508
           },
-          "hit_probability": 0.5832,
-          "raw_hit_probability": 0.567,
-          "lift": 0.0322,
+          "hit_probability": 0.6239,
+          "raw_hit_probability": 0.6752,
+          "lift": -0.0513,
           "reliability": "D",
           "sample_n": 20,
           "projection": {
-            "stat": "hits",
+            "stat": "hits_runs_rbis",
             "value": 0.5,
             "needs": 1
           }
