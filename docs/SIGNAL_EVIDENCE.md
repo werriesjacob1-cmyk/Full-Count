@@ -64,3 +64,30 @@ The actionable conclusion is the opposite of "add more signals": the things
 that predict a prop hitting are how many chances the player gets and what
 his own base rate is. Effort is better spent on estimating those two
 precisely than on finding an eighth matchup adjustment.
+
+## Recommendation mix after adding the six missing prop families (2026-08-07)
+
+The commit that added runs/RBIs/HRR/singles/doubles/triples to `_batter_options`
+flagged one likely side effect as UNMEASURED: that `hits_runs_rbis 1+`, at
+roughly 0.767 for a good hitter, clears `MIN_LINE_PROB = 0.60` and could
+therefore compete with "Over 0.5 Hits" for the recommendation slot.
+
+Measured on a full slate scoring, 180 batter recommendations:
+
+    before          hits 1+            180 of 180      100.0%
+    after           hits 1+            110 of 180       61.1%
+                    hits_runs_rbis 1+   69 of 180       38.3%
+                    singles 1+           1 of 180        0.6%
+
+So the every-batter-gets-the-same-prop monotony did break, and it broke without
+touching the probability floor — 39% of batter recommendations moved to a
+different market purely because the model can now price one it previously
+could not.
+
+What did NOT change, and why: still only three distinct batter markets on the
+board. No home run, total bases, RBI or doubles recommendation appears, because
+none of those clears a 0.60 floor for essentially any hitter — 1+ HR runs
+0.10-0.25, 2+ TB around 0.40. That is the floor working exactly as specified,
+not a bug. Those markets are now priced by the model and reachable through the
+value board; they are simply not recommendable under a rule that requires the
+recommendation itself to be likely.
