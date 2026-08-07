@@ -2577,6 +2577,28 @@ def main() -> int:
     top10 = ranked[:10]
     skipped = [c for c in ranked[10:13] if c["score"] >= 55][:2]
 
+    # THE REAL POSTED PRICE, which the board has never carried.
+    #
+    # Every pick shipped with `estimated_odds`, and that number is
+    # pp.american_odds(hit_probability) — our own probability restated as a
+    # price. It is circular by construction: it cannot disagree with us, so it
+    # can never tell anyone whether a pick is good VALUE, only that the model
+    # thinks it is likely. max_acceptable_price is derived from it too.
+    #
+    # attach_market_prices() was written to fix exactly this and had ZERO
+    # callers, while FanDuel's prices were being fetched hourly and committed
+    # to data/props. The information was free, already arriving, and never
+    # reached the one document that gets read before betting.
+    #
+    # Never fatal: an unpriced prop leaves the fields absent rather than
+    # guessing, and a failed fetch leaves the board exactly as it was.
+    try:
+        import odds_fanduel as _fd
+        _, n_priced = _fd.attach_market_prices(candidates)
+        print(f"    Real market prices attached to {n_priced} of {len(candidates)} candidates")
+    except Exception as e:
+        m.warn(f"Market prices unavailable ({e}) — board ships without them")
+
     write_markdown(top10, skipped, game_meta, bullpen_scores, ranked)
     write_json(top10)
     persist_player_snapshots(candidates)
@@ -2604,8 +2626,16 @@ def write_json(top10):
             "reliability": c.get("reliability"),
             "max_acceptable_price": (pp.max_acceptable_price(c["hit_probability"])
                                      if c.get("hit_probability") is not None else None),
+            # estimated_odds is OUR fair price, not the market's. Kept because
+            # it is the number max_acceptable_price is measured against, but
+            # the real posted price sits beside it now so the two can never be
+            # confused for each other again.
             "estimated_odds": (pp.american_odds(c["hit_probability"])
                                if c.get("hit_probability") is not None else None),
+            "market_odds": c.get("market_odds"),
+            "market_implied": c.get("market_implied"),
+            "market_edge": c.get("market_edge"),
+            "price_clears": c.get("price_clears"),
             "probability_basis": c.get("probability_basis"),
             "probability_detail": c.get("probability_detail"),
             "alternatives": c.get("alternatives"),

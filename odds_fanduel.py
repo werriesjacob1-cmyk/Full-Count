@@ -338,7 +338,13 @@ def attach_market_prices(candidates, prices=None):
         try:
             prices = fetch_prop_prices()
         except Exception:
-            return candidates
+            # ALWAYS a (candidates, matched) pair. This path used to return
+            # the bare list while the success path returned a tuple, so any
+            # caller unpacking the result — the only sane way to read the
+            # match count — would raise on exactly the failure it was trying
+            # to survive. Nothing caught it before because nothing called this
+            # function at all.
+            return candidates, 0
     matched = 0
     for c in candidates:
         proj = c.get("projection") or {}
