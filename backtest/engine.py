@@ -449,12 +449,31 @@ class PointInTime:
         # straight past every guard above.
         self._saved[("m", "_SEASON_STATCAST_CACHE")] = getattr(m, "_SEASON_STATCAST_CACHE", None)
         m._SEASON_STATCAST_CACHE = None
+        # mlb_sources.league_base_rates() has the exact same hazard and was
+        # missed the first time this class was written: it caches on its own
+        # module-level dict and, unlike _SEASON_STATCAST_CACHE above, nothing
+        # was clearing it. Left alone, the FIRST simulated date's league rate
+        # would silently freeze for every later date in the same run --
+        # not a forward leak (its own read is properly cutoff-guarded via the
+        # swapped pyb.statcast above), but a staleness bug in the other
+        # direction: date 5 would see date 1's league rate, not its own.
+        self._saved[("msrc", "_LEAGUE_RATES_CACHE")] = dict(msrc._LEAGUE_RATES_CACHE)
+        msrc._LEAGUE_RATES_CACHE.clear()
         return self
 
     def __exit__(self, exc_type, exc, tb):
         for (mod, attr), val in self._saved.items():
-            target = m.pyb if mod == "pyb" else m
-            setattr(target, attr, val)
+            if mod == "pyb":
+                target = m.pyb
+            elif mod == "msrc":
+                target = msrc
+            else:
+                target = m
+            if mod == "msrc":
+                getattr(target, attr).clear()
+                getattr(target, attr).update(val)
+            else:
+                setattr(target, attr, val)
         self._saved.clear()
         return False
 
@@ -985,7 +1004,22 @@ def simulate_date(date, store, use_weather=True, use_bullpen=True, keep_unpriced
             # game-log tables are season-scoped and therefore passed empty, so
             # predicted_prob is the purely MODELLED probability (which is what
             # SCHEMA.md asks for: uncalibrated model output).
-            gp.attach_hit_probabilities(candidates, comp_table, {}, {})
+            #
+            # league_rates WAS missing here entirely (verified live: this is
+            # why generate_picks.py's league-only fallback and the
+            # SHRINK_MODEL_K toggle were both structurally inert in every
+            # backtest run so far -- 0 candidates ever took either path,
+            # confirmed by instrumenting a real date). Safe to call here
+            # specifically because league_base_rates() reads through
+            # m.fetch_season_statcast(), which routes through the swapped,
+            # cutoff-guarded pyb.statcast (see PointInTime.__enter__) --
+            # unlike statcast_sprint_speed/statcast_catcher_poptime, it is
+            # NOT on the _POISONED_LEADERBOARDS list, because it has no
+            # season-aggregate-with-no-date-window shape to poison. Its own
+            # module-level cache is cleared per-date by PointInTime now too
+            # (see __enter__/__exit__), so date 5 cannot see date 1's rate.
+            league_rates = msrc.league_base_rates()
+            gp.attach_hit_probabilities(candidates, comp_table, {}, {}, league_rates)
             res.n_candidates = len(candidates)
     except LookaheadError:
         raise                            # never degrade a leak into a warning
