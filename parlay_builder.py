@@ -68,11 +68,37 @@ MIN_LINE_PROB = 0.60
 # occupy on the main board (real signal, low raw probability -- see
 # select_moonshots in generate_picks.py) -- not a different, looser standard
 # invented for this module, the same one already shipped and reasoned about.
-RISK_BANDS = {
-    "safest": (MIN_LINE_PROB, 1.01),
-    "balanced": (0.40, MIN_LINE_PROB),
-    "risky": (0.0, 0.40),
-}
+#
+# THE RISK BAR. A customer picking a risk appetite shouldn't be stuck
+# choosing between exactly 3 buckets -- "a little safer than balanced" is a
+# real, common request. RISK_ANCHORS defines the SAME three bands as before
+# at fixed points on a 0-100 dial (0 = safest, 50 = balanced, 100 = riskiest)
+# and risk_band() linearly interpolates both ends of the band between
+# whichever two anchors straddle the requested level. This is a UI/threshold
+# choice, not a probability claim -- it never touches how any individual
+# leg's hit_probability was computed, it only decides which real,
+# already-scored candidates are eligible to be offered at that risk level.
+RISK_ANCHORS = [
+    (0, (MIN_LINE_PROB, 1.01)),
+    (50, (0.40, MIN_LINE_PROB)),
+    (100, (0.0, 0.40)),
+]
+RISK_TIER_LEVELS = {"safest": 0, "balanced": 50, "risky": 100}
+# Kept for backward compatibility / anything that wants the old named bands
+# directly -- computed FROM the anchors so the two can never drift apart.
+RISK_BANDS = {name: RISK_ANCHORS[level // 50][1] for name, level in RISK_TIER_LEVELS.items()}
+
+
+def risk_band(risk_level):
+    """(lo, hi) hit_probability band for a risk dial value in [0, 100].
+    Out-of-range values clamp rather than raise -- a UI slider should never
+    be able to 500 this by sending 101."""
+    level = max(0.0, min(100.0, float(risk_level)))
+    for (r0, (lo0, hi0)), (r1, (lo1, hi1)) in zip(RISK_ANCHORS, RISK_ANCHORS[1:]):
+        if r0 <= level <= r1:
+            frac = (level - r0) / (r1 - r0)
+            return (lo0 + (lo1 - lo0) * frac, hi0 + (hi1 - hi0) * frac)
+    return RISK_ANCHORS[-1][1]  # unreachable given the clamp above; no silent guess
 
 # Phrase -> stat key. Deliberately explicit rather than fuzzy-matched, same
 # reasoning as odds_fanduel.MARKET_MAP: a silent mis-mapping here would
@@ -127,10 +153,19 @@ def _team_names():
 @dataclass
 class ParlayRequest:
     prop_counts: dict           # {"home_runs": 2, "doubles": 1, "triples": 1}
-    risk_tier: str = "safest"   # "safest" | "balanced" | "risky"
+    risk_tier: str = "safest"   # "safest" | "balanced" | "risky" -- legacy 3-way input
+    risk_level: float = None    # 0-100 risk dial; overrides risk_tier when set
     game_filter: list = field(default_factory=list)   # team-name substrings, ANDed
     stake: float = None
     target_payout: float = None
+
+    def effective_risk_level(self):
+        """The numeric dial value this request actually resolves to --
+        risk_level directly if the caller (a real slider, eventually) set
+        one, else the anchor point for the named risk_tier."""
+        if self.risk_level is not None:
+            return self.risk_level
+        return RISK_TIER_LEVELS.get(self.risk_tier, 0)
 
 
 def parse_request(text):
@@ -157,6 +192,14 @@ def parse_request(text):
         stake = float(m_range.group(1).replace(",", ""))
         target_payout = float(m_range.group(2).replace(",", ""))
 
+    # An explicit dial value ("risk level 70", "70% risk") wins outright --
+    # this is the path a real risk-bar UI would use, sending a number
+    # instead of asking the parser to guess a tier from adjectives.
+    risk_level = None
+    m_level = re.search(r"risk(?:\s*(?:level|bar))?\s*(?:of|:|is)?\s*(\d{1,3})\s*%?", t)
+    if m_level:
+        risk_level = max(0.0, min(100.0, float(m_level.group(1))))
+
     if any(w in t for w in ("riskier", "risky", "longshot", "moonshot", "makes me rich")):
         risk_tier = "risky"
     elif any(w in t for w in ("safest", "safe", "best", "most likely")):
@@ -166,7 +209,7 @@ def parse_request(text):
 
     game_filter = [name for name in _team_names() if len(name) > 3 and name.lower() in t]
 
-    return ParlayRequest(prop_counts=prop_counts, risk_tier=risk_tier,
+    return ParlayRequest(prop_counts=prop_counts, risk_tier=risk_tier, risk_level=risk_level,
                          game_filter=game_filter, stake=stake, target_payout=target_payout)
 
 
@@ -201,8 +244,8 @@ def load_todays_pool(date=None):
     return pool
 
 
-def _select_legs(pool, prop_counts, risk_tier):
-    lo, hi = RISK_BANDS.get(risk_tier, RISK_BANDS["safest"])
+def _select_legs(pool, prop_counts, risk_level):
+    lo, hi = risk_band(risk_level)
     eligible = [c for c in pool if lo <= c["hit_probability"] < hi]
 
     by_stat = defaultdict(list)
@@ -247,7 +290,7 @@ def build_parlay(request, pool=None, price_legs=True):
                      if all(name.lower() in (c.get("matchup") or "").lower()
                             for name in request.game_filter)]
 
-    legs, shortfalls = _select_legs(candidates, request.prop_counts, request.risk_tier)
+    legs, shortfalls = _select_legs(candidates, request.prop_counts, request.effective_risk_level())
 
     if price_legs and legs:
         try:

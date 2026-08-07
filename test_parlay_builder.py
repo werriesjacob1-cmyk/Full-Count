@@ -80,11 +80,43 @@ check(r.prop_counts == {"triples": 1, "stolen_base": 1},
 r = pb.parse_request("nonsense request with no recognizable props")
 check(r.prop_counts == {}, "unrecognised text extracts nothing rather than guessing")
 
-head("2. _select_legs -- risk bands and correlation screening")
+r = pb.parse_request("risk level 70, 2 home runs")
+check(r.risk_level == 70.0, "an explicit numeric risk dial in text is parsed directly",
+      f"got {r.risk_level}")
+check(r.effective_risk_level() == 70.0,
+      "an explicit risk_level wins over the word-based risk_tier default")
+
+r = pb.parse_request("2 home runs")
+check(r.risk_level is None and r.effective_risk_level() == 50,
+      "no explicit dial value falls back to the word-based tier's anchor "
+      "-- no risk words at all defaults to the balanced tier (50), same as risk_tier itself",
+      f"risk_level={r.risk_level} effective={r.effective_risk_level()}")
+
+head("2. risk_band -- continuous dial, and its named-tier anchors")
 
 lo, hi = pb.RISK_BANDS["safest"]
 check(lo == pb.MIN_LINE_PROB, "safest band floor matches MIN_LINE_PROB exactly",
       f"got {lo} vs {pb.MIN_LINE_PROB}")
+
+check(pb.risk_band(0) == pb.RISK_BANDS["safest"],
+      "risk_band(0) matches the safest named tier exactly")
+check(pb.risk_band(50) == pb.RISK_BANDS["balanced"],
+      "risk_band(50) matches the balanced named tier exactly")
+check(pb.risk_band(100) == pb.RISK_BANDS["risky"],
+      "risk_band(100) matches the risky named tier exactly")
+
+lo25, hi25 = pb.risk_band(25)
+lo0, hi0 = pb.risk_band(0)
+lo50, hi50 = pb.risk_band(50)
+check(lo0 > lo25 > lo50 and hi0 > hi25 > hi50,
+      "a dial value between two anchors interpolates strictly between their bands, "
+      "not just snapping to the nearer one",
+      f"lo0={lo0} lo25={lo25} lo50={lo50} hi0={hi0} hi25={hi25} hi50={hi50}")
+
+check(pb.risk_band(-10) == pb.risk_band(0) and pb.risk_band(150) == pb.risk_band(100),
+      "out-of-range dial values clamp into [0, 100] instead of raising")
+
+head("3. _select_legs -- risk bands and correlation screening")
 
 a = batter("A. Batter", "Mets", "Mets @ Pirates", 1, "hits", 0.70)
 b = batter("B. Batter", "Mets", "Mets @ Pirates", 1, "hits", 0.65)
@@ -97,7 +129,7 @@ p_opposing = pitcher("Home SP", "Pirates", "Mets @ Pirates", 1, "home",
                      "strikeouts", 0.66)
 pool = [a, b, p_own_team]
 
-legs, shortfalls = pb._select_legs(pool, {"hits": 1, "strikeouts": 1}, "safest")
+legs, shortfalls = pb._select_legs(pool, {"hits": 1, "strikeouts": 1}, pb.RISK_TIER_LEVELS["safest"])
 check(len(legs) == 2 and not shortfalls,
       "request across two stats fills both legs when the candidates are "
       "positively (not negatively) correlated",
@@ -111,7 +143,7 @@ check(pb.corr.classify(legs[0], legs[1]).label != "negative",
 # building a bad parlay.
 c = batter("C. Batter", "Mets", "Mets @ Pirates", 1, "hits", 0.72)
 pool2 = [c, p_opposing]
-legs2, shortfalls2 = pb._select_legs(pool2, {"hits": 1, "strikeouts": 1}, "safest")
+legs2, shortfalls2 = pb._select_legs(pool2, {"hits": 1, "strikeouts": 1}, pb.RISK_TIER_LEVELS["safest"])
 check(len(legs2) == 1 and len(shortfalls2) == 1,
       "when the only hits candidate is negatively correlated with the only "
       "strikeout candidate, one leg is dropped as a shortfall rather than "
@@ -120,13 +152,13 @@ check(len(legs2) == 1 and len(shortfalls2) == 1,
 
 # duplicate-player guard: same player can't fill two different legs.
 dup_pool = [dict(a, projection={"stat": "total_bases"}), a]
-legs3, _ = pb._select_legs(dup_pool, {"hits": 1, "total_bases": 1}, "safest")
+legs3, _ = pb._select_legs(dup_pool, {"hits": 1, "total_bases": 1}, pb.RISK_TIER_LEVELS["safest"])
 names3 = [l["player_id"] for l in legs3]
 check(len(names3) == len(set(names3)),
       "the same player is never selected twice across different legs",
       f"got {names3}")
 
-head("3. build_parlay -- end to end with a synthetic pool, no network")
+head("4. build_parlay -- end to end with a synthetic pool, no network")
 
 req = pb.ParlayRequest(prop_counts={"hits": 1, "strikeouts": 1}, risk_tier="safest")
 res = pb.build_parlay(req, pool=[a, b, p_own_team], price_legs=False)
@@ -155,7 +187,18 @@ game_filtered = pb.build_parlay(
 check(game_filtered["legs"] == [] and game_filtered["shortfalls"],
       "a game filter that matches nothing in the pool yields a shortfall, not a leg from the wrong game")
 
-head("4. sanity against today's real pool, if it exists")
+# A numeric risk_level flows all the way through build_parlay, not just
+# _select_legs directly -- e.g. dialed all the way to 100 (riskiest), the
+# 0.70/0.65/0.68-probability synthetic pool has nothing below the risky
+# band's 0.40 ceiling, so it should come back empty with a shortfall.
+risky_dial = pb.build_parlay(
+    pb.ParlayRequest(prop_counts={"hits": 1}, risk_level=100),
+    pool=[a, b, p_own_team], price_legs=False)
+check(risky_dial["legs"] == [] and risky_dial["shortfalls"],
+      "dialing risk_level to 100 excludes safe-band candidates that don't belong in a risky parlay",
+      f"legs={risky_dial['legs']} shortfalls={risky_dial['shortfalls']}")
+
+head("5. sanity against today's real pool, if it exists")
 try:
     pool_real = pb.load_todays_pool()
     if pool_real:
