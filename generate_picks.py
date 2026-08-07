@@ -1580,6 +1580,46 @@ def score_batter(batter, gm, opp_sp_row, opp_sp_id, opp_sp_hand, park_wx, batter
             _sig(signals, "hard_hit_105_rate", r105["p_hat"],
                  clamp((r105["p_hat"] - 0.215) * 25, -5, 5))
 
+    # How the market has MOVED on this batter's team since the day opened.
+    # Distinct from every other signal here: the rest describe the player or
+    # the matchup, this describes what everyone else has concluded since. A
+    # team total climbing half a run between the morning and first pitch is
+    # information arriving -- a scratch, a wind shift, a bullpen note -- that
+    # our own inputs may not carry yet. Keyed by full team name, which was
+    # verified to match game_meta's names 22-for-22 rather than assumed.
+    lmv = (ex.get("line_move") or {}).get(batter.get("team"))
+    if lmv and lmv.get("move") is not None and (lmv.get("hours") or 0) >= 1.0:
+        # The move itself, in runs of implied team total. Guarded on elapsed
+        # time because a "move" measured between two captures a minute apart
+        # is rounding, not information.
+        _sig(signals, "team_total_move", lmv["move"], clamp(lmv["move"] * 6, -6, 6))
+    if lmv and lmv.get("current") is not None:
+        _sig(signals, "team_total_open", lmv["current"],
+             clamp((lmv["current"] - 4.5) * 4, -6, 6))
+    # Where the money disagrees with the tickets. A line moving toward the
+    # side taking the MINORITY of bets but the majority of the money is the
+    # classic sharp footprint; recorded raw so that claim can be tested here
+    # rather than inherited from betting folklore.
+    if lmv and lmv.get("tickets_pct") and lmv.get("money_pct"):
+        split = lmv["money_pct"] - lmv["tickets_pct"]
+        _sig(signals, "money_ticket_split", split, clamp(split * 0.25, -5, 5))
+
+    # Schedule context. Already computed in game_meta for the report's flag
+    # lines and never once read by scoring.
+    if gm.get("is_getaway") is not None:
+        # Getaway day: the last game of a series, often an early start with
+        # travel afterwards and regulars rested. Whether that actually moves
+        # a hitter's line is exactly what the measurement is for.
+        _sig(signals, "getaway_day", 1 if gm.get("is_getaway") else 0,
+             -2 if gm.get("is_getaway") else 0)
+    if gm.get("series_game") is not None:
+        # Later games in a series mean a lineup that has already seen this
+        # staff. NOT the same field as the pitching "opener" that
+        # OPENER_BF_THRESHOLD handles -- game_meta's is_opener means SERIES
+        # opener, and conflating the two would be a real bug.
+        _sig(signals, "series_game", gm["series_game"],
+             clamp((gm["series_game"] - 1) * 1.0, 0, 3))
+
     return {
         "type": "batter", "name": name, "player_id": bid, "team": batter.get("team"), "matchup": gm["matchup"],
         "game_pk": gm.get("game_pk"), "prop": prop, "projection": {"stat": "total_bases", "value": projected_tb},
@@ -2255,6 +2295,10 @@ def _build_and_score():
         ("team_bat", lambda: _src.team_batting_table()),
         ("pull", lambda: _src.pull_rates()),
         ("pitch_q", lambda: _src.pitch_quality()),
+        # The one input in this whole project that cannot be re-fetched later.
+        # odds_snapshot.py has been writing hourly captures since the start
+        # precisely so this would exist, and nothing has ever read them.
+        ("line_move", lambda: _src.line_movement()),
     ):
         try:
             # NOT `fn() or {}`: several of these return DataFrames, and the
