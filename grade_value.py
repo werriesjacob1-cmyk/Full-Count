@@ -55,6 +55,14 @@ def closing_prices(date):
         payload = json.load(f)
     best = {}
     for snap in sorted(payload.get("snapshots", []), key=lambda s: s.get("taken_at", "")):
+        # A sweep that ran out of its time budget covers only part of the
+        # slate (see prop_snapshot.SWEEP_BUDGET_S). It is still worth keeping
+        # — a partial capture beats none — but the games it never reached keep
+        # whatever price an earlier sweep left, so their "closing" price is
+        # really a stale one. Recorded on the row so a settled bet can be
+        # traced back to how fresh its price actually was.
+        cov = snap.get("coverage") or {}
+        partial = cov.get("complete") is False
         for r in snap.get("rows", []):
             if r.get("in_play"):
                 continue  # in-play is a different bet from the one screened
@@ -62,7 +70,8 @@ def closing_prices(date):
             # Later pregame snapshots overwrite earlier ones, so what remains
             # after the sweep is the closing number.
             best[key] = {"american": r["american"], "player": r["player"],
-                         "game": r.get("game"), "taken_at": snap.get("taken_at")}
+                         "game": r.get("game"), "taken_at": snap.get("taken_at"),
+                         "from_partial_sweep": partial}
     return best
 
 

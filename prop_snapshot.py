@@ -36,23 +36,60 @@ right up to first pitch, and each row records whether the game had started.
 import json
 import os
 import sys
+import time
 from datetime import datetime, timezone
 
 import odds_fanduel as fd
 
 OUT_DIR = os.environ.get("PROPS_DIR", "data/props")
 
+# Wall-clock budget for one sweep, in seconds.
+#
+# WHY THIS EXISTS, measured rather than guessed. A healthy sweep of a 15-game
+# slate takes about 24 seconds (15 events at ~1.6s each, timed live). But
+# odds_fanduel._get() falls back across four regional hosts at a 20-second
+# timeout each, so an event whose hosts all hang costs 80 seconds, and a
+# fully unreachable FanDuel costs 4 x 20 x 15 = 20 MINUTES. Nothing was
+# written until the whole sweep finished, so a runner killing the job partway
+# threw away every price already collected.
+#
+# That is not hypothetical. The scheduled runs at 16:00 and 18:20 UTC on
+# 2026-08-06 were both killed at almost exactly 15 minutes with no data
+# committed — the pregame window where closing prices matter most, and prices
+# are the one input in this project that cannot be re-fetched later.
+#
+# 240s sits well under the job's 6-minute limit, so this guard trips first and
+# writes a partial sweep. A slate with three quarters of its prices captured
+# is worth immeasurably more than a slate with none.
+SWEEP_BUDGET_S = float(os.environ.get("PROP_SWEEP_BUDGET_S", "240"))
 
-def capture():
-    """One full sweep of the slate. Returns (taken_at, rows)."""
+
+def capture(budget_s=None):
+    """One sweep of the slate, bounded in time.
+
+    Returns (taken_at, rows, coverage) where coverage reports how much of the
+    slate was actually reached — a partial sweep must be visibly partial, or
+    a consumer would read thin coverage as thin markets."""
+    budget = SWEEP_BUDGET_S if budget_s is None else budget_s
+    started = time.monotonic()
     taken_at = datetime.now(timezone.utc).isoformat()
     games = fd.list_games()
     rows = []
+    done = 0
     for event_id, name, start in games:
+        if time.monotonic() - started > budget:
+            # Stop and keep what we have. The alternative is not "more data",
+            # it is "no data", because the runner kills the job before the
+            # write.
+            print(f"Sweep budget of {budget:.0f}s reached after {done}/{len(games)} "
+                  f"games — writing a partial snapshot rather than losing it.")
+            break
         try:
             props = fd._event_props(event_id)
         except Exception:
+            done += 1
             continue
+        done += 1
         for p in props:
             rows.append({
                 "taken_at": taken_at,
@@ -69,7 +106,9 @@ def capture():
                 # choose, and so the transition itself is visible.
                 "in_play": p["in_play"],
             })
-    return taken_at, rows
+    return taken_at, rows, {"games_total": len(games), "games_captured": done,
+                            "complete": done == len(games),
+                            "elapsed_s": round(time.monotonic() - started, 1)}
 
 
 def main():
@@ -78,7 +117,7 @@ def main():
     path = os.path.join(OUT_DIR, f"props_{date_str}.json")
 
     try:
-        taken_at, rows = capture()
+        taken_at, rows, coverage = capture()
     except Exception as e:
         # A missed hour is bad; a broken workflow that stops all future hours
         # is worse. Never fail the job over one bad response.
@@ -103,7 +142,11 @@ def main():
     minute = taken_at[:16]
     payload["snapshots"] = [s for s in payload.get("snapshots", [])
                             if s.get("taken_at", "")[:16] != minute]
-    payload["snapshots"].append({"taken_at": taken_at, "rows": rows})
+    # Coverage travels WITH the snapshot. grade_value.py settles at the last
+    # pregame price, and a truncated sweep that silently looks like a
+    # complete one would let it treat a stale price as the close.
+    payload["snapshots"].append({"taken_at": taken_at, "coverage": coverage,
+                                 "rows": rows})
     payload["snapshots"].sort(key=lambda s: s["taken_at"])
 
     with open(path, "w", encoding="utf-8") as f:
@@ -111,8 +154,11 @@ def main():
 
     live = sum(1 for r in rows if r["in_play"])
     players = len({r["player_norm"] for r in rows})
+    cov = ("complete" if coverage["complete"] else
+           f"PARTIAL {coverage['games_captured']}/{coverage['games_total']} games")
     print(f"Recorded {len(rows)} prop prices for {players} players at {taken_at} "
-          f"({live} in-play, {len(rows)-live} pregame) — "
+          f"({live} in-play, {len(rows)-live} pregame) — {cov} in "
+          f"{coverage['elapsed_s']}s — "
           f"{len(payload['snapshots'])} snapshot(s) today in {path}")
     return 0
 

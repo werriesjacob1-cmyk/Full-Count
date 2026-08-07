@@ -158,6 +158,34 @@ jobs:
         if: ${{ !(github.event_name == 'workflow_dispatch' && (inputs.dry_run || inputs.skip_picks)) }}
         run: python3 check_scratches.py || true
 
+      - name: Build the value board against live prices
+        # The board that actually gets bet, and until now it only existed if
+        # someone ran it by hand. generate_picks.py ranks by chance of
+        # cashing; this takes those same scored candidates, pairs them with
+        # FanDuel's live prices, and tiers what is worth taking at what the
+        # market is charging — including the home-run section.
+        #
+        # Written to output/ so it is committed with the board rather than
+        # living only in a log that scrolls past.
+        if: ${{ !(github.event_name == 'workflow_dispatch' && (inputs.dry_run || inputs.skip_picks)) }}
+        run: |
+          python3 value_board.py --json output/value_board_$(date -u +'%F').json || true
+
+      - name: Settle the value screen against captured prices
+        # THE FORWARD TEST, and it has never once run.
+        #
+        # Its own docstring is explicit that prices cannot be backfilled and
+        # that the screen can only ever be judged forward, against prices
+        # captured live — which is exactly why prop_snapshot.py runs hourly.
+        # That capture has been accumulating and nothing has ever settled it,
+        # so the screen's central claim has gone untested since the day it
+        # was written.
+        #
+        # Refuses to call a verdict under 200 settled bets on its own, so
+        # running it daily costs nothing and simply lets the record build.
+        if: ${{ !(github.event_name == 'workflow_dispatch' && inputs.dry_run) }}
+        run: python3 grade_value.py || true
+
       - name: Commit picks immediately
         # PICKS ARE COMMITTED BEFORE THE LONG REPORT RUNS, deliberately.
         #
@@ -184,7 +212,7 @@ jobs:
           # They are the record of every board generated that day, kept because
           # a later run overwrites the live file and the earlier board may be
           # the one that was actually bet.
-          git add output/top10_picks_*.md output/picks_*.json output/scratches_*.json results/*.json data/players/*.json
+          git add output/top10_picks_*.md output/picks_*.json output/scratches_*.json output/value_board_*.json results/*.json data/players/*.json
           if git diff --cached --quiet; then
             echo "No picks to commit."
             exit 0
