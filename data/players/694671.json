@@ -39,6 +39,82 @@
           "matchup": "San Francisco Giants @ Texas Rangers"
         }
       ]
+    },
+    {
+      "date": "2026-08-07",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 52.2,
+          "notable_signals": 0,
+          "matchup": "Baltimore Orioles @ Texas Rangers",
+          "game_pk": 822863,
+          "team": "Texas Rangers",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 38.8571,
+            "l7_avg_ev": 100.0,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 38.0,
+            "lineup_slot": 87.5,
+            "bullpen_fatigue": 44.4444,
+            "platoon_barrel_pct": 0.16,
+            "platoon_xwoba": 0.06,
+            "park_hand_index": 0.64,
+            "opp_catcher_framing": -0.48,
+            "days_rest": 2.0,
+            "consecutive_games": -2.4,
+            "pull_park_synergy": 0.2845,
+            "hard_hit_105_rate": 2.17,
+            "team_total_move": -6.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": 0.464,
+            "vs_rp_ops": 1.476
+          },
+          "hit_probability": 0.6377,
+          "raw_hit_probability": 0.6827,
+          "lift": 0.0867,
+          "reliability": "B",
+          "sample_n": 63,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 57.4,
+          "notable_signals": 1,
+          "matchup": "Baltimore Orioles @ Texas Rangers",
+          "game_pk": 822863,
+          "team": "Texas Rangers",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "opp_team_cs_pct": -3.6,
+            "sprint_speed": 34.375,
+            "catcher_poptime": 77.1429,
+            "on_base": 84.6449
+          },
+          "hit_probability": 0.1864,
+          "raw_hit_probability": 0.1187,
+          "lift": null,
+          "reliability": "B",
+          "sample_n": 63,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1
+          }
+        }
+      ]
     }
   ]
 }

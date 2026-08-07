@@ -1,0 +1,61 @@
+{
+  "player_id": 554430,
+  "name": "Zack Wheeler",
+  "snapshots": [
+    {
+      "date": "2026-08-07",
+      "evaluations": [
+        {
+          "prop": "Over 5.5 Strikeouts",
+          "type": "pitcher",
+          "score": 68.6,
+          "notable_signals": 0,
+          "matchup": "Toronto Blue Jays @ Philadelphia Phillies",
+          "game_pk": 823428,
+          "team": "Philadelphia Phillies",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "same_hand_ratio": 100.0,
+            "l14_k_pct": 100.0,
+            "env_neutral": 50.0
+          },
+          "hit_probability": 0.6133,
+          "raw_hit_probability": 0.6275,
+          "lift": 0.2366,
+          "reliability": "D",
+          "sample_n": 18,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 5.5,
+            "needs": 6
+          }
+        },
+        {
+          "prop": "Toronto Blue Jays scoreless in the 1st",
+          "type": "pitcher",
+          "score": 83.3,
+          "notable_signals": 0,
+          "matchup": "Toronto Blue Jays @ Philadelphia Phillies",
+          "game_pk": 823428,
+          "team": "Philadelphia Phillies",
+          "side": "home",
+          "lean": "NRFI",
+          "signals": {
+            "yrfi_rate": 16.7,
+            "fi_n_starts": 18.0
+          },
+          "hit_probability": 0.6965,
+          "raw_hit_probability": 0.7387,
+          "lift": -0.0095,
+          "reliability": "D",
+          "sample_n": 18,
+          "projection": {
+            "stat": "first_inning_run",
+            "value": 16.7
+          }
+        }
+      ]
+    }
+  ]
+}

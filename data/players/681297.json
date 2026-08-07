@@ -58,6 +58,81 @@
           "matchup": "Los Angeles Angels @ Baltimore Orioles"
         }
       ]
+    },
+    {
+      "date": "2026-08-07",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 55.0,
+          "notable_signals": 1,
+          "matchup": "Baltimore Orioles @ Texas Rangers",
+          "game_pk": 822863,
+          "team": "Baltimore Orioles",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 51.7143,
+            "l7_avg_ev": 57.2917,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 47.3333,
+            "lineup_slot": 25.0,
+            "bullpen_fatigue": 55.5556,
+            "platoon_barrel_pct": 3.36,
+            "platoon_xwoba": 1.2,
+            "park_hand_index": -0.25,
+            "opp_catcher_framing": 0.24,
+            "days_rest": 0.0,
+            "pull_park_synergy": -0.098,
+            "hard_hit_105_rate": 0.18,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": -0.08,
+            "vs_rp_ops": -1.152
+          },
+          "hit_probability": 0.4823,
+          "raw_hit_probability": 0.513,
+          "lift": -0.193,
+          "reliability": "A",
+          "sample_n": 96,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 44.0,
+          "notable_signals": 0,
+          "matchup": "Baltimore Orioles @ Texas Rangers",
+          "game_pk": 822863,
+          "team": "Baltimore Orioles",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "opp_team_cs_pct": 1.92,
+            "sprint_speed": 18.75,
+            "catcher_poptime": 100.0,
+            "on_base": 29.9424
+          },
+          "hit_probability": 0.1705,
+          "raw_hit_probability": 0.0883,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 96,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1
+          }
+        }
+      ]
     }
   ]
 }

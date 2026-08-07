@@ -1,6 +1,6 @@
 {
   "player_id": 660670,
-  "name": "Ronald Acu\u00f1a Jr.",
+  "name": "Ronald Acuna",
   "snapshots": [
     {
       "date": "2026-08-04",
@@ -35,6 +35,56 @@
           "score": 61.7,
           "notable_signals": 0,
           "matchup": "Miami Marlins @ Atlanta Braves"
+        }
+      ]
+    },
+    {
+      "date": "2026-08-07",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 80.1,
+          "notable_signals": 2,
+          "matchup": "Atlanta Braves @ New York Yankees",
+          "game_pk": 823515,
+          "team": "Atlanta Braves",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 17.7143,
+            "pitch_exploit": 19.4286,
+            "l7_avg_ev": 75.5556,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 59.7,
+            "season_barrel_pct": 74.6667,
+            "lineup_slot": 100.0,
+            "bullpen_fatigue": 64.1026,
+            "platoon_barrel_pct": 3.6,
+            "platoon_xwoba": 0.96,
+            "park_hand_index": 0.68,
+            "opp_catcher_framing": -2.28,
+            "days_rest": 0.0,
+            "pull_park_synergy": 0.1833,
+            "hard_hit_105_rate": 3.6125,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": -1.104,
+            "vs_rp_ops": -0.168
+          },
+          "hit_probability": 0.6206,
+          "raw_hit_probability": 0.6457,
+          "lift": 0.0696,
+          "reliability": "B",
+          "sample_n": 63,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
         }
       ]
     }

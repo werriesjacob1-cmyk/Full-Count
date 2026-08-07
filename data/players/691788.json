@@ -37,6 +37,57 @@
           "matchup": "Miami Marlins @ Atlanta Braves"
         }
       ]
+    },
+    {
+      "date": "2026-08-07",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 72.3,
+          "notable_signals": 2,
+          "matchup": "Los Angeles Angels @ Miami Marlins",
+          "game_pk": 823836,
+          "team": "Miami Marlins",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 100.0,
+            "pitch_exploit": 8.0,
+            "l7_avg_ev": 94.375,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 15.0,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 48.6667,
+            "lineup_slot": 12.5,
+            "bullpen_fatigue": 55.5556,
+            "platoon_barrel_pct": 1.84,
+            "platoon_xwoba": 1.32,
+            "park_hand_index": -1.5,
+            "opp_catcher_framing": 1.08,
+            "days_rest": 2.0,
+            "pull_park_synergy": -0.9502,
+            "hard_hit_105_rate": 0.67,
+            "team_total_move": 0.0,
+            "team_total_open": 0.0,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": 1.0,
+            "vs_rp_ops": 0.948
+          },
+          "hit_probability": 0.5887,
+          "raw_hit_probability": 0.6338,
+          "lift": -0.0866,
+          "reliability": "B",
+          "sample_n": 66,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

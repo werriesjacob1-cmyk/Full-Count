@@ -25,6 +25,55 @@
           "matchup": "San Francisco Giants @ Texas Rangers"
         }
       ]
+    },
+    {
+      "date": "2026-08-07",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 70.9,
+          "notable_signals": 1,
+          "matchup": "Baltimore Orioles @ Texas Rangers",
+          "game_pk": 822863,
+          "team": "Texas Rangers",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 38.8571,
+            "l7_avg_ev": 100.0,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 81.3333,
+            "lineup_slot": 75.0,
+            "bullpen_fatigue": 44.4444,
+            "platoon_barrel_pct": 5.0,
+            "platoon_xwoba": 2.58,
+            "park_hand_index": -0.25,
+            "opp_catcher_framing": -0.48,
+            "days_rest": 4.0,
+            "pull_park_synergy": -0.168,
+            "hard_hit_105_rate": 2.925,
+            "team_total_move": -6.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": 0.432,
+            "vs_rp_ops": 0.072
+          },
+          "hit_probability": 0.5884,
+          "raw_hit_probability": 0.6334,
+          "lift": -0.0869,
+          "reliability": "B",
+          "sample_n": 55,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

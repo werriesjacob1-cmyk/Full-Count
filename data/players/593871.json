@@ -25,6 +25,52 @@
           "matchup": "New York Mets @ Cleveland Guardians"
         }
       ]
+    },
+    {
+      "date": "2026-08-07",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 67.6,
+          "notable_signals": 2,
+          "matchup": "New York Mets @ Pittsburgh Pirates",
+          "game_pk": 823349,
+          "team": "New York Mets",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "sp_era_weak": 18.5714,
+            "l7_avg_ev": 86.6667,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 52.0,
+            "season_barrel_pct": 0.0,
+            "lineup_slot": 12.5,
+            "bullpen_fatigue": 55.5556,
+            "platoon_barrel_pct": -3.52,
+            "platoon_xwoba": -4.68,
+            "opp_catcher_framing": -0.12,
+            "days_rest": 2.0,
+            "hard_hit_105_rate": -0.5775,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": 2.96,
+            "vs_rp_ops": -0.672
+          },
+          "hit_probability": 0.533,
+          "raw_hit_probability": 0.5701,
+          "lift": -0.1423,
+          "reliability": "C",
+          "sample_n": 30,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

@@ -1,0 +1,61 @@
+{
+  "player_id": 592662,
+  "name": "Robbie Ray",
+  "snapshots": [
+    {
+      "date": "2026-08-07",
+      "evaluations": [
+        {
+          "prop": "Over 3.5 Strikeouts",
+          "type": "pitcher",
+          "score": 47.8,
+          "notable_signals": 0,
+          "matchup": "Houston Astros @ San Diego Padres",
+          "game_pk": 823266,
+          "team": "San Diego Padres",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "same_hand_ratio": 33.3333,
+            "l14_k_pct": 49.4118,
+            "env_neutral": 50.0
+          },
+          "hit_probability": 0.6428,
+          "raw_hit_probability": 0.7363,
+          "lift": -0.0711,
+          "reliability": "D",
+          "sample_n": 21,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 3.5,
+            "needs": 4
+          }
+        },
+        {
+          "prop": "Houston Astros scoreless in the 1st",
+          "type": "pitcher",
+          "score": 82.6,
+          "notable_signals": 0,
+          "matchup": "Houston Astros @ San Diego Padres",
+          "game_pk": 823266,
+          "team": "San Diego Padres",
+          "side": "home",
+          "lean": "NRFI",
+          "signals": {
+            "yrfi_rate": 17.4,
+            "fi_n_starts": 23.0
+          },
+          "hit_probability": 0.6974,
+          "raw_hit_probability": 0.7428,
+          "lift": -0.0086,
+          "reliability": "D",
+          "sample_n": 23,
+          "projection": {
+            "stat": "first_inning_run",
+            "value": 17.4
+          }
+        }
+      ]
+    }
+  ]
+}

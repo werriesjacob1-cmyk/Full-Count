@@ -1,6 +1,6 @@
 {
   "player_id": 683748,
-  "name": "Victor Mesa Jr.",
+  "name": "Victor Mesa",
   "snapshots": [
     {
       "date": "2026-08-05",
@@ -18,6 +18,82 @@
           "score": 39.1,
           "notable_signals": 0,
           "matchup": "Tampa Bay Rays @ Colorado Rockies"
+        }
+      ]
+    },
+    {
+      "date": "2026-08-07",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 69.2,
+          "notable_signals": 3,
+          "matchup": "Tampa Bay Rays @ Seattle Mariners",
+          "game_pk": 823103,
+          "team": "Tampa Bay Rays",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 27.4286,
+            "l7_avg_ev": 65.8594,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 7.725,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 57.3333,
+            "lineup_slot": 37.5,
+            "bullpen_fatigue": 64.1026,
+            "platoon_barrel_pct": 5.0,
+            "platoon_xwoba": 1.08,
+            "park_hand_index": 1.57,
+            "opp_catcher_framing": 0.6,
+            "days_rest": 2.0,
+            "pull_park_synergy": 0.7144,
+            "hard_hit_105_rate": 1.0,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": -2.456,
+            "vs_rp_ops": -1.884
+          },
+          "hit_probability": 0.5552,
+          "raw_hit_probability": 0.5953,
+          "lift": -0.1201,
+          "reliability": "C",
+          "sample_n": 43,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 39.1,
+          "notable_signals": 0,
+          "matchup": "Tampa Bay Rays @ Seattle Mariners",
+          "game_pk": 823103,
+          "team": "Tampa Bay Rays",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "opp_team_cs_pct": 0.9,
+            "sprint_speed": 18.75,
+            "catcher_poptime": 74.2857,
+            "on_base": 40.499
+          },
+          "hit_probability": 0.1732,
+          "raw_hit_probability": 0.0936,
+          "lift": null,
+          "reliability": "C",
+          "sample_n": 43,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1
+          }
         }
       ]
     }

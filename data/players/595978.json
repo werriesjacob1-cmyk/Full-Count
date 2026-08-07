@@ -13,6 +13,55 @@
           "matchup": "New York Mets @ Cleveland Guardians"
         }
       ]
+    },
+    {
+      "date": "2026-08-07",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 62.8,
+          "notable_signals": 2,
+          "matchup": "Cleveland Guardians @ Chicago White Sox",
+          "game_pk": 824566,
+          "team": "Cleveland Guardians",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 94.8571,
+            "pitch_exploit": 5.7143,
+            "l7_avg_ev": 100.0,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 11.1,
+            "park_hr_index": 51.9,
+            "season_barrel_pct": 12.0,
+            "lineup_slot": 12.5,
+            "bullpen_fatigue": 59.5238,
+            "platoon_barrel_pct": -3.28,
+            "platoon_xwoba": -1.32,
+            "opp_catcher_framing": 0.24,
+            "days_rest": 4.0,
+            "hard_hit_105_rate": -1.5225,
+            "team_total_move": 0.0,
+            "team_total_open": 0.0,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": -0.864,
+            "vs_rp_ops": -0.552
+          },
+          "hit_probability": 0.6054,
+          "raw_hit_probability": 0.6134,
+          "lift": 0.0544,
+          "reliability": "B",
+          "sample_n": 52,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

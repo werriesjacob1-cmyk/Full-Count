@@ -25,6 +25,57 @@
           "matchup": "San Diego Padres @ Arizona Diamondbacks"
         }
       ]
+    },
+    {
+      "date": "2026-08-07",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 70.0,
+          "notable_signals": 2,
+          "matchup": "Houston Astros @ San Diego Padres",
+          "game_pk": 823266,
+          "team": "San Diego Padres",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 100.0,
+            "pitch_exploit": 20.0,
+            "l7_avg_ev": 70.0543,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 39.6,
+            "season_barrel_pct": 54.0,
+            "lineup_slot": 62.5,
+            "bullpen_fatigue": 64.1026,
+            "platoon_barrel_pct": 3.52,
+            "platoon_xwoba": 0.78,
+            "park_hand_index": 0.01,
+            "opp_catcher_framing": 1.08,
+            "days_rest": 0.0,
+            "consecutive_games": -0.6,
+            "pull_park_synergy": 0.0036,
+            "hard_hit_105_rate": 1.8625,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": 0.12,
+            "vs_rp_ops": 1.884
+          },
+          "hit_probability": 0.6223,
+          "raw_hit_probability": 0.6493,
+          "lift": 0.0713,
+          "reliability": "A",
+          "sample_n": 85,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

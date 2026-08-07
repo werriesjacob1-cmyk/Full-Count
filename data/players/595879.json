@@ -1,6 +1,6 @@
 {
   "player_id": 595879,
-  "name": "Javier B\u00e1ez",
+  "name": "Javier Baez",
   "snapshots": [
     {
       "date": "2026-08-05",
@@ -23,6 +23,49 @@
           "score": 21.9,
           "notable_signals": 0,
           "matchup": "Detroit Tigers @ Seattle Mariners"
+        }
+      ]
+    },
+    {
+      "date": "2026-08-07",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 48.8,
+          "notable_signals": 3,
+          "matchup": "Detroit Tigers @ San Francisco Giants",
+          "game_pk": 823191,
+          "team": "Detroit Tigers",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 65.0,
+            "l7_avg_ev": 0.0,
+            "l7_barrel_pct": 80.7143,
+            "park_hr_index": 28.3,
+            "season_barrel_pct": 0.0,
+            "lineup_slot": 12.5,
+            "bullpen_fatigue": 66.6667,
+            "park_hand_index": -0.42,
+            "opp_catcher_framing": 1.44,
+            "days_rest": 0.0,
+            "pull_park_synergy": -0.2969,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": 1.632,
+            "vs_rp_ops": 1.236
+          },
+          "hit_probability": 0.6235,
+          "raw_hit_probability": 0.6519,
+          "lift": 0.0725,
+          "reliability": "C",
+          "sample_n": 30,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
         }
       ]
     }

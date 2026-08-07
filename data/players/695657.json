@@ -37,6 +37,54 @@
           "matchup": "Chicago White Sox @ Boston Red Sox"
         }
       ]
+    },
+    {
+      "date": "2026-08-07",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 49.4,
+          "notable_signals": 3,
+          "matchup": "Cleveland Guardians @ Chicago White Sox",
+          "game_pk": 824566,
+          "team": "Chicago White Sox",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 2.0,
+            "pitch_exploit": 7.4286,
+            "l7_avg_ev": 7.9464,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 51.9,
+            "season_barrel_pct": 64.0,
+            "lineup_slot": 62.5,
+            "bullpen_fatigue": 47.619,
+            "platoon_barrel_pct": 3.12,
+            "platoon_xwoba": 1.38,
+            "opp_catcher_framing": 0.48,
+            "days_rest": 0.0,
+            "hard_hit_105_rate": 2.685,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": -2.176,
+            "vs_rp_ops": -1.656
+          },
+          "hit_probability": 0.5913,
+          "raw_hit_probability": 0.6368,
+          "lift": -0.084,
+          "reliability": "A",
+          "sample_n": 108,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

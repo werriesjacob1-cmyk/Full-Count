@@ -58,6 +58,76 @@
           "matchup": "Athletics @ Cincinnati Reds"
         }
       ]
+    },
+    {
+      "date": "2026-08-07",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 61.8,
+          "notable_signals": 1,
+          "matchup": "Cincinnati Reds @ Washington Nationals",
+          "game_pk": 822699,
+          "team": "Cincinnati Reds",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "sp_era_weak": 29.1429,
+            "l7_avg_ev": 62.8906,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 59.9,
+            "season_barrel_pct": 76.6667,
+            "lineup_slot": 100.0,
+            "bullpen_fatigue": 76.9231,
+            "platoon_barrel_pct": 4.08,
+            "platoon_xwoba": 3.42,
+            "opp_catcher_framing": -0.12,
+            "days_rest": 0.0,
+            "hard_hit_105_rate": 5.0,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": 0.752,
+            "vs_rp_ops": 2.364
+          },
+          "hit_probability": 0.6475,
+          "raw_hit_probability": 0.7043,
+          "lift": 0.0965,
+          "reliability": "A",
+          "sample_n": 95,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 57.5,
+          "notable_signals": 1,
+          "matchup": "Cincinnati Reds @ Washington Nationals",
+          "game_pk": 822699,
+          "team": "Cincinnati Reds",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "opp_team_cs_pct": 0.54,
+            "sprint_speed": 37.5,
+            "catcher_poptime": 60.0,
+            "on_base": 100.0
+          },
+          "hit_probability": 0.2185,
+          "raw_hit_probability": 0.1748,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 95,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1
+          }
+        }
+      ]
     }
   ]
 }

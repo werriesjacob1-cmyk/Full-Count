@@ -1,0 +1,61 @@
+{
+  "player_id": 805673,
+  "name": "Zebby Matthews",
+  "snapshots": [
+    {
+      "date": "2026-08-07",
+      "evaluations": [
+        {
+          "prop": "Over 3.5 Strikeouts",
+          "type": "pitcher",
+          "score": 57.4,
+          "notable_signals": 0,
+          "matchup": "Minnesota Twins @ Milwaukee Brewers",
+          "game_pk": 823750,
+          "team": "Minnesota Twins",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "same_hand_ratio": 100.0,
+            "l14_k_pct": 55.2941,
+            "env_neutral": 50.0
+          },
+          "hit_probability": 0.6487,
+          "raw_hit_probability": 0.7584,
+          "lift": -0.0652,
+          "reliability": "D",
+          "sample_n": 14,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 3.5,
+            "needs": 4
+          }
+        },
+        {
+          "prop": "Milwaukee Brewers scoreless in the 1st",
+          "type": "pitcher",
+          "score": 53.3,
+          "notable_signals": 0,
+          "matchup": "Minnesota Twins @ Milwaukee Brewers",
+          "game_pk": 823750,
+          "team": "Minnesota Twins",
+          "side": "away",
+          "lean": "NRFI",
+          "signals": {
+            "yrfi_rate": 53.3,
+            "fi_n_starts": 15.0
+          },
+          "hit_probability": 0.6768,
+          "raw_hit_probability": 0.6525,
+          "lift": -0.0292,
+          "reliability": "D",
+          "sample_n": 15,
+          "projection": {
+            "stat": "first_inning_run",
+            "value": 53.3
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,62 @@
+{
+  "player_id": 669854,
+  "name": "Ronel Blanco",
+  "snapshots": [
+    {
+      "date": "2026-08-07",
+      "evaluations": [
+        {
+          "prop": "Over 4.5 Strikeouts",
+          "type": "pitcher",
+          "score": 46.9,
+          "notable_signals": 0,
+          "matchup": "Houston Astros @ San Diego Padres",
+          "game_pk": 823266,
+          "team": "Houston Astros",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "same_hand_ratio": 100.0,
+            "l14_k_pct": 21.1765,
+            "tto_penalty": -8.0,
+            "env_neutral": 50.0
+          },
+          "hit_probability": 0.6294,
+          "raw_hit_probability": 0.6864,
+          "lift": 0.0901,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 4.5,
+            "needs": 5
+          }
+        },
+        {
+          "prop": "San Diego Padres scoreless in the 1st",
+          "type": "pitcher",
+          "score": 36.7,
+          "notable_signals": 0,
+          "matchup": "Houston Astros @ San Diego Padres",
+          "game_pk": 823266,
+          "team": "Houston Astros",
+          "side": "away",
+          "lean": "NRFI",
+          "signals": {
+            "yrfi_rate": 33.3,
+            "fi_n_starts": 3.0
+          },
+          "hit_probability": 0.6886,
+          "raw_hit_probability": 0.7039,
+          "lift": -0.0174,
+          "reliability": "D",
+          "sample_n": 3,
+          "projection": {
+            "stat": "first_inning_run",
+            "value": 33.3
+          }
+        }
+      ]
+    }
+  ]
+}

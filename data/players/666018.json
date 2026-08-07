@@ -13,6 +13,56 @@
           "matchup": "Tampa Bay Rays @ Colorado Rockies"
         }
       ]
+    },
+    {
+      "date": "2026-08-07",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 72.4,
+          "notable_signals": 3,
+          "matchup": "Tampa Bay Rays @ Seattle Mariners",
+          "game_pk": 823103,
+          "team": "Tampa Bay Rays",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 27.4286,
+            "l7_avg_ev": 72.5625,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 11.775,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 48.0,
+            "lineup_slot": 87.5,
+            "bullpen_fatigue": 64.1026,
+            "platoon_barrel_pct": 3.28,
+            "platoon_xwoba": 3.24,
+            "park_hand_index": 1.57,
+            "opp_catcher_framing": 0.6,
+            "days_rest": 2.0,
+            "pull_park_synergy": 0.4451,
+            "hard_hit_105_rate": 0.565,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": 0.024,
+            "vs_rp_ops": 1.056
+          },
+          "hit_probability": 0.6384,
+          "raw_hit_probability": 0.6843,
+          "lift": 0.0874,
+          "reliability": "A",
+          "sample_n": 111,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

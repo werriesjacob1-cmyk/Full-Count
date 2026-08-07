@@ -25,6 +25,47 @@
           "matchup": "Washington Nationals @ Philadelphia Phillies"
         }
       ]
+    },
+    {
+      "date": "2026-08-07",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 55.4,
+          "notable_signals": 0,
+          "matchup": "Cincinnati Reds @ Washington Nationals",
+          "game_pk": 822699,
+          "team": "Washington Nationals",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "l7_avg_ev": 87.0536,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 59.9,
+            "season_barrel_pct": 11.3333,
+            "lineup_slot": 50.0,
+            "bullpen_fatigue": 64.1026,
+            "opp_catcher_framing": 0.96,
+            "days_rest": 0.0,
+            "hard_hit_105_rate": -2.485,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": -0.88,
+            "vs_rp_ops": -0.396
+          },
+          "hit_probability": 0.629,
+          "raw_hit_probability": 0.6639,
+          "lift": 0.078,
+          "reliability": "B",
+          "sample_n": 74,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

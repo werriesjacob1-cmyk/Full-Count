@@ -39,6 +39,79 @@
           "matchup": "Toronto Blue Jays @ Chicago Cubs"
         }
       ]
+    },
+    {
+      "date": "2026-08-07",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 55.6,
+          "notable_signals": 0,
+          "matchup": "Chicago Cubs @ Kansas City Royals",
+          "game_pk": 824081,
+          "team": "Chicago Cubs",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 0.0,
+            "l7_avg_ev": 61.9853,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 43.4,
+            "season_barrel_pct": 47.3333,
+            "lineup_slot": 87.5,
+            "bullpen_fatigue": 47.619,
+            "platoon_barrel_pct": 1.68,
+            "platoon_xwoba": 4.44,
+            "park_hand_index": 0.36,
+            "opp_catcher_framing": -0.36,
+            "days_rest": 0.0,
+            "pull_park_synergy": 0.1966,
+            "hard_hit_105_rate": 2.725,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": -0.712,
+            "vs_rp_ops": 0.84
+          },
+          "hit_probability": 0.6328,
+          "raw_hit_probability": 0.672,
+          "lift": 0.0818,
+          "reliability": "A",
+          "sample_n": 99,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 57.8,
+          "notable_signals": 1,
+          "matchup": "Chicago Cubs @ Kansas City Royals",
+          "game_pk": 824081,
+          "team": "Chicago Cubs",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "opp_team_cs_pct": -5.22,
+            "sprint_speed": 15.625,
+            "catcher_poptime": 100.0,
+            "on_base": 100.0
+          },
+          "hit_probability": 0.1411,
+          "raw_hit_probability": 0.0252,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 99,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1
+          }
+        }
+      ]
     }
   ]
 }

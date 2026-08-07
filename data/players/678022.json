@@ -1,0 +1,61 @@
+{
+  "player_id": 678022,
+  "name": "Jack Perkins",
+  "snapshots": [
+    {
+      "date": "2026-08-07",
+      "evaluations": [
+        {
+          "prop": "Over 3.5 Strikeouts",
+          "type": "pitcher",
+          "score": 62.3,
+          "notable_signals": 0,
+          "matchup": "Athletics @ Boston Red Sox",
+          "game_pk": 824727,
+          "team": "Athletics",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "same_hand_ratio": 100.0,
+            "l14_k_pct": 74.7059,
+            "env_neutral": 50.0
+          },
+          "hit_probability": 0.6862,
+          "raw_hit_probability": 0.9043,
+          "lift": -0.0277,
+          "reliability": "D",
+          "sample_n": 9,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 3.5,
+            "needs": 4
+          }
+        },
+        {
+          "prop": "Boston Red Sox scoreless in the 1st",
+          "type": "pitcher",
+          "score": 55.6,
+          "notable_signals": 1,
+          "matchup": "Athletics @ Boston Red Sox",
+          "game_pk": 824727,
+          "team": "Athletics",
+          "side": "away",
+          "lean": "NRFI",
+          "signals": {
+            "yrfi_rate": 55.6,
+            "fi_n_starts": 9.0
+          },
+          "hit_probability": 0.6802,
+          "raw_hit_probability": 0.6673,
+          "lift": -0.0258,
+          "reliability": "D",
+          "sample_n": 9,
+          "projection": {
+            "stat": "first_inning_run",
+            "value": 55.6
+          }
+        }
+      ]
+    }
+  ]
+}

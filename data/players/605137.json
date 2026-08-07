@@ -37,6 +37,54 @@
           "matchup": "Minnesota Twins @ Kansas City Royals"
         }
       ]
+    },
+    {
+      "date": "2026-08-07",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 66.7,
+          "notable_signals": 3,
+          "matchup": "Minnesota Twins @ Milwaukee Brewers",
+          "game_pk": 823750,
+          "team": "Minnesota Twins",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "sp_era_weak": 28.0,
+            "pitch_exploit": 5.7143,
+            "l7_avg_ev": 100.0,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 4.425,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 44.0,
+            "lineup_slot": 75.0,
+            "bullpen_fatigue": 64.1026,
+            "platoon_barrel_pct": -0.4,
+            "platoon_xwoba": -1.92,
+            "opp_catcher_framing": 0.72,
+            "days_rest": 0.0,
+            "hard_hit_105_rate": 1.295,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": -0.848,
+            "vs_rp_ops": -0.78
+          },
+          "hit_probability": 0.6219,
+          "raw_hit_probability": 0.6485,
+          "lift": 0.0709,
+          "reliability": "A",
+          "sample_n": 111,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

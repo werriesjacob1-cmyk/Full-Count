@@ -1,0 +1,80 @@
+{
+  "player_id": 642708,
+  "name": "Amed Rosario",
+  "snapshots": [
+    {
+      "date": "2026-08-07",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 58.8,
+          "notable_signals": 1,
+          "matchup": "Atlanta Braves @ New York Yankees",
+          "game_pk": 823515,
+          "team": "New York Yankees",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 75.1429,
+            "l7_avg_ev": 97.8571,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 59.7,
+            "season_barrel_pct": 56.6667,
+            "lineup_slot": 75.0,
+            "bullpen_fatigue": 75.7576,
+            "platoon_barrel_pct": 3.28,
+            "platoon_xwoba": 0.84,
+            "park_hand_index": 0.68,
+            "opp_catcher_framing": 1.56,
+            "days_rest": 4.0,
+            "pull_park_synergy": 0.138,
+            "hard_hit_105_rate": 2.73,
+            "team_total_move": 0.0,
+            "team_total_open": 0.0,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": 2.112,
+            "vs_rp_ops": 1.956
+          },
+          "hit_probability": 0.5685,
+          "raw_hit_probability": 0.6105,
+          "lift": -0.1068,
+          "reliability": "B",
+          "sample_n": 66,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 42.7,
+          "notable_signals": 0,
+          "matchup": "Atlanta Braves @ New York Yankees",
+          "game_pk": 823515,
+          "team": "New York Yankees",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "opp_team_cs_pct": 5.28,
+            "sprint_speed": 37.5,
+            "on_base": 45.2975
+          },
+          "hit_probability": 0.1412,
+          "raw_hit_probability": 0.0256,
+          "lift": null,
+          "reliability": "B",
+          "sample_n": 66,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1
+          }
+        }
+      ]
+    }
+  ]
+}

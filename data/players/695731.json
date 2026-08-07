@@ -58,6 +58,80 @@
           "matchup": "Chicago White Sox @ Boston Red Sox"
         }
       ]
+    },
+    {
+      "date": "2026-08-07",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 49.9,
+          "notable_signals": 4,
+          "matchup": "Cleveland Guardians @ Chicago White Sox",
+          "game_pk": 824566,
+          "team": "Chicago White Sox",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "sp_era_weak": 2.0,
+            "pitch_exploit": 3.4286,
+            "l7_avg_ev": 0.0,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 10.95,
+            "park_hr_index": 51.9,
+            "season_barrel_pct": 2.0,
+            "lineup_slot": 25.0,
+            "bullpen_fatigue": 47.619,
+            "platoon_barrel_pct": -5.0,
+            "platoon_xwoba": -1.8,
+            "opp_catcher_framing": 0.48,
+            "days_rest": 0.0,
+            "hard_hit_105_rate": -0.9975,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": -0.168,
+            "vs_rp_ops": -0.732
+          },
+          "hit_probability": 0.6517,
+          "raw_hit_probability": 0.7091,
+          "lift": -0.0236,
+          "reliability": "B",
+          "sample_n": 47,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 54.5,
+          "notable_signals": 0,
+          "matchup": "Cleveland Guardians @ Chicago White Sox",
+          "game_pk": 824566,
+          "team": "Chicago White Sox",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "opp_team_cs_pct": 6.0,
+            "sprint_speed": 37.5,
+            "catcher_poptime": 91.4286,
+            "on_base": 46.2572
+          },
+          "hit_probability": 0.1429,
+          "raw_hit_probability": 0.0294,
+          "lift": null,
+          "reliability": "B",
+          "sample_n": 47,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1
+          }
+        }
+      ]
     }
   ]
 }

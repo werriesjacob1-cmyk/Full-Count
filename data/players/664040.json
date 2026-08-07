@@ -25,6 +25,57 @@
           "matchup": "Pittsburgh Pirates @ Milwaukee Brewers"
         }
       ]
+    },
+    {
+      "date": "2026-08-07",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 51.7,
+          "notable_signals": 1,
+          "matchup": "New York Mets @ Pittsburgh Pirates",
+          "game_pk": 823349,
+          "team": "Pittsburgh Pirates",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 10.8571,
+            "pitch_exploit": 4.0,
+            "l7_avg_ev": 89.2969,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 52.0,
+            "season_barrel_pct": 61.3333,
+            "lineup_slot": 87.5,
+            "bullpen_fatigue": 58.8235,
+            "platoon_barrel_pct": 1.12,
+            "platoon_xwoba": -3.48,
+            "park_hand_index": 2.44,
+            "opp_catcher_framing": 0.12,
+            "days_rest": 0.0,
+            "consecutive_games": -1.8,
+            "pull_park_synergy": 1.9471,
+            "hard_hit_105_rate": 1.685,
+            "team_total_move": 0.0,
+            "team_total_open": 0.0,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": -0.944,
+            "vs_rp_ops": 0.204
+          },
+          "hit_probability": 0.6324,
+          "raw_hit_probability": 0.6712,
+          "lift": 0.0814,
+          "reliability": "A",
+          "sample_n": 108,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

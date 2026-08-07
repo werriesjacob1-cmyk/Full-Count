@@ -39,6 +39,78 @@
           "matchup": "Tampa Bay Rays @ Colorado Rockies"
         }
       ]
+    },
+    {
+      "date": "2026-08-07",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 38.0,
+          "notable_signals": 0,
+          "matchup": "Colorado Rockies @ St. Louis Cardinals",
+          "game_pk": 823024,
+          "team": "Colorado Rockies",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "sp_era_weak": 26.8571,
+            "l7_avg_ev": 0.0,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 60.6,
+            "season_barrel_pct": 34.0,
+            "lineup_slot": 25.0,
+            "bullpen_fatigue": 64.1026,
+            "platoon_barrel_pct": 3.44,
+            "platoon_xwoba": 1.8,
+            "opp_catcher_framing": -0.72,
+            "days_rest": 4.0,
+            "hard_hit_105_rate": 2.515,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": -1.36,
+            "vs_rp_ops": -0.672
+          },
+          "hit_probability": 0.6206,
+          "raw_hit_probability": 0.6458,
+          "lift": 0.0696,
+          "reliability": "A",
+          "sample_n": 96,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 55.9,
+          "notable_signals": 0,
+          "matchup": "Colorado Rockies @ St. Louis Cardinals",
+          "game_pk": 823024,
+          "team": "Colorado Rockies",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "opp_team_cs_pct": 2.64,
+            "sprint_speed": 28.125,
+            "catcher_poptime": 94.2857,
+            "on_base": 70.2495
+          },
+          "hit_probability": 0.1621,
+          "raw_hit_probability": 0.0712,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 96,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1
+          }
+        }
+      ]
     }
   ]
 }
