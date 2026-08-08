@@ -39,6 +39,84 @@
           "matchup": "Toronto Blue Jays @ Chicago Cubs"
         }
       ]
+    },
+    {
+      "date": "2026-08-08",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 51.2,
+          "notable_signals": 2,
+          "matchup": "Chicago Cubs @ Kansas City Royals",
+          "game_pk": 824079,
+          "team": "Chicago Cubs",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 54.5714,
+            "l7_avg_ev": 0.0,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 60.6,
+            "season_barrel_pct": 59.3333,
+            "lineup_slot": 0.0,
+            "bullpen_fatigue": 44.4444,
+            "platoon_barrel_pct": 5.0,
+            "platoon_xwoba": 0.72,
+            "park_hand_index": 0.13,
+            "opp_catcher_framing": -0.48,
+            "days_rest": 2.0,
+            "pull_park_synergy": 0.1006,
+            "hard_hit_105_rate": -1.895,
+            "team_total_move": 0.0,
+            "team_total_open": 4.0,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": -0.76,
+            "vs_rp_ops": 0.348,
+            "ump_k_pct": -0.492,
+            "ump_bb_pct": 0.024
+          },
+          "hit_probability": 0.5254,
+          "raw_hit_probability": 0.5616,
+          "lift": -0.1491,
+          "reliability": "B",
+          "sample_n": 61,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 71.3,
+          "notable_signals": 1,
+          "matchup": "Chicago Cubs @ Kansas City Royals",
+          "game_pk": 824079,
+          "team": "Chicago Cubs",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "opp_team_cs_pct": -4.98,
+            "sprint_speed": 53.125,
+            "catcher_poptime": 100.0,
+            "on_base": 76.0077
+          },
+          "hit_probability": 0.1347,
+          "raw_hit_probability": 0.0101,
+          "lift": null,
+          "reliability": "B",
+          "sample_n": 61,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

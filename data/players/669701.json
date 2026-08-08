@@ -119,6 +119,82 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-08",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 47.4,
+          "notable_signals": 1,
+          "matchup": "Toronto Blue Jays @ Philadelphia Phillies",
+          "game_pk": 823426,
+          "team": "Toronto Blue Jays",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 87.1429,
+            "l7_avg_ev": 0.0,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 79.6,
+            "season_barrel_pct": 17.3333,
+            "lineup_slot": 12.5,
+            "bullpen_fatigue": 47.619,
+            "platoon_barrel_pct": -0.64,
+            "platoon_xwoba": -1.08,
+            "park_hand_index": 2.03,
+            "opp_catcher_framing": -0.24,
+            "days_rest": 0.0,
+            "pull_park_synergy": 0.7673,
+            "hard_hit_105_rate": -0.7325,
+            "team_total_move": 0.0,
+            "team_total_open": 0.0,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "ump_k_pct": -0.084,
+            "ump_bb_pct": -0.18
+          },
+          "hit_probability": 0.5293,
+          "raw_hit_probability": 0.566,
+          "lift": -0.1452,
+          "reliability": "B",
+          "sample_n": 48,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 34.3,
+          "notable_signals": 0,
+          "matchup": "Toronto Blue Jays @ Philadelphia Phillies",
+          "game_pk": 823426,
+          "team": "Toronto Blue Jays",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "opp_team_cs_pct": -3.0,
+            "sprint_speed": 12.5,
+            "catcher_poptime": 100.0,
+            "on_base": 0.1919
+          },
+          "hit_probability": 0.1682,
+          "raw_hit_probability": 0.0836,
+          "lift": null,
+          "reliability": "B",
+          "sample_n": 48,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

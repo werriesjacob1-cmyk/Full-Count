@@ -143,8 +143,8 @@
         {
           "prop": "Over 0.5 Hits+Runs+RBIs",
           "type": "batter",
-          "score": 55.1,
-          "notable_signals": 2,
+          "score": 46.1,
+          "notable_signals": 1,
           "matchup": "Baltimore Orioles @ Texas Rangers",
           "game_pk": 822864,
           "team": "Baltimore Orioles",
@@ -162,7 +162,7 @@
             "platoon_barrel_pct": 3.2,
             "platoon_xwoba": 1.26,
             "park_hand_index": -0.26,
-            "opp_catcher_framing": 0.36,
+            "opp_catcher_framing": 0.72,
             "days_rest": 0.0,
             "pull_park_synergy": -0.1083,
             "hard_hit_105_rate": 0.1325,
@@ -171,11 +171,13 @@
             "getaway_day": 0.0,
             "series_game": 1.0,
             "sp_rp_ops_gap": -0.12,
-            "vs_rp_ops": -1.152
+            "vs_rp_ops": -1.152,
+            "ump_k_pct": 0.204,
+            "ump_bb_pct": 0.444
           },
-          "hit_probability": 0.4855,
-          "raw_hit_probability": 0.5167,
-          "lift": -0.1872,
+          "hit_probability": 0.4858,
+          "raw_hit_probability": 0.517,
+          "lift": -0.1887,
           "reliability": "A",
           "sample_n": 97,
           "projection": {
@@ -187,7 +189,7 @@
         {
           "prop": "To Steal a Base",
           "type": "batter",
-          "score": 44.0,
+          "score": 40.0,
           "notable_signals": 0,
           "matchup": "Baltimore Orioles @ Texas Rangers",
           "game_pk": 822864,
@@ -197,7 +199,7 @@
           "signals": {
             "opp_team_cs_pct": 1.92,
             "sprint_speed": 18.75,
-            "catcher_poptime": 100.0,
+            "catcher_poptime": 85.7143,
             "on_base": 29.9424
           },
           "hit_probability": 0.1695,

@@ -52,6 +52,59 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-08",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 35.9,
+          "notable_signals": 2,
+          "matchup": "Los Angeles Dodgers @ Arizona Diamondbacks",
+          "game_pk": 825049,
+          "team": "Arizona Diamondbacks",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 7.4286,
+            "l7_avg_ev": 0.0,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 1.275,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 30.0,
+            "lineup_slot": 75.0,
+            "bullpen_fatigue": 47.619,
+            "bvp_ops": 0.132,
+            "platoon_barrel_pct": 0.88,
+            "platoon_xwoba": 2.94,
+            "park_hand_index": -0.36,
+            "opp_catcher_framing": 0.84,
+            "days_rest": 0.0,
+            "pull_park_synergy": -0.0995,
+            "hard_hit_105_rate": 0.38,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": -0.056,
+            "vs_rp_ops": 1.212,
+            "ump_k_pct": 0.816,
+            "ump_bb_pct": -0.012
+          },
+          "hit_probability": 0.6365,
+          "raw_hit_probability": 0.6802,
+          "lift": 0.0855,
+          "reliability": "A",
+          "sample_n": 88,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

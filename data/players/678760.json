@@ -25,6 +25,49 @@
           "matchup": "San Francisco Giants @ Texas Rangers"
         }
       ]
+    },
+    {
+      "date": "2026-08-08",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 32.2,
+          "notable_signals": 1,
+          "matchup": "Detroit Tigers @ San Francisco Giants",
+          "game_pk": 823188,
+          "team": "San Francisco Giants",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 35.0,
+            "l7_avg_ev": 0.0,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 25.8,
+            "lineup_slot": 25.0,
+            "bullpen_fatigue": 55.5556,
+            "park_hand_index": -0.44,
+            "opp_catcher_framing": -1.32,
+            "days_rest": 4.0,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "ump_k_pct": 0.264,
+            "ump_bb_pct": 0.216
+          },
+          "hit_probability": 0.5755,
+          "raw_hit_probability": 0.551,
+          "lift": 0.0245,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

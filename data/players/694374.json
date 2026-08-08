@@ -79,6 +79,83 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-08",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 39.9,
+          "notable_signals": 1,
+          "matchup": "Los Angeles Dodgers @ Arizona Diamondbacks",
+          "game_pk": 825049,
+          "team": "Arizona Diamondbacks",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 7.4286,
+            "l7_avg_ev": 84.375,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 32.0,
+            "lineup_slot": 25.0,
+            "bullpen_fatigue": 47.619,
+            "platoon_barrel_pct": -0.16,
+            "platoon_xwoba": -0.72,
+            "park_hand_index": -0.36,
+            "opp_catcher_framing": 0.84,
+            "days_rest": 0.0,
+            "pull_park_synergy": -0.1537,
+            "hard_hit_105_rate": -1.6725,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": -0.696,
+            "vs_rp_ops": -0.9,
+            "ump_k_pct": 0.816,
+            "ump_bb_pct": -0.012
+          },
+          "hit_probability": 0.5604,
+          "raw_hit_probability": 0.6012,
+          "lift": -0.1141,
+          "reliability": "B",
+          "sample_n": 54,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 23.3,
+          "notable_signals": 0,
+          "matchup": "Los Angeles Dodgers @ Arizona Diamondbacks",
+          "game_pk": 825049,
+          "team": "Arizona Diamondbacks",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "opp_team_cs_pct": 2.7,
+            "sprint_speed": 6.25,
+            "on_base": 28.023
+          },
+          "hit_probability": 0.1576,
+          "raw_hit_probability": 0.0618,
+          "lift": null,
+          "reliability": "B",
+          "sample_n": 54,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

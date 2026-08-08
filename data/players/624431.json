@@ -25,6 +25,55 @@
           "matchup": "Athletics @ Cincinnati Reds"
         }
       ]
+    },
+    {
+      "date": "2026-08-08",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 74.2,
+          "notable_signals": 3,
+          "matchup": "Cincinnati Reds @ Washington Nationals",
+          "game_pk": 822701,
+          "team": "Cincinnati Reds",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 41.1429,
+            "l7_avg_ev": 98.75,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 15.0,
+            "park_hr_index": 82.9,
+            "season_barrel_pct": 0.0,
+            "lineup_slot": 25.0,
+            "bullpen_fatigue": 52.0833,
+            "park_hand_index": 1.22,
+            "opp_catcher_framing": -0.12,
+            "days_rest": 4.0,
+            "pull_park_synergy": 0.4526,
+            "team_total_move": 0.0,
+            "team_total_open": 0.0,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": -4.152,
+            "vs_rp_ops": -4.272,
+            "ump_k_pct": 0.264,
+            "ump_bb_pct": -0.06
+          },
+          "hit_probability": 0.6043,
+          "raw_hit_probability": 0.6112,
+          "lift": 0.0533,
+          "reliability": "C",
+          "sample_n": 27,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

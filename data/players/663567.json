@@ -8,8 +8,8 @@
         {
           "prop": "Over 4.5 Strikeouts",
           "type": "pitcher",
-          "score": 68.3,
-          "notable_signals": 0,
+          "score": 70.7,
+          "notable_signals": 1,
           "matchup": "Houston Astros @ San Diego Padres",
           "game_pk": 823267,
           "team": "Houston Astros",
@@ -18,11 +18,14 @@
           "signals": {
             "same_hand_ratio": 100.0,
             "l14_k_pct": 98.8235,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 74.1847,
+            "ump_k_pct": 1.044,
+            "ump_bb_pct": -0.276
           },
-          "hit_probability": 0.6306,
-          "raw_hit_probability": 0.6909,
-          "lift": 0.0921,
+          "hit_probability": 0.63,
+          "raw_hit_probability": 0.6886,
+          "lift": 0.0915,
           "reliability": "D",
           "sample_n": 19,
           "projection": {
@@ -44,7 +47,8 @@
           "signals": {
             "yrfi_rate": 15.0,
             "fi_n_starts": 20.0,
-            "park_hr_index": 36.0
+            "ump_run_impact": 13.0909,
+            "park_hr_index": 36.1
           },
           "hit_probability": 0.6982,
           "raw_hit_probability": 0.746,

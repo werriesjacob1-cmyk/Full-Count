@@ -8,7 +8,7 @@
         {
           "prop": "Over 3.5 Strikeouts",
           "type": "pitcher",
-          "score": 49.2,
+          "score": 44.2,
           "notable_signals": 0,
           "matchup": "Chicago Cubs @ Kansas City Royals",
           "game_pk": 824079,
@@ -16,12 +16,15 @@
           "side": null,
           "lean": null,
           "signals": {
-            "same_hand_ratio": 43.75,
-            "env_neutral": 50.0
+            "same_hand_ratio": 12.5,
+            "env_neutral": 50.0,
+            "ump_accuracy": 37.6717,
+            "ump_k_pct": 0.492,
+            "ump_bb_pct": -0.024
           },
-          "hit_probability": 0.6568,
-          "raw_hit_probability": 0.7893,
-          "lift": -0.0567,
+          "hit_probability": 0.6563,
+          "raw_hit_probability": 0.7872,
+          "lift": -0.0572,
           "reliability": "D",
           "sample_n": 9,
           "projection": {
@@ -43,7 +46,8 @@
           "signals": {
             "yrfi_rate": 22.2,
             "fi_n_starts": 9.0,
-            "park_hr_index": 39.2
+            "ump_run_impact": 44.5041,
+            "park_hr_index": 60.6
           },
           "hit_probability": 0.6915,
           "raw_hit_probability": 0.7166,
