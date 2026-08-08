@@ -1,6 +1,6 @@
 {
   "player_id": 665966,
-  "name": "Carlos Narv\u00e1ez",
+  "name": "Carlos Narvaez",
   "snapshots": [
     {
       "date": "2026-08-04",
@@ -82,6 +82,54 @@
           "lift": -0.1318,
           "reliability": "B",
           "sample_n": 60,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-08-08",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 36.6,
+          "notable_signals": 2,
+          "matchup": "Baltimore Orioles @ Texas Rangers",
+          "game_pk": 822864,
+          "team": "Baltimore Orioles",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 41.7143,
+            "l7_avg_ev": 12.0833,
+            "l7_barrel_pct": 0.0,
+            "bat_speed_trend": 15.0,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 27.3333,
+            "lineup_slot": 0.0,
+            "bullpen_fatigue": 64.1026,
+            "platoon_barrel_pct": 0.72,
+            "platoon_xwoba": -2.1,
+            "park_hand_index": 0.5,
+            "opp_catcher_framing": 0.36,
+            "days_rest": 0.0,
+            "pull_park_synergy": 0.0332,
+            "hard_hit_105_rate": 0.0175,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 1.0
+          },
+          "hit_probability": 0.547,
+          "raw_hit_probability": 0.586,
+          "lift": -0.1262,
+          "reliability": "B",
+          "sample_n": 61,
           "projection": {
             "stat": "hits_runs_rbis",
             "value": 0.5,

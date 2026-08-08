@@ -1,0 +1,63 @@
+{
+  "player_id": 607536,
+  "name": "Kyle Freeland",
+  "snapshots": [
+    {
+      "date": "2026-08-08",
+      "evaluations": [
+        {
+          "prop": "Over 3.5 Strikeouts",
+          "type": "pitcher",
+          "score": 37.7,
+          "notable_signals": 1,
+          "matchup": "Colorado Rockies @ St. Louis Cardinals",
+          "game_pk": 823021,
+          "team": "Colorado Rockies",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "same_hand_ratio": 5.5556,
+            "l14_k_pct": 14.7059,
+            "tto_penalty": 8.0,
+            "env_neutral": 50.0
+          },
+          "hit_probability": 0.6483,
+          "raw_hit_probability": 0.757,
+          "lift": -0.0652,
+          "reliability": "D",
+          "sample_n": 20,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 3.5,
+            "needs": 4
+          }
+        },
+        {
+          "prop": "St. Louis Cardinals scoreless in the 1st",
+          "type": "pitcher",
+          "score": 66.7,
+          "notable_signals": 0,
+          "matchup": "Colorado Rockies @ St. Louis Cardinals",
+          "game_pk": 823021,
+          "team": "Colorado Rockies",
+          "side": "away",
+          "lean": "NRFI",
+          "signals": {
+            "yrfi_rate": 33.3,
+            "fi_n_starts": 21.0,
+            "park_hr_index": 50.0
+          },
+          "hit_probability": 0.6866,
+          "raw_hit_probability": 0.6948,
+          "lift": -0.0194,
+          "reliability": "D",
+          "sample_n": 21,
+          "projection": {
+            "stat": "first_inning_run",
+            "value": 33.3
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -86,6 +86,53 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-08",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 65.4,
+          "notable_signals": 2,
+          "matchup": "Cleveland Guardians @ Chicago White Sox",
+          "game_pk": 824565,
+          "team": "Cleveland Guardians",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 43.1429,
+            "l7_avg_ev": 92.9605,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 24.0,
+            "lineup_slot": 75.0,
+            "bullpen_fatigue": 66.6667,
+            "platoon_barrel_pct": -0.56,
+            "platoon_xwoba": 0.54,
+            "opp_catcher_framing": 0.24,
+            "days_rest": 0.0,
+            "hard_hit_105_rate": 3.135,
+            "team_total_move": -6.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": 0.96,
+            "vs_rp_ops": 1.692
+          },
+          "hit_probability": 0.632,
+          "raw_hit_probability": 0.6703,
+          "lift": 0.081,
+          "reliability": "A",
+          "sample_n": 99,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

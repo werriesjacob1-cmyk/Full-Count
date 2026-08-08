@@ -78,6 +78,57 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-08",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 55.3,
+          "notable_signals": 1,
+          "matchup": "New York Mets @ Pittsburgh Pirates",
+          "game_pk": 823348,
+          "team": "Pittsburgh Pirates",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 0.0,
+            "l7_avg_ev": 77.4265,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 1.5,
+            "park_hr_index": 37.5,
+            "season_barrel_pct": 61.3333,
+            "lineup_slot": 87.5,
+            "bullpen_fatigue": 46.2963,
+            "platoon_barrel_pct": 5.0,
+            "platoon_xwoba": 3.42,
+            "park_hand_index": 2.23,
+            "opp_catcher_framing": 0.12,
+            "days_rest": 0.0,
+            "consecutive_games": -2.4,
+            "pull_park_synergy": 1.7639,
+            "hard_hit_105_rate": 1.6325,
+            "team_total_move": 0.0,
+            "team_total_open": 0.0,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": -0.896,
+            "vs_rp_ops": 0.204
+          },
+          "hit_probability": 0.6329,
+          "raw_hit_probability": 0.6723,
+          "lift": 0.0819,
+          "reliability": "A",
+          "sample_n": 109,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

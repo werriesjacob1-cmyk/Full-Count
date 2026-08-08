@@ -1,0 +1,62 @@
+{
+  "player_id": 594798,
+  "name": "Jacob deGrom",
+  "snapshots": [
+    {
+      "date": "2026-08-08",
+      "evaluations": [
+        {
+          "prop": "Over 4.5 Strikeouts",
+          "type": "pitcher",
+          "score": 41.9,
+          "notable_signals": 0,
+          "matchup": "Baltimore Orioles @ Texas Rangers",
+          "game_pk": 822864,
+          "team": "Texas Rangers",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "same_hand_ratio": 75.0,
+            "l14_k_pct": 5.2941,
+            "env_neutral": 50.0
+          },
+          "hit_probability": 0.6424,
+          "raw_hit_probability": 0.7347,
+          "lift": 0.1039,
+          "reliability": "D",
+          "sample_n": 21,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 4.5,
+            "needs": 5
+          }
+        },
+        {
+          "prop": "Baltimore Orioles scoreless in the 1st",
+          "type": "pitcher",
+          "score": 42.9,
+          "notable_signals": 0,
+          "matchup": "Baltimore Orioles @ Texas Rangers",
+          "game_pk": 822864,
+          "team": "Texas Rangers",
+          "side": "home",
+          "lean": "NRFI",
+          "signals": {
+            "yrfi_rate": 42.9,
+            "fi_n_starts": 21.0,
+            "park_hr_index": 50.0
+          },
+          "hit_probability": 0.6802,
+          "raw_hit_probability": 0.6672,
+          "lift": -0.0258,
+          "reliability": "D",
+          "sample_n": 21,
+          "projection": {
+            "stat": "first_inning_run",
+            "value": 42.9
+          }
+        }
+      ]
+    }
+  ]
+}

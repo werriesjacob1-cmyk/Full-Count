@@ -1,6 +1,6 @@
 {
   "player_id": 699393,
-  "name": "Pedro Ram\u00edrez",
+  "name": "Pedro Ramirez",
   "snapshots": [
     {
       "date": "2026-08-05",
@@ -105,6 +105,79 @@
           "lift": null,
           "reliability": "C",
           "sample_n": 40,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-08-08",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 39.4,
+          "notable_signals": 1,
+          "matchup": "Chicago Cubs @ Kansas City Royals",
+          "game_pk": 824079,
+          "team": "Chicago Cubs",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "sp_era_weak": 54.5714,
+            "l7_avg_ev": 25.1136,
+            "l7_barrel_pct": 50.7143,
+            "park_hr_index": 41.2,
+            "season_barrel_pct": 0.0,
+            "lineup_slot": 12.5,
+            "bullpen_fatigue": 44.4444,
+            "platoon_barrel_pct": -3.6,
+            "platoon_xwoba": -1.92,
+            "opp_catcher_framing": -0.48,
+            "days_rest": 0.0,
+            "hard_hit_105_rate": -0.8625,
+            "team_total_move": 0.0,
+            "team_total_open": 4.0,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": 1.696,
+            "vs_rp_ops": 2.076
+          },
+          "hit_probability": 0.5973,
+          "raw_hit_probability": 0.5963,
+          "lift": 0.0463,
+          "reliability": "C",
+          "sample_n": 41,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 62.0,
+          "notable_signals": 1,
+          "matchup": "Chicago Cubs @ Kansas City Royals",
+          "game_pk": 824079,
+          "team": "Chicago Cubs",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "opp_team_cs_pct": -4.98,
+            "sprint_speed": 31.25,
+            "catcher_poptime": 100.0,
+            "on_base": 83.6852
+          },
+          "hit_probability": 0.1832,
+          "raw_hit_probability": 0.1127,
+          "lift": null,
+          "reliability": "C",
+          "sample_n": 41,
           "projection": {
             "stat": "stolen_base",
             "value": 1,

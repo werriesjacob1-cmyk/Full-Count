@@ -95,6 +95,79 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-08",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 40.0,
+          "notable_signals": 3,
+          "matchup": "Tampa Bay Rays @ Seattle Mariners",
+          "game_pk": 823102,
+          "team": "Tampa Bay Rays",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "sp_era_weak": 36.0,
+            "l7_avg_ev": 0.0,
+            "l7_barrel_pct": 0.0,
+            "bat_speed_trend": 15.0,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 0.0,
+            "lineup_slot": 0.0,
+            "bullpen_fatigue": 59.5238,
+            "platoon_barrel_pct": -1.76,
+            "platoon_xwoba": -2.22,
+            "opp_catcher_framing": 0.6,
+            "days_rest": 0.0,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": -0.856,
+            "vs_rp_ops": -2.34
+          },
+          "hit_probability": 0.6333,
+          "raw_hit_probability": 0.6866,
+          "lift": -0.0399,
+          "reliability": "A",
+          "sample_n": 87,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 32.1,
+          "notable_signals": 0,
+          "matchup": "Tampa Bay Rays @ Seattle Mariners",
+          "game_pk": 823102,
+          "team": "Tampa Bay Rays",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "opp_team_cs_pct": 1.08,
+            "sprint_speed": 18.75,
+            "catcher_poptime": 74.2857,
+            "on_base": 8.8292
+          },
+          "hit_probability": 0.2173,
+          "raw_hit_probability": 0.1727,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 87,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

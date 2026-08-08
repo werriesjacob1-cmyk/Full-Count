@@ -77,6 +77,57 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-08",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 48.6,
+          "notable_signals": 4,
+          "matchup": "Houston Astros @ San Diego Padres",
+          "game_pk": 823267,
+          "team": "Houston Astros",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 27.1429,
+            "pitch_exploit": 2.2857,
+            "l7_avg_ev": 0.0,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 15.0,
+            "park_hr_index": 36.0,
+            "season_barrel_pct": 18.0,
+            "lineup_slot": 12.5,
+            "bullpen_fatigue": 71.4286,
+            "platoon_barrel_pct": -0.08,
+            "platoon_xwoba": 1.5,
+            "park_hand_index": 0.16,
+            "opp_catcher_framing": 0.72,
+            "days_rest": 0.0,
+            "pull_park_synergy": 0.0543,
+            "hard_hit_105_rate": 1.0475,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": -0.808,
+            "vs_rp_ops": -1.08
+          },
+          "hit_probability": 0.6239,
+          "raw_hit_probability": 0.6528,
+          "lift": 0.0729,
+          "reliability": "B",
+          "sample_n": 56,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

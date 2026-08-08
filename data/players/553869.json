@@ -1,6 +1,6 @@
 {
   "player_id": 553869,
-  "name": "Elias D\u00edaz",
+  "name": "Elias Diaz",
   "snapshots": [
     {
       "date": "2026-08-04",
@@ -68,6 +68,54 @@
           "lift": -0.1139,
           "reliability": "C",
           "sample_n": 44,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-08-08",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 37.5,
+          "notable_signals": 1,
+          "matchup": "Baltimore Orioles @ Texas Rangers",
+          "game_pk": 822864,
+          "team": "Texas Rangers",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 36.8571,
+            "l7_avg_ev": 0.0,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 15.0,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 14.6667,
+            "lineup_slot": 12.5,
+            "bullpen_fatigue": 47.619,
+            "platoon_barrel_pct": -4.32,
+            "platoon_xwoba": -4.2,
+            "park_hand_index": 0.5,
+            "opp_catcher_framing": -0.48,
+            "days_rest": 0.0,
+            "pull_park_synergy": 0.1837,
+            "hard_hit_105_rate": 0.7,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 1.0
+          },
+          "hit_probability": 0.5656,
+          "raw_hit_probability": 0.6071,
+          "lift": -0.1076,
+          "reliability": "B",
+          "sample_n": 45,
           "projection": {
             "stat": "hits_runs_rbis",
             "value": 0.5,

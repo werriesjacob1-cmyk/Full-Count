@@ -1,6 +1,6 @@
 {
   "player_id": 694208,
-  "name": "Mois\u00e9s Ballesteros",
+  "name": "Moises Ballesteros",
   "snapshots": [
     {
       "date": "2026-08-04",
@@ -79,6 +79,53 @@
           "lift": -0.1309,
           "reliability": "B",
           "sample_n": 62,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-08-08",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 57.5,
+          "notable_signals": 1,
+          "matchup": "Los Angeles Angels @ Miami Marlins",
+          "game_pk": 823834,
+          "team": "Los Angeles Angels",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 33.7143,
+            "l7_avg_ev": 86.5909,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 40.0,
+            "lineup_slot": 37.5,
+            "bullpen_fatigue": 44.4444,
+            "platoon_barrel_pct": 3.36,
+            "platoon_xwoba": 0.06,
+            "park_hand_index": -1.51,
+            "opp_catcher_framing": 0.84,
+            "days_rest": 0.0,
+            "pull_park_synergy": -0.5655,
+            "hard_hit_105_rate": -0.1625,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 1.0
+          },
+          "hit_probability": 0.5452,
+          "raw_hit_probability": 0.5839,
+          "lift": -0.128,
+          "reliability": "B",
+          "sample_n": 63,
           "projection": {
             "stat": "hits_runs_rbis",
             "value": 0.5,

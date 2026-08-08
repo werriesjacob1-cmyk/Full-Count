@@ -1,0 +1,63 @@
+{
+  "player_id": 688107,
+  "name": "Robert Gasser",
+  "snapshots": [
+    {
+      "date": "2026-08-08",
+      "evaluations": [
+        {
+          "prop": "Over 3.5 Strikeouts",
+          "type": "pitcher",
+          "score": 40.7,
+          "notable_signals": 0,
+          "matchup": "Minnesota Twins @ Milwaukee Brewers",
+          "game_pk": 823752,
+          "team": "Milwaukee Brewers",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "same_hand_ratio": 0.0,
+            "l14_k_pct": 45.2941,
+            "tto_penalty": -8.0,
+            "env_neutral": 50.0
+          },
+          "hit_probability": 0.6595,
+          "raw_hit_probability": 0.7997,
+          "lift": -0.054,
+          "reliability": "D",
+          "sample_n": 12,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 3.5,
+            "needs": 4
+          }
+        },
+        {
+          "prop": "Minnesota Twins scoreless in the 1st",
+          "type": "pitcher",
+          "score": 38.5,
+          "notable_signals": 0,
+          "matchup": "Minnesota Twins @ Milwaukee Brewers",
+          "game_pk": 823752,
+          "team": "Milwaukee Brewers",
+          "side": "home",
+          "lean": "NRFI",
+          "signals": {
+            "yrfi_rate": 38.5,
+            "fi_n_starts": 13.0,
+            "park_hr_index": 50.0
+          },
+          "hit_probability": 0.685,
+          "raw_hit_probability": 0.6878,
+          "lift": -0.021,
+          "reliability": "D",
+          "sample_n": 13,
+          "projection": {
+            "stat": "first_inning_run",
+            "value": 38.5
+          }
+        }
+      ]
+    }
+  ]
+}

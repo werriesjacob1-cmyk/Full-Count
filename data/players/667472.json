@@ -133,6 +133,82 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-08",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 69.9,
+          "notable_signals": 2,
+          "matchup": "Cincinnati Reds @ Washington Nationals",
+          "game_pk": 822701,
+          "team": "Cincinnati Reds",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 41.1429,
+            "l7_avg_ev": 57.8125,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 81.7,
+            "season_barrel_pct": 15.3333,
+            "lineup_slot": 75.0,
+            "bullpen_fatigue": 52.0833,
+            "platoon_barrel_pct": -0.32,
+            "platoon_xwoba": 1.62,
+            "park_hand_index": 1.22,
+            "opp_catcher_framing": -0.12,
+            "days_rest": 2.0,
+            "pull_park_synergy": -0.1793,
+            "hard_hit_105_rate": -2.335,
+            "team_total_move": 0.0,
+            "team_total_open": 0.0,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": -0.44,
+            "vs_rp_ops": -0.228
+          },
+          "hit_probability": 0.5677,
+          "raw_hit_probability": 0.6095,
+          "lift": -0.1055,
+          "reliability": "B",
+          "sample_n": 71,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 43.1,
+          "notable_signals": 1,
+          "matchup": "Cincinnati Reds @ Washington Nationals",
+          "game_pk": 822701,
+          "team": "Cincinnati Reds",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "opp_team_cs_pct": 0.66,
+            "sprint_speed": 18.75,
+            "catcher_poptime": 60.0,
+            "on_base": 76.9674
+          },
+          "hit_probability": 0.1838,
+          "raw_hit_probability": 0.1139,
+          "lift": null,
+          "reliability": "B",
+          "sample_n": 71,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

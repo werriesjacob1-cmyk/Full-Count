@@ -1,0 +1,62 @@
+{
+  "player_id": 696149,
+  "name": "Bubba Chandler",
+  "snapshots": [
+    {
+      "date": "2026-08-08",
+      "evaluations": [
+        {
+          "prop": "Over 3.5 Strikeouts",
+          "type": "pitcher",
+          "score": 46.9,
+          "notable_signals": 0,
+          "matchup": "New York Mets @ Pittsburgh Pirates",
+          "game_pk": 823348,
+          "team": "Pittsburgh Pirates",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "same_hand_ratio": 92.8571,
+            "l14_k_pct": 16.4706,
+            "env_neutral": 50.0
+          },
+          "hit_probability": 0.6256,
+          "raw_hit_probability": 0.6725,
+          "lift": -0.0879,
+          "reliability": "D",
+          "sample_n": 21,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 3.5,
+            "needs": 4
+          }
+        },
+        {
+          "prop": "New York Mets scoreless in the 1st",
+          "type": "pitcher",
+          "score": 76.2,
+          "notable_signals": 0,
+          "matchup": "New York Mets @ Pittsburgh Pirates",
+          "game_pk": 823348,
+          "team": "Pittsburgh Pirates",
+          "side": "home",
+          "lean": "NRFI",
+          "signals": {
+            "yrfi_rate": 23.8,
+            "fi_n_starts": 21.0,
+            "park_hr_index": 37.5
+          },
+          "hit_probability": 0.6928,
+          "raw_hit_probability": 0.7221,
+          "lift": -0.0132,
+          "reliability": "D",
+          "sample_n": 21,
+          "projection": {
+            "stat": "first_inning_run",
+            "value": 23.8
+          }
+        }
+      ]
+    }
+  ]
+}

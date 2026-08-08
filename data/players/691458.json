@@ -74,6 +74,55 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-08",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 73.0,
+          "notable_signals": 0,
+          "matchup": "Colorado Rockies @ St. Louis Cardinals",
+          "game_pk": 823021,
+          "team": "St. Louis Cardinals",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 100.0,
+            "l7_avg_ev": 100.0,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 38.6667,
+            "lineup_slot": 37.5,
+            "bullpen_fatigue": 59.5238,
+            "platoon_barrel_pct": 0.24,
+            "platoon_xwoba": 2.1,
+            "park_hand_index": -2.99,
+            "opp_catcher_framing": 0.72,
+            "days_rest": 0.0,
+            "pull_park_synergy": -1.0884,
+            "hard_hit_105_rate": -0.3125,
+            "team_total_move": 0.0,
+            "team_total_open": 0.0,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": 2.0,
+            "vs_rp_ops": 0.768
+          },
+          "hit_probability": 0.6074,
+          "raw_hit_probability": 0.6177,
+          "lift": 0.0564,
+          "reliability": "C",
+          "sample_n": 41,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

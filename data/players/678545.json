@@ -107,6 +107,74 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-08",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 50.7,
+          "notable_signals": 2,
+          "matchup": "Detroit Tigers @ San Francisco Giants",
+          "game_pk": 823188,
+          "team": "San Francisco Giants",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 35.0,
+            "l7_avg_ev": 76.75,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 7.125,
+            "park_hr_index": 26.6,
+            "lineup_slot": 25.0,
+            "bullpen_fatigue": 55.5556,
+            "park_hand_index": -0.44,
+            "opp_catcher_framing": -1.32,
+            "days_rest": 0.0,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 1.0
+          },
+          "hit_probability": 0.5755,
+          "raw_hit_probability": 0.551,
+          "lift": 0.0245,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 48.4,
+          "notable_signals": 0,
+          "matchup": "Detroit Tigers @ San Francisco Giants",
+          "game_pk": 823188,
+          "team": "San Francisco Giants",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "opp_team_cs_pct": -0.48,
+            "sprint_speed": 18.75,
+            "catcher_poptime": 100.0
+          },
+          "hit_probability": null,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

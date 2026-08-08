@@ -1,6 +1,6 @@
 {
   "player_id": 671056,
-  "name": "Iv\u00e1n Herrera",
+  "name": "Ivan Herrera",
   "snapshots": [
     {
       "date": "2026-08-04",
@@ -71,6 +71,55 @@
           "lift": 0.061,
           "reliability": "A",
           "sample_n": 114,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-08-08",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 68.1,
+          "notable_signals": 0,
+          "matchup": "Colorado Rockies @ St. Louis Cardinals",
+          "game_pk": 823021,
+          "team": "St. Louis Cardinals",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 100.0,
+            "l7_avg_ev": 71.4706,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 16.0,
+            "lineup_slot": 75.0,
+            "bullpen_fatigue": 59.5238,
+            "platoon_barrel_pct": 0.48,
+            "platoon_xwoba": 3.72,
+            "park_hand_index": -2.99,
+            "opp_catcher_framing": 0.72,
+            "days_rest": 0.0,
+            "pull_park_synergy": -1.057,
+            "hard_hit_105_rate": 3.0575,
+            "team_total_move": 0.0,
+            "team_total_open": 0.0,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": 0.336,
+            "vs_rp_ops": 0.468
+          },
+          "hit_probability": 0.614,
+          "raw_hit_probability": 0.6317,
+          "lift": 0.063,
+          "reliability": "A",
+          "sample_n": 115,
           "projection": {
             "stat": "hits",
             "value": 0.5,

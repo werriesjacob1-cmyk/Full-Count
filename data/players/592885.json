@@ -88,6 +88,55 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-08",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 48.0,
+          "notable_signals": 0,
+          "matchup": "Minnesota Twins @ Milwaukee Brewers",
+          "game_pk": 823752,
+          "team": "Milwaukee Brewers",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 34.0,
+            "l7_avg_ev": 5.8333,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 44.0,
+            "lineup_slot": 25.0,
+            "bullpen_fatigue": 59.5238,
+            "platoon_barrel_pct": 2.72,
+            "platoon_xwoba": -0.12,
+            "park_hand_index": -1.2,
+            "opp_catcher_framing": -0.24,
+            "days_rest": 0.0,
+            "pull_park_synergy": -0.4284,
+            "hard_hit_105_rate": -0.195,
+            "team_total_move": 0.0,
+            "team_total_open": 0.0,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": -0.056,
+            "vs_rp_ops": -0.456
+          },
+          "hit_probability": 0.6457,
+          "raw_hit_probability": 0.7017,
+          "lift": -0.0275,
+          "reliability": "B",
+          "sample_n": 79,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

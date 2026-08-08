@@ -1,6 +1,6 @@
 {
   "player_id": 595879,
-  "name": "Javier B\u00e1ez",
+  "name": "Javier Baez",
   "snapshots": [
     {
       "date": "2026-08-05",
@@ -66,6 +66,54 @@
           "lift": 0.0726,
           "reliability": "C",
           "sample_n": 30,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-08-08",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 44.2,
+          "notable_signals": 2,
+          "matchup": "Detroit Tigers @ San Francisco Giants",
+          "game_pk": 823188,
+          "team": "Detroit Tigers",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 52.2857,
+            "l7_avg_ev": 0.0,
+            "l7_barrel_pct": 87.8571,
+            "park_hr_index": 26.6,
+            "season_barrel_pct": 0.0,
+            "lineup_slot": 12.5,
+            "bullpen_fatigue": 52.0833,
+            "platoon_barrel_pct": -4.56,
+            "platoon_xwoba": -2.88,
+            "park_hand_index": -0.44,
+            "opp_catcher_framing": 1.44,
+            "days_rest": 0.0,
+            "pull_park_synergy": -0.3049,
+            "team_total_move": 6.0,
+            "team_total_open": 0.0,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": 1.112,
+            "vs_rp_ops": 0.456
+          },
+          "hit_probability": 0.6164,
+          "raw_hit_probability": 0.6367,
+          "lift": 0.0654,
+          "reliability": "C",
+          "sample_n": 31,
           "projection": {
             "stat": "hits",
             "value": 0.5,
