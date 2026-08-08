@@ -86,8 +86,8 @@
         {
           "prop": "Over 0.5 Hits+Runs+RBIs",
           "type": "batter",
-          "score": 39.9,
-          "notable_signals": 1,
+          "score": 40.1,
+          "notable_signals": 0,
           "matchup": "Los Angeles Dodgers @ Arizona Diamondbacks",
           "game_pk": 825049,
           "team": "Arizona Diamondbacks",
@@ -105,7 +105,7 @@
             "platoon_barrel_pct": -0.16,
             "platoon_xwoba": -0.72,
             "park_hand_index": -0.36,
-            "opp_catcher_framing": 0.84,
+            "opp_catcher_framing": -0.12,
             "days_rest": 0.0,
             "pull_park_synergy": -0.1537,
             "hard_hit_105_rate": -1.6725,
@@ -118,9 +118,9 @@
             "ump_k_pct": 0.816,
             "ump_bb_pct": -0.012
           },
-          "hit_probability": 0.5604,
-          "raw_hit_probability": 0.6012,
-          "lift": -0.1141,
+          "hit_probability": 0.5608,
+          "raw_hit_probability": 0.6017,
+          "lift": -0.1154,
           "reliability": "B",
           "sample_n": 54,
           "projection": {
@@ -132,7 +132,7 @@
         {
           "prop": "To Steal a Base",
           "type": "batter",
-          "score": 23.3,
+          "score": 29.3,
           "notable_signals": 0,
           "matchup": "Los Angeles Dodgers @ Arizona Diamondbacks",
           "game_pk": 825049,
@@ -142,10 +142,11 @@
           "signals": {
             "opp_team_cs_pct": 2.7,
             "sprint_speed": 6.25,
+            "catcher_poptime": 71.4286,
             "on_base": 28.023
           },
-          "hit_probability": 0.1576,
-          "raw_hit_probability": 0.0618,
+          "hit_probability": 0.1573,
+          "raw_hit_probability": 0.0611,
           "lift": null,
           "reliability": "B",
           "sample_n": 54,
