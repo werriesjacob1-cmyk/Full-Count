@@ -13,6 +13,56 @@
           "matchup": "Toronto Blue Jays @ Houston Astros"
         }
       ]
+    },
+    {
+      "date": "2026-08-09",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 53.8,
+          "notable_signals": 1,
+          "matchup": "Houston Astros @ San Diego Padres",
+          "game_pk": 823268,
+          "team": "Houston Astros",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 55.7143,
+            "l7_avg_ev": 72.0833,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 38.4,
+            "season_barrel_pct": 8.0,
+            "lineup_slot": 0.0,
+            "bullpen_fatigue": 71.4286,
+            "platoon_barrel_pct": 0.64,
+            "platoon_xwoba": -2.1,
+            "park_hand_index": -1.88,
+            "opp_catcher_framing": 0.12,
+            "days_rest": 0.0,
+            "pull_park_synergy": -0.8817,
+            "team_total_move": 0.0,
+            "team_total_open": 0.0,
+            "getaway_day": -2.0,
+            "series_game": 2.0,
+            "sp_rp_ops_gap": 0.112,
+            "vs_rp_ops": 0.072,
+            "ump_k_pct": 0.24,
+            "ump_bb_pct": -0.048
+          },
+          "hit_probability": 0.5752,
+          "raw_hit_probability": 0.6182,
+          "lift": -0.0967,
+          "reliability": "C",
+          "sample_n": 26,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }
