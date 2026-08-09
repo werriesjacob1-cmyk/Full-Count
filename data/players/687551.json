@@ -173,6 +173,83 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-09",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 36.4,
+          "notable_signals": 2,
+          "matchup": "Detroit Tigers @ San Francisco Giants",
+          "game_pk": 823190,
+          "team": "San Francisco Giants",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 0.0,
+            "l7_avg_ev": 0.0,
+            "l7_barrel_pct": 40.7143,
+            "bat_speed_trend": 15.0,
+            "park_hr_index": 25.6,
+            "season_barrel_pct": 0.0,
+            "lineup_slot": 37.5,
+            "bullpen_fatigue": 60.6061,
+            "platoon_barrel_pct": -3.04,
+            "platoon_xwoba": 1.26,
+            "park_hand_index": -4.13,
+            "opp_catcher_framing": -1.32,
+            "days_rest": 0.0,
+            "pull_park_synergy": -1.9659,
+            "hard_hit_105_rate": -2.5975,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": -2.0,
+            "series_game": 2.0,
+            "sp_rp_ops_gap": -0.608,
+            "vs_rp_ops": -1.092
+          },
+          "hit_probability": 0.5302,
+          "raw_hit_probability": 0.567,
+          "lift": -0.1382,
+          "reliability": "A",
+          "sample_n": 90,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 38.1,
+          "notable_signals": 0,
+          "matchup": "Detroit Tigers @ San Francisco Giants",
+          "game_pk": 823190,
+          "team": "San Francisco Giants",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "opp_team_cs_pct": -0.48,
+            "sprint_speed": 3.125,
+            "catcher_poptime": 100.0,
+            "on_base": 38.5797
+          },
+          "hit_probability": 0.1383,
+          "raw_hit_probability": 0.0188,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 90,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

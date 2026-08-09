@@ -37,6 +37,56 @@
           "matchup": "Athletics @ Cincinnati Reds"
         }
       ]
+    },
+    {
+      "date": "2026-08-09",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 40.8,
+          "notable_signals": 1,
+          "matchup": "Athletics @ Boston Red Sox",
+          "game_pk": 824724,
+          "team": "Athletics",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 7.1429,
+            "l7_avg_ev": 49.375,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 89.8,
+            "season_barrel_pct": 0.0,
+            "lineup_slot": 0.0,
+            "bullpen_fatigue": 59.5238,
+            "platoon_barrel_pct": -5.0,
+            "platoon_xwoba": -2.34,
+            "park_hand_index": -2.88,
+            "opp_catcher_framing": 0.48,
+            "days_rest": 0.0,
+            "pull_park_synergy": -1.1794,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": -2.0,
+            "series_game": 2.0,
+            "sp_rp_ops_gap": -0.528,
+            "vs_rp_ops": -1.428,
+            "ump_k_pct": -0.192,
+            "ump_bb_pct": 0.372
+          },
+          "hit_probability": 0.5606,
+          "raw_hit_probability": 0.6014,
+          "lift": -0.1078,
+          "reliability": "A",
+          "sample_n": 102,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

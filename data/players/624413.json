@@ -140,6 +140,56 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-09",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 72.0,
+          "notable_signals": 2,
+          "matchup": "Baltimore Orioles @ Texas Rangers",
+          "game_pk": 822862,
+          "team": "Baltimore Orioles",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 45.1429,
+            "pitch_exploit": 4.0,
+            "l7_avg_ev": 97.5,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 63.3333,
+            "lineup_slot": 87.5,
+            "bullpen_fatigue": 64.1026,
+            "platoon_barrel_pct": 4.8,
+            "platoon_xwoba": 4.68,
+            "park_hand_index": 0.44,
+            "opp_catcher_framing": 0.36,
+            "days_rest": 0.0,
+            "pull_park_synergy": 0.117,
+            "hard_hit_105_rate": 4.79,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": -2.0,
+            "series_game": 2.0,
+            "sp_rp_ops_gap": -0.544,
+            "vs_rp_ops": 0.384
+          },
+          "hit_probability": 0.6207,
+          "raw_hit_probability": 0.646,
+          "lift": 0.0695,
+          "reliability": "A",
+          "sample_n": 117,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

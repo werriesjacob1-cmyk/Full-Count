@@ -1,6 +1,6 @@
 {
   "player_id": 643289,
-  "name": "Mauricio Dub\u00f3n",
+  "name": "Mauricio Dubon",
   "snapshots": [
     {
       "date": "2026-08-05",
@@ -124,6 +124,59 @@
           "lift": 0.0827,
           "reliability": "A",
           "sample_n": 111,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-08-09",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 54.2,
+          "notable_signals": 3,
+          "matchup": "Atlanta Braves @ New York Yankees",
+          "game_pk": 823513,
+          "team": "Atlanta Braves",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 0.0,
+            "pitch_exploit": 9.1429,
+            "l7_avg_ev": 54.5625,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 2.25,
+            "park_hr_index": 36.4,
+            "season_barrel_pct": 8.6667,
+            "lineup_slot": 37.5,
+            "bullpen_fatigue": 59.5238,
+            "platoon_barrel_pct": -2.56,
+            "platoon_xwoba": -0.06,
+            "park_hand_index": 0.9,
+            "opp_catcher_framing": -0.6,
+            "days_rest": 0.0,
+            "pull_park_synergy": 0.1071,
+            "hard_hit_105_rate": -3.1025,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": -2.0,
+            "series_game": 2.0,
+            "sp_rp_ops_gap": 0.856,
+            "vs_rp_ops": 0.732,
+            "ump_k_pct": 0.156,
+            "ump_bb_pct": -0.252
+          },
+          "hit_probability": 0.6339,
+          "raw_hit_probability": 0.6744,
+          "lift": 0.0827,
+          "reliability": "A",
+          "sample_n": 112,
           "projection": {
             "stat": "hits",
             "value": 0.5,

@@ -25,6 +25,56 @@
           "matchup": "Los Angeles Angels @ Baltimore Orioles"
         }
       ]
+    },
+    {
+      "date": "2026-08-09",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 48.6,
+          "notable_signals": 0,
+          "matchup": "Los Angeles Angels @ Miami Marlins",
+          "game_pk": 823835,
+          "team": "Los Angeles Angels",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 80.2857,
+            "l7_avg_ev": 78.75,
+            "l7_barrel_pct": 0.0,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 0.0,
+            "lineup_slot": 0.0,
+            "bullpen_fatigue": 47.619,
+            "platoon_barrel_pct": -2.56,
+            "platoon_xwoba": -5.0,
+            "park_hand_index": -1.66,
+            "opp_catcher_framing": 0.96,
+            "days_rest": 4.0,
+            "pull_park_synergy": -0.8657,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": -2.0,
+            "series_game": 2.0,
+            "sp_rp_ops_gap": -0.92,
+            "vs_rp_ops": -2.136,
+            "ump_k_pct": 0.132,
+            "ump_bb_pct": 0.156
+          },
+          "hit_probability": 0.4842,
+          "raw_hit_probability": 0.5152,
+          "lift": -0.1842,
+          "reliability": "C",
+          "sample_n": 37,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

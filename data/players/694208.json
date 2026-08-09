@@ -135,6 +135,55 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-09",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 67.1,
+          "notable_signals": 0,
+          "matchup": "Los Angeles Angels @ Miami Marlins",
+          "game_pk": 823835,
+          "team": "Los Angeles Angels",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 80.2857,
+            "l7_avg_ev": 100.0,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 40.0,
+            "lineup_slot": 50.0,
+            "bullpen_fatigue": 47.619,
+            "platoon_barrel_pct": 3.84,
+            "platoon_xwoba": 0.06,
+            "park_hand_index": -1.66,
+            "opp_catcher_framing": 0.96,
+            "days_rest": 0.0,
+            "pull_park_synergy": -0.581,
+            "hard_hit_105_rate": -0.2225,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": -2.0,
+            "series_game": 2.0,
+            "ump_k_pct": 0.132,
+            "ump_bb_pct": 0.156
+          },
+          "hit_probability": 0.538,
+          "raw_hit_probability": 0.5758,
+          "lift": -0.1304,
+          "reliability": "B",
+          "sample_n": 64,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

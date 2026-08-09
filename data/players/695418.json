@@ -1,0 +1,39 @@
+{
+  "player_id": 695418,
+  "name": "Brad Lord",
+  "snapshots": [
+    {
+      "date": "2026-08-09",
+      "evaluations": [
+        {
+          "prop": "Over 3.5 Strikeouts",
+          "type": "pitcher",
+          "score": 58.7,
+          "notable_signals": 1,
+          "matchup": "Cincinnati Reds @ Washington Nationals",
+          "game_pk": 822700,
+          "team": "Washington Nationals",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "same_hand_ratio": 100.0,
+            "env_neutral": 50.0,
+            "ump_accuracy": 75.8145,
+            "ump_k_pct": -0.276,
+            "ump_bb_pct": 0.072
+          },
+          "hit_probability": 0.6588,
+          "raw_hit_probability": 0.797,
+          "lift": -0.0545,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 3.5,
+            "needs": 4
+          }
+        }
+      ]
+    }
+  ]
+}

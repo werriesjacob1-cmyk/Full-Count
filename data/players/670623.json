@@ -129,6 +129,52 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-09",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 44.5,
+          "notable_signals": 1,
+          "matchup": "Houston Astros @ San Diego Padres",
+          "game_pk": 823268,
+          "team": "Houston Astros",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 65.0,
+            "l7_avg_ev": 0.0,
+            "l7_barrel_pct": 60.7143,
+            "park_hr_index": 40.1,
+            "season_barrel_pct": 18.6667,
+            "lineup_slot": 75.0,
+            "bullpen_fatigue": 71.4286,
+            "park_hand_index": 0.05,
+            "opp_catcher_framing": 0.72,
+            "days_rest": 0.0,
+            "pull_park_synergy": 0.0299,
+            "hard_hit_105_rate": -2.1,
+            "team_total_move": -6.0,
+            "team_total_open": -4.0,
+            "getaway_day": -2.0,
+            "series_game": 2.0,
+            "sp_rp_ops_gap": 0.04,
+            "vs_rp_ops": 0.576
+          },
+          "hit_probability": 0.6209,
+          "raw_hit_probability": 0.6463,
+          "lift": 0.0697,
+          "reliability": "A",
+          "sample_n": 111,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

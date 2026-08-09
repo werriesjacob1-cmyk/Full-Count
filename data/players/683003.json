@@ -20,6 +20,63 @@
           "matchup": "Pittsburgh Pirates @ Milwaukee Brewers"
         }
       ]
+    },
+    {
+      "date": "2026-08-09",
+      "evaluations": [
+        {
+          "prop": "Over 3.5 Strikeouts",
+          "type": "pitcher",
+          "score": 48.1,
+          "notable_signals": 0,
+          "matchup": "New York Mets @ Pittsburgh Pirates",
+          "game_pk": 823345,
+          "team": "Pittsburgh Pirates",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "same_hand_ratio": 92.8571,
+            "l14_k_pct": 29.4118,
+            "tto_penalty": -8.0,
+            "env_neutral": 50.0
+          },
+          "hit_probability": 0.6788,
+          "raw_hit_probability": 0.8747,
+          "lift": -0.0345,
+          "reliability": "D",
+          "sample_n": 12,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 3.5,
+            "needs": 4
+          }
+        },
+        {
+          "prop": "New York Mets scoreless in the 1st",
+          "type": "pitcher",
+          "score": 83.3,
+          "notable_signals": 0,
+          "matchup": "New York Mets @ Pittsburgh Pirates",
+          "game_pk": 823345,
+          "team": "Pittsburgh Pirates",
+          "side": "home",
+          "lean": "NRFI",
+          "signals": {
+            "yrfi_rate": 16.7,
+            "fi_n_starts": 12.0,
+            "park_hr_index": 39.6
+          },
+          "hit_probability": 0.6945,
+          "raw_hit_probability": 0.7298,
+          "lift": -0.0115,
+          "reliability": "D",
+          "sample_n": 12,
+          "projection": {
+            "stat": "first_inning_run",
+            "value": 16.7
+          }
+        }
+      ]
     }
   ]
 }

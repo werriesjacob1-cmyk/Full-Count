@@ -214,6 +214,84 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-09",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 78.2,
+          "notable_signals": 2,
+          "matchup": "Chicago Cubs @ Kansas City Royals",
+          "game_pk": 824078,
+          "team": "Kansas City Royals",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 31.1429,
+            "l7_avg_ev": 97.5694,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 61.0,
+            "season_barrel_pct": 60.0,
+            "lineup_slot": 87.5,
+            "bullpen_fatigue": 76.9231,
+            "platoon_barrel_pct": 5.0,
+            "platoon_xwoba": 5.0,
+            "park_hand_index": 0.04,
+            "opp_catcher_framing": -0.0,
+            "days_rest": 0.0,
+            "pull_park_synergy": 0.0036,
+            "hard_hit_105_rate": 5.0,
+            "team_total_move": 0.0,
+            "team_total_open": 0.0,
+            "getaway_day": -2.0,
+            "series_game": 2.0,
+            "sp_rp_ops_gap": -0.048,
+            "vs_rp_ops": 1.02,
+            "ump_k_pct": -0.624,
+            "ump_bb_pct": -0.312
+          },
+          "hit_probability": 0.6569,
+          "raw_hit_probability": 0.7252,
+          "lift": 0.1057,
+          "reliability": "A",
+          "sample_n": 99,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 88.9,
+          "notable_signals": 1,
+          "matchup": "Chicago Cubs @ Kansas City Royals",
+          "game_pk": 824078,
+          "team": "Kansas City Royals",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "opp_team_cs_pct": -0.84,
+            "sprint_speed": 93.75,
+            "catcher_poptime": 85.7143,
+            "on_base": 81.7658
+          },
+          "hit_probability": 0.2784,
+          "raw_hit_probability": 0.2652,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 99,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

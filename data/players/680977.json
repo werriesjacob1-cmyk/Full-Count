@@ -127,6 +127,53 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-09",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 32.4,
+          "notable_signals": 1,
+          "matchup": "Tampa Bay Rays @ Seattle Mariners",
+          "game_pk": 823104,
+          "team": "Seattle Mariners",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 50.5714,
+            "pitch_exploit": 8.0,
+            "l7_avg_ev": 0.0,
+            "l7_barrel_pct": 57.1429,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 8.6667,
+            "lineup_slot": 12.5,
+            "bullpen_fatigue": 52.0833,
+            "platoon_barrel_pct": -5.0,
+            "platoon_xwoba": -4.02,
+            "park_hand_index": 1.68,
+            "opp_catcher_framing": 0.72,
+            "days_rest": 0.0,
+            "pull_park_synergy": 0.7703,
+            "getaway_day": -2.0,
+            "series_game": 2.0,
+            "sp_rp_ops_gap": -3.36,
+            "vs_rp_ops": -2.376
+          },
+          "hit_probability": 0.5766,
+          "raw_hit_probability": 0.6198,
+          "lift": -0.0918,
+          "reliability": "C",
+          "sample_n": 29,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

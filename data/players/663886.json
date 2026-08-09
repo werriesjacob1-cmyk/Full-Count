@@ -136,6 +136,58 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-09",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 61.0,
+          "notable_signals": 1,
+          "matchup": "Cincinnati Reds @ Washington Nationals",
+          "game_pk": 822700,
+          "team": "Cincinnati Reds",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 39.4286,
+            "pitch_exploit": 17.1429,
+            "l7_avg_ev": 73.75,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 59.8,
+            "season_barrel_pct": 60.0,
+            "lineup_slot": 62.5,
+            "bullpen_fatigue": 55.5556,
+            "platoon_barrel_pct": 5.0,
+            "platoon_xwoba": 2.16,
+            "park_hand_index": 1.19,
+            "opp_catcher_framing": -0.12,
+            "days_rest": 2.0,
+            "pull_park_synergy": 0.2541,
+            "hard_hit_105_rate": -1.1975,
+            "team_total_move": 0.0,
+            "team_total_open": 0.0,
+            "getaway_day": -2.0,
+            "series_game": 2.0,
+            "sp_rp_ops_gap": 0.32,
+            "vs_rp_ops": 0.576,
+            "ump_k_pct": 0.276,
+            "ump_bb_pct": -0.072
+          },
+          "hit_probability": 0.6066,
+          "raw_hit_probability": 0.616,
+          "lift": 0.0554,
+          "reliability": "A",
+          "sample_n": 86,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }
