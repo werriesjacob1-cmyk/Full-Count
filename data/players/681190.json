@@ -13,6 +13,66 @@
           "matchup": "San Diego Padres @ Arizona Diamondbacks"
         }
       ]
+    },
+    {
+      "date": "2026-08-09",
+      "evaluations": [
+        {
+          "prop": "Over 3.5 Strikeouts",
+          "type": "pitcher",
+          "score": 45.5,
+          "notable_signals": 1,
+          "matchup": "Houston Astros @ San Diego Padres",
+          "game_pk": 823268,
+          "team": "San Diego Padres",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "same_hand_ratio": 100.0,
+            "l14_k_pct": 0.0,
+            "env_neutral": 50.0,
+            "ump_accuracy": 69.0825,
+            "ump_k_pct": -0.24,
+            "ump_bb_pct": 0.048
+          },
+          "hit_probability": 0.5311,
+          "raw_hit_probability": 0.3373,
+          "lift": -0.1822,
+          "reliability": "D",
+          "sample_n": 18,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 3.5,
+            "needs": 4
+          }
+        },
+        {
+          "prop": "Houston Astros scoreless in the 1st",
+          "type": "pitcher",
+          "score": 70.0,
+          "notable_signals": 0,
+          "matchup": "Houston Astros @ San Diego Padres",
+          "game_pk": 823268,
+          "team": "San Diego Padres",
+          "side": "home",
+          "lean": "NRFI",
+          "signals": {
+            "yrfi_rate": 30.0,
+            "fi_n_starts": 20.0,
+            "ump_run_impact": 21.5385,
+            "park_hr_index": 39.9
+          },
+          "hit_probability": 0.6887,
+          "raw_hit_probability": 0.7043,
+          "lift": -0.0173,
+          "reliability": "D",
+          "sample_n": 20,
+          "projection": {
+            "stat": "first_inning_run",
+            "value": 30.0
+          }
+        }
+      ]
     }
   ]
 }
