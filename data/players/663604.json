@@ -1,0 +1,82 @@
+{
+  "player_id": 663604,
+  "name": "Brandon Lockridge",
+  "snapshots": [
+    {
+      "date": "2026-08-09",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 50.1,
+          "notable_signals": 0,
+          "matchup": "Minnesota Twins @ Milwaukee Brewers",
+          "game_pk": 823751,
+          "team": "Milwaukee Brewers",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 64.2857,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 0.0,
+            "lineup_slot": 12.5,
+            "bullpen_fatigue": 59.5238,
+            "platoon_barrel_pct": -5.0,
+            "platoon_xwoba": -2.64,
+            "park_hand_index": 0.91,
+            "opp_catcher_framing": -0.48,
+            "days_rest": 0.0,
+            "pull_park_synergy": -0.0191,
+            "hard_hit_105_rate": -0.58,
+            "team_total_move": 0.0,
+            "team_total_open": 0.0,
+            "getaway_day": -2.0,
+            "series_game": 2.0,
+            "sp_rp_ops_gap": -1.032,
+            "vs_rp_ops": -1.044,
+            "ump_k_pct": 0.696,
+            "ump_bb_pct": -0.324
+          },
+          "hit_probability": 0.6211,
+          "raw_hit_probability": 0.6469,
+          "lift": 0.0699,
+          "reliability": "C",
+          "sample_n": 29,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 58.2,
+          "notable_signals": 0,
+          "matchup": "Minnesota Twins @ Milwaukee Brewers",
+          "game_pk": 823751,
+          "team": "Milwaukee Brewers",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "opp_team_cs_pct": 6.0,
+            "sprint_speed": 59.375,
+            "catcher_poptime": 57.1429,
+            "on_base": 56.8138
+          },
+          "hit_probability": 0.214,
+          "raw_hit_probability": 0.1672,
+          "lift": null,
+          "reliability": "C",
+          "sample_n": 29,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
+    }
+  ]
+}

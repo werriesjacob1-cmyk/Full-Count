@@ -25,10 +25,10 @@
       "date": "2026-08-09",
       "evaluations": [
         {
-          "prop": "Over 0.5 Hits",
+          "prop": "Over 0.5 Hits+Runs+RBIs",
           "type": "batter",
-          "score": 34.8,
-          "notable_signals": 0,
+          "score": 39.8,
+          "notable_signals": 1,
           "matchup": "Los Angeles Angels @ Miami Marlins",
           "game_pk": 823835,
           "team": "Miami Marlins",
@@ -59,13 +59,13 @@
             "ump_k_pct": 0.132,
             "ump_bb_pct": 0.156
           },
-          "hit_probability": 0.5991,
-          "raw_hit_probability": 0.6001,
-          "lift": 0.0479,
+          "hit_probability": 0.596,
+          "raw_hit_probability": 0.6423,
+          "lift": -0.0703,
           "reliability": "C",
           "sample_n": 35,
           "projection": {
-            "stat": "hits",
+            "stat": "hits_runs_rbis",
             "value": 0.5,
             "needs": 1
           }
@@ -85,8 +85,8 @@
             "sprint_speed": 0.0,
             "on_base": 32.8215
           },
-          "hit_probability": 0.1667,
-          "raw_hit_probability": 0.0807,
+          "hit_probability": 0.1666,
+          "raw_hit_probability": 0.0804,
           "lift": null,
           "reliability": "C",
           "sample_n": 35,

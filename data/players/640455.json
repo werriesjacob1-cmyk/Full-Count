@@ -27,7 +27,7 @@
         {
           "prop": "Over 3.5 Strikeouts",
           "type": "pitcher",
-          "score": 38.5,
+          "score": 39.9,
           "notable_signals": 0,
           "matchup": "New York Mets @ Pittsburgh Pirates",
           "game_pk": 823345,
@@ -38,7 +38,10 @@
             "same_hand_ratio": 0.0,
             "l14_k_pct": 36.4706,
             "tto_penalty": -8.0,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 63.9946,
+            "ump_k_pct": -0.252,
+            "ump_bb_pct": 0.564
           },
           "hit_probability": 0.6636,
           "raw_hit_probability": 0.8153,
@@ -64,7 +67,8 @@
           "signals": {
             "yrfi_rate": 36.4,
             "fi_n_starts": 11.0,
-            "park_hr_index": 39.6
+            "ump_run_impact": 23.9425,
+            "park_hr_index": 38.9
           },
           "hit_probability": 0.6863,
           "raw_hit_probability": 0.6938,
