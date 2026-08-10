@@ -254,7 +254,7 @@
         {
           "prop": "Over 0.5 Hits",
           "type": "batter",
-          "score": 53.2,
+          "score": 53.0,
           "notable_signals": 2,
           "matchup": "Houston Astros @ San Francisco Giants",
           "game_pk": 823189,
@@ -266,22 +266,24 @@
             "sp_era_weak": 64.5714,
             "l7_avg_ev": 16.5972,
             "l7_barrel_pct": 100.0,
-            "park_hr_index": 25.5,
+            "park_hr_index": 25.6,
             "lineup_slot": 50.0,
             "bullpen_fatigue": 64.1026,
             "platoon_barrel_pct": 5.0,
             "platoon_xwoba": 3.3,
             "park_hand_index": -0.69,
-            "opp_catcher_framing": 1.08,
+            "opp_catcher_framing": 0.36,
             "days_rest": 0.0,
             "team_total_move": 0.0,
             "team_total_open": -4.0,
             "getaway_day": 0.0,
-            "series_game": 0.0
+            "series_game": 0.0,
+            "ump_k_pct": -0.66,
+            "ump_bb_pct": 0.624
           },
-          "hit_probability": 0.6351,
-          "raw_hit_probability": 0.677,
-          "lift": 0.0838,
+          "hit_probability": 0.6347,
+          "raw_hit_probability": 0.6762,
+          "lift": 0.0834,
           "reliability": "D",
           "sample_n": 0,
           "projection": {
@@ -293,7 +295,7 @@
         {
           "prop": "To Steal a Base",
           "type": "batter",
-          "score": 42.0,
+          "score": 40.4,
           "notable_signals": 0,
           "matchup": "Houston Astros @ San Francisco Giants",
           "game_pk": 823189,
@@ -303,7 +305,7 @@
           "signals": {
             "opp_team_cs_pct": 0.48,
             "sprint_speed": 18.75,
-            "catcher_poptime": 77.1429
+            "catcher_poptime": 71.4286
           },
           "hit_probability": 0.1889,
           "raw_hit_probability": 0.1234,

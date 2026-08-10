@@ -215,7 +215,7 @@
         {
           "prop": "Over 0.5 Hits+Runs+RBIs",
           "type": "batter",
-          "score": 55.5,
+          "score": 54.7,
           "notable_signals": 3,
           "matchup": "Kansas City Royals @ Los Angeles Dodgers",
           "game_pk": 823918,
@@ -229,11 +229,11 @@
             "bat_speed_trend": 15.0,
             "park_hr_index": 51.2,
             "season_barrel_pct": 16.6667,
-            "lineup_slot": 25.0,
+            "lineup_slot": 12.5,
             "bullpen_fatigue": 89.7436,
             "platoon_barrel_pct": -0.88,
             "platoon_xwoba": -2.58,
-            "opp_catcher_framing": 0.48,
+            "opp_catcher_framing": -0.12,
             "days_rest": 2.0,
             "hard_hit_105_rate": 1.0325,
             "team_total_move": 0.0,
@@ -241,11 +241,13 @@
             "getaway_day": 0.0,
             "series_game": 0.0,
             "sp_rp_ops_gap": 0.208,
-            "vs_rp_ops": -0.024
+            "vs_rp_ops": -0.024,
+            "ump_k_pct": 0.072,
+            "ump_bb_pct": -0.66
           },
-          "hit_probability": 0.5947,
-          "raw_hit_probability": 0.6408,
-          "lift": -0.0782,
+          "hit_probability": 0.5943,
+          "raw_hit_probability": 0.6403,
+          "lift": -0.0757,
           "reliability": "A",
           "sample_n": 104,
           "projection": {
@@ -257,7 +259,7 @@
         {
           "prop": "To Steal a Base",
           "type": "batter",
-          "score": 29.8,
+          "score": 35.8,
           "notable_signals": 0,
           "matchup": "Kansas City Royals @ Los Angeles Dodgers",
           "game_pk": 823918,
@@ -267,10 +269,11 @@
           "signals": {
             "opp_team_cs_pct": 2.7,
             "sprint_speed": 6.25,
+            "catcher_poptime": 71.4286,
             "on_base": 57.7735
           },
-          "hit_probability": 0.1562,
-          "raw_hit_probability": 0.0589,
+          "hit_probability": 0.1559,
+          "raw_hit_probability": 0.0581,
           "lift": null,
           "reliability": "A",
           "sample_n": 104,

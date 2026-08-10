@@ -310,7 +310,7 @@
             "bullpen_fatigue": 89.7436,
             "platoon_barrel_pct": -5.0,
             "platoon_xwoba": -2.22,
-            "opp_catcher_framing": 0.48,
+            "opp_catcher_framing": -0.12,
             "days_rest": 0.0,
             "hard_hit_105_rate": 0.08,
             "team_total_move": 0.0,
@@ -318,11 +318,13 @@
             "getaway_day": 0.0,
             "series_game": 0.0,
             "sp_rp_ops_gap": 0.096,
-            "vs_rp_ops": -1.128
+            "vs_rp_ops": -1.128,
+            "ump_k_pct": 0.072,
+            "ump_bb_pct": -0.66
           },
-          "hit_probability": 0.5251,
-          "raw_hit_probability": 0.5612,
-          "lift": -0.1478,
+          "hit_probability": 0.5245,
+          "raw_hit_probability": 0.5605,
+          "lift": -0.1455,
           "reliability": "B",
           "sample_n": 61,
           "projection": {
@@ -334,7 +336,7 @@
         {
           "prop": "To Steal a Base",
           "type": "batter",
-          "score": 21.5,
+          "score": 27.5,
           "notable_signals": 0,
           "matchup": "Kansas City Royals @ Los Angeles Dodgers",
           "game_pk": 823918,
@@ -344,10 +346,11 @@
           "signals": {
             "opp_team_cs_pct": 2.7,
             "sprint_speed": 3.125,
+            "catcher_poptime": 71.4286,
             "on_base": 27.0633
           },
-          "hit_probability": 0.1643,
-          "raw_hit_probability": 0.0758,
+          "hit_probability": 0.1642,
+          "raw_hit_probability": 0.0756,
           "lift": null,
           "reliability": "B",
           "sample_n": 61,

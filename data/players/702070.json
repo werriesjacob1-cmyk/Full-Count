@@ -20,7 +20,7 @@
         {
           "prop": "Over 4.5 Strikeouts",
           "type": "pitcher",
-          "score": 62.0,
+          "score": 63.1,
           "notable_signals": 0,
           "matchup": "Kansas City Royals @ Los Angeles Dodgers",
           "game_pk": 823918,
@@ -30,7 +30,10 @@
           "signals": {
             "same_hand_ratio": 75.0,
             "l14_k_pct": 85.8824,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 60.2376,
+            "ump_k_pct": -0.072,
+            "ump_bb_pct": 0.66
           },
           "hit_probability": 0.6179,
           "raw_hit_probability": 0.6441,
@@ -56,6 +59,7 @@
           "signals": {
             "yrfi_rate": 22.7,
             "fi_n_starts": 22.0,
+            "ump_run_impact": 23.2353,
             "park_hr_index": 51.2
           },
           "hit_probability": 0.6936,

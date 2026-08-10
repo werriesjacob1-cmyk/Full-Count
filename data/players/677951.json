@@ -1,6 +1,6 @@
 {
   "player_id": 677951,
-  "name": "Bobby Witt",
+  "name": "Bobby Witt Jr.",
   "snapshots": [
     {
       "date": "2026-08-04",
@@ -318,7 +318,7 @@
             "bvp_ops": -2.712,
             "platoon_barrel_pct": 5.0,
             "platoon_xwoba": 5.0,
-            "opp_catcher_framing": 0.48,
+            "opp_catcher_framing": -0.12,
             "days_rest": 0.0,
             "hard_hit_105_rate": 5.0,
             "team_total_move": 0.0,
@@ -326,11 +326,13 @@
             "getaway_day": 0.0,
             "series_game": 0.0,
             "sp_rp_ops_gap": -0.056,
-            "vs_rp_ops": 0.96
+            "vs_rp_ops": 0.96,
+            "ump_k_pct": 0.072,
+            "ump_bb_pct": -0.66
           },
-          "hit_probability": 0.6522,
-          "raw_hit_probability": 0.7147,
-          "lift": 0.1009,
+          "hit_probability": 0.6521,
+          "raw_hit_probability": 0.7145,
+          "lift": 0.1008,
           "reliability": "A",
           "sample_n": 100,
           "projection": {
@@ -342,7 +344,7 @@
         {
           "prop": "To Steal a Base",
           "type": "batter",
-          "score": 78.9,
+          "score": 84.9,
           "notable_signals": 1,
           "matchup": "Kansas City Royals @ Los Angeles Dodgers",
           "game_pk": 823918,
@@ -352,10 +354,11 @@
           "signals": {
             "opp_team_cs_pct": 2.7,
             "sprint_speed": 93.75,
+            "catcher_poptime": 71.4286,
             "on_base": 81.7658
           },
-          "hit_probability": 0.2765,
-          "raw_hit_probability": 0.2626,
+          "hit_probability": 0.2764,
+          "raw_hit_probability": 0.2625,
           "lift": null,
           "reliability": "A",
           "sample_n": 100,
