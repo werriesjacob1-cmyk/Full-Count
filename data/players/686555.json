@@ -208,6 +208,79 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-10",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 58.2,
+          "notable_signals": 4,
+          "matchup": "Kansas City Royals @ Los Angeles Dodgers",
+          "game_pk": 823918,
+          "team": "Kansas City Royals",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "sp_era_weak": 8.2857,
+            "l7_avg_ev": 63.4375,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 15.0,
+            "park_hr_index": 41.4,
+            "season_barrel_pct": 16.6667,
+            "lineup_slot": 25.0,
+            "bullpen_fatigue": 89.7436,
+            "platoon_barrel_pct": -0.88,
+            "platoon_xwoba": -2.58,
+            "opp_catcher_framing": 0.48,
+            "days_rest": 2.0,
+            "hard_hit_105_rate": 1.0325,
+            "team_total_move": 0.0,
+            "team_total_open": -6.0,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": 0.208,
+            "vs_rp_ops": -0.024
+          },
+          "hit_probability": 0.5953,
+          "raw_hit_probability": 0.6414,
+          "lift": -0.0811,
+          "reliability": "A",
+          "sample_n": 104,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 29.8,
+          "notable_signals": 0,
+          "matchup": "Kansas City Royals @ Los Angeles Dodgers",
+          "game_pk": 823918,
+          "team": "Kansas City Royals",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "opp_team_cs_pct": 2.7,
+            "sprint_speed": 6.25,
+            "on_base": 57.7735
+          },
+          "hit_probability": 0.1562,
+          "raw_hit_probability": 0.0588,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 104,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

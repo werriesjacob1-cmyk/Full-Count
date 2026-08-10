@@ -292,6 +292,83 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-10",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 48.0,
+          "notable_signals": 2,
+          "matchup": "Philadelphia Phillies @ St. Louis Cardinals",
+          "game_pk": 823018,
+          "team": "Philadelphia Phillies",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 35.4286,
+            "pitch_exploit": 2.8571,
+            "l7_avg_ev": 8.8889,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 60.5,
+            "season_barrel_pct": 14.6667,
+            "lineup_slot": 50.0,
+            "bullpen_fatigue": 64.1026,
+            "platoon_barrel_pct": -1.04,
+            "platoon_xwoba": 0.72,
+            "park_hand_index": -2.97,
+            "opp_catcher_framing": -0.84,
+            "days_rest": 0.0,
+            "pull_park_synergy": -1.4865,
+            "hard_hit_105_rate": -0.0225,
+            "team_total_move": 0.0,
+            "team_total_open": 0.0,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": -0.28,
+            "vs_rp_ops": -0.996
+          },
+          "hit_probability": 0.6157,
+          "raw_hit_probability": 0.6654,
+          "lift": -0.0607,
+          "reliability": "A",
+          "sample_n": 86,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 48.3,
+          "notable_signals": 0,
+          "matchup": "Philadelphia Phillies @ St. Louis Cardinals",
+          "game_pk": 823018,
+          "team": "Philadelphia Phillies",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "opp_team_cs_pct": 3.24,
+            "sprint_speed": 28.125,
+            "catcher_poptime": 94.2857,
+            "on_base": 35.7006
+          },
+          "hit_probability": 0.1472,
+          "raw_hit_probability": 0.0391,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 86,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

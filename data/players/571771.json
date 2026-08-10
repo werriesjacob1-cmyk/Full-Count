@@ -1,6 +1,6 @@
 {
   "player_id": 571771,
-  "name": "Enrique Hern\u00e1ndez",
+  "name": "Enrique Hernandez",
   "snapshots": [
     {
       "date": "2026-08-05",
@@ -48,6 +48,47 @@
           "hit_probability": 0.5756,
           "raw_hit_probability": 0.5512,
           "lift": 0.0244,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-08-10",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 40.5,
+          "notable_signals": 0,
+          "matchup": "Kansas City Royals @ Los Angeles Dodgers",
+          "game_pk": 823918,
+          "team": "Los Angeles Dodgers",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 59.7143,
+            "l7_avg_ev": 26.6667,
+            "l7_barrel_pct": 0.0,
+            "park_hr_index": 41.4,
+            "lineup_slot": 12.5,
+            "bullpen_fatigue": 59.5238,
+            "opp_catcher_framing": -0.36,
+            "days_rest": 0.0,
+            "team_total_move": 0.0,
+            "team_total_open": 0.0,
+            "getaway_day": 0.0,
+            "series_game": 0.0
+          },
+          "hit_probability": 0.5756,
+          "raw_hit_probability": 0.5513,
+          "lift": 0.0243,
           "reliability": "D",
           "sample_n": 0,
           "projection": {

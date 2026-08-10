@@ -183,6 +183,57 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-10",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 39.9,
+          "notable_signals": 1,
+          "matchup": "Milwaukee Brewers @ San Diego Padres",
+          "game_pk": 823265,
+          "team": "San Diego Padres",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 4.5714,
+            "pitch_exploit": 20.0,
+            "l7_avg_ev": 47.1053,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 40.0,
+            "season_barrel_pct": 54.0,
+            "lineup_slot": 62.5,
+            "bullpen_fatigue": 64.1026,
+            "platoon_barrel_pct": 3.68,
+            "platoon_xwoba": 0.9,
+            "park_hand_index": 0.13,
+            "opp_catcher_framing": 0.48,
+            "days_rest": 0.0,
+            "consecutive_games": -2.4,
+            "pull_park_synergy": 0.0473,
+            "hard_hit_105_rate": 1.89,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": 0.08,
+            "vs_rp_ops": 1.704
+          },
+          "hit_probability": 0.6181,
+          "raw_hit_probability": 0.6403,
+          "lift": 0.0668,
+          "reliability": "A",
+          "sample_n": 88,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

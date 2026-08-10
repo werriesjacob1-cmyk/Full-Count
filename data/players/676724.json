@@ -292,6 +292,82 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-10",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 63.7,
+          "notable_signals": 1,
+          "matchup": "New York Mets @ Atlanta Braves",
+          "game_pk": 824887,
+          "team": "New York Mets",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 38.2857,
+            "l7_avg_ev": 74.6528,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 42.6667,
+            "lineup_slot": 37.5,
+            "bullpen_fatigue": 64.1026,
+            "platoon_barrel_pct": 3.44,
+            "platoon_xwoba": 1.32,
+            "park_hand_index": 1.26,
+            "opp_catcher_framing": 0.48,
+            "days_rest": 0.0,
+            "pull_park_synergy": 0.7365,
+            "hard_hit_105_rate": 3.02,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": -1.312,
+            "vs_rp_ops": -0.564
+          },
+          "hit_probability": 0.6154,
+          "raw_hit_probability": 0.6651,
+          "lift": -0.061,
+          "reliability": "B",
+          "sample_n": 68,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 46.2,
+          "notable_signals": 0,
+          "matchup": "New York Mets @ Atlanta Braves",
+          "game_pk": 824887,
+          "team": "New York Mets",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "opp_team_cs_pct": 5.58,
+            "sprint_speed": 12.5,
+            "catcher_poptime": 91.4286,
+            "on_base": 65.4511
+          },
+          "hit_probability": 0.1491,
+          "raw_hit_probability": 0.0434,
+          "lift": null,
+          "reliability": "B",
+          "sample_n": 68,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

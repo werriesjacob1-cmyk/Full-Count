@@ -13,6 +13,62 @@
           "matchup": "Tampa Bay Rays @ Colorado Rockies"
         }
       ]
+    },
+    {
+      "date": "2026-08-10",
+      "evaluations": [
+        {
+          "prop": "Over 3.5 Strikeouts",
+          "type": "pitcher",
+          "score": 37.9,
+          "notable_signals": 0,
+          "matchup": "Tampa Bay Rays @ Athletics",
+          "game_pk": 824969,
+          "team": "Tampa Bay Rays",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "same_hand_ratio": 43.75,
+            "l14_k_pct": 4.7059,
+            "env_neutral": 50.0
+          },
+          "hit_probability": 0.638,
+          "raw_hit_probability": 0.7181,
+          "lift": -0.0739,
+          "reliability": "D",
+          "sample_n": 23,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 3.5,
+            "needs": 4
+          }
+        },
+        {
+          "prop": "Athletics scoreless in the 1st",
+          "type": "pitcher",
+          "score": 69.6,
+          "notable_signals": 0,
+          "matchup": "Tampa Bay Rays @ Athletics",
+          "game_pk": 824969,
+          "team": "Tampa Bay Rays",
+          "side": "away",
+          "lean": "NRFI",
+          "signals": {
+            "yrfi_rate": 30.4,
+            "fi_n_starts": 23.0,
+            "park_hr_index": 29.2
+          },
+          "hit_probability": 0.6884,
+          "raw_hit_probability": 0.7029,
+          "lift": -0.0176,
+          "reliability": "D",
+          "sample_n": 23,
+          "projection": {
+            "stat": "first_inning_run",
+            "value": 30.4
+          }
+        }
+      ]
     }
   ]
 }

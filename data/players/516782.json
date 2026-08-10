@@ -103,6 +103,53 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-10",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 50.6,
+          "notable_signals": 3,
+          "matchup": "Kansas City Royals @ Los Angeles Dodgers",
+          "game_pk": 823918,
+          "team": "Kansas City Royals",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 8.2857,
+            "l7_avg_ev": 0.0,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 41.4,
+            "season_barrel_pct": 39.3333,
+            "lineup_slot": 50.0,
+            "bullpen_fatigue": 89.7436,
+            "platoon_barrel_pct": 0.96,
+            "platoon_xwoba": -1.44,
+            "opp_catcher_framing": 0.48,
+            "days_rest": 0.0,
+            "hard_hit_105_rate": 0.3225,
+            "team_total_move": 0.0,
+            "team_total_open": -6.0,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": -0.608,
+            "vs_rp_ops": -1.584
+          },
+          "hit_probability": 0.6007,
+          "raw_hit_probability": 0.6035,
+          "lift": 0.0494,
+          "reliability": "B",
+          "sample_n": 53,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

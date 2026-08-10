@@ -182,6 +182,53 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-10",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 64.2,
+          "notable_signals": 3,
+          "matchup": "Tampa Bay Rays @ Athletics",
+          "game_pk": 824969,
+          "team": "Athletics",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "sp_era_weak": 71.1429,
+            "pitch_exploit": 6.2857,
+            "l7_avg_ev": 58.5714,
+            "l7_barrel_pct": 87.8571,
+            "park_hr_index": 29.2,
+            "season_barrel_pct": 28.6667,
+            "lineup_slot": 62.5,
+            "bullpen_fatigue": 69.4444,
+            "platoon_barrel_pct": -3.28,
+            "platoon_xwoba": -1.92,
+            "opp_catcher_framing": 0.48,
+            "days_rest": 0.0,
+            "hard_hit_105_rate": -2.54,
+            "team_total_move": 0.0,
+            "team_total_open": 0.0,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": -1.176,
+            "vs_rp_ops": -0.228
+          },
+          "hit_probability": 0.6026,
+          "raw_hit_probability": 0.6076,
+          "lift": 0.0513,
+          "reliability": "B",
+          "sample_n": 71,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

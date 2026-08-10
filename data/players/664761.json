@@ -194,6 +194,57 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-10",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 47.7,
+          "notable_signals": 1,
+          "matchup": "Philadelphia Phillies @ St. Louis Cardinals",
+          "game_pk": 823018,
+          "team": "Philadelphia Phillies",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 35.4286,
+            "l7_avg_ev": 55.95,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 15.0,
+            "park_hr_index": 60.5,
+            "season_barrel_pct": 13.3333,
+            "lineup_slot": 12.5,
+            "bullpen_fatigue": 64.1026,
+            "platoon_barrel_pct": -2.56,
+            "platoon_xwoba": 0.06,
+            "park_hand_index": -2.97,
+            "opp_catcher_framing": -0.84,
+            "days_rest": 0.0,
+            "consecutive_games": -0.6,
+            "pull_park_synergy": -0.2703,
+            "hard_hit_105_rate": 0.4775,
+            "team_total_move": 0.0,
+            "team_total_open": 0.0,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": -0.432,
+            "vs_rp_ops": -1.248
+          },
+          "hit_probability": 0.6117,
+          "raw_hit_probability": 0.6607,
+          "lift": -0.0647,
+          "reliability": "A",
+          "sample_n": 114,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

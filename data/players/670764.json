@@ -243,6 +243,79 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-10",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 48.6,
+          "notable_signals": 4,
+          "matchup": "Tampa Bay Rays @ Athletics",
+          "game_pk": 824969,
+          "team": "Tampa Bay Rays",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "sp_era_weak": 94.0,
+            "l7_avg_ev": 0.0,
+            "l7_barrel_pct": 33.5714,
+            "bat_speed_trend": 3.3,
+            "park_hr_index": 29.2,
+            "season_barrel_pct": 0.0,
+            "lineup_slot": 12.5,
+            "bullpen_fatigue": 83.3333,
+            "platoon_barrel_pct": -5.0,
+            "platoon_xwoba": -5.0,
+            "opp_catcher_framing": 0.12,
+            "days_rest": 0.0,
+            "team_total_move": 0.0,
+            "team_total_open": 4.0,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": -0.768,
+            "vs_rp_ops": -2.304
+          },
+          "hit_probability": 0.6309,
+          "raw_hit_probability": 0.6837,
+          "lift": -0.0455,
+          "reliability": "A",
+          "sample_n": 89,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 32.9,
+          "notable_signals": 0,
+          "matchup": "Tampa Bay Rays @ Athletics",
+          "game_pk": 824969,
+          "team": "Tampa Bay Rays",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "opp_team_cs_pct": -0.84,
+            "sprint_speed": 18.75,
+            "catcher_poptime": 77.1429,
+            "on_base": 8.8292
+          },
+          "hit_probability": 0.2168,
+          "raw_hit_probability": 0.172,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 89,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

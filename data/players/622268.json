@@ -37,6 +37,55 @@
           "matchup": "Athletics @ Cincinnati Reds"
         }
       ]
+    },
+    {
+      "date": "2026-08-10",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 49.7,
+          "notable_signals": 3,
+          "matchup": "Tampa Bay Rays @ Athletics",
+          "game_pk": 824969,
+          "team": "Athletics",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 71.1429,
+            "pitch_exploit": 4.0,
+            "l7_avg_ev": 0.0,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 29.2,
+            "season_barrel_pct": 8.0,
+            "lineup_slot": 25.0,
+            "bullpen_fatigue": 69.4444,
+            "platoon_barrel_pct": -2.16,
+            "platoon_xwoba": 0.6,
+            "park_hand_index": 2.74,
+            "opp_catcher_framing": 0.48,
+            "days_rest": 0.0,
+            "pull_park_synergy": 1.6974,
+            "team_total_move": 0.0,
+            "team_total_open": 0.0,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": 2.4,
+            "vs_rp_ops": 3.828
+          },
+          "hit_probability": 0.6114,
+          "raw_hit_probability": 0.6262,
+          "lift": 0.0601,
+          "reliability": "C",
+          "sample_n": 44,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }
