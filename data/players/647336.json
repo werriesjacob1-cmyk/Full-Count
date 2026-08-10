@@ -8,7 +8,7 @@
         {
           "prop": "Over 4.5 Strikeouts",
           "type": "pitcher",
-          "score": 55.2,
+          "score": 50.7,
           "notable_signals": 0,
           "matchup": "Colorado Rockies @ Arizona Diamondbacks",
           "game_pk": 825048,
@@ -16,8 +16,11 @@
           "side": null,
           "lean": null,
           "signals": {
-            "same_hand_ratio": 92.8571,
-            "env_neutral": 50.0
+            "same_hand_ratio": 57.1429,
+            "env_neutral": 50.0,
+            "ump_accuracy": 48.5518,
+            "ump_k_pct": 0.36,
+            "ump_bb_pct": 0.084
           },
           "hit_probability": 0.6158,
           "raw_hit_probability": 0.6364,
@@ -43,6 +46,7 @@
           "signals": {
             "yrfi_rate": 29.4,
             "fi_n_starts": 17.0,
+            "ump_run_impact": 34.5675,
             "park_hr_index": 50.0
           },
           "hit_probability": 0.6891,
