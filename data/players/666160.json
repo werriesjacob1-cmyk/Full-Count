@@ -46,7 +46,7 @@
         {
           "prop": "Over 0.5 Hits",
           "type": "batter",
-          "score": 52.8,
+          "score": 53.0,
           "notable_signals": 2,
           "matchup": "Colorado Rockies @ St. Louis Cardinals",
           "game_pk": 823024,
@@ -80,9 +80,9 @@
             "ump_k_pct": -0.264,
             "ump_bb_pct": -0.192
           },
-          "hit_probability": 0.6148,
-          "raw_hit_probability": 0.6333,
-          "lift": 0.0638,
+          "hit_probability": 0.6146,
+          "raw_hit_probability": 0.6329,
+          "lift": 0.0636,
           "reliability": "B",
           "sample_n": 77,
           "projection": {
@@ -114,6 +114,30 @@
           "sample_n": 77,
           "projection": {
             "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 36.5,
+          "notable_signals": 1,
+          "matchup": "Colorado Rockies @ St. Louis Cardinals",
+          "game_pk": 823024,
+          "team": "Colorado Rockies",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "hard_hit_rate": 0.2827
+          },
+          "hit_probability": 0.291,
+          "raw_hit_probability": 0.2827,
+          "lift": 0.0632,
+          "reliability": "B",
+          "sample_n": 77,
+          "projection": {
+            "stat": "hard_hit_105",
             "value": 1,
             "needs": 1
           }

@@ -32,7 +32,7 @@
         {
           "prop": "Over 0.5 Hits",
           "type": "batter",
-          "score": 61.8,
+          "score": 64.4,
           "notable_signals": 3,
           "matchup": "Houston Astros @ San Diego Padres",
           "game_pk": 823266,
@@ -48,7 +48,7 @@
             "bat_speed_trend": 15.0,
             "park_hr_index": 39.6,
             "season_barrel_pct": 38.6667,
-            "lineup_slot": 0.0,
+            "lineup_slot": 37.5,
             "bullpen_fatigue": 64.1026,
             "platoon_barrel_pct": 3.2,
             "platoon_xwoba": 1.8,
@@ -62,16 +62,115 @@
             "getaway_day": 0.0,
             "series_game": 0.0,
             "sp_rp_ops_gap": 0.808,
-            "vs_rp_ops": 2.76
+            "vs_rp_ops": 2.76,
+            "ump_k_pct": -0.408,
+            "ump_bb_pct": -0.036
           },
-          "hit_probability": 0.6019,
-          "raw_hit_probability": 0.606,
-          "lift": 0.0509,
+          "hit_probability": 0.6111,
+          "raw_hit_probability": 0.6255,
+          "lift": 0.0601,
           "reliability": "C",
           "sample_n": 39,
           "projection": {
             "stat": "hits",
             "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 30.5,
+          "notable_signals": 0,
+          "matchup": "Houston Astros @ San Diego Padres",
+          "game_pk": 823266,
+          "team": "San Diego Padres",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "hard_hit_rate": 0.2587
+          },
+          "hit_probability": 0.2737,
+          "raw_hit_probability": 0.2587,
+          "lift": 0.0459,
+          "reliability": "C",
+          "sample_n": 39,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-08-11",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 52.4,
+          "notable_signals": 4,
+          "matchup": "Milwaukee Brewers @ San Diego Padres",
+          "game_pk": 823264,
+          "team": "San Diego Padres",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 9.7143,
+            "pitch_exploit": 5.1429,
+            "l7_avg_ev": 88.5938,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 13.35,
+            "park_hr_index": 40.3,
+            "season_barrel_pct": 38.6667,
+            "lineup_slot": 25.0,
+            "bullpen_fatigue": 69.4444,
+            "platoon_barrel_pct": -5.0,
+            "platoon_xwoba": 0.84,
+            "park_hand_index": 0.15,
+            "opp_catcher_framing": 0.6,
+            "days_rest": 4.0,
+            "pull_park_synergy": 0.1207,
+            "hard_hit_105_rate": 0.8925,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": 0.592,
+            "vs_rp_ops": 2.34
+          },
+          "hit_probability": 0.6035,
+          "raw_hit_probability": 0.6095,
+          "lift": 0.0522,
+          "reliability": "C",
+          "sample_n": 41,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 28.6,
+          "notable_signals": 0,
+          "matchup": "Milwaukee Brewers @ San Diego Padres",
+          "game_pk": 823264,
+          "team": "San Diego Padres",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "hard_hit_rate": 0.2507
+          },
+          "hit_probability": 0.2681,
+          "raw_hit_probability": 0.2507,
+          "lift": 0.0408,
+          "reliability": "C",
+          "sample_n": 41,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
             "needs": 1
           }
         }

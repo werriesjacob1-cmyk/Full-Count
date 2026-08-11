@@ -1,6 +1,6 @@
 {
   "player_id": 694208,
-  "name": "Mois\u00e9s Ballesteros",
+  "name": "Moises Ballesteros",
   "snapshots": [
     {
       "date": "2026-08-04",
@@ -74,14 +74,107 @@
             "ump_k_pct": 0.132,
             "ump_bb_pct": 0.684
           },
-          "hit_probability": 0.5404,
-          "raw_hit_probability": 0.5785,
-          "lift": -0.1316,
+          "hit_probability": 0.5403,
+          "raw_hit_probability": 0.5784,
+          "lift": -0.1311,
           "reliability": "B",
           "sample_n": 62,
           "projection": {
             "stat": "hits_runs_rbis",
             "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 15.7,
+          "notable_signals": 0,
+          "matchup": "Los Angeles Angels @ Miami Marlins",
+          "game_pk": 823836,
+          "team": "Los Angeles Angels",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "hard_hit_rate": 0.1995
+          },
+          "hit_probability": 0.2339,
+          "raw_hit_probability": 0.1995,
+          "lift": 0.0061,
+          "reliability": "B",
+          "sample_n": 62,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-08-11",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 46.4,
+          "notable_signals": 1,
+          "matchup": "Texas Rangers @ Los Angeles Angels",
+          "game_pk": 823997,
+          "team": "Los Angeles Angels",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 0.0,
+            "l7_avg_ev": 76.6447,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 51.0,
+            "season_barrel_pct": 36.0,
+            "lineup_slot": 37.5,
+            "bullpen_fatigue": 76.9231,
+            "park_hand_index": -2.63,
+            "opp_catcher_framing": 0.24,
+            "days_rest": 0.0,
+            "pull_park_synergy": -0.8008,
+            "hard_hit_105_rate": -0.065,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": -1.248,
+            "vs_rp_ops": -1.536
+          },
+          "hit_probability": 0.5371,
+          "raw_hit_probability": 0.5748,
+          "lift": -0.1347,
+          "reliability": "B",
+          "sample_n": 66,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 19.0,
+          "notable_signals": 0,
+          "matchup": "Texas Rangers @ Los Angeles Angels",
+          "game_pk": 823997,
+          "team": "Los Angeles Angels",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "hard_hit_rate": 0.2124
+          },
+          "hit_probability": 0.2422,
+          "raw_hit_probability": 0.2124,
+          "lift": 0.0149,
+          "reliability": "B",
+          "sample_n": 66,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
             "needs": 1
           }
         }

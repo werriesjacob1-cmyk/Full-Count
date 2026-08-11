@@ -58,6 +58,105 @@
           "matchup": "Miami Marlins @ Atlanta Braves"
         }
       ]
+    },
+    {
+      "date": "2026-08-11",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 68.0,
+          "notable_signals": 2,
+          "matchup": "New York Mets @ Atlanta Braves",
+          "game_pk": 824886,
+          "team": "Atlanta Braves",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 28.8571,
+            "l7_avg_ev": 94.2045,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 6.6667,
+            "lineup_slot": 0.0,
+            "bullpen_fatigue": 71.4286,
+            "platoon_barrel_pct": -3.2,
+            "platoon_xwoba": -3.72,
+            "park_hand_index": 1.33,
+            "opp_catcher_framing": -0.36,
+            "days_rest": 0.0,
+            "pull_park_synergy": 0.4934,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": 0.936,
+            "vs_rp_ops": -0.504,
+            "ump_k_pct": -0.288,
+            "ump_bb_pct": -0.204
+          },
+          "hit_probability": 0.5464,
+          "raw_hit_probability": 0.5853,
+          "lift": -0.1254,
+          "reliability": "C",
+          "sample_n": 32,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 41.1,
+          "notable_signals": 0,
+          "matchup": "New York Mets @ Atlanta Braves",
+          "game_pk": 824886,
+          "team": "Atlanta Braves",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "opp_team_cs_pct": -3.78,
+            "sprint_speed": 15.625,
+            "catcher_poptime": 100.0,
+            "on_base": 24.1843
+          },
+          "hit_probability": 0.1369,
+          "raw_hit_probability": 0.0155,
+          "lift": null,
+          "reliability": "C",
+          "sample_n": 32,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 0,
+          "notable_signals": 0,
+          "matchup": "New York Mets @ Atlanta Braves",
+          "game_pk": 824886,
+          "team": "Atlanta Braves",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "hard_hit_rate": 0.1235
+          },
+          "hit_probability": 0.189,
+          "raw_hit_probability": 0.1235,
+          "lift": -0.0383,
+          "reliability": "C",
+          "sample_n": 32,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

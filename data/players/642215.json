@@ -20,6 +20,104 @@
           "matchup": "Detroit Tigers @ Seattle Mariners"
         }
       ]
+    },
+    {
+      "date": "2026-08-11",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 65.9,
+          "notable_signals": 3,
+          "matchup": "Seattle Mariners @ New York Yankees",
+          "game_pk": 823512,
+          "team": "Seattle Mariners",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 36.8571,
+            "l7_avg_ev": 95.625,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 72.0,
+            "season_barrel_pct": 13.3333,
+            "lineup_slot": 12.5,
+            "bullpen_fatigue": 83.3333,
+            "platoon_barrel_pct": -1.68,
+            "platoon_xwoba": -3.96,
+            "park_hand_index": 0.84,
+            "opp_catcher_framing": -0.6,
+            "days_rest": 2.0,
+            "pull_park_synergy": 0.6938,
+            "hard_hit_105_rate": -1.93,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "ump_k_pct": -0.204,
+            "ump_bb_pct": 0.228
+          },
+          "hit_probability": 0.5149,
+          "raw_hit_probability": 0.5497,
+          "lift": -0.1569,
+          "reliability": "C",
+          "sample_n": 39,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 32.3,
+          "notable_signals": 0,
+          "matchup": "Seattle Mariners @ New York Yankees",
+          "game_pk": 823512,
+          "team": "Seattle Mariners",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "opp_team_cs_pct": 1.38,
+            "sprint_speed": 12.5,
+            "catcher_poptime": 77.1429,
+            "on_base": 20.3455
+          },
+          "hit_probability": 0.1823,
+          "raw_hit_probability": 0.111,
+          "lift": null,
+          "reliability": "C",
+          "sample_n": 39,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 0.4,
+          "notable_signals": 0,
+          "matchup": "Seattle Mariners @ New York Yankees",
+          "game_pk": 823512,
+          "team": "Seattle Mariners",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "hard_hit_rate": 0.1378
+          },
+          "hit_probability": 0.1969,
+          "raw_hit_probability": 0.1378,
+          "lift": -0.0304,
+          "reliability": "C",
+          "sample_n": 39,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

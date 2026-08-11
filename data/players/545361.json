@@ -98,8 +98,8 @@
             "ump_bb_pct": 0.684
           },
           "hit_probability": 0.6934,
-          "raw_hit_probability": 0.7624,
-          "lift": 0.0214,
+          "raw_hit_probability": 0.7623,
+          "lift": 0.022,
           "reliability": "A",
           "sample_n": 96,
           "projection": {
@@ -131,6 +131,129 @@
           "sample_n": 96,
           "projection": {
             "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 69.1,
+          "notable_signals": 1,
+          "matchup": "Los Angeles Angels @ Miami Marlins",
+          "game_pk": 823836,
+          "team": "Los Angeles Angels",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "hard_hit_rate": 0.413
+          },
+          "hit_probability": 0.3949,
+          "raw_hit_probability": 0.413,
+          "lift": 0.1671,
+          "reliability": "A",
+          "sample_n": 96,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-08-11",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 70.1,
+          "notable_signals": 2,
+          "matchup": "Texas Rangers @ Los Angeles Angels",
+          "game_pk": 823997,
+          "team": "Los Angeles Angels",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 0.0,
+            "l7_avg_ev": 66.25,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 15.0,
+            "park_hr_index": 51.0,
+            "season_barrel_pct": 92.0,
+            "lineup_slot": 87.5,
+            "bullpen_fatigue": 76.9231,
+            "platoon_barrel_pct": 5.0,
+            "platoon_xwoba": 4.32,
+            "park_hand_index": -1.07,
+            "opp_catcher_framing": 0.24,
+            "days_rest": 0.0,
+            "pull_park_synergy": -0.412,
+            "hard_hit_105_rate": 5.0,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": -0.912,
+            "vs_rp_ops": 0.468
+          },
+          "hit_probability": 0.6867,
+          "raw_hit_probability": 0.7536,
+          "lift": 0.0149,
+          "reliability": "A",
+          "sample_n": 100,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 67.7,
+          "notable_signals": 1,
+          "matchup": "Texas Rangers @ Los Angeles Angels",
+          "game_pk": 823997,
+          "team": "Los Angeles Angels",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "opp_team_cs_pct": 2.22,
+            "sprint_speed": 37.5,
+            "catcher_poptime": 100.0,
+            "on_base": 95.2015
+          },
+          "hit_probability": 0.1654,
+          "raw_hit_probability": 0.0779,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 100,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 69.8,
+          "notable_signals": 1,
+          "matchup": "Texas Rangers @ Los Angeles Angels",
+          "game_pk": 823997,
+          "team": "Los Angeles Angels",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "hard_hit_rate": 0.4157
+          },
+          "hit_probability": 0.3972,
+          "raw_hit_probability": 0.4157,
+          "lift": 0.1699,
+          "reliability": "A",
+          "sample_n": 100,
+          "projection": {
+            "stat": "hard_hit_105",
             "value": 1,
             "needs": 1
           }

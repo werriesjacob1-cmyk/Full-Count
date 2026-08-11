@@ -76,6 +76,79 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-11",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 59.7,
+          "notable_signals": 3,
+          "matchup": "Milwaukee Brewers @ San Diego Padres",
+          "game_pk": 823264,
+          "team": "Milwaukee Brewers",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 73.4286,
+            "pitch_exploit": 18.8571,
+            "l7_avg_ev": 0.0,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 15.0,
+            "park_hr_index": 40.3,
+            "season_barrel_pct": 20.6667,
+            "lineup_slot": 37.5,
+            "bullpen_fatigue": 59.5238,
+            "platoon_barrel_pct": -1.6,
+            "platoon_xwoba": -0.36,
+            "park_hand_index": 0.15,
+            "opp_catcher_framing": 0.72,
+            "days_rest": 0.0,
+            "pull_park_synergy": 0.0199,
+            "hard_hit_105_rate": -1.45,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": -0.544,
+            "vs_rp_ops": 1.044
+          },
+          "hit_probability": 0.6073,
+          "raw_hit_probability": 0.6175,
+          "lift": 0.056,
+          "reliability": "B",
+          "sample_n": 74,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 5.2,
+          "notable_signals": 0,
+          "matchup": "Milwaukee Brewers @ San Diego Padres",
+          "game_pk": 823264,
+          "team": "Milwaukee Brewers",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "hard_hit_rate": 0.157
+          },
+          "hit_probability": 0.2079,
+          "raw_hit_probability": 0.157,
+          "lift": -0.0194,
+          "reliability": "B",
+          "sample_n": 74,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

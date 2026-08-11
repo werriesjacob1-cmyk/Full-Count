@@ -106,13 +106,136 @@
             "catcher_poptime": 80.0,
             "on_base": 78.8868
           },
-          "hit_probability": 0.1549,
-          "raw_hit_probability": 0.0561,
+          "hit_probability": 0.155,
+          "raw_hit_probability": 0.0562,
           "lift": null,
           "reliability": "A",
           "sample_n": 109,
           "projection": {
             "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 41.5,
+          "notable_signals": 1,
+          "matchup": "Baltimore Orioles @ Texas Rangers",
+          "game_pk": 822863,
+          "team": "Texas Rangers",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "hard_hit_rate": 0.3027
+          },
+          "hit_probability": 0.3059,
+          "raw_hit_probability": 0.3027,
+          "lift": 0.0781,
+          "reliability": "A",
+          "sample_n": 109,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-08-11",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 75.6,
+          "notable_signals": 1,
+          "matchup": "Texas Rangers @ Los Angeles Angels",
+          "game_pk": 823997,
+          "team": "Texas Rangers",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 100.0,
+            "pitch_exploit": 2.8571,
+            "l7_avg_ev": 87.1528,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 51.0,
+            "season_barrel_pct": 55.3333,
+            "lineup_slot": 62.5,
+            "bullpen_fatigue": 59.5238,
+            "platoon_barrel_pct": 5.0,
+            "platoon_xwoba": 3.9,
+            "park_hand_index": -2.63,
+            "opp_catcher_framing": 0.72,
+            "days_rest": 0.0,
+            "pull_park_synergy": -0.7272,
+            "hard_hit_105_rate": 2.3325,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": -0.264,
+            "vs_rp_ops": 0.6
+          },
+          "hit_probability": 0.6128,
+          "raw_hit_probability": 0.6292,
+          "lift": 0.0615,
+          "reliability": "A",
+          "sample_n": 113,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 57.0,
+          "notable_signals": 1,
+          "matchup": "Texas Rangers @ Los Angeles Angels",
+          "game_pk": 823997,
+          "team": "Texas Rangers",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "opp_team_cs_pct": 2.76,
+            "sprint_speed": 31.25,
+            "catcher_poptime": 85.7143,
+            "on_base": 78.8868
+          },
+          "hit_probability": 0.154,
+          "raw_hit_probability": 0.0542,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 113,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 43.0,
+          "notable_signals": 1,
+          "matchup": "Texas Rangers @ Los Angeles Angels",
+          "game_pk": 823997,
+          "team": "Texas Rangers",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "hard_hit_rate": 0.3083
+          },
+          "hit_probability": 0.3102,
+          "raw_hit_probability": 0.3083,
+          "lift": 0.0829,
+          "reliability": "A",
+          "sample_n": 113,
+          "projection": {
+            "stat": "hard_hit_105",
             "value": 1,
             "needs": 1
           }

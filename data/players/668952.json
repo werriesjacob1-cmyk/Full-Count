@@ -98,9 +98,9 @@
             "ump_k_pct": 0.288,
             "ump_bb_pct": -0.36
           },
-          "hit_probability": 0.5475,
-          "raw_hit_probability": 0.5865,
-          "lift": -0.1245,
+          "hit_probability": 0.5474,
+          "raw_hit_probability": 0.5864,
+          "lift": -0.124,
           "reliability": "B",
           "sample_n": 66,
           "projection": {
@@ -126,12 +126,36 @@
             "on_base": 34.7409
           },
           "hit_probability": 0.1568,
-          "raw_hit_probability": 0.0601,
+          "raw_hit_probability": 0.0602,
           "lift": null,
           "reliability": "B",
           "sample_n": 66,
           "projection": {
             "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 26.4,
+          "notable_signals": 0,
+          "matchup": "Minnesota Twins @ Milwaukee Brewers",
+          "game_pk": 823750,
+          "team": "Minnesota Twins",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "hard_hit_rate": 0.2422
+          },
+          "hit_probability": 0.2622,
+          "raw_hit_probability": 0.2422,
+          "lift": 0.0344,
+          "reliability": "B",
+          "sample_n": 66,
+          "projection": {
+            "stat": "hard_hit_105",
             "value": 1,
             "needs": 1
           }

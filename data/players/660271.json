@@ -116,6 +116,128 @@
             "value": 1,
             "needs": 1
           }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 79.3,
+          "notable_signals": 1,
+          "matchup": "Los Angeles Dodgers @ Arizona Diamondbacks",
+          "game_pk": 825051,
+          "team": "Los Angeles Dodgers",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "hard_hit_rate": 0.4539
+          },
+          "hit_probability": 0.4301,
+          "raw_hit_probability": 0.4539,
+          "lift": 0.2023,
+          "reliability": "A",
+          "sample_n": 105,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-08-11",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 73.3,
+          "notable_signals": 3,
+          "matchup": "Kansas City Royals @ Los Angeles Dodgers",
+          "game_pk": 823917,
+          "team": "Los Angeles Dodgers",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 26.8571,
+            "pitch_exploit": 12.5714,
+            "l7_avg_ev": 68.8235,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 3.225,
+            "park_hr_index": 40.0,
+            "season_barrel_pct": 91.3333,
+            "lineup_slot": 100.0,
+            "bullpen_fatigue": 59.5238,
+            "platoon_barrel_pct": 5.0,
+            "platoon_xwoba": 5.0,
+            "opp_catcher_framing": -0.36,
+            "days_rest": 0.0,
+            "hard_hit_105_rate": 5.0,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": -1.296,
+            "vs_rp_ops": 1.44
+          },
+          "hit_probability": 0.6173,
+          "raw_hit_probability": 0.6387,
+          "lift": 0.066,
+          "reliability": "A",
+          "sample_n": 109,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 54.7,
+          "notable_signals": 1,
+          "matchup": "Kansas City Royals @ Los Angeles Dodgers",
+          "game_pk": 823917,
+          "team": "Los Angeles Dodgers",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "opp_team_cs_pct": -4.56,
+            "sprint_speed": 9.375,
+            "catcher_poptime": 100.0,
+            "on_base": 100.0
+          },
+          "hit_probability": 0.1586,
+          "raw_hit_probability": 0.0638,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 109,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 77.8,
+          "notable_signals": 1,
+          "matchup": "Kansas City Royals @ Los Angeles Dodgers",
+          "game_pk": 823917,
+          "team": "Los Angeles Dodgers",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "hard_hit_rate": 0.4477
+          },
+          "hit_probability": 0.4247,
+          "raw_hit_probability": 0.4477,
+          "lift": 0.1974,
+          "reliability": "A",
+          "sample_n": 109,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
         }
       ]
     }

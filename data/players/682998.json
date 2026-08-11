@@ -28,7 +28,7 @@
             "platoon_barrel_pct": 5.0,
             "platoon_xwoba": 1.8,
             "park_hand_index": -0.99,
-            "opp_catcher_framing": 1.2,
+            "opp_catcher_framing": -0.12,
             "days_rest": 0.0,
             "pull_park_synergy": -0.7554,
             "hard_hit_105_rate": 3.85,
@@ -41,9 +41,9 @@
             "ump_k_pct": -0.192,
             "ump_bb_pct": -0.06
           },
-          "hit_probability": 0.6446,
-          "raw_hit_probability": 0.7003,
-          "lift": -0.0274,
+          "hit_probability": 0.6445,
+          "raw_hit_probability": 0.7002,
+          "lift": -0.0269,
           "reliability": "A",
           "sample_n": 112,
           "projection": {
@@ -55,7 +55,7 @@
         {
           "prop": "To Steal a Base",
           "type": "batter",
-          "score": 70.1,
+          "score": 76.1,
           "notable_signals": 1,
           "matchup": "Los Angeles Dodgers @ Arizona Diamondbacks",
           "game_pk": 825051,
@@ -65,15 +65,40 @@
           "signals": {
             "opp_team_cs_pct": 2.4,
             "sprint_speed": 75.0,
+            "catcher_poptime": 71.4286,
             "on_base": 84.6449
           },
           "hit_probability": 0.1907,
-          "raw_hit_probability": 0.1266,
+          "raw_hit_probability": 0.1267,
           "lift": null,
           "reliability": "A",
           "sample_n": 112,
           "projection": {
             "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 58.1,
+          "notable_signals": 1,
+          "matchup": "Los Angeles Dodgers @ Arizona Diamondbacks",
+          "game_pk": 825051,
+          "team": "Arizona Diamondbacks",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "hard_hit_rate": 0.369
+          },
+          "hit_probability": 0.3582,
+          "raw_hit_probability": 0.369,
+          "lift": 0.1304,
+          "reliability": "A",
+          "sample_n": 112,
+          "projection": {
+            "stat": "hard_hit_105",
             "value": 1,
             "needs": 1
           }

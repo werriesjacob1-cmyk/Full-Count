@@ -46,7 +46,7 @@
         {
           "prop": "Over 0.5 Hits",
           "type": "batter",
-          "score": 40.9,
+          "score": 41.1,
           "notable_signals": 0,
           "matchup": "Colorado Rockies @ St. Louis Cardinals",
           "game_pk": 823024,
@@ -75,9 +75,9 @@
             "ump_k_pct": -0.264,
             "ump_bb_pct": -0.192
           },
-          "hit_probability": 0.6156,
-          "raw_hit_probability": 0.635,
-          "lift": 0.0646,
+          "hit_probability": 0.6154,
+          "raw_hit_probability": 0.6346,
+          "lift": 0.0644,
           "reliability": "B",
           "sample_n": 45,
           "projection": {
@@ -103,12 +103,131 @@
             "on_base": 100.0
           },
           "hit_probability": 0.1752,
-          "raw_hit_probability": 0.0974,
+          "raw_hit_probability": 0.0975,
           "lift": null,
           "reliability": "B",
           "sample_n": 45,
           "projection": {
             "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 8.3,
+          "notable_signals": 0,
+          "matchup": "Colorado Rockies @ St. Louis Cardinals",
+          "game_pk": 823024,
+          "team": "Colorado Rockies",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "hard_hit_rate": 0.17
+          },
+          "hit_probability": 0.2156,
+          "raw_hit_probability": 0.17,
+          "lift": -0.0122,
+          "reliability": "B",
+          "sample_n": 45,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-08-11",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 41.0,
+          "notable_signals": 0,
+          "matchup": "Colorado Rockies @ Arizona Diamondbacks",
+          "game_pk": 825046,
+          "team": "Colorado Rockies",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "sp_era_weak": 40.0,
+            "l7_avg_ev": 0.0,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 12.6667,
+            "lineup_slot": 75.0,
+            "bullpen_fatigue": 59.5238,
+            "platoon_barrel_pct": -0.24,
+            "platoon_xwoba": -0.48,
+            "opp_catcher_framing": 0.12,
+            "days_rest": 0.0,
+            "hard_hit_105_rate": -1.365,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": 0.312,
+            "vs_rp_ops": 2.028
+          },
+          "hit_probability": 0.6109,
+          "raw_hit_probability": 0.6251,
+          "lift": 0.0596,
+          "reliability": "B",
+          "sample_n": 49,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 73.4,
+          "notable_signals": 1,
+          "matchup": "Colorado Rockies @ Arizona Diamondbacks",
+          "game_pk": 825046,
+          "team": "Colorado Rockies",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "opp_team_cs_pct": 2.88,
+            "sprint_speed": 46.875,
+            "catcher_poptime": 100.0,
+            "on_base": 100.0
+          },
+          "hit_probability": 0.1795,
+          "raw_hit_probability": 0.1058,
+          "lift": null,
+          "reliability": "B",
+          "sample_n": 49,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 6.0,
+          "notable_signals": 0,
+          "matchup": "Colorado Rockies @ Arizona Diamondbacks",
+          "game_pk": 825046,
+          "team": "Colorado Rockies",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "hard_hit_rate": 0.1604
+          },
+          "hit_probability": 0.2099,
+          "raw_hit_probability": 0.1604,
+          "lift": -0.0174,
+          "reliability": "B",
+          "sample_n": 49,
+          "projection": {
+            "stat": "hard_hit_105",
             "value": 1,
             "needs": 1
           }

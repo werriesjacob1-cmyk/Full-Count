@@ -79,9 +79,9 @@
             "ump_k_pct": 0.624,
             "ump_bb_pct": -0.384
           },
-          "hit_probability": 0.567,
-          "raw_hit_probability": 0.6088,
-          "lift": -0.105,
+          "hit_probability": 0.5669,
+          "raw_hit_probability": 0.6086,
+          "lift": -0.1045,
           "reliability": "B",
           "sample_n": 76,
           "projection": {
@@ -113,6 +113,30 @@
           "sample_n": 76,
           "projection": {
             "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 0,
+          "notable_signals": 0,
+          "matchup": "New York Mets @ Pittsburgh Pirates",
+          "game_pk": 823349,
+          "team": "Pittsburgh Pirates",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "hard_hit_rate": 0.1077
+          },
+          "hit_probability": 0.1805,
+          "raw_hit_probability": 0.1077,
+          "lift": -0.0473,
+          "reliability": "B",
+          "sample_n": 76,
+          "projection": {
+            "stat": "hard_hit_105",
             "value": 1,
             "needs": 1
           }

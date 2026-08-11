@@ -79,9 +79,9 @@
             "ump_k_pct": -0.456,
             "ump_bb_pct": -0.588
           },
-          "hit_probability": 0.6004,
-          "raw_hit_probability": 0.6474,
-          "lift": -0.0716,
+          "hit_probability": 0.6003,
+          "raw_hit_probability": 0.6473,
+          "lift": -0.0711,
           "reliability": "B",
           "sample_n": 61,
           "projection": {
@@ -113,6 +113,128 @@
           "sample_n": 61,
           "projection": {
             "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 0,
+          "notable_signals": 0,
+          "matchup": "Baltimore Orioles @ Texas Rangers",
+          "game_pk": 822863,
+          "team": "Texas Rangers",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "hard_hit_rate": 0.0646
+          },
+          "hit_probability": 0.1589,
+          "raw_hit_probability": 0.0646,
+          "lift": -0.0689,
+          "reliability": "B",
+          "sample_n": 61,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-08-11",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 48.4,
+          "notable_signals": 1,
+          "matchup": "Texas Rangers @ Los Angeles Angels",
+          "game_pk": 823997,
+          "team": "Texas Rangers",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 100.0,
+            "pitch_exploit": 11.4286,
+            "l7_avg_ev": 0.0,
+            "l7_barrel_pct": 36.4286,
+            "park_hr_index": 51.0,
+            "season_barrel_pct": 0.0,
+            "lineup_slot": 0.0,
+            "bullpen_fatigue": 59.5238,
+            "platoon_barrel_pct": -5.0,
+            "platoon_xwoba": -3.06,
+            "park_hand_index": -2.63,
+            "opp_catcher_framing": 0.72,
+            "days_rest": 0.0,
+            "pull_park_synergy": -0.8377,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": -0.16,
+            "vs_rp_ops": -0.924
+          },
+          "hit_probability": 0.5944,
+          "raw_hit_probability": 0.6404,
+          "lift": -0.0774,
+          "reliability": "B",
+          "sample_n": 65,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 36.0,
+          "notable_signals": 0,
+          "matchup": "Texas Rangers @ Los Angeles Angels",
+          "game_pk": 823997,
+          "team": "Texas Rangers",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "opp_team_cs_pct": 2.76,
+            "sprint_speed": 12.5,
+            "catcher_poptime": 85.7143,
+            "on_base": 26.1036
+          },
+          "hit_probability": 0.1602,
+          "raw_hit_probability": 0.0673,
+          "lift": null,
+          "reliability": "B",
+          "sample_n": 65,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 0,
+          "notable_signals": 0,
+          "matchup": "Texas Rangers @ Los Angeles Angels",
+          "game_pk": 823997,
+          "team": "Texas Rangers",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "hard_hit_rate": 0.0616
+          },
+          "hit_probability": 0.1575,
+          "raw_hit_probability": 0.0616,
+          "lift": -0.0698,
+          "reliability": "B",
+          "sample_n": 65,
+          "projection": {
+            "stat": "hard_hit_105",
             "value": 1,
             "needs": 1
           }

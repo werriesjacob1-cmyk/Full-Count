@@ -415,6 +415,16 @@ def grade_pick(pick, game_statuses):
         elif stat == "home_runs":
             actual = float(row.get("hr", 0) or 0)
             actual_stat = "home_runs"
+        elif stat == "pitcher_outs":
+            # Same whole.frac -> outs conversion mlb_sources.empirical_pitcher_outs_rates
+            # and score_pitcher_outs already use, reading MLB's own
+            # inningsPitched notation directly rather than reconstructing
+            # outs from raw events -- box scores already resolve double
+            # plays, sac flies, etc. correctly server-side.
+            ip = str(row.get("ip") or "0")
+            whole, _, frac = ip.partition(".")
+            actual = float(int(whole) * 3 + int(frac or 0))
+            actual_stat = "pitcher_outs"
         elif stat == "total_bases":
             # Verified against generate_picks.py's own prop-text branches (the three
             # f-strings feeding off project_batter_tb(), ~line 690-696): unlike

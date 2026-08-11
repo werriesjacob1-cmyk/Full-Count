@@ -98,9 +98,9 @@
             "ump_k_pct": -0.024,
             "ump_bb_pct": -0.336
           },
-          "hit_probability": 0.6345,
-          "raw_hit_probability": 0.688,
-          "lift": -0.0375,
+          "hit_probability": 0.6344,
+          "raw_hit_probability": 0.6879,
+          "lift": -0.037,
           "reliability": "A",
           "sample_n": 110,
           "projection": {
@@ -132,6 +132,130 @@
           "sample_n": 110,
           "projection": {
             "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 18.7,
+          "notable_signals": 0,
+          "matchup": "Toronto Blue Jays @ Philadelphia Phillies",
+          "game_pk": 823428,
+          "team": "Philadelphia Phillies",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "hard_hit_rate": 0.2115
+          },
+          "hit_probability": 0.2417,
+          "raw_hit_probability": 0.2115,
+          "lift": 0.0139,
+          "reliability": "A",
+          "sample_n": 110,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-08-11",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 68.3,
+          "notable_signals": 3,
+          "matchup": "Philadelphia Phillies @ St. Louis Cardinals",
+          "game_pk": 823019,
+          "team": "Philadelphia Phillies",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 32.2857,
+            "pitch_exploit": 4.5714,
+            "l7_avg_ev": 80.5978,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 81.7,
+            "season_barrel_pct": 25.3333,
+            "lineup_slot": 37.5,
+            "bullpen_fatigue": 69.4444,
+            "platoon_barrel_pct": 0.08,
+            "platoon_xwoba": 1.14,
+            "park_hand_index": -3.77,
+            "opp_catcher_framing": -1.08,
+            "days_rest": 0.0,
+            "consecutive_games": -1.2,
+            "pull_park_synergy": -2.098,
+            "hard_hit_105_rate": -0.24,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": 1.6,
+            "vs_rp_ops": 1.776
+          },
+          "hit_probability": 0.6013,
+          "raw_hit_probability": 0.6047,
+          "lift": 0.05,
+          "reliability": "A",
+          "sample_n": 114,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 59.9,
+          "notable_signals": 0,
+          "matchup": "Philadelphia Phillies @ St. Louis Cardinals",
+          "game_pk": 823019,
+          "team": "Philadelphia Phillies",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "opp_team_cs_pct": 3.24,
+            "sprint_speed": 37.5,
+            "catcher_poptime": 97.1429,
+            "on_base": 63.5317
+          },
+          "hit_probability": 0.2221,
+          "raw_hit_probability": 0.1807,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 114,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 17.3,
+          "notable_signals": 0,
+          "matchup": "Philadelphia Phillies @ St. Louis Cardinals",
+          "game_pk": 823019,
+          "team": "Philadelphia Phillies",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "hard_hit_rate": 0.2054
+          },
+          "hit_probability": 0.2377,
+          "raw_hit_probability": 0.2054,
+          "lift": 0.0104,
+          "reliability": "A",
+          "sample_n": 114,
+          "projection": {
+            "stat": "hard_hit_105",
             "value": 1,
             "needs": 1
           }

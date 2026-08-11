@@ -96,9 +96,9 @@
             "ump_k_pct": -0.432,
             "ump_bb_pct": 0.072
           },
-          "hit_probability": 0.6509,
-          "raw_hit_probability": 0.7081,
-          "lift": -0.0211,
+          "hit_probability": 0.6508,
+          "raw_hit_probability": 0.7079,
+          "lift": -0.0206,
           "reliability": "B",
           "sample_n": 47,
           "projection": {
@@ -124,12 +124,133 @@
             "on_base": 35.7006
           },
           "hit_probability": 0.1429,
-          "raw_hit_probability": 0.0294,
+          "raw_hit_probability": 0.0295,
           "lift": null,
           "reliability": "B",
           "sample_n": 47,
           "projection": {
             "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 9.6,
+          "notable_signals": 0,
+          "matchup": "Cleveland Guardians @ Chicago White Sox",
+          "game_pk": 824566,
+          "team": "Chicago White Sox",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "hard_hit_rate": 0.1751
+          },
+          "hit_probability": 0.2187,
+          "raw_hit_probability": 0.1751,
+          "lift": -0.0091,
+          "reliability": "B",
+          "sample_n": 47,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-08-11",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 51.6,
+          "notable_signals": 2,
+          "matchup": "Cincinnati Reds @ Chicago White Sox",
+          "game_pk": 824563,
+          "team": "Chicago White Sox",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "sp_era_weak": 60.0,
+            "pitch_exploit": 0.0,
+            "l7_avg_ev": 30.2273,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 5.1,
+            "park_hr_index": 43.2,
+            "season_barrel_pct": 0.6667,
+            "lineup_slot": 50.0,
+            "bullpen_fatigue": 47.619,
+            "platoon_barrel_pct": -3.28,
+            "platoon_xwoba": -0.36,
+            "opp_catcher_framing": 0.84,
+            "days_rest": 2.0,
+            "hard_hit_105_rate": -0.83,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": -0.216,
+            "vs_rp_ops": -0.372
+          },
+          "hit_probability": 0.6609,
+          "raw_hit_probability": 0.7205,
+          "lift": -0.0109,
+          "reliability": "B",
+          "sample_n": 50,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 46.6,
+          "notable_signals": 0,
+          "matchup": "Cincinnati Reds @ Chicago White Sox",
+          "game_pk": 824563,
+          "team": "Chicago White Sox",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "opp_team_cs_pct": 4.32,
+            "sprint_speed": 37.5,
+            "catcher_poptime": 71.4286,
+            "on_base": 35.7006
+          },
+          "hit_probability": 0.1424,
+          "raw_hit_probability": 0.0282,
+          "lift": null,
+          "reliability": "B",
+          "sample_n": 50,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 11.4,
+          "notable_signals": 0,
+          "matchup": "Cincinnati Reds @ Chicago White Sox",
+          "game_pk": 824563,
+          "team": "Chicago White Sox",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "hard_hit_rate": 0.1818
+          },
+          "hit_probability": 0.2228,
+          "raw_hit_probability": 0.1818,
+          "lift": -0.0045,
+          "reliability": "B",
+          "sample_n": 50,
+          "projection": {
+            "stat": "hard_hit_105",
             "value": 1,
             "needs": 1
           }

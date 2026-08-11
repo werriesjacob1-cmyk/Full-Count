@@ -61,7 +61,9 @@
             "getaway_day": 0.0,
             "series_game": 0.0,
             "sp_rp_ops_gap": -2.184,
-            "vs_rp_ops": 2.208
+            "vs_rp_ops": 2.208,
+            "ump_k_pct": -0.408,
+            "ump_bb_pct": -0.036
           },
           "hit_probability": 0.6227,
           "raw_hit_probability": 0.6503,
@@ -71,6 +73,102 @@
           "projection": {
             "stat": "hits",
             "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 83.7,
+          "notable_signals": 1,
+          "matchup": "Houston Astros @ San Diego Padres",
+          "game_pk": 823266,
+          "team": "Houston Astros",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "hard_hit_rate": 0.4716
+          },
+          "hit_probability": 0.4456,
+          "raw_hit_probability": 0.4716,
+          "lift": 0.2178,
+          "reliability": "A",
+          "sample_n": 114,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-08-11",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 76.4,
+          "notable_signals": 3,
+          "matchup": "Houston Astros @ San Francisco Giants",
+          "game_pk": 823186,
+          "team": "Houston Astros",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 100.0,
+            "pitch_exploit": 7.4286,
+            "l7_avg_ev": 100.0,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 25.6,
+            "season_barrel_pct": 100.0,
+            "lineup_slot": 87.5,
+            "bullpen_fatigue": 71.4286,
+            "platoon_barrel_pct": 5.0,
+            "platoon_xwoba": 5.0,
+            "park_hand_index": -4.05,
+            "opp_catcher_framing": 1.32,
+            "days_rest": 0.0,
+            "pull_park_synergy": -1.6018,
+            "hard_hit_105_rate": 5.0,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": -2.368,
+            "vs_rp_ops": 1.752
+          },
+          "hit_probability": 0.6223,
+          "raw_hit_probability": 0.6493,
+          "lift": 0.071,
+          "reliability": "A",
+          "sample_n": 118,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 85.7,
+          "notable_signals": 1,
+          "matchup": "Houston Astros @ San Francisco Giants",
+          "game_pk": 823186,
+          "team": "Houston Astros",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "hard_hit_rate": 0.4793
+          },
+          "hit_probability": 0.4524,
+          "raw_hit_probability": 0.4793,
+          "lift": 0.2251,
+          "reliability": "A",
+          "sample_n": 118,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
             "needs": 1
           }
         }

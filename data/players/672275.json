@@ -25,6 +25,77 @@
           "matchup": "New York Mets @ Cleveland Guardians"
         }
       ]
+    },
+    {
+      "date": "2026-08-11",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 63.4,
+          "notable_signals": 3,
+          "matchup": "Cleveland Guardians @ Detroit Tigers",
+          "game_pk": 824240,
+          "team": "Cleveland Guardians",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "sp_era_weak": 43.1429,
+            "l7_avg_ev": 100.0,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 15.0,
+            "park_hr_index": 74.1,
+            "season_barrel_pct": 28.6667,
+            "lineup_slot": 12.5,
+            "bullpen_fatigue": 51.2821,
+            "platoon_barrel_pct": -0.4,
+            "platoon_xwoba": -1.32,
+            "opp_catcher_framing": -1.32,
+            "days_rest": 2.0,
+            "hard_hit_105_rate": -0.645,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": 1.312,
+            "vs_rp_ops": -0.072,
+            "ump_k_pct": 0.096,
+            "ump_bb_pct": 0.528
+          },
+          "hit_probability": 0.521,
+          "raw_hit_probability": 0.5566,
+          "lift": -0.1508,
+          "reliability": "B",
+          "sample_n": 76,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 13.2,
+          "notable_signals": 0,
+          "matchup": "Cleveland Guardians @ Detroit Tigers",
+          "game_pk": 824240,
+          "team": "Cleveland Guardians",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "hard_hit_rate": 0.1892
+          },
+          "hit_probability": 0.2274,
+          "raw_hit_probability": 0.1892,
+          "lift": 0.0001,
+          "reliability": "B",
+          "sample_n": 76,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

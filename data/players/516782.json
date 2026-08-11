@@ -39,14 +39,109 @@
             "ump_k_pct": -0.0,
             "ump_bb_pct": 0.216
           },
-          "hit_probability": 0.6061,
-          "raw_hit_probability": 0.6541,
-          "lift": -0.0659,
+          "hit_probability": 0.6059,
+          "raw_hit_probability": 0.6539,
+          "lift": -0.0655,
           "reliability": "B",
           "sample_n": 51,
           "projection": {
             "stat": "hits_runs_rbis",
             "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 21.0,
+          "notable_signals": 0,
+          "matchup": "Chicago Cubs @ Kansas City Royals",
+          "game_pk": 824081,
+          "team": "Kansas City Royals",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "hard_hit_rate": 0.2208
+          },
+          "hit_probability": 0.2478,
+          "raw_hit_probability": 0.2208,
+          "lift": 0.02,
+          "reliability": "B",
+          "sample_n": 51,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-08-11",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 61.5,
+          "notable_signals": 4,
+          "matchup": "Kansas City Royals @ Los Angeles Dodgers",
+          "game_pk": 823917,
+          "team": "Kansas City Royals",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 100.0,
+            "l7_avg_ev": 0.0,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 2.325,
+            "park_hr_index": 40.0,
+            "season_barrel_pct": 45.3333,
+            "lineup_slot": 50.0,
+            "bullpen_fatigue": 76.9231,
+            "bvp_ops": 0.324,
+            "platoon_barrel_pct": 0.8,
+            "platoon_xwoba": -1.5,
+            "opp_catcher_framing": -0.12,
+            "days_rest": 0.0,
+            "hard_hit_105_rate": 0.2475,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": -0.744,
+            "vs_rp_ops": -1.8
+          },
+          "hit_probability": 0.5949,
+          "raw_hit_probability": 0.641,
+          "lift": -0.0769,
+          "reliability": "B",
+          "sample_n": 54,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 22.1,
+          "notable_signals": 0,
+          "matchup": "Kansas City Royals @ Los Angeles Dodgers",
+          "game_pk": 823917,
+          "team": "Kansas City Royals",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "hard_hit_rate": 0.2249
+          },
+          "hit_probability": 0.2505,
+          "raw_hit_probability": 0.2249,
+          "lift": 0.0232,
+          "reliability": "B",
+          "sample_n": 54,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
             "needs": 1
           }
         }

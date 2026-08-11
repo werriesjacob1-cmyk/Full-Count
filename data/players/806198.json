@@ -133,6 +133,30 @@
             "value": 1,
             "needs": 1
           }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 0,
+          "notable_signals": 0,
+          "matchup": "Minnesota Twins @ Milwaukee Brewers",
+          "game_pk": 823750,
+          "team": "Milwaukee Brewers",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "hard_hit_rate": 0.0993
+          },
+          "hit_probability": 0.1761,
+          "raw_hit_probability": 0.0993,
+          "lift": -0.0517,
+          "reliability": "C",
+          "sample_n": 41,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
         }
       ]
     }

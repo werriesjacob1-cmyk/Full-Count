@@ -32,7 +32,7 @@
         {
           "prop": "Over 0.5 Hits+Runs+RBIs",
           "type": "batter",
-          "score": 52.8,
+          "score": 52.0,
           "notable_signals": 2,
           "matchup": "Tampa Bay Rays @ Seattle Mariners",
           "game_pk": 823103,
@@ -47,7 +47,7 @@
             "l7_barrel_pct": 100.0,
             "park_hr_index": 50.0,
             "season_barrel_pct": 32.6667,
-            "lineup_slot": 87.5,
+            "lineup_slot": 75.0,
             "bullpen_fatigue": 66.6667,
             "platoon_barrel_pct": 1.68,
             "platoon_xwoba": 2.94,
@@ -61,16 +61,116 @@
             "getaway_day": 0.0,
             "series_game": 0.0,
             "sp_rp_ops_gap": 1.656,
-            "vs_rp_ops": 2.916
+            "vs_rp_ops": 2.916,
+            "ump_k_pct": -0.36,
+            "ump_bb_pct": -0.072
           },
-          "hit_probability": 0.6866,
-          "raw_hit_probability": 0.7534,
-          "lift": 0.0146,
+          "hit_probability": 0.6865,
+          "raw_hit_probability": 0.7533,
+          "lift": 0.0151,
           "reliability": "A",
           "sample_n": 108,
           "projection": {
             "stat": "hits_runs_rbis",
             "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 35.4,
+          "notable_signals": 1,
+          "matchup": "Tampa Bay Rays @ Seattle Mariners",
+          "game_pk": 823103,
+          "team": "Seattle Mariners",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "hard_hit_rate": 0.2782
+          },
+          "hit_probability": 0.2878,
+          "raw_hit_probability": 0.2782,
+          "lift": 0.06,
+          "reliability": "A",
+          "sample_n": 108,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-08-11",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 68.4,
+          "notable_signals": 4,
+          "matchup": "Seattle Mariners @ New York Yankees",
+          "game_pk": 823512,
+          "team": "Seattle Mariners",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 36.8571,
+            "pitch_exploit": 7.4286,
+            "l7_avg_ev": 24.5,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 72.0,
+            "season_barrel_pct": 32.6667,
+            "lineup_slot": 87.5,
+            "bullpen_fatigue": 83.3333,
+            "platoon_barrel_pct": -1.12,
+            "platoon_xwoba": 0.48,
+            "park_hand_index": 0.84,
+            "opp_catcher_framing": -0.6,
+            "days_rest": 2.0,
+            "pull_park_synergy": 0.1235,
+            "hard_hit_105_rate": 1.4275,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": 1.568,
+            "vs_rp_ops": 2.556,
+            "ump_k_pct": -0.204,
+            "ump_bb_pct": 0.228
+          },
+          "hit_probability": 0.61,
+          "raw_hit_probability": 0.6231,
+          "lift": 0.0587,
+          "reliability": "A",
+          "sample_n": 111,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 33.9,
+          "notable_signals": 0,
+          "matchup": "Seattle Mariners @ New York Yankees",
+          "game_pk": 823512,
+          "team": "Seattle Mariners",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "hard_hit_rate": 0.2721
+          },
+          "hit_probability": 0.2833,
+          "raw_hit_probability": 0.2721,
+          "lift": 0.056,
+          "reliability": "A",
+          "sample_n": 111,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
             "needs": 1
           }
         }

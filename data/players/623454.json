@@ -13,6 +13,40 @@
           "matchup": "Detroit Tigers @ Seattle Mariners"
         }
       ]
+    },
+    {
+      "date": "2026-08-11",
+      "evaluations": [
+        {
+          "prop": "Over 3.5 Strikeouts",
+          "type": "pitcher",
+          "score": 33.5,
+          "notable_signals": 0,
+          "matchup": "Cleveland Guardians @ Detroit Tigers",
+          "game_pk": 824240,
+          "team": "Detroit Tigers",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "same_hand_ratio": 0.0,
+            "l14_k_pct": 5.8824,
+            "env_neutral": 50.0,
+            "ump_accuracy": 56.1115,
+            "ump_k_pct": -0.096,
+            "ump_bb_pct": -0.528
+          },
+          "hit_probability": 0.5801,
+          "raw_hit_probability": 0.5085,
+          "lift": -0.1326,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 3.5,
+            "needs": 4
+          }
+        }
+      ]
     }
   ]
 }

@@ -20,6 +20,66 @@
           "matchup": "Detroit Tigers @ Seattle Mariners"
         }
       ]
+    },
+    {
+      "date": "2026-08-11",
+      "evaluations": [
+        {
+          "prop": "Over 4.5 Strikeouts",
+          "type": "pitcher",
+          "score": 48.2,
+          "notable_signals": 0,
+          "matchup": "Seattle Mariners @ New York Yankees",
+          "game_pk": 823512,
+          "team": "Seattle Mariners",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "same_hand_ratio": 5.5556,
+            "l14_k_pct": 71.1765,
+            "tto_penalty": -8.0,
+            "env_neutral": 50.0,
+            "ump_accuracy": 53.2564,
+            "ump_k_pct": 0.204,
+            "ump_bb_pct": -0.228
+          },
+          "hit_probability": 0.6139,
+          "raw_hit_probability": 0.6294,
+          "lift": 0.0765,
+          "reliability": "D",
+          "sample_n": 22,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 4.5,
+            "needs": 5
+          }
+        },
+        {
+          "prop": "Over 16.5 Outs Recorded",
+          "type": "pitcher",
+          "score": 77.6,
+          "notable_signals": 1,
+          "matchup": "Seattle Mariners @ New York Yankees",
+          "game_pk": 823512,
+          "team": "Seattle Mariners",
+          "side": "away",
+          "lean": null,
+          "signals": {
+            "outs_rate": 0.6053,
+            "avg_outs_per_start": 17.36
+          },
+          "hit_probability": 0.564,
+          "raw_hit_probability": 0.6053,
+          "lift": 0.0726,
+          "reliability": "D",
+          "sample_n": 22,
+          "projection": {
+            "stat": "pitcher_outs",
+            "value": 16.5,
+            "needs": 17
+          }
+        }
+      ]
     }
   ]
 }

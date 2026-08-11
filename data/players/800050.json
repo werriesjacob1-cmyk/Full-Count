@@ -84,6 +84,103 @@
             "value": 0.5,
             "needs": 1
           }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 51.6,
+          "notable_signals": 1,
+          "matchup": "Cleveland Guardians @ Chicago White Sox",
+          "game_pk": 824566,
+          "team": "Cleveland Guardians",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "hard_hit_rate": 0.3432
+          },
+          "hit_probability": 0.3374,
+          "raw_hit_probability": 0.3432,
+          "lift": 0.1096,
+          "reliability": "A",
+          "sample_n": 98,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-08-11",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 57.0,
+          "notable_signals": 1,
+          "matchup": "Cleveland Guardians @ Detroit Tigers",
+          "game_pk": 824240,
+          "team": "Cleveland Guardians",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 43.1429,
+            "l7_avg_ev": 70.8824,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 74.1,
+            "season_barrel_pct": 23.3333,
+            "lineup_slot": 87.5,
+            "bullpen_fatigue": 51.2821,
+            "platoon_barrel_pct": 0.24,
+            "platoon_xwoba": 2.88,
+            "park_hand_index": -2.92,
+            "opp_catcher_framing": -1.32,
+            "days_rest": 2.0,
+            "pull_park_synergy": -1.1753,
+            "hard_hit_105_rate": 3.1975,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": 0.776,
+            "vs_rp_ops": 1.44,
+            "ump_k_pct": 0.096,
+            "ump_bb_pct": 0.528
+          },
+          "hit_probability": 0.6125,
+          "raw_hit_probability": 0.6285,
+          "lift": 0.0612,
+          "reliability": "A",
+          "sample_n": 101,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 51.6,
+          "notable_signals": 1,
+          "matchup": "Cleveland Guardians @ Detroit Tigers",
+          "game_pk": 824240,
+          "team": "Cleveland Guardians",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "hard_hit_rate": 0.3429
+          },
+          "hit_probability": 0.3371,
+          "raw_hit_probability": 0.3429,
+          "lift": 0.1098,
+          "reliability": "A",
+          "sample_n": 101,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
         }
       ]
     }

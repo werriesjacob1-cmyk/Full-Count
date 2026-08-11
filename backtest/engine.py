@@ -888,6 +888,8 @@ PROP_TYPE_BY_STAT = {
     "stolen_base": "stolen_base",
     "first_inning_run": "first_inning_run",
     "nrfi_combined": "nrfi_combined",
+    "hard_hit_105": "hard_hit_105", "hard_hit_110": "hard_hit_110",
+    "pitcher_outs": "pitcher_outs",
 }
 
 

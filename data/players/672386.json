@@ -88,6 +88,103 @@
             "value": 0.5,
             "needs": 1
           }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 14.9,
+          "notable_signals": 0,
+          "matchup": "Toronto Blue Jays @ Philadelphia Phillies",
+          "game_pk": 823428,
+          "team": "Toronto Blue Jays",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "hard_hit_rate": 0.1962
+          },
+          "hit_probability": 0.2318,
+          "raw_hit_probability": 0.1962,
+          "lift": 0.004,
+          "reliability": "C",
+          "sample_n": 42,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-08-11",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 41.6,
+          "notable_signals": 1,
+          "matchup": "Boston Red Sox @ Toronto Blue Jays",
+          "game_pk": 822778,
+          "team": "Toronto Blue Jays",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 25.1429,
+            "l7_avg_ev": 17.75,
+            "l7_barrel_pct": 92.8571,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 0.0,
+            "lineup_slot": 50.0,
+            "bullpen_fatigue": 71.4286,
+            "platoon_barrel_pct": -3.44,
+            "platoon_xwoba": -1.86,
+            "park_hand_index": -0.58,
+            "opp_catcher_framing": -0.48,
+            "days_rest": 2.0,
+            "pull_park_synergy": -0.0568,
+            "hard_hit_105_rate": -0.6225,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": -0.728,
+            "vs_rp_ops": -0.996,
+            "ump_k_pct": -0.204,
+            "ump_bb_pct": -0.276
+          },
+          "hit_probability": 0.5919,
+          "raw_hit_probability": 0.6375,
+          "lift": -0.0799,
+          "reliability": "B",
+          "sample_n": 45,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 13.4,
+          "notable_signals": 0,
+          "matchup": "Boston Red Sox @ Toronto Blue Jays",
+          "game_pk": 822778,
+          "team": "Toronto Blue Jays",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "hard_hit_rate": 0.1901
+          },
+          "hit_probability": 0.228,
+          "raw_hit_probability": 0.1901,
+          "lift": 0.0007,
+          "reliability": "B",
+          "sample_n": 45,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
         }
       ]
     }

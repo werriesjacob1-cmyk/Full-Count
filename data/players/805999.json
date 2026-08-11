@@ -124,13 +124,137 @@
             "catcher_poptime": 68.5714,
             "on_base": 56.8138
           },
-          "hit_probability": 0.2123,
-          "raw_hit_probability": 0.1644,
+          "hit_probability": 0.2124,
+          "raw_hit_probability": 0.1645,
           "lift": null,
           "reliability": "B",
           "sample_n": 75,
           "projection": {
             "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 9.9,
+          "notable_signals": 0,
+          "matchup": "New York Mets @ Pittsburgh Pirates",
+          "game_pk": 823349,
+          "team": "New York Mets",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "hard_hit_rate": 0.1761
+          },
+          "hit_probability": 0.2193,
+          "raw_hit_probability": 0.1761,
+          "lift": -0.0085,
+          "reliability": "B",
+          "sample_n": 75,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-08-11",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 43.0,
+          "notable_signals": 0,
+          "matchup": "New York Mets @ Atlanta Braves",
+          "game_pk": 824886,
+          "team": "New York Mets",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 18.2857,
+            "l7_avg_ev": 44.8214,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 33.3333,
+            "lineup_slot": 100.0,
+            "bullpen_fatigue": 64.1026,
+            "platoon_barrel_pct": 0.8,
+            "platoon_xwoba": -0.54,
+            "park_hand_index": 1.33,
+            "opp_catcher_framing": 0.48,
+            "days_rest": 0.0,
+            "pull_park_synergy": 0.4888,
+            "hard_hit_105_rate": -0.9,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": -0.928,
+            "vs_rp_ops": -0.684,
+            "ump_k_pct": -0.288,
+            "ump_bb_pct": -0.204
+          },
+          "hit_probability": 0.6089,
+          "raw_hit_probability": 0.6208,
+          "lift": 0.0576,
+          "reliability": "B",
+          "sample_n": 79,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 72.5,
+          "notable_signals": 0,
+          "matchup": "New York Mets @ Atlanta Braves",
+          "game_pk": 824886,
+          "team": "New York Mets",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "opp_team_cs_pct": 5.58,
+            "sprint_speed": 68.75,
+            "catcher_poptime": 91.4286,
+            "on_base": 56.8138
+          },
+          "hit_probability": 0.2138,
+          "raw_hit_probability": 0.167,
+          "lift": null,
+          "reliability": "B",
+          "sample_n": 79,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 10.7,
+          "notable_signals": 0,
+          "matchup": "New York Mets @ Atlanta Braves",
+          "game_pk": 824886,
+          "team": "New York Mets",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "hard_hit_rate": 0.179
+          },
+          "hit_probability": 0.2211,
+          "raw_hit_probability": 0.179,
+          "lift": -0.0062,
+          "reliability": "B",
+          "sample_n": 79,
+          "projection": {
+            "stat": "hard_hit_105",
             "value": 1,
             "needs": 1
           }

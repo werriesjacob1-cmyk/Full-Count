@@ -52,14 +52,38 @@
             "ump_k_pct": -0.432,
             "ump_bb_pct": 0.072
           },
-          "hit_probability": 0.6102,
-          "raw_hit_probability": 0.6589,
-          "lift": -0.0618,
+          "hit_probability": 0.61,
+          "raw_hit_probability": 0.6587,
+          "lift": -0.0614,
           "reliability": "B",
           "sample_n": 52,
           "projection": {
             "stat": "hits_runs_rbis",
             "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 4.4,
+          "notable_signals": 0,
+          "matchup": "Cleveland Guardians @ Chicago White Sox",
+          "game_pk": 824566,
+          "team": "Cleveland Guardians",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "hard_hit_rate": 0.1541
+          },
+          "hit_probability": 0.2062,
+          "raw_hit_probability": 0.1541,
+          "lift": -0.0216,
+          "reliability": "B",
+          "sample_n": 52,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
             "needs": 1
           }
         }

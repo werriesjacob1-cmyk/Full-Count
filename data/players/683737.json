@@ -66,12 +66,113 @@
           },
           "hit_probability": 0.6379,
           "raw_hit_probability": 0.6921,
-          "lift": -0.0341,
+          "lift": -0.0335,
           "reliability": "A",
           "sample_n": 115,
           "projection": {
             "stat": "hits_runs_rbis",
             "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 7.9,
+          "notable_signals": 0,
+          "matchup": "Chicago Cubs @ Kansas City Royals",
+          "game_pk": 824081,
+          "team": "Chicago Cubs",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "hard_hit_rate": 0.1683
+          },
+          "hit_probability": 0.2146,
+          "raw_hit_probability": 0.1683,
+          "lift": -0.0132,
+          "reliability": "A",
+          "sample_n": 115,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-08-11",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 65.8,
+          "notable_signals": 3,
+          "matchup": "Chicago Cubs @ Washington Nationals",
+          "game_pk": 822697,
+          "team": "Chicago Cubs",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 82.0,
+            "pitch_exploit": 1.1429,
+            "l7_avg_ev": 0.0,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 9.075,
+            "park_hr_index": 41.6,
+            "season_barrel_pct": 44.0,
+            "lineup_slot": 75.0,
+            "bullpen_fatigue": 59.5238,
+            "bvp_ops": 0.822,
+            "platoon_barrel_pct": 1.52,
+            "platoon_xwoba": 1.38,
+            "park_hand_index": 2.81,
+            "opp_catcher_framing": -0.6,
+            "days_rest": 2.0,
+            "consecutive_games": -4.0,
+            "pull_park_synergy": 1.2687,
+            "hard_hit_105_rate": -0.91,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": -0.896,
+            "vs_rp_ops": -0.372,
+            "ump_k_pct": -0.708,
+            "ump_bb_pct": 0.048
+          },
+          "hit_probability": 0.6434,
+          "raw_hit_probability": 0.6988,
+          "lift": -0.0284,
+          "reliability": "A",
+          "sample_n": 118,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 10.6,
+          "notable_signals": 0,
+          "matchup": "Chicago Cubs @ Washington Nationals",
+          "game_pk": 822697,
+          "team": "Chicago Cubs",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "hard_hit_rate": 0.1786
+          },
+          "hit_probability": 0.2209,
+          "raw_hit_probability": 0.1786,
+          "lift": -0.0064,
+          "reliability": "A",
+          "sample_n": 118,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
             "needs": 1
           }
         }

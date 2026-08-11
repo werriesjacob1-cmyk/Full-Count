@@ -1386,6 +1386,81 @@ def empirical_pitcher_k_rates(pitcher_ids, min_starts=5, max_workers=12):
     return _apply_shrinkage(out, prior_games=6)
 
 
+def _empirical_pitcher_outs_one(job):
+    pid, min_starts = job
+    try:
+        splits = _game_log(pid, "pitching")
+    except Exception:
+        return pid, None
+    outs_per_start = []
+    for s in splits:
+        st = s.get("stat") or {}
+        try:
+            gs = int(st.get("gamesStarted") or 0)
+        except (TypeError, ValueError):
+            gs = 0
+        if gs < 1:
+            continue
+        # MLB's own inningsPitched notation ("6.1", "6.2") already resolves
+        # exactly how many outs a partial inning holds -- the API has
+        # already counted double plays, sac flies and every other
+        # multi-out/no-additional-out event correctly server-side. Parsing
+        # ".1"/".2" as tenths would be wrong (baseball innings aren't
+        # decimal), so this reads the fractional digit as its literal
+        # out count, same conversion _empirical_pitcher_one already uses
+        # as a battersFaced fallback just below.
+        ip = str(st.get("inningsPitched") or "")
+        if not ip:
+            continue
+        whole, _, frac = ip.partition(".")
+        try:
+            outs = int(whole) * 3 + int(frac or 0)
+        except (TypeError, ValueError):
+            continue
+        outs_per_start.append(outs)
+    n = len(outs_per_start)
+    if n < min_starts:
+        return pid, None
+    out = {"starts": n, "avg_outs": round(sum(outs_per_start) / n, 2), "rates": {}}
+    # Every 3-out (1-inning) step from 4.0 IP (12 outs) to 7.0 IP (21 outs)
+    # covers the real range FanDuel posts lines in -- a start shorter than 4
+    # IP or longer than 7 is the exception, not the market's usual territory.
+    for t in range(12, 22):
+        hits = sum(1 for o in outs_per_start if o >= t)
+        out["rates"][f"outs_{t}plus"] = {
+            "p": round(hits / n, 4), "n": n, "hit": hits,
+            "p_lo": round(_wilson_lower(hits, n), 4),
+        }
+    return pid, out
+
+
+def empirical_pitcher_outs_rates(pitcher_ids, min_starts=5, max_workers=12):
+    """Per-starter empirical rate of recording at least N outs, over real
+    starts only. Prices FanDuel's real "Pitcher Outs Recorded" market
+    (PITCHER_A/B_OUTS_RECORDED_SB -- found live 2026-08-07, never mapped
+    before), mirroring empirical_pitcher_k_rates exactly: same game-log
+    source, same starts-only filter, same shrinkage discipline. Outs
+    recorded is what innings pitched literally counts, so no new modeling
+    concept is introduced here, only a new threshold read off data this
+    pipeline was already fetching for the strikeout market."""
+    from concurrent.futures import ThreadPoolExecutor
+    ids = [int(p) for p in dict.fromkeys(pitcher_ids) if p]
+    out = {}
+    if not ids:
+        return out
+    with ThreadPoolExecutor(max_workers=max_workers) as ex:
+        for pid, res in ex.map(_empirical_pitcher_outs_one, [(i, min_starts) for i in ids]):
+            if res:
+                out[pid] = res
+    # Same prior_games=6 as empirical_pitcher_k_rates -- no separate fit was
+    # done for this market yet (it did not exist as a scored candidate
+    # until now), but it is the same "how many real starts is one pitcher's
+    # own record worth" question over the same population, so borrowing the
+    # existing measured constant is the honest default until this market
+    # has enough graded history of its own to fit one independently.
+    return _apply_shrinkage(out, prior_games=6)
+
+
 # ══════════════════════════════════════════════════════════════════════════
 #  EXPONENTIAL-DECAY RECENCY  (replaces the hard L7/L14 window for the
 #  pitcher K-rate the probability model actually consumes)

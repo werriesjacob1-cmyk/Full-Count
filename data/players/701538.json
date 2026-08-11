@@ -75,11 +75,13 @@
             "getaway_day": 0.0,
             "series_game": 0.0,
             "sp_rp_ops_gap": 1.288,
-            "vs_rp_ops": 0.804
+            "vs_rp_ops": 0.804,
+            "ump_k_pct": -0.408,
+            "ump_bb_pct": -0.036
           },
-          "hit_probability": 0.6003,
-          "raw_hit_probability": 0.6473,
-          "lift": -0.0717,
+          "hit_probability": 0.6002,
+          "raw_hit_probability": 0.6472,
+          "lift": -0.0712,
           "reliability": "A",
           "sample_n": 112,
           "projection": {
@@ -111,6 +113,129 @@
           "sample_n": 112,
           "projection": {
             "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 21.2,
+          "notable_signals": 0,
+          "matchup": "Houston Astros @ San Diego Padres",
+          "game_pk": 823266,
+          "team": "San Diego Padres",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "hard_hit_rate": 0.2214
+          },
+          "hit_probability": 0.2482,
+          "raw_hit_probability": 0.2214,
+          "lift": 0.0204,
+          "reliability": "A",
+          "sample_n": 112,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-08-11",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 50.2,
+          "notable_signals": 2,
+          "matchup": "Milwaukee Brewers @ San Diego Padres",
+          "game_pk": 823264,
+          "team": "San Diego Padres",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 9.7143,
+            "l7_avg_ev": 100.0,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 40.3,
+            "season_barrel_pct": 50.6667,
+            "lineup_slot": 50.0,
+            "bullpen_fatigue": 69.4444,
+            "platoon_barrel_pct": -0.64,
+            "platoon_xwoba": -0.06,
+            "park_hand_index": -1.31,
+            "opp_catcher_framing": 0.6,
+            "days_rest": 0.0,
+            "consecutive_games": -3.0,
+            "pull_park_synergy": -0.564,
+            "hard_hit_105_rate": 0.53,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": 0.744,
+            "vs_rp_ops": 0.588
+          },
+          "hit_probability": 0.6091,
+          "raw_hit_probability": 0.6576,
+          "lift": -0.0627,
+          "reliability": "A",
+          "sample_n": 116,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 58.9,
+          "notable_signals": 0,
+          "matchup": "Milwaukee Brewers @ San Diego Padres",
+          "game_pk": 823264,
+          "team": "San Diego Padres",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "opp_team_cs_pct": -6.0,
+            "sprint_speed": 50.0,
+            "catcher_poptime": 91.4286,
+            "on_base": 37.62
+          },
+          "hit_probability": 0.2209,
+          "raw_hit_probability": 0.1787,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 116,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 25.0,
+          "notable_signals": 0,
+          "matchup": "Milwaukee Brewers @ San Diego Padres",
+          "game_pk": 823264,
+          "team": "San Diego Padres",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "hard_hit_rate": 0.2362
+          },
+          "hit_probability": 0.2581,
+          "raw_hit_probability": 0.2362,
+          "lift": 0.0308,
+          "reliability": "A",
+          "sample_n": 116,
+          "projection": {
+            "stat": "hard_hit_105",
             "value": 1,
             "needs": 1
           }

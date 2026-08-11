@@ -20,6 +20,65 @@
           "matchup": "Miami Marlins @ Atlanta Braves"
         }
       ]
+    },
+    {
+      "date": "2026-08-11",
+      "evaluations": [
+        {
+          "prop": "Over 4.5 Strikeouts",
+          "type": "pitcher",
+          "score": 65.3,
+          "notable_signals": 0,
+          "matchup": "Pittsburgh Pirates @ Miami Marlins",
+          "game_pk": 823832,
+          "team": "Miami Marlins",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "same_hand_ratio": 75.0,
+            "l14_k_pct": 95.2941,
+            "env_neutral": 50.0,
+            "ump_accuracy": 59.5117,
+            "ump_k_pct": -0.216,
+            "ump_bb_pct": -0.204
+          },
+          "hit_probability": 0.6267,
+          "raw_hit_probability": 0.6763,
+          "lift": 0.0893,
+          "reliability": "D",
+          "sample_n": 20,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 4.5,
+            "needs": 5
+          }
+        },
+        {
+          "prop": "Over 13.5 Outs Recorded",
+          "type": "pitcher",
+          "score": 85.2,
+          "notable_signals": 0,
+          "matchup": "Pittsburgh Pirates @ Miami Marlins",
+          "game_pk": 823832,
+          "team": "Miami Marlins",
+          "side": "home",
+          "lean": null,
+          "signals": {
+            "outs_rate": 0.8495,
+            "avg_outs_per_start": 16.45
+          },
+          "hit_probability": 0.7551,
+          "raw_hit_probability": 0.8495,
+          "lift": -0.0925,
+          "reliability": "D",
+          "sample_n": 20,
+          "projection": {
+            "stat": "pitcher_outs",
+            "value": 13.5,
+            "needs": 14
+          }
+        }
+      ]
     }
   ]
 }

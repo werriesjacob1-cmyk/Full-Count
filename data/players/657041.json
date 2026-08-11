@@ -80,8 +80,8 @@
             "ump_bb_pct": 0.312
           },
           "hit_probability": 0.5461,
-          "raw_hit_probability": 0.585,
-          "lift": -0.1259,
+          "raw_hit_probability": 0.5849,
+          "lift": -0.1253,
           "reliability": "A",
           "sample_n": 97,
           "projection": {
@@ -113,6 +113,30 @@
           "sample_n": 97,
           "projection": {
             "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 14.1,
+          "notable_signals": 0,
+          "matchup": "Atlanta Braves @ New York Yankees",
+          "game_pk": 823515,
+          "team": "Atlanta Braves",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "hard_hit_rate": 0.1931
+          },
+          "hit_probability": 0.2299,
+          "raw_hit_probability": 0.1931,
+          "lift": 0.0021,
+          "reliability": "A",
+          "sample_n": 97,
+          "projection": {
+            "stat": "hard_hit_105",
             "value": 1,
             "needs": 1
           }

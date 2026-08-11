@@ -80,9 +80,9 @@
             "ump_k_pct": -0.024,
             "ump_bb_pct": -0.336
           },
-          "hit_probability": 0.523,
-          "raw_hit_probability": 0.5588,
-          "lift": -0.149,
+          "hit_probability": 0.5228,
+          "raw_hit_probability": 0.5586,
+          "lift": -0.1486,
           "reliability": "B",
           "sample_n": 47,
           "projection": {
@@ -108,12 +108,36 @@
             "on_base": 0.0
           },
           "hit_probability": 0.1603,
-          "raw_hit_probability": 0.0674,
+          "raw_hit_probability": 0.0675,
           "lift": null,
           "reliability": "B",
           "sample_n": 47,
           "projection": {
             "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 12.9,
+          "notable_signals": 0,
+          "matchup": "Toronto Blue Jays @ Philadelphia Phillies",
+          "game_pk": 823428,
+          "team": "Toronto Blue Jays",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "hard_hit_rate": 0.1883
+          },
+          "hit_probability": 0.2269,
+          "raw_hit_probability": 0.1883,
+          "lift": -0.0009,
+          "reliability": "B",
+          "sample_n": 47,
+          "projection": {
+            "stat": "hard_hit_105",
             "value": 1,
             "needs": 1
           }

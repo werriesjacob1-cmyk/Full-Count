@@ -87,6 +87,102 @@
             "value": 0.5,
             "needs": 1
           }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 63.4,
+          "notable_signals": 1,
+          "matchup": "Minnesota Twins @ Milwaukee Brewers",
+          "game_pk": 823750,
+          "team": "Milwaukee Brewers",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "hard_hit_rate": 0.3902
+          },
+          "hit_probability": 0.3757,
+          "raw_hit_probability": 0.3902,
+          "lift": 0.1479,
+          "reliability": "A",
+          "sample_n": 102,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-08-11",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 80.3,
+          "notable_signals": 2,
+          "matchup": "Milwaukee Brewers @ San Diego Padres",
+          "game_pk": 823264,
+          "team": "Milwaukee Brewers",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 73.4286,
+            "pitch_exploit": 2.2857,
+            "l7_avg_ev": 100.0,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 40.3,
+            "season_barrel_pct": 70.6667,
+            "lineup_slot": 75.0,
+            "bullpen_fatigue": 59.5238,
+            "platoon_barrel_pct": 5.0,
+            "platoon_xwoba": 4.08,
+            "park_hand_index": -1.31,
+            "opp_catcher_framing": 0.72,
+            "days_rest": 0.0,
+            "pull_park_synergy": -0.8345,
+            "hard_hit_105_rate": 4.08,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": -0.272,
+            "vs_rp_ops": 1.704
+          },
+          "hit_probability": 0.6049,
+          "raw_hit_probability": 0.6124,
+          "lift": 0.0536,
+          "reliability": "A",
+          "sample_n": 106,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 60.5,
+          "notable_signals": 1,
+          "matchup": "Milwaukee Brewers @ San Diego Padres",
+          "game_pk": 823264,
+          "team": "Milwaukee Brewers",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "hard_hit_rate": 0.3782
+          },
+          "hit_probability": 0.3657,
+          "raw_hit_probability": 0.3782,
+          "lift": 0.1384,
+          "reliability": "A",
+          "sample_n": 106,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
         }
       ]
     }

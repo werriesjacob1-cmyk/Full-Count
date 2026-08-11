@@ -20,6 +20,66 @@
           "matchup": "St. Louis Cardinals @ New York Yankees"
         }
       ]
+    },
+    {
+      "date": "2026-08-11",
+      "evaluations": [
+        {
+          "prop": "Over 4.5 Strikeouts",
+          "type": "pitcher",
+          "score": 48.2,
+          "notable_signals": 0,
+          "matchup": "Seattle Mariners @ New York Yankees",
+          "game_pk": 823512,
+          "team": "New York Yankees",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "same_hand_ratio": 75.0,
+            "l14_k_pct": 37.0588,
+            "tto_penalty": -8.0,
+            "env_neutral": 50.0,
+            "ump_accuracy": 53.2564,
+            "ump_k_pct": 0.204,
+            "ump_bb_pct": -0.228
+          },
+          "hit_probability": 0.6135,
+          "raw_hit_probability": 0.6279,
+          "lift": 0.0761,
+          "reliability": "D",
+          "sample_n": 22,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 4.5,
+            "needs": 5
+          }
+        },
+        {
+          "prop": "Over 15.5 Outs Recorded",
+          "type": "pitcher",
+          "score": 68.7,
+          "notable_signals": 0,
+          "matchup": "Seattle Mariners @ New York Yankees",
+          "game_pk": 823512,
+          "team": "New York Yankees",
+          "side": "home",
+          "lean": null,
+          "signals": {
+            "outs_rate": 0.6251,
+            "avg_outs_per_start": 16.5
+          },
+          "hit_probability": 0.5812,
+          "raw_hit_probability": 0.6251,
+          "lift": -0.0025,
+          "reliability": "D",
+          "sample_n": 22,
+          "projection": {
+            "stat": "pitcher_outs",
+            "value": 15.5,
+            "needs": 16
+          }
+        }
+      ]
     }
   ]
 }

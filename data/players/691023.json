@@ -46,7 +46,7 @@
         {
           "prop": "Over 0.5 Hits+Runs+RBIs",
           "type": "batter",
-          "score": 76.2,
+          "score": 76.0,
           "notable_signals": 3,
           "matchup": "Colorado Rockies @ St. Louis Cardinals",
           "game_pk": 823024,
@@ -81,9 +81,9 @@
             "ump_k_pct": -0.264,
             "ump_bb_pct": -0.192
           },
-          "hit_probability": 0.6967,
-          "raw_hit_probability": 0.7667,
-          "lift": 0.0247,
+          "hit_probability": 0.6966,
+          "raw_hit_probability": 0.7666,
+          "lift": 0.0252,
           "reliability": "A",
           "sample_n": 111,
           "projection": {
@@ -115,6 +115,130 @@
           "sample_n": 111,
           "projection": {
             "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 92.8,
+          "notable_signals": 1,
+          "matchup": "Colorado Rockies @ St. Louis Cardinals",
+          "game_pk": 823024,
+          "team": "St. Louis Cardinals",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "hard_hit_rate": 0.5078
+          },
+          "hit_probability": 0.4776,
+          "raw_hit_probability": 0.5078,
+          "lift": 0.2498,
+          "reliability": "A",
+          "sample_n": 111,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-08-11",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 57.1,
+          "notable_signals": 5,
+          "matchup": "Philadelphia Phillies @ St. Louis Cardinals",
+          "game_pk": 823019,
+          "team": "St. Louis Cardinals",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 4.2857,
+            "pitch_exploit": 12.0,
+            "l7_avg_ev": 0.0,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 0.675,
+            "park_hr_index": 81.7,
+            "season_barrel_pct": 66.6667,
+            "lineup_slot": 75.0,
+            "bullpen_fatigue": 76.9231,
+            "platoon_barrel_pct": 5.0,
+            "platoon_xwoba": 5.0,
+            "park_hand_index": -3.01,
+            "opp_catcher_framing": 0.6,
+            "days_rest": 0.0,
+            "pull_park_synergy": -1.2853,
+            "hard_hit_105_rate": 5.0,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": 0.8,
+            "vs_rp_ops": 2.052
+          },
+          "hit_probability": 0.7018,
+          "raw_hit_probability": 0.7736,
+          "lift": 0.03,
+          "reliability": "A",
+          "sample_n": 115,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 78.6,
+          "notable_signals": 1,
+          "matchup": "Philadelphia Phillies @ St. Louis Cardinals",
+          "game_pk": 823019,
+          "team": "St. Louis Cardinals",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "opp_team_cs_pct": -3.48,
+            "sprint_speed": 59.375,
+            "catcher_poptime": 100.0,
+            "on_base": 95.2015
+          },
+          "hit_probability": 0.185,
+          "raw_hit_probability": 0.1161,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 115,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 94.6,
+          "notable_signals": 1,
+          "matchup": "Philadelphia Phillies @ St. Louis Cardinals",
+          "game_pk": 823019,
+          "team": "St. Louis Cardinals",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "hard_hit_rate": 0.5147
+          },
+          "hit_probability": 0.4838,
+          "raw_hit_probability": 0.5147,
+          "lift": 0.2565,
+          "reliability": "A",
+          "sample_n": 115,
+          "projection": {
+            "stat": "hard_hit_105",
             "value": 1,
             "needs": 1
           }

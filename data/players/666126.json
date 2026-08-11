@@ -37,6 +37,78 @@
           "matchup": "Athletics @ Cincinnati Reds"
         }
       ]
+    },
+    {
+      "date": "2026-08-11",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 36.9,
+          "notable_signals": 1,
+          "matchup": "Tampa Bay Rays @ Athletics",
+          "game_pk": 824970,
+          "team": "Athletics",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 4.2857,
+            "l7_avg_ev": 0.0,
+            "l7_barrel_pct": 0.0,
+            "bat_speed_trend": 15.0,
+            "park_hr_index": 50.8,
+            "season_barrel_pct": 28.0,
+            "lineup_slot": 62.5,
+            "bullpen_fatigue": 60.6061,
+            "platoon_barrel_pct": 0.08,
+            "platoon_xwoba": 1.02,
+            "park_hand_index": 2.53,
+            "opp_catcher_framing": 0.36,
+            "days_rest": 0.0,
+            "pull_park_synergy": 0.6464,
+            "hard_hit_105_rate": -1.58,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": -0.832,
+            "vs_rp_ops": -0.48
+          },
+          "hit_probability": 0.6029,
+          "raw_hit_probability": 0.6082,
+          "lift": 0.0516,
+          "reliability": "A",
+          "sample_n": 86,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 3.9,
+          "notable_signals": 0,
+          "matchup": "Tampa Bay Rays @ Athletics",
+          "game_pk": 824970,
+          "team": "Athletics",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "hard_hit_rate": 0.1518
+          },
+          "hit_probability": 0.2049,
+          "raw_hit_probability": 0.1518,
+          "lift": -0.0224,
+          "reliability": "A",
+          "sample_n": 86,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

@@ -1867,6 +1867,84 @@ def _on_base_score(bs):
     return None, None
 
 
+# Real starts of shrinkage evidence, confidence-cap side (mirrors
+# LASER_SCORE_CONFIDENCE_GAMES's role, not mlb_sources.empirical_pitcher_outs_rates's
+# own prior_games=6, which regularises the PROBABILITY). A starter with
+# barely enough starts to clear min_starts=5 can still land a properly
+# shrunk, genuinely useful hit_probability -- but the 0-100 quality score
+# (what MIN_QUALITY_SCORE and category ranking actually gate on) should
+# still read that as a thinner read than a starter with 15+ real starts.
+PITCHER_OUTS_SCORE_CONFIDENCE_STARTS = 10
+
+
+def score_pitcher_outs(sp_name, sp_id, gm, side, outs_rates):
+    """FanDuel's real "Pitcher Outs Recorded" market
+    (PITCHER_A/B_OUTS_RECORDED_SB -- found live 2026-08-07, MARKET_MAP
+    never carried it before now). Outs recorded is exactly what innings
+    pitched counts, so mlb_sources.empirical_pitcher_outs_rates reads it
+    straight off MLB's own official inningsPitched notation rather than
+    reconstructing it from raw pitch events (which would have to
+    separately handle double plays, sac flies, and every other multi- or
+    zero-out outcome by hand -- a real and avoidable source of a subtly
+    wrong number).
+
+    Same design as score_laser and for the same reason: no separate
+    matchup-specific model of how long a start goes exists here, only the
+    pitcher's own shrunk record (Beta prior, prior_games=6, same constant
+    empirical_pitcher_k_rates already uses and was independently measured
+    for), so p_hat is used directly as hit_probability with no modelled
+    blend. _pick_line chooses the threshold by LIFT among lines that clear
+    the floor, not raw probability -- the same reasoning as score_laser:
+    P(12+ outs) is structurally always higher than P(18+ outs), so a naive
+    max() would always pick the earliest, least informative line."""
+    if not sp_id:
+        return None
+    r = outs_rates.get(sp_id)
+    if not r or not r.get("rates"):
+        return None
+    opts = []
+    for t in range(12, 22):
+        rate = r["rates"].get(f"outs_{t}plus")
+        if not rate:
+            continue
+        lg = rate.get("league_p") or 0.0
+        opts.append({"threshold": t, "prob": rate["p_hat"], "base_rate": lg,
+                     "lift": round(rate["p_hat"] - lg, 4)})
+    if not opts:
+        return None
+    best = _pick_line(opts)
+    n = r.get("starts", 0)
+    score = clamp(best["prob"] * 100 + best["lift"] * 150)
+    if n < PITCHER_OUTS_SCORE_CONFIDENCE_STARTS:
+        score = min(score, 55)
+    ip_str = f"{best['threshold'] // 3}.{best['threshold'] % 3}"
+    why = [f"Recorded {best['threshold']}+ outs ({ip_str} IP) in {best['prob'] * 100:.1f}% of his "
+          f"last {n} real starts (league {(best['base_rate'] or 0) * 100:.1f}%, avg {r.get('avg_outs')} outs/start)"]
+    watchouts = []
+    if n < PITCHER_OUTS_SCORE_CONFIDENCE_STARTS:
+        watchouts.append(f"Only {n} real starts of workload history -- shrunk heavily toward league average")
+    alternatives = [{"stat": "pitcher_outs", "line": o["threshold"] - 0.5, "needs": o["threshold"],
+                     "prob": o["prob"], "base_rate": o["base_rate"], "lift": o["lift"]}
+                    for o in opts if o is not best][:3]
+    return {
+        "type": "pitcher", "name": sp_name, "player_id": sp_id,
+        "team": gm["away_team"] if side == "away" else gm["home_team"], "side": side,
+        "matchup": gm["matchup"], "game_pk": gm.get("game_pk"),
+        "prop": f"Over {best['threshold'] - 0.5} Outs Recorded",
+        "projection": {"stat": "pitcher_outs", "value": best["threshold"] - 0.5, "needs": best["threshold"]},
+        "hit_probability": round(best["prob"], 4),
+        "base_rate": best["base_rate"], "lift": best["lift"],
+        "probability_basis": "empirical_shrunk",
+        "probability_detail": {"empirical": best["prob"], "modelled": None},
+        "sample_n": n, "alternatives": alternatives,
+        "signals": {"outs_rate": best["prob"], "avg_outs_per_start": r.get("avg_outs")},
+        "score": round(score, 1),
+        "why": why, "watchouts": watchouts, "notable_signals": 1 if best["lift"] >= 0.05 else 0,
+        "confidence": "High" if score >= 70 and n >= PITCHER_OUTS_SCORE_CONFIDENCE_STARTS
+                     else ("Medium" if score >= 55 else "Low"),
+    }
+
+
 def score_stolen_base(batter, gm, opp_catcher_poptime, sprint_speed, batter_season,
                       opp_cs_pct=None):
     """Speed is the dominant SKILL signal, but it is not the gating one: a
@@ -1953,6 +2031,85 @@ def score_stolen_base(batter, gm, opp_catcher_poptime, sprint_speed, batter_seas
         "score": round(score, 1),
         "why": why, "watchouts": watchouts, "notable_signals": notable_signals,
         "confidence": "High" if score >= 70 else ("Medium" if score >= 55 else "Low"),
+    }
+
+
+# Games of shrinkage evidence for the score's own confidence cap -- separate
+# from mlb_sources.hard_hit_game_rates()'s own prior_games=20 (which already
+# regularises the PROBABILITY). This caps the 0-100 quality score specifically,
+# same two-layer pattern as score_first_inning's sample penalty: a properly
+# shrunk probability can still come from a thin, barely-past-the-floor sample,
+# and the score is what the MIN_QUALITY_SCORE floor and category ranking
+# actually gate on.
+LASER_SCORE_CONFIDENCE_GAMES = 60
+
+
+def score_laser(batter, gm, hard_hit_rates):
+    """A real, priced FanDuel market (105+/110+ MPH exit velocity -- FanDuel
+    calls it a "Laser") this project already computes a properly shrunk rate
+    for (mlb_sources.hard_hit_game_rates), but the rate only ever fed OTHER
+    props as a signal (see score_batter's hard_hit_105_rate) and never became
+    its own candidate. MARKET_MAP has carried the pricing keys
+    (hard_hit_105/hard_hit_110) since before this function existed -- the gap
+    was entirely on the scoring side.
+
+    hard_hit_game_rates() already shrinks toward the TRUE league rate (pooled
+    across every batter, not the slate -- same discipline as every other
+    empirical rate in this file) via a real Beta-prior fit, so p_hat is used
+    directly as hit_probability. No separate modelled component: there is no
+    matchup-specific physics model of exit velocity here, only the batter's
+    own shrunk record, which is what the market itself mostly prices off of
+    too. Picks whichever of the two thresholds this batter clears more often
+    -- same "best of several real lines" pattern as score_stolen_base's
+    sibling strikeout scorer, kept comparable across players because both
+    thresholds are shrunk the same way -- via _pick_line, the same "highest
+    LIFT among lines that clear the floor" rule strikeouts/hits use, not
+    raw probability. Raw probability would be a real bug here specifically:
+    P(105+) is structurally always higher than P(110+) (110+ is a strict
+    subset of 105+), so a naive max() would deterministically always pick
+    105+ and never let a genuine 110+ standout show up as itself."""
+    bid = batter.get("id")
+    if not bid:
+        return None
+    hh = hard_hit_rates.get(bid)
+    if not hh or not hh.get("rates"):
+        return None
+    opts = []
+    for thr in (105, 110):
+        r = hh["rates"].get(f"hard_hit_{thr}_1plus")
+        if not r:
+            continue
+        lg = r.get("league_p") or 0.0
+        opts.append({"threshold": thr, "prob": r["p_hat"], "base_rate": lg,
+                     "lift": round(r["p_hat"] - lg, 4), "n": r["n"]})
+    if not opts:
+        return None
+    best = _pick_line(opts)
+    lift = best["lift"]
+    n = best["n"]
+    score = clamp(best["prob"] * 100 + lift * 150)
+    if n < LASER_SCORE_CONFIDENCE_GAMES:
+        score = min(score, 55)  # thin-relative-to-a-season sample: never more than a low/medium lean
+    why = [f"Cleared {best['threshold']}+ MPH exit velocity in {best['prob'] * 100:.1f}% of his "
+          f"last {n} games with a batted ball (league {(best['base_rate'] or 0) * 100:.1f}%)"]
+    alternatives = [{"stat": f"hard_hit_{o['threshold']}", "line": 1, "needs": 1,
+                     "prob": o["prob"], "base_rate": o["base_rate"], "lift": o["lift"]}
+                    for o in opts if o is not best]
+    return {
+        "type": "batter", "name": batter["name"], "player_id": bid, "team": batter.get("team"),
+        "matchup": gm["matchup"], "game_pk": gm.get("game_pk"),
+        "prop": f"To Hit a Laser ({best['threshold']}+ MPH)",
+        "projection": {"stat": f"hard_hit_{best['threshold']}", "value": 1, "needs": 1},
+        "hit_probability": round(best["prob"], 4),
+        "base_rate": best["base_rate"], "lift": lift,
+        "probability_basis": "empirical_shrunk",
+        "probability_detail": {"empirical": best["prob"], "modelled": None},
+        "sample_n": n, "alternatives": alternatives,
+        "signals": {"hard_hit_rate": best["prob"]},
+        "score": round(score, 1),
+        "why": why, "watchouts": [], "notable_signals": 1 if lift >= 0.05 else 0,
+        "confidence": "High" if score >= 70 and n >= LASER_SCORE_CONFIDENCE_GAMES
+                     else ("Medium" if score >= 55 else "Low"),
     }
 
 
@@ -2191,9 +2348,10 @@ def build_candidates(game_meta, *, extras=None, batter_lookup, pitcher_lookup, t
                               extras=extras))
             # score_walk() is deliberately not called -- see its own docstring:
             # no "Player to Draw a Walk" market exists on FanDuel to bet it on.
-            c = score_stolen_base(batter, gm, away_opp_catcher_pop, sprint_speed.get(batter.get("id")), bseason,
-                                  opp_cs_pct=(extras or {}).get("cs_pct_by_team", {}).get(gm["home_team"]))
-            if c: candidates.append(c)
+            for c in (score_stolen_base(batter, gm, away_opp_catcher_pop, sprint_speed.get(batter.get("id")), bseason,
+                                        opp_cs_pct=(extras or {}).get("cs_pct_by_team", {}).get(gm["home_team"])),
+                      score_laser(batter, gm, (extras or {}).get("hard_hit") or {})):
+                if c: candidates.append(c)
         for batter in gm.get("home_lineup", []):
             batter["team"] = gm["home_team"]
             bseason = lookup_player(batter_lookup, batter["name"], batter.get("id"))
@@ -2203,9 +2361,10 @@ def build_candidates(game_meta, *, extras=None, batter_lookup, pitcher_lookup, t
                               extras=extras))
             # score_walk() is deliberately not called -- see its own docstring:
             # no "Player to Draw a Walk" market exists on FanDuel to bet it on.
-            c = score_stolen_base(batter, gm, home_opp_catcher_pop, sprint_speed.get(batter.get("id")), bseason,
-                                  opp_cs_pct=(extras or {}).get("cs_pct_by_team", {}).get(gm["away_team"]))
-            if c: candidates.append(c)
+            for c in (score_stolen_base(batter, gm, home_opp_catcher_pop, sprint_speed.get(batter.get("id")), bseason,
+                                        opp_cs_pct=(extras or {}).get("cs_pct_by_team", {}).get(gm["away_team"])),
+                      score_laser(batter, gm, (extras or {}).get("hard_hit") or {})):
+                if c: candidates.append(c)
 
         if gm["away_sp"] != "TBD" and gm.get("away_sp_id"):
             opp_k, opp_k_source = team_k_lookup.get(gm["home_team"]), "team"
@@ -2219,6 +2378,9 @@ def build_candidates(game_meta, *, extras=None, batter_lookup, pitcher_lookup, t
             fi = score_first_inning(gm["away_sp"], gm["away_sp_id"], gm, "away", fi_form,
                                     extras.get("ump_env"), park_wx)
             if fi: candidates.append(fi)
+            po = score_pitcher_outs(gm["away_sp"], gm["away_sp_id"], gm, "away",
+                                    (extras or {}).get("pitcher_outs") or {})
+            if po: candidates.append(po)
         if gm["home_sp"] != "TBD" and gm.get("home_sp_id"):
             opp_k, opp_k_source = team_k_lookup.get(gm["away_team"]), "team"
             if opp_k is None:
@@ -2231,6 +2393,9 @@ def build_candidates(game_meta, *, extras=None, batter_lookup, pitcher_lookup, t
             fi = score_first_inning(gm["home_sp"], gm["home_sp_id"], gm, "home", fi_form,
                                     extras.get("ump_env"), park_wx)
             if fi: candidates.append(fi)
+            po = score_pitcher_outs(gm["home_sp"], gm["home_sp_id"], gm, "home",
+                                    (extras or {}).get("pitcher_outs") or {})
+            if po: candidates.append(po)
 
     # Rain risk applies to every prop type in a game equally (a postponement
     # or delay affects the batter and the pitcher and the NRFI lean alike),
@@ -2396,6 +2561,9 @@ def _build_and_score():
         ("framing", lambda: _src.catcher_framing()),
         ("rest", lambda: _src.rest_and_usage(game_meta)),
         ("hard_hit", lambda: _src.hard_hit_game_rates()),
+        ("pitcher_outs", lambda: _src.empirical_pitcher_outs_rates(
+            [gm.get("away_sp_id") for gm in game_meta if gm.get("away_sp_id")] +
+            [gm.get("home_sp_id") for gm in game_meta if gm.get("home_sp_id")])),
         # Second batch, each verified against its real structure before use.
         ("team_field", lambda: _src.team_fielding_table()),
         ("team_bat", lambda: _src.team_batting_table()),
@@ -2590,6 +2758,8 @@ CATEGORY_LABELS = {
     "singles": "Singles", "doubles": "Doubles", "triples": "Triples",
     "stolen_base": "Stolen Base", "strikeouts": "Strikeouts",
     "nrfi_combined": "NRFI/YRFI (Both Teams)",
+    "hard_hit_105": "Laser (105+ MPH)", "hard_hit_110": "Laser (110+ MPH)",
+    "pitcher_outs": "Pitcher Outs Recorded",
 }
 
 
@@ -2877,8 +3047,12 @@ def main() -> int:
             fi_prices = _fd.fetch_first_inning_totals()
         except Exception:
             fi_prices = {}
+        try:
+            po_prices = _fd.fetch_pitcher_outs()
+        except Exception:
+            po_prices = {}
         _, n_priced = _fd.attach_market_prices(candidates, prices=prices, k_prices=k_prices,
-                                               fi_prices=fi_prices)
+                                               fi_prices=fi_prices, po_prices=po_prices)
         print(f"    Real market prices attached to {n_priced} of {len(candidates)} candidates")
         # PER-MARKET REAL-PRICE COVERAGE. The pool diagnostic above only ever
         # showed whether the MODEL had a probability, which is a different
@@ -4055,6 +4229,19 @@ def attach_reliability(candidates, emp_batters, emp_pitchers):
             rate = (emp["rates"] or {}).get(key)
         elif stat in ("first_inning_run", "nrfi_combined"):
             n = int((c.get("signals") or {}).get("fi_n_starts") or 0)
+        elif stat in ("hard_hit_105", "hard_hit_110"):
+            # score_laser already set sample_n from mlb_sources.hard_hit_game_rates
+            # -- its own real sample size, not emp_batters' (a different rate
+            # table entirely; looking it up there would silently overwrite a
+            # correct number with an unrelated one).
+            n = c.get("sample_n") or 0
+        elif stat == "pitcher_outs":
+            # Same bug class, pitcher side: this stat isn't "strikeouts" so
+            # the generic path above would look it up in emp_batters (wrong
+            # table for a pitcher, and pid won't even be in it) and silently
+            # zero out score_pitcher_outs's real sample_n from
+            # mlb_sources.empirical_pitcher_outs_rates.
+            n = c.get("sample_n") or 0
         if rate:
             lo, hi = _wilson_interval(rate.get("hit", 0), rate.get("n", n) or 1)
             c["prob_ci"] = [round(lo, 4), round(hi, 4)]

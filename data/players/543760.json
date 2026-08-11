@@ -98,9 +98,9 @@
             "ump_k_pct": 0.624,
             "ump_bb_pct": -0.384
           },
-          "hit_probability": 0.5536,
-          "raw_hit_probability": 0.5935,
-          "lift": -0.1184,
+          "hit_probability": 0.5535,
+          "raw_hit_probability": 0.5934,
+          "lift": -0.1179,
           "reliability": "A",
           "sample_n": 97,
           "projection": {
@@ -132,6 +132,133 @@
           "sample_n": 97,
           "projection": {
             "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 0,
+          "notable_signals": 0,
+          "matchup": "New York Mets @ Pittsburgh Pirates",
+          "game_pk": 823349,
+          "team": "New York Mets",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "hard_hit_rate": 0.1111
+          },
+          "hit_probability": 0.1823,
+          "raw_hit_probability": 0.1111,
+          "lift": -0.0455,
+          "reliability": "A",
+          "sample_n": 97,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-08-11",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 58.4,
+          "notable_signals": 3,
+          "matchup": "New York Mets @ Atlanta Braves",
+          "game_pk": 824886,
+          "team": "New York Mets",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 18.2857,
+            "pitch_exploit": 5.7143,
+            "l7_avg_ev": 43.0,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 6.15,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 27.3333,
+            "lineup_slot": 25.0,
+            "bullpen_fatigue": 64.1026,
+            "bvp_ops": -0.078,
+            "platoon_barrel_pct": 0.4,
+            "platoon_xwoba": 2.46,
+            "park_hand_index": -1.31,
+            "opp_catcher_framing": 0.48,
+            "days_rest": 0.0,
+            "pull_park_synergy": -0.8391,
+            "hard_hit_105_rate": -2.6875,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": 0.312,
+            "vs_rp_ops": -0.78,
+            "ump_k_pct": -0.288,
+            "ump_bb_pct": -0.204
+          },
+          "hit_probability": 0.5581,
+          "raw_hit_probability": 0.5986,
+          "lift": -0.1137,
+          "reliability": "A",
+          "sample_n": 101,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 43.5,
+          "notable_signals": 0,
+          "matchup": "New York Mets @ Atlanta Braves",
+          "game_pk": 824886,
+          "team": "New York Mets",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "opp_team_cs_pct": 5.58,
+            "sprint_speed": 28.125,
+            "catcher_poptime": 91.4286,
+            "on_base": 17.4664
+          },
+          "hit_probability": 0.1651,
+          "raw_hit_probability": 0.0774,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 101,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 0,
+          "notable_signals": 0,
+          "matchup": "New York Mets @ Atlanta Braves",
+          "game_pk": 824886,
+          "team": "New York Mets",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "hard_hit_rate": 0.1075
+          },
+          "hit_probability": 0.1804,
+          "raw_hit_probability": 0.1075,
+          "lift": -0.0469,
+          "reliability": "A",
+          "sample_n": 101,
+          "projection": {
+            "stat": "hard_hit_105",
             "value": 1,
             "needs": 1
           }

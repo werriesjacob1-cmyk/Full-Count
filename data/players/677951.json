@@ -1,6 +1,6 @@
 {
   "player_id": 677951,
-  "name": "Bobby Witt Jr.",
+  "name": "Bobby Witt",
   "snapshots": [
     {
       "date": "2026-08-04",
@@ -97,8 +97,8 @@
             "ump_bb_pct": 0.216
           },
           "hit_probability": 0.6949,
-          "raw_hit_probability": 0.7644,
-          "lift": 0.0229,
+          "raw_hit_probability": 0.7643,
+          "lift": 0.0235,
           "reliability": "A",
           "sample_n": 97,
           "projection": {
@@ -123,13 +123,133 @@
             "catcher_poptime": 85.7143,
             "on_base": 87.524
           },
-          "hit_probability": 0.2818,
-          "raw_hit_probability": 0.27,
+          "hit_probability": 0.2819,
+          "raw_hit_probability": 0.2701,
           "lift": null,
           "reliability": "A",
           "sample_n": 97,
           "projection": {
             "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 70.3,
+          "notable_signals": 1,
+          "matchup": "Chicago Cubs @ Kansas City Royals",
+          "game_pk": 824081,
+          "team": "Kansas City Royals",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "hard_hit_rate": 0.4178
+          },
+          "hit_probability": 0.399,
+          "raw_hit_probability": 0.4178,
+          "lift": 0.1712,
+          "reliability": "A",
+          "sample_n": 97,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-08-11",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 80.3,
+          "notable_signals": 3,
+          "matchup": "Kansas City Royals @ Los Angeles Dodgers",
+          "game_pk": 823917,
+          "team": "Kansas City Royals",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 100.0,
+            "l7_avg_ev": 92.2024,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 40.0,
+            "season_barrel_pct": 62.0,
+            "lineup_slot": 87.5,
+            "bullpen_fatigue": 76.9231,
+            "platoon_barrel_pct": 5.0,
+            "platoon_xwoba": 5.0,
+            "opp_catcher_framing": -0.12,
+            "days_rest": 0.0,
+            "hard_hit_105_rate": 4.935,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": -0.08,
+            "vs_rp_ops": 0.888
+          },
+          "hit_probability": 0.6946,
+          "raw_hit_probability": 0.7639,
+          "lift": 0.0228,
+          "reliability": "A",
+          "sample_n": 101,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 84.6,
+          "notable_signals": 1,
+          "matchup": "Kansas City Royals @ Los Angeles Dodgers",
+          "game_pk": 823917,
+          "team": "Kansas City Royals",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "opp_team_cs_pct": 3.0,
+            "sprint_speed": 90.625,
+            "catcher_poptime": 71.4286,
+            "on_base": 87.524
+          },
+          "hit_probability": 0.2812,
+          "raw_hit_probability": 0.2691,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 101,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 69.0,
+          "notable_signals": 1,
+          "matchup": "Kansas City Royals @ Los Angeles Dodgers",
+          "game_pk": 823917,
+          "team": "Kansas City Royals",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "hard_hit_rate": 0.4124
+          },
+          "hit_probability": 0.3944,
+          "raw_hit_probability": 0.4124,
+          "lift": 0.1671,
+          "reliability": "A",
+          "sample_n": 101,
+          "projection": {
+            "stat": "hard_hit_105",
             "value": 1,
             "needs": 1
           }

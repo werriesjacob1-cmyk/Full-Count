@@ -99,9 +99,9 @@
             "ump_k_pct": 0.132,
             "ump_bb_pct": 0.684
           },
-          "hit_probability": 0.5976,
-          "raw_hit_probability": 0.6441,
-          "lift": -0.0744,
+          "hit_probability": 0.5975,
+          "raw_hit_probability": 0.644,
+          "lift": -0.0739,
           "reliability": "A",
           "sample_n": 108,
           "projection": {
@@ -133,6 +133,131 @@
           "sample_n": 108,
           "projection": {
             "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 9.2,
+          "notable_signals": 0,
+          "matchup": "Los Angeles Angels @ Miami Marlins",
+          "game_pk": 823836,
+          "team": "Miami Marlins",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "hard_hit_rate": 0.1735
+          },
+          "hit_probability": 0.2178,
+          "raw_hit_probability": 0.1735,
+          "lift": -0.01,
+          "reliability": "A",
+          "sample_n": 108,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-08-11",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 58.1,
+          "notable_signals": 4,
+          "matchup": "Pittsburgh Pirates @ Miami Marlins",
+          "game_pk": 823832,
+          "team": "Miami Marlins",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 41.7143,
+            "l7_avg_ev": 0.0,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 15.0,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 4.0,
+            "lineup_slot": 50.0,
+            "bullpen_fatigue": 76.9231,
+            "platoon_barrel_pct": -2.56,
+            "platoon_xwoba": -0.6,
+            "park_hand_index": -1.53,
+            "opp_catcher_framing": 0.48,
+            "days_rest": 2.0,
+            "pull_park_synergy": -0.7015,
+            "hard_hit_105_rate": -1.1375,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": -0.208,
+            "vs_rp_ops": -1.176,
+            "ump_k_pct": 0.216,
+            "ump_bb_pct": 0.204
+          },
+          "hit_probability": 0.6045,
+          "raw_hit_probability": 0.6522,
+          "lift": -0.0673,
+          "reliability": "A",
+          "sample_n": 111,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 43.1,
+          "notable_signals": 0,
+          "matchup": "Pittsburgh Pirates @ Miami Marlins",
+          "game_pk": 823832,
+          "team": "Miami Marlins",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "opp_team_cs_pct": 0.72,
+            "sprint_speed": 18.75,
+            "catcher_poptime": 100.0,
+            "on_base": 26.1036
+          },
+          "hit_probability": 0.1997,
+          "raw_hit_probability": 0.1427,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 111,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 8.3,
+          "notable_signals": 0,
+          "matchup": "Pittsburgh Pirates @ Miami Marlins",
+          "game_pk": 823832,
+          "team": "Miami Marlins",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "hard_hit_rate": 0.1695
+          },
+          "hit_probability": 0.2153,
+          "raw_hit_probability": 0.1695,
+          "lift": -0.012,
+          "reliability": "A",
+          "sample_n": 111,
+          "projection": {
+            "stat": "hard_hit_105",
             "value": 1,
             "needs": 1
           }

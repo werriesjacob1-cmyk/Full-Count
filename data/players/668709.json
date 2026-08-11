@@ -65,8 +65,8 @@
         {
           "prop": "Over 0.5 Hits+Runs+RBIs",
           "type": "batter",
-          "score": 63.3,
-          "notable_signals": 4,
+          "score": 61.2,
+          "notable_signals": 3,
           "matchup": "Cincinnati Reds @ Washington Nationals",
           "game_pk": 822699,
           "team": "Cincinnati Reds",
@@ -79,7 +79,7 @@
             "l7_avg_ev": 9.6154,
             "l7_barrel_pct": 100.0,
             "bat_speed_trend": 3.225,
-            "park_hr_index": 81.5,
+            "park_hr_index": 50.0,
             "season_barrel_pct": 52.6667,
             "lineup_slot": 75.0,
             "bullpen_fatigue": 76.9231,
@@ -98,8 +98,8 @@
             "ump_bb_pct": 0.252
           },
           "hit_probability": 0.6069,
-          "raw_hit_probability": 0.6551,
-          "lift": -0.0651,
+          "raw_hit_probability": 0.655,
+          "lift": -0.0645,
           "reliability": "A",
           "sample_n": 86,
           "projection": {
@@ -131,6 +131,127 @@
           "sample_n": 86,
           "projection": {
             "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 39.6,
+          "notable_signals": 1,
+          "matchup": "Cincinnati Reds @ Washington Nationals",
+          "game_pk": 822699,
+          "team": "Cincinnati Reds",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "hard_hit_rate": 0.2949
+          },
+          "hit_probability": 0.3001,
+          "raw_hit_probability": 0.2949,
+          "lift": 0.0723,
+          "reliability": "A",
+          "sample_n": 86,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-08-11",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 66.7,
+          "notable_signals": 4,
+          "matchup": "Cincinnati Reds @ Chicago White Sox",
+          "game_pk": 824563,
+          "team": "Cincinnati Reds",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 16.5714,
+            "pitch_exploit": 6.2857,
+            "l7_avg_ev": 45.8333,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 43.2,
+            "season_barrel_pct": 52.6667,
+            "lineup_slot": 75.0,
+            "bullpen_fatigue": 71.4286,
+            "platoon_barrel_pct": 3.44,
+            "platoon_xwoba": 3.84,
+            "opp_catcher_framing": 0.96,
+            "days_rest": 2.0,
+            "hard_hit_105_rate": 1.795,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": -0.44,
+            "vs_rp_ops": 0.552
+          },
+          "hit_probability": 0.5994,
+          "raw_hit_probability": 0.6462,
+          "lift": -0.0724,
+          "reliability": "A",
+          "sample_n": 89,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 46.0,
+          "notable_signals": 1,
+          "matchup": "Cincinnati Reds @ Chicago White Sox",
+          "game_pk": 824563,
+          "team": "Cincinnati Reds",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "opp_team_cs_pct": 0.24,
+            "sprint_speed": 6.25,
+            "catcher_poptime": 82.8571,
+            "on_base": 89.4434
+          },
+          "hit_probability": 0.1606,
+          "raw_hit_probability": 0.068,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 89,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 37.6,
+          "notable_signals": 1,
+          "matchup": "Cincinnati Reds @ Chicago White Sox",
+          "game_pk": 824563,
+          "team": "Cincinnati Reds",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "hard_hit_rate": 0.2868
+          },
+          "hit_probability": 0.2941,
+          "raw_hit_probability": 0.2868,
+          "lift": 0.0668,
+          "reliability": "A",
+          "sample_n": 89,
+          "projection": {
+            "stat": "hard_hit_105",
             "value": 1,
             "needs": 1
           }

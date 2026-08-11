@@ -76,7 +76,7 @@
           },
           "hit_probability": 0.6109,
           "raw_hit_probability": 0.6598,
-          "lift": -0.0611,
+          "lift": -0.0605,
           "reliability": "A",
           "sample_n": 111,
           "projection": {
@@ -108,6 +108,129 @@
           "sample_n": 111,
           "projection": {
             "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 30.7,
+          "notable_signals": 0,
+          "matchup": "Chicago Cubs @ Kansas City Royals",
+          "game_pk": 824081,
+          "team": "Chicago Cubs",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "hard_hit_rate": 0.2595
+          },
+          "hit_probability": 0.2743,
+          "raw_hit_probability": 0.2595,
+          "lift": 0.0465,
+          "reliability": "A",
+          "sample_n": 111,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-08-11",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 71.2,
+          "notable_signals": 2,
+          "matchup": "Chicago Cubs @ Washington Nationals",
+          "game_pk": 822697,
+          "team": "Chicago Cubs",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "sp_era_weak": 82.0,
+            "l7_avg_ev": 55.625,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 15.0,
+            "park_hr_index": 41.6,
+            "season_barrel_pct": 56.6667,
+            "lineup_slot": 50.0,
+            "bullpen_fatigue": 59.5238,
+            "platoon_barrel_pct": 4.72,
+            "platoon_xwoba": 1.26,
+            "opp_catcher_framing": -0.6,
+            "days_rest": 2.0,
+            "consecutive_games": -4.0,
+            "hard_hit_105_rate": 1.15,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": 1.152,
+            "vs_rp_ops": 1.284,
+            "ump_k_pct": -0.708,
+            "ump_bb_pct": 0.048
+          },
+          "hit_probability": 0.6111,
+          "raw_hit_probability": 0.66,
+          "lift": -0.0607,
+          "reliability": "A",
+          "sample_n": 114,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 47.7,
+          "notable_signals": 0,
+          "matchup": "Chicago Cubs @ Washington Nationals",
+          "game_pk": 822697,
+          "team": "Chicago Cubs",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "opp_team_cs_pct": 0.66,
+            "sprint_speed": 18.75,
+            "catcher_poptime": 91.4286,
+            "on_base": 57.7735
+          },
+          "hit_probability": 0.1464,
+          "raw_hit_probability": 0.0373,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 114,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 31.2,
+          "notable_signals": 0,
+          "matchup": "Chicago Cubs @ Washington Nationals",
+          "game_pk": 822697,
+          "team": "Chicago Cubs",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "hard_hit_rate": 0.261
+          },
+          "hit_probability": 0.2754,
+          "raw_hit_probability": 0.261,
+          "lift": 0.0481,
+          "reliability": "A",
+          "sample_n": 114,
+          "projection": {
+            "stat": "hard_hit_105",
             "value": 1,
             "needs": 1
           }

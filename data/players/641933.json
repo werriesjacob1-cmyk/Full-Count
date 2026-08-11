@@ -79,9 +79,9 @@
             "ump_k_pct": -0.456,
             "ump_bb_pct": -0.588
           },
-          "hit_probability": 0.5636,
-          "raw_hit_probability": 0.6049,
-          "lift": -0.1084,
+          "hit_probability": 0.5635,
+          "raw_hit_probability": 0.6048,
+          "lift": -0.1079,
           "reliability": "B",
           "sample_n": 70,
           "projection": {
@@ -107,12 +107,136 @@
             "on_base": 49.1363
           },
           "hit_probability": 0.1406,
-          "raw_hit_probability": 0.024,
+          "raw_hit_probability": 0.0241,
           "lift": null,
           "reliability": "B",
           "sample_n": 70,
           "projection": {
             "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 5.4,
+          "notable_signals": 0,
+          "matchup": "Baltimore Orioles @ Texas Rangers",
+          "game_pk": 822863,
+          "team": "Baltimore Orioles",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "hard_hit_rate": 0.1582
+          },
+          "hit_probability": 0.2086,
+          "raw_hit_probability": 0.1582,
+          "lift": -0.0192,
+          "reliability": "B",
+          "sample_n": 70,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-08-11",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 47.4,
+          "notable_signals": 0,
+          "matchup": "Baltimore Orioles @ Minnesota Twins",
+          "game_pk": 823673,
+          "team": "Baltimore Orioles",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 55.7143,
+            "l7_avg_ev": 21.7708,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 48.7,
+            "season_barrel_pct": 42.0,
+            "lineup_slot": 62.5,
+            "bullpen_fatigue": 64.1026,
+            "platoon_barrel_pct": -1.2,
+            "platoon_xwoba": -2.46,
+            "park_hand_index": -0.72,
+            "opp_catcher_framing": -0.24,
+            "days_rest": 0.0,
+            "pull_park_synergy": -0.383,
+            "hard_hit_105_rate": -1.3275,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": 1.144,
+            "vs_rp_ops": 0.792,
+            "ump_k_pct": 0.72,
+            "ump_bb_pct": -0.36
+          },
+          "hit_probability": 0.5597,
+          "raw_hit_probability": 0.6004,
+          "lift": -0.1121,
+          "reliability": "B",
+          "sample_n": 74,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 44.9,
+          "notable_signals": 0,
+          "matchup": "Baltimore Orioles @ Minnesota Twins",
+          "game_pk": 823673,
+          "team": "Baltimore Orioles",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "opp_team_cs_pct": 5.88,
+            "sprint_speed": 21.875,
+            "catcher_poptime": 82.8571,
+            "on_base": 49.1363
+          },
+          "hit_probability": 0.1399,
+          "raw_hit_probability": 0.0224,
+          "lift": null,
+          "reliability": "B",
+          "sample_n": 74,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 6.4,
+          "notable_signals": 0,
+          "matchup": "Baltimore Orioles @ Minnesota Twins",
+          "game_pk": 823673,
+          "team": "Baltimore Orioles",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "hard_hit_rate": 0.1619
+          },
+          "hit_probability": 0.2108,
+          "raw_hit_probability": 0.1619,
+          "lift": -0.0165,
+          "reliability": "B",
+          "sample_n": 74,
+          "projection": {
+            "stat": "hard_hit_105",
             "value": 1,
             "needs": 1
           }

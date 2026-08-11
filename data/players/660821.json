@@ -87,6 +87,30 @@
             "value": 0.5,
             "needs": 1
           }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 43.9,
+          "notable_signals": 1,
+          "matchup": "Toronto Blue Jays @ Philadelphia Phillies",
+          "game_pk": 823428,
+          "team": "Toronto Blue Jays",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "hard_hit_rate": 0.3124
+          },
+          "hit_probability": 0.3133,
+          "raw_hit_probability": 0.3124,
+          "lift": 0.0855,
+          "reliability": "B",
+          "sample_n": 78,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
         }
       ]
     }

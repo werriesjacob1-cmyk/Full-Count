@@ -32,7 +32,7 @@
         {
           "prop": "Over 0.5 Hits+Runs+RBIs",
           "type": "batter",
-          "score": 52.8,
+          "score": 53.0,
           "notable_signals": 2,
           "matchup": "Athletics @ Boston Red Sox",
           "game_pk": 824727,
@@ -60,14 +60,38 @@
             "ump_k_pct": -0.324,
             "ump_bb_pct": -0.144
           },
-          "hit_probability": 0.569,
-          "raw_hit_probability": 0.611,
-          "lift": -0.103,
+          "hit_probability": 0.5688,
+          "raw_hit_probability": 0.6108,
+          "lift": -0.1026,
           "reliability": "C",
           "sample_n": 38,
           "projection": {
             "stat": "hits_runs_rbis",
             "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 0,
+          "notable_signals": 0,
+          "matchup": "Athletics @ Boston Red Sox",
+          "game_pk": 824727,
+          "team": "Boston Red Sox",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "hard_hit_rate": 0.0786
+          },
+          "hit_probability": 0.1657,
+          "raw_hit_probability": 0.0786,
+          "lift": -0.0621,
+          "reliability": "C",
+          "sample_n": 38,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
             "needs": 1
           }
         }

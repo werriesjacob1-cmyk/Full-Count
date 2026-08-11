@@ -78,9 +78,9 @@
             "ump_k_pct": 0.132,
             "ump_bb_pct": 0.684
           },
-          "hit_probability": 0.5156,
-          "raw_hit_probability": 0.5505,
-          "lift": -0.1564,
+          "hit_probability": 0.5154,
+          "raw_hit_probability": 0.5503,
+          "lift": -0.156,
           "reliability": "B",
           "sample_n": 68,
           "projection": {
@@ -106,12 +106,36 @@
             "on_base": 4.9904
           },
           "hit_probability": 0.1589,
-          "raw_hit_probability": 0.0645,
+          "raw_hit_probability": 0.0646,
           "lift": null,
           "reliability": "B",
           "sample_n": 68,
           "projection": {
             "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 16.3,
+          "notable_signals": 0,
+          "matchup": "Los Angeles Angels @ Miami Marlins",
+          "game_pk": 823836,
+          "team": "Los Angeles Angels",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "hard_hit_rate": 0.2017
+          },
+          "hit_probability": 0.2353,
+          "raw_hit_probability": 0.2017,
+          "lift": 0.0075,
+          "reliability": "B",
+          "sample_n": 68,
+          "projection": {
+            "stat": "hard_hit_105",
             "value": 1,
             "needs": 1
           }

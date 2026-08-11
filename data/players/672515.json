@@ -27,7 +27,7 @@
             "platoon_barrel_pct": 0.96,
             "platoon_xwoba": 3.12,
             "park_hand_index": -0.6,
-            "opp_catcher_framing": 1.2,
+            "opp_catcher_framing": -0.12,
             "days_rest": 0.0,
             "pull_park_synergy": -0.1659,
             "hard_hit_105_rate": 0.4325,
@@ -48,6 +48,30 @@
           "projection": {
             "stat": "hits",
             "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 23.9,
+          "notable_signals": 0,
+          "matchup": "Los Angeles Dodgers @ Arizona Diamondbacks",
+          "game_pk": 825051,
+          "team": "Arizona Diamondbacks",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "hard_hit_rate": 0.2323
+          },
+          "hit_probability": 0.2555,
+          "raw_hit_probability": 0.2323,
+          "lift": 0.0277,
+          "reliability": "A",
+          "sample_n": 87,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
             "needs": 1
           }
         }

@@ -101,12 +101,36 @@
             "on_base": 69.2898
           },
           "hit_probability": 0.185,
-          "raw_hit_probability": 0.1161,
+          "raw_hit_probability": 0.1162,
           "lift": null,
           "reliability": "C",
           "sample_n": 40,
           "projection": {
             "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 11.7,
+          "notable_signals": 0,
+          "matchup": "Chicago Cubs @ Kansas City Royals",
+          "game_pk": 824081,
+          "team": "Chicago Cubs",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "hard_hit_rate": 0.1834
+          },
+          "hit_probability": 0.2238,
+          "raw_hit_probability": 0.1834,
+          "lift": -0.004,
+          "reliability": "C",
+          "sample_n": 40,
+          "projection": {
+            "stat": "hard_hit_105",
             "value": 1,
             "needs": 1
           }

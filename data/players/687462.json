@@ -74,6 +74,105 @@
             "value": 0.5,
             "needs": 1
           }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 0,
+          "notable_signals": 0,
+          "matchup": "New York Mets @ Pittsburgh Pirates",
+          "game_pk": 823349,
+          "team": "Pittsburgh Pirates",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "hard_hit_rate": 0.1304
+          },
+          "hit_probability": 0.1928,
+          "raw_hit_probability": 0.1304,
+          "lift": -0.035,
+          "reliability": "B",
+          "sample_n": 79,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-08-11",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 42.2,
+          "notable_signals": 2,
+          "matchup": "Pittsburgh Pirates @ Miami Marlins",
+          "game_pk": 823832,
+          "team": "Pittsburgh Pirates",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 31.7143,
+            "pitch_exploit": 3.4286,
+            "l7_avg_ev": 0.0,
+            "l7_barrel_pct": 40.7143,
+            "bat_speed_trend": 13.35,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 34.0,
+            "lineup_slot": 62.5,
+            "bullpen_fatigue": 47.619,
+            "platoon_barrel_pct": 1.28,
+            "platoon_xwoba": 1.8,
+            "park_hand_index": -1.53,
+            "opp_catcher_framing": 0.84,
+            "days_rest": 4.0,
+            "pull_park_synergy": -0.6372,
+            "hard_hit_105_rate": -2.18,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": 0.32,
+            "vs_rp_ops": 1.332,
+            "ump_k_pct": 0.216,
+            "ump_bb_pct": 0.204
+          },
+          "hit_probability": 0.5999,
+          "raw_hit_probability": 0.6019,
+          "lift": 0.0486,
+          "reliability": "A",
+          "sample_n": 81,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 0,
+          "notable_signals": 0,
+          "matchup": "Pittsburgh Pirates @ Miami Marlins",
+          "game_pk": 823832,
+          "team": "Pittsburgh Pirates",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "hard_hit_rate": 0.1278
+          },
+          "hit_probability": 0.1913,
+          "raw_hit_probability": 0.1278,
+          "lift": -0.036,
+          "reliability": "A",
+          "sample_n": 81,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
         }
       ]
     }

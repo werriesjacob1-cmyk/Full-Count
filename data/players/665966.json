@@ -1,6 +1,6 @@
 {
   "player_id": 665966,
-  "name": "Carlos Narv\u00e1ez",
+  "name": "Carlos Narvaez",
   "snapshots": [
     {
       "date": "2026-08-04",
@@ -77,14 +77,111 @@
             "ump_k_pct": -0.456,
             "ump_bb_pct": -0.588
           },
-          "hit_probability": 0.5422,
-          "raw_hit_probability": 0.5805,
-          "lift": -0.1298,
+          "hit_probability": 0.5421,
+          "raw_hit_probability": 0.5804,
+          "lift": -0.1293,
           "reliability": "B",
           "sample_n": 60,
           "projection": {
             "stat": "hits_runs_rbis",
             "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 20.4,
+          "notable_signals": 0,
+          "matchup": "Baltimore Orioles @ Texas Rangers",
+          "game_pk": 822863,
+          "team": "Baltimore Orioles",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "hard_hit_rate": 0.2183
+          },
+          "hit_probability": 0.2461,
+          "raw_hit_probability": 0.2183,
+          "lift": 0.0183,
+          "reliability": "B",
+          "sample_n": 60,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-08-11",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 46.9,
+          "notable_signals": 0,
+          "matchup": "Baltimore Orioles @ Minnesota Twins",
+          "game_pk": 823673,
+          "team": "Baltimore Orioles",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 55.7143,
+            "l7_avg_ev": 41.25,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 48.7,
+            "season_barrel_pct": 26.0,
+            "lineup_slot": 0.0,
+            "bullpen_fatigue": 64.1026,
+            "platoon_barrel_pct": 0.64,
+            "platoon_xwoba": -2.58,
+            "park_hand_index": -0.72,
+            "opp_catcher_framing": -0.24,
+            "days_rest": 0.0,
+            "pull_park_synergy": -0.0353,
+            "hard_hit_105_rate": -0.165,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": 0.952,
+            "vs_rp_ops": -1.416,
+            "ump_k_pct": 0.72,
+            "ump_bb_pct": -0.36
+          },
+          "hit_probability": 0.5387,
+          "raw_hit_probability": 0.5766,
+          "lift": -0.1331,
+          "reliability": "B",
+          "sample_n": 64,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 18.0,
+          "notable_signals": 0,
+          "matchup": "Baltimore Orioles @ Minnesota Twins",
+          "game_pk": 823673,
+          "team": "Baltimore Orioles",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "hard_hit_rate": 0.2084
+          },
+          "hit_probability": 0.2396,
+          "raw_hit_probability": 0.2084,
+          "lift": 0.0123,
+          "reliability": "B",
+          "sample_n": 64,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
             "needs": 1
           }
         }
