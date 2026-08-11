@@ -197,6 +197,75 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-11",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 45.1,
+          "notable_signals": 2,
+          "matchup": "Kansas City Royals @ Los Angeles Dodgers",
+          "game_pk": 823917,
+          "team": "Kansas City Royals",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 100.0,
+            "l7_avg_ev": 0.0,
+            "l7_barrel_pct": 57.1429,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 100.0,
+            "lineup_slot": 12.5,
+            "bullpen_fatigue": 76.9231,
+            "opp_catcher_framing": 0.48,
+            "days_rest": 2.0,
+            "team_total_move": 6.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "ump_k_pct": 0.324,
+            "ump_bb_pct": -0.288
+          },
+          "hit_probability": 0.6039,
+          "raw_hit_probability": 0.6102,
+          "lift": 0.0527,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 51.6,
+          "notable_signals": 0,
+          "matchup": "Kansas City Royals @ Los Angeles Dodgers",
+          "game_pk": 823917,
+          "team": "Kansas City Royals",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "opp_team_cs_pct": 3.0,
+            "sprint_speed": 53.125
+          },
+          "hit_probability": 0.2068,
+          "raw_hit_probability": 0.1551,
+          "lift": null,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }
