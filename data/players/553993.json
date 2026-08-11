@@ -1,6 +1,6 @@
 {
   "player_id": 553993,
-  "name": "Eugenio Su\u00e1rez",
+  "name": "Eugenio Suarez",
   "snapshots": [
     {
       "date": "2026-08-04",
@@ -181,6 +181,53 @@
           "lift": -0.1294,
           "reliability": "A",
           "sample_n": 85,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-08-11",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 47.1,
+          "notable_signals": 3,
+          "matchup": "Cincinnati Reds @ Chicago White Sox",
+          "game_pk": 824563,
+          "team": "Cincinnati Reds",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 15.4286,
+            "l7_avg_ev": 20.75,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 40.9,
+            "season_barrel_pct": 50.0,
+            "lineup_slot": 50.0,
+            "bullpen_fatigue": 71.4286,
+            "platoon_barrel_pct": 2.48,
+            "platoon_xwoba": -2.82,
+            "opp_catcher_framing": 0.96,
+            "days_rest": 2.0,
+            "hard_hit_105_rate": -0.9325,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": 0.432,
+            "vs_rp_ops": -0.024
+          },
+          "hit_probability": 0.5332,
+          "raw_hit_probability": 0.5703,
+          "lift": -0.1394,
+          "reliability": "A",
+          "sample_n": 86,
           "projection": {
             "stat": "hits_runs_rbis",
             "value": 0.5,

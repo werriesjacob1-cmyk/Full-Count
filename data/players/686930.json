@@ -13,6 +13,62 @@
           "matchup": "Athletics @ Cincinnati Reds"
         }
       ]
+    },
+    {
+      "date": "2026-08-11",
+      "evaluations": [
+        {
+          "prop": "Over 4.5 Strikeouts",
+          "type": "pitcher",
+          "score": 52.9,
+          "notable_signals": 0,
+          "matchup": "Tampa Bay Rays @ Athletics",
+          "game_pk": 824970,
+          "team": "Athletics",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "same_hand_ratio": 12.5,
+            "l14_k_pct": 80.0,
+            "env_neutral": 50.0
+          },
+          "hit_probability": 0.6607,
+          "raw_hit_probability": 0.8042,
+          "lift": 0.1233,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 4.5,
+            "needs": 5
+          }
+        },
+        {
+          "prop": "Tampa Bay Rays scoreless in the 1st",
+          "type": "pitcher",
+          "score": 5.0,
+          "notable_signals": 0,
+          "matchup": "Tampa Bay Rays @ Athletics",
+          "game_pk": 824970,
+          "team": "Athletics",
+          "side": "home",
+          "lean": "NRFI",
+          "signals": {
+            "yrfi_rate": 50.0,
+            "fi_n_starts": 2.0,
+            "park_hr_index": 50.0
+          },
+          "hit_probability": 0.6874,
+          "raw_hit_probability": 0.6984,
+          "lift": -0.0186,
+          "reliability": "D",
+          "sample_n": 2,
+          "projection": {
+            "stat": "first_inning_run",
+            "value": 50.0
+          }
+        }
+      ]
     }
   ]
 }

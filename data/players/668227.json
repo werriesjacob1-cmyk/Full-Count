@@ -179,6 +179,56 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-11",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 62.5,
+          "notable_signals": 2,
+          "matchup": "Seattle Mariners @ New York Yankees",
+          "game_pk": 823512,
+          "team": "Seattle Mariners",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 42.5714,
+            "pitch_exploit": 7.4286,
+            "l7_avg_ev": 24.5,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 59.6,
+            "season_barrel_pct": 34.6667,
+            "lineup_slot": 75.0,
+            "bullpen_fatigue": 83.3333,
+            "platoon_barrel_pct": -1.12,
+            "platoon_xwoba": 0.48,
+            "park_hand_index": 0.84,
+            "opp_catcher_framing": -0.6,
+            "days_rest": 2.0,
+            "pull_park_synergy": 0.1235,
+            "hard_hit_105_rate": 1.4275,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": 1.568,
+            "vs_rp_ops": 2.556
+          },
+          "hit_probability": 0.6293,
+          "raw_hit_probability": 0.6644,
+          "lift": 0.0781,
+          "reliability": "A",
+          "sample_n": 111,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

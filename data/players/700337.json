@@ -98,6 +98,53 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-11",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 61.7,
+          "notable_signals": 2,
+          "matchup": "Cincinnati Reds @ Chicago White Sox",
+          "game_pk": 824563,
+          "team": "Chicago White Sox",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "sp_era_weak": 60.0,
+            "l7_avg_ev": 89.25,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 15.0,
+            "park_hr_index": 40.9,
+            "season_barrel_pct": 0.0,
+            "lineup_slot": 12.5,
+            "bullpen_fatigue": 47.619,
+            "platoon_barrel_pct": -2.96,
+            "platoon_xwoba": -2.7,
+            "opp_catcher_framing": 0.84,
+            "days_rest": 2.0,
+            "hard_hit_105_rate": -1.5025,
+            "team_total_move": 0.0,
+            "team_total_open": 0.0,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": 0.912,
+            "vs_rp_ops": -1.932
+          },
+          "hit_probability": 0.498,
+          "raw_hit_probability": 0.5307,
+          "lift": -0.1746,
+          "reliability": "B",
+          "sample_n": 60,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

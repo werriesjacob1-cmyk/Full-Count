@@ -283,6 +283,79 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-11",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 40.4,
+          "notable_signals": 0,
+          "matchup": "Cleveland Guardians @ Detroit Tigers",
+          "game_pk": 824240,
+          "team": "Cleveland Guardians",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "sp_era_weak": 49.7143,
+            "l7_avg_ev": 0.0,
+            "l7_barrel_pct": 60.7143,
+            "park_hr_index": 65.9,
+            "season_barrel_pct": 0.0,
+            "lineup_slot": 37.5,
+            "bullpen_fatigue": 51.2821,
+            "platoon_barrel_pct": -3.36,
+            "platoon_xwoba": -1.14,
+            "opp_catcher_framing": -1.32,
+            "days_rest": 2.0,
+            "hard_hit_105_rate": -2.7775,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": -0.168,
+            "vs_rp_ops": -0.468
+          },
+          "hit_probability": 0.6073,
+          "raw_hit_probability": 0.6174,
+          "lift": 0.0561,
+          "reliability": "A",
+          "sample_n": 116,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 38.6,
+          "notable_signals": 0,
+          "matchup": "Cleveland Guardians @ Detroit Tigers",
+          "game_pk": 824240,
+          "team": "Cleveland Guardians",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "opp_team_cs_pct": -0.36,
+            "sprint_speed": 0.0,
+            "catcher_poptime": 100.0,
+            "on_base": 48.1766
+          },
+          "hit_probability": 0.187,
+          "raw_hit_probability": 0.1198,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 116,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

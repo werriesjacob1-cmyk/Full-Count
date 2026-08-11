@@ -232,6 +232,80 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-11",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 45.9,
+          "notable_signals": 1,
+          "matchup": "Milwaukee Brewers @ San Diego Padres",
+          "game_pk": 823264,
+          "team": "Milwaukee Brewers",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 76.5714,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 6.0,
+            "lineup_slot": 0.0,
+            "bullpen_fatigue": 59.5238,
+            "platoon_barrel_pct": -2.88,
+            "platoon_xwoba": -1.02,
+            "park_hand_index": 0.15,
+            "opp_catcher_framing": 0.72,
+            "days_rest": 4.0,
+            "pull_park_synergy": 0.0294,
+            "hard_hit_105_rate": -0.62,
+            "team_total_move": -6.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": 1.472,
+            "vs_rp_ops": 0.396
+          },
+          "hit_probability": 0.6042,
+          "raw_hit_probability": 0.6519,
+          "lift": -0.0684,
+          "reliability": "A",
+          "sample_n": 85,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 57.7,
+          "notable_signals": 0,
+          "matchup": "Milwaukee Brewers @ San Diego Padres",
+          "game_pk": 823264,
+          "team": "Milwaukee Brewers",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "opp_team_cs_pct": -4.98,
+            "sprint_speed": 56.25,
+            "catcher_poptime": 80.0,
+            "on_base": 32.8215
+          },
+          "hit_probability": 0.1708,
+          "raw_hit_probability": 0.0888,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 85,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

@@ -293,6 +293,81 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-11",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 67.9,
+          "notable_signals": 4,
+          "matchup": "Cincinnati Reds @ Chicago White Sox",
+          "game_pk": 824563,
+          "team": "Cincinnati Reds",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 15.4286,
+            "pitch_exploit": 8.5714,
+            "l7_avg_ev": 45.8333,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 40.9,
+            "season_barrel_pct": 51.3333,
+            "lineup_slot": 75.0,
+            "bullpen_fatigue": 71.4286,
+            "platoon_barrel_pct": 3.44,
+            "platoon_xwoba": 3.84,
+            "opp_catcher_framing": 0.96,
+            "days_rest": 2.0,
+            "hard_hit_105_rate": 1.795,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": -0.44,
+            "vs_rp_ops": 0.552
+          },
+          "hit_probability": 0.6014,
+          "raw_hit_probability": 0.6051,
+          "lift": 0.0502,
+          "reliability": "A",
+          "sample_n": 89,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 45.4,
+          "notable_signals": 1,
+          "matchup": "Cincinnati Reds @ Chicago White Sox",
+          "game_pk": 824563,
+          "team": "Cincinnati Reds",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "opp_team_cs_pct": 0.24,
+            "sprint_speed": 6.25,
+            "catcher_poptime": 82.8571,
+            "on_base": 86.5643
+          },
+          "hit_probability": 0.1606,
+          "raw_hit_probability": 0.068,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 89,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }
