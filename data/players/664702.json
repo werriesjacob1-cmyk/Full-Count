@@ -141,7 +141,7 @@
         {
           "prop": "Over 0.5 Hits",
           "type": "batter",
-          "score": 37.7,
+          "score": 26.5,
           "notable_signals": 2,
           "matchup": "Boston Red Sox @ Toronto Blue Jays",
           "game_pk": 822778,
@@ -155,7 +155,7 @@
             "l7_barrel_pct": 23.5714,
             "park_hr_index": 50.0,
             "season_barrel_pct": 3.3333,
-            "lineup_slot": 0.0,
+            "lineup_slot": 12.5,
             "bullpen_fatigue": 71.4286,
             "bvp_ops": -0.498,
             "platoon_barrel_pct": -1.44,
@@ -169,11 +169,13 @@
             "getaway_day": 0.0,
             "series_game": 1.0,
             "sp_rp_ops_gap": -2.376,
-            "vs_rp_ops": -3.192
+            "vs_rp_ops": -3.192,
+            "ump_k_pct": -0.204,
+            "ump_bb_pct": -0.276
           },
-          "hit_probability": 0.5718,
-          "raw_hit_probability": 0.5434,
-          "lift": 0.0205,
+          "hit_probability": 0.5752,
+          "raw_hit_probability": 0.5505,
+          "lift": 0.0239,
           "reliability": "A",
           "sample_n": 91,
           "projection": {
@@ -185,7 +187,7 @@
         {
           "prop": "To Steal a Base",
           "type": "batter",
-          "score": 64.1,
+          "score": 52.1,
           "notable_signals": 0,
           "matchup": "Boston Red Sox @ Toronto Blue Jays",
           "game_pk": 822778,
@@ -198,8 +200,8 @@
             "catcher_poptime": 85.7143,
             "on_base": 11.7083
           },
-          "hit_probability": 0.1636,
-          "raw_hit_probability": 0.0743,
+          "hit_probability": 0.1645,
+          "raw_hit_probability": 0.0762,
           "lift": null,
           "reliability": "A",
           "sample_n": 91,
@@ -212,7 +214,7 @@
         {
           "prop": "To Hit a Laser (105+ MPH)",
           "type": "batter",
-          "score": 0,
+          "score": 0.1,
           "notable_signals": 0,
           "matchup": "Boston Red Sox @ Toronto Blue Jays",
           "game_pk": 822778,

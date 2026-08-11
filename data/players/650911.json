@@ -27,8 +27,8 @@
         {
           "prop": "Over 4.5 Strikeouts",
           "type": "pitcher",
-          "score": 57.1,
-          "notable_signals": 0,
+          "score": 71.5,
+          "notable_signals": 1,
           "matchup": "Philadelphia Phillies @ St. Louis Cardinals",
           "game_pk": 823019,
           "team": "Philadelphia Phillies",
@@ -37,7 +37,10 @@
           "signals": {
             "same_hand_ratio": 5.5556,
             "l14_k_pct": 100.0,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 74.4047,
+            "ump_k_pct": -0.108,
+            "ump_bb_pct": -0.192
           },
           "hit_probability": 0.6259,
           "raw_hit_probability": 0.6734,
@@ -51,9 +54,9 @@
           }
         },
         {
-          "prop": "Over 15.5 Outs Recorded",
+          "prop": "Over 18.5 Outs Recorded",
           "type": "pitcher",
-          "score": 100,
+          "score": 61.9,
           "notable_signals": 1,
           "matchup": "Philadelphia Phillies @ St. Louis Cardinals",
           "game_pk": 823019,
@@ -61,18 +64,42 @@
           "side": "away",
           "lean": null,
           "signals": {
-            "outs_rate": 0.7834,
+            "outs_rate": 0.3763,
             "avg_outs_per_start": 18.71
           },
-          "hit_probability": 0.7091,
-          "raw_hit_probability": 0.7834,
-          "lift": 0.1254,
+          "hit_probability": 0.3642,
+          "raw_hit_probability": 0.3763,
+          "lift": 0.1496,
           "reliability": "D",
           "sample_n": 24,
           "projection": {
             "stat": "pitcher_outs",
-            "value": 15.5,
-            "needs": 16
+            "value": 18.5,
+            "needs": 19
+          }
+        },
+        {
+          "prop": "Over 9.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 55,
+          "notable_signals": 1,
+          "matchup": "Philadelphia Phillies @ St. Louis Cardinals",
+          "game_pk": 823019,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "signals": {
+            "combined_k_edge": 0.0569
+          },
+          "hit_probability": 0.5463,
+          "raw_hit_probability": 0.5852,
+          "lift": 0.018,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 9.5,
+            "needs": 10
           }
         }
       ]

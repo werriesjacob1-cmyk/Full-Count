@@ -27,8 +27,8 @@
         {
           "prop": "Over 5.5 Strikeouts",
           "type": "pitcher",
-          "score": 67.8,
-          "notable_signals": 0,
+          "score": 82.1,
+          "notable_signals": 1,
           "matchup": "Boston Red Sox @ Toronto Blue Jays",
           "game_pk": 822778,
           "team": "Toronto Blue Jays",
@@ -37,7 +37,10 @@
           "signals": {
             "same_hand_ratio": 92.8571,
             "l14_k_pct": 100.0,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 73.7199,
+            "ump_k_pct": 0.204,
+            "ump_bb_pct": 0.276
           },
           "hit_probability": 0.6175,
           "raw_hit_probability": 0.6427,
@@ -51,9 +54,9 @@
           }
         },
         {
-          "prop": "Over 13.5 Outs Recorded",
+          "prop": "Over 18.5 Outs Recorded",
           "type": "pitcher",
-          "score": 100,
+          "score": 44.5,
           "notable_signals": 1,
           "matchup": "Boston Red Sox @ Toronto Blue Jays",
           "game_pk": 822778,
@@ -61,18 +64,18 @@
           "side": "home",
           "lean": null,
           "signals": {
-            "outs_rate": 0.9291,
+            "outs_rate": 0.3069,
             "avg_outs_per_start": 18.05
           },
-          "hit_probability": 0.8036,
-          "raw_hit_probability": 0.9291,
-          "lift": -0.044,
+          "hit_probability": 0.3091,
+          "raw_hit_probability": 0.3069,
+          "lift": 0.0945,
           "reliability": "D",
           "sample_n": 21,
           "projection": {
             "stat": "pitcher_outs",
-            "value": 13.5,
-            "needs": 14
+            "value": 18.5,
+            "needs": 19
           }
         }
       ]

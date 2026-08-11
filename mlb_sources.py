@@ -1138,13 +1138,22 @@ def _game_log(player_id, group, season=None):
 
 
 def _empirical_batter_one(job):
-    pid, min_games = job
+    pid, min_games, asof = job
     try:
         splits = _game_log(pid, "hitting")
     except Exception:
         return pid, None
     games = []
     for s in splits:
+        # _game_log hits the raw MLB gameLog endpoint with no date bound at
+        # all (season=year, every game in it) -- the same unguarded shape
+        # _empirical_pitcher_outs_one had before its own asof fix, and this
+        # function has the identical exposure: a backtest calling it
+        # unfiltered would silently read games AFTER the date being
+        # simulated. asof filters on the same real per-split "date" field;
+        # None (the live default) means "no filter," today's behaviour.
+        if asof is not None and (s.get("date") or "9999-99-99") > asof:
+            continue
         st = s.get("stat") or {}
         try:
             pa = int(st.get("plateAppearances") or 0)
@@ -1291,32 +1300,49 @@ def _wilson_lower(hits, n, z=1.96):
     return max(0.0, (centre - margin) / d)
 
 
-def empirical_batter_prop_rates(batter_ids, min_games=20, max_workers=16):
+def empirical_batter_prop_rates(batter_ids, min_games=20, max_workers=16, asof=None):
     """Per-batter empirical rate of clearing each standard prop threshold, from
     real game logs. Keyed by MLBAM id.
 
     Verified live: Bobby Witt Jr. returns 27/96 games with a steal (0.281)
-    against a modelled 0.364 -- the gap this table exists to expose."""
+    against a modelled 0.364 -- the gap this table exists to expose.
+
+    asof: "YYYY-MM-DD" string. When given, only counts games on or before
+    that date -- see _empirical_batter_one's own comment for why this exists
+    (this source has no built-in date guard the way the Statcast-backed
+    empirical functions do). None (default) means "no filter," i.e. today's
+    live behaviour, unchanged. This is the same table generate_picks.py's
+    live scoring blends with the modelled probability for hits/total_bases/
+    home_runs/runs/rbis/stolen_base/singles/doubles/triples/hits_runs_rbis
+    -- until this parameter existed, backtest could never call it at all
+    (any call would have leaked future games), so every backtest run
+    validated a modelled-ONLY stand-in rather than what actually ships live."""
     from concurrent.futures import ThreadPoolExecutor
     ids = [int(b) for b in dict.fromkeys(batter_ids) if b]
     out = {}
     if not ids:
         return out
     with ThreadPoolExecutor(max_workers=max_workers) as ex:
-        for pid, res in ex.map(_empirical_batter_one, [(i, min_games) for i in ids]):
+        for pid, res in ex.map(_empirical_batter_one, [(i, min_games, asof) for i in ids]):
             if res:
                 out[pid] = res
     return _apply_shrinkage(out)
 
 
 def _empirical_pitcher_one(job):
-    pid, min_starts = job
+    pid, min_starts, asof = job
     try:
         splits = _game_log(pid, "pitching")
     except Exception:
         return pid, None
     starts, bfs = [], []
     for s in splits:
+        # Same unguarded raw-gameLog exposure as _empirical_pitcher_outs_one
+        # and _empirical_batter_one -- see either's own comment. asof filters
+        # on the real per-split "date" field; None (live default) is today's
+        # unfiltered behaviour.
+        if asof is not None and (s.get("date") or "9999-99-99") > asof:
+            continue
         st = s.get("stat") or {}
         # Strikeout props are bet on STARTS. A reliever appearance in the same
         # log is a different event and would collapse every rate.
@@ -1354,16 +1380,19 @@ def _empirical_pitcher_one(job):
     return pid, out
 
 
-def empirical_pitcher_k_rates(pitcher_ids, min_starts=5, max_workers=12):
+def empirical_pitcher_k_rates(pitcher_ids, min_starts=5, max_workers=12, asof=None):
     """Per-starter empirical rate of reaching each strikeout threshold, counted
-    over real starts only (relief appearances excluded)."""
+    over real starts only (relief appearances excluded).
+
+    asof: see empirical_batter_prop_rates's own docstring -- same reasoning,
+    same fix. None (default) is today's unfiltered live behaviour."""
     from concurrent.futures import ThreadPoolExecutor
     ids = [int(p) for p in dict.fromkeys(pitcher_ids) if p]
     out = {}
     if not ids:
         return out
     with ThreadPoolExecutor(max_workers=max_workers) as ex:
-        for pid, res in ex.map(_empirical_pitcher_one, [(i, min_starts) for i in ids]):
+        for pid, res in ex.map(_empirical_pitcher_one, [(i, min_starts, asof) for i in ids]):
             if res:
                 out[pid] = res
     # Starters make far fewer starts than batters play games, so the prior

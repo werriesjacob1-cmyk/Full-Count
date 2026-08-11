@@ -30,6 +30,14 @@ CATEGORY_LABELS = {
     "stolen_base": "Stolen Base", "strikeouts": "Strikeouts",
     "walks": "Walks", "first_inning_run": "First Inning",
     "nrfi_combined": "NRFI/YRFI (Both Teams)", "home_runs": "Home Runs",
+    # Found out of sync with generate_picks.py's own copy during a bug sweep:
+    # missing these three meant a real Laser/Pitcher-Outs pick on the board
+    # rendered its raw internal stat name ("hard_hit_105") as the section
+    # header instead of a real label -- CATEGORY_LABELS.get(stat, stat) falls
+    # back to the key itself, silently, with no error anywhere.
+    "hard_hit_105": "Laser (105+ MPH)", "hard_hit_110": "Laser (110+ MPH)",
+    "pitcher_outs": "Pitcher Outs Recorded",
+    "combined_strikeouts": "Combined Starter Strikeouts",
 }
 
 CONFIDENCE_ORDER = {"High": 0, "Medium": 1, "Low": 2}

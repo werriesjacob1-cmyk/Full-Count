@@ -27,7 +27,7 @@
         {
           "prop": "Over 3.5 Strikeouts",
           "type": "pitcher",
-          "score": 46.0,
+          "score": 34.0,
           "notable_signals": 1,
           "matchup": "Baltimore Orioles @ Minnesota Twins",
           "game_pk": 823673,
@@ -55,9 +55,9 @@
           }
         },
         {
-          "prop": "Over 13.5 Outs Recorded",
+          "prop": "Over 16.5 Outs Recorded",
           "type": "pitcher",
-          "score": 80.3,
+          "score": 45.3,
           "notable_signals": 0,
           "matchup": "Baltimore Orioles @ Minnesota Twins",
           "game_pk": 823673,
@@ -65,18 +65,18 @@
           "side": "home",
           "lean": null,
           "signals": {
-            "outs_rate": 0.8298,
+            "outs_rate": 0.476,
             "avg_outs_per_start": 16.41
           },
-          "hit_probability": 0.7419,
-          "raw_hit_probability": 0.8298,
-          "lift": -0.1057,
+          "hit_probability": 0.4495,
+          "raw_hit_probability": 0.476,
+          "lift": -0.0419,
           "reliability": "D",
           "sample_n": 17,
           "projection": {
             "stat": "pitcher_outs",
-            "value": 13.5,
-            "needs": 14
+            "value": 16.5,
+            "needs": 17
           }
         }
       ]

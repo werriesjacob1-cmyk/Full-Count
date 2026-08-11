@@ -103,6 +103,23 @@ def check(picks, rosters):
             rows.append({**base, "state": "unknown",
                          "note": "game or player not found in the current schedule"})
             continue
+        if p.get("type") == "pitcher_combo":
+            # Two starters, not one -- team is None on this pick (it spans
+            # both teams), so the single-side "team" comparison below can't
+            # place it. Both listed starters have to still be the probable
+            # starters for the pick to still mean what it said.
+            ids = p.get("combo_player_ids") or []
+            away_sp, home_sp = info.get("away_sp_id"), info.get("home_sp_id")
+            if not ids or away_sp is None or home_sp is None:
+                rows.append({**base, "state": "unknown",
+                             "note": "no probable starters listed for this game"})
+            elif set(ids) != {away_sp, home_sp}:
+                rows.append({**base, "state": "scratched",
+                             "note": "one or both starters are no longer the listed probables"})
+            else:
+                rows.append({**base, "state": "ok", "note": "both starters still listed"})
+            continue
+
         side = "away" if p.get("team") == info.get("away_team") else "home"
 
         if p.get("type") == "pitcher" or (p.get("projection") or {}).get("stat") in (

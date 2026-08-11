@@ -37,6 +37,7 @@ CATEGORY_LABELS = {
     "nrfi_combined": "NRFI/YRFI (Both Teams)",
     "hard_hit_105": "Laser (105+ MPH)", "hard_hit_110": "Laser (110+ MPH)",
     "pitcher_outs": "Pitcher Outs Recorded", "home_runs": "Home Runs",
+    "combined_strikeouts": "Combined Starter Strikeouts",
 }
 
 

@@ -27,7 +27,7 @@
         {
           "prop": "Over 3.5 Strikeouts",
           "type": "pitcher",
-          "score": 38.9,
+          "score": 29.4,
           "notable_signals": 0,
           "matchup": "Milwaukee Brewers @ San Diego Padres",
           "game_pk": 823264,
@@ -37,7 +37,10 @@
           "signals": {
             "same_hand_ratio": 61.1111,
             "l14_k_pct": 0.0,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 49.4061,
+            "ump_k_pct": -0.516,
+            "ump_bb_pct": -0.0
           },
           "hit_probability": 0.6207,
           "raw_hit_probability": 0.6542,
@@ -51,9 +54,9 @@
           }
         },
         {
-          "prop": "Over 11.5 Outs Recorded",
+          "prop": "Over 14.5 Outs Recorded",
           "type": "pitcher",
-          "score": 79.2,
+          "score": 42.2,
           "notable_signals": 0,
           "matchup": "Milwaukee Brewers @ San Diego Padres",
           "game_pk": 823264,
@@ -61,18 +64,18 @@
           "side": "home",
           "lean": null,
           "signals": {
-            "outs_rate": 0.8859,
+            "outs_rate": 0.6479,
             "avg_outs_per_start": 14.13
           },
-          "hit_probability": 0.7783,
-          "raw_hit_probability": 0.8859,
-          "lift": -0.1702,
+          "hit_probability": 0.6008,
+          "raw_hit_probability": 0.6479,
+          "lift": -0.1975,
           "reliability": "D",
           "sample_n": 23,
           "projection": {
             "stat": "pitcher_outs",
-            "value": 11.5,
-            "needs": 12
+            "value": 14.5,
+            "needs": 15
           }
         }
       ]

@@ -27,7 +27,7 @@
         {
           "prop": "Over 4.5 Strikeouts",
           "type": "pitcher",
-          "score": 65.3,
+          "score": 77.3,
           "notable_signals": 0,
           "matchup": "Pittsburgh Pirates @ Miami Marlins",
           "game_pk": 823832,
@@ -54,9 +54,9 @@
           }
         },
         {
-          "prop": "Over 13.5 Outs Recorded",
+          "prop": "Over 16.5 Outs Recorded",
           "type": "pitcher",
-          "score": 85.2,
+          "score": 41.2,
           "notable_signals": 0,
           "matchup": "Pittsburgh Pirates @ Miami Marlins",
           "game_pk": 823832,
@@ -64,18 +64,18 @@
           "side": "home",
           "lean": null,
           "signals": {
-            "outs_rate": 0.8495,
+            "outs_rate": 0.4596,
             "avg_outs_per_start": 16.45
           },
-          "hit_probability": 0.7551,
-          "raw_hit_probability": 0.8495,
-          "lift": -0.0925,
+          "hit_probability": 0.4351,
+          "raw_hit_probability": 0.4596,
+          "lift": -0.0563,
           "reliability": "D",
           "sample_n": 20,
           "projection": {
             "stat": "pitcher_outs",
-            "value": 13.5,
-            "needs": 14
+            "value": 16.5,
+            "needs": 17
           }
         }
       ]

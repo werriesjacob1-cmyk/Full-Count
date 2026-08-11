@@ -363,6 +363,30 @@ def grade_pick(pick, game_statuses, date=None):
 
     stat = (pick.get("projection") or {}).get("stat")
 
+    if stat == "combined_strikeouts":
+        # The one prop family this pipeline settles from TWO player box
+        # scores instead of one -- combo_player_ids carries both starters
+        # (score_combined_strikeouts in generate_picks.py), since pick's own
+        # player_id is only the away starter (kept for persistence, which
+        # is keyed one-file-per-player and needs a single real id).
+        ids = pick.get("combo_player_ids") or []
+        if len(ids) != 2 or not all(ids):
+            return {**pick, "grade": "ungraded", "reason": "missing combo_player_ids"}
+        needs = (pick.get("projection") or {}).get("needs")
+        if needs is None:
+            return {**pick, "grade": "ungraded", "reason": "no needs threshold on pick"}
+        total_k = 0
+        for pid in ids:
+            row, err = get_box_line(game_pk, pid, is_pitcher=True)
+            if row is None:
+                return {**pick, "grade": "ungraded",
+                        "reason": f"box line unavailable for one starter: {err}"}
+            total_k += float(row.get("k", 0) or 0)
+        hit = total_k >= needs
+        return {**pick, "grade": "hit" if hit else "miss", "actual": total_k,
+                "actual_stat": "combined_strikeouts",
+                **opportunity_context(pick, None, game_pk)}
+
     if stat in ("hard_hit_105", "hard_hit_110"):
         # Not on the pick's own record -- the caller knows what date it's
         # grading (that's how it fetched game_statuses in the first place);
@@ -458,6 +482,35 @@ def grade_pick(pick, game_statuses, date=None):
         elif stat == "home_runs":
             actual = float(row.get("hr", 0) or 0)
             actual_stat = "home_runs"
+        elif stat == "runs":
+            actual = float(row.get("r", 0) or 0)
+            actual_stat = "runs"
+        elif stat == "rbis":
+            actual = float(row.get("rbi", 0) or 0)
+            actual_stat = "rbis"
+        elif stat == "hits_runs_rbis":
+            # The market is literally the sum, including the double-count when
+            # a player drives himself in on a home run -- that is how FanDuel
+            # settles it (verified against mlb_sources._empirical_batter_one's
+            # own "hits_runs_rbis": h + runs_ + rbi_, the same convention this
+            # market's empirical rate table already uses), so that is how this
+            # has to grade too.
+            actual = (float(row.get("h", 0) or 0) + float(row.get("r", 0) or 0)
+                      + float(row.get("rbi", 0) or 0))
+            actual_stat = "hits_runs_rbis"
+        elif stat == "singles":
+            h = int(row.get("h", 0) or 0)
+            d = int(row.get("doubles", 0) or 0)
+            t = int(row.get("triples", 0) or 0)
+            hr = int(row.get("hr", 0) or 0)
+            actual = float(max(0, h - d - t - hr))
+            actual_stat = "singles"
+        elif stat == "doubles":
+            actual = float(row.get("doubles", 0) or 0)
+            actual_stat = "doubles"
+        elif stat == "triples":
+            actual = float(row.get("triples", 0) or 0)
+            actual_stat = "triples"
         elif stat == "pitcher_outs":
             # Same whole.frac -> outs conversion mlb_sources.empirical_pitcher_outs_rates
             # and score_pitcher_outs already use, reading MLB's own

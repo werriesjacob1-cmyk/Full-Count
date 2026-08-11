@@ -27,7 +27,7 @@
         {
           "prop": "Over 4.5 Strikeouts",
           "type": "pitcher",
-          "score": 48.2,
+          "score": 60.2,
           "notable_signals": 0,
           "matchup": "Seattle Mariners @ New York Yankees",
           "game_pk": 823512,
@@ -55,9 +55,9 @@
           }
         },
         {
-          "prop": "Over 16.5 Outs Recorded",
+          "prop": "Over 17.5 Outs Recorded",
           "type": "pitcher",
-          "score": 77.6,
+          "score": 83.2,
           "notable_signals": 1,
           "matchup": "Seattle Mariners @ New York Yankees",
           "game_pk": 823512,
@@ -65,18 +65,42 @@
           "side": "away",
           "lean": null,
           "signals": {
-            "outs_rate": 0.6053,
+            "outs_rate": 0.5929,
             "avg_outs_per_start": 17.36
           },
-          "hit_probability": 0.564,
-          "raw_hit_probability": 0.6053,
-          "lift": 0.0726,
+          "hit_probability": 0.5531,
+          "raw_hit_probability": 0.5929,
+          "lift": 0.1196,
           "reliability": "D",
           "sample_n": 22,
           "projection": {
             "stat": "pitcher_outs",
-            "value": 16.5,
-            "needs": 17
+            "value": 17.5,
+            "needs": 18
+          }
+        },
+        {
+          "prop": "Over 11.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 19.6,
+          "notable_signals": 0,
+          "matchup": "Seattle Mariners @ New York Yankees",
+          "game_pk": 823512,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "signals": {
+            "combined_k_edge": -0.1827
+          },
+          "hit_probability": 0.4443,
+          "raw_hit_probability": 0.4701,
+          "lift": -0.2085,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 11.5,
+            "needs": 12
           }
         }
       ]

@@ -354,6 +354,65 @@ def fetch_pitcher_outs():
     return out
 
 
+_COMBINED_K_RE = re.compile(r"^(.+?)\s*&\s*(.+?)\s+(\d+)\+\s*Combined Strikeouts$", re.I)
+
+
+def fetch_combined_pitcher_strikeouts():
+    """"Starting Pitcher Combined Alt Strikeouts" -- the combined strikeout
+    total of BOTH starters, found live under the same pitcher-props/popular
+    tabs fetch_pitcher_outs already scans. Confirmed real and unmapped:
+    a full pull of a real slate's pitcher-props tab showed this market
+    sitting right next to PITCHER_*_OUTS_RECORDED_SB with nothing reading
+    it. Unlike Pitcher Outs Recorded, this is a ONE-SIDED LADDER (12+, 13+,
+    14+, ... Combined Strikeouts, escalating odds, no paired Under side) --
+    the same shape as the batter hit/TB ladders in MARKET_MAP, not the
+    single-line two-sided shape fetch_pitcher_outs parses. So each rung's
+    implied probability is read directly off its own price
+    (prop_probability.implied_probability), same as every other one-sided
+    market this file prices -- there is no complementary side to devig
+    against for a single "X+" runner.
+
+    Keyed by `matchup` (game_meta's own "Away @ Home", no pitcher names) --
+    a two-pitcher joint market, the same reason fetch_first_inning_totals is
+    keyed by game rather than by either starter alone, and the same
+    parenthetical-stripping that function's own docstring explains: raw
+    list_games() names embed the probable starters
+    ("Team (P Name) @ Team (P Name)"), which never matches generate_picks.py's
+    plain matchup field on its own.
+
+    Returns {matchup: {"pitchers": (name_a, name_b),
+                        "rungs": {threshold: american_odds}}}."""
+    out = {}
+    for event_id, name, _start in list_games():
+        matchup = re.sub(r"\s*\([^)]*\)", "", name).strip()
+        for tab in ("pitcher-props", "popular"):
+            try:
+                d = _get(f"event-page?eventId={event_id}&tab={tab}&_ak={AK}")
+            except Exception:
+                continue
+            for m in (d.get("attachments", {}).get("markets") or {}).values():
+                if (m.get("marketType") or "") != "STARTING_PITCHER_COMBINED_ALT_STRIKEOUTS":
+                    continue
+                if m.get("inPlay"):
+                    continue
+                pitchers = None
+                rungs = {}
+                for rn in (m.get("runners") or []):
+                    match = _COMBINED_K_RE.match((rn.get("runnerName") or "").strip())
+                    if not match:
+                        continue
+                    a, b, threshold = match.group(1).strip(), match.group(2).strip(), int(match.group(3))
+                    odds = ((rn.get("winRunnerOdds") or {})
+                            .get("americanDisplayOdds", {}) or {}).get("americanOddsInt")
+                    if odds is None:
+                        continue
+                    pitchers = (a, b)
+                    rungs[threshold] = odds
+                if pitchers and rungs:
+                    out[matchup] = {"pitchers": pitchers, "rungs": rungs}
+    return out
+
+
 def fetch_first_inning_totals():
     """The REAL both-teams NRFI/YRFI price -- market type
     ***OVER/UNDER_0.5_RUNS_1ST_INNINGS, under the "innings" tab (never

@@ -8,7 +8,7 @@
         {
           "prop": "Over 3.5 Strikeouts",
           "type": "pitcher",
-          "score": 51.1,
+          "score": 42.0,
           "notable_signals": 0,
           "matchup": "Cincinnati Reds @ Chicago White Sox",
           "game_pk": 824563,
@@ -34,9 +34,9 @@
           }
         },
         {
-          "prop": "Over 13.5 Outs Recorded",
+          "prop": "Over 14.5 Outs Recorded",
           "type": "pitcher",
-          "score": 82.4,
+          "score": 71.8,
           "notable_signals": 0,
           "matchup": "Cincinnati Reds @ Chicago White Sox",
           "game_pk": 824563,
@@ -44,18 +44,42 @@
           "side": "away",
           "lean": null,
           "signals": {
-            "outs_rate": 0.8381,
+            "outs_rate": 0.7661,
             "avg_outs_per_start": 15.67
           },
-          "hit_probability": 0.7475,
-          "raw_hit_probability": 0.8381,
-          "lift": -0.1001,
+          "hit_probability": 0.6962,
+          "raw_hit_probability": 0.7661,
+          "lift": -0.1021,
           "reliability": "D",
           "sample_n": 12,
           "projection": {
             "stat": "pitcher_outs",
-            "value": 13.5,
-            "needs": 14
+            "value": 14.5,
+            "needs": 15
+          }
+        },
+        {
+          "prop": "Over 11.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 19.6,
+          "notable_signals": 0,
+          "matchup": "Cincinnati Reds @ Chicago White Sox",
+          "game_pk": 824563,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "signals": {
+            "combined_k_edge": -0.1576
+          },
+          "hit_probability": 0.4117,
+          "raw_hit_probability": 0.4326,
+          "lift": -0.1785,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 11.5,
+            "needs": 12
           }
         }
       ]

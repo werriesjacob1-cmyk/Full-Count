@@ -27,7 +27,7 @@
         {
           "prop": "Over 3.5 Strikeouts",
           "type": "pitcher",
-          "score": 36.7,
+          "score": 30.4,
           "notable_signals": 0,
           "matchup": "Tampa Bay Rays @ Athletics",
           "game_pk": 824970,
@@ -35,9 +35,12 @@
           "side": null,
           "lean": null,
           "signals": {
-            "same_hand_ratio": 43.75,
+            "same_hand_ratio": 75.0,
             "l14_k_pct": 0.0,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 54.8506,
+            "ump_k_pct": 0.024,
+            "ump_bb_pct": -0.348
           },
           "hit_probability": 0.5884,
           "raw_hit_probability": 0.5379,
@@ -51,9 +54,9 @@
           }
         },
         {
-          "prop": "Over 15.5 Outs Recorded",
+          "prop": "Over 17.5 Outs Recorded",
           "type": "pitcher",
-          "score": 100,
+          "score": 65.3,
           "notable_signals": 1,
           "matchup": "Tampa Bay Rays @ Athletics",
           "game_pk": 824970,
@@ -61,18 +64,18 @@
           "side": "away",
           "lean": null,
           "signals": {
-            "outs_rate": 0.8036,
+            "outs_rate": 0.5215,
             "avg_outs_per_start": 17.59
           },
-          "hit_probability": 0.7237,
-          "raw_hit_probability": 0.8036,
-          "lift": 0.14,
+          "hit_probability": 0.4898,
+          "raw_hit_probability": 0.5215,
+          "lift": 0.0563,
           "reliability": "D",
           "sample_n": 22,
           "projection": {
             "stat": "pitcher_outs",
-            "value": 15.5,
-            "needs": 16
+            "value": 17.5,
+            "needs": 18
           }
         }
       ]

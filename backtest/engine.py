@@ -901,6 +901,17 @@ PROP_TYPE_BY_STAT = {
     "nrfi_combined": "nrfi_combined",
     "hard_hit_105": "hard_hit_105", "hard_hit_110": "hard_hit_110",
     "pitcher_outs": "pitcher_outs",
+    # Real, live board markets (select_best_by_category / _batter_options)
+    # that were never added here -- every one of them was being scored,
+    # priced and shown on the board every night while silently falling out
+    # of both backtest AND live grading (grade_results.grade_pick had no
+    # branch for any of them either, fixed alongside this). combined_strikeouts
+    # deliberately absent: that market only ever produces a candidate when a
+    # REAL FanDuel price was fetched, and backtest never fetches live prices,
+    # so build_candidates() naturally never generates one during a backtest
+    # run -- nothing to map.
+    "runs": "runs", "rbis": "rbis", "hits_runs_rbis": "hits_runs_rbis",
+    "singles": "singles", "doubles": "doubles", "triples": "triples",
 }
 
 
@@ -998,6 +1009,7 @@ def simulate_date(date, store, use_weather=True, use_bullpen=True, keep_unpriced
     problems — a failed date is reported, not fatal, so a 60-day run does not
     die on one bad slate."""
     res = DateResult(date)
+    cutoff = shift(date, -1)
     try:
         with PointInTime(date, store) as pit:
             game_meta, kwargs, comp_table, _pit_df, log = build_inputs(
@@ -1015,11 +1027,27 @@ def simulate_date(date, store, use_weather=True, use_bullpen=True, keep_unpriced
             res.log = pit.log
 
             candidates = gp.build_candidates(game_meta, **kwargs)
-            # Probabilities. comp_table is rebuilt point-in-time; the empirical
-            # game-log tables are season-scoped and therefore passed empty, so
-            # predicted_prob is the purely MODELLED probability (which is what
-            # SCHEMA.md asks for: uncalibrated model output).
+            # Probabilities. comp_table is rebuilt point-in-time.
             #
+            # emp_batters/emp_pitchers USED TO BE HARDCODED {}, {} HERE,
+            # unconditionally, with the comment "season-scoped and therefore
+            # passed empty" -- true of the underlying game-log source before
+            # its own asof fix (see empirical_batter_prop_rates/
+            # empirical_pitcher_k_rates' docstrings), but not true anymore,
+            # and leaving it hardcoded meant no backtest run had EVER
+            # exercised the actual empirical+modelled blend live scoring
+            # uses for hits/total_bases/home_runs/runs/rbis/stolen_base/
+            # singles/doubles/triples/hits_runs_rbis -- every run validated a
+            # modelled-only stand-in instead of what actually ships. Fetched
+            # here the same way generate_picks.py's own live path does:
+            # AFTER build_candidates, from the ids that actually produced a
+            # candidate, not the whole slate.
+            bat_ids = [c["player_id"] for c in candidates
+                       if c.get("type") == "batter" and c.get("player_id")]
+            pit_ids = [c["player_id"] for c in candidates
+                       if c.get("type") == "pitcher" and c.get("player_id")]
+            emp_batters = msrc.empirical_batter_prop_rates(bat_ids, asof=cutoff)
+            emp_pitchers = msrc.empirical_pitcher_k_rates(pit_ids, asof=cutoff)
             # league_rates WAS missing here entirely (verified live: this is
             # why generate_picks.py's league-only fallback and the
             # SHRINK_MODEL_K toggle were both structurally inert in every
@@ -1034,7 +1062,7 @@ def simulate_date(date, store, use_weather=True, use_bullpen=True, keep_unpriced
             # module-level cache is cleared per-date by PointInTime now too
             # (see __enter__/__exit__), so date 5 cannot see date 1's rate.
             league_rates = msrc.league_base_rates()
-            gp.attach_hit_probabilities(candidates, comp_table, {}, {}, league_rates)
+            gp.attach_hit_probabilities(candidates, comp_table, emp_batters, emp_pitchers, league_rates)
             res.n_candidates = len(candidates)
     except LookaheadError:
         raise                            # never degrade a leak into a warning

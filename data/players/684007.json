@@ -27,7 +27,7 @@
         {
           "prop": "Over 3.5 Strikeouts",
           "type": "pitcher",
-          "score": 48.2,
+          "score": 60.2,
           "notable_signals": 0,
           "matchup": "Chicago Cubs @ Washington Nationals",
           "game_pk": 822697,
@@ -55,9 +55,9 @@
           }
         },
         {
-          "prop": "Over 14.5 Outs Recorded",
+          "prop": "Over 17.5 Outs Recorded",
           "type": "pitcher",
-          "score": 100,
+          "score": 60.8,
           "notable_signals": 1,
           "matchup": "Chicago Cubs @ Washington Nationals",
           "game_pk": 822697,
@@ -65,18 +65,42 @@
           "side": "away",
           "lean": null,
           "signals": {
-            "outs_rate": 0.8893,
+            "outs_rate": 0.5035,
             "avg_outs_per_start": 17.3
           },
-          "hit_probability": 0.7803,
-          "raw_hit_probability": 0.8893,
-          "lift": -0.018,
+          "hit_probability": 0.4738,
+          "raw_hit_probability": 0.5035,
+          "lift": 0.0403,
           "reliability": "D",
           "sample_n": 23,
           "projection": {
             "stat": "pitcher_outs",
-            "value": 14.5,
-            "needs": 15
+            "value": 17.5,
+            "needs": 18
+          }
+        },
+        {
+          "prop": "Over 9.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 14.6,
+          "notable_signals": 0,
+          "matchup": "Chicago Cubs @ Washington Nationals",
+          "game_pk": 822697,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "signals": {
+            "combined_k_edge": -0.1546
+          },
+          "hit_probability": 0.3656,
+          "raw_hit_probability": 0.3781,
+          "lift": -0.1671,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 9.5,
+            "needs": 10
           }
         }
       ]
