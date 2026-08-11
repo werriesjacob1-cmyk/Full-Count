@@ -27,8 +27,8 @@
         {
           "prop": "Over 5.5 Strikeouts",
           "type": "pitcher",
-          "score": 57.1,
-          "notable_signals": 0,
+          "score": 59.5,
+          "notable_signals": 1,
           "matchup": "Philadelphia Phillies @ St. Louis Cardinals",
           "game_pk": 823019,
           "team": "Philadelphia Phillies",
@@ -37,11 +37,14 @@
           "signals": {
             "same_hand_ratio": 5.5556,
             "l14_k_pct": 100.0,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 74.4047,
+            "ump_k_pct": -0.108,
+            "ump_bb_pct": -0.192
           },
-          "hit_probability": 0.6364,
-          "raw_hit_probability": 0.7124,
-          "lift": 0.2595,
+          "hit_probability": 0.6363,
+          "raw_hit_probability": 0.712,
+          "lift": 0.2594,
           "reliability": "D",
           "sample_n": 24,
           "projection": {
@@ -63,7 +66,8 @@
           "signals": {
             "yrfi_rate": 20.0,
             "fi_n_starts": 25.0,
-            "park_hr_index": 82.5
+            "ump_run_impact": 12.2537,
+            "park_hr_index": 80.5
           },
           "hit_probability": 0.696,
           "raw_hit_probability": 0.7365,

@@ -13,6 +13,66 @@
           "matchup": "Washington Nationals @ Philadelphia Phillies"
         }
       ]
+    },
+    {
+      "date": "2026-08-11",
+      "evaluations": [
+        {
+          "prop": "Over 3.5 Strikeouts",
+          "type": "pitcher",
+          "score": 44.6,
+          "notable_signals": 0,
+          "matchup": "Chicago Cubs @ Washington Nationals",
+          "game_pk": 822697,
+          "team": "Washington Nationals",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "same_hand_ratio": 100.0,
+            "l14_k_pct": 0.0,
+            "env_neutral": 50.0,
+            "ump_accuracy": 59.8609,
+            "ump_k_pct": 0.708,
+            "ump_bb_pct": -0.048
+          },
+          "hit_probability": 0.619,
+          "raw_hit_probability": 0.6482,
+          "lift": -0.0937,
+          "reliability": "D",
+          "sample_n": 13,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 3.5,
+            "needs": 4
+          }
+        },
+        {
+          "prop": "Chicago Cubs scoreless in the 1st",
+          "type": "pitcher",
+          "score": 64.3,
+          "notable_signals": 0,
+          "matchup": "Chicago Cubs @ Washington Nationals",
+          "game_pk": 822697,
+          "team": "Washington Nationals",
+          "side": "home",
+          "lean": "NRFI",
+          "signals": {
+            "yrfi_rate": 35.7,
+            "fi_n_starts": 14.0,
+            "ump_run_impact": 25.6441,
+            "park_hr_index": 59.6
+          },
+          "hit_probability": 0.6861,
+          "raw_hit_probability": 0.6926,
+          "lift": -0.0199,
+          "reliability": "D",
+          "sample_n": 14,
+          "projection": {
+            "stat": "first_inning_run",
+            "value": 35.7
+          }
+        }
+      ]
     }
   ]
 }

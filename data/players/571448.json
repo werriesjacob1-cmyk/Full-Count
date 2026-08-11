@@ -154,6 +154,57 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-11",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 40.5,
+          "notable_signals": 1,
+          "matchup": "Colorado Rockies @ Arizona Diamondbacks",
+          "game_pk": 825046,
+          "team": "Arizona Diamondbacks",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 56.2857,
+            "l7_avg_ev": 0.0,
+            "l7_barrel_pct": 57.1429,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 27.3333,
+            "lineup_slot": 50.0,
+            "bullpen_fatigue": 76.9231,
+            "platoon_barrel_pct": 0.0,
+            "platoon_xwoba": -1.38,
+            "park_hand_index": -0.43,
+            "opp_catcher_framing": 0.72,
+            "days_rest": 0.0,
+            "pull_park_synergy": -0.2995,
+            "hard_hit_105_rate": -2.355,
+            "team_total_move": 0.0,
+            "team_total_open": 0.0,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": 1.616,
+            "vs_rp_ops": 1.8,
+            "ump_k_pct": 0.06,
+            "ump_bb_pct": -0.564
+          },
+          "hit_probability": 0.6128,
+          "raw_hit_probability": 0.6291,
+          "lift": 0.0616,
+          "reliability": "A",
+          "sample_n": 113,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

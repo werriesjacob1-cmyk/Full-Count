@@ -27,7 +27,7 @@
         {
           "prop": "Over 4.5 Strikeouts",
           "type": "pitcher",
-          "score": 47.8,
+          "score": 48.2,
           "notable_signals": 0,
           "matchup": "Seattle Mariners @ New York Yankees",
           "game_pk": 823512,
@@ -38,10 +38,13 @@
             "same_hand_ratio": 5.5556,
             "l14_k_pct": 71.1765,
             "tto_penalty": -8.0,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 53.2564,
+            "ump_k_pct": 0.204,
+            "ump_bb_pct": -0.228
           },
           "hit_probability": 0.629,
-          "raw_hit_probability": 0.685,
+          "raw_hit_probability": 0.6848,
           "lift": 0.0916,
           "reliability": "D",
           "sample_n": 22,
@@ -64,7 +67,8 @@
           "signals": {
             "yrfi_rate": 17.4,
             "fi_n_starts": 23.0,
-            "park_hr_index": 51.4
+            "ump_run_impact": 32.0352,
+            "park_hr_index": 35.6
           },
           "hit_probability": 0.6974,
           "raw_hit_probability": 0.7428,

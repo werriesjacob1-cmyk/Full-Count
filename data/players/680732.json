@@ -27,7 +27,7 @@
         {
           "prop": "Over 4.5 Strikeouts",
           "type": "pitcher",
-          "score": 68.6,
+          "score": 68.9,
           "notable_signals": 0,
           "matchup": "Cincinnati Reds @ Chicago White Sox",
           "game_pk": 824563,
@@ -37,10 +37,13 @@
           "signals": {
             "same_hand_ratio": 100.0,
             "l14_k_pct": 100.0,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 52.723,
+            "ump_k_pct": 0.0,
+            "ump_bb_pct": 0.036
           },
           "hit_probability": 0.6522,
-          "raw_hit_probability": 0.7718,
+          "raw_hit_probability": 0.7716,
           "lift": 0.1148,
           "reliability": "D",
           "sample_n": 19,
@@ -63,7 +66,8 @@
           "signals": {
             "yrfi_rate": 28.6,
             "fi_n_starts": 21.0,
-            "park_hr_index": 41.0
+            "ump_run_impact": 29.9483,
+            "park_hr_index": 40.4
           },
           "hit_probability": 0.6896,
           "raw_hit_probability": 0.7083,

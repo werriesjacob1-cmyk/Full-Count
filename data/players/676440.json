@@ -27,7 +27,7 @@
         {
           "prop": "Over 3.5 Strikeouts",
           "type": "pitcher",
-          "score": 53.8,
+          "score": 54.4,
           "notable_signals": 0,
           "matchup": "Cleveland Guardians @ Detroit Tigers",
           "game_pk": 824240,
@@ -38,11 +38,14 @@
             "same_hand_ratio": 61.1111,
             "l14_k_pct": 67.6471,
             "tto_penalty": -8.0,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 56.1115,
+            "ump_k_pct": -0.096,
+            "ump_bb_pct": -0.528
           },
-          "hit_probability": 0.6203,
-          "raw_hit_probability": 0.653,
-          "lift": -0.0924,
+          "hit_probability": 0.6204,
+          "raw_hit_probability": 0.6532,
+          "lift": -0.0923,
           "reliability": "D",
           "sample_n": 24,
           "projection": {
@@ -64,7 +67,8 @@
           "signals": {
             "yrfi_rate": 30.8,
             "fi_n_starts": 26.0,
-            "park_hr_index": 71.8
+            "ump_run_impact": 29.6147,
+            "park_hr_index": 51.9
           },
           "hit_probability": 0.6881,
           "raw_hit_probability": 0.7013,
