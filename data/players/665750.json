@@ -341,6 +341,79 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-11",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 58.3,
+          "notable_signals": 2,
+          "matchup": "Baltimore Orioles @ Minnesota Twins",
+          "game_pk": 823673,
+          "team": "Baltimore Orioles",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "sp_era_weak": 55.7143,
+            "l7_avg_ev": 0.0,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 15.0,
+            "park_hr_index": 39.5,
+            "season_barrel_pct": 10.0,
+            "lineup_slot": 37.5,
+            "bullpen_fatigue": 64.1026,
+            "bvp_ops": -3.12,
+            "platoon_barrel_pct": -0.4,
+            "platoon_xwoba": -0.48,
+            "opp_catcher_framing": -0.12,
+            "days_rest": 2.0,
+            "hard_hit_105_rate": 0.2025,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": -0.432,
+            "vs_rp_ops": -1.14
+          },
+          "hit_probability": 0.588,
+          "raw_hit_probability": 0.6329,
+          "lift": -0.0775,
+          "reliability": "A",
+          "sample_n": 99,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 55.1,
+          "notable_signals": 0,
+          "matchup": "Baltimore Orioles @ Minnesota Twins",
+          "game_pk": 823673,
+          "team": "Baltimore Orioles",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "opp_team_cs_pct": 6.0,
+            "sprint_speed": 53.125,
+            "catcher_poptime": 82.8571,
+            "on_base": 24.1843
+          },
+          "hit_probability": 0.1775,
+          "raw_hit_probability": 0.1019,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 99,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

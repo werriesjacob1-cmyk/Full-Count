@@ -328,6 +328,76 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-11",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Singles",
+          "type": "batter",
+          "score": 27.3,
+          "notable_signals": 3,
+          "matchup": "Tampa Bay Rays @ Athletics",
+          "game_pk": 824970,
+          "team": "Tampa Bay Rays",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 65.0,
+            "l7_avg_ev": 0.0,
+            "l7_barrel_pct": 17.8571,
+            "park_hr_index": 29.4,
+            "season_barrel_pct": 0.0,
+            "lineup_slot": 37.5,
+            "bullpen_fatigue": 83.3333,
+            "park_hand_index": 2.74,
+            "opp_catcher_framing": 0.12,
+            "days_rest": 2.0,
+            "pull_park_synergy": 0.2781,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": -0.304,
+            "vs_rp_ops": -0.576
+          },
+          "hit_probability": 0.5768,
+          "raw_hit_probability": 0.62,
+          "lift": 0.1743,
+          "reliability": "A",
+          "sample_n": 107,
+          "projection": {
+            "stat": "singles",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 64.9,
+          "notable_signals": 0,
+          "matchup": "Tampa Bay Rays @ Athletics",
+          "game_pk": 824970,
+          "team": "Tampa Bay Rays",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "opp_team_cs_pct": -0.84,
+            "sprint_speed": 68.75,
+            "catcher_poptime": 77.1429,
+            "on_base": 40.499
+          },
+          "hit_probability": 0.2622,
+          "raw_hit_probability": 0.2421,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 107,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

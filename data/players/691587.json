@@ -20,6 +20,62 @@
           "matchup": "Miami Marlins @ Atlanta Braves"
         }
       ]
+    },
+    {
+      "date": "2026-08-11",
+      "evaluations": [
+        {
+          "prop": "Over 5.5 Strikeouts",
+          "type": "pitcher",
+          "score": 67.4,
+          "notable_signals": 0,
+          "matchup": "Pittsburgh Pirates @ Miami Marlins",
+          "game_pk": 823832,
+          "team": "Miami Marlins",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "same_hand_ratio": 100.0,
+            "l14_k_pct": 95.2941,
+            "env_neutral": 50.0
+          },
+          "hit_probability": 0.6187,
+          "raw_hit_probability": 0.6469,
+          "lift": 0.2425,
+          "reliability": "D",
+          "sample_n": 20,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 5.5,
+            "needs": 6
+          }
+        },
+        {
+          "prop": "Pittsburgh Pirates scoreless in the 1st",
+          "type": "pitcher",
+          "score": 72.7,
+          "notable_signals": 0,
+          "matchup": "Pittsburgh Pirates @ Miami Marlins",
+          "game_pk": 823832,
+          "team": "Miami Marlins",
+          "side": "home",
+          "lean": "NRFI",
+          "signals": {
+            "yrfi_rate": 27.3,
+            "fi_n_starts": 22.0,
+            "park_hr_index": 50.0
+          },
+          "hit_probability": 0.6905,
+          "raw_hit_probability": 0.7122,
+          "lift": -0.0155,
+          "reliability": "D",
+          "sample_n": 22,
+          "projection": {
+            "stat": "first_inning_run",
+            "value": 27.3
+          }
+        }
+      ]
     }
   ]
 }

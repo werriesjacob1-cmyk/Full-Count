@@ -20,6 +20,62 @@
           "matchup": "Minnesota Twins @ Kansas City Royals"
         }
       ]
+    },
+    {
+      "date": "2026-08-11",
+      "evaluations": [
+        {
+          "prop": "Over 3.5 Strikeouts",
+          "type": "pitcher",
+          "score": 43.5,
+          "notable_signals": 0,
+          "matchup": "Kansas City Royals @ Los Angeles Dodgers",
+          "game_pk": 823917,
+          "team": "Kansas City Royals",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "same_hand_ratio": 75.0,
+            "l14_k_pct": 11.7647,
+            "env_neutral": 50.0
+          },
+          "hit_probability": 0.6241,
+          "raw_hit_probability": 0.6668,
+          "lift": -0.0878,
+          "reliability": "D",
+          "sample_n": 23,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 3.5,
+            "needs": 4
+          }
+        },
+        {
+          "prop": "Los Angeles Dodgers scoreless in the 1st",
+          "type": "pitcher",
+          "score": 80.0,
+          "notable_signals": 0,
+          "matchup": "Kansas City Royals @ Los Angeles Dodgers",
+          "game_pk": 823917,
+          "team": "Kansas City Royals",
+          "side": "away",
+          "lean": "NRFI",
+          "signals": {
+            "yrfi_rate": 20.0,
+            "fi_n_starts": 25.0,
+            "park_hr_index": 51.2
+          },
+          "hit_probability": 0.696,
+          "raw_hit_probability": 0.7365,
+          "lift": -0.01,
+          "reliability": "C",
+          "sample_n": 25,
+          "projection": {
+            "stat": "first_inning_run",
+            "value": 20.0
+          }
+        }
+      ]
     }
   ]
 }

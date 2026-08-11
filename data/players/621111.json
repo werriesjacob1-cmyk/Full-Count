@@ -20,6 +20,62 @@
           "matchup": "San Diego Padres @ Arizona Diamondbacks"
         }
       ]
+    },
+    {
+      "date": "2026-08-11",
+      "evaluations": [
+        {
+          "prop": "Over 3.5 Strikeouts",
+          "type": "pitcher",
+          "score": 36.7,
+          "notable_signals": 0,
+          "matchup": "Milwaukee Brewers @ San Diego Padres",
+          "game_pk": 823264,
+          "team": "San Diego Padres",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "same_hand_ratio": 43.75,
+            "l14_k_pct": 0.0,
+            "env_neutral": 50.0
+          },
+          "hit_probability": 0.6161,
+          "raw_hit_probability": 0.6376,
+          "lift": -0.0958,
+          "reliability": "D",
+          "sample_n": 23,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 3.5,
+            "needs": 4
+          }
+        },
+        {
+          "prop": "Milwaukee Brewers scoreless in the 1st",
+          "type": "pitcher",
+          "score": 84.0,
+          "notable_signals": 0,
+          "matchup": "Milwaukee Brewers @ San Diego Padres",
+          "game_pk": 823264,
+          "team": "San Diego Padres",
+          "side": "home",
+          "lean": "NRFI",
+          "signals": {
+            "yrfi_rate": 16.0,
+            "fi_n_starts": 25.0,
+            "park_hr_index": 37.6
+          },
+          "hit_probability": 0.6989,
+          "raw_hit_probability": 0.7495,
+          "lift": -0.0071,
+          "reliability": "C",
+          "sample_n": 25,
+          "projection": {
+            "stat": "first_inning_run",
+            "value": 16.0
+          }
+        }
+      ]
     }
   ]
 }

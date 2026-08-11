@@ -369,6 +369,79 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-11",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 50.2,
+          "notable_signals": 0,
+          "matchup": "New York Mets @ Atlanta Braves",
+          "game_pk": 824886,
+          "team": "New York Mets",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 21.1429,
+            "l7_avg_ev": 74.6528,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 42.6667,
+            "lineup_slot": 50.0,
+            "bullpen_fatigue": 64.1026,
+            "platoon_barrel_pct": -5.0,
+            "platoon_xwoba": -0.42,
+            "park_hand_index": 1.26,
+            "opp_catcher_framing": 1.68,
+            "days_rest": 0.0,
+            "pull_park_synergy": 0.7365,
+            "hard_hit_105_rate": 3.02,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": -1.312,
+            "vs_rp_ops": -0.564
+          },
+          "hit_probability": 0.6009,
+          "raw_hit_probability": 0.6039,
+          "lift": 0.0496,
+          "reliability": "B",
+          "sample_n": 69,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 34.6,
+          "notable_signals": 0,
+          "matchup": "New York Mets @ Atlanta Braves",
+          "game_pk": 824886,
+          "team": "New York Mets",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "opp_team_cs_pct": 5.58,
+            "sprint_speed": 12.5,
+            "on_base": 65.4511
+          },
+          "hit_probability": 0.1496,
+          "raw_hit_probability": 0.0444,
+          "lift": null,
+          "reliability": "B",
+          "sample_n": 69,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

@@ -372,6 +372,81 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-11",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 70.5,
+          "notable_signals": 1,
+          "matchup": "Baltimore Orioles @ Minnesota Twins",
+          "game_pk": 823673,
+          "team": "Baltimore Orioles",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 55.7143,
+            "l7_avg_ev": 86.5385,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 39.5,
+            "season_barrel_pct": 26.6667,
+            "lineup_slot": 100.0,
+            "bullpen_fatigue": 64.1026,
+            "bvp_ops": -1.194,
+            "platoon_barrel_pct": 1.2,
+            "platoon_xwoba": 0.36,
+            "park_hand_index": -2.36,
+            "opp_catcher_framing": -0.12,
+            "days_rest": 0.0,
+            "pull_park_synergy": -1.5281,
+            "hard_hit_105_rate": 2.7,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": 0.584,
+            "vs_rp_ops": 0.024
+          },
+          "hit_probability": 0.6186,
+          "raw_hit_probability": 0.6689,
+          "lift": -0.0469,
+          "reliability": "A",
+          "sample_n": 118,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 45.5,
+          "notable_signals": 0,
+          "matchup": "Baltimore Orioles @ Minnesota Twins",
+          "game_pk": 823673,
+          "team": "Baltimore Orioles",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "opp_team_cs_pct": 6.0,
+            "sprint_speed": 28.125,
+            "catcher_poptime": 82.8571,
+            "on_base": 37.62
+          },
+          "hit_probability": 0.164,
+          "raw_hit_probability": 0.0751,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 118,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

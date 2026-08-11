@@ -218,6 +218,55 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-11",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 75.8,
+          "notable_signals": 5,
+          "matchup": "Houston Astros @ San Francisco Giants",
+          "game_pk": 823186,
+          "team": "San Francisco Giants",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 26.2857,
+            "pitch_exploit": 15.4286,
+            "l7_avg_ev": 60.5208,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 15.0,
+            "park_hr_index": 27.1,
+            "season_barrel_pct": 60.6667,
+            "lineup_slot": 75.0,
+            "bullpen_fatigue": 69.4444,
+            "platoon_barrel_pct": 4.0,
+            "platoon_xwoba": 1.98,
+            "park_hand_index": -4.24,
+            "opp_catcher_framing": 0.36,
+            "days_rest": 2.0,
+            "pull_park_synergy": -1.8402,
+            "hard_hit_105_rate": 2.4975,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": -1.08,
+            "vs_rp_ops": -0.3
+          },
+          "hit_probability": 0.614,
+          "raw_hit_probability": 0.6317,
+          "lift": 0.0627,
+          "reliability": "B",
+          "sample_n": 75,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

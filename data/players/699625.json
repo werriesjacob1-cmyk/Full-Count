@@ -166,6 +166,51 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-11",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 43.9,
+          "notable_signals": 3,
+          "matchup": "Philadelphia Phillies @ St. Louis Cardinals",
+          "game_pk": 823019,
+          "team": "St. Louis Cardinals",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 3.1429,
+            "l7_avg_ev": 30.5,
+            "l7_barrel_pct": 0.0,
+            "park_hr_index": 72.4,
+            "season_barrel_pct": 48.6667,
+            "lineup_slot": 12.5,
+            "bullpen_fatigue": 76.9231,
+            "park_hand_index": -3.66,
+            "opp_catcher_framing": -0.12,
+            "days_rest": 0.0,
+            "pull_park_synergy": -1.5628,
+            "hard_hit_105_rate": -0.31,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": 3.352,
+            "vs_rp_ops": 1.104
+          },
+          "hit_probability": 0.5049,
+          "raw_hit_probability": 0.5385,
+          "lift": -0.1606,
+          "reliability": "C",
+          "sample_n": 40,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

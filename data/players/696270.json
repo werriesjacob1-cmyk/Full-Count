@@ -20,6 +20,62 @@
           "matchup": "Los Angeles Angels @ Baltimore Orioles"
         }
       ]
+    },
+    {
+      "date": "2026-08-11",
+      "evaluations": [
+        {
+          "prop": "Over 3.5 Strikeouts",
+          "type": "pitcher",
+          "score": 43.6,
+          "notable_signals": 0,
+          "matchup": "Texas Rangers @ Los Angeles Angels",
+          "game_pk": 823997,
+          "team": "Los Angeles Angels",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "same_hand_ratio": 100.0,
+            "l14_k_pct": 0.0,
+            "env_neutral": 50.0
+          },
+          "hit_probability": 0.5815,
+          "raw_hit_probability": 0.5133,
+          "lift": -0.1304,
+          "reliability": "D",
+          "sample_n": 10,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 3.5,
+            "needs": 4
+          }
+        },
+        {
+          "prop": "Texas Rangers scoreless in the 1st",
+          "type": "pitcher",
+          "score": 72.7,
+          "notable_signals": 0,
+          "matchup": "Texas Rangers @ Los Angeles Angels",
+          "game_pk": 823997,
+          "team": "Los Angeles Angels",
+          "side": "home",
+          "lean": "NRFI",
+          "signals": {
+            "yrfi_rate": 27.3,
+            "fi_n_starts": 11.0,
+            "park_hr_index": 51.1
+          },
+          "hit_probability": 0.69,
+          "raw_hit_probability": 0.7097,
+          "lift": -0.016,
+          "reliability": "D",
+          "sample_n": 11,
+          "projection": {
+            "stat": "first_inning_run",
+            "value": 27.3
+          }
+        }
+      ]
     }
   ]
 }

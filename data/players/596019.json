@@ -236,6 +236,52 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-11",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 63.2,
+          "notable_signals": 2,
+          "matchup": "New York Mets @ Atlanta Braves",
+          "game_pk": 824886,
+          "team": "New York Mets",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "sp_era_weak": 21.1429,
+            "pitch_exploit": 0.5714,
+            "l7_avg_ev": 47.6786,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 46.0,
+            "lineup_slot": 87.5,
+            "bullpen_fatigue": 64.1026,
+            "bvp_ops": 2.958,
+            "platoon_barrel_pct": -0.08,
+            "platoon_xwoba": 1.5,
+            "opp_catcher_framing": 1.68,
+            "days_rest": 0.0,
+            "hard_hit_105_rate": 0.0175,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": 1.952,
+            "vs_rp_ops": 2.088
+          },
+          "hit_probability": 0.6102,
+          "raw_hit_probability": 0.6236,
+          "lift": 0.0589,
+          "reliability": "B",
+          "sample_n": 62,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

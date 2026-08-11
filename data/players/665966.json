@@ -1,6 +1,6 @@
 {
   "player_id": 665966,
-  "name": "Carlos Narv\u00e1ez",
+  "name": "Carlos Narvaez",
   "snapshots": [
     {
       "date": "2026-08-04",
@@ -233,6 +233,53 @@
           "hit_probability": 0.5445,
           "raw_hit_probability": 0.5831,
           "lift": -0.1255,
+          "reliability": "B",
+          "sample_n": 63,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-08-11",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 49.7,
+          "notable_signals": 1,
+          "matchup": "Baltimore Orioles @ Minnesota Twins",
+          "game_pk": 823673,
+          "team": "Baltimore Orioles",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 55.7143,
+            "l7_avg_ev": 41.25,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 39.5,
+            "season_barrel_pct": 27.3333,
+            "lineup_slot": 0.0,
+            "bullpen_fatigue": 64.1026,
+            "platoon_barrel_pct": 0.64,
+            "platoon_xwoba": -2.4,
+            "park_hand_index": -0.79,
+            "opp_catcher_framing": -0.12,
+            "days_rest": 0.0,
+            "pull_park_synergy": -0.0387,
+            "hard_hit_105_rate": -0.105,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": 0.952,
+            "vs_rp_ops": -1.416
+          },
+          "hit_probability": 0.5435,
+          "raw_hit_probability": 0.582,
+          "lift": -0.122,
           "reliability": "B",
           "sample_n": 63,
           "projection": {

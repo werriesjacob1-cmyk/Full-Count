@@ -353,6 +353,78 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-11",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 53.9,
+          "notable_signals": 3,
+          "matchup": "Houston Astros @ San Francisco Giants",
+          "game_pk": 823186,
+          "team": "Houston Astros",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 65.0,
+            "l7_avg_ev": 64.0,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 3.075,
+            "park_hr_index": 27.1,
+            "season_barrel_pct": 55.3333,
+            "lineup_slot": 50.0,
+            "bullpen_fatigue": 71.4286,
+            "park_hand_index": -4.24,
+            "opp_catcher_framing": 1.56,
+            "days_rest": 2.0,
+            "pull_park_synergy": -2.968,
+            "hard_hit_105_rate": 3.1325,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": -3.808,
+            "vs_rp_ops": -2.88
+          },
+          "hit_probability": 0.536,
+          "raw_hit_probability": 0.5735,
+          "lift": -0.1295,
+          "reliability": "B",
+          "sample_n": 59,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 41.9,
+          "notable_signals": 0,
+          "matchup": "Houston Astros @ San Francisco Giants",
+          "game_pk": 823186,
+          "team": "Houston Astros",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "opp_team_cs_pct": 0.78,
+            "sprint_speed": 3.125,
+            "catcher_poptime": 100.0,
+            "on_base": 55.8541
+          },
+          "hit_probability": 0.1533,
+          "raw_hit_probability": 0.0526,
+          "lift": null,
+          "reliability": "B",
+          "sample_n": 59,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

@@ -177,6 +177,79 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-11",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 63.9,
+          "notable_signals": 1,
+          "matchup": "Texas Rangers @ Los Angeles Angels",
+          "game_pk": 823997,
+          "team": "Los Angeles Angels",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 80.0,
+            "l7_avg_ev": 100.0,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 51.1,
+            "season_barrel_pct": 29.3333,
+            "lineup_slot": 25.0,
+            "bullpen_fatigue": 76.9231,
+            "platoon_barrel_pct": 5.0,
+            "platoon_xwoba": 1.26,
+            "park_hand_index": -1.06,
+            "opp_catcher_framing": 0.24,
+            "days_rest": 2.0,
+            "pull_park_synergy": -0.4786,
+            "hard_hit_105_rate": 0.025,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": -0.448,
+            "vs_rp_ops": -1.356
+          },
+          "hit_probability": 0.5506,
+          "raw_hit_probability": 0.59,
+          "lift": -0.1149,
+          "reliability": "A",
+          "sample_n": 89,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 53.6,
+          "notable_signals": 0,
+          "matchup": "Texas Rangers @ Los Angeles Angels",
+          "game_pk": 823997,
+          "team": "Los Angeles Angels",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "opp_team_cs_pct": 2.22,
+            "sprint_speed": 40.625,
+            "catcher_poptime": 100.0,
+            "on_base": 24.1843
+          },
+          "hit_probability": 0.1888,
+          "raw_hit_probability": 0.1231,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 89,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }
