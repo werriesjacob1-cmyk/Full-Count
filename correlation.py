@@ -59,13 +59,21 @@ Verdict = namedtuple("Verdict", ["label", "reason"])
 _OVERLAPPING_BATTER_FAMILIES = {
     "hits", "total_bases", "home_runs", "singles", "doubles", "triples",
     "hits_runs_rbis",
+    # Found out of sync during a bug sweep: hits_runs_rbis (h+r+rbi, literally
+    # the sum of these two) was already in this set, but its own component
+    # stats were not -- a player's Runs pick and RBIs pick were being scored
+    # "positive" (merely correlated) instead of "redundant" (largely the same
+    # outcome), the exact distinction this set exists to draw.
+    "runs", "rbis",
 }
 
 # Pitcher stat families that work AGAINST the hitters he is facing tonight --
 # a strikeout is an out for the batter, and NRFI/a scoreless inning for his
 # team means the opposing lineup did not score, generated no runs/hits/RBIs
-# for its own hitters in that half-inning.
-_PITCHER_STATS_OPPOSE_HITTERS = {"strikeouts", "first_inning_run"}
+# for its own hitters in that half-inning. Same reasoning covers outs
+# recorded: every extra out he gets is an at-bat the opposing lineup did not
+# turn into a hit.
+_PITCHER_STATS_OPPOSE_HITTERS = {"strikeouts", "first_inning_run", "pitcher_outs"}
 
 
 def _teams_in_matchup(matchup):

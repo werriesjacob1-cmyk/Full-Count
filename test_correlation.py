@@ -66,6 +66,16 @@ check(v.label == "redundant" or v.label == "positive",
       "same player, non-overlapping-family stolen_base is not classified negative",
       f"got {v.label}")
 
+# Bug found during a sweep: runs/rbis are hits_runs_rbis' own component
+# stats (h+r+rbi), and hits_runs_rbis was already in the overlapping set --
+# runs and rbis themselves were not, so a same-player Runs+RBIs pair was
+# scored merely "positive" instead of "redundant".
+runs_pick = dict(a, projection={"stat": "runs"})
+rbis_pick = dict(a, projection={"stat": "rbis"})
+check(corr.classify(runs_pick, rbis_pick).label == "redundant",
+      "same player, runs + rbis classifies redundant (both are hits_runs_rbis' own components)",
+      f"got {corr.classify(runs_pick, rbis_pick).label}")
+
 # Pitcher facing the batter's team -- strikeouts and first_inning_run should
 # both count as "works against this lineup".
 p_home = pitcher("Home SP", "Pirates", "Mets @ Pirates", 1, "home", "strikeouts")
@@ -77,6 +87,15 @@ p_away = pitcher("Away SP", "Mets", "Mets @ Pirates", 1, "away", "first_inning_r
 check(corr.classify(p_away, b).label == "negative",
       "away pitcher's first_inning_run prop vs a batter on the HOME (facing) team is negative",
       f"got {corr.classify(p_away, b).label}")
+
+# Bug found during a sweep: pitcher_outs (Outs Recorded) wasn't in
+# _PITCHER_STATS_OPPOSE_HITTERS even though the reasoning is identical to
+# strikeouts -- every extra out he gets is an at-bat the facing lineup did
+# not turn into a hit.
+p_outs = pitcher("Home SP", "Pirates", "Mets @ Pirates", 1, "home", "pitcher_outs")
+check(corr.classify(p_outs, a).label == "negative",
+      "home pitcher's pitcher_outs prop vs a batter on the facing team is negative",
+      f"got {corr.classify(p_outs, a).label}")
 
 # A pitcher's strikeout prop should NOT be flagged negative against a batter
 # on his OWN team (they're on the same side, not facing off).
