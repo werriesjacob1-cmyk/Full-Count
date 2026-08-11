@@ -228,6 +228,33 @@ def _game_innings(game_pk):
         return None
 
 
+_EV_CACHE = {}
+
+def _date_batter_peak_ev(date):
+    """{(batter_id, game_pk): max launch_speed that day}, one Statcast pull per
+    date (cached) instead of one per pick -- a 15-game slate can carry a dozen
+    Laser picks that would otherwise each re-fetch the same day's data.
+
+    Box scores (get_box_line, MLB Stats API) have no exit velocity at all, so
+    hard_hit_105/hard_hit_110 picks can only be graded from Statcast itself.
+    Mirrors mlb_sources.hard_hit_game_rates's own peak-per-game definition:
+    the market is "did he hit ONE ball that hard", not average velocity."""
+    if date in _EV_CACHE:
+        return _EV_CACHE[date]
+    out = {}
+    try:
+        df = m.pyb.statcast(start_dt=date, end_dt=date)
+        if df is not None and not df.empty and {"batter", "game_pk", "launch_speed"}.issubset(df.columns):
+            bb = df[df["launch_speed"].notna()]
+            if not bb.empty:
+                peak = bb.groupby(["batter", "game_pk"])["launch_speed"].max()
+                out = {(int(b), int(g)): float(v) for (b, g), v in peak.items()}
+    except Exception as e:
+        m.warn(f"Grading: couldn't fetch Statcast for {date}: {e}")
+    _EV_CACHE[date] = out
+    return out
+
+
 def _num(v, default=0):
     try: return float(v)
     except (TypeError, ValueError): return default
@@ -324,7 +351,7 @@ def opportunity_context(pick, row, game_pk):
     return ctx
 
 
-def grade_pick(pick, game_statuses):
+def grade_pick(pick, game_statuses, date=None):
     game_pk = pick.get("game_pk")
     player_id = pick.get("player_id")
     if not game_pk or not player_id:
@@ -335,6 +362,22 @@ def grade_pick(pick, game_statuses):
         return {**pick, "grade": "ungraded", "reason": f"game not final yet (status: {detail})"}
 
     stat = (pick.get("projection") or {}).get("stat")
+
+    if stat in ("hard_hit_105", "hard_hit_110"):
+        # Not on the pick's own record -- the caller knows what date it's
+        # grading (that's how it fetched game_statuses in the first place);
+        # this is the one prop family where the box score literally cannot
+        # answer the question, so it's the only branch that needs it.
+        if not date:
+            return {**pick, "grade": "ungraded", "reason": "no date supplied for Statcast lookup"}
+        thr = 105 if stat == "hard_hit_105" else 110
+        ev = _date_batter_peak_ev(date).get((player_id, game_pk))
+        if ev is None:
+            return {**pick, "grade": "ungraded", "reason": "no batted-ball Statcast data for this game"}
+        hit = ev >= thr
+        return {**pick, "grade": "hit" if hit else "miss", "actual": ev,
+                "actual_stat": "max_exit_velocity",
+                **opportunity_context(pick, None, game_pk)}
 
     if stat == "first_inning_run":
         # away_sp pitches to the home team in the bottom of the 1st (after the away
@@ -530,7 +573,7 @@ def grade_day(date) -> bool:
     graded = []
     for p in picks:
         try:
-            graded.append(grade_pick(p, game_statuses))
+            graded.append(grade_pick(p, game_statuses, date=YESTERDAY))
         except Exception as e:
             graded.append({**p, "grade": "ungraded", "reason": f"grader error: {e}"})
     hits = sum(1 for g in graded if g["grade"] == "hit")

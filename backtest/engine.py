@@ -860,6 +860,17 @@ def build_inputs(date, store, use_weather=True, use_bullpen=True, verbose=True):
                                             end_date=cutoff)
     comp_table = {int(k): v for k, v in comp_table.items()}
 
+    # Laser (hard_hit_105/110): routes through fetch_season_statcast, already
+    # point-in-time safe via the swapped pyb.statcast + repointed TODAY above
+    # -- no asof plumbing needed, same reasoning as fi_form/l7_form.
+    hard_hit = msrc.hard_hit_game_rates()
+    # Pitcher Outs Recorded: this source has NO built-in date guard (raw
+    # gameLog endpoint, no window param) -- asof=cutoff is required here or
+    # this would silently read starts after the date being simulated. See
+    # mlb_sources._empirical_pitcher_outs_one's own comment.
+    pitcher_outs = msrc.empirical_pitcher_outs_rates(starter_ids.values(), asof=cutoff)
+    extras = {"hard_hit": hard_hit, "pitcher_outs": pitcher_outs}
+
     kwargs = dict(
         batter_lookup=batter_lookup, pitcher_lookup=pitcher_lookup,
         team_k_lookup=team_k, park_wx=park_wx,
@@ -868,7 +879,7 @@ def build_inputs(date, store, use_weather=True, use_bullpen=True, verbose=True):
         bullpen_scores=bullpen_scores, bullpen_quality=bullpen_quality,
         l7_form=l7_form, bat_speed_trend=bat_speed_trend,
         batter_arsenal=batter_arsenal, pitcher_arsenal=pitcher_arsenal,
-        l14_pitcher_form=l14_pitcher_form, fi_form=fi_form,
+        l14_pitcher_form=l14_pitcher_form, fi_form=fi_form, extras=extras,
     )
     if verbose:
         print(f"  inputs: {len(batter_lookup)} batters / {len(pitcher_lookup)} pitchers "
@@ -1038,7 +1049,7 @@ def simulate_date(date, store, use_weather=True, use_bullpen=True, keep_unpriced
         statuses = gr.fetch_game_statuses(date)
         for c in candidates:
             try:
-                graded = gr.grade_pick(c, statuses)
+                graded = gr.grade_pick(c, statuses, date=date)
             except Exception as e:
                 res.n_ungraded += 1
                 res.ungraded_reasons[f"grader error: {type(e).__name__}"] += 1

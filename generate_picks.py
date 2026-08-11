@@ -3119,6 +3119,22 @@ def main() -> int:
     except Exception as e:
         m.warn(f"Example parlay generation failed ({e}) — picks JSON/markdown are unaffected")
 
+    # Every real scored candidate, filterable by prop type, sorted high to
+    # low confidence within each filter -- the curated board only ever
+    # shows the single best pick per category, so a genuinely strong
+    # candidate that wasn't #1 in its own category is otherwise invisible.
+    try:
+        import parlay_builder as pbuild
+        import render_full_board as rfb
+        full_pool = pbuild.load_todays_pool(date=m.TODAY)
+        full_html = rfb.render(full_pool, m.TODAY)
+        full_path = os.path.join(OUTPUT_DIR, f"full_board_{m.TODAY}.html")
+        with open(full_path, "w", encoding="utf-8") as f:
+            f.write(full_html)
+        print(f"Wrote full board ({len(full_pool)} candidates) to {full_path}")
+    except Exception as e:
+        m.warn(f"Full board rendering failed ({e}) — picks JSON/markdown are unaffected")
+
     return 0
 
 

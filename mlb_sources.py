@@ -1387,13 +1387,25 @@ def empirical_pitcher_k_rates(pitcher_ids, min_starts=5, max_workers=12):
 
 
 def _empirical_pitcher_outs_one(job):
-    pid, min_starts = job
+    pid, min_starts, asof = job
     try:
         splits = _game_log(pid, "pitching")
     except Exception:
         return pid, None
     outs_per_start = []
     for s in splits:
+        # _game_log hits the raw MLB gameLog endpoint with no date bound at
+        # all (season=year, every start in it) -- unlike hard_hit_game_rates
+        # and fetch_first_inning_form, which route through fetch_season_statcast
+        # and are therefore already point-in-time safe via PointInTime's own
+        # swapped pyb.statcast + repointed TODAY. This function has no such
+        # guard, so a backtest calling it unfiltered would silently read
+        # starts AFTER the date being simulated -- real look-ahead bias, not
+        # a hypothetical one. asof filters it out by the same real per-split
+        # "date" field the API already returns; None (the live default) means
+        # "no filter," identical to today's behaviour.
+        if asof is not None and (s.get("date") or "9999-99-99") > asof:
+            continue
         st = s.get("stat") or {}
         try:
             gs = int(st.get("gamesStarted") or 0)
@@ -1434,7 +1446,7 @@ def _empirical_pitcher_outs_one(job):
     return pid, out
 
 
-def empirical_pitcher_outs_rates(pitcher_ids, min_starts=5, max_workers=12):
+def empirical_pitcher_outs_rates(pitcher_ids, min_starts=5, max_workers=12, asof=None):
     """Per-starter empirical rate of recording at least N outs, over real
     starts only. Prices FanDuel's real "Pitcher Outs Recorded" market
     (PITCHER_A/B_OUTS_RECORDED_SB -- found live 2026-08-07, never mapped
@@ -1442,14 +1454,20 @@ def empirical_pitcher_outs_rates(pitcher_ids, min_starts=5, max_workers=12):
     source, same starts-only filter, same shrinkage discipline. Outs
     recorded is what innings pitched literally counts, so no new modeling
     concept is introduced here, only a new threshold read off data this
-    pipeline was already fetching for the strikeout market."""
+    pipeline was already fetching for the strikeout market.
+
+    asof: "YYYY-MM-DD" string. When given, only counts starts on or before
+    that date -- see _empirical_pitcher_outs_one's own comment for why this
+    exists (this source has no built-in date guard the way the
+    Statcast-backed empirical functions do). None (default) means "no
+    filter," i.e. today's live behaviour, unchanged."""
     from concurrent.futures import ThreadPoolExecutor
     ids = [int(p) for p in dict.fromkeys(pitcher_ids) if p]
     out = {}
     if not ids:
         return out
     with ThreadPoolExecutor(max_workers=max_workers) as ex:
-        for pid, res in ex.map(_empirical_pitcher_outs_one, [(i, min_starts) for i in ids]):
+        for pid, res in ex.map(_empirical_pitcher_outs_one, [(i, min_starts, asof) for i in ids]):
             if res:
                 out[pid] = res
     # Same prior_games=6 as empirical_pitcher_k_rates -- no separate fit was

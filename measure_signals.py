@@ -117,7 +117,7 @@ def grade_rows(rows, verbose=True):
         n_ok = 0
         for r in by_date[date]:
             try:
-                g = gr.grade_pick(r, statuses)
+                g = gr.grade_pick(r, statuses, date=date)
             except Exception:
                 continue
             if g.get("grade") in ("hit", "miss"):
