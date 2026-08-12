@@ -3768,7 +3768,17 @@ def _batter_options(c, comp, emp, league=None):
          (lambda k: pp.p_at_least_hits(k, dist, pa)) if dist and pa else None),
         ("total_bases", "Total Bases", [(1.5, 2), (2.5, 3), (3.5, 4)],
          (lambda k: pp.p_at_least_total_bases(k, dist, pa)) if dist and pa else None),
-        ("home_runs", "Home Runs", [(0.5, 1)],
+        # 2+ and 3+ were dead on arrival before this: TO_HIT_2+_HOME_RUNS has
+        # been in MARKET_MAP and home_runs_2plus in mlb_sources._PROP_THRESHOLDS
+        # the whole time, but this family list only ever asked for 1+, so
+        # neither threshold could ever become a candidate's projection. Found
+        # live: FanDuel is currently posting TO_HIT_3+_HOME_RUNS too (verified
+        # against a real pull, 4 occurrences across 8 games), not in
+        # MARKET_MAP at all until this same pass added it. p_at_least_home_runs
+        # is a plain binomial tail sum, so 2 and 3 need no new math, only
+        # asking for them -- same "computed, then discarded" failure as the
+        # six markets fixed above.
+        ("home_runs", "Home Runs", [(0.5, 1), (1.5, 2), (2.5, 3)],
          (lambda k: pp.p_at_least_home_runs(k, dist, pa)) if dist and pa else None),
         # THE SIX MARKETS THE MODEL COULD NOT PRICE.
         #

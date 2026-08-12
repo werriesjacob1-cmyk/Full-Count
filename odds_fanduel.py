@@ -92,6 +92,12 @@ MARKET_MAP = {
     # Home runs
     "TO_HIT_A_HOME_RUN":        ("home_runs", 1),
     "TO_HIT_2+_HOME_RUNS":      ("home_runs", 2),
+    # Found live 2026-08-12 (a real pull, 4 occurrences across 8 games) --
+    # never mapped before now. generate_picks.py's _batter_options never even
+    # asked for a 2+/3+ home-run probability until the same pass added this,
+    # so this entry alone would have priced a market the pipeline could never
+    # actually recommend against.
+    "TO_HIT_3+_HOME_RUNS":      ("home_runs", 3),
     # Runs, RBIs and steals. These were the largest omission: the empirical
     # table has always computed rates for all three, and FanDuel prices ~720
     # lines a night across them, so they were being modelled and then thrown

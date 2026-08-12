@@ -1106,7 +1106,7 @@ def _as_float(v):
 _PROP_THRESHOLDS = {
     "hits":         [1, 2, 3, 4],
     "total_bases":  [1, 2, 3, 4, 5],
-    "home_runs":    [1, 2],
+    "home_runs":    [1, 2, 3],
     "stolen_bases": [1, 2],
     "walks":        [1],
     "runs":         [1, 2, 3],
