@@ -2852,6 +2852,12 @@ def _build_and_score():
         # pass can reuse it instead of sweeping FanDuel for the same market
         # twice (extras itself is local to this function).
         "po_prices": extras.get("pitcher_outs_prices"),
+        # Same reasoning, same fetch-above-reuse-below pattern -- this one
+        # was missing until attach_market_prices grew a combined_strikeouts
+        # branch (added this pass; see its own docstring). Before that,
+        # main()'s attach_market_prices call had no use for this key, so its
+        # absence here was invisible.
+        "combined_k_prices": extras.get("combined_k_prices"),
     }
 
 
@@ -3236,8 +3242,16 @@ def main() -> int:
         # could price the real line directly) -- reused here rather than
         # sweeping FanDuel for the same market twice.
         po_prices = early_po_prices or {}
+        # Fetched early too (before scoring, so score_combined_strikeouts
+        # could price the real ladder directly) -- reused here for the same
+        # reason po_prices is: attach_market_prices now has a
+        # combined_strikeouts branch (added this pass, see its own
+        # docstring), and passing this avoids a second FanDuel sweep for a
+        # market this function used to no-op on entirely.
+        combined_k_prices = ctx.get("combined_k_prices") or {}
         _, n_priced = _fd.attach_market_prices(candidates, prices=prices, k_prices=k_prices,
-                                               fi_prices=fi_prices, po_prices=po_prices)
+                                               fi_prices=fi_prices, po_prices=po_prices,
+                                               combined_k_prices=combined_k_prices)
         print(f"    Real market prices attached to {n_priced} of {len(candidates)} candidates")
         # PER-MARKET REAL-PRICE COVERAGE. The pool diagnostic above only ever
         # showed whether the MODEL had a probability, which is a different

@@ -534,7 +534,8 @@ def fetch_prop_prices(max_workers=8):
 STAT_ALIASES = {"stolen_base": "stolen_bases"}
 
 
-def attach_market_prices(candidates, prices=None, k_prices=None, fi_prices=None, po_prices=None):
+def attach_market_prices(candidates, prices=None, k_prices=None, fi_prices=None, po_prices=None,
+                         combined_k_prices=None):
     """Attach the real posted price to every candidate that has one.
 
     Sets `market_odds`, `market_implied`, and `market_edge` (model probability
@@ -542,14 +543,27 @@ def attach_market_prices(candidates, prices=None, k_prices=None, fi_prices=None,
     guessing when the prop is not offered -- an unpriced prop is a gap in
     coverage, not a bet at some assumed number.
 
-    Consults THREE price feeds. `prices` (fetch_prop_prices) is the
-    one-sided batter feed; pitcher strikeouts are a separate, two-sided
-    market (fetch_pitcher_strikeouts) that this function used to never even
+    Consults price feeds. `prices` (fetch_prop_prices) is the one-sided
+    batter feed; pitcher strikeouts are a separate, two-sided market
+    (fetch_pitcher_strikeouts) that this function used to never even
     request, which is the entire reason 27 strikeout candidates priced at
     zero -- not a naming mismatch like stolen_base, a missing feed.
     fetch_first_inning_totals is the real combined NRFI/YRFI market, keyed
     by game rather than player -- same "never requested the right tab"
-    story as strikeouts, found the same way."""
+    story as strikeouts, found the same way.
+
+    combined_k_prices was missing entirely until this pass: build_candidates()
+    already prices combined_strikeouts inline (score_combined_strikeouts sets
+    market_odds itself, at creation time, off the real ladder), so this
+    function's main() caller never needed it and this gap stayed invisible.
+    But that inline price is never persisted (persist_player_snapshots'
+    evaluation dict carries no market_odds at all -- the daily board's own
+    in-memory candidates simply keep the value they were created with) and
+    this function had no branch to RE-derive it -- so parlay_builder.py,
+    which reloads candidates from data/players/*.json and re-prices through
+    exactly this function, could never price a combined_strikeouts leg.
+    Verified live before this fix: a reconstructed combined_strikeouts leg
+    came back with market_odds still None after a full _finalize() pass."""
     import prop_probability as pp
     if prices is None:
         try:
@@ -566,6 +580,11 @@ def attach_market_prices(candidates, prices=None, k_prices=None, fi_prices=None,
             fi_prices = fetch_first_inning_totals()
         except Exception:
             fi_prices = {}
+    if combined_k_prices is None:
+        try:
+            combined_k_prices = fetch_combined_pitcher_strikeouts()
+        except Exception:
+            combined_k_prices = {}
     if po_prices is None:
         try:
             po_prices = fetch_pitcher_outs()
@@ -591,6 +610,31 @@ def attach_market_prices(candidates, prices=None, k_prices=None, fi_prices=None,
             if p is not None:
                 c["market_edge"] = round(p - c["market_implied"], 4)
                 c["price_clears"] = pp.price_is_acceptable(po["over"], p)
+            matched += 1
+            continue
+
+        if stat == "combined_strikeouts":
+            # Game-level market like nrfi_combined -- keyed by matchup, not
+            # player name (the candidate's own "name" is "Pitcher A & Pitcher
+            # B", which will never match a real FanDuel runner name). A
+            # one-sided ladder like the batter markets in MARKET_MAP (12+,
+            # 13+, 14+... escalating odds, no paired Under), so the implied
+            # probability is read straight off the price, same as those --
+            # matches score_combined_strikeouts' own market_implied
+            # computation exactly, for consistency between the price set at
+            # creation time and any later re-price through this function.
+            ck = (combined_k_prices or {}).get(c.get("matchup"))
+            if ck is None or needs is None:
+                continue
+            odds = (ck.get("rungs") or {}).get(needs)
+            if odds is None:
+                continue
+            c["market_odds"] = odds
+            c["market_implied"] = round(pp.implied_probability(odds), 4)
+            p = c.get("hit_probability")
+            if p is not None:
+                c["market_edge"] = round(p - c["market_implied"], 4)
+                c["price_clears"] = pp.price_is_acceptable(odds, p)
             matched += 1
             continue
 
