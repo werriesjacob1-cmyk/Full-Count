@@ -142,10 +142,12 @@ jobs:
         #
         # Seventeen signals are currently recorded without affecting any
         # score, on the promise that they would be measured before being
-        # weighted. Nothing could keep that promise: the backtest cannot
-        # rebuild their season-to-date inputs point-in-time, and ten graded
-        # picks a day cannot resolve seventeen signals. This step is the
-        # measurement, and it only gets more decisive the longer it runs.
+        # weighted. This step exists because ten graded picks a day cannot
+        # resolve seventeen signals on its own, even now that nine of them
+        # are ALSO measurable via a real backtest replay (fixed 2026-08-12 --
+        # see backtest/engine.py and measure_signals.py's own docstring for
+        # which nine, and the four that remain forward-only). It only gets
+        # more decisive the longer it runs.
         #
         # Runs after grading so the box scores it needs are already final,
         # and never blocks the pipeline -- an empty result is the expected
