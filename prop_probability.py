@@ -221,6 +221,65 @@ def p_at_least_strikeouts(threshold, batters_faced, k_rate):
     return _binom_at_least(batters_faced, k_rate, threshold)
 
 
+def _binomial_pmf(n, p):
+    """Full P(X=k) for k in 0..n, X ~ Binomial(n, p). Same iterative
+    multiplicative step _binom_at_least uses to avoid factorial overflow,
+    exposed as the full distribution (not just a tail sum) so it can be
+    convolved with another pitcher's -- see combined_strikeouts_distribution."""
+    n = int(round(n))
+    p = min(max(p, 0.0), 1.0)
+    if n <= 0:
+        return {0: 1.0}
+    pmf = {}
+    cur = (1.0 - p) ** n
+    for k in range(n + 1):
+        pmf[k] = cur
+        if p >= 1.0:
+            cur = 0.0
+        else:
+            cur = cur * (n - k) / (k + 1) * (p / (1.0 - p))
+    return pmf
+
+
+def combined_strikeouts_distribution(bf_a, k_rate_a, bf_b, k_rate_b):
+    """Distribution of TWO STARTERS' combined strikeout total.
+
+    Treated as independent binomials and convolved -- the same DP pattern
+    total_bases_distribution already uses for one player's own PA sequence,
+    extended across two players instead of across plate appearances.
+
+    THE INDEPENDENCE ASSUMPTION, STATED RATHER THAN HIDDEN. Two opposing
+    starters' strikeout counts are not perfectly independent -- a
+    strikeout-friendly umpire or a slow, high-leverage game pace nudges both
+    pitchers' counts the same direction, the same shared-environment effect
+    umpire_k_pct already measures for individual pitchers. That is a much
+    weaker coupling than PLAYERS_TO_COMBINE_FOR's teammates, who share the
+    literal same plate appearances (deliberately left unmapped in
+    odds_fanduel.py for exactly that reason) -- these two pitchers never
+    face the same batter. Treating them as independent here is a real,
+    documented approximation, not an oversight: revisit if backtesting this
+    market shows the combined rate running systematically hot or cold
+    relative to the two individual rates, the same signature that would
+    reveal uncaptured shared variance."""
+    dist_a = _binomial_pmf(bf_a, k_rate_a)
+    dist_b = _binomial_pmf(bf_b, k_rate_b)
+    out = {}
+    for ka, pa in dist_a.items():
+        if pa <= 0:
+            continue
+        for kb, pb in dist_b.items():
+            if pb <= 0:
+                continue
+            k = ka + kb
+            out[k] = out.get(k, 0.0) + pa * pb
+    return out
+
+
+def p_at_least_combined_strikeouts(threshold, bf_a, k_rate_a, bf_b, k_rate_b):
+    dist = combined_strikeouts_distribution(bf_a, k_rate_a, bf_b, k_rate_b)
+    return sum(p for k, p in dist.items() if k >= threshold)
+
+
 def p_at_least_walks(threshold, n_pa, bb_rate):
     return _binom_at_least(n_pa, bb_rate, threshold)
 

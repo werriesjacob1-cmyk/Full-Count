@@ -1,0 +1,36 @@
+{
+  "player_id": "nrfi_823264",
+  "name": "Milwaukee Brewers @ San Diego Padres \u2014 1st Inning (Both Teams)",
+  "snapshots": [
+    {
+      "date": "2026-08-11",
+      "evaluations": [
+        {
+          "prop": "No runs in the 1st (both teams)",
+          "type": "game",
+          "score": 49.8,
+          "notable_signals": 0,
+          "matchup": "Milwaukee Brewers @ San Diego Padres",
+          "game_pk": 823264,
+          "team": null,
+          "side": "both",
+          "lean": "NRFI",
+          "signals": {
+            "home_team_scores_p": 0.2718,
+            "away_team_scores_p": 0.2505,
+            "fi_n_starts": 19.0
+          },
+          "hit_probability": 0.5114,
+          "raw_hit_probability": 0.5458,
+          "lift": 0.013,
+          "reliability": "D",
+          "sample_n": 19,
+          "projection": {
+            "stat": "nrfi_combined",
+            "value": 54.6
+          }
+        }
+      ]
+    }
+  ]
+}

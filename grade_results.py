@@ -228,6 +228,33 @@ def _game_innings(game_pk):
         return None
 
 
+_EV_CACHE = {}
+
+def _date_batter_peak_ev(date):
+    """{(batter_id, game_pk): max launch_speed that day}, one Statcast pull per
+    date (cached) instead of one per pick -- a 15-game slate can carry a dozen
+    Laser picks that would otherwise each re-fetch the same day's data.
+
+    Box scores (get_box_line, MLB Stats API) have no exit velocity at all, so
+    hard_hit_105/hard_hit_110 picks can only be graded from Statcast itself.
+    Mirrors mlb_sources.hard_hit_game_rates's own peak-per-game definition:
+    the market is "did he hit ONE ball that hard", not average velocity."""
+    if date in _EV_CACHE:
+        return _EV_CACHE[date]
+    out = {}
+    try:
+        df = m.pyb.statcast(start_dt=date, end_dt=date)
+        if df is not None and not df.empty and {"batter", "game_pk", "launch_speed"}.issubset(df.columns):
+            bb = df[df["launch_speed"].notna()]
+            if not bb.empty:
+                peak = bb.groupby(["batter", "game_pk"])["launch_speed"].max()
+                out = {(int(b), int(g)): float(v) for (b, g), v in peak.items()}
+    except Exception as e:
+        m.warn(f"Grading: couldn't fetch Statcast for {date}: {e}")
+    _EV_CACHE[date] = out
+    return out
+
+
 def _num(v, default=0):
     try: return float(v)
     except (TypeError, ValueError): return default
@@ -262,13 +289,21 @@ def opportunity_context(pick, row, game_pk):
         # bat in the 9th -- so 8 is NOT automatically short.
         ctx["shortened_game"] = innings < 8
 
+    stat = (pick.get("projection") or {}).get("stat")
+    if stat == "nrfi_combined":
+        # Both-teams NRFI/YRFI resolves in the 1st inning, same as the
+        # one-sided read below -- every game reaches it regardless of how
+        # either start actually went.
+        ctx["fair_test"] = True
+        ctx["opportunity"] = "full (first inning always played)"
+        return ctx
+
     if pick.get("type") == "pitcher":
         ip = _num(row.get("ip"), None) if row else None
         if ip is not None:
             ctx["actual_ip"] = ip
         if row and row.get("p"):
             ctx["pitch_count"] = _num(row.get("p"))
-        stat = (pick.get("projection") or {}).get("stat")
         if stat == "first_inning_run":
             # An NRFI/YRFI lean resolves in the 1st inning, which every game
             # reaches -- it always gets a fair test regardless of workload.
@@ -316,7 +351,7 @@ def opportunity_context(pick, row, game_pk):
     return ctx
 
 
-def grade_pick(pick, game_statuses):
+def grade_pick(pick, game_statuses, date=None):
     game_pk = pick.get("game_pk")
     player_id = pick.get("player_id")
     if not game_pk or not player_id:
@@ -327,6 +362,46 @@ def grade_pick(pick, game_statuses):
         return {**pick, "grade": "ungraded", "reason": f"game not final yet (status: {detail})"}
 
     stat = (pick.get("projection") or {}).get("stat")
+
+    if stat == "combined_strikeouts":
+        # The one prop family this pipeline settles from TWO player box
+        # scores instead of one -- combo_player_ids carries both starters
+        # (score_combined_strikeouts in generate_picks.py), since pick's own
+        # player_id is only the away starter (kept for persistence, which
+        # is keyed one-file-per-player and needs a single real id).
+        ids = pick.get("combo_player_ids") or []
+        if len(ids) != 2 or not all(ids):
+            return {**pick, "grade": "ungraded", "reason": "missing combo_player_ids"}
+        needs = (pick.get("projection") or {}).get("needs")
+        if needs is None:
+            return {**pick, "grade": "ungraded", "reason": "no needs threshold on pick"}
+        total_k = 0
+        for pid in ids:
+            row, err = get_box_line(game_pk, pid, is_pitcher=True)
+            if row is None:
+                return {**pick, "grade": "ungraded",
+                        "reason": f"box line unavailable for one starter: {err}"}
+            total_k += float(row.get("k", 0) or 0)
+        hit = total_k >= needs
+        return {**pick, "grade": "hit" if hit else "miss", "actual": total_k,
+                "actual_stat": "combined_strikeouts",
+                **opportunity_context(pick, None, game_pk)}
+
+    if stat in ("hard_hit_105", "hard_hit_110"):
+        # Not on the pick's own record -- the caller knows what date it's
+        # grading (that's how it fetched game_statuses in the first place);
+        # this is the one prop family where the box score literally cannot
+        # answer the question, so it's the only branch that needs it.
+        if not date:
+            return {**pick, "grade": "ungraded", "reason": "no date supplied for Statcast lookup"}
+        thr = 105 if stat == "hard_hit_105" else 110
+        ev = _date_batter_peak_ev(date).get((player_id, game_pk))
+        if ev is None:
+            return {**pick, "grade": "ungraded", "reason": "no batted-ball Statcast data for this game"}
+        hit = ev >= thr
+        return {**pick, "grade": "hit" if hit else "miss", "actual": ev,
+                "actual_stat": "max_exit_velocity",
+                **opportunity_context(pick, None, game_pk)}
 
     if stat == "first_inning_run":
         # away_sp pitches to the home team in the bottom of the 1st (after the away
@@ -368,6 +443,24 @@ def grade_pick(pick, game_statuses):
                 "actual_stat": "first_inning_runs_allowed",
                 **opportunity_context(pick, None, game_pk)}
 
+    if stat == "nrfi_combined":
+        # The real both-teams market: hit only if BOTH halves match the
+        # lean (both scoreless for NRFI; at least one team scores for YRFI).
+        lean = pick.get("lean")
+        inning1 = fetch_first_inning_linescore(game_pk)
+        if not inning1 or lean not in ("YRFI", "NRFI"):
+            return {**pick, "grade": "ungraded", "reason": "linescore or lean unavailable"}
+        away_runs = inning1.get("away", {}).get("runs")
+        home_runs = inning1.get("home", {}).get("runs")
+        if away_runs is None or home_runs is None:
+            return {**pick, "grade": "ungraded", "reason": "missing runs data"}
+        actual_yrfi = (away_runs > 0) or (home_runs > 0)
+        hit = actual_yrfi if lean == "YRFI" else not actual_yrfi
+        return {**pick, "grade": "hit" if hit else "miss",
+                "actual": away_runs + home_runs,
+                "actual_stat": "first_inning_runs_total",
+                **opportunity_context(pick, None, game_pk)}
+
     is_pitcher = pick["type"] == "pitcher"
     row, err = get_box_line(game_pk, player_id, is_pitcher)
     if row is None:
@@ -389,6 +482,45 @@ def grade_pick(pick, game_statuses):
         elif stat == "home_runs":
             actual = float(row.get("hr", 0) or 0)
             actual_stat = "home_runs"
+        elif stat == "runs":
+            actual = float(row.get("r", 0) or 0)
+            actual_stat = "runs"
+        elif stat == "rbis":
+            actual = float(row.get("rbi", 0) or 0)
+            actual_stat = "rbis"
+        elif stat == "hits_runs_rbis":
+            # The market is literally the sum, including the double-count when
+            # a player drives himself in on a home run -- that is how FanDuel
+            # settles it (verified against mlb_sources._empirical_batter_one's
+            # own "hits_runs_rbis": h + runs_ + rbi_, the same convention this
+            # market's empirical rate table already uses), so that is how this
+            # has to grade too.
+            actual = (float(row.get("h", 0) or 0) + float(row.get("r", 0) or 0)
+                      + float(row.get("rbi", 0) or 0))
+            actual_stat = "hits_runs_rbis"
+        elif stat == "singles":
+            h = int(row.get("h", 0) or 0)
+            d = int(row.get("doubles", 0) or 0)
+            t = int(row.get("triples", 0) or 0)
+            hr = int(row.get("hr", 0) or 0)
+            actual = float(max(0, h - d - t - hr))
+            actual_stat = "singles"
+        elif stat == "doubles":
+            actual = float(row.get("doubles", 0) or 0)
+            actual_stat = "doubles"
+        elif stat == "triples":
+            actual = float(row.get("triples", 0) or 0)
+            actual_stat = "triples"
+        elif stat == "pitcher_outs":
+            # Same whole.frac -> outs conversion mlb_sources.empirical_pitcher_outs_rates
+            # and score_pitcher_outs already use, reading MLB's own
+            # inningsPitched notation directly rather than reconstructing
+            # outs from raw events -- box scores already resolve double
+            # plays, sac flies, etc. correctly server-side.
+            ip = str(row.get("ip") or "0")
+            whole, _, frac = ip.partition(".")
+            actual = float(int(whole) * 3 + int(frac or 0))
+            actual_stat = "pitcher_outs"
         elif stat == "total_bases":
             # Verified against generate_picks.py's own prop-text branches (the three
             # f-strings feeding off project_batter_tb(), ~line 690-696): unlike
@@ -494,7 +626,7 @@ def grade_day(date) -> bool:
     graded = []
     for p in picks:
         try:
-            graded.append(grade_pick(p, game_statuses))
+            graded.append(grade_pick(p, game_statuses, date=YESTERDAY))
         except Exception as e:
             graded.append({**p, "grade": "ungraded", "reason": f"grader error: {e}"})
     hits = sum(1 for g in graded if g["grade"] == "hit")

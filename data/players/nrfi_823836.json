@@ -1,0 +1,36 @@
+{
+  "player_id": "nrfi_823836",
+  "name": "Los Angeles Angels @ Miami Marlins \u2014 1st Inning (Both Teams)",
+  "snapshots": [
+    {
+      "date": "2026-08-07",
+      "evaluations": [
+        {
+          "prop": "A run scores in the 1st (either team)",
+          "type": "game",
+          "score": 36.7,
+          "notable_signals": 0,
+          "matchup": "Los Angeles Angels @ Miami Marlins",
+          "game_pk": 823836,
+          "team": null,
+          "side": "both",
+          "lean": "YRFI",
+          "signals": {
+            "home_team_scores_p": 0.3087,
+            "away_team_scores_p": 0.3013,
+            "fi_n_starts": 4.0
+          },
+          "hit_probability": 0.4858,
+          "raw_hit_probability": 0.517,
+          "lift": -0.0158,
+          "reliability": "D",
+          "sample_n": 4,
+          "projection": {
+            "stat": "nrfi_combined",
+            "value": 51.7
+          }
+        }
+      ]
+    }
+  ]
+}

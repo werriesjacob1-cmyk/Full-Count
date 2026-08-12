@@ -1,0 +1,36 @@
+{
+  "player_id": "nrfi_822697",
+  "name": "Chicago Cubs @ Washington Nationals \u2014 1st Inning (Both Teams)",
+  "snapshots": [
+    {
+      "date": "2026-08-11",
+      "evaluations": [
+        {
+          "prop": "A run scores in the 1st (either team)",
+          "type": "game",
+          "score": 47.2,
+          "notable_signals": 0,
+          "matchup": "Chicago Cubs @ Washington Nationals",
+          "game_pk": 822697,
+          "team": null,
+          "side": "both",
+          "lean": "YRFI",
+          "signals": {
+            "home_team_scores_p": 0.2895,
+            "away_team_scores_p": 0.3074,
+            "fi_n_starts": 14.0
+          },
+          "hit_probability": 0.4777,
+          "raw_hit_probability": 0.5079,
+          "lift": -0.0239,
+          "reliability": "D",
+          "sample_n": 14,
+          "projection": {
+            "stat": "nrfi_combined",
+            "value": 50.8
+          }
+        }
+      ]
+    }
+  ]
+}

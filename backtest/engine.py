@@ -449,12 +449,31 @@ class PointInTime:
         # straight past every guard above.
         self._saved[("m", "_SEASON_STATCAST_CACHE")] = getattr(m, "_SEASON_STATCAST_CACHE", None)
         m._SEASON_STATCAST_CACHE = None
+        # mlb_sources.league_base_rates() has the exact same hazard and was
+        # missed the first time this class was written: it caches on its own
+        # module-level dict and, unlike _SEASON_STATCAST_CACHE above, nothing
+        # was clearing it. Left alone, the FIRST simulated date's league rate
+        # would silently freeze for every later date in the same run --
+        # not a forward leak (its own read is properly cutoff-guarded via the
+        # swapped pyb.statcast above), but a staleness bug in the other
+        # direction: date 5 would see date 1's league rate, not its own.
+        self._saved[("msrc", "_LEAGUE_RATES_CACHE")] = dict(msrc._LEAGUE_RATES_CACHE)
+        msrc._LEAGUE_RATES_CACHE.clear()
         return self
 
     def __exit__(self, exc_type, exc, tb):
         for (mod, attr), val in self._saved.items():
-            target = m.pyb if mod == "pyb" else m
-            setattr(target, attr, val)
+            if mod == "pyb":
+                target = m.pyb
+            elif mod == "msrc":
+                target = msrc
+            else:
+                target = m
+            if mod == "msrc":
+                getattr(target, attr).clear()
+                getattr(target, attr).update(val)
+            else:
+                setattr(target, attr, val)
         self._saved.clear()
         return False
 
@@ -841,6 +860,17 @@ def build_inputs(date, store, use_weather=True, use_bullpen=True, verbose=True):
                                             end_date=cutoff)
     comp_table = {int(k): v for k, v in comp_table.items()}
 
+    # Laser (hard_hit_105/110): routes through fetch_season_statcast, already
+    # point-in-time safe via the swapped pyb.statcast + repointed TODAY above
+    # -- no asof plumbing needed, same reasoning as fi_form/l7_form.
+    hard_hit = msrc.hard_hit_game_rates()
+    # Pitcher Outs Recorded: this source has NO built-in date guard (raw
+    # gameLog endpoint, no window param) -- asof=cutoff is required here or
+    # this would silently read starts after the date being simulated. See
+    # mlb_sources._empirical_pitcher_outs_one's own comment.
+    pitcher_outs = msrc.empirical_pitcher_outs_rates(starter_ids.values(), asof=cutoff)
+    extras = {"hard_hit": hard_hit, "pitcher_outs": pitcher_outs}
+
     kwargs = dict(
         batter_lookup=batter_lookup, pitcher_lookup=pitcher_lookup,
         team_k_lookup=team_k, park_wx=park_wx,
@@ -849,7 +879,7 @@ def build_inputs(date, store, use_weather=True, use_bullpen=True, verbose=True):
         bullpen_scores=bullpen_scores, bullpen_quality=bullpen_quality,
         l7_form=l7_form, bat_speed_trend=bat_speed_trend,
         batter_arsenal=batter_arsenal, pitcher_arsenal=pitcher_arsenal,
-        l14_pitcher_form=l14_pitcher_form, fi_form=fi_form,
+        l14_pitcher_form=l14_pitcher_form, fi_form=fi_form, extras=extras,
     )
     if verbose:
         print(f"  inputs: {len(batter_lookup)} batters / {len(pitcher_lookup)} pitchers "
@@ -868,6 +898,20 @@ PROP_TYPE_BY_STAT = {
     "walks": "walks",
     "stolen_base": "stolen_base",
     "first_inning_run": "first_inning_run",
+    "nrfi_combined": "nrfi_combined",
+    "hard_hit_105": "hard_hit_105", "hard_hit_110": "hard_hit_110",
+    "pitcher_outs": "pitcher_outs",
+    # Real, live board markets (select_best_by_category / _batter_options)
+    # that were never added here -- every one of them was being scored,
+    # priced and shown on the board every night while silently falling out
+    # of both backtest AND live grading (grade_results.grade_pick had no
+    # branch for any of them either, fixed alongside this). combined_strikeouts
+    # deliberately absent: that market only ever produces a candidate when a
+    # REAL FanDuel price was fetched, and backtest never fetches live prices,
+    # so build_candidates() naturally never generates one during a backtest
+    # run -- nothing to map.
+    "runs": "runs", "rbis": "rbis", "hits_runs_rbis": "hits_runs_rbis",
+    "singles": "singles", "doubles": "doubles", "triples": "triples",
 }
 
 
@@ -879,10 +923,11 @@ def _line_and_needs(pick):
     stat = proj.get("stat")
     needs = proj.get("needs")
     value = proj.get("value")
-    if stat == "first_inning_run":
-        # A one-sided team market: does the opposing lineup score off him in
-        # the 1st. Expressed as over/under 0.5 runs, with `lean` carrying which
-        # side was recommended.
+    if stat in ("first_inning_run", "nrfi_combined"):
+        # first_inning_run: a one-sided team market (does the opposing lineup
+        # score off him in the 1st). nrfi_combined: the real both-teams
+        # market. Both expressed as over/under 0.5 runs, with `lean` carrying
+        # which side was recommended.
         return 0.5, 1
     if needs is not None:
         return (float(needs) - 0.5), int(needs)
@@ -964,6 +1009,7 @@ def simulate_date(date, store, use_weather=True, use_bullpen=True, keep_unpriced
     problems — a failed date is reported, not fatal, so a 60-day run does not
     die on one bad slate."""
     res = DateResult(date)
+    cutoff = shift(date, -1)
     try:
         with PointInTime(date, store) as pit:
             game_meta, kwargs, comp_table, _pit_df, log = build_inputs(
@@ -981,11 +1027,42 @@ def simulate_date(date, store, use_weather=True, use_bullpen=True, keep_unpriced
             res.log = pit.log
 
             candidates = gp.build_candidates(game_meta, **kwargs)
-            # Probabilities. comp_table is rebuilt point-in-time; the empirical
-            # game-log tables are season-scoped and therefore passed empty, so
-            # predicted_prob is the purely MODELLED probability (which is what
-            # SCHEMA.md asks for: uncalibrated model output).
-            gp.attach_hit_probabilities(candidates, comp_table, {}, {})
+            # Probabilities. comp_table is rebuilt point-in-time.
+            #
+            # emp_batters/emp_pitchers USED TO BE HARDCODED {}, {} HERE,
+            # unconditionally, with the comment "season-scoped and therefore
+            # passed empty" -- true of the underlying game-log source before
+            # its own asof fix (see empirical_batter_prop_rates/
+            # empirical_pitcher_k_rates' docstrings), but not true anymore,
+            # and leaving it hardcoded meant no backtest run had EVER
+            # exercised the actual empirical+modelled blend live scoring
+            # uses for hits/total_bases/home_runs/runs/rbis/stolen_base/
+            # singles/doubles/triples/hits_runs_rbis -- every run validated a
+            # modelled-only stand-in instead of what actually ships. Fetched
+            # here the same way generate_picks.py's own live path does:
+            # AFTER build_candidates, from the ids that actually produced a
+            # candidate, not the whole slate.
+            bat_ids = [c["player_id"] for c in candidates
+                       if c.get("type") == "batter" and c.get("player_id")]
+            pit_ids = [c["player_id"] for c in candidates
+                       if c.get("type") == "pitcher" and c.get("player_id")]
+            emp_batters = msrc.empirical_batter_prop_rates(bat_ids, asof=cutoff)
+            emp_pitchers = msrc.empirical_pitcher_k_rates(pit_ids, asof=cutoff)
+            # league_rates WAS missing here entirely (verified live: this is
+            # why generate_picks.py's league-only fallback and the
+            # SHRINK_MODEL_K toggle were both structurally inert in every
+            # backtest run so far -- 0 candidates ever took either path,
+            # confirmed by instrumenting a real date). Safe to call here
+            # specifically because league_base_rates() reads through
+            # m.fetch_season_statcast(), which routes through the swapped,
+            # cutoff-guarded pyb.statcast (see PointInTime.__enter__) --
+            # unlike statcast_sprint_speed/statcast_catcher_poptime, it is
+            # NOT on the _POISONED_LEADERBOARDS list, because it has no
+            # season-aggregate-with-no-date-window shape to poison. Its own
+            # module-level cache is cleared per-date by PointInTime now too
+            # (see __enter__/__exit__), so date 5 cannot see date 1's rate.
+            league_rates = msrc.league_base_rates()
+            gp.attach_hit_probabilities(candidates, comp_table, emp_batters, emp_pitchers, league_rates)
             res.n_candidates = len(candidates)
     except LookaheadError:
         raise                            # never degrade a leak into a warning
@@ -1000,7 +1077,7 @@ def simulate_date(date, store, use_weather=True, use_bullpen=True, keep_unpriced
         statuses = gr.fetch_game_statuses(date)
         for c in candidates:
             try:
-                graded = gr.grade_pick(c, statuses)
+                graded = gr.grade_pick(c, statuses, date=date)
             except Exception as e:
                 res.n_ungraded += 1
                 res.ungraded_reasons[f"grader error: {type(e).__name__}"] += 1

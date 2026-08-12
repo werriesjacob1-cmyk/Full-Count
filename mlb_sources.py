@@ -1138,13 +1138,22 @@ def _game_log(player_id, group, season=None):
 
 
 def _empirical_batter_one(job):
-    pid, min_games = job
+    pid, min_games, asof = job
     try:
         splits = _game_log(pid, "hitting")
     except Exception:
         return pid, None
     games = []
     for s in splits:
+        # _game_log hits the raw MLB gameLog endpoint with no date bound at
+        # all (season=year, every game in it) -- the same unguarded shape
+        # _empirical_pitcher_outs_one had before its own asof fix, and this
+        # function has the identical exposure: a backtest calling it
+        # unfiltered would silently read games AFTER the date being
+        # simulated. asof filters on the same real per-split "date" field;
+        # None (the live default) means "no filter," today's behaviour.
+        if asof is not None and (s.get("date") or "9999-99-99") > asof:
+            continue
         st = s.get("stat") or {}
         try:
             pa = int(st.get("plateAppearances") or 0)
@@ -1291,32 +1300,49 @@ def _wilson_lower(hits, n, z=1.96):
     return max(0.0, (centre - margin) / d)
 
 
-def empirical_batter_prop_rates(batter_ids, min_games=20, max_workers=16):
+def empirical_batter_prop_rates(batter_ids, min_games=20, max_workers=16, asof=None):
     """Per-batter empirical rate of clearing each standard prop threshold, from
     real game logs. Keyed by MLBAM id.
 
     Verified live: Bobby Witt Jr. returns 27/96 games with a steal (0.281)
-    against a modelled 0.364 -- the gap this table exists to expose."""
+    against a modelled 0.364 -- the gap this table exists to expose.
+
+    asof: "YYYY-MM-DD" string. When given, only counts games on or before
+    that date -- see _empirical_batter_one's own comment for why this exists
+    (this source has no built-in date guard the way the Statcast-backed
+    empirical functions do). None (default) means "no filter," i.e. today's
+    live behaviour, unchanged. This is the same table generate_picks.py's
+    live scoring blends with the modelled probability for hits/total_bases/
+    home_runs/runs/rbis/stolen_base/singles/doubles/triples/hits_runs_rbis
+    -- until this parameter existed, backtest could never call it at all
+    (any call would have leaked future games), so every backtest run
+    validated a modelled-ONLY stand-in rather than what actually ships live."""
     from concurrent.futures import ThreadPoolExecutor
     ids = [int(b) for b in dict.fromkeys(batter_ids) if b]
     out = {}
     if not ids:
         return out
     with ThreadPoolExecutor(max_workers=max_workers) as ex:
-        for pid, res in ex.map(_empirical_batter_one, [(i, min_games) for i in ids]):
+        for pid, res in ex.map(_empirical_batter_one, [(i, min_games, asof) for i in ids]):
             if res:
                 out[pid] = res
     return _apply_shrinkage(out)
 
 
 def _empirical_pitcher_one(job):
-    pid, min_starts = job
+    pid, min_starts, asof = job
     try:
         splits = _game_log(pid, "pitching")
     except Exception:
         return pid, None
     starts, bfs = [], []
     for s in splits:
+        # Same unguarded raw-gameLog exposure as _empirical_pitcher_outs_one
+        # and _empirical_batter_one -- see either's own comment. asof filters
+        # on the real per-split "date" field; None (live default) is today's
+        # unfiltered behaviour.
+        if asof is not None and (s.get("date") or "9999-99-99") > asof:
+            continue
         st = s.get("stat") or {}
         # Strikeout props are bet on STARTS. A reliever appearance in the same
         # log is a different event and would collapse every rate.
@@ -1354,16 +1380,19 @@ def _empirical_pitcher_one(job):
     return pid, out
 
 
-def empirical_pitcher_k_rates(pitcher_ids, min_starts=5, max_workers=12):
+def empirical_pitcher_k_rates(pitcher_ids, min_starts=5, max_workers=12, asof=None):
     """Per-starter empirical rate of reaching each strikeout threshold, counted
-    over real starts only (relief appearances excluded)."""
+    over real starts only (relief appearances excluded).
+
+    asof: see empirical_batter_prop_rates's own docstring -- same reasoning,
+    same fix. None (default) is today's unfiltered live behaviour."""
     from concurrent.futures import ThreadPoolExecutor
     ids = [int(p) for p in dict.fromkeys(pitcher_ids) if p]
     out = {}
     if not ids:
         return out
     with ThreadPoolExecutor(max_workers=max_workers) as ex:
-        for pid, res in ex.map(_empirical_pitcher_one, [(i, min_starts) for i in ids]):
+        for pid, res in ex.map(_empirical_pitcher_one, [(i, min_starts, asof) for i in ids]):
             if res:
                 out[pid] = res
     # Starters make far fewer starts than batters play games, so the prior
@@ -1383,6 +1412,99 @@ def empirical_pitcher_k_rates(pitcher_ids, min_starts=5, max_workers=12):
     # shrunk pitcher rate clearly beats using no pitcher information at all
     # (strikeouts_6plus: .64682 shipped vs .67210 league-only, held-out log
     # loss). A starter's own strikeout record carries real signal; leave this.
+    return _apply_shrinkage(out, prior_games=6)
+
+
+def _empirical_pitcher_outs_one(job):
+    pid, min_starts, asof = job
+    try:
+        splits = _game_log(pid, "pitching")
+    except Exception:
+        return pid, None
+    outs_per_start = []
+    for s in splits:
+        # _game_log hits the raw MLB gameLog endpoint with no date bound at
+        # all (season=year, every start in it) -- unlike hard_hit_game_rates
+        # and fetch_first_inning_form, which route through fetch_season_statcast
+        # and are therefore already point-in-time safe via PointInTime's own
+        # swapped pyb.statcast + repointed TODAY. This function has no such
+        # guard, so a backtest calling it unfiltered would silently read
+        # starts AFTER the date being simulated -- real look-ahead bias, not
+        # a hypothetical one. asof filters it out by the same real per-split
+        # "date" field the API already returns; None (the live default) means
+        # "no filter," identical to today's behaviour.
+        if asof is not None and (s.get("date") or "9999-99-99") > asof:
+            continue
+        st = s.get("stat") or {}
+        try:
+            gs = int(st.get("gamesStarted") or 0)
+        except (TypeError, ValueError):
+            gs = 0
+        if gs < 1:
+            continue
+        # MLB's own inningsPitched notation ("6.1", "6.2") already resolves
+        # exactly how many outs a partial inning holds -- the API has
+        # already counted double plays, sac flies and every other
+        # multi-out/no-additional-out event correctly server-side. Parsing
+        # ".1"/".2" as tenths would be wrong (baseball innings aren't
+        # decimal), so this reads the fractional digit as its literal
+        # out count, same conversion _empirical_pitcher_one already uses
+        # as a battersFaced fallback just below.
+        ip = str(st.get("inningsPitched") or "")
+        if not ip:
+            continue
+        whole, _, frac = ip.partition(".")
+        try:
+            outs = int(whole) * 3 + int(frac or 0)
+        except (TypeError, ValueError):
+            continue
+        outs_per_start.append(outs)
+    n = len(outs_per_start)
+    if n < min_starts:
+        return pid, None
+    out = {"starts": n, "avg_outs": round(sum(outs_per_start) / n, 2), "rates": {}}
+    # Every 3-out (1-inning) step from 4.0 IP (12 outs) to 7.0 IP (21 outs)
+    # covers the real range FanDuel posts lines in -- a start shorter than 4
+    # IP or longer than 7 is the exception, not the market's usual territory.
+    for t in range(12, 22):
+        hits = sum(1 for o in outs_per_start if o >= t)
+        out["rates"][f"outs_{t}plus"] = {
+            "p": round(hits / n, 4), "n": n, "hit": hits,
+            "p_lo": round(_wilson_lower(hits, n), 4),
+        }
+    return pid, out
+
+
+def empirical_pitcher_outs_rates(pitcher_ids, min_starts=5, max_workers=12, asof=None):
+    """Per-starter empirical rate of recording at least N outs, over real
+    starts only. Prices FanDuel's real "Pitcher Outs Recorded" market
+    (PITCHER_A/B_OUTS_RECORDED_SB -- found live 2026-08-07, never mapped
+    before), mirroring empirical_pitcher_k_rates exactly: same game-log
+    source, same starts-only filter, same shrinkage discipline. Outs
+    recorded is what innings pitched literally counts, so no new modeling
+    concept is introduced here, only a new threshold read off data this
+    pipeline was already fetching for the strikeout market.
+
+    asof: "YYYY-MM-DD" string. When given, only counts starts on or before
+    that date -- see _empirical_pitcher_outs_one's own comment for why this
+    exists (this source has no built-in date guard the way the
+    Statcast-backed empirical functions do). None (default) means "no
+    filter," i.e. today's live behaviour, unchanged."""
+    from concurrent.futures import ThreadPoolExecutor
+    ids = [int(p) for p in dict.fromkeys(pitcher_ids) if p]
+    out = {}
+    if not ids:
+        return out
+    with ThreadPoolExecutor(max_workers=max_workers) as ex:
+        for pid, res in ex.map(_empirical_pitcher_outs_one, [(i, min_starts, asof) for i in ids]):
+            if res:
+                out[pid] = res
+    # Same prior_games=6 as empirical_pitcher_k_rates -- no separate fit was
+    # done for this market yet (it did not exist as a scored candidate
+    # until now), but it is the same "how many real starts is one pitcher's
+    # own record worth" question over the same population, so borrowing the
+    # existing measured constant is the honest default until this market
+    # has enough graded history of its own to fit one independently.
     return _apply_shrinkage(out, prior_games=6)
 
 

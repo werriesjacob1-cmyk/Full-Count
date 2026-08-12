@@ -282,6 +282,191 @@ def fetch_pitcher_strikeouts(max_workers=8):
     return out
 
 
+_OUTS_RUNNER_RE = re.compile(r"^(.*?)\s+(Over|Under)\s+([\d.]+)$")
+
+
+def _parse_outs_runner(name):
+    """"Keider Montero Over 15.5" -> ("Keider Montero", "OVER", 15.5).
+
+    A DIFFERENT shape than _parse_two_sided expects, verified live before
+    writing this rather than assumed: this market's runner names embed the
+    side mid-string with the line as a trailing number, not a suffix side
+    with the line in a separate `handicap` field (handicap is 0/unused
+    here). Reusing _parse_two_sided against this market would have matched
+    zero runners silently -- name.strip().endswith("Over"/"Under") is
+    false for "...Over 15.5", so every runner would have been skipped
+    without an error."""
+    m = _OUTS_RUNNER_RE.match((name or "").strip())
+    if not m:
+        return None
+    return m.group(1).strip(), m.group(2).upper(), float(m.group(3))
+
+
+def fetch_pitcher_outs():
+    """Two-sided "Pitcher Outs Recorded" markets for tonight's starters --
+    market type suffix _OUTS_RECORDED_SB (PITCHER_A/B/C/D/E/F_..., same
+    per-pitcher-slot naming fetch_pitcher_strikeouts already reuses).
+    Found live 2026-08-07 under the same tabs strikeouts already uses
+    (pitcher-props, popular) -- never mapped before because it never had a
+    scorer producing a candidate for it to price, not a tab problem like
+    nrfi_combined's.
+
+    Returns {normalized_name: {"line": float, "over": int, "under": int,
+                               "needs": int, "true_over": float,
+                               "true_under": float, "hold": float}}."""
+    import prop_probability as pp
+    out = {}
+    for event_id, name, _start in list_games():
+        for tab in ("pitcher-props", "popular"):
+            try:
+                d = _get(f"event-page?eventId={event_id}&tab={tab}&_ak={AK}")
+            except Exception:
+                continue
+            for m in (d.get("attachments", {}).get("markets") or {}).values():
+                if not (m.get("marketType") or "").endswith("_OUTS_RECORDED_SB"):
+                    continue
+                if m.get("inPlay"):
+                    continue
+                player = line = None
+                sides = {}
+                for rn in (m.get("runners") or []):
+                    parsed = _parse_outs_runner(rn.get("runnerName"))
+                    if not parsed:
+                        continue
+                    p, side, ln = parsed
+                    odds = ((rn.get("winRunnerOdds") or {})
+                            .get("americanDisplayOdds", {}) or {}).get("americanOddsInt")
+                    if odds is None:
+                        continue
+                    player, line = p, ln
+                    sides[side] = odds
+                if not player or line is None or "OVER" not in sides or "UNDER" not in sides:
+                    continue
+                over, under = sides["OVER"], sides["UNDER"]
+                t_over, t_under, hold = pp.devig_two_sided(over, under)
+                out[normalize_name(player)] = {
+                    "player": player, "line": line,
+                    "needs": int(line) + 1 if float(line).is_integer() else int(line + 0.5),
+                    "over": over, "under": under,
+                    "true_over": t_over, "true_under": t_under, "hold": hold,
+                    "game": name,
+                }
+    return out
+
+
+_COMBINED_K_RE = re.compile(r"^(.+?)\s*&\s*(.+?)\s+(\d+)\+\s*Combined Strikeouts$", re.I)
+
+
+def fetch_combined_pitcher_strikeouts():
+    """"Starting Pitcher Combined Alt Strikeouts" -- the combined strikeout
+    total of BOTH starters, found live under the same pitcher-props/popular
+    tabs fetch_pitcher_outs already scans. Confirmed real and unmapped:
+    a full pull of a real slate's pitcher-props tab showed this market
+    sitting right next to PITCHER_*_OUTS_RECORDED_SB with nothing reading
+    it. Unlike Pitcher Outs Recorded, this is a ONE-SIDED LADDER (12+, 13+,
+    14+, ... Combined Strikeouts, escalating odds, no paired Under side) --
+    the same shape as the batter hit/TB ladders in MARKET_MAP, not the
+    single-line two-sided shape fetch_pitcher_outs parses. So each rung's
+    implied probability is read directly off its own price
+    (prop_probability.implied_probability), same as every other one-sided
+    market this file prices -- there is no complementary side to devig
+    against for a single "X+" runner.
+
+    Keyed by `matchup` (game_meta's own "Away @ Home", no pitcher names) --
+    a two-pitcher joint market, the same reason fetch_first_inning_totals is
+    keyed by game rather than by either starter alone, and the same
+    parenthetical-stripping that function's own docstring explains: raw
+    list_games() names embed the probable starters
+    ("Team (P Name) @ Team (P Name)"), which never matches generate_picks.py's
+    plain matchup field on its own.
+
+    Returns {matchup: {"pitchers": (name_a, name_b),
+                        "rungs": {threshold: american_odds}}}."""
+    out = {}
+    for event_id, name, _start in list_games():
+        matchup = re.sub(r"\s*\([^)]*\)", "", name).strip()
+        for tab in ("pitcher-props", "popular"):
+            try:
+                d = _get(f"event-page?eventId={event_id}&tab={tab}&_ak={AK}")
+            except Exception:
+                continue
+            for m in (d.get("attachments", {}).get("markets") or {}).values():
+                if (m.get("marketType") or "") != "STARTING_PITCHER_COMBINED_ALT_STRIKEOUTS":
+                    continue
+                if m.get("inPlay"):
+                    continue
+                pitchers = None
+                rungs = {}
+                for rn in (m.get("runners") or []):
+                    match = _COMBINED_K_RE.match((rn.get("runnerName") or "").strip())
+                    if not match:
+                        continue
+                    a, b, threshold = match.group(1).strip(), match.group(2).strip(), int(match.group(3))
+                    odds = ((rn.get("winRunnerOdds") or {})
+                            .get("americanDisplayOdds", {}) or {}).get("americanOddsInt")
+                    if odds is None:
+                        continue
+                    pitchers = (a, b)
+                    rungs[threshold] = odds
+                if pitchers and rungs:
+                    out[matchup] = {"pitchers": pitchers, "rungs": rungs}
+    return out
+
+
+def fetch_first_inning_totals():
+    """The REAL both-teams NRFI/YRFI price -- market type
+    ***OVER/UNDER_0.5_RUNS_1ST_INNINGS, under the "innings" tab (never
+    "batter-props"/"popular"/"pitcher-props", which is the entire reason
+    this was never fetched before: no code here had ever requested that tab).
+
+    A simple two-way Over/Under 0.5 runs, BOTH teams combined -- this is
+    what generate_picks.py's _build_combined_nrfi computes a model
+    probability for. Verified live against FanDuel's raw API (not just app
+    screenshots): the runner names are literally "Over"/"Under" with no
+    player attached (handicap is fixed at 0, the 0.5 line lives in the
+    market name, not the handicap field) -- so unlike every other market
+    here, this one is keyed by GAME NAME rather than player.
+
+    KEY FORMAT. list_games() returns "Detroit Tigers (K Montero) @ San
+    Francisco Giants (J Brubaker)" -- FanDuel embeds the probable starters
+    right in the game name. generate_picks.py's own `matchup` field never
+    carries pitcher names ("Detroit Tigers @ San Francisco Giants", built by
+    mlb_daily.py as f"{away} @ {home}"), so a raw dict keyed on FanDuel's
+    name would never match anything -- caught live before it could ship as
+    a second silent zero. Stripped here so the key matches `matchup` exactly.
+
+    Returns {matchup: {"over": int, "under": int, "true_over": float,
+                       "true_under": float, "hold": float}}."""
+    import prop_probability as pp
+    out = {}
+    for event_id, name, _start in list_games():
+        matchup = re.sub(r"\s*\([^)]*\)", "", name).strip()
+        try:
+            d = _get(f"event-page?eventId={event_id}&tab=innings&_ak={AK}")
+        except Exception:
+            continue
+        for m in (d.get("attachments", {}).get("markets") or {}).values():
+            if m.get("marketType") != "***OVER/UNDER_0.5_RUNS_1ST_INNINGS":
+                continue
+            if m.get("inPlay"):
+                continue
+            over = under = None
+            for rn in (m.get("runners") or []):
+                side = (rn.get("runnerName") or "").strip().upper()
+                odds = ((rn.get("winRunnerOdds") or {})
+                        .get("americanDisplayOdds", {}) or {}).get("americanOddsInt")
+                if odds is None:
+                    continue
+                if side == "OVER": over = odds
+                elif side == "UNDER": under = odds
+            if over is None or under is None:
+                continue
+            t_over, t_under, hold = pp.devig_two_sided(over, under)
+            out[matchup] = {"over": over, "under": under,
+                           "true_over": t_over, "true_under": t_under, "hold": hold}
+    return out
+
+
 def _event_props(event_id):
     rows = []
     for tab in ("batter-props", "popular"):
@@ -338,7 +523,7 @@ def fetch_prop_prices(max_workers=8):
 STAT_ALIASES = {"stolen_base": "stolen_bases"}
 
 
-def attach_market_prices(candidates, prices=None, k_prices=None):
+def attach_market_prices(candidates, prices=None, k_prices=None, fi_prices=None, po_prices=None):
     """Attach the real posted price to every candidate that has one.
 
     Sets `market_odds`, `market_implied`, and `market_edge` (model probability
@@ -346,11 +531,14 @@ def attach_market_prices(candidates, prices=None, k_prices=None):
     guessing when the prop is not offered -- an unpriced prop is a gap in
     coverage, not a bet at some assumed number.
 
-    Consults TWO price feeds, not one. `prices` (fetch_prop_prices) is the
+    Consults THREE price feeds. `prices` (fetch_prop_prices) is the
     one-sided batter feed; pitcher strikeouts are a separate, two-sided
     market (fetch_pitcher_strikeouts) that this function used to never even
     request, which is the entire reason 27 strikeout candidates priced at
-    zero -- not a naming mismatch like stolen_base, a missing feed."""
+    zero -- not a naming mismatch like stolen_base, a missing feed.
+    fetch_first_inning_totals is the real combined NRFI/YRFI market, keyed
+    by game rather than player -- same "never requested the right tab"
+    story as strikeouts, found the same way."""
     import prop_probability as pp
     if prices is None:
         try:
@@ -362,11 +550,59 @@ def attach_market_prices(candidates, prices=None, k_prices=None):
             k_prices = fetch_pitcher_strikeouts()
         except Exception:
             k_prices = {}
+    if fi_prices is None:
+        try:
+            fi_prices = fetch_first_inning_totals()
+        except Exception:
+            fi_prices = {}
+    if po_prices is None:
+        try:
+            po_prices = fetch_pitcher_outs()
+        except Exception:
+            po_prices = {}
     matched = 0
     for c in candidates:
         proj = c.get("projection") or {}
         stat = STAT_ALIASES.get(proj.get("stat"), proj.get("stat"))
         needs = proj.get("needs")
+
+        if stat == "pitcher_outs":
+            # Two-sided, same shape as strikeouts: FanDuel posts one line
+            # per starter, so a price only exists when our recommended
+            # threshold happens to be the one they offered.
+            po = po_prices.get(normalize_name(c.get("name")))
+            if po is None or needs is None or po.get("needs") != needs:
+                continue
+            c["market_odds"] = po["over"]
+            c["market_implied"] = round(po["true_over"], 4)
+            c["market_hold"] = round(po["hold"], 4)
+            p = c.get("hit_probability")
+            if p is not None:
+                c["market_edge"] = round(p - c["market_implied"], 4)
+                c["price_clears"] = pp.price_is_acceptable(po["over"], p)
+            matched += 1
+            continue
+
+        if stat == "nrfi_combined":
+            # Game-level market, keyed by matchup ("Away @ Home") rather than
+            # player name -- the runners are literally "Over"/"Under" with no
+            # player attached. lean picks which side's price/implied prob we
+            # report: YRFI = Over 0.5 (at least one team scores), NRFI = Under.
+            fi = fi_prices.get(c.get("matchup"))
+            lean = c.get("lean")
+            if fi is None or lean not in ("YRFI", "NRFI"):
+                continue
+            odds = fi["over"] if lean == "YRFI" else fi["under"]
+            implied = fi["true_over"] if lean == "YRFI" else fi["true_under"]
+            c["market_odds"] = odds
+            c["market_implied"] = round(implied, 4)
+            c["market_hold"] = round(fi["hold"], 4)
+            p = c.get("hit_probability")
+            if p is not None:
+                c["market_edge"] = round(p - c["market_implied"], 4)
+                c["price_clears"] = pp.price_is_acceptable(odds, p)
+            matched += 1
+            continue
 
         if stat == "strikeouts":
             # Two-sided market: FanDuel posts exactly one line per starter,

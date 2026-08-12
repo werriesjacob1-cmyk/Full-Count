@@ -44,7 +44,7 @@
         {
           "prop": "Over 0.5 Singles",
           "type": "batter",
-          "score": 59.3,
+          "score": 58.9,
           "notable_signals": 1,
           "matchup": "Toronto Blue Jays @ Philadelphia Phillies",
           "game_pk": 823428,
@@ -54,7 +54,7 @@
           "signals": {
             "platoon": 80.0,
             "sp_era_weak": 22.5714,
-            "pitch_exploit": 20.0,
+            "pitch_exploit": 19.4286,
             "l7_avg_ev": 67.6875,
             "l7_barrel_pct": 92.8571,
             "park_hr_index": 59.8,
@@ -74,14 +74,111 @@
             "ump_k_pct": -0.024,
             "ump_bb_pct": -0.336
           },
-          "hit_probability": 0.5804,
-          "raw_hit_probability": 0.6242,
-          "lift": 0.1782,
+          "hit_probability": 0.58,
+          "raw_hit_probability": 0.6237,
+          "lift": 0.1778,
           "reliability": "A",
           "sample_n": 108,
           "projection": {
             "stat": "singles",
             "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 0,
+          "notable_signals": 0,
+          "matchup": "Toronto Blue Jays @ Philadelphia Phillies",
+          "game_pk": 823428,
+          "team": "Philadelphia Phillies",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "hard_hit_rate": 0.0427
+          },
+          "hit_probability": 0.1488,
+          "raw_hit_probability": 0.0427,
+          "lift": -0.079,
+          "reliability": "A",
+          "sample_n": 108,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-08-11",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Singles",
+          "type": "batter",
+          "score": 38.4,
+          "notable_signals": 3,
+          "matchup": "Philadelphia Phillies @ St. Louis Cardinals",
+          "game_pk": 823019,
+          "team": "Philadelphia Phillies",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 32.2857,
+            "pitch_exploit": 19.4286,
+            "l7_avg_ev": 22.6613,
+            "l7_barrel_pct": 8.5714,
+            "park_hr_index": 78.5,
+            "season_barrel_pct": 0.0,
+            "lineup_slot": 62.5,
+            "bullpen_fatigue": 69.4444,
+            "platoon_barrel_pct": -4.64,
+            "platoon_xwoba": 0.42,
+            "park_hand_index": -3.77,
+            "opp_catcher_framing": -1.08,
+            "days_rest": 0.0,
+            "pull_park_synergy": -0.3167,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": -2.24,
+            "vs_rp_ops": -1.032,
+            "ump_k_pct": 0.108,
+            "ump_bb_pct": 0.192
+          },
+          "hit_probability": 0.5703,
+          "raw_hit_probability": 0.6125,
+          "lift": 0.1678,
+          "reliability": "A",
+          "sample_n": 112,
+          "projection": {
+            "stat": "singles",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 0.0,
+          "notable_signals": 0,
+          "matchup": "Philadelphia Phillies @ St. Louis Cardinals",
+          "game_pk": 823019,
+          "team": "Philadelphia Phillies",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "hard_hit_rate": 0.0414
+          },
+          "hit_probability": 0.1482,
+          "raw_hit_probability": 0.0414,
+          "lift": -0.0791,
+          "reliability": "A",
+          "sample_n": 112,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
             "needs": 1
           }
         }
