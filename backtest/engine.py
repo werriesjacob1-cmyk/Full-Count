@@ -908,6 +908,26 @@ def build_inputs(date, store, use_weather=True, use_bullpen=True, verbose=True):
     # after the date being simulated, the same exposure pitcher_outs above
     # already had to guard against.
     rest = msrc.rest_and_usage(game_meta, asof=cutoff)
+    # team_bat/team_field: CHECKED, not fixable the way pull/park_hand/
+    # platoon_qoc/framing were, despite looking the same shape at first.
+    # mlb_sources.fetch_team_stats now supports stats=byDateRange (verified
+    # live 2026-08-12: real, different hitting numbers for a partial window
+    # vs season-to-date -- same mechanism fetch_player_stats already uses).
+    # But the ONE thing actually consumed downstream, score_stolen_base's
+    # opp_cs_pct (via extras["cs_pct_by_team"], derived in generate_picks.py
+    # from team_field's "CS%" column), can't be reconstructed this way: a
+    # live byDateRange fielding pull is MISSING caughtStealingPercentage/
+    # stolenBases/passedBall entirely (confirmed live -- the season query's
+    # field set has 21 keys, the byDateRange query for the identical teams
+    # has 13, and every catching-specific stat is among the 8 missing ones).
+    # This is not a partial/degraded result to work around; the API simply
+    # does not expose these fields for a date-bounded fielding query. Left
+    # out of extras below for that reason -- adding team_bat/team_field
+    # without cs_pct_by_team would supply data nothing reads (team_bat's own
+    # generate_picks.py derivation, extras["team_k_pct"], is itself dead --
+    # never read anywhere either) while implying this gap is closed when it
+    # isn't. Same permanent-exclusion bucket as bvp/sp_rp/ump_env, for a
+    # different underlying reason (missing fields, not a live-only source).
     extras = {
         "hard_hit": hard_hit, "pitcher_outs": pitcher_outs,
         "pull": pull, "park_hand": park_hand, "platoon_qoc": platoon_qoc,

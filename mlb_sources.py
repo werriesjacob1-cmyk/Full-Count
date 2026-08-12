@@ -41,7 +41,7 @@ UA = {"User-Agent": "Mozilla/5.0"}
 #  MLB STATS API — TEAM AGGREGATES  (replaces FanGraphs team pages)
 # ══════════════════════════════════════════════════════════════════════════
 
-def fetch_team_stats(group):
+def fetch_team_stats(group, start_date=None, end_date=None):
     """Team-level season aggregates for 'hitting', 'pitching', or 'fielding'.
 
     Verified live against all three groups: returns all 30 teams every time,
@@ -54,11 +54,25 @@ def fetch_team_stats(group):
     This is the replacement for FanGraphs' team-level pages, which fail
     independently of its individual leaderboards — verified across a full
     night of real runs where every team page was empty while individual
-    pages succeeded."""
+    pages succeeded.
+
+    POINT-IN-TIME MODE, same pattern as fetch_player_stats: passing
+    start_date/end_date switches stats=season (always "through today") to
+    stats=byDateRange, which /teams/stats honors too -- verified live
+    (2026-08-12): byDateRange through 2026-07-01 returned the Dodgers at
+    689 PA / 3371 strikeOuts-denominator-relevant PA vs 4591 for the full
+    season-to-date pull, a genuinely different number, not a silent
+    no-op. This is what lets backtest/engine.py call this point-in-time
+    safely; live callers pass neither and get the previous behaviour."""
+    params = {"season": m.YEAR, "sportId": 1, "group": group}
+    if start_date and end_date:
+        params.update({"stats": "byDateRange", "startDate": start_date,
+                       "endDate": end_date, "gameType": "R"})
+    else:
+        params["stats"] = "season"
     try:
         r = m.retry_get(f"{STATS_API}/teams/stats",
-                        params={"season": m.YEAR, "sportId": 1, "group": group, "stats": "season"},
-                        headers=UA, timeout=25, retries=2)
+                        params=params, headers=UA, timeout=25, retries=2)
         r.raise_for_status()
         splits = r.json().get("stats", [{}])[0].get("splits", [])
     except Exception as e:
@@ -79,10 +93,13 @@ def _pct(num, den, digits=1):
         return None
 
 
-def team_batting_table():
+def team_batting_table(start_date=None, end_date=None):
     """Team batting with derived K%/BB% — the specific fields downstream
-    scoring wants and that the raw API returns only as raw counts."""
-    rows = fetch_team_stats("hitting")
+    scoring wants and that the raw API returns only as raw counts.
+
+    start_date/end_date: see fetch_team_stats's own docstring -- passed
+    straight through for point-in-time (backtest) callers."""
+    rows = fetch_team_stats("hitting", start_date=start_date, end_date=end_date)
     out = []
     for r in rows:
         pa = r.get("plateAppearances")
@@ -111,8 +128,10 @@ def team_pitching_table():
     return sorted(out, key=lambda x: (x["ERA"] is None, float(x["ERA"] or 99)))
 
 
-def team_fielding_table():
-    rows = fetch_team_stats("fielding")
+def team_fielding_table(start_date=None, end_date=None):
+    """start_date/end_date: see fetch_team_stats's own docstring -- passed
+    straight through for point-in-time (backtest) callers."""
+    rows = fetch_team_stats("fielding", start_date=start_date, end_date=end_date)
     out = []
     for r in rows:
         out.append({
