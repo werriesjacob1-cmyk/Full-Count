@@ -13,109 +13,55 @@ market already prices that in. Every pick commits to a real projected number,
 not just a category label. `grade_results.py` then closes the loop: each
 morning it fetches the actual box scores for yesterday's picks and grades
 them, building a running accuracy record in `results/history.json` — so the
-system's performance is measured, not assumed. All three land their output in
-`output/`/`results/`, committed back to this repo automatically. GitHub is
-the interpreter here, not an external model — the scoring logic is plain,
-readable Python, not a prompt.
+system's performance is measured, not assumed. Real FanDuel prices
+(`odds_fanduel.py`) drive a value screen (`value_board.py`) that reports only
+props where this model's read beats the real price by more than its own
+uncertainty, a parlay builder (`parlay_builder.py`) that turns a plain-text
+request into a real, correlation-checked multi-leg parlay, and a forward test
+(`grade_value.py`) that settles the value screen against real captured
+closing prices rather than the model's own self-consistency check. Everything
+lands its output in `output/`/`results/`/`data/`, committed back to this repo
+automatically. GitHub is the interpreter here, not an external model — the
+scoring logic is plain, readable Python, not a prompt.
 
 ---
 
-## ▶️ PICK UP HERE — session paused 2026-08-05 ~17:00 UTC
+## Current status
 
-Working tree clean, `main` in sync with remote, everything below is live on
-`main`. When resuming, **start at "Do this first."**
+**UPDATED, 2026-08-12.** This section used to be a "pick up here" handoff
+banner dated 2026-08-05, with a "do this first" list (diagnose the
+schedule trigger, add grading catch-up for missed days) and a longer
+priority-ordered backlog (implied team totals, a real expected-PA model,
+expected pitcher workload, and eight more items). Left in place across
+eight days and dozens of merged fixes, it stopped being a handoff and
+became actively misleading: the schedule question and the grading
+catch-up were both resolved, and implied team totals, expected PA, and
+expected pitcher workload are all now live inputs to `score_batter`/
+`score_pitcher` (see "How picks are generated" below) — none of that
+was reflected here. Rather than leave a stale to-do list at the top of
+the file for the next reader to trust by accident, it's removed. For
+what actually happened between 2026-08-05 and now, `git log` and this
+project's own accumulated fixes are the real record; for what's still
+open, see "What's next" further down.
 
-### What landed in the final push
+Standing principles that outlived that specific handoff and still apply:
 
-- **19 bug fixes merged** from two agent branches. The recurring theme: raw
-  `pyb.statcast()` rows are pitch-level and their `player_name` column is the
-  **pitcher, not the batter**. That one misunderstanding had corrupted Sections
-  13, 14, 15, 16, 43, 44, 46, 47 and the bat-tracking leaderboard — real batter
-  stats published under pitcher names, silently, every run. **If you touch any
-  code that groups raw Statcast output, group by the `batter`/`pitcher` ID
-  column, never `player_name`. Assume more instances exist.**
-- **10 previously-empty sections now produce real data** (10, 49, 50, 51, 52,
-  75, 77, 81, 83, 88) via `mlb_sources.py` wrappers. All verified live. Adds
-  ~60s runtime. Original sources stay primary; fallbacks fire only on empty.
-- **4 grading fixes.** One was live-critical: total-bases picks were graded
-  against a sliding `projection − 0.5` threshold while the displayed prop line
-  is hardcoded ("Over 1.5 TB"). A real double — which *wins* that bet — would
-  have been recorded as a **miss**.
-- **Accuracy record corrected**: 2026-08-04 now grades 10/10 at **5 hits / 5
-  misses (50%)**, up from 2/4 with 4 permanently ungraded. The old 33% was a
-  grading bug, not performance. Still far too small a sample to conclude
-  anything.
-- **Backup cron added** at 15:30 UTC (see below).
-
-### Do this first
-
-1. **Check whether the schedule fired.** As of the pause, **13/13 runs were
-   manual — the `schedule` trigger had never once fired**, despite the workflow
-   being `state: active` with a passed window and nothing holding the
-   concurrency group. A backup window (15:30 UTC) was added as a hedge, not a
-   diagnosis. Run: list workflow runs and check for any with `event: schedule`.
-   - If some fired → it was GitHub load-shedding; consider keeping both windows.
-   - If still zero → this is the top-priority bug. **Nothing else matters as
-     much**, because the accuracy record only compounds if this runs unattended.
-2. **Add grading catch-up for missed days.** `grade_results.py` only ever
-   grades *yesterday*. Any missed run permanently loses that day's accuracy
-   data. Make it grade any prior date that has `output/picks_*.json` but no
-   `results/grades_*.json`. Given the cron already failed once, this is the
-   real safeguard and is probably 20 minutes of work.
-
-### Then, in priority order
-
-3. **Implied team totals** — highest-value analytics item and nearly free: the
-   data is already downloaded every run and thrown away.
-   `fetch_public_betting_bias()` in `generate_picks.py` parses only the
-   moneyline, but the same response carries `total` (game total) and
-   `core_bet_type_6_team_score` (per-team implied runs) under
-   `g['markets']['15']['event']`. Verified live. This is the market's own
-   run-environment forecast — it prices in park, weather, pitcher, and bullpen
-   simultaneously. Wire into the ENVIRONMENT component for batters.
-4. **Real expected-PA model** — `ORDER_PA` is static (season PA ÷ 162). Actual
-   PAs depend on lineup slot × run environment (use #3). Leadoff on a 5.5-run
-   team ≈ 4.6 PA; 9-hole on a 3.5-run team ≈ 3.7. That ~25% swing scales every
-   batter prop linearly. Derive coefficients from real box scores, don't invent.
-5. **Expected pitcher workload** — `project_pitcher_ks` uses a flat
-   batters-faced constant (22). A 5.1-IP pitcher cannot reach 7 Ks regardless
-   of K rate. Gates every strikeout prop.
-6. Handedness-split park factors · 7. Platoon-specific xwOBA · 8. Per-batter
-   vs SP/RP (verified available and large: Alvarez .359/1.183 vs starters vs
-   .271/.902 vs relievers — a 281-point OPS gap, running *opposite* to
-   conventional wisdom) · 9. Quantified umpire effect · 10. Rest/usage patterns
-   · 11. Real steal-opportunity model (must gate on OBP — elite speed with a
-   .280 OBP is far fewer chances than current scoring assumes) · 12. Wire
-   BABIP/xBA regression indicators into scoring (computed in the report today,
-   but never reaching the scoring engine)
-
-Also queued: a transparent pitch-quality model to replace proprietary Stuff+
-(all its Statcast inputs are already available), and MLB's **602 situational
-split codes**, of which this pipeline uses roughly six — including `fip`
-(official first-inning/NRFI data), real pitch-count splits (better than the
-current at-bat-number proxy for times-through-order), and `vgo`/`vao` (batter
-vs ground-ball/fly-ball pitcher types).
-
-### Constraints that must survive this handoff
-
-- **Verify against live data before trusting anything.** Nearly every real bug
-  this session was invisible from reading the code and only surfaced by running
-  it and checking real values. A theory that hasn't been run doesn't count.
-- **Do not tune coefficients against the results.** The record holds one day
-  and ten graded picks. There is no signal in that sample, only noise — any
-  change that "improves" it is overfitting. Ground constants in measured
-  baselines or explicit reasoning.
-- **Don't ship a plausible-looking number that isn't real.** Where a metric is
-  genuinely unavailable (Stuff+, DRS/UZR), the sections say so plainly and name
-  what they're showing instead. Keep that honesty.
-
-### Known-unmerged
-
-`worktree-agent-ae81d329067af391a` has one final commit (`c91471b`) explicitly
-marked **WIP (UNVERIFIED)** — a bat-tracking fix whose agent was cut off
-mid-verification. Its reasoning looks correct and matches the confirmed
-pitcher/batter pattern above, but it was deliberately left unmerged. Verify it
-live, then merge or discard.
+- **Verify against live data before trusting anything.** The large majority
+  of real bugs found in this project were invisible from reading the code
+  and only surfaced by running it and checking real values. A theory that
+  hasn't been run doesn't count.
+- **Do not tune coefficients against thin results.** A record with only a
+  handful of graded days has no signal, only noise — any change that
+  "improves" a small sample is overfitting. Ground constants in measured
+  baselines or explicit reasoning, and wait for a real backtest before
+  trusting a number.
+- **Don't ship a plausible-looking number that isn't real.** Where a metric
+  is genuinely unavailable, say so plainly and name what's shown instead,
+  rather than presenting a guess as data.
+- **Absent is not zero.** A signal or a stat that could not be determined
+  must stay absent, not default to 0 — the two mean different things, and
+  conflating them has been the single most repeated real bug in this
+  project's history.
 
 ---
 
@@ -147,17 +93,44 @@ Jacob to act on manually.
 
 ## Repo layout
 
+**UPDATED, 2026-08-12** — this tree covered the pipeline as of the original
+handoff and had not been touched since; the project grew a live-pricing
+layer, a parlay builder, and a real backtest harness in between, none of
+which appeared here.
+
 ```
-mlb-daily-pipeline/
-├── .github/workflows/mlb-daily.yml   # schedule + manual trigger
+PROJECT-GRIDIRON/
+├── .github/workflows/
+│   ├── mlb-daily.yml                 # schedule + manual trigger, commits picks/board/results
+│   ├── odds-snapshot.yml             # scheduled prop_snapshot.py runs (closing-price capture)
+│   └── test.yml                      # push/PR-triggered: runs every test_*.py, glob-based
 ├── mlb_daily.py                      # data pipeline (single file, ~88 sections)
-├── generate_picks.py                 # deterministic scoring -> top 10 picks, no LLM
-├── grade_results.py                  # grades yesterday's picks against real box scores
+├── mlb_sources.py                    # shared empirical-rate/season-data fetchers
+├── generate_picks.py                 # deterministic scoring -> top 10 picks + full board, no LLM
+├── odds_fanduel.py                   # real FanDuel prices, free, from its public web-app API
+├── value_board.py                    # the value screen -- good read + fair price, both required
+├── parlay_builder.py                 # request-to-parlay engine, correlation-checked
+├── correlation.py                    # structural relationship classifier for parlay legs
+├── prop_probability.py               # odds math: implied prob, de-vigging, Kelly, calibration
+├── prop_snapshot.py                  # scheduled closing-price capture (data/props/)
+├── grade_results.py                  # grades yesterday's picks against real box scores (self-consistency)
+├── grade_value.py                    # settles the value screen against real captured prices (forward test)
+├── check_scratches.py                # confirmed-lineup scratch detection
+├── render_board.py / render_full_board.py / render_parlay.py / final_card.py
+│                                      # HTML/markdown board renderers + manual price-entry tool
+├── backtest/
+│   ├── engine.py                     # point-in-time replay over real historical dates
+│   ├── signals.py                    # per-signal separation power (AUC) + hand-picked-vs-fitted comparison
+│   ├── calibration.py                # probability calibrators, fit on backtest output
+│   └── SCHEMA.md                     # the one data contract all three of the above share
+├── measure_signals.py                # grades every persisted signal against real outcomes
 ├── requirements.txt                  # pinned dependency versions
 ├── README.md
-├── output/                           # generated .txt / .md / .json land here
-├── results/                          # grades_YYYY-MM-DD.json + running history.json
-└── data/players/                     # {player_id}.json — longitudinal per-player snapshot history
+├── output/                           # generated .txt / .md / .json / .html land here
+├── results/                          # grades_*.json, history.json, value_screen_record.json, backtest summaries
+├── data/players/                     # {player_id}.json — longitudinal per-player snapshot history
+├── data/props/                       # props_YYYY-MM-DD.json — captured closing prices
+└── test_*.py                         # one file per module under test; run by test.yml automatically
 ```
 
 ## Run log
@@ -322,19 +295,68 @@ sportsbook line — see "Results tracking" below.
 
 ### Prop universe
 
-Six prop types, each with its own signal set — not just "whoever has the
-highest average":
-- **Total bases / hits / home run** — the matchup/form/skill formula above
+**UPDATED — this section described six prop types and was stale by the time
+it was checked during a later audit pass** (2026-08-12): it's grown to
+fifteen, and Walks was built, shipped, and then deliberately *retired* (see
+below) in between — none of that history was reflected here. What's live
+now:
+
+**One formula, nine batter markets.** `score_batter()` computes a single
+composite score (the matchup/form/skill formula above) per batter, per game.
+`generate_picks.py`'s `_batter_options()` then re-prices that same
+underlying read against every real FanDuel threshold across nine families —
+**hits, total bases, home runs, runs, RBIs, hits+runs+RBIs, singles,
+doubles, triples** — and recommends whichever threshold is most likely to
+cash. Hits/total bases/home runs blend an empirical rate (this player's own
+real game logs) with a modelled per-plate-appearance distribution; runs and
+RBIs are empirical-only (they depend on teammates reaching base and driving
+him in, which no per-batter distribution can capture) but are real,
+priced markets and were being computed and thrown away for months before
+that was noticed and fixed.
+
+**Its own formula:**
 - **Stolen base** — dominated by sprint speed (a real threat needs to clear a
   minimum speed threshold before matchup context matters at all), then the
-  opposing catcher's pop time to 2B and season SB rate as secondary signals
-- **Walks** — batter BB% vs. opposing pitcher BB%, plus HP umpire accuracy
-  (a less accurate/looser zone tends to mean more walks) — degrades to "no
-  pick" when FanGraphs is blocked, since neither BB% input is available from
-  the Statcast fallback
-- **Strikeouts** (pitcher) — as described above
-- **NRFI/YRFI lean** — real per-start first-inning results (not a season
-  aggregate) for tonight's starters
+  opposing catcher's pop time to 2B and on-base ability as secondary signals
+- **Strikeouts** (pitcher) — as described above, blended with FanGraphs
+  CSW%/Stuff%/K% where available
+- **Pitcher Outs Recorded** — the starter's own shrunk workload rate (outs
+  recorded per start, from real innings-pitched data), anchored to
+  FanDuel's real posted line when one exists rather than self-selecting an
+  easier threshold — see `score_pitcher_outs`'s own docstring for the real
+  mis-selection bug this replaced.
+- **Combined Starter Strikeouts** — both tonight's starters' strikeout
+  totals added together, modelled as two independent binomials (a
+  documented approximation — see `prop_probability.combined_strikeouts_
+  distribution`) and priced only when FanDuel has actually posted the
+  ladder; there is no model-only fallback for this one, since a made-up
+  combined line would have no real market to grade against.
+- **Laser (105+/110+ MPH exit velocity)** — a batter's own shrunk rate of
+  clearing either real Statcast threshold in a game; `score_laser` picks
+  whichever of the two the batter clears more often, by lift over league
+  rather than raw probability (105+ is structurally always higher than
+  110+, so raw probability would just always pick 105+ and hide a genuine
+  110+ standout).
+- **NRFI/YRFI (both teams)** — the REAL, books-comparable both-teams-
+  scoreless market, built from both starters' own shrunk first-inning reads
+  combined (see `_build_combined_nrfi`'s own docstring for why the honest
+  expectation here is a number close to a coinflip for almost every game —
+  that's not a bug, it's what a season of measurement says a starter's own
+  first-inning record is worth).
+
+**Retired.** Walks (batter BB% vs. opposing pitcher BB% plus HP umpire zone
+accuracy) and a standalone first-inning-per-starter market both shipped,
+then were deliberately removed from the board: no "Player to Draw a Walk"
+market exists on FanDuel to bet the former against, and the latter is a
+one-sided read (this starter's own history) rather than the real,
+books-comparable NRFI/YRFI market above, which replaced it. `score_walk` is
+never called by `build_candidates()` any more; `score_first_inning` still
+runs (its output feeds the real combined NRFI/YRFI market) but no longer
+surfaces as its own board entry.
+
+Every one of these families, plus the real FanDuel price wherever one
+exists, is documented in `odds_fanduel.MARKET_MAP` and cross-checked for
+drift by `test_lookup_table_consistency.py` — see "Live prices" below.
 
 ### Ranking: chance of cashing, not score
 
@@ -456,6 +478,46 @@ Every pick still says to check the current line before betting — a captured
 price can move between capture and bet — but "no live odds are fetched" is
 no longer an accurate description of this project.
 
+## Parlays: request-to-parlay, correlation-checked
+
+`parlay_builder.py` turns a request ("2 home runs, 1 double, 1 triple, $5 to
+$1,000, riskier") into a real parlay built from real, currently-scored
+candidates — not just the top 10 that made the published board, but the
+full ~450-candidate pool `persist_player_snapshots` writes every night
+(`data/players/*.json`). `parse_request()` is deliberately minimal pattern
+matching, not general language understanding — a production chat interface
+would sit in front of this exact function as a translation layer, the same
+"the chat layer isn't the moat" principle as everywhere else in this
+project; `build_parlay()`/`build_best_available_parlay()` are directly
+callable with a structured `ParlayRequest` by anything, no parser required.
+
+**The risk dial** (0 = safest, 50 = balanced, 100 = risky, continuous, not
+just three buckets) maps to a `hit_probability` band via linear
+interpolation between three fixed anchors — a UI/threshold choice, never a
+change to how any individual leg's probability was computed.
+
+**Correlation, not independence, decides which legs can go together.**
+Every prop in this pipeline is scored independently — nothing computes a
+joint probability for two legs together — which is fine for a single-leg
+board and wrong the instant two picks get multiplied into a parlay, since
+independent-probability multiplication only holds when the legs actually
+are independent, and game props usually are not. `correlation.py`
+classifies every candidate pair structurally (same player, same team, a
+pitcher's strikeout/outs/first-inning prop against a hitter on the team he
+is actually facing) into four labels — **redundant** (stacking barely adds
+diversification, e.g. a player's own Runs and RBIs), **positive**, **negative**
+(rejected outright — "K prop + opposing hitter" is a hard rule, not a
+suggestion), **independent** — deliberately labels, not a fitted
+coefficient, since a real correlation number needs backtested outcome data
+that doesn't exist yet. `parlay_builder.py`'s leg selection rejects any
+candidate that would be negatively correlated or redundant with a leg
+already picked, checking every pair, not just consecutive ones.
+
+The reported "combined probability" is explicitly the naive independent-legs
+product, labelled a conservative floor rather than a promise — legs flagged
+positively correlated are likely somewhat better than that number, by an
+amount this project does not yet claim to know.
+
 ## Results tracking — closing the feedback loop
 
 `grade_results.py` runs each morning, before that day's new picks are
@@ -508,8 +570,13 @@ corrected number, not the original inflated one.
 pip install -r requirements.txt
 python3 mlb_daily.py                # full run, ~15-20 min
 python3 mlb_daily.py --dry-run       # fast subset, ~1 min — same as DRY_RUN=1
-python3 generate_picks.py           # scores today's slate, writes top10_picks_*.md + picks_*.json
-python3 grade_results.py            # grades yesterday's picks against real box scores
+python3 generate_picks.py           # scores today's slate, writes top10_picks_*.md/full board/picks_*.json
+python3 grade_results.py            # grades yesterday's picks against real box scores (self-consistency)
+python3 value_board.py              # screens today's priced props for real edge (needs FanDuel live)
+python3 parlay_builder.py "2 home runs, 1 double, riskier"   # build a real parlay from today's pool
+python3 grade_value.py              # settles the value screen against real captured closing prices
+python3 prop_snapshot.py            # capture right now's FanDuel prices to data/props/
+python3 measure_signals.py          # grade every persisted signal against real outcomes
 ```
 
 ## What changed from the prior manual script
@@ -780,9 +847,18 @@ revisiting if pybaseball patches it upstream.
 ## What's next
 
 Explicitly deferred, not forgotten:
-- **Runs/RBI, doubles, and pitcher-unders (ER/H/BB allowed) props** — the
-  current prop universe (TB/hits/HR, stolen base, walks, strikeouts,
-  NRFI/YRFI) is real but not exhaustive.
+- **Runs/RBI, doubles, pitcher-unders (ER/H/BB allowed) props** — UPDATED:
+  runs, RBIs and doubles shipped (see "Prop universe" above); pitcher-unders
+  (ER/H/BB allowed) have not.
+- **PLAYERS_TO_COMBINE_FOR_\* (two or more players in one bet)** — a real,
+  heavily-priced FanDuel market family (~640 lines a night) deliberately
+  left unmapped: pricing it honestly needs the JOINT distribution, and
+  teammates' outcomes are correlated (same game, same pitcher, same run
+  environment) — multiplying two independent probabilities would overstate
+  every one of them. `correlation.py` now exists (built for
+  `parlay_builder.py`) and may be reusable here; not yet evaluated for that.
+  This is a real feature build, not a quick wire-up — do not start it
+  without checking scope first.
 - **Defensive-positioning mismatch** — cross-referencing a hitter's Pull%
   against the opposing team's actual defensive positioning/range metrics.
   Dropped for the last pass specifically because Pull% isn't available from
