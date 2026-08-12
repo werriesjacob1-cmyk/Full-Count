@@ -399,9 +399,19 @@ def grade_pick(pick, game_statuses, date=None):
         if ev is None:
             return {**pick, "grade": "ungraded", "reason": "no batted-ball Statcast data for this game"}
         hit = ev >= thr
+        # opportunity_context's batter branch reads PA/substitute status off
+        # a real box line -- passing None here (as this used to) makes EVERY
+        # hard_hit pick fall into "row missing" and get marked fair_test=False,
+        # "did not appear", even a graded HIT, which is a batted ball that by
+        # definition required the batter to appear. Found via the backtest
+        # coverage report: 5,914 hard_hit_105 rows, n_fair exactly 0. The box
+        # score has no exit velocity (why this branch exists at all) but it
+        # still has AB/BB/substitution, which is all opportunity_context
+        # actually needs -- so fetch it like every other batter stat does.
+        row, _ = get_box_line(game_pk, player_id, is_pitcher=False)
         return {**pick, "grade": "hit" if hit else "miss", "actual": ev,
                 "actual_stat": "max_exit_velocity",
-                **opportunity_context(pick, None, game_pk)}
+                **opportunity_context(pick, row, game_pk)}
 
     if stat == "first_inning_run":
         # away_sp pitches to the home team in the bottom of the 1st (after the away
