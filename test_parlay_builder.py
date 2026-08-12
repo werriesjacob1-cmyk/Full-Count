@@ -80,6 +80,19 @@ check(r.prop_counts == {"triples": 1, "stolen_base": 1},
 r = pb.parse_request("nonsense request with no recognizable props")
 check(r.prop_counts == {}, "unrecognised text extracts nothing rather than guessing")
 
+# Bug found during a sweep: these four markets (all shipped this session)
+# had no phrase in _STAT_PHRASES at all, so a request for any of them
+# silently extracted nothing.
+r = pb.parse_request("a laser")
+check(r.prop_counts == {"hard_hit_105": 1}, "'a laser' is recognized", f"got {r.prop_counts}")
+r = pb.parse_request("a pitcher outs")
+check(r.prop_counts == {"pitcher_outs": 1}, "'pitcher outs' is recognized", f"got {r.prop_counts}")
+r = pb.parse_request("an nrfi")
+check(r.prop_counts == {"nrfi_combined": 1}, "'nrfi' is recognized", f"got {r.prop_counts}")
+r = pb.parse_request("a combined strikeouts")
+check(r.prop_counts == {"combined_strikeouts": 1}, "'combined strikeouts' is recognized "
+      "(and NOT captured by the plain 'strikeouts' pattern)", f"got {r.prop_counts}")
+
 r = pb.parse_request("risk level 70, 2 home runs")
 check(r.risk_level == 70.0, "an explicit numeric risk dial in text is parsed directly",
       f"got {r.risk_level}")
@@ -149,6 +162,19 @@ check(len(legs2) == 1 and len(shortfalls2) == 1,
       "strikeout candidate, one leg is dropped as a shortfall rather than "
       "building the bad pair",
       f"legs={[l['name'] for l in legs2]} shortfalls={shortfalls2}")
+
+# Bug found during a sweep: score_laser only ever emits ONE candidate per
+# player (whichever of 105+/110+ has the better read), so a request for
+# "a laser" (which parses to hard_hit_105, since free text can't specify
+# which MPH) has to draw from BOTH real thresholds combined, or a player
+# whose winning read happened to be 110+ would be invisible to the request.
+laser_110_only = batter("Laser Guy", "Mets", "Mets @ Pirates", 1, "hard_hit_110", 0.70)
+legs3, shortfalls3 = pb._select_legs([laser_110_only], {"hard_hit_105": 1},
+                                     pb.RISK_TIER_LEVELS["safest"])
+check(len(legs3) == 1 and legs3[0]["name"] == "Laser Guy",
+      "a hard_hit_105 request also matches a real hard_hit_110 candidate -- "
+      "same market, the other real threshold",
+      f"legs={[l['name'] for l in legs3]} shortfalls={shortfalls3}")
 
 # duplicate-player guard: same player can't fill two different legs.
 dup_pool = [dict(a, projection={"stat": "total_bases"}), a]

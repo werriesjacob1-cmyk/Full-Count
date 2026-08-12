@@ -85,6 +85,19 @@ def clamp(x, lo=0, hi=100):
     return max(lo, min(hi, x))
 
 
+def _team_label(c):
+    """Display text for a pick's "(TEAM)" parenthetical. Every candidate
+    used to be one player on one team, so every markdown call site read
+    c['team'] directly -- bracket access, not .get(), so it never raised
+    on a MISSING key. score_combined_strikeouts's picks broke that
+    assumption: team is explicitly None (the pick spans both teams), a
+    PRESENT key with a None value, which bracket access happily returns
+    and an f-string happily renders as the literal text "(None)". Found
+    live in the category-picks table, the one place a combined_strikeouts
+    pick was already confirmed to reach the board."""
+    return c.get("team") or "combined"
+
+
 def _sig(bag, name, raw, scaled):
     """Record one named signal on a candidate — ONLY when its underlying input
     actually existed.
@@ -3325,6 +3338,14 @@ def write_json(top10, moonshots=(), by_category=None):
         return {
             "rank": i, "type": c["type"], "name": c["name"], "player_id": c["player_id"],
             "team": c["team"], "matchup": c["matchup"], "game_pk": c["game_pk"], "side": c.get("side"),
+            # Same failure mode this file already hit once before with NRFI's
+            # side/lean fields: a field computed on the candidate and never
+            # written to disk here is invisible to grade_results.py, which
+            # reads THIS file, not the in-memory candidate. Without it, every
+            # combined_strikeouts pick would grade "missing combo_player_ids"
+            # tomorrow morning, defeating grade_pick's own combined_strikeouts
+            # branch entirely -- caught before it ever shipped a real pick.
+            "combo_player_ids": c.get("combo_player_ids"),
             "prop": c["prop"], "projection": c["projection"], "lean": c.get("lean"), "score": c["score"],
             "confidence": c["confidence"], "notable_signals": c["notable_signals"],
             "category": c.get("category"),
@@ -3399,7 +3420,7 @@ def write_early_look(assumed_lineup):
     for c in ranked[:25]:
         p = c.get("hit_probability")
         p_str = f"{p*100:.1f}%" if p is not None else "unscored"
-        lines.append(f"- **{c['name']}** ({c['team']}) — {c['prop']} — {p_str} "
+        lines.append(f"- **{c['name']}** ({_team_label(c)}) — {c['prop']} — {p_str} "
                     f"[{c['matchup']}]")
     if not ranked:
         lines.append("_(none)_")
@@ -4606,15 +4627,32 @@ def quality_control(candidates, game_meta, park_wx, emp_pitchers):
         reason = None
         is_assumed = False
 
-        if stat == "strikeouts":
+        # pitcher_outs and combined_strikeouts are just as vulnerable to the
+        # opener trap as strikeouts is -- arguably more so, since "Over 17.5
+        # Outs" assumes a normal-length start even more directly than a K
+        # total does. Found missing during a sweep: this check only ever
+        # covered strikeouts, so a pitcher who'd shifted into an opener role
+        # could still ship an Outs Recorded or Combined Strikeouts pick built
+        # on a season average that no longer reflects how he's being used.
+        if stat in ("strikeouts", "pitcher_outs"):
             emp = emp_pitchers.get(c.get("player_id")) or {}
             starts = emp.get("starts", 0)
             avg_bf = emp.get("avg_bf")
+            label = CATEGORY_LABELS.get(stat, stat)
             if avg_bf is not None and avg_bf < OPENER_BF_THRESHOLD:
                 reason = (f"used as an opener ({avg_bf:.0f} batters faced per outing) — "
-                          f"a strikeout prop on him is not the bet the model priced")
+                          f"a {label} prop on him is not the bet the model priced")
             elif starts and starts < 3:
                 reason = f"only {starts} start(s) of evidence"
+        elif stat == "combined_strikeouts":
+            for pid in (c.get("combo_player_ids") or []):
+                emp = emp_pitchers.get(pid) or {}
+                avg_bf = emp.get("avg_bf")
+                if avg_bf is not None and avg_bf < OPENER_BF_THRESHOLD:
+                    reason = (f"one of the two starters is used as an opener "
+                              f"({avg_bf:.0f} batters faced per outing) — a combined "
+                              f"strikeouts prop assumes normal starter workload from both")
+                    break
 
         if reason is None and c.get("type") == "batter":
             gp = c.get("game_pk")
@@ -4755,7 +4793,7 @@ def write_markdown(top10, skipped, game_meta, bullpen_scores, all_ranked=(), moo
                      "unconfirmed, or data pulls came back empty) — check the run log.")
     for i, c in enumerate(top10, 1):
         hp = c.get("hit_probability")
-        head = f"### {i}. {c['name']} ({c['team']}) — {c['prop']}"
+        head = f"### {i}. {c['name']} ({_team_label(c)}) — {c['prop']}"
         if hp is not None:
             head += f"  ·  **{hp*100:.0f}% to hit**"
         lines.append(head)
@@ -4865,7 +4903,7 @@ def write_markdown(top10, skipped, game_meta, bullpen_scores, all_ranked=(), moo
                     base = c.get("base_rate")
                     lift_s = (f"  ·  lift {lift*100:+.1f} pts"
                               + (f" over a {base*100:.0f}% base rate" if base is not None else ""))
-                lines.append(f"- {c['name']} ({c['team']}) — {c['prop']} — "
+                lines.append(f"- {c['name']} ({_team_label(c)}) — {c['prop']} — "
                              f"**{hp*100:.0f}%** (~{pp.format_odds(hp)}){lift_s}")
             lines.append("")
 
@@ -4891,7 +4929,7 @@ def write_markdown(top10, skipped, game_meta, bullpen_scores, all_ranked=(), moo
             hp = c.get("hit_probability")
             odds = c.get("market_odds")
             odds_s = f" · **{odds:+d}** at FanDuel" if odds is not None else " · unpriced"
-            lines.append(f"{i}. **{c['name']}** ({c['team']}) — {c['matchup']} — "
+            lines.append(f"{i}. **{c['name']}** ({_team_label(c)}) — {c['matchup']} — "
                          f"**{hp*100:.1f}%** to hit a HR{odds_s}")
         lines.append("")
 
@@ -4918,7 +4956,7 @@ def write_markdown(top10, skipped, game_meta, bullpen_scores, all_ranked=(), moo
             odds = c.get("market_odds")
             flag = "" if c.get("clears_main_board_floor") else " ⚠"
             odds_s = f"{odds:+d}" if odds is not None else "unpriced"
-            lines.append(f"| {CATEGORY_LABELS[stat]} | {c['name']} ({c['team']}) | {c['prop']} | "
+            lines.append(f"| {CATEGORY_LABELS[stat]} | {c['name']} ({_team_label(c)}) | {c['prop']} | "
                          f"{hp*100:.1f}%{flag} | {c.get('score', '?')} | {odds_s} |")
         lines.append("")
 
