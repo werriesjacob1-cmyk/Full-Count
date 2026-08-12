@@ -136,27 +136,32 @@ MARKET_MAP = {
 # Markets deliberately NOT mapped, and why. Listing them is the point: an
 # unmapped market should be a decision on record, not an oversight.
 #
+# STALE ENTRIES REMOVED, 2026-08-12 audit: LASER and PITCHER_*_STRIKEOUTS used
+# to be listed here as unmapped/not-yet-computed. Both are wrong now --
+# score_laser (hard_hit_105/hard_hit_110, both in MARKET_MAP above) and
+# fetch_pitcher_strikeouts/attach_market_prices' "strikeouts" branch (a
+# separate two-sided feed, since it's a line market rather than yes/no, not a
+# MARKET_MAP entry) have shipped since this dict was written. UNMAPPED_REASONS
+# itself is never read by any code path -- it is documentation only -- but
+# stale documentation here is exactly the "the comment says one thing, the
+# code does another" bug class this project keeps finding elsewhere, just
+# without a runtime consequence this time.
+#
 #   PLAYERS_TO_COMBINE_FOR_*  — two or more players in one bet. Pricing these
 #     honestly needs the JOINT distribution, and teammates' outcomes are
 #     correlated (same game, same pitcher, same run environment). Multiplying
 #     two independent probabilities would overstate every one of them, which
 #     is exactly the kind of plausible-looking error this project keeps
-#     finding. ~640 lines a night, left alone until correlation is modelled.
+#     finding. ~640 lines a night, left alone until correlation is modelled --
+#     correlation.py now exists (built for parlay_builder.py) and may be
+#     reusable here; not yet evaluated for that.
 #   RESULT_OF_FIRST_PITCH, BATTER_UP_*, FIRST_SCORING_PLAY — single-pitch and
 #     single-plate-appearance micro markets. No rate is computed for them and
 #     none could be estimated from game logs.
-#   PLAYER_TO_HIT_A_LASER_(110+_MPH) — genuinely modelable from Statcast exit
-#     velocity, which this project already pulls, but the per-game rate is not
-#     computed yet. A real gap rather than an impossibility.
-#   PITCHER_*_STRIKEOUTS — these are line markets (over/under N) rather than
-#     yes/no, so they need different parsing. empirical_pitcher_k_rates
-#     already produces the rates; only the mapping is missing.
 UNMAPPED_REASONS = {
     "PLAYERS_TO_COMBINE_FOR": "needs a joint distribution — teammates are correlated",
     "RESULT_OF_FIRST_PITCH": "single-pitch market, no rate exists",
     "BATTER_UP": "single-plate-appearance micro market, no rate exists",
-    "LASER": "modelable from Statcast exit velo — not yet computed",
-    "PITCHER_": "line market, needs different parsing — rates already exist",
 }
 
 
