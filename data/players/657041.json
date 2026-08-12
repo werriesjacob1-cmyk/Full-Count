@@ -125,7 +125,7 @@
         {
           "prop": "Over 0.5 Hits+Runs+RBIs",
           "type": "batter",
-          "score": 74.5,
+          "score": 74.6,
           "notable_signals": 2,
           "matchup": "New York Mets @ Atlanta Braves",
           "game_pk": 824883,
@@ -145,7 +145,7 @@
             "platoon_barrel_pct": -2.16,
             "platoon_xwoba": 2.04,
             "park_hand_index": -1.46,
-            "opp_catcher_framing": 0.12,
+            "opp_catcher_framing": -0.36,
             "days_rest": 0.0,
             "woba_ahead": 22.7273,
             "woba_behind": 4.5455,
@@ -156,11 +156,13 @@
             "getaway_day": -2.0,
             "series_game": 2.0,
             "sp_rp_ops_gap": -1.008,
-            "vs_rp_ops": -0.864
+            "vs_rp_ops": -0.864,
+            "ump_k_pct": -0.036,
+            "ump_bb_pct": 0.096
           },
-          "hit_probability": 0.6272,
-          "raw_hit_probability": 0.5993,
-          "lift": -0.0471,
+          "hit_probability": 0.6243,
+          "raw_hit_probability": 0.5944,
+          "lift": -0.0466,
           "reliability": "A",
           "sample_n": 99,
           "projection": {
@@ -172,7 +174,7 @@
         {
           "prop": "To Steal a Base",
           "type": "batter",
-          "score": 55.0,
+          "score": 51.8,
           "notable_signals": 0,
           "matchup": "New York Mets @ Atlanta Braves",
           "game_pk": 824883,
@@ -183,7 +185,7 @@
           "signals": {
             "opp_team_cs_pct": -4.26,
             "sprint_speed": 56.25,
-            "catcher_poptime": 11.4286,
+            "catcher_poptime": 0.0,
             "on_base": 52.975
           },
           "hit_probability": 0.0684,

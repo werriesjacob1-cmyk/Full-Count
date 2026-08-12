@@ -27,7 +27,7 @@
         {
           "prop": "Over 3.5 Strikeouts",
           "type": "pitcher",
-          "score": 46.9,
+          "score": 24.7,
           "notable_signals": 0,
           "matchup": "Cincinnati Reds @ Chicago White Sox",
           "game_pk": 824562,
@@ -39,7 +39,10 @@
             "same_hand_ratio": 21.4286,
             "l14_k_pct": 11.7647,
             "tto_penalty": -8.0,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 51.7807,
+            "ump_k_pct": 0.228,
+            "ump_bb_pct": -0.06
           },
           "hit_probability": 0.6187,
           "raw_hit_probability": 0.6993,
@@ -55,7 +58,7 @@
         {
           "prop": "Over 15.5 Outs Recorded",
           "type": "pitcher",
-          "score": 53.3,
+          "score": 54.7,
           "notable_signals": 0,
           "matchup": "Cincinnati Reds @ Chicago White Sox",
           "game_pk": 824562,
@@ -64,18 +67,46 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.5283,
+            "outs_rate": 0.5238,
             "avg_outs_per_start": 14.47
           },
-          "hit_probability": 0.5283,
+          "hit_probability": 0.5238,
           "raw_hit_probability": null,
-          "lift": 0.0031,
+          "lift": 0.0157,
           "reliability": "D",
           "sample_n": 17,
           "projection": {
             "stat": "pitcher_outs",
             "value": 15.5,
             "needs": 16
+          }
+        },
+        {
+          "prop": "Over 9.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 0,
+          "notable_signals": 0,
+          "matchup": "Cincinnati Reds @ Chicago White Sox",
+          "game_pk": 824562,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            695076,
+            622491
+          ],
+          "signals": {
+            "combined_k_edge": -0.2663
+          },
+          "hit_probability": 0.3027,
+          "raw_hit_probability": null,
+          "lift": -0.2663,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 9.5,
+            "needs": 10
           }
         }
       ]

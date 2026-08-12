@@ -68,7 +68,7 @@
         {
           "prop": "Over 3.5 Strikeouts",
           "type": "pitcher",
-          "score": 54.3,
+          "score": 52.9,
           "notable_signals": 0,
           "matchup": "Pittsburgh Pirates @ Miami Marlins",
           "game_pk": 823833,
@@ -79,7 +79,10 @@
           "signals": {
             "same_hand_ratio": 75.0,
             "l14_k_pct": 7.0588,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 35.5004,
+            "ump_k_pct": -0.072,
+            "ump_bb_pct": 0.156
           },
           "hit_probability": 0.5457,
           "raw_hit_probability": 0.4828,
@@ -95,7 +98,7 @@
         {
           "prop": "Over 13.5 Outs Recorded",
           "type": "pitcher",
-          "score": 49.4,
+          "score": 49.5,
           "notable_signals": 0,
           "matchup": "Pittsburgh Pirates @ Miami Marlins",
           "game_pk": 823833,
@@ -104,18 +107,46 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.6709,
+            "outs_rate": 0.6699,
             "avg_outs_per_start": 14.1
           },
-          "hit_probability": 0.6709,
+          "hit_probability": 0.6699,
           "raw_hit_probability": null,
-          "lift": -0.1181,
+          "lift": -0.1164,
           "reliability": "D",
           "sample_n": 10,
           "projection": {
             "stat": "pitcher_outs",
             "value": 13.5,
             "needs": 14
+          }
+        },
+        {
+          "prop": "Over 7.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 0,
+          "notable_signals": 0,
+          "matchup": "Pittsburgh Pirates @ Miami Marlins",
+          "game_pk": 823833,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            669387,
+            676083
+          ],
+          "signals": {
+            "combined_k_edge": -0.3032
+          },
+          "hit_probability": 0.2836,
+          "raw_hit_probability": null,
+          "lift": -0.3032,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 7.5,
+            "needs": 8
           }
         }
       ]

@@ -69,7 +69,7 @@
         {
           "prop": "Over 4.5 Strikeouts",
           "type": "pitcher",
-          "score": 79.8,
+          "score": 75.8,
           "notable_signals": 1,
           "matchup": "New York Mets @ Atlanta Braves",
           "game_pk": 824883,
@@ -78,10 +78,13 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "same_hand_ratio": 92.8571,
+            "same_hand_ratio": 75.0,
             "l14_k_pct": 100.0,
             "tto_penalty": 8.0,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 32.7199,
+            "ump_k_pct": 0.036,
+            "ump_bb_pct": -0.096
           },
           "hit_probability": 0.5962,
           "raw_hit_probability": 0.6315,
@@ -97,7 +100,7 @@
         {
           "prop": "Over 16.5 Outs Recorded",
           "type": "pitcher",
-          "score": 40.7,
+          "score": 42.2,
           "notable_signals": 0,
           "matchup": "New York Mets @ Atlanta Braves",
           "game_pk": 824883,
@@ -106,12 +109,12 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.4247,
+            "outs_rate": 0.4206,
             "avg_outs_per_start": 15.89
           },
-          "hit_probability": 0.4247,
+          "hit_probability": 0.4206,
           "raw_hit_probability": null,
-          "lift": -0.0118,
+          "lift": 0.0012,
           "reliability": "D",
           "sample_n": 19,
           "projection": {

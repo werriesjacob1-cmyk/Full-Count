@@ -79,7 +79,7 @@
       "date": "2026-08-12",
       "evaluations": [
         {
-          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "prop": "Over 0.5 Hits",
           "type": "batter",
           "score": 68.3,
           "notable_signals": 1,
@@ -95,15 +95,15 @@
             "l7_avg_ev": 32.0833,
             "l7_barrel_pct": 65.0,
             "bat_speed_trend": 1.2,
-            "park_hr_index": 62.0,
+            "park_hr_index": 37.9,
             "season_barrel_pct": 39.3333,
-            "lineup_slot": 50.0,
+            "lineup_slot": 75.0,
             "bullpen_fatigue": 47.619,
             "platoon_barrel_pct": 2.0,
             "platoon_xwoba": 0.54,
-            "opp_catcher_framing": 0.84,
+            "opp_catcher_framing": -0.36,
             "days_rest": 0.0,
-            "woba_ahead": 27.2727,
+            "woba_ahead": 86.3636,
             "woba_behind": 20.9091,
             "hard_hit_105_rate": -2.8675,
             "team_total_move": 0.0,
@@ -111,15 +111,17 @@
             "getaway_day": 0.0,
             "series_game": 1.0,
             "sp_rp_ops_gap": 0.6,
-            "vs_rp_ops": 0.732
+            "vs_rp_ops": 0.732,
+            "ump_k_pct": -0.228,
+            "ump_bb_pct": 0.06
           },
-          "hit_probability": 0.6605,
-          "raw_hit_probability": 0.655,
-          "lift": -0.0138,
+          "hit_probability": 0.6071,
+          "raw_hit_probability": 0.6063,
+          "lift": 0.0559,
           "reliability": "A",
           "sample_n": 104,
           "projection": {
-            "stat": "hits_runs_rbis",
+            "stat": "hits",
             "value": 0.5,
             "needs": 1
           }

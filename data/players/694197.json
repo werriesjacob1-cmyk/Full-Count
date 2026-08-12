@@ -191,6 +191,51 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-12",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 78.7,
+          "notable_signals": 2,
+          "matchup": "Cleveland Guardians @ Detroit Tigers",
+          "game_pk": 824241,
+          "team": "Cleveland Guardians",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "sp_era_weak": 47.7143,
+            "l7_avg_ev": 100.0,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 75.9,
+            "lineup_slot": 25.0,
+            "bullpen_fatigue": 69.4444,
+            "opp_catcher_framing": -1.32,
+            "days_rest": 0.0,
+            "woba_ahead": 19.0909,
+            "woba_behind": 28.1818,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "ump_k_pct": -0.456,
+            "ump_bb_pct": -0.6
+          },
+          "hit_probability": 0.5303,
+          "raw_hit_probability": 0.5512,
+          "lift": -0.0209,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

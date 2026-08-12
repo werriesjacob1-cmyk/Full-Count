@@ -27,8 +27,8 @@
         {
           "prop": "Over 3.5 Strikeouts",
           "type": "pitcher",
-          "score": 44.0,
-          "notable_signals": 1,
+          "score": 35.5,
+          "notable_signals": 2,
           "matchup": "Seattle Mariners @ New York Yankees",
           "game_pk": 823511,
           "team": "Seattle Mariners",
@@ -39,7 +39,10 @@
             "same_hand_ratio": 5.5556,
             "l14_k_pct": 23.5294,
             "tto_penalty": 8.0,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 75.3511,
+            "ump_k_pct": -0.12,
+            "ump_bb_pct": -0.276
           },
           "hit_probability": 0.6315,
           "raw_hit_probability": 0.7387,
@@ -55,7 +58,7 @@
         {
           "prop": "Over 16.5 Outs Recorded",
           "type": "pitcher",
-          "score": 47.9,
+          "score": 49.1,
           "notable_signals": 0,
           "matchup": "Seattle Mariners @ New York Yankees",
           "game_pk": 823511,
@@ -64,18 +67,46 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.4536,
+            "outs_rate": 0.4482,
             "avg_outs_per_start": 17.08
           },
-          "hit_probability": 0.4536,
+          "hit_probability": 0.4482,
           "raw_hit_probability": null,
-          "lift": 0.0171,
+          "lift": 0.0288,
           "reliability": "D",
           "sample_n": 13,
           "projection": {
             "stat": "pitcher_outs",
             "value": 16.5,
             "needs": 17
+          }
+        },
+        {
+          "prop": "Over 9.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 37.1,
+          "notable_signals": 0,
+          "matchup": "Seattle Mariners @ New York Yankees",
+          "game_pk": 823511,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            682243,
+            701542
+          ],
+          "signals": {
+            "combined_k_edge": -0.1147
+          },
+          "hit_probability": 0.5429,
+          "raw_hit_probability": null,
+          "lift": -0.1147,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 9.5,
+            "needs": 10
           }
         }
       ]

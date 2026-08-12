@@ -1,0 +1,82 @@
+{
+  "player_id": 670770,
+  "name": "TJ Friedl",
+  "snapshots": [
+    {
+      "date": "2026-08-12",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 39.9,
+          "notable_signals": 1,
+          "matchup": "Cincinnati Reds @ Chicago White Sox",
+          "game_pk": 824562,
+          "team": "Cincinnati Reds",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 80.0,
+            "l7_avg_ev": 95.0,
+            "l7_barrel_pct": 0.0,
+            "park_hr_index": 37.9,
+            "season_barrel_pct": 0.0,
+            "lineup_slot": 12.5,
+            "bullpen_fatigue": 66.6667,
+            "platoon_barrel_pct": -2.8,
+            "platoon_xwoba": -4.62,
+            "opp_catcher_framing": 0.12,
+            "days_rest": 4.0,
+            "woba_ahead": 0.0,
+            "woba_behind": 0.0,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": 0.408,
+            "vs_rp_ops": -2.292,
+            "ump_k_pct": -0.228,
+            "ump_bb_pct": 0.06
+          },
+          "hit_probability": 0.604,
+          "raw_hit_probability": 0.5615,
+          "lift": -0.0669,
+          "reliability": "B",
+          "sample_n": 65,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 0,
+          "notable_signals": 0,
+          "matchup": "Cincinnati Reds @ Chicago White Sox",
+          "game_pk": 824562,
+          "team": "Cincinnati Reds",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0856
+          },
+          "hit_probability": 0.0925,
+          "raw_hit_probability": 0.0856,
+          "lift": -0.1343,
+          "reliability": "B",
+          "sample_n": 65,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
+    }
+  ]
+}

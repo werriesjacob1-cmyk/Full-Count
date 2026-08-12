@@ -1,6 +1,6 @@
 {
   "player_id": 671739,
-  "name": "Michael Harris",
+  "name": "Michael Harris II",
   "snapshots": [
     {
       "date": "2026-08-04",
@@ -459,7 +459,7 @@
         {
           "prop": "Over 0.5 Hits",
           "type": "batter",
-          "score": 76.1,
+          "score": 74.5,
           "notable_signals": 3,
           "matchup": "New York Mets @ Atlanta Braves",
           "game_pk": 824883,
@@ -480,7 +480,7 @@
             "platoon_barrel_pct": 1.52,
             "platoon_xwoba": 1.08,
             "park_hand_index": 1.46,
-            "opp_catcher_framing": 0.12,
+            "opp_catcher_framing": -0.36,
             "days_rest": 0.0,
             "woba_ahead": 28.1818,
             "woba_behind": 22.7273,
@@ -491,7 +491,9 @@
             "getaway_day": -2.0,
             "series_game": 2.0,
             "sp_rp_ops_gap": 1.056,
-            "vs_rp_ops": 2.016
+            "vs_rp_ops": 2.016,
+            "ump_k_pct": -0.036,
+            "ump_bb_pct": 0.096
           },
           "hit_probability": 0.6601,
           "raw_hit_probability": 0.6465,
@@ -507,7 +509,7 @@
         {
           "prop": "To Steal a Base",
           "type": "batter",
-          "score": 20.6,
+          "score": 35.5,
           "notable_signals": 1,
           "matchup": "New York Mets @ Atlanta Braves",
           "game_pk": 824883,
@@ -518,10 +520,10 @@
           "signals": {
             "opp_team_cs_pct": -4.26,
             "sprint_speed": 9.375,
-            "catcher_poptime": 11.4286,
+            "catcher_poptime": 0.0,
             "on_base": 85.6046
           },
-          "hit_probability": 0.0543,
+          "hit_probability": 0.0541,
           "raw_hit_probability": null,
           "lift": null,
           "reliability": "A",

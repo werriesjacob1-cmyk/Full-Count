@@ -27,7 +27,7 @@
         {
           "prop": "Over 3.5 Strikeouts",
           "type": "pitcher",
-          "score": 54.5,
+          "score": 31.7,
           "notable_signals": 0,
           "matchup": "Chicago Cubs @ Washington Nationals",
           "game_pk": 822698,
@@ -39,7 +39,10 @@
             "same_hand_ratio": 12.5,
             "l14_k_pct": 46.4706,
             "tto_penalty": -8.0,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 61.9994,
+            "ump_k_pct": -0.192,
+            "ump_bb_pct": -0.684
           },
           "hit_probability": 0.6076,
           "raw_hit_probability": 0.6656,
@@ -55,7 +58,7 @@
         {
           "prop": "Over 14.5 Outs Recorded",
           "type": "pitcher",
-          "score": 72.2,
+          "score": 72.3,
           "notable_signals": 0,
           "matchup": "Chicago Cubs @ Washington Nationals",
           "game_pk": 822698,
@@ -64,18 +67,46 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.7376,
+            "outs_rate": 0.7369,
             "avg_outs_per_start": 15.07
           },
-          "hit_probability": 0.7376,
+          "hit_probability": 0.7369,
           "raw_hit_probability": null,
-          "lift": -0.0106,
+          "lift": -0.0091,
           "reliability": "D",
           "sample_n": 15,
           "projection": {
             "stat": "pitcher_outs",
             "value": 14.5,
             "needs": 15
+          }
+        },
+        {
+          "prop": "Over 7.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 55,
+          "notable_signals": 1,
+          "matchup": "Chicago Cubs @ Washington Nationals",
+          "game_pk": 822698,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            656849,
+            800600
+          ],
+          "signals": {
+            "combined_k_edge": 0.0951
+          },
+          "hit_probability": 0.7328,
+          "raw_hit_probability": null,
+          "lift": 0.0951,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 7.5,
+            "needs": 8
           }
         }
       ]
