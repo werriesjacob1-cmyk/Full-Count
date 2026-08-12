@@ -4006,53 +4006,74 @@ LEAGUE_YRFI_RATE = 0.294
 
 # ── Calibration ───────────────────────────────────────────────────────────
 #
-# The model's stated probabilities were measured against 12,582 backtested
-# picks and they are badly overconfident at exactly the end of the range the
-# board selects from:
+# REFIT 2026-08-12 against the real 2026-07-10..08-08 backtest (14,124 real
+# graded rows, produced after this session's fixes -- combo_player_ids
+# persistence, value_board's missing quality_control(), grade_value's
+# settlement bug, the hard_hit_105 fair_test bug, and the CURRENT_WEIGHTS/
+# _batter_options coverage gaps). The PREVIOUS calibrators were fit
+# 2026-05-17..06-03, on an earlier scorer version, over four markets (hits,
+# walks, strikeouts, first_inning_run) -- walks is now retired entirely
+# (score_walk is never called) and first_inning_run no longer ships as its
+# own board entry, so half of that fit was calibrating markets that no
+# longer exist in this form. STALENESS IS A REAL RISK for exactly this
+# reason: refit whenever scoring changes materially, not on a schedule.
 #
-#     stated 0.3 -> actual 0.296   (well calibrated)
-#     stated 0.5 -> actual 0.490   (well calibrated)
-#     stated 0.6 -> actual 0.606   (well calibrated)
-#     stated 0.7 -> actual 0.644
-#     stated 0.8 -> actual 0.676
-#     stated 0.9 -> actual 0.684   <- a "90%" pick hits 68% of the time
+# ONE CURVE PER MARKET THAT CAN SUPPORT ONE, not a blanket policy. Every
+# candidate market was checked -- reliability table (real miscalibration
+# pattern present?) AND held-out time-based-split evaluation (does a fitted
+# curve actually help on dates it wasn't fit on?) -- and only kept where
+# both agreed or the evidence was unambiguous:
 #
-# Below about 0.65 the numbers mean what they say. Above it they do not, and
-# the real hit rate ceilings near 0.68 no matter how confident the model gets.
+#     market            n      ECE(raw)   held-out result           kept?
+#     hits            2960     0.008      neutral (already accurate)  yes
+#     hits_runs_rbis  3480     0.017      real improvement            yes
+#     strikeouts       725     0.073      real improvement (largest    yes
+#                                          miscalibration measured --
+#                                          overconfident 0.76->0.57 at
+#                                          the top bin)
+#     hard_hit_105    5914     0.018      tiny held-out regression on   yes
+#                                          a large sample (noise-level,
+#                                          not a real signal) against a
+#                                          real, consistent raw pattern
+#     pitcher_outs      625    0.023      held-out got WORSE on a thin  NO
+#                                          train split (435 rows) --
+#                                          real diagnostic pattern
+#                                          exists but the fit is not
+#                                          demonstrated stable; deferred
+#                                          pending more backtest data
+#     nrfi_combined     326    0.007      predictions cluster almost    NO
+#                                          entirely in one 0.50-0.62
+#                                          bin -- there is effectively
+#                                          no variance for a curve to
+#                                          learn from, matching this
+#                                          market's own known behaviour
+#                                          (_build_combined_nrfi's own
+#                                          docstring: two already-shrunk
+#                                          reads combine to ~coinflip
+#                                          for nearly every game)
+#     singles            94    0.005      too few rows (down to n=2 in  NO
+#                                          some bins) to trust any fit
 #
-# The consequence is worse than a cosmetic overstatement. Because the board
-# RANKS by probability, and the overstatement GROWS with the number, the sort
-# key was systematically selecting the most inflated picks. Ranking by
-# probability was, in part, ranking by overconfidence.
+# NO GLOBAL/POOLED FALLBACK, by choice, not oversight. backtest/
+# calibrator.json (the old pooled curve) is deleted rather than refit: the
+# 2026-08-05 audit that first built per-market curves already measured the
+# pooled curve actively HARMING its two largest markets by averaging away
+# corrections that run in opposite directions, and this refit's own global
+# fit reproduced that same near-neutral-to-negative result on fresh data.
+# Markets this backtest never scored a candidate for at all (runs, rbis,
+# doubles, triples, home_runs, total_bases, combined_strikeouts -- see
+# generate_picks.py's audit notes on _pick_line favouring hits/hits_runs_rbis
+# in this window) now ship the raw, uncalibrated probability instead of a
+# weak correction borrowed from unrelated markets. Raw is honest about what
+# it is; a bad correction is not.
 #
 # PLATT RATHER THAN ISOTONIC, chosen deliberately against the scoreboard.
-# Isotonic fit the training set marginally better (held-out Brier 0.2227 vs
-# 0.2232) but it is a step function defined only across the probabilities it
-# was trained on, and it flatlines at the boundary outside that range. This
-# calibrator was fitted before several scoring changes that shift the
-# distribution of predicted probabilities, so out-of-domain inputs are
-# expected rather than hypothetical. Platt is a smooth sigmoid that degrades
-# gracefully. The 0.0005 of Brier is worth paying for that.
-#
-# STALENESS IS A REAL CAVEAT. This was fitted on backtested picks generated by
-# an earlier version of the scorer. It should be refitted whenever scoring
-# changes materially, and the raw uncalibrated figure is kept on every pick so
-# the two can always be compared.
-# ONE CURVE PER MARKET, not one curve for everything. Measured on held-out
-# later dates, a dedicated calibrator beat the pooled one in all four markets:
-#
-#     market              raw     pooled      own
-#     hits             0.2363     0.2371   0.2329
-#     walks            0.2077     0.2067   0.2063
-#     strikeouts       0.2802     0.2606   0.2394
-#     first_inning     0.2047     0.2056   0.2044
-#
-# The pooled curve was actively HARMING the two largest markets: on hits and
-# on first-inning props it scored worse than applying no calibration at all,
-# because it was averaging away corrections that run in opposite directions.
-# Strikeouts gain most, 15% over raw, which makes sense -- a starter's
-# strikeout distribution has nothing in common with a batter's chance of a
-# hit, and forcing them through one curve fits neither.
+# Isotonic fit the training set marginally better but it is a step function
+# defined only across the probabilities it was trained on, and it flatlines
+# at the boundary outside that range. Platt is a smooth sigmoid that degrades
+# gracefully to inputs the fit never saw, which matters here because scoring
+# keeps changing. The raw uncalibrated figure is kept on every pick
+# (raw_hit_probability) so the two can always be compared.
 CALIBRATOR_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)),
                                "backtest", "calibrator.json")
 CALIBRATORS_BY_MARKET_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)),
