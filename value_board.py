@@ -211,7 +211,7 @@ def screen(entries, min_roi=pp.MIN_ROI, require_robust=True, reject_suspect=True
                             "gap_vs_market": agree["gap"]}}
         clears_roi = v["roi"] >= min_roi
         robust = v.get("robust_to_uncertainty", True)
-        if clears_roi and robust and agree["agreement"] != "SUSPECT":
+        if clears_roi and robust and (not reject_suspect or agree["agreement"] != "SUSPECT"):
             row["tier"] = "A"
         elif clears_roi and robust:
             row["tier"] = "B"
