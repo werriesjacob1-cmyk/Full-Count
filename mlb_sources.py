@@ -2046,6 +2046,23 @@ def umpire_k_bb_rates(min_games=8):
     return out
 
 
+def _fetch_transactions(days_back):
+    """Raw MLB transactions for the last `days_back` days, as of today.
+    Shared by fetch_recent_il_returns and fetch_recent_callups so both draw
+    from one real fetch rather than hitting this endpoint twice for the
+    same window -- same discipline as attach_market_prices/po_prices
+    elsewhere in this project ("reused ... instead of fetching the same
+    market twice")."""
+    r = m.retry_get(f"{STATS_API}/transactions",
+                    params={"sportId": 1,
+                            "startDate": (_dt.datetime.strptime(m.TODAY, "%Y-%m-%d").date()
+                                         - _dt.timedelta(days=days_back)).strftime("%Y-%m-%d"),
+                            "endDate": m.TODAY},
+                    headers={"User-Agent": "Mozilla/5.0"}, timeout=25)
+    r.raise_for_status()
+    return r.json().get("transactions", [])
+
+
 def fetch_recent_il_returns(days_back=21):
     """Players activated off the injured list within the last `days_back`
     days, as of today. Returns {player_id: {"date": "YYYY-MM-DD",
@@ -2081,14 +2098,7 @@ def fetch_recent_il_returns(days_back=21):
     generate_picks.py) -- same treatment as the existing rain-risk and
     bullpen-fatigue flags -- not folded into score."""
     import re as _re
-    r = m.retry_get(f"{STATS_API}/transactions",
-                    params={"sportId": 1,
-                            "startDate": (_dt.datetime.strptime(m.TODAY, "%Y-%m-%d").date()
-                                         - _dt.timedelta(days=days_back)).strftime("%Y-%m-%d"),
-                            "endDate": m.TODAY},
-                    headers={"User-Agent": "Mozilla/5.0"}, timeout=25)
-    r.raise_for_status()
-    txns = r.json().get("transactions", [])
+    txns = _fetch_transactions(days_back)
     pattern = _re.compile(r"activated\b.*\bfrom the (\d+)-day injured list", _re.IGNORECASE)
     today = _dt.datetime.strptime(m.TODAY, "%Y-%m-%d").date()
     out = {}
@@ -2118,4 +2128,53 @@ def fetch_recent_il_returns(days_back=21):
             continue
         out[pid] = {"date": date_str, "days_ago": days_ago,
                     "il_days": int(match.group(1)), "description": desc}
+    return out
+
+
+def fetch_recent_callups(days_back=14):
+    """Players recalled from the minors within the last `days_back` days.
+    Returns {player_id: {"date": "YYYY-MM-DD", "days_ago": int,
+    "description": str}} -- one entry per player, most recent recall wins.
+
+    SAME "FRESH, UNCERTAIN TRACK RECORD" THEME AS fetch_recent_il_returns,
+    a genuinely different cause: not an injury layoff, a jump from a lower
+    level of competition with little or no MLB track record of his own to
+    season/rolling stats. A September call-up, a rookie debut, or a
+    yo-yoing bench bat back up after being optioned down all land here
+    alike -- this deliberately does not try to distinguish which, since
+    the shared, actionable fact for a betting read is the same either way:
+    whatever this pipeline knows about him is thinner than it looks.
+
+    Unlike IL activity, "Recalled" is its own clean, dedicated typeDesc on
+    MLB's transactions endpoint (verified live: 115 real matches in a
+    2026-07-25..08-12 window, e.g. "Cleveland Guardians recalled LHP Will
+    Dion from Columbus Clippers.") -- no free-text pattern-matching needed,
+    unlike the IL case where the same typeDesc covers both directions.
+
+    DELIBERATELY NOT A SCORED SIGNAL, same reasoning as
+    fetch_recent_il_returns: no measured effect size exists for how a
+    recent call-up actually performs relative to what his own season line
+    shows, so this is an informational watchout only."""
+    txns = _fetch_transactions(days_back)
+    today = _dt.datetime.strptime(m.TODAY, "%Y-%m-%d").date()
+    out = {}
+    for t in txns:
+        if t.get("typeDesc") != "Recalled":
+            continue
+        pid = (t.get("person") or {}).get("id")
+        date_str = t.get("date")
+        if not pid or not date_str:
+            continue
+        try:
+            txn_date = _dt.datetime.strptime(date_str, "%Y-%m-%d").date()
+        except ValueError:
+            continue
+        days_ago = (today - txn_date).days
+        if days_ago < 0:
+            continue
+        existing = out.get(pid)
+        if existing is not None and existing["days_ago"] <= days_ago:
+            continue
+        out[pid] = {"date": date_str, "days_ago": days_ago,
+                    "description": t.get("description") or ""}
     return out

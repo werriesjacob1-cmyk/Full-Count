@@ -1370,6 +1370,14 @@ def score_batter(batter, gm, opp_sp_row, opp_sp_id, opp_sp_hand, park_wx, batter
         watchouts.append(f"Activated from the {il['il_days']}-day injured list {il['days_ago']} "
                          f"day(s) ago — early performance back can be inconsistent")
 
+    # Recently called up from the minors -- same "fresh, uncertain track
+    # record" theme as the IL check above, a different cause. See
+    # mlb_sources.fetch_recent_callups' own docstring.
+    cu = ((extras or {}).get("callups") or {}).get(bid) if bid else None
+    if cu:
+        watchouts.append(f"Recalled from the minors {cu['days_ago']} day(s) ago — thin or no MLB "
+                         f"track record behind his season/rolling stats")
+
     # REGRESSION SIGNAL — expected-vs-actual gap, as a bounded two-sided
     # adjustment OUTSIDE the weighted formula.
     #
@@ -1712,7 +1720,7 @@ def score_batter(batter, gm, opp_sp_row, opp_sp_id, opp_sp_hand, park_wx, batter
 
 def score_pitcher(sp_name, sp_id, sp_hand, gm, side, pit_season_lookup, l14_form,
                    opp_lineup, opp_team_k_pct, ump_scores, opp_k_source=None, exp_k_form=None,
-                   ump_kbb=None, il_returns=None):
+                   ump_kbb=None, il_returns=None, callups=None):
     ps = lookup_player(pit_season_lookup, sp_name, sp_id, {})
     exp_k = (exp_k_form or {}).get(sp_id)
     k_pct = ps.get("K%")
@@ -1788,6 +1796,14 @@ def score_pitcher(sp_name, sp_id, sp_hand, gm, side, pit_season_lookup, l14_form
     if il:
         watchouts.append(f"Activated from the {il['il_days']}-day injured list {il['days_ago']} "
                          f"day(s) ago — early performance back can be inconsistent")
+
+    # Recently called up from the minors -- see fetch_recent_callups' own
+    # docstring. Real for pitchers too: a spot-start call-up or a September
+    # addition has little or no MLB track record behind his season stats.
+    cu = (callups or {}).get(sp_id) if sp_id else None
+    if cu:
+        watchouts.append(f"Recalled from the minors {cu['days_ago']} day(s) ago — thin or no MLB "
+                         f"track record behind his season/rolling stats")
 
     if star_profile and notable_signals == 0:
         score -= 10
@@ -2602,7 +2618,7 @@ def build_candidates(game_meta, *, extras=None, batter_lookup, pitcher_lookup, t
             away_pitcher_c = score_pitcher(gm["away_sp"], gm["away_sp_id"], gm.get("away_sp_hand"),
                                              gm, "away", pitcher_lookup, l14_pitcher_form,
                                              gm.get("home_lineup", []), opp_k, ump_scores, opp_k_source,
-                                             exp_k_form, extras.get("ump_kbb"), extras.get("il_returns"))
+                                             exp_k_form, extras.get("ump_kbb"), extras.get("il_returns"), extras.get("callups"))
             candidates.append(away_pitcher_c)
             fi = score_first_inning(gm["away_sp"], gm["away_sp_id"], gm, "away", fi_form,
                                     extras.get("ump_env"), park_wx)
@@ -2619,7 +2635,7 @@ def build_candidates(game_meta, *, extras=None, batter_lookup, pitcher_lookup, t
             home_pitcher_c = score_pitcher(gm["home_sp"], gm["home_sp_id"], gm.get("home_sp_hand"),
                                              gm, "home", pitcher_lookup, l14_pitcher_form,
                                              gm.get("away_lineup", []), opp_k, ump_scores, opp_k_source,
-                                             exp_k_form, extras.get("ump_kbb"), extras.get("il_returns"))
+                                             exp_k_form, extras.get("ump_kbb"), extras.get("il_returns"), extras.get("callups"))
             candidates.append(home_pitcher_c)
             fi = score_first_inning(gm["home_sp"], gm["home_sp_id"], gm, "home", fi_form,
                                     extras.get("ump_env"), park_wx)
@@ -2828,6 +2844,13 @@ def _build_and_score():
         # one would be exactly the "plausible-looking number that isn't
         # real" this project exists to avoid.
         ("il_returns", lambda: _src.fetch_recent_il_returns()),
+        # Same "fresh, uncertain track record" theme, a different cause: a
+        # recent call-up from the minors (rookie debut, September call-up,
+        # or optioned-and-back) has little or no MLB track record of his
+        # own behind whatever season/rolling stat this pipeline shows for
+        # him. Also informational only -- see fetch_recent_callups' own
+        # docstring.
+        ("callups", lambda: _src.fetch_recent_callups()),
         # The one input in this whole project that cannot be re-fetched later.
         # odds_snapshot.py has been writing hourly captures since the start
         # precisely so this would exist, and nothing has ever read them.

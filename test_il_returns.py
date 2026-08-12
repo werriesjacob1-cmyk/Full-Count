@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
-"""test_il_returns.py — checks mlb_sources.fetch_recent_il_returns' free-text
-transaction parsing against real and adversarial examples.
+"""test_il_returns.py — checks mlb_sources.fetch_recent_il_returns' and
+fetch_recent_callups' transaction parsing against real and adversarial
+examples. Both share one theme (a player's recent situation change makes
+his season/rolling stats thinner than they look) and one underlying fetch
+(_fetch_transactions), so they're tested together here.
 
 MLB's transactions endpoint has no dedicated "injured list" transaction
 type -- both IL placements and IL returns come back as the same typeDesc
@@ -10,7 +13,9 @@ a healthy player (activated off paternity/bereavement/restricted list) gets
 falsely flagged as injury-fresh; too strict and real returns get missed
 silently. This locks in the pattern against real examples pulled live
 before it was written (see the function's own docstring) plus adversarial
-ones designed to catch exactly those two failure modes.
+ones designed to catch exactly those two failure modes. "Recalled" (minor-
+league call-ups) is its own clean typeDesc and needs no such parsing, but
+is covered here too since it shares the fetch helper.
 
     /tmp/mlbvenv/bin/python3 test_il_returns.py
 """
@@ -114,6 +119,36 @@ with mock.patch.object(m, "retry_get") as mock_get, mock.patch.object(m, "TODAY"
 check(20 not in result3,
       "an IL-to-IL transfer (still injured, not activated) does not match",
       f"got {result3.get(20)}")
+
+head("4. fetch_recent_callups -- a clean dedicated typeDesc, no parsing needed")
+
+TXNS4 = [
+    _txn(30, "2026-08-05", "Cleveland Guardians recalled LHP Will Dion from Columbus Clippers.",
+         type_desc="Recalled"),
+    # Must NOT be picked up by fetch_recent_callups -- different typeDesc,
+    # even though the word "recalled" isn't in play here at all; this checks
+    # the filter is on typeDesc, not a text search.
+    _txn(31, "2026-08-06", "New York Yankees activated LHP Max Fried from the 15-day injured list."),
+    # Two recalls for the same player -- most recent should win, same as IL.
+    _txn(32, "2026-07-20", "Team Z recalled RHP Someone from Triple-A.", type_desc="Recalled"),
+    _txn(32, "2026-08-10", "Team Z recalled RHP Someone from Triple-A.", type_desc="Recalled"),
+]
+with mock.patch.object(m, "retry_get") as mock_get, mock.patch.object(m, "TODAY", TODAY):
+    mock_get.return_value.json.return_value = {"transactions": TXNS4}
+    mock_get.return_value.raise_for_status = lambda: None
+    callups = src.fetch_recent_callups(days_back=21)
+
+check(30 in callups, "a real 'Recalled' transaction is picked up",
+      f"got {callups.get(30)}")
+check(31 not in callups,
+      "a 'Status Change' (IL activation) transaction is NOT picked up as a callup",
+      f"got {callups.get(31)}")
+check(callups.get(32, {}).get("date") == "2026-08-10",
+      "most-recent recall wins when a player has two in the window",
+      f"got {callups.get(32, {}).get('date')}")
+check(callups.get(30, {}).get("days_ago") == 7,
+      f"days_ago correctly computed as 7 (2026-08-05 to {TODAY})",
+      f"got {callups.get(30, {}).get('days_ago')}")
 
 n_pass = sum(1 for ok, _, _ in _results if ok)
 n_total = len(_results)
