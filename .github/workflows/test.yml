@@ -1,0 +1,59 @@
+name: Test Suite
+
+# No test workflow existed at all before this -- both other workflows here
+# (mlb-daily.yml, odds-snapshot.yml) are schedule-only, so every one of this
+# project's own test_*.py files (247+ checks as of 2026-08) has only ever
+# been run manually, ad hoc, by whoever happened to remember to. A future
+# change could silently break something and merge with nothing to catch it.
+#
+# Runs every test_*.py file by GLOB, not a hardcoded list -- a hardcoded
+# list is exactly the bug class this session kept finding elsewhere
+# (CATEGORY_LABELS, _STAT_PHRASES, PROP_TYPE_BY_STAT, all duplicated lookup
+# tables that drifted out of sync with what the code actually shipped). A
+# new test_*.py file should be picked up automatically, not require also
+# remembering to edit this workflow.
+on:
+  push:
+    branches: ['**']
+  pull_request:
+
+# Read-only by design: this workflow only runs tests, never commits or
+# pushes anything, unlike mlb-daily.yml (which needs contents:write to
+# commit each day's output). Least privilege rather than inheriting
+# whatever the repo's default token permissions happen to be.
+permissions:
+  contents: read
+
+concurrency:
+  group: test-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  run-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run test suite
+        run: |
+          set -e
+          fail=0
+          for f in test_*.py; do
+            echo "::group::$f"
+            if ! python3 "$f"; then
+              fail=1
+            fi
+            echo "::endgroup::"
+          done
+          exit $fail
