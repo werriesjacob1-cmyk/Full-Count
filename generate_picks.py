@@ -2241,7 +2241,16 @@ def score_stolen_base(batter, gm, opp_catcher_poptime, sprint_speed, batter_seas
     # an accidental bound swap, not a convention. Ascending bounds (1.90,
     # 2.25) now score a slow catcher high and a fast catcher low, matching
     # the notable_signals check and the actual market.
-    matchup = scale(opp_catcher_poptime, 1.90, 2.25) if opp_catcher_poptime else 50
+    # A missing reading (no confirmed catcher yet, or a real one below Statcast's
+    # own min_2b_att=3 reliability floor -- verified live: Atlanta's Sean Murphy
+    # and LA's Ben Rortvedt each have exactly 1 real 2B steal attempt against
+    # them as of 2026-08-12, not zero data, just not enough of it to trust) used
+    # to default matchup to a flat 50. That doesn't correspond to anything real:
+    # scale(LEAGUE_AVG_POPTIME, 1.90, 2.25) -- what an average-armed catcher
+    # actually scores here -- is ~28.6, not 50. Falling back to the real league
+    # average instead of an arbitrary midpoint keeps this honest without
+    # fabricating a catcher-specific number that doesn't exist yet.
+    matchup = scale(opp_catcher_poptime, 1.90, 2.25) if opp_catcher_poptime else scale(LEAGUE_AVG_POPTIME, 1.90, 2.25)
     if opp_catcher_poptime and opp_catcher_poptime >= 2.10: notable_signals += 1
     bs = batter_season or {}
     season_sb = bs.get("SB")
@@ -2260,7 +2269,7 @@ def score_stolen_base(batter, gm, opp_catcher_poptime, sprint_speed, batter_seas
     if opp_cs_pct is not None and opp_cs_pct >= 0.30:
         watchouts.append(f"Opposing team throws out {opp_cs_pct*100:.0f}% of runners "
                           f"(league ~25%) — a genuinely hard team to run on")
-    if not opp_catcher_poptime: watchouts.append("Opposing catcher pop time unavailable — matchup component defaulted to neutral")
+    if not opp_catcher_poptime: watchouts.append(f"Opposing catcher pop time unavailable — matchup component defaulted to the league average ({LEAGUE_AVG_POPTIME}s)")
     if on_base is None:
         watchouts.append("No usable on-base rate (no OBP, and wOBA sample under 40 PA) — "
                           "steal-opportunity component defaulted to neutral")

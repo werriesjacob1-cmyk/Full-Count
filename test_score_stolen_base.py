@@ -100,12 +100,17 @@ check(with_sb["score"] == without_sb["score"],
 check(with_sb["notable_signals"] > without_sb["notable_signals"],
       "season SB >= 15 still bumps notable_signals even though it doesn't move the score")
 
-head("6. catcher matchup: no poptime defaults to neutral (50) with a watchout, not a crash")
+head("6. catcher matchup: no poptime defaults to the real league average, not a fabricated crash")
 
 c_no_ct = call(opp_catcher_poptime=None)
 check(REQUIRED_KEYS.issubset(c_no_ct.keys()), "opp_catcher_poptime=None doesn't crash")
-check(any("neutral" in w for w in c_no_ct["watchouts"]),
+check(any("league average" in w for w in c_no_ct["watchouts"]),
       "missing catcher pop time is flagged with its own watchout")
+c_league_avg = call(opp_catcher_poptime=gp.LEAGUE_AVG_POPTIME)
+check(c_no_ct["score"] == c_league_avg["score"],
+      "the missing-data score matches scoring the same batter against a catcher with "
+      "exactly the league-average pop time, not an arbitrary flat 50",
+      f"missing={c_no_ct['score']} league_avg={c_league_avg['score']}")
 
 head("7. a genuinely hard team to run against (opp_cs_pct >= 0.30) gets a real watchout")
 
