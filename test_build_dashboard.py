@@ -155,6 +155,31 @@ check(html.count("<script>") == 1 and html.count("</script>") == 1,
       "script block is well-formed (exactly one open/close)")
 
 
+head("7. priced candidates rank ahead of unpriced ones within a tab, and in All Props -- "
+     "even when the unpriced one has the higher raw probability")
+
+result7 = {
+    "generated_at": "x", "date": "2026-08-12",
+    "pitcher_outs": [
+        # No real FanDuel line yet (market_odds=None) -- found live 2026-08-12:
+        # David Peterson's Outs Recorded read (63.2%, no line) sorted above
+        # several real, priced, lower-probability candidates for exactly this
+        # reason, reading as a recommended pick that wasn't actually a bet
+        # anyone could place.
+        row("No Line High Prob", "pitcher_outs", 0.90, odds=None, implied=None, edge=None, clears=None),
+        row("Priced Lower Prob", "pitcher_outs", 0.60, odds=-140, implied=0.58, edge=0.02, clears=True),
+    ],
+}
+payload7 = bd.build_payload(result7)
+tab_names = [r["name"] for r in payload7["data"]["pitcher_outs"]]
+check(tab_names == ["Priced Lower Prob", "No Line High Prob"],
+      "within a tab, a real-priced candidate ranks first even against a higher-probability "
+      "unpriced one", f"got {tab_names}")
+all_names = [r["name"] for r in payload7["data"]["all"]]
+check(all_names == ["Priced Lower Prob", "No Line High Prob"],
+      "the same priced-first rule applies to the All Props tab", f"got {all_names}")
+
+
 n_pass = sum(1 for ok, _, _ in _results if ok)
 n_total = len(_results)
 print("\n" + "=" * 78)
