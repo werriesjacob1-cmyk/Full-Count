@@ -99,9 +99,32 @@ def actual_results(date, player_names):
         if not splits:
             continue  # did not play: no bet settles, rather than a loss
         st = splits[0].get("stat") or {}
-        out[norm] = {"hits": int(st.get("hits") or 0),
-                     "total_bases": int(st.get("totalBases") or 0),
-                     "home_runs": int(st.get("homeRuns") or 0),
+        # Found during a bug sweep: this used to carry only hits/total_bases/
+        # home_runs, and settle() below read missing stats via act.get(stat, 0)
+        # -- meaning every real bet this screen flagged on runs, rbis, doubles,
+        # triples, stolen_base or hits_runs_rbis (all real markets
+        # model_probabilities() screens, none of them new to this file) was
+        # graded a GUARANTEED LOSS, not skipped, because 0 >= any real needs
+        # threshold is always False. Not "ungraded" -- silently WRONG, and
+        # baked directly into the ROI number this tool exists to report.
+        # These fields are the same ones mlb_sources._empirical_batter_one
+        # already reads off this identical gameLog endpoint.
+        h = int(st.get("hits") or 0)
+        d2 = int(st.get("doubles") or 0)
+        t3 = int(st.get("triples") or 0)
+        hr = int(st.get("homeRuns") or 0)
+        r_ = int(st.get("runs") or 0)
+        rbi = int(st.get("rbi") or 0)
+        out[norm] = {"hits": h, "total_bases": int(st.get("totalBases") or 0),
+                     "home_runs": hr, "doubles": d2, "triples": t3,
+                     "runs": r_, "rbis": rbi,
+                     "singles": max(0, h - d2 - t3 - hr),
+                     "hits_runs_rbis": h + r_ + rbi,
+                     # Plural, matching MARKET_MAP/value_board.py's own
+                     # convention -- NOT generate_picks.py's internal
+                     # "stolen_base" singular (see odds_fanduel.py's own
+                     # STAT_ALIASES comment on exactly this split).
+                     "stolen_bases": int(st.get("stolenBases") or 0),
                      "pa": int(st.get("plateAppearances") or 0)}
     return out
 
@@ -174,11 +197,22 @@ def settle(date, min_roi=pp.MIN_ROI):
         act = results.get(norm)
         if not act:
             continue  # did not play; no action
-        won = act.get(b["stat"], 0) >= b["needs"]
+        if b["stat"] not in act:
+            # THE BUG THIS REPLACES. act.get(b["stat"], 0) >= b["needs"] used
+            # to silently default an untracked stat (hard_hit_105/110,
+            # pitcher_outs -- this function only reads the BATTER hitting
+            # gameLog, it has no Statcast or innings-pitched source) to 0,
+            # which is never >= a real needs threshold -- every such bet
+            # graded a GUARANTEED LOSS instead of being skipped. Distinguish
+            # "cannot determine this stat" from "determined it and it was
+            # zero" explicitly, the same "absent is not zero" rule this
+            # project applies everywhere else.
+            continue
+        won = act[b["stat"]] >= b["needs"]
         d = pp.decimal_odds(b["american"])
         staked += 1.0
         returned += d if won else 0.0
-        settled.append({**b, "actual": act.get(b["stat"]), "won": won})
+        settled.append({**b, "actual": act[b["stat"]], "won": won})
     return {"date": date, "flagged": len(bets), "settled": len(settled),
             "staked": staked, "returned": returned,
             "roi": (returned - staked) / staked if staked else None,
