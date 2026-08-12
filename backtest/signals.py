@@ -241,15 +241,26 @@ CURRENT_WEIGHTS: Dict[str, Dict[str, Tuple[float, float]]] = {
         "catcher_poptime":  (0.28, NEUTRAL),
         "season_sb":        (0.22, NEUTRAL),
     },
-    # score_walk: skill*0.4 + matchup*0.4 + context*0.2. Dead in practice --
-    # build_candidates() deliberately never calls score_walk() any more (no
-    # "Player to Draw a Walk" market exists on FanDuel) -- kept here rather
-    # than deleted because it costs nothing to leave and documents what the
-    # formula WAS, for anyone re-grading old picks from before it was removed.
+    # score_walk: skill*0.66 + matchup*0.24 + context*0.10 (fitted by logistic
+    # regression on 5,634 backtested walk props -- see score_walk's own
+    # docstring in generate_picks.py). Dead in practice -- build_candidates()
+    # deliberately never calls score_walk() any more (no "Player to Draw a
+    # Walk" market exists on FanDuel) -- kept here rather than deleted
+    # because it costs nothing to leave and documents what the formula WAS,
+    # for anyone re-grading old picks from before it was removed.
+    #
+    # REAL DRIFT FOUND 2026-08-12, same class as the stolen_base fix above:
+    # this table was written 2026-08-06 with the ORIGINAL hand-picked
+    # weights (0.40/0.40/0.20). The very same day, score_walk's weights were
+    # refit from real data to 0.66/0.24/0.10 -- but this table was never
+    # updated to match, and walks scoring stayed live in build_candidates()
+    # for roughly another 27 hours before the market was confirmed dead and
+    # removed entirely (2026-08-07). Any picks graded from that window would
+    # have been reconstructed here against the WRONG (pre-refit) formula.
     "walks": {
-        "batter_bb_pct":    (0.40, NEUTRAL),
-        "sp_bb_pct":        (0.40, NEUTRAL),
-        "ump_accuracy":     (0.20, NEUTRAL),
+        "batter_bb_pct":    (0.66, NEUTRAL),
+        "sp_bb_pct":        (0.24, NEUTRAL),
+        "ump_accuracy":     (0.10, NEUTRAL),
     },
     # score_first_inning: single signal + sample penalty. Still real and
     # still scored (build_candidates always calls it -- _build_combined_nrfi

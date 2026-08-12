@@ -1,19 +1,30 @@
 #!/usr/bin/env python3
 """test_current_weight_score.py — coverage for backtest.signals.current_
-weight_score() and, specifically, a regression test for a real drift bug
-found and fixed 2026-08-12: CURRENT_WEIGHTS["stolen_base"] documented the
-weights as skill*0.55 + matchup*0.30 + context*0.15, but generate_picks.
-score_stolen_base() actually computes skill*0.50 + matchup*0.28 +
-context*0.22 -- an older, stale copy of the formula. Since current_
-weight_score() exists specifically to reconstruct "what the shipped
-formula scores" as the baseline every fitted-alternative comparison in
-this module is measured against, a stale weight table silently biased
-every such comparison for the stolen_base market.
+weight_score() and, specifically, regression tests for two real drift bugs
+found and fixed 2026-08-12:
 
-This locks the corrected weights in directly against score_stolen_base's
-own real output, so a future edit to either side (the scoring formula or
-this reconstruction table) that lets them drift apart again is caught
-immediately, rather than silently, the way this one was.
+1. CURRENT_WEIGHTS["stolen_base"] documented the weights as skill*0.55 +
+   matchup*0.30 + context*0.15, but generate_picks.score_stolen_base()
+   actually computes skill*0.50 + matchup*0.28 + context*0.22 -- an older,
+   stale copy of the formula.
+2. CURRENT_WEIGHTS["walks"] documented the ORIGINAL hand-picked weights
+   (0.40/0.40/0.20), but score_walk's weights were refit from real data to
+   0.66/0.24/0.10 the same day this table was written, and walks scoring
+   stayed live in build_candidates() for roughly another 27 hours before
+   the market was removed entirely -- confirmed via git history
+   (b9b6359 refit the weights the same day e18fb92 added this table,
+   neither commit touched the other side).
+
+current_weight_score() exists specifically to reconstruct "what the
+shipped formula scores" as the baseline every fitted-alternative
+comparison in this module is measured against, so a stale weight table
+silently biases every such comparison (or, for the now-dead walks market,
+biases any future re-grading of the picks from that ~27-hour window).
+
+This locks the corrected weights in directly against the real scoring
+functions' own output, so a future edit to either side (the scoring
+formula or this reconstruction table) that lets them drift apart again is
+caught immediately, rather than silently, the way these two were.
 
     /tmp/mlbvenv/bin/python3 test_current_weight_score.py
 """
@@ -105,6 +116,39 @@ check(abs(reconstructed_mismatch - expected_if_neutral_context) < 1e-6,
       "NEUTRAL for the context slot, exactly as if on_base weren't there at all -- "
       "the deliberate, documented behavior", f"got {reconstructed_mismatch}, "
       f"want {expected_if_neutral_context}")
+
+head("3. THE SECOND REGRESSION THIS PREVENTS: CURRENT_WEIGHTS['walks'] weight VALUES "
+     "now match score_walk()'s real, fitted 0.66/0.24/0.10 split, not the original "
+     "hand-picked 0.40/0.40/0.20 the table was stuck at")
+
+walks_table = bt_signals.CURRENT_WEIGHTS["walks"]
+check(abs(walks_table["batter_bb_pct"][0] - 0.66) < 1e-9,
+      "batter_bb_pct's weight is 0.66, matching score_walk's real fitted skill*0.66 term",
+      f"got {walks_table['batter_bb_pct'][0]}")
+check(abs(walks_table["sp_bb_pct"][0] - 0.24) < 1e-9,
+      "sp_bb_pct's weight is 0.24, matching score_walk's real fitted matchup*0.24 term",
+      f"got {walks_table['sp_bb_pct'][0]}")
+check(abs(walks_table["ump_accuracy"][0] - 0.10) < 1e-9,
+      "ump_accuracy's weight is 0.10, matching score_walk's real fitted context*0.10 term",
+      f"got {walks_table['ump_accuracy'][0]}")
+check(abs(sum(w for w, _ in walks_table.values()) - 1.00) < 1e-9,
+      "the three walks weights still sum to exactly 1.00")
+
+head("4. END-TO-END: current_weight_score() reconstructs the SAME number score_walk() "
+     "itself actually computes, from a real call's own recorded signals")
+
+WALK_GM = {"matchup": "Athletics @ Astros", "game_pk": 900001}
+walk_c = gp.score_walk(
+    {"name": "Patient Hitter", "id": 1, "team": "Athletics"}, WALK_GM,
+    {"BB%": 11.0}, {"Athletics @ Astros": {"accuracy": 93.0}}, {"BB%": 9.5})
+walk_reconstructed = bt_signals.current_weight_score(
+    {"signals": walk_c["signals"], "prop_type": "walks"})
+check(walk_reconstructed is not None,
+      "a real score_walk candidate's signals reconstruct to a real number, not None")
+check(abs(walk_reconstructed - walk_c["score"]) < 0.05,
+      "current_weight_score()'s reconstruction matches score_walk()'s own real score "
+      "almost exactly, using the corrected fitted weights",
+      f"reconstructed={walk_reconstructed} actual_score={walk_c['score']}")
 
 n_pass = sum(1 for ok, _, _ in _results if ok)
 n_total = len(_results)
