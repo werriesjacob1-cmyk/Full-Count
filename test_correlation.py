@@ -123,6 +123,33 @@ for team_name, team_batter in (("away", a), ("home", b)):
           f"combined_strikeouts vs a {team_name}-side batter in the same game is negative",
           f"got {v_combo.label}")
 
+# Bug found during this audit: combined_strikeouts' own player_id carries
+# only the AWAY starter's id (persistence needs a single real id), so a
+# solo strikeouts pick on that same away starter fell into the same_player
+# branch and scored merely "positive" (not "redundant" -- combined_
+# strikeouts isn't in _OVERLAPPING_BATTER_FAMILIES, which is batter-only),
+# while a solo pick on the HOME starter -- whose id the combo never carries
+# -- matched no player_id at all and fell through to "independent". Both
+# wrong the same way: a starter's own strikeout total is a strict subset of
+# the combined total.
+combo_with_ids = dict(combo, combo_player_ids=["sp_a", "sp_b"])
+solo_away = pitcher("SP A", "Mets", "Mets @ Pirates", 1, "away", "strikeouts", player_id="sp_a")
+solo_home = pitcher("SP B", "Pirates", "Mets @ Pirates", 1, "home", "strikeouts", player_id="sp_b")
+for label, solo in (("away starter (same id combo carries)", solo_away),
+                    ("home starter (id combo never carries)", solo_home)):
+    v_solo = corr.classify(combo_with_ids, solo)
+    check(v_solo.label == "redundant",
+          f"combined_strikeouts vs a solo strikeouts pick on its own {label} is redundant",
+          f"got {v_solo.label}")
+
+# A solo strikeouts pick on a pitcher who is NOT one of the combo's two
+# starters must not be flagged -- only the actual overlapping pair.
+unrelated = pitcher("SP C", "Dodgers", "Dodgers @ Giants", 2, "away", "strikeouts", player_id="sp_c")
+v_unrelated = corr.classify(combo_with_ids, unrelated)
+check(v_unrelated.label == "independent",
+      "combined_strikeouts vs an unrelated pitcher in a different game is independent",
+      f"got {v_unrelated.label}")
+
 # Same game, opposing teams, no pitcher-vs-hitter relationship -> independent,
 # not a fabricated negative.
 g = batter("G. Batter", "Pirates", "Mets @ Pirates", 1, "home_runs")
