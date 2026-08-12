@@ -23,15 +23,41 @@
             "ump_k_pct": 0.456,
             "ump_bb_pct": 0.588
           },
-          "hit_probability": 0.6358,
-          "raw_hit_probability": 0.71,
-          "lift": -0.0781,
+          "hit_probability": 0.6505,
+          "raw_hit_probability": 0.7653,
+          "lift": -0.0634,
           "reliability": "D",
           "sample_n": 22,
           "projection": {
             "stat": "strikeouts",
             "value": 3.5,
             "needs": 4
+          }
+        },
+        {
+          "prop": "Texas Rangers scoreless in the 1st",
+          "type": "pitcher",
+          "score": 65.2,
+          "notable_signals": 0,
+          "matchup": "Baltimore Orioles @ Texas Rangers",
+          "game_pk": 822863,
+          "team": "Baltimore Orioles",
+          "side": "away",
+          "lean": "NRFI",
+          "signals": {
+            "yrfi_rate": 34.8,
+            "fi_n_starts": 23.0,
+            "ump_run_impact": 7.0617,
+            "park_hr_index": 50.0
+          },
+          "hit_probability": 0.6853,
+          "raw_hit_probability": 0.6894,
+          "lift": -0.0207,
+          "reliability": "D",
+          "sample_n": 23,
+          "projection": {
+            "stat": "first_inning_run",
+            "value": 34.8
           }
         }
       ]

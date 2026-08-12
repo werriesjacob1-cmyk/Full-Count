@@ -32,7 +32,7 @@
         {
           "prop": "Over 0.5 Hits+Runs+RBIs",
           "type": "batter",
-          "score": 33.3,
+          "score": 33.2,
           "notable_signals": 1,
           "matchup": "Minnesota Twins @ Milwaukee Brewers",
           "game_pk": 823750,
@@ -45,7 +45,7 @@
             "l7_avg_ev": 0.0,
             "l7_barrel_pct": 0.0,
             "park_hr_index": 50.0,
-            "season_barrel_pct": 24.0,
+            "season_barrel_pct": 24.6667,
             "lineup_slot": 12.5,
             "bullpen_fatigue": 64.1026,
             "platoon_barrel_pct": 2.16,
@@ -64,7 +64,7 @@
           },
           "hit_probability": 0.5795,
           "raw_hit_probability": 0.6231,
-          "lift": -0.0919,
+          "lift": -0.0916,
           "reliability": "A",
           "sample_n": 85,
           "projection": {
@@ -72,28 +72,192 @@
             "value": 0.5,
             "needs": 1
           }
-        },
+        }
+      ]
+    },
+    {
+      "date": "2026-08-08",
+      "evaluations": [
         {
-          "prop": "To Hit a Laser (105+ MPH)",
+          "prop": "Over 0.5 Hits+Runs+RBIs",
           "type": "batter",
-          "score": 4.9,
-          "notable_signals": 0,
+          "score": 58.0,
+          "notable_signals": 2,
           "matchup": "Minnesota Twins @ Milwaukee Brewers",
-          "game_pk": 823750,
+          "game_pk": 823752,
           "team": "Minnesota Twins",
           "side": null,
           "lean": null,
           "signals": {
-            "hard_hit_rate": 0.1562
+            "sp_era_weak": 56.5714,
+            "pitch_exploit": 20.0,
+            "l7_avg_ev": 0.0,
+            "l7_barrel_pct": 87.8571,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 24.6667,
+            "lineup_slot": 37.5,
+            "bullpen_fatigue": 83.3333,
+            "platoon_barrel_pct": 2.0,
+            "platoon_xwoba": 1.2,
+            "opp_catcher_framing": 0.6,
+            "days_rest": 0.0,
+            "hard_hit_105_rate": -1.5075,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": -0.424,
+            "vs_rp_ops": -1.224
           },
-          "hit_probability": 0.2075,
-          "raw_hit_probability": 0.1562,
-          "lift": -0.0203,
+          "hit_probability": 0.5828,
+          "raw_hit_probability": 0.6269,
+          "lift": -0.0899,
           "reliability": "A",
-          "sample_n": 85,
+          "sample_n": 86,
           "projection": {
-            "stat": "hard_hit_105",
-            "value": 1,
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-08-09",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 50.5,
+          "notable_signals": 2,
+          "matchup": "Minnesota Twins @ Milwaukee Brewers",
+          "game_pk": 823751,
+          "team": "Minnesota Twins",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "sp_era_weak": 0.0,
+            "l7_avg_ev": 51.75,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 24.6667,
+            "lineup_slot": 25.0,
+            "bullpen_fatigue": 69.4444,
+            "platoon_barrel_pct": -0.56,
+            "platoon_xwoba": -0.12,
+            "opp_catcher_framing": 0.84,
+            "days_rest": 2.0,
+            "hard_hit_105_rate": -1.5075,
+            "team_total_move": 0.0,
+            "team_total_open": -6.0,
+            "getaway_day": -2.0,
+            "series_game": 2.0,
+            "sp_rp_ops_gap": -0.424,
+            "vs_rp_ops": -1.224,
+            "ump_k_pct": 0.696,
+            "ump_bb_pct": -0.324
+          },
+          "hit_probability": 0.582,
+          "raw_hit_probability": 0.626,
+          "lift": -0.0857,
+          "reliability": "A",
+          "sample_n": 86,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-08-10",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 46.7,
+          "notable_signals": 0,
+          "matchup": "Baltimore Orioles @ Minnesota Twins",
+          "game_pk": 823675,
+          "team": "Minnesota Twins",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "sp_era_weak": 50.5714,
+            "l7_avg_ev": 45.5357,
+            "l7_barrel_pct": 87.8571,
+            "park_hr_index": 39.6,
+            "season_barrel_pct": 24.6667,
+            "lineup_slot": 12.5,
+            "bullpen_fatigue": 64.1026,
+            "platoon_barrel_pct": 1.92,
+            "platoon_xwoba": 1.14,
+            "opp_catcher_framing": -0.36,
+            "days_rest": 0.0,
+            "hard_hit_105_rate": -1.545,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": -0.344,
+            "vs_rp_ops": -1.056,
+            "ump_k_pct": 0.648,
+            "ump_bb_pct": 0.324
+          },
+          "hit_probability": 0.5854,
+          "raw_hit_probability": 0.6299,
+          "lift": -0.0846,
+          "reliability": "A",
+          "sample_n": 87,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-08-11",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 44.3,
+          "notable_signals": 1,
+          "matchup": "Baltimore Orioles @ Minnesota Twins",
+          "game_pk": 823673,
+          "team": "Minnesota Twins",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "sp_era_weak": 23.1429,
+            "pitch_exploit": 5.7143,
+            "l7_avg_ev": 45.5357,
+            "l7_barrel_pct": 87.8571,
+            "park_hr_index": 39.5,
+            "season_barrel_pct": 24.6667,
+            "lineup_slot": 12.5,
+            "bullpen_fatigue": 64.1026,
+            "platoon_barrel_pct": -0.64,
+            "platoon_xwoba": -0.06,
+            "opp_catcher_framing": -0.36,
+            "days_rest": 0.0,
+            "hard_hit_105_rate": -1.545,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": -0.344,
+            "vs_rp_ops": -1.056
+          },
+          "hit_probability": 0.5847,
+          "raw_hit_probability": 0.6291,
+          "lift": -0.0808,
+          "reliability": "A",
+          "sample_n": 87,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
             "needs": 1
           }
         }

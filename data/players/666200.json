@@ -20,6 +20,66 @@
           "matchup": "Washington Nationals @ Philadelphia Phillies"
         }
       ]
+    },
+    {
+      "date": "2026-08-09",
+      "evaluations": [
+        {
+          "prop": "Over 5.5 Strikeouts",
+          "type": "pitcher",
+          "score": 44.1,
+          "notable_signals": 1,
+          "matchup": "Toronto Blue Jays @ Philadelphia Phillies",
+          "game_pk": 823425,
+          "team": "Philadelphia Phillies",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "same_hand_ratio": 33.3333,
+            "l14_k_pct": 25.2941,
+            "env_neutral": 50.0,
+            "ump_accuracy": 73.479,
+            "ump_k_pct": -0.276,
+            "ump_bb_pct": -0.192
+          },
+          "hit_probability": 0.6381,
+          "raw_hit_probability": 0.7188,
+          "lift": 0.2614,
+          "reliability": "D",
+          "sample_n": 23,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 5.5,
+            "needs": 6
+          }
+        },
+        {
+          "prop": "Toronto Blue Jays scoreless in the 1st",
+          "type": "pitcher",
+          "score": 96.0,
+          "notable_signals": 1,
+          "matchup": "Toronto Blue Jays @ Philadelphia Phillies",
+          "game_pk": 823425,
+          "team": "Philadelphia Phillies",
+          "side": "home",
+          "lean": "NRFI",
+          "signals": {
+            "yrfi_rate": 4.0,
+            "fi_n_starts": 25.0,
+            "ump_run_impact": 15.2566,
+            "park_hr_index": 79.1
+          },
+          "hit_probability": 0.7076,
+          "raw_hit_probability": 0.7885,
+          "lift": 0.0016,
+          "reliability": "C",
+          "sample_n": 25,
+          "projection": {
+            "stat": "first_inning_run",
+            "value": 4.0
+          }
+        }
+      ]
     }
   ]
 }

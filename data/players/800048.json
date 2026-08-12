@@ -23,15 +23,41 @@
             "ump_k_pct": 0.432,
             "ump_bb_pct": -0.072
           },
-          "hit_probability": 0.6075,
-          "raw_hit_probability": 0.6063,
-          "lift": 0.0682,
+          "hit_probability": 0.6296,
+          "raw_hit_probability": 0.687,
+          "lift": 0.0903,
           "reliability": "D",
           "sample_n": 22,
           "projection": {
             "stat": "strikeouts",
             "value": 4.5,
             "needs": 5
+          }
+        },
+        {
+          "prop": "Chicago White Sox scoreless in the 1st",
+          "type": "pitcher",
+          "score": 91.7,
+          "notable_signals": 1,
+          "matchup": "Cleveland Guardians @ Chicago White Sox",
+          "game_pk": 824566,
+          "team": "Cleveland Guardians",
+          "side": "away",
+          "lean": "NRFI",
+          "signals": {
+            "yrfi_rate": 8.3,
+            "fi_n_starts": 24.0,
+            "ump_run_impact": 11.3173,
+            "park_hr_index": 36.1
+          },
+          "hit_probability": 0.7041,
+          "raw_hit_probability": 0.7726,
+          "lift": -0.0019,
+          "reliability": "D",
+          "sample_n": 24,
+          "projection": {
+            "stat": "first_inning_run",
+            "value": 8.3
           }
         }
       ]

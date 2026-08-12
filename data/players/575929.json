@@ -44,7 +44,7 @@
         {
           "prop": "Over 0.5 Hits",
           "type": "batter",
-          "score": 76.1,
+          "score": 76.3,
           "notable_signals": 3,
           "matchup": "Athletics @ Boston Red Sox",
           "game_pk": 824727,
@@ -54,11 +54,11 @@
           "signals": {
             "platoon": 35.0,
             "sp_era_weak": 100.0,
-            "pitch_exploit": 6.8571,
+            "pitch_exploit": 7.4286,
             "l7_avg_ev": 100.0,
             "l7_barrel_pct": 100.0,
             "park_hr_index": 59.8,
-            "season_barrel_pct": 76.6667,
+            "season_barrel_pct": 75.3333,
             "lineup_slot": 62.5,
             "bullpen_fatigue": 66.6667,
             "platoon_barrel_pct": 4.64,
@@ -75,9 +75,9 @@
             "sp_rp_ops_gap": -2.072,
             "vs_rp_ops": 0.66
           },
-          "hit_probability": 0.6105,
-          "raw_hit_probability": 0.6243,
-          "lift": 0.0595,
+          "hit_probability": 0.6325,
+          "raw_hit_probability": 0.6715,
+          "lift": 0.0815,
           "reliability": "A",
           "sample_n": 104,
           "projection": {
@@ -85,31 +85,161 @@
             "value": 0.5,
             "needs": 1
           }
-        },
+        }
+      ]
+    },
+    {
+      "date": "2026-08-08",
+      "evaluations": [
         {
-          "prop": "To Steal a Base",
+          "prop": "Over 0.5 Hits",
           "type": "batter",
-          "score": 42.8,
-          "notable_signals": 1,
+          "score": 81.6,
+          "notable_signals": 4,
           "matchup": "Athletics @ Boston Red Sox",
-          "game_pk": 824727,
+          "game_pk": 824726,
           "team": "Boston Red Sox",
           "side": null,
           "lean": null,
           "signals": {
-            "opp_team_cs_pct": -1.32,
-            "sprint_speed": 0.0,
-            "catcher_poptime": 74.2857,
-            "on_base": 100.0
+            "platoon": 80.0,
+            "sp_era_weak": 59.7143,
+            "pitch_exploit": 2.8571,
+            "l7_avg_ev": 100.0,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 87.0,
+            "season_barrel_pct": 75.3333,
+            "lineup_slot": 62.5,
+            "bullpen_fatigue": 66.6667,
+            "platoon_barrel_pct": 5.0,
+            "platoon_xwoba": 5.0,
+            "park_hand_index": -2.09,
+            "opp_catcher_framing": -0.96,
+            "days_rest": 4.0,
+            "pull_park_synergy": -1.4484,
+            "hard_hit_105_rate": 5.0,
+            "team_total_move": 0.0,
+            "team_total_open": 4.0,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": -2.072,
+            "vs_rp_ops": 0.66,
+            "ump_k_pct": 0.456,
+            "ump_bb_pct": 0.144
           },
-          "hit_probability": 0.1444,
-          "raw_hit_probability": 0.0329,
-          "lift": null,
+          "hit_probability": 0.6327,
+          "raw_hit_probability": 0.6719,
+          "lift": 0.0817,
           "reliability": "A",
           "sample_n": 104,
           "projection": {
-            "stat": "stolen_base",
-            "value": 1,
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-08-09",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 75.8,
+          "notable_signals": 4,
+          "matchup": "Athletics @ Boston Red Sox",
+          "game_pk": 824724,
+          "team": "Boston Red Sox",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 27.4286,
+            "pitch_exploit": 20.0,
+            "l7_avg_ev": 100.0,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 89.8,
+            "season_barrel_pct": 75.3333,
+            "lineup_slot": 62.5,
+            "bullpen_fatigue": 66.6667,
+            "platoon_barrel_pct": 4.56,
+            "platoon_xwoba": 3.42,
+            "park_hand_index": -2.11,
+            "opp_catcher_framing": 0.12,
+            "days_rest": 0.0,
+            "pull_park_synergy": -1.4622,
+            "hard_hit_105_rate": 5.0,
+            "team_total_move": 0.0,
+            "team_total_open": 4.0,
+            "getaway_day": -2.0,
+            "series_game": 2.0,
+            "sp_rp_ops_gap": -1.96,
+            "vs_rp_ops": 0.684,
+            "ump_k_pct": -0.192,
+            "ump_bb_pct": 0.372
+          },
+          "hit_probability": 0.6331,
+          "raw_hit_probability": 0.6728,
+          "lift": 0.0819,
+          "reliability": "A",
+          "sample_n": 105,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-08-10",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 73.8,
+          "notable_signals": 2,
+          "matchup": "Boston Red Sox @ Toronto Blue Jays",
+          "game_pk": 822780,
+          "team": "Boston Red Sox",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 97.7143,
+            "pitch_exploit": 7.4286,
+            "l7_avg_ev": 100.0,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 75.3333,
+            "lineup_slot": 62.5,
+            "bullpen_fatigue": 66.6667,
+            "bvp_ops": -0.882,
+            "platoon_barrel_pct": 4.48,
+            "platoon_xwoba": 3.54,
+            "park_hand_index": -0.59,
+            "opp_catcher_framing": -2.04,
+            "days_rest": 0.0,
+            "pull_park_synergy": -0.4047,
+            "hard_hit_105_rate": 5.0,
+            "team_total_move": 0.0,
+            "team_total_open": 0.0,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": -1.992,
+            "vs_rp_ops": 0.624,
+            "ump_k_pct": 0.276,
+            "ump_bb_pct": 0.396
+          },
+          "hit_probability": 0.6301,
+          "raw_hit_probability": 0.6661,
+          "lift": 0.0788,
+          "reliability": "A",
+          "sample_n": 106,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
             "needs": 1
           }
         }
@@ -121,7 +251,7 @@
         {
           "prop": "Over 0.5 Hits",
           "type": "batter",
-          "score": 41.4,
+          "score": 52.1,
           "notable_signals": 4,
           "matchup": "Boston Red Sox @ Toronto Blue Jays",
           "game_pk": 822778,
@@ -131,11 +261,11 @@
           "signals": {
             "platoon": 35.0,
             "sp_era_weak": 0.0,
-            "pitch_exploit": 4.0,
+            "pitch_exploit": 2.8571,
             "l7_avg_ev": 39.4444,
             "l7_barrel_pct": 100.0,
             "park_hr_index": 50.0,
-            "season_barrel_pct": 76.6667,
+            "season_barrel_pct": 75.3333,
             "lineup_slot": 62.5,
             "bullpen_fatigue": 66.6667,
             "bvp_ops": 0.294,
@@ -146,6 +276,8 @@
             "days_rest": 0.0,
             "pull_park_synergy": -0.3958,
             "hard_hit_105_rate": 5.0,
+            "team_total_move": -6.0,
+            "team_total_open": -6.0,
             "getaway_day": 0.0,
             "series_game": 1.0,
             "sp_rp_ops_gap": -1.936,
@@ -153,65 +285,14 @@
             "ump_k_pct": -0.204,
             "ump_bb_pct": -0.276
           },
-          "hit_probability": 0.6046,
-          "raw_hit_probability": 0.6118,
-          "lift": 0.0533,
+          "hit_probability": 0.6252,
+          "raw_hit_probability": 0.6557,
+          "lift": 0.074,
           "reliability": "A",
           "sample_n": 107,
           "projection": {
             "stat": "hits",
             "value": 0.5,
-            "needs": 1
-          }
-        },
-        {
-          "prop": "To Steal a Base",
-          "type": "batter",
-          "score": 30.0,
-          "notable_signals": 1,
-          "matchup": "Boston Red Sox @ Toronto Blue Jays",
-          "game_pk": 822778,
-          "team": "Boston Red Sox",
-          "side": null,
-          "lean": null,
-          "signals": {
-            "opp_team_cs_pct": 0.6,
-            "sprint_speed": 0.0,
-            "catcher_poptime": 71.4286,
-            "on_base": 100.0
-          },
-          "hit_probability": 0.144,
-          "raw_hit_probability": 0.032,
-          "lift": null,
-          "reliability": "A",
-          "sample_n": 107,
-          "projection": {
-            "stat": "stolen_base",
-            "value": 1,
-            "needs": 1
-          }
-        },
-        {
-          "prop": "To Hit a Laser (105+ MPH)",
-          "type": "batter",
-          "score": 72.0,
-          "notable_signals": 1,
-          "matchup": "Boston Red Sox @ Toronto Blue Jays",
-          "game_pk": 822778,
-          "team": "Boston Red Sox",
-          "side": null,
-          "lean": null,
-          "signals": {
-            "hard_hit_rate": 0.4228
-          },
-          "hit_probability": 0.4033,
-          "raw_hit_probability": 0.4228,
-          "lift": 0.176,
-          "reliability": "A",
-          "sample_n": 107,
-          "projection": {
-            "stat": "hard_hit_105",
-            "value": 1,
             "needs": 1
           }
         }

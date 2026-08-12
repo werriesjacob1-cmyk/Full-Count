@@ -13,6 +13,66 @@
           "matchup": "Athletics @ Cincinnati Reds"
         }
       ]
+    },
+    {
+      "date": "2026-08-09",
+      "evaluations": [
+        {
+          "prop": "Over 3.5 Strikeouts",
+          "type": "pitcher",
+          "score": 50.3,
+          "notable_signals": 0,
+          "matchup": "Athletics @ Boston Red Sox",
+          "game_pk": 824724,
+          "team": "Athletics",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "same_hand_ratio": 100.0,
+            "l14_k_pct": 34.1176,
+            "env_neutral": 50.0,
+            "ump_accuracy": 31.1485,
+            "ump_k_pct": 0.192,
+            "ump_bb_pct": -0.372
+          },
+          "hit_probability": 0.6582,
+          "raw_hit_probability": 0.7946,
+          "lift": -0.0551,
+          "reliability": "D",
+          "sample_n": 20,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 3.5,
+            "needs": 4
+          }
+        },
+        {
+          "prop": "Boston Red Sox scoreless in the 1st",
+          "type": "pitcher",
+          "score": 80.0,
+          "notable_signals": 0,
+          "matchup": "Athletics @ Boston Red Sox",
+          "game_pk": 824724,
+          "team": "Athletics",
+          "side": "away",
+          "lean": "NRFI",
+          "signals": {
+            "yrfi_rate": 20.0,
+            "fi_n_starts": 20.0,
+            "ump_run_impact": 51.3823,
+            "park_hr_index": 89.8
+          },
+          "hit_probability": 0.695,
+          "raw_hit_probability": 0.7321,
+          "lift": -0.011,
+          "reliability": "D",
+          "sample_n": 20,
+          "projection": {
+            "stat": "first_inning_run",
+            "value": 20.0
+          }
+        }
+      ]
     }
   ]
 }

@@ -1,0 +1,66 @@
+{
+  "player_id": 547179,
+  "name": "Michael Lorenzen",
+  "snapshots": [
+    {
+      "date": "2026-08-09",
+      "evaluations": [
+        {
+          "prop": "Over 3.5 Strikeouts",
+          "type": "pitcher",
+          "score": 39.1,
+          "notable_signals": 0,
+          "matchup": "Colorado Rockies @ St. Louis Cardinals",
+          "game_pk": 823020,
+          "team": "Colorado Rockies",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "same_hand_ratio": 61.1111,
+            "l14_k_pct": 0.0,
+            "env_neutral": 50.0,
+            "ump_accuracy": 52.3142,
+            "ump_k_pct": -0.348,
+            "ump_bb_pct": 0.012
+          },
+          "hit_probability": 0.5699,
+          "raw_hit_probability": 0.4724,
+          "lift": -0.1434,
+          "reliability": "D",
+          "sample_n": 23,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 3.5,
+            "needs": 4
+          }
+        },
+        {
+          "prop": "St. Louis Cardinals scoreless in the 1st",
+          "type": "pitcher",
+          "score": 41.7,
+          "notable_signals": 0,
+          "matchup": "Colorado Rockies @ St. Louis Cardinals",
+          "game_pk": 823020,
+          "team": "Colorado Rockies",
+          "side": "away",
+          "lean": "NRFI",
+          "signals": {
+            "yrfi_rate": 41.7,
+            "fi_n_starts": 24.0,
+            "ump_run_impact": 34.322,
+            "park_hr_index": 60.4
+          },
+          "hit_probability": 0.6802,
+          "raw_hit_probability": 0.6672,
+          "lift": -0.0258,
+          "reliability": "D",
+          "sample_n": 24,
+          "projection": {
+            "stat": "first_inning_run",
+            "value": 41.7
+          }
+        }
+      ]
+    }
+  ]
+}

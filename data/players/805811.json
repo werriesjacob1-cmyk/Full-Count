@@ -20,7 +20,7 @@
         {
           "prop": "Over 0.5 Hits",
           "type": "batter",
-          "score": 66.0,
+          "score": 66.6,
           "notable_signals": 2,
           "matchup": "Detroit Tigers @ San Francisco Giants",
           "game_pk": 823191,
@@ -30,11 +30,11 @@
           "signals": {
             "platoon": 80.0,
             "sp_era_weak": 19.1429,
-            "pitch_exploit": 14.2857,
+            "pitch_exploit": 15.4286,
             "l7_avg_ev": 80.3846,
             "l7_barrel_pct": 100.0,
-            "park_hr_index": 27.6,
-            "season_barrel_pct": 58.6667,
+            "park_hr_index": 29.8,
+            "season_barrel_pct": 60.6667,
             "lineup_slot": 100.0,
             "bullpen_fatigue": 64.1026,
             "platoon_barrel_pct": 4.4,
@@ -51,9 +51,9 @@
             "ump_k_pct": -0.048,
             "ump_bb_pct": 0.384
           },
-          "hit_probability": 0.6046,
-          "raw_hit_probability": 0.6117,
-          "lift": 0.0536,
+          "hit_probability": 0.6216,
+          "raw_hit_probability": 0.648,
+          "lift": 0.0706,
           "reliability": "B",
           "sample_n": 72,
           "projection": {
@@ -61,28 +61,159 @@
             "value": 0.5,
             "needs": 1
           }
-        },
+        }
+      ]
+    },
+    {
+      "date": "2026-08-08",
+      "evaluations": [
         {
-          "prop": "To Hit a Laser (105+ MPH)",
+          "prop": "Over 0.5 Hits",
           "type": "batter",
-          "score": 44.4,
+          "score": 56.6,
           "notable_signals": 1,
           "matchup": "Detroit Tigers @ San Francisco Giants",
-          "game_pk": 823191,
+          "game_pk": 823188,
           "team": "San Francisco Giants",
           "side": null,
           "lean": null,
           "signals": {
-            "hard_hit_rate": 0.3144
+            "platoon": 80.0,
+            "l7_avg_ev": 66.9643,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 25.5,
+            "season_barrel_pct": 60.6667,
+            "lineup_slot": 100.0,
+            "bullpen_fatigue": 55.5556,
+            "platoon_barrel_pct": 4.24,
+            "platoon_xwoba": 2.28,
+            "park_hand_index": -4.02,
+            "opp_catcher_framing": -1.32,
+            "days_rest": 0.0,
+            "pull_park_synergy": -1.801,
+            "hard_hit_105_rate": 2.4025,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": -1.184,
+            "vs_rp_ops": -0.228,
+            "ump_k_pct": 0.264,
+            "ump_bb_pct": 0.216
           },
-          "hit_probability": 0.3148,
-          "raw_hit_probability": 0.3144,
-          "lift": 0.087,
+          "hit_probability": 0.6183,
+          "raw_hit_probability": 0.6409,
+          "lift": 0.0673,
           "reliability": "B",
-          "sample_n": 72,
+          "sample_n": 73,
           "projection": {
-            "stat": "hard_hit_105",
-            "value": 1,
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-08-09",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 68.4,
+          "notable_signals": 2,
+          "matchup": "Detroit Tigers @ San Francisco Giants",
+          "game_pk": 823190,
+          "team": "San Francisco Giants",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 0.0,
+            "pitch_exploit": 15.4286,
+            "l7_avg_ev": 100.0,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 15.0,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 60.6667,
+            "lineup_slot": 100.0,
+            "bullpen_fatigue": 60.6061,
+            "platoon_barrel_pct": 4.08,
+            "platoon_xwoba": 2.04,
+            "park_hand_index": -4.13,
+            "opp_catcher_framing": 1.08,
+            "days_rest": 0.0,
+            "pull_park_synergy": -1.8791,
+            "hard_hit_105_rate": 2.58,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": -2.0,
+            "series_game": 2.0,
+            "sp_rp_ops_gap": -1.168,
+            "vs_rp_ops": -0.348,
+            "ump_k_pct": -0.0,
+            "ump_bb_pct": -0.348
+          },
+          "hit_probability": 0.6147,
+          "raw_hit_probability": 0.6332,
+          "lift": 0.0635,
+          "reliability": "B",
+          "sample_n": 74,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-08-10",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 74.3,
+          "notable_signals": 3,
+          "matchup": "Houston Astros @ San Francisco Giants",
+          "game_pk": 823189,
+          "team": "San Francisco Giants",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 64.5714,
+            "l7_avg_ev": 60.5208,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 15.0,
+            "park_hr_index": 25.6,
+            "season_barrel_pct": 60.6667,
+            "lineup_slot": 75.0,
+            "bullpen_fatigue": 64.1026,
+            "platoon_barrel_pct": 4.0,
+            "platoon_xwoba": 1.98,
+            "park_hand_index": -4.24,
+            "opp_catcher_framing": 0.36,
+            "days_rest": 0.0,
+            "pull_park_synergy": -1.8402,
+            "hard_hit_105_rate": 2.4975,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": -1.08,
+            "vs_rp_ops": -0.3,
+            "ump_k_pct": -0.66,
+            "ump_bb_pct": 0.624
+          },
+          "hit_probability": 0.6136,
+          "raw_hit_probability": 0.6309,
+          "lift": 0.0623,
+          "reliability": "B",
+          "sample_n": 75,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
             "needs": 1
           }
         }
@@ -94,7 +225,7 @@
         {
           "prop": "Over 0.5 Hits",
           "type": "batter",
-          "score": 60.7,
+          "score": 72.8,
           "notable_signals": 5,
           "matchup": "Houston Astros @ San Francisco Giants",
           "game_pk": 823186,
@@ -103,13 +234,13 @@
           "lean": null,
           "signals": {
             "platoon": 80.0,
-            "sp_era_weak": 29.4286,
-            "pitch_exploit": 14.2857,
+            "sp_era_weak": 26.2857,
+            "pitch_exploit": 15.4286,
             "l7_avg_ev": 72.1094,
             "l7_barrel_pct": 100.0,
             "bat_speed_trend": 15.0,
             "park_hr_index": 25.0,
-            "season_barrel_pct": 58.6667,
+            "season_barrel_pct": 60.6667,
             "lineup_slot": 100.0,
             "bullpen_fatigue": 69.4444,
             "platoon_barrel_pct": 4.4,
@@ -124,38 +255,14 @@
             "sp_rp_ops_gap": -1.144,
             "vs_rp_ops": -0.36
           },
-          "hit_probability": 0.6009,
-          "raw_hit_probability": 0.604,
-          "lift": 0.0496,
+          "hit_probability": 0.617,
+          "raw_hit_probability": 0.6381,
+          "lift": 0.0658,
           "reliability": "B",
           "sample_n": 76,
           "projection": {
             "stat": "hits",
             "value": 0.5,
-            "needs": 1
-          }
-        },
-        {
-          "prop": "To Hit a Laser (105+ MPH)",
-          "type": "batter",
-          "score": 44.1,
-          "notable_signals": 1,
-          "matchup": "Houston Astros @ San Francisco Giants",
-          "game_pk": 823186,
-          "team": "San Francisco Giants",
-          "side": null,
-          "lean": null,
-          "signals": {
-            "hard_hit_rate": 0.3117
-          },
-          "hit_probability": 0.3128,
-          "raw_hit_probability": 0.3117,
-          "lift": 0.0855,
-          "reliability": "B",
-          "sample_n": 76,
-          "projection": {
-            "stat": "hard_hit_105",
-            "value": 1,
             "needs": 1
           }
         }

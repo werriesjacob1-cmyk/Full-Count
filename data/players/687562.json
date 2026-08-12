@@ -1,0 +1,66 @@
+{
+  "player_id": 687562,
+  "name": "Jake Bennett",
+  "snapshots": [
+    {
+      "date": "2026-08-08",
+      "evaluations": [
+        {
+          "prop": "Over 3.5 Strikeouts",
+          "type": "pitcher",
+          "score": 35.5,
+          "notable_signals": 0,
+          "matchup": "Athletics @ Boston Red Sox",
+          "game_pk": 824726,
+          "team": "Boston Red Sox",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "same_hand_ratio": 12.5,
+            "l14_k_pct": 4.1176,
+            "env_neutral": 50.0,
+            "ump_accuracy": 65.3463,
+            "ump_k_pct": -0.456,
+            "ump_bb_pct": -0.144
+          },
+          "hit_probability": 0.6275,
+          "raw_hit_probability": 0.6795,
+          "lift": -0.086,
+          "reliability": "D",
+          "sample_n": 12,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 3.5,
+            "needs": 4
+          }
+        },
+        {
+          "prop": "Athletics scoreless in the 1st",
+          "type": "pitcher",
+          "score": 100,
+          "notable_signals": 1,
+          "matchup": "Athletics @ Boston Red Sox",
+          "game_pk": 824726,
+          "team": "Boston Red Sox",
+          "side": "home",
+          "lean": "NRFI",
+          "signals": {
+            "yrfi_rate": 0.0,
+            "fi_n_starts": 12.0,
+            "ump_run_impact": 17.9863,
+            "park_hr_index": 87.0
+          },
+          "hit_probability": 0.7015,
+          "raw_hit_probability": 0.7611,
+          "lift": -0.0045,
+          "reliability": "D",
+          "sample_n": 12,
+          "projection": {
+            "stat": "first_inning_run",
+            "value": 0.0
+          }
+        }
+      ]
+    }
+  ]
+}

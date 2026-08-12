@@ -32,7 +32,7 @@
         {
           "prop": "Over 0.5 Hits+Runs+RBIs",
           "type": "batter",
-          "score": 56.8,
+          "score": 56.4,
           "notable_signals": 3,
           "matchup": "Detroit Tigers @ San Francisco Giants",
           "game_pk": 823191,
@@ -41,11 +41,11 @@
           "lean": null,
           "signals": {
             "platoon": 35.0,
-            "sp_era_weak": 19.1429,
+            "sp_era_weak": 16.0,
             "l7_avg_ev": 53.5526,
             "l7_barrel_pct": 100.0,
-            "park_hr_index": 27.6,
-            "season_barrel_pct": 70.6667,
+            "park_hr_index": 29.8,
+            "season_barrel_pct": 67.3333,
             "lineup_slot": 37.5,
             "bullpen_fatigue": 66.6667,
             "platoon_barrel_pct": 5.0,
@@ -62,9 +62,9 @@
             "ump_k_pct": -0.048,
             "ump_bb_pct": 0.384
           },
-          "hit_probability": 0.5661,
-          "raw_hit_probability": 0.6077,
-          "lift": -0.1053,
+          "hit_probability": 0.5664,
+          "raw_hit_probability": 0.6081,
+          "lift": -0.1081,
           "reliability": "A",
           "sample_n": 114,
           "projection": {
@@ -72,28 +72,106 @@
             "value": 0.5,
             "needs": 1
           }
-        },
+        }
+      ]
+    },
+    {
+      "date": "2026-08-08",
+      "evaluations": [
         {
-          "prop": "To Hit a Laser (105+ MPH)",
+          "prop": "Over 0.5 Hits+Runs+RBIs",
           "type": "batter",
-          "score": 15.0,
-          "notable_signals": 0,
+          "score": 59.8,
+          "notable_signals": 2,
           "matchup": "Detroit Tigers @ San Francisco Giants",
-          "game_pk": 823191,
+          "game_pk": 823188,
           "team": "Detroit Tigers",
           "side": null,
           "lean": null,
           "signals": {
-            "hard_hit_rate": 0.1968
+            "platoon": 35.0,
+            "sp_era_weak": 52.2857,
+            "l7_avg_ev": 63.6111,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 25.5,
+            "season_barrel_pct": 67.3333,
+            "lineup_slot": 37.5,
+            "bullpen_fatigue": 52.0833,
+            "platoon_barrel_pct": 5.0,
+            "platoon_xwoba": 0.12,
+            "park_hand_index": -0.44,
+            "opp_catcher_framing": 1.44,
+            "days_rest": 0.0,
+            "pull_park_synergy": -0.2834,
+            "hard_hit_105_rate": -0.3125,
+            "team_total_move": 6.0,
+            "team_total_open": 0.0,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": 0.512,
+            "vs_rp_ops": 0.552,
+            "ump_k_pct": 0.264,
+            "ump_bb_pct": 0.216
           },
-          "hit_probability": 0.2322,
-          "raw_hit_probability": 0.1968,
-          "lift": 0.0044,
+          "hit_probability": 0.5692,
+          "raw_hit_probability": 0.6113,
+          "lift": -0.107,
           "reliability": "A",
-          "sample_n": 114,
+          "sample_n": 115,
           "projection": {
-            "stat": "hard_hit_105",
-            "value": 1,
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-08-09",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 56.0,
+          "notable_signals": 2,
+          "matchup": "Detroit Tigers @ San Francisco Giants",
+          "game_pk": 823190,
+          "team": "Detroit Tigers",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 35.4286,
+            "l7_avg_ev": 44.8529,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 67.3333,
+            "lineup_slot": 37.5,
+            "bullpen_fatigue": 71.4286,
+            "platoon_barrel_pct": 5.0,
+            "platoon_xwoba": 0.18,
+            "park_hand_index": -0.57,
+            "opp_catcher_framing": -0.96,
+            "days_rest": 0.0,
+            "pull_park_synergy": -0.3631,
+            "hard_hit_105_rate": -0.3475,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": -2.0,
+            "series_game": 2.0,
+            "sp_rp_ops_gap": 0.504,
+            "vs_rp_ops": 0.564,
+            "ump_k_pct": -0.0,
+            "ump_bb_pct": -0.348
+          },
+          "hit_probability": 0.5706,
+          "raw_hit_probability": 0.6129,
+          "lift": -0.0971,
+          "reliability": "A",
+          "sample_n": 116,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
             "needs": 1
           }
         }
@@ -105,7 +183,7 @@
         {
           "prop": "Over 0.5 Hits+Runs+RBIs",
           "type": "batter",
-          "score": 48.3,
+          "score": 59.2,
           "notable_signals": 2,
           "matchup": "Cleveland Guardians @ Detroit Tigers",
           "game_pk": 824240,
@@ -114,11 +192,11 @@
           "lean": null,
           "signals": {
             "platoon": 35.0,
-            "sp_era_weak": 38.5714,
+            "sp_era_weak": 37.4286,
             "l7_avg_ev": 55.625,
             "l7_barrel_pct": 100.0,
-            "park_hr_index": 50.0,
-            "season_barrel_pct": 70.6667,
+            "park_hr_index": 51.9,
+            "season_barrel_pct": 67.3333,
             "lineup_slot": 37.5,
             "bullpen_fatigue": 66.6667,
             "bvp_ops": 2.202,
@@ -129,6 +207,8 @@
             "days_rest": 2.0,
             "pull_park_synergy": 0.5796,
             "hard_hit_105_rate": -0.385,
+            "team_total_move": 0.0,
+            "team_total_open": 0.0,
             "getaway_day": 0.0,
             "series_game": 0.0,
             "sp_rp_ops_gap": 0.552,
@@ -136,38 +216,14 @@
             "ump_k_pct": 0.096,
             "ump_bb_pct": 0.528
           },
-          "hit_probability": 0.5736,
-          "raw_hit_probability": 0.6163,
-          "lift": -0.0983,
+          "hit_probability": 0.5737,
+          "raw_hit_probability": 0.6164,
+          "lift": -0.0986,
           "reliability": "A",
           "sample_n": 117,
           "projection": {
             "stat": "hits_runs_rbis",
             "value": 0.5,
-            "needs": 1
-          }
-        },
-        {
-          "prop": "To Hit a Laser (105+ MPH)",
-          "type": "batter",
-          "score": 16.0,
-          "notable_signals": 0,
-          "matchup": "Cleveland Guardians @ Detroit Tigers",
-          "game_pk": 824240,
-          "team": "Detroit Tigers",
-          "side": null,
-          "lean": null,
-          "signals": {
-            "hard_hit_rate": 0.1996
-          },
-          "hit_probability": 0.234,
-          "raw_hit_probability": 0.1996,
-          "lift": 0.0067,
-          "reliability": "A",
-          "sample_n": 117,
-          "projection": {
-            "stat": "hard_hit_105",
-            "value": 1,
             "needs": 1
           }
         }

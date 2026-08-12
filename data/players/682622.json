@@ -59,8 +59,8 @@
             "l7_avg_ev": 69.1964,
             "l7_barrel_pct": 100.0,
             "bat_speed_trend": 9.15,
-            "park_hr_index": 50.0,
-            "season_barrel_pct": 16.0,
+            "park_hr_index": 59.7,
+            "season_barrel_pct": 18.0,
             "lineup_slot": 25.0,
             "bullpen_fatigue": 76.9231,
             "platoon_barrel_pct": -3.36,
@@ -77,9 +77,9 @@
             "ump_k_pct": -0.108,
             "ump_bb_pct": 0.252
           },
-          "hit_probability": 0.5906,
-          "raw_hit_probability": 0.636,
-          "lift": -0.0808,
+          "hit_probability": 0.5905,
+          "raw_hit_probability": 0.6359,
+          "lift": -0.0806,
           "reliability": "B",
           "sample_n": 53,
           "projection": {
@@ -91,7 +91,7 @@
         {
           "prop": "To Steal a Base",
           "type": "batter",
-          "score": 53.7,
+          "score": 47.3,
           "notable_signals": 0,
           "matchup": "Cincinnati Reds @ Washington Nationals",
           "game_pk": 822699,
@@ -101,7 +101,7 @@
           "signals": {
             "opp_team_cs_pct": 0.54,
             "sprint_speed": 56.25,
-            "catcher_poptime": 91.4286,
+            "catcher_poptime": 68.5714,
             "on_base": 0.0
           },
           "hit_probability": 0.178,
@@ -114,27 +114,81 @@
             "value": 1,
             "needs": 1
           }
-        },
+        }
+      ]
+    },
+    {
+      "date": "2026-08-08",
+      "evaluations": [
         {
-          "prop": "To Hit a Laser (105+ MPH)",
+          "prop": "Over 0.5 Hits+Runs+RBIs",
           "type": "batter",
-          "score": 39.1,
-          "notable_signals": 1,
+          "score": 58.1,
+          "notable_signals": 2,
           "matchup": "Cincinnati Reds @ Washington Nationals",
-          "game_pk": 822699,
+          "game_pk": 822701,
           "team": "Cincinnati Reds",
           "side": null,
           "lean": null,
           "signals": {
-            "hard_hit_rate": 0.2929
+            "platoon": 80.0,
+            "sp_era_weak": 41.1429,
+            "l7_avg_ev": 32.7885,
+            "l7_barrel_pct": 40.7143,
+            "park_hr_index": 82.9,
+            "season_barrel_pct": 18.0,
+            "lineup_slot": 12.5,
+            "bullpen_fatigue": 52.0833,
+            "platoon_barrel_pct": 5.0,
+            "platoon_xwoba": -5.0,
+            "park_hand_index": 1.22,
+            "opp_catcher_framing": -0.12,
+            "days_rest": 0.0,
+            "pull_park_synergy": 0.8497,
+            "hard_hit_105_rate": 1.855,
+            "team_total_move": 0.0,
+            "team_total_open": 0.0,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": 0.864,
+            "vs_rp_ops": -0.96,
+            "ump_k_pct": 0.264,
+            "ump_bb_pct": -0.06
           },
-          "hit_probability": 0.2986,
-          "raw_hit_probability": 0.2929,
-          "lift": 0.0708,
+          "hit_probability": 0.5955,
+          "raw_hit_probability": 0.6417,
+          "lift": -0.079,
           "reliability": "B",
-          "sample_n": 53,
+          "sample_n": 54,
           "projection": {
-            "stat": "hard_hit_105",
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 44.9,
+          "notable_signals": 0,
+          "matchup": "Cincinnati Reds @ Washington Nationals",
+          "game_pk": 822701,
+          "team": "Cincinnati Reds",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "opp_team_cs_pct": 0.66,
+            "sprint_speed": 56.25,
+            "catcher_poptime": 60.0,
+            "on_base": 0.0
+          },
+          "hit_probability": 0.1847,
+          "raw_hit_probability": 0.1155,
+          "lift": null,
+          "reliability": "B",
+          "sample_n": 54,
+          "projection": {
+            "stat": "stolen_base",
             "value": 1,
             "needs": 1
           }
@@ -147,7 +201,7 @@
         {
           "prop": "Over 0.5 Hits+Runs+RBIs",
           "type": "batter",
-          "score": 40.8,
+          "score": 41.1,
           "notable_signals": 4,
           "matchup": "Cincinnati Reds @ Chicago White Sox",
           "game_pk": 824563,
@@ -156,12 +210,12 @@
           "lean": null,
           "signals": {
             "platoon": 35.0,
-            "sp_era_weak": 16.5714,
+            "sp_era_weak": 15.4286,
             "l7_avg_ev": 8.4375,
             "l7_barrel_pct": 45.0,
             "bat_speed_trend": 15.0,
-            "park_hr_index": 43.2,
-            "season_barrel_pct": 16.0,
+            "park_hr_index": 41.0,
+            "season_barrel_pct": 18.0,
             "lineup_slot": 12.5,
             "bullpen_fatigue": 71.4286,
             "platoon_barrel_pct": -3.44,
@@ -169,14 +223,16 @@
             "opp_catcher_framing": 0.96,
             "days_rest": 4.0,
             "hard_hit_105_rate": 1.76,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
             "getaway_day": 0.0,
             "series_game": 0.0,
             "sp_rp_ops_gap": 0.736,
             "vs_rp_ops": -1.056
           },
-          "hit_probability": 0.599,
-          "raw_hit_probability": 0.6458,
-          "lift": -0.0728,
+          "hit_probability": 0.5992,
+          "raw_hit_probability": 0.646,
+          "lift": -0.0734,
           "reliability": "B",
           "sample_n": 55,
           "projection": {
@@ -208,30 +264,6 @@
           "sample_n": 55,
           "projection": {
             "stat": "stolen_base",
-            "value": 1,
-            "needs": 1
-          }
-        },
-        {
-          "prop": "To Hit a Laser (105+ MPH)",
-          "type": "batter",
-          "score": 37.3,
-          "notable_signals": 1,
-          "matchup": "Cincinnati Reds @ Chicago White Sox",
-          "game_pk": 824563,
-          "team": "Cincinnati Reds",
-          "side": null,
-          "lean": null,
-          "signals": {
-            "hard_hit_rate": 0.2854
-          },
-          "hit_probability": 0.293,
-          "raw_hit_probability": 0.2854,
-          "lift": 0.0657,
-          "reliability": "B",
-          "sample_n": 55,
-          "projection": {
-            "stat": "hard_hit_105",
             "value": 1,
             "needs": 1
           }

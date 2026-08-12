@@ -1,0 +1,66 @@
+{
+  "player_id": 663567,
+  "name": "Peter Lambert",
+  "snapshots": [
+    {
+      "date": "2026-08-08",
+      "evaluations": [
+        {
+          "prop": "Over 4.5 Strikeouts",
+          "type": "pitcher",
+          "score": 70.7,
+          "notable_signals": 1,
+          "matchup": "Houston Astros @ San Diego Padres",
+          "game_pk": 823267,
+          "team": "Houston Astros",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "same_hand_ratio": 100.0,
+            "l14_k_pct": 98.8235,
+            "env_neutral": 50.0,
+            "ump_accuracy": 74.1847,
+            "ump_k_pct": 1.044,
+            "ump_bb_pct": -0.276
+          },
+          "hit_probability": 0.6303,
+          "raw_hit_probability": 0.6896,
+          "lift": 0.0918,
+          "reliability": "D",
+          "sample_n": 19,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 4.5,
+            "needs": 5
+          }
+        },
+        {
+          "prop": "San Diego Padres scoreless in the 1st",
+          "type": "pitcher",
+          "score": 85.0,
+          "notable_signals": 0,
+          "matchup": "Houston Astros @ San Diego Padres",
+          "game_pk": 823267,
+          "team": "Houston Astros",
+          "side": "away",
+          "lean": "NRFI",
+          "signals": {
+            "yrfi_rate": 15.0,
+            "fi_n_starts": 20.0,
+            "ump_run_impact": 13.0909,
+            "park_hr_index": 36.8
+          },
+          "hit_probability": 0.6982,
+          "raw_hit_probability": 0.746,
+          "lift": -0.0078,
+          "reliability": "D",
+          "sample_n": 20,
+          "projection": {
+            "stat": "first_inning_run",
+            "value": 15.0
+          }
+        }
+      ]
+    }
+  ]
+}

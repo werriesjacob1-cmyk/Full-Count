@@ -63,10 +63,10 @@
       "date": "2026-08-07",
       "evaluations": [
         {
-          "prop": "Over 1.5 Hits+Runs+RBIs",
+          "prop": "Over 0.5 Hits",
           "type": "batter",
-          "score": 62.8,
-          "notable_signals": 2,
+          "score": 57.8,
+          "notable_signals": 1,
           "matchup": "Los Angeles Angels @ Miami Marlins",
           "game_pk": 823836,
           "team": "Miami Marlins",
@@ -75,12 +75,11 @@
           "signals": {
             "platoon": 35.0,
             "sp_era_weak": 100.0,
-            "pitch_exploit": 0.5714,
             "l7_avg_ev": 73.0,
             "l7_barrel_pct": 100.0,
             "bat_speed_trend": 3.375,
             "park_hr_index": 50.0,
-            "season_barrel_pct": 22.0,
+            "season_barrel_pct": 24.0,
             "lineup_slot": 87.5,
             "bullpen_fatigue": 55.5556,
             "platoon_barrel_pct": -0.48,
@@ -99,21 +98,21 @@
             "ump_k_pct": 0.132,
             "ump_bb_pct": 0.684
           },
-          "hit_probability": 0.5723,
-          "raw_hit_probability": 0.6148,
-          "lift": 0.1145,
+          "hit_probability": 0.6703,
+          "raw_hit_probability": 0.7555,
+          "lift": 0.1193,
           "reliability": "A",
           "sample_n": 112,
           "projection": {
-            "stat": "hits_runs_rbis",
-            "value": 1.5,
-            "needs": 2
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
           }
         },
         {
           "prop": "To Steal a Base",
           "type": "batter",
-          "score": 62.6,
+          "score": 62.5,
           "notable_signals": 1,
           "matchup": "Los Angeles Angels @ Miami Marlins",
           "game_pk": 823836,
@@ -122,9 +121,9 @@
           "lean": null,
           "signals": {
             "opp_team_cs_pct": 3.24,
-            "sprint_speed": 37.5,
-            "catcher_poptime": 85.7143,
-            "on_base": 90.4031
+            "sprint_speed": 34.375,
+            "catcher_poptime": 88.5714,
+            "on_base": 93.2821
           },
           "hit_probability": 0.2175,
           "raw_hit_probability": 0.173,
@@ -136,27 +135,160 @@
             "value": 1,
             "needs": 1
           }
-        },
+        }
+      ]
+    },
+    {
+      "date": "2026-08-08",
+      "evaluations": [
         {
-          "prop": "To Hit a Laser (105+ MPH)",
+          "prop": "Over 0.5 Hits",
           "type": "batter",
-          "score": 40.4,
+          "score": 39.5,
           "notable_signals": 1,
           "matchup": "Los Angeles Angels @ Miami Marlins",
-          "game_pk": 823836,
+          "game_pk": 823834,
           "team": "Miami Marlins",
           "side": null,
           "lean": null,
           "signals": {
-            "hard_hit_rate": 0.2982
+            "platoon": 35.0,
+            "sp_era_weak": 1.1429,
+            "pitch_exploit": 6.2857,
+            "l7_avg_ev": 32.7885,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 24.0,
+            "lineup_slot": 62.5,
+            "bullpen_fatigue": 52.0833,
+            "platoon_barrel_pct": -0.64,
+            "platoon_xwoba": 0.84,
+            "park_hand_index": -3.56,
+            "opp_catcher_framing": -1.32,
+            "days_rest": 0.0,
+            "pull_park_synergy": -0.2367,
+            "hard_hit_105_rate": 2.025,
+            "team_total_move": -6.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": 0.44,
+            "vs_rp_ops": 1.548,
+            "ump_k_pct": 0.036,
+            "ump_bb_pct": 0.66
           },
-          "hit_probability": 0.3026,
-          "raw_hit_probability": 0.2982,
-          "lift": 0.0748,
+          "hit_probability": 0.6651,
+          "raw_hit_probability": 0.7437,
+          "lift": 0.1141,
           "reliability": "A",
-          "sample_n": 112,
+          "sample_n": 113,
           "projection": {
-            "stat": "hard_hit_105",
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 62.5,
+          "notable_signals": 1,
+          "matchup": "Los Angeles Angels @ Miami Marlins",
+          "game_pk": 823834,
+          "team": "Miami Marlins",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "opp_team_cs_pct": 3.24,
+            "sprint_speed": 34.375,
+            "catcher_poptime": 88.5714,
+            "on_base": 93.2821
+          },
+          "hit_probability": 0.2144,
+          "raw_hit_probability": 0.168,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 113,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-08-09",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 61.4,
+          "notable_signals": 2,
+          "matchup": "Los Angeles Angels @ Miami Marlins",
+          "game_pk": 823835,
+          "team": "Miami Marlins",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 100.0,
+            "l7_avg_ev": 16.4583,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 15.0,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 24.0,
+            "lineup_slot": 75.0,
+            "bullpen_fatigue": 55.5556,
+            "platoon_barrel_pct": -0.64,
+            "platoon_xwoba": 0.9,
+            "park_hand_index": -3.6,
+            "opp_catcher_framing": 0.72,
+            "days_rest": 0.0,
+            "pull_park_synergy": -0.2394,
+            "hard_hit_105_rate": 1.97,
+            "team_total_move": 0.0,
+            "team_total_open": 0.0,
+            "getaway_day": -2.0,
+            "series_game": 2.0,
+            "sp_rp_ops_gap": 0.512,
+            "vs_rp_ops": 1.668,
+            "ump_k_pct": 0.132,
+            "ump_bb_pct": 0.156
+          },
+          "hit_probability": 0.6677,
+          "raw_hit_probability": 0.7495,
+          "lift": 0.1165,
+          "reliability": "A",
+          "sample_n": 114,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 51.7,
+          "notable_signals": 1,
+          "matchup": "Los Angeles Angels @ Miami Marlins",
+          "game_pk": 823835,
+          "team": "Miami Marlins",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "opp_team_cs_pct": 2.76,
+            "sprint_speed": 34.375,
+            "on_base": 93.2821
+          },
+          "hit_probability": 0.2144,
+          "raw_hit_probability": 0.1679,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 114,
+          "projection": {
+            "stat": "stolen_base",
             "value": 1,
             "needs": 1
           }
@@ -167,9 +299,9 @@
       "date": "2026-08-11",
       "evaluations": [
         {
-          "prop": "Over 1.5 Hits+Runs+RBIs",
+          "prop": "Over 0.5 Hits",
           "type": "batter",
-          "score": 30.3,
+          "score": 46.0,
           "notable_signals": 4,
           "matchup": "Pittsburgh Pirates @ Miami Marlins",
           "game_pk": 823832,
@@ -178,13 +310,12 @@
           "lean": null,
           "signals": {
             "platoon": 35.0,
-            "sp_era_weak": 41.7143,
-            "pitch_exploit": 0.5714,
+            "sp_era_weak": 40.0,
             "l7_avg_ev": 0.0,
             "l7_barrel_pct": 75.0,
             "bat_speed_trend": 12.45,
             "park_hr_index": 50.0,
-            "season_barrel_pct": 22.0,
+            "season_barrel_pct": 24.0,
             "lineup_slot": 87.5,
             "bullpen_fatigue": 76.9231,
             "platoon_barrel_pct": -0.72,
@@ -194,6 +325,8 @@
             "days_rest": 2.0,
             "pull_park_synergy": -0.2726,
             "hard_hit_105_rate": 1.9175,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
             "getaway_day": 0.0,
             "series_game": 0.0,
             "sp_rp_ops_gap": 0.464,
@@ -201,21 +334,21 @@
             "ump_k_pct": 0.216,
             "ump_bb_pct": 0.204
           },
-          "hit_probability": 0.5733,
-          "raw_hit_probability": 0.616,
-          "lift": 0.1151,
+          "hit_probability": 0.6684,
+          "raw_hit_probability": 0.7512,
+          "lift": 0.1172,
           "reliability": "A",
           "sample_n": 115,
           "projection": {
-            "stat": "hits_runs_rbis",
-            "value": 1.5,
-            "needs": 2
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
           }
         },
         {
           "prop": "To Steal a Base",
           "type": "batter",
-          "score": 54.6,
+          "score": 65.7,
           "notable_signals": 1,
           "matchup": "Pittsburgh Pirates @ Miami Marlins",
           "game_pk": 823832,
@@ -224,9 +357,9 @@
           "lean": null,
           "signals": {
             "opp_team_cs_pct": 0.72,
-            "sprint_speed": 37.5,
+            "sprint_speed": 34.375,
             "catcher_poptime": 100.0,
-            "on_base": 90.4031
+            "on_base": 93.2821
           },
           "hit_probability": 0.2148,
           "raw_hit_probability": 0.1686,
@@ -235,30 +368,6 @@
           "sample_n": 115,
           "projection": {
             "stat": "stolen_base",
-            "value": 1,
-            "needs": 1
-          }
-        },
-        {
-          "prop": "To Hit a Laser (105+ MPH)",
-          "type": "batter",
-          "score": 39.1,
-          "notable_signals": 1,
-          "matchup": "Pittsburgh Pirates @ Miami Marlins",
-          "game_pk": 823832,
-          "team": "Miami Marlins",
-          "side": null,
-          "lean": null,
-          "signals": {
-            "hard_hit_rate": 0.2917
-          },
-          "hit_probability": 0.2977,
-          "raw_hit_probability": 0.2917,
-          "lift": 0.0704,
-          "reliability": "A",
-          "sample_n": 115,
-          "projection": {
-            "stat": "hard_hit_105",
             "value": 1,
             "needs": 1
           }

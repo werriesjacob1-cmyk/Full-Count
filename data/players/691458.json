@@ -30,7 +30,7 @@
       "date": "2026-08-07",
       "evaluations": [
         {
-          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "prop": "Over 0.5 Hits",
           "type": "batter",
           "score": 66.6,
           "notable_signals": 1,
@@ -44,8 +44,8 @@
             "sp_era_weak": 92.8571,
             "l7_avg_ev": 100.0,
             "l7_barrel_pct": 100.0,
-            "park_hr_index": 51.9,
-            "season_barrel_pct": 36.0,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 38.6667,
             "lineup_slot": 12.5,
             "bullpen_fatigue": 59.5238,
             "platoon_barrel_pct": 1.52,
@@ -62,13 +62,64 @@
             "sp_rp_ops_gap": 1.92,
             "vs_rp_ops": 0.648
           },
-          "hit_probability": 0.6377,
-          "raw_hit_probability": 0.6919,
-          "lift": -0.0379,
+          "hit_probability": 0.6067,
+          "raw_hit_probability": 0.6161,
+          "lift": 0.0557,
           "reliability": "C",
           "sample_n": 40,
           "projection": {
-            "stat": "hits_runs_rbis",
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-08-08",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 83.8,
+          "notable_signals": 2,
+          "matchup": "Colorado Rockies @ St. Louis Cardinals",
+          "game_pk": 823021,
+          "team": "St. Louis Cardinals",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 100.0,
+            "l7_avg_ev": 100.0,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 74.6,
+            "season_barrel_pct": 38.6667,
+            "lineup_slot": 25.0,
+            "bullpen_fatigue": 59.5238,
+            "platoon_barrel_pct": 0.24,
+            "platoon_xwoba": 2.1,
+            "park_hand_index": -2.99,
+            "opp_catcher_framing": 0.72,
+            "days_rest": 0.0,
+            "pull_park_synergy": -1.0884,
+            "hard_hit_105_rate": -0.3125,
+            "team_total_move": 0.0,
+            "team_total_open": 0.0,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": 2.0,
+            "vs_rp_ops": 0.768,
+            "ump_k_pct": 0.744,
+            "ump_bb_pct": 0.612
+          },
+          "hit_probability": 0.6052,
+          "raw_hit_probability": 0.613,
+          "lift": 0.0542,
+          "reliability": "C",
+          "sample_n": 41,
+          "projection": {
+            "stat": "hits",
             "value": 0.5,
             "needs": 1
           }
@@ -79,9 +130,9 @@
       "date": "2026-08-11",
       "evaluations": [
         {
-          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "prop": "Over 0.5 Hits",
           "type": "batter",
-          "score": 53.3,
+          "score": 65.0,
           "notable_signals": 3,
           "matchup": "Philadelphia Phillies @ St. Louis Cardinals",
           "game_pk": 823019,
@@ -90,11 +141,11 @@
           "lean": null,
           "signals": {
             "platoon": 80.0,
-            "sp_era_weak": 4.2857,
+            "sp_era_weak": 3.1429,
             "l7_avg_ev": 100.0,
             "l7_barrel_pct": 100.0,
-            "park_hr_index": 78.5,
-            "season_barrel_pct": 36.0,
+            "park_hr_index": 80.5,
+            "season_barrel_pct": 38.6667,
             "lineup_slot": 25.0,
             "bullpen_fatigue": 76.9231,
             "platoon_barrel_pct": 0.0,
@@ -104,6 +155,8 @@
             "days_rest": 4.0,
             "pull_park_synergy": -1.0956,
             "hard_hit_105_rate": -0.3975,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
             "getaway_day": 0.0,
             "series_game": 1.0,
             "sp_rp_ops_gap": 1.904,
@@ -111,38 +164,14 @@
             "ump_k_pct": 0.108,
             "ump_bb_pct": 0.192
           },
-          "hit_probability": 0.6316,
-          "raw_hit_probability": 0.6845,
-          "lift": -0.0403,
+          "hit_probability": 0.6056,
+          "raw_hit_probability": 0.6138,
+          "lift": 0.0544,
           "reliability": "C",
           "sample_n": 42,
           "projection": {
-            "stat": "hits_runs_rbis",
+            "stat": "hits",
             "value": 0.5,
-            "needs": 1
-          }
-        },
-        {
-          "prop": "To Hit a Laser (105+ MPH)",
-          "type": "batter",
-          "score": 15.9,
-          "notable_signals": 0,
-          "matchup": "Philadelphia Phillies @ St. Louis Cardinals",
-          "game_pk": 823019,
-          "team": "St. Louis Cardinals",
-          "side": null,
-          "lean": null,
-          "signals": {
-            "hard_hit_rate": 0.1991
-          },
-          "hit_probability": 0.2337,
-          "raw_hit_probability": 0.1991,
-          "lift": 0.0064,
-          "reliability": "C",
-          "sample_n": 42,
-          "projection": {
-            "stat": "hard_hit_105",
-            "value": 1,
             "needs": 1
           }
         }

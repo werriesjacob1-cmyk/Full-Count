@@ -20,6 +20,66 @@
           "matchup": "San Francisco Giants @ Texas Rangers"
         }
       ]
+    },
+    {
+      "date": "2026-08-10",
+      "evaluations": [
+        {
+          "prop": "Over 4.5 Strikeouts",
+          "type": "pitcher",
+          "score": 53.4,
+          "notable_signals": 0,
+          "matchup": "Texas Rangers @ Los Angeles Angels",
+          "game_pk": 823998,
+          "team": "Texas Rangers",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "same_hand_ratio": 33.3333,
+            "l14_k_pct": 67.6471,
+            "env_neutral": 50.0,
+            "ump_accuracy": 60.3718,
+            "ump_k_pct": 0.252,
+            "ump_bb_pct": -0.276
+          },
+          "hit_probability": 0.642,
+          "raw_hit_probability": 0.7331,
+          "lift": 0.105,
+          "reliability": "D",
+          "sample_n": 24,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 4.5,
+            "needs": 5
+          }
+        },
+        {
+          "prop": "Los Angeles Angels scoreless in the 1st",
+          "type": "pitcher",
+          "score": 73.1,
+          "notable_signals": 0,
+          "matchup": "Texas Rangers @ Los Angeles Angels",
+          "game_pk": 823998,
+          "team": "Texas Rangers",
+          "side": "away",
+          "lean": "NRFI",
+          "signals": {
+            "yrfi_rate": 26.9,
+            "fi_n_starts": 26.0,
+            "ump_run_impact": 23.4535,
+            "park_hr_index": 51.1
+          },
+          "hit_probability": 0.691,
+          "raw_hit_probability": 0.7143,
+          "lift": -0.015,
+          "reliability": "C",
+          "sample_n": 26,
+          "projection": {
+            "stat": "first_inning_run",
+            "value": 26.9
+          }
+        }
+      ]
     }
   ]
 }

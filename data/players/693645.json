@@ -1,0 +1,66 @@
+{
+  "player_id": 693645,
+  "name": "Cam Schlittler",
+  "snapshots": [
+    {
+      "date": "2026-08-09",
+      "evaluations": [
+        {
+          "prop": "Over 5.5 Strikeouts",
+          "type": "pitcher",
+          "score": 58.4,
+          "notable_signals": 0,
+          "matchup": "Atlanta Braves @ New York Yankees",
+          "game_pk": 823513,
+          "team": "New York Yankees",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "same_hand_ratio": 12.5,
+            "l14_k_pct": 100.0,
+            "env_neutral": 50.0,
+            "ump_accuracy": 54.7177,
+            "ump_k_pct": -0.156,
+            "ump_bb_pct": 0.252
+          },
+          "hit_probability": 0.6422,
+          "raw_hit_probability": 0.7339,
+          "lift": 0.2655,
+          "reliability": "D",
+          "sample_n": 24,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 5.5,
+            "needs": 6
+          }
+        },
+        {
+          "prop": "Atlanta Braves scoreless in the 1st",
+          "type": "pitcher",
+          "score": 84.0,
+          "notable_signals": 0,
+          "matchup": "Atlanta Braves @ New York Yankees",
+          "game_pk": 823513,
+          "team": "New York Yankees",
+          "side": "home",
+          "lean": "NRFI",
+          "signals": {
+            "yrfi_rate": 16.0,
+            "fi_n_starts": 25.0,
+            "ump_run_impact": 29.288,
+            "park_hr_index": 38.4
+          },
+          "hit_probability": 0.6989,
+          "raw_hit_probability": 0.7495,
+          "lift": -0.0071,
+          "reliability": "C",
+          "sample_n": 25,
+          "projection": {
+            "stat": "first_inning_run",
+            "value": 16.0
+          }
+        }
+      ]
+    }
+  ]
+}

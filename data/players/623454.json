@@ -20,7 +20,7 @@
         {
           "prop": "Over 3.5 Strikeouts",
           "type": "pitcher",
-          "score": 32.1,
+          "score": 33.5,
           "notable_signals": 0,
           "matchup": "Cleveland Guardians @ Detroit Tigers",
           "game_pk": 824240,
@@ -35,15 +35,41 @@
             "ump_k_pct": -0.096,
             "ump_bb_pct": -0.528
           },
-          "hit_probability": 0.5801,
-          "raw_hit_probability": 0.5085,
-          "lift": -0.1326,
+          "hit_probability": 0.5216,
+          "raw_hit_probability": 0.3043,
+          "lift": -0.1911,
           "reliability": "D",
           "sample_n": 0,
           "projection": {
             "stat": "strikeouts",
             "value": 3.5,
             "needs": 4
+          }
+        },
+        {
+          "prop": "Cleveland Guardians scoreless in the 1st",
+          "type": "pitcher",
+          "score": 70,
+          "notable_signals": 1,
+          "matchup": "Cleveland Guardians @ Detroit Tigers",
+          "game_pk": 824240,
+          "team": "Detroit Tigers",
+          "side": "home",
+          "lean": "NRFI",
+          "signals": {
+            "yrfi_rate": 0.0,
+            "fi_n_starts": 3.0,
+            "ump_run_impact": 29.6147,
+            "park_hr_index": 51.9
+          },
+          "hit_probability": 0.6928,
+          "raw_hit_probability": 0.722,
+          "lift": -0.0132,
+          "reliability": "D",
+          "sample_n": 3,
+          "projection": {
+            "stat": "first_inning_run",
+            "value": 0.0
           }
         }
       ]

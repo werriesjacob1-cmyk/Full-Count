@@ -27,7 +27,7 @@
         {
           "prop": "Over 3.5 Strikeouts",
           "type": "pitcher",
-          "score": 55.9,
+          "score": 51.2,
           "notable_signals": 0,
           "matchup": "Baltimore Orioles @ Minnesota Twins",
           "game_pk": 823673,
@@ -42,9 +42,9 @@
             "ump_k_pct": -0.72,
             "ump_bb_pct": 0.36
           },
-          "hit_probability": 0.6386,
-          "raw_hit_probability": 0.7206,
-          "lift": -0.0741,
+          "hit_probability": 0.6477,
+          "raw_hit_probability": 0.7546,
+          "lift": -0.065,
           "reliability": "D",
           "sample_n": 19,
           "projection": {
@@ -54,52 +54,29 @@
           }
         },
         {
-          "prop": "Over 17.5 Outs Recorded",
+          "prop": "Minnesota Twins scoreless in the 1st",
           "type": "pitcher",
-          "score": 51.0,
+          "score": 68.4,
           "notable_signals": 0,
           "matchup": "Baltimore Orioles @ Minnesota Twins",
           "game_pk": 823673,
           "team": "Baltimore Orioles",
           "side": "away",
-          "lean": null,
+          "lean": "NRFI",
           "signals": {
-            "outs_rate": 0.464,
-            "avg_outs_per_start": 17.0
+            "yrfi_rate": 31.6,
+            "fi_n_starts": 19.0,
+            "ump_run_impact": 27.8641,
+            "park_hr_index": 52.5
           },
-          "hit_probability": 0.439,
-          "raw_hit_probability": 0.464,
-          "lift": 0.0055,
+          "hit_probability": 0.6878,
+          "raw_hit_probability": 0.7001,
+          "lift": -0.0182,
           "reliability": "D",
           "sample_n": 19,
           "projection": {
-            "stat": "pitcher_outs",
-            "value": 17.5,
-            "needs": 18
-          }
-        },
-        {
-          "prop": "Over 8.5 Combined Strikeouts",
-          "type": "pitcher_combo",
-          "score": 23.0,
-          "notable_signals": 0,
-          "matchup": "Baltimore Orioles @ Minnesota Twins",
-          "game_pk": 823673,
-          "team": null,
-          "side": null,
-          "lean": null,
-          "signals": {
-            "combined_k_edge": -0.122
-          },
-          "hit_probability": 0.3948,
-          "raw_hit_probability": 0.4129,
-          "lift": -0.1401,
-          "reliability": "D",
-          "sample_n": 0,
-          "projection": {
-            "stat": "combined_strikeouts",
-            "value": 8.5,
-            "needs": 9
+            "stat": "first_inning_run",
+            "value": 31.6
           }
         }
       ]

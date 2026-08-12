@@ -65,7 +65,7 @@
         {
           "prop": "Over 0.5 Hits",
           "type": "batter",
-          "score": 41.9,
+          "score": 42.1,
           "notable_signals": 0,
           "matchup": "Minnesota Twins @ Milwaukee Brewers",
           "game_pk": 823750,
@@ -78,7 +78,7 @@
             "l7_avg_ev": 5.0,
             "l7_barrel_pct": 100.0,
             "park_hr_index": 50.0,
-            "season_barrel_pct": 6.0,
+            "season_barrel_pct": 8.6667,
             "lineup_slot": 12.5,
             "bullpen_fatigue": 59.5238,
             "platoon_barrel_pct": -1.84,
@@ -96,9 +96,9 @@
             "ump_k_pct": 0.288,
             "ump_bb_pct": -0.36
           },
-          "hit_probability": 0.5994,
-          "raw_hit_probability": 0.6009,
-          "lift": 0.0484,
+          "hit_probability": 0.6106,
+          "raw_hit_probability": 0.6244,
+          "lift": 0.0596,
           "reliability": "C",
           "sample_n": 41,
           "projection": {
@@ -110,8 +110,8 @@
         {
           "prop": "To Steal a Base",
           "type": "batter",
-          "score": 61.4,
-          "notable_signals": 0,
+          "score": 62.0,
+          "notable_signals": 1,
           "matchup": "Minnesota Twins @ Milwaukee Brewers",
           "game_pk": 823750,
           "team": "Milwaukee Brewers",
@@ -121,7 +121,7 @@
             "opp_team_cs_pct": 6.0,
             "sprint_speed": 43.75,
             "catcher_poptime": 82.8571,
-            "on_base": 74.0883
+            "on_base": 76.9674
           },
           "hit_probability": 0.2384,
           "raw_hit_probability": 0.2065,
@@ -133,27 +133,157 @@
             "value": 1,
             "needs": 1
           }
-        },
+        }
+      ]
+    },
+    {
+      "date": "2026-08-08",
+      "evaluations": [
         {
-          "prop": "To Hit a Laser (105+ MPH)",
+          "prop": "Over 0.5 Hits",
           "type": "batter",
-          "score": 0,
-          "notable_signals": 0,
+          "score": 41.5,
+          "notable_signals": 1,
           "matchup": "Minnesota Twins @ Milwaukee Brewers",
-          "game_pk": 823750,
+          "game_pk": 823752,
           "team": "Milwaukee Brewers",
           "side": null,
           "lean": null,
           "signals": {
-            "hard_hit_rate": 0.0993
+            "platoon": 35.0,
+            "sp_era_weak": 34.0,
+            "l7_avg_ev": 14.6875,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 8.6667,
+            "lineup_slot": 12.5,
+            "bullpen_fatigue": 59.5238,
+            "platoon_barrel_pct": -2.08,
+            "platoon_xwoba": 1.68,
+            "park_hand_index": 1.04,
+            "opp_catcher_framing": -0.24,
+            "days_rest": 0.0,
+            "pull_park_synergy": 0.051,
+            "team_total_move": 0.0,
+            "team_total_open": 0.0,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": -2.424,
+            "vs_rp_ops": -1.596,
+            "ump_k_pct": 1.164,
+            "ump_bb_pct": 0.156
           },
-          "hit_probability": 0.1761,
-          "raw_hit_probability": 0.0993,
-          "lift": -0.0517,
+          "hit_probability": 0.6055,
+          "raw_hit_probability": 0.6137,
+          "lift": 0.0545,
           "reliability": "C",
-          "sample_n": 41,
+          "sample_n": 42,
           "projection": {
-            "stat": "hard_hit_105",
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 62.0,
+          "notable_signals": 1,
+          "matchup": "Minnesota Twins @ Milwaukee Brewers",
+          "game_pk": 823752,
+          "team": "Milwaukee Brewers",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "opp_team_cs_pct": 6.0,
+            "sprint_speed": 43.75,
+            "catcher_poptime": 82.8571,
+            "on_base": 76.9674
+          },
+          "hit_probability": 0.2351,
+          "raw_hit_probability": 0.2013,
+          "lift": null,
+          "reliability": "C",
+          "sample_n": 42,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-08-09",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 51.0,
+          "notable_signals": 0,
+          "matchup": "Minnesota Twins @ Milwaukee Brewers",
+          "game_pk": 823751,
+          "team": "Milwaukee Brewers",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 64.2857,
+            "l7_avg_ev": 18.2031,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 8.6667,
+            "lineup_slot": 12.5,
+            "bullpen_fatigue": 59.5238,
+            "platoon_barrel_pct": -5.0,
+            "platoon_xwoba": -2.58,
+            "park_hand_index": 0.91,
+            "opp_catcher_framing": -0.48,
+            "days_rest": 0.0,
+            "pull_park_synergy": 0.035,
+            "team_total_move": 0.0,
+            "team_total_open": 0.0,
+            "getaway_day": -2.0,
+            "series_game": 2.0,
+            "sp_rp_ops_gap": -2.368,
+            "vs_rp_ops": -1.8,
+            "ump_k_pct": 0.696,
+            "ump_bb_pct": -0.324
+          },
+          "hit_probability": 0.6007,
+          "raw_hit_probability": 0.6035,
+          "lift": 0.0495,
+          "reliability": "C",
+          "sample_n": 43,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 54.8,
+          "notable_signals": 1,
+          "matchup": "Minnesota Twins @ Milwaukee Brewers",
+          "game_pk": 823751,
+          "team": "Milwaukee Brewers",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "opp_team_cs_pct": 6.0,
+            "sprint_speed": 43.75,
+            "catcher_poptime": 57.1429,
+            "on_base": 76.9674
+          },
+          "hit_probability": 0.2332,
+          "raw_hit_probability": 0.1984,
+          "lift": null,
+          "reliability": "C",
+          "sample_n": 43,
+          "projection": {
+            "stat": "stolen_base",
             "value": 1,
             "needs": 1
           }

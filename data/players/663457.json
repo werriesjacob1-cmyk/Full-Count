@@ -8,7 +8,7 @@
         {
           "prop": "Over 0.5 Hits+Runs+RBIs",
           "type": "batter",
-          "score": 55.1,
+          "score": 56.9,
           "notable_signals": 0,
           "matchup": "Los Angeles Dodgers @ Arizona Diamondbacks",
           "game_pk": 825051,
@@ -21,7 +21,7 @@
             "l7_avg_ev": 38.0625,
             "l7_barrel_pct": 100.0,
             "park_hr_index": 50.0,
-            "season_barrel_pct": 37.3333,
+            "season_barrel_pct": 41.3333,
             "lineup_slot": 50.0,
             "bullpen_fatigue": 44.4444,
             "platoon_barrel_pct": 1.36,
@@ -38,9 +38,9 @@
             "ump_k_pct": -0.192,
             "ump_bb_pct": -0.06
           },
-          "hit_probability": 0.6412,
-          "raw_hit_probability": 0.6962,
-          "lift": -0.0302,
+          "hit_probability": 0.6419,
+          "raw_hit_probability": 0.697,
+          "lift": -0.0326,
           "reliability": "B",
           "sample_n": 51,
           "projection": {
@@ -52,7 +52,7 @@
         {
           "prop": "To Steal a Base",
           "type": "batter",
-          "score": 34.4,
+          "score": 33.1,
           "notable_signals": 0,
           "matchup": "Los Angeles Dodgers @ Arizona Diamondbacks",
           "game_pk": 825051,
@@ -61,12 +61,12 @@
           "lean": null,
           "signals": {
             "opp_team_cs_pct": 2.4,
-            "sprint_speed": 9.375,
+            "sprint_speed": 6.25,
             "catcher_poptime": 71.4286,
-            "on_base": 44.3378
+            "on_base": 45.2975
           },
-          "hit_probability": 0.1426,
-          "raw_hit_probability": 0.0287,
+          "hit_probability": 0.1421,
+          "raw_hit_probability": 0.0275,
           "lift": null,
           "reliability": "B",
           "sample_n": 51,
@@ -75,27 +75,157 @@
             "value": 1,
             "needs": 1
           }
-        },
+        }
+      ]
+    },
+    {
+      "date": "2026-08-08",
+      "evaluations": [
         {
-          "prop": "To Hit a Laser (105+ MPH)",
+          "prop": "Over 0.5 Hits",
           "type": "batter",
-          "score": 38.2,
-          "notable_signals": 1,
+          "score": 50.8,
+          "notable_signals": 2,
           "matchup": "Los Angeles Dodgers @ Arizona Diamondbacks",
-          "game_pk": 825051,
+          "game_pk": 825049,
           "team": "Arizona Diamondbacks",
           "side": null,
           "lean": null,
           "signals": {
-            "hard_hit_rate": 0.2895
+            "platoon": 80.0,
+            "sp_era_weak": 7.4286,
+            "l7_avg_ev": 41.125,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 0.3,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 41.3333,
+            "lineup_slot": 50.0,
+            "bullpen_fatigue": 47.619,
+            "platoon_barrel_pct": 1.84,
+            "platoon_xwoba": 2.04,
+            "park_hand_index": -1.12,
+            "opp_catcher_framing": -0.12,
+            "days_rest": 0.0,
+            "pull_park_synergy": -0.541,
+            "hard_hit_105_rate": 1.7625,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "ump_k_pct": 0.816,
+            "ump_bb_pct": -0.012
           },
-          "hit_probability": 0.2961,
-          "raw_hit_probability": 0.2895,
-          "lift": 0.0683,
+          "hit_probability": 0.5993,
+          "raw_hit_probability": 0.6006,
+          "lift": 0.0483,
           "reliability": "B",
-          "sample_n": 51,
+          "sample_n": 52,
           "projection": {
-            "stat": "hard_hit_105",
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 33.1,
+          "notable_signals": 0,
+          "matchup": "Los Angeles Dodgers @ Arizona Diamondbacks",
+          "game_pk": 825049,
+          "team": "Arizona Diamondbacks",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "opp_team_cs_pct": 2.7,
+            "sprint_speed": 6.25,
+            "catcher_poptime": 71.4286,
+            "on_base": 45.2975
+          },
+          "hit_probability": 0.1423,
+          "raw_hit_probability": 0.0281,
+          "lift": null,
+          "reliability": "B",
+          "sample_n": 52,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-08-10",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 59.5,
+          "notable_signals": 1,
+          "matchup": "Colorado Rockies @ Arizona Diamondbacks",
+          "game_pk": 825048,
+          "team": "Arizona Diamondbacks",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 23.7143,
+            "l7_avg_ev": 49.75,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 1.725,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 41.3333,
+            "lineup_slot": 50.0,
+            "bullpen_fatigue": 64.1026,
+            "platoon_barrel_pct": 1.68,
+            "platoon_xwoba": 1.86,
+            "park_hand_index": -1.25,
+            "opp_catcher_framing": 0.72,
+            "days_rest": 2.0,
+            "pull_park_synergy": -0.6169,
+            "hard_hit_105_rate": 2.005,
+            "team_total_move": 0.0,
+            "team_total_open": 0.0,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "ump_k_pct": -0.36,
+            "ump_bb_pct": -0.084
+          },
+          "hit_probability": 0.6365,
+          "raw_hit_probability": 0.6904,
+          "lift": -0.0335,
+          "reliability": "B",
+          "sample_n": 53,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 37.9,
+          "notable_signals": 0,
+          "matchup": "Colorado Rockies @ Arizona Diamondbacks",
+          "game_pk": 825048,
+          "team": "Arizona Diamondbacks",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "opp_team_cs_pct": 5.28,
+            "sprint_speed": 6.25,
+            "catcher_poptime": 88.5714,
+            "on_base": 45.2975
+          },
+          "hit_probability": 0.1417,
+          "raw_hit_probability": 0.0266,
+          "lift": null,
+          "reliability": "B",
+          "sample_n": 53,
+          "projection": {
+            "stat": "stolen_base",
             "value": 1,
             "needs": 1
           }
@@ -108,7 +238,7 @@
         {
           "prop": "Over 0.5 Hits+Runs+RBIs",
           "type": "batter",
-          "score": 54.4,
+          "score": 68.2,
           "notable_signals": 1,
           "matchup": "Colorado Rockies @ Arizona Diamondbacks",
           "game_pk": 825046,
@@ -117,11 +247,11 @@
           "lean": null,
           "signals": {
             "platoon": 80.0,
-            "sp_era_weak": 57.4286,
+            "sp_era_weak": 56.2857,
             "l7_avg_ev": 60.5882,
             "l7_barrel_pct": 100.0,
             "park_hr_index": 50.0,
-            "season_barrel_pct": 37.3333,
+            "season_barrel_pct": 41.3333,
             "lineup_slot": 100.0,
             "bullpen_fatigue": 76.9231,
             "platoon_barrel_pct": 1.52,
@@ -131,14 +261,16 @@
             "days_rest": 0.0,
             "pull_park_synergy": -0.686,
             "hard_hit_105_rate": 1.905,
+            "team_total_move": 0.0,
+            "team_total_open": 0.0,
             "getaway_day": 0.0,
             "series_game": 1.0,
             "ump_k_pct": 0.06,
             "ump_bb_pct": -0.564
           },
-          "hit_probability": 0.6403,
-          "raw_hit_probability": 0.6951,
-          "lift": -0.0316,
+          "hit_probability": 0.6404,
+          "raw_hit_probability": 0.6952,
+          "lift": -0.0319,
           "reliability": "B",
           "sample_n": 54,
           "projection": {
@@ -150,7 +282,7 @@
         {
           "prop": "To Steal a Base",
           "type": "batter",
-          "score": 27.2,
+          "score": 37.9,
           "notable_signals": 0,
           "matchup": "Colorado Rockies @ Arizona Diamondbacks",
           "game_pk": 825046,
@@ -159,41 +291,17 @@
           "lean": null,
           "signals": {
             "opp_team_cs_pct": 5.46,
-            "sprint_speed": 9.375,
+            "sprint_speed": 6.25,
             "catcher_poptime": 88.5714,
-            "on_base": 44.3378
+            "on_base": 45.2975
           },
           "hit_probability": 0.1422,
-          "raw_hit_probability": 0.0278,
+          "raw_hit_probability": 0.0277,
           "lift": null,
           "reliability": "B",
           "sample_n": 54,
           "projection": {
             "stat": "stolen_base",
-            "value": 1,
-            "needs": 1
-          }
-        },
-        {
-          "prop": "To Hit a Laser (105+ MPH)",
-          "type": "batter",
-          "score": 39.0,
-          "notable_signals": 1,
-          "matchup": "Colorado Rockies @ Arizona Diamondbacks",
-          "game_pk": 825046,
-          "team": "Arizona Diamondbacks",
-          "side": null,
-          "lean": null,
-          "signals": {
-            "hard_hit_rate": 0.2912
-          },
-          "hit_probability": 0.2973,
-          "raw_hit_probability": 0.2912,
-          "lift": 0.07,
-          "reliability": "B",
-          "sample_n": 54,
-          "projection": {
-            "stat": "hard_hit_105",
             "value": 1,
             "needs": 1
           }

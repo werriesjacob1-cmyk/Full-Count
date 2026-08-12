@@ -32,8 +32,8 @@
         {
           "prop": "Over 0.5 Hits",
           "type": "batter",
-          "score": 47.1,
-          "notable_signals": 2,
+          "score": 43.2,
+          "notable_signals": 1,
           "matchup": "Atlanta Braves @ New York Yankees",
           "game_pk": 823515,
           "team": "New York Yankees",
@@ -44,14 +44,14 @@
             "sp_era_weak": 75.1429,
             "l7_avg_ev": 0.0,
             "l7_barrel_pct": 100.0,
-            "park_hr_index": 83.6,
+            "park_hr_index": 51.4,
             "lineup_slot": 25.0,
             "bullpen_fatigue": 75.7576,
             "park_hand_index": 0.68,
             "opp_catcher_framing": 1.56,
             "days_rest": 2.0,
-            "team_total_move": 0.0,
-            "team_total_open": 0.0,
+            "team_total_move": -6.0,
+            "team_total_open": -4.0,
             "getaway_day": 0.0,
             "series_game": 0.0,
             "ump_k_pct": -0.024,
@@ -71,12 +71,100 @@
       ]
     },
     {
+      "date": "2026-08-08",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 49.3,
+          "notable_signals": 2,
+          "matchup": "Atlanta Braves @ New York Yankees",
+          "game_pk": 823514,
+          "team": "New York Yankees",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 0.0,
+            "l7_avg_ev": 0.0,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 89.1,
+            "lineup_slot": 37.5,
+            "bullpen_fatigue": 55.5556,
+            "park_hand_index": 0.66,
+            "opp_catcher_framing": 0.24,
+            "days_rest": 0.0,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "ump_k_pct": 0.144,
+            "ump_bb_pct": -0.084
+          },
+          "hit_probability": 0.5755,
+          "raw_hit_probability": 0.551,
+          "lift": 0.0245,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-08-09",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 34.9,
+          "notable_signals": 1,
+          "matchup": "Atlanta Braves @ New York Yankees",
+          "game_pk": 823513,
+          "team": "New York Yankees",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 39.4286,
+            "l7_avg_ev": 0.0,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 38.4,
+            "lineup_slot": 25.0,
+            "bullpen_fatigue": 76.9231,
+            "park_hand_index": 0.9,
+            "opp_catcher_framing": 0.36,
+            "days_rest": 0.0,
+            "team_total_move": 0.0,
+            "team_total_open": 0.0,
+            "getaway_day": -2.0,
+            "series_game": 2.0,
+            "ump_k_pct": 0.156,
+            "ump_bb_pct": -0.252
+          },
+          "hit_probability": 0.5756,
+          "raw_hit_probability": 0.5512,
+          "lift": 0.0244,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
       "date": "2026-08-11",
       "evaluations": [
         {
           "prop": "Over 0.5 Hits",
           "type": "batter",
-          "score": 23.6,
+          "score": 36.2,
           "notable_signals": 1,
           "matchup": "Seattle Mariners @ New York Yankees",
           "game_pk": 823512,
@@ -85,23 +173,25 @@
           "lean": null,
           "signals": {
             "platoon": 35.0,
-            "sp_era_weak": 51.7143,
+            "sp_era_weak": 58.8571,
             "l7_avg_ev": 0.0,
             "l7_barrel_pct": 100.0,
-            "park_hr_index": 36.6,
+            "park_hr_index": 35.6,
             "lineup_slot": 37.5,
             "bullpen_fatigue": 71.4286,
             "park_hand_index": 0.84,
             "opp_catcher_framing": 0.6,
             "days_rest": 2.0,
+            "team_total_move": -6.0,
+            "team_total_open": -4.0,
             "getaway_day": 0.0,
             "series_game": 0.0,
             "ump_k_pct": -0.204,
             "ump_bb_pct": 0.228
           },
           "hit_probability": 0.5756,
-          "raw_hit_probability": 0.5513,
-          "lift": 0.0243,
+          "raw_hit_probability": 0.5512,
+          "lift": 0.0244,
           "reliability": "D",
           "sample_n": 0,
           "projection": {

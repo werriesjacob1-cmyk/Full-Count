@@ -63,9 +63,9 @@
       "date": "2026-08-07",
       "evaluations": [
         {
-          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "prop": "Over 0.5 Hits",
           "type": "batter",
-          "score": 50.6,
+          "score": 50.7,
           "notable_signals": 1,
           "matchup": "Los Angeles Angels @ Miami Marlins",
           "game_pk": 823836,
@@ -79,7 +79,7 @@
             "l7_barrel_pct": 100.0,
             "bat_speed_trend": 15.0,
             "park_hr_index": 50.0,
-            "season_barrel_pct": 17.3333,
+            "season_barrel_pct": 18.0,
             "lineup_slot": 25.0,
             "bullpen_fatigue": 59.5238,
             "platoon_barrel_pct": -2.72,
@@ -96,13 +96,13 @@
             "sp_rp_ops_gap": 0.92,
             "vs_rp_ops": -0.036
           },
-          "hit_probability": 0.6609,
-          "raw_hit_probability": 0.7205,
-          "lift": -0.0147,
+          "hit_probability": 0.6121,
+          "raw_hit_probability": 0.6277,
+          "lift": 0.0611,
           "reliability": "C",
           "sample_n": 39,
           "projection": {
-            "stat": "hits_runs_rbis",
+            "stat": "hits",
             "value": 0.5,
             "needs": 1
           }
@@ -110,7 +110,7 @@
         {
           "prop": "To Steal a Base",
           "type": "batter",
-          "score": 42.7,
+          "score": 41.8,
           "notable_signals": 0,
           "matchup": "Los Angeles Angels @ Miami Marlins",
           "game_pk": 823836,
@@ -119,9 +119,9 @@
           "lean": null,
           "signals": {
             "opp_team_cs_pct": 1.92,
-            "sprint_speed": 18.75,
+            "sprint_speed": 15.625,
             "catcher_poptime": 100.0,
-            "on_base": 24.1843
+            "on_base": 27.0633
           },
           "hit_probability": 0.1539,
           "raw_hit_probability": 0.0538,
@@ -137,12 +137,245 @@
       ]
     },
     {
+      "date": "2026-08-08",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 54.0,
+          "notable_signals": 2,
+          "matchup": "Los Angeles Angels @ Miami Marlins",
+          "game_pk": 823834,
+          "team": "Los Angeles Angels",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 33.7143,
+            "l7_avg_ev": 74.5833,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 15.0,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 18.0,
+            "lineup_slot": 25.0,
+            "bullpen_fatigue": 44.4444,
+            "platoon_barrel_pct": -2.72,
+            "platoon_xwoba": -2.16,
+            "park_hand_index": -3.56,
+            "opp_catcher_framing": 0.84,
+            "days_rest": 0.0,
+            "pull_park_synergy": -2.0434,
+            "hard_hit_105_rate": -0.9775,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": 0.92,
+            "vs_rp_ops": -0.036,
+            "ump_k_pct": 0.036,
+            "ump_bb_pct": 0.66
+          },
+          "hit_probability": 0.6109,
+          "raw_hit_probability": 0.6251,
+          "lift": 0.0599,
+          "reliability": "C",
+          "sample_n": 39,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 41.8,
+          "notable_signals": 0,
+          "matchup": "Los Angeles Angels @ Miami Marlins",
+          "game_pk": 823834,
+          "team": "Los Angeles Angels",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "opp_team_cs_pct": 1.92,
+            "sprint_speed": 15.625,
+            "catcher_poptime": 100.0,
+            "on_base": 27.0633
+          },
+          "hit_probability": 0.1538,
+          "raw_hit_probability": 0.0536,
+          "lift": null,
+          "reliability": "C",
+          "sample_n": 39,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-08-09",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 51.6,
+          "notable_signals": 0,
+          "matchup": "Los Angeles Angels @ Miami Marlins",
+          "game_pk": 823835,
+          "team": "Los Angeles Angels",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 80.2857,
+            "l7_avg_ev": 100.0,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 18.0,
+            "lineup_slot": 37.5,
+            "bullpen_fatigue": 47.619,
+            "platoon_barrel_pct": -2.8,
+            "platoon_xwoba": -2.34,
+            "park_hand_index": -3.6,
+            "opp_catcher_framing": 0.96,
+            "days_rest": 0.0,
+            "pull_park_synergy": -2.0412,
+            "hard_hit_105_rate": -0.64,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": -2.0,
+            "series_game": 2.0,
+            "sp_rp_ops_gap": 0.904,
+            "vs_rp_ops": -0.036,
+            "ump_k_pct": 0.132,
+            "ump_bb_pct": 0.156
+          },
+          "hit_probability": 0.6163,
+          "raw_hit_probability": 0.6365,
+          "lift": 0.0651,
+          "reliability": "C",
+          "sample_n": 40,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 35.4,
+          "notable_signals": 0,
+          "matchup": "Los Angeles Angels @ Miami Marlins",
+          "game_pk": 823835,
+          "team": "Los Angeles Angels",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "opp_team_cs_pct": 1.92,
+            "sprint_speed": 15.625,
+            "catcher_poptime": 77.1429,
+            "on_base": 27.0633
+          },
+          "hit_probability": 0.1534,
+          "raw_hit_probability": 0.0528,
+          "lift": null,
+          "reliability": "C",
+          "sample_n": 40,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-08-10",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 55.2,
+          "notable_signals": 0,
+          "matchup": "Texas Rangers @ Los Angeles Angels",
+          "game_pk": 823998,
+          "team": "Los Angeles Angels",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 64.8571,
+            "l7_avg_ev": 52.9687,
+            "l7_barrel_pct": 75.0,
+            "park_hr_index": 51.0,
+            "season_barrel_pct": 18.0,
+            "lineup_slot": 50.0,
+            "bullpen_fatigue": 64.1026,
+            "platoon_barrel_pct": 5.0,
+            "platoon_xwoba": -0.78,
+            "park_hand_index": -1.06,
+            "opp_catcher_framing": 0.24,
+            "days_rest": 0.0,
+            "pull_park_synergy": -0.5639,
+            "hard_hit_105_rate": -0.72,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": 0.8,
+            "vs_rp_ops": -0.336
+          },
+          "hit_probability": 0.6142,
+          "raw_hit_probability": 0.632,
+          "lift": 0.0629,
+          "reliability": "C",
+          "sample_n": 41,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 41.8,
+          "notable_signals": 0,
+          "matchup": "Texas Rangers @ Los Angeles Angels",
+          "game_pk": 823998,
+          "team": "Los Angeles Angels",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "opp_team_cs_pct": 2.22,
+            "sprint_speed": 15.625,
+            "catcher_poptime": 100.0,
+            "on_base": 27.0633
+          },
+          "hit_probability": 0.1531,
+          "raw_hit_probability": 0.0522,
+          "lift": null,
+          "reliability": "C",
+          "sample_n": 41,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
       "date": "2026-08-11",
       "evaluations": [
         {
-          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "prop": "Over 0.5 Hits",
           "type": "batter",
-          "score": 49.1,
+          "score": 54.4,
           "notable_signals": 1,
           "matchup": "Texas Rangers @ Los Angeles Angels",
           "game_pk": 823997,
@@ -151,11 +384,10 @@
           "lean": null,
           "signals": {
             "platoon": 80.0,
-            "sp_era_weak": 0.0,
             "l7_avg_ev": 52.9687,
             "l7_barrel_pct": 75.0,
-            "park_hr_index": 51.1,
-            "season_barrel_pct": 17.3333,
+            "park_hr_index": 51.0,
+            "season_barrel_pct": 18.0,
             "lineup_slot": 50.0,
             "bullpen_fatigue": 76.9231,
             "platoon_barrel_pct": 5.0,
@@ -165,18 +397,20 @@
             "days_rest": 0.0,
             "pull_park_synergy": -0.5692,
             "hard_hit_105_rate": -0.7925,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
             "getaway_day": 0.0,
             "series_game": 1.0,
             "sp_rp_ops_gap": 0.712,
             "vs_rp_ops": -0.468
           },
-          "hit_probability": 0.6451,
-          "raw_hit_probability": 0.7009,
-          "lift": -0.0277,
+          "hit_probability": 0.6108,
+          "raw_hit_probability": 0.6249,
+          "lift": 0.0596,
           "reliability": "C",
           "sample_n": 42,
           "projection": {
-            "stat": "hits_runs_rbis",
+            "stat": "hits",
             "value": 0.5,
             "needs": 1
           }
@@ -184,7 +418,7 @@
         {
           "prop": "To Steal a Base",
           "type": "batter",
-          "score": 42.7,
+          "score": 41.8,
           "notable_signals": 0,
           "matchup": "Texas Rangers @ Los Angeles Angels",
           "game_pk": 823997,
@@ -193,9 +427,9 @@
           "lean": null,
           "signals": {
             "opp_team_cs_pct": 2.22,
-            "sprint_speed": 18.75,
+            "sprint_speed": 15.625,
             "catcher_poptime": 100.0,
-            "on_base": 24.1843
+            "on_base": 27.0633
           },
           "hit_probability": 0.1531,
           "raw_hit_probability": 0.0522,
@@ -204,30 +438,6 @@
           "sample_n": 42,
           "projection": {
             "stat": "stolen_base",
-            "value": 1,
-            "needs": 1
-          }
-        },
-        {
-          "prop": "To Hit a Laser (105+ MPH)",
-          "type": "batter",
-          "score": 11.7,
-          "notable_signals": 0,
-          "matchup": "Texas Rangers @ Los Angeles Angels",
-          "game_pk": 823997,
-          "team": "Los Angeles Angels",
-          "side": null,
-          "lean": null,
-          "signals": {
-            "hard_hit_rate": 0.1833
-          },
-          "hit_probability": 0.2238,
-          "raw_hit_probability": 0.1833,
-          "lift": -0.0035,
-          "reliability": "C",
-          "sample_n": 42,
-          "projection": {
-            "stat": "hard_hit_105",
             "value": 1,
             "needs": 1
           }

@@ -63,9 +63,9 @@
       "date": "2026-08-07",
       "evaluations": [
         {
-          "prop": "Over 0.5 Hits",
+          "prop": "Over 0.5 Hits+Runs+RBIs",
           "type": "batter",
-          "score": 29.0,
+          "score": 29.9,
           "notable_signals": 2,
           "matchup": "Toronto Blue Jays @ Philadelphia Phillies",
           "game_pk": 823428,
@@ -77,8 +77,8 @@
             "sp_era_weak": 0.0,
             "l7_avg_ev": 0.0,
             "l7_barrel_pct": 21.4286,
-            "park_hr_index": 59.9,
-            "season_barrel_pct": 3.3333,
+            "park_hr_index": 59.8,
+            "season_barrel_pct": 5.3333,
             "lineup_slot": 0.0,
             "bullpen_fatigue": 51.2821,
             "platoon_barrel_pct": -4.64,
@@ -95,13 +95,13 @@
             "sp_rp_ops_gap": -2.12,
             "vs_rp_ops": -2.76
           },
-          "hit_probability": 0.5735,
-          "raw_hit_probability": 0.5469,
-          "lift": 0.0225,
+          "hit_probability": 0.4543,
+          "raw_hit_probability": 0.4814,
+          "lift": -0.2213,
           "reliability": "A",
           "sample_n": 87,
           "projection": {
-            "stat": "hits",
+            "stat": "hits_runs_rbis",
             "value": 0.5,
             "needs": 1
           }
@@ -109,7 +109,7 @@
         {
           "prop": "To Steal a Base",
           "type": "batter",
-          "score": 68.1,
+          "score": 67.0,
           "notable_signals": 0,
           "matchup": "Toronto Blue Jays @ Philadelphia Phillies",
           "game_pk": 823428,
@@ -120,7 +120,7 @@
             "opp_team_cs_pct": -3.54,
             "sprint_speed": 75.0,
             "catcher_poptime": 100.0,
-            "on_base": 11.7083
+            "on_base": 6.9098
           },
           "hit_probability": 0.1656,
           "raw_hit_probability": 0.0784,
@@ -136,13 +136,170 @@
       ]
     },
     {
+      "date": "2026-08-08",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 39.0,
+          "notable_signals": 2,
+          "matchup": "Toronto Blue Jays @ Philadelphia Phillies",
+          "game_pk": 823426,
+          "team": "Toronto Blue Jays",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 87.1429,
+            "l7_avg_ev": 0.0,
+            "l7_barrel_pct": 17.8571,
+            "park_hr_index": 79.6,
+            "season_barrel_pct": 5.3333,
+            "lineup_slot": 0.0,
+            "bullpen_fatigue": 47.619,
+            "platoon_barrel_pct": -4.72,
+            "platoon_xwoba": 0.72,
+            "park_hand_index": 0.45,
+            "opp_catcher_framing": -0.24,
+            "days_rest": 0.0,
+            "pull_park_synergy": 0.1748,
+            "hard_hit_105_rate": -3.3775,
+            "team_total_move": 0.0,
+            "team_total_open": 0.0,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": -2.2,
+            "vs_rp_ops": -2.88,
+            "ump_k_pct": -0.084,
+            "ump_bb_pct": -0.18
+          },
+          "hit_probability": 0.4502,
+          "raw_hit_probability": 0.4768,
+          "lift": -0.2243,
+          "reliability": "A",
+          "sample_n": 88,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 67.0,
+          "notable_signals": 0,
+          "matchup": "Toronto Blue Jays @ Philadelphia Phillies",
+          "game_pk": 823426,
+          "team": "Toronto Blue Jays",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "opp_team_cs_pct": -3.0,
+            "sprint_speed": 75.0,
+            "catcher_poptime": 100.0,
+            "on_base": 6.9098
+          },
+          "hit_probability": 0.1652,
+          "raw_hit_probability": 0.0776,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 88,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-08-09",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 45.7,
+          "notable_signals": 3,
+          "matchup": "Toronto Blue Jays @ Philadelphia Phillies",
+          "game_pk": 823425,
+          "team": "Toronto Blue Jays",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 30.5714,
+            "l7_avg_ev": 0.0,
+            "l7_barrel_pct": 21.4286,
+            "park_hr_index": 79.1,
+            "season_barrel_pct": 5.3333,
+            "lineup_slot": 25.0,
+            "bullpen_fatigue": 47.619,
+            "bvp_ops": 0.594,
+            "platoon_barrel_pct": -1.28,
+            "platoon_xwoba": -2.16,
+            "park_hand_index": 0.62,
+            "opp_catcher_framing": 0.72,
+            "days_rest": 0.0,
+            "pull_park_synergy": 0.2279,
+            "hard_hit_105_rate": -3.395,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": -2.0,
+            "series_game": 2.0,
+            "sp_rp_ops_gap": -2.304,
+            "vs_rp_ops": -3.048,
+            "ump_k_pct": 0.276,
+            "ump_bb_pct": 0.192
+          },
+          "hit_probability": 0.4533,
+          "raw_hit_probability": 0.4803,
+          "lift": -0.2144,
+          "reliability": "A",
+          "sample_n": 89,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 67.0,
+          "notable_signals": 0,
+          "matchup": "Toronto Blue Jays @ Philadelphia Phillies",
+          "game_pk": 823425,
+          "team": "Toronto Blue Jays",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "opp_team_cs_pct": -3.84,
+            "sprint_speed": 75.0,
+            "catcher_poptime": 100.0,
+            "on_base": 6.9098
+          },
+          "hit_probability": 0.1658,
+          "raw_hit_probability": 0.0789,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 89,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
       "date": "2026-08-11",
       "evaluations": [
         {
-          "prop": "Over 0.5 Hits",
+          "prop": "Over 0.5 Hits+Runs+RBIs",
           "type": "batter",
-          "score": 26.5,
-          "notable_signals": 2,
+          "score": 37.5,
+          "notable_signals": 3,
           "matchup": "Boston Red Sox @ Toronto Blue Jays",
           "game_pk": 822778,
           "team": "Toronto Blue Jays",
@@ -150,12 +307,12 @@
           "lean": null,
           "signals": {
             "platoon": 80.0,
-            "sp_era_weak": 25.1429,
+            "sp_era_weak": 23.4286,
             "l7_avg_ev": 0.0,
             "l7_barrel_pct": 23.5714,
             "park_hr_index": 50.0,
-            "season_barrel_pct": 3.3333,
-            "lineup_slot": 12.5,
+            "season_barrel_pct": 5.3333,
+            "lineup_slot": 0.0,
             "bullpen_fatigue": 71.4286,
             "bvp_ops": -0.498,
             "platoon_barrel_pct": -1.44,
@@ -166,6 +323,8 @@
             "consecutive_games": -1.2,
             "pull_park_synergy": -0.203,
             "hard_hit_105_rate": -3.4325,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
             "getaway_day": 0.0,
             "series_game": 1.0,
             "sp_rp_ops_gap": -2.376,
@@ -173,13 +332,13 @@
             "ump_k_pct": -0.204,
             "ump_bb_pct": -0.276
           },
-          "hit_probability": 0.5752,
-          "raw_hit_probability": 0.5505,
-          "lift": 0.0239,
+          "hit_probability": 0.4544,
+          "raw_hit_probability": 0.4815,
+          "lift": -0.2179,
           "reliability": "A",
           "sample_n": 91,
           "projection": {
-            "stat": "hits",
+            "stat": "hits_runs_rbis",
             "value": 0.5,
             "needs": 1
           }
@@ -187,7 +346,7 @@
         {
           "prop": "To Steal a Base",
           "type": "batter",
-          "score": 52.1,
+          "score": 63.0,
           "notable_signals": 0,
           "matchup": "Boston Red Sox @ Toronto Blue Jays",
           "game_pk": 822778,
@@ -198,39 +357,15 @@
             "opp_team_cs_pct": 5.64,
             "sprint_speed": 75.0,
             "catcher_poptime": 85.7143,
-            "on_base": 11.7083
+            "on_base": 6.9098
           },
-          "hit_probability": 0.1645,
-          "raw_hit_probability": 0.0762,
+          "hit_probability": 0.1636,
+          "raw_hit_probability": 0.0743,
           "lift": null,
           "reliability": "A",
           "sample_n": 91,
           "projection": {
             "stat": "stolen_base",
-            "value": 1,
-            "needs": 1
-          }
-        },
-        {
-          "prop": "To Hit a Laser (105+ MPH)",
-          "type": "batter",
-          "score": 0.1,
-          "notable_signals": 0,
-          "matchup": "Boston Red Sox @ Toronto Blue Jays",
-          "game_pk": 822778,
-          "team": "Toronto Blue Jays",
-          "side": null,
-          "lean": null,
-          "signals": {
-            "hard_hit_rate": 0.0777
-          },
-          "hit_probability": 0.1653,
-          "raw_hit_probability": 0.0777,
-          "lift": -0.062,
-          "reliability": "A",
-          "sample_n": 91,
-          "projection": {
-            "stat": "hard_hit_105",
             "value": 1,
             "needs": 1
           }

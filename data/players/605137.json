@@ -44,7 +44,7 @@
         {
           "prop": "Over 0.5 Hits",
           "type": "batter",
-          "score": 66.1,
+          "score": 66.0,
           "notable_signals": 2,
           "matchup": "Minnesota Twins @ Milwaukee Brewers",
           "game_pk": 823750,
@@ -58,7 +58,7 @@
             "l7_barrel_pct": 100.0,
             "bat_speed_trend": 4.425,
             "park_hr_index": 50.0,
-            "season_barrel_pct": 46.0,
+            "season_barrel_pct": 44.0,
             "lineup_slot": 62.5,
             "bullpen_fatigue": 64.1026,
             "platoon_barrel_pct": -0.4,
@@ -75,9 +75,9 @@
             "ump_k_pct": 0.288,
             "ump_bb_pct": -0.36
           },
-          "hit_probability": 0.5994,
-          "raw_hit_probability": 0.6009,
-          "lift": 0.0484,
+          "hit_probability": 0.6203,
+          "raw_hit_probability": 0.6451,
+          "lift": 0.0693,
           "reliability": "A",
           "sample_n": 111,
           "projection": {
@@ -85,28 +85,150 @@
             "value": 0.5,
             "needs": 1
           }
-        },
+        }
+      ]
+    },
+    {
+      "date": "2026-08-08",
+      "evaluations": [
         {
-          "prop": "To Hit a Laser (105+ MPH)",
+          "prop": "Over 0.5 Hits",
           "type": "batter",
-          "score": 32.5,
-          "notable_signals": 0,
+          "score": 65.0,
+          "notable_signals": 2,
           "matchup": "Minnesota Twins @ Milwaukee Brewers",
-          "game_pk": 823750,
+          "game_pk": 823752,
           "team": "Minnesota Twins",
           "side": null,
           "lean": null,
           "signals": {
-            "hard_hit_rate": 0.2668
+            "sp_era_weak": 56.5714,
+            "l7_avg_ev": 98.3553,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 7.725,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 44.0,
+            "lineup_slot": 62.5,
+            "bullpen_fatigue": 83.3333,
+            "platoon_barrel_pct": 0.24,
+            "platoon_xwoba": -1.38,
+            "opp_catcher_framing": 0.6,
+            "days_rest": 0.0,
+            "hard_hit_105_rate": 1.2475,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": -1.016,
+            "vs_rp_ops": -0.72,
+            "ump_k_pct": 1.164,
+            "ump_bb_pct": 0.156
           },
-          "hit_probability": 0.2795,
-          "raw_hit_probability": 0.2668,
-          "lift": 0.0517,
+          "hit_probability": 0.6237,
+          "raw_hit_probability": 0.6525,
+          "lift": 0.0727,
           "reliability": "A",
-          "sample_n": 111,
+          "sample_n": 112,
           "projection": {
-            "stat": "hard_hit_105",
-            "value": 1,
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-08-09",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 58.7,
+          "notable_signals": 2,
+          "matchup": "Minnesota Twins @ Milwaukee Brewers",
+          "game_pk": 823751,
+          "team": "Minnesota Twins",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "sp_era_weak": 0.0,
+            "l7_avg_ev": 88.2386,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 44.0,
+            "lineup_slot": 75.0,
+            "bullpen_fatigue": 69.4444,
+            "platoon_barrel_pct": 3.28,
+            "platoon_xwoba": 1.62,
+            "opp_catcher_framing": 0.84,
+            "days_rest": 0.0,
+            "hard_hit_105_rate": 1.2,
+            "team_total_move": 0.0,
+            "team_total_open": -6.0,
+            "getaway_day": -2.0,
+            "series_game": 2.0,
+            "sp_rp_ops_gap": -0.976,
+            "vs_rp_ops": -0.672,
+            "ump_k_pct": 0.696,
+            "ump_bb_pct": -0.324
+          },
+          "hit_probability": 0.624,
+          "raw_hit_probability": 0.653,
+          "lift": 0.0728,
+          "reliability": "A",
+          "sample_n": 113,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-08-10",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 53.6,
+          "notable_signals": 0,
+          "matchup": "Baltimore Orioles @ Minnesota Twins",
+          "game_pk": 823675,
+          "team": "Minnesota Twins",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "sp_era_weak": 50.5714,
+            "l7_avg_ev": 65.0,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 39.6,
+            "season_barrel_pct": 44.0,
+            "lineup_slot": 62.5,
+            "bullpen_fatigue": 64.1026,
+            "bvp_ops": 1.506,
+            "platoon_barrel_pct": 0.0,
+            "platoon_xwoba": -1.26,
+            "opp_catcher_framing": -0.36,
+            "days_rest": 0.0,
+            "hard_hit_105_rate": 1.33,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": -1.008,
+            "vs_rp_ops": -0.768,
+            "ump_k_pct": 0.648,
+            "ump_bb_pct": 0.324
+          },
+          "hit_probability": 0.623,
+          "raw_hit_probability": 0.6509,
+          "lift": 0.0717,
+          "reliability": "A",
+          "sample_n": 114,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
             "needs": 1
           }
         }
@@ -118,7 +240,7 @@
         {
           "prop": "Over 0.5 Hits",
           "type": "batter",
-          "score": 48.1,
+          "score": 59.8,
           "notable_signals": 1,
           "matchup": "Baltimore Orioles @ Minnesota Twins",
           "game_pk": 823673,
@@ -126,12 +248,12 @@
           "side": null,
           "lean": null,
           "signals": {
-            "sp_era_weak": 26.5714,
+            "sp_era_weak": 23.1429,
             "pitch_exploit": 5.7143,
             "l7_avg_ev": 67.7885,
             "l7_barrel_pct": 100.0,
-            "park_hr_index": 51.2,
-            "season_barrel_pct": 46.0,
+            "park_hr_index": 52.5,
+            "season_barrel_pct": 44.0,
             "lineup_slot": 75.0,
             "bullpen_fatigue": 64.1026,
             "platoon_barrel_pct": 3.12,
@@ -139,6 +261,8 @@
             "opp_catcher_framing": 1.68,
             "days_rest": 0.0,
             "hard_hit_105_rate": 1.46,
+            "team_total_move": 0.0,
+            "team_total_open": 0.0,
             "getaway_day": 0.0,
             "series_game": 1.0,
             "sp_rp_ops_gap": -0.728,
@@ -146,38 +270,14 @@
             "ump_k_pct": 0.72,
             "ump_bb_pct": -0.36
           },
-          "hit_probability": 0.6057,
-          "raw_hit_probability": 0.6141,
-          "lift": 0.0544,
+          "hit_probability": 0.6262,
+          "raw_hit_probability": 0.6578,
+          "lift": 0.075,
           "reliability": "A",
           "sample_n": 115,
           "projection": {
             "stat": "hits",
             "value": 0.5,
-            "needs": 1
-          }
-        },
-        {
-          "prop": "To Hit a Laser (105+ MPH)",
-          "type": "batter",
-          "score": 34.6,
-          "notable_signals": 0,
-          "matchup": "Baltimore Orioles @ Minnesota Twins",
-          "game_pk": 823673,
-          "team": "Minnesota Twins",
-          "side": null,
-          "lean": null,
-          "signals": {
-            "hard_hit_rate": 0.2734
-          },
-          "hit_probability": 0.2843,
-          "raw_hit_probability": 0.2734,
-          "lift": 0.057,
-          "reliability": "A",
-          "sample_n": 115,
-          "projection": {
-            "stat": "hard_hit_105",
-            "value": 1,
             "needs": 1
           }
         }

@@ -20,6 +20,66 @@
           "matchup": "Miami Marlins @ Atlanta Braves"
         }
       ]
+    },
+    {
+      "date": "2026-08-09",
+      "evaluations": [
+        {
+          "prop": "Over 3.5 Strikeouts",
+          "type": "pitcher",
+          "score": 40.6,
+          "notable_signals": 0,
+          "matchup": "Atlanta Braves @ New York Yankees",
+          "game_pk": 823513,
+          "team": "Atlanta Braves",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "same_hand_ratio": 5.5556,
+            "l14_k_pct": 32.3529,
+            "env_neutral": 50.0,
+            "ump_accuracy": 54.7177,
+            "ump_k_pct": -0.156,
+            "ump_bb_pct": 0.252
+          },
+          "hit_probability": 0.6357,
+          "raw_hit_probability": 0.7096,
+          "lift": -0.0776,
+          "reliability": "D",
+          "sample_n": 21,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 3.5,
+            "needs": 4
+          }
+        },
+        {
+          "prop": "New York Yankees scoreless in the 1st",
+          "type": "pitcher",
+          "score": 81.8,
+          "notable_signals": 0,
+          "matchup": "Atlanta Braves @ New York Yankees",
+          "game_pk": 823513,
+          "team": "Atlanta Braves",
+          "side": "away",
+          "lean": "NRFI",
+          "signals": {
+            "yrfi_rate": 18.2,
+            "fi_n_starts": 22.0,
+            "ump_run_impact": 29.288,
+            "park_hr_index": 38.4
+          },
+          "hit_probability": 0.6967,
+          "raw_hit_probability": 0.7393,
+          "lift": -0.0093,
+          "reliability": "D",
+          "sample_n": 22,
+          "projection": {
+            "stat": "first_inning_run",
+            "value": 18.2
+          }
+        }
+      ]
     }
   ]
 }

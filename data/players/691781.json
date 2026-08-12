@@ -25,10 +25,10 @@
       "date": "2026-08-07",
       "evaluations": [
         {
-          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "prop": "Over 0.5 Hits",
           "type": "batter",
-          "score": 70.8,
-          "notable_signals": 2,
+          "score": 60.1,
+          "notable_signals": 1,
           "matchup": "Cincinnati Reds @ Washington Nationals",
           "game_pk": 822699,
           "team": "Washington Nationals",
@@ -37,11 +37,10 @@
           "signals": {
             "platoon": 35.0,
             "sp_era_weak": 57.1429,
-            "pitch_exploit": 14.8571,
             "l7_avg_ev": 67.5,
             "l7_barrel_pct": 100.0,
-            "park_hr_index": 50.0,
-            "season_barrel_pct": 63.3333,
+            "park_hr_index": 59.7,
+            "season_barrel_pct": 61.3333,
             "lineup_slot": 75.0,
             "bullpen_fatigue": 64.1026,
             "platoon_barrel_pct": 2.4,
@@ -59,13 +58,13 @@
             "ump_k_pct": -0.108,
             "ump_bb_pct": 0.252
           },
-          "hit_probability": 0.6402,
-          "raw_hit_probability": 0.695,
-          "lift": -0.0312,
+          "hit_probability": 0.6127,
+          "raw_hit_probability": 0.629,
+          "lift": 0.0617,
           "reliability": "B",
           "sample_n": 54,
           "projection": {
-            "stat": "hits_runs_rbis",
+            "stat": "hits",
             "value": 0.5,
             "needs": 1
           }
@@ -73,7 +72,7 @@
         {
           "prop": "To Steal a Base",
           "type": "batter",
-          "score": 38.8,
+          "score": 38.4,
           "notable_signals": 0,
           "matchup": "Cincinnati Reds @ Washington Nationals",
           "game_pk": 822699,
@@ -84,7 +83,7 @@
             "opp_team_cs_pct": 4.44,
             "sprint_speed": 21.875,
             "catcher_poptime": 71.4286,
-            "on_base": 35.7006
+            "on_base": 33.7812
           },
           "hit_probability": 0.1421,
           "raw_hit_probability": 0.0276,
@@ -96,30 +95,6 @@
             "value": 1,
             "needs": 1
           }
-        },
-        {
-          "prop": "To Hit a Laser (105+ MPH)",
-          "type": "batter",
-          "score": 43.5,
-          "notable_signals": 1,
-          "matchup": "Cincinnati Reds @ Washington Nationals",
-          "game_pk": 822699,
-          "team": "Washington Nationals",
-          "side": null,
-          "lean": null,
-          "signals": {
-            "hard_hit_rate": 0.3108
-          },
-          "hit_probability": 0.3121,
-          "raw_hit_probability": 0.3108,
-          "lift": 0.0843,
-          "reliability": "B",
-          "sample_n": 54,
-          "projection": {
-            "stat": "hard_hit_105",
-            "value": 1,
-            "needs": 1
-          }
         }
       ]
     },
@@ -127,9 +102,9 @@
       "date": "2026-08-11",
       "evaluations": [
         {
-          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "prop": "Over 0.5 Hits",
           "type": "batter",
-          "score": 62.2,
+          "score": 75.1,
           "notable_signals": 2,
           "matchup": "Chicago Cubs @ Washington Nationals",
           "game_pk": 822697,
@@ -138,11 +113,11 @@
           "lean": null,
           "signals": {
             "platoon": 80.0,
-            "sp_era_weak": 31.4286,
+            "sp_era_weak": 33.4286,
             "l7_avg_ev": 100.0,
             "l7_barrel_pct": 100.0,
-            "park_hr_index": 44.6,
-            "season_barrel_pct": 63.3333,
+            "park_hr_index": 59.6,
+            "season_barrel_pct": 61.3333,
             "lineup_slot": 75.0,
             "bullpen_fatigue": 76.9231,
             "platoon_barrel_pct": 5.0,
@@ -152,6 +127,8 @@
             "days_rest": 2.0,
             "pull_park_synergy": 0.294,
             "hard_hit_105_rate": 2.51,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
             "getaway_day": 0.0,
             "series_game": 0.0,
             "sp_rp_ops_gap": 2.168,
@@ -159,13 +136,13 @@
             "ump_k_pct": -0.708,
             "ump_bb_pct": 0.048
           },
-          "hit_probability": 0.6361,
-          "raw_hit_probability": 0.69,
-          "lift": -0.0358,
+          "hit_probability": 0.6109,
+          "raw_hit_probability": 0.625,
+          "lift": 0.0597,
           "reliability": "B",
           "sample_n": 56,
           "projection": {
-            "stat": "hits_runs_rbis",
+            "stat": "hits",
             "value": 0.5,
             "needs": 1
           }
@@ -173,7 +150,7 @@
         {
           "prop": "To Steal a Base",
           "type": "batter",
-          "score": 30.8,
+          "score": 42.4,
           "notable_signals": 0,
           "matchup": "Chicago Cubs @ Washington Nationals",
           "game_pk": 822697,
@@ -184,39 +161,15 @@
             "opp_team_cs_pct": -1.38,
             "sprint_speed": 21.875,
             "catcher_poptime": 85.7143,
-            "on_base": 35.7006
+            "on_base": 33.7812
           },
-          "hit_probability": 0.1417,
-          "raw_hit_probability": 0.0266,
+          "hit_probability": 0.1416,
+          "raw_hit_probability": 0.0265,
           "lift": null,
           "reliability": "B",
           "sample_n": 56,
           "projection": {
             "stat": "stolen_base",
-            "value": 1,
-            "needs": 1
-          }
-        },
-        {
-          "prop": "To Hit a Laser (105+ MPH)",
-          "type": "batter",
-          "score": 45.1,
-          "notable_signals": 1,
-          "matchup": "Chicago Cubs @ Washington Nationals",
-          "game_pk": 822697,
-          "team": "Washington Nationals",
-          "side": null,
-          "lean": null,
-          "signals": {
-            "hard_hit_rate": 0.3154
-          },
-          "hit_probability": 0.3156,
-          "raw_hit_probability": 0.3154,
-          "lift": 0.0883,
-          "reliability": "B",
-          "sample_n": 56,
-          "projection": {
-            "stat": "hard_hit_105",
             "value": 1,
             "needs": 1
           }

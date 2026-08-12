@@ -27,7 +27,7 @@
         {
           "prop": "Over 0.5 Hits",
           "type": "batter",
-          "score": 48.4,
+          "score": 48.8,
           "notable_signals": 0,
           "matchup": "Cincinnati Reds @ Washington Nationals",
           "game_pk": 822699,
@@ -39,8 +39,7 @@
             "sp_era_weak": 57.1429,
             "l7_avg_ev": 39.5,
             "l7_barrel_pct": 100.0,
-            "park_hr_index": 50.0,
-            "season_barrel_pct": 38.0,
+            "park_hr_index": 59.7,
             "lineup_slot": 37.5,
             "bullpen_fatigue": 64.1026,
             "park_hand_index": 0.95,
@@ -51,14 +50,40 @@
             "ump_k_pct": -0.108,
             "ump_bb_pct": 0.252
           },
-          "hit_probability": 0.5602,
-          "raw_hit_probability": 0.5196,
-          "lift": 0.0092,
+          "hit_probability": 0.5435,
+          "raw_hit_probability": 0.4855,
+          "lift": -0.0075,
           "reliability": "D",
           "sample_n": 0,
           "projection": {
             "stat": "hits",
             "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 32.6,
+          "notable_signals": 0,
+          "matchup": "Cincinnati Reds @ Washington Nationals",
+          "game_pk": 822699,
+          "team": "Washington Nationals",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "opp_team_cs_pct": 4.44,
+            "sprint_speed": 3.125,
+            "catcher_poptime": 71.4286
+          },
+          "hit_probability": 0.1765,
+          "raw_hit_probability": 0.1,
+          "lift": null,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
             "needs": 1
           }
         }
@@ -70,7 +95,7 @@
         {
           "prop": "Over 0.5 Hits",
           "type": "batter",
-          "score": 39.4,
+          "score": 53.1,
           "notable_signals": 1,
           "matchup": "Chicago Cubs @ Washington Nationals",
           "game_pk": 822697,
@@ -79,11 +104,10 @@
           "lean": null,
           "signals": {
             "platoon": 80.0,
-            "sp_era_weak": 31.4286,
+            "sp_era_weak": 33.4286,
             "l7_avg_ev": 28.2813,
             "l7_barrel_pct": 100.0,
-            "park_hr_index": 44.6,
-            "season_barrel_pct": 38.0,
+            "park_hr_index": 59.6,
             "lineup_slot": 50.0,
             "bullpen_fatigue": 76.9231,
             "platoon_barrel_pct": 5.0,
@@ -91,19 +115,47 @@
             "park_hand_index": 1.05,
             "opp_catcher_framing": -0.0,
             "days_rest": 4.0,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
             "getaway_day": 0.0,
             "series_game": 0.0,
             "ump_k_pct": -0.708,
             "ump_bb_pct": 0.048
           },
-          "hit_probability": 0.569,
-          "raw_hit_probability": 0.5377,
-          "lift": 0.0177,
+          "hit_probability": 0.5624,
+          "raw_hit_probability": 0.5242,
+          "lift": 0.0112,
           "reliability": "D",
           "sample_n": 0,
           "projection": {
             "stat": "hits",
             "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 36.6,
+          "notable_signals": 0,
+          "matchup": "Chicago Cubs @ Washington Nationals",
+          "game_pk": 822697,
+          "team": "Washington Nationals",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "opp_team_cs_pct": -1.38,
+            "sprint_speed": 3.125,
+            "catcher_poptime": 85.7143
+          },
+          "hit_probability": 0.1745,
+          "raw_hit_probability": 0.0961,
+          "lift": null,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
             "needs": 1
           }
         }

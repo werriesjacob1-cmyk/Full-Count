@@ -65,7 +65,7 @@
         {
           "prop": "Over 0.5 Hits",
           "type": "batter",
-          "score": 44.5,
+          "score": 44.6,
           "notable_signals": 0,
           "matchup": "Minnesota Twins @ Milwaukee Brewers",
           "game_pk": 823750,
@@ -77,7 +77,7 @@
             "l7_avg_ev": 0.0,
             "l7_barrel_pct": 65.0,
             "park_hr_index": 50.0,
-            "season_barrel_pct": 8.6667,
+            "season_barrel_pct": 12.0,
             "lineup_slot": 25.0,
             "bullpen_fatigue": 59.5238,
             "platoon_barrel_pct": -0.16,
@@ -93,9 +93,9 @@
             "ump_k_pct": 0.288,
             "ump_bb_pct": -0.36
           },
-          "hit_probability": 0.5764,
-          "raw_hit_probability": 0.553,
-          "lift": 0.0254,
+          "hit_probability": 0.5775,
+          "raw_hit_probability": 0.5551,
+          "lift": 0.0265,
           "reliability": "D",
           "sample_n": 20,
           "projection": {
@@ -107,7 +107,7 @@
         {
           "prop": "To Steal a Base",
           "type": "batter",
-          "score": 48.4,
+          "score": 51.1,
           "notable_signals": 0,
           "matchup": "Minnesota Twins @ Milwaukee Brewers",
           "game_pk": 823750,
@@ -118,13 +118,230 @@
             "opp_team_cs_pct": 6.0,
             "sprint_speed": 31.25,
             "catcher_poptime": 82.8571,
-            "on_base": 43.3781
+            "on_base": 55.8541
           },
           "hit_probability": 0.1815,
           "raw_hit_probability": 0.1096,
           "lift": null,
           "reliability": "D",
           "sample_n": 20,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-08-09",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 56.5,
+          "notable_signals": 1,
+          "matchup": "Minnesota Twins @ Milwaukee Brewers",
+          "game_pk": 823751,
+          "team": "Milwaukee Brewers",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "sp_era_weak": 64.2857,
+            "l7_avg_ev": 61.7188,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 0.0,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 12.0,
+            "lineup_slot": 37.5,
+            "bullpen_fatigue": 59.5238,
+            "opp_catcher_framing": -0.48,
+            "days_rest": 0.0,
+            "team_total_move": 0.0,
+            "team_total_open": 0.0,
+            "getaway_day": -2.0,
+            "series_game": 2.0,
+            "sp_rp_ops_gap": 3.488,
+            "vs_rp_ops": 2.556,
+            "ump_k_pct": 0.696,
+            "ump_bb_pct": -0.324
+          },
+          "hit_probability": 0.5993,
+          "raw_hit_probability": 0.6005,
+          "lift": 0.0481,
+          "reliability": "D",
+          "sample_n": 21,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 43.9,
+          "notable_signals": 0,
+          "matchup": "Minnesota Twins @ Milwaukee Brewers",
+          "game_pk": 823751,
+          "team": "Milwaukee Brewers",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "opp_team_cs_pct": 6.0,
+            "sprint_speed": 31.25,
+            "catcher_poptime": 57.1429,
+            "on_base": 55.8541
+          },
+          "hit_probability": 0.1799,
+          "raw_hit_probability": 0.1065,
+          "lift": null,
+          "reliability": "D",
+          "sample_n": 21,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-08-10",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 59.7,
+          "notable_signals": 2,
+          "matchup": "Milwaukee Brewers @ San Diego Padres",
+          "game_pk": 823265,
+          "team": "Milwaukee Brewers",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "sp_era_weak": 5.7143,
+            "l7_avg_ev": 88.3333,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 37.1,
+            "season_barrel_pct": 12.0,
+            "lineup_slot": 12.5,
+            "bullpen_fatigue": 71.4286,
+            "platoon_barrel_pct": -0.48,
+            "platoon_xwoba": -0.12,
+            "opp_catcher_framing": 0.12,
+            "days_rest": 0.0,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": 3.28,
+            "vs_rp_ops": 1.92,
+            "ump_k_pct": 0.288,
+            "ump_bb_pct": -0.132
+          },
+          "hit_probability": 0.5741,
+          "raw_hit_probability": 0.5481,
+          "lift": 0.0228,
+          "reliability": "D",
+          "sample_n": 22,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 55.9,
+          "notable_signals": 0,
+          "matchup": "Milwaukee Brewers @ San Diego Padres",
+          "game_pk": 823265,
+          "team": "Milwaukee Brewers",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "opp_team_cs_pct": -4.44,
+            "sprint_speed": 31.25,
+            "catcher_poptime": 100.0,
+            "on_base": 55.8541
+          },
+          "hit_probability": 0.1744,
+          "raw_hit_probability": 0.0959,
+          "lift": null,
+          "reliability": "D",
+          "sample_n": 22,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-08-11",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 61.9,
+          "notable_signals": 1,
+          "matchup": "Milwaukee Brewers @ San Diego Padres",
+          "game_pk": 823264,
+          "team": "Milwaukee Brewers",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "sp_era_weak": 76.5714,
+            "l7_avg_ev": 88.3333,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 37.6,
+            "season_barrel_pct": 12.0,
+            "lineup_slot": 12.5,
+            "bullpen_fatigue": 59.5238,
+            "platoon_barrel_pct": -0.48,
+            "platoon_xwoba": -0.12,
+            "opp_catcher_framing": 0.12,
+            "days_rest": 2.0,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": 3.28,
+            "vs_rp_ops": 1.92
+          },
+          "hit_probability": 0.577,
+          "raw_hit_probability": 0.5542,
+          "lift": 0.0257,
+          "reliability": "D",
+          "sample_n": 22,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 55.9,
+          "notable_signals": 0,
+          "matchup": "Milwaukee Brewers @ San Diego Padres",
+          "game_pk": 823264,
+          "team": "Milwaukee Brewers",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "opp_team_cs_pct": -4.44,
+            "sprint_speed": 31.25,
+            "catcher_poptime": 100.0,
+            "on_base": 55.8541
+          },
+          "hit_probability": 0.1744,
+          "raw_hit_probability": 0.0959,
+          "lift": null,
+          "reliability": "D",
+          "sample_n": 22,
           "projection": {
             "stat": "stolen_base",
             "value": 1,

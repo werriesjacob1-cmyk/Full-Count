@@ -18,10 +18,10 @@
       "date": "2026-08-07",
       "evaluations": [
         {
-          "prop": "Over 0.5 Hits",
+          "prop": "Over 0.5 Hits+Runs+RBIs",
           "type": "batter",
-          "score": 65.2,
-          "notable_signals": 2,
+          "score": 60.2,
+          "notable_signals": 1,
           "matchup": "Baltimore Orioles @ Texas Rangers",
           "game_pk": 822863,
           "team": "Texas Rangers",
@@ -30,12 +30,11 @@
           "signals": {
             "platoon": 80.0,
             "sp_era_weak": 38.8571,
-            "pitch_exploit": 0.0,
             "l7_avg_ev": 42.0455,
             "l7_barrel_pct": 100.0,
             "bat_speed_trend": 6.45,
             "park_hr_index": 50.0,
-            "season_barrel_pct": 54.0,
+            "season_barrel_pct": 55.3333,
             "lineup_slot": 100.0,
             "bullpen_fatigue": 44.4444,
             "platoon_barrel_pct": 3.28,
@@ -55,38 +54,66 @@
             "ump_k_pct": -0.456,
             "ump_bb_pct": -0.588
           },
-          "hit_probability": 0.6033,
-          "raw_hit_probability": 0.6089,
-          "lift": 0.0523,
+          "hit_probability": 0.581,
+          "raw_hit_probability": 0.6249,
+          "lift": -0.0935,
           "reliability": "A",
           "sample_n": 104,
           "projection": {
-            "stat": "hits",
+            "stat": "hits_runs_rbis",
             "value": 0.5,
             "needs": 1
           }
-        },
+        }
+      ]
+    },
+    {
+      "date": "2026-08-08",
+      "evaluations": [
         {
-          "prop": "To Hit a Laser (105+ MPH)",
+          "prop": "Over 0.5 Hits+Runs+RBIs",
           "type": "batter",
-          "score": 39.2,
+          "score": 61.4,
           "notable_signals": 1,
           "matchup": "Baltimore Orioles @ Texas Rangers",
-          "game_pk": 822863,
+          "game_pk": 822864,
           "team": "Texas Rangers",
           "side": null,
           "lean": null,
           "signals": {
-            "hard_hit_rate": 0.2934
+            "platoon": 80.0,
+            "sp_era_weak": 36.8571,
+            "l7_avg_ev": 58.6538,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 2.475,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 55.3333,
+            "lineup_slot": 100.0,
+            "bullpen_fatigue": 47.619,
+            "platoon_barrel_pct": 3.52,
+            "platoon_xwoba": 2.76,
+            "park_hand_index": -0.26,
+            "opp_catcher_framing": -0.48,
+            "days_rest": 0.0,
+            "pull_park_synergy": -0.1219,
+            "hard_hit_105_rate": 2.0975,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": -0.568,
+            "vs_rp_ops": 0.936,
+            "ump_k_pct": 0.204,
+            "ump_bb_pct": 0.444
           },
-          "hit_probability": 0.299,
-          "raw_hit_probability": 0.2934,
-          "lift": 0.0712,
+          "hit_probability": 0.5839,
+          "raw_hit_probability": 0.6282,
+          "lift": -0.0923,
           "reliability": "A",
-          "sample_n": 104,
+          "sample_n": 105,
           "projection": {
-            "stat": "hard_hit_105",
-            "value": 1,
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
             "needs": 1
           }
         }
@@ -96,9 +123,9 @@
       "date": "2026-08-11",
       "evaluations": [
         {
-          "prop": "Over 0.5 Hits",
+          "prop": "Over 0.5 Hits+Runs+RBIs",
           "type": "batter",
-          "score": 65.3,
+          "score": 77.4,
           "notable_signals": 1,
           "matchup": "Texas Rangers @ Los Angeles Angels",
           "game_pk": 823997,
@@ -111,56 +138,32 @@
             "l7_avg_ev": 100.0,
             "l7_barrel_pct": 100.0,
             "bat_speed_trend": 2.1,
-            "park_hr_index": 51.1,
-            "season_barrel_pct": 54.0,
+            "park_hr_index": 51.0,
+            "season_barrel_pct": 55.3333,
             "lineup_slot": 100.0,
             "bullpen_fatigue": 59.5238,
             "platoon_barrel_pct": 3.36,
             "platoon_xwoba": 2.7,
             "park_hand_index": -2.63,
-            "opp_catcher_framing": -1.2,
+            "opp_catcher_framing": 0.72,
             "days_rest": 0.0,
             "pull_park_synergy": -1.2151,
             "hard_hit_105_rate": 1.98,
+            "team_total_move": 0.0,
+            "team_total_open": 0.0,
             "getaway_day": 0.0,
             "series_game": 1.0,
             "sp_rp_ops_gap": -0.544,
-            "vs_rp_ops": 0.84,
-            "ump_k_pct": -0.432,
-            "ump_bb_pct": -0.012
+            "vs_rp_ops": 0.84
           },
-          "hit_probability": 0.6043,
-          "raw_hit_probability": 0.6111,
-          "lift": 0.053,
+          "hit_probability": 0.5748,
+          "raw_hit_probability": 0.6177,
+          "lift": -0.0975,
           "reliability": "A",
           "sample_n": 107,
           "projection": {
-            "stat": "hits",
+            "stat": "hits_runs_rbis",
             "value": 0.5,
-            "needs": 1
-          }
-        },
-        {
-          "prop": "To Hit a Laser (105+ MPH)",
-          "type": "batter",
-          "score": 39.8,
-          "notable_signals": 1,
-          "matchup": "Texas Rangers @ Los Angeles Angels",
-          "game_pk": 823997,
-          "team": "Texas Rangers",
-          "side": null,
-          "lean": null,
-          "signals": {
-            "hard_hit_rate": 0.2942
-          },
-          "hit_probability": 0.2996,
-          "raw_hit_probability": 0.2942,
-          "lift": 0.0723,
-          "reliability": "A",
-          "sample_n": 107,
-          "projection": {
-            "stat": "hard_hit_105",
-            "value": 1,
             "needs": 1
           }
         }

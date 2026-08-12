@@ -1,0 +1,66 @@
+{
+  "player_id": 674841,
+  "name": "Andrew Alvarez",
+  "snapshots": [
+    {
+      "date": "2026-08-08",
+      "evaluations": [
+        {
+          "prop": "Over 3.5 Strikeouts",
+          "type": "pitcher",
+          "score": 38.2,
+          "notable_signals": 0,
+          "matchup": "Cincinnati Reds @ Washington Nationals",
+          "game_pk": 822701,
+          "team": "Washington Nationals",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "same_hand_ratio": 0.0,
+            "l14_k_pct": 21.1765,
+            "env_neutral": 50.0,
+            "ump_accuracy": 65.2412,
+            "ump_k_pct": -0.264,
+            "ump_bb_pct": 0.06
+          },
+          "hit_probability": 0.6419,
+          "raw_hit_probability": 0.7327,
+          "lift": -0.0716,
+          "reliability": "D",
+          "sample_n": 8,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 3.5,
+            "needs": 4
+          }
+        },
+        {
+          "prop": "Cincinnati Reds scoreless in the 1st",
+          "type": "pitcher",
+          "score": 100,
+          "notable_signals": 1,
+          "matchup": "Cincinnati Reds @ Washington Nationals",
+          "game_pk": 822701,
+          "team": "Washington Nationals",
+          "side": "home",
+          "lean": "NRFI",
+          "signals": {
+            "yrfi_rate": 0.0,
+            "fi_n_starts": 8.0,
+            "ump_run_impact": 20.4283,
+            "park_hr_index": 82.9
+          },
+          "hit_probability": 0.698,
+          "raw_hit_probability": 0.7452,
+          "lift": -0.008,
+          "reliability": "D",
+          "sample_n": 8,
+          "projection": {
+            "stat": "first_inning_run",
+            "value": 0.0
+          }
+        }
+      ]
+    }
+  ]
+}

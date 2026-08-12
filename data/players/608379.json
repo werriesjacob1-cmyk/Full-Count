@@ -27,7 +27,7 @@
         {
           "prop": "Over 3.5 Strikeouts",
           "type": "pitcher",
-          "score": 42.4,
+          "score": 39.7,
           "notable_signals": 0,
           "matchup": "Kansas City Royals @ Los Angeles Dodgers",
           "game_pk": 823917,
@@ -39,9 +39,9 @@
             "l14_k_pct": 11.7647,
             "env_neutral": 50.0
           },
-          "hit_probability": 0.6236,
-          "raw_hit_probability": 0.6649,
-          "lift": -0.0891,
+          "hit_probability": 0.6241,
+          "raw_hit_probability": 0.6668,
+          "lift": -0.0886,
           "reliability": "D",
           "sample_n": 23,
           "projection": {
@@ -51,28 +51,28 @@
           }
         },
         {
-          "prop": "Over 17.5 Outs Recorded",
+          "prop": "Los Angeles Dodgers scoreless in the 1st",
           "type": "pitcher",
-          "score": 100,
-          "notable_signals": 1,
+          "score": 80.0,
+          "notable_signals": 0,
           "matchup": "Kansas City Royals @ Los Angeles Dodgers",
           "game_pk": 823917,
           "team": "Kansas City Royals",
           "side": "away",
-          "lean": null,
+          "lean": "NRFI",
           "signals": {
-            "outs_rate": 0.6759,
-            "avg_outs_per_start": 18.78
+            "yrfi_rate": 20.0,
+            "fi_n_starts": 25.0,
+            "park_hr_index": 50.0
           },
-          "hit_probability": 0.6245,
-          "raw_hit_probability": 0.6759,
-          "lift": 0.191,
-          "reliability": "D",
-          "sample_n": 23,
+          "hit_probability": 0.696,
+          "raw_hit_probability": 0.7365,
+          "lift": -0.01,
+          "reliability": "C",
+          "sample_n": 25,
           "projection": {
-            "stat": "pitcher_outs",
-            "value": 17.5,
-            "needs": 18
+            "stat": "first_inning_run",
+            "value": 20.0
           }
         }
       ]

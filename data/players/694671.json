@@ -46,7 +46,7 @@
         {
           "prop": "Over 0.5 Hits",
           "type": "batter",
-          "score": 52.7,
+          "score": 52.3,
           "notable_signals": 0,
           "matchup": "Baltimore Orioles @ Texas Rangers",
           "game_pk": 822863,
@@ -59,7 +59,7 @@
             "l7_avg_ev": 100.0,
             "l7_barrel_pct": 100.0,
             "park_hr_index": 50.0,
-            "season_barrel_pct": 36.0,
+            "season_barrel_pct": 38.0,
             "lineup_slot": 87.5,
             "bullpen_fatigue": 44.4444,
             "platoon_barrel_pct": 0.16,
@@ -79,9 +79,9 @@
             "ump_k_pct": -0.456,
             "ump_bb_pct": -0.588
           },
-          "hit_probability": 0.6136,
-          "raw_hit_probability": 0.6309,
-          "lift": 0.0626,
+          "hit_probability": 0.6377,
+          "raw_hit_probability": 0.6827,
+          "lift": 0.0867,
           "reliability": "B",
           "sample_n": 63,
           "projection": {
@@ -93,7 +93,7 @@
         {
           "prop": "To Steal a Base",
           "type": "batter",
-          "score": 56.2,
+          "score": 57.4,
           "notable_signals": 1,
           "matchup": "Baltimore Orioles @ Texas Rangers",
           "game_pk": 822863,
@@ -102,12 +102,12 @@
           "lean": null,
           "signals": {
             "opp_team_cs_pct": -3.6,
-            "sprint_speed": 31.25,
-            "catcher_poptime": 80.0,
-            "on_base": 82.7255
+            "sprint_speed": 34.375,
+            "catcher_poptime": 77.1429,
+            "on_base": 84.6449
           },
-          "hit_probability": 0.1864,
-          "raw_hit_probability": 0.1188,
+          "hit_probability": 0.1859,
+          "raw_hit_probability": 0.1178,
           "lift": null,
           "reliability": "B",
           "sample_n": 63,
@@ -116,27 +116,240 @@
             "value": 1,
             "needs": 1
           }
-        },
+        }
+      ]
+    },
+    {
+      "date": "2026-08-08",
+      "evaluations": [
         {
-          "prop": "To Hit a Laser (105+ MPH)",
+          "prop": "Over 0.5 Hits",
           "type": "batter",
-          "score": 41.3,
+          "score": 55.2,
           "notable_signals": 1,
           "matchup": "Baltimore Orioles @ Texas Rangers",
-          "game_pk": 822863,
+          "game_pk": 822864,
           "team": "Texas Rangers",
           "side": null,
           "lean": null,
           "signals": {
-            "hard_hit_rate": 0.3018
+            "platoon": 35.0,
+            "sp_era_weak": 36.8571,
+            "pitch_exploit": 19.4286,
+            "l7_avg_ev": 76.3462,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 38.0,
+            "lineup_slot": 87.5,
+            "bullpen_fatigue": 47.619,
+            "platoon_barrel_pct": 0.08,
+            "platoon_xwoba": -0.18,
+            "park_hand_index": 0.5,
+            "opp_catcher_framing": -0.48,
+            "days_rest": 0.0,
+            "pull_park_synergy": 0.2135,
+            "hard_hit_105_rate": 2.085,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": 0.568,
+            "vs_rp_ops": 1.476,
+            "ump_k_pct": 0.204,
+            "ump_bb_pct": 0.444
           },
-          "hit_probability": 0.3053,
-          "raw_hit_probability": 0.3018,
-          "lift": 0.0775,
+          "hit_probability": 0.6343,
+          "raw_hit_probability": 0.6754,
+          "lift": 0.0833,
           "reliability": "B",
-          "sample_n": 63,
+          "sample_n": 64,
           "projection": {
-            "stat": "hard_hit_105",
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 57.4,
+          "notable_signals": 1,
+          "matchup": "Baltimore Orioles @ Texas Rangers",
+          "game_pk": 822864,
+          "team": "Texas Rangers",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "opp_team_cs_pct": -3.6,
+            "sprint_speed": 34.375,
+            "catcher_poptime": 77.1429,
+            "on_base": 84.6449
+          },
+          "hit_probability": 0.1853,
+          "raw_hit_probability": 0.1167,
+          "lift": null,
+          "reliability": "B",
+          "sample_n": 64,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-08-09",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 64.1,
+          "notable_signals": 1,
+          "matchup": "Baltimore Orioles @ Texas Rangers",
+          "game_pk": 822862,
+          "team": "Texas Rangers",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 74.8571,
+            "pitch_exploit": 19.4286,
+            "l7_avg_ev": 67.2917,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 38.0,
+            "lineup_slot": 100.0,
+            "bullpen_fatigue": 51.2821,
+            "platoon_barrel_pct": 3.84,
+            "platoon_xwoba": -1.38,
+            "park_hand_index": 0.44,
+            "opp_catcher_framing": -0.48,
+            "days_rest": 0.0,
+            "pull_park_synergy": 0.1879,
+            "hard_hit_105_rate": 2.0,
+            "team_total_move": 0.0,
+            "team_total_open": 0.0,
+            "getaway_day": -2.0,
+            "series_game": 2.0,
+            "sp_rp_ops_gap": 0.656,
+            "vs_rp_ops": 1.548,
+            "ump_k_pct": 0.816,
+            "ump_bb_pct": 0.06
+          },
+          "hit_probability": 0.6326,
+          "raw_hit_probability": 0.6716,
+          "lift": 0.0814,
+          "reliability": "B",
+          "sample_n": 65,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 57.4,
+          "notable_signals": 1,
+          "matchup": "Baltimore Orioles @ Texas Rangers",
+          "game_pk": 822862,
+          "team": "Texas Rangers",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "opp_team_cs_pct": -3.6,
+            "sprint_speed": 34.375,
+            "catcher_poptime": 77.1429,
+            "on_base": 84.6449
+          },
+          "hit_probability": 0.1849,
+          "raw_hit_probability": 0.116,
+          "lift": null,
+          "reliability": "B",
+          "sample_n": 65,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-08-10",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 55.6,
+          "notable_signals": 1,
+          "matchup": "Texas Rangers @ Los Angeles Angels",
+          "game_pk": 823998,
+          "team": "Texas Rangers",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 43.7143,
+            "pitch_exploit": 19.4286,
+            "l7_avg_ev": 16.5179,
+            "l7_barrel_pct": 87.8571,
+            "park_hr_index": 51.1,
+            "season_barrel_pct": 38.0,
+            "lineup_slot": 100.0,
+            "bullpen_fatigue": 59.5238,
+            "platoon_barrel_pct": 3.44,
+            "platoon_xwoba": -1.56,
+            "park_hand_index": -1.06,
+            "opp_catcher_framing": 1.08,
+            "days_rest": 0.0,
+            "pull_park_synergy": -0.4415,
+            "hard_hit_105_rate": 1.9175,
+            "team_total_move": -6.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": 0.624,
+            "vs_rp_ops": 1.536,
+            "ump_k_pct": -0.252,
+            "ump_bb_pct": 0.276
+          },
+          "hit_probability": 0.6334,
+          "raw_hit_probability": 0.6733,
+          "lift": 0.0821,
+          "reliability": "B",
+          "sample_n": 66,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 59.8,
+          "notable_signals": 1,
+          "matchup": "Texas Rangers @ Los Angeles Angels",
+          "game_pk": 823998,
+          "team": "Texas Rangers",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "opp_team_cs_pct": 2.76,
+            "sprint_speed": 34.375,
+            "catcher_poptime": 85.7143,
+            "on_base": 84.6449
+          },
+          "hit_probability": 0.184,
+          "raw_hit_probability": 0.1142,
+          "lift": null,
+          "reliability": "B",
+          "sample_n": 66,
+          "projection": {
+            "stat": "stolen_base",
             "value": 1,
             "needs": 1
           }
@@ -149,7 +362,7 @@
         {
           "prop": "Over 0.5 Hits",
           "type": "batter",
-          "score": 39.8,
+          "score": 51.5,
           "notable_signals": 0,
           "matchup": "Texas Rangers @ Los Angeles Angels",
           "game_pk": 823997,
@@ -161,27 +374,27 @@
             "sp_era_weak": 100.0,
             "l7_avg_ev": 30.0,
             "l7_barrel_pct": 95.7143,
-            "park_hr_index": 51.1,
-            "season_barrel_pct": 36.0,
+            "park_hr_index": 51.0,
+            "season_barrel_pct": 38.0,
             "lineup_slot": 87.5,
             "bullpen_fatigue": 59.5238,
             "platoon_barrel_pct": 0.0,
             "platoon_xwoba": 0.12,
             "park_hand_index": -1.07,
-            "opp_catcher_framing": -1.2,
+            "opp_catcher_framing": 0.72,
             "days_rest": 0.0,
             "pull_park_synergy": -0.4457,
             "hard_hit_105_rate": 1.8375,
+            "team_total_move": 0.0,
+            "team_total_open": 0.0,
             "getaway_day": 0.0,
             "series_game": 1.0,
             "sp_rp_ops_gap": 0.776,
-            "vs_rp_ops": 1.692,
-            "ump_k_pct": -0.432,
-            "ump_bb_pct": -0.012
+            "vs_rp_ops": 1.692
           },
-          "hit_probability": 0.6113,
-          "raw_hit_probability": 0.6259,
-          "lift": 0.06,
+          "hit_probability": 0.6306,
+          "raw_hit_probability": 0.6672,
+          "lift": 0.0794,
           "reliability": "B",
           "sample_n": 67,
           "projection": {
@@ -193,7 +406,7 @@
         {
           "prop": "To Steal a Base",
           "type": "batter",
-          "score": 45.8,
+          "score": 59.8,
           "notable_signals": 1,
           "matchup": "Texas Rangers @ Los Angeles Angels",
           "game_pk": 823997,
@@ -202,9 +415,9 @@
           "lean": null,
           "signals": {
             "opp_team_cs_pct": 2.76,
-            "sprint_speed": 31.25,
+            "sprint_speed": 34.375,
             "catcher_poptime": 85.7143,
-            "on_base": 82.7255
+            "on_base": 84.6449
           },
           "hit_probability": 0.1831,
           "raw_hit_probability": 0.1126,
@@ -213,30 +426,6 @@
           "sample_n": 67,
           "projection": {
             "stat": "stolen_base",
-            "value": 1,
-            "needs": 1
-          }
-        },
-        {
-          "prop": "To Hit a Laser (105+ MPH)",
-          "type": "batter",
-          "score": 38.3,
-          "notable_signals": 1,
-          "matchup": "Texas Rangers @ Los Angeles Angels",
-          "game_pk": 823997,
-          "team": "Texas Rangers",
-          "side": null,
-          "lean": null,
-          "signals": {
-            "hard_hit_rate": 0.2885
-          },
-          "hit_probability": 0.2953,
-          "raw_hit_probability": 0.2885,
-          "lift": 0.068,
-          "reliability": "B",
-          "sample_n": 67,
-          "projection": {
-            "stat": "hard_hit_105",
             "value": 1,
             "needs": 1
           }

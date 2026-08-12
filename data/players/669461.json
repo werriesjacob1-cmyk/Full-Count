@@ -1,0 +1,66 @@
+{
+  "player_id": 669461,
+  "name": "Matthew Liberatore",
+  "snapshots": [
+    {
+      "date": "2026-08-08",
+      "evaluations": [
+        {
+          "prop": "Over 3.5 Strikeouts",
+          "type": "pitcher",
+          "score": 59.2,
+          "notable_signals": 1,
+          "matchup": "Colorado Rockies @ St. Louis Cardinals",
+          "game_pk": 823021,
+          "team": "St. Louis Cardinals",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "same_hand_ratio": 21.4286,
+            "l14_k_pct": 92.9412,
+            "env_neutral": 50.0,
+            "ump_accuracy": 69.6649,
+            "ump_k_pct": -0.744,
+            "ump_bb_pct": -0.612
+          },
+          "hit_probability": 0.6486,
+          "raw_hit_probability": 0.7581,
+          "lift": -0.0649,
+          "reliability": "D",
+          "sample_n": 22,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 3.5,
+            "needs": 4
+          }
+        },
+        {
+          "prop": "Colorado Rockies scoreless in the 1st",
+          "type": "pitcher",
+          "score": 39.1,
+          "notable_signals": 0,
+          "matchup": "Colorado Rockies @ St. Louis Cardinals",
+          "game_pk": 823021,
+          "team": "St. Louis Cardinals",
+          "side": "home",
+          "lean": "NRFI",
+          "signals": {
+            "yrfi_rate": 39.1,
+            "fi_n_starts": 23.0,
+            "ump_run_impact": 22.1983,
+            "park_hr_index": 74.6
+          },
+          "hit_probability": 0.6823,
+          "raw_hit_probability": 0.6763,
+          "lift": -0.0237,
+          "reliability": "D",
+          "sample_n": 23,
+          "projection": {
+            "stat": "first_inning_run",
+            "value": 39.1
+          }
+        }
+      ]
+    }
+  ]
+}

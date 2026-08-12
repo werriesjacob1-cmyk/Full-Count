@@ -63,9 +63,9 @@
       "date": "2026-08-07",
       "evaluations": [
         {
-          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "prop": "Over 0.5 Hits",
           "type": "batter",
-          "score": 50.4,
+          "score": 50.5,
           "notable_signals": 0,
           "matchup": "Minnesota Twins @ Milwaukee Brewers",
           "game_pk": 823750,
@@ -78,7 +78,7 @@
             "l7_avg_ev": 83.0556,
             "l7_barrel_pct": 100.0,
             "park_hr_index": 50.0,
-            "season_barrel_pct": 57.3333,
+            "season_barrel_pct": 59.3333,
             "lineup_slot": 50.0,
             "bullpen_fatigue": 64.1026,
             "platoon_barrel_pct": 4.72,
@@ -97,13 +97,13 @@
             "ump_k_pct": 0.288,
             "ump_bb_pct": -0.36
           },
-          "hit_probability": 0.6197,
-          "raw_hit_probability": 0.6702,
-          "lift": -0.0517,
+          "hit_probability": 0.6034,
+          "raw_hit_probability": 0.6092,
+          "lift": 0.0524,
           "reliability": "A",
           "sample_n": 100,
           "projection": {
-            "stat": "hits_runs_rbis",
+            "stat": "hits",
             "value": 0.5,
             "needs": 1
           }
@@ -111,7 +111,7 @@
         {
           "prop": "To Steal a Base",
           "type": "batter",
-          "score": 48.3,
+          "score": 48.2,
           "notable_signals": 0,
           "matchup": "Minnesota Twins @ Milwaukee Brewers",
           "game_pk": 823750,
@@ -120,9 +120,9 @@
           "lean": null,
           "signals": {
             "opp_team_cs_pct": -6.0,
-            "sprint_speed": 18.75,
+            "sprint_speed": 15.625,
             "catcher_poptime": 91.4286,
-            "on_base": 60.6526
+            "on_base": 67.3704
           },
           "hit_probability": 0.166,
           "raw_hit_probability": 0.0793,
@@ -134,27 +134,236 @@
             "value": 1,
             "needs": 1
           }
-        },
+        }
+      ]
+    },
+    {
+      "date": "2026-08-08",
+      "evaluations": [
         {
-          "prop": "To Hit a Laser (105+ MPH)",
+          "prop": "Over 0.5 Hits",
           "type": "batter",
-          "score": 41.6,
+          "score": 46.9,
           "notable_signals": 1,
           "matchup": "Minnesota Twins @ Milwaukee Brewers",
-          "game_pk": 823750,
+          "game_pk": 823752,
           "team": "Minnesota Twins",
           "side": null,
           "lean": null,
           "signals": {
-            "hard_hit_rate": 0.3029
+            "platoon": 35.0,
+            "sp_era_weak": 56.5714,
+            "l7_avg_ev": 52.6316,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 59.3333,
+            "lineup_slot": 50.0,
+            "bullpen_fatigue": 83.3333,
+            "platoon_barrel_pct": 4.24,
+            "platoon_xwoba": 1.02,
+            "park_hand_index": -1.2,
+            "opp_catcher_framing": 0.6,
+            "days_rest": 0.0,
+            "pull_park_synergy": -0.714,
+            "hard_hit_105_rate": 2.135,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": -2.36,
+            "vs_rp_ops": -1.68,
+            "ump_k_pct": 1.164,
+            "ump_bb_pct": 0.156
           },
-          "hit_probability": 0.3061,
-          "raw_hit_probability": 0.3029,
-          "lift": 0.0783,
+          "hit_probability": 0.6047,
+          "raw_hit_probability": 0.6119,
+          "lift": 0.0537,
           "reliability": "A",
-          "sample_n": 100,
+          "sample_n": 101,
           "projection": {
-            "stat": "hard_hit_105",
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 48.2,
+          "notable_signals": 0,
+          "matchup": "Minnesota Twins @ Milwaukee Brewers",
+          "game_pk": 823752,
+          "team": "Minnesota Twins",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "opp_team_cs_pct": -6.0,
+            "sprint_speed": 15.625,
+            "catcher_poptime": 91.4286,
+            "on_base": 67.3704
+          },
+          "hit_probability": 0.1654,
+          "raw_hit_probability": 0.078,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 101,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-08-09",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 51.5,
+          "notable_signals": 2,
+          "matchup": "Minnesota Twins @ Milwaukee Brewers",
+          "game_pk": 823751,
+          "team": "Minnesota Twins",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 0.0,
+            "l7_avg_ev": 22.2024,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 59.3333,
+            "lineup_slot": 62.5,
+            "bullpen_fatigue": 69.4444,
+            "platoon_barrel_pct": 3.36,
+            "platoon_xwoba": 0.36,
+            "park_hand_index": -1.31,
+            "opp_catcher_framing": 0.84,
+            "days_rest": 0.0,
+            "pull_park_synergy": -0.7978,
+            "hard_hit_105_rate": 2.075,
+            "team_total_move": 0.0,
+            "team_total_open": -6.0,
+            "getaway_day": -2.0,
+            "series_game": 2.0,
+            "sp_rp_ops_gap": -2.296,
+            "vs_rp_ops": -1.716,
+            "ump_k_pct": 0.696,
+            "ump_bb_pct": -0.324
+          },
+          "hit_probability": 0.6023,
+          "raw_hit_probability": 0.607,
+          "lift": 0.0511,
+          "reliability": "A",
+          "sample_n": 102,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 45.8,
+          "notable_signals": 0,
+          "matchup": "Minnesota Twins @ Milwaukee Brewers",
+          "game_pk": 823751,
+          "team": "Minnesota Twins",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "opp_team_cs_pct": -6.0,
+            "sprint_speed": 15.625,
+            "catcher_poptime": 82.8571,
+            "on_base": 67.3704
+          },
+          "hit_probability": 0.1656,
+          "raw_hit_probability": 0.0783,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 102,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-08-10",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 44.7,
+          "notable_signals": 1,
+          "matchup": "Baltimore Orioles @ Minnesota Twins",
+          "game_pk": 823675,
+          "team": "Minnesota Twins",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 50.5714,
+            "pitch_exploit": 1.1429,
+            "l7_avg_ev": 15.3472,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 46.4,
+            "season_barrel_pct": 59.3333,
+            "lineup_slot": 50.0,
+            "bullpen_fatigue": 64.1026,
+            "platoon_barrel_pct": 3.84,
+            "platoon_xwoba": 0.72,
+            "park_hand_index": -2.36,
+            "opp_catcher_framing": -0.36,
+            "days_rest": 0.0,
+            "pull_park_synergy": -1.462,
+            "hard_hit_105_rate": 2.2125,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": -2.376,
+            "vs_rp_ops": -1.704
+          },
+          "hit_probability": 0.6042,
+          "raw_hit_probability": 0.611,
+          "lift": 0.0529,
+          "reliability": "A",
+          "sample_n": 103,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 44.2,
+          "notable_signals": 0,
+          "matchup": "Baltimore Orioles @ Minnesota Twins",
+          "game_pk": 823675,
+          "team": "Minnesota Twins",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "opp_team_cs_pct": -3.6,
+            "sprint_speed": 15.625,
+            "catcher_poptime": 77.1429,
+            "on_base": 67.3704
+          },
+          "hit_probability": 0.1646,
+          "raw_hit_probability": 0.0764,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 103,
+          "projection": {
+            "stat": "stolen_base",
             "value": 1,
             "needs": 1
           }
@@ -165,9 +374,9 @@
       "date": "2026-08-11",
       "evaluations": [
         {
-          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "prop": "Over 0.5 Hits",
           "type": "batter",
-          "score": 40.8,
+          "score": 52.6,
           "notable_signals": 0,
           "matchup": "Baltimore Orioles @ Minnesota Twins",
           "game_pk": 823673,
@@ -176,11 +385,11 @@
           "lean": null,
           "signals": {
             "platoon": 80.0,
-            "sp_era_weak": 26.5714,
+            "sp_era_weak": 23.1429,
             "l7_avg_ev": 15.3472,
             "l7_barrel_pct": 100.0,
-            "park_hr_index": 51.2,
-            "season_barrel_pct": 57.3333,
+            "park_hr_index": 52.5,
+            "season_barrel_pct": 59.3333,
             "lineup_slot": 62.5,
             "bullpen_fatigue": 64.1026,
             "platoon_barrel_pct": 3.68,
@@ -190,6 +399,8 @@
             "days_rest": 2.0,
             "pull_park_synergy": -1.5054,
             "hard_hit_105_rate": 2.2125,
+            "team_total_move": 0.0,
+            "team_total_open": 0.0,
             "getaway_day": 0.0,
             "series_game": 1.0,
             "sp_rp_ops_gap": -2.376,
@@ -197,13 +408,13 @@
             "ump_k_pct": 0.72,
             "ump_bb_pct": -0.36
           },
-          "hit_probability": 0.6197,
-          "raw_hit_probability": 0.6702,
-          "lift": -0.0522,
+          "hit_probability": 0.6064,
+          "raw_hit_probability": 0.6155,
+          "lift": 0.0552,
           "reliability": "A",
           "sample_n": 103,
           "projection": {
-            "stat": "hits_runs_rbis",
+            "stat": "hits",
             "value": 0.5,
             "needs": 1
           }
@@ -211,7 +422,7 @@
         {
           "prop": "To Steal a Base",
           "type": "batter",
-          "score": 31.5,
+          "score": 43.4,
           "notable_signals": 0,
           "matchup": "Baltimore Orioles @ Minnesota Twins",
           "game_pk": 823673,
@@ -220,9 +431,9 @@
           "lean": null,
           "signals": {
             "opp_team_cs_pct": -3.42,
-            "sprint_speed": 18.75,
+            "sprint_speed": 15.625,
             "catcher_poptime": 74.2857,
-            "on_base": 60.6526
+            "on_base": 67.3704
           },
           "hit_probability": 0.1653,
           "raw_hit_probability": 0.0777,
@@ -231,30 +442,6 @@
           "sample_n": 103,
           "projection": {
             "stat": "stolen_base",
-            "value": 1,
-            "needs": 1
-          }
-        },
-        {
-          "prop": "To Hit a Laser (105+ MPH)",
-          "type": "batter",
-          "score": 42.1,
-          "notable_signals": 1,
-          "matchup": "Baltimore Orioles @ Minnesota Twins",
-          "game_pk": 823673,
-          "team": "Minnesota Twins",
-          "side": null,
-          "lean": null,
-          "signals": {
-            "hard_hit_rate": 0.3035
-          },
-          "hit_probability": 0.3065,
-          "raw_hit_probability": 0.3035,
-          "lift": 0.0792,
-          "reliability": "A",
-          "sample_n": 103,
-          "projection": {
-            "stat": "hard_hit_105",
             "value": 1,
             "needs": 1
           }

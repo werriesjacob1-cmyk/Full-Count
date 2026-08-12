@@ -44,7 +44,7 @@
       "date": "2026-08-07",
       "evaluations": [
         {
-          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "prop": "Over 0.5 Hits",
           "type": "batter",
           "score": 35.3,
           "notable_signals": 1,
@@ -59,7 +59,7 @@
             "l7_avg_ev": 14.2708,
             "l7_barrel_pct": 100.0,
             "park_hr_index": 50.0,
-            "season_barrel_pct": 16.0,
+            "season_barrel_pct": 16.6667,
             "lineup_slot": 100.0,
             "bullpen_fatigue": 66.6667,
             "platoon_barrel_pct": -2.16,
@@ -73,16 +73,16 @@
             "team_total_open": -4.0,
             "getaway_day": 0.0,
             "series_game": 0.0,
-            "ump_k_pct": -0.36,
-            "ump_bb_pct": -0.072
+            "ump_k_pct": 0.168,
+            "ump_bb_pct": -0.624
           },
-          "hit_probability": 0.6778,
-          "raw_hit_probability": 0.742,
-          "lift": 0.0064,
+          "hit_probability": 0.6118,
+          "raw_hit_probability": 0.6269,
+          "lift": 0.0608,
           "reliability": "A",
           "sample_n": 114,
           "projection": {
-            "stat": "hits_runs_rbis",
+            "stat": "hits",
             "value": 0.5,
             "needs": 1
           }
@@ -90,7 +90,7 @@
         {
           "prop": "To Steal a Base",
           "type": "batter",
-          "score": 39.8,
+          "score": 38.8,
           "notable_signals": 0,
           "matchup": "Tampa Bay Rays @ Seattle Mariners",
           "game_pk": 823103,
@@ -99,12 +99,12 @@
           "lean": null,
           "signals": {
             "opp_team_cs_pct": 2.34,
-            "sprint_speed": 6.25,
+            "sprint_speed": 3.125,
             "catcher_poptime": 77.1429,
-            "on_base": 68.3301
+            "on_base": 71.2092
           },
-          "hit_probability": 0.1467,
-          "raw_hit_probability": 0.0381,
+          "hit_probability": 0.1465,
+          "raw_hit_probability": 0.0375,
           "lift": null,
           "reliability": "A",
           "sample_n": 114,
@@ -113,27 +113,157 @@
             "value": 1,
             "needs": 1
           }
-        },
+        }
+      ]
+    },
+    {
+      "date": "2026-08-08",
+      "evaluations": [
         {
-          "prop": "To Hit a Laser (105+ MPH)",
+          "prop": "Over 0.5 Hits",
           "type": "batter",
-          "score": 5.5,
-          "notable_signals": 0,
+          "score": 43.8,
+          "notable_signals": 1,
           "matchup": "Tampa Bay Rays @ Seattle Mariners",
-          "game_pk": 823103,
+          "game_pk": 823102,
           "team": "Seattle Mariners",
           "side": null,
           "lean": null,
           "signals": {
-            "hard_hit_rate": 0.1585
+            "platoon": 35.0,
+            "sp_era_weak": 32.2857,
+            "l7_avg_ev": 42.3958,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 10.425,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 16.6667,
+            "lineup_slot": 100.0,
+            "bullpen_fatigue": 52.0833,
+            "platoon_barrel_pct": -2.16,
+            "platoon_xwoba": 0.84,
+            "park_hand_index": 0.23,
+            "opp_catcher_framing": 0.72,
+            "days_rest": 0.0,
+            "pull_park_synergy": 0.0241,
+            "hard_hit_105_rate": -1.4425,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": -0.072,
+            "vs_rp_ops": 0.048,
+            "ump_k_pct": 0.096,
+            "ump_bb_pct": -0.048
           },
-          "hit_probability": 0.2088,
-          "raw_hit_probability": 0.1585,
-          "lift": -0.019,
+          "hit_probability": 0.6106,
+          "raw_hit_probability": 0.6245,
+          "lift": 0.0596,
           "reliability": "A",
-          "sample_n": 114,
+          "sample_n": 115,
           "projection": {
-            "stat": "hard_hit_105",
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 42.8,
+          "notable_signals": 0,
+          "matchup": "Tampa Bay Rays @ Seattle Mariners",
+          "game_pk": 823102,
+          "team": "Seattle Mariners",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "opp_team_cs_pct": 2.04,
+            "sprint_speed": 3.125,
+            "catcher_poptime": 91.4286,
+            "on_base": 71.2092
+          },
+          "hit_probability": 0.1465,
+          "raw_hit_probability": 0.0376,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 115,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-08-09",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 51.7,
+          "notable_signals": 1,
+          "matchup": "Tampa Bay Rays @ Seattle Mariners",
+          "game_pk": 823104,
+          "team": "Seattle Mariners",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 50.5714,
+            "l7_avg_ev": 0.0,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 4.05,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 16.6667,
+            "lineup_slot": 100.0,
+            "bullpen_fatigue": 52.0833,
+            "platoon_barrel_pct": 0.56,
+            "platoon_xwoba": 3.6,
+            "park_hand_index": 0.1,
+            "opp_catcher_framing": 0.72,
+            "days_rest": 0.0,
+            "pull_park_synergy": 0.0098,
+            "hard_hit_105_rate": -1.47,
+            "getaway_day": -2.0,
+            "series_game": 2.0,
+            "ump_k_pct": 0.096,
+            "ump_bb_pct": -0.06
+          },
+          "hit_probability": 0.6106,
+          "raw_hit_probability": 0.6245,
+          "lift": 0.0594,
+          "reliability": "A",
+          "sample_n": 116,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 38.8,
+          "notable_signals": 0,
+          "matchup": "Tampa Bay Rays @ Seattle Mariners",
+          "game_pk": 823104,
+          "team": "Seattle Mariners",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "opp_team_cs_pct": 2.16,
+            "sprint_speed": 3.125,
+            "catcher_poptime": 77.1429,
+            "on_base": 71.2092
+          },
+          "hit_probability": 0.1463,
+          "raw_hit_probability": 0.0371,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 116,
+          "projection": {
+            "stat": "stolen_base",
             "value": 1,
             "needs": 1
           }
@@ -144,9 +274,9 @@
       "date": "2026-08-11",
       "evaluations": [
         {
-          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "prop": "Over 0.5 Hits",
           "type": "batter",
-          "score": 48.5,
+          "score": 61.2,
           "notable_signals": 3,
           "matchup": "Seattle Mariners @ New York Yankees",
           "game_pk": 823512,
@@ -155,12 +285,12 @@
           "lean": null,
           "signals": {
             "platoon": 80.0,
-            "sp_era_weak": 36.8571,
+            "sp_era_weak": 42.5714,
             "l7_avg_ev": 0.0,
             "l7_barrel_pct": 100.0,
             "bat_speed_trend": 2.625,
-            "park_hr_index": 36.6,
-            "season_barrel_pct": 16.0,
+            "park_hr_index": 35.6,
+            "season_barrel_pct": 16.6667,
             "lineup_slot": 100.0,
             "bullpen_fatigue": 83.3333,
             "platoon_barrel_pct": 1.92,
@@ -170,18 +300,20 @@
             "days_rest": 2.0,
             "pull_park_synergy": 0.0794,
             "hard_hit_105_rate": -1.5,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
             "getaway_day": 0.0,
             "series_game": 0.0,
             "ump_k_pct": -0.204,
             "ump_bb_pct": 0.228
           },
-          "hit_probability": 0.6765,
-          "raw_hit_probability": 0.7404,
-          "lift": 0.0046,
+          "hit_probability": 0.6119,
+          "raw_hit_probability": 0.6272,
+          "lift": 0.0607,
           "reliability": "A",
           "sample_n": 117,
           "projection": {
-            "stat": "hits_runs_rbis",
+            "stat": "hits",
             "value": 0.5,
             "needs": 1
           }
@@ -189,7 +321,7 @@
         {
           "prop": "To Steal a Base",
           "type": "batter",
-          "score": 27.8,
+          "score": 38.8,
           "notable_signals": 0,
           "matchup": "Seattle Mariners @ New York Yankees",
           "game_pk": 823512,
@@ -198,9 +330,9 @@
           "lean": null,
           "signals": {
             "opp_team_cs_pct": 1.38,
-            "sprint_speed": 6.25,
+            "sprint_speed": 3.125,
             "catcher_poptime": 77.1429,
-            "on_base": 68.3301
+            "on_base": 71.2092
           },
           "hit_probability": 0.1462,
           "raw_hit_probability": 0.037,
@@ -209,30 +341,6 @@
           "sample_n": 117,
           "projection": {
             "stat": "stolen_base",
-            "value": 1,
-            "needs": 1
-          }
-        },
-        {
-          "prop": "To Hit a Laser (105+ MPH)",
-          "type": "batter",
-          "score": 4.9,
-          "notable_signals": 0,
-          "matchup": "Seattle Mariners @ New York Yankees",
-          "game_pk": 823512,
-          "team": "Seattle Mariners",
-          "side": null,
-          "lean": null,
-          "signals": {
-            "hard_hit_rate": 0.155
-          },
-          "hit_probability": 0.2068,
-          "raw_hit_probability": 0.155,
-          "lift": -0.0205,
-          "reliability": "A",
-          "sample_n": 117,
-          "projection": {
-            "stat": "hard_hit_105",
             "value": 1,
             "needs": 1
           }

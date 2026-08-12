@@ -27,7 +27,7 @@
         {
           "prop": "Over 3.5 Strikeouts",
           "type": "pitcher",
-          "score": 66.4,
+          "score": 54.4,
           "notable_signals": 0,
           "matchup": "Cleveland Guardians @ Detroit Tigers",
           "game_pk": 824240,
@@ -43,9 +43,9 @@
             "ump_k_pct": -0.096,
             "ump_bb_pct": -0.528
           },
-          "hit_probability": 0.6372,
-          "raw_hit_probability": 0.7154,
-          "lift": -0.0755,
+          "hit_probability": 0.6204,
+          "raw_hit_probability": 0.6532,
+          "lift": -0.0923,
           "reliability": "D",
           "sample_n": 24,
           "projection": {
@@ -55,52 +55,29 @@
           }
         },
         {
-          "prop": "Over 17.5 Outs Recorded",
+          "prop": "Detroit Tigers scoreless in the 1st",
           "type": "pitcher",
-          "score": 73.3,
-          "notable_signals": 1,
+          "score": 69.2,
+          "notable_signals": 0,
           "matchup": "Cleveland Guardians @ Detroit Tigers",
           "game_pk": 824240,
           "team": "Cleveland Guardians",
           "side": "away",
-          "lean": null,
+          "lean": "NRFI",
           "signals": {
-            "outs_rate": 0.5534,
-            "avg_outs_per_start": 17.25
+            "yrfi_rate": 30.8,
+            "fi_n_starts": 26.0,
+            "ump_run_impact": 29.6147,
+            "park_hr_index": 51.9
           },
-          "hit_probability": 0.5182,
-          "raw_hit_probability": 0.5534,
-          "lift": 0.0847,
-          "reliability": "D",
-          "sample_n": 24,
+          "hit_probability": 0.6881,
+          "raw_hit_probability": 0.7013,
+          "lift": -0.0179,
+          "reliability": "C",
+          "sample_n": 26,
           "projection": {
-            "stat": "pitcher_outs",
-            "value": 17.5,
-            "needs": 18
-          }
-        },
-        {
-          "prop": "Over 7.5 Combined Strikeouts",
-          "type": "pitcher_combo",
-          "score": 32.3,
-          "notable_signals": 0,
-          "matchup": "Cleveland Guardians @ Detroit Tigers",
-          "game_pk": 824240,
-          "team": null,
-          "side": null,
-          "lean": null,
-          "signals": {
-            "combined_k_edge": -0.1068
-          },
-          "hit_probability": 0.456,
-          "raw_hit_probability": 0.4834,
-          "lift": -0.1342,
-          "reliability": "D",
-          "sample_n": 0,
-          "projection": {
-            "stat": "combined_strikeouts",
-            "value": 7.5,
-            "needs": 8
+            "stat": "first_inning_run",
+            "value": 30.8
           }
         }
       ]

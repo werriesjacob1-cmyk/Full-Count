@@ -46,7 +46,7 @@
         {
           "prop": "Over 0.5 Hits",
           "type": "batter",
-          "score": 38.7,
+          "score": 38.8,
           "notable_signals": 1,
           "matchup": "Detroit Tigers @ San Francisco Giants",
           "game_pk": 823191,
@@ -58,7 +58,7 @@
             "sp_era_weak": 19.1429,
             "l7_avg_ev": 0.0,
             "l7_barrel_pct": 100.0,
-            "park_hr_index": 27.6,
+            "park_hr_index": 29.8,
             "season_barrel_pct": 0.0,
             "lineup_slot": 87.5,
             "bullpen_fatigue": 64.1026,
@@ -75,9 +75,9 @@
             "ump_k_pct": -0.048,
             "ump_bb_pct": 0.384
           },
-          "hit_probability": 0.6268,
-          "raw_hit_probability": 0.659,
-          "lift": 0.0758,
+          "hit_probability": 0.6482,
+          "raw_hit_probability": 0.7058,
+          "lift": 0.0972,
           "reliability": "A",
           "sample_n": 105,
           "projection": {
@@ -89,7 +89,7 @@
         {
           "prop": "To Steal a Base",
           "type": "batter",
-          "score": 46.7,
+          "score": 47.3,
           "notable_signals": 1,
           "matchup": "Detroit Tigers @ San Francisco Giants",
           "game_pk": 823191,
@@ -100,10 +100,10 @@
             "opp_team_cs_pct": -0.48,
             "sprint_speed": 3.125,
             "catcher_poptime": 100.0,
-            "on_base": 77.9271
+            "on_base": 80.8061
           },
-          "hit_probability": 0.1654,
-          "raw_hit_probability": 0.0779,
+          "hit_probability": 0.165,
+          "raw_hit_probability": 0.0772,
           "lift": null,
           "reliability": "A",
           "sample_n": 105,
@@ -112,27 +112,233 @@
             "value": 1,
             "needs": 1
           }
-        },
+        }
+      ]
+    },
+    {
+      "date": "2026-08-08",
+      "evaluations": [
         {
-          "prop": "To Hit a Laser (105+ MPH)",
+          "prop": "Over 0.5 Hits",
           "type": "batter",
-          "score": 0,
-          "notable_signals": 0,
+          "score": 41.1,
+          "notable_signals": 1,
           "matchup": "Detroit Tigers @ San Francisco Giants",
-          "game_pk": 823191,
+          "game_pk": 823188,
           "team": "San Francisco Giants",
           "side": null,
           "lean": null,
           "signals": {
-            "hard_hit_rate": 0.0586
+            "platoon": 80.0,
+            "l7_avg_ev": 0.0,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 25.5,
+            "season_barrel_pct": 0.0,
+            "lineup_slot": 87.5,
+            "bullpen_fatigue": 55.5556,
+            "platoon_barrel_pct": -3.28,
+            "platoon_xwoba": 1.02,
+            "park_hand_index": -4.02,
+            "opp_catcher_framing": -1.32,
+            "days_rest": 0.0,
+            "pull_park_synergy": -1.7447,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": 1.016,
+            "vs_rp_ops": 1.656,
+            "ump_k_pct": 0.264,
+            "ump_bb_pct": 0.216
           },
-          "hit_probability": 0.1561,
-          "raw_hit_probability": 0.0586,
-          "lift": -0.0717,
+          "hit_probability": 0.6486,
+          "raw_hit_probability": 0.7066,
+          "lift": 0.0976,
           "reliability": "A",
-          "sample_n": 105,
+          "sample_n": 106,
           "projection": {
-            "stat": "hard_hit_105",
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 47.3,
+          "notable_signals": 1,
+          "matchup": "Detroit Tigers @ San Francisco Giants",
+          "game_pk": 823188,
+          "team": "San Francisco Giants",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "opp_team_cs_pct": -0.48,
+            "sprint_speed": 3.125,
+            "catcher_poptime": 100.0,
+            "on_base": 80.8061
+          },
+          "hit_probability": 0.1647,
+          "raw_hit_probability": 0.0766,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 106,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-08-09",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 38.7,
+          "notable_signals": 0,
+          "matchup": "Detroit Tigers @ San Francisco Giants",
+          "game_pk": 823190,
+          "team": "San Francisco Giants",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 0.0,
+            "l7_avg_ev": 7.7273,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 0.0,
+            "lineup_slot": 87.5,
+            "bullpen_fatigue": 60.6061,
+            "platoon_barrel_pct": -3.28,
+            "platoon_xwoba": 0.96,
+            "park_hand_index": -4.13,
+            "opp_catcher_framing": 1.08,
+            "days_rest": 0.0,
+            "pull_park_synergy": -1.778,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": -2.0,
+            "series_game": 2.0,
+            "sp_rp_ops_gap": 1.032,
+            "vs_rp_ops": 1.596,
+            "ump_k_pct": -0.0,
+            "ump_bb_pct": -0.348
+          },
+          "hit_probability": 0.6461,
+          "raw_hit_probability": 0.7011,
+          "lift": 0.0949,
+          "reliability": "A",
+          "sample_n": 107,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 44.1,
+          "notable_signals": 1,
+          "matchup": "Detroit Tigers @ San Francisco Giants",
+          "game_pk": 823190,
+          "team": "San Francisco Giants",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "opp_team_cs_pct": -0.48,
+            "sprint_speed": 3.125,
+            "catcher_poptime": 88.5714,
+            "on_base": 80.8061
+          },
+          "hit_probability": 0.1645,
+          "raw_hit_probability": 0.0762,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 107,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-08-10",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 66.1,
+          "notable_signals": 2,
+          "matchup": "Houston Astros @ San Francisco Giants",
+          "game_pk": 823189,
+          "team": "San Francisco Giants",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 64.5714,
+            "l7_avg_ev": 49.881,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 25.6,
+            "season_barrel_pct": 0.0,
+            "lineup_slot": 100.0,
+            "bullpen_fatigue": 64.1026,
+            "platoon_barrel_pct": -3.28,
+            "platoon_xwoba": 0.84,
+            "park_hand_index": -4.24,
+            "opp_catcher_framing": 0.36,
+            "days_rest": 0.0,
+            "pull_park_synergy": -1.8253,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": 1.064,
+            "vs_rp_ops": 1.536,
+            "ump_k_pct": -0.66,
+            "ump_bb_pct": 0.624
+          },
+          "hit_probability": 0.6456,
+          "raw_hit_probability": 0.7,
+          "lift": 0.0943,
+          "reliability": "A",
+          "sample_n": 108,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 39.3,
+          "notable_signals": 1,
+          "matchup": "Houston Astros @ San Francisco Giants",
+          "game_pk": 823189,
+          "team": "San Francisco Giants",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "opp_team_cs_pct": 0.48,
+            "sprint_speed": 3.125,
+            "catcher_poptime": 71.4286,
+            "on_base": 80.8061
+          },
+          "hit_probability": 0.1643,
+          "raw_hit_probability": 0.0758,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 108,
+          "projection": {
+            "stat": "stolen_base",
             "value": 1,
             "needs": 1
           }
@@ -145,7 +351,7 @@
         {
           "prop": "Over 0.5 Hits",
           "type": "batter",
-          "score": 42.8,
+          "score": 54.4,
           "notable_signals": 3,
           "matchup": "Houston Astros @ San Francisco Giants",
           "game_pk": 823186,
@@ -154,7 +360,7 @@
           "lean": null,
           "signals": {
             "platoon": 80.0,
-            "sp_era_weak": 29.4286,
+            "sp_era_weak": 26.2857,
             "l7_avg_ev": 46.1932,
             "l7_barrel_pct": 100.0,
             "park_hr_index": 25.0,
@@ -173,9 +379,9 @@
             "sp_rp_ops_gap": 0.984,
             "vs_rp_ops": 1.56
           },
-          "hit_probability": 0.6247,
-          "raw_hit_probability": 0.6545,
-          "lift": 0.0734,
+          "hit_probability": 0.645,
+          "raw_hit_probability": 0.6988,
+          "lift": 0.0938,
           "reliability": "A",
           "sample_n": 109,
           "projection": {
@@ -187,7 +393,7 @@
         {
           "prop": "To Steal a Base",
           "type": "batter",
-          "score": 28.3,
+          "score": 40.9,
           "notable_signals": 1,
           "matchup": "Houston Astros @ San Francisco Giants",
           "game_pk": 823186,
@@ -198,39 +404,15 @@
             "opp_team_cs_pct": 0.48,
             "sprint_speed": 3.125,
             "catcher_poptime": 77.1429,
-            "on_base": 77.9271
+            "on_base": 80.8061
           },
           "hit_probability": 0.164,
-          "raw_hit_probability": 0.0752,
+          "raw_hit_probability": 0.0751,
           "lift": null,
           "reliability": "A",
           "sample_n": 109,
           "projection": {
             "stat": "stolen_base",
-            "value": 1,
-            "needs": 1
-          }
-        },
-        {
-          "prop": "To Hit a Laser (105+ MPH)",
-          "type": "batter",
-          "score": 0.1,
-          "notable_signals": 0,
-          "matchup": "Houston Astros @ San Francisco Giants",
-          "game_pk": 823186,
-          "team": "San Francisco Giants",
-          "side": null,
-          "lean": null,
-          "signals": {
-            "hard_hit_rate": 0.0643
-          },
-          "hit_probability": 0.1588,
-          "raw_hit_probability": 0.0643,
-          "lift": -0.0685,
-          "reliability": "A",
-          "sample_n": 109,
-          "projection": {
-            "stat": "hard_hit_105",
             "value": 1,
             "needs": 1
           }

@@ -15,12 +15,63 @@
       ]
     },
     {
+      "date": "2026-08-08",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 42.9,
+          "notable_signals": 0,
+          "matchup": "New York Mets @ Pittsburgh Pirates",
+          "game_pk": 823348,
+          "team": "Pittsburgh Pirates",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 0.0,
+            "l7_avg_ev": 41.1364,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 30.5,
+            "season_barrel_pct": 0.0,
+            "lineup_slot": 12.5,
+            "bullpen_fatigue": 46.2963,
+            "platoon_barrel_pct": -3.04,
+            "platoon_xwoba": 0.24,
+            "park_hand_index": 2.23,
+            "opp_catcher_framing": 0.12,
+            "days_rest": 0.0,
+            "pull_park_synergy": 0.9912,
+            "hard_hit_105_rate": 0.6225,
+            "team_total_move": 0.0,
+            "team_total_open": 0.0,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": 0.904,
+            "vs_rp_ops": 3.744,
+            "ump_k_pct": 0.312,
+            "ump_bb_pct": 0.012
+          },
+          "hit_probability": 0.5349,
+          "raw_hit_probability": 0.5723,
+          "lift": -0.1396,
+          "reliability": "B",
+          "sample_n": 49,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
       "date": "2026-08-11",
       "evaluations": [
         {
-          "prop": "Over 0.5 Hits",
+          "prop": "Over 0.5 Hits+Runs+RBIs",
           "type": "batter",
-          "score": 32.2,
+          "score": 39.6,
           "notable_signals": 1,
           "matchup": "Pittsburgh Pirates @ Miami Marlins",
           "game_pk": 823832,
@@ -29,12 +80,12 @@
           "lean": null,
           "signals": {
             "platoon": 80.0,
-            "sp_era_weak": 31.7143,
+            "sp_era_weak": 26.8571,
             "l7_avg_ev": 25.5,
             "l7_barrel_pct": 57.1429,
             "bat_speed_trend": 3.975,
             "park_hr_index": 50.0,
-            "season_barrel_pct": 5.3333,
+            "season_barrel_pct": 0.0,
             "lineup_slot": 12.5,
             "bullpen_fatigue": 47.619,
             "platoon_barrel_pct": -3.2,
@@ -44,6 +95,8 @@
             "days_rest": 2.0,
             "pull_park_synergy": -0.7443,
             "hard_hit_105_rate": 0.45,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
             "getaway_day": 0.0,
             "series_game": 0.0,
             "sp_rp_ops_gap": 0.688,
@@ -51,38 +104,14 @@
             "ump_k_pct": 0.216,
             "ump_bb_pct": 0.204
           },
-          "hit_probability": 0.5848,
-          "raw_hit_probability": 0.5703,
-          "lift": 0.0335,
+          "hit_probability": 0.5326,
+          "raw_hit_probability": 0.5697,
+          "lift": -0.1397,
           "reliability": "B",
           "sample_n": 51,
           "projection": {
-            "stat": "hits",
+            "stat": "hits_runs_rbis",
             "value": 0.5,
-            "needs": 1
-          }
-        },
-        {
-          "prop": "To Hit a Laser (105+ MPH)",
-          "type": "batter",
-          "score": 24.4,
-          "notable_signals": 0,
-          "matchup": "Pittsburgh Pirates @ Miami Marlins",
-          "game_pk": 823832,
-          "team": "Pittsburgh Pirates",
-          "side": null,
-          "lean": null,
-          "signals": {
-            "hard_hit_rate": 0.233
-          },
-          "hit_probability": 0.256,
-          "raw_hit_probability": 0.233,
-          "lift": 0.0287,
-          "reliability": "B",
-          "sample_n": 51,
-          "projection": {
-            "stat": "hard_hit_105",
-            "value": 1,
             "needs": 1
           }
         }

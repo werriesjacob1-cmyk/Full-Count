@@ -27,7 +27,7 @@
         {
           "prop": "Over 3.5 Strikeouts",
           "type": "pitcher",
-          "score": 30.7,
+          "score": 42.6,
           "notable_signals": 0,
           "matchup": "Colorado Rockies @ Arizona Diamondbacks",
           "game_pk": 825046,
@@ -43,9 +43,9 @@
             "ump_k_pct": -0.06,
             "ump_bb_pct": 0.564
           },
-          "hit_probability": 0.5904,
-          "raw_hit_probability": 0.5448,
-          "lift": -0.1223,
+          "hit_probability": 0.5459,
+          "raw_hit_probability": 0.3884,
+          "lift": -0.1668,
           "reliability": "D",
           "sample_n": 20,
           "projection": {
@@ -55,28 +55,29 @@
           }
         },
         {
-          "prop": "Over 15.5 Outs Recorded",
+          "prop": "Arizona Diamondbacks scoreless in the 1st",
           "type": "pitcher",
-          "score": 42.3,
+          "score": 45.5,
           "notable_signals": 0,
           "matchup": "Colorado Rockies @ Arizona Diamondbacks",
           "game_pk": 825046,
           "team": "Colorado Rockies",
           "side": "away",
-          "lean": null,
+          "lean": "NRFI",
           "signals": {
-            "outs_rate": 0.5193,
-            "avg_outs_per_start": 16.15
+            "yrfi_rate": 45.5,
+            "fi_n_starts": 22.0,
+            "ump_run_impact": 38.2684,
+            "park_hr_index": 50.0
           },
-          "hit_probability": 0.4879,
-          "raw_hit_probability": 0.5193,
-          "lift": -0.0958,
+          "hit_probability": 0.6781,
+          "raw_hit_probability": 0.6581,
+          "lift": -0.0279,
           "reliability": "D",
-          "sample_n": 20,
+          "sample_n": 22,
           "projection": {
-            "stat": "pitcher_outs",
-            "value": 15.5,
-            "needs": 16
+            "stat": "first_inning_run",
+            "value": 45.5
           }
         }
       ]

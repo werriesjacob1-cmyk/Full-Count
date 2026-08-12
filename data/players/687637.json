@@ -78,7 +78,7 @@
             "l7_avg_ev": 70.8929,
             "l7_barrel_pct": 100.0,
             "park_hr_index": 50.0,
-            "season_barrel_pct": 15.3333,
+            "season_barrel_pct": 16.0,
             "lineup_slot": 50.0,
             "bullpen_fatigue": 55.5556,
             "platoon_barrel_pct": -0.56,
@@ -97,9 +97,9 @@
             "ump_k_pct": -0.456,
             "ump_bb_pct": -0.588
           },
-          "hit_probability": 0.6178,
-          "raw_hit_probability": 0.6679,
-          "lift": -0.0536,
+          "hit_probability": 0.6183,
+          "raw_hit_probability": 0.6686,
+          "lift": -0.0562,
           "reliability": "B",
           "sample_n": 60,
           "projection": {
@@ -111,7 +111,7 @@
         {
           "prop": "To Steal a Base",
           "type": "batter",
-          "score": 63.7,
+          "score": 64.5,
           "notable_signals": 0,
           "matchup": "Baltimore Orioles @ Texas Rangers",
           "game_pk": 822863,
@@ -122,10 +122,10 @@
             "opp_team_cs_pct": 1.92,
             "sprint_speed": 53.125,
             "catcher_poptime": 100.0,
-            "on_base": 41.4587
+            "on_base": 45.2975
           },
-          "hit_probability": 0.1664,
-          "raw_hit_probability": 0.0801,
+          "hit_probability": 0.1659,
+          "raw_hit_probability": 0.079,
           "lift": null,
           "reliability": "B",
           "sample_n": 60,
@@ -134,27 +134,239 @@
             "value": 1,
             "needs": 1
           }
-        },
+        }
+      ]
+    },
+    {
+      "date": "2026-08-08",
+      "evaluations": [
         {
-          "prop": "To Hit a Laser (105+ MPH)",
+          "prop": "Over 0.5 Hits+Runs+RBIs",
           "type": "batter",
-          "score": 2.4,
-          "notable_signals": 0,
+          "score": 49.9,
+          "notable_signals": 2,
           "matchup": "Baltimore Orioles @ Texas Rangers",
-          "game_pk": 822863,
+          "game_pk": 822864,
           "team": "Baltimore Orioles",
           "side": null,
           "lean": null,
           "signals": {
-            "hard_hit_rate": 0.1463
+            "platoon": 80.0,
+            "sp_era_weak": 41.7143,
+            "pitch_exploit": 0.0,
+            "l7_avg_ev": 0.0,
+            "l7_barrel_pct": 87.8571,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 16.0,
+            "lineup_slot": 50.0,
+            "bullpen_fatigue": 64.1026,
+            "platoon_barrel_pct": -0.64,
+            "platoon_xwoba": 0.72,
+            "park_hand_index": -0.26,
+            "opp_catcher_framing": 0.72,
+            "days_rest": 0.0,
+            "pull_park_synergy": -0.0846,
+            "hard_hit_105_rate": -1.765,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": 1.632,
+            "vs_rp_ops": 0.936,
+            "ump_k_pct": 0.204,
+            "ump_bb_pct": 0.444
           },
-          "hit_probability": 0.2017,
-          "raw_hit_probability": 0.1463,
-          "lift": -0.0261,
+          "hit_probability": 0.6221,
+          "raw_hit_probability": 0.6731,
+          "lift": -0.0541,
           "reliability": "B",
-          "sample_n": 60,
+          "sample_n": 61,
           "projection": {
-            "stat": "hard_hit_105",
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 60.5,
+          "notable_signals": 0,
+          "matchup": "Baltimore Orioles @ Texas Rangers",
+          "game_pk": 822864,
+          "team": "Baltimore Orioles",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "opp_team_cs_pct": 1.92,
+            "sprint_speed": 53.125,
+            "catcher_poptime": 85.7143,
+            "on_base": 45.2975
+          },
+          "hit_probability": 0.1655,
+          "raw_hit_probability": 0.0782,
+          "lift": null,
+          "reliability": "B",
+          "sample_n": 61,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-08-09",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 58.6,
+          "notable_signals": 2,
+          "matchup": "Baltimore Orioles @ Texas Rangers",
+          "game_pk": 822862,
+          "team": "Baltimore Orioles",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 45.1429,
+            "pitch_exploit": 0.0,
+            "l7_avg_ev": 3.125,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 16.0,
+            "lineup_slot": 50.0,
+            "bullpen_fatigue": 64.1026,
+            "platoon_barrel_pct": -0.08,
+            "platoon_xwoba": 0.9,
+            "park_hand_index": -0.14,
+            "opp_catcher_framing": 0.36,
+            "days_rest": 0.0,
+            "pull_park_synergy": -0.049,
+            "hard_hit_105_rate": -1.5025,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": -2.0,
+            "series_game": 2.0,
+            "sp_rp_ops_gap": 1.544,
+            "vs_rp_ops": 0.684,
+            "ump_k_pct": 0.816,
+            "ump_bb_pct": 0.06
+          },
+          "hit_probability": 0.6135,
+          "raw_hit_probability": 0.6629,
+          "lift": -0.0542,
+          "reliability": "B",
+          "sample_n": 62,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 64.5,
+          "notable_signals": 0,
+          "matchup": "Baltimore Orioles @ Texas Rangers",
+          "game_pk": 822862,
+          "team": "Baltimore Orioles",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "opp_team_cs_pct": 1.92,
+            "sprint_speed": 53.125,
+            "catcher_poptime": 100.0,
+            "on_base": 45.2975
+          },
+          "hit_probability": 0.165,
+          "raw_hit_probability": 0.0772,
+          "lift": null,
+          "reliability": "B",
+          "sample_n": 62,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-08-10",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 59.1,
+          "notable_signals": 1,
+          "matchup": "Baltimore Orioles @ Minnesota Twins",
+          "game_pk": 823675,
+          "team": "Baltimore Orioles",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 100.0,
+            "l7_avg_ev": 6.6667,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 39.6,
+            "season_barrel_pct": 16.0,
+            "lineup_slot": 50.0,
+            "bullpen_fatigue": 64.1026,
+            "platoon_barrel_pct": -0.16,
+            "platoon_xwoba": 0.96,
+            "park_hand_index": -2.36,
+            "opp_catcher_framing": -0.12,
+            "days_rest": 0.0,
+            "pull_park_synergy": -0.8508,
+            "hard_hit_105_rate": -1.55,
+            "team_total_move": 0.0,
+            "team_total_open": 0.0,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": 1.392,
+            "vs_rp_ops": 0.54,
+            "ump_k_pct": 0.648,
+            "ump_bb_pct": 0.324
+          },
+          "hit_probability": 0.6174,
+          "raw_hit_probability": 0.6675,
+          "lift": -0.0526,
+          "reliability": "B",
+          "sample_n": 63,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 59.7,
+          "notable_signals": 0,
+          "matchup": "Baltimore Orioles @ Minnesota Twins",
+          "game_pk": 823675,
+          "team": "Baltimore Orioles",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "opp_team_cs_pct": 6.0,
+            "sprint_speed": 53.125,
+            "catcher_poptime": 82.8571,
+            "on_base": 45.2975
+          },
+          "hit_probability": 0.1641,
+          "raw_hit_probability": 0.0754,
+          "lift": null,
+          "reliability": "B",
+          "sample_n": 63,
+          "projection": {
+            "stat": "stolen_base",
             "value": 1,
             "needs": 1
           }
@@ -167,8 +379,8 @@
         {
           "prop": "Over 0.5 Hits+Runs+RBIs",
           "type": "batter",
-          "score": 51.7,
-          "notable_signals": 0,
+          "score": 58.2,
+          "notable_signals": 2,
           "matchup": "Baltimore Orioles @ Minnesota Twins",
           "game_pk": 823673,
           "team": "Baltimore Orioles",
@@ -177,10 +389,11 @@
           "signals": {
             "platoon": 80.0,
             "sp_era_weak": 55.7143,
+            "pitch_exploit": 0.0,
             "l7_avg_ev": 6.6667,
             "l7_barrel_pct": 100.0,
-            "park_hr_index": 48.7,
-            "season_barrel_pct": 15.3333,
+            "park_hr_index": 70.5,
+            "season_barrel_pct": 16.0,
             "lineup_slot": 50.0,
             "bullpen_fatigue": 64.1026,
             "platoon_barrel_pct": -0.16,
@@ -190,16 +403,16 @@
             "days_rest": 0.0,
             "pull_park_synergy": -0.876,
             "hard_hit_105_rate": -1.5975,
+            "team_total_move": 0.0,
+            "team_total_open": 0.0,
             "getaway_day": 0.0,
             "series_game": 1.0,
             "sp_rp_ops_gap": 1.392,
-            "vs_rp_ops": 0.42,
-            "ump_k_pct": 0.72,
-            "ump_bb_pct": -0.36
+            "vs_rp_ops": 0.42
           },
-          "hit_probability": 0.611,
-          "raw_hit_probability": 0.6599,
-          "lift": -0.0608,
+          "hit_probability": 0.6113,
+          "raw_hit_probability": 0.6602,
+          "lift": -0.0613,
           "reliability": "B",
           "sample_n": 64,
           "projection": {
@@ -211,7 +424,7 @@
         {
           "prop": "To Steal a Base",
           "type": "batter",
-          "score": 58.9,
+          "score": 59.7,
           "notable_signals": 0,
           "matchup": "Baltimore Orioles @ Minnesota Twins",
           "game_pk": 823673,
@@ -222,7 +435,7 @@
             "opp_team_cs_pct": 5.88,
             "sprint_speed": 53.125,
             "catcher_poptime": 82.8571,
-            "on_base": 41.4587
+            "on_base": 45.2975
           },
           "hit_probability": 0.164,
           "raw_hit_probability": 0.0752,
@@ -231,30 +444,6 @@
           "sample_n": 64,
           "projection": {
             "stat": "stolen_base",
-            "value": 1,
-            "needs": 1
-          }
-        },
-        {
-          "prop": "To Hit a Laser (105+ MPH)",
-          "type": "batter",
-          "score": 3.7,
-          "notable_signals": 0,
-          "matchup": "Baltimore Orioles @ Minnesota Twins",
-          "game_pk": 823673,
-          "team": "Baltimore Orioles",
-          "side": null,
-          "lean": null,
-          "signals": {
-            "hard_hit_rate": 0.1511
-          },
-          "hit_probability": 0.2045,
-          "raw_hit_probability": 0.1511,
-          "lift": -0.0228,
-          "reliability": "B",
-          "sample_n": 64,
-          "projection": {
-            "stat": "hard_hit_105",
             "value": 1,
             "needs": 1
           }

@@ -20,7 +20,7 @@
         {
           "prop": "Over 3.5 Strikeouts",
           "type": "pitcher",
-          "score": 32.6,
+          "score": 44.6,
           "notable_signals": 0,
           "matchup": "Chicago Cubs @ Washington Nationals",
           "game_pk": 822697,
@@ -35,9 +35,9 @@
             "ump_k_pct": 0.708,
             "ump_bb_pct": -0.048
           },
-          "hit_probability": 0.6063,
-          "raw_hit_probability": 0.6021,
-          "lift": -0.1064,
+          "hit_probability": 0.619,
+          "raw_hit_probability": 0.6482,
+          "lift": -0.0937,
           "reliability": "D",
           "sample_n": 13,
           "projection": {
@@ -47,28 +47,29 @@
           }
         },
         {
-          "prop": "Over 15.5 Outs Recorded",
+          "prop": "Chicago Cubs scoreless in the 1st",
           "type": "pitcher",
-          "score": 0,
+          "score": 64.3,
           "notable_signals": 0,
           "matchup": "Chicago Cubs @ Washington Nationals",
           "game_pk": 822697,
           "team": "Washington Nationals",
           "side": "home",
-          "lean": null,
+          "lean": "NRFI",
           "signals": {
-            "outs_rate": 0.2896,
-            "avg_outs_per_start": 14.31
+            "yrfi_rate": 35.7,
+            "fi_n_starts": 14.0,
+            "ump_run_impact": 25.6441,
+            "park_hr_index": 59.6
           },
-          "hit_probability": 0.2961,
-          "raw_hit_probability": 0.2896,
-          "lift": -0.2876,
+          "hit_probability": 0.6861,
+          "raw_hit_probability": 0.6926,
+          "lift": -0.0199,
           "reliability": "D",
-          "sample_n": 13,
+          "sample_n": 14,
           "projection": {
-            "stat": "pitcher_outs",
-            "value": 15.5,
-            "needs": 16
+            "stat": "first_inning_run",
+            "value": 35.7
           }
         }
       ]

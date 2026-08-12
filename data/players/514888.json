@@ -46,7 +46,7 @@
         {
           "prop": "Over 0.5 Hits",
           "type": "batter",
-          "score": 39.7,
+          "score": 43.2,
           "notable_signals": 1,
           "matchup": "Houston Astros @ San Diego Padres",
           "game_pk": 823266,
@@ -60,7 +60,7 @@
             "l7_avg_ev": 0.0,
             "l7_barrel_pct": 82.8571,
             "park_hr_index": 39.6,
-            "season_barrel_pct": 16.0,
+            "season_barrel_pct": 14.6667,
             "lineup_slot": 62.5,
             "bullpen_fatigue": 64.1026,
             "bvp_ops": 4.0,
@@ -80,9 +80,9 @@
             "ump_k_pct": -0.408,
             "ump_bb_pct": -0.036
           },
-          "hit_probability": 0.6002,
-          "raw_hit_probability": 0.6025,
-          "lift": 0.0492,
+          "hit_probability": 0.6106,
+          "raw_hit_probability": 0.6244,
+          "lift": 0.0596,
           "reliability": "A",
           "sample_n": 91,
           "projection": {
@@ -94,7 +94,7 @@
         {
           "prop": "To Steal a Base",
           "type": "batter",
-          "score": 34.7,
+          "score": 32.5,
           "notable_signals": 0,
           "matchup": "Houston Astros @ San Diego Padres",
           "game_pk": 823266,
@@ -103,12 +103,12 @@
           "lean": null,
           "signals": {
             "opp_team_cs_pct": -4.44,
-            "sprint_speed": 6.25,
-            "catcher_poptime": 77.1429,
-            "on_base": 45.2975
+            "sprint_speed": 3.125,
+            "catcher_poptime": 80.0,
+            "on_base": 38.5797
           },
-          "hit_probability": 0.1419,
-          "raw_hit_probability": 0.027,
+          "hit_probability": 0.1416,
+          "raw_hit_probability": 0.0263,
           "lift": null,
           "reliability": "A",
           "sample_n": 91,
@@ -117,27 +117,242 @@
             "value": 1,
             "needs": 1
           }
-        },
+        }
+      ]
+    },
+    {
+      "date": "2026-08-08",
+      "evaluations": [
         {
-          "prop": "To Hit a Laser (105+ MPH)",
+          "prop": "Over 0.5 Hits",
           "type": "batter",
-          "score": 1.8,
-          "notable_signals": 0,
+          "score": 45.4,
+          "notable_signals": 4,
           "matchup": "Houston Astros @ San Diego Padres",
-          "game_pk": 823266,
+          "game_pk": 823267,
           "team": "Houston Astros",
           "side": null,
           "lean": null,
           "signals": {
-            "hard_hit_rate": 0.144
+            "platoon": 35.0,
+            "sp_era_weak": 27.1429,
+            "pitch_exploit": 1.1429,
+            "l7_avg_ev": 0.0,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 0.825,
+            "park_hr_index": 36.8,
+            "season_barrel_pct": 14.6667,
+            "lineup_slot": 62.5,
+            "bullpen_fatigue": 71.4286,
+            "bvp_ops": -0.816,
+            "platoon_barrel_pct": -1.28,
+            "platoon_xwoba": -2.64,
+            "park_hand_index": 0.16,
+            "opp_catcher_framing": 0.72,
+            "days_rest": 0.0,
+            "pull_park_synergy": 0.1204,
+            "hard_hit_105_rate": -1.8075,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": 0.728,
+            "vs_rp_ops": 0.54,
+            "ump_k_pct": -1.044,
+            "ump_bb_pct": 0.276
           },
-          "hit_probability": 0.2004,
-          "raw_hit_probability": 0.144,
-          "lift": -0.0274,
+          "hit_probability": 0.6107,
+          "raw_hit_probability": 0.6247,
+          "lift": 0.0597,
           "reliability": "A",
-          "sample_n": 91,
+          "sample_n": 92,
           "projection": {
-            "stat": "hard_hit_105",
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 32.5,
+          "notable_signals": 0,
+          "matchup": "Houston Astros @ San Diego Padres",
+          "game_pk": 823267,
+          "team": "Houston Astros",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "opp_team_cs_pct": -4.44,
+            "sprint_speed": 3.125,
+            "catcher_poptime": 80.0,
+            "on_base": 38.5797
+          },
+          "hit_probability": 0.1415,
+          "raw_hit_probability": 0.0261,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 92,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-08-09",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 47.1,
+          "notable_signals": 2,
+          "matchup": "Houston Astros @ San Diego Padres",
+          "game_pk": 823268,
+          "team": "Houston Astros",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 55.7143,
+            "pitch_exploit": 1.1429,
+            "l7_avg_ev": 5.3646,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 39.9,
+            "season_barrel_pct": 14.6667,
+            "lineup_slot": 62.5,
+            "bullpen_fatigue": 71.4286,
+            "platoon_barrel_pct": -1.28,
+            "platoon_xwoba": -2.64,
+            "park_hand_index": 0.05,
+            "opp_catcher_framing": 0.12,
+            "days_rest": 0.0,
+            "pull_park_synergy": 0.0383,
+            "hard_hit_105_rate": -1.8375,
+            "team_total_move": 0.0,
+            "team_total_open": 0.0,
+            "getaway_day": -2.0,
+            "series_game": 2.0,
+            "sp_rp_ops_gap": 0.632,
+            "vs_rp_ops": 0.42,
+            "ump_k_pct": 0.24,
+            "ump_bb_pct": -0.048
+          },
+          "hit_probability": 0.6124,
+          "raw_hit_probability": 0.6283,
+          "lift": 0.0612,
+          "reliability": "A",
+          "sample_n": 93,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 38.1,
+          "notable_signals": 0,
+          "matchup": "Houston Astros @ San Diego Padres",
+          "game_pk": 823268,
+          "team": "Houston Astros",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "opp_team_cs_pct": -4.44,
+            "sprint_speed": 3.125,
+            "catcher_poptime": 100.0,
+            "on_base": 38.5797
+          },
+          "hit_probability": 0.1413,
+          "raw_hit_probability": 0.0257,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 93,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-08-10",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 35.1,
+          "notable_signals": 3,
+          "matchup": "Houston Astros @ San Francisco Giants",
+          "game_pk": 823189,
+          "team": "Houston Astros",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 14.2857,
+            "pitch_exploit": 1.1429,
+            "l7_avg_ev": 0.0,
+            "l7_barrel_pct": 82.8571,
+            "park_hr_index": 25.6,
+            "season_barrel_pct": 14.6667,
+            "lineup_slot": 62.5,
+            "bullpen_fatigue": 71.4286,
+            "platoon_barrel_pct": -1.36,
+            "platoon_xwoba": -2.76,
+            "park_hand_index": -0.69,
+            "opp_catcher_framing": 1.56,
+            "days_rest": 0.0,
+            "pull_park_synergy": -0.5385,
+            "hard_hit_105_rate": -1.87,
+            "team_total_move": 0.0,
+            "team_total_open": 0.0,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": 0.632,
+            "vs_rp_ops": 0.36,
+            "ump_k_pct": -0.66,
+            "ump_bb_pct": 0.624
+          },
+          "hit_probability": 0.6111,
+          "raw_hit_probability": 0.6256,
+          "lift": 0.0598,
+          "reliability": "A",
+          "sample_n": 94,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 38.1,
+          "notable_signals": 0,
+          "matchup": "Houston Astros @ San Francisco Giants",
+          "game_pk": 823189,
+          "team": "Houston Astros",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "opp_team_cs_pct": 0.78,
+            "sprint_speed": 3.125,
+            "catcher_poptime": 100.0,
+            "on_base": 38.5797
+          },
+          "hit_probability": 0.1412,
+          "raw_hit_probability": 0.0255,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 94,
+          "projection": {
+            "stat": "stolen_base",
             "value": 1,
             "needs": 1
           }
@@ -150,7 +365,7 @@
         {
           "prop": "Over 0.5 Hits",
           "type": "batter",
-          "score": 47.0,
+          "score": 59.2,
           "notable_signals": 3,
           "matchup": "Houston Astros @ San Francisco Giants",
           "game_pk": 823186,
@@ -164,7 +379,7 @@
             "l7_avg_ev": 0.0,
             "l7_barrel_pct": 100.0,
             "park_hr_index": 25.0,
-            "season_barrel_pct": 16.0,
+            "season_barrel_pct": 14.6667,
             "lineup_slot": 62.5,
             "bullpen_fatigue": 71.4286,
             "platoon_barrel_pct": -2.16,
@@ -179,9 +394,9 @@
             "sp_rp_ops_gap": 0.608,
             "vs_rp_ops": 0.24
           },
-          "hit_probability": 0.5991,
-          "raw_hit_probability": 0.6002,
-          "lift": 0.0478,
+          "hit_probability": 0.6085,
+          "raw_hit_probability": 0.62,
+          "lift": 0.0573,
           "reliability": "A",
           "sample_n": 95,
           "projection": {
@@ -193,7 +408,7 @@
         {
           "prop": "To Steal a Base",
           "type": "batter",
-          "score": 29.1,
+          "score": 38.1,
           "notable_signals": 0,
           "matchup": "Houston Astros @ San Francisco Giants",
           "game_pk": 823186,
@@ -202,9 +417,9 @@
           "lean": null,
           "signals": {
             "opp_team_cs_pct": 0.78,
-            "sprint_speed": 6.25,
+            "sprint_speed": 3.125,
             "catcher_poptime": 100.0,
-            "on_base": 45.2975
+            "on_base": 38.5797
           },
           "hit_probability": 0.1413,
           "raw_hit_probability": 0.0258,
@@ -213,30 +428,6 @@
           "sample_n": 95,
           "projection": {
             "stat": "stolen_base",
-            "value": 1,
-            "needs": 1
-          }
-        },
-        {
-          "prop": "To Hit a Laser (105+ MPH)",
-          "type": "batter",
-          "score": 0.8,
-          "notable_signals": 0,
-          "matchup": "Houston Astros @ San Francisco Giants",
-          "game_pk": 823186,
-          "team": "Houston Astros",
-          "side": null,
-          "lean": null,
-          "signals": {
-            "hard_hit_rate": 0.139
-          },
-          "hit_probability": 0.1976,
-          "raw_hit_probability": 0.139,
-          "lift": -0.0297,
-          "reliability": "A",
-          "sample_n": 95,
-          "projection": {
-            "stat": "hard_hit_105",
             "value": 1,
             "needs": 1
           }

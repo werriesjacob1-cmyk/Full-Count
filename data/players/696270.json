@@ -27,8 +27,8 @@
         {
           "prop": "Over 3.5 Strikeouts",
           "type": "pitcher",
-          "score": 30.3,
-          "notable_signals": 1,
+          "score": 38.9,
+          "notable_signals": 0,
           "matchup": "Texas Rangers @ Los Angeles Angels",
           "game_pk": 823997,
           "team": "Los Angeles Angels",
@@ -37,14 +37,11 @@
           "signals": {
             "same_hand_ratio": 61.1111,
             "l14_k_pct": 0.0,
-            "env_neutral": 50.0,
-            "ump_accuracy": 80.5357,
-            "ump_k_pct": 0.432,
-            "ump_bb_pct": 0.012
+            "env_neutral": 50.0
           },
-          "hit_probability": 0.6082,
-          "raw_hit_probability": 0.6089,
-          "lift": -0.1045,
+          "hit_probability": 0.5815,
+          "raw_hit_probability": 0.5133,
+          "lift": -0.1312,
           "reliability": "D",
           "sample_n": 10,
           "projection": {
@@ -54,28 +51,28 @@
           }
         },
         {
-          "prop": "Over 15.5 Outs Recorded",
+          "prop": "Texas Rangers scoreless in the 1st",
           "type": "pitcher",
-          "score": 0,
+          "score": 72.7,
           "notable_signals": 0,
           "matchup": "Texas Rangers @ Los Angeles Angels",
           "game_pk": 823997,
           "team": "Los Angeles Angels",
           "side": "home",
-          "lean": null,
+          "lean": "NRFI",
           "signals": {
-            "outs_rate": 0.2814,
-            "avg_outs_per_start": 13.7
+            "yrfi_rate": 27.3,
+            "fi_n_starts": 11.0,
+            "park_hr_index": 51.0
           },
-          "hit_probability": 0.2901,
-          "raw_hit_probability": 0.2814,
-          "lift": -0.2936,
+          "hit_probability": 0.69,
+          "raw_hit_probability": 0.7097,
+          "lift": -0.016,
           "reliability": "D",
-          "sample_n": 10,
+          "sample_n": 11,
           "projection": {
-            "stat": "pitcher_outs",
-            "value": 15.5,
-            "needs": 16
+            "stat": "first_inning_run",
+            "value": 27.3
           }
         }
       ]

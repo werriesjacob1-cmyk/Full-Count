@@ -22,15 +22,41 @@
             "ump_k_pct": -0.132,
             "ump_bb_pct": -0.684
           },
-          "hit_probability": 0.6479,
-          "raw_hit_probability": 0.7555,
-          "lift": -0.066,
+          "hit_probability": 0.6588,
+          "raw_hit_probability": 0.797,
+          "lift": -0.0551,
           "reliability": "D",
           "sample_n": 0,
           "projection": {
             "stat": "strikeouts",
             "value": 3.5,
             "needs": 4
+          }
+        },
+        {
+          "prop": "Miami Marlins scoreless in the 1st",
+          "type": "pitcher",
+          "score": 35.0,
+          "notable_signals": 0,
+          "matchup": "Los Angeles Angels @ Miami Marlins",
+          "game_pk": 823836,
+          "team": "Los Angeles Angels",
+          "side": "away",
+          "lean": "NRFI",
+          "signals": {
+            "yrfi_rate": 50.0,
+            "fi_n_starts": 4.0,
+            "ump_run_impact": 29.3328,
+            "park_hr_index": 50.0
+          },
+          "hit_probability": 0.6858,
+          "raw_hit_probability": 0.6913,
+          "lift": -0.0202,
+          "reliability": "D",
+          "sample_n": 4,
+          "projection": {
+            "stat": "first_inning_run",
+            "value": 50.0
           }
         }
       ]

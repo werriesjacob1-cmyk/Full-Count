@@ -44,9 +44,9 @@
       "date": "2026-08-07",
       "evaluations": [
         {
-          "prop": "Over 0.5 Hits",
+          "prop": "Over 0.5 Hits+Runs+RBIs",
           "type": "batter",
-          "score": 50.1,
+          "score": 51.0,
           "notable_signals": 1,
           "matchup": "Los Angeles Angels @ Miami Marlins",
           "game_pk": 823836,
@@ -59,7 +59,7 @@
             "l7_avg_ev": 19.7222,
             "l7_barrel_pct": 65.0,
             "park_hr_index": 50.0,
-            "season_barrel_pct": 12.6667,
+            "season_barrel_pct": 14.6667,
             "lineup_slot": 37.5,
             "bullpen_fatigue": 55.5556,
             "platoon_barrel_pct": -2.8,
@@ -78,13 +78,13 @@
             "ump_k_pct": 0.132,
             "ump_bb_pct": 0.684
           },
-          "hit_probability": 0.5756,
-          "raw_hit_probability": 0.5512,
-          "lift": 0.0246,
+          "hit_probability": 0.4954,
+          "raw_hit_probability": 0.5278,
+          "lift": -0.1757,
           "reliability": "B",
           "sample_n": 49,
           "projection": {
-            "stat": "hits",
+            "stat": "hits_runs_rbis",
             "value": 0.5,
             "needs": 1
           }
@@ -92,7 +92,7 @@
         {
           "prop": "To Steal a Base",
           "type": "batter",
-          "score": 38.4,
+          "score": 38.7,
           "notable_signals": 0,
           "matchup": "Los Angeles Angels @ Miami Marlins",
           "game_pk": 823836,
@@ -102,8 +102,8 @@
           "signals": {
             "opp_team_cs_pct": 3.24,
             "sprint_speed": 21.875,
-            "catcher_poptime": 85.7143,
-            "on_base": 15.547
+            "catcher_poptime": 88.5714,
+            "on_base": 13.6276
           },
           "hit_probability": 0.1438,
           "raw_hit_probability": 0.0315,
@@ -112,30 +112,6 @@
           "sample_n": 49,
           "projection": {
             "stat": "stolen_base",
-            "value": 1,
-            "needs": 1
-          }
-        },
-        {
-          "prop": "To Hit a Laser (105+ MPH)",
-          "type": "batter",
-          "score": 0,
-          "notable_signals": 0,
-          "matchup": "Los Angeles Angels @ Miami Marlins",
-          "game_pk": 823836,
-          "team": "Miami Marlins",
-          "side": null,
-          "lean": null,
-          "signals": {
-            "hard_hit_rate": 0.1309
-          },
-          "hit_probability": 0.193,
-          "raw_hit_probability": 0.1309,
-          "lift": -0.0348,
-          "reliability": "B",
-          "sample_n": 49,
-          "projection": {
-            "stat": "hard_hit_105",
             "value": 1,
             "needs": 1
           }

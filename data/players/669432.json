@@ -20,6 +20,66 @@
           "matchup": "Los Angeles Angels @ Baltimore Orioles"
         }
       ]
+    },
+    {
+      "date": "2026-08-10",
+      "evaluations": [
+        {
+          "prop": "Over 3.5 Strikeouts",
+          "type": "pitcher",
+          "score": 55.5,
+          "notable_signals": 0,
+          "matchup": "Baltimore Orioles @ Minnesota Twins",
+          "game_pk": 823675,
+          "team": "Baltimore Orioles",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "same_hand_ratio": 0.0,
+            "l14_k_pct": 91.7647,
+            "env_neutral": 50.0,
+            "ump_accuracy": 61.3628,
+            "ump_k_pct": -0.648,
+            "ump_bb_pct": -0.324
+          },
+          "hit_probability": 0.6408,
+          "raw_hit_probability": 0.7289,
+          "lift": -0.0711,
+          "reliability": "D",
+          "sample_n": 21,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 3.5,
+            "needs": 4
+          }
+        },
+        {
+          "prop": "Minnesota Twins scoreless in the 1st",
+          "type": "pitcher",
+          "score": 86.4,
+          "notable_signals": 0,
+          "matchup": "Baltimore Orioles @ Minnesota Twins",
+          "game_pk": 823675,
+          "team": "Baltimore Orioles",
+          "side": "away",
+          "lean": "NRFI",
+          "signals": {
+            "yrfi_rate": 13.6,
+            "fi_n_starts": 22.0,
+            "ump_run_impact": 18.9149,
+            "park_hr_index": 39.6
+          },
+          "hit_probability": 0.6997,
+          "raw_hit_probability": 0.753,
+          "lift": -0.0063,
+          "reliability": "D",
+          "sample_n": 22,
+          "projection": {
+            "stat": "first_inning_run",
+            "value": 13.6
+          }
+        }
+      ]
     }
   ]
 }

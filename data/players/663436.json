@@ -20,6 +20,67 @@
           "matchup": "Chicago White Sox @ Boston Red Sox"
         }
       ]
+    },
+    {
+      "date": "2026-08-09",
+      "evaluations": [
+        {
+          "prop": "Over 3.5 Strikeouts",
+          "type": "pitcher",
+          "score": 41.4,
+          "notable_signals": 2,
+          "matchup": "Cleveland Guardians @ Chicago White Sox",
+          "game_pk": 824564,
+          "team": "Chicago White Sox",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "same_hand_ratio": 0.0,
+            "l14_k_pct": 0.0,
+            "tto_penalty": 8.0,
+            "env_neutral": 50.0,
+            "ump_accuracy": 80.2355,
+            "ump_k_pct": 0.072,
+            "ump_bb_pct": 0.06
+          },
+          "hit_probability": 0.6106,
+          "raw_hit_probability": 0.6176,
+          "lift": -0.1027,
+          "reliability": "D",
+          "sample_n": 23,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 3.5,
+            "needs": 4
+          }
+        },
+        {
+          "prop": "Cleveland Guardians scoreless in the 1st",
+          "type": "pitcher",
+          "score": 78.3,
+          "notable_signals": 0,
+          "matchup": "Cleveland Guardians @ Chicago White Sox",
+          "game_pk": 824564,
+          "team": "Chicago White Sox",
+          "side": "home",
+          "lean": "NRFI",
+          "signals": {
+            "yrfi_rate": 21.7,
+            "fi_n_starts": 23.0,
+            "ump_run_impact": 4.9623,
+            "park_hr_index": 28.6
+          },
+          "hit_probability": 0.6945,
+          "raw_hit_probability": 0.7296,
+          "lift": -0.0115,
+          "reliability": "D",
+          "sample_n": 23,
+          "projection": {
+            "stat": "first_inning_run",
+            "value": 21.7
+          }
+        }
+      ]
     }
   ]
 }

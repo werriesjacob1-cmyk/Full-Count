@@ -27,7 +27,7 @@
         {
           "prop": "Over 3.5 Strikeouts",
           "type": "pitcher",
-          "score": 29.4,
+          "score": 38.9,
           "notable_signals": 0,
           "matchup": "Milwaukee Brewers @ San Diego Padres",
           "game_pk": 823264,
@@ -37,14 +37,11 @@
           "signals": {
             "same_hand_ratio": 61.1111,
             "l14_k_pct": 0.0,
-            "env_neutral": 50.0,
-            "ump_accuracy": 49.4061,
-            "ump_k_pct": -0.516,
-            "ump_bb_pct": -0.0
+            "env_neutral": 50.0
           },
-          "hit_probability": 0.6207,
-          "raw_hit_probability": 0.6542,
-          "lift": -0.092,
+          "hit_probability": 0.6161,
+          "raw_hit_probability": 0.6376,
+          "lift": -0.0966,
           "reliability": "D",
           "sample_n": 23,
           "projection": {
@@ -54,28 +51,28 @@
           }
         },
         {
-          "prop": "Over 14.5 Outs Recorded",
+          "prop": "Milwaukee Brewers scoreless in the 1st",
           "type": "pitcher",
-          "score": 42.2,
+          "score": 84.0,
           "notable_signals": 0,
           "matchup": "Milwaukee Brewers @ San Diego Padres",
           "game_pk": 823264,
           "team": "San Diego Padres",
           "side": "home",
-          "lean": null,
+          "lean": "NRFI",
           "signals": {
-            "outs_rate": 0.6479,
-            "avg_outs_per_start": 14.13
+            "yrfi_rate": 16.0,
+            "fi_n_starts": 25.0,
+            "park_hr_index": 42.6
           },
-          "hit_probability": 0.6008,
-          "raw_hit_probability": 0.6479,
-          "lift": -0.1975,
-          "reliability": "D",
-          "sample_n": 23,
+          "hit_probability": 0.6989,
+          "raw_hit_probability": 0.7495,
+          "lift": -0.0071,
+          "reliability": "C",
+          "sample_n": 25,
           "projection": {
-            "stat": "pitcher_outs",
-            "value": 14.5,
-            "needs": 15
+            "stat": "first_inning_run",
+            "value": 16.0
           }
         }
       ]

@@ -1,0 +1,66 @@
+{
+  "player_id": 543037,
+  "name": "Gerrit Cole",
+  "snapshots": [
+    {
+      "date": "2026-08-08",
+      "evaluations": [
+        {
+          "prop": "Over 4.5 Strikeouts",
+          "type": "pitcher",
+          "score": 54.4,
+          "notable_signals": 1,
+          "matchup": "Atlanta Braves @ New York Yankees",
+          "game_pk": 823514,
+          "team": "New York Yankees",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "same_hand_ratio": 43.75,
+            "l14_k_pct": 61.7647,
+            "env_neutral": 50.0,
+            "ump_accuracy": 72.3181,
+            "ump_k_pct": -0.144,
+            "ump_bb_pct": 0.084
+          },
+          "hit_probability": 0.6485,
+          "raw_hit_probability": 0.7578,
+          "lift": 0.11,
+          "reliability": "D",
+          "sample_n": 13,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 4.5,
+            "needs": 5
+          }
+        },
+        {
+          "prop": "Atlanta Braves scoreless in the 1st",
+          "type": "pitcher",
+          "score": 73.3,
+          "notable_signals": 0,
+          "matchup": "Atlanta Braves @ New York Yankees",
+          "game_pk": 823514,
+          "team": "New York Yankees",
+          "side": "home",
+          "lean": "NRFI",
+          "signals": {
+            "yrfi_rate": 26.7,
+            "fi_n_starts": 15.0,
+            "ump_run_impact": 11.4431,
+            "park_hr_index": 89.1
+          },
+          "hit_probability": 0.6905,
+          "raw_hit_probability": 0.712,
+          "lift": -0.0155,
+          "reliability": "D",
+          "sample_n": 15,
+          "projection": {
+            "stat": "first_inning_run",
+            "value": 26.7
+          }
+        }
+      ]
+    }
+  ]
+}

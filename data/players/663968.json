@@ -46,7 +46,7 @@
         {
           "prop": "Over 0.5 Hits",
           "type": "batter",
-          "score": 53.5,
+          "score": 49.6,
           "notable_signals": 1,
           "matchup": "New York Mets @ Pittsburgh Pirates",
           "game_pk": 823349,
@@ -58,7 +58,7 @@
             "pitch_exploit": 13.7143,
             "l7_avg_ev": 64.6528,
             "l7_barrel_pct": 100.0,
-            "park_hr_index": 40.9,
+            "park_hr_index": 37.6,
             "season_barrel_pct": 0.0,
             "lineup_slot": 100.0,
             "bullpen_fatigue": 58.8235,
@@ -75,9 +75,9 @@
             "ump_k_pct": 0.624,
             "ump_bb_pct": -0.384
           },
-          "hit_probability": 0.6246,
-          "raw_hit_probability": 0.6543,
-          "lift": 0.0736,
+          "hit_probability": 0.6436,
+          "raw_hit_probability": 0.6957,
+          "lift": 0.0926,
           "reliability": "A",
           "sample_n": 87,
           "projection": {
@@ -89,7 +89,7 @@
         {
           "prop": "To Steal a Base",
           "type": "batter",
-          "score": 74.2,
+          "score": 74.4,
           "notable_signals": 0,
           "matchup": "New York Mets @ Pittsburgh Pirates",
           "game_pk": 823349,
@@ -100,7 +100,7 @@
             "opp_team_cs_pct": -3.72,
             "sprint_speed": 65.625,
             "catcher_poptime": 100.0,
-            "on_base": 60.6526
+            "on_base": 61.6123
           },
           "hit_probability": 0.241,
           "raw_hit_probability": 0.2105,
@@ -112,27 +112,153 @@
             "value": 1,
             "needs": 1
           }
-        },
+        }
+      ]
+    },
+    {
+      "date": "2026-08-08",
+      "evaluations": [
         {
-          "prop": "To Hit a Laser (105+ MPH)",
+          "prop": "Over 0.5 Hits",
           "type": "batter",
-          "score": 0,
+          "score": 35.3,
           "notable_signals": 0,
           "matchup": "New York Mets @ Pittsburgh Pirates",
-          "game_pk": 823349,
+          "game_pk": 823348,
           "team": "Pittsburgh Pirates",
           "side": null,
           "lean": null,
           "signals": {
-            "hard_hit_rate": 0.0591
+            "sp_era_weak": 0.0,
+            "l7_avg_ev": 17.0833,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 30.5,
+            "season_barrel_pct": 0.0,
+            "lineup_slot": 100.0,
+            "bullpen_fatigue": 46.2963,
+            "platoon_barrel_pct": -4.32,
+            "platoon_xwoba": -1.08,
+            "opp_catcher_framing": 0.12,
+            "days_rest": 0.0,
+            "team_total_move": 0.0,
+            "team_total_open": 0.0,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": -0.896,
+            "vs_rp_ops": -0.732,
+            "ump_k_pct": 0.312,
+            "ump_bb_pct": 0.012
           },
-          "hit_probability": 0.1563,
-          "raw_hit_probability": 0.0591,
-          "lift": -0.0715,
+          "hit_probability": 0.6415,
+          "raw_hit_probability": 0.691,
+          "lift": 0.0905,
           "reliability": "A",
-          "sample_n": 87,
+          "sample_n": 88,
           "projection": {
-            "stat": "hard_hit_105",
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 71.2,
+          "notable_signals": 0,
+          "matchup": "New York Mets @ Pittsburgh Pirates",
+          "game_pk": 823348,
+          "team": "Pittsburgh Pirates",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "opp_team_cs_pct": -3.72,
+            "sprint_speed": 65.625,
+            "catcher_poptime": 88.5714,
+            "on_base": 61.6123
+          },
+          "hit_probability": 0.2393,
+          "raw_hit_probability": 0.2079,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 88,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-08-09",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 48.7,
+          "notable_signals": 1,
+          "matchup": "New York Mets @ Pittsburgh Pirates",
+          "game_pk": 823345,
+          "team": "Pittsburgh Pirates",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "sp_era_weak": 54.8571,
+            "pitch_exploit": 13.7143,
+            "l7_avg_ev": 5.625,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 38.4,
+            "season_barrel_pct": 0.0,
+            "lineup_slot": 100.0,
+            "bullpen_fatigue": 52.0833,
+            "platoon_barrel_pct": -5.0,
+            "platoon_xwoba": -2.88,
+            "opp_catcher_framing": 0.12,
+            "days_rest": 0.0,
+            "consecutive_games": -0.6,
+            "team_total_move": 0.0,
+            "team_total_open": 0.0,
+            "getaway_day": -2.0,
+            "series_game": 2.0,
+            "sp_rp_ops_gap": -1.024,
+            "vs_rp_ops": -0.672,
+            "ump_k_pct": 0.252,
+            "ump_bb_pct": -0.564
+          },
+          "hit_probability": 0.6429,
+          "raw_hit_probability": 0.6942,
+          "lift": 0.0917,
+          "reliability": "A",
+          "sample_n": 89,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 71.2,
+          "notable_signals": 0,
+          "matchup": "New York Mets @ Pittsburgh Pirates",
+          "game_pk": 823345,
+          "team": "Pittsburgh Pirates",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "opp_team_cs_pct": -3.78,
+            "sprint_speed": 65.625,
+            "catcher_poptime": 88.5714,
+            "on_base": 61.6123
+          },
+          "hit_probability": 0.2442,
+          "raw_hit_probability": 0.2154,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 89,
+          "projection": {
+            "stat": "stolen_base",
             "value": 1,
             "needs": 1
           }
@@ -145,7 +271,7 @@
         {
           "prop": "Over 0.5 Hits",
           "type": "batter",
-          "score": 36.3,
+          "score": 43.6,
           "notable_signals": 0,
           "matchup": "Pittsburgh Pirates @ Miami Marlins",
           "game_pk": 823832,
@@ -153,7 +279,7 @@
           "side": null,
           "lean": null,
           "signals": {
-            "sp_era_weak": 31.7143,
+            "sp_era_weak": 26.8571,
             "l7_avg_ev": 56.875,
             "l7_barrel_pct": 100.0,
             "park_hr_index": 50.0,
@@ -165,6 +291,8 @@
             "opp_catcher_framing": 0.84,
             "days_rest": 2.0,
             "consecutive_games": -1.2,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
             "getaway_day": 0.0,
             "series_game": 0.0,
             "sp_rp_ops_gap": -1.08,
@@ -172,9 +300,9 @@
             "ump_k_pct": 0.216,
             "ump_bb_pct": 0.204
           },
-          "hit_probability": 0.6248,
-          "raw_hit_probability": 0.6547,
-          "lift": 0.0735,
+          "hit_probability": 0.644,
+          "raw_hit_probability": 0.6966,
+          "lift": 0.0928,
           "reliability": "A",
           "sample_n": 90,
           "projection": {
@@ -186,7 +314,7 @@
         {
           "prop": "To Steal a Base",
           "type": "batter",
-          "score": 62.2,
+          "score": 74.4,
           "notable_signals": 0,
           "matchup": "Pittsburgh Pirates @ Miami Marlins",
           "game_pk": 823832,
@@ -197,39 +325,15 @@
             "opp_team_cs_pct": 1.92,
             "sprint_speed": 65.625,
             "catcher_poptime": 100.0,
-            "on_base": 60.6526
+            "on_base": 61.6123
           },
-          "hit_probability": 0.2429,
-          "raw_hit_probability": 0.2134,
+          "hit_probability": 0.2428,
+          "raw_hit_probability": 0.2133,
           "lift": null,
           "reliability": "A",
           "sample_n": 90,
           "projection": {
             "stat": "stolen_base",
-            "value": 1,
-            "needs": 1
-          }
-        },
-        {
-          "prop": "To Hit a Laser (105+ MPH)",
-          "type": "batter",
-          "score": 0.1,
-          "notable_signals": 0,
-          "matchup": "Pittsburgh Pirates @ Miami Marlins",
-          "game_pk": 823832,
-          "team": "Pittsburgh Pirates",
-          "side": null,
-          "lean": null,
-          "signals": {
-            "hard_hit_rate": 0.0574
-          },
-          "hit_probability": 0.1555,
-          "raw_hit_probability": 0.0574,
-          "lift": -0.0718,
-          "reliability": "A",
-          "sample_n": 90,
-          "projection": {
-            "stat": "hard_hit_105",
             "value": 1,
             "needs": 1
           }

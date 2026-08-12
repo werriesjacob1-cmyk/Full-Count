@@ -18,9 +18,9 @@
       "date": "2026-08-11",
       "evaluations": [
         {
-          "prop": "Over 4.5 Strikeouts",
+          "prop": "Over 5.5 Strikeouts",
           "type": "pitcher",
-          "score": 69.8,
+          "score": 57.9,
           "notable_signals": 0,
           "matchup": "Milwaukee Brewers @ San Diego Padres",
           "game_pk": 823264,
@@ -30,45 +30,42 @@
           "signals": {
             "same_hand_ratio": 12.5,
             "l14_k_pct": 100.0,
-            "env_neutral": 50.0,
-            "ump_accuracy": 49.4061,
-            "ump_k_pct": -0.516,
-            "ump_bb_pct": -0.0
+            "env_neutral": 50.0
           },
-          "hit_probability": 0.6386,
-          "raw_hit_probability": 0.7205,
-          "lift": 0.1012,
+          "hit_probability": 0.6143,
+          "raw_hit_probability": 0.6311,
+          "lift": 0.2374,
           "reliability": "D",
           "sample_n": 18,
           "projection": {
             "stat": "strikeouts",
-            "value": 4.5,
-            "needs": 5
+            "value": 5.5,
+            "needs": 6
           }
         },
         {
-          "prop": "Over 15.5 Outs Recorded",
+          "prop": "San Diego Padres scoreless in the 1st",
           "type": "pitcher",
-          "score": 32.3,
+          "score": 78.9,
           "notable_signals": 0,
           "matchup": "Milwaukee Brewers @ San Diego Padres",
           "game_pk": 823264,
           "team": "Milwaukee Brewers",
           "side": "away",
-          "lean": null,
+          "lean": "NRFI",
           "signals": {
-            "outs_rate": 0.4793,
-            "avg_outs_per_start": 14.78
+            "yrfi_rate": 21.1,
+            "fi_n_starts": 19.0,
+            "park_hr_index": 42.6
           },
-          "hit_probability": 0.4524,
-          "raw_hit_probability": 0.4793,
-          "lift": -0.1313,
+          "hit_probability": 0.6942,
+          "raw_hit_probability": 0.7282,
+          "lift": -0.0118,
           "reliability": "D",
-          "sample_n": 18,
+          "sample_n": 19,
           "projection": {
-            "stat": "pitcher_outs",
-            "value": 15.5,
-            "needs": 16
+            "stat": "first_inning_run",
+            "value": 21.1
           }
         }
       ]

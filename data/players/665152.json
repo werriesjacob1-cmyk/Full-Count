@@ -20,6 +20,66 @@
           "matchup": "Minnesota Twins @ Kansas City Royals"
         }
       ]
+    },
+    {
+      "date": "2026-08-10",
+      "evaluations": [
+        {
+          "prop": "Over 3.5 Strikeouts",
+          "type": "pitcher",
+          "score": 41.7,
+          "notable_signals": 0,
+          "matchup": "Baltimore Orioles @ Minnesota Twins",
+          "game_pk": 823675,
+          "team": "Minnesota Twins",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "same_hand_ratio": 75.0,
+            "l14_k_pct": 0.0,
+            "env_neutral": 50.0,
+            "ump_accuracy": 61.3628,
+            "ump_k_pct": -0.648,
+            "ump_bb_pct": -0.324
+          },
+          "hit_probability": 0.6436,
+          "raw_hit_probability": 0.7394,
+          "lift": -0.0683,
+          "reliability": "D",
+          "sample_n": 8,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 3.5,
+            "needs": 4
+          }
+        },
+        {
+          "prop": "Baltimore Orioles scoreless in the 1st",
+          "type": "pitcher",
+          "score": 66.7,
+          "notable_signals": 1,
+          "matchup": "Baltimore Orioles @ Minnesota Twins",
+          "game_pk": 823675,
+          "team": "Minnesota Twins",
+          "side": "home",
+          "lean": "NRFI",
+          "signals": {
+            "yrfi_rate": 66.7,
+            "fi_n_starts": 9.0,
+            "ump_run_impact": 18.9149,
+            "park_hr_index": 39.6
+          },
+          "hit_probability": 0.6765,
+          "raw_hit_probability": 0.651,
+          "lift": -0.0295,
+          "reliability": "D",
+          "sample_n": 9,
+          "projection": {
+            "stat": "first_inning_run",
+            "value": 66.7
+          }
+        }
+      ]
     }
   ]
 }

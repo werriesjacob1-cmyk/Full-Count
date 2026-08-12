@@ -27,7 +27,7 @@
         {
           "prop": "Over 3.5 Strikeouts",
           "type": "pitcher",
-          "score": 34.0,
+          "score": 46.0,
           "notable_signals": 1,
           "matchup": "Baltimore Orioles @ Minnesota Twins",
           "game_pk": 823673,
@@ -43,9 +43,9 @@
             "ump_k_pct": -0.72,
             "ump_bb_pct": 0.36
           },
-          "hit_probability": 0.5955,
-          "raw_hit_probability": 0.5631,
-          "lift": -0.1172,
+          "hit_probability": 0.559,
+          "raw_hit_probability": 0.4341,
+          "lift": -0.1537,
           "reliability": "D",
           "sample_n": 17,
           "projection": {
@@ -55,28 +55,29 @@
           }
         },
         {
-          "prop": "Over 16.5 Outs Recorded",
+          "prop": "Baltimore Orioles scoreless in the 1st",
           "type": "pitcher",
-          "score": 45.3,
+          "score": 78.9,
           "notable_signals": 0,
           "matchup": "Baltimore Orioles @ Minnesota Twins",
           "game_pk": 823673,
           "team": "Minnesota Twins",
           "side": "home",
-          "lean": null,
+          "lean": "NRFI",
           "signals": {
-            "outs_rate": 0.476,
-            "avg_outs_per_start": 16.41
+            "yrfi_rate": 21.1,
+            "fi_n_starts": 19.0,
+            "ump_run_impact": 27.8641,
+            "park_hr_index": 52.5
           },
-          "hit_probability": 0.4495,
-          "raw_hit_probability": 0.476,
-          "lift": -0.0419,
+          "hit_probability": 0.6942,
+          "raw_hit_probability": 0.7282,
+          "lift": -0.0118,
           "reliability": "D",
-          "sample_n": 17,
+          "sample_n": 19,
           "projection": {
-            "stat": "pitcher_outs",
-            "value": 16.5,
-            "needs": 17
+            "stat": "first_inning_run",
+            "value": 21.1
           }
         }
       ]

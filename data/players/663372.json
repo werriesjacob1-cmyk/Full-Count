@@ -24,15 +24,41 @@
             "ump_k_pct": 0.264,
             "ump_bb_pct": 0.192
           },
-          "hit_probability": 0.6144,
-          "raw_hit_probability": 0.6312,
-          "lift": -0.0995,
+          "hit_probability": 0.5873,
+          "raw_hit_probability": 0.5339,
+          "lift": -0.1266,
           "reliability": "D",
           "sample_n": 16,
           "projection": {
             "stat": "strikeouts",
             "value": 3.5,
             "needs": 4
+          }
+        },
+        {
+          "prop": "St. Louis Cardinals scoreless in the 1st",
+          "type": "pitcher",
+          "score": 72.2,
+          "notable_signals": 0,
+          "matchup": "Colorado Rockies @ St. Louis Cardinals",
+          "game_pk": 823024,
+          "team": "Colorado Rockies",
+          "side": "away",
+          "lean": "NRFI",
+          "signals": {
+            "yrfi_rate": 27.8,
+            "fi_n_starts": 18.0,
+            "ump_run_impact": 14.2374,
+            "park_hr_index": 51.9
+          },
+          "hit_probability": 0.6901,
+          "raw_hit_probability": 0.7101,
+          "lift": -0.0159,
+          "reliability": "D",
+          "sample_n": 18,
+          "projection": {
+            "stat": "first_inning_run",
+            "value": 27.8
           }
         }
       ]

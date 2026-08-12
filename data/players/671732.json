@@ -58,7 +58,7 @@
             "l7_barrel_pct": 100.0,
             "bat_speed_trend": 15.0,
             "park_hr_index": 59.7,
-            "season_barrel_pct": 27.3333,
+            "season_barrel_pct": 26.6667,
             "lineup_slot": 25.0,
             "bullpen_fatigue": 76.9231,
             "platoon_barrel_pct": -2.48,
@@ -77,9 +77,9 @@
             "ump_k_pct": -0.324,
             "ump_bb_pct": -0.144
           },
-          "hit_probability": 0.5394,
-          "raw_hit_probability": 0.5773,
-          "lift": -0.132,
+          "hit_probability": 0.5393,
+          "raw_hit_probability": 0.5772,
+          "lift": -0.1318,
           "reliability": "A",
           "sample_n": 102,
           "projection": {
@@ -87,28 +87,161 @@
             "value": 0.5,
             "needs": 1
           }
-        },
+        }
+      ]
+    },
+    {
+      "date": "2026-08-08",
+      "evaluations": [
         {
-          "prop": "To Hit a Laser (105+ MPH)",
+          "prop": "Over 0.5 Hits+Runs+RBIs",
           "type": "batter",
-          "score": 34.6,
-          "notable_signals": 0,
+          "score": 53.2,
+          "notable_signals": 3,
           "matchup": "Athletics @ Boston Red Sox",
-          "game_pk": 824727,
+          "game_pk": 824726,
           "team": "Athletics",
           "side": null,
           "lean": null,
           "signals": {
-            "hard_hit_rate": 0.2751
+            "platoon": 35.0,
+            "sp_era_weak": 11.4286,
+            "l7_avg_ev": 49.0972,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 14.775,
+            "park_hr_index": 87.0,
+            "season_barrel_pct": 26.6667,
+            "lineup_slot": 25.0,
+            "bullpen_fatigue": 64.1026,
+            "platoon_barrel_pct": -2.64,
+            "platoon_xwoba": -3.72,
+            "park_hand_index": -2.98,
+            "opp_catcher_framing": 0.84,
+            "days_rest": 0.0,
+            "pull_park_synergy": -1.3559,
+            "hard_hit_105_rate": 1.445,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": 0.624,
+            "vs_rp_ops": -0.636,
+            "ump_k_pct": 0.456,
+            "ump_bb_pct": 0.144
           },
-          "hit_probability": 0.2855,
-          "raw_hit_probability": 0.2751,
-          "lift": 0.0577,
+          "hit_probability": 0.5354,
+          "raw_hit_probability": 0.5728,
+          "lift": -0.1373,
           "reliability": "A",
-          "sample_n": 102,
+          "sample_n": 103,
           "projection": {
-            "stat": "hard_hit_105",
-            "value": 1,
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-08-09",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 62.3,
+          "notable_signals": 3,
+          "matchup": "Athletics @ Boston Red Sox",
+          "game_pk": 824724,
+          "team": "Athletics",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 7.1429,
+            "pitch_exploit": 9.1429,
+            "l7_avg_ev": 77.9861,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 14.7,
+            "park_hr_index": 89.8,
+            "season_barrel_pct": 26.6667,
+            "lineup_slot": 37.5,
+            "bullpen_fatigue": 59.5238,
+            "platoon_barrel_pct": -2.8,
+            "platoon_xwoba": -3.06,
+            "park_hand_index": -2.88,
+            "opp_catcher_framing": 0.48,
+            "days_rest": 0.0,
+            "pull_park_synergy": -1.2802,
+            "hard_hit_105_rate": 1.59,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": -2.0,
+            "series_game": 2.0,
+            "sp_rp_ops_gap": 0.608,
+            "vs_rp_ops": -0.696,
+            "ump_k_pct": -0.192,
+            "ump_bb_pct": 0.372
+          },
+          "hit_probability": 0.5377,
+          "raw_hit_probability": 0.5754,
+          "lift": -0.13,
+          "reliability": "A",
+          "sample_n": 104,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-08-10",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 72.5,
+          "notable_signals": 2,
+          "matchup": "Tampa Bay Rays @ Athletics",
+          "game_pk": 824969,
+          "team": "Athletics",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 71.1429,
+            "l7_avg_ev": 77.0395,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 5.4,
+            "park_hr_index": 50.9,
+            "season_barrel_pct": 26.6667,
+            "lineup_slot": 50.0,
+            "bullpen_fatigue": 69.4444,
+            "platoon_barrel_pct": 1.12,
+            "platoon_xwoba": 0.6,
+            "park_hand_index": 2.74,
+            "opp_catcher_framing": 0.72,
+            "days_rest": 0.0,
+            "pull_park_synergy": 1.2179,
+            "hard_hit_105_rate": 1.735,
+            "team_total_move": 0.0,
+            "team_total_open": 0.0,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": 0.488,
+            "vs_rp_ops": -0.876,
+            "ump_k_pct": -0.432,
+            "ump_bb_pct": -0.132
+          },
+          "hit_probability": 0.534,
+          "raw_hit_probability": 0.5712,
+          "lift": -0.136,
+          "reliability": "A",
+          "sample_n": 105,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
             "needs": 1
           }
         }
@@ -120,7 +253,7 @@
         {
           "prop": "Over 0.5 Hits+Runs+RBIs",
           "type": "batter",
-          "score": 44.0,
+          "score": 56.0,
           "notable_signals": 1,
           "matchup": "Tampa Bay Rays @ Athletics",
           "game_pk": 824970,
@@ -129,12 +262,12 @@
           "lean": null,
           "signals": {
             "platoon": 80.0,
-            "sp_era_weak": 4.2857,
+            "sp_era_weak": 7.7143,
             "l7_avg_ev": 70.4762,
             "l7_barrel_pct": 100.0,
             "bat_speed_trend": 4.575,
             "park_hr_index": 50.8,
-            "season_barrel_pct": 27.3333,
+            "season_barrel_pct": 26.6667,
             "lineup_slot": 50.0,
             "bullpen_fatigue": 60.6061,
             "platoon_barrel_pct": 1.04,
@@ -144,45 +277,21 @@
             "days_rest": 0.0,
             "pull_park_synergy": 1.16,
             "hard_hit_105_rate": 1.6775,
+            "team_total_move": 0.0,
+            "team_total_open": 0.0,
             "getaway_day": 0.0,
             "series_game": 1.0,
             "sp_rp_ops_gap": 0.544,
-            "vs_rp_ops": -0.78,
-            "ump_k_pct": -0.024,
-            "ump_bb_pct": 0.348
+            "vs_rp_ops": -0.78
           },
-          "hit_probability": 0.5372,
-          "raw_hit_probability": 0.5749,
-          "lift": -0.1347,
+          "hit_probability": 0.5373,
+          "raw_hit_probability": 0.575,
+          "lift": -0.135,
           "reliability": "A",
           "sample_n": 106,
           "projection": {
             "stat": "hits_runs_rbis",
             "value": 0.5,
-            "needs": 1
-          }
-        },
-        {
-          "prop": "To Hit a Laser (105+ MPH)",
-          "type": "batter",
-          "score": 36.7,
-          "notable_signals": 1,
-          "matchup": "Tampa Bay Rays @ Athletics",
-          "game_pk": 824970,
-          "team": "Athletics",
-          "side": null,
-          "lean": null,
-          "signals": {
-            "hard_hit_rate": 0.2821
-          },
-          "hit_probability": 0.2906,
-          "raw_hit_probability": 0.2821,
-          "lift": 0.0633,
-          "reliability": "A",
-          "sample_n": 106,
-          "projection": {
-            "stat": "hard_hit_105",
-            "value": 1,
             "needs": 1
           }
         }

@@ -20,6 +20,66 @@
           "matchup": "Los Angeles Dodgers @ Chicago Cubs"
         }
       ]
+    },
+    {
+      "date": "2026-08-10",
+      "evaluations": [
+        {
+          "prop": "Over 5.5 Strikeouts",
+          "type": "pitcher",
+          "score": 55.6,
+          "notable_signals": 0,
+          "matchup": "Kansas City Royals @ Los Angeles Dodgers",
+          "game_pk": 823918,
+          "team": "Los Angeles Dodgers",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "same_hand_ratio": 75.0,
+            "l14_k_pct": 55.8824,
+            "env_neutral": 50.0,
+            "ump_accuracy": 60.2376,
+            "ump_k_pct": -0.072,
+            "ump_bb_pct": 0.66
+          },
+          "hit_probability": 0.6434,
+          "raw_hit_probability": 0.7386,
+          "lift": 0.2672,
+          "reliability": "D",
+          "sample_n": 17,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 5.5,
+            "needs": 6
+          }
+        },
+        {
+          "prop": "Kansas City Royals scoreless in the 1st",
+          "type": "pitcher",
+          "score": 72.2,
+          "notable_signals": 0,
+          "matchup": "Kansas City Royals @ Los Angeles Dodgers",
+          "game_pk": 823918,
+          "team": "Los Angeles Dodgers",
+          "side": "home",
+          "lean": "NRFI",
+          "signals": {
+            "yrfi_rate": 27.8,
+            "fi_n_starts": 18.0,
+            "ump_run_impact": 23.2353,
+            "park_hr_index": 51.2
+          },
+          "hit_probability": 0.6901,
+          "raw_hit_probability": 0.7101,
+          "lift": -0.0159,
+          "reliability": "D",
+          "sample_n": 18,
+          "projection": {
+            "stat": "first_inning_run",
+            "value": 27.8
+          }
+        }
+      ]
     }
   ]
 }

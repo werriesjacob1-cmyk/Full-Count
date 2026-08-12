@@ -23,15 +23,41 @@
             "ump_k_pct": 0.024,
             "ump_bb_pct": -0.312
           },
-          "hit_probability": 0.6256,
-          "raw_hit_probability": 0.6724,
-          "lift": 0.0863,
+          "hit_probability": 0.6291,
+          "raw_hit_probability": 0.6853,
+          "lift": 0.0898,
           "reliability": "D",
           "sample_n": 13,
           "projection": {
             "stat": "strikeouts",
             "value": 4.5,
             "needs": 5
+          }
+        },
+        {
+          "prop": "Atlanta Braves scoreless in the 1st",
+          "type": "pitcher",
+          "score": 71.4,
+          "notable_signals": 0,
+          "matchup": "Atlanta Braves @ New York Yankees",
+          "game_pk": 823515,
+          "team": "New York Yankees",
+          "side": "home",
+          "lean": "NRFI",
+          "signals": {
+            "yrfi_rate": 28.6,
+            "fi_n_starts": 14.0,
+            "ump_run_impact": 20.7375,
+            "park_hr_index": 51.4
+          },
+          "hit_probability": 0.6895,
+          "raw_hit_probability": 0.7077,
+          "lift": -0.0165,
+          "reliability": "D",
+          "sample_n": 14,
+          "projection": {
+            "stat": "first_inning_run",
+            "value": 28.6
           }
         }
       ]

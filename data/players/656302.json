@@ -25,9 +25,9 @@
       "date": "2026-08-11",
       "evaluations": [
         {
-          "prop": "Over 5.5 Strikeouts",
+          "prop": "Over 6.5 Strikeouts",
           "type": "pitcher",
-          "score": 82.1,
+          "score": 70.1,
           "notable_signals": 1,
           "matchup": "Boston Red Sox @ Toronto Blue Jays",
           "game_pk": 822778,
@@ -42,40 +42,41 @@
             "ump_k_pct": 0.204,
             "ump_bb_pct": 0.276
           },
-          "hit_probability": 0.6175,
-          "raw_hit_probability": 0.6427,
-          "lift": 0.2406,
+          "hit_probability": 0.6507,
+          "raw_hit_probability": 0.766,
+          "lift": 0.4051,
           "reliability": "D",
           "sample_n": 21,
           "projection": {
             "stat": "strikeouts",
-            "value": 5.5,
-            "needs": 6
+            "value": 6.5,
+            "needs": 7
           }
         },
         {
-          "prop": "Over 18.5 Outs Recorded",
+          "prop": "Boston Red Sox scoreless in the 1st",
           "type": "pitcher",
-          "score": 44.5,
-          "notable_signals": 1,
+          "score": 68.2,
+          "notable_signals": 0,
           "matchup": "Boston Red Sox @ Toronto Blue Jays",
           "game_pk": 822778,
           "team": "Toronto Blue Jays",
           "side": "home",
-          "lean": null,
+          "lean": "NRFI",
           "signals": {
-            "outs_rate": 0.3069,
-            "avg_outs_per_start": 18.05
+            "yrfi_rate": 31.8,
+            "fi_n_starts": 22.0,
+            "ump_run_impact": 13.8991,
+            "park_hr_index": 50.0
           },
-          "hit_probability": 0.3091,
-          "raw_hit_probability": 0.3069,
-          "lift": 0.0945,
+          "hit_probability": 0.6875,
+          "raw_hit_probability": 0.6989,
+          "lift": -0.0185,
           "reliability": "D",
-          "sample_n": 21,
+          "sample_n": 22,
           "projection": {
-            "stat": "pitcher_outs",
-            "value": 18.5,
-            "needs": 19
+            "stat": "first_inning_run",
+            "value": 31.8
           }
         }
       ]

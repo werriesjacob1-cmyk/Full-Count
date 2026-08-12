@@ -1,0 +1,163 @@
+{
+  "player_id": 642201,
+  "name": "Eli White",
+  "snapshots": [
+    {
+      "date": "2026-08-08",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 57.4,
+          "notable_signals": 4,
+          "matchup": "Athletics @ Boston Red Sox",
+          "game_pk": 824726,
+          "team": "Boston Red Sox",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 59.7143,
+            "l7_avg_ev": 28.75,
+            "l7_barrel_pct": 0.0,
+            "bat_speed_trend": 15.0,
+            "park_hr_index": 87.0,
+            "season_barrel_pct": 18.6667,
+            "lineup_slot": 37.5,
+            "bullpen_fatigue": 66.6667,
+            "platoon_barrel_pct": -1.84,
+            "platoon_xwoba": -2.16,
+            "park_hand_index": -2.09,
+            "opp_catcher_framing": -0.96,
+            "days_rest": 0.0,
+            "pull_park_synergy": -1.3606,
+            "hard_hit_105_rate": -1.3875,
+            "team_total_move": 0.0,
+            "team_total_open": 4.0,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": -0.96,
+            "vs_rp_ops": -1.164,
+            "ump_k_pct": 0.456,
+            "ump_bb_pct": 0.144
+          },
+          "hit_probability": 0.5578,
+          "raw_hit_probability": 0.5982,
+          "lift": -0.1149,
+          "reliability": "B",
+          "sample_n": 61,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 69.4,
+          "notable_signals": 0,
+          "matchup": "Athletics @ Boston Red Sox",
+          "game_pk": 824726,
+          "team": "Boston Red Sox",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "opp_team_cs_pct": -1.32,
+            "sprint_speed": 93.75,
+            "on_base": 38.5797
+          },
+          "hit_probability": 0.164,
+          "raw_hit_probability": 0.0751,
+          "lift": null,
+          "reliability": "B",
+          "sample_n": 61,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-08-09",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 55.7,
+          "notable_signals": 4,
+          "matchup": "Athletics @ Boston Red Sox",
+          "game_pk": 824724,
+          "team": "Boston Red Sox",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 27.4286,
+            "l7_avg_ev": 41.75,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 14.4,
+            "park_hr_index": 89.8,
+            "season_barrel_pct": 18.6667,
+            "lineup_slot": 12.5,
+            "bullpen_fatigue": 66.6667,
+            "platoon_barrel_pct": 2.56,
+            "platoon_xwoba": -3.42,
+            "park_hand_index": -2.11,
+            "opp_catcher_framing": 0.12,
+            "days_rest": 0.0,
+            "pull_park_synergy": -1.3588,
+            "hard_hit_105_rate": -1.435,
+            "team_total_move": 0.0,
+            "team_total_open": 4.0,
+            "getaway_day": -2.0,
+            "series_game": 2.0,
+            "sp_rp_ops_gap": -0.96,
+            "vs_rp_ops": -1.164,
+            "ump_k_pct": -0.192,
+            "ump_bb_pct": 0.372
+          },
+          "hit_probability": 0.5503,
+          "raw_hit_probability": 0.5897,
+          "lift": -0.1174,
+          "reliability": "B",
+          "sample_n": 62,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 77.0,
+          "notable_signals": 0,
+          "matchup": "Athletics @ Boston Red Sox",
+          "game_pk": 824724,
+          "team": "Boston Red Sox",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "opp_team_cs_pct": -0.84,
+            "sprint_speed": 93.75,
+            "catcher_poptime": 77.1429,
+            "on_base": 38.5797
+          },
+          "hit_probability": 0.1619,
+          "raw_hit_probability": 0.0709,
+          "lift": null,
+          "reliability": "B",
+          "sample_n": 62,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
+    }
+  ]
+}

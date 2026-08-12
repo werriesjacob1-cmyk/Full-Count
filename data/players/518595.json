@@ -44,7 +44,7 @@
         {
           "prop": "Over 0.5 Hits",
           "type": "batter",
-          "score": 36.8,
+          "score": 37.0,
           "notable_signals": 0,
           "matchup": "Los Angeles Angels @ Miami Marlins",
           "game_pk": 823836,
@@ -57,7 +57,7 @@
             "l7_avg_ev": 0.0,
             "l7_barrel_pct": 100.0,
             "park_hr_index": 50.0,
-            "season_barrel_pct": 81.3333,
+            "season_barrel_pct": 87.3333,
             "lineup_slot": 0.0,
             "bullpen_fatigue": 59.5238,
             "platoon_barrel_pct": 5.0,
@@ -70,9 +70,101 @@
             "getaway_day": 0.0,
             "series_game": 0.0
           },
-          "hit_probability": 0.566,
-          "raw_hit_probability": 0.5315,
-          "lift": 0.015,
+          "hit_probability": 0.5565,
+          "raw_hit_probability": 0.512,
+          "lift": 0.0055,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-08-08",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 35.4,
+          "notable_signals": 1,
+          "matchup": "Los Angeles Angels @ Miami Marlins",
+          "game_pk": 823834,
+          "team": "Los Angeles Angels",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 33.7143,
+            "l7_avg_ev": 0.0,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 87.3333,
+            "lineup_slot": 0.0,
+            "bullpen_fatigue": 44.4444,
+            "platoon_barrel_pct": 5.0,
+            "platoon_xwoba": -0.72,
+            "park_hand_index": -3.56,
+            "opp_catcher_framing": 0.84,
+            "days_rest": 4.0,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 1.0
+          },
+          "hit_probability": 0.554,
+          "raw_hit_probability": 0.507,
+          "lift": 0.003,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-08-10",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 39.4,
+          "notable_signals": 0,
+          "matchup": "Texas Rangers @ Los Angeles Angels",
+          "game_pk": 823998,
+          "team": "Los Angeles Angels",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 64.8571,
+            "l7_avg_ev": 0.0,
+            "l7_barrel_pct": 0.0,
+            "park_hr_index": 51.1,
+            "season_barrel_pct": 87.3333,
+            "lineup_slot": 12.5,
+            "bullpen_fatigue": 64.1026,
+            "platoon_barrel_pct": 5.0,
+            "platoon_xwoba": -1.14,
+            "park_hand_index": -1.06,
+            "opp_catcher_framing": 0.24,
+            "days_rest": 4.0,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "ump_k_pct": -0.252,
+            "ump_bb_pct": 0.276
+          },
+          "hit_probability": 0.5623,
+          "raw_hit_probability": 0.524,
+          "lift": 0.011,
           "reliability": "D",
           "sample_n": 0,
           "projection": {
@@ -89,7 +181,7 @@
         {
           "prop": "Over 0.5 Hits",
           "type": "batter",
-          "score": 34.8,
+          "score": 40.3,
           "notable_signals": 1,
           "matchup": "Texas Rangers @ Los Angeles Angels",
           "game_pk": 823997,
@@ -98,11 +190,10 @@
           "lean": null,
           "signals": {
             "platoon": 80.0,
-            "sp_era_weak": 0.0,
             "l7_avg_ev": 0.0,
             "l7_barrel_pct": 0.0,
-            "park_hr_index": 51.1,
-            "season_barrel_pct": 81.3333,
+            "park_hr_index": 51.0,
+            "season_barrel_pct": 87.3333,
             "lineup_slot": 25.0,
             "bullpen_fatigue": 76.9231,
             "platoon_barrel_pct": 5.0,
@@ -110,12 +201,14 @@
             "park_hand_index": -1.07,
             "opp_catcher_framing": 0.24,
             "days_rest": 0.0,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
             "getaway_day": 0.0,
             "series_game": 1.0
           },
-          "hit_probability": 0.5688,
-          "raw_hit_probability": 0.5373,
-          "lift": 0.0175,
+          "hit_probability": 0.562,
+          "raw_hit_probability": 0.5233,
+          "lift": 0.0108,
           "reliability": "D",
           "sample_n": 0,
           "projection": {

@@ -1,0 +1,65 @@
+{
+  "player_id": 647336,
+  "name": "Michael Soroka",
+  "snapshots": [
+    {
+      "date": "2026-08-10",
+      "evaluations": [
+        {
+          "prop": "Over 4.5 Strikeouts",
+          "type": "pitcher",
+          "score": 50.7,
+          "notable_signals": 0,
+          "matchup": "Colorado Rockies @ Arizona Diamondbacks",
+          "game_pk": 825048,
+          "team": "Arizona Diamondbacks",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "same_hand_ratio": 57.1429,
+            "env_neutral": 50.0,
+            "ump_accuracy": 48.5518,
+            "ump_k_pct": 0.36,
+            "ump_bb_pct": 0.084
+          },
+          "hit_probability": 0.6158,
+          "raw_hit_probability": 0.6364,
+          "lift": 0.0788,
+          "reliability": "D",
+          "sample_n": 15,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 4.5,
+            "needs": 5
+          }
+        },
+        {
+          "prop": "Colorado Rockies scoreless in the 1st",
+          "type": "pitcher",
+          "score": 70.6,
+          "notable_signals": 0,
+          "matchup": "Colorado Rockies @ Arizona Diamondbacks",
+          "game_pk": 825048,
+          "team": "Arizona Diamondbacks",
+          "side": "home",
+          "lean": "NRFI",
+          "signals": {
+            "yrfi_rate": 29.4,
+            "fi_n_starts": 17.0,
+            "ump_run_impact": 34.5675,
+            "park_hr_index": 50.0
+          },
+          "hit_probability": 0.6891,
+          "raw_hit_probability": 0.706,
+          "lift": -0.0169,
+          "reliability": "D",
+          "sample_n": 17,
+          "projection": {
+            "stat": "first_inning_run",
+            "value": 29.4
+          }
+        }
+      ]
+    }
+  ]
+}

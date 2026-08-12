@@ -1,0 +1,40 @@
+{
+  "player_id": 476594,
+  "name": "Robert Stock",
+  "snapshots": [
+    {
+      "date": "2026-08-08",
+      "evaluations": [
+        {
+          "prop": "Over 3.5 Strikeouts",
+          "type": "pitcher",
+          "score": 50.0,
+          "notable_signals": 1,
+          "matchup": "New York Mets @ Pittsburgh Pirates",
+          "game_pk": 823348,
+          "team": "New York Mets",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "same_hand_ratio": 50.0,
+            "l14_k_pct": 42.3529,
+            "env_neutral": 50.0,
+            "ump_accuracy": 69.2437,
+            "ump_k_pct": -0.312,
+            "ump_bb_pct": -0.012
+          },
+          "hit_probability": 0.6443,
+          "raw_hit_probability": 0.7419,
+          "lift": -0.0692,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 3.5,
+            "needs": 4
+          }
+        }
+      ]
+    }
+  ]
+}

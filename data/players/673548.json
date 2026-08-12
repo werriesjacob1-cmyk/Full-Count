@@ -46,8 +46,8 @@
         {
           "prop": "Over 0.5 Hits",
           "type": "batter",
-          "score": 64.9,
-          "notable_signals": 2,
+          "score": 55.7,
+          "notable_signals": 0,
           "matchup": "Chicago Cubs @ Kansas City Royals",
           "game_pk": 824081,
           "team": "Chicago Cubs",
@@ -56,11 +56,10 @@
           "signals": {
             "platoon": 80.0,
             "sp_era_weak": 0.0,
-            "pitch_exploit": 4.0,
             "l7_avg_ev": 61.9853,
             "l7_barrel_pct": 100.0,
-            "park_hr_index": 43.6,
-            "season_barrel_pct": 48.0,
+            "park_hr_index": 45.1,
+            "season_barrel_pct": 47.3333,
             "lineup_slot": 87.5,
             "bullpen_fatigue": 47.619,
             "platoon_barrel_pct": 1.68,
@@ -77,9 +76,9 @@
             "ump_k_pct": -0.0,
             "ump_bb_pct": 0.216
           },
-          "hit_probability": 0.6106,
-          "raw_hit_probability": 0.6244,
-          "lift": 0.0596,
+          "hit_probability": 0.6328,
+          "raw_hit_probability": 0.672,
+          "lift": 0.0818,
           "reliability": "A",
           "sample_n": 99,
           "projection": {
@@ -91,7 +90,7 @@
         {
           "prop": "To Steal a Base",
           "type": "batter",
-          "score": 57.4,
+          "score": 57.8,
           "notable_signals": 1,
           "matchup": "Chicago Cubs @ Kansas City Royals",
           "game_pk": 824081,
@@ -102,10 +101,10 @@
             "opp_team_cs_pct": -5.22,
             "sprint_speed": 15.625,
             "catcher_poptime": 100.0,
-            "on_base": 98.0806
+            "on_base": 100.0
           },
-          "hit_probability": 0.1411,
-          "raw_hit_probability": 0.0253,
+          "hit_probability": 0.1408,
+          "raw_hit_probability": 0.0246,
           "lift": null,
           "reliability": "A",
           "sample_n": 99,
@@ -114,27 +113,159 @@
             "value": 1,
             "needs": 1
           }
-        },
+        }
+      ]
+    },
+    {
+      "date": "2026-08-08",
+      "evaluations": [
         {
-          "prop": "To Hit a Laser (105+ MPH)",
+          "prop": "Over 0.5 Hits",
           "type": "batter",
-          "score": 46.8,
+          "score": 58.0,
           "notable_signals": 1,
           "matchup": "Chicago Cubs @ Kansas City Royals",
-          "game_pk": 824081,
+          "game_pk": 824079,
           "team": "Chicago Cubs",
           "side": null,
           "lean": null,
           "signals": {
-            "hard_hit_rate": 0.324
+            "platoon": 35.0,
+            "sp_era_weak": 54.5714,
+            "l7_avg_ev": 61.3068,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 60.6,
+            "season_barrel_pct": 47.3333,
+            "lineup_slot": 87.5,
+            "bullpen_fatigue": 44.4444,
+            "platoon_barrel_pct": 2.72,
+            "platoon_xwoba": 0.18,
+            "park_hand_index": 0.13,
+            "opp_catcher_framing": -0.48,
+            "days_rest": 0.0,
+            "pull_park_synergy": 0.0682,
+            "hard_hit_105_rate": 2.6575,
+            "team_total_move": -6.0,
+            "team_total_open": 0.0,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": -0.64,
+            "vs_rp_ops": 0.888,
+            "ump_k_pct": -0.492,
+            "ump_bb_pct": 0.024
           },
-          "hit_probability": 0.3223,
-          "raw_hit_probability": 0.324,
-          "lift": 0.0945,
+          "hit_probability": 0.6339,
+          "raw_hit_probability": 0.6744,
+          "lift": 0.0829,
           "reliability": "A",
-          "sample_n": 99,
+          "sample_n": 100,
           "projection": {
-            "stat": "hard_hit_105",
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 57.8,
+          "notable_signals": 1,
+          "matchup": "Chicago Cubs @ Kansas City Royals",
+          "game_pk": 824079,
+          "team": "Chicago Cubs",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "opp_team_cs_pct": -4.98,
+            "sprint_speed": 15.625,
+            "catcher_poptime": 100.0,
+            "on_base": 100.0
+          },
+          "hit_probability": 0.1407,
+          "raw_hit_probability": 0.0244,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 100,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-08-09",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 48.3,
+          "notable_signals": 1,
+          "matchup": "Chicago Cubs @ Kansas City Royals",
+          "game_pk": 824078,
+          "team": "Chicago Cubs",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 0.0,
+            "l7_avg_ev": 50.5435,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 61.0,
+            "season_barrel_pct": 47.3333,
+            "lineup_slot": 87.5,
+            "bullpen_fatigue": 59.5238,
+            "platoon_barrel_pct": 2.56,
+            "platoon_xwoba": 0.0,
+            "park_hand_index": 0.04,
+            "opp_catcher_framing": -3.12,
+            "days_rest": 0.0,
+            "pull_park_synergy": 0.0206,
+            "hard_hit_105_rate": 2.59,
+            "team_total_move": 0.0,
+            "team_total_open": 4.0,
+            "getaway_day": -2.0,
+            "series_game": 2.0,
+            "sp_rp_ops_gap": -0.584,
+            "vs_rp_ops": 0.84,
+            "ump_k_pct": -0.624,
+            "ump_bb_pct": -0.312
+          },
+          "hit_probability": 0.6329,
+          "raw_hit_probability": 0.6723,
+          "lift": 0.0817,
+          "reliability": "A",
+          "sample_n": 101,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 55.4,
+          "notable_signals": 1,
+          "matchup": "Chicago Cubs @ Kansas City Royals",
+          "game_pk": 824078,
+          "team": "Chicago Cubs",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "opp_team_cs_pct": -4.98,
+            "sprint_speed": 15.625,
+            "catcher_poptime": 91.4286,
+            "on_base": 100.0
+          },
+          "hit_probability": 0.1409,
+          "raw_hit_probability": 0.0247,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 101,
+          "projection": {
+            "stat": "stolen_base",
             "value": 1,
             "needs": 1
           }
@@ -147,7 +278,7 @@
         {
           "prop": "Over 0.5 Hits",
           "type": "batter",
-          "score": 34.2,
+          "score": 45.7,
           "notable_signals": 0,
           "matchup": "Chicago Cubs @ Washington Nationals",
           "game_pk": 822697,
@@ -156,11 +287,11 @@
           "lean": null,
           "signals": {
             "platoon": 35.0,
-            "sp_era_weak": 82.0,
+            "sp_era_weak": 87.4286,
             "l7_avg_ev": 1.6912,
             "l7_barrel_pct": 70.0,
-            "park_hr_index": 44.6,
-            "season_barrel_pct": 48.0,
+            "park_hr_index": 59.6,
+            "season_barrel_pct": 47.3333,
             "lineup_slot": 87.5,
             "bullpen_fatigue": 59.5238,
             "bvp_ops": -0.324,
@@ -171,6 +302,8 @@
             "days_rest": 4.0,
             "pull_park_synergy": 0.5402,
             "hard_hit_105_rate": 2.59,
+            "team_total_move": -6.0,
+            "team_total_open": 0.0,
             "getaway_day": 0.0,
             "series_game": 0.0,
             "sp_rp_ops_gap": -0.584,
@@ -178,9 +311,9 @@
             "ump_k_pct": -0.708,
             "ump_bb_pct": 0.048
           },
-          "hit_probability": 0.6102,
-          "raw_hit_probability": 0.6235,
-          "lift": 0.0589,
+          "hit_probability": 0.632,
+          "raw_hit_probability": 0.6704,
+          "lift": 0.0808,
           "reliability": "A",
           "sample_n": 101,
           "projection": {
@@ -192,7 +325,7 @@
         {
           "prop": "To Steal a Base",
           "type": "batter",
-          "score": 43.0,
+          "score": 49.0,
           "notable_signals": 1,
           "matchup": "Chicago Cubs @ Washington Nationals",
           "game_pk": 822697,
@@ -202,40 +335,16 @@
           "signals": {
             "opp_team_cs_pct": 0.66,
             "sprint_speed": 15.625,
-            "catcher_poptime": 91.4286,
-            "on_base": 98.0806
+            "catcher_poptime": 68.5714,
+            "on_base": 100.0
           },
-          "hit_probability": 0.1409,
-          "raw_hit_probability": 0.0247,
+          "hit_probability": 0.1408,
+          "raw_hit_probability": 0.0246,
           "lift": null,
           "reliability": "A",
           "sample_n": 101,
           "projection": {
             "stat": "stolen_base",
-            "value": 1,
-            "needs": 1
-          }
-        },
-        {
-          "prop": "To Hit a Laser (105+ MPH)",
-          "type": "batter",
-          "score": 45.9,
-          "notable_signals": 1,
-          "matchup": "Chicago Cubs @ Washington Nationals",
-          "game_pk": 822697,
-          "team": "Chicago Cubs",
-          "side": null,
-          "lean": null,
-          "signals": {
-            "hard_hit_rate": 0.3186
-          },
-          "hit_probability": 0.3181,
-          "raw_hit_probability": 0.3186,
-          "lift": 0.0908,
-          "reliability": "A",
-          "sample_n": 101,
-          "projection": {
-            "stat": "hard_hit_105",
             "value": 1,
             "needs": 1
           }

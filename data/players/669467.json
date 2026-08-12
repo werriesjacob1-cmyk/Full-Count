@@ -27,7 +27,7 @@
         {
           "prop": "Over 3.5 Strikeouts",
           "type": "pitcher",
-          "score": 29.0,
+          "score": 37.9,
           "notable_signals": 1,
           "matchup": "Philadelphia Phillies @ St. Louis Cardinals",
           "game_pk": 823019,
@@ -42,9 +42,9 @@
             "ump_k_pct": -0.108,
             "ump_bb_pct": -0.192
           },
-          "hit_probability": 0.6189,
-          "raw_hit_probability": 0.6479,
-          "lift": -0.0938,
+          "hit_probability": 0.5949,
+          "raw_hit_probability": 0.5611,
+          "lift": -0.1178,
           "reliability": "D",
           "sample_n": 22,
           "projection": {
@@ -54,28 +54,29 @@
           }
         },
         {
-          "prop": "Over 16.5 Outs Recorded",
+          "prop": "Philadelphia Phillies scoreless in the 1st",
           "type": "pitcher",
-          "score": 59.8,
+          "score": 68.2,
           "notable_signals": 0,
           "matchup": "Philadelphia Phillies @ St. Louis Cardinals",
           "game_pk": 823019,
           "team": "St. Louis Cardinals",
           "side": "home",
-          "lean": null,
+          "lean": "NRFI",
           "signals": {
-            "outs_rate": 0.5339,
-            "avg_outs_per_start": 16.91
+            "yrfi_rate": 31.8,
+            "fi_n_starts": 22.0,
+            "ump_run_impact": 12.2537,
+            "park_hr_index": 80.5
           },
-          "hit_probability": 0.5008,
-          "raw_hit_probability": 0.5339,
-          "lift": 0.0094,
+          "hit_probability": 0.6875,
+          "raw_hit_probability": 0.6989,
+          "lift": -0.0185,
           "reliability": "D",
           "sample_n": 22,
           "projection": {
-            "stat": "pitcher_outs",
-            "value": 16.5,
-            "needs": 17
+            "stat": "first_inning_run",
+            "value": 31.8
           }
         }
       ]

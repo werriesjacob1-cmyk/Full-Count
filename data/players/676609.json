@@ -1,6 +1,6 @@
 {
   "player_id": 676609,
-  "name": "Jose Caballero",
+  "name": "Jos\u00e9 Caballero",
   "snapshots": [
     {
       "date": "2026-08-07",
@@ -69,6 +69,84 @@
           "lift": null,
           "reliability": "A",
           "sample_n": 95,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-08-08",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 59.4,
+          "notable_signals": 2,
+          "matchup": "Atlanta Braves @ New York Yankees",
+          "game_pk": 823514,
+          "team": "New York Yankees",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 0.0,
+            "l7_avg_ev": 91.4583,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 89.1,
+            "season_barrel_pct": 7.3333,
+            "lineup_slot": 12.5,
+            "bullpen_fatigue": 55.5556,
+            "platoon_barrel_pct": -2.64,
+            "platoon_xwoba": -1.86,
+            "park_hand_index": 0.66,
+            "opp_catcher_framing": 0.24,
+            "days_rest": 0.0,
+            "pull_park_synergy": 0.3858,
+            "hard_hit_105_rate": -2.575,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": -0.184,
+            "vs_rp_ops": -0.48,
+            "ump_k_pct": 0.144,
+            "ump_bb_pct": -0.084
+          },
+          "hit_probability": 0.5956,
+          "raw_hit_probability": 0.6418,
+          "lift": -0.0771,
+          "reliability": "A",
+          "sample_n": 96,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 47.2,
+          "notable_signals": 0,
+          "matchup": "Atlanta Braves @ New York Yankees",
+          "game_pk": 823514,
+          "team": "New York Yankees",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "opp_team_cs_pct": 5.28,
+            "sprint_speed": 25.0,
+            "catcher_poptime": 91.4286,
+            "on_base": 41.4587
+          },
+          "hit_probability": 0.2604,
+          "raw_hit_probability": 0.2396,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 96,
           "projection": {
             "stat": "stolen_base",
             "value": 1,

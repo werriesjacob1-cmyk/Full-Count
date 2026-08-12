@@ -65,8 +65,8 @@
         {
           "prop": "Over 0.5 Hits",
           "type": "batter",
-          "score": 60.1,
-          "notable_signals": 2,
+          "score": 52.9,
+          "notable_signals": 1,
           "matchup": "Atlanta Braves @ New York Yankees",
           "game_pk": 823515,
           "team": "Atlanta Braves",
@@ -78,8 +78,8 @@
             "l7_avg_ev": 100.0,
             "l7_barrel_pct": 100.0,
             "bat_speed_trend": 15.0,
-            "park_hr_index": 81.9,
-            "season_barrel_pct": 57.3333,
+            "park_hr_index": 51.4,
+            "season_barrel_pct": 58.0,
             "lineup_slot": 50.0,
             "bullpen_fatigue": 64.1026,
             "platoon_barrel_pct": 1.76,
@@ -94,13 +94,11 @@
             "getaway_day": 0.0,
             "series_game": 0.0,
             "sp_rp_ops_gap": 0.72,
-            "vs_rp_ops": 1.824,
-            "ump_k_pct": -0.024,
-            "ump_bb_pct": 0.312
+            "vs_rp_ops": 1.824
           },
-          "hit_probability": 0.6194,
-          "raw_hit_probability": 0.6431,
-          "lift": 0.0684,
+          "hit_probability": 0.6452,
+          "raw_hit_probability": 0.6992,
+          "lift": 0.0942,
           "reliability": "A",
           "sample_n": 109,
           "projection": {
@@ -112,7 +110,7 @@
         {
           "prop": "To Steal a Base",
           "type": "batter",
-          "score": 45.8,
+          "score": 42.5,
           "notable_signals": 1,
           "matchup": "Atlanta Braves @ New York Yankees",
           "game_pk": 823515,
@@ -121,9 +119,9 @@
           "lean": null,
           "signals": {
             "opp_team_cs_pct": 2.04,
-            "sprint_speed": 9.375,
+            "sprint_speed": 6.25,
             "catcher_poptime": 77.1429,
-            "on_base": 88.4837
+            "on_base": 80.8061
           },
           "hit_probability": 0.1552,
           "raw_hit_probability": 0.0567,
@@ -139,12 +137,250 @@
       ]
     },
     {
+      "date": "2026-08-08",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 72.9,
+          "notable_signals": 3,
+          "matchup": "Atlanta Braves @ New York Yankees",
+          "game_pk": 823514,
+          "team": "Atlanta Braves",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 26.2857,
+            "pitch_exploit": 2.8571,
+            "l7_avg_ev": 100.0,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 3.75,
+            "park_hr_index": 89.1,
+            "season_barrel_pct": 58.0,
+            "lineup_slot": 62.5,
+            "bullpen_fatigue": 64.1026,
+            "platoon_barrel_pct": 4.96,
+            "platoon_xwoba": 3.24,
+            "park_hand_index": 3.51,
+            "opp_catcher_framing": -0.6,
+            "days_rest": 0.0,
+            "pull_park_synergy": 1.7199,
+            "hard_hit_105_rate": 5.0,
+            "team_total_move": 0.0,
+            "team_total_open": 0.0,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": 0.64,
+            "vs_rp_ops": 1.704,
+            "ump_k_pct": 0.144,
+            "ump_bb_pct": -0.084
+          },
+          "hit_probability": 0.6454,
+          "raw_hit_probability": 0.6996,
+          "lift": 0.0944,
+          "reliability": "A",
+          "sample_n": 110,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 42.5,
+          "notable_signals": 1,
+          "matchup": "Atlanta Braves @ New York Yankees",
+          "game_pk": 823514,
+          "team": "Atlanta Braves",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "opp_team_cs_pct": 2.04,
+            "sprint_speed": 6.25,
+            "catcher_poptime": 77.1429,
+            "on_base": 80.8061
+          },
+          "hit_probability": 0.1553,
+          "raw_hit_probability": 0.0568,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 110,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-08-09",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 70.1,
+          "notable_signals": 2,
+          "matchup": "Atlanta Braves @ New York Yankees",
+          "game_pk": 823513,
+          "team": "Atlanta Braves",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 0.0,
+            "l7_avg_ev": 87.6316,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 13.425,
+            "park_hr_index": 38.4,
+            "season_barrel_pct": 58.0,
+            "lineup_slot": 62.5,
+            "bullpen_fatigue": 59.5238,
+            "platoon_barrel_pct": 4.8,
+            "platoon_xwoba": 3.12,
+            "park_hand_index": 3.41,
+            "opp_catcher_framing": -0.6,
+            "days_rest": 0.0,
+            "pull_park_synergy": 1.6948,
+            "hard_hit_105_rate": 5.0,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": -2.0,
+            "series_game": 2.0,
+            "sp_rp_ops_gap": 0.776,
+            "vs_rp_ops": 1.788,
+            "ump_k_pct": 0.156,
+            "ump_bb_pct": -0.252
+          },
+          "hit_probability": 0.6456,
+          "raw_hit_probability": 0.7,
+          "lift": 0.0944,
+          "reliability": "A",
+          "sample_n": 111,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 42.5,
+          "notable_signals": 1,
+          "matchup": "Atlanta Braves @ New York Yankees",
+          "game_pk": 823513,
+          "team": "Atlanta Braves",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "opp_team_cs_pct": 2.04,
+            "sprint_speed": 6.25,
+            "catcher_poptime": 77.1429,
+            "on_base": 80.8061
+          },
+          "hit_probability": 0.155,
+          "raw_hit_probability": 0.0562,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 111,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-08-10",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 64.6,
+          "notable_signals": 2,
+          "matchup": "New York Mets @ Atlanta Braves",
+          "game_pk": 824887,
+          "team": "Atlanta Braves",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 14.0,
+            "l7_avg_ev": 81.6667,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 15.0,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 58.0,
+            "lineup_slot": 62.5,
+            "bullpen_fatigue": 71.4286,
+            "platoon_barrel_pct": 4.72,
+            "platoon_xwoba": 2.94,
+            "park_hand_index": 1.26,
+            "opp_catcher_framing": 0.12,
+            "days_rest": 0.0,
+            "pull_park_synergy": 0.6262,
+            "hard_hit_105_rate": 5.0,
+            "team_total_move": 0.0,
+            "team_total_open": 0.0,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": 0.888,
+            "vs_rp_ops": 1.848,
+            "ump_k_pct": -1.272,
+            "ump_bb_pct": -0.336
+          },
+          "hit_probability": 0.6472,
+          "raw_hit_probability": 0.7036,
+          "lift": 0.0959,
+          "reliability": "A",
+          "sample_n": 112,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 45.7,
+          "notable_signals": 1,
+          "matchup": "New York Mets @ Atlanta Braves",
+          "game_pk": 824887,
+          "team": "Atlanta Braves",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "opp_team_cs_pct": -3.78,
+            "sprint_speed": 6.25,
+            "catcher_poptime": 88.5714,
+            "on_base": 80.8061
+          },
+          "hit_probability": 0.1547,
+          "raw_hit_probability": 0.0555,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 112,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
       "date": "2026-08-11",
       "evaluations": [
         {
           "prop": "Over 0.5 Hits",
           "type": "batter",
-          "score": 63.5,
+          "score": 74.8,
           "notable_signals": 3,
           "matchup": "New York Mets @ Atlanta Braves",
           "game_pk": 824886,
@@ -153,12 +389,12 @@
           "lean": null,
           "signals": {
             "platoon": 80.0,
-            "sp_era_weak": 28.8571,
+            "sp_era_weak": 22.5714,
             "l7_avg_ev": 99.6429,
             "l7_barrel_pct": 100.0,
             "bat_speed_trend": 9.675,
             "park_hr_index": 50.0,
-            "season_barrel_pct": 57.3333,
+            "season_barrel_pct": 58.0,
             "lineup_slot": 62.5,
             "bullpen_fatigue": 71.4286,
             "platoon_barrel_pct": 4.64,
@@ -168,6 +404,8 @@
             "days_rest": 0.0,
             "pull_park_synergy": 0.6424,
             "hard_hit_105_rate": 5.0,
+            "team_total_move": 0.0,
+            "team_total_open": 0.0,
             "getaway_day": 0.0,
             "series_game": 1.0,
             "sp_rp_ops_gap": 1.048,
@@ -175,9 +413,9 @@
             "ump_k_pct": -0.288,
             "ump_bb_pct": -0.204
           },
-          "hit_probability": 0.6223,
-          "raw_hit_probability": 0.6493,
-          "lift": 0.071,
+          "hit_probability": 0.648,
+          "raw_hit_probability": 0.7053,
+          "lift": 0.0968,
           "reliability": "A",
           "sample_n": 113,
           "projection": {
@@ -189,7 +427,7 @@
         {
           "prop": "To Steal a Base",
           "type": "batter",
-          "score": 37.0,
+          "score": 45.7,
           "notable_signals": 1,
           "matchup": "New York Mets @ Atlanta Braves",
           "game_pk": 824886,
@@ -198,9 +436,9 @@
           "lean": null,
           "signals": {
             "opp_team_cs_pct": -3.78,
-            "sprint_speed": 9.375,
+            "sprint_speed": 6.25,
             "catcher_poptime": 88.5714,
-            "on_base": 88.4837
+            "on_base": 80.8061
           },
           "hit_probability": 0.1546,
           "raw_hit_probability": 0.0554,
@@ -209,30 +447,6 @@
           "sample_n": 113,
           "projection": {
             "stat": "stolen_base",
-            "value": 1,
-            "needs": 1
-          }
-        },
-        {
-          "prop": "To Hit a Laser (105+ MPH)",
-          "type": "batter",
-          "score": 99.6,
-          "notable_signals": 1,
-          "matchup": "New York Mets @ Atlanta Braves",
-          "game_pk": 824886,
-          "team": "Atlanta Braves",
-          "side": null,
-          "lean": null,
-          "signals": {
-            "hard_hit_rate": 0.5329
-          },
-          "hit_probability": 0.4999,
-          "raw_hit_probability": 0.5329,
-          "lift": 0.2726,
-          "reliability": "A",
-          "sample_n": 113,
-          "projection": {
-            "stat": "hard_hit_105",
             "value": 1,
             "needs": 1
           }

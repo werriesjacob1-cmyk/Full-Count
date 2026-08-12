@@ -6,7 +6,7 @@
       "date": "2026-08-07",
       "evaluations": [
         {
-          "prop": "Over 4.5 Strikeouts",
+          "prop": "Over 5.5 Strikeouts",
           "type": "pitcher",
           "score": 54.1,
           "notable_signals": 0,
@@ -23,15 +23,41 @@
             "ump_k_pct": 0.324,
             "ump_bb_pct": 0.144
           },
-          "hit_probability": 0.6278,
-          "raw_hit_probability": 0.6803,
-          "lift": 0.0885,
+          "hit_probability": 0.6075,
+          "raw_hit_probability": 0.6064,
+          "lift": 0.2308,
           "reliability": "D",
           "sample_n": 18,
           "projection": {
             "stat": "strikeouts",
-            "value": 4.5,
-            "needs": 5
+            "value": 5.5,
+            "needs": 6
+          }
+        },
+        {
+          "prop": "Athletics scoreless in the 1st",
+          "type": "pitcher",
+          "score": 66.7,
+          "notable_signals": 0,
+          "matchup": "Athletics @ Boston Red Sox",
+          "game_pk": 824727,
+          "team": "Boston Red Sox",
+          "side": "home",
+          "lean": "NRFI",
+          "signals": {
+            "yrfi_rate": 33.3,
+            "fi_n_starts": 18.0,
+            "ump_run_impact": 31.7214,
+            "park_hr_index": 59.7
+          },
+          "hit_probability": 0.6868,
+          "raw_hit_probability": 0.696,
+          "lift": -0.0192,
+          "reliability": "D",
+          "sample_n": 18,
+          "projection": {
+            "stat": "first_inning_run",
+            "value": 33.3
           }
         }
       ]

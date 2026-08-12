@@ -27,7 +27,7 @@
         {
           "prop": "Over 4.5 Strikeouts",
           "type": "pitcher",
-          "score": 80.9,
+          "score": 68.9,
           "notable_signals": 0,
           "matchup": "Cincinnati Reds @ Chicago White Sox",
           "game_pk": 824563,
@@ -42,9 +42,9 @@
             "ump_k_pct": 0.0,
             "ump_bb_pct": 0.036
           },
-          "hit_probability": 0.6354,
-          "raw_hit_probability": 0.7085,
-          "lift": 0.098,
+          "hit_probability": 0.6522,
+          "raw_hit_probability": 0.7716,
+          "lift": 0.1148,
           "reliability": "D",
           "sample_n": 19,
           "projection": {
@@ -54,28 +54,29 @@
           }
         },
         {
-          "prop": "Over 17.5 Outs Recorded",
+          "prop": "Cincinnati Reds scoreless in the 1st",
           "type": "pitcher",
-          "score": 51.0,
+          "score": 71.4,
           "notable_signals": 0,
           "matchup": "Cincinnati Reds @ Chicago White Sox",
           "game_pk": 824563,
           "team": "Chicago White Sox",
           "side": "home",
-          "lean": null,
+          "lean": "NRFI",
           "signals": {
-            "outs_rate": 0.464,
-            "avg_outs_per_start": 16.37
+            "yrfi_rate": 28.6,
+            "fi_n_starts": 21.0,
+            "ump_run_impact": 29.9483,
+            "park_hr_index": 40.4
           },
-          "hit_probability": 0.439,
-          "raw_hit_probability": 0.464,
-          "lift": 0.0055,
+          "hit_probability": 0.6896,
+          "raw_hit_probability": 0.7083,
+          "lift": -0.0164,
           "reliability": "D",
-          "sample_n": 19,
+          "sample_n": 21,
           "projection": {
-            "stat": "pitcher_outs",
-            "value": 17.5,
-            "needs": 18
+            "stat": "first_inning_run",
+            "value": 28.6
           }
         }
       ]

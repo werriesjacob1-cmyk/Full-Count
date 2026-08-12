@@ -20,6 +20,66 @@
           "matchup": "Minnesota Twins @ Kansas City Royals"
         }
       ]
+    },
+    {
+      "date": "2026-08-09",
+      "evaluations": [
+        {
+          "prop": "Over 3.5 Strikeouts",
+          "type": "pitcher",
+          "score": 43.5,
+          "notable_signals": 0,
+          "matchup": "Chicago Cubs @ Kansas City Royals",
+          "game_pk": 824078,
+          "team": "Kansas City Royals",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "same_hand_ratio": 100.0,
+            "l14_k_pct": 0.0,
+            "env_neutral": 50.0,
+            "ump_accuracy": 49.2456,
+            "ump_k_pct": 0.624,
+            "ump_bb_pct": 0.312
+          },
+          "hit_probability": 0.5259,
+          "raw_hit_probability": 0.319,
+          "lift": -0.1874,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 3.5,
+            "needs": 4
+          }
+        },
+        {
+          "prop": "Chicago Cubs scoreless in the 1st",
+          "type": "pitcher",
+          "score": 100,
+          "notable_signals": 1,
+          "matchup": "Chicago Cubs @ Kansas City Royals",
+          "game_pk": 824078,
+          "team": "Kansas City Royals",
+          "side": "home",
+          "lean": "NRFI",
+          "signals": {
+            "yrfi_rate": 0.0,
+            "fi_n_starts": 5.0,
+            "ump_run_impact": 35.0972,
+            "park_hr_index": 60.9
+          },
+          "hit_probability": 0.695,
+          "raw_hit_probability": 0.7318,
+          "lift": -0.011,
+          "reliability": "D",
+          "sample_n": 5,
+          "projection": {
+            "stat": "first_inning_run",
+            "value": 0.0
+          }
+        }
+      ]
     }
   ]
 }

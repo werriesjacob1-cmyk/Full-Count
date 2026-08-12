@@ -32,7 +32,7 @@
         {
           "prop": "Over 0.5 Hits",
           "type": "batter",
-          "score": 33.3,
+          "score": 29.8,
           "notable_signals": 0,
           "matchup": "New York Mets @ Pittsburgh Pirates",
           "game_pk": 823349,
@@ -43,7 +43,7 @@
             "sp_era_weak": 10.8571,
             "l7_avg_ev": 14.0,
             "l7_barrel_pct": 0.0,
-            "park_hr_index": 40.9,
+            "park_hr_index": 37.6,
             "lineup_slot": 25.0,
             "bullpen_fatigue": 58.8235,
             "opp_catcher_framing": -0.36,
@@ -69,12 +69,96 @@
       ]
     },
     {
+      "date": "2026-08-08",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 26.5,
+          "notable_signals": 0,
+          "matchup": "New York Mets @ Pittsburgh Pirates",
+          "game_pk": 823348,
+          "team": "Pittsburgh Pirates",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "sp_era_weak": 0.0,
+            "l7_avg_ev": 20.2778,
+            "l7_barrel_pct": 0.0,
+            "park_hr_index": 30.5,
+            "lineup_slot": 0.0,
+            "bullpen_fatigue": 46.2963,
+            "opp_catcher_framing": 0.12,
+            "days_rest": 0.0,
+            "team_total_move": 0.0,
+            "team_total_open": 0.0,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "ump_k_pct": 0.312,
+            "ump_bb_pct": 0.012
+          },
+          "hit_probability": 0.5755,
+          "raw_hit_probability": 0.551,
+          "lift": 0.0245,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-08-09",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 40.0,
+          "notable_signals": 0,
+          "matchup": "New York Mets @ Pittsburgh Pirates",
+          "game_pk": 823345,
+          "team": "Pittsburgh Pirates",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "sp_era_weak": 54.8571,
+            "l7_avg_ev": 0.0,
+            "l7_barrel_pct": 0.0,
+            "park_hr_index": 38.4,
+            "lineup_slot": 87.5,
+            "bullpen_fatigue": 52.0833,
+            "opp_catcher_framing": 0.12,
+            "days_rest": 0.0,
+            "team_total_move": 0.0,
+            "team_total_open": 0.0,
+            "getaway_day": -2.0,
+            "series_game": 2.0,
+            "ump_k_pct": 0.252,
+            "ump_bb_pct": -0.564
+          },
+          "hit_probability": 0.5756,
+          "raw_hit_probability": 0.5512,
+          "lift": 0.0244,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
       "date": "2026-08-11",
       "evaluations": [
         {
           "prop": "Over 0.5 Hits",
           "type": "batter",
-          "score": 30.8,
+          "score": 38.5,
           "notable_signals": 0,
           "matchup": "Pittsburgh Pirates @ Miami Marlins",
           "game_pk": 823832,
@@ -82,7 +166,7 @@
           "side": null,
           "lean": null,
           "signals": {
-            "sp_era_weak": 31.7143,
+            "sp_era_weak": 26.8571,
             "l7_avg_ev": 0.0,
             "l7_barrel_pct": 100.0,
             "park_hr_index": 50.0,
@@ -90,14 +174,16 @@
             "bullpen_fatigue": 47.619,
             "opp_catcher_framing": 0.84,
             "days_rest": 2.0,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
             "getaway_day": 0.0,
             "series_game": 0.0,
             "ump_k_pct": 0.216,
             "ump_bb_pct": 0.204
           },
           "hit_probability": 0.5756,
-          "raw_hit_probability": 0.5513,
-          "lift": 0.0243,
+          "raw_hit_probability": 0.5512,
+          "lift": 0.0244,
           "reliability": "D",
           "sample_n": 0,
           "projection": {

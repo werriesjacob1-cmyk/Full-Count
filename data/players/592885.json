@@ -44,7 +44,7 @@
         {
           "prop": "Over 0.5 Hits+Runs+RBIs",
           "type": "batter",
-          "score": 53.2,
+          "score": 53.3,
           "notable_signals": 0,
           "matchup": "Minnesota Twins @ Milwaukee Brewers",
           "game_pk": 823750,
@@ -57,7 +57,7 @@
             "l7_avg_ev": 0.0,
             "l7_barrel_pct": 100.0,
             "park_hr_index": 50.0,
-            "season_barrel_pct": 42.0,
+            "season_barrel_pct": 44.0,
             "lineup_slot": 37.5,
             "bullpen_fatigue": 59.5238,
             "platoon_barrel_pct": 2.8,
@@ -78,7 +78,7 @@
           },
           "hit_probability": 0.6429,
           "raw_hit_probability": 0.6982,
-          "lift": -0.0285,
+          "lift": -0.0282,
           "reliability": "B",
           "sample_n": 78,
           "projection": {
@@ -86,28 +86,157 @@
             "value": 0.5,
             "needs": 1
           }
-        },
+        }
+      ]
+    },
+    {
+      "date": "2026-08-08",
+      "evaluations": [
         {
-          "prop": "To Hit a Laser (105+ MPH)",
+          "prop": "Over 0.5 Hits+Runs+RBIs",
           "type": "batter",
-          "score": 18.2,
-          "notable_signals": 0,
+          "score": 51.3,
+          "notable_signals": 1,
           "matchup": "Minnesota Twins @ Milwaukee Brewers",
-          "game_pk": 823750,
+          "game_pk": 823752,
           "team": "Milwaukee Brewers",
           "side": null,
           "lean": null,
           "signals": {
-            "hard_hit_rate": 0.2093
+            "platoon": 80.0,
+            "sp_era_weak": 34.0,
+            "l7_avg_ev": 5.8333,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 44.0,
+            "lineup_slot": 25.0,
+            "bullpen_fatigue": 59.5238,
+            "platoon_barrel_pct": 2.72,
+            "platoon_xwoba": -0.12,
+            "park_hand_index": -1.2,
+            "opp_catcher_framing": -0.24,
+            "days_rest": 0.0,
+            "pull_park_synergy": -0.4284,
+            "hard_hit_105_rate": -0.195,
+            "team_total_move": 0.0,
+            "team_total_open": 0.0,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": -0.056,
+            "vs_rp_ops": -0.456,
+            "ump_k_pct": 1.164,
+            "ump_bb_pct": 0.156
           },
-          "hit_probability": 0.2402,
-          "raw_hit_probability": 0.2093,
-          "lift": 0.0124,
+          "hit_probability": 0.6462,
+          "raw_hit_probability": 0.7023,
+          "lift": -0.03,
           "reliability": "B",
-          "sample_n": 78,
+          "sample_n": 79,
           "projection": {
-            "stat": "hard_hit_105",
-            "value": 1,
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-08-09",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 47.3,
+          "notable_signals": 0,
+          "matchup": "Minnesota Twins @ Milwaukee Brewers",
+          "game_pk": 823751,
+          "team": "Milwaukee Brewers",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 64.2857,
+            "l7_avg_ev": 0.0,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 44.0,
+            "lineup_slot": 100.0,
+            "bullpen_fatigue": 59.5238,
+            "platoon_barrel_pct": -1.36,
+            "platoon_xwoba": -2.16,
+            "park_hand_index": -1.31,
+            "opp_catcher_framing": -0.48,
+            "days_rest": 0.0,
+            "pull_park_synergy": -0.4585,
+            "hard_hit_105_rate": -0.245,
+            "team_total_move": 0.0,
+            "team_total_open": 0.0,
+            "getaway_day": -2.0,
+            "series_game": 2.0,
+            "sp_rp_ops_gap": -0.16,
+            "vs_rp_ops": -0.564,
+            "ump_k_pct": 0.696,
+            "ump_bb_pct": -0.324
+          },
+          "hit_probability": 0.6045,
+          "raw_hit_probability": 0.6116,
+          "lift": 0.0533,
+          "reliability": "A",
+          "sample_n": 80,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-08-10",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 51.6,
+          "notable_signals": 2,
+          "matchup": "Milwaukee Brewers @ San Diego Padres",
+          "game_pk": 823265,
+          "team": "Milwaukee Brewers",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 5.7143,
+            "l7_avg_ev": 0.0,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 37.1,
+            "season_barrel_pct": 44.0,
+            "lineup_slot": 25.0,
+            "bullpen_fatigue": 71.4286,
+            "platoon_barrel_pct": 2.56,
+            "platoon_xwoba": -0.36,
+            "park_hand_index": -1.52,
+            "opp_catcher_framing": 0.12,
+            "days_rest": 0.0,
+            "pull_park_synergy": -0.532,
+            "hard_hit_105_rate": -0.245,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": -0.16,
+            "vs_rp_ops": -0.564,
+            "ump_k_pct": 0.288,
+            "ump_bb_pct": -0.132
+          },
+          "hit_probability": 0.6476,
+          "raw_hit_probability": 0.704,
+          "lift": -0.0224,
+          "reliability": "A",
+          "sample_n": 80,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
             "needs": 1
           }
         }
@@ -119,7 +248,7 @@
         {
           "prop": "Over 0.5 Hits+Runs+RBIs",
           "type": "batter",
-          "score": 42.5,
+          "score": 54.9,
           "notable_signals": 1,
           "matchup": "Milwaukee Brewers @ San Diego Padres",
           "game_pk": 823264,
@@ -128,11 +257,11 @@
           "lean": null,
           "signals": {
             "platoon": 80.0,
-            "sp_era_weak": 73.4286,
+            "sp_era_weak": 76.5714,
             "l7_avg_ev": 0.0,
             "l7_barrel_pct": 100.0,
-            "park_hr_index": 42.3,
-            "season_barrel_pct": 42.0,
+            "park_hr_index": 42.6,
+            "season_barrel_pct": 44.0,
             "lineup_slot": 25.0,
             "bullpen_fatigue": 59.5238,
             "platoon_barrel_pct": 2.96,
@@ -142,45 +271,21 @@
             "days_rest": 0.0,
             "pull_park_synergy": -0.4585,
             "hard_hit_105_rate": -0.2925,
+            "team_total_move": -6.0,
+            "team_total_open": -4.0,
             "getaway_day": 0.0,
             "series_game": 1.0,
             "sp_rp_ops_gap": -0.352,
-            "vs_rp_ops": -0.612,
-            "ump_k_pct": 0.516,
-            "ump_bb_pct": 0.0
+            "vs_rp_ops": -0.612
           },
           "hit_probability": 0.6503,
-          "raw_hit_probability": 0.7073,
-          "lift": -0.0216,
+          "raw_hit_probability": 0.7074,
+          "lift": -0.022,
           "reliability": "A",
           "sample_n": 81,
           "projection": {
             "stat": "hits_runs_rbis",
             "value": 0.5,
-            "needs": 1
-          }
-        },
-        {
-          "prop": "To Hit a Laser (105+ MPH)",
-          "type": "batter",
-          "score": 16.9,
-          "notable_signals": 0,
-          "matchup": "Milwaukee Brewers @ San Diego Padres",
-          "game_pk": 823264,
-          "team": "Milwaukee Brewers",
-          "side": null,
-          "lean": null,
-          "signals": {
-            "hard_hit_rate": 0.2033
-          },
-          "hit_probability": 0.2364,
-          "raw_hit_probability": 0.2033,
-          "lift": 0.0091,
-          "reliability": "A",
-          "sample_n": 81,
-          "projection": {
-            "stat": "hard_hit_105",
-            "value": 1,
             "needs": 1
           }
         }

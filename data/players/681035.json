@@ -20,6 +20,66 @@
           "matchup": "New York Mets @ Cleveland Guardians"
         }
       ]
+    },
+    {
+      "date": "2026-08-10",
+      "evaluations": [
+        {
+          "prop": "Over 4.5 Strikeouts",
+          "type": "pitcher",
+          "score": 61.4,
+          "notable_signals": 0,
+          "matchup": "New York Mets @ Atlanta Braves",
+          "game_pk": 824887,
+          "team": "New York Mets",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "same_hand_ratio": 75.0,
+            "l14_k_pct": 83.5294,
+            "env_neutral": 50.0,
+            "ump_accuracy": 49.8235,
+            "ump_k_pct": 1.272,
+            "ump_bb_pct": 0.336
+          },
+          "hit_probability": 0.6677,
+          "raw_hit_probability": 0.8313,
+          "lift": 0.1307,
+          "reliability": "D",
+          "sample_n": 16,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 4.5,
+            "needs": 5
+          }
+        },
+        {
+          "prop": "Atlanta Braves scoreless in the 1st",
+          "type": "pitcher",
+          "score": 75.0,
+          "notable_signals": 0,
+          "matchup": "New York Mets @ Atlanta Braves",
+          "game_pk": 824887,
+          "team": "New York Mets",
+          "side": "away",
+          "lean": "NRFI",
+          "signals": {
+            "yrfi_rate": 25.0,
+            "fi_n_starts": 16.0,
+            "ump_run_impact": 29.4529,
+            "park_hr_index": 50.0
+          },
+          "hit_probability": 0.6915,
+          "raw_hit_probability": 0.7164,
+          "lift": -0.0145,
+          "reliability": "D",
+          "sample_n": 16,
+          "projection": {
+            "stat": "first_inning_run",
+            "value": 25.0
+          }
+        }
+      ]
     }
   ]
 }

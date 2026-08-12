@@ -8,8 +8,8 @@
         {
           "prop": "Over 0.5 Hits+Runs+RBIs",
           "type": "batter",
-          "score": 62.3,
-          "notable_signals": 2,
+          "score": 53.7,
+          "notable_signals": 1,
           "matchup": "Houston Astros @ San Diego Padres",
           "game_pk": 823266,
           "team": "San Diego Padres",
@@ -18,11 +18,11 @@
           "signals": {
             "platoon": 80.0,
             "sp_era_weak": 100.0,
-            "pitch_exploit": 1.1429,
+            "pitch_exploit": 0.5714,
             "l7_avg_ev": 7.1429,
             "l7_barrel_pct": 100.0,
             "park_hr_index": 39.6,
-            "season_barrel_pct": 26.0,
+            "season_barrel_pct": 24.0,
             "lineup_slot": 25.0,
             "bullpen_fatigue": 64.1026,
             "platoon_barrel_pct": 1.44,
@@ -41,9 +41,9 @@
             "ump_k_pct": -0.408,
             "ump_bb_pct": -0.036
           },
-          "hit_probability": 0.5581,
-          "raw_hit_probability": 0.5986,
-          "lift": -0.1133,
+          "hit_probability": 0.5586,
+          "raw_hit_probability": 0.5991,
+          "lift": -0.1159,
           "reliability": "A",
           "sample_n": 106,
           "projection": {
@@ -51,28 +51,204 @@
             "value": 0.5,
             "needs": 1
           }
-        },
+        }
+      ]
+    },
+    {
+      "date": "2026-08-08",
+      "evaluations": [
         {
-          "prop": "To Hit a Laser (105+ MPH)",
+          "prop": "Over 0.5 Hits+Runs+RBIs",
           "type": "batter",
-          "score": 32.8,
+          "score": 41.3,
           "notable_signals": 0,
           "matchup": "Houston Astros @ San Diego Padres",
-          "game_pk": 823266,
+          "game_pk": 823267,
           "team": "San Diego Padres",
           "side": null,
           "lean": null,
           "signals": {
-            "hard_hit_rate": 0.2679
+            "platoon": 80.0,
+            "sp_era_weak": 16.0,
+            "l7_avg_ev": 14.8438,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 36.8,
+            "season_barrel_pct": 24.0,
+            "lineup_slot": 25.0,
+            "bullpen_fatigue": 64.1026,
+            "platoon_barrel_pct": 1.36,
+            "platoon_xwoba": 1.32,
+            "park_hand_index": -2.08,
+            "opp_catcher_framing": 0.36,
+            "days_rest": 0.0,
+            "pull_park_synergy": -0.8226,
+            "hard_hit_105_rate": 1.27,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": 1.12,
+            "vs_rp_ops": 0.756,
+            "ump_k_pct": -1.044,
+            "ump_bb_pct": 0.276
           },
-          "hit_probability": 0.2803,
-          "raw_hit_probability": 0.2679,
-          "lift": 0.0525,
+          "hit_probability": 0.5547,
+          "raw_hit_probability": 0.5947,
+          "lift": -0.1215,
           "reliability": "A",
-          "sample_n": 106,
+          "sample_n": 107,
           "projection": {
-            "stat": "hard_hit_105",
-            "value": 1,
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-08-09",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 54.4,
+          "notable_signals": 0,
+          "matchup": "Houston Astros @ San Diego Padres",
+          "game_pk": 823268,
+          "team": "San Diego Padres",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 100.0,
+            "l7_avg_ev": 6.875,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 39.9,
+            "season_barrel_pct": 24.0,
+            "lineup_slot": 25.0,
+            "bullpen_fatigue": 64.1026,
+            "platoon_barrel_pct": 1.28,
+            "platoon_xwoba": 1.14,
+            "park_hand_index": -1.88,
+            "opp_catcher_framing": 1.08,
+            "days_rest": 0.0,
+            "pull_park_synergy": -0.7106,
+            "hard_hit_105_rate": 1.2175,
+            "team_total_move": 0.0,
+            "team_total_open": 0.0,
+            "getaway_day": -2.0,
+            "series_game": 2.0,
+            "sp_rp_ops_gap": 1.056,
+            "vs_rp_ops": 0.696,
+            "ump_k_pct": 0.24,
+            "ump_bb_pct": -0.048
+          },
+          "hit_probability": 0.5569,
+          "raw_hit_probability": 0.5972,
+          "lift": -0.115,
+          "reliability": "A",
+          "sample_n": 108,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-08-10",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 34.5,
+          "notable_signals": 1,
+          "matchup": "Milwaukee Brewers @ San Diego Padres",
+          "game_pk": 823265,
+          "team": "San Diego Padres",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 4.5714,
+            "l7_avg_ev": 0.0,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 37.1,
+            "season_barrel_pct": 24.0,
+            "lineup_slot": 25.0,
+            "bullpen_fatigue": 64.1026,
+            "platoon_barrel_pct": 1.6,
+            "platoon_xwoba": 1.38,
+            "park_hand_index": -1.52,
+            "opp_catcher_framing": 0.48,
+            "days_rest": 0.0,
+            "pull_park_synergy": -0.5692,
+            "hard_hit_105_rate": 1.1675,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": 1.312,
+            "vs_rp_ops": 1.08,
+            "ump_k_pct": 0.288,
+            "ump_bb_pct": -0.132
+          },
+          "hit_probability": 0.5593,
+          "raw_hit_probability": 0.6,
+          "lift": -0.1107,
+          "reliability": "A",
+          "sample_n": 109,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-08-11",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 30.1,
+          "notable_signals": 1,
+          "matchup": "Milwaukee Brewers @ San Diego Padres",
+          "game_pk": 823264,
+          "team": "San Diego Padres",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 14.5714,
+            "l7_avg_ev": 0.0,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 37.6,
+            "season_barrel_pct": 24.0,
+            "lineup_slot": 25.0,
+            "bullpen_fatigue": 69.4444,
+            "platoon_barrel_pct": -3.84,
+            "platoon_xwoba": -3.96,
+            "park_hand_index": -1.52,
+            "opp_catcher_framing": 0.48,
+            "days_rest": 2.0,
+            "pull_park_synergy": -0.5692,
+            "hard_hit_105_rate": 1.1675,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": 1.312,
+            "vs_rp_ops": 1.08
+          },
+          "hit_probability": 0.5587,
+          "raw_hit_probability": 0.5993,
+          "lift": -0.1068,
+          "reliability": "A",
+          "sample_n": 109,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
             "needs": 1
           }
         }

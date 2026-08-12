@@ -63,9 +63,9 @@
       "date": "2026-08-07",
       "evaluations": [
         {
-          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "prop": "Over 0.5 Hits",
           "type": "batter",
-          "score": 77.5,
+          "score": 76.1,
           "notable_signals": 1,
           "matchup": "Cleveland Guardians @ Chicago White Sox",
           "game_pk": 824566,
@@ -77,8 +77,8 @@
             "sp_era_weak": 94.8571,
             "l7_avg_ev": 100.0,
             "l7_barrel_pct": 100.0,
-            "park_hr_index": 51.9,
-            "season_barrel_pct": 39.3333,
+            "park_hr_index": 36.1,
+            "season_barrel_pct": 36.6667,
             "lineup_slot": 62.5,
             "bullpen_fatigue": 59.5238,
             "platoon_barrel_pct": 3.92,
@@ -86,20 +86,20 @@
             "opp_catcher_framing": 1.08,
             "days_rest": 0.0,
             "hard_hit_105_rate": 3.8325,
-            "team_total_move": 0.0,
-            "team_total_open": 0.0,
+            "team_total_move": -6.0,
+            "team_total_open": -4.0,
             "getaway_day": 0.0,
             "series_game": 0.0,
             "ump_k_pct": -0.432,
             "ump_bb_pct": 0.072
           },
-          "hit_probability": 0.5919,
-          "raw_hit_probability": 0.6375,
-          "lift": -0.0795,
+          "hit_probability": 0.603,
+          "raw_hit_probability": 0.6084,
+          "lift": 0.052,
           "reliability": "A",
           "sample_n": 114,
           "projection": {
-            "stat": "hits_runs_rbis",
+            "stat": "hits",
             "value": 0.5,
             "needs": 1
           }
@@ -107,7 +107,7 @@
         {
           "prop": "To Steal a Base",
           "type": "batter",
-          "score": 43.6,
+          "score": 42.2,
           "notable_signals": 0,
           "matchup": "Cleveland Guardians @ Chicago White Sox",
           "game_pk": 824566,
@@ -116,9 +116,9 @@
           "lean": null,
           "signals": {
             "opp_team_cs_pct": 0.36,
-            "sprint_speed": 25.0,
+            "sprint_speed": 21.875,
             "catcher_poptime": 82.8571,
-            "on_base": 35.7006
+            "on_base": 36.6603
           },
           "hit_probability": 0.1434,
           "raw_hit_probability": 0.0305,
@@ -130,27 +130,153 @@
             "value": 1,
             "needs": 1
           }
-        },
+        }
+      ]
+    },
+    {
+      "date": "2026-08-08",
+      "evaluations": [
         {
-          "prop": "To Hit a Laser (105+ MPH)",
+          "prop": "Over 0.5 Hits",
           "type": "batter",
-          "score": 57.9,
-          "notable_signals": 1,
+          "score": 76.7,
+          "notable_signals": 2,
           "matchup": "Cleveland Guardians @ Chicago White Sox",
-          "game_pk": 824566,
+          "game_pk": 824565,
           "team": "Cleveland Guardians",
           "side": null,
           "lean": null,
           "signals": {
-            "hard_hit_rate": 0.3683
+            "platoon": 80.0,
+            "sp_era_weak": 43.1429,
+            "l7_avg_ev": 100.0,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 39.6,
+            "season_barrel_pct": 36.6667,
+            "lineup_slot": 87.5,
+            "bullpen_fatigue": 66.6667,
+            "platoon_barrel_pct": 3.92,
+            "platoon_xwoba": 5.0,
+            "opp_catcher_framing": 0.24,
+            "days_rest": 0.0,
+            "hard_hit_105_rate": 3.765,
+            "team_total_move": -6.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "ump_k_pct": -0.132,
+            "ump_bb_pct": 0.18
           },
-          "hit_probability": 0.3576,
-          "raw_hit_probability": 0.3683,
-          "lift": 0.1298,
+          "hit_probability": 0.6035,
+          "raw_hit_probability": 0.6095,
+          "lift": 0.0525,
           "reliability": "A",
-          "sample_n": 114,
+          "sample_n": 115,
           "projection": {
-            "stat": "hard_hit_105",
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 43.8,
+          "notable_signals": 0,
+          "matchup": "Cleveland Guardians @ Chicago White Sox",
+          "game_pk": 824565,
+          "team": "Cleveland Guardians",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "opp_team_cs_pct": 0.48,
+            "sprint_speed": 21.875,
+            "catcher_poptime": 88.5714,
+            "on_base": 36.6603
+          },
+          "hit_probability": 0.1432,
+          "raw_hit_probability": 0.0302,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 115,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-08-09",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 59.4,
+          "notable_signals": 3,
+          "matchup": "Cleveland Guardians @ Chicago White Sox",
+          "game_pk": 824564,
+          "team": "Cleveland Guardians",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 32.0,
+            "l7_avg_ev": 89.9038,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 28.6,
+            "season_barrel_pct": 36.6667,
+            "lineup_slot": 50.0,
+            "bullpen_fatigue": 77.7778,
+            "platoon_barrel_pct": 0.56,
+            "platoon_xwoba": -0.84,
+            "opp_catcher_framing": 1.08,
+            "days_rest": -2.0,
+            "hard_hit_105_rate": 3.7,
+            "team_total_move": 0.0,
+            "team_total_open": 0.0,
+            "getaway_day": -2.0,
+            "series_game": 2.0,
+            "sp_rp_ops_gap": 0.016,
+            "vs_rp_ops": -0.444,
+            "ump_k_pct": -0.072,
+            "ump_bb_pct": -0.06
+          },
+          "hit_probability": 0.6005,
+          "raw_hit_probability": 0.6031,
+          "lift": 0.0493,
+          "reliability": "A",
+          "sample_n": 117,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 42.2,
+          "notable_signals": 0,
+          "matchup": "Cleveland Guardians @ Chicago White Sox",
+          "game_pk": 824564,
+          "team": "Cleveland Guardians",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "opp_team_cs_pct": 0.24,
+            "sprint_speed": 21.875,
+            "catcher_poptime": 82.8571,
+            "on_base": 36.6603
+          },
+          "hit_probability": 0.1431,
+          "raw_hit_probability": 0.0299,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 117,
+          "projection": {
+            "stat": "stolen_base",
             "value": 1,
             "needs": 1
           }
@@ -163,7 +289,7 @@
         {
           "prop": "Over 0.5 Hits+Runs+RBIs",
           "type": "batter",
-          "score": 44.1,
+          "score": 55.9,
           "notable_signals": 1,
           "matchup": "Cleveland Guardians @ Detroit Tigers",
           "game_pk": 824240,
@@ -172,12 +298,12 @@
           "lean": null,
           "signals": {
             "platoon": 35.0,
-            "sp_era_weak": 43.1429,
+            "sp_era_weak": 49.7143,
             "pitch_exploit": 18.2857,
             "l7_avg_ev": 86.7708,
             "l7_barrel_pct": 100.0,
-            "park_hr_index": 50.0,
-            "season_barrel_pct": 39.3333,
+            "park_hr_index": 51.9,
+            "season_barrel_pct": 36.6667,
             "lineup_slot": 50.0,
             "bullpen_fatigue": 51.2821,
             "platoon_barrel_pct": 0.56,
@@ -187,6 +313,8 @@
             "days_rest": 2.0,
             "pull_park_synergy": 0.2995,
             "hard_hit_105_rate": 3.81,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
             "getaway_day": 0.0,
             "series_game": 0.0,
             "sp_rp_ops_gap": 0.016,
@@ -194,9 +322,9 @@
             "ump_k_pct": 0.096,
             "ump_bb_pct": 0.528
           },
-          "hit_probability": 0.5925,
-          "raw_hit_probability": 0.6382,
-          "lift": -0.0794,
+          "hit_probability": 0.5926,
+          "raw_hit_probability": 0.6383,
+          "lift": -0.0797,
           "reliability": "A",
           "sample_n": 117,
           "projection": {
@@ -208,7 +336,7 @@
         {
           "prop": "To Steal a Base",
           "type": "batter",
-          "score": 36.4,
+          "score": 47.0,
           "notable_signals": 0,
           "matchup": "Cleveland Guardians @ Detroit Tigers",
           "game_pk": 824240,
@@ -217,9 +345,9 @@
           "lean": null,
           "signals": {
             "opp_team_cs_pct": -0.36,
-            "sprint_speed": 25.0,
+            "sprint_speed": 21.875,
             "catcher_poptime": 100.0,
-            "on_base": 35.7006
+            "on_base": 36.6603
           },
           "hit_probability": 0.1429,
           "raw_hit_probability": 0.0293,
@@ -228,30 +356,6 @@
           "sample_n": 117,
           "projection": {
             "stat": "stolen_base",
-            "value": 1,
-            "needs": 1
-          }
-        },
-        {
-          "prop": "To Hit a Laser (105+ MPH)",
-          "type": "batter",
-          "score": 58.2,
-          "notable_signals": 1,
-          "matchup": "Cleveland Guardians @ Detroit Tigers",
-          "game_pk": 824240,
-          "team": "Cleveland Guardians",
-          "side": null,
-          "lean": null,
-          "signals": {
-            "hard_hit_rate": 0.3674
-          },
-          "hit_probability": 0.3569,
-          "raw_hit_probability": 0.3674,
-          "lift": 0.1296,
-          "reliability": "A",
-          "sample_n": 117,
-          "projection": {
-            "stat": "hard_hit_105",
             "value": 1,
             "needs": 1
           }

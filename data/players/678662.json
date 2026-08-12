@@ -46,7 +46,7 @@
         {
           "prop": "Over 0.5 Hits+Runs+RBIs",
           "type": "batter",
-          "score": 47.6,
+          "score": 46.4,
           "notable_signals": 2,
           "matchup": "Colorado Rockies @ St. Louis Cardinals",
           "game_pk": 823024,
@@ -60,8 +60,8 @@
             "l7_avg_ev": 63.8281,
             "l7_barrel_pct": 100.0,
             "bat_speed_trend": 2.925,
-            "park_hr_index": 63.2,
-            "season_barrel_pct": 22.6667,
+            "park_hr_index": 51.9,
+            "season_barrel_pct": 23.3333,
             "lineup_slot": 25.0,
             "bullpen_fatigue": 64.1026,
             "platoon_barrel_pct": 0.08,
@@ -80,9 +80,9 @@
             "ump_k_pct": -0.264,
             "ump_bb_pct": -0.192
           },
-          "hit_probability": 0.5737,
-          "raw_hit_probability": 0.6164,
-          "lift": -0.0977,
+          "hit_probability": 0.5741,
+          "raw_hit_probability": 0.6169,
+          "lift": -0.1004,
           "reliability": "A",
           "sample_n": 104,
           "projection": {
@@ -107,8 +107,8 @@
             "catcher_poptime": 94.2857,
             "on_base": 0.0
           },
-          "hit_probability": 0.1525,
-          "raw_hit_probability": 0.0509,
+          "hit_probability": 0.1522,
+          "raw_hit_probability": 0.0502,
           "lift": null,
           "reliability": "A",
           "sample_n": 104,
@@ -117,27 +117,237 @@
             "value": 1,
             "needs": 1
           }
-        },
+        }
+      ]
+    },
+    {
+      "date": "2026-08-08",
+      "evaluations": [
         {
-          "prop": "To Hit a Laser (105+ MPH)",
+          "prop": "Over 0.5 Hits+Runs+RBIs",
           "type": "batter",
-          "score": 18.1,
-          "notable_signals": 0,
+          "score": 59.0,
+          "notable_signals": 3,
           "matchup": "Colorado Rockies @ St. Louis Cardinals",
-          "game_pk": 823024,
+          "game_pk": 823021,
           "team": "Colorado Rockies",
           "side": null,
           "lean": null,
           "signals": {
-            "hard_hit_rate": 0.2091
+            "platoon": 80.0,
+            "sp_era_weak": 70.5714,
+            "pitch_exploit": 0.5714,
+            "l7_avg_ev": 63.75,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 74.6,
+            "season_barrel_pct": 23.3333,
+            "lineup_slot": 0.0,
+            "bullpen_fatigue": 76.9231,
+            "platoon_barrel_pct": 0.4,
+            "platoon_xwoba": -3.24,
+            "park_hand_index": -2.99,
+            "opp_catcher_framing": 0.72,
+            "days_rest": 0.0,
+            "pull_park_synergy": -0.6488,
+            "hard_hit_105_rate": -0.1875,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": 0.352,
+            "vs_rp_ops": -1.356,
+            "ump_k_pct": 0.744,
+            "ump_bb_pct": 0.612
           },
-          "hit_probability": 0.2401,
-          "raw_hit_probability": 0.2091,
-          "lift": 0.0123,
+          "hit_probability": 0.57,
+          "raw_hit_probability": 0.6122,
+          "lift": -0.1062,
           "reliability": "A",
-          "sample_n": 104,
+          "sample_n": 105,
           "projection": {
-            "stat": "hard_hit_105",
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 31.7,
+          "notable_signals": 0,
+          "matchup": "Colorado Rockies @ St. Louis Cardinals",
+          "game_pk": 823021,
+          "team": "Colorado Rockies",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "opp_team_cs_pct": 2.64,
+            "sprint_speed": 21.875,
+            "catcher_poptime": 74.2857,
+            "on_base": 0.0
+          },
+          "hit_probability": 0.1514,
+          "raw_hit_probability": 0.0485,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 105,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-08-09",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 43.0,
+          "notable_signals": 1,
+          "matchup": "Colorado Rockies @ St. Louis Cardinals",
+          "game_pk": 823020,
+          "team": "Colorado Rockies",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 31.1429,
+            "l7_avg_ev": 65.7031,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 60.4,
+            "season_barrel_pct": 23.3333,
+            "lineup_slot": 0.0,
+            "bullpen_fatigue": 90.9091,
+            "platoon_barrel_pct": 0.0,
+            "platoon_xwoba": -2.04,
+            "park_hand_index": -2.99,
+            "opp_catcher_framing": -0.72,
+            "days_rest": 0.0,
+            "pull_park_synergy": -0.6907,
+            "hard_hit_105_rate": -0.23,
+            "team_total_move": -6.0,
+            "team_total_open": -4.0,
+            "getaway_day": -2.0,
+            "series_game": 2.0,
+            "sp_rp_ops_gap": 0.32,
+            "vs_rp_ops": -1.344,
+            "ump_k_pct": 0.348,
+            "ump_bb_pct": -0.012
+          },
+          "hit_probability": 0.5715,
+          "raw_hit_probability": 0.6139,
+          "lift": -0.0962,
+          "reliability": "A",
+          "sample_n": 106,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 37.3,
+          "notable_signals": 0,
+          "matchup": "Colorado Rockies @ St. Louis Cardinals",
+          "game_pk": 823020,
+          "team": "Colorado Rockies",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "opp_team_cs_pct": 3.24,
+            "sprint_speed": 21.875,
+            "catcher_poptime": 94.2857,
+            "on_base": 0.0
+          },
+          "hit_probability": 0.1513,
+          "raw_hit_probability": 0.0483,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 106,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-08-10",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 43.4,
+          "notable_signals": 1,
+          "matchup": "Colorado Rockies @ Arizona Diamondbacks",
+          "game_pk": 825048,
+          "team": "Colorado Rockies",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 16.2857,
+            "l7_avg_ev": 67.8906,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 6.225,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 23.3333,
+            "lineup_slot": 0.0,
+            "bullpen_fatigue": 59.5238,
+            "platoon_barrel_pct": 0.0,
+            "platoon_xwoba": -2.1,
+            "park_hand_index": -0.45,
+            "opp_catcher_framing": 0.12,
+            "days_rest": 0.0,
+            "pull_park_synergy": -0.1071,
+            "hard_hit_105_rate": -0.27,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": 0.304,
+            "vs_rp_ops": -1.44
+          },
+          "hit_probability": 0.5685,
+          "raw_hit_probability": 0.6105,
+          "lift": -0.1079,
+          "reliability": "A",
+          "sample_n": 107,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 38.9,
+          "notable_signals": 0,
+          "matchup": "Colorado Rockies @ Arizona Diamondbacks",
+          "game_pk": 825048,
+          "team": "Colorado Rockies",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "opp_team_cs_pct": 2.88,
+            "sprint_speed": 21.875,
+            "catcher_poptime": 100.0,
+            "on_base": 0.0
+          },
+          "hit_probability": 0.151,
+          "raw_hit_probability": 0.0476,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 107,
+          "projection": {
+            "stat": "stolen_base",
             "value": 1,
             "needs": 1
           }
@@ -150,7 +360,7 @@
         {
           "prop": "Over 0.5 Hits+Runs+RBIs",
           "type": "batter",
-          "score": 33.1,
+          "score": 49.0,
           "notable_signals": 0,
           "matchup": "Colorado Rockies @ Arizona Diamondbacks",
           "game_pk": 825046,
@@ -159,11 +369,11 @@
           "lean": null,
           "signals": {
             "platoon": 80.0,
-            "sp_era_weak": 40.0,
+            "sp_era_weak": 78.0,
             "l7_avg_ev": 42.6042,
             "l7_barrel_pct": 45.0,
             "park_hr_index": 50.0,
-            "season_barrel_pct": 22.6667,
+            "season_barrel_pct": 23.3333,
             "lineup_slot": 0.0,
             "bullpen_fatigue": 59.5238,
             "platoon_barrel_pct": 0.16,
@@ -173,6 +383,8 @@
             "days_rest": 2.0,
             "pull_park_synergy": -0.1023,
             "hard_hit_105_rate": -0.27,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
             "getaway_day": 0.0,
             "series_game": 1.0,
             "sp_rp_ops_gap": 0.304,
@@ -180,9 +392,9 @@
             "ump_k_pct": 0.06,
             "ump_bb_pct": -0.564
           },
-          "hit_probability": 0.5678,
-          "raw_hit_probability": 0.6097,
-          "lift": -0.1041,
+          "hit_probability": 0.5679,
+          "raw_hit_probability": 0.6098,
+          "lift": -0.1044,
           "reliability": "A",
           "sample_n": 107,
           "projection": {
@@ -194,7 +406,7 @@
         {
           "prop": "To Steal a Base",
           "type": "batter",
-          "score": 19.7,
+          "score": 31.7,
           "notable_signals": 0,
           "matchup": "Colorado Rockies @ Arizona Diamondbacks",
           "game_pk": 825046,
@@ -208,36 +420,12 @@
             "on_base": 0.0
           },
           "hit_probability": 0.1512,
-          "raw_hit_probability": 0.0481,
+          "raw_hit_probability": 0.048,
           "lift": null,
           "reliability": "A",
           "sample_n": 107,
           "projection": {
             "stat": "stolen_base",
-            "value": 1,
-            "needs": 1
-          }
-        },
-        {
-          "prop": "To Hit a Laser (105+ MPH)",
-          "type": "batter",
-          "score": 17.2,
-          "notable_signals": 0,
-          "matchup": "Colorado Rockies @ Arizona Diamondbacks",
-          "game_pk": 825046,
-          "team": "Colorado Rockies",
-          "side": null,
-          "lean": null,
-          "signals": {
-            "hard_hit_rate": 0.2042
-          },
-          "hit_probability": 0.2369,
-          "raw_hit_probability": 0.2042,
-          "lift": 0.0096,
-          "reliability": "A",
-          "sample_n": 107,
-          "projection": {
-            "stat": "hard_hit_105",
             "value": 1,
             "needs": 1
           }

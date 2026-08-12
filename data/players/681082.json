@@ -63,9 +63,9 @@
       "date": "2026-08-07",
       "evaluations": [
         {
-          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "prop": "Over 0.5 Hits",
           "type": "batter",
-          "score": 60.5,
+          "score": 60.7,
           "notable_signals": 1,
           "matchup": "Toronto Blue Jays @ Philadelphia Phillies",
           "game_pk": 823428,
@@ -79,7 +79,7 @@
             "l7_barrel_pct": 100.0,
             "bat_speed_trend": 11.025,
             "park_hr_index": 59.8,
-            "season_barrel_pct": 25.3333,
+            "season_barrel_pct": 26.6667,
             "lineup_slot": 12.5,
             "bullpen_fatigue": 64.1026,
             "platoon_barrel_pct": 0.4,
@@ -98,13 +98,13 @@
             "ump_k_pct": -0.024,
             "ump_bb_pct": -0.336
           },
-          "hit_probability": 0.6344,
-          "raw_hit_probability": 0.6879,
-          "lift": -0.037,
+          "hit_probability": 0.6201,
+          "raw_hit_probability": 0.6447,
+          "lift": 0.0691,
           "reliability": "A",
           "sample_n": 110,
           "projection": {
-            "stat": "hits_runs_rbis",
+            "stat": "hits",
             "value": 0.5,
             "needs": 1
           }
@@ -112,7 +112,7 @@
         {
           "prop": "To Steal a Base",
           "type": "batter",
-          "score": 52.7,
+          "score": 50.8,
           "notable_signals": 0,
           "matchup": "Toronto Blue Jays @ Philadelphia Phillies",
           "game_pk": 823428,
@@ -123,10 +123,10 @@
             "opp_team_cs_pct": -0.0,
             "sprint_speed": 37.5,
             "catcher_poptime": 71.4286,
-            "on_base": 63.5317
+            "on_base": 54.8944
           },
-          "hit_probability": 0.2143,
-          "raw_hit_probability": 0.1678,
+          "hit_probability": 0.214,
+          "raw_hit_probability": 0.1672,
           "lift": null,
           "reliability": "A",
           "sample_n": 110,
@@ -135,27 +135,243 @@
             "value": 1,
             "needs": 1
           }
-        },
+        }
+      ]
+    },
+    {
+      "date": "2026-08-08",
+      "evaluations": [
         {
-          "prop": "To Hit a Laser (105+ MPH)",
+          "prop": "Over 0.5 Hits",
           "type": "batter",
-          "score": 18.7,
-          "notable_signals": 0,
+          "score": 87.5,
+          "notable_signals": 5,
           "matchup": "Toronto Blue Jays @ Philadelphia Phillies",
-          "game_pk": 823428,
+          "game_pk": 823426,
           "team": "Philadelphia Phillies",
           "side": null,
           "lean": null,
           "signals": {
-            "hard_hit_rate": 0.2115
+            "platoon": 80.0,
+            "sp_era_weak": 100.0,
+            "pitch_exploit": 6.2857,
+            "l7_avg_ev": 100.0,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 2.175,
+            "park_hr_index": 79.6,
+            "season_barrel_pct": 26.6667,
+            "lineup_slot": 50.0,
+            "bullpen_fatigue": 71.4286,
+            "bvp_ops": 3.288,
+            "platoon_barrel_pct": 0.32,
+            "platoon_xwoba": 0.96,
+            "park_hand_index": 2.03,
+            "opp_catcher_framing": -2.16,
+            "days_rest": 0.0,
+            "pull_park_synergy": 1.1439,
+            "hard_hit_105_rate": -0.125,
+            "team_total_move": 0.0,
+            "team_total_open": 4.0,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": 1.512,
+            "vs_rp_ops": 1.536,
+            "ump_k_pct": -0.084,
+            "ump_bb_pct": -0.18
           },
-          "hit_probability": 0.2417,
-          "raw_hit_probability": 0.2115,
-          "lift": 0.0139,
+          "hit_probability": 0.6257,
+          "raw_hit_probability": 0.6566,
+          "lift": 0.0747,
           "reliability": "A",
-          "sample_n": 110,
+          "sample_n": 111,
           "projection": {
-            "stat": "hard_hit_105",
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 58.8,
+          "notable_signals": 0,
+          "matchup": "Toronto Blue Jays @ Philadelphia Phillies",
+          "game_pk": 823426,
+          "team": "Philadelphia Phillies",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "opp_team_cs_pct": 0.12,
+            "sprint_speed": 37.5,
+            "catcher_poptime": 100.0,
+            "on_base": 54.8944
+          },
+          "hit_probability": 0.2169,
+          "raw_hit_probability": 0.1721,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 111,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-08-09",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 79.3,
+          "notable_signals": 3,
+          "matchup": "Toronto Blue Jays @ Philadelphia Phillies",
+          "game_pk": 823425,
+          "team": "Philadelphia Phillies",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 74.5714,
+            "pitch_exploit": 6.2857,
+            "l7_avg_ev": 100.0,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 79.1,
+            "season_barrel_pct": 26.6667,
+            "lineup_slot": 37.5,
+            "bullpen_fatigue": 89.7436,
+            "platoon_barrel_pct": 0.24,
+            "platoon_xwoba": 1.08,
+            "park_hand_index": 1.97,
+            "opp_catcher_framing": -0.72,
+            "days_rest": 0.0,
+            "pull_park_synergy": 1.1308,
+            "hard_hit_105_rate": -0.165,
+            "team_total_move": 0.0,
+            "team_total_open": 0.0,
+            "getaway_day": -2.0,
+            "series_game": 2.0,
+            "sp_rp_ops_gap": 1.568,
+            "vs_rp_ops": 1.656,
+            "ump_k_pct": 0.276,
+            "ump_bb_pct": 0.192
+          },
+          "hit_probability": 0.6246,
+          "raw_hit_probability": 0.6544,
+          "lift": 0.0734,
+          "reliability": "A",
+          "sample_n": 112,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 50.8,
+          "notable_signals": 0,
+          "matchup": "Toronto Blue Jays @ Philadelphia Phillies",
+          "game_pk": 823425,
+          "team": "Philadelphia Phillies",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "opp_team_cs_pct": 0.18,
+            "sprint_speed": 37.5,
+            "catcher_poptime": 71.4286,
+            "on_base": 54.8944
+          },
+          "hit_probability": 0.2192,
+          "raw_hit_probability": 0.1759,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 112,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-08-10",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 68.7,
+          "notable_signals": 2,
+          "matchup": "Philadelphia Phillies @ St. Louis Cardinals",
+          "game_pk": 823018,
+          "team": "Philadelphia Phillies",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 35.4286,
+            "pitch_exploit": 4.0,
+            "l7_avg_ev": 88.0435,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 73.6,
+            "season_barrel_pct": 26.6667,
+            "lineup_slot": 87.5,
+            "bullpen_fatigue": 64.1026,
+            "platoon_barrel_pct": 0.16,
+            "platoon_xwoba": 1.2,
+            "park_hand_index": -3.66,
+            "opp_catcher_framing": -0.84,
+            "days_rest": 0.0,
+            "consecutive_games": -0.6,
+            "pull_park_synergy": -2.0624,
+            "hard_hit_105_rate": -0.2025,
+            "team_total_move": 0.0,
+            "team_total_open": 0.0,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": 1.536,
+            "vs_rp_ops": 1.668,
+            "ump_k_pct": 0.12,
+            "ump_bb_pct": -0.132
+          },
+          "hit_probability": 0.6321,
+          "raw_hit_probability": 0.6706,
+          "lift": 0.0808,
+          "reliability": "A",
+          "sample_n": 113,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 57.2,
+          "notable_signals": 0,
+          "matchup": "Philadelphia Phillies @ St. Louis Cardinals",
+          "game_pk": 823018,
+          "team": "Philadelphia Phillies",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "opp_team_cs_pct": 3.24,
+            "sprint_speed": 37.5,
+            "catcher_poptime": 94.2857,
+            "on_base": 54.8944
+          },
+          "hit_probability": 0.2278,
+          "raw_hit_probability": 0.1898,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 113,
+          "projection": {
+            "stat": "stolen_base",
             "value": 1,
             "needs": 1
           }
@@ -168,7 +384,7 @@
         {
           "prop": "Over 0.5 Hits",
           "type": "batter",
-          "score": 55.7,
+          "score": 68.3,
           "notable_signals": 3,
           "matchup": "Philadelphia Phillies @ St. Louis Cardinals",
           "game_pk": 823019,
@@ -177,12 +393,12 @@
           "lean": null,
           "signals": {
             "platoon": 80.0,
-            "sp_era_weak": 32.2857,
-            "pitch_exploit": 4.5714,
+            "sp_era_weak": 34.8571,
+            "pitch_exploit": 4.0,
             "l7_avg_ev": 80.5978,
             "l7_barrel_pct": 100.0,
-            "park_hr_index": 78.5,
-            "season_barrel_pct": 25.3333,
+            "park_hr_index": 80.5,
+            "season_barrel_pct": 26.6667,
             "lineup_slot": 37.5,
             "bullpen_fatigue": 69.4444,
             "platoon_barrel_pct": 0.08,
@@ -193,6 +409,8 @@
             "consecutive_games": -1.2,
             "pull_park_synergy": -2.098,
             "hard_hit_105_rate": -0.24,
+            "team_total_move": 0.0,
+            "team_total_open": 0.0,
             "getaway_day": 0.0,
             "series_game": 1.0,
             "sp_rp_ops_gap": 1.6,
@@ -200,9 +418,9 @@
             "ump_k_pct": 0.108,
             "ump_bb_pct": 0.192
           },
-          "hit_probability": 0.6008,
-          "raw_hit_probability": 0.6037,
-          "lift": 0.0495,
+          "hit_probability": 0.6261,
+          "raw_hit_probability": 0.6576,
+          "lift": 0.0749,
           "reliability": "A",
           "sample_n": 114,
           "projection": {
@@ -214,7 +432,7 @@
         {
           "prop": "To Steal a Base",
           "type": "batter",
-          "score": 47.9,
+          "score": 58.0,
           "notable_signals": 0,
           "matchup": "Philadelphia Phillies @ St. Louis Cardinals",
           "game_pk": 823019,
@@ -225,7 +443,7 @@
             "opp_team_cs_pct": 3.24,
             "sprint_speed": 37.5,
             "catcher_poptime": 97.1429,
-            "on_base": 63.5317
+            "on_base": 54.8944
           },
           "hit_probability": 0.2221,
           "raw_hit_probability": 0.1807,
@@ -234,30 +452,6 @@
           "sample_n": 114,
           "projection": {
             "stat": "stolen_base",
-            "value": 1,
-            "needs": 1
-          }
-        },
-        {
-          "prop": "To Hit a Laser (105+ MPH)",
-          "type": "batter",
-          "score": 17.5,
-          "notable_signals": 0,
-          "matchup": "Philadelphia Phillies @ St. Louis Cardinals",
-          "game_pk": 823019,
-          "team": "Philadelphia Phillies",
-          "side": null,
-          "lean": null,
-          "signals": {
-            "hard_hit_rate": 0.2054
-          },
-          "hit_probability": 0.2377,
-          "raw_hit_probability": 0.2054,
-          "lift": 0.0104,
-          "reliability": "A",
-          "sample_n": 114,
-          "projection": {
-            "stat": "hard_hit_105",
             "value": 1,
             "needs": 1
           }

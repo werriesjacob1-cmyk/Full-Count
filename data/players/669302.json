@@ -8,7 +8,7 @@
         {
           "prop": "Over 4.5 Strikeouts",
           "type": "pitcher",
-          "score": 40.1,
+          "score": 43.1,
           "notable_signals": 0,
           "matchup": "Tampa Bay Rays @ Seattle Mariners",
           "game_pk": 823103,
@@ -16,22 +16,48 @@
           "side": null,
           "lean": null,
           "signals": {
-            "same_hand_ratio": 12.5,
+            "same_hand_ratio": 43.75,
             "l14_k_pct": 29.4118,
             "env_neutral": 50.0,
-            "ump_accuracy": 48.5518,
-            "ump_k_pct": 0.36,
-            "ump_bb_pct": 0.072
+            "ump_accuracy": 40.0255,
+            "ump_k_pct": -0.168,
+            "ump_bb_pct": 0.624
           },
-          "hit_probability": 0.6251,
-          "raw_hit_probability": 0.6706,
-          "lift": 0.0858,
+          "hit_probability": 0.6548,
+          "raw_hit_probability": 0.7815,
+          "lift": 0.1155,
           "reliability": "D",
           "sample_n": 22,
           "projection": {
             "stat": "strikeouts",
             "value": 4.5,
             "needs": 5
+          }
+        },
+        {
+          "prop": "Tampa Bay Rays scoreless in the 1st",
+          "type": "pitcher",
+          "score": 45.5,
+          "notable_signals": 0,
+          "matchup": "Tampa Bay Rays @ Seattle Mariners",
+          "game_pk": 823103,
+          "team": "Seattle Mariners",
+          "side": "home",
+          "lean": "NRFI",
+          "signals": {
+            "yrfi_rate": 45.5,
+            "fi_n_starts": 22.0,
+            "ump_run_impact": 38.3739,
+            "park_hr_index": 50.0
+          },
+          "hit_probability": 0.6781,
+          "raw_hit_probability": 0.6581,
+          "lift": -0.0279,
+          "reliability": "D",
+          "sample_n": 22,
+          "projection": {
+            "stat": "first_inning_run",
+            "value": 45.5
           }
         }
       ]

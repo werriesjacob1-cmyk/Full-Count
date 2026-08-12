@@ -25,9 +25,9 @@
       "date": "2026-08-11",
       "evaluations": [
         {
-          "prop": "Over 4.5 Strikeouts",
+          "prop": "Over 5.5 Strikeouts",
           "type": "pitcher",
-          "score": 76.0,
+          "score": 64.0,
           "notable_signals": 2,
           "matchup": "New York Mets @ Atlanta Braves",
           "game_pk": 824886,
@@ -43,64 +43,41 @@
             "ump_k_pct": 0.288,
             "ump_bb_pct": 0.204
           },
-          "hit_probability": 0.6331,
-          "raw_hit_probability": 0.7,
-          "lift": 0.0957,
+          "hit_probability": 0.6378,
+          "raw_hit_probability": 0.7175,
+          "lift": 0.2609,
           "reliability": "D",
           "sample_n": 23,
           "projection": {
             "stat": "strikeouts",
-            "value": 4.5,
-            "needs": 5
+            "value": 5.5,
+            "needs": 6
           }
         },
         {
-          "prop": "Over 17.5 Outs Recorded",
+          "prop": "Atlanta Braves scoreless in the 1st",
           "type": "pitcher",
-          "score": 78.1,
-          "notable_signals": 1,
+          "score": 69.6,
+          "notable_signals": 0,
           "matchup": "New York Mets @ Atlanta Braves",
           "game_pk": 824886,
           "team": "New York Mets",
           "side": "away",
-          "lean": null,
+          "lean": "NRFI",
           "signals": {
-            "outs_rate": 0.5724,
-            "avg_outs_per_start": 17.04
+            "yrfi_rate": 30.4,
+            "fi_n_starts": 23.0,
+            "ump_run_impact": 14.0867,
+            "park_hr_index": 50.0
           },
-          "hit_probability": 0.535,
-          "raw_hit_probability": 0.5724,
-          "lift": 0.1015,
+          "hit_probability": 0.6884,
+          "raw_hit_probability": 0.7029,
+          "lift": -0.0176,
           "reliability": "D",
           "sample_n": 23,
           "projection": {
-            "stat": "pitcher_outs",
-            "value": 17.5,
-            "needs": 18
-          }
-        },
-        {
-          "prop": "Over 9.5 Combined Strikeouts",
-          "type": "pitcher_combo",
-          "score": 55,
-          "notable_signals": 1,
-          "matchup": "New York Mets @ Atlanta Braves",
-          "game_pk": 824886,
-          "team": null,
-          "side": null,
-          "lean": null,
-          "signals": {
-            "combined_k_edge": 0.0643
-          },
-          "hit_probability": 0.5915,
-          "raw_hit_probability": 0.637,
-          "lift": 0.0189,
-          "reliability": "D",
-          "sample_n": 0,
-          "projection": {
-            "stat": "combined_strikeouts",
-            "value": 9.5,
-            "needs": 10
+            "stat": "first_inning_run",
+            "value": 30.4
           }
         }
       ]

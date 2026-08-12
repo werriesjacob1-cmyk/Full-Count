@@ -13,6 +13,66 @@
           "matchup": "Toronto Blue Jays @ Houston Astros"
         }
       ]
+    },
+    {
+      "date": "2026-08-10",
+      "evaluations": [
+        {
+          "prop": "Over 3.5 Strikeouts",
+          "type": "pitcher",
+          "score": 38.8,
+          "notable_signals": 0,
+          "matchup": "Houston Astros @ San Francisco Giants",
+          "game_pk": 823189,
+          "team": "Houston Astros",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "same_hand_ratio": 33.3333,
+            "l14_k_pct": 10.0,
+            "env_neutral": 50.0,
+            "ump_accuracy": 58.5023,
+            "ump_k_pct": 0.66,
+            "ump_bb_pct": -0.624
+          },
+          "hit_probability": 0.5968,
+          "raw_hit_probability": 0.568,
+          "lift": -0.1151,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 3.5,
+            "needs": 4
+          }
+        },
+        {
+          "prop": "San Francisco Giants scoreless in the 1st",
+          "type": "pitcher",
+          "score": 5.0,
+          "notable_signals": 0,
+          "matchup": "Houston Astros @ San Francisco Giants",
+          "game_pk": 823189,
+          "team": "Houston Astros",
+          "side": "away",
+          "lean": "NRFI",
+          "signals": {
+            "yrfi_rate": 50.0,
+            "fi_n_starts": 2.0,
+            "ump_run_impact": 28.7126,
+            "park_hr_index": 25.6
+          },
+          "hit_probability": 0.6874,
+          "raw_hit_probability": 0.6984,
+          "lift": -0.0186,
+          "reliability": "D",
+          "sample_n": 2,
+          "projection": {
+            "stat": "first_inning_run",
+            "value": 50.0
+          }
+        }
+      ]
     }
   ]
 }

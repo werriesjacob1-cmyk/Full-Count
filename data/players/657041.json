@@ -46,8 +46,8 @@
         {
           "prop": "Over 0.5 Hits+Runs+RBIs",
           "type": "batter",
-          "score": 64.9,
-          "notable_signals": 2,
+          "score": 57.8,
+          "notable_signals": 1,
           "matchup": "Atlanta Braves @ New York Yankees",
           "game_pk": 823515,
           "team": "Atlanta Braves",
@@ -58,8 +58,8 @@
             "sp_era_weak": 17.7143,
             "l7_avg_ev": 67.375,
             "l7_barrel_pct": 100.0,
-            "park_hr_index": 83.6,
-            "season_barrel_pct": 23.3333,
+            "park_hr_index": 51.4,
+            "season_barrel_pct": 24.6667,
             "lineup_slot": 37.5,
             "bullpen_fatigue": 64.1026,
             "bvp_ops": -3.684,
@@ -79,9 +79,9 @@
             "ump_k_pct": -0.024,
             "ump_bb_pct": 0.312
           },
-          "hit_probability": 0.5461,
-          "raw_hit_probability": 0.5849,
-          "lift": -0.1253,
+          "hit_probability": 0.5465,
+          "raw_hit_probability": 0.5854,
+          "lift": -0.128,
           "reliability": "A",
           "sample_n": 97,
           "projection": {
@@ -93,7 +93,7 @@
         {
           "prop": "To Steal a Base",
           "type": "batter",
-          "score": 61.8,
+          "score": 62.2,
           "notable_signals": 0,
           "matchup": "Atlanta Braves @ New York Yankees",
           "game_pk": 823515,
@@ -104,39 +104,15 @@
             "opp_team_cs_pct": 2.04,
             "sprint_speed": 56.25,
             "catcher_poptime": 77.1429,
-            "on_base": 54.8944
+            "on_base": 56.8138
           },
-          "hit_probability": 0.1618,
-          "raw_hit_probability": 0.0706,
+          "hit_probability": 0.1615,
+          "raw_hit_probability": 0.0699,
           "lift": null,
           "reliability": "A",
           "sample_n": 97,
           "projection": {
             "stat": "stolen_base",
-            "value": 1,
-            "needs": 1
-          }
-        },
-        {
-          "prop": "To Hit a Laser (105+ MPH)",
-          "type": "batter",
-          "score": 14.1,
-          "notable_signals": 0,
-          "matchup": "Atlanta Braves @ New York Yankees",
-          "game_pk": 823515,
-          "team": "Atlanta Braves",
-          "side": null,
-          "lean": null,
-          "signals": {
-            "hard_hit_rate": 0.1931
-          },
-          "hit_probability": 0.2299,
-          "raw_hit_probability": 0.1931,
-          "lift": 0.0021,
-          "reliability": "A",
-          "sample_n": 97,
-          "projection": {
-            "stat": "hard_hit_105",
             "value": 1,
             "needs": 1
           }

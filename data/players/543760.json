@@ -65,8 +65,8 @@
         {
           "prop": "Over 0.5 Hits+Runs+RBIs",
           "type": "batter",
-          "score": 43.9,
-          "notable_signals": 2,
+          "score": 47.8,
+          "notable_signals": 3,
           "matchup": "New York Mets @ Pittsburgh Pirates",
           "game_pk": 823349,
           "team": "New York Mets",
@@ -78,8 +78,8 @@
             "l7_avg_ev": 6.9853,
             "l7_barrel_pct": 70.0,
             "bat_speed_trend": 8.55,
-            "park_hr_index": 40.9,
-            "season_barrel_pct": 27.3333,
+            "park_hr_index": 37.6,
+            "season_barrel_pct": 29.3333,
             "lineup_slot": 37.5,
             "bullpen_fatigue": 55.5556,
             "platoon_barrel_pct": 0.8,
@@ -98,9 +98,9 @@
             "ump_k_pct": 0.624,
             "ump_bb_pct": -0.384
           },
-          "hit_probability": 0.5535,
-          "raw_hit_probability": 0.5934,
-          "lift": -0.1179,
+          "hit_probability": 0.5536,
+          "raw_hit_probability": 0.5935,
+          "lift": -0.1184,
           "reliability": "A",
           "sample_n": 97,
           "projection": {
@@ -112,7 +112,7 @@
         {
           "prop": "To Steal a Base",
           "type": "batter",
-          "score": 37.1,
+          "score": 34.3,
           "notable_signals": 0,
           "matchup": "New York Mets @ Pittsburgh Pirates",
           "game_pk": 823349,
@@ -121,9 +121,9 @@
           "lean": null,
           "signals": {
             "opp_team_cs_pct": 0.6,
-            "sprint_speed": 28.125,
+            "sprint_speed": 25.0,
             "catcher_poptime": 68.5714,
-            "on_base": 17.4664
+            "on_base": 11.7083
           },
           "hit_probability": 0.1671,
           "raw_hit_probability": 0.0815,
@@ -135,27 +135,238 @@
             "value": 1,
             "needs": 1
           }
-        },
+        }
+      ]
+    },
+    {
+      "date": "2026-08-08",
+      "evaluations": [
         {
-          "prop": "To Hit a Laser (105+ MPH)",
+          "prop": "Over 0.5 Hits+Runs+RBIs",
           "type": "batter",
-          "score": 0,
-          "notable_signals": 0,
+          "score": 59.1,
+          "notable_signals": 3,
           "matchup": "New York Mets @ Pittsburgh Pirates",
-          "game_pk": 823349,
+          "game_pk": 823348,
           "team": "New York Mets",
           "side": null,
           "lean": null,
           "signals": {
-            "hard_hit_rate": 0.1111
+            "platoon": 35.0,
+            "sp_era_weak": 56.8571,
+            "l7_avg_ev": 30.5357,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 3.0,
+            "park_hr_index": 30.5,
+            "season_barrel_pct": 29.3333,
+            "lineup_slot": 25.0,
+            "bullpen_fatigue": 52.0833,
+            "platoon_barrel_pct": 1.04,
+            "platoon_xwoba": -1.2,
+            "park_hand_index": -3.26,
+            "opp_catcher_framing": -0.12,
+            "days_rest": 0.0,
+            "pull_park_synergy": -2.1108,
+            "hard_hit_105_rate": -2.62,
+            "team_total_move": 6.0,
+            "team_total_open": 0.0,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": 0.432,
+            "vs_rp_ops": -0.588,
+            "ump_k_pct": 0.312,
+            "ump_bb_pct": 0.012
           },
-          "hit_probability": 0.1823,
-          "raw_hit_probability": 0.1111,
-          "lift": -0.0455,
+          "hit_probability": 0.5571,
+          "raw_hit_probability": 0.5974,
+          "lift": -0.1174,
           "reliability": "A",
-          "sample_n": 97,
+          "sample_n": 98,
           "projection": {
-            "stat": "hard_hit_105",
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 43.1,
+          "notable_signals": 0,
+          "matchup": "New York Mets @ Pittsburgh Pirates",
+          "game_pk": 823348,
+          "team": "New York Mets",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "opp_team_cs_pct": 1.2,
+            "sprint_speed": 25.0,
+            "catcher_poptime": 100.0,
+            "on_base": 11.7083
+          },
+          "hit_probability": 0.1662,
+          "raw_hit_probability": 0.0797,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 98,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-08-09",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 55.3,
+          "notable_signals": 2,
+          "matchup": "New York Mets @ Pittsburgh Pirates",
+          "game_pk": 823345,
+          "team": "New York Mets",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 37.4286,
+            "l7_avg_ev": 57.7632,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 5.4,
+            "park_hr_index": 38.4,
+            "season_barrel_pct": 29.3333,
+            "lineup_slot": 25.0,
+            "bullpen_fatigue": 55.5556,
+            "platoon_barrel_pct": 0.96,
+            "platoon_xwoba": -1.32,
+            "park_hand_index": -3.31,
+            "opp_catcher_framing": 0.48,
+            "days_rest": 0.0,
+            "pull_park_synergy": -2.1432,
+            "hard_hit_105_rate": -2.6425,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": -2.0,
+            "series_game": 2.0,
+            "sp_rp_ops_gap": 0.448,
+            "vs_rp_ops": -0.636,
+            "ump_k_pct": 0.252,
+            "ump_bb_pct": -0.564
+          },
+          "hit_probability": 0.5516,
+          "raw_hit_probability": 0.5912,
+          "lift": -0.1161,
+          "reliability": "A",
+          "sample_n": 99,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 43.1,
+          "notable_signals": 0,
+          "matchup": "New York Mets @ Pittsburgh Pirates",
+          "game_pk": 823345,
+          "team": "New York Mets",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "opp_team_cs_pct": 0.72,
+            "sprint_speed": 25.0,
+            "catcher_poptime": 100.0,
+            "on_base": 11.7083
+          },
+          "hit_probability": 0.1658,
+          "raw_hit_probability": 0.0788,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 99,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-08-10",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 60.2,
+          "notable_signals": 2,
+          "matchup": "New York Mets @ Atlanta Braves",
+          "game_pk": 824887,
+          "team": "New York Mets",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 38.2857,
+            "l7_avg_ev": 49.1667,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 29.3333,
+            "lineup_slot": 37.5,
+            "bullpen_fatigue": 64.1026,
+            "platoon_barrel_pct": 0.88,
+            "platoon_xwoba": -1.38,
+            "park_hand_index": -1.19,
+            "opp_catcher_framing": 1.68,
+            "days_rest": 0.0,
+            "pull_park_synergy": -0.7789,
+            "hard_hit_105_rate": -2.665,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": 0.376,
+            "vs_rp_ops": -0.696,
+            "ump_k_pct": -1.272,
+            "ump_bb_pct": -0.336
+          },
+          "hit_probability": 0.555,
+          "raw_hit_probability": 0.595,
+          "lift": -0.115,
+          "reliability": "A",
+          "sample_n": 100,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 29.1,
+          "notable_signals": 0,
+          "matchup": "New York Mets @ Atlanta Braves",
+          "game_pk": 824887,
+          "team": "New York Mets",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "opp_team_cs_pct": 5.58,
+            "sprint_speed": 25.0,
+            "on_base": 11.7083
+          },
+          "hit_probability": 0.1658,
+          "raw_hit_probability": 0.0787,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 100,
+          "projection": {
+            "stat": "stolen_base",
             "value": 1,
             "needs": 1
           }
@@ -168,8 +379,8 @@
         {
           "prop": "Over 0.5 Hits+Runs+RBIs",
           "type": "batter",
-          "score": 47.3,
-          "notable_signals": 3,
+          "score": 58.3,
+          "notable_signals": 2,
           "matchup": "New York Mets @ Atlanta Braves",
           "game_pk": 824886,
           "team": "New York Mets",
@@ -177,13 +388,12 @@
           "lean": null,
           "signals": {
             "platoon": 80.0,
-            "sp_era_weak": 18.2857,
-            "pitch_exploit": 5.7143,
+            "sp_era_weak": 21.1429,
             "l7_avg_ev": 43.0,
             "l7_barrel_pct": 100.0,
             "bat_speed_trend": 6.15,
             "park_hr_index": 50.0,
-            "season_barrel_pct": 27.3333,
+            "season_barrel_pct": 29.3333,
             "lineup_slot": 37.5,
             "bullpen_fatigue": 64.1026,
             "bvp_ops": -0.078,
@@ -194,6 +404,8 @@
             "days_rest": 0.0,
             "pull_park_synergy": -0.8391,
             "hard_hit_105_rate": -2.6875,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
             "getaway_day": 0.0,
             "series_game": 1.0,
             "sp_rp_ops_gap": 0.312,
@@ -203,7 +415,7 @@
           },
           "hit_probability": 0.5582,
           "raw_hit_probability": 0.5987,
-          "lift": -0.1137,
+          "lift": -0.1141,
           "reliability": "A",
           "sample_n": 101,
           "projection": {
@@ -215,7 +427,7 @@
         {
           "prop": "To Steal a Base",
           "type": "batter",
-          "score": 31.5,
+          "score": 40.7,
           "notable_signals": 0,
           "matchup": "New York Mets @ Atlanta Braves",
           "game_pk": 824886,
@@ -224,9 +436,9 @@
           "lean": null,
           "signals": {
             "opp_team_cs_pct": 5.58,
-            "sprint_speed": 28.125,
+            "sprint_speed": 25.0,
             "catcher_poptime": 91.4286,
-            "on_base": 17.4664
+            "on_base": 11.7083
           },
           "hit_probability": 0.1656,
           "raw_hit_probability": 0.0784,
@@ -235,30 +447,6 @@
           "sample_n": 101,
           "projection": {
             "stat": "stolen_base",
-            "value": 1,
-            "needs": 1
-          }
-        },
-        {
-          "prop": "To Hit a Laser (105+ MPH)",
-          "type": "batter",
-          "score": 0.1,
-          "notable_signals": 0,
-          "matchup": "New York Mets @ Atlanta Braves",
-          "game_pk": 824886,
-          "team": "New York Mets",
-          "side": null,
-          "lean": null,
-          "signals": {
-            "hard_hit_rate": 0.1075
-          },
-          "hit_probability": 0.1804,
-          "raw_hit_probability": 0.1075,
-          "lift": -0.0469,
-          "reliability": "A",
-          "sample_n": 101,
-          "projection": {
-            "stat": "hard_hit_105",
             "value": 1,
             "needs": 1
           }

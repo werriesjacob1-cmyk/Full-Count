@@ -44,7 +44,7 @@
         {
           "prop": "Over 0.5 Hits",
           "type": "batter",
-          "score": 64.3,
+          "score": 65.8,
           "notable_signals": 2,
           "matchup": "Athletics @ Boston Red Sox",
           "game_pk": 824727,
@@ -57,7 +57,7 @@
             "l7_avg_ev": 69.4643,
             "l7_barrel_pct": 100.0,
             "park_hr_index": 59.7,
-            "season_barrel_pct": 40.0,
+            "season_barrel_pct": 40.6667,
             "lineup_slot": 37.5,
             "bullpen_fatigue": 66.6667,
             "platoon_barrel_pct": -1.28,
@@ -76,9 +76,9 @@
             "ump_k_pct": -0.324,
             "ump_bb_pct": -0.144
           },
-          "hit_probability": 0.6063,
-          "raw_hit_probability": 0.6154,
-          "lift": 0.0553,
+          "hit_probability": 0.6123,
+          "raw_hit_probability": 0.628,
+          "lift": 0.0613,
           "reliability": "B",
           "sample_n": 71,
           "projection": {
@@ -86,28 +86,155 @@
             "value": 0.5,
             "needs": 1
           }
-        },
+        }
+      ]
+    },
+    {
+      "date": "2026-08-08",
+      "evaluations": [
         {
-          "prop": "To Hit a Laser (105+ MPH)",
+          "prop": "Over 0.5 Hits",
           "type": "batter",
-          "score": 0,
-          "notable_signals": 0,
+          "score": 66.3,
+          "notable_signals": 3,
           "matchup": "Athletics @ Boston Red Sox",
-          "game_pk": 824727,
+          "game_pk": 824726,
           "team": "Boston Red Sox",
           "side": null,
           "lean": null,
           "signals": {
-            "hard_hit_rate": 0.1123
+            "platoon": 80.0,
+            "sp_era_weak": 59.7143,
+            "l7_avg_ev": 29.0476,
+            "l7_barrel_pct": 87.8571,
+            "park_hr_index": 87.0,
+            "season_barrel_pct": 40.6667,
+            "lineup_slot": 50.0,
+            "bullpen_fatigue": 66.6667,
+            "platoon_barrel_pct": 5.0,
+            "platoon_xwoba": 2.82,
+            "park_hand_index": -2.09,
+            "opp_catcher_framing": -0.96,
+            "days_rest": 0.0,
+            "pull_park_synergy": -0.5486,
+            "hard_hit_105_rate": -2.5975,
+            "team_total_move": 0.0,
+            "team_total_open": 4.0,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": -2.472,
+            "vs_rp_ops": -0.924,
+            "ump_k_pct": 0.456,
+            "ump_bb_pct": 0.144
           },
-          "hit_probability": 0.1829,
-          "raw_hit_probability": 0.1123,
-          "lift": -0.0449,
+          "hit_probability": 0.6171,
+          "raw_hit_probability": 0.6383,
+          "lift": 0.0661,
           "reliability": "B",
-          "sample_n": 71,
+          "sample_n": 72,
           "projection": {
-            "stat": "hard_hit_105",
-            "value": 1,
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-08-09",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 49.6,
+          "notable_signals": 3,
+          "matchup": "Athletics @ Boston Red Sox",
+          "game_pk": 824724,
+          "team": "Boston Red Sox",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 27.4286,
+            "l7_avg_ev": 16.1875,
+            "l7_barrel_pct": 57.1429,
+            "park_hr_index": 89.8,
+            "season_barrel_pct": 40.6667,
+            "lineup_slot": 50.0,
+            "bullpen_fatigue": 66.6667,
+            "platoon_barrel_pct": -1.44,
+            "platoon_xwoba": -1.68,
+            "park_hand_index": -2.11,
+            "opp_catcher_framing": 0.12,
+            "days_rest": 0.0,
+            "pull_park_synergy": -0.5169,
+            "hard_hit_105_rate": -2.6275,
+            "team_total_move": 0.0,
+            "team_total_open": 4.0,
+            "getaway_day": -2.0,
+            "series_game": 2.0,
+            "sp_rp_ops_gap": -2.512,
+            "vs_rp_ops": -0.912,
+            "ump_k_pct": -0.192,
+            "ump_bb_pct": 0.372
+          },
+          "hit_probability": 0.6178,
+          "raw_hit_probability": 0.6397,
+          "lift": 0.0666,
+          "reliability": "B",
+          "sample_n": 73,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-08-10",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 43.2,
+          "notable_signals": 1,
+          "matchup": "Boston Red Sox @ Toronto Blue Jays",
+          "game_pk": 822780,
+          "team": "Boston Red Sox",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 97.7143,
+            "l7_avg_ev": 13.0357,
+            "l7_barrel_pct": 53.5714,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 40.6667,
+            "lineup_slot": 12.5,
+            "bullpen_fatigue": 66.6667,
+            "platoon_barrel_pct": -1.52,
+            "platoon_xwoba": -1.86,
+            "park_hand_index": -0.59,
+            "opp_catcher_framing": -0.84,
+            "days_rest": 0.0,
+            "pull_park_synergy": -0.1404,
+            "hard_hit_105_rate": -2.4,
+            "team_total_move": 0.0,
+            "team_total_open": 0.0,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": -2.352,
+            "vs_rp_ops": -0.972
+          },
+          "hit_probability": 0.6076,
+          "raw_hit_probability": 0.618,
+          "lift": 0.0563,
+          "reliability": "B",
+          "sample_n": 74,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
             "needs": 1
           }
         }
@@ -119,7 +246,7 @@
         {
           "prop": "Over 0.5 Hits+Runs+RBIs",
           "type": "batter",
-          "score": 23.9,
+          "score": 36.6,
           "notable_signals": 3,
           "matchup": "Boston Red Sox @ Toronto Blue Jays",
           "game_pk": 822778,
@@ -132,7 +259,7 @@
             "l7_avg_ev": 13.0357,
             "l7_barrel_pct": 53.5714,
             "park_hr_index": 50.0,
-            "season_barrel_pct": 40.0,
+            "season_barrel_pct": 40.6667,
             "lineup_slot": 0.0,
             "bullpen_fatigue": 66.6667,
             "platoon_barrel_pct": -1.52,
@@ -142,6 +269,8 @@
             "days_rest": 0.0,
             "pull_park_synergy": -0.138,
             "hard_hit_105_rate": -2.43,
+            "team_total_move": -6.0,
+            "team_total_open": -6.0,
             "getaway_day": 0.0,
             "series_game": 1.0,
             "sp_rp_ops_gap": -2.392,
@@ -149,38 +278,14 @@
             "ump_k_pct": -0.204,
             "ump_bb_pct": -0.276
           },
-          "hit_probability": 0.5908,
-          "raw_hit_probability": 0.6362,
-          "lift": -0.0811,
+          "hit_probability": 0.5909,
+          "raw_hit_probability": 0.6363,
+          "lift": -0.0814,
           "reliability": "B",
           "sample_n": 75,
           "projection": {
             "stat": "hits_runs_rbis",
             "value": 0.5,
-            "needs": 1
-          }
-        },
-        {
-          "prop": "To Hit a Laser (105+ MPH)",
-          "type": "batter",
-          "score": 0.1,
-          "notable_signals": 0,
-          "matchup": "Boston Red Sox @ Toronto Blue Jays",
-          "game_pk": 822778,
-          "team": "Boston Red Sox",
-          "side": null,
-          "lean": null,
-          "signals": {
-            "hard_hit_rate": 0.1178
-          },
-          "hit_probability": 0.1859,
-          "raw_hit_probability": 0.1178,
-          "lift": -0.0414,
-          "reliability": "B",
-          "sample_n": 75,
-          "projection": {
-            "stat": "hard_hit_105",
-            "value": 1,
             "needs": 1
           }
         }

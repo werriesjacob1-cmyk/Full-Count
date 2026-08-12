@@ -44,7 +44,7 @@
         {
           "prop": "Over 0.5 Hits",
           "type": "batter",
-          "score": 81.3,
+          "score": 82.7,
           "notable_signals": 2,
           "matchup": "Los Angeles Angels @ Miami Marlins",
           "game_pk": 823836,
@@ -54,12 +54,12 @@
           "signals": {
             "platoon": 80.0,
             "sp_era_weak": 100.0,
-            "pitch_exploit": 3.4286,
+            "pitch_exploit": 6.2857,
             "l7_avg_ev": 100.0,
             "l7_barrel_pct": 100.0,
             "bat_speed_trend": 12.6,
             "park_hr_index": 50.0,
-            "season_barrel_pct": 84.6667,
+            "season_barrel_pct": 92.6667,
             "lineup_slot": 75.0,
             "bullpen_fatigue": 55.5556,
             "platoon_barrel_pct": 5.0,
@@ -78,9 +78,9 @@
             "ump_k_pct": 0.132,
             "ump_bb_pct": 0.684
           },
-          "hit_probability": 0.6044,
-          "raw_hit_probability": 0.6114,
-          "lift": 0.0534,
+          "hit_probability": 0.601,
+          "raw_hit_probability": 0.6041,
+          "lift": 0.05,
           "reliability": "B",
           "sample_n": 48,
           "projection": {
@@ -88,28 +88,109 @@
             "value": 0.5,
             "needs": 1
           }
-        },
+        }
+      ]
+    },
+    {
+      "date": "2026-08-08",
+      "evaluations": [
         {
-          "prop": "To Hit a Laser (105+ MPH)",
+          "prop": "Over 0.5 Hits+Runs+RBIs",
           "type": "batter",
-          "score": 38.2,
-          "notable_signals": 1,
+          "score": 69.1,
+          "notable_signals": 2,
           "matchup": "Los Angeles Angels @ Miami Marlins",
-          "game_pk": 823836,
+          "game_pk": 823834,
           "team": "Miami Marlins",
           "side": null,
           "lean": null,
           "signals": {
-            "hard_hit_rate": 0.2895
+            "platoon": 80.0,
+            "sp_era_weak": 1.1429,
+            "pitch_exploit": 6.2857,
+            "l7_avg_ev": 100.0,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 5.1,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 92.6667,
+            "lineup_slot": 50.0,
+            "bullpen_fatigue": 52.0833,
+            "platoon_barrel_pct": 5.0,
+            "platoon_xwoba": 3.6,
+            "park_hand_index": -1.51,
+            "opp_catcher_framing": -1.32,
+            "days_rest": 0.0,
+            "pull_park_synergy": -1.0359,
+            "hard_hit_105_rate": 1.7625,
+            "team_total_move": -6.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": 0.328,
+            "vs_rp_ops": 1.728,
+            "ump_k_pct": 0.036,
+            "ump_bb_pct": 0.66
           },
-          "hit_probability": 0.2961,
-          "raw_hit_probability": 0.2895,
-          "lift": 0.0683,
+          "hit_probability": 0.5727,
+          "raw_hit_probability": 0.6153,
+          "lift": -0.1,
           "reliability": "B",
-          "sample_n": 48,
+          "sample_n": 49,
           "projection": {
-            "stat": "hard_hit_105",
-            "value": 1,
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-08-09",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 86.0,
+          "notable_signals": 2,
+          "matchup": "Los Angeles Angels @ Miami Marlins",
+          "game_pk": 823835,
+          "team": "Miami Marlins",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 100.0,
+            "pitch_exploit": 6.2857,
+            "l7_avg_ev": 93.9583,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 92.6667,
+            "lineup_slot": 62.5,
+            "bullpen_fatigue": 55.5556,
+            "platoon_barrel_pct": 5.0,
+            "platoon_xwoba": 3.42,
+            "park_hand_index": -1.66,
+            "opp_catcher_framing": 0.72,
+            "days_rest": 0.0,
+            "pull_park_synergy": -1.0923,
+            "hard_hit_105_rate": 2.005,
+            "team_total_move": 0.0,
+            "team_total_open": 0.0,
+            "getaway_day": -2.0,
+            "series_game": 2.0,
+            "sp_rp_ops_gap": 0.136,
+            "vs_rp_ops": 1.608,
+            "ump_k_pct": 0.132,
+            "ump_bb_pct": 0.156
+          },
+          "hit_probability": 0.6,
+          "raw_hit_probability": 0.602,
+          "lift": 0.0488,
+          "reliability": "B",
+          "sample_n": 50,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
             "needs": 1
           }
         }
@@ -121,8 +202,8 @@
         {
           "prop": "Over 0.5 Hits",
           "type": "batter",
-          "score": 59.3,
-          "notable_signals": 3,
+          "score": 76.1,
+          "notable_signals": 4,
           "matchup": "Pittsburgh Pirates @ Miami Marlins",
           "game_pk": 823832,
           "team": "Miami Marlins",
@@ -130,12 +211,12 @@
           "lean": null,
           "signals": {
             "platoon": 80.0,
-            "sp_era_weak": 41.7143,
-            "pitch_exploit": 1.1429,
+            "sp_era_weak": 40.0,
+            "pitch_exploit": 3.4286,
             "l7_avg_ev": 100.0,
             "l7_barrel_pct": 100.0,
             "park_hr_index": 50.0,
-            "season_barrel_pct": 84.6667,
+            "season_barrel_pct": 92.6667,
             "lineup_slot": 75.0,
             "bullpen_fatigue": 76.9231,
             "platoon_barrel_pct": 5.0,
@@ -145,6 +226,8 @@
             "days_rest": 2.0,
             "pull_park_synergy": -1.0496,
             "hard_hit_105_rate": 2.2425,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
             "getaway_day": 0.0,
             "series_game": 0.0,
             "sp_rp_ops_gap": 1.016,
@@ -152,38 +235,14 @@
             "ump_k_pct": 0.216,
             "ump_bb_pct": 0.204
           },
-          "hit_probability": 0.6057,
-          "raw_hit_probability": 0.614,
-          "lift": 0.0544,
+          "hit_probability": 0.6033,
+          "raw_hit_probability": 0.609,
+          "lift": 0.0521,
           "reliability": "B",
           "sample_n": 51,
           "projection": {
             "stat": "hits",
             "value": 0.5,
-            "needs": 1
-          }
-        },
-        {
-          "prop": "To Hit a Laser (105+ MPH)",
-          "type": "batter",
-          "score": 42.4,
-          "notable_signals": 1,
-          "matchup": "Pittsburgh Pirates @ Miami Marlins",
-          "game_pk": 823832,
-          "team": "Miami Marlins",
-          "side": null,
-          "lean": null,
-          "signals": {
-            "hard_hit_rate": 0.3047
-          },
-          "hit_probability": 0.3075,
-          "raw_hit_probability": 0.3047,
-          "lift": 0.0802,
-          "reliability": "B",
-          "sample_n": 51,
-          "projection": {
-            "stat": "hard_hit_105",
-            "value": 1,
             "needs": 1
           }
         }

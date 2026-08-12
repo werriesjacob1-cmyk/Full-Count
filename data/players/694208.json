@@ -1,6 +1,6 @@
 {
   "player_id": 694208,
-  "name": "Mois\u00e9s Ballesteros",
+  "name": "Moises Ballesteros",
   "snapshots": [
     {
       "date": "2026-08-04",
@@ -44,7 +44,7 @@
         {
           "prop": "Over 0.5 Hits+Runs+RBIs",
           "type": "batter",
-          "score": 52.8,
+          "score": 52.9,
           "notable_signals": 0,
           "matchup": "Los Angeles Angels @ Miami Marlins",
           "game_pk": 823836,
@@ -57,7 +57,7 @@
             "l7_avg_ev": 43.75,
             "l7_barrel_pct": 100.0,
             "park_hr_index": 50.0,
-            "season_barrel_pct": 36.0,
+            "season_barrel_pct": 40.0,
             "lineup_slot": 37.5,
             "bullpen_fatigue": 59.5238,
             "platoon_barrel_pct": 2.88,
@@ -74,9 +74,9 @@
             "ump_k_pct": 0.132,
             "ump_bb_pct": 0.684
           },
-          "hit_probability": 0.5403,
-          "raw_hit_probability": 0.5784,
-          "lift": -0.1311,
+          "hit_probability": 0.5402,
+          "raw_hit_probability": 0.5783,
+          "lift": -0.1309,
           "reliability": "B",
           "sample_n": 62,
           "projection": {
@@ -84,28 +84,151 @@
             "value": 0.5,
             "needs": 1
           }
-        },
+        }
+      ]
+    },
+    {
+      "date": "2026-08-08",
+      "evaluations": [
         {
-          "prop": "To Hit a Laser (105+ MPH)",
+          "prop": "Over 0.5 Hits+Runs+RBIs",
           "type": "batter",
-          "score": 15.7,
-          "notable_signals": 0,
+          "score": 57.6,
+          "notable_signals": 1,
           "matchup": "Los Angeles Angels @ Miami Marlins",
-          "game_pk": 823836,
+          "game_pk": 823834,
           "team": "Los Angeles Angels",
           "side": null,
           "lean": null,
           "signals": {
-            "hard_hit_rate": 0.1995
+            "platoon": 80.0,
+            "sp_era_weak": 33.7143,
+            "l7_avg_ev": 86.5909,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 40.0,
+            "lineup_slot": 37.5,
+            "bullpen_fatigue": 44.4444,
+            "platoon_barrel_pct": 3.36,
+            "platoon_xwoba": 0.06,
+            "park_hand_index": -1.51,
+            "opp_catcher_framing": 0.84,
+            "days_rest": 0.0,
+            "pull_park_synergy": -0.5655,
+            "hard_hit_105_rate": -0.1625,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "ump_k_pct": 0.036,
+            "ump_bb_pct": 0.66
           },
-          "hit_probability": 0.2339,
-          "raw_hit_probability": 0.1995,
-          "lift": 0.0061,
+          "hit_probability": 0.5451,
+          "raw_hit_probability": 0.5838,
+          "lift": -0.1276,
           "reliability": "B",
-          "sample_n": 62,
+          "sample_n": 63,
           "projection": {
-            "stat": "hard_hit_105",
-            "value": 1,
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-08-09",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 62.1,
+          "notable_signals": 0,
+          "matchup": "Los Angeles Angels @ Miami Marlins",
+          "game_pk": 823835,
+          "team": "Los Angeles Angels",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 80.2857,
+            "l7_avg_ev": 100.0,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 40.0,
+            "lineup_slot": 50.0,
+            "bullpen_fatigue": 47.619,
+            "platoon_barrel_pct": 3.84,
+            "platoon_xwoba": 0.06,
+            "park_hand_index": -1.66,
+            "opp_catcher_framing": 0.96,
+            "days_rest": 0.0,
+            "pull_park_synergy": -0.581,
+            "hard_hit_105_rate": -0.2225,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": -2.0,
+            "series_game": 2.0,
+            "ump_k_pct": 0.132,
+            "ump_bb_pct": 0.156
+          },
+          "hit_probability": 0.5378,
+          "raw_hit_probability": 0.5756,
+          "lift": -0.1299,
+          "reliability": "B",
+          "sample_n": 64,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-08-10",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 55.3,
+          "notable_signals": 0,
+          "matchup": "Texas Rangers @ Los Angeles Angels",
+          "game_pk": 823998,
+          "team": "Los Angeles Angels",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 64.8571,
+            "l7_avg_ev": 100.0,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 51.1,
+            "season_barrel_pct": 40.0,
+            "lineup_slot": 37.5,
+            "bullpen_fatigue": 64.1026,
+            "park_hand_index": -2.49,
+            "opp_catcher_framing": 0.24,
+            "days_rest": 0.0,
+            "pull_park_synergy": -0.7582,
+            "hard_hit_105_rate": -0.005,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": -1.248,
+            "vs_rp_ops": -1.536,
+            "ump_k_pct": -0.252,
+            "ump_bb_pct": 0.276
+          },
+          "hit_probability": 0.5428,
+          "raw_hit_probability": 0.5812,
+          "lift": -0.1272,
+          "reliability": "B",
+          "sample_n": 65,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
             "needs": 1
           }
         }
@@ -117,7 +240,7 @@
         {
           "prop": "Over 0.5 Hits+Runs+RBIs",
           "type": "batter",
-          "score": 34.6,
+          "score": 51.9,
           "notable_signals": 1,
           "matchup": "Texas Rangers @ Los Angeles Angels",
           "game_pk": 823997,
@@ -126,11 +249,10 @@
           "lean": null,
           "signals": {
             "platoon": 35.0,
-            "sp_era_weak": 0.0,
             "l7_avg_ev": 76.6447,
             "l7_barrel_pct": 100.0,
-            "park_hr_index": 51.1,
-            "season_barrel_pct": 36.0,
+            "park_hr_index": 51.0,
+            "season_barrel_pct": 40.0,
             "lineup_slot": 37.5,
             "bullpen_fatigue": 76.9231,
             "park_hand_index": -2.63,
@@ -138,45 +260,21 @@
             "days_rest": 0.0,
             "pull_park_synergy": -0.8008,
             "hard_hit_105_rate": -0.065,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
             "getaway_day": 0.0,
             "series_game": 1.0,
             "sp_rp_ops_gap": -1.248,
-            "vs_rp_ops": -1.536,
-            "ump_k_pct": -0.432,
-            "ump_bb_pct": -0.012
+            "vs_rp_ops": -1.536
           },
-          "hit_probability": 0.5372,
-          "raw_hit_probability": 0.5749,
-          "lift": -0.1347,
+          "hit_probability": 0.5373,
+          "raw_hit_probability": 0.575,
+          "lift": -0.135,
           "reliability": "B",
           "sample_n": 66,
           "projection": {
             "stat": "hits_runs_rbis",
             "value": 0.5,
-            "needs": 1
-          }
-        },
-        {
-          "prop": "To Hit a Laser (105+ MPH)",
-          "type": "batter",
-          "score": 19.2,
-          "notable_signals": 0,
-          "matchup": "Texas Rangers @ Los Angeles Angels",
-          "game_pk": 823997,
-          "team": "Los Angeles Angels",
-          "side": null,
-          "lean": null,
-          "signals": {
-            "hard_hit_rate": 0.2124
-          },
-          "hit_probability": 0.2422,
-          "raw_hit_probability": 0.2124,
-          "lift": 0.0149,
-          "reliability": "B",
-          "sample_n": 66,
-          "projection": {
-            "stat": "hard_hit_105",
-            "value": 1,
             "needs": 1
           }
         }

@@ -27,7 +27,7 @@
         {
           "prop": "Over 3.5 Strikeouts",
           "type": "pitcher",
-          "score": 30.4,
+          "score": 36.7,
           "notable_signals": 0,
           "matchup": "Tampa Bay Rays @ Athletics",
           "game_pk": 824970,
@@ -35,16 +35,13 @@
           "side": null,
           "lean": null,
           "signals": {
-            "same_hand_ratio": 75.0,
+            "same_hand_ratio": 43.75,
             "l14_k_pct": 0.0,
-            "env_neutral": 50.0,
-            "ump_accuracy": 54.8506,
-            "ump_k_pct": 0.024,
-            "ump_bb_pct": -0.348
+            "env_neutral": 50.0
           },
-          "hit_probability": 0.5884,
-          "raw_hit_probability": 0.5379,
-          "lift": -0.1243,
+          "hit_probability": 0.5701,
+          "raw_hit_probability": 0.4731,
+          "lift": -0.1426,
           "reliability": "D",
           "sample_n": 22,
           "projection": {
@@ -54,28 +51,28 @@
           }
         },
         {
-          "prop": "Over 17.5 Outs Recorded",
+          "prop": "Athletics scoreless in the 1st",
           "type": "pitcher",
-          "score": 65.3,
-          "notable_signals": 1,
+          "score": 83.3,
+          "notable_signals": 0,
           "matchup": "Tampa Bay Rays @ Athletics",
           "game_pk": 824970,
           "team": "Tampa Bay Rays",
           "side": "away",
-          "lean": null,
+          "lean": "NRFI",
           "signals": {
-            "outs_rate": 0.5215,
-            "avg_outs_per_start": 17.59
+            "yrfi_rate": 16.7,
+            "fi_n_starts": 24.0,
+            "park_hr_index": 50.8
           },
-          "hit_probability": 0.4898,
-          "raw_hit_probability": 0.5215,
-          "lift": 0.0563,
+          "hit_probability": 0.6982,
+          "raw_hit_probability": 0.7461,
+          "lift": -0.0078,
           "reliability": "D",
-          "sample_n": 22,
+          "sample_n": 24,
           "projection": {
-            "stat": "pitcher_outs",
-            "value": 17.5,
-            "needs": 18
+            "stat": "first_inning_run",
+            "value": 16.7
           }
         }
       ]

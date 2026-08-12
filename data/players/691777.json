@@ -27,7 +27,7 @@
         {
           "prop": "Over 0.5 Hits+Runs+RBIs",
           "type": "batter",
-          "score": 58.8,
+          "score": 59.7,
           "notable_signals": 3,
           "matchup": "Athletics @ Boston Red Sox",
           "game_pk": 824727,
@@ -37,11 +37,11 @@
           "signals": {
             "platoon": 80.0,
             "sp_era_weak": 22.8571,
-            "pitch_exploit": 1.1429,
+            "pitch_exploit": 4.0,
             "l7_avg_ev": 67.5,
             "l7_barrel_pct": 100.0,
             "park_hr_index": 59.7,
-            "season_barrel_pct": 56.6667,
+            "season_barrel_pct": 54.0,
             "lineup_slot": 12.5,
             "bullpen_fatigue": 76.9231,
             "platoon_barrel_pct": 5.0,
@@ -62,7 +62,7 @@
           },
           "hit_probability": 0.5817,
           "raw_hit_probability": 0.6257,
-          "lift": -0.0897,
+          "lift": -0.0894,
           "reliability": "B",
           "sample_n": 51,
           "projection": {
@@ -74,7 +74,7 @@
         {
           "prop": "To Steal a Base",
           "type": "batter",
-          "score": 40.4,
+          "score": 41.9,
           "notable_signals": 0,
           "matchup": "Athletics @ Boston Red Sox",
           "game_pk": 824727,
@@ -85,7 +85,7 @@
             "opp_team_cs_pct": 4.86,
             "sprint_speed": 18.75,
             "catcher_poptime": 85.7143,
-            "on_base": 31.8618
+            "on_base": 38.5797
           },
           "hit_probability": 0.1574,
           "raw_hit_probability": 0.0614,
@@ -97,72 +97,53 @@
             "value": 1,
             "needs": 1
           }
-        },
-        {
-          "prop": "To Hit a Laser (105+ MPH)",
-          "type": "batter",
-          "score": 41.0,
-          "notable_signals": 1,
-          "matchup": "Athletics @ Boston Red Sox",
-          "game_pk": 824727,
-          "team": "Athletics",
-          "side": null,
-          "lean": null,
-          "signals": {
-            "hard_hit_rate": 0.3008
-          },
-          "hit_probability": 0.3045,
-          "raw_hit_probability": 0.3008,
-          "lift": 0.0767,
-          "reliability": "B",
-          "sample_n": 51,
-          "projection": {
-            "stat": "hard_hit_105",
-            "value": 1,
-            "needs": 1
-          }
-        },
+        }
+      ]
+    },
+    {
+      "date": "2026-08-08",
+      "evaluations": [
         {
           "prop": "Over 0.5 Hits+Runs+RBIs",
           "type": "batter",
-          "score": 73.1,
+          "score": 72.8,
           "notable_signals": 2,
           "matchup": "Los Angeles Dodgers @ Arizona Diamondbacks",
-          "game_pk": 825051,
+          "game_pk": 825049,
           "team": "Los Angeles Dodgers",
           "side": null,
           "lean": null,
           "signals": {
             "platoon": 80.0,
-            "sp_era_weak": 72.5714,
-            "pitch_exploit": 1.1429,
-            "l7_avg_ev": 67.5,
-            "l7_barrel_pct": 100.0,
+            "sp_era_weak": 33.1429,
+            "pitch_exploit": 4.0,
+            "l7_avg_ev": 66.25,
+            "l7_barrel_pct": 87.8571,
             "park_hr_index": 50.0,
-            "season_barrel_pct": 56.6667,
+            "season_barrel_pct": 54.0,
             "lineup_slot": 62.5,
             "bullpen_fatigue": 64.1026,
             "platoon_barrel_pct": 3.04,
             "platoon_xwoba": -3.54,
-            "park_hand_index": -0.99,
-            "opp_catcher_framing": 0.12,
-            "days_rest": 0.0,
-            "pull_park_synergy": -0.5891,
-            "hard_hit_105_rate": 2.145,
-            "team_total_move": -6.0,
+            "park_hand_index": -1.12,
+            "opp_catcher_framing": 1.32,
+            "days_rest": -2.0,
+            "pull_park_synergy": -0.6978,
+            "hard_hit_105_rate": 2.045,
+            "team_total_move": 0.0,
             "team_total_open": 0.0,
             "getaway_day": 0.0,
-            "series_game": 0.0,
-            "sp_rp_ops_gap": 0.008,
-            "vs_rp_ops": -0.6,
-            "ump_k_pct": -0.192,
-            "ump_bb_pct": -0.06
+            "series_game": 1.0,
+            "sp_rp_ops_gap": -0.112,
+            "vs_rp_ops": -0.696,
+            "ump_k_pct": 0.816,
+            "ump_bb_pct": -0.012
           },
-          "hit_probability": 0.5817,
-          "raw_hit_probability": 0.6257,
-          "lift": -0.0897,
+          "hit_probability": 0.5795,
+          "raw_hit_probability": 0.6231,
+          "lift": -0.095,
           "reliability": "B",
-          "sample_n": 51,
+          "sample_n": 53,
           "projection": {
             "stat": "hits_runs_rbis",
             "value": 0.5,
@@ -172,50 +153,104 @@
         {
           "prop": "To Steal a Base",
           "type": "batter",
-          "score": 44.4,
+          "score": 38.7,
           "notable_signals": 0,
           "matchup": "Los Angeles Dodgers @ Arizona Diamondbacks",
-          "game_pk": 825051,
+          "game_pk": 825049,
           "team": "Los Angeles Dodgers",
           "side": null,
           "lean": null,
           "signals": {
-            "opp_team_cs_pct": 3.3,
+            "opp_team_cs_pct": 2.7,
             "sprint_speed": 18.75,
-            "catcher_poptime": 100.0,
-            "on_base": 31.8618
+            "catcher_poptime": 74.2857,
+            "on_base": 38.5797
           },
-          "hit_probability": 0.1588,
-          "raw_hit_probability": 0.0644,
+          "hit_probability": 0.1579,
+          "raw_hit_probability": 0.0625,
           "lift": null,
           "reliability": "B",
-          "sample_n": 51,
+          "sample_n": 53,
           "projection": {
             "stat": "stolen_base",
             "value": 1,
             "needs": 1
           }
-        },
+        }
+      ]
+    },
+    {
+      "date": "2026-08-09",
+      "evaluations": [
         {
-          "prop": "To Hit a Laser (105+ MPH)",
+          "prop": "Over 0.5 Hits+Runs+RBIs",
           "type": "batter",
-          "score": 41.0,
+          "score": 50.6,
           "notable_signals": 1,
-          "matchup": "Los Angeles Dodgers @ Arizona Diamondbacks",
-          "game_pk": 825051,
-          "team": "Los Angeles Dodgers",
+          "matchup": "Athletics @ Boston Red Sox",
+          "game_pk": 824724,
+          "team": "Athletics",
           "side": null,
           "lean": null,
           "signals": {
-            "hard_hit_rate": 0.3008
+            "platoon": 80.0,
+            "sp_era_weak": 7.1429,
+            "l7_avg_ev": 50.3125,
+            "l7_barrel_pct": 75.0,
+            "park_hr_index": 89.8,
+            "season_barrel_pct": 54.0,
+            "lineup_slot": 12.5,
+            "bullpen_fatigue": 59.5238,
+            "platoon_barrel_pct": 5.0,
+            "platoon_xwoba": 0.6,
+            "park_hand_index": -2.11,
+            "opp_catcher_framing": 0.48,
+            "days_rest": 0.0,
+            "pull_park_synergy": -1.2776,
+            "hard_hit_105_rate": 1.9475,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": -2.0,
+            "series_game": 2.0,
+            "sp_rp_ops_gap": -0.0,
+            "vs_rp_ops": -0.696,
+            "ump_k_pct": -0.192,
+            "ump_bb_pct": 0.372
           },
-          "hit_probability": 0.3045,
-          "raw_hit_probability": 0.3008,
-          "lift": 0.0767,
+          "hit_probability": 0.5779,
+          "raw_hit_probability": 0.6213,
+          "lift": -0.0898,
           "reliability": "B",
-          "sample_n": 51,
+          "sample_n": 53,
           "projection": {
-            "stat": "hard_hit_105",
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 41.9,
+          "notable_signals": 0,
+          "matchup": "Athletics @ Boston Red Sox",
+          "game_pk": 824724,
+          "team": "Athletics",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "opp_team_cs_pct": 5.22,
+            "sprint_speed": 18.75,
+            "catcher_poptime": 85.7143,
+            "on_base": 38.5797
+          },
+          "hit_probability": 0.1563,
+          "raw_hit_probability": 0.059,
+          "lift": null,
+          "reliability": "B",
+          "sample_n": 53,
+          "projection": {
+            "stat": "stolen_base",
             "value": 1,
             "needs": 1
           }
@@ -228,7 +263,7 @@
         {
           "prop": "Over 0.5 Hits+Runs+RBIs",
           "type": "batter",
-          "score": 48.8,
+          "score": 61.8,
           "notable_signals": 2,
           "matchup": "Kansas City Royals @ Los Angeles Dodgers",
           "game_pk": 823917,
@@ -237,12 +272,12 @@
           "lean": null,
           "signals": {
             "platoon": 80.0,
-            "sp_era_weak": 26.8571,
-            "pitch_exploit": 1.1429,
+            "sp_era_weak": 28.8571,
+            "pitch_exploit": 4.0,
             "l7_avg_ev": 46.125,
             "l7_barrel_pct": 57.1429,
-            "park_hr_index": 51.3,
-            "season_barrel_pct": 56.6667,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 54.0,
             "lineup_slot": 62.5,
             "bullpen_fatigue": 59.5238,
             "platoon_barrel_pct": 2.96,
@@ -250,14 +285,16 @@
             "opp_catcher_framing": -0.36,
             "days_rest": 2.0,
             "hard_hit_105_rate": 1.85,
+            "team_total_move": 0.0,
+            "team_total_open": 0.0,
             "getaway_day": 0.0,
             "series_game": 1.0,
             "sp_rp_ops_gap": 0.024,
             "vs_rp_ops": -0.66
           },
-          "hit_probability": 0.5833,
-          "raw_hit_probability": 0.6275,
-          "lift": -0.0886,
+          "hit_probability": 0.5835,
+          "raw_hit_probability": 0.6277,
+          "lift": -0.0888,
           "reliability": "B",
           "sample_n": 54,
           "projection": {
@@ -269,7 +306,7 @@
         {
           "prop": "To Steal a Base",
           "type": "batter",
-          "score": 32.4,
+          "score": 45.9,
           "notable_signals": 0,
           "matchup": "Kansas City Royals @ Los Angeles Dodgers",
           "game_pk": 823917,
@@ -280,7 +317,7 @@
             "opp_team_cs_pct": -4.56,
             "sprint_speed": 18.75,
             "catcher_poptime": 100.0,
-            "on_base": 31.8618
+            "on_base": 38.5797
           },
           "hit_probability": 0.1574,
           "raw_hit_probability": 0.0613,
@@ -289,30 +326,6 @@
           "sample_n": 54,
           "projection": {
             "stat": "stolen_base",
-            "value": 1,
-            "needs": 1
-          }
-        },
-        {
-          "prop": "To Hit a Laser (105+ MPH)",
-          "type": "batter",
-          "score": 38.5,
-          "notable_signals": 1,
-          "matchup": "Kansas City Royals @ Los Angeles Dodgers",
-          "game_pk": 823917,
-          "team": "Los Angeles Dodgers",
-          "side": null,
-          "lean": null,
-          "signals": {
-            "hard_hit_rate": 0.289
-          },
-          "hit_probability": 0.2957,
-          "raw_hit_probability": 0.289,
-          "lift": 0.0684,
-          "reliability": "B",
-          "sample_n": 54,
-          "projection": {
-            "stat": "hard_hit_105",
             "value": 1,
             "needs": 1
           }

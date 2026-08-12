@@ -23,15 +23,41 @@
             "ump_k_pct": 0.108,
             "ump_bb_pct": -0.252
           },
-          "hit_probability": 0.5973,
-          "raw_hit_probability": 0.5696,
-          "lift": -0.1166,
+          "hit_probability": 0.5565,
+          "raw_hit_probability": 0.4253,
+          "lift": -0.1574,
           "reliability": "D",
           "sample_n": 0,
           "projection": {
             "stat": "strikeouts",
             "value": 3.5,
             "needs": 4
+          }
+        },
+        {
+          "prop": "Washington Nationals scoreless in the 1st",
+          "type": "pitcher",
+          "score": 55,
+          "notable_signals": 0,
+          "matchup": "Cincinnati Reds @ Washington Nationals",
+          "game_pk": 822699,
+          "team": "Cincinnati Reds",
+          "side": "away",
+          "lean": "NRFI",
+          "signals": {
+            "yrfi_rate": 0.0,
+            "fi_n_starts": 2.0,
+            "ump_run_impact": 47.7389,
+            "park_hr_index": 59.7
+          },
+          "hit_probability": 0.6916,
+          "raw_hit_probability": 0.7169,
+          "lift": -0.0144,
+          "reliability": "D",
+          "sample_n": 2,
+          "projection": {
+            "stat": "first_inning_run",
+            "value": 0.0
           }
         }
       ]

@@ -23,15 +23,41 @@
             "ump_k_pct": -0.624,
             "ump_bb_pct": 0.384
           },
-          "hit_probability": 0.6148,
-          "raw_hit_probability": 0.6327,
-          "lift": -0.0991,
+          "hit_probability": 0.6039,
+          "raw_hit_probability": 0.5932,
+          "lift": -0.11,
           "reliability": "D",
           "sample_n": 6,
           "projection": {
             "stat": "strikeouts",
             "value": 3.5,
             "needs": 4
+          }
+        },
+        {
+          "prop": "Pittsburgh Pirates scoreless in the 1st",
+          "type": "pitcher",
+          "score": 71.4,
+          "notable_signals": 1,
+          "matchup": "New York Mets @ Pittsburgh Pirates",
+          "game_pk": 823349,
+          "team": "New York Mets",
+          "side": "away",
+          "lean": "NRFI",
+          "signals": {
+            "yrfi_rate": 71.4,
+            "fi_n_starts": 7.0,
+            "ump_run_impact": 28.037,
+            "park_hr_index": 37.6
+          },
+          "hit_probability": 0.6777,
+          "raw_hit_probability": 0.6562,
+          "lift": -0.0283,
+          "reliability": "D",
+          "sample_n": 7,
+          "projection": {
+            "stat": "first_inning_run",
+            "value": 71.4
           }
         }
       ]

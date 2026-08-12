@@ -1,0 +1,67 @@
+{
+  "player_id": 605400,
+  "name": "Aaron Nola",
+  "snapshots": [
+    {
+      "date": "2026-08-08",
+      "evaluations": [
+        {
+          "prop": "Over 3.5 Strikeouts",
+          "type": "pitcher",
+          "score": 41.8,
+          "notable_signals": 0,
+          "matchup": "Toronto Blue Jays @ Philadelphia Phillies",
+          "game_pk": 823426,
+          "team": "Philadelphia Phillies",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "same_hand_ratio": 43.75,
+            "l14_k_pct": 24.1176,
+            "tto_penalty": -8.0,
+            "env_neutral": 50.0,
+            "ump_accuracy": 60.802,
+            "ump_k_pct": 0.084,
+            "ump_bb_pct": 0.18
+          },
+          "hit_probability": 0.6676,
+          "raw_hit_probability": 0.8308,
+          "lift": -0.0459,
+          "reliability": "D",
+          "sample_n": 23,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 3.5,
+            "needs": 4
+          }
+        },
+        {
+          "prop": "Toronto Blue Jays scoreless in the 1st",
+          "type": "pitcher",
+          "score": 70.8,
+          "notable_signals": 0,
+          "matchup": "Toronto Blue Jays @ Philadelphia Phillies",
+          "game_pk": 823426,
+          "team": "Philadelphia Phillies",
+          "side": "home",
+          "lean": "NRFI",
+          "signals": {
+            "yrfi_rate": 29.2,
+            "fi_n_starts": 24.0,
+            "ump_run_impact": 23.9429,
+            "park_hr_index": 79.6
+          },
+          "hit_probability": 0.6893,
+          "raw_hit_probability": 0.7066,
+          "lift": -0.0167,
+          "reliability": "D",
+          "sample_n": 24,
+          "projection": {
+            "stat": "first_inning_run",
+            "value": 29.2
+          }
+        }
+      ]
+    }
+  ]
+}

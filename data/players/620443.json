@@ -32,8 +32,8 @@
         {
           "prop": "Over 0.5 Hits+Runs+RBIs",
           "type": "batter",
-          "score": 46.2,
-          "notable_signals": 1,
+          "score": 54.1,
+          "notable_signals": 2,
           "matchup": "New York Mets @ Pittsburgh Pirates",
           "game_pk": 823349,
           "team": "New York Mets",
@@ -45,8 +45,8 @@
             "l7_avg_ev": 100.0,
             "l7_barrel_pct": 100.0,
             "bat_speed_trend": 5.7,
-            "park_hr_index": 40.9,
-            "season_barrel_pct": 6.0,
+            "park_hr_index": 37.6,
+            "season_barrel_pct": 2.6667,
             "lineup_slot": 0.0,
             "bullpen_fatigue": 55.5556,
             "platoon_barrel_pct": -2.64,
@@ -65,38 +65,14 @@
             "ump_k_pct": 0.624,
             "ump_bb_pct": -0.384
           },
-          "hit_probability": 0.5326,
-          "raw_hit_probability": 0.5697,
-          "lift": -0.1388,
+          "hit_probability": 0.5328,
+          "raw_hit_probability": 0.5699,
+          "lift": -0.1392,
           "reliability": "B",
           "sample_n": 65,
           "projection": {
             "stat": "hits_runs_rbis",
             "value": 0.5,
-            "needs": 1
-          }
-        },
-        {
-          "prop": "To Hit a Laser (105+ MPH)",
-          "type": "batter",
-          "score": 1.9,
-          "notable_signals": 0,
-          "matchup": "New York Mets @ Pittsburgh Pirates",
-          "game_pk": 823349,
-          "team": "New York Mets",
-          "side": null,
-          "lean": null,
-          "signals": {
-            "hard_hit_rate": 0.1443
-          },
-          "hit_probability": 0.2006,
-          "raw_hit_probability": 0.1443,
-          "lift": -0.0272,
-          "reliability": "B",
-          "sample_n": 65,
-          "projection": {
-            "stat": "hard_hit_105",
-            "value": 1,
             "needs": 1
           }
         }
@@ -108,7 +84,7 @@
         {
           "prop": "Over 0.5 Hits+Runs+RBIs",
           "type": "batter",
-          "score": 51.7,
+          "score": 51.9,
           "notable_signals": 0,
           "matchup": "New York Mets @ Atlanta Braves",
           "game_pk": 824886,
@@ -117,11 +93,11 @@
           "lean": null,
           "signals": {
             "platoon": 80.0,
-            "sp_era_weak": 18.2857,
+            "sp_era_weak": 21.1429,
             "l7_avg_ev": 100.0,
             "l7_barrel_pct": 100.0,
             "park_hr_index": 50.0,
-            "season_barrel_pct": 6.0,
+            "season_barrel_pct": 2.6667,
             "lineup_slot": 0.0,
             "bullpen_fatigue": 64.1026,
             "platoon_barrel_pct": -2.32,
@@ -131,45 +107,21 @@
             "days_rest": 4.0,
             "pull_park_synergy": 0.0138,
             "hard_hit_105_rate": -1.81,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
             "getaway_day": 0.0,
             "series_game": 1.0,
             "sp_rp_ops_gap": 0.64,
-            "vs_rp_ops": -0.336,
-            "ump_k_pct": -0.288,
-            "ump_bb_pct": -0.204
+            "vs_rp_ops": -0.336
           },
-          "hit_probability": 0.5269,
-          "raw_hit_probability": 0.5632,
-          "lift": -0.1449,
+          "hit_probability": 0.527,
+          "raw_hit_probability": 0.5634,
+          "lift": -0.1456,
           "reliability": "B",
           "sample_n": 66,
           "projection": {
             "stat": "hits_runs_rbis",
             "value": 0.5,
-            "needs": 1
-          }
-        },
-        {
-          "prop": "To Hit a Laser (105+ MPH)",
-          "type": "batter",
-          "score": 1.6,
-          "notable_signals": 0,
-          "matchup": "New York Mets @ Atlanta Braves",
-          "game_pk": 824886,
-          "team": "New York Mets",
-          "side": null,
-          "lean": null,
-          "signals": {
-            "hard_hit_rate": 0.1426
-          },
-          "hit_probability": 0.1996,
-          "raw_hit_probability": 0.1426,
-          "lift": -0.0277,
-          "reliability": "B",
-          "sample_n": 66,
-          "projection": {
-            "stat": "hard_hit_105",
-            "value": 1,
             "needs": 1
           }
         }

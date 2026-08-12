@@ -30,9 +30,9 @@
       "date": "2026-08-07",
       "evaluations": [
         {
-          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "prop": "Over 0.5 Hits",
           "type": "batter",
-          "score": 65.1,
+          "score": 66.6,
           "notable_signals": 1,
           "matchup": "Los Angeles Dodgers @ Arizona Diamondbacks",
           "game_pk": 825051,
@@ -45,7 +45,7 @@
             "l7_avg_ev": 71.5833,
             "l7_barrel_pct": 100.0,
             "park_hr_index": 50.0,
-            "season_barrel_pct": 24.0,
+            "season_barrel_pct": 25.3333,
             "lineup_slot": 37.5,
             "bullpen_fatigue": 64.1026,
             "platoon_barrel_pct": -0.16,
@@ -64,38 +64,164 @@
             "ump_k_pct": -0.192,
             "ump_bb_pct": -0.06
           },
-          "hit_probability": 0.6559,
-          "raw_hit_probability": 0.7143,
-          "lift": -0.0155,
+          "hit_probability": 0.6024,
+          "raw_hit_probability": 0.6072,
+          "lift": 0.0514,
           "reliability": "A",
           "sample_n": 108,
           "projection": {
-            "stat": "hits_runs_rbis",
+            "stat": "hits",
             "value": 0.5,
             "needs": 1
           }
-        },
+        }
+      ]
+    },
+    {
+      "date": "2026-08-08",
+      "evaluations": [
         {
-          "prop": "To Hit a Laser (105+ MPH)",
+          "prop": "Over 0.5 Hits",
           "type": "batter",
-          "score": 17.2,
-          "notable_signals": 0,
+          "score": 68.5,
+          "notable_signals": 1,
           "matchup": "Los Angeles Dodgers @ Arizona Diamondbacks",
-          "game_pk": 825051,
+          "game_pk": 825049,
           "team": "Los Angeles Dodgers",
           "side": null,
           "lean": null,
           "signals": {
-            "hard_hit_rate": 0.2056
+            "platoon": 80.0,
+            "sp_era_weak": 33.1429,
+            "l7_avg_ev": 82.1667,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 25.3333,
+            "lineup_slot": 37.5,
+            "bullpen_fatigue": 64.1026,
+            "platoon_barrel_pct": -0.16,
+            "platoon_xwoba": 1.5,
+            "park_hand_index": -1.12,
+            "opp_catcher_framing": 1.32,
+            "days_rest": 0.0,
+            "pull_park_synergy": -0.7017,
+            "hard_hit_105_rate": -0.0875,
+            "team_total_move": 0.0,
+            "team_total_open": 0.0,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": 0.32,
+            "vs_rp_ops": 0.252,
+            "ump_k_pct": 0.816,
+            "ump_bb_pct": -0.012
           },
-          "hit_probability": 0.2378,
-          "raw_hit_probability": 0.2056,
-          "lift": 0.01,
+          "hit_probability": 0.6041,
+          "raw_hit_probability": 0.6107,
+          "lift": 0.0531,
           "reliability": "A",
-          "sample_n": 108,
+          "sample_n": 109,
           "projection": {
-            "stat": "hard_hit_105",
-            "value": 1,
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-08-09",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 45.8,
+          "notable_signals": 0,
+          "matchup": "Los Angeles Dodgers @ Arizona Diamondbacks",
+          "game_pk": 825050,
+          "team": "Los Angeles Dodgers",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 0.0,
+            "l7_avg_ev": 48.9583,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 25.3333,
+            "lineup_slot": 37.5,
+            "bullpen_fatigue": 59.5238,
+            "bvp_ops": -0.942,
+            "platoon_barrel_pct": 0.32,
+            "platoon_xwoba": 1.5,
+            "park_hand_index": -1.16,
+            "days_rest": 0.0,
+            "pull_park_synergy": -0.7349,
+            "hard_hit_105_rate": -0.1275,
+            "team_total_move": 0.0,
+            "team_total_open": 0.0,
+            "getaway_day": -2.0,
+            "series_game": 2.0,
+            "sp_rp_ops_gap": 0.528,
+            "vs_rp_ops": 0.492,
+            "ump_k_pct": -0.516,
+            "ump_bb_pct": -0.024
+          },
+          "hit_probability": 0.6037,
+          "raw_hit_probability": 0.6098,
+          "lift": 0.0525,
+          "reliability": "A",
+          "sample_n": 110,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-08-10",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 54.5,
+          "notable_signals": 1,
+          "matchup": "Kansas City Royals @ Los Angeles Dodgers",
+          "game_pk": 823918,
+          "team": "Los Angeles Dodgers",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 59.7143,
+            "l7_avg_ev": 47.5,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 11.925,
+            "park_hr_index": 51.2,
+            "season_barrel_pct": 25.3333,
+            "lineup_slot": 37.5,
+            "bullpen_fatigue": 59.5238,
+            "platoon_barrel_pct": 0.08,
+            "platoon_xwoba": 1.38,
+            "opp_catcher_framing": -0.36,
+            "days_rest": 0.0,
+            "hard_hit_105_rate": -0.165,
+            "team_total_move": 0.0,
+            "team_total_open": 0.0,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": 0.424,
+            "vs_rp_ops": 0.444
+          },
+          "hit_probability": 0.6048,
+          "raw_hit_probability": 0.6121,
+          "lift": 0.0535,
+          "reliability": "A",
+          "sample_n": 111,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
             "needs": 1
           }
         }
@@ -105,9 +231,9 @@
       "date": "2026-08-11",
       "evaluations": [
         {
-          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "prop": "Over 0.5 Hits",
           "type": "batter",
-          "score": 47.8,
+          "score": 61.5,
           "notable_signals": 2,
           "matchup": "Kansas City Royals @ Los Angeles Dodgers",
           "game_pk": 823917,
@@ -116,12 +242,12 @@
           "lean": null,
           "signals": {
             "platoon": 80.0,
-            "sp_era_weak": 26.8571,
+            "sp_era_weak": 28.8571,
             "l7_avg_ev": 19.7368,
             "l7_barrel_pct": 100.0,
             "bat_speed_trend": 8.925,
-            "park_hr_index": 51.3,
-            "season_barrel_pct": 24.0,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 25.3333,
             "lineup_slot": 37.5,
             "bullpen_fatigue": 59.5238,
             "platoon_barrel_pct": -0.32,
@@ -129,43 +255,21 @@
             "opp_catcher_framing": -0.36,
             "days_rest": 0.0,
             "hard_hit_105_rate": -0.205,
+            "team_total_move": 0.0,
+            "team_total_open": 0.0,
             "getaway_day": 0.0,
             "series_game": 1.0,
             "sp_rp_ops_gap": 0.424,
             "vs_rp_ops": 0.444
           },
-          "hit_probability": 0.6629,
-          "raw_hit_probability": 0.723,
-          "lift": -0.009,
+          "hit_probability": 0.6038,
+          "raw_hit_probability": 0.6101,
+          "lift": 0.0526,
           "reliability": "A",
           "sample_n": 112,
           "projection": {
-            "stat": "hits_runs_rbis",
+            "stat": "hits",
             "value": 0.5,
-            "needs": 1
-          }
-        },
-        {
-          "prop": "To Hit a Laser (105+ MPH)",
-          "type": "batter",
-          "score": 17.8,
-          "notable_signals": 0,
-          "matchup": "Kansas City Royals @ Los Angeles Dodgers",
-          "game_pk": 823917,
-          "team": "Los Angeles Dodgers",
-          "side": null,
-          "lean": null,
-          "signals": {
-            "hard_hit_rate": 0.2068
-          },
-          "hit_probability": 0.2386,
-          "raw_hit_probability": 0.2068,
-          "lift": 0.0113,
-          "reliability": "A",
-          "sample_n": 112,
-          "projection": {
-            "stat": "hard_hit_105",
-            "value": 1,
             "needs": 1
           }
         }

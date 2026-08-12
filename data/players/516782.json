@@ -8,7 +8,7 @@
         {
           "prop": "Over 0.5 Hits+Runs+RBIs",
           "type": "batter",
-          "score": 39.4,
+          "score": 38.5,
           "notable_signals": 0,
           "matchup": "Chicago Cubs @ Kansas City Royals",
           "game_pk": 824081,
@@ -20,8 +20,8 @@
             "sp_era_weak": 53.7143,
             "l7_avg_ev": 11.9643,
             "l7_barrel_pct": 87.8571,
-            "park_hr_index": 43.6,
-            "season_barrel_pct": 45.3333,
+            "park_hr_index": 45.1,
+            "season_barrel_pct": 39.3333,
             "lineup_slot": 12.5,
             "bullpen_fatigue": 59.5238,
             "bvp_ops": 4.0,
@@ -39,9 +39,9 @@
             "ump_k_pct": -0.0,
             "ump_bb_pct": 0.216
           },
-          "hit_probability": 0.6059,
-          "raw_hit_probability": 0.6539,
-          "lift": -0.0655,
+          "hit_probability": 0.6067,
+          "raw_hit_probability": 0.6548,
+          "lift": -0.0678,
           "reliability": "B",
           "sample_n": 51,
           "projection": {
@@ -49,28 +49,105 @@
             "value": 0.5,
             "needs": 1
           }
-        },
+        }
+      ]
+    },
+    {
+      "date": "2026-08-09",
+      "evaluations": [
         {
-          "prop": "To Hit a Laser (105+ MPH)",
+          "prop": "Over 0.5 Hits",
           "type": "batter",
-          "score": 21.0,
-          "notable_signals": 0,
+          "score": 50.8,
+          "notable_signals": 1,
           "matchup": "Chicago Cubs @ Kansas City Royals",
-          "game_pk": 824081,
+          "game_pk": 824078,
           "team": "Kansas City Royals",
           "side": null,
           "lean": null,
           "signals": {
-            "hard_hit_rate": 0.2208
+            "platoon": 80.0,
+            "sp_era_weak": 31.1429,
+            "l7_avg_ev": 1.0417,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 60.9,
+            "season_barrel_pct": 39.3333,
+            "lineup_slot": 50.0,
+            "bullpen_fatigue": 76.9231,
+            "bvp_ops": -1.38,
+            "platoon_barrel_pct": 0.24,
+            "platoon_xwoba": -1.98,
+            "park_hand_index": 0.04,
+            "opp_catcher_framing": 0.48,
+            "days_rest": 2.0,
+            "pull_park_synergy": 0.0048,
+            "hard_hit_105_rate": 0.07,
+            "team_total_move": 0.0,
+            "team_total_open": 0.0,
+            "getaway_day": -2.0,
+            "series_game": 2.0,
+            "sp_rp_ops_gap": -0.24,
+            "vs_rp_ops": -1.488,
+            "ump_k_pct": -0.624,
+            "ump_bb_pct": -0.312
           },
-          "hit_probability": 0.2478,
-          "raw_hit_probability": 0.2208,
-          "lift": 0.02,
+          "hit_probability": 0.6009,
+          "raw_hit_probability": 0.604,
+          "lift": 0.0497,
           "reliability": "B",
-          "sample_n": 51,
+          "sample_n": 52,
           "projection": {
-            "stat": "hard_hit_105",
-            "value": 1,
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-08-10",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 47.1,
+          "notable_signals": 2,
+          "matchup": "Kansas City Royals @ Los Angeles Dodgers",
+          "game_pk": 823918,
+          "team": "Kansas City Royals",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 8.2857,
+            "l7_avg_ev": 0.0,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 51.2,
+            "season_barrel_pct": 39.3333,
+            "lineup_slot": 37.5,
+            "bullpen_fatigue": 89.7436,
+            "platoon_barrel_pct": 0.96,
+            "platoon_xwoba": -1.44,
+            "opp_catcher_framing": -0.12,
+            "days_rest": 0.0,
+            "hard_hit_105_rate": 0.3225,
+            "team_total_move": 0.0,
+            "team_total_open": -6.0,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": -0.608,
+            "vs_rp_ops": -1.584,
+            "ump_k_pct": 0.072,
+            "ump_bb_pct": -0.66
+          },
+          "hit_probability": 0.602,
+          "raw_hit_probability": 0.6493,
+          "lift": -0.068,
+          "reliability": "B",
+          "sample_n": 53,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
             "needs": 1
           }
         }
@@ -82,7 +159,7 @@
         {
           "prop": "Over 0.5 Hits+Runs+RBIs",
           "type": "batter",
-          "score": 46.8,
+          "score": 58.5,
           "notable_signals": 3,
           "matchup": "Kansas City Royals @ Los Angeles Dodgers",
           "game_pk": 823917,
@@ -95,8 +172,8 @@
             "l7_avg_ev": 0.0,
             "l7_barrel_pct": 100.0,
             "bat_speed_trend": 2.325,
-            "park_hr_index": 51.3,
-            "season_barrel_pct": 45.3333,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 39.3333,
             "lineup_slot": 50.0,
             "bullpen_fatigue": 76.9231,
             "bvp_ops": 0.324,
@@ -105,43 +182,21 @@
             "opp_catcher_framing": -0.12,
             "days_rest": 0.0,
             "hard_hit_105_rate": 0.2475,
+            "team_total_move": 6.0,
+            "team_total_open": -4.0,
             "getaway_day": 0.0,
             "series_game": 1.0,
             "sp_rp_ops_gap": -0.744,
             "vs_rp_ops": -1.8
           },
-          "hit_probability": 0.5949,
-          "raw_hit_probability": 0.641,
-          "lift": -0.077,
+          "hit_probability": 0.5951,
+          "raw_hit_probability": 0.6412,
+          "lift": -0.0772,
           "reliability": "B",
           "sample_n": 54,
           "projection": {
             "stat": "hits_runs_rbis",
             "value": 0.5,
-            "needs": 1
-          }
-        },
-        {
-          "prop": "To Hit a Laser (105+ MPH)",
-          "type": "batter",
-          "score": 22.3,
-          "notable_signals": 0,
-          "matchup": "Kansas City Royals @ Los Angeles Dodgers",
-          "game_pk": 823917,
-          "team": "Kansas City Royals",
-          "side": null,
-          "lean": null,
-          "signals": {
-            "hard_hit_rate": 0.2249
-          },
-          "hit_probability": 0.2505,
-          "raw_hit_probability": 0.2249,
-          "lift": 0.0232,
-          "reliability": "B",
-          "sample_n": 54,
-          "projection": {
-            "stat": "hard_hit_105",
-            "value": 1,
             "needs": 1
           }
         }

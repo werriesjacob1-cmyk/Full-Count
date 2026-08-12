@@ -42,10 +42,10 @@
       "date": "2026-08-07",
       "evaluations": [
         {
-          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "prop": "Over 0.5 Hits",
           "type": "batter",
-          "score": 81.7,
-          "notable_signals": 3,
+          "score": 79.4,
+          "notable_signals": 2,
           "matchup": "Atlanta Braves @ New York Yankees",
           "game_pk": 823515,
           "team": "Atlanta Braves",
@@ -54,11 +54,11 @@
           "signals": {
             "platoon": 80.0,
             "sp_era_weak": 17.7143,
-            "pitch_exploit": 20.0,
+            "pitch_exploit": 19.4286,
             "l7_avg_ev": 75.5556,
             "l7_barrel_pct": 100.0,
-            "park_hr_index": 83.6,
-            "season_barrel_pct": 76.6667,
+            "park_hr_index": 51.4,
+            "season_barrel_pct": 74.6667,
             "lineup_slot": 100.0,
             "bullpen_fatigue": 64.1026,
             "platoon_barrel_pct": 3.6,
@@ -77,38 +77,168 @@
             "ump_k_pct": -0.024,
             "ump_bb_pct": 0.312
           },
-          "hit_probability": 0.6573,
-          "raw_hit_probability": 0.716,
-          "lift": -0.0141,
+          "hit_probability": 0.6209,
+          "raw_hit_probability": 0.6463,
+          "lift": 0.0699,
           "reliability": "B",
           "sample_n": 63,
           "projection": {
-            "stat": "hits_runs_rbis",
+            "stat": "hits",
             "value": 0.5,
             "needs": 1
           }
-        },
+        }
+      ]
+    },
+    {
+      "date": "2026-08-08",
+      "evaluations": [
         {
-          "prop": "To Hit a Laser (105+ MPH)",
+          "prop": "Over 0.5 Hits",
           "type": "batter",
-          "score": 55.7,
+          "score": 60.9,
           "notable_signals": 1,
           "matchup": "Atlanta Braves @ New York Yankees",
-          "game_pk": 823515,
+          "game_pk": 823514,
           "team": "Atlanta Braves",
           "side": null,
           "lean": null,
           "signals": {
-            "hard_hit_rate": 0.3595
+            "platoon": 35.0,
+            "sp_era_weak": 26.2857,
+            "l7_avg_ev": 87.625,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 89.1,
+            "season_barrel_pct": 74.6667,
+            "lineup_slot": 87.5,
+            "bullpen_fatigue": 64.1026,
+            "platoon_barrel_pct": 5.0,
+            "platoon_xwoba": 5.0,
+            "park_hand_index": 0.66,
+            "opp_catcher_framing": -0.6,
+            "days_rest": 0.0,
+            "pull_park_synergy": 0.1871,
+            "hard_hit_105_rate": 3.5075,
+            "team_total_move": 0.0,
+            "team_total_open": 0.0,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": -1.032,
+            "vs_rp_ops": -0.096,
+            "ump_k_pct": 0.144,
+            "ump_bb_pct": -0.084
           },
-          "hit_probability": 0.3504,
-          "raw_hit_probability": 0.3595,
-          "lift": 0.1226,
+          "hit_probability": 0.6223,
+          "raw_hit_probability": 0.6494,
+          "lift": 0.0713,
           "reliability": "B",
-          "sample_n": 63,
+          "sample_n": 64,
           "projection": {
-            "stat": "hard_hit_105",
-            "value": 1,
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-08-09",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 68.6,
+          "notable_signals": 2,
+          "matchup": "Atlanta Braves @ New York Yankees",
+          "game_pk": 823513,
+          "team": "Atlanta Braves",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 0.0,
+            "pitch_exploit": 19.4286,
+            "l7_avg_ev": 72.5595,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 38.4,
+            "season_barrel_pct": 74.6667,
+            "lineup_slot": 87.5,
+            "bullpen_fatigue": 59.5238,
+            "platoon_barrel_pct": 5.0,
+            "platoon_xwoba": 5.0,
+            "park_hand_index": 0.9,
+            "opp_catcher_framing": -0.6,
+            "days_rest": 0.0,
+            "pull_park_synergy": 0.2552,
+            "hard_hit_105_rate": 3.6925,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": -2.0,
+            "series_game": 2.0,
+            "sp_rp_ops_gap": -0.528,
+            "vs_rp_ops": 0.48,
+            "ump_k_pct": 0.156,
+            "ump_bb_pct": -0.252
+          },
+          "hit_probability": 0.6232,
+          "raw_hit_probability": 0.6514,
+          "lift": 0.072,
+          "reliability": "B",
+          "sample_n": 65,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-08-10",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 48.9,
+          "notable_signals": 1,
+          "matchup": "New York Mets @ Atlanta Braves",
+          "game_pk": 824887,
+          "team": "Atlanta Braves",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 14.0,
+            "l7_avg_ev": 56.8182,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 74.6667,
+            "lineup_slot": 87.5,
+            "bullpen_fatigue": 71.4286,
+            "platoon_barrel_pct": 5.0,
+            "platoon_xwoba": 4.86,
+            "park_hand_index": -1.19,
+            "opp_catcher_framing": 0.12,
+            "days_rest": 0.0,
+            "pull_park_synergy": -0.3499,
+            "hard_hit_105_rate": 3.5875,
+            "team_total_move": 0.0,
+            "team_total_open": 0.0,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": -0.464,
+            "vs_rp_ops": 0.396,
+            "ump_k_pct": -1.272,
+            "ump_bb_pct": -0.336
+          },
+          "hit_probability": 0.6213,
+          "raw_hit_probability": 0.6472,
+          "lift": 0.07,
+          "reliability": "B",
+          "sample_n": 66,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
             "needs": 1
           }
         }
@@ -118,9 +248,9 @@
       "date": "2026-08-11",
       "evaluations": [
         {
-          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "prop": "Over 0.5 Hits",
           "type": "batter",
-          "score": 62.6,
+          "score": 73.8,
           "notable_signals": 4,
           "matchup": "New York Mets @ Atlanta Braves",
           "game_pk": 824886,
@@ -129,13 +259,13 @@
           "lean": null,
           "signals": {
             "platoon": 35.0,
-            "sp_era_weak": 28.8571,
-            "pitch_exploit": 20.0,
+            "sp_era_weak": 22.5714,
+            "pitch_exploit": 19.4286,
             "l7_avg_ev": 73.6,
             "l7_barrel_pct": 100.0,
             "bat_speed_trend": 1.425,
             "park_hr_index": 50.0,
-            "season_barrel_pct": 76.6667,
+            "season_barrel_pct": 74.6667,
             "lineup_slot": 87.5,
             "bullpen_fatigue": 71.4286,
             "platoon_barrel_pct": 5.0,
@@ -145,6 +275,8 @@
             "days_rest": 0.0,
             "pull_park_synergy": -0.376,
             "hard_hit_105_rate": 3.485,
+            "team_total_move": 0.0,
+            "team_total_open": 0.0,
             "getaway_day": 0.0,
             "series_game": 1.0,
             "sp_rp_ops_gap": -0.456,
@@ -152,38 +284,14 @@
             "ump_k_pct": -0.288,
             "ump_bb_pct": -0.204
           },
-          "hit_probability": 0.6586,
-          "raw_hit_probability": 0.7177,
-          "lift": -0.0133,
+          "hit_probability": 0.6221,
+          "raw_hit_probability": 0.6489,
+          "lift": 0.0709,
           "reliability": "B",
           "sample_n": 67,
           "projection": {
-            "stat": "hits_runs_rbis",
+            "stat": "hits",
             "value": 0.5,
-            "needs": 1
-          }
-        },
-        {
-          "prop": "To Hit a Laser (105+ MPH)",
-          "type": "batter",
-          "score": 54.8,
-          "notable_signals": 1,
-          "matchup": "New York Mets @ Atlanta Braves",
-          "game_pk": 824886,
-          "team": "Atlanta Braves",
-          "side": null,
-          "lean": null,
-          "signals": {
-            "hard_hit_rate": 0.3544
-          },
-          "hit_probability": 0.3463,
-          "raw_hit_probability": 0.3544,
-          "lift": 0.119,
-          "reliability": "B",
-          "sample_n": 67,
-          "projection": {
-            "stat": "hard_hit_105",
-            "value": 1,
             "needs": 1
           }
         }

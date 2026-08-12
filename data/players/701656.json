@@ -20,6 +20,66 @@
           "matchup": "Pittsburgh Pirates @ Milwaukee Brewers"
         }
       ]
+    },
+    {
+      "date": "2026-08-10",
+      "evaluations": [
+        {
+          "prop": "Over 5.5 Strikeouts",
+          "type": "pitcher",
+          "score": 64.9,
+          "notable_signals": 0,
+          "matchup": "Milwaukee Brewers @ San Diego Padres",
+          "game_pk": 823265,
+          "team": "Milwaukee Brewers",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "same_hand_ratio": 75.0,
+            "l14_k_pct": 100.0,
+            "env_neutral": 50.0,
+            "ump_accuracy": 42.9056,
+            "ump_k_pct": -0.288,
+            "ump_bb_pct": 0.132
+          },
+          "hit_probability": 0.6175,
+          "raw_hit_probability": 0.6426,
+          "lift": 0.2413,
+          "reliability": "D",
+          "sample_n": 10,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 5.5,
+            "needs": 6
+          }
+        },
+        {
+          "prop": "San Diego Padres scoreless in the 1st",
+          "type": "pitcher",
+          "score": 90.0,
+          "notable_signals": 1,
+          "matchup": "Milwaukee Brewers @ San Diego Padres",
+          "game_pk": 823265,
+          "team": "Milwaukee Brewers",
+          "side": "away",
+          "lean": "NRFI",
+          "signals": {
+            "yrfi_rate": 10.0,
+            "fi_n_starts": 10.0,
+            "ump_run_impact": 36.2495,
+            "park_hr_index": 37.1
+          },
+          "hit_probability": 0.6962,
+          "raw_hit_probability": 0.7373,
+          "lift": -0.0098,
+          "reliability": "D",
+          "sample_n": 10,
+          "projection": {
+            "stat": "first_inning_run",
+            "value": 10.0
+          }
+        }
+      ]
     }
   ]
 }

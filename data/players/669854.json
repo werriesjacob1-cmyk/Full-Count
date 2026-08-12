@@ -24,15 +24,41 @@
             "ump_k_pct": 0.408,
             "ump_bb_pct": 0.036
           },
-          "hit_probability": 0.6093,
-          "raw_hit_probability": 0.6129,
-          "lift": 0.07,
+          "hit_probability": 0.6294,
+          "raw_hit_probability": 0.6864,
+          "lift": 0.0901,
           "reliability": "D",
           "sample_n": 0,
           "projection": {
             "stat": "strikeouts",
             "value": 4.5,
             "needs": 5
+          }
+        },
+        {
+          "prop": "San Diego Padres scoreless in the 1st",
+          "type": "pitcher",
+          "score": 36.7,
+          "notable_signals": 0,
+          "matchup": "Houston Astros @ San Diego Padres",
+          "game_pk": 823266,
+          "team": "Houston Astros",
+          "side": "away",
+          "lean": "NRFI",
+          "signals": {
+            "yrfi_rate": 33.3,
+            "fi_n_starts": 3.0,
+            "ump_run_impact": 28.5991,
+            "park_hr_index": 39.6
+          },
+          "hit_probability": 0.6886,
+          "raw_hit_probability": 0.7039,
+          "lift": -0.0174,
+          "reliability": "D",
+          "sample_n": 3,
+          "projection": {
+            "stat": "first_inning_run",
+            "value": 33.3
           }
         }
       ]
