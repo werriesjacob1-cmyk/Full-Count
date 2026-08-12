@@ -330,6 +330,23 @@ jobs:
           exit 1
 
       - name: Upload run artifacts
+        # EVERY FILE IN THIS GLOB IS ALSO COMMITTED TO GIT, ABOVE, IN THE
+        # SAME JOB (either "Commit picks immediately" or "Commit the full
+        # report"). This upload buys exactly one thing over that: a one-click
+        # zip of a specific run from the Actions UI, without checking out
+        # git. It does not buy durability -- git already has that, with no
+        # retention limit.
+        #
+        # At the old 14-day retention, that redundant convenience was
+        # costing real money: ~6 runs/day x ~5.1MB x 14 days = ~430MB against
+        # this account's 500MB free Actions-storage quota (measured 2026-08-12
+        # via the GitHub storage-usage warning, which hit 90% -- confirmed by
+        # checking several recent runs' actual artifact sizes, not guessed).
+        # Public-repo Actions MINUTES are unlimited (see the schedule
+        # comment above); Actions STORAGE is not, and this step was the
+        # entire cause. 3 days keeps the quick-access convenience for
+        # same-week debugging at roughly a 5x smaller footprint (~90MB
+        # steady-state) with real headroom to spare.
         if: always()
         uses: actions/upload-artifact@v4
         with:
@@ -343,5 +360,5 @@ jobs:
             output/full_board_*.html
             output/parlay_example_*.html
             results/*.json
-          retention-days: 14
+          retention-days: 3
           if-no-files-found: ignore
