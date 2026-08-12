@@ -222,11 +222,24 @@ CURRENT_WEIGHTS: Dict[str, Dict[str, Tuple[float, float]]] = {
     "singles":          dict(_BATTER_WEIGHTS),
     "hits_runs_rbis":   dict(_BATTER_WEIGHTS),
     "strikeouts":       dict(_PITCHER_K_WEIGHTS),
-    # score_stolen_base: skill*0.55 + matchup*0.30 + context*0.15
+    # score_stolen_base: skill*0.50 + matchup*0.28 + context*0.22 -- REAL DRIFT
+    # FOUND 2026-08-12 while fixing a sign bug in the matchup component
+    # itself (catcher_poptime's scale() bounds were inverted in generate_
+    # picks.py, now fixed): these weights had gone stale relative to the
+    # shipped formula (were 0.55/0.30/0.15, an older version), which meant
+    # current_weight_score()'s reconstruction of "what the shipped formula
+    # actually scores" for stolen_base was itself wrong, biasing every past
+    # comparison against a fitted alternative for this market. "season_sb"
+    # is DELIBERATELY not renamed to "on_base" -- see score_stolen_base's
+    # own docstring in generate_picks.py: the real scored component is
+    # on_base (season_sb is only a converging notable_signals flag), and
+    # recording it under its real name lets a name this table doesn't
+    # recognise surface as an honest coverage warning here rather than
+    # silently mislabelling the input.
     "stolen_base": {
-        "sprint_speed":     (0.55, NEUTRAL),
-        "catcher_poptime":  (0.30, NEUTRAL),
-        "season_sb":        (0.15, NEUTRAL),
+        "sprint_speed":     (0.50, NEUTRAL),
+        "catcher_poptime":  (0.28, NEUTRAL),
+        "season_sb":        (0.22, NEUTRAL),
     },
     # score_walk: skill*0.4 + matchup*0.4 + context*0.2. Dead in practice --
     # build_candidates() deliberately never calls score_walk() any more (no
