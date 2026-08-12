@@ -337,6 +337,9 @@ jobs:
             output/run_log_*.json
             output/top10_picks_*.md
             output/picks_*.json
+            output/board_*.html
+            output/full_board_*.html
+            output/parlay_example_*.html
             results/*.json
           retention-days: 14
           if-no-files-found: ignore
