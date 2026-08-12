@@ -372,6 +372,7 @@
           "team": "Kansas City Royals",
           "side": null,
           "lean": null,
+          "combo_player_ids": null,
           "signals": {
             "sp_era_weak": 68.2857,
             "l7_avg_ev": 88.6029,
@@ -385,6 +386,8 @@
             "platoon_xwoba": -2.94,
             "opp_catcher_framing": 0.72,
             "days_rest": 0.0,
+            "woba_ahead": 31.8182,
+            "woba_behind": 63.6364,
             "hard_hit_105_rate": 0.93,
             "team_total_move": 0.0,
             "team_total_open": -4.0,
@@ -393,9 +396,9 @@
             "sp_rp_ops_gap": 0.16,
             "vs_rp_ops": -0.18
           },
-          "hit_probability": 0.5863,
-          "raw_hit_probability": 0.631,
-          "lift": -0.089,
+          "hit_probability": 0.6522,
+          "raw_hit_probability": 0.6409,
+          "lift": -0.021,
           "reliability": "A",
           "sample_n": 106,
           "projection": {
@@ -414,13 +417,14 @@
           "team": "Kansas City Royals",
           "side": null,
           "lean": null,
+          "combo_player_ids": null,
           "signals": {
             "opp_team_cs_pct": 3.3,
             "sprint_speed": 6.25,
             "on_base": 51.0557
           },
-          "hit_probability": 0.156,
-          "raw_hit_probability": 0.0583,
+          "hit_probability": 0.0582,
+          "raw_hit_probability": null,
           "lift": null,
           "reliability": "A",
           "sample_n": 106,
@@ -440,12 +444,13 @@
           "team": "Kansas City Royals",
           "side": null,
           "lean": null,
+          "combo_player_ids": null,
           "signals": {
             "hard_hit_rate": 0.2522
           },
-          "hit_probability": 0.2692,
+          "hit_probability": 0.2144,
           "raw_hit_probability": 0.2522,
-          "lift": 0.0424,
+          "lift": -0.0124,
           "reliability": "A",
           "sample_n": 106,
           "projection": {

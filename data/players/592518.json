@@ -307,6 +307,7 @@
           "team": "San Diego Padres",
           "side": null,
           "lean": null,
+          "combo_player_ids": null,
           "signals": {
             "platoon": 35.0,
             "sp_era_weak": 51.4286,
@@ -324,6 +325,8 @@
             "opp_catcher_framing": 0.6,
             "days_rest": 0.0,
             "consecutive_games": -3.6,
+            "woba_ahead": 0.0,
+            "woba_behind": 74.5455,
             "pull_park_synergy": 0.1238,
             "hard_hit_105_rate": 2.6425,
             "team_total_move": 0.0,
@@ -331,11 +334,13 @@
             "getaway_day": -2.0,
             "series_game": 2.0,
             "sp_rp_ops_gap": 0.152,
-            "vs_rp_ops": 0.096
+            "vs_rp_ops": 0.096,
+            "ump_k_pct": 0.336,
+            "ump_bb_pct": -0.108
           },
-          "hit_probability": 0.6075,
-          "raw_hit_probability": 0.6558,
-          "lift": -0.0678,
+          "hit_probability": 0.6631,
+          "raw_hit_probability": 0.6595,
+          "lift": -0.0101,
           "reliability": "A",
           "sample_n": 118,
           "projection": {
@@ -354,12 +359,13 @@
           "team": "San Diego Padres",
           "side": null,
           "lean": null,
+          "combo_player_ids": null,
           "signals": {
             "hard_hit_rate": 0.3207
           },
-          "hit_probability": 0.3197,
+          "hit_probability": 0.2903,
           "raw_hit_probability": 0.3207,
-          "lift": 0.0929,
+          "lift": 0.0635,
           "reliability": "A",
           "sample_n": 118,
           "projection": {

@@ -75,14 +75,15 @@
           "team": "Pittsburgh Pirates",
           "side": null,
           "lean": null,
+          "combo_player_ids": null,
           "signals": {
             "same_hand_ratio": 75.0,
             "l14_k_pct": 7.0588,
             "env_neutral": 50.0
           },
-          "hit_probability": 0.5729,
+          "hit_probability": 0.5457,
           "raw_hit_probability": 0.4828,
-          "lift": -0.1403,
+          "lift": -0.1675,
           "reliability": "D",
           "sample_n": 10,
           "projection": {
@@ -101,13 +102,14 @@
           "team": "Pittsburgh Pirates",
           "side": "away",
           "lean": null,
+          "combo_player_ids": null,
           "signals": {
             "outs_rate": 0.675,
             "avg_outs_per_start": 14.1
           },
-          "hit_probability": 0.6237,
-          "raw_hit_probability": 0.675,
-          "lift": -0.1763,
+          "hit_probability": 0.675,
+          "raw_hit_probability": null,
+          "lift": -0.125,
           "reliability": "D",
           "sample_n": 10,
           "projection": {

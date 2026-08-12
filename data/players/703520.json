@@ -225,13 +225,14 @@
         {
           "prop": "Over 0.5 Hits",
           "type": "batter",
-          "score": 45.9,
-          "notable_signals": 1,
+          "score": 50.1,
+          "notable_signals": 2,
           "matchup": "Boston Red Sox @ Toronto Blue Jays",
           "game_pk": 822779,
           "team": "Toronto Blue Jays",
           "side": null,
           "lean": null,
+          "combo_player_ids": null,
           "signals": {
             "platoon": 35.0,
             "sp_era_weak": 23.4286,
@@ -243,14 +244,15 @@
             "park_hand_index": -0.49,
             "opp_catcher_framing": -0.48,
             "days_rest": 0.0,
+            "woba_behind": 16.3636,
             "team_total_move": 0.0,
             "team_total_open": -4.0,
             "getaway_day": 0.0,
             "series_game": 2.0
           },
-          "hit_probability": 0.5756,
+          "hit_probability": 0.5303,
           "raw_hit_probability": 0.5512,
-          "lift": 0.0244,
+          "lift": -0.0209,
           "reliability": "D",
           "sample_n": 0,
           "projection": {
@@ -262,17 +264,18 @@
         {
           "prop": "To Steal a Base",
           "type": "batter",
-          "score": 27.7,
+          "score": 12.5,
           "notable_signals": 0,
           "matchup": "Boston Red Sox @ Toronto Blue Jays",
           "game_pk": 822779,
           "team": "Toronto Blue Jays",
           "side": null,
           "lean": null,
+          "combo_player_ids": null,
           "signals": {
             "opp_team_cs_pct": 5.64,
             "sprint_speed": 9.375,
-            "catcher_poptime": 85.7143
+            "catcher_poptime": 14.2857
           },
           "hit_probability": null,
           "raw_hit_probability": null,

@@ -203,13 +203,14 @@
         {
           "prop": "Over 0.5 Hits+Runs+RBIs",
           "type": "batter",
-          "score": 62.7,
+          "score": 66.1,
           "notable_signals": 3,
           "matchup": "Pittsburgh Pirates @ Miami Marlins",
           "game_pk": 823833,
           "team": "Miami Marlins",
           "side": null,
           "lean": null,
+          "combo_player_ids": null,
           "signals": {
             "platoon": 80.0,
             "sp_era_weak": 28.8571,
@@ -226,6 +227,8 @@
             "park_hand_index": -1.64,
             "opp_catcher_framing": -0.12,
             "days_rest": 0.0,
+            "woba_ahead": 10.0,
+            "woba_behind": 23.6364,
             "pull_park_synergy": -1.125,
             "hard_hit_105_rate": 0.3925,
             "team_total_move": -6.0,
@@ -235,9 +238,9 @@
             "sp_rp_ops_gap": 1.016,
             "vs_rp_ops": 0.6
           },
-          "hit_probability": 0.5739,
-          "raw_hit_probability": 0.6167,
-          "lift": -0.1014,
+          "hit_probability": 0.648,
+          "raw_hit_probability": 0.6338,
+          "lift": -0.0252,
           "reliability": "B",
           "sample_n": 70,
           "projection": {
@@ -256,12 +259,13 @@
           "team": "Miami Marlins",
           "side": null,
           "lean": null,
+          "combo_player_ids": null,
           "signals": {
             "hard_hit_rate": 0.2307
           },
-          "hit_probability": 0.2544,
+          "hit_probability": 0.1938,
           "raw_hit_probability": 0.2307,
-          "lift": 0.0276,
+          "lift": -0.033,
           "reliability": "B",
           "sample_n": 70,
           "projection": {

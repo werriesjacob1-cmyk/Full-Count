@@ -70,15 +70,16 @@
       "date": "2026-08-12",
       "evaluations": [
         {
-          "prop": "Over 0.5 Hits",
+          "prop": "Over 0.5 Hits+Runs+RBIs",
           "type": "batter",
-          "score": 91.0,
+          "score": 90.0,
           "notable_signals": 3,
           "matchup": "Chicago Cubs @ Washington Nationals",
           "game_pk": 822698,
           "team": "Washington Nationals",
           "side": null,
           "lean": null,
+          "combo_player_ids": null,
           "signals": {
             "platoon": 80.0,
             "sp_era_weak": 81.4286,
@@ -86,7 +87,7 @@
             "l7_avg_ev": 44.0,
             "l7_barrel_pct": 100.0,
             "bat_speed_trend": 9.375,
-            "park_hr_index": 59.7,
+            "park_hr_index": 45.9,
             "season_barrel_pct": 64.6667,
             "lineup_slot": 87.5,
             "bullpen_fatigue": 71.4286,
@@ -95,6 +96,8 @@
             "park_hand_index": 1.36,
             "opp_catcher_framing": -0.0,
             "days_rest": 0.0,
+            "woba_ahead": 3.6364,
+            "woba_behind": 3.6364,
             "pull_park_synergy": 1.0424,
             "hard_hit_105_rate": 0.715,
             "team_total_move": 6.0,
@@ -104,13 +107,13 @@
             "sp_rp_ops_gap": 5.0,
             "vs_rp_ops": 5.0
           },
-          "hit_probability": 0.5908,
-          "raw_hit_probability": 0.5827,
-          "lift": 0.0396,
+          "hit_probability": 0.6366,
+          "raw_hit_probability": 0.6148,
+          "lift": -0.0366,
           "reliability": "B",
           "sample_n": 48,
           "projection": {
-            "stat": "hits",
+            "stat": "hits_runs_rbis",
             "value": 0.5,
             "needs": 1
           }
@@ -125,12 +128,13 @@
           "team": "Washington Nationals",
           "side": null,
           "lean": null,
+          "combo_player_ids": null,
           "signals": {
             "hard_hit_rate": 0.2436
           },
-          "hit_probability": 0.2632,
+          "hit_probability": 0.2059,
           "raw_hit_probability": 0.2436,
-          "lift": 0.0364,
+          "lift": -0.0209,
           "reliability": "B",
           "sample_n": 48,
           "projection": {

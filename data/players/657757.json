@@ -260,13 +260,14 @@
         {
           "prop": "Over 0.5 Hits+Runs+RBIs",
           "type": "batter",
-          "score": 61.7,
+          "score": 61.6,
           "notable_signals": 1,
           "matchup": "Milwaukee Brewers @ San Diego Padres",
           "game_pk": 823263,
           "team": "San Diego Padres",
           "side": null,
           "lean": null,
+          "combo_player_ids": null,
           "signals": {
             "platoon": 80.0,
             "sp_era_weak": 51.4286,
@@ -281,6 +282,8 @@
             "park_hand_index": -1.46,
             "opp_catcher_framing": 0.6,
             "days_rest": 0.0,
+            "woba_ahead": 0.0,
+            "woba_behind": 0.0,
             "pull_park_synergy": -0.5417,
             "hard_hit_105_rate": 1.0675,
             "team_total_move": 0.0,
@@ -288,11 +291,13 @@
             "getaway_day": -2.0,
             "series_game": 2.0,
             "sp_rp_ops_gap": 1.344,
-            "vs_rp_ops": 1.056
+            "vs_rp_ops": 1.056,
+            "ump_k_pct": 0.336,
+            "ump_bb_pct": -0.108
           },
-          "hit_probability": 0.552,
-          "raw_hit_probability": 0.5916,
-          "lift": -0.1233,
+          "hit_probability": 0.634,
+          "raw_hit_probability": 0.6105,
+          "lift": -0.0392,
           "reliability": "A",
           "sample_n": 111,
           "projection": {
@@ -311,12 +316,13 @@
           "team": "San Diego Padres",
           "side": null,
           "lean": null,
+          "combo_player_ids": null,
           "signals": {
             "hard_hit_rate": 0.2577
           },
-          "hit_probability": 0.273,
+          "hit_probability": 0.2199,
           "raw_hit_probability": 0.2577,
-          "lift": 0.0462,
+          "lift": -0.0069,
           "reliability": "A",
           "sample_n": 111,
           "projection": {

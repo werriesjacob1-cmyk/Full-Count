@@ -351,15 +351,16 @@
       "date": "2026-08-12",
       "evaluations": [
         {
-          "prop": "Over 0.5 Singles",
+          "prop": "Over 0.5 Hits+Runs+RBIs",
           "type": "batter",
-          "score": 70.0,
+          "score": 73.3,
           "notable_signals": 3,
           "matchup": "Pittsburgh Pirates @ Miami Marlins",
           "game_pk": 823833,
           "team": "Miami Marlins",
           "side": null,
           "lean": null,
+          "combo_player_ids": null,
           "signals": {
             "sp_era_weak": 28.8571,
             "pitch_exploit": 1.7143,
@@ -374,6 +375,8 @@
             "platoon_xwoba": 0.36,
             "opp_catcher_framing": -0.12,
             "days_rest": 0.0,
+            "woba_ahead": 4.5455,
+            "woba_behind": 58.1818,
             "hard_hit_105_rate": -3.695,
             "team_total_move": -6.0,
             "team_total_open": -4.0,
@@ -382,13 +385,13 @@
             "sp_rp_ops_gap": -0.336,
             "vs_rp_ops": 0.096
           },
-          "hit_probability": 0.5725,
-          "raw_hit_probability": 0.6151,
-          "lift": 0.17,
+          "hit_probability": 0.7191,
+          "raw_hit_probability": 0.7605,
+          "lift": 0.0459,
           "reliability": "A",
           "sample_n": 118,
           "projection": {
-            "stat": "singles",
+            "stat": "hits_runs_rbis",
             "value": 0.5,
             "needs": 1
           }
@@ -396,21 +399,22 @@
         {
           "prop": "To Steal a Base",
           "type": "batter",
-          "score": 47.1,
+          "score": 43.1,
           "notable_signals": 0,
           "matchup": "Pittsburgh Pirates @ Miami Marlins",
           "game_pk": 823833,
           "team": "Miami Marlins",
           "side": null,
           "lean": null,
+          "combo_player_ids": null,
           "signals": {
             "opp_team_cs_pct": 0.42,
             "sprint_speed": 31.25,
-            "catcher_poptime": 100.0,
+            "catcher_poptime": 0.0,
             "on_base": 70.2495
           },
-          "hit_probability": 0.1964,
-          "raw_hit_probability": 0.137,
+          "hit_probability": 0.1374,
+          "raw_hit_probability": null,
           "lift": null,
           "reliability": "A",
           "sample_n": 118,
@@ -430,12 +434,13 @@
           "team": "Miami Marlins",
           "side": null,
           "lean": null,
+          "combo_player_ids": null,
           "signals": {
             "hard_hit_rate": 0.0672
           },
-          "hit_probability": 0.1602,
+          "hit_probability": 0.0838,
           "raw_hit_probability": 0.0672,
-          "lift": -0.0666,
+          "lift": -0.143,
           "reliability": "A",
           "sample_n": 118,
           "projection": {

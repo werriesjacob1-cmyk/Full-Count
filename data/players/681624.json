@@ -443,6 +443,7 @@
           "team": "Los Angeles Dodgers",
           "side": null,
           "lean": null,
+          "combo_player_ids": null,
           "signals": {
             "platoon": 80.0,
             "sp_era_weak": 0.0,
@@ -456,6 +457,8 @@
             "platoon_xwoba": 5.0,
             "opp_catcher_framing": -0.36,
             "days_rest": 0.0,
+            "woba_ahead": 94.5455,
+            "woba_behind": 75.4545,
             "hard_hit_105_rate": 1.835,
             "team_total_move": -6.0,
             "team_total_open": 0.0,
@@ -464,9 +467,9 @@
             "sp_rp_ops_gap": 1.416,
             "vs_rp_ops": 2.1
           },
-          "hit_probability": 0.6141,
+          "hit_probability": 0.6412,
           "raw_hit_probability": 0.6319,
-          "lift": 0.0629,
+          "lift": 0.09,
           "reliability": "A",
           "sample_n": 118,
           "projection": {
@@ -478,21 +481,22 @@
         {
           "prop": "To Steal a Base",
           "type": "batter",
-          "score": 49.4,
+          "score": 45.4,
           "notable_signals": 1,
           "matchup": "Kansas City Royals @ Los Angeles Dodgers",
           "game_pk": 823916,
           "team": "Los Angeles Dodgers",
           "side": null,
           "lean": null,
+          "combo_player_ids": null,
           "signals": {
             "opp_team_cs_pct": -4.56,
             "sprint_speed": 31.25,
-            "catcher_poptime": 100.0,
+            "catcher_poptime": 0.0,
             "on_base": 80.8061
           },
-          "hit_probability": 0.1697,
-          "raw_hit_probability": 0.0866,
+          "hit_probability": 0.0867,
+          "raw_hit_probability": null,
           "lift": null,
           "reliability": "A",
           "sample_n": 118,
@@ -512,12 +516,13 @@
           "team": "Los Angeles Dodgers",
           "side": null,
           "lean": null,
+          "combo_player_ids": null,
           "signals": {
             "hard_hit_rate": 0.2884
           },
-          "hit_probability": 0.2952,
+          "hit_probability": 0.2526,
           "raw_hit_probability": 0.2884,
-          "lift": 0.0684,
+          "lift": 0.0258,
           "reliability": "A",
           "sample_n": 118,
           "projection": {

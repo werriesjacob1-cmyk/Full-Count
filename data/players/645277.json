@@ -282,7 +282,7 @@
       "date": "2026-08-12",
       "evaluations": [
         {
-          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "prop": "Over 0.5 Hits",
           "type": "batter",
           "score": 57.5,
           "notable_signals": 1,
@@ -291,6 +291,7 @@
           "team": "Atlanta Braves",
           "side": null,
           "lean": null,
+          "combo_player_ids": null,
           "signals": {
             "sp_era_weak": 0.5714,
             "l7_avg_ev": 37.6389,
@@ -303,6 +304,8 @@
             "platoon_xwoba": -1.32,
             "opp_catcher_framing": 0.12,
             "days_rest": 0.0,
+            "woba_ahead": 80.0,
+            "woba_behind": 54.5455,
             "hard_hit_105_rate": -2.2,
             "team_total_move": 0.0,
             "team_total_open": 0.0,
@@ -311,13 +314,13 @@
             "sp_rp_ops_gap": 0.16,
             "vs_rp_ops": 0.516
           },
-          "hit_probability": 0.6757,
-          "raw_hit_probability": 0.7393,
-          "lift": 0.0004,
+          "hit_probability": 0.6154,
+          "raw_hit_probability": 0.6125,
+          "lift": 0.0642,
           "reliability": "A",
           "sample_n": 120,
           "projection": {
-            "stat": "hits_runs_rbis",
+            "stat": "hits",
             "value": 0.5,
             "needs": 1
           }
@@ -332,12 +335,13 @@
           "team": "Atlanta Braves",
           "side": null,
           "lean": null,
+          "combo_player_ids": null,
           "signals": {
             "hard_hit_rate": 0.127
           },
-          "hit_probability": 0.1909,
+          "hit_probability": 0.1152,
           "raw_hit_probability": 0.127,
-          "lift": -0.0359,
+          "lift": -0.1116,
           "reliability": "A",
           "sample_n": 120,
           "projection": {

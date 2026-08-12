@@ -238,22 +238,23 @@
       "date": "2026-08-12",
       "evaluations": [
         {
-          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "prop": "Over 0.5 Hits",
           "type": "batter",
-          "score": 55.2,
+          "score": 55.4,
           "notable_signals": 3,
           "matchup": "Cleveland Guardians @ Detroit Tigers",
           "game_pk": 824241,
           "team": "Detroit Tigers",
           "side": null,
           "lean": null,
+          "combo_player_ids": null,
           "signals": {
             "platoon": 35.0,
             "sp_era_weak": 23.1429,
             "pitch_exploit": 10.8571,
             "l7_avg_ev": 0.0,
             "l7_barrel_pct": 57.1429,
-            "park_hr_index": 73.4,
+            "park_hr_index": 75.9,
             "season_barrel_pct": 77.3333,
             "lineup_slot": 62.5,
             "bullpen_fatigue": 77.7778,
@@ -262,6 +263,8 @@
             "park_hand_index": -2.94,
             "opp_catcher_framing": 0.6,
             "days_rest": 0.0,
+            "woba_ahead": 67.2727,
+            "woba_behind": 100.0,
             "pull_park_synergy": -1.0907,
             "hard_hit_105_rate": 4.335,
             "team_total_move": 0.0,
@@ -271,13 +274,13 @@
             "sp_rp_ops_gap": -1.024,
             "vs_rp_ops": 0.276
           },
-          "hit_probability": 0.6826,
-          "raw_hit_probability": 0.7482,
-          "lift": 0.0073,
+          "hit_probability": 0.6149,
+          "raw_hit_probability": 0.6121,
+          "lift": 0.0637,
           "reliability": "A",
           "sample_n": 117,
           "projection": {
-            "stat": "hits_runs_rbis",
+            "stat": "hits",
             "value": 0.5,
             "needs": 1
           }
@@ -292,12 +295,13 @@
           "team": "Detroit Tigers",
           "side": null,
           "lean": null,
+          "combo_player_ids": null,
           "signals": {
             "hard_hit_rate": 0.3884
           },
-          "hit_probability": 0.3742,
+          "hit_probability": 0.3789,
           "raw_hit_probability": 0.3884,
-          "lift": 0.1474,
+          "lift": 0.1521,
           "reliability": "A",
           "sample_n": 117,
           "projection": {

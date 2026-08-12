@@ -457,7 +457,7 @@
       "date": "2026-08-12",
       "evaluations": [
         {
-          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "prop": "Over 0.5 Hits",
           "type": "batter",
           "score": 61.0,
           "notable_signals": 0,
@@ -466,12 +466,13 @@
           "team": "Minnesota Twins",
           "side": null,
           "lean": null,
+          "combo_player_ids": null,
           "signals": {
             "platoon": 35.0,
             "sp_era_weak": 36.0,
             "l7_avg_ev": 29.8684,
             "l7_barrel_pct": 100.0,
-            "park_hr_index": 50.2,
+            "park_hr_index": 49.9,
             "season_barrel_pct": 63.3333,
             "lineup_slot": 87.5,
             "bullpen_fatigue": 64.1026,
@@ -480,6 +481,8 @@
             "park_hand_index": -0.66,
             "opp_catcher_framing": -0.24,
             "days_rest": 0.0,
+            "woba_ahead": 59.0909,
+            "woba_behind": 30.9091,
             "pull_park_synergy": -0.462,
             "hard_hit_105_rate": 2.7075,
             "team_total_move": 0.0,
@@ -491,13 +494,13 @@
             "ump_k_pct": 0.264,
             "ump_bb_pct": 0.096
           },
-          "hit_probability": 0.6693,
-          "raw_hit_probability": 0.7312,
-          "lift": -0.006,
+          "hit_probability": 0.6053,
+          "raw_hit_probability": 0.605,
+          "lift": 0.0541,
           "reliability": "A",
           "sample_n": 86,
           "projection": {
-            "stat": "hits_runs_rbis",
+            "stat": "hits",
             "value": 0.5,
             "needs": 1
           }
@@ -505,21 +508,22 @@
         {
           "prop": "To Steal a Base",
           "type": "batter",
-          "score": 29.6,
+          "score": 14.3,
           "notable_signals": 0,
           "matchup": "Baltimore Orioles @ Minnesota Twins",
           "game_pk": 823672,
           "team": "Minnesota Twins",
           "side": null,
           "lean": null,
+          "combo_player_ids": null,
           "signals": {
             "opp_team_cs_pct": -3.42,
             "sprint_speed": 12.5,
-            "catcher_poptime": 80.0,
+            "catcher_poptime": 20.0,
             "on_base": 58.7332
           },
-          "hit_probability": 0.1861,
-          "raw_hit_probability": 0.1181,
+          "hit_probability": 0.1185,
+          "raw_hit_probability": null,
           "lift": null,
           "reliability": "A",
           "sample_n": 86,
@@ -539,12 +543,13 @@
           "team": "Minnesota Twins",
           "side": null,
           "lean": null,
+          "combo_player_ids": null,
           "signals": {
             "hard_hit_rate": 0.3233
           },
-          "hit_probability": 0.3217,
+          "hit_probability": 0.2935,
           "raw_hit_probability": 0.3233,
-          "lift": 0.0949,
+          "lift": 0.0667,
           "reliability": "A",
           "sample_n": 86,
           "projection": {

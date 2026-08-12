@@ -208,6 +208,86 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-12",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 75.4,
+          "notable_signals": 2,
+          "matchup": "Colorado Rockies @ Arizona Diamondbacks",
+          "game_pk": 825047,
+          "team": "Arizona Diamondbacks",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 91.7143,
+            "l7_avg_ev": 46.9271,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 4.65,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 26.0,
+            "lineup_slot": 75.0,
+            "bullpen_fatigue": 76.9231,
+            "platoon_barrel_pct": 0.48,
+            "platoon_xwoba": 2.94,
+            "park_hand_index": -0.48,
+            "opp_catcher_framing": 0.24,
+            "days_rest": 0.0,
+            "woba_ahead": 50.9091,
+            "woba_behind": 30.0,
+            "pull_park_synergy": -0.1445,
+            "hard_hit_105_rate": 0.3925,
+            "team_total_move": -6.0,
+            "team_total_open": 0.0,
+            "getaway_day": -2.0,
+            "series_game": 2.0,
+            "sp_rp_ops_gap": -0.408,
+            "vs_rp_ops": 1.008,
+            "ump_k_pct": 0.156,
+            "ump_bb_pct": -0.108
+          },
+          "hit_probability": 0.6532,
+          "raw_hit_probability": 0.6411,
+          "lift": 0.102,
+          "reliability": "A",
+          "sample_n": 92,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 23.7,
+          "notable_signals": 0,
+          "matchup": "Colorado Rockies @ Arizona Diamondbacks",
+          "game_pk": 825047,
+          "team": "Arizona Diamondbacks",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.2307
+          },
+          "hit_probability": 0.1938,
+          "raw_hit_probability": 0.2307,
+          "lift": -0.033,
+          "reliability": "A",
+          "sample_n": 92,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

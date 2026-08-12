@@ -75,6 +75,7 @@
           "team": "Baltimore Orioles",
           "side": null,
           "lean": null,
+          "combo_player_ids": null,
           "signals": {
             "same_hand_ratio": 75.0,
             "l14_k_pct": 53.5294,
@@ -83,9 +84,9 @@
             "ump_k_pct": -0.264,
             "ump_bb_pct": -0.096
           },
-          "hit_probability": 0.606,
+          "hit_probability": 0.586,
           "raw_hit_probability": 0.601,
-          "lift": 0.0695,
+          "lift": 0.0495,
           "reliability": "D",
           "sample_n": 23,
           "projection": {
@@ -104,13 +105,14 @@
           "team": "Baltimore Orioles",
           "side": "away",
           "lean": null,
+          "combo_player_ids": null,
           "signals": {
             "outs_rate": 0.4925,
             "avg_outs_per_start": 17.78
           },
-          "hit_probability": 0.4641,
-          "raw_hit_probability": 0.4925,
-          "lift": 0.0839,
+          "hit_probability": 0.4925,
+          "raw_hit_probability": null,
+          "lift": 0.1123,
           "reliability": "D",
           "sample_n": 23,
           "projection": {
@@ -129,12 +131,16 @@
           "team": null,
           "side": null,
           "lean": null,
+          "combo_player_ids": [
+            669358,
+            805673
+          ],
           "signals": {
             "combined_k_edge": -0.032
           },
-          "hit_probability": 0.5447,
-          "raw_hit_probability": 0.5834,
-          "lift": -0.0707,
+          "hit_probability": 0.5834,
+          "raw_hit_probability": null,
+          "lift": -0.032,
           "reliability": "D",
           "sample_n": 0,
           "projection": {

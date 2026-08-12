@@ -132,6 +132,7 @@
           "team": "Atlanta Braves",
           "side": null,
           "lean": null,
+          "combo_player_ids": null,
           "signals": {
             "platoon": 80.0,
             "sp_era_weak": 0.5714,
@@ -146,6 +147,8 @@
             "park_hand_index": -1.46,
             "opp_catcher_framing": 0.12,
             "days_rest": 0.0,
+            "woba_ahead": 22.7273,
+            "woba_behind": 4.5455,
             "pull_park_synergy": -0.7869,
             "hard_hit_105_rate": -0.63,
             "team_total_move": 0.0,
@@ -155,9 +158,9 @@
             "sp_rp_ops_gap": -1.008,
             "vs_rp_ops": -0.864
           },
-          "hit_probability": 0.5379,
-          "raw_hit_probability": 0.5757,
-          "lift": -0.1374,
+          "hit_probability": 0.6277,
+          "raw_hit_probability": 0.6,
+          "lift": -0.0455,
           "reliability": "A",
           "sample_n": 99,
           "projection": {
@@ -169,21 +172,22 @@
         {
           "prop": "To Steal a Base",
           "type": "batter",
-          "score": 52.6,
+          "score": 55.0,
           "notable_signals": 0,
           "matchup": "New York Mets @ Atlanta Braves",
           "game_pk": 824883,
           "team": "Atlanta Braves",
           "side": null,
           "lean": null,
+          "combo_player_ids": null,
           "signals": {
             "opp_team_cs_pct": -4.26,
             "sprint_speed": 56.25,
-            "catcher_poptime": 88.5714,
+            "catcher_poptime": 11.4286,
             "on_base": 52.975
           },
-          "hit_probability": 0.1608,
-          "raw_hit_probability": 0.0685,
+          "hit_probability": 0.0684,
+          "raw_hit_probability": null,
           "lift": null,
           "reliability": "A",
           "sample_n": 99,
@@ -203,12 +207,13 @@
           "team": "Atlanta Braves",
           "side": null,
           "lean": null,
+          "combo_player_ids": null,
           "signals": {
             "hard_hit_rate": 0.1898
           },
-          "hit_probability": 0.2278,
+          "hit_probability": 0.1588,
           "raw_hit_probability": 0.1898,
-          "lift": 0.001,
+          "lift": -0.068,
           "reliability": "A",
           "sample_n": 99,
           "projection": {

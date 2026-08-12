@@ -75,6 +75,7 @@
           "team": "Philadelphia Phillies",
           "side": null,
           "lean": null,
+          "combo_player_ids": null,
           "signals": {
             "same_hand_ratio": 61.1111,
             "l14_k_pct": 62.9412,
@@ -84,9 +85,9 @@
             "ump_k_pct": 0.348,
             "ump_bb_pct": -0.036
           },
-          "hit_probability": 0.6324,
+          "hit_probability": 0.6181,
           "raw_hit_probability": 0.6976,
-          "lift": 0.0959,
+          "lift": 0.0816,
           "reliability": "D",
           "sample_n": 19,
           "projection": {
@@ -105,13 +106,14 @@
           "team": "Philadelphia Phillies",
           "side": "away",
           "lean": null,
+          "combo_player_ids": null,
           "signals": {
             "outs_rate": 0.6113,
             "avg_outs_per_start": 17.42
           },
-          "hit_probability": 0.5692,
-          "raw_hit_probability": 0.6113,
-          "lift": 0.189,
+          "hit_probability": 0.6113,
+          "raw_hit_probability": null,
+          "lift": 0.2311,
           "reliability": "D",
           "sample_n": 19,
           "projection": {
@@ -121,7 +123,7 @@
           }
         },
         {
-          "prop": "Over 11.5 Combined Strikeouts",
+          "prop": "Over 10.5 Combined Strikeouts",
           "type": "pitcher_combo",
           "score": 55,
           "notable_signals": 1,
@@ -130,18 +132,22 @@
           "team": null,
           "side": null,
           "lean": null,
+          "combo_player_ids": [
+            554430,
+            681517
+          ],
           "signals": {
-            "combined_k_edge": 0.2802
+            "combined_k_edge": 0.2838
           },
-          "hit_probability": 0.5731,
-          "raw_hit_probability": 0.6157,
-          "lift": 0.2375,
+          "hit_probability": 0.7384,
+          "raw_hit_probability": null,
+          "lift": 0.2838,
           "reliability": "D",
           "sample_n": 0,
           "projection": {
             "stat": "combined_strikeouts",
-            "value": 11.5,
-            "needs": 12
+            "value": 10.5,
+            "needs": 11
           }
         }
       ]

@@ -459,6 +459,7 @@
           "team": "New York Mets",
           "side": null,
           "lean": null,
+          "combo_player_ids": null,
           "signals": {
             "platoon": 35.0,
             "sp_era_weak": 66.5714,
@@ -473,6 +474,8 @@
             "park_hand_index": -1.46,
             "opp_catcher_framing": 1.32,
             "days_rest": 0.0,
+            "woba_ahead": 34.5455,
+            "woba_behind": 44.5455,
             "pull_park_synergy": -1.0118,
             "hard_hit_105_rate": 2.025,
             "team_total_move": 0.0,
@@ -482,9 +485,9 @@
             "sp_rp_ops_gap": 0.408,
             "vs_rp_ops": -0.804
           },
-          "hit_probability": 0.5778,
-          "raw_hit_probability": 0.6211,
-          "lift": -0.0975,
+          "hit_probability": 0.6523,
+          "raw_hit_probability": 0.6411,
+          "lift": -0.0209,
           "reliability": "C",
           "sample_n": 42,
           "projection": {
@@ -503,13 +506,14 @@
           "team": "New York Mets",
           "side": null,
           "lean": null,
+          "combo_player_ids": null,
           "signals": {
             "opp_team_cs_pct": 5.58,
             "sprint_speed": 56.25,
             "on_base": 19.3858
           },
-          "hit_probability": 0.1489,
-          "raw_hit_probability": 0.0429,
+          "hit_probability": 0.0424,
+          "raw_hit_probability": null,
           "lift": null,
           "reliability": "C",
           "sample_n": 42,
@@ -529,12 +533,13 @@
           "team": "New York Mets",
           "side": null,
           "lean": null,
+          "combo_player_ids": null,
           "signals": {
             "hard_hit_rate": 0.296
           },
-          "hit_probability": 0.3009,
+          "hit_probability": 0.2612,
           "raw_hit_probability": 0.296,
-          "lift": 0.0741,
+          "lift": 0.0344,
           "reliability": "C",
           "sample_n": 42,
           "projection": {

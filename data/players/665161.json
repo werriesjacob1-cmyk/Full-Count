@@ -1,6 +1,6 @@
 {
   "player_id": 665161,
-  "name": "Jeremy Pena",
+  "name": "Jeremy Pe\u00f1a",
   "snapshots": [
     {
       "date": "2026-08-04",
@@ -440,15 +440,16 @@
       "date": "2026-08-12",
       "evaluations": [
         {
-          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "prop": "Over 0.5 Hits",
           "type": "batter",
-          "score": 70.6,
+          "score": 69.6,
           "notable_signals": 4,
           "matchup": "Houston Astros @ San Francisco Giants",
           "game_pk": 823187,
           "team": "Houston Astros",
           "side": null,
           "lean": null,
+          "combo_player_ids": null,
           "signals": {
             "platoon": 35.0,
             "sp_era_weak": 58.5714,
@@ -465,20 +466,23 @@
             "park_hand_index": -0.93,
             "opp_catcher_framing": 1.08,
             "days_rest": 0.0,
+            "woba_behind": 100.0,
             "pull_park_synergy": -0.5989,
             "hard_hit_105_rate": 1.835,
             "getaway_day": -2.0,
             "series_game": 2.0,
             "sp_rp_ops_gap": -0.968,
-            "vs_rp_ops": 0.312
+            "vs_rp_ops": 0.312,
+            "ump_k_pct": 0.804,
+            "ump_bb_pct": 0.06
           },
-          "hit_probability": 0.7045,
-          "raw_hit_probability": 0.7772,
-          "lift": 0.0292,
+          "hit_probability": 0.6639,
+          "raw_hit_probability": 0.6495,
+          "lift": 0.1127,
           "reliability": "B",
           "sample_n": 72,
           "projection": {
-            "stat": "hits_runs_rbis",
+            "stat": "hits",
             "value": 0.5,
             "needs": 1
           }
@@ -486,21 +490,22 @@
         {
           "prop": "To Steal a Base",
           "type": "batter",
-          "score": 67.5,
+          "score": 63.5,
           "notable_signals": 1,
           "matchup": "Houston Astros @ San Francisco Giants",
           "game_pk": 823187,
           "team": "Houston Astros",
           "side": null,
           "lean": null,
+          "combo_player_ids": null,
           "signals": {
             "opp_team_cs_pct": 0.78,
             "sprint_speed": 59.375,
-            "catcher_poptime": 100.0,
+            "catcher_poptime": 0.0,
             "on_base": 99.0403
           },
-          "hit_probability": 0.1725,
-          "raw_hit_probability": 0.0922,
+          "hit_probability": 0.0922,
+          "raw_hit_probability": null,
           "lift": null,
           "reliability": "B",
           "sample_n": 72,
@@ -520,12 +525,13 @@
           "team": "Houston Astros",
           "side": null,
           "lean": null,
+          "combo_player_ids": null,
           "signals": {
             "hard_hit_rate": 0.2884
           },
-          "hit_probability": 0.2952,
+          "hit_probability": 0.2526,
           "raw_hit_probability": 0.2884,
-          "lift": 0.0684,
+          "lift": 0.0258,
           "reliability": "B",
           "sample_n": 72,
           "projection": {

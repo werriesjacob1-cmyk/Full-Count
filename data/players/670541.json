@@ -290,13 +290,14 @@
         {
           "prop": "Over 0.5 Hits",
           "type": "batter",
-          "score": 91.2,
+          "score": 90.3,
           "notable_signals": 3,
           "matchup": "Houston Astros @ San Francisco Giants",
           "game_pk": 823187,
           "team": "Houston Astros",
           "side": null,
           "lean": null,
+          "combo_player_ids": null,
           "signals": {
             "platoon": 80.0,
             "sp_era_weak": 58.5714,
@@ -312,16 +313,20 @@
             "park_hand_index": -3.98,
             "opp_catcher_framing": 1.08,
             "days_rest": 0.0,
+            "woba_ahead": 67.2727,
+            "woba_behind": 45.4545,
             "pull_park_synergy": -1.5741,
             "hard_hit_105_rate": 5.0,
             "getaway_day": -2.0,
             "series_game": 2.0,
             "sp_rp_ops_gap": -2.32,
-            "vs_rp_ops": 1.788
+            "vs_rp_ops": 1.788,
+            "ump_k_pct": 0.804,
+            "ump_bb_pct": 0.06
           },
-          "hit_probability": 0.6215,
-          "raw_hit_probability": 0.6477,
-          "lift": 0.0703,
+          "hit_probability": 0.6601,
+          "raw_hit_probability": 0.6465,
+          "lift": 0.1089,
           "reliability": "A",
           "sample_n": 119,
           "projection": {
@@ -340,12 +345,13 @@
           "team": "Houston Astros",
           "side": null,
           "lean": null,
+          "combo_player_ids": null,
           "signals": {
             "hard_hit_rate": 0.4759
           },
-          "hit_probability": 0.4494,
+          "hit_probability": 0.5057,
           "raw_hit_probability": 0.4759,
-          "lift": 0.2226,
+          "lift": 0.2789,
           "reliability": "A",
           "sample_n": 119,
           "projection": {
