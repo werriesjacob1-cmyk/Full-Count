@@ -410,7 +410,6 @@ body {{
 .pick .who .sub {{ font-size: 11.5px; color: var(--ink-faint); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 1px; }}
 .pick .prop-col {{ min-width: 0; }}
 .pick .prop {{ font-size: 13.5px; font-weight: 600; color: var(--ink); }}
-.pick .reason {{ font-size: 11.5px; color: var(--ink-dim); margin-top: 2px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; line-height: 1.4; }}
 .pick .odds-col {{ display: flex; flex-direction: column; align-items: flex-end; gap: 5px; width: 100%; }}
 .odds-line {{ display: flex; align-items: baseline; gap: 7px; }}
 .odds-line .price {{ font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-weight: 700; font-size: 16.5px; color: var(--ink); letter-spacing: -0.01em; }}
@@ -645,7 +644,6 @@ function pickRow(p, rank) {{
   }}
 
   const subLine = p.type === "game" ? "Team prop" : (p.type === "pitcher_combo" ? "Combined · " + (p.matchup || "") : (p.team || p.matchup || ""));
-  const preview = (p.why && p.why[0]) ? humanizeReason(p.why[0]) : "";
 
   let edgeHtml = "";
   if (p.market_edge !== null && p.market_edge !== undefined) {{
@@ -667,7 +665,6 @@ function pickRow(p, rank) {{
     </div>
     <div class="prop-col">
       <div class="prop">${{esc(p.prop)}}</div>
-      ${{preview ? `<div class="reason">${{esc(capSentence(preview))}}</div>` : ""}}
     </div>
     <div class="odds-col">
       <div class="odds-line">
