@@ -868,7 +868,7 @@ def _consecutive_streak(dates):
 
 
 def _rest_batter_one(job):
-    pid, name = job
+    pid, name, asof = job
     today = _dt.datetime.strptime(m.TODAY, "%Y-%m-%d").date()
     try:
         r = m.retry_get(f"{STATS_API}/people/{pid}/stats",
@@ -879,6 +879,13 @@ def _rest_batter_one(job):
         if not stats:
             return None
         dates = _parse_dates(stats[0].get("splits", []))
+        # Raw gameLog has no window param -- same unguarded exposure
+        # empirical_pitcher_outs_rates/empirical_pitcher_k_rates already
+        # fix with an explicit asof. None (the live default) means "no
+        # filter," today's behaviour, since a live run's gameLog never
+        # contains games after real today anyway.
+        if asof is not None:
+            dates = [d for d in dates if d.isoformat() <= asof]
         if not dates:
             return None
     except Exception:
@@ -891,7 +898,7 @@ def _rest_batter_one(job):
 
 
 def _rest_pitcher_one(job):
-    pid, name = job
+    pid, name, asof = job
     today = _dt.datetime.strptime(m.TODAY, "%Y-%m-%d").date()
     try:
         r = m.retry_get(f"{STATS_API}/people/{pid}/stats",
@@ -906,6 +913,8 @@ def _rest_pitcher_one(job):
         # relief; those rows have gamesStarted==0 and would understate rest).
         start_splits = [sp for sp in splits if int(sp.get("stat", {}).get("gamesStarted", 0) or 0) > 0]
         dates = _parse_dates(start_splits)
+        if asof is not None:
+            dates = [d for d in dates if d.isoformat() <= asof]
         if not dates:
             return None
     except Exception:
@@ -915,7 +924,7 @@ def _rest_pitcher_one(job):
             "starts_this_season": len(dates)}
 
 
-def rest_and_usage(game_meta, max_batters_per_game=9, max_workers=16):
+def rest_and_usage(game_meta, max_batters_per_game=9, max_workers=16, asof=None):
     """Rest/usage signals for tonight's confirmed lineup batters and
     probable starters, from real MLB game logs (stats=gameLog) — the same
     endpoint shape as mlb_daily.fetch_mlb_game_logs, reused here for a
@@ -946,7 +955,15 @@ def rest_and_usage(game_meta, max_batters_per_game=9, max_workers=16):
 
     Returns {"batters": {id: {...}}, "starters": {id: {...}}} — dict-keyed
     by MLBAM id per the project convention, not a list, since this is
-    meant to be looked up per player rather than iterated/sorted."""
+    meant to be looked up per player rather than iterated/sorted.
+
+    asof (default None, live/unfiltered behaviour): a 'YYYY-MM-DD' cutoff.
+    The raw gameLog endpoint has no window param of its own, so without
+    this a backtest would silently take each player's most recent game as
+    of the REAL current date rather than as of the date being simulated —
+    the same exposure empirical_pitcher_outs_rates already guards against.
+    When set, every parsed game date after asof is dropped before
+    days_since_last_game/consecutive_games/games_last_7d are computed."""
     batters = {}
     starters = {}
     for gm in game_meta:
@@ -962,13 +979,15 @@ def rest_and_usage(game_meta, max_batters_per_game=9, max_workers=16):
     out = {"batters": {}, "starters": {}}
     try:
         if batters:
+            jobs = [(pid, name, asof) for pid, name in batters.items()]
             with m.ThreadPoolExecutor(max_workers=max_workers) as ex:
-                for res in ex.map(_rest_batter_one, list(batters.items())):
+                for res in ex.map(_rest_batter_one, jobs):
                     if res:
                         out["batters"][res["id"]] = res
         if starters:
+            jobs = [(pid, name, asof) for pid, name in starters.items()]
             with m.ThreadPoolExecutor(max_workers=max_workers) as ex:
-                for res in ex.map(_rest_pitcher_one, list(starters.items())):
+                for res in ex.map(_rest_pitcher_one, jobs):
                     if res:
                         out["starters"][res["id"]] = res
     except Exception as e:

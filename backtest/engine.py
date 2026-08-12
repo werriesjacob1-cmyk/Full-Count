@@ -225,6 +225,14 @@ STATCAST_COLUMNS = [
     "woba_value", "woba_denom", "delta_run_exp", "bat_speed",
     "at_bat_number", "inning", "inning_topbot", "bat_score", "post_bat_score",
     "home_team", "away_team", "stand", "p_throws", "balls", "strikes",
+    # hc_x/hc_y (batted-ball coordinates): added when pull_rates() was wired
+    # into the backtest extras. Without them mlb_sources.pull_rates() always
+    # degrades to {} on this store -- confirmed live via --verify, which
+    # warned "Pull%: Statcast is missing batted-ball coordinate columns" the
+    # first time pull was wired in, before this line was added. Any cached
+    # parquet built before this line was added still lacks them and must be
+    # regenerated (delete it; StatcastStore.load() re-pulls automatically).
+    "hc_x", "hc_y",
 ]
 
 HIT_EVENTS = ("single", "double", "triple", "home_run")
@@ -869,7 +877,47 @@ def build_inputs(date, store, use_weather=True, use_bullpen=True, verbose=True):
     # this would silently read starts after the date being simulated. See
     # mlb_sources._empirical_pitcher_outs_one's own comment.
     pitcher_outs = msrc.empirical_pitcher_outs_rates(starter_ids.values(), asof=cutoff)
-    extras = {"hard_hit": hard_hit, "pitcher_outs": pitcher_outs}
+    # pull / park_hand / platoon_qoc: same fetch_season_statcast() route as
+    # hard_hit above, so already point-in-time safe with zero extra plumbing.
+    # These were live-scored-and-recorded signals (pull_park_synergy,
+    # park_hand_index, platoon_barrel_pct/platoon_xwoba) that this backtest
+    # simply never fetched, so signals.py could never measure their real
+    # separation power. Genuinely fixable, unlike bvp/sp_rp/ump_env below.
+    pull = msrc.pull_rates()
+    park_hand = msrc.park_hand_factors()
+    platoon_qoc = msrc.platoon_quality_of_contact()
+    # ump_kbb: Statcast half is the same safe route; its schedule-hydrate
+    # half already bounds with endDate=m.TODAY (repointed), so it too needed
+    # no new plumbing -- just never wired into this dict.
+    ump_kbb = msrc.umpire_k_bb_rates()
+    # rest: fixed alongside this wiring -- see mlb_sources.rest_and_usage's
+    # own asof comment. Without asof=cutoff this would silently read games
+    # after the date being simulated, the same exposure pitcher_outs above
+    # already had to guard against.
+    rest = msrc.rest_and_usage(game_meta, asof=cutoff)
+    extras = {
+        "hard_hit": hard_hit, "pitcher_outs": pitcher_outs,
+        "pull": pull, "park_hand": park_hand, "platoon_qoc": platoon_qoc,
+        "ump_kbb": ump_kbb, "rest": rest,
+    }
+    # bvp, sp_rp, ump_env are DELIBERATELY left out, same bucket as the
+    # market signals (line_move/combined_k_prices/pitcher_outs_prices):
+    # not merely unwired, structurally impossible to reconstruct as-of a
+    # historical cutoff with the sources this pipeline has.
+    #   - bvp (mlb_sources.fetch_bvp, MLB Stats API stats=vsPlayer) and
+    #     sp_rp (mlb_sources.fetch_batter_sit_split, stats=statSplits) are
+    #     both live current-state aggregates. Verified live (2026-08-12):
+    #     passing date=<historical date> to either endpoint returns BYTE-
+    #     IDENTICAL totals to no date param at all -- the API silently
+    #     ignores it. There is no way to ask either endpoint "as of D".
+    #   - ump_env (mlb_sources.fetch_umpire_run_environment) pulls
+    #     umpscorecards.com/api/umpires, a third-party snapshot with no
+    #     date parameter anywhere in its API -- current state only, no
+    #     historical archive exists to reconstruct from.
+    # Any of the three could in principle become backtest-safe if this
+    # pipeline started archiving its own daily snapshots going forward, but
+    # that is a new data-collection project, not a wiring fix -- do not
+    # "fix" this block by adding them without that archive existing first.
 
     kwargs = dict(
         batter_lookup=batter_lookup, pitcher_lookup=pitcher_lookup,
