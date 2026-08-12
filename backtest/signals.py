@@ -196,9 +196,31 @@ _PITCHER_K_WEIGHTS = {
 }
 
 CURRENT_WEIGHTS: Dict[str, Dict[str, Tuple[float, float]]] = {
+    # score_batter() computes ONE composite score (matchup/recent-form/
+    # environment/baseline-skill/context) per batter; attach_hit_probabilities'
+    # _batter_options() then re-picks which of these nine families to
+    # recommend by probability alone, off that SAME score. So _BATTER_WEIGHTS
+    # is the right reconstruction for every one of them, not just the three
+    # that used to be listed here -- runs/rbis/doubles/triples/singles/
+    # hits_runs_rbis were silently absent, which meant current_weight_score()
+    # returned None (safely -- see the "could not reconstruct" guard below --
+    # but still a real coverage gap) for six of the batter markets this
+    # project actually bets.
+    #
+    # "home_run" (singular) was also a real bug, not merely incomplete: every
+    # prop_type this project actually emits is "home_runs" (plural -- see
+    # MARKET_MAP in odds_fanduel.py and generate_picks.py's own
+    # "projection": {"stat": "home_runs", ...}), so this key has never once
+    # matched a real row since CURRENT_WEIGHTS was written.
     "hits":             dict(_BATTER_WEIGHTS),
     "total_bases":      dict(_BATTER_WEIGHTS),
-    "home_run":         dict(_BATTER_WEIGHTS),
+    "home_runs":        dict(_BATTER_WEIGHTS),
+    "runs":             dict(_BATTER_WEIGHTS),
+    "rbis":             dict(_BATTER_WEIGHTS),
+    "doubles":          dict(_BATTER_WEIGHTS),
+    "triples":          dict(_BATTER_WEIGHTS),
+    "singles":          dict(_BATTER_WEIGHTS),
+    "hits_runs_rbis":   dict(_BATTER_WEIGHTS),
     "strikeouts":       dict(_PITCHER_K_WEIGHTS),
     # score_stolen_base: skill*0.55 + matchup*0.30 + context*0.15
     "stolen_base": {
@@ -206,17 +228,37 @@ CURRENT_WEIGHTS: Dict[str, Dict[str, Tuple[float, float]]] = {
         "catcher_poptime":  (0.30, NEUTRAL),
         "season_sb":        (0.15, NEUTRAL),
     },
-    # score_walk: skill*0.4 + matchup*0.4 + context*0.2
+    # score_walk: skill*0.4 + matchup*0.4 + context*0.2. Dead in practice --
+    # build_candidates() deliberately never calls score_walk() any more (no
+    # "Player to Draw a Walk" market exists on FanDuel) -- kept here rather
+    # than deleted because it costs nothing to leave and documents what the
+    # formula WAS, for anyone re-grading old picks from before it was removed.
     "walks": {
         "batter_bb_pct":    (0.40, NEUTRAL),
         "sp_bb_pct":        (0.40, NEUTRAL),
         "ump_accuracy":     (0.20, NEUTRAL),
     },
-    # score_first_inning: single signal + sample penalty
+    # score_first_inning: single signal + sample penalty. Still real and
+    # still scored (build_candidates always calls it -- _build_combined_nrfi
+    # consumes its output), just no longer shown as its own standalone board
+    # entry.
     "first_inning_run": {
         "yrfi_rate":        (1.00, NEUTRAL),
         "fi_n_starts":      (0.00, 0.0),
     },
+    # DELIBERATELY NOT LISTED: pitcher_outs, combined_strikeouts,
+    # hard_hit_105, hard_hit_110, nrfi_combined. Checked each scoring
+    # function (score_pitcher_outs, score_combined_strikeouts, score_laser,
+    # _build_combined_nrfi) -- none of them computes a hand-picked WEIGHTED
+    # composite the way score_batter/score_pitcher do. Each is either a
+    # single shrunk empirical rate used directly as hit_probability
+    # (pitcher_outs, hard_hit_105/110 -- "signals" carries exactly one key)
+    # or a joint-probability combination of two already-computed reads
+    # (combined_strikeouts: independent binomials; nrfi_combined: both
+    # starters' first-inning reads multiplied). There is no formula to
+    # reconstruct here, so adding an entry would fabricate one rather than
+    # fill a gap -- current_weight_score()'s "no table found" branch is the
+    # correct, honest answer for these five, not a shortfall to fix.
 }
 
 # Alternate names engine.py might legitimately emit. Kept explicit so a rename
