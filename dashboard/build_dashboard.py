@@ -87,6 +87,16 @@ def run_live_fetch():
                             combined_k_prices=combined_k_prices)
     log("Market prices attached to primary-family candidates.")
 
+    # Computed here, not after clean() below, because it needs player_id/
+    # game_pk to screen out same-player and negatively/redundantly
+    # correlated legs -- fields clean() strips before the dashboard payload
+    # ever sees a row (kept lean since PAYLOAD is embedded in a page anyone
+    # with the link can open). parlay_builder.py is the real, tested,
+    # correlation-aware engine already built for this -- reused as-is
+    # rather than reimplemented, since a naive client-side leg combiner
+    # would silently drop the one thing that engine exists to get right.
+    suggested_parlay = _build_suggested_parlay(candidates)
+
     moonshots_full = gp.select_moonshots(candidates, prices, fd, n=9999)
     log(f"{len(moonshots_full)} total home_run candidates.")
 
@@ -113,10 +123,64 @@ def run_live_fetch():
         return out
 
     out = {"generated_at": datetime.now().isoformat(), "date": gp.m.TODAY,
-          "moonshot": clean(moonshots_full)}
+          "moonshot": clean(moonshots_full), "suggested_parlay": suggested_parlay}
     for stat, entries in by_category_full.items():
         out[stat] = clean(entries)
     return out
+
+
+def _decimal_to_american(dec):
+    """Standard decimal-to-American conversion -- prop_probability.py only
+    ever goes the other direction (american->decimal, via decimal_odds),
+    since every other price this file handles starts life as a FanDuel
+    American price. A parlay's combined price starts life as a product of
+    decimal odds instead, so this is the one place the board needs the
+    reverse."""
+    if dec is None:
+        return None
+    if dec >= 2.0:
+        return round((dec - 1) * 100)
+    return round(-100 / (dec - 1))
+
+
+def _build_suggested_parlay(candidates):
+    """A real, correlation-screened 3-leg parlay at the "safest" risk tier,
+    computed by parlay_builder.py's own build_best_available_parlay --
+    the same engine a customer's typed request would run through, not a
+    simplified reimplementation. price_legs=False because these candidates
+    already carry real FanDuel prices from attach_market_prices() above;
+    re-fetching would just cost another round of live calls for the same
+    answer.
+
+    Returns None rather than a padded/partial parlay if the engine can't
+    put together at least two real legs tonight -- an honest "nothing to
+    suggest" beats a one-leg parlay dressed up as one."""
+    try:
+        import parlay_builder as pb
+    except Exception as e:
+        log(f"Suggested parlay: import failed ({e}), skipping.")
+        return None
+    try:
+        result = pb.build_best_available_parlay(pool=candidates, n=3, risk_level=0, price_legs=False)
+    except Exception as e:
+        log(f"Suggested parlay: build failed ({e}), skipping.")
+        return None
+    legs = result.get("legs") or []
+    if len(legs) < 2:
+        log(f"Suggested parlay: only {len(legs)} real leg(s) available tonight, skipping.")
+        return None
+    return {
+        "legs": [
+            {"name": l.get("name"), "team": l.get("team"), "prop": l.get("prop"),
+             "market_odds": l.get("market_odds"), "hit_probability": l.get("hit_probability"),
+             "confidence": l.get("confidence")}
+            for l in legs
+        ],
+        "naive_combined_probability": result.get("naive_combined_probability"),
+        "naive_probability_note": result.get("naive_probability_note"),
+        "combined_american_odds": _decimal_to_american(result.get("combined_decimal_odds")),
+        "correlation_notes": result.get("correlation_notes") or [],
+    }
 
 
 CATEGORY_LABELS = {
@@ -139,7 +203,36 @@ CATEGORY_ORDER = [
 ]
 
 
-def build_payload(result):
+def load_track_record(path=None):
+    """The real, currently-running accuracy record for the MAIN board --
+    results/history.json's own main_hit_rate, not the blended overall_hit_rate
+    (which also folds in moonshots' deliberately-15-25%-by-design rate and
+    best_of_category's deliberately-below-floor picks -- see this project's
+    own skill doc for why quoting the blended number as "is the model
+    working" is misleading). Kept as a real file read separate from
+    build_payload() so build_payload stays a pure function of its `result`
+    argument, testable without a real history.json on disk.
+
+    Returns None (not a fabricated 0%/blank record) if the file is missing
+    or the main category has no graded picks yet -- an honest "no track
+    record yet" beats a fake one."""
+    path = path or os.path.join(REPO_ROOT, "results", "history.json")
+    try:
+        with open(path) as f:
+            h = json.load(f)
+    except Exception:
+        return None
+    main = (h.get("by_category_totals") or {}).get("main") or {}
+    n = (main.get("hits") or 0) + (main.get("misses") or 0)
+    if n == 0 or h.get("main_hit_rate") is None:
+        return None
+    return {
+        "main_hit_rate": h["main_hit_rate"], "main_n": n,
+        "last_14d_hit_rate": h.get("last_14_days_hit_rate"),
+    }
+
+
+def build_payload(result, track_record=None):
     import prop_probability as pp
 
     def add_estimated_odds(rows):
@@ -211,6 +304,8 @@ def build_payload(result):
             **{stat: CATEGORY_LABELS.get(stat, stat.replace("_", " ").title()) for stat in tabs},
         },
         "data": {"top_picks": top_picks, "all": all_rows, **tabs},
+        "track_record": track_record,
+        "suggested_parlay": result.get("suggested_parlay"),
     }
 
 
@@ -361,9 +456,58 @@ body {{
 .stat .l {{ font-size: 10.5px; letter-spacing: 0.07em; text-transform: uppercase; color: var(--ink-faint); font-weight: 600; }}
 
 .caveat {{
-  font-size: 11.5px; color: var(--ink-faint); margin: 0 0 20px;
+  font-size: 11.5px; color: var(--ink-faint); margin: 0 0 10px;
   border-left: 2px solid var(--line); padding-left: 10px;
 }}
+
+/* ---------- track record: the real number, not a marketing one ---------- */
+.track-record {{
+  font-size: 11.5px; color: var(--ink-dim); margin: 0 0 20px;
+  border-left: 2px solid var(--line); padding-left: 10px;
+}}
+.track-record .n {{ font-family: var(--font-mono); font-weight: 700; }}
+.track-record .n.below {{ color: var(--bad); }}
+.track-record .n.in-range {{ color: var(--good); }}
+
+/* ---------- suggested parlay: a real correlation-screened 3-leg card ---------- */
+.suggested-parlay {{
+  background: var(--surface); border: 1px solid var(--line); border-radius: 10px;
+  padding: 16px 18px; margin-bottom: 18px; box-shadow: var(--shadow);
+}}
+.suggested-parlay-head {{
+  display: flex; align-items: baseline; justify-content: space-between; gap: 10px;
+  margin-bottom: 12px; flex-wrap: wrap;
+}}
+.suggested-parlay-head h2 {{
+  font-family: var(--font-display); font-weight: 700; font-size: 15px; margin: 0;
+  display: flex; align-items: center; gap: 7px;
+}}
+.suggested-parlay-odds {{
+  font-family: var(--font-mono); font-weight: 700; font-size: 18px; color: var(--accent);
+}}
+.sp-legs {{ display: flex; flex-direction: column; gap: 8px; margin-bottom: 10px; }}
+.sp-leg {{
+  display: flex; align-items: baseline; justify-content: space-between; gap: 10px;
+  font-size: 12.5px; padding: 7px 10px; background: var(--surface-2); border-radius: 6px;
+}}
+.sp-leg .who {{ color: var(--ink); font-weight: 600; }}
+.sp-leg .prop {{ color: var(--ink-dim); font-weight: 400; }}
+.sp-leg .price {{ font-family: var(--font-mono); font-variant-numeric: tabular-nums; color: var(--ink-dim); flex: 0 0 auto; }}
+.suggested-parlay .note {{ font-size: 11px; color: var(--ink-faint); line-height: 1.5; margin: 0; }}
+.suggested-parlay .corr-note {{ font-size: 11px; color: var(--accent); margin: 6px 0 0; }}
+
+/* ---------- star / watchlist ---------- */
+.star-btn {{
+  position: absolute; top: 8px; right: 10px;
+  background: transparent; border: none; cursor: pointer; padding: 2px;
+  color: var(--ink-faint); font-size: 16px; line-height: 1; z-index: 2;
+  transition: color 0.12s, transform 0.12s;
+}}
+.star-btn:hover {{ color: var(--accent); transform: scale(1.15); }}
+.star-btn.starred {{ color: var(--accent); }}
+.tab.starred-tab {{ color: var(--accent); }}
+.tab.starred-tab:hover {{ color: var(--accent-bright); }}
+.tab.starred-tab.active {{ border-bottom-color: var(--accent); }}
 
 /* ---------- tabs: sticky terminal-style underline strip ---------- */
 .tabbar-wrap {{
@@ -578,6 +722,8 @@ body {{
 
   <section class="summary" id="summary"></section>
   <p class="caveat" id="caveat"></p>
+  <p class="track-record" id="track-record"></p>
+  <div id="suggested-parlay"></div>
 
   <div class="tabbar-wrap">
     <nav class="tabbar" id="tabbar"></nav>
@@ -743,8 +889,13 @@ function pickRow(p, rank) {{
   const isLock = p.confidence === "High" && p.price_clears === true;
   const lockBadge = isLock ? `<span class="chip lock-badge">&#128274; Lock</span>` : "";
 
+  const starKey = pickKey(p);
+  const isStarred = starredKeys.has(starKey);
+  const starBtn = `<button class="star-btn${{isStarred ? " starred" : ""}}" type="button" data-star-key="${{esc(starKey)}}" aria-label="${{isStarred ? "Remove from starred" : "Add to starred"}}">${{isStarred ? "&#9733;" : "&#9734;"}}</button>`;
+
   return `
   <div class="pick${{isLock ? " lock" : ""}}${{isUnpriced ? " no-line" : ""}}" tabindex="0" role="button" aria-expanded="false">
+    ${{starBtn}}
     <div class="rank">${{String(rank).padStart(2, "0")}}</div>
     <div class="who">
       <div class="name">${{esc(p.name)}}</div>
@@ -799,7 +950,9 @@ function renderSummary() {{
   }}
   const tiles = [
     {{ n: all.length, l: "Candidates Scored" }},
-    {{ n: PAYLOAD.tabs_order.length - 2, l: "Prop Markets" }},
+    // 3 fixed non-market tabs by the time this runs (top_picks/starred/all)
+    // -- initWatchlist() inserts "starred" before this is ever called.
+    {{ n: PAYLOAD.tabs_order.length - 3, l: "Prop Markets" }},
     {{ n: priced, l: "With a Live Line" }},
     {{ n: clears, l: "Clear the Price", accent: true }},
   ];
@@ -810,6 +963,47 @@ function renderSummary() {{
   tiles.forEach((t, i) => animateCount(document.getElementById("stat-n-" + i), t.n));
 }}
 
+// ---- track record: the model's own real accuracy, not a claim about it.
+function renderTrackRecord() {{
+  const el = document.getElementById("track-record");
+  const tr = PAYLOAD.track_record;
+  if (!tr || tr.main_hit_rate == null) {{ el.style.display = "none"; return; }}
+  const pct = (tr.main_hit_rate * 100).toFixed(1) + "%";
+  const cls = tr.main_hit_rate >= 0.60 ? "in-range" : "below";
+  let html = `Real track record: the main board has hit <span class="n ${{cls}}">${{pct}}</span> `
+    + `of ${{tr.main_n}} graded picks so far (target range 60&ndash;80%).`;
+  if (tr.last_14d_hit_rate != null) {{
+    html += ` Last 14 days: <span class="n">${{(tr.last_14d_hit_rate * 100).toFixed(1)}}%</span>.`;
+  }}
+  el.innerHTML = html;
+}}
+
+// ---- suggested parlay: a real, correlation-screened 3-leg card from
+// parlay_builder.py's own engine, not a client-side reimplementation.
+function renderSuggestedParlay() {{
+  const el = document.getElementById("suggested-parlay");
+  const sp = PAYLOAD.suggested_parlay;
+  if (!sp || !sp.legs || sp.legs.length < 2) {{ el.style.display = "none"; return; }}
+  const oddsStr = fmtOdds(sp.combined_american_odds);
+  const legsHtml = sp.legs.map(l => `
+    <div class="sp-leg">
+      <div><span class="who">${{esc(l.name)}}</span> <span class="prop">&middot; ${{esc(l.prop)}}</span></div>
+      <div class="price">${{fmtOdds(l.market_odds) ?? "NO LINE"}}</div>
+    </div>`).join("");
+  const corrHtml = (sp.correlation_notes || [])
+    .map(n => `<p class="corr-note">&#128279; ${{esc(n)}}</p>`).join("");
+  el.innerHTML = `
+    <div class="suggested-parlay">
+      <div class="suggested-parlay-head">
+        <h2>&#127919; Suggested Parlay <span style="font-weight:400;color:var(--ink-faint);font-size:11.5px;">(safest tier, correlation-screened)</span></h2>
+        ${{oddsStr ? `<span class="suggested-parlay-odds">${{oddsStr}}</span>` : ""}}
+      </div>
+      <div class="sp-legs">${{legsHtml}}</div>
+      ${{corrHtml}}
+      <p class="note">${{esc(sp.naive_probability_note || "")}}</p>
+    </div>`;
+}}
+
 let activeTabKey = PAYLOAD.tabs_order[0];
 
 function renderTabs() {{
@@ -817,8 +1011,9 @@ function renderTabs() {{
   bar.innerHTML = PAYLOAD.tabs_order.map((key) => {{
     const label = PAYLOAD.labels[key];
     const count = PAYLOAD.data[key].length;
-    const icon = key === "top_picks" ? "&#127942; " : "";
-    return `<button class="tab${{key === activeTabKey ? " active" : ""}}${{key === "top_picks" ? " top-picks" : ""}}" data-tab="${{esc(key)}}">${{icon}}${{esc(label)}} <span class="cnt">${{count}}</span></button>`;
+    const icon = key === "top_picks" ? "&#127942; " : (key === "starred" ? "&#9733; " : "");
+    const extraCls = key === "top_picks" ? " top-picks" : (key === "starred" ? " starred-tab" : "");
+    return `<button class="tab${{key === activeTabKey ? " active" : ""}}${{extraCls}}" data-tab="${{esc(key)}}">${{icon}}${{esc(label)}} <span class="cnt">${{count}}</span></button>`;
   }}).join("");
   bar.querySelectorAll(".tab").forEach(btn => {{
     btn.addEventListener("click", () => {{
@@ -833,6 +1028,7 @@ function renderTabs() {{
 
 const PANEL_DESC = {{
   top_picks: "The board's real favorites tonight: High-confidence picks that still clear FanDuel's price, ranked by genuine edge over the market -- not just raw probability.",
+  starred: "Your personal shortlist. Click the star on any pick to save it here -- stored on this device only, nothing is sent anywhere.",
 }};
 
 // Some markets are structurally thin -- not a bug, not a trimmed list, just
@@ -898,7 +1094,9 @@ function renderPanels() {{
     const rest = rows.slice(SHOW_N);
     const desc = PANEL_DESC[key] ? `<p class="panel-desc">${{esc(PANEL_DESC[key])}}</p>` : "";
     let body;
-    if (!realRows.length) {{
+    if (!realRows.length && key === "starred") {{
+      body = `<div class="empty-state">You haven't starred any picks yet -- click the &#9734; on any pick to save it here.</div>`;
+    }} else if (!realRows.length) {{
       body = `<div class="empty-state">Nothing here right now -- no candidate tonight both clears High confidence and the live price.</div>`;
     }} else if (!rows.length) {{
       body = `<div class="empty-state">No candidates in ${{esc(label)}} match your filters right now.<br><button class="thin-link clear-filters">Clear filters &times;</button></div>`;
@@ -957,6 +1155,12 @@ function toggleExplain(row) {{
 function initPanelInteractions() {{
   const el = document.getElementById("panels");
   el.addEventListener("click", e => {{
+    const starBtn = e.target.closest(".star-btn");
+    if (starBtn) {{
+      e.stopPropagation();
+      toggleStar(starBtn.dataset.starKey);
+      return;
+    }}
     const row = e.target.closest(".pick");
     if (row) toggleExplain(row);
   }});
@@ -1062,10 +1266,46 @@ function initFilters() {{
   }});
 }}
 
+// ---- star / watchlist: a personal shortlist, stored on this device only
+// (no account, no server -- this page is a static file). "starred" is made
+// into a real PAYLOAD tab client-side so it runs through the exact same
+// renderTabs()/renderPanels() machinery every other tab already uses,
+// rather than a second parallel rendering path to keep in sync.
+const STAR_KEY = "gridiron-starred";
+function pickKey(p) {{ return (p.name || "") + "||" + (p.prop || ""); }}
+function loadStarred() {{
+  try {{ return new Set(JSON.parse(localStorage.getItem(STAR_KEY) || "[]")); }}
+  catch (e) {{ return new Set(); }}
+}}
+function saveStarred() {{ safeSet(STAR_KEY, JSON.stringify([...starredKeys])); }}
+let starredKeys = loadStarred();
+
+function refreshStarredTab() {{
+  PAYLOAD.data.starred = PAYLOAD.data.all.filter(p => starredKeys.has(pickKey(p)));
+}}
+function initWatchlist() {{
+  // Inserted right after top_picks, ahead of "all" and every real market --
+  // must run before renderSummary() (its "Prop Markets" tile count assumes
+  // exactly the fixed meta tabs, now three: top_picks/starred/all, not two).
+  PAYLOAD.tabs_order = ["top_picks", "starred", ...PAYLOAD.tabs_order.filter(k => k !== "top_picks")];
+  PAYLOAD.labels.starred = "Starred";
+  refreshStarredTab();
+}}
+function toggleStar(key) {{
+  if (starredKeys.has(key)) starredKeys.delete(key); else starredKeys.add(key);
+  saveStarred();
+  refreshStarredTab();
+  renderTabs();
+  renderPanels();
+}}
+
 initTheme();
 renderHeader();
 renderFreshness();
 setInterval(renderFreshness, 60000);
+initWatchlist();
+renderTrackRecord();
+renderSuggestedParlay();
 renderSummary();
 renderTabs();
 renderPanels();
@@ -1093,7 +1333,8 @@ def main():
 
     fonts = json.load(open(args.fonts))
     result = run_live_fetch()
-    payload = build_payload(result)
+    track_record = load_track_record()
+    payload = build_payload(result, track_record=track_record)
     html = render_html(payload, fonts)
 
     os.makedirs(os.path.dirname(os.path.abspath(args.out)) or ".", exist_ok=True)
