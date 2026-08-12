@@ -199,6 +199,19 @@ def park_hr_index(temp, wsp, wdir, humid, cf_deg, elev, dome):
     copy of the formula — the only difference between the two callers is where
     temp/wind/humidity come from (a forecast tonight, an archive back then).
     Returns (index, wind_effect)."""
+    # REAL BUG, found by test_park_hr_index.py: both real callers currently
+    # short-circuit dome parks before ever reaching this function (each
+    # hardcodes {"park_hr_index": 50, "wind_effect": "dome"} itself), which
+    # is the only reason this was never hit live. Called directly with
+    # dome=True, it wasn't neutral: m.wind_vs_field returns the string "DOME
+    # — no wind effect", and the word WIND contains the substring "IN" --
+    # so `"IN" in wvf.upper()` matched, and a dome game got scored as if
+    # wind were blowing IN (a real, negative wsp*2.5 penalty on an indoor
+    # game with no wind at all). Guarding here closes the gap for any future
+    # caller that doesn't happen to duplicate the two existing callers' own
+    # pre-filtering.
+    if dome:
+        return 50.0, "dome"
     wvf = m.wind_vs_field(wdir, cf_deg, dome)
     dens = m.air_density_pct(elev, temp, humid)
     idx_score = 50
