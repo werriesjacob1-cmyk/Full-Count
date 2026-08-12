@@ -859,12 +859,25 @@ Explicitly deferred, not forgotten:
   `parlay_builder.py`) and may be reusable here; not yet evaluated for that.
   This is a real feature build, not a quick wire-up — do not start it
   without checking scope first.
-- **Defensive-positioning mismatch** — cross-referencing a hitter's Pull%
-  against the opposing team's actual defensive positioning/range metrics.
-  Dropped for the last pass specifically because Pull% isn't available from
-  the Statcast fallback data used whenever FanGraphs is blocked — revisit
-  once there's a Statcast-native Pull%-equivalent or FanGraphs access
-  improves.
+- **Pull tendency vs. park, done; opposing-team positioning specifically,
+  not done.** UPDATED — this bullet claimed Pull% was blocked on FanGraphs
+  and dropped; that's stale. `mlb_sources.pull_rates()` computes real Pull%
+  directly from Statcast batted-ball spray angle, no FanGraphs dependency
+  at all, and `score_batter` has recorded it (`pull_park_synergy`, pull
+  rate interacted with the park's own handedness-split HR index) since
+  before this session. It's real, live, and computed every run — just not
+  yet promoted to a scored weight, same "record, measure, promote"
+  discipline as every other new signal here. What's still genuinely
+  missing is the OTHER half of the original idea: the opposing team's own
+  defensive positioning/range, to catch when a pull-heavy hitter is running
+  into an already-well-positioned defense. No free per-team positioning
+  data source has been found for this. Also worth noting: MLB's 2023 shift
+  rule (two infielders required on each side of second base) already
+  eliminated the most extreme version of what this bullet originally
+  chased — the aggressive three-infielders-on-one-side shifts that made
+  "pull into the shift" a dramatic signal no longer exist, so even a real
+  positioning data source would likely move the needle less than it once
+  would have.
 - **Using the per-player history now being collected** — `data/players/` is
   accumulating real data every run, but nothing reads it back yet for
   genuine multi-week trend detection beyond the current L7/L14 windows. That
