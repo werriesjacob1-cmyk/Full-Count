@@ -4944,7 +4944,17 @@ def quality_control(candidates, game_meta, park_wx, emp_pitchers):
             gp = c.get("game_pk")
             side = "away" if c.get("team") == next(
                 (g.get("away_team") for g in game_meta if g.get("game_pk") == gp), None) else "home"
-            state = lineup_state.get((gp, side))
+            # REAL BUG, found by test_quality_control.py: .get((gp, side)) with
+            # no default returns None for a candidate whose game_pk isn't in
+            # game_meta at all (a stale candidate, or a game that dropped off
+            # the schedule between generation and this check). None matches
+            # neither "missing" nor "assumed" below, so the candidate fell
+            # through BOTH branches and reached `kept` -- a batter with ZERO
+            # lineup information sailing through as if fully confirmed, the
+            # exact thing this function exists to prevent. Defaulting to
+            # "missing" here makes that case reject the same way a genuinely
+            # unconfirmed lineup already does, instead of silently passing.
+            state = lineup_state.get((gp, side), "missing")
             if state == "missing":
                 reason = ("lineup not confirmed — the batting-order slot is a guess, "
                           "and slot is the strongest single signal in the model")
