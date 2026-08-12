@@ -308,8 +308,16 @@ body {{
   letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-faint);
   border: 1px solid var(--line); border-radius: 4px; padding: 3px 7px;
 }}
-.meta {{ text-align: right; display: flex; flex-direction: column; align-items: flex-end; gap: 4px; }}
+.meta {{ display: flex; align-items: center; gap: 12px; }}
+.meta-col {{ text-align: right; display: flex; flex-direction: column; align-items: flex-end; gap: 4px; }}
 .meta .date {{ font-family: var(--font-mono); font-size: 12.5px; color: var(--ink); font-weight: 600; }}
+.theme-toggle {{
+  width: 32px; height: 32px; flex: 0 0 auto; display: flex; align-items: center; justify-content: center;
+  font-size: 15px; line-height: 1; border-radius: 999px; cursor: pointer;
+  background: var(--surface-2); border: 1px solid var(--line); color: var(--ink-dim);
+  transition: background 0.12s, border-color 0.12s, color 0.12s;
+}}
+.theme-toggle:hover {{ color: var(--ink); border-color: var(--accent-soft); }}
 .live-pill {{
   display: inline-flex; align-items: center; gap: 6px;
   font-family: var(--font-mono); font-size: 10.5px; font-weight: 600;
@@ -318,6 +326,7 @@ body {{
   border-radius: 999px; padding: 3px 9px 3px 7px;
 }}
 .live-pill .dot {{ width: 6px; height: 6px; border-radius: 50%; background: var(--good); flex: 0 0 auto; }}
+#board-fresh {{ color: var(--ink-faint); font-weight: 500; }}
 @media (prefers-reduced-motion: no-preference) {{
   .live-pill .dot {{ animation: pulse-dot 2.2s ease-in-out infinite; }}
 }}
@@ -377,6 +386,39 @@ body {{
 .tab.top-picks:hover {{ color: var(--accent-bright); }}
 .tab.top-picks.active {{ border-bottom-color: var(--accent); }}
 
+/* ---------- filter bar: search + quick filters + sort ---------- */
+.filterbar {{
+  display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+  padding: 10px 0;
+}}
+.search-wrap {{ position: relative; flex: 1 1 200px; min-width: 160px; }}
+.search-icon {{
+  position: absolute; left: 10px; top: 50%; transform: translateY(-50%);
+  width: 14px; height: 14px; color: var(--ink-faint); pointer-events: none;
+}}
+#search-input {{
+  width: 100%; font-family: var(--font-body); font-size: 12.5px; color: var(--ink);
+  background: var(--surface); border: 1px solid var(--line); border-radius: 999px;
+  padding: 7px 12px 7px 30px; outline: none;
+  transition: border-color 0.12s;
+}}
+#search-input::placeholder {{ color: var(--ink-faint); }}
+#search-input:focus {{ border-color: var(--accent); }}
+.filter-chip {{
+  font-family: var(--font-mono); font-size: 11px; font-weight: 600; white-space: nowrap;
+  color: var(--ink-dim); background: var(--surface); border: 1px solid var(--line);
+  border-radius: 999px; padding: 7px 12px; cursor: pointer; flex: 0 0 auto;
+  transition: background 0.12s, border-color 0.12s, color 0.12s;
+}}
+.filter-chip:hover {{ border-color: var(--accent-soft); }}
+.filter-chip[data-active="true"] {{ background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }}
+.sort-select {{
+  font-family: var(--font-mono); font-size: 11px; font-weight: 600;
+  color: var(--ink-dim); background: var(--surface); border: 1px solid var(--line);
+  border-radius: 999px; padding: 7px 10px; cursor: pointer; flex: 0 0 auto; outline: none;
+}}
+.sort-select:hover {{ border-color: var(--accent-soft); }}
+
 .panel {{ display: none; }}
 .panel.active {{ display: block; }}
 .panel-head {{
@@ -420,10 +462,10 @@ body {{
 .chip.conf-high {{ background: var(--accent-soft); color: var(--accent); }}
 .chip.conf-medium {{ background: var(--surface-2); color: var(--ink-dim); border: 1px solid var(--line); }}
 .chip.conf-low {{ background: var(--surface-2); color: var(--ink-faint); border: 1px solid var(--line); }}
-.chip.love-badge {{ background: var(--accent); color: var(--accent-ink); font-weight: 700; }}
-.pick.love {{ border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent-soft), var(--shadow); }}
-.pick.love:hover {{ box-shadow: 0 0 0 2px var(--accent-soft), var(--shadow-lift); }}
-.pick.love .who .name {{ color: var(--accent); }}
+.chip.lock-badge {{ background: var(--accent); color: var(--accent-ink); font-weight: 700; }}
+.pick.lock {{ border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent-soft), var(--shadow); }}
+.pick.lock:hover {{ box-shadow: 0 0 0 2px var(--accent-soft), var(--shadow-lift); }}
+.pick.lock .who .name {{ color: var(--accent); }}
 .meter {{ width: 100%; height: 4px; background: var(--line-soft); border-radius: 2px; margin-top: 6px; position: relative; overflow: visible; }}
 .meter .fill {{ position: absolute; inset: 0 auto 0 0; background: var(--accent); border-radius: 2px; }}
 .meter .fill.clears {{ background: var(--good); }}
@@ -506,8 +548,11 @@ body {{
       <span class="tag">FanDuel &middot; MLB Props</span>
     </div>
     <div class="meta">
-      <div class="date" id="board-date">&mdash;</div>
-      <span class="live-pill"><span class="dot"></span><span id="board-time">Live-scored &mdash;</span></span>
+      <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Toggle color theme">&#127769;</button>
+      <div class="meta-col">
+        <div class="date" id="board-date">&mdash;</div>
+        <span class="live-pill"><span class="dot"></span><span id="board-time">Live-scored &mdash;</span><span id="board-fresh"></span></span>
+      </div>
     </div>
   </header>
 
@@ -516,6 +561,23 @@ body {{
 
   <div class="tabbar-wrap">
     <nav class="tabbar" id="tabbar"></nav>
+    <div class="filterbar" id="filterbar">
+      <div class="search-wrap">
+        <svg class="search-icon" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="9" cy="9" r="6.5" stroke="currentColor" stroke-width="1.6"/>
+          <path d="M17 17L13.5 13.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+        </svg>
+        <input type="search" id="search-input" placeholder="Search player or team&hellip;" autocomplete="off" spellcheck="false">
+      </div>
+      <button class="filter-chip" id="filter-clears" type="button" data-active="false">Clears Price</button>
+      <button class="filter-chip" id="filter-high" type="button" data-active="false">High Confidence</button>
+      <select class="sort-select" id="sort-select" aria-label="Sort by">
+        <option value="">Sort: Default</option>
+        <option value="edge">Sort: Edge %</option>
+        <option value="prob">Sort: Model %</option>
+        <option value="odds">Sort: Biggest Payout</option>
+      </select>
+    </div>
   </div>
   <main id="panels"></main>
 
@@ -653,11 +715,11 @@ function pickRow(p, rank) {{
     edgeHtml = `<span class="edge ${{edgeCls}}">${{edgeText}} vs mkt</span>`;
   }}
 
-  const isLove = p.confidence === "High" && p.price_clears === true;
-  const loveBadge = isLove ? `<span class="chip love-badge">&#128293; Loves This</span>` : "";
+  const isLock = p.confidence === "High" && p.price_clears === true;
+  const lockBadge = isLock ? `<span class="chip lock-badge">&#128274; Lock</span>` : "";
 
   return `
-  <div class="pick${{isLove ? " love" : ""}}" tabindex="0" role="button" aria-expanded="false">
+  <div class="pick${{isLock ? " lock" : ""}}" tabindex="0" role="button" aria-expanded="false">
     <div class="rank">${{String(rank).padStart(2, "0")}}</div>
     <div class="who">
       <div class="name">${{esc(p.name)}}</div>
@@ -671,7 +733,7 @@ function pickRow(p, rank) {{
         <span class="price ${{oddsClass}}">${{oddsText}}</span>
         ${{fairOdds !== null ? `<span class="fair">fair ${{fairOdds}}</span>` : ""}}
       </div>
-      <div class="badges">${{loveBadge}}${{confChip}}</div>
+      <div class="badges">${{lockBadge}}${{confChip}}</div>
       <div class="meter">
         <div class="fill ${{fillClass}}" style="width:${{ourPct}}%; opacity:${{fillOpacity}}"></div>
         ${{marketPct !== null ? `<div class="mark" style="left:${{marketPct}}%"></div>` : ""}}
@@ -723,16 +785,19 @@ function renderSummary() {{
   tiles.forEach((t, i) => animateCount(document.getElementById("stat-n-" + i), t.n));
 }}
 
+let activeTabKey = PAYLOAD.tabs_order[0];
+
 function renderTabs() {{
   const bar = document.getElementById("tabbar");
-  bar.innerHTML = PAYLOAD.tabs_order.map((key, i) => {{
+  bar.innerHTML = PAYLOAD.tabs_order.map((key) => {{
     const label = PAYLOAD.labels[key];
     const count = PAYLOAD.data[key].length;
     const icon = key === "top_picks" ? "&#127942; " : "";
-    return `<button class="tab${{i === 0 ? " active" : ""}}${{key === "top_picks" ? " top-picks" : ""}}" data-tab="${{esc(key)}}">${{icon}}${{esc(label)}} <span class="cnt">${{count}}</span></button>`;
+    return `<button class="tab${{key === activeTabKey ? " active" : ""}}${{key === "top_picks" ? " top-picks" : ""}}" data-tab="${{esc(key)}}">${{icon}}${{esc(label)}} <span class="cnt">${{count}}</span></button>`;
   }}).join("");
   bar.querySelectorAll(".tab").forEach(btn => {{
     btn.addEventListener("click", () => {{
+      activeTabKey = btn.dataset.tab;
       bar.querySelectorAll(".tab").forEach(b => b.classList.remove("active"));
       btn.classList.add("active");
       document.querySelectorAll(".panel").forEach(p => p.classList.remove("active"));
@@ -769,18 +834,51 @@ const THIN_NOTES = {{
 }};
 const THIN_THRESHOLD = 10;
 
+// ---- search / quick-filter / sort state -------------------------------
+// Purely a client-side view over the same PAYLOAD data -- filtering never
+// changes what a tab's real candidate count says (that stays the honest
+// total), only what's currently rendered as pick cards.
+const uiState = {{ q: "", clearsOnly: false, highOnly: false, sortKey: "" }};
+
+function filterSortRows(rows) {{
+  let out = rows;
+  if (uiState.clearsOnly) out = out.filter(p => p.price_clears === true);
+  if (uiState.highOnly) out = out.filter(p => p.confidence === "High");
+  if (uiState.q) {{
+    const q = uiState.q;
+    out = out.filter(p =>
+      (p.name || "").toLowerCase().includes(q) ||
+      (p.team || "").toLowerCase().includes(q) ||
+      (p.matchup || "").toLowerCase().includes(q));
+  }}
+  if (uiState.sortKey === "edge") {{
+    out = out.slice().sort((a, b) => (b.market_edge ?? -Infinity) - (a.market_edge ?? -Infinity));
+  }} else if (uiState.sortKey === "prob") {{
+    out = out.slice().sort((a, b) => (b.hit_probability ?? -Infinity) - (a.hit_probability ?? -Infinity));
+  }} else if (uiState.sortKey === "odds") {{
+    out = out.slice().sort((a, b) => (b.market_odds ?? -Infinity) - (a.market_odds ?? -Infinity));
+  }}
+  return out;
+}}
+
 function renderPanels() {{
   const el = document.getElementById("panels");
+  const filtersActive = !!(uiState.q || uiState.clearsOnly || uiState.highOnly);
   let html = "";
-  PAYLOAD.tabs_order.forEach((key, i) => {{
-    const rows = PAYLOAD.data[key];
+  PAYLOAD.tabs_order.forEach((key) => {{
+    const realRows = PAYLOAD.data[key];
+    const rows = filterSortRows(realRows);
     const label = PAYLOAD.labels[key];
     const visible = rows.slice(0, SHOW_N);
     const rest = rows.slice(SHOW_N);
     const desc = PANEL_DESC[key] ? `<p class="panel-desc">${{esc(PANEL_DESC[key])}}</p>` : "";
     let body;
-    if (rows.length) {{
-      const thin = rows.length < THIN_THRESHOLD ? THIN_NOTES[key] : null;
+    if (!realRows.length) {{
+      body = `<div class="empty-state">Nothing here right now -- no candidate tonight both clears High confidence and the live price.</div>`;
+    }} else if (!rows.length) {{
+      body = `<div class="empty-state">No candidates in ${{esc(label)}} match your filters right now.<br><button class="thin-link clear-filters">Clear filters &times;</button></div>`;
+    }} else {{
+      const thin = realRows.length < THIN_THRESHOLD ? THIN_NOTES[key] : null;
       const thinNote = thin
         ? `<div class="thin-note">
              <p>${{esc(thin.text)}}</p>
@@ -793,12 +891,13 @@ function renderPanels() {{
         </div>
         ${{rest.length ? `<button class="more-btn" data-more="${{esc(key)}}">Show all ${{rows.length}} &darr;</button>` : ""}}
         ${{thinNote}}`;
-    }} else {{
-      body = `<div class="empty-state">Nothing here right now -- no candidate tonight both clears High confidence and the live price.</div>`;
     }}
+    const countLabel = filtersActive
+      ? `${{rows.length}} of ${{realRows.length}} candidate${{realRows.length === 1 ? "" : "s"}}`
+      : `${{realRows.length}} candidate${{realRows.length === 1 ? "" : "s"}}`;
     html += `
-    <div class="panel${{i === 0 ? " active" : ""}}" id="panel-${{esc(key)}}">
-      <div class="panel-head"><h2>${{esc(label)}}</h2><span class="n">${{rows.length}} candidate${{rows.length === 1 ? "" : "s"}}, ranked by ${{key === "top_picks" ? "edge over the market" : "model probability"}}</span></div>
+    <div class="panel${{key === activeTabKey ? " active" : ""}}" id="panel-${{esc(key)}}">
+      <div class="panel-head"><h2>${{esc(label)}}</h2><span class="n">${{countLabel}}, ranked by ${{uiState.sortKey === "edge" ? "edge over the market" : uiState.sortKey === "prob" ? "model probability" : uiState.sortKey === "odds" ? "payout size" : (key === "top_picks" ? "edge over the market" : "model probability")}}</span></div>
       ${{desc}}
       ${{body}}
     </div>`;
@@ -811,17 +910,27 @@ function renderPanels() {{
       btn.remove();
     }});
   }});
-  el.querySelectorAll(".thin-link").forEach(btn => {{
+  el.querySelectorAll(".thin-link[data-goto]").forEach(btn => {{
     btn.addEventListener("click", () => {{
       document.querySelector(`.tab[data-tab="${{btn.dataset.goto}}"]`)?.click();
       document.querySelector(".tabbar-wrap")?.scrollIntoView({{ behavior: "smooth", block: "start" }});
     }});
   }});
+  el.querySelectorAll(".clear-filters").forEach(btn => {{
+    btn.addEventListener("click", () => {{ resetFilters(); }});
+  }});
+}}
 
-  function toggleExplain(row) {{
-    const open = row.classList.toggle("expanded");
-    row.setAttribute("aria-expanded", open ? "true" : "false");
-  }}
+// Delegated once, on the persistent #panels container -- NOT inside
+// renderPanels(), which now runs on every keystroke/filter change. Binding
+// these there would stack a fresh listener on every re-render, since
+// innerHTML replaces the children but not the container itself.
+function toggleExplain(row) {{
+  const open = row.classList.toggle("expanded");
+  row.setAttribute("aria-expanded", open ? "true" : "false");
+}}
+function initPanelInteractions() {{
+  const el = document.getElementById("panels");
   el.addEventListener("click", e => {{
     const row = e.target.closest(".pick");
     if (row) toggleExplain(row);
@@ -845,10 +954,98 @@ function renderHeader() {{
     "Scored fresh against tonight's still-open games only — any game already underway when this ran is excluded, since its FanDuel lines are closed.";
 }}
 
+// ---- freshness: this board is rebuilt once a day, not live, so how old
+// it is right now is real information a bettor needs before trusting it.
+function renderFreshness() {{
+  const el = document.getElementById("board-fresh");
+  if (!el) return;
+  const genMs = new Date(PAYLOAD.generated_at).getTime();
+  const mins = Math.max(0, Math.round((Date.now() - genMs) / 60000));
+  let text;
+  if (mins < 1) text = "just now";
+  else if (mins < 60) text = mins + "m ago";
+  else {{
+    const hrs = Math.floor(mins / 60);
+    const remMin = mins % 60;
+    text = hrs + "h" + (remMin ? " " + remMin + "m" : "") + " ago";
+  }}
+  el.textContent = " · " + text;
+}}
+
+// ---- theme toggle: system preference by default, explicit choice
+// persisted locally so it survives a reload without needing an account. --
+const THEME_KEY = "gridiron-theme";
+function safeGet(k) {{ try {{ return localStorage.getItem(k); }} catch (e) {{ return null; }} }}
+function safeSet(k, v) {{ try {{ localStorage.setItem(k, v); }} catch (e) {{}} }}
+function systemTheme() {{ return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"; }}
+function applyTheme(theme) {{
+  if (theme) document.documentElement.setAttribute("data-theme", theme);
+  else document.documentElement.removeAttribute("data-theme");
+  const btn = document.getElementById("theme-toggle");
+  const effective = theme || systemTheme();
+  btn.textContent = effective === "dark" ? "☀️" : "🌙";
+  btn.setAttribute("aria-label", effective === "dark" ? "Switch to light mode" : "Switch to dark mode");
+}}
+function initTheme() {{
+  applyTheme(safeGet(THEME_KEY));
+  document.getElementById("theme-toggle").addEventListener("click", () => {{
+    const current = document.documentElement.getAttribute("data-theme") || systemTheme();
+    const next = current === "dark" ? "light" : "dark";
+    safeSet(THEME_KEY, next);
+    applyTheme(next);
+  }});
+}}
+
+// ---- search / quick filters / sort: wired once, each control just
+// updates uiState and asks renderPanels() to redraw with the new view.
+function debounce(fn, ms) {{
+  let t;
+  return (...args) => {{ clearTimeout(t); t = setTimeout(() => fn(...args), ms); }};
+}}
+function resetFilters() {{
+  uiState.q = ""; uiState.clearsOnly = false; uiState.highOnly = false; uiState.sortKey = "";
+  document.getElementById("search-input").value = "";
+  document.getElementById("filter-clears").dataset.active = "false";
+  document.getElementById("filter-high").dataset.active = "false";
+  document.getElementById("sort-select").value = "";
+  renderPanels();
+}}
+function initFilters() {{
+  const search = document.getElementById("search-input");
+  search.addEventListener("input", debounce(() => {{
+    uiState.q = search.value.trim().toLowerCase();
+    renderPanels();
+  }}, 150));
+
+  const clearsBtn = document.getElementById("filter-clears");
+  clearsBtn.addEventListener("click", () => {{
+    uiState.clearsOnly = !uiState.clearsOnly;
+    clearsBtn.dataset.active = String(uiState.clearsOnly);
+    renderPanels();
+  }});
+
+  const highBtn = document.getElementById("filter-high");
+  highBtn.addEventListener("click", () => {{
+    uiState.highOnly = !uiState.highOnly;
+    highBtn.dataset.active = String(uiState.highOnly);
+    renderPanels();
+  }});
+
+  document.getElementById("sort-select").addEventListener("change", (e) => {{
+    uiState.sortKey = e.target.value;
+    renderPanels();
+  }});
+}}
+
+initTheme();
 renderHeader();
+renderFreshness();
+setInterval(renderFreshness, 60000);
 renderSummary();
 renderTabs();
 renderPanels();
+initPanelInteractions();
+initFilters();
 </script>
 """
 
