@@ -69,22 +69,23 @@
         {
           "prop": "Over 3.5 Strikeouts",
           "type": "pitcher",
-          "score": 45.6,
+          "score": 57.6,
           "notable_signals": 1,
           "matchup": "Colorado Rockies @ Arizona Diamondbacks",
           "game_pk": 825047,
           "team": "Colorado Rockies",
           "side": null,
           "lean": null,
+          "combo_player_ids": null,
           "signals": {
             "same_hand_ratio": 100.0,
             "l14_k_pct": 0.0,
             "tto_penalty": 8.0,
             "env_neutral": 50.0
           },
-          "hit_probability": 0.5734,
-          "raw_hit_probability": 0.4846,
-          "lift": -0.1393,
+          "hit_probability": 0.5852,
+          "raw_hit_probability": 0.5987,
+          "lift": -0.128,
           "reliability": "D",
           "sample_n": 17,
           "projection": {
@@ -94,28 +95,29 @@
           }
         },
         {
-          "prop": "Arizona Diamondbacks scoreless in the 1st",
+          "prop": "Over 14.5 Outs Recorded",
           "type": "pitcher",
-          "score": 73.7,
+          "score": 43.7,
           "notable_signals": 0,
           "matchup": "Colorado Rockies @ Arizona Diamondbacks",
           "game_pk": 825047,
           "team": "Colorado Rockies",
           "side": "away",
-          "lean": "NRFI",
+          "lean": null,
+          "combo_player_ids": null,
           "signals": {
-            "yrfi_rate": 26.3,
-            "fi_n_starts": 19.0,
-            "park_hr_index": 50.0
+            "outs_rate": 0.6347,
+            "avg_outs_per_start": 14.47
           },
-          "hit_probability": 0.691,
-          "raw_hit_probability": 0.7143,
-          "lift": -0.015,
+          "hit_probability": 0.6347,
+          "raw_hit_probability": null,
+          "lift": -0.1317,
           "reliability": "D",
-          "sample_n": 19,
+          "sample_n": 17,
           "projection": {
-            "stat": "first_inning_run",
-            "value": 26.3
+            "stat": "pitcher_outs",
+            "value": 14.5,
+            "needs": 15
           }
         }
       ]

@@ -351,38 +351,45 @@
       "date": "2026-08-12",
       "evaluations": [
         {
-          "prop": "Over 0.5 Singles",
+          "prop": "Over 0.5 Hits+Runs+RBIs",
           "type": "batter",
-          "score": 65.4,
-          "notable_signals": 2,
+          "score": 71.3,
+          "notable_signals": 3,
           "matchup": "Pittsburgh Pirates @ Miami Marlins",
           "game_pk": 823833,
           "team": "Miami Marlins",
           "side": null,
           "lean": null,
+          "combo_player_ids": null,
           "signals": {
-            "l7_avg_ev": 43.0147,
+            "sp_era_weak": 18.5714,
+            "pitch_exploit": 3.4286,
+            "l7_avg_ev": 38.625,
             "l7_barrel_pct": 100.0,
             "bat_speed_trend": 15.0,
             "park_hr_index": 50.0,
-            "season_barrel_pct": 4.6667,
-            "lineup_slot": 100.0,
+            "season_barrel_pct": 6.0,
+            "lineup_slot": 87.5,
             "bullpen_fatigue": 83.3333,
-            "opp_catcher_framing": 0.48,
+            "platoon_barrel_pct": -2.88,
+            "platoon_xwoba": 0.36,
+            "opp_catcher_framing": -0.12,
             "days_rest": 0.0,
-            "hard_hit_105_rate": -3.6825,
+            "woba_ahead": 0.0,
+            "woba_behind": 59.0909,
+            "hard_hit_105_rate": -3.695,
             "getaway_day": 0.0,
             "series_game": 1.0,
-            "sp_rp_ops_gap": -0.32,
-            "vs_rp_ops": 0.132
+            "sp_rp_ops_gap": -0.336,
+            "vs_rp_ops": 0.096
           },
-          "hit_probability": 0.5721,
-          "raw_hit_probability": 0.6146,
-          "lift": 0.1696,
+          "hit_probability": 0.7196,
+          "raw_hit_probability": 0.7616,
+          "lift": 0.0443,
           "reliability": "A",
           "sample_n": 118,
           "projection": {
-            "stat": "singles",
+            "stat": "hits_runs_rbis",
             "value": 0.5,
             "needs": 1
           }
@@ -390,26 +397,52 @@
         {
           "prop": "To Steal a Base",
           "type": "batter",
-          "score": 59.1,
+          "score": 46.2,
           "notable_signals": 0,
           "matchup": "Pittsburgh Pirates @ Miami Marlins",
           "game_pk": 823833,
           "team": "Miami Marlins",
           "side": null,
           "lean": null,
+          "combo_player_ids": null,
           "signals": {
-            "opp_team_cs_pct": 0.9,
-            "sprint_speed": 31.25,
+            "opp_team_cs_pct": 0.42,
+            "sprint_speed": 28.125,
             "catcher_poptime": 100.0,
-            "on_base": 70.2495
+            "on_base": 73.1286
           },
-          "hit_probability": 0.1971,
-          "raw_hit_probability": 0.1381,
+          "hit_probability": 0.1376,
+          "raw_hit_probability": null,
           "lift": null,
           "reliability": "A",
           "sample_n": 118,
           "projection": {
             "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 0,
+          "notable_signals": 0,
+          "matchup": "Pittsburgh Pirates @ Miami Marlins",
+          "game_pk": 823833,
+          "team": "Miami Marlins",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0672
+          },
+          "hit_probability": 0.0838,
+          "raw_hit_probability": 0.0672,
+          "lift": -0.143,
+          "reliability": "A",
+          "sample_n": 118,
+          "projection": {
+            "stat": "hard_hit_105",
             "value": 1,
             "needs": 1
           }

@@ -216,6 +216,79 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-12",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 72.5,
+          "notable_signals": 1,
+          "matchup": "Pittsburgh Pirates @ Miami Marlins",
+          "game_pk": 823833,
+          "team": "Pittsburgh Pirates",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "sp_era_weak": 60.8571,
+            "pitch_exploit": 8.5714,
+            "l7_avg_ev": 100.0,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 52.0,
+            "lineup_slot": 25.0,
+            "bullpen_fatigue": 47.619,
+            "platoon_barrel_pct": 3.28,
+            "platoon_xwoba": 1.86,
+            "opp_catcher_framing": 0.84,
+            "days_rest": 4.0,
+            "woba_ahead": 44.5455,
+            "woba_behind": 3.6364,
+            "hard_hit_105_rate": -0.17,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": 0.352,
+            "vs_rp_ops": 1.704
+          },
+          "hit_probability": 0.6645,
+          "raw_hit_probability": 0.662,
+          "lift": -0.0108,
+          "reliability": "B",
+          "sample_n": 45,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 18.0,
+          "notable_signals": 0,
+          "matchup": "Pittsburgh Pirates @ Miami Marlins",
+          "game_pk": 823833,
+          "team": "Pittsburgh Pirates",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.2082
+          },
+          "hit_probability": 0.1738,
+          "raw_hit_probability": 0.2082,
+          "lift": -0.053,
+          "reliability": "B",
+          "sample_n": 45,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

@@ -67,55 +67,57 @@
       "date": "2026-08-12",
       "evaluations": [
         {
-          "prop": "Over 3.5 Strikeouts",
+          "prop": "Over 4.5 Strikeouts",
           "type": "pitcher",
-          "score": 68.6,
+          "score": 79.8,
           "notable_signals": 1,
           "matchup": "New York Mets @ Atlanta Braves",
           "game_pk": 824883,
           "team": "Atlanta Braves",
           "side": null,
           "lean": null,
+          "combo_player_ids": null,
           "signals": {
-            "same_hand_ratio": 100.0,
+            "same_hand_ratio": 92.8571,
             "l14_k_pct": 100.0,
             "tto_penalty": 8.0,
             "env_neutral": 50.0
           },
-          "hit_probability": 0.6614,
-          "raw_hit_probability": 0.8071,
-          "lift": -0.0513,
+          "hit_probability": 0.5962,
+          "raw_hit_probability": 0.6315,
+          "lift": 0.0597,
           "reliability": "D",
           "sample_n": 19,
           "projection": {
             "stat": "strikeouts",
-            "value": 3.5,
-            "needs": 4
+            "value": 4.5,
+            "needs": 5
           }
         },
         {
-          "prop": "New York Mets scoreless in the 1st",
+          "prop": "Over 15.5 Outs Recorded",
           "type": "pitcher",
-          "score": 65.0,
+          "score": 41.0,
           "notable_signals": 0,
           "matchup": "New York Mets @ Atlanta Braves",
           "game_pk": 824883,
           "team": "Atlanta Braves",
           "side": "home",
-          "lean": "NRFI",
+          "lean": null,
+          "combo_player_ids": null,
           "signals": {
-            "yrfi_rate": 35.0,
-            "fi_n_starts": 20.0,
-            "park_hr_index": 50.0
+            "outs_rate": 0.4906,
+            "avg_outs_per_start": 15.89
           },
-          "hit_probability": 0.6856,
-          "raw_hit_probability": 0.6904,
-          "lift": -0.0204,
+          "hit_probability": 0.4906,
+          "raw_hit_probability": null,
+          "lift": -0.0536,
           "reliability": "D",
-          "sample_n": 20,
+          "sample_n": 19,
           "projection": {
-            "stat": "first_inning_run",
-            "value": 35.0
+            "stat": "pitcher_outs",
+            "value": 15.5,
+            "needs": 16
           }
         }
       ]

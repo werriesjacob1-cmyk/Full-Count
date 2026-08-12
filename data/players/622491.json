@@ -27,21 +27,22 @@
         {
           "prop": "Over 3.5 Strikeouts",
           "type": "pitcher",
-          "score": 62.4,
+          "score": 74.4,
           "notable_signals": 0,
           "matchup": "Cincinnati Reds @ Chicago White Sox",
           "game_pk": 824562,
           "team": "Chicago White Sox",
           "side": null,
           "lean": null,
+          "combo_player_ids": null,
           "signals": {
             "same_hand_ratio": 100.0,
             "l14_k_pct": 75.2941,
             "env_neutral": 50.0
           },
-          "hit_probability": 0.6167,
-          "raw_hit_probability": 0.6398,
-          "lift": -0.096,
+          "hit_probability": 0.5925,
+          "raw_hit_probability": 0.6204,
+          "lift": -0.1207,
           "reliability": "D",
           "sample_n": 18,
           "projection": {
@@ -51,28 +52,29 @@
           }
         },
         {
-          "prop": "Cincinnati Reds scoreless in the 1st",
+          "prop": "Over 14.5 Outs Recorded",
           "type": "pitcher",
-          "score": 65.0,
+          "score": 68.4,
           "notable_signals": 0,
           "matchup": "Cincinnati Reds @ Chicago White Sox",
           "game_pk": 824562,
           "team": "Chicago White Sox",
           "side": "home",
-          "lean": "NRFI",
+          "lean": null,
+          "combo_player_ids": null,
           "signals": {
-            "yrfi_rate": 35.0,
-            "fi_n_starts": 20.0,
-            "park_hr_index": 64.4
+            "outs_rate": 0.7333,
+            "avg_outs_per_start": 15.39
           },
-          "hit_probability": 0.6856,
-          "raw_hit_probability": 0.6904,
-          "lift": -0.0204,
+          "hit_probability": 0.7333,
+          "raw_hit_probability": null,
+          "lift": -0.0331,
           "reliability": "D",
-          "sample_n": 20,
+          "sample_n": 18,
           "projection": {
-            "stat": "first_inning_run",
-            "value": 35.0
+            "stat": "pitcher_outs",
+            "value": 14.5,
+            "needs": 15
           }
         }
       ]

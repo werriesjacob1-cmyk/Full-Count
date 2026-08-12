@@ -27,22 +27,23 @@
         {
           "prop": "Over 3.5 Strikeouts",
           "type": "pitcher",
-          "score": 43.7,
+          "score": 46.9,
           "notable_signals": 0,
           "matchup": "Cincinnati Reds @ Chicago White Sox",
           "game_pk": 824562,
           "team": "Cincinnati Reds",
           "side": null,
           "lean": null,
+          "combo_player_ids": null,
           "signals": {
-            "same_hand_ratio": 92.8571,
+            "same_hand_ratio": 21.4286,
             "l14_k_pct": 11.7647,
             "tto_penalty": -8.0,
             "env_neutral": 50.0
           },
-          "hit_probability": 0.6248,
-          "raw_hit_probability": 0.6694,
-          "lift": -0.0879,
+          "hit_probability": 0.6187,
+          "raw_hit_probability": 0.6993,
+          "lift": -0.0945,
           "reliability": "D",
           "sample_n": 17,
           "projection": {
@@ -52,28 +53,29 @@
           }
         },
         {
-          "prop": "Chicago White Sox scoreless in the 1st",
+          "prop": "Over 13.5 Outs Recorded",
           "type": "pitcher",
-          "score": 41.2,
+          "score": 73.0,
           "notable_signals": 0,
           "matchup": "Cincinnati Reds @ Chicago White Sox",
           "game_pk": 824562,
           "team": "Cincinnati Reds",
           "side": "away",
-          "lean": "NRFI",
+          "lean": null,
+          "combo_player_ids": null,
           "signals": {
-            "yrfi_rate": 41.2,
-            "fi_n_starts": 17.0,
-            "park_hr_index": 64.4
+            "outs_rate": 0.7752,
+            "avg_outs_per_start": 14.47
           },
-          "hit_probability": 0.6825,
-          "raw_hit_probability": 0.6769,
-          "lift": -0.0235,
+          "hit_probability": 0.7752,
+          "raw_hit_probability": null,
+          "lift": -0.0298,
           "reliability": "D",
           "sample_n": 17,
           "projection": {
-            "stat": "first_inning_run",
-            "value": 41.2
+            "stat": "pitcher_outs",
+            "value": 13.5,
+            "needs": 14
           }
         }
       ]

@@ -27,21 +27,22 @@
         {
           "prop": "Over 3.5 Strikeouts",
           "type": "pitcher",
-          "score": 51.0,
+          "score": 59.9,
           "notable_signals": 0,
           "matchup": "Cleveland Guardians @ Detroit Tigers",
           "game_pk": 824241,
           "team": "Detroit Tigers",
           "side": null,
           "lean": null,
+          "combo_player_ids": null,
           "signals": {
-            "same_hand_ratio": 100.0,
+            "same_hand_ratio": 75.0,
             "l14_k_pct": 29.4118,
             "env_neutral": 50.0
           },
-          "hit_probability": 0.6285,
-          "raw_hit_probability": 0.6829,
-          "lift": -0.0842,
+          "hit_probability": 0.6238,
+          "raw_hit_probability": 0.715,
+          "lift": -0.0894,
           "reliability": "D",
           "sample_n": 23,
           "projection": {
@@ -51,28 +52,29 @@
           }
         },
         {
-          "prop": "Cleveland Guardians scoreless in the 1st",
+          "prop": "Over 17.5 Outs Recorded",
           "type": "pitcher",
-          "score": 72.0,
-          "notable_signals": 0,
+          "score": 82.8,
+          "notable_signals": 1,
           "matchup": "Cleveland Guardians @ Detroit Tigers",
           "game_pk": 824241,
           "team": "Detroit Tigers",
           "side": "home",
-          "lean": "NRFI",
+          "lean": null,
+          "combo_player_ids": null,
           "signals": {
-            "yrfi_rate": 28.0,
-            "fi_n_starts": 25.0,
-            "park_hr_index": 51.9
+            "outs_rate": 0.5625,
+            "avg_outs_per_start": 16.61
           },
-          "hit_probability": 0.6901,
-          "raw_hit_probability": 0.7105,
-          "lift": -0.0159,
-          "reliability": "C",
-          "sample_n": 25,
+          "hit_probability": 0.5625,
+          "raw_hit_probability": null,
+          "lift": 0.177,
+          "reliability": "D",
+          "sample_n": 23,
           "projection": {
-            "stat": "first_inning_run",
-            "value": 28.0
+            "stat": "pitcher_outs",
+            "value": 17.5,
+            "needs": 18
           }
         }
       ]

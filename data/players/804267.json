@@ -68,21 +68,22 @@
         {
           "prop": "Over 3.5 Strikeouts",
           "type": "pitcher",
-          "score": 43.6,
+          "score": 48.7,
           "notable_signals": 0,
           "matchup": "New York Mets @ Atlanta Braves",
           "game_pk": 824883,
           "team": "New York Mets",
           "side": null,
           "lean": null,
+          "combo_player_ids": null,
           "signals": {
-            "same_hand_ratio": 100.0,
+            "same_hand_ratio": 43.75,
             "l14_k_pct": 0.0,
             "env_neutral": 50.0
           },
-          "hit_probability": 0.5876,
-          "raw_hit_probability": 0.535,
-          "lift": -0.1251,
+          "hit_probability": 0.5899,
+          "raw_hit_probability": 0.6128,
+          "lift": -0.1233,
           "reliability": "D",
           "sample_n": 7,
           "projection": {
@@ -92,28 +93,29 @@
           }
         },
         {
-          "prop": "Atlanta Braves scoreless in the 1st",
+          "prop": "Over 16.5 Outs Recorded",
           "type": "pitcher",
-          "score": 62.5,
+          "score": 55,
           "notable_signals": 1,
           "matchup": "New York Mets @ Atlanta Braves",
           "game_pk": 824883,
           "team": "New York Mets",
           "side": "away",
-          "lean": "NRFI",
+          "lean": null,
+          "combo_player_ids": null,
           "signals": {
-            "yrfi_rate": 62.5,
-            "fi_n_starts": 8.0,
-            "park_hr_index": 50.0
+            "outs_rate": 0.5201,
+            "avg_outs_per_start": 16.86
           },
-          "hit_probability": 0.679,
-          "raw_hit_probability": 0.6619,
-          "lift": -0.027,
+          "hit_probability": 0.5201,
+          "raw_hit_probability": null,
+          "lift": 0.0598,
           "reliability": "D",
-          "sample_n": 8,
+          "sample_n": 7,
           "projection": {
-            "stat": "first_inning_run",
-            "value": 62.5
+            "stat": "pitcher_outs",
+            "value": 16.5,
+            "needs": 17
           }
         }
       ]
