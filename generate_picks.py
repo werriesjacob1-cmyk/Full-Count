@@ -3377,6 +3377,11 @@ def write_json(top10, moonshots=(), by_category=None):
             # dashboard, a customer-facing view) could ever show WHY a pick
             # was made without re-deriving it from raw signals by hand.
             "why": c.get("why"), "watchouts": c.get("watchouts"),
+            # apply_signal_weights's own docstring promises "every adjustment
+            # is recorded on the candidate, never silent" -- true in memory,
+            # false the moment this function persisted a pick without it.
+            # Found in the same sweep as combo_player_ids, same root cause.
+            "signal_weight_adjustment": c.get("signal_weight_adjustment"),
         }
     category_flat = [c for entries in (by_category or {}).values() for c in entries]
     picks = [_row(i, c) for i, c in enumerate(top10, 1)]
@@ -3480,6 +3485,15 @@ def persist_player_snapshots(candidates):
                              # by side, not off a batting line.
                              "game_pk": c.get("game_pk"), "team": c.get("team"),
                              "side": c.get("side"), "lean": c.get("lean"),
+                             # Same gap just found and fixed in write_json()'s
+                             # _row(), this time in the OTHER path that reaches
+                             # grade_pick: measure_signals.py reads these
+                             # persisted evaluations and grades them directly.
+                             # Without this, a combined_strikeouts evaluation
+                             # here would fail "missing combo_player_ids" the
+                             # same way, and its signals (combined_k_edge)
+                             # could never be measured for trust.
+                             "combo_player_ids": c.get("combo_player_ids"),
                              "signals": c.get("signals") or {},
                              "hit_probability": c.get("hit_probability"),
                              "raw_hit_probability": c.get("raw_hit_probability"),
