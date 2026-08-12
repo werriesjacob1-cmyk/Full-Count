@@ -2216,7 +2216,19 @@ def score_stolen_base(batter, gm, opp_catcher_poptime, sprint_speed, batter_seas
         return None  # not a plausible SB threat regardless of matchup
     notable_signals = 0
     skill = scale(sprint_speed, 27.3, 30.5)
-    matchup = scale(opp_catcher_poptime, 2.25, 1.90) if opp_catcher_poptime else 50
+    # REAL BUG, found by test_score_stolen_base.py: this scale() call had its
+    # bounds swapped (2.25, 1.90 -- descending), which maps a SLOW catcher
+    # (poptime near 2.25, an easy target) to a LOW matchup score and a FAST,
+    # elite-armed catcher (poptime near 1.90, a hard target) to a HIGH one --
+    # exactly backwards for a stolen-base prop, and directly contradicted by
+    # the very next line, which has always treated a slow poptime (>=2.10)
+    # as a NOTABLE GOOD signal. Every other descending scale() call in this
+    # file (score_first_inning's YRFI/NRFI branch) is deliberate and
+    # comment-justified; this one wasn't, and had no such justification --
+    # an accidental bound swap, not a convention. Ascending bounds (1.90,
+    # 2.25) now score a slow catcher high and a fast catcher low, matching
+    # the notable_signals check and the actual market.
+    matchup = scale(opp_catcher_poptime, 1.90, 2.25) if opp_catcher_poptime else 50
     if opp_catcher_poptime and opp_catcher_poptime >= 2.10: notable_signals += 1
     bs = batter_season or {}
     season_sb = bs.get("SB")
