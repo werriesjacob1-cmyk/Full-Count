@@ -2929,8 +2929,17 @@ def select_moonshots(candidates, prices, fd, n=5):
 # _build_combined_nrfi's docstrings). first_inning_run still runs
 # internally as nrfi_combined's input; it just never becomes a candidate
 # a customer could see as a standalone pick.
+# "home_runs" was missing here until this audit -- found by diffing this
+# dict against render_board.py's and render_full_board.py's own copies
+# (three independent copies of the same table, a drift risk by construction).
+# The impact was real, not cosmetic: select_best_by_category's own docstring
+# names home runs as the exact example of a family this function exists to
+# stop from being structurally excluded ("the floor is what makes an entire
+# family (home runs, 2+ total bases) structurally unable to appear here at
+# all"), and a missing dict key did precisely that, silently, the whole time
+# home_runs has existed as its own market.
 CATEGORY_LABELS = {
-    "hits": "Hits", "total_bases": "Total Bases",
+    "hits": "Hits", "total_bases": "Total Bases", "home_runs": "Home Runs",
     "runs": "Runs", "rbis": "RBIs", "hits_runs_rbis": "Hits+Runs+RBIs",
     "singles": "Singles", "doubles": "Doubles", "triples": "Triples",
     "stolen_base": "Stolen Base", "strikeouts": "Strikeouts",
