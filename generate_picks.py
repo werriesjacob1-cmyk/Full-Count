@@ -3708,7 +3708,16 @@ MIN_EMPIRICAL_GAMES = 25
 # a real share. This split is a starting position, not a fitted result --
 # backtest/signals.py exists to replace it with something measured.
 #
-# ── AUDIT, 2026-08-06: MEASURED. NOT YET ACTED ON. ────────────────────────
+# ── AUDIT, 2026-08-06: MEASURED, AND ACTED ON 2026-08-07. ─────────────────
+# See _batter_options' MODEL_SHRINK_K block and the strikeouts loop's
+# STRIKEOUT_SHRINK_K block below -- both replace this blend with "shrink
+# modelled toward the true league rate, drop empirical" wherever a modelled
+# term and a true league rate exist. EMPIRICAL_WEIGHT/_blend() below now only
+# fire for props with no modelled counterpart (runs/rbis/hits_runs_rbis/
+# singles/doubles/triples, where _blend(empirical, None) just returns
+# empirical) or as a fallback when no true league rate is available for the
+# specific key. Left below verbatim as the record of what was measured and
+# why -- do not re-read this block as an open item.
 # Out-of-sample test on 244 batters with 250+ PA: both inputs fitted on each
 # batter's first 60% of games (chronological), scored on his last 40%.
 # Held-out mean log loss, and every configuration below fixed a priori so
