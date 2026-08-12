@@ -3786,10 +3786,20 @@ def _batter_options(c, comp, emp, league=None):
         # bound (biased low at every sample size). See _apply_shrinkage.
         return r.get("p_hat", r["p"])
 
+    # AUDIT, 2026-08-12: found by test_lookup_table_consistency.py cross-
+    # checking every family's thresholds against MARKET_MAP -- hits 4+,
+    # total_bases 5+, runs 3+, rbis 3+/4+ and hits_runs_rbis 4+ were all real,
+    # currently-posted FanDuel markets (confirmed in MARKET_MAP) with a real
+    # empirical rate already computed (_PROP_THRESHOLDS has carried all of
+    # them all along), never offered here -- same "computed, then discarded"
+    # failure as home_runs 2+/3+ above, just five more instances of it that
+    # a manual read missed. total_bases 1+ deliberately NOT added: no such
+    # MARKET_MAP entry exists (FanDuel does not post it), so a rate for it
+    # would have no real price to ever attach to.
     families = [
-        ("hits", "Hits", [(0.5, 1), (1.5, 2), (2.5, 3)],
+        ("hits", "Hits", [(0.5, 1), (1.5, 2), (2.5, 3), (3.5, 4)],
          (lambda k: pp.p_at_least_hits(k, dist, pa)) if dist and pa else None),
-        ("total_bases", "Total Bases", [(1.5, 2), (2.5, 3), (3.5, 4)],
+        ("total_bases", "Total Bases", [(1.5, 2), (2.5, 3), (3.5, 4), (4.5, 5)],
          (lambda k: pp.p_at_least_total_bases(k, dist, pa)) if dist and pa else None),
         # 2+ and 3+ were dead on arrival before this: TO_HIT_2+_HOME_RUNS has
         # been in MARKET_MAP and home_runs_2plus in mlb_sources._PROP_THRESHOLDS
@@ -3826,9 +3836,9 @@ def _batter_options(c, comp, emp, league=None):
         # contains. Passing None here means _blend() uses the empirical rate
         # and records basis accordingly, instead of inventing a model term to
         # fill the column.
-        ("runs", "Runs", [(0.5, 1), (1.5, 2)], None),
-        ("rbis", "RBIs", [(0.5, 1), (1.5, 2)], None),
-        ("hits_runs_rbis", "Hits+Runs+RBIs", [(0.5, 1), (1.5, 2), (2.5, 3)], None),
+        ("runs", "Runs", [(0.5, 1), (1.5, 2), (2.5, 3)], None),
+        ("rbis", "RBIs", [(0.5, 1), (1.5, 2), (2.5, 3), (3.5, 4)], None),
+        ("hits_runs_rbis", "Hits+Runs+RBIs", [(0.5, 1), (1.5, 2), (2.5, 3), (3.5, 4)], None),
         ("singles", "Singles", [(0.5, 1)], None),
         ("doubles", "Doubles", [(0.5, 1)], None),
         ("triples", "Triples", [(0.5, 1)], None),
