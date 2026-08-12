@@ -419,7 +419,24 @@ def fetch_lineups(date):
                         block.append(f"    {i}. {p['name']} ({bats}) — {p.get('pos','?')}  [proj ~{pa_proj} PA/yr]"
                                       + ("" if pid else "  [MLBAM id not matched — per-player Statcast signals unavailable]"))
                         if gm_entry is not None:
-                            gm_entry[lineup_key].append({"name":p["name"],"id":pid,"pos":p.get("pos","?"),"bats":bats,"order":i})
+                            # Rotowire is a THIRD-PARTY PROJECTION, not an officially
+                            # posted lineup (unlike the MLB.com fallback tier above,
+                            # which mirrors MLB's own confirmed posting once it's up)
+                            # — this file's own comment three lines up calls it
+                            # "best-effort" and "a genuine last resort". Tagged
+                            # assumed=True for the exact reason fetch_last_known_lineup
+                            # already tags its own guesses that way: quality_control()
+                            # in generate_picks.py routes anything with this flag to the
+                            # early-look board instead of treating a guessed batting
+                            # slot as a real, gradeable recommendation. Found live: a
+                            # Rotowire-projected leadoff hitter (Carter Jensen, KC @
+                            # LAD) was shipping as an ordinary "confirmed" pick,
+                            # indistinguishable from a real posted lineup, with real
+                            # FanDuel prices attached to a slot that was never
+                            # officially locked -- exactly the failure mode this
+                            # tagging exists to prevent for Tier 4, just missed here.
+                            gm_entry[lineup_key].append({"name":p["name"],"id":pid,"pos":p.get("pos","?"),"bats":bats,"order":i,
+                                                          "assumed":True})
                     lines[miss["idx"]]="\n".join(block)
                 else:
                     still_still_missing.append(miss)

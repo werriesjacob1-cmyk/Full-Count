@@ -148,6 +148,20 @@ def build_payload(result):
             r["estimated_odds"] = pp.american_odds(p) if p is not None else None
         return rows
 
+    # Real FanDuel line first, then everything without one -- the exact
+    # "ranked = priced + unpriced" split generate_picks.py's own top10
+    # selection already uses, applied here for the same reason. Sorting
+    # every tab by raw model probability alone (the old behavior) let an
+    # unpriced candidate -- a real player and a real projection, but no
+    # market FanDuel has actually posted yet -- rank ABOVE genuinely
+    # bettable picks just for having a bigger number attached, which reads
+    # as "this is a recommendation" when it's not currently a bet anyone
+    # can place. Found live 2026-08-12: David Peterson's Outs Recorded
+    # read (63.2%, no line) was sorting above several real, priced,
+    # lower-probability Strikeouts candidates for exactly this reason.
+    def _priced_first(r):
+        return (r.get("market_odds") is None, -r["hit_probability"])
+
     # select_best_by_category's own CATEGORY_LABELS includes "home_runs" (a
     # 2026-08-12 audit fix in generate_picks.py), so it produces the exact
     # same home-run field select_moonshots() already does under "moonshot"
@@ -163,7 +177,7 @@ def build_payload(result):
         if not rows:
             continue
         rows = [r for r in rows if r.get("hit_probability") is not None]
-        rows.sort(key=lambda r: r["hit_probability"], reverse=True)
+        rows.sort(key=_priced_first)
         if rows:
             tabs[stat] = add_estimated_odds(rows)
 
@@ -171,14 +185,14 @@ def build_payload(result):
         if stat in meta_keys or stat in tabs or stat in CATEGORY_ORDER:
             continue
         rows = [r for r in rows if r.get("hit_probability") is not None]
-        rows.sort(key=lambda r: r["hit_probability"], reverse=True)
+        rows.sort(key=_priced_first)
         if rows:
             tabs[stat] = add_estimated_odds(rows)
 
     all_rows = []
     for rows in tabs.values():
         all_rows.extend(rows)
-    all_rows.sort(key=lambda r: r["hit_probability"], reverse=True)
+    all_rows.sort(key=_priced_first)
 
     # "Top Picks" -- the board's real favorites. Ranked by genuine edge over
     # the market among picks that actually clear the price, not by raw
@@ -455,7 +469,7 @@ body {{
 .pick .odds-col {{ display: flex; flex-direction: column; align-items: flex-end; gap: 5px; width: 100%; }}
 .odds-line {{ display: flex; align-items: baseline; gap: 7px; }}
 .odds-line .price {{ font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-weight: 700; font-size: 16.5px; color: var(--ink); letter-spacing: -0.01em; }}
-.odds-line .price.none {{ color: var(--ink-faint); font-weight: 500; font-size: 13px; }}
+.odds-line .price.none {{ color: var(--ink-faint); font-weight: 500; font-size: 11px; text-align: right; line-height: 1.3; max-width: 108px; }}
 .odds-line .fair {{ font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-size: 11px; color: var(--ink-faint); }}
 .badges {{ display: flex; gap: 6px; align-items: center; justify-content: flex-end; flex-wrap: wrap; }}
 .chip {{ font-family: var(--font-mono); font-size: 10px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; padding: 2.5px 7px; border-radius: 4px; white-space: nowrap; }}
@@ -466,6 +480,12 @@ body {{
 .pick.lock {{ border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent-soft), var(--shadow); }}
 .pick.lock:hover {{ box-shadow: 0 0 0 2px var(--accent-soft), var(--shadow-lift); }}
 .pick.lock .who .name {{ color: var(--accent); }}
+/* Real player, real projection -- just not a bet FanDuel has posted a
+   price for yet. Dimmed rather than hidden (it's still real information),
+   but clearly receded so it never reads as a recommendation on par with
+   an actually-bettable priced pick. */
+.pick.no-line {{ opacity: 0.62; }}
+.pick.no-line:hover {{ opacity: 0.85; }}
 .meter {{ width: 100%; height: 4px; background: var(--line-soft); border-radius: 2px; margin-top: 6px; position: relative; overflow: visible; }}
 .meter .fill {{ position: absolute; inset: 0 auto 0 0; background: var(--accent); border-radius: 2px; }}
 .meter .fill.clears {{ background: var(--good); }}
@@ -689,8 +709,13 @@ function buildExplanation(p) {{
 function pickRow(p, rank) {{
   const marketOdds = fmtOdds(p.market_odds);
   const fairOdds = fmtOdds(p.estimated_odds);
-  const oddsClass = p.market_odds === null || p.market_odds === undefined ? "none" : "";
-  const oddsText = marketOdds === null ? "NO LINE" : marketOdds;
+  const isUnpriced = p.market_odds === null || p.market_odds === undefined;
+  const oddsClass = isUnpriced ? "none" : "";
+  // "NO LINE" reads like a display glitch. Spelling out that FanDuel simply
+  // hasn't posted this specific market yet -- a real, honest, and possibly
+  // temporary state -- makes clear this isn't a bet anyone can place right
+  // now, not that something's broken.
+  const oddsText = marketOdds === null ? "NOT ON FANDUEL YET" : marketOdds;
 
   const confChip = p.confidence ? `<span class="chip ${{confClass(p.confidence)}}">${{esc(p.confidence)}}</span>` : "";
 
@@ -719,7 +744,7 @@ function pickRow(p, rank) {{
   const lockBadge = isLock ? `<span class="chip lock-badge">&#128274; Lock</span>` : "";
 
   return `
-  <div class="pick${{isLock ? " lock" : ""}}" tabindex="0" role="button" aria-expanded="false">
+  <div class="pick${{isLock ? " lock" : ""}}${{isUnpriced ? " no-line" : ""}}" tabindex="0" role="button" aria-expanded="false">
     <div class="rank">${{String(rank).padStart(2, "0")}}</div>
     <div class="who">
       <div class="name">${{esc(p.name)}}</div>
