@@ -20,6 +20,62 @@
           "matchup": "Chicago White Sox @ Boston Red Sox"
         }
       ]
+    },
+    {
+      "date": "2026-08-12",
+      "evaluations": [
+        {
+          "prop": "Over 3.5 Strikeouts",
+          "type": "pitcher",
+          "score": 35.8,
+          "notable_signals": 0,
+          "matchup": "Boston Red Sox @ Toronto Blue Jays",
+          "game_pk": 822779,
+          "team": "Boston Red Sox",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "same_hand_ratio": 33.3333,
+            "l14_k_pct": 1.1765,
+            "env_neutral": 50.0
+          },
+          "hit_probability": 0.6449,
+          "raw_hit_probability": 0.7443,
+          "lift": -0.0678,
+          "reliability": "D",
+          "sample_n": 20,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 3.5,
+            "needs": 4
+          }
+        },
+        {
+          "prop": "Toronto Blue Jays scoreless in the 1st",
+          "type": "pitcher",
+          "score": 71.4,
+          "notable_signals": 0,
+          "matchup": "Boston Red Sox @ Toronto Blue Jays",
+          "game_pk": 822779,
+          "team": "Boston Red Sox",
+          "side": "away",
+          "lean": "NRFI",
+          "signals": {
+            "yrfi_rate": 28.6,
+            "fi_n_starts": 21.0,
+            "park_hr_index": 50.0
+          },
+          "hit_probability": 0.6896,
+          "raw_hit_probability": 0.7083,
+          "lift": -0.0164,
+          "reliability": "D",
+          "sample_n": 21,
+          "projection": {
+            "stat": "first_inning_run",
+            "value": 28.6
+          }
+        }
+      ]
     }
   ]
 }

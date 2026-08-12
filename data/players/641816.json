@@ -62,6 +62,63 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-12",
+      "evaluations": [
+        {
+          "prop": "Over 3.5 Strikeouts",
+          "type": "pitcher",
+          "score": 68.6,
+          "notable_signals": 1,
+          "matchup": "New York Mets @ Atlanta Braves",
+          "game_pk": 824883,
+          "team": "Atlanta Braves",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "same_hand_ratio": 100.0,
+            "l14_k_pct": 100.0,
+            "tto_penalty": 8.0,
+            "env_neutral": 50.0
+          },
+          "hit_probability": 0.6614,
+          "raw_hit_probability": 0.8071,
+          "lift": -0.0513,
+          "reliability": "D",
+          "sample_n": 19,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 3.5,
+            "needs": 4
+          }
+        },
+        {
+          "prop": "New York Mets scoreless in the 1st",
+          "type": "pitcher",
+          "score": 65.0,
+          "notable_signals": 0,
+          "matchup": "New York Mets @ Atlanta Braves",
+          "game_pk": 824883,
+          "team": "Atlanta Braves",
+          "side": "home",
+          "lean": "NRFI",
+          "signals": {
+            "yrfi_rate": 35.0,
+            "fi_n_starts": 20.0,
+            "park_hr_index": 50.0
+          },
+          "hit_probability": 0.6856,
+          "raw_hit_probability": 0.6904,
+          "lift": -0.0204,
+          "reliability": "D",
+          "sample_n": 20,
+          "projection": {
+            "stat": "first_inning_run",
+            "value": 35.0
+          }
+        }
+      ]
     }
   ]
 }

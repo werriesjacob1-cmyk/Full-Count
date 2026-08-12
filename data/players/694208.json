@@ -1,6 +1,6 @@
 {
   "player_id": 694208,
-  "name": "Mois\u00e9s Ballesteros",
+  "name": "Moises Ballesteros",
   "snapshots": [
     {
       "date": "2026-08-04",
@@ -272,6 +272,53 @@
           "hit_probability": 0.5372,
           "raw_hit_probability": 0.5749,
           "lift": -0.1349,
+          "reliability": "B",
+          "sample_n": 66,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-08-12",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 68.8,
+          "notable_signals": 2,
+          "matchup": "Texas Rangers @ Los Angeles Angels",
+          "game_pk": 823994,
+          "team": "Los Angeles Angels",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 30.2857,
+            "l7_avg_ev": 83.4559,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 41.3333,
+            "lineup_slot": 37.5,
+            "bullpen_fatigue": 76.9231,
+            "platoon_barrel_pct": 3.52,
+            "platoon_xwoba": 0.12,
+            "park_hand_index": -2.63,
+            "opp_catcher_framing": 0.6,
+            "days_rest": 2.0,
+            "pull_park_synergy": -0.8008,
+            "hard_hit_105_rate": -0.065,
+            "getaway_day": 0.0,
+            "series_game": 2.0,
+            "sp_rp_ops_gap": -1.248,
+            "vs_rp_ops": -1.536
+          },
+          "hit_probability": 0.5367,
+          "raw_hit_probability": 0.5743,
+          "lift": -0.1327,
           "reliability": "B",
           "sample_n": 66,
           "projection": {

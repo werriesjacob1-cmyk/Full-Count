@@ -1,6 +1,6 @@
 {
   "player_id": 650490,
-  "name": "Yandy D\u00edaz",
+  "name": "Yandy Diaz",
   "snapshots": [
     {
       "date": "2026-08-05",
@@ -264,6 +264,50 @@
           "hit_probability": 0.6535,
           "raw_hit_probability": 0.7176,
           "lift": 0.1023,
+          "reliability": "A",
+          "sample_n": 113,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-08-12",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 67.7,
+          "notable_signals": 1,
+          "matchup": "Tampa Bay Rays @ Athletics",
+          "game_pk": 824967,
+          "team": "Tampa Bay Rays",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 65.0,
+            "l7_avg_ev": 100.0,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 59.8,
+            "season_barrel_pct": 26.0,
+            "lineup_slot": 100.0,
+            "bullpen_fatigue": 83.3333,
+            "park_hand_index": 3.99,
+            "opp_catcher_framing": 0.12,
+            "days_rest": 2.0,
+            "pull_park_synergy": -0.6424,
+            "hard_hit_105_rate": 4.9,
+            "getaway_day": -2.0,
+            "series_game": 2.0,
+            "sp_rp_ops_gap": 1.64,
+            "vs_rp_ops": 2.916
+          },
+          "hit_probability": 0.6507,
+          "raw_hit_probability": 0.7114,
+          "lift": 0.0995,
           "reliability": "A",
           "sample_n": 113,
           "projection": {

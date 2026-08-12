@@ -247,6 +247,55 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-12",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 63.2,
+          "notable_signals": 2,
+          "matchup": "Baltimore Orioles @ Minnesota Twins",
+          "game_pk": 823672,
+          "team": "Minnesota Twins",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 36.0,
+            "pitch_exploit": 8.5714,
+            "l7_avg_ev": 71.6346,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 12.975,
+            "park_hr_index": 42.9,
+            "season_barrel_pct": 54.0,
+            "lineup_slot": 87.5,
+            "bullpen_fatigue": 64.1026,
+            "platoon_barrel_pct": 4.16,
+            "platoon_xwoba": 2.22,
+            "park_hand_index": -0.72,
+            "opp_catcher_framing": 1.68,
+            "days_rest": 0.0,
+            "pull_park_synergy": -0.3226,
+            "hard_hit_105_rate": 3.9375,
+            "getaway_day": -2.0,
+            "series_game": 2.0,
+            "sp_rp_ops_gap": 1.936,
+            "vs_rp_ops": 3.792
+          },
+          "hit_probability": 0.6405,
+          "raw_hit_probability": 0.6889,
+          "lift": 0.0893,
+          "reliability": "B",
+          "sample_n": 59,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

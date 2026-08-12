@@ -293,6 +293,54 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-12",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 51.2,
+          "notable_signals": 1,
+          "matchup": "Texas Rangers @ Los Angeles Angels",
+          "game_pk": 823994,
+          "team": "Los Angeles Angels",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 30.2857,
+            "l7_avg_ev": 23.2738,
+            "l7_barrel_pct": 87.8571,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 0.0,
+            "lineup_slot": 75.0,
+            "bullpen_fatigue": 76.9231,
+            "bvp_ops": -1.32,
+            "platoon_barrel_pct": -3.6,
+            "platoon_xwoba": 2.22,
+            "park_hand_index": -2.63,
+            "opp_catcher_framing": 0.6,
+            "days_rest": 2.0,
+            "pull_park_synergy": -1.7674,
+            "hard_hit_105_rate": -2.825,
+            "getaway_day": 0.0,
+            "series_game": 2.0,
+            "sp_rp_ops_gap": 0.528,
+            "vs_rp_ops": 0.612
+          },
+          "hit_probability": 0.6403,
+          "raw_hit_probability": 0.6884,
+          "lift": 0.0891,
+          "reliability": "A",
+          "sample_n": 98,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

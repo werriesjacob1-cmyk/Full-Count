@@ -218,6 +218,72 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-12",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 52.2,
+          "notable_signals": 2,
+          "matchup": "Boston Red Sox @ Toronto Blue Jays",
+          "game_pk": 822779,
+          "team": "Toronto Blue Jays",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 23.4286,
+            "l7_avg_ev": 0.0,
+            "l7_barrel_pct": 95.7143,
+            "park_hr_index": 50.0,
+            "lineup_slot": 87.5,
+            "bullpen_fatigue": 76.9231,
+            "park_hand_index": -0.53,
+            "opp_catcher_framing": -0.48,
+            "days_rest": 0.0,
+            "getaway_day": 0.0,
+            "series_game": 2.0
+          },
+          "hit_probability": 0.5756,
+          "raw_hit_probability": 0.5512,
+          "lift": 0.0244,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 39.7,
+          "notable_signals": 0,
+          "matchup": "Boston Red Sox @ Toronto Blue Jays",
+          "game_pk": 822779,
+          "team": "Toronto Blue Jays",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "opp_team_cs_pct": 5.64,
+            "sprint_speed": 9.375,
+            "catcher_poptime": 85.7143
+          },
+          "hit_probability": null,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

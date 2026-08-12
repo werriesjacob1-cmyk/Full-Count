@@ -1,6 +1,6 @@
 {
   "player_id": 677951,
-  "name": "Bobby Witt Jr.",
+  "name": "Bobby Witt",
   "snapshots": [
     {
       "date": "2026-08-04",
@@ -434,6 +434,74 @@
           },
           "hit_probability": 0.281,
           "raw_hit_probability": 0.2689,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 101,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-08-12",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 65.9,
+          "notable_signals": 0,
+          "matchup": "Kansas City Royals @ Los Angeles Dodgers",
+          "game_pk": 823916,
+          "team": "Kansas City Royals",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 65.0,
+            "l7_avg_ev": 84.2647,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 59.3333,
+            "lineup_slot": 87.5,
+            "bullpen_fatigue": 64.1026,
+            "opp_catcher_framing": 0.48,
+            "days_rest": 2.0,
+            "hard_hit_105_rate": 4.935,
+            "getaway_day": -2.0,
+            "series_game": 2.0,
+            "sp_rp_ops_gap": -0.08,
+            "vs_rp_ops": 0.888
+          },
+          "hit_probability": 0.652,
+          "raw_hit_probability": 0.7142,
+          "lift": 0.1008,
+          "reliability": "A",
+          "sample_n": 101,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 77.7,
+          "notable_signals": 1,
+          "matchup": "Kansas City Royals @ Los Angeles Dodgers",
+          "game_pk": 823916,
+          "team": "Kansas City Royals",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "opp_team_cs_pct": 3.0,
+            "sprint_speed": 90.625,
+            "on_base": 83.6852
+          },
+          "hit_probability": 0.2812,
+          "raw_hit_probability": 0.2692,
           "lift": null,
           "reliability": "A",
           "sample_n": 101,

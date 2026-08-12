@@ -47,6 +47,48 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-12",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 45.1,
+          "notable_signals": 1,
+          "matchup": "Boston Red Sox @ Toronto Blue Jays",
+          "game_pk": 822779,
+          "team": "Boston Red Sox",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "sp_era_weak": 21.1429,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 27.3333,
+            "lineup_slot": 75.0,
+            "bullpen_fatigue": 71.4286,
+            "platoon_barrel_pct": 0.88,
+            "platoon_xwoba": 1.62,
+            "opp_catcher_framing": -0.84,
+            "days_rest": 0.0,
+            "hard_hit_105_rate": 0.48,
+            "getaway_day": 0.0,
+            "series_game": 2.0,
+            "sp_rp_ops_gap": 0.016,
+            "vs_rp_ops": 0.54
+          },
+          "hit_probability": 0.6105,
+          "raw_hit_probability": 0.6243,
+          "lift": 0.0593,
+          "reliability": "B",
+          "sample_n": 68,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

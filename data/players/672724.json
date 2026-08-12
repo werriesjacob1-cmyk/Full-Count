@@ -254,6 +254,80 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-12",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 54.7,
+          "notable_signals": 1,
+          "matchup": "Texas Rangers @ Los Angeles Angels",
+          "game_pk": 823994,
+          "team": "Los Angeles Angels",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 30.2857,
+            "l7_avg_ev": 100.0,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 27.3333,
+            "lineup_slot": 50.0,
+            "bullpen_fatigue": 76.9231,
+            "platoon_barrel_pct": -3.2,
+            "platoon_xwoba": -4.32,
+            "park_hand_index": -1.07,
+            "opp_catcher_framing": 0.6,
+            "days_rest": 2.0,
+            "pull_park_synergy": -0.4719,
+            "hard_hit_105_rate": 0.2025,
+            "getaway_day": 0.0,
+            "series_game": 2.0,
+            "sp_rp_ops_gap": -0.528,
+            "vs_rp_ops": -1.416
+          },
+          "hit_probability": 0.5544,
+          "raw_hit_probability": 0.5944,
+          "lift": -0.115,
+          "reliability": "A",
+          "sample_n": 90,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 47.0,
+          "notable_signals": 0,
+          "matchup": "Texas Rangers @ Los Angeles Angels",
+          "game_pk": 823994,
+          "team": "Los Angeles Angels",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "opp_team_cs_pct": 2.22,
+            "sprint_speed": 37.5,
+            "catcher_poptime": 85.7143,
+            "on_base": 19.3858
+          },
+          "hit_probability": 0.1901,
+          "raw_hit_probability": 0.1255,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 90,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

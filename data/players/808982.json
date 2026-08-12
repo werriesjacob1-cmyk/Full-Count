@@ -420,6 +420,77 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-12",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 53.2,
+          "notable_signals": 2,
+          "matchup": "Houston Astros @ San Francisco Giants",
+          "game_pk": 823187,
+          "team": "San Francisco Giants",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 65.0,
+            "l7_avg_ev": 25.3676,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 25.5,
+            "season_barrel_pct": 0.0,
+            "lineup_slot": 100.0,
+            "bullpen_fatigue": 69.4444,
+            "park_hand_index": -4.05,
+            "opp_catcher_framing": 1.08,
+            "days_rest": 2.0,
+            "pull_park_synergy": -1.6726,
+            "hard_hit_105_rate": -3.7675,
+            "getaway_day": -2.0,
+            "series_game": 2.0,
+            "sp_rp_ops_gap": 0.984,
+            "vs_rp_ops": 1.56
+          },
+          "hit_probability": 0.6472,
+          "raw_hit_probability": 0.7035,
+          "lift": 0.096,
+          "reliability": "A",
+          "sample_n": 109,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 41.4,
+          "notable_signals": 1,
+          "matchup": "Houston Astros @ San Francisco Giants",
+          "game_pk": 823187,
+          "team": "San Francisco Giants",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "opp_team_cs_pct": 0.48,
+            "sprint_speed": 6.25,
+            "catcher_poptime": 77.1429,
+            "on_base": 76.0077
+          },
+          "hit_probability": 0.1642,
+          "raw_hit_probability": 0.0756,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 109,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

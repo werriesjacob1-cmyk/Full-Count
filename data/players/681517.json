@@ -61,6 +61,62 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-12",
+      "evaluations": [
+        {
+          "prop": "Over 3.5 Strikeouts",
+          "type": "pitcher",
+          "score": 48.5,
+          "notable_signals": 0,
+          "matchup": "Philadelphia Phillies @ St. Louis Cardinals",
+          "game_pk": 823017,
+          "team": "St. Louis Cardinals",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "same_hand_ratio": 33.3333,
+            "l14_k_pct": 52.3529,
+            "env_neutral": 50.0
+          },
+          "hit_probability": 0.6401,
+          "raw_hit_probability": 0.726,
+          "lift": -0.0726,
+          "reliability": "D",
+          "sample_n": 22,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 3.5,
+            "needs": 4
+          }
+        },
+        {
+          "prop": "Philadelphia Phillies scoreless in the 1st",
+          "type": "pitcher",
+          "score": 82.6,
+          "notable_signals": 0,
+          "matchup": "Philadelphia Phillies @ St. Louis Cardinals",
+          "game_pk": 823017,
+          "team": "St. Louis Cardinals",
+          "side": "home",
+          "lean": "NRFI",
+          "signals": {
+            "yrfi_rate": 17.4,
+            "fi_n_starts": 23.0,
+            "park_hr_index": 81.6
+          },
+          "hit_probability": 0.6974,
+          "raw_hit_probability": 0.7428,
+          "lift": -0.0086,
+          "reliability": "D",
+          "sample_n": 23,
+          "projection": {
+            "stat": "first_inning_run",
+            "value": 17.4
+          }
+        }
+      ]
     }
   ]
 }

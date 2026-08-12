@@ -174,6 +174,46 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-12",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 36.4,
+          "notable_signals": 0,
+          "matchup": "Baltimore Orioles @ Minnesota Twins",
+          "game_pk": 823672,
+          "team": "Minnesota Twins",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 36.0,
+            "l7_avg_ev": 0.0,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 42.9,
+            "lineup_slot": 0.0,
+            "bullpen_fatigue": 64.1026,
+            "park_hand_index": -0.72,
+            "opp_catcher_framing": 1.68,
+            "days_rest": 2.0,
+            "getaway_day": -2.0,
+            "series_game": 2.0
+          },
+          "hit_probability": 0.5756,
+          "raw_hit_probability": 0.5512,
+          "lift": 0.0244,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }
