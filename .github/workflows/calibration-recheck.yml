@@ -1,0 +1,122 @@
+name: Calibration Recheck
+
+on:
+  schedule:
+    # Weekly, not daily: this reruns backtest/engine.py's real (network-heavy)
+    # replay over a rolling window, and the whole point of the promotion bar
+    # in backtest/refit_calibrators.py is that a market's calibration should
+    # NOT change on every small fluctuation — generate_picks.py's own comment
+    # block says it outright: "refit whenever scoring changes materially, not
+    # on a schedule." Weekly is a cheap, regular OPPORTUNITY to check whether
+    # that trigger condition (materially more data, a scoring change) has been
+    # met; it is not itself the trigger.
+    - cron: '0 9 * * 1'  # Monday 09:00 UTC — well clear of the daily pipeline's runs
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Compute and report, but never write backtest/calibrators_by_market.json"
+        required: false
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+concurrency:
+  group: calibration-recheck
+  cancel-in-progress: false
+
+jobs:
+  recheck:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      # backtest/rows.jsonl is gitignored (regenerated, never committed) --
+      # without this cache, every weekly run would pay to re-simulate the
+      # entire trailing window from scratch. backtest/engine.py's own state
+      # file (rows.jsonl.state.json) makes re-running the same command skip
+      # any date already present, so restoring last week's cache means a
+      # normal week only pays to simulate the handful of NEW dates that
+      # entered the rolling window. Same pattern as mlb-daily.yml's pybaseball
+      # cache: a fresh key every run (so nothing is ever overwritten/lost),
+      # restore-keys' prefix match warms from the most recent prior save.
+      - name: Cache backtest rows
+        uses: actions/cache@v4
+        with:
+          path: |
+            backtest/rows.jsonl
+            backtest/rows.jsonl.state.json
+          key: backtest-rows-${{ github.run_id }}
+          restore-keys: |
+            backtest-rows-
+
+      - name: Cache pybaseball data
+        uses: actions/cache@v4
+        with:
+          path: ~/.pybaseball/cache
+          key: pybaseball-cache-${{ github.run_id }}
+          restore-keys: |
+            pybaseball-cache-
+
+      - name: Run the calibration recheck
+        # Extends backtest/rows.jsonl to the current rolling window, fits one
+        # candidate calibrator per market on the older portion, and only
+        # promotes a candidate into backtest/calibrators_by_market.json if it
+        # clears a real held-out improvement bar over BOTH the raw probability
+        # and whatever is already shipping for that market. See
+        # backtest/refit_calibrators.py's own module docstring for exactly
+        # what the bar is and why it is deliberately conservative. Writes
+        # backtest/calibration_recheck_report.json every run, promoted or not,
+        # so "checked, nothing changed" is a visible, committed fact.
+        env:
+          EXTRA_ARGS: ${{ (github.event_name == 'workflow_dispatch' && inputs.dry_run) && '--dry-run' || '' }}
+        run: python3 backtest/refit_calibrators.py $EXTRA_ARGS
+
+      - name: Commit any promoted calibrators and this run's report
+        if: always()
+        run: |
+          shopt -s nullglob
+          git config user.name "mlb-pipeline-bot"
+          git config user.email "actions@github.com"
+          git add backtest/calibrators_by_market.json backtest/calibration_recheck_report.json
+          if git diff --cached --quiet; then
+            echo "No calibration changes and no new report to commit."
+            exit 0
+          fi
+          git commit -m "Calibration recheck $(date -u +%F)"
+          for attempt in 1 2 3 4 5; do
+            if git push; then
+              echo "Pushed on attempt $attempt."
+              exit 0
+            fi
+            echo "Push rejected (attempt $attempt/5) — rebasing onto origin/main."
+            git fetch origin main
+            if ! git rebase origin/main; then
+              echo "::error::Rebase hit a real conflict — aborting rather than leaving the repo in a broken state."
+              git rebase --abort
+              exit 1
+            fi
+          done
+          echo "::error::Failed to push after 5 attempts."
+          exit 1
+
+      - name: Upload recheck report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: calibration-recheck-report-${{ github.run_id }}
+          path: backtest/calibration_recheck_report.json
+          retention-days: 90
+          if-no-files-found: ignore
