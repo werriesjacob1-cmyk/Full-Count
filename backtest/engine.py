@@ -233,6 +233,11 @@ STATCAST_COLUMNS = [
     # parquet built before this line was added still lacks them and must be
     # regenerated (delete it; StatcastStore.load() re-pulls automatically).
     "hc_x", "hc_y",
+    # fielder_2/zone: added when catcher_framing() was wired into the
+    # backtest extras (missed in the same pass that added hc_x/hc_y above).
+    # Without them mlb_sources.catcher_framing() always degrades to {} on
+    # this store, same failure mode as pull_rates() without hc_x/hc_y.
+    "fielder_2", "zone",
 ]
 
 HIT_EVENTS = ("single", "double", "triple", "home_run")
@@ -886,6 +891,14 @@ def build_inputs(date, store, use_weather=True, use_bullpen=True, verbose=True):
     pull = msrc.pull_rates()
     park_hand = msrc.park_hand_factors()
     platoon_qoc = msrc.platoon_quality_of_contact()
+    # framing: same fetch_season_statcast() route as pull/park_hand/
+    # platoon_qoc above -- missed in the same original pass that added
+    # those three (found 2026-08-12 while updating measure_signals.py's
+    # docstring, which still claimed no signal could reach backtest). Feeds
+    # build_candidates()'s own framing_by_team derivation (already present
+    # in that function), so no separate derivation logic is needed here --
+    # just supplying the raw table is enough.
+    framing = msrc.catcher_framing()
     # ump_kbb: Statcast half is the same safe route; its schedule-hydrate
     # half already bounds with endDate=m.TODAY (repointed), so it too needed
     # no new plumbing -- just never wired into this dict.
@@ -898,7 +911,7 @@ def build_inputs(date, store, use_weather=True, use_bullpen=True, verbose=True):
     extras = {
         "hard_hit": hard_hit, "pitcher_outs": pitcher_outs,
         "pull": pull, "park_hand": park_hand, "platoon_qoc": platoon_qoc,
-        "ump_kbb": ump_kbb, "rest": rest,
+        "framing": framing, "ump_kbb": ump_kbb, "rest": rest,
     }
     # bvp, sp_rp, ump_env are DELIBERATELY left out, same bucket as the
     # market signals (line_move/combined_k_prices/pitcher_outs_prices):
