@@ -2,9 +2,10 @@ name: Test Suite
 
 # No test workflow existed at all before this -- both other workflows here
 # (mlb-daily.yml, odds-snapshot.yml) are schedule-only, so every one of this
-# project's own test_*.py files (247+ checks as of 2026-08) has only ever
-# been run manually, ad hoc, by whoever happened to remember to. A future
-# change could silently break something and merge with nothing to catch it.
+# project's own test_*.py files (457+ checks across 20 files as of
+# 2026-08-12) has only ever been run manually, ad hoc, by whoever happened
+# to remember to. A future change could silently break something and merge
+# with nothing to catch it.
 #
 # Runs every test_*.py file by GLOB, not a hardcoded list -- a hardcoded
 # list is exactly the bug class this session kept finding elsewhere
