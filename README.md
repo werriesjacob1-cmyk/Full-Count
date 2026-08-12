@@ -859,25 +859,29 @@ Explicitly deferred, not forgotten:
   `parlay_builder.py`) and may be reusable here; not yet evaluated for that.
   This is a real feature build, not a quick wire-up — do not start it
   without checking scope first.
-- **Pull tendency vs. park, done; opposing-team positioning specifically,
-  not done.** UPDATED — this bullet claimed Pull% was blocked on FanGraphs
-  and dropped; that's stale. `mlb_sources.pull_rates()` computes real Pull%
-  directly from Statcast batted-ball spray angle, no FanGraphs dependency
-  at all, and `score_batter` has recorded it (`pull_park_synergy`, pull
-  rate interacted with the park's own handedness-split HR index) since
-  before this session. It's real, live, and computed every run — just not
-  yet promoted to a scored weight, same "record, measure, promote"
-  discipline as every other new signal here. What's still genuinely
-  missing is the OTHER half of the original idea: the opposing team's own
-  defensive positioning/range, to catch when a pull-heavy hitter is running
-  into an already-well-positioned defense. No free per-team positioning
-  data source has been found for this. Also worth noting: MLB's 2023 shift
-  rule (two infielders required on each side of second base) already
-  eliminated the most extreme version of what this bullet originally
-  chased — the aggressive three-infielders-on-one-side shifts that made
-  "pull into the shift" a dramatic signal no longer exist, so even a real
-  positioning data source would likely move the needle less than it once
-  would have.
+- **Pull tendency vs. park, done and MEASURED (2026-08-12); opposing-team
+  positioning specifically, not done.** `mlb_sources.pull_rates()` computes
+  real Pull% directly from Statcast batted-ball spray angle, no FanGraphs
+  dependency at all, and `score_batter` has recorded it (`pull_park_synergy`,
+  pull rate interacted with the park's own handedness-split HR index) since
+  before this session. It only became backtest-measurable this session (the
+  extras-construction gap that made it and eight other signals invisible to
+  `backtest/signals.py` was fixed 2026-08-12 — see `backtest/engine.py`).
+  Measured on a fresh 33-date backtest: no real separation power on its own
+  (AUC 0.522, CI containing 0.50) and fully redundant with `park_hand_index`
+  (r=0.877, which has the stronger univariate read of the two) — see
+  `generate_picks.py`'s own audit comment near where it's recorded. Left
+  unweighted; this is the honest "record, measure" outcome, not an
+  unfinished step. What's still genuinely missing is the OTHER half of the
+  original idea: the opposing team's own defensive positioning/range, to
+  catch when a pull-heavy hitter is running into an already-well-positioned
+  defense. No free per-team positioning data source has been found for
+  this. Also worth noting: MLB's 2023 shift rule (two infielders required on
+  each side of second base) already eliminated the most extreme version of
+  what this bullet originally chased — the aggressive
+  three-infielders-on-one-side shifts that made "pull into the shift" a
+  dramatic signal no longer exist, so even a real positioning data source
+  would likely move the needle less than it once would have.
 - **Using the per-player history now being collected** — `data/players/` is
   accumulating real data every run, but nothing reads it back yet for
   genuine multi-week trend detection beyond the current L7/L14 windows. That
