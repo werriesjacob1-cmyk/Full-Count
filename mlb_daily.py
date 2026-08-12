@@ -115,39 +115,6 @@ def retry_get(url, retries=3, backoff=2.0, **kwargs):
     if last_exc: raise last_exc
     return r
 
-def retry_call(fn, *args, retries=3, backoff=2.0, **kwargs):
-    """Generic retry wrapper for pybaseball/statsapi calls prone to transient 403/network errors."""
-    last_exc = None
-    for attempt in range(retries):
-        try:
-            return fn(*args, **kwargs)
-        except Exception as e:
-            last_exc = e
-            if attempt < retries-1:
-                _time.sleep(backoff * (2**attempt) + random.uniform(0, 0.5))
-    raise last_exc
-
-# ══════════════════════════════════════════════════════════════════════════════
-#  RUN LOG — tracks per-section outcome so Jacob (and Claude downstream) can
-#  see at a glance what failed/returned empty without reading all 100+ sections.
-# ══════════════════════════════════════════════════════════════════════════════
-RUN_LOG = []
-_FAIL_MARKERS = ("Failed:", "unavailable", "not found", "[No data]", "No data.",
-                  "not yet posted", "API unavailable", "TBD")
-
-def log_section(n, title, text):
-    t = (text or "").strip()
-    if not t or t == "[No data]":
-        status = "empty"
-    elif any(m.lower() in t.lower() for m in ("failed:", "unavailable", "api unavailable")):
-        status = "failed"
-    elif any(m.lower() in t.lower() for m in ("no data.", "[no data]", "not yet posted", "not found")):
-        status = "empty"
-    else:
-        status = "ok"
-    RUN_LOG.append({"section": n, "title": title, "status": status})
-    return text
-
 _TEAM_ID_CACHE = None
 def get_team_ids():
     """All 30 MLB team IDs + abbreviations, cached for the run."""

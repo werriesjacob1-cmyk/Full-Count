@@ -1542,6 +1542,42 @@ def score_batter(batter, gm, opp_sp_row, opp_sp_id, opp_sp_hand, park_wx, batter
             watchouts.append(f"BvP: {bvp.get('H','?')}-for-{bvp.get('AB','?')} "
                              f"vs {opp_sp_name} (small sample, weighted lightly)")
 
+    # AUDIT, 2026-08-12: platoon_barrel_pct/platoon_xwoba/park_hand_index/
+    # days_rest/consecutive_games/pull_park_synergy (below) plus ump_k_pct/
+    # ump_bb_pct (elsewhere in this file) became measurable in backtest for
+    # the FIRST TIME this session (see backtest/engine.py's extras dict --
+    # they were computed and recorded live every night but structurally
+    # invisible to backtest/signals.py before this session's fix). Measured
+    # on a fresh 33-date backtest (2026-07-10..08-11, 15,440 graded rows) via
+    # backtest/signals.py's univariate + fitted-weight report, same
+    # discipline as every other signal here: record, measure, THEN promote --
+    # never the reverse.
+    #
+    # THE HONEST RESULT: none of the eight clear the bar to promote.
+    #   pull_park_synergy    AUC 0.522 CI [0.499,0.545] (n=2544) -- DROP,
+    #                        redundant with park_hand_index (r=0.877) which
+    #                        has the stronger univariate read anyway
+    #   park_hand_index      AUC 0.528 CI [0.507,0.550] (n=2858) -- REVIEW,
+    #                        real alone but not significant once every other
+    #                        signal is in the fit (p=0.141) -- mixed, not a
+    #                        promote
+    #   platoon_barrel_pct   AUC 0.498 (n=3141) -- DROP, redundant with
+    #                        season_barrel_pct (r=0.880)
+    #   platoon_xwoba        AUC 0.512 (n=3141) -- DROP, no separation
+    #   days_rest            AUC 0.487 (n=3415) -- DROP, no separation
+    #   consecutive_games    AUC 0.430 (n=261, only 7.6% of rows fire --
+    #                        >=10 consecutive games is rare) -- DROP
+    #   ump_k_pct            AUC 0.495-0.493 across segments -- DROP
+    #   ump_bb_pct           AUC 0.505-0.518 across segments -- DROP
+    #
+    # None of this is a wasted build: the infrastructure fix was real
+    # (bvp/sp_rp/ump_env remain the genuinely permanent gaps, see
+    # backtest/engine.py) and now these keep getting measured on every
+    # future backtest run without further work. This is what "record,
+    # measure" is supposed to look like when the honest answer is "not yet"
+    # -- left unweighted below, exactly as before this audit. Do not
+    # promote any of these without a fresh measurement showing otherwise.
+
     # Platoon measured properly: exit velocity and barrel rate BY handedness,
     # rather than the binary hand-versus-hand flag that measured AUC 0.500.
     pq = (ex.get("platoon_qoc") or {}).get(bid) if bid else None
@@ -4179,6 +4215,21 @@ LEAGUE_YRFI_RATE = 0.294
 #     singles            94    0.005      too few rows (down to n=2 in  NO
 #                                          some bins) to trust any fit
 #
+# RE-CHECKED, 2026-08-12, on a fresh 33-date backtest (2026-07-10..08-11,
+# more than the run above) specifically to see whether pitcher_outs/singles
+# now have enough data to fit -- per this project's own discipline, "more
+# data available" is exactly the trigger that comment called for, not a
+# reason to leave the question stale. Result: NEITHER changes.
+#   pitcher_outs (695 rows, up from 625): held-out brier_improvement -0.00447,
+#     log_loss_improvement -0.00865 -- both still NEGATIVE, i.e. the fitted
+#     curve is still worse than raw on data it wasn't trained on. Same
+#     verdict, now on a larger sample: still NO.
+#   singles (4 rows in THIS run, even fewer than the 94 above -- this
+#     backtest's candidate mix simply produces very few singles candidates)
+#     -- nowhere close to fittable. Still NO.
+# Re-check again once either market's row count grows by an order of
+# magnitude, not on every backtest run.
+#
 # NO GLOBAL/POOLED FALLBACK, by choice, not oversight. backtest/
 # calibrator.json (the old pooled curve) is deleted rather than refit: the
 # 2026-08-05 audit that first built per-market curves already measured the
@@ -4330,6 +4381,28 @@ def attach_hit_probabilities(candidates, comp_table, emp_batters, emp_pitchers,
             if comp.get("attempt_rate") and c.get("projected_pa"):
                 tob = (comp.get("obp") or 0.31) * c["projected_pa"]
                 modelled = pp.p_stolen_base(tob, comp["attempt_rate"], comp["success_rate"])
+            # AUDIT, 2026-08-12: CHECKED against the same held-out methodology
+            # that found hits/TB/HR/strikeouts broken -- stolen_base is NOT in
+            # the same state, so it is NOT changed. 253 regulars (40+ real
+            # games), each split 60% train / 40% test chronologically by their
+            # own games, 10,061 real held-out test games. Held-out mean log
+            # loss: shipped 60/40 blend 0.22329, empirical-only 0.22258,
+            # model-only 0.26824 (confirms the model alone IS overconfident,
+            # matching p_stolen_base's own David-Hamilton-+7.2-points note),
+            # league-only 0.23960, model-shrunk-toward-league (k=0.5, the fix
+            # that worked for hits/TB/HR) 0.22389. Unlike hits/TB/HR, the
+            # shipped blend clearly and significantly beats league-only
+            # (paired bootstrap, 600 resamples: -0.01631, 95% CI [-0.02054,
+            # -0.01145], excluding zero) -- this is a real signal, not a
+            # coin flip dressed up as one. The hits/TB/HR fix (shrink model,
+            # drop empirical) does NOT help here (0.22389 vs 0.22329, i.e.
+            # slightly worse) because the failure mode is different: there
+            # the BLEND was the problem; here the MODEL alone is the weak
+            # input but the blend's 60% empirical weighting already mostly
+            # compensates. Left as-is -- not every checked signal needs a
+            # fix, and shipping one anyway on a difference this small (within
+            # a single split's noise) would be exactly the kind of change
+            # this project's own discipline warns against.
             prob, basis = _blend(empirical, modelled)
             c["hit_probability"] = None if prob is None else round(prob, 4)
             c["probability_basis"] = basis
