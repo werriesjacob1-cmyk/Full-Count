@@ -68,23 +68,25 @@
         {
           "prop": "Over 3.5 Strikeouts",
           "type": "pitcher",
-          "score": 73.2,
-          "notable_signals": 0,
+          "score": 75.2,
+          "notable_signals": 1,
           "matchup": "Baltimore Orioles @ Minnesota Twins",
           "game_pk": 823672,
           "team": "Minnesota Twins",
           "side": null,
           "lean": null,
-          "combo_player_ids": null,
           "signals": {
             "same_hand_ratio": 75.0,
             "l14_k_pct": 90.5882,
             "tto_penalty": -8.0,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 69.8666,
+            "ump_k_pct": -0.264,
+            "ump_bb_pct": -0.096
           },
-          "hit_probability": 0.6242,
+          "hit_probability": 0.6374,
           "raw_hit_probability": 0.7162,
-          "lift": -0.089,
+          "lift": -0.0758,
           "reliability": "D",
           "sample_n": 15,
           "projection": {
@@ -96,21 +98,20 @@
         {
           "prop": "Over 16.5 Outs Recorded",
           "type": "pitcher",
-          "score": 82.9,
+          "score": 83.1,
           "notable_signals": 1,
           "matchup": "Baltimore Orioles @ Minnesota Twins",
           "game_pk": 823672,
           "team": "Minnesota Twins",
           "side": "home",
           "lean": null,
-          "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.6077,
+            "outs_rate": 0.6068,
             "avg_outs_per_start": 17.2
           },
-          "hit_probability": 0.6077,
-          "raw_hit_probability": null,
-          "lift": 0.1474,
+          "hit_probability": 0.5653,
+          "raw_hit_probability": 0.6068,
+          "lift": 0.1082,
           "reliability": "D",
           "sample_n": 15,
           "projection": {

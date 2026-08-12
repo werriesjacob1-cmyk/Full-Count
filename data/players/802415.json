@@ -410,16 +410,15 @@
       "date": "2026-08-12",
       "evaluations": [
         {
-          "prop": "Over 0.5 Hits",
+          "prop": "Over 0.5 Singles",
           "type": "batter",
-          "score": 52.5,
+          "score": 51.7,
           "notable_signals": 2,
           "matchup": "Tampa Bay Rays @ Athletics",
           "game_pk": 824967,
           "team": "Tampa Bay Rays",
           "side": null,
           "lean": null,
-          "combo_player_ids": null,
           "signals": {
             "platoon": 80.0,
             "sp_era_weak": 100.0,
@@ -434,21 +433,19 @@
             "park_hand_index": 2.64,
             "opp_catcher_framing": -0.0,
             "days_rest": 0.0,
-            "woba_ahead": 58.1818,
-            "woba_behind": 94.5455,
             "pull_park_synergy": 0.2587,
             "getaway_day": -2.0,
             "series_game": 2.0,
             "sp_rp_ops_gap": -0.296,
             "vs_rp_ops": -0.528
           },
-          "hit_probability": 0.6796,
-          "raw_hit_probability": 0.662,
-          "lift": 0.1284,
+          "hit_probability": 0.5828,
+          "raw_hit_probability": 0.6269,
+          "lift": 0.1803,
           "reliability": "A",
           "sample_n": 109,
           "projection": {
-            "stat": "hits",
+            "stat": "singles",
             "value": 0.5,
             "needs": 1
           }
@@ -456,22 +453,21 @@
         {
           "prop": "To Steal a Base",
           "type": "batter",
-          "score": 51.8,
+          "score": 53.1,
           "notable_signals": 0,
           "matchup": "Tampa Bay Rays @ Athletics",
           "game_pk": 824967,
           "team": "Tampa Bay Rays",
           "side": null,
           "lean": null,
-          "combo_player_ids": null,
           "signals": {
             "opp_team_cs_pct": -0.42,
             "sprint_speed": 68.75,
-            "catcher_poptime": 25.7143,
-            "on_base": 40.499
+            "catcher_poptime": 74.2857,
+            "on_base": 45.2975
           },
-          "hit_probability": 0.2585,
-          "raw_hit_probability": null,
+          "hit_probability": 0.2723,
+          "raw_hit_probability": 0.2566,
           "lift": null,
           "reliability": "A",
           "sample_n": 109,
@@ -491,13 +487,12 @@
           "team": "Tampa Bay Rays",
           "side": null,
           "lean": null,
-          "combo_player_ids": null,
           "signals": {
             "hard_hit_rate": 0.0407
           },
-          "hit_probability": 0.0725,
+          "hit_probability": 0.1479,
           "raw_hit_probability": 0.0407,
-          "lift": -0.1543,
+          "lift": -0.0789,
           "reliability": "A",
           "sample_n": 109,
           "projection": {
