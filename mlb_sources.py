@@ -2044,3 +2044,78 @@ def umpire_k_bb_rates(min_games=8):
             "league_bb_pct": round(lg_bb, 4),
         }
     return out
+
+
+def fetch_recent_il_returns(days_back=21):
+    """Players activated off the injured list within the last `days_back`
+    days, as of today. Returns {player_id: {"date": "YYYY-MM-DD",
+    "days_ago": int, "il_days": int or None, "description": str}} -- one
+    entry per player, the MOST RECENT activation if there were several.
+
+    WHY THIS EXISTS. Nothing in this pipeline currently accounts for a
+    batter or pitcher being fresh off the injured list. The injury report
+    (mlb_daily.fetch_injuries) only ever shows who is CURRENTLY out, never
+    who just came back -- and a player's first games back from a real
+    injury are a real, plausible source of underperformance that a
+    season-long or even L7 rolling stat can't see coming, because the
+    return itself hasn't accumulated any track record yet.
+
+    VERIFIED LIVE before building this: MLB's transactions endpoint has no
+    dedicated "injured list" transaction type -- returns and placements
+    both come back as typeCode "SC" / typeDesc "Status Change", with the
+    actual detail only in the free-text `description` field. Pulled a real
+    2026-07-25..08-12 window (1,261 transactions): 139 matched "activated
+    ... from the N-day injured list" verbatim, e.g. "Houston Astros
+    activated RHP Marco Raya from the 15-day injured list." Deliberately
+    NOT matching on the bare word "activated" alone -- a real example in
+    the same window, "Boston Red Sox activated 3B Curtis Mead.", has no
+    "injured list" clause at all (a paternity/bereavement/restricted-list
+    return, which carries no injury-performance implication), and matching
+    it would have falsely flagged a healthy player.
+
+    DELIBERATELY NOT A SCORED SIGNAL. There is no measured effect size for
+    how many games a return-from-IL performance dip actually lasts in this
+    league, and inventing one would be exactly the "plausible-looking
+    number that isn't real" this project exists to avoid. This is surfaced
+    as an informational watchout on the affected candidate (see
+    generate_picks.py) -- same treatment as the existing rain-risk and
+    bullpen-fatigue flags -- not folded into score."""
+    import re as _re
+    r = m.retry_get(f"{STATS_API}/transactions",
+                    params={"sportId": 1,
+                            "startDate": (_dt.datetime.strptime(m.TODAY, "%Y-%m-%d").date()
+                                         - _dt.timedelta(days=days_back)).strftime("%Y-%m-%d"),
+                            "endDate": m.TODAY},
+                    headers={"User-Agent": "Mozilla/5.0"}, timeout=25)
+    r.raise_for_status()
+    txns = r.json().get("transactions", [])
+    pattern = _re.compile(r"activated\b.*\bfrom the (\d+)-day injured list", _re.IGNORECASE)
+    today = _dt.datetime.strptime(m.TODAY, "%Y-%m-%d").date()
+    out = {}
+    for t in txns:
+        if t.get("typeDesc") != "Status Change":
+            continue
+        desc = t.get("description") or ""
+        match = pattern.search(desc)
+        if not match:
+            continue
+        pid = (t.get("person") or {}).get("id")
+        date_str = t.get("date")
+        if not pid or not date_str:
+            continue
+        try:
+            txn_date = _dt.datetime.strptime(date_str, "%Y-%m-%d").date()
+        except ValueError:
+            continue
+        days_ago = (today - txn_date).days
+        if days_ago < 0:
+            continue  # a future-dated transaction is not a real return yet
+        # Keep only the most recent activation per player -- a player
+        # activated, re-injured, and activated again should show his LATEST
+        # return, not an earlier one.
+        existing = out.get(pid)
+        if existing is not None and existing["days_ago"] <= days_ago:
+            continue
+        out[pid] = {"date": date_str, "days_ago": days_ago,
+                    "il_days": int(match.group(1)), "description": desc}
+    return out

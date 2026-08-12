@@ -1357,6 +1357,19 @@ def score_batter(batter, gm, opp_sp_row, opp_sp_id, opp_sp_hand, park_wx, batter
         score -= 12
         watchouts.append(f"L7 AVG {l7.get('AVG')} isn't backed by barrel rate ({l7.get('barrel_pct')}%) — likely BABIP-driven, due to cool off")
 
+    # Fresh off the injured list. Informational only, deliberately not a
+    # score adjustment -- see mlb_sources.fetch_recent_il_returns' own
+    # docstring for why: no measured effect size exists for how long a
+    # return-from-IL dip actually lasts in this league.
+    # NOT using `ex` here -- this runs before `ex = extras or {}` is
+    # assigned further down in this function, so it reads the raw `extras`
+    # parameter directly instead (verified live: using `ex` here raised
+    # UnboundLocalError, caught before this ever shipped).
+    il = ((extras or {}).get("il_returns") or {}).get(bid) if bid else None
+    if il:
+        watchouts.append(f"Activated from the {il['il_days']}-day injured list {il['days_ago']} "
+                         f"day(s) ago — early performance back can be inconsistent")
+
     # REGRESSION SIGNAL — expected-vs-actual gap, as a bounded two-sided
     # adjustment OUTSIDE the weighted formula.
     #
@@ -1699,7 +1712,7 @@ def score_batter(batter, gm, opp_sp_row, opp_sp_id, opp_sp_hand, park_wx, batter
 
 def score_pitcher(sp_name, sp_id, sp_hand, gm, side, pit_season_lookup, l14_form,
                    opp_lineup, opp_team_k_pct, ump_scores, opp_k_source=None, exp_k_form=None,
-                   ump_kbb=None):
+                   ump_kbb=None, il_returns=None):
     ps = lookup_player(pit_season_lookup, sp_name, sp_id, {})
     exp_k = (exp_k_form or {}).get(sp_id)
     k_pct = ps.get("K%")
@@ -1767,6 +1780,14 @@ def score_pitcher(sp_name, sp_id, sp_hand, gm, side, pit_season_lookup, l14_form
     if era and k_pct and era > 4.5 and k_pct > 25:
         watchouts.append(f"High K% ({k_pct}%) paired with a shaky ERA ({era:.2f}) — command may be inconsistent start-to-start")
     if tto_note: watchouts.append(tto_note) if "drop-off" in tto_note else None
+
+    # Fresh off the injured list -- see score_batter's identical check and
+    # mlb_sources.fetch_recent_il_returns' own docstring for why this is
+    # informational only, not a score adjustment.
+    il = (il_returns or {}).get(sp_id) if sp_id else None
+    if il:
+        watchouts.append(f"Activated from the {il['il_days']}-day injured list {il['days_ago']} "
+                         f"day(s) ago — early performance back can be inconsistent")
 
     if star_profile and notable_signals == 0:
         score -= 10
@@ -2581,7 +2602,7 @@ def build_candidates(game_meta, *, extras=None, batter_lookup, pitcher_lookup, t
             away_pitcher_c = score_pitcher(gm["away_sp"], gm["away_sp_id"], gm.get("away_sp_hand"),
                                              gm, "away", pitcher_lookup, l14_pitcher_form,
                                              gm.get("home_lineup", []), opp_k, ump_scores, opp_k_source,
-                                             exp_k_form, extras.get("ump_kbb"))
+                                             exp_k_form, extras.get("ump_kbb"), extras.get("il_returns"))
             candidates.append(away_pitcher_c)
             fi = score_first_inning(gm["away_sp"], gm["away_sp_id"], gm, "away", fi_form,
                                     extras.get("ump_env"), park_wx)
@@ -2598,7 +2619,7 @@ def build_candidates(game_meta, *, extras=None, batter_lookup, pitcher_lookup, t
             home_pitcher_c = score_pitcher(gm["home_sp"], gm["home_sp_id"], gm.get("home_sp_hand"),
                                              gm, "home", pitcher_lookup, l14_pitcher_form,
                                              gm.get("away_lineup", []), opp_k, ump_scores, opp_k_source,
-                                             exp_k_form, extras.get("ump_kbb"))
+                                             exp_k_form, extras.get("ump_kbb"), extras.get("il_returns"))
             candidates.append(home_pitcher_c)
             fi = score_first_inning(gm["home_sp"], gm["home_sp_id"], gm, "home", fi_form,
                                     extras.get("ump_env"), park_wx)
@@ -2797,6 +2818,16 @@ def _build_and_score():
         ("team_bat", lambda: _src.team_batting_table()),
         ("pull", lambda: _src.pull_rates()),
         ("pitch_q", lambda: _src.pitch_quality()),
+        # Real IL activations (returns) in the last 21 days, via MLB's
+        # transactions endpoint. Nothing else in this pipeline knows a
+        # batter or pitcher is fresh off the injured list -- the injury
+        # report only ever shows who's currently OUT. Surfaced as a
+        # watchout on the affected candidate (see score_batter/score_pitcher),
+        # not a scored signal: no measured effect size exists for how long
+        # a return-from-IL dip actually lasts in this league, and inventing
+        # one would be exactly the "plausible-looking number that isn't
+        # real" this project exists to avoid.
+        ("il_returns", lambda: _src.fetch_recent_il_returns()),
         # The one input in this whole project that cannot be re-fetched later.
         # odds_snapshot.py has been writing hourly captures since the start
         # precisely so this would exist, and nothing has ever read them.
