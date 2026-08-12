@@ -1,0 +1,106 @@
+{
+  "player_id": 701678,
+  "name": "Hao-Yu Lee",
+  "snapshots": [
+    {
+      "date": "2026-08-12",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 57.8,
+          "notable_signals": 2,
+          "matchup": "Cleveland Guardians @ Detroit Tigers",
+          "game_pk": 824241,
+          "team": "Detroit Tigers",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 23.1429,
+            "l7_avg_ev": 0.0,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 72.9,
+            "season_barrel_pct": 38.6667,
+            "lineup_slot": 25.0,
+            "bullpen_fatigue": 77.7778,
+            "platoon_barrel_pct": 1.68,
+            "platoon_xwoba": -0.42,
+            "park_hand_index": 0.92,
+            "opp_catcher_framing": 0.6,
+            "days_rest": 4.0,
+            "pull_park_synergy": 0.0934,
+            "hard_hit_105_rate": -0.6225,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": -0.0,
+            "vs_rp_ops": 0.0
+          },
+          "hit_probability": 0.6035,
+          "raw_hit_probability": 0.6095,
+          "lift": 0.0523,
+          "reliability": "B",
+          "sample_n": 70,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 37.7,
+          "notable_signals": 0,
+          "matchup": "Cleveland Guardians @ Detroit Tigers",
+          "game_pk": 824241,
+          "team": "Detroit Tigers",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "opp_team_cs_pct": 5.58,
+            "sprint_speed": 28.125,
+            "catcher_poptime": 88.5714,
+            "on_base": 49.1363
+          },
+          "hit_probability": 0.1402,
+          "raw_hit_probability": 0.0231,
+          "lift": null,
+          "reliability": "B",
+          "sample_n": 70,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 13.5,
+          "notable_signals": 0,
+          "matchup": "Cleveland Guardians @ Detroit Tigers",
+          "game_pk": 824241,
+          "team": "Detroit Tigers",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "hard_hit_rate": 0.1901
+          },
+          "hit_probability": 0.228,
+          "raw_hit_probability": 0.1901,
+          "lift": 0.0012,
+          "reliability": "B",
+          "sample_n": 70,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
+    }
+  ]
+}

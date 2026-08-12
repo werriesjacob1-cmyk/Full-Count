@@ -66,9 +66,9 @@
       "date": "2026-08-12",
       "evaluations": [
         {
-          "prop": "Over 5.5 Strikeouts",
+          "prop": "Over 4.5 Strikeouts",
           "type": "pitcher",
-          "score": 57.4,
+          "score": 63.4,
           "notable_signals": 0,
           "matchup": "Philadelphia Phillies @ St. Louis Cardinals",
           "game_pk": 823017,
@@ -76,45 +76,48 @@
           "side": null,
           "lean": null,
           "signals": {
-            "same_hand_ratio": 100.0,
+            "same_hand_ratio": 61.1111,
             "l14_k_pct": 62.9412,
             "tto_penalty": -8.0,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 37.7378,
+            "ump_k_pct": 0.348,
+            "ump_bb_pct": -0.036
           },
-          "hit_probability": 0.6206,
-          "raw_hit_probability": 0.6538,
-          "lift": 0.2437,
+          "hit_probability": 0.6324,
+          "raw_hit_probability": 0.6976,
+          "lift": 0.0959,
           "reliability": "D",
           "sample_n": 19,
           "projection": {
             "stat": "strikeouts",
-            "value": 5.5,
-            "needs": 6
+            "value": 4.5,
+            "needs": 5
           }
         },
         {
-          "prop": "St. Louis Cardinals scoreless in the 1st",
+          "prop": "Over 17.5 Outs Recorded",
           "type": "pitcher",
-          "score": 84.2,
-          "notable_signals": 0,
+          "score": 95.8,
+          "notable_signals": 1,
           "matchup": "Philadelphia Phillies @ St. Louis Cardinals",
           "game_pk": 823017,
           "team": "Philadelphia Phillies",
           "side": "away",
-          "lean": "NRFI",
+          "lean": null,
           "signals": {
-            "yrfi_rate": 15.8,
-            "fi_n_starts": 19.0,
-            "park_hr_index": 81.6
+            "outs_rate": 0.6113,
+            "avg_outs_per_start": 17.42
           },
-          "hit_probability": 0.6973,
-          "raw_hit_probability": 0.7424,
-          "lift": -0.0087,
+          "hit_probability": 0.5692,
+          "raw_hit_probability": 0.6113,
+          "lift": 0.189,
           "reliability": "D",
           "sample_n": 19,
           "projection": {
-            "stat": "first_inning_run",
-            "value": 15.8
+            "stat": "pitcher_outs",
+            "value": 17.5,
+            "needs": 18
           }
         }
       ]

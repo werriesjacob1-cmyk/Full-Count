@@ -201,6 +201,77 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-12",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 64.5,
+          "notable_signals": 1,
+          "matchup": "Kansas City Royals @ Los Angeles Dodgers",
+          "game_pk": 823916,
+          "team": "Kansas City Royals",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 68.2857,
+            "l7_avg_ev": 0.0,
+            "l7_barrel_pct": 65.0,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 46.0,
+            "lineup_slot": 50.0,
+            "bullpen_fatigue": 64.1026,
+            "platoon_barrel_pct": 0.8,
+            "platoon_xwoba": -1.5,
+            "opp_catcher_framing": 0.72,
+            "days_rest": 2.0,
+            "hard_hit_105_rate": 0.245,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": -2.0,
+            "series_game": 2.0,
+            "sp_rp_ops_gap": -0.744,
+            "vs_rp_ops": -1.8
+          },
+          "hit_probability": 0.5955,
+          "raw_hit_probability": 0.6417,
+          "lift": -0.0787,
+          "reliability": "B",
+          "sample_n": 54,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 22.2,
+          "notable_signals": 0,
+          "matchup": "Kansas City Royals @ Los Angeles Dodgers",
+          "game_pk": 823916,
+          "team": "Kansas City Royals",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "hard_hit_rate": 0.2248
+          },
+          "hit_probability": 0.2504,
+          "raw_hit_probability": 0.2248,
+          "lift": 0.0236,
+          "reliability": "B",
+          "sample_n": 54,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

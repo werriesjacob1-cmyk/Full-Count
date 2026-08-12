@@ -1,0 +1,36 @@
+{
+  "player_id": "nrfi_823833",
+  "name": "Pittsburgh Pirates @ Miami Marlins \u2014 1st Inning (Both Teams)",
+  "snapshots": [
+    {
+      "date": "2026-08-12",
+      "evaluations": [
+        {
+          "prop": "No runs in the 1st (both teams)",
+          "type": "game",
+          "score": 56.5,
+          "notable_signals": 0,
+          "matchup": "Pittsburgh Pirates @ Miami Marlins",
+          "game_pk": 823833,
+          "team": null,
+          "side": "both",
+          "lean": "NRFI",
+          "signals": {
+            "home_team_scores_p": 0.2788,
+            "away_team_scores_p": 0.2899,
+            "fi_n_starts": 10.0
+          },
+          "hit_probability": 0.4815,
+          "raw_hit_probability": 0.5121,
+          "lift": -0.0169,
+          "reliability": "D",
+          "sample_n": 10,
+          "projection": {
+            "stat": "nrfi_combined",
+            "value": 51.2
+          }
+        }
+      ]
+    }
+  ]
+}

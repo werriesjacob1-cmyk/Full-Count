@@ -66,54 +66,57 @@
       "date": "2026-08-12",
       "evaluations": [
         {
-          "prop": "Over 3.5 Strikeouts",
+          "prop": "Over 4.5 Strikeouts",
           "type": "pitcher",
-          "score": 56.1,
-          "notable_signals": 0,
+          "score": 67.9,
+          "notable_signals": 1,
           "matchup": "Baltimore Orioles @ Minnesota Twins",
           "game_pk": 823672,
           "team": "Baltimore Orioles",
           "side": null,
           "lean": null,
           "signals": {
-            "same_hand_ratio": 92.8571,
+            "same_hand_ratio": 75.0,
             "l14_k_pct": 53.5294,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 69.8666,
+            "ump_k_pct": -0.264,
+            "ump_bb_pct": -0.096
           },
-          "hit_probability": 0.6623,
-          "raw_hit_probability": 0.8103,
-          "lift": -0.0504,
+          "hit_probability": 0.606,
+          "raw_hit_probability": 0.601,
+          "lift": 0.0695,
           "reliability": "D",
           "sample_n": 23,
           "projection": {
             "stat": "strikeouts",
-            "value": 3.5,
-            "needs": 4
+            "value": 4.5,
+            "needs": 5
           }
         },
         {
-          "prop": "Minnesota Twins scoreless in the 1st",
+          "prop": "Over 17.5 Outs Recorded",
           "type": "pitcher",
-          "score": 66.7,
-          "notable_signals": 0,
+          "score": 66.1,
+          "notable_signals": 1,
           "matchup": "Baltimore Orioles @ Minnesota Twins",
           "game_pk": 823672,
           "team": "Baltimore Orioles",
           "side": "away",
-          "lean": "NRFI",
+          "lean": null,
           "signals": {
-            "yrfi_rate": 33.3,
-            "fi_n_starts": 24.0,
-            "park_hr_index": 42.9
+            "outs_rate": 0.4925,
+            "avg_outs_per_start": 17.78
           },
-          "hit_probability": 0.6863,
-          "raw_hit_probability": 0.6937,
-          "lift": -0.0197,
+          "hit_probability": 0.4641,
+          "raw_hit_probability": 0.4925,
+          "lift": 0.0839,
           "reliability": "D",
-          "sample_n": 24,
+          "sample_n": 23,
           "projection": {
-            "stat": "first_inning_run",
-            "value": 33.3
+            "stat": "pitcher_outs",
+            "value": 17.5,
+            "needs": 18
           }
         }
       ]

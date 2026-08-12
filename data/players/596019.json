@@ -293,8 +293,8 @@
         {
           "prop": "Over 0.5 Hits",
           "type": "batter",
-          "score": 68.9,
-          "notable_signals": 1,
+          "score": 74.0,
+          "notable_signals": 0,
           "matchup": "New York Mets @ Atlanta Braves",
           "game_pk": 824883,
           "team": "New York Mets",
@@ -302,7 +302,7 @@
           "lean": null,
           "signals": {
             "sp_era_weak": 66.5714,
-            "l7_avg_ev": 76.6406,
+            "l7_avg_ev": 76.7105,
             "l7_barrel_pct": 100.0,
             "park_hr_index": 50.0,
             "season_barrel_pct": 46.0,
@@ -311,22 +311,48 @@
             "bvp_ops": -1.482,
             "platoon_barrel_pct": 2.56,
             "platoon_xwoba": 2.82,
-            "opp_catcher_framing": 0.48,
+            "opp_catcher_framing": 1.32,
             "days_rest": 0.0,
-            "hard_hit_105_rate": 0.2425,
+            "hard_hit_105_rate": 0.175,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
             "getaway_day": -2.0,
             "series_game": 2.0,
-            "sp_rp_ops_gap": 1.664,
-            "vs_rp_ops": 2.112
+            "sp_rp_ops_gap": 1.528,
+            "vs_rp_ops": 2.004
           },
-          "hit_probability": 0.6143,
-          "raw_hit_probability": 0.6324,
-          "lift": 0.0631,
+          "hit_probability": 0.5996,
+          "raw_hit_probability": 0.6013,
+          "lift": 0.0484,
           "reliability": "B",
           "sample_n": 63,
           "projection": {
             "stat": "hits",
             "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 21.5,
+          "notable_signals": 0,
+          "matchup": "New York Mets @ Atlanta Braves",
+          "game_pk": 824883,
+          "team": "New York Mets",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "hard_hit_rate": 0.222
+          },
+          "hit_probability": 0.2486,
+          "raw_hit_probability": 0.222,
+          "lift": 0.0218,
+          "reliability": "B",
+          "sample_n": 63,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
             "needs": 1
           }
         }

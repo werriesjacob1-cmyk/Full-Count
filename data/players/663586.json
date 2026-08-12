@@ -455,7 +455,7 @@
         {
           "prop": "Over 0.5 Hits+Runs+RBIs",
           "type": "batter",
-          "score": 47.0,
+          "score": 62.5,
           "notable_signals": 1,
           "matchup": "New York Mets @ Atlanta Braves",
           "game_pk": 824883,
@@ -465,7 +465,7 @@
           "signals": {
             "platoon": 80.0,
             "sp_era_weak": 0.5714,
-            "l7_avg_ev": 56.0417,
+            "l7_avg_ev": 64.0179,
             "l7_barrel_pct": 100.0,
             "park_hr_index": 50.0,
             "season_barrel_pct": 56.0,
@@ -473,19 +473,21 @@
             "bullpen_fatigue": 66.6667,
             "platoon_barrel_pct": 5.0,
             "platoon_xwoba": 0.24,
-            "park_hand_index": -1.31,
+            "park_hand_index": -1.46,
             "opp_catcher_framing": 0.12,
             "days_rest": 0.0,
-            "pull_park_synergy": -0.4906,
-            "hard_hit_105_rate": 3.4,
+            "pull_park_synergy": -0.5468,
+            "hard_hit_105_rate": 3.3375,
+            "team_total_move": 0.0,
+            "team_total_open": 0.0,
             "getaway_day": -2.0,
             "series_game": 2.0,
-            "sp_rp_ops_gap": 0.304,
-            "vs_rp_ops": -0.444
+            "sp_rp_ops_gap": 0.312,
+            "vs_rp_ops": -0.492
           },
-          "hit_probability": 0.5781,
-          "raw_hit_probability": 0.6215,
-          "lift": -0.0913,
+          "hit_probability": 0.5787,
+          "raw_hit_probability": 0.6222,
+          "lift": -0.0955,
           "reliability": "A",
           "sample_n": 119,
           "projection": {
@@ -497,7 +499,7 @@
         {
           "prop": "To Steal a Base",
           "type": "batter",
-          "score": 41.4,
+          "score": 29.4,
           "notable_signals": 0,
           "matchup": "New York Mets @ Atlanta Braves",
           "game_pk": 824883,
@@ -510,13 +512,37 @@
             "catcher_poptime": 88.5714,
             "on_base": 32.8215
           },
-          "hit_probability": 0.1559,
-          "raw_hit_probability": 0.0581,
+          "hit_probability": 0.1558,
+          "raw_hit_probability": 0.0579,
           "lift": null,
           "reliability": "A",
           "sample_n": 119,
           "projection": {
             "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 53.1,
+          "notable_signals": 1,
+          "matchup": "New York Mets @ Atlanta Braves",
+          "game_pk": 824883,
+          "team": "Atlanta Braves",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "hard_hit_rate": 0.3485
+          },
+          "hit_probability": 0.3416,
+          "raw_hit_probability": 0.3485,
+          "lift": 0.1148,
+          "reliability": "A",
+          "sample_n": 119,
+          "projection": {
+            "stat": "hard_hit_105",
             "value": 1,
             "needs": 1
           }

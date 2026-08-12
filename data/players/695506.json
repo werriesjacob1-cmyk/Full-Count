@@ -295,37 +295,67 @@
         {
           "prop": "Over 0.5 Hits",
           "type": "batter",
-          "score": 66.2,
-          "notable_signals": 0,
+          "score": 86.0,
+          "notable_signals": 2,
           "matchup": "Kansas City Royals @ Los Angeles Dodgers",
           "game_pk": 823916,
           "team": "Kansas City Royals",
           "side": null,
           "lean": null,
           "signals": {
-            "platoon": 65.0,
+            "platoon": 35.0,
+            "sp_era_weak": 68.2857,
+            "pitch_exploit": 9.7143,
             "l7_avg_ev": 100.0,
             "l7_barrel_pct": 100.0,
             "park_hr_index": 50.0,
             "season_barrel_pct": 78.0,
             "lineup_slot": 75.0,
             "bullpen_fatigue": 64.1026,
-            "opp_catcher_framing": 0.48,
-            "days_rest": 2.0,
+            "platoon_barrel_pct": -0.08,
+            "platoon_xwoba": -2.04,
+            "opp_catcher_framing": 0.72,
+            "days_rest": 0.0,
             "hard_hit_105_rate": 5.0,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
             "getaway_day": -2.0,
             "series_game": 2.0,
-            "sp_rp_ops_gap": -0.72,
-            "vs_rp_ops": 0.408
+            "sp_rp_ops_gap": -0.616,
+            "vs_rp_ops": 0.54
           },
-          "hit_probability": 0.6259,
-          "raw_hit_probability": 0.6572,
-          "lift": 0.0747,
+          "hit_probability": 0.6116,
+          "raw_hit_probability": 0.6266,
+          "lift": 0.0604,
           "reliability": "A",
-          "sample_n": 111,
+          "sample_n": 112,
           "projection": {
             "stat": "hits",
             "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 89.2,
+          "notable_signals": 1,
+          "matchup": "Kansas City Royals @ Los Angeles Dodgers",
+          "game_pk": 823916,
+          "team": "Kansas City Royals",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "hard_hit_rate": 0.4929
+          },
+          "hit_probability": 0.4644,
+          "raw_hit_probability": 0.4929,
+          "lift": 0.2376,
+          "reliability": "A",
+          "sample_n": 112,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
             "needs": 1
           }
         }

@@ -68,22 +68,25 @@
         {
           "prop": "Over 3.5 Strikeouts",
           "type": "pitcher",
-          "score": 64.3,
-          "notable_signals": 0,
+          "score": 75.2,
+          "notable_signals": 1,
           "matchup": "Baltimore Orioles @ Minnesota Twins",
           "game_pk": 823672,
           "team": "Minnesota Twins",
           "side": null,
           "lean": null,
           "signals": {
-            "same_hand_ratio": 100.0,
+            "same_hand_ratio": 75.0,
             "l14_k_pct": 90.5882,
             "tto_penalty": -8.0,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 69.8666,
+            "ump_k_pct": -0.264,
+            "ump_bb_pct": -0.096
           },
-          "hit_probability": 0.6462,
-          "raw_hit_probability": 0.7492,
-          "lift": -0.0665,
+          "hit_probability": 0.6374,
+          "raw_hit_probability": 0.7162,
+          "lift": -0.0758,
           "reliability": "D",
           "sample_n": 15,
           "projection": {
@@ -93,28 +96,28 @@
           }
         },
         {
-          "prop": "Baltimore Orioles scoreless in the 1st",
+          "prop": "Over 16.5 Outs Recorded",
           "type": "pitcher",
-          "score": 56.2,
+          "score": 83.1,
           "notable_signals": 1,
           "matchup": "Baltimore Orioles @ Minnesota Twins",
           "game_pk": 823672,
           "team": "Minnesota Twins",
           "side": "home",
-          "lean": "NRFI",
+          "lean": null,
           "signals": {
-            "yrfi_rate": 56.2,
-            "fi_n_starts": 16.0,
-            "park_hr_index": 42.9
+            "outs_rate": 0.6068,
+            "avg_outs_per_start": 17.2
           },
-          "hit_probability": 0.6746,
-          "raw_hit_probability": 0.6429,
-          "lift": -0.0314,
+          "hit_probability": 0.5653,
+          "raw_hit_probability": 0.6068,
+          "lift": 0.1082,
           "reliability": "D",
-          "sample_n": 16,
+          "sample_n": 15,
           "projection": {
-            "stat": "first_inning_run",
-            "value": 56.2
+            "stat": "pitcher_outs",
+            "value": 16.5,
+            "needs": 17
           }
         }
       ]

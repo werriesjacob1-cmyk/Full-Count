@@ -68,7 +68,7 @@
         {
           "prop": "Over 3.5 Strikeouts",
           "type": "pitcher",
-          "score": 49.7,
+          "score": 60.8,
           "notable_signals": 0,
           "matchup": "Colorado Rockies @ Arizona Diamondbacks",
           "game_pk": 825047,
@@ -76,13 +76,13 @@
           "side": null,
           "lean": null,
           "signals": {
-            "same_hand_ratio": 100.0,
+            "same_hand_ratio": 92.8571,
             "l14_k_pct": 24.1176,
             "env_neutral": 50.0
           },
-          "hit_probability": 0.6046,
-          "raw_hit_probability": 0.5958,
-          "lift": -0.1081,
+          "hit_probability": 0.6203,
+          "raw_hit_probability": 0.6527,
+          "lift": -0.0929,
           "reliability": "D",
           "sample_n": 21,
           "projection": {
@@ -92,28 +92,28 @@
           }
         },
         {
-          "prop": "Colorado Rockies scoreless in the 1st",
+          "prop": "Over 17.5 Outs Recorded",
           "type": "pitcher",
-          "score": 65.2,
+          "score": 38.2,
           "notable_signals": 0,
           "matchup": "Colorado Rockies @ Arizona Diamondbacks",
           "game_pk": 825047,
           "team": "Arizona Diamondbacks",
           "side": "home",
-          "lean": "NRFI",
+          "lean": null,
           "signals": {
-            "yrfi_rate": 34.8,
-            "fi_n_starts": 23.0,
-            "park_hr_index": 50.0
+            "outs_rate": 0.3808,
+            "avg_outs_per_start": 17.14
           },
-          "hit_probability": 0.6853,
-          "raw_hit_probability": 0.6894,
-          "lift": -0.0207,
+          "hit_probability": 0.3679,
+          "raw_hit_probability": 0.3808,
+          "lift": -0.0123,
           "reliability": "D",
-          "sample_n": 23,
+          "sample_n": 21,
           "projection": {
-            "stat": "first_inning_run",
-            "value": 34.8
+            "stat": "pitcher_outs",
+            "value": 17.5,
+            "needs": 18
           }
         }
       ]

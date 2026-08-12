@@ -281,6 +281,80 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-12",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 59.7,
+          "notable_signals": 1,
+          "matchup": "Colorado Rockies @ Arizona Diamondbacks",
+          "game_pk": 825047,
+          "team": "Colorado Rockies",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 68.0,
+            "pitch_exploit": 0.0,
+            "l7_avg_ev": 30.5921,
+            "l7_barrel_pct": 60.7143,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 10.6667,
+            "lineup_slot": 75.0,
+            "bullpen_fatigue": 64.1026,
+            "platoon_barrel_pct": -0.8,
+            "platoon_xwoba": 1.2,
+            "park_hand_index": -1.24,
+            "opp_catcher_framing": 1.32,
+            "days_rest": 0.0,
+            "pull_park_synergy": -0.6597,
+            "hard_hit_105_rate": -1.835,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": -2.0,
+            "series_game": 2.0,
+            "sp_rp_ops_gap": 2.152,
+            "vs_rp_ops": 3.192
+          },
+          "hit_probability": 0.6169,
+          "raw_hit_probability": 0.6379,
+          "lift": 0.0657,
+          "reliability": "A",
+          "sample_n": 117,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 1.4,
+          "notable_signals": 0,
+          "matchup": "Colorado Rockies @ Arizona Diamondbacks",
+          "game_pk": 825047,
+          "team": "Colorado Rockies",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "hard_hit_rate": 0.1416
+          },
+          "hit_probability": 0.199,
+          "raw_hit_probability": 0.1416,
+          "lift": -0.0278,
+          "reliability": "A",
+          "sample_n": 117,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

@@ -305,9 +305,9 @@
       "date": "2026-08-12",
       "evaluations": [
         {
-          "prop": "Over 0.5 Hits",
+          "prop": "Over 0.5 Hits+Runs+RBIs",
           "type": "batter",
-          "score": 60.0,
+          "score": 78.6,
           "notable_signals": 3,
           "matchup": "New York Mets @ Atlanta Braves",
           "game_pk": 824883,
@@ -320,31 +320,57 @@
             "pitch_exploit": 12.5714,
             "l7_avg_ev": 100.0,
             "l7_barrel_pct": 100.0,
-            "bat_speed_trend": 7.95,
+            "bat_speed_trend": 13.2,
             "park_hr_index": 50.0,
             "season_barrel_pct": 84.0,
             "lineup_slot": 75.0,
             "bullpen_fatigue": 66.6667,
             "platoon_barrel_pct": 5.0,
-            "platoon_xwoba": 1.68,
-            "park_hand_index": 1.33,
+            "platoon_xwoba": 1.74,
+            "park_hand_index": 1.46,
             "opp_catcher_framing": 0.12,
             "days_rest": 0.0,
-            "pull_park_synergy": 0.6517,
+            "pull_park_synergy": 0.7256,
             "hard_hit_105_rate": 5.0,
+            "team_total_move": 0.0,
+            "team_total_open": 0.0,
             "getaway_day": -2.0,
             "series_game": 2.0,
-            "sp_rp_ops_gap": 0.04,
-            "vs_rp_ops": 2.076
+            "sp_rp_ops_gap": 0.288,
+            "vs_rp_ops": 2.376
           },
-          "hit_probability": 0.6429,
-          "raw_hit_probability": 0.6941,
-          "lift": 0.0917,
+          "hit_probability": 0.6974,
+          "raw_hit_probability": 0.7677,
+          "lift": 0.0232,
           "reliability": "A",
           "sample_n": 120,
           "projection": {
-            "stat": "hits",
+            "stat": "hits_runs_rbis",
             "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 90.2,
+          "notable_signals": 1,
+          "matchup": "New York Mets @ Atlanta Braves",
+          "game_pk": 824883,
+          "team": "Atlanta Braves",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "hard_hit_rate": 0.4968
+          },
+          "hit_probability": 0.4679,
+          "raw_hit_probability": 0.4968,
+          "lift": 0.2411,
+          "reliability": "A",
+          "sample_n": 120,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
             "needs": 1
           }
         }

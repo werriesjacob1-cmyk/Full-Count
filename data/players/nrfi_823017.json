@@ -1,0 +1,36 @@
+{
+  "player_id": "nrfi_823017",
+  "name": "Philadelphia Phillies @ St. Louis Cardinals \u2014 1st Inning (Both Teams)",
+  "snapshots": [
+    {
+      "date": "2026-08-12",
+      "evaluations": [
+        {
+          "prop": "No runs in the 1st (both teams)",
+          "type": "game",
+          "score": 65.3,
+          "notable_signals": 0,
+          "matchup": "Philadelphia Phillies @ St. Louis Cardinals",
+          "game_pk": 823017,
+          "team": null,
+          "side": "both",
+          "lean": "NRFI",
+          "signals": {
+            "home_team_scores_p": 0.2576,
+            "away_team_scores_p": 0.2572,
+            "fi_n_starts": 19.0
+          },
+          "hit_probability": 0.5165,
+          "raw_hit_probability": 0.5515,
+          "lift": 0.0181,
+          "reliability": "D",
+          "sample_n": 19,
+          "projection": {
+            "stat": "nrfi_combined",
+            "value": 55.1
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -175,10 +175,10 @@
       "date": "2026-08-12",
       "evaluations": [
         {
-          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "prop": "Over 0.5 Hits",
           "type": "batter",
-          "score": 75.0,
-          "notable_signals": 0,
+          "score": 93.0,
+          "notable_signals": 1,
           "matchup": "Texas Rangers @ Los Angeles Angels",
           "game_pk": 823994,
           "team": "Texas Rangers",
@@ -193,26 +193,52 @@
             "season_barrel_pct": 55.3333,
             "lineup_slot": 100.0,
             "bullpen_fatigue": 62.5,
-            "platoon_barrel_pct": 3.36,
-            "platoon_xwoba": 2.7,
-            "park_hand_index": -2.63,
+            "platoon_barrel_pct": 3.68,
+            "platoon_xwoba": 3.06,
+            "park_hand_index": -2.57,
             "opp_catcher_framing": -1.2,
-            "days_rest": 2.0,
-            "pull_park_synergy": -1.2151,
-            "hard_hit_105_rate": 1.98,
+            "days_rest": 0.0,
+            "pull_park_synergy": -1.1604,
+            "hard_hit_105_rate": 1.9225,
+            "team_total_move": 0.0,
+            "team_total_open": 0.0,
             "getaway_day": 0.0,
             "series_game": 2.0,
-            "sp_rp_ops_gap": -0.544,
-            "vs_rp_ops": 0.84
+            "sp_rp_ops_gap": -0.624,
+            "vs_rp_ops": 0.984
           },
-          "hit_probability": 0.5744,
-          "raw_hit_probability": 0.6172,
-          "lift": -0.095,
+          "hit_probability": 0.6042,
+          "raw_hit_probability": 0.611,
+          "lift": 0.053,
           "reliability": "A",
-          "sample_n": 107,
+          "sample_n": 108,
           "projection": {
-            "stat": "hits_runs_rbis",
+            "stat": "hits",
             "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 39.0,
+          "notable_signals": 1,
+          "matchup": "Texas Rangers @ Los Angeles Angels",
+          "game_pk": 823994,
+          "team": "Texas Rangers",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "hard_hit_rate": 0.2919
+          },
+          "hit_probability": 0.2978,
+          "raw_hit_probability": 0.2919,
+          "lift": 0.071,
+          "reliability": "A",
+          "sample_n": 108,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
             "needs": 1
           }
         }

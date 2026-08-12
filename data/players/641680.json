@@ -287,7 +287,7 @@
         {
           "prop": "Over 0.5 Hits+Runs+RBIs",
           "type": "batter",
-          "score": 55.8,
+          "score": 62.9,
           "notable_signals": 1,
           "matchup": "Tampa Bay Rays @ Athletics",
           "game_pk": 824967,
@@ -296,30 +296,54 @@
           "lean": null,
           "signals": {
             "sp_era_weak": 7.1429,
-            "l7_avg_ev": 81.3393,
+            "l7_avg_ev": 64.7222,
             "l7_barrel_pct": 100.0,
-            "park_hr_index": 59.8,
+            "park_hr_index": 59.7,
             "season_barrel_pct": 30.6667,
             "lineup_slot": 37.5,
             "bullpen_fatigue": 69.4444,
-            "platoon_barrel_pct": -2.56,
-            "platoon_xwoba": -1.74,
-            "opp_catcher_framing": 0.36,
-            "days_rest": 2.0,
-            "hard_hit_105_rate": -2.57,
+            "platoon_barrel_pct": -2.72,
+            "platoon_xwoba": -2.04,
+            "opp_catcher_framing": 0.24,
+            "days_rest": 0.0,
+            "hard_hit_105_rate": -2.6025,
             "getaway_day": -2.0,
             "series_game": 2.0,
             "sp_rp_ops_gap": -1.24,
             "vs_rp_ops": -0.324
           },
-          "hit_probability": 0.5988,
-          "raw_hit_probability": 0.6455,
-          "lift": -0.0706,
+          "hit_probability": 0.5937,
+          "raw_hit_probability": 0.6396,
+          "lift": -0.0805,
           "reliability": "B",
-          "sample_n": 72,
+          "sample_n": 73,
           "projection": {
             "stat": "hits_runs_rbis",
             "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 0,
+          "notable_signals": 0,
+          "matchup": "Tampa Bay Rays @ Athletics",
+          "game_pk": 824967,
+          "team": "Athletics",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "hard_hit_rate": 0.1109
+          },
+          "hit_probability": 0.1822,
+          "raw_hit_probability": 0.1109,
+          "lift": -0.0446,
+          "reliability": "B",
+          "sample_n": 73,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
             "needs": 1
           }
         }

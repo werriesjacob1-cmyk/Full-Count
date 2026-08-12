@@ -27,7 +27,7 @@
         {
           "prop": "Over 3.5 Strikeouts",
           "type": "pitcher",
-          "score": 49.0,
+          "score": 47.5,
           "notable_signals": 0,
           "matchup": "Cleveland Guardians @ Detroit Tigers",
           "game_pk": 824241,
@@ -35,13 +35,13 @@
           "side": null,
           "lean": null,
           "signals": {
-            "same_hand_ratio": 88.8889,
+            "same_hand_ratio": 5.5556,
             "l14_k_pct": 27.0588,
             "env_neutral": 50.0
           },
-          "hit_probability": 0.635,
-          "raw_hit_probability": 0.7071,
-          "lift": -0.0777,
+          "hit_probability": 0.6383,
+          "raw_hit_probability": 0.7193,
+          "lift": -0.0749,
           "reliability": "D",
           "sample_n": 23,
           "projection": {
@@ -51,28 +51,28 @@
           }
         },
         {
-          "prop": "Detroit Tigers scoreless in the 1st",
+          "prop": "Over 17.5 Outs Recorded",
           "type": "pitcher",
-          "score": 79.2,
-          "notable_signals": 0,
+          "score": 66.1,
+          "notable_signals": 1,
           "matchup": "Cleveland Guardians @ Detroit Tigers",
           "game_pk": 824241,
           "team": "Cleveland Guardians",
           "side": "away",
-          "lean": "NRFI",
+          "lean": null,
           "signals": {
-            "yrfi_rate": 20.8,
-            "fi_n_starts": 24.0,
-            "park_hr_index": 51.9
+            "outs_rate": 0.4925,
+            "avg_outs_per_start": 17.39
           },
-          "hit_probability": 0.6953,
-          "raw_hit_probability": 0.7332,
-          "lift": -0.0107,
+          "hit_probability": 0.4641,
+          "raw_hit_probability": 0.4925,
+          "lift": 0.0839,
           "reliability": "D",
-          "sample_n": 24,
+          "sample_n": 23,
           "projection": {
-            "stat": "first_inning_run",
-            "value": 20.8
+            "stat": "pitcher_outs",
+            "value": 17.5,
+            "needs": 18
           }
         }
       ]

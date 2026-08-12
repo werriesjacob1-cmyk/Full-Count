@@ -243,10 +243,10 @@
       "date": "2026-08-12",
       "evaluations": [
         {
-          "prop": "Over 0.5 Hits",
+          "prop": "Over 0.5 Hits+Runs+RBIs",
           "type": "batter",
-          "score": 69.3,
-          "notable_signals": 1,
+          "score": 88.8,
+          "notable_signals": 2,
           "matchup": "Pittsburgh Pirates @ Miami Marlins",
           "game_pk": 823833,
           "team": "Pittsburgh Pirates",
@@ -256,32 +256,58 @@
             "platoon": 80.0,
             "sp_era_weak": 60.8571,
             "pitch_exploit": 3.4286,
-            "l7_avg_ev": 87.9687,
+            "l7_avg_ev": 88.75,
             "l7_barrel_pct": 100.0,
             "park_hr_index": 50.0,
             "season_barrel_pct": 62.6667,
             "lineup_slot": 87.5,
             "bullpen_fatigue": 47.619,
             "platoon_barrel_pct": 5.0,
-            "platoon_xwoba": 3.24,
-            "park_hand_index": -1.53,
+            "platoon_xwoba": 3.18,
+            "park_hand_index": -1.64,
             "opp_catcher_framing": 0.84,
             "days_rest": 0.0,
-            "pull_park_synergy": -1.2156,
-            "hard_hit_105_rate": 1.5275,
+            "pull_park_synergy": -1.3145,
+            "hard_hit_105_rate": 1.475,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
             "getaway_day": 0.0,
             "series_game": 1.0,
-            "sp_rp_ops_gap": -0.672,
-            "vs_rp_ops": 0.42
+            "sp_rp_ops_gap": -0.664,
+            "vs_rp_ops": 0.384
           },
-          "hit_probability": 0.6295,
-          "raw_hit_probability": 0.6649,
-          "lift": 0.0783,
+          "hit_probability": 0.6751,
+          "raw_hit_probability": 0.7385,
+          "lift": 0.0009,
           "reliability": "A",
           "sample_n": 112,
           "projection": {
-            "stat": "hits",
+            "stat": "hits_runs_rbis",
             "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 34.5,
+          "notable_signals": 0,
+          "matchup": "Pittsburgh Pirates @ Miami Marlins",
+          "game_pk": 823833,
+          "team": "Pittsburgh Pirates",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "hard_hit_rate": 0.274
+          },
+          "hit_probability": 0.2847,
+          "raw_hit_probability": 0.274,
+          "lift": 0.0579,
+          "reliability": "A",
+          "sample_n": 112,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
             "needs": 1
           }
         }

@@ -340,7 +340,7 @@
         {
           "prop": "Over 0.5 Hits+Runs+RBIs",
           "type": "batter",
-          "score": 56.1,
+          "score": 44.9,
           "notable_signals": 2,
           "matchup": "Chicago Cubs @ Washington Nationals",
           "game_pk": 822698,
@@ -349,25 +349,27 @@
           "lean": null,
           "signals": {
             "sp_era_weak": 81.4286,
-            "l7_avg_ev": 32.6786,
-            "l7_barrel_pct": 87.8571,
-            "bat_speed_trend": 1.575,
-            "park_hr_index": 51.5,
+            "l7_avg_ev": 41.3971,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 1.8,
+            "park_hr_index": 46.7,
             "season_barrel_pct": 0.0,
-            "lineup_slot": 12.5,
+            "lineup_slot": 0.0,
             "bullpen_fatigue": 71.4286,
             "platoon_barrel_pct": -4.64,
-            "platoon_xwoba": -1.26,
+            "platoon_xwoba": -1.62,
             "opp_catcher_framing": -0.0,
             "days_rest": 0.0,
+            "team_total_move": 6.0,
+            "team_total_open": 0.0,
             "getaway_day": 0.0,
             "series_game": 1.0,
-            "sp_rp_ops_gap": -0.28,
-            "vs_rp_ops": -1.86
+            "sp_rp_ops_gap": -0.192,
+            "vs_rp_ops": -1.8
           },
-          "hit_probability": 0.5991,
-          "raw_hit_probability": 0.6459,
-          "lift": -0.0703,
+          "hit_probability": 0.6065,
+          "raw_hit_probability": 0.6546,
+          "lift": -0.0677,
           "reliability": "A",
           "sample_n": 106,
           "projection": {
@@ -379,7 +381,7 @@
         {
           "prop": "To Steal a Base",
           "type": "batter",
-          "score": 65.4,
+          "score": 53.4,
           "notable_signals": 0,
           "matchup": "Chicago Cubs @ Washington Nationals",
           "game_pk": 822698,
@@ -392,13 +394,37 @@
             "catcher_poptime": 85.7143,
             "on_base": 10.7486
           },
-          "hit_probability": 0.3194,
-          "raw_hit_probability": 0.3203,
+          "hit_probability": 0.3152,
+          "raw_hit_probability": 0.3149,
           "lift": null,
           "reliability": "A",
           "sample_n": 106,
           "projection": {
             "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 0,
+          "notable_signals": 0,
+          "matchup": "Chicago Cubs @ Washington Nationals",
+          "game_pk": 822698,
+          "team": "Washington Nationals",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "hard_hit_rate": 0.0571
+          },
+          "hit_probability": 0.1554,
+          "raw_hit_probability": 0.0571,
+          "lift": -0.0714,
+          "reliability": "A",
+          "sample_n": 106,
+          "projection": {
+            "stat": "hard_hit_105",
             "value": 1,
             "needs": 1
           }

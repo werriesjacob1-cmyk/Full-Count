@@ -20,6 +20,63 @@
           "matchup": "Los Angeles Dodgers @ Chicago Cubs"
         }
       ]
+    },
+    {
+      "date": "2026-08-12",
+      "evaluations": [
+        {
+          "prop": "Over 3.5 Strikeouts",
+          "type": "pitcher",
+          "score": 48.7,
+          "notable_signals": 0,
+          "matchup": "Kansas City Royals @ Los Angeles Dodgers",
+          "game_pk": 823916,
+          "team": "Los Angeles Dodgers",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "same_hand_ratio": 43.75,
+            "l14_k_pct": 0.0,
+            "tto_penalty": -8.0,
+            "env_neutral": 50.0
+          },
+          "hit_probability": 0.5884,
+          "raw_hit_probability": 0.5378,
+          "lift": -0.1248,
+          "reliability": "D",
+          "sample_n": 15,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 3.5,
+            "needs": 4
+          }
+        },
+        {
+          "prop": "Over 17.5 Outs Recorded",
+          "type": "pitcher",
+          "score": 29.6,
+          "notable_signals": 0,
+          "matchup": "Kansas City Royals @ Los Angeles Dodgers",
+          "game_pk": 823916,
+          "team": "Los Angeles Dodgers",
+          "side": "home",
+          "lean": null,
+          "signals": {
+            "outs_rate": 0.3467,
+            "avg_outs_per_start": 15.2
+          },
+          "hit_probability": 0.3401,
+          "raw_hit_probability": 0.3467,
+          "lift": -0.0401,
+          "reliability": "D",
+          "sample_n": 15,
+          "projection": {
+            "stat": "pitcher_outs",
+            "value": 17.5,
+            "needs": 18
+          }
+        }
+      ]
     }
   ]
 }

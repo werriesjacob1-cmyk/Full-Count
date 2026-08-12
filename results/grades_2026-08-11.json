@@ -1,10 +1,10 @@
 {
   "date": "2026-08-11",
-  "hits": 0,
-  "misses": 0,
-  "ungraded": 26,
-  "fair_hits": 0,
-  "fair_misses": 0,
+  "hits": 10,
+  "misses": 16,
+  "ungraded": 0,
+  "fair_hits": 10,
+  "fair_misses": 12,
   "picks": [
     {
       "rank": 1,
@@ -111,8 +111,18 @@
           "modelled": null
         }
       ],
-      "grade": "ungraded",
-      "reason": "game not final yet (status: Pre-Game)"
+      "grade": "miss",
+      "actual": 0.0,
+      "actual_stat": "hits",
+      "threshold": 0.5,
+      "game_innings": 9,
+      "shortened_game": false,
+      "actual_ab": 5,
+      "actual_pa_est": 5,
+      "was_substitute": false,
+      "batting_order": 1,
+      "fair_test": true,
+      "opportunity": "full (5 PA)"
     },
     {
       "rank": 2,
@@ -219,8 +229,18 @@
           "modelled": null
         }
       ],
-      "grade": "ungraded",
-      "reason": "game not final yet (status: Pre-Game)"
+      "grade": "miss",
+      "actual": 0.0,
+      "actual_stat": "hits",
+      "threshold": 0.5,
+      "game_innings": 10,
+      "shortened_game": false,
+      "actual_ab": 4,
+      "actual_pa_est": 5,
+      "was_substitute": false,
+      "batting_order": 2,
+      "fair_test": true,
+      "opportunity": "full (5 PA)"
     },
     {
       "rank": 3,
@@ -329,8 +349,18 @@
           "modelled": null
         }
       ],
-      "grade": "ungraded",
-      "reason": "game not final yet (status: Pre-Game)"
+      "grade": "miss",
+      "actual": 0.0,
+      "actual_stat": "hits",
+      "threshold": 0.5,
+      "game_innings": 9,
+      "shortened_game": false,
+      "actual_ab": 2,
+      "actual_pa_est": 2,
+      "was_substitute": false,
+      "batting_order": 2,
+      "fair_test": false,
+      "opportunity": "limited \u2014 only 2 PA (early exit, shortened game, or removed for a pinch hitter)"
     },
     {
       "rank": 4,
@@ -439,8 +469,18 @@
           "modelled": null
         }
       ],
-      "grade": "ungraded",
-      "reason": "game not final yet (status: In Progress)"
+      "grade": "miss",
+      "actual": 0.0,
+      "actual_stat": "hits",
+      "threshold": 0.5,
+      "game_innings": 9,
+      "shortened_game": false,
+      "actual_ab": 2,
+      "actual_pa_est": 3,
+      "was_substitute": false,
+      "batting_order": 3,
+      "fair_test": true,
+      "opportunity": "full (3 PA)"
     },
     {
       "rank": 5,
@@ -548,8 +588,18 @@
           "modelled": null
         }
       ],
-      "grade": "ungraded",
-      "reason": "game not final yet (status: Pre-Game)"
+      "grade": "hit",
+      "actual": 1.0,
+      "actual_stat": "hits",
+      "threshold": 0.5,
+      "game_innings": 9,
+      "shortened_game": false,
+      "actual_ab": 5,
+      "actual_pa_est": 5,
+      "was_substitute": false,
+      "batting_order": 1,
+      "fair_test": true,
+      "opportunity": "full (5 PA)"
     },
     {
       "rank": 6,
@@ -655,8 +705,18 @@
           "modelled": null
         }
       ],
-      "grade": "ungraded",
-      "reason": "game not final yet (status: Pre-Game)"
+      "grade": "miss",
+      "actual": 0.0,
+      "actual_stat": "hits",
+      "threshold": 0.5,
+      "game_innings": 9,
+      "shortened_game": false,
+      "actual_ab": 1,
+      "actual_pa_est": 2,
+      "was_substitute": false,
+      "batting_order": 2,
+      "fair_test": false,
+      "opportunity": "limited \u2014 only 2 PA (early exit, shortened game, or removed for a pinch hitter)"
     },
     {
       "rank": 7,
@@ -761,8 +821,18 @@
           "modelled": null
         }
       ],
-      "grade": "ungraded",
-      "reason": "game not final yet (status: Pre-Game)"
+      "grade": "hit",
+      "actual": 2.0,
+      "actual_stat": "hits",
+      "threshold": 0.5,
+      "game_innings": 10,
+      "shortened_game": false,
+      "actual_ab": 5,
+      "actual_pa_est": 5,
+      "was_substitute": false,
+      "batting_order": 2,
+      "fair_test": true,
+      "opportunity": "full (5 PA)"
     },
     {
       "rank": 8,
@@ -870,8 +940,18 @@
           "modelled": null
         }
       ],
-      "grade": "ungraded",
-      "reason": "game not final yet (status: Pre-Game)"
+      "grade": "hit",
+      "actual": 1.0,
+      "actual_stat": "hits",
+      "threshold": 0.5,
+      "game_innings": 9,
+      "shortened_game": false,
+      "actual_ab": 3,
+      "actual_pa_est": 4,
+      "was_substitute": false,
+      "batting_order": 3,
+      "fair_test": true,
+      "opportunity": "full (4 PA)"
     },
     {
       "rank": 9,
@@ -979,8 +1059,18 @@
           "modelled": null
         }
       ],
-      "grade": "ungraded",
-      "reason": "game not final yet (status: In Progress)"
+      "grade": "hit",
+      "actual": 1.0,
+      "actual_stat": "hits",
+      "threshold": 0.5,
+      "game_innings": 9,
+      "shortened_game": false,
+      "actual_ab": 3,
+      "actual_pa_est": 4,
+      "was_substitute": false,
+      "batting_order": 4,
+      "fair_test": true,
+      "opportunity": "full (4 PA)"
     },
     {
       "rank": 10,
@@ -1087,8 +1177,18 @@
           "modelled": null
         }
       ],
-      "grade": "ungraded",
-      "reason": "game not final yet (status: Pre-Game)"
+      "grade": "miss",
+      "actual": 0.0,
+      "actual_stat": "hits",
+      "threshold": 0.5,
+      "game_innings": 10,
+      "shortened_game": false,
+      "actual_ab": 5,
+      "actual_pa_est": 5,
+      "was_substitute": false,
+      "batting_order": 1,
+      "fair_test": true,
+      "opportunity": "full (5 PA)"
     },
     {
       "rank": 11,
@@ -1154,8 +1254,18 @@
         "modelled": null
       },
       "alternatives": null,
-      "grade": "ungraded",
-      "reason": "game not final yet (status: In Progress)"
+      "grade": "miss",
+      "actual": 0.0,
+      "actual_stat": "home_runs",
+      "threshold": 0.5,
+      "game_innings": 10,
+      "shortened_game": false,
+      "actual_ab": 4,
+      "actual_pa_est": 4,
+      "was_substitute": false,
+      "batting_order": 2,
+      "fair_test": true,
+      "opportunity": "full (4 PA)"
     },
     {
       "rank": 12,
@@ -1225,8 +1335,18 @@
         "modelled": null
       },
       "alternatives": null,
-      "grade": "ungraded",
-      "reason": "game not final yet (status: In Progress)"
+      "grade": "miss",
+      "actual": 0.0,
+      "actual_stat": "home_runs",
+      "threshold": 0.5,
+      "game_innings": 9,
+      "shortened_game": false,
+      "actual_ab": 3,
+      "actual_pa_est": 4,
+      "was_substitute": false,
+      "batting_order": 1,
+      "fair_test": true,
+      "opportunity": "full (4 PA)"
     },
     {
       "rank": 13,
@@ -1292,8 +1412,18 @@
         "modelled": null
       },
       "alternatives": null,
-      "grade": "ungraded",
-      "reason": "game not final yet (status: Pre-Game)"
+      "grade": "miss",
+      "actual": 0.0,
+      "actual_stat": "home_runs",
+      "threshold": 0.5,
+      "game_innings": 9,
+      "shortened_game": false,
+      "actual_ab": 1,
+      "actual_pa_est": 2,
+      "was_substitute": false,
+      "batting_order": 2,
+      "fair_test": false,
+      "opportunity": "limited \u2014 only 2 PA (early exit, shortened game, or removed for a pinch hitter)"
     },
     {
       "rank": 14,
@@ -1361,8 +1491,18 @@
         "modelled": null
       },
       "alternatives": null,
-      "grade": "ungraded",
-      "reason": "game not final yet (status: Pre-Game)"
+      "grade": "hit",
+      "actual": 1.0,
+      "actual_stat": "home_runs",
+      "threshold": 0.5,
+      "game_innings": 9,
+      "shortened_game": false,
+      "actual_ab": 3,
+      "actual_pa_est": 4,
+      "was_substitute": false,
+      "batting_order": 3,
+      "fair_test": true,
+      "opportunity": "full (4 PA)"
     },
     {
       "rank": 15,
@@ -1431,8 +1571,18 @@
         "modelled": null
       },
       "alternatives": null,
-      "grade": "ungraded",
-      "reason": "game not final yet (status: In Progress)"
+      "grade": "hit",
+      "actual": 1.0,
+      "actual_stat": "home_runs",
+      "threshold": 0.5,
+      "game_innings": 9,
+      "shortened_game": false,
+      "actual_ab": 3,
+      "actual_pa_est": 4,
+      "was_substitute": false,
+      "batting_order": 3,
+      "fair_test": true,
+      "opportunity": "full (4 PA)"
     },
     {
       "rank": 16,
@@ -1479,8 +1629,18 @@
         "modelled": 0.5391
       },
       "alternatives": null,
-      "grade": "ungraded",
-      "reason": "game not final yet (status: Pre-Game)"
+      "grade": "hit",
+      "actual": 1.0,
+      "actual_stat": "stolen_bases",
+      "threshold": 0.5,
+      "game_innings": 10,
+      "shortened_game": false,
+      "actual_ab": 2,
+      "actual_pa_est": 3,
+      "was_substitute": false,
+      "batting_order": 7,
+      "fair_test": true,
+      "opportunity": "full (3 PA)"
     },
     {
       "rank": 17,
@@ -1547,8 +1707,18 @@
         "modelled": null
       },
       "alternatives": null,
-      "grade": "ungraded",
-      "reason": "game not final yet (status: Pre-Game)"
+      "grade": "miss",
+      "actual": 0.0,
+      "actual_stat": "hits_runs_rbis",
+      "threshold": 0.5,
+      "game_innings": 10,
+      "shortened_game": false,
+      "actual_ab": 4,
+      "actual_pa_est": 5,
+      "was_substitute": false,
+      "batting_order": 2,
+      "fair_test": true,
+      "opportunity": "full (5 PA)"
     },
     {
       "rank": 18,
@@ -1615,8 +1785,18 @@
         "modelled": null
       },
       "alternatives": null,
-      "grade": "ungraded",
-      "reason": "game not final yet (status: Pre-Game)"
+      "grade": "miss",
+      "actual": 0.0,
+      "actual_stat": "rbis",
+      "threshold": 0.5,
+      "game_innings": 10,
+      "shortened_game": false,
+      "actual_ab": 5,
+      "actual_pa_est": 5,
+      "was_substitute": false,
+      "batting_order": 1,
+      "fair_test": true,
+      "opportunity": "full (5 PA)"
     },
     {
       "rank": 19,
@@ -1684,8 +1864,18 @@
         "modelled": null
       },
       "alternatives": null,
-      "grade": "ungraded",
-      "reason": "game not final yet (status: In Progress)"
+      "grade": "miss",
+      "actual": 0.0,
+      "actual_stat": "doubles",
+      "threshold": 0.5,
+      "game_innings": 9,
+      "shortened_game": false,
+      "actual_ab": 3,
+      "actual_pa_est": 3,
+      "was_substitute": false,
+      "batting_order": 4,
+      "fair_test": true,
+      "opportunity": "full (3 PA)"
     },
     {
       "rank": 20,
@@ -1754,8 +1944,18 @@
         "modelled": null
       },
       "alternatives": null,
-      "grade": "ungraded",
-      "reason": "game not final yet (status: Pre-Game)"
+      "grade": "miss",
+      "actual": 0.0,
+      "actual_stat": "singles",
+      "threshold": 0.5,
+      "game_innings": 9,
+      "shortened_game": false,
+      "actual_ab": 2,
+      "actual_pa_est": 2,
+      "was_substitute": false,
+      "batting_order": 2,
+      "fair_test": false,
+      "opportunity": "limited \u2014 only 2 PA (early exit, shortened game, or removed for a pinch hitter)"
     },
     {
       "rank": 21,
@@ -1823,8 +2023,18 @@
         "modelled": null
       },
       "alternatives": null,
-      "grade": "ungraded",
-      "reason": "game not final yet (status: Pre-Game)"
+      "grade": "miss",
+      "actual": 0.0,
+      "actual_stat": "triples",
+      "threshold": 0.5,
+      "game_innings": 9,
+      "shortened_game": false,
+      "actual_ab": 4,
+      "actual_pa_est": 4,
+      "was_substitute": false,
+      "batting_order": 2,
+      "fair_test": true,
+      "opportunity": "full (4 PA)"
     },
     {
       "rank": 22,
@@ -1893,8 +2103,18 @@
         "modelled": null
       },
       "alternatives": null,
-      "grade": "ungraded",
-      "reason": "game not final yet (status: In Progress)"
+      "grade": "hit",
+      "actual": 4,
+      "actual_stat": "total_bases",
+      "threshold": 1.5,
+      "game_innings": 9,
+      "shortened_game": false,
+      "actual_ab": 3,
+      "actual_pa_est": 4,
+      "was_substitute": false,
+      "batting_order": 3,
+      "fair_test": true,
+      "opportunity": "full (4 PA)"
     },
     {
       "rank": 23,
@@ -1961,8 +2181,18 @@
         "modelled": null
       },
       "alternatives": null,
-      "grade": "ungraded",
-      "reason": "game not final yet (status: Pre-Game)"
+      "grade": "miss",
+      "actual": 0.0,
+      "actual_stat": "runs",
+      "threshold": 0.5,
+      "game_innings": 9,
+      "shortened_game": false,
+      "actual_ab": 5,
+      "actual_pa_est": 5,
+      "was_substitute": false,
+      "batting_order": 1,
+      "fair_test": true,
+      "opportunity": "full (5 PA)"
     },
     {
       "rank": 24,
@@ -2029,8 +2259,18 @@
         "modelled": null
       },
       "alternatives": null,
-      "grade": "ungraded",
-      "reason": "game not final yet (status: Pre-Game)"
+      "grade": "miss",
+      "actual": 0.0,
+      "actual_stat": "hits",
+      "threshold": 0.5,
+      "game_innings": 9,
+      "shortened_game": false,
+      "actual_ab": 5,
+      "actual_pa_est": 5,
+      "was_substitute": false,
+      "batting_order": 1,
+      "fair_test": true,
+      "opportunity": "full (5 PA)"
     },
     {
       "rank": 25,
@@ -2080,8 +2320,16 @@
         "modelled": 0.8369
       },
       "alternatives": null,
-      "grade": "ungraded",
-      "reason": "game not final yet (status: Pre-Game)"
+      "grade": "hit",
+      "actual": 4.0,
+      "actual_stat": "strikeouts",
+      "threshold": 3.5,
+      "game_innings": 9,
+      "shortened_game": false,
+      "actual_ip": 5.0,
+      "pitch_count": 89.0,
+      "fair_test": true,
+      "opportunity": "full (5.0 IP)"
     },
     {
       "rank": 26,
@@ -2128,8 +2376,13 @@
         "modelled": null
       },
       "alternatives": null,
-      "grade": "ungraded",
-      "reason": "game not final yet (status: Pre-Game)"
+      "grade": "hit",
+      "actual": 0,
+      "actual_stat": "first_inning_runs_allowed",
+      "game_innings": 9,
+      "shortened_game": false,
+      "fair_test": true,
+      "opportunity": "full (first inning always played)"
     }
   ]
 }
