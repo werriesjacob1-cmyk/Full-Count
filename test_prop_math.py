@@ -539,6 +539,84 @@ if ms is not None:
     ms._apply_shrinkage(empty, prior_games=20)
     check(empty == {}, "an empty table shrinks to an empty table rather than raising")
 
+    # _fit_shrinkage_n0: the auto-fit that replaced the flat prior_games=20
+    # default for empirical_batter_prop_rates (2026-08-06 audit, acted on
+    # 2026-08-12). Two independent checks: the optimiser actually finds the
+    # log-likelihood's maximum (brute-force grid, not a re-derivation of the
+    # golden-section search itself), and the fit recovers a KNOWN n0 from
+    # synthetic data generated the opposite direction (Beta-Binomial sampling
+    # forward, not fit backward) -- an end-to-end sanity check, not just an
+    # optimiser check.
+    def _bb_neg_ll(obs, league, n0):
+        lgamma = math.lgamma
+        alpha, beta = league * n0, (1.0 - league) * n0
+        log_norm = lgamma(alpha) + lgamma(beta) - lgamma(alpha + beta)
+        return -sum(lgamma(h + alpha) + lgamma(n - h + beta)
+                    - lgamma(n + alpha + beta) - log_norm for h, n in obs)
+
+    rng = random.Random(20260812)
+
+    def synth_players(true_league, true_n0, n_players=300, games_lo=20, games_hi=150):
+        obs = []
+        for _ in range(n_players):
+            n = rng.randint(games_lo, games_hi)
+            # Beta-distributed true rate via two Gamma draws (stdlib random
+            # has no betavariate-by-shape-scale mismatch to worry about here
+            # -- random.betavariate takes alpha/beta directly).
+            alpha, beta = true_league * true_n0, (1.0 - true_league) * true_n0
+            p_i = rng.betavariate(alpha, beta)
+            hits = sum(1 for _ in range(n) if rng.random() < p_i)
+            obs.append((hits, n))
+        return obs
+
+    for true_league, true_n0, label in ((0.65, 70.0, "hits-like (high n0)"),
+                                        (0.35, 15.0, "stolen-base-like (low n0)")):
+        obs = synth_players(true_league, true_n0)
+        entries = [{"hit": h, "n": n} for h, n in obs]
+        fitted = ms._fit_shrinkage_n0(entries, true_league)
+        # Brute-force grid over the same log-likelihood the golden-section
+        # search maximises, coarse but independent of that search's own path.
+        grid = [math.exp(x / 10.0) for x in range(int(math.log(2) * 10), int(math.log(1000) * 10))]
+        best_grid_n0 = min(grid, key=lambda n0: _bb_neg_ll(obs, true_league, n0))
+        check(_bb_neg_ll(obs, true_league, fitted) <= _bb_neg_ll(obs, true_league, best_grid_n0) + 0.5,
+              f"[{label}] golden-section fit (n0={fitted:.1f}) matches or beats a "
+              f"brute-force grid search's best point (n0={best_grid_n0:.1f}) on log-likelihood",
+              f"fit ll={-_bb_neg_ll(obs, true_league, fitted):.3f} vs "
+              f"grid ll={-_bb_neg_ll(obs, true_league, best_grid_n0):.3f}")
+        # Recovery is noisy by nature (300 players, one finite sample) --
+        # within a factor of 2.5x of the true n0 is the honest tolerance for
+        # a single-draw sanity check, not a precision claim.
+        check(true_n0 / 2.5 <= fitted <= true_n0 * 2.5,
+              f"[{label}] fit recovers the true n0={true_n0} within 2.5x from one synthetic sample",
+              f"fitted {fitted:.1f}")
+
+    # Too few players: falls back rather than fitting an unstable estimate.
+    tiny_entries = [{"hit": 4, "n": 20}, {"hit": 10, "n": 20}, {"hit": 15, "n": 20}]
+    check(ms._fit_shrinkage_n0(tiny_entries, 0.45) == ms.SHRINKAGE_PRIOR_GAMES,
+          "fewer than MIN_PLAYERS_TO_FIT_SHRINKAGE players falls back to the flat prior")
+    # Degenerate league (0 or 1): undefined for the beta-binomial, falls back.
+    degen_entries = [{"hit": 0, "n": 20}] * 40
+    check(ms._fit_shrinkage_n0(degen_entries, 0.0) == ms.SHRINKAGE_PRIOR_GAMES,
+          "a degenerate league rate (0) falls back instead of raising")
+
+    # _apply_shrinkage's new default (prior_games=None) actually calls the
+    # fit and records n0 per key, rather than silently keeping the old flat
+    # behaviour.
+    default_table = {}
+    for i in range(60):
+        n = rng.randint(30, 120)
+        p_i = rng.betavariate(0.5 * 70, 0.5 * 70)
+        h = sum(1 for _ in range(n) if rng.random() < p_i)
+        default_table[i] = {"rates": {"hits_1plus": {"p": h / n, "n": n, "hit": h}}}
+    ms._apply_shrinkage(default_table)  # prior_games defaults to None now
+    n0_used = {e["rates"]["hits_1plus"]["n0"] for e in default_table.values()}
+    check(len(n0_used) == 1, "every player gets the SAME fitted n0 for a given key",
+          f"got {n0_used}")
+    fitted_default = next(iter(n0_used))
+    check(fitted_default != ms.SHRINKAGE_PRIOR_GAMES,
+          "the default path used the fit, not a coincidental match to the flat fallback",
+          f"fitted n0={fitted_default}")
+
 # ══════════════════════════════════════════════════════════════════════════
 #  12. Calibration module against independent references
 # ══════════════════════════════════════════════════════════════════════════

@@ -1226,7 +1226,7 @@ def _empirical_batter_one(job):
 # sample is pulled about 44% of the way to league average -- roughly the
 # right amount of scepticism for that much evidence.
 #
-# ── AUDIT, 2026-08-06: MEASURED. NOT ACTED ON -- SEE THE CAVEAT BELOW. ────
+# ── AUDIT, 2026-08-06: MEASURED. ACTED ON 2026-08-12 -- SEE THE CAVEAT. ──
 # This constant is the strength of a Beta prior, so it is not a taste
 # question: for hits_i ~ BetaBinom(n_i, mu*n0, (1-mu)*n0) the posterior mean
 # is EXACTLY the (hit + n0*league)/(n + n0) computed below, and n0 is fixed
@@ -1236,7 +1236,7 @@ def _empirical_batter_one(job):
 # a third way, non-parametrically, by splitting each player's games odd/even,
 # shrinking the odd half and scoring the even half.
 #
-#   threshold            MLE n0   MoM n0   split-half n0   SHIPPED
+#   threshold            MLE n0   MoM n0   split-half n0   SHIPPED (was)
 #   hits_1plus             72.7     70.3        56            20
 #   hits_2plus             72.0     72.8        56            20
 #   total_bases_2plus      78.3     76.9        70            20
@@ -1254,25 +1254,94 @@ def _empirical_batter_one(job):
 # where between-player differences really are large and real -- and 3-4x too
 # SMALL for hits and total bases, which is where the board actually bets.
 # The consequence at the 25-game gate (MIN_EMPIRICAL_GAMES): a hits_1plus
-# rate is currently pulled 44% toward league when it should be pulled 74%.
-# Measured cost: at n0=20 the shipped total-bases rates are under-shrunk
-# enough that they score WORSE out of sample than ignoring the player's own
-# record entirely (total_bases_2plus .65675 vs .65540 league-only).
+# rate was pulled 44% toward league when it should be pulled 74%. Measured
+# cost: at flat n0=20 the total-bases rates were under-shrunk enough that
+# they scored WORSE out of sample than ignoring the player's own record
+# entirely (total_bases_2plus .65675 vs .65540 league-only).
 #
-# RECOMMENDED: fit n0 per threshold by the same beta-binomial MLE, inside
-# _apply_shrinkage's existing per-key loop -- it already pools every player's
-# (hit, n) for each key to get `league`, which is exactly the data the fit
-# needs, so this costs one extra optimisation per key and no new inputs.
+# ACTED ON: _apply_shrinkage now fits n0 per threshold with the same
+# beta-binomial MLE, inside its existing per-key loop -- it already pools
+# every player's (hit, n) for each key to get `league`, which is exactly the
+# data the fit needs. See _fit_shrinkage_n0. SHRINKAGE_PRIOR_GAMES survives
+# as the fallback for a key with too few players to fit reliably, and as the
+# explicit override still used by empirical_pitcher_k_rates/
+# empirical_pitcher_outs_rates (prior_games=6, independently audited/
+# borrowed -- see their own comments) and hard_hit_game_rates
+# (prior_games=20, never separately audited) -- neither of those call sites
+# is touched by this fix; only the batter table's own default is.
 #
-# CAVEAT, stated because it bounds the claim: these n0 were fitted on
-# REGULARS (250+ PA, 40+ games). Restricting to regulars truncates the
-# between-player spread, which biases n0 upward. That is the same population
-# the pipeline scores, so it is the right population to fit on -- but the
-# numbers above should not be reused for a wider player pool.
+# CAVEAT, stated because it bounds the claim: the n0 in the table above were
+# fitted on REGULARS (250+ PA, 40+ games). Restricting to regulars truncates
+# the between-player spread, which biases n0 upward. The live fit below runs
+# fresh on whatever population is actually passed in each call -- typically
+# a night's ~250-300 confirmed lineup batters, a similar-sized and similarly
+# composed pool -- rather than reusing these frozen numbers, so it adapts
+# automatically instead of inheriting this caveat.
 SHRINKAGE_PRIOR_GAMES = 20
 
+# A key needs at least this many players with a rate for the beta-binomial
+# fit below to be trusted; short of it, _fit_shrinkage_n0 returns the flat
+# fallback rather than fitting a concentration parameter off a handful of
+# points. Well under the audit's 244 -- this guards against instability, not
+# against reusing a frozen population.
+MIN_PLAYERS_TO_FIT_SHRINKAGE = 30
 
-def _apply_shrinkage(table, prior_games=SHRINKAGE_PRIOR_GAMES):
+
+def _fit_shrinkage_n0(entries, league, fallback=SHRINKAGE_PRIOR_GAMES,
+                      lo=2.0, hi=1000.0):
+    """MLE of the Beta-Binomial concentration n0 (= alpha + beta) for a FIXED
+    mean `league`, from this key's real (hit, n) pairs -- see the audit above
+    _apply_shrinkage for the derivation and the numbers that motivated this.
+
+    hits_i ~ BetaBinomial(n_i, alpha=league*n0, beta=(1-league)*n0). Maximises
+    the log-likelihood over n0 by golden-section search in log-space (n0 is
+    strictly positive and the audit's own three independent estimators agree
+    it varies close to two orders of magnitude across thresholds, which is
+    exactly the regime a log-space search is suited to) -- no scipy
+    dependency for a one-parameter fit this pipeline only needs at night.
+
+    Falls back to `fallback` rather than fitting when there are too few
+    players (MIN_PLAYERS_TO_FIT_SHRINKAGE) or league is degenerate (0 or 1,
+    where the beta-binomial log-likelihood is undefined)."""
+    if league <= 0.0 or league >= 1.0:
+        return fallback
+    obs = [(int(e["hit"]), int(e["n"])) for e in entries if e.get("n")]
+    if len(obs) < MIN_PLAYERS_TO_FIT_SHRINKAGE:
+        return fallback
+
+    lgamma = math.lgamma
+
+    def neg_log_lik(n0):
+        alpha, beta = league * n0, (1.0 - league) * n0
+        log_norm = lgamma(alpha) + lgamma(beta) - lgamma(alpha + beta)
+        ll = 0.0
+        for hit, n in obs:
+            ll += (lgamma(hit + alpha) + lgamma(n - hit + beta)
+                   - lgamma(n + alpha + beta) - log_norm)
+        return -ll
+
+    a, b = math.log(lo), math.log(hi)
+    gr = (5 ** 0.5 - 1) / 2  # golden ratio conjugate, ~0.618
+    c, d = b - gr * (b - a), a + gr * (b - a)
+    try:
+        fc, fd = neg_log_lik(math.exp(c)), neg_log_lik(math.exp(d))
+        for _ in range(60):
+            if fc < fd:
+                b, d, fd = d, c, fc
+                c = b - gr * (b - a)
+                fc = neg_log_lik(math.exp(c))
+            else:
+                a, c, fc = c, d, fd
+                d = a + gr * (b - a)
+                fd = neg_log_lik(math.exp(d))
+            if b - a < 1e-4:
+                break
+    except (ValueError, OverflowError):
+        return fallback
+    return math.exp((a + b) / 2)
+
+
+def _apply_shrinkage(table, prior_games=None):
     """Shrink each player's observed rate toward the league rate for that same
     threshold, in place, writing "p_hat" as the estimate to actually use.
 
@@ -1289,7 +1358,13 @@ def _apply_shrinkage(table, prior_games=SHRINKAGE_PRIOR_GAMES):
 
     Shrinkage toward the league rate fits the problem: it is centred rather
     than pessimistic, it corrects hardest exactly where the evidence is
-    thinnest, and it converges on the observed rate as the sample grows."""
+    thinnest, and it converges on the observed rate as the sample grows.
+
+    prior_games: None (the default) fits n0 PER KEY via _fit_shrinkage_n0 --
+    see the audit above this function. Pass an explicit number to force the
+    old flat behaviour for every key, which empirical_pitcher_k_rates,
+    empirical_pitcher_outs_rates and hard_hit_game_rates still do
+    deliberately (see their own call sites for why)."""
     keys = set()
     for e in table.values():
         keys.update((e.get("rates") or {}).keys())
@@ -1298,10 +1373,12 @@ def _apply_shrinkage(table, prior_games=SHRINKAGE_PRIOR_GAMES):
         total_hits = sum(r["hit"] for r in entries)
         total_n = sum(r["n"] for r in entries)
         league = (total_hits / total_n) if total_n else 0.0
+        n0 = prior_games if prior_games is not None else _fit_shrinkage_n0(entries, league)
         for r in entries:
             r["league_p"] = round(league, 4)
-            r["p_hat"] = round((r["hit"] + prior_games * league) /
-                               (r["n"] + prior_games), 4)
+            r["n0"] = round(n0, 1)
+            r["p_hat"] = round((r["hit"] + n0 * league) /
+                               (r["n"] + n0), 4)
     return table
 
 
