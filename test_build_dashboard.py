@@ -12,7 +12,9 @@ right, and does the HTML it renders actually embed that payload.
     /tmp/mlbvenv/bin/python3 test_build_dashboard.py
 """
 import json
+import os
 import sys
+import tempfile
 
 sys.path.insert(0, __file__.rsplit("/", 1)[0] if "/" in __file__ else ".")
 sys.path.insert(0, __file__.rsplit("/", 1)[0] + "/dashboard" if "/" in __file__ else "dashboard")
@@ -178,6 +180,69 @@ check(tab_names == ["Priced Lower Prob", "No Line High Prob"],
 all_names = [r["name"] for r in payload7["data"]["all"]]
 check(all_names == ["Priced Lower Prob", "No Line High Prob"],
       "the same priced-first rule applies to the All Props tab", f"got {all_names}")
+
+
+head("8. load_track_record reads the real main_hit_rate, not the blended overall one, "
+     "and degrades to None honestly rather than a fabricated 0%")
+
+with tempfile.TemporaryDirectory() as td:
+    hist_path = os.path.join(td, "history.json")
+    with open(hist_path, "w") as f:
+        json.dump({
+            "overall_hit_rate": 0.452, "main_hit_rate": 0.553,
+            "last_14_days_hit_rate": 0.452,
+            "by_category_totals": {"main": {"hits": 26, "misses": 21, "ungraded": 0}},
+        }, f)
+    tr = bd.load_track_record(hist_path)
+    check(tr["main_hit_rate"] == 0.553,
+          "reads main_hit_rate, not overall_hit_rate", f"got {tr}")
+    check(tr["main_n"] == 47, "main_n is hits+misses from by_category_totals.main", f"got {tr}")
+
+    empty_path = os.path.join(td, "empty.json")
+    with open(empty_path, "w") as f:
+        json.dump({"main_hit_rate": None, "by_category_totals": {}}, f)
+    check(bd.load_track_record(empty_path) is None,
+          "no graded main-board picks yet returns None, not a fabricated 0% record")
+
+    check(bd.load_track_record(os.path.join(td, "does_not_exist.json")) is None,
+          "a missing history.json returns None rather than crashing the build")
+
+
+head("9. suggested parlay: real correlation-screened legs via the actual parlay_builder.py "
+     "engine, honest None when fewer than 2 real legs exist")
+
+def parlay_candidate(name, team, matchup, game_pk, player_id, prop, stat, prob, odds, conf="High"):
+    return {
+        "name": name, "team": team, "matchup": matchup, "game_pk": game_pk,
+        "type": "batter", "player_id": player_id, "prop": prop, "side": None,
+        "projection": {"stat": stat, "value": 0.5, "needs": 1},
+        "hit_probability": prob, "market_odds": odds, "market_implied": None,
+        "confidence": conf, "price_clears": True,
+    }
+
+check(bd._decimal_to_american(2.0) == 100, "decimal 2.0 (even money) is +100")
+check(bd._decimal_to_american(1.5) == -200, "decimal 1.5 is -200")
+check(bd._decimal_to_american(None) is None, "a missing decimal price returns None, not a crash")
+
+three_legs = [
+    parlay_candidate("A", "T1", "T1 @ T2", 1, 101, "Over 0.5 Hits", "hits", 0.72, -150),
+    parlay_candidate("B", "T3", "T3 @ T4", 2, 102, "Over 0.5 Total Bases", "total_bases", 0.68, -130),
+    parlay_candidate("C", "T5", "T5 @ T6", 3, 103, "Over 0.5 Runs", "runs", 0.65, -120, conf="Medium"),
+]
+sp = bd._build_suggested_parlay(three_legs)
+check(sp is not None and len(sp["legs"]) >= 2,
+      "a real slate with enough independent legs produces a real suggested parlay",
+      f"got {sp}")
+if sp:
+    check(sp["combined_american_odds"] is not None,
+          "combined_american_odds is populated when every leg is priced", f"got {sp}")
+    check("naive_probability_note" in sp and sp["naive_probability_note"],
+          "the honest 'not a final answer' caveat travels with the parlay, not just the number")
+
+check(bd._build_suggested_parlay([three_legs[0]]) is None,
+      "a single real leg is NOT dressed up as a parlay -- honest None instead")
+check(bd._build_suggested_parlay([]) is None,
+      "no candidates at all returns None, not an empty/fabricated parlay")
 
 
 n_pass = sum(1 for ok, _, _ in _results if ok)
