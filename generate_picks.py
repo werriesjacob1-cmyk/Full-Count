@@ -1613,6 +1613,16 @@ def score_batter(batter, gm, opp_sp_row, opp_sp_id, opp_sp_hand, park_wx, batter
         # A better framer steals more strikes, which is bad for the hitter.
         # League Steal% runs around 4-5%.
         _sig(signals, "opp_catcher_framing", fr, clamp(-(fr - 4.5) * 1.2, -4, 4))
+        # AUDIT, 2026-08-12: MEASURED, same fresh 33-date backtest as the
+        # audit near the platoon block above (catcher_framing() was wired
+        # into backtest extras in the same pass, one signal at a time --
+        # see backtest/engine.py's own comment). No real separation power:
+        # AUC 0.501 (n=7200, hits), 0.518 (n=3409, hits_runs_rbis), 0.486
+        # (n=3787, a third batter segment) -- every confidence interval
+        # straddles 0.50, and backtest/signals.py's prune recommendation
+        # says DROP in all three. Same honest "not yet" verdict as the
+        # other eight signals audited above -- left unweighted, exactly as
+        # it already was.
 
     # Rest and accumulated usage.
     # rest_and_usage nests under 'batters'/'starters', and the field is
