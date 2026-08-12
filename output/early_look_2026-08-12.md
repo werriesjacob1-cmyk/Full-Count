@@ -4,10 +4,10 @@ Every player below is projected into last night's/his last game's batting slot f
 
 - **Gabriel Moreno** (Arizona Diamondbacks) — Over 0.5 Hits — 61.8% [Colorado Rockies @ Arizona Diamondbacks]
 - **James McCann** (Arizona Diamondbacks) — Over 0.5 Hits — 61.7% [Colorado Rockies @ Arizona Diamondbacks]
-- **Tyler Locklear** (Arizona Diamondbacks) — Over 0.5 Hits — 61.0% [Colorado Rockies @ Arizona Diamondbacks]
+- **Tyler Locklear** (Arizona Diamondbacks) — Over 0.5 Hits — 61.1% [Colorado Rockies @ Arizona Diamondbacks]
 - **Ketel Marte** (Arizona Diamondbacks) — Over 0.5 Hits — 60.3% [Colorado Rockies @ Arizona Diamondbacks]
-- **Ryan Waldschmidt** (Arizona Diamondbacks) — Over 0.5 Hits — 60.2% [Colorado Rockies @ Arizona Diamondbacks]
 - **Ildemaro Vargas** (Arizona Diamondbacks) — Over 0.5 Hits — 60.2% [Colorado Rockies @ Arizona Diamondbacks]
+- **Ryan Waldschmidt** (Arizona Diamondbacks) — Over 0.5 Hits — 60.2% [Colorado Rockies @ Arizona Diamondbacks]
 - **Corbin Carroll** (Arizona Diamondbacks) — Over 0.5 Hits — 59.9% [Colorado Rockies @ Arizona Diamondbacks]
 - **Jorge Barrosa** (Arizona Diamondbacks) — Over 0.5 Hits — 57.5% [Colorado Rockies @ Arizona Diamondbacks]
 - **Tim Tawa** (Arizona Diamondbacks) — Over 0.5 Hits+Runs+RBIs — 56.7% [Colorado Rockies @ Arizona Diamondbacks]

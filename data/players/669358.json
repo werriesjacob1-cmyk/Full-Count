@@ -118,6 +118,30 @@
             "value": 17.5,
             "needs": 18
           }
+        },
+        {
+          "prop": "Over 9.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 53.5,
+          "notable_signals": 0,
+          "matchup": "Baltimore Orioles @ Minnesota Twins",
+          "game_pk": 823672,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "signals": {
+            "combined_k_edge": -0.032
+          },
+          "hit_probability": 0.5447,
+          "raw_hit_probability": 0.5834,
+          "lift": -0.0707,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 9.5,
+            "needs": 10
+          }
         }
       ]
     }

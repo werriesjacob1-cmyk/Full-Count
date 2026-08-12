@@ -119,6 +119,30 @@
             "value": 17.5,
             "needs": 18
           }
+        },
+        {
+          "prop": "Over 11.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 55,
+          "notable_signals": 1,
+          "matchup": "Philadelphia Phillies @ St. Louis Cardinals",
+          "game_pk": 823017,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "signals": {
+            "combined_k_edge": 0.2802
+          },
+          "hit_probability": 0.5731,
+          "raw_hit_probability": 0.6157,
+          "lift": 0.2375,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 11.5,
+            "needs": 12
+          }
         }
       ]
     }
