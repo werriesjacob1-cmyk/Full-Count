@@ -1571,6 +1571,18 @@ def score_batter(batter, gm, opp_sp_row, opp_sp_id, opp_sp_hand, park_wx, batter
             _sig(signals, "consecutive_games", rs["consecutive_games"],
                  clamp(-(rs["consecutive_games"] - 9) * 0.6, -4, 0))
 
+    # Lineup context: who's on base ahead (RBI opportunity) and who hits
+    # behind (protection) -- see build_candidates' own comment on this for
+    # why wOBA rather than OBP, why "ahead" doesn't wrap and "behind" does,
+    # and why this one (unlike several of the "recorded, not weighted"
+    # signals below) is fully backtest-measurable from day one.
+    lwc = (ex.get("lineup_woba") or {}).get(bid) if bid else None
+    if lwc:
+        if lwc.get("woba_ahead") is not None:
+            _sig(signals, "woba_ahead", lwc["woba_ahead"], scale(lwc["woba_ahead"], 0.290, 0.400))
+        if lwc.get("woba_behind") is not None:
+            _sig(signals, "woba_behind", lwc["woba_behind"], scale(lwc["woba_behind"], 0.290, 0.400))
+
     # Pull rate, which only means something ALONGSIDE the park. A pull-heavy
     # left-handed hitter in a park that plays 138 for left-handed power is a
     # different proposition from the same hitter in a neutral yard, and
@@ -2471,6 +2483,56 @@ def build_candidates(game_meta, *, extras=None, batter_lookup, pitcher_lookup, t
         for team, cid in catcher_by_team.items()
         if cid in _framing and (_framing.get(cid) or {}).get("Steal%") is not None
     }
+
+    # Who's on base ahead of a batter (more RBI opportunity) and how much of
+    # a threat hits behind him (a pitcher can't as easily pitch around him).
+    # mlb_daily.py's own report (compute_lineup_context) already computes
+    # this for humans to read; it never reached scoring -- the CONTEXT
+    # component's lineup_context signal in score_batter only ever used the
+    # batter's own slot number, never who is actually hitting around him.
+    # wOBA, not raw OBP: OBP is absent from the Statcast-fallback batter_lookup
+    # shape (_fg_statcast_bat_fallback's own rename dict has no "OBP" mapping,
+    # only "AVG"/"xBA"/"xwOBA"/"wOBA"), so scoring on OBP would silently go
+    # dark on every FanGraphs-blocked run -- the exact "computed, then
+    # discarded on the fallback path" failure this project keeps finding.
+    # wOBA is present under both shapes and is arguably the better metric for
+    # this anyway (folds in power, not just reaching base).
+    # "Ahead" deliberately does NOT wrap (the 9-hole batter has no meaningful
+    # "who's on base ahead of me" read from the prior inning's leadoff man --
+    # three outs reset the bases in between). "Behind" DOES wrap: a pitcher
+    # deciding whether to pitch around the 9-hole batter genuinely does face
+    # the leadoff man next, so the wraparound is the real baseball question,
+    # not an artifact -- this matches mlb_daily.py's own report, which wraps
+    # "protection" the same way.
+    # RECORDED via _sig() below, in score_batter -- NOT folded into score.
+    # No measured effect size exists yet for either direction; giving it real
+    # weight without that would repeat the exact mistake already learned once
+    # in this file (signals given weight by judgement, later found not to
+    # separate hits from misses at all). Uses only batter_lookup and the
+    # lineup itself, both identical in shape between the live and backtest
+    # paths, so this is fully measurable by backtest/signals.py from day one
+    # -- unlike several other recorded-not-weighted signals in this function
+    # (pull_park_synergy, park_hand_index, bvp_ops) whose inputs only exist
+    # in the live extras fetch and are structurally invisible to any
+    # backtest, found auditing this same signal.
+    lineup_woba = {}
+    for gm in game_meta:
+        for side in ("away_lineup", "home_lineup"):
+            lineup = gm.get(side, [])
+            n = len(lineup)
+            for i, p in enumerate(lineup):
+                bid = p.get("id")
+                if not bid:
+                    continue
+                prev_p = lineup[i - 1] if i > 0 else None
+                next_p = lineup[(i + 1) % n] if n > 1 else None
+                prev_row = lookup_player(batter_lookup, prev_p["name"], prev_p.get("id")) if prev_p else None
+                next_row = lookup_player(batter_lookup, next_p["name"], next_p.get("id")) if next_p else None
+                lineup_woba[bid] = {
+                    "woba_ahead": (prev_row or {}).get("wOBA"),
+                    "woba_behind": (next_row or {}).get("wOBA"),
+                }
+    extras["lineup_woba"] = lineup_woba
 
     for gm in game_meta:
         opp_sp_row_for_away_batters = lookup_player(pitcher_lookup, gm["home_sp"], gm.get("home_sp_id"), {})
