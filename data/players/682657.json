@@ -1,6 +1,6 @@
 {
   "player_id": 682657,
-  "name": "Angel Mart\u00ednez",
+  "name": "Angel Martinez",
   "snapshots": [
     {
       "date": "2026-08-04",
@@ -276,6 +276,77 @@
           "lift": null,
           "reliability": "B",
           "sample_n": 73,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-08-12",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 46.1,
+          "notable_signals": 1,
+          "matchup": "Cleveland Guardians @ Detroit Tigers",
+          "game_pk": 824241,
+          "team": "Cleveland Guardians",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "sp_era_weak": 47.7143,
+            "l7_avg_ev": 0.0,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 51.9,
+            "season_barrel_pct": 37.3333,
+            "lineup_slot": 25.0,
+            "bullpen_fatigue": 69.4444,
+            "platoon_barrel_pct": 1.12,
+            "platoon_xwoba": 1.68,
+            "opp_catcher_framing": -1.32,
+            "days_rest": 0.0,
+            "hard_hit_105_rate": 2.2625,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": -0.168,
+            "vs_rp_ops": -0.384
+          },
+          "hit_probability": 0.587,
+          "raw_hit_probability": 0.6318,
+          "lift": -0.0824,
+          "reliability": "B",
+          "sample_n": 74,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 41.4,
+          "notable_signals": 0,
+          "matchup": "Cleveland Guardians @ Detroit Tigers",
+          "game_pk": 824241,
+          "team": "Cleveland Guardians",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "opp_team_cs_pct": -0.84,
+            "sprint_speed": 9.375,
+            "catcher_poptime": 100.0,
+            "on_base": 39.5393
+          },
+          "hit_probability": 0.1808,
+          "raw_hit_probability": 0.1083,
+          "lift": null,
+          "reliability": "B",
+          "sample_n": 74,
           "projection": {
             "stat": "stolen_base",
             "value": 1,

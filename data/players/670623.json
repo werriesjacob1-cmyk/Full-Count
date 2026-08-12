@@ -240,7 +240,7 @@
         {
           "prop": "Over 0.5 Hits",
           "type": "batter",
-          "score": 66.7,
+          "score": 66.9,
           "notable_signals": 3,
           "matchup": "Houston Astros @ San Francisco Giants",
           "game_pk": 823186,
@@ -253,7 +253,7 @@
             "pitch_exploit": 1.7143,
             "l7_avg_ev": 32.1053,
             "l7_barrel_pct": 98.5714,
-            "park_hr_index": 25.0,
+            "park_hr_index": 25.5,
             "season_barrel_pct": 18.6667,
             "lineup_slot": 75.0,
             "bullpen_fatigue": 71.4286,
@@ -267,11 +267,57 @@
             "getaway_day": 0.0,
             "series_game": 1.0,
             "sp_rp_ops_gap": 0.096,
+            "vs_rp_ops": 0.636,
+            "ump_k_pct": -0.096,
+            "ump_bb_pct": -0.216
+          },
+          "hit_probability": 0.6213,
+          "raw_hit_probability": 0.6473,
+          "lift": 0.0701,
+          "reliability": "A",
+          "sample_n": 113,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-08-12",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 53.6,
+          "notable_signals": 2,
+          "matchup": "Houston Astros @ San Francisco Giants",
+          "game_pk": 823187,
+          "team": "Houston Astros",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 65.0,
+            "l7_avg_ev": 24.2969,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 25.5,
+            "season_barrel_pct": 16.0,
+            "lineup_slot": 75.0,
+            "bullpen_fatigue": 71.4286,
+            "park_hand_index": -0.71,
+            "opp_catcher_framing": 1.32,
+            "days_rest": 2.0,
+            "pull_park_synergy": -0.4374,
+            "hard_hit_105_rate": -2.15,
+            "getaway_day": -2.0,
+            "series_game": 2.0,
+            "sp_rp_ops_gap": 0.096,
             "vs_rp_ops": 0.636
           },
-          "hit_probability": 0.6211,
-          "raw_hit_probability": 0.6468,
-          "lift": 0.0699,
+          "hit_probability": 0.6203,
+          "raw_hit_probability": 0.6452,
+          "lift": 0.0691,
           "reliability": "A",
           "sample_n": 113,
           "projection": {

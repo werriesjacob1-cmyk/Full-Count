@@ -1,0 +1,62 @@
+{
+  "player_id": 615698,
+  "name": "Cal Quantrill",
+  "snapshots": [
+    {
+      "date": "2026-08-12",
+      "evaluations": [
+        {
+          "prop": "Over 3.5 Strikeouts",
+          "type": "pitcher",
+          "score": 43.6,
+          "notable_signals": 0,
+          "matchup": "Texas Rangers @ Los Angeles Angels",
+          "game_pk": 823994,
+          "team": "Texas Rangers",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "same_hand_ratio": 100.0,
+            "l14_k_pct": 0.0,
+            "env_neutral": 50.0
+          },
+          "hit_probability": 0.6009,
+          "raw_hit_probability": 0.5825,
+          "lift": -0.1118,
+          "reliability": "D",
+          "sample_n": 7,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 3.5,
+            "needs": 4
+          }
+        },
+        {
+          "prop": "Los Angeles Angels scoreless in the 1st",
+          "type": "pitcher",
+          "score": 85.7,
+          "notable_signals": 0,
+          "matchup": "Texas Rangers @ Los Angeles Angels",
+          "game_pk": 823994,
+          "team": "Texas Rangers",
+          "side": "away",
+          "lean": "NRFI",
+          "signals": {
+            "yrfi_rate": 14.3,
+            "fi_n_starts": 7.0,
+            "park_hr_index": 50.0
+          },
+          "hit_probability": 0.6932,
+          "raw_hit_probability": 0.7239,
+          "lift": -0.0128,
+          "reliability": "D",
+          "sample_n": 7,
+          "projection": {
+            "stat": "first_inning_run",
+            "value": 14.3
+          }
+        }
+      ]
+    }
+  ]
+}

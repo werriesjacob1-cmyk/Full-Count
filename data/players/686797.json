@@ -236,7 +236,7 @@
         {
           "prop": "Over 0.5 Hits",
           "type": "batter",
-          "score": 44.5,
+          "score": 44.4,
           "notable_signals": 1,
           "matchup": "Baltimore Orioles @ Minnesota Twins",
           "game_pk": 823673,
@@ -248,7 +248,7 @@
             "pitch_exploit": 0.5714,
             "l7_avg_ev": 25.6944,
             "l7_barrel_pct": 100.0,
-            "park_hr_index": 52.5,
+            "park_hr_index": 50.6,
             "season_barrel_pct": 4.0,
             "lineup_slot": 37.5,
             "bullpen_fatigue": 64.1026,
@@ -267,8 +267,53 @@
             "ump_bb_pct": -0.36
           },
           "hit_probability": 0.6097,
-          "raw_hit_probability": 0.6225,
+          "raw_hit_probability": 0.6226,
           "lift": 0.0585,
+          "reliability": "A",
+          "sample_n": 112,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-08-12",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 52.3,
+          "notable_signals": 1,
+          "matchup": "Baltimore Orioles @ Minnesota Twins",
+          "game_pk": 823672,
+          "team": "Minnesota Twins",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "sp_era_weak": 36.0,
+            "pitch_exploit": 18.8571,
+            "l7_avg_ev": 37.2656,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 42.9,
+            "season_barrel_pct": 4.6667,
+            "lineup_slot": 37.5,
+            "bullpen_fatigue": 64.1026,
+            "platoon_barrel_pct": -2.8,
+            "platoon_xwoba": -2.16,
+            "opp_catcher_framing": 1.68,
+            "days_rest": 0.0,
+            "hard_hit_105_rate": -2.56,
+            "getaway_day": -2.0,
+            "series_game": 2.0,
+            "sp_rp_ops_gap": -0.888,
+            "vs_rp_ops": -0.768
+          },
+          "hit_probability": 0.6092,
+          "raw_hit_probability": 0.6214,
+          "lift": 0.058,
           "reliability": "A",
           "sample_n": 112,
           "projection": {

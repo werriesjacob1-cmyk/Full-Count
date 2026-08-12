@@ -380,7 +380,7 @@
         {
           "prop": "Over 0.5 Hits",
           "type": "batter",
-          "score": 86.2,
+          "score": 86.1,
           "notable_signals": 2,
           "matchup": "Milwaukee Brewers @ San Diego Padres",
           "game_pk": 823264,
@@ -393,7 +393,7 @@
             "pitch_exploit": 18.2857,
             "l7_avg_ev": 100.0,
             "l7_barrel_pct": 100.0,
-            "park_hr_index": 42.6,
+            "park_hr_index": 39.6,
             "season_barrel_pct": 35.3333,
             "lineup_slot": 100.0,
             "bullpen_fatigue": 59.5238,
@@ -410,10 +410,12 @@
             "getaway_day": 0.0,
             "series_game": 1.0,
             "sp_rp_ops_gap": 0.96,
-            "vs_rp_ops": 2.052
+            "vs_rp_ops": 2.052,
+            "ump_k_pct": 0.516,
+            "ump_bb_pct": 0.0
           },
           "hit_probability": 0.6359,
-          "raw_hit_probability": 0.6788,
+          "raw_hit_probability": 0.6789,
           "lift": 0.0847,
           "reliability": "A",
           "sample_n": 113,
@@ -438,6 +440,81 @@
             "sprint_speed": 40.625,
             "catcher_poptime": 80.0,
             "on_base": 93.2821
+          },
+          "hit_probability": 0.1942,
+          "raw_hit_probability": 0.1329,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 113,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-08-12",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 64.0,
+          "notable_signals": 2,
+          "matchup": "Milwaukee Brewers @ San Diego Padres",
+          "game_pk": 823263,
+          "team": "Milwaukee Brewers",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 21.1429,
+            "l7_avg_ev": 100.0,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 28.6,
+            "season_barrel_pct": 34.6667,
+            "lineup_slot": 100.0,
+            "bullpen_fatigue": 64.1026,
+            "platoon_barrel_pct": -1.76,
+            "platoon_xwoba": -2.28,
+            "park_hand_index": -1.31,
+            "opp_catcher_framing": 0.72,
+            "days_rest": 2.0,
+            "consecutive_games": -1.2,
+            "pull_park_synergy": -0.0779,
+            "hard_hit_105_rate": -0.1275,
+            "getaway_day": -2.0,
+            "series_game": 2.0,
+            "sp_rp_ops_gap": 0.96,
+            "vs_rp_ops": 2.052
+          },
+          "hit_probability": 0.636,
+          "raw_hit_probability": 0.6791,
+          "lift": 0.0848,
+          "reliability": "A",
+          "sample_n": 113,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 62.0,
+          "notable_signals": 1,
+          "matchup": "Milwaukee Brewers @ San Diego Padres",
+          "game_pk": 823263,
+          "team": "Milwaukee Brewers",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "opp_team_cs_pct": -4.98,
+            "sprint_speed": 40.625,
+            "catcher_poptime": 77.1429,
+            "on_base": 91.3628
           },
           "hit_probability": 0.1943,
           "raw_hit_probability": 0.1332,

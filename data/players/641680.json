@@ -238,7 +238,7 @@
         {
           "prop": "Over 0.5 Hits+Runs+RBIs",
           "type": "batter",
-          "score": 50.3,
+          "score": 48.7,
           "notable_signals": 1,
           "matchup": "Tampa Bay Rays @ Athletics",
           "game_pk": 824970,
@@ -264,11 +264,57 @@
             "getaway_day": 0.0,
             "series_game": 1.0,
             "sp_rp_ops_gap": -1.24,
+            "vs_rp_ops": -0.324,
+            "ump_k_pct": -0.024,
+            "ump_bb_pct": 0.348
+          },
+          "hit_probability": 0.5993,
+          "raw_hit_probability": 0.6461,
+          "lift": -0.0728,
+          "reliability": "B",
+          "sample_n": 72,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-08-12",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 55.8,
+          "notable_signals": 1,
+          "matchup": "Tampa Bay Rays @ Athletics",
+          "game_pk": 824967,
+          "team": "Athletics",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "sp_era_weak": 7.1429,
+            "l7_avg_ev": 81.3393,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 59.8,
+            "season_barrel_pct": 30.6667,
+            "lineup_slot": 37.5,
+            "bullpen_fatigue": 69.4444,
+            "platoon_barrel_pct": -2.56,
+            "platoon_xwoba": -1.74,
+            "opp_catcher_framing": 0.36,
+            "days_rest": 2.0,
+            "hard_hit_105_rate": -2.57,
+            "getaway_day": -2.0,
+            "series_game": 2.0,
+            "sp_rp_ops_gap": -1.24,
             "vs_rp_ops": -0.324
           },
-          "hit_probability": 0.5994,
-          "raw_hit_probability": 0.6462,
-          "lift": -0.0729,
+          "hit_probability": 0.5988,
+          "raw_hit_probability": 0.6455,
+          "lift": -0.0706,
           "reliability": "B",
           "sample_n": 72,
           "projection": {

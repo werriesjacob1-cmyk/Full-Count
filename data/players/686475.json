@@ -233,7 +233,7 @@
         {
           "prop": "Over 0.5 Hits+Runs+RBIs",
           "type": "batter",
-          "score": 46.0,
+          "score": 47.0,
           "notable_signals": 3,
           "matchup": "Kansas City Royals @ Los Angeles Dodgers",
           "game_pk": 823917,
@@ -248,22 +248,24 @@
             "bat_speed_trend": 8.625,
             "park_hr_index": 50.0,
             "season_barrel_pct": 8.6667,
-            "lineup_slot": 12.5,
+            "lineup_slot": 25.0,
             "bullpen_fatigue": 76.9231,
             "platoon_barrel_pct": -5.0,
             "platoon_xwoba": -1.14,
-            "opp_catcher_framing": -0.12,
+            "opp_catcher_framing": 0.48,
             "days_rest": 0.0,
             "team_total_move": 6.0,
             "team_total_open": -4.0,
             "getaway_day": 0.0,
             "series_game": 1.0,
             "sp_rp_ops_gap": 3.072,
-            "vs_rp_ops": 3.744
+            "vs_rp_ops": 3.744,
+            "ump_k_pct": 0.324,
+            "ump_bb_pct": -0.288
           },
-          "hit_probability": 0.5439,
-          "raw_hit_probability": 0.5824,
-          "lift": -0.1284,
+          "hit_probability": 0.5438,
+          "raw_hit_probability": 0.5823,
+          "lift": -0.1283,
           "reliability": "C",
           "sample_n": 34,
           "projection": {
@@ -275,7 +277,7 @@
         {
           "prop": "To Steal a Base",
           "type": "batter",
-          "score": 74.8,
+          "score": 68.8,
           "notable_signals": 1,
           "matchup": "Kansas City Royals @ Los Angeles Dodgers",
           "game_pk": 823917,
@@ -285,11 +287,78 @@
           "signals": {
             "opp_team_cs_pct": 3.0,
             "sprint_speed": 65.625,
-            "catcher_poptime": 71.4286,
             "on_base": 100.0
           },
-          "hit_probability": 0.2908,
-          "raw_hit_probability": 0.2823,
+          "hit_probability": 0.2933,
+          "raw_hit_probability": 0.2857,
+          "lift": null,
+          "reliability": "C",
+          "sample_n": 34,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-08-12",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 36.9,
+          "notable_signals": 1,
+          "matchup": "Kansas City Royals @ Los Angeles Dodgers",
+          "game_pk": 823916,
+          "team": "Kansas City Royals",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 65.0,
+            "l7_avg_ev": 0.0,
+            "l7_barrel_pct": 0.0,
+            "bat_speed_trend": 9.675,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 6.6667,
+            "lineup_slot": 25.0,
+            "bullpen_fatigue": 64.1026,
+            "opp_catcher_framing": 0.48,
+            "days_rest": 2.0,
+            "getaway_day": -2.0,
+            "series_game": 2.0,
+            "sp_rp_ops_gap": 3.072,
+            "vs_rp_ops": 3.744
+          },
+          "hit_probability": 0.5429,
+          "raw_hit_probability": 0.5813,
+          "lift": -0.1265,
+          "reliability": "C",
+          "sample_n": 34,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 67.8,
+          "notable_signals": 1,
+          "matchup": "Kansas City Royals @ Los Angeles Dodgers",
+          "game_pk": 823916,
+          "team": "Kansas City Royals",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "opp_team_cs_pct": 3.0,
+            "sprint_speed": 65.625,
+            "on_base": 95.2015
+          },
+          "hit_probability": 0.2937,
+          "raw_hit_probability": 0.2863,
           "lift": null,
           "reliability": "C",
           "sample_n": 34,

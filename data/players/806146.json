@@ -1,6 +1,6 @@
 {
   "player_id": 806146,
-  "name": "George Lombard Jr.",
+  "name": "George Lombard",
   "snapshots": [
     {
       "date": "2026-08-04",
@@ -197,6 +197,72 @@
           "projection": {
             "stat": "hits",
             "value": 0.5,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-08-12",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 45.8,
+          "notable_signals": 1,
+          "matchup": "Seattle Mariners @ New York Yankees",
+          "game_pk": 823511,
+          "team": "New York Yankees",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 16.5714,
+            "l7_avg_ev": 18.875,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 51.5,
+            "lineup_slot": 37.5,
+            "bullpen_fatigue": 55.5556,
+            "park_hand_index": 0.84,
+            "opp_catcher_framing": 0.6,
+            "days_rest": 0.0,
+            "getaway_day": 0.0,
+            "series_game": 1.0
+          },
+          "hit_probability": 0.5756,
+          "raw_hit_probability": 0.5512,
+          "lift": 0.0244,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 68.5,
+          "notable_signals": 0,
+          "matchup": "Seattle Mariners @ New York Yankees",
+          "game_pk": 823511,
+          "team": "New York Yankees",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "opp_team_cs_pct": 0.6,
+            "sprint_speed": 75.0,
+            "catcher_poptime": 71.4286
+          },
+          "hit_probability": null,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
             "needs": 1
           }
         }

@@ -1,6 +1,6 @@
 {
   "player_id": 686780,
-  "name": "Pedro Pag\u00e9s",
+  "name": "Pedro Pages",
   "snapshots": [
     {
       "date": "2026-08-04",
@@ -69,7 +69,7 @@
         {
           "prop": "Over 0.5 Hits+Runs+RBIs",
           "type": "batter",
-          "score": 60.0,
+          "score": 60.2,
           "notable_signals": 3,
           "matchup": "Philadelphia Phillies @ St. Louis Cardinals",
           "game_pk": 823019,
@@ -81,7 +81,7 @@
             "sp_era_weak": 3.1429,
             "l7_avg_ev": 100.0,
             "l7_barrel_pct": 100.0,
-            "park_hr_index": 80.5,
+            "park_hr_index": 78.5,
             "season_barrel_pct": 14.6667,
             "lineup_slot": 0.0,
             "bullpen_fatigue": 76.9231,
@@ -101,9 +101,54 @@
             "ump_k_pct": 0.108,
             "ump_bb_pct": 0.192
           },
-          "hit_probability": 0.5188,
-          "raw_hit_probability": 0.5541,
-          "lift": -0.1535,
+          "hit_probability": 0.5187,
+          "raw_hit_probability": 0.554,
+          "lift": -0.1534,
+          "reliability": "B",
+          "sample_n": 53,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-08-12",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 45.6,
+          "notable_signals": 2,
+          "matchup": "Philadelphia Phillies @ St. Louis Cardinals",
+          "game_pk": 823017,
+          "team": "St. Louis Cardinals",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 5.4286,
+            "park_hr_index": 81.6,
+            "season_barrel_pct": 14.6667,
+            "lineup_slot": 0.0,
+            "bullpen_fatigue": 89.7436,
+            "platoon_barrel_pct": -0.64,
+            "platoon_xwoba": -1.92,
+            "park_hand_index": -3.01,
+            "opp_catcher_framing": 0.6,
+            "days_rest": 0.0,
+            "pull_park_synergy": -1.3485,
+            "hard_hit_105_rate": -0.2625,
+            "getaway_day": -2.0,
+            "series_game": 2.0,
+            "sp_rp_ops_gap": 0.48,
+            "vs_rp_ops": -1.344
+          },
+          "hit_probability": 0.5181,
+          "raw_hit_probability": 0.5533,
+          "lift": -0.1513,
           "reliability": "B",
           "sample_n": 53,
           "projection": {

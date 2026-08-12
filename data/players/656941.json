@@ -258,7 +258,7 @@
         {
           "prop": "Over 0.5 Hits",
           "type": "batter",
-          "score": 81.4,
+          "score": 80.9,
           "notable_signals": 4,
           "matchup": "Philadelphia Phillies @ St. Louis Cardinals",
           "game_pk": 823019,
@@ -272,7 +272,7 @@
             "l7_avg_ev": 76.25,
             "l7_barrel_pct": 100.0,
             "bat_speed_trend": 15.0,
-            "park_hr_index": 80.5,
+            "park_hr_index": 78.5,
             "season_barrel_pct": 97.3333,
             "lineup_slot": 100.0,
             "bullpen_fatigue": 69.4444,
@@ -293,11 +293,61 @@
             "ump_k_pct": 0.108,
             "ump_bb_pct": 0.192
           },
-          "hit_probability": 0.6114,
-          "raw_hit_probability": 0.6261,
-          "lift": 0.0602,
+          "hit_probability": 0.6112,
+          "raw_hit_probability": 0.6258,
+          "lift": 0.06,
           "reliability": "A",
           "sample_n": 114,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-08-12",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 79.6,
+          "notable_signals": 3,
+          "matchup": "Philadelphia Phillies @ St. Louis Cardinals",
+          "game_pk": 823017,
+          "team": "Philadelphia Phillies",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 26.8571,
+            "pitch_exploit": 1.7143,
+            "l7_avg_ev": 77.8846,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 15.0,
+            "park_hr_index": 81.6,
+            "season_barrel_pct": 97.3333,
+            "lineup_slot": 100.0,
+            "bullpen_fatigue": 64.1026,
+            "platoon_barrel_pct": 5.0,
+            "platoon_xwoba": 2.34,
+            "park_hand_index": -3.77,
+            "opp_catcher_framing": -1.08,
+            "days_rest": 0.0,
+            "consecutive_games": -1.8,
+            "pull_park_synergy": -3.2592,
+            "hard_hit_105_rate": 5.0,
+            "getaway_day": -2.0,
+            "series_game": 2.0,
+            "sp_rp_ops_gap": -0.368,
+            "vs_rp_ops": 1.932
+          },
+          "hit_probability": 0.6125,
+          "raw_hit_probability": 0.6284,
+          "lift": 0.0613,
+          "reliability": "A",
+          "sample_n": 115,
           "projection": {
             "stat": "hits",
             "value": 0.5,

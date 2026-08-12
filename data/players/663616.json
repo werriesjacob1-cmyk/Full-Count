@@ -95,7 +95,7 @@
         {
           "prop": "Over 0.5 Hits",
           "type": "batter",
-          "score": 50.1,
+          "score": 50.0,
           "notable_signals": 0,
           "matchup": "Baltimore Orioles @ Minnesota Twins",
           "game_pk": 823673,
@@ -107,7 +107,7 @@
             "sp_era_weak": 23.1429,
             "l7_avg_ev": 10.4545,
             "l7_barrel_pct": 100.0,
-            "park_hr_index": 52.5,
+            "park_hr_index": 50.6,
             "season_barrel_pct": 34.0,
             "lineup_slot": 100.0,
             "bullpen_fatigue": 64.1026,
@@ -127,11 +127,59 @@
             "ump_k_pct": 0.72,
             "ump_bb_pct": -0.36
           },
-          "hit_probability": 0.6111,
-          "raw_hit_probability": 0.6256,
-          "lift": 0.0599,
+          "hit_probability": 0.6112,
+          "raw_hit_probability": 0.6257,
+          "lift": 0.06,
           "reliability": "A",
           "sample_n": 98,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-08-12",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 42.2,
+          "notable_signals": 1,
+          "matchup": "Baltimore Orioles @ Minnesota Twins",
+          "game_pk": 823672,
+          "team": "Minnesota Twins",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 36.0,
+            "pitch_exploit": 2.8571,
+            "l7_avg_ev": 0.0,
+            "l7_barrel_pct": 0.0,
+            "park_hr_index": 42.9,
+            "season_barrel_pct": 31.3333,
+            "lineup_slot": 100.0,
+            "bullpen_fatigue": 64.1026,
+            "platoon_barrel_pct": 1.28,
+            "platoon_xwoba": 1.56,
+            "park_hand_index": -2.43,
+            "opp_catcher_framing": 1.68,
+            "days_rest": 0.0,
+            "pull_park_synergy": -1.3863,
+            "hard_hit_105_rate": 1.3075,
+            "getaway_day": -2.0,
+            "series_game": 2.0,
+            "sp_rp_ops_gap": -0.472,
+            "vs_rp_ops": 0.588
+          },
+          "hit_probability": 0.6091,
+          "raw_hit_probability": 0.6212,
+          "lift": 0.0579,
+          "reliability": "A",
+          "sample_n": 99,
           "projection": {
             "stat": "hits",
             "value": 0.5,

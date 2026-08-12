@@ -346,6 +346,75 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-12",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 60.8,
+          "notable_signals": 1,
+          "matchup": "Chicago Cubs @ Washington Nationals",
+          "game_pk": 822698,
+          "team": "Chicago Cubs",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "l7_avg_ev": 55.625,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 15.0,
+            "park_hr_index": 51.5,
+            "season_barrel_pct": 57.3333,
+            "lineup_slot": 50.0,
+            "bullpen_fatigue": 64.1026,
+            "opp_catcher_framing": -0.6,
+            "days_rest": 0.0,
+            "hard_hit_105_rate": 1.15,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": 1.152,
+            "vs_rp_ops": 1.284
+          },
+          "hit_probability": 0.6129,
+          "raw_hit_probability": 0.6621,
+          "lift": -0.0565,
+          "reliability": "A",
+          "sample_n": 115,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 49.0,
+          "notable_signals": 0,
+          "matchup": "Chicago Cubs @ Washington Nationals",
+          "game_pk": 822698,
+          "team": "Chicago Cubs",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "opp_team_cs_pct": 0.66,
+            "sprint_speed": 18.75,
+            "catcher_poptime": 91.4286,
+            "on_base": 63.5317
+          },
+          "hit_probability": 0.1463,
+          "raw_hit_probability": 0.0371,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 115,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

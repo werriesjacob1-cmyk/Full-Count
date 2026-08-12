@@ -61,6 +61,62 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-12",
+      "evaluations": [
+        {
+          "prop": "Over 3.5 Strikeouts",
+          "type": "pitcher",
+          "score": 46.6,
+          "notable_signals": 0,
+          "matchup": "Milwaukee Brewers @ San Diego Padres",
+          "game_pk": 823263,
+          "team": "San Diego Padres",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "same_hand_ratio": 100.0,
+            "l14_k_pct": 11.7647,
+            "env_neutral": 50.0
+          },
+          "hit_probability": 0.6281,
+          "raw_hit_probability": 0.6814,
+          "lift": -0.0846,
+          "reliability": "D",
+          "sample_n": 22,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 3.5,
+            "needs": 4
+          }
+        },
+        {
+          "prop": "Milwaukee Brewers scoreless in the 1st",
+          "type": "pitcher",
+          "score": 83.3,
+          "notable_signals": 0,
+          "matchup": "Milwaukee Brewers @ San Diego Padres",
+          "game_pk": 823263,
+          "team": "San Diego Padres",
+          "side": "home",
+          "lean": "NRFI",
+          "signals": {
+            "yrfi_rate": 16.7,
+            "fi_n_starts": 24.0,
+            "park_hr_index": 28.6
+          },
+          "hit_probability": 0.6982,
+          "raw_hit_probability": 0.7461,
+          "lift": -0.0078,
+          "reliability": "D",
+          "sample_n": 24,
+          "projection": {
+            "stat": "first_inning_run",
+            "value": 16.7
+          }
+        }
+      ]
     }
   ]
 }

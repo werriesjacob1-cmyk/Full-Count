@@ -1,6 +1,6 @@
 {
   "player_id": 608070,
-  "name": "Jos\u00e9 Ram\u00edrez",
+  "name": "Jose Ramirez",
   "snapshots": [
     {
       "date": "2026-08-05",
@@ -334,6 +334,80 @@
           "lift": null,
           "reliability": "A",
           "sample_n": 86,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-08-12",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 74.1,
+          "notable_signals": 4,
+          "matchup": "Cleveland Guardians @ Detroit Tigers",
+          "game_pk": 824241,
+          "team": "Cleveland Guardians",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "sp_era_weak": 47.7143,
+            "pitch_exploit": 1.1429,
+            "l7_avg_ev": 78.4375,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 15.0,
+            "park_hr_index": 51.9,
+            "season_barrel_pct": 16.0,
+            "lineup_slot": 75.0,
+            "bullpen_fatigue": 69.4444,
+            "bvp_ops": 2.706,
+            "platoon_barrel_pct": 0.72,
+            "platoon_xwoba": 4.98,
+            "opp_catcher_framing": -1.32,
+            "days_rest": 0.0,
+            "hard_hit_105_rate": 3.08,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": -1.248,
+            "vs_rp_ops": -1.056
+          },
+          "hit_probability": 0.6075,
+          "raw_hit_probability": 0.6179,
+          "lift": 0.0563,
+          "reliability": "A",
+          "sample_n": 87,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 45.9,
+          "notable_signals": 0,
+          "matchup": "Cleveland Guardians @ Detroit Tigers",
+          "game_pk": 824241,
+          "team": "Cleveland Guardians",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "opp_team_cs_pct": -0.84,
+            "sprint_speed": 12.5,
+            "catcher_poptime": 100.0,
+            "on_base": 52.975
+          },
+          "hit_probability": 0.2789,
+          "raw_hit_probability": 0.2659,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 87,
           "projection": {
             "stat": "stolen_base",
             "value": 1,

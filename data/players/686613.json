@@ -27,21 +27,24 @@
         {
           "prop": "Over 3.5 Strikeouts",
           "type": "pitcher",
-          "score": 55.0,
-          "notable_signals": 0,
+          "score": 60.8,
+          "notable_signals": 1,
           "matchup": "Houston Astros @ San Francisco Giants",
           "game_pk": 823186,
           "team": "Houston Astros",
           "side": null,
           "lean": null,
           "signals": {
-            "same_hand_ratio": 33.3333,
+            "same_hand_ratio": 61.1111,
             "l14_k_pct": 78.2353,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 74.0741,
+            "ump_k_pct": 0.096,
+            "ump_bb_pct": 0.216
           },
-          "hit_probability": 0.6698,
-          "raw_hit_probability": 0.8395,
-          "lift": -0.0429,
+          "hit_probability": 0.666,
+          "raw_hit_probability": 0.8248,
+          "lift": -0.0467,
           "reliability": "D",
           "sample_n": 11,
           "projection": {
@@ -63,7 +66,8 @@
           "signals": {
             "yrfi_rate": 16.7,
             "fi_n_starts": 12.0,
-            "park_hr_index": 25.0
+            "ump_run_impact": 27.9254,
+            "park_hr_index": 25.5
           },
           "hit_probability": 0.6945,
           "raw_hit_probability": 0.7298,

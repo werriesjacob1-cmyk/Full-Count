@@ -240,6 +240,50 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-12",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 55.6,
+          "notable_signals": 0,
+          "matchup": "Chicago Cubs @ Washington Nationals",
+          "game_pk": 822698,
+          "team": "Chicago Cubs",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 65.0,
+            "l7_avg_ev": 38.9474,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 51.5,
+            "season_barrel_pct": 42.0,
+            "lineup_slot": 75.0,
+            "bullpen_fatigue": 64.1026,
+            "park_hand_index": 2.81,
+            "opp_catcher_framing": -0.6,
+            "days_rest": 0.0,
+            "pull_park_synergy": 1.2687,
+            "hard_hit_105_rate": -0.91,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": -0.896,
+            "vs_rp_ops": -0.372
+          },
+          "hit_probability": 0.6167,
+          "raw_hit_probability": 0.6375,
+          "lift": 0.0655,
+          "reliability": "A",
+          "sample_n": 119,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

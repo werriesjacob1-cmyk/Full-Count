@@ -352,7 +352,7 @@
         {
           "prop": "Over 0.5 Hits+Runs+RBIs",
           "type": "batter",
-          "score": 58.5,
+          "score": 59.6,
           "notable_signals": 2,
           "matchup": "Houston Astros @ San Francisco Giants",
           "game_pk": 823186,
@@ -364,9 +364,9 @@
             "sp_era_weak": 100.0,
             "l7_avg_ev": 65.9375,
             "l7_barrel_pct": 100.0,
-            "park_hr_index": 25.0,
+            "park_hr_index": 25.5,
             "season_barrel_pct": 22.6667,
-            "lineup_slot": 12.5,
+            "lineup_slot": 25.0,
             "bullpen_fatigue": 71.4286,
             "platoon_barrel_pct": -0.24,
             "platoon_xwoba": -1.98,
@@ -378,11 +378,13 @@
             "getaway_day": 0.0,
             "series_game": 1.0,
             "sp_rp_ops_gap": 0.08,
-            "vs_rp_ops": -0.384
+            "vs_rp_ops": -0.384,
+            "ump_k_pct": -0.096,
+            "ump_bb_pct": -0.216
           },
-          "hit_probability": 0.6129,
-          "raw_hit_probability": 0.6621,
-          "lift": -0.0594,
+          "hit_probability": 0.6128,
+          "raw_hit_probability": 0.662,
+          "lift": -0.0593,
           "reliability": "A",
           "sample_n": 100,
           "projection": {
@@ -407,8 +409,79 @@
             "catcher_poptime": 100.0,
             "on_base": 37.62
           },
-          "hit_probability": 0.1711,
-          "raw_hit_probability": 0.0895,
+          "hit_probability": 0.1715,
+          "raw_hit_probability": 0.0902,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 100,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-08-12",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 54.8,
+          "notable_signals": 2,
+          "matchup": "Houston Astros @ San Francisco Giants",
+          "game_pk": 823187,
+          "team": "Houston Astros",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 65.0,
+            "l7_avg_ev": 53.6607,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 25.5,
+            "season_barrel_pct": 22.6667,
+            "lineup_slot": 25.0,
+            "bullpen_fatigue": 71.4286,
+            "park_hand_index": -4.05,
+            "opp_catcher_framing": 1.32,
+            "days_rest": 2.0,
+            "pull_park_synergy": -2.0412,
+            "hard_hit_105_rate": 0.135,
+            "getaway_day": -2.0,
+            "series_game": 2.0,
+            "sp_rp_ops_gap": 0.08,
+            "vs_rp_ops": -0.384
+          },
+          "hit_probability": 0.6125,
+          "raw_hit_probability": 0.6616,
+          "lift": -0.0569,
+          "reliability": "A",
+          "sample_n": 100,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 36.8,
+          "notable_signals": 0,
+          "matchup": "Houston Astros @ San Francisco Giants",
+          "game_pk": 823187,
+          "team": "Houston Astros",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "opp_team_cs_pct": 0.78,
+            "sprint_speed": 3.125,
+            "catcher_poptime": 100.0,
+            "on_base": 32.8215
+          },
+          "hit_probability": 0.1717,
+          "raw_hit_probability": 0.0906,
           "lift": null,
           "reliability": "A",
           "sample_n": 100,

@@ -239,7 +239,7 @@
         {
           "prop": "Over 0.5 Hits+Runs+RBIs",
           "type": "batter",
-          "score": 60.7,
+          "score": 59.7,
           "notable_signals": 3,
           "matchup": "Kansas City Royals @ Los Angeles Dodgers",
           "game_pk": 823917,
@@ -254,7 +254,7 @@
             "bat_speed_trend": 9.075,
             "park_hr_index": 50.0,
             "season_barrel_pct": 31.3333,
-            "lineup_slot": 50.0,
+            "lineup_slot": 37.5,
             "bullpen_fatigue": 59.5238,
             "platoon_barrel_pct": 0.64,
             "platoon_xwoba": -0.06,
@@ -266,11 +266,59 @@
             "getaway_day": 0.0,
             "series_game": 1.0,
             "sp_rp_ops_gap": 0.912,
-            "vs_rp_ops": 0.276
+            "vs_rp_ops": 0.276,
+            "ump_k_pct": 0.324,
+            "ump_bb_pct": -0.288
           },
           "hit_probability": 0.6121,
           "raw_hit_probability": 0.6612,
-          "lift": -0.0602,
+          "lift": -0.06,
+          "reliability": "A",
+          "sample_n": 82,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-08-12",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 62.6,
+          "notable_signals": 2,
+          "matchup": "Kansas City Royals @ Los Angeles Dodgers",
+          "game_pk": 823916,
+          "team": "Los Angeles Dodgers",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 0.0,
+            "l7_avg_ev": 42.8676,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 11.175,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 28.0,
+            "lineup_slot": 37.5,
+            "bullpen_fatigue": 55.5556,
+            "platoon_barrel_pct": 0.08,
+            "platoon_xwoba": 2.34,
+            "opp_catcher_framing": -0.36,
+            "days_rest": 2.0,
+            "hard_hit_105_rate": -2.0075,
+            "getaway_day": -2.0,
+            "series_game": 2.0,
+            "sp_rp_ops_gap": 0.912,
+            "vs_rp_ops": 0.276
+          },
+          "hit_probability": 0.6117,
+          "raw_hit_probability": 0.6607,
+          "lift": -0.0577,
           "reliability": "A",
           "sample_n": 82,
           "projection": {

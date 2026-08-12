@@ -240,7 +240,7 @@
         {
           "prop": "Over 0.5 Hits",
           "type": "batter",
-          "score": 53.2,
+          "score": 52.9,
           "notable_signals": 4,
           "matchup": "Milwaukee Brewers @ San Diego Padres",
           "game_pk": 823264,
@@ -254,7 +254,7 @@
             "l7_avg_ev": 88.5938,
             "l7_barrel_pct": 100.0,
             "bat_speed_trend": 13.35,
-            "park_hr_index": 42.6,
+            "park_hr_index": 39.6,
             "season_barrel_pct": 32.0,
             "lineup_slot": 25.0,
             "bullpen_fatigue": 69.4444,
@@ -270,11 +270,62 @@
             "getaway_day": 0.0,
             "series_game": 1.0,
             "sp_rp_ops_gap": 0.592,
+            "vs_rp_ops": 2.34,
+            "ump_k_pct": 0.516,
+            "ump_bb_pct": 0.0
+          },
+          "hit_probability": 0.6093,
+          "raw_hit_probability": 0.6217,
+          "lift": 0.0581,
+          "reliability": "C",
+          "sample_n": 41,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-08-12",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 46.9,
+          "notable_signals": 4,
+          "matchup": "Milwaukee Brewers @ San Diego Padres",
+          "game_pk": 823263,
+          "team": "San Diego Padres",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 51.4286,
+            "pitch_exploit": 1.1429,
+            "l7_avg_ev": 88.5938,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 10.575,
+            "park_hr_index": 28.6,
+            "season_barrel_pct": 34.6667,
+            "lineup_slot": 25.0,
+            "bullpen_fatigue": 83.3333,
+            "platoon_barrel_pct": 2.72,
+            "platoon_xwoba": 1.56,
+            "park_hand_index": 0.15,
+            "opp_catcher_framing": 0.6,
+            "days_rest": 4.0,
+            "pull_park_synergy": 0.1207,
+            "hard_hit_105_rate": 0.8925,
+            "getaway_day": -2.0,
+            "series_game": 2.0,
+            "sp_rp_ops_gap": 0.592,
             "vs_rp_ops": 2.34
           },
-          "hit_probability": 0.6094,
-          "raw_hit_probability": 0.6219,
-          "lift": 0.0582,
+          "hit_probability": 0.6105,
+          "raw_hit_probability": 0.6242,
+          "lift": 0.0593,
           "reliability": "C",
           "sample_n": 41,
           "projection": {

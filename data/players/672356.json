@@ -20,7 +20,7 @@
         {
           "prop": "Over 0.5 Hits+Runs+RBIs",
           "type": "batter",
-          "score": 26.9,
+          "score": 31.8,
           "notable_signals": 0,
           "matchup": "New York Mets @ Atlanta Braves",
           "game_pk": 824886,
@@ -52,11 +52,58 @@
             "ump_k_pct": -0.288,
             "ump_bb_pct": -0.204
           },
-          "hit_probability": 0.5715,
-          "raw_hit_probability": 0.6139,
-          "lift": -0.1008,
+          "hit_probability": 0.5714,
+          "raw_hit_probability": 0.6138,
+          "lift": -0.1007,
           "reliability": "C",
           "sample_n": 41,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-08-12",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 33.8,
+          "notable_signals": 1,
+          "matchup": "New York Mets @ Atlanta Braves",
+          "game_pk": 824883,
+          "team": "New York Mets",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 66.5714,
+            "l7_avg_ev": 0.0,
+            "l7_barrel_pct": 0.0,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 46.0,
+            "lineup_slot": 0.0,
+            "bullpen_fatigue": 64.1026,
+            "platoon_barrel_pct": 3.6,
+            "platoon_xwoba": 0.24,
+            "park_hand_index": -1.31,
+            "opp_catcher_framing": 0.48,
+            "days_rest": 0.0,
+            "pull_park_synergy": -0.541,
+            "hard_hit_105_rate": 2.26,
+            "getaway_day": -2.0,
+            "series_game": 2.0,
+            "sp_rp_ops_gap": 1.76,
+            "vs_rp_ops": 0.852
+          },
+          "hit_probability": 0.562,
+          "raw_hit_probability": 0.603,
+          "lift": -0.1074,
+          "reliability": "C",
+          "sample_n": 42,
           "projection": {
             "stat": "hits_runs_rbis",
             "value": 0.5,

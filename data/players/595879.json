@@ -1,6 +1,6 @@
 {
   "player_id": 595879,
-  "name": "Javier B\u00e1ez",
+  "name": "Javier Baez",
   "snapshots": [
     {
       "date": "2026-08-05",
@@ -214,6 +214,52 @@
           "lift": 0.069,
           "reliability": "C",
           "sample_n": 32,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-08-12",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 43.8,
+          "notable_signals": 1,
+          "matchup": "Cleveland Guardians @ Detroit Tigers",
+          "game_pk": 824241,
+          "team": "Detroit Tigers",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 23.1429,
+            "l7_avg_ev": 20.7692,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 51.9,
+            "season_barrel_pct": 0.0,
+            "lineup_slot": 12.5,
+            "bullpen_fatigue": 77.7778,
+            "platoon_barrel_pct": -2.72,
+            "platoon_xwoba": 0.18,
+            "park_hand_index": 0.92,
+            "opp_catcher_framing": -0.0,
+            "days_rest": 0.0,
+            "pull_park_synergy": 0.6569,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": 1.528,
+            "vs_rp_ops": 0.84
+          },
+          "hit_probability": 0.6231,
+          "raw_hit_probability": 0.6512,
+          "lift": 0.0719,
+          "reliability": "C",
+          "sample_n": 33,
           "projection": {
             "stat": "hits",
             "value": 0.5,

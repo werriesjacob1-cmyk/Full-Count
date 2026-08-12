@@ -62,6 +62,63 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-12",
+      "evaluations": [
+        {
+          "prop": "Over 3.5 Strikeouts",
+          "type": "pitcher",
+          "score": 45.6,
+          "notable_signals": 1,
+          "matchup": "Colorado Rockies @ Arizona Diamondbacks",
+          "game_pk": 825047,
+          "team": "Colorado Rockies",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "same_hand_ratio": 100.0,
+            "l14_k_pct": 0.0,
+            "tto_penalty": 8.0,
+            "env_neutral": 50.0
+          },
+          "hit_probability": 0.5734,
+          "raw_hit_probability": 0.4846,
+          "lift": -0.1393,
+          "reliability": "D",
+          "sample_n": 17,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 3.5,
+            "needs": 4
+          }
+        },
+        {
+          "prop": "Arizona Diamondbacks scoreless in the 1st",
+          "type": "pitcher",
+          "score": 73.7,
+          "notable_signals": 0,
+          "matchup": "Colorado Rockies @ Arizona Diamondbacks",
+          "game_pk": 825047,
+          "team": "Colorado Rockies",
+          "side": "away",
+          "lean": "NRFI",
+          "signals": {
+            "yrfi_rate": 26.3,
+            "fi_n_starts": 19.0,
+            "park_hr_index": 50.0
+          },
+          "hit_probability": 0.691,
+          "raw_hit_probability": 0.7143,
+          "lift": -0.015,
+          "reliability": "D",
+          "sample_n": 19,
+          "projection": {
+            "stat": "first_inning_run",
+            "value": 26.3
+          }
+        }
+      ]
     }
   ]
 }

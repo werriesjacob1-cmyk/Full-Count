@@ -1,6 +1,6 @@
 {
   "player_id": 665926,
-  "name": "Andr\u00e9s Gim\u00e9nez",
+  "name": "Andres Gimenez",
   "snapshots": [
     {
       "date": "2026-08-04",
@@ -448,6 +448,81 @@
           "lift": null,
           "reliability": "A",
           "sample_n": 109,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-08-12",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 49.8,
+          "notable_signals": 2,
+          "matchup": "Boston Red Sox @ Toronto Blue Jays",
+          "game_pk": 822779,
+          "team": "Toronto Blue Jays",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 23.4286,
+            "l7_avg_ev": 24.5588,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 3.3333,
+            "lineup_slot": 25.0,
+            "bullpen_fatigue": 76.9231,
+            "platoon_barrel_pct": -3.68,
+            "platoon_xwoba": -3.66,
+            "park_hand_index": -0.53,
+            "opp_catcher_framing": -0.48,
+            "days_rest": 0.0,
+            "consecutive_games": -1.8,
+            "pull_park_synergy": -0.2133,
+            "hard_hit_105_rate": -2.98,
+            "getaway_day": 0.0,
+            "series_game": 2.0,
+            "sp_rp_ops_gap": -1.12,
+            "vs_rp_ops": -1.812
+          },
+          "hit_probability": 0.5754,
+          "raw_hit_probability": 0.6184,
+          "lift": -0.094,
+          "reliability": "A",
+          "sample_n": 110,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 36.1,
+          "notable_signals": 0,
+          "matchup": "Boston Red Sox @ Toronto Blue Jays",
+          "game_pk": 822779,
+          "team": "Toronto Blue Jays",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "opp_team_cs_pct": 5.64,
+            "sprint_speed": 15.625,
+            "catcher_poptime": 85.7143,
+            "on_base": 19.3858
+          },
+          "hit_probability": 0.1923,
+          "raw_hit_probability": 0.1296,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 110,
           "projection": {
             "stat": "stolen_base",
             "value": 1,

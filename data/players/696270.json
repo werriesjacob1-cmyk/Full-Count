@@ -27,8 +27,8 @@
         {
           "prop": "Over 3.5 Strikeouts",
           "type": "pitcher",
-          "score": 38.9,
-          "notable_signals": 0,
+          "score": 41.9,
+          "notable_signals": 1,
           "matchup": "Texas Rangers @ Los Angeles Angels",
           "game_pk": 823997,
           "team": "Los Angeles Angels",
@@ -37,11 +37,14 @@
           "signals": {
             "same_hand_ratio": 61.1111,
             "l14_k_pct": 0.0,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 80.5357,
+            "ump_k_pct": 0.432,
+            "ump_bb_pct": 0.012
           },
-          "hit_probability": 0.5815,
-          "raw_hit_probability": 0.5133,
-          "lift": -0.1312,
+          "hit_probability": 0.5771,
+          "raw_hit_probability": 0.4977,
+          "lift": -0.1356,
           "reliability": "D",
           "sample_n": 10,
           "projection": {
@@ -63,7 +66,8 @@
           "signals": {
             "yrfi_rate": 27.3,
             "fi_n_starts": 11.0,
-            "park_hr_index": 51.0
+            "ump_run_impact": 10.5455,
+            "park_hr_index": 37.8
           },
           "hit_probability": 0.69,
           "raw_hit_probability": 0.7097,

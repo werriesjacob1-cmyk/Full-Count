@@ -382,7 +382,7 @@
         {
           "prop": "Over 0.5 Hits+Runs+RBIs",
           "type": "batter",
-          "score": 75.3,
+          "score": 69.7,
           "notable_signals": 2,
           "matchup": "Texas Rangers @ Los Angeles Angels",
           "game_pk": 823997,
@@ -394,14 +394,14 @@
             "l7_avg_ev": 66.25,
             "l7_barrel_pct": 100.0,
             "bat_speed_trend": 15.0,
-            "park_hr_index": 51.0,
+            "park_hr_index": 37.8,
             "season_barrel_pct": 94.6667,
             "lineup_slot": 87.5,
             "bullpen_fatigue": 76.9231,
             "platoon_barrel_pct": 5.0,
             "platoon_xwoba": 4.32,
             "park_hand_index": -1.07,
-            "opp_catcher_framing": 0.24,
+            "opp_catcher_framing": 0.6,
             "days_rest": 0.0,
             "pull_park_synergy": -0.412,
             "hard_hit_105_rate": 5.0,
@@ -410,11 +410,13 @@
             "getaway_day": 0.0,
             "series_game": 1.0,
             "sp_rp_ops_gap": -0.912,
-            "vs_rp_ops": 0.468
+            "vs_rp_ops": 0.468,
+            "ump_k_pct": -0.432,
+            "ump_bb_pct": -0.012
           },
           "hit_probability": 0.6868,
           "raw_hit_probability": 0.7537,
-          "lift": 0.0145,
+          "lift": 0.0147,
           "reliability": "A",
           "sample_n": 100,
           "projection": {
@@ -426,7 +428,7 @@
         {
           "prop": "To Steal a Base",
           "type": "batter",
-          "score": 68.8,
+          "score": 64.8,
           "notable_signals": 1,
           "matchup": "Texas Rangers @ Los Angeles Angels",
           "game_pk": 823997,
@@ -436,11 +438,87 @@
           "signals": {
             "opp_team_cs_pct": 2.22,
             "sprint_speed": 37.5,
-            "catcher_poptime": 100.0,
+            "catcher_poptime": 85.7143,
             "on_base": 100.0
           },
+          "hit_probability": 0.1653,
+          "raw_hit_probability": 0.0777,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 100,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-08-12",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 68.2,
+          "notable_signals": 3,
+          "matchup": "Texas Rangers @ Los Angeles Angels",
+          "game_pk": 823994,
+          "team": "Los Angeles Angels",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 30.2857,
+            "pitch_exploit": 8.0,
+            "l7_avg_ev": 64.2045,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 15.0,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 94.0,
+            "lineup_slot": 87.5,
+            "bullpen_fatigue": 76.9231,
+            "platoon_barrel_pct": 5.0,
+            "platoon_xwoba": 4.74,
+            "park_hand_index": -1.07,
+            "opp_catcher_framing": 0.6,
+            "days_rest": 2.0,
+            "pull_park_synergy": -0.412,
+            "hard_hit_105_rate": 5.0,
+            "getaway_day": 0.0,
+            "series_game": 2.0,
+            "sp_rp_ops_gap": -0.912,
+            "vs_rp_ops": 0.468
+          },
+          "hit_probability": 0.6864,
+          "raw_hit_probability": 0.7532,
+          "lift": 0.017,
+          "reliability": "A",
+          "sample_n": 100,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 65.9,
+          "notable_signals": 1,
+          "matchup": "Texas Rangers @ Los Angeles Angels",
+          "game_pk": 823994,
+          "team": "Los Angeles Angels",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "opp_team_cs_pct": 2.22,
+            "sprint_speed": 40.625,
+            "catcher_poptime": 85.7143,
+            "on_base": 98.0806
+          },
           "hit_probability": 0.1654,
-          "raw_hit_probability": 0.0779,
+          "raw_hit_probability": 0.078,
           "lift": null,
           "reliability": "A",
           "sample_n": 100,

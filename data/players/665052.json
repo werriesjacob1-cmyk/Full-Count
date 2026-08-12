@@ -247,6 +247,50 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-12",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 65.7,
+          "notable_signals": 1,
+          "matchup": "Pittsburgh Pirates @ Miami Marlins",
+          "game_pk": 823833,
+          "team": "Miami Marlins",
+          "side": null,
+          "lean": null,
+          "signals": {
+            "platoon": 65.0,
+            "l7_avg_ev": 90.875,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 85.3333,
+            "lineup_slot": 75.0,
+            "bullpen_fatigue": 83.3333,
+            "park_hand_index": -1.53,
+            "opp_catcher_framing": 0.48,
+            "days_rest": 0.0,
+            "pull_park_synergy": -1.0496,
+            "hard_hit_105_rate": 2.2425,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": 1.016,
+            "vs_rp_ops": 2.892
+          },
+          "hit_probability": 0.6069,
+          "raw_hit_probability": 0.6165,
+          "lift": 0.0557,
+          "reliability": "B",
+          "sample_n": 52,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }
