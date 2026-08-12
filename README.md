@@ -421,27 +421,40 @@ mean doubling network calls for what `mlb_daily.py` already pulled. If picks
 generation fails for any reason, it degrades gracefully and does **not**
 block the research package from being committed.
 
-**No live sportsbook odds are fetched.** A live-odds integration (FanDuel via
-a licensed odds-data provider, not direct scraping — see below for why) was
-evaluated and shelved: even the free tier of a legitimate odds API doesn't
-cover a full daily slate's player props without paying, and that's off the
-table for now. So picks are statistical/trend-based, not price-verified +EV
-bets. Every pick in the output explicitly says to check the current line
-before betting. Treat this as a research shortlist, not a finished bet slip.
+**UPDATED — this section described an earlier version of the project and was
+wrong by the time it was checked during a later audit pass.** The paragraphs
+below (kept struck through in spirit, not literally, for the reasoning
+trail) explain why a licensed odds API looked like the only legitimate path.
+That turned out to be based on testing the wrong two sources and
+generalizing: `odds_fanduel.py` fetches FanDuel's own public web-app API
+directly — the same JSON its website reads, no account, no login, no key of
+one's own (a single public client parameter that identifies the calling
+*application*, not a user, works unchanged across every regional FanDuel
+subdomain). It is not scraping HTML and it is not the ToS-violating
+bot-access risk the section below describes; it is the same public,
+unauthenticated request a browser makes. Verified live: 108+ batters priced
+across a full slate, every prop family this pipeline scores, updated
+continuously.
 
-### Why FanDuel/Fanatics odds aren't scraped directly
+Live prices now drive real parts of the pipeline, not just a display field:
+- The main board's picks carry a real posted price (`market_odds`,
+  `market_implied`, `market_edge`) wherever FanDuel offers a matching line.
+- `value_board.py` screens every priced prop against this pipeline's
+  calibrated probability and reports only where a real edge survives the
+  model's own uncertainty — see its own module docstring for the two tests
+  a prop has to pass.
+- `prop_snapshot.py` captures the closing (last pregame) price for every
+  prop on a schedule; `grade_value.py` settles the value screen's own past
+  calls against those real captured prices and real outcomes — a genuine
+  forward test, not the self-consistency check `grade_results.py` runs
+  (see below), because prices cannot be reconstructed backwards the way box
+  scores can.
+- `parlay_builder.py` prices real multi-leg parlays against these same live
+  odds, correlation-checked by `correlation.py`.
 
-Evaluated and rejected. Both are regulated real-money sportsbooks whose Terms
-of Service prohibit automated/bot access, and books actively detect and
-restrict accounts suspected of using scraping or betting-automation tools —
-that's a real risk to an actual account, not just an engineering hurdle. The
-legitimate path is a licensed odds-data provider (e.g. The Odds API), which
-does carry FanDuel as a bookmaker and does support MLB player-prop markets —
-verified live against their docs. The blocker is purely cost: player-prop
-odds are billed per-market-per-game on that API, and even a single market
-(e.g. just home runs) across a 15-game slate burns roughly the entire 500
-credit/month free-tier allowance in under two weeks. Paid tiers start at
-$30/month for full coverage. Revisit if that tradeoff changes.
+Every pick still says to check the current line before betting — a captured
+price can move between capture and bet — but "no live odds are fetched" is
+no longer an accurate description of this project.
 
 ## Results tracking — closing the feedback loop
 
@@ -453,9 +466,12 @@ not-yet-started game would silently score every open pick as a false "miss,"
 verified against a real edge case while building this), fetches the real box
 score, and grades each pick's own projection as a hit or miss (actual stat >
 projection − 0.5, the same "Over X.5" convention the pick's own text commits
-to — this is a self-consistency check against the model's own call, not a
-market-beating claim, since no real sportsbook line is available to grade
-against).
+to — this is a self-consistency check against the model's own call ("did the
+pick turn out right"), not a market-beating claim. `grade_value.py` is the
+market-beating claim: it settles the value screen (see above) against real
+captured closing prices, which is a genuinely different, harder question
+("would this have made money") — kept separate because that forward test
+only has as much history as `prop_snapshot.py` has been capturing.
 
 Output:
 - `results/grades_YYYY-MM-DD.json` — per-pick detail for that day
