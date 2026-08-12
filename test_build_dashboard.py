@@ -244,6 +244,47 @@ check(bd._build_suggested_parlay([three_legs[0]]) is None,
 check(bd._build_suggested_parlay([]) is None,
       "no candidates at all returns None, not an empty/fabricated parlay")
 
+# REAL BUG, found live 2026-08-12 running the actual pipeline end to end:
+# quality_control() rejects candidates on lineup/rain/opener grounds, not on
+# whether a probability could be computed, so real pools reaching this
+# function routinely contain hit_probability=None candidates -- and
+# parlay_builder's risk_band comparison crashed on the first one, silently
+# no-oping the whole feature via the caller's except every single real run.
+none_prob_pool = three_legs + [
+    parlay_candidate("D", "T7", "T7 @ T8", 4, 104, "Over 0.5 RBIs", "rbis", None, -110),
+]
+sp_with_none = bd._build_suggested_parlay(none_prob_pool)
+check(sp_with_none is not None,
+      "a pool containing a real hit_probability=None candidate doesn't crash the whole "
+      "feature -- it's filtered out the same way load_todays_pool() already does for "
+      "every other caller of this engine", f"got {sp_with_none}")
+if sp_with_none:
+    check("D" not in [l["name"] for l in sp_with_none["legs"]],
+          "the None-probability candidate itself never becomes a leg")
+
+
+head("10. build_payload doesn't crash on a result dict shaped like run_live_fetch()'s "
+     "real output -- suggested_parlay included as a top-level key, not a stat category")
+
+result10 = {
+    "generated_at": "x", "date": "2026-08-12",
+    "hits": [row("A", "hits", 0.7, odds=-200, implied=0.6, edge=0.1, clears=True)],
+    "suggested_parlay": None,
+}
+payload10 = bd.build_payload(result10)
+check("suggested_parlay" not in payload10["tabs_order"],
+      "suggested_parlay never becomes its own tab", f"got {payload10['tabs_order']}")
+check(payload10["suggested_parlay"] is None,
+      "a None suggested_parlay (the honest case when the engine can't build one) passes "
+      "through cleanly")
+
+result10b = dict(result10)
+result10b["suggested_parlay"] = {"legs": [{"name": "X"}], "combined_american_odds": 150}
+payload10b = bd.build_payload(result10b)
+check(payload10b["suggested_parlay"] == result10b["suggested_parlay"],
+      "a real suggested_parlay dict passes through to the payload unchanged, not "
+      "misread as a list of candidate rows", f"got {payload10b['suggested_parlay']}")
+
 
 n_pass = sum(1 for ok, _, _ in _results if ok)
 n_total = len(_results)

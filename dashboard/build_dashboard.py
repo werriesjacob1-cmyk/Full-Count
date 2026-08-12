@@ -160,8 +160,21 @@ def _build_suggested_parlay(candidates):
     except Exception as e:
         log(f"Suggested parlay: import failed ({e}), skipping.")
         return None
+    # REAL BUG, found live 2026-08-12 running the actual pipeline: this used
+    # to pass the raw `candidates` list straight through. parlay_builder.py's
+    # own load_todays_pool() -- the normal way its pool gets built -- always
+    # pre-filters to hit_probability is not None ("Only candidates with a
+    # real hit_probability are included", per its own docstring); nothing
+    # downstream in build_best_available_parlay/risk_band re-checks that.
+    # quality_control() rejects on lineup/rain/opener grounds, not on
+    # whether a probability could be computed at all, so plenty of real
+    # candidates reach here with hit_probability=None -- and risk_band's
+    # `lo <= c["hit_probability"] < hi` crashed the instant one of them did,
+    # silently no-oping the whole feature via the except below on every real
+    # run rather than ever actually producing a parlay.
+    priced_pool = [c for c in candidates if c.get("hit_probability") is not None]
     try:
-        result = pb.build_best_available_parlay(pool=candidates, n=3, risk_level=0, price_legs=False)
+        result = pb.build_best_available_parlay(pool=priced_pool, n=3, risk_level=0, price_legs=False)
     except Exception as e:
         log(f"Suggested parlay: build failed ({e}), skipping.")
         return None
@@ -263,7 +276,16 @@ def build_payload(result, track_record=None):
     result = dict(result)
     result.pop("home_runs", None)
 
-    meta_keys = {"generated_at", "date"}
+    # REAL BUG, found live 2026-08-12 running the actual pipeline end to end
+    # (not caught by any existing test, since none of them passed a `result`
+    # dict shaped like run_live_fetch()'s real output with this key present):
+    # "suggested_parlay" is a top-level key in run_live_fetch()'s own `out`
+    # dict, same as "generated_at"/"date", but wasn't in meta_keys -- so the
+    # generic "everything else is a stat category" loop below tried to treat
+    # its value (None, or a dict once the parlay build succeeds) as a list
+    # of candidate rows and crashed on `for r in rows` the moment a real run
+    # actually populated it.
+    meta_keys = {"generated_at", "date", "suggested_parlay"}
     tabs = {}
     for stat in CATEGORY_ORDER:
         rows = result.get(stat)
