@@ -470,6 +470,22 @@ body {{
   font-size: 13.5px; border: 1px dashed var(--line); border-radius: 8px;
 }}
 
+/* A short candidate list explained, not left as blank space below it --
+   real context on why a market is thin tonight, not a trimmed list. */
+.thin-note {{
+  margin-top: 14px; padding: 16px 18px;
+  background: var(--surface-2); border: 1px solid var(--line); border-radius: 8px;
+  display: flex; flex-direction: column; gap: 10px; align-items: flex-start;
+}}
+.thin-note p {{ margin: 0; font-size: 12.5px; line-height: 1.55; color: var(--ink-dim); max-width: 62ch; }}
+.thin-link {{
+  font-family: var(--font-mono); font-size: 11.5px; font-weight: 600;
+  color: var(--accent); background: transparent; border: 1px solid var(--accent-soft);
+  border-radius: 999px; padding: 6px 12px; cursor: pointer;
+  transition: background 0.12s, border-color 0.12s;
+}}
+.thin-link:hover {{ background: var(--accent-soft); }}
+
 @media (max-width: 680px) {{
   .pick {{ grid-template-columns: 1fr auto; grid-template-areas: "who odds" "prop odds"; row-gap: 8px; }}
   .pick .rank {{ display: none; }}
@@ -732,6 +748,30 @@ const PANEL_DESC = {{
   top_picks: "The board's real favorites tonight: High-confidence picks that still clear FanDuel's price, ranked by genuine edge over the market -- not just raw probability.",
 }};
 
+// Some markets are structurally thin -- not a bug, not a trimmed list, just
+// how few real candidates that market produces on a given slate. Explained
+// honestly instead of leaving a wall of blank space that reads as broken.
+const THIN_NOTES = {{
+  strikeouts: {{
+    text: "FanDuel posts exactly one strikeout line per starter, and only some of tonight's are priced yet -- every real one that is shows here, not a trimmed list.",
+  }},
+  combined_strikeouts: {{
+    text: "A rarer market by nature: it needs BOTH starters in a game individually priced by FanDuel. Most slates only produce a couple of real matchups like this.",
+    related: "strikeouts",
+  }},
+  pitcher_outs: {{
+    text: "Same story as strikeouts -- FanDuel posts one Outs Recorded line per starter, and this is every real one priced tonight.",
+    related: "strikeouts",
+  }},
+  nrfi_combined: {{
+    text: "The real combined NRFI/YRFI price needs FanDuel's first-inning market posted for that specific game, which isn't up for every matchup yet.",
+  }},
+  stolen_base: {{
+    text: "Bounded by real speed, not by coverage -- only players who clear a genuine sprint-speed threshold ever become a stolen-base candidate at all.",
+  }},
+}};
+const THIN_THRESHOLD = 10;
+
 function renderPanels() {{
   const el = document.getElementById("panels");
   let html = "";
@@ -741,13 +781,24 @@ function renderPanels() {{
     const visible = rows.slice(0, SHOW_N);
     const rest = rows.slice(SHOW_N);
     const desc = PANEL_DESC[key] ? `<p class="panel-desc">${{esc(PANEL_DESC[key])}}</p>` : "";
-    const body = rows.length
-      ? `<div class="picks">
+    let body;
+    if (rows.length) {{
+      const thin = rows.length < THIN_THRESHOLD ? THIN_NOTES[key] : null;
+      const thinNote = thin
+        ? `<div class="thin-note">
+             <p>${{esc(thin.text)}}</p>
+             ${{thin.related && PAYLOAD.data[thin.related] ? `<button class="thin-link" data-goto="${{esc(thin.related)}}">Browse ${{esc(PAYLOAD.labels[thin.related])}} instead &rarr;</button>` : ""}}
+           </div>`
+        : "";
+      body = `<div class="picks">
           ${{visible.map((p, j) => pickRow(p, j + 1)).join("")}}
           ${{rest.map((p, j) => pickRow(p, j + 1 + SHOW_N).replace('class="pick', 'class="pick hidden-row')).join("")}}
         </div>
-        ${{rest.length ? `<button class="more-btn" data-more="${{esc(key)}}">Show all ${{rows.length}} &darr;</button>` : ""}}`
-      : `<div class="empty-state">Nothing here right now -- no candidate tonight both clears High confidence and the live price.</div>`;
+        ${{rest.length ? `<button class="more-btn" data-more="${{esc(key)}}">Show all ${{rows.length}} &darr;</button>` : ""}}
+        ${{thinNote}}`;
+    }} else {{
+      body = `<div class="empty-state">Nothing here right now -- no candidate tonight both clears High confidence and the live price.</div>`;
+    }}
     html += `
     <div class="panel${{i === 0 ? " active" : ""}}" id="panel-${{esc(key)}}">
       <div class="panel-head"><h2>${{esc(label)}}</h2><span class="n">${{rows.length}} candidate${{rows.length === 1 ? "" : "s"}}, ranked by ${{key === "top_picks" ? "edge over the market" : "model probability"}}</span></div>
@@ -761,6 +812,12 @@ function renderPanels() {{
       const panel = document.getElementById("panel-" + btn.dataset.more);
       panel.querySelectorAll(".hidden-row").forEach(r => r.classList.remove("hidden-row"));
       btn.remove();
+    }});
+  }});
+  el.querySelectorAll(".thin-link").forEach(btn => {{
+    btn.addEventListener("click", () => {{
+      document.querySelector(`.tab[data-tab="${{btn.dataset.goto}}"]`)?.click();
+      document.querySelector(".tabbar-wrap")?.scrollIntoView({{ behavior: "smooth", block: "start" }});
     }});
   }});
 
