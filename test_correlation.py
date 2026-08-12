@@ -106,6 +106,50 @@ check(v2.label != "negative",
       "pitcher's strikeout prop vs his OWN team's batter is not negative",
       f"got {v2.label}")
 
+# Bug found during this audit: combined_strikeouts (score_combined_strikeouts,
+# "type": "pitcher_combo", team explicitly None) wasn't covered by the
+# pitcher-vs-hitter check at all, since that check required "type": "pitcher".
+# A "2 combined strikeouts, 2 hits" parlay request would have classified the
+# pair "independent" -- verified live before this fix -- exactly the "K prop
+# + opposing hitter" case this module exists to catch. Both teams' hitters
+# are opposed (no `team` to match against, since the prop is both starters
+# combined), so this should fire against a batter on EITHER side.
+combo = dict(name="SP A & SP B", team=None, matchup="Mets @ Pirates", game_pk=1,
+            type="pitcher_combo", player_id="sp_a",
+            projection={"stat": "combined_strikeouts"})
+for team_name, team_batter in (("away", a), ("home", b)):
+    v_combo = corr.classify(combo, team_batter)
+    check(v_combo.label == "negative",
+          f"combined_strikeouts vs a {team_name}-side batter in the same game is negative",
+          f"got {v_combo.label}")
+
+# Bug found during this audit: combined_strikeouts' own player_id carries
+# only the AWAY starter's id (persistence needs a single real id), so a
+# solo strikeouts pick on that same away starter fell into the same_player
+# branch and scored merely "positive" (not "redundant" -- combined_
+# strikeouts isn't in _OVERLAPPING_BATTER_FAMILIES, which is batter-only),
+# while a solo pick on the HOME starter -- whose id the combo never carries
+# -- matched no player_id at all and fell through to "independent". Both
+# wrong the same way: a starter's own strikeout total is a strict subset of
+# the combined total.
+combo_with_ids = dict(combo, combo_player_ids=["sp_a", "sp_b"])
+solo_away = pitcher("SP A", "Mets", "Mets @ Pirates", 1, "away", "strikeouts", player_id="sp_a")
+solo_home = pitcher("SP B", "Pirates", "Mets @ Pirates", 1, "home", "strikeouts", player_id="sp_b")
+for label, solo in (("away starter (same id combo carries)", solo_away),
+                    ("home starter (id combo never carries)", solo_home)):
+    v_solo = corr.classify(combo_with_ids, solo)
+    check(v_solo.label == "redundant",
+          f"combined_strikeouts vs a solo strikeouts pick on its own {label} is redundant",
+          f"got {v_solo.label}")
+
+# A solo strikeouts pick on a pitcher who is NOT one of the combo's two
+# starters must not be flagged -- only the actual overlapping pair.
+unrelated = pitcher("SP C", "Dodgers", "Dodgers @ Giants", 2, "away", "strikeouts", player_id="sp_c")
+v_unrelated = corr.classify(combo_with_ids, unrelated)
+check(v_unrelated.label == "independent",
+      "combined_strikeouts vs an unrelated pitcher in a different game is independent",
+      f"got {v_unrelated.label}")
+
 # Same game, opposing teams, no pitcher-vs-hitter relationship -> independent,
 # not a fabricated negative.
 g = batter("G. Batter", "Pirates", "Mets @ Pirates", 1, "home_runs")

@@ -20,6 +20,7 @@ file doesn't exist (first run, or picks generation failed/was skipped that
 day), this is a no-op — it must never block the rest of the pipeline.
 """
 import glob, os, sys, json
+from collections import defaultdict
 from datetime import datetime, timedelta
 
 import mlb_daily as m
@@ -399,9 +400,19 @@ def grade_pick(pick, game_statuses, date=None):
         if ev is None:
             return {**pick, "grade": "ungraded", "reason": "no batted-ball Statcast data for this game"}
         hit = ev >= thr
+        # opportunity_context's batter branch reads PA/substitute status off
+        # a real box line -- passing None here (as this used to) makes EVERY
+        # hard_hit pick fall into "row missing" and get marked fair_test=False,
+        # "did not appear", even a graded HIT, which is a batted ball that by
+        # definition required the batter to appear. Found via the backtest
+        # coverage report: 5,914 hard_hit_105 rows, n_fair exactly 0. The box
+        # score has no exit velocity (why this branch exists at all) but it
+        # still has AB/BB/substitution, which is all opportunity_context
+        # actually needs -- so fetch it like every other batter stat does.
+        row, _ = get_box_line(game_pk, player_id, is_pitcher=False)
         return {**pick, "grade": "hit" if hit else "miss", "actual": ev,
                 "actual_stat": "max_exit_velocity",
-                **opportunity_context(pick, None, game_pk)}
+                **opportunity_context(pick, row, game_pk)}
 
     if stat == "first_inning_run":
         # away_sp pitches to the home team in the bottom of the 1st (after the away
@@ -640,9 +651,30 @@ def grade_day(date) -> bool:
     fair_hits = sum(1 for g in graded if g["grade"] == "hit" and g.get("fair_test"))
     fair_misses = sum(1 for g in graded if g["grade"] == "miss" and g.get("fair_test"))
 
+    # BY CATEGORY, ADDITIVE ONLY -- found 2026-08-12 while catching up 5 days
+    # of ungraded picks: the raw/fair totals above blend three groups with
+    # deliberately very different intended hit rates into one number --
+    # "main" (the actual top10 recommendation, meant to run 60-80%),
+    # "moonshot" (home runs, meant to run 15-25% by design), and
+    # "best_of_category" (explicitly includes sub-60%-floor picks, flagged
+    # with a warning icon on the board for exactly this reason). A reader
+    # of the blended headline (measured 45.2% over the 5 days just caught
+    # up) would reasonably conclude the model is barely better than a coin
+    # flip, when the main board alone measured 57.8% over the same window
+    # -- still worth watching, but a very different picture. New keys only;
+    # every existing key here is untouched, so nothing already reading this
+    # file breaks.
+    _GRADE_TO_KEY = {"hit": "hits", "miss": "misses", "ungraded": "ungraded"}
+    by_category = defaultdict(lambda: {"hits": 0, "misses": 0, "ungraded": 0})
+    for g in graded:
+        cat = g.get("category") or "main"
+        by_category[cat][_GRADE_TO_KEY[g["grade"]]] += 1
+    by_category = {k: dict(v) for k, v in by_category.items()}
+
     with open(GRADES_FILE, "w", encoding="utf-8") as f:
         json.dump({"date": YESTERDAY, "hits": hits, "misses": misses, "ungraded": ungraded,
                    "fair_hits": fair_hits, "fair_misses": fair_misses,
+                   "by_category": by_category,
                    "picks": graded}, f, indent=2)
 
     history = {"days": []}
@@ -651,7 +683,8 @@ def grade_day(date) -> bool:
             history = json.load(f)
     history["days"] = [d for d in history.get("days", []) if d["date"] != YESTERDAY]  # avoid dup on reruns
     history["days"].append({"date": YESTERDAY, "hits": hits, "misses": misses, "ungraded": ungraded,
-                            "fair_hits": fair_hits, "fair_misses": fair_misses})
+                            "fair_hits": fair_hits, "fair_misses": fair_misses,
+                            "by_category": by_category})
     history["days"].sort(key=lambda d: d["date"])
 
     totals = {"hits": sum(d["hits"] for d in history["days"]),
@@ -664,6 +697,27 @@ def grade_day(date) -> bool:
     fm = sum(d.get("fair_misses", 0) for d in history["days"])
     history["fair_test_totals"] = {"hits": fh, "misses": fm}
     history["fair_test_hit_rate"] = round(fh / (fh + fm), 3) if (fh + fm) else None
+
+    # BY-CATEGORY TOTALS, same reasoning as the per-day file above: the
+    # blended overall_hit_rate mixes "main" (the actual top10 recommendation)
+    # with "moonshot" (deliberately long-shot HR bets) and
+    # "best_of_category" (deliberately includes sub-floor picks). main_
+    # hit_rate is the number that answers "how is the board Jacob would
+    # actually bet actually doing" -- the blended headline above cannot
+    # answer that on its own. Days written before this change have no
+    # by_category key at all (.get(..., {}) below), so they're silently
+    # excluded from this breakdown rather than crashing or fabricating one.
+    cat_totals = defaultdict(lambda: {"hits": 0, "misses": 0, "ungraded": 0})
+    for d in history["days"]:
+        for cat, counts in d.get("by_category", {}).items():
+            for k in ("hits", "misses", "ungraded"):
+                cat_totals[cat][k] += counts.get(k, 0)
+    history["by_category_totals"] = {k: dict(v) for k, v in cat_totals.items()}
+    main = cat_totals.get("main")
+    if main and (main["hits"] + main["misses"]) > 0:
+        history["main_hit_rate"] = round(main["hits"] / (main["hits"] + main["misses"]), 3)
+    else:
+        history["main_hit_rate"] = None
 
     # Rolling last-14-day rate, so a slow start doesn't permanently anchor the headline number
     recent = history["days"][-14:]
@@ -681,6 +735,11 @@ def grade_day(date) -> bool:
     print(f"  Of picks that got a fair test: {fair_hits} hits / {fair_misses} misses (rate: {fair_rate})")
     print(f"Overall to date: {totals['hits']} hits / {totals['misses']} misses "
           f"(rate: {history['overall_hit_rate']}, last 14 days: {history['last_14_days_hit_rate']})")
+    if history["main_hit_rate"] is not None:
+        m_totals = history["by_category_totals"].get("main", {})
+        print(f"  Main board only (the actual top10 recommendation, excludes moonshots/"
+              f"best-of-category): {m_totals.get('hits', 0)} hits / {m_totals.get('misses', 0)} "
+              f"misses (rate: {history['main_hit_rate']})")
     return True
 
 

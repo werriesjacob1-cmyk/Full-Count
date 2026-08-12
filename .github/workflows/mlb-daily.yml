@@ -142,10 +142,12 @@ jobs:
         #
         # Seventeen signals are currently recorded without affecting any
         # score, on the promise that they would be measured before being
-        # weighted. Nothing could keep that promise: the backtest cannot
-        # rebuild their season-to-date inputs point-in-time, and ten graded
-        # picks a day cannot resolve seventeen signals. This step is the
-        # measurement, and it only gets more decisive the longer it runs.
+        # weighted. This step exists because ten graded picks a day cannot
+        # resolve seventeen signals on its own, even now that nine of them
+        # are ALSO measurable via a real backtest replay (fixed 2026-08-12 --
+        # see backtest/engine.py and measure_signals.py's own docstring for
+        # which nine, and the four that remain forward-only). It only gets
+        # more decisive the longer it runs.
         #
         # Runs after grading so the box scores it needs are already final,
         # and never blocks the pipeline -- an empty result is the expected
@@ -230,7 +232,22 @@ jobs:
           # They are the record of every board generated that day, kept because
           # a later run overwrites the live file and the earlier board may be
           # the one that was actually bet.
-          git add output/top10_picks_*.md output/picks_*.json output/scratches_*.json output/value_board_*.json output/early_look_*.md results/*.json data/players/*.json
+          #
+          # board_*.html / full_board_*.html / parlay_example_*.html WERE
+          # MISSING FROM THIS LIST ENTIRELY. Found by checking git history
+          # for output/*.html: every commit that ever touched one, in this
+          # repo's entire history, was a manual `git add -A` during
+          # development -- never this workflow. generate_picks.py has been
+          # writing all three every single scheduled run since they were
+          # built (render_board.py, render_full_board.py, the example-parlay
+          # step), and every one was silently discarded at the end of the
+          # job, recoverable only from that run's GitHub Actions artifact
+          # bundle (limited retention, not part of the permanent record) --
+          # never actually reaching the repo a real "check tonight's board"
+          # visit would read. These are exactly "what gets read before
+          # betting", the same standard as the JSON/markdown already here,
+          # so they belong in this step, not the secondary report commit.
+          git add output/top10_picks_*.md output/picks_*.json output/scratches_*.json output/value_board_*.json output/early_look_*.md output/board_*.html output/full_board_*.html output/parlay_example_*.html results/*.json data/players/*.json
           if git diff --cached --quiet; then
             echo "No picks to commit."
             exit 0
@@ -322,6 +339,9 @@ jobs:
             output/run_log_*.json
             output/top10_picks_*.md
             output/picks_*.json
+            output/board_*.html
+            output/full_board_*.html
+            output/parlay_example_*.html
             results/*.json
           retention-days: 14
           if-no-files-found: ignore

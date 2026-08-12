@@ -112,6 +112,18 @@ _STAT_PHRASES = [
     (r"triples?", "triples"),
     (r"singles?", "singles"),
     (r"stolen\s*bases?|steals?", "stolen_base"),
+    # Found missing entirely during a bug sweep: every market shipped this
+    # session (Laser, Pitcher Outs Recorded, NRFI/YRFI, combined strikeouts)
+    # had no phrase here, so "give me a parlay with pitcher outs" would
+    # silently extract nothing -- degrades gracefully per this function's
+    # own "never raises, absent not guessed" contract, but a real coverage
+    # gap on a real, user-facing feature. combined-strikeouts MUST come
+    # before the plain strikeouts pattern below, or "combined strikeouts"
+    # would match that first and never reach this one.
+    (r"combined\s*(?:starter\s*)?(?:strikeouts?|k'?s\b)", "combined_strikeouts"),
+    (r"laser|exit\s*velo(?:city)?|105\+?\s*mph", "hard_hit_105"),
+    (r"pitcher\s*outs?|outs?\s*recorded", "pitcher_outs"),
+    (r"nrfi|yrfi|first\s*inning", "nrfi_combined"),
     (r"strikeouts?|k'?s\b", "strikeouts"),
     (r"walks?", "walks"),
     (r"rbis?", "rbis"),
@@ -245,6 +257,21 @@ def load_todays_pool(date=None):
     return pool
 
 
+
+# Laser is priced at two real thresholds (105+/110+ MPH), and score_laser's
+# own _pick_line already picks whichever one has the better read per
+# player -- a single candidate never carries both. A request for "a laser"
+# (parsed to hard_hit_105 by _STAT_PHRASES, since the text doesn't
+# distinguish which MPH) has to draw from BOTH buckets combined, or every
+# player whose winning threshold happened to be 110+ would be invisible to
+# it -- found while adding the Laser phrase to _STAT_PHRASES, not a
+# hypothetical.
+_STAT_GROUPS = {
+    "hard_hit_105": ("hard_hit_105", "hard_hit_110"),
+    "hard_hit_110": ("hard_hit_105", "hard_hit_110"),
+}
+
+
 def _select_legs(pool, prop_counts, risk_level):
     lo, hi = risk_band(risk_level)
     eligible = [c for c in pool if lo <= c["hit_probability"] < hi]
@@ -259,7 +286,11 @@ def _select_legs(pool, prop_counts, risk_level):
     legs, shortfalls = [], []
     for stat, need_n in prop_counts.items():
         taken = 0
-        for cand in by_stat.get(stat, []):
+        stat_pool = []
+        for s in _STAT_GROUPS.get(stat, (stat,)):
+            stat_pool.extend(by_stat.get(s, []))
+        stat_pool.sort(key=lambda c: c["hit_probability"], reverse=True)
+        for cand in stat_pool:
             if taken >= need_n:
                 break
             if any(cand["player_id"] == leg["player_id"] for leg in legs):

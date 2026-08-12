@@ -85,6 +85,19 @@ def clamp(x, lo=0, hi=100):
     return max(lo, min(hi, x))
 
 
+def _team_label(c):
+    """Display text for a pick's "(TEAM)" parenthetical. Every candidate
+    used to be one player on one team, so every markdown call site read
+    c['team'] directly -- bracket access, not .get(), so it never raised
+    on a MISSING key. score_combined_strikeouts's picks broke that
+    assumption: team is explicitly None (the pick spans both teams), a
+    PRESENT key with a None value, which bracket access happily returns
+    and an f-string happily renders as the literal text "(None)". Found
+    live in the category-picks table, the one place a combined_strikeouts
+    pick was already confirmed to reach the board."""
+    return c.get("team") or "combined"
+
+
 def _sig(bag, name, raw, scaled):
     """Record one named signal on a candidate — ONLY when its underlying input
     actually existed.
@@ -186,6 +199,19 @@ def park_hr_index(temp, wsp, wdir, humid, cf_deg, elev, dome):
     copy of the formula — the only difference between the two callers is where
     temp/wind/humidity come from (a forecast tonight, an archive back then).
     Returns (index, wind_effect)."""
+    # REAL BUG, found by test_park_hr_index.py: both real callers currently
+    # short-circuit dome parks before ever reaching this function (each
+    # hardcodes {"park_hr_index": 50, "wind_effect": "dome"} itself), which
+    # is the only reason this was never hit live. Called directly with
+    # dome=True, it wasn't neutral: m.wind_vs_field returns the string "DOME
+    # — no wind effect", and the word WIND contains the substring "IN" --
+    # so `"IN" in wvf.upper()` matched, and a dome game got scored as if
+    # wind were blowing IN (a real, negative wsp*2.5 penalty on an indoor
+    # game with no wind at all). Guarding here closes the gap for any future
+    # caller that doesn't happen to duplicate the two existing callers' own
+    # pre-filtering.
+    if dome:
+        return 50.0, "dome"
     wvf = m.wind_vs_field(wdir, cf_deg, dome)
     dens = m.air_density_pct(elev, temp, humid)
     idx_score = 50
@@ -1344,6 +1370,27 @@ def score_batter(batter, gm, opp_sp_row, opp_sp_id, opp_sp_hand, park_wx, batter
         score -= 12
         watchouts.append(f"L7 AVG {l7.get('AVG')} isn't backed by barrel rate ({l7.get('barrel_pct')}%) — likely BABIP-driven, due to cool off")
 
+    # Fresh off the injured list. Informational only, deliberately not a
+    # score adjustment -- see mlb_sources.fetch_recent_il_returns' own
+    # docstring for why: no measured effect size exists for how long a
+    # return-from-IL dip actually lasts in this league.
+    # NOT using `ex` here -- this runs before `ex = extras or {}` is
+    # assigned further down in this function, so it reads the raw `extras`
+    # parameter directly instead (verified live: using `ex` here raised
+    # UnboundLocalError, caught before this ever shipped).
+    il = ((extras or {}).get("il_returns") or {}).get(bid) if bid else None
+    if il:
+        watchouts.append(f"Activated from the {il['il_days']}-day injured list {il['days_ago']} "
+                         f"day(s) ago — early performance back can be inconsistent")
+
+    # Recently called up from the minors -- same "fresh, uncertain track
+    # record" theme as the IL check above, a different cause. See
+    # mlb_sources.fetch_recent_callups' own docstring.
+    cu = ((extras or {}).get("callups") or {}).get(bid) if bid else None
+    if cu:
+        watchouts.append(f"Recalled from the minors {cu['days_ago']} day(s) ago — thin or no MLB "
+                         f"track record behind his season/rolling stats")
+
     # REGRESSION SIGNAL — expected-vs-actual gap, as a bounded two-sided
     # adjustment OUTSIDE the weighted formula.
     #
@@ -1508,6 +1555,42 @@ def score_batter(batter, gm, opp_sp_row, opp_sp_id, opp_sp_hand, park_wx, batter
             watchouts.append(f"BvP: {bvp.get('H','?')}-for-{bvp.get('AB','?')} "
                              f"vs {opp_sp_name} (small sample, weighted lightly)")
 
+    # AUDIT, 2026-08-12: platoon_barrel_pct/platoon_xwoba/park_hand_index/
+    # days_rest/consecutive_games/pull_park_synergy (below) plus ump_k_pct/
+    # ump_bb_pct (elsewhere in this file) became measurable in backtest for
+    # the FIRST TIME this session (see backtest/engine.py's extras dict --
+    # they were computed and recorded live every night but structurally
+    # invisible to backtest/signals.py before this session's fix). Measured
+    # on a fresh 33-date backtest (2026-07-10..08-11, 15,440 graded rows) via
+    # backtest/signals.py's univariate + fitted-weight report, same
+    # discipline as every other signal here: record, measure, THEN promote --
+    # never the reverse.
+    #
+    # THE HONEST RESULT: none of the eight clear the bar to promote.
+    #   pull_park_synergy    AUC 0.522 CI [0.499,0.545] (n=2544) -- DROP,
+    #                        redundant with park_hand_index (r=0.877) which
+    #                        has the stronger univariate read anyway
+    #   park_hand_index      AUC 0.528 CI [0.507,0.550] (n=2858) -- REVIEW,
+    #                        real alone but not significant once every other
+    #                        signal is in the fit (p=0.141) -- mixed, not a
+    #                        promote
+    #   platoon_barrel_pct   AUC 0.498 (n=3141) -- DROP, redundant with
+    #                        season_barrel_pct (r=0.880)
+    #   platoon_xwoba        AUC 0.512 (n=3141) -- DROP, no separation
+    #   days_rest            AUC 0.487 (n=3415) -- DROP, no separation
+    #   consecutive_games    AUC 0.430 (n=261, only 7.6% of rows fire --
+    #                        >=10 consecutive games is rare) -- DROP
+    #   ump_k_pct            AUC 0.495-0.493 across segments -- DROP
+    #   ump_bb_pct           AUC 0.505-0.518 across segments -- DROP
+    #
+    # None of this is a wasted build: the infrastructure fix was real
+    # (bvp/sp_rp/ump_env remain the genuinely permanent gaps, see
+    # backtest/engine.py) and now these keep getting measured on every
+    # future backtest run without further work. This is what "record,
+    # measure" is supposed to look like when the honest answer is "not yet"
+    # -- left unweighted below, exactly as before this audit. Do not
+    # promote any of these without a fresh measurement showing otherwise.
+
     # Platoon measured properly: exit velocity and barrel rate BY handedness,
     # rather than the binary hand-versus-hand flag that measured AUC 0.500.
     pq = (ex.get("platoon_qoc") or {}).get(bid) if bid else None
@@ -1543,6 +1626,16 @@ def score_batter(batter, gm, opp_sp_row, opp_sp_id, opp_sp_hand, park_wx, batter
         # A better framer steals more strikes, which is bad for the hitter.
         # League Steal% runs around 4-5%.
         _sig(signals, "opp_catcher_framing", fr, clamp(-(fr - 4.5) * 1.2, -4, 4))
+        # AUDIT, 2026-08-12: MEASURED, same fresh 33-date backtest as the
+        # audit near the platoon block above (catcher_framing() was wired
+        # into backtest extras in the same pass, one signal at a time --
+        # see backtest/engine.py's own comment). No real separation power:
+        # AUC 0.501 (n=7200, hits), 0.518 (n=3409, hits_runs_rbis), 0.486
+        # (n=3787, a third batter segment) -- every confidence interval
+        # straddles 0.50, and backtest/signals.py's prune recommendation
+        # says DROP in all three. Same honest "not yet" verdict as the
+        # other eight signals audited above -- left unweighted, exactly as
+        # it already was.
 
     # Rest and accumulated usage.
     # rest_and_usage nests under 'batters'/'starters', and the field is
@@ -1557,6 +1650,18 @@ def score_batter(batter, gm, opp_sp_row, opp_sp_id, opp_sp_hand, park_wx, batter
         if rs.get("consecutive_games") is not None and rs["consecutive_games"] >= 10:
             _sig(signals, "consecutive_games", rs["consecutive_games"],
                  clamp(-(rs["consecutive_games"] - 9) * 0.6, -4, 0))
+
+    # Lineup context: who's on base ahead (RBI opportunity) and who hits
+    # behind (protection) -- see build_candidates' own comment on this for
+    # why wOBA rather than OBP, why "ahead" doesn't wrap and "behind" does,
+    # and why this one (unlike several of the "recorded, not weighted"
+    # signals below) is fully backtest-measurable from day one.
+    lwc = (ex.get("lineup_woba") or {}).get(bid) if bid else None
+    if lwc:
+        if lwc.get("woba_ahead") is not None:
+            _sig(signals, "woba_ahead", lwc["woba_ahead"], scale(lwc["woba_ahead"], 0.290, 0.400))
+        if lwc.get("woba_behind") is not None:
+            _sig(signals, "woba_behind", lwc["woba_behind"], scale(lwc["woba_behind"], 0.290, 0.400))
 
     # Pull rate, which only means something ALONGSIDE the park. A pull-heavy
     # left-handed hitter in a park that plays 138 for left-handed power is a
@@ -1674,7 +1779,7 @@ def score_batter(batter, gm, opp_sp_row, opp_sp_id, opp_sp_hand, park_wx, batter
 
 def score_pitcher(sp_name, sp_id, sp_hand, gm, side, pit_season_lookup, l14_form,
                    opp_lineup, opp_team_k_pct, ump_scores, opp_k_source=None, exp_k_form=None,
-                   ump_kbb=None):
+                   ump_kbb=None, il_returns=None, callups=None):
     ps = lookup_player(pit_season_lookup, sp_name, sp_id, {})
     exp_k = (exp_k_form or {}).get(sp_id)
     k_pct = ps.get("K%")
@@ -1742,6 +1847,22 @@ def score_pitcher(sp_name, sp_id, sp_hand, gm, side, pit_season_lookup, l14_form
     if era and k_pct and era > 4.5 and k_pct > 25:
         watchouts.append(f"High K% ({k_pct}%) paired with a shaky ERA ({era:.2f}) — command may be inconsistent start-to-start")
     if tto_note: watchouts.append(tto_note) if "drop-off" in tto_note else None
+
+    # Fresh off the injured list -- see score_batter's identical check and
+    # mlb_sources.fetch_recent_il_returns' own docstring for why this is
+    # informational only, not a score adjustment.
+    il = (il_returns or {}).get(sp_id) if sp_id else None
+    if il:
+        watchouts.append(f"Activated from the {il['il_days']}-day injured list {il['days_ago']} "
+                         f"day(s) ago — early performance back can be inconsistent")
+
+    # Recently called up from the minors -- see fetch_recent_callups' own
+    # docstring. Real for pitchers too: a spot-start call-up or a September
+    # addition has little or no MLB track record behind his season stats.
+    cu = (callups or {}).get(sp_id) if sp_id else None
+    if cu:
+        watchouts.append(f"Recalled from the minors {cu['days_ago']} day(s) ago — thin or no MLB "
+                         f"track record behind his season/rolling stats")
 
     if star_profile and notable_signals == 0:
         score -= 10
@@ -2108,7 +2229,19 @@ def score_stolen_base(batter, gm, opp_catcher_poptime, sprint_speed, batter_seas
         return None  # not a plausible SB threat regardless of matchup
     notable_signals = 0
     skill = scale(sprint_speed, 27.3, 30.5)
-    matchup = scale(opp_catcher_poptime, 2.25, 1.90) if opp_catcher_poptime else 50
+    # REAL BUG, found by test_score_stolen_base.py: this scale() call had its
+    # bounds swapped (2.25, 1.90 -- descending), which maps a SLOW catcher
+    # (poptime near 2.25, an easy target) to a LOW matchup score and a FAST,
+    # elite-armed catcher (poptime near 1.90, a hard target) to a HIGH one --
+    # exactly backwards for a stolen-base prop, and directly contradicted by
+    # the very next line, which has always treated a slow poptime (>=2.10)
+    # as a NOTABLE GOOD signal. Every other descending scale() call in this
+    # file (score_first_inning's YRFI/NRFI branch) is deliberate and
+    # comment-justified; this one wasn't, and had no such justification --
+    # an accidental bound swap, not a convention. Ascending bounds (1.90,
+    # 2.25) now score a slow catcher high and a fast catcher low, matching
+    # the notable_signals check and the actual market.
+    matchup = scale(opp_catcher_poptime, 1.90, 2.25) if opp_catcher_poptime else 50
     if opp_catcher_poptime and opp_catcher_poptime >= 2.10: notable_signals += 1
     bs = batter_season or {}
     season_sb = bs.get("SB")
@@ -2459,6 +2592,56 @@ def build_candidates(game_meta, *, extras=None, batter_lookup, pitcher_lookup, t
         if cid in _framing and (_framing.get(cid) or {}).get("Steal%") is not None
     }
 
+    # Who's on base ahead of a batter (more RBI opportunity) and how much of
+    # a threat hits behind him (a pitcher can't as easily pitch around him).
+    # mlb_daily.py's own report (compute_lineup_context) already computes
+    # this for humans to read; it never reached scoring -- the CONTEXT
+    # component's lineup_context signal in score_batter only ever used the
+    # batter's own slot number, never who is actually hitting around him.
+    # wOBA, not raw OBP: OBP is absent from the Statcast-fallback batter_lookup
+    # shape (_fg_statcast_bat_fallback's own rename dict has no "OBP" mapping,
+    # only "AVG"/"xBA"/"xwOBA"/"wOBA"), so scoring on OBP would silently go
+    # dark on every FanGraphs-blocked run -- the exact "computed, then
+    # discarded on the fallback path" failure this project keeps finding.
+    # wOBA is present under both shapes and is arguably the better metric for
+    # this anyway (folds in power, not just reaching base).
+    # "Ahead" deliberately does NOT wrap (the 9-hole batter has no meaningful
+    # "who's on base ahead of me" read from the prior inning's leadoff man --
+    # three outs reset the bases in between). "Behind" DOES wrap: a pitcher
+    # deciding whether to pitch around the 9-hole batter genuinely does face
+    # the leadoff man next, so the wraparound is the real baseball question,
+    # not an artifact -- this matches mlb_daily.py's own report, which wraps
+    # "protection" the same way.
+    # RECORDED via _sig() below, in score_batter -- NOT folded into score.
+    # No measured effect size exists yet for either direction; giving it real
+    # weight without that would repeat the exact mistake already learned once
+    # in this file (signals given weight by judgement, later found not to
+    # separate hits from misses at all). Uses only batter_lookup and the
+    # lineup itself, both identical in shape between the live and backtest
+    # paths, so this is fully measurable by backtest/signals.py from day one
+    # -- unlike several other recorded-not-weighted signals in this function
+    # (pull_park_synergy, park_hand_index, bvp_ops) whose inputs only exist
+    # in the live extras fetch and are structurally invisible to any
+    # backtest, found auditing this same signal.
+    lineup_woba = {}
+    for gm in game_meta:
+        for side in ("away_lineup", "home_lineup"):
+            lineup = gm.get(side, [])
+            n = len(lineup)
+            for i, p in enumerate(lineup):
+                bid = p.get("id")
+                if not bid:
+                    continue
+                prev_p = lineup[i - 1] if i > 0 else None
+                next_p = lineup[(i + 1) % n] if n > 1 else None
+                prev_row = lookup_player(batter_lookup, prev_p["name"], prev_p.get("id")) if prev_p else None
+                next_row = lookup_player(batter_lookup, next_p["name"], next_p.get("id")) if next_p else None
+                lineup_woba[bid] = {
+                    "woba_ahead": (prev_row or {}).get("wOBA"),
+                    "woba_behind": (next_row or {}).get("wOBA"),
+                }
+    extras["lineup_woba"] = lineup_woba
+
     for gm in game_meta:
         opp_sp_row_for_away_batters = lookup_player(pitcher_lookup, gm["home_sp"], gm.get("home_sp_id"), {})
         opp_sp_row_for_home_batters = lookup_player(pitcher_lookup, gm["away_sp"], gm.get("away_sp_id"), {})
@@ -2506,7 +2689,7 @@ def build_candidates(game_meta, *, extras=None, batter_lookup, pitcher_lookup, t
             away_pitcher_c = score_pitcher(gm["away_sp"], gm["away_sp_id"], gm.get("away_sp_hand"),
                                              gm, "away", pitcher_lookup, l14_pitcher_form,
                                              gm.get("home_lineup", []), opp_k, ump_scores, opp_k_source,
-                                             exp_k_form, extras.get("ump_kbb"))
+                                             exp_k_form, extras.get("ump_kbb"), extras.get("il_returns"), extras.get("callups"))
             candidates.append(away_pitcher_c)
             fi = score_first_inning(gm["away_sp"], gm["away_sp_id"], gm, "away", fi_form,
                                     extras.get("ump_env"), park_wx)
@@ -2523,7 +2706,7 @@ def build_candidates(game_meta, *, extras=None, batter_lookup, pitcher_lookup, t
             home_pitcher_c = score_pitcher(gm["home_sp"], gm["home_sp_id"], gm.get("home_sp_hand"),
                                              gm, "home", pitcher_lookup, l14_pitcher_form,
                                              gm.get("away_lineup", []), opp_k, ump_scores, opp_k_source,
-                                             exp_k_form, extras.get("ump_kbb"))
+                                             exp_k_form, extras.get("ump_kbb"), extras.get("il_returns"), extras.get("callups"))
             candidates.append(home_pitcher_c)
             fi = score_first_inning(gm["home_sp"], gm["home_sp_id"], gm, "home", fi_form,
                                     extras.get("ump_env"), park_wx)
@@ -2722,6 +2905,23 @@ def _build_and_score():
         ("team_bat", lambda: _src.team_batting_table()),
         ("pull", lambda: _src.pull_rates()),
         ("pitch_q", lambda: _src.pitch_quality()),
+        # Real IL activations (returns) in the last 21 days, via MLB's
+        # transactions endpoint. Nothing else in this pipeline knows a
+        # batter or pitcher is fresh off the injured list -- the injury
+        # report only ever shows who's currently OUT. Surfaced as a
+        # watchout on the affected candidate (see score_batter/score_pitcher),
+        # not a scored signal: no measured effect size exists for how long
+        # a return-from-IL dip actually lasts in this league, and inventing
+        # one would be exactly the "plausible-looking number that isn't
+        # real" this project exists to avoid.
+        ("il_returns", lambda: _src.fetch_recent_il_returns()),
+        # Same "fresh, uncertain track record" theme, a different cause: a
+        # recent call-up from the minors (rookie debut, September call-up,
+        # or optioned-and-back) has little or no MLB track record of his
+        # own behind whatever season/rolling stat this pipeline shows for
+        # him. Also informational only -- see fetch_recent_callups' own
+        # docstring.
+        ("callups", lambda: _src.fetch_recent_callups()),
         # The one input in this whole project that cannot be re-fetched later.
         # odds_snapshot.py has been writing hourly captures since the start
         # precisely so this would exist, and nothing has ever read them.
@@ -2839,6 +3039,12 @@ def _build_and_score():
         # pass can reuse it instead of sweeping FanDuel for the same market
         # twice (extras itself is local to this function).
         "po_prices": extras.get("pitcher_outs_prices"),
+        # Same reasoning, same fetch-above-reuse-below pattern -- this one
+        # was missing until attach_market_prices grew a combined_strikeouts
+        # branch (added this pass; see its own docstring). Before that,
+        # main()'s attach_market_prices call had no use for this key, so its
+        # absence here was invisible.
+        "combined_k_prices": extras.get("combined_k_prices"),
     }
 
 
@@ -2910,8 +3116,17 @@ def select_moonshots(candidates, prices, fd, n=5):
 # _build_combined_nrfi's docstrings). first_inning_run still runs
 # internally as nrfi_combined's input; it just never becomes a candidate
 # a customer could see as a standalone pick.
+# "home_runs" was missing here until this audit -- found by diffing this
+# dict against render_board.py's and render_full_board.py's own copies
+# (three independent copies of the same table, a drift risk by construction).
+# The impact was real, not cosmetic: select_best_by_category's own docstring
+# names home runs as the exact example of a family this function exists to
+# stop from being structurally excluded ("the floor is what makes an entire
+# family (home runs, 2+ total bases) structurally unable to appear here at
+# all"), and a missing dict key did precisely that, silently, the whole time
+# home_runs has existed as its own market.
 CATEGORY_LABELS = {
-    "hits": "Hits", "total_bases": "Total Bases",
+    "hits": "Hits", "total_bases": "Total Bases", "home_runs": "Home Runs",
     "runs": "Runs", "rbis": "RBIs", "hits_runs_rbis": "Hits+Runs+RBIs",
     "singles": "Singles", "doubles": "Doubles", "triples": "Triples",
     "stolen_base": "Stolen Base", "strikeouts": "Strikeouts",
@@ -3223,8 +3438,16 @@ def main() -> int:
         # could price the real line directly) -- reused here rather than
         # sweeping FanDuel for the same market twice.
         po_prices = early_po_prices or {}
+        # Fetched early too (before scoring, so score_combined_strikeouts
+        # could price the real ladder directly) -- reused here for the same
+        # reason po_prices is: attach_market_prices now has a
+        # combined_strikeouts branch (added this pass, see its own
+        # docstring), and passing this avoids a second FanDuel sweep for a
+        # market this function used to no-op on entirely.
+        combined_k_prices = ctx.get("combined_k_prices") or {}
         _, n_priced = _fd.attach_market_prices(candidates, prices=prices, k_prices=k_prices,
-                                               fi_prices=fi_prices, po_prices=po_prices)
+                                               fi_prices=fi_prices, po_prices=po_prices,
+                                               combined_k_prices=combined_k_prices)
         print(f"    Real market prices attached to {n_priced} of {len(candidates)} candidates")
         # PER-MARKET REAL-PRICE COVERAGE. The pool diagnostic above only ever
         # showed whether the MODEL had a probability, which is a different
@@ -3325,6 +3548,14 @@ def write_json(top10, moonshots=(), by_category=None):
         return {
             "rank": i, "type": c["type"], "name": c["name"], "player_id": c["player_id"],
             "team": c["team"], "matchup": c["matchup"], "game_pk": c["game_pk"], "side": c.get("side"),
+            # Same failure mode this file already hit once before with NRFI's
+            # side/lean fields: a field computed on the candidate and never
+            # written to disk here is invisible to grade_results.py, which
+            # reads THIS file, not the in-memory candidate. Without it, every
+            # combined_strikeouts pick would grade "missing combo_player_ids"
+            # tomorrow morning, defeating grade_pick's own combined_strikeouts
+            # branch entirely -- caught before it ever shipped a real pick.
+            "combo_player_ids": c.get("combo_player_ids"),
             "prop": c["prop"], "projection": c["projection"], "lean": c.get("lean"), "score": c["score"],
             "confidence": c["confidence"], "notable_signals": c["notable_signals"],
             "category": c.get("category"),
@@ -3356,6 +3587,11 @@ def write_json(top10, moonshots=(), by_category=None):
             # dashboard, a customer-facing view) could ever show WHY a pick
             # was made without re-deriving it from raw signals by hand.
             "why": c.get("why"), "watchouts": c.get("watchouts"),
+            # apply_signal_weights's own docstring promises "every adjustment
+            # is recorded on the candidate, never silent" -- true in memory,
+            # false the moment this function persisted a pick without it.
+            # Found in the same sweep as combo_player_ids, same root cause.
+            "signal_weight_adjustment": c.get("signal_weight_adjustment"),
         }
     category_flat = [c for entries in (by_category or {}).values() for c in entries]
     picks = [_row(i, c) for i, c in enumerate(top10, 1)]
@@ -3399,7 +3635,7 @@ def write_early_look(assumed_lineup):
     for c in ranked[:25]:
         p = c.get("hit_probability")
         p_str = f"{p*100:.1f}%" if p is not None else "unscored"
-        lines.append(f"- **{c['name']}** ({c['team']}) — {c['prop']} — {p_str} "
+        lines.append(f"- **{c['name']}** ({_team_label(c)}) — {c['prop']} — {p_str} "
                     f"[{c['matchup']}]")
     if not ranked:
         lines.append("_(none)_")
@@ -3459,6 +3695,15 @@ def persist_player_snapshots(candidates):
                              # by side, not off a batting line.
                              "game_pk": c.get("game_pk"), "team": c.get("team"),
                              "side": c.get("side"), "lean": c.get("lean"),
+                             # Same gap just found and fixed in write_json()'s
+                             # _row(), this time in the OTHER path that reaches
+                             # grade_pick: measure_signals.py reads these
+                             # persisted evaluations and grades them directly.
+                             # Without this, a combined_strikeouts evaluation
+                             # here would fail "missing combo_player_ids" the
+                             # same way, and its signals (combined_k_edge)
+                             # could never be measured for trust.
+                             "combo_player_ids": c.get("combo_player_ids"),
                              "signals": c.get("signals") or {},
                              "hit_probability": c.get("hit_probability"),
                              "raw_hit_probability": c.get("raw_hit_probability"),
@@ -3534,7 +3779,16 @@ MIN_EMPIRICAL_GAMES = 25
 # a real share. This split is a starting position, not a fitted result --
 # backtest/signals.py exists to replace it with something measured.
 #
-# ── AUDIT, 2026-08-06: MEASURED. NOT YET ACTED ON. ────────────────────────
+# ── AUDIT, 2026-08-06: MEASURED, AND ACTED ON 2026-08-07. ─────────────────
+# See _batter_options' MODEL_SHRINK_K block and the strikeouts loop's
+# STRIKEOUT_SHRINK_K block below -- both replace this blend with "shrink
+# modelled toward the true league rate, drop empirical" wherever a modelled
+# term and a true league rate exist. EMPIRICAL_WEIGHT/_blend() below now only
+# fire for props with no modelled counterpart (runs/rbis/hits_runs_rbis/
+# singles/doubles/triples, where _blend(empirical, None) just returns
+# empirical) or as a fallback when no true league rate is available for the
+# specific key. Left below verbatim as the record of what was measured and
+# why -- do not re-read this block as an open item.
 # Out-of-sample test on 244 batters with 250+ PA: both inputs fitted on each
 # batter's first 60% of games (chronological), scored on his last 40%.
 # Held-out mean log loss, and every configuration below fixed a priori so
@@ -3728,12 +3982,32 @@ def _batter_options(c, comp, emp, league=None):
         # bound (biased low at every sample size). See _apply_shrinkage.
         return r.get("p_hat", r["p"])
 
+    # AUDIT, 2026-08-12: found by test_lookup_table_consistency.py cross-
+    # checking every family's thresholds against MARKET_MAP -- hits 4+,
+    # total_bases 5+, runs 3+, rbis 3+/4+ and hits_runs_rbis 4+ were all real,
+    # currently-posted FanDuel markets (confirmed in MARKET_MAP) with a real
+    # empirical rate already computed (_PROP_THRESHOLDS has carried all of
+    # them all along), never offered here -- same "computed, then discarded"
+    # failure as home_runs 2+/3+ above, just five more instances of it that
+    # a manual read missed. total_bases 1+ deliberately NOT added: no such
+    # MARKET_MAP entry exists (FanDuel does not post it), so a rate for it
+    # would have no real price to ever attach to.
     families = [
-        ("hits", "Hits", [(0.5, 1), (1.5, 2), (2.5, 3)],
+        ("hits", "Hits", [(0.5, 1), (1.5, 2), (2.5, 3), (3.5, 4)],
          (lambda k: pp.p_at_least_hits(k, dist, pa)) if dist and pa else None),
-        ("total_bases", "Total Bases", [(1.5, 2), (2.5, 3), (3.5, 4)],
+        ("total_bases", "Total Bases", [(1.5, 2), (2.5, 3), (3.5, 4), (4.5, 5)],
          (lambda k: pp.p_at_least_total_bases(k, dist, pa)) if dist and pa else None),
-        ("home_runs", "Home Runs", [(0.5, 1)],
+        # 2+ and 3+ were dead on arrival before this: TO_HIT_2+_HOME_RUNS has
+        # been in MARKET_MAP and home_runs_2plus in mlb_sources._PROP_THRESHOLDS
+        # the whole time, but this family list only ever asked for 1+, so
+        # neither threshold could ever become a candidate's projection. Found
+        # live: FanDuel is currently posting TO_HIT_3+_HOME_RUNS too (verified
+        # against a real pull, 4 occurrences across 8 games), not in
+        # MARKET_MAP at all until this same pass added it. p_at_least_home_runs
+        # is a plain binomial tail sum, so 2 and 3 need no new math, only
+        # asking for them -- same "computed, then discarded" failure as the
+        # six markets fixed above.
+        ("home_runs", "Home Runs", [(0.5, 1), (1.5, 2), (2.5, 3)],
          (lambda k: pp.p_at_least_home_runs(k, dist, pa)) if dist and pa else None),
         # THE SIX MARKETS THE MODEL COULD NOT PRICE.
         #
@@ -3758,9 +4032,9 @@ def _batter_options(c, comp, emp, league=None):
         # contains. Passing None here means _blend() uses the empirical rate
         # and records basis accordingly, instead of inventing a model term to
         # fill the column.
-        ("runs", "Runs", [(0.5, 1), (1.5, 2)], None),
-        ("rbis", "RBIs", [(0.5, 1), (1.5, 2)], None),
-        ("hits_runs_rbis", "Hits+Runs+RBIs", [(0.5, 1), (1.5, 2), (2.5, 3)], None),
+        ("runs", "Runs", [(0.5, 1), (1.5, 2), (2.5, 3)], None),
+        ("rbis", "RBIs", [(0.5, 1), (1.5, 2), (2.5, 3), (3.5, 4)], None),
+        ("hits_runs_rbis", "Hits+Runs+RBIs", [(0.5, 1), (1.5, 2), (2.5, 3), (3.5, 4)], None),
         ("singles", "Singles", [(0.5, 1)], None),
         ("doubles", "Doubles", [(0.5, 1)], None),
         ("triples", "Triples", [(0.5, 1)], None),
@@ -3928,53 +4202,89 @@ LEAGUE_YRFI_RATE = 0.294
 
 # ── Calibration ───────────────────────────────────────────────────────────
 #
-# The model's stated probabilities were measured against 12,582 backtested
-# picks and they are badly overconfident at exactly the end of the range the
-# board selects from:
+# REFIT 2026-08-12 against the real 2026-07-10..08-08 backtest (14,124 real
+# graded rows, produced after this session's fixes -- combo_player_ids
+# persistence, value_board's missing quality_control(), grade_value's
+# settlement bug, the hard_hit_105 fair_test bug, and the CURRENT_WEIGHTS/
+# _batter_options coverage gaps). The PREVIOUS calibrators were fit
+# 2026-05-17..06-03, on an earlier scorer version, over four markets (hits,
+# walks, strikeouts, first_inning_run) -- walks is now retired entirely
+# (score_walk is never called) and first_inning_run no longer ships as its
+# own board entry, so half of that fit was calibrating markets that no
+# longer exist in this form. STALENESS IS A REAL RISK for exactly this
+# reason: refit whenever scoring changes materially, not on a schedule.
 #
-#     stated 0.3 -> actual 0.296   (well calibrated)
-#     stated 0.5 -> actual 0.490   (well calibrated)
-#     stated 0.6 -> actual 0.606   (well calibrated)
-#     stated 0.7 -> actual 0.644
-#     stated 0.8 -> actual 0.676
-#     stated 0.9 -> actual 0.684   <- a "90%" pick hits 68% of the time
+# ONE CURVE PER MARKET THAT CAN SUPPORT ONE, not a blanket policy. Every
+# candidate market was checked -- reliability table (real miscalibration
+# pattern present?) AND held-out time-based-split evaluation (does a fitted
+# curve actually help on dates it wasn't fit on?) -- and only kept where
+# both agreed or the evidence was unambiguous:
 #
-# Below about 0.65 the numbers mean what they say. Above it they do not, and
-# the real hit rate ceilings near 0.68 no matter how confident the model gets.
+#     market            n      ECE(raw)   held-out result           kept?
+#     hits            2960     0.008      neutral (already accurate)  yes
+#     hits_runs_rbis  3480     0.017      real improvement            yes
+#     strikeouts       725     0.073      real improvement (largest    yes
+#                                          miscalibration measured --
+#                                          overconfident 0.76->0.57 at
+#                                          the top bin)
+#     hard_hit_105    5914     0.018      tiny held-out regression on   yes
+#                                          a large sample (noise-level,
+#                                          not a real signal) against a
+#                                          real, consistent raw pattern
+#     pitcher_outs      625    0.023      held-out got WORSE on a thin  NO
+#                                          train split (435 rows) --
+#                                          real diagnostic pattern
+#                                          exists but the fit is not
+#                                          demonstrated stable; deferred
+#                                          pending more backtest data
+#     nrfi_combined     326    0.007      predictions cluster almost    NO
+#                                          entirely in one 0.50-0.62
+#                                          bin -- there is effectively
+#                                          no variance for a curve to
+#                                          learn from, matching this
+#                                          market's own known behaviour
+#                                          (_build_combined_nrfi's own
+#                                          docstring: two already-shrunk
+#                                          reads combine to ~coinflip
+#                                          for nearly every game)
+#     singles            94    0.005      too few rows (down to n=2 in  NO
+#                                          some bins) to trust any fit
 #
-# The consequence is worse than a cosmetic overstatement. Because the board
-# RANKS by probability, and the overstatement GROWS with the number, the sort
-# key was systematically selecting the most inflated picks. Ranking by
-# probability was, in part, ranking by overconfidence.
+# RE-CHECKED, 2026-08-12, on a fresh 33-date backtest (2026-07-10..08-11,
+# more than the run above) specifically to see whether pitcher_outs/singles
+# now have enough data to fit -- per this project's own discipline, "more
+# data available" is exactly the trigger that comment called for, not a
+# reason to leave the question stale. Result: NEITHER changes.
+#   pitcher_outs (695 rows, up from 625): held-out brier_improvement -0.00447,
+#     log_loss_improvement -0.00865 -- both still NEGATIVE, i.e. the fitted
+#     curve is still worse than raw on data it wasn't trained on. Same
+#     verdict, now on a larger sample: still NO.
+#   singles (4 rows in THIS run, even fewer than the 94 above -- this
+#     backtest's candidate mix simply produces very few singles candidates)
+#     -- nowhere close to fittable. Still NO.
+# Re-check again once either market's row count grows by an order of
+# magnitude, not on every backtest run.
+#
+# NO GLOBAL/POOLED FALLBACK, by choice, not oversight. backtest/
+# calibrator.json (the old pooled curve) is deleted rather than refit: the
+# 2026-08-05 audit that first built per-market curves already measured the
+# pooled curve actively HARMING its two largest markets by averaging away
+# corrections that run in opposite directions, and this refit's own global
+# fit reproduced that same near-neutral-to-negative result on fresh data.
+# Markets this backtest never scored a candidate for at all (runs, rbis,
+# doubles, triples, home_runs, total_bases, combined_strikeouts -- see
+# generate_picks.py's audit notes on _pick_line favouring hits/hits_runs_rbis
+# in this window) now ship the raw, uncalibrated probability instead of a
+# weak correction borrowed from unrelated markets. Raw is honest about what
+# it is; a bad correction is not.
 #
 # PLATT RATHER THAN ISOTONIC, chosen deliberately against the scoreboard.
-# Isotonic fit the training set marginally better (held-out Brier 0.2227 vs
-# 0.2232) but it is a step function defined only across the probabilities it
-# was trained on, and it flatlines at the boundary outside that range. This
-# calibrator was fitted before several scoring changes that shift the
-# distribution of predicted probabilities, so out-of-domain inputs are
-# expected rather than hypothetical. Platt is a smooth sigmoid that degrades
-# gracefully. The 0.0005 of Brier is worth paying for that.
-#
-# STALENESS IS A REAL CAVEAT. This was fitted on backtested picks generated by
-# an earlier version of the scorer. It should be refitted whenever scoring
-# changes materially, and the raw uncalibrated figure is kept on every pick so
-# the two can always be compared.
-# ONE CURVE PER MARKET, not one curve for everything. Measured on held-out
-# later dates, a dedicated calibrator beat the pooled one in all four markets:
-#
-#     market              raw     pooled      own
-#     hits             0.2363     0.2371   0.2329
-#     walks            0.2077     0.2067   0.2063
-#     strikeouts       0.2802     0.2606   0.2394
-#     first_inning     0.2047     0.2056   0.2044
-#
-# The pooled curve was actively HARMING the two largest markets: on hits and
-# on first-inning props it scored worse than applying no calibration at all,
-# because it was averaging away corrections that run in opposite directions.
-# Strikeouts gain most, 15% over raw, which makes sense -- a starter's
-# strikeout distribution has nothing in common with a batter's chance of a
-# hit, and forcing them through one curve fits neither.
+# Isotonic fit the training set marginally better but it is a step function
+# defined only across the probabilities it was trained on, and it flatlines
+# at the boundary outside that range. Platt is a smooth sigmoid that degrades
+# gracefully to inputs the fit never saw, which matters here because scoring
+# keeps changing. The raw uncalibrated figure is kept on every pick
+# (raw_hit_probability) so the two can always be compared.
 CALIBRATOR_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)),
                                "backtest", "calibrator.json")
 CALIBRATORS_BY_MARKET_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)),
@@ -4106,6 +4416,28 @@ def attach_hit_probabilities(candidates, comp_table, emp_batters, emp_pitchers,
             if comp.get("attempt_rate") and c.get("projected_pa"):
                 tob = (comp.get("obp") or 0.31) * c["projected_pa"]
                 modelled = pp.p_stolen_base(tob, comp["attempt_rate"], comp["success_rate"])
+            # AUDIT, 2026-08-12: CHECKED against the same held-out methodology
+            # that found hits/TB/HR/strikeouts broken -- stolen_base is NOT in
+            # the same state, so it is NOT changed. 253 regulars (40+ real
+            # games), each split 60% train / 40% test chronologically by their
+            # own games, 10,061 real held-out test games. Held-out mean log
+            # loss: shipped 60/40 blend 0.22329, empirical-only 0.22258,
+            # model-only 0.26824 (confirms the model alone IS overconfident,
+            # matching p_stolen_base's own David-Hamilton-+7.2-points note),
+            # league-only 0.23960, model-shrunk-toward-league (k=0.5, the fix
+            # that worked for hits/TB/HR) 0.22389. Unlike hits/TB/HR, the
+            # shipped blend clearly and significantly beats league-only
+            # (paired bootstrap, 600 resamples: -0.01631, 95% CI [-0.02054,
+            # -0.01145], excluding zero) -- this is a real signal, not a
+            # coin flip dressed up as one. The hits/TB/HR fix (shrink model,
+            # drop empirical) does NOT help here (0.22389 vs 0.22329, i.e.
+            # slightly worse) because the failure mode is different: there
+            # the BLEND was the problem; here the MODEL alone is the weak
+            # input but the blend's 60% empirical weighting already mostly
+            # compensates. Left as-is -- not every checked signal needs a
+            # fix, and shipping one anyway on a difference this small (within
+            # a single split's noise) would be exactly the kind of change
+            # this project's own discipline warns against.
             prob, basis = _blend(empirical, modelled)
             c["hit_probability"] = None if prob is None else round(prob, 4)
             c["probability_basis"] = basis
@@ -4606,21 +4938,48 @@ def quality_control(candidates, game_meta, park_wx, emp_pitchers):
         reason = None
         is_assumed = False
 
-        if stat == "strikeouts":
+        # pitcher_outs and combined_strikeouts are just as vulnerable to the
+        # opener trap as strikeouts is -- arguably more so, since "Over 17.5
+        # Outs" assumes a normal-length start even more directly than a K
+        # total does. Found missing during a sweep: this check only ever
+        # covered strikeouts, so a pitcher who'd shifted into an opener role
+        # could still ship an Outs Recorded or Combined Strikeouts pick built
+        # on a season average that no longer reflects how he's being used.
+        if stat in ("strikeouts", "pitcher_outs"):
             emp = emp_pitchers.get(c.get("player_id")) or {}
             starts = emp.get("starts", 0)
             avg_bf = emp.get("avg_bf")
+            label = CATEGORY_LABELS.get(stat, stat)
             if avg_bf is not None and avg_bf < OPENER_BF_THRESHOLD:
                 reason = (f"used as an opener ({avg_bf:.0f} batters faced per outing) — "
-                          f"a strikeout prop on him is not the bet the model priced")
+                          f"a {label} prop on him is not the bet the model priced")
             elif starts and starts < 3:
                 reason = f"only {starts} start(s) of evidence"
+        elif stat == "combined_strikeouts":
+            for pid in (c.get("combo_player_ids") or []):
+                emp = emp_pitchers.get(pid) or {}
+                avg_bf = emp.get("avg_bf")
+                if avg_bf is not None and avg_bf < OPENER_BF_THRESHOLD:
+                    reason = (f"one of the two starters is used as an opener "
+                              f"({avg_bf:.0f} batters faced per outing) — a combined "
+                              f"strikeouts prop assumes normal starter workload from both")
+                    break
 
         if reason is None and c.get("type") == "batter":
             gp = c.get("game_pk")
             side = "away" if c.get("team") == next(
                 (g.get("away_team") for g in game_meta if g.get("game_pk") == gp), None) else "home"
-            state = lineup_state.get((gp, side))
+            # REAL BUG, found by test_quality_control.py: .get((gp, side)) with
+            # no default returns None for a candidate whose game_pk isn't in
+            # game_meta at all (a stale candidate, or a game that dropped off
+            # the schedule between generation and this check). None matches
+            # neither "missing" nor "assumed" below, so the candidate fell
+            # through BOTH branches and reached `kept` -- a batter with ZERO
+            # lineup information sailing through as if fully confirmed, the
+            # exact thing this function exists to prevent. Defaulting to
+            # "missing" here makes that case reject the same way a genuinely
+            # unconfirmed lineup already does, instead of silently passing.
+            state = lineup_state.get((gp, side), "missing")
             if state == "missing":
                 reason = ("lineup not confirmed — the batting-order slot is a guess, "
                           "and slot is the strongest single signal in the model")
@@ -4755,7 +5114,7 @@ def write_markdown(top10, skipped, game_meta, bullpen_scores, all_ranked=(), moo
                      "unconfirmed, or data pulls came back empty) — check the run log.")
     for i, c in enumerate(top10, 1):
         hp = c.get("hit_probability")
-        head = f"### {i}. {c['name']} ({c['team']}) — {c['prop']}"
+        head = f"### {i}. {c['name']} ({_team_label(c)}) — {c['prop']}"
         if hp is not None:
             head += f"  ·  **{hp*100:.0f}% to hit**"
         lines.append(head)
@@ -4865,7 +5224,7 @@ def write_markdown(top10, skipped, game_meta, bullpen_scores, all_ranked=(), moo
                     base = c.get("base_rate")
                     lift_s = (f"  ·  lift {lift*100:+.1f} pts"
                               + (f" over a {base*100:.0f}% base rate" if base is not None else ""))
-                lines.append(f"- {c['name']} ({c['team']}) — {c['prop']} — "
+                lines.append(f"- {c['name']} ({_team_label(c)}) — {c['prop']} — "
                              f"**{hp*100:.0f}%** (~{pp.format_odds(hp)}){lift_s}")
             lines.append("")
 
@@ -4891,7 +5250,7 @@ def write_markdown(top10, skipped, game_meta, bullpen_scores, all_ranked=(), moo
             hp = c.get("hit_probability")
             odds = c.get("market_odds")
             odds_s = f" · **{odds:+d}** at FanDuel" if odds is not None else " · unpriced"
-            lines.append(f"{i}. **{c['name']}** ({c['team']}) — {c['matchup']} — "
+            lines.append(f"{i}. **{c['name']}** ({_team_label(c)}) — {c['matchup']} — "
                          f"**{hp*100:.1f}%** to hit a HR{odds_s}")
         lines.append("")
 
@@ -4918,7 +5277,7 @@ def write_markdown(top10, skipped, game_meta, bullpen_scores, all_ranked=(), moo
             odds = c.get("market_odds")
             flag = "" if c.get("clears_main_board_floor") else " ⚠"
             odds_s = f"{odds:+d}" if odds is not None else "unpriced"
-            lines.append(f"| {CATEGORY_LABELS[stat]} | {c['name']} ({c['team']}) | {c['prop']} | "
+            lines.append(f"| {CATEGORY_LABELS[stat]} | {c['name']} ({_team_label(c)}) | {c['prop']} | "
                          f"{hp*100:.1f}%{flag} | {c.get('score', '?')} | {odds_s} |")
         lines.append("")
 

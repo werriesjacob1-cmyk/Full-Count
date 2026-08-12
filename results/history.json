@@ -30,7 +30,24 @@
       "misses": 16,
       "ungraded": 0,
       "fair_hits": 10,
-      "fair_misses": 16
+      "fair_misses": 16,
+      "by_category": {
+        "main": {
+          "hits": 6,
+          "misses": 4,
+          "ungraded": 0
+        },
+        "moonshot": {
+          "hits": 1,
+          "misses": 4,
+          "ungraded": 0
+        },
+        "best_of_category": {
+          "hits": 3,
+          "misses": 8,
+          "ungraded": 0
+        }
+      }
     },
     {
       "date": "2026-08-08",
@@ -38,7 +55,24 @@
       "misses": 16,
       "ungraded": 1,
       "fair_hits": 9,
-      "fair_misses": 16
+      "fair_misses": 16,
+      "by_category": {
+        "main": {
+          "hits": 5,
+          "misses": 5,
+          "ungraded": 0
+        },
+        "moonshot": {
+          "hits": 1,
+          "misses": 4,
+          "ungraded": 0
+        },
+        "best_of_category": {
+          "hits": 3,
+          "misses": 7,
+          "ungraded": 1
+        }
+      }
     },
     {
       "date": "2026-08-09",
@@ -46,7 +80,24 @@
       "misses": 16,
       "ungraded": 0,
       "fair_hits": 6,
-      "fair_misses": 16
+      "fair_misses": 16,
+      "by_category": {
+        "main": {
+          "hits": 3,
+          "misses": 4,
+          "ungraded": 0
+        },
+        "moonshot": {
+          "hits": 1,
+          "misses": 4,
+          "ungraded": 0
+        },
+        "best_of_category": {
+          "hits": 2,
+          "misses": 8,
+          "ungraded": 0
+        }
+      }
     },
     {
       "date": "2026-08-10",
@@ -54,7 +105,24 @@
       "misses": 10,
       "ungraded": 0,
       "fair_hits": 16,
-      "fair_misses": 10
+      "fair_misses": 10,
+      "by_category": {
+        "main": {
+          "hits": 8,
+          "misses": 2,
+          "ungraded": 0
+        },
+        "moonshot": {
+          "hits": 1,
+          "misses": 4,
+          "ungraded": 0
+        },
+        "best_of_category": {
+          "hits": 7,
+          "misses": 4,
+          "ungraded": 0
+        }
+      }
     },
     {
       "date": "2026-08-11",
@@ -62,7 +130,24 @@
       "misses": 16,
       "ungraded": 0,
       "fair_hits": 10,
-      "fair_misses": 12
+      "fair_misses": 12,
+      "by_category": {
+        "main": {
+          "hits": 4,
+          "misses": 6,
+          "ungraded": 0
+        },
+        "moonshot": {
+          "hits": 2,
+          "misses": 3,
+          "ungraded": 0
+        },
+        "best_of_category": {
+          "hits": 4,
+          "misses": 7,
+          "ungraded": 0
+        }
+      }
     }
   ],
   "totals": {
@@ -76,5 +161,23 @@
     "hits": 70,
     "misses": 79
   },
-  "fair_test_hit_rate": 0.47
+  "fair_test_hit_rate": 0.47,
+  "by_category_totals": {
+    "main": {
+      "hits": 26,
+      "misses": 21,
+      "ungraded": 0
+    },
+    "moonshot": {
+      "hits": 6,
+      "misses": 19,
+      "ungraded": 0
+    },
+    "best_of_category": {
+      "hits": 19,
+      "misses": 34,
+      "ungraded": 1
+    }
+  },
+  "main_hit_rate": 0.553
 }

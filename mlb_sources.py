@@ -41,7 +41,7 @@ UA = {"User-Agent": "Mozilla/5.0"}
 #  MLB STATS API — TEAM AGGREGATES  (replaces FanGraphs team pages)
 # ══════════════════════════════════════════════════════════════════════════
 
-def fetch_team_stats(group):
+def fetch_team_stats(group, start_date=None, end_date=None):
     """Team-level season aggregates for 'hitting', 'pitching', or 'fielding'.
 
     Verified live against all three groups: returns all 30 teams every time,
@@ -54,11 +54,25 @@ def fetch_team_stats(group):
     This is the replacement for FanGraphs' team-level pages, which fail
     independently of its individual leaderboards — verified across a full
     night of real runs where every team page was empty while individual
-    pages succeeded."""
+    pages succeeded.
+
+    POINT-IN-TIME MODE, same pattern as fetch_player_stats: passing
+    start_date/end_date switches stats=season (always "through today") to
+    stats=byDateRange, which /teams/stats honors too -- verified live
+    (2026-08-12): byDateRange through 2026-07-01 returned the Dodgers at
+    689 PA / 3371 strikeOuts-denominator-relevant PA vs 4591 for the full
+    season-to-date pull, a genuinely different number, not a silent
+    no-op. This is what lets backtest/engine.py call this point-in-time
+    safely; live callers pass neither and get the previous behaviour."""
+    params = {"season": m.YEAR, "sportId": 1, "group": group}
+    if start_date and end_date:
+        params.update({"stats": "byDateRange", "startDate": start_date,
+                       "endDate": end_date, "gameType": "R"})
+    else:
+        params["stats"] = "season"
     try:
         r = m.retry_get(f"{STATS_API}/teams/stats",
-                        params={"season": m.YEAR, "sportId": 1, "group": group, "stats": "season"},
-                        headers=UA, timeout=25, retries=2)
+                        params=params, headers=UA, timeout=25, retries=2)
         r.raise_for_status()
         splits = r.json().get("stats", [{}])[0].get("splits", [])
     except Exception as e:
@@ -79,10 +93,13 @@ def _pct(num, den, digits=1):
         return None
 
 
-def team_batting_table():
+def team_batting_table(start_date=None, end_date=None):
     """Team batting with derived K%/BB% — the specific fields downstream
-    scoring wants and that the raw API returns only as raw counts."""
-    rows = fetch_team_stats("hitting")
+    scoring wants and that the raw API returns only as raw counts.
+
+    start_date/end_date: see fetch_team_stats's own docstring -- passed
+    straight through for point-in-time (backtest) callers."""
+    rows = fetch_team_stats("hitting", start_date=start_date, end_date=end_date)
     out = []
     for r in rows:
         pa = r.get("plateAppearances")
@@ -111,8 +128,10 @@ def team_pitching_table():
     return sorted(out, key=lambda x: (x["ERA"] is None, float(x["ERA"] or 99)))
 
 
-def team_fielding_table():
-    rows = fetch_team_stats("fielding")
+def team_fielding_table(start_date=None, end_date=None):
+    """start_date/end_date: see fetch_team_stats's own docstring -- passed
+    straight through for point-in-time (backtest) callers."""
+    rows = fetch_team_stats("fielding", start_date=start_date, end_date=end_date)
     out = []
     for r in rows:
         out.append({
@@ -868,7 +887,7 @@ def _consecutive_streak(dates):
 
 
 def _rest_batter_one(job):
-    pid, name = job
+    pid, name, asof = job
     today = _dt.datetime.strptime(m.TODAY, "%Y-%m-%d").date()
     try:
         r = m.retry_get(f"{STATS_API}/people/{pid}/stats",
@@ -879,6 +898,13 @@ def _rest_batter_one(job):
         if not stats:
             return None
         dates = _parse_dates(stats[0].get("splits", []))
+        # Raw gameLog has no window param -- same unguarded exposure
+        # empirical_pitcher_outs_rates/empirical_pitcher_k_rates already
+        # fix with an explicit asof. None (the live default) means "no
+        # filter," today's behaviour, since a live run's gameLog never
+        # contains games after real today anyway.
+        if asof is not None:
+            dates = [d for d in dates if d.isoformat() <= asof]
         if not dates:
             return None
     except Exception:
@@ -891,7 +917,7 @@ def _rest_batter_one(job):
 
 
 def _rest_pitcher_one(job):
-    pid, name = job
+    pid, name, asof = job
     today = _dt.datetime.strptime(m.TODAY, "%Y-%m-%d").date()
     try:
         r = m.retry_get(f"{STATS_API}/people/{pid}/stats",
@@ -906,6 +932,8 @@ def _rest_pitcher_one(job):
         # relief; those rows have gamesStarted==0 and would understate rest).
         start_splits = [sp for sp in splits if int(sp.get("stat", {}).get("gamesStarted", 0) or 0) > 0]
         dates = _parse_dates(start_splits)
+        if asof is not None:
+            dates = [d for d in dates if d.isoformat() <= asof]
         if not dates:
             return None
     except Exception:
@@ -915,7 +943,7 @@ def _rest_pitcher_one(job):
             "starts_this_season": len(dates)}
 
 
-def rest_and_usage(game_meta, max_batters_per_game=9, max_workers=16):
+def rest_and_usage(game_meta, max_batters_per_game=9, max_workers=16, asof=None):
     """Rest/usage signals for tonight's confirmed lineup batters and
     probable starters, from real MLB game logs (stats=gameLog) — the same
     endpoint shape as mlb_daily.fetch_mlb_game_logs, reused here for a
@@ -946,7 +974,15 @@ def rest_and_usage(game_meta, max_batters_per_game=9, max_workers=16):
 
     Returns {"batters": {id: {...}}, "starters": {id: {...}}} — dict-keyed
     by MLBAM id per the project convention, not a list, since this is
-    meant to be looked up per player rather than iterated/sorted."""
+    meant to be looked up per player rather than iterated/sorted.
+
+    asof (default None, live/unfiltered behaviour): a 'YYYY-MM-DD' cutoff.
+    The raw gameLog endpoint has no window param of its own, so without
+    this a backtest would silently take each player's most recent game as
+    of the REAL current date rather than as of the date being simulated —
+    the same exposure empirical_pitcher_outs_rates already guards against.
+    When set, every parsed game date after asof is dropped before
+    days_since_last_game/consecutive_games/games_last_7d are computed."""
     batters = {}
     starters = {}
     for gm in game_meta:
@@ -962,13 +998,15 @@ def rest_and_usage(game_meta, max_batters_per_game=9, max_workers=16):
     out = {"batters": {}, "starters": {}}
     try:
         if batters:
+            jobs = [(pid, name, asof) for pid, name in batters.items()]
             with m.ThreadPoolExecutor(max_workers=max_workers) as ex:
-                for res in ex.map(_rest_batter_one, list(batters.items())):
+                for res in ex.map(_rest_batter_one, jobs):
                     if res:
                         out["batters"][res["id"]] = res
         if starters:
+            jobs = [(pid, name, asof) for pid, name in starters.items()]
             with m.ThreadPoolExecutor(max_workers=max_workers) as ex:
-                for res in ex.map(_rest_pitcher_one, list(starters.items())):
+                for res in ex.map(_rest_pitcher_one, jobs):
                     if res:
                         out["starters"][res["id"]] = res
     except Exception as e:
@@ -1106,7 +1144,7 @@ def _as_float(v):
 _PROP_THRESHOLDS = {
     "hits":         [1, 2, 3, 4],
     "total_bases":  [1, 2, 3, 4, 5],
-    "home_runs":    [1, 2],
+    "home_runs":    [1, 2, 3],
     "stolen_bases": [1, 2],
     "walks":        [1],
     "runs":         [1, 2, 3],
@@ -1207,7 +1245,7 @@ def _empirical_batter_one(job):
 # sample is pulled about 44% of the way to league average -- roughly the
 # right amount of scepticism for that much evidence.
 #
-# ── AUDIT, 2026-08-06: MEASURED. NOT ACTED ON -- SEE THE CAVEAT BELOW. ────
+# ── AUDIT, 2026-08-06: MEASURED. ACTED ON 2026-08-12 -- SEE THE CAVEAT. ──
 # This constant is the strength of a Beta prior, so it is not a taste
 # question: for hits_i ~ BetaBinom(n_i, mu*n0, (1-mu)*n0) the posterior mean
 # is EXACTLY the (hit + n0*league)/(n + n0) computed below, and n0 is fixed
@@ -1217,7 +1255,7 @@ def _empirical_batter_one(job):
 # a third way, non-parametrically, by splitting each player's games odd/even,
 # shrinking the odd half and scoring the even half.
 #
-#   threshold            MLE n0   MoM n0   split-half n0   SHIPPED
+#   threshold            MLE n0   MoM n0   split-half n0   SHIPPED (was)
 #   hits_1plus             72.7     70.3        56            20
 #   hits_2plus             72.0     72.8        56            20
 #   total_bases_2plus      78.3     76.9        70            20
@@ -1235,25 +1273,94 @@ def _empirical_batter_one(job):
 # where between-player differences really are large and real -- and 3-4x too
 # SMALL for hits and total bases, which is where the board actually bets.
 # The consequence at the 25-game gate (MIN_EMPIRICAL_GAMES): a hits_1plus
-# rate is currently pulled 44% toward league when it should be pulled 74%.
-# Measured cost: at n0=20 the shipped total-bases rates are under-shrunk
-# enough that they score WORSE out of sample than ignoring the player's own
-# record entirely (total_bases_2plus .65675 vs .65540 league-only).
+# rate was pulled 44% toward league when it should be pulled 74%. Measured
+# cost: at flat n0=20 the total-bases rates were under-shrunk enough that
+# they scored WORSE out of sample than ignoring the player's own record
+# entirely (total_bases_2plus .65675 vs .65540 league-only).
 #
-# RECOMMENDED: fit n0 per threshold by the same beta-binomial MLE, inside
-# _apply_shrinkage's existing per-key loop -- it already pools every player's
-# (hit, n) for each key to get `league`, which is exactly the data the fit
-# needs, so this costs one extra optimisation per key and no new inputs.
+# ACTED ON: _apply_shrinkage now fits n0 per threshold with the same
+# beta-binomial MLE, inside its existing per-key loop -- it already pools
+# every player's (hit, n) for each key to get `league`, which is exactly the
+# data the fit needs. See _fit_shrinkage_n0. SHRINKAGE_PRIOR_GAMES survives
+# as the fallback for a key with too few players to fit reliably, and as the
+# explicit override still used by empirical_pitcher_k_rates/
+# empirical_pitcher_outs_rates (prior_games=6, independently audited/
+# borrowed -- see their own comments) and hard_hit_game_rates
+# (prior_games=20, never separately audited) -- neither of those call sites
+# is touched by this fix; only the batter table's own default is.
 #
-# CAVEAT, stated because it bounds the claim: these n0 were fitted on
-# REGULARS (250+ PA, 40+ games). Restricting to regulars truncates the
-# between-player spread, which biases n0 upward. That is the same population
-# the pipeline scores, so it is the right population to fit on -- but the
-# numbers above should not be reused for a wider player pool.
+# CAVEAT, stated because it bounds the claim: the n0 in the table above were
+# fitted on REGULARS (250+ PA, 40+ games). Restricting to regulars truncates
+# the between-player spread, which biases n0 upward. The live fit below runs
+# fresh on whatever population is actually passed in each call -- typically
+# a night's ~250-300 confirmed lineup batters, a similar-sized and similarly
+# composed pool -- rather than reusing these frozen numbers, so it adapts
+# automatically instead of inheriting this caveat.
 SHRINKAGE_PRIOR_GAMES = 20
 
+# A key needs at least this many players with a rate for the beta-binomial
+# fit below to be trusted; short of it, _fit_shrinkage_n0 returns the flat
+# fallback rather than fitting a concentration parameter off a handful of
+# points. Well under the audit's 244 -- this guards against instability, not
+# against reusing a frozen population.
+MIN_PLAYERS_TO_FIT_SHRINKAGE = 30
 
-def _apply_shrinkage(table, prior_games=SHRINKAGE_PRIOR_GAMES):
+
+def _fit_shrinkage_n0(entries, league, fallback=SHRINKAGE_PRIOR_GAMES,
+                      lo=2.0, hi=1000.0):
+    """MLE of the Beta-Binomial concentration n0 (= alpha + beta) for a FIXED
+    mean `league`, from this key's real (hit, n) pairs -- see the audit above
+    _apply_shrinkage for the derivation and the numbers that motivated this.
+
+    hits_i ~ BetaBinomial(n_i, alpha=league*n0, beta=(1-league)*n0). Maximises
+    the log-likelihood over n0 by golden-section search in log-space (n0 is
+    strictly positive and the audit's own three independent estimators agree
+    it varies close to two orders of magnitude across thresholds, which is
+    exactly the regime a log-space search is suited to) -- no scipy
+    dependency for a one-parameter fit this pipeline only needs at night.
+
+    Falls back to `fallback` rather than fitting when there are too few
+    players (MIN_PLAYERS_TO_FIT_SHRINKAGE) or league is degenerate (0 or 1,
+    where the beta-binomial log-likelihood is undefined)."""
+    if league <= 0.0 or league >= 1.0:
+        return fallback
+    obs = [(int(e["hit"]), int(e["n"])) for e in entries if e.get("n")]
+    if len(obs) < MIN_PLAYERS_TO_FIT_SHRINKAGE:
+        return fallback
+
+    lgamma = math.lgamma
+
+    def neg_log_lik(n0):
+        alpha, beta = league * n0, (1.0 - league) * n0
+        log_norm = lgamma(alpha) + lgamma(beta) - lgamma(alpha + beta)
+        ll = 0.0
+        for hit, n in obs:
+            ll += (lgamma(hit + alpha) + lgamma(n - hit + beta)
+                   - lgamma(n + alpha + beta) - log_norm)
+        return -ll
+
+    a, b = math.log(lo), math.log(hi)
+    gr = (5 ** 0.5 - 1) / 2  # golden ratio conjugate, ~0.618
+    c, d = b - gr * (b - a), a + gr * (b - a)
+    try:
+        fc, fd = neg_log_lik(math.exp(c)), neg_log_lik(math.exp(d))
+        for _ in range(60):
+            if fc < fd:
+                b, d, fd = d, c, fc
+                c = b - gr * (b - a)
+                fc = neg_log_lik(math.exp(c))
+            else:
+                a, c, fc = c, d, fd
+                d = a + gr * (b - a)
+                fd = neg_log_lik(math.exp(d))
+            if b - a < 1e-4:
+                break
+    except (ValueError, OverflowError):
+        return fallback
+    return math.exp((a + b) / 2)
+
+
+def _apply_shrinkage(table, prior_games=None):
     """Shrink each player's observed rate toward the league rate for that same
     threshold, in place, writing "p_hat" as the estimate to actually use.
 
@@ -1270,7 +1377,13 @@ def _apply_shrinkage(table, prior_games=SHRINKAGE_PRIOR_GAMES):
 
     Shrinkage toward the league rate fits the problem: it is centred rather
     than pessimistic, it corrects hardest exactly where the evidence is
-    thinnest, and it converges on the observed rate as the sample grows."""
+    thinnest, and it converges on the observed rate as the sample grows.
+
+    prior_games: None (the default) fits n0 PER KEY via _fit_shrinkage_n0 --
+    see the audit above this function. Pass an explicit number to force the
+    old flat behaviour for every key, which empirical_pitcher_k_rates,
+    empirical_pitcher_outs_rates and hard_hit_game_rates still do
+    deliberately (see their own call sites for why)."""
     keys = set()
     for e in table.values():
         keys.update((e.get("rates") or {}).keys())
@@ -1279,10 +1392,12 @@ def _apply_shrinkage(table, prior_games=SHRINKAGE_PRIOR_GAMES):
         total_hits = sum(r["hit"] for r in entries)
         total_n = sum(r["n"] for r in entries)
         league = (total_hits / total_n) if total_n else 0.0
+        n0 = prior_games if prior_games is not None else _fit_shrinkage_n0(entries, league)
         for r in entries:
             r["league_p"] = round(league, 4)
-            r["p_hat"] = round((r["hit"] + prior_games * league) /
-                               (r["n"] + prior_games), 4)
+            r["n0"] = round(n0, 1)
+            r["p_hat"] = round((r["hit"] + n0 * league) /
+                               (r["n"] + n0), 4)
     return table
 
 
@@ -2043,4 +2158,138 @@ def umpire_k_bb_rates(min_games=8):
             "league_k_pct": round(lg_k, 4),
             "league_bb_pct": round(lg_bb, 4),
         }
+    return out
+
+
+def _fetch_transactions(days_back):
+    """Raw MLB transactions for the last `days_back` days, as of today.
+    Shared by fetch_recent_il_returns and fetch_recent_callups so both draw
+    from one real fetch rather than hitting this endpoint twice for the
+    same window -- same discipline as attach_market_prices/po_prices
+    elsewhere in this project ("reused ... instead of fetching the same
+    market twice")."""
+    r = m.retry_get(f"{STATS_API}/transactions",
+                    params={"sportId": 1,
+                            "startDate": (_dt.datetime.strptime(m.TODAY, "%Y-%m-%d").date()
+                                         - _dt.timedelta(days=days_back)).strftime("%Y-%m-%d"),
+                            "endDate": m.TODAY},
+                    headers={"User-Agent": "Mozilla/5.0"}, timeout=25)
+    r.raise_for_status()
+    return r.json().get("transactions", [])
+
+
+def fetch_recent_il_returns(days_back=21):
+    """Players activated off the injured list within the last `days_back`
+    days, as of today. Returns {player_id: {"date": "YYYY-MM-DD",
+    "days_ago": int, "il_days": int or None, "description": str}} -- one
+    entry per player, the MOST RECENT activation if there were several.
+
+    WHY THIS EXISTS. Nothing in this pipeline currently accounts for a
+    batter or pitcher being fresh off the injured list. The injury report
+    (mlb_daily.fetch_injuries) only ever shows who is CURRENTLY out, never
+    who just came back -- and a player's first games back from a real
+    injury are a real, plausible source of underperformance that a
+    season-long or even L7 rolling stat can't see coming, because the
+    return itself hasn't accumulated any track record yet.
+
+    VERIFIED LIVE before building this: MLB's transactions endpoint has no
+    dedicated "injured list" transaction type -- returns and placements
+    both come back as typeCode "SC" / typeDesc "Status Change", with the
+    actual detail only in the free-text `description` field. Pulled a real
+    2026-07-25..08-12 window (1,261 transactions): 139 matched "activated
+    ... from the N-day injured list" verbatim, e.g. "Houston Astros
+    activated RHP Marco Raya from the 15-day injured list." Deliberately
+    NOT matching on the bare word "activated" alone -- a real example in
+    the same window, "Boston Red Sox activated 3B Curtis Mead.", has no
+    "injured list" clause at all (a paternity/bereavement/restricted-list
+    return, which carries no injury-performance implication), and matching
+    it would have falsely flagged a healthy player.
+
+    DELIBERATELY NOT A SCORED SIGNAL. There is no measured effect size for
+    how many games a return-from-IL performance dip actually lasts in this
+    league, and inventing one would be exactly the "plausible-looking
+    number that isn't real" this project exists to avoid. This is surfaced
+    as an informational watchout on the affected candidate (see
+    generate_picks.py) -- same treatment as the existing rain-risk and
+    bullpen-fatigue flags -- not folded into score."""
+    import re as _re
+    txns = _fetch_transactions(days_back)
+    pattern = _re.compile(r"activated\b.*\bfrom the (\d+)-day injured list", _re.IGNORECASE)
+    today = _dt.datetime.strptime(m.TODAY, "%Y-%m-%d").date()
+    out = {}
+    for t in txns:
+        if t.get("typeDesc") != "Status Change":
+            continue
+        desc = t.get("description") or ""
+        match = pattern.search(desc)
+        if not match:
+            continue
+        pid = (t.get("person") or {}).get("id")
+        date_str = t.get("date")
+        if not pid or not date_str:
+            continue
+        try:
+            txn_date = _dt.datetime.strptime(date_str, "%Y-%m-%d").date()
+        except ValueError:
+            continue
+        days_ago = (today - txn_date).days
+        if days_ago < 0:
+            continue  # a future-dated transaction is not a real return yet
+        # Keep only the most recent activation per player -- a player
+        # activated, re-injured, and activated again should show his LATEST
+        # return, not an earlier one.
+        existing = out.get(pid)
+        if existing is not None and existing["days_ago"] <= days_ago:
+            continue
+        out[pid] = {"date": date_str, "days_ago": days_ago,
+                    "il_days": int(match.group(1)), "description": desc}
+    return out
+
+
+def fetch_recent_callups(days_back=14):
+    """Players recalled from the minors within the last `days_back` days.
+    Returns {player_id: {"date": "YYYY-MM-DD", "days_ago": int,
+    "description": str}} -- one entry per player, most recent recall wins.
+
+    SAME "FRESH, UNCERTAIN TRACK RECORD" THEME AS fetch_recent_il_returns,
+    a genuinely different cause: not an injury layoff, a jump from a lower
+    level of competition with little or no MLB track record of his own to
+    season/rolling stats. A September call-up, a rookie debut, or a
+    yo-yoing bench bat back up after being optioned down all land here
+    alike -- this deliberately does not try to distinguish which, since
+    the shared, actionable fact for a betting read is the same either way:
+    whatever this pipeline knows about him is thinner than it looks.
+
+    Unlike IL activity, "Recalled" is its own clean, dedicated typeDesc on
+    MLB's transactions endpoint (verified live: 115 real matches in a
+    2026-07-25..08-12 window, e.g. "Cleveland Guardians recalled LHP Will
+    Dion from Columbus Clippers.") -- no free-text pattern-matching needed,
+    unlike the IL case where the same typeDesc covers both directions.
+
+    DELIBERATELY NOT A SCORED SIGNAL, same reasoning as
+    fetch_recent_il_returns: no measured effect size exists for how a
+    recent call-up actually performs relative to what his own season line
+    shows, so this is an informational watchout only."""
+    txns = _fetch_transactions(days_back)
+    today = _dt.datetime.strptime(m.TODAY, "%Y-%m-%d").date()
+    out = {}
+    for t in txns:
+        if t.get("typeDesc") != "Recalled":
+            continue
+        pid = (t.get("person") or {}).get("id")
+        date_str = t.get("date")
+        if not pid or not date_str:
+            continue
+        try:
+            txn_date = _dt.datetime.strptime(date_str, "%Y-%m-%d").date()
+        except ValueError:
+            continue
+        days_ago = (today - txn_date).days
+        if days_ago < 0:
+            continue
+        existing = out.get(pid)
+        if existing is not None and existing["days_ago"] <= days_ago:
+            continue
+        out[pid] = {"date": date_str, "days_ago": days_ago,
+                    "description": t.get("description") or ""}
     return out

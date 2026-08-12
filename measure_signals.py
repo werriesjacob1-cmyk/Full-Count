@@ -14,13 +14,11 @@ series_game, ump_k_pct, ump_bb_pct. Every one is recorded through _sig()
 without touching the score, precisely so its worth could be established from
 outcomes rather than from how sensible it sounds.
 
-That promise had no way to be kept. The measurement path did not exist:
+That promise had no way to be kept when this was written. The measurement
+path did not exist:
 
-  - backtest/engine.py builds its kwargs without `extras`, so all seventeen
-    are absent from every backtested row. Not broken -- correct, since the
-    tables behind them are season-to-date aggregates that cannot be rebuilt
-    as of a past morning without lookahead, which is the exact thing the
-    PointInTime guard exists to prevent.
+  - backtest/engine.py built its kwargs without `extras` at all, so every
+    one of the seventeen was absent from every backtested row.
   - results/grades_*.json holds ten picks a day, the published board. Ten
     rows a day cannot separate seventeen signals from noise.
   - data/players/*.json holds every candidate scored -- roughly 420 a day,
@@ -29,6 +27,28 @@ That promise had no way to be kept. The measurement path did not exist:
 So the substrate was being written and thrown away, while the two things
 that could have consumed it were structurally unable to. This joins the
 third file to real box scores and measures each signal directly.
+
+UPDATED 2026-08-12: the backtest half of that is no longer true for most of
+these. platoon_barrel_pct, platoon_xwoba, park_hand_index, opp_catcher_
+framing, pull_park_synergy, days_rest, consecutive_games, ump_k_pct, and
+ump_bb_pct all route through sources that ARE point-in-time reconstructable
+(mlb_sources.fetch_season_statcast(), which the PointInTime guard already
+protects) and are now wired into backtest/engine.py's extras -- see its own
+comments. hard_hit_105_rate was already backtest-visible before that fix.
+getaway_day/series_game come straight off game_meta (the confirmed slate
+for date D), never needed extras at all, and were always backtest-safe.
+Measured on a fresh 33-date backtest via backtest/signals.py: see
+generate_picks.py's own audit comment near where each is recorded for the
+result (short version: none of the eight newly-visible ones cleared the bar
+to promote, but they are now genuinely measurable on every future run).
+
+STILL genuinely forward-only, unchanged: bvp_ops, team_total_move,
+team_total_open, and money_ticket_split are live market/matchup-history
+aggregates with no reconstructable historical archive -- this file remains
+the only way to measure those four. opp_team_cs_pct (mlb_sources.
+fetch_team_stats, stats=season with no byDateRange support checked) has not
+been re-examined for point-in-time safety; treat it as forward-only until
+someone does.
 
 WHAT IS MEASURED, AND WHY AUC.
 

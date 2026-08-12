@@ -83,6 +83,17 @@ def model_probabilities(prices, min_games=40, use_pipeline=True):
         try:
             import generate_picks as gp
             cands, _ctx = gp.score_slate()
+            # quality_control() was never called here at all -- found during
+            # a bug sweep. score_slate() is the raw scoring engine; the input-
+            # TRUST layer (reject a pitcher who's actually being used as an
+            # opener tonight, a batter whose lineup slot is still a guess,
+            # rain risk) is applied separately, by main(), after this exact
+            # same call. This module's own docstring calls itself "the board
+            # that actually gets bet" -- it was the one surface reusing the
+            # scoring engine while skipping the safety layer built for it.
+            cands, _qc_rejected, _assumed = gp.quality_control(
+                cands, _ctx.get("game_meta") or [], _ctx.get("park_wx") or {},
+                _ctx.get("emp_pitchers") or {})
             for c in cands:
                 nm = fd.normalize_name(c.get("name") or "")
                 if not nm:
@@ -200,7 +211,7 @@ def screen(entries, min_roi=pp.MIN_ROI, require_robust=True, reject_suspect=True
                             "gap_vs_market": agree["gap"]}}
         clears_roi = v["roi"] >= min_roi
         robust = v.get("robust_to_uncertainty", True)
-        if clears_roi and robust and agree["agreement"] != "SUSPECT":
+        if clears_roi and robust and (not reject_suspect or agree["agreement"] != "SUSPECT"):
             row["tier"] = "A"
         elif clears_roi and robust:
             row["tier"] = "B"

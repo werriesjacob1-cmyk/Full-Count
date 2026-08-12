@@ -92,6 +92,12 @@ MARKET_MAP = {
     # Home runs
     "TO_HIT_A_HOME_RUN":        ("home_runs", 1),
     "TO_HIT_2+_HOME_RUNS":      ("home_runs", 2),
+    # Found live 2026-08-12 (a real pull, 4 occurrences across 8 games) --
+    # never mapped before now. generate_picks.py's _batter_options never even
+    # asked for a 2+/3+ home-run probability until the same pass added this,
+    # so this entry alone would have priced a market the pipeline could never
+    # actually recommend against.
+    "TO_HIT_3+_HOME_RUNS":      ("home_runs", 3),
     # Runs, RBIs and steals. These were the largest omission: the empirical
     # table has always computed rates for all three, and FanDuel prices ~720
     # lines a night across them, so they were being modelled and then thrown
@@ -136,27 +142,32 @@ MARKET_MAP = {
 # Markets deliberately NOT mapped, and why. Listing them is the point: an
 # unmapped market should be a decision on record, not an oversight.
 #
+# STALE ENTRIES REMOVED, 2026-08-12 audit: LASER and PITCHER_*_STRIKEOUTS used
+# to be listed here as unmapped/not-yet-computed. Both are wrong now --
+# score_laser (hard_hit_105/hard_hit_110, both in MARKET_MAP above) and
+# fetch_pitcher_strikeouts/attach_market_prices' "strikeouts" branch (a
+# separate two-sided feed, since it's a line market rather than yes/no, not a
+# MARKET_MAP entry) have shipped since this dict was written. UNMAPPED_REASONS
+# itself is never read by any code path -- it is documentation only -- but
+# stale documentation here is exactly the "the comment says one thing, the
+# code does another" bug class this project keeps finding elsewhere, just
+# without a runtime consequence this time.
+#
 #   PLAYERS_TO_COMBINE_FOR_*  — two or more players in one bet. Pricing these
 #     honestly needs the JOINT distribution, and teammates' outcomes are
 #     correlated (same game, same pitcher, same run environment). Multiplying
 #     two independent probabilities would overstate every one of them, which
 #     is exactly the kind of plausible-looking error this project keeps
-#     finding. ~640 lines a night, left alone until correlation is modelled.
+#     finding. ~640 lines a night, left alone until correlation is modelled --
+#     correlation.py now exists (built for parlay_builder.py) and may be
+#     reusable here; not yet evaluated for that.
 #   RESULT_OF_FIRST_PITCH, BATTER_UP_*, FIRST_SCORING_PLAY — single-pitch and
 #     single-plate-appearance micro markets. No rate is computed for them and
 #     none could be estimated from game logs.
-#   PLAYER_TO_HIT_A_LASER_(110+_MPH) — genuinely modelable from Statcast exit
-#     velocity, which this project already pulls, but the per-game rate is not
-#     computed yet. A real gap rather than an impossibility.
-#   PITCHER_*_STRIKEOUTS — these are line markets (over/under N) rather than
-#     yes/no, so they need different parsing. empirical_pitcher_k_rates
-#     already produces the rates; only the mapping is missing.
 UNMAPPED_REASONS = {
     "PLAYERS_TO_COMBINE_FOR": "needs a joint distribution — teammates are correlated",
     "RESULT_OF_FIRST_PITCH": "single-pitch market, no rate exists",
     "BATTER_UP": "single-plate-appearance micro market, no rate exists",
-    "LASER": "modelable from Statcast exit velo — not yet computed",
-    "PITCHER_": "line market, needs different parsing — rates already exist",
 }
 
 
@@ -523,7 +534,8 @@ def fetch_prop_prices(max_workers=8):
 STAT_ALIASES = {"stolen_base": "stolen_bases"}
 
 
-def attach_market_prices(candidates, prices=None, k_prices=None, fi_prices=None, po_prices=None):
+def attach_market_prices(candidates, prices=None, k_prices=None, fi_prices=None, po_prices=None,
+                         combined_k_prices=None):
     """Attach the real posted price to every candidate that has one.
 
     Sets `market_odds`, `market_implied`, and `market_edge` (model probability
@@ -531,14 +543,27 @@ def attach_market_prices(candidates, prices=None, k_prices=None, fi_prices=None,
     guessing when the prop is not offered -- an unpriced prop is a gap in
     coverage, not a bet at some assumed number.
 
-    Consults THREE price feeds. `prices` (fetch_prop_prices) is the
-    one-sided batter feed; pitcher strikeouts are a separate, two-sided
-    market (fetch_pitcher_strikeouts) that this function used to never even
+    Consults price feeds. `prices` (fetch_prop_prices) is the one-sided
+    batter feed; pitcher strikeouts are a separate, two-sided market
+    (fetch_pitcher_strikeouts) that this function used to never even
     request, which is the entire reason 27 strikeout candidates priced at
     zero -- not a naming mismatch like stolen_base, a missing feed.
     fetch_first_inning_totals is the real combined NRFI/YRFI market, keyed
     by game rather than player -- same "never requested the right tab"
-    story as strikeouts, found the same way."""
+    story as strikeouts, found the same way.
+
+    combined_k_prices was missing entirely until this pass: build_candidates()
+    already prices combined_strikeouts inline (score_combined_strikeouts sets
+    market_odds itself, at creation time, off the real ladder), so this
+    function's main() caller never needed it and this gap stayed invisible.
+    But that inline price is never persisted (persist_player_snapshots'
+    evaluation dict carries no market_odds at all -- the daily board's own
+    in-memory candidates simply keep the value they were created with) and
+    this function had no branch to RE-derive it -- so parlay_builder.py,
+    which reloads candidates from data/players/*.json and re-prices through
+    exactly this function, could never price a combined_strikeouts leg.
+    Verified live before this fix: a reconstructed combined_strikeouts leg
+    came back with market_odds still None after a full _finalize() pass."""
     import prop_probability as pp
     if prices is None:
         try:
@@ -555,6 +580,11 @@ def attach_market_prices(candidates, prices=None, k_prices=None, fi_prices=None,
             fi_prices = fetch_first_inning_totals()
         except Exception:
             fi_prices = {}
+    if combined_k_prices is None:
+        try:
+            combined_k_prices = fetch_combined_pitcher_strikeouts()
+        except Exception:
+            combined_k_prices = {}
     if po_prices is None:
         try:
             po_prices = fetch_pitcher_outs()
@@ -580,6 +610,31 @@ def attach_market_prices(candidates, prices=None, k_prices=None, fi_prices=None,
             if p is not None:
                 c["market_edge"] = round(p - c["market_implied"], 4)
                 c["price_clears"] = pp.price_is_acceptable(po["over"], p)
+            matched += 1
+            continue
+
+        if stat == "combined_strikeouts":
+            # Game-level market like nrfi_combined -- keyed by matchup, not
+            # player name (the candidate's own "name" is "Pitcher A & Pitcher
+            # B", which will never match a real FanDuel runner name). A
+            # one-sided ladder like the batter markets in MARKET_MAP (12+,
+            # 13+, 14+... escalating odds, no paired Under), so the implied
+            # probability is read straight off the price, same as those --
+            # matches score_combined_strikeouts' own market_implied
+            # computation exactly, for consistency between the price set at
+            # creation time and any later re-price through this function.
+            ck = (combined_k_prices or {}).get(c.get("matchup"))
+            if ck is None or needs is None:
+                continue
+            odds = (ck.get("rungs") or {}).get(needs)
+            if odds is None:
+                continue
+            c["market_odds"] = odds
+            c["market_implied"] = round(pp.implied_probability(odds), 4)
+            p = c.get("hit_probability")
+            if p is not None:
+                c["market_edge"] = round(p - c["market_implied"], 4)
+                c["price_clears"] = pp.price_is_acceptable(odds, p)
             matched += 1
             continue
 
