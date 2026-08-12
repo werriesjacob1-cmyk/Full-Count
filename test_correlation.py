@@ -106,6 +106,23 @@ check(v2.label != "negative",
       "pitcher's strikeout prop vs his OWN team's batter is not negative",
       f"got {v2.label}")
 
+# Bug found during this audit: combined_strikeouts (score_combined_strikeouts,
+# "type": "pitcher_combo", team explicitly None) wasn't covered by the
+# pitcher-vs-hitter check at all, since that check required "type": "pitcher".
+# A "2 combined strikeouts, 2 hits" parlay request would have classified the
+# pair "independent" -- verified live before this fix -- exactly the "K prop
+# + opposing hitter" case this module exists to catch. Both teams' hitters
+# are opposed (no `team` to match against, since the prop is both starters
+# combined), so this should fire against a batter on EITHER side.
+combo = dict(name="SP A & SP B", team=None, matchup="Mets @ Pirates", game_pk=1,
+            type="pitcher_combo", player_id="sp_a",
+            projection={"stat": "combined_strikeouts"})
+for team_name, team_batter in (("away", a), ("home", b)):
+    v_combo = corr.classify(combo, team_batter)
+    check(v_combo.label == "negative",
+          f"combined_strikeouts vs a {team_name}-side batter in the same game is negative",
+          f"got {v_combo.label}")
+
 # Same game, opposing teams, no pitcher-vs-hitter relationship -> independent,
 # not a fabricated negative.
 g = batter("G. Batter", "Pirates", "Mets @ Pirates", 1, "home_runs")

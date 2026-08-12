@@ -85,6 +85,23 @@ def _teams_in_matchup(matchup):
     return away.strip(), home.strip()
 
 
+def _is_combined_k_prop(pick):
+    """A combined_strikeouts candidate (score_combined_strikeouts) is BOTH
+    starters' strikeout totals added together -- type "pitcher_combo", team
+    explicitly None (see its own docstring), not the single-pitcher "type":
+    "pitcher" this module's pitcher-vs-hitter check was built for. Missed
+    entirely until this audit: a request for "2 combined strikeouts, 2 hits"
+    in the same game classified the pair "independent" (checked live,
+    verified before this fix), when it is exactly the "K prop + opposing
+    hitter" case this module exists to catch -- whichever of the two
+    starters faces a given batter's team, more strikeouts from him is worse
+    for that batter, and unlike the single-pitcher case there is no `team`
+    to match against `_opponent_team`, because BOTH teams' hitters are
+    opposed by one half of this same prop."""
+    stat = (pick.get("projection") or {}).get("stat")
+    return pick.get("type") == "pitcher_combo" and stat == "combined_strikeouts"
+
+
 def _opponent_team(pick):
     """The team a pitcher (or batter) is facing tonight, from matchup + his
     own team -- not from `side` alone, since `side` says which dugout he's
@@ -130,14 +147,16 @@ def classify(pick_a, pick_b):
     same_team = pick_a.get("team") is not None and pick_a.get("team") == pick_b.get("team")
 
     # Pitcher vs. a hitter on the team he's actually facing.
-    a_pitcher_opposing_b = (pick_a.get("type") == "pitcher"
-                            and stat_a in _PITCHER_STATS_OPPOSE_HITTERS
-                            and pick_b.get("type") == "batter"
-                            and _opponent_team(pick_a) == pick_b.get("team"))
-    b_pitcher_opposing_a = (pick_b.get("type") == "pitcher"
-                            and stat_b in _PITCHER_STATS_OPPOSE_HITTERS
-                            and pick_a.get("type") == "batter"
-                            and _opponent_team(pick_b) == pick_a.get("team"))
+    a_pitcher_opposing_b = (pick_b.get("type") == "batter"
+                            and ((pick_a.get("type") == "pitcher"
+                                  and stat_a in _PITCHER_STATS_OPPOSE_HITTERS
+                                  and _opponent_team(pick_a) == pick_b.get("team"))
+                                 or _is_combined_k_prop(pick_a)))
+    b_pitcher_opposing_a = (pick_a.get("type") == "batter"
+                            and ((pick_b.get("type") == "pitcher"
+                                  and stat_b in _PITCHER_STATS_OPPOSE_HITTERS
+                                  and _opponent_team(pick_b) == pick_a.get("team"))
+                                 or _is_combined_k_prop(pick_b)))
     if a_pitcher_opposing_b or b_pitcher_opposing_a:
         pitcher, hitter = (pick_a, pick_b) if a_pitcher_opposing_b else (pick_b, pick_a)
         return Verdict("negative",
