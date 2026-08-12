@@ -1,10 +1,27 @@
 {
   "date": "2026-08-07",
-  "hits": 9,
-  "misses": 11,
-  "ungraded": 6,
-  "fair_hits": 9,
-  "fair_misses": 11,
+  "hits": 10,
+  "misses": 16,
+  "ungraded": 0,
+  "fair_hits": 10,
+  "fair_misses": 16,
+  "by_category": {
+    "main": {
+      "hits": 6,
+      "misses": 4,
+      "ungraded": 0
+    },
+    "moonshot": {
+      "hits": 1,
+      "misses": 4,
+      "ungraded": 0
+    },
+    "best_of_category": {
+      "hits": 3,
+      "misses": 8,
+      "ungraded": 0
+    }
+  },
   "picks": [
     {
       "rank": 1,
@@ -1660,8 +1677,18 @@
         "modelled": null
       },
       "alternatives": null,
-      "grade": "ungraded",
-      "reason": "unrecognized projection stat 'doubles'"
+      "grade": "miss",
+      "actual": 0.0,
+      "actual_stat": "doubles",
+      "threshold": 0.5,
+      "game_innings": 10,
+      "shortened_game": false,
+      "actual_ab": 4,
+      "actual_pa_est": 4,
+      "was_substitute": false,
+      "batting_order": 4,
+      "fair_test": true,
+      "opportunity": "full (4 PA)"
     },
     {
       "rank": 17,
@@ -1805,8 +1832,18 @@
         "modelled": null
       },
       "alternatives": null,
-      "grade": "ungraded",
-      "reason": "unrecognized projection stat 'singles'"
+      "grade": "miss",
+      "actual": 0.0,
+      "actual_stat": "singles",
+      "threshold": 0.5,
+      "game_innings": 9,
+      "shortened_game": false,
+      "actual_ab": 4,
+      "actual_pa_est": 5,
+      "was_substitute": false,
+      "batting_order": 4,
+      "fair_test": true,
+      "opportunity": "full (5 PA)"
     },
     {
       "rank": 19,
@@ -1950,8 +1987,18 @@
         "modelled": null
       },
       "alternatives": null,
-      "grade": "ungraded",
-      "reason": "unrecognized projection stat 'triples'"
+      "grade": "miss",
+      "actual": 0.0,
+      "actual_stat": "triples",
+      "threshold": 0.5,
+      "game_innings": 9,
+      "shortened_game": false,
+      "actual_ab": 4,
+      "actual_pa_est": 4,
+      "was_substitute": false,
+      "batting_order": 2,
+      "fair_test": true,
+      "opportunity": "full (4 PA)"
     },
     {
       "rank": 21,
@@ -2019,8 +2066,18 @@
         "modelled": null
       },
       "alternatives": null,
-      "grade": "ungraded",
-      "reason": "unrecognized projection stat 'rbis'"
+      "grade": "miss",
+      "actual": 0.0,
+      "actual_stat": "rbis",
+      "threshold": 0.5,
+      "game_innings": 9,
+      "shortened_game": false,
+      "actual_ab": 2,
+      "actual_pa_est": 4,
+      "was_substitute": false,
+      "batting_order": 1,
+      "fair_test": true,
+      "opportunity": "full (4 PA)"
     },
     {
       "rank": 22,
@@ -2086,8 +2143,18 @@
         "modelled": null
       },
       "alternatives": null,
-      "grade": "ungraded",
-      "reason": "unrecognized projection stat 'hits_runs_rbis'"
+      "grade": "hit",
+      "actual": 4.0,
+      "actual_stat": "hits_runs_rbis",
+      "threshold": 0.5,
+      "game_innings": 9,
+      "shortened_game": false,
+      "actual_ab": 4,
+      "actual_pa_est": 5,
+      "was_substitute": false,
+      "batting_order": 1,
+      "fair_test": true,
+      "opportunity": "full (5 PA)"
     },
     {
       "rank": 23,
@@ -2156,8 +2223,18 @@
         "modelled": null
       },
       "alternatives": null,
-      "grade": "ungraded",
-      "reason": "unrecognized projection stat 'runs'"
+      "grade": "miss",
+      "actual": 0.0,
+      "actual_stat": "runs",
+      "threshold": 0.5,
+      "game_innings": 10,
+      "shortened_game": false,
+      "actual_ab": 4,
+      "actual_pa_est": 4,
+      "was_substitute": false,
+      "batting_order": 2,
+      "fair_test": true,
+      "opportunity": "full (4 PA)"
     },
     {
       "rank": 24,
