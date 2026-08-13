@@ -1,10 +1,10 @@
 {
   "date": "2026-08-13",
-  "generated": "2026-08-13T00:19:44.453362",
+  "generated": "2026-08-13T15:39:20.357767",
   "total_sections": 88,
-  "ok": 86,
-  "empty": 2,
-  "failed": 0,
+  "ok": 74,
+  "empty": 5,
+  "failed": 9,
   "sections": [
     {
       "section": 1,
@@ -69,22 +69,22 @@
     {
       "section": 13,
       "title": "YESTERDAY'S STATCAST GAME LOG \u2014 2026-08-12",
-      "status": "empty"
+      "status": "ok"
     },
     {
       "section": 14,
       "title": "ACTIVE HIT STREAKS (3+ games, L14 Statcast)",
-      "status": "ok"
+      "status": "failed"
     },
     {
       "section": 15,
       "title": "LAST 7-DAY ROLLING BATTER FORM + EV TRENDS + LAUNCH ANGLE CONSISTENCY",
-      "status": "ok"
+      "status": "failed"
     },
     {
       "section": 16,
       "title": "PLAYER STATE INDICATORS \u2014 O-Swing% delta L3 vs season (locked-in vs pressing)",
-      "status": "ok"
+      "status": "failed"
     },
     {
       "section": 17,
@@ -134,7 +134,7 @@
     {
       "section": 26,
       "title": "CATCHER PITCH-CALLING TENDENCIES (first-pitch fastball%, early count patterns)",
-      "status": "ok"
+      "status": "failed"
     },
     {
       "section": 27,
@@ -184,7 +184,7 @@
     {
       "section": 36,
       "title": "CSW% LEADERBOARD \u2014 K prop edge table (sorted highest CSW%)",
-      "status": "ok"
+      "status": "empty"
     },
     {
       "section": 37,
@@ -219,27 +219,27 @@
     {
       "section": 43,
       "title": "BATTER COUNT-BASED DECISIONS (first pitch%, 2-strike chase%, RISP swing%)",
-      "status": "ok"
+      "status": "failed"
     },
     {
       "section": 44,
       "title": "HITTER IN-GAME DEGRADATION (bat speed/launch angle/chase by PA number)",
-      "status": "ok"
+      "status": "failed"
     },
     {
       "section": 45,
       "title": "OPPOSING LINEUP K% per GAME (K prop matchup context)",
-      "status": "ok"
+      "status": "empty"
     },
     {
       "section": 46,
       "title": "SCORE DIFFERENTIAL PERFORMANCE SPLITS (winning/losing/tied)",
-      "status": "ok"
+      "status": "failed"
     },
     {
       "section": 47,
       "title": "RISP + PRESSURE PERFORMANCE SPLITS (L14 Statcast)",
-      "status": "ok"
+      "status": "failed"
     },
     {
       "section": 48,
@@ -319,7 +319,7 @@
     {
       "section": 63,
       "title": "STATCAST BAT TRACKING 2026  (bat speed \u00b7 swing length \u00b7 blasts \u00b7 attack angle)",
-      "status": "ok"
+      "status": "failed"
     },
     {
       "section": 64,
@@ -389,7 +389,7 @@
     {
       "section": 77,
       "title": "STATCAST CATCHER FRAMING 2026  (strikes stolen above average)",
-      "status": "ok"
+      "status": "empty"
     },
     {
       "section": 78,
@@ -409,7 +409,7 @@
     {
       "section": 81,
       "title": "INFIELD PULL TENDENCY CROSS-MATCH  (Pull% vs defensive positioning)",
-      "status": "ok"
+      "status": "empty"
     },
     {
       "section": 82,
