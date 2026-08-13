@@ -1774,6 +1774,15 @@ def score_batter(batter, gm, opp_sp_row, opp_sp_id, opp_sp_hand, park_wx, batter
         "projected_pa": projected_pa, "projected_tb": projected_tb, "signals": signals,
         "score": round(score, 1), "why": why, "watchouts": watchouts, "notable_signals": notable_signals,
         "confidence": "High" if score >= 70 and not low_sample else ("Medium" if score >= 55 else "Low"),
+        # Raw 0-100 category components BEFORE the 35/25/15/15/10 weighting is
+        # applied, recorded so backtest/engine.py can capture them per graded
+        # row -- these weights were carried over verbatim from an old manual-
+        # reasoning report section (mlb_daily.py's "SYNTHESIS LAYER REFERENCE")
+        # and have never been fit or validated as an ensemble against real
+        # outcomes. See fit_score_weights.py.
+        "cat_matchup": round(matchup, 2), "cat_recent_form": round(form, 2),
+        "cat_environment": round(env, 2), "cat_baseline_skill": round(skill, 2),
+        "cat_context": round(context, 2),
     }
 
 
@@ -1946,6 +1955,10 @@ def score_pitcher(sp_name, sp_id, sp_hand, gm, side, pit_season_lookup, l14_form
                          else (k_pct or 22.5) / 100)),
         "score": round(score, 1), "why": why, "watchouts": watchouts, "notable_signals": notable_signals,
         "confidence": "High" if score >= 70 and not low_sample_form else ("Medium" if score >= 55 else "Low"),
+        # See the matching comment in score_batter's return dict above.
+        "cat_matchup": round(matchup, 2), "cat_recent_form": round(form, 2),
+        "cat_environment": round(env, 2), "cat_baseline_skill": round(skill, 2),
+        "cat_context": round(context, 2),
     }
 
 

@@ -42,7 +42,9 @@ GM = {"matchup": "Athletics @ Astros", "away_team": "Athletics", "home_team": "A
 
 REQUIRED_KEYS = {"type", "name", "player_id", "team", "matchup", "game_pk", "prop",
                  "projection", "signals", "expected_bf", "k_rate", "score", "why",
-                 "watchouts", "notable_signals", "confidence"}
+                 "watchouts", "notable_signals", "confidence",
+                 "cat_matchup", "cat_recent_form", "cat_environment",
+                 "cat_baseline_skill", "cat_context"}
 
 REAL_LINEUP = [{"name": f"Batter {i}", "id": i, "bats": "R" if i % 2 else "L"} for i in range(1, 10)]
 
@@ -67,6 +69,12 @@ check(c["type"] == "pitcher" and c["name"] == "Framber Valdez" and c["player_id"
 check(0 <= c["score"] <= 100, "score is bounded to [0, 100]", f"got {c['score']}")
 check(0 < c["k_rate"] < 1, "k_rate is a real fraction, not a raw percentage or out of range",
       f"got {c['k_rate']}")
+
+rebuilt = (c["cat_matchup"] * 0.35 + c["cat_recent_form"] * 0.25 + c["cat_environment"] * 0.15
+           + c["cat_baseline_skill"] * 0.15 + c["cat_context"] * 0.10)
+check(abs(round(rebuilt, 1) - c["score"]) < 0.15,
+      "score == 0.35*matchup + 0.25*recent_form + 0.15*environment + 0.15*baseline_skill + 0.10*context",
+      f"rebuilt={rebuilt:.2f} vs recorded score={c['score']}")
 
 head("2. every optional input at its default doesn't crash")
 

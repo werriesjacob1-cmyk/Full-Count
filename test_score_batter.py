@@ -49,7 +49,9 @@ GM = {"matchup": "Athletics @ Astros", "away_team": "Athletics", "home_team": "A
 
 REQUIRED_KEYS = {"type", "name", "player_id", "team", "matchup", "game_pk", "prop",
                  "projection", "projected_pa", "projected_tb", "signals", "score",
-                 "why", "watchouts", "notable_signals", "confidence"}
+                 "why", "watchouts", "notable_signals", "confidence",
+                 "cat_matchup", "cat_recent_form", "cat_environment",
+                 "cat_baseline_skill", "cat_context"}
 
 
 def call(batter=None, opp_sp_row=None, opp_sp_id=None, opp_sp_hand=None, park_wx=None,
@@ -70,6 +72,18 @@ check(c["type"] == "batter" and c["name"] == "Test Batter" and c["player_id"] ==
       "identity fields pass through correctly")
 check(0 <= c["score"] <= 100, "score is bounded to [0, 100]", f"got {c['score']}")
 check(c["confidence"] in ("High", "Medium", "Low"), "confidence is one of the three real labels")
+
+head("1b. score is genuinely reconstructable from the 5 recorded cat_ components "
+     "via the documented 35/25/15/15/10 weights -- proves the instrumentation "
+     "records the SAME values the formula actually used, not a re-derivation")
+
+rebuilt = (c["cat_matchup"] * 0.35 + c["cat_recent_form"] * 0.25 + c["cat_environment"] * 0.15
+           + c["cat_baseline_skill"] * 0.15 + c["cat_context"] * 0.10)
+check(abs(round(rebuilt, 1) - c["score"]) < 0.15,
+      "score == 0.35*matchup + 0.25*recent_form + 0.15*environment + 0.15*baseline_skill + 0.10*context",
+      f"rebuilt={rebuilt:.2f} vs recorded score={c['score']}")
+for k in ("cat_matchup", "cat_recent_form", "cat_environment", "cat_baseline_skill", "cat_context"):
+    check(0 <= c[k] <= 100, f"{k} is bounded to [0, 100]", f"got {c[k]}")
 
 head("2. every optional input as None/missing doesn't crash")
 

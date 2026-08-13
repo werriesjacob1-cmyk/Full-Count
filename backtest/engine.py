@@ -1066,6 +1066,17 @@ def to_row(date, pick, graded, keep_unpriced=False):
         "needs": needs,
         "signals": pick.get("signals") or {},
         "score": pick.get("score"),
+        # Raw 0-100 category components (batters/pitchers only -- see
+        # score_batter/score_pitcher's return dicts) BEFORE the hand-set
+        # 35/25/15/15/10 weighting, so fit_score_weights.py can fit real
+        # weights against outcome without re-deriving them from `signals`.
+        # None for prop types that don't use this framework (pitcher_outs,
+        # combined_strikeouts, stolen_base, laser, walk, first_inning).
+        "cat_matchup": pick.get("cat_matchup"),
+        "cat_recent_form": pick.get("cat_recent_form"),
+        "cat_environment": pick.get("cat_environment"),
+        "cat_baseline_skill": pick.get("cat_baseline_skill"),
+        "cat_context": pick.get("cat_context"),
         "predicted_prob": pick.get("hit_probability"),
         "outcome": 1 if grade == "hit" else 0,
         "actual": actual,

@@ -15,6 +15,11 @@ happened. This is the single interface between the three pieces.
   "needs": 1,
   "signals": {"platoon": 80.0, "l7_form": 62.1, "park_hr_index": 55.0},
   "score": 74.2,
+  "cat_matchup": 71.0,
+  "cat_recent_form": 68.5,
+  "cat_environment": 55.0,
+  "cat_baseline_skill": 62.0,
+  "cat_context": 80.0,
   "predicted_prob": 0.71,
   "outcome": 1,
   "actual": 2,
@@ -29,6 +34,16 @@ happened. This is the single interface between the three pieces.
   value. This is what weight-fitting and signal-pruning consume. A signal that
   did not fire is **absent**, not zero: absent and zero mean different things
   and conflating them teaches the fitter that missing data is a real reading.
+- `cat_matchup`/`cat_recent_form`/`cat_environment`/`cat_baseline_skill`/
+  `cat_context` — the five raw 0-100 category components `score` is built
+  from (MATCHUP/RECENT FORM/ENVIRONMENT/BASELINE SKILL/CONTEXT), BEFORE the
+  hand-set 35/25/15/15/10 weighting is applied. Only present for batters and
+  pitchers (`score_batter`/`score_pitcher`) — the other prop-specific scorers
+  (pitcher_outs, combined_strikeouts, stolen_base, laser, walk, first_inning)
+  don't use this framework, so these are `null` on those rows. This is what
+  `fit_score_weights.py` fits against `outcome` to test whether 35/25/15/15/10
+  is actually the best split, or just what an old manual-reasoning report
+  section happened to say.
 - `predicted_prob` — model probability BEFORE any calibration is applied.
   Calibration must never be fit on already-calibrated values.
 - `outcome` — 1 if the prop hit, 0 if not. Rows that cannot be graded are
