@@ -3325,8 +3325,10 @@ def rank_for_board(gated):
     Split into a real-edge tier (ranked by market_edge -- the dashboard's
     own Top Picks tab already does exactly this, "not just raw probability,
     which just rewards the easiest, most-chalk market every time") and
-    everything else, kept only as a fallback so the board is never empty
-    on a night with too few clearing picks."""
+    everything else -- kept in this full ordering for diagnostics and the
+    "what I'd skip tonight" list even though, as of 2026-08-13, the main
+    board itself (select_main_board, below) no longer draws from the
+    no-edge/unpriced tiers to pad itself out."""
     priced = [c for c in gated if c.get("hit_probability") is not None]
     unpriced = [c for c in gated if c.get("hit_probability") is None]
     clears = [c for c in priced if c.get("price_clears") is True]
@@ -3337,6 +3339,22 @@ def rank_for_board(gated):
                                 c["hit_probability"], c["score"]), reverse=True)
     unpriced.sort(key=lambda c: c["score"], reverse=True)
     return clears + no_edge + unpriced
+
+
+def select_main_board(ranked, n=10):
+    """Select the main board from rank_for_board's full ordering: real edge
+    over the market ONLY (price_clears is True), full stop -- up to n picks.
+
+    Until 2026-08-13 this was simply `ranked[:n]`, unconditionally padding
+    to n with price_clears=False fallbacks whenever fewer than n candidates
+    actually cleared price -- the exact style of pick behind the -22.1% real
+    flat-stake ROI documented in rank_for_board's docstring above. Jacob's
+    call once that was shown to him: ship fewer than n picks on a thin night
+    rather than dress a no-edge favorite up as a top-10 pick. price_clears
+    is None (no market price to check at all, not a confirmed non-edge) is
+    excluded for the same reason -- an unconfirmed edge is not a confirmed
+    one. Board can legitimately come back empty on a night nothing clears."""
+    return [c for c in ranked if c.get("price_clears") is True][:n]
 
 
 def main() -> int:
@@ -3450,8 +3468,13 @@ def main() -> int:
         print(f"      {st:18s} {e['n']:4d} / {e['priced']:4d}   best={e['best']:.3f}{flag}")
     if not ranked:   # nothing cleared the gate — fall back rather than ship nothing
         ranked = sorted(candidates, key=lambda c: c["score"], reverse=True)
-    top10 = ranked[:10]
-    skipped = [c for c in ranked[10:13] if c["score"] >= 55][:2]
+
+    # See select_main_board's own docstring for why this is no longer
+    # `ranked[:10]` -- the main board only ships picks with a real,
+    # confirmed edge over tonight's actual price now.
+    top10 = select_main_board(ranked)
+    _top10_ids = {id(c) for c in top10}
+    skipped = [c for c in ranked if id(c) not in _top10_ids and c["score"] >= 55][:2]
 
     # THE REAL POSTED PRICE, which the board has never carried.
     #
@@ -5163,8 +5186,10 @@ def write_markdown(top10, skipped, game_meta, bullpen_scores, all_ranked=(), moo
     lines.append("")
 
     if not top10:
-        lines.append("No candidates scored high enough today (thin slate, lineups mostly "
-                     "unconfirmed, or data pulls came back empty) — check the run log.")
+        lines.append("No candidate genuinely cleared the market's price today — real, not a "
+                     "bug: FanDuel's lines were sharp enough tonight that nothing had a "
+                     "confirmed edge. (Could also mean a thin slate, lineups mostly "
+                     "unconfirmed, or data pulls came back empty — check the run log.)")
     for i, c in enumerate(top10, 1):
         hp = c.get("hit_probability")
         head = f"### {i}. {c['name']} ({_team_label(c)}) — {c['prop']}"

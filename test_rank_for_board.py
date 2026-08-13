@@ -108,6 +108,42 @@ head("6. an empty pool doesn't crash")
 check(gp.rank_for_board([]) == [], "empty input returns empty output")
 
 
+head("7. select_main_board -- real edge only, board 2026-08-13")
+
+head("7a. no-edge picks are excluded entirely, not used to pad the board")
+
+only_no_edge = [cand("Chalk A", clears=False), cand("Chalk B", clears=False)]
+check(gp.select_main_board(gp.rank_for_board(only_no_edge)) == [],
+      "a pool of only no-edge candidates selects an empty board, not a padded one")
+
+head("7b. unpriced (price_clears=None) candidates are also excluded, not a confirmed edge")
+
+unpriced_only = [{"name": "No Line", "type": "batter", "score": 90.0, "reliability": "A",
+                  "hit_probability": None, "market_odds": None, "market_edge": None,
+                  "price_clears": None}]
+check(gp.select_main_board(gp.rank_for_board(unpriced_only)) == [],
+      "an unconfirmed edge does not fill a board slot")
+
+head("7c. a mixed pool keeps only the genuinely clearing picks, in rank order")
+
+clears_a = cand("Clears A", prob=0.60, odds=-110, edge=0.04, clears=True)
+clears_b = cand("Clears B", prob=0.58, odds=130, edge=0.08, clears=True)
+no_edge = cand("No Edge", prob=0.75, odds=-400, edge=-0.15, clears=False)
+board = gp.select_main_board(gp.rank_for_board([clears_a, clears_b, no_edge]))
+check([c["name"] for c in board] == ["Clears B", "Clears A"],
+      "only the two clearing picks ship, ordered by edge, and the heavily-juiced "
+      "no-edge favorite does not fill the remaining slot",
+      f"got {[c['name'] for c in board]}")
+
+head("7d. caps at n even when more than n picks clear")
+
+many_clears = [cand(f"C{i}", prob=0.55 + i * 0.01, odds=120, edge=0.05 + i * 0.01, clears=True)
+               for i in range(12)]
+board2 = gp.select_main_board(gp.rank_for_board(many_clears), n=10)
+check(len(board2) == 10, "board is capped at n even with 12 clearing candidates",
+      f"got {len(board2)}")
+
+
 n_pass = sum(1 for ok, _, _ in _results if ok)
 n_total = len(_results)
 print("\n" + "=" * 78)

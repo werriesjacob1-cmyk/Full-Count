@@ -58,10 +58,16 @@ YEAR      = datetime.now().year
 YEAR_PREV = YEAR - 1
 YEAR_2YR  = YEAR - 2
 
-L3_END  = TODAY; L3_START  = (datetime.now()-timedelta(days=3)).strftime("%Y-%m-%d")
-L7_END  = TODAY; L7_START  = (datetime.now()-timedelta(days=7)).strftime("%Y-%m-%d")
-L14_END = TODAY; L14_START = (datetime.now()-timedelta(days=14)).strftime("%Y-%m-%d")
-L30_END = TODAY; L30_START = (datetime.now()-timedelta(days=30)).strftime("%Y-%m-%d")
+# End dates are capped at YESTERDAY, not TODAY: Baseball Savant rejects any
+# Statcast query whose range includes today's not-yet-indexed data with
+# "Error: Query Timeout" (see fetch_season_statcast() below for the live
+# repro). Every one of these windows feeds a pyb.statcast()/statcast_pitcher()
+# call, so capping here fixes all of them at the source instead of patching
+# each call site.
+L3_END  = YESTERDAY; L3_START  = (datetime.now()-timedelta(days=3)).strftime("%Y-%m-%d")
+L7_END  = YESTERDAY; L7_START  = (datetime.now()-timedelta(days=7)).strftime("%Y-%m-%d")
+L14_END = YESTERDAY; L14_START = (datetime.now()-timedelta(days=14)).strftime("%Y-%m-%d")
+L30_END = YESTERDAY; L30_START = (datetime.now()-timedelta(days=30)).strftime("%Y-%m-%d")
 
 MIN_PA=50; MIN_PA_R=10; MIN_IP=10; MIN_BBE=20; MIN_OPP=10
 DIV="═"*72; THIN="─"*60
@@ -2782,8 +2788,8 @@ def compute_aging_curves(game_meta):
             try:
                 pid = gm["away_sp_id"] if sp_name == gm["away_sp"] else gm["home_sp_id"]
                 if not pid: continue
-                # Current year
-                cur=pyb.statcast_pitcher(start_dt=f"{YEAR}-04-01",end_dt=TODAY,player_id=pid)
+                # Current year (end capped at YESTERDAY -- see L*_END comment above)
+                cur=pyb.statcast_pitcher(start_dt=f"{YEAR}-04-01",end_dt=YESTERDAY,player_id=pid)
                 # Prior year
                 prev=pyb.statcast_pitcher(start_dt=f"{YEAR_PREV}-04-01",end_dt=f"{YEAR_PREV}-10-01",player_id=pid)
                 if cur is None or cur.empty: continue
@@ -3485,7 +3491,7 @@ def main():
     S(63, f"STATCAST BAT TRACKING {YEAR}  (bat speed · swing length · blasts · attack angle)")
     try:
         step(f"Statcast bat tracking {YEAR}...")
-        df=pyb.statcast(start_dt=f"{YEAR}-04-01",end_dt=TODAY)
+        df=pyb.statcast(start_dt=f"{YEAR}-04-01",end_dt=YESTERDAY)  # capped -- see L*_END comment above
         if df is not None and not df.empty:
             if "bat_speed" in df.columns:
                 # Verified live and severe: raw pyb.statcast() rows are pitch-level
