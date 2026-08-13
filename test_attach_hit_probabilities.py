@@ -141,6 +141,47 @@ check(out_k[0]["hit_probability"] != out_k_noleague[0]["hit_probability"],
       "proving the shrink path is actually taken when a true league rate exists",
       f"shrunk={out_k[0]['hit_probability']} raw_fallback={out_k_noleague[0]['hit_probability']}")
 
+head("5b. strikeouts: THE LINE-SELECTION BUG THIS FIXES (2026-08-13) -- when a real "
+     "FanDuel line is passed via k_prices, it overrides _pick_line's pure "
+     "probability/lift search, the same way score_pitcher_outs already prefers a real "
+     "posted line over its own model-anchored fallback. Without this, attach_market_"
+     "prices' strikeouts branch (which only prices a candidate when `needs` matches "
+     "FanDuel's own posted line) matched real prices on only 1 of 6 real starters live.")
+
+import odds_fanduel as fd
+
+k_c_named = dict(k_c, name="Test Pitcher K", projection={"stat": "strikeouts"})
+out_baseline = gp.attach_hit_probabilities([dict(k_c_named)], {}, {}, {}, league_rates=league_k)
+default_needs = out_baseline[0]["projection"]["needs"]
+other_needs = next(n for n in (4, 5, 6, 7, 8) if n != default_needs)
+
+k_prices = {fd.normalize_name("Test Pitcher K"): {"needs": other_needs, "line": other_needs - 0.5,
+                                                   "over": -120, "under": 100,
+                                                   "true_over": 0.55, "true_under": 0.45,
+                                                   "hold": 0.02, "player": "Test Pitcher K",
+                                                   "game": "Away @ Home"}}
+out_real_line = gp.attach_hit_probabilities([dict(k_c_named)], {}, {}, {},
+                                            league_rates=league_k, k_prices=k_prices)
+check(out_real_line[0]["projection"]["needs"] == other_needs,
+      "a real FanDuel line present in k_prices wins over _pick_line's own choice, "
+      "even though _pick_line preferred a different threshold on this exact candidate",
+      f"real-line needs={other_needs}, _pick_line's own choice was {default_needs}, "
+      f"got {out_real_line[0]['projection']['needs']}")
+check(out_real_line[0]["prop"] == f"Over {other_needs - 0.5} Strikeouts",
+      "the prop label matches the real-line-selected threshold, not the discarded "
+      "_pick_line choice", f"got {out_real_line[0]['prop']!r}")
+
+head("5c. strikeouts: a real line with a needs value NOT among our computed thresholds "
+     "(odds posted for a number we never modelled) falls back to _pick_line rather than "
+     "silently picking nothing")
+
+k_prices_miss = {fd.normalize_name("Test Pitcher K"): {"needs": 99, "line": 98.5}}
+out_miss = gp.attach_hit_probabilities([dict(k_c_named)], {}, {}, {},
+                                       league_rates=league_k, k_prices=k_prices_miss)
+check(out_miss[0]["projection"]["needs"] == default_needs,
+      "an unmatchable real line falls back to _pick_line's own choice instead of "
+      "producing no recommendation at all", f"got {out_miss[0]['projection']['needs']}")
+
 head("6. first_inning_run: THE SCALE BUG THIS PREVENTS -- yrfi_pct is stored as a "
      "PERCENTAGE (e.g. 60.0), and must be divided by 100 before use as a probability, "
      "never read as a raw fraction")

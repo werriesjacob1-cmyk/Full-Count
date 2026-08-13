@@ -2925,6 +2925,17 @@ def _build_and_score():
         # actually lines at 17.5). Reused below at the later attach_market_prices
         # call instead of fetching the same market twice.
         ("pitcher_outs_prices", lambda: _fd_early.fetch_pitcher_outs()),
+        # SAME bug, SAME fix, for the standard strikeouts market. Found live
+        # 2026-08-13: attach_market_prices' "strikeouts" branch only prices a
+        # candidate when the model's chosen `needs` happens to equal
+        # FanDuel's real posted line's `needs` -- but attach_hit_probabilities
+        # picked that threshold via _pick_line (pure model probability/lift
+        # among t in 4..8), never checking what FanDuel actually offers.
+        # Real slate: k_prices had a genuine line for every one of 6
+        # starters, yet only 1 matched. Fetched here so
+        # attach_hit_probabilities can prefer the real line's needs the same
+        # way score_pitcher_outs already does for pitcher_outs.
+        ("strikeout_prices", lambda: _fd_early.fetch_pitcher_strikeouts()),
         # Starting Pitcher Combined Alt Strikeouts -- see score_combined_
         # strikeouts's own docstring. A real, priced ladder market with no
         # scorer until now, found sitting next to Pitcher Outs Recorded on
@@ -3054,7 +3065,7 @@ def _build_and_score():
                f"falling back to score-only ranking")
 
     attach_hit_probabilities(candidates, comp_table, emp_batters, emp_pitchers,
-                             league_rates)
+                             league_rates, k_prices=extras.get("strikeout_prices"))
     # Calibrate BEFORE ranking and before the positive-read floor, so both
     # operate on the honest number rather than the overstated one.
     apply_calibration(candidates, load_calibrator())
@@ -3075,6 +3086,10 @@ def _build_and_score():
         # main()'s attach_market_prices call had no use for this key, so its
         # absence here was invisible.
         "combined_k_prices": extras.get("combined_k_prices"),
+        # Same fetch-above-reuse-below pattern as po_prices/combined_k_prices,
+        # now that attach_hit_probabilities' strikeouts branch needs the real
+        # line to pick against (see strikeout_prices' own comment above).
+        "k_prices": extras.get("strikeout_prices"),
     }
 
 
@@ -3420,6 +3435,7 @@ def main() -> int:
     bullpen_scores = ctx['bullpen_scores']
     emp_batters = ctx['emp_batters']; emp_pitchers = ctx['emp_pitchers']
     early_po_prices = ctx.get('po_prices')
+    early_k_prices = ctx.get('k_prices')
 
     # RANKING. See rank_for_board's own docstring for the final ordering
     # (real edge over the market first, chance of cashing as the tiebreak
@@ -3507,10 +3523,11 @@ def main() -> int:
         # Fetching it twice would mean two full FanDuel sweeps of a 15-game
         # slate for the same data.
         prices = _fd.fetch_prop_prices()
-        try:
-            k_prices = _fd.fetch_pitcher_strikeouts()
-        except Exception:
-            k_prices = {}
+        # Already fetched earlier (before scoring, so attach_hit_probabilities'
+        # strikeouts branch could price against the real line directly) --
+        # reused here rather than sweeping FanDuel for the same market twice,
+        # same pattern as po_prices/combined_k_prices below.
+        k_prices = early_k_prices or {}
         try:
             fi_prices = _fd.fetch_first_inning_totals()
         except Exception:
@@ -4508,7 +4525,7 @@ def apply_calibration(candidates, calibrator):
     return candidates
 
 def attach_hit_probabilities(candidates, comp_table, emp_batters, emp_pitchers,
-                             league_rates=None):
+                             league_rates=None, k_prices=None):
     """Give every candidate a real chance-of-cashing number, and let the
     batter props re-choose their threshold to maximise it.
 
@@ -4657,7 +4674,30 @@ def attach_hit_probabilities(candidates, comp_table, emp_batters, emp_pitchers,
                              "empirical": None if empirical is None else round(empirical, 4),
                              "modelled": None if modelled is None else round(modelled, 4)})
             opts.sort(key=lambda o: o["prob"], reverse=True)
-            best = _pick_line(opts)
+            # THE SAME LINE-SELECTION BUG score_pitcher_outs already fixed
+            # (see its own docstring), never generalized here. attach_
+            # market_prices' "strikeouts" branch only attaches a real price
+            # when the recommended `needs` equals FanDuel's own posted
+            # line's `needs` -- but _pick_line chooses purely by model
+            # probability/lift among t in 4..8, with zero awareness of what
+            # FanDuel actually offers. Verified live 2026-08-13: k_prices
+            # had a real line for all 6 of that night's starters, yet only
+            # 1 matched, because the model's chosen threshold rarely lined
+            # up with the book's. When the real line is available and one
+            # of our computed thresholds matches it, use that -- there is
+            # only one number FanDuel is actually offering money on, same
+            # reasoning as pitcher_outs. Only fall back to _pick_line's
+            # search when no real line can be matched (odds not posted, a
+            # name-match miss, or a line outside 4..8).
+            real_line = None
+            if k_prices:
+                import odds_fanduel as _fd
+                real_line = k_prices.get(_fd.normalize_name(c.get("name")))
+            best = None
+            if real_line and real_line.get("needs") is not None:
+                best = next((o for o in opts if o["needs"] == real_line["needs"]), None)
+            if best is None:
+                best = _pick_line(opts)
             if best:
                 c["prop"] = f"Over {best['line']} Strikeouts"
                 c["projection"] = {"stat": "strikeouts", "value": best["line"],
