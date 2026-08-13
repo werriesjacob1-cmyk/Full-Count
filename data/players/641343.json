@@ -377,6 +377,84 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-13",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 78.2,
+          "notable_signals": 1,
+          "matchup": "Milwaukee Brewers @ Los Angeles Dodgers",
+          "game_pk": 823915,
+          "team": "Milwaukee Brewers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 58.2857,
+            "pitch_exploit": 1.1429,
+            "l7_avg_ev": 100.0,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 34.0,
+            "season_barrel_pct": 72.6667,
+            "lineup_slot": 62.5,
+            "bullpen_fatigue": 59.5238,
+            "platoon_barrel_pct": 5.0,
+            "platoon_xwoba": 4.08,
+            "opp_catcher_framing": 0.72,
+            "days_rest": 0.0,
+            "woba_ahead": 68.1818,
+            "woba_behind": 71.8182,
+            "hard_hit_105_rate": 4.125,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": -0.176,
+            "vs_rp_ops": 1.692,
+            "ump_k_pct": 0.192,
+            "ump_bb_pct": -0.144
+          },
+          "hit_probability": 0.6057,
+          "raw_hit_probability": 0.6053,
+          "lift": 0.0543,
+          "reliability": "A",
+          "sample_n": 108,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 61.4,
+          "notable_signals": 1,
+          "matchup": "Milwaukee Brewers @ Los Angeles Dodgers",
+          "game_pk": 823915,
+          "team": "Milwaukee Brewers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.38
+          },
+          "hit_probability": 0.3673,
+          "raw_hit_probability": 0.38,
+          "lift": 0.1404,
+          "reliability": "A",
+          "sample_n": 108,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }
