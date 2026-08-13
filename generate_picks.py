@@ -3426,6 +3426,104 @@ def main() -> int:
         print(f"    Signal-weighted adjustment applied to {moved} of {len(candidates)} "
               f"candidates ({len(signal_trust)} signals with any measured trust)")
 
+    # THE REAL POSTED PRICE, which the board has never carried.
+    #
+    # Every pick shipped with `estimated_odds`, and that number is
+    # pp.american_odds(hit_probability) — our own probability restated as a
+    # price. It is circular by construction: it cannot disagree with us, so it
+    # can never tell anyone whether a pick is good VALUE, only that the model
+    # thinks it is likely. max_acceptable_price is derived from it too.
+    #
+    # attach_market_prices() was written to fix exactly this and had ZERO
+    # callers, while FanDuel's prices were being fetched hourly and committed
+    # to data/props. The information was free, already arriving, and never
+    # reached the one document that gets read before betting.
+    #
+    # MOVED HERE 2026-08-13, from after `top10 = select_main_board(ranked)`.
+    # REAL BUG, found live checking tonight's actual board against its own
+    # by_category diagnostic: select_main_board (added earlier today, #15)
+    # filters on price_clears is True, but this attach step -- the ONLY
+    # thing that ever sets price_clears/market_odds/market_edge for the
+    # general batter/pitcher markets -- ran AFTER select_main_board had
+    # already run. attach_hit_probabilities (called from _build_and_score,
+    # well before this point) never sets those fields; only score_pitcher_
+    # outs/score_combined_strikeouts do, by pricing against an early-fetched
+    # line directly inside their own scoring function. So every OTHER market
+    # had price_clears=None (not False, ABSENT) at select-time, and `None is
+    # True` is False -- meaning every hits/total_bases/home_runs/RBIs/runs/
+    # singles/doubles/triples/hits_runs_rbis candidate was structurally
+    # unable to ever appear on the main board, regardless of real edge,
+    # while the two early-priced markets were the only ones that could.
+    # Verified live: tonight's by_category diagnostic showed Brandon Marsh's
+    # Over 0.5 Singles at price_clears=True, market_edge=+0.019 -- a real,
+    # confirmed edge -- sitting in "best_of_category" while the main board
+    # carried only 1 pick total (the one early-priced market). Moving this
+    # block earlier, before the gate/rank/select pipeline runs, fixes it at
+    # the source instead of teaching select_main_board to also poll a
+    # market fetch itself.
+    #
+    # Never fatal: an unpriced prop leaves the fields absent rather than
+    # guessing, and a failed fetch leaves the board exactly as it was.
+    moonshots = []
+    by_category = {}
+    try:
+        import odds_fanduel as _fd
+        # Fetched once, explicitly, rather than left for attach_market_prices
+        # to fetch internally -- the moonshot selection below needs this same
+        # dict to look up HOME RUN prices, which live_options carries but the
+        # chosen `projection` almost never does (see select_moonshots).
+        # Fetching it twice would mean two full FanDuel sweeps of a 15-game
+        # slate for the same data.
+        prices = _fd.fetch_prop_prices()
+        try:
+            k_prices = _fd.fetch_pitcher_strikeouts()
+        except Exception:
+            k_prices = {}
+        try:
+            fi_prices = _fd.fetch_first_inning_totals()
+        except Exception:
+            fi_prices = {}
+        # Already fetched earlier (before scoring, so score_pitcher_outs
+        # could price the real line directly) -- reused here rather than
+        # sweeping FanDuel for the same market twice.
+        po_prices = early_po_prices or {}
+        # Fetched early too (before scoring, so score_combined_strikeouts
+        # could price the real ladder directly) -- reused here for the same
+        # reason po_prices is: attach_market_prices now has a
+        # combined_strikeouts branch (added this pass, see its own
+        # docstring), and passing this avoids a second FanDuel sweep for a
+        # market this function used to no-op on entirely.
+        combined_k_prices = ctx.get("combined_k_prices") or {}
+        _, n_priced = _fd.attach_market_prices(candidates, prices=prices, k_prices=k_prices,
+                                               fi_prices=fi_prices, po_prices=po_prices,
+                                               combined_k_prices=combined_k_prices)
+        print(f"    Real market prices attached to {n_priced} of {len(candidates)} candidates")
+        # PER-MARKET REAL-PRICE COVERAGE. The pool diagnostic above only ever
+        # showed whether the MODEL had a probability, which is a different
+        # question from whether FanDuel's price was actually found and
+        # attached -- stolen_base sat at 141/0 real prices for weeks while
+        # printing 141/138 "priced" above, because "priced" there means
+        # hit_probability is not None. Printed separately, after attach
+        # runs, since the pool table above is built before this call.
+        price_pool = defaultdict(lambda: {"n": 0, "priced": 0})
+        for c in candidates:
+            st = (c.get("projection") or {}).get("stat") or "?"
+            e = price_pool[st]
+            e["n"] += 1
+            if c.get("market_odds") is not None:
+                e["priced"] += 1
+        print("    Real market-price coverage by market (considered / priced):")
+        for st, e in sorted(price_pool.items(), key=lambda kv: -kv[1]["n"]):
+            flag = "" if e["priced"] == e["n"] else "   <-- UNPRICED CANDIDATES"
+            print(f"      {st:18s} {e['n']:4d} / {e['priced']:4d}{flag}")
+        moonshots = select_moonshots(candidates, prices, _fd, n=5)
+        print(f"    {len(moonshots)} moonshot(s) selected (home runs, priced, ranked by hit probability)")
+        by_category = select_best_by_category(candidates, prices, _fd, n_per_category=1, k_prices=k_prices)
+        print(f"    Best-of-category board: {len(by_category)} of {len(CATEGORY_LABELS)} "
+              f"families had a candidate tonight")
+    except Exception as e:
+        m.warn(f"Market prices unavailable ({e}) — board ships without them")
+
     gated = [c for c in candidates if c["score"] >= MIN_QUALITY_SCORE]
 
     # POSITIVE-READ FLOOR. A pick has to beat the league base rate for its own
@@ -3496,81 +3594,6 @@ def main() -> int:
     top10 = select_main_board(ranked)
     _top10_ids = {id(c) for c in top10}
     skipped = [c for c in ranked if id(c) not in _top10_ids and c["score"] >= 55][:2]
-
-    # THE REAL POSTED PRICE, which the board has never carried.
-    #
-    # Every pick shipped with `estimated_odds`, and that number is
-    # pp.american_odds(hit_probability) — our own probability restated as a
-    # price. It is circular by construction: it cannot disagree with us, so it
-    # can never tell anyone whether a pick is good VALUE, only that the model
-    # thinks it is likely. max_acceptable_price is derived from it too.
-    #
-    # attach_market_prices() was written to fix exactly this and had ZERO
-    # callers, while FanDuel's prices were being fetched hourly and committed
-    # to data/props. The information was free, already arriving, and never
-    # reached the one document that gets read before betting.
-    #
-    # Never fatal: an unpriced prop leaves the fields absent rather than
-    # guessing, and a failed fetch leaves the board exactly as it was.
-    moonshots = []
-    by_category = {}
-    try:
-        import odds_fanduel as _fd
-        # Fetched once, explicitly, rather than left for attach_market_prices
-        # to fetch internally -- the moonshot selection below needs this same
-        # dict to look up HOME RUN prices, which live_options carries but the
-        # chosen `projection` almost never does (see select_moonshots).
-        # Fetching it twice would mean two full FanDuel sweeps of a 15-game
-        # slate for the same data.
-        prices = _fd.fetch_prop_prices()
-        try:
-            k_prices = _fd.fetch_pitcher_strikeouts()
-        except Exception:
-            k_prices = {}
-        try:
-            fi_prices = _fd.fetch_first_inning_totals()
-        except Exception:
-            fi_prices = {}
-        # Already fetched earlier (before scoring, so score_pitcher_outs
-        # could price the real line directly) -- reused here rather than
-        # sweeping FanDuel for the same market twice.
-        po_prices = early_po_prices or {}
-        # Fetched early too (before scoring, so score_combined_strikeouts
-        # could price the real ladder directly) -- reused here for the same
-        # reason po_prices is: attach_market_prices now has a
-        # combined_strikeouts branch (added this pass, see its own
-        # docstring), and passing this avoids a second FanDuel sweep for a
-        # market this function used to no-op on entirely.
-        combined_k_prices = ctx.get("combined_k_prices") or {}
-        _, n_priced = _fd.attach_market_prices(candidates, prices=prices, k_prices=k_prices,
-                                               fi_prices=fi_prices, po_prices=po_prices,
-                                               combined_k_prices=combined_k_prices)
-        print(f"    Real market prices attached to {n_priced} of {len(candidates)} candidates")
-        # PER-MARKET REAL-PRICE COVERAGE. The pool diagnostic above only ever
-        # showed whether the MODEL had a probability, which is a different
-        # question from whether FanDuel's price was actually found and
-        # attached -- stolen_base sat at 141/0 real prices for weeks while
-        # printing 141/138 "priced" above, because "priced" there means
-        # hit_probability is not None. Printed separately, after attach
-        # runs, since the pool table above is built before this call.
-        price_pool = defaultdict(lambda: {"n": 0, "priced": 0})
-        for c in candidates:
-            st = (c.get("projection") or {}).get("stat") or "?"
-            e = price_pool[st]
-            e["n"] += 1
-            if c.get("market_odds") is not None:
-                e["priced"] += 1
-        print("    Real market-price coverage by market (considered / priced):")
-        for st, e in sorted(price_pool.items(), key=lambda kv: -kv[1]["n"]):
-            flag = "" if e["priced"] == e["n"] else "   <-- UNPRICED CANDIDATES"
-            print(f"      {st:18s} {e['n']:4d} / {e['priced']:4d}{flag}")
-        moonshots = select_moonshots(candidates, prices, _fd, n=5)
-        print(f"    {len(moonshots)} moonshot(s) selected (home runs, priced, ranked by hit probability)")
-        by_category = select_best_by_category(candidates, prices, _fd, n_per_category=1, k_prices=k_prices)
-        print(f"    Best-of-category board: {len(by_category)} of {len(CATEGORY_LABELS)} "
-              f"families had a candidate tonight")
-    except Exception as e:
-        m.warn(f"Market prices unavailable ({e}) — board ships without them")
 
     write_markdown(top10, skipped, game_meta, bullpen_scores, ranked, moonshots, by_category)
     write_json(top10, moonshots, by_category)
