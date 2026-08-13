@@ -707,23 +707,61 @@ def fetch_active_roster_by_name():
 _SEASON_STATCAST_CACHE = None
 def fetch_season_statcast():
     """Leaguewide season-long pitch-by-pitch Statcast pull, cached module-
-    level (one pull, reused by every section that needs it). Verified live
-    before building on this: a full-season pull is ~480K rows and completes
-    in ~50s — well within this pipeline's budget, not the timeout risk it
-    was assumed to be when CSW%/batter K% were first left as FanGraphs-only
-    gaps. Used as the real fallback for metrics that live only on FanGraphs'
-    pages (CSW%, batter K%/BB%) and have no equivalent field in the
-    lighter-weight Statcast "expected stats" endpoints already used
-    elsewhere as the batting/pitching fallback."""
+    level (one pull, reused by every section that needs it). Used as the
+    real fallback for metrics that live only on FanGraphs' pages (CSW%,
+    batter K%/BB%) and have no equivalent field in the lighter-weight
+    Statcast "expected stats" endpoints already used elsewhere as the
+    batting/pitching fallback -- and, via mlb_sources.league_base_rates(),
+    the ONLY source for the true league-wide hit/TB/HR base rates that
+    generate_picks.py's MODEL_SHRINK_K fix needs to fire.
+
+    REAL BUG, found live 2026-08-13: this used to query through TODAY in
+    one shot, and on failure returned an EMPTY DataFrame -- not a partial
+    one. Every downstream true-league-rate lookup then silently returned
+    None, and generate_picks.py's own true_league_rates-gated
+    MODEL_SHRINK_K branch (see its 2026-08-07 audit comment) fell back to
+    the OLDER blend it was built to replace -- confirmed against real
+    graded picks: 50 of 55 real "hits" candidates over 08-07..08-12
+    carried probability_basis "blended" (the old path) rather than
+    "modelled_shrunk" (the fix), and the main board's calibration gap
+    (avg predicted vs actual hit rate) was -6.6 to -12 points over that
+    same window.
+
+    ROOT CAUSE, isolated live: it is specifically TODAY that Baseball
+    Savant rejects, not query size. 2026-08-12 alone (a fully completed,
+    already-indexed day) returns in 0.1s; any range whose end_dt reaches
+    2026-08-13 (today, still in progress / not yet indexed) fails
+    instantly with 'Query Timeout' regardless of how narrow the range is
+    otherwise -- a 1-day query for today alone fails the same as the
+    full season. Fixed by capping end_dt at YESTERDAY: today's games
+    aren't finished when this pipeline runs anyway, so today's rows were
+    never real data to lose. Also chunked into 14-day windows as
+    defense-in-depth -- a smaller, unrelated failure now costs one
+    warn-and-skip window rather than the whole season."""
     global _SEASON_STATCAST_CACHE
     if _SEASON_STATCAST_CACHE is not None:
         return _SEASON_STATCAST_CACHE
-    try:
-        df = pyb.statcast(start_dt=f"{YEAR}-03-15", end_dt=TODAY)
-        _SEASON_STATCAST_CACHE = df if df is not None else pd.DataFrame()
-    except Exception as e:
-        warn(f"Season Statcast pull: {e}")
-        _SEASON_STATCAST_CACHE = pd.DataFrame()
+    chunks = []
+    start = datetime.strptime(f"{YEAR}-03-15", "%Y-%m-%d")
+    # Yesterday, not today -- today's games aren't finished/indexed on
+    # Statcast yet when this pipeline runs, so today was never real data
+    # to lose. If it's still opening week (yesterday < start), the loop
+    # below simply never executes and this returns an empty frame, same
+    # as the pre-season case already handled gracefully everywhere else.
+    end = datetime.strptime(TODAY, "%Y-%m-%d") - timedelta(days=1)
+    window = timedelta(days=14)
+    cur = start
+    while cur <= end:
+        chunk_end = min(cur + window - timedelta(days=1), end)
+        s, e = cur.strftime("%Y-%m-%d"), chunk_end.strftime("%Y-%m-%d")
+        try:
+            df = pyb.statcast(start_dt=s, end_dt=e)
+            if df is not None and not df.empty:
+                chunks.append(df)
+        except Exception as ex:
+            warn(f"Season Statcast pull {s}..{e}: {ex}")
+        cur = chunk_end + timedelta(days=1)
+    _SEASON_STATCAST_CACHE = pd.concat(chunks, ignore_index=True) if chunks else pd.DataFrame()
     return _SEASON_STATCAST_CACHE
 
 IL_STATUS_CODES = {"D7":"7-Day IL","D10":"10-Day IL","D15":"15-Day IL","D60":"60-Day IL","DRS":"Restricted-Injured"}
