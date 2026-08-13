@@ -1,0 +1,1069 @@
+{
+  "date": "2026-08-13",
+  "generated": "2026-08-13T00:09:08.540506",
+  "picks": [
+    {
+      "rank": 1,
+      "type": "pitcher",
+      "name": "Cade Cavalli",
+      "player_id": 676917,
+      "team": "Washington Nationals",
+      "matchup": "Chicago Cubs @ Washington Nationals",
+      "game_pk": 822696,
+      "side": null,
+      "combo_player_ids": null,
+      "prop": "Over 4.5 Strikeouts",
+      "projection": {
+        "stat": "strikeouts",
+        "value": 4.5,
+        "needs": 5
+      },
+      "lean": null,
+      "score": 66.5,
+      "confidence": "Medium",
+      "notable_signals": 0,
+      "category": null,
+      "hit_probability": 0.6039,
+      "signals": {
+        "same_hand_ratio": 100.0,
+        "l14_k_pct": 43.5294,
+        "env_neutral": 50.0
+      },
+      "base_rate": 0.5365,
+      "lift": 0.0674,
+      "raw_hit_probability": 0.6546,
+      "calibrated_by": "strikeouts",
+      "prob_ci": [
+        0.4074,
+        0.766
+      ],
+      "sample_n": 25,
+      "reliability": "C",
+      "max_acceptable_price": -152,
+      "estimated_odds": -177,
+      "market_odds": null,
+      "market_implied": null,
+      "market_edge": null,
+      "price_clears": null,
+      "probability_basis": "modelled_shrunk",
+      "probability_detail": {
+        "empirical": 0.6046,
+        "modelled": 0.7726
+      },
+      "alternatives": [
+        {
+          "line": 3.5,
+          "needs": 4,
+          "prob": 0.8048,
+          "basis": "modelled_shrunk",
+          "base_rate": 0.7132,
+          "lift": 0.0916,
+          "empirical": 0.6653,
+          "modelled": 0.8964
+        },
+        {
+          "line": 5.5,
+          "needs": 6,
+          "prob": 0.4888,
+          "basis": "modelled_shrunk",
+          "base_rate": 0.3751,
+          "lift": 0.1137,
+          "empirical": 0.4408,
+          "modelled": 0.6025
+        },
+        {
+          "line": 6.5,
+          "needs": 7,
+          "prob": 0.3312,
+          "basis": "modelled_shrunk",
+          "base_rate": 0.2449,
+          "lift": 0.0863,
+          "empirical": 0.3829,
+          "modelled": 0.4175
+        }
+      ],
+      "why": [
+        "Opposing team K% unavailable (FanGraphs team page down and no confirmed lineup batters matched)",
+        "Expected workload 23.7 batters faced (his own 24.5/start over 2 real starts, shrunk toward the 23.1 league mean)",
+        "6/8 known-hand opposing batters same-handed",
+        "L14 K% 22.4 (49 PA)",
+        "Recency-weighted K rate 25.9% (exp. decay, halflife 30d, 25 real starts / 552 BF) \u2014 drives the strikeout probability model"
+      ],
+      "watchouts": [
+        "Workload estimate rests on only 2 starts in the L14 window \u2014 most start-to-start variation in batters faced is noise, so this is shrunk heavily toward league average"
+      ],
+      "signal_weight_adjustment": 12.0
+    },
+    {
+      "rank": 2,
+      "type": "pitcher",
+      "name": "Kevin Gausman",
+      "player_id": 592332,
+      "team": "Chicago Cubs",
+      "matchup": "Chicago Cubs @ Washington Nationals",
+      "game_pk": 822696,
+      "side": "away",
+      "combo_player_ids": null,
+      "prop": "Over 16.5 Outs Recorded",
+      "projection": {
+        "stat": "pitcher_outs",
+        "value": 16.5,
+        "needs": 17
+      },
+      "lean": null,
+      "score": 65.2,
+      "confidence": "Medium",
+      "notable_signals": 1,
+      "category": null,
+      "hit_probability": 0.6457,
+      "signals": {
+        "outs_rate": 0.6457,
+        "avg_outs_per_start": 16.79
+      },
+      "base_rate": 0.5618,
+      "lift": 0.0839,
+      "raw_hit_probability": null,
+      "calibrated_by": null,
+      "prob_ci": null,
+      "sample_n": 24,
+      "reliability": "D",
+      "max_acceptable_price": -182,
+      "estimated_odds": -213,
+      "market_odds": null,
+      "market_implied": null,
+      "market_edge": null,
+      "price_clears": null,
+      "probability_basis": "empirical_shrunk",
+      "probability_detail": {
+        "empirical": 0.6457,
+        "modelled": null
+      },
+      "alternatives": [
+        {
+          "stat": "pitcher_outs",
+          "line": 11.5,
+          "needs": 12,
+          "prob": 0.9163,
+          "base_rate": 0.9147,
+          "lift": 0.0016
+        },
+        {
+          "stat": "pitcher_outs",
+          "line": 12.5,
+          "needs": 13,
+          "prob": 0.9092,
+          "base_rate": 0.8794,
+          "lift": 0.0298
+        },
+        {
+          "stat": "pitcher_outs",
+          "line": 13.5,
+          "needs": 14,
+          "prob": 0.9022,
+          "base_rate": 0.8441,
+          "lift": 0.0581
+        }
+      ],
+      "why": [
+        "Recorded 17+ outs (5.2 IP) in 64.6% of his last 24 real starts (league 56.2%, avg 16.79 outs/start)"
+      ],
+      "watchouts": [
+        "No real FanDuel line found for this pitcher yet -- this threshold is model-anchored to his average workload, not a posted market number"
+      ],
+      "signal_weight_adjustment": -12.0
+    },
+    {
+      "rank": 3,
+      "type": "pitcher",
+      "name": "Davis Martin",
+      "player_id": 663436,
+      "team": "Chicago White Sox",
+      "matchup": "Cincinnati Reds @ Chicago White Sox",
+      "game_pk": 824561,
+      "side": "home",
+      "combo_player_ids": null,
+      "prop": "Over 15.5 Outs Recorded",
+      "projection": {
+        "stat": "pitcher_outs",
+        "value": 15.5,
+        "needs": 16
+      },
+      "lean": null,
+      "score": 57.2,
+      "confidence": "Medium",
+      "notable_signals": 0,
+      "category": null,
+      "hit_probability": 0.6438,
+      "signals": {
+        "outs_rate": 0.6438,
+        "avg_outs_per_start": 16.04
+      },
+      "base_rate": 0.6118,
+      "lift": 0.032,
+      "raw_hit_probability": null,
+      "calibrated_by": null,
+      "prob_ci": null,
+      "sample_n": 23,
+      "reliability": "D",
+      "max_acceptable_price": -181,
+      "estimated_odds": -211,
+      "market_odds": null,
+      "market_implied": null,
+      "market_edge": null,
+      "price_clears": null,
+      "probability_basis": "empirical_shrunk",
+      "probability_detail": {
+        "empirical": 0.6438,
+        "modelled": null
+      },
+      "alternatives": [
+        {
+          "stat": "pitcher_outs",
+          "line": 11.5,
+          "needs": 12,
+          "prob": 0.8789,
+          "base_rate": 0.9147,
+          "lift": -0.0358
+        },
+        {
+          "stat": "pitcher_outs",
+          "line": 12.5,
+          "needs": 13,
+          "prob": 0.8371,
+          "base_rate": 0.8794,
+          "lift": -0.0423
+        },
+        {
+          "stat": "pitcher_outs",
+          "line": 13.5,
+          "needs": 14,
+          "prob": 0.8298,
+          "base_rate": 0.8441,
+          "lift": -0.0143
+        }
+      ],
+      "why": [
+        "Recorded 16+ outs (5.1 IP) in 64.4% of his last 23 real starts (league 61.2%, avg 16.04 outs/start)"
+      ],
+      "watchouts": [
+        "No real FanDuel line found for this pitcher yet -- this threshold is model-anchored to his average workload, not a posted market number"
+      ],
+      "signal_weight_adjustment": -12.0
+    },
+    {
+      "rank": 4,
+      "type": "pitcher",
+      "name": "Braxton Ashcraft",
+      "player_id": 677952,
+      "team": "Pittsburgh Pirates",
+      "matchup": "Pittsburgh Pirates @ Miami Marlins",
+      "game_pk": 823829,
+      "side": "away",
+      "combo_player_ids": null,
+      "prop": "Over 16.5 Outs Recorded",
+      "projection": {
+        "stat": "pitcher_outs",
+        "value": 16.5,
+        "needs": 17
+      },
+      "lean": null,
+      "score": 62.1,
+      "confidence": "Medium",
+      "notable_signals": 1,
+      "category": null,
+      "hit_probability": 0.6335,
+      "signals": {
+        "outs_rate": 0.6335,
+        "avg_outs_per_start": 17.26
+      },
+      "base_rate": 0.5618,
+      "lift": 0.0717,
+      "raw_hit_probability": null,
+      "calibrated_by": null,
+      "prob_ci": null,
+      "sample_n": 23,
+      "reliability": "D",
+      "max_acceptable_price": -173,
+      "estimated_odds": -202,
+      "market_odds": null,
+      "market_implied": null,
+      "market_edge": null,
+      "price_clears": null,
+      "probability_basis": "empirical_shrunk",
+      "probability_detail": {
+        "empirical": 0.6335,
+        "modelled": null
+      },
+      "alternatives": [
+        {
+          "stat": "pitcher_outs",
+          "line": 11.5,
+          "needs": 12,
+          "prob": 0.9479,
+          "base_rate": 0.9147,
+          "lift": 0.0332
+        },
+        {
+          "stat": "pitcher_outs",
+          "line": 12.5,
+          "needs": 13,
+          "prob": 0.9406,
+          "base_rate": 0.8794,
+          "lift": 0.0612
+        },
+        {
+          "stat": "pitcher_outs",
+          "line": 13.5,
+          "needs": 14,
+          "prob": 0.8988,
+          "base_rate": 0.8441,
+          "lift": 0.0547
+        }
+      ],
+      "why": [
+        "Recorded 17+ outs (5.2 IP) in 63.3% of his last 23 real starts (league 56.2%, avg 17.26 outs/start)"
+      ],
+      "watchouts": [
+        "No real FanDuel line found for this pitcher yet -- this threshold is model-anchored to his average workload, not a posted market number"
+      ],
+      "signal_weight_adjustment": -12.0
+    },
+    {
+      "rank": 5,
+      "type": "pitcher",
+      "name": "Payton Tolle",
+      "player_id": 801139,
+      "team": "Boston Red Sox",
+      "matchup": "Boston Red Sox @ Toronto Blue Jays",
+      "game_pk": 822776,
+      "side": null,
+      "combo_player_ids": null,
+      "prop": "Over 4.5 Strikeouts",
+      "projection": {
+        "stat": "strikeouts",
+        "value": 4.5,
+        "needs": 5
+      },
+      "lean": null,
+      "score": 72.5,
+      "confidence": "Medium",
+      "notable_signals": 0,
+      "category": null,
+      "hit_probability": 0.628,
+      "signals": {
+        "same_hand_ratio": 33.3333,
+        "l14_k_pct": 100.0,
+        "env_neutral": 50.0
+      },
+      "base_rate": 0.5365,
+      "lift": 0.0915,
+      "raw_hit_probability": 0.7279,
+      "calibrated_by": "strikeouts",
+      "prob_ci": [
+        0.5121,
+        0.8819
+      ],
+      "sample_n": 19,
+      "reliability": "D",
+      "max_acceptable_price": -169,
+      "estimated_odds": -197,
+      "market_odds": null,
+      "market_implied": null,
+      "market_edge": null,
+      "price_clears": null,
+      "probability_basis": "modelled_shrunk",
+      "probability_detail": {
+        "empirical": 0.7096,
+        "modelled": 0.9194
+      },
+      "alternatives": [
+        {
+          "line": 3.5,
+          "needs": 4,
+          "prob": 0.8423,
+          "basis": "modelled_shrunk",
+          "base_rate": 0.7132,
+          "lift": 0.1291,
+          "empirical": 0.8249,
+          "modelled": 0.9715
+        },
+        {
+          "line": 5.5,
+          "needs": 6,
+          "prob": 0.5986,
+          "basis": "modelled_shrunk",
+          "base_rate": 0.3751,
+          "lift": 0.2235,
+          "empirical": 0.5866,
+          "modelled": 0.822
+        },
+        {
+          "line": 6.5,
+          "needs": 7,
+          "prob": 0.4615,
+          "basis": "modelled_shrunk",
+          "base_rate": 0.2449,
+          "lift": 0.2166,
+          "empirical": 0.4748,
+          "modelled": 0.6781
+        }
+      ],
+      "why": [
+        "Opposing team K% unavailable (FanGraphs team page down and no confirmed lineup batters matched)",
+        "Expected workload 23.1 batters faced (his own 23.0/start over 2 real starts, shrunk toward the 23.1 league mean)",
+        "3/9 known-hand opposing batters same-handed",
+        "L14 K% 45.7 (46 PA)",
+        "Recency-weighted K rate 32.9% (exp. decay, halflife 30d, 19 real starts / 435 BF) \u2014 drives the strikeout probability model"
+      ],
+      "watchouts": [
+        "Workload estimate rests on only 2 starts in the L14 window \u2014 most start-to-start variation in batters faced is noise, so this is shrunk heavily toward league average"
+      ],
+      "signal_weight_adjustment": 12.0
+    },
+    {
+      "rank": 6,
+      "type": "pitcher",
+      "name": "Max Fried",
+      "player_id": 608331,
+      "team": "New York Yankees",
+      "matchup": "Seattle Mariners @ New York Yankees",
+      "game_pk": 823508,
+      "side": null,
+      "combo_player_ids": null,
+      "prop": "Over 4.5 Strikeouts",
+      "projection": {
+        "stat": "strikeouts",
+        "value": 4.5,
+        "needs": 5
+      },
+      "lean": null,
+      "score": 80.6,
+      "confidence": "Medium",
+      "notable_signals": 0,
+      "category": null,
+      "hit_probability": 0.6186,
+      "signals": {
+        "same_hand_ratio": 100.0,
+        "l14_k_pct": 100.0,
+        "env_neutral": 50.0
+      },
+      "base_rate": 0.5365,
+      "lift": 0.0821,
+      "raw_hit_probability": 0.6991,
+      "calibrated_by": "strikeouts",
+      "prob_ci": [
+        0.3876,
+        0.8366
+      ],
+      "sample_n": 14,
+      "reliability": "D",
+      "max_acceptable_price": -162,
+      "estimated_odds": -189,
+      "market_odds": null,
+      "market_implied": null,
+      "market_edge": null,
+      "price_clears": null,
+      "probability_basis": "modelled_shrunk",
+      "probability_detail": {
+        "empirical": 0.6371,
+        "modelled": 0.8616
+      },
+      "alternatives": [
+        {
+          "line": 3.5,
+          "needs": 4,
+          "prob": 0.8292,
+          "basis": "modelled_shrunk",
+          "base_rate": 0.7132,
+          "lift": 0.116,
+          "empirical": 0.8312,
+          "modelled": 0.9452
+        },
+        {
+          "line": 5.5,
+          "needs": 6,
+          "prob": 0.5504,
+          "basis": "modelled_shrunk",
+          "base_rate": 0.3751,
+          "lift": 0.1753,
+          "empirical": 0.4832,
+          "modelled": 0.7257
+        },
+        {
+          "line": 6.5,
+          "needs": 7,
+          "prob": 0.3983,
+          "basis": "modelled_shrunk",
+          "base_rate": 0.2449,
+          "lift": 0.1534,
+          "empirical": 0.2935,
+          "modelled": 0.5517
+        }
+      ],
+      "why": [
+        "Opposing team K% unavailable (FanGraphs team page down and no confirmed lineup batters matched)",
+        "Expected workload 22.0 batters faced (his own 20.5/start over 2 real starts, shrunk toward the 23.1 league mean)",
+        "5/8 known-hand opposing batters same-handed",
+        "L14 K% 34.1 (41 PA)",
+        "Recency-weighted K rate 31.2% (exp. decay, halflife 30d, 14 real starts / 312 BF) \u2014 drives the strikeout probability model"
+      ],
+      "watchouts": [
+        "Workload estimate rests on only 2 starts in the L14 window \u2014 most start-to-start variation in batters faced is noise, so this is shrunk heavily toward league average"
+      ],
+      "signal_weight_adjustment": 12.0
+    },
+    {
+      "rank": 7,
+      "type": "pitcher",
+      "name": "Logan Gilbert",
+      "player_id": 669302,
+      "team": "Seattle Mariners",
+      "matchup": "Seattle Mariners @ New York Yankees",
+      "game_pk": 823508,
+      "side": "away",
+      "combo_player_ids": null,
+      "prop": "Over 17.5 Outs Recorded",
+      "projection": {
+        "stat": "pitcher_outs",
+        "value": 17.5,
+        "needs": 18
+      },
+      "lean": null,
+      "score": 69.3,
+      "confidence": "Medium",
+      "notable_signals": 1,
+      "category": null,
+      "hit_probability": 0.6183,
+      "signals": {
+        "outs_rate": 0.6183,
+        "avg_outs_per_start": 18.17
+      },
+      "base_rate": 0.4882,
+      "lift": 0.1301,
+      "raw_hit_probability": null,
+      "calibrated_by": null,
+      "prob_ci": null,
+      "sample_n": 23,
+      "reliability": "D",
+      "max_acceptable_price": -162,
+      "estimated_odds": -188,
+      "market_odds": null,
+      "market_implied": null,
+      "market_edge": null,
+      "price_clears": null,
+      "probability_basis": "empirical_shrunk",
+      "probability_detail": {
+        "empirical": 0.6183,
+        "modelled": null
+      },
+      "alternatives": [
+        {
+          "stat": "pitcher_outs",
+          "line": 11.5,
+          "needs": 12,
+          "prob": 0.9824,
+          "base_rate": 0.9147,
+          "lift": 0.0677
+        },
+        {
+          "stat": "pitcher_outs",
+          "line": 12.5,
+          "needs": 13,
+          "prob": 0.9406,
+          "base_rate": 0.8794,
+          "lift": 0.0612
+        },
+        {
+          "stat": "pitcher_outs",
+          "line": 13.5,
+          "needs": 14,
+          "prob": 0.9333,
+          "base_rate": 0.8441,
+          "lift": 0.0892
+        }
+      ],
+      "why": [
+        "Recorded 18+ outs (6.0 IP) in 61.8% of his last 23 real starts (league 48.8%, avg 18.17 outs/start)"
+      ],
+      "watchouts": [
+        "No real FanDuel line found for this pitcher yet -- this threshold is model-anchored to his average workload, not a posted market number"
+      ],
+      "signal_weight_adjustment": -12.0
+    },
+    {
+      "rank": 8,
+      "type": "pitcher",
+      "name": "Keider Montero",
+      "player_id": 672456,
+      "team": "Detroit Tigers",
+      "matchup": "Cleveland Guardians @ Detroit Tigers",
+      "game_pk": 824238,
+      "side": "home",
+      "combo_player_ids": null,
+      "prop": "Over 16.5 Outs Recorded",
+      "projection": {
+        "stat": "pitcher_outs",
+        "value": 16.5,
+        "needs": 17
+      },
+      "lean": null,
+      "score": 57.4,
+      "confidence": "Medium",
+      "notable_signals": 1,
+      "category": null,
+      "hit_probability": 0.6148,
+      "signals": {
+        "outs_rate": 0.6148,
+        "avg_outs_per_start": 17.05
+      },
+      "base_rate": 0.5618,
+      "lift": 0.053,
+      "raw_hit_probability": null,
+      "calibrated_by": null,
+      "prob_ci": null,
+      "sample_n": 19,
+      "reliability": "D",
+      "max_acceptable_price": -160,
+      "estimated_odds": -186,
+      "market_odds": null,
+      "market_implied": null,
+      "market_edge": null,
+      "price_clears": null,
+      "probability_basis": "empirical_shrunk",
+      "probability_detail": {
+        "empirical": 0.6148,
+        "modelled": null
+      },
+      "alternatives": [
+        {
+          "stat": "pitcher_outs",
+          "line": 11.5,
+          "needs": 12,
+          "prob": 0.9795,
+          "base_rate": 0.9147,
+          "lift": 0.0648
+        },
+        {
+          "stat": "pitcher_outs",
+          "line": 12.5,
+          "needs": 13,
+          "prob": 0.9711,
+          "base_rate": 0.8794,
+          "lift": 0.0917
+        },
+        {
+          "stat": "pitcher_outs",
+          "line": 13.5,
+          "needs": 14,
+          "prob": 0.8826,
+          "base_rate": 0.8441,
+          "lift": 0.0385
+        }
+      ],
+      "why": [
+        "Recorded 17+ outs (5.2 IP) in 61.5% of his last 19 real starts (league 56.2%, avg 17.05 outs/start)"
+      ],
+      "watchouts": [
+        "No real FanDuel line found for this pitcher yet -- this threshold is model-anchored to his average workload, not a posted market number"
+      ],
+      "signal_weight_adjustment": -12.0
+    },
+    {
+      "rank": 9,
+      "type": "pitcher",
+      "name": "Payton Tolle",
+      "player_id": 801139,
+      "team": "Boston Red Sox",
+      "matchup": "Boston Red Sox @ Toronto Blue Jays",
+      "game_pk": 822776,
+      "side": "away",
+      "combo_player_ids": null,
+      "prop": "Over 16.5 Outs Recorded",
+      "projection": {
+        "stat": "pitcher_outs",
+        "value": 16.5,
+        "needs": 17
+      },
+      "lean": null,
+      "score": 57.4,
+      "confidence": "Medium",
+      "notable_signals": 1,
+      "category": null,
+      "hit_probability": 0.6148,
+      "signals": {
+        "outs_rate": 0.6148,
+        "avg_outs_per_start": 16.89
+      },
+      "base_rate": 0.5618,
+      "lift": 0.053,
+      "raw_hit_probability": null,
+      "calibrated_by": null,
+      "prob_ci": null,
+      "sample_n": 19,
+      "reliability": "D",
+      "max_acceptable_price": -160,
+      "estimated_odds": -186,
+      "market_odds": null,
+      "market_implied": null,
+      "market_edge": null,
+      "price_clears": null,
+      "probability_basis": "empirical_shrunk",
+      "probability_detail": {
+        "empirical": 0.6148,
+        "modelled": null
+      },
+      "alternatives": [
+        {
+          "stat": "pitcher_outs",
+          "line": 11.5,
+          "needs": 12,
+          "prob": 0.8995,
+          "base_rate": 0.9147,
+          "lift": -0.0152
+        },
+        {
+          "stat": "pitcher_outs",
+          "line": 12.5,
+          "needs": 13,
+          "prob": 0.8911,
+          "base_rate": 0.8794,
+          "lift": 0.0117
+        },
+        {
+          "stat": "pitcher_outs",
+          "line": 13.5,
+          "needs": 14,
+          "prob": 0.8826,
+          "base_rate": 0.8441,
+          "lift": 0.0385
+        }
+      ],
+      "why": [
+        "Recorded 17+ outs (5.2 IP) in 61.5% of his last 19 real starts (league 56.2%, avg 16.89 outs/start)"
+      ],
+      "watchouts": [
+        "No real FanDuel line found for this pitcher yet -- this threshold is model-anchored to his average workload, not a posted market number"
+      ],
+      "signal_weight_adjustment": -12.0
+    },
+    {
+      "rank": 10,
+      "type": "pitcher",
+      "name": "Jacob deGrom",
+      "player_id": 594798,
+      "team": "Texas Rangers",
+      "matchup": "Texas Rangers @ Los Angeles Angels",
+      "game_pk": 823995,
+      "side": null,
+      "combo_player_ids": null,
+      "prop": "Over 4.5 Strikeouts",
+      "projection": {
+        "stat": "strikeouts",
+        "value": 4.5,
+        "needs": 5
+      },
+      "lean": null,
+      "score": 74.3,
+      "confidence": "Medium",
+      "notable_signals": 0,
+      "category": null,
+      "hit_probability": 0.609,
+      "signals": {
+        "same_hand_ratio": 88.8889,
+        "l14_k_pct": 88.2353,
+        "tto_penalty": -8.0,
+        "env_neutral": 50.0
+      },
+      "base_rate": 0.5365,
+      "lift": 0.0725,
+      "raw_hit_probability": 0.6699,
+      "calibrated_by": "strikeouts",
+      "prob_ci": [
+        0.5656,
+        0.8988
+      ],
+      "sample_n": 22,
+      "reliability": "D",
+      "max_acceptable_price": -156,
+      "estimated_odds": -181,
+      "market_odds": null,
+      "market_implied": null,
+      "market_edge": null,
+      "price_clears": null,
+      "probability_basis": "modelled_shrunk",
+      "probability_detail": {
+        "empirical": 0.7408,
+        "modelled": 0.8033
+      },
+      "alternatives": [
+        {
+          "line": 3.5,
+          "needs": 4,
+          "prob": 0.814,
+          "basis": "modelled_shrunk",
+          "base_rate": 0.7132,
+          "lift": 0.1008,
+          "empirical": 0.8437,
+          "modelled": 0.9148
+        },
+        {
+          "line": 5.5,
+          "needs": 6,
+          "prob": 0.5081,
+          "basis": "modelled_shrunk",
+          "base_rate": 0.3751,
+          "lift": 0.133,
+          "empirical": 0.6309,
+          "modelled": 0.6411
+        },
+        {
+          "line": 6.5,
+          "needs": 7,
+          "prob": 0.3501,
+          "basis": "modelled_shrunk",
+          "base_rate": 0.2449,
+          "lift": 0.1052,
+          "empirical": 0.4597,
+          "modelled": 0.4552
+        }
+      ],
+      "why": [
+        "Opposing team K% unavailable (FanGraphs team page down and no confirmed lineup batters matched)",
+        "Expected workload 21.8 batters faced (his own 20.0/start over 2 real starts, shrunk toward the 23.1 league mean)",
+        "5/9 known-hand opposing batters same-handed",
+        "L14 K% 30.0 (40 PA)",
+        "Recency-weighted K rate 29.1% (exp. decay, halflife 30d, 22 real starts / 486 BF) \u2014 drives the strikeout probability model"
+      ],
+      "watchouts": [
+        "Significant TTO K% drop-off (TTO1 40.0% -> TTO3 14.3%) \u2014 caution deep into the start",
+        "Workload estimate rests on only 2 starts in the L14 window \u2014 most start-to-start variation in batters faced is noise, so this is shrunk heavily toward league average"
+      ],
+      "signal_weight_adjustment": 12.0
+    },
+    {
+      "rank": 11,
+      "type": "pitcher",
+      "name": "Kevin Gausman",
+      "player_id": 592332,
+      "team": "Chicago Cubs",
+      "matchup": "Chicago Cubs @ Washington Nationals",
+      "game_pk": 822696,
+      "side": null,
+      "combo_player_ids": null,
+      "prop": "Over 3.5 Strikeouts",
+      "projection": {
+        "stat": "strikeouts",
+        "value": 3.5,
+        "needs": 4
+      },
+      "lean": null,
+      "score": 58.7,
+      "confidence": "Medium",
+      "notable_signals": 1,
+      "category": "best_of_category",
+      "hit_probability": 0.6339,
+      "signals": {
+        "same_hand_ratio": 100.0,
+        "l14_k_pct": 4.1176,
+        "tto_penalty": 8.0,
+        "env_neutral": 50.0
+      },
+      "base_rate": 0.7132,
+      "lift": -0.0793,
+      "raw_hit_probability": 0.7461,
+      "calibrated_by": "strikeouts",
+      "prob_ci": [
+        0.5953,
+        0.9076
+      ],
+      "sample_n": 24,
+      "reliability": "D",
+      "max_acceptable_price": -173,
+      "estimated_odds": -202,
+      "market_odds": null,
+      "market_implied": null,
+      "market_edge": null,
+      "price_clears": null,
+      "probability_basis": "modelled_shrunk",
+      "probability_detail": {
+        "empirical": 0.7875,
+        "modelled": 0.7791
+      },
+      "alternatives": [
+        {
+          "line": 4.5,
+          "needs": 5,
+          "prob": 0.5662,
+          "basis": "modelled_shrunk",
+          "base_rate": 0.5365,
+          "lift": 0.0297,
+          "empirical": 0.6247,
+          "modelled": 0.596
+        },
+        {
+          "line": 5.5,
+          "needs": 6,
+          "prob": 0.3872,
+          "basis": "modelled_shrunk",
+          "base_rate": 0.3751,
+          "lift": 0.0121,
+          "empirical": 0.3888,
+          "modelled": 0.3994
+        },
+        {
+          "line": 6.5,
+          "needs": 7,
+          "prob": 0.2385,
+          "basis": "modelled_shrunk",
+          "base_rate": 0.2449,
+          "lift": -0.0064,
+          "empirical": 0.329,
+          "modelled": 0.2322
+        }
+      ],
+      "why": [
+        "Opposing team K% unavailable (FanGraphs team page down and no confirmed lineup batters matched)",
+        "Expected workload 24.1 batters faced (his own 25.5/start over 2 real starts, shrunk toward the 23.1 league mean)",
+        "6/8 known-hand opposing batters same-handed",
+        "L14 K% 15.7 (51 PA)",
+        "Recency-weighted K rate 21.1% (exp. decay, halflife 30d, 24 real starts / 566 BF) \u2014 drives the strikeout probability model",
+        "Maintains K rate through the order (TTO1 10.0% -> TTO3 17.1%)"
+      ],
+      "watchouts": [
+        "Workload estimate rests on only 2 starts in the L14 window \u2014 most start-to-start variation in batters faced is noise, so this is shrunk heavily toward league average"
+      ],
+      "signal_weight_adjustment": null
+    },
+    {
+      "rank": 12,
+      "type": "pitcher",
+      "name": "Kevin Gausman",
+      "player_id": 592332,
+      "team": "Chicago Cubs",
+      "matchup": "Chicago Cubs @ Washington Nationals",
+      "game_pk": 822696,
+      "side": "away",
+      "combo_player_ids": null,
+      "prop": "Over 16.5 Outs Recorded",
+      "projection": {
+        "stat": "pitcher_outs",
+        "value": 16.5,
+        "needs": 17
+      },
+      "lean": null,
+      "score": 65.2,
+      "confidence": "Medium",
+      "notable_signals": 1,
+      "category": "best_of_category",
+      "hit_probability": 0.6457,
+      "signals": {
+        "outs_rate": 0.6457,
+        "avg_outs_per_start": 16.79
+      },
+      "base_rate": 0.5618,
+      "lift": 0.0839,
+      "raw_hit_probability": null,
+      "calibrated_by": null,
+      "prob_ci": null,
+      "sample_n": 24,
+      "reliability": "D",
+      "max_acceptable_price": -182,
+      "estimated_odds": -213,
+      "market_odds": null,
+      "market_implied": null,
+      "market_edge": null,
+      "price_clears": null,
+      "probability_basis": "empirical_shrunk",
+      "probability_detail": {
+        "empirical": 0.6457,
+        "modelled": null
+      },
+      "alternatives": [
+        {
+          "stat": "pitcher_outs",
+          "line": 11.5,
+          "needs": 12,
+          "prob": 0.9163,
+          "base_rate": 0.9147,
+          "lift": 0.0016
+        },
+        {
+          "stat": "pitcher_outs",
+          "line": 12.5,
+          "needs": 13,
+          "prob": 0.9092,
+          "base_rate": 0.8794,
+          "lift": 0.0298
+        },
+        {
+          "stat": "pitcher_outs",
+          "line": 13.5,
+          "needs": 14,
+          "prob": 0.9022,
+          "base_rate": 0.8441,
+          "lift": 0.0581
+        }
+      ],
+      "why": [
+        "Recorded 17+ outs (5.2 IP) in 64.6% of his last 24 real starts (league 56.2%, avg 16.79 outs/start)"
+      ],
+      "watchouts": [
+        "No real FanDuel line found for this pitcher yet -- this threshold is model-anchored to his average workload, not a posted market number"
+      ],
+      "signal_weight_adjustment": null
+    },
+    {
+      "rank": 13,
+      "type": "game",
+      "name": "Cleveland Guardians @ Detroit Tigers \u2014 1st Inning (Both Teams)",
+      "player_id": "nrfi_824238",
+      "team": null,
+      "matchup": "Cleveland Guardians @ Detroit Tigers",
+      "game_pk": 824238,
+      "side": "both",
+      "combo_player_ids": null,
+      "prop": "No runs in the 1st (both teams)",
+      "projection": {
+        "stat": "nrfi_combined",
+        "value": 57.6
+      },
+      "lean": "NRFI",
+      "score": 68.8,
+      "confidence": "Medium",
+      "notable_signals": 0,
+      "category": "best_of_category",
+      "hit_probability": 0.5757,
+      "signals": {
+        "home_team_scores_p": 0.2245,
+        "away_team_scores_p": 0.2576,
+        "fi_n_starts": 19.0
+      },
+      "base_rate": 0.4984,
+      "lift": 0.0773,
+      "raw_hit_probability": null,
+      "calibrated_by": null,
+      "prob_ci": null,
+      "sample_n": 19,
+      "reliability": "D",
+      "max_acceptable_price": -136,
+      "estimated_odds": -157,
+      "market_odds": -130,
+      "market_implied": 0.5331,
+      "market_edge": 0.0426,
+      "price_clears": true,
+      "probability_basis": "combined_shrunk",
+      "probability_detail": {
+        "empirical": null,
+        "modelled": null
+      },
+      "alternatives": null,
+      "why": [
+        "Detroit Tigers scores off Parker Messick (away SP) in the bottom 1st: 22.5% (shrunk, 25 starts)",
+        "Cleveland Guardians scores off Keider Montero (home SP) in the top 1st: 25.8% (shrunk, 19 starts)",
+        "This is the real both-teams NRFI/YRFI market -- combines both starters' halves of the 1st, not a one-sided team read."
+      ],
+      "watchouts": [],
+      "signal_weight_adjustment": null
+    }
+  ]
+}

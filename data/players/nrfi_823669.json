@@ -1,0 +1,37 @@
+{
+  "player_id": "nrfi_823669",
+  "name": "Philadelphia Phillies @ Minnesota Twins \u2014 1st Inning (Both Teams)",
+  "snapshots": [
+    {
+      "date": "2026-08-13",
+      "evaluations": [
+        {
+          "prop": "A run scores in the 1st (either team)",
+          "type": "game",
+          "score": 66.4,
+          "notable_signals": 0,
+          "matchup": "Philadelphia Phillies @ Minnesota Twins",
+          "game_pk": 823669,
+          "team": null,
+          "side": "both",
+          "lean": "YRFI",
+          "combo_player_ids": null,
+          "signals": {
+            "home_team_scores_p": 0.3024,
+            "away_team_scores_p": 0.3458,
+            "fi_n_starts": 24.0
+          },
+          "hit_probability": 0.5436,
+          "raw_hit_probability": null,
+          "lift": 0.042,
+          "reliability": "D",
+          "sample_n": 24,
+          "projection": {
+            "stat": "nrfi_combined",
+            "value": 54.4
+          }
+        }
+      ]
+    }
+  ]
+}

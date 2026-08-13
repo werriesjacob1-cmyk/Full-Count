@@ -20,6 +20,64 @@
           "matchup": "Pittsburgh Pirates @ Milwaukee Brewers"
         }
       ]
+    },
+    {
+      "date": "2026-08-13",
+      "evaluations": [
+        {
+          "prop": "Over 4.5 Strikeouts",
+          "type": "pitcher",
+          "score": 68.2,
+          "notable_signals": 0,
+          "matchup": "Pittsburgh Pirates @ Miami Marlins",
+          "game_pk": 823829,
+          "team": "Pittsburgh Pirates",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "same_hand_ratio": 75.0,
+            "l14_k_pct": 62.3529,
+            "env_neutral": 50.0
+          },
+          "hit_probability": 0.5877,
+          "raw_hit_probability": 0.6062,
+          "lift": 0.0512,
+          "reliability": "D",
+          "sample_n": 23,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 4.5,
+            "needs": 5
+          }
+        },
+        {
+          "prop": "Over 16.5 Outs Recorded",
+          "type": "pitcher",
+          "score": 62.1,
+          "notable_signals": 1,
+          "matchup": "Pittsburgh Pirates @ Miami Marlins",
+          "game_pk": 823829,
+          "team": "Pittsburgh Pirates",
+          "side": "away",
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "outs_rate": 0.6335,
+            "avg_outs_per_start": 17.26
+          },
+          "hit_probability": 0.6335,
+          "raw_hit_probability": null,
+          "lift": 0.0717,
+          "reliability": "D",
+          "sample_n": 23,
+          "projection": {
+            "stat": "pitcher_outs",
+            "value": 16.5,
+            "needs": 17
+          }
+        }
+      ]
     }
   ]
 }
