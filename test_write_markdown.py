@@ -66,7 +66,7 @@ head("1. an entirely empty board doesn't crash and writes a real file")
 gp.write_markdown([], [], [{"matchup": "Athletics @ Astros"}] * 15, {})
 check(os.path.exists(gp.PICKS_FILE), "an all-empty call still writes a real file")
 content0 = read()
-check("No candidates scored high enough" in content0,
+check("No candidate genuinely cleared the market's price" in content0,
       "the empty-top10 case explicitly explains why, not a silently blank board")
 
 head("2. a real top10 candidate renders its core fields")
