@@ -2317,6 +2317,14 @@ def score_stolen_base(batter, gm, opp_catcher_poptime, sprint_speed, batter_seas
         "score": round(score, 1),
         "why": why, "watchouts": watchouts, "notable_signals": notable_signals,
         "confidence": "High" if score >= 70 else ("Medium" if score >= 55 else "Low"),
+        # Raw 0-100 category components BEFORE the 50/28/22 weighting, same
+        # instrumentation pattern and purpose as score_batter/score_pitcher's
+        # cat_matchup etc -- see fit_score_weights.py. Named sb_cat_* (not
+        # cat_*) because this is a different 3-category scheme (skill/
+        # matchup/context weighted 50/28/22), not the 5-category 35/25/15/
+        # 15/10 framework, and the two must not collide in the shared rows.jsonl.
+        "sb_cat_skill": round(skill, 2), "sb_cat_matchup": round(matchup, 2),
+        "sb_cat_context": round(context, 2),
     }
 
 

@@ -20,6 +20,9 @@ happened. This is the single interface between the three pieces.
   "cat_environment": 55.0,
   "cat_baseline_skill": 62.0,
   "cat_context": 80.0,
+  "sb_cat_skill": null,
+  "sb_cat_matchup": null,
+  "sb_cat_context": null,
   "predicted_prob": 0.71,
   "outcome": 1,
   "actual": 2,
@@ -44,6 +47,17 @@ happened. This is the single interface between the three pieces.
   `fit_score_weights.py` fits against `outcome` to test whether 35/25/15/15/10
   is actually the best split, or just what an old manual-reasoning report
   section happened to say.
+- `sb_cat_skill`/`sb_cat_matchup`/`sb_cat_context` — the analogous raw 0-100
+  components for `score_stolen_base`'s own 3-category scheme (weighted
+  50/28/22), only present on `stolen_base` rows. Deliberately NOT named
+  `cat_*` — a different weight scheme, must not collide with the
+  batter/pitcher fields above in the shared schema. In practice these will
+  never appear in `backtest/rows.jsonl`: `score_stolen_base()` always
+  returns `None` in a backtest replay because sprint speed is a season-final
+  Statcast leaderboard with no date-window support (see engine.py's own
+  "WHAT COULD NOT BE RECONSTRUCTED POINT-IN-TIME" section) — recorded here
+  for schema completeness and for the day a point-in-time sprint-speed
+  source exists, not because today's backtest can use it.
 - `predicted_prob` — model probability BEFORE any calibration is applied.
   Calibration must never be fit on already-calibrated values.
 - `outcome` — 1 if the prop hit, 0 if not. Rows that cannot be graded are

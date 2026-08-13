@@ -38,7 +38,8 @@ BATTER = {"name": "Speedy Runner", "id": 5, "team": "Athletics", "order": 1}
 
 REQUIRED_KEYS = {"type", "name", "player_id", "team", "matchup", "game_pk", "prop",
                  "projection", "signals", "projected_pa", "score", "why", "watchouts",
-                 "notable_signals", "confidence"}
+                 "notable_signals", "confidence",
+                 "sb_cat_skill", "sb_cat_matchup", "sb_cat_context"}
 
 
 def call(sprint_speed=28.5, opp_catcher_poptime=2.0, batter_season=None, opp_cs_pct=None,
@@ -64,6 +65,12 @@ check(c is not None and REQUIRED_KEYS.issubset(c.keys()),
 check(c["projection"] == {"stat": "stolen_base", "value": 1},
       "projection is pinned at exactly value=1 (deliberately, per the docstring -- "
       "grade_results.py grades actual >= projection - 0.5)", f"got {c['projection']}")
+
+rebuilt = c["sb_cat_skill"] * 0.50 + c["sb_cat_matchup"] * 0.28 + c["sb_cat_context"] * 0.22
+check(abs(round(rebuilt, 1) - c["score"]) < 0.15,
+      "score == 0.50*skill + 0.28*matchup + 0.22*context, reconstructed from the recorded "
+      "sb_cat_ fields -- proves the instrumentation records what the formula actually used",
+      f"rebuilt={rebuilt:.2f} vs recorded score={c['score']}")
 
 head("3. the previously-shipped bug: OBP/wOBA context is NOT a flat 50 on a real fallback frame")
 

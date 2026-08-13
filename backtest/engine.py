@@ -1077,6 +1077,11 @@ def to_row(date, pick, graded, keep_unpriced=False):
         "cat_environment": pick.get("cat_environment"),
         "cat_baseline_skill": pick.get("cat_baseline_skill"),
         "cat_context": pick.get("cat_context"),
+        # score_stolen_base's own 3-category scheme (skill/matchup/context,
+        # weighted 50/28/22) -- see the matching comment in its return dict.
+        "sb_cat_skill": pick.get("sb_cat_skill"),
+        "sb_cat_matchup": pick.get("sb_cat_matchup"),
+        "sb_cat_context": pick.get("sb_cat_context"),
         "predicted_prob": pick.get("hit_probability"),
         "outcome": 1 if grade == "hit" else 0,
         "actual": actual,
