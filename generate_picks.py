@@ -3287,6 +3287,58 @@ def _fd_stat_alias(stat):
     return {"stolen_base": "stolen_bases"}.get(stat, stat)
 
 
+_RELIABILITY_ORDER = {"A": 0, "B": 0, "C": 0, "D": 1}
+
+
+def rank_for_board(gated):
+    """Order an already-gated (MIN_QUALITY_SCORE + positive-lift-floor)
+    candidate pool for the top10 board. A pure function of that pool so
+    it's directly testable, unlike the rest of main()'s live orchestration.
+
+    EVIDENCE BEFORE CONFIDENCE. Sorting on probability alone put a 12-start
+    grade-D pick above a 107-game grade-A pick with sixteen times the lift,
+    because the two probabilities were three points apart. A number resting
+    on twelve observations should not outrank one resting on a hundred, so
+    picks are grouped by whether their evidence is adequate first, and only
+    then ordered within each group. Thin-sample picks are still shown --
+    they are ranked, not hidden.
+
+    REAL BUG, found 2026-08-13 checking the actual graded record: this used
+    to rank every priced candidate by raw hit_probability alone, and
+    price_clears (pp.price_is_acceptable, computed on every candidate since
+    prop_probability.py was built) was never read anywhere in this
+    function -- purely display metadata. Probability and "how short the
+    market has already priced it" are highly correlated (the best hitters
+    get the shortest odds), so ranking on probability alone systematically
+    promotes heavily-juiced favorites the BOOK has already fully priced,
+    not picks with a real edge over that price. Confirmed against the real
+    graded record: 54 of the last 57 main-board picks (08-07..08-12)
+    carried price_clears=False -- the board's own value check said "no" --
+    and shipped anyway. Average price -254 (needs 71.3% to break even),
+    actual hit rate 56.1%, real flat-stake ROI -22.1%. The positive-read
+    floor (MIN_POSITIVE_LIFT, applied before this function is called) only
+    compares a pick to its market's GENERIC base rate, not to the specific
+    price FanDuel is offering tonight -- a real edge over the average is
+    not the same thing as a real edge over this exact number, and only the
+    latter is a bet worth making.
+
+    Split into a real-edge tier (ranked by market_edge -- the dashboard's
+    own Top Picks tab already does exactly this, "not just raw probability,
+    which just rewards the easiest, most-chalk market every time") and
+    everything else, kept only as a fallback so the board is never empty
+    on a night with too few clearing picks."""
+    priced = [c for c in gated if c.get("hit_probability") is not None]
+    unpriced = [c for c in gated if c.get("hit_probability") is None]
+    clears = [c for c in priced if c.get("price_clears") is True]
+    no_edge = [c for c in priced if c.get("price_clears") is not True]
+    clears.sort(key=lambda c: (-_RELIABILITY_ORDER.get(c.get("reliability", "D"), 1),
+                               c.get("market_edge") or 0, c["hit_probability"]), reverse=True)
+    no_edge.sort(key=lambda c: (-_RELIABILITY_ORDER.get(c.get("reliability", "D"), 1),
+                                c["hit_probability"], c["score"]), reverse=True)
+    unpriced.sort(key=lambda c: c["score"], reverse=True)
+    return clears + no_edge + unpriced
+
+
 def main() -> int:
     print("Generating top 10 picks (deterministic scoring, no LLM call)...")
     result = _build_and_score()
@@ -3298,17 +3350,21 @@ def main() -> int:
     emp_batters = ctx['emp_batters']; emp_pitchers = ctx['emp_pitchers']
     early_po_prices = ctx.get('po_prices')
 
-    # RANKING. The board is sorted by chance of cashing, which is the stated
-    # objective, with the quality score demoted to a GATE rather than the
-    # ordering. Both parts matter:
+    # RANKING. See rank_for_board's own docstring for the final ordering
+    # (real edge over the market first, chance of cashing as the tiebreak
+    # and the fallback for picks with no market edge to rank by -- not
+    # "chance of cashing decides the order" outright, which is what shipped
+    # until 2026-08-13 and is exactly what let heavily-juiced, no-edge
+    # favorites dominate the board). The quality score below is a GATE
+    # rather than part of that ordering. Both parts matter:
     #
     #   - Without the gate, this ranks a 70% prop on a player in an awful
     #     spot above a 68% prop with every signal behind it, purely because
     #     of the base rate. The score is what knows about tonight.
-    #   - Without probability ordering, the board ranks by a 0-100 quality
-    #     number that is not a probability and does not behave like one --
-    #     which is how a 28% stolen base finished #1 while a 79% hits prop
-    #     went unranked.
+    #   - Without probability/edge ordering, the board ranks by a 0-100
+    #     quality number that is not a probability and does not behave like
+    #     one -- which is how a 28% stolen base finished #1 while a 79%
+    #     hits prop went unranked.
     #
     # A candidate that could not be priced at all keeps its place in the
     # score order behind everything that could, rather than being dropped:
@@ -3334,8 +3390,9 @@ def main() -> int:
     gated = [c for c in candidates if c["score"] >= MIN_QUALITY_SCORE]
 
     # POSITIVE-READ FLOOR. A pick has to beat the league base rate for its own
-    # market before it can be recommended at all, and only then does chance of
-    # cashing decide the order.
+    # market before it can be recommended at all -- only then does
+    # rank_for_board's edge-first ordering (see its own docstring) decide
+    # the rest.
     #
     # This exists because ranking on probability alone selects, systematically,
     # for picks the model knows nothing about. The easiest line in a market
@@ -3347,9 +3404,9 @@ def main() -> int:
     # about him, and that is precisely why he ranked first. Dylan Cease at 6+
     # strikeouts, +16.9 points over base rate, ranked beneath him.
     #
-    # The ordering is still purely by chance of cashing, as intended. The floor
-    # only removes bets where the number comes from the market being easy
-    # rather than from anything known about the player.
+    # This floor is independent of rank_for_board's own edge-first ordering
+    # below -- it only removes bets where the number comes from the market
+    # being easy rather than from anything known about the player.
     #
     # A pick whose lift cannot be computed is NOT dropped: an unknown base rate
     # is missing information about the market, not evidence against the pick.
@@ -3362,20 +3419,7 @@ def main() -> int:
         m.warn("No candidate cleared the positive-read floor — falling back to "
                "the full pool so the board is not empty.")
 
-    priced = [c for c in gated if c.get("hit_probability") is not None]
-    unpriced = [c for c in gated if c.get("hit_probability") is None]
-    # EVIDENCE BEFORE CONFIDENCE. Sorting on probability alone put a 12-start
-    # grade-D pick above a 107-game grade-A pick with sixteen times the lift,
-    # because the two probabilities were three points apart. A number resting
-    # on twelve observations should not outrank one resting on a hundred, so
-    # picks are grouped by whether their evidence is adequate first, and only
-    # then ordered by chance of cashing within each group. Thin-sample picks
-    # are still shown -- they are ranked, not hidden.
-    _order = {"A": 0, "B": 0, "C": 0, "D": 1}
-    priced.sort(key=lambda c: (-_order.get(c.get("reliability", "D"), 1),
-                               c["hit_probability"], c["score"]), reverse=True)
-    unpriced.sort(key=lambda c: c["score"], reverse=True)
-    ranked = priced + unpriced
+    ranked = rank_for_board(gated)
 
     # CANDIDATE POOL DIAGNOSTIC. Prints what was actually CONSIDERED, not just
     # what won. Without it, a board that comes out all one market is
