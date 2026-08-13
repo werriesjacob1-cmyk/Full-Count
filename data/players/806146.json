@@ -284,7 +284,7 @@
         {
           "prop": "Over 0.5 Hits",
           "type": "batter",
-          "score": 57.5,
+          "score": 57.6,
           "notable_signals": 2,
           "matchup": "Seattle Mariners @ New York Yankees",
           "game_pk": 823508,
@@ -294,7 +294,7 @@
           "combo_player_ids": null,
           "signals": {
             "platoon": 35.0,
-            "sp_era_weak": 26.2857,
+            "sp_era_weak": 27.4286,
             "park_hr_index": 28.0,
             "lineup_slot": 50.0,
             "bullpen_fatigue": 71.4286,
@@ -303,8 +303,8 @@
             "park_hand_index": 1.02,
             "opp_catcher_framing": 1.08,
             "days_rest": 0.0,
-            "woba_ahead": 69.0909,
-            "woba_behind": 10.0,
+            "woba_ahead": 72.7273,
+            "woba_behind": 10.9091,
             "team_total_move": -6.0,
             "team_total_open": -4.0,
             "getaway_day": -2.0,
@@ -312,41 +312,14 @@
             "ump_k_pct": 0.096,
             "ump_bb_pct": -0.312
           },
-          "hit_probability": 0.5306,
-          "raw_hit_probability": 0.5514,
+          "hit_probability": 0.5307,
+          "raw_hit_probability": 0.5515,
           "lift": -0.0208,
           "reliability": "D",
           "sample_n": 0,
           "projection": {
             "stat": "hits",
             "value": 0.5,
-            "needs": 1
-          }
-        },
-        {
-          "prop": "To Steal a Base",
-          "type": "batter",
-          "score": 68.5,
-          "notable_signals": 0,
-          "matchup": "Seattle Mariners @ New York Yankees",
-          "game_pk": 823508,
-          "team": "New York Yankees",
-          "side": null,
-          "lean": null,
-          "combo_player_ids": null,
-          "signals": {
-            "opp_team_cs_pct": 0.54,
-            "sprint_speed": 75.0,
-            "catcher_poptime": 28.5714
-          },
-          "hit_probability": null,
-          "raw_hit_probability": null,
-          "lift": null,
-          "reliability": "D",
-          "sample_n": 0,
-          "projection": {
-            "stat": "stolen_base",
-            "value": 1,
             "needs": 1
           }
         }
