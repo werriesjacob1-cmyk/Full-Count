@@ -1,5 +1,5 @@
 MLB DAILY DATA PACKAGE V5 — 2026-08-13
-Generated : 2026-08-13  15:34:13
+Generated : 2026-08-13  16:19:29
 Season    : 2026
 Windows   : L3 2026-08-10→2026-08-13 | L7 2026-08-06→2026-08-13 | L14 2026-07-30→2026-08-13 | L30 2026-07-14→2026-08-13
 Sources   : FanGraphs | Statcast/Baseball Savant | MLB Stats API | UmpScorecards | FIC | Open-Meteo | Covers.com
@@ -9,7 +9,7 @@ Sources   : FanGraphs | Statcast/Baseball Savant | MLB Stats API | UmpScorecards
   SECTION 0: RUN SUMMARY — what's missing at a glance (see run_log JSON for machine-readable form)
 ════════════════════════════════════════════════════════════════════════
 
-  88 sections attempted  |  74 OK  |  5 empty  |  9 failed
+  88 sections attempted  |  78 OK  |  1 empty  |  9 failed
 
   FAILED sections:
     Section  14: ACTIVE HIT STREAKS (3+ games, L14 Statcast)
@@ -24,10 +24,6 @@ Sources   : FanGraphs | Statcast/Baseball Savant | MLB Stats API | UmpScorecards
 
   EMPTY sections (no data returned — often expected, e.g. HP umpire TBD before game morning):
     Section  31: MULTI-YEAR WEIGHTED CAREER BASELINE (2024+2025+2026 age-adjusted)
-    Section  36: CSW% LEADERBOARD — K prop edge table (sorted highest CSW%)
-    Section  45: OPPOSING LINEUP K% per GAME (K prop matchup context)
-    Section  77: STATCAST CATCHER FRAMING 2026  (strikes stolen above average)
-    Section  81: INFIELD PULL TENDENCY CROSS-MATCH  (Pull% vs defensive positioning)
 
 
 ════════════════════════════════════════════════════════════════════════
@@ -144,16 +140,16 @@ Sources   : FanGraphs | Statcast/Baseball Savant | MLB Stats API | UmpScorecards
     8. Jhonny Pereda (R) — C  [proj ~609 PA/yr]
     9. Leo Rivas (S) — SS  [proj ~585 PA/yr]
 
-  New York Yankees Batting Order  (source: Rotowire fallback, best-effort):
+  New York Yankees Batting Order:
     1. Trent Grisham (L) — CF  [proj ~750 PA/yr]
     2. Ben Rice (L) — DH  [proj ~732 PA/yr]
-    3. Spencer Jones (L) — RF  [proj ~714 PA/yr]
-    4. Luis Garcia (L) — 1B  [proj ~693 PA/yr]
-    5. Heliot Ramos (R) — LF  [proj ~672 PA/yr]
-    6. Jazz Chisholm (L) — 2B  [proj ~651 PA/yr]
-    7. Ryan McMahon (L) — 3B  [proj ~630 PA/yr]
-    8. Austin Wells (L) — C  [proj ~609 PA/yr]
-    9. George Lombard (R) — SS  [proj ~585 PA/yr]
+    3. Spencer Jones (L) — LF  [proj ~714 PA/yr]
+    4. Luis García Jr. (L) — 1B  [proj ~693 PA/yr]
+    5. George Lombard Jr. (R) — SS  [proj ~672 PA/yr]
+    6. Jazz Chisholm Jr. (L) — 2B  [proj ~651 PA/yr]
+    7. José Caballero (R) — RF  [proj ~630 PA/yr]
+    8. Ryan McMahon (L) — 3B  [proj ~609 PA/yr]
+    9. Ali Sánchez (R) — C  [proj ~585 PA/yr]
 
 ────────────────────────────────────────────────────────────
   Boston Red Sox (64-56)  @  Toronto Blue Jays (59-63)
@@ -163,16 +159,16 @@ Sources   : FanGraphs | Statcast/Baseball Savant | MLB Stats API | UmpScorecards
   SP Away: Payton Tolle  
   SP Home: Max Scherzer  
 
-  Boston Red Sox Batting Order  (source: Rotowire fallback, best-effort):
-    1. Masataka Yoshida (L) — DH  [proj ~750 PA/yr]
+  Boston Red Sox Batting Order:
+    1. Nick Sogard (S) — 2B  [proj ~750 PA/yr]
     2. Ceddanne Rafaela (R) — CF  [proj ~732 PA/yr]
-    3. Adley Rutschman (S) — C  [proj ~714 PA/yr]
+    3. Wilyer Abreu (L) — RF  [proj ~714 PA/yr]
     4. Willson Contreras (R) — 1B  [proj ~693 PA/yr]
-    5. Wilyer Abreu (L) — RF  [proj ~672 PA/yr]
+    5. Masataka Yoshida (L) — DH  [proj ~672 PA/yr]
     6. Caleb Durbin (R) — 3B  [proj ~651 PA/yr]
     7. Jarren Duran (L) — LF  [proj ~630 PA/yr]
     8. Andruw Monasterio (R) — SS  [proj ~609 PA/yr]
-    9. Nick Sogard (S) — 2B  [proj ~585 PA/yr]
+    9. Connor Wong (R) — C  [proj ~585 PA/yr]
 
   Toronto Blue Jays Batting Order:
     1. Charles McAdoo (R) — LF  [proj ~750 PA/yr]
@@ -651,22 +647,22 @@ Sources   : FanGraphs | Statcast/Baseball Savant | MLB Stats API | UmpScorecards
 ──────────────────────────────────────────────────
   Cleveland Guardians @ Detroit Tigers
   Venue   : Comerica Park  |  Elev: 585ft  |  Surface: grass
-  Temp    : 82°F  |  Humidity: 69%
-  Rain%   : 2%  (0.00in expected)
-  Wind    : 7mph from S (191°)
-  vs Field: diagonal (146° off CF)
-  AirDens : 0.9346  →  ball carries 6.5% FARTHER vs sea-level
+  Temp    : 82°F  |  Humidity: 67%
+  Rain%   : 3%  (0.00in expected)
+  Wind    : 6mph from SSW (200°)
+  vs Field: blowing OUT to CF 🔴 hitter-friendly ⚡
+  AirDens : 0.9347  →  ball carries 6.5% FARTHER vs sea-level
   Humidor : No
   HP Ump  : James Hoye
 
 ──────────────────────────────────────────────────
   Cincinnati Reds @ Chicago White Sox
   Venue   : Guaranteed Rate Field  |  Elev: 595ft  |  Surface: grass
-  Temp    : 76°F  |  Humidity: 92%
-  Rain%   : 3%  (0.00in expected)
-  Wind    : 5mph from E (90°)
-  vs Field: blowing L→R crossfield
-  AirDens : 0.9433  →  ball carries 5.7% FARTHER vs sea-level
+  Temp    : 77°F  |  Humidity: 85%
+  Rain%   : 4%  (0.00in expected)
+  Wind    : 2mph from SE (146°)
+  vs Field: diagonal (131° off CF)
+  AirDens : 0.9424  →  ball carries 5.8% FARTHER vs sea-level
   Humidor : No
   HP Ump  : Alan Porter
 
@@ -680,11 +676,11 @@ Sources   : FanGraphs | Statcast/Baseball Savant | MLB Stats API | UmpScorecards
 ──────────────────────────────────────────────────
   Seattle Mariners @ New York Yankees
   Venue   : Yankee Stadium  |  Elev: 55ft  |  Surface: grass
-  Temp    : 84°F  |  Humidity: 56%
+  Temp    : 84°F  |  Humidity: 55%
   Rain%   : 0%  (0.00in expected)
-  Wind    : 9mph from WNW (301°)
+  Wind    : 9mph from WNW (302°)
   vs Field: blowing R→L crossfield
-  AirDens : 0.9495  →  ball carries 5.0% FARTHER vs sea-level
+  AirDens : 0.9482  →  ball carries 5.2% FARTHER vs sea-level
   Humidor : No
   HP Ump  : Rob Drake
 
@@ -698,11 +694,11 @@ Sources   : FanGraphs | Statcast/Baseball Savant | MLB Stats API | UmpScorecards
 ──────────────────────────────────────────────────
   Chicago Cubs @ Washington Nationals
   Venue   : Nationals Park  |  Elev: 25ft  |  Surface: grass
-  Temp    : 93°F  |  Humidity: 37%
+  Temp    : 93°F  |  Humidity: 38%
   Rain%   : 0%  (0.00in expected)
-  Wind    : 6mph from WNW (286°)
+  Wind    : 7mph from WNW (295°)
   vs Field: blowing R→L crossfield
-  AirDens : 0.9356  →  ball carries 6.4% FARTHER vs sea-level
+  AirDens : 0.9353  →  ball carries 6.5% FARTHER vs sea-level
   Humidor : No
   HP Ump  : TBD
   ⚠ FLAGS : 🔥 HOT 93°F — ball carries
@@ -712,22 +708,22 @@ Sources   : FanGraphs | Statcast/Baseball Savant | MLB Stats API | UmpScorecards
 ──────────────────────────────────────────────────
   Texas Rangers @ Los Angeles Angels
   Venue   : Angel Stadium  |  Elev: 160ft  |  Surface: grass
-  Temp    : 70°F  |  Humidity: 82%
+  Temp    : 70°F  |  Humidity: 81%
   Rain%   : 0%  (0.00in expected)
-  Wind    : 4mph from SSW (208°)
-  vs Field: blowing R→L crossfield
-  AirDens : 0.9718  →  ball carries 2.8% FARTHER vs sea-level
+  Wind    : 4mph from SW (217°)
+  vs Field: diagonal (307° off CF)
+  AirDens : 0.9714  →  ball carries 2.9% FARTHER vs sea-level
   Humidor : No
   HP Ump  : TBD
 
 ──────────────────────────────────────────────────
   Milwaukee Brewers @ Los Angeles Dodgers
   Venue   : Dodger Stadium  |  Elev: 512ft  |  Surface: grass
-  Temp    : 68°F  |  Humidity: 86%
+  Temp    : 68°F  |  Humidity: 84%
   Rain%   : 0%  (0.00in expected)
-  Wind    : 4mph from SW (223°)
+  Wind    : 4mph from SW (225°)
   vs Field: blowing R→L crossfield
-  AirDens : 0.9625  →  ball carries 3.7% FARTHER vs sea-level
+  AirDens : 0.9616  →  ball carries 3.8% FARTHER vs sea-level
   Humidor : No
   HP Ump  : TBD
 
@@ -867,7 +863,7 @@ Sources   : FanGraphs | Statcast/Baseball Savant | MLB Stats API | UmpScorecards
 5           Brenton Doyle     Andrew Abbott      Cincinnati Reds @ Chicago White Sox  10  4   1  .400  1.300  3   2
 6          Nolan Schanuel      Jacob deGrom       Texas Rangers @ Los Angeles Angels  10  1   0  .100   .282  5   1
 7           Trent Grisham     Logan Gilbert      Seattle Mariners @ New York Yankees   9  2   0  .222   .633  3   1
-8           Jazz Chisholm     Logan Gilbert      Seattle Mariners @ New York Yankees   9  2   1  .222   .856  4   1
+8       Jazz Chisholm Jr.     Logan Gilbert      Seattle Mariners @ New York Yankees   9  2   1  .222   .856  4   1
 9             Cal Raleigh         Max Fried      Seattle Mariners @ New York Yankees   9  1   0  .111   .422  3   1
 10              JJ Bleday      Davis Martin      Cincinnati Reds @ Chicago White Sox   8  1   1  .125   .722  1   1
 11               Jo Adell    Keider Montero     Cleveland Guardians @ Detroit Tigers   7  1   1  .143   .714  4   0
@@ -883,36 +879,36 @@ Sources   : FanGraphs | Statcast/Baseball Savant | MLB Stats API | UmpScorecards
 21             Mike Trout      Jacob deGrom       Texas Rangers @ Los Angeles Angels   6  2   0  .333   .878  3   4
 22      Spencer Torkelson    Parker Messick     Cleveland Guardians @ Detroit Tigers   5  1   1  .200  1.000  3   0
 23           José Ramírez    Keider Montero     Cleveland Guardians @ Detroit Tigers   5  0   0  .000   .167  1   1
-24        Brendan Donovan         Max Fried      Seattle Mariners @ New York Yankees   5  1   0  .200   .400  1   0
-25          Ernie Clement      Payton Tolle       Boston Red Sox @ Toronto Blue Jays   5  0   0  .000   .286  2   2
-26  Vladimir Guerrero Jr.      Payton Tolle       Boston Red Sox @ Toronto Blue Jays   5  1   0  .200   .600  1   0
-27           Keibert Ruiz     Kevin Gausman      Chicago Cubs @ Washington Nationals   5  0   0  .000   .000  3   0
-28           Ryan Jeffers        Aaron Nola  Philadelphia Phillies @ Minnesota Twins   5  0   0  .000   .167  2   1
-29         Dillon Dingler    Parker Messick     Cleveland Guardians @ Detroit Tigers   4  1   0  .250   .750  0   0
-30         Nathaniel Lowe    Keider Montero     Cleveland Guardians @ Detroit Tigers   4  2   1  .500  1.750  0   0
-31         Brayan Rocchio    Keider Montero     Cleveland Guardians @ Detroit Tigers   4  0   0  .000   .000  0   0
-32         Bryan Reynolds    Tyler Phillips       Pittsburgh Pirates @ Miami Marlins   4  1   0  .250   .650  1   1
-33          Nick Gonzales    Tyler Phillips       Pittsburgh Pirates @ Miami Marlins   4  1   0  .250   .500  0   0
-34         Andrés Giménez      Payton Tolle       Boston Red Sox @ Toronto Blue Jays   4  3   1  .750  2.500  0   0
-35            Myles Straw      Payton Tolle       Boston Red Sox @ Toronto Blue Jays   4  0   0  .000   .200  1   1
-36        Adley Rutschman      Max Scherzer       Boston Red Sox @ Toronto Blue Jays   4  1   0  .250   .750  0   0
-37      Andruw Monasterio      Max Scherzer       Boston Red Sox @ Toronto Blue Jays   4  1   0  .250   .500  0   0
-38           Joc Pederson     Walbert Ureña       Texas Rangers @ Los Angeles Angels   4  1   0  .250   .650  1   1
-39          Brandon Nimmo     Walbert Ureña       Texas Rangers @ Los Angeles Angels   4  1   0  .250   .900  0   1
-40            Jake Burger     Walbert Ureña       Texas Rangers @ Los Angeles Angels   4  0   0  .000   .200  3   1
-41         Gleyber Torres    Parker Messick     Cleveland Guardians @ Detroit Tigers   3  1   0  .333   .666  1   0
-42        Kevin McGonigle    Parker Messick     Cleveland Guardians @ Detroit Tigers   3  0   0  .000   .000  1   0
-43            Steven Kwan    Keider Montero     Cleveland Guardians @ Detroit Tigers   3  0   0  .000   .200  0   1
-44         Chase DeLauter    Keider Montero     Cleveland Guardians @ Detroit Tigers   3  0   0  .000   .000  1   0
-45         Chase Meidroth     Andrew Abbott      Cincinnati Reds @ Chicago White Sox   3  0   0  .000   .000  1   0
-46          Miguel Vargas     Andrew Abbott      Cincinnati Reds @ Chicago White Sox   3  1   0  .333  1.000  0   0
-47            Edgar Quero     Andrew Abbott      Cincinnati Reds @ Chicago White Sox   3  2   0  .667  1.334  0   0
-48        Luisangel Acuña     Andrew Abbott      Cincinnati Reds @ Chicago White Sox   3  1   0  .333  1.000  1   0
-49        Elly De La Cruz      Davis Martin      Cincinnati Reds @ Chicago White Sox   3  0   0  .000   .000  0   0
-50            Matt McLain      Davis Martin      Cincinnati Reds @ Chicago White Sox   3  1   0  .333   .666  0   0
-51         Xavier Edwards  Braxton Ashcraft       Pittsburgh Pirates @ Miami Marlins   3  1   0  .333   .666  1   0
-52             Otto Lopez  Braxton Ashcraft       Pittsburgh Pirates @ Miami Marlins   3  0   0  .000   .000  0   0
-53           Heliot Ramos     Logan Gilbert      Seattle Mariners @ New York Yankees   3  1   0  .333   .666  1   0
+24        Luis García Jr.     Logan Gilbert      Seattle Mariners @ New York Yankees   5  2   0  .400   .800  0   0
+25        Brendan Donovan         Max Fried      Seattle Mariners @ New York Yankees   5  1   0  .200   .400  1   0
+26          Ernie Clement      Payton Tolle       Boston Red Sox @ Toronto Blue Jays   5  0   0  .000   .286  2   2
+27  Vladimir Guerrero Jr.      Payton Tolle       Boston Red Sox @ Toronto Blue Jays   5  1   0  .200   .600  1   0
+28           Keibert Ruiz     Kevin Gausman      Chicago Cubs @ Washington Nationals   5  0   0  .000   .000  3   0
+29           Ryan Jeffers        Aaron Nola  Philadelphia Phillies @ Minnesota Twins   5  0   0  .000   .167  2   1
+30         Dillon Dingler    Parker Messick     Cleveland Guardians @ Detroit Tigers   4  1   0  .250   .750  0   0
+31         Nathaniel Lowe    Keider Montero     Cleveland Guardians @ Detroit Tigers   4  2   1  .500  1.750  0   0
+32         Brayan Rocchio    Keider Montero     Cleveland Guardians @ Detroit Tigers   4  0   0  .000   .000  0   0
+33         Bryan Reynolds    Tyler Phillips       Pittsburgh Pirates @ Miami Marlins   4  1   0  .250   .650  1   1
+34          Nick Gonzales    Tyler Phillips       Pittsburgh Pirates @ Miami Marlins   4  1   0  .250   .500  0   0
+35         José Caballero     Logan Gilbert      Seattle Mariners @ New York Yankees   4  0   0  .000   .000  2   0
+36         Andrés Giménez      Payton Tolle       Boston Red Sox @ Toronto Blue Jays   4  3   1  .750  2.500  0   0
+37            Myles Straw      Payton Tolle       Boston Red Sox @ Toronto Blue Jays   4  0   0  .000   .200  1   1
+38      Andruw Monasterio      Max Scherzer       Boston Red Sox @ Toronto Blue Jays   4  1   0  .250   .500  0   0
+39           Joc Pederson     Walbert Ureña       Texas Rangers @ Los Angeles Angels   4  1   0  .250   .650  1   1
+40          Brandon Nimmo     Walbert Ureña       Texas Rangers @ Los Angeles Angels   4  1   0  .250   .900  0   1
+41            Jake Burger     Walbert Ureña       Texas Rangers @ Los Angeles Angels   4  0   0  .000   .200  3   1
+42         Gleyber Torres    Parker Messick     Cleveland Guardians @ Detroit Tigers   3  1   0  .333   .666  1   0
+43        Kevin McGonigle    Parker Messick     Cleveland Guardians @ Detroit Tigers   3  0   0  .000   .000  1   0
+44            Steven Kwan    Keider Montero     Cleveland Guardians @ Detroit Tigers   3  0   0  .000   .200  0   1
+45         Chase DeLauter    Keider Montero     Cleveland Guardians @ Detroit Tigers   3  0   0  .000   .000  1   0
+46         Chase Meidroth     Andrew Abbott      Cincinnati Reds @ Chicago White Sox   3  0   0  .000   .000  1   0
+47          Miguel Vargas     Andrew Abbott      Cincinnati Reds @ Chicago White Sox   3  1   0  .333  1.000  0   0
+48            Edgar Quero     Andrew Abbott      Cincinnati Reds @ Chicago White Sox   3  2   0  .667  1.334  0   0
+49        Luisangel Acuña     Andrew Abbott      Cincinnati Reds @ Chicago White Sox   3  1   0  .333  1.000  1   0
+50        Elly De La Cruz      Davis Martin      Cincinnati Reds @ Chicago White Sox   3  0   0  .000   .000  0   0
+51            Matt McLain      Davis Martin      Cincinnati Reds @ Chicago White Sox   3  1   0  .333   .666  0   0
+52         Xavier Edwards  Braxton Ashcraft       Pittsburgh Pirates @ Miami Marlins   3  1   0  .333   .666  1   0
+53             Otto Lopez  Braxton Ashcraft       Pittsburgh Pirates @ Miami Marlins   3  0   0  .000   .000  0   0
 54            Josh Naylor         Max Fried      Seattle Mariners @ New York Yankees   3  1   0  .333   .666  1   0
 55         Kazuma Okamoto      Payton Tolle       Boston Red Sox @ Toronto Blue Jays   3  1   0  .333   .833  1   1
 56       Ceddanne Rafaela      Max Scherzer       Boston Red Sox @ Toronto Blue Jays   3  2   0  .667  1.667  0   0
@@ -6132,8 +6128,58 @@ pc_bucket
   SECTION 36: CSW% LEADERBOARD — K prop edge table (sorted highest CSW%)
 ════════════════════════════════════════════════════════════════════════
 
-  CSW% unavailable — FanGraphs down and season Statcast pull failed.
-
+  FanGraphs unavailable this run — computed directly from Statcast pitch-level data instead (CSW% = called strikes + whiffs / total pitches, min 200 pitches):
+                  Name  Pitches   CSW%     K%   PA
+1         Mason Miller      856 38.700 46.000  202
+2          Cade Horton      232 35.800 25.000   68
+3       Anthony Bender      575 35.000 28.900  149
+4         Andrés Muñoz      765 34.900 37.500  192
+5    Jacob Misiorowski     2073 34.900 39.600  523
+6           Josh Hader      420 34.300 36.500  104
+7            Dylan Lee      872 33.400 33.300  210
+8        Fernando Cruz      901 33.000 29.400  221
+9        Tyler Glasnow      771 32.900 35.900  184
+10         Aaron Ashby     1275 32.900 32.400  309
+11           Jake Bird      624 32.900 25.500  157
+12      Pete Fairbanks      705 32.900 31.200  170
+13       Robert Garcia      201 32.800 26.100   46
+14       Jordan Romano      471 32.500 26.600  109
+15        Jeff Hoffman      989 32.300 34.000  238
+16       Trevor Megill      715 32.200 30.100  193
+17        Tanner Scott      774 32.200 31.800  201
+18      Tyler Ferguson      256 32.000 28.600   70
+19      Adrian Morejon     1093 32.000 29.200  281
+20          Jacob Webb      927 31.900 26.500  230
+21       Julian Garcia      381 31.800 25.500   94
+22       Austin Warren      670 31.800 24.800  161
+23         Sam Bachman      797 31.700 23.400  209
+24         Tyler Wells      898 31.600 27.700  231
+25       Jesús Luzardo     2494 31.600 29.200  640
+26  Cristopher Sánchez     2439 31.500 27.900  662
+27      Gavin Williams     2419 31.500 31.700  615
+28        Ryan Helsley      322 31.400 33.800   77
+29      Brandyn Garcia      523 31.400 27.500  142
+30        Grant Taylor     1040 31.400 31.500  257
+31     Gavin Hollowell      265 31.300 21.200   66
+32        Tejay Antone      677 31.300 21.800  174
+33     Raisel Iglesias      741 31.300 27.600  196
+34     Samy Natera Jr.      524 31.300 39.300  117
+35            Luis Mey      316 31.300 28.900   76
+36       Joey Cantillo     2143 31.200 25.700  536
+37         JoJo Romero      747 31.100 24.000  192
+38      Brendon Little      331 31.100 30.500   82
+39      George Soriano      931 31.100 24.400  234
+40          Chris Sale     2131 31.000 29.300  539
+41         Dylan Cease     2327 30.900 35.800  551
+42     Graham Ashcraft      488 30.900 30.300  119
+43        Drey Jameson      266 30.800 17.100   76
+44          Cade Smith     1036 30.700 32.800  241
+45       Shohei Ohtani     1482 30.700 29.400  374
+46         Erik Miller      742 30.700 32.100  168
+47        Gregory Soto      909 30.700 29.400  218
+48        Tarik Skubal     1685 30.600 30.300  439
+49      Devin Williams      748 30.600 28.300  184
+50         Abner Uribe      793 30.600 24.700  198
 
 ════════════════════════════════════════════════════════════════════════
   SECTION 37: PITCHER TIMES-THROUGH-ORDER SPLITS (TTO) — K%/BB%/AVG by 1st/2nd/3rd time through
@@ -6450,9 +6496,9 @@ pc_bucket
   Kevin Gausman:
     Situation                BF     IP    K   BB    ERA    AVG    OPS
     1st inning pitched      104   23.0   20    8   7.83   .280   .768
-    first 75 pitches        424   99.1  101   31      -   .256   .710
-    pitches 76+             116   27.2   26    5      -   .270   .725
-    7th inning or later       3    1.0    1    -   0.00   .000   .000  🔴 small sample
+    first 75 pitches         19    4.2    3    1      -   .222   .707  🔴 small sample
+    pitches 76+               7    2.1    1    -      -   .000   .000  🔴 small sample
+    7th inning or later      10    2.1    1    -   3.86   .300   .900  🔴 small sample
 
   Logan Gilbert:
     Situation                BF     IP    K   BB    ERA    AVG    OPS
@@ -6579,7 +6625,222 @@ pc_bucket
   SECTION 45: OPPOSING LINEUP K% per GAME (K prop matchup context)
 ════════════════════════════════════════════════════════════════════════
 
-  Opposing lineup K% unavailable — no confirmed lineups with enough data yet.
+  Source: Statcast pitch-level data (FanGraphs unavailable this run), min 15 PA. Sorted by K% within each lineup:
+
+  Cleveland Guardians @ Detroit Tigers — Detroit Tigers lineup facing Parker Messick (avg K% 22.4):
+  Batter                        K%    BB%
+  Spencer Torkelson           29.4   10.3 🎯 K prop target
+  Max Clark                   27.5    9.8 🎯 K prop target
+  Hao-Yu Lee                  24.2    4.7
+  Ben Malgeri                 23.7   15.3
+  Eduardo Valencia            23.4    2.1
+  Dillon Dingler              21.2    5.9
+  Gleyber Torres              20.3   14.1
+  Javier Báez                 18.8    3.5
+  Kevin McGonigle             13.5   14.3
+
+  Cleveland Guardians @ Detroit Tigers — Cleveland Guardians lineup facing Keider Montero (avg K% 16.3):
+  Batter                        K%    BB%
+  Jo Adell                    25.0    4.1 🎯 K prop target
+  Nathaniel Lowe              24.5    9.6
+  Travis Bazzana              22.0   11.9
+  Austin Hedges               16.3   11.1
+  Chase DeLauter              14.4   11.1
+  Brayan Rocchio              14.3    6.8
+  José Ramírez                12.0   13.2
+  Steven Kwan                 10.6   13.8
+  Angel Genao                  7.4    7.4
+
+  Cincinnati Reds @ Chicago White Sox — Chicago White Sox lineup facing Andrew Abbott (avg K% 22.1):
+  Batter                        K%    BB%
+  Colson Montgomery           33.5    8.4 🎯 K prop target
+  Brenton Doyle               27.2    8.1 🎯 K prop target
+  Randal Grichuk              22.9    4.4
+  Chase Meidroth              22.3    9.6
+  Braden Montgomery           22.2    9.9
+  Edgar Quero                 20.1    8.5
+  Luisangel Acuña             18.4    3.8
+  Miguel Vargas               17.8   13.3
+  Sam Antonacci               14.8    7.4
+
+  Cincinnati Reds @ Chicago White Sox — Cincinnati Reds lineup facing Davis Martin (avg K% 26.3):
+  Batter                        K%    BB%
+  Eugenio Suárez              36.5    9.7 🎯 K prop target
+  Héctor Rodríguez            30.4   13.0 🎯 K prop target
+  Tyler Stephenson            26.9   10.4 🎯 K prop target
+  Dane Myers                  26.8   11.8 🎯 K prop target
+  Elly De La Cruz             26.5   10.6 🎯 K prop target
+  Matt McLain                 26.4   11.1 🎯 K prop target
+  Sal Stewart                 21.9   10.4
+  JJ Bleday                   21.6   13.9
+  Ke'Bryan Hayes              19.4    6.6
+
+  Pittsburgh Pirates @ Miami Marlins — Miami Marlins lineup facing Braxton Ashcraft (avg K% 21.5):
+  Batter                        K%    BB%
+  Owen Caissie                37.7    8.5 🎯 K prop target
+  Griffin Conine              28.9   11.2 🎯 K prop target
+  Esteury Ruiz                28.9   10.8 🎯 K prop target
+  Agustín Ramírez             22.9   10.8
+  Jakob Marsee                21.4   12.6
+  Leo Jiménez                 18.6    7.6
+  Xavier Edwards              13.5   11.2
+  Otto Lopez                  13.0    4.6
+  Javier Sanoja                8.2    5.4
+
+  Pittsburgh Pirates @ Miami Marlins — Pittsburgh Pirates lineup facing Tyler Phillips (avg K% 22.7):
+  Batter                        K%    BB%
+  Esmerlyn Valdez             35.8   16.2 🎯 K prop target
+  Brandon Lowe                28.5    9.1 🎯 K prop target
+  Bryan Reynolds              24.2   13.8
+  Rafael Flores Jr.           23.7   18.4
+  Jared Triolo                21.9    7.9
+  Jake Mangum                 19.8    5.1
+  Jacob Gonzalez              19.0    4.9
+  Nick Gonzales               17.4    5.9
+  Spencer Horwitz             13.8   13.0
+
+  Seattle Mariners @ New York Yankees — New York Yankees lineup facing Logan Gilbert (avg K% 25.5):
+  Batter                        K%    BB%
+  Spencer Jones               33.3   11.6 🎯 K prop target
+  Jazz Chisholm Jr.           30.6   10.5 🎯 K prop target
+  Ryan McMahon                30.2    7.1 🎯 K prop target
+  George Lombard Jr.          27.6   10.3 🎯 K prop target
+  Ali Sánchez                 25.4    1.5 🎯 K prop target
+  Ben Rice                    25.3   11.9 🎯 K prop target
+  José Caballero              24.1    6.2
+  Trent Grisham               17.1   12.5
+  Luis García Jr.             16.2    4.2
+
+  Seattle Mariners @ New York Yankees — Seattle Mariners lineup facing Max Fried (avg K% 22.0):
+  Batter                        K%    BB%
+  Cal Raleigh                 32.3   11.7 🎯 K prop target
+  Weston Wilson               29.4    9.2 🎯 K prop target
+  Leo Rivas                   28.4   14.2 🎯 K prop target
+  Randy Arozarena             20.9    9.7
+  Julio Rodríguez             20.4    8.2
+  Dominic Canzone             19.9    8.7
+  Jhonny Pereda               19.0    5.1
+  Brendan Donovan             14.9    9.5
+  Josh Naylor                 12.4    7.9
+
+  Boston Red Sox @ Toronto Blue Jays — Toronto Blue Jays lineup facing Payton Tolle (avg K% 18.7):
+  Batter                        K%    BB%
+  Kazuma Okamoto              30.5    8.9 🎯 K prop target
+  Brandon Valenzuela          27.1   10.0 🎯 K prop target
+  Charles McAdoo              22.5    5.0
+  Andrés Giménez              19.2    3.7
+  George Springer             17.7   10.3
+  Nathan Lukes                14.5    6.2
+  Vladimir Guerrero Jr.       13.3    9.8
+  Myles Straw                 13.2    6.2
+  Ernie Clement               10.2    3.3
+
+  Boston Red Sox @ Toronto Blue Jays — Boston Red Sox lineup facing Max Scherzer (avg K% 19.7):
+  Batter                        K%    BB%
+  Jarren Duran                27.8    7.1 🎯 K prop target
+  Willson Contreras           25.1   10.7 🎯 K prop target
+  Connor Wong                 22.8    9.1
+  Wilyer Abreu                20.5   10.1
+  Andruw Monasterio           20.3    7.7
+  Ceddanne Rafaela            20.0    4.3
+  Nick Sogard                 15.6   15.6
+  Caleb Durbin                14.2    7.1
+  Masataka Yoshida            11.2    9.2
+
+  Chicago Cubs @ Washington Nationals — Washington Nationals lineup facing Kevin Gausman (avg K% 19.3):
+  Batter                        K%    BB%
+  Jose Tena                   28.3    8.0 🎯 K prop target
+  Dylan Crews                 24.8    7.0
+  CJ Abrams                   22.9    8.5
+  Nasim Nunez                 20.6   11.6
+  Daylen Lile                 18.7    5.6
+  Jacob Young                 16.9    7.4
+  Abimelec Ortiz              16.7    3.3
+  Jorbit Vivas                14.4   10.6
+  Keibert Ruiz                10.8    4.9
+
+  Chicago Cubs @ Washington Nationals — Chicago Cubs lineup facing Cade Cavalli (avg K% 21.0):
+  Batter                        K%    BB%
+  Ian Happ                    30.4   13.3 🎯 K prop target
+  Pete Crow-Armstrong         26.9   12.1 🎯 K prop target
+  Seiya Suzuki                25.2   11.9 🎯 K prop target
+  Dansby Swanson              23.4    9.8
+  Michael Busch               22.0   12.3
+  Tyrone Taylor               19.9    5.2
+  Carson Kelly                16.6   10.7
+  Alex Bregman                15.9   10.8
+  Nico Hoerner                 8.8    7.6
+
+  Philadelphia Phillies @ Minnesota Twins — Minnesota Twins lineup facing Aaron Nola (avg K% 21.3):
+  Batter                        K%    BB%
+  Kaelen Culpepper            35.3    5.9 🎯 K prop target
+  Royce Lewis                 25.0    8.7 🎯 K prop target
+  Byron Buxton                24.5    7.0
+  Kody Clemens                22.4    6.1
+  Josh Bell                   21.1    8.1
+  Trevor Larnach              17.5   10.9
+  Ryan Jeffers                15.9   12.8
+  Brooks Lee                  15.9    6.9
+  Luke Keaschall              14.4    9.9
+
+  Philadelphia Phillies @ Minnesota Twins — Philadelphia Phillies lineup facing Taj Bradley (avg K% 19.7):
+  Batter                        K%    BB%
+  Kyle Schwarber              34.0   15.0 🎯 K prop target
+  Brandon Marsh               25.3    5.6 🎯 K prop target
+  Trea Turner                 21.7    6.1
+  Bryce Harper                21.1   16.0
+  J.T. Realmuto               21.1    7.4
+  Justin Crawford             18.9    5.9
+  Bryson Stott                17.2    9.3
+  Alec Bohm                   13.9    6.7
+  Luis Arraez                  4.5    5.1
+
+  Texas Rangers @ Los Angeles Angels — Los Angeles Angels lineup facing Jacob deGrom (avg K% 22.0):
+  Batter                        K%    BB%
+  Zach Neto                   32.3    9.4 🎯 K prop target
+  Josh Lowe                   28.5    7.2 🎯 K prop target
+  Mike Trout                  25.5   17.9 🎯 K prop target
+  Denzer Guzman               24.0    5.7
+  Wade Meckler                21.0    9.3
+  Moises Ballesteros          20.7   10.1
+  Vaughn Grissom              16.8    6.9
+  Tyler Heineman              15.6    3.4
+  Nolan Schanuel              13.7   10.7
+
+  Texas Rangers @ Los Angeles Angels — Texas Rangers lineup facing Walbert Ureña (avg K% 22.9):
+  Batter                        K%    BB%
+  Jake Burger                 26.6    7.5 🎯 K prop target
+  Corey Seager                25.4   11.8 🎯 K prop target
+  Evan Carter                 24.1   12.8
+  Ezequiel Duran              23.8    7.0
+  Joc Pederson                23.7   11.3
+  Elias Diaz                  22.6    2.6
+  Wyatt Langford              22.2    8.0
+  Brandon Nimmo               21.8    8.3
+  Nicky Lopez                 15.5    5.0
+
+  Milwaukee Brewers @ Los Angeles Dodgers — Los Angeles Dodgers lineup facing Shane Drohan (avg K% 19.2):
+  Batter                        K%    BB%
+  Teoscar Hernandez           27.1    8.3 🎯 K prop target
+  Shohei Ohtani               23.2   13.4
+  Tommy Edman                 19.9    6.0
+  Andy Pages                  19.7    8.3
+  Kyle Tucker                 18.3   12.5
+  Enrique Hernandez           18.2    4.5
+  Freddie Freeman             16.2   10.6
+  Mookie Betts                11.2    8.8
+
+  Milwaukee Brewers @ Los Angeles Dodgers — Milwaukee Brewers lineup facing Roki Sasaki (avg K% 22.6):
+  Batter                        K%    BB%
+  Garrett Mitchell            32.4   12.1 🎯 K prop target
+  Christian Yelich            27.3    9.4 🎯 K prop target
+  Brice Turang                25.0   12.3 🎯 K prop target
+  Jake Bauers                 24.9   13.8
+  Jackson Chourio             24.1    8.1
+  David Hamilton              21.9    9.3
+  Joey Ortiz                  18.2    9.8
+  Andrew Vaughn               15.8   10.5
+  William Contreras           14.0    8.9
 
 
 ════════════════════════════════════════════════════════════════════════
@@ -9762,66 +10023,66 @@ San Francisco Giants 50 71 .413 23.0 19
   Cleveland Guardians @ Detroit Tigers — Comerica Park:
   LF(345ft/14ft wall)  CF(420ft)  RF(330ft/8ft wall)
   Surface: grass  Humidor: No  Batter Eye: easy
-  Air density: 0.9346  Altitude bonus: 1.1408
-  Wind pull-side boost: 0.980  Oppo-side boost: 1.020
-  PULL HITTERS HR INDEX: 1.196
-  OPPO HITTERS HR INDEX: 1.246
+  Air density: 0.9347  Altitude bonus: 1.1408
+  Wind pull-side boost: 0.981  Oppo-side boost: 1.019
+  PULL HITTERS HR INDEX: 1.197
+  OPPO HITTERS HR INDEX: 1.244
 
   Cincinnati Reds @ Chicago White Sox — Guaranteed Rate Field:
   LF(330ft/8ft wall)  CF(400ft)  RF(335ft/8ft wall)
   Surface: grass  Humidor: No  Batter Eye: easy
-  Air density: 0.9433  Altitude bonus: 1.1405
-  Wind pull-side boost: 1.000  Oppo-side boost: 1.000
-  PULL HITTERS HR INDEX: 1.209
-  OPPO HITTERS HR INDEX: 1.209
+  Air density: 0.9424  Altitude bonus: 1.1405
+  Wind pull-side boost: 0.993  Oppo-side boost: 1.007
+  PULL HITTERS HR INDEX: 1.202
+  OPPO HITTERS HR INDEX: 1.219
 
   Pittsburgh Pirates @ Miami Marlins — loanDepot park:
   LF(344ft/8ft wall)  CF(418ft)  RF(335ft/8ft wall)
   Surface: grass  Humidor: No  Batter Eye: easy
-  Air density: 0.9388  Altitude bonus: 1.0000
+  Air density: 0.9400  Altitude bonus: 1.0000
   Wind pull-side boost: 1.000  Oppo-side boost: 1.000
-  PULL HITTERS HR INDEX: 1.065
-  OPPO HITTERS HR INDEX: 1.065
+  PULL HITTERS HR INDEX: 1.064
+  OPPO HITTERS HR INDEX: 1.064
 
   Seattle Mariners @ New York Yankees — Yankee Stadium:
   LF(318ft/8ft wall)  CF(408ft)  RF(314ft/8ft wall)
   Surface: grass  Humidor: No  Batter Eye: easy
-  Air density: 0.9495  Altitude bonus: 1.1567
-  Wind pull-side boost: 1.026  Oppo-side boost: 0.974
-  PULL HITTERS HR INDEX: 1.25
+  Air density: 0.9482  Altitude bonus: 1.1567
+  Wind pull-side boost: 1.027  Oppo-side boost: 0.973
+  PULL HITTERS HR INDEX: 1.253
   OPPO HITTERS HR INDEX: 1.187
 
   Boston Red Sox @ Toronto Blue Jays — Rogers Centre:
   LF(328ft/12ft wall)  CF(400ft)  RF(328ft/12ft wall)
   Surface: turf  Humidor: No  Batter Eye: medium
-  Air density: 0.9573  Altitude bonus: 1.0000
-  Wind pull-side boost: 0.990  Oppo-side boost: 1.010
-  PULL HITTERS HR INDEX: 1.034
-  OPPO HITTERS HR INDEX: 1.056
+  Air density: 0.9593  Altitude bonus: 1.0000
+  Wind pull-side boost: 0.980  Oppo-side boost: 1.020
+  PULL HITTERS HR INDEX: 1.021
+  OPPO HITTERS HR INDEX: 1.064
 
   Chicago Cubs @ Washington Nationals — Nationals Park:
   LF(336ft/8ft wall)  CF(402ft)  RF(335ft/8ft wall)
   Surface: grass  Humidor: No  Batter Eye: easy
-  Air density: 0.9356  Altitude bonus: 1.1577
-  Wind pull-side boost: 0.981  Oppo-side boost: 1.020
-  PULL HITTERS HR INDEX: 1.213
-  OPPO HITTERS HR INDEX: 1.261
+  Air density: 0.9353  Altitude bonus: 1.1577
+  Wind pull-side boost: 0.979  Oppo-side boost: 1.021
+  PULL HITTERS HR INDEX: 1.212
+  OPPO HITTERS HR INDEX: 1.263
 
   Texas Rangers @ Los Angeles Angels — Angel Stadium:
   LF(330ft/8ft wall)  CF(396ft)  RF(330ft/8ft wall)
   Surface: grass  Humidor: No  Batter Eye: easy
-  Air density: 0.9718  Altitude bonus: 1.1536
-  Wind pull-side boost: 1.011  Oppo-side boost: 0.989
-  PULL HITTERS HR INDEX: 1.201
-  OPPO HITTERS HR INDEX: 1.174
+  Air density: 0.9714  Altitude bonus: 1.1536
+  Wind pull-side boost: 1.014  Oppo-side boost: 0.987
+  PULL HITTERS HR INDEX: 1.204
+  OPPO HITTERS HR INDEX: 1.172
 
   Milwaukee Brewers @ Los Angeles Dodgers — Dodger Stadium:
   LF(330ft/8ft wall)  CF(395ft)  RF(330ft/8ft wall)
   Surface: grass  Humidor: No  Batter Eye: easy
-  Air density: 0.9625  Altitude bonus: 1.1430
-  Wind pull-side boost: 0.988  Oppo-side boost: 1.012
-  PULL HITTERS HR INDEX: 1.173
-  OPPO HITTERS HR INDEX: 1.202
+  Air density: 0.9616  Altitude bonus: 1.1430
+  Wind pull-side boost: 1.000  Oppo-side boost: 1.000
+  PULL HITTERS HR INDEX: 1.189
+  OPPO HITTERS HR INDEX: 1.189
 
 
 ════════════════════════════════════════════════════════════════════════
@@ -9925,26 +10186,26 @@ San Francisco Giants 50 71 .413 23.0 19
   --------------------------------------------------------------------------------
   1     Trent Grisham                   750  n/a        Ben Rice
   2     Ben Rice                        732  n/a        Spencer Jones
-  3     Spencer Jones                   714  n/a        Luis Garcia
-  4     Luis Garcia                     693  n/a        Heliot Ramos
-  5     Heliot Ramos                    672  n/a        Jazz Chisholm
-  6     Jazz Chisholm                   651  n/a        Ryan McMahon
-  7     Ryan McMahon                    630  n/a        Austin Wells
-  8     Austin Wells                    609  n/a        George Lombard
-  9     George Lombard                  585  n/a        Trent Grisham
+  3     Spencer Jones                   714  n/a        Luis García Jr.
+  4     Luis García Jr.                 693  n/a        George Lombard Jr.
+  5     George Lombard Jr.              672  n/a        Jazz Chisholm Jr.
+  6     Jazz Chisholm Jr.               651  n/a        José Caballero
+  7     José Caballero                  630  n/a        Ryan McMahon
+  8     Ryan McMahon                    609  n/a        Ali Sánchez
+  9     Ali Sánchez                     585  n/a        Trent Grisham
 
   Boston Red Sox lineup context:
   Slot  Player                    ProjPA/yr  OBP ahead  Protected by
   --------------------------------------------------------------------------------
-  1     Masataka Yoshida                750  n/a        Ceddanne Rafaela
-  2     Ceddanne Rafaela                732  n/a        Adley Rutschman
-  3     Adley Rutschman                 714  n/a        Willson Contreras
-  4     Willson Contreras               693  n/a        Wilyer Abreu
-  5     Wilyer Abreu                    672  n/a        Caleb Durbin
+  1     Nick Sogard                     750  n/a        Ceddanne Rafaela
+  2     Ceddanne Rafaela                732  n/a        Wilyer Abreu
+  3     Wilyer Abreu                    714  n/a        Willson Contreras
+  4     Willson Contreras               693  n/a        Masataka Yoshida
+  5     Masataka Yoshida                672  n/a        Caleb Durbin
   6     Caleb Durbin                    651  n/a        Jarren Duran
   7     Jarren Duran                    630  n/a        Andruw Monasterio
-  8     Andruw Monasterio               609  n/a        Nick Sogard
-  9     Nick Sogard                     585  n/a        Masataka Yoshida
+  8     Andruw Monasterio               609  n/a        Connor Wong
+  9     Connor Wong                     585  n/a        Nick Sogard
 
   Toronto Blue Jays lineup context:
   Slot  Player                    ProjPA/yr  OBP ahead  Protected by
@@ -13076,8 +13337,70 @@ San Francisco Giants 50 71 .413 23.0 19
   SECTION 77: STATCAST CATCHER FRAMING 2026  (strikes stolen above average)
 ════════════════════════════════════════════════════════════════════════
 
-  Catcher framing unavailable from both sources.
-
+  [Baseball Savant disabled the CSV export for its catcher-framing leaderboard
+   specifically, so this is computed from raw Statcast pitch data instead: share of
+   TAKEN pitches outside the zone (zones 11-14) called strikes = strikes stolen.]
+                Catcher  OutsideTaken  StrikesStolen  Steal%
+1            Luke Maile           369             26   7.000
+2           Ali Sánchez          1136             72   6.300
+3    Brandon Valenzuela          2859            177   6.200
+4         Aramis Garcia           365             22   6.000
+5       Eliezer Alfonzo           581             33   5.700
+6        Dillon Dingler          4210            234   5.600
+7           Drew Millas          2285            127   5.600
+8        Tyler Heineman          2207            122   5.500
+9          Collin Price           149              8   5.400
+10             Sam Huff           424             23   5.400
+11         Daniel Susac          2163            114   5.300
+12          Pedro Pagés          2708            142   5.200
+13         Jimmy Crooks          1353             69   5.100
+14       Alejandro Kirk          2317            117   5.000
+15       Rafael Marchán          1521             76   5.000
+16         Austin Wells          3822            192   5.000
+17      Victor Caratini          3103            154   5.000
+18         P.J. Higgins           574             28   4.900
+19           Harry Ford           627             31   4.900
+20      Adley Rutschman          2787            135   4.800
+21        César Salazar           436             21   4.800
+22        Carter Jensen          3545            170   4.800
+23         Jose Trevino          1577             75   4.800
+24         Luis Torrens          2957            140   4.700
+25       Carlos Narváez          3218            150   4.700
+26            David Fry           301             14   4.700
+27         Ryan Jeffers          2662            126   4.700
+28         Brian Serven           499             23   4.600
+29         Keibert Ruiz          3630            166   4.600
+30         Carson Kelly          3578            163   4.600
+31         J.C. Escarra          1412             65   4.600
+32       Endy Rodríguez          1636             76   4.600
+33     Eduardo Valencia           247             11   4.500
+34      Hunter Feduccia          2629            119   4.500
+35       Patrick Bailey          3744            168   4.500
+36           Jonah Heim          2498            112   4.500
+37       Garrett Stubbs           709             32   4.500
+38            Joey Bart          1849             83   4.500
+39        Freddy Fermin          3115            139   4.500
+40           Sandy León           816             36   4.400
+41            Drew Romo          2333            102   4.400
+42      Braxton Fulford           521             23   4.400
+43           Liam Hicks          1913             84   4.400
+44    Francisco Alvarez          3172            138   4.400
+45            Bo Naylor          1311             58   4.400
+46       Chadwick Tromp           642             28   4.400
+47     Sebastián Rivero          1080             46   4.300
+48        Hayden Senger           349             15   4.300
+49    Christian Vázquez          3357            145   4.300
+50       Gabriel Moreno          3468            150   4.300
+51        Austin Hedges          2602            108   4.200
+52         Miguel Amaya          2404            102   4.200
+53       Brett Sullivan          2139             90   4.200
+54           Elias Díaz          2108             89   4.200
+55         Austin Wynns          1342             57   4.200
+56      Brian Navarreto           370             15   4.100
+57  Adrian Del Castillo           772             32   4.100
+58        Drake Baldwin          3159            129   4.100
+59   Moisés Ballesteros           484             20   4.100
+60       Samuel Basallo          2235             91   4.100
 
 ════════════════════════════════════════════════════════════════════════
   SECTION 78: STATCAST CATCHER POP TIME 2026  (SB prevention)
@@ -13539,8 +13862,164 @@ San Francisco Giants 50 71 .413 23.0 19
   SECTION 81: INFIELD PULL TENDENCY CROSS-MATCH  (Pull% vs defensive positioning)
 ════════════════════════════════════════════════════════════════════════
 
-  Pull% unavailable — season Statcast pull failed.
-
+  [Computed from Statcast batted-ball spray angle, mirrored by batter handedness so
+   'pull' means the same for LHB and RHB. Extreme pull hitters face the most shifted
+   alignments; extreme oppo hitters beat them.]
+                    Batter                                  Matchup  BBE  Pull%  Oppo%
+1             Esteury Ruiz       Pittsburgh Pirates @ Miami Marlins   91 69.200 20.900
+2             Keibert Ruiz      Chicago Cubs @ Washington Nationals  237 68.800 19.000
+3        Jazz Chisholm Jr.      Seattle Mariners @ New York Yankees  265 66.000 23.400
+4           Kyle Schwarber  Philadelphia Phillies @ Minnesota Twins  259 65.300 22.800
+5            Weston Wilson      Seattle Mariners @ New York Yankees   68 63.200 30.900
+6              Cal Raleigh      Seattle Mariners @ New York Yankees  210 62.900 26.200
+7           Tyler Heineman       Texas Rangers @ Los Angeles Angels  115 62.600 31.300
+8             Brandon Lowe       Pittsburgh Pirates @ Miami Marlins  318 62.600 24.200
+9            Tyrone Taylor      Chicago Cubs @ Washington Nationals  138 62.300 25.400
+10          Dansby Swanson      Chicago Cubs @ Washington Nationals  309 62.100 23.900
+11            José Ramírez     Cleveland Guardians @ Detroit Tigers  295 61.700 24.700
+12             Nick Sogard       Boston Red Sox @ Toronto Blue Jays   73 61.600 27.400
+13       Colson Montgomery      Cincinnati Reds @ Chicago White Sox  276 61.600 26.400
+14          Kazuma Okamoto       Boston Red Sox @ Toronto Blue Jays  291 61.500 26.800
+15     Pete Crow-Armstrong      Chicago Cubs @ Washington Nationals  321 61.100 27.100
+16             Royce Lewis  Philadelphia Phillies @ Minnesota Twins  249 60.200 26.900
+17          Eugenio Suárez      Cincinnati Reds @ Chicago White Sox  187 59.900 32.100
+18           Trent Grisham      Seattle Mariners @ New York Yankees  291 59.800 25.400
+19           Austin Hedges     Cleveland Guardians @ Detroit Tigers  136 59.600 27.900
+20           Shohei Ohtani  Milwaukee Brewers @ Los Angeles Dodgers  319 59.600 28.800
+21                Ben Rice      Seattle Mariners @ New York Yankees  317 59.300 26.800
+22       Willson Contreras       Boston Red Sox @ Toronto Blue Jays  275 59.300 28.400
+23           Miguel Vargas      Cincinnati Reds @ Chicago White Sox  360 59.200 29.700
+24               JJ Bleday      Cincinnati Reds @ Chicago White Sox  245 59.200 22.400
+25             Javier Báez     Cleveland Guardians @ Detroit Tigers  110 59.100 25.500
+26           Ernie Clement       Boston Red Sox @ Toronto Blue Jays  421 59.100 26.800
+27            Alex Bregman      Chicago Cubs @ Washington Nationals  395 59.000 27.600
+28            Byron Buxton  Philadelphia Phillies @ Minnesota Twins  249 59.000 26.900
+29          Nolan Schanuel       Texas Rangers @ Los Angeles Angels  325 58.800 27.700
+30            Corey Seager       Texas Rangers @ Los Angeles Angels  174 58.600 29.900
+31             Tommy Edman  Milwaukee Brewers @ Los Angeles Dodgers  118 58.500 25.400
+32         Luis García Jr.      Seattle Mariners @ New York Yankees  334 58.400 28.400
+33       Spencer Torkelson     Cleveland Guardians @ Detroit Tigers  290 57.900 29.000
+34             Kyle Tucker  Milwaukee Brewers @ Los Angeles Dodgers  330 57.900 31.200
+35            Kody Clemens  Philadelphia Phillies @ Minnesota Twins  311 57.900 31.800
+36          Griffin Conine       Pittsburgh Pirates @ Miami Marlins  109 57.800 23.900
+37              Brooks Lee  Philadelphia Phillies @ Minnesota Twins  373 57.400 29.200
+38         Dominic Canzone      Seattle Mariners @ New York Yankees  257 57.200 26.500
+39             Connor Wong       Boston Red Sox @ Toronto Blue Jays  128 57.000 34.400
+40             Jake Bauers  Milwaukee Brewers @ Los Angeles Dodgers  269 56.900 32.700
+41          Randal Grichuk      Cincinnati Reds @ Chicago White Sox  146 56.800 32.900
+42          José Caballero      Seattle Mariners @ New York Yankees  252 56.700 29.400
+43             Jake Burger       Texas Rangers @ Los Angeles Angels  313 56.500 31.900
+44      Brandon Valenzuela       Boston Red Sox @ Toronto Blue Jays  138 56.500 31.200
+45          Trevor Larnach  Philadelphia Phillies @ Minnesota Twins  263 56.300 27.400
+46            Jarren Duran       Boston Red Sox @ Toronto Blue Jays  315 56.200 27.000
+47               Zach Neto       Texas Rangers @ Los Angeles Angels  306 56.200 30.400
+48               Josh Bell  Philadelphia Phillies @ Minnesota Twins  344 56.100 29.700
+49         Agustín Ramírez       Pittsburgh Pirates @ Miami Marlins  102 55.900 33.300
+50               CJ Abrams      Chicago Cubs @ Washington Nationals  349 55.300 31.200
+51            Bryson Stott  Philadelphia Phillies @ Minnesota Twins  342 55.300 31.000
+52         George Springer       Boston Red Sox @ Toronto Blue Jays  286 55.200 29.700
+53           Denzer Guzman       Texas Rangers @ Los Angeles Angels  120 55.000 27.500
+54            Caleb Durbin       Boston Red Sox @ Toronto Blue Jays  342 55.000 32.700
+55          Jacob Gonzalez       Pittsburgh Pirates @ Miami Marlins  120 55.000 35.000
+56               Leo Rivas      Seattle Mariners @ New York Yankees   82 54.900 28.000
+57                Ian Happ      Chicago Cubs @ Washington Nationals  283 54.800 32.200
+58        Masataka Yoshida       Boston Red Sox @ Toronto Blue Jays  238 54.600 32.400
+59            Seiya Suzuki      Chicago Cubs @ Washington Nationals  281 54.100 31.000
+60          Brayan Rocchio     Cleveland Guardians @ Detroit Tigers  362 54.100 31.500
+61          Dillon Dingler     Cleveland Guardians @ Detroit Tigers  342 54.100 31.900
+62          Nathaniel Lowe     Cleveland Guardians @ Detroit Tigers  200 54.000 29.500
+63           J.T. Realmuto  Philadelphia Phillies @ Minnesota Twins  238 53.800 31.900
+64            Ryan Jeffers  Philadelphia Phillies @ Minnesota Twins  182 53.800 34.600
+65            Bryce Harper  Philadelphia Phillies @ Minnesota Twins  330 53.600 30.900
+66            Joc Pederson       Texas Rangers @ Los Angeles Angels  240 53.300 30.400
+67            Jakob Marsee       Pittsburgh Pirates @ Miami Marlins  295 53.200 35.600
+68           Brandon Marsh  Philadelphia Phillies @ Minnesota Twins  327 53.200 35.500
+69             Dylan Crews      Chicago Cubs @ Washington Nationals  194 53.100 30.900
+70         Brendan Donovan      Seattle Mariners @ New York Yankees  102 52.900 30.400
+71            Mookie Betts  Milwaukee Brewers @ Los Angeles Dodgers  299 52.800 31.800
+72             Evan Carter       Texas Rangers @ Los Angeles Angels  218 52.800 32.100
+73          Chase Meidroth      Cincinnati Reds @ Chicago White Sox  333 52.600 35.700
+74             Josh Naylor      Seattle Mariners @ New York Yankees  384 52.600 32.600
+75          Vaughn Grissom       Texas Rangers @ Los Angeles Angels  225 52.400 32.900
+76         Freddie Freeman  Milwaukee Brewers @ Los Angeles Dodgers  380 52.400 35.300
+77           Michael Busch      Chicago Cubs @ Washington Nationals  355 52.400 33.200
+78          Luke Keaschall  Philadelphia Phillies @ Minnesota Twins  335 52.200 35.500
+79          Chase DeLauter     Cleveland Guardians @ Detroit Tigers  341 52.200 34.300
+80             Nasim Nunez      Chicago Cubs @ Washington Nationals  281 52.000 33.500
+81         Spencer Horwitz       Pittsburgh Pirates @ Miami Marlins  248 52.000 36.700
+82             Daylen Lile      Chicago Cubs @ Washington Nationals  385 51.900 35.100
+83            Jared Triolo       Pittsburgh Pirates @ Miami Marlins  189 51.900 35.400
+84         Luisangel Acuña      Cincinnati Reds @ Chicago White Sox  162 51.900 35.800
+85          Wyatt Langford       Texas Rangers @ Los Angeles Angels  214 51.900 35.500
+86          Andrés Giménez       Boston Red Sox @ Toronto Blue Jays  299 51.800 34.100
+87           Sam Antonacci      Cincinnati Reds @ Chicago White Sox  290 51.700 33.800
+88          Bryan Reynolds       Pittsburgh Pirates @ Miami Marlins  331 51.700 36.600
+89            Ryan McMahon      Seattle Mariners @ New York Yankees  189 51.300 31.700
+90              Mike Trout       Texas Rangers @ Los Angeles Angels  258 50.800 36.400
+91          Ezequiel Duran       Texas Rangers @ Los Angeles Angels  298 50.700 36.900
+92           Javier Sanoja       Pittsburgh Pirates @ Miami Marlins  283 50.200 37.100
+93             Nicky Lopez       Texas Rangers @ Los Angeles Angels  170 50.000 32.400
+94             Myles Straw       Boston Red Sox @ Toronto Blue Jays  194 50.000 35.600
+95           Nick Gonzales       Pittsburgh Pirates @ Miami Marlins  370 49.700 37.600
+96               Jose Tena      Chicago Cubs @ Washington Nationals  157 49.700 33.100
+97        Christian Yelich  Milwaukee Brewers @ Los Angeles Dodgers  236 49.600 36.900
+98          Travis Bazzana     Cleveland Guardians @ Detroit Tigers  251 49.400 35.100
+99            Owen Caissie       Pittsburgh Pirates @ Miami Marlins  148 49.300 32.400
+100      Braden Montgomery      Cincinnati Reds @ Chicago White Sox  140 49.300 36.400
+101        Kevin McGonigle     Cleveland Guardians @ Detroit Tigers  388 49.200 34.300
+102          Brenton Doyle      Cincinnati Reds @ Chicago White Sox  108 49.100 30.600
+103               Jo Adell     Cleveland Guardians @ Detroit Tigers  343 49.000 37.000
+104            Ali Sánchez      Seattle Mariners @ New York Yankees   47 48.900 36.200
+105       Garrett Mitchell  Milwaukee Brewers @ Los Angeles Dodgers  231 48.900 36.800
+106         David Hamilton  Milwaukee Brewers @ Los Angeles Dodgers  211 48.800 43.600
+107           Carson Kelly      Chicago Cubs @ Washington Nationals  240 48.800 37.500
+108             Elias Diaz       Texas Rangers @ Los Angeles Angels  115 48.700 42.600
+109              Josh Lowe       Texas Rangers @ Los Angeles Angels  158 48.700 36.100
+110            Edgar Quero      Cincinnati Reds @ Chicago White Sox  154 48.700 35.700
+111     Moises Ballesteros       Texas Rangers @ Los Angeles Angels  156 48.700 37.200
+112            Jacob Young      Chicago Cubs @ Washington Nationals  278 48.600 34.500
+113           Wade Meckler       Texas Rangers @ Los Angeles Angels  142 48.600 35.900
+114            Ben Malgeri     Cleveland Guardians @ Detroit Tigers   35 48.600 40.000
+115        Julio Rodríguez      Seattle Mariners @ New York Yankees  342 48.500 36.000
+116          Brandon Nimmo       Texas Rangers @ Los Angeles Angels  346 48.300 32.700
+117  Vladimir Guerrero Jr.       Boston Red Sox @ Toronto Blue Jays  372 48.100 38.400
+118           Jorbit Vivas      Chicago Cubs @ Washington Nationals  190 47.900 37.400
+119             Andy Pages  Milwaukee Brewers @ Los Angeles Dodgers  379 47.500 38.300
+120      Andruw Monasterio       Boston Red Sox @ Toronto Blue Jays  192 46.900 35.900
+121        Elly De La Cruz      Cincinnati Reds @ Chicago White Sox  286 46.900 38.500
+122       Ceddanne Rafaela       Boston Red Sox @ Toronto Blue Jays  373 46.900 42.100
+123            Trea Turner  Philadelphia Phillies @ Minnesota Twins  391 46.800 37.900
+124           Wilyer Abreu       Boston Red Sox @ Toronto Blue Jays  357 46.500 38.700
+125      William Contreras  Milwaukee Brewers @ Los Angeles Dodgers  377 46.200 36.600
+126             Joey Ortiz  Milwaukee Brewers @ Los Angeles Dodgers  219 45.700 39.300
+127      Teoscar Hernandez  Milwaukee Brewers @ Los Angeles Dodgers  224 45.500 39.700
+128       Tyler Stephenson      Cincinnati Reds @ Chicago White Sox  209 45.500 37.300
+129            Leo Jiménez       Pittsburgh Pirates @ Miami Marlins  117 45.300 33.300
+130           Nathan Lukes       Boston Red Sox @ Toronto Blue Jays  251 44.600 43.000
+131            Matt McLain      Cincinnati Reds @ Chicago White Sox  224 44.200 39.700
+132       Eduardo Valencia     Cleveland Guardians @ Detroit Tigers   34 44.100 47.100
+133          Andrew Vaughn  Milwaukee Brewers @ Los Angeles Dodgers  189 43.900 39.700
+134        Randy Arozarena      Seattle Mariners @ New York Yankees  332 43.700 40.700
+135            Sal Stewart      Cincinnati Reds @ Chicago White Sox  350 43.700 40.600
+136           Nico Hoerner      Chicago Cubs @ Washington Nationals  444 43.500 39.600
+137        Esmerlyn Valdez       Pittsburgh Pirates @ Miami Marlins   97 43.300 36.100
+138             Hao-Yu Lee     Cleveland Guardians @ Detroit Tigers  150 43.300 43.300
+139             Otto Lopez       Pittsburgh Pirates @ Miami Marlins  421 43.000 41.100
+140            Luis Arraez  Philadelphia Phillies @ Minnesota Twins  459 42.300 44.200
+141         Xavier Edwards       Pittsburgh Pirates @ Miami Marlins  391 42.200 45.500
+142        Jackson Chourio  Milwaukee Brewers @ Los Angeles Dodgers  271 42.100 37.300
+143              Alec Bohm  Philadelphia Phillies @ Minnesota Twins  382 42.100 39.300
+144         Ke'Bryan Hayes      Cincinnati Reds @ Chicago White Sox  138 42.000 44.200
+145           Brice Turang  Milwaukee Brewers @ Los Angeles Dodgers  330 41.800 43.300
+146            Steven Kwan     Cleveland Guardians @ Detroit Tigers  354 39.800 45.500
+147        Justin Crawford  Philadelphia Phillies @ Minnesota Twins  277 39.700 47.300
+148          Spencer Jones      Seattle Mariners @ New York Yankees   79 39.200 36.700
+149            Jake Mangum       Pittsburgh Pirates @ Miami Marlins  270 37.800 50.400
+150          Jhonny Pereda      Seattle Mariners @ New York Yankees   58 36.200 44.800
+151             Dane Myers      Cincinnati Reds @ Chicago White Sox  131 35.100 48.900
+152         Gleyber Torres     Cleveland Guardians @ Detroit Tigers  187 34.200 53.500
+153              Max Clark     Cleveland Guardians @ Detroit Tigers   31 25.800 58.100
+154         Charles McAdoo       Boston Red Sox @ Toronto Blue Jays   29 20.700 62.100
 
 ════════════════════════════════════════════════════════════════════════
   SECTION 82: STATCAST OUTS ABOVE AVERAGE — FIELDING 2026
