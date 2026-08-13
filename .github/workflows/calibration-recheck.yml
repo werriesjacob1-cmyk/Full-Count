@@ -112,19 +112,12 @@ jobs:
           echo "::error::Failed to push after 5 attempts."
           exit 1
 
-      - name: Upload recheck report
-        # Same redundancy as mlb-daily.yml's own artifact upload (fixed
-        # 2026-08-12 after it drove this account to 90% of its Actions
-        # storage quota): the report is already committed to git, above,
-        # with no retention limit. 90 days bought nothing git doesn't
-        # already have; 14 keeps a quick-access window at a fraction of
-        # the footprint. This job is weekly and the report is small, so
-        # it was never the real driver of the quota warning -- fixed
-        # anyway, on the same principle, while the cause was fresh.
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: calibration-recheck-report-${{ github.run_id }}
-          path: backtest/calibration_recheck_report.json
-          retention-days: 14
-          if-no-files-found: ignore
+      # Report-artifact upload REMOVED 2026-08-13, same principle as
+      # mlb-daily.yml's own removal: backtest/calibration_recheck_report.json
+      # is already committed to git, above, with no retention limit and no
+      # quota. This job's own artifact was never the main driver of the
+      # 500MB Actions-storage quota hit (mlb-daily.yml's ~6-runs/day upload
+      # was), but removing every redundant upload rather than just the
+      # biggest one is the actual permanent fix -- any one of them left in
+      # place is still a recurring cost against a quota this account has
+      # already hit once.

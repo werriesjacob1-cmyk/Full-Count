@@ -329,36 +329,18 @@ jobs:
           echo "::error::Failed to push generated output after 5 attempts."
           exit 1
 
-      - name: Upload run artifacts
-        # EVERY FILE IN THIS GLOB IS ALSO COMMITTED TO GIT, ABOVE, IN THE
-        # SAME JOB (either "Commit picks immediately" or "Commit the full
-        # report"). This upload buys exactly one thing over that: a one-click
-        # zip of a specific run from the Actions UI, without checking out
-        # git. It does not buy durability -- git already has that, with no
-        # retention limit.
-        #
-        # At the old 14-day retention, that redundant convenience was
-        # costing real money: ~6 runs/day x ~5.1MB x 14 days = ~430MB against
-        # this account's 500MB free Actions-storage quota (measured 2026-08-12
-        # via the GitHub storage-usage warning, which hit 90% -- confirmed by
-        # checking several recent runs' actual artifact sizes, not guessed).
-        # Public-repo Actions MINUTES are unlimited (see the schedule
-        # comment above); Actions STORAGE is not, and this step was the
-        # entire cause. 3 days keeps the quick-access convenience for
-        # same-week debugging at roughly a 5x smaller footprint (~90MB
-        # steady-state) with real headroom to spare.
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: mlb-daily-output-${{ github.run_id }}
-          path: |
-            output/mlb_daily_*.txt
-            output/run_log_*.json
-            output/top10_picks_*.md
-            output/picks_*.json
-            output/board_*.html
-            output/full_board_*.html
-            output/parlay_example_*.html
-            results/*.json
-          retention-days: 3
-          if-no-files-found: ignore
+      # Run-artifact upload REMOVED 2026-08-13 after the account hit 100% of
+      # its 500MB free Actions-storage quota (the 2026-08-12 fix below this
+      # comment only reduced retention 14d -> 3d; that wasn't enough headroom
+      # against ~6 runs/day, and stale pre-fix artifacts hadn't rolled off
+      # yet). EVERY FILE this step used to upload is ALSO committed to git,
+      # above, in this same job (either "Commit picks immediately" or
+      # "Commit the full report") -- the upload bought exactly one thing
+      # over that: a one-click zip of a specific run from the Actions UI,
+      # without checking out git. It never bought durability; git already
+      # has that, with no retention limit and no quota. Removing it
+      # entirely (rather than shrinking retention further) is the
+      # permanent fix: zero ongoing storage cost from this workflow instead
+      # of a smaller recurring one. If a quick same-week zip download is
+      # ever missed, `git checkout <commit> -- output/ results/` from the
+      # daily commit this job already makes is the equivalent, for free.
