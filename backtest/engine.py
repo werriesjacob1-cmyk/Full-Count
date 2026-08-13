@@ -1077,6 +1077,11 @@ def to_row(date, pick, graded, keep_unpriced=False):
         "cat_environment": pick.get("cat_environment"),
         "cat_baseline_skill": pick.get("cat_baseline_skill"),
         "cat_context": pick.get("cat_context"),
+        # score_stolen_base's own 3-category scheme (skill/matchup/context,
+        # weighted 50/28/22) -- see the matching comment in its return dict.
+        "sb_cat_skill": pick.get("sb_cat_skill"),
+        "sb_cat_matchup": pick.get("sb_cat_matchup"),
+        "sb_cat_context": pick.get("sb_cat_context"),
         "predicted_prob": pick.get("hit_probability"),
         "outcome": 1 if grade == "hit" else 0,
         "actual": actual,
@@ -1274,6 +1279,44 @@ def verify_no_lookahead(date, store, use_weather=False, use_bullpen=False, verbo
            f"L14={globals_now['L14_START']}..{globals_now['L14_END']})"
            + (f" — VIOLATIONS: {bad_globals}" if bad_globals else ""))
 
+        # ---- 3. the bound changes the answer -----------------------------
+        # REAL BUG, found verifying a 2024 date (never surfaced backtesting
+        # 2026 only): this used to run AFTER the `with PointInTime` block
+        # closed, by which point __exit__ had already restored m.YEAR to the
+        # REAL current year. fetch_player_stats() sends season=m.YEAR
+        # alongside the explicit startDate/endDate computed from `year`
+        # (this date's own year) -- for a same-year backtest those always
+        # matched by coincidence, so the mismatch was never exercised. For
+        # any OTHER year the season param and the date range disagree, and
+        # MLB's byDateRange endpoint returns ZERO rows for a mismatched
+        # season (verified live: season=2026 + 2024 dates -> 0 rows, both
+        # calls, so "0 players gained PA" was comparing two empty lists, not
+        # detecting real leakage). Moved inside the block so m.YEAR is still
+        # correctly this date's own year when the call is made.
+        thru_cutoff = msrc.fetch_player_stats("hitting", limit=2000,
+                                              start_date=f"{year}{SEASON_START_MMDD}",
+                                              end_date=cutoff)
+        time.sleep(0.5)
+        thru_date = msrc.fetch_player_stats("hitting", limit=2000,
+                                            start_date=f"{year}{SEASON_START_MMDD}",
+                                            end_date=date)
+
+        def pa_by_id(rows):
+            return {(r.get("player") or {}).get("id"): _i((r.get("stat") or {}).get("plateAppearances"))
+                    for r in rows}
+
+        a, b = pa_by_id(thru_cutoff), pa_by_id(thru_date)
+        moved = [pid for pid in a if pid in b and b[pid] > a[pid]]
+        example = ""
+        if moved:
+            pid = moved[0]
+            name = next(((r.get("player") or {}).get("fullName") for r in thru_date
+                         if (r.get("player") or {}).get("id") == pid), pid)
+            example = f" e.g. {name}: {a[pid]} PA through {cutoff} vs {b[pid]} through {date}"
+        ok(len(moved) > 0,
+           f"the season-line window is load-bearing: {len(moved)} players gained PA "
+           f"between endDate={cutoff} and endDate={date}.{example}")
+
     # ---- 1. no read touched D or later ----------------------------------
     violations = []
     for r in reads:
@@ -1299,31 +1342,6 @@ def verify_no_lookahead(date, store, use_weather=False, use_bullpen=False, verbo
     ok(len(same_day) > 0,
        f"POSITIVE CONTROL: {len(same_day)} of those pitches are from {date} itself, "
        f"and none of them reached any input frame")
-
-    # ---- 3. the bound changes the answer --------------------------------
-    thru_cutoff = msrc.fetch_player_stats("hitting", limit=2000,
-                                          start_date=f"{year}{SEASON_START_MMDD}",
-                                          end_date=cutoff)
-    time.sleep(0.5)
-    thru_date = msrc.fetch_player_stats("hitting", limit=2000,
-                                        start_date=f"{year}{SEASON_START_MMDD}",
-                                        end_date=date)
-
-    def pa_by_id(rows):
-        return {(r.get("player") or {}).get("id"): _i((r.get("stat") or {}).get("plateAppearances"))
-                for r in rows}
-
-    a, b = pa_by_id(thru_cutoff), pa_by_id(thru_date)
-    moved = [pid for pid in a if pid in b and b[pid] > a[pid]]
-    example = ""
-    if moved:
-        pid = moved[0]
-        name = next(((r.get("player") or {}).get("fullName") for r in thru_date
-                     if (r.get("player") or {}).get("id") == pid), pid)
-        example = f" e.g. {name}: {a[pid]} PA through {cutoff} vs {b[pid]} through {date}"
-    ok(len(moved) > 0,
-       f"the season-line window is load-bearing: {len(moved)} players gained PA "
-       f"between endDate={cutoff} and endDate={date}.{example}")
 
     # ---- 4. rolling windows end the day before --------------------------
     rolling = [r for r in reads if r["source"] == "statcast" or r["source"].startswith("statcast_")]
