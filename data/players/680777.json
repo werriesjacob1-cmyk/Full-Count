@@ -328,9 +328,9 @@
       "date": "2026-08-13",
       "evaluations": [
         {
-          "prop": "Over 0.5 Hits",
+          "prop": "Over 0.5 Hits+Runs+RBIs",
           "type": "batter",
-          "score": 71.1,
+          "score": 71.7,
           "notable_signals": 2,
           "matchup": "Philadelphia Phillies @ Minnesota Twins",
           "game_pk": 823669,
@@ -364,13 +364,13 @@
             "ump_k_pct": -0.204,
             "ump_bb_pct": -0.048
           },
-          "hit_probability": 0.625,
-          "raw_hit_probability": 0.6196,
-          "lift": 0.0735,
+          "hit_probability": 0.7099,
+          "raw_hit_probability": 0.7432,
+          "lift": 0.0368,
           "reliability": "B",
           "sample_n": 59,
           "projection": {
-            "stat": "hits",
+            "stat": "hits_runs_rbis",
             "value": 0.5,
             "needs": 1
           }

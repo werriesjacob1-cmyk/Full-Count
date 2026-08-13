@@ -269,6 +269,113 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-13",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 57.1,
+          "notable_signals": 1,
+          "matchup": "Texas Rangers @ Los Angeles Angels",
+          "game_pk": 823995,
+          "team": "Texas Rangers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 1.1429,
+            "l7_avg_ev": 65.8333,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 15.0,
+            "park_hr_index": 50.9,
+            "season_barrel_pct": 50.0,
+            "lineup_slot": 0.0,
+            "bullpen_fatigue": 52.0833,
+            "platoon_barrel_pct": -0.16,
+            "platoon_xwoba": -1.44,
+            "park_hand_index": -1.33,
+            "opp_catcher_framing": 0.48,
+            "days_rest": 0.0,
+            "woba_ahead": 0.0,
+            "woba_behind": 64.5455,
+            "pull_park_synergy": -0.6657,
+            "hard_hit_105_rate": -1.5525,
+            "team_total_move": -6.0,
+            "team_total_open": -4.0,
+            "getaway_day": -2.0,
+            "series_game": 3.0,
+            "sp_rp_ops_gap": -1.44,
+            "vs_rp_ops": -0.228,
+            "ump_k_pct": -0.408,
+            "ump_bb_pct": 0.012
+          },
+          "hit_probability": 0.5739,
+          "raw_hit_probability": 0.5822,
+          "lift": 0.0224,
+          "reliability": "B",
+          "sample_n": 65,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 40.5,
+          "notable_signals": 1,
+          "matchup": "Texas Rangers @ Los Angeles Angels",
+          "game_pk": 823995,
+          "team": "Texas Rangers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": 2.76,
+            "sprint_speed": 6.25,
+            "on_base": 78.8868
+          },
+          "hit_probability": 0.0181,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "B",
+          "sample_n": 65,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 4.3,
+          "notable_signals": 0,
+          "matchup": "Texas Rangers @ Los Angeles Angels",
+          "game_pk": 823995,
+          "team": "Texas Rangers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.1529
+          },
+          "hit_probability": 0.1318,
+          "raw_hit_probability": 0.1529,
+          "lift": -0.0951,
+          "reliability": "B",
+          "sample_n": 65,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

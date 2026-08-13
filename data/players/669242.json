@@ -520,6 +520,110 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-13",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 52.1,
+          "notable_signals": 0,
+          "matchup": "Milwaukee Brewers @ Los Angeles Dodgers",
+          "game_pk": 823915,
+          "team": "Los Angeles Dodgers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "sp_era_weak": 28.0,
+            "l7_avg_ev": 37.0833,
+            "l7_barrel_pct": 25.7143,
+            "park_hr_index": 34.0,
+            "season_barrel_pct": 26.6667,
+            "lineup_slot": 75.0,
+            "bullpen_fatigue": 64.1026,
+            "platoon_barrel_pct": 1.92,
+            "platoon_xwoba": 0.48,
+            "opp_catcher_framing": 0.6,
+            "days_rest": 0.0,
+            "woba_ahead": 45.4545,
+            "woba_behind": 80.0,
+            "hard_hit_105_rate": 1.2925,
+            "team_total_move": 0.0,
+            "team_total_open": 0.0,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": 0.52,
+            "vs_rp_ops": 0.732,
+            "ump_k_pct": 0.192,
+            "ump_bb_pct": -0.144
+          },
+          "hit_probability": 0.6362,
+          "raw_hit_probability": 0.6281,
+          "lift": 0.0847,
+          "reliability": "C",
+          "sample_n": 44,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 40.3,
+          "notable_signals": 1,
+          "matchup": "Milwaukee Brewers @ Los Angeles Dodgers",
+          "game_pk": 823915,
+          "team": "Los Angeles Dodgers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": -5.76,
+            "sprint_speed": 12.5,
+            "catcher_poptime": 8.5714,
+            "on_base": 89.4434
+          },
+          "hit_probability": 0.0714,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "C",
+          "sample_n": 44,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 32.9,
+          "notable_signals": 0,
+          "matchup": "Milwaukee Brewers @ Los Angeles Dodgers",
+          "game_pk": 823915,
+          "team": "Los Angeles Dodgers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.2667
+          },
+          "hit_probability": 0.2292,
+          "raw_hit_probability": 0.2667,
+          "lift": 0.0023,
+          "reliability": "C",
+          "sample_n": 44,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }
