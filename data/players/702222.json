@@ -560,6 +560,111 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-13",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 67.9,
+          "notable_signals": 0,
+          "matchup": "Philadelphia Phillies @ Minnesota Twins",
+          "game_pk": 823669,
+          "team": "Philadelphia Phillies",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 36.0,
+            "l7_avg_ev": 79.875,
+            "l7_barrel_pct": 100.0,
+            "season_barrel_pct": 0.0,
+            "lineup_slot": 0.0,
+            "bullpen_fatigue": 64.1026,
+            "platoon_barrel_pct": -4.24,
+            "platoon_xwoba": -1.74,
+            "opp_catcher_framing": -0.24,
+            "days_rest": 0.0,
+            "consecutive_games": -2.4,
+            "woba_ahead": 2.7273,
+            "woba_behind": 90.0,
+            "hard_hit_105_rate": -1.7025,
+            "team_total_move": 0.0,
+            "team_total_open": 0.0,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": -1.04,
+            "vs_rp_ops": -1.452,
+            "ump_k_pct": -0.204,
+            "ump_bb_pct": -0.048
+          },
+          "hit_probability": 0.6583,
+          "raw_hit_probability": 0.6513,
+          "lift": -0.0267,
+          "reliability": "A",
+          "sample_n": 108,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 60.6,
+          "notable_signals": 0,
+          "matchup": "Philadelphia Phillies @ Minnesota Twins",
+          "game_pk": 823669,
+          "team": "Philadelphia Phillies",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": 5.94,
+            "sprint_speed": 71.875,
+            "catcher_poptime": 17.1429,
+            "on_base": 35.7006
+          },
+          "hit_probability": 0.1429,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 108,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 2.8,
+          "notable_signals": 0,
+          "matchup": "Philadelphia Phillies @ Minnesota Twins",
+          "game_pk": 823669,
+          "team": "Philadelphia Phillies",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.1469
+          },
+          "hit_probability": 0.1278,
+          "raw_hit_probability": 0.1469,
+          "lift": -0.0991,
+          "reliability": "A",
+          "sample_n": 108,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

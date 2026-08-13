@@ -218,6 +218,82 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-13",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 69.9,
+          "notable_signals": 1,
+          "matchup": "Philadelphia Phillies @ Minnesota Twins",
+          "game_pk": 823669,
+          "team": "Minnesota Twins",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 84.8571,
+            "pitch_exploit": 2.8571,
+            "l7_avg_ev": 0.0,
+            "l7_barrel_pct": 100.0,
+            "season_barrel_pct": 31.3333,
+            "lineup_slot": 100.0,
+            "bullpen_fatigue": 59.5238,
+            "platoon_barrel_pct": 0.96,
+            "platoon_xwoba": 1.38,
+            "opp_catcher_framing": 0.6,
+            "days_rest": 0.0,
+            "woba_behind": 70.0,
+            "hard_hit_105_rate": 1.4025,
+            "team_total_move": 0.0,
+            "team_total_open": 0.0,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": -0.464,
+            "vs_rp_ops": 0.372,
+            "ump_k_pct": -0.204,
+            "ump_bb_pct": -0.048
+          },
+          "hit_probability": 0.6345,
+          "raw_hit_probability": 0.6268,
+          "lift": 0.0831,
+          "reliability": "A",
+          "sample_n": 100,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 34.0,
+          "notable_signals": 0,
+          "matchup": "Philadelphia Phillies @ Minnesota Twins",
+          "game_pk": 823669,
+          "team": "Minnesota Twins",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.2711
+          },
+          "hit_probability": 0.2338,
+          "raw_hit_probability": 0.2711,
+          "lift": 0.0069,
+          "reliability": "A",
+          "sample_n": 100,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }
