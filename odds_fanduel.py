@@ -480,7 +480,18 @@ def fetch_first_inning_totals():
 
 def _event_props(event_id):
     rows = []
-    for tab in ("batter-props", "popular"):
+    # REAL BUG, found live 2026-08-13 checking why hard_hit_105/hard_hit_110
+    # (the Laser prop) showed 0/17 real prices attached every single night,
+    # a 100% miss rate that -- combined with select_main_board's price_clears
+    # requirement -- meant this entire prop family could never appear on the
+    # main board regardless of the model's read. TO_HIT_A_LASER_(105+_MPH)
+    # is a real, live, currently-posted FanDuel market (verified: 15 real
+    # runners for tonight's Brewers @ Dodgers game, e.g. Shohei Ohtani
+    # +410) -- it was never missing, just posted under its own dedicated
+    # "lasers" tab that this loop never fetched. FanDuel's own event-page
+    # layout response lists it explicitly ("Lasers", tab id 384) alongside
+    # "batter-props" and "popular", which this function already knew about.
+    for tab in ("batter-props", "popular", "lasers"):
         try:
             d = _get(f"event-page?eventId={event_id}&tab={tab}&_ak={AK}")
         except Exception:
