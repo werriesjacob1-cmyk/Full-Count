@@ -81,9 +81,9 @@
             "l14_k_pct": 43.5294,
             "env_neutral": 50.0
           },
-          "hit_probability": 0.6039,
-          "raw_hit_probability": 0.6546,
-          "lift": 0.0674,
+          "hit_probability": 0.6097,
+          "raw_hit_probability": 0.6719,
+          "lift": -0.0153,
           "reliability": "C",
           "sample_n": 25,
           "projection": {
@@ -93,9 +93,9 @@
           }
         },
         {
-          "prop": "Over 14.5 Outs Recorded",
+          "prop": "Over 15.5 Outs Recorded",
           "type": "pitcher",
-          "score": 51.3,
+          "score": 39.4,
           "notable_signals": 0,
           "matchup": "Chicago Cubs @ Washington Nationals",
           "game_pk": 822696,
@@ -104,18 +104,18 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.7366,
+            "outs_rate": 0.5688,
             "avg_outs_per_start": 15.44
           },
-          "hit_probability": 0.7366,
+          "hit_probability": 0.5688,
           "raw_hit_probability": null,
-          "lift": -0.0693,
+          "lift": -0.0368,
           "reliability": "C",
           "sample_n": 25,
           "projection": {
             "stat": "pitcher_outs",
-            "value": 14.5,
-            "needs": 15
+            "value": 15.5,
+            "needs": 16
           }
         }
       ]

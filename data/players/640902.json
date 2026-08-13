@@ -13,6 +13,50 @@
           "matchup": "Detroit Tigers @ Seattle Mariners"
         }
       ]
+    },
+    {
+      "date": "2026-08-13",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 58.2,
+          "notable_signals": 3,
+          "matchup": "Seattle Mariners @ New York Yankees",
+          "game_pk": 823508,
+          "team": "Seattle Mariners",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 10.8571,
+            "park_hr_index": 28.2,
+            "season_barrel_pct": 4.6667,
+            "lineup_slot": 12.5,
+            "bullpen_fatigue": 83.3333,
+            "days_rest": 4.0,
+            "woba_ahead": 0.0,
+            "woba_behind": 0.0,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": -2.0,
+            "series_game": 2.0,
+            "sp_rp_ops_gap": 1.144,
+            "vs_rp_ops": 0.216
+          },
+          "hit_probability": 0.6395,
+          "raw_hit_probability": 0.6306,
+          "lift": 0.0356,
+          "reliability": "D",
+          "sample_n": 20,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

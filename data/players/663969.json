@@ -68,8 +68,8 @@
         {
           "prop": "Over 3.5 Strikeouts",
           "type": "pitcher",
-          "score": 56.8,
-          "notable_signals": 0,
+          "score": 61.3,
+          "notable_signals": 1,
           "matchup": "Pittsburgh Pirates @ Miami Marlins",
           "game_pk": 823829,
           "team": "Miami Marlins",
@@ -77,13 +77,14 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "same_hand_ratio": 75.0,
+            "same_hand_ratio": 92.8571,
             "l14_k_pct": 17.0588,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 72.5879
           },
-          "hit_probability": 0.5849,
-          "raw_hit_probability": 0.5977,
-          "lift": -0.1283,
+          "hit_probability": 0.5616,
+          "raw_hit_probability": 0.5292,
+          "lift": -0.2134,
           "reliability": "D",
           "sample_n": 13,
           "projection": {
@@ -93,9 +94,9 @@
           }
         },
         {
-          "prop": "Over 13.5 Outs Recorded",
+          "prop": "Over 14.5 Outs Recorded",
           "type": "pitcher",
-          "score": 20.1,
+          "score": 23.3,
           "notable_signals": 0,
           "matchup": "Pittsburgh Pirates @ Miami Marlins",
           "game_pk": 823829,
@@ -104,18 +105,18 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.635,
+            "outs_rate": 0.6211,
             "avg_outs_per_start": 13.54
           },
-          "hit_probability": 0.635,
+          "hit_probability": 0.6211,
           "raw_hit_probability": null,
-          "lift": -0.2091,
+          "lift": -0.1789,
           "reliability": "D",
           "sample_n": 13,
           "projection": {
             "stat": "pitcher_outs",
-            "value": 13.5,
-            "needs": 14
+            "value": 14.5,
+            "needs": 15
           }
         }
       ]

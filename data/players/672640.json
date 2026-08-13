@@ -482,6 +482,79 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-13",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 57.1,
+          "notable_signals": 2,
+          "matchup": "Pittsburgh Pirates @ Miami Marlins",
+          "game_pk": 823829,
+          "team": "Miami Marlins",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 45.1429,
+            "pitch_exploit": 1.1429,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 21.3333,
+            "lineup_slot": 75.0,
+            "bullpen_fatigue": 83.3333,
+            "days_rest": 0.0,
+            "woba_ahead": 40.0,
+            "woba_behind": 85.4545,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": -2.0,
+            "series_game": 2.0,
+            "sp_rp_ops_gap": 0.384,
+            "vs_rp_ops": 1.416
+          },
+          "hit_probability": 0.7591,
+          "raw_hit_probability": 0.7315,
+          "lift": 0.1552,
+          "reliability": "A",
+          "sample_n": 117,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 57.6,
+          "notable_signals": 1,
+          "matchup": "Pittsburgh Pirates @ Miami Marlins",
+          "game_pk": 823829,
+          "team": "Miami Marlins",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": 0.42,
+            "sprint_speed": 37.5,
+            "catcher_poptime": 25.7143,
+            "on_base": 89.4434
+          },
+          "hit_probability": 0.1661,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 117,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

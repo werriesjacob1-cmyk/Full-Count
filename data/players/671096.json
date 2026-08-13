@@ -27,7 +27,7 @@
         {
           "prop": "Over 3.5 Strikeouts",
           "type": "pitcher",
-          "score": 55.6,
+          "score": 23.5,
           "notable_signals": 0,
           "matchup": "Cincinnati Reds @ Chicago White Sox",
           "game_pk": 824561,
@@ -36,13 +36,14 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "same_hand_ratio": 100.0,
+            "same_hand_ratio": 21.4286,
             "l14_k_pct": 0.0,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 64.8132
           },
-          "hit_probability": 0.6111,
-          "raw_hit_probability": 0.6764,
-          "lift": -0.1021,
+          "hit_probability": 0.6086,
+          "raw_hit_probability": 0.6688,
+          "lift": -0.1664,
           "reliability": "D",
           "sample_n": 24,
           "projection": {
@@ -54,7 +55,7 @@
         {
           "prop": "Over 15.5 Outs Recorded",
           "type": "pitcher",
-          "score": 51.8,
+          "score": 52.4,
           "notable_signals": 0,
           "matchup": "Cincinnati Reds @ Chicago White Sox",
           "game_pk": 824561,
@@ -63,18 +64,46 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.6224,
+            "outs_rate": 0.6211,
             "avg_outs_per_start": 16.08
           },
-          "hit_probability": 0.6224,
+          "hit_probability": 0.6211,
           "raw_hit_probability": null,
-          "lift": 0.0106,
+          "lift": 0.0155,
           "reliability": "D",
           "sample_n": 24,
           "projection": {
             "stat": "pitcher_outs",
             "value": 15.5,
             "needs": 16
+          }
+        },
+        {
+          "prop": "Over 8.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 0.0,
+          "notable_signals": 0,
+          "matchup": "Cincinnati Reds @ Chicago White Sox",
+          "game_pk": 824561,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            671096,
+            663436
+          ],
+          "signals": {
+            "combined_k_edge": -0.2983
+          },
+          "hit_probability": 0.3446,
+          "raw_hit_probability": null,
+          "lift": -0.2983,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 8.5,
+            "needs": 9
           }
         }
       ]
