@@ -2771,7 +2771,34 @@ def compute_multiyear_baseline():
             weighted.index+=1
             step(f"  {len(weighted)} players with multi-year data")
             return fmt(weighted.head(150))
-        return "  wRC+ not available in batting data.\n"
+        # FanGraphs-blocked fallback shape (_fg_statcast_bat_fallback): real
+        # data WAS fetched here (verified live: 600+ batters/year), just
+        # discarded every time because this function only knew how to weight
+        # wRC+, a FanGraphs-only column the Statcast fallback doesn't carry.
+        # xwOBA is that fallback's own skill-level column (Statcast's
+        # equivalent read on quality of contact), so weight that instead of
+        # returning nothing. Verified live: only this codepath is reachable
+        # while FanGraphs stays blocked from GitHub Actions' IP range.
+        if "xwOBA" in combined.columns:
+            weighted=combined.groupby("Name").apply(
+                lambda x: pd.Series({
+                    "seasons":len(x),
+                    "wtd_xwOBA":round((x["xwOBA"]*x["weight"]).sum()/x["weight"].sum(),3) if "xwOBA" in x.columns else None,
+                    "wtd_AVG":round((x["AVG"]*x["weight"]).sum()/x["weight"].sum(),3) if "AVG" in x.columns else None,
+                    "cur_xwOBA":x[x["season"]==YEAR]["xwOBA"].iloc[0] if len(x[x["season"]==YEAR])>0 else None,
+                    "regression_signal":None
+                })
+            ).reset_index()
+            if "wtd_xwOBA" in weighted.columns and "cur_xwOBA" in weighted.columns:
+                weighted["regression_signal"]=weighted.apply(
+                    lambda r: "🔴 OVERPERFORMING" if (r["cur_xwOBA"] or 0.320)>(r["wtd_xwOBA"] or 0.320)+0.040
+                    else ("🟢 UNDERPERFORMING" if (r["cur_xwOBA"] or 0.320)<(r["wtd_xwOBA"] or 0.320)-0.040 else "🟡 Normal"),
+                    axis=1)
+            weighted=weighted.sort_values("wtd_xwOBA",ascending=False).reset_index(drop=True)
+            weighted.index+=1
+            step(f"  {len(weighted)} players with multi-year data (Statcast xwOBA fallback -- FanGraphs blocked)")
+            return fmt(weighted.head(150))
+        return "  Neither wRC+ nor xwOBA available in batting data.\n"
     except Exception as e:
         warn(f"Multi-year: {e}"); return f"  Failed: {e}\n"
 
