@@ -66,7 +66,7 @@
       "date": "2026-08-13",
       "evaluations": [
         {
-          "prop": "Over 3.5 Strikeouts",
+          "prop": "Over 4.5 Strikeouts",
           "type": "pitcher",
           "score": 64.7,
           "notable_signals": 0,
@@ -84,21 +84,21 @@
             "ump_k_pct": 0.408,
             "ump_bb_pct": -0.012
           },
-          "hit_probability": 0.6196,
-          "raw_hit_probability": 0.7218,
-          "lift": -0.0925,
+          "hit_probability": 0.5839,
+          "raw_hit_probability": 0.5333,
+          "lift": 0.0482,
           "reliability": "D",
           "sample_n": 19,
           "projection": {
             "stat": "strikeouts",
-            "value": 3.5,
-            "needs": 4
+            "value": 4.5,
+            "needs": 5
           }
         },
         {
           "prop": "Over 15.5 Outs Recorded",
           "type": "pitcher",
-          "score": 42.6,
+          "score": 40.6,
           "notable_signals": 0,
           "matchup": "Texas Rangers @ Los Angeles Angels",
           "game_pk": 823995,
@@ -107,12 +107,12 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.521,
+            "outs_rate": 0.5265,
             "avg_outs_per_start": 15.79
           },
-          "hit_probability": 0.521,
+          "hit_probability": 0.5265,
           "raw_hit_probability": null,
-          "lift": 0.0169,
+          "lift": -0.0005,
           "reliability": "D",
           "sample_n": 19,
           "projection": {
