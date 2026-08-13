@@ -3378,6 +3378,38 @@ def select_main_board(ranked, n=10):
     return [c for c in ranked if c.get("price_clears") is True][:n]
 
 
+_EARLY_PRICED_MARKETS = {"pitcher_outs", "combined_strikeouts"}
+
+
+def pricing_freshness_warning(gated):
+    """Returns a warning string, or None, checking for the exact bug class
+    fixed 2026-08-13: market pricing running too late in main() for
+    rank_for_board's sort / select_main_board's filter to see it.
+
+    pitcher_outs and combined_strikeouts price themselves early, inside
+    their own scoring function -- every OTHER market depends on the
+    attach_market_prices() call in main() having already run by the time
+    this is checked. If that call silently stopped running (or moved again,
+    later, in some future edit) every general-market candidate would have
+    price_clears=None here, and the board would go quiet on real edges
+    exactly the way it did for 3 hours on 2026-08-13 (Brandon Marsh's Over
+    0.5 Singles, +0.019 edge, sat unseen in price_clears=True while the
+    main board carried only 1 pick, from the one early-priced market that
+    still worked).
+
+    A pool of ONLY early-priced-market candidates (or an empty pool) is not
+    suspicious -- there is nothing else to check pricing freshness against,
+    so returns None rather than a false alarm on a thin, legitimate slate."""
+    general = [c for c in gated
+               if (c.get("projection") or {}).get("stat") not in _EARLY_PRICED_MARKETS]
+    if general and all(c.get("price_clears") is None for c in general):
+        return ("SUSPICIOUS: every gated candidate outside pitcher_outs/combined_strikeouts "
+                "has price_clears=None. Either the FanDuel price fetch failed (see any "
+                "warning above) or market pricing is running too late in main() again -- "
+                "see the fix and its own comment near attach_market_prices, above.")
+    return None
+
+
 def main() -> int:
     print("Generating top 10 picks (deterministic scoring, no LLM call)...")
     result = _build_and_score()
@@ -3555,6 +3587,10 @@ def main() -> int:
     else:
         m.warn("No candidate cleared the positive-read floor — falling back to "
                "the full pool so the board is not empty.")
+
+    _pricing_warning = pricing_freshness_warning(gated)
+    if _pricing_warning:
+        m.warn(_pricing_warning)
 
     ranked = rank_for_board(gated)
 
