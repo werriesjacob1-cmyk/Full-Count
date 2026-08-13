@@ -568,8 +568,8 @@
         {
           "prop": "Over 0.5 Hits+Runs+RBIs",
           "type": "batter",
-          "score": 78.7,
-          "notable_signals": 2,
+          "score": 91.0,
+          "notable_signals": 3,
           "matchup": "Boston Red Sox @ Toronto Blue Jays",
           "game_pk": 822776,
           "team": "Boston Red Sox",
@@ -579,6 +579,9 @@
           "signals": {
             "platoon": 80.0,
             "sp_era_weak": 100.0,
+            "l7_avg_ev": 97.0395,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 1.875,
             "park_hr_index": 50.0,
             "season_barrel_pct": 46.0,
             "lineup_slot": 25.0,
@@ -588,8 +591,8 @@
             "park_hand_index": -0.65,
             "opp_catcher_framing": -2.04,
             "days_rest": 0.0,
-            "woba_ahead": 29.0909,
-            "woba_behind": 43.6364,
+            "woba_ahead": 26.3636,
+            "woba_behind": 42.7273,
             "pull_park_synergy": -0.3686,
             "hard_hit_105_rate": 3.4825,
             "team_total_move": 0.0,
@@ -601,9 +604,9 @@
             "ump_k_pct": 0.528,
             "ump_bb_pct": -0.036
           },
-          "hit_probability": 0.6708,
-          "raw_hit_probability": 0.6728,
-          "lift": -0.0024,
+          "hit_probability": 0.6725,
+          "raw_hit_probability": 0.6758,
+          "lift": -0.0088,
           "reliability": "A",
           "sample_n": 113,
           "projection": {
@@ -615,7 +618,7 @@
         {
           "prop": "To Steal a Base",
           "type": "batter",
-          "score": 40.1,
+          "score": 39.9,
           "notable_signals": 0,
           "matchup": "Boston Red Sox @ Toronto Blue Jays",
           "game_pk": 822776,
@@ -627,9 +630,9 @@
             "opp_team_cs_pct": 0.48,
             "sprint_speed": 53.125,
             "catcher_poptime": 0.0,
-            "on_base": 6.9098
+            "on_base": 5.9501
           },
-          "hit_probability": 0.1352,
+          "hit_probability": 0.1334,
           "raw_hit_probability": null,
           "lift": null,
           "reliability": "A",
