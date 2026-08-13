@@ -199,8 +199,8 @@
         {
           "prop": "Over 0.5 Hits+Runs+RBIs",
           "type": "batter",
-          "score": 60.8,
-          "notable_signals": 1,
+          "score": 71.7,
+          "notable_signals": 2,
           "matchup": "Cincinnati Reds @ Chicago White Sox",
           "game_pk": 824561,
           "team": "Chicago White Sox",
@@ -209,28 +209,59 @@
           "combo_player_ids": null,
           "signals": {
             "sp_era_weak": 40.5714,
-            "park_hr_index": 39.2,
+            "park_hr_index": 51.7,
             "season_barrel_pct": 0.0,
             "lineup_slot": 25.0,
             "bullpen_fatigue": 47.619,
+            "platoon_barrel_pct": -1.76,
+            "platoon_xwoba": -1.86,
+            "opp_catcher_framing": 0.84,
             "days_rest": 2.0,
             "woba_ahead": 27.2727,
             "woba_behind": 50.0,
+            "hard_hit_105_rate": -1.5525,
             "team_total_move": 0.0,
             "team_total_open": 0.0,
             "getaway_day": -2.0,
             "series_game": 2.0,
             "sp_rp_ops_gap": 0.368,
-            "vs_rp_ops": -2.076
+            "vs_rp_ops": -2.076,
+            "ump_k_pct": -0.408,
+            "ump_bb_pct": -0.108
           },
           "hit_probability": 0.6112,
           "raw_hit_probability": 0.5731,
-          "lift": -0.0634,
+          "lift": -0.062,
           "reliability": "B",
           "sample_n": 61,
           "projection": {
             "stat": "hits_runs_rbis",
             "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 4.3,
+          "notable_signals": 0,
+          "matchup": "Cincinnati Reds @ Chicago White Sox",
+          "game_pk": 824561,
+          "team": "Chicago White Sox",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.1529
+          },
+          "hit_probability": 0.1318,
+          "raw_hit_probability": 0.1529,
+          "lift": -0.0951,
+          "reliability": "B",
+          "sample_n": 61,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
             "needs": 1
           }
         }

@@ -39,11 +39,13 @@
             "same_hand_ratio": 100.0,
             "l14_k_pct": 62.3529,
             "env_neutral": 50.0,
-            "ump_accuracy": 72.5879
+            "ump_accuracy": 72.5879,
+            "ump_k_pct": -0.228,
+            "ump_bb_pct": -0.192
           },
-          "hit_probability": 0.6389,
-          "raw_hit_probability": 0.7618,
-          "lift": 0.0139,
+          "hit_probability": 0.5876,
+          "raw_hit_probability": 0.6058,
+          "lift": 0.0519,
           "reliability": "D",
           "sample_n": 23,
           "projection": {
@@ -81,7 +83,7 @@
         {
           "prop": "Over 9.5 Combined Strikeouts",
           "type": "pitcher_combo",
-          "score": 29.6,
+          "score": 30.2,
           "notable_signals": 0,
           "matchup": "Pittsburgh Pirates @ Miami Marlins",
           "game_pk": 823829,
@@ -93,11 +95,11 @@
             663969
           ],
           "signals": {
-            "combined_k_edge": -0.0998
+            "combined_k_edge": -0.0956
           },
           "hit_probability": 0.4457,
           "raw_hit_probability": null,
-          "lift": -0.0998,
+          "lift": -0.0956,
           "reliability": "D",
           "sample_n": 0,
           "projection": {

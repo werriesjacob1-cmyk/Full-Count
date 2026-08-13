@@ -371,8 +371,8 @@
         {
           "prop": "Over 0.5 Hits+Runs+RBIs",
           "type": "batter",
-          "score": 61.8,
-          "notable_signals": 0,
+          "score": 67.7,
+          "notable_signals": 1,
           "matchup": "Cincinnati Reds @ Chicago White Sox",
           "game_pk": 824561,
           "team": "Chicago White Sox",
@@ -382,22 +382,28 @@
           "signals": {
             "platoon": 80.0,
             "sp_era_weak": 40.5714,
-            "park_hr_index": 39.2,
+            "park_hr_index": 51.7,
             "season_barrel_pct": 10.6667,
             "lineup_slot": 50.0,
             "bullpen_fatigue": 47.619,
             "bvp_ops": 3.48,
+            "platoon_barrel_pct": 0.72,
+            "platoon_xwoba": -1.62,
+            "opp_catcher_framing": 0.84,
             "days_rest": 0.0,
             "woba_ahead": 20.9091,
             "woba_behind": 27.2727,
+            "hard_hit_105_rate": -0.54,
             "team_total_move": 0.0,
             "team_total_open": 0.0,
             "getaway_day": -2.0,
-            "series_game": 2.0
+            "series_game": 2.0,
+            "ump_k_pct": -0.408,
+            "ump_bb_pct": -0.108
           },
-          "hit_probability": 0.6615,
-          "raw_hit_probability": 0.6568,
-          "lift": -0.0131,
+          "hit_probability": 0.6612,
+          "raw_hit_probability": 0.6562,
+          "lift": -0.012,
           "reliability": "B",
           "sample_n": 47,
           "projection": {
@@ -423,13 +429,38 @@
             "catcher_poptime": 25.7143,
             "on_base": 2.1113
           },
-          "hit_probability": 0.223,
+          "hit_probability": 0.2233,
           "raw_hit_probability": null,
           "lift": null,
           "reliability": "B",
           "sample_n": 47,
           "projection": {
             "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 14.5,
+          "notable_signals": 0,
+          "matchup": "Cincinnati Reds @ Chicago White Sox",
+          "game_pk": 824561,
+          "team": "Chicago White Sox",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.1934
+          },
+          "hit_probability": 0.1616,
+          "raw_hit_probability": 0.1934,
+          "lift": -0.0653,
+          "reliability": "B",
+          "sample_n": 47,
+          "projection": {
+            "stat": "hard_hit_105",
             "value": 1,
             "needs": 1
           }

@@ -66,7 +66,7 @@
       "date": "2026-08-13",
       "evaluations": [
         {
-          "prop": "Over 3.5 Strikeouts",
+          "prop": "Over 4.5 Strikeouts",
           "type": "pitcher",
           "score": 72.7,
           "notable_signals": 0,
@@ -80,17 +80,19 @@
             "same_hand_ratio": 57.1429,
             "l14_k_pct": 100.0,
             "env_neutral": 50.0,
-            "ump_accuracy": 22.8723
+            "ump_accuracy": 22.8723,
+            "ump_k_pct": -0.096,
+            "ump_bb_pct": 0.312
           },
-          "hit_probability": 0.6751,
-          "raw_hit_probability": 0.8776,
-          "lift": -0.0999,
+          "hit_probability": 0.6185,
+          "raw_hit_probability": 0.6987,
+          "lift": 0.0828,
           "reliability": "D",
           "sample_n": 14,
           "projection": {
             "stat": "strikeouts",
-            "value": 3.5,
-            "needs": 4
+            "value": 4.5,
+            "needs": 5
           }
         },
         {

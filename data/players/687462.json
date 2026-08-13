@@ -284,23 +284,56 @@
             "season_barrel_pct": 32.6667,
             "lineup_slot": 100.0,
             "bullpen_fatigue": 35.7143,
+            "platoon_barrel_pct": 1.04,
+            "platoon_xwoba": 1.38,
+            "park_hand_index": -1.66,
+            "opp_catcher_framing": 0.96,
             "days_rest": 0.0,
             "woba_behind": 50.9091,
+            "pull_park_synergy": -0.6972,
+            "hard_hit_105_rate": -2.2425,
             "team_total_move": 0.0,
             "team_total_open": 0.0,
             "getaway_day": -2.0,
             "series_game": 2.0,
             "sp_rp_ops_gap": 0.44,
-            "vs_rp_ops": 1.176
+            "vs_rp_ops": 1.176,
+            "ump_k_pct": 0.228,
+            "ump_bb_pct": 0.192
           },
-          "hit_probability": 0.6438,
-          "raw_hit_probability": 0.6339,
-          "lift": 0.0399,
+          "hit_probability": 0.6125,
+          "raw_hit_probability": 0.6103,
+          "lift": 0.0611,
           "reliability": "A",
           "sample_n": 83,
           "projection": {
             "stat": "hits",
             "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 0.1,
+          "notable_signals": 0,
+          "matchup": "Pittsburgh Pirates @ Miami Marlins",
+          "game_pk": 823829,
+          "team": "Pittsburgh Pirates",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.1253
+          },
+          "hit_probability": 0.1142,
+          "raw_hit_probability": 0.1253,
+          "lift": -0.1127,
+          "reliability": "A",
+          "sample_n": 83,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
             "needs": 1
           }
         }

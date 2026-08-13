@@ -204,9 +204,9 @@
       "date": "2026-08-13",
       "evaluations": [
         {
-          "prop": "Over 1.5 Total Bases (proj. 0.81 TB)",
+          "prop": "Over 0.5 Hits",
           "type": "batter",
-          "score": 62.4,
+          "score": 58.2,
           "notable_signals": 1,
           "matchup": "Cincinnati Reds @ Chicago White Sox",
           "game_pk": 824561,
@@ -217,25 +217,29 @@
           "signals": {
             "platoon": 80.0,
             "sp_era_weak": 47.7143,
-            "park_hr_index": 39.2,
+            "park_hr_index": 51.7,
             "lineup_slot": 25.0,
             "bullpen_fatigue": 66.6667,
+            "opp_catcher_framing": 0.96,
             "days_rest": 0.0,
             "woba_ahead": 29.0909,
             "woba_behind": 0.0,
             "team_total_move": 0.0,
             "team_total_open": -4.0,
             "getaway_day": -2.0,
-            "series_game": 2.0
+            "series_game": 2.0,
+            "ump_k_pct": -0.408,
+            "ump_bb_pct": -0.108
           },
-          "hit_probability": null,
-          "raw_hit_probability": null,
-          "lift": null,
+          "hit_probability": 0.5306,
+          "raw_hit_probability": 0.5514,
+          "lift": -0.0208,
           "reliability": "D",
           "sample_n": 0,
           "projection": {
-            "stat": "total_bases",
-            "value": 0.81
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
           }
         }
       ]

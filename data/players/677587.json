@@ -467,9 +467,9 @@
       "date": "2026-08-13",
       "evaluations": [
         {
-          "prop": "Over 0.5 Hits",
+          "prop": "Over 0.5 Hits+Runs+RBIs",
           "type": "batter",
-          "score": 54.2,
+          "score": 55.0,
           "notable_signals": 0,
           "matchup": "Cleveland Guardians @ Detroit Tigers",
           "game_pk": 824238,
@@ -479,27 +479,33 @@
           "combo_player_ids": null,
           "signals": {
             "sp_era_weak": 25.1429,
-            "park_hr_index": 52.0,
+            "park_hr_index": 63.7,
             "season_barrel_pct": 3.3333,
             "lineup_slot": 0.0,
             "bullpen_fatigue": 64.1026,
+            "platoon_barrel_pct": -3.36,
+            "platoon_xwoba": -1.2,
+            "opp_catcher_framing": -1.32,
             "days_rest": 0.0,
             "woba_ahead": 28.1818,
             "woba_behind": 24.5455,
+            "hard_hit_105_rate": -2.815,
             "team_total_move": -6.0,
             "team_total_open": -4.0,
             "getaway_day": -2.0,
             "series_game": 2.0,
             "sp_rp_ops_gap": -0.272,
-            "vs_rp_ops": -0.66
+            "vs_rp_ops": -0.66,
+            "ump_k_pct": 0.072,
+            "ump_bb_pct": 0.36
           },
-          "hit_probability": 0.599,
-          "raw_hit_probability": 0.6004,
-          "lift": -0.0049,
+          "hit_probability": 0.666,
+          "raw_hit_probability": 0.6646,
+          "lift": -0.0072,
           "reliability": "A",
           "sample_n": 118,
           "projection": {
-            "stat": "hits",
+            "stat": "hits_runs_rbis",
             "value": 0.5,
             "needs": 1
           }
@@ -528,6 +534,31 @@
           "sample_n": 118,
           "projection": {
             "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 0.1,
+          "notable_signals": 0,
+          "matchup": "Cleveland Guardians @ Detroit Tigers",
+          "game_pk": 824238,
+          "team": "Cleveland Guardians",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.1024
+          },
+          "hit_probability": 0.1012,
+          "raw_hit_probability": 0.1024,
+          "lift": -0.1257,
+          "reliability": "A",
+          "sample_n": 118,
+          "projection": {
+            "stat": "hard_hit_105",
             "value": 1,
             "needs": 1
           }

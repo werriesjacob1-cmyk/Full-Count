@@ -563,6 +563,112 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-13",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 48.8,
+          "notable_signals": 1,
+          "matchup": "Boston Red Sox @ Toronto Blue Jays",
+          "game_pk": 822776,
+          "team": "Toronto Blue Jays",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 20.0,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 3.3333,
+            "lineup_slot": 37.5,
+            "bullpen_fatigue": 76.9231,
+            "platoon_barrel_pct": -3.76,
+            "platoon_xwoba": -3.06,
+            "park_hand_index": -0.65,
+            "opp_catcher_framing": 0.84,
+            "days_rest": 0.0,
+            "consecutive_games": -2.4,
+            "woba_ahead": 25.4545,
+            "woba_behind": 18.1818,
+            "pull_park_synergy": -0.2684,
+            "hard_hit_105_rate": -3.0175,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": -2.0,
+            "series_game": 3.0,
+            "sp_rp_ops_gap": -1.096,
+            "vs_rp_ops": -1.764,
+            "ump_k_pct": 0.528,
+            "ump_bb_pct": -0.036
+          },
+          "hit_probability": 0.6502,
+          "raw_hit_probability": 0.6375,
+          "lift": -0.023,
+          "reliability": "A",
+          "sample_n": 111,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 18.0,
+          "notable_signals": 0,
+          "matchup": "Boston Red Sox @ Toronto Blue Jays",
+          "game_pk": 822776,
+          "team": "Toronto Blue Jays",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": 5.7,
+            "sprint_speed": 15.625,
+            "catcher_poptime": 20.0,
+            "on_base": 19.3858
+          },
+          "hit_probability": 0.1309,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 111,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 0.1,
+          "notable_signals": 0,
+          "matchup": "Boston Red Sox @ Toronto Blue Jays",
+          "game_pk": 822776,
+          "team": "Toronto Blue Jays",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0943
+          },
+          "hit_probability": 0.0969,
+          "raw_hit_probability": 0.0943,
+          "lift": -0.13,
+          "reliability": "A",
+          "sample_n": 111,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

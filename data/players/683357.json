@@ -501,19 +501,27 @@
             "season_barrel_pct": 78.0,
             "lineup_slot": 25.0,
             "bullpen_fatigue": 83.3333,
+            "platoon_barrel_pct": 5.0,
+            "platoon_xwoba": 0.24,
+            "park_hand_index": -1.66,
+            "opp_catcher_framing": 0.6,
             "days_rest": 0.0,
             "woba_ahead": 0.0,
             "woba_behind": 23.6364,
+            "pull_park_synergy": -0.5403,
+            "hard_hit_105_rate": 1.17,
             "team_total_move": 0.0,
             "team_total_open": -4.0,
             "getaway_day": -2.0,
             "series_game": 2.0,
             "sp_rp_ops_gap": -0.584,
-            "vs_rp_ops": -0.588
+            "vs_rp_ops": -0.588,
+            "ump_k_pct": 0.228,
+            "ump_bb_pct": 0.192
           },
-          "hit_probability": 0.643,
-          "raw_hit_probability": 0.6254,
-          "lift": -0.0316,
+          "hit_probability": 0.6428,
+          "raw_hit_probability": 0.6251,
+          "lift": -0.0304,
           "reliability": "A",
           "sample_n": 87,
           "projection": {
@@ -539,13 +547,38 @@
             "catcher_poptime": 25.7143,
             "on_base": 50.096
           },
-          "hit_probability": 0.0527,
+          "hit_probability": 0.0528,
           "raw_hit_probability": null,
           "lift": null,
           "reliability": "A",
           "sample_n": 87,
           "projection": {
             "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 31.7,
+          "notable_signals": 0,
+          "matchup": "Pittsburgh Pirates @ Miami Marlins",
+          "game_pk": 823829,
+          "team": "Miami Marlins",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.2618
+          },
+          "hit_probability": 0.2241,
+          "raw_hit_probability": 0.2618,
+          "lift": -0.0028,
+          "reliability": "A",
+          "sample_n": 87,
+          "projection": {
+            "stat": "hard_hit_105",
             "value": 1,
             "needs": 1
           }

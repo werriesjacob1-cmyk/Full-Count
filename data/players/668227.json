@@ -319,7 +319,7 @@
         {
           "prop": "Over 0.5 Hits",
           "type": "batter",
-          "score": 68.6,
+          "score": 68.5,
           "notable_signals": 4,
           "matchup": "Seattle Mariners @ New York Yankees",
           "game_pk": 823508,
@@ -331,27 +331,60 @@
             "platoon": 80.0,
             "sp_era_weak": 10.8571,
             "pitch_exploit": 8.5714,
-            "park_hr_index": 28.2,
+            "park_hr_index": 28.0,
             "season_barrel_pct": 33.3333,
             "lineup_slot": 100.0,
             "bullpen_fatigue": 83.3333,
+            "platoon_barrel_pct": -1.28,
+            "platoon_xwoba": 0.18,
+            "park_hand_index": 1.02,
+            "opp_catcher_framing": -2.16,
             "days_rest": 0.0,
             "woba_behind": 32.7273,
+            "pull_park_synergy": 0.1321,
+            "hard_hit_105_rate": 1.5075,
             "team_total_move": 0.0,
             "team_total_open": -4.0,
             "getaway_day": -2.0,
             "series_game": 2.0,
             "sp_rp_ops_gap": 1.216,
-            "vs_rp_ops": 2.352
+            "vs_rp_ops": 2.352,
+            "ump_k_pct": 0.096,
+            "ump_bb_pct": -0.312
           },
-          "hit_probability": 0.6847,
-          "raw_hit_probability": 0.6661,
-          "lift": 0.0808,
+          "hit_probability": 0.6315,
+          "raw_hit_probability": 0.6245,
+          "lift": 0.0801,
           "reliability": "A",
           "sample_n": 113,
           "projection": {
             "stat": "hits",
             "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 35.1,
+          "notable_signals": 0,
+          "matchup": "Seattle Mariners @ New York Yankees",
+          "game_pk": 823508,
+          "team": "Seattle Mariners",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.2753
+          },
+          "hit_probability": 0.2383,
+          "raw_hit_probability": 0.2753,
+          "lift": 0.0114,
+          "reliability": "A",
+          "sample_n": 113,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
             "needs": 1
           }
         }
