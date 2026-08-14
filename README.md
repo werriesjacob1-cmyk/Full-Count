@@ -99,7 +99,7 @@ layer, a parlay builder, and a real backtest harness in between, none of
 which appeared here.
 
 ```
-PROJECT-GRIDIRON/
+Full-Count/
 ├── .github/workflows/
 │   ├── mlb-daily.yml                 # schedule + manual trigger, commits picks/board/results
 │   ├── odds-snapshot.yml             # scheduled prop_snapshot.py runs (closing-price capture)

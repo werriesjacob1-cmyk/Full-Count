@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-08-14T17:30:07.619284Z",
+  "generated_at": "2026-08-14T22:12:12.156524Z",
   "window": {
     "start": "2026-07-08",
     "end": "2026-08-12"
@@ -15,35 +15,35 @@
   "decisions": [
     {
       "prop_type": "hard_hit_105",
-      "n_train": 5047,
-      "n_heldout": 2175,
+      "n_train": 5034,
+      "n_heldout": 2188,
       "action": "skip",
-      "reason": "held-out improvement too small to trust (brier -0.00108, log_loss -0.00282) -- raw probability, or the existing calibrator, keeps shipping",
-      "brier_improvement": -0.00108,
-      "log_loss_improvement": -0.00282,
-      "candidate_brier_after": 0.16098,
+      "reason": "held-out improvement too small to trust (brier -0.00031, log_loss -0.00318) -- raw probability, or the existing calibrator, keeps shipping",
+      "brier_improvement": -0.00031,
+      "log_loss_improvement": -0.00318,
+      "candidate_brier_after": 0.05285,
       "existing_brier_after": null
     },
     {
       "prop_type": "hits",
-      "n_train": 2687,
-      "n_heldout": 1120,
+      "n_train": 2691,
+      "n_heldout": 1116,
       "action": "skip",
-      "reason": "held-out improvement too small to trust (brier -0.00043, log_loss -0.00092) -- raw probability, or the existing calibrator, keeps shipping",
-      "brier_improvement": -0.00043,
-      "log_loss_improvement": -0.00092,
-      "candidate_brier_after": 0.23614,
+      "reason": "held-out improvement too small to trust (brier -0.00054, log_loss -0.00115) -- raw probability, or the existing calibrator, keeps shipping",
+      "brier_improvement": -0.00054,
+      "log_loss_improvement": -0.00115,
+      "candidate_brier_after": 0.23651,
       "existing_brier_after": null
     },
     {
       "prop_type": "hits_runs_rbis",
-      "n_train": 2943,
-      "n_heldout": 1274,
+      "n_train": 2948,
+      "n_heldout": 1269,
       "action": "skip",
-      "reason": "held-out improvement too small to trust (brier +0.00000, log_loss -0.00004) -- raw probability, or the existing calibrator, keeps shipping",
-      "brier_improvement": 0.0,
-      "log_loss_improvement": -4e-05,
-      "candidate_brier_after": 0.22508,
+      "reason": "held-out improvement too small to trust (brier -0.00002, log_loss -0.00007) -- raw probability, or the existing calibrator, keeps shipping",
+      "brier_improvement": -2e-05,
+      "log_loss_improvement": -7e-05,
+      "candidate_brier_after": 0.22546,
       "existing_brier_after": null
     },
     {
@@ -59,25 +59,25 @@
     },
     {
       "prop_type": "pitcher_outs",
-      "n_train": 535,
-      "n_heldout": 233,
+      "n_train": 537,
+      "n_heldout": 231,
       "action": "skip",
-      "reason": "held-out improvement too small to trust (brier -0.00280, log_loss -0.00665) -- raw probability, or the existing calibrator, keeps shipping",
-      "brier_improvement": -0.0028,
-      "log_loss_improvement": -0.00665,
-      "candidate_brier_after": 0.23236,
+      "reason": "held-out improvement too small to trust (brier -0.00328, log_loss -0.00763) -- raw probability, or the existing calibrator, keeps shipping",
+      "brier_improvement": -0.00328,
+      "log_loss_improvement": -0.00763,
+      "candidate_brier_after": 0.23288,
       "existing_brier_after": null
     },
     {
       "prop_type": "strikeouts",
-      "n_train": 623,
-      "n_heldout": 268,
-      "action": "promote",
-      "reason": "held-out brier improved +0.00923, log_loss improved +0.02038 over raw on 268 held-out rows; also beat the existing calibrator (0.24430 -> 0.24427)",
-      "brier_improvement": 0.00923,
-      "log_loss_improvement": 0.02038,
-      "candidate_brier_after": 0.24427,
-      "existing_brier_after": 0.2443
+      "n_train": 625,
+      "n_heldout": 266,
+      "action": "skip",
+      "reason": "held-out improvement over raw is real, but the currently-shipped calibrator is already at least as good on this window (existing brier 0.24484 vs candidate 0.24490) -- keeping the existing fit",
+      "brier_improvement": 0.00915,
+      "log_loss_improvement": 0.02025,
+      "candidate_brier_after": 0.2449,
+      "existing_brier_after": 0.24484
     },
     {
       "prop_type": "singles",
@@ -91,7 +91,5 @@
       "existing_brier_after": null
     }
   ],
-  "promoted": [
-    "strikeouts"
-  ]
+  "promoted": []
 }

@@ -165,7 +165,7 @@ def scale(value, lo, hi, out_lo=0, out_hi=100):
 #  DATA COLLECTION — tonight-scoped, reusing mlb_daily.py's fetchers
 # ══════════════════════════════════════════════════════════════════════════
 
-NWS_UA = {"User-Agent": "(full-count-mlb-pipeline, contact: github.com/werriesjacob1-cmyk/PROJECT-GRIDIRON)"}
+NWS_UA = {"User-Agent": "(full-count-mlb-pipeline, contact: github.com/werriesjacob1-cmyk/Full-Count)"}
 
 def fetch_nws_weather(lat, lon, hour):
     """Second, independent weather source (National Weather Service — free,
