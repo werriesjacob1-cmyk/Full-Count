@@ -70,10 +70,18 @@ check(0 <= c["score"] <= 100, "score is bounded to [0, 100]", f"got {c['score']}
 check(0 < c["k_rate"] < 1, "k_rate is a real fraction, not a raw percentage or out of range",
       f"got {c['k_rate']}")
 
-rebuilt = (c["cat_matchup"] * 0.35 + c["cat_recent_form"] * 0.25 + c["cat_environment"] * 0.15
-           + c["cat_baseline_skill"] * 0.15 + c["cat_context"] * 0.10)
+# PROMOTED 2026-08-14: score_pitcher no longer uses the original hand-set
+# 35/25/15/15/10 -- see the comment above its own `score = clamp(...)` line
+# for the measured findings (cleared the old formula's CI on 5 of 5
+# independent train/held-out splits, the most robust finding of the
+# night). ENVIRONMENT/CONTEXT weights deliberately kept at their original
+# 0.15/0.10 -- both are functionally constant for this market, so the fit
+# had nothing real to say about them.
+rebuilt = gp.clamp(c["cat_matchup"] * 0.11 + c["cat_recent_form"] * -0.16 + c["cat_environment"] * 0.15
+                   + c["cat_baseline_skill"] * 0.48 + c["cat_context"] * 0.10)
 check(abs(round(rebuilt, 1) - c["score"]) < 0.15,
-      "score == 0.35*matchup + 0.25*recent_form + 0.15*environment + 0.15*baseline_skill + 0.10*context",
+      "score == clamp(0.11*matchup + -0.16*recent_form + 0.15*environment + "
+      "0.48*baseline_skill + 0.10*context)",
       f"rebuilt={rebuilt:.2f} vs recorded score={c['score']}")
 
 head("2. every optional input at its default doesn't crash")

@@ -48,14 +48,31 @@ kept = fw.usable(pool)
 check(kept == [complete], "only the fully-populated row with a real outcome survives",
       f"kept {len(kept)} of {len(pool)}")
 
-head("2. current_formula_score reproduces the documented 35/25/15/15/10 weights exactly")
+head("2. current_formula_score reproduces the live shipped weights exactly, dispatched "
+     "by prop_type -- PROMOTED 2026-08-14, batters and pitchers now use two different "
+     "formulas, not the original shared 35/25/15/15/10")
 
 row = {"cat_matchup": 80, "cat_recent_form": 60, "cat_environment": 40,
        "cat_baseline_skill": 20, "cat_context": 100}
-expected = 80 * 0.35 + 60 * 0.25 + 40 * 0.15 + 20 * 0.15 + 100 * 0.10
-check(abs(fw.current_formula_score(row) - expected) < 1e-9,
-      "current_formula_score matches the hand-computed weighted sum",
-      f"got {fw.current_formula_score(row)}, expected {expected}")
+
+expected_batter = 80 * fw.CURRENT_WEIGHTS_BATTER["cat_matchup"] + 60 * fw.CURRENT_WEIGHTS_BATTER["cat_recent_form"] \
+    + 40 * fw.CURRENT_WEIGHTS_BATTER["cat_environment"] + 20 * fw.CURRENT_WEIGHTS_BATTER["cat_baseline_skill"] \
+    + 100 * fw.CURRENT_WEIGHTS_BATTER["cat_context"]
+check(abs(fw.current_formula_score(row) - expected_batter) < 1e-9,
+      "a row with no prop_type (or a non-strikeouts one) uses CURRENT_WEIGHTS_BATTER",
+      f"got {fw.current_formula_score(row)}, expected {expected_batter}")
+
+row_pitcher = dict(row, prop_type="strikeouts")
+expected_pitcher = 80 * fw.CURRENT_WEIGHTS_PITCHER["cat_matchup"] + 60 * fw.CURRENT_WEIGHTS_PITCHER["cat_recent_form"] \
+    + 40 * fw.CURRENT_WEIGHTS_PITCHER["cat_environment"] + 20 * fw.CURRENT_WEIGHTS_PITCHER["cat_baseline_skill"] \
+    + 100 * fw.CURRENT_WEIGHTS_PITCHER["cat_context"]
+check(abs(fw.current_formula_score(row_pitcher) - expected_pitcher) < 1e-9,
+      "a row with prop_type='strikeouts' uses CURRENT_WEIGHTS_PITCHER instead",
+      f"got {fw.current_formula_score(row_pitcher)}, expected {expected_pitcher}")
+check(abs(expected_batter - expected_pitcher) > 1,
+      "sanity check: the two formulas actually differ on this row -- if they didn't, "
+      "checks 1 and 2 above wouldn't be able to tell the dispatch apart from a bug that "
+      "always used one formula", f"batter={expected_batter} pitcher={expected_pitcher}")
 
 head("3. bootstrap_auc_ci returns a point estimate bracketed by its own CI")
 

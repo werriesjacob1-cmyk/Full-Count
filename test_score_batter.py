@@ -73,14 +73,18 @@ check(c["type"] == "batter" and c["name"] == "Test Batter" and c["player_id"] ==
 check(0 <= c["score"] <= 100, "score is bounded to [0, 100]", f"got {c['score']}")
 check(c["confidence"] in ("High", "Medium", "Low"), "confidence is one of the three real labels")
 
-head("1b. score is genuinely reconstructable from the 5 recorded cat_ components "
-     "via the documented 35/25/15/15/10 weights -- proves the instrumentation "
-     "records the SAME values the formula actually used, not a re-derivation")
+head("1b. score is genuinely reconstructable from the 5 recorded cat_ components via "
+     "the PROMOTED 2026-08-14 weights (0.04/0.03/0.20/-0.09/0.64, replacing the "
+     "original hand-set 35/25/15/15/10 -- see the comment above score_batter's own "
+     "`score = clamp(...)` line for the measured findings) -- proves the "
+     "instrumentation records the SAME values the formula actually used, not a "
+     "re-derivation")
 
-rebuilt = (c["cat_matchup"] * 0.35 + c["cat_recent_form"] * 0.25 + c["cat_environment"] * 0.15
-           + c["cat_baseline_skill"] * 0.15 + c["cat_context"] * 0.10)
+rebuilt = gp.clamp(c["cat_matchup"] * 0.04 + c["cat_recent_form"] * 0.03 + c["cat_environment"] * 0.20
+                   + c["cat_baseline_skill"] * -0.09 + c["cat_context"] * 0.64)
 check(abs(round(rebuilt, 1) - c["score"]) < 0.15,
-      "score == 0.35*matchup + 0.25*recent_form + 0.15*environment + 0.15*baseline_skill + 0.10*context",
+      "score == clamp(0.04*matchup + 0.03*recent_form + 0.20*environment + "
+      "-0.09*baseline_skill + 0.64*context)",
       f"rebuilt={rebuilt:.2f} vs recorded score={c['score']}")
 for k in ("cat_matchup", "cat_recent_form", "cat_environment", "cat_baseline_skill", "cat_context"):
     check(0 <= c[k] <= 100, f"{k} is bounded to [0, 100]", f"got {c[k]}")

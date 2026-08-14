@@ -1347,7 +1347,26 @@ def score_batter(batter, gm, opp_sp_row, opp_sp_id, opp_sp_hand, park_wx, batter
         context = clamp(context + clamp(bullpen_era_diff * 8, -8, 8))
         if bullpen_era_diff >= 0.5: notable_signals += 1
 
-    score = matchup * 0.35 + form * 0.25 + env * 0.15 + skill * 0.15 + context * 0.10
+    # PROMOTED 2026-08-14, replacing the original hand-set 35/25/15/15/10
+    # split. backtest/fit_score_weights.py tested the hand-set weights
+    # against a logistic-regression fit on the real multi-year backtest
+    # (2024-2025, ~41K usable batter rows) and found a REAL, robust
+    # improvement -- not a one-off: re-run across 5 independent train/
+    # held-out split boundaries (test_frac 0.2 through 0.4), the fitted
+    # weights cleared the hand-set formula's confidence interval in 4 of 5
+    # (the 5th, on the smallest held-out slice, was underpowered rather
+    # than contradictory -- same direction, same rough magnitude, just a
+    # wider CI). CONTEXT was traced to its actual source (batting order
+    # slot, see score_batter's own CONTEXT section above) and confirmed a
+    # real, monotonic signal on 41K rows: raw hit rate climbs from 55.8% to
+    # 71.2% across its range, no reversals. BASELINE SKILL came back
+    # negative and small -- season-level power/contact stats are largely
+    # already priced in by the market itself, the same "no additional
+    # signal" pattern star_profile's own discount below already assumes.
+    # See fit_score_weights.py's own CURRENT_WEIGHTS_BATTER, kept in sync
+    # with this line so future reruns compare against what's actually
+    # shipping, not a stale reference.
+    score = clamp(matchup * 0.04 + form * 0.03 + env * 0.20 + skill * -0.09 + context * 0.64)
 
     # Sharp-money nudge: a small, capped adjustment from a genuinely different
     # signal type (market-derived, not stats-derived) — deliberately not part
@@ -1848,7 +1867,27 @@ def score_pitcher(sp_name, sp_id, sp_hand, gm, side, pit_season_lookup, l14_form
     context = scale(ump.get("accuracy"), 90, 96) if ump.get("accuracy") else 50
     if ump.get("accuracy") and ump["accuracy"] >= 94: notable_signals += 1
 
-    score = matchup * 0.35 + form * 0.25 + env * 0.15 + skill * 0.15 + context * 0.10
+    # PROMOTED 2026-08-14, replacing the original hand-set 35/25/15/15/10
+    # split. backtest/fit_score_weights.py's PITCHERS-ONLY cut (strikeouts,
+    # ~4.6K usable rows across the real 2024-2025 backtest) is the most
+    # robust finding of the whole exercise: cleared the hand-set formula's
+    # confidence interval in 5 of 5 independent train/held-out splits
+    # (test_frac 0.2 through 0.4), with an almost identical AUC delta
+    # (+0.080 to +0.087) every single time -- not a fluke of one cutoff.
+    # RECENT FORM inverted (a hot recent K rate predicting WORSE, not
+    # better) reproduced with the same sign and similar magnitude on all
+    # 5 splits too. ENVIRONMENT and CONTEXT are deliberately left at their
+    # ORIGINAL weights, not the fit's numbers -- both are functionally
+    # constant for this market (env is hardcoded 50 above; context sits at
+    # ump.get("accuracy") or 50 and this season's real data showed it
+    # pinned at 50 for every single strikeout row), so the fit's small
+    # negative shares for them were a math artifact of feeding a
+    # regression two constant columns, not a real signal to promote.
+    # MATCHUP/RECENT FORM/BASELINE SKILL are renormalized into the
+    # remaining 75% of the budget the original formula gave them,
+    # preserving their fitted RELATIVE proportions. See fit_score_weights.
+    # py's own CURRENT_WEIGHTS_PITCHER, kept in sync with this line.
+    score = clamp(matchup * 0.11 + form * -0.16 + env * 0.15 + skill * 0.48 + context * 0.10)
 
     watchouts = []
     if low_sample_form:
