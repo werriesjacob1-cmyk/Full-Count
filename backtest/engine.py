@@ -147,6 +147,9 @@ import mlb_daily as m           # noqa: E402
 import generate_picks as gp     # noqa: E402
 import grade_results as gr      # noqa: E402
 import mlb_sources as msrc      # noqa: E402
+import odds_fanduel as fd       # noqa: E402  -- only ever used for .normalize_name() below;
+                                 # backtest never fetches live prices, so nothing here touches
+                                 # the network.
 
 CACHE_DIR = os.environ.get("BACKTEST_CACHE", os.path.join(os.path.dirname(os.path.abspath(__file__)), ".cache"))
 os.makedirs(CACHE_DIR, exist_ok=True)
@@ -1104,6 +1107,61 @@ def to_row(date, pick, graded, keep_unpriced=False):
     return row
 
 
+def best_of_category_extras(candidates):
+    """The candidates build_candidates() structurally can never surface as a
+    batter's single main pick, but which ship live every night via
+    select_best_by_category()'s independent per-family selection (the
+    "Best of Every Category" board section, and the dashboard's per-market
+    tabs since the min_score=0 fix).
+
+    build_candidates() gives each batter exactly ONE candidate, chosen by
+    _pick_line competing ALL of hits/total_bases/home_runs/runs/rbis/
+    hits_runs_rbis/singles/doubles/triples against each other.
+    Hits/hits_runs_rbis/singles structurally win that competition almost
+    every time (higher base rate -> higher lift), so the other six NEVER
+    produced a backtest row before this -- not excluded, just never the
+    winner of the one slot per batter.
+
+    min_score=0 for the same reason build_dashboard.py and shadow tracking
+    use it: a quality floor here would just reintroduce the exact "some
+    nights this category has zero rows" gap for the thinner categories.
+
+    n_per_category=9999 (uncapped), same as build_dashboard.py's own call
+    for the live per-market tabs -- NOT the live site's display cap of 5.
+    n_per_category truncates the SLATE-WIDE ranked list for that stat, not
+    a per-batter count (each batter contributes at most one entry per
+    category regardless), so capping it low means capping how many
+    DIFFERENT BATTERS' outcomes get graded each night, not avoiding
+    duplication -- verified live on a real date: n_per_category=1 produced
+    exactly 1 row/day for total_bases/home_runs/runs/rbis/doubles/triples,
+    which would need 200+ days just to reach refit_calibrators.py's
+    MIN_FIT_ROWS. Uncapped gives every real, distinct batter a graded row,
+    matching how hits/hits_runs_rbis already accumulate volume.
+
+    prices={}/k_prices=None: backtest never fetches live FanDuel prices
+    (see this module's coverage_report -- market signals are explicitly
+    out of scope for backtest), and select_best_by_category() already
+    degrades gracefully to market_odds=None when prices is empty. `fd` is
+    only ever used there for its normalize_name() helper -- no network
+    calls result from passing it.
+
+    DEDUP against the main candidates: a batter's single main pick
+    occasionally already IS the best line in one of these families (e.g.
+    total_bases genuinely wins for a few batters some nights). Grading it
+    twice would double-count that (player, stat, needs) outcome as if it
+    were two independent data points."""
+    by_category = gp.select_best_by_category(candidates, prices={}, fd=fd,
+                                              n_per_category=9999, k_prices=None,
+                                              min_score=0)
+    main_keys = {(c.get("player_id"), (c.get("projection") or {}).get("stat"),
+                 (c.get("projection") or {}).get("needs")) for c in candidates}
+    return [
+        e for entries in by_category.values() for e in entries
+        if (e.get("player_id"), (e.get("projection") or {}).get("stat"),
+           (e.get("projection") or {}).get("needs")) not in main_keys
+    ]
+
+
 def simulate_date(date, store, use_weather=True, use_bullpen=True, keep_unpriced=False,
                   verbose=True) -> DateResult:
     """Reconstruct, score and grade one past date. Never raises for data
@@ -1164,7 +1222,14 @@ def simulate_date(date, store, use_weather=True, use_bullpen=True, keep_unpriced
             # (see __enter__/__exit__), so date 5 cannot see date 1's rate.
             league_rates = msrc.league_base_rates()
             gp.attach_hit_probabilities(candidates, comp_table, emp_batters, emp_pitchers, league_rates)
-            res.n_candidates = len(candidates)
+
+            # Best-of-category candidates: total_bases/home_runs/runs/rbis/
+            # doubles/triples never win build_candidates()'s single-pick
+            # slot per batter, but ship live every night via
+            # select_best_by_category() -- see that function's own
+            # docstring for the full reasoning.
+            extra_candidates = best_of_category_extras(candidates)
+            res.n_candidates = len(candidates) + len(extra_candidates)
     except LookaheadError:
         raise                            # never degrade a leak into a warning
     except Exception as e:
@@ -1176,7 +1241,7 @@ def simulate_date(date, store, use_weather=True, use_bullpen=True, keep_unpriced
     # supposed to read the future — that is what an outcome is.
     try:
         statuses = gr.fetch_game_statuses(date)
-        for c in candidates:
+        for c in candidates + extra_candidates:
             try:
                 graded = gr.grade_pick(c, statuses, date=date)
             except Exception as e:
