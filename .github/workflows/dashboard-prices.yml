@@ -1,0 +1,88 @@
+name: Dashboard Price Refresh
+
+# Re-prices the dashboard's already-scored candidates against fresh
+# FanDuel odds, every 5 minutes. Direct request: "I want all props to
+# update with new odds as FanDuel changes them, and compute in real time
+# the edge and whether it keeps it on the top 10."
+#
+# Deliberately NOT the same job as Dashboard Refresh (dashboard-refresh.yml).
+# That workflow does a full live rescoring pass (FanGraphs/Statcast/
+# lineups) and is capped at every 2 hours on purpose -- build_dashboard.py's
+# own docstring says a fresh pass is "not something to run every few
+# minutes." This job does nothing of the kind: dashboard/refresh_prices.py
+# only re-prices EXISTING candidates against a fresh line (their
+# hit_probability never changes), which needs nothing heavier than
+# `requests` -- odds_fanduel.py and prop_probability.py both import
+# nothing beyond that and the stdlib -- so it costs a few seconds, not
+# several minutes, and can run this often without violating that
+# constraint at all.
+on:
+  schedule:
+    - cron: '*/5 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+# Distinct group from every other workflow's, same isolation reasoning as
+# dashboard-refresh.yml -- this must never wait on or block a full rebuild,
+# the main pipeline, or the odds snapshot.
+concurrency:
+  group: dashboard-prices
+  cancel-in-progress: true
+
+jobs:
+  reprice:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      # Only requests -- see the module docstring. Installing
+      # requirements.txt (pandas/scikit-learn/pybaseball) here would
+      # defeat the entire point of a job meant to run every 5 minutes.
+      - name: Install minimal deps
+        run: pip install --quiet requests
+
+      - name: Reprice against fresh FanDuel odds
+        run: |
+          if [ ! -f docs/data.json ]; then
+            echo "docs/data.json doesn't exist yet -- Dashboard Refresh hasn't run a full build yet. Nothing to reprice."
+            exit 0
+          fi
+          python3 dashboard/refresh_prices.py
+
+      - name: Commit and push
+        run: |
+          git config user.name "mlb-pipeline-bot"
+          git config user.email "actions@github.com"
+          git add docs/data.json
+          if git diff --cached --quiet; then
+            echo "No price change to publish."
+            exit 0
+          fi
+          git commit -m "Dashboard price refresh $(date -u +'%F %H:%M') UTC"
+          # Same retry-with-rebase as every other bot commit in this repo
+          # -- docs/data.json is the only file this job ever writes, so a
+          # rebase always resolves cleanly.
+          for attempt in 1 2 3 4 5; do
+            if git push; then
+              echo "Pushed on attempt $attempt."
+              exit 0
+            fi
+            echo "Push rejected (attempt $attempt/5) -- rebasing onto origin/main."
+            git fetch origin main
+            if ! git rebase origin/main; then
+              echo "::error::Rebase conflict -- aborting rather than leaving a broken tree."
+              git rebase --abort
+              exit 1
+            fi
+          done
+          echo "::error::Failed to push price refresh after 5 attempts."
+          exit 1
