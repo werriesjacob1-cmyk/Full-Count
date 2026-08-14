@@ -286,6 +286,41 @@ check(payload10b["suggested_parlay"] == result10b["suggested_parlay"],
       "misread as a list of candidate rows", f"got {payload10b['suggested_parlay']}")
 
 
+head("11. _game_schedule -- direct request: \"as games start I want those "
+     "props removed\". Parses MLB's schedule endpoint into "
+     "{game_pk: {started, start}}, non-fatal on failure.")
+
+import unittest.mock as mock
+import mlb_daily as m
+
+SCHEDULE_RESP = {"dates": [{"games": [
+    {"gamePk": 700001, "gameDate": "2026-08-14T23:05:00Z",
+     "status": {"abstractGameState": "Preview"}},
+    {"gamePk": 700002, "gameDate": "2026-08-14T22:10:00Z",
+     "status": {"abstractGameState": "Live"}},
+    {"gamePk": 700003, "gameDate": "2026-08-14T20:00:00Z",
+     "status": {"abstractGameState": "Final"}},
+]}]}
+
+with mock.patch.object(m, "retry_get") as mock_get:
+    mock_get.return_value.json.return_value = SCHEDULE_RESP
+    mock_get.return_value.raise_for_status = lambda: None
+    sched = bd._game_schedule("2026-08-14")
+
+check(sched[700001]["started"] is False, "a Preview game is NOT started")
+check(sched[700002]["started"] is True, "a Live game IS started")
+check(sched[700003]["started"] is True, "a Final game IS started (started != still playing)")
+check(sched[700001]["start"] == "2026-08-14T23:05:00Z",
+      "the real scheduled gameDate passes through for client-side pruning",
+      f"got {sched[700001]['start']}")
+
+head("12. _game_schedule fails soft (empty dict, not an exception) when the fetch itself breaks")
+
+with mock.patch.object(m, "retry_get", side_effect=Exception("network down")):
+    sched_fail = bd._game_schedule("2026-08-14")
+check(sched_fail == {}, "a network failure returns {} rather than raising -- must never take "
+      "down the whole dashboard build over one schedule fetch")
+
 n_pass = sum(1 for ok, _, _ in _results if ok)
 n_total = len(_results)
 print("\n" + "=" * 78)

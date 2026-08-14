@@ -35,6 +35,29 @@ def log(msg):
     print(msg, flush=True)
 
 
+def _game_schedule(date):
+    """{game_pk: {"started": bool, "start": iso8601 str or None}} for every
+    game MLB's schedule has for `date`. Direct request: "as games start I
+    want those props removed" -- the header text already claimed "any game
+    already underway when this ran is excluded, since its FanDuel lines are
+    closed," but nothing actually enforced that; this is what makes it true.
+    Non-fatal on failure (empty dict) -- a schedule fetch that fails must
+    never take down the whole dashboard build, same discipline as every
+    other network call in this pipeline."""
+    import mlb_daily as m
+    try:
+        r = m.retry_get("https://statsapi.mlb.com/api/v1/schedule", params={"sportId": 1, "date": date},
+                        headers={"User-Agent": "Mozilla/5.0"}, timeout=20)
+        r.raise_for_status()
+        games = r.json().get("dates", [{}])[0].get("games", [])
+        return {g["gamePk"]: {"started": g.get("status", {}).get("abstractGameState") != "Preview",
+                              "start": g.get("gameDate")}
+                for g in games}
+    except Exception as e:
+        log(f"  (couldn't fetch game schedule/status: {e} -- game-start filtering skipped this build)")
+        return {}
+
+
 def run_live_fetch():
     """Isolated live re-run of generate_picks.py's scoring pass. Returns the
     same shape fetch_full_depth.py (the scratch prototype this was promoted
@@ -104,9 +127,33 @@ def run_live_fetch():
     for stat, entries in by_category_full.items():
         log(f"  {stat}: {len(entries)} candidates")
 
+    # GAME-START FILTERING. Direct request: "as games start I want those
+    # props removed" -- and the header text below already promised this
+    # ("any game already underway when this ran is excluded") without
+    # anything actually enforcing it. Two layers: drop already-started
+    # games right here (catches anything live by the moment this build
+    # runs), and carry each survivor's game_pk/game_start through clean()
+    # so the page itself can keep pruning client-side between rebuilds
+    # (this script is deliberately not run every few minutes -- see the
+    # module docstring -- so a game that starts mid-window needs a
+    # non-rebuild way to disappear).
+    schedule = _game_schedule(gp.m.TODAY)
+    started = {pk for pk, info in schedule.items() if info["started"]}
+    if started:
+        before_ms = len(moonshots_full)
+        moonshots_full = [r for r in moonshots_full if r.get("game_pk") not in started]
+        before_cat = sum(len(v) for v in by_category_full.values())
+        by_category_full = {stat: [r for r in entries if r.get("game_pk") not in started]
+                            for stat, entries in by_category_full.items()}
+        by_category_full = {stat: entries for stat, entries in by_category_full.items() if entries}
+        after_cat = sum(len(v) for v in by_category_full.values())
+        log(f"Game-start filter: removed {before_ms - len(moonshots_full)} moonshot(s) and "
+            f"{before_cat - after_cat} category candidate(s) whose games are already underway.")
+
     def clean(rows):
         out = []
         for r in rows:
+            game_pk = r.get("game_pk")
             out.append({
                 "type": r.get("type"), "name": r.get("name"), "team": r.get("team"),
                 "matchup": r.get("matchup"), "side": r.get("side"), "prop": r.get("prop"),
@@ -119,6 +166,7 @@ def run_live_fetch():
                 "why": (r.get("why") or [])[:4],
                 "watchouts": (r.get("watchouts") or [])[:2],
                 "base_rate": r.get("base_rate"), "lift": r.get("lift"),
+                "game_pk": game_pk, "game_start": (schedule.get(game_pk) or {}).get("start"),
             })
         return out
 
@@ -1202,7 +1250,27 @@ function renderHeader() {{
   document.getElementById("board-date").textContent = dateStr;
   document.getElementById("board-time").textContent = "Updated " + timeStr + " ET";
   document.getElementById("caveat").textContent =
-    "Scored fresh against tonight's still-open games only — any game already underway when this ran is excluded, since its FanDuel lines are closed.";
+    "Scored fresh against tonight's still-open games only — any game already underway when this ran is excluded, since its FanDuel lines are closed. This page also prunes a prop itself the moment its game starts and reloads periodically to pick up fresh lineups and prices, so it stays current without you doing anything.";
+}}
+
+// ---- game-start pruning: direct request, "as games start I want those
+// props removed." The build already drops anything live AT BUILD TIME
+// (see _game_schedule/run_live_fetch in build_dashboard.py), but this page
+// can sit open for a while between rebuilds (deliberately not rebuilt
+// every few minutes -- see the module docstring), so a game that starts
+// while the tab is open needs a way to disappear without a full reload.
+// Every row carries its own game_start (the schedule's real gameDate) for
+// exactly this.
+function pruneStartedGames() {{
+  const now = Date.now();
+  let removed = 0;
+  for (const key of Object.keys(PAYLOAD.data)) {{
+    const rows = PAYLOAD.data[key];
+    const kept = rows.filter(p => !p.game_start || new Date(p.game_start).getTime() > now);
+    removed += rows.length - kept.length;
+    PAYLOAD.data[key] = kept;
+  }}
+  return removed;
 }}
 
 // ---- freshness: this board is rebuilt once a day, not live, so how old
@@ -1325,6 +1393,7 @@ initTheme();
 renderHeader();
 renderFreshness();
 setInterval(renderFreshness, 60000);
+pruneStartedGames();
 initWatchlist();
 renderTrackRecord();
 renderSuggestedParlay();
@@ -1333,6 +1402,22 @@ renderTabs();
 renderPanels();
 initPanelInteractions();
 initFilters();
+
+// Re-prune every minute (piggybacking renderFreshness's own cadence) so a
+// game that starts while this tab is sitting open still disappears without
+// the user doing anything -- then a full reload every 30 minutes to pick
+// up whatever the next real server-side rebuild produced (fresh lineups,
+// fresh prices, fresh candidates this page's own JS has no way to derive
+// on its own). Together: "runs separately, no effort from either of us."
+setInterval(() => {{
+  if (pruneStartedGames() > 0) {{
+    refreshStarredTab();
+    renderSummary();
+    renderTabs();
+    renderPanels();
+  }}
+}}, 60000);
+setInterval(() => location.reload(), 30 * 60000);
 </script>
 """
 
