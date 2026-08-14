@@ -68,8 +68,8 @@
         {
           "prop": "Over 4.5 Strikeouts",
           "type": "pitcher",
-          "score": 52.5,
-          "notable_signals": 1,
+          "score": 59.8,
+          "notable_signals": 2,
           "matchup": "Kansas City Royals @ Los Angeles Angels",
           "game_pk": 823993,
           "team": "Kansas City Royals",
@@ -80,7 +80,10 @@
             "same_hand_ratio": 75.0,
             "l14_k_pct": 7.6471,
             "tto_penalty": 8.0,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 73.5435,
+            "ump_k_pct": -0.372,
+            "ump_bb_pct": 0.084
           },
           "hit_probability": 0.5582,
           "raw_hit_probability": 0.4546,
@@ -96,8 +99,8 @@
         {
           "prop": "Over 16.5 Outs Recorded",
           "type": "pitcher",
-          "score": 56.1,
-          "notable_signals": 0,
+          "score": 57.2,
+          "notable_signals": 1,
           "matchup": "Kansas City Royals @ Los Angeles Angels",
           "game_pk": 823993,
           "team": "Kansas City Royals",
@@ -105,18 +108,46 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.6138,
+            "outs_rate": 0.6117,
             "avg_outs_per_start": 16.83
           },
-          "hit_probability": 0.6138,
+          "hit_probability": 0.6117,
           "raw_hit_probability": null,
-          "lift": 0.0446,
+          "lift": 0.0533,
           "reliability": "D",
           "sample_n": 24,
           "projection": {
             "stat": "pitcher_outs",
             "value": 16.5,
             "needs": 17
+          }
+        },
+        {
+          "prop": "Over 9.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 15.8,
+          "notable_signals": 0,
+          "matchup": "Kansas City Royals @ Los Angeles Angels",
+          "game_pk": 823993,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            607625,
+            680570
+          ],
+          "signals": {
+            "combined_k_edge": -0.1755
+          },
+          "hit_probability": 0.4213,
+          "raw_hit_probability": null,
+          "lift": -0.1755,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 9.5,
+            "needs": 10
           }
         }
       ]

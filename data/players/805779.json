@@ -364,6 +364,105 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-14",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 77.1,
+          "notable_signals": 1,
+          "matchup": "Texas Rangers @ Athletics",
+          "game_pk": 824968,
+          "team": "Athletics",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 56.0,
+            "park_hr_index": 50.6,
+            "season_barrel_pct": 0.0,
+            "lineup_slot": 87.5,
+            "bullpen_fatigue": 76.9231,
+            "platoon_barrel_pct": -3.36,
+            "platoon_xwoba": -0.78,
+            "park_hand_index": 4.04,
+            "opp_catcher_framing": 0.36,
+            "days_rest": 4.0,
+            "woba_ahead": 0.0,
+            "woba_behind": 54.5455,
+            "pull_park_synergy": 0.6929,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": -0.352,
+            "vs_rp_ops": -0.672,
+            "ump_k_pct": -0.42,
+            "ump_bb_pct": -0.516
+          },
+          "hit_probability": 0.6527,
+          "raw_hit_probability": 0.6407,
+          "lift": 0.1018,
+          "reliability": "B",
+          "sample_n": 78,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 0.0,
+          "notable_signals": 0,
+          "matchup": "Texas Rangers @ Athletics",
+          "game_pk": 824968,
+          "team": "Athletics",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0103
+          },
+          "hit_probability": 0.0103,
+          "raw_hit_probability": null,
+          "lift": -0.0393,
+          "reliability": "B",
+          "sample_n": 78,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 0,
+          "notable_signals": 0,
+          "matchup": "Texas Rangers @ Athletics",
+          "game_pk": 824968,
+          "team": "Athletics",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0045
+          },
+          "hit_probability": 0.0045,
+          "raw_hit_probability": null,
+          "lift": -0.017,
+          "reliability": "B",
+          "sample_n": 78,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

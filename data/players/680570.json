@@ -87,8 +87,8 @@
         {
           "prop": "Over 5.5 Strikeouts",
           "type": "pitcher",
-          "score": 39.3,
-          "notable_signals": 0,
+          "score": 32.7,
+          "notable_signals": 1,
           "matchup": "Kansas City Royals @ Los Angeles Angels",
           "game_pk": 823993,
           "team": "Los Angeles Angels",
@@ -96,9 +96,12 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "same_hand_ratio": 43.75,
+            "same_hand_ratio": 12.5,
             "l14_k_pct": 90.5882,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 73.5435,
+            "ump_k_pct": -0.372,
+            "ump_bb_pct": 0.084
           },
           "hit_probability": 0.5408,
           "raw_hit_probability": 0.3833,
@@ -114,7 +117,7 @@
         {
           "prop": "Over 13.5 Outs Recorded",
           "type": "pitcher",
-          "score": 16.1,
+          "score": 17.4,
           "notable_signals": 0,
           "matchup": "Kansas City Royals @ Los Angeles Angels",
           "game_pk": 823993,
@@ -123,12 +126,12 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.6145,
+            "outs_rate": 0.6082,
             "avg_outs_per_start": 13.75
           },
-          "hit_probability": 0.6145,
+          "hit_probability": 0.6082,
           "raw_hit_probability": null,
-          "lift": -0.2291,
+          "lift": -0.2165,
           "reliability": "D",
           "sample_n": 12,
           "projection": {
