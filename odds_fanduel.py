@@ -703,6 +703,21 @@ def attach_market_prices(candidates, prices=None, k_prices=None, fi_prices=None,
             continue
         odds = (prices.get(normalize_name(c.get("name"))) or {}).get(key)
         if odds is None:
+            # KNOWN RESIDUAL GAP for hard_hit_105/hard_hit_110, verified live
+            # 2026-08-14 -- NOT the needs-mismatch bug class pitcher_outs/
+            # strikeouts had (hard_hit's `needs` is always 1, so there is no
+            # line to miss) and NOT a normalize_name/MARKET_MAP defect.
+            # FanDuel's Laser market is (a) only posted for games close to
+            # first pitch -- games 2-3+ hours out have zero Laser runners at
+            # all -- and (b) even for live games, prices a SUBSET of each
+            # lineup: a live re-pull 25 minutes apart on the same game grew
+            # from 14 to 17 runners as FanDuel filled the board in, and a
+            # few real batters (confirmed absent on both pulls, not a
+            # spelling miss) never got a Laser line at all that slate. This
+            # caps real-price coverage below 100% by design of FanDuel's own
+            # market, not a bug here -- do not re-diagnose this as the same
+            # class of issue already fixed for pitcher_outs/strikeouts/
+            # lasers-tab without new live evidence.
             continue
         c["market_odds"] = odds
         c["market_implied"] = round(pp.implied_probability(odds), 4)
