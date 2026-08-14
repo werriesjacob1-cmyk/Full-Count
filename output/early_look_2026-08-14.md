@@ -2,7 +2,7 @@
 
 Every player below is projected into last night's/his last game's batting slot for his team, because no real lineup — not MLB's own API, not MLB.com, not Rotowire — has been posted for tonight yet. These are NOT picks: the batting order can and does change (a day off, a platoon swap, a late scratch), and none of this is graded or fed back into the accuracy record. Read it as "who to watch once real lineups post," not as a board to bet.
 
-- **Kevin McGonigle** (Detroit Tigers) — Over 0.5 Hits+Runs+RBIs — 73.8% [Chicago White Sox @ Detroit Tigers]
+- **Kevin McGonigle** (Detroit Tigers) — Over 0.5 Hits+Runs+RBIs — 73.7% [Chicago White Sox @ Detroit Tigers]
 - **Brice Turang** (Milwaukee Brewers) — Over 0.5 Hits+Runs+RBIs — 72.1% [Milwaukee Brewers @ Los Angeles Dodgers]
 - **Xavier Edwards** (Miami Marlins) — Over 0.5 Hits+Runs+RBIs — 71.9% [Miami Marlins @ Cincinnati Reds]
 - **Chase Meidroth** (Chicago White Sox) — Over 0.5 Hits+Runs+RBIs — 71.8% [Chicago White Sox @ Detroit Tigers]
@@ -10,9 +10,8 @@ Every player below is projected into last night's/his last game's batting slot f
 - **Zack Gelof** (Athletics) — Over 0.5 Hits+Runs+RBIs — 71.0% [Texas Rangers @ Athletics]
 - **Mike Trout** (Los Angeles Angels) — Over 0.5 Hits+Runs+RBIs — 70.8% [Kansas City Royals @ Los Angeles Angels]
 - **Abimelec Ortiz** (Washington Nationals) — Over 0.5 Hits — 70.7% [Washington Nationals @ New York Mets]
-- **Sal Stewart** (Cincinnati Reds) — Over 0.5 Hits+Runs+RBIs — 70.7% [Miami Marlins @ Cincinnati Reds]
+- **Sal Stewart** (Cincinnati Reds) — Over 0.5 Hits+Runs+RBIs — 70.6% [Miami Marlins @ Cincinnati Reds]
 - **Bryan Reynolds** (Pittsburgh Pirates) — Over 0.5 Hits+Runs+RBIs — 70.6% [Boston Red Sox @ Pittsburgh Pirates]
-- **Alex Bregman** (Chicago Cubs) — Over 0.5 Hits+Runs+RBIs — 70.2% [St. Louis Cardinals @ Chicago Cubs]
 - **Brandon Lowe** (Pittsburgh Pirates) — Over 0.5 Hits+Runs+RBIs — 70.1% [Boston Red Sox @ Pittsburgh Pirates]
 - **Taylor Ward** (Seattle Mariners) — Over 0.5 Hits+Runs+RBIs — 69.9% [Seattle Mariners @ Houston Astros]
 - **Geraldo Perdomo** (Arizona Diamondbacks) — Over 0.5 Hits+Runs+RBIs — 69.8% [Arizona Diamondbacks @ Atlanta Braves]
@@ -27,3 +26,4 @@ Every player below is projected into last night's/his last game's batting slot f
 - **Adley Rutschman** (Boston Red Sox) — Over 0.5 Hits+Runs+RBIs — 68.7% [Boston Red Sox @ Pittsburgh Pirates]
 - **Corbin Carroll** (Arizona Diamondbacks) — Over 0.5 Hits+Runs+RBIs — 68.6% [Arizona Diamondbacks @ Atlanta Braves]
 - **Ildemaro Vargas** (Arizona Diamondbacks) — Over 0.5 Hits+Runs+RBIs — 68.4% [Arizona Diamondbacks @ Atlanta Braves]
+- **Denzer Guzman** (Los Angeles Angels) — Over 0.5 Hits+Runs+RBIs — 68.4% [Kansas City Royals @ Los Angeles Angels]
