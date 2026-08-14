@@ -61,6 +61,67 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-14",
+      "evaluations": [
+        {
+          "prop": "Over 6.5 Strikeouts",
+          "type": "pitcher",
+          "score": 36.9,
+          "notable_signals": 0,
+          "matchup": "Texas Rangers @ Athletics",
+          "game_pk": 824968,
+          "team": "Athletics",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "same_hand_ratio": 33.3333,
+            "l14_k_pct": 100.0,
+            "env_neutral": 50.0,
+            "ump_accuracy": 45.5855,
+            "ump_k_pct": 0.42,
+            "ump_bb_pct": 0.516
+          },
+          "hit_probability": 0.5431,
+          "raw_hit_probability": 0.3924,
+          "lift": 0.2974,
+          "reliability": "D",
+          "sample_n": 14,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 6.5,
+            "needs": 7
+          }
+        },
+        {
+          "prop": "Over 15.5 Outs Recorded",
+          "type": "pitcher",
+          "score": 19.2,
+          "notable_signals": 0,
+          "matchup": "Texas Rangers @ Athletics",
+          "game_pk": 824968,
+          "team": "Athletics",
+          "side": "home",
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "outs_rate": 0.4753,
+            "avg_outs_per_start": 15.57
+          },
+          "hit_probability": 0.4753,
+          "raw_hit_probability": null,
+          "lift": -0.1089,
+          "reliability": "D",
+          "sample_n": 14,
+          "projection": {
+            "stat": "pitcher_outs",
+            "value": 15.5,
+            "needs": 16
+          }
+        }
+      ]
     }
   ]
 }

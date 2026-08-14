@@ -98,7 +98,7 @@
         {
           "prop": "Over 14.5 Outs Recorded",
           "type": "pitcher",
-          "score": 41.1,
+          "score": 42.4,
           "notable_signals": 0,
           "matchup": "Texas Rangers @ Athletics",
           "game_pk": 824968,
@@ -107,18 +107,46 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.6806,
+            "outs_rate": 0.6773,
             "avg_outs_per_start": 14.75
           },
-          "hit_probability": 0.6806,
+          "hit_probability": 0.6773,
           "raw_hit_probability": null,
-          "lift": -0.1019,
+          "lift": -0.0911,
           "reliability": "D",
           "sample_n": 20,
           "projection": {
             "stat": "pitcher_outs",
             "value": 14.5,
             "needs": 15
+          }
+        },
+        {
+          "prop": "Over 10.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 55.0,
+          "notable_signals": 1,
+          "matchup": "Texas Rangers @ Athletics",
+          "game_pk": 824968,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            677958,
+            695611
+          ],
+          "signals": {
+            "combined_k_edge": 0.1143
+          },
+          "hit_probability": 0.6598,
+          "raw_hit_probability": null,
+          "lift": 0.1143,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 10.5,
+            "needs": 11
           }
         }
       ]
