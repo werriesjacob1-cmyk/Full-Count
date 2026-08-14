@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""dashboard/refresh_prices.py — repricing-only refresh for the Gridiron
+"""dashboard/refresh_prices.py — repricing-only refresh for the Full Count
 Board dashboard. Direct request: "I want all props to update with new
 odds as FanDuel changes them, and compute in real time the edge and
 whether it keeps it on the top 10."

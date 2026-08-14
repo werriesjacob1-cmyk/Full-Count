@@ -138,6 +138,21 @@ check("Below Floor Pick" in content6 and "⚠" in content6,
       "a below-floor category entry is shown WITH the warning flag, not hidden or "
       "silently unflagged", f"got: {content6[content6.find('Below Floor'):content6.find('Below Floor')+120]!r}")
 
+head("7b. by_category renders up to 5 entries per category (not just the single best) -- "
+     "direct request: \"I just want to see the top 5 best of the slate. We aren't trying "
+     "to prevent people from betting we want them to at least have options.\"")
+
+five_lasers = [cand(name=f"Laser {i}", stat="hard_hit_105", hit_probability=p,
+                    clears_main_board_floor=(p >= 0.60))
+              for i, p in enumerate([0.09, 0.08, 0.07, 0.06, 0.05, 0.04], start=1)]
+gp.write_markdown([], [], [{"matchup": "Athletics @ Astros"}] * 15, {},
+                  by_category={"hard_hit_105": five_lasers})
+content6b = read()
+check(sum(f"Laser {i}" in content6b for i in range(1, 7)) == 5,
+      "exactly 5 of the 6 real candidates render, not just 1 and not all 6",
+      f"got content: {content6b!r}")
+check("Laser 6" not in content6b, "the 6th-best candidate is truncated -- capped at 5, not unlimited")
+
 head("8. a candidate carrying real alternatives renders them in the 'other lines' note")
 
 with_alts = cand(name="Multi Line Player", stat="strikeouts",

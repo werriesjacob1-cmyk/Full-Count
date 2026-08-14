@@ -165,7 +165,7 @@ def scale(value, lo, hi, out_lo=0, out_hi=100):
 #  DATA COLLECTION — tonight-scoped, reusing mlb_daily.py's fetchers
 # ══════════════════════════════════════════════════════════════════════════
 
-NWS_UA = {"User-Agent": "(project-gridiron-mlb-pipeline, contact: github.com/werriesjacob1-cmyk/PROJECT-GRIDIRON)"}
+NWS_UA = {"User-Agent": "(full-count-mlb-pipeline, contact: github.com/werriesjacob1-cmyk/PROJECT-GRIDIRON)"}
 
 def fetch_nws_weather(lat, lon, hour):
     """Second, independent weather source (National Weather Service — free,
@@ -3840,22 +3840,28 @@ def main() -> int:
         deep_moonshots = select_deep_moonshots(candidates, prices, _fd, n=5)
         print(f"    {len(deep_moonshots)} deep moonshot(s) selected (420+ FT home runs, priced, "
               f"ranked by hit probability)")
-        by_category = select_best_by_category(candidates, prices, _fd, n_per_category=1, k_prices=k_prices)
+        # n_per_category=5, min_score=0: direct report, verbatim -- "Even if
+        # a prop doesn't make the main board I still want to show at least
+        # something. I don't want to see NO lasers. I just want to see the
+        # top 5 best of the slate. We aren't trying to prevent people from
+        # betting we want them to at least have options." Previously floored
+        # at MIN_QUALITY_SCORE and capped to 1, which could -- and did, the
+        # night the Laser HR-conditioning fix landed and real Laser scores
+        # dropped -- render "no candidate tonight" for a whole family even
+        # though real candidates existed, just below the bar. write_markdown
+        # flags anything below either floor with ⚠ rather than hiding it.
+        by_category = select_best_by_category(candidates, prices, _fd, n_per_category=5,
+                                               k_prices=k_prices, min_score=0)
         print(f"    Best-of-category board: {len(by_category)} of {len(CATEGORY_LABELS)} "
               f"families had a candidate tonight")
-        # UNFLOORED companion: direct request, verbatim: "we should always
-        # track every prop to know if one sticks out randomly for some
-        # reason. We have to be prepared. We can't just throw them away."
-        # by_category above drops a whole family some nights (home_runs,
-        # doubles, triples especially) when nothing clears MIN_QUALITY_
-        # SCORE -- this re-runs the exact same selection with no floor at
-        # all, so every CATEGORY_LABELS family gets its best-available
-        # candidate recorded and graded regardless, merged into
-        # shadow_tracking below (never into by_category/the real card).
-        all_category = select_best_by_category(candidates, prices, _fd, n_per_category=1,
-                                               k_prices=k_prices, min_score=0)
-        for stat, entries in all_category.items():
-            for e in entries:
+        # Shadow tracking: direct request, verbatim: "we should always track
+        # every prop to know if one sticks out randomly for some reason. We
+        # have to be prepared. We can't just throw them away." by_category
+        # above is already unfloored (min_score=0), so its own top entry per
+        # stat covers every CATEGORY_LABELS family without a second,
+        # redundant select_best_by_category() re-run.
+        for stat, entries in by_category.items():
+            for e in entries[:1]:
                 needs = (e.get("projection") or {}).get("needs")
                 key = (stat, needs)
                 if key in shadow_tracking:
@@ -5777,30 +5783,31 @@ def write_markdown(top10, skipped, game_meta, bullpen_scores, all_ranked=(), moo
 
     if by_category:
         lines.append("## Best of Every Category")
-        lines.append("_One line per prop family this pipeline can price -- whatever the single best "
-                     "pick is tonight, even where it falls short of the main board's 60% floor. Score "
-                     "is the 0-100 quality rating (35% matchup / 25% recent form / 15% environment / "
-                     "15% baseline skill / 10% context); every entry here already cleared the "
-                     f"{MIN_QUALITY_SCORE:.0f}+ quality floor, same as the main board. Entries marked "
-                     "⚠ sit below the 60% cash-probability floor -- shown because you asked to see "
-                     "the category's ceiling regardless, not because they're a recommendation at the "
-                     "same bar as the top 10._")
+        lines.append("_Up to 5 real candidates in every prop family this pipeline can price tonight -- "
+                     "not just the ones that clear the main board's bars. We want you to have options, "
+                     "not just an empty category. Score is the 0-100 quality rating (35% matchup / 25% "
+                     "recent form / 15% environment / 15% baseline skill / 10% context); Prob is chance "
+                     "of cashing. Neither is floored here. Entries marked ⚠ sit below the 60% "
+                     f"cash-probability floor and/or the {MIN_QUALITY_SCORE:.0f}+ quality floor that "
+                     "gate the main board -- still real, still ranked honestly by chance of cashing, "
+                     "just not a recommendation at the same bar as the top 10._")
         lines.append("")
-        lines.append("| Category | Player | Prop | Prob | Score | FanDuel |")
-        lines.append("|---|---|---|---|---|---|")
         for stat in sorted(CATEGORY_LABELS, key=lambda s: CATEGORY_LABELS[s]):
             entries = by_category.get(stat)
+            lines.append(f"**{CATEGORY_LABELS[stat]}**")
             if not entries:
-                lines.append(f"| {CATEGORY_LABELS[stat]} | _no candidate tonight_ | | | | |")
+                lines.append("- _no candidate tonight_")
+                lines.append("")
                 continue
-            c = entries[0]
-            hp = c.get("hit_probability")
-            odds = c.get("market_odds")
-            flag = "" if c.get("clears_main_board_floor") else " ⚠"
-            odds_s = f"{odds:+d}" if odds is not None else "unpriced"
-            lines.append(f"| {CATEGORY_LABELS[stat]} | {c['name']} ({_team_label(c)}) | {c['prop']} | "
-                         f"{hp*100:.1f}%{flag} | {c.get('score', '?')} | {odds_s} |")
-        lines.append("")
+            for c in entries[:5]:
+                hp = c.get("hit_probability")
+                odds = c.get("market_odds")
+                below_floor = (not c.get("clears_main_board_floor")) or (c.get("score") or 0) < MIN_QUALITY_SCORE
+                flag = " ⚠" if below_floor else ""
+                odds_s = f"{odds:+d}" if odds is not None else "unpriced"
+                lines.append(f"- {c['name']} ({_team_label(c)}) — {c['prop']} — "
+                             f"**{hp*100:.1f}%**{flag} (score {c.get('score', '?')}, {odds_s})")
+            lines.append("")
 
     with open(PICKS_FILE, "w", encoding="utf-8") as f:
         f.write("\n".join(lines))

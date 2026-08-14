@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""dashboard/build_dashboard.py — builds the standalone Gridiron Board HTML
+"""dashboard/build_dashboard.py — builds the standalone Full Count Board HTML
 (the tabbed prop-explorer dashboard, distinct from the curated top-10 board
 generate_picks.py ships) in one pass: a live, isolated re-run of the real
 scoring pipeline to capture EVERY qualifying candidate per prop family (not
@@ -63,7 +63,7 @@ def run_live_fetch():
     same shape fetch_full_depth.py (the scratch prototype this was promoted
     from) produced: {"generated_at", "date", "moonshot": [...], "<stat>": [...]}.
     """
-    scratch = tempfile.mkdtemp(prefix="gridiron_dashboard_")
+    scratch = tempfile.mkdtemp(prefix="fullcount_dashboard_")
     os.environ["OUTPUT_DIR"] = os.path.join(scratch, "output")
     os.environ["PLAYERS_DIR"] = os.path.join(scratch, "players")
     os.makedirs(os.environ["OUTPUT_DIR"], exist_ok=True)
@@ -123,7 +123,19 @@ def run_live_fetch():
     moonshots_full = gp.select_moonshots(candidates, prices, fd, n=9999)
     log(f"{len(moonshots_full)} total home_run candidates.")
 
-    by_category_full = gp.select_best_by_category(candidates, prices, fd, n_per_category=9999, k_prices=k_prices)
+    # min_score=0: direct report, verbatim -- "Even if a prop doesn't make
+    # the main board I still want to show at least something. I don't want
+    # to see NO lasers." Without this, select_best_by_category's default
+    # MIN_QUALITY_SCORE floor could empty out an entire market for the
+    # night (exactly what happened to Laser the night the HR-conditioning
+    # fix landed and real Laser probabilities dropped) -- and an empty
+    # category here means its tab never even gets added to tabs_order
+    # below, so it vanishes from the site entirely rather than showing a
+    # thin or unattractive slate. This site is meant to give bettors
+    # options, not gatekeep them -- the "clears" vs "pass" price styling
+    # already tells them which rows are genuinely good value.
+    by_category_full = gp.select_best_by_category(candidates, prices, fd, n_per_category=9999,
+                                                   k_prices=k_prices, min_score=0)
     for stat, entries in by_category_full.items():
         log(f"  {stat}: {len(entries)} candidates")
 
@@ -392,7 +404,7 @@ def build_payload(result, track_record=None):
 
 PAGE_TEMPLATE = """<meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Gridiron Board</title>
+<title>Full Count</title>
 <style>
 @font-face {{
   font-family: 'Archivo Var';
@@ -790,7 +802,7 @@ body {{
 <div class="wrap">
   <header class="masthead">
     <div class="brand">
-      <span class="mark">GRID<em>IRON</em></span>
+      <span class="mark">FULL <em>COUNT</em></span>
       <span class="tag">FanDuel &middot; MLB Props</span>
     </div>
     <div class="meta">
@@ -1340,7 +1352,7 @@ function renderFreshness() {{
 
 // ---- theme toggle: system preference by default, explicit choice
 // persisted locally so it survives a reload without needing an account. --
-const THEME_KEY = "gridiron-theme";
+const THEME_KEY = "fullcount-theme";
 function safeGet(k) {{ try {{ return localStorage.getItem(k); }} catch (e) {{ return null; }} }}
 function safeSet(k, v) {{ try {{ localStorage.setItem(k, v); }} catch (e) {{}} }}
 function systemTheme() {{ return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"; }}
@@ -1408,7 +1420,7 @@ function initFilters() {{
 // into a real PAYLOAD tab client-side so it runs through the exact same
 // renderTabs()/renderPanels() machinery every other tab already uses,
 // rather than a second parallel rendering path to keep in sync.
-const STAR_KEY = "gridiron-starred";
+const STAR_KEY = "fullcount-starred";
 function pickKey(p) {{ return (p.name || "") + "||" + (p.prop || ""); }}
 function loadStarred() {{
   try {{ return new Set(JSON.parse(localStorage.getItem(STAR_KEY) || "[]")); }}
@@ -1535,7 +1547,7 @@ def render_html(payload, fonts):
 
 def main():
     ap = argparse.ArgumentParser(description=__doc__)
-    ap.add_argument("--out", default=os.path.join(DASHBOARD_DIR, "gridiron_board.html"),
+    ap.add_argument("--out", default=os.path.join(DASHBOARD_DIR, "fullcount_board.html"),
                     help="output HTML path (gitignored -- this is generated, not committed)")
     ap.add_argument("--fonts", default=os.path.join(DASHBOARD_DIR, "fonts_b64.json"),
                     help="path to the cached base64 font payload")
