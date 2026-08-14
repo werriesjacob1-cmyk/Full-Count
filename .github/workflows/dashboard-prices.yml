@@ -62,6 +62,19 @@ jobs:
         run: |
           git config user.name "mlb-pipeline-bot"
           git config user.email "actions@github.com"
+          # `git add` on a path that doesn't exist yet is a hard error
+          # (exit 128), not a no-op -- real bug hit live 2026-08-14: the
+          # very first run of this workflow landed before Dashboard
+          # Refresh had ever produced a docs/data.json (its --data-out
+          # support merged in the same PR as this workflow), and the
+          # unconditional `git add` below killed the job before the
+          # "nothing to commit" check three lines later ever got a chance
+          # to run. Same file-existence guard the reprice step above
+          # already uses.
+          if [ ! -f docs/data.json ]; then
+            echo "docs/data.json still doesn't exist -- nothing to commit."
+            exit 0
+          fi
           git add docs/data.json
           if git diff --cached --quiet; then
             echo "No price change to publish."
