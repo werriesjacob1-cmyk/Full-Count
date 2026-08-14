@@ -456,6 +456,137 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-14",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 68.4,
+          "notable_signals": 1,
+          "matchup": "St. Louis Cardinals @ Chicago Cubs",
+          "game_pk": 824643,
+          "team": "Chicago Cubs",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 70.5714,
+            "park_hr_index": 31.4,
+            "season_barrel_pct": 48.0,
+            "lineup_slot": 87.5,
+            "bullpen_fatigue": 76.9231,
+            "bvp_ops": -2.136,
+            "platoon_barrel_pct": 1.28,
+            "platoon_xwoba": 3.96,
+            "park_hand_index": 1.52,
+            "opp_catcher_framing": 0.6,
+            "days_rest": 0.0,
+            "woba_ahead": 100.0,
+            "woba_behind": 28.1818,
+            "pull_park_synergy": 0.8406,
+            "hard_hit_105_rate": 2.4275,
+            "team_total_move": 0.0,
+            "team_total_open": 0.0,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": -0.104,
+            "vs_rp_ops": 1.32,
+            "ump_k_pct": -0.24,
+            "ump_bb_pct": -0.312
+          },
+          "hit_probability": 0.6292,
+          "raw_hit_probability": 0.6228,
+          "lift": 0.0783,
+          "reliability": "A",
+          "sample_n": 104,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 48.6,
+          "notable_signals": 1,
+          "matchup": "St. Louis Cardinals @ Chicago Cubs",
+          "game_pk": 824643,
+          "team": "Chicago Cubs",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": 3.48,
+            "sprint_speed": 15.625,
+            "catcher_poptime": 25.7143,
+            "on_base": 98.0806
+          },
+          "hit_probability": 0.0232,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 104,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 43.9,
+          "notable_signals": 1,
+          "matchup": "St. Louis Cardinals @ Chicago Cubs",
+          "game_pk": 824643,
+          "team": "Chicago Cubs",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.3121
+          },
+          "hit_probability": 0.2799,
+          "raw_hit_probability": 0.3121,
+          "lift": 0.0507,
+          "reliability": "A",
+          "sample_n": 104,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 6.5,
+          "notable_signals": 0,
+          "matchup": "St. Louis Cardinals @ Chicago Cubs",
+          "game_pk": 824643,
+          "team": "Chicago Cubs",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0389
+          },
+          "hit_probability": 0.0389,
+          "raw_hit_probability": null,
+          "lift": 0.0174,
+          "reliability": "A",
+          "sample_n": 104,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }
