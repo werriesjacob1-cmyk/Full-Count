@@ -2407,6 +2407,63 @@ def score_laser(batter, gm, hard_hit_rates):
     }
 
 
+MOONSHOT_SCORE_CONFIDENCE_GAMES = 60
+MOONSHOT_THRESHOLD_FT = 420
+
+
+def score_moonshot(batter, gm, moonshot_rates_table, threshold_ft=MOONSHOT_THRESHOLD_FT):
+    """FanDuel's real "To Hit a Moonshot (420+ FT)" market
+    (PLAYER_TO_HIT_A_HOME_RUN_420+_FEET) -- found live 2026-08-14 from a
+    screenshot of the user's own FanDuel app, matched exactly against a
+    live API pull for the same slate and players (Suzuki +1900, Happ
+    +2000, Swanson +2200, all confirmed identical). Same shape as
+    score_laser, deliberately: mlb_sources.moonshot_rates() already
+    shrinks toward the true league-wide per-game rate via the same
+    Beta-prior discipline hard_hit_game_rates uses, so p_hat is used
+    directly as hit_probability -- no separate modelled component, same
+    reasoning as the Laser market (there is no matchup-specific physics
+    model of home-run distance here, only the batter's own shrunk power
+    profile, which is close to what the real market prices off of too).
+
+    Single threshold, unlike score_laser's two -- FanDuel only posts
+    420+ FT (verified live, no 400+ FT market exists anywhere in the
+    API), so there is nothing to pick between."""
+    bid = batter.get("id")
+    if not bid:
+        return None
+    mh = moonshot_rates_table.get(bid)
+    if not mh or not mh.get("rates"):
+        return None
+    r = mh["rates"].get(f"moonshot_{threshold_ft}plus")
+    if not r:
+        return None
+    prob = r["p_hat"]
+    base_rate = r.get("league_p") or 0.0
+    lift = round(prob - base_rate, 4)
+    n = r["n"]
+    score = clamp(prob * 100 + lift * 150)
+    if n < MOONSHOT_SCORE_CONFIDENCE_GAMES:
+        score = min(score, 55)
+    why = [f"Hit a {threshold_ft}+ ft home run in {prob * 100:.1f}% of his last {n} games "
+          f"with a batted ball (league {base_rate * 100:.1f}%)"]
+    return {
+        "type": "batter", "name": batter["name"], "player_id": bid, "team": batter.get("team"),
+        "matchup": gm["matchup"], "game_pk": gm.get("game_pk"),
+        "prop": f"To Hit a Moonshot ({threshold_ft}+ FT)",
+        "projection": {"stat": f"moonshot_{threshold_ft}", "value": 1, "needs": 1},
+        "hit_probability": round(prob, 4),
+        "base_rate": base_rate, "lift": lift,
+        "probability_basis": "empirical_shrunk",
+        "probability_detail": {"empirical": prob, "modelled": None},
+        "sample_n": n, "alternatives": [],
+        "signals": {"moonshot_rate": prob},
+        "score": round(score, 1),
+        "why": why, "watchouts": [], "notable_signals": 1 if lift >= 0.03 else 0,
+        "confidence": "High" if score >= 70 and n >= MOONSHOT_SCORE_CONFIDENCE_GAMES
+                     else ("Medium" if score >= 55 else "Low"),
+    }
+
+
 def score_walk(batter, gm, opp_sp_row, ump_scores, batter_season, ump_kbb=None):
     """A patient hitter facing a wild pitcher and a loose-zone umpire — a
     genuine convergent signal most bettors don't compute, since none of the
@@ -2694,7 +2751,8 @@ def build_candidates(game_meta, *, extras=None, batter_lookup, pitcher_lookup, t
             # no "Player to Draw a Walk" market exists on FanDuel to bet it on.
             for c in (score_stolen_base(batter, gm, away_opp_catcher_pop, sprint_speed.get(batter.get("id")), bseason,
                                         opp_cs_pct=(extras or {}).get("cs_pct_by_team", {}).get(gm["home_team"])),
-                      score_laser(batter, gm, (extras or {}).get("hard_hit") or {})):
+                      score_laser(batter, gm, (extras or {}).get("hard_hit") or {}),
+                      score_moonshot(batter, gm, (extras or {}).get("moonshot") or {})):
                 if c: candidates.append(c)
         for batter in gm.get("home_lineup", []):
             batter["team"] = gm["home_team"]
@@ -2707,7 +2765,8 @@ def build_candidates(game_meta, *, extras=None, batter_lookup, pitcher_lookup, t
             # no "Player to Draw a Walk" market exists on FanDuel to bet it on.
             for c in (score_stolen_base(batter, gm, home_opp_catcher_pop, sprint_speed.get(batter.get("id")), bseason,
                                         opp_cs_pct=(extras or {}).get("cs_pct_by_team", {}).get(gm["away_team"])),
-                      score_laser(batter, gm, (extras or {}).get("hard_hit") or {})):
+                      score_laser(batter, gm, (extras or {}).get("hard_hit") or {}),
+                      score_moonshot(batter, gm, (extras or {}).get("moonshot") or {})):
                 if c: candidates.append(c)
 
         away_pitcher_c = home_pitcher_c = None
@@ -2915,6 +2974,15 @@ def _build_and_score():
         ("framing", lambda: _src.catcher_framing()),
         ("rest", lambda: _src.rest_and_usage(game_meta)),
         ("hard_hit", lambda: _src.hard_hit_game_rates()),
+        # "To Hit a Moonshot (420+ FT)" -- a real market found live
+        # 2026-08-14 from the user's own FanDuel screenshot, matched
+        # exactly against a live API pull for the same slate/players. Same
+        # shrunk-per-game-rate shape as hard_hit above; see score_moonshot's
+        # own docstring for why it needed a new mlb_sources function rather
+        # than reusing hard_hit_game_rates directly (a different Statcast
+        # column, and the market only pays on an actual home run, not any
+        # long batted ball).
+        ("moonshot", lambda: _src.moonshot_rates()),
         ("pitcher_outs", lambda: _src.empirical_pitcher_outs_rates(
             [gm.get("away_sp_id") for gm in game_meta if gm.get("away_sp_id")] +
             [gm.get("home_sp_id") for gm in game_meta if gm.get("home_sp_id")])),
@@ -3147,6 +3215,47 @@ def select_moonshots(candidates, prices, fd, n=5):
             "price_clears": pp.price_is_acceptable(odds, hr_opt["prob"]),
             "category": "moonshot",
         })
+    out.sort(key=lambda o: o["hit_probability"], reverse=True)
+    return out[:n]
+
+
+def select_deep_moonshots(candidates, prices, fd, n=5):
+    """Best "To Hit a Moonshot (420+ FT)" bets by hit probability, priced
+    against FanDuel's real line -- built 2026-08-14 alongside score_moonshot,
+    found live from the user's own FanDuel screenshot. A SEPARATE section
+    from select_moonshots on purpose: that one is about hitting a home run
+    AT ALL, this one is specifically about distance, and merging the two
+    under one heading would blur a real distinction a bettor is paying to
+    see (Joc Pederson at 17.4% to homer at all is a very different bet from
+    Joc Pederson at 8% to hit one 420+ feet).
+
+    NO MIN_QUALITY_SCORE gate, same reasoning select_moonshots gives for
+    skipping it: score_moonshot's own `score` is already scaled off this
+    exact rare probability (real per-game rates run 2-11%, verified live,
+    similar rarity to hard_hit_110), so a quality floor built for the
+    5-category batter formula would exclude every real candidate here, not
+    just weak ones. Unlike select_moonshots, there is no line_options detour
+    needed -- score_moonshot already creates its own standalone candidate,
+    so this selects directly from `candidates`."""
+    out = []
+    for c in candidates:
+        if c.get("type") != "batter":
+            continue
+        proj = c.get("projection") or {}
+        if proj.get("stat") != f"moonshot_{MOONSHOT_THRESHOLD_FT}":
+            continue
+        if c.get("hit_probability") is None:
+            continue
+        odds = (prices.get(fd.normalize_name(c.get("name"))) or {}).get(
+            (f"moonshot_{MOONSHOT_THRESHOLD_FT}", 1))
+        implied = round(pp.implied_probability(odds), 4) if odds is not None else None
+        row = dict(c)
+        row["market_odds"] = odds
+        row["market_implied"] = implied
+        row["market_edge"] = None if implied is None else round(c["hit_probability"] - implied, 4)
+        row["price_clears"] = pp.price_is_acceptable(odds, c["hit_probability"])
+        row["category"] = "moonshot_420"
+        out.append(row)
     out.sort(key=lambda o: o["hit_probability"], reverse=True)
     return out[:n]
 
@@ -3513,6 +3622,7 @@ def main() -> int:
     # Never fatal: an unpriced prop leaves the fields absent rather than
     # guessing, and a failed fetch leaves the board exactly as it was.
     moonshots = []
+    deep_moonshots = []
     by_category = {}
     try:
         import odds_fanduel as _fd
@@ -3567,6 +3677,9 @@ def main() -> int:
             print(f"      {st:18s} {e['n']:4d} / {e['priced']:4d}{flag}")
         moonshots = select_moonshots(candidates, prices, _fd, n=5)
         print(f"    {len(moonshots)} moonshot(s) selected (home runs, priced, ranked by hit probability)")
+        deep_moonshots = select_deep_moonshots(candidates, prices, _fd, n=5)
+        print(f"    {len(deep_moonshots)} deep moonshot(s) selected (420+ FT home runs, priced, "
+              f"ranked by hit probability)")
         by_category = select_best_by_category(candidates, prices, _fd, n_per_category=1, k_prices=k_prices)
         print(f"    Best-of-category board: {len(by_category)} of {len(CATEGORY_LABELS)} "
               f"families had a candidate tonight")
@@ -3648,8 +3761,8 @@ def main() -> int:
     _top10_ids = {id(c) for c in top10}
     skipped = [c for c in ranked if id(c) not in _top10_ids and c["score"] >= 55][:2]
 
-    write_markdown(top10, skipped, game_meta, bullpen_scores, ranked, moonshots, by_category)
-    write_json(top10, moonshots, by_category)
+    write_markdown(top10, skipped, game_meta, bullpen_scores, ranked, moonshots, by_category, deep_moonshots)
+    write_json(top10, moonshots, by_category, deep_moonshots)
     persist_player_snapshots(candidates)
     print(f"Wrote {len(top10)} picks to {PICKS_FILE} and {PICKS_JSON_FILE}")
 
@@ -3706,17 +3819,17 @@ def main() -> int:
     return 0
 
 
-def write_json(top10, moonshots=(), by_category=None):
+def write_json(top10, moonshots=(), by_category=None, deep_moonshots=()):
     """Structured pick data for grade_results.py — never parse the markdown
     back into data, same lesson learned from mlb_daily.py's report text.
 
-    Moonshots and the best-of-category board are appended into the SAME
-    `picks` list, tagged category="moonshot" / "best_of_category" (top10
-    entries carry no category key, i.e. the primary board), rank
-    continuing past 10 rather than restarting. They ride the exact grading
-    path grade_results.py already has -- a parallel path would be a second
-    thing to keep correct forever for no reason, when this one is already
-    proven."""
+    Moonshots, deep moonshots and the best-of-category board are appended
+    into the SAME `picks` list, tagged category="moonshot" /
+    "moonshot_420" / "best_of_category" (top10 entries carry no category
+    key, i.e. the primary board), rank continuing past 10 rather than
+    restarting. They ride the exact grading path grade_results.py already
+    has -- a parallel path would be a second thing to keep correct forever
+    for no reason, when this one is already proven."""
     def _row(i, c):
         return {
             "rank": i, "type": c["type"], "name": c["name"], "player_id": c["player_id"],
@@ -3769,6 +3882,7 @@ def write_json(top10, moonshots=(), by_category=None):
     category_flat = [c for entries in (by_category or {}).values() for c in entries]
     picks = [_row(i, c) for i, c in enumerate(top10, 1)]
     picks += [_row(i, c) for i, c in enumerate(moonshots, len(picks) + 1)]
+    picks += [_row(i, c) for i, c in enumerate(deep_moonshots, len(picks) + 1)]
     picks += [_row(i, c) for i, c in enumerate(category_flat, len(picks) + 1)]
     payload = {
         "date": m.TODAY,
@@ -5277,7 +5391,8 @@ def archive_existing_picks(date):
         m.warn(f"Could not archive prior picks ({e}) — continuing")
     return None
 
-def write_markdown(top10, skipped, game_meta, bullpen_scores, all_ranked=(), moonshots=(), by_category=None):
+def write_markdown(top10, skipped, game_meta, bullpen_scores, all_ranked=(), moonshots=(), by_category=None,
+                   deep_moonshots=()):
     lines = [f"# MLB Top 10 Picks — {m.TODAY}", "",
              "_Generated by deterministic scoring over today's research pull — no LLM "
              "in the loop. No sportsbook odds were used: these are ranked purely by "
@@ -5450,6 +5565,23 @@ def write_markdown(top10, skipped, game_meta, bullpen_scores, all_ranked=(), moo
             odds_s = f" · **{odds:+d}** at FanDuel" if odds is not None else " · unpriced"
             lines.append(f"{i}. **{c['name']}** ({_team_label(c)}) — {c['matchup']} — "
                          f"**{hp*100:.1f}%** to hit a HR{odds_s}")
+        lines.append("")
+
+    if deep_moonshots:
+        lines.append(f"## 🚀 Deep Moonshots ({MOONSHOT_THRESHOLD_FT}+ FT)")
+        lines.append("_A different market from the Moonshots above -- this one pays only on a home run"
+                     f" that actually travels {MOONSHOT_THRESHOLD_FT}+ feet, not any home run. Real"
+                     " per-game rates run 2-11% even for the game's biggest sluggers (verified live"
+                     " against real Statcast distance data), so like the HR-at-all market above it"
+                     " can't be reached by the main board's usual floor. Ranked by chance of cashing,"
+                     " not price or edge._")
+        lines.append("")
+        for i, c in enumerate(deep_moonshots, 1):
+            hp = c.get("hit_probability")
+            odds = c.get("market_odds")
+            odds_s = f" · **{odds:+d}** at FanDuel" if odds is not None else " · unpriced"
+            lines.append(f"{i}. **{c['name']}** ({_team_label(c)}) — {c['matchup']} — "
+                         f"**{hp*100:.1f}%** to hit a {MOONSHOT_THRESHOLD_FT}+ ft HR{odds_s}")
         lines.append("")
 
     if by_category:

@@ -1911,6 +1911,66 @@ def hard_hit_game_rates(min_games=30, thresholds=(105, 110)):
     return _apply_shrinkage(out, prior_games=20)
 
 
+def moonshot_rates(min_games=30, threshold_ft=420):
+    """Per-game rate of hitting a home run that travels threshold_ft+ feet --
+    FanDuel's real "To Hit a Moonshot (420+ FT)" market
+    (PLAYER_TO_HIT_A_HOME_RUN_420+_FEET), found live 2026-08-14 from a real
+    screenshot of the user's own FanDuel app and matched exactly against a
+    live API pull for the same slate (Suzuki +1900, Happ +2000, Swanson
+    +2200, all confirmed identical). Checked all 13 games on the live
+    slate: no separate "400+ FT" market type exists anywhere in the API,
+    only this one.
+
+    SAME SHAPE AS hard_hit_game_rates, deliberately -- this is the same
+    "rare per-game Statcast threshold" problem the Laser market already
+    solves, not a new kind of quantity. The one real difference from a
+    plain distance threshold: the market only pays out on a genuine home
+    run, not any long batted ball, so "cleared" requires BOTH events ==
+    "home_run" AND hit_distance_sc >= threshold_ft -- a 421-foot double
+    off the wall or a warning-track flyout does not count, no matter how
+    far it carried.
+
+    The unit is the GAME, matching hard_hit_game_rates' own reasoning: the
+    market asks whether a player hits ONE qualifying homer, so a
+    multi-homer game still counts once, and computing this per home run
+    instead of per game would badly understate a slugger who hits more
+    than one in the same game.
+
+    Only games with at least one real batted ball are counted (same
+    launch_speed-based denominator hard_hit_game_rates uses) -- a game
+    where he did not get a real swing off does not belong in either the
+    numerator or the denominator, the same "he was on the bench, that is
+    not a miss" reasoning."""
+    df = m.fetch_season_statcast()
+    if df is None or df.empty:
+        return {}
+    need = {"batter", "game_pk", "launch_speed", "events", "hit_distance_sc"}
+    if not need.issubset(df.columns):
+        m.warn("Moonshot rates: Statcast is missing launch_speed/events/hit_distance_sc")
+        return {}
+    bb = df[df["launch_speed"].notna()]
+    if bb.empty:
+        return {}
+    bb = bb.copy()
+    bb["moonshot"] = (bb["events"] == "home_run") & (bb["hit_distance_sc"] >= threshold_ft)
+    cleared_per_game = bb.groupby(["batter", "game_pk"])["moonshot"].max()
+    per_batter = cleared_per_game.groupby("batter").agg(["sum", "size"])
+    out = {}
+    key = f"moonshot_{threshold_ft}plus"
+    for bid, row in per_batter.iterrows():
+        n = int(row["size"])
+        if n < min_games:
+            continue
+        hits = int(row["sum"])
+        out[int(bid)] = {"games": n, "rates": {
+            key: {"p": round(hits / n, 4), "n": n, "hit": hits,
+                  "p_lo": round(_wilson_lower(hits, n), 4)},
+        }}
+    # Same flat prior as hard_hit_game_rates -- a rare-event rate needs real
+    # shrinkage, not the per-key-fit n0 the higher-volume game-log rates use.
+    return _apply_shrinkage(out, prior_games=20)
+
+
 def line_movement(date=None, odds_dir="data/odds"):
     """How each team's market has MOVED since the first capture of the day.
 

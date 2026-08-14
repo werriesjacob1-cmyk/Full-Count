@@ -137,6 +137,17 @@ MARKET_MAP = {
     # is one where a read can actually matter.
     "PLAYER_TO_HIT_A_LASER_(110+_MPH)": ("hard_hit_110", 1),
     "TO_HIT_A_LASER_(105+_MPH)":        ("hard_hit_105", 1),
+    # "To Hit a Moonshot (420+ FT)" -- found live 2026-08-14 from a real
+    # screenshot of the user's own FanDuel app under the dedicated
+    # "Moonshots" tab (numeric id 386), matched exactly against a live API
+    # pull for the same slate and players (Suzuki +1900, Happ +2000,
+    # Swanson +2200, all confirmed identical). Checked every game on that
+    # live slate: no separate "400+ FT" market type exists anywhere in the
+    # API, only this one, despite the FanDuel app UI showing both a
+    # 400+ FT and a 420+ FT column -- whatever the app derives that 400+
+    # FT column from, it is not a separately priced market this pipeline
+    # can fetch.
+    "PLAYER_TO_HIT_A_HOME_RUN_420+_FEET": ("moonshot_420", 1),
 }
 
 # Markets deliberately NOT mapped, and why. Listing them is the point: an
@@ -491,7 +502,11 @@ def _event_props(event_id):
     # "lasers" tab that this loop never fetched. FanDuel's own event-page
     # layout response lists it explicitly ("Lasers", tab id 384) alongside
     # "batter-props" and "popular", which this function already knew about.
-    for tab in ("batter-props", "popular", "lasers"):
+    # "moonshots" added 2026-08-14: PLAYER_TO_HIT_A_HOME_RUN_420+_FEET (see
+    # MARKET_MAP's own comment) lives ONLY under this tab -- confirmed live,
+    # absent from batter-props/popular/lasers across every game checked --
+    # same "real market, wrong tab" story as lasers above.
+    for tab in ("batter-props", "popular", "lasers", "moonshots"):
         try:
             d = _get(f"event-page?eventId={event_id}&tab={tab}&_ak={AK}")
         except Exception:
