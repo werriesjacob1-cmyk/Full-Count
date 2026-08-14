@@ -69,7 +69,7 @@
         {
           "prop": "Over 4.5 Strikeouts",
           "type": "pitcher",
-          "score": 58.7,
+          "score": 54.8,
           "notable_signals": 0,
           "matchup": "Milwaukee Brewers @ Los Angeles Dodgers",
           "game_pk": 823913,
@@ -78,7 +78,7 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "same_hand_ratio": 75.0,
+            "same_hand_ratio": 43.75,
             "l14_k_pct": 32.3529,
             "tto_penalty": -8.0,
             "env_neutral": 50.0
@@ -95,9 +95,9 @@
           }
         },
         {
-          "prop": "Over 14.5 Outs Recorded",
+          "prop": "Over 15.5 Outs Recorded",
           "type": "pitcher",
-          "score": 48.7,
+          "score": 9.3,
           "notable_signals": 0,
           "matchup": "Milwaukee Brewers @ Los Angeles Dodgers",
           "game_pk": 823913,
@@ -106,46 +106,18 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.7313,
+            "outs_rate": 0.4613,
             "avg_outs_per_start": 15.46
           },
-          "hit_probability": 0.7313,
+          "hit_probability": 0.4613,
           "raw_hit_probability": null,
-          "lift": -0.0845,
+          "lift": -0.1663,
           "reliability": "D",
           "sample_n": 13,
           "projection": {
             "stat": "pitcher_outs",
-            "value": 14.5,
-            "needs": 15
-          }
-        },
-        {
-          "prop": "Over 10.5 Combined Strikeouts",
-          "type": "pitcher_combo",
-          "score": 29.8,
-          "notable_signals": 0,
-          "matchup": "Milwaukee Brewers @ Los Angeles Dodgers",
-          "game_pk": 823913,
-          "team": null,
-          "side": null,
-          "lean": null,
-          "combo_player_ids": [
-            688107,
-            808967
-          ],
-          "signals": {
-            "combined_k_edge": -0.0922
-          },
-          "hit_probability": 0.4361,
-          "raw_hit_probability": null,
-          "lift": -0.0922,
-          "reliability": "D",
-          "sample_n": 0,
-          "projection": {
-            "stat": "combined_strikeouts",
-            "value": 10.5,
-            "needs": 11
+            "value": 15.5,
+            "needs": 16
           }
         }
       ]

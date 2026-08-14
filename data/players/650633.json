@@ -69,7 +69,7 @@
         {
           "prop": "Over 3.5 Strikeouts",
           "type": "pitcher",
-          "score": 60.2,
+          "score": 56.1,
           "notable_signals": 0,
           "matchup": "San Diego Padres @ Cleveland Guardians",
           "game_pk": 824399,
@@ -78,7 +78,7 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "same_hand_ratio": 33.3333,
+            "same_hand_ratio": 0.0,
             "l14_k_pct": 58.8235,
             "tto_penalty": -8.0,
             "env_neutral": 50.0
@@ -95,9 +95,9 @@
           }
         },
         {
-          "prop": "Over 16.5 Outs Recorded",
+          "prop": "Over 17.5 Outs Recorded",
           "type": "pitcher",
-          "score": 73.6,
+          "score": 66.6,
           "notable_signals": 1,
           "matchup": "San Diego Padres @ Cleveland Guardians",
           "game_pk": 824399,
@@ -106,18 +106,18 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.6788,
+            "outs_rate": 0.5929,
             "avg_outs_per_start": 17.04
           },
-          "hit_probability": 0.6788,
+          "hit_probability": 0.5929,
           "raw_hit_probability": null,
-          "lift": 0.1183,
+          "lift": 0.1286,
           "reliability": "D",
           "sample_n": 24,
           "projection": {
             "stat": "pitcher_outs",
-            "value": 16.5,
-            "needs": 17
+            "value": 17.5,
+            "needs": 18
           }
         }
       ]
