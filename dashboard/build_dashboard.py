@@ -855,7 +855,38 @@ function confClass(c) {{
 // always come straight from the data; nothing here is invented -- a
 // bullet this doesn't recognize passes through unchanged rather than
 // being guessed at.
+const PITCH_NAMES = {{
+  FF: "four-seam fastball", SI: "sinker", FC: "cutter", SL: "slider", ST: "sweeper",
+  CU: "curveball", KC: "knuckle curve", CH: "changeup", FS: "splitter", FO: "forkball",
+  SC: "screwball", KN: "knuckleball", EP: "eephus",
+}};
+function pitchName(code) {{ return PITCH_NAMES[code] || code; }}
 const REASON_RULES = [
+  // Real gaps found live 2026-08-14, checking actual "why"/"watchouts" text
+  // against these rules for the first time -- every one below previously
+  // fell through to the raw, jargon-carrying string unchanged.
+  [/^(.+?) scores off (.+?) \\((away|home) SP\\) in the (top|bottom) 1st: ([\\d.]+)% \\(shrunk, (\\d+) starts\\)$/,
+   m => `${{m[1]}} have scored off ${{m[2]}} in the ${{m[4]}} of the 1st inning in ${{m[5]}}% of his last ${{m[6]}} starts`],
+  [/^Pitch-type exploit: RV\\/100 ([+-][\\d.]+) vs (\\w+) \\(opposing SP throws it ([\\d.]+)% of the time\\)$/,
+   m => `he's historically done real damage against the ${{pitchName(m[2])}} (a ${{m[1]}} run-value edge per 100 pitches seen), and tonight's opposing pitcher throws that pitch ${{m[3]}}% of the time`],
+  [/^Opposing bullpen fatigue: (\\d+)\\/(\\d+) relievers over 60 pitches in L7 \\((tired pen — favorable late|fresh pen)\\)$/,
+   m => `${{m[1]}} of the other team's last ${{m[2]}} relievers used have been worked hard recently (60+ pitches within the last week)` + (m[3].startsWith("tired") ? ", which tends to favor hitters late in the game" : ", though their bullpen is otherwise fresh")],
+  [/^Sharp money (backing|fading) (.+?) \\(money% ([+-]?\\d+) pts vs ticket%\\)$/,
+   m => `the money being wagered on ${{m[2]}} is running ${{Math.abs(parseInt(m[3]))}} points ${{m[1] === "backing" ? "ahead of" : "behind"}} the share of bets placed on them -- a sign bigger, sharper bettors are ${{m[1]}} this side`],
+  [/^Public heavy on (.+?) \\(money% trails tickets% by (\\d+) pts\\)/,
+   m => `most of the tickets on ${{m[1]}} are small public bets rather than sharp money -- the dollars wagered trail the number of bets by ${{m[2]}} points, a classic public-side signal worth a discount`],
+  [/^BvP: (\\d+)-for-(\\d+) vs (.+?) \\(small sample, weighted lightly\\)$/,
+   m => `he's ${{m[1]}}-for-${{m[2]}} in his career at-bats against tonight's starter, ${{m[3]}} -- a real trend, but too small a sample to weigh heavily on its own`],
+  [/^Recency-weighted K rate ([\\d.]+)% \\(exp\\. decay, halflife 30d, (\\d+) real starts \\/ (\\d+) BF\\) — drives the strikeout probability model$/,
+   m => `his strikeout rate over his ${{m[2]}} most recent starts (${{m[3]}} batters faced), weighted so his newest starts count for more, comes in at ${{m[1]}}% -- this is the number the strikeout probability itself is built from`],
+  [/^L14 K% ([\\d.]+) \\((\\d+) PA\\)$/,
+   m => `over his last 14 days he's struck out ${{m[1]}}% of the ${{m[2]}} batters he's faced`],
+  [/^HP ump accuracy ([\\d.]+)%.*$/,
+   m => `tonight's home plate umpire has called ${{m[1]}}% of pitches correctly this season -- a more accurate ump tends to mean a tighter, more predictable strike zone`],
+  [/^Projected ([\\d.]+) PA \\(slot (\\d+), ([\\d.]+)-run implied team total\\)$/,
+   m => `he's projected for about ${{m[1]}} plate appearances tonight batting ${{m[2]}} in the order, in a lineup the market expects to score around ${{m[3]}} runs`],
+  [/^Projected ([\\d.]+) PA \\(slot (\\d+), league-average run environment.*\\)$/,
+   m => `he's projected for about ${{m[1]}} plate appearances tonight batting ${{m[2]}} in the order, in a game with no market run total posted yet so a league-average environment is assumed`],
   [/^Opposing SP ERA ([\\d.]+)$/, m => `the opposing starting pitcher has a ${{m[1]}} ERA`],
   [/^L7 avg EV ([\\d.]+)mph \\(league ~([\\d.]+)\\)$/, m => `over his last 7 days his average exit velocity is ${{m[1]}}mph, a bit below the league average of about ${{m[2]}}mph`],
   [/^L7 barrel% ([\\d.]+)$/, m => `${{m[1]}}% of his batted balls over the last 7 days have been barreled up`],
