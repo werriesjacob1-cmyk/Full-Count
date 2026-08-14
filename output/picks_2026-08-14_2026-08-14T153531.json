@@ -1,0 +1,1116 @@
+{
+  "date": "2026-08-14",
+  "generated": "2026-08-14T15:35:31.416873",
+  "picks": [
+    {
+      "rank": 1,
+      "type": "pitcher",
+      "name": "Clay Holmes",
+      "player_id": 605280,
+      "team": "Chicago Cubs",
+      "matchup": "St. Louis Cardinals @ Chicago Cubs",
+      "game_pk": 824643,
+      "side": "home",
+      "combo_player_ids": null,
+      "prop": "Over 15.5 Outs Recorded",
+      "projection": {
+        "stat": "pitcher_outs",
+        "value": 15.5,
+        "needs": 16
+      },
+      "lean": null,
+      "score": 62.1,
+      "confidence": "Medium",
+      "notable_signals": 0,
+      "category": null,
+      "hit_probability": 0.6728,
+      "signals": {
+        "outs_rate": 0.6728,
+        "avg_outs_per_start": 17.0
+      },
+      "base_rate": 0.6276,
+      "lift": 0.0452,
+      "raw_hit_probability": null,
+      "calibrated_by": null,
+      "prob_ci": null,
+      "sample_n": 10,
+      "reliability": "D",
+      "max_acceptable_price": -206,
+      "estimated_odds": -242,
+      "market_odds": 120,
+      "market_implied": 0.4237,
+      "market_edge": 0.2491,
+      "price_clears": true,
+      "probability_basis": "empirical_shrunk",
+      "probability_detail": {
+        "empirical": 0.6728,
+        "modelled": null
+      },
+      "alternatives": [
+        {
+          "stat": "pitcher_outs",
+          "line": 11.5,
+          "needs": 12,
+          "prob": 0.979,
+          "base_rate": 0.9439,
+          "lift": 0.0351
+        },
+        {
+          "stat": "pitcher_outs",
+          "line": 12.5,
+          "needs": 13,
+          "prob": 0.8964,
+          "base_rate": 0.8903,
+          "lift": 0.0061
+        },
+        {
+          "stat": "pitcher_outs",
+          "line": 13.5,
+          "needs": 14,
+          "prob": 0.8157,
+          "base_rate": 0.8418,
+          "lift": -0.0261
+        }
+      ],
+      "why": [
+        "Recorded 16+ outs (5.1 IP) in 67.3% of his last 10 real starts (league 62.8%, avg 17.0 outs/start)"
+      ],
+      "watchouts": [],
+      "signal_weight_adjustment": -12.0
+    },
+    {
+      "rank": 2,
+      "type": "pitcher",
+      "name": "Gerrit Cole",
+      "player_id": 543037,
+      "team": "New York Yankees",
+      "matchup": "New York Yankees @ Toronto Blue Jays",
+      "game_pk": 822777,
+      "side": null,
+      "combo_player_ids": null,
+      "prop": "Over 5.5 Strikeouts",
+      "projection": {
+        "stat": "strikeouts",
+        "value": 5.5,
+        "needs": 6
+      },
+      "lean": null,
+      "score": 71.4,
+      "confidence": "Medium",
+      "notable_signals": 0,
+      "category": null,
+      "hit_probability": 0.5871,
+      "signals": {
+        "same_hand_ratio": 88.8889,
+        "l14_k_pct": 76.4706,
+        "tto_penalty": -8.0,
+        "env_neutral": 50.0
+      },
+      "base_rate": 0.378,
+      "lift": 0.2091,
+      "raw_hit_probability": 0.5503,
+      "calibrated_by": "strikeouts",
+      "prob_ci": [
+        0.3259,
+        0.7862
+      ],
+      "sample_n": 14,
+      "reliability": "D",
+      "max_acceptable_price": -142,
+      "estimated_odds": -165,
+      "market_odds": 126,
+      "market_implied": 0.4171,
+      "market_edge": 0.17,
+      "price_clears": true,
+      "probability_basis": "modelled_shrunk",
+      "probability_detail": {
+        "empirical": 0.5217,
+        "modelled": 0.7226
+      },
+      "alternatives": [
+        {
+          "line": 3.5,
+          "needs": 4,
+          "prob": 0.8282,
+          "basis": "modelled_shrunk",
+          "base_rate": 0.7137,
+          "lift": 0.1145,
+          "empirical": 0.8227,
+          "modelled": 0.9427
+        },
+        {
+          "line": 4.5,
+          "needs": 5,
+          "prob": 0.6985,
+          "basis": "modelled_shrunk",
+          "base_rate": 0.539,
+          "lift": 0.1595,
+          "empirical": 0.7184,
+          "modelled": 0.858
+        },
+        {
+          "line": 6.5,
+          "needs": 7,
+          "prob": 0.3984,
+          "basis": "modelled_shrunk",
+          "base_rate": 0.2457,
+          "lift": 0.1527,
+          "empirical": 0.3719,
+          "modelled": 0.5511
+        }
+      ],
+      "why": [
+        "Opposing team K% unavailable (FanGraphs team page down and no confirmed lineup batters matched)",
+        "Expected workload 23.9 batters faced (his own 25.0/start over 2 real starts, shrunk toward the 23.1 league mean)",
+        "5/9 known-hand opposing batters same-handed",
+        "L14 K% 28.0 (50 PA)",
+        "Recency-weighted K rate 28.7% (exp. decay, halflife 30d, 14 real starts / 329 BF) \u2014 drives the strikeout probability model"
+      ],
+      "watchouts": [
+        "Significant TTO K% drop-off (TTO1 40.0% -> TTO3 18.2%) \u2014 caution deep into the start",
+        "Workload estimate rests on only 2 starts in the L14 window \u2014 most start-to-start variation in batters faced is noise, so this is shrunk heavily toward league average"
+      ],
+      "signal_weight_adjustment": 12.0
+    },
+    {
+      "rank": 3,
+      "type": "pitcher",
+      "name": "Grayson Rodriguez",
+      "player_id": 680570,
+      "team": "Los Angeles Angels",
+      "matchup": "Kansas City Royals @ Los Angeles Angels",
+      "game_pk": 823993,
+      "side": null,
+      "combo_player_ids": null,
+      "prop": "Over 5.5 Strikeouts",
+      "projection": {
+        "stat": "strikeouts",
+        "value": 5.5,
+        "needs": 6
+      },
+      "lean": null,
+      "score": 71.4,
+      "confidence": "Medium",
+      "notable_signals": 0,
+      "category": null,
+      "hit_probability": 0.5547,
+      "signals": {
+        "same_hand_ratio": 43.75,
+        "l14_k_pct": 90.5882,
+        "env_neutral": 50.0
+      },
+      "base_rate": 0.378,
+      "lift": 0.1767,
+      "raw_hit_probability": 0.3833,
+      "calibrated_by": "strikeouts",
+      "prob_ci": [
+        0.1381,
+        0.6094
+      ],
+      "sample_n": 12,
+      "reliability": "D",
+      "max_acceptable_price": -125,
+      "estimated_odds": -144,
+      "market_odds": 130,
+      "market_implied": 0.4106,
+      "market_edge": 0.1441,
+      "price_clears": true,
+      "probability_basis": "modelled_shrunk",
+      "probability_detail": {
+        "empirical": 0.3574,
+        "modelled": 0.3887
+      },
+      "alternatives": [
+        {
+          "line": 3.5,
+          "needs": 4,
+          "prob": 0.7433,
+          "basis": "modelled_shrunk",
+          "base_rate": 0.7137,
+          "lift": 0.0296,
+          "empirical": 0.6363,
+          "modelled": 0.773
+        },
+        {
+          "line": 4.5,
+          "needs": 5,
+          "prob": 0.5628,
+          "basis": "modelled_shrunk",
+          "base_rate": 0.539,
+          "lift": 0.0238,
+          "empirical": 0.5204,
+          "modelled": 0.5867
+        },
+        {
+          "line": 6.5,
+          "needs": 7,
+          "prob": 0.2341,
+          "basis": "modelled_shrunk",
+          "base_rate": 0.2457,
+          "lift": -0.0116,
+          "empirical": 0.1355,
+          "modelled": 0.2225
+        }
+      ],
+      "why": [
+        "Opposing team K% unavailable (FanGraphs team page down and no confirmed lineup batters matched)",
+        "Expected workload 23.1 batters faced (his own 23.0/start over 2 real starts, shrunk toward the 23.1 league mean)",
+        "3/8 known-hand opposing batters same-handed",
+        "L14 K% 30.4 (46 PA)",
+        "Recency-weighted K rate 21.8% (exp. decay, halflife 30d, 12 real starts / 254 BF) \u2014 drives the strikeout probability model"
+      ],
+      "watchouts": [
+        "Workload estimate rests on only 2 starts in the L14 window \u2014 most start-to-start variation in batters faced is noise, so this is shrunk heavily toward league average"
+      ],
+      "signal_weight_adjustment": 12.0
+    },
+    {
+      "rank": 4,
+      "type": "pitcher",
+      "name": "Bubba Chandler",
+      "player_id": 696149,
+      "team": "Pittsburgh Pirates",
+      "matchup": "Boston Red Sox @ Pittsburgh Pirates",
+      "game_pk": 823346,
+      "side": null,
+      "combo_player_ids": null,
+      "prop": "Over 4.5 Strikeouts",
+      "projection": {
+        "stat": "strikeouts",
+        "value": 4.5,
+        "needs": 5
+      },
+      "lean": null,
+      "score": 65.3,
+      "confidence": "Medium",
+      "notable_signals": 0,
+      "category": null,
+      "hit_probability": 0.5776,
+      "signals": {
+        "same_hand_ratio": 92.8571,
+        "l14_k_pct": 42.3529,
+        "env_neutral": 50.0
+      },
+      "base_rate": 0.539,
+      "lift": 0.0386,
+      "raw_hit_probability": 0.501,
+      "calibrated_by": "strikeouts",
+      "prob_ci": [
+        0.2692,
+        0.6534
+      ],
+      "sample_n": 22,
+      "reliability": "D",
+      "max_acceptable_price": -137,
+      "estimated_odds": -158,
+      "market_odds": 116,
+      "market_implied": 0.4369,
+      "market_edge": 0.1407,
+      "price_clears": true,
+      "probability_basis": "modelled_shrunk",
+      "probability_detail": {
+        "empirical": 0.4774,
+        "modelled": 0.463
+      },
+      "alternatives": [
+        {
+          "line": 3.5,
+          "needs": 4,
+          "prob": 0.6929,
+          "basis": "modelled_shrunk",
+          "base_rate": 0.7137,
+          "lift": -0.0208,
+          "empirical": 0.6948,
+          "modelled": 0.6722
+        },
+        {
+          "line": 5.5,
+          "needs": 6,
+          "prob": 0.3257,
+          "basis": "modelled_shrunk",
+          "base_rate": 0.378,
+          "lift": -0.0523,
+          "empirical": 0.3012,
+          "modelled": 0.2734
+        },
+        {
+          "line": 6.5,
+          "needs": 7,
+          "prob": 0.1917,
+          "basis": "modelled_shrunk",
+          "base_rate": 0.2457,
+          "lift": -0.054,
+          "empirical": 0.0871,
+          "modelled": 0.1377
+        }
+      ],
+      "why": [
+        "Opposing team K% unavailable (FanGraphs team page down and no confirmed lineup batters matched)",
+        "Expected workload 22.8 batters faced (his own 22.5/start over 2 real starts, shrunk toward the 23.1 league mean)",
+        "4/7 known-hand opposing batters same-handed",
+        "L14 K% 22.2 (45 PA)",
+        "Recency-weighted K rate 19.4% (exp. decay, halflife 30d, 22 real starts / 488 BF) \u2014 drives the strikeout probability model"
+      ],
+      "watchouts": [
+        "Workload estimate rests on only 2 starts in the L14 window \u2014 most start-to-start variation in batters faced is noise, so this is shrunk heavily toward league average"
+      ],
+      "signal_weight_adjustment": 12.0
+    },
+    {
+      "rank": 5,
+      "type": "pitcher",
+      "name": "Gavin Williams",
+      "player_id": 668909,
+      "team": "Cleveland Guardians",
+      "matchup": "San Diego Padres @ Cleveland Guardians",
+      "game_pk": 824399,
+      "side": null,
+      "combo_player_ids": null,
+      "prop": "Over 7.5 Strikeouts",
+      "projection": {
+        "stat": "strikeouts",
+        "value": 7.5,
+        "needs": 8
+      },
+      "lean": null,
+      "score": 80.6,
+      "confidence": "Medium",
+      "notable_signals": 0,
+      "category": null,
+      "hit_probability": 0.5529,
+      "signals": {
+        "same_hand_ratio": 100.0,
+        "l14_k_pct": 100.0,
+        "env_neutral": 50.0
+      },
+      "base_rate": 0.1399,
+      "lift": 0.413,
+      "raw_hit_probability": 0.3741,
+      "calibrated_by": "strikeouts",
+      "prob_ci": [
+        0.2789,
+        0.6493
+      ],
+      "sample_n": 24,
+      "reliability": "D",
+      "max_acceptable_price": -124,
+      "estimated_odds": -143,
+      "market_odds": 124,
+      "market_implied": 0.4216,
+      "market_edge": 0.1313,
+      "price_clears": true,
+      "probability_basis": "modelled_shrunk",
+      "probability_detail": {
+        "empirical": 0.3922,
+        "modelled": 0.6082
+      },
+      "alternatives": [
+        {
+          "line": 3.5,
+          "needs": 4,
+          "prob": 0.8492,
+          "basis": "modelled_shrunk",
+          "base_rate": 0.7137,
+          "lift": 0.1355,
+          "empirical": 0.9485,
+          "modelled": 0.9848
+        },
+        {
+          "line": 4.5,
+          "needs": 5,
+          "prob": 0.7455,
+          "basis": "modelled_shrunk",
+          "base_rate": 0.539,
+          "lift": 0.2065,
+          "empirical": 0.7789,
+          "modelled": 0.952
+        },
+        {
+          "line": 5.5,
+          "needs": 6,
+          "prob": 0.6301,
+          "basis": "modelled_shrunk",
+          "base_rate": 0.378,
+          "lift": 0.2521,
+          "empirical": 0.7145,
+          "modelled": 0.8822
+        }
+      ],
+      "why": [
+        "Opposing team K% unavailable (FanGraphs team page down and no confirmed lineup batters matched)",
+        "Expected workload 22.0 batters faced (his own 20.5/start over 2 real starts, shrunk toward the 23.1 league mean)",
+        "5/8 known-hand opposing batters same-handed",
+        "L14 K% 41.5 (41 PA)",
+        "Recency-weighted K rate 37.2% (exp. decay, halflife 30d, 24 real starts / 573 BF) \u2014 drives the strikeout probability model"
+      ],
+      "watchouts": [
+        "Workload estimate rests on only 2 starts in the L14 window \u2014 most start-to-start variation in batters faced is noise, so this is shrunk heavily toward league average"
+      ],
+      "signal_weight_adjustment": 12.0
+    },
+    {
+      "rank": 6,
+      "type": "pitcher",
+      "name": "Kyle Freeland",
+      "player_id": 607536,
+      "team": "Colorado Rockies",
+      "matchup": "Colorado Rockies @ San Francisco Giants",
+      "game_pk": 823185,
+      "side": null,
+      "combo_player_ids": null,
+      "prop": "Over 5.5 Strikeouts",
+      "projection": {
+        "stat": "strikeouts",
+        "value": 5.5,
+        "needs": 6
+      },
+      "lean": null,
+      "score": 57.2,
+      "confidence": "Medium",
+      "notable_signals": 0,
+      "category": null,
+      "hit_probability": 0.5491,
+      "signals": {
+        "same_hand_ratio": 61.1111,
+        "l14_k_pct": 25.2941,
+        "env_neutral": 50.0
+      },
+      "base_rate": 0.378,
+      "lift": 0.1711,
+      "raw_hit_probability": 0.3544,
+      "calibrated_by": "strikeouts",
+      "prob_ci": [
+        0.1381,
+        0.4996
+      ],
+      "sample_n": 21,
+      "reliability": "D",
+      "max_acceptable_price": -122,
+      "estimated_odds": -140,
+      "market_odds": 124,
+      "market_implied": 0.4204,
+      "market_edge": 0.1287,
+      "price_clears": true,
+      "probability_basis": "modelled_shrunk",
+      "probability_detail": {
+        "empirical": 0.3124,
+        "modelled": 0.3308
+      },
+      "alternatives": [
+        {
+          "line": 3.5,
+          "needs": 4,
+          "prob": 0.7179,
+          "basis": "modelled_shrunk",
+          "base_rate": 0.7137,
+          "lift": 0.0042,
+          "empirical": 0.7205,
+          "modelled": 0.7222
+        },
+        {
+          "line": 4.5,
+          "needs": 5,
+          "prob": 0.5317,
+          "basis": "modelled_shrunk",
+          "base_rate": 0.539,
+          "lift": -0.0073,
+          "empirical": 0.384,
+          "modelled": 0.5244
+        },
+        {
+          "line": 6.5,
+          "needs": 7,
+          "prob": 0.213,
+          "basis": "modelled_shrunk",
+          "base_rate": 0.2457,
+          "lift": -0.0327,
+          "empirical": 0.2385,
+          "modelled": 0.1803
+        }
+      ],
+      "why": [
+        "Opposing team K% unavailable (FanGraphs team page down and no confirmed lineup batters matched)",
+        "Expected workload 25.4 batters faced (his own 28.5/start over 2 real starts, shrunk toward the 23.1 league mean)",
+        "4/9 known-hand opposing batters same-handed",
+        "L14 K% 19.3 (57 PA)",
+        "Recency-weighted K rate 18.6% (exp. decay, halflife 30d, 21 real starts / 509 BF) \u2014 drives the strikeout probability model"
+      ],
+      "watchouts": [
+        "Workload estimate rests on only 2 starts in the L14 window \u2014 most start-to-start variation in batters faced is noise, so this is shrunk heavily toward league average"
+      ],
+      "signal_weight_adjustment": 12.0
+    },
+    {
+      "rank": 7,
+      "type": "pitcher",
+      "name": "Kumar Rocker",
+      "player_id": 677958,
+      "team": "Texas Rangers",
+      "matchup": "Texas Rangers @ Athletics",
+      "game_pk": 824968,
+      "side": null,
+      "combo_player_ids": null,
+      "prop": "Over 4.5 Strikeouts",
+      "projection": {
+        "stat": "strikeouts",
+        "value": 4.5,
+        "needs": 5
+      },
+      "lean": null,
+      "score": 58.6,
+      "confidence": "Medium",
+      "notable_signals": 0,
+      "category": null,
+      "hit_probability": 0.5918,
+      "signals": {
+        "same_hand_ratio": 43.75,
+        "l14_k_pct": 39.4118,
+        "env_neutral": 50.0
+      },
+      "base_rate": 0.539,
+      "lift": 0.0528,
+      "raw_hit_probability": 0.5746,
+      "calibrated_by": "strikeouts",
+      "prob_ci": [
+        0.3421,
+        0.7418
+      ],
+      "sample_n": 20,
+      "reliability": "D",
+      "max_acceptable_price": -145,
+      "estimated_odds": -168,
+      "market_odds": 102,
+      "market_implied": 0.4669,
+      "market_edge": 0.1249,
+      "price_clears": true,
+      "probability_basis": "modelled_shrunk",
+      "probability_detail": {
+        "empirical": 0.5526,
+        "modelled": 0.6102
+      },
+      "alternatives": [
+        {
+          "line": 3.5,
+          "needs": 4,
+          "prob": 0.7521,
+          "basis": "modelled_shrunk",
+          "base_rate": 0.7137,
+          "lift": 0.0384,
+          "empirical": 0.6713,
+          "modelled": 0.7904
+        },
+        {
+          "line": 5.5,
+          "needs": 6,
+          "prob": 0.3954,
+          "basis": "modelled_shrunk",
+          "base_rate": 0.378,
+          "lift": 0.0174,
+          "empirical": 0.2474,
+          "modelled": 0.4127
+        },
+        {
+          "line": 6.5,
+          "needs": 7,
+          "prob": 0.2438,
+          "basis": "modelled_shrunk",
+          "base_rate": 0.2457,
+          "lift": -0.0019,
+          "empirical": 0.0938,
+          "modelled": 0.2419
+        }
+      ],
+      "why": [
+        "Opposing team K% unavailable (FanGraphs team page down and no confirmed lineup batters matched)",
+        "Expected workload 23.1 batters faced (his own 23.0/start over 2 real starts, shrunk toward the 23.1 league mean)",
+        "3/8 known-hand opposing batters same-handed",
+        "L14 K% 21.7 (46 PA)",
+        "Recency-weighted K rate 22.3% (exp. decay, halflife 30d, 20 real starts / 434 BF) \u2014 drives the strikeout probability model"
+      ],
+      "watchouts": [
+        "Workload estimate rests on only 2 starts in the L14 window \u2014 most start-to-start variation in batters faced is noise, so this is shrunk heavily toward league average"
+      ],
+      "signal_weight_adjustment": 12.0
+    },
+    {
+      "rank": 8,
+      "type": "pitcher",
+      "name": "Matthew Liberatore",
+      "player_id": 669461,
+      "team": "St. Louis Cardinals",
+      "matchup": "St. Louis Cardinals @ Chicago Cubs",
+      "game_pk": 824643,
+      "side": null,
+      "combo_player_ids": null,
+      "prop": "Over 4.5 Strikeouts",
+      "projection": {
+        "stat": "strikeouts",
+        "value": 4.5,
+        "needs": 5
+      },
+      "lean": null,
+      "score": 56.2,
+      "confidence": "Medium",
+      "notable_signals": 0,
+      "category": null,
+      "hit_probability": 0.5954,
+      "signals": {
+        "same_hand_ratio": 12.5,
+        "l14_k_pct": 45.2941,
+        "env_neutral": 50.0
+      },
+      "base_rate": 0.539,
+      "lift": 0.0564,
+      "raw_hit_probability": 0.5932,
+      "calibrated_by": "strikeouts",
+      "prob_ci": [
+        0.2563,
+        0.6319
+      ],
+      "sample_n": 23,
+      "reliability": "D",
+      "max_acceptable_price": -147,
+      "estimated_odds": -171,
+      "market_odds": 100,
+      "market_implied": 0.4711,
+      "market_edge": 0.1243,
+      "price_clears": true,
+      "probability_basis": "modelled_shrunk",
+      "probability_detail": {
+        "empirical": 0.4609,
+        "modelled": 0.6473
+      },
+      "alternatives": [
+        {
+          "line": 3.5,
+          "needs": 4,
+          "prob": 0.7654,
+          "basis": "modelled_shrunk",
+          "base_rate": 0.7137,
+          "lift": 0.0517,
+          "empirical": 0.6708,
+          "modelled": 0.8171
+        },
+        {
+          "line": 5.5,
+          "needs": 6,
+          "prob": 0.415,
+          "basis": "modelled_shrunk",
+          "base_rate": 0.378,
+          "lift": 0.037,
+          "empirical": 0.3598,
+          "modelled": 0.4519
+        },
+        {
+          "line": 6.5,
+          "needs": 7,
+          "prob": 0.2601,
+          "basis": "modelled_shrunk",
+          "base_rate": 0.2457,
+          "lift": 0.0144,
+          "empirical": 0.222,
+          "modelled": 0.2744
+        }
+      ],
+      "why": [
+        "Opposing team K% unavailable (FanGraphs team page down and no confirmed lineup batters matched)",
+        "Expected workload 22.6 batters faced (his own 22.0/start over 2 real starts, shrunk toward the 23.1 league mean)",
+        "2/8 known-hand opposing batters same-handed",
+        "L14 K% 22.7 (44 PA)",
+        "Recency-weighted K rate 23.6% (exp. decay, halflife 30d, 23 real starts / 500 BF) \u2014 drives the strikeout probability model"
+      ],
+      "watchouts": [
+        "Workload estimate rests on only 2 starts in the L14 window \u2014 most start-to-start variation in batters faced is noise, so this is shrunk heavily toward league average"
+      ],
+      "signal_weight_adjustment": 12.0
+    },
+    {
+      "rank": 9,
+      "type": "pitcher",
+      "name": "Michael King",
+      "player_id": 650633,
+      "team": "San Diego Padres",
+      "matchup": "San Diego Padres @ Cleveland Guardians",
+      "game_pk": 824399,
+      "side": "away",
+      "combo_player_ids": null,
+      "prop": "Over 17.5 Outs Recorded",
+      "projection": {
+        "stat": "pitcher_outs",
+        "value": 17.5,
+        "needs": 18
+      },
+      "lean": null,
+      "score": 66.6,
+      "confidence": "Medium",
+      "notable_signals": 1,
+      "category": null,
+      "hit_probability": 0.5929,
+      "signals": {
+        "outs_rate": 0.5929,
+        "avg_outs_per_start": 17.04
+      },
+      "base_rate": 0.4643,
+      "lift": 0.1286,
+      "raw_hit_probability": null,
+      "calibrated_by": null,
+      "prob_ci": null,
+      "sample_n": 24,
+      "reliability": "D",
+      "max_acceptable_price": -146,
+      "estimated_odds": -169,
+      "market_odds": -102,
+      "market_implied": 0.4702,
+      "market_edge": 0.1227,
+      "price_clears": true,
+      "probability_basis": "empirical_shrunk",
+      "probability_detail": {
+        "empirical": 0.5929,
+        "modelled": null
+      },
+      "alternatives": [
+        {
+          "stat": "pitcher_outs",
+          "line": 11.5,
+          "needs": 12,
+          "prob": 0.9554,
+          "base_rate": 0.9439,
+          "lift": 0.0115
+        },
+        {
+          "stat": "pitcher_outs",
+          "line": 12.5,
+          "needs": 13,
+          "prob": 0.9447,
+          "base_rate": 0.8903,
+          "lift": 0.0544
+        },
+        {
+          "stat": "pitcher_outs",
+          "line": 13.5,
+          "needs": 14,
+          "prob": 0.8684,
+          "base_rate": 0.8418,
+          "lift": 0.0266
+        }
+      ],
+      "why": [
+        "Recorded 18+ outs (6.0 IP) in 59.3% of his last 24 real starts (league 46.4%, avg 17.04 outs/start)"
+      ],
+      "watchouts": [],
+      "signal_weight_adjustment": -12.0
+    },
+    {
+      "rank": 10,
+      "type": "pitcher",
+      "name": "Jackson Jobe",
+      "player_id": 695549,
+      "team": "Detroit Tigers",
+      "matchup": "Chicago White Sox @ Detroit Tigers",
+      "game_pk": 824237,
+      "side": null,
+      "combo_player_ids": null,
+      "prop": "Over 4.5 Strikeouts",
+      "projection": {
+        "stat": "strikeouts",
+        "value": 4.5,
+        "needs": 5
+      },
+      "lean": null,
+      "score": 60.7,
+      "confidence": "Medium",
+      "notable_signals": 0,
+      "category": null,
+      "hit_probability": 0.5945,
+      "signals": {
+        "same_hand_ratio": 21.4286,
+        "l14_k_pct": 58.8235,
+        "env_neutral": 50.0
+      },
+      "base_rate": 0.539,
+      "lift": 0.0555,
+      "raw_hit_probability": 0.5888,
+      "calibrated_by": "strikeouts",
+      "prob_ci": null,
+      "sample_n": 0,
+      "reliability": "D",
+      "max_acceptable_price": -147,
+      "estimated_odds": -170,
+      "market_odds": -111,
+      "market_implied": 0.4958,
+      "market_edge": 0.0987,
+      "price_clears": true,
+      "probability_basis": "modelled_shrunk",
+      "probability_detail": {
+        "empirical": null,
+        "modelled": 0.6387
+      },
+      "alternatives": [
+        {
+          "line": 3.5,
+          "needs": 4,
+          "prob": 0.763,
+          "basis": "modelled_shrunk",
+          "base_rate": 0.7137,
+          "lift": 0.0493,
+          "empirical": null,
+          "modelled": 0.8124
+        },
+        {
+          "line": 5.5,
+          "needs": 6,
+          "prob": 0.4092,
+          "basis": "modelled_shrunk",
+          "base_rate": 0.378,
+          "lift": 0.0312,
+          "empirical": null,
+          "modelled": 0.4403
+        },
+        {
+          "line": 6.5,
+          "needs": 7,
+          "prob": 0.2541,
+          "basis": "modelled_shrunk",
+          "base_rate": 0.2457,
+          "lift": 0.0084,
+          "empirical": null,
+          "modelled": 0.2625
+        }
+      ],
+      "why": [
+        "Opposing team K% unavailable (FanGraphs team page down and no confirmed lineup batters matched)",
+        "Expected workload 21.1 batters faced (his own 16.0/start over 1 real start, shrunk toward the 23.1 league mean)",
+        "2/7 known-hand opposing batters same-handed",
+        "L14 K% 25.0 (16 PA)"
+      ],
+      "watchouts": [
+        "Activated from the 60-day injured list 7 day(s) ago \u2014 early performance back can be inconsistent",
+        "Workload estimate rests on only 1 start in the L14 window \u2014 most start-to-start variation in batters faced is noise, so this is shrunk heavily toward league average"
+      ],
+      "signal_weight_adjustment": 12.0
+    },
+    {
+      "rank": 11,
+      "type": "pitcher",
+      "name": "Michael King",
+      "player_id": 650633,
+      "team": "San Diego Padres",
+      "matchup": "San Diego Padres @ Cleveland Guardians",
+      "game_pk": 824399,
+      "side": null,
+      "combo_player_ids": null,
+      "prop": "Over 3.5 Strikeouts",
+      "projection": {
+        "stat": "strikeouts",
+        "value": 3.5,
+        "needs": 4
+      },
+      "lean": null,
+      "score": 56.1,
+      "confidence": "Medium",
+      "notable_signals": 0,
+      "category": "best_of_category",
+      "hit_probability": 0.6219,
+      "signals": {
+        "same_hand_ratio": 0.0,
+        "l14_k_pct": 58.8235,
+        "tto_penalty": -8.0,
+        "env_neutral": 50.0
+      },
+      "base_rate": 0.7137,
+      "lift": -0.0918,
+      "raw_hit_probability": 0.7337,
+      "calibrated_by": "strikeouts",
+      "prob_ci": [
+        0.69,
+        0.9566
+      ],
+      "sample_n": 24,
+      "reliability": "D",
+      "max_acceptable_price": -164,
+      "estimated_odds": -191,
+      "market_odds": -160,
+      "market_implied": 0.5796,
+      "market_edge": 0.0423,
+      "price_clears": true,
+      "probability_basis": "modelled_shrunk",
+      "probability_detail": {
+        "empirical": 0.8485,
+        "modelled": 0.7538
+      },
+      "alternatives": [
+        {
+          "line": 4.5,
+          "needs": 5,
+          "prob": 0.5501,
+          "basis": "modelled_shrunk",
+          "base_rate": 0.539,
+          "lift": 0.0111,
+          "empirical": 0.6456,
+          "modelled": 0.5613
+        },
+        {
+          "line": 5.5,
+          "needs": 6,
+          "prob": 0.3706,
+          "basis": "modelled_shrunk",
+          "base_rate": 0.378,
+          "lift": -0.0074,
+          "empirical": 0.3478,
+          "modelled": 0.3632
+        },
+        {
+          "line": 6.5,
+          "needs": 7,
+          "prob": 0.2241,
+          "basis": "modelled_shrunk",
+          "base_rate": 0.2457,
+          "lift": -0.0216,
+          "empirical": 0.148,
+          "modelled": 0.2024
+        }
+      ],
+      "why": [
+        "Opposing team K% unavailable (FanGraphs team page down and no confirmed lineup batters matched)",
+        "Expected workload 22.6 batters faced (his own 22.0/start over 2 real starts, shrunk toward the 23.1 league mean)",
+        "1/5 known-hand opposing batters same-handed",
+        "L14 K% 25.0 (44 PA)",
+        "Recency-weighted K rate 21.7% (exp. decay, halflife 30d, 24 real starts / 559 BF) \u2014 drives the strikeout probability model"
+      ],
+      "watchouts": [
+        "Significant TTO K% drop-off (TTO1 50.0% -> TTO3 19.2%) \u2014 caution deep into the start",
+        "Workload estimate rests on only 2 starts in the L14 window \u2014 most start-to-start variation in batters faced is noise, so this is shrunk heavily toward league average"
+      ],
+      "signal_weight_adjustment": null
+    },
+    {
+      "rank": 12,
+      "type": "pitcher",
+      "name": "Clay Holmes",
+      "player_id": 605280,
+      "team": "Chicago Cubs",
+      "matchup": "St. Louis Cardinals @ Chicago Cubs",
+      "game_pk": 824643,
+      "side": "home",
+      "combo_player_ids": null,
+      "prop": "Over 15.5 Outs Recorded",
+      "projection": {
+        "stat": "pitcher_outs",
+        "value": 15.5,
+        "needs": 16
+      },
+      "lean": null,
+      "score": 62.1,
+      "confidence": "Medium",
+      "notable_signals": 0,
+      "category": "best_of_category",
+      "hit_probability": 0.6728,
+      "signals": {
+        "outs_rate": 0.6728,
+        "avg_outs_per_start": 17.0
+      },
+      "base_rate": 0.6276,
+      "lift": 0.0452,
+      "raw_hit_probability": null,
+      "calibrated_by": null,
+      "prob_ci": null,
+      "sample_n": 10,
+      "reliability": "D",
+      "max_acceptable_price": -206,
+      "estimated_odds": -242,
+      "market_odds": 120,
+      "market_implied": 0.4237,
+      "market_edge": 0.2491,
+      "price_clears": true,
+      "probability_basis": "empirical_shrunk",
+      "probability_detail": {
+        "empirical": 0.6728,
+        "modelled": null
+      },
+      "alternatives": [
+        {
+          "stat": "pitcher_outs",
+          "line": 11.5,
+          "needs": 12,
+          "prob": 0.979,
+          "base_rate": 0.9439,
+          "lift": 0.0351
+        },
+        {
+          "stat": "pitcher_outs",
+          "line": 12.5,
+          "needs": 13,
+          "prob": 0.8964,
+          "base_rate": 0.8903,
+          "lift": 0.0061
+        },
+        {
+          "stat": "pitcher_outs",
+          "line": 13.5,
+          "needs": 14,
+          "prob": 0.8157,
+          "base_rate": 0.8418,
+          "lift": -0.0261
+        }
+      ],
+      "why": [
+        "Recorded 16+ outs (5.1 IP) in 67.3% of his last 10 real starts (league 62.8%, avg 17.0 outs/start)"
+      ],
+      "watchouts": [],
+      "signal_weight_adjustment": null
+    },
+    {
+      "rank": 13,
+      "type": "game",
+      "name": "Miami Marlins @ Cincinnati Reds \u2014 1st Inning (Both Teams)",
+      "player_id": "nrfi_824479",
+      "team": null,
+      "matchup": "Miami Marlins @ Cincinnati Reds",
+      "game_pk": 824479,
+      "side": "both",
+      "combo_player_ids": null,
+      "prop": "No runs in the 1st (both teams)",
+      "projection": {
+        "stat": "nrfi_combined",
+        "value": 56.4
+      },
+      "lean": "NRFI",
+      "score": 68.4,
+      "confidence": "Medium",
+      "notable_signals": 0,
+      "category": "best_of_category",
+      "hit_probability": 0.5644,
+      "signals": {
+        "home_team_scores_p": 0.2505,
+        "away_team_scores_p": 0.247,
+        "fi_n_starts": 22.0
+      },
+      "base_rate": 0.4984,
+      "lift": 0.066,
+      "raw_hit_probability": null,
+      "calibrated_by": null,
+      "prob_ci": null,
+      "sample_n": 22,
+      "reliability": "D",
+      "max_acceptable_price": -130,
+      "estimated_odds": -150,
+      "market_odds": -148,
+      "market_implied": 0.5631,
+      "market_edge": 0.0013,
+      "price_clears": false,
+      "probability_basis": "combined_shrunk",
+      "probability_detail": {
+        "empirical": null,
+        "modelled": null
+      },
+      "alternatives": null,
+      "why": [
+        "Cincinnati Reds scores off Sandy Alcantara (away SP) in the bottom 1st: 25.0% (shrunk, 25 starts)",
+        "Miami Marlins scores off Chase Burns (home SP) in the top 1st: 24.7% (shrunk, 22 starts)",
+        "This is the real both-teams NRFI/YRFI market -- combines both starters' halves of the 1st, not a one-sided team read."
+      ],
+      "watchouts": [],
+      "signal_weight_adjustment": null
+    }
+  ]
+}
