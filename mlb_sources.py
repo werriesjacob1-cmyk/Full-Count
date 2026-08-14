@@ -1864,13 +1864,30 @@ def league_base_rates():
 
 
 def hard_hit_game_rates(min_games=30, thresholds=(105, 110)):
-    """Per-game rate of hitting a ball at or above a given exit velocity.
+    """Per-game rate of hitting a HOME RUN at or above a given exit velocity
+    -- NOT any batted ball at that exit velocity.
 
-    FanDuel prices "to hit a laser" at 105+ and 110+ mph, several hundred
-    lines a night, and this is the rate those markets settle on. It cannot
-    come from game logs -- MLB's box score has no exit velocity -- but it is
-    directly measurable from the Statcast pull this pipeline already caches,
-    so it costs nothing but a groupby.
+    REAL BUG, found live 2026-08-14 from a direct report plus the actual
+    FanDuel app's own "Full details" text for this market: "Laser = HR
+    with Specified MPH Exit Velocity." This function used to condition on
+    ANY batted ball clearing the threshold -- a groundout or a routine
+    single at 106mph counted the same as a 106mph home run. Verified two
+    ways before touching the fix: (1) real live market odds the same
+    night -- Fernando Tatis Jr. +650 (~13.3% implied), Jo Adell +900
+    (~10% implied) -- are far too long for "any hard-hit ball in a game"
+    (this pipeline's own season data puts the UNCONDITIONED rate at 21.9%
+    LEAGUE AVERAGE, meaning a real slugger's true unconditioned rate would
+    run 35-60%+, nowhere near what a +650/+900 price implies); (2) the
+    HR-conditioned rate over the same season data comes out to 4.7%
+    league average, which a plus-power hitter running meaningfully above
+    that lines up with real market prices far better. moonshot_rates()
+    (the 420+ ft market) already got this right by conditioning on
+    events == "home_run" -- this now matches that exact pattern.
+
+    FanDuel prices this market at 105+ and 110+ mph, several hundred
+    lines a night. It cannot come from game logs -- MLB's box score has
+    no exit velocity -- but it is directly measurable from the Statcast
+    pull this pipeline already caches, so it costs nothing but a groupby.
 
     The unit is the GAME, not the batted ball: the market asks whether a
     player hits ONE, so a three-laser game counts once. Computing it per
@@ -1884,17 +1901,18 @@ def hard_hit_game_rates(min_games=30, thresholds=(105, 110)):
     df = m.fetch_season_statcast()
     if df is None or df.empty:
         return {}
-    need = {"batter", "game_pk", "launch_speed"}
+    need = {"batter", "game_pk", "launch_speed", "events"}
     if not need.issubset(df.columns):
-        m.warn("Hard-hit rates: Statcast is missing launch_speed")
+        m.warn("Hard-hit rates: Statcast is missing launch_speed/events")
         return {}
     bb = df[df["launch_speed"].notna()]
     if bb.empty:
         return {}
-    peak = bb.groupby(["batter", "game_pk"])["launch_speed"].max()
+    bb = bb.copy()
     out = {}
     for thr in thresholds:
-        cleared = (peak >= thr).groupby("batter").agg(["sum", "size"])
+        bb[f"is_hr_{thr}"] = (bb["events"] == "home_run") & (bb["launch_speed"] >= thr)
+        cleared = bb.groupby(["batter", "game_pk"])[f"is_hr_{thr}"].max().groupby("batter").agg(["sum", "size"])
         for bid, row in cleared.iterrows():
             n = int(row["size"])
             if n < min_games:

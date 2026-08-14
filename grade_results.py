@@ -234,7 +234,7 @@ _MOONSHOT_CACHE = {}
 def _date_batter_moonshot(date, threshold_ft=420):
     """{(batter_id, game_pk): True/False, did he hit a threshold_ft+ HR that
     day}, one Statcast pull per date (cached), same reasoning and same
-    per-date-pull pattern as _date_batter_peak_ev right below -- box scores
+    per-date-pull pattern as _date_batter_hr_ev right below -- box scores
     have no hit distance either, so "To Hit a Moonshot" picks can only be
     graded from Statcast itself. Mirrors mlb_sources.moonshot_rates' own
     definition exactly: a real home run (not just any long batted ball)
@@ -261,28 +261,43 @@ def _date_batter_moonshot(date, threshold_ft=420):
 
 _EV_CACHE = {}
 
-def _date_batter_peak_ev(date):
-    """{(batter_id, game_pk): max launch_speed that day}, one Statcast pull per
-    date (cached) instead of one per pick -- a 15-game slate can carry a dozen
-    Laser picks that would otherwise each re-fetch the same day's data.
+def _date_batter_hr_ev(date, threshold_mph):
+    """{(batter_id, game_pk): True/False, did he hit a HOME RUN at
+    threshold_mph+ exit velocity that day} -- NOT "did he hit any ball
+    that hard." One Statcast pull per (date, threshold) (cached) instead
+    of one per pick.
 
-    Box scores (get_box_line, MLB Stats API) have no exit velocity at all, so
-    hard_hit_105/hard_hit_110 picks can only be graded from Statcast itself.
-    Mirrors mlb_sources.hard_hit_game_rates's own peak-per-game definition:
-    the market is "did he hit ONE ball that hard", not average velocity."""
-    if date in _EV_CACHE:
-        return _EV_CACHE[date]
+    REAL BUG, found live 2026-08-14 from the actual FanDuel app's own
+    "Full details" text for this market: "Laser = HR with Specified MPH
+    Exit Velocity." This used to grade off peak exit velocity alone
+    (_date_batter_peak_ev, now removed) -- a hard-hit groundout or single
+    graded identically to a home run at the same speed. Confirmed two
+    ways before the fix: real live market odds that same night (Fernando
+    Tatis Jr. +650, Jo Adell +900 -- both far too long to be "any hard-hit
+    ball," a common event) and the season data itself (unconditioned rate
+    21.9% league average vs. 4.7% once conditioned on home_run, the
+    latter tracking real market prices far better). Mirrors
+    mlb_sources.hard_hit_game_rates's corrected definition and
+    _date_batter_moonshot's identical shape/pattern right above -- box
+    scores have no exit velocity at all, so this can only be graded from
+    Statcast itself."""
+    key = (date, threshold_mph)
+    if key in _EV_CACHE:
+        return _EV_CACHE[key]
     out = {}
     try:
         df = m.pyb.statcast(start_dt=date, end_dt=date)
-        if df is not None and not df.empty and {"batter", "game_pk", "launch_speed"}.issubset(df.columns):
+        need = {"batter", "game_pk", "launch_speed", "events"}
+        if df is not None and not df.empty and need.issubset(df.columns):
             bb = df[df["launch_speed"].notna()]
             if not bb.empty:
-                peak = bb.groupby(["batter", "game_pk"])["launch_speed"].max()
-                out = {(int(b), int(g)): float(v) for (b, g), v in peak.items()}
+                bb = bb.copy()
+                bb["cleared"] = (bb["events"] == "home_run") & (bb["launch_speed"] >= threshold_mph)
+                cleared = bb.groupby(["batter", "game_pk"])["cleared"].max()
+                out = {(int(b), int(g)): bool(v) for (b, g), v in cleared.items()}
     except Exception as e:
         m.warn(f"Grading: couldn't fetch Statcast for {date}: {e}")
-    _EV_CACHE[date] = out
+    _EV_CACHE[key] = out
     return out
 
 
@@ -426,10 +441,10 @@ def grade_pick(pick, game_statuses, date=None):
         if not date:
             return {**pick, "grade": "ungraded", "reason": "no date supplied for Statcast lookup"}
         thr = 105 if stat == "hard_hit_105" else 110
-        ev = _date_batter_peak_ev(date).get((player_id, game_pk))
-        if ev is None:
+        hr_ev = _date_batter_hr_ev(date, thr).get((player_id, game_pk))
+        if hr_ev is None:
             return {**pick, "grade": "ungraded", "reason": "no batted-ball Statcast data for this game"}
-        hit = ev >= thr
+        hit = hr_ev
         # opportunity_context's batter branch reads PA/substitute status off
         # a real box line -- passing None here (as this used to) makes EVERY
         # hard_hit pick fall into "row missing" and get marked fair_test=False,
@@ -440,8 +455,8 @@ def grade_pick(pick, game_statuses, date=None):
         # still has AB/BB/substitution, which is all opportunity_context
         # actually needs -- so fetch it like every other batter stat does.
         row, _ = get_box_line(game_pk, player_id, is_pitcher=False)
-        return {**pick, "grade": "hit" if hit else "miss", "actual": ev,
-                "actual_stat": "max_exit_velocity",
+        return {**pick, "grade": "hit" if hit else "miss", "actual": hit,
+                "actual_stat": "hr_at_exit_velocity",
                 **opportunity_context(pick, row, game_pk)}
 
     if stat == "moonshot_420":

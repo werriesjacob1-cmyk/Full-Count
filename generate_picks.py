@@ -1571,8 +1571,21 @@ def score_batter(batter, gm, opp_sp_row, opp_sp_id, opp_sp_hand, park_wx, batter
             ops = None
         if ops is not None:
             _sig(signals, "bvp_ops", ops, clamp((ops - 0.720) * 6, -4, 4))
-            watchouts.append(f"BvP: {bvp.get('H','?')}-for-{bvp.get('AB','?')} "
-                             f"vs {opp_sp_name} (small sample, weighted lightly)")
+            # Made technical on request, not just "small sample": a batting
+            # rate off N at-bats carries a real standard error --
+            # sqrt(p(1-p)/N) -- and reporting the number itself is a more
+            # defensible argument than an unquantified adjective, especially
+            # for a reader who already knows this stat cold. A raw AB count
+            # in the teens SOUNDS like a real sample; the SE band is what
+            # shows why it still isn't one.
+            bvp_ab = bvp.get("AB") or 0
+            bvp_h = bvp.get("H") or 0
+            bvp_p = bvp_h / bvp_ab if bvp_ab else 0
+            bvp_se = (bvp_p * (1 - bvp_p) / bvp_ab) ** 0.5 if bvp_ab else 0
+            watchouts.append(f"BvP: {bvp_h}-for-{bvp_ab} vs {opp_sp_name} "
+                             f"(standard error ±{bvp_se*100:.0f} pts on a {bvp_ab}-AB career "
+                             f"sample -- weighted lightly on that basis, not just because "
+                             f"the count looks small)")
 
     # AUDIT, 2026-08-12: platoon_barrel_pct/platoon_xwoba/park_hand_index/
     # days_rest/consecutive_games/pull_park_synergy (below) plus ump_k_pct/
@@ -1697,12 +1710,27 @@ def score_batter(batter, gm, opp_sp_row, opp_sp_id, opp_sp_hand, park_wx, batter
                  clamp(synergy * 0.35, -4, 4))
 
     # Hard-hit rate, already used by the value screen but never by the board.
+    #
+    # BASELINE CORRECTED 2026-08-14, same fix as mlb_sources.hard_hit_
+    # game_rates() itself: that function now conditions on events ==
+    # "home_run" (matching FanDuel's own "Laser = HR with Specified MPH
+    # Exit Velocity" market definition, confirmed live), so this signal
+    # is no longer "does he make loud contact in general" -- it now
+    # specifically reads "does he combine power AND exit velocity,"
+    # closer to a home-run-authority read than a generic contact-quality
+    # one. The old 0.215 baseline was the LEAGUE-AVERAGE UNCONDITIONED
+    # rate; left in place, every batter's real (now much smaller,
+    # HR-conditioned) p_hat would sit far below it and this signal would
+    # read strongly negative for nearly everyone, a real bug introduced
+    # as a side effect of the correct upstream fix. Replaced with the
+    # real HR-conditioned league average (4.66%, measured directly off
+    # the same season data hard_hit_game_rates() itself uses).
     hh = (ex.get("hard_hit") or {}).get(bid) if bid else None
     if hh:
         r105 = (hh.get("rates") or {}).get("hard_hit_105_1plus")
         if r105 and r105.get("hit", 0) >= 4:
             _sig(signals, "hard_hit_105_rate", r105["p_hat"],
-                 clamp((r105["p_hat"] - 0.215) * 25, -5, 5))
+                 clamp((r105["p_hat"] - 0.0466) * 25, -5, 5))
 
     # How the market has MOVED on this batter's team since the day opened.
     # Distinct from every other signal here: the rest describe the player or
@@ -2386,6 +2414,15 @@ def score_laser(batter, gm, hard_hit_rates):
     (hard_hit_105/hard_hit_110) since before this function existed -- the gap
     was entirely on the scoring side.
 
+    NOT "any batted ball at that exit velocity" -- FanDuel's own "Full
+    details" text for this market reads "Laser = HR with Specified MPH
+    Exit Velocity," confirmed live 2026-08-14 against real market odds
+    (Fernando Tatis Jr. +650, Jo Adell +900 -- both far too long to be
+    "any hard-hit ball," a common event). hard_hit_game_rates() itself
+    was fixed to condition on a real home run at that exit velocity, so
+    this function needed no changes -- it was always going to use
+    whatever that function returned, and now that's the right thing.
+
     hard_hit_game_rates() already shrinks toward the TRUE league rate (pooled
     across every batter, not the slate -- same discipline as every other
     empirical rate in this file) via a real Beta-prior fit, so p_hat is used
@@ -2423,7 +2460,7 @@ def score_laser(batter, gm, hard_hit_rates):
     score = clamp(best["prob"] * 100 + lift * 150)
     if n < LASER_SCORE_CONFIDENCE_GAMES:
         score = min(score, 55)  # thin-relative-to-a-season sample: never more than a low/medium lean
-    why = [f"Cleared {best['threshold']}+ MPH exit velocity in {best['prob'] * 100:.1f}% of his "
+    why = [f"Hit a home run at {best['threshold']}+ MPH exit velocity in {best['prob'] * 100:.1f}% of his "
           f"last {n} games with a batted ball (league {(best['base_rate'] or 0) * 100:.1f}%)"]
     alternatives = [{"stat": f"hard_hit_{o['threshold']}", "line": 1, "needs": 1,
                      "prob": o["prob"], "base_rate": o["base_rate"], "lift": o["lift"]}
