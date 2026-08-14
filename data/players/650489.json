@@ -519,6 +519,131 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-14",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 62.3,
+          "notable_signals": 2,
+          "matchup": "Colorado Rockies @ San Francisco Giants",
+          "game_pk": 823185,
+          "team": "Colorado Rockies",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "sp_era_weak": 49.1429,
+            "park_hr_index": 25.1,
+            "season_barrel_pct": 38.6667,
+            "lineup_slot": 75.0,
+            "bullpen_fatigue": 76.9231,
+            "platoon_barrel_pct": 3.36,
+            "platoon_xwoba": 1.62,
+            "days_rest": 2.0,
+            "woba_ahead": 72.7273,
+            "woba_behind": 67.2727,
+            "hard_hit_105_rate": 0.5575,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": -1.496,
+            "vs_rp_ops": -0.78,
+            "ump_k_pct": -0.036,
+            "ump_bb_pct": -0.156
+          },
+          "hit_probability": 0.623,
+          "raw_hit_probability": 0.6181,
+          "lift": 0.0721,
+          "reliability": "A",
+          "sample_n": 102,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 49.3,
+          "notable_signals": 0,
+          "matchup": "Colorado Rockies @ San Francisco Giants",
+          "game_pk": 823185,
+          "team": "Colorado Rockies",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": 0.78,
+            "sprint_speed": 28.125,
+            "on_base": 69.2898
+          },
+          "hit_probability": 0.0795,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 102,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 9.8,
+          "notable_signals": 0,
+          "matchup": "Colorado Rockies @ San Francisco Giants",
+          "game_pk": 823185,
+          "team": "Colorado Rockies",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0689
+          },
+          "hit_probability": 0.0689,
+          "raw_hit_probability": null,
+          "lift": 0.0193,
+          "reliability": "A",
+          "sample_n": 102,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 12.8,
+          "notable_signals": 1,
+          "matchup": "Colorado Rockies @ San Francisco Giants",
+          "game_pk": 823185,
+          "team": "Colorado Rockies",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0641
+          },
+          "hit_probability": 0.0641,
+          "raw_hit_probability": null,
+          "lift": 0.0426,
+          "reliability": "A",
+          "sample_n": 102,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

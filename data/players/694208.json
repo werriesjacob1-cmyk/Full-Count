@@ -441,6 +441,106 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-14",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 67.1,
+          "notable_signals": 2,
+          "matchup": "Kansas City Royals @ Los Angeles Angels",
+          "game_pk": 823993,
+          "team": "Los Angeles Angels",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 54.5714,
+            "park_hr_index": 39.0,
+            "season_barrel_pct": 41.3333,
+            "lineup_slot": 50.0,
+            "bullpen_fatigue": 59.5238,
+            "platoon_barrel_pct": 3.2,
+            "platoon_xwoba": -0.3,
+            "park_hand_index": -2.59,
+            "opp_catcher_framing": -0.48,
+            "days_rest": 0.0,
+            "consecutive_games": -0.6,
+            "woba_ahead": 24.5455,
+            "woba_behind": 18.1818,
+            "pull_park_synergy": -0.8068,
+            "team_total_move": -6.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "ump_k_pct": 0.372,
+            "ump_bb_pct": -0.084
+          },
+          "hit_probability": 0.6286,
+          "raw_hit_probability": 0.6015,
+          "lift": -0.035,
+          "reliability": "B",
+          "sample_n": 69,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 1.4,
+          "notable_signals": 0,
+          "matchup": "Kansas City Royals @ Los Angeles Angels",
+          "game_pk": 823993,
+          "team": "Los Angeles Angels",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0352
+          },
+          "hit_probability": 0.0352,
+          "raw_hit_probability": null,
+          "lift": -0.0144,
+          "reliability": "B",
+          "sample_n": 69,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 3.9,
+          "notable_signals": 0,
+          "matchup": "Kansas City Royals @ Los Angeles Angels",
+          "game_pk": 823993,
+          "team": "Los Angeles Angels",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0286
+          },
+          "hit_probability": 0.0286,
+          "raw_hit_probability": null,
+          "lift": 0.0071,
+          "reliability": "B",
+          "sample_n": 69,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

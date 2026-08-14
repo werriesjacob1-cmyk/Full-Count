@@ -68,7 +68,7 @@
         {
           "prop": "Over 5.5 Strikeouts",
           "type": "pitcher",
-          "score": 50.7,
+          "score": 29.3,
           "notable_signals": 0,
           "matchup": "Colorado Rockies @ San Francisco Giants",
           "game_pk": 823185,
@@ -77,9 +77,12 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "same_hand_ratio": 57.1429,
+            "same_hand_ratio": 12.5,
             "l14_k_pct": 22.3529,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 53.2914,
+            "ump_k_pct": 0.036,
+            "ump_bb_pct": 0.156
           },
           "hit_probability": 0.5337,
           "raw_hit_probability": 0.3544,
@@ -95,7 +98,7 @@
         {
           "prop": "Over 17.5 Outs Recorded",
           "type": "pitcher",
-          "score": 26.6,
+          "score": 27.6,
           "notable_signals": 0,
           "matchup": "Colorado Rockies @ San Francisco Giants",
           "game_pk": 823185,
@@ -104,12 +107,12 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.4451,
+            "outs_rate": 0.4429,
             "avg_outs_per_start": 16.13
           },
-          "hit_probability": 0.4451,
+          "hit_probability": 0.4429,
           "raw_hit_probability": null,
-          "lift": -0.0395,
+          "lift": -0.0311,
           "reliability": "D",
           "sample_n": 23,
           "projection": {
