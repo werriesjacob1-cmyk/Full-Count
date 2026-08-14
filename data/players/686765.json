@@ -582,6 +582,82 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-14",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 83.3,
+          "notable_signals": 1,
+          "matchup": "Boston Red Sox @ Pittsburgh Pirates",
+          "game_pk": 823346,
+          "team": "Boston Red Sox",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "sp_era_weak": 56.8571,
+            "park_hr_index": 43.3,
+            "season_barrel_pct": 0.0,
+            "lineup_slot": 100.0,
+            "bullpen_fatigue": 89.7436,
+            "platoon_barrel_pct": -5.0,
+            "platoon_xwoba": -0.3,
+            "opp_catcher_framing": 0.6,
+            "days_rest": 0.0,
+            "consecutive_games": -0.6,
+            "woba_behind": 35.4545,
+            "team_total_move": -6.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": 0.544,
+            "vs_rp_ops": 0.12,
+            "ump_k_pct": -1.068,
+            "ump_bb_pct": -0.504
+          },
+          "hit_probability": 0.6773,
+          "raw_hit_probability": 0.6842,
+          "lift": 0.0087,
+          "reliability": "C",
+          "sample_n": 25,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 38.1,
+          "notable_signals": 0,
+          "matchup": "Boston Red Sox @ Pittsburgh Pirates",
+          "game_pk": 823346,
+          "team": "Boston Red Sox",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": -0.0,
+            "sprint_speed": 28.125,
+            "catcher_poptime": 0.0,
+            "on_base": 54.8944
+          },
+          "hit_probability": 0.0263,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "C",
+          "sample_n": 25,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }
