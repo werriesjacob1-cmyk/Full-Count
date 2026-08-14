@@ -1275,20 +1275,24 @@ function pruneStartedGames() {{
 
 // ---- freshness: this board is rebuilt once a day, not live, so how old
 // it is right now is real information a bettor needs before trusting it.
+function _agoText(iso) {{
+  const ms = new Date(iso).getTime();
+  const mins = Math.max(0, Math.round((Date.now() - ms) / 60000));
+  if (mins < 1) return "just now";
+  if (mins < 60) return mins + "m ago";
+  const hrs = Math.floor(mins / 60);
+  const remMin = mins % 60;
+  return hrs + "h" + (remMin ? " " + remMin + "m" : "") + " ago";
+}}
 function renderFreshness() {{
   const el = document.getElementById("board-fresh");
   if (!el) return;
-  const genMs = new Date(PAYLOAD.generated_at).getTime();
-  const mins = Math.max(0, Math.round((Date.now() - genMs) / 60000));
-  let text;
-  if (mins < 1) text = "just now";
-  else if (mins < 60) text = mins + "m ago";
-  else {{
-    const hrs = Math.floor(mins / 60);
-    const remMin = mins % 60;
-    text = hrs + "h" + (remMin ? " " + remMin + "m" : "") + " ago";
-  }}
-  el.textContent = " · " + text;
+  let text = " · board " + _agoText(PAYLOAD.generated_at);
+  // Only shown once pollPrices() has actually landed an update -- before
+  // that, prices are exactly as fresh as the board itself, no separate
+  // number worth showing.
+  if (lastPricesUpdatedAt) text += ", prices " + _agoText(lastPricesUpdatedAt);
+  el.textContent = text;
 }}
 
 // ---- theme toggle: system preference by default, explicit choice
@@ -1373,6 +1377,60 @@ let starredKeys = loadStarred();
 function refreshStarredTab() {{
   PAYLOAD.data.starred = PAYLOAD.data.all.filter(p => starredKeys.has(pickKey(p)));
 }}
+
+// ---- live price polling: direct request, "I want all props to update
+// with new odds as FanDuel changes them, and compute in real time the
+// edge and whether it keeps it on the top 10." A full rebuild (rescoring
+// every candidate against FanGraphs/Statcast/lineups) is deliberately
+// infrequent -- see the module docstring -- but re-pricing an EXISTING
+// candidate against a fresh FanDuel line is cheap and has nothing to do
+// with the model itself, so dashboard/refresh_prices.py does that piece
+// on its own fast cadence and writes data.json next to this page. This
+// polls that file and merges just the price fields in, matched by
+// pickKey (name + prop) across every tab -- not a full reload, and not a
+// fetch of the whole page (fonts/HTML), just the numbers that actually
+// change between full rebuilds.
+function mergePriceUpdate(freshAll) {{
+  const freshByKey = new Map(freshAll.map(p => [pickKey(p), p]));
+  let changed = 0;
+  for (const key of Object.keys(PAYLOAD.data)) {{
+    if (key === "top_picks") continue;  // rebuilt below, not merged into directly
+    for (const p of PAYLOAD.data[key]) {{
+      const fresh = freshByKey.get(pickKey(p));
+      if (!fresh) continue;
+      if (p.market_odds !== fresh.market_odds || p.market_edge !== fresh.market_edge) changed++;
+      p.market_odds = fresh.market_odds;
+      p.market_implied = fresh.market_implied;
+      p.market_edge = fresh.market_edge;
+      p.price_clears = fresh.price_clears;
+    }}
+  }}
+  // Same rule build_payload() uses server-side: price_clears===true,
+  // ranked by edge, capped at 10 -- recomputed fresh so a price move can
+  // genuinely push a prop onto or off Top Picks in real time.
+  const tp = PAYLOAD.data.all.filter(p => p.price_clears === true);
+  tp.sort((a, b) => (b.market_edge || 0) - (a.market_edge || 0));
+  PAYLOAD.data.top_picks = tp.slice(0, 10);
+  if (PAYLOAD.data.starred) refreshStarredTab();
+  return changed;
+}}
+let lastPricesUpdatedAt = null;
+async function pollPrices() {{
+  try {{
+    const res = await fetch("data.json?t=" + Date.now(), {{ cache: "no-store" }});
+    if (!res.ok) return;
+    const fresh = await res.json();
+    const stamp = fresh.prices_updated_at || fresh.generated_at;
+    if (!fresh.data || !fresh.data.all || stamp === lastPricesUpdatedAt) return;
+    lastPricesUpdatedAt = stamp;
+    const changed = mergePriceUpdate(fresh.data.all);
+    if (changed > 0) {{
+      renderSummary();
+      renderTabs();
+      renderPanels();
+    }}
+  }} catch (e) {{ /* a missed poll just tries again next interval -- never breaks the page */ }}
+}}
 function initWatchlist() {{
   // Inserted right after top_picks, ahead of "all" and every real market --
   // must run before renderSummary() (its "Prop Markets" tile count assumes
@@ -1418,6 +1476,8 @@ setInterval(() => {{
   }}
 }}, 60000);
 setInterval(() => location.reload(), 30 * 60000);
+pollPrices();
+setInterval(pollPrices, 3 * 60000);
 </script>
 """
 
@@ -1436,6 +1496,10 @@ def main():
                     help="output HTML path (gitignored -- this is generated, not committed)")
     ap.add_argument("--fonts", default=os.path.join(DASHBOARD_DIR, "fonts_b64.json"),
                     help="path to the cached base64 font payload")
+    ap.add_argument("--data-out", default=None,
+                    help="also write the raw JSON payload here (default: data.json next to --out) -- "
+                         "this is what dashboard/refresh_prices.py rewrites between full rebuilds and "
+                         "what the page itself polls for live price updates, see pollPrices() above")
     args = ap.parse_args()
 
     fonts = json.load(open(args.fonts))
@@ -1448,9 +1512,14 @@ def main():
     with open(args.out, "w", encoding="utf-8") as f:
         f.write(html)
 
+    data_out = args.data_out or os.path.join(os.path.dirname(os.path.abspath(args.out)), "data.json")
+    with open(data_out, "w", encoding="utf-8") as f:
+        json.dump(payload, f, separators=(",", ":"))
+
     n_total = len(payload["data"]["all"])
     n_top = len(payload["data"]["top_picks"])
     print(f"Wrote {args.out} ({len(html)} bytes, {n_total} candidates, {n_top} top picks)")
+    print(f"Wrote {data_out}")
 
 
 if __name__ == "__main__":

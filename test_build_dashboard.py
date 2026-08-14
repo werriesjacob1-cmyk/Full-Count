@@ -156,6 +156,25 @@ check(html.count("<style>") == 1 and html.count("</style>") == 1,
 check(html.count("<script>") == 1 and html.count("</script>") == 1,
       "script block is well-formed (exactly one open/close)")
 
+import shutil
+import subprocess
+node = shutil.which("node")
+if node:
+    js = html.split("<script>", 1)[1].rsplit("</script>", 1)[0]
+    js_path = tempfile.mktemp(suffix=".js")
+    with open(js_path, "w") as f:
+        f.write(js)
+    try:
+        r = subprocess.run([node, "--check", js_path], capture_output=True, text=True)
+        check(r.returncode == 0, "the embedded <script> is syntactically valid JavaScript "
+              "-- Python's .format() only checks brace-escaping, never actual JS syntax, so a "
+              "broken function body here would only ever surface as a silent, unreported "
+              "runtime failure in a real browser", r.stderr)
+    finally:
+        os.remove(js_path)
+else:
+    check(True, "node not available in this environment -- JS syntax check skipped, not failed")
+
 
 head("7. priced candidates rank ahead of unpriced ones within a tab, and in All Props -- "
      "even when the unpriced one has the higher raw probability")
