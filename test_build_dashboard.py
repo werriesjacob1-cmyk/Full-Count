@@ -199,7 +199,7 @@ const CASES = [
   ["Pitch-type exploit: RV/100 +3.5 vs SL (opposing SP throws it 23.9% of the time)", "slider"],
   ["Sharp money backing St. Louis Cardinals (money% +42 pts vs ticket%)", "St. Louis Cardinals"],
   ["Recency-weighted K rate 14.3% (exp. decay, halflife 30d, 10 real starts / 233 BF) -- drives the strikeout probability model", "14.3%"],
-  ["BvP: 4-for-13 vs Matthew Liberatore (small sample, weighted lightly)", "Matthew Liberatore"],
+  ["BvP: 4-for-13 vs Matthew Liberatore (standard error ±13 pts on a 13-AB career sample -- weighted lightly on that basis, not just because the count looks small)", "Matthew Liberatore"],
   ["HP ump accuracy 93.9%", "93.9%"],
 ];
 let ok = true;
@@ -328,6 +328,19 @@ check(sp_with_none is not None,
       "a pool containing a real hit_probability=None candidate doesn't crash the whole "
       "feature -- it's filtered out the same way load_todays_pool() already does for "
       "every other caller of this engine", f"got {sp_with_none}")
+
+# REAL BUG, found live 2026-08-14 from a direct report: "why are we
+# recommending a parlay that has props that are not available? Can't bet
+# on that at all." A candidate can carry a real model hit_probability
+# with no FanDuel line posted for it yet (market_odds=None) -- distinct
+# from the hit_probability=None bug above, and not caught by it.
+unpriced_leg = parlay_candidate("E", "T9", "T9 @ T10", 5, 105, "Over 0.5 Doubles", "doubles",
+                                0.70, None)
+sp_unpriced_excluded = bd._build_suggested_parlay([three_legs[0], three_legs[1], unpriced_leg])
+if sp_unpriced_excluded:
+    names = {l["name"] for l in sp_unpriced_excluded["legs"]}
+    check("E" not in names, "a real-probability-but-unpriced (market_odds=None) candidate "
+          "never becomes a parlay leg -- it's not a bet anyone could place", f"got legs={names}")
 if sp_with_none:
     check("D" not in [l["name"] for l in sp_with_none["legs"]],
           "the None-probability candidate itself never becomes a leg")

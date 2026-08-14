@@ -220,7 +220,18 @@ def _build_suggested_parlay(candidates):
     # `lo <= c["hit_probability"] < hi` crashed the instant one of them did,
     # silently no-oping the whole feature via the except below on every real
     # run rather than ever actually producing a parlay.
-    priced_pool = [c for c in candidates if c.get("hit_probability") is not None]
+    # REAL BUG, found live 2026-08-14 from a direct report: a candidate with
+    # a real model hit_probability but no FanDuel line posted for it yet
+    # could still be selected as a parlay leg -- a recommendation for a bet
+    # nobody can actually place. hit_probability is not None only means the
+    # MODEL has a read; market_odds is not None is the separate, additional
+    # fact that FanDuel has actually priced it. parlay_builder.py's own
+    # combined-odds math already treats unpriced legs correctly downstream
+    # (priced_legs filters them out of the odds multiply), but that
+    # protects the MATH, not the SELECTION -- an unpriced leg could still
+    # win a slot in the 3 legs shown to Jacob.
+    priced_pool = [c for c in candidates
+                  if c.get("hit_probability") is not None and c.get("market_odds") is not None]
     try:
         result = pb.build_best_available_parlay(pool=priced_pool, n=3, risk_level=0, price_legs=False)
     except Exception as e:
@@ -380,6 +391,7 @@ def build_payload(result, track_record=None):
 
 
 PAGE_TEMPLATE = """<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Gridiron Board</title>
 <style>
 @font-face {{
@@ -875,8 +887,8 @@ const REASON_RULES = [
    m => `the money being wagered on ${{m[2]}} is running ${{Math.abs(parseInt(m[3]))}} points ${{m[1] === "backing" ? "ahead of" : "behind"}} the share of bets placed on them -- a sign bigger, sharper bettors are ${{m[1]}} this side`],
   [/^Public heavy on (.+?) \\(money% trails tickets% by (\\d+) pts\\)/,
    m => `most of the tickets on ${{m[1]}} are small public bets rather than sharp money -- the dollars wagered trail the number of bets by ${{m[2]}} points, a classic public-side signal worth a discount`],
-  [/^BvP: (\\d+)-for-(\\d+) vs (.+?) \\(small sample, weighted lightly\\)$/,
-   m => `he's ${{m[1]}}-for-${{m[2]}} in his career at-bats against tonight's starter, ${{m[3]}} -- a real trend, but too small a sample to weigh heavily on its own`],
+  [/^BvP: (\\d+)-for-(\\d+) vs (.+?) \\(standard error ±(\\d+) pts on a (\\d+)-AB career sample.*\\)$/,
+   m => `he's ${{m[1]}}-for-${{m[2]}} in his career at-bats against tonight's starter, ${{m[3]}} -- the standard error on a ${{m[5]}}-AB sample runs about ±${{m[4]}} points, so his true rate against this pitcher could plausibly sit anywhere in that band, weighted lightly for exactly that reason`],
   [/^Recency-weighted K rate ([\\d.]+)% \\(exp\\. decay, halflife 30d, (\\d+) real starts \\/ (\\d+) BF\\) — drives the strikeout probability model$/,
    m => `his strikeout rate over his ${{m[2]}} most recent starts (${{m[3]}} batters faced), weighted so his newest starts count for more, comes in at ${{m[1]}}% -- this is the number the strikeout probability itself is built from`],
   [/^L14 K% ([\\d.]+) \\((\\d+) PA\\)$/,

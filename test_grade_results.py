@@ -99,21 +99,37 @@ r4 = gr.grade_pick(p4, {pk4: FINAL}, date=None)
 check(r4["grade"] == "ungraded" and "date" in r4["reason"],
       "hard_hit_105 with no date supplied -> ungraded (Statcast lookup needs the date)")
 
-with mock.patch.object(gr, "_date_batter_peak_ev") as mev, \
+# REAL BUG FIXED 2026-08-14: grading used to key off peak exit velocity
+# alone (_date_batter_peak_ev, now removed) -- a hard-hit groundout or
+# single graded identically to a home run at the same speed. FanDuel's
+# own "Full details" text for this market reads "Laser = HR with
+# Specified MPH Exit Velocity" -- confirmed against real live market
+# odds the same night (Tatis +650, Adell +900, both far too long to be
+# "any hard-hit ball"). Now grades off _date_batter_hr_ev(date,
+# threshold), which returns True/False -- did he hit a HOME RUN at that
+# exit velocity that game -- mirroring _date_batter_moonshot's identical
+# shape.
+with mock.patch.object(gr, "_date_batter_hr_ev") as mev, \
      mock.patch.object(gr, "get_box_line", return_value=({"ab": "4"}, None)), \
      mock.patch.object(gr, "opportunity_context", return_value={}):
     pk5 = new_pk()
     p5 = base_pick(game_pk=pk5, player_id=999, projection={"stat": "hard_hit_105"})
-    mev.return_value = {(999, pk5): 106.4}
+    mev.return_value = {(999, pk5): True}
     r5 = gr.grade_pick(p5, {pk5: FINAL}, date="2026-08-06")
-    check(r5["grade"] == "hit" and r5["actual"] == 106.4,
-          "hard_hit_105: peak EV 106.4 >= 105 grades a hit", f"got {r5}")
+    check(r5["grade"] == "hit" and r5["actual"] is True,
+          "hard_hit_105: a real HR at 105+ mph exit velocity grades a hit", f"got {r5}")
+    check(mev.call_args[0] == ("2026-08-06", 105),
+          "_date_batter_hr_ev called with the real date and the 105 threshold",
+          f"got {mev.call_args}")
 
     pk6 = new_pk()
     p6 = base_pick(game_pk=pk6, player_id=999, projection={"stat": "hard_hit_110"})
-    mev.return_value = {(999, pk6): 106.4}
+    mev.return_value = {(999, pk6): False}
     r6 = gr.grade_pick(p6, {pk6: FINAL}, date="2026-08-06")
-    check(r6["grade"] == "miss", "hard_hit_110: peak EV 106.4 < 110 grades a miss (same ball, different threshold)")
+    check(r6["grade"] == "miss",
+          "hard_hit_110: no qualifying HR that game (even if he hit hard-hit non-HRs) grades a miss")
+    check(mev.call_args[0] == ("2026-08-06", 110), "called with the 110 threshold this time",
+          f"got {mev.call_args}")
 
     pk7 = new_pk()
     p7 = base_pick(game_pk=pk7, player_id=888, projection={"stat": "hard_hit_105"})
