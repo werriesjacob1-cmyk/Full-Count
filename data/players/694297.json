@@ -68,7 +68,7 @@
         {
           "prop": "Over 3.5 Strikeouts",
           "type": "pitcher",
-          "score": 53.8,
+          "score": 50.1,
           "notable_signals": 0,
           "matchup": "Arizona Diamondbacks @ Atlanta Braves",
           "game_pk": 824882,
@@ -79,7 +79,10 @@
           "signals": {
             "same_hand_ratio": 43.75,
             "l14_k_pct": 0.0,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 52.5075,
+            "ump_k_pct": 0.0,
+            "ump_bb_pct": 0.012
           },
           "hit_probability": 0.5713,
           "raw_hit_probability": 0.5084,
@@ -116,6 +119,34 @@
             "stat": "pitcher_outs",
             "value": 17.5,
             "needs": 18
+          }
+        },
+        {
+          "prop": "Over 9.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 55.0,
+          "notable_signals": 0,
+          "matchup": "Arizona Diamondbacks @ Atlanta Braves",
+          "game_pk": 824882,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            694297,
+            519242
+          ],
+          "signals": {
+            "combined_k_edge": -0.0327
+          },
+          "hit_probability": 0.6152,
+          "raw_hit_probability": null,
+          "lift": -0.0327,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 9.5,
+            "needs": 10
           }
         }
       ]

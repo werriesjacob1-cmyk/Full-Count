@@ -375,6 +375,107 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-14",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 81.2,
+          "notable_signals": 2,
+          "matchup": "Arizona Diamondbacks @ Atlanta Braves",
+          "game_pk": 824882,
+          "team": "Atlanta Braves",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 24.5714,
+            "pitch_exploit": 20.0,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 72.6667,
+            "lineup_slot": 87.5,
+            "bullpen_fatigue": 69.4444,
+            "platoon_barrel_pct": 5.0,
+            "platoon_xwoba": 5.0,
+            "park_hand_index": -1.12,
+            "opp_catcher_framing": 0.24,
+            "days_rest": 2.0,
+            "woba_ahead": 59.0909,
+            "woba_behind": 80.0,
+            "pull_park_synergy": -0.2979,
+            "hard_hit_105_rate": 0.685,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": -0.264,
+            "vs_rp_ops": 0.564,
+            "ump_k_pct": -0.0,
+            "ump_bb_pct": -0.012
+          },
+          "hit_probability": 0.6855,
+          "raw_hit_probability": 0.6987,
+          "lift": 0.0191,
+          "reliability": "B",
+          "sample_n": 69,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 11.1,
+          "notable_signals": 0,
+          "matchup": "Arizona Diamondbacks @ Atlanta Braves",
+          "game_pk": 824882,
+          "team": "Atlanta Braves",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.074
+          },
+          "hit_probability": 0.074,
+          "raw_hit_probability": null,
+          "lift": 0.0244,
+          "reliability": "B",
+          "sample_n": 69,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 7.4,
+          "notable_signals": 0,
+          "matchup": "Arizona Diamondbacks @ Atlanta Braves",
+          "game_pk": 824882,
+          "team": "Atlanta Braves",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0424
+          },
+          "hit_probability": 0.0424,
+          "raw_hit_probability": null,
+          "lift": 0.0209,
+          "reliability": "B",
+          "sample_n": 69,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

@@ -120,6 +120,34 @@
             "value": 17.5,
             "needs": 18
           }
+        },
+        {
+          "prop": "Over 8.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 47.9,
+          "notable_signals": 0,
+          "matchup": "Boston Red Sox @ Pittsburgh Pirates",
+          "game_pk": 823346,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            687562,
+            696149
+          ],
+          "signals": {
+            "combined_k_edge": -0.0329
+          },
+          "hit_probability": 0.5285,
+          "raw_hit_probability": null,
+          "lift": -0.0329,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 8.5,
+            "needs": 9
+          }
         }
       ]
     }

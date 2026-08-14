@@ -382,6 +382,108 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-14",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 58.6,
+          "notable_signals": 2,
+          "matchup": "Seattle Mariners @ Houston Astros",
+          "game_pk": 824159,
+          "team": "Seattle Mariners",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 16.8571,
+            "pitch_exploit": 2.2857,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 5.3333,
+            "lineup_slot": 37.5,
+            "bullpen_fatigue": 83.3333,
+            "platoon_barrel_pct": 0.64,
+            "platoon_xwoba": 4.38,
+            "park_hand_index": 2.53,
+            "opp_catcher_framing": 0.36,
+            "days_rest": 0.0,
+            "woba_ahead": 19.0909,
+            "woba_behind": 0.0,
+            "pull_park_synergy": 1.1954,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": -3.736,
+            "vs_rp_ops": -3.048,
+            "ump_k_pct": -1.536,
+            "ump_bb_pct": 0.456
+          },
+          "hit_probability": 0.6515,
+          "raw_hit_probability": 0.6398,
+          "lift": -0.0149,
+          "reliability": "C",
+          "sample_n": 32,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 0.0,
+          "notable_signals": 0,
+          "matchup": "Seattle Mariners @ Houston Astros",
+          "game_pk": 824159,
+          "team": "Seattle Mariners",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0198
+          },
+          "hit_probability": 0.0198,
+          "raw_hit_probability": null,
+          "lift": -0.0298,
+          "reliability": "C",
+          "sample_n": 32,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 0,
+          "notable_signals": 0,
+          "matchup": "Seattle Mariners @ Houston Astros",
+          "game_pk": 824159,
+          "team": "Seattle Mariners",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0086
+          },
+          "hit_probability": 0.0086,
+          "raw_hit_probability": null,
+          "lift": -0.0129,
+          "reliability": "C",
+          "sample_n": 32,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

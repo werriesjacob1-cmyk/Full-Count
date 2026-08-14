@@ -351,6 +351,108 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-14",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 85.2,
+          "notable_signals": 3,
+          "matchup": "Baltimore Orioles @ Tampa Bay Rays",
+          "game_pk": 822942,
+          "team": "Tampa Bay Rays",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 79.1429,
+            "pitch_exploit": 6.2857,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 46.0,
+            "lineup_slot": 87.5,
+            "bullpen_fatigue": 71.4286,
+            "bvp_ops": -1.482,
+            "platoon_barrel_pct": 3.76,
+            "platoon_xwoba": 3.48,
+            "park_hand_index": -1.28,
+            "opp_catcher_framing": -0.24,
+            "days_rest": 2.0,
+            "woba_ahead": 66.3636,
+            "woba_behind": 16.3636,
+            "pull_park_synergy": -0.3315,
+            "hard_hit_105_rate": -0.0375,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": 0.056,
+            "vs_rp_ops": 1.056,
+            "ump_k_pct": 0.48,
+            "ump_bb_pct": 0.012
+          },
+          "hit_probability": 0.6385,
+          "raw_hit_probability": 0.6298,
+          "lift": 0.0876,
+          "reliability": "A",
+          "sample_n": 117,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 3.8,
+          "notable_signals": 0,
+          "matchup": "Baltimore Orioles @ Tampa Bay Rays",
+          "game_pk": 822942,
+          "team": "Tampa Bay Rays",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0451
+          },
+          "hit_probability": 0.0451,
+          "raw_hit_probability": null,
+          "lift": -0.0045,
+          "reliability": "A",
+          "sample_n": 117,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 0,
+          "notable_signals": 0,
+          "matchup": "Baltimore Orioles @ Tampa Bay Rays",
+          "game_pk": 822942,
+          "team": "Tampa Bay Rays",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0032
+          },
+          "hit_probability": 0.0032,
+          "raw_hit_probability": null,
+          "lift": -0.0183,
+          "reliability": "A",
+          "sample_n": 117,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

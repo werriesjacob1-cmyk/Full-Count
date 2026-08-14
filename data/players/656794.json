@@ -34,6 +34,34 @@
             "value": 4.5,
             "needs": 5
           }
+        },
+        {
+          "prop": "Over 8.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 54.9,
+          "notable_signals": 1,
+          "matchup": "Chicago White Sox @ Detroit Tigers",
+          "game_pk": 824237,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            656794,
+            695549
+          ],
+          "signals": {
+            "combined_k_edge": 0.6305
+          },
+          "hit_probability": 0.806,
+          "raw_hit_probability": null,
+          "lift": 0.6305,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 8.5,
+            "needs": 9
+          }
         }
       ]
     }

@@ -69,8 +69,8 @@
         {
           "prop": "Over 7.5 Strikeouts",
           "type": "pitcher",
-          "score": 39.9,
-          "notable_signals": 0,
+          "score": 42.0,
+          "notable_signals": 1,
           "matchup": "San Diego Padres @ Cleveland Guardians",
           "game_pk": 824399,
           "team": "Cleveland Guardians",
@@ -80,7 +80,10 @@
           "signals": {
             "same_hand_ratio": 100.0,
             "l14_k_pct": 100.0,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 71.2359,
+            "ump_k_pct": 0.204,
+            "ump_bb_pct": 0.156
           },
           "hit_probability": 0.5386,
           "raw_hit_probability": 0.3741,
