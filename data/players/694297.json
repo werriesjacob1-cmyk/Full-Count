@@ -68,7 +68,7 @@
         {
           "prop": "Over 3.5 Strikeouts",
           "type": "pitcher",
-          "score": 52.6,
+          "score": 48.7,
           "notable_signals": 0,
           "matchup": "Arizona Diamondbacks @ Atlanta Braves",
           "game_pk": 824882,
@@ -77,7 +77,7 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "same_hand_ratio": 75.0,
+            "same_hand_ratio": 43.75,
             "l14_k_pct": 0.0,
             "env_neutral": 50.0
           },
@@ -95,8 +95,8 @@
         {
           "prop": "Over 17.5 Outs Recorded",
           "type": "pitcher",
-          "score": 46.8,
-          "notable_signals": 0,
+          "score": 47.6,
+          "notable_signals": 1,
           "matchup": "Arizona Diamondbacks @ Atlanta Braves",
           "game_pk": 824882,
           "team": "Arizona Diamondbacks",
@@ -104,12 +104,12 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.5211,
+            "outs_rate": 0.5168,
             "avg_outs_per_start": 17.55
           },
-          "hit_probability": 0.5211,
+          "hit_probability": 0.5168,
           "raw_hit_probability": null,
-          "lift": 0.0448,
+          "lift": 0.0525,
           "reliability": "D",
           "sample_n": 11,
           "projection": {

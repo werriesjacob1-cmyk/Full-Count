@@ -66,9 +66,9 @@
       "date": "2026-08-14",
       "evaluations": [
         {
-          "prop": "Over 3.5 Strikeouts",
+          "prop": "Over 4.5 Strikeouts",
           "type": "pitcher",
-          "score": 50.1,
+          "score": 51.7,
           "notable_signals": 0,
           "matchup": "Washington Nationals @ New York Mets",
           "game_pk": 823591,
@@ -77,25 +77,25 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "same_hand_ratio": 43.75,
+            "same_hand_ratio": 57.1429,
             "l14_k_pct": 5.2941,
             "env_neutral": 50.0
           },
-          "hit_probability": 0.6049,
-          "raw_hit_probability": 0.6435,
-          "lift": -0.1088,
+          "hit_probability": 0.5675,
+          "raw_hit_probability": 0.4487,
+          "lift": 0.0285,
           "reliability": "D",
           "sample_n": 9,
           "projection": {
             "stat": "strikeouts",
-            "value": 3.5,
-            "needs": 4
+            "value": 4.5,
+            "needs": 5
           }
         },
         {
-          "prop": "Over 13.5 Outs Recorded",
+          "prop": "Over 14.5 Outs Recorded",
           "type": "pitcher",
-          "score": 13.1,
+          "score": 0,
           "notable_signals": 0,
           "matchup": "Washington Nationals @ New York Mets",
           "game_pk": 823591,
@@ -104,18 +104,18 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.6077,
+            "outs_rate": 0.5224,
             "avg_outs_per_start": 14.22
           },
-          "hit_probability": 0.6077,
+          "hit_probability": 0.5224,
           "raw_hit_probability": null,
-          "lift": -0.2449,
+          "lift": -0.2837,
           "reliability": "D",
           "sample_n": 9,
           "projection": {
             "stat": "pitcher_outs",
-            "value": 13.5,
-            "needs": 14
+            "value": 14.5,
+            "needs": 15
           }
         }
       ]
