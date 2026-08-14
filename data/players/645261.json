@@ -120,6 +120,34 @@
             "value": 18.5,
             "needs": 19
           }
+        },
+        {
+          "prop": "Over 11.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 20.6,
+          "notable_signals": 0,
+          "matchup": "Miami Marlins @ Cincinnati Reds",
+          "game_pk": 824479,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            645261,
+            695505
+          ],
+          "signals": {
+            "combined_k_edge": -0.1805
+          },
+          "hit_probability": 0.477,
+          "raw_hit_probability": null,
+          "lift": -0.1805,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 11.5,
+            "needs": 12
+          }
         }
       ]
     }

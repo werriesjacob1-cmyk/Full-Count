@@ -146,6 +146,51 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-14",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 53.2,
+          "notable_signals": 1,
+          "matchup": "Boston Red Sox @ Pittsburgh Pirates",
+          "game_pk": 823346,
+          "team": "Pittsburgh Pirates",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 19.1429,
+            "park_hr_index": 52.0,
+            "lineup_slot": 37.5,
+            "bullpen_fatigue": 64.1026,
+            "park_hand_index": -3.26,
+            "opp_catcher_framing": -0.48,
+            "days_rest": 0.0,
+            "woba_ahead": 50.9091,
+            "woba_behind": 37.2727,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "ump_k_pct": -1.068,
+            "ump_bb_pct": -0.504
+          },
+          "hit_probability": 0.5446,
+          "raw_hit_probability": 0.5613,
+          "lift": -0.0063,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

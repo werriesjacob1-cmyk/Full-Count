@@ -427,6 +427,135 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-14",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 31.3,
+          "notable_signals": 2,
+          "matchup": "Arizona Diamondbacks @ Atlanta Braves",
+          "game_pk": 824882,
+          "team": "Arizona Diamondbacks",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 0.0,
+            "pitch_exploit": 13.7143,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 30.0,
+            "lineup_slot": 0.0,
+            "bullpen_fatigue": 64.1026,
+            "platoon_barrel_pct": -0.4,
+            "platoon_xwoba": -1.62,
+            "park_hand_index": -1.12,
+            "opp_catcher_framing": 0.36,
+            "days_rest": 2.0,
+            "consecutive_games": -0.6,
+            "woba_ahead": 66.3636,
+            "woba_behind": 36.3636,
+            "pull_park_synergy": -0.3724,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": 3.64,
+            "vs_rp_ops": 3.06,
+            "ump_k_pct": -0.0,
+            "ump_bb_pct": -0.012
+          },
+          "hit_probability": 0.6741,
+          "raw_hit_probability": 0.6786,
+          "lift": 0.0077,
+          "reliability": "B",
+          "sample_n": 55,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 53.6,
+          "notable_signals": 0,
+          "matchup": "Arizona Diamondbacks @ Atlanta Braves",
+          "game_pk": 824882,
+          "team": "Arizona Diamondbacks",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": 5.58,
+            "sprint_speed": 50.0,
+            "catcher_poptime": 8.5714,
+            "on_base": 64.4914
+          },
+          "hit_probability": 0.0934,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "B",
+          "sample_n": 55,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 0.0,
+          "notable_signals": 0,
+          "matchup": "Arizona Diamondbacks @ Atlanta Braves",
+          "game_pk": 824882,
+          "team": "Arizona Diamondbacks",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0148
+          },
+          "hit_probability": 0.0148,
+          "raw_hit_probability": null,
+          "lift": -0.0348,
+          "reliability": "B",
+          "sample_n": 55,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 2.1,
+          "notable_signals": 0,
+          "matchup": "Arizona Diamondbacks @ Atlanta Braves",
+          "game_pk": 824882,
+          "team": "Arizona Diamondbacks",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0214
+          },
+          "hit_probability": 0.0214,
+          "raw_hit_probability": null,
+          "lift": -0.0001,
+          "reliability": "B",
+          "sample_n": 55,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

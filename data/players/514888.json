@@ -534,6 +534,137 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-14",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 53.1,
+          "notable_signals": 1,
+          "matchup": "Seattle Mariners @ Houston Astros",
+          "game_pk": 824159,
+          "team": "Houston Astros",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 33.7143,
+            "pitch_exploit": 3.4286,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 14.0,
+            "lineup_slot": 50.0,
+            "bullpen_fatigue": 64.1026,
+            "bvp_ops": -1.686,
+            "platoon_barrel_pct": -1.36,
+            "platoon_xwoba": -2.94,
+            "park_hand_index": 2.41,
+            "opp_catcher_framing": 0.6,
+            "days_rest": 4.0,
+            "woba_ahead": 30.9091,
+            "woba_behind": 4.5455,
+            "pull_park_synergy": 1.7207,
+            "team_total_move": -6.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": 0.584,
+            "vs_rp_ops": 0.24,
+            "ump_k_pct": -1.536,
+            "ump_bb_pct": 0.456
+          },
+          "hit_probability": 0.671,
+          "raw_hit_probability": 0.6732,
+          "lift": 0.0046,
+          "reliability": "A",
+          "sample_n": 96,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 13.7,
+          "notable_signals": 0,
+          "matchup": "Seattle Mariners @ Houston Astros",
+          "game_pk": 824159,
+          "team": "Houston Astros",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": 0.3,
+            "sprint_speed": 3.125,
+            "catcher_poptime": 28.5714,
+            "on_base": 41.4587
+          },
+          "hit_probability": 0.0247,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 96,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 0.0,
+          "notable_signals": 0,
+          "matchup": "Seattle Mariners @ Houston Astros",
+          "game_pk": 824159,
+          "team": "Houston Astros",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0179
+          },
+          "hit_probability": 0.0179,
+          "raw_hit_probability": null,
+          "lift": -0.0317,
+          "reliability": "A",
+          "sample_n": 96,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 0,
+          "notable_signals": 0,
+          "matchup": "Seattle Mariners @ Houston Astros",
+          "game_pk": 824159,
+          "team": "Houston Astros",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0039
+          },
+          "hit_probability": 0.0039,
+          "raw_hit_probability": null,
+          "lift": -0.0176,
+          "reliability": "A",
+          "sample_n": 96,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }
