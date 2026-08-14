@@ -175,6 +175,57 @@ if node:
 else:
     check(True, "node not available in this environment -- JS syntax check skipped, not failed")
 
+head("6b. REASON_RULES/humanizeReason actually translate real jargon strings, not just "
+     "parse without crashing -- direct request: \"refine the notes... clean understandable "
+     "language.\" These are verbatim strings generate_picks.py emits live (checked against "
+     "2026-08-14's real board) that previously fell straight through untranslated.")
+
+if node:
+    js = html.split("<script>", 1)[1].rsplit("</script>", 1)[0]
+    harness = """
+const document = {getElementById: () => ({addEventListener(){}, textContent:'', dataset:{}}),
+  documentElement: {setAttribute(){}, removeAttribute(){}, getAttribute: () => null},
+  querySelectorAll: () => [], querySelector: () => null, createElement: () => ({})};
+const window = {matchMedia: () => ({matches:false}), location: {reload(){}}};
+const localStorage = {getItem: () => null, setItem(){}};
+const fetch = () => Promise.reject(new Error("no network in test"));
+const PAYLOAD = {generated_at:"x", date:"x", tabs_order:[], labels:{},
+  data:{all:[], top_picks:[]}, track_record:null, suggested_parlay:null};
+const setInterval = () => {};
+try { """ + js + """ } catch (e) {}
+const CASES = [
+  ["Arizona Diamondbacks scores off Chris Sale (home SP) in the top 1st: 23.4% (shrunk, 22 starts)",
+   "Arizona Diamondbacks"],
+  ["Pitch-type exploit: RV/100 +3.5 vs SL (opposing SP throws it 23.9% of the time)", "slider"],
+  ["Sharp money backing St. Louis Cardinals (money% +42 pts vs ticket%)", "St. Louis Cardinals"],
+  ["Recency-weighted K rate 14.3% (exp. decay, halflife 30d, 10 real starts / 233 BF) -- drives the strikeout probability model", "14.3%"],
+  ["BvP: 4-for-13 vs Matthew Liberatore (small sample, weighted lightly)", "Matthew Liberatore"],
+  ["HP ump accuracy 93.9%", "93.9%"],
+];
+let ok = true;
+for (const [raw, mustContain] of CASES) {
+  const out = humanizeReason(raw);
+  if (out === raw || !out.includes(mustContain)) {
+    console.error("FAIL: " + JSON.stringify(raw) + " -> " + JSON.stringify(out));
+    ok = false;
+  }
+}
+if (!ok) process.exit(1);
+console.log("all " + CASES.length + " reason translations passed");
+"""
+    harness_path = tempfile.mktemp(suffix=".js")
+    with open(harness_path, "w") as f:
+        f.write(harness)
+    try:
+        r = subprocess.run([node, harness_path], capture_output=True, text=True)
+        check(r.returncode == 0, "every real jargon string actually gets translated to readable "
+              "text (not left as raw RV/100, halflife, BvP, money%/ticket% jargon)",
+              r.stdout + r.stderr)
+    finally:
+        os.remove(harness_path)
+else:
+    check(True, "node not available -- reason-translation check skipped, not failed")
+
 
 head("7. priced candidates rank ahead of unpriced ones within a tab, and in All Props -- "
      "even when the unpriced one has the higher raw probability")
