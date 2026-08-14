@@ -355,6 +355,108 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-14",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 76.0,
+          "notable_signals": 2,
+          "matchup": "St. Louis Cardinals @ Chicago Cubs",
+          "game_pk": 824643,
+          "team": "St. Louis Cardinals",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 0.0,
+            "park_hr_index": 51.7,
+            "season_barrel_pct": 57.3333,
+            "lineup_slot": 75.0,
+            "bullpen_fatigue": 97.2222,
+            "platoon_barrel_pct": 4.4,
+            "platoon_xwoba": 5.0,
+            "park_hand_index": 3.66,
+            "opp_catcher_framing": 0.12,
+            "days_rest": 2.0,
+            "woba_ahead": 33.6364,
+            "woba_behind": 63.6364,
+            "pull_park_synergy": 2.4979,
+            "hard_hit_105_rate": 3.9925,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": 0.2,
+            "vs_rp_ops": 1.584,
+            "ump_k_pct": -0.24,
+            "ump_bb_pct": -0.312
+          },
+          "hit_probability": 0.6434,
+          "raw_hit_probability": 0.6336,
+          "lift": 0.0925,
+          "reliability": "A",
+          "sample_n": 120,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 59.7,
+          "notable_signals": 1,
+          "matchup": "St. Louis Cardinals @ Chicago Cubs",
+          "game_pk": 824643,
+          "team": "St. Louis Cardinals",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.3747
+          },
+          "hit_probability": 0.3601,
+          "raw_hit_probability": 0.3747,
+          "lift": 0.1309,
+          "reliability": "A",
+          "sample_n": 120,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 5.0,
+          "notable_signals": 0,
+          "matchup": "St. Louis Cardinals @ Chicago Cubs",
+          "game_pk": 824643,
+          "team": "St. Louis Cardinals",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0328
+          },
+          "hit_probability": 0.0328,
+          "raw_hit_probability": null,
+          "lift": 0.0113,
+          "reliability": "A",
+          "sample_n": 120,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }
