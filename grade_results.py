@@ -229,6 +229,36 @@ def _game_innings(game_pk):
         return None
 
 
+_MOONSHOT_CACHE = {}
+
+def _date_batter_moonshot(date, threshold_ft=420):
+    """{(batter_id, game_pk): True/False, did he hit a threshold_ft+ HR that
+    day}, one Statcast pull per date (cached), same reasoning and same
+    per-date-pull pattern as _date_batter_peak_ev right below -- box scores
+    have no hit distance either, so "To Hit a Moonshot" picks can only be
+    graded from Statcast itself. Mirrors mlb_sources.moonshot_rates' own
+    definition exactly: a real home run (not just any long batted ball)
+    that travelled threshold_ft+ feet."""
+    key = (date, threshold_ft)
+    if key in _MOONSHOT_CACHE:
+        return _MOONSHOT_CACHE[key]
+    out = {}
+    try:
+        df = m.pyb.statcast(start_dt=date, end_dt=date)
+        need = {"batter", "game_pk", "events", "hit_distance_sc"}
+        if df is not None and not df.empty and need.issubset(df.columns):
+            hr = df[(df["events"] == "home_run") & df["hit_distance_sc"].notna()]
+            if not hr.empty:
+                hr = hr.copy()
+                hr["cleared"] = hr["hit_distance_sc"] >= threshold_ft
+                cleared = hr.groupby(["batter", "game_pk"])["cleared"].max()
+                out = {(int(b), int(g)): bool(v) for (b, g), v in cleared.items()}
+    except Exception as e:
+        m.warn(f"Grading: couldn't fetch Statcast for {date}: {e}")
+    _MOONSHOT_CACHE[key] = out
+    return out
+
+
 _EV_CACHE = {}
 
 def _date_batter_peak_ev(date):
@@ -412,6 +442,20 @@ def grade_pick(pick, game_statuses, date=None):
         row, _ = get_box_line(game_pk, player_id, is_pitcher=False)
         return {**pick, "grade": "hit" if hit else "miss", "actual": ev,
                 "actual_stat": "max_exit_velocity",
+                **opportunity_context(pick, row, game_pk)}
+
+    if stat == "moonshot_420":
+        # Same reasoning as hard_hit_105/110 immediately above: the box
+        # score has no hit distance, so this is the one other prop family
+        # that can only be graded from Statcast itself.
+        if not date:
+            return {**pick, "grade": "ungraded", "reason": "no date supplied for Statcast lookup"}
+        cleared = _date_batter_moonshot(date, 420).get((player_id, game_pk))
+        if cleared is None:
+            return {**pick, "grade": "ungraded", "reason": "no batted-ball Statcast data for this game"}
+        row, _ = get_box_line(game_pk, player_id, is_pitcher=False)
+        return {**pick, "grade": "hit" if cleared else "miss", "actual": cleared,
+                "actual_stat": "moonshot_420",
                 **opportunity_context(pick, row, game_pk)}
 
     if stat == "first_inning_run":

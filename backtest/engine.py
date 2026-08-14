@@ -877,6 +877,9 @@ def build_inputs(date, store, use_weather=True, use_bullpen=True, verbose=True):
     # point-in-time safe via the swapped pyb.statcast + repointed TODAY above
     # -- no asof plumbing needed, same reasoning as fi_form/l7_form.
     hard_hit = msrc.hard_hit_game_rates()
+    # Moonshot (420+ FT): same routing, same point-in-time safety, no new
+    # plumbing needed -- built 2026-08-14 alongside score_moonshot.
+    moonshot = msrc.moonshot_rates()
     # Pitcher Outs Recorded: this source has NO built-in date guard (raw
     # gameLog endpoint, no window param) -- asof=cutoff is required here or
     # this would silently read starts after the date being simulated. See
@@ -929,7 +932,7 @@ def build_inputs(date, store, use_weather=True, use_bullpen=True, verbose=True):
     # isn't. Same permanent-exclusion bucket as bvp/sp_rp/ump_env, for a
     # different underlying reason (missing fields, not a live-only source).
     extras = {
-        "hard_hit": hard_hit, "pitcher_outs": pitcher_outs,
+        "hard_hit": hard_hit, "moonshot": moonshot, "pitcher_outs": pitcher_outs,
         "pull": pull, "park_hand": park_hand, "platoon_qoc": platoon_qoc,
         "framing": framing, "ump_kbb": ump_kbb, "rest": rest,
     }
@@ -981,6 +984,7 @@ PROP_TYPE_BY_STAT = {
     "first_inning_run": "first_inning_run",
     "nrfi_combined": "nrfi_combined",
     "hard_hit_105": "hard_hit_105", "hard_hit_110": "hard_hit_110",
+    "moonshot_420": "moonshot_420",
     "pitcher_outs": "pitcher_outs",
     # Real, live board markets (select_best_by_category / _batter_options)
     # that were never added here -- every one of them was being scored,
