@@ -1,4 +1,4 @@
-# PROJECT-GRIDIRON — MLB Daily Betting Pipeline
+# Full Count — MLB Daily Betting Pipeline
 
 Fully automated MLB player-prop research + picks pipeline. GitHub Actions does
 all of it, unattended, with **no LLM call and no API key to manage**:

@@ -68,7 +68,7 @@
         {
           "prop": "Over 5.5 Strikeouts",
           "type": "pitcher",
-          "score": 45.1,
+          "score": 46.6,
           "notable_signals": 0,
           "matchup": "Miami Marlins @ Cincinnati Reds",
           "game_pk": 824479,
@@ -79,7 +79,10 @@
           "signals": {
             "same_hand_ratio": 100.0,
             "l14_k_pct": 67.6471,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 64.7582,
+            "ump_k_pct": -1.068,
+            "ump_bb_pct": -0.012
           },
           "hit_probability": 0.5401,
           "raw_hit_probability": 0.3802,
@@ -95,7 +98,7 @@
         {
           "prop": "Over 18.5 Outs Recorded",
           "type": "pitcher",
-          "score": 64.6,
+          "score": 63.7,
           "notable_signals": 1,
           "matchup": "Miami Marlins @ Cincinnati Reds",
           "game_pk": 824479,
@@ -104,12 +107,12 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.4255,
+            "outs_rate": 0.4273,
             "avg_outs_per_start": 19.64
           },
-          "hit_probability": 0.4255,
+          "hit_probability": 0.4273,
           "raw_hit_probability": null,
-          "lift": 0.2269,
+          "lift": 0.2196,
           "reliability": "C",
           "sample_n": 25,
           "projection": {

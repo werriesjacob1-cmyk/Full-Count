@@ -46,6 +46,49 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-14",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 48.6,
+          "notable_signals": 1,
+          "matchup": "Miami Marlins @ Cincinnati Reds",
+          "game_pk": 824479,
+          "team": "Cincinnati Reds",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "sp_era_weak": 33.7143,
+            "park_hr_index": 44.5,
+            "lineup_slot": 37.5,
+            "bullpen_fatigue": 51.2821,
+            "opp_catcher_framing": 0.6,
+            "days_rest": 2.0,
+            "woba_ahead": 2.7273,
+            "woba_behind": 35.4545,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "ump_k_pct": 1.068,
+            "ump_bb_pct": 0.012
+          },
+          "hit_probability": 0.5299,
+          "raw_hit_probability": 0.5509,
+          "lift": -0.021,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }
