@@ -3330,7 +3330,7 @@ CATEGORY_LABELS = {
 }
 
 
-def select_best_by_category(candidates, prices, fd, n_per_category=1, k_prices=None):
+def select_best_by_category(candidates, prices, fd, n_per_category=1, k_prices=None, min_score=None):
     """The single best (by hit probability) candidate in EVERY prop family
     the pipeline can price, not just whichever ones happened to win the
     main board's overall ranking. Direct request: "the best available of
@@ -3351,16 +3351,25 @@ def select_best_by_category(candidates, prices, fd, n_per_category=1, k_prices=N
       thresholds -- each candidate already IS the one number for that
       player (or game, for nrfi_combined), so it's used directly.
 
-    Same MIN_QUALITY_SCORE floor as everything else on this board, and
-    deliberately NO MIN_LINE_PROB floor -- the floor is what makes an
-    entire family (home runs, 2+ total bases) structurally unable to
-    appear here at all, which is the opposite of "show me the best
-    available in every category." A pick below that floor is still
-    labelled with its real probability; nothing is hidden, only ranked
-    honestly against however good the category's own ceiling is tonight."""
+    min_score defaults to MIN_QUALITY_SCORE (same floor as everything else
+    on this board), and deliberately NO MIN_LINE_PROB floor -- the score
+    floor is what makes an entire family (home runs, 2+ total bases)
+    structurally unable to appear here at all some nights. A pick below
+    that floor is still labelled with its real probability; nothing is
+    hidden, only ranked honestly against however good the category's own
+    ceiling is tonight.
+
+    Pass min_score=0 for the companion "never silently drop a category"
+    shadow-tracking call (see select_shadow_tracking / main()) -- direct
+    request: "we should always track every prop to know if one sticks out
+    randomly for some reason... We can't just throw them away." A category
+    with zero candidates clearing MIN_QUALITY_SCORE tonight still deserves
+    its best-available entry recorded and graded, even though it would
+    never have been good enough to ship on the real card."""
+    floor = MIN_QUALITY_SCORE if min_score is None else min_score
     by_category = defaultdict(list)
     for c in candidates:
-        if c.get("score", 0) < MIN_QUALITY_SCORE:
+        if c.get("score", 0) < floor:
             continue
         if c.get("type") == "batter" and c.get("line_options"):
             stats_here = {o["stat"] for o in c["line_options"] if o.get("stat") in CATEGORY_LABELS}
@@ -3469,6 +3478,72 @@ def _fd_stat_alias(stat):
     load (it's only ever imported lazily inside main(), same as everywhere
     else prices are looked up)."""
     return {"stolen_base": "stolen_bases"}.get(stat, stat)
+
+
+def select_shadow_tracking(candidates, n_per_key=1):
+    """Direct request, verbatim: "There should be no prop not rated and bet
+    on to know the hit percentage. I understand if it isn't included in the
+    final card but I still want to know." Specifically raised about lasers
+    and hard-hit props.
+
+    score_laser/score_pitcher_outs/score_combined_strikeouts already compute
+    EVERY real threshold a batter/pitcher could be scored on (e.g. both
+    105+ and 110+ MPH exit velocity), but _pick_line only ever keeps the
+    single best one as the real candidate -- every other threshold is
+    demoted to a supporting `alternatives` annotation on the winner and,
+    until now, never became its own gradable pick. Concretely: hard_hit_110
+    almost never wins _pick_line's selection against hard_hit_105 (110+ is
+    a strict subset of 105+, so its raw probability is always lower), which
+    meant this project could never actually measure hard_hit_110's real
+    hit rate -- exactly the gap flagged when the "ALL PROPS" hit-rate
+    breakdown came back with hard_hit_110 completely absent.
+
+    This pulls every one of those demoted alternates back out and turns
+    each into its own trackable pick, grouped by (stat, needs) so e.g. two
+    different pitcher_outs thresholds (which share one stat name) don't
+    collide into the same slot the way a plain groupby on `stat` alone
+    would.
+
+    Deliberately NOT priced against FanDuel odds like
+    select_best_by_category -- these were never going to reach the card,
+    so there is no betting decision to price, only a hit-rate question to
+    answer. And deliberately tagged category="shadow", a name that must
+    stay OUT of grade_results.py's normal by_category split -- mixing
+    these into "best_of_category" would quietly inflate that bucket with
+    picks nobody could have actually made, corrupting the one number
+    (headline hit rate) this whole project is judged by."""
+    groups = defaultdict(list)
+    for c in candidates:
+        if c.get("type") not in ("batter", "pitcher", "game", "pitcher_combo"):
+            continue
+        for alt in c.get("alternatives") or []:
+            if alt.get("prob") is None or alt.get("stat") is None:
+                continue
+            key = (alt["stat"], alt.get("needs"))
+            groups[key].append({
+                "type": c["type"], "name": c["name"], "player_id": c.get("player_id"),
+                "combo_player_ids": c.get("combo_player_ids"),
+                "team": c.get("team"), "matchup": c.get("matchup"), "game_pk": c.get("game_pk"),
+                "side": c.get("side"),
+                "prop": f"[shadow] Over {alt.get('line')} {CATEGORY_LABELS.get(alt['stat'], alt['stat'])}",
+                "projection": {"stat": alt["stat"], "value": alt.get("line"), "needs": alt.get("needs")},
+                "lean": None, "score": c.get("score"), "confidence": c.get("confidence"),
+                "notable_signals": 0,
+                "hit_probability": alt["prob"], "signals": c.get("signals") or {},
+                "base_rate": alt.get("base_rate"), "lift": alt.get("lift"),
+                "probability_basis": "empirical_shrunk",
+                "why": ["Tracked for hit-rate measurement only -- an alternate threshold "
+                        "that lost selection against the real candidate, never a live bet."],
+                "watchouts": [],
+                "market_odds": None, "market_implied": None, "market_edge": None,
+                "price_clears": None,
+                "category": "shadow",
+            })
+    out = {}
+    for key, entries in groups.items():
+        entries.sort(key=lambda e: e["hit_probability"], reverse=True)
+        out[key] = entries[:n_per_key]
+    return out
 
 
 _RELIABILITY_ORDER = {"A": 0, "B": 0, "C": 0, "D": 1}
@@ -3663,6 +3738,15 @@ def main() -> int:
     moonshots = []
     deep_moonshots = []
     by_category = {}
+    # No pricing dependency (deliberately unpriced, see its own docstring),
+    # so computed here rather than inside the pricing try-block below --
+    # an odds-fetch failure must never also silently zero out shadow
+    # tracking, the two are unrelated failure modes.
+    shadow_tracking = select_shadow_tracking(candidates)
+    shadow_n = sum(len(v) for v in shadow_tracking.values())
+    print(f"    Shadow tracking: {shadow_n} alternate-threshold pick(s) across "
+          f"{len(shadow_tracking)} (stat, threshold) combo(s) -- scored and will be "
+          f"graded, never shown on the card")
     try:
         import odds_fanduel as _fd
         # Fetched once, explicitly, rather than left for attach_market_prices
@@ -3722,6 +3806,29 @@ def main() -> int:
         by_category = select_best_by_category(candidates, prices, _fd, n_per_category=1, k_prices=k_prices)
         print(f"    Best-of-category board: {len(by_category)} of {len(CATEGORY_LABELS)} "
               f"families had a candidate tonight")
+        # UNFLOORED companion: direct request, verbatim: "we should always
+        # track every prop to know if one sticks out randomly for some
+        # reason. We have to be prepared. We can't just throw them away."
+        # by_category above drops a whole family some nights (home_runs,
+        # doubles, triples especially) when nothing clears MIN_QUALITY_
+        # SCORE -- this re-runs the exact same selection with no floor at
+        # all, so every CATEGORY_LABELS family gets its best-available
+        # candidate recorded and graded regardless, merged into
+        # shadow_tracking below (never into by_category/the real card).
+        all_category = select_best_by_category(candidates, prices, _fd, n_per_category=1,
+                                               k_prices=k_prices, min_score=0)
+        for stat, entries in all_category.items():
+            for e in entries:
+                needs = (e.get("projection") or {}).get("needs")
+                key = (stat, needs)
+                if key in shadow_tracking:
+                    continue  # an alternate-threshold entry already covers this exact slot
+                e = dict(e)
+                e["category"] = "shadow"
+                shadow_tracking[key] = [e]
+        shadow_n = sum(len(v) for v in shadow_tracking.values())
+        print(f"    Shadow tracking (unfloored): {shadow_n} total tracked pick(s) across "
+              f"{len(shadow_tracking)} (stat, threshold) combo(s)")
     except Exception as e:
         m.warn(f"Market prices unavailable ({e}) — board ships without them")
 
@@ -3801,7 +3908,7 @@ def main() -> int:
     skipped = [c for c in ranked if id(c) not in _top10_ids and c["score"] >= 55][:2]
 
     write_markdown(top10, skipped, game_meta, bullpen_scores, ranked, moonshots, by_category, deep_moonshots)
-    write_json(top10, moonshots, by_category, deep_moonshots)
+    write_json(top10, moonshots, by_category, deep_moonshots, shadow_tracking)
     persist_player_snapshots(candidates)
     print(f"Wrote {len(top10)} picks to {PICKS_FILE} and {PICKS_JSON_FILE}")
 
@@ -3858,7 +3965,7 @@ def main() -> int:
     return 0
 
 
-def write_json(top10, moonshots=(), by_category=None, deep_moonshots=()):
+def write_json(top10, moonshots=(), by_category=None, deep_moonshots=(), shadow_tracking=None):
     """Structured pick data for grade_results.py — never parse the markdown
     back into data, same lesson learned from mlb_daily.py's report text.
 
@@ -3868,7 +3975,13 @@ def write_json(top10, moonshots=(), by_category=None, deep_moonshots=()):
     key, i.e. the primary board), rank continuing past 10 rather than
     restarting. They ride the exact grading path grade_results.py already
     has -- a parallel path would be a second thing to keep correct forever
-    for no reason, when this one is already proven."""
+    for no reason, when this one is already proven.
+
+    shadow_tracking is DELIBERATELY NOT in that same `picks` list -- see
+    select_shadow_tracking's docstring for why blending it in would
+    corrupt the headline hit rate. It gets its own top-level key and its
+    own grading pass in grade_results.py (shadow_by_category), never
+    touching hits/misses/by_category."""
     def _row(i, c):
         return {
             "rank": i, "type": c["type"], "name": c["name"], "player_id": c["player_id"],
@@ -3923,10 +4036,12 @@ def write_json(top10, moonshots=(), by_category=None, deep_moonshots=()):
     picks += [_row(i, c) for i, c in enumerate(moonshots, len(picks) + 1)]
     picks += [_row(i, c) for i, c in enumerate(deep_moonshots, len(picks) + 1)]
     picks += [_row(i, c) for i, c in enumerate(category_flat, len(picks) + 1)]
+    shadow_flat = [c for entries in (shadow_tracking or {}).values() for c in entries]
     payload = {
         "date": m.TODAY,
         "generated": datetime.now().isoformat(),
         "picks": picks,
+        "shadow_tracking": [_row(i, c) for i, c in enumerate(shadow_flat, 1)],
     }
     with open(PICKS_JSON_FILE, "w", encoding="utf-8") as f:
         json.dump(payload, f, indent=2)

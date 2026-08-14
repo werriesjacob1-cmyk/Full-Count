@@ -715,11 +715,36 @@ def grade_day(date) -> bool:
         by_category[cat][_GRADE_TO_KEY[g["grade"]]] += 1
     by_category = {k: dict(v) for k, v in by_category.items()}
 
+    # SHADOW TRACKING -- direct request: "There should be no prop not rated
+    # and bet on to know the hit percentage... I understand if it isn't
+    # included in the final card but I still want to know." generate_picks.
+    # select_shadow_tracking() recovers the alternate thresholds (hard_hit_110
+    # chief among them) that _pick_line demoted on every candidate, so their
+    # real hit rate can finally be measured. Graded through the exact same
+    # grade_pick() path as everything else, but kept in a COMPLETELY separate
+    # key from hits/misses/by_category above -- these were never bettable
+    # picks, so folding them into the headline number would understate the
+    # real board's accuracy by diluting it with picks nobody could place.
+    shadow_picks = payload.get("shadow_tracking", [])
+    shadow_graded = []
+    for p in shadow_picks:
+        try:
+            shadow_graded.append(grade_pick(p, game_statuses, date=YESTERDAY))
+        except Exception as e:
+            shadow_graded.append({**p, "grade": "ungraded", "reason": f"grader error: {e}"})
+    shadow_by_category = defaultdict(lambda: {"hits": 0, "misses": 0, "ungraded": 0})
+    for g in shadow_graded:
+        key = f"{(g.get('projection') or {}).get('stat')}@{(g.get('projection') or {}).get('needs')}"
+        shadow_by_category[key][_GRADE_TO_KEY[g["grade"]]] += 1
+    shadow_by_category = {k: dict(v) for k, v in shadow_by_category.items()}
+
     with open(GRADES_FILE, "w", encoding="utf-8") as f:
         json.dump({"date": YESTERDAY, "hits": hits, "misses": misses, "ungraded": ungraded,
                    "fair_hits": fair_hits, "fair_misses": fair_misses,
                    "by_category": by_category,
-                   "picks": graded}, f, indent=2)
+                   "shadow_by_category": shadow_by_category,
+                   "picks": graded,
+                   "shadow_tracking": shadow_graded}, f, indent=2)
 
     history = {"days": []}
     if os.path.exists(HISTORY_FILE):
@@ -728,7 +753,7 @@ def grade_day(date) -> bool:
     history["days"] = [d for d in history.get("days", []) if d["date"] != YESTERDAY]  # avoid dup on reruns
     history["days"].append({"date": YESTERDAY, "hits": hits, "misses": misses, "ungraded": ungraded,
                             "fair_hits": fair_hits, "fair_misses": fair_misses,
-                            "by_category": by_category})
+                            "by_category": by_category, "shadow_by_category": shadow_by_category})
     history["days"].sort(key=lambda d: d["date"])
 
     totals = {"hits": sum(d["hits"] for d in history["days"]),
@@ -762,6 +787,19 @@ def grade_day(date) -> bool:
         history["main_hit_rate"] = round(main["hits"] / (main["hits"] + main["misses"]), 3)
     else:
         history["main_hit_rate"] = None
+
+    # SHADOW TOTALS -- accumulates every alternate-threshold pick's real
+    # outcome across days, keyed "stat@needs" (e.g. "hard_hit_110@1"), so
+    # "what's hard_hit_110's real hit rate" becomes answerable from history
+    # instead of needing a fresh one-off pull like the first time this was
+    # asked. Deliberately its own top-level key, never merged into
+    # by_category_totals/overall_hit_rate above.
+    shadow_totals = defaultdict(lambda: {"hits": 0, "misses": 0, "ungraded": 0})
+    for d in history["days"]:
+        for cat, counts in d.get("shadow_by_category", {}).items():
+            for k in ("hits", "misses", "ungraded"):
+                shadow_totals[cat][k] += counts.get(k, 0)
+    history["shadow_by_category_totals"] = {k: dict(v) for k, v in shadow_totals.items()}
 
     # Rolling last-14-day rate, so a slow start doesn't permanently anchor the headline number
     recent = history["days"][-14:]
