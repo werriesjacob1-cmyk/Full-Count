@@ -1,0 +1,124 @@
+name: Dashboard Refresh
+
+# Rebuilds the standalone Gridiron Board dashboard (dashboard/build_dashboard.py)
+# and publishes it to GitHub Pages, on its own schedule, with no manual
+# trigger from either Jacob or Claude. Direct request: "I want the dashboard
+# to auto update each day, as prices change, and as lineups come out...
+# I want this to run separately from you. No effort from either of us."
+#
+# Every 2 hours, not more often: build_dashboard.py's own docstring is
+# explicit that a fresh live pass takes several minutes and makes real
+# calls to FanGraphs/Statcast/FanDuel -- "this is not something to run
+# every few minutes." Spread across the day this still catches lineups as
+# MLB posts them progressively through the afternoon/evening and refreshes
+# FanDuel prices each time. The published page ALSO prunes itself
+# client-side the moment a game starts and reloads every 30 minutes on its
+# own (see build_dashboard.py's pruneStartedGames()/the trailing
+# setInterval calls) -- so the two together approximate a live page
+# without the underlying pipeline ever running on a live cadence.
+#
+# Multiple cron entries, same reasoning as mlb-daily.yml's own multi-window
+# schedule: GitHub documents that scheduled runs are delayed under load and
+# can be dropped entirely, and this project has already measured that
+# happening. One missed window here is not catastrophic (the page just
+# stays on its last build a bit longer), but there is no reason to accept
+# more staleness than necessary when redundant windows are free on a
+# public repo.
+on:
+  schedule:
+    - cron: '0 13 * * *'
+    - cron: '0 15 * * *'
+    - cron: '0 17 * * *'
+    - cron: '0 19 * * *'
+    - cron: '0 21 * * *'
+    - cron: '0 23 * * *'
+    - cron: '0 1 * * *'
+    - cron: '0 3 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+# Distinct group from every other workflow's -- a slow dashboard build must
+# never block or be blocked by the main picks pipeline, the odds snapshot,
+# or the calibration recheck, and vice versa.
+concurrency:
+  group: dashboard-refresh
+  cancel-in-progress: true
+
+jobs:
+  build-and-publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Build dashboard
+        run: python3 dashboard/build_dashboard.py --out docs/index.html
+
+      - name: Commit and push
+        run: |
+          git config user.name "mlb-pipeline-bot"
+          git config user.email "actions@github.com"
+          git add docs/index.html
+          if git diff --cached --quiet; then
+            echo "No change to the dashboard -- nothing to publish."
+            exit 0
+          fi
+          git commit -m "Dashboard refresh $(date -u +'%F %H:%M') UTC"
+          # Same retry-with-rebase as odds-snapshot.yml: this collides with
+          # the main pipeline's and the odds snapshot's own commits, and
+          # docs/index.html is the only file this job ever writes, so a
+          # rebase always resolves cleanly.
+          for attempt in 1 2 3 4 5; do
+            if git push; then
+              echo "Pushed on attempt $attempt."
+              exit 0
+            fi
+            echo "Push rejected (attempt $attempt/5) -- rebasing onto origin/main."
+            git fetch origin main
+            if ! git rebase origin/main; then
+              echo "::error::Rebase conflict -- aborting rather than leaving a broken tree."
+              git rebase --abort
+              exit 1
+            fi
+          done
+          echo "::error::Failed to push dashboard rebuild after 5 attempts."
+          exit 1
+
+  deploy-pages:
+    needs: build-and-publish
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload dashboard artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
