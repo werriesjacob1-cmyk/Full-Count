@@ -147,6 +147,17 @@ head("9. an empty candidate list returns an empty dict")
 
 check(gp.select_best_by_category([], {}, fd) == {}, "no candidates returns an empty dict")
 
+head("10. min_score=0 recovers a category the default MIN_QUALITY_SCORE floor drops entirely "
+     "-- direct request: \"we should always track every prop... We can't just throw them away\"")
+
+below_floor = single_line_pitcher(stat="strikeouts", score=gp.MIN_QUALITY_SCORE - 5)
+default_out = gp.select_best_by_category([below_floor], {}, fd)
+unfloored_out = gp.select_best_by_category([below_floor], {}, fd, min_score=0)
+check(default_out == {}, "the default call (no min_score) still drops it, unchanged behavior")
+check("strikeouts" in unfloored_out and unfloored_out["strikeouts"][0]["score"] == below_floor["score"],
+      "min_score=0 recovers the exact same below-floor candidate instead of discarding it",
+      f"got {unfloored_out}")
+
 n_pass = sum(1 for ok, _, _ in _results if ok)
 n_total = len(_results)
 print("\n" + "=" * 78)
