@@ -3234,6 +3234,12 @@ def _build_and_score():
         # now that attach_hit_probabilities' strikeouts branch needs the real
         # line to pick against (see strikeout_prices' own comment above).
         "k_prices": extras.get("strikeout_prices"),
+        # Per-umpire K%/BB% tendency (see score_batter's own ump_kbb usage
+        # above) -- not previously carried through ctx since nothing outside
+        # scoring needed it. dashboard/build_dashboard.py's game-schedule
+        # breakdown needs it to explain WHY a game's props lean a certain
+        # way, not just score them with it.
+        "ump_kbb": extras.get("ump_kbb"),
     }
 
 

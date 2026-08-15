@@ -25,6 +25,7 @@ import json
 import os
 import sys
 import tempfile
+from collections import defaultdict
 from datetime import datetime
 
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -196,6 +197,67 @@ def run_live_fetch():
           "moonshot": clean(moonshots_full), "suggested_parlay": suggested_parlay}
     for stat, entries in by_category_full.items():
         out[stat] = clean(entries)
+
+    # Per-game schedule breakdown. Direct request: "I want people to be able
+    # to click on a game on the schedule, and get a breakdown of why X
+    # props might be best for A B C reasons. Think time, weather, etc."
+    # Built from the exact same weather/umpire data score_batter() already
+    # used to score tonight's candidates -- this isn't a second, separate
+    # read, just exposing the real reasoning instead of leaving it buried
+    # inside the model. Already-started games are skipped, same rule as
+    # everywhere else on this page ("as games start I want those props
+    # removed" -- a schedule entry with no live props to show would be a
+    # dead end, not useful).
+    all_priced = clean(moonshots_full)
+    for entries in by_category_full.values():
+        all_priced.extend(clean(entries))
+    picks_by_game = defaultdict(list)
+    seen_pick_keys = set()
+    for r in all_priced:
+        pk = r.get("game_pk")
+        if not pk or r.get("hit_probability") is None:
+            continue
+        key = (r.get("name"), r.get("prop"))
+        if key in seen_pick_keys:
+            continue  # moonshot/best-of-category can overlap on the same player+prop
+        seen_pick_keys.add(key)
+        picks_by_game[pk].append(r)
+
+    ump_kbb = ctx.get("ump_kbb") or {}
+    game_context = []
+    for gm in game_meta:
+        pk = gm.get("game_pk")
+        if pk in started:
+            continue
+        wx = park_wx.get(gm.get("matchup")) or {}
+        weather = None
+        if wx.get("dome"):
+            weather = {"dome": True}
+        elif wx.get("temp") is not None:
+            weather = {"dome": False, "temp": wx.get("temp"), "wind_mph": wx.get("wind_mph"),
+                      "wind_effect": wx.get("wind_effect"), "park_hr_index": wx.get("park_hr_index"),
+                      "precip_prob": wx.get("precip_prob")}
+        uk = ump_kbb.get(gm.get("hp_ump")) or {}
+        umpire = None
+        if uk.get("k_pct") is not None:
+            umpire = {"name": gm.get("hp_ump"), "k_pct": uk.get("k_pct"),
+                     "bb_pct": uk.get("bb_pct"), "league_k_pct": uk.get("league_k_pct"),
+                     "league_bb_pct": uk.get("league_bb_pct")}
+        game_picks = sorted(picks_by_game.get(pk, []),
+                           key=lambda r: r.get("hit_probability") or 0, reverse=True)[:6]
+        game_context.append({
+            "game_pk": pk, "matchup": gm.get("matchup"),
+            "away_team": gm.get("away_team"), "home_team": gm.get("home_team"),
+            "away_sp": gm.get("away_sp"), "home_sp": gm.get("home_sp"),
+            "hp_ump": gm.get("hp_ump") if gm.get("hp_ump") != "TBD" else None,
+            "game_start": (schedule.get(pk) or {}).get("start"),
+            "weather": weather, "umpire": umpire,
+            "is_getaway": bool(gm.get("is_getaway")), "is_opener": bool(gm.get("is_opener")),
+            "picks": [{"name": r["name"], "prop": r["prop"], "hit_probability": r["hit_probability"],
+                      "market_odds": r.get("market_odds"), "price_clears": r.get("price_clears"),
+                      "why": (r.get("why") or [None])[0]} for r in game_picks],
+        })
+    out["game_context"] = game_context
     return out
 
 
@@ -366,7 +428,7 @@ def build_payload(result, track_record=None):
     # its value (None, or a dict once the parlay build succeeds) as a list
     # of candidate rows and crashed on `for r in rows` the moment a real run
     # actually populated it.
-    meta_keys = {"generated_at", "date", "suggested_parlay"}
+    meta_keys = {"generated_at", "date", "suggested_parlay", "game_context"}
     tabs = {}
     for stat in CATEGORY_ORDER:
         rows = result.get(stat)
@@ -401,12 +463,21 @@ def build_payload(result, track_record=None):
     return {
         "date": result.get("date"),
         "generated_at": result.get("generated_at"),
-        "tabs_order": ["top_picks", "all"] + list(tabs.keys()),
+        # "schedule": direct request, "I want people to be able to click on
+        # a game on the schedule, and get a breakdown of why X props might
+        # be best for A B C reasons. Think time, weather, etc." A real tab
+        # like top_picks/all, not the generic stat-category loop above --
+        # its rows are games, not picks (no hit_probability/market_odds),
+        # which is exactly why game_context is in meta_keys: the generic
+        # loop filters on hit_probability is not None, which would silently
+        # empty this tab out entirely if it ran through there instead.
+        "tabs_order": ["top_picks", "schedule", "all"] + list(tabs.keys()),
         "labels": {
-            "top_picks": "Top Picks", "all": "All Props",
+            "top_picks": "Top Picks", "schedule": "Schedule", "all": "All Props",
             **{stat: CATEGORY_LABELS.get(stat, stat.replace("_", " ").title()) for stat in tabs},
         },
-        "data": {"top_picks": top_picks, "all": all_rows, **tabs},
+        "data": {"top_picks": top_picks, "schedule": result.get("game_context") or [],
+                "all": all_rows, **tabs},
         "track_record": track_record,
         "suggested_parlay": result.get("suggested_parlay"),
     }
@@ -789,6 +860,38 @@ body {{
 }}
 .explain b {{ color: var(--ink); font-weight: 600; }}
 
+/* ---- schedule / game cards -- direct request: "click on a game on the
+   schedule, and get a breakdown of why X props might be best... time,
+   weather, etc." Same expand/collapse mechanism as .pick (toggleExplain(),
+   the shared .explain block), different layout since a game card has no
+   odds/probability columns to align to. */
+.games {{ display: flex; flex-direction: column; gap: 10px; }}
+.game-card {{
+  background: var(--surface); border: 1px solid var(--line); border-radius: 10px;
+  padding: 14px 16px; cursor: pointer; transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}}
+.game-card:hover {{ border-color: var(--accent-soft); }}
+.game-card.expanded {{ border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent-soft), var(--shadow); }}
+.game-card.expanded .chev {{ transform: rotate(180deg); color: var(--accent); }}
+.game-head {{ display: flex; align-items: baseline; gap: 10px; }}
+.game-matchup {{ font-family: var(--font-display); font-weight: 700; font-size: 15.5px; color: var(--ink); }}
+.game-time {{ font-family: var(--font-mono); font-size: 12px; color: var(--ink-faint); margin-left: auto; }}
+.game-card .chev {{ width: 16px; height: 16px; color: var(--ink-faint); flex-shrink: 0; transition: transform 0.15s ease; }}
+.game-sub {{ font-size: 12.5px; color: var(--ink-dim); margin-top: 4px; }}
+.game-card.expanded .explain {{ max-height: 900px; opacity: 1; margin-top: 12px; padding-top: 12px; }}
+.game-detail-row {{ margin-bottom: 6px; }}
+.game-picks-label {{ margin-top: 10px; }}
+.game-picks {{ display: flex; flex-direction: column; gap: 4px; }}
+.game-pick-row {{
+  display: flex; align-items: center; justify-content: space-between; gap: 10px;
+  padding: 6px 8px; background: var(--surface-2); border-radius: 6px; font-size: 12.5px;
+}}
+.gp-who {{ display: flex; flex-direction: column; min-width: 0; }}
+.gp-name {{ font-weight: 600; color: var(--ink); }}
+.gp-prop {{ color: var(--ink-faint); font-size: 11.5px; }}
+.gp-prob {{ font-family: var(--font-mono); font-weight: 700; color: var(--ink-dim); flex-shrink: 0; }}
+.gp-prob.gp-clears {{ color: var(--good); }}
+
 .empty-state {{
   text-align: center; padding: 48px 20px; color: var(--ink-faint);
   font-size: 13.5px; border: 1px dashed var(--line); border-radius: 8px;
@@ -1166,6 +1269,77 @@ function renderSuggestedParlay() {{
     </div>`;
 }}
 
+// ---- schedule: direct request, "I want people to be able to click on a
+// game on the schedule, and get a breakdown of why X props might be best
+// for A B C reasons. Think time, weather, etc." Reuses the SAME
+// expand/collapse mechanism .pick rows already use (toggleExplain(), see
+// initPanelInteractions()) rather than a second interaction pattern.
+function gameCard(g) {{
+  const start = g.game_start ? new Date(g.game_start) : null;
+  const timeStr = start
+    ? start.toLocaleTimeString("en-US", {{ hour: "numeric", minute: "2-digit", timeZone: "America/New_York" }}) + " ET"
+    : "Time TBD";
+
+  let wxLine;
+  if (g.weather && g.weather.dome) {{
+    wxLine = "Dome (climate controlled, no weather factor)";
+  }} else if (g.weather && g.weather.temp !== null && g.weather.temp !== undefined) {{
+    const parts = [Math.round(g.weather.temp) + "&deg;F"];
+    if (g.weather.wind_mph !== null && g.weather.wind_mph !== undefined) {{
+      parts.push(Math.round(g.weather.wind_mph) + " mph" + (g.weather.wind_effect ? " (" + g.weather.wind_effect.replace(/_/g, " ") + ")" : ""));
+    }}
+    if (g.weather.precip_prob !== null && g.weather.precip_prob !== undefined && g.weather.precip_prob >= 30) {{
+      parts.push(g.weather.precip_prob + "% chance of rain");
+    }}
+    wxLine = parts.join(", ");
+  }} else {{
+    wxLine = "Weather data unavailable";
+  }}
+
+  let umpLine;
+  if (g.umpire && g.umpire.k_pct !== null && g.umpire.k_pct !== undefined) {{
+    const kDiff = (g.umpire.k_pct - g.umpire.league_k_pct) * 100;
+    const bbDiff = (g.umpire.bb_pct - g.umpire.league_bb_pct) * 100;
+    const kNote = Math.abs(kDiff) >= 1 ? (kDiff > 0 ? "tighter zone, more strikeouts" : "bigger zone, fewer strikeouts") : "close to league average";
+    umpLine = `${{esc(g.umpire.name)}} -- ${{(g.umpire.k_pct * 100).toFixed(1)}}% K rate, ${{(g.umpire.bb_pct * 100).toFixed(1)}}% BB rate (${{kNote}})`;
+  }} else if (g.hp_ump) {{
+    umpLine = `${{esc(g.hp_ump)}} -- not enough called games yet for a real tendency read`;
+  }} else {{
+    umpLine = "Umpire not yet assigned";
+  }}
+
+  const flags = [];
+  if (g.is_getaway) flags.push("Getaway day");
+  if (g.is_opener) flags.push("Series opener");
+
+  const picks = g.picks || [];
+  const picksHtml = picks.length
+    ? picks.map(p => `
+        <div class="game-pick-row">
+          <span class="gp-who"><span class="gp-name">${{esc(p.name)}}</span><span class="gp-prop">${{esc(p.prop)}}</span></span>
+          <span class="gp-prob${{p.price_clears === true ? " gp-clears" : ""}}">${{Math.round(p.hit_probability * 100)}}%</span>
+        </div>`).join("")
+    : `<div class="empty-state">No priced candidates for this game yet -- check back as lineups and prices come in.</div>`;
+
+  return `
+  <div class="game-card" tabindex="0" role="button" aria-expanded="false">
+    <div class="game-head">
+      <div class="game-matchup">${{esc(g.matchup)}}</div>
+      <div class="game-time">${{timeStr}}</div>
+      <svg class="chev" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    <div class="game-sub">${{esc(g.away_sp || "TBD")}} vs ${{esc(g.home_sp || "TBD")}}${{flags.length ? " &middot; " + flags.map(esc).join(", ") : ""}}</div>
+    <div class="explain">
+      <div class="game-detail-row"><strong>Weather:</strong> ${{wxLine}}</div>
+      <div class="game-detail-row"><strong>HP Umpire:</strong> ${{umpLine}}</div>
+      <div class="game-detail-row game-picks-label"><strong>Best-priced props tied to this game:</strong></div>
+      <div class="game-picks">${{picksHtml}}</div>
+    </div>
+  </div>`;
+}}
+
 let activeTabKey = PAYLOAD.tabs_order[0];
 
 function renderTabs() {{
@@ -1173,7 +1347,7 @@ function renderTabs() {{
   bar.innerHTML = PAYLOAD.tabs_order.map((key) => {{
     const label = PAYLOAD.labels[key];
     const count = PAYLOAD.data[key].length;
-    const icon = key === "top_picks" ? "&#127942; " : (key === "starred" ? "&#9733; " : "");
+    const icon = key === "top_picks" ? "&#127942; " : (key === "starred" ? "&#9733; " : (key === "schedule" ? "&#128197; " : ""));
     const extraCls = key === "top_picks" ? " top-picks" : (key === "starred" ? " starred-tab" : "");
     return `<button class="tab${{key === activeTabKey ? " active" : ""}}${{extraCls}}" data-tab="${{esc(key)}}">${{icon}}${{esc(label)}} <span class="cnt">${{count}}</span></button>`;
   }}).join("");
@@ -1191,6 +1365,7 @@ function renderTabs() {{
 const PANEL_DESC = {{
   top_picks: "The board's real favorites tonight: High-confidence picks that still clear FanDuel's price, ranked by genuine edge over the market -- not just raw probability.",
   starred: "Your personal shortlist. Click the star on any pick to save it here -- stored on this device only, nothing is sent anywhere.",
+  schedule: "Tonight's slate. Click a game for the real weather, home-plate umpire tendency, and starting pitchers behind it, plus the best-priced props tied to that specific matchup.",
 }};
 
 // Some markets are structurally thin -- not a bug, not a trimmed list, just
@@ -1250,12 +1425,22 @@ function renderPanels() {{
   let html = "";
   PAYLOAD.tabs_order.forEach((key) => {{
     const realRows = PAYLOAD.data[key];
-    const rows = filterSortRows(realRows);
     const label = PAYLOAD.labels[key];
+    const desc = PANEL_DESC[key] ? `<p class="panel-desc">${{esc(PANEL_DESC[key])}}</p>` : "";
+    let body, countLabel, rankedBy;
+    if (key === "schedule") {{
+      // Games, not picks -- no price/edge/probability to filter or sort by,
+      // so this bypasses filterSortRows/THIN_NOTES/the "show more" cutoff
+      // entirely rather than forcing a pick-shaped rendering onto them.
+      body = realRows.length
+        ? `<div class="games">${{realRows.map(gameCard).join("")}}</div>`
+        : `<div class="empty-state">No games left to preview tonight -- everything on the slate has already started.</div>`;
+      countLabel = `${{realRows.length}} game${{realRows.length === 1 ? "" : "s"}}`;
+      rankedBy = "first pitch time";
+    }} else {{
+    const rows = filterSortRows(realRows);
     const visible = rows.slice(0, SHOW_N);
     const rest = rows.slice(SHOW_N);
-    const desc = PANEL_DESC[key] ? `<p class="panel-desc">${{esc(PANEL_DESC[key])}}</p>` : "";
-    let body;
     if (!realRows.length && key === "starred") {{
       body = `<div class="empty-state">You haven't starred any picks yet -- click the &#9734; on any pick to save it here.</div>`;
     }} else if (!realRows.length) {{
@@ -1277,12 +1462,14 @@ function renderPanels() {{
         ${{rest.length ? `<button class="more-btn" data-more="${{esc(key)}}">Show all ${{rows.length}} &darr;</button>` : ""}}
         ${{thinNote}}`;
     }}
-    const countLabel = filtersActive
+    countLabel = filtersActive
       ? `${{rows.length}} of ${{realRows.length}} candidate${{realRows.length === 1 ? "" : "s"}}`
       : `${{realRows.length}} candidate${{realRows.length === 1 ? "" : "s"}}`;
+    rankedBy = uiState.sortKey === "edge" ? "edge over the market" : uiState.sortKey === "prob" ? "model probability" : uiState.sortKey === "odds" ? "payout size" : (key === "top_picks" ? "edge over the market" : "model probability");
+    }}
     html += `
     <div class="panel${{key === activeTabKey ? " active" : ""}}" id="panel-${{esc(key)}}">
-      <div class="panel-head"><h2>${{esc(label)}}</h2><span class="n">${{countLabel}}, ranked by ${{uiState.sortKey === "edge" ? "edge over the market" : uiState.sortKey === "prob" ? "model probability" : uiState.sortKey === "odds" ? "payout size" : (key === "top_picks" ? "edge over the market" : "model probability")}}</span></div>
+      <div class="panel-head"><h2>${{esc(label)}}</h2><span class="n">${{countLabel}}, ranked by ${{rankedBy}}</span></div>
       ${{desc}}
       ${{body}}
     </div>`;
@@ -1323,12 +1510,12 @@ function initPanelInteractions() {{
       toggleStar(starBtn.dataset.starKey);
       return;
     }}
-    const row = e.target.closest(".pick");
+    const row = e.target.closest(".pick, .game-card");
     if (row) toggleExplain(row);
   }});
   el.addEventListener("keydown", e => {{
     if (e.key !== "Enter" && e.key !== " ") return;
-    const row = e.target.closest(".pick");
+    const row = e.target.closest(".pick, .game-card");
     if (!row) return;
     e.preventDefault();
     toggleExplain(row);
