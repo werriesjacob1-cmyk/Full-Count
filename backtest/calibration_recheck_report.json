@@ -1,57 +1,79 @@
 {
-  "generated_at": "2026-08-14T22:12:12.156524Z",
+  "generated_at": "2026-08-15T01:31:30.274443Z",
   "window": {
-    "start": "2026-07-08",
-    "end": "2026-08-12"
+    "start": "2026-07-09",
+    "end": "2026-08-13"
   },
   "method": "platt",
   "test_frac": 0.3,
-  "n_rows_total": 17304,
-  "n_train": 12113,
-  "n_heldout": 5191,
+  "n_rows_total": 62063,
+  "n_train": 43444,
+  "n_heldout": 18619,
   "min_fit_rows": 200,
   "min_heldout_rows": 150,
   "min_brier_improvement": 0.0015,
   "decisions": [
     {
-      "prop_type": "hard_hit_105",
-      "n_train": 5034,
-      "n_heldout": 2188,
+      "prop_type": "doubles",
+      "n_train": 5346,
+      "n_heldout": 2412,
       "action": "skip",
-      "reason": "held-out improvement too small to trust (brier -0.00031, log_loss -0.00318) -- raw probability, or the existing calibrator, keeps shipping",
-      "brier_improvement": -0.00031,
-      "log_loss_improvement": -0.00318,
-      "candidate_brier_after": 0.05285,
+      "reason": "held-out improvement too small to trust (brier -0.00006, log_loss -0.00028) -- raw probability, or the existing calibrator, keeps shipping",
+      "brier_improvement": -6e-05,
+      "log_loss_improvement": -0.00028,
+      "candidate_brier_after": 0.1257,
+      "existing_brier_after": null
+    },
+    {
+      "prop_type": "hard_hit_105",
+      "n_train": 4933,
+      "n_heldout": 2057,
+      "action": "skip",
+      "reason": "held-out improvement too small to trust (brier -0.00028, log_loss -0.00289) -- raw probability, or the existing calibrator, keeps shipping",
+      "brier_improvement": -0.00028,
+      "log_loss_improvement": -0.00289,
+      "candidate_brier_after": 0.05262,
       "existing_brier_after": null
     },
     {
       "prop_type": "hits",
-      "n_train": 2691,
-      "n_heldout": 1116,
+      "n_train": 2621,
+      "n_heldout": 1053,
       "action": "skip",
-      "reason": "held-out improvement too small to trust (brier -0.00054, log_loss -0.00115) -- raw probability, or the existing calibrator, keeps shipping",
-      "brier_improvement": -0.00054,
-      "log_loss_improvement": -0.00115,
-      "candidate_brier_after": 0.23651,
+      "reason": "held-out improvement too small to trust (brier -0.00047, log_loss -0.00102) -- raw probability, or the existing calibrator, keeps shipping",
+      "brier_improvement": -0.00047,
+      "log_loss_improvement": -0.00102,
+      "candidate_brier_after": 0.23623,
       "existing_brier_after": null
     },
     {
       "prop_type": "hits_runs_rbis",
-      "n_train": 2948,
-      "n_heldout": 1269,
+      "n_train": 2868,
+      "n_heldout": 1212,
       "action": "skip",
-      "reason": "held-out improvement too small to trust (brier -0.00002, log_loss -0.00007) -- raw probability, or the existing calibrator, keeps shipping",
-      "brier_improvement": -2e-05,
-      "log_loss_improvement": -7e-05,
-      "candidate_brier_after": 0.22546,
+      "reason": "held-out improvement too small to trust (brier -0.00010, log_loss -0.00025) -- raw probability, or the existing calibrator, keeps shipping",
+      "brier_improvement": -0.0001,
+      "log_loss_improvement": -0.00025,
+      "candidate_brier_after": 0.22584,
+      "existing_brier_after": null
+    },
+    {
+      "prop_type": "home_run",
+      "n_train": 5414,
+      "n_heldout": 2344,
+      "action": "skip",
+      "reason": "held-out improvement too small to trust (brier -0.00008, log_loss -0.00042) -- raw probability, or the existing calibrator, keeps shipping",
+      "brier_improvement": -8e-05,
+      "log_loss_improvement": -0.00042,
+      "candidate_brier_after": 0.10043,
       "existing_brier_after": null
     },
     {
       "prop_type": "nrfi_combined",
-      "n_train": 277,
-      "n_heldout": 118,
+      "n_train": 273,
+      "n_heldout": 110,
       "action": "skip",
-      "reason": "only 118 held-out rows (need >= 150)",
+      "reason": "only 110 held-out rows (need >= 150)",
       "brier_improvement": null,
       "log_loss_improvement": null,
       "candidate_brier_after": null,
@@ -59,25 +81,69 @@
     },
     {
       "prop_type": "pitcher_outs",
-      "n_train": 537,
-      "n_heldout": 231,
+      "n_train": 525,
+      "n_heldout": 218,
       "action": "skip",
-      "reason": "held-out improvement too small to trust (brier -0.00328, log_loss -0.00763) -- raw probability, or the existing calibrator, keeps shipping",
-      "brier_improvement": -0.00328,
-      "log_loss_improvement": -0.00763,
-      "candidate_brier_after": 0.23288,
+      "reason": "held-out improvement too small to trust (brier -0.00306, log_loss -0.00730) -- raw probability, or the existing calibrator, keeps shipping",
+      "brier_improvement": -0.00306,
+      "log_loss_improvement": -0.0073,
+      "candidate_brier_after": 0.23142,
+      "existing_brier_after": null
+    },
+    {
+      "prop_type": "rbis",
+      "n_train": 4937,
+      "n_heldout": 2211,
+      "action": "skip",
+      "reason": "held-out improvement too small to trust (brier -0.00045, log_loss -0.00109) -- raw probability, or the existing calibrator, keeps shipping",
+      "brier_improvement": -0.00045,
+      "log_loss_improvement": -0.00109,
+      "candidate_brier_after": 0.21131,
+      "existing_brier_after": null
+    },
+    {
+      "prop_type": "runs",
+      "n_train": 4937,
+      "n_heldout": 2211,
+      "action": "skip",
+      "reason": "held-out improvement too small to trust (brier -0.00035, log_loss -0.00074) -- raw probability, or the existing calibrator, keeps shipping",
+      "brier_improvement": -0.00035,
+      "log_loss_improvement": -0.00074,
+      "candidate_brier_after": 0.23337,
       "existing_brier_after": null
     },
     {
       "prop_type": "strikeouts",
-      "n_train": 625,
-      "n_heldout": 266,
+      "n_train": 609,
+      "n_heldout": 252,
+      "action": "promote",
+      "reason": "held-out brier improved +0.00958, log_loss improved +0.02134 over raw on 252 held-out rows; also beat the existing calibrator (0.24560 -> 0.24554)",
+      "brier_improvement": 0.00958,
+      "log_loss_improvement": 0.02134,
+      "candidate_brier_after": 0.24554,
+      "existing_brier_after": 0.2456
+    },
+    {
+      "prop_type": "total_bases",
+      "n_train": 5490,
+      "n_heldout": 2268,
       "action": "skip",
-      "reason": "held-out improvement over raw is real, but the currently-shipped calibrator is already at least as good on this window (existing brier 0.24484 vs candidate 0.24490) -- keeping the existing fit",
-      "brier_improvement": 0.00915,
-      "log_loss_improvement": 0.02025,
-      "candidate_brier_after": 0.2449,
-      "existing_brier_after": 0.24484
+      "reason": "held-out improvement too small to trust (brier -0.00021, log_loss -0.00051) -- raw probability, or the existing calibrator, keeps shipping",
+      "brier_improvement": -0.00021,
+      "log_loss_improvement": -0.00051,
+      "candidate_brier_after": 0.22267,
+      "existing_brier_after": null
+    },
+    {
+      "prop_type": "triples",
+      "n_train": 5490,
+      "n_heldout": 2268,
+      "action": "skip",
+      "reason": "held-out improvement too small to trust (brier +0.00004, log_loss +0.00027) -- raw probability, or the existing calibrator, keeps shipping",
+      "brier_improvement": 4e-05,
+      "log_loss_improvement": 0.00027,
+      "candidate_brier_after": 0.01426,
+      "existing_brier_after": null
     },
     {
       "prop_type": "singles",
@@ -91,5 +157,7 @@
       "existing_brier_after": null
     }
   ],
-  "promoted": []
+  "promoted": [
+    "strikeouts"
+  ]
 }
