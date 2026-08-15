@@ -88,7 +88,7 @@
         {
           "prop": "Over 4.5 Strikeouts",
           "type": "pitcher",
-          "score": 52.4,
+          "score": 52.1,
           "notable_signals": 1,
           "matchup": "Boston Red Sox @ Pittsburgh Pirates",
           "game_pk": 823347,
@@ -97,6 +97,7 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
+            "opp_team_k_pct": 46.0,
             "same_hand_ratio": 92.8571,
             "l14_k_pct": 12.3529,
             "tto_penalty": 8.0,
@@ -105,7 +106,7 @@
           "hit_probability": 0.596,
           "raw_hit_probability": 0.6104,
           "lift": 0.057,
-          "reliability": "D",
+          "reliability": "B",
           "sample_n": 13,
           "projection": {
             "stat": "strikeouts",
@@ -116,7 +117,7 @@
         {
           "prop": "Over 14.5 Outs Recorded",
           "type": "pitcher",
-          "score": 2.0,
+          "score": 2.2,
           "notable_signals": 0,
           "matchup": "Boston Red Sox @ Pittsburgh Pirates",
           "game_pk": 823347,
@@ -125,13 +126,13 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.4964,
+            "outs_rate": 0.4957,
             "avg_outs_per_start": 13.62
           },
-          "hit_probability": 0.4964,
+          "hit_probability": 0.4957,
           "raw_hit_probability": null,
-          "lift": -0.2423,
-          "reliability": "D",
+          "lift": -0.2406,
+          "reliability": "B",
           "sample_n": 13,
           "projection": {
             "stat": "pitcher_outs",

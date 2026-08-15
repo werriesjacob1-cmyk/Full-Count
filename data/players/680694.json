@@ -68,7 +68,7 @@
         {
           "prop": "Over 4.5 Strikeouts",
           "type": "pitcher",
-          "score": 47.3,
+          "score": 45.0,
           "notable_signals": 0,
           "matchup": "Baltimore Orioles @ Tampa Bay Rays",
           "game_pk": 822941,
@@ -77,6 +77,7 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
+            "opp_team_k_pct": 18.0,
             "same_hand_ratio": 12.5,
             "l14_k_pct": 32.9412,
             "env_neutral": 50.0
@@ -84,7 +85,7 @@
           "hit_probability": 0.5706,
           "raw_hit_probability": 0.4865,
           "lift": 0.0316,
-          "reliability": "D",
+          "reliability": "A",
           "sample_n": 23,
           "projection": {
             "stat": "strikeouts",
@@ -95,7 +96,7 @@
         {
           "prop": "Over 17.5 Outs Recorded",
           "type": "pitcher",
-          "score": 36.7,
+          "score": 36.0,
           "notable_signals": 0,
           "matchup": "Baltimore Orioles @ Tampa Bay Rays",
           "game_pk": 822941,
@@ -104,13 +105,13 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.4765,
+            "outs_rate": 0.478,
             "avg_outs_per_start": 16.57
           },
-          "hit_probability": 0.4765,
+          "hit_probability": 0.478,
           "raw_hit_probability": null,
-          "lift": 0.007,
-          "reliability": "D",
+          "lift": 0.0012,
+          "reliability": "A",
           "sample_n": 23,
           "projection": {
             "stat": "pitcher_outs",

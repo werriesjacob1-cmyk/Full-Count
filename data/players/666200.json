@@ -87,7 +87,7 @@
         {
           "prop": "Over 6.5 Strikeouts",
           "type": "pitcher",
-          "score": 37.4,
+          "score": 36.9,
           "notable_signals": 0,
           "matchup": "Philadelphia Phillies @ Minnesota Twins",
           "game_pk": 823671,
@@ -96,6 +96,7 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
+            "opp_team_k_pct": 44.0,
             "same_hand_ratio": 0.0,
             "l14_k_pct": 100.0,
             "tto_penalty": -8.0,
@@ -104,7 +105,7 @@
           "hit_probability": 0.5703,
           "raw_hit_probability": 0.4849,
           "lift": 0.3246,
-          "reliability": "D",
+          "reliability": "A",
           "sample_n": 24,
           "projection": {
             "stat": "strikeouts",
@@ -115,7 +116,7 @@
         {
           "prop": "Over 17.5 Outs Recorded",
           "type": "pitcher",
-          "score": 74.4,
+          "score": 73.7,
           "notable_signals": 1,
           "matchup": "Philadelphia Phillies @ Minnesota Twins",
           "game_pk": 823671,
@@ -124,13 +125,13 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.6272,
+            "outs_rate": 0.6287,
             "avg_outs_per_start": 17.96
           },
-          "hit_probability": 0.6272,
+          "hit_probability": 0.6287,
           "raw_hit_probability": null,
-          "lift": 0.1577,
-          "reliability": "D",
+          "lift": 0.1519,
+          "reliability": "A",
           "sample_n": 24,
           "projection": {
             "stat": "pitcher_outs",
