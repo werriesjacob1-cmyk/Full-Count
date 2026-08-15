@@ -511,9 +511,17 @@ CATEGORY_LABELS = {
     "moonshot": "Home Runs",
 }
 
+# Direct request: "Home runs should be more accessible and viewable.
+# Shouldn't be so far down the bar." moonshot used to sit 9th here (14th
+# tab overall, after locks/schedule/streaks/all/hits_runs_rbis/hits/
+# total_bases/singles/doubles/triples/runs/rbis) -- moved up to 3rd, right
+# behind the two most-bet main-board categories, instead of buried behind
+# every counting stat. Only consumer of this order is the tab-building
+# loop below (list(tabs.keys()) feeds straight into tabs_order); nothing
+# else in the codebase reads CATEGORY_ORDER.
 CATEGORY_ORDER = [
-    "hits_runs_rbis", "hits", "total_bases", "singles", "doubles", "triples",
-    "runs", "rbis", "moonshot", "stolen_base", "strikeouts",
+    "hits_runs_rbis", "hits", "moonshot", "total_bases", "singles",
+    "doubles", "triples", "runs", "rbis", "stolen_base", "strikeouts",
     "combined_strikeouts", "pitcher_outs", "hard_hit_105", "hard_hit_110",
     "nrfi_combined",
 ]
@@ -1606,17 +1614,25 @@ function renderTabs() {{
   bar.querySelectorAll(".tab").forEach(btn => {{
     btn.addEventListener("click", () => {{
       activeTabKey = btn.dataset.tab;
+      // Clicking a tab while a global search is active would otherwise try
+      // to activate a panel-<key> div that doesn't exist in the DOM (the
+      // search view replaces #panels with a single synthetic panel) --
+      // clearing the query here and re-rendering fresh through the normal
+      // path is simpler and safer than trying to keep two DOM shapes in
+      // sync by hand.
+      uiState.q = "";
+      const search = document.getElementById("search-input");
+      if (search) search.value = "";
       bar.querySelectorAll(".tab").forEach(b => b.classList.remove("active"));
       btn.classList.add("active");
-      document.querySelectorAll(".panel").forEach(p => p.classList.remove("active"));
-      document.getElementById("panel-" + btn.dataset.tab).classList.add("active");
+      renderPanels();
     }});
   }});
 }}
 
 const PANEL_DESC = {{
-  top_picks: "The board's real favorites tonight: High-confidence picks that still clear FanDuel's price, ranked by genuine edge over the market -- not just raw probability. A Lineup not confirmed badge means his slot is still a projection, not an official posted lineup -- it'll confirm or disappear as MLB posts the real one.",
-  locks: "Every High-confidence pick that clears FanDuel's price with a real, confirmed lineup -- the Lock badge you'd otherwise have to go hunting for across every tab, all in one place. Ranked by edge among these, but everything here already earned the same High-confidence bar.",
+  top_picks: "Every real, priced pick that clears FanDuel's price, ranked purely by edge (model probability minus the market's own implied probability) -- NOT filtered by confidence. A thin-track-record pick with a huge edge can outrank a well-supported pick with a small one, on purpose: edge size and confidence measure two different things. Confidence-gated High picks live in Locks instead. A Lineup not confirmed badge means his slot is still a projection, not an official posted lineup -- it'll confirm or disappear as MLB posts the real one.",
+  locks: "Every pick meeting all three real gates at once: High confidence (score 70+ AND a reliability grade of A or B -- 45+ real games/starts of evidence), price_clears (still positive-EV at the pessimistic end of its confidence interval), and a real MLB-confirmed lineup (not a projection). Ranked by edge among these, but every entry already cleared the same bar -- unlike Top Picks, size of edge is secondary here.",
   starred: "Your personal shortlist. Click the star on any pick to save it here -- stored on this device only, nothing is sent anywhere.",
   schedule: "Tonight's slate. Click a game for the real weather, home-plate umpire tendency, and starting pitchers behind it, plus the best-priced props tied to that specific matchup.",
   streaks: "Real, active streaks among tonight's own candidates, across every batter and pitcher market -- consecutive games clearing a real line, not just hits and total bases. Every entry here is a real prop you can actually bet tonight, not a trivia list.",
@@ -1676,6 +1692,43 @@ function filterSortRows(rows) {{
 function renderPanels() {{
   const el = document.getElementById("panels");
   const filtersActive = !!(uiState.q || uiState.clearsOnly || uiState.highOnly);
+
+  // Global search: direct request -- "the search bar does not work
+  // correctly. I try searching Kyle or Phillies for Kyle Schwarber props
+  // and it returns nothing." Found live: search only ever matched WITHIN
+  // whichever tab happened to be showing, so a real player with real props
+  // (Schwarber had 10) came back empty from a small curated tab (Top
+  // Picks/Locks) he simply wasn't part of. A non-empty query now searches
+  // every real candidate on the board at once (the same row set All Props
+  // shows) instead of requiring the right tab to be open first.
+  if (uiState.q) {{
+    const rows = filterSortRows(PAYLOAD.data.all);
+    const visible = rows.slice(0, SHOW_N);
+    const rest = rows.slice(SHOW_N);
+    const body = rows.length
+      ? `<div class="picks">
+          ${{visible.map((p, j) => pickRow(p, j + 1)).join("")}}
+          ${{rest.map((p, j) => pickRow(p, j + 1 + SHOW_N).replace('class="pick', 'class="pick hidden-row')).join("")}}
+        </div>
+        ${{rest.length ? `<button class="more-btn" data-more="search">Show all ${{rows.length}} &darr;</button>` : ""}}`
+      : `<div class="empty-state">No candidate anywhere on tonight's board matches "${{esc(uiState.q)}}".<br><button class="thin-link clear-filters">Clear search &times;</button></div>`;
+    el.innerHTML = `
+    <div class="panel active" id="panel-search">
+      <div class="panel-head"><h2>Search results</h2><span class="n">${{rows.length}} of ${{PAYLOAD.data.all.length}} candidates match, across every tab</span></div>
+      ${{body}}
+    </div>`;
+    el.querySelectorAll(".more-btn").forEach(btn => {{
+      btn.addEventListener("click", () => {{
+        el.querySelectorAll(".hidden-row").forEach(r => r.classList.remove("hidden-row"));
+        btn.remove();
+      }});
+    }});
+    el.querySelectorAll(".clear-filters").forEach(btn => {{
+      btn.addEventListener("click", () => {{ resetFilters(); }});
+    }});
+    return;
+  }}
+
   let html = "";
   PAYLOAD.tabs_order.forEach((key) => {{
     const realRows = PAYLOAD.data[key];

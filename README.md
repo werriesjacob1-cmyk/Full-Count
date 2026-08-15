@@ -182,18 +182,25 @@ explicit weighted formula instead of prose:
   fatigue when the sample is real — see below), HP umpire zone accuracy +
   opposing lineup handedness composition for pitchers
 
-**Opposing K% has two independent sources.** FanGraphs' *team*-level batting
-page is a separate endpoint from its individual leaderboards and fails on its
-own schedule — verified live: on one real run, every individual batting/
-pitching leaderboard succeeded while the team-batting/team-pitching/team-
-fielding pages all came back empty, which is what was producing "Opposing
-team K% unavailable" on pitcher picks. Rather than add a third team-level
-source, the fallback is tonight's actual confirmed lineup: when the team page
-is down, opposing K% is derived from the mean K% of the specific batters in
-tonight's lineup (already fetched per-player, with its own Statcast fallback)
-— arguably more accurate than a season team average anyway, since it reflects
-who's actually playing tonight rather than the full-season roster. Every
-pitcher pick's "why" states which source was used.
+**Opposing K% has three independent sources, tried in order.** FanGraphs'
+*team*-level batting page is a separate endpoint from its individual
+leaderboards and fails on its own schedule — verified live: on one real run,
+every individual batting/pitching leaderboard succeeded while the
+team-batting/team-pitching/team-fielding pages all came back empty. The
+original fallback for that (deriving opposing K% from tonight's confirmed
+lineup) turned out to have a silent gap of its own: when FanGraphs'
+*individual* batting page ALSO fails, it falls back to Statcast expected-stats
+(`_fg_statcast_bat_fallback`), which has no K% column at all — so every batter
+the lineup-derived fallback checked came back with no K%, and "Opposing team
+K% unavailable" kept showing regardless of whether tonight's lineup was
+confirmed. Found live 2026-08-15 chasing a direct report that this message
+was still appearing. Fixed by inserting a real, always-available second tier:
+`mlb_sources.team_batting_table()`, a team K% derived from the MLB Stats API's
+own `/teams/stats` endpoint (not FanGraphs, not Statcast) — already being
+fetched into backtest extras and never used to close this exact gap. Order
+now: FanGraphs team page → MLB Stats API team page → tonight's confirmed (or
+assumed) lineup's own mean K% → honestly unavailable only if all three come up
+empty. Every pitcher pick's "why" states which of the four outcomes applied.
 
 Weighted toward **trend/data convergence** (how many independent signals
 point the same way) rather than a single computed statistical edge, per

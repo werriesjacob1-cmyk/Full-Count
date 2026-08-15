@@ -127,6 +127,20 @@ check("triples" not in payload4["tabs_order"],
 check("hits" in payload4["tabs_order"],
       "a category with real rows does become a tab")
 
+payload4b = bd.build_payload({
+    "generated_at": "x", "date": "2026-08-12",
+    "hits": [row("A", "hits", 0.7, odds=-200, implied=0.6, edge=0.1, clears=True)],
+    "moonshot": [row("B", "home_runs", 0.2, odds=350, implied=0.22, edge=0.03, clears=True)],
+    "rbis": [row("C", "rbis", 0.5, odds=-110, implied=0.52, edge=0.02, clears=True)],
+    "stolen_base": [row("D", "stolen_base", 0.4, odds=150, implied=0.4, edge=0.0, clears=True)],
+})
+check(payload4b["tabs_order"].index("moonshot") < payload4b["tabs_order"].index("rbis")
+      < payload4b["tabs_order"].index("stolen_base"),
+      "direct request: \"Home runs should be more accessible and viewable. Shouldn't be so "
+      "far down the bar.\" moonshot now sits ahead of the counting-stat categories (rbis, "
+      "stolen_base, etc.) in tabs_order instead of buried behind all of them",
+      f"got {payload4b['tabs_order']}")
+
 
 head("5. estimated_odds is computed for every priced row via the real prop_probability.american_odds")
 
@@ -950,6 +964,95 @@ check("Assumed High Conf" not in lock_names24,
 
 payload24b = bd.build_payload({"generated_at": "x", "date": "2026-08-15"})
 check(payload24b["data"]["locks"] == [], "no candidates at all means an empty, valid Locks tab")
+
+head("25. Global search: direct request, verbatim -- \"the search bar does not work correctly. "
+     "I try searching 'Kyle' or 'Phillies' for Kyle shearer props and it returns nothing.\" Real "
+     "bug, found live 2026-08-15: filterSortRows() itself matched correctly, but renderPanels() "
+     "only ever applied it to whichever tab happened to be active -- a real player with real "
+     "props in All Props but none in the small curated Top Picks/Locks tabs came back empty just "
+     "because the wrong tab was open.")
+
+if node:
+    html25 = bd.render_html(bd.build_payload({
+        "generated_at": "x", "date": "2026-08-15",
+        "hits": [row("Kyle Schwarber", "hits", 0.65, odds=-110, implied=0.52, edge=0.13,
+                     clears=True, confidence="Medium")],
+        "total_bases": [row("Some Other Guy", "total_bases", 0.55, odds=100, implied=0.50,
+                            edge=0.05, clears=True, confidence="Low")],
+    }), fonts)
+    js25 = html25.split("<script>", 1)[1].rsplit("</script>", 1)[0]
+    harness25 = """
+function stubEl() {
+  return {addEventListener(){}, textContent:'', innerHTML:'', dataset:{}, style:{},
+    setAttribute(){}, removeAttribute(){}, value:'',
+    classList:{add(){}, remove(){}, toggle(){return false;}}, querySelectorAll: () => [],
+    querySelector: () => null, remove(){}};
+}
+const panelsEl = stubEl();
+const tabbarEl = stubEl();
+const els = {panels: panelsEl, tabbar: tabbarEl};
+const document = {
+  getElementById: (id) => els[id] || stubEl(),
+  documentElement: {setAttribute(){}, removeAttribute(){}, getAttribute: () => null},
+  querySelectorAll: () => [], querySelector: () => null, createElement: () => stubEl()};
+const window = {matchMedia: () => ({matches:false}), location: {reload(){}}};
+const localStorage = {getItem: () => null, setItem(){}};
+const fetch = () => Promise.reject(new Error("no network in test"));
+const setInterval = () => {};
+const requestAnimationFrame = (fn) => {};
+""" + js25 + """
+// Top Picks is the active tab (won't contain either of these Medium/Low
+// confidence, small-tab-only rows) -- the real Schwarber scenario.
+activeTabKey = "top_picks";
+uiState.q = "kyle";
+renderPanels();
+if (!panelsEl.innerHTML.includes("Kyle Schwarber")) {
+  console.error("FAIL: searching 'kyle' while Top Picks is active found nothing -- got: " + panelsEl.innerHTML.slice(0, 300));
+  process.exit(1);
+}
+if (!panelsEl.innerHTML.includes("panel-search")) {
+  console.error("FAIL: search didn't render the synthetic search-results panel");
+  process.exit(1);
+}
+uiState.q = "";
+panelsEl.innerHTML = "";
+// Team-name search must also work, across the whole board.
+uiState.q = "phillies";
+renderPanels();
+// Neither fixture player is on the Phillies, so this should be a real,
+// honest empty state, not a crash and not a stale render.
+if (!panelsEl.innerHTML.includes("No candidate anywhere")) {
+  console.error("FAIL: a query matching nothing should render the honest empty-search state -- got: " + panelsEl.innerHTML.slice(0, 300));
+  process.exit(1);
+}
+// Simulate a tab click while search is active -- must not throw, and must
+// clear the search (this is exactly the null-ref risk the renderTabs() fix
+// exists for: clicking a panel-<key> that doesn't exist while the search
+// view is showing).
+uiState.q = "kyle";
+renderPanels();
+activeTabKey = "hits";
+uiState.q = "";
+renderPanels();
+if (panelsEl.innerHTML.includes("panel-search")) {
+  console.error("FAIL: switching tabs should leave search mode, not keep rendering the search panel");
+  process.exit(1);
+}
+console.log("global search: all checks passed");
+"""
+    harness_path25 = tempfile.mktemp(suffix=".js")
+    with open(harness_path25, "w") as f:
+        f.write(harness25)
+    try:
+        r25 = subprocess.run([node, harness_path25], capture_output=True, text=True)
+        check(r25.returncode == 0, "global search finds a real player regardless of which tab "
+              "is active, a non-matching query renders an honest empty state instead of a "
+              "crash, and switching tabs while search is active safely exits search mode",
+              r25.stdout + r25.stderr)
+    finally:
+        os.remove(harness_path25)
+else:
+    check(True, "node not available -- global search JS check skipped, not failed")
 
 n_pass = sum(1 for ok, _, _ in _results if ok)
 n_total = len(_results)

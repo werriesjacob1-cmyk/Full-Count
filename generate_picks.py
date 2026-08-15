@@ -1966,10 +1966,14 @@ def score_pitcher(sp_name, sp_id, sp_hand, gm, side, pit_season_lookup, l14_form
         watchouts.append("No L14 start found for this pitcher — workload defaulted to the league average")
 
     if opp_team_k_pct is not None:
-        k_note = (f"Opposing team K% {opp_team_k_pct:.1f}" if opp_k_source == "team"
-                   else f"Opposing lineup K% {opp_team_k_pct:.1f} (avg of {opp_k_source} confirmed batters — FanGraphs team page unreachable)")
+        if opp_k_source == "team":
+            k_note = f"Opposing team K% {opp_team_k_pct:.1f}"
+        elif opp_k_source == "mlb_team":
+            k_note = f"Opposing team K% {opp_team_k_pct:.1f} (MLB Stats API — FanGraphs team page unreachable)"
+        else:
+            k_note = f"Opposing lineup K% {opp_team_k_pct:.1f} (avg of {opp_k_source} confirmed batters — FanGraphs and MLB Stats API team pages both unreachable)"
     else:
-        k_note = "Opposing team K% unavailable (FanGraphs team page down and no confirmed lineup batters matched)"
+        k_note = "Opposing team K% unavailable (FanGraphs and MLB Stats API team pages both empty, and no confirmed/assumed lineup batters matched)"
     why = [k_note]
     if workload_note: why.append(workload_note)
     why.append(f"{same_hand}/{known} known-hand opposing batters same-handed" if known else "Opposing lineup handedness mostly unknown")
@@ -2718,7 +2722,7 @@ def build_candidates(game_meta, *, extras=None, batter_lookup, pitcher_lookup, t
                      park_wx, ump_scores, bullpen_scores, bullpen_quality,
                      sharp_bias, l7_form, bat_speed_trend, batter_arsenal,
                      pitcher_arsenal, sprint_speed, catcher_poptime,
-                     l14_pitcher_form, fi_form, exp_k_form=None):
+                     l14_pitcher_form, fi_form, exp_k_form=None, team_k_source=None):
     """Score every prop candidate on a slate. Pure function of its inputs —
     it fetches nothing, so the caller decides what "now" means.
 
@@ -2734,6 +2738,7 @@ def build_candidates(game_meta, *, extras=None, batter_lookup, pitcher_lookup, t
     exactly the behaviour a backtest needs, versus silently substituting a
     present-day value."""
     candidates = []
+    team_k_source = team_k_source or {}
     catcher_by_team = {}
     for gm in game_meta:
         for side, team_key in [("away_lineup", "away_team"), ("home_lineup", "home_team")]:
@@ -2847,7 +2852,8 @@ def build_candidates(game_meta, *, extras=None, batter_lookup, pitcher_lookup, t
 
         away_pitcher_c = home_pitcher_c = None
         if gm["away_sp"] != "TBD" and gm.get("away_sp_id"):
-            opp_k, opp_k_source = team_k_lookup.get(gm["home_team"]), "team"
+            opp_k = team_k_lookup.get(gm["home_team"])
+            opp_k_source = team_k_source.get(gm["home_team"], "team")
             if opp_k is None:
                 opp_k, n = estimate_lineup_k_pct(gm.get("home_lineup", []), batter_lookup)
                 opp_k_source = n
@@ -2864,7 +2870,8 @@ def build_candidates(game_meta, *, extras=None, batter_lookup, pitcher_lookup, t
                                     po_prices=(extras or {}).get("pitcher_outs_prices"))
             if po: candidates.append(po)
         if gm["home_sp"] != "TBD" and gm.get("home_sp_id"):
-            opp_k, opp_k_source = team_k_lookup.get(gm["away_team"]), "team"
+            opp_k = team_k_lookup.get(gm["away_team"])
+            opp_k_source = team_k_source.get(gm["away_team"], "team")
             if opp_k is None:
                 opp_k, n = estimate_lineup_k_pct(gm.get("away_lineup", []), batter_lookup)
                 opp_k_source = n
@@ -3003,9 +3010,35 @@ def _build_and_score():
     batter_lookup = name_lookup(bat_season_df)
     pitcher_lookup = name_lookup(pit_season_df)
     team_k_lookup = {}
+    team_k_source = {}
     if team_bat_df is not None and not team_bat_df.empty and "K%" in team_bat_df.columns:
         name_col = "Team" if "Team" in team_bat_df.columns else team_bat_df.columns[0]
         team_k_lookup = dict(zip(team_bat_df[name_col].astype(str), team_bat_df["K%"]))
+        team_k_source = {t: "team" for t in team_k_lookup}
+
+    # Direct request, verbatim: "why do I still see 'Opposing team K% unavailable'?"
+    # Real bug, found live 2026-08-15: FanGraphs' team-batting page 403s
+    # independently of (and more often than) its INDIVIDUAL batting page --
+    # and when the individual page ALSO falls back to Statcast expected-stats
+    # (_fg_statcast_bat_fallback in mlb_daily.py), that fallback has no K%
+    # column at all. So whenever FanGraphs' individual batting data was down
+    # too, batter_lookup carried no K% for ANY player, which meant
+    # estimate_lineup_k_pct()'s "derive it from tonight's confirmed lineup"
+    # fallback below could never fire either -- every batter it checked came
+    # back K%=None, every single time, regardless of whether the lineup was
+    # confirmed. mlb_sources.team_batting_table() -- a real MLB Stats API
+    # team-level K%, not FanGraphs, not Statcast -- was already being fetched
+    # into extras["team_bat"] purely for backtest signal measurement and
+    # never consulted here, sitting unused right next to the exact gap it
+    # fills. Fetched once, reused below for extras["team_bat"] too so this
+    # isn't a second network call for the same data.
+    import mlb_sources as _src
+    mlb_team_bat_rows = _src.team_batting_table()
+    for r in mlb_team_bat_rows:
+        team, k = r.get("Team"), r.get("K%")
+        if team and k is not None and team not in team_k_lookup:
+            team_k_lookup[team] = k
+            team_k_source[team] = "mlb_team"
 
     starter_ids = {}
     for gm in game_meta:
@@ -3021,7 +3054,6 @@ def _build_and_score():
     # flat league-average K rate (RMSE 0.0993 vs 0.0807 on 147 real held-out
     # starts), while this measured statistically tied with the pitcher's own
     # flat season rate (0.0684 vs 0.0673) and beat every hard window tested.
-    import mlb_sources as _src
     import odds_fanduel as _fd_early
     exp_k_form = _src.exp_weighted_pitcher_k_rate(list(starter_ids.values()))
 
@@ -3087,7 +3119,9 @@ def _build_and_score():
         ("combined_k_prices", lambda: _fd_early.fetch_combined_pitcher_strikeouts()),
         # Second batch, each verified against its real structure before use.
         ("team_field", lambda: _src.team_fielding_table()),
-        ("team_bat", lambda: _src.team_batting_table()),
+        # Reuses the same call already made above for team_k_lookup's
+        # mlb_team fallback tier -- not fetched twice for the same data.
+        ("team_bat", lambda: mlb_team_bat_rows),
         ("pull", lambda: _src.pull_rates()),
         ("pitch_q", lambda: _src.pitch_quality()),
         # Real IL activations (returns) in the last 21 days, via MLB's
@@ -3166,7 +3200,7 @@ def _build_and_score():
     candidates = build_candidates(
         game_meta, extras=extras,
         batter_lookup=batter_lookup, pitcher_lookup=pitcher_lookup,
-        team_k_lookup=team_k_lookup, park_wx=park_wx, ump_scores=ump_scores,
+        team_k_lookup=team_k_lookup, team_k_source=team_k_source, park_wx=park_wx, ump_scores=ump_scores,
         bullpen_scores=bullpen_scores, bullpen_quality=bullpen_quality,
         sharp_bias=sharp_bias, l7_form=l7_form, bat_speed_trend=bat_speed_trend,
         batter_arsenal=batter_arsenal, pitcher_arsenal=pitcher_arsenal,
@@ -3243,6 +3277,22 @@ def _build_and_score():
     }
 
 
+# How much of a real HR-specific edge over a player's OWN season base rate
+# a moonshot pick needs to earn "High" confidence. Direct request: "does the
+# math support it? Or is it just because we have an edge?" -- found live
+# 2026-08-15 that select_moonshots() was labeling picks High off the
+# batter's HITS/TOTAL-BASES confidence (his primary, most-likely
+# projection), reused wholesale for the home-run entry even though nothing
+# about it was computed for home runs specifically. A real Gleyber Torres
+# case: 11.07% HR probability vs his own 10.34% base rate -- a 0.73-point
+# lift, indistinguishable from noise -- carried a borrowed "High" tag with
+# an empty why/reliability/sample_n, because none of that was ever computed
+# for the HR read either. 3 points is a real, not-noise elevation for a
+# single-digit-percent event (a double-digit relative lift over a real base
+# rate), not an arbitrary round number picked to look scientific.
+MOONSHOT_LOCK_LIFT = 0.03
+
+
 def select_moonshots(candidates, prices, fd, n=5):
     """Best home-run bets by hit probability, priced against FanDuel's real
     line, for batters who already cleared quality_control but whose HR
@@ -3262,7 +3312,17 @@ def select_moonshots(candidates, prices, fd, n=5):
     liking HR bets and confirmed: a separate always-longshot category, not
     a lowered floor. This does not touch MIN_LINE_PROB or anything that
     feeds the main board -- only the quality gate (MIN_QUALITY_SCORE)
-    still applies, same floor every other candidate has to clear."""
+    still applies, same floor every other candidate has to clear.
+
+    confidence/reliability/sample_n/why are computed HERE, independently of
+    the batter's own (hits/total-bases) versions of those same fields --
+    see MOONSHOT_LOCK_LIFT's own comment for the real bug this replaces.
+    reliability/sample_n still describe how much real MLB track record this
+    player has (a legitimate, real thing to carry over -- it says nothing
+    about home runs specifically, just how trustworthy ANY read on him is),
+    but confidence additionally requires a real HR-specific lift, and why
+    is written fresh from the real HR numbers instead of borrowing a
+    sentence about a different stat entirely."""
     out = []
     for c in candidates:
         if c.get("type") != "batter":
@@ -3275,6 +3335,28 @@ def select_moonshots(candidates, prices, fd, n=5):
             continue
         odds = (prices.get(fd.normalize_name(c.get("name"))) or {}).get(("home_runs", 1))
         implied = round(pp.implied_probability(odds), 4) if odds is not None else None
+        lift = hr_opt.get("lift")
+        reliability = c.get("reliability")
+        # Half of MOONSHOT_LOCK_LIFT, not a fresh made-up number: any
+        # positive lift at all (even 0.1 of a point, indistinguishable from
+        # rounding noise) originally qualified for Medium, which is its own
+        # version of the exact bug this whole fix exists to close -- a
+        # label implying real support for a read that's actually just
+        # noise around zero.
+        if reliability in ("A", "B") and lift is not None and lift >= MOONSHOT_LOCK_LIFT:
+            confidence = "High"
+        elif reliability in ("A", "B", "C") and lift is not None and lift >= MOONSHOT_LOCK_LIFT / 2:
+            confidence = "Medium"
+        else:
+            confidence = "Low"
+        base_rate = hr_opt.get("base_rate")
+        why = []
+        if base_rate is not None and lift is not None:
+            sample_n = c.get("sample_n") or 0
+            why.append(
+                f"{hr_opt['prob']*100:.1f}% real model probability to homer tonight vs his own "
+                f"{base_rate*100:.1f}% season base rate ({lift*100:+.1f} points) -- built on "
+                f"{sample_n} real batter-games, reliability grade {reliability or '?'}")
         # Full candidate shape, not a stripped-down dict -- write_json appends
         # these into the same `picks` list grade_results.py already knows how
         # to grade (it reads pick["type"], pick["projection"]["stat"]/["needs"]
@@ -3285,11 +3367,11 @@ def select_moonshots(candidates, prices, fd, n=5):
             "team": c.get("team"), "matchup": c.get("matchup"), "game_pk": c.get("game_pk"),
             "side": c.get("side"), "prop": "Home Run",
             "projection": {"stat": "home_runs", "value": 1, "needs": 1},
-            "lean": None, "score": c.get("score"), "confidence": c.get("confidence"),
+            "lean": None, "score": c.get("score"), "confidence": confidence,
             "notable_signals": c.get("notable_signals", 0),
             "hit_probability": hr_opt["prob"],
             "signals": c.get("signals") or {},
-            "base_rate": hr_opt.get("base_rate"), "lift": hr_opt.get("lift"),
+            "base_rate": base_rate, "lift": lift,
             "probability_basis": hr_opt.get("basis"),
             "probability_detail": {"empirical": hr_opt.get("empirical"), "modelled": hr_opt.get("modelled")},
             "market_odds": odds, "market_implied": implied,
@@ -3297,6 +3379,8 @@ def select_moonshots(candidates, prices, fd, n=5):
             "price_clears": pp.price_is_acceptable(odds, hr_opt["prob"]),
             "category": "moonshot",
             "lineup_assumed": c.get("lineup_assumed"),
+            "reliability": reliability, "sample_n": c.get("sample_n"),
+            "why": why, "watchouts": [],
         })
     out.sort(key=lambda o: o["hit_probability"], reverse=True)
     return out[:n]
