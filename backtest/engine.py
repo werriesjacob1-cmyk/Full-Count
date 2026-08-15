@@ -137,7 +137,7 @@ import os
 import sys
 import time
 from collections import defaultdict
-from datetime import date as _date, datetime, timedelta
+from datetime import date as _date, datetime, timedelta, timezone
 
 import pandas as pd
 
@@ -150,9 +150,27 @@ import mlb_sources as msrc      # noqa: E402
 import odds_fanduel as fd       # noqa: E402  -- only ever used for .normalize_name() below;
                                  # backtest never fetches live prices, so nothing here touches
                                  # the network.
+import recommendation as grec   # noqa: E402  -- only used for .git_sha() below, see to_row()
 
 CACHE_DIR = os.environ.get("BACKTEST_CACHE", os.path.join(os.path.dirname(os.path.abspath(__file__)), ".cache"))
 os.makedirs(CACHE_DIR, exist_ok=True)
+
+# PHASE 3, ITEM 7: "backtest rows can span different formula versions
+# without a version tag." Every row to_row() emits below is stamped with
+# these two, computed ONCE per process (a git subprocess call per row,
+# across a run that can emit 240,000+ rows, would be its own real cost --
+# and the answer is the same value every single time within one run
+# anyway). This is deliberately the CODE'S version, not the historical
+# DATE being replayed -- a backtest replays a past date through TODAY'S
+# scoring functions, so two runs of the exact same date range on two
+# different commits can (and, across this project's history, DID)
+# legitimately disagree, and nothing on disk could previously tell which
+# commit produced which row. Going forward, every row can be filtered or
+# grouped by exactly which formula version produced it -- see
+# backtest/SCHEMA.md and the Phase 3 historical-data-integrity tiers this
+# enables in results/ANALYSIS.md.
+BACKTEST_CODE_GIT_SHA = grec.git_sha()
+BACKTEST_RUN_AT = datetime.now(timezone.utc).isoformat()
 
 # Regular season effectively starts here; a couple of weeks of slack costs
 # nothing (the endpoints just return no rows) and covers an early opener.
@@ -1097,6 +1115,12 @@ def to_row(date, pick, graded, keep_unpriced=False):
         # model, and the consumer decides whether to include it.
         "fair_test": graded.get("fair_test"),
         "actual_pa": graded.get("actual_pa_est"),
+        # PHASE 3, ITEM 7: which commit's scoring code produced this row,
+        # and when this row was generated -- NOT the historical `date`
+        # above, which is the date being replayed. See the module-level
+        # comment on BACKTEST_CODE_GIT_SHA for why this matters.
+        "code_git_sha": BACKTEST_CODE_GIT_SHA,
+        "backtest_generated_at": BACKTEST_RUN_AT,
     }
     if pick.get("lean"):
         row["lean"] = pick["lean"]

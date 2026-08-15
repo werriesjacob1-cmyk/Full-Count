@@ -27,7 +27,9 @@ happened. This is the single interface between the three pieces.
   "outcome": 1,
   "actual": 2,
   "fair_test": true,
-  "actual_pa": 4
+  "actual_pa": 4,
+  "code_git_sha": "6d01e83",
+  "backtest_generated_at": "2026-08-16T14:02:11+00:00"
 }
 ```
 
@@ -65,6 +67,17 @@ happened. This is the single interface between the three pieces.
 - `fair_test` — did the pick get a real opportunity (see grade_results.py).
   Kept per-row so analysis can include or exclude, and must NOT be
   pre-filtered by the producer.
+- `code_git_sha`/`backtest_generated_at` — added Phase 3, 2026-08-16. WHICH
+  scoring-code commit produced this row and WHEN the row was generated —
+  never confuse this with `date`, which is the historical date being
+  replayed. A backtest replays a past date through TODAY's scoring
+  functions, so two runs of the identical date range on two different
+  commits can legitimately disagree, and nothing on disk could tell them
+  apart before this. Both are `None` on any row written before this field
+  existed (`backtest/rows.jsonl` predates it) — treat a missing
+  `code_git_sha` as "unknown formula version," never as a specific one,
+  when segmenting historical rows for the data-integrity tiers this
+  enables (see `results/ANALYSIS.md`).
 
 ## THE RULE THAT MATTERS MOST: no lookahead
 

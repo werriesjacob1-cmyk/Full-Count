@@ -125,6 +125,36 @@ for e in extras5:
     check((e.get("projection") or {}).get("needs") is not None,
          f"{e.get('projection', {}).get('stat')}: projection.needs present")
 
+head("6. PHASE 3 ITEM 7: every to_row() output is stamped with code_git_sha/"
+     "backtest_generated_at -- which COMMIT's scoring code produced this row, distinct "
+     "from `date`, the historical date being replayed. Without this, two backtest runs "
+     "of the identical date range on two different commits could blend into rows.jsonl "
+     "with no way to tell which row came from which formula version.")
+
+pick6 = {"projection": {"stat": "hits", "needs": 1, "value": 0.5}, "game_pk": 1,
+        "player_id": 2, "name": "Test Player", "hit_probability": 0.65, "score": 70.0}
+graded6 = {"grade": "hit", "actual": 2, "fair_test": True, "actual_pa_est": 4}
+row6 = bt.to_row("2026-06-14", pick6, graded6)
+check(row6["date"] == "2026-06-14",
+      "the historical date being replayed is untouched by the new fields")
+check("code_git_sha" in row6, "row carries a code_git_sha key (None outside a git checkout, "
+      "never simply absent)", f"got {row6.get('code_git_sha')!r}")
+check(row6.get("code_git_sha") == bt.BACKTEST_CODE_GIT_SHA,
+      "the row's code_git_sha matches the module-level constant computed once at import -- "
+      "not re-derived (and potentially drifted) per row",
+      f"got {row6.get('code_git_sha')!r} vs module constant {bt.BACKTEST_CODE_GIT_SHA!r}")
+check(row6.get("backtest_generated_at") == bt.BACKTEST_RUN_AT,
+      "backtest_generated_at is the one real run-level timestamp, not a fresh datetime.now() "
+      "per row (which would make every row in one run look like it happened at a "
+      "microscopically different instant for no reason)",
+      f"got {row6.get('backtest_generated_at')!r}")
+
+row6b = bt.to_row("2026-06-15", pick6, graded6)
+check(row6b["code_git_sha"] == row6["code_git_sha"] and
+     row6b["backtest_generated_at"] == row6["backtest_generated_at"],
+     "two different historical dates in the SAME run share the identical code/run stamp -- "
+     "confirming this is a real run-level constant, not per-row noise")
+
 n_pass = sum(1 for ok, _, _ in _results if ok)
 n_total = len(_results)
 print("\n" + "=" * 78)

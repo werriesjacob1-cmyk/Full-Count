@@ -4063,6 +4063,17 @@ def main() -> int:
     n_top_pick = sum(1 for c in _rec_pool if c.get("status") == "top_pick")
     print(f"    Recommendation layer: {n_top_pick} of {len(_rec_pool)} scored candidates "
           f"classified as top_pick tonight")
+    # PHASE 3, ITEM 3: computed ONCE here (one git subprocess call, one real
+    # timestamp -- reused, not re-derived, so write_json's per-row copies
+    # below can never drift a few seconds from what attach_recommendations
+    # actually classified against) and threaded into write_json so every
+    # SAVED recommendation is self-describing on its own, not only readable
+    # via the board wrapper around it. Direct instruction: "Verify that
+    # every future saved recommendation contains enough information to
+    # reproduce what produced it" -- a single row in grades_*.json, read on
+    # its own out of context, needs this on it.
+    _rec_metadata = grec.build_metadata(odds_fetched_at=_board_generated_at,
+                                        board_generated_at=_board_generated_at)
 
     gated = [c for c in candidates if c["score"] >= MIN_QUALITY_SCORE]
 
@@ -4140,7 +4151,8 @@ def main() -> int:
     skipped = [c for c in ranked if id(c) not in _top10_ids and c["score"] >= 55][:2]
 
     write_markdown(top10, skipped, game_meta, bullpen_scores, ranked, moonshots, by_category, deep_moonshots)
-    write_json(top10, moonshots, by_category, deep_moonshots, shadow_tracking)
+    write_json(top10, moonshots, by_category, deep_moonshots, shadow_tracking,
+              recommendation_metadata=_rec_metadata)
     persist_player_snapshots(candidates)
     print(f"Wrote {len(top10)} picks to {PICKS_FILE} and {PICKS_JSON_FILE}")
 
@@ -4197,7 +4209,8 @@ def main() -> int:
     return 0
 
 
-def write_json(top10, moonshots=(), by_category=None, deep_moonshots=(), shadow_tracking=None):
+def write_json(top10, moonshots=(), by_category=None, deep_moonshots=(), shadow_tracking=None,
+              recommendation_metadata=None):
     """Structured pick data for grade_results.py — never parse the markdown
     back into data, same lesson learned from mlb_daily.py's report text.
 
@@ -4213,7 +4226,22 @@ def write_json(top10, moonshots=(), by_category=None, deep_moonshots=(), shadow_
     select_shadow_tracking's docstring for why blending it in would
     corrupt the headline hit rate. It gets its own top-level key and its
     own grading pass in grade_results.py (shadow_by_category), never
-    touching hits/misses/by_category."""
+    touching hits/misses/by_category.
+
+    recommendation_metadata: PHASE 3, ITEM 3. Computed exactly ONCE by
+    main() (one git subprocess call, one real timestamp -- the same one
+    attach_recommendations() actually classified against) and stamped onto
+    EVERY row below, not just the board-level wrapper. Direct instruction:
+    "every future saved recommendation [should] contain enough information
+    to reproduce what produced it" -- a single row in grades_*.json, read
+    on its own out of context (which is exactly how grade_results.py and
+    every analysis script in results/ consumes it), needs this on it
+    directly. The per-row repetition this used to avoid (see the prior
+    version of this docstring) is real but small -- a handful of short
+    string/timestamp fields -- and is worth it for a saved recommendation
+    that can prove what produced it without cross-referencing a board file
+    that may not even be the one it was graded from."""
+    rm = recommendation_metadata or {}
     def _row(i, c):
         return {
             "rank": i, "type": c["type"], "name": c["name"], "player_id": c["player_id"],
@@ -4236,6 +4264,14 @@ def write_json(top10, moonshots=(), by_category=None, deep_moonshots=(), shadow_
             "calibrated_by": c.get("calibrated_by"),
             "prob_ci": c.get("prob_ci"), "sample_n": c.get("sample_n"),
             "reliability": c.get("reliability"),
+            # PHASE 3, ITEM 3: real gap found while wiring per-row versioning
+            # -- quality_control() sets this on the candidate, classify_
+            # recommendation() already reads it to decide Top Pick status,
+            # but write_json never actually persisted it, so a graded pick
+            # carried no visible record of whether its lineup slot was
+            # confirmed or assumed. Same "computed, then discarded"
+            # boundary as combo_player_ids/prob_ci before it.
+            "lineup_assumed": c.get("lineup_assumed"),
             "max_acceptable_price": (pp.max_acceptable_price(c["hit_probability"])
                                      if c.get("hit_probability") is not None else None),
             # estimated_odds is OUR fair price, not the market's. Kept because
@@ -4246,6 +4282,17 @@ def write_json(top10, moonshots=(), by_category=None, deep_moonshots=(), shadow_
                                if c.get("hit_probability") is not None else None),
             "market_odds": c.get("market_odds"),
             "market_implied": c.get("market_implied"),
+            # market_hold: the REAL, exactly-measured hold on the two-sided
+            # markets (strikeouts/pitcher_outs/nrfi_combined -- see
+            # odds_fanduel.attach_market_prices), vs None on the one-sided
+            # batter markets where FanDuel posts no opposite side to measure
+            # a hold from at all. Computed on the candidate all along and
+            # dropped at this exact boundary until now -- same "computed,
+            # then discarded" shape as combo_player_ids/prob_ci before it.
+            # Phase 3 item 5 needs this to tell an EXACT no-vig probability
+            # (market_hold present) from an 8%-ASSUMED approximation
+            # (market_hold absent) at analysis time, per pick.
+            "market_hold": c.get("market_hold"),
             "market_edge": c.get("market_edge"),
             "price_clears": c.get("price_clears"),
             "probability_basis": c.get("probability_basis"),
@@ -4275,6 +4322,26 @@ def write_json(top10, moonshots=(), by_category=None, deep_moonshots=(), shadow_
             "recommendation_status": c.get("status"),
             "status_reasons": c.get("status_reasons"),
             "stale": c.get("stale", False),
+            # PHASE 3, ITEM 3 -- stamped per row, not just once at the board
+            # level (see this function's own docstring for why). Every
+            # field below is the SAME value across every row of a single
+            # run by construction (one run, one version state, one price
+            # fetch), which is exactly what makes it safe to compute once
+            # in main() and copy rather than re-derive per row.
+            "model_version": rm.get("model_version"),
+            "selection_policy_version": rm.get("selection_policy_version"),
+            "calibration_version": rm.get("calibration_version"),
+            "feature_version": rm.get("feature_version"),
+            "git_sha": rm.get("git_sha"),
+            "prediction_timestamp": rm.get("prediction_timestamp"),
+            "odds_timestamp": rm.get("odds_fetched_at"),
+            # No standalone lineup-fetch timestamp exists anywhere in this
+            # pipeline yet (lineup confirmation and scoring both happen
+            # inside this same run) -- honestly reusing the real run
+            # timestamp rather than fabricating a separate one that was
+            # never actually measured. lineup_assumed (above) is the actual
+            # status; this is only WHEN that status was true as of.
+            "lineup_checked_at": rm.get("board_generated_at"),
         }
     category_flat = [c for entries in (by_category or {}).values() for c in entries]
     picks = [_row(i, c) for i, c in enumerate(top10, 1)]
@@ -4282,19 +4349,18 @@ def write_json(top10, moonshots=(), by_category=None, deep_moonshots=(), shadow_
     picks += [_row(i, c) for i, c in enumerate(deep_moonshots, len(picks) + 1)]
     picks += [_row(i, c) for i, c in enumerate(category_flat, len(picks) + 1)]
     shadow_flat = [c for entries in (shadow_tracking or {}).values() for c in entries]
-    import recommendation as grec
     payload = {
         "date": m.TODAY,
         "generated": datetime.now().isoformat(),
         "picks": picks,
         "shadow_tracking": [_row(i, c) for i, c in enumerate(shadow_flat, 1)],
-        # One version block per board, not per pick -- every pick in this
-        # exact file was produced by the same run, so a per-row copy would
-        # be pure repetition. Direct request: "I want future performance
-        # after this rebuild to be distinguishable from older Full Count
-        # versions." git_sha is honestly None outside a git checkout,
-        # never a fabricated placeholder -- see recommendation.git_sha.
-        "recommendation_metadata": grec.build_metadata(),
+        # Also kept at the board level for convenience (a quick "what
+        # version wrote this file" check without reading a pick row) --
+        # the SAME dict already stamped onto every row above, not a fresh
+        # build_metadata() call. Two calls would mean two git subprocess
+        # invocations and two independently-drifting timestamps for what
+        # is supposed to be one run's one version state.
+        "recommendation_metadata": rm,
     }
     with open(PICKS_JSON_FILE, "w", encoding="utf-8") as f:
         json.dump(payload, f, indent=2)

@@ -108,6 +108,56 @@ check(rows4[0]["in_play"] is True,
       "an in-play prop is recorded with in_play=True, not filtered out at capture time "
       "(closing_prices() is what filters it later)")
 
+head("5. PHASE 3 ITEM 5/6: capture_two_sided() flattens strikeouts/pitcher_outs/"
+     "nrfi_combined into one row list, each tagged by market, with the real over/under "
+     "prices and the EXACT hold already computed by odds_fanduel -- not the 8%-assumed "
+     "approximation the one-sided batter props need")
+
+K_FIXTURE = {"keider montero": {"player": "Keider Montero", "line": 4.5, "needs": 5,
+             "over": -120, "under": -110, "true_over": 0.512, "true_under": 0.488,
+             "hold": 0.061, "game": "DET@CLE"}}
+PO_FIXTURE = {"logan gilbert": {"player": "Logan Gilbert", "line": 16.5, "needs": 17,
+              "over": -130, "under": 105, "true_over": 0.548, "true_under": 0.452,
+              "hold": 0.058, "game": "SEA@OAK"}}
+FI_FIXTURE = {"BOS @ NYY": {"over": 130, "under": -160, "true_over": 0.421,
+              "true_under": 0.579, "hold": 0.072}}
+
+with mock.patch("odds_fanduel.fetch_pitcher_strikeouts", return_value=K_FIXTURE), \
+     mock.patch("odds_fanduel.fetch_pitcher_outs", return_value=PO_FIXTURE), \
+     mock.patch("odds_fanduel.fetch_first_inning_totals", return_value=FI_FIXTURE):
+    ts_taken_at, ts_rows = ps.capture_two_sided()
+
+markets_seen = {r["market"] for r in ts_rows}
+check(markets_seen == {"strikeouts", "pitcher_outs", "nrfi_combined"},
+      "all three two-sided markets are represented, each tagged by market",
+      f"got {markets_seen}")
+check(len(ts_rows) == 3, "one row per fixture entry (1 pitcher K's + 1 pitcher outs + "
+      "1 game NRFI)", f"got {len(ts_rows)} rows")
+k_row = next(r for r in ts_rows if r["market"] == "strikeouts")
+check(k_row["over_odds"] == -120 and k_row["under_odds"] == -110,
+      "both real sides' prices are captured, not just the one side being bet",
+      f"got over={k_row['over_odds']} under={k_row['under_odds']}")
+check(k_row["hold"] == 0.061,
+      "the REAL, exactly-measured hold travels with the row -- not an 8%-assumed "
+      "placeholder", f"got {k_row['hold']}")
+check(k_row["book"] == "fanduel", "book is recorded on every row")
+fi_row = next(r for r in ts_rows if r["market"] == "nrfi_combined")
+check(fi_row["player"] is None and fi_row["game"] == "BOS @ NYY",
+      "the game-level NRFI market is keyed by matchup, not a player, and says so "
+      "honestly (player=None) rather than fabricating one")
+check(all(r["taken_at"] == ts_taken_at for r in ts_rows),
+      "every row shares one real capture timestamp")
+
+head("6. a failure in one two-sided fetcher doesn't take down the others")
+
+with mock.patch("odds_fanduel.fetch_pitcher_strikeouts", side_effect=RuntimeError("boom")), \
+     mock.patch("odds_fanduel.fetch_pitcher_outs", return_value=PO_FIXTURE), \
+     mock.patch("odds_fanduel.fetch_first_inning_totals", return_value=FI_FIXTURE):
+    _, ts_rows6 = ps.capture_two_sided()
+check({r["market"] for r in ts_rows6} == {"pitcher_outs", "nrfi_combined"},
+      "strikeouts failing doesn't prevent pitcher_outs/nrfi_combined from still being "
+      "captured", f"got {[r['market'] for r in ts_rows6]}")
+
 n_pass = sum(1 for ok, _, _ in _results if ok)
 n_total = len(_results)
 print("\n" + "=" * 78)
