@@ -59,6 +59,88 @@ def _game_schedule(date):
         return {}
 
 
+STREAK_MIN = 3  # showing every player with a 1-game "streak" would be everyone who got a
+                # hit last night -- noise, not a trend. 3+ consecutive games/starts is the
+                # common threshold real sports coverage treats as notable.
+
+
+def _compute_streaks(all_priced, max_workers=12):
+    """Real active streaks tied to tonight's board. Direct request,
+    verbatim: "STREAKS. Hits in a row, 2+ bases in a row, over X
+    strikeouts in a row, any trends that are useful."
+
+    Only computed for players who already have a real candidate on
+    tonight's board (all_priced -- the same deduped moonshot+best-of-
+    category pool the schedule breakdown above already built), same
+    design principle as that feature: every streak entry ties back to an
+    actual bettable prop tonight, not a generic league-wide trending list
+    nobody can act on.
+
+    Real per-game logs, not the aggregate empirical rate table (that
+    table deliberately discards game order -- see mlb_sources.
+    batter_recent_game_log's own docstring for why a streak needs a
+    second, separate fetch rather than reusing it). Threaded, same
+    pattern empirical_batter_prop_rates already uses, since this is one
+    network call per streak-eligible player."""
+    import mlb_sources as msrc
+    from concurrent.futures import ThreadPoolExecutor
+
+    # Dedup by player_id: a batter can carry multiple candidate rows (a
+    # hits row AND a total_bases row via best-of-category), but only
+    # needs ONE real game-log fetch to check both streak types against.
+    batters, pitchers = {}, {}
+    for r in all_priced:
+        stat = (r.get("projection") or {}).get("stat")
+        pid = r.get("player_id")
+        if not pid:
+            continue
+        if r.get("type") == "batter" and stat in ("hits", "total_bases") and pid not in batters:
+            batters[pid] = r
+        elif r.get("type") == "pitcher" and stat == "strikeouts" and pid not in pitchers:
+            pitchers[pid] = r
+
+    batter_logs, pitcher_logs = {}, {}
+    if batters:
+        with ThreadPoolExecutor(max_workers=max_workers) as ex:
+            for pid, log_ in ex.map(lambda pid: (pid, msrc.batter_recent_game_log(pid)), batters.keys()):
+                batter_logs[pid] = log_
+    if pitchers:
+        with ThreadPoolExecutor(max_workers=max_workers) as ex:
+            for pid, log_ in ex.map(lambda pid: (pid, msrc.pitcher_recent_starts(pid)), pitchers.keys()):
+                pitcher_logs[pid] = log_
+
+    def _streak_len(games, clears):
+        n = 0
+        for g in games:
+            if clears(g):
+                n += 1
+            else:
+                break
+        return n
+
+    entries = []
+    for pid, r in batters.items():
+        stat = (r.get("projection") or {}).get("stat")
+        games = batter_logs.get(pid) or []
+        if stat == "hits":
+            n = _streak_len(games, lambda g: g["hits"] >= 1)
+        else:
+            n = _streak_len(games, lambda g: g["total_bases"] >= 2)
+        if n >= STREAK_MIN:
+            entries.append({**r, "streak": n, "streak_stat": stat})
+    for pid, r in pitchers.items():
+        needs = (r.get("projection") or {}).get("needs")
+        if needs is None:
+            continue
+        games = pitcher_logs.get(pid) or []
+        n = _streak_len(games, lambda g: g["strikeouts"] >= needs)
+        if n >= STREAK_MIN:
+            entries.append({**r, "streak": n, "streak_stat": "strikeouts"})
+
+    entries.sort(key=lambda r: r["streak"], reverse=True)
+    return entries[:15]
+
+
 def run_live_fetch():
     """Isolated live re-run of generate_picks.py's scoring pass. Returns the
     same shape fetch_full_depth.py (the scratch prototype this was promoted
@@ -258,6 +340,7 @@ def run_live_fetch():
                       "why": (r.get("why") or [None])[0]} for r in game_picks],
         })
     out["game_context"] = game_context
+    out["streaks"] = _compute_streaks(all_priced)
     return out
 
 
@@ -428,7 +511,7 @@ def build_payload(result, track_record=None):
     # its value (None, or a dict once the parlay build succeeds) as a list
     # of candidate rows and crashed on `for r in rows` the moment a real run
     # actually populated it.
-    meta_keys = {"generated_at", "date", "suggested_parlay", "game_context"}
+    meta_keys = {"generated_at", "date", "suggested_parlay", "game_context", "streaks"}
     tabs = {}
     for stat in CATEGORY_ORDER:
         rows = result.get(stat)
@@ -471,13 +554,22 @@ def build_payload(result, track_record=None):
         # which is exactly why game_context is in meta_keys: the generic
         # loop filters on hit_probability is not None, which would silently
         # empty this tab out entirely if it ran through there instead.
-        "tabs_order": ["top_picks", "schedule", "all"] + list(tabs.keys()),
+        #
+        # "streaks": direct request, "STREAKS. Hits in a row, 2+ bases in a
+        # row, over X strikeouts in a row." Its rows ARE pick-shaped (real
+        # hit_probability/market_odds), so the generic loop WOULD accept
+        # them -- but it would also re-sort by _priced_first, discarding
+        # _compute_streaks' own longest-streak-first order. Kept out of the
+        # generic loop for the same reason schedule is: to keep control of
+        # the ordering that actually matters for this tab.
+        "tabs_order": ["top_picks", "schedule", "streaks", "all"] + list(tabs.keys()),
         "labels": {
-            "top_picks": "Top Picks", "schedule": "Schedule", "all": "All Props",
+            "top_picks": "Top Picks", "schedule": "Schedule", "streaks": "Streaks",
+            "all": "All Props",
             **{stat: CATEGORY_LABELS.get(stat, stat.replace("_", " ").title()) for stat in tabs},
         },
         "data": {"top_picks": top_picks, "schedule": result.get("game_context") or [],
-                "all": all_rows, **tabs},
+                "streaks": result.get("streaks") or [], "all": all_rows, **tabs},
         "track_record": track_record,
         "suggested_parlay": result.get("suggested_parlay"),
     }
@@ -814,6 +906,7 @@ body {{
 .pick.grade-hit {{ border-color: var(--good); box-shadow: 0 0 0 2px var(--good-soft), var(--shadow); }}
 .pick.grade-hit .who .name {{ color: var(--good); }}
 .pick.grade-miss {{ border-color: var(--bad); opacity: 0.82; }}
+.chip.streak-badge {{ background: var(--warn-soft); color: var(--warn); font-weight: 600; }}
 /* Real player, real projection -- just not a bet FanDuel has posted a
    price for yet. Dimmed rather than hidden (it's still real information),
    but clearly receded so it never reads as a recommendation on par with
@@ -1154,6 +1247,17 @@ function pickRow(p, rank) {{
     : p.grade === "miss" ? `<span class="chip grade-badge grade-miss">Missed</span>`
     : p.grade === "live" ? `<span class="chip grade-badge grade-live">&#9679; Live</span>` : "";
 
+  // Streaks: direct request, "STREAKS. Hits in a row, 2+ bases in a row,
+  // over X strikeouts in a row." p.streak/p.streak_stat come from
+  // dashboard/build_dashboard.py's _compute_streaks(), a real per-game
+  // log count, not derived from hit_probability -- so this can appear on
+  // any pick regardless of its own confidence/price state.
+  const STREAK_STAT_NAMES = {{ hits: "games with a hit", total_bases: "games with 2+ total bases",
+    strikeouts: "starts clearing this K line" }};
+  const streakBadge = p.streak
+    ? `<span class="chip streak-badge">&#128293; ${{p.streak}} straight ${{esc(STREAK_STAT_NAMES[p.streak_stat] || "games")}}</span>`
+    : "";
+
   const starKey = pickKey(p);
   const isStarred = starredKeys.has(starKey);
   const starBtn = `<button class="star-btn${{isStarred ? " starred" : ""}}" type="button" data-star-key="${{esc(starKey)}}" aria-label="${{isStarred ? "Remove from starred" : "Add to starred"}}">${{isStarred ? "&#9733;" : "&#9734;"}}</button>`;
@@ -1174,7 +1278,7 @@ function pickRow(p, rank) {{
         <span class="price ${{oddsClass}}">${{oddsText}}</span>
         ${{fairOdds !== null ? `<span class="fair">fair ${{fairOdds}}</span>` : ""}}
       </div>
-      <div class="badges">${{gradeBadge}}${{lockBadge}}${{confChip}}</div>
+      <div class="badges">${{gradeBadge}}${{streakBadge}}${{lockBadge}}${{confChip}}</div>
       <div class="meter">
         <div class="fill ${{fillClass}}" style="width:${{ourPct}}%; opacity:${{fillOpacity}}"></div>
         ${{marketPct !== null ? `<div class="mark" style="left:${{marketPct}}%"></div>` : ""}}
@@ -1347,7 +1451,7 @@ function renderTabs() {{
   bar.innerHTML = PAYLOAD.tabs_order.map((key) => {{
     const label = PAYLOAD.labels[key];
     const count = PAYLOAD.data[key].length;
-    const icon = key === "top_picks" ? "&#127942; " : (key === "starred" ? "&#9733; " : (key === "schedule" ? "&#128197; " : ""));
+    const icon = key === "top_picks" ? "&#127942; " : (key === "starred" ? "&#9733; " : (key === "schedule" ? "&#128197; " : (key === "streaks" ? "&#128293; " : "")));
     const extraCls = key === "top_picks" ? " top-picks" : (key === "starred" ? " starred-tab" : "");
     return `<button class="tab${{key === activeTabKey ? " active" : ""}}${{extraCls}}" data-tab="${{esc(key)}}">${{icon}}${{esc(label)}} <span class="cnt">${{count}}</span></button>`;
   }}).join("");
@@ -1366,6 +1470,7 @@ const PANEL_DESC = {{
   top_picks: "The board's real favorites tonight: High-confidence picks that still clear FanDuel's price, ranked by genuine edge over the market -- not just raw probability.",
   starred: "Your personal shortlist. Click the star on any pick to save it here -- stored on this device only, nothing is sent anywhere.",
   schedule: "Tonight's slate. Click a game for the real weather, home-plate umpire tendency, and starting pitchers behind it, plus the best-priced props tied to that specific matchup.",
+  streaks: "Real, active streaks among tonight's own candidates -- consecutive games with a hit, consecutive games with 2+ total bases, consecutive starts clearing a strikeout line. Every entry here is a real prop you can actually bet tonight, not a trivia list.",
 }};
 
 // Some markets are structurally thin -- not a bug, not a trimmed list, just
@@ -1465,7 +1570,7 @@ function renderPanels() {{
     countLabel = filtersActive
       ? `${{rows.length}} of ${{realRows.length}} candidate${{realRows.length === 1 ? "" : "s"}}`
       : `${{realRows.length}} candidate${{realRows.length === 1 ? "" : "s"}}`;
-    rankedBy = uiState.sortKey === "edge" ? "edge over the market" : uiState.sortKey === "prob" ? "model probability" : uiState.sortKey === "odds" ? "payout size" : (key === "top_picks" ? "edge over the market" : "model probability");
+    rankedBy = uiState.sortKey === "edge" ? "edge over the market" : uiState.sortKey === "prob" ? "model probability" : uiState.sortKey === "odds" ? "payout size" : (key === "top_picks" ? "edge over the market" : (key === "streaks" ? "streak length" : "model probability"));
     }}
     html += `
     <div class="panel${{key === activeTabKey ? " active" : ""}}" id="panel-${{esc(key)}}">
