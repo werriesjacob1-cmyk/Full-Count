@@ -1444,6 +1444,73 @@ def empirical_batter_prop_rates(batter_ids, min_games=20, max_workers=16, asof=N
     return _apply_shrinkage(out)
 
 
+def batter_recent_game_log(player_id, max_games=20):
+    """Real per-game hits/total_bases, most recent game FIRST. Direct
+    request, verbatim: "STREAKS. Hits in a row, 2+ bases in a row, over X
+    strikeouts in a row, any trends that are useful."
+
+    A genuinely different question from empirical_batter_prop_rates: that
+    function deliberately throws game order away to compute an aggregate
+    rate; a streak is specifically about the ORDER, counting consecutive
+    games backward from the most recent one. Kept as its own small fetch
+    (not threaded through the aggregate path) so this stays simple to
+    verify in isolation, at the cost of a second _game_log call per
+    streak-eligible player -- acceptable since this only runs during the
+    infrequent full rebuild, on the much smaller "already has a real
+    candidate on tonight's board" population, not every batter in the
+    league.
+
+    THE ORDER IS NOT DOCUMENTED BY MLB -- VERIFIED LIVE rather than
+    assumed: a real player's gameLog splits come back oldest-first
+    (Aaron Judge, 2026: first split 2026-03-25, last split 2026-05-31).
+    Reversed here so index 0 is always the most recent game -- getting
+    this backward would silently compute a fabricated "streak" counting
+    the wrong direction.
+
+    Returns [] on any fetch failure or a player with no real-PA games --
+    an honest empty streak history, never a fabricated one."""
+    try:
+        splits = _game_log(player_id, "hitting")
+    except Exception:
+        return []
+    games = []
+    for s in splits:
+        st = s.get("stat") or {}
+        try:
+            pa = int(st.get("plateAppearances") or 0)
+        except (TypeError, ValueError):
+            pa = 0
+        if pa < 1:
+            continue  # didn't really play -- not evidence for or against a streak
+        games.append({"date": s.get("date"), "hits": int(st.get("hits") or 0),
+                     "total_bases": int(st.get("totalBases") or 0)})
+    return list(reversed(games))[:max_games]
+
+
+def pitcher_recent_starts(player_id, max_games=15):
+    """Real per-start strikeouts, most recent start FIRST. Same reasoning
+    and same verified-not-assumed ordering as batter_recent_game_log.
+    Starts only (gamesStarted >= 1) -- a strikeout prop is bet on starts,
+    and a reliever appearance in the same log is a different event that
+    would corrupt the streak, same filter _empirical_pitcher_one already
+    uses for its own aggregate rate."""
+    try:
+        splits = _game_log(player_id, "pitching")
+    except Exception:
+        return []
+    starts = []
+    for s in splits:
+        st = s.get("stat") or {}
+        try:
+            gs = int(st.get("gamesStarted") or 0)
+        except (TypeError, ValueError):
+            gs = 0
+        if gs < 1:
+            continue
+        starts.append({"date": s.get("date"), "strikeouts": int(st.get("strikeOuts") or 0)})
+    return list(reversed(starts))[:max_games]
+
+
 def _empirical_pitcher_one(job):
     pid, min_starts, asof = job
     try:

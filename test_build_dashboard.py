@@ -119,8 +119,8 @@ payload4 = bd.build_payload({
     "hits": [row("A", "hits", 0.7, odds=-200, implied=0.6, edge=0.1, clears=True)],
     "triples": [],  # present in the data but empty -- must not become a tab
 })
-check(payload4["tabs_order"][:3] == ["top_picks", "schedule", "all"],
-      "top_picks, schedule, and all are always first, in that order",
+check(payload4["tabs_order"][:4] == ["top_picks", "schedule", "streaks", "all"],
+      "top_picks, schedule, streaks, and all are always first, in that order",
       f"got {payload4['tabs_order'][:3]}")
 check("triples" not in payload4["tabs_order"],
       "a category with zero real rows never becomes an empty tab")
@@ -626,6 +626,158 @@ console.log("gameCard: all checks passed");
         os.remove(harness_path16)
 else:
     check(True, "node not available -- gameCard JS check skipped, not failed")
+
+head("17. _compute_streaks: direct request, verbatim: \"STREAKS. Hits in a row, 2+ bases "
+     "in a row, over X strikeouts in a row, any trends that are useful.\" Only computed "
+     "for players who already have a real candidate on tonight's board, one game-log fetch "
+     "per unique player_id, STREAK_MIN=3 filters out noise, sorted longest-first.")
+
+import mlb_sources as msrc
+
+
+def streak_row(name, pid, stat, needs=1, ptype="batter"):
+    return dict(row(name, stat, 0.5, needs=needs, ptype=ptype), player_id=pid)
+
+
+ALL_PRICED_17 = [
+    streak_row("Five Hit Streak", 1, "hits"),
+    streak_row("Four TB Streak", 2, "total_bases"),
+    streak_row("Two Hit Streak", 3, "hits"),          # below STREAK_MIN -- must be excluded
+    streak_row("Three K Streak", 4, "strikeouts", needs=5, ptype="pitcher"),
+    streak_row("Dedup Hits First", 5, "hits"),
+    streak_row("Dedup TB Second", 5, "total_bases"),  # same player_id=5 -- must NOT get its own fetch
+]
+
+BATTER_LOGS_17 = {
+    1: [{"date": f"d{i}", "hits": 1, "total_bases": 1} for i in range(5)],
+    2: [{"date": f"d{i}", "hits": 0, "total_bases": 2} for i in range(4)] + [{"date": "d4", "hits": 0, "total_bases": 0}],
+    3: [{"date": "d0", "hits": 1, "total_bases": 1}, {"date": "d1", "hits": 1, "total_bases": 1},
+        {"date": "d2", "hits": 0, "total_bases": 0}],
+    5: [{"date": f"d{i}", "hits": 1, "total_bases": 0} for i in range(3)],
+}
+PITCHER_LOGS_17 = {4: [{"date": f"d{i}", "strikeouts": 5 + i} for i in range(3)]}
+
+batter_calls_17 = []
+
+
+def fake_batter_log_17(pid, max_games=20):
+    batter_calls_17.append(pid)
+    return BATTER_LOGS_17.get(pid, [])
+
+
+with mock.patch.object(msrc, "batter_recent_game_log", side_effect=fake_batter_log_17), \
+     mock.patch.object(msrc, "pitcher_recent_starts", side_effect=lambda pid, max_games=15: PITCHER_LOGS_17.get(pid, [])):
+    entries17 = bd._compute_streaks(ALL_PRICED_17)
+
+check(batter_calls_17.count(5) == 1, "a player carrying multiple candidate rows (hits AND "
+      "total_bases) only gets ONE real game-log fetch, not one per row", f"got {batter_calls_17}")
+names17 = [e["name"] for e in entries17]
+check("Five Hit Streak" in names17, "a real 5-game hit streak is surfaced")
+check("Four TB Streak" in names17, "a real 4-game 2+ total-bases streak is surfaced")
+check("Three K Streak" in names17, "a real 3-start strikeouts-needs-clearing streak is surfaced")
+check("Two Hit Streak" not in names17, "a 2-game streak is below STREAK_MIN=3 and excluded as noise",
+      f"got {names17}")
+dedup_entries17 = [e for e in entries17 if e["player_id"] == 5]
+check(len(dedup_entries17) == 1 and dedup_entries17[0]["streak_stat"] == "hits",
+      "the deduped player only produces a streak entry for whichever candidate row was "
+      "encountered first (hits, not total_bases)", f"got {dedup_entries17}")
+five17 = next(e for e in entries17 if e["name"] == "Five Hit Streak")
+four17 = next(e for e in entries17 if e["name"] == "Four TB Streak")
+check(five17["streak"] == 5 and four17["streak"] == 4, "streak lengths are counted correctly",
+      f"got {five17['streak']}, {four17['streak']}")
+check(entries17[0]["name"] == "Five Hit Streak",
+      "entries are sorted longest-streak-first", f"got {names17}")
+
+head("18. _compute_streaks caps output at 15 entries, keeping the longest streaks")
+
+ALL_PRICED_18 = [streak_row(f"Player {i}", i, "hits") for i in range(20)]
+LOGS_18 = {i: [{"date": f"d{j}", "hits": 1, "total_bases": 1} for j in range(3 + i)] for i in range(20)}
+with mock.patch.object(msrc, "batter_recent_game_log", side_effect=lambda pid, max_games=20: LOGS_18.get(pid, [])):
+    entries18 = bd._compute_streaks(ALL_PRICED_18)
+check(len(entries18) == 15, "output capped at 15 entries", f"got {len(entries18)}")
+check(entries18[0]["name"] == "Player 19", "the longest streaks survive the cap, not the first-seen",
+      f"got {[e['name'] for e in entries18[:3]]}")
+
+head("19. streaks tab: build_payload wires _compute_streaks' output through as its own real "
+     "tab (not swept into the generic stat-category loop -- its rows carry a 'streak' key, "
+     "not a per-category hit_probability filter that would otherwise behave correctly by "
+     "accident but for the wrong reason), ordered right after schedule.")
+
+payload19 = bd.build_payload({
+    "generated_at": "x", "date": "2026-08-15",
+    "hits": [row("A", "hits", 0.7, odds=-200, implied=0.6, edge=0.1, clears=True)],
+    "streaks": [dict(row("Streaky Batter", "hits", 0.6, odds=-110, implied=0.55, edge=0.05, clears=True),
+                     player_id=9, streak=6, streak_stat="hits")],
+})
+check(payload19["tabs_order"][:4] == ["top_picks", "schedule", "streaks", "all"],
+      "streaks sits right after schedule in the fixed tab prefix", f"got {payload19['tabs_order']}")
+check(payload19["labels"].get("streaks") == "Streaks", "streaks has a real human label")
+check(len(payload19["data"]["streaks"]) == 1 and payload19["data"]["streaks"][0]["streak"] == 6,
+      "the real streak entry passes through with its streak length intact",
+      f"got {payload19['data']['streaks']}")
+
+payload19b = bd.build_payload({"generated_at": "x", "date": "2026-08-15"})
+check(payload19b["data"]["streaks"] == [],
+      "a result dict with no streaks key at all still produces a valid empty streaks tab, "
+      "not a KeyError")
+
+head("20. streak badge renders client-side on a pick row: direct request, \"any trends that "
+     "are useful\" -- a streak entry must be visually flagged the same way a live/hit/miss "
+     "grade badge already is, on the actual .pick markup, not just present in the data.")
+
+if node:
+    html20 = bd.render_html(bd.build_payload({
+        "generated_at": "x", "date": "2026-08-15",
+        "streaks": [dict(row("Ronald Acuna", "hits", 0.65, odds=-120, implied=0.55, edge=0.1,
+                             clears=True), player_id=9, streak=7, streak_stat="hits")],
+    }), fonts)
+    js20 = html20.split("<script>", 1)[1].rsplit("</script>", 1)[0]
+    harness20 = """
+function stubEl() {
+  return {addEventListener(){}, textContent:'', innerHTML:'', dataset:{}, style:{},
+    setAttribute(){}, removeAttribute(){}, value:'',
+    classList:{add(){}, remove(){}, toggle(){return false;}}, querySelectorAll: () => [],
+    querySelector: () => null, remove(){}};
+}
+function escapingEl() {
+  let raw = "";
+  const ESCAPE_MAP = {"&": "&amp;", "<": "&lt;", ">": "&gt;"};
+  return {
+    addEventListener(){}, dataset:{}, style:{}, setAttribute(){}, removeAttribute(){}, value:'',
+    classList:{add(){}, remove(){}, toggle(){return false;}}, querySelectorAll: () => [],
+    querySelector: () => null, remove(){},
+    get textContent() { return raw; },
+    set textContent(v) { raw = v; },
+    get innerHTML() { return raw.replace(/[&<>]/g, ch => ESCAPE_MAP[ch]); },
+  };
+}
+const document = {getElementById: () => stubEl(),
+  documentElement: {setAttribute(){}, removeAttribute(){}, getAttribute: () => null},
+  querySelectorAll: () => [], querySelector: () => null, createElement: () => escapingEl()};
+const window = {matchMedia: () => ({matches:false}), location: {reload(){}}};
+const localStorage = {getItem: () => null, setItem(){}};
+const fetch = () => Promise.reject(new Error("no network in test"));
+const setInterval = () => {};
+const requestAnimationFrame = (fn) => {};
+""" + js20 + """
+const html = pickRow(PAYLOAD.data.streaks[0], 1);
+if (!html.includes("streak-badge")) { console.error("FAIL: no streak-badge chip rendered"); process.exit(1); }
+if (!html.includes("7")) { console.error("FAIL: the real streak length is missing"); process.exit(1); }
+if (!html.includes("games with a hit")) { console.error("FAIL: the human streak-stat label is missing"); process.exit(1); }
+console.log("streak badge: all checks passed");
+"""
+    harness_path20 = tempfile.mktemp(suffix=".js")
+    with open(harness_path20, "w") as f:
+        f.write(harness20)
+    try:
+        r20 = subprocess.run([node, harness_path20], capture_output=True, text=True)
+        check(r20.returncode == 0, "pickRow() renders a real streak badge with the streak "
+              "length and a human-readable description of what's streaking",
+              r20.stdout + r20.stderr)
+    finally:
+        os.remove(harness_path20)
+else:
+    check(True, "node not available -- streak badge JS check skipped, not failed")
 
 n_pass = sum(1 for ok, _, _ in _results if ok)
 n_total = len(_results)
