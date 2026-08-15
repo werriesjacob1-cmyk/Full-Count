@@ -80,6 +80,64 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-15",
+      "evaluations": [
+        {
+          "prop": "Over 6.5 Strikeouts",
+          "type": "pitcher",
+          "score": 43.3,
+          "notable_signals": 0,
+          "matchup": "Kansas City Royals @ Los Angeles Angels",
+          "game_pk": 823990,
+          "team": "Los Angeles Angels",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "same_hand_ratio": 61.1111,
+            "l14_k_pct": 69.4118,
+            "env_neutral": 50.0
+          },
+          "hit_probability": 0.5437,
+          "raw_hit_probability": 0.3574,
+          "lift": 0.298,
+          "reliability": "D",
+          "sample_n": 24,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 6.5,
+            "needs": 7
+          }
+        },
+        {
+          "prop": "Over 17.5 Outs Recorded",
+          "type": "pitcher",
+          "score": 32.7,
+          "notable_signals": 0,
+          "matchup": "Kansas City Royals @ Los Angeles Angels",
+          "game_pk": 823990,
+          "team": "Los Angeles Angels",
+          "side": "home",
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "outs_rate": 0.4606,
+            "avg_outs_per_start": 16.88
+          },
+          "hit_probability": 0.4606,
+          "raw_hit_probability": null,
+          "lift": -0.0089,
+          "reliability": "D",
+          "sample_n": 24,
+          "projection": {
+            "stat": "pitcher_outs",
+            "value": 17.5,
+            "needs": 18
+          }
+        }
+      ]
     }
   ]
 }
