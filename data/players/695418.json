@@ -34,6 +34,37 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-15",
+      "evaluations": [
+        {
+          "prop": "Over 3.5 Strikeouts",
+          "type": "pitcher",
+          "score": 47.6,
+          "notable_signals": 0,
+          "matchup": "Washington Nationals @ New York Mets",
+          "game_pk": 823588,
+          "team": "Washington Nationals",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "same_hand_ratio": 92.8571,
+            "env_neutral": 50.0
+          },
+          "hit_probability": 0.6134,
+          "raw_hit_probability": 0.6968,
+          "lift": -0.1003,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 3.5,
+            "needs": 4
+          }
+        }
+      ]
     }
   ]
 }

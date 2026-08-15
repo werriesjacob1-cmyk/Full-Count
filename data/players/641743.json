@@ -61,6 +61,95 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-15",
+      "evaluations": [
+        {
+          "prop": "Over 4.5 Strikeouts",
+          "type": "pitcher",
+          "score": 30.4,
+          "notable_signals": 1,
+          "matchup": "Chicago White Sox @ Detroit Tigers",
+          "game_pk": 824239,
+          "team": "Chicago White Sox",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "same_hand_ratio": 0.0,
+            "l14_k_pct": 0.0,
+            "env_neutral": 50.0,
+            "ump_accuracy": 73.6935,
+            "ump_k_pct": -0.228,
+            "ump_bb_pct": 0.216
+          },
+          "hit_probability": 0.5789,
+          "raw_hit_probability": 0.5267,
+          "lift": 0.0399,
+          "reliability": "D",
+          "sample_n": 22,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 4.5,
+            "needs": 5
+          }
+        },
+        {
+          "prop": "Over 15.5 Outs Recorded",
+          "type": "pitcher",
+          "score": 13.6,
+          "notable_signals": 0,
+          "matchup": "Chicago White Sox @ Detroit Tigers",
+          "game_pk": 824239,
+          "team": "Chicago White Sox",
+          "side": "away",
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "outs_rate": 0.4431,
+            "avg_outs_per_start": 14.86
+          },
+          "hit_probability": 0.4431,
+          "raw_hit_probability": null,
+          "lift": -0.1247,
+          "reliability": "D",
+          "sample_n": 22,
+          "projection": {
+            "stat": "pitcher_outs",
+            "value": 15.5,
+            "needs": 16
+          }
+        },
+        {
+          "prop": "Over 9.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 55.0,
+          "notable_signals": 0,
+          "matchup": "Chicago White Sox @ Detroit Tigers",
+          "game_pk": 824239,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            641743,
+            675512
+          ],
+          "signals": {
+            "combined_k_edge": 0.015
+          },
+          "hit_probability": 0.5876,
+          "raw_hit_probability": null,
+          "lift": 0.015,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 9.5,
+            "needs": 10
+          }
+        }
+      ]
     }
   ]
 }

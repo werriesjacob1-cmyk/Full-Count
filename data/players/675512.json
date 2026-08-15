@@ -80,6 +80,67 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-15",
+      "evaluations": [
+        {
+          "prop": "Over 5.5 Strikeouts",
+          "type": "pitcher",
+          "score": 51.9,
+          "notable_signals": 1,
+          "matchup": "Chicago White Sox @ Detroit Tigers",
+          "game_pk": 824239,
+          "team": "Detroit Tigers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "same_hand_ratio": 43.75,
+            "l14_k_pct": 24.1176,
+            "env_neutral": 50.0,
+            "ump_accuracy": 73.6935,
+            "ump_k_pct": -0.228,
+            "ump_bb_pct": 0.216
+          },
+          "hit_probability": 0.5594,
+          "raw_hit_probability": 0.4326,
+          "lift": 0.1814,
+          "reliability": "D",
+          "sample_n": 13,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 5.5,
+            "needs": 6
+          }
+        },
+        {
+          "prop": "Over 17.5 Outs Recorded",
+          "type": "pitcher",
+          "score": 59.9,
+          "notable_signals": 1,
+          "matchup": "Chicago White Sox @ Detroit Tigers",
+          "game_pk": 824239,
+          "team": "Detroit Tigers",
+          "side": "home",
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "outs_rate": 0.5693,
+            "avg_outs_per_start": 18.46
+          },
+          "hit_probability": 0.5693,
+          "raw_hit_probability": null,
+          "lift": 0.0998,
+          "reliability": "D",
+          "sample_n": 13,
+          "projection": {
+            "stat": "pitcher_outs",
+            "value": 17.5,
+            "needs": 18
+          }
+        }
+      ]
     }
   ]
 }

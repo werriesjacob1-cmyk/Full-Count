@@ -62,6 +62,65 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-15",
+      "evaluations": [
+        {
+          "prop": "Over 4.5 Strikeouts",
+          "type": "pitcher",
+          "score": 48.7,
+          "notable_signals": 0,
+          "matchup": "St. Louis Cardinals @ Chicago Cubs",
+          "game_pk": 824644,
+          "team": "Chicago Cubs",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "same_hand_ratio": 5.5556,
+            "l14_k_pct": 0.0,
+            "tto_penalty": -8.0,
+            "env_neutral": 50.0
+          },
+          "hit_probability": 0.5601,
+          "raw_hit_probability": 0.4359,
+          "lift": 0.0211,
+          "reliability": "D",
+          "sample_n": 14,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 4.5,
+            "needs": 5
+          }
+        },
+        {
+          "prop": "Over 17.5 Outs Recorded",
+          "type": "pitcher",
+          "score": 52.8,
+          "notable_signals": 1,
+          "matchup": "St. Louis Cardinals @ Chicago Cubs",
+          "game_pk": 824644,
+          "team": "Chicago Cubs",
+          "side": "home",
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "outs_rate": 0.5409,
+            "avg_outs_per_start": 17.07
+          },
+          "hit_probability": 0.5409,
+          "raw_hit_probability": null,
+          "lift": 0.0714,
+          "reliability": "D",
+          "sample_n": 14,
+          "projection": {
+            "stat": "pitcher_outs",
+            "value": 17.5,
+            "needs": 18
+          }
+        }
+      ]
     }
   ]
 }
