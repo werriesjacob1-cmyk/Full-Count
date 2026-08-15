@@ -112,15 +112,16 @@ check(payload3["labels"]["moonshot"] == "Home Runs",
       "moonshot's display label is still the human name, not the internal key")
 
 
-head("4. tabs_order always starts with the two fixed tabs, then only categories with real rows")
+head("4. tabs_order always starts with the three fixed tabs, then only categories with real rows")
 
 payload4 = bd.build_payload({
     "generated_at": "x", "date": "2026-08-12",
     "hits": [row("A", "hits", 0.7, odds=-200, implied=0.6, edge=0.1, clears=True)],
     "triples": [],  # present in the data but empty -- must not become a tab
 })
-check(payload4["tabs_order"][0] == "top_picks" and payload4["tabs_order"][1] == "all",
-      "top_picks and all are always first, in that order", f"got {payload4['tabs_order'][:2]}")
+check(payload4["tabs_order"][:3] == ["top_picks", "schedule", "all"],
+      "top_picks, schedule, and all are always first, in that order",
+      f"got {payload4['tabs_order'][:3]}")
 check("triples" not in payload4["tabs_order"],
       "a category with zero real rows never becomes an empty tab")
 check("hits" in payload4["tabs_order"],
@@ -507,6 +508,124 @@ console.log("live grading: all checks passed");
         os.remove(harness_path13)
 else:
     check(True, "node not available -- live-grading JS check skipped, not failed")
+
+head("14. game schedule breakdown: direct request, \"I want people to be able to click on a "
+     "game on the schedule, and get a breakdown of why X props might be best for A B C "
+     "reasons. Think time, weather, etc.\" game_context passes through as the 'schedule' tab, "
+     "not swept into the generic stat-category loop (its rows have no hit_probability, which "
+     "would otherwise filter every game out silently).")
+
+payload14 = bd.build_payload({
+    "generated_at": "x", "date": "2026-08-15",
+    "hits": [row("A", "hits", 0.7, odds=-200, implied=0.6, edge=0.1, clears=True)],
+    "game_context": [
+        {"game_pk": 1, "matchup": "Athletics @ Astros", "away_team": "Athletics",
+         "home_team": "Astros", "away_sp": "X", "home_sp": "Y", "hp_ump": "Z",
+         "game_start": "2026-08-15T23:05:00Z",
+         "weather": {"dome": False, "temp": 80.0, "wind_mph": 5.0, "wind_effect": "neutral",
+                    "park_hr_index": 50, "precip_prob": 0},
+         "umpire": {"name": "Z", "k_pct": 0.22, "bb_pct": 0.08, "league_k_pct": 0.221,
+                   "league_bb_pct": 0.085},
+         "is_getaway": False, "is_opener": False,
+         "picks": [{"name": "B", "prop": "Over 0.5 Hits", "hit_probability": 0.65,
+                   "market_odds": -130, "price_clears": True, "why": "a real reason"}]},
+    ],
+})
+check("schedule" in payload14["tabs_order"], "schedule is a real tab", f"got {payload14['tabs_order']}")
+check(len(payload14["data"]["schedule"]) == 1,
+      "the one real game passes through untouched, not filtered by the hit_probability check "
+      "the generic stat-category loop applies to every other tab",
+      f"got {payload14['data']['schedule']}")
+check(payload14["data"]["schedule"][0]["matchup"] == "Athletics @ Astros",
+      "the game's own fields survive intact")
+check("schedule" not in payload14["labels"] or payload14["labels"]["schedule"] == "Schedule",
+      "schedule has a real human label")
+
+head("15. an empty game_context (no games left tonight) is a clean, honest empty tab, not "
+     "a missing key or a crash")
+
+payload15 = bd.build_payload({"generated_at": "x", "date": "2026-08-15", "game_context": []})
+check(payload15["data"]["schedule"] == [], "an empty game_context list stays empty, doesn't crash")
+
+payload15b = bd.build_payload({"generated_at": "x", "date": "2026-08-15"})
+check(payload15b["data"]["schedule"] == [],
+      "a result dict with no game_context key AT ALL (e.g. run_live_fetch's early return on a "
+      "no-games night) still produces a valid empty schedule tab, not a KeyError")
+
+head("16. the schedule tab renders real game cards client-side, with weather/umpire/picks "
+     "detail behind the same click-to-expand interaction .pick rows already use")
+
+if node:
+    html16 = bd.render_html(bd.build_payload({
+        "generated_at": "x", "date": "2026-08-15",
+        "game_context": [
+            {"game_pk": 1, "matchup": "Athletics @ Astros", "away_team": "Athletics",
+             "home_team": "Astros", "away_sp": "Sean Murphy", "home_sp": "Framber Valdez",
+             "hp_ump": "Angel Hernandez", "game_start": "2026-08-15T23:05:00Z",
+             "weather": {"dome": False, "temp": 91.0, "wind_mph": 12.0, "wind_effect": "blowing_out",
+                        "park_hr_index": 70, "precip_prob": 5},
+             "umpire": {"name": "Angel Hernandez", "k_pct": 0.24, "bb_pct": 0.09,
+                       "league_k_pct": 0.221, "league_bb_pct": 0.085},
+             "is_getaway": False, "is_opener": True,
+             "picks": [{"name": "Yordan Alvarez", "prop": "Over 1.5 Total Bases",
+                       "hit_probability": 0.61, "market_odds": -135, "price_clears": True,
+                       "why": None}]},
+        ],
+    }), fonts)
+    js16 = html16.split("<script>", 1)[1].rsplit("</script>", 1)[0]
+    harness16 = """
+function stubEl() {
+  return {addEventListener(){}, textContent:'', innerHTML:'', dataset:{}, style:{},
+    setAttribute(){}, removeAttribute(){}, value:'',
+    classList:{add(){}, remove(){}, toggle(){return false;}}, querySelectorAll: () => [],
+    querySelector: () => null, remove(){}};
+}
+// esc() (build_dashboard.py) creates a real <div>, sets .textContent, and
+// reads back .innerHTML to get browser-correct HTML escaping -- this stub
+// element needs that exact round-trip to actually work, not just exist,
+// or every esc()'d string (every player/team/prop name on the page)
+// silently comes back empty in this harness, which would look like a
+// real bug in the feature rather than an incomplete DOM stub.
+function escapingEl() {
+  let raw = "";
+  const ESCAPE_MAP = {"&": "&amp;", "<": "&lt;", ">": "&gt;"};
+  return {
+    addEventListener(){}, dataset:{}, style:{}, setAttribute(){}, removeAttribute(){}, value:'',
+    classList:{add(){}, remove(){}, toggle(){return false;}}, querySelectorAll: () => [],
+    querySelector: () => null, remove(){},
+    get textContent() { return raw; },
+    set textContent(v) { raw = v; },
+    get innerHTML() { return raw.replace(/[&<>]/g, ch => ESCAPE_MAP[ch]); },
+  };
+}
+const document = {getElementById: () => stubEl(),
+  documentElement: {setAttribute(){}, removeAttribute(){}, getAttribute: () => null},
+  querySelectorAll: () => [], querySelector: () => null, createElement: () => escapingEl()};
+const window = {matchMedia: () => ({matches:false}), location: {reload(){}}};
+const localStorage = {getItem: () => null, setItem(){}};
+const fetch = () => Promise.reject(new Error("no network in test"));
+const setInterval = () => {};
+const requestAnimationFrame = (fn) => {};
+""" + js16 + """
+const card = gameCard(PAYLOAD.data.schedule[0]);
+if (!card.includes("Athletics @ Astros")) { console.error("FAIL: matchup missing from card"); process.exit(1); }
+if (!card.includes("91")) { console.error("FAIL: real temperature missing from weather line"); process.exit(1); }
+if (!card.includes("Angel Hernandez")) { console.error("FAIL: umpire name missing"); process.exit(1); }
+if (!card.includes("Yordan Alvarez")) { console.error("FAIL: the real pick tied to this game is missing"); process.exit(1); }
+if (!card.includes("class=\\"game-card\\"")) { console.error("FAIL: not rendered as a game-card"); process.exit(1); }
+console.log("gameCard: all checks passed");
+"""
+    harness_path16 = tempfile.mktemp(suffix=".js")
+    with open(harness_path16, "w") as f:
+        f.write(harness16)
+    try:
+        r16 = subprocess.run([node, harness_path16], capture_output=True, text=True)
+        check(r16.returncode == 0, "gameCard() renders the real matchup, weather, umpire, and "
+              "the picks tied to that specific game_pk", r16.stdout + r16.stderr)
+    finally:
+        os.remove(harness_path16)
+else:
+    check(True, "node not available -- gameCard JS check skipped, not failed")
 
 n_pass = sum(1 for ok, _, _ in _results if ok)
 n_total = len(_results)
