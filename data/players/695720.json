@@ -337,6 +337,57 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-15",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 55.8,
+          "notable_signals": 1,
+          "matchup": "Texas Rangers @ Athletics",
+          "game_pk": 824966,
+          "team": "Athletics",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 55.1429,
+            "park_hr_index": 50.8,
+            "season_barrel_pct": 9.3333,
+            "lineup_slot": 50.0,
+            "bullpen_fatigue": 76.9231,
+            "platoon_barrel_pct": -2.0,
+            "platoon_xwoba": -1.74,
+            "park_hand_index": 4.04,
+            "opp_catcher_framing": 0.84,
+            "days_rest": 0.0,
+            "woba_ahead": 7.2727,
+            "woba_behind": 0.0,
+            "pull_park_synergy": 1.2867,
+            "team_total_move": -6.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": 0.576,
+            "vs_rp_ops": -1.608,
+            "ump_k_pct": 0.504,
+            "ump_bb_pct": -0.168
+          },
+          "hit_probability": 0.6246,
+          "raw_hit_probability": 0.6193,
+          "lift": 0.0737,
+          "reliability": "D",
+          "sample_n": 24,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

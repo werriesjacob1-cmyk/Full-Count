@@ -223,6 +223,107 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-15",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 52.3,
+          "notable_signals": 1,
+          "matchup": "Milwaukee Brewers @ Los Angeles Dodgers",
+          "game_pk": 823914,
+          "team": "Milwaukee Brewers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 26.8571,
+            "pitch_exploit": 19.4286,
+            "park_hr_index": 30.9,
+            "season_barrel_pct": 38.6667,
+            "lineup_slot": 50.0,
+            "bullpen_fatigue": 55.5556,
+            "platoon_barrel_pct": 1.84,
+            "platoon_xwoba": 3.66,
+            "opp_catcher_framing": -0.24,
+            "days_rest": 0.0,
+            "woba_ahead": 81.8182,
+            "woba_behind": 13.6364,
+            "hard_hit_105_rate": 0.94,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 2.0,
+            "sp_rp_ops_gap": 0.936,
+            "vs_rp_ops": 2.208,
+            "ump_k_pct": 0.216,
+            "ump_bb_pct": -0.708
+          },
+          "hit_probability": 0.6388,
+          "raw_hit_probability": 0.6185,
+          "lift": -0.0342,
+          "reliability": "B",
+          "sample_n": 65,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 13.7,
+          "notable_signals": 0,
+          "matchup": "Milwaukee Brewers @ Los Angeles Dodgers",
+          "game_pk": 823914,
+          "team": "Milwaukee Brewers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0842
+          },
+          "hit_probability": 0.0842,
+          "raw_hit_probability": null,
+          "lift": 0.0346,
+          "reliability": "B",
+          "sample_n": 65,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 1.1,
+          "notable_signals": 0,
+          "matchup": "Milwaukee Brewers @ Los Angeles Dodgers",
+          "game_pk": 823914,
+          "team": "Milwaukee Brewers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0172
+          },
+          "hit_probability": 0.0172,
+          "raw_hit_probability": null,
+          "lift": -0.0043,
+          "reliability": "B",
+          "sample_n": 65,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }
