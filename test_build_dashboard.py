@@ -119,9 +119,9 @@ payload4 = bd.build_payload({
     "hits": [row("A", "hits", 0.7, odds=-200, implied=0.6, edge=0.1, clears=True)],
     "triples": [],  # present in the data but empty -- must not become a tab
 })
-check(payload4["tabs_order"][:4] == ["top_picks", "schedule", "streaks", "all"],
-      "top_picks, schedule, streaks, and all are always first, in that order",
-      f"got {payload4['tabs_order'][:4]}")
+check(payload4["tabs_order"][:5] == ["top_picks", "locks", "schedule", "streaks", "all"],
+      "top_picks, locks, schedule, streaks, and all are always first, in that order",
+      f"got {payload4['tabs_order'][:5]}")
 check("triples" not in payload4["tabs_order"],
       "a category with zero real rows never becomes an empty tab")
 check("hits" in payload4["tabs_order"],
@@ -737,7 +737,7 @@ payload19 = bd.build_payload({
     "streaks": [dict(row("Streaky Batter", "hits", 0.6, odds=-110, implied=0.55, edge=0.05, clears=True),
                      player_id=9, streak=6, streak_stat="hits")],
 })
-check(payload19["tabs_order"][:4] == ["top_picks", "schedule", "streaks", "all"],
+check(payload19["tabs_order"][:5] == ["top_picks", "locks", "schedule", "streaks", "all"],
       "streaks sits right after schedule in the fixed tab prefix", f"got {payload19['tabs_order']}")
 check(payload19["labels"].get("streaks") == "Streaks", "streaks has a real human label")
 check(len(payload19["data"]["streaks"]) == 1 and payload19["data"]["streaks"][0]["streak"] == 6,
@@ -910,6 +910,46 @@ console.log("assumed-lineup badge: all checks passed");
         os.remove(harness_path23)
 else:
     check(True, "node not available -- early-look badge JS check skipped, not failed")
+
+head("24. Locks: direct request, verbatim -- \"Locks should be in their own section I "
+     "shouldn't have to look so hard for Sam Antonacci RBI or whatever it is.\" Every "
+     "High-confidence, price-clearing, CONFIRMED-lineup pick collected in one tab, "
+     "independent of Top Picks' edge-only ranking (a real High-confidence pick can have a "
+     "tiny edge and still get buried behind bigger-edge Medium/Low picks there).")
+
+payload24 = bd.build_payload({
+    "generated_at": "x", "date": "2026-08-15",
+    "hits": [
+        row("Small Edge Lock", "hits", 0.65, odds=200, implied=0.60, edge=0.03, clears=True,
+           confidence="High"),
+        row("Big Edge Non-Lock", "hits", 0.60, odds=150, implied=0.45, edge=0.20, clears=True,
+           confidence="Medium"),
+        row("Doesnt Clear High Conf", "hits", 0.70, odds=-800, implied=0.85, edge=-0.05,
+           clears=False, confidence="High"),
+        dict(row("Assumed High Conf", "hits", 0.68, odds=180, implied=0.55, edge=0.10, clears=True,
+                confidence="High"), lineup_assumed=True),
+    ],
+})
+lock_names24 = [r["name"] for r in payload24["data"]["locks"]]
+check("locks" in payload24["tabs_order"], "locks is a real tab", f"got {payload24['tabs_order']}")
+check(payload24["labels"].get("locks") == "Locks", "locks has a real human label")
+check("Small Edge Lock" in lock_names24,
+      "a real High-confidence, clearing, confirmed-lineup pick makes Locks even with a small "
+      "edge -- this is the exact case that prompted the request (buried in Top Picks by edge)",
+      f"got {lock_names24}")
+check("Big Edge Non-Lock" not in lock_names24,
+      "a Medium-confidence pick never makes Locks no matter how big its edge -- Locks is "
+      "confidence-gated, not edge-gated", f"got {lock_names24}")
+check("Doesnt Clear High Conf" not in lock_names24,
+      "a High-confidence pick that doesn't clear the price is still not a real bet -- excluded",
+      f"got {lock_names24}")
+check("Assumed High Conf" not in lock_names24,
+      "an assumed-lineup pick never makes Locks even at High confidence -- a Lock badge "
+      "requires a real confirmed lineup, same rule pickRow()'s own isLock uses client-side",
+      f"got {lock_names24}")
+
+payload24b = bd.build_payload({"generated_at": "x", "date": "2026-08-15"})
+check(payload24b["data"]["locks"] == [], "no candidates at all means an empty, valid Locks tab")
 
 n_pass = sum(1 for ok, _, _ in _results if ok)
 n_total = len(_results)

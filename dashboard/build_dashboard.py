@@ -629,6 +629,24 @@ def build_payload(result, track_record=None):
     top_picks.sort(key=lambda r: r.get("market_edge") or 0, reverse=True)
     top_picks = top_picks[:10]
 
+    # "Locks" -- direct request: "Locks should be in their own section I
+    # shouldn't have to look so hard for Sam Antonacci RBI or whatever it
+    # is." Top Picks ranks by edge, which can legitimately bury a real
+    # High-confidence pick behind several bigger-edge-but-lower-confidence
+    # ones (a High pick already priced close to fair by FanDuel still has
+    # a small edge) -- verified live 2026-08-15, exactly the case that
+    # prompted this. Locks is the OTHER axis: every pick that already
+    # earns pickRow()'s own gold Lock badge client-side (High confidence
+    # AND price_clears AND a real confirmed lineup -- see isLock there),
+    # collected in one place instead of making someone hunt for it across
+    # every category tab. Not capped to a fixed count on purpose, same
+    # reasoning select_best_by_category's own min_score=0 comment gives:
+    # some nights there are 2 real locks, some nights 15, and neither
+    # number should be gatekept down to match the other.
+    locks = [r for r in all_rows if r.get("confidence") == "High" and r.get("price_clears") is True
+            and not r.get("lineup_assumed")]
+    locks.sort(key=lambda r: r.get("market_edge") or 0, reverse=True)
+
     return {
         "date": result.get("date"),
         "generated_at": result.get("generated_at"),
@@ -648,13 +666,17 @@ def build_payload(result, track_record=None):
         # _compute_streaks' own longest-streak-first order. Kept out of the
         # generic loop for the same reason schedule is: to keep control of
         # the ordering that actually matters for this tab.
-        "tabs_order": ["top_picks", "schedule", "streaks", "all"] + list(tabs.keys()),
+        # "locks": direct request, "Locks should be in their own section I
+        # shouldn't have to look so hard for Sam Antonacci RBI or whatever
+        # it is." Placed right after top_picks -- the other curated,
+        # high-value section, not a generic category tab.
+        "tabs_order": ["top_picks", "locks", "schedule", "streaks", "all"] + list(tabs.keys()),
         "labels": {
-            "top_picks": "Top Picks", "schedule": "Schedule", "streaks": "Streaks",
+            "top_picks": "Top Picks", "locks": "Locks", "schedule": "Schedule", "streaks": "Streaks",
             "all": "All Props",
             **{stat: CATEGORY_LABELS.get(stat, stat.replace("_", " ").title()) for stat in tabs},
         },
-        "data": {"top_picks": top_picks, "schedule": result.get("game_context") or [],
+        "data": {"top_picks": top_picks, "locks": locks, "schedule": result.get("game_context") or [],
                 "streaks": result.get("streaks") or [], "all": all_rows, **tabs},
         "track_record": track_record,
         "suggested_parlay": result.get("suggested_parlay"),
@@ -1577,7 +1599,7 @@ function renderTabs() {{
   bar.innerHTML = PAYLOAD.tabs_order.map((key) => {{
     const label = PAYLOAD.labels[key];
     const count = PAYLOAD.data[key].length;
-    const icon = key === "top_picks" ? "&#127942; " : (key === "starred" ? "&#9733; " : (key === "schedule" ? "&#128197; " : (key === "streaks" ? "&#128293; " : "")));
+    const icon = key === "top_picks" ? "&#127942; " : (key === "locks" ? "&#128274; " : (key === "starred" ? "&#9733; " : (key === "schedule" ? "&#128197; " : (key === "streaks" ? "&#128293; " : ""))));
     const extraCls = key === "top_picks" ? " top-picks" : (key === "starred" ? " starred-tab" : "");
     return `<button class="tab${{key === activeTabKey ? " active" : ""}}${{extraCls}}" data-tab="${{esc(key)}}">${{icon}}${{esc(label)}} <span class="cnt">${{count}}</span></button>`;
   }}).join("");
@@ -1594,6 +1616,7 @@ function renderTabs() {{
 
 const PANEL_DESC = {{
   top_picks: "The board's real favorites tonight: High-confidence picks that still clear FanDuel's price, ranked by genuine edge over the market -- not just raw probability. A Lineup not confirmed badge means his slot is still a projection, not an official posted lineup -- it'll confirm or disappear as MLB posts the real one.",
+  locks: "Every High-confidence pick that clears FanDuel's price with a real, confirmed lineup -- the Lock badge you'd otherwise have to go hunting for across every tab, all in one place. Ranked by edge among these, but everything here already earned the same High-confidence bar.",
   starred: "Your personal shortlist. Click the star on any pick to save it here -- stored on this device only, nothing is sent anywhere.",
   schedule: "Tonight's slate. Click a game for the real weather, home-plate umpire tendency, and starting pitchers behind it, plus the best-priced props tied to that specific matchup.",
   streaks: "Real, active streaks among tonight's own candidates, across every batter and pitcher market -- consecutive games clearing a real line, not just hits and total bases. Every entry here is a real prop you can actually bet tonight, not a trivia list.",
@@ -1696,7 +1719,7 @@ function renderPanels() {{
     countLabel = filtersActive
       ? `${{rows.length}} of ${{realRows.length}} candidate${{realRows.length === 1 ? "" : "s"}}`
       : `${{realRows.length}} candidate${{realRows.length === 1 ? "" : "s"}}`;
-    rankedBy = uiState.sortKey === "edge" ? "edge over the market" : uiState.sortKey === "prob" ? "model probability" : uiState.sortKey === "odds" ? "payout size" : (key === "top_picks" ? "edge over the market" : (key === "streaks" ? "streak length" : "model probability"));
+    rankedBy = uiState.sortKey === "edge" ? "edge over the market" : uiState.sortKey === "prob" ? "model probability" : uiState.sortKey === "odds" ? "payout size" : ((key === "top_picks" || key === "locks") ? "edge over the market" : (key === "streaks" ? "streak length" : "model probability"));
     }}
     html += `
     <div class="panel${{key === activeTabKey ? " active" : ""}}" id="panel-${{esc(key)}}">
