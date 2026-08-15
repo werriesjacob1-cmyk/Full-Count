@@ -104,6 +104,13 @@ head("4. prices_updated_at is stamped, generated_at is left untouched -- this is
 
 check("prices_updated_at" in out3, "prices_updated_at was added")
 check(out3["generated_at"] == "x", "generated_at (the last real rescoring pass) is never touched here")
+# Real bug, found live 2026-08-15: a naive datetime.now().isoformat() (no
+# tz suffix) gets parsed by a browser's `new Date(iso)` as LOCAL time, not
+# UTC -- the page showed an "Updated" time hours in the future for anyone
+# west of UTC. Must carry a real UTC offset.
+check("+00:00" in out3["prices_updated_at"] or out3["prices_updated_at"].endswith("Z"),
+      "prices_updated_at is timezone-aware, not a naive local timestamp a browser would "
+      "misread as local time", f"got {out3['prices_updated_at']!r}")
 
 head("4b. a top pick whose game has already started is grandfathered into the rebuilt "
      "Top Picks even once price_clears goes false -- direct request: \"for the top picks, "

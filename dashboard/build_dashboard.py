@@ -26,7 +26,7 @@ import os
 import sys
 import tempfile
 from collections import defaultdict
-from datetime import datetime
+from datetime import datetime, timezone
 
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DASHBOARD_DIR = os.path.join(REPO_ROOT, "dashboard")
@@ -64,10 +64,24 @@ STREAK_MIN = 3  # showing every player with a 1-game "streak" would be everyone 
                 # common threshold real sports coverage treats as notable.
 
 
+# Every real per-game batter field batter_recent_game_log() returns, i.e.
+# every batter market a real streak can be built on. Direct follow-up
+# request: "broaden the streaks to any relevant prop" -- not just
+# hits/total_bases. "moonshot_400"-style keys are deliberately excluded:
+# select_moonshots() scores those as their own distance-threshold family,
+# never through this stat name, so they can't double-count against
+# "home_runs" here.
+BATTER_STREAK_STATS = ("hits", "total_bases", "runs", "rbis", "doubles", "triples",
+                       "home_runs", "stolen_base", "singles", "hits_runs_rbis")
+
+
 def _compute_streaks(all_priced, max_workers=12):
     """Real active streaks tied to tonight's board. Direct request,
     verbatim: "STREAKS. Hits in a row, 2+ bases in a row, over X
-    strikeouts in a row, any trends that are useful."
+    strikeouts in a row, any trends that are useful," broadened by a
+    direct follow-up to "any relevant prop" -- every batter market in
+    BATTER_STREAK_STATS, each checked against that candidate's own real
+    line (projection.needs), not a hardcoded per-stat threshold.
 
     Only computed for players who already have a real candidate on
     tonight's board (all_priced -- the same deduped moonshot+best-of-
@@ -81,21 +95,38 @@ def _compute_streaks(all_priced, max_workers=12):
     batter_recent_game_log's own docstring for why a streak needs a
     second, separate fetch rather than reusing it). Threaded, same
     pattern empirical_batter_prop_rates already uses, since this is one
-    network call per streak-eligible player."""
+    network call per streak-eligible player -- ONE fetch even when a
+    player carries several different-stat candidate rows, since a single
+    game log has every field needed to check all of them.
+
+    Real bug, found live 2026-08-15: without a market_odds check, a
+    streak got built against the model's own internally-chosen analysis
+    threshold even when FanDuel has no matching line posted at all yet
+    (market_odds is None) -- Jacob Misiorowski's real K line runs ~9;
+    "15 straight starts clearing Over 5.5" was true and also nearly
+    meaningless, since 5.5 was never a real number anyone could bet.
+    This tab's own panel description promises "every entry here is a
+    real prop you can actually bet tonight" -- enforce that instead of
+    just claiming it."""
     import mlb_sources as msrc
     from concurrent.futures import ThreadPoolExecutor
 
-    # Dedup by player_id: a batter can carry multiple candidate rows (a
-    # hits row AND a total_bases row via best-of-category), but only
-    # needs ONE real game-log fetch to check both streak types against.
-    batters, pitchers = {}, {}
+    # Group by player_id (not deduped down to one row): a player can
+    # carry several real candidate rows across different stat categories
+    # (hits AND doubles AND rbis, say, via best-of-category) and each is
+    # a genuinely different, real streak worth surfacing -- "more
+    # substantial... more data" was the direct ask. Still only ONE game-
+    # log fetch per player either way.
+    batters, pitchers = defaultdict(list), {}
     for r in all_priced:
+        if r.get("market_odds") is None:
+            continue
         stat = (r.get("projection") or {}).get("stat")
         pid = r.get("player_id")
         if not pid:
             continue
-        if r.get("type") == "batter" and stat in ("hits", "total_bases") and pid not in batters:
-            batters[pid] = r
+        if r.get("type") == "batter" and stat in BATTER_STREAK_STATS:
+            batters[pid].append(r)
         elif r.get("type") == "pitcher" and stat == "strikeouts" and pid not in pitchers:
             pitchers[pid] = r
 
@@ -119,15 +150,16 @@ def _compute_streaks(all_priced, max_workers=12):
         return n
 
     entries = []
-    for pid, r in batters.items():
-        stat = (r.get("projection") or {}).get("stat")
+    for pid, rows in batters.items():
         games = batter_logs.get(pid) or []
-        if stat == "hits":
-            n = _streak_len(games, lambda g: g["hits"] >= 1)
-        else:
-            n = _streak_len(games, lambda g: g["total_bases"] >= 2)
-        if n >= STREAK_MIN:
-            entries.append({**r, "streak": n, "streak_stat": stat})
+        for r in rows:
+            stat = (r.get("projection") or {}).get("stat")
+            needs = (r.get("projection") or {}).get("needs")
+            if needs is None:
+                continue
+            n = _streak_len(games, lambda g, stat=stat, needs=needs: g.get(stat, 0) >= needs)
+            if n >= STREAK_MIN:
+                entries.append({**r, "streak": n, "streak_stat": stat})
     for pid, r in pitchers.items():
         needs = (r.get("projection") or {}).get("needs")
         if needs is None:
@@ -161,7 +193,7 @@ def run_live_fetch():
     result = gp._build_and_score()
     if result is None:
         log("No games / nothing bettable right now.")
-        return {"generated_at": datetime.now().isoformat(), "date": gp.m.TODAY}
+        return {"generated_at": datetime.now(timezone.utc).isoformat(), "date": gp.m.TODAY}
 
     candidates, ctx = result
     game_meta = ctx["game_meta"]; park_wx = ctx["park_wx"]
@@ -169,8 +201,9 @@ def run_live_fetch():
     early_po_prices = ctx.get("po_prices")
     log(f"Scored {len(candidates)} raw candidates across {len(game_meta)} bettable games.")
 
-    candidates, _qc_rejected, _assumed_lineup = gp.quality_control(candidates, game_meta, park_wx, emp_pitchers)
-    log(f"{len(candidates)} candidates survive quality_control.")
+    candidates, _qc_rejected, assumed_lineup = gp.quality_control(candidates, game_meta, park_wx, emp_pitchers)
+    log(f"{len(candidates)} candidates have a confirmed lineup; {len(assumed_lineup)} more will be "
+        f"included with a 'lineup not confirmed' badge (Rotowire projection or last-known order).")
 
     signal_trust = gp.load_signal_trust()
     gp.apply_signal_weights(candidates, trust=signal_trust)
@@ -193,6 +226,17 @@ def run_live_fetch():
                             combined_k_prices=combined_k_prices)
     log("Market prices attached to primary-family candidates.")
 
+    # Direct request: "we shouldn't have to wait for lineups to at least get
+    # a lean... there are still props for almost every player posted."
+    # FanDuel prices most props well before lineups lock, so a real price
+    # can attach to an early-look candidate the same way it does a
+    # confirmed one -- the batting SLOT is still a guess (that's why
+    # quality_control() held it out of `candidates`), but a real posted
+    # price makes the lean worth more than a bare probability.
+    fd.attach_market_prices(assumed_lineup, prices=prices, k_prices=k_prices,
+                            fi_prices=fi_prices, po_prices=po_prices,
+                            combined_k_prices=combined_k_prices)
+
     # Computed here, not after clean() below, because it needs player_id/
     # game_pk to screen out same-player and negatively/redundantly
     # correlated legs -- fields clean() strips before the dashboard payload
@@ -203,7 +247,33 @@ def run_live_fetch():
     # would silently drop the one thing that engine exists to get right.
     suggested_parlay = _build_suggested_parlay(candidates)
 
-    moonshots_full = gp.select_moonshots(candidates, prices, fd, n=9999)
+    # Direct follow-up request: "I want you to broaden the streaks to any
+    # relevant prop. Our system should use assumed lineups... we would
+    # just scratch the ones who don't end up on the final roster... this
+    # way we can have a more substantial streak setting and more data
+    # early in the day. We shouldn't have to wait for lineups." Assumed-
+    # lineup candidates now flow through the SAME moonshot/category
+    # selection as confirmed ones (still individually tagged
+    # lineup_assumed=True -- see clean() and pickRow()'s earlier badge --
+    # so nothing about this is silent), rather than being walled off in a
+    # separate tab nobody browses by default. suggested_parlay above is
+    # deliberately NOT extended this way: compounding several guessed
+    # lineups into one multi-leg bet is a materially bigger risk than one
+    # flagged single pick, and nothing in this request asked for that.
+    #
+    # "Scratch the ones who don't make the roster" already happens
+    # structurally, not as a patch: every rebuild is a fresh, from-
+    # scratch scoring pass (see this function's own docstring), so a
+    # player who doesn't end up in a real lineup simply isn't generated
+    # as a candidate on the NEXT rebuild at all -- lineup-watch triggers
+    # that rebuild within ~10 minutes of the real lineup posting or
+    # changing. A player who DOES make the roster gets re-scored with
+    # real inputs (real batting slot, real platoon matchup) on that same
+    # rebuild, which is what should move his confidence -- no separate
+    # "confirm/scratch" step to build.
+    combined_candidates = candidates + assumed_lineup
+
+    moonshots_full = gp.select_moonshots(combined_candidates, prices, fd, n=9999)
     log(f"{len(moonshots_full)} total home_run candidates.")
 
     # min_score=0: direct report, verbatim -- "Even if a prop doesn't make
@@ -217,7 +287,7 @@ def run_live_fetch():
     # thin or unattractive slate. This site is meant to give bettors
     # options, not gatekeep them -- the "clears" vs "pass" price styling
     # already tells them which rows are genuinely good value.
-    by_category_full = gp.select_best_by_category(candidates, prices, fd, n_per_category=9999,
+    by_category_full = gp.select_best_by_category(combined_candidates, prices, fd, n_per_category=9999,
                                                    k_prices=k_prices, min_score=0)
     for stat, entries in by_category_full.items():
         log(f"  {stat}: {len(entries)} candidates")
@@ -272,10 +342,17 @@ def run_live_fetch():
                 # doesn't."
                 "player_id": r.get("player_id"),
                 "combo_player_ids": r.get("combo_player_ids"),
+                # Early Look: True only for a candidate whose batting-order
+                # slot is GUESSED (Rotowire projection or last-known
+                # lineup), never a real posted one -- see quality_control()
+                # in generate_picks.py. Carried on the row itself (not
+                # inferred from which tab it's rendered in) so the client
+                # can visibly flag it no matter where it ends up.
+                "lineup_assumed": r.get("lineup_assumed"),
             })
         return out
 
-    out = {"generated_at": datetime.now().isoformat(), "date": gp.m.TODAY,
+    out = {"generated_at": datetime.now(timezone.utc).isoformat(), "date": gp.m.TODAY,
           "moonshot": clean(moonshots_full), "suggested_parlay": suggested_parlay}
     for stat, entries in by_category_full.items():
         out[stat] = clean(entries)
@@ -511,6 +588,15 @@ def build_payload(result, track_record=None):
     # its value (None, or a dict once the parlay build succeeds) as a list
     # of candidate rows and crashed on `for r in rows` the moment a real run
     # actually populated it.
+    # Assumed-lineup candidates (quality_control()'s lineup_assumed=True
+    # pool) are DELIBERATELY not excluded here -- direct follow-up
+    # request: "our system should use assumed lineups... we would just
+    # scratch the ones who don't end up on the final roster." They flow
+    # into candidates/moonshots_full/by_category_full upstream in
+    # run_live_fetch() like any other row, carrying their own
+    # lineup_assumed flag through clean() so pickRow() can badge them
+    # ("Lineup not confirmed") and suppress the Lock badge for them --
+    # visibly flagged, not walled off into a separate tab.
     meta_keys = {"generated_at", "date", "suggested_parlay", "game_context", "streaks"}
     tabs = {}
     for stat in CATEGORY_ORDER:
@@ -907,6 +993,11 @@ body {{
 .pick.grade-hit .who .name {{ color: var(--good); }}
 .pick.grade-miss {{ border-color: var(--bad); opacity: 0.82; }}
 .chip.streak-badge {{ background: var(--warn-soft); color: var(--warn); font-weight: 600; }}
+/* Early Look: deliberately muted/dashed, the opposite treatment of .pick.lock's
+   confident solid accent -- this must read as "unofficial," never as a
+   recommendation, no matter how quickly someone scans the row. */
+.chip.assumed-badge {{ background: var(--surface-2); color: var(--ink-dim); border: 1px dashed var(--line); }}
+.pick.lineup-assumed {{ border-style: dashed; }}
 /* Real player, real projection -- just not a bet FanDuel has posted a
    price for yet. Dimmed rather than hidden (it's still real information),
    but clearly receded so it never reads as a recommendation on par with
@@ -1007,11 +1098,22 @@ body {{
 .thin-link:hover {{ background: var(--accent-soft); }}
 
 @media (max-width: 680px) {{
-  .pick {{ grid-template-columns: 1fr auto; grid-template-areas: "who odds" "prop odds"; row-gap: 8px; }}
+  /* Real bug, found live 2026-08-15 (Jacob Misiorowski's name unreadable
+     on mobile): an `auto` second track sizes to its content's max-content
+     width, and a single long chip's un-wrappable text (chips are
+     white-space:nowrap) IS that content -- no max-width on the item
+     itself stops grid track-sizing from using its full unwrapped width.
+     A genuine max-width on the item (tried first) didn't fix it for
+     exactly this reason. Fixed to the same 128px-class width the desktop
+     layout already uses successfully (158px there), so .badges' own
+     flex-wrap is what handles a long chip, never the grid track -- and
+     minmax(0, 1fr) guarantees .who can actually shrink to fit an
+     ellipsis instead of being pushed off by the sibling track's content. */
+  .pick {{ grid-template-columns: minmax(0, 1fr) 128px; grid-template-areas: "who odds" "prop odds"; row-gap: 8px; }}
   .pick .rank {{ display: none; }}
   .pick .who {{ grid-area: who; }}
   .pick .prop-col {{ grid-area: prop; }}
-  .pick .odds-col {{ grid-area: odds; min-width: 112px; }}
+  .pick .odds-col {{ grid-area: odds; }}
   .summary {{ grid-template-columns: repeat(2, 1fr); }}
   .tabbar-wrap {{ margin: 0 -20px 18px; }}
 }}
@@ -1232,8 +1334,22 @@ function pickRow(p, rank) {{
     edgeHtml = `<span class="edge ${{edgeCls}}">${{edgeText}} vs mkt</span>`;
   }}
 
-  const isLock = p.confidence === "High" && p.price_clears === true;
+  // A "Lock" badge is a strong, real-recommendation signal -- never earned
+  // by a candidate whose batting-order slot is still a guess (p.lineup_
+  // assumed), even if it happens to have a real posted price and a High
+  // read. Early Look's whole point is "not a pick yet."
+  const isLock = p.confidence === "High" && p.price_clears === true && !p.lineup_assumed;
   const lockBadge = isLock ? `<span class="chip lock-badge">&#128274; Lock</span>` : "";
+
+  // Early Look: direct request, "we shouldn't have to wait for lineups to
+  // at least get a lean, then we can adjust depending how the lineups
+  // come out." p.lineup_assumed comes straight from quality_control()'s
+  // own assumed=True tag -- a real player, a real matchup, a GUESSED
+  // batting slot (Rotowire projection or last-known order), never a
+  // posted one. Shown on the row itself (not just the panel description)
+  // so it stays unmistakable no matter how a card gets shared/screenshot.
+  const earlyBadge = p.lineup_assumed
+    ? `<span class="chip assumed-badge">&#128064; Lineup not confirmed</span>` : "";
 
   // Live grading: direct request, "for the top picks, them to show when
   // it's cashed... make the pick yellow when the game is happening...
@@ -1248,14 +1364,24 @@ function pickRow(p, rank) {{
     : p.grade === "live" ? `<span class="chip grade-badge grade-live">&#9679; Live</span>` : "";
 
   // Streaks: direct request, "STREAKS. Hits in a row, 2+ bases in a row,
-  // over X strikeouts in a row." p.streak/p.streak_stat come from
-  // dashboard/build_dashboard.py's _compute_streaks(), a real per-game
-  // log count, not derived from hit_probability -- so this can appear on
-  // any pick regardless of its own confidence/price state.
-  const STREAK_STAT_NAMES = {{ hits: "games with a hit", total_bases: "games with 2+ total bases",
-    strikeouts: "starts clearing this K line" }};
+  // over X strikeouts in a row," broadened by a direct follow-up to "any
+  // relevant prop." p.streak comes from dashboard/build_dashboard.py's
+  // _compute_streaks(), a real per-game log count checked against THIS
+  // candidate's own real line (p.projection.needs varies player to
+  // player) -- so this can appear on any pick regardless of its own
+  // confidence/price state.
+  // No per-stat label baked into the badge on purpose: since needs now
+  // varies per player/stat instead of a fixed "2+" or "1+", a canned
+  // label ("2+ TB streak") would be wrong for whoever's real line isn't
+  // 2. The adjacent .prop column already states the exact real line, so
+  // the badge just states the streak length. Also kept terse for the
+  // same reason found live 2026-08-15: a longer sentence-style badge is
+  // a single white-space:nowrap chip that doesn't wrap internally -- on
+  // the mobile grid, where .odds-col is an `auto`-sized track, that
+  // forced the track wide enough to crush the .who name column to
+  // nothing ("Misiorowski's name is cut off, can't see anything").
   const streakBadge = p.streak
-    ? `<span class="chip streak-badge">&#128293; ${{p.streak}} straight ${{esc(STREAK_STAT_NAMES[p.streak_stat] || "games")}}</span>`
+    ? `<span class="chip streak-badge">&#128293; ${{p.streak}}-game streak</span>`
     : "";
 
   const starKey = pickKey(p);
@@ -1263,7 +1389,7 @@ function pickRow(p, rank) {{
   const starBtn = `<button class="star-btn${{isStarred ? " starred" : ""}}" type="button" data-star-key="${{esc(starKey)}}" aria-label="${{isStarred ? "Remove from starred" : "Add to starred"}}">${{isStarred ? "&#9733;" : "&#9734;"}}</button>`;
 
   return `
-  <div class="pick${{isLock ? " lock" : ""}}${{isUnpriced ? " no-line" : ""}}${{gradeClass}}" tabindex="0" role="button" aria-expanded="false">
+  <div class="pick${{isLock ? " lock" : ""}}${{isUnpriced ? " no-line" : ""}}${{gradeClass}}${{p.lineup_assumed ? " lineup-assumed" : ""}}" tabindex="0" role="button" aria-expanded="false">
     ${{starBtn}}
     <div class="rank">${{String(rank).padStart(2, "0")}}</div>
     <div class="who">
@@ -1278,7 +1404,7 @@ function pickRow(p, rank) {{
         <span class="price ${{oddsClass}}">${{oddsText}}</span>
         ${{fairOdds !== null ? `<span class="fair">fair ${{fairOdds}}</span>` : ""}}
       </div>
-      <div class="badges">${{gradeBadge}}${{streakBadge}}${{lockBadge}}${{confChip}}</div>
+      <div class="badges">${{earlyBadge}}${{gradeBadge}}${{streakBadge}}${{lockBadge}}${{confChip}}</div>
       <div class="meter">
         <div class="fill ${{fillClass}}" style="width:${{ourPct}}%; opacity:${{fillOpacity}}"></div>
         ${{marketPct !== null ? `<div class="mark" style="left:${{marketPct}}%"></div>` : ""}}
@@ -1467,10 +1593,10 @@ function renderTabs() {{
 }}
 
 const PANEL_DESC = {{
-  top_picks: "The board's real favorites tonight: High-confidence picks that still clear FanDuel's price, ranked by genuine edge over the market -- not just raw probability.",
+  top_picks: "The board's real favorites tonight: High-confidence picks that still clear FanDuel's price, ranked by genuine edge over the market -- not just raw probability. A Lineup not confirmed badge means his slot is still a projection, not an official posted lineup -- it'll confirm or disappear as MLB posts the real one.",
   starred: "Your personal shortlist. Click the star on any pick to save it here -- stored on this device only, nothing is sent anywhere.",
   schedule: "Tonight's slate. Click a game for the real weather, home-plate umpire tendency, and starting pitchers behind it, plus the best-priced props tied to that specific matchup.",
-  streaks: "Real, active streaks among tonight's own candidates -- consecutive games with a hit, consecutive games with 2+ total bases, consecutive starts clearing a strikeout line. Every entry here is a real prop you can actually bet tonight, not a trivia list.",
+  streaks: "Real, active streaks among tonight's own candidates, across every batter and pitcher market -- consecutive games clearing a real line, not just hits and total bases. Every entry here is a real prop you can actually bet tonight, not a trivia list.",
 }};
 
 // Some markets are structurally thin -- not a bug, not a trimmed list, just

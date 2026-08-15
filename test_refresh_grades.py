@@ -130,6 +130,14 @@ check(out6["data"]["all"][0]["grade"] == "miss", "the 'all' tab's copy also pick
 head("7. grades_updated_at is stamped after a real grading pass")
 
 check("grades_updated_at" in out6, "grades_updated_at was added to the payload")
+# Real bug, found live 2026-08-15: datetime.now().isoformat() (naive, no
+# tz suffix) writes e.g. "2026-08-15T13:47:59" -- a viewer's browser
+# parses a tz-less ISO string as LOCAL time, not UTC, so the page showed
+# an "Updated" time HOURS in the future for anyone west of UTC. Must
+# carry a real UTC offset so `new Date(iso)` parses it correctly.
+check("+00:00" in out6["grades_updated_at"] or out6["grades_updated_at"].endswith("Z"),
+      "grades_updated_at is timezone-aware (a real UTC offset), not a naive local timestamp "
+      "that a browser would misread as local time", f"got {out6['grades_updated_at']!r}")
 
 head("8. an empty top_picks list is a clean no-op, no crash, no fetch")
 

@@ -121,7 +121,7 @@ payload4 = bd.build_payload({
 })
 check(payload4["tabs_order"][:4] == ["top_picks", "schedule", "streaks", "all"],
       "top_picks, schedule, streaks, and all are always first, in that order",
-      f"got {payload4['tabs_order'][:3]}")
+      f"got {payload4['tabs_order'][:4]}")
 check("triples" not in payload4["tabs_order"],
       "a category with zero real rows never becomes an empty tab")
 check("hits" in payload4["tabs_order"],
@@ -635,17 +635,27 @@ head("17. _compute_streaks: direct request, verbatim: \"STREAKS. Hits in a row, 
 import mlb_sources as msrc
 
 
-def streak_row(name, pid, stat, needs=1, ptype="batter"):
-    return dict(row(name, stat, 0.5, needs=needs, ptype=ptype), player_id=pid)
+def streak_row(name, pid, stat, needs=1, ptype="batter", odds=-110):
+    # odds=-110 by default: real bug, found live 2026-08-15 (Jacob
+    # Misiorowski's "15 straight starts clearing Over 5.5 K" -- a real
+    # streak against a threshold FanDuel had never actually posted a
+    # price for, since his real line runs closer to 9). A streak-eligible
+    # fixture needs a real market_odds unless a check is deliberately
+    # testing the unpriced-exclusion rule itself.
+    return dict(row(name, stat, 0.5, needs=needs, ptype=ptype, odds=odds), player_id=pid)
 
 
 ALL_PRICED_17 = [
     streak_row("Five Hit Streak", 1, "hits"),
-    streak_row("Four TB Streak", 2, "total_bases"),
+    streak_row("Four TB Streak", 2, "total_bases", needs=2),
     streak_row("Two Hit Streak", 3, "hits"),          # below STREAK_MIN -- must be excluded
     streak_row("Three K Streak", 4, "strikeouts", needs=5, ptype="pitcher"),
-    streak_row("Dedup Hits First", 5, "hits"),
-    streak_row("Dedup TB Second", 5, "total_bases"),  # same player_id=5 -- must NOT get its own fetch
+    streak_row("Multi Stat Hits", 5, "hits"),
+    streak_row("Multi Stat RBIs", 5, "rbis"),         # same player_id=5, a DIFFERENT stat --
+                                                       # must produce its OWN entry, one fetch total
+    streak_row("Unpriced Hit Streak", 6, "hits", odds=None),  # no real FanDuel line -- must be excluded
+    streak_row("Doubles Streak", 7, "doubles"),       # direct follow-up: "broaden the streaks to
+                                                       # any relevant prop" -- not just hits/TB/K
 ]
 
 BATTER_LOGS_17 = {
@@ -653,7 +663,12 @@ BATTER_LOGS_17 = {
     2: [{"date": f"d{i}", "hits": 0, "total_bases": 2} for i in range(4)] + [{"date": "d4", "hits": 0, "total_bases": 0}],
     3: [{"date": "d0", "hits": 1, "total_bases": 1}, {"date": "d1", "hits": 1, "total_bases": 1},
         {"date": "d2", "hits": 0, "total_bases": 0}],
-    5: [{"date": f"d{i}", "hits": 1, "total_bases": 0} for i in range(3)],
+    # A real 4-game hit streak AND a real 3-game RBI streak on the SAME
+    # player -- both must surface as independent entries off one fetch.
+    5: [{"date": "d0", "hits": 1, "rbis": 1}, {"date": "d1", "hits": 1, "rbis": 1},
+        {"date": "d2", "hits": 1, "rbis": 1}, {"date": "d3", "hits": 1, "rbis": 0}],
+    6: [{"date": f"d{i}", "hits": 1, "total_bases": 0} for i in range(6)],  # a real 6-game streak, if it counted
+    7: [{"date": f"d{i}", "doubles": 1} for i in range(3)],
 }
 PITCHER_LOGS_17 = {4: [{"date": f"d{i}", "strikeouts": 5 + i} for i in range(3)]}
 
@@ -669,18 +684,31 @@ with mock.patch.object(msrc, "batter_recent_game_log", side_effect=fake_batter_l
      mock.patch.object(msrc, "pitcher_recent_starts", side_effect=lambda pid, max_games=15: PITCHER_LOGS_17.get(pid, [])):
     entries17 = bd._compute_streaks(ALL_PRICED_17)
 
-check(batter_calls_17.count(5) == 1, "a player carrying multiple candidate rows (hits AND "
-      "total_bases) only gets ONE real game-log fetch, not one per row", f"got {batter_calls_17}")
+check(batter_calls_17.count(5) == 1, "a player carrying multiple candidate rows across "
+      "DIFFERENT stats (hits AND rbis) only gets ONE real game-log fetch, not one per row",
+      f"got {batter_calls_17}")
 names17 = [e["name"] for e in entries17]
 check("Five Hit Streak" in names17, "a real 5-game hit streak is surfaced")
-check("Four TB Streak" in names17, "a real 4-game 2+ total-bases streak is surfaced")
+check("Four TB Streak" in names17, "a real 4-game total-bases streak (needs=2) is surfaced")
 check("Three K Streak" in names17, "a real 3-start strikeouts-needs-clearing streak is surfaced")
+check("Doubles Streak" in names17,
+      "a real doubles streak is surfaced -- direct follow-up request: \"broaden the streaks to "
+      "any relevant prop,\" not just hits/total_bases/strikeouts", f"got {names17}")
 check("Two Hit Streak" not in names17, "a 2-game streak is below STREAK_MIN=3 and excluded as noise",
       f"got {names17}")
-dedup_entries17 = [e for e in entries17 if e["player_id"] == 5]
-check(len(dedup_entries17) == 1 and dedup_entries17[0]["streak_stat"] == "hits",
-      "the deduped player only produces a streak entry for whichever candidate row was "
-      "encountered first (hits, not total_bases)", f"got {dedup_entries17}")
+check("Unpriced Hit Streak" not in names17,
+      "a real, otherwise-qualifying streak is excluded when the candidate has no real FanDuel "
+      "price (market_odds is None) -- this is the exact Misiorowski bug: a streak against a "
+      "threshold that was never an actual bettable line", f"got {names17}")
+check(batter_calls_17.count(6) == 0,
+      "an unpriced candidate is filtered out before ever costing a game-log fetch",
+      f"got {batter_calls_17}")
+multi17 = [e for e in entries17 if e["player_id"] == 5]
+multi_stats17 = {e["streak_stat"]: e["streak"] for e in multi17}
+check(multi_stats17 == {"hits": 4, "rbis": 3},
+      "a player with real, independently-qualifying streaks in TWO different stats gets BOTH "
+      "as separate entries (not deduped down to just the first-seen row) -- direct follow-up "
+      "request: \"more substantial streak setting and more data\"", f"got {multi_stats17}")
 five17 = next(e for e in entries17 if e["name"] == "Five Hit Streak")
 four17 = next(e for e in entries17 if e["name"] == "Four TB Streak")
 check(five17["streak"] == 5 and four17["streak"] == 4, "streak lengths are counted correctly",
@@ -763,7 +791,7 @@ const requestAnimationFrame = (fn) => {};
 const html = pickRow(PAYLOAD.data.streaks[0], 1);
 if (!html.includes("streak-badge")) { console.error("FAIL: no streak-badge chip rendered"); process.exit(1); }
 if (!html.includes("7")) { console.error("FAIL: the real streak length is missing"); process.exit(1); }
-if (!html.includes("games with a hit")) { console.error("FAIL: the human streak-stat label is missing"); process.exit(1); }
+if (!html.includes("7-game streak")) { console.error("FAIL: the streak length text is missing"); process.exit(1); }
 console.log("streak badge: all checks passed");
 """
     harness_path20 = tempfile.mktemp(suffix=".js")
@@ -778,6 +806,110 @@ console.log("streak badge: all checks passed");
         os.remove(harness_path20)
 else:
     check(True, "node not available -- streak badge JS check skipped, not failed")
+
+head("21. run_live_fetch()'s no-games early return stamps a timezone-aware generated_at -- "
+     "real bug, found live 2026-08-15: datetime.now().isoformat() (naive, no tz suffix) gets "
+     "parsed by a browser's `new Date(iso)` as LOCAL time, not UTC, so the page showed an "
+     "'Updated' time hours in the future for a viewer west of UTC.")
+
+import generate_picks as gp
+
+with mock.patch.object(gp, "_build_and_score", return_value=None), \
+     mock.patch.object(gp.m, "TODAY", "2026-08-15"):
+    out21 = bd.run_live_fetch()
+check("+00:00" in out21["generated_at"] or out21["generated_at"].endswith("Z"),
+      "the no-games early-return path stamps a real UTC offset, not a naive local timestamp",
+      f"got {out21['generated_at']!r}")
+
+head("22. Assumed-lineup candidates: direct follow-up request, verbatim -- \"our system should "
+     "use assumed lineups. The players lines are still out there, we would just scratch the "
+     "ones who don't end up on the final roster... we shouldn't have to wait for lineups.\" "
+     "run_live_fetch() now merges quality_control()'s assumed_lineup pool into the same "
+     "candidate flow as confirmed picks (see combined_candidates there) -- by the time a row "
+     "reaches build_payload(), it's indistinguishable in SHAPE from a confirmed one, just "
+     "still carrying lineup_assumed=True so the client can badge it. This checks build_payload "
+     "doesn't do anything to filter that flag back out.")
+
+assumed_row = dict(row("Assumed Lineup Guy", "hits", 0.75, odds=-140, implied=0.58, edge=0.17,
+                       clears=True, confidence="High"), lineup_assumed=True)
+payload22 = bd.build_payload({
+    "generated_at": "x", "date": "2026-08-15",
+    "hits": [row("Confirmed Guy", "hits", 0.6, odds=-110, implied=0.52, edge=0.08, clears=True),
+            assumed_row],
+})
+check(any(r.get("name") == "Assumed Lineup Guy" and r.get("lineup_assumed") is True
+          for r in payload22["data"]["hits"]),
+      "an assumed-lineup candidate appears in its real category tab, still flagged",
+      f"got {payload22['data']['hits']}")
+check(any(r.get("name") == "Assumed Lineup Guy" for r in payload22["data"]["all"]),
+      "an assumed-lineup candidate is included in All Props, not walled off",
+      f"got {[r.get('name') for r in payload22['data']['all']]}")
+check(any(r.get("name") == "Assumed Lineup Guy" and r.get("lineup_assumed") is True
+          for r in payload22["data"]["top_picks"]),
+      "a High-confidence, price_clears==True assumed-lineup candidate DOES reach Top Picks now "
+      "(direct request: use assumed lineups as real board data) -- but still carries "
+      "lineup_assumed=True so the client renders its badge there too",
+      f"got {payload22['data']['top_picks']}")
+
+head("23. Assumed-lineup rows never earn the 'Lock' badge client-side, even with a real "
+     "posted price and High confidence in Top Picks itself -- a Lock badge is a strong "
+     "recommendation signal, and an unconfirmed lineup slot is still a guess no matter how "
+     "good the price looks")
+
+if node:
+    html23 = bd.render_html(bd.build_payload({
+        "generated_at": "x", "date": "2026-08-15",
+        "hits": [dict(row("Guessed Slot Guy", "hits", 0.8, odds=-200, implied=0.6, edge=0.2,
+                          clears=True, confidence="High"), lineup_assumed=True)],
+    }), fonts)
+    js23 = html23.split("<script>", 1)[1].rsplit("</script>", 1)[0]
+    harness23 = """
+function stubEl() {
+  return {addEventListener(){}, textContent:'', innerHTML:'', dataset:{}, style:{},
+    setAttribute(){}, removeAttribute(){}, value:'',
+    classList:{add(){}, remove(){}, toggle(){return false;}}, querySelectorAll: () => [],
+    querySelector: () => null, remove(){}};
+}
+function escapingEl() {
+  let raw = "";
+  const ESCAPE_MAP = {"&": "&amp;", "<": "&lt;", ">": "&gt;"};
+  return {
+    addEventListener(){}, dataset:{}, style:{}, setAttribute(){}, removeAttribute(){}, value:'',
+    classList:{add(){}, remove(){}, toggle(){return false;}}, querySelectorAll: () => [],
+    querySelector: () => null, remove(){},
+    get textContent() { return raw; },
+    set textContent(v) { raw = v; },
+    get innerHTML() { return raw.replace(/[&<>]/g, ch => ESCAPE_MAP[ch]); },
+  };
+}
+const document = {getElementById: () => stubEl(),
+  documentElement: {setAttribute(){}, removeAttribute(){}, getAttribute: () => null},
+  querySelectorAll: () => [], querySelector: () => null, createElement: () => escapingEl()};
+const window = {matchMedia: () => ({matches:false}), location: {reload(){}}};
+const localStorage = {getItem: () => null, setItem(){}};
+const fetch = () => Promise.reject(new Error("no network in test"));
+const setInterval = () => {};
+const requestAnimationFrame = (fn) => {};
+""" + js23 + """
+const html = pickRow(PAYLOAD.data.hits[0], 1);
+if (html.includes("lock-badge")) { console.error("FAIL: an assumed-lineup row earned a Lock badge -- looks like a real recommendation"); process.exit(1); }
+if (!html.includes("assumed-badge")) { console.error("FAIL: no unconfirmed-lineup badge rendered"); process.exit(1); }
+if (!html.includes("Lineup not confirmed")) { console.error("FAIL: the unconfirmed-lineup disclaimer text is missing"); process.exit(1); }
+if (!html.includes("lineup-assumed")) { console.error("FAIL: the .pick row isn't visually flagged as lineup-assumed"); process.exit(1); }
+console.log("assumed-lineup badge: all checks passed");
+"""
+    harness_path23 = tempfile.mktemp(suffix=".js")
+    with open(harness_path23, "w") as f:
+        f.write(harness23)
+    try:
+        r23 = subprocess.run([node, harness_path23], capture_output=True, text=True)
+        check(r23.returncode == 0, "an assumed-lineup row never renders a Lock badge and always "
+              "renders the unconfirmed-lineup disclaimer badge, even inside a normal category "
+              "tab", r23.stdout + r23.stderr)
+    finally:
+        os.remove(harness_path23)
+else:
+    check(True, "node not available -- early-look badge JS check skipped, not failed")
 
 n_pass = sum(1 for ok, _, _ in _results if ok)
 n_total = len(_results)

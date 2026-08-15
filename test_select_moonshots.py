@@ -135,6 +135,20 @@ head("9. an empty candidate list returns an empty list")
 
 check(gp.select_moonshots([], {}, fd) == [], "no candidates at all returns an empty list")
 
+head("10. lineup_assumed survives into the output row -- real bug, found live 2026-08-15: "
+     "this function's own output dict was a fixed field list that silently dropped "
+     "lineup_assumed, so a batter whose lineup slot is a guess (quality_control()'s "
+     "assumed=True tag) came out of here indistinguishable from a fully confirmed one, with "
+     "no way for a caller to badge it")
+
+assumed_out = gp.select_moonshots([batter_c(lineup_assumed=True)], {}, fd)
+check(len(assumed_out) == 1 and assumed_out[0]["lineup_assumed"] is True,
+      "an assumed-lineup candidate's flag survives into the moonshot row", f"got {assumed_out}")
+confirmed_out = gp.select_moonshots([batter_c(name="Confirmed Guy", player_id=6)], {}, fd)
+check(confirmed_out[0].get("lineup_assumed") is None,
+      "a normal (confirmed) candidate with no lineup_assumed key stays honestly absent, "
+      "not fabricated as False")
+
 n_pass = sum(1 for ok, _, _ in _results if ok)
 n_total = len(_results)
 print("\n" + "=" * 78)

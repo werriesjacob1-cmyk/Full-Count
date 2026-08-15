@@ -31,7 +31,7 @@ import argparse
 import json
 import os
 import sys
-from datetime import datetime
+from datetime import datetime, timezone
 
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, REPO_ROOT)
@@ -117,7 +117,7 @@ def refresh(data_path):
             if grade:
                 r["grade"] = grade
 
-    payload["grades_updated_at"] = datetime.now().isoformat()
+    payload["grades_updated_at"] = datetime.now(timezone.utc).isoformat()
 
     with open(data_path, "w", encoding="utf-8") as f:
         json.dump(payload, f, separators=(",", ":"))

@@ -1445,9 +1445,11 @@ def empirical_batter_prop_rates(batter_ids, min_games=20, max_workers=16, asof=N
 
 
 def batter_recent_game_log(player_id, max_games=20):
-    """Real per-game hits/total_bases, most recent game FIRST. Direct
-    request, verbatim: "STREAKS. Hits in a row, 2+ bases in a row, over X
-    strikeouts in a row, any trends that are useful."
+    """Real per-game batting line, every stat a real FanDuel batter market
+    can be built on, most recent game FIRST. Direct request, verbatim:
+    "STREAKS. Hits in a row, 2+ bases in a row, over X strikeouts in a
+    row, any trends that are useful" -- broadened per a direct follow-up
+    request to cover "any relevant prop," not just hits/total_bases.
 
     A genuinely different question from empirical_batter_prop_rates: that
     function deliberately throws game order away to compute an aggregate
@@ -1467,6 +1469,12 @@ def batter_recent_game_log(player_id, max_games=20):
     this backward would silently compute a fabricated "streak" counting
     the wrong direction.
 
+    "singles" and "hits_runs_rbis" aren't raw MLB stat fields -- derived
+    the same way FanDuel's own markets are built (singles = hits minus
+    every extra-base hit; hits_runs_rbis = the three summed), verified
+    against MLB's real field names live (hits/doubles/triples/homeRuns/
+    runs/rbi/stolenBases/totalBases) before writing this.
+
     Returns [] on any fetch failure or a player with no real-PA games --
     an honest empty streak history, never a fabricated one."""
     try:
@@ -1482,8 +1490,19 @@ def batter_recent_game_log(player_id, max_games=20):
             pa = 0
         if pa < 1:
             continue  # didn't really play -- not evidence for or against a streak
-        games.append({"date": s.get("date"), "hits": int(st.get("hits") or 0),
-                     "total_bases": int(st.get("totalBases") or 0)})
+        hits = int(st.get("hits") or 0)
+        doubles = int(st.get("doubles") or 0)
+        triples = int(st.get("triples") or 0)
+        home_runs = int(st.get("homeRuns") or 0)
+        runs = int(st.get("runs") or 0)
+        rbis = int(st.get("rbi") or 0)
+        games.append({
+            "date": s.get("date"), "hits": hits, "total_bases": int(st.get("totalBases") or 0),
+            "runs": runs, "rbis": rbis, "doubles": doubles, "triples": triples,
+            "home_runs": home_runs, "stolen_base": int(st.get("stolenBases") or 0),
+            "singles": max(0, hits - doubles - triples - home_runs),
+            "hits_runs_rbis": hits + runs + rbis,
+        })
     return list(reversed(games))[:max_games]
 
 
