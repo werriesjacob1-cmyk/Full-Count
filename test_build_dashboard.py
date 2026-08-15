@@ -43,56 +43,86 @@ import build_dashboard as bd
 
 
 def row(name, stat, prob, needs=1, value=0.5, odds=None, implied=None, edge=None,
-       clears=None, confidence="Medium", ptype="batter"):
+       clears=None, confidence="Medium", ptype="batter", recommendation_status=None,
+       lineup_assumed=None, prob_ci=None, lift=None, reliability="B"):
     return {
         "type": ptype, "name": name, "team": "Team", "matchup": "A @ B", "side": None,
         "prop": f"Over {value} {stat}", "projection": {"stat": stat, "value": value, "needs": needs},
         "lean": None, "score": 65.0, "confidence": confidence,
         "hit_probability": prob, "market_odds": odds, "market_implied": implied,
         "market_edge": edge, "price_clears": clears,
-        "reliability": "B", "sample_n": 80, "why": [], "watchouts": [],
-        "base_rate": None, "lift": None,
+        "reliability": reliability, "sample_n": 80, "why": [], "watchouts": [],
+        "base_rate": None, "lift": lift, "prob_ci": prob_ci,
+        # build_payload() operates on already-clean()'d rows in real
+        # run_live_fetch() output, which means recommendation_status is
+        # already computed by recommendation.py by the time build_payload()
+        # ever sees it (see run_live_fetch's own call to
+        # gprec.attach_recommendations before clean()) -- these fixtures
+        # set it directly rather than re-deriving it, matching that real
+        # shape.
+        "recommendation_status": recommendation_status, "status_reasons": [], "stale": False,
+        "lineup_assumed": lineup_assumed,
     }
 
 
-head("1. Top Picks ranks by market_edge among price_clears==True only, capped at 10")
+head("1. Top Picks: 2026-08-15 rebuild -- recommendation_status=='top_pick' only, "
+     "ranked by market_edge, no probability/price/confidence heuristic re-derived here "
+     "(that's recommendation.py's job, upstream of build_payload)")
 
 result = {
     "generated_at": "2026-08-12T20:00:00", "date": "2026-08-12",
     "hits": [
-        row("Big Edge Clears", "hits", 0.70, odds=-150, implied=0.55, edge=0.15, clears=True),
-        row("Small Edge Clears", "hits", 0.60, odds=-120, implied=0.58, edge=0.02, clears=True),
-        row("Doesnt Clear", "hits", 0.90, odds=-800, implied=0.85, edge=0.05, clears=False),
-        row("No Line At All", "hits", 0.55, odds=None, implied=None, edge=None, clears=None),
+        row("Big Edge Top Pick", "hits", 0.70, odds=-150, implied=0.55, edge=0.15, clears=True,
+           recommendation_status="top_pick"),
+        row("Small Edge Top Pick", "hits", 0.60, odds=-120, implied=0.58, edge=0.02, clears=True,
+           recommendation_status="top_pick"),
+        row("High Prob But Only A Lean", "hits", 0.90, odds=-800, implied=0.85, edge=0.05,
+           clears=False, recommendation_status="lean"),
+        row("No Line At All", "hits", 0.55, odds=None, implied=None, edge=None, clears=None,
+           recommendation_status="neutral"),
     ],
     "stolen_base": [
-        row("Mid Edge Clears", "stolen_base", 0.35, odds=200, implied=0.28, edge=0.07, clears=True),
+        row("Mid Edge Top Pick", "stolen_base", 0.35, odds=200, implied=0.28, edge=0.07, clears=True,
+           recommendation_status="top_pick"),
     ],
 }
 payload = bd.build_payload(result)
 tp = payload["data"]["top_picks"]
-check(len(tp) == 3, "only the 3 genuinely price_clears==True rows make Top Picks",
+check(len(tp) == 3, "only the 3 rows recommendation.py actually classified as top_pick "
+      "make Top Picks -- not a re-derived price_clears/probability heuristic",
       f"got {[r['name'] for r in tp]}")
-check([r["name"] for r in tp] == ["Big Edge Clears", "Mid Edge Clears", "Small Edge Clears"],
-      "Top Picks is ordered by market_edge descending, not by probability",
+check([r["name"] for r in tp] == ["Big Edge Top Pick", "Mid Edge Top Pick", "Small Edge Top Pick"],
+      "Top Picks is ordered by market_edge descending among the real qualifiers",
       f"got {[r['name'] for r in tp]}")
-check("Doesnt Clear" not in [r["name"] for r in tp],
-      "a big-probability pick that fails price_clears is excluded from Top Picks")
+check("High Prob But Only A Lean" not in [r["name"] for r in tp],
+      "a high-probability pick that recommendation.py graded only a Lean (e.g. it failed "
+      "price_clears) is excluded from Top Picks regardless of its raw probability")
 check("No Line At All" not in [r["name"] for r in tp],
-      "an unpriced candidate (price_clears is None, not True) is excluded from Top Picks")
+      "a neutral-status candidate never appears in Top Picks")
 
 
-head("2. Top Picks caps at 10 even when more than 10 clear")
+head("2. Top Picks: NO hard cap and NO padding -- direct instruction, \"if only 3 bets "
+     "qualify, show 3. If none qualify, show none.\" The old [:10] cap is retired.")
 
 many = {"generated_at": "x", "date": "2026-08-12",
-       "hits": [row(f"Clearer {i}", "hits", 0.6, odds=-110, implied=0.5,
-                    edge=0.10 - i * 0.001, clears=True) for i in range(15)]}
+       "hits": [row(f"Qualifier {i}", "hits", 0.6, odds=-110, implied=0.5,
+                    edge=0.10 - i * 0.001, clears=True, recommendation_status="top_pick")
+               for i in range(15)]}
 payload2 = bd.build_payload(many)
-check(len(payload2["data"]["top_picks"]) == 10,
-      "Top Picks never exceeds 10 even with 15 real qualifying candidates",
-      f"got {len(payload2['data']['top_picks'])}")
-check(payload2["data"]["top_picks"][0]["name"] == "Clearer 0",
-      "still the genuinely highest-edge ones that make the cut")
+check(len(payload2["data"]["top_picks"]) == 15,
+      "every real qualifying Top Pick ships, uncapped -- a real 15-Top-Pick night is not "
+      "silently trimmed to 10", f"got {len(payload2['data']['top_picks'])}")
+check(payload2["data"]["top_picks"][0]["name"] == "Qualifier 0",
+      "still ranked by the genuinely highest edge first")
+
+zero = {"generated_at": "x", "date": "2026-08-12",
+       "hits": [row("Not Quite", "hits", 0.55, odds=-110, implied=0.5, edge=0.05, clears=True,
+                    recommendation_status="lean")]}
+payload2b = bd.build_payload(zero)
+check(payload2b["data"]["top_picks"] == [],
+      "a slate where nothing clears the real Top Pick bar shows ZERO Top Picks -- not a "
+      "fallback to the next-best Lean to keep the tab from looking empty",
+      f"got {payload2b['data']['top_picks']}")
 
 
 head("3. home_runs is dropped as a duplicate of moonshot (same underlying field, per audit)")
@@ -112,16 +142,17 @@ check(payload3["labels"]["moonshot"] == "Home Runs",
       "moonshot's display label is still the human name, not the internal key")
 
 
-head("4. tabs_order always starts with the three fixed tabs, then only categories with real rows")
+head("4. tabs_order always starts with the fixed tabs, then only categories with real rows")
 
 payload4 = bd.build_payload({
     "generated_at": "x", "date": "2026-08-12",
-    "hits": [row("A", "hits", 0.7, odds=-200, implied=0.6, edge=0.1, clears=True)],
+    "hits": [row("A", "hits", 0.7, odds=-200, implied=0.6, edge=0.1, clears=True,
+                recommendation_status="top_pick")],
     "triples": [],  # present in the data but empty -- must not become a tab
 })
-check(payload4["tabs_order"][:5] == ["top_picks", "locks", "schedule", "streaks", "all"],
-      "top_picks, locks, schedule, streaks, and all are always first, in that order",
-      f"got {payload4['tabs_order'][:5]}")
+check(payload4["tabs_order"][:6] == ["top_picks", "leans", "best_value", "schedule", "streaks", "all"],
+      "top_picks, leans, best_value, schedule, streaks, and all are always first, in that order",
+      f"got {payload4['tabs_order'][:6]}")
 check("triples" not in payload4["tabs_order"],
       "a category with zero real rows never becomes an empty tab")
 check("hits" in payload4["tabs_order"],
@@ -431,7 +462,8 @@ if node:
     result13 = {
         "generated_at": "x", "date": "2026-08-14",
         "hits": [
-            dict(row("Started Pick", "hits", 0.6, odds=-110, implied=0.52, edge=0.08, clears=True),
+            dict(row("Started Pick", "hits", 0.6, odds=-110, implied=0.52, edge=0.08, clears=True,
+                    recommendation_status="top_pick"),
                  game_pk=1, game_start=past),
             dict(row("Not Started Other", "hits", 0.5, odds=100, implied=0.5, edge=-0.02, clears=False),
                  game_pk=2, game_start=future),
@@ -760,7 +792,7 @@ payload19 = bd.build_payload({
     "streaks": [dict(row("Streaky Batter", "hits", 0.6, odds=-110, implied=0.55, edge=0.05, clears=True),
                      player_id=9, streak=6, streak_stat="hits")],
 })
-check(payload19["tabs_order"][:5] == ["top_picks", "locks", "schedule", "streaks", "all"],
+check(payload19["tabs_order"][:6] == ["top_picks", "leans", "best_value", "schedule", "streaks", "all"],
       "streaks sits right after schedule in the fixed tab prefix", f"got {payload19['tabs_order']}")
 check(payload19["labels"].get("streaks") == "Streaks", "streaks has a real human label")
 check(len(payload19["data"]["streaks"]) == 1 and payload19["data"]["streaks"][0]["streak"] == 6,
@@ -854,10 +886,12 @@ head("22. Assumed-lineup candidates: direct follow-up request, verbatim -- \"our
      "doesn't do anything to filter that flag back out.")
 
 assumed_row = dict(row("Assumed Lineup Guy", "hits", 0.75, odds=-140, implied=0.58, edge=0.17,
-                       clears=True, confidence="High"), lineup_assumed=True)
+                       clears=True, confidence="High", recommendation_status="lean"),
+                   lineup_assumed=True)
 payload22 = bd.build_payload({
     "generated_at": "x", "date": "2026-08-15",
-    "hits": [row("Confirmed Guy", "hits", 0.6, odds=-110, implied=0.52, edge=0.08, clears=True),
+    "hits": [row("Confirmed Guy", "hits", 0.6, odds=-110, implied=0.52, edge=0.08, clears=True,
+                recommendation_status="top_pick"),
             assumed_row],
 })
 check(any(r.get("name") == "Assumed Lineup Guy" and r.get("lineup_assumed") is True
@@ -867,12 +901,16 @@ check(any(r.get("name") == "Assumed Lineup Guy" and r.get("lineup_assumed") is T
 check(any(r.get("name") == "Assumed Lineup Guy" for r in payload22["data"]["all"]),
       "an assumed-lineup candidate is included in All Props, not walled off",
       f"got {[r.get('name') for r in payload22['data']['all']]}")
-check(any(r.get("name") == "Assumed Lineup Guy" and r.get("lineup_assumed") is True
-          for r in payload22["data"]["top_picks"]),
-      "a High-confidence, price_clears==True assumed-lineup candidate DOES reach Top Picks now "
-      "(direct request: use assumed lineups as real board data) -- but still carries "
-      "lineup_assumed=True so the client renders its badge there too",
+check(not any(r.get("name") == "Assumed Lineup Guy" for r in payload22["data"]["top_picks"]),
+      "2026-08-15 rebuild: an assumed-lineup candidate can NEVER reach Top Picks no matter how "
+      "strong its probability/price/confidence are -- recommendation.classify_recommendation() "
+      "hard-requires a confirmed lineup for top_pick status. This is a deliberate tightening "
+      "vs. the pre-rebuild board, not a regression: it still shows (in its real category tab "
+      "and All Props, flagged), just never as an official recommendation.",
       f"got {payload22['data']['top_picks']}")
+check(any(r.get("name") == "Assumed Lineup Guy" for r in payload22["data"]["leans"]),
+      "the same candidate DOES appear in Leans -- a real, computed opinion the site still "
+      "surfaces, just not dressed up as a Top Pick", f"got {payload22['data']['leans']}")
 
 head("23. Assumed-lineup rows never earn the 'Lock' badge client-side, even with a real "
      "posted price and High confidence in Top Picks itself -- a Lock badge is a strong "
@@ -883,7 +921,8 @@ if node:
     html23 = bd.render_html(bd.build_payload({
         "generated_at": "x", "date": "2026-08-15",
         "hits": [dict(row("Guessed Slot Guy", "hits", 0.8, odds=-200, implied=0.6, edge=0.2,
-                          clears=True, confidence="High"), lineup_assumed=True)],
+                          clears=True, confidence="High", recommendation_status="lean"),
+                     lineup_assumed=True)],
     }), fonts)
     js23 = html23.split("<script>", 1)[1].rsplit("</script>", 1)[0]
     harness23 = """
@@ -915,7 +954,8 @@ const setInterval = () => {};
 const requestAnimationFrame = (fn) => {};
 """ + js23 + """
 const html = pickRow(PAYLOAD.data.hits[0], 1);
-if (html.includes("lock-badge")) { console.error("FAIL: an assumed-lineup row earned a Lock badge -- looks like a real recommendation"); process.exit(1); }
+if (html.includes("top-pick-badge")) { console.error("FAIL: a row recommendation.py graded 'lean' rendered a Top Pick badge -- looks like a real recommendation it isn't"); process.exit(1); }
+if (!html.includes("lean-badge")) { console.error("FAIL: the real Lean status didn't render its own badge"); process.exit(1); }
 if (!html.includes("assumed-badge")) { console.error("FAIL: no unconfirmed-lineup badge rendered"); process.exit(1); }
 if (!html.includes("Lineup not confirmed")) { console.error("FAIL: the unconfirmed-lineup disclaimer text is missing"); process.exit(1); }
 if (!html.includes("lineup-assumed")) { console.error("FAIL: the .pick row isn't visually flagged as lineup-assumed"); process.exit(1); }
@@ -926,53 +966,57 @@ console.log("assumed-lineup badge: all checks passed");
         f.write(harness23)
     try:
         r23 = subprocess.run([node, harness_path23], capture_output=True, text=True)
-        check(r23.returncode == 0, "an assumed-lineup row never renders a Lock badge and always "
-              "renders the unconfirmed-lineup disclaimer badge, even inside a normal category "
-              "tab", r23.stdout + r23.stderr)
+        check(r23.returncode == 0, "a row recommendation.py classified as a Lean (not a Top "
+              "Pick) never renders the Top Pick badge, and always renders the "
+              "unconfirmed-lineup disclaimer badge", r23.stdout + r23.stderr)
     finally:
         os.remove(harness_path23)
 else:
     check(True, "node not available -- early-look badge JS check skipped, not failed")
 
-head("24. Locks: direct request, verbatim -- \"Locks should be in their own section I "
-     "shouldn't have to look so hard for Sam Antonacci RBI or whatever it is.\" Every "
-     "High-confidence, price-clearing, CONFIRMED-lineup pick collected in one tab, "
-     "independent of Top Picks' edge-only ranking (a real High-confidence pick can have a "
-     "tiny edge and still get buried behind bigger-edge Medium/Low picks there).")
+head("24. Top Picks/Leans/Best Value: 2026-08-15 rebuild, replacing the retired Locks tab. "
+     "Every row's real recommendation_status (computed upstream by recommendation.py, not "
+     "re-derived here) determines exactly one bucket -- direct instruction: \"probability, "
+     "recommendation status and displayed terminology should never contradict one another.\"")
 
 payload24 = bd.build_payload({
     "generated_at": "x", "date": "2026-08-15",
     "hits": [
-        row("Small Edge Lock", "hits", 0.65, odds=200, implied=0.60, edge=0.03, clears=True,
-           confidence="High"),
-        row("Big Edge Non-Lock", "hits", 0.60, odds=150, implied=0.45, edge=0.20, clears=True,
-           confidence="Medium"),
-        row("Doesnt Clear High Conf", "hits", 0.70, odds=-800, implied=0.85, edge=-0.05,
-           clears=False, confidence="High"),
-        dict(row("Assumed High Conf", "hits", 0.68, odds=180, implied=0.55, edge=0.10, clears=True,
-                confidence="High"), lineup_assumed=True),
+        row("Real Top Pick", "hits", 0.65, odds=200, implied=0.60, edge=0.03, clears=True,
+           confidence="High", recommendation_status="top_pick"),
+        row("Just A Lean", "hits", 0.60, odds=150, implied=0.45, edge=0.20, clears=True,
+           confidence="Medium", recommendation_status="lean"),
+        row("Longshot Value", "hits", 0.20, odds=500, implied=0.17, edge=0.15, clears=True,
+           confidence="Low", recommendation_status="value"),
+        row("Nothing Here", "hits", 0.50, odds=-110, implied=0.52, edge=-0.02, clears=False,
+           confidence="Low", recommendation_status="neutral"),
     ],
 })
-lock_names24 = [r["name"] for r in payload24["data"]["locks"]]
-check("locks" in payload24["tabs_order"], "locks is a real tab", f"got {payload24['tabs_order']}")
-check(payload24["labels"].get("locks") == "Locks", "locks has a real human label")
-check("Small Edge Lock" in lock_names24,
-      "a real High-confidence, clearing, confirmed-lineup pick makes Locks even with a small "
-      "edge -- this is the exact case that prompted the request (buried in Top Picks by edge)",
-      f"got {lock_names24}")
-check("Big Edge Non-Lock" not in lock_names24,
-      "a Medium-confidence pick never makes Locks no matter how big its edge -- Locks is "
-      "confidence-gated, not edge-gated", f"got {lock_names24}")
-check("Doesnt Clear High Conf" not in lock_names24,
-      "a High-confidence pick that doesn't clear the price is still not a real bet -- excluded",
-      f"got {lock_names24}")
-check("Assumed High Conf" not in lock_names24,
-      "an assumed-lineup pick never makes Locks even at High confidence -- a Lock badge "
-      "requires a real confirmed lineup, same rule pickRow()'s own isLock uses client-side",
-      f"got {lock_names24}")
+top_names24 = [r["name"] for r in payload24["data"]["top_picks"]]
+lean_names24 = [r["name"] for r in payload24["data"]["leans"]]
+value_names24 = [r["name"] for r in payload24["data"]["best_value"]]
+check("top_picks" in payload24["tabs_order"] and "leans" in payload24["tabs_order"]
+      and "best_value" in payload24["tabs_order"],
+      "all three recommendation tabs are real tabs", f"got {payload24['tabs_order']}")
+check(payload24["labels"].get("leans") == "Leans" and payload24["labels"].get("best_value") == "Best Value",
+      "leans and best_value have real human labels")
+check(top_names24 == ["Real Top Pick"],
+      "only the row recommendation.py graded top_pick lands in Top Picks", f"got {top_names24}")
+check(lean_names24 == ["Just A Lean"],
+      "only the row graded lean lands in Leans, regardless of its raw edge/probability",
+      f"got {lean_names24}")
+check(value_names24 == ["Longshot Value"],
+      "only the row graded value lands in Best Value -- a real 20% probability bet, never "
+      "presented as a Top Pick or Lock even though it has real positive edge",
+      f"got {value_names24}")
+check("Nothing Here" not in top_names24 + lean_names24 + value_names24,
+      "a neutral-status row appears in none of the three recommendation tabs -- a real "
+      "'no opinion' is allowed to just not show up as a recommendation of any kind")
 
 payload24b = bd.build_payload({"generated_at": "x", "date": "2026-08-15"})
-check(payload24b["data"]["locks"] == [], "no candidates at all means an empty, valid Locks tab")
+check(payload24b["data"]["top_picks"] == [] and payload24b["data"]["leans"] == []
+      and payload24b["data"]["best_value"] == [],
+      "no candidates at all means three real, empty, valid recommendation tabs -- not a crash")
 
 head("25. Global search: direct request, verbatim -- \"the search bar does not work correctly. "
      "I try searching 'Kyle' or 'Phillies' for Kyle shearer props and it returns nothing.\" Real "

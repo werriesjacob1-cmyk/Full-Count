@@ -730,6 +730,26 @@ def grade_day(date) -> bool:
         by_category[cat][_GRADE_TO_KEY[g["grade"]]] += 1
     by_category = {k: dict(v) for k, v in by_category.items()}
 
+    # BY RECOMMENDATION STATUS, same additive-only reasoning as by_category
+    # above, but along the axis the 2026-08-15 rebuild actually introduced:
+    # top_pick/lean/value/neutral (recommendation.classify_recommendation),
+    # not the prop-family axis by_category already covers. Direct request:
+    # "The public Top Pick hit rate should measure the bets Full Count
+    # actually designated as Top Picks" -- by_category's "main" bucket is
+    # every pick that reached the top10 board by rank_for_board's ordering,
+    # which is NOT the same claim as "this specific pick cleared the real
+    # Top Pick floor" (a top10 pick can legitimately be a Lean-grade read
+    # that simply out-ranked everything else on a thin night). Picks
+    # graded before this rebuild shipped have no recommendation_status at
+    # all -- bucketed "unclassified" rather than guessed into one of the
+    # four real states, so old and new results are never silently blended
+    # under a label neither the model nor the audit ever actually assigned.
+    by_rec_status = defaultdict(lambda: {"hits": 0, "misses": 0, "ungraded": 0})
+    for g in graded:
+        rs = g.get("recommendation_status") or "unclassified"
+        by_rec_status[rs][_GRADE_TO_KEY[g["grade"]]] += 1
+    by_rec_status = {k: dict(v) for k, v in by_rec_status.items()}
+
     # SHADOW TRACKING -- direct request: "There should be no prop not rated
     # and bet on to know the hit percentage... I understand if it isn't
     # included in the final card but I still want to know." generate_picks.
@@ -757,6 +777,7 @@ def grade_day(date) -> bool:
         json.dump({"date": YESTERDAY, "hits": hits, "misses": misses, "ungraded": ungraded,
                    "fair_hits": fair_hits, "fair_misses": fair_misses,
                    "by_category": by_category,
+                   "by_recommendation_status": by_rec_status,
                    "shadow_by_category": shadow_by_category,
                    "picks": graded,
                    "shadow_tracking": shadow_graded}, f, indent=2)
@@ -768,7 +789,8 @@ def grade_day(date) -> bool:
     history["days"] = [d for d in history.get("days", []) if d["date"] != YESTERDAY]  # avoid dup on reruns
     history["days"].append({"date": YESTERDAY, "hits": hits, "misses": misses, "ungraded": ungraded,
                             "fair_hits": fair_hits, "fair_misses": fair_misses,
-                            "by_category": by_category, "shadow_by_category": shadow_by_category})
+                            "by_category": by_category, "by_recommendation_status": by_rec_status,
+                            "shadow_by_category": shadow_by_category})
     history["days"].sort(key=lambda d: d["date"])
 
     totals = {"hits": sum(d["hits"] for d in history["days"]),
@@ -803,6 +825,25 @@ def grade_day(date) -> bool:
     else:
         history["main_hit_rate"] = None
 
+    # RECOMMENDATION-STATUS TOTALS -- the rebuild's own axis, accumulated
+    # across days the same way by_category_totals is. This is what makes
+    # "the public Top Pick hit rate measures the bets Full Count actually
+    # designated as Top Picks" a checkable fact rather than a promise: it
+    # counts only picks that carried recommendation_status=="top_pick" on
+    # the day they were made, never a pick that merely reached the top10
+    # board or scored well by quality score alone.
+    rec_status_totals = defaultdict(lambda: {"hits": 0, "misses": 0, "ungraded": 0})
+    for d in history["days"]:
+        for rs, counts in d.get("by_recommendation_status", {}).items():
+            for k in ("hits", "misses", "ungraded"):
+                rec_status_totals[rs][k] += counts.get(k, 0)
+    history["by_recommendation_status_totals"] = {k: dict(v) for k, v in rec_status_totals.items()}
+    tp = rec_status_totals.get("top_pick")
+    if tp and (tp["hits"] + tp["misses"]) > 0:
+        history["top_pick_hit_rate"] = round(tp["hits"] / (tp["hits"] + tp["misses"]), 3)
+    else:
+        history["top_pick_hit_rate"] = None
+
     # SHADOW TOTALS -- accumulates every alternate-threshold pick's real
     # outcome across days, keyed "stat@needs" (e.g. "hard_hit_110@1"), so
     # "what's hard_hit_110's real hit rate" becomes answerable from history
@@ -823,6 +864,28 @@ def grade_day(date) -> bool:
         round(sum(d["hits"] for d in recent) / recent_graded, 3) if recent_graded else None
     )
 
+    # ROLLING 14-DAY TOP-PICK-ONLY RATE -- deliberately a SEPARATE number
+    # from last_14_days_hit_rate above, never displayed as though the two
+    # are the same claim. Direct instruction: "do not display blended
+    # 14-day record beside Top Pick record as comparable... track Top
+    # Picks/Best Value/Longshots/Leans independently." last_14_days_hit_rate
+    # blends every graded pick (main board + moonshots + best-of-category,
+    # the audit's own concern (c) -- Top Picks mixed with longshots/other
+    # categories in the headline number); this counts only the picks that
+    # actually carried recommendation_status=="top_pick" on the day they
+    # shipped. Days graded before this rebuild have no
+    # by_recommendation_status at all, so they contribute zero to this
+    # window rather than being silently folded in as unclassified hits.
+    recent_tp_hits = sum(d.get("by_recommendation_status", {}).get("top_pick", {}).get("hits", 0)
+                         for d in recent)
+    recent_tp_misses = sum(d.get("by_recommendation_status", {}).get("top_pick", {}).get("misses", 0)
+                           for d in recent)
+    recent_tp_graded = recent_tp_hits + recent_tp_misses
+    history["last_14_days_top_pick_hit_rate"] = (
+        round(recent_tp_hits / recent_tp_graded, 3) if recent_tp_graded else None
+    )
+    history["last_14_days_top_pick_n"] = recent_tp_graded
+
     with open(HISTORY_FILE, "w", encoding="utf-8") as f:
         json.dump(history, f, indent=2)
 
@@ -837,6 +900,17 @@ def grade_day(date) -> bool:
         print(f"  Main board only (the actual top10 recommendation, excludes moonshots/"
               f"best-of-category): {m_totals.get('hits', 0)} hits / {m_totals.get('misses', 0)} "
               f"misses (rate: {history['main_hit_rate']})")
+    if history["top_pick_hit_rate"] is not None:
+        tp_totals = history["by_recommendation_status_totals"].get("top_pick", {})
+        # Deliberately printed as its own line, never averaged with the
+        # blended rate above -- this is the number the rebuild exists to
+        # make trustworthy: only picks recommendation.classify_recommendation
+        # actually designated top_pick, not "reached the top10 board."
+        print(f"  Top Picks only (recommendation_status=='top_pick'): "
+              f"{tp_totals.get('hits', 0)} hits / {tp_totals.get('misses', 0)} misses "
+              f"(all-time rate: {history['top_pick_hit_rate']}, last 14 days: "
+              f"{history['last_14_days_top_pick_hit_rate']} over "
+              f"{history['last_14_days_top_pick_n']} graded)")
     return True
 
 

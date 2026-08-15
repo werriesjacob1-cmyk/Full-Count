@@ -56,6 +56,7 @@ def refresh(data_path):
         return payload
 
     import odds_fanduel as fd
+    import recommendation as gprec
 
     prices = fd.fetch_prop_prices()
     try:
@@ -79,15 +80,30 @@ def refresh(data_path):
                                          po_prices=po_prices, combined_k_prices=combined_k_prices)
     print(f"Repriced {matched} of {len(all_rows)} candidates against fresh FanDuel lines.")
 
+    # RECOMMENDATION LAYER, 2026-08-15 rebuild. A price move can genuinely
+    # flip a pick's real recommendation status -- a shortened price can
+    # push a Top Pick's own robustness test negative, or a lengthened one
+    # can newly clear it -- so this re-runs the SAME classify_
+    # recommendation() build_dashboard.py uses at full-build time, on the
+    # SAME Python module, rather than approximating it with a second,
+    # separate rule (the old price_clears==True heuristic this replaces)
+    # that could silently drift from what a full rebuild would actually
+    # say. One authoritative implementation, called from both places.
+    odds_fetched_at = datetime.now(timezone.utc).isoformat()
+    board_generated_at = payload.get("generated_at")
+    gprec.attach_recommendations(all_rows, odds_fetched_at=odds_fetched_at,
+                                 board_generated_at=board_generated_at)
+
     # Propagate the SAME field updates into every other tab -- these are
     # separate dict objects from "all" (this is a fresh process each run,
     # not the in-memory sharing build_payload() gets for free within one
     # build), so a row that lives in both "hits" and "all" needs the
     # update applied twice, matched by identity rather than object equality.
     PRICE_FIELDS = ("market_odds", "market_implied", "market_edge", "price_clears", "market_hold")
+    REC_FIELDS = ("status", "status_reasons", "stale")
     by_key = {_row_key(r): r for r in all_rows}
     for tab_name, rows in payload.get("data", {}).items():
-        if tab_name in ("all", "top_picks"):
+        if tab_name in ("all", "top_picks", "leans", "best_value"):
             continue
         for r in rows:
             fresh = by_key.get(_row_key(r))
@@ -95,19 +111,20 @@ def refresh(data_path):
                 continue
             for field in PRICE_FIELDS:
                 r[field] = fresh.get(field)
+            r["recommendation_status"] = fresh.get("status")
+            r["status_reasons"] = fresh.get("status_reasons")
+            r["stale"] = fresh.get("stale", False)
 
-    # Same rule build_payload() uses: price_clears is True, ranked by
-    # edge, capped at 10 -- recomputed here so a price move can genuinely
-    # push a prop on or off Top Picks between full rebuilds. A pick whose
-    # game has already started is grandfathered in regardless of its
-    # current price_clears value (FanDuel's own line for it is closed by
-    # then anyway) -- direct request: "for the top picks, them to show
-    # when it's cashed... make the pick yellow when the game is
-    # happening... green if it cashes, red if it doesn't." Without this,
-    # a cashed pick could get bumped off the board by an unrelated later
-    # game's price move right as dashboard/refresh_grades.py marks it
-    # green, defeating the entire point of watching it resolve. Mirrored
-    # client-side in mergePriceUpdate() (build_dashboard.py).
+    # Rebucket fresh from the just-recomputed status -- a pick whose game
+    # has already started is grandfathered into Top Picks regardless of
+    # its current status (FanDuel's own line for it is closed by then
+    # anyway) -- direct request: "for the top picks, them to show when
+    # it's cashed... make the pick yellow when the game is happening...
+    # green if it cashes, red if it doesn't." Without this, a cashed pick
+    # could get bumped off the board by an unrelated later game's price
+    # move right as dashboard/refresh_grades.py marks it green, defeating
+    # the entire point of watching it resolve. Mirrored client-side in
+    # mergePriceUpdate() (build_dashboard.py) for the same reason.
     now = datetime.now().astimezone()
     was_top_pick = {_row_key(r) for r in (payload.get("data", {}).get("top_picks") or [])}
     def _already_started(r):
@@ -118,11 +135,22 @@ def refresh(data_path):
             return datetime.fromisoformat(gs.replace("Z", "+00:00")) <= now
         except ValueError:
             return False
-    top_picks = [r for r in all_rows if r.get("price_clears") is True
+    for r in all_rows:
+        r["recommendation_status"] = r.get("status")
+    top_picks = [r for r in all_rows if r.get("status") == "top_pick"
                 or (_row_key(r) in was_top_pick and _already_started(r))]
     top_picks.sort(key=lambda r: r.get("market_edge") or 0, reverse=True)
-    payload["data"]["top_picks"] = top_picks[:10]
+    payload["data"]["top_picks"] = top_picks
 
+    leans = [r for r in all_rows if r.get("status") == "lean"]
+    leans.sort(key=lambda r: r.get("lift") or 0, reverse=True)
+    payload["data"]["leans"] = leans
+
+    best_value = [r for r in all_rows if r.get("status") == "value"]
+    best_value.sort(key=lambda r: r.get("market_edge") or 0, reverse=True)
+    payload["data"]["best_value"] = best_value
+
+    payload["odds_fetched_at"] = odds_fetched_at
     payload["prices_updated_at"] = datetime.now(timezone.utc).isoformat()
 
     with open(data_path, "w", encoding="utf-8") as f:

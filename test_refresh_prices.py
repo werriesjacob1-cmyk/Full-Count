@@ -15,6 +15,7 @@ import os
 import sys
 import tempfile
 import unittest.mock as mock
+from datetime import datetime, timezone
 
 sys.path.insert(0, __file__.rsplit("/", 1)[0] if "/" in __file__ else ".")
 sys.path.insert(0, __file__.rsplit("/", 1)[0] + "/dashboard" if "/" in __file__ else "dashboard")
@@ -43,10 +44,13 @@ import refresh_prices as rp
 import odds_fanduel as fd
 
 
-def row(name, prop, stat, needs, prob, matchup="A @ B", lean=None):
+def row(name, prop, stat, needs, prob, matchup="A @ B", lean=None, reliability=None,
+       lineup_assumed=False, lift=None, prob_ci=None):
     return {"name": name, "prop": prop, "matchup": matchup, "lean": lean,
             "projection": {"stat": stat, "needs": needs}, "hit_probability": prob,
-            "market_odds": None, "market_implied": None, "market_edge": None, "price_clears": None}
+            "market_odds": None, "market_implied": None, "market_edge": None, "price_clears": None,
+            "reliability": reliability, "lineup_assumed": lineup_assumed, "lift": lift,
+            "prob_ci": prob_ci}
 
 
 head("1. refresh() reprices every row in 'all' against fresh FanDuel prices")
@@ -76,10 +80,14 @@ check(out1["data"]["hits"][0]["market_odds"] == -150,
       "the 'hits' tab's copy of the same row picked up the identical update",
       f"got {out1['data']['hits'][0]}")
 
-head("3. Top Picks gets recomputed fresh: price_clears==True, ranked by edge, capped at 10")
+head("3. Top Picks gets recomputed fresh via the real recommendation.classify_recommendation() "
+     "-- 2026-08-15 rebuild: NO cap exists anymore (\"if only 3 bets qualify, show 3\"), so this "
+     "now proves 15 genuinely qualifying picks all ship, not that they get trimmed to 10.")
 
-rows3 = [row(f"P{i}", f"prop{i}", "hits", 1, 0.9) for i in range(15)]
-payload3 = {"generated_at": "x", "data": {"all": rows3, "top_picks": []}}
+rows3 = [row(f"P{i}", f"prop{i}", "hits", 1, 0.9, reliability="A", lift=0.10,
+            prob_ci=[0.75, 0.95]) for i in range(15)]
+generated_at3 = datetime.now(timezone.utc).isoformat()
+payload3 = {"generated_at": generated_at3, "data": {"all": rows3, "top_picks": []}}
 path3 = tempfile.mktemp(suffix=".json")
 json.dump(payload3, open(path3, "w"))
 
@@ -89,21 +97,26 @@ with mock.patch.object(fd, "fetch_prop_prices") as mp, \
      mock.patch.object(fd, "fetch_pitcher_outs", return_value={}), \
      mock.patch.object(fd, "fetch_combined_pitcher_strikeouts", return_value={}):
     # Every candidate prices at -110 (a real, clearly-acceptable price for
-    # a 90% model probability) so every one of the 15 clears -- proves the
-    # cap, not the filter.
+    # a 90% model probability, robust even at the pessimistic 75% end of
+    # its own real interval) so every one of the 15 genuinely qualifies.
     mp.return_value = {fd.normalize_name(f"P{i}"): {("hits", 1): -110} for i in range(15)}
     out3 = rp.refresh(path3)
 
-check(len(out3["data"]["top_picks"]) == 10, "capped at 10 even though 15 candidates clear",
+check(len(out3["data"]["top_picks"]) == 15,
+      "every one of the 15 genuinely qualifying picks ships, uncapped",
       f"got {len(out3['data']['top_picks'])}")
 check(all(tp.get("price_clears") for tp in out3["data"]["top_picks"]),
       "every Top Pick genuinely has price_clears==True")
+check(all(tp.get("recommendation_status") == "top_pick" for tp in out3["data"]["top_picks"]),
+      "every row in the rebuilt Top Picks tab actually carries recommendation_status=='top_pick', "
+      "not just a price_clears heuristic")
 
 head("4. prices_updated_at is stamped, generated_at is left untouched -- this is a repricing "
      "pass, not a rebuild, and the page needs to tell the two apart")
 
 check("prices_updated_at" in out3, "prices_updated_at was added")
-check(out3["generated_at"] == "x", "generated_at (the last real rescoring pass) is never touched here")
+check(out3["generated_at"] == generated_at3,
+      "generated_at (the last real rescoring pass) is never touched here")
 # Real bug, found live 2026-08-15: a naive datetime.now().isoformat() (no
 # tz suffix) gets parsed by a browser's `new Date(iso)` as LOCAL time, not
 # UTC -- the page showed an "Updated" time hours in the future for anyone

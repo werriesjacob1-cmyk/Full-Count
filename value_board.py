@@ -109,8 +109,19 @@ def model_probabilities(prices, min_games=40, use_pipeline=True):
                 # pipeline probability, and all 7 were hits/1+.
                 for o in (c.get("line_options") or []):
                     if o.get("stat") and o.get("needs") is not None and o.get("prob") is not None:
+                        # o["ci"] is this EXACT stat+threshold's own real
+                        # interval (or honestly None when no defensible one
+                        # exists -- see generate_picks._batter_options).
+                        # Direct fix for the audit's C4 finding: this used to
+                        # be hardcoded None, computed and then never actually
+                        # read anywhere in this file -- so screen()'s
+                        # robustness test silently fell back to season_p's
+                        # Wilson bound for EVERY alternate line regardless of
+                        # whether a pipeline probability was the one being
+                        # tested, mixing uncertainty from a different model
+                        # into the one probability actually being priced.
                         pipeline_probs[(nm, o["stat"], o["needs"])] = {
-                            "prob": o["prob"], "ci": None,
+                            "prob": o["prob"], "ci": o.get("ci"),
                             "games": c.get("sample_n"), "source": "pipeline",
                         }
                 # The recommended line last, so its calibrated probability
@@ -163,10 +174,26 @@ def model_probabilities(prices, min_games=40, use_pipeline=True):
             pl = pipeline_probs.get((name_n, stat, needs))
             prob = pl["prob"] if pl else season_p
             source = "pipeline" if pl else "season-rate"
+            # THE FIX for the audit's C4 finding: prob_lo must describe the
+            # uncertainty of the SAME probability being tested in screen()'s
+            # robustness check, not a different model's. When the pipeline
+            # (context-aware) probability is what's being priced, its own
+            # real per-line CI is the only defensible lower bound -- the
+            # season-rate table's p_lo describes season_p, a different
+            # number, and mixing them in was exactly the "uncertainty from
+            # one model validating another model's probability" bug. When
+            # pipeline has no defensible CI for this line (o["ci"] is None,
+            # e.g. a modelled_shrunk probability with no real empirical
+            # count behind it), prob_lo stays honestly None -- screen()
+            # already treats prob_lo=None as "skip the robustness test"
+            # (see value_verdict), which is the correct behavior for an
+            # uncertainty estimate that doesn't exist, not a bug to work
+            # around by borrowing a different one.
+            prob_lo = (pl.get("ci") or [None])[0] if pl else r.get("p_lo")
             entries[(name_n, stat, needs)] = {
                 "player": meta.get("name"), "stat": stat, "needs": needs,
                 "american": american, "prob": prob,
-                "prob_lo": r.get("p_lo"), "season_prob": season_p,
+                "prob_lo": prob_lo, "season_prob": season_p,
                 "source": source, "games": e.get("games"),
                 "base_rate": (league or {}).get(f"{stat}_{needs}plus"),
             }

@@ -188,6 +188,7 @@ def run_live_fetch():
     os.chdir(REPO_ROOT)
 
     import generate_picks as gp
+    import recommendation as gprec
 
     log("Starting isolated live scoring pass...")
     result = gp._build_and_score()
@@ -209,6 +210,13 @@ def run_live_fetch():
     gp.apply_signal_weights(candidates, trust=signal_trust)
 
     import odds_fanduel as fd
+    # Real request: "odds timestamp" as part of the freshness/versioning
+    # rebuild. odds_fanduel itself carries no fetch-time field (a real gap
+    # the audit found -- fetch_prop_prices() returns only a bare price
+    # dict), so this captures it here instead: every price this run
+    # attaches came from THIS ONE fetch, so one timestamp for the whole run
+    # is the real, honest granularity rather than a per-row fabrication.
+    odds_fetched_at = datetime.now(timezone.utc).isoformat()
     prices = fd.fetch_prop_prices()
     try:
         k_prices = fd.fetch_pitcher_strikeouts()
@@ -315,6 +323,23 @@ def run_live_fetch():
         log(f"Game-start filter: removed {before_ms - len(moonshots_full)} moonshot(s) and "
             f"{before_cat - after_cat} category candidate(s) whose games are already underway.")
 
+    # RECOMMENDATION LAYER -- the 2026-08-15 rebuild. Classifies every real
+    # candidate into top_pick/lean/value/neutral via recommendation.py's
+    # single classifier, using the SAME real hard floor everywhere on this
+    # site (no separate ad-hoc "Locks"/"Top Picks" criteria anymore -- see
+    # recommendation.py's own module docstring for why that mattered: a
+    # Triple prop at 1.2% probability was shipping as a "High Confidence
+    # Lock" under the old per-tab logic this replaces). Run BEFORE clean()
+    # strips fields down, on the full raw candidate dicts -- classification
+    # needs prob_ci/lift/reliability, all real fields that exist here and
+    # get filtered out of the public payload.
+    board_generated_at = datetime.now(timezone.utc).isoformat()
+    all_candidates_for_rec = list(moonshots_full)
+    for entries in by_category_full.values():
+        all_candidates_for_rec.extend(entries)
+    gprec.attach_recommendations(all_candidates_for_rec, odds_fetched_at=odds_fetched_at,
+                                 board_generated_at=board_generated_at)
+
     def clean(rows):
         out = []
         for r in rows:
@@ -331,6 +356,24 @@ def run_live_fetch():
                 "why": (r.get("why") or [])[:4],
                 "watchouts": (r.get("watchouts") or [])[:2],
                 "base_rate": r.get("base_rate"), "lift": r.get("lift"),
+                # prob_ci: real bug, found in the same audit -- this field
+                # was computed (attach_reliability) and never even reached
+                # the live dashboard's payload at all, so a mismatched CI
+                # bug this exact field would have exposed stayed invisible
+                # here (it only showed on the static board). Now correctly
+                # scoped per exact line (see generate_picks._batter_options'
+                # own fix) before it ever reaches this boundary.
+                "prob_ci": r.get("prob_ci"),
+                # The single field this whole rebuild exists to add: which
+                # of the four real recommendation states this row earned,
+                # and why -- computed once, above, by recommendation.py,
+                # and carried through here rather than re-derived or
+                # dropped at the serialization boundary (the exact "computed,
+                # then discarded" failure this rebuild's own audit found
+                # repeatedly elsewhere in this codebase).
+                "recommendation_status": r.get("status"),
+                "status_reasons": r.get("status_reasons"),
+                "stale": r.get("stale", False),
                 "game_pk": game_pk, "game_start": (schedule.get(game_pk) or {}).get("start"),
                 # player_id/combo_player_ids: not used anywhere in this page's
                 # own rendering, but required by grade_results.grade_pick() --
@@ -352,7 +395,10 @@ def run_live_fetch():
             })
         return out
 
-    out = {"generated_at": datetime.now(timezone.utc).isoformat(), "date": gp.m.TODAY,
+    out = {"generated_at": board_generated_at, "date": gp.m.TODAY,
+          "odds_fetched_at": odds_fetched_at,
+          "recommendation_metadata": gprec.build_metadata(odds_fetched_at=odds_fetched_at,
+                                                          board_generated_at=board_generated_at),
           "moonshot": clean(moonshots_full), "suggested_parlay": suggested_parlay}
     for stat, entries in by_category_full.items():
         out[stat] = clean(entries)
@@ -629,35 +675,45 @@ def build_payload(result, track_record=None):
         all_rows.extend(rows)
     all_rows.sort(key=_priced_first)
 
-    # "Top Picks" -- the board's real favorites. Ranked by genuine edge over
-    # the market among picks that actually clear the price, not by raw
-    # probability (which just rewards the easiest, most-chalk market every
-    # time). Not padded to a fixed count.
-    top_picks = [r for r in all_rows if r.get("price_clears") is True]
+    # RECOMMENDATION LAYER, 2026-08-15 rebuild. Every row already carries a
+    # real recommendation_status (top_pick/lean/value/neutral), computed
+    # once by recommendation.py against every candidate BEFORE this
+    # function ever ran (see run_live_fetch) -- this just buckets by that
+    # field instead of re-deriving ad-hoc per-tab criteria the way the old
+    # Top Picks/Locks split did (that split is retired: Top Picks now IS
+    # the single, real "genuinely recommend and be judged on" bucket the
+    # old Locks tab was trying and failing to be).
+    #
+    # TOP PICKS. The hard floor is real: recommendation.classify_
+    # recommendation() already enforced probability/evidence/lineup/price/
+    # freshness before this row ever got here. NO padding exists to fill
+    # this list back up -- a night with 3 qualifying picks shows 3; a night
+    # with none shows none. That absence is the correct, honest output on
+    # a slate where nothing really clears the bar, not a bug.
+    top_picks = [r for r in all_rows if r.get("recommendation_status") == "top_pick"]
     top_picks.sort(key=lambda r: r.get("market_edge") or 0, reverse=True)
-    top_picks = top_picks[:10]
 
-    # "Locks" -- direct request: "Locks should be in their own section I
-    # shouldn't have to look so hard for Sam Antonacci RBI or whatever it
-    # is." Top Picks ranks by edge, which can legitimately bury a real
-    # High-confidence pick behind several bigger-edge-but-lower-confidence
-    # ones (a High pick already priced close to fair by FanDuel still has
-    # a small edge) -- verified live 2026-08-15, exactly the case that
-    # prompted this. Locks is the OTHER axis: every pick that already
-    # earns pickRow()'s own gold Lock badge client-side (High confidence
-    # AND price_clears AND a real confirmed lineup -- see isLock there),
-    # collected in one place instead of making someone hunt for it across
-    # every category tab. Not capped to a fixed count on purpose, same
-    # reasoning select_best_by_category's own min_score=0 comment gives:
-    # some nights there are 2 real locks, some nights 15, and neither
-    # number should be gatekept down to match the other.
-    locks = [r for r in all_rows if r.get("confidence") == "High" and r.get("price_clears") is True
-            and not r.get("lineup_assumed")]
-    locks.sort(key=lambda r: r.get("market_edge") or 0, reverse=True)
+    # LEANS. A real, computed opinion that doesn't clear every Top Pick
+    # requirement -- thin evidence, an unconfirmed lineup, or simply a
+    # probability below the floor with no standout price. Ranked by how
+    # much probability separation the model actually found (lift), since
+    # "how much of an opinion" is what a Lean is fundamentally reporting.
+    leans = [r for r in all_rows if r.get("recommendation_status") == "lean"]
+    leans.sort(key=lambda r: r.get("lift") or 0, reverse=True)
+
+    # BEST VALUE / LONGSHOTS. Real price value at a real, often low,
+    # probability -- direct request: "a 22% bet at +500 may be a good value
+    # bet while still being very likely to lose... never present that as a
+    # Lock." Ranked by ROI/edge, not by probability, since probability is
+    # explicitly not the point of this bucket.
+    best_value = [r for r in all_rows if r.get("recommendation_status") == "value"]
+    best_value.sort(key=lambda r: r.get("market_edge") or 0, reverse=True)
 
     return {
         "date": result.get("date"),
         "generated_at": result.get("generated_at"),
+        "odds_fetched_at": result.get("odds_fetched_at"),
+        "recommendation_metadata": result.get("recommendation_metadata"),
         # "schedule": direct request, "I want people to be able to click on
         # a game on the schedule, and get a breakdown of why X props might
         # be best for A B C reasons. Think time, weather, etc." A real tab
@@ -674,17 +730,14 @@ def build_payload(result, track_record=None):
         # _compute_streaks' own longest-streak-first order. Kept out of the
         # generic loop for the same reason schedule is: to keep control of
         # the ordering that actually matters for this tab.
-        # "locks": direct request, "Locks should be in their own section I
-        # shouldn't have to look so hard for Sam Antonacci RBI or whatever
-        # it is." Placed right after top_picks -- the other curated,
-        # high-value section, not a generic category tab.
-        "tabs_order": ["top_picks", "locks", "schedule", "streaks", "all"] + list(tabs.keys()),
+        "tabs_order": ["top_picks", "leans", "best_value", "schedule", "streaks", "all"] + list(tabs.keys()),
         "labels": {
-            "top_picks": "Top Picks", "locks": "Locks", "schedule": "Schedule", "streaks": "Streaks",
-            "all": "All Props",
+            "top_picks": "Top Picks", "leans": "Leans", "best_value": "Best Value",
+            "schedule": "Schedule", "streaks": "Streaks", "all": "All Props",
             **{stat: CATEGORY_LABELS.get(stat, stat.replace("_", " ").title()) for stat in tabs},
         },
-        "data": {"top_picks": top_picks, "locks": locks, "schedule": result.get("game_context") or [],
+        "data": {"top_picks": top_picks, "leans": leans, "best_value": best_value,
+                "schedule": result.get("game_context") or [],
                 "streaks": result.get("streaks") or [], "all": all_rows, **tabs},
         "track_record": track_record,
         "suggested_parlay": result.get("suggested_parlay"),
@@ -1018,10 +1071,24 @@ body {{
 .chip.conf-high {{ background: var(--accent-soft); color: var(--accent); }}
 .chip.conf-medium {{ background: var(--surface-2); color: var(--ink-dim); border: 1px solid var(--line); }}
 .chip.conf-low {{ background: var(--surface-2); color: var(--ink-faint); border: 1px solid var(--line); }}
-.chip.lock-badge {{ background: var(--accent); color: var(--accent-ink); font-weight: 700; }}
-.pick.lock {{ border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent-soft), var(--shadow); }}
-.pick.lock:hover {{ box-shadow: 0 0 0 2px var(--accent-soft), var(--shadow-lift); }}
-.pick.lock .who .name {{ color: var(--accent); }}
+/* Top Pick: the ONE real recommendation badge on this site, gated by
+   recommendation.py's hard floor (see that module for the full rule) --
+   never earned by score/confidence/price alone the way the retired "Lock"
+   badge was. */
+.chip.top-pick-badge {{ background: var(--accent); color: var(--accent-ink); font-weight: 700; }}
+.pick.top-pick {{ border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent-soft), var(--shadow); }}
+.pick.top-pick:hover {{ box-shadow: 0 0 0 2px var(--accent-soft), var(--shadow-lift); }}
+.pick.top-pick .who .name {{ color: var(--accent); }}
+/* Lean: a real, computed opinion that doesn't clear every Top Pick
+   requirement -- deliberately quieter than Top Pick's solid accent, so it
+   never reads as the same strength of recommendation. */
+.chip.lean-badge {{ background: var(--surface-2); color: var(--ink-dim); border: 1px solid var(--accent-soft); font-weight: 600; }}
+/* Value/Longshot: real price value at a real, often low, probability --
+   direct instruction: "never present that as a Lock." A distinct color
+   from both Top Pick and Lean so a low-probability, good-price bet is
+   never visually confused with a likely one. */
+.chip.value-badge {{ background: var(--warn-soft); color: var(--warn); font-weight: 600; }}
+.chip.stale-badge {{ background: var(--bad-soft); color: var(--bad); font-weight: 600; }}
 /* Live grading: direct request, "for the top picks, them to show when it's
    cashed... make the pick yellow when the game is happening... green if it
    cashes, red if it doesn't." dashboard/refresh_grades.py writes these
@@ -1355,7 +1422,16 @@ function pickRow(p, rank) {{
   // now, not that something's broken.
   const oddsText = marketOdds === null ? "NOT ON FANDUEL YET" : marketOdds;
 
-  const confChip = p.confidence ? `<span class="chip ${{confClass(p.confidence)}}">${{esc(p.confidence)}}</span>` : "";
+  // Relabelled "Read: High/Medium/Low" rather than a bare "High" -- direct
+  // instruction from the 2026-08-15 rebuild: this badge's precise meaning
+  // is "how good this player's matchup/form/skill score is, backed by how
+  // much real sample size" (score>=70 AND reliability A/B), a real,
+  // defined statement that has never meant "likely to hit" or "recommend
+  // this bet" -- both of those live in recommendation_status now. The
+  // bare word "Confidence" next to a probability was exactly what made
+  // that conflation easy; spelling out "Read" keeps the real, useful
+  // signal without implying the thing it was never claiming.
+  const confChip = p.confidence ? `<span class="chip ${{confClass(p.confidence)}}">Read: ${{esc(p.confidence)}}</span>` : "";
 
   const marketPct = p.market_implied !== null && p.market_implied !== undefined ? p.market_implied * 100 : null;
   const ourPct = p.hit_probability !== null && p.hit_probability !== undefined ? p.hit_probability * 100 : 0;
@@ -1378,12 +1454,24 @@ function pickRow(p, rank) {{
     edgeHtml = `<span class="edge ${{edgeCls}}">${{edgeText}} vs mkt</span>`;
   }}
 
-  // A "Lock" badge is a strong, real-recommendation signal -- never earned
-  // by a candidate whose batting-order slot is still a guess (p.lineup_
-  // assumed), even if it happens to have a real posted price and a High
-  // read. Early Look's whole point is "not a pick yet."
-  const isLock = p.confidence === "High" && p.price_clears === true && !p.lineup_assumed;
-  const lockBadge = isLock ? `<span class="chip lock-badge">&#128274; Lock</span>` : "";
+  // recommendation_status: 2026-08-15 rebuild. The ONE real recommendation
+  // signal on this page -- computed server-side by recommendation.py
+  // against a real, hard probability/evidence/lineup/price/freshness
+  // floor (see that module's own docstring), never re-derived from
+  // confidence/price_clears here. "Confidence"/"High" no longer implies
+  // "recommend this" anywhere on this page; a Triple at 1.2% probability
+  // can still show High confidence (a real, precisely-defined statement
+  // about score+evidence) while correctly carrying no Top Pick badge at
+  // all, which is exactly the gap this field closes.
+  const isTopPick = p.recommendation_status === "top_pick";
+  const statusBadge = isTopPick
+    ? `<span class="chip top-pick-badge" title="${{esc((p.status_reasons || [])[0] || "")}}">&#127919; Top Pick</span>`
+    : p.recommendation_status === "lean"
+    ? `<span class="chip lean-badge" title="${{esc((p.status_reasons || [])[0] || "")}}">Lean</span>`
+    : p.recommendation_status === "value"
+    ? `<span class="chip value-badge" title="${{esc((p.status_reasons || [])[0] || "")}}">Value</span>` : "";
+  const staleBadge = p.stale
+    ? `<span class="chip stale-badge">&#9203; Data may be stale</span>` : "";
 
   // Early Look: direct request, "we shouldn't have to wait for lineups to
   // at least get a lean, then we can adjust depending how the lineups
@@ -1433,7 +1521,7 @@ function pickRow(p, rank) {{
   const starBtn = `<button class="star-btn${{isStarred ? " starred" : ""}}" type="button" data-star-key="${{esc(starKey)}}" aria-label="${{isStarred ? "Remove from starred" : "Add to starred"}}">${{isStarred ? "&#9733;" : "&#9734;"}}</button>`;
 
   return `
-  <div class="pick${{isLock ? " lock" : ""}}${{isUnpriced ? " no-line" : ""}}${{gradeClass}}${{p.lineup_assumed ? " lineup-assumed" : ""}}" tabindex="0" role="button" aria-expanded="false">
+  <div class="pick${{isTopPick ? " top-pick" : ""}}${{isUnpriced ? " no-line" : ""}}${{gradeClass}}${{p.lineup_assumed ? " lineup-assumed" : ""}}" tabindex="0" role="button" aria-expanded="false">
     ${{starBtn}}
     <div class="rank">${{String(rank).padStart(2, "0")}}</div>
     <div class="who">
@@ -1448,7 +1536,7 @@ function pickRow(p, rank) {{
         <span class="price ${{oddsClass}}">${{oddsText}}</span>
         ${{fairOdds !== null ? `<span class="fair">fair ${{fairOdds}}</span>` : ""}}
       </div>
-      <div class="badges">${{earlyBadge}}${{gradeBadge}}${{streakBadge}}${{lockBadge}}${{confChip}}</div>
+      <div class="badges">${{earlyBadge}}${{gradeBadge}}${{streakBadge}}${{statusBadge}}${{staleBadge}}${{confChip}}</div>
       <div class="meter">
         <div class="fill ${{fillClass}}" style="width:${{ourPct}}%; opacity:${{fillOpacity}}"></div>
         ${{marketPct !== null ? `<div class="mark" style="left:${{marketPct}}%"></div>` : ""}}
@@ -1489,9 +1577,13 @@ function renderSummary() {{
   }}
   const tiles = [
     {{ n: all.length, l: "Candidates Scored" }},
-    // 3 fixed non-market tabs by the time this runs (top_picks/starred/all)
-    // -- initWatchlist() inserts "starred" before this is ever called.
-    {{ n: PAYLOAD.tabs_order.length - 3, l: "Prop Markets" }},
+    // 5 fixed non-market tabs by the time this runs (top_picks/leans/
+    // best_value/starred/all) -- initWatchlist() inserts "starred" before
+    // this is ever called. schedule/streaks are real content tabs but
+    // don't carry per-prop-market rows, so they were never counted here
+    // either (matches this tile's pre-existing 3-tab offset before the
+    // leans/best_value split added two more non-market tabs).
+    {{ n: PAYLOAD.tabs_order.length - 5, l: "Prop Markets" }},
     {{ n: priced, l: "With a Live Line" }},
     {{ n: clears, l: "Clear the Price", accent: true }},
   ];
@@ -1624,7 +1716,7 @@ function renderTabs() {{
   bar.innerHTML = PAYLOAD.tabs_order.map((key) => {{
     const label = PAYLOAD.labels[key];
     const count = PAYLOAD.data[key].length;
-    const icon = key === "top_picks" ? "&#127942; " : (key === "locks" ? "&#128274; " : (key === "starred" ? "&#9733; " : (key === "schedule" ? "&#128197; " : (key === "streaks" ? "&#128293; " : ""))));
+    const icon = key === "top_picks" ? "&#127919; " : (key === "leans" ? "&#128172; " : (key === "best_value" ? "&#128176; " : (key === "starred" ? "&#9733; " : (key === "schedule" ? "&#128197; " : (key === "streaks" ? "&#128293; " : "")))));
     const extraCls = key === "top_picks" ? " top-picks" : (key === "starred" ? " starred-tab" : "");
     return `<button class="tab${{key === activeTabKey ? " active" : ""}}${{extraCls}}" data-tab="${{esc(key)}}">${{icon}}${{esc(label)}} <span class="cnt">${{count}}</span></button>`;
   }}).join("");
@@ -1648,8 +1740,14 @@ function renderTabs() {{
 }}
 
 const PANEL_DESC = {{
-  top_picks: "Every real, priced pick that clears FanDuel's price, ranked purely by edge (model probability minus the market's own implied probability) -- NOT filtered by confidence. A thin-track-record pick with a huge edge can outrank a well-supported pick with a small one, on purpose: edge size and confidence measure two different things. Confidence-gated High picks live in Locks instead. A Lineup not confirmed badge means his slot is still a projection, not an official posted lineup -- it'll confirm or disappear as MLB posts the real one.",
-  locks: "Every pick meeting all three real gates at once: High confidence (score 70+ AND a reliability grade of A or B -- 45+ real games/starts of evidence), price_clears (still positive-EV at the pessimistic end of its confidence interval), and a real MLB-confirmed lineup (not a projection). Ranked by edge among these, but every entry already cleared the same bar -- unlike Top Picks, size of edge is secondary here.",
+  // 2026-08-15 rebuild. Every pick on this whole site now carries a real
+  // recommendation_status computed by one function (recommendation.py),
+  // against one real, hard floor -- not four different ad-hoc criteria
+  // scattered across tabs the way "Top Picks"/"Locks" used to be. These
+  // four descriptions are that classifier's real rule, stated plainly.
+  top_picks: "Every bet Full Count is willing to recommend and be judged on. Every entry clears ALL of: a real calibrated probability of at least 60%, a reliability grade of A or B (a genuine sample, not a thin one), a confirmed MLB lineup (never a projection), fresh odds and board data, and a price that still clears the model's own uncertainty (positive expected return at the PESSIMISTIC end of its real confidence interval, not just at the point estimate). This floor is real and hard: no fallback pads this list back up on a slate where fewer bets qualify -- if only 2 clear it tonight, 2 is the honest number.",
+  leans: "Full Count has a real, computed opinion here -- a genuine positive read over the market's own base rate -- but the bet doesn't clear every Top Pick requirement: thin evidence, a lineup that's still a projection, stale data, or a real probability below the 60% floor with no standout price to compensate. Worth watching, never worth betting as if it were a Top Pick.",
+  best_value: "Real price value at a probability that's often genuinely low -- home runs, stolen bases, triples, and similar high-variance bets Full Count still likes at the price offered. A 22% probability at +500 can be a good bet on the math and still be more likely to lose than win. Ranked by edge, not by probability, because probability of winning and value at the price are two different questions -- these bets answer the second one, honestly, without dressing a longshot up as a favorite.",
   starred: "Your personal shortlist. Click the star on any pick to save it here -- stored on this device only, nothing is sent anywhere.",
   schedule: "Tonight's slate. Click a game for the real weather, home-plate umpire tendency, and starting pitchers behind it, plus the best-priced props tied to that specific matchup.",
   streaks: "Real, active streaks among tonight's own candidates, across every batter and pitcher market -- consecutive games clearing a real line, not just hits and total bases. Every entry here is a real prop you can actually bet tonight, not a trivia list.",
@@ -1800,7 +1898,7 @@ function renderPanels() {{
     countLabel = filtersActive
       ? `${{rows.length}} of ${{realRows.length}} candidate${{realRows.length === 1 ? "" : "s"}}`
       : `${{realRows.length}} candidate${{realRows.length === 1 ? "" : "s"}}`;
-    rankedBy = uiState.sortKey === "edge" ? "edge over the market" : uiState.sortKey === "prob" ? "model probability" : uiState.sortKey === "odds" ? "payout size" : ((key === "top_picks" || key === "locks") ? "edge over the market" : (key === "streaks" ? "streak length" : "model probability"));
+    rankedBy = uiState.sortKey === "edge" ? "edge over the market" : uiState.sortKey === "prob" ? "model probability" : uiState.sortKey === "odds" ? "payout size" : ((key === "top_picks" || key === "best_value") ? "edge over the market" : (key === "leans" ? "how strong the read is" : (key === "streaks" ? "streak length" : "model probability")));
     }}
     html += `
     <div class="panel${{key === activeTabKey ? " active" : ""}}" id="panel-${{esc(key)}}">
@@ -2035,7 +2133,7 @@ function mergePriceUpdate(freshAll) {{
   const freshByKey = new Map(freshAll.map(p => [pickKey(p), p]));
   let changed = 0;
   for (const key of Object.keys(PAYLOAD.data)) {{
-    if (key === "top_picks") continue;  // rebuilt below, not merged into directly
+    if (key === "top_picks" || key === "leans" || key === "best_value") continue;  // rebuilt below
     for (const p of PAYLOAD.data[key]) {{
       const fresh = freshByKey.get(pickKey(p));
       if (!fresh) continue;
@@ -2044,6 +2142,19 @@ function mergePriceUpdate(freshAll) {{
       p.market_implied = fresh.market_implied;
       p.market_edge = fresh.market_edge;
       p.price_clears = fresh.price_clears;
+      // recommendation_status: a price move can genuinely flip a pick's
+      // real Top Pick/Lean/Value status (its value/robustness test
+      // depends on the price). dashboard/refresh_prices.py already
+      // re-ran the SAME Python classify_recommendation() this page's own
+      // full build uses and wrote the real answer into data.json -- this
+      // reads that answer rather than re-deriving a second, separate
+      // approximation of it in JS, which is exactly the kind of drift
+      // this rebuild's own audit found between the old ad-hoc Top
+      // Picks/Locks criteria and what pickRow() actually badged.
+      if (p.recommendation_status !== fresh.recommendation_status) changed++;
+      p.recommendation_status = fresh.recommendation_status;
+      p.status_reasons = fresh.status_reasons;
+      p.stale = fresh.stale;
       // grade: dashboard/refresh_grades.py's live hit/miss/in-progress
       // state -- see pruneStartedGames() and renderPick() for the rest of
       // this feature.
@@ -2051,20 +2162,24 @@ function mergePriceUpdate(freshAll) {{
       p.grade = fresh.grade;
     }}
   }}
-  // Same rule build_payload() uses server-side: price_clears===true,
-  // ranked by edge, capped at 10 -- recomputed fresh so a price move can
-  // genuinely push a prop onto or off Top Picks in real time. A pick
-  // whose game has already started is grandfathered in regardless of its
-  // current price_clears value (FanDuel's own line for it is closed by
-  // then anyway) -- otherwise a cashed pick could get bumped off the
-  // board by an unrelated later game's price move right as it turns
-  // green, which defeats the entire point of watching it resolve.
+  // Rebucket from the just-merged, server-recomputed status -- a pick
+  // whose game has already started is grandfathered into Top Picks
+  // regardless of its current status (FanDuel's own line for it is
+  // closed by then anyway) -- otherwise a cashed pick could get bumped
+  // off the board by an unrelated later game's price move right as it
+  // turns green, which defeats the entire point of watching it resolve.
   const now = Date.now();
   const wasTopPick = new Set((PAYLOAD.data.top_picks || []).map(pickKey));
-  const tp = PAYLOAD.data.all.filter(p => p.price_clears === true
+  const tp = PAYLOAD.data.all.filter(p => p.recommendation_status === "top_pick"
     || (wasTopPick.has(pickKey(p)) && p.game_start && new Date(p.game_start).getTime() <= now));
   tp.sort((a, b) => (b.market_edge || 0) - (a.market_edge || 0));
-  PAYLOAD.data.top_picks = tp.slice(0, 10);
+  PAYLOAD.data.top_picks = tp;
+  const lns = PAYLOAD.data.all.filter(p => p.recommendation_status === "lean");
+  lns.sort((a, b) => (b.lift || 0) - (a.lift || 0));
+  PAYLOAD.data.leans = lns;
+  const bv = PAYLOAD.data.all.filter(p => p.recommendation_status === "value");
+  bv.sort((a, b) => (b.market_edge || 0) - (a.market_edge || 0));
+  PAYLOAD.data.best_value = bv;
   if (PAYLOAD.data.starred) refreshStarredTab();
   return changed;
 }}
