@@ -3296,6 +3296,7 @@ def select_moonshots(candidates, prices, fd, n=5):
             "market_edge": None if implied is None else round(hr_opt["prob"] - implied, 4),
             "price_clears": pp.price_is_acceptable(odds, hr_opt["prob"]),
             "category": "moonshot",
+            "lineup_assumed": c.get("lineup_assumed"),
         })
     out.sort(key=lambda o: o["hit_probability"], reverse=True)
     return out[:n]
@@ -3450,6 +3451,16 @@ def select_best_by_category(candidates, prices, fd, n_per_category=1, k_prices=N
                     "prob_ci": c.get("prob_ci"), "sample_n": c.get("sample_n"),
                     "reliability": c.get("reliability"),
                     "why": c.get("why"), "watchouts": c.get("watchouts"),
+                    # Real bug, found live 2026-08-15: this fixed field list
+                    # silently dropped lineup_assumed, the exact tag
+                    # quality_control() sets on an assumed-lineup candidate --
+                    # a batter whose slot is a guess would come out of here
+                    # looking identical to a fully confirmed one, with no way
+                    # for a caller (the dashboard) to tell them apart. Absent
+                    # (None) for every candidate that never had it set, which
+                    # is every candidate the static/graded pipeline ever
+                    # passes here -- inert there.
+                    "lineup_assumed": c.get("lineup_assumed"),
                     "_needs_price_lookup": True,
                 })
         elif c.get("type") in ("batter", "pitcher", "game", "pitcher_combo"):
@@ -3483,6 +3494,7 @@ def select_best_by_category(candidates, prices, fd, n_per_category=1, k_prices=N
                 "why": c.get("why"), "watchouts": c.get("watchouts"),
                 "market_odds": c.get("market_odds"), "market_implied": c.get("market_implied"),
                 "market_edge": c.get("market_edge"), "price_clears": c.get("price_clears"),
+                "lineup_assumed": c.get("lineup_assumed"),
                 "_needs_price_lookup": False,
             })
 

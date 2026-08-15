@@ -58,8 +58,30 @@ check(mp1.call_args[0] == (12345, "hitting"), "fetches the 'hitting' group for t
 check(games1[0]["date"] == "2026-08-03", "index 0 is the most recent game, not the oldest",
       f"got {games1[0]}")
 check(games1[-1]["date"] == "2026-08-01", "the oldest game is last")
-check(games1[0] == {"date": "2026-08-03", "hits": 2, "total_bases": 3},
+check(games1[0]["hits"] == 2 and games1[0]["total_bases"] == 3,
       "hits/total_bases pass through under the field names the streak counter expects")
+
+head("1b. batter_recent_game_log: broadened per a direct follow-up request, \"broaden the "
+     "streaks to any relevant prop\" -- every real batter stat is derived from MLB's actual "
+     "field names (runs/doubles/triples/homeRuns/rbi/stolenBases), verified live before "
+     "writing this")
+
+RICH_GAME = [{"date": "2026-08-05", "stat": {
+    "plateAppearances": 5, "hits": 3, "totalBases": 7, "runs": 2, "rbi": 4,
+    "doubles": 1, "triples": 0, "homeRuns": 1, "stolenBases": 1,
+}}]
+with mock.patch.object(msrc, "_game_log", return_value=RICH_GAME):
+    games1b = msrc.batter_recent_game_log(12345)
+g = games1b[0]
+check(g["runs"] == 2 and g["rbis"] == 4 and g["doubles"] == 1 and g["triples"] == 0
+      and g["home_runs"] == 1 and g["stolen_base"] == 1,
+      "runs/rbis/doubles/triples/home_runs/stolen_base all pass through under the real MLB "
+      "field values", f"got {g}")
+check(g["singles"] == 1,
+      "singles is derived (hits - doubles - triples - home_runs), not a raw MLB field: "
+      "3 hits - 1 double - 0 triples - 1 HR = 1 single", f"got {g['singles']}")
+check(g["hits_runs_rbis"] == 9,
+      "hits_runs_rbis is derived (hits + runs + rbi): 3 + 2 + 4 = 9", f"got {g['hits_runs_rbis']}")
 
 head("2. batter_recent_game_log filters out games with no real plate appearance "
      "(didn't really play -- not evidence for or against a streak)")

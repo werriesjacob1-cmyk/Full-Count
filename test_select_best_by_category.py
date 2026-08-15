@@ -158,6 +158,25 @@ check("strikeouts" in unfloored_out and unfloored_out["strikeouts"][0]["score"] 
       "min_score=0 recovers the exact same below-floor candidate instead of discarding it",
       f"got {unfloored_out}")
 
+head("11. lineup_assumed survives into the output row, in BOTH branches -- real bug, found "
+     "live 2026-08-15: this function's own output dicts are fixed field lists that silently "
+     "dropped lineup_assumed, so a batter whose lineup slot is a guess (quality_control()'s "
+     "assumed=True tag) came out of here indistinguishable from a fully confirmed one, with "
+     "no way for a caller to badge it")
+
+assumed_batter_out = gp.select_best_by_category([batter_with_options(lineup_assumed=True)], {}, fd)
+check(assumed_batter_out["hits"][0]["lineup_assumed"] is True,
+      "the line_options branch (batters) preserves lineup_assumed", f"got {assumed_batter_out}")
+confirmed_batter_out = gp.select_best_by_category(
+    [batter_with_options(name="Confirmed Batter", player_id=6)], {}, fd)
+check(confirmed_batter_out["hits"][0].get("lineup_assumed") is None,
+      "a normal (confirmed) batter with no lineup_assumed key stays honestly absent")
+
+assumed_pitcher_out = gp.select_best_by_category([single_line_pitcher(lineup_assumed=True)], {}, fd)
+check(assumed_pitcher_out["strikeouts"][0]["lineup_assumed"] is True,
+      "the single-line branch (pitchers/stolen_base/nrfi) preserves lineup_assumed too",
+      f"got {assumed_pitcher_out}")
+
 n_pass = sum(1 for ok, _, _ in _results if ok)
 n_total = len(_results)
 print("\n" + "=" * 78)
