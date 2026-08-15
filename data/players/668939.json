@@ -219,6 +219,104 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-15",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 71.7,
+          "notable_signals": 1,
+          "matchup": "Boston Red Sox @ Pittsburgh Pirates",
+          "game_pk": 823347,
+          "team": "Boston Red Sox",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "sp_era_weak": 72.2857,
+            "park_hr_index": 47.6,
+            "season_barrel_pct": 27.3333,
+            "lineup_slot": 75.0,
+            "bullpen_fatigue": 64.1026,
+            "platoon_barrel_pct": 0.88,
+            "platoon_xwoba": 1.62,
+            "opp_catcher_framing": 0.6,
+            "days_rest": 0.0,
+            "woba_ahead": 48.1818,
+            "woba_behind": 98.1818,
+            "team_total_move": -6.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": 0.016,
+            "vs_rp_ops": 0.54,
+            "ump_k_pct": -0.9,
+            "ump_bb_pct": 0.048
+          },
+          "hit_probability": 0.6842,
+          "raw_hit_probability": 0.6965,
+          "lift": 0.0115,
+          "reliability": "B",
+          "sample_n": 70,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 0.0,
+          "notable_signals": 0,
+          "matchup": "Boston Red Sox @ Pittsburgh Pirates",
+          "game_pk": 823347,
+          "team": "Boston Red Sox",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0108
+          },
+          "hit_probability": 0.0108,
+          "raw_hit_probability": null,
+          "lift": -0.0388,
+          "reliability": "B",
+          "sample_n": 70,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 0.0,
+          "notable_signals": 0,
+          "matchup": "Boston Red Sox @ Pittsburgh Pirates",
+          "game_pk": 823347,
+          "team": "Boston Red Sox",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0047
+          },
+          "hit_probability": 0.0047,
+          "raw_hit_probability": null,
+          "lift": -0.0168,
+          "reliability": "B",
+          "sample_n": 70,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

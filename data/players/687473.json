@@ -87,7 +87,7 @@
         {
           "prop": "Over 4.5 Strikeouts",
           "type": "pitcher",
-          "score": 51.6,
+          "score": 52.2,
           "notable_signals": 0,
           "matchup": "Miami Marlins @ Cincinnati Reds",
           "game_pk": 824480,
@@ -99,7 +99,10 @@
             "opp_team_k_pct": 82.0,
             "same_hand_ratio": 100.0,
             "l14_k_pct": 41.1765,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 56.1067,
+            "ump_k_pct": -0.252,
+            "ump_bb_pct": -0.648
           },
           "hit_probability": 0.5717,
           "raw_hit_probability": 0.492,
@@ -124,18 +127,46 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.4011,
+            "outs_rate": 0.4033,
             "avg_outs_per_start": 11.9
           },
-          "hit_probability": 0.4011,
+          "hit_probability": 0.4033,
           "raw_hit_probability": null,
-          "lift": -0.3352,
+          "lift": -0.3388,
           "reliability": "B",
           "sample_n": 10,
           "projection": {
             "stat": "pitcher_outs",
             "value": 14.5,
             "needs": 15
+          }
+        },
+        {
+          "prop": "Over 9.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 22.2,
+          "notable_signals": 0,
+          "matchup": "Miami Marlins @ Cincinnati Reds",
+          "game_pk": 824480,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            687473,
+            663903
+          ],
+          "signals": {
+            "combined_k_edge": -0.1311
+          },
+          "hit_probability": 0.4184,
+          "raw_hit_probability": null,
+          "lift": -0.1311,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 9.5,
+            "needs": 10
           }
         }
       ]

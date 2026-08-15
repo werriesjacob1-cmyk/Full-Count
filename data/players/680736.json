@@ -68,7 +68,7 @@
         {
           "prop": "Over 4.5 Strikeouts",
           "type": "pitcher",
-          "score": 52.2,
+          "score": 51.3,
           "notable_signals": 0,
           "matchup": "Milwaukee Brewers @ Los Angeles Dodgers",
           "game_pk": 823914,
@@ -80,7 +80,10 @@
             "opp_team_k_pct": 46.0,
             "same_hand_ratio": 43.75,
             "l14_k_pct": 7.6471,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 40.2476,
+            "ump_k_pct": -0.216,
+            "ump_bb_pct": 0.708
           },
           "hit_probability": 0.5848,
           "raw_hit_probability": 0.5556,
@@ -96,7 +99,7 @@
         {
           "prop": "Over 17.5 Outs Recorded",
           "type": "pitcher",
-          "score": 85.1,
+          "score": 85.7,
           "notable_signals": 1,
           "matchup": "Milwaukee Brewers @ Los Angeles Dodgers",
           "game_pk": 823914,
@@ -105,12 +108,12 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.6744,
+            "outs_rate": 0.6728,
             "avg_outs_per_start": 18.37
           },
-          "hit_probability": 0.6744,
+          "hit_probability": 0.6728,
           "raw_hit_probability": null,
-          "lift": 0.1976,
+          "lift": 0.2029,
           "reliability": "A",
           "sample_n": 19,
           "projection": {

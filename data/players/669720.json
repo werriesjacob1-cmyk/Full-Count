@@ -153,6 +153,79 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-15",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 47.0,
+          "notable_signals": 1,
+          "matchup": "San Diego Padres @ Cleveland Guardians",
+          "game_pk": 824400,
+          "team": "San Diego Padres",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 40.2857,
+            "park_hr_index": 40.7,
+            "season_barrel_pct": 23.3333,
+            "lineup_slot": 25.0,
+            "bullpen_fatigue": 51.2821,
+            "park_hand_index": 0.62,
+            "opp_catcher_framing": -0.0,
+            "days_rest": 4.0,
+            "woba_ahead": 86.3636,
+            "woba_behind": 0.0,
+            "pull_park_synergy": 0.4449,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "ump_k_pct": 0.684,
+            "ump_bb_pct": 0.336
+          },
+          "hit_probability": 0.6064,
+          "raw_hit_probability": 0.6058,
+          "lift": 0.0555,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 13.2,
+          "notable_signals": 0,
+          "matchup": "San Diego Padres @ Cleveland Guardians",
+          "game_pk": 824400,
+          "team": "San Diego Padres",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": 5.76,
+            "sprint_speed": 0.0,
+            "catcher_poptime": 0.0,
+            "on_base": 21.3052
+          },
+          "hit_probability": 0.0,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

@@ -68,7 +68,7 @@
         {
           "prop": "Over 4.5 Strikeouts",
           "type": "pitcher",
-          "score": 45.0,
+          "score": 46.5,
           "notable_signals": 0,
           "matchup": "Baltimore Orioles @ Tampa Bay Rays",
           "game_pk": 822941,
@@ -78,9 +78,12 @@
           "combo_player_ids": null,
           "signals": {
             "opp_team_k_pct": 18.0,
-            "same_hand_ratio": 12.5,
+            "same_hand_ratio": 43.75,
             "l14_k_pct": 32.9412,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 53.264,
+            "ump_k_pct": 0.264,
+            "ump_bb_pct": -0.276
           },
           "hit_probability": 0.5706,
           "raw_hit_probability": 0.4865,
@@ -96,7 +99,7 @@
         {
           "prop": "Over 17.5 Outs Recorded",
           "type": "pitcher",
-          "score": 36.0,
+          "score": 36.6,
           "notable_signals": 0,
           "matchup": "Baltimore Orioles @ Tampa Bay Rays",
           "game_pk": 822941,
@@ -105,18 +108,46 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.478,
+            "outs_rate": 0.4765,
             "avg_outs_per_start": 16.57
           },
-          "hit_probability": 0.478,
+          "hit_probability": 0.4765,
           "raw_hit_probability": null,
-          "lift": 0.0012,
+          "lift": 0.0066,
           "reliability": "A",
           "sample_n": 23,
           "projection": {
             "stat": "pitcher_outs",
             "value": 17.5,
             "needs": 18
+          }
+        },
+        {
+          "prop": "Over 10.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 55.0,
+          "notable_signals": 0,
+          "matchup": "Baltimore Orioles @ Tampa Bay Rays",
+          "game_pk": 822941,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            680694,
+            693855
+          ],
+          "signals": {
+            "combined_k_edge": 0.0251
+          },
+          "hit_probability": 0.673,
+          "raw_hit_probability": null,
+          "lift": 0.0251,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 10.5,
+            "needs": 11
           }
         }
       ]

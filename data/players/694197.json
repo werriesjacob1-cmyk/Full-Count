@@ -322,6 +322,47 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-15",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 48.7,
+          "notable_signals": 1,
+          "matchup": "San Diego Padres @ Cleveland Guardians",
+          "game_pk": 824400,
+          "team": "Cleveland Guardians",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "sp_era_weak": 27.1429,
+            "park_hr_index": 40.7,
+            "lineup_slot": 37.5,
+            "bullpen_fatigue": 89.7436,
+            "opp_catcher_framing": 0.12,
+            "days_rest": 0.0,
+            "woba_ahead": 60.0,
+            "woba_behind": 29.0909,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "ump_k_pct": 0.684,
+            "ump_bb_pct": 0.336
+          },
+          "hit_probability": 0.6649,
+          "raw_hit_probability": 0.6503,
+          "lift": 0.114,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }
