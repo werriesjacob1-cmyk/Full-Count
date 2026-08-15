@@ -179,6 +179,16 @@ def run_live_fetch():
                 "watchouts": (r.get("watchouts") or [])[:2],
                 "base_rate": r.get("base_rate"), "lift": r.get("lift"),
                 "game_pk": game_pk, "game_start": (schedule.get(game_pk) or {}).get("start"),
+                # player_id/combo_player_ids: not used anywhere in this page's
+                # own rendering, but required by grade_results.grade_pick() --
+                # dashboard/refresh_grades.py reshapes a row back into a
+                # candidate dict to grade it live, and needs these to find the
+                # real box score line. Direct request: "for the top picks,
+                # them to show when it's cashed... make the pick yellow when
+                # the game is happening... green if it cashes, red if it
+                # doesn't."
+                "player_id": r.get("player_id"),
+                "combo_player_ids": r.get("combo_player_ids"),
             })
         return out
 
@@ -453,6 +463,8 @@ PAGE_TEMPLATE = """<meta charset="utf-8">
   --good-soft: #E1F5EC;
   --bad: #D63A54;
   --bad-soft: #FCE8EB;
+  --warn: #B8860B;
+  --warn-soft: #FBF0D2;
   --shadow: 0 1px 2px rgba(15, 18, 32, 0.05), 0 6px 16px -8px rgba(15, 18, 32, 0.14);
   --shadow-lift: 0 2px 4px rgba(15, 18, 32, 0.07), 0 12px 28px -10px rgba(15, 18, 32, 0.20);
 
@@ -470,6 +482,7 @@ PAGE_TEMPLATE = """<meta charset="utf-8">
     --accent-soft: rgba(240, 180, 41, 0.14);
     --good: #33D689; --good-soft: rgba(51, 214, 137, 0.13);
     --bad: #FF5C72; --bad-soft: rgba(255, 92, 114, 0.13);
+    --warn: #F0B429; --warn-soft: rgba(240, 180, 41, 0.14);
     --shadow: 0 1px 2px rgba(0,0,0,0.35), 0 8px 20px -10px rgba(0,0,0,0.6);
     --shadow-lift: 0 2px 6px rgba(0,0,0,0.4), 0 16px 36px -12px rgba(0,0,0,0.7);
   }}
@@ -482,6 +495,7 @@ PAGE_TEMPLATE = """<meta charset="utf-8">
   --accent-soft: rgba(240, 180, 41, 0.14);
   --good: #33D689; --good-soft: rgba(51, 214, 137, 0.13);
   --bad: #FF5C72; --bad-soft: rgba(255, 92, 114, 0.13);
+  --warn: #F0B429; --warn-soft: rgba(240, 180, 41, 0.14);
   --shadow: 0 1px 2px rgba(0,0,0,0.35), 0 8px 20px -10px rgba(0,0,0,0.6);
   --shadow-lift: 0 2px 6px rgba(0,0,0,0.4), 0 16px 36px -12px rgba(0,0,0,0.7);
 }}
@@ -718,6 +732,17 @@ body {{
 .pick.lock {{ border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent-soft), var(--shadow); }}
 .pick.lock:hover {{ box-shadow: 0 0 0 2px var(--accent-soft), var(--shadow-lift); }}
 .pick.lock .who .name {{ color: var(--accent); }}
+/* Live grading: direct request, "for the top picks, them to show when it's
+   cashed... make the pick yellow when the game is happening... green if it
+   cashes, red if it doesn't." dashboard/refresh_grades.py writes these
+   states in throughout the evening -- see mergePriceUpdate()/pollPrices(). */
+.chip.grade-badge.grade-live {{ background: var(--warn-soft); color: var(--warn); }}
+.chip.grade-badge.grade-hit {{ background: var(--good-soft); color: var(--good); font-weight: 700; }}
+.chip.grade-badge.grade-miss {{ background: var(--bad-soft); color: var(--bad); }}
+.pick.grade-live {{ border-color: var(--warn); box-shadow: 0 0 0 2px var(--warn-soft), var(--shadow); }}
+.pick.grade-hit {{ border-color: var(--good); box-shadow: 0 0 0 2px var(--good-soft), var(--shadow); }}
+.pick.grade-hit .who .name {{ color: var(--good); }}
+.pick.grade-miss {{ border-color: var(--bad); opacity: 0.82; }}
 /* Real player, real projection -- just not a bet FanDuel has posted a
    price for yet. Dimmed rather than hidden (it's still real information),
    but clearly receded so it never reads as a recommendation on par with
@@ -1014,12 +1039,24 @@ function pickRow(p, rank) {{
   const isLock = p.confidence === "High" && p.price_clears === true;
   const lockBadge = isLock ? `<span class="chip lock-badge">&#128274; Lock</span>` : "";
 
+  // Live grading: direct request, "for the top picks, them to show when
+  // it's cashed... make the pick yellow when the game is happening...
+  // green if it cashes, red if it doesn't." dashboard/refresh_grades.py
+  // writes p.grade -- "live" (game underway, not final), "hit", or "miss"
+  // -- reusing the same grade_results.grade_pick() every pick is ever
+  // graded with, just called live instead of waiting for tomorrow morning.
+  const gradeClass = p.grade === "hit" ? " grade-hit" : p.grade === "miss" ? " grade-miss"
+    : p.grade === "live" ? " grade-live" : "";
+  const gradeBadge = p.grade === "hit" ? `<span class="chip grade-badge grade-hit">&#9989; Cashed</span>`
+    : p.grade === "miss" ? `<span class="chip grade-badge grade-miss">Missed</span>`
+    : p.grade === "live" ? `<span class="chip grade-badge grade-live">&#9679; Live</span>` : "";
+
   const starKey = pickKey(p);
   const isStarred = starredKeys.has(starKey);
   const starBtn = `<button class="star-btn${{isStarred ? " starred" : ""}}" type="button" data-star-key="${{esc(starKey)}}" aria-label="${{isStarred ? "Remove from starred" : "Add to starred"}}">${{isStarred ? "&#9733;" : "&#9734;"}}</button>`;
 
   return `
-  <div class="pick${{isLock ? " lock" : ""}}${{isUnpriced ? " no-line" : ""}}" tabindex="0" role="button" aria-expanded="false">
+  <div class="pick${{isLock ? " lock" : ""}}${{isUnpriced ? " no-line" : ""}}${{gradeClass}}" tabindex="0" role="button" aria-expanded="false">
     ${{starBtn}}
     <div class="rank">${{String(rank).padStart(2, "0")}}</div>
     <div class="who">
@@ -1034,7 +1071,7 @@ function pickRow(p, rank) {{
         <span class="price ${{oddsClass}}">${{oddsText}}</span>
         ${{fairOdds !== null ? `<span class="fair">fair ${{fairOdds}}</span>` : ""}}
       </div>
-      <div class="badges">${{lockBadge}}${{confChip}}</div>
+      <div class="badges">${{gradeBadge}}${{lockBadge}}${{confChip}}</div>
       <div class="meter">
         <div class="fill ${{fillClass}}" style="width:${{ourPct}}%; opacity:${{fillOpacity}}"></div>
         ${{marketPct !== null ? `<div class="mark" style="left:${{marketPct}}%"></div>` : ""}}
@@ -1318,10 +1355,22 @@ function renderHeader() {{
 // exactly this.
 function pruneStartedGames() {{
   const now = Date.now();
+  // Top Picks is exempt: direct request, "for the top picks, them to show
+  // when it's cashed... make the pick yellow when the game is happening...
+  // green if it cashes, red if it doesn't." A pick being tracked for live
+  // grading needs to STAY on the board through and after its game, not
+  // vanish the moment it starts -- and it must stay in every OTHER tab it
+  // also appears in (protectedKeys, not just top_picks itself), or
+  // mergePriceUpdate()'s grade merge below would have nothing left to
+  // write into once the row's gone from PAYLOAD.data. General prop
+  // browsing (every other tab) keeps the original behavior: those are
+  // still-bettable options, not something being watched resolve.
+  const protectedKeys = new Set((PAYLOAD.data.top_picks || []).map(pickKey));
   let removed = 0;
   for (const key of Object.keys(PAYLOAD.data)) {{
     const rows = PAYLOAD.data[key];
-    const kept = rows.filter(p => !p.game_start || new Date(p.game_start).getTime() > now);
+    const kept = rows.filter(p => protectedKeys.has(pickKey(p))
+      || !p.game_start || new Date(p.game_start).getTime() > now);
     removed += rows.length - kept.length;
     PAYLOAD.data[key] = kept;
   }}
@@ -1344,9 +1393,10 @@ function renderFreshness() {{
   if (!el) return;
   let text = " · board " + _agoText(PAYLOAD.generated_at);
   // Only shown once pollPrices() has actually landed an update -- before
-  // that, prices are exactly as fresh as the board itself, no separate
-  // number worth showing.
+  // that, prices/grades are exactly as fresh as the board itself, no
+  // separate number worth showing.
   if (lastPricesUpdatedAt) text += ", prices " + _agoText(lastPricesUpdatedAt);
+  if (lastGradesUpdatedAt) text += ", grades " + _agoText(lastGradesUpdatedAt);
   el.textContent = text;
 }}
 
@@ -1458,26 +1508,52 @@ function mergePriceUpdate(freshAll) {{
       p.market_implied = fresh.market_implied;
       p.market_edge = fresh.market_edge;
       p.price_clears = fresh.price_clears;
+      // grade: dashboard/refresh_grades.py's live hit/miss/in-progress
+      // state -- see pruneStartedGames() and renderPick() for the rest of
+      // this feature.
+      if (p.grade !== fresh.grade) changed++;
+      p.grade = fresh.grade;
     }}
   }}
   // Same rule build_payload() uses server-side: price_clears===true,
   // ranked by edge, capped at 10 -- recomputed fresh so a price move can
-  // genuinely push a prop onto or off Top Picks in real time.
-  const tp = PAYLOAD.data.all.filter(p => p.price_clears === true);
+  // genuinely push a prop onto or off Top Picks in real time. A pick
+  // whose game has already started is grandfathered in regardless of its
+  // current price_clears value (FanDuel's own line for it is closed by
+  // then anyway) -- otherwise a cashed pick could get bumped off the
+  // board by an unrelated later game's price move right as it turns
+  // green, which defeats the entire point of watching it resolve.
+  const now = Date.now();
+  const wasTopPick = new Set((PAYLOAD.data.top_picks || []).map(pickKey));
+  const tp = PAYLOAD.data.all.filter(p => p.price_clears === true
+    || (wasTopPick.has(pickKey(p)) && p.game_start && new Date(p.game_start).getTime() <= now));
   tp.sort((a, b) => (b.market_edge || 0) - (a.market_edge || 0));
   PAYLOAD.data.top_picks = tp.slice(0, 10);
   if (PAYLOAD.data.starred) refreshStarredTab();
   return changed;
 }}
 let lastPricesUpdatedAt = null;
+let lastGradesUpdatedAt = null;
+let lastPollStamp = null;
 async function pollPrices() {{
   try {{
     const res = await fetch("data.json?t=" + Date.now(), {{ cache: "no-store" }});
     if (!res.ok) return;
     const fresh = await res.json();
-    const stamp = fresh.prices_updated_at || fresh.generated_at;
-    if (!fresh.data || !fresh.data.all || stamp === lastPricesUpdatedAt) return;
-    lastPricesUpdatedAt = stamp;
+    // Combined stamp, change-detection ONLY: dashboard/refresh_prices.py
+    // and dashboard/refresh_grades.py are two independent scripts on
+    // their own schedules, writing prices_updated_at / grades_updated_at
+    // separately -- a grade-only change (a game just went final, no
+    // price moved) must still trigger a merge, not get silently skipped
+    // because prices_updated_at alone didn't change. Kept separate from
+    // lastPricesUpdatedAt/lastGradesUpdatedAt below, which are real
+    // timestamps renderFreshness() displays -- this combined string is
+    // not a valid date and must never be passed to _agoText().
+    const stamp = (fresh.prices_updated_at || "") + "|" + (fresh.grades_updated_at || "") + "|" + fresh.generated_at;
+    if (!fresh.data || !fresh.data.all || stamp === lastPollStamp) return;
+    lastPollStamp = stamp;
+    if (fresh.prices_updated_at) lastPricesUpdatedAt = fresh.prices_updated_at;
+    if (fresh.grades_updated_at) lastGradesUpdatedAt = fresh.grades_updated_at;
     const changed = mergePriceUpdate(fresh.data.all);
     if (changed > 0) {{
       renderSummary();

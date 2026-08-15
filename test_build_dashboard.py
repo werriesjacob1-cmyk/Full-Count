@@ -404,6 +404,110 @@ with mock.patch.object(m, "retry_get", side_effect=Exception("network down")):
 check(sched_fail == {}, "a network failure returns {} rather than raising -- must never take "
       "down the whole dashboard build over one schedule fetch")
 
+head("13. live grading (pruneStartedGames/mergePriceUpdate): direct request, \"for the top "
+     "picks, them to show when it's cashed... make the pick yellow when the game is "
+     "happening... green if it cashes, red if it doesn't.\" A top pick must survive its own "
+     "game start (in every tab it appears in) and keep its grade through a price-merge cycle, "
+     "even once price_clears flips false because FanDuel's line closed.")
+
+if node:
+    past = "2020-01-01T00:00:00+00:00"
+    future = "2099-01-01T00:00:00+00:00"
+    result13 = {
+        "generated_at": "x", "date": "2026-08-14",
+        "hits": [
+            dict(row("Started Pick", "hits", 0.6, odds=-110, implied=0.52, edge=0.08, clears=True),
+                 game_pk=1, game_start=past),
+            dict(row("Not Started Other", "hits", 0.5, odds=100, implied=0.5, edge=-0.02, clears=False),
+                 game_pk=2, game_start=future),
+            dict(row("Started Not Top", "hits", 0.4, odds=100, implied=0.5, edge=-0.05, clears=False),
+                 game_pk=3, game_start=past),
+        ],
+    }
+    html13 = bd.render_html(bd.build_payload(result13), fonts)
+    js13 = html13.split("<script>", 1)[1].rsplit("</script>", 1)[0]
+    harness13 = """
+function stubEl() {
+  return {addEventListener(){}, textContent:'', innerHTML:'', dataset:{}, style:{},
+    setAttribute(){}, removeAttribute(){}, value:'',
+    classList:{add(){}, remove(){}, toggle(){return false;}}, querySelectorAll: () => [],
+    querySelector: () => null, remove(){}};
+}
+const document = {getElementById: () => stubEl(),
+  documentElement: {setAttribute(){}, removeAttribute(){}, getAttribute: () => null},
+  querySelectorAll: () => [], querySelector: () => null, createElement: () => stubEl()};
+const window = {matchMedia: () => ({matches:false}), location: {reload(){}}};
+const localStorage = {getItem: () => null, setItem(){}};
+const fetch = () => Promise.reject(new Error("no network in test"));
+const setInterval = () => {};
+const requestAnimationFrame = (fn) => {};
+""" + js13 + """
+// PAYLOAD is a genuine top-level const declared by the script above (this
+// harness does NOT wrap it in a try/catch block, unlike check 6b's --
+// pruneStartedGames()/mergePriceUpdate() below need to read/mutate its
+// REAL runtime state, not just call a pure string-in-string-out function
+// the way check 6b's humanizeReason does, so PAYLOAD has to survive as a
+// real reference, not get swallowed inside a block scope).
+const P = PAYLOAD;
+
+if (!P.data.top_picks.some(p => p.name === "Started Pick")) {
+  console.error("FAIL: build_payload didn't put the sole price_clears=true row into top_picks "
+    + "-- test setup is wrong, not the feature under test");
+  process.exit(1);
+}
+
+// 1. pruneStartedGames() must NOT remove the started top pick from either
+//    tab it's in, but MUST still remove the started-but-never-a-top-pick
+//    row from "all" (unchanged behavior for ordinary prop browsing).
+pruneStartedGames();
+if (!P.data.top_picks.some(p => p.name === "Started Pick")) {
+  console.error("FAIL: started top pick was pruned from top_picks"); process.exit(1);
+}
+if (!P.data.all.some(p => p.name === "Started Pick")) {
+  console.error("FAIL: started top pick was pruned from all"); process.exit(1);
+}
+if (P.data.all.some(p => p.name === "Started Not Top")) {
+  console.error("FAIL: a started prop that was never a top pick should still be pruned");
+  process.exit(1);
+}
+if (!P.data.all.some(p => p.name === "Not Started Other")) {
+  console.error("FAIL: a prop whose game hasn't started should never be pruned"); process.exit(1);
+}
+
+// 2. mergePriceUpdate(): the started top pick's price_clears flips to
+//    false (FanDuel closed the line) and it's now graded "hit" -- it must
+//    survive the top_picks rebuild anyway, and the grade must merge in.
+const freshAll = P.data.all.map(p => Object.assign({}, p));
+const startedFresh = freshAll.find(p => p.name === "Started Pick");
+startedFresh.price_clears = false;
+startedFresh.grade = "hit";
+mergePriceUpdate(freshAll);
+const survivor = P.data.top_picks.find(p => p.name === "Started Pick");
+if (!survivor) {
+  console.error("FAIL: started+graded top pick was dropped from top_picks by the price rebuild "
+    + "once price_clears went false -- this is the exact bug that would make a cashed pick "
+    + "vanish right as it turns green");
+  process.exit(1);
+}
+if (survivor.grade !== "hit") {
+  console.error("FAIL: grade field did not merge onto the top pick ('" + survivor.grade + "')");
+  process.exit(1);
+}
+console.log("live grading: all checks passed");
+"""
+    harness_path13 = tempfile.mktemp(suffix=".js")
+    with open(harness_path13, "w") as f:
+        f.write(harness13)
+    try:
+        r13 = subprocess.run([node, harness_path13], capture_output=True, text=True)
+        check(r13.returncode == 0, "a started top pick survives pruning in every tab, and keeps "
+              "its live-graded 'hit' state through a price-refresh cycle even once price_clears "
+              "goes false", r13.stdout + r13.stderr)
+    finally:
+        os.remove(harness_path13)
+else:
+    check(True, "node not available -- live-grading JS check skipped, not failed")
+
 n_pass = sum(1 for ok, _, _ in _results if ok)
 n_total = len(_results)
 print("\n" + "=" * 78)

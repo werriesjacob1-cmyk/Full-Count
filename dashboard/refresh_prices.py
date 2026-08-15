@@ -98,8 +98,28 @@ def refresh(data_path):
 
     # Same rule build_payload() uses: price_clears is True, ranked by
     # edge, capped at 10 -- recomputed here so a price move can genuinely
-    # push a prop on or off Top Picks between full rebuilds.
-    top_picks = [r for r in all_rows if r.get("price_clears") is True]
+    # push a prop on or off Top Picks between full rebuilds. A pick whose
+    # game has already started is grandfathered in regardless of its
+    # current price_clears value (FanDuel's own line for it is closed by
+    # then anyway) -- direct request: "for the top picks, them to show
+    # when it's cashed... make the pick yellow when the game is
+    # happening... green if it cashes, red if it doesn't." Without this,
+    # a cashed pick could get bumped off the board by an unrelated later
+    # game's price move right as dashboard/refresh_grades.py marks it
+    # green, defeating the entire point of watching it resolve. Mirrored
+    # client-side in mergePriceUpdate() (build_dashboard.py).
+    now = datetime.now().astimezone()
+    was_top_pick = {_row_key(r) for r in (payload.get("data", {}).get("top_picks") or [])}
+    def _already_started(r):
+        gs = r.get("game_start")
+        if not gs:
+            return False
+        try:
+            return datetime.fromisoformat(gs.replace("Z", "+00:00")) <= now
+        except ValueError:
+            return False
+    top_picks = [r for r in all_rows if r.get("price_clears") is True
+                or (_row_key(r) in was_top_pick and _already_started(r))]
     top_picks.sort(key=lambda r: r.get("market_edge") or 0, reverse=True)
     payload["data"]["top_picks"] = top_picks[:10]
 
