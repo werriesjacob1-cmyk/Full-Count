@@ -511,9 +511,17 @@ CATEGORY_LABELS = {
     "moonshot": "Home Runs",
 }
 
+# Direct request: "Home runs should be more accessible and viewable.
+# Shouldn't be so far down the bar." moonshot used to sit 9th here (14th
+# tab overall, after locks/schedule/streaks/all/hits_runs_rbis/hits/
+# total_bases/singles/doubles/triples/runs/rbis) -- moved up to 3rd, right
+# behind the two most-bet main-board categories, instead of buried behind
+# every counting stat. Only consumer of this order is the tab-building
+# loop below (list(tabs.keys()) feeds straight into tabs_order); nothing
+# else in the codebase reads CATEGORY_ORDER.
 CATEGORY_ORDER = [
-    "hits_runs_rbis", "hits", "total_bases", "singles", "doubles", "triples",
-    "runs", "rbis", "moonshot", "stolen_base", "strikeouts",
+    "hits_runs_rbis", "hits", "moonshot", "total_bases", "singles",
+    "doubles", "triples", "runs", "rbis", "stolen_base", "strikeouts",
     "combined_strikeouts", "pitcher_outs", "hard_hit_105", "hard_hit_110",
     "nrfi_combined",
 ]
@@ -936,11 +944,22 @@ body {{
 #search-input {{
   width: 100%; font-family: var(--font-body); font-size: 12.5px; color: var(--ink);
   background: var(--surface); border: 1px solid var(--line); border-radius: 999px;
-  padding: 7px 12px 7px 30px; outline: none;
+  padding: 7px 28px 7px 30px; outline: none;
   transition: border-color 0.12s;
 }}
 #search-input::placeholder {{ color: var(--ink-faint); }}
 #search-input:focus {{ border-color: var(--accent); }}
+/* Native ::-webkit-search-cancel-button is inconsistent (Chrome-only, tiny,
+   invisible until focused) -- a real always-visible button instead. */
+#search-input::-webkit-search-cancel-button {{ display: none; }}
+.search-clear {{
+  position: absolute; right: 8px; top: 50%; transform: translateY(-50%);
+  width: 16px; height: 16px; line-height: 14px; text-align: center;
+  border: none; border-radius: 999px; background: var(--surface-2); color: var(--ink-faint);
+  font-size: 13px; cursor: pointer; padding: 0;
+}}
+.search-clear:hover {{ background: var(--accent-soft); color: var(--accent); }}
+.search-clear[hidden] {{ display: none; }}
 .filter-chip {{
   font-family: var(--font-mono); font-size: 11px; font-weight: 600; white-space: nowrap;
   color: var(--ink-dim); background: var(--surface); border: 1px solid var(--line);
@@ -1095,6 +1114,8 @@ body {{
 .gp-who {{ display: flex; flex-direction: column; min-width: 0; }}
 .gp-name {{ font-weight: 600; color: var(--ink); }}
 .gp-prop {{ color: var(--ink-faint); font-size: 11.5px; }}
+.gp-nums {{ display: flex; align-items: baseline; gap: 8px; flex-shrink: 0; }}
+.gp-odds {{ font-family: var(--font-mono); font-size: 11.5px; color: var(--ink-faint); }}
 .gp-prob {{ font-family: var(--font-mono); font-weight: 700; color: var(--ink-dim); flex-shrink: 0; }}
 .gp-prob.gp-clears {{ color: var(--good); }}
 
@@ -1173,6 +1194,7 @@ body {{
           <path d="M17 17L13.5 13.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
         </svg>
         <input type="search" id="search-input" placeholder="Search player or team&hellip;" autocomplete="off" spellcheck="false">
+        <button class="search-clear" id="search-clear" type="button" aria-label="Clear search" hidden>&times;</button>
       </div>
       <button class="filter-chip" id="filter-clears" type="button" data-active="false">Clears Price</button>
       <button class="filter-chip" id="filter-high" type="button" data-active="false">High Confidence</button>
@@ -1569,7 +1591,10 @@ function gameCard(g) {{
     ? picks.map(p => `
         <div class="game-pick-row">
           <span class="gp-who"><span class="gp-name">${{esc(p.name)}}</span><span class="gp-prop">${{esc(p.prop)}}</span></span>
-          <span class="gp-prob${{p.price_clears === true ? " gp-clears" : ""}}">${{Math.round(p.hit_probability * 100)}}%</span>
+          <span class="gp-nums">
+            <span class="gp-odds">${{fmtOdds(p.market_odds) ?? "NO LINE"}}</span>
+            <span class="gp-prob${{p.price_clears === true ? " gp-clears" : ""}}">${{Math.round(p.hit_probability * 100)}}%</span>
+          </span>
         </div>`).join("")
     : `<div class="empty-state">No priced candidates for this game yet -- check back as lineups and prices come in.</div>`;
 
@@ -1606,17 +1631,25 @@ function renderTabs() {{
   bar.querySelectorAll(".tab").forEach(btn => {{
     btn.addEventListener("click", () => {{
       activeTabKey = btn.dataset.tab;
+      // Clicking a tab while a global search is active would otherwise try
+      // to activate a panel-<key> div that doesn't exist in the DOM (the
+      // search view replaces #panels with a single synthetic panel) --
+      // clearing the query here and re-rendering fresh through the normal
+      // path is simpler and safer than trying to keep two DOM shapes in
+      // sync by hand.
+      uiState.q = "";
+      const search = document.getElementById("search-input");
+      if (search) search.value = "";
       bar.querySelectorAll(".tab").forEach(b => b.classList.remove("active"));
       btn.classList.add("active");
-      document.querySelectorAll(".panel").forEach(p => p.classList.remove("active"));
-      document.getElementById("panel-" + btn.dataset.tab).classList.add("active");
+      renderPanels();
     }});
   }});
 }}
 
 const PANEL_DESC = {{
-  top_picks: "The board's real favorites tonight: High-confidence picks that still clear FanDuel's price, ranked by genuine edge over the market -- not just raw probability. A Lineup not confirmed badge means his slot is still a projection, not an official posted lineup -- it'll confirm or disappear as MLB posts the real one.",
-  locks: "Every High-confidence pick that clears FanDuel's price with a real, confirmed lineup -- the Lock badge you'd otherwise have to go hunting for across every tab, all in one place. Ranked by edge among these, but everything here already earned the same High-confidence bar.",
+  top_picks: "Every real, priced pick that clears FanDuel's price, ranked purely by edge (model probability minus the market's own implied probability) -- NOT filtered by confidence. A thin-track-record pick with a huge edge can outrank a well-supported pick with a small one, on purpose: edge size and confidence measure two different things. Confidence-gated High picks live in Locks instead. A Lineup not confirmed badge means his slot is still a projection, not an official posted lineup -- it'll confirm or disappear as MLB posts the real one.",
+  locks: "Every pick meeting all three real gates at once: High confidence (score 70+ AND a reliability grade of A or B -- 45+ real games/starts of evidence), price_clears (still positive-EV at the pessimistic end of its confidence interval), and a real MLB-confirmed lineup (not a projection). Ranked by edge among these, but every entry already cleared the same bar -- unlike Top Picks, size of edge is secondary here.",
   starred: "Your personal shortlist. Click the star on any pick to save it here -- stored on this device only, nothing is sent anywhere.",
   schedule: "Tonight's slate. Click a game for the real weather, home-plate umpire tendency, and starting pitchers behind it, plus the best-priced props tied to that specific matchup.",
   streaks: "Real, active streaks among tonight's own candidates, across every batter and pitcher market -- consecutive games clearing a real line, not just hits and total bases. Every entry here is a real prop you can actually bet tonight, not a trivia list.",
@@ -1652,16 +1685,27 @@ const THIN_THRESHOLD = 10;
 // total), only what's currently rendered as pick cards.
 const uiState = {{ q: "", clearsOnly: false, highOnly: false, sortKey: "" }};
 
+function _escapeRegex(s) {{
+  return s.replace(/[.*+?^${{}}()|[\\]\\\\]/g, "\\\\$&");
+}}
 function filterSortRows(rows) {{
   let out = rows;
   if (uiState.clearsOnly) out = out.filter(p => p.price_clears === true);
   if (uiState.highOnly) out = out.filter(p => p.confidence === "High");
   if (uiState.q) {{
-    const q = uiState.q;
+    // Direct request, verbatim: "For search, it picks up any letter instead
+    // of the first. When I type 'T' in all props it gives Mitch McGreevy --
+    // I believe because it is picking up the T in St. Louis." Real bug:
+    // plain .includes(q) matches ANY substring, including mid-word (the "t"
+    // inside "St." or "Cardinals"), so a single common letter matched nearly
+    // everything. \b (word-boundary) requires the match to start a real
+    // word -- "t" now matches "Texas"/team names starting with T, but not
+    // the "t" buried inside "St." or "Cardinals". Regex-escaped since this
+    // runs on raw user input (a literal "(" would otherwise throw and
+    // silently break search entirely).
+    const re = new RegExp("\\\\b" + _escapeRegex(uiState.q), "i");
     out = out.filter(p =>
-      (p.name || "").toLowerCase().includes(q) ||
-      (p.team || "").toLowerCase().includes(q) ||
-      (p.matchup || "").toLowerCase().includes(q));
+      re.test(p.name || "") || re.test(p.team || "") || re.test(p.matchup || ""));
   }}
   if (uiState.sortKey === "edge") {{
     out = out.slice().sort((a, b) => (b.market_edge ?? -Infinity) - (a.market_edge ?? -Infinity));
@@ -1676,6 +1720,43 @@ function filterSortRows(rows) {{
 function renderPanels() {{
   const el = document.getElementById("panels");
   const filtersActive = !!(uiState.q || uiState.clearsOnly || uiState.highOnly);
+
+  // Global search: direct request -- "the search bar does not work
+  // correctly. I try searching Kyle or Phillies for Kyle Schwarber props
+  // and it returns nothing." Found live: search only ever matched WITHIN
+  // whichever tab happened to be showing, so a real player with real props
+  // (Schwarber had 10) came back empty from a small curated tab (Top
+  // Picks/Locks) he simply wasn't part of. A non-empty query now searches
+  // every real candidate on the board at once (the same row set All Props
+  // shows) instead of requiring the right tab to be open first.
+  if (uiState.q) {{
+    const rows = filterSortRows(PAYLOAD.data.all);
+    const visible = rows.slice(0, SHOW_N);
+    const rest = rows.slice(SHOW_N);
+    const body = rows.length
+      ? `<div class="picks">
+          ${{visible.map((p, j) => pickRow(p, j + 1)).join("")}}
+          ${{rest.map((p, j) => pickRow(p, j + 1 + SHOW_N).replace('class="pick', 'class="pick hidden-row')).join("")}}
+        </div>
+        ${{rest.length ? `<button class="more-btn" data-more="search">Show all ${{rows.length}} &darr;</button>` : ""}}`
+      : `<div class="empty-state">No candidate anywhere on tonight's board matches "${{esc(uiState.q)}}".<br><button class="thin-link clear-filters">Clear search &times;</button></div>`;
+    el.innerHTML = `
+    <div class="panel active" id="panel-search">
+      <div class="panel-head"><h2>Search results</h2><span class="n">${{rows.length}} of ${{PAYLOAD.data.all.length}} candidates match, across every tab</span></div>
+      ${{body}}
+    </div>`;
+    el.querySelectorAll(".more-btn").forEach(btn => {{
+      btn.addEventListener("click", () => {{
+        el.querySelectorAll(".hidden-row").forEach(r => r.classList.remove("hidden-row"));
+        btn.remove();
+      }});
+    }});
+    el.querySelectorAll(".clear-filters").forEach(btn => {{
+      btn.addEventListener("click", () => {{ resetFilters(); }});
+    }});
+    return;
+  }}
+
   let html = "";
   PAYLOAD.tabs_order.forEach((key) => {{
     const realRows = PAYLOAD.data[key];
@@ -1874,6 +1955,7 @@ function debounce(fn, ms) {{
 function resetFilters() {{
   uiState.q = ""; uiState.clearsOnly = false; uiState.highOnly = false; uiState.sortKey = "";
   document.getElementById("search-input").value = "";
+  document.getElementById("search-clear").hidden = true;
   document.getElementById("filter-clears").dataset.active = "false";
   document.getElementById("filter-high").dataset.active = "false";
   document.getElementById("sort-select").value = "";
@@ -1881,10 +1963,23 @@ function resetFilters() {{
 }}
 function initFilters() {{
   const search = document.getElementById("search-input");
+  const clearBtn = document.getElementById("search-clear");
   search.addEventListener("input", debounce(() => {{
     uiState.q = search.value.trim().toLowerCase();
+    clearBtn.hidden = !search.value;
     renderPanels();
   }}, 150));
+  // Direct request, verbatim: "There should also be an X in the search bar
+  // to clear it instead of having to backspace." Native
+  // ::-webkit-search-cancel-button is Chrome-only, invisible until focused,
+  // and absent on Firefox -- a real, always-visible button instead.
+  clearBtn.addEventListener("click", () => {{
+    search.value = "";
+    uiState.q = "";
+    clearBtn.hidden = true;
+    search.focus();
+    renderPanels();
+  }});
 
   const clearsBtn = document.getElementById("filter-clears");
   clearsBtn.addEventListener("click", () => {{

@@ -149,6 +149,50 @@ check(confirmed_out[0].get("lineup_assumed") is None,
       "a normal (confirmed) candidate with no lineup_assumed key stays honestly absent, "
       "not fabricated as False")
 
+head("11. moonshot confidence is computed independently of the batter's own (hits/TB) "
+     "confidence -- direct request: \"does the math support it? Or is it just because we "
+     "have an edge?\" Real bug, found live 2026-08-15: Gleyber Torres' Home Run pick showed "
+     "'High' confidence (borrowed from his HITS read) with only a 0.73-point HR-specific "
+     "lift and no why/reliability/sample_n at all.")
+
+# A batter's own (hits/TB) confidence is "High" in every case below -- if the
+# bug were still there, every one of these would show High. The real
+# HR-specific reliability/lift are what should actually decide it now.
+torres_case = batter_c(hr_prob=0.1107, base_rate=0.1034, confidence="High",
+                       reliability="B", sample_n=80)  # lift = 0.0073 -- the real Torres case
+out11 = gp.select_moonshots([torres_case], {}, fd)
+check(out11[0]["confidence"] == "Low",
+      "a thin (0.73-point) lift never earns High or Medium confidence, no matter how "
+      "reliable the player's own track record is or what his HITS confidence says",
+      f"got {out11[0]['confidence']}")
+check(out11[0]["why"] and "0.73" not in out11[0]["why"][0] and "11.1%" in out11[0]["why"][0],
+      "a real, HR-specific why sentence is generated with the real computed numbers",
+      f"got {out11[0]['why']}")
+
+real_lock = batter_c(hr_prob=0.20, base_rate=0.15, reliability="A", sample_n=120)  # lift=0.05
+out_lock = gp.select_moonshots([real_lock], {}, fd)
+check(out_lock[0]["confidence"] == "High",
+      "a genuinely reliable player (grade A) with a real 5-point HR-specific lift "
+      "(>= MOONSHOT_LOCK_LIFT) earns real High confidence", f"got {out_lock[0]['confidence']}")
+
+medium_case = batter_c(hr_prob=0.14, base_rate=0.11, reliability="C", sample_n=30)  # lift=0.03, but C
+out_medium = gp.select_moonshots([medium_case], {}, fd)
+check(out_medium[0]["confidence"] == "Medium",
+      "a positive lift with only a C reliability grade (thin sample) caps out at Medium, "
+      "never High", f"got {out_medium[0]['confidence']}")
+
+thin_case = batter_c(hr_prob=0.12, base_rate=0.11, reliability="D", sample_n=10)  # lift=0.01
+out_thin = gp.select_moonshots([thin_case], {}, fd)
+check(out_thin[0]["confidence"] == "Low",
+      "a D reliability grade (very thin sample) never clears Medium even with a positive lift",
+      f"got {out_thin[0]['confidence']}")
+
+negative_lift = batter_c(hr_prob=0.08, base_rate=0.11, reliability="A", sample_n=150)  # lift=-0.03
+out_neg = gp.select_moonshots([negative_lift], {}, fd)
+check(out_neg[0]["confidence"] == "Low",
+      "a negative lift (the model actually likes this LESS than his own base rate) is Low "
+      "regardless of how reliable his track record is", f"got {out_neg[0]['confidence']}")
+
 n_pass = sum(1 for ok, _, _ in _results if ok)
 n_total = len(_results)
 print("\n" + "=" * 78)

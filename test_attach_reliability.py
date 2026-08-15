@@ -151,6 +151,58 @@ head("11. an empty candidate list returns cleanly")
 
 check(gp.attach_reliability([], {}, {}) == [], "an empty candidate list returns an empty list")
 
+head("12. pitcher starts-based stats grade on PITCHER_STARTS_RELIABILITY_TIERS (16/9/5/0), "
+     "NOT the batter-games scale (80/45/25/0) -- direct request, verbatim: \"I don't like how "
+     "mcgreevy outs is a high model % but not a lock... maybe we need to lessen the constraints "
+     "you mentioned about his starts.\" Real bug, found live 2026-08-15: a starting pitcher can "
+     "make at most ~32 starts in a full season, so the batter scale's 80/45 thresholds were "
+     "structurally unreachable for ANY pitcher-start-based stat -- McGreevy's real 23 starts "
+     "graded D (very thin) under the batter scale purely because the wrong yardstick was reused.")
+
+for stat in ("strikeouts", "pitcher_outs", "combined_strikeouts", "first_inning_run", "nrfi_combined"):
+    for n, want_grade in ((23, "A"), (16, "A"), (15, "B"), (9, "B"), (8, "C"), (5, "C"), (4, "D"), (0, "D")):
+        if stat == "strikeouts":
+            c = cand(stat, player_id=501)
+            out = gp.attach_reliability([c], emp_batters={}, emp_pitchers={501: {"starts": n}})
+        elif stat in ("first_inning_run", "nrfi_combined"):
+            c = cand(stat, player_id=9, signals={"fi_n_starts": n})
+            out = gp.attach_reliability([c], emp_batters={}, emp_pitchers={})
+        else:
+            c = cand(stat, player_id=7, sample_n=n)
+            out = gp.attach_reliability([c], emp_batters={}, emp_pitchers={})
+        check(out[0]["reliability"] == want_grade,
+              f"{stat} n={n} grades {want_grade!r} on the pitcher-starts scale, not the "
+              f"batter-games scale", f"got {out[0]['reliability']!r}")
+
+# McGreevy's own real number, called out directly in the report.
+c_mcgreevy = cand("pitcher_outs", player_id=800, sample_n=23)
+out_mcgreevy = gp.attach_reliability([c_mcgreevy], emp_batters={}, emp_pitchers={})
+check(out_mcgreevy[0]["reliability"] == "A",
+      "23 real starts (the exact real McGreevy case) now grades A, clearing the reliability "
+      "gate for High confidence -- the score/edge gate itself is untouched",
+      f"got {out_mcgreevy[0]['reliability']}")
+
+head("13. a real batter stat is unaffected by the pitcher-starts scale -- 23 GAMES for a "
+     "batter still grades C (25<=n batter scale, not the 16-start pitcher 'A' floor)")
+
+c_batter23 = cand("hits", player_id=1)
+out_batter23 = gp.attach_reliability([c_batter23], emp_batters={1: {"games": 23}}, emp_pitchers={})
+check(out_batter23[0]["reliability"] == "D",
+      "23 batter GAMES still grades D per the unchanged batter scale (25 needed for C) -- "
+      "the pitcher recalibration doesn't leak into batter stats", f"got {out_batter23[0]['reliability']}")
+
+head("14. hard_hit_105/hard_hit_110 (batter-side, per-game) stay on the batter-games scale, "
+     "NOT the pitcher-starts scale, even though pitcher_outs/combined_strikeouts (also fed "
+     "via c['sample_n']) now use the pitcher scale")
+
+for stat in ("hard_hit_105", "hard_hit_110"):
+    c = cand(stat, player_id=7, sample_n=23)
+    out = gp.attach_reliability([c], emp_batters={}, emp_pitchers={})
+    check(out[0]["reliability"] == "D",
+          f"{stat} n=23 grades D (batter scale), not A (which the pitcher scale would give "
+          f"at n=23) -- these are real per-game batter rates, not pitcher starts",
+          f"got {out[0]['reliability']!r}")
+
 n_pass = sum(1 for ok, _, _ in _results if ok)
 n_total = len(_results)
 print("\n" + "=" * 78)

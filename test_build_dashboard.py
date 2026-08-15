@@ -127,6 +127,20 @@ check("triples" not in payload4["tabs_order"],
 check("hits" in payload4["tabs_order"],
       "a category with real rows does become a tab")
 
+payload4b = bd.build_payload({
+    "generated_at": "x", "date": "2026-08-12",
+    "hits": [row("A", "hits", 0.7, odds=-200, implied=0.6, edge=0.1, clears=True)],
+    "moonshot": [row("B", "home_runs", 0.2, odds=350, implied=0.22, edge=0.03, clears=True)],
+    "rbis": [row("C", "rbis", 0.5, odds=-110, implied=0.52, edge=0.02, clears=True)],
+    "stolen_base": [row("D", "stolen_base", 0.4, odds=150, implied=0.4, edge=0.0, clears=True)],
+})
+check(payload4b["tabs_order"].index("moonshot") < payload4b["tabs_order"].index("rbis")
+      < payload4b["tabs_order"].index("stolen_base"),
+      "direct request: \"Home runs should be more accessible and viewable. Shouldn't be so "
+      "far down the bar.\" moonshot now sits ahead of the counting-stat categories (rbis, "
+      "stolen_base, etc.) in tabs_order instead of buried behind all of them",
+      f"got {payload4b['tabs_order']}")
+
 
 head("5. estimated_odds is computed for every priced row via the real prop_probability.american_odds")
 
@@ -569,6 +583,9 @@ if node:
              "is_getaway": False, "is_opener": True,
              "picks": [{"name": "Yordan Alvarez", "prop": "Over 1.5 Total Bases",
                        "hit_probability": 0.61, "market_odds": -135, "price_clears": True,
+                       "why": None},
+                      {"name": "Unpriced Guy", "prop": "Over 0.5 Doubles",
+                       "hit_probability": 0.30, "market_odds": None, "price_clears": None,
                        "why": None}]},
         ],
     }), fonts)
@@ -613,6 +630,12 @@ if (!card.includes("91")) { console.error("FAIL: real temperature missing from w
 if (!card.includes("Angel Hernandez")) { console.error("FAIL: umpire name missing"); process.exit(1); }
 if (!card.includes("Yordan Alvarez")) { console.error("FAIL: the real pick tied to this game is missing"); process.exit(1); }
 if (!card.includes("class=\\"game-card\\"")) { console.error("FAIL: not rendered as a game-card"); process.exit(1); }
+// Direct request, verbatim: "under schedule when you tap on a game and it
+// gives you the % I think it should include the odds as well" -- market_odds
+// was already in the payload (build_dashboard.py's game_context builder
+// includes it) but gameCard() never rendered it, only hit_probability.
+if (!card.includes("-135")) { console.error("FAIL: the real market odds (-135) for this pick are missing from the game card"); process.exit(1); }
+if (!card.includes("NO LINE")) { console.error("FAIL: an unpriced pick should show 'NO LINE' honestly, not a blank or fabricated number"); process.exit(1); }
 console.log("gameCard: all checks passed");
 """
     harness_path16 = tempfile.mktemp(suffix=".js")
@@ -950,6 +973,180 @@ check("Assumed High Conf" not in lock_names24,
 
 payload24b = bd.build_payload({"generated_at": "x", "date": "2026-08-15"})
 check(payload24b["data"]["locks"] == [], "no candidates at all means an empty, valid Locks tab")
+
+head("25. Global search: direct request, verbatim -- \"the search bar does not work correctly. "
+     "I try searching 'Kyle' or 'Phillies' for Kyle shearer props and it returns nothing.\" Real "
+     "bug, found live 2026-08-15: filterSortRows() itself matched correctly, but renderPanels() "
+     "only ever applied it to whichever tab happened to be active -- a real player with real "
+     "props in All Props but none in the small curated Top Picks/Locks tabs came back empty just "
+     "because the wrong tab was open.")
+
+if node:
+    html25 = bd.render_html(bd.build_payload({
+        "generated_at": "x", "date": "2026-08-15",
+        "hits": [row("Kyle Schwarber", "hits", 0.65, odds=-110, implied=0.52, edge=0.13,
+                     clears=True, confidence="Medium")],
+        "total_bases": [row("Some Other Guy", "total_bases", 0.55, odds=100, implied=0.50,
+                            edge=0.05, clears=True, confidence="Low")],
+    }), fonts)
+    js25 = html25.split("<script>", 1)[1].rsplit("</script>", 1)[0]
+    harness25 = """
+function stubEl() {
+  return {addEventListener(){}, textContent:'', innerHTML:'', dataset:{}, style:{},
+    setAttribute(){}, removeAttribute(){}, value:'',
+    classList:{add(){}, remove(){}, toggle(){return false;}}, querySelectorAll: () => [],
+    querySelector: () => null, remove(){}};
+}
+const panelsEl = stubEl();
+const tabbarEl = stubEl();
+const els = {panels: panelsEl, tabbar: tabbarEl};
+const document = {
+  getElementById: (id) => els[id] || stubEl(),
+  documentElement: {setAttribute(){}, removeAttribute(){}, getAttribute: () => null},
+  querySelectorAll: () => [], querySelector: () => null, createElement: () => stubEl()};
+const window = {matchMedia: () => ({matches:false}), location: {reload(){}}};
+const localStorage = {getItem: () => null, setItem(){}};
+const fetch = () => Promise.reject(new Error("no network in test"));
+const setInterval = () => {};
+const requestAnimationFrame = (fn) => {};
+""" + js25 + """
+// Top Picks is the active tab (won't contain either of these Medium/Low
+// confidence, small-tab-only rows) -- the real Schwarber scenario.
+activeTabKey = "top_picks";
+uiState.q = "kyle";
+renderPanels();
+if (!panelsEl.innerHTML.includes("Kyle Schwarber")) {
+  console.error("FAIL: searching 'kyle' while Top Picks is active found nothing -- got: " + panelsEl.innerHTML.slice(0, 300));
+  process.exit(1);
+}
+if (!panelsEl.innerHTML.includes("panel-search")) {
+  console.error("FAIL: search didn't render the synthetic search-results panel");
+  process.exit(1);
+}
+uiState.q = "";
+panelsEl.innerHTML = "";
+// Team-name search must also work, across the whole board.
+uiState.q = "phillies";
+renderPanels();
+// Neither fixture player is on the Phillies, so this should be a real,
+// honest empty state, not a crash and not a stale render.
+if (!panelsEl.innerHTML.includes("No candidate anywhere")) {
+  console.error("FAIL: a query matching nothing should render the honest empty-search state -- got: " + panelsEl.innerHTML.slice(0, 300));
+  process.exit(1);
+}
+// Simulate a tab click while search is active -- must not throw, and must
+// clear the search (this is exactly the null-ref risk the renderTabs() fix
+// exists for: clicking a panel-<key> that doesn't exist while the search
+// view is showing).
+uiState.q = "kyle";
+renderPanels();
+activeTabKey = "hits";
+uiState.q = "";
+renderPanels();
+if (panelsEl.innerHTML.includes("panel-search")) {
+  console.error("FAIL: switching tabs should leave search mode, not keep rendering the search panel");
+  process.exit(1);
+}
+console.log("global search: all checks passed");
+"""
+    harness_path25 = tempfile.mktemp(suffix=".js")
+    with open(harness_path25, "w") as f:
+        f.write(harness25)
+    try:
+        r25 = subprocess.run([node, harness_path25], capture_output=True, text=True)
+        check(r25.returncode == 0, "global search finds a real player regardless of which tab "
+              "is active, a non-matching query renders an honest empty state instead of a "
+              "crash, and switching tabs while search is active safely exits search mode",
+              r25.stdout + r25.stderr)
+    finally:
+        os.remove(harness_path25)
+else:
+    check(True, "node not available -- global search JS check skipped, not failed")
+
+head("26. search matches on WORD boundaries, not any substring -- direct request, verbatim: "
+     "\"For search, it picks up any letter instead of the first. When I type 'T' in all props "
+     "it gives Mitch McGreevy -- I believe because it is picking up the T in St. Louis.\" Real "
+     "bug: plain .includes(q) matched anywhere, so a single common letter matched almost every "
+     "row via a mid-word hit (the 't' inside 'St.'). Also checks the new clear-search (X) "
+     "button, direct request: \"There should also be an X in the search bar to clear it "
+     "instead of having to backspace.\"")
+
+if node:
+    # row()'s own team/matchup are hardcoded ("Team"/"A @ B") -- irrelevant
+    # here, since the whole point is testing REAL team-name substrings
+    # (McGreevy's actual "St. Louis Cardinals"), so this builds the rows
+    # directly instead of going through that fixture.
+    mcgreevy_row26 = dict(row("Mitch McGreevy", "pitcher_outs", 0.5, odds=-110, implied=0.52,
+                              edge=0.0, clears=True, confidence="Medium", ptype="pitcher"),
+                         team="St. Louis Cardinals", matchup="St. Louis Cardinals @ Astros")
+    texas_row26 = dict(row("Some Other Pitcher", "total_bases", 0.5, odds=-110, implied=0.52,
+                           edge=0.0, clears=True, confidence="Medium"),
+                       team="Texas Rangers", matchup="Texas Rangers @ Astros")
+    html26 = bd.render_html(bd.build_payload({
+        "generated_at": "x", "date": "2026-08-15",
+        "pitcher_outs": [mcgreevy_row26],
+        "total_bases": [texas_row26],
+    }), fonts)
+    js26 = html26.split("<script>", 1)[1].rsplit("</script>", 1)[0]
+    harness26 = """
+function stubEl() {
+  return {addEventListener(){}, textContent:'', innerHTML:'', dataset:{}, style:{},
+    setAttribute(){}, removeAttribute(){}, value:'',
+    classList:{add(){}, remove(){}, toggle(){return false;}}, querySelectorAll: () => [],
+    querySelector: () => null, remove(){}};
+}
+const els = {"search-clear": stubEl(), "search-input": stubEl()};
+const document = {getElementById: (id) => els[id] || stubEl(),
+  documentElement: {setAttribute(){}, removeAttribute(){}, getAttribute: () => null},
+  querySelectorAll: () => [], querySelector: () => null, createElement: () => stubEl()};
+const window = {matchMedia: () => ({matches:false}), location: {reload(){}}};
+const localStorage = {getItem: () => null, setItem(){}};
+const fetch = () => Promise.reject(new Error("no network in test"));
+const setInterval = () => {};
+const requestAnimationFrame = (fn) => {};
+""" + js26 + """
+uiState.q = "t";
+const matched = filterSortRows(PAYLOAD.data.all).map(p => p.name);
+if (matched.includes("Mitch McGreevy")) {
+  console.error("FAIL: 't' matched McGreevy via the mid-word 't' in his team's 'St. Louis' -- got: " + matched);
+  process.exit(1);
+}
+if (!matched.includes("Some Other Pitcher")) {
+  console.error("FAIL: 't' should still match a row whose TEAM genuinely starts with T (Texas Rangers) -- got: " + matched);
+  process.exit(1);
+}
+uiState.q = "mcgreevy";
+const matched2 = filterSortRows(PAYLOAD.data.all).map(p => p.name);
+if (!matched2.includes("Mitch McGreevy")) {
+  console.error("FAIL: a real word-start query for his own last name should still match");
+  process.exit(1);
+}
+// A literal regex special char in the query must not crash search.
+uiState.q = "(";
+try { filterSortRows(PAYLOAD.data.all); } catch (e) {
+  console.error("FAIL: a raw '(' in the search query crashed filterSortRows: " + e.message);
+  process.exit(1);
+}
+console.log("word-boundary search + clear button: all checks passed");
+"""
+    harness_path26 = tempfile.mktemp(suffix=".js")
+    with open(harness_path26, "w") as f:
+        f.write(harness26)
+    try:
+        r26 = subprocess.run([node, harness_path26], capture_output=True, text=True)
+        check(r26.returncode == 0, "search matches on real word boundaries (not any mid-word "
+              "substring), handles regex-special characters in the query safely, and the "
+              "clear-search button exists and starts hidden", r26.stdout + r26.stderr)
+    finally:
+        os.remove(harness_path26)
+    check('id="search-clear"' in html26, "a real clear-search (X) button exists in the page markup",
+          "id=\"search-clear\" not found in rendered HTML")
+    _clear_btn_tag = html26[html26.find('<button class="search-clear"'):][:120]
+    check("hidden" in _clear_btn_tag,
+          "the clear-search button starts hidden in the static markup (empty query on page "
+          "load, nothing to clear yet)", _clear_btn_tag)
+else:
+    check(True, "node not available -- word-boundary search JS check skipped, not failed")
 
 n_pass = sum(1 for ok, _, _ in _results if ok)
 n_total = len(_results)

@@ -149,6 +149,61 @@ head("6. an empty game_meta produces an empty candidate list, not a crash")
 
 check(build([]) == [], "no games at all returns an empty list cleanly")
 
+head("7. team_k_source lets a caller flag which team_k_lookup entries came from "
+     "FanGraphs ('team') vs the MLB Stats API fallback ('mlb_team') -- direct request, "
+     "verbatim: \"why do I still see 'Opposing team K% unavailable'?\" Real bug, found "
+     "live 2026-08-15: mlb_sources.team_batting_table() (a real MLB Stats API team K%, "
+     "not FanGraphs) was already being fetched into extras['team_bat'] and never used "
+     "to fill this gap -- so whenever FanGraphs' team page AND its individual page (whose "
+     "Statcast fallback has no K% column at all) were both down, opposing K% went "
+     "unavailable on every pitcher pick, confirmed lineup or not.")
+
+opp_k_seen = {}
+orig_score_pitcher = gp.score_pitcher
+def _capture_pitcher(name, pid, hand, gm, side, *a, **kw):
+    args = list(a)
+    opp_k_seen[name] = (args[3] if len(args) > 3 else None, args[5] if len(args) > 5 else None)
+    return orig_score_pitcher(name, pid, hand, gm, side, *a, **kw)
+gp.score_pitcher = _capture_pitcher
+try:
+    # Away starter (JP Sears) faces the home lineup -- opposing team is
+    # "Astros". Tagged "mlb_team" here, meaning this game's number came
+    # from the MLB Stats API fallback, not FanGraphs.
+    build([GM], team_k_lookup={"Astros": 24.5}, team_k_source={"Astros": "mlb_team"})
+finally:
+    gp.score_pitcher = orig_score_pitcher
+
+opp_k, opp_src = opp_k_seen["JP Sears"]
+check(opp_k == 24.5, "the real team_k_lookup value reaches score_pitcher unchanged",
+      f"got {opp_k}")
+check(opp_src == "mlb_team",
+      "the real source tag ('mlb_team', not the old hardcoded 'team') reaches "
+      "score_pitcher, so its own why-note can honestly say which source it used",
+      f"got {opp_src!r}")
+
+head("8. team_k_source defaults to treating every team_k_lookup entry as FanGraphs-"
+     "sourced ('team') when the caller doesn't pass it at all -- backtest/engine.py's "
+     "existing call shape, unchanged by this fix")
+
+opp_k_seen2 = {}
+def _capture_pitcher2(name, pid, hand, gm, side, *a, **kw):
+    args = list(a)
+    opp_k_seen2[name] = (args[3] if len(args) > 3 else None, args[5] if len(args) > 5 else None)
+    return orig_score_pitcher(name, pid, hand, gm, side, *a, **kw)
+gp.score_pitcher = _capture_pitcher2
+try:
+    build([GM], team_k_lookup={"Astros": 22.0})   # no team_k_source kwarg at all
+finally:
+    gp.score_pitcher = orig_score_pitcher
+
+opp_k2, opp_src2 = opp_k_seen2["JP Sears"]
+check(opp_k2 == 22.0, "the real team_k_lookup value still reaches score_pitcher with "
+      "no team_k_source passed at all", f"got {opp_k2}")
+check(opp_src2 == "team",
+      "with no team_k_source supplied, every team_k_lookup entry defaults to the "
+      "original 'team' (FanGraphs) tag -- exact prior behavior, unchanged for callers "
+      "that don't know about the new source", f"got {opp_src2!r}")
+
 n_pass = sum(1 for ok, _, _ in _results if ok)
 n_total = len(_results)
 print("\n" + "=" * 78)

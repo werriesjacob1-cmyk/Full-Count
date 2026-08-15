@@ -127,6 +127,32 @@ check(c7a["team"] == "Athletics" and c7b["team"] == "Astros",
       "side='away'/'home' resolve to the correct team from game_meta, not swapped",
       f"got away->{c7a['team']}, home->{c7b['team']}")
 
+head("8. the 'why' note honestly names which real source opp_team_k_pct came from -- "
+     "direct request, verbatim: \"why do I still see 'Opposing team K% unavailable'?\" "
+     "opp_k_source is now one of: 'team' (FanGraphs), 'mlb_team' (the new MLB Stats API "
+     "fallback), an int (lineup-average N), or None (nothing at all matched)")
+
+c8_fg = call(opp_team_k_pct=23.0, opp_k_source="team")
+check(any("Opposing team K% 23.0" in w and "MLB Stats API" not in w for w in c8_fg["why"]),
+      "opp_k_source='team' (FanGraphs) produces the plain team-K% note, no source caveat",
+      f"got {c8_fg['why']}")
+
+c8_mlb = call(opp_team_k_pct=21.0, opp_k_source="mlb_team")
+check(any("Opposing team K% 21.0" in w and "MLB Stats API" in w for w in c8_mlb["why"]),
+      "opp_k_source='mlb_team' produces a real team-K% note that honestly states it came "
+      "from the MLB Stats API fallback, not FanGraphs", f"got {c8_mlb['why']}")
+
+c8_lineup = call(opp_team_k_pct=19.5, opp_k_source=6)
+check(any("Opposing lineup K% 19.5" in w and "avg of 6 confirmed batters" in w for w in c8_lineup["why"]),
+      "opp_k_source=<int> (both team-level sources unreachable) produces the lineup-average "
+      "fallback note with the real N", f"got {c8_lineup['why']}")
+
+c8_none = call(opp_team_k_pct=None)
+check(any("Opposing team K% unavailable" in w and "FanGraphs and MLB Stats API" in w
+          for w in c8_none["why"]),
+      "opp_team_k_pct=None (every real source came up empty) produces an honest, specific "
+      "unavailable note naming both sources that were tried", f"got {c8_none['why']}")
+
 n_pass = sum(1 for ok, _, _ in _results if ok)
 n_total = len(_results)
 print("\n" + "=" * 78)
