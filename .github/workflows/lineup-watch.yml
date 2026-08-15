@@ -9,12 +9,18 @@ name: Lineup Watch
 # for up to 2 hours (worse if a scheduled tick is delayed/dropped, which
 # GitHub Actions does under load and this project has already measured).
 #
+# Also catches the mirror-image case check_scratches.py's own docstring
+# names directly: a player scratched AFTER his lineup already posted
+# would otherwise sit on the live board looking fully live until the next
+# fixed-window rebuild.
+#
 # This is the cheap half of the same split dashboard-prices.yml already
 # uses for FanDuel odds: a fast, free MLB schedule call every 10 minutes
 # (dashboard/check_lineups.py), and Dashboard Refresh only actually gets
-# triggered when a game's lineup status changed since the last check --
-# not on a fixed clock, so a lineup posting at 2:03 gets a rebuild
-# started within 10 minutes instead of waiting for the 3:00 window.
+# triggered when a game's lineup status genuinely changed since the last
+# check -- newly posted OR an already-posted roster changing -- not on a
+# fixed clock, so either event gets a rebuild started within 10 minutes
+# instead of waiting for the next 2-hour window.
 
 on:
   schedule:
@@ -51,7 +57,7 @@ jobs:
       - name: Install minimal deps
         run: pip install --quiet requests
 
-      - name: Check for newly confirmed lineups
+      - name: Check for new or changed confirmed lineups
         id: check
         run: python3 dashboard/check_lineups.py
 
@@ -71,7 +77,7 @@ jobs:
             echo "No state change to publish."
             exit 0
           fi
-          git commit -m "Lineup watch: new confirmed lineup(s) $(date -u +'%F %H:%M') UTC"
+          git commit -m "Lineup watch: new or changed lineup(s) $(date -u +'%F %H:%M') UTC"
           # Same retry-with-rebase as every other bot commit in this repo
           # -- lineup_watch_state.json is the only file this job ever
           # writes, so a rebase always resolves cleanly.
