@@ -1,0 +1,97 @@
+name: Dashboard Live Grading
+
+# Grades the dashboard's Top Picks live throughout the evening. Direct
+# request, verbatim: "for the top picks, them to show when it's cashed...
+# make them go green if it hits" -- refined moments later to "make the
+# pick yellow when the game is happening. And have it turn green if it
+# cashes, red if it doesn't."
+#
+# Reuses grade_results.grade_pick() -- the EXACT same function every pick
+# is ever graded with each morning against real box scores -- just called
+# live instead of waiting until tomorrow. Needs mlb_daily.py's own
+# dependencies (pandas/numpy/beautifulsoup4/requests/mlb-statsapi) since
+# grade_results.py imports it, but NOT pybaseball/scikit-learn/lxml -- the
+# full pipeline's heaviest, slowest dependencies are for FanGraphs/Statcast
+# rescoring, which this job never does (it only re-checks box scores for
+# candidates the board already scored). Meaningfully heavier than
+# dashboard-prices.yml's `requests`-only install, but far lighter than
+# dashboard-refresh.yml's full requirements.txt.
+on:
+  schedule:
+    - cron: '*/5 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+# Distinct group from every other workflow's, same isolation reasoning as
+# dashboard-prices.yml -- this must never wait on or block a full rebuild,
+# the price refresh, the main pipeline, or the odds snapshot.
+concurrency:
+  group: dashboard-grades
+  cancel-in-progress: true
+
+jobs:
+  grade:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      # Only what grade_results.py's own import chain actually needs at
+      # runtime for this job (mlb_daily.py's top-level imports) -- NOT
+      # requirements.txt's pybaseball/scikit-learn/lxml, which nothing in
+      # a live box-score check ever touches.
+      - name: Install grading deps
+        run: pip install --quiet pandas numpy beautifulsoup4 requests mlb-statsapi
+
+      - name: Grade live top picks
+        run: |
+          if [ ! -f docs/data.json ]; then
+            echo "docs/data.json doesn't exist yet -- Dashboard Refresh hasn't run a full build yet. Nothing to grade."
+            exit 0
+          fi
+          python3 dashboard/refresh_grades.py
+
+      - name: Commit and push
+        run: |
+          git config user.name "mlb-pipeline-bot"
+          git config user.email "actions@github.com"
+          # `git add` on a path that doesn't exist yet is a hard error
+          # (exit 128), not a no-op -- same real bug this repo already hit
+          # once with dashboard-prices.yml, guarded the same way here.
+          if [ ! -f docs/data.json ]; then
+            echo "docs/data.json still doesn't exist -- nothing to commit."
+            exit 0
+          fi
+          git add docs/data.json
+          if git diff --cached --quiet; then
+            echo "No grade change to publish."
+            exit 0
+          fi
+          git commit -m "Dashboard live grading $(date -u +'%F %H:%M') UTC"
+          # Same retry-with-rebase as every other bot commit in this repo
+          # -- docs/data.json is the only file this job ever writes, so a
+          # rebase always resolves cleanly.
+          for attempt in 1 2 3 4 5; do
+            if git push; then
+              echo "Pushed on attempt $attempt."
+              exit 0
+            fi
+            echo "Push rejected (attempt $attempt/5) -- rebasing onto origin/main."
+            git fetch origin main
+            if ! git rebase origin/main; then
+              echo "::error::Rebase conflict -- aborting rather than leaving a broken tree."
+              git rebase --abort
+              exit 1
+            fi
+          done
+          echo "::error::Failed to push live grading after 5 attempts."
+          exit 1

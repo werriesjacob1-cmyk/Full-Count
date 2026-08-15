@@ -105,6 +105,46 @@ head("4. prices_updated_at is stamped, generated_at is left untouched -- this is
 check("prices_updated_at" in out3, "prices_updated_at was added")
 check(out3["generated_at"] == "x", "generated_at (the last real rescoring pass) is never touched here")
 
+head("4b. a top pick whose game has already started is grandfathered into the rebuilt "
+     "Top Picks even once price_clears goes false -- direct request: \"for the top picks, "
+     "them to show when it's cashed... make the pick yellow when the game is happening...\" "
+     "FanDuel closes the line once a game starts, so without this a pick would get bumped "
+     "off the board right as dashboard/refresh_grades.py is trying to show it resolving.")
+
+r4b_started_top = row("Started Was Top", "Over 0.5 Hits", "hits", 1, 0.6)
+r4b_started_top["game_start"] = "2020-01-01T00:00:00Z"  # long past -- definitely started
+r4b_started_never_top = row("Started Never Top", "Over 0.5 Hits", "hits", 1, 0.5)
+r4b_started_never_top["game_start"] = "2020-01-01T00:00:00Z"  # also started
+r4b_not_started = row("Not Started", "Over 0.5 Hits", "hits", 1, 0.5)
+r4b_not_started["game_start"] = "2099-01-01T00:00:00Z"  # far future -- definitely not started
+payload4b = {"generated_at": "x",
+            "data": {"all": [r4b_started_top, r4b_started_never_top, r4b_not_started],
+                    "top_picks": [dict(r4b_started_top)]}}  # only this one was already a top pick
+path4b = tempfile.mktemp(suffix=".json")
+json.dump(payload4b, open(path4b, "w"))
+
+with mock.patch.object(fd, "fetch_prop_prices") as mp, \
+     mock.patch.object(fd, "fetch_pitcher_strikeouts", return_value={}), \
+     mock.patch.object(fd, "fetch_first_inning_totals", return_value={}), \
+     mock.patch.object(fd, "fetch_pitcher_outs", return_value={}), \
+     mock.patch.object(fd, "fetch_combined_pitcher_strikeouts", return_value={}):
+    mp.return_value = {}  # no fresh price found for any of them -- FanDuel's line closed
+    out4b = rp.refresh(path4b)
+
+names4b = {r["name"] for r in out4b["data"]["top_picks"]}
+check("Started Was Top" in names4b,
+      "the started pick that WAS already a top pick survives the rebuild with no fresh price",
+      f"got {names4b}")
+check("Started Never Top" not in names4b,
+      "a started prop that was NEVER a top pick does not sneak onto Top Picks just because "
+      "its game has started -- only grandfathered picks are exempt from the price_clears filter",
+      f"got {names4b}")
+check("Not Started" not in names4b,
+      "an unstarted, unpriced prop is correctly excluded (the ordinary price_clears filter)",
+      f"got {names4b}")
+
+os.remove(path4b)
+
 head("5. a payload with no 'all' rows at all (e.g. a lineup-less early-look night) is a clean no-op")
 
 payload5 = {"generated_at": "x", "data": {"all": [], "top_picks": []}}
