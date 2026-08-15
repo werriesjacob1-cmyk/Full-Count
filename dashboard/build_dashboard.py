@@ -944,11 +944,22 @@ body {{
 #search-input {{
   width: 100%; font-family: var(--font-body); font-size: 12.5px; color: var(--ink);
   background: var(--surface); border: 1px solid var(--line); border-radius: 999px;
-  padding: 7px 12px 7px 30px; outline: none;
+  padding: 7px 28px 7px 30px; outline: none;
   transition: border-color 0.12s;
 }}
 #search-input::placeholder {{ color: var(--ink-faint); }}
 #search-input:focus {{ border-color: var(--accent); }}
+/* Native ::-webkit-search-cancel-button is inconsistent (Chrome-only, tiny,
+   invisible until focused) -- a real always-visible button instead. */
+#search-input::-webkit-search-cancel-button {{ display: none; }}
+.search-clear {{
+  position: absolute; right: 8px; top: 50%; transform: translateY(-50%);
+  width: 16px; height: 16px; line-height: 14px; text-align: center;
+  border: none; border-radius: 999px; background: var(--surface-2); color: var(--ink-faint);
+  font-size: 13px; cursor: pointer; padding: 0;
+}}
+.search-clear:hover {{ background: var(--accent-soft); color: var(--accent); }}
+.search-clear[hidden] {{ display: none; }}
 .filter-chip {{
   font-family: var(--font-mono); font-size: 11px; font-weight: 600; white-space: nowrap;
   color: var(--ink-dim); background: var(--surface); border: 1px solid var(--line);
@@ -1103,6 +1114,8 @@ body {{
 .gp-who {{ display: flex; flex-direction: column; min-width: 0; }}
 .gp-name {{ font-weight: 600; color: var(--ink); }}
 .gp-prop {{ color: var(--ink-faint); font-size: 11.5px; }}
+.gp-nums {{ display: flex; align-items: baseline; gap: 8px; flex-shrink: 0; }}
+.gp-odds {{ font-family: var(--font-mono); font-size: 11.5px; color: var(--ink-faint); }}
 .gp-prob {{ font-family: var(--font-mono); font-weight: 700; color: var(--ink-dim); flex-shrink: 0; }}
 .gp-prob.gp-clears {{ color: var(--good); }}
 
@@ -1181,6 +1194,7 @@ body {{
           <path d="M17 17L13.5 13.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
         </svg>
         <input type="search" id="search-input" placeholder="Search player or team&hellip;" autocomplete="off" spellcheck="false">
+        <button class="search-clear" id="search-clear" type="button" aria-label="Clear search" hidden>&times;</button>
       </div>
       <button class="filter-chip" id="filter-clears" type="button" data-active="false">Clears Price</button>
       <button class="filter-chip" id="filter-high" type="button" data-active="false">High Confidence</button>
@@ -1577,7 +1591,10 @@ function gameCard(g) {{
     ? picks.map(p => `
         <div class="game-pick-row">
           <span class="gp-who"><span class="gp-name">${{esc(p.name)}}</span><span class="gp-prop">${{esc(p.prop)}}</span></span>
-          <span class="gp-prob${{p.price_clears === true ? " gp-clears" : ""}}">${{Math.round(p.hit_probability * 100)}}%</span>
+          <span class="gp-nums">
+            <span class="gp-odds">${{fmtOdds(p.market_odds) ?? "NO LINE"}}</span>
+            <span class="gp-prob${{p.price_clears === true ? " gp-clears" : ""}}">${{Math.round(p.hit_probability * 100)}}%</span>
+          </span>
         </div>`).join("")
     : `<div class="empty-state">No priced candidates for this game yet -- check back as lineups and prices come in.</div>`;
 
@@ -1668,16 +1685,27 @@ const THIN_THRESHOLD = 10;
 // total), only what's currently rendered as pick cards.
 const uiState = {{ q: "", clearsOnly: false, highOnly: false, sortKey: "" }};
 
+function _escapeRegex(s) {{
+  return s.replace(/[.*+?^${{}}()|[\\]\\\\]/g, "\\\\$&");
+}}
 function filterSortRows(rows) {{
   let out = rows;
   if (uiState.clearsOnly) out = out.filter(p => p.price_clears === true);
   if (uiState.highOnly) out = out.filter(p => p.confidence === "High");
   if (uiState.q) {{
-    const q = uiState.q;
+    // Direct request, verbatim: "For search, it picks up any letter instead
+    // of the first. When I type 'T' in all props it gives Mitch McGreevy --
+    // I believe because it is picking up the T in St. Louis." Real bug:
+    // plain .includes(q) matches ANY substring, including mid-word (the "t"
+    // inside "St." or "Cardinals"), so a single common letter matched nearly
+    // everything. \b (word-boundary) requires the match to start a real
+    // word -- "t" now matches "Texas"/team names starting with T, but not
+    // the "t" buried inside "St." or "Cardinals". Regex-escaped since this
+    // runs on raw user input (a literal "(" would otherwise throw and
+    // silently break search entirely).
+    const re = new RegExp("\\\\b" + _escapeRegex(uiState.q), "i");
     out = out.filter(p =>
-      (p.name || "").toLowerCase().includes(q) ||
-      (p.team || "").toLowerCase().includes(q) ||
-      (p.matchup || "").toLowerCase().includes(q));
+      re.test(p.name || "") || re.test(p.team || "") || re.test(p.matchup || ""));
   }}
   if (uiState.sortKey === "edge") {{
     out = out.slice().sort((a, b) => (b.market_edge ?? -Infinity) - (a.market_edge ?? -Infinity));
@@ -1927,6 +1955,7 @@ function debounce(fn, ms) {{
 function resetFilters() {{
   uiState.q = ""; uiState.clearsOnly = false; uiState.highOnly = false; uiState.sortKey = "";
   document.getElementById("search-input").value = "";
+  document.getElementById("search-clear").hidden = true;
   document.getElementById("filter-clears").dataset.active = "false";
   document.getElementById("filter-high").dataset.active = "false";
   document.getElementById("sort-select").value = "";
@@ -1934,10 +1963,23 @@ function resetFilters() {{
 }}
 function initFilters() {{
   const search = document.getElementById("search-input");
+  const clearBtn = document.getElementById("search-clear");
   search.addEventListener("input", debounce(() => {{
     uiState.q = search.value.trim().toLowerCase();
+    clearBtn.hidden = !search.value;
     renderPanels();
   }}, 150));
+  // Direct request, verbatim: "There should also be an X in the search bar
+  // to clear it instead of having to backspace." Native
+  // ::-webkit-search-cancel-button is Chrome-only, invisible until focused,
+  // and absent on Firefox -- a real, always-visible button instead.
+  clearBtn.addEventListener("click", () => {{
+    search.value = "";
+    uiState.q = "";
+    clearBtn.hidden = true;
+    search.focus();
+    renderPanels();
+  }});
 
   const clearsBtn = document.getElementById("filter-clears");
   clearsBtn.addEventListener("click", () => {{

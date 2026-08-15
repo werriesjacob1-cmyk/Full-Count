@@ -5330,6 +5330,39 @@ RELIABILITY_TIERS = [
     (0,  "D", "very thin sample — the number is barely more than a base rate"),
 ]
 
+# Direct request, verbatim: "I guess I don't like how mcgreevy outs is a high
+# model % but not a lock... maybe we need to lessen the constraints you
+# mentioned about his starts." Investigated rather than just loosened blindly:
+# RELIABILITY_TIERS above was being applied UNCHANGED to pitcher STARTS
+# counts, not just batter GAMES counts -- but a starting pitcher makes
+# roughly 30-33 starts across a full, healthy 162-game season (one every
+# 5th game), against a batter's ~150-162 games. Under the batter-games
+# scale, tier "A" (80) and even "B" (45) are structurally impossible for ANY
+# starting pitcher to ever reach within a single season -- Mitch McGreevy's
+# 23 real starts by mid-August, arguably a genuinely deep sample for a
+# starter this point in the year, was capped at reliability D (very thin)
+# purely because the yardstick built for a 150+-game batter season was
+# reused verbatim for a ~32-start pitcher season. Rescaled here to the same
+# FRACTIONS of a season (80/162≈49%, 45/162≈28%, 25/162≈15%) applied to a
+# pitcher's real ~32-start season instead: 16/9/5. McGreevy's 23 starts
+# grades "A" under this scale -- a real, defensible recalibration of what
+# "season-long" means for a market that only produces one data point every
+# five days, not an arbitrary loosening of the bar itself (the score/edge
+# gate is untouched).
+PITCHER_STARTS_RELIABILITY_TIERS = [
+    (16, "A", "season-long sample (starts)"),
+    (9,  "B", "solid sample (starts)"),
+    (5,  "C", "thin sample (starts) — treat the number as approximate"),
+    (0,  "D", "very thin sample (starts) — the number is barely more than a base rate"),
+]
+
+# Every stat whose sample_n above is counted in STARTS, not games -- the
+# generic branch routes "strikeouts" through emp_pitchers['starts'], and
+# pitcher_outs/combined_strikeouts/first_inning_run/nrfi_combined all set
+# n from a starts-based source of their own (see the branches below).
+PITCHER_STARTS_STATS = {"strikeouts", "pitcher_outs", "combined_strikeouts",
+                        "first_inning_run", "nrfi_combined"}
+
 
 def _wilson_interval(hits, n, z=1.96):
     """Wilson score interval — stays sensible at the extremes, where the
@@ -5387,7 +5420,8 @@ def attach_reliability(candidates, emp_batters, emp_pitchers):
             lo, hi = _wilson_interval(rate.get("hit", 0), rate.get("n", n) or 1)
             c["prob_ci"] = [round(lo, 4), round(hi, 4)]
         c["sample_n"] = int(n)
-        for floor, grade, blurb in RELIABILITY_TIERS:
+        tiers = PITCHER_STARTS_RELIABILITY_TIERS if stat in PITCHER_STARTS_STATS else RELIABILITY_TIERS
+        for floor, grade, blurb in tiers:
             if n >= floor:
                 c["reliability"] = grade
                 c["reliability_note"] = blurb

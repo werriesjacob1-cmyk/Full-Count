@@ -583,6 +583,9 @@ if node:
              "is_getaway": False, "is_opener": True,
              "picks": [{"name": "Yordan Alvarez", "prop": "Over 1.5 Total Bases",
                        "hit_probability": 0.61, "market_odds": -135, "price_clears": True,
+                       "why": None},
+                      {"name": "Unpriced Guy", "prop": "Over 0.5 Doubles",
+                       "hit_probability": 0.30, "market_odds": None, "price_clears": None,
                        "why": None}]},
         ],
     }), fonts)
@@ -627,6 +630,12 @@ if (!card.includes("91")) { console.error("FAIL: real temperature missing from w
 if (!card.includes("Angel Hernandez")) { console.error("FAIL: umpire name missing"); process.exit(1); }
 if (!card.includes("Yordan Alvarez")) { console.error("FAIL: the real pick tied to this game is missing"); process.exit(1); }
 if (!card.includes("class=\\"game-card\\"")) { console.error("FAIL: not rendered as a game-card"); process.exit(1); }
+// Direct request, verbatim: "under schedule when you tap on a game and it
+// gives you the % I think it should include the odds as well" -- market_odds
+// was already in the payload (build_dashboard.py's game_context builder
+// includes it) but gameCard() never rendered it, only hit_probability.
+if (!card.includes("-135")) { console.error("FAIL: the real market odds (-135) for this pick are missing from the game card"); process.exit(1); }
+if (!card.includes("NO LINE")) { console.error("FAIL: an unpriced pick should show 'NO LINE' honestly, not a blank or fabricated number"); process.exit(1); }
 console.log("gameCard: all checks passed");
 """
     harness_path16 = tempfile.mktemp(suffix=".js")
@@ -1053,6 +1062,91 @@ console.log("global search: all checks passed");
         os.remove(harness_path25)
 else:
     check(True, "node not available -- global search JS check skipped, not failed")
+
+head("26. search matches on WORD boundaries, not any substring -- direct request, verbatim: "
+     "\"For search, it picks up any letter instead of the first. When I type 'T' in all props "
+     "it gives Mitch McGreevy -- I believe because it is picking up the T in St. Louis.\" Real "
+     "bug: plain .includes(q) matched anywhere, so a single common letter matched almost every "
+     "row via a mid-word hit (the 't' inside 'St.'). Also checks the new clear-search (X) "
+     "button, direct request: \"There should also be an X in the search bar to clear it "
+     "instead of having to backspace.\"")
+
+if node:
+    # row()'s own team/matchup are hardcoded ("Team"/"A @ B") -- irrelevant
+    # here, since the whole point is testing REAL team-name substrings
+    # (McGreevy's actual "St. Louis Cardinals"), so this builds the rows
+    # directly instead of going through that fixture.
+    mcgreevy_row26 = dict(row("Mitch McGreevy", "pitcher_outs", 0.5, odds=-110, implied=0.52,
+                              edge=0.0, clears=True, confidence="Medium", ptype="pitcher"),
+                         team="St. Louis Cardinals", matchup="St. Louis Cardinals @ Astros")
+    texas_row26 = dict(row("Some Other Pitcher", "total_bases", 0.5, odds=-110, implied=0.52,
+                           edge=0.0, clears=True, confidence="Medium"),
+                       team="Texas Rangers", matchup="Texas Rangers @ Astros")
+    html26 = bd.render_html(bd.build_payload({
+        "generated_at": "x", "date": "2026-08-15",
+        "pitcher_outs": [mcgreevy_row26],
+        "total_bases": [texas_row26],
+    }), fonts)
+    js26 = html26.split("<script>", 1)[1].rsplit("</script>", 1)[0]
+    harness26 = """
+function stubEl() {
+  return {addEventListener(){}, textContent:'', innerHTML:'', dataset:{}, style:{},
+    setAttribute(){}, removeAttribute(){}, value:'',
+    classList:{add(){}, remove(){}, toggle(){return false;}}, querySelectorAll: () => [],
+    querySelector: () => null, remove(){}};
+}
+const els = {"search-clear": stubEl(), "search-input": stubEl()};
+const document = {getElementById: (id) => els[id] || stubEl(),
+  documentElement: {setAttribute(){}, removeAttribute(){}, getAttribute: () => null},
+  querySelectorAll: () => [], querySelector: () => null, createElement: () => stubEl()};
+const window = {matchMedia: () => ({matches:false}), location: {reload(){}}};
+const localStorage = {getItem: () => null, setItem(){}};
+const fetch = () => Promise.reject(new Error("no network in test"));
+const setInterval = () => {};
+const requestAnimationFrame = (fn) => {};
+""" + js26 + """
+uiState.q = "t";
+const matched = filterSortRows(PAYLOAD.data.all).map(p => p.name);
+if (matched.includes("Mitch McGreevy")) {
+  console.error("FAIL: 't' matched McGreevy via the mid-word 't' in his team's 'St. Louis' -- got: " + matched);
+  process.exit(1);
+}
+if (!matched.includes("Some Other Pitcher")) {
+  console.error("FAIL: 't' should still match a row whose TEAM genuinely starts with T (Texas Rangers) -- got: " + matched);
+  process.exit(1);
+}
+uiState.q = "mcgreevy";
+const matched2 = filterSortRows(PAYLOAD.data.all).map(p => p.name);
+if (!matched2.includes("Mitch McGreevy")) {
+  console.error("FAIL: a real word-start query for his own last name should still match");
+  process.exit(1);
+}
+// A literal regex special char in the query must not crash search.
+uiState.q = "(";
+try { filterSortRows(PAYLOAD.data.all); } catch (e) {
+  console.error("FAIL: a raw '(' in the search query crashed filterSortRows: " + e.message);
+  process.exit(1);
+}
+console.log("word-boundary search + clear button: all checks passed");
+"""
+    harness_path26 = tempfile.mktemp(suffix=".js")
+    with open(harness_path26, "w") as f:
+        f.write(harness26)
+    try:
+        r26 = subprocess.run([node, harness_path26], capture_output=True, text=True)
+        check(r26.returncode == 0, "search matches on real word boundaries (not any mid-word "
+              "substring), handles regex-special characters in the query safely, and the "
+              "clear-search button exists and starts hidden", r26.stdout + r26.stderr)
+    finally:
+        os.remove(harness_path26)
+    check('id="search-clear"' in html26, "a real clear-search (X) button exists in the page markup",
+          "id=\"search-clear\" not found in rendered HTML")
+    _clear_btn_tag = html26[html26.find('<button class="search-clear"'):][:120]
+    check("hidden" in _clear_btn_tag,
+          "the clear-search button starts hidden in the static markup (empty query on page "
+          "load, nothing to clear yet)", _clear_btn_tag)
+else:
+    check(True, "node not available -- word-boundary search JS check skipped, not failed")
 
 n_pass = sum(1 for ok, _, _ in _results if ok)
 n_total = len(_results)
