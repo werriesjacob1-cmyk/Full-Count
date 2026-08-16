@@ -140,6 +140,34 @@
             "value": 17.5,
             "needs": 18
           }
+        },
+        {
+          "prop": "Over 10.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 9.3,
+          "notable_signals": 0,
+          "matchup": "Baltimore Orioles @ Tampa Bay Rays",
+          "game_pk": 822940,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            669432,
+            642547
+          ],
+          "signals": {
+            "combined_k_edge": -0.1827
+          },
+          "hit_probability": 0.3669,
+          "raw_hit_probability": null,
+          "lift": -0.1827,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 10.5,
+            "needs": 11
+          }
         }
       ]
     }

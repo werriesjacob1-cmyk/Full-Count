@@ -80,8 +80,8 @@
         {
           "prop": "Over 4.5 Strikeouts",
           "type": "pitcher",
-          "score": 53.0,
-          "notable_signals": 0,
+          "score": 53.6,
+          "notable_signals": 1,
           "matchup": "Washington Nationals @ New York Mets",
           "game_pk": 823590,
           "team": "Washington Nationals",
@@ -90,9 +90,12 @@
           "combo_player_ids": null,
           "signals": {
             "opp_team_k_pct": 57.0,
-            "same_hand_ratio": 92.8571,
+            "same_hand_ratio": 57.1429,
             "l14_k_pct": 20.0,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 70.1072,
+            "ump_k_pct": -0.72,
+            "ump_bb_pct": -0.672
           },
           "hit_probability": 0.5601,
           "raw_hit_probability": 0.4356,
@@ -129,6 +132,34 @@
             "stat": "pitcher_outs",
             "value": 14.5,
             "needs": 15
+          }
+        },
+        {
+          "prop": "Over 9.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 55.0,
+          "notable_signals": 0,
+          "matchup": "Washington Nationals @ New York Mets",
+          "game_pk": 823590,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            663623,
+            681035
+          ],
+          "signals": {
+            "combined_k_edge": 0.0477
+          },
+          "hit_probability": 0.6445,
+          "raw_hit_probability": null,
+          "lift": 0.0477,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 9.5,
+            "needs": 10
           }
         }
       ]

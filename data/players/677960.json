@@ -142,6 +142,34 @@
             "value": 17.5,
             "needs": 18
           }
+        },
+        {
+          "prop": "Over 12.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 54.0,
+          "notable_signals": 0,
+          "matchup": "New York Yankees @ Toronto Blue Jays",
+          "game_pk": 822774,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            677960,
+            656302
+          ],
+          "signals": {
+            "combined_k_edge": -0.0471
+          },
+          "hit_probability": 0.6105,
+          "raw_hit_probability": null,
+          "lift": -0.0471,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 12.5,
+            "needs": 13
+          }
         }
       ]
     }

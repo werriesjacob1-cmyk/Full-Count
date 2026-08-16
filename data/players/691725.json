@@ -92,7 +92,10 @@
             "opp_team_k_pct": 45.0,
             "same_hand_ratio": 100.0,
             "l14_k_pct": 66.4706,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 49.6685,
+            "ump_k_pct": 1.644,
+            "ump_bb_pct": 0.516
           },
           "hit_probability": 0.6198,
           "raw_hit_probability": 0.7291,
@@ -129,6 +132,34 @@
             "stat": "pitcher_outs",
             "value": 15.5,
             "needs": 16
+          }
+        },
+        {
+          "prop": "Over 8.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 55.0,
+          "notable_signals": 1,
+          "matchup": "Philadelphia Phillies @ Minnesota Twins",
+          "game_pk": 823670,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            691725,
+            665152
+          ],
+          "signals": {
+            "combined_k_edge": 0.136
+          },
+          "hit_probability": 0.6262,
+          "raw_hit_probability": null,
+          "lift": 0.136,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 8.5,
+            "needs": 9
           }
         }
       ]

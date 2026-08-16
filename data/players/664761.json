@@ -659,6 +659,108 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-16",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 60.8,
+          "notable_signals": 2,
+          "matchup": "Philadelphia Phillies @ Minnesota Twins",
+          "game_pk": 823670,
+          "team": "Philadelphia Phillies",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 78.5714,
+            "park_hr_index": 27.0,
+            "season_barrel_pct": 13.3333,
+            "lineup_slot": 50.0,
+            "bullpen_fatigue": 76.9231,
+            "platoon_barrel_pct": -2.56,
+            "platoon_xwoba": 0.0,
+            "park_hand_index": -0.82,
+            "opp_catcher_framing": -0.48,
+            "days_rest": 0.0,
+            "woba_ahead": 44.5455,
+            "woba_behind": 30.9091,
+            "pull_park_synergy": -0.0832,
+            "hard_hit_105_rate": -0.0225,
+            "team_total_move": 0.0,
+            "team_total_open": 0.0,
+            "getaway_day": -2.0,
+            "series_game": 2.0,
+            "sp_rp_ops_gap": -0.496,
+            "vs_rp_ops": -0.972,
+            "ump_k_pct": -1.644,
+            "ump_bb_pct": -0.516
+          },
+          "hit_probability": 0.6687,
+          "raw_hit_probability": 0.6692,
+          "lift": 0.0001,
+          "reliability": "A",
+          "sample_n": 118,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 4.0,
+          "notable_signals": 0,
+          "matchup": "Philadelphia Phillies @ Minnesota Twins",
+          "game_pk": 823670,
+          "team": "Philadelphia Phillies",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0457
+          },
+          "hit_probability": 0.0457,
+          "raw_hit_probability": null,
+          "lift": -0.0039,
+          "reliability": "A",
+          "sample_n": 118,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 1.4,
+          "notable_signals": 0,
+          "matchup": "Philadelphia Phillies @ Minnesota Twins",
+          "game_pk": 823670,
+          "team": "Philadelphia Phillies",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0186
+          },
+          "hit_probability": 0.0186,
+          "raw_hit_probability": null,
+          "lift": -0.0029,
+          "reliability": "A",
+          "sample_n": 118,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

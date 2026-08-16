@@ -120,6 +120,34 @@
             "value": 15.5,
             "needs": 16
           }
+        },
+        {
+          "prop": "Over 7.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 55.0,
+          "notable_signals": 1,
+          "matchup": "Arizona Diamondbacks @ Atlanta Braves",
+          "game_pk": 824880,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            647336,
+            693821
+          ],
+          "signals": {
+            "combined_k_edge": 0.0624
+          },
+          "hit_probability": 0.7246,
+          "raw_hit_probability": null,
+          "lift": 0.0624,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 7.5,
+            "needs": 8
+          }
         }
       ]
     }

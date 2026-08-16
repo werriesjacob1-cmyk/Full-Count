@@ -850,6 +850,136 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-16",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 88.6,
+          "notable_signals": 3,
+          "matchup": "Miami Marlins @ Cincinnati Reds",
+          "game_pk": 824477,
+          "team": "Miami Marlins",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 60.0,
+            "pitch_exploit": 5.7143,
+            "park_hr_index": 60.1,
+            "season_barrel_pct": 21.3333,
+            "lineup_slot": 100.0,
+            "bullpen_fatigue": 76.9231,
+            "platoon_barrel_pct": -0.08,
+            "platoon_xwoba": 0.78,
+            "park_hand_index": 1.31,
+            "opp_catcher_framing": -0.36,
+            "days_rest": 0.0,
+            "woba_behind": 29.0909,
+            "pull_park_synergy": 0.0642,
+            "hard_hit_105_rate": -0.03,
+            "team_total_move": 0.0,
+            "team_total_open": 0.0,
+            "getaway_day": -2.0,
+            "series_game": 2.0,
+            "sp_rp_ops_gap": 0.408,
+            "vs_rp_ops": 1.26,
+            "ump_k_pct": -0.372,
+            "ump_bb_pct": -0.744
+          },
+          "hit_probability": 0.6849,
+          "raw_hit_probability": 0.6663,
+          "lift": 0.134,
+          "reliability": "A",
+          "sample_n": 120,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 58.4,
+          "notable_signals": 1,
+          "matchup": "Miami Marlins @ Cincinnati Reds",
+          "game_pk": 824477,
+          "team": "Miami Marlins",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": 4.2,
+            "sprint_speed": 37.5,
+            "catcher_poptime": 28.5714,
+            "on_base": 89.4434
+          },
+          "hit_probability": 0.1719,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 120,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 3.9,
+          "notable_signals": 0,
+          "matchup": "Miami Marlins @ Cincinnati Reds",
+          "game_pk": 824477,
+          "team": "Miami Marlins",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0454
+          },
+          "hit_probability": 0.0454,
+          "raw_hit_probability": null,
+          "lift": -0.0042,
+          "reliability": "A",
+          "sample_n": 120,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 1.4,
+          "notable_signals": 0,
+          "matchup": "Miami Marlins @ Cincinnati Reds",
+          "game_pk": 824477,
+          "team": "Miami Marlins",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0184
+          },
+          "hit_probability": 0.0184,
+          "raw_hit_probability": null,
+          "lift": -0.0031,
+          "reliability": "A",
+          "sample_n": 120,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }
