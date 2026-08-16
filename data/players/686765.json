@@ -735,6 +735,80 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-16",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 84.5,
+          "notable_signals": 2,
+          "matchup": "Boston Red Sox @ Pittsburgh Pirates",
+          "game_pk": 823344,
+          "team": "Boston Red Sox",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "sp_era_weak": 35.1429,
+            "park_hr_index": 28.8,
+            "season_barrel_pct": 0.0,
+            "lineup_slot": 100.0,
+            "bullpen_fatigue": 71.4286,
+            "platoon_barrel_pct": -5.0,
+            "platoon_xwoba": -0.3,
+            "opp_catcher_framing": 0.6,
+            "days_rest": 0.0,
+            "consecutive_games": -1.8,
+            "woba_behind": 48.1818,
+            "getaway_day": -2.0,
+            "series_game": 2.0,
+            "sp_rp_ops_gap": 0.976,
+            "vs_rp_ops": 0.384,
+            "ump_k_pct": 0.396,
+            "ump_bb_pct": 0.696
+          },
+          "hit_probability": 0.6761,
+          "raw_hit_probability": 0.6822,
+          "lift": 0.0061,
+          "reliability": "C",
+          "sample_n": 27,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 36.3,
+          "notable_signals": 0,
+          "matchup": "Boston Red Sox @ Pittsburgh Pirates",
+          "game_pk": 823344,
+          "team": "Boston Red Sox",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": -0.0,
+            "sprint_speed": 21.875,
+            "catcher_poptime": 0.0,
+            "on_base": 60.6526
+          },
+          "hit_probability": 0.0252,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "C",
+          "sample_n": 27,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

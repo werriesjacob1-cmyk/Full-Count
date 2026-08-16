@@ -107,6 +107,55 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-16",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 38.4,
+          "notable_signals": 2,
+          "matchup": "Baltimore Orioles @ Tampa Bay Rays",
+          "game_pk": 822940,
+          "team": "Baltimore Orioles",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 80.8571,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 0.0,
+            "lineup_slot": 0.0,
+            "bullpen_fatigue": 76.9231,
+            "platoon_barrel_pct": -5.0,
+            "platoon_xwoba": -5.0,
+            "park_hand_index": 1.5,
+            "opp_catcher_framing": 0.72,
+            "days_rest": 0.0,
+            "woba_ahead": 18.1818,
+            "woba_behind": 36.3636,
+            "pull_park_synergy": -0.0735,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 2.0,
+            "ump_k_pct": 0.3,
+            "ump_bb_pct": 0.132
+          },
+          "hit_probability": 0.5808,
+          "raw_hit_probability": 0.5872,
+          "lift": 0.0299,
+          "reliability": "D",
+          "sample_n": 22,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

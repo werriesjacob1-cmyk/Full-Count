@@ -60,6 +60,68 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-16",
+      "evaluations": [
+        {
+          "prop": "Over 4.5 Strikeouts",
+          "type": "pitcher",
+          "score": 48.6,
+          "notable_signals": 1,
+          "matchup": "Arizona Diamondbacks @ Atlanta Braves",
+          "game_pk": 824880,
+          "team": "Arizona Diamondbacks",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_k_pct": 44.0,
+            "same_hand_ratio": 12.5,
+            "l14_k_pct": 42.3529,
+            "env_neutral": 50.0,
+            "ump_accuracy": 82.699,
+            "ump_k_pct": -0.396,
+            "ump_bb_pct": -0.168
+          },
+          "hit_probability": 0.5829,
+          "raw_hit_probability": 0.5464,
+          "lift": 0.0439,
+          "reliability": "A",
+          "sample_n": 16,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 4.5,
+            "needs": 5
+          }
+        },
+        {
+          "prop": "Over 15.5 Outs Recorded",
+          "type": "pitcher",
+          "score": 58.6,
+          "notable_signals": 1,
+          "matchup": "Arizona Diamondbacks @ Atlanta Braves",
+          "game_pk": 824880,
+          "team": "Arizona Diamondbacks",
+          "side": "away",
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "outs_rate": 0.5995,
+            "avg_outs_per_start": 16.19
+          },
+          "hit_probability": 0.5995,
+          "raw_hit_probability": null,
+          "lift": 0.0679,
+          "reliability": "A",
+          "sample_n": 16,
+          "projection": {
+            "stat": "pitcher_outs",
+            "value": 15.5,
+            "needs": 16
+          }
+        }
+      ]
     }
   ]
 }

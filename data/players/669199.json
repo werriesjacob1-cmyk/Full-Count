@@ -1,0 +1,42 @@
+{
+  "player_id": 669199,
+  "name": "Lake Bachar",
+  "snapshots": [
+    {
+      "date": "2026-08-16",
+      "evaluations": [
+        {
+          "prop": "Over 4.5 Strikeouts",
+          "type": "pitcher",
+          "score": 47.4,
+          "notable_signals": 0,
+          "matchup": "Boston Red Sox @ Pittsburgh Pirates",
+          "game_pk": 823344,
+          "team": "Pittsburgh Pirates",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_k_pct": 47.0,
+            "same_hand_ratio": 100.0,
+            "l14_k_pct": 58.8235,
+            "env_neutral": 50.0,
+            "ump_accuracy": 60.8466,
+            "ump_k_pct": -0.396,
+            "ump_bb_pct": -0.696
+          },
+          "hit_probability": 0.5999,
+          "raw_hit_probability": 0.6297,
+          "lift": 0.0609,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 4.5,
+            "needs": 5
+          }
+        }
+      ]
+    }
+  ]
+}

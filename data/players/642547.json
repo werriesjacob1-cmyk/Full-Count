@@ -73,6 +73,68 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-16",
+      "evaluations": [
+        {
+          "prop": "Over 6.5 Strikeouts",
+          "type": "pitcher",
+          "score": 54.8,
+          "notable_signals": 0,
+          "matchup": "Baltimore Orioles @ Tampa Bay Rays",
+          "game_pk": 822940,
+          "team": "Tampa Bay Rays",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_k_pct": 74.0,
+            "same_hand_ratio": 75.0,
+            "l14_k_pct": 21.1765,
+            "env_neutral": 50.0,
+            "ump_accuracy": 65.0656,
+            "ump_k_pct": -0.3,
+            "ump_bb_pct": -0.132
+          },
+          "hit_probability": 0.5109,
+          "raw_hit_probability": 0.2011,
+          "lift": 0.2652,
+          "reliability": "A",
+          "sample_n": 24,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 6.5,
+            "needs": 7
+          }
+        },
+        {
+          "prop": "Over 15.5 Outs Recorded",
+          "type": "pitcher",
+          "score": 35.8,
+          "notable_signals": 0,
+          "matchup": "Baltimore Orioles @ Tampa Bay Rays",
+          "game_pk": 822940,
+          "team": "Tampa Bay Rays",
+          "side": "home",
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "outs_rate": 0.5063,
+            "avg_outs_per_start": 15.42
+          },
+          "hit_probability": 0.5063,
+          "raw_hit_probability": null,
+          "lift": -0.0253,
+          "reliability": "A",
+          "sample_n": 24,
+          "projection": {
+            "stat": "pitcher_outs",
+            "value": 15.5,
+            "needs": 16
+          }
+        }
+      ]
     }
   ]
 }

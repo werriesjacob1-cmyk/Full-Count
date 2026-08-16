@@ -1,0 +1,37 @@
+{
+  "player_id": "nrfi_824397",
+  "name": "San Diego Padres @ Cleveland Guardians \u2014 1st Inning (Both Teams)",
+  "snapshots": [
+    {
+      "date": "2026-08-16",
+      "evaluations": [
+        {
+          "prop": "No runs in the 1st (both teams)",
+          "type": "game",
+          "score": 65.2,
+          "notable_signals": 0,
+          "matchup": "San Diego Padres @ Cleveland Guardians",
+          "game_pk": 824397,
+          "team": null,
+          "side": "both",
+          "lean": "NRFI",
+          "combo_player_ids": null,
+          "signals": {
+            "home_team_scores_p": 0.2216,
+            "away_team_scores_p": 0.3024,
+            "fi_n_starts": 17.0
+          },
+          "hit_probability": 0.543,
+          "raw_hit_probability": null,
+          "lift": 0.0446,
+          "reliability": "A",
+          "sample_n": 17,
+          "projection": {
+            "stat": "nrfi_combined",
+            "value": 54.3
+          }
+        }
+      ]
+    }
+  ]
+}

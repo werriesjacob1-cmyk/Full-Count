@@ -1,0 +1,587 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Picks Board — 2026-08-16</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+:root {
+  --bg: #f2f5ef; --surface: #ffffff; --surface-2: #e9ede4;
+  --text: #16201a; --text-dim: #5b685e; --line: rgba(22,32,26,0.12);
+  --accent: #2f8f52; --accent-bg: rgba(47,143,82,0.10);
+  --gold: #a9761e; --gold-bg: rgba(169,118,30,0.12);
+  --low: #78877e; --low-bg: rgba(120,135,126,0.12);
+  --bad: #a1432b;
+  --font-display: "Roboto Condensed", "Arial Narrow", "Noto Sans Condensed", sans-serif;
+  --font-body: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", "Cascadia Mono", "Roboto Mono", monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0f1613; --surface: #161e19; --surface-2: #1d2620;
+    --text: #edf1e8; --text-dim: #93a196; --line: rgba(255,255,255,0.10);
+    --accent: #5fbf77; --accent-bg: rgba(95,191,119,0.14);
+    --gold: #e0ac4c; --gold-bg: rgba(224,172,76,0.14);
+    --low: #6f7d73; --low-bg: rgba(111,125,115,0.16);
+    --bad: #d97a5c;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0f1613; --surface: #161e19; --surface-2: #1d2620;
+  --text: #edf1e8; --text-dim: #93a196; --line: rgba(255,255,255,0.10);
+  --accent: #5fbf77; --accent-bg: rgba(95,191,119,0.14);
+  --gold: #e0ac4c; --gold-bg: rgba(224,172,76,0.14);
+  --low: #6f7d73; --low-bg: rgba(111,125,115,0.16);
+  --bad: #d97a5c;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0; background: var(--bg); color: var(--text);
+  font-family: var(--font-body); line-height: 1.45;
+}
+header {
+  position: sticky; top: 0; z-index: 5;
+  background: var(--surface); border-bottom: 1px solid var(--line);
+  padding: 14px clamp(16px, 4vw, 40px);
+  display: flex; align-items: baseline; justify-content: space-between; gap: 16px; flex-wrap: wrap;
+}
+header h1 {
+  font-family: var(--font-display); text-transform: uppercase; letter-spacing: 0.04em;
+  font-size: clamp(20px, 3vw, 26px); margin: 0; font-weight: 700;
+}
+header .stats {
+  font-family: var(--font-mono); font-variant-numeric: tabular-nums;
+  color: var(--text-dim); font-size: 13px;
+}
+main { max-width: 1180px; margin: 0 auto; padding: 28px clamp(16px, 4vw, 40px) 60px; }
+h2 {
+  font-family: var(--font-display); text-transform: uppercase; letter-spacing: 0.05em;
+  font-size: 15px; font-weight: 700; color: var(--text-dim); margin: 0 0 10px;
+}
+section.stack { margin-bottom: 40px; }
+.section-head { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 14px; }
+.section-note { font-size: 12.5px; color: var(--text-dim); }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 12px; }
+.cat-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 14px 12px; }
+.cat-block h2 { margin-bottom: 6px; }
+.card {
+  background: var(--surface); border: 1px solid var(--line); border-radius: 6px;
+  padding: 14px; display: flex; flex-direction: column; gap: 6px;
+}
+.card.hi { border-left: 3px solid var(--accent); }
+.card.md { border-left: 3px solid var(--gold); }
+.card.lo { border-left: 3px solid var(--low); }
+.card.big { background: var(--surface-2); }
+.card-top { display: flex; align-items: center; justify-content: space-between; }
+.pill {
+  font-family: var(--font-display); text-transform: uppercase; letter-spacing: 0.04em;
+  font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 100px;
+}
+.pill.hi { background: var(--accent-bg); color: var(--accent); }
+.pill.md { background: var(--gold-bg); color: var(--gold); }
+.pill.lo { background: var(--low-bg); color: var(--low); }
+.pct {
+  font-family: var(--font-mono); font-variant-numeric: tabular-nums;
+  font-size: 22px; font-weight: 600;
+}
+.player { margin: 2px 0 0; font-size: 16.5px; font-weight: 700; text-wrap: balance; }
+.prop { margin: 0; color: var(--text); font-size: 14px; }
+.matchup { margin: 0; color: var(--text-dim); font-size: 12.5px; }
+.meta {
+  display: flex; flex-wrap: wrap; gap: 6px 12px; margin-top: 4px;
+  font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-size: 12px; color: var(--text-dim);
+}
+.tag { font-family: var(--font-body); font-size: 11px; padding: 1px 6px; border-radius: 4px; margin-left: 4px; }
+.tag.good { background: var(--accent-bg); color: var(--accent); }
+.tag.bad { background: rgba(161,67,43,0.12); color: var(--bad); }
+.lift.pos { color: var(--accent); }
+.lift.neg { color: var(--bad); }
+details.reason { margin-top: 4px; font-size: 13px; }
+details.reason summary {
+  cursor: pointer; color: var(--text-dim); font-size: 12px;
+  text-transform: uppercase; letter-spacing: 0.04em; font-family: var(--font-display); font-weight: 700;
+}
+details.reason summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+ul.why, ul.watch { margin: 6px 0 0; padding-left: 18px; }
+ul.why li { margin-bottom: 3px; }
+ul.watch { color: var(--bad); }
+p.fallback-reason { margin: 6px 0 0; color: var(--text-dim); font-size: 12.5px; }
+p.empty { color: var(--text-dim); font-style: italic; }
+footer { max-width: 1180px; margin: 0 auto; padding: 0 clamp(16px, 4vw, 40px) 40px; color: var(--text-dim); font-size: 12px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Picks Board — 2026-08-16</h1>
+  <div class="stats">12 games · generated 2:50 PM · 8 top board · 15 categories · 5 moonshots</div>
+</header>
+<main>
+  <section class="stack">
+    <div class="section-head"><h2>Best pick in every category</h2><span class="section-note">ranked high → low confidence</span></div>
+    <div class="cat-grid">
+      <section class="cat-block"><h2>Hits+Runs+RBIs</h2>
+    <article class="card hi">
+      <div class="card-top">
+        <span class="pill hi">High</span>
+        <span class="pct">79.8%</span>
+      </div>
+      <h3 class="player">Kevin McGonigle</h3>
+      <p class="prop">Over 0.5 Hits+Runs+RBIs</p>
+      <p class="matchup">Detroit Tigers · Chicago White Sox @ Detroit Tigers</p>
+      <div class="meta">
+        <span>Market -300 (implied 75.0%) <span class="tag good">clears</span></span>
+        <span class="lift pos">+12.8 pts vs base rate</span>
+        <span class="sample">119 sample · grade A</span>
+      </div>
+      <details class="reason"><summary>Why</summary><ul class="why"><li>Projected 4.41 PA (slot 2, 3.98-run implied team total)</li><li>Platoon: L bat vs RHP (favorable)</li><li>Pitch-type exploit: RV/100 +1.8 vs CU (opposing SP throws it 20.6% of the time)</li><li>Opposing SP ERA 3.08</li><li>Market implied team total 3.98 runs (league avg 4.245; line 3.5, game total 8)</li><li>Wind blowing OUT (9mph) — HR boost</li><li>Opposing bullpen fatigue: 4/13 relievers over 60 pitches in L7 (fresh pen)</li><li>Sharp money fading Detroit Tigers (money% -10 pts vs ticket%)</li></ul><ul class="watch"><li>L7 sample is thin (0 PA) — treat recent-form read with caution</li><li>Public heavy on Detroit Tigers (money% trails tickets% by 10 pts) — sharp money is fading this side</li><li>AVG vs xBA: 0.286 vs 0.261 (+0.025) — outperforming his contact quality, regression risk</li></ul></details>
+    </article></section>
+<section class="cat-block"><h2>Pitcher Outs Recorded</h2>
+    <article class="card md">
+      <div class="card-top">
+        <span class="pill md">Medium</span>
+        <span class="pct">72.0%</span>
+      </div>
+      <h3 class="player">Jake Irvin</h3>
+      <p class="prop">Over 14.5 Outs Recorded</p>
+      <p class="matchup">Washington Nationals · Washington Nationals @ New York Mets</p>
+      <div class="meta">
+        <span>Market -168 (implied 58.4%) <span class="tag good">clears</span></span>
+        <span class="lift neg">-1.3 pts vs base rate</span>
+        <span class="sample">14 sample · grade B</span>
+      </div>
+      <details class="reason"><summary>Why</summary><ul class="why"><li>Recorded 15+ outs (5.0 IP) in 72.0% of his last 14 real starts (league 73.3%, avg 14.0 outs/start)</li></ul><ul class="watch"><li>No positive read here: 1.3 pts BELOW the 73% league base rate for this market</li></ul></details>
+    </article></section>
+<section class="cat-block"><h2>Combined Starter Strikeouts</h2>
+    <article class="card md">
+      <div class="card-top">
+        <span class="pill md">Medium</span>
+        <span class="pct">69.3%</span>
+      </div>
+      <h3 class="player">Sean Burke &amp; Drew Anderson</h3>
+      <p class="prop">Over 9.5 Combined Strikeouts</p>
+      <p class="matchup"> · Chicago White Sox @ Detroit Tigers</p>
+      <div class="meta">
+        <span>Market -170 (implied 63.0%) <span class="tag good">clears</span></span>
+        <span class="lift pos">+6.3 pts vs base rate</span>
+        
+      </div>
+      <details class="reason"><summary>Why</summary><ul class="why"><li>Model: 69.3% chance of 10+ combined Ks (Sean Burke + Drew Anderson), priced at -170 (63.0% implied)</li></ul><ul class="watch"><li>Combined-strikeout picks aren&#x27;t in the confidence measurement suite yet -- brand new, treat as unproven.</li></ul></details>
+    </article></section>
+<section class="cat-block"><h2>Hits</h2>
+    <article class="card md">
+      <div class="card-top">
+        <span class="pill md">Medium</span>
+        <span class="pct">66.3%</span>
+      </div>
+      <h3 class="player">Brett Bateman</h3>
+      <p class="prop">Over 0.5 Hits</p>
+      <p class="matchup">Toronto Blue Jays · New York Yankees @ Toronto Blue Jays</p>
+      <div class="meta">
+        <span>Market -190 (implied 65.5%) <span class="tag good">clears</span></span>
+        <span class="lift pos">+11.2 pts vs base rate</span>
+        
+      </div>
+      <details class="reason"><summary>Why</summary><ul class="why"><li>Projected 4.41 PA (slot 1, 3.28-run implied team total)</li><li>Platoon: L bat vs LHP (unfavorable)</li><li>Opposing SP ERA 3.79</li><li>Market implied team total 3.28 runs (league avg 4.245; line 3.5, game total 6.5)</li><li>Dome — weather neutral</li><li>Opposing bullpen fatigue: 6/14 relievers over 60 pitches in L7 (tired pen — favorable late)</li></ul><ul class="watch"><li>L7 sample is thin (0 PA) — treat recent-form read with caution</li></ul></details>
+    </article></section>
+<section class="cat-block"><h2>Strikeouts</h2>
+    <article class="card lo">
+      <div class="card-top">
+        <span class="pill lo">Low</span>
+        <span class="pct">62.1%</span>
+      </div>
+      <h3 class="player">Hunter Dobbins</h3>
+      <p class="prop">Over 3.5 Strikeouts</p>
+      <p class="matchup">St. Louis Cardinals · St. Louis Cardinals @ Chicago Cubs</p>
+      <div class="meta">
+        <span>Market -130 (implied 53.3%) <span class="tag good">clears</span></span>
+        <span class="lift neg">-9.2 pts vs base rate</span>
+        <span class="sample">6 sample · grade C</span>
+      </div>
+      <details class="reason"><summary>Why</summary><ul class="why"><li>Opposing team K% 21.8 (MLB Stats API — FanGraphs team page unreachable)</li><li>Expected workload 23.5 batters faced (his own 24.0/start over 2 real starts, shrunk toward the 23.1 league mean)</li><li>6/8 known-hand opposing batters same-handed</li><li>L14 K% 20.8 (48 PA)</li><li>Recency-weighted K rate 21.0% (exp. decay, halflife 30d, 6 real starts / 133 BF) — drives the strikeout probability model</li></ul><ul class="watch"><li>Recalled from the minors 13 day(s) ago — thin or no MLB track record behind his season/rolling stats</li><li>Workload estimate rests on only 2 starts in the L14 window — most start-to-start variation in batters faced is noise, so this is shrunk heavily toward league average</li></ul></details>
+    </article></section>
+<section class="cat-block"><h2>Singles</h2>
+    <article class="card lo">
+      <div class="card-top">
+        <span class="pill lo">Low</span>
+        <span class="pct">59.8%</span>
+      </div>
+      <h3 class="player">Chandler Simpson</h3>
+      <p class="prop">Over 0.5 Singles</p>
+      <p class="matchup">Tampa Bay Rays · Baltimore Orioles @ Tampa Bay Rays</p>
+      <div class="meta">
+        <span>Market -175 (implied 63.6%) <span class="tag bad">misses</span></span>
+        <span class="lift pos">+19.7 pts vs base rate</span>
+        <span class="sample">111 sample · grade A</span>
+      </div>
+      <details class="reason"><summary>Why</summary><ul class="why"><li>Projected 4.1 PA (slot 5, 4.02-run implied team total)</li><li>Platoon: L bat vs LHP (unfavorable)</li><li>Opposing SP ERA 4.21</li><li>Market implied team total 4.02 runs (league avg 4.245; line 3.5, game total 7.5)</li><li>Dome — weather neutral</li><li>Opposing bullpen fatigue: 5/14 relievers over 60 pitches in L7 (fresh pen)</li></ul><ul class="watch"><li>L7 sample is thin (0 PA) — treat recent-form read with caution</li><li>AVG vs xBA: 0.305 vs 0.258 (+0.047) — outperforming his contact quality, regression risk</li><li>wOBA vs xwOBA: 0.308 vs 0.264 (+0.044) — outperforming his contact quality, regression risk</li></ul></details>
+    </article></section>
+<section class="cat-block"><h2>NRFI/YRFI (Both Teams)</h2>
+    <article class="card md">
+      <div class="card-top">
+        <span class="pill md">Medium</span>
+        <span class="pct">54.3%</span>
+      </div>
+      <h3 class="player">Philadelphia Phillies @ Minnesota Twins — 1st Inning (Both Teams)</h3>
+      <p class="prop">A run scores in the 1st (either team)</p>
+      <p class="matchup"> · Philadelphia Phillies @ Minnesota Twins</p>
+      <div class="meta">
+        <span>Market -136 (implied 54.3%) <span class="tag bad">misses</span></span>
+        <span class="lift pos">+4.2 pts vs base rate</span>
+        <span class="sample">8 sample · grade C</span>
+      </div>
+      <details class="reason"><summary>Why</summary><ul class="why"><li>Minnesota Twins scores off Andrew Painter (away SP) in the bottom 1st: 29.2% (shrunk, 14 starts)</li><li>Philadelphia Phillies scores off Dean Kremer (home SP) in the top 1st: 35.5% (shrunk, 8 starts)</li><li>This is the real both-teams NRFI/YRFI market -- combines both starters&#x27; halves of the 1st, not a one-sided team read.</li></ul></details>
+    </article></section>
+<section class="cat-block"><h2>Runs</h2>
+    <article class="card md">
+      <div class="card-top">
+        <span class="pill md">Medium</span>
+        <span class="pct">47.2%</span>
+      </div>
+      <h3 class="player">Matt Olson</h3>
+      <p class="prop">Over 0.5 Runs</p>
+      <p class="matchup">Atlanta Braves · Arizona Diamondbacks @ Atlanta Braves</p>
+      <div class="meta">
+        <span>Market -115 (implied 53.5%) <span class="tag bad">misses</span></span>
+        <span class="lift pos">+8.9 pts vs base rate</span>
+        <span class="sample">123 sample · grade A</span>
+      </div>
+      <details class="reason"><summary>Why</summary><ul class="why"><li>Projected 4.33 PA (slot 3, 4.34-run implied team total)</li><li>Platoon: L bat vs RHP (favorable)</li><li>Opposing SP ERA 2.92</li><li>Market implied team total 4.34 runs (league avg 4.245; line 4.5, game total 8.5)</li><li>Dome — weather neutral</li><li>Opposing bullpen fatigue: 5/12 relievers over 60 pitches in L7 (tired pen — favorable late)</li><li>Sharp money fading Atlanta Braves (money% -14 pts vs ticket%)</li></ul><ul class="watch"><li>L7 sample is thin (0 PA) — treat recent-form read with caution</li><li>Public heavy on Atlanta Braves (money% trails tickets% by 14 pts) — sharp money is fading this side</li></ul></details>
+    </article></section>
+<section class="cat-block"><h2>Total Bases</h2>
+    <article class="card hi">
+      <div class="card-top">
+        <span class="pill hi">High</span>
+        <span class="pct">40.2%</span>
+      </div>
+      <h3 class="player">Ceddanne Rafaela</h3>
+      <p class="prop">Over 1.5 Total Bases</p>
+      <p class="matchup">Boston Red Sox · Boston Red Sox @ Pittsburgh Pirates</p>
+      <div class="meta">
+        <span>Market +105 (implied 48.8%) <span class="tag bad">misses</span></span>
+        <span class="lift pos">+9.0 pts vs base rate</span>
+        <span class="sample">116 sample · grade A</span>
+      </div>
+      <details class="reason"><summary>Why</summary><ul class="why"><li>Projected 4.46 PA (slot 2, 4.46-run implied team total)</li><li>Platoon: R bat vs RHP (unfavorable)</li><li>Pitch-type exploit: RV/100 +4.8 vs ST (opposing SP throws it 18.1% of the time)</li><li>Opposing SP ERA 3.73</li><li>Market implied team total 4.46 runs (league avg 4.245; line 4.5, game total 8.5)</li><li>Wind blowing IN — power suppressed</li><li>Opposing bullpen fatigue: 6/14 relievers over 60 pitches in L7 (tired pen — favorable late)</li></ul><ul class="watch"><li>L7 sample is thin (0 PA) — treat recent-form read with caution</li><li>AVG vs xBA: 0.287 vs 0.250 (+0.037) — outperforming his contact quality, regression risk</li><li>wOBA vs xwOBA: 0.343 vs 0.287 (+0.056) — outperforming his contact quality, regression risk</li></ul></details>
+    </article></section>
+<section class="cat-block"><h2>RBIs</h2>
+    <article class="card md">
+      <div class="card-top">
+        <span class="pill md">Medium</span>
+        <span class="pct">36.5%</span>
+      </div>
+      <h3 class="player">Jonathan Aranda</h3>
+      <p class="prop">Over 0.5 RBIs</p>
+      <p class="matchup">Tampa Bay Rays · Baltimore Orioles @ Tampa Bay Rays</p>
+      <div class="meta">
+        <span>Market +230 (implied 30.3%) <span class="tag good">clears</span></span>
+        <span class="lift pos">+6.9 pts vs base rate</span>
+        <span class="sample">119 sample · grade A</span>
+      </div>
+      <details class="reason"><summary>Why</summary><ul class="why"><li>Projected 4.41 PA (slot 2, 4.02-run implied team total)</li><li>Platoon: L bat vs LHP (unfavorable)</li><li>Opposing SP ERA 4.21</li><li>Market implied team total 4.02 runs (league avg 4.245; line 3.5, game total 7.5)</li><li>Dome — weather neutral</li><li>Opposing bullpen fatigue: 5/14 relievers over 60 pitches in L7 (fresh pen)</li></ul><ul class="watch"><li>L7 sample is thin (0 PA) — treat recent-form read with caution</li></ul></details>
+    </article></section>
+<section class="cat-block"><h2>Stolen Base</h2>
+    <article class="card md">
+      <div class="card-top">
+        <span class="pill md">Medium</span>
+        <span class="pct">26.1%</span>
+      </div>
+      <h3 class="player">Chandler Simpson</h3>
+      <p class="prop">To Steal a Base</p>
+      <p class="matchup">Tampa Bay Rays · Baltimore Orioles @ Tampa Bay Rays</p>
+      <div class="meta">
+        <span>Market +280 (implied 26.3%) <span class="tag bad">misses</span></span>
+        
+        <span class="sample">111 sample · grade A</span>
+      </div>
+      <details class="reason"><summary>Why</summary><ul class="why"><li>Sprint speed 29.5ft/s (league ~27.0)</li><li>Opposing catcher pop time 1.99s to 2B (league ~2.0s)</li><li>On-base ability: wOBA 0.308 (league ~0.313) — gates how often he&#x27;s on first to run at all</li></ul></details>
+    </article></section>
+<section class="cat-block"><h2>Home Runs</h2>
+    <article class="card hi">
+      <div class="card-top">
+        <span class="pill hi">High</span>
+        <span class="pct">19.1%</span>
+      </div>
+      <h3 class="player">Munetaka Murakami</h3>
+      <p class="prop">Over 0.5 Home Runs</p>
+      <p class="matchup">Chicago White Sox · Chicago White Sox @ Detroit Tigers</p>
+      <div class="meta">
+        <span>Market +370 (implied 21.3%) <span class="tag bad">misses</span></span>
+        <span class="lift pos">+8.8 pts vs base rate</span>
+        <span class="sample">87 sample · grade A</span>
+      </div>
+      <details class="reason"><summary>Why</summary><ul class="why"><li>Projected 4.41 PA (slot 2, 4.02-run implied team total)</li><li>Platoon: L bat vs RHP (favorable)</li><li>Pitch-type exploit: RV/100 +4.3 vs CH (opposing SP throws it 30.8% of the time)</li><li>Opposing SP ERA 4.01</li><li>Market implied team total 4.02 runs (league avg 4.245; line 3.5, game total 8)</li><li>Wind blowing OUT (9mph) — HR boost</li><li>Opposing bullpen fatigue: 6/13 relievers over 60 pitches in L7 (tired pen — favorable late)</li><li>Sharp money backing Chicago White Sox (money% +10 pts vs ticket%)</li></ul><ul class="watch"><li>L7 sample is thin (0 PA) — treat recent-form read with caution</li></ul></details>
+    </article></section>
+<section class="cat-block"><h2>Doubles</h2>
+    <article class="card hi">
+      <div class="card-top">
+        <span class="pill hi">High</span>
+        <span class="pct">17.1%</span>
+      </div>
+      <h3 class="player">Ceddanne Rafaela</h3>
+      <p class="prop">Over 0.5 Doubles</p>
+      <p class="matchup">Boston Red Sox · Boston Red Sox @ Pittsburgh Pirates</p>
+      <div class="meta">
+        <span>Market +330 (implied 23.3%) <span class="tag bad">misses</span></span>
+        <span class="lift pos">+3.2 pts vs base rate</span>
+        <span class="sample">116 sample · grade A</span>
+      </div>
+      <details class="reason"><summary>Why</summary><ul class="why"><li>Projected 4.46 PA (slot 2, 4.46-run implied team total)</li><li>Platoon: R bat vs RHP (unfavorable)</li><li>Pitch-type exploit: RV/100 +4.8 vs ST (opposing SP throws it 18.1% of the time)</li><li>Opposing SP ERA 3.73</li><li>Market implied team total 4.46 runs (league avg 4.245; line 4.5, game total 8.5)</li><li>Wind blowing IN — power suppressed</li><li>Opposing bullpen fatigue: 6/14 relievers over 60 pitches in L7 (tired pen — favorable late)</li></ul><ul class="watch"><li>L7 sample is thin (0 PA) — treat recent-form read with caution</li><li>AVG vs xBA: 0.287 vs 0.250 (+0.037) — outperforming his contact quality, regression risk</li><li>wOBA vs xwOBA: 0.343 vs 0.287 (+0.056) — outperforming his contact quality, regression risk</li></ul></details>
+    </article></section>
+<section class="cat-block"><h2>Laser (105+ MPH)</h2>
+    <article class="card lo">
+      <div class="card-top">
+        <span class="pill lo">Low</span>
+        <span class="pct">15.3%</span>
+      </div>
+      <h3 class="player">Matt Olson</h3>
+      <p class="prop">To Hit a Laser (105+ MPH)</p>
+      <p class="matchup">Atlanta Braves · Arizona Diamondbacks @ Atlanta Braves</p>
+      <div class="meta">
+        <span>Market +460 (implied 17.9%) <span class="tag bad">misses</span></span>
+        <span class="lift pos">+10.4 pts vs base rate</span>
+        <span class="sample">123 sample · grade A</span>
+      </div>
+      <details class="reason"><summary>Why</summary><ul class="why"><li>Hit a home run at 105+ MPH exit velocity in 15.3% of his last 117 games with a batted ball (league 5.0%)</li></ul></details>
+    </article></section>
+<section class="cat-block"><h2>Triples</h2>
+    <article class="card md">
+      <div class="card-top">
+        <span class="pill md">Medium</span>
+        <span class="pct">3.2%</span>
+      </div>
+      <h3 class="player">Leody Taveras</h3>
+      <p class="prop">Over 0.5 Triples</p>
+      <p class="matchup">Baltimore Orioles · Baltimore Orioles @ Tampa Bay Rays</p>
+      <div class="meta">
+        <span>Market +2500 (implied 3.9%) <span class="tag bad">misses</span></span>
+        <span class="lift pos">+1.9 pts vs base rate</span>
+        <span class="sample">102 sample · grade A</span>
+      </div>
+      <details class="reason"><summary>Why</summary><ul class="why"><li>Projected 3.9 PA (slot 6, 3.48-run implied team total)</li><li>Platoon: S bat vs RHP (favorable)</li><li>Opposing SP ERA 5.33</li><li>Market implied team total 3.48 runs (league avg 4.245; line 3.5, game total 7.5)</li><li>Dome — weather neutral</li><li>Opposing bullpen fatigue: 6/13 relievers over 60 pitches in L7 (tired pen — favorable late)</li></ul><ul class="watch"><li>L7 sample is thin (0 PA) — treat recent-form read with caution</li></ul></details>
+    </article></section>
+    </div>
+  </section>
+
+  <section class="stack">
+    <div class="section-head"><h2>Top board</h2><span class="section-note">ranked high → low confidence</span></div>
+    <div class="grid">
+      
+    <article class="card md big">
+      <div class="card-top">
+        <span class="pill md">Medium</span>
+        <span class="pct">69.3%</span>
+      </div>
+      <h3 class="player">Sean Burke &amp; Drew Anderson</h3>
+      <p class="prop">Over 9.5 Combined Strikeouts</p>
+      <p class="matchup"> · Chicago White Sox @ Detroit Tigers</p>
+      <div class="meta">
+        <span>Market -170 (implied 63.0%) <span class="tag good">clears</span></span>
+        <span class="lift pos">+6.3 pts vs base rate</span>
+        
+      </div>
+      <details class="reason"><summary>Why</summary><ul class="why"><li>Model: 69.3% chance of 10+ combined Ks (Sean Burke + Drew Anderson), priced at -170 (63.0% implied)</li></ul><ul class="watch"><li>Combined-strikeout picks aren&#x27;t in the confidence measurement suite yet -- brand new, treat as unproven.</li></ul></details>
+    </article>
+
+    <article class="card md big">
+      <div class="card-top">
+        <span class="pill md">Medium</span>
+        <span class="pct">68.1%</span>
+      </div>
+      <h3 class="player">Brett Bateman</h3>
+      <p class="prop">Over 0.5 Hits</p>
+      <p class="matchup">Toronto Blue Jays · New York Yankees @ Toronto Blue Jays</p>
+      <div class="meta">
+        <span>Market -190 (implied 65.5%) <span class="tag good">clears</span></span>
+        <span class="lift pos">+13.0 pts vs base rate</span>
+        
+      </div>
+      <details class="reason"><summary>Why</summary><ul class="why"><li>Projected 4.41 PA (slot 1, 3.28-run implied team total)</li><li>Platoon: L bat vs LHP (unfavorable)</li><li>Opposing SP ERA 3.79</li><li>Market implied team total 3.28 runs (league avg 4.245; line 3.5, game total 6.5)</li><li>Dome — weather neutral</li><li>Opposing bullpen fatigue: 6/14 relievers over 60 pitches in L7 (tired pen — favorable late)</li></ul><ul class="watch"><li>L7 sample is thin (0 PA) — treat recent-form read with caution</li></ul></details>
+    </article>
+
+    <article class="card md big">
+      <div class="card-top">
+        <span class="pill md">Medium</span>
+        <span class="pct">62.5%</span>
+      </div>
+      <h3 class="player">Colt Keith</h3>
+      <p class="prop">Over 0.5 Hits</p>
+      <p class="matchup">Detroit Tigers · Chicago White Sox @ Detroit Tigers</p>
+      <div class="meta">
+        <span>Market -165 (implied 62.3%) <span class="tag good">clears</span></span>
+        <span class="lift pos">+7.4 pts vs base rate</span>
+        <span class="sample">113 sample · grade A</span>
+      </div>
+      <details class="reason"><summary>Why</summary><ul class="why"><li>Projected 4.21 PA (slot 4, 3.98-run implied team total)</li><li>Platoon: L bat vs RHP (favorable)</li><li>Opposing SP ERA 3.08</li><li>Market implied team total 3.98 runs (league avg 4.245; line 3.5, game total 8)</li><li>Wind blowing OUT (9mph) — HR boost</li><li>Opposing bullpen fatigue: 4/13 relievers over 60 pitches in L7 (fresh pen)</li><li>Sharp money fading Detroit Tigers (money% -10 pts vs ticket%)</li></ul><ul class="watch"><li>L7 sample is thin (0 PA) — treat recent-form read with caution</li><li>Public heavy on Detroit Tigers (money% trails tickets% by 10 pts) — sharp money is fading this side</li></ul></details>
+    </article>
+
+    <article class="card md">
+      <div class="card-top">
+        <span class="pill md">Medium</span>
+        <span class="pct">60.0%</span>
+      </div>
+      <h3 class="player">Michael Soroka</h3>
+      <p class="prop">Over 15.5 Outs Recorded</p>
+      <p class="matchup">Arizona Diamondbacks · Arizona Diamondbacks @ Atlanta Braves</p>
+      <div class="meta">
+        <span>Market -144 (implied 55.1%) <span class="tag good">clears</span></span>
+        <span class="lift pos">+6.8 pts vs base rate</span>
+        <span class="sample">16 sample · grade A</span>
+      </div>
+      <details class="reason"><summary>Why</summary><ul class="why"><li>Recorded 16+ outs (5.1 IP) in 60.0% of his last 16 real starts (league 53.2%, avg 16.19 outs/start)</li></ul></details>
+    </article>
+
+    <article class="card md">
+      <div class="card-top">
+        <span class="pill md">Medium</span>
+        <span class="pct">56.5%</span>
+      </div>
+      <h3 class="player">Bryce Elder</h3>
+      <p class="prop">Over 17.5 Outs Recorded</p>
+      <p class="matchup">Atlanta Braves · Arizona Diamondbacks @ Atlanta Braves</p>
+      <div class="meta">
+        <span>Market -106 (implied 48.1%) <span class="tag good">clears</span></span>
+        <span class="lift pos">+16.9 pts vs base rate</span>
+        <span class="sample">23 sample · grade A</span>
+      </div>
+      <details class="reason"><summary>Why</summary><ul class="why"><li>Recorded 18+ outs (6.0 IP) in 56.5% of his last 23 real starts (league 39.6%, avg 17.17 outs/start)</li></ul></details>
+    </article>
+
+    <article class="card md">
+      <div class="card-top">
+        <span class="pill md">Medium</span>
+        <span class="pct">53.4%</span>
+      </div>
+      <h3 class="player">Baltimore Orioles @ Tampa Bay Rays — 1st Inning (Both Teams)</h3>
+      <p class="prop">No runs in the 1st (both teams)</p>
+      <p class="matchup"> · Baltimore Orioles @ Tampa Bay Rays</p>
+      <div class="meta">
+        <span>Market -111 (implied 49.6%) <span class="tag good">clears</span></span>
+        <span class="lift pos">+3.5 pts vs base rate</span>
+        <span class="sample">21 sample · grade A</span>
+      </div>
+      <details class="reason"><summary>Why</summary><ul class="why"><li>Tampa Bay Rays scores off Trevor Rogers (away SP) in the bottom 1st: 25.1% (shrunk, 21 starts)</li><li>Baltimore Orioles scores off Freddy Peralta (home SP) in the top 1st: 28.8% (shrunk, 22 starts)</li><li>This is the real both-teams NRFI/YRFI market -- combines both starters&#x27; halves of the 1st, not a one-sided team read.</li></ul></details>
+    </article>
+
+    <article class="card md">
+      <div class="card-top">
+        <span class="pill md">Medium</span>
+        <span class="pct">53.3%</span>
+      </div>
+      <h3 class="player">New York Yankees @ Toronto Blue Jays — 1st Inning (Both Teams)</h3>
+      <p class="prop">A run scores in the 1st (either team)</p>
+      <p class="matchup"> · New York Yankees @ Toronto Blue Jays</p>
+      <div class="meta">
+        <span>Market +142 (implied 38.9%) <span class="tag good">clears</span></span>
+        <span class="lift pos">+3.2 pts vs base rate</span>
+        <span class="sample">21 sample · grade A</span>
+      </div>
+      <details class="reason"><summary>Why</summary><ul class="why"><li>Toronto Blue Jays scores off Ryan Weathers (away SP) in the bottom 1st: 32.8% (shrunk, 22 starts)</li><li>New York Yankees scores off Dylan Cease (home SP) in the top 1st: 30.5% (shrunk, 21 starts)</li><li>This is the real both-teams NRFI/YRFI market -- combines both starters&#x27; halves of the 1st, not a one-sided team read.</li></ul></details>
+    </article>
+
+    <article class="card md">
+      <div class="card-top">
+        <span class="pill md">Medium</span>
+        <span class="pct">20.7%</span>
+      </div>
+      <h3 class="player">Fernando Tatis Jr.</h3>
+      <p class="prop">To Steal a Base</p>
+      <p class="matchup">San Diego Padres · San Diego Padres @ Cleveland Guardians</p>
+      <div class="meta">
+        <span>Market +520 (implied 16.1%) <span class="tag good">clears</span></span>
+        
+        <span class="sample">122 sample · grade A</span>
+      </div>
+      <details class="reason"><summary>Why</summary><ul class="why"><li>Sprint speed 28.9ft/s (league ~27.0)</li><li>Opposing catcher pop time 1.94s to 2B (league ~2.0s)</li><li>On-base ability: wOBA 0.334 (league ~0.313) — gates how often he&#x27;s on first to run at all</li></ul></details>
+    </article>
+    </div>
+  </section>
+
+  <section class="stack">
+    <div class="section-head"><h2>Moonshots</h2><span class="section-note">home-run bets, ranked high → low confidence</span></div>
+    <div class="grid">
+      
+    <article class="card hi">
+      <div class="card-top">
+        <span class="pill hi">High</span>
+        <span class="pct">19.1%</span>
+      </div>
+      <h3 class="player">Munetaka Murakami</h3>
+      <p class="prop">Home Run</p>
+      <p class="matchup">Chicago White Sox · Chicago White Sox @ Detroit Tigers</p>
+      <div class="meta">
+        <span>Market +370 (implied 21.3%) <span class="tag bad">misses</span></span>
+        <span class="lift pos">+8.8 pts vs base rate</span>
+        <span class="sample">87 sample · grade A</span>
+      </div>
+      <details class="reason"><summary>Why</summary><ul class="why"><li>19.1% real model probability to homer tonight vs his own 10.3% season base rate (+8.8 points) -- built on 87 real batter-games, reliability grade A</li></ul></details>
+    </article>
+
+    <article class="card hi">
+      <div class="card-top">
+        <span class="pill hi">High</span>
+        <span class="pct">17.8%</span>
+      </div>
+      <h3 class="player">Matt Olson</h3>
+      <p class="prop">Home Run</p>
+      <p class="matchup">Atlanta Braves · Arizona Diamondbacks @ Atlanta Braves</p>
+      <div class="meta">
+        <span>Market +290 (implied 25.6%) <span class="tag bad">misses</span></span>
+        <span class="lift pos">+7.5 pts vs base rate</span>
+        <span class="sample">123 sample · grade A</span>
+      </div>
+      <details class="reason"><summary>Why</summary><ul class="why"><li>17.8% real model probability to homer tonight vs his own 10.3% season base rate (+7.5 points) -- built on 123 real batter-games, reliability grade A</li></ul></details>
+    </article>
+
+    <article class="card hi">
+      <div class="card-top">
+        <span class="pill hi">High</span>
+        <span class="pct">17.8%</span>
+      </div>
+      <h3 class="player">Junior Caminero</h3>
+      <p class="prop">Home Run</p>
+      <p class="matchup">Tampa Bay Rays · Baltimore Orioles @ Tampa Bay Rays</p>
+      <div class="meta">
+        <span>Market +255 (implied 28.2%) <span class="tag bad">misses</span></span>
+        <span class="lift pos">+7.4 pts vs base rate</span>
+        <span class="sample">122 sample · grade A</span>
+      </div>
+      <details class="reason"><summary>Why</summary><ul class="why"><li>17.8% real model probability to homer tonight vs his own 10.3% season base rate (+7.4 points) -- built on 122 real batter-games, reliability grade A</li></ul></details>
+    </article>
+
+    <article class="card lo">
+      <div class="card-top">
+        <span class="pill lo">Low</span>
+        <span class="pct">17.2%</span>
+      </div>
+      <h3 class="player">Christian Encarnacion-Strand</h3>
+      <p class="prop">Home Run</p>
+      <p class="matchup">Baltimore Orioles · Baltimore Orioles @ Tampa Bay Rays</p>
+      <div class="meta">
+        <span>Market +390 (implied 20.4%) <span class="tag bad">misses</span></span>
+        <span class="lift pos">+6.9 pts vs base rate</span>
+        <span class="sample">22 sample · grade D</span>
+      </div>
+      <details class="reason"><summary>Why</summary><ul class="why"><li>17.2% real model probability to homer tonight vs his own 10.3% season base rate (+6.9 points) -- built on 22 real batter-games, reliability grade D</li></ul></details>
+    </article>
+
+    <article class="card hi">
+      <div class="card-top">
+        <span class="pill hi">High</span>
+        <span class="pct">15.7%</span>
+      </div>
+      <h3 class="player">Dillon Dingler</h3>
+      <p class="prop">Home Run</p>
+      <p class="matchup">Detroit Tigers · Chicago White Sox @ Detroit Tigers</p>
+      <div class="meta">
+        <span>Market +490 (implied 17.0%) <span class="tag bad">misses</span></span>
+        <span class="lift pos">+5.4 pts vs base rate</span>
+        <span class="sample">114 sample · grade A</span>
+      </div>
+      <details class="reason"><summary>Why</summary><ul class="why"><li>15.7% real model probability to homer tonight vs his own 10.3% season base rate (+5.4 points) -- built on 114 real batter-games, reliability grade A</li></ul></details>
+    </article>
+    </div>
+  </section>
+</main>
+<footer>No sportsbook odds were used to generate these probabilities where no market price is shown. Verify current lines and availability before betting.</footer>
+</body>
+</html>

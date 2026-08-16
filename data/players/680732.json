@@ -80,6 +80,96 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-16",
+      "evaluations": [
+        {
+          "prop": "Over 5.5 Strikeouts",
+          "type": "pitcher",
+          "score": 46.3,
+          "notable_signals": 1,
+          "matchup": "Chicago White Sox @ Detroit Tigers",
+          "game_pk": 824236,
+          "team": "Chicago White Sox",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_k_pct": 56.0,
+            "same_hand_ratio": 61.1111,
+            "l14_k_pct": 68.8235,
+            "env_neutral": 50.0,
+            "ump_accuracy": 74.4061,
+            "ump_k_pct": -0.012,
+            "ump_bb_pct": -0.228
+          },
+          "hit_probability": 0.5891,
+          "raw_hit_probability": 0.5766,
+          "lift": 0.2111,
+          "reliability": "A",
+          "sample_n": 20,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 5.5,
+            "needs": 6
+          }
+        },
+        {
+          "prop": "Over 17.5 Outs Recorded",
+          "type": "pitcher",
+          "score": 47.8,
+          "notable_signals": 1,
+          "matchup": "Chicago White Sox @ Detroit Tigers",
+          "game_pk": 824236,
+          "team": "Chicago White Sox",
+          "side": "away",
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "outs_rate": 0.476,
+            "avg_outs_per_start": 16.6
+          },
+          "hit_probability": 0.476,
+          "raw_hit_probability": null,
+          "lift": 0.0802,
+          "reliability": "A",
+          "sample_n": 20,
+          "projection": {
+            "stat": "pitcher_outs",
+            "value": 17.5,
+            "needs": 18
+          }
+        },
+        {
+          "prop": "Over 9.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 55.0,
+          "notable_signals": 1,
+          "matchup": "Chicago White Sox @ Detroit Tigers",
+          "game_pk": 824236,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            680732,
+            623454
+          ],
+          "signals": {
+            "combined_k_edge": 0.0635
+          },
+          "hit_probability": 0.6932,
+          "raw_hit_probability": null,
+          "lift": 0.0635,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 9.5,
+            "needs": 10
+          }
+        }
+      ]
     }
   ]
 }

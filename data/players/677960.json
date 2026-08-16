@@ -81,6 +81,69 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-16",
+      "evaluations": [
+        {
+          "prop": "Over 4.5 Strikeouts",
+          "type": "pitcher",
+          "score": 42.6,
+          "notable_signals": 0,
+          "matchup": "New York Yankees @ Toronto Blue Jays",
+          "game_pk": 822774,
+          "team": "New York Yankees",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_k_pct": 26.0,
+            "same_hand_ratio": 5.5556,
+            "l14_k_pct": 48.8235,
+            "tto_penalty": -8.0,
+            "env_neutral": 50.0,
+            "ump_accuracy": 35.5485,
+            "ump_k_pct": -0.108,
+            "ump_bb_pct": 0.168
+          },
+          "hit_probability": 0.5927,
+          "raw_hit_probability": 0.5942,
+          "lift": 0.0537,
+          "reliability": "A",
+          "sample_n": 23,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 4.5,
+            "needs": 5
+          }
+        },
+        {
+          "prop": "Over 17.5 Outs Recorded",
+          "type": "pitcher",
+          "score": 35.5,
+          "notable_signals": 0,
+          "matchup": "New York Yankees @ Toronto Blue Jays",
+          "game_pk": 822774,
+          "team": "New York Yankees",
+          "side": "away",
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "outs_rate": 0.4267,
+            "avg_outs_per_start": 16.52
+          },
+          "hit_probability": 0.4267,
+          "raw_hit_probability": null,
+          "lift": 0.0309,
+          "reliability": "A",
+          "sample_n": 23,
+          "projection": {
+            "stat": "pitcher_outs",
+            "value": 17.5,
+            "needs": 18
+          }
+        }
+      ]
     }
   ]
 }

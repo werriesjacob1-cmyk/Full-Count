@@ -60,6 +60,68 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-16",
+      "evaluations": [
+        {
+          "prop": "Over 4.5 Strikeouts",
+          "type": "pitcher",
+          "score": 43.4,
+          "notable_signals": 1,
+          "matchup": "Miami Marlins @ Cincinnati Reds",
+          "game_pk": 824477,
+          "team": "Cincinnati Reds",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_k_pct": 47.0,
+            "same_hand_ratio": 12.5,
+            "l14_k_pct": 75.2941,
+            "env_neutral": 50.0,
+            "ump_accuracy": 81.4674,
+            "ump_k_pct": 0.372,
+            "ump_bb_pct": 0.744
+          },
+          "hit_probability": 0.572,
+          "raw_hit_probability": 0.4931,
+          "lift": 0.033,
+          "reliability": "B",
+          "sample_n": 13,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 4.5,
+            "needs": 5
+          }
+        },
+        {
+          "prop": "Over 15.5 Outs Recorded",
+          "type": "pitcher",
+          "score": 30.3,
+          "notable_signals": 0,
+          "matchup": "Miami Marlins @ Cincinnati Reds",
+          "game_pk": 824477,
+          "team": "Cincinnati Reds",
+          "side": "home",
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "outs_rate": 0.4837,
+            "avg_outs_per_start": 15.38
+          },
+          "hit_probability": 0.4837,
+          "raw_hit_probability": null,
+          "lift": -0.0479,
+          "reliability": "B",
+          "sample_n": 13,
+          "projection": {
+            "stat": "pitcher_outs",
+            "value": 15.5,
+            "needs": 16
+          }
+        }
+      ]
     }
   ]
 }

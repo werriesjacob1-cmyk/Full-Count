@@ -448,6 +448,105 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-16",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 59.7,
+          "notable_signals": 1,
+          "matchup": "San Diego Padres @ Cleveland Guardians",
+          "game_pk": 824397,
+          "team": "San Diego Padres",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "sp_era_weak": 38.5714,
+            "park_hr_index": 69.0,
+            "season_barrel_pct": 6.0,
+            "lineup_slot": 37.5,
+            "bullpen_fatigue": 64.1026,
+            "bvp_ops": 4.0,
+            "platoon_barrel_pct": -1.52,
+            "platoon_xwoba": 0.06,
+            "opp_catcher_framing": 0.72,
+            "days_rest": 2.0,
+            "woba_ahead": 17.2727,
+            "woba_behind": 22.7273,
+            "team_total_move": 0.0,
+            "team_total_open": 0.0,
+            "getaway_day": -2.0,
+            "series_game": 2.0,
+            "sp_rp_ops_gap": 1.288,
+            "vs_rp_ops": 2.676,
+            "ump_k_pct": 0.876,
+            "ump_bb_pct": -0.456
+          },
+          "hit_probability": 0.6649,
+          "raw_hit_probability": 0.6627,
+          "lift": -0.0051,
+          "reliability": "A",
+          "sample_n": 82,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 0.0,
+          "notable_signals": 0,
+          "matchup": "San Diego Padres @ Cleveland Guardians",
+          "game_pk": 824397,
+          "team": "San Diego Padres",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0205
+          },
+          "hit_probability": 0.0205,
+          "raw_hit_probability": null,
+          "lift": -0.0291,
+          "reliability": "A",
+          "sample_n": 82,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 0.0,
+          "notable_signals": 0,
+          "matchup": "San Diego Padres @ Cleveland Guardians",
+          "game_pk": 824397,
+          "team": "San Diego Padres",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0044
+          },
+          "hit_probability": 0.0044,
+          "raw_hit_probability": null,
+          "lift": -0.0171,
+          "reliability": "A",
+          "sample_n": 82,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

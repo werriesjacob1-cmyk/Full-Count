@@ -73,6 +73,42 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-16",
+      "evaluations": [
+        {
+          "prop": "Over 4.5 Strikeouts",
+          "type": "pitcher",
+          "score": 54.7,
+          "notable_signals": 1,
+          "matchup": "Chicago White Sox @ Detroit Tigers",
+          "game_pk": 824236,
+          "team": "Detroit Tigers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_k_pct": 69.0,
+            "same_hand_ratio": 21.4286,
+            "l14_k_pct": 12.3529,
+            "env_neutral": 50.0,
+            "ump_accuracy": 74.4061,
+            "ump_k_pct": -0.012,
+            "ump_bb_pct": -0.228
+          },
+          "hit_probability": 0.5562,
+          "raw_hit_probability": 0.4172,
+          "lift": 0.0172,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 4.5,
+            "needs": 5
+          }
+        }
+      ]
     }
   ]
 }
