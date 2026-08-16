@@ -1,5 +1,5 @@
 MLB DAILY DATA PACKAGE V5 — 2026-08-16
-Generated : 2026-08-16  22:48:22
+Generated : 2026-08-16  23:45:21
 Season    : 2026
 Windows   : L3 2026-08-13→2026-08-15 | L7 2026-08-09→2026-08-15 | L14 2026-08-02→2026-08-15 | L30 2026-07-17→2026-08-15
 Sources   : FanGraphs | Statcast/Baseball Savant | MLB Stats API | UmpScorecards | FIC | Open-Meteo | Covers.com
@@ -60,7 +60,7 @@ Sources   : FanGraphs | Statcast/Baseball Savant | MLB Stats API | UmpScorecards
 
 ────────────────────────────────────────────────────────────
   Boston Red Sox (66-58)  @  Pittsburgh Pirates (61-65)
-  1:35 PM ET  |  PNC Park  |  Game Over
+  1:35 PM ET  |  PNC Park  |  Final
   Series: Game 3 of 3  🚌 GETAWAY DAY  📋 GAME 3 (full adjustment)
   HP Ump : Jonathan Parra
   SP Away: Patrick Sandoval  
@@ -179,8 +179,8 @@ Sources   : FanGraphs | Statcast/Baseball Savant | MLB Stats API | UmpScorecards
     9. Luis Torrens (R) — C  [proj ~585 PA/yr]
 
 ────────────────────────────────────────────────────────────
-  San Diego Padres (66-58)  @  Cleveland Guardians (60-64)
-  1:40 PM ET  |  Progressive Field  |  In Progress
+  San Diego Padres (67-58)  @  Cleveland Guardians (60-65)
+  1:40 PM ET  |  Progressive Field  |  Final
   Series: Game 3 of 3  🚌 GETAWAY DAY  📋 GAME 3 (full adjustment)
   HP Ump : Todd Tichenor
   SP Away: Casey Mize  
@@ -329,8 +329,8 @@ Sources   : FanGraphs | Statcast/Baseball Savant | MLB Stats API | UmpScorecards
     9. Miguel Amaya (R) — C  [proj ~585 PA/yr]
 
 ────────────────────────────────────────────────────────────
-  Colorado Rockies (49-74)  @  San Francisco Giants (51-72)
-  4:05 PM ET  |  Oracle Park  |  In Progress
+  Colorado Rockies (50-74)  @  San Francisco Giants (51-73)
+  4:05 PM ET  |  Oracle Park  |  Final
   Series: Game 3 of 3  🚌 GETAWAY DAY  📋 GAME 3 (full adjustment)
   HP Ump : Brian Walsh
   SP Away: Gabriel Hughes  
@@ -360,7 +360,7 @@ Sources   : FanGraphs | Statcast/Baseball Savant | MLB Stats API | UmpScorecards
 
 ────────────────────────────────────────────────────────────
   Texas Rangers (61-64)  @  Athletics (49-75)
-  4:05 PM ET  |  Sutter Health Park  |  Game Over
+  4:05 PM ET  |  Sutter Health Park  |  Final
   Series: Game 3 of 3  🚌 GETAWAY DAY  📋 GAME 3 (full adjustment)
   HP Ump : Malachi Moore
   SP Away: Cody Bradford  
@@ -419,8 +419,8 @@ Sources   : FanGraphs | Statcast/Baseball Savant | MLB Stats API | UmpScorecards
     9. Josh Lowe (L) — RF  [proj ~585 PA/yr]
 
 ────────────────────────────────────────────────────────────
-  Milwaukee Brewers (76-48)  @  Los Angeles Dodgers (74-50)
-  4:10 PM ET  |  UNIQLO Field at Dodger Stadium  |  In Progress
+  Milwaukee Brewers (77-48)  @  Los Angeles Dodgers (74-51)
+  4:10 PM ET  |  UNIQLO Field at Dodger Stadium  |  Final
   Series: Game 4 of 4  🚌 GETAWAY DAY
   HP Ump : Emil Jimenez
   SP Away: Logan Henderson  
@@ -450,7 +450,7 @@ Sources   : FanGraphs | Statcast/Baseball Savant | MLB Stats API | UmpScorecards
 
 ────────────────────────────────────────────────────────────
   Seattle Mariners (58-66)  @  Houston Astros (63-61)
-  7:20 PM ET  |  Daikin Park  |  Pre-Game
+  7:20 PM ET  |  Daikin Park  |  In Progress
   Series: Game 3 of 3  🚌 GETAWAY DAY  📋 GAME 3 (full adjustment)
   HP Ump : Tripp Gibson
   SP Away: Bryan Woo  
@@ -1038,15 +1038,15 @@ Sources   : FanGraphs | Statcast/Baseball Savant | MLB Stats API | UmpScorecards
   Edwin Jimenez        Arizona Diamondbacks @ Atlanta Braves        4 - 4                   
   Hunter Wendelstedt   New York Yankees @ Toronto Blue Jays         14 - 10                 
   Willie Traynor       Washington Nationals @ New York Mets         16 - 10                 
-  Todd Tichenor        San Diego Padres @ Cleveland Guardians       11 - 12                 
+  Todd Tichenor        San Diego Padres @ Cleveland Guardians       11 - 13                 
   Adam Beck            Chicago White Sox @ Detroit Tigers           11 - 10                 
   John Libka           Miami Marlins @ Cincinnati Reds              5 - 17                  
   Cory Blaser          Philadelphia Phillies @ Minnesota Twins      9 - 12                  
   Nate Tomlinson       St. Louis Cardinals @ Chicago Cubs           15 - 9                  
-  Brian Walsh          Colorado Rockies @ San Francisco Giants      14 - 9                  
+  Brian Walsh          Colorado Rockies @ San Francisco Giants      15 - 9                  
   Malachi Moore        Texas Rangers @ Athletics                    14 - 10                 
   Ramon De Jesus       Kansas City Royals @ Los Angeles Angels      8 - 13                  
-  Emil Jimenez         Milwaukee Brewers @ Los Angeles Dodgers      15 - 5                  
+  Emil Jimenez         Milwaukee Brewers @ Los Angeles Dodgers      16 - 5                  
   Tripp Gibson         Seattle Mariners @ Houston Astros            9 - 12                  
 
 
@@ -1194,181 +1194,169 @@ Sources   : FanGraphs | Statcast/Baseball Savant | MLB Stats API | UmpScorecards
 ════════════════════════════════════════════════════════════════════════
 
   Source: MLB Stats API official batter-vs-pitcher history (min 3 career AB).
-                  Batter           Pitcher                                  Matchup  AB  H  HR    AVG    OPS  K  BB
-1        Julio Rodríguez      Hunter Brown        Seattle Mariners @ Houston Astros  24  8   1   .333   .927  8   2
-2    Pete Crow-Armstrong    Hunter Dobbins       St. Louis Cardinals @ Chicago Cubs  19  5   0   .263   .631  8   0
-3           Seiya Suzuki    Hunter Dobbins       St. Louis Cardinals @ Chicago Cubs  19  5   0   .263   .631  8   0
-4           Alex Bregman    Hunter Dobbins       St. Louis Cardinals @ Chicago Cubs  19  5   0   .263   .631  8   0
-5               Ian Happ    Hunter Dobbins       St. Louis Cardinals @ Chicago Cubs  19  5   0   .263   .631  8   0
-6           Nico Hoerner    Hunter Dobbins       St. Louis Cardinals @ Chicago Cubs  19  5   0   .263   .631  8   0
-7          Pedro Ramírez    Hunter Dobbins       St. Louis Cardinals @ Chicago Cubs  19  5   0   .263   .631  8   0
-8         Dansby Swanson    Hunter Dobbins       St. Louis Cardinals @ Chicago Cubs  19  5   0   .263   .631  8   0
-9       Michael Conforto    Hunter Dobbins       St. Louis Cardinals @ Chicago Cubs  19  5   0   .263   .631  8   0
-10          Miguel Amaya    Hunter Dobbins       St. Louis Cardinals @ Chicago Cubs  19  5   0   .263   .631  8   0
-11         Andrew Vaughn      Tarik Skubal  Milwaukee Brewers @ Los Angeles Dodgers  19  4   0   .211   .461  8   1
-12           Cal Raleigh      Hunter Brown        Seattle Mariners @ Houston Astros  18  3   0   .167   .485  6   4
-13          Ryan McMahon       Dylan Cease     New York Yankees @ Toronto Blue Jays  16  6   2   .375  1.202  3   1
-14          Gary Sánchez      Tarik Skubal  Milwaukee Brewers @ Los Angeles Dodgers  16  2   0   .125   .451  7   2
-15       Randy Arozarena      Hunter Brown        Seattle Mariners @ Houston Astros  16  1   0   .063   .292  7   1
-16            A.J. Ewing        Jake Irvin     Washington Nationals @ New York Mets  15  5   1   .333  1.108  5   1
-17      Francisco Lindor        Jake Irvin     Washington Nationals @ New York Mets  15  5   1   .333  1.108  5   1
-18           Bo Bichette        Jake Irvin     Washington Nationals @ New York Mets  15  5   1   .333  1.108  5   1
-19          Carson Benge        Jake Irvin     Washington Nationals @ New York Mets  15  5   1   .333  1.108  5   1
-20           Jared Young        Jake Irvin     Washington Nationals @ New York Mets  15  5   1   .333  1.108  5   1
-21       Luis Robert Jr.        Jake Irvin     Washington Nationals @ New York Mets  15  5   1   .333  1.108  5   1
-22            Brett Baty        Jake Irvin     Washington Nationals @ New York Mets  15  5   1   .333  1.108  5   1
-23         Jorge Polanco        Jake Irvin     Washington Nationals @ New York Mets  15  5   1   .333  1.108  5   1
-24          Luis Torrens        Jake Irvin     Washington Nationals @ New York Mets  15  5   1   .333  1.108  5   1
-25         Nolan Arenado       Bryce Elder    Arizona Diamondbacks @ Atlanta Braves  14  3   0   .214   .500  4   0
-26          Heliot Ramos       Dylan Cease     New York Yankees @ Toronto Blue Jays  14  3   0   .214   .527  7   2
-27              Jo Adell        Casey Mize   San Diego Padres @ Cleveland Guardians  14  0   0   .000   .000  4   0
-28          José Ramírez        Casey Mize   San Diego Padres @ Cleveland Guardians  13  6   2   .462  1.423  1   1
-29           Jose Altuve         Bryan Woo        Seattle Mariners @ Houston Astros  13  3   0   .231   .517  4   1
-30      Christian Walker         Bryan Woo        Seattle Mariners @ Houston Astros  13  5   1   .385  1.198  4   1
-31         Freddy Fermin      Tanner Bibee   San Diego Padres @ Cleveland Guardians  12  5   1   .417  1.129  2   1
-32            Otto Lopez       Nick Lodolo          Miami Marlins @ Cincinnati Reds  12  2   0   .167   .334  1   0
-33           Steven Kwan        Casey Mize   San Diego Padres @ Cleveland Guardians  11  2   0   .182   .364  1   0
-34          Luis Rengifo      Tanner Bibee   San Diego Padres @ Cleveland Guardians  11  6   1   .545  1.454  1   0
-35         JJ Wetherholt    Edward Cabrera       St. Louis Cardinals @ Chicago Cubs  11  5   1   .455  1.389  3   3
-36          Iván Herrera    Edward Cabrera       St. Louis Cardinals @ Chicago Cubs  11  5   1   .455  1.389  3   3
-37         Alec Burleson    Edward Cabrera       St. Louis Cardinals @ Chicago Cubs  11  5   1   .455  1.389  3   3
-38         Jordan Walker    Edward Cabrera       St. Louis Cardinals @ Chicago Cubs  11  5   1   .455  1.389  3   3
-39           Joshua Báez    Edward Cabrera       St. Louis Cardinals @ Chicago Cubs  11  5   1   .455  1.389  3   3
-40         Nathan Church    Edward Cabrera       St. Louis Cardinals @ Chicago Cubs  11  5   1   .455  1.389  3   3
-41            Masyn Winn    Edward Cabrera       St. Louis Cardinals @ Chicago Cubs  11  5   1   .455  1.389  3   3
-42          Jimmy Crooks    Edward Cabrera       St. Louis Cardinals @ Chicago Cubs  11  5   1   .455  1.389  3   3
-43          Blaze Jordan    Edward Cabrera       St. Louis Cardinals @ Chicago Cubs  11  5   1   .455  1.389  3   3
-44            Max Kepler       Bryce Elder    Arizona Diamondbacks @ Atlanta Braves  10  0   0   .000   .091  2   1
-45          Austin Wells       Dylan Cease     New York Yankees @ Toronto Blue Jays  10  0   0   .000   .000  4   0
-46        Xavier Edwards       Nick Lodolo          Miami Marlins @ Cincinnati Reds  10  2   0   .200   .685  3   3
-47           Jeremy Peña         Bryan Woo        Seattle Mariners @ Houston Astros  10  2   0   .200   .400  4   0
-48       Jackson Chourio      Tarik Skubal  Milwaukee Brewers @ Los Angeles Dodgers   9  3   0   .333   .777  3   0
-49         Isaac Paredes         Bryan Woo        Seattle Mariners @ Houston Astros   9  1   0   .111   .311  3   1
-50           Yainer Diaz         Bryan Woo        Seattle Mariners @ Houston Astros   9  0   0   .000   .000  1   0
-51       Dominic Canzone      Hunter Brown        Seattle Mariners @ Houston Astros   9  3   0   .333   .889  4   0
-52         Dominic Smith    Michael Soroka    Arizona Diamondbacks @ Atlanta Braves   8  2   0   .250   .500  2   0
-53         Ernie Clement     Ryan Weathers     New York Yankees @ Toronto Blue Jays   8  2   1   .250   .875  0   0
-54       Luis García Jr.       Dylan Cease     New York Yankees @ Toronto Blue Jays   8  1   0   .125   .250  3   0
-55        Nathaniel Lowe        Casey Mize   San Diego Padres @ Cleveland Guardians   8  2   0   .250   .750  2   0
-56             Ty France      Tanner Bibee   San Diego Padres @ Cleveland Guardians   8  2   1   .250   .958  3   1
-57     Spencer Torkelson        Sean Burke       Chicago White Sox @ Detroit Tigers   8  1   0   .125   .375  3   0
-58             TJ Friedl        Eury Pérez          Miami Marlins @ Cincinnati Reds   8  4   0   .500  1.375  1   0
-59          Bryson Stott       Dean Kremer  Philadelphia Phillies @ Minnesota Twins   8  3   0   .375  1.000  1   0
-60          Bryce Harper       Dean Kremer  Philadelphia Phillies @ Minnesota Twins   8  1   0   .125   .347  1   1
-61           Luis Arraez       Dean Kremer  Philadelphia Phillies @ Minnesota Twins   8  1   0   .125   .347  0   1
-62       Lawrence Butler     Cody Bradford                Texas Rangers @ Athletics   8  4   1   .500  1.556  0   1
-63     William Contreras      Tarik Skubal  Milwaukee Brewers @ Los Angeles Dodgers   8  3   0   .375   .944  0   1
-64            Joey Ortiz      Tarik Skubal  Milwaukee Brewers @ Los Angeles Dodgers   8  0   0   .000   .000  5   0
-65      LaMonte Wade Jr.         Bryan Woo        Seattle Mariners @ Houston Astros   8  1   0   .125   .472  3   1
-66         Drake Baldwin    Michael Soroka    Arizona Diamondbacks @ Atlanta Braves   7  2   1   .286  1.089  0   0
-67          Austin Riley    Michael Soroka    Arizona Diamondbacks @ Atlanta Braves   7  2   0   .286   .572  3   0
-68        Corbin Carroll       Bryce Elder    Arizona Diamondbacks @ Atlanta Braves   7  2   0   .286   .946  2   1
-69           Ketel Marte       Bryce Elder    Arizona Diamondbacks @ Atlanta Braves   7  1   0   .143   .536  2   1
-70            Colt Keith        Sean Burke       Chicago White Sox @ Detroit Tigers   7  3   1   .429  1.357  0   1
-71        Zach McKinstry        Sean Burke       Chicago White Sox @ Detroit Tigers   7  2   0   .286   .572  0   0
-72        Eugenio Suárez        Eury Pérez          Miami Marlins @ Cincinnati Reds   7  3   0   .429  1.000  0   0
-73            Zack Gelof     Cody Bradford                Texas Rangers @ Athletics   7  0   0   .000   .125  3   1
-74             Zach Neto      Noah Cameron  Kansas City Royals @ Los Angeles Angels   7  0   0   .000   .300  4   3
-75            Mike Trout      Noah Cameron  Kansas City Royals @ Los Angeles Angels   7  0   0   .000   .300  4   3
-76        Vaughn Grissom      Noah Cameron  Kansas City Royals @ Los Angeles Angels   7  0   0   .000   .300  4   3
-77             Jose Siri      Noah Cameron  Kansas City Royals @ Los Angeles Angels   7  0   0   .000   .300  4   3
-78          Wade Meckler      Noah Cameron  Kansas City Royals @ Los Angeles Angels   7  0   0   .000   .300  4   3
-79         Denzer Guzman      Noah Cameron  Kansas City Royals @ Los Angeles Angels   7  0   0   .000   .300  4   3
-80         Oswald Peraza      Noah Cameron  Kansas City Royals @ Los Angeles Angels   7  0   0   .000   .300  4   3
-81       Travis d'Arnaud      Noah Cameron  Kansas City Royals @ Los Angeles Angels   7  0   0   .000   .300  4   3
-82             Josh Lowe      Noah Cameron  Kansas City Royals @ Los Angeles Angels   7  0   0   .000   .300  4   3
-83            Yandy Díaz     Trevor Rogers       Baltimore Orioles @ Tampa Bay Rays   6  1   0   .167   .334  1   0
-84       Jonathan Aranda     Trevor Rogers       Baltimore Orioles @ Tampa Bay Rays   6  1   0   .167   .334  1   0
-85       Junior Caminero     Trevor Rogers       Baltimore Orioles @ Tampa Bay Rays   6  1   0   .167   .334  1   0
-86           Ryan Vilade     Trevor Rogers       Baltimore Orioles @ Tampa Bay Rays   6  1   0   .167   .334  1   0
-87      Chandler Simpson     Trevor Rogers       Baltimore Orioles @ Tampa Bay Rays   6  1   0   .167   .334  1   0
-88          Jonny DeLuca     Trevor Rogers       Baltimore Orioles @ Tampa Bay Rays   6  1   0   .167   .334  1   0
-89           Jorge Mateo     Trevor Rogers       Baltimore Orioles @ Tampa Bay Rays   6  1   0   .167   .334  1   0
-90           Nick Fortes     Trevor Rogers       Baltimore Orioles @ Tampa Bay Rays   6  1   0   .167   .334  1   0
-91          Taylor Walls     Trevor Rogers       Baltimore Orioles @ Tampa Bay Rays   6  1   0   .167   .334  1   0
-92     Michael Harris II    Michael Soroka    Arizona Diamondbacks @ Atlanta Braves   6  3   0   .500  1.071  0   1
-93       Geraldo Perdomo       Bryce Elder    Arizona Diamondbacks @ Atlanta Braves   6  2   0   .333   .666  1   0
-94        Kazuma Okamoto     Ryan Weathers     New York Yankees @ Toronto Blue Jays   6  2   1   .333  1.166  2   0
-95              Ben Rice       Dylan Cease     New York Yankees @ Toronto Blue Jays   6  1   1   .167   .834  2   0
-96        Gleyber Torres        Sean Burke       Chicago White Sox @ Detroit Tigers   6  1   0   .167   .334  1   0
-97       Elly De La Cruz        Eury Pérez          Miami Marlins @ Cincinnati Reds   6  0   0   .000   .250  3   2
-98       Agustín Ramírez       Nick Lodolo          Miami Marlins @ Cincinnati Reds   6  2   0   .333   .762  1   1
-99        Wyatt Langford       Jacob Lopez                Texas Rangers @ Athletics   6  0   0   .000   .455  1   5
-100       Gabriel Moreno       Bryce Elder    Arizona Diamondbacks @ Atlanta Braves   5  2   0   .400   .800  0   0
-101      George Springer     Ryan Weathers     New York Yankees @ Toronto Blue Jays   5  3   2   .600  2.467  1   1
-102          Myles Straw     Ryan Weathers     New York Yankees @ Toronto Blue Jays   5  1   0   .200   .400  2   0
-103            CJ Abrams   Christian Scott     Washington Nationals @ New York Mets   5  1   0   .200   .533  1   0
-104       Abimelec Ortiz   Christian Scott     Washington Nationals @ New York Mets   5  1   0   .200   .533  1   0
-105          Dylan Crews   Christian Scott     Washington Nationals @ New York Mets   5  1   0   .200   .533  1   0
-106          Daylen Lile   Christian Scott     Washington Nationals @ New York Mets   5  1   0   .200   .533  1   0
-107          Brady House   Christian Scott     Washington Nationals @ New York Mets   5  1   0   .200   .533  1   0
-108         Jorbit Vivas   Christian Scott     Washington Nationals @ New York Mets   5  1   0   .200   .533  1   0
-109      Andrés Chaparro   Christian Scott     Washington Nationals @ New York Mets   5  1   0   .200   .533  1   0
-110         Keibert Ruiz   Christian Scott     Washington Nationals @ New York Mets   5  1   0   .200   .533  1   0
-111          Jacob Young   Christian Scott     Washington Nationals @ New York Mets   5  1   0   .200   .533  1   0
-112         Rhys Hoskins        Casey Mize   San Diego Padres @ Cleveland Guardians   5  0   0   .000   .167  0   1
-113       Brayan Rocchio        Casey Mize   San Diego Padres @ Cleveland Guardians   5  3   0   .600  1.867  1   1
-114        Manny Machado      Tanner Bibee   San Diego Padres @ Cleveland Guardians   5  2   0   .400   .800  0   0
-115       Dillon Dingler        Sean Burke       Chicago White Sox @ Detroit Tigers   5  2   0   .400  1.000  1   0
-116          Javier Báez        Sean Burke       Chicago White Sox @ Detroit Tigers   5  1   0   .200   .400  0   0
-117        J.T. Realmuto       Dean Kremer  Philadelphia Phillies @ Minnesota Twins   5  1   0   .200   .400  2   0
-118       Darell Hernaiz     Cody Bradford                Texas Rangers @ Athletics   5  2   0   .400   .800  1   0
-119          Josh Naylor      Hunter Brown        Seattle Mariners @ Houston Astros   5  2   1   .400  1.500  1   1
-120           Matt Olson    Michael Soroka    Arizona Diamondbacks @ Atlanta Braves   4  1   0   .250   .900  1   1
-121     Mike Yastrzemski    Michael Soroka    Arizona Diamondbacks @ Atlanta Braves   4  1   0   .250  1.150  1   1
-122         Ozzie Albies    Michael Soroka    Arizona Diamondbacks @ Atlanta Braves   4  0   0   .000   .000  0   0
-123       Andrés Giménez     Ryan Weathers     New York Yankees @ Toronto Blue Jays   4  1   0   .250   .650  0   0
-124       José Caballero       Dylan Cease     New York Yankees @ Toronto Blue Jays   4  0   0   .000   .000  0   0
-125       Chase DeLauter        Casey Mize   San Diego Padres @ Cleveland Guardians   4  0   0   .000   .000  1   0
-126     Jake Cronenworth      Tanner Bibee   San Diego Padres @ Cleveland Guardians   4  2   0   .500  1.100  0   1
-127      Xander Bogaerts      Tanner Bibee   San Diego Padres @ Cleveland Guardians   4  1   0   .250   .700  0   0
-128       Michael Toglia        Eury Pérez          Miami Marlins @ Cincinnati Reds   4  0   0   .000   .200  2   1
-129          Matt McLain        Eury Pérez          Miami Marlins @ Cincinnati Reds   4  1   1   .250  1.400  1   0
-130         Esteury Ruiz       Nick Lodolo          Miami Marlins @ Cincinnati Reds   4  0   0   .000   .200  1   0
-131        Brandon Marsh       Dean Kremer  Philadelphia Phillies @ Minnesota Twins   4  1   0   .250   .900  2   1
-132        Rafael Devers    Gabriel Hughes  Colorado Rockies @ San Francisco Giants   4  3   1   .750  2.500  0   0
-133         Jacob Wilson     Cody Bradford                Texas Rangers @ Athletics   4  0   0   .000   .000  0   0
-134       Alika Williams     Cody Bradford                Texas Rangers @ Athletics   4  0   0   .000   .000  4   0
-135        Carter Jensen      Ryan Johnson  Kansas City Royals @ Los Angeles Angels   4  1   0   .250   .650  1   0
-136       Bobby Witt Jr.      Ryan Johnson  Kansas City Royals @ Los Angeles Angels   4  1   0   .250   .650  1   0
-137       Jac Caglianone      Ryan Johnson  Kansas City Royals @ Los Angeles Angels   4  1   0   .250   .650  1   0
-138       Salvador Perez      Ryan Johnson  Kansas City Royals @ Los Angeles Angels   4  1   0   .250   .650  1   0
-139       Michael Massey      Ryan Johnson  Kansas City Royals @ Los Angeles Angels   4  1   0   .250   .650  1   0
-140          Nick Loftin      Ryan Johnson  Kansas City Royals @ Los Angeles Angels   4  1   0   .250   .650  1   0
-141        Isaac Collins      Ryan Johnson  Kansas City Royals @ Los Angeles Angels   4  1   0   .250   .650  1   0
-142            John Rave      Ryan Johnson  Kansas City Royals @ Los Angeles Angels   4  1   0   .250   .650  1   0
-143           Kyle Isbel      Ryan Johnson  Kansas City Royals @ Los Angeles Angels   4  1   0   .250   .650  1   0
-144       Yordan Alvarez         Bryan Woo        Seattle Mariners @ Houston Astros   4  2   1   .500  1.850  2   1
-145         Jared Triolo  Patrick Sandoval      Boston Red Sox @ Pittsburgh Pirates   3  0   0   .000   .000  2   0
-146       Bryan Reynolds  Patrick Sandoval      Boston Red Sox @ Pittsburgh Pirates   3  0   0   .000   .000  1   0
-147         Brandon Lowe  Patrick Sandoval      Boston Red Sox @ Pittsburgh Pirates   3  1   1   .333  1.666  2   0
-148          Jake Mangum  Patrick Sandoval      Boston Red Sox @ Pittsburgh Pirates   3  1   0   .333   .666  0   0
-149         James McCann       Bryce Elder    Arizona Diamondbacks @ Atlanta Braves   3  1   0   .333   .666  0   0
-150        Brett Bateman     Ryan Weathers     New York Yankees @ Toronto Blue Jays   3  0   0   .000   .000  1   0
-151          Daz Cameron     Ryan Weathers     New York Yankees @ Toronto Blue Jays   3  1   0   .333  1.000  1   0
-152        Trent Grisham       Dylan Cease     New York Yankees @ Toronto Blue Jays   3  1   0   .333   .933  1   2
-153       Travis Bazzana        Casey Mize   San Diego Padres @ Cleveland Guardians   3  0   0   .000   .000  0   0
-154         Gavin Sheets      Tanner Bibee   San Diego Padres @ Cleveland Guardians   3  3   2  1.000  4.333  0   0
-155    Munetaka Murakami     Drew Anderson       Chicago White Sox @ Detroit Tigers   3  0   0   .000   .000  2   0
-156    Colson Montgomery     Drew Anderson       Chicago White Sox @ Detroit Tigers   3  2   1   .667  2.334  1   0
-157       Tristan Peters     Drew Anderson       Chicago White Sox @ Detroit Tigers   3  2   0   .667  1.750  0   1
-158          Sal Stewart        Eury Pérez          Miami Marlins @ Cincinnati Reds   3  2   1   .667  2.667  0   0
-159       Ke'Bryan Hayes        Eury Pérez          Miami Marlins @ Cincinnati Reds   3  0   0   .000   .000  2   0
-160        Javier Sanoja       Nick Lodolo          Miami Marlins @ Cincinnati Reds   3  1   0   .333   .666  0   0
-161         Byron Buxton    Andrew Painter  Philadelphia Phillies @ Minnesota Twins   3  0   0   .000   .000  2   0
-162            Josh Bell    Andrew Painter  Philadelphia Phillies @ Minnesota Twins   3  1   0   .333   .666  0   0
-163         Kody Clemens    Andrew Painter  Philadelphia Phillies @ Minnesota Twins   3  2   1   .667  2.334  0   0
-164       Kyle Schwarber       Dean Kremer  Philadelphia Phillies @ Minnesota Twins   3  0   0   .000   .333  1   2
-165            Alec Bohm       Dean Kremer  Philadelphia Phillies @ Minnesota Twins   3  1   1   .333  1.666  1   0
-166         Edmundo Sosa       Dean Kremer  Philadelphia Phillies @ Minnesota Twins   3  0   0   .000   .000  3   0
-167          Henry Bolte     Cody Bradford                Texas Rangers @ Athletics   3  2   0   .667  1.334  0   0
-168        Brandon Nimmo       Jacob Lopez                Texas Rangers @ Athletics   3  1   0   .333   .833  1   1
-169          Jake Burger       Jacob Lopez                Texas Rangers @ Athletics   3  1   0   .333   .904  0   2
-170           Elias Díaz       Jacob Lopez                Texas Rangers @ Athletics   3  0   0   .000   .000  2   0
-171           Andy Pages   Logan Henderson  Milwaukee Brewers @ Los Angeles Dodgers   3  0   0   .000   .400  1   2
-172    Brandon Lockridge      Tarik Skubal  Milwaukee Brewers @ Los Angeles Dodgers   3  1   0   .333   .666  2   0
-173           Nick Allen         Bryan Woo        Seattle Mariners @ Houston Astros   3  1   0   .333   .666  1   0
-174      Brendan Donovan      Hunter Brown        Seattle Mariners @ Houston Astros   3  1   0   .333  1.000  0   0
+                  Batter           Pitcher                                  Matchup  AB  H  HR   AVG    OPS  K  BB
+1            Henry Bolte     Cody Bradford                Texas Rangers @ Athletics  25  8   2  .320   .970  4   2
+2             Zack Gelof     Cody Bradford                Texas Rangers @ Athletics  25  8   2  .320   .970  4   2
+3           Jacob Wilson     Cody Bradford                Texas Rangers @ Athletics  25  8   2  .320   .970  4   2
+4             Jonah Heim     Cody Bradford                Texas Rangers @ Athletics  25  8   2  .320   .970  4   2
+5            Tommy White     Cody Bradford                Texas Rangers @ Athletics  25  8   2  .320   .970  4   2
+6        Lawrence Butler     Cody Bradford                Texas Rangers @ Athletics  25  8   2  .320   .970  4   2
+7              Max Muncy     Cody Bradford                Texas Rangers @ Athletics  25  8   2  .320   .970  4   2
+8         Alika Williams     Cody Bradford                Texas Rangers @ Athletics  25  8   2  .320   .970  4   2
+9         Darell Hernaiz     Cody Bradford                Texas Rangers @ Athletics  25  8   2  .320   .970  4   2
+10       Julio Rodríguez      Hunter Brown        Seattle Mariners @ Houston Astros  24  8   1  .333   .927  8   2
+11      Francisco Lindor        Jake Irvin     Washington Nationals @ New York Mets  23  8   2  .348  1.087  6   0
+12           Steven Kwan        Casey Mize   San Diego Padres @ Cleveland Guardians  19  2   0  .105   .401  6   2
+13        Chase DeLauter        Casey Mize   San Diego Padres @ Cleveland Guardians  19  2   0  .105   .401  6   2
+14          José Ramírez        Casey Mize   San Diego Padres @ Cleveland Guardians  19  2   0  .105   .401  6   2
+15              Jo Adell        Casey Mize   San Diego Padres @ Cleveland Guardians  19  2   0  .105   .401  6   2
+16        Nathaniel Lowe        Casey Mize   San Diego Padres @ Cleveland Guardians  19  2   0  .105   .401  6   2
+17          Rhys Hoskins        Casey Mize   San Diego Padres @ Cleveland Guardians  19  2   0  .105   .401  6   2
+18        Travis Bazzana        Casey Mize   San Diego Padres @ Cleveland Guardians  19  2   0  .105   .401  6   2
+19         Austin Hedges        Casey Mize   San Diego Padres @ Cleveland Guardians  19  2   0  .105   .401  6   2
+20        Brayan Rocchio        Casey Mize   San Diego Padres @ Cleveland Guardians  19  2   0  .105   .401  6   2
+21           Cal Raleigh      Hunter Brown        Seattle Mariners @ Houston Astros  18  3   0  .167   .485  6   4
+22          Heliot Ramos       Dylan Cease     New York Yankees @ Toronto Blue Jays  16  4   0  .250   .681  7   3
+23       Randy Arozarena      Hunter Brown        Seattle Mariners @ Houston Astros  16  1   0  .063   .292  7   1
+24         Nolan Arenado       Bryce Elder    Arizona Diamondbacks @ Atlanta Braves  14  3   0  .214   .500  4   0
+25          Ryan McMahon       Dylan Cease     New York Yankees @ Toronto Blue Jays  14  6   2  .429  1.367  1   1
+26            Brett Baty        Jake Irvin     Washington Nationals @ New York Mets  13  3   2  .231  1.055  2   1
+27           Jose Altuve         Bryan Woo        Seattle Mariners @ Houston Astros  13  3   0  .231   .517  4   1
+28      Christian Walker         Bryan Woo        Seattle Mariners @ Houston Astros  13  5   1  .385  1.198  4   1
+29          Luis Torrens        Jake Irvin     Washington Nationals @ New York Mets  12  4   1  .333  1.083  3   0
+30            Otto Lopez       Nick Lodolo          Miami Marlins @ Cincinnati Reds  12  2   0  .167   .334  1   0
+31         Jake McCarthy     Blade Tidwell  Colorado Rockies @ San Francisco Giants  11  2   0  .182   .539  0   3
+32          Cole Carrigg     Blade Tidwell  Colorado Rockies @ San Francisco Giants  11  2   0  .182   .539  0   3
+33         Mickey Moniak     Blade Tidwell  Colorado Rockies @ San Francisco Giants  11  2   0  .182   .539  0   3
+34          Willi Castro     Blade Tidwell  Colorado Rockies @ San Francisco Giants  11  2   0  .182   .539  0   3
+35         Troy Johnston     Blade Tidwell  Colorado Rockies @ San Francisco Giants  11  2   0  .182   .539  0   3
+36              Zac Veen     Blade Tidwell  Colorado Rockies @ San Francisco Giants  11  2   0  .182   .539  0   3
+37           Jordan Beck     Blade Tidwell  Colorado Rockies @ San Francisco Giants  11  2   0  .182   .539  0   3
+38        Brett Sullivan     Blade Tidwell  Colorado Rockies @ San Francisco Giants  11  2   0  .182   .539  0   3
+39          Adael Amador     Blade Tidwell  Colorado Rockies @ San Francisco Giants  11  2   0  .182   .539  0   3
+40         Shohei Ohtani   Logan Henderson  Milwaukee Brewers @ Los Angeles Dodgers  11  1   0  .091   .258  2   1
+41       Freddie Freeman   Logan Henderson  Milwaukee Brewers @ Los Angeles Dodgers  11  1   0  .091   .258  2   1
+42            Andy Pages   Logan Henderson  Milwaukee Brewers @ Los Angeles Dodgers  11  1   0  .091   .258  2   1
+43             Max Muncy   Logan Henderson  Milwaukee Brewers @ Los Angeles Dodgers  11  1   0  .091   .258  2   1
+44          Mookie Betts   Logan Henderson  Milwaukee Brewers @ Los Angeles Dodgers  11  1   0  .091   .258  2   1
+45           Kyle Tucker   Logan Henderson  Milwaukee Brewers @ Los Angeles Dodgers  11  1   0  .091   .258  2   1
+46           Tommy Edman   Logan Henderson  Milwaukee Brewers @ Los Angeles Dodgers  11  1   0  .091   .258  2   1
+47     Teoscar Hernández   Logan Henderson  Milwaukee Brewers @ Los Angeles Dodgers  11  1   0  .091   .258  2   1
+48          Ben Rortvedt   Logan Henderson  Milwaukee Brewers @ Los Angeles Dodgers  11  1   0  .091   .258  2   1
+49            Yandy Díaz     Trevor Rogers       Baltimore Orioles @ Tampa Bay Rays  10  6   0  .600  1.536  2   1
+50            Max Kepler       Bryce Elder    Arizona Diamondbacks @ Atlanta Braves  10  0   0  .000   .091  2   1
+51             TJ Friedl        Eury Pérez          Miami Marlins @ Cincinnati Reds  10  4   0  .400  1.100  2   0
+52        Xavier Edwards       Nick Lodolo          Miami Marlins @ Cincinnati Reds  10  2   0  .200   .685  3   3
+53           Jeremy Peña         Bryan Woo        Seattle Mariners @ Houston Astros  10  2   0  .200   .400  4   0
+54       Junior Caminero     Trevor Rogers       Baltimore Orioles @ Tampa Bay Rays   9  3   0  .333   .733  2   1
+55              Ben Rice       Dylan Cease     New York Yankees @ Toronto Blue Jays   9  1   1  .111   .555  2   0
+56        Wyatt Langford       Jacob Lopez                Texas Rangers @ Athletics   9  0   0  .000   .000  4   0
+57        Ezequiel Duran       Jacob Lopez                Texas Rangers @ Athletics   9  0   0  .000   .000  4   0
+58         Brandon Nimmo       Jacob Lopez                Texas Rangers @ Athletics   9  0   0  .000   .000  4   0
+59           Jake Burger       Jacob Lopez                Texas Rangers @ Athletics   9  0   0  .000   .000  4   0
+60         Justin Foscue       Jacob Lopez                Texas Rangers @ Athletics   9  0   0  .000   .000  4   0
+61          Cody Freeman       Jacob Lopez                Texas Rangers @ Athletics   9  0   0  .000   .000  4   0
+62            Elias Díaz       Jacob Lopez                Texas Rangers @ Athletics   9  0   0  .000   .000  4   0
+63          Austin Wynns       Jacob Lopez                Texas Rangers @ Athletics   9  0   0  .000   .000  4   0
+64           Evan Carter       Jacob Lopez                Texas Rangers @ Athletics   9  0   0  .000   .000  4   0
+65         Isaac Paredes         Bryan Woo        Seattle Mariners @ Houston Astros   9  1   0  .111   .311  3   1
+66           Yainer Diaz         Bryan Woo        Seattle Mariners @ Houston Astros   9  0   0  .000   .000  1   0
+67       Dominic Canzone      Hunter Brown        Seattle Mariners @ Houston Astros   9  3   0  .333   .889  4   0
+68           Pete Alonso    Freddy Peralta       Baltimore Orioles @ Tampa Bay Rays   8  2   0  .250   .913  2   2
+69         Dominic Smith    Michael Soroka    Arizona Diamondbacks @ Atlanta Braves   8  2   0  .250   .500  2   0
+70         Ernie Clement     Ryan Weathers     New York Yankees @ Toronto Blue Jays   8  2   1  .250   .875  0   0
+71        Kazuma Okamoto     Ryan Weathers     New York Yankees @ Toronto Blue Jays   8  3   1  .375  1.250  3   0
+72       Luis García Jr.       Dylan Cease     New York Yankees @ Toronto Blue Jays   8  1   0  .125   .250  3   0
+73          Austin Wells       Dylan Cease     New York Yankees @ Toronto Blue Jays   8  0   0  .000   .000  3   0
+74             CJ Abrams   Christian Scott     Washington Nationals @ New York Mets   8  0   0  .000   .000  4   0
+75     Spencer Torkelson        Sean Burke       Chicago White Sox @ Detroit Tigers   8  1   0  .125   .375  3   0
+76        Eugenio Suárez        Eury Pérez          Miami Marlins @ Cincinnati Reds   8  3   0  .375  1.000  0   2
+77          Bryson Stott       Dean Kremer  Philadelphia Phillies @ Minnesota Twins   8  3   0  .375  1.000  1   0
+78     William Contreras      Tarik Skubal  Milwaukee Brewers @ Los Angeles Dodgers   8  1   0  .125   .347  5   1
+79             Luis Lara      Tarik Skubal  Milwaukee Brewers @ Los Angeles Dodgers   8  1   0  .125   .347  5   1
+80       Jackson Chourio      Tarik Skubal  Milwaukee Brewers @ Los Angeles Dodgers   8  1   0  .125   .347  5   1
+81           Jake Bauers      Tarik Skubal  Milwaukee Brewers @ Los Angeles Dodgers   8  1   0  .125   .347  5   1
+82         Andrew Vaughn      Tarik Skubal  Milwaukee Brewers @ Los Angeles Dodgers   8  1   0  .125   .347  5   1
+83          Gary Sánchez      Tarik Skubal  Milwaukee Brewers @ Los Angeles Dodgers   8  1   0  .125   .347  5   1
+84     Brandon Lockridge      Tarik Skubal  Milwaukee Brewers @ Los Angeles Dodgers   8  1   0  .125   .347  5   1
+85            Joey Ortiz      Tarik Skubal  Milwaukee Brewers @ Los Angeles Dodgers   8  1   0  .125   .347  5   1
+86      Jonathan Ornelas      Tarik Skubal  Milwaukee Brewers @ Los Angeles Dodgers   8  1   0  .125   .347  5   1
+87      LaMonte Wade Jr.         Bryan Woo        Seattle Mariners @ Houston Astros   8  1   0  .125   .472  3   1
+88      Mike Yastrzemski    Michael Soroka    Arizona Diamondbacks @ Atlanta Braves   7  1   0  .143   .679  2   1
+89        Corbin Carroll       Bryce Elder    Arizona Diamondbacks @ Atlanta Braves   7  2   0  .286   .946  2   1
+90           Ketel Marte       Bryce Elder    Arizona Diamondbacks @ Atlanta Braves   7  1   0  .143   .536  2   1
+91            Colt Keith        Sean Burke       Chicago White Sox @ Detroit Tigers   7  3   1  .429  1.357  0   1
+92        Zach McKinstry        Sean Burke       Chicago White Sox @ Detroit Tigers   7  2   0  .286   .572  0   0
+93       Elly De La Cruz        Eury Pérez          Miami Marlins @ Cincinnati Reds   7  0   0  .000   .300  4   3
+94       Agustín Ramírez       Nick Lodolo          Miami Marlins @ Cincinnati Reds   7  2   0  .286   .661  1   1
+95          Alex Bregman    Hunter Dobbins       St. Louis Cardinals @ Chicago Cubs   7  3   1  .429  1.500  0   1
+96         Alec Burleson    Edward Cabrera       St. Louis Cardinals @ Chicago Cubs   7  2   1  .286  1.089  0   1
+97         Jordan Walker    Edward Cabrera       St. Louis Cardinals @ Chicago Cubs   7  1   0  .143   .429  3   0
+98             Zach Neto      Noah Cameron  Kansas City Royals @ Los Angeles Angels   7  2   0  .286   .572  2   0
+99          Taylor Walls     Trevor Rogers       Baltimore Orioles @ Tampa Bay Rays   6  1   0  .167   .619  0   1
+100         Jared Triolo  Patrick Sandoval      Boston Red Sox @ Pittsburgh Pirates   6  1   0  .167   .334  2   0
+101           Matt Olson    Michael Soroka    Arizona Diamondbacks @ Atlanta Braves   6  1   0  .167   .708  2   2
+102    Michael Harris II    Michael Soroka    Arizona Diamondbacks @ Atlanta Braves   6  3   0  .500  1.071  0   1
+103      Geraldo Perdomo       Bryce Elder    Arizona Diamondbacks @ Atlanta Braves   6  2   0  .333   .666  1   0
+104          Myles Straw     Ryan Weathers     New York Yankees @ Toronto Blue Jays   6  1   0  .167   .453  2   1
+105          Bo Bichette        Jake Irvin     Washington Nationals @ New York Mets   6  3   0  .500  1.125  1   2
+106         Keibert Ruiz   Christian Scott     Washington Nationals @ New York Mets   6  2   0  .333   .666  1   0
+107         Esteury Ruiz       Nick Lodolo          Miami Marlins @ Cincinnati Reds   6  1   0  .167   .453  1   0
+108         Bryce Harper       Dean Kremer  Philadelphia Phillies @ Minnesota Twins   6  1   0  .167   .334  1   0
+109          Luis Arraez       Dean Kremer  Philadelphia Phillies @ Minnesota Twins   6  1   0  .167   .453  0   1
+110             Ian Happ    Hunter Dobbins       St. Louis Cardinals @ Chicago Cubs   6  1   0  .167   .453  1   1
+111         Iván Herrera    Edward Cabrera       St. Louis Cardinals @ Chicago Cubs   6  2   0  .333   .666  1   0
+112           Masyn Winn    Edward Cabrera       St. Louis Cardinals @ Chicago Cubs   6  3   0  .500  1.167  1   0
+113      Jonathan Aranda     Trevor Rogers       Baltimore Orioles @ Tampa Bay Rays   5  2   0  .400   .800  1   0
+114     Chandler Simpson     Trevor Rogers       Baltimore Orioles @ Tampa Bay Rays   5  1   0  .200   .600  0   0
+115         Austin Riley    Michael Soroka    Arizona Diamondbacks @ Atlanta Braves   5  1   0  .200   .400  2   0
+116       Gabriel Moreno       Bryce Elder    Arizona Diamondbacks @ Atlanta Braves   5  2   0  .400   .800  0   0
+117       Alejandro Kirk     Ryan Weathers     New York Yankees @ Toronto Blue Jays   5  3   0  .600  1.400  0   0
+118      George Springer     Ryan Weathers     New York Yankees @ Toronto Blue Jays   5  3   2  .600  2.467  1   1
+119       Gleyber Torres        Sean Burke       Chicago White Sox @ Detroit Tigers   5  1   0  .200   .400  1   0
+120          Javier Báez        Sean Burke       Chicago White Sox @ Detroit Tigers   5  1   0  .200   .400  0   0
+121        Javier Sanoja       Nick Lodolo          Miami Marlins @ Cincinnati Reds   5  1   0  .200   .400  0   0
+122         Seiya Suzuki    Hunter Dobbins       St. Louis Cardinals @ Chicago Cubs   5  1   0  .200   .400  3   0
+123         Nico Hoerner    Hunter Dobbins       St. Louis Cardinals @ Chicago Cubs   5  3   1  .600  1.800  0   0
+124        Oswald Peraza      Noah Cameron  Kansas City Royals @ Los Angeles Angels   5  0   0  .000   .375  3   3
+125          Josh Naylor      Hunter Brown        Seattle Mariners @ Houston Astros   5  2   1  .400  1.500  1   1
+126        Leody Taveras    Freddy Peralta       Baltimore Orioles @ Tampa Bay Rays   4  0   0  .000   .200  2   1
+127        Drake Baldwin    Michael Soroka    Arizona Diamondbacks @ Atlanta Braves   4  1   1  .250  1.400  0   0
+128         Ozzie Albies    Michael Soroka    Arizona Diamondbacks @ Atlanta Braves   4  0   0  .000   .000  0   0
+129       Andrés Giménez     Ryan Weathers     New York Yankees @ Toronto Blue Jays   4  1   0  .250   .650  0   0
+130        Trent Grisham       Dylan Cease     New York Yankees @ Toronto Blue Jays   4  1   0  .250   .750  2   2
+131       José Caballero       Dylan Cease     New York Yankees @ Toronto Blue Jays   4  0   0  .000   .200  0   1
+132       Chase Meidroth     Drew Anderson       Chicago White Sox @ Detroit Tigers   4  1   0  .250   .500  1   0
+133          Sal Stewart        Eury Pérez          Miami Marlins @ Cincinnati Reds   4  2   1  .500  2.000  0   0
+134       Michael Toglia        Eury Pérez          Miami Marlins @ Cincinnati Reds   4  0   0  .000   .200  2   1
+135          Matt McLain        Eury Pérez          Miami Marlins @ Cincinnati Reds   4  1   1  .250  1.400  1   0
+136         Jose Trevino        Eury Pérez          Miami Marlins @ Cincinnati Reds   4  2   0  .500  1.000  0   0
+137        Brandon Marsh       Dean Kremer  Philadelphia Phillies @ Minnesota Twins   4  1   0  .250   .900  2   1
+138       Yordan Alvarez         Bryan Woo        Seattle Mariners @ Houston Astros   4  2   1  .500  1.850  2   1
+139     Gunnar Henderson    Freddy Peralta       Baltimore Orioles @ Tampa Bay Rays   3  0   0  .000   .000  1   0
+140        Colton Cowser    Freddy Peralta       Baltimore Orioles @ Tampa Bay Rays   3  2   1  .667  2.667  0   0
+141       Bryan Reynolds  Patrick Sandoval      Boston Red Sox @ Pittsburgh Pirates   3  0   0  .000   .000  1   0
+142         Brandon Lowe  Patrick Sandoval      Boston Red Sox @ Pittsburgh Pirates   3  1   1  .333  1.666  2   0
+143         James McCann       Bryce Elder    Arizona Diamondbacks @ Atlanta Braves   3  1   0  .333   .666  0   0
+144        Brett Bateman     Ryan Weathers     New York Yankees @ Toronto Blue Jays   3  0   0  .000   .000  1   0
+145      Andrés Chaparro   Christian Scott     Washington Nationals @ New York Mets   3  0   0  .000   .000  1   0
+146       Dillon Dingler        Sean Burke       Chicago White Sox @ Detroit Tigers   3  2   0  .667  1.667  1   0
+147    Munetaka Murakami     Drew Anderson       Chicago White Sox @ Detroit Tigers   3  0   0  .000   .000  2   0
+148       Tristan Peters     Drew Anderson       Chicago White Sox @ Detroit Tigers   3  2   0  .667  1.750  0   1
+149       Ke'Bryan Hayes        Eury Pérez          Miami Marlins @ Cincinnati Reds   3  0   0  .000   .000  2   0
+150       Kyle Schwarber       Dean Kremer  Philadelphia Phillies @ Minnesota Twins   3  0   0  .000   .333  1   2
+151        J.T. Realmuto       Dean Kremer  Philadelphia Phillies @ Minnesota Twins   3  1   0  .333   .666  0   0
+152         Edmundo Sosa       Dean Kremer  Philadelphia Phillies @ Minnesota Twins   3  0   0  .000   .000  3   0
+153  Pete Crow-Armstrong    Hunter Dobbins       St. Louis Cardinals @ Chicago Cubs   3  0   0  .000   .000  2   0
+154       Dansby Swanson    Hunter Dobbins       St. Louis Cardinals @ Chicago Cubs   3  0   0  .000   .000  2   0
+155         Miguel Amaya    Hunter Dobbins       St. Louis Cardinals @ Chicago Cubs   3  0   0  .000   .250  1   1
+156        Nathan Church    Edward Cabrera       St. Louis Cardinals @ Chicago Cubs   3  0   0  .000   .250  1   0
+157           Mike Trout      Noah Cameron  Kansas City Royals @ Los Angeles Angels   3  0   0  .000   .500  2   3
+158       Vaughn Grissom      Noah Cameron  Kansas City Royals @ Los Angeles Angels   3  2   0  .667  2.000  0   0
+159         Wade Meckler      Noah Cameron  Kansas City Royals @ Los Angeles Angels   3  0   0  .000   .000  0   0
+160        Denzer Guzman      Noah Cameron  Kansas City Royals @ Los Angeles Angels   3  0   0  .000   .000  1   0
+161           Nick Allen         Bryan Woo        Seattle Mariners @ Houston Astros   3  1   0  .333   .666  1   0
+162      Brendan Donovan      Hunter Brown        Seattle Mariners @ Houston Astros   3  1   0  .333  1.000  0   0
 
 ════════════════════════════════════════════════════════════════════════
   SECTION 11: HEAD-TO-HEAD PITCH-BY-PITCH AB HISTORY (tonight's matchups via Statcast)
@@ -2207,20 +2195,20 @@ Sources   : FanGraphs | Statcast/Baseball Savant | MLB Stats API | UmpScorecards
   Bryan Woo — Last 5 Starts:
   Date         Opp      IP    H    R    ER   BB   K    HR     PC
   -----------------------------------------------------------------
-  2026-07-18   SF       6.0   6    3    2    2    7    2      98
   2026-07-25   TEX      5.0   9    5    5    2    5    0      95
   2026-07-30   LAD      5.0   5    5    5    2    8    1      91
   2026-08-05   DET      7.0   3    0    0    1    5    0      91
   2026-08-11   NYY      5.0   3    0    0    1    5    0      92
+  2026-08-16   HOU      1.0   0    0    0    0    0    0      10
 
   Hunter Brown — Last 5 Starts:
   Date         Opp      IP    H    R    ER   BB   K    HR     PC
   -----------------------------------------------------------------
-  2026-07-19   BAL      4.2   3    4    4    6    4    0      92
   2026-07-25   CWS      7.0   2    0    0    0    7    0      90
   2026-07-31   TEX      5.2   6    2    2    2    5    1     104
   2026-08-05   TOR      6.0   3    3    3    2    8    1      93
   2026-08-11   SF       5.0   5    3    3    3    4    1      89
+  2026-08-16   SEA      2.0   2    1    1    0    1    1      32
 
 
 ════════════════════════════════════════════════════════════════════════
@@ -8372,8 +8360,8 @@ pc_bucket
 
   Blade Tidwell:
     Situation                BF     IP    K   BB    ERA    AVG    OPS
-    1st inning pitched       41   10.0    7    2   4.50   .270   .749
-    first 75 pitches         82   20.2   17    4      -   .237   .596
+    1st inning pitched       44   11.0    7    3   5.73   .256   .728
+    first 75 pitches        101   25.0   18    9      -   .233   .640
     pitches 76+               9    2.0    2    1      -   .250   .583  🔴 small sample
     7th inning or later      44   11.0    9    3   3.27   .250   .668
 
@@ -8455,9 +8443,9 @@ pc_bucket
 
   Gabriel Hughes:
     Situation                BF     IP    K   BB    ERA    AVG    OPS
-    1st inning pitched       33    7.0    8    3  11.57   .276   .916
-    first 75 pitches        123   28.2   29   11      -   .241   .681
-    pitches 76+              20    4.2    2    1      -   .278   .800  🔴 small sample
+    1st inning pitched       38    8.0    9    3  12.38   .294   .927
+    first 75 pitches        142   32.0   31   11      -   .268   .742
+    pitches 76+              22    5.0    2    2      -   .263   .792  🔴 small sample
     7th inning or later      11    3.0    1    1   0.00   .200   .473  🔴 small sample
 
   Hunter Brown:
@@ -8495,10 +8483,10 @@ pc_bucket
 
   Logan Henderson:
     Situation                BF     IP    K   BB    ERA    AVG    OPS
-    1st inning pitched       41   10.2   18    3   2.53   .237   .635
-    first 75 pitches        195   51.1   60    8      -   .200   .615
-    pitches 76+              21    5.0    9    3      -   .167   .675  🔴 small sample
-    7th inning or later       4    0.1    -    1  54.00   .667  2.417  🔴 small sample
+    1st inning pitched       45   11.2   20    3   2.31   .238   .622
+    first 75 pitches        216   57.1   65    9      -   .195   .604
+    pitches 76+              24    6.0   10    3      -   .143   .583  🔴 small sample
+    7th inning or later       8    1.1    1    2  13.50   .333  1.333  🔴 small sample
 
   Michael Soroka:
     Situation                BF     IP    K   BB    ERA    AVG    OPS
@@ -8550,9 +8538,9 @@ pc_bucket
 
   Tanner Bibee:
     Situation                BF     IP    K   BB    ERA    AVG    OPS
-    1st inning pitched      103   25.0   21    8   6.48   .245   .811
-    first 75 pitches        472  116.1   97   31      -   .226   .697
-    pitches 76+             114   26.2   17    9      -   .245   .634
+    1st inning pitched      106   26.0   21    8   6.23   .237   .787
+    first 75 pitches        493  121.0   99   33      -   .228   .706
+    pitches 76+             120   28.0   18   10      -   .252   .647
     7th inning or later      40    9.0    3    6   6.00   .212   .658
 
   Tarik Skubal:
@@ -9004,16 +8992,16 @@ pc_bucket
   [FanGraphs unavailable this run — official team batting via MLB Stats API / Statcast instead]
                      Team    PA   AVG   OBP   SLG   OPS   HR    R   SB     K%    BB% BABIP
 0    Washington Nationals  4865  .251  .327  .437  .764  180  670  135 21.600  9.000  .290
-1     Los Angeles Dodgers  4754  .259  .335  .426  .761  159  615   48 20.600  9.700  .299
+1     Los Angeles Dodgers  4758  .259  .335  .427  .762  160  616   48 20.600  9.700  .299
 2            Chicago Cubs  4926  .248  .337  .417  .754  159  645   94 21.800 10.800  .293
 3      Pittsburgh Pirates  4904  .257  .333  .412  .745  151  633  107 24.100  9.200  .317
-4        Colorado Rockies  4710  .254  .324  .420  .744  140  596   84 22.600  8.300  .305
+4        Colorado Rockies  4714  .254  .323  .420  .743  140  596   84 22.600  8.300  .305
 5          Tampa Bay Rays  4658  .261  .331  .407  .738  129  559  125 18.800  8.700  .300
-6          Houston Astros  4704  .244  .319  .413  .732  166  574   40 21.300  8.800  .281
+6          Houston Astros  4709  .244  .319  .413  .732  166  574   40 21.300  8.800  .280
 7          Atlanta Braves  4651  .247  .312  .418  .730  166  599   61 21.500  7.800  .284
 8       Chicago White Sox  4693  .240  .318  .412  .730  164  594   69 23.900  8.900  .287
 9           Miami Marlins  4697  .250  .326  .403  .729  128  550  130 21.700  9.000  .298
-10      Milwaukee Brewers  4837  .250  .335  .392  .727  113  608  122 21.700 10.800  .305
+10      Milwaukee Brewers  4838  .250  .335  .392  .727  113  608  122 21.700 10.800  .305
 11         Detroit Tigers  4719  .242  .319  .408  .727  150  565   36 22.500  9.300  .288
 12        Minnesota Twins  4737  .245  .320  .406  .726  146  578   73 21.600  8.700  .287
 13         Boston Red Sox  4681  .248  .320  .400  .720  124  549   93 21.800  8.400  .297
@@ -9021,17 +9009,17 @@ pc_bucket
 15      Baltimore Orioles  4692  .237  .321  .397  .718  148  563   65 24.300 10.200  .289
 16       New York Yankees  4615  .229  .308  .408  .716  171  551  120 24.600  9.800  .273
 17   Arizona Diamondbacks  4733  .244  .316  .399  .715  124  567   84 19.300  8.900  .281
-18   San Francisco Giants  4633  .249  .307  .407  .714  137  509   56 20.800  7.100  .289
+18   San Francisco Giants  4640  .249  .307  .407  .714  137  509   56 20.800  7.000  .290
 19  Philadelphia Phillies  4694  .239  .310  .401  .711  154  558   95 22.800  8.500  .282
 20          Texas Rangers  4662  .242  .315  .394  .709  139  507   60 22.900  8.600  .291
-21     Kansas City Royals  4671  .242  .310  .393  .703  126  513   96 21.300  8.200  .286
-22       San Diego Padres  4637  .238  .314  .388  .702  138  533  124 21.800  9.200  .280
+21       San Diego Padres  4646  .238  .314  .390  .704  140  535  124 21.800  9.200  .280
+22     Kansas City Royals  4671  .242  .310  .393  .703  126  513   96 21.300  8.200  .286
 23        Cincinnati Reds  4612  .226  .306  .393  .699  161  502   87 25.300  9.600  .274
 24    St. Louis Cardinals  4689  .240  .316  .382  .698  129  548   76 20.300  8.600  .279
 25          New York Mets  4699  .236  .307  .390  .697  152  523   64 22.700  8.600  .278
-26       Seattle Mariners  4622  .230  .309  .377  .686  143  486   87 23.000  8.800  .273
+26       Seattle Mariners  4630  .230  .308  .377  .685  144  487   87 22.900  8.800  .273
 27     Los Angeles Angels  4675  .235  .310  .374  .684  125  507   65 25.200  8.400  .296
-28    Cleveland Guardians  4692  .233  .313  .370  .683  119  494  121 21.800  9.700  .279
+28    Cleveland Guardians  4700  .233  .313  .369  .682  119  494  121 21.800  9.700  .278
 29      Toronto Blue Jays  4684  .242  .304  .374  .678  116  492   60 19.600  7.400  .281
 
 ════════════════════════════════════════════════════════════════════════
@@ -9041,19 +9029,19 @@ pc_bucket
   [FanGraphs unavailable this run — official team pitching via MLB Stats API / Statcast instead]
                      Team   ERA  WHIP      IP   K/9  BB/9  HR/9     K%    BB%  SV  BS  Holds
 0        New York Yankees  3.26  1.18  1107.2  9.04  3.09  0.99 24.200  8.300  35  22     65
-1       Milwaukee Brewers  3.49  1.16  1116.1  9.76  3.14  1.03 26.300  8.500  40  18     62
+1       Milwaukee Brewers  3.50  1.16  1117.1  9.75  3.13  1.04 26.300  8.500  40  18     64
 2          Boston Red Sox  3.52  1.22  1101.1  8.65  2.84  0.97 23.000  7.600  34  11     76
 3          Detroit Tigers  3.55  1.21  1099.2  8.34  3.12  1.01 22.200  8.300  25  27     55
 4          Atlanta Braves  3.64  1.24  1104.0  8.71  3.47  1.17 23.100  9.200  38  17     90
-5     Los Angeles Dodgers  3.70  1.17  1104.1  9.14  3.19  1.18 24.500  8.600  34  17     79
+5     Los Angeles Dodgers  3.68  1.17  1104.2  9.14  3.19  1.18 24.500  8.600  34  17     79
 6          Tampa Bay Rays  3.76  1.15  1098.0  8.24  2.60  1.25 22.200  7.000  48  14     93
-7     Cleveland Guardians  3.84  1.27  1104.2  9.39  3.36  1.17 24.600  8.800  35  14     93
-8        Seattle Mariners  3.86  1.21  1095.0  8.64  2.56  1.11 23.100  6.800  27  20     63
+7     Cleveland Guardians  3.85  1.27  1106.2  9.39  3.36  1.18 24.600  8.800  35  14     93
+8        Seattle Mariners  3.86  1.21  1096.2  8.63  2.55  1.11 23.100  6.800  27  20     63
 9           Miami Marlins  3.92  1.24  1097.0  8.57  3.40  1.04 22.600  8.900  29  15     69
 10      Toronto Blue Jays  3.95  1.31  1123.1  8.81  3.73  1.05 23.000  9.700  43  15     83
 11    St. Louis Cardinals  4.04  1.34  1106.1  7.70  3.43  0.99 20.000  8.900  35  22     78
-12   Arizona Diamondbacks  4.09  1.27  1110.0  6.91  2.94  1.15 18.200  7.700  31  15     71
-13       San Diego Padres  4.09  1.31  1102.2  8.27  3.53  1.12 21.600  9.200  37  15     77
+12       San Diego Padres  4.08  1.31  1105.0  8.27  3.53  1.12 21.700  9.200  37  15     78
+13   Arizona Diamondbacks  4.09  1.27  1110.0  6.91  2.94  1.15 18.200  7.700  31  15     71
 14          New York Mets  4.09  1.30  1112.2  9.11  3.58  1.09 23.600  9.300  23  14     52
 15      Chicago White Sox  4.11  1.29  1098.1  8.51  3.64  1.11 22.100  9.500  32  23     53
 16  Philadelphia Phillies  4.16  1.31  1108.2  9.99  3.10  1.19 25.900  8.000  32  16     50
@@ -9061,15 +9049,15 @@ pc_bucket
 18      Baltimore Orioles  4.21  1.35  1102.2  8.00  3.39  1.06 20.700  8.800  33  17     67
 19          Texas Rangers  4.31  1.30  1093.1  8.59  3.08  1.26 22.300  8.000  35  16     63
 20     Pittsburgh Pirates  4.31  1.32  1123.2  9.38  3.68  1.05 24.200  9.500  24  20     51
-21   San Francisco Giants  4.37  1.35  1094.0  7.70  3.84  0.95 19.900  9.900  23  18     61
+21   San Francisco Giants  4.36  1.35  1095.0  7.70  3.84  0.95 19.900  9.900  23  19     61
 22     Los Angeles Angels  4.40  1.35  1101.1  9.17  4.26  1.10 23.500 10.900  19  21     67
 23        Cincinnati Reds  4.51  1.40  1093.0  8.17  4.19  1.28 20.700 10.600  32  19     69
-24         Houston Astros  4.60  1.36  1100.1  8.85  4.17  1.35 22.800 10.700  38   8     60
+24         Houston Astros  4.60  1.36  1102.1  8.84  4.16  1.36 22.700 10.700  38   8     60
 25        Minnesota Twins  4.67  1.39  1103.2  8.39  3.73  1.19 21.400  9.500  34  13     82
 26   Washington Nationals  4.72  1.39  1122.0  7.72  3.55  1.41 19.600  9.000  33  32     66
 27     Kansas City Royals  4.78  1.41  1097.1  7.59  3.78  1.29 19.500  9.700  30  23     56
 28              Athletics  5.45  1.50  1099.1  8.60  4.02  1.59 21.400 10.000  30  24     66
-29       Colorado Rockies  5.48  1.52  1086.2  6.97  3.35  1.42 17.300  8.300  29  20     49
+29       Colorado Rockies  5.47  1.52  1088.2  6.98  3.34  1.41 17.300  8.300  29  20     50
 
 ════════════════════════════════════════════════════════════════════════
   SECTION 51: FANGRAPHS TEAM FIELDING 2026 + error rates
@@ -9080,8 +9068,8 @@ pc_bucket
 0    Arizona Diamondbacks  .990  45      17  113  3.98   4          73  17  .189
 1            Chicago Cubs  .990  46      26   96  4.05   6          68  24  .261
 2     Los Angeles Dodgers  .988  51      25   71  3.92  13          73  19  .207
-3     St. Louis Cardinals  .988  54      20  124  4.06   7          87  20  .187
-4        San Diego Padres  .988  53      28  101  4.00   1          79  39  .331
+3        San Diego Padres  .988  53      28  101  4.00   1          79  39  .331
+4     St. Louis Cardinals  .988  54      20  124  4.06   7          87  20  .187
 5           Texas Rangers  .988  53      30   80  3.88   3          77  22  .222
 6          Detroit Tigers  .988  55      26   95  3.99   5          69  25  .266
 7      Kansas City Royals  .987  56      38  108  4.03  11          63  32  .337
@@ -9091,19 +9079,19 @@ pc_bucket
 11              Athletics  .986  58      31   86  3.85  11          84  30  .263
 12        Minnesota Twins  .986  59      28   86  3.87   4         108  19  .150
 13         Boston Red Sox  .986  61      28   90  3.98   7          85  15  .150
-14       Seattle Mariners  .986  60      40  101  3.92   5          85  28  .248
+14       Seattle Mariners  .986  60      40  101  3.93   5          85  28  .248
 15  Philadelphia Phillies  .986  62      31   75  3.92   4          75  33  .306
 16       New York Yankees  .985  66      32   97  4.00   4          60  18  .231
 17      Chicago White Sox  .985  66      33   85  3.92  11          99  33  .250
 18        Cincinnati Reds  .985  67      30   85  3.91   3         117  25  .176
-19    Cleveland Guardians  .984  68      38   83  3.88   7          88  17  .162
+19    Cleveland Guardians  .984  68      38   83  3.89   7          88  17  .162
 20     Los Angeles Angels  .983  74      35   75  3.93   8          88  23  .207
 21         Tampa Bay Rays  .983  73      39   83  3.88   5         103  28  .214
 22     Pittsburgh Pirates  .983  76      44  101  3.87   7          78  26  .250
 23      Toronto Blue Jays  .983  78      40   85  3.96   2         121  38  .239
-24   San Francisco Giants  .983  79      48  115  4.07   8         102  32  .239
+24   San Francisco Giants  .983  79      48  115  4.06   8         102  32  .239
 25      Baltimore Orioles  .982  80      37   88  3.97   6          65  27  .293
-26       Colorado Rockies  .982  79      36  104  3.97   8          98  20  .169
+26       Colorado Rockies  .982  79      36  105  3.97   8          98  20  .169
 27          New York Mets  .982  81      42   77  3.89  11          56  27  .325
 28          Miami Marlins  .982  81      40   91  3.94  11         106  31  .226
 29   Washington Nationals  .981  89      38  107  4.03   8          90  28  .237
@@ -9113,8 +9101,8 @@ pc_bucket
 ════════════════════════════════════════════════════════════════════════
 
   [FanGraphs unavailable this run — real SP/RP splits via MLB Stats API / Statcast instead]
-  Starters (335 pitchers, 23719.5 IP): ERA 4.15  K/9 8.42  BB/9 3.21  WHIP 1.285
-  Relievers (467 pitchers, 9233.1 IP): ERA 4.31  K/9 8.83  BB/9 4.03  WHIP 1.371
+  Starters (335 pitchers, 23727.5 IP): ERA 4.15  K/9 8.42  BB/9 3.21  WHIP 1.285
+  Relievers (467 pitchers, 9237.2 IP): ERA 4.31  K/9 8.83  BB/9 4.03  WHIP 1.371
 
   K/9 gap (RP - SP): 0.41 — relievers miss more bats per inning,
   which is why late-game PAs are worse for contact props and better for K props.
@@ -9269,7 +9257,7 @@ pc_bucket
     10. Jacob Latz                ?     24
 
   ONBASEPLUSSLUGGING:
-     1. Yordan Alvarez            ?     1.058
+     1. Yordan Alvarez            ?     1.056
      2. Shohei Ohtani             ?     .928
      3. James Wood                ?     .928
      4. Willson Contreras         ?     .912
@@ -9695,26 +9683,28 @@ San Francisco Giants 51 72 .415 22.5 17
     Home Games           ERA:3.00  WHIP:1.17  AVG:.227  K/9:9.00  IP:6.0
     Home Games           ERA:2.44  WHIP:0.93  AVG:.205  K/9:8.01  IP:51.2
     Away Games           ERA:3.07  WHIP:1.10  AVG:.224  K/9:9.88  IP:41.0
-    Away Games           ERA:21.60  WHIP:3.60  AVG:.500  K/9:2.70  IP:3.1
-    Away Games           ERA:4.47  WHIP:1.29  AVG:.253  K/9:9.34  IP:44.1
+    Away Games           ERA:7.71  WHIP:1.71  AVG:.316  K/9:3.86  IP:9.1
+    Away Games           ERA:3.93  WHIP:1.21  AVG:.242  K/9:8.76  IP:50.1
     Day Games            ERA:2.31  WHIP:0.92  AVG:.215  K/9:6.46  IP:39.0
+    Day Games            ERA:0.00  WHIP:0.67  AVG:.150  K/9:4.50  IP:6.0
+    Day Games            ERA:2.00  WHIP:0.89  AVG:.207  K/9:6.20  IP:45.0
     Night Games          ERA:3.02  WHIP:1.05  AVG:.211  K/9:10.76  IP:47.2
     Night Games          ERA:9.64  WHIP:2.04  AVG:.350  K/9:6.75  IP:9.1
     Night Games          ERA:4.11  WHIP:1.21  AVG:.237  K/9:10.11  IP:57.0
     vs Left              ERA:?  WHIP:0.91  AVG:.194  K/9:8.88  IP:49.2
-    vs Left              ERA:?  WHIP:1.88  AVG:.304  K/9:6.75  IP:5.1
-    vs Left              ERA:?  WHIP:1.00  AVG:.207  K/9:8.67  IP:55.0
+    vs Left              ERA:?  WHIP:1.56  AVG:.270  K/9:4.00  IP:9.0
+    vs Left              ERA:?  WHIP:1.01  AVG:.207  K/9:8.13  IP:58.2
     vs Right             ERA:?  WHIP:1.14  AVG:.237  K/9:9.00  IP:36.0
-    vs Right             ERA:?  WHIP:2.25  AVG:.412  K/9:6.75  IP:4.0
-    vs Right             ERA:?  WHIP:1.25  AVG:.257  K/9:8.78  IP:40.0
+    vs Right             ERA:?  WHIP:1.42  AVG:.304  K/9:8.53  IP:6.1
+    vs Right             ERA:?  WHIP:1.18  AVG:.247  K/9:8.93  IP:42.1
 
   Tanner Bibee — Pitcher Splits:
-    Home Games           ERA:3.92  WHIP:1.06  AVG:.220  K/9:7.28  IP:80.1
+    Home Games           ERA:3.96  WHIP:1.10  AVG:.225  K/9:7.09  IP:86.1
     Away Games           ERA:4.08  WHIP:1.22  AVG:.243  K/9:6.89  IP:64.0
-    Day Games            ERA:3.77  WHIP:1.19  AVG:.240  K/9:4.71  IP:28.2
+    Day Games            ERA:3.89  WHIP:1.27  AVG:.250  K/9:4.67  IP:34.2
     Night Games          ERA:4.05  WHIP:1.12  AVG:.227  K/9:7.70  IP:115.2
-    vs Left              ERA:?  WHIP:1.10  AVG:.220  K/9:7.89  IP:81.0
-    vs Right             ERA:?  WHIP:1.19  AVG:.243  K/9:6.24  IP:62.0
+    vs Left              ERA:?  WHIP:1.13  AVG:.225  K/9:7.78  IP:83.1
+    vs Right             ERA:?  WHIP:1.20  AVG:.242  K/9:6.17  IP:65.2
 
   Sean Burke — Pitcher Splits:
     Home Games           ERA:3.22  WHIP:1.02  AVG:.209  K/9:9.78  IP:81.0
@@ -9794,19 +9784,19 @@ San Francisco Giants 51 72 .415 22.5 17
 
   Gabriel Hughes — Pitcher Splits:
     Home Games           ERA:3.86  WHIP:1.18  AVG:.235  K/9:9.16  IP:18.2
-    Away Games           ERA:7.80  WHIP:1.40  AVG:.259  K/9:7.20  IP:15.0
-    Day Games            ERA:3.60  WHIP:1.30  AVG:.297  K/9:6.30  IP:10.0
+    Away Games           ERA:9.47  WHIP:1.58  AVG:.295  K/9:6.63  IP:19.0
+    Day Games            ERA:7.07  WHIP:1.57  AVG:.333  K/9:5.79  IP:14.0
     Night Games          ERA:6.46  WHIP:1.27  AVG:.225  K/9:9.13  IP:23.2
-    vs Left              ERA:?  WHIP:1.35  AVG:.260  K/9:7.20  IP:20.0
-    vs Right             ERA:?  WHIP:1.20  AVG:.224  K/9:10.13  IP:13.1
+    vs Left              ERA:?  WHIP:1.52  AVG:.286  K/9:6.45  IP:22.1
+    vs Right             ERA:?  WHIP:1.23  AVG:.236  K/9:10.43  IP:14.2
 
   Blade Tidwell — Pitcher Splits:
-    Home Games           ERA:0.71  WHIP:0.79  AVG:.167  K/9:8.53  IP:12.2
+    Home Games           ERA:3.71  WHIP:1.06  AVG:.179  K/9:6.88  IP:17.0
     Away Games           ERA:5.40  WHIP:1.50  AVG:.310  K/9:6.30  IP:10.0
-    Day Games            ERA:0.00  WHIP:0.67  AVG:.100  K/9:6.00  IP:3.0
+    Day Games            ERA:7.36  WHIP:1.36  AVG:.167  K/9:3.68  IP:7.1
     Night Games          ERA:3.20  WHIP:1.17  AVG:.257  K/9:7.78  IP:19.2
-    vs Left              ERA:?  WHIP:1.78  AVG:.325  K/9:5.00  IP:9.0
-    vs Right             ERA:?  WHIP:0.66  AVG:.159  K/9:9.22  IP:13.2
+    vs Left              ERA:?  WHIP:1.95  AVG:.308  K/9:3.65  IP:12.1
+    vs Right             ERA:?  WHIP:0.61  AVG:.152  K/9:9.20  IP:14.2
 
   Cody Bradford — Pitcher Splits:
     Home Games           ERA:0.00  WHIP:1.62  AVG:.278  K/9:10.38  IP:4.1
@@ -9842,29 +9832,31 @@ San Francisco Giants 51 72 .415 22.5 17
 
   Logan Henderson — Pitcher Splits:
     Home Games           ERA:2.42  WHIP:0.88  AVG:.194  K/9:11.42  IP:26.0
-    Away Games           ERA:3.26  WHIP:0.92  AVG:.200  K/9:10.68  IP:30.1
-    Day Games            ERA:3.38  WHIP:0.81  AVG:.203  K/9:12.38  IP:16.0
+    Away Games           ERA:2.89  WHIP:0.86  AVG:.188  K/9:10.13  IP:37.1
+    Day Games            ERA:2.74  WHIP:0.74  AVG:.183  K/9:10.96  IP:23.0
     Night Games          ERA:2.68  WHIP:0.94  AVG:.194  K/9:10.49  IP:40.1
-    vs Left              ERA:?  WHIP:0.90  AVG:.187  K/9:10.99  IP:37.2
-    vs Right             ERA:?  WHIP:0.93  AVG:.217  K/9:11.29  IP:18.1
+    vs Left              ERA:?  WHIP:0.84  AVG:.180  K/9:10.34  IP:42.2
+    vs Right             ERA:?  WHIP:0.93  AVG:.211  K/9:11.51  IP:20.1
 
   Tarik Skubal — Pitcher Splits:
     Home Games           ERA:3.54  WHIP:0.95  AVG:.208  K/9:11.36  IP:48.1
-    Home Games           ERA:5.40  WHIP:1.20  AVG:.222  K/9:10.80  IP:5.0
-    Home Games           ERA:3.71  WHIP:0.98  AVG:.209  K/9:11.31  IP:53.1
+    Home Games           ERA:3.27  WHIP:1.36  AVG:.256  K/9:10.64  IP:11.0
+    Home Games           ERA:3.49  WHIP:1.03  AVG:.217  K/9:11.22  IP:59.1
     Away Games           ERA:2.05  WHIP:0.87  AVG:.211  K/9:10.24  IP:48.1
     Away Games           ERA:3.00  WHIP:1.00  AVG:.182  K/9:9.00  IP:6.0
     Away Games           ERA:2.15  WHIP:0.88  AVG:.208  K/9:10.10  IP:54.1
     Day Games            ERA:2.63  WHIP:0.88  AVG:.202  K/9:8.63  IP:48.0
+    Day Games            ERA:1.50  WHIP:1.50  AVG:.280  K/9:10.50  IP:6.0
+    Day Games            ERA:2.50  WHIP:0.94  AVG:.212  K/9:8.83  IP:54.0
     Night Games          ERA:2.96  WHIP:0.95  AVG:.217  K/9:12.95  IP:48.2
     Night Games          ERA:4.09  WHIP:1.09  AVG:.200  K/9:9.82  IP:11.0
     Night Games          ERA:3.17  WHIP:0.97  AVG:.214  K/9:12.37  IP:59.2
     vs Left              ERA:?  WHIP:1.21  AVG:.270  K/9:12.09  IP:22.1
-    vs Left              ERA:?  WHIP:0.75  AVG:.200  K/9:13.50  IP:4.0
-    vs Left              ERA:?  WHIP:1.14  AVG:.260  K/9:12.30  IP:26.1
+    vs Left              ERA:?  WHIP:1.50  AVG:.333  K/9:13.50  IP:4.0
+    vs Left              ERA:?  WHIP:1.25  AVG:.280  K/9:12.30  IP:26.1
     vs Right             ERA:?  WHIP:0.82  AVG:.189  K/9:10.41  IP:74.1
-    vs Right             ERA:?  WHIP:1.29  AVG:.200  K/9:7.71  IP:7.0
-    vs Right             ERA:?  WHIP:0.86  AVG:.190  K/9:10.18  IP:81.1
+    vs Right             ERA:?  WHIP:1.15  AVG:.191  K/9:9.00  IP:13.0
+    vs Right             ERA:?  WHIP:0.87  AVG:.190  K/9:10.20  IP:87.1
 
   Bryan Woo — Pitcher Splits:
     Home Games           ERA:1.96  WHIP:0.75  AVG:.164  K/9:9.65  IP:64.1
@@ -12381,29 +12373,26 @@ San Francisco Giants 51 72 .415 22.5 17
   Texas Rangers @ Athletics — Sutter Health Park:
   LF(330ft/8ft wall)  CF(403ft)  RF(325ft/8ft wall)
   Surface: grass  Humidor: No  Batter Eye: hard
-  Air density: 0.9728  Altitude bonus: 1.1577
-  Wind pull-side boost: 1.015  Oppo-side boost: 0.985
-  PULL HITTERS HR INDEX: 1.208
-  OPPO HITTERS HR INDEX: 1.172
-  ⚠️  Weather fetch failed — using league-average estimate (72°F, 5mph), not the real forecast
+  Air density: 0.9365  Altitude bonus: 1.1577
+  Wind pull-side boost: 1.018  Oppo-side boost: 0.982
+  PULL HITTERS HR INDEX: 1.258
+  OPPO HITTERS HR INDEX: 1.214
 
   Kansas City Royals @ Los Angeles Angels — Angel Stadium:
   LF(330ft/8ft wall)  CF(396ft)  RF(330ft/8ft wall)
   Surface: grass  Humidor: No  Batter Eye: easy
-  Air density: 0.9681  Altitude bonus: 1.1536
-  Wind pull-side boost: 1.015  Oppo-side boost: 0.985
-  PULL HITTERS HR INDEX: 1.209
-  OPPO HITTERS HR INDEX: 1.174
-  ⚠️  Weather fetch failed — using league-average estimate (72°F, 5mph), not the real forecast
+  Air density: 0.9455  Altitude bonus: 1.1536
+  Wind pull-side boost: 1.026  Oppo-side boost: 0.975
+  PULL HITTERS HR INDEX: 1.251
+  OPPO HITTERS HR INDEX: 1.189
 
   Milwaukee Brewers @ Los Angeles Dodgers — Dodger Stadium:
   LF(330ft/8ft wall)  CF(395ft)  RF(330ft/8ft wall)
   Surface: grass  Humidor: No  Batter Eye: easy
-  Air density: 0.9560  Altitude bonus: 1.1430
-  Wind pull-side boost: 1.015  Oppo-side boost: 0.985
-  PULL HITTERS HR INDEX: 1.214
-  OPPO HITTERS HR INDEX: 1.178
-  ⚠️  Weather fetch failed — using league-average estimate (72°F, 5mph), not the real forecast
+  Air density: 0.9316  Altitude bonus: 1.1430
+  Wind pull-side boost: 1.023  Oppo-side boost: 0.977
+  PULL HITTERS HR INDEX: 1.255
+  OPPO HITTERS HR INDEX: 1.199
 
   Seattle Mariners @ Houston Astros — Daikin Park:
   LF(315ft/21ft wall)  CF(435ft)  RF(326ft/7ft wall)
@@ -16891,7 +16880,7 @@ San Francisco Giants 51 72 .415 22.5 17
   [DRS/UZR are proprietary (BIS/FanGraphs) and unavailable — these are MLB's official
    fielding stats. Statcast Outs Above Average in Section 82 is the advanced equivalent.]
                    Name Pos      Inn   Fld%  E   DP  RF/9
-0         Austin Hedges   C  461.200   .992  4    1  9.98
+0         Austin Hedges   C  463.200   .992  4    1  9.97
 1        Alejandro Kirk   C  384.200   .995  2    4  9.91
 2            Will Smith   C  393.000   .993  3    0  9.87
 3       Travis d'Arnaud   C  143.200  1.000  0    1  9.82
@@ -16909,17 +16898,17 @@ San Francisco Giants 51 72 .415 22.5 17
 15       Endy Rodríguez   C  273.200   .986  4    1  9.49
 16     Sebastián Rivero   C  144.100   .981  3    0  9.44
 17         Alex Jackson   C  148.000   .981  3    0  9.43
-18          Yainer Diaz   C  457.100   .996  2    2  9.41
-19         Austin Wells   C  703.000   .993  5    2  9.41
-20       Chadwick Tromp   C  132.000   .986  2    1  9.41
-21             Joe Mack   C  582.100   .990  6    3  9.40
+18         Austin Wells   C  703.000   .993  5    2  9.41
+19       Chadwick Tromp   C  132.000   .986  2    1  9.41
+20             Joe Mack   C  582.100   .990  6    3  9.40
+21          Yainer Diaz   C  459.000   .996  2    2  9.39
 22        Rafael Devers  1B  776.000   .991  7   69  9.39
 23       Dalton Rushing   C  472.100   .998  1    1  9.38
 24       Carlos Narváez   C  572.000   .990  6    2  9.38
 25       Jac Caglianone  1B  273.100   .990  3   21  9.33
 26        Jhonny Pereda   C  186.100  1.000  0    0  9.29
 27         J.C. Escarra   C  216.200   .991  2    5  9.29
-28        Freddy Fermin   C  523.100   .987  7    3  9.29
+28        Freddy Fermin   C  525.100   .987  7    3  9.29
 29            Drew Romo   C  419.000   .984  7    0  9.28
 30       Garrett Stubbs   C  107.000   .991  1    0  9.25
 31           Liam Hicks   C  348.000   .994  2    1  9.23
@@ -16928,10 +16917,10 @@ San Francisco Giants 51 72 .415 22.5 17
 34         Danny Jansen   C  313.100   .991  3    1  9.17
 35   Brandon Valenzuela   C  521.000   .983  9    3  9.17
 36        Alec Burleson  1B 1030.100   .992  8  107  9.11
-37       Bryce Eldridge  1B  181.100  1.000  0   23  9.10
+37       Bryce Eldridge  1B  182.100  1.000  0   23  9.05
 38       Samuel Basallo   C  382.000   .997  1    1  9.05
 39          Curtis Mead  1B  201.000   .981  4   16  9.04
-40         Gary Sánchez   C  266.100   .993  2    1  9.03
+40         Gary Sánchez   C  267.000   .993  2    1  9.00
 41       Salvador Perez  1B  151.000   .987  2   14  9.00
 42          TJ Rumfield  1B  865.100   .997  3   80  8.98
 43     Tyler Stephenson   C  759.000   .996  3    3  8.96
@@ -16949,8 +16938,8 @@ San Francisco Giants 51 72 .415 22.5 17
 55          Nick Fortes   C  613.200   .987  8    1  8.78
 56          Edgar Quero   C  438.000   .984  7    0  8.75
 57        Mickey Gasper   C  101.000  1.000  0    0  8.73
-58      Hunter Feduccia   C  474.100   .989  5    1  8.73
-59          Cal Raleigh   C  621.200   .998  1    4  8.72
+58          Cal Raleigh   C  623.200   .998  1    4  8.73
+59      Hunter Feduccia   C  474.100   .989  5    1  8.73
 60    Spencer Torkelson  1B 1041.200   .998  2   86  8.72
 61             Ben Rice  1B  465.200   .991  4   37  8.71
 62       Jose Fernandez  1B  140.100   .993  1   13  8.68
@@ -16967,8 +16956,8 @@ San Francisco Giants 51 72 .415 22.5 17
 73           Harry Ford   C  111.100  1.000  0    1  8.35
 74         Ryan Jeffers   C  441.200   .998  1    3  8.35
 75         Keibert Ruiz   C  647.000   .992  5    5  8.35
-76            Ty France  1B  725.000   .996  3   50  8.34
-77             Tim Tawa  1B  184.000  1.000  0   21  8.32
+76             Tim Tawa  1B  184.000  1.000  0   21  8.32
+77            Ty France  1B  727.000   .996  3   50  8.32
 78       Nolan Schanuel  1B  874.100   .990  8   58  8.30
 79         Miguel Amaya   C  444.100   .998  1    1  8.27
 
@@ -18192,4 +18181,4 @@ San Francisco Giants 51 72 .415 22.5 17
   Logan Henderson          vs Los Angeles Dodgers      team K% 20.6
   Tarik Skubal             vs Milwaukee Brewers        team K% 21.7
   Bryan Woo                vs Houston Astros           team K% 21.3
-  Hunter Brown             vs Seattle Mariners         team K% 23.0 🎯 high-K lineup
+  Hunter Brown             vs Seattle Mariners         team K% 22.9
