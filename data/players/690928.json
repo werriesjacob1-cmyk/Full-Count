@@ -80,8 +80,8 @@
         {
           "prop": "Over 3.5 Strikeouts",
           "type": "pitcher",
-          "score": 50.3,
-          "notable_signals": 0,
+          "score": 53.1,
+          "notable_signals": 1,
           "matchup": "St. Louis Cardinals @ Chicago Cubs",
           "game_pk": 824642,
           "team": "St. Louis Cardinals",
@@ -92,7 +92,10 @@
             "opp_team_k_pct": 48.0,
             "same_hand_ratio": 100.0,
             "l14_k_pct": 34.1176,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 77.4733,
+            "ump_k_pct": -1.08,
+            "ump_bb_pct": 0.084
           },
           "hit_probability": 0.6212,
           "raw_hit_probability": 0.7357,
@@ -117,18 +120,46 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.6998,
+            "outs_rate": 0.7021,
             "avg_outs_per_start": 15.5
           },
-          "hit_probability": 0.6998,
+          "hit_probability": 0.7021,
           "raw_hit_probability": null,
-          "lift": -0.0332,
+          "lift": -0.0354,
           "reliability": "C",
           "sample_n": 6,
           "projection": {
             "stat": "pitcher_outs",
             "value": 14.5,
             "needs": 15
+          }
+        },
+        {
+          "prop": "Over 8.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 55.0,
+          "notable_signals": 1,
+          "matchup": "St. Louis Cardinals @ Chicago Cubs",
+          "game_pk": 824642,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            690928,
+            665795
+          ],
+          "signals": {
+            "combined_k_edge": 0.2318
+          },
+          "hit_probability": 0.6485,
+          "raw_hit_probability": null,
+          "lift": 0.2318,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 8.5,
+            "needs": 9
           }
         }
       ]

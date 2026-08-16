@@ -87,7 +87,7 @@
         {
           "prop": "Over 3.5 Strikeouts",
           "type": "pitcher",
-          "score": 45.1,
+          "score": 44.9,
           "notable_signals": 1,
           "matchup": "Colorado Rockies @ San Francisco Giants",
           "game_pk": 823182,
@@ -97,10 +97,13 @@
           "combo_player_ids": null,
           "signals": {
             "opp_team_k_pct": 39.0,
-            "same_hand_ratio": 61.1111,
+            "same_hand_ratio": 33.3333,
             "l14_k_pct": 45.2941,
             "tto_penalty": 8.0,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 58.9196,
+            "ump_k_pct": -0.408,
+            "ump_bb_pct": 0.42
           },
           "hit_probability": 0.621,
           "raw_hit_probability": 0.7348,
@@ -116,7 +119,7 @@
         {
           "prop": "Over 15.5 Outs Recorded",
           "type": "pitcher",
-          "score": 38.3,
+          "score": 38.4,
           "notable_signals": 0,
           "matchup": "Colorado Rockies @ San Francisco Giants",
           "game_pk": 823182,
@@ -125,18 +128,46 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.5158,
+            "outs_rate": 0.5138,
             "avg_outs_per_start": 15.33
           },
-          "hit_probability": 0.5158,
+          "hit_probability": 0.5138,
           "raw_hit_probability": null,
-          "lift": -0.0158,
+          "lift": -0.0138,
           "reliability": "C",
           "sample_n": 6,
           "projection": {
             "stat": "pitcher_outs",
             "value": 15.5,
             "needs": 16
+          }
+        },
+        {
+          "prop": "Over 8.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 55.0,
+          "notable_signals": 1,
+          "matchup": "Colorado Rockies @ San Francisco Giants",
+          "game_pk": 823182,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            687312,
+            694918
+          ],
+          "signals": {
+            "combined_k_edge": 0.0966
+          },
+          "hit_probability": 0.658,
+          "raw_hit_probability": null,
+          "lift": 0.0966,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 8.5,
+            "needs": 9
           }
         }
       ]
