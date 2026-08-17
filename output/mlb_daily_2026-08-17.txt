@@ -1,5 +1,5 @@
 MLB DAILY DATA PACKAGE V5 — 2026-08-17
-Generated : 2026-08-17  14:58:37
+Generated : 2026-08-17  15:53:03
 Season    : 2026
 Windows   : L3 2026-08-14→2026-08-16 | L7 2026-08-10→2026-08-16 | L14 2026-08-03→2026-08-16 | L30 2026-07-18→2026-08-16
 Sources   : FanGraphs | Statcast/Baseball Savant | MLB Stats API | UmpScorecards | FIC | Open-Meteo | Covers.com
@@ -183,7 +183,7 @@ Sources   : FanGraphs | Statcast/Baseball Savant | MLB Stats API | UmpScorecards
   Series: Game 1 of 3  🔵 SERIES OPENER
   HP Ump : TBD
   SP Away: Mitch Bratt  
-  SP Home: TBD  
+  SP Home: Alec Gamboa  
 
   Arizona Diamondbacks Batting Order  (source: last KNOWN lineup from gamePk 824880 — ASSUMED, not yet posted for tonight, will change if the real lineup differs):
     1. Geraldo Perdomo (S) — SS  [proj ~750 PA/yr]  [ASSUMED]
@@ -880,6 +880,10 @@ Sources   : FanGraphs | Statcast/Baseball Savant | MLB Stats API | UmpScorecards
     Pitcher Zone%: unavailable (FanGraphs unreachable or no name match)
     → Cross-reference with ump zone size (Section 6) + catcher framing (Section 79)
     → Three-way score = zone_pct × ump_zone_factor × catcher_frames
+  Alec Gamboa (Arizona Diamondbacks @ Boston Red Sox) | HP Ump: TBD
+    Pitcher Zone%: unavailable (FanGraphs unreachable or no name match)
+    → Cross-reference with ump zone size (Section 6) + catcher framing (Section 79)
+    → Three-way score = zone_pct × ump_zone_factor × catcher_frames
   Walker Buehler (San Diego Padres @ New York Mets) | HP Ump: TBD
     Pitcher Zone%: unavailable (FanGraphs unreachable or no name match)
     → Cross-reference with ump zone size (Section 6) + catcher framing (Section 79)
@@ -1042,7 +1046,7 @@ Sources   : FanGraphs | Statcast/Baseball Savant | MLB Stats API | UmpScorecards
   Framber Va   EST       -4UTC         —  
   Carmen Mlo   EST       -4UTC         —  
   Mitch Brat   EST       -4UTC         —  
-  TBD          EST       -4UTC         —  
+  Alec Gambo   EST       -4UTC         —  
   Walker Bue   EST       -4UTC         —  
   Nolan McLe   EST       -4UTC         —  
   Mason Barn   EST       -5UTC         —  
@@ -1601,6 +1605,15 @@ Sources   : FanGraphs | Statcast/Baseball Savant | MLB Stats API | UmpScorecards
   2026-08-05   SD       7.0   1    0    0    3    9    0      92
   2026-08-11   COL      6.0   4    2    2    1    4    1      78
 
+  Alec Gamboa — Last 5 Starts:
+  Date         Opp      IP    H    R    ER   BB   K    HR     PC
+  -----------------------------------------------------------------
+  2026-07-17   TB       3.0   2    0    0    0    1    0      43
+  2026-07-22   BAL      1.0   0    0    0    0    1    0      14
+  2026-07-25   TOR      4.0   5    1    1    1    6    0      63
+  2026-08-12   TOR      1.0   2    0    0    0    0    0       9
+  2026-08-14   PIT      3.0   2    1    0    0    0    0      36
+
   Walker Buehler — Last 5 Starts:
   Date         Opp      IP    H    R    ER   BB   K    HR     PC
   -----------------------------------------------------------------
@@ -1802,6 +1815,16 @@ Sources   : FanGraphs | Statcast/Baseball Savant | MLB Stats API | UmpScorecards
   2026-08-11     86.5    -0.1   2221     -37  6.17   53.9 78.0  
   Perceived velo (last start): 86.5mph  Decision window: 476.8ms
 
+  Alec Gamboa — Velocity/Spin/Extension Trend (last 6 starts):
+  Season avg velo: 92.9  Season avg spin: 2101
+  Date           Velo   ΔVelo   Spin   ΔSpin   Ext  Zone%   PC Flags
+  ---------------------------------------------------------------------------
+  2026-07-22     92.3    -0.6   2094      -6  6.60   64.3 14.0  
+  2026-07-25     93.4    +0.5   2089     -12  6.57   52.4 63.0  
+  2026-08-12     92.9    +0.1   2169     +68  6.51   55.6  9.0  
+  2026-08-14     92.2    -0.7   2107      +6  6.34   47.2 36.0  
+  Perceived velo (last start): 92.3mph  Decision window: 446.8ms
+
   Walker Buehler — Velocity/Spin/Extension Trend (last 6 starts):
   Season avg velo: 90.8  Season avg spin: 2138
   Date           Velo   ΔVelo   Spin   ΔSpin   Ext  Zone%   PC Flags
@@ -1949,6 +1972,11 @@ Sources   : FanGraphs | Statcast/Baseball Savant | MLB Stats API | UmpScorecards
   Mitch Bratt: 🐢 Slow worker (avg 5.2 pitches/PA)
     💡 More time for hitters to reset — benefits rhythm-dependent batters
     Avg pitches/PA: 5.15  Total PA analyzed: 33
+    👉 Stack insight: Quick tempo pitcher + high O-Swing% hitters = K prop edge
+
+  Alec Gamboa: 🚀 Quick worker (avg 3.5 pitches/PA)
+    ⚡ Timing disruption: hitters get less setup time
+    Avg pitches/PA: 3.46  Total PA analyzed: 13
     👉 Stack insight: Quick tempo pitcher + high O-Swing% hitters = K prop edge
 
   Walker Buehler: 🐢 Slow worker (avg 4.7 pitches/PA)
@@ -2242,6 +2270,24 @@ Sources   : FanGraphs | Statcast/Baseball Savant | MLB Stats API | UmpScorecards
     Pitch types: 6  → 🟢 Complex (4+)
     Release consistency: X stdev=0.138ft  Z stdev=0.119ft
     Slot classification: 🟡 Moderate drift
+
+  Alec Gamboa — Pitch Arsenal + Tunneling:
+  Type    Use%  Velo   IVB    HB  Spin  Ext  Whiff%  Zone%
+  ------------------------------------------------------------
+  FF      48.3  96.2  1.38  0.27  2152 6.35     8.9   60.7
+  SI      17.2  95.2  0.76  1.04  1948 6.58    10.0   50.0
+  SL      34.5  88.5  0.11 -0.28  2176 6.66    10.0   47.5
+
+  Tunneling scores (lower ΔMove = better tunnel deception):
+    FF→SL: ΔMove=1.39in  VeloGap=7.6mph  DecisionWindow=428.3ms  🔥 ELITE TUNNEL
+    SI→SL: ΔMove=1.47in  VeloGap=6.7mph  DecisionWindow=431.8ms  🔥 ELITE TUNNEL
+
+  Pitch Sequencing (first pitch, 2-strike, 0-0):
+    First pitch: {'FF': np.float64(52.8), 'SL': np.float64(27.8), 'SI': np.float64(13.9), 'CU': np.float64(5.6)}
+    2-strike:    {'FF': np.float64(38.1), 'SL': np.float64(33.3), 'SI': np.float64(21.4), 'CH': np.float64(4.8)}
+    Pitch types: 3  → 🟡 Moderate (3 pitch)
+    Release consistency: X stdev=0.339ft  Z stdev=0.161ft
+    Slot classification: 🔴 Variable slot
 
   Walker Buehler — Pitch Arsenal + Tunneling:
   Type    Use%  Velo   IVB    HB  Spin  Ext  Whiff%  Zone%
@@ -2675,6 +2721,22 @@ pc_bucket
 91+       86.850    62.070
   Arm slot drift (inning 1-2 vs 5+): 0.072ft  ✅ Consistent arm slot
 
+  Alec Gamboa — In-Game Micro-Fatigue (L14 aggregated):
+  Inning-by-inning velo/spin/zone%:
+         velo     spin  zone_pct  rel_x  rel_z  count
+inning                                               
+6      90.390 2187.730    54.550  1.260  6.280     11
+7      93.780 2067.110    38.890  1.570  6.210     18
+8      92.010 2131.190    56.250  1.460  6.360     16
+  Early innings velo (1-2): nan  Late innings (5+): 92.1  Drop: +nanmph
+
+  By pitch count:
+            velo  zone_pct
+pc_bucket                 
+1-30      92.040    46.670
+31-60     92.690    50.000
+  Arm slot drift (inning 1-2 vs 5+): nanft  ✅ Consistent arm slot
+
   Walker Buehler — In-Game Micro-Fatigue (L14 aggregated):
   Inning-by-inning velo/spin/zone%:
          velo     spin  zone_pct  rel_x  rel_z  count
@@ -2963,6 +3025,12 @@ pc_bucket
   SL      14.0  0.816 -0.221      166°
   SV      38.0 -0.172 -1.221      305°
 
+  Alec Gamboa — VAA/HAA + Spin Axis:
+  Type   Count    VAA    HAA  SpinAxis
+  -----------------------------------
+  FF      22.0  1.335  0.265      162°
+  SL      14.0  0.085 -0.351      252°
+
   Walker Buehler — VAA/HAA + Spin Axis:
   Type   Count    VAA    HAA  SpinAxis
   -----------------------------------
@@ -3121,6 +3189,13 @@ pc_bucket
     Perceived velocity: 86.6mph  Decision window: 476.2ms
     Velocity gap (fastest-slowest): 11.5mph  🔥 BIG GAP
     Release slot consistency: stdev=0.138ft  
+
+  Alec Gamboa:
+    Pitch types (≥5%): ['FF', 'SL', 'SI']  →  🟡 Moderate
+    Avg velo: 92.9mph  Avg extension: 6.50ft
+    Perceived velocity: 93.1mph  Decision window: 443.0ms
+    Velocity gap (fastest-slowest): 7.6mph  
+    Release slot consistency: stdev=0.339ft  
 
   Walker Buehler:
     Pitch types (≥5%): ['FC', 'SI', 'FF', 'CH', 'SL', 'ST']  →  🟢 Complex
@@ -5052,6 +5127,8 @@ pc_bucket
 
   Mitch Bratt: 86.7mph avg (no prior year comparison)
 
+  Alec Gamboa: 92.9mph avg (no prior year comparison)
+
   Walker Buehler (2025→2026):
     Velo: 89.1→89.8 (+0.7mph)  Spin: 2306→2199 (-107)  Ext: 6.55→6.55 (-0.00ft)
     ✅ Stable profile YOY
@@ -6717,6 +6794,10 @@ pc_bucket
 3     TTO4+ (4th+)  47  10   4  11 21.300  8.500        0.234   8.600
     🟢 Maintains/improves K rate through the order — strong late-game K prop candidate
 
+  Alec Gamboa — Times-Through-Order Splits (L30, PA≥1 buckets):
+            TTO     PA     K    BB     H     K%   BB%  AVG_against  Whiff%
+0  TTO4+ (4th+) 36.000 7.000 1.000 9.000 19.400 2.800        0.250   9.000
+
   Walker Buehler — Times-Through-Order Splits (L30, PA≥1 buckets):
                TTO  PA  K  BB   H     K%    BB%  AVG_against  Whiff%
 0  TTO1 (1st time)  19  4   2   4 21.100 10.500        0.211   7.100
@@ -6920,6 +7001,12 @@ pc_bucket
   NRFI read; the pitch-count rows are real fatigue thresholds (not the at-bat-number
   proxy Sections 37/38 derive), so they also cross-check those.
 
+
+  Alec Gamboa:
+    Situation                BF     IP    K   BB    ERA    AVG    OPS
+    1st inning pitched       29    8.0    6    1   2.25   .154   .480  🔴 small sample
+    first 75 pitches         68   17.0   12    5      -   .233   .651
+    7th inning or later      61   15.0   10    5   1.80   .245   .696
 
   Andre Pallante:
     Situation                BF     IP    K   BB    ERA    AVG    OPS
@@ -7242,6 +7329,18 @@ pc_bucket
   Nick Sogard                 18.8   14.1
   Adley Rutschman             14.2   10.6
   Caleb Durbin                13.9    6.6
+
+  Arizona Diamondbacks @ Boston Red Sox — Arizona Diamondbacks lineup facing Alec Gamboa (avg K% 18.2):
+  Batter                        K%    BB%
+  Jorge Barrosa               24.9   10.1
+  James McCann                23.1    1.9
+  Corbin Carroll              22.9   11.6
+  Tim Tawa                    21.5    8.5
+  Max Kepler                  19.4    7.5
+  Gabriel Moreno              15.2   11.9
+  Ketel Marte                 14.8    7.0
+  Geraldo Perdomo             12.3   14.8
+  Ildemaro Vargas              9.3    5.8
 
   San Diego Padres @ New York Mets — New York Mets lineup facing Walker Buehler (avg K% 22.2):
   Batter                        K%    BB%
@@ -8043,6 +8142,14 @@ San Francisco Giants 51 73 .411 22.5 16
     Night Games          ERA:2.10  WHIP:1.13  AVG:.202  K/9:7.71  IP:25.2
     vs Left              ERA:?  WHIP:1.24  AVG:.263  K/9:4.66  IP:9.2
     vs Right             ERA:?  WHIP:1.50  AVG:.214  K/9:7.71  IP:23.1
+
+  Alec Gamboa — Pitcher Splits:
+    Home Games           ERA:2.61  WHIP:1.45  AVG:.256  K/9:7.84  IP:10.1
+    Away Games           ERA:0.00  WHIP:0.60  AVG:.190  K/9:4.05  IP:6.2
+    Day Games            ERA:2.89  WHIP:1.61  AVG:.278  K/9:7.71  IP:9.1
+    Night Games          ERA:0.00  WHIP:0.52  AVG:.167  K/9:4.70  IP:7.2
+    vs Left              ERA:?  WHIP:1.20  AVG:.250  K/9:9.00  IP:5.0
+    vs Right             ERA:?  WHIP:1.08  AVG:.225  K/9:5.25  IP:12.0
 
   Walker Buehler — Pitcher Splits:
     Home Games           ERA:4.41  WHIP:1.31  AVG:.249  K/9:6.54  IP:63.1
@@ -16041,7 +16148,7 @@ San Francisco Giants 51 73 .411 22.5 16
 
   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
   Arizona Diamondbacks @ Boston Red Sox
-  SP Away: Mitch Bratt  vs  SP Home: TBD
+  SP Away: Mitch Bratt  vs  SP Home: Alec Gamboa
   HP Umpire: TBD
   Park: Fenway Park  |  Dome: No  |  Surface: grass  |  Humidor: No
   Dimensions: LF310/CF420/RF302  Wall: LF37ft/RF5ft
@@ -16145,6 +16252,7 @@ San Francisco Giants 51 73 .411 22.5 16
   Framber Valdez           vs Pittsburgh Pirates       team K% 24.1 🎯 high-K lineup
   Carmen Mlodzinski        vs Detroit Tigers           team K% 22.5
   Mitch Bratt              vs Boston Red Sox           team K% 21.8
+  Alec Gamboa              vs Arizona Diamondbacks     team K% 19.3
   Walker Buehler           vs New York Mets            team K% 22.7
   Nolan McLean             vs San Diego Padres         team K% 21.8
   Mason Barnett            vs Kansas City Royals       team K% 21.3
