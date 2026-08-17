@@ -132,6 +132,47 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-17",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 44.6,
+          "notable_signals": 0,
+          "matchup": "St. Louis Cardinals @ Cincinnati Reds",
+          "game_pk": 824514,
+          "team": "Cincinnati Reds",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "sp_era_weak": 31.4286,
+            "park_hr_index": 51.8,
+            "lineup_slot": 37.5,
+            "bullpen_fatigue": 64.1026,
+            "opp_catcher_framing": -0.84,
+            "days_rest": 0.0,
+            "woba_ahead": 29.0909,
+            "woba_behind": 0.0,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "ump_k_pct": 0.612,
+            "ump_bb_pct": -0.024
+          },
+          "hit_probability": 0.53,
+          "raw_hit_probability": 0.551,
+          "lift": -0.021,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

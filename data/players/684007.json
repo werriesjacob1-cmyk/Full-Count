@@ -81,6 +81,65 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-17",
+      "evaluations": [
+        {
+          "prop": "Over 5.5 Strikeouts",
+          "type": "pitcher",
+          "score": 44.5,
+          "notable_signals": 0,
+          "matchup": "Chicago White Sox @ Chicago Cubs",
+          "game_pk": 824641,
+          "team": "Chicago Cubs",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_k_pct": 69.0,
+            "same_hand_ratio": 12.5,
+            "l14_k_pct": 58.8235,
+            "env_neutral": 50.0
+          },
+          "hit_probability": 0.5508,
+          "raw_hit_probability": 0.3911,
+          "lift": 0.1727,
+          "reliability": "A",
+          "sample_n": 24,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 5.5,
+            "needs": 6
+          }
+        },
+        {
+          "prop": "Over 17.5 Outs Recorded",
+          "type": "pitcher",
+          "score": 47.7,
+          "notable_signals": 1,
+          "matchup": "Chicago White Sox @ Chicago Cubs",
+          "game_pk": 824641,
+          "team": "Chicago Cubs",
+          "side": "home",
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "outs_rate": 0.484,
+            "avg_outs_per_start": 17.17
+          },
+          "hit_probability": 0.484,
+          "raw_hit_probability": null,
+          "lift": 0.0639,
+          "reliability": "A",
+          "sample_n": 24,
+          "projection": {
+            "stat": "pitcher_outs",
+            "value": 17.5,
+            "needs": 18
+          }
+        }
+      ]
     }
   ]
 }
