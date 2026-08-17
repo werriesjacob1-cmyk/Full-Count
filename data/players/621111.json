@@ -87,7 +87,7 @@
         {
           "prop": "Over 4.5 Strikeouts",
           "type": "pitcher",
-          "score": 50.4,
+          "score": 52.9,
           "notable_signals": 0,
           "matchup": "San Diego Padres @ New York Mets",
           "game_pk": 823589,
@@ -100,9 +100,9 @@
             "same_hand_ratio": 92.8571,
             "l14_k_pct": 23.5294,
             "env_neutral": 50.0,
-            "ump_accuracy": 30.179,
-            "ump_k_pct": 0.204,
-            "ump_bb_pct": -0.264
+            "ump_accuracy": 54.8646,
+            "ump_k_pct": -0.156,
+            "ump_bb_pct": 0.228
           },
           "hit_probability": 0.5692,
           "raw_hit_probability": 0.4799,
@@ -118,7 +118,7 @@
         {
           "prop": "Over 15.5 Outs Recorded",
           "type": "pitcher",
-          "score": 17.1,
+          "score": 18.1,
           "notable_signals": 0,
           "matchup": "San Diego Padres @ New York Mets",
           "game_pk": 823589,
@@ -127,18 +127,46 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.4487,
+            "outs_rate": 0.4468,
             "avg_outs_per_start": 14.29
           },
-          "hit_probability": 0.4487,
+          "hit_probability": 0.4468,
           "raw_hit_probability": null,
-          "lift": -0.1282,
+          "lift": -0.1206,
           "reliability": "A",
           "sample_n": 24,
           "projection": {
             "stat": "pitcher_outs",
             "value": 15.5,
             "needs": 16
+          }
+        },
+        {
+          "prop": "Over 9.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 55.0,
+          "notable_signals": 0,
+          "matchup": "San Diego Padres @ New York Mets",
+          "game_pk": 823589,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            621111,
+            690997
+          ],
+          "signals": {
+            "combined_k_edge": -0.0172
+          },
+          "hit_probability": 0.6124,
+          "raw_hit_probability": null,
+          "lift": -0.0172,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 9.5,
+            "needs": 10
           }
         }
       ]

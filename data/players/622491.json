@@ -88,7 +88,7 @@
         {
           "prop": "Over 4.5 Strikeouts",
           "type": "pitcher",
-          "score": 37.6,
+          "score": 39.0,
           "notable_signals": 0,
           "matchup": "Chicago White Sox @ Chicago Cubs",
           "game_pk": 824641,
@@ -101,9 +101,9 @@
             "same_hand_ratio": 92.8571,
             "l14_k_pct": 100.0,
             "env_neutral": 50.0,
-            "ump_accuracy": 31.3225,
-            "ump_k_pct": 0.384,
-            "ump_bb_pct": -0.24
+            "ump_accuracy": 45.352,
+            "ump_k_pct": 0.312,
+            "ump_bb_pct": -0.012
           },
           "hit_probability": 0.5814,
           "raw_hit_probability": 0.5388,
@@ -119,7 +119,7 @@
         {
           "prop": "Over 16.5 Outs Recorded",
           "type": "pitcher",
-          "score": 36.7,
+          "score": 36.6,
           "notable_signals": 0,
           "matchup": "Chicago White Sox @ Chicago Cubs",
           "game_pk": 824641,
@@ -133,13 +133,41 @@
           },
           "hit_probability": 0.4772,
           "raw_hit_probability": null,
-          "lift": -0.011,
+          "lift": -0.0112,
           "reliability": "A",
           "sample_n": 19,
           "projection": {
             "stat": "pitcher_outs",
             "value": 16.5,
             "needs": 17
+          }
+        },
+        {
+          "prop": "Over 9.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 40.9,
+          "notable_signals": 0,
+          "matchup": "Chicago White Sox @ Chicago Cubs",
+          "game_pk": 824641,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            622491,
+            684007
+          ],
+          "signals": {
+            "combined_k_edge": -0.0976
+          },
+          "hit_probability": 0.5551,
+          "raw_hit_probability": null,
+          "lift": -0.0976,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 9.5,
+            "needs": 10
           }
         }
       ]

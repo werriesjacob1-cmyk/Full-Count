@@ -41,7 +41,7 @@
         {
           "prop": "Over 6.5 Strikeouts",
           "type": "pitcher",
-          "score": 38.3,
+          "score": 40.8,
           "notable_signals": 0,
           "matchup": "Los Angeles Dodgers @ Colorado Rockies",
           "game_pk": 824320,
@@ -51,12 +51,12 @@
           "combo_player_ids": null,
           "signals": {
             "opp_team_k_pct": 56.0,
-            "same_hand_ratio": 33.3333,
+            "same_hand_ratio": 75.0,
             "l14_k_pct": 100.0,
             "env_neutral": 50.0,
-            "ump_accuracy": 54.836,
-            "ump_k_pct": -0.42,
-            "ump_bb_pct": 0.168
+            "ump_accuracy": 63.7538,
+            "ump_k_pct": 0.024,
+            "ump_bb_pct": -0.3
           },
           "hit_probability": 0.5934,
           "raw_hit_probability": 0.5976,
@@ -67,6 +67,34 @@
             "stat": "strikeouts",
             "value": 6.5,
             "needs": 7
+          }
+        },
+        {
+          "prop": "Over 11.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 54.9,
+          "notable_signals": 1,
+          "matchup": "Los Angeles Dodgers @ Colorado Rockies",
+          "game_pk": 824320,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            605483,
+            608372
+          ],
+          "signals": {
+            "combined_k_edge": 0.448
+          },
+          "hit_probability": 0.7882,
+          "raw_hit_probability": null,
+          "lift": 0.448,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 11.5,
+            "needs": 12
           }
         }
       ]
