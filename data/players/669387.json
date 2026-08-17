@@ -157,8 +157,8 @@
         {
           "prop": "Over 3.5 Strikeouts",
           "type": "pitcher",
-          "score": 55.9,
-          "notable_signals": 0,
+          "score": 56.5,
+          "notable_signals": 1,
           "matchup": "Detroit Tigers @ Pittsburgh Pirates",
           "game_pk": 823343,
           "team": "Pittsburgh Pirates",
@@ -167,10 +167,13 @@
           "combo_player_ids": null,
           "signals": {
             "opp_team_k_pct": 55.0,
-            "same_hand_ratio": 88.8889,
+            "same_hand_ratio": 61.1111,
             "l14_k_pct": 0.0,
             "tto_penalty": -8.0,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 66.9679,
+            "ump_k_pct": 0.06,
+            "ump_bb_pct": -0.696
           },
           "hit_probability": 0.5587,
           "raw_hit_probability": 0.4291,

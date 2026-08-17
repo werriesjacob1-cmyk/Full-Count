@@ -443,6 +443,135 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-17",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 50.3,
+          "notable_signals": 2,
+          "matchup": "Chicago White Sox @ Chicago Cubs",
+          "game_pk": 824641,
+          "team": "Chicago White Sox",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 31.4286,
+            "park_hr_index": 51.4,
+            "season_barrel_pct": 2.6667,
+            "lineup_slot": 12.5,
+            "bullpen_fatigue": 76.9231,
+            "platoon_barrel_pct": -4.4,
+            "platoon_xwoba": -2.7,
+            "park_hand_index": 1.57,
+            "opp_catcher_framing": 0.6,
+            "days_rest": 4.0,
+            "woba_ahead": 50.0,
+            "woba_behind": 0.0,
+            "pull_park_synergy": 0.6429,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": -0.856,
+            "vs_rp_ops": -2.892,
+            "ump_k_pct": -0.384,
+            "ump_bb_pct": 0.24
+          },
+          "hit_probability": 0.6313,
+          "raw_hit_probability": 0.606,
+          "lift": -0.0448,
+          "reliability": "B",
+          "sample_n": 71,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 54.3,
+          "notable_signals": 0,
+          "matchup": "Chicago White Sox @ Chicago Cubs",
+          "game_pk": 824641,
+          "team": "Chicago White Sox",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": -0.66,
+            "sprint_speed": 78.125,
+            "catcher_poptime": 11.4286,
+            "on_base": 0.0
+          },
+          "hit_probability": 0.213,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "B",
+          "sample_n": 71,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 0.0,
+          "notable_signals": 0,
+          "matchup": "Chicago White Sox @ Chicago Cubs",
+          "game_pk": 824641,
+          "team": "Chicago White Sox",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.011
+          },
+          "hit_probability": 0.011,
+          "raw_hit_probability": null,
+          "lift": -0.0385,
+          "reliability": "B",
+          "sample_n": 71,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 0.0,
+          "notable_signals": 0,
+          "matchup": "Chicago White Sox @ Chicago Cubs",
+          "game_pk": 824641,
+          "team": "Chicago White Sox",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0048
+          },
+          "hit_probability": 0.0048,
+          "raw_hit_probability": null,
+          "lift": -0.0167,
+          "reliability": "B",
+          "sample_n": 71,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }
