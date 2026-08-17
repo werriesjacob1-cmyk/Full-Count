@@ -23,7 +23,7 @@ Every player below is projected into last night's/his last game's batting slot f
 - **Kyle Tucker** (Los Angeles Dodgers) — Over 0.5 Hits+Runs+RBIs — 68.6% [Los Angeles Dodgers @ Colorado Rockies]
 - **Michael Busch** (Chicago Cubs) — Over 0.5 Hits+Runs+RBIs — 68.5% [Chicago White Sox @ Chicago Cubs]
 - **Taylor Walls** (Tampa Bay Rays) — Over 0.5 Hits+Runs+RBIs — 68.4% [Baltimore Orioles @ Tampa Bay Rays]
+- **Nick Gonzales** (Pittsburgh Pirates) — Over 0.5 Hits — 67.9% [Detroit Tigers @ Pittsburgh Pirates]
 - **Adley Rutschman** (Boston Red Sox) — Over 0.5 Hits+Runs+RBIs — 67.9% [Arizona Diamondbacks @ Boston Red Sox]
 - **Gunnar Henderson** (Baltimore Orioles) — Over 0.5 Hits+Runs+RBIs — 67.9% [Baltimore Orioles @ Tampa Bay Rays]
-- **Nick Gonzales** (Pittsburgh Pirates) — Over 0.5 Hits — 67.7% [Detroit Tigers @ Pittsburgh Pirates]
 - **Otto Lopez** (Miami Marlins) — Over 0.5 Hits — 67.7% [Miami Marlins @ Philadelphia Phillies]
