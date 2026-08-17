@@ -73,6 +73,13 @@
           "ungraded": 1
         }
       },
+      "by_recommendation_status": {
+        "unclassified": {
+          "hits": 9,
+          "misses": 16,
+          "ungraded": 1
+        }
+      },
       "shadow_by_category": {}
     },
     {
@@ -174,6 +181,13 @@
           "ungraded": 1
         }
       },
+      "by_recommendation_status": {
+        "unclassified": {
+          "hits": 14,
+          "misses": 15,
+          "ungraded": 1
+        }
+      },
       "shadow_by_category": {}
     },
     {
@@ -198,6 +212,13 @@
           "hits": 6,
           "misses": 6,
           "ungraded": 2
+        }
+      },
+      "by_recommendation_status": {
+        "unclassified": {
+          "hits": 11,
+          "misses": 11,
+          "ungraded": 7
         }
       },
       "shadow_by_category": {}
@@ -229,6 +250,13 @@
           "hits": 23,
           "misses": 47,
           "ungraded": 5
+        }
+      },
+      "by_recommendation_status": {
+        "unclassified": {
+          "hits": 25,
+          "misses": 60,
+          "ungraded": 8
         }
       },
       "shadow_by_category": {
@@ -388,6 +416,13 @@
           "ungraded": 2
         }
       },
+      "by_recommendation_status": {
+        "unclassified": {
+          "hits": 19,
+          "misses": 54,
+          "ungraded": 6
+        }
+      },
       "shadow_by_category": {
         "hits@1": {
           "hits": 0,
@@ -533,6 +568,13 @@
           "hits": 19,
           "misses": 41,
           "ungraded": 1
+        }
+      },
+      "by_recommendation_status": {
+        "unclassified": {
+          "hits": 21,
+          "misses": 45,
+          "ungraded": 5
         }
       },
       "shadow_by_category": {
@@ -840,5 +882,15 @@
       "misses": 0,
       "ungraded": 0
     }
-  }
+  },
+  "by_recommendation_status_totals": {
+    "unclassified": {
+      "hits": 99,
+      "misses": 201,
+      "ungraded": 28
+    }
+  },
+  "top_pick_hit_rate": null,
+  "last_14_days_top_pick_hit_rate": null,
+  "last_14_days_top_pick_n": 0
 }
