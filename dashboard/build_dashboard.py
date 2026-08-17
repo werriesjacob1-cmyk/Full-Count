@@ -1,22 +1,35 @@
 #!/usr/bin/env python3
-"""dashboard/build_dashboard.py — builds the standalone Full Count Board HTML
-(the tabbed prop-explorer dashboard, distinct from the curated top-10 board
-generate_picks.py ships) in one pass: a live, isolated re-run of the real
-scoring pipeline to capture EVERY qualifying candidate per prop family (not
-just the single winner select_best_by_category/select_moonshots normally
-keep for the curated board), then renders it into one self-contained HTML
-file with fonts and data embedded.
+"""dashboard/build_dashboard.py — builds the Full Count Board (the research
+dashboard, distinct from the curated top-10 board generate_picks.py ships)
+in one pass: a live, isolated re-run of the real scoring pipeline to
+capture EVERY qualifying candidate per prop family (not just the single
+winner select_best_by_category/select_moonshots normally keep for the
+curated board), then writes it as a small static site: dashboard/static/
+'s hand-written index.html/app.css/app.js copied unchanged, plus a fresh
+docs/data.json.
+
+PHASE 4 REBUILD (2026-08-16). The page used to be one ~4.7MB self-
+contained HTML file (fonts and the ENTIRE data payload both base64/JSON-
+embedded inline, then the same data payload written AGAIN as a separate
+~4.4MB data.json for polling to fetch) that force-reloaded itself every 30
+minutes. It is now: a small static shell + stylesheet + script (changes
+only when this site's own code changes, cacheable across daily data
+refreshes), a single deduplicated data.json (every prop appears exactly
+once; recommendation_status/stat are real fields the client filters on,
+not separate server-built lists), and a small live.json the client polls
+for price/grade/status deltas instead of re-fetching the whole board. See
+results in this project's Phase 4 report.
 
 Read-only against the real pipeline: OUTPUT_DIR/PLAYERS_DIR are redirected
 to a throwaway temp directory for the whole run, so nothing here ever
 touches output/, data/players/, or any file this repo actually commits.
 
-    python3 dashboard/build_dashboard.py [--out PATH]
+    python3 dashboard/build_dashboard.py [--out-dir PATH]
 
 Intended to be run once a day (a fresh live pass takes several minutes and
 makes real calls to FanGraphs/Statcast/FanDuel -- this is not something to
 run every few minutes). The caller is responsible for publishing the
-resulting HTML file wherever it needs to go; this script only builds it.
+resulting directory wherever it needs to go; this script only builds it.
 """
 from __future__ import annotations
 
@@ -159,7 +172,13 @@ def _compute_streaks(all_priced, max_workers=12):
                 continue
             n = _streak_len(games, lambda g, stat=stat, needs=needs: g.get(stat, 0) >= needs)
             if n >= STREAK_MIN:
-                entries.append({**r, "streak": n, "streak_stat": stat})
+                # PHASE 4: a lean {id, streak, streak_stat} reference, not a
+                # third full copy of the row (see build_payload()'s single-
+                # array data model) -- the client looks the rest up by id in
+                # PAYLOAD.props. `r` here is already clean()'d (this
+                # function is called with all_priced, built via clean()),
+                # so a real id already exists on it.
+                entries.append({"id": r["id"], "streak": n, "streak_stat": stat})
     for pid, r in pitchers.items():
         needs = (r.get("projection") or {}).get("needs")
         if needs is None:
@@ -167,7 +186,7 @@ def _compute_streaks(all_priced, max_workers=12):
         games = pitcher_logs.get(pid) or []
         n = _streak_len(games, lambda g: g["strikeouts"] >= needs)
         if n >= STREAK_MIN:
-            entries.append({**r, "streak": n, "streak_stat": "strikeouts"})
+            entries.append({"id": r["id"], "streak": n, "streak_stat": "strikeouts"})
 
     entries.sort(key=lambda r: r["streak"], reverse=True)
     return entries[:15]
@@ -344,15 +363,39 @@ def run_live_fetch():
         out = []
         for r in rows:
             game_pk = r.get("game_pk")
+            proj = r.get("projection") or {}
+            stat = proj.get("stat")
+            combo = r.get("combo_player_ids")
+            # PHASE 4: a real, stable identity for this exact prop -- the
+            # single-array data model (see build_payload()) needs one, and
+            # the fragile (name, prop) STRING matching refresh_prices.py/
+            # refresh_grades.py/mergePriceUpdate() all used before this
+            # (three independent reimplementations of "find this same row
+            # again") collapses into one real key everywhere once every row
+            # carries it directly. game_pk + player (or combo) + stat +
+            # threshold is the same identity grade_pick() itself keys a
+            # settlement on -- reusing it here rather than inventing a
+            # separate one.
+            subject = r.get("player_id") or ("+".join(str(x) for x in combo) if combo else "game")
+            prop_id = f"{game_pk}-{subject}-{stat}-{proj.get('needs')}"
             out.append({
+                "id": prop_id,
                 "type": r.get("type"), "name": r.get("name"), "team": r.get("team"),
                 "matchup": r.get("matchup"), "side": r.get("side"), "prop": r.get("prop"),
-                "projection": r.get("projection"), "lean": r.get("lean"),
+                "projection": proj, "stat": stat, "lean": r.get("lean"),
                 "score": r.get("score"), "confidence": r.get("confidence"),
                 "hit_probability": r.get("hit_probability"),
                 "market_odds": r.get("market_odds"), "market_implied": r.get("market_implied"),
                 "market_edge": r.get("market_edge"), "price_clears": r.get("price_clears"),
-                "reliability": r.get("reliability"), "sample_n": r.get("sample_n"),
+                # market_hold: PHASE 3 addition (see eval_lib.market_probability)
+                # -- present (a real number) only on the genuinely two-sided
+                # markets (strikeouts/pitcher_outs/nrfi_combined), where it is
+                # the EXACT measured hold from both real posted sides, not an
+                # assumed one. Surfaced so the detail view can say "exact
+                # market price" instead of "estimated" where it's actually true.
+                "market_hold": r.get("market_hold"),
+                "reliability": r.get("reliability"), "reliability_note": r.get("reliability_note"),
+                "sample_n": r.get("sample_n"),
                 "why": (r.get("why") or [])[:4],
                 "watchouts": (r.get("watchouts") or [])[:2],
                 "base_rate": r.get("base_rate"), "lift": r.get("lift"),
@@ -384,7 +427,7 @@ def run_live_fetch():
                 # the game is happening... green if it cashes, red if it
                 # doesn't."
                 "player_id": r.get("player_id"),
-                "combo_player_ids": r.get("combo_player_ids"),
+                "combo_player_ids": combo,
                 # Early Look: True only for a candidate whose batting-order
                 # slot is GUESSED (Rotowire projection or last-known
                 # lineup), never a real posted one -- see quality_control()
@@ -574,35 +617,68 @@ CATEGORY_ORDER = [
 
 
 def load_track_record(path=None):
-    """The real, currently-running accuracy record for the MAIN board --
-    results/history.json's own main_hit_rate, not the blended overall_hit_rate
-    (which also folds in moonshots' deliberately-15-25%-by-design rate and
-    best_of_category's deliberately-below-floor picks -- see this project's
-    own skill doc for why quoting the blended number as "is the model
-    working" is misleading). Kept as a real file read separate from
-    build_payload() so build_payload stays a pure function of its `result`
-    argument, testable without a real history.json on disk.
+    """PHASE 4: the site's Performance page must show the CURRENT
+    (2026-08-15+ recommendation-layer) record and the LEGACY (pre-rebuild)
+    record as two clearly separate things -- direct instruction: "Do not
+    imply that legacy -26.8% ROI represents the current recommendation
+    architecture... do not pretend the new architecture has proven itself
+    before it has enough observations." Reads exactly the fields Phase 3
+    built for this: by_recommendation_status_totals.top_pick / top_pick_
+    hit_rate / last_14_days_top_pick_hit_rate (current) alongside the
+    pre-existing by_category_totals.main / main_hit_rate / last_14_days_
+    hit_rate (legacy) -- see results/ANALYSIS.md for the full tier
+    definitions this maps onto.
 
-    Returns None (not a fabricated 0%/blank record) if the file is missing
-    or the main category has no graded picks yet -- an honest "no track
-    record yet" beats a fake one."""
+    Kept as a real file read separate from build_payload() so build_payload
+    stays a pure function of its `result` argument, testable without a real
+    history.json on disk.
+
+    "current" and/or "legacy" are None (never a fabricated 0%/blank record)
+    when that tier genuinely has no graded picks yet -- an honest "no track
+    record yet" beats a fake one. As of this rebuild, "current" is None by
+    construction: zero days have been graded under the new architecture."""
     path = path or os.path.join(REPO_ROOT, "results", "history.json")
     try:
         with open(path) as f:
             h = json.load(f)
     except Exception:
-        return None
+        return {"current": None, "legacy": None}
+
+    tp = (h.get("by_recommendation_status_totals") or {}).get("top_pick") or {}
+    tp_n = (tp.get("hits") or 0) + (tp.get("misses") or 0)
+    current = None
+    if tp_n > 0 and h.get("top_pick_hit_rate") is not None:
+        current = {
+            "hit_rate": h["top_pick_hit_rate"], "n": tp_n,
+            "hits": tp.get("hits", 0), "misses": tp.get("misses", 0),
+            "last_14d_hit_rate": h.get("last_14_days_top_pick_hit_rate"),
+            "last_14d_n": h.get("last_14_days_top_pick_n"),
+        }
+
     main = (h.get("by_category_totals") or {}).get("main") or {}
-    n = (main.get("hits") or 0) + (main.get("misses") or 0)
-    if n == 0 or h.get("main_hit_rate") is None:
-        return None
-    return {
-        "main_hit_rate": h["main_hit_rate"], "main_n": n,
-        "last_14d_hit_rate": h.get("last_14_days_hit_rate"),
-    }
+    main_n = (main.get("hits") or 0) + (main.get("misses") or 0)
+    legacy = None
+    if main_n > 0 and h.get("main_hit_rate") is not None:
+        legacy = {
+            "hit_rate": h["main_hit_rate"], "n": main_n,
+            "hits": main.get("hits", 0), "misses": main.get("misses", 0),
+            "last_14d_hit_rate": h.get("last_14_days_hit_rate"),
+        }
+
+    return {"current": current, "legacy": legacy}
 
 
 def build_payload(result, track_record=None):
+    """PHASE 4 REBUILD (2026-08-16): ONE canonical `props` array, no
+    duplication. The pre-rebuild version of this function serialized every
+    row up to FOUR times -- once in its own stat tab, once again in "all",
+    and again in whichever of top_picks/leans/best_value it qualified for
+    -- which is the exact, measured root cause of docs/data.json's ~4.4MB
+    size (verified: summing every per-stat tab's length equalled "all"'s
+    length exactly). recommendation_status/stat are already real fields on
+    every row (see clean()), so "which bucket is this in" is now a client-
+    side FILTER over one array, not a server-side copy into a second list.
+    See dashboard/app.js's TOP_PICKS/LEANS/BEST_VALUE view functions."""
     import prop_probability as pp
 
     def add_estimated_odds(rows):
@@ -611,1697 +687,157 @@ def build_payload(result, track_record=None):
             r["estimated_odds"] = pp.american_odds(p) if p is not None else None
         return rows
 
-    # Real FanDuel line first, then everything without one -- the exact
-    # "ranked = priced + unpriced" split generate_picks.py's own top10
-    # selection already uses, applied here for the same reason. Sorting
-    # every tab by raw model probability alone (the old behavior) let an
-    # unpriced candidate -- a real player and a real projection, but no
-    # market FanDuel has actually posted yet -- rank ABOVE genuinely
-    # bettable picks just for having a bigger number attached, which reads
-    # as "this is a recommendation" when it's not currently a bet anyone
-    # can place. Found live 2026-08-12: David Peterson's Outs Recorded
-    # read (63.2%, no line) was sorting above several real, priced,
-    # lower-probability Strikeouts candidates for exactly this reason.
-    def _priced_first(r):
-        return (r.get("market_odds") is None, -r["hit_probability"])
-
     # select_best_by_category's own CATEGORY_LABELS includes "home_runs" (a
     # 2026-08-12 audit fix in generate_picks.py), so it produces the exact
     # same home-run field select_moonshots() already does under "moonshot"
     # -- verified live (identical names, order, probabilities). Drop the
-    # duplicate rather than show two "Home Runs" tabs.
+    # duplicate rather than double-count "Home Runs".
     result = dict(result)
     result.pop("home_runs", None)
 
-    # REAL BUG, found live 2026-08-12 running the actual pipeline end to end
-    # (not caught by any existing test, since none of them passed a `result`
-    # dict shaped like run_live_fetch()'s real output with this key present):
-    # "suggested_parlay" is a top-level key in run_live_fetch()'s own `out`
-    # dict, same as "generated_at"/"date", but wasn't in meta_keys -- so the
-    # generic "everything else is a stat category" loop below tried to treat
-    # its value (None, or a dict once the parlay build succeeds) as a list
-    # of candidate rows and crashed on `for r in rows` the moment a real run
-    # actually populated it.
-    # Assumed-lineup candidates (quality_control()'s lineup_assumed=True
-    # pool) are DELIBERATELY not excluded here -- direct follow-up
-    # request: "our system should use assumed lineups... we would just
-    # scratch the ones who don't end up on the final roster." They flow
-    # into candidates/moonshots_full/by_category_full upstream in
-    # run_live_fetch() like any other row, carrying their own
-    # lineup_assumed flag through clean() so pickRow() can badge them
-    # ("Lineup not confirmed") and suppress the Lock badge for them --
-    # visibly flagged, not walled off into a separate tab.
-    meta_keys = {"generated_at", "date", "suggested_parlay", "game_context", "streaks"}
-    tabs = {}
-    for stat in CATEGORY_ORDER:
-        rows = result.get(stat)
+    meta_keys = {"generated_at", "date", "suggested_parlay", "game_context", "streaks",
+                "odds_fetched_at", "recommendation_metadata"}
+    all_rows = []
+    family_counts = {}
+    for stat, rows in result.items():
+        if stat in meta_keys or not isinstance(rows, list):
+            continue
+        rows = [r for r in rows if r.get("hit_probability") is not None]
         if not rows:
             continue
-        rows = [r for r in rows if r.get("hit_probability") is not None]
-        rows.sort(key=_priced_first)
-        if rows:
-            tabs[stat] = add_estimated_odds(rows)
-
-    for stat, rows in result.items():
-        if stat in meta_keys or stat in tabs or stat in CATEGORY_ORDER:
-            continue
-        rows = [r for r in rows if r.get("hit_probability") is not None]
-        rows.sort(key=_priced_first)
-        if rows:
-            tabs[stat] = add_estimated_odds(rows)
-
-    all_rows = []
-    for rows in tabs.values():
+        add_estimated_odds(rows)
         all_rows.extend(rows)
-    all_rows.sort(key=_priced_first)
+        family_counts[stat] = family_counts.get(stat, 0) + len(rows)
 
-    # RECOMMENDATION LAYER, 2026-08-15 rebuild. Every row already carries a
-    # real recommendation_status (top_pick/lean/value/neutral), computed
-    # once by recommendation.py against every candidate BEFORE this
-    # function ever ran (see run_live_fetch) -- this just buckets by that
-    # field instead of re-deriving ad-hoc per-tab criteria the way the old
-    # Top Picks/Locks split did (that split is retired: Top Picks now IS
-    # the single, real "genuinely recommend and be judged on" bucket the
-    # old Locks tab was trying and failing to be).
-    #
-    # TOP PICKS. The hard floor is real: recommendation.classify_
-    # recommendation() already enforced probability/evidence/lineup/price/
-    # freshness before this row ever got here. NO padding exists to fill
-    # this list back up -- a night with 3 qualifying picks shows 3; a night
-    # with none shows none. That absence is the correct, honest output on
-    # a slate where nothing really clears the bar, not a bug.
-    top_picks = [r for r in all_rows if r.get("recommendation_status") == "top_pick"]
-    top_picks.sort(key=lambda r: r.get("market_edge") or 0, reverse=True)
+    # Real FanDuel line first, then everything without one -- the exact
+    # "ranked = priced + unpriced" split generate_picks.py's own top10
+    # selection already uses, applied here for the same reason. Sorting by
+    # raw model probability alone let an unpriced candidate -- a real
+    # player and a real projection, but no market FanDuel has actually
+    # posted yet -- rank ABOVE genuinely bettable picks just for having a
+    # bigger number attached, which reads as "this is a recommendation"
+    # when it's not currently a bet anyone can place. Found live
+    # 2026-08-12: David Peterson's Outs Recorded read (63.2%, no line) was
+    # sorting above several real, priced, lower-probability Strikeouts
+    # candidates for exactly this reason. Within that, Top Pick first (the
+    # one state that's an actual recommendation), then by edge -- a
+    # sensible default order for anyone rendering the raw payload order,
+    # even though every real view in app.js re-sorts explicitly anyway.
+    _STATUS_RANK = {"top_pick": 0, "lean": 1, "value": 2, "neutral": 3, None: 4}
 
-    # LEANS. A real, computed opinion that doesn't clear every Top Pick
-    # requirement -- thin evidence, an unconfirmed lineup, or simply a
-    # probability below the floor with no standout price. Ranked by how
-    # much probability separation the model actually found (lift), since
-    # "how much of an opinion" is what a Lean is fundamentally reporting.
-    leans = [r for r in all_rows if r.get("recommendation_status") == "lean"]
-    leans.sort(key=lambda r: r.get("lift") or 0, reverse=True)
+    def _default_order(r):
+        return (r.get("market_odds") is None, _STATUS_RANK.get(r.get("recommendation_status"), 4),
+               -(r.get("market_edge") or 0))
 
-    # BEST VALUE / LONGSHOTS. Real price value at a real, often low,
-    # probability -- direct request: "a 22% bet at +500 may be a good value
-    # bet while still being very likely to lose... never present that as a
-    # Lock." Ranked by ROI/edge, not by probability, since probability is
-    # explicitly not the point of this bucket.
-    best_value = [r for r in all_rows if r.get("recommendation_status") == "value"]
-    best_value.sort(key=lambda r: r.get("market_edge") or 0, reverse=True)
+    all_rows.sort(key=_default_order)
+
+    families = [{"stat": stat, "label": CATEGORY_LABELS.get(stat, stat.replace("_", " ").title()),
+                "count": count}
+               for stat, count in sorted(family_counts.items(), key=lambda kv: -kv[1])]
+
+    n_top_pick = sum(1 for r in all_rows if r.get("recommendation_status") == "top_pick")
+    n_lean = sum(1 for r in all_rows if r.get("recommendation_status") == "lean")
+    n_value = sum(1 for r in all_rows if r.get("recommendation_status") == "value")
 
     return {
         "date": result.get("date"),
         "generated_at": result.get("generated_at"),
         "odds_fetched_at": result.get("odds_fetched_at"),
         "recommendation_metadata": result.get("recommendation_metadata"),
-        # "schedule": direct request, "I want people to be able to click on
-        # a game on the schedule, and get a breakdown of why X props might
-        # be best for A B C reasons. Think time, weather, etc." A real tab
-        # like top_picks/all, not the generic stat-category loop above --
-        # its rows are games, not picks (no hit_probability/market_odds),
-        # which is exactly why game_context is in meta_keys: the generic
-        # loop filters on hit_probability is not None, which would silently
-        # empty this tab out entirely if it ran through there instead.
-        #
-        # "streaks": direct request, "STREAKS. Hits in a row, 2+ bases in a
-        # row, over X strikeouts in a row." Its rows ARE pick-shaped (real
-        # hit_probability/market_odds), so the generic loop WOULD accept
-        # them -- but it would also re-sort by _priced_first, discarding
-        # _compute_streaks' own longest-streak-first order. Kept out of the
-        # generic loop for the same reason schedule is: to keep control of
-        # the ordering that actually matters for this tab.
-        "tabs_order": ["top_picks", "leans", "best_value", "schedule", "streaks", "all"] + list(tabs.keys()),
-        "labels": {
-            "top_picks": "Top Picks", "leans": "Leans", "best_value": "Best Value",
-            "schedule": "Schedule", "streaks": "Streaks", "all": "All Props",
-            **{stat: CATEGORY_LABELS.get(stat, stat.replace("_", " ").title()) for stat in tabs},
-        },
-        "data": {"top_picks": top_picks, "leans": leans, "best_value": best_value,
-                "schedule": result.get("game_context") or [],
-                "streaks": result.get("streaks") or [], "all": all_rows, **tabs},
+        "families": families,
+        "summary": {"n_props": len(all_rows), "n_top_pick": n_top_pick, "n_lean": n_lean,
+                   "n_value": n_value, "n_games": len(result.get("game_context") or [])},
+        "props": all_rows,
+        "schedule": result.get("game_context") or [],
+        "streaks": result.get("streaks") or [],
         "track_record": track_record,
         "suggested_parlay": result.get("suggested_parlay"),
     }
 
 
-PAGE_TEMPLATE = """<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Full Count</title>
-<style>
-@font-face {{
-  font-family: 'Archivo Var';
-  font-weight: 100 900;
-  font-style: normal;
-  font-display: swap;
-  src: url(data:font/woff2;base64,{archivo}) format('woff2');
-}}
-@font-face {{
-  font-family: 'Plex Sans Var';
-  font-weight: 100 900;
-  font-style: normal;
-  font-display: swap;
-  src: url(data:font/woff2;base64,{plexsans}) format('woff2');
-}}
-@font-face {{
-  font-family: 'Plex Mono';
-  font-weight: 500;
-  font-style: normal;
-  font-display: swap;
-  src: url(data:font/woff2;base64,{plexmono500}) format('woff2');
-}}
-@font-face {{
-  font-family: 'Plex Mono';
-  font-weight: 600;
-  font-style: normal;
-  font-display: swap;
-  src: url(data:font/woff2;base64,{plexmono600}) format('woff2');
-}}
 
-:root {{
-  --ground: #F1F2F6;
-  --surface: #FFFFFF;
-  --surface-2: #F6F7FB;
-  --surface-raised: #ECEFF5;
-  --line: #DBDFE9;
-  --line-soft: #E7E9F0;
-  --ink: #0F1220;
-  --ink-dim: #545D75;
-  --ink-faint: #8992A6;
-  --accent: #A6690A;
-  --accent-bright: #8F5806;
-  --accent-ink: #FFFFFF;
-  --accent-soft: #F4E6C9;
-  --good: #1F9A63;
-  --good-soft: #E1F5EC;
-  --bad: #D63A54;
-  --bad-soft: #FCE8EB;
-  --warn: #B8860B;
-  --warn-soft: #FBF0D2;
-  --shadow: 0 1px 2px rgba(15, 18, 32, 0.05), 0 6px 16px -8px rgba(15, 18, 32, 0.14);
-  --shadow-lift: 0 2px 4px rgba(15, 18, 32, 0.07), 0 12px 28px -10px rgba(15, 18, 32, 0.20);
-
-  --font-display: 'Archivo Var', 'Archivo', system-ui, sans-serif;
-  --font-body: 'Plex Sans Var', 'IBM Plex Sans', system-ui, sans-serif;
-  --font-mono: 'Plex Mono', 'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, monospace;
-}}
-
-@media (prefers-color-scheme: dark) {{
-  :root:not([data-theme="light"]) {{
-    --ground: #080A11; --surface: #10141F; --surface-2: #151A29;
-    --surface-raised: #1A2033; --line: #232C40; --line-soft: #1B2233;
-    --ink: #F4F6FB; --ink-dim: #8F99B2; --ink-faint: #5B6480;
-    --accent: #F0B429; --accent-bright: #FFC94A; --accent-ink: #1A1200;
-    --accent-soft: rgba(240, 180, 41, 0.14);
-    --good: #33D689; --good-soft: rgba(51, 214, 137, 0.13);
-    --bad: #FF5C72; --bad-soft: rgba(255, 92, 114, 0.13);
-    --warn: #F0B429; --warn-soft: rgba(240, 180, 41, 0.14);
-    --shadow: 0 1px 2px rgba(0,0,0,0.35), 0 8px 20px -10px rgba(0,0,0,0.6);
-    --shadow-lift: 0 2px 6px rgba(0,0,0,0.4), 0 16px 36px -12px rgba(0,0,0,0.7);
-  }}
-}}
-:root[data-theme="dark"] {{
-  --ground: #080A11; --surface: #10141F; --surface-2: #151A29;
-  --surface-raised: #1A2033; --line: #232C40; --line-soft: #1B2233;
-  --ink: #F4F6FB; --ink-dim: #8F99B2; --ink-faint: #5B6480;
-  --accent: #F0B429; --accent-bright: #FFC94A; --accent-ink: #1A1200;
-  --accent-soft: rgba(240, 180, 41, 0.14);
-  --good: #33D689; --good-soft: rgba(51, 214, 137, 0.13);
-  --bad: #FF5C72; --bad-soft: rgba(255, 92, 114, 0.13);
-  --warn: #F0B429; --warn-soft: rgba(240, 180, 41, 0.14);
-  --shadow: 0 1px 2px rgba(0,0,0,0.35), 0 8px 20px -10px rgba(0,0,0,0.6);
-  --shadow-lift: 0 2px 6px rgba(0,0,0,0.4), 0 16px 36px -12px rgba(0,0,0,0.7);
-}}
-
-* {{ box-sizing: border-box; }}
-html {{ color-scheme: light dark; }}
-body {{
-  margin: 0; background: var(--ground); color: var(--ink);
-  font-family: var(--font-body); font-size: 15px; line-height: 1.5;
-  -webkit-font-smoothing: antialiased;
-}}
-::selection {{ background: var(--accent-soft); color: var(--ink); }}
-
-.wrap {{ max-width: 980px; margin: 0 auto; padding: 24px 20px 64px; }}
-
-/* ---------- masthead ---------- */
-.masthead {{
-  display: flex; align-items: flex-end; justify-content: space-between;
-  gap: 16px; padding-bottom: 16px; border-bottom: 2px solid var(--ink);
-  margin-bottom: 18px; flex-wrap: wrap;
-}}
-.brand {{ display: flex; align-items: baseline; gap: 10px; }}
-.brand .mark {{ font-family: var(--font-display); font-weight: 800; font-size: 29px; color: var(--ink); letter-spacing: -0.01em; }}
-.brand .mark em {{ font-style: normal; color: var(--accent); }}
-.brand .tag {{
-  font-family: var(--font-mono); font-size: 10.5px; font-weight: 500;
-  letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-faint);
-  border: 1px solid var(--line); border-radius: 4px; padding: 3px 7px;
-}}
-.meta {{ display: flex; align-items: center; gap: 12px; }}
-.meta-col {{ text-align: right; display: flex; flex-direction: column; align-items: flex-end; gap: 4px; }}
-.meta .date {{ font-family: var(--font-mono); font-size: 12.5px; color: var(--ink); font-weight: 600; }}
-.theme-toggle {{
-  width: 32px; height: 32px; flex: 0 0 auto; display: flex; align-items: center; justify-content: center;
-  font-size: 15px; line-height: 1; border-radius: 999px; cursor: pointer;
-  background: var(--surface-2); border: 1px solid var(--line); color: var(--ink-dim);
-  transition: background 0.12s, border-color 0.12s, color 0.12s;
-}}
-.theme-toggle:hover {{ color: var(--ink); border-color: var(--accent-soft); }}
-.live-pill {{
-  display: inline-flex; align-items: center; gap: 6px;
-  font-family: var(--font-mono); font-size: 10.5px; font-weight: 600;
-  letter-spacing: 0.03em; color: var(--ink-dim);
-  background: var(--surface-2); border: 1px solid var(--line);
-  border-radius: 999px; padding: 3px 9px 3px 7px;
-}}
-.live-pill .dot {{ width: 6px; height: 6px; border-radius: 50%; background: var(--good); flex: 0 0 auto; }}
-#board-fresh {{ color: var(--ink-faint); font-weight: 500; }}
-@media (prefers-reduced-motion: no-preference) {{
-  .live-pill .dot {{ animation: pulse-dot 2.2s ease-in-out infinite; }}
-}}
-@keyframes pulse-dot {{
-  0%, 100% {{ opacity: 1; box-shadow: 0 0 0 0 var(--good-soft); }}
-  50% {{ opacity: 0.7; box-shadow: 0 0 0 4px transparent; }}
-}}
-
-/* ---------- summary ---------- */
-.summary {{
-  display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px;
-  background: var(--line); border: 1px solid var(--line); border-radius: 9px;
-  overflow: hidden; margin-bottom: 14px; box-shadow: var(--shadow);
-}}
-.stat {{ background: var(--surface); padding: 13px 16px; display: flex; flex-direction: column; gap: 3px; }}
-.stat .n {{ font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-weight: 700; font-size: 23px; color: var(--ink); letter-spacing: -0.01em; }}
-.stat .n.accent {{ color: var(--accent); }}
-.stat .l {{ font-size: 10.5px; letter-spacing: 0.07em; text-transform: uppercase; color: var(--ink-faint); font-weight: 600; }}
-
-.caveat {{
-  font-size: 11.5px; color: var(--ink-faint); margin: 0 0 10px;
-  border-left: 2px solid var(--line); padding-left: 10px;
-}}
-
-/* ---------- track record: the real number, not a marketing one ---------- */
-.track-record {{
-  font-size: 11.5px; color: var(--ink-dim); margin: 0 0 20px;
-  border-left: 2px solid var(--line); padding-left: 10px;
-}}
-.track-record .n {{ font-family: var(--font-mono); font-weight: 700; }}
-.track-record .n.below {{ color: var(--bad); }}
-.track-record .n.in-range {{ color: var(--good); }}
-
-/* ---------- suggested parlay: a real correlation-screened 3-leg card ---------- */
-.suggested-parlay {{
-  background: var(--surface); border: 1px solid var(--line); border-radius: 10px;
-  padding: 16px 18px; margin-bottom: 18px; box-shadow: var(--shadow);
-}}
-.suggested-parlay-head {{
-  display: flex; align-items: baseline; justify-content: space-between; gap: 10px;
-  margin-bottom: 12px; flex-wrap: wrap;
-}}
-.suggested-parlay-head h2 {{
-  font-family: var(--font-display); font-weight: 700; font-size: 15px; margin: 0;
-  display: flex; align-items: center; gap: 7px;
-}}
-.suggested-parlay-odds {{
-  font-family: var(--font-mono); font-weight: 700; font-size: 18px; color: var(--accent);
-}}
-.sp-legs {{ display: flex; flex-direction: column; gap: 8px; margin-bottom: 10px; }}
-.sp-leg {{
-  display: flex; align-items: baseline; justify-content: space-between; gap: 10px;
-  font-size: 12.5px; padding: 7px 10px; background: var(--surface-2); border-radius: 6px;
-}}
-.sp-leg .who {{ color: var(--ink); font-weight: 600; }}
-.sp-leg .prop {{ color: var(--ink-dim); font-weight: 400; }}
-.sp-leg .price {{ font-family: var(--font-mono); font-variant-numeric: tabular-nums; color: var(--ink-dim); flex: 0 0 auto; }}
-.suggested-parlay .note {{ font-size: 11px; color: var(--ink-faint); line-height: 1.5; margin: 0; }}
-.suggested-parlay .corr-note {{ font-size: 11px; color: var(--accent); margin: 6px 0 0; }}
-
-/* ---------- star / watchlist ---------- */
-.star-btn {{
-  position: absolute; top: 8px; right: 10px;
-  background: transparent; border: none; cursor: pointer; padding: 2px;
-  color: var(--ink-faint); font-size: 16px; line-height: 1; z-index: 2;
-  transition: color 0.12s, transform 0.12s;
-}}
-.star-btn:hover {{ color: var(--accent); transform: scale(1.15); }}
-.star-btn.starred {{ color: var(--accent); }}
-.tab.starred-tab {{ color: var(--accent); }}
-.tab.starred-tab:hover {{ color: var(--accent-bright); }}
-.tab.starred-tab.active {{ border-bottom-color: var(--accent); }}
-
-/* ---------- tabs: sticky terminal-style underline strip ---------- */
-.tabbar-wrap {{
-  position: sticky; top: 0; z-index: 20;
-  background: color-mix(in srgb, var(--ground) 92%, transparent);
-  -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
-  margin: 0 -20px 18px; padding: 8px 20px 0;
-  border-bottom: 1px solid var(--line);
-}}
-.tabbar {{
-  display: flex; gap: 2px; overflow-x: auto;
-  scrollbar-width: thin;
-}}
-.tabbar::-webkit-scrollbar {{ height: 4px; }}
-.tabbar::-webkit-scrollbar-thumb {{ background: var(--line); border-radius: 3px; }}
-.tab {{
-  font-family: var(--font-mono); font-size: 12px; font-weight: 600;
-  letter-spacing: 0.01em;
-  color: var(--ink-faint); background: transparent; border: none;
-  border-bottom: 2px solid transparent;
-  padding: 10px 12px 9px; white-space: nowrap; cursor: pointer;
-  display: flex; align-items: center; gap: 6px; flex: 0 0 auto;
-  transition: color 0.12s ease, border-color 0.12s ease;
-}}
-.tab:hover {{ color: var(--ink); }}
-.tab .cnt {{
-  font-family: var(--font-mono); font-size: 10px; font-weight: 600;
-  background: var(--surface-2); color: var(--ink-faint); border-radius: 999px;
-  padding: 1px 6px;
-}}
-.tab.active {{ color: var(--ink); border-bottom-color: var(--accent); }}
-.tab.active .cnt {{ background: var(--accent-soft); color: var(--accent); }}
-.tab.top-picks {{ color: var(--accent); }}
-.tab.top-picks:hover {{ color: var(--accent-bright); }}
-.tab.top-picks.active {{ border-bottom-color: var(--accent); }}
-
-/* ---------- filter bar: search + quick filters + sort ---------- */
-.filterbar {{
-  display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
-  padding: 10px 0;
-}}
-.search-wrap {{ position: relative; flex: 1 1 200px; min-width: 160px; }}
-.search-icon {{
-  position: absolute; left: 10px; top: 50%; transform: translateY(-50%);
-  width: 14px; height: 14px; color: var(--ink-faint); pointer-events: none;
-}}
-#search-input {{
-  width: 100%; font-family: var(--font-body); font-size: 12.5px; color: var(--ink);
-  background: var(--surface); border: 1px solid var(--line); border-radius: 999px;
-  padding: 7px 28px 7px 30px; outline: none;
-  transition: border-color 0.12s;
-}}
-#search-input::placeholder {{ color: var(--ink-faint); }}
-#search-input:focus {{ border-color: var(--accent); }}
-/* Native ::-webkit-search-cancel-button is inconsistent (Chrome-only, tiny,
-   invisible until focused) -- a real always-visible button instead. */
-#search-input::-webkit-search-cancel-button {{ display: none; }}
-.search-clear {{
-  position: absolute; right: 8px; top: 50%; transform: translateY(-50%);
-  width: 16px; height: 16px; line-height: 14px; text-align: center;
-  border: none; border-radius: 999px; background: var(--surface-2); color: var(--ink-faint);
-  font-size: 13px; cursor: pointer; padding: 0;
-}}
-.search-clear:hover {{ background: var(--accent-soft); color: var(--accent); }}
-.search-clear[hidden] {{ display: none; }}
-.filter-chip {{
-  font-family: var(--font-mono); font-size: 11px; font-weight: 600; white-space: nowrap;
-  color: var(--ink-dim); background: var(--surface); border: 1px solid var(--line);
-  border-radius: 999px; padding: 7px 12px; cursor: pointer; flex: 0 0 auto;
-  transition: background 0.12s, border-color 0.12s, color 0.12s;
-}}
-.filter-chip:hover {{ border-color: var(--accent-soft); }}
-.filter-chip[data-active="true"] {{ background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }}
-.sort-select {{
-  font-family: var(--font-mono); font-size: 11px; font-weight: 600;
-  color: var(--ink-dim); background: var(--surface); border: 1px solid var(--line);
-  border-radius: 999px; padding: 7px 10px; cursor: pointer; flex: 0 0 auto; outline: none;
-}}
-.sort-select:hover {{ border-color: var(--accent-soft); }}
-
-.panel {{ display: none; }}
-.panel.active {{ display: block; }}
-.panel-head {{
-  display: flex; align-items: baseline; justify-content: space-between; gap: 10px;
-  margin-bottom: 12px; flex-wrap: wrap;
-}}
-.panel-head h2 {{ font-family: var(--font-display); font-weight: 700; font-size: 18px; margin: 0; letter-spacing: -0.005em; }}
-.panel-head .n {{ font-family: var(--font-mono); font-size: 11.5px; color: var(--ink-faint); }}
-.panel-desc {{ font-size: 12.5px; color: var(--ink-dim); margin: -8px 0 14px; max-width: 62ch; }}
-
-/* ---------- pick row ---------- */
-.picks {{ display: flex; flex-direction: column; gap: 7px; }}
-.pick {{
-  background: var(--surface); border: 1px solid var(--line); border-radius: 8px;
-  padding: 12px 15px; display: grid;
-  grid-template-columns: 32px 1.05fr 1.55fr 158px;
-  align-items: center; gap: 14px; box-shadow: var(--shadow);
-  cursor: pointer; position: relative;
-  transition: border-color 0.12s ease, box-shadow 0.12s ease, transform 0.12s ease;
-}}
-.pick:hover {{ border-color: var(--accent); box-shadow: var(--shadow-lift); transform: translateY(-1px); }}
-.pick:focus-visible {{ outline: 2px solid var(--accent); outline-offset: 2px; }}
-@media (prefers-reduced-motion: no-preference) {{
-  .pick {{ animation: rise 0.28s ease backwards; }}
-}}
-@keyframes rise {{ from {{ opacity: 0; transform: translateY(3px); }} to {{ opacity: 1; transform: translateY(0); }} }}
-
-.pick .rank {{ font-family: var(--font-mono); font-variant-numeric: tabular-nums; color: var(--ink-faint); font-size: 12.5px; font-weight: 600; }}
-.pick .who {{ min-width: 0; }}
-.pick .who .name {{ font-family: var(--font-display); font-weight: 700; font-size: 14.5px; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }}
-.pick .who .sub {{ font-size: 11.5px; color: var(--ink-faint); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 1px; }}
-.pick .prop-col {{ min-width: 0; }}
-.pick .prop {{ font-size: 13.5px; font-weight: 600; color: var(--ink); }}
-.pick .odds-col {{ display: flex; flex-direction: column; align-items: flex-end; gap: 5px; width: 100%; }}
-.odds-line {{ display: flex; align-items: baseline; gap: 7px; }}
-.odds-line .price {{ font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-weight: 700; font-size: 16.5px; color: var(--ink); letter-spacing: -0.01em; }}
-.odds-line .price.none {{ color: var(--ink-faint); font-weight: 500; font-size: 11px; text-align: right; line-height: 1.3; max-width: 108px; }}
-.odds-line .fair {{ font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-size: 11px; color: var(--ink-faint); }}
-.badges {{ display: flex; gap: 6px; align-items: center; justify-content: flex-end; flex-wrap: wrap; }}
-.chip {{ font-family: var(--font-mono); font-size: 10px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; padding: 2.5px 7px; border-radius: 4px; white-space: nowrap; }}
-.chip.conf-high {{ background: var(--accent-soft); color: var(--accent); }}
-.chip.conf-medium {{ background: var(--surface-2); color: var(--ink-dim); border: 1px solid var(--line); }}
-.chip.conf-low {{ background: var(--surface-2); color: var(--ink-faint); border: 1px solid var(--line); }}
-/* Top Pick: the ONE real recommendation badge on this site, gated by
-   recommendation.py's hard floor (see that module for the full rule) --
-   never earned by score/confidence/price alone the way the retired "Lock"
-   badge was. */
-.chip.top-pick-badge {{ background: var(--accent); color: var(--accent-ink); font-weight: 700; }}
-.pick.top-pick {{ border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent-soft), var(--shadow); }}
-.pick.top-pick:hover {{ box-shadow: 0 0 0 2px var(--accent-soft), var(--shadow-lift); }}
-.pick.top-pick .who .name {{ color: var(--accent); }}
-/* Lean: a real, computed opinion that doesn't clear every Top Pick
-   requirement -- deliberately quieter than Top Pick's solid accent, so it
-   never reads as the same strength of recommendation. */
-.chip.lean-badge {{ background: var(--surface-2); color: var(--ink-dim); border: 1px solid var(--accent-soft); font-weight: 600; }}
-/* Value/Longshot: real price value at a real, often low, probability --
-   direct instruction: "never present that as a Lock." A distinct color
-   from both Top Pick and Lean so a low-probability, good-price bet is
-   never visually confused with a likely one. */
-.chip.value-badge {{ background: var(--warn-soft); color: var(--warn); font-weight: 600; }}
-.chip.stale-badge {{ background: var(--bad-soft); color: var(--bad); font-weight: 600; }}
-/* Live grading: direct request, "for the top picks, them to show when it's
-   cashed... make the pick yellow when the game is happening... green if it
-   cashes, red if it doesn't." dashboard/refresh_grades.py writes these
-   states in throughout the evening -- see mergePriceUpdate()/pollPrices(). */
-.chip.grade-badge.grade-live {{ background: var(--warn-soft); color: var(--warn); }}
-.chip.grade-badge.grade-hit {{ background: var(--good-soft); color: var(--good); font-weight: 700; }}
-.chip.grade-badge.grade-miss {{ background: var(--bad-soft); color: var(--bad); }}
-.pick.grade-live {{ border-color: var(--warn); box-shadow: 0 0 0 2px var(--warn-soft), var(--shadow); }}
-.pick.grade-hit {{ border-color: var(--good); box-shadow: 0 0 0 2px var(--good-soft), var(--shadow); }}
-.pick.grade-hit .who .name {{ color: var(--good); }}
-.pick.grade-miss {{ border-color: var(--bad); opacity: 0.82; }}
-.chip.streak-badge {{ background: var(--warn-soft); color: var(--warn); font-weight: 600; }}
-/* Early Look: deliberately muted/dashed, the opposite treatment of .pick.lock's
-   confident solid accent -- this must read as "unofficial," never as a
-   recommendation, no matter how quickly someone scans the row. */
-.chip.assumed-badge {{ background: var(--surface-2); color: var(--ink-dim); border: 1px dashed var(--line); }}
-.pick.lineup-assumed {{ border-style: dashed; }}
-/* Real player, real projection -- just not a bet FanDuel has posted a
-   price for yet. Dimmed rather than hidden (it's still real information),
-   but clearly receded so it never reads as a recommendation on par with
-   an actually-bettable priced pick. */
-.pick.no-line {{ opacity: 0.62; }}
-.pick.no-line:hover {{ opacity: 0.85; }}
-.meter {{ width: 100%; height: 4px; background: var(--line-soft); border-radius: 2px; margin-top: 6px; position: relative; overflow: visible; }}
-.meter .fill {{ position: absolute; inset: 0 auto 0 0; background: var(--accent); border-radius: 2px; }}
-.meter .fill.clears {{ background: var(--good); }}
-.meter .fill.pass {{ background: var(--bad); }}
-.meter .mark {{ position: absolute; top: -2px; width: 2px; height: 8px; background: var(--ink-faint); border-radius: 1px; }}
-.prob-row {{ display: flex; align-items: baseline; justify-content: space-between; width: 100%; font-family: var(--font-mono); font-size: 10.5px; color: var(--ink-faint); margin-top: 7px; }}
-.prob-row .our {{ color: var(--ink-dim); font-weight: 600; }}
-.prob-row .edge {{ font-weight: 700; }}
-.prob-row .edge.edge-pos {{ color: var(--good); }}
-.prob-row .edge.edge-neg {{ color: var(--bad); }}
-
-.more-btn {{
-  display: block; width: 100%; margin-top: 10px; padding: 11px;
-  font-family: var(--font-body); font-size: 12.5px; font-weight: 600;
-  color: var(--ink-dim); background: var(--surface); border: 1px dashed var(--line);
-  border-radius: 8px; cursor: pointer; text-align: center;
-  transition: border-color 0.12s, color 0.12s;
-}}
-.more-btn:hover {{ border-color: var(--accent); color: var(--ink); }}
-.pick.hidden-row {{ display: none; }}
-
-.pick .chev {{
-  position: absolute; right: 15px; bottom: 12px;
-  width: 16px; height: 16px; color: var(--ink-faint);
-  transition: transform 0.15s ease;
-  pointer-events: none;
-}}
-.pick.expanded .chev {{ transform: rotate(180deg); color: var(--accent); }}
-.explain {{
-  grid-column: 1 / -1;
-  max-height: 0; overflow: hidden; opacity: 0;
-  transition: max-height 0.2s ease, opacity 0.15s ease, margin-top 0.2s ease;
-  font-size: 13px; line-height: 1.6; color: var(--ink-dim);
-  border-top: 1px dashed var(--line-soft);
-}}
-.pick.expanded .explain {{
-  max-height: 700px; opacity: 1; margin-top: 12px; padding-top: 12px;
-}}
-.explain b {{ color: var(--ink); font-weight: 600; }}
-
-/* ---- schedule / game cards -- direct request: "click on a game on the
-   schedule, and get a breakdown of why X props might be best... time,
-   weather, etc." Same expand/collapse mechanism as .pick (toggleExplain(),
-   the shared .explain block), different layout since a game card has no
-   odds/probability columns to align to. */
-.games {{ display: flex; flex-direction: column; gap: 10px; }}
-.game-card {{
-  background: var(--surface); border: 1px solid var(--line); border-radius: 10px;
-  padding: 14px 16px; cursor: pointer; transition: border-color 0.15s ease, box-shadow 0.15s ease;
-}}
-.game-card:hover {{ border-color: var(--accent-soft); }}
-.game-card.expanded {{ border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent-soft), var(--shadow); }}
-.game-card.expanded .chev {{ transform: rotate(180deg); color: var(--accent); }}
-.game-head {{ display: flex; align-items: baseline; gap: 10px; }}
-.game-matchup {{ font-family: var(--font-display); font-weight: 700; font-size: 15.5px; color: var(--ink); }}
-.game-time {{ font-family: var(--font-mono); font-size: 12px; color: var(--ink-faint); margin-left: auto; }}
-.game-card .chev {{ width: 16px; height: 16px; color: var(--ink-faint); flex-shrink: 0; transition: transform 0.15s ease; }}
-.game-sub {{ font-size: 12.5px; color: var(--ink-dim); margin-top: 4px; }}
-.game-card.expanded .explain {{ max-height: 900px; opacity: 1; margin-top: 12px; padding-top: 12px; }}
-.game-detail-row {{ margin-bottom: 6px; }}
-.game-picks-label {{ margin-top: 10px; }}
-.game-picks {{ display: flex; flex-direction: column; gap: 4px; }}
-.game-pick-row {{
-  display: flex; align-items: center; justify-content: space-between; gap: 10px;
-  padding: 6px 8px; background: var(--surface-2); border-radius: 6px; font-size: 12.5px;
-}}
-.gp-who {{ display: flex; flex-direction: column; min-width: 0; }}
-.gp-name {{ font-weight: 600; color: var(--ink); }}
-.gp-prop {{ color: var(--ink-faint); font-size: 11.5px; }}
-.gp-nums {{ display: flex; align-items: baseline; gap: 8px; flex-shrink: 0; }}
-.gp-odds {{ font-family: var(--font-mono); font-size: 11.5px; color: var(--ink-faint); }}
-.gp-prob {{ font-family: var(--font-mono); font-weight: 700; color: var(--ink-dim); flex-shrink: 0; }}
-.gp-prob.gp-clears {{ color: var(--good); }}
-
-.empty-state {{
-  text-align: center; padding: 48px 20px; color: var(--ink-faint);
-  font-size: 13.5px; border: 1px dashed var(--line); border-radius: 8px;
-}}
-
-/* A short candidate list explained, not left as blank space below it --
-   real context on why a market is thin tonight, not a trimmed list. */
-.thin-note {{
-  margin-top: 14px; padding: 16px 18px;
-  background: var(--surface-2); border: 1px solid var(--line); border-radius: 8px;
-  display: flex; flex-direction: column; gap: 10px; align-items: flex-start;
-}}
-.thin-note p {{ margin: 0; font-size: 12.5px; line-height: 1.55; color: var(--ink-dim); max-width: 62ch; }}
-.thin-link {{
-  font-family: var(--font-mono); font-size: 11.5px; font-weight: 600;
-  color: var(--accent); background: transparent; border: 1px solid var(--accent-soft);
-  border-radius: 999px; padding: 6px 12px; cursor: pointer;
-  transition: background 0.12s, border-color 0.12s;
-}}
-.thin-link:hover {{ background: var(--accent-soft); }}
-
-@media (max-width: 680px) {{
-  /* Real bug, found live 2026-08-15 (Jacob Misiorowski's name unreadable
-     on mobile): an `auto` second track sizes to its content's max-content
-     width, and a single long chip's un-wrappable text (chips are
-     white-space:nowrap) IS that content -- no max-width on the item
-     itself stops grid track-sizing from using its full unwrapped width.
-     A genuine max-width on the item (tried first) didn't fix it for
-     exactly this reason. Fixed to the same 128px-class width the desktop
-     layout already uses successfully (158px there), so .badges' own
-     flex-wrap is what handles a long chip, never the grid track -- and
-     minmax(0, 1fr) guarantees .who can actually shrink to fit an
-     ellipsis instead of being pushed off by the sibling track's content. */
-  .pick {{ grid-template-columns: minmax(0, 1fr) 128px; grid-template-areas: "who odds" "prop odds"; row-gap: 8px; }}
-  .pick .rank {{ display: none; }}
-  .pick .who {{ grid-area: who; }}
-  .pick .prop-col {{ grid-area: prop; }}
-  .pick .odds-col {{ grid-area: odds; }}
-  .summary {{ grid-template-columns: repeat(2, 1fr); }}
-  .tabbar-wrap {{ margin: 0 -20px 18px; }}
-}}
-
-.foot {{ margin-top: 40px; padding-top: 16px; border-top: 1px solid var(--line); font-size: 11.5px; color: var(--ink-faint); line-height: 1.7; }}
-.foot strong {{ color: var(--ink-dim); }}
-</style>
-
-<div class="wrap">
-  <header class="masthead">
-    <div class="brand">
-      <span class="mark">FULL <em>COUNT</em></span>
-      <span class="tag">FanDuel &middot; MLB Props</span>
-    </div>
-    <div class="meta">
-      <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Toggle color theme">&#127769;</button>
-      <div class="meta-col">
-        <div class="date" id="board-date">&mdash;</div>
-        <span class="live-pill"><span class="dot"></span><span id="board-time">Live-scored &mdash;</span><span id="board-fresh"></span></span>
-      </div>
-    </div>
-  </header>
-
-  <section class="summary" id="summary"></section>
-  <p class="caveat" id="caveat"></p>
-  <p class="track-record" id="track-record"></p>
-  <div id="suggested-parlay"></div>
-
-  <div class="tabbar-wrap">
-    <nav class="tabbar" id="tabbar"></nav>
-    <div class="filterbar" id="filterbar">
-      <div class="search-wrap">
-        <svg class="search-icon" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <circle cx="9" cy="9" r="6.5" stroke="currentColor" stroke-width="1.6"/>
-          <path d="M17 17L13.5 13.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
-        </svg>
-        <input type="search" id="search-input" placeholder="Search player or team&hellip;" autocomplete="off" spellcheck="false">
-        <button class="search-clear" id="search-clear" type="button" aria-label="Clear search" hidden>&times;</button>
-      </div>
-      <button class="filter-chip" id="filter-clears" type="button" data-active="false">Clears Price</button>
-      <button class="filter-chip" id="filter-high" type="button" data-active="false">High Confidence</button>
-      <select class="sort-select" id="sort-select" aria-label="Sort by">
-        <option value="">Sort: Default</option>
-        <option value="edge">Sort: Edge %</option>
-        <option value="prob">Sort: Model %</option>
-        <option value="odds">Sort: Biggest Payout</option>
-      </select>
-    </div>
-  </div>
-  <main id="panels"></main>
-
-  <footer class="foot">
-    <strong>How to read this.</strong> Every tab is one FanDuel prop market, every candidate the
-    pipeline scored tonight for it, ranked by the model's calibrated chance of hitting &mdash; not just
-    whichever single pick made a curated top-10. &ldquo;Model&rdquo; is that calibrated probability;
-    the colored percentage next to it is the edge over FanDuel's posted price. A colored bar means
-    the price still clears the pipeline's ROI floor at the pessimistic end of its confidence interval
-    (green) or doesn't (red) &mdash; shade shows by how much. Games already underway when this was
-    generated are excluded &mdash; their lines are closed. Not financial advice.
-  </footer>
-</div>
-
-<script>
-const PAYLOAD = {payload_json};
-const SHOW_N = 25;
-
-function fmtOdds(v) {{
-  if (v === null || v === undefined) return null;
-  return v > 0 ? "+" + v : String(v);
-}}
-function pct(v) {{
-  if (v === null || v === undefined) return "—";
-  return (v * 100).toFixed(1) + "%";
-}}
-function esc(s) {{
-  const d = document.createElement("div");
-  d.textContent = s ?? "";
-  return d.innerHTML;
-}}
-function confClass(c) {{
-  return "conf-" + (c || "medium").toLowerCase();
-}}
-
-// ---- plain-English explanations -------------------------------------
-// Rewrites the pipeline's own real reasoning strings (why[]/watchouts[])
-// into short, flowing sentences instead of technical shorthand. Numbers
-// always come straight from the data; nothing here is invented -- a
-// bullet this doesn't recognize passes through unchanged rather than
-// being guessed at.
-const PITCH_NAMES = {{
-  FF: "four-seam fastball", SI: "sinker", FC: "cutter", SL: "slider", ST: "sweeper",
-  CU: "curveball", KC: "knuckle curve", CH: "changeup", FS: "splitter", FO: "forkball",
-  SC: "screwball", KN: "knuckleball", EP: "eephus",
-}};
-function pitchName(code) {{ return PITCH_NAMES[code] || code; }}
-const REASON_RULES = [
-  // Real gaps found live 2026-08-14, checking actual "why"/"watchouts" text
-  // against these rules for the first time -- every one below previously
-  // fell through to the raw, jargon-carrying string unchanged.
-  [/^(.+?) scores off (.+?) \\((away|home) SP\\) in the (top|bottom) 1st: ([\\d.]+)% \\(shrunk, (\\d+) starts\\)$/,
-   m => `${{m[1]}} have scored off ${{m[2]}} in the ${{m[4]}} of the 1st inning in ${{m[5]}}% of his last ${{m[6]}} starts`],
-  [/^Pitch-type exploit: RV\\/100 ([+-][\\d.]+) vs (\\w+) \\(opposing SP throws it ([\\d.]+)% of the time\\)$/,
-   m => `he's historically done real damage against the ${{pitchName(m[2])}} (a ${{m[1]}} run-value edge per 100 pitches seen), and tonight's opposing pitcher throws that pitch ${{m[3]}}% of the time`],
-  [/^Opposing bullpen fatigue: (\\d+)\\/(\\d+) relievers over 60 pitches in L7 \\((tired pen — favorable late|fresh pen)\\)$/,
-   m => `${{m[1]}} of the other team's last ${{m[2]}} relievers used have been worked hard recently (60+ pitches within the last week)` + (m[3].startsWith("tired") ? ", which tends to favor hitters late in the game" : ", though their bullpen is otherwise fresh")],
-  [/^Sharp money (backing|fading) (.+?) \\(money% ([+-]?\\d+) pts vs ticket%\\)$/,
-   m => `the money being wagered on ${{m[2]}} is running ${{Math.abs(parseInt(m[3]))}} points ${{m[1] === "backing" ? "ahead of" : "behind"}} the share of bets placed on them -- a sign bigger, sharper bettors are ${{m[1]}} this side`],
-  [/^Public heavy on (.+?) \\(money% trails tickets% by (\\d+) pts\\)/,
-   m => `most of the tickets on ${{m[1]}} are small public bets rather than sharp money -- the dollars wagered trail the number of bets by ${{m[2]}} points, a classic public-side signal worth a discount`],
-  [/^BvP: (\\d+)-for-(\\d+) vs (.+?) \\(standard error ±(\\d+) pts on a (\\d+)-AB career sample.*\\)$/,
-   m => `he's ${{m[1]}}-for-${{m[2]}} in his career at-bats against tonight's starter, ${{m[3]}} -- the standard error on a ${{m[5]}}-AB sample runs about ±${{m[4]}} points, so his true rate against this pitcher could plausibly sit anywhere in that band, weighted lightly for exactly that reason`],
-  [/^Recency-weighted K rate ([\\d.]+)% \\(exp\\. decay, halflife 30d, (\\d+) real starts \\/ (\\d+) BF\\) — drives the strikeout probability model$/,
-   m => `his strikeout rate over his ${{m[2]}} most recent starts (${{m[3]}} batters faced), weighted so his newest starts count for more, comes in at ${{m[1]}}% -- this is the number the strikeout probability itself is built from`],
-  [/^L14 K% ([\\d.]+) \\((\\d+) PA\\)$/,
-   m => `over his last 14 days he's struck out ${{m[1]}}% of the ${{m[2]}} batters he's faced`],
-  [/^HP ump accuracy ([\\d.]+)%.*$/,
-   m => `tonight's home plate umpire has called ${{m[1]}}% of pitches correctly this season -- a more accurate ump tends to mean a tighter, more predictable strike zone`],
-  [/^Projected ([\\d.]+) PA \\(slot (\\d+), ([\\d.]+)-run implied team total\\)$/,
-   m => `he's projected for about ${{m[1]}} plate appearances tonight batting ${{m[2]}} in the order, in a lineup the market expects to score around ${{m[3]}} runs`],
-  [/^Projected ([\\d.]+) PA \\(slot (\\d+), league-average run environment.*\\)$/,
-   m => `he's projected for about ${{m[1]}} plate appearances tonight batting ${{m[2]}} in the order, in a game with no market run total posted yet so a league-average environment is assumed`],
-  [/^Opposing SP ERA ([\\d.]+)$/, m => `the opposing starting pitcher has a ${{m[1]}} ERA`],
-  [/^L7 avg EV ([\\d.]+)mph \\(league ~([\\d.]+)\\)$/, m => `over his last 7 days his average exit velocity is ${{m[1]}}mph, a bit below the league average of about ${{m[2]}}mph`],
-  [/^L7 barrel% ([\\d.]+)$/, m => `${{m[1]}}% of his batted balls over the last 7 days have been barreled up`],
-  [/^Season barrel% ([\\d.]+)/, m => `he's barreling up ${{m[1]}}% of his batted balls this season`],
-  [/^Platoon: L bat vs LHP \\((\\w+)\\)$/, m => `he's a lefty hitter facing a left-handed pitcher tonight, ${{m[1] === "unfavorable" ? "typically a tougher matchup" : "typically a good matchup for him"}}`],
-  [/^Platoon: R bat vs RHP \\((\\w+)\\)$/, m => `he's a righty hitter facing a right-handed pitcher tonight, ${{m[1] === "unfavorable" ? "typically a tougher matchup" : "typically a good matchup for him"}}`],
-  [/^Platoon: L bat vs RHP \\((\\w+)\\)$/, m => `he's a lefty hitter facing a right-handed pitcher tonight, ${{m[1] === "favorable" ? "usually the easier side of the platoon for him" : "a tougher matchup than his platoon splits suggest"}}`],
-  [/^Platoon: R bat vs LHP \\((\\w+)\\)$/, m => `he's a righty hitter facing a lefty tonight, ${{m[1] === "favorable" ? "usually the easier side of the platoon for him" : "a tougher matchup than his platoon splits suggest"}}`],
-  [/^Market implied team total ([\\d.]+) runs/, m => `the betting market expects his team to score about ${{m[1]}} runs tonight`],
-  [/^Wind blowing OUT \\((\\d+)mph\\)/, m => `the wind is blowing out at ${{m[1]}}mph, which helps the ball carry`],
-  [/^Wind blowing IN \\((\\d+)mph\\)/, m => `the wind is blowing in at ${{m[1]}}mph, which knocks the ball down`],
-  [/^Opposing bullpen fatigue: (\\d+)\\/(\\d+) relievers over 60 pitches in L7/, m => `${{m[1]}} of the other team's last ${{m[2]}} relievers used have been worked hard recently, which tends to favor hitters late`],
-  [/^Season SB: (\\d+)$/, m => `he already has ${{m[1]}} stolen bases this season`],
-  [/^Sprint speed ([\\d.]+)ft\\/s \\(league ~([\\d.]+)\\)$/, m => `he's a genuinely fast runner (${{m[1]}} ft/s, vs. a league-average runner around ${{m[2]}})`],
-  [/^Opposing catcher pop time ([\\d.]+)s to 2B \\(league ~([\\d.]+)s\\)$/, m => `the catcher behind the plate tonight is slow getting the ball to second (${{m[1]}}s, vs. a league-average catcher around ${{m[2]}}s)`],
-  [/^Opposing team throws out (\\d+)% of runners/, m => `the opposing team throws out ${{m[1]}}% of runners who try to steal, a genuinely tough team to run on`],
-  [/^AVG vs xBA: ([\\d.]+) vs ([\\d.]+) \\(([+-][\\d.]+)\\)/, m => `his batting average (${{m[1]}}) is running ${{parseFloat(m[3]) > 0 ? "a bit above" : "a bit below"}} what the quality of his contact suggests (${{m[2]}}), ${{parseFloat(m[3]) > 0 ? "a mild regression risk" : "a sign he may be due for better luck"}}`],
-];
-function humanizeReason(s) {{
-  for (const [re, fn] of REASON_RULES) {{
-    const m = s.match(re);
-    if (m) return fn(m);
-  }}
-  return s.charAt(0).toLowerCase() + s.slice(1);
-}}
-function capSentence(s) {{
-  if (!s) return s;
-  const t = s.charAt(0).toUpperCase() + s.slice(1);
-  return /[.!?]$/.test(t) ? t : t + ".";
-}}
-function buildExplanation(p) {{
-  const probPct = p.hit_probability != null ? Math.round(p.hit_probability * 100) : null;
-  const mktPct = p.market_implied != null ? Math.round(p.market_implied * 100) : null;
-  const subject = (p.type === "game" || p.type === "pitcher_combo") ? `this one` : p.name;
-  const parts = [];
-
-  if (probPct === null) {{
-    parts.push(capSentence(`No usable probability could be computed for this one`));
-  }} else if (mktPct !== null) {{
-    parts.push(capSentence(
-      `The model gives ${{subject}} about ${{probPct}}% to cash "${{p.prop}}" tonight -- FanDuel's price implies roughly ${{mktPct}}%, so this ${{p.price_clears
-        ? "is currently rated as real value at the posted line"
-        : "isn't rated as strong value at tonight's price, even though the model likes the read"}}`
-    ));
-  }} else {{
-    parts.push(capSentence(`The model gives ${{subject}} about ${{probPct}}% to cash "${{p.prop}}" tonight -- FanDuel hasn't posted a line for this exact prop yet, so there's no price to compare it against`));
-  }}
-
-  const reasons = (p.why || []).slice(0, 3).map(humanizeReason);
-  if (reasons.length) {{
-    reasons.forEach(r => parts.push(capSentence(r)));
-  }} else if (p.base_rate != null) {{
-    parts.push(capSentence(`he's cleared a bet like this in about ${{Math.round(p.base_rate * 100)}}% of his own games this season, and tonight's matchup is part of why the model likes this spot`));
-  }}
-
-  if (p.watchouts && p.watchouts.length) {{
-    parts.push(`<b>Worth noting:</b> ${{capSentence(humanizeReason(p.watchouts[0]))}}`);
-  }}
-
-  if (p.sample_n != null && p.sample_n > 0 && p.sample_n < 30) {{
-    parts.push(capSentence(`this read leans on a smaller sample (${{p.sample_n}} games), so treat it with a little extra caution`));
-  }}
-
-  return parts.join(" ");
-}}
-
-function pickRow(p, rank) {{
-  const marketOdds = fmtOdds(p.market_odds);
-  const fairOdds = fmtOdds(p.estimated_odds);
-  const isUnpriced = p.market_odds === null || p.market_odds === undefined;
-  const oddsClass = isUnpriced ? "none" : "";
-  // "NO LINE" reads like a display glitch. Spelling out that FanDuel simply
-  // hasn't posted this specific market yet -- a real, honest, and possibly
-  // temporary state -- makes clear this isn't a bet anyone can place right
-  // now, not that something's broken.
-  const oddsText = marketOdds === null ? "NOT ON FANDUEL YET" : marketOdds;
-
-  // Relabelled "Read: High/Medium/Low" rather than a bare "High" -- direct
-  // instruction from the 2026-08-15 rebuild: this badge's precise meaning
-  // is "how good this player's matchup/form/skill score is, backed by how
-  // much real sample size" (score>=70 AND reliability A/B), a real,
-  // defined statement that has never meant "likely to hit" or "recommend
-  // this bet" -- both of those live in recommendation_status now. The
-  // bare word "Confidence" next to a probability was exactly what made
-  // that conflation easy; spelling out "Read" keeps the real, useful
-  // signal without implying the thing it was never claiming.
-  const confChip = p.confidence ? `<span class="chip ${{confClass(p.confidence)}}">Read: ${{esc(p.confidence)}}</span>` : "";
-
-  const marketPct = p.market_implied !== null && p.market_implied !== undefined ? p.market_implied * 100 : null;
-  const ourPct = p.hit_probability !== null && p.hit_probability !== undefined ? p.hit_probability * 100 : 0;
-
-  let fillClass = "";
-  let fillOpacity = 1;
-  if (p.price_clears === true) fillClass = "clears";
-  else if (p.price_clears === false) fillClass = "pass";
-  if (fillClass && p.market_edge !== null && p.market_edge !== undefined) {{
-    fillOpacity = Math.max(0.4, Math.min(1, Math.abs(p.market_edge) / 0.10));
-  }}
-
-  const subLine = p.type === "game" ? "Team prop" : (p.type === "pitcher_combo" ? "Combined · " + (p.matchup || "") : (p.team || p.matchup || ""));
-
-  let edgeHtml = "";
-  if (p.market_edge !== null && p.market_edge !== undefined) {{
-    const edgePts = p.market_edge * 100;
-    const edgeCls = p.price_clears === true ? "edge-pos" : (p.price_clears === false ? "edge-neg" : "");
-    const edgeText = (edgePts >= 0 ? "+" : "") + edgePts.toFixed(1) + "%";
-    edgeHtml = `<span class="edge ${{edgeCls}}">${{edgeText}} vs mkt</span>`;
-  }}
-
-  // recommendation_status: 2026-08-15 rebuild. The ONE real recommendation
-  // signal on this page -- computed server-side by recommendation.py
-  // against a real, hard probability/evidence/lineup/price/freshness
-  // floor (see that module's own docstring), never re-derived from
-  // confidence/price_clears here. "Confidence"/"High" no longer implies
-  // "recommend this" anywhere on this page; a Triple at 1.2% probability
-  // can still show High confidence (a real, precisely-defined statement
-  // about score+evidence) while correctly carrying no Top Pick badge at
-  // all, which is exactly the gap this field closes.
-  const isTopPick = p.recommendation_status === "top_pick";
-  const statusBadge = isTopPick
-    ? `<span class="chip top-pick-badge" title="${{esc((p.status_reasons || [])[0] || "")}}">&#127919; Top Pick</span>`
-    : p.recommendation_status === "lean"
-    ? `<span class="chip lean-badge" title="${{esc((p.status_reasons || [])[0] || "")}}">Lean</span>`
-    : p.recommendation_status === "value"
-    ? `<span class="chip value-badge" title="${{esc((p.status_reasons || [])[0] || "")}}">Value</span>` : "";
-  const staleBadge = p.stale
-    ? `<span class="chip stale-badge">&#9203; Data may be stale</span>` : "";
-
-  // Early Look: direct request, "we shouldn't have to wait for lineups to
-  // at least get a lean, then we can adjust depending how the lineups
-  // come out." p.lineup_assumed comes straight from quality_control()'s
-  // own assumed=True tag -- a real player, a real matchup, a GUESSED
-  // batting slot (Rotowire projection or last-known order), never a
-  // posted one. Shown on the row itself (not just the panel description)
-  // so it stays unmistakable no matter how a card gets shared/screenshot.
-  const earlyBadge = p.lineup_assumed
-    ? `<span class="chip assumed-badge">&#128064; Lineup not confirmed</span>` : "";
-
-  // Live grading: direct request, "for the top picks, them to show when
-  // it's cashed... make the pick yellow when the game is happening...
-  // green if it cashes, red if it doesn't." dashboard/refresh_grades.py
-  // writes p.grade -- "live" (game underway, not final), "hit", or "miss"
-  // -- reusing the same grade_results.grade_pick() every pick is ever
-  // graded with, just called live instead of waiting for tomorrow morning.
-  const gradeClass = p.grade === "hit" ? " grade-hit" : p.grade === "miss" ? " grade-miss"
-    : p.grade === "live" ? " grade-live" : "";
-  const gradeBadge = p.grade === "hit" ? `<span class="chip grade-badge grade-hit">&#9989; Cashed</span>`
-    : p.grade === "miss" ? `<span class="chip grade-badge grade-miss">Missed</span>`
-    : p.grade === "live" ? `<span class="chip grade-badge grade-live">&#9679; Live</span>` : "";
-
-  // Streaks: direct request, "STREAKS. Hits in a row, 2+ bases in a row,
-  // over X strikeouts in a row," broadened by a direct follow-up to "any
-  // relevant prop." p.streak comes from dashboard/build_dashboard.py's
-  // _compute_streaks(), a real per-game log count checked against THIS
-  // candidate's own real line (p.projection.needs varies player to
-  // player) -- so this can appear on any pick regardless of its own
-  // confidence/price state.
-  // No per-stat label baked into the badge on purpose: since needs now
-  // varies per player/stat instead of a fixed "2+" or "1+", a canned
-  // label ("2+ TB streak") would be wrong for whoever's real line isn't
-  // 2. The adjacent .prop column already states the exact real line, so
-  // the badge just states the streak length. Also kept terse for the
-  // same reason found live 2026-08-15: a longer sentence-style badge is
-  // a single white-space:nowrap chip that doesn't wrap internally -- on
-  // the mobile grid, where .odds-col is an `auto`-sized track, that
-  // forced the track wide enough to crush the .who name column to
-  // nothing ("Misiorowski's name is cut off, can't see anything").
-  const streakBadge = p.streak
-    ? `<span class="chip streak-badge">&#128293; ${{p.streak}}-game streak</span>`
-    : "";
-
-  const starKey = pickKey(p);
-  const isStarred = starredKeys.has(starKey);
-  const starBtn = `<button class="star-btn${{isStarred ? " starred" : ""}}" type="button" data-star-key="${{esc(starKey)}}" aria-label="${{isStarred ? "Remove from starred" : "Add to starred"}}">${{isStarred ? "&#9733;" : "&#9734;"}}</button>`;
-
-  return `
-  <div class="pick${{isTopPick ? " top-pick" : ""}}${{isUnpriced ? " no-line" : ""}}${{gradeClass}}${{p.lineup_assumed ? " lineup-assumed" : ""}}" tabindex="0" role="button" aria-expanded="false">
-    ${{starBtn}}
-    <div class="rank">${{String(rank).padStart(2, "0")}}</div>
-    <div class="who">
-      <div class="name">${{esc(p.name)}}</div>
-      <div class="sub">${{esc(subLine)}}</div>
-    </div>
-    <div class="prop-col">
-      <div class="prop">${{esc(p.prop)}}</div>
-    </div>
-    <div class="odds-col">
-      <div class="odds-line">
-        <span class="price ${{oddsClass}}">${{oddsText}}</span>
-        ${{fairOdds !== null ? `<span class="fair">fair ${{fairOdds}}</span>` : ""}}
-      </div>
-      <div class="badges">${{earlyBadge}}${{gradeBadge}}${{streakBadge}}${{statusBadge}}${{staleBadge}}${{confChip}}</div>
-      <div class="meter">
-        <div class="fill ${{fillClass}}" style="width:${{ourPct}}%; opacity:${{fillOpacity}}"></div>
-        ${{marketPct !== null ? `<div class="mark" style="left:${{marketPct}}%"></div>` : ""}}
-      </div>
-      <div class="prob-row">
-        <span class="our">${{pct(p.hit_probability)}} model</span>
-        ${{edgeHtml}}
-      </div>
-    </div>
-    <svg class="chev" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
-    </svg>
-    <div class="explain">${{buildExplanation(p)}}</div>
-  </div>`;
-}}
-
-function animateCount(el, target) {{
-  const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  if (reduce || !Number.isFinite(target)) {{ el.textContent = target; return; }}
-  const start = performance.now();
-  const dur = 600;
-  function step(now) {{
-    const t = Math.min(1, (now - start) / dur);
-    const eased = 1 - Math.pow(1 - t, 3);
-    el.textContent = Math.round(target * eased);
-    if (t < 1) requestAnimationFrame(step);
-    else el.textContent = target;
-  }}
-  requestAnimationFrame(step);
-}}
-
-function renderSummary() {{
-  const all = PAYLOAD.data.all;
-  let clears = 0, priced = 0;
-  for (const p of all) {{
-    if (p.price_clears) clears++;
-    if (p.market_odds !== null && p.market_odds !== undefined) priced++;
-  }}
-  const tiles = [
-    {{ n: all.length, l: "Candidates Scored" }},
-    // 5 fixed non-market tabs by the time this runs (top_picks/leans/
-    // best_value/starred/all) -- initWatchlist() inserts "starred" before
-    // this is ever called. schedule/streaks are real content tabs but
-    // don't carry per-prop-market rows, so they were never counted here
-    // either (matches this tile's pre-existing 3-tab offset before the
-    // leans/best_value split added two more non-market tabs).
-    {{ n: PAYLOAD.tabs_order.length - 5, l: "Prop Markets" }},
-    {{ n: priced, l: "With a Live Line" }},
-    {{ n: clears, l: "Clear the Price", accent: true }},
-  ];
-  const el = document.getElementById("summary");
-  el.innerHTML = tiles.map((t, i) =>
-    `<div class="stat"><div class="n${{t.accent ? " accent" : ""}}" id="stat-n-${{i}}">0</div><div class="l">${{t.l}}</div></div>`
-  ).join("");
-  tiles.forEach((t, i) => animateCount(document.getElementById("stat-n-" + i), t.n));
-}}
-
-// ---- track record: the model's own real accuracy, not a claim about it.
-function renderTrackRecord() {{
-  const el = document.getElementById("track-record");
-  const tr = PAYLOAD.track_record;
-  if (!tr || tr.main_hit_rate == null) {{ el.style.display = "none"; return; }}
-  const pct = (tr.main_hit_rate * 100).toFixed(1) + "%";
-  const cls = tr.main_hit_rate >= 0.60 ? "in-range" : "below";
-  let html = `Real track record: the main board has hit <span class="n ${{cls}}">${{pct}}</span> `
-    + `of ${{tr.main_n}} graded picks so far (target range 60&ndash;80%).`;
-  if (tr.last_14d_hit_rate != null) {{
-    html += ` Last 14 days: <span class="n">${{(tr.last_14d_hit_rate * 100).toFixed(1)}}%</span>.`;
-  }}
-  el.innerHTML = html;
-}}
-
-// ---- suggested parlay: a real, correlation-screened 3-leg card from
-// parlay_builder.py's own engine, not a client-side reimplementation.
-function renderSuggestedParlay() {{
-  const el = document.getElementById("suggested-parlay");
-  const sp = PAYLOAD.suggested_parlay;
-  if (!sp || !sp.legs || sp.legs.length < 2) {{ el.style.display = "none"; return; }}
-  const oddsStr = fmtOdds(sp.combined_american_odds);
-  const legsHtml = sp.legs.map(l => `
-    <div class="sp-leg">
-      <div><span class="who">${{esc(l.name)}}</span> <span class="prop">&middot; ${{esc(l.prop)}}</span></div>
-      <div class="price">${{fmtOdds(l.market_odds) ?? "NO LINE"}}</div>
-    </div>`).join("");
-  const corrHtml = (sp.correlation_notes || [])
-    .map(n => `<p class="corr-note">&#128279; ${{esc(n)}}</p>`).join("");
-  el.innerHTML = `
-    <div class="suggested-parlay">
-      <div class="suggested-parlay-head">
-        <h2>&#127919; Suggested Parlay <span style="font-weight:400;color:var(--ink-faint);font-size:11.5px;">(safest tier, correlation-screened)</span></h2>
-        ${{oddsStr ? `<span class="suggested-parlay-odds">${{oddsStr}}</span>` : ""}}
-      </div>
-      <div class="sp-legs">${{legsHtml}}</div>
-      ${{corrHtml}}
-      <p class="note">${{esc(sp.naive_probability_note || "")}}</p>
-    </div>`;
-}}
-
-// ---- schedule: direct request, "I want people to be able to click on a
-// game on the schedule, and get a breakdown of why X props might be best
-// for A B C reasons. Think time, weather, etc." Reuses the SAME
-// expand/collapse mechanism .pick rows already use (toggleExplain(), see
-// initPanelInteractions()) rather than a second interaction pattern.
-function gameCard(g) {{
-  const start = g.game_start ? new Date(g.game_start) : null;
-  const timeStr = start
-    ? start.toLocaleTimeString("en-US", {{ hour: "numeric", minute: "2-digit", timeZone: "America/New_York" }}) + " ET"
-    : "Time TBD";
-
-  let wxLine;
-  if (g.weather && g.weather.dome) {{
-    wxLine = "Dome (climate controlled, no weather factor)";
-  }} else if (g.weather && g.weather.temp !== null && g.weather.temp !== undefined) {{
-    const parts = [Math.round(g.weather.temp) + "&deg;F"];
-    if (g.weather.wind_mph !== null && g.weather.wind_mph !== undefined) {{
-      parts.push(Math.round(g.weather.wind_mph) + " mph" + (g.weather.wind_effect ? " (" + g.weather.wind_effect.replace(/_/g, " ") + ")" : ""));
-    }}
-    if (g.weather.precip_prob !== null && g.weather.precip_prob !== undefined && g.weather.precip_prob >= 30) {{
-      parts.push(g.weather.precip_prob + "% chance of rain");
-    }}
-    wxLine = parts.join(", ");
-  }} else {{
-    wxLine = "Weather data unavailable";
-  }}
-
-  let umpLine;
-  if (g.umpire && g.umpire.k_pct !== null && g.umpire.k_pct !== undefined) {{
-    const kDiff = (g.umpire.k_pct - g.umpire.league_k_pct) * 100;
-    const bbDiff = (g.umpire.bb_pct - g.umpire.league_bb_pct) * 100;
-    const kNote = Math.abs(kDiff) >= 1 ? (kDiff > 0 ? "tighter zone, more strikeouts" : "bigger zone, fewer strikeouts") : "close to league average";
-    umpLine = `${{esc(g.umpire.name)}} -- ${{(g.umpire.k_pct * 100).toFixed(1)}}% K rate, ${{(g.umpire.bb_pct * 100).toFixed(1)}}% BB rate (${{kNote}})`;
-  }} else if (g.hp_ump) {{
-    umpLine = `${{esc(g.hp_ump)}} -- not enough called games yet for a real tendency read`;
-  }} else {{
-    umpLine = "Umpire not yet assigned";
-  }}
-
-  const flags = [];
-  if (g.is_getaway) flags.push("Getaway day");
-  if (g.is_opener) flags.push("Series opener");
-
-  const picks = g.picks || [];
-  const picksHtml = picks.length
-    ? picks.map(p => `
-        <div class="game-pick-row">
-          <span class="gp-who"><span class="gp-name">${{esc(p.name)}}</span><span class="gp-prop">${{esc(p.prop)}}</span></span>
-          <span class="gp-nums">
-            <span class="gp-odds">${{fmtOdds(p.market_odds) ?? "NO LINE"}}</span>
-            <span class="gp-prob${{p.price_clears === true ? " gp-clears" : ""}}">${{Math.round(p.hit_probability * 100)}}%</span>
-          </span>
-        </div>`).join("")
-    : `<div class="empty-state">No priced candidates for this game yet -- check back as lineups and prices come in.</div>`;
-
-  return `
-  <div class="game-card" tabindex="0" role="button" aria-expanded="false">
-    <div class="game-head">
-      <div class="game-matchup">${{esc(g.matchup)}}</div>
-      <div class="game-time">${{timeStr}}</div>
-      <svg class="chev" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>
-    </div>
-    <div class="game-sub">${{esc(g.away_sp || "TBD")}} vs ${{esc(g.home_sp || "TBD")}}${{flags.length ? " &middot; " + flags.map(esc).join(", ") : ""}}</div>
-    <div class="explain">
-      <div class="game-detail-row"><strong>Weather:</strong> ${{wxLine}}</div>
-      <div class="game-detail-row"><strong>HP Umpire:</strong> ${{umpLine}}</div>
-      <div class="game-detail-row game-picks-label"><strong>Best-priced props tied to this game:</strong></div>
-      <div class="game-picks">${{picksHtml}}</div>
-    </div>
-  </div>`;
-}}
-
-let activeTabKey = PAYLOAD.tabs_order[0];
-
-function renderTabs() {{
-  const bar = document.getElementById("tabbar");
-  bar.innerHTML = PAYLOAD.tabs_order.map((key) => {{
-    const label = PAYLOAD.labels[key];
-    const count = PAYLOAD.data[key].length;
-    const icon = key === "top_picks" ? "&#127919; " : (key === "leans" ? "&#128172; " : (key === "best_value" ? "&#128176; " : (key === "starred" ? "&#9733; " : (key === "schedule" ? "&#128197; " : (key === "streaks" ? "&#128293; " : "")))));
-    const extraCls = key === "top_picks" ? " top-picks" : (key === "starred" ? " starred-tab" : "");
-    return `<button class="tab${{key === activeTabKey ? " active" : ""}}${{extraCls}}" data-tab="${{esc(key)}}">${{icon}}${{esc(label)}} <span class="cnt">${{count}}</span></button>`;
-  }}).join("");
-  bar.querySelectorAll(".tab").forEach(btn => {{
-    btn.addEventListener("click", () => {{
-      activeTabKey = btn.dataset.tab;
-      // Clicking a tab while a global search is active would otherwise try
-      // to activate a panel-<key> div that doesn't exist in the DOM (the
-      // search view replaces #panels with a single synthetic panel) --
-      // clearing the query here and re-rendering fresh through the normal
-      // path is simpler and safer than trying to keep two DOM shapes in
-      // sync by hand.
-      uiState.q = "";
-      const search = document.getElementById("search-input");
-      if (search) search.value = "";
-      bar.querySelectorAll(".tab").forEach(b => b.classList.remove("active"));
-      btn.classList.add("active");
-      renderPanels();
-    }});
-  }});
-}}
-
-const PANEL_DESC = {{
-  // 2026-08-15 rebuild. Every pick on this whole site now carries a real
-  // recommendation_status computed by one function (recommendation.py),
-  // against one real, hard floor -- not four different ad-hoc criteria
-  // scattered across tabs the way "Top Picks"/"Locks" used to be. These
-  // four descriptions are that classifier's real rule, stated plainly.
-  top_picks: "Every bet Full Count is willing to recommend and be judged on. Every entry clears ALL of: a real calibrated probability of at least 60%, a reliability grade of A or B (a genuine sample, not a thin one), a confirmed MLB lineup (never a projection), fresh odds and board data, and a price that still clears the model's own uncertainty (positive expected return at the PESSIMISTIC end of its real confidence interval, not just at the point estimate). This floor is real and hard: no fallback pads this list back up on a slate where fewer bets qualify -- if only 2 clear it tonight, 2 is the honest number.",
-  leans: "Full Count has a real, computed opinion here -- a genuine positive read over the market's own base rate -- but the bet doesn't clear every Top Pick requirement: thin evidence, a lineup that's still a projection, stale data, or a real probability below the 60% floor with no standout price to compensate. Worth watching, never worth betting as if it were a Top Pick.",
-  best_value: "Real price value at a probability that's often genuinely low -- home runs, stolen bases, triples, and similar high-variance bets Full Count still likes at the price offered. A 22% probability at +500 can be a good bet on the math and still be more likely to lose than win. Ranked by edge, not by probability, because probability of winning and value at the price are two different questions -- these bets answer the second one, honestly, without dressing a longshot up as a favorite.",
-  starred: "Your personal shortlist. Click the star on any pick to save it here -- stored on this device only, nothing is sent anywhere.",
-  schedule: "Tonight's slate. Click a game for the real weather, home-plate umpire tendency, and starting pitchers behind it, plus the best-priced props tied to that specific matchup.",
-  streaks: "Real, active streaks among tonight's own candidates, across every batter and pitcher market -- consecutive games clearing a real line, not just hits and total bases. Every entry here is a real prop you can actually bet tonight, not a trivia list.",
-}};
-
-// Some markets are structurally thin -- not a bug, not a trimmed list, just
-// how few real candidates that market produces on a given slate. Explained
-// honestly instead of leaving a wall of blank space that reads as broken.
-const THIN_NOTES = {{
-  strikeouts: {{
-    text: "FanDuel posts exactly one strikeout line per starter, and only some of tonight's are priced yet -- every real one that is shows here, not a trimmed list.",
-  }},
-  combined_strikeouts: {{
-    text: "A rarer market by nature: it needs BOTH starters in a game individually priced by FanDuel. Most slates only produce a couple of real matchups like this.",
-    related: "strikeouts",
-  }},
-  pitcher_outs: {{
-    text: "Same story as strikeouts -- FanDuel posts one Outs Recorded line per starter, and this is every real one priced tonight.",
-    related: "strikeouts",
-  }},
-  nrfi_combined: {{
-    text: "The real combined NRFI/YRFI price needs FanDuel's first-inning market posted for that specific game, which isn't up for every matchup yet.",
-  }},
-  stolen_base: {{
-    text: "Bounded by real speed, not by coverage -- only players who clear a genuine sprint-speed threshold ever become a stolen-base candidate at all.",
-  }},
-}};
-const THIN_THRESHOLD = 10;
-
-// ---- search / quick-filter / sort state -------------------------------
-// Purely a client-side view over the same PAYLOAD data -- filtering never
-// changes what a tab's real candidate count says (that stays the honest
-// total), only what's currently rendered as pick cards.
-const uiState = {{ q: "", clearsOnly: false, highOnly: false, sortKey: "" }};
-
-function _escapeRegex(s) {{
-  return s.replace(/[.*+?^${{}}()|[\\]\\\\]/g, "\\\\$&");
-}}
-function filterSortRows(rows) {{
-  let out = rows;
-  if (uiState.clearsOnly) out = out.filter(p => p.price_clears === true);
-  if (uiState.highOnly) out = out.filter(p => p.confidence === "High");
-  if (uiState.q) {{
-    // Direct request, verbatim: "For search, it picks up any letter instead
-    // of the first. When I type 'T' in all props it gives Mitch McGreevy --
-    // I believe because it is picking up the T in St. Louis." Real bug:
-    // plain .includes(q) matches ANY substring, including mid-word (the "t"
-    // inside "St." or "Cardinals"), so a single common letter matched nearly
-    // everything. \b (word-boundary) requires the match to start a real
-    // word -- "t" now matches "Texas"/team names starting with T, but not
-    // the "t" buried inside "St." or "Cardinals". Regex-escaped since this
-    // runs on raw user input (a literal "(" would otherwise throw and
-    // silently break search entirely).
-    const re = new RegExp("\\\\b" + _escapeRegex(uiState.q), "i");
-    out = out.filter(p =>
-      re.test(p.name || "") || re.test(p.team || "") || re.test(p.matchup || ""));
-  }}
-  if (uiState.sortKey === "edge") {{
-    out = out.slice().sort((a, b) => (b.market_edge ?? -Infinity) - (a.market_edge ?? -Infinity));
-  }} else if (uiState.sortKey === "prob") {{
-    out = out.slice().sort((a, b) => (b.hit_probability ?? -Infinity) - (a.hit_probability ?? -Infinity));
-  }} else if (uiState.sortKey === "odds") {{
-    out = out.slice().sort((a, b) => (b.market_odds ?? -Infinity) - (a.market_odds ?? -Infinity));
-  }}
-  return out;
-}}
-
-function renderPanels() {{
-  const el = document.getElementById("panels");
-  const filtersActive = !!(uiState.q || uiState.clearsOnly || uiState.highOnly);
-
-  // Global search: direct request -- "the search bar does not work
-  // correctly. I try searching Kyle or Phillies for Kyle Schwarber props
-  // and it returns nothing." Found live: search only ever matched WITHIN
-  // whichever tab happened to be showing, so a real player with real props
-  // (Schwarber had 10) came back empty from a small curated tab (Top
-  // Picks/Locks) he simply wasn't part of. A non-empty query now searches
-  // every real candidate on the board at once (the same row set All Props
-  // shows) instead of requiring the right tab to be open first.
-  if (uiState.q) {{
-    const rows = filterSortRows(PAYLOAD.data.all);
-    const visible = rows.slice(0, SHOW_N);
-    const rest = rows.slice(SHOW_N);
-    const body = rows.length
-      ? `<div class="picks">
-          ${{visible.map((p, j) => pickRow(p, j + 1)).join("")}}
-          ${{rest.map((p, j) => pickRow(p, j + 1 + SHOW_N).replace('class="pick', 'class="pick hidden-row')).join("")}}
-        </div>
-        ${{rest.length ? `<button class="more-btn" data-more="search">Show all ${{rows.length}} &darr;</button>` : ""}}`
-      : `<div class="empty-state">No candidate anywhere on tonight's board matches "${{esc(uiState.q)}}".<br><button class="thin-link clear-filters">Clear search &times;</button></div>`;
-    el.innerHTML = `
-    <div class="panel active" id="panel-search">
-      <div class="panel-head"><h2>Search results</h2><span class="n">${{rows.length}} of ${{PAYLOAD.data.all.length}} candidates match, across every tab</span></div>
-      ${{body}}
-    </div>`;
-    el.querySelectorAll(".more-btn").forEach(btn => {{
-      btn.addEventListener("click", () => {{
-        el.querySelectorAll(".hidden-row").forEach(r => r.classList.remove("hidden-row"));
-        btn.remove();
-      }});
-    }});
-    el.querySelectorAll(".clear-filters").forEach(btn => {{
-      btn.addEventListener("click", () => {{ resetFilters(); }});
-    }});
-    return;
-  }}
-
-  let html = "";
-  PAYLOAD.tabs_order.forEach((key) => {{
-    const realRows = PAYLOAD.data[key];
-    const label = PAYLOAD.labels[key];
-    const desc = PANEL_DESC[key] ? `<p class="panel-desc">${{esc(PANEL_DESC[key])}}</p>` : "";
-    let body, countLabel, rankedBy;
-    if (key === "schedule") {{
-      // Games, not picks -- no price/edge/probability to filter or sort by,
-      // so this bypasses filterSortRows/THIN_NOTES/the "show more" cutoff
-      // entirely rather than forcing a pick-shaped rendering onto them.
-      body = realRows.length
-        ? `<div class="games">${{realRows.map(gameCard).join("")}}</div>`
-        : `<div class="empty-state">No games left to preview tonight -- everything on the slate has already started.</div>`;
-      countLabel = `${{realRows.length}} game${{realRows.length === 1 ? "" : "s"}}`;
-      rankedBy = "first pitch time";
-    }} else {{
-    const rows = filterSortRows(realRows);
-    const visible = rows.slice(0, SHOW_N);
-    const rest = rows.slice(SHOW_N);
-    if (!realRows.length && key === "starred") {{
-      body = `<div class="empty-state">You haven't starred any picks yet -- click the &#9734; on any pick to save it here.</div>`;
-    }} else if (!realRows.length) {{
-      body = `<div class="empty-state">Nothing here right now -- no candidate tonight both clears High confidence and the live price.</div>`;
-    }} else if (!rows.length) {{
-      body = `<div class="empty-state">No candidates in ${{esc(label)}} match your filters right now.<br><button class="thin-link clear-filters">Clear filters &times;</button></div>`;
-    }} else {{
-      const thin = realRows.length < THIN_THRESHOLD ? THIN_NOTES[key] : null;
-      const thinNote = thin
-        ? `<div class="thin-note">
-             <p>${{esc(thin.text)}}</p>
-             ${{thin.related && PAYLOAD.data[thin.related] ? `<button class="thin-link" data-goto="${{esc(thin.related)}}">Browse ${{esc(PAYLOAD.labels[thin.related])}} instead &rarr;</button>` : ""}}
-           </div>`
-        : "";
-      body = `<div class="picks">
-          ${{visible.map((p, j) => pickRow(p, j + 1)).join("")}}
-          ${{rest.map((p, j) => pickRow(p, j + 1 + SHOW_N).replace('class="pick', 'class="pick hidden-row')).join("")}}
-        </div>
-        ${{rest.length ? `<button class="more-btn" data-more="${{esc(key)}}">Show all ${{rows.length}} &darr;</button>` : ""}}
-        ${{thinNote}}`;
-    }}
-    countLabel = filtersActive
-      ? `${{rows.length}} of ${{realRows.length}} candidate${{realRows.length === 1 ? "" : "s"}}`
-      : `${{realRows.length}} candidate${{realRows.length === 1 ? "" : "s"}}`;
-    rankedBy = uiState.sortKey === "edge" ? "edge over the market" : uiState.sortKey === "prob" ? "model probability" : uiState.sortKey === "odds" ? "payout size" : ((key === "top_picks" || key === "best_value") ? "edge over the market" : (key === "leans" ? "how strong the read is" : (key === "streaks" ? "streak length" : "model probability")));
-    }}
-    html += `
-    <div class="panel${{key === activeTabKey ? " active" : ""}}" id="panel-${{esc(key)}}">
-      <div class="panel-head"><h2>${{esc(label)}}</h2><span class="n">${{countLabel}}, ranked by ${{rankedBy}}</span></div>
-      ${{desc}}
-      ${{body}}
-    </div>`;
-  }});
-  el.innerHTML = html;
-  el.querySelectorAll(".more-btn").forEach(btn => {{
-    btn.addEventListener("click", () => {{
-      const panel = document.getElementById("panel-" + btn.dataset.more);
-      panel.querySelectorAll(".hidden-row").forEach(r => r.classList.remove("hidden-row"));
-      btn.remove();
-    }});
-  }});
-  el.querySelectorAll(".thin-link[data-goto]").forEach(btn => {{
-    btn.addEventListener("click", () => {{
-      document.querySelector(`.tab[data-tab="${{btn.dataset.goto}}"]`)?.click();
-      document.querySelector(".tabbar-wrap")?.scrollIntoView({{ behavior: "smooth", block: "start" }});
-    }});
-  }});
-  el.querySelectorAll(".clear-filters").forEach(btn => {{
-    btn.addEventListener("click", () => {{ resetFilters(); }});
-  }});
-}}
-
-// Delegated once, on the persistent #panels container -- NOT inside
-// renderPanels(), which now runs on every keystroke/filter change. Binding
-// these there would stack a fresh listener on every re-render, since
-// innerHTML replaces the children but not the container itself.
-function toggleExplain(row) {{
-  const open = row.classList.toggle("expanded");
-  row.setAttribute("aria-expanded", open ? "true" : "false");
-}}
-function initPanelInteractions() {{
-  const el = document.getElementById("panels");
-  el.addEventListener("click", e => {{
-    const starBtn = e.target.closest(".star-btn");
-    if (starBtn) {{
-      e.stopPropagation();
-      toggleStar(starBtn.dataset.starKey);
-      return;
-    }}
-    const row = e.target.closest(".pick, .game-card");
-    if (row) toggleExplain(row);
-  }});
-  el.addEventListener("keydown", e => {{
-    if (e.key !== "Enter" && e.key !== " ") return;
-    const row = e.target.closest(".pick, .game-card");
-    if (!row) return;
-    e.preventDefault();
-    toggleExplain(row);
-  }});
-}}
-
-function renderHeader() {{
-  const gen = new Date(PAYLOAD.generated_at);
-  const dateStr = gen.toLocaleDateString("en-US", {{ weekday: "long", month: "long", day: "numeric", year: "numeric", timeZone: "America/New_York" }});
-  const timeStr = gen.toLocaleTimeString("en-US", {{ hour: "numeric", minute: "2-digit", timeZone: "America/New_York" }});
-  document.getElementById("board-date").textContent = dateStr;
-  document.getElementById("board-time").textContent = "Updated " + timeStr + " ET";
-  document.getElementById("caveat").textContent =
-    "Scored fresh against tonight's still-open games only — any game already underway when this ran is excluded, since its FanDuel lines are closed. This page also prunes a prop itself the moment its game starts and reloads periodically to pick up fresh lineups and prices, so it stays current without you doing anything.";
-}}
-
-// ---- game-start pruning: direct request, "as games start I want those
-// props removed." The build already drops anything live AT BUILD TIME
-// (see _game_schedule/run_live_fetch in build_dashboard.py), but this page
-// can sit open for a while between rebuilds (deliberately not rebuilt
-// every few minutes -- see the module docstring), so a game that starts
-// while the tab is open needs a way to disappear without a full reload.
-// Every row carries its own game_start (the schedule's real gameDate) for
-// exactly this.
-function pruneStartedGames() {{
-  const now = Date.now();
-  // Top Picks is exempt: direct request, "for the top picks, them to show
-  // when it's cashed... make the pick yellow when the game is happening...
-  // green if it cashes, red if it doesn't." A pick being tracked for live
-  // grading needs to STAY on the board through and after its game, not
-  // vanish the moment it starts -- and it must stay in every OTHER tab it
-  // also appears in (protectedKeys, not just top_picks itself), or
-  // mergePriceUpdate()'s grade merge below would have nothing left to
-  // write into once the row's gone from PAYLOAD.data. General prop
-  // browsing (every other tab) keeps the original behavior: those are
-  // still-bettable options, not something being watched resolve.
-  const protectedKeys = new Set((PAYLOAD.data.top_picks || []).map(pickKey));
-  let removed = 0;
-  for (const key of Object.keys(PAYLOAD.data)) {{
-    const rows = PAYLOAD.data[key];
-    const kept = rows.filter(p => protectedKeys.has(pickKey(p))
-      || !p.game_start || new Date(p.game_start).getTime() > now);
-    removed += rows.length - kept.length;
-    PAYLOAD.data[key] = kept;
-  }}
-  return removed;
-}}
-
-// ---- freshness: this board is rebuilt once a day, not live, so how old
-// it is right now is real information a bettor needs before trusting it.
-function _agoText(iso) {{
-  const ms = new Date(iso).getTime();
-  const mins = Math.max(0, Math.round((Date.now() - ms) / 60000));
-  if (mins < 1) return "just now";
-  if (mins < 60) return mins + "m ago";
-  const hrs = Math.floor(mins / 60);
-  const remMin = mins % 60;
-  return hrs + "h" + (remMin ? " " + remMin + "m" : "") + " ago";
-}}
-function renderFreshness() {{
-  const el = document.getElementById("board-fresh");
-  if (!el) return;
-  let text = " · board " + _agoText(PAYLOAD.generated_at);
-  // Only shown once pollPrices() has actually landed an update -- before
-  // that, prices/grades are exactly as fresh as the board itself, no
-  // separate number worth showing.
-  if (lastPricesUpdatedAt) text += ", prices " + _agoText(lastPricesUpdatedAt);
-  if (lastGradesUpdatedAt) text += ", grades " + _agoText(lastGradesUpdatedAt);
-  el.textContent = text;
-}}
-
-// ---- theme toggle: system preference by default, explicit choice
-// persisted locally so it survives a reload without needing an account. --
-const THEME_KEY = "fullcount-theme";
-function safeGet(k) {{ try {{ return localStorage.getItem(k); }} catch (e) {{ return null; }} }}
-function safeSet(k, v) {{ try {{ localStorage.setItem(k, v); }} catch (e) {{}} }}
-function systemTheme() {{ return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"; }}
-function applyTheme(theme) {{
-  if (theme) document.documentElement.setAttribute("data-theme", theme);
-  else document.documentElement.removeAttribute("data-theme");
-  const btn = document.getElementById("theme-toggle");
-  const effective = theme || systemTheme();
-  btn.textContent = effective === "dark" ? "☀️" : "🌙";
-  btn.setAttribute("aria-label", effective === "dark" ? "Switch to light mode" : "Switch to dark mode");
-}}
-function initTheme() {{
-  applyTheme(safeGet(THEME_KEY));
-  document.getElementById("theme-toggle").addEventListener("click", () => {{
-    const current = document.documentElement.getAttribute("data-theme") || systemTheme();
-    const next = current === "dark" ? "light" : "dark";
-    safeSet(THEME_KEY, next);
-    applyTheme(next);
-  }});
-}}
-
-// ---- search / quick filters / sort: wired once, each control just
-// updates uiState and asks renderPanels() to redraw with the new view.
-function debounce(fn, ms) {{
-  let t;
-  return (...args) => {{ clearTimeout(t); t = setTimeout(() => fn(...args), ms); }};
-}}
-function resetFilters() {{
-  uiState.q = ""; uiState.clearsOnly = false; uiState.highOnly = false; uiState.sortKey = "";
-  document.getElementById("search-input").value = "";
-  document.getElementById("search-clear").hidden = true;
-  document.getElementById("filter-clears").dataset.active = "false";
-  document.getElementById("filter-high").dataset.active = "false";
-  document.getElementById("sort-select").value = "";
-  renderPanels();
-}}
-function initFilters() {{
-  const search = document.getElementById("search-input");
-  const clearBtn = document.getElementById("search-clear");
-  search.addEventListener("input", debounce(() => {{
-    uiState.q = search.value.trim().toLowerCase();
-    clearBtn.hidden = !search.value;
-    renderPanels();
-  }}, 150));
-  // Direct request, verbatim: "There should also be an X in the search bar
-  // to clear it instead of having to backspace." Native
-  // ::-webkit-search-cancel-button is Chrome-only, invisible until focused,
-  // and absent on Firefox -- a real, always-visible button instead.
-  clearBtn.addEventListener("click", () => {{
-    search.value = "";
-    uiState.q = "";
-    clearBtn.hidden = true;
-    search.focus();
-    renderPanels();
-  }});
-
-  const clearsBtn = document.getElementById("filter-clears");
-  clearsBtn.addEventListener("click", () => {{
-    uiState.clearsOnly = !uiState.clearsOnly;
-    clearsBtn.dataset.active = String(uiState.clearsOnly);
-    renderPanels();
-  }});
-
-  const highBtn = document.getElementById("filter-high");
-  highBtn.addEventListener("click", () => {{
-    uiState.highOnly = !uiState.highOnly;
-    highBtn.dataset.active = String(uiState.highOnly);
-    renderPanels();
-  }});
-
-  document.getElementById("sort-select").addEventListener("change", (e) => {{
-    uiState.sortKey = e.target.value;
-    renderPanels();
-  }});
-}}
-
-// ---- star / watchlist: a personal shortlist, stored on this device only
-// (no account, no server -- this page is a static file). "starred" is made
-// into a real PAYLOAD tab client-side so it runs through the exact same
-// renderTabs()/renderPanels() machinery every other tab already uses,
-// rather than a second parallel rendering path to keep in sync.
-const STAR_KEY = "fullcount-starred";
-function pickKey(p) {{ return (p.name || "") + "||" + (p.prop || ""); }}
-function loadStarred() {{
-  try {{ return new Set(JSON.parse(localStorage.getItem(STAR_KEY) || "[]")); }}
-  catch (e) {{ return new Set(); }}
-}}
-function saveStarred() {{ safeSet(STAR_KEY, JSON.stringify([...starredKeys])); }}
-let starredKeys = loadStarred();
-
-function refreshStarredTab() {{
-  PAYLOAD.data.starred = PAYLOAD.data.all.filter(p => starredKeys.has(pickKey(p)));
-}}
-
-// ---- live price polling: direct request, "I want all props to update
-// with new odds as FanDuel changes them, and compute in real time the
-// edge and whether it keeps it on the top 10." A full rebuild (rescoring
-// every candidate against FanGraphs/Statcast/lineups) is deliberately
-// infrequent -- see the module docstring -- but re-pricing an EXISTING
-// candidate against a fresh FanDuel line is cheap and has nothing to do
-// with the model itself, so dashboard/refresh_prices.py does that piece
-// on its own fast cadence and writes data.json next to this page. This
-// polls that file and merges just the price fields in, matched by
-// pickKey (name + prop) across every tab -- not a full reload, and not a
-// fetch of the whole page (fonts/HTML), just the numbers that actually
-// change between full rebuilds.
-function mergePriceUpdate(freshAll) {{
-  const freshByKey = new Map(freshAll.map(p => [pickKey(p), p]));
-  let changed = 0;
-  for (const key of Object.keys(PAYLOAD.data)) {{
-    if (key === "top_picks" || key === "leans" || key === "best_value") continue;  // rebuilt below
-    for (const p of PAYLOAD.data[key]) {{
-      const fresh = freshByKey.get(pickKey(p));
-      if (!fresh) continue;
-      if (p.market_odds !== fresh.market_odds || p.market_edge !== fresh.market_edge) changed++;
-      p.market_odds = fresh.market_odds;
-      p.market_implied = fresh.market_implied;
-      p.market_edge = fresh.market_edge;
-      p.price_clears = fresh.price_clears;
-      // recommendation_status: a price move can genuinely flip a pick's
-      // real Top Pick/Lean/Value status (its value/robustness test
-      // depends on the price). dashboard/refresh_prices.py already
-      // re-ran the SAME Python classify_recommendation() this page's own
-      // full build uses and wrote the real answer into data.json -- this
-      // reads that answer rather than re-deriving a second, separate
-      // approximation of it in JS, which is exactly the kind of drift
-      // this rebuild's own audit found between the old ad-hoc Top
-      // Picks/Locks criteria and what pickRow() actually badged.
-      if (p.recommendation_status !== fresh.recommendation_status) changed++;
-      p.recommendation_status = fresh.recommendation_status;
-      p.status_reasons = fresh.status_reasons;
-      p.stale = fresh.stale;
-      // grade: dashboard/refresh_grades.py's live hit/miss/in-progress
-      // state -- see pruneStartedGames() and renderPick() for the rest of
-      // this feature.
-      if (p.grade !== fresh.grade) changed++;
-      p.grade = fresh.grade;
-    }}
-  }}
-  // Rebucket from the just-merged, server-recomputed status -- a pick
-  // whose game has already started is grandfathered into Top Picks
-  // regardless of its current status (FanDuel's own line for it is
-  // closed by then anyway) -- otherwise a cashed pick could get bumped
-  // off the board by an unrelated later game's price move right as it
-  // turns green, which defeats the entire point of watching it resolve.
-  const now = Date.now();
-  const wasTopPick = new Set((PAYLOAD.data.top_picks || []).map(pickKey));
-  const tp = PAYLOAD.data.all.filter(p => p.recommendation_status === "top_pick"
-    || (wasTopPick.has(pickKey(p)) && p.game_start && new Date(p.game_start).getTime() <= now));
-  tp.sort((a, b) => (b.market_edge || 0) - (a.market_edge || 0));
-  PAYLOAD.data.top_picks = tp;
-  const lns = PAYLOAD.data.all.filter(p => p.recommendation_status === "lean");
-  lns.sort((a, b) => (b.lift || 0) - (a.lift || 0));
-  PAYLOAD.data.leans = lns;
-  const bv = PAYLOAD.data.all.filter(p => p.recommendation_status === "value");
-  bv.sort((a, b) => (b.market_edge || 0) - (a.market_edge || 0));
-  PAYLOAD.data.best_value = bv;
-  if (PAYLOAD.data.starred) refreshStarredTab();
-  return changed;
-}}
-let lastPricesUpdatedAt = null;
-let lastGradesUpdatedAt = null;
-let lastPollStamp = null;
-async function pollPrices() {{
-  try {{
-    const res = await fetch("data.json?t=" + Date.now(), {{ cache: "no-store" }});
-    if (!res.ok) return;
-    const fresh = await res.json();
-    // Combined stamp, change-detection ONLY: dashboard/refresh_prices.py
-    // and dashboard/refresh_grades.py are two independent scripts on
-    // their own schedules, writing prices_updated_at / grades_updated_at
-    // separately -- a grade-only change (a game just went final, no
-    // price moved) must still trigger a merge, not get silently skipped
-    // because prices_updated_at alone didn't change. Kept separate from
-    // lastPricesUpdatedAt/lastGradesUpdatedAt below, which are real
-    // timestamps renderFreshness() displays -- this combined string is
-    // not a valid date and must never be passed to _agoText().
-    const stamp = (fresh.prices_updated_at || "") + "|" + (fresh.grades_updated_at || "") + "|" + fresh.generated_at;
-    if (!fresh.data || !fresh.data.all || stamp === lastPollStamp) return;
-    lastPollStamp = stamp;
-    if (fresh.prices_updated_at) lastPricesUpdatedAt = fresh.prices_updated_at;
-    if (fresh.grades_updated_at) lastGradesUpdatedAt = fresh.grades_updated_at;
-    const changed = mergePriceUpdate(fresh.data.all);
-    if (changed > 0) {{
-      renderSummary();
-      renderTabs();
-      renderPanels();
-    }}
-  }} catch (e) {{ /* a missed poll just tries again next interval -- never breaks the page */ }}
-}}
-function initWatchlist() {{
-  // Inserted right after top_picks, ahead of "all" and every real market --
-  // must run before renderSummary() (its "Prop Markets" tile count assumes
-  // exactly the fixed meta tabs, now three: top_picks/starred/all, not two).
-  PAYLOAD.tabs_order = ["top_picks", "starred", ...PAYLOAD.tabs_order.filter(k => k !== "top_picks")];
-  PAYLOAD.labels.starred = "Starred";
-  refreshStarredTab();
-}}
-function toggleStar(key) {{
-  if (starredKeys.has(key)) starredKeys.delete(key); else starredKeys.add(key);
-  saveStarred();
-  refreshStarredTab();
-  renderTabs();
-  renderPanels();
-}}
-
-initTheme();
-renderHeader();
-renderFreshness();
-setInterval(renderFreshness, 60000);
-pruneStartedGames();
-initWatchlist();
-renderTrackRecord();
-renderSuggestedParlay();
-renderSummary();
-renderTabs();
-renderPanels();
-initPanelInteractions();
-initFilters();
-
-// Re-prune every minute (piggybacking renderFreshness's own cadence) so a
-// game that starts while this tab is sitting open still disappears without
-// the user doing anything -- then a full reload every 30 minutes to pick
-// up whatever the next real server-side rebuild produced (fresh lineups,
-// fresh prices, fresh candidates this page's own JS has no way to derive
-// on its own). Together: "runs separately, no effort from either of us."
-setInterval(() => {{
-  if (pruneStartedGames() > 0) {{
-    refreshStarredTab();
-    renderSummary();
-    renderTabs();
-    renderPanels();
-  }}
-}}, 60000);
-setInterval(() => location.reload(), 30 * 60000);
-pollPrices();
-setInterval(pollPrices, 3 * 60000);
-</script>
-"""
-
-
-def render_html(payload, fonts):
-    return PAGE_TEMPLATE.format(
-        payload_json=json.dumps(payload, separators=(",", ":")),
-        archivo=fonts["archivo"], plexsans=fonts["plexsans"],
-        plexmono500=fonts["plexmono500"], plexmono600=fonts["plexmono600"],
-    )
+# PHASE 4 REBUILD (2026-08-16): the page itself -- HTML shell, CSS, JS -- is
+# no longer a Python string template. It moved to dashboard/static/
+# (index.html, app.css, app.js) as real, plain, editable files: no more
+# {{ }} escaping every brace in a CSS/JS block just to survive
+# str.format(), and critically, no more embedding data.json's entire
+# contents a SECOND time inside index.html (measured before this change:
+# docs/index.html was 4.7MB and docs/data.json was 4.4MB, nearly
+# identical, because build_payload()'s output was serialized into BOTH --
+# once inline via PAGE_TEMPLATE.format(payload_json=...) so the page had
+# data on first paint, and again as the standalone file pollPrices()
+# fetched). The shell now fetches data.json once itself; nothing is
+# embedded twice. See dashboard/static/app.js's boot sequence.
+#
+# Fonts: the old page embedded ~148KB of base64-encoded Archivo/IBM Plex
+# Sans/IBM Plex Mono directly in the HTML (base64 inflates binary ~33%, so
+# that was ~110KB of real font data costing ~148KB on the wire, parsed
+# before first paint, uncacheable separately from the page). Replaced with
+# a deliberate system-font stack (see app.css) -- zero font requests, zero
+# FOUT/FOIT, and a data-dense stats page benefits more from instant text
+# than from a custom display face. dashboard/fonts_b64.json and the
+# --fonts flag are retired along with PAGE_TEMPLATE.
+STATIC_DIR = os.path.join(DASHBOARD_DIR, "static")
+STATIC_FILES = ("index.html", "app.css", "app.js")
+
+
+def copy_static_assets(out_dir):
+    """Copies the hand-written shell/CSS/JS into the deploy directory
+    unchanged -- these do not depend on today's data at all, so they are
+    not regenerated per run. Browsers (and GitHub Pages' own CDN) can cache
+    them across runs; only data.json/live.json change every cycle."""
+    os.makedirs(out_dir, exist_ok=True)
+    for name in STATIC_FILES:
+        src = os.path.join(STATIC_DIR, name)
+        dst = os.path.join(out_dir, name)
+        with open(src, encoding="utf-8") as f:
+            content = f.read()
+        with open(dst, "w", encoding="utf-8") as f:
+            f.write(content)
+    return [os.path.join(out_dir, name) for name in STATIC_FILES]
 
 
 def main():
     ap = argparse.ArgumentParser(description=__doc__)
-    ap.add_argument("--out", default=os.path.join(DASHBOARD_DIR, "fullcount_board.html"),
-                    help="output HTML path (gitignored -- this is generated, not committed)")
-    ap.add_argument("--fonts", default=os.path.join(DASHBOARD_DIR, "fonts_b64.json"),
-                    help="path to the cached base64 font payload")
+    ap.add_argument("--out-dir", default=os.path.join(REPO_ROOT, "docs"),
+                    help="deploy directory (default: docs/, GitHub Pages' own root)")
     ap.add_argument("--data-out", default=None,
-                    help="also write the raw JSON payload here (default: data.json next to --out) -- "
-                         "this is what dashboard/refresh_prices.py rewrites between full rebuilds and "
-                         "what the page itself polls for live price updates, see pollPrices() above")
+                    help="also write the raw JSON payload here (default: data.json inside "
+                         "--out-dir) -- this is what dashboard/refresh_prices.py rewrites "
+                         "between full rebuilds and what the page itself polls for live "
+                         "updates via live.json, see dashboard/static/app.js's pollLive()")
     args = ap.parse_args()
 
-    fonts = json.load(open(args.fonts))
     result = run_live_fetch()
     track_record = load_track_record()
     payload = build_payload(result, track_record=track_record)
-    html = render_html(payload, fonts)
 
-    os.makedirs(os.path.dirname(os.path.abspath(args.out)) or ".", exist_ok=True)
-    with open(args.out, "w", encoding="utf-8") as f:
-        f.write(html)
+    written = copy_static_assets(args.out_dir)
+    for path in written:
+        print(f"Wrote {path} ({os.path.getsize(path)} bytes)")
 
-    data_out = args.data_out or os.path.join(os.path.dirname(os.path.abspath(args.out)), "data.json")
+    data_out = args.data_out or os.path.join(args.out_dir, "data.json")
+    os.makedirs(os.path.dirname(os.path.abspath(data_out)) or ".", exist_ok=True)
     with open(data_out, "w", encoding="utf-8") as f:
         json.dump(payload, f, separators=(",", ":"))
 
-    n_total = len(payload["data"]["all"])
-    n_top = len(payload["data"]["top_picks"])
-    print(f"Wrote {args.out} ({len(html)} bytes, {n_total} candidates, {n_top} top picks)")
-    print(f"Wrote {data_out}")
+    summary = payload["summary"]
+    print(f"Wrote {data_out} ({os.path.getsize(data_out)} bytes, {summary['n_props']} props, "
+          f"{summary['n_top_pick']} top picks, {summary['n_lean']} leans, "
+          f"{summary['n_value']} value)")
+
+    # A full rebuild already carries every prop's current price/status/grade
+    # in data.json itself, so any deltas refresh_prices.py/refresh_grades.py
+    # accumulated in live.json since the last rebuild are now redundant --
+    # and their ids are stale anyway (ids embed today's game_pk, so a new
+    # day's board never matches yesterday's leftover entries). Reset it here
+    # so live.json stays small indefinitely instead of growing across every
+    # 5-minute cycle since the pipeline was first deployed.
+    live_out = os.path.join(os.path.dirname(data_out) or ".", "live.json")
+    with open(live_out, "w", encoding="utf-8") as f:
+        json.dump({"prices_updated_at": None, "grades_updated_at": None, "props": {}}, f,
+                  separators=(",", ":"))
+    print(f"Wrote {live_out} (reset for this rebuild)")
 
 
 if __name__ == "__main__":
