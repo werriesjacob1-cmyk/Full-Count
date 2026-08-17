@@ -1,7 +1,7 @@
 # Full Count Project State
 
 - Last verified: 2026-08-17
-- Verification base: `main` at `7a42ae0e8aa9de7e6006fefbe11bb71b4e390290`
+- Code verification base: `main` at `a31fa26d925597935a39ea43cd5f42e0412ef524`
 
 This file is the concise map of the system that exists now. Use
 `engineering/ENGINEERING_HANDOFF.md` for chronology and
@@ -72,26 +72,43 @@ available candidate in a market without making that candidate a Top Pick.
 
 ## Scoring and features
 
-The principal batter/pitcher score is deterministic and baseball-specific:
+The five general score categories originated in a historical, hand-set shared
+synthesis scaffold: 35% matchup, 25% recent form, 15% environment, 15%
+baseline skill, and 10% context. That shared split is **not** the current live
+general formula.
 
-- 35% matchup
-- 25% recent form
-- 15% environment
-- 15% baseline skill
-- 10% context
+The promoted live general formulas are different for batters and pitchers:
+
+| Component | Batter | Pitcher |
+|---|---:|---:|
+| Matchup | 0.04 | 0.11 |
+| Recent form | 0.03 | -0.16 |
+| Environment | 0.20 | 0.15 |
+| Baseline skill | -0.09 | 0.48 |
+| Context | 0.64 | 0.10 |
+
+`generate_picks.score_batter()` and `generate_picks.score_pitcher()` apply
+those formulas, and `backtest/fit_score_weights.py` mirrors them as
+`CURRENT_WEIGHTS_BATTER` and `CURRENT_WEIGHTS_PITCHER`. Specialty-market
+scorers can use their own market-specific formulas and are not represented by
+the table above.
 
 The concrete signals include platoon and pitch-arsenal interactions, recent
 contact or strikeout form, bat-speed and times-through-order information,
 park/weather, workload, lineup slot, bullpen context, umpire context, and
-other market-specific inputs. Every available signal is recorded on the
-candidate rather than inferred later.
+other market-specific inputs. General batter/pitcher candidates record the
+five component values used to reconstruct their formula, while signal coverage
+remains specific to each scorer and the data available for that candidate.
 
 `generate_picks.apply_signal_weights()` can adjust the live quality score from
 forward signal measurements in `results/signal_measurement.json`. It is
 intentionally excluded from the historical backtest path because today's
 settled signal trust would leak future information into historical dates.
-Input-quality rejection and assumed-lineup handling live in
-`generate_picks.quality_control()`.
+The resulting score participates in the `MIN_QUALITY_SCORE` gate and diagnostic
+ordering. These score weights are not the final betting probability,
+calibration, sportsbook price/value assessment, or recommendation policy;
+those are separate downstream layers. Input-quality rejection and
+assumed-lineup handling live in `generate_picks.quality_control()`.
 
 ## Probability generation
 
