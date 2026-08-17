@@ -159,6 +159,14 @@ truth and not blanket authorization to change production:
     causing searches such as Phillies to surface opposing players.
 17. The public track record of the rebuilt Top Pick architecture is still
     young and should not drive premature model tuning.
+18. Verified scoring-description drift remains outside this documentation PR:
+    the `generate_picks.py` module text, component headings, comments, and
+    diagnostic copy; `backtest/SCHEMA.md`; `backtest/signals.py`; and some
+    adjacent test/engine comments still describe or reconstruct the original
+    shared 35/25/15/15/10 scaffold. The live general formulas and their current
+    formula tests use separate promoted batter and pitcher weights. Any change
+    to executable reconstruction requires its own evidence-backed audit and is
+    not authorized by this finding.
 
 ## Important current principle
 
@@ -284,3 +292,123 @@ Information Claude should know when resuming:
 - Treat `engineering/AUDIT/README.md` as the contract for audit findings.
 - Challenge this map when code or data disagrees; append evidence rather than
   silently rewriting historical entries.
+
+## 2026-08-17 — Correct canonical live scoring-weight documentation
+
+Agent: Codex
+
+Branch: `pre-phase-v/engineering-memory`
+
+Commit(s): Documentation correction commits on PR #50; resolve the immutable
+SHAs from the PR history.
+
+PR: Draft PR #50, **Pre-Phase-V: establish shared engineering memory**.
+
+Objective: Correct the canonical scoring architecture from verified current
+code while keeping this PR strictly documentation-only.
+
+What I inspected:
+
+- The live general formulas in `generate_picks.score_batter()` and
+  `generate_picks.score_pitcher()` on current `main`.
+- `CURRENT_WEIGHTS_BATTER`, `CURRENT_WEIGHTS_PITCHER`, and the scope notes in
+  `backtest/fit_score_weights.py`.
+- `test_score_batter.py`, `test_score_pitcher.py`,
+  `test_fit_score_weights.py`, and `test_current_weight_score.py`.
+- Every remaining section of `engineering/PROJECT_STATE.md` for historical
+  behavior incorrectly presented as current behavior.
+- All repository references to the original shared 35/25/15/15/10 split that
+  could indicate related documentation or reconstruction drift.
+
+What I found:
+
+- The first version of `PROJECT_STATE.md` incorrectly presented the original
+  shared 35/25/15/15/10 synthesis scaffold as the current principal score.
+- Current live general batter weights are matchup 0.04, recent form 0.03,
+  environment 0.20, baseline skill -0.09, and context 0.64.
+- Current live general pitcher weights are matchup 0.11, recent form -0.16,
+  environment 0.15, baseline skill 0.48, and context 0.10.
+- Batter and pitcher use different promoted formulas. Specialty-market scorers
+  can use their own formulas.
+- The quality score is distinct from downstream betting probability,
+  calibration, sportsbook value, and recommendation policy.
+- No other section of `PROJECT_STATE.md` described superseded historical
+  architecture as current architecture at this verification base.
+- Stale 35/25/15/15/10 descriptions and reconstruction remain in source,
+  schema, and test-adjacent locations listed in audit item 18. They were not
+  changed because executable changes are outside this PR's authorization.
+- Since this branch was created, `main` advanced from `7a42ae0e...` to
+  `a31fa26d...` through one automated commit affecting only the current odds
+  and props generated-data snapshots.
+
+What I changed:
+
+- Replaced the incorrect shared current formula in
+  `engineering/PROJECT_STATE.md` with the verified promoted batter and pitcher
+  formulas and their scope.
+- Clarified component/signal recording and separated quality score from the
+  downstream probability, price/value, and recommendation layers.
+- Updated the `PROJECT_STATE.md` code verification base to the inspected
+  current `main` commit.
+- Added audit item 18 and this chronological correction entry.
+
+Architectural decisions:
+
+- The original shared 35/25/15/15/10 split is retained only as historical
+  context, not current architecture.
+- General batter weights, general pitcher weights, and specialty-market
+  formulas are distinct concepts.
+- Quality scoring, probability generation, sportsbook value, and
+  recommendation classification remain separate layers in the canonical map.
+- Documentation drift does not authorize changing model weights or executable
+  reconstruction in this PR.
+
+Tests added: None. This correction changes documentation only.
+
+Test results:
+
+- `test_fit_score_weights.py`: 11/11 checks passed.
+- `test_score_batter.py`: 18/18 checks passed.
+- `test_score_pitcher.py`: 17/17 checks passed.
+- `test_current_weight_score.py`: 15/15 checks passed.
+- Focused total: 61/61 checks passed using a temporary environment with the
+  repository requirements installed.
+
+Behavior intentionally unchanged:
+
+- All model weights and executable scoring, signal, probability, calibration,
+  pricing, recommendation, persistence, workflow, dashboard, and generated-data
+  behavior.
+- The large `README.md`, source comments/docstrings, schemas, tests, and
+  generated artifacts.
+
+Risks / known limitations:
+
+- Some executable-adjacent descriptions still contradict the promoted general
+  weights and can mislead future maintainers until separately audited.
+- `backtest/signals.py` contains more than prose: its reconstruction still
+  encodes the historical shared weights, so a future correction must first
+  determine the intended evaluation semantics and add regression evidence.
+- Automated generated-data commits can continue advancing `main` while this
+  documentation PR remains open.
+
+New issues discovered:
+
+- The stale-weight references are broader than the two live scorer headings;
+  they also include module/diagnostic text, backtest schema/reconstruction, and
+  adjacent comments. Audit item 18 records the affected scope without changing
+  it.
+
+Recommended next work:
+
+- Audit the stale score descriptions and signal reconstruction as a separate,
+  evidence-backed task before changing any executable file.
+- Preserve the promoted weights unless held-out validation and explicit model
+  versioning justify a future change.
+
+Information Claude should know when resuming:
+
+- The code and focused scoring tests agree on separate promoted batter and
+  pitcher formulas; the old shared split is historical only.
+- No model weight or production behavior changed in this correction.
+- Phase V has not begun; this remains Pre-Phase-V audit/hardening work.
