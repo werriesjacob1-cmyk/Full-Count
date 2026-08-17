@@ -1,7 +1,7 @@
 # Full Count Project State
 
 - Last verified: 2026-08-17
-- Code verification base: `main` at `e1f296b9bfa6d461f5163a96badcc18ce339f60c`
+- Code verification base: `main` at `fd20785769e1de25581e873317d2b2230389ba13`
 
 This file is the concise map of the system that exists now. Use
 `engineering/ENGINEERING_HANDOFF.md` for chronology and

@@ -813,3 +813,75 @@ Information Claude should know when resuming:
 - The canonical invariant is result authority, not permanent live-terminal
   protection.
 - PR #51 remains draft and unmerged. Phase V has not begun.
+
+## 2026-08-17 — PR #51 CI dependency correction
+
+Agent:
+Codex
+
+Branch:
+`pre-phase-v/live-lifecycle-hardening`
+
+Commit(s):
+`faddb4fbd61b2c2830be3e9f131cff9fca66e07c` (declare YAML validation dependency);
+the handoff commit containing this entry follows it on PR #51.
+
+PR:
+[#51 — Pre-Phase-V: harden live pick lifecycle](https://github.com/werriesjacob1-cmyk/Full-Count/pull/51) (draft, unmerged)
+
+Objective:
+Correct the single CI-only dependency failure found after publishing the full
+lifecycle correction, without changing lifecycle, model, recommendation,
+workflow, dashboard, or generated-data behavior.
+
+What I inspected:
+GitHub Actions Test Suite run `32076556881`, job `95530920118`, its complete
+job log, `requirements.txt`, and `test_pages_contract_v3.py`.
+
+What I found:
+The workflow-contract regression test imports `yaml`, but PyYAML was available
+only in the earlier development environment and was not declared in the
+dependency set installed by CI. The run's only failure was
+`ModuleNotFoundError: No module named 'yaml'`; all later test files completed
+successfully.
+
+What I changed:
+Declared `PyYAML~=6.0.2` in `requirements.txt`, matching the repository's
+patch-compatible pinning convention, so the workflow YAML validation gate is
+reproducible in a clean CI environment. Updated the project verification base
+after automated main commits advanced it to
+`fd20785769e1de25581e873317d2b2230389ba13`.
+
+Architectural decisions:
+Workflow YAML parsing remains a real CI contract test. The missing dependency
+is declared rather than weakening or deleting that test.
+
+Tests added:
+None; this fixes the clean-environment execution of the existing seven-check
+Pages/workflow contract test.
+
+Test results:
+`test_pages_contract_v3.py`: 7/7 passed. Complete CI-equivalent root suite:
+77/77 files and 1,478/1,478 reported tests/checks passed with exit code 0.
+
+Behavior intentionally unchanged:
+All production lifecycle behavior, model/scoring/probability/calibration code,
+`recommendation.py`, workflow semantics, dashboard behavior, and generated
+artifacts.
+
+Risks / known limitations:
+Scheduled workflow and public Pages behavior remain operationally untestable
+until merge. The audit's post-merge checklist remains mandatory.
+
+New issues discovered:
+The earlier local environment masked an undeclared test dependency. Clean CI
+is the authoritative dependency-reproducibility check.
+
+Recommended next work:
+Wait for the replacement PR CI run, then leave PR #51 draft and unmerged for
+independent review.
+
+Information Claude should know when resuming:
+The lifecycle correction itself did not fail. The only failing check was the
+undeclared PyYAML dependency used by the workflow-contract test; it is now
+declared and the complete suite passes locally. Phase V has not begun.
