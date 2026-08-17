@@ -337,9 +337,12 @@ What I found:
 - Stale 35/25/15/15/10 descriptions and reconstruction remain in source,
   schema, and test-adjacent locations listed in audit item 18. They were not
   changed because executable changes are outside this PR's authorization.
-- Since this branch was created, `main` advanced from `7a42ae0e...` to
+- At the start of this correction, `main` had advanced from `7a42ae0e...` to
   `a31fa26d...` through one automated commit affecting only the current odds
   and props generated-data snapshots.
+- While the correction and its first CI run were in progress, `main` advanced
+  again to `3d3e1ea...` through one automated commit affecting only
+  `docs/data.json` and `docs/live.json`.
 
 What I changed:
 
