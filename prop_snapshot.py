@@ -111,6 +111,66 @@ def capture(budget_s=None):
                             "elapsed_s": round(time.monotonic() - started, 1)}
 
 
+def capture_two_sided():
+    """PHASE 3, ITEM 5/6: the genuinely two-sided markets (pitcher
+    strikeouts, pitcher outs, first-inning runs/NRFI) get an EXACT no-vig
+    probability from odds_fanduel.py's own devig_two_sided() at pick time
+    -- but until now nothing preserved the raw over/under prices themselves
+    for later CLV or closing-line analysis the way capture() already does
+    for the one-sided batter props. Direct instruction: "modify the odds/
+    snapshot pipeline to persist Over odds, Under odds, exact line, book,
+    timestamp for every supported market."
+
+    Deliberately NOT combined_strikeouts -- that market is a one-sided
+    ladder (12+, 13+, 14+ escalating prices, no paired Under; see
+    odds_fanduel.attach_market_prices' own comment), so there is no second
+    side to capture there either, same reasoning as the batter YES/NO
+    props.
+
+    Returns (taken_at, rows) -- rows are flat, one per priced line, tagged
+    by which market they came from so a consumer never has to guess."""
+    taken_at = datetime.now(timezone.utc).isoformat()
+    rows = []
+
+    try:
+        k = fd.fetch_pitcher_strikeouts()
+    except Exception:
+        k = {}
+    for norm, v in k.items():
+        rows.append({"taken_at": taken_at, "market": "strikeouts", "book": "fanduel",
+                     "player": v.get("player"), "player_norm": norm, "game": v.get("game"),
+                     "line": v.get("line"), "needs": v.get("needs"),
+                     "over_odds": v.get("over"), "under_odds": v.get("under"),
+                     "true_over": v.get("true_over"), "true_under": v.get("true_under"),
+                     "hold": v.get("hold"), "in_play": False})
+
+    try:
+        po = fd.fetch_pitcher_outs()
+    except Exception:
+        po = {}
+    for norm, v in po.items():
+        rows.append({"taken_at": taken_at, "market": "pitcher_outs", "book": "fanduel",
+                     "player": v.get("player"), "player_norm": norm, "game": v.get("game"),
+                     "line": v.get("line"), "needs": v.get("needs"),
+                     "over_odds": v.get("over"), "under_odds": v.get("under"),
+                     "true_over": v.get("true_over"), "true_under": v.get("true_under"),
+                     "hold": v.get("hold"), "in_play": False})
+
+    try:
+        fi = fd.fetch_first_inning_totals()
+    except Exception:
+        fi = {}
+    for matchup, v in fi.items():
+        rows.append({"taken_at": taken_at, "market": "nrfi_combined", "book": "fanduel",
+                     "player": None, "player_norm": None, "game": matchup,
+                     "line": 0.5, "needs": 1,
+                     "over_odds": v.get("over"), "under_odds": v.get("under"),
+                     "true_over": v.get("true_over"), "true_under": v.get("true_under"),
+                     "hold": v.get("hold"), "in_play": False})
+
+    return taken_at, rows
+
+
 def main():
     date_str = os.environ.get("PROPS_DATE") or datetime.now().strftime("%Y-%m-%d")
     os.makedirs(OUT_DIR, exist_ok=True)
@@ -149,6 +209,26 @@ def main():
                                  "rows": rows})
     payload["snapshots"].sort(key=lambda s: s["taken_at"])
 
+    # PHASE 3, ITEM 5/6: the genuinely two-sided markets, captured under a
+    # SEPARATE top-level key -- "two_sided_snapshots", never merged into
+    # "snapshots" above -- so grade_value.py's closing_prices() (which reads
+    # "snapshots"/"rows" with a one-sided-prop row shape: player_norm/stat/
+    # needs/american) stays completely unaware this key exists and keeps
+    # working unmodified. A capture failure here must never cost the
+    # one-sided sweep that already succeeded above.
+    try:
+        ts_taken_at, ts_rows = capture_two_sided()
+    except Exception as e:
+        print(f"Two-sided prop snapshot failed ({e}) — one-sided sweep above is unaffected.")
+        ts_taken_at, ts_rows = taken_at, []
+    if ts_rows:
+        payload.setdefault("two_sided_snapshots", [])
+        ts_minute = ts_taken_at[:16]
+        payload["two_sided_snapshots"] = [s for s in payload["two_sided_snapshots"]
+                                          if s.get("taken_at", "")[:16] != ts_minute]
+        payload["two_sided_snapshots"].append({"taken_at": ts_taken_at, "rows": ts_rows})
+        payload["two_sided_snapshots"].sort(key=lambda s: s["taken_at"])
+
     with open(path, "w", encoding="utf-8") as f:
         json.dump(payload, f, indent=2)
 
@@ -160,6 +240,9 @@ def main():
           f"({live} in-play, {len(rows)-live} pregame) — {cov} in "
           f"{coverage['elapsed_s']}s — "
           f"{len(payload['snapshots'])} snapshot(s) today in {path}")
+    if ts_rows:
+        print(f"Recorded {len(ts_rows)} two-sided prop prices (strikeouts/pitcher_outs/"
+              f"nrfi_combined, exact over+under+hold) at {ts_taken_at}")
     return 0
 
 

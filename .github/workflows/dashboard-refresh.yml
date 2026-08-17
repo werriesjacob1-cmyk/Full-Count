@@ -64,27 +64,37 @@ jobs:
         run: pip install -r requirements.txt
 
       - name: Build dashboard
-        run: python3 dashboard/build_dashboard.py --out docs/index.html
+        run: python3 dashboard/build_dashboard.py --out-dir docs
 
       - name: Commit and push
         run: |
           git config user.name "mlb-pipeline-bot"
           git config user.email "actions@github.com"
-          # Real bug, caught live 2026-08-14: build_dashboard.py's
-          # --data-out writes docs/data.json on disk (what refresh_prices.
-          # yml rewrites and what the page itself polls for live price
-          # updates), but this step only ever staged docs/index.html --
-          # so data.json was built every run and never once committed.
-          git add docs/index.html docs/data.json
+          # PHASE 4 REBUILD (2026-08-16): the page is no longer a single
+          # self-contained docs/index.html -- build_dashboard.py now copies
+          # index.html/app.css/app.js (the static shell, unchanged by
+          # today's data) alongside writing data.json (today's payload) and
+          # resetting live.json (the small polled delta refresh_prices.py/
+          # refresh_grades.py write between rebuilds). All five must be
+          # staged, matching the real bug this same comment used to
+          # document for docs/data.json alone: whichever of these isn't
+          # committed here is simply never live on the deployed site.
+          git add docs/index.html docs/app.css docs/app.js docs/data.json docs/live.json
           if git diff --cached --quiet; then
             echo "No change to the dashboard -- nothing to publish."
             exit 0
           fi
           git commit -m "Dashboard refresh $(date -u +'%F %H:%M') UTC"
-          # Same retry-with-rebase as odds-snapshot.yml: this collides with
-          # the main pipeline's and the odds snapshot's own commits, and
-          # docs/index.html is the only file this job ever writes, so a
-          # rebase always resolves cleanly.
+          # Same retry-with-rebase as odds-snapshot.yml. docs/data.json and
+          # docs/live.json are also written by dashboard-prices.yml/
+          # dashboard-grades.yml on their own 5-minute cadence, so a rebase
+          # here CAN hit a real conflict on those two files (both are
+          # minified to one line, so any concurrent edit collides at the
+          # line level) -- unlike a plain single-writer file, this is not
+          # guaranteed to resolve cleanly. That's an accepted, pre-existing
+          # risk (docs/data.json was already shared this way before this
+          # rebuild); a failed run here just means the next scheduled
+          # window republishes.
           for attempt in 1 2 3 4 5; do
             if git push; then
               echo "Pushed on attempt $attempt."

@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Full Count</title>
+<meta name="description" content="Full Count — baseball prop research and recommendations, with real probabilities and honest uncertainty.">
+<meta name="theme-color" content="#0b3d2e" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#f6f5f0" media="(prefers-color-scheme: light)">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='46' fill='%23f6f5f0' stroke='%23a6690a' stroke-width='4'/%3E%3Cpath d='M12 32 Q50 50 12 68 M88 32 Q50 50 88 68' fill='none' stroke='%23a6690a' stroke-width='3'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="app.css">
+</head>
+<body>
+
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="site-header" role="banner">
+  <div class="header-row">
+    <a class="brand" href="#/today" aria-label="Full Count home">
+      <span class="brand-mark" aria-hidden="true">⚾</span>
+      <span class="brand-word">Full Count</span>
+    </a>
+
+    <div class="header-search">
+      <label class="sr-only" for="global-search">Search players, teams, games, or prop types</label>
+      <input id="global-search" type="search" placeholder="Search players, teams, games…" autocomplete="off" aria-describedby="search-hint">
+      <span id="search-hint" class="sr-only">Results update as you type</span>
+      <div id="search-results" class="search-results" hidden aria-label="Search results"></div>
+    </div>
+
+    <div class="header-actions">
+      <button id="theme-toggle" class="icon-btn" type="button" aria-label="Toggle dark/light theme">
+        <svg class="icon-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/></svg>
+        <svg class="icon-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a7 7 0 0 0 10.5 10.5Z"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <nav class="main-nav" aria-label="Primary">
+    <a href="#/today" data-route="today">Today</a>
+    <a href="#/props" data-route="props">All Props</a>
+    <a href="#/games" data-route="games">Games</a>
+    <a href="#/performance" data-route="performance">Performance</a>
+    <a href="#/watchlist" data-route="watchlist">
+      Watchlist <span id="watchlist-count" class="nav-count" hidden>0</span>
+    </a>
+  </nav>
+</header>
+
+<div id="freshness-bar" class="freshness-bar" role="status" aria-live="polite"></div>
+
+<main id="main" tabindex="-1">
+  <div id="page-today" class="page" hidden></div>
+  <div id="page-props" class="page" hidden></div>
+  <div id="page-games" class="page" hidden></div>
+  <div id="page-performance" class="page" hidden></div>
+  <div id="page-watchlist" class="page" hidden></div>
+</main>
+
+<div id="detail-sheet" class="detail-sheet" hidden aria-hidden="true">
+  <div class="detail-sheet-backdrop" data-close-detail></div>
+  <div class="detail-sheet-panel" role="dialog" aria-modal="true" aria-labelledby="detail-title" tabindex="-1">
+    <button class="detail-close" type="button" data-close-detail aria-label="Close">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+    </button>
+    <div id="detail-body"></div>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <div class="glossary" id="glossary">
+    <h2>How to read Full Count</h2>
+    <dl>
+      <div><dt>Probability</dt><dd>Full Count's estimated chance the bet wins.</dd></div>
+      <div><dt>Edge</dt><dd>The difference between Full Count's probability and what the sportsbook's price implies.</dd></div>
+      <div><dt>Top Pick</dt><dd>Meets Full Count's full recommendation standard — real probability, evidence, price, and freshness, all at once.</dd></div>
+      <div><dt>Lean</dt><dd>Full Count's data favors a side, but it isn't an official recommendation.</dd></div>
+      <div><dt>Value</dt><dd>The price pays more than the win probability alone would justify — a different claim than "likely to win."</dd></div>
+      <div><dt>Evidence Quality</dt><dd>How much real track record backs this read — more games/starts observed means a stronger grade.</dd></div>
+    </dl>
+  </div>
+  <p class="footer-fine">
+    Full Count is research, not a guarantee. Prices move — always check the sportsbook before betting.
+    <a href="#/performance">See the real track record →</a>
+  </p>
+</footer>
+
+<script src="app.js"></script>
+</body>
+</html>

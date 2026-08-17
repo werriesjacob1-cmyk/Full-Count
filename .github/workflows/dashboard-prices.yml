@@ -76,14 +76,26 @@ jobs:
             exit 0
           fi
           git add docs/data.json
+          # PHASE 4 REBUILD (2026-08-16): refresh_prices.py now ALSO writes
+          # docs/live.json -- the small polled delta app.js's pollLive()
+          # fetches every few minutes instead of re-fetching the whole
+          # board. Real risk this guards against directly: docs/data.json
+          # alone was already forgotten once here (see the comment above);
+          # forgetting live.json a second time wouldn't error, it would
+          # just leave the live-update channel silently dead in production
+          # -- pollLive() would poll forever against a live.json that never
+          # changes. Same existence guard, since a run that bailed before
+          # writing it (data.json exists from a previous cycle, this one
+          # crashed) must not `git add` a stale/missing path.
+          if [ -f docs/live.json ]; then
+            git add docs/live.json
+          fi
           if git diff --cached --quiet; then
             echo "No price change to publish."
             exit 0
           fi
           git commit -m "Dashboard price refresh $(date -u +'%F %H:%M') UTC"
-          # Same retry-with-rebase as every other bot commit in this repo
-          # -- docs/data.json is the only file this job ever writes, so a
-          # rebase always resolves cleanly.
+          # Same retry-with-rebase as every other bot commit in this repo.
           for attempt in 1 2 3 4 5; do
             if git push; then
               echo "Pushed on attempt $attempt."

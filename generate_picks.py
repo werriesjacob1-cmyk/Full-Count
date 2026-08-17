@@ -53,7 +53,7 @@ fetchers here does not mean a second round of network traffic for anything
 mlb_daily.py already pulled.
 """
 import os, sys, json, re, unicodedata, math
-from datetime import datetime
+from datetime import datetime, timezone
 from collections import defaultdict
 import pandas as pd
 
@@ -1247,6 +1247,59 @@ def score_batter(batter, gm, opp_sp_row, opp_sp_id, opp_sp_hand, park_wx, batter
     notable_signals = 0  # counts non-obvious converging signals, for the public-awareness discount
 
     # MATCHUP (35%) — platoon edge + opposing pitcher quality + pitch-type exploit
+    #
+    # RE-MEASURED 2026-08-15, PART OF THE RECOMMENDATION-LAYER REBUILD'S
+    # SIGNAL ABLATION (direct instruction: "Do NOT automatically remove
+    # platoon... run market-specific and interaction-aware ablation...
+    # Remove it only if out-of-sample evidence shows it adds no value").
+    # This crude binary flag was audited once before (AUC 0.500, small
+    # sample, pooled only). Re-measured here on the full 242,776-row
+    # multi-year backtest (backtest/rows.jsonl) via backtest/signals.py's
+    # univariate_signal_report, PER PROP TYPE (not just pooled -- the
+    # module's own full_report docstring warns a pooled AUC confounds with
+    # base-rate differences across markets) and on a power-vs-contact
+    # interaction split:
+    #   pooled (n=128,180 fired):  AUC 0.490, 95% CI [0.486, 0.493] --
+    #     statistically real, and BACKWARDS (below 0.5)
+    #   every individual prop_type segment (hits/hits_runs_rbis/home_run/
+    #     total_bases/doubles/triples/rbis/runs/singles, n=584-48,479 each):
+    #     every single CI straddles 0.500 -- no measurable signal anywhere
+    #   power markets (home_run/total_bases/doubles/triples, n=33,624):
+    #     AUC 0.501, CI [0.493, 0.510] -- no signal
+    #   contact markets (hits/singles/hits_runs_rbis, n=79,812):
+    #     AUC 0.498, CI [0.493, 0.502] -- no signal
+    # Conclusion: the pooled backwards-separation is the base-rate confound
+    # the module warns about, not a real (if inverted) effect -- confirmed
+    # by every real per-market segment showing nothing. This binary flag
+    # earns no weight in ANY market or interaction tested. NOT YET REMOVED
+    # from the live 0.55 coefficient below -- it is 19% of the total 0-100
+    # score (35% matchup * 55%), and redistributing that weight needs its
+    # own proper backtest/signals.py fit_weights()/compare_to_current_
+    # weights() pass before touching a live-money formula, not a same-
+    # session bolt-on. Flagged as the concrete next step.
+    #
+    # THE RELATED, GENUINELY NEW FINDING while re-running this: the
+    # project's own 2026-08-12 audit comment below (still present,
+    # unchanged, for the history) measured platoon_xwoba/platoon_barrel_pct
+    # (exit velo/barrel rate BY HANDEDNESS -- the properly-continuous
+    # version of this same platoon concept, computed at line ~1628 below
+    # and already recorded in every candidate's signals dict for exactly
+    # this kind of re-check, but never promoted into score) at only n=3,141
+    # and called them DROP. Re-measured on the same 242,776-row set:
+    #   platoon_xwoba    pooled AUC 0.518, CI [0.515, 0.521] -- separates,
+    #     right direction, and holds up across nearly every individual
+    #     batter market: hits 0.522, hits_runs_rbis 0.522, home_run 0.543,
+    #     total_bases 0.530, doubles 0.525, runs 0.527, rbis 0.519 (only
+    #     singles/triples, both under 9K fired, don't clear their own CI)
+    #   platoon_barrel_pct   pooled AUC 0.506 (weak pooled) but home_run
+    #     specifically: AUC 0.568, CI [0.549, 0.587] -- a real, meaningfully
+    #     sized effect exactly where barrel rate should matter most
+    # This is very likely the n=3,141 sample simply being too small to see
+    # a real but modest effect, not a contradiction of the earlier result.
+    # NOT promoted into score here either, same reasoning as above (needs a
+    # real fit_weights pass, not a same-session guess at the right
+    # coefficient) -- but this is a strong, concrete candidate to replace
+    # this binary flag with, not just remove it outright.
     if bats in ("L", "R") and opp_sp_hand in ("L", "R"):
         platoon = 80 if bats != opp_sp_hand else 35
     else:
@@ -3532,7 +3585,17 @@ def select_best_by_category(candidates, prices, fd, n_per_category=1, k_prices=N
                     "base_rate": best.get("base_rate"), "lift": best.get("lift"),
                     "probability_basis": best.get("basis"),
                     "probability_detail": {"empirical": None, "modelled": None},
-                    "prob_ci": c.get("prob_ci"), "sample_n": c.get("sample_n"),
+                    # THE FIX: best["ci"] (this exact stat+threshold's own
+                    # interval, or honestly None when no defensible one
+                    # exists -- see _batter_options), never c["prob_ci"]
+                    # (the candidate's PRIMARY line's interval, which is a
+                    # different stat/threshold whenever this family isn't
+                    # that primary line). sample_n/reliability stay
+                    # player-level on purpose -- how much real MLB track
+                    # record exists for this player at all is a fact that
+                    # doesn't change per stat family, unlike a specific
+                    # probability's own interval.
+                    "prob_ci": best.get("ci"), "sample_n": c.get("sample_n"),
                     "reliability": c.get("reliability"),
                     "why": c.get("why"), "watchouts": c.get("watchouts"),
                     # Real bug, found live 2026-08-15: this fixed field list
@@ -3977,6 +4040,41 @@ def main() -> int:
     except Exception as e:
         m.warn(f"Market prices unavailable ({e}) — board ships without them")
 
+    # THE SAME recommendation/probability-integrity layer the live dashboard
+    # runs (recommendation.classify_recommendation / attach_recommendations,
+    # dashboard/build_dashboard.py's run_live_fetch and refresh_prices.py),
+    # applied here so the static picks JSON grade_results.py reads carries a
+    # real recommendation_status too -- otherwise the graded record could
+    # never separate a genuine Top Pick's real performance from a longshot's
+    # or a Lean's (see grade_results.py's by_recommendation_status). Run on
+    # every pool that ends up in write_json's `picks` list: candidates
+    # (covers top10/skipped by shared object identity, since select_main_board
+    # filters `candidates` itself rather than copying), plus moonshots/
+    # deep_moonshots/by_category/shadow_tracking, which are all built as
+    # fresh dicts with no shared identity to `candidates` and would
+    # otherwise never get classified at all.
+    import recommendation as grec
+    _board_generated_at = datetime.now(timezone.utc).isoformat()
+    _rec_pool = (candidates + moonshots + deep_moonshots
+                + [c for entries in by_category.values() for c in entries]
+                + [c for entries in shadow_tracking.values() for c in entries])
+    grec.attach_recommendations(_rec_pool, odds_fetched_at=_board_generated_at,
+                                board_generated_at=_board_generated_at)
+    n_top_pick = sum(1 for c in _rec_pool if c.get("status") == "top_pick")
+    print(f"    Recommendation layer: {n_top_pick} of {len(_rec_pool)} scored candidates "
+          f"classified as top_pick tonight")
+    # PHASE 3, ITEM 3: computed ONCE here (one git subprocess call, one real
+    # timestamp -- reused, not re-derived, so write_json's per-row copies
+    # below can never drift a few seconds from what attach_recommendations
+    # actually classified against) and threaded into write_json so every
+    # SAVED recommendation is self-describing on its own, not only readable
+    # via the board wrapper around it. Direct instruction: "Verify that
+    # every future saved recommendation contains enough information to
+    # reproduce what produced it" -- a single row in grades_*.json, read on
+    # its own out of context, needs this on it.
+    _rec_metadata = grec.build_metadata(odds_fetched_at=_board_generated_at,
+                                        board_generated_at=_board_generated_at)
+
     gated = [c for c in candidates if c["score"] >= MIN_QUALITY_SCORE]
 
     # POSITIVE-READ FLOOR. A pick has to beat the league base rate for its own
@@ -4053,7 +4151,8 @@ def main() -> int:
     skipped = [c for c in ranked if id(c) not in _top10_ids and c["score"] >= 55][:2]
 
     write_markdown(top10, skipped, game_meta, bullpen_scores, ranked, moonshots, by_category, deep_moonshots)
-    write_json(top10, moonshots, by_category, deep_moonshots, shadow_tracking)
+    write_json(top10, moonshots, by_category, deep_moonshots, shadow_tracking,
+              recommendation_metadata=_rec_metadata)
     persist_player_snapshots(candidates)
     print(f"Wrote {len(top10)} picks to {PICKS_FILE} and {PICKS_JSON_FILE}")
 
@@ -4110,7 +4209,8 @@ def main() -> int:
     return 0
 
 
-def write_json(top10, moonshots=(), by_category=None, deep_moonshots=(), shadow_tracking=None):
+def write_json(top10, moonshots=(), by_category=None, deep_moonshots=(), shadow_tracking=None,
+              recommendation_metadata=None):
     """Structured pick data for grade_results.py — never parse the markdown
     back into data, same lesson learned from mlb_daily.py's report text.
 
@@ -4126,7 +4226,22 @@ def write_json(top10, moonshots=(), by_category=None, deep_moonshots=(), shadow_
     select_shadow_tracking's docstring for why blending it in would
     corrupt the headline hit rate. It gets its own top-level key and its
     own grading pass in grade_results.py (shadow_by_category), never
-    touching hits/misses/by_category."""
+    touching hits/misses/by_category.
+
+    recommendation_metadata: PHASE 3, ITEM 3. Computed exactly ONCE by
+    main() (one git subprocess call, one real timestamp -- the same one
+    attach_recommendations() actually classified against) and stamped onto
+    EVERY row below, not just the board-level wrapper. Direct instruction:
+    "every future saved recommendation [should] contain enough information
+    to reproduce what produced it" -- a single row in grades_*.json, read
+    on its own out of context (which is exactly how grade_results.py and
+    every analysis script in results/ consumes it), needs this on it
+    directly. The per-row repetition this used to avoid (see the prior
+    version of this docstring) is real but small -- a handful of short
+    string/timestamp fields -- and is worth it for a saved recommendation
+    that can prove what produced it without cross-referencing a board file
+    that may not even be the one it was graded from."""
+    rm = recommendation_metadata or {}
     def _row(i, c):
         return {
             "rank": i, "type": c["type"], "name": c["name"], "player_id": c["player_id"],
@@ -4149,6 +4264,14 @@ def write_json(top10, moonshots=(), by_category=None, deep_moonshots=(), shadow_
             "calibrated_by": c.get("calibrated_by"),
             "prob_ci": c.get("prob_ci"), "sample_n": c.get("sample_n"),
             "reliability": c.get("reliability"),
+            # PHASE 3, ITEM 3: real gap found while wiring per-row versioning
+            # -- quality_control() sets this on the candidate, classify_
+            # recommendation() already reads it to decide Top Pick status,
+            # but write_json never actually persisted it, so a graded pick
+            # carried no visible record of whether its lineup slot was
+            # confirmed or assumed. Same "computed, then discarded"
+            # boundary as combo_player_ids/prob_ci before it.
+            "lineup_assumed": c.get("lineup_assumed"),
             "max_acceptable_price": (pp.max_acceptable_price(c["hit_probability"])
                                      if c.get("hit_probability") is not None else None),
             # estimated_odds is OUR fair price, not the market's. Kept because
@@ -4159,6 +4282,17 @@ def write_json(top10, moonshots=(), by_category=None, deep_moonshots=(), shadow_
                                if c.get("hit_probability") is not None else None),
             "market_odds": c.get("market_odds"),
             "market_implied": c.get("market_implied"),
+            # market_hold: the REAL, exactly-measured hold on the two-sided
+            # markets (strikeouts/pitcher_outs/nrfi_combined -- see
+            # odds_fanduel.attach_market_prices), vs None on the one-sided
+            # batter markets where FanDuel posts no opposite side to measure
+            # a hold from at all. Computed on the candidate all along and
+            # dropped at this exact boundary until now -- same "computed,
+            # then discarded" shape as combo_player_ids/prob_ci before it.
+            # Phase 3 item 5 needs this to tell an EXACT no-vig probability
+            # (market_hold present) from an 8%-ASSUMED approximation
+            # (market_hold absent) at analysis time, per pick.
+            "market_hold": c.get("market_hold"),
             "market_edge": c.get("market_edge"),
             "price_clears": c.get("price_clears"),
             "probability_basis": c.get("probability_basis"),
@@ -4175,6 +4309,39 @@ def write_json(top10, moonshots=(), by_category=None, deep_moonshots=(), shadow_
             # false the moment this function persisted a pick without it.
             # Found in the same sweep as combo_player_ids, same root cause.
             "signal_weight_adjustment": c.get("signal_weight_adjustment"),
+            # The 2026-08-15 rebuild's recommendation layer -- same field
+            # names dashboard/build_dashboard.py's clean() uses for the same
+            # data, so grade_results.py can key on recommendation_status
+            # (top_pick/lean/value/neutral) regardless of which pipeline
+            # (live dashboard or this static JSON) produced the pick.
+            # Computed once, in main(), by recommendation.attach_recommendations()
+            # over this exact same candidate/moonshot/by_category/shadow
+            # pool -- c.get("status") here, not "recommendation_status",
+            # because that rename happens at THIS serialization boundary,
+            # matching clean()'s own rename in build_dashboard.py.
+            "recommendation_status": c.get("status"),
+            "status_reasons": c.get("status_reasons"),
+            "stale": c.get("stale", False),
+            # PHASE 3, ITEM 3 -- stamped per row, not just once at the board
+            # level (see this function's own docstring for why). Every
+            # field below is the SAME value across every row of a single
+            # run by construction (one run, one version state, one price
+            # fetch), which is exactly what makes it safe to compute once
+            # in main() and copy rather than re-derive per row.
+            "model_version": rm.get("model_version"),
+            "selection_policy_version": rm.get("selection_policy_version"),
+            "calibration_version": rm.get("calibration_version"),
+            "feature_version": rm.get("feature_version"),
+            "git_sha": rm.get("git_sha"),
+            "prediction_timestamp": rm.get("prediction_timestamp"),
+            "odds_timestamp": rm.get("odds_fetched_at"),
+            # No standalone lineup-fetch timestamp exists anywhere in this
+            # pipeline yet (lineup confirmation and scoring both happen
+            # inside this same run) -- honestly reusing the real run
+            # timestamp rather than fabricating a separate one that was
+            # never actually measured. lineup_assumed (above) is the actual
+            # status; this is only WHEN that status was true as of.
+            "lineup_checked_at": rm.get("board_generated_at"),
         }
     category_flat = [c for entries in (by_category or {}).values() for c in entries]
     picks = [_row(i, c) for i, c in enumerate(top10, 1)]
@@ -4187,6 +4354,13 @@ def write_json(top10, moonshots=(), by_category=None, deep_moonshots=(), shadow_
         "generated": datetime.now().isoformat(),
         "picks": picks,
         "shadow_tracking": [_row(i, c) for i, c in enumerate(shadow_flat, 1)],
+        # Also kept at the board level for convenience (a quick "what
+        # version wrote this file" check without reading a pick row) --
+        # the SAME dict already stamped onto every row above, not a fresh
+        # build_metadata() call. Two calls would mean two git subprocess
+        # invocations and two independently-drifting timestamps for what
+        # is supposed to be one run's one version state.
+        "recommendation_metadata": rm,
     }
     with open(PICKS_JSON_FILE, "w", encoding="utf-8") as f:
         json.dump(payload, f, indent=2)
@@ -4479,7 +4653,14 @@ def _keep_options(opts, default_stat=None):
     return [{"stat": o.get("stat") or default_stat,
              "needs": o.get("needs"), "line": o.get("line"),
              "prob": o.get("prob"), "base_rate": o.get("base_rate"),
-             "lift": o.get("lift"), "basis": o.get("basis")}
+             "lift": o.get("lift"), "basis": o.get("basis"),
+             # Real bug, found 2026-08-15 audit: this fixed field list
+             # dropped the per-line "ci" _batter_options() computes, which
+             # is exactly the field that stops select_best_by_category()
+             # from falling back to a stale, wrong-stat CI carried over from
+             # the candidate's primary projection -- see _batter_options'
+             # own comment on the same fix for the full story.
+             "ci": o.get("ci")}
             for o in (opts or []) if o.get("needs") is not None
             and o.get("prob") is not None]
 
@@ -4552,8 +4733,24 @@ def _batter_options(c, comp, emp, league=None):
     # league dict, so the fallback can never draw on the circular one.
     true_league_rates = {}
 
+    # Real bug, found 2026-08-15 audit: attach_reliability() computed ONE
+    # prob_ci per candidate, keyed to whichever single stat/needs the
+    # candidate's OWN _pick_line-chosen projection happened to be (almost
+    # always hits or total_bases) -- and select_best_by_category() then
+    # copied that SAME interval onto every OTHER family's line for that
+    # player (his total-bases line, his home-run line, ...) verbatim. Live
+    # data confirmed the real damage: Pete Crow-Armstrong's Total Bases line
+    # showed 39.8% probability next to a "95% CI [59.6%, 75.9%]" that was
+    # actually his HITS interval, and Munetaka Murakami's Home Run line
+    # showed 19.1% next to the same borrowed [64.3%, 82.5%]. Fixed at the
+    # root: every option below carries its OWN interval, computed from the
+    # REAL empirical hit/n count for that EXACT stat+threshold, captured
+    # here as emp_p runs over each family.
+    raw_rates = {}
+
     def emp_p(key):
         r = rates.get(key)
+        raw_rates[key] = r
         lg = (league or {}).get(key)
         if lg is not None:
             true_league_rates[key] = lg
@@ -4703,6 +4900,23 @@ def _batter_options(c, comp, emp, league=None):
                 if true_base is None:
                     continue
                 prob, basis = true_base, "league_only"
+            # Real, per-line confidence interval -- ONLY when a genuine
+            # empirical count backs THIS exact threshold and the displayed
+            # probability actually reflects it (basis is "empirical" or a
+            # real blend of it). "modelled_shrunk"/"modelled"/"league_only"
+            # have no per-player empirical count behind the number shown at
+            # all (modelled_shrunk explicitly drops the empirical term --
+            # see MODEL_SHRINK_K's own comment), so a Wilson interval on the
+            # raw rate table would describe a DIFFERENT number than the one
+            # on screen. Direct instruction: "If a defensible CI does not
+            # exist for a particular line, show no CI rather than inventing
+            # or borrowing one." None, honestly, is the correct answer there.
+            ci = None
+            if basis in ("empirical", "blended"):
+                r = raw_rates.get(f"{stat}_{need}plus")
+                if r and r.get("n"):
+                    lo, hi = _wilson_interval(r.get("hit", 0), r["n"])
+                    ci = [round(lo, 4), round(hi, 4)]
             options.append({
                 "stat": stat, "line": line, "needs": need,
                 "label": f"Over {line} {label}",
@@ -4715,6 +4929,7 @@ def _batter_options(c, comp, emp, league=None):
                 "lift": None if base is None else round(prob - base, 4),
                 "empirical": None if empirical is None else round(empirical, 4),
                 "modelled": None if modelled is None else round(modelled, 4),
+                "ci": ci,
             })
     options.sort(key=lambda o: o["prob"], reverse=True)
     return options
@@ -5416,7 +5631,16 @@ def attach_reliability(candidates, emp_batters, emp_pitchers):
             # has no independent sample size of its own to report, not a
             # lookup that quietly went to the wrong place.
             n = c.get("sample_n") or 0
-        if rate:
+        # Same fix as _batter_options' per-line CI, applied here for the
+        # candidate's own primary (top10-board) line: a Wilson interval on
+        # the raw empirical rate table only describes the displayed
+        # hit_probability when that probability actually came from the
+        # empirical rate. "modelled_shrunk" (hits/total_bases/home_runs
+        # with a true league rate available) and "league_only" explicitly
+        # drop or never touch the empirical term -- computing a CI from
+        # `rate` there would describe a different number than the one on
+        # screen, the exact mismatch the 2026-08-15 audit found live.
+        if rate and c.get("probability_basis") not in ("modelled_shrunk", "league_only"):
             lo, hi = _wilson_interval(rate.get("hit", 0), rate.get("n", n) or 1)
             c["prob_ci"] = [round(lo, 4), round(hi, 4)]
         c["sample_n"] = int(n)
@@ -5807,6 +6031,10 @@ def write_markdown(top10, skipped, game_meta, bullpen_scores, all_ranked=(), moo
                           "for this player, so this pick is ranked on quality score alone.")
         lines.append(f"- **Quality score:** {c['score']}/100  |  **Confidence:** {c['confidence']}  |  "
                      f"**Converging signals:** {c['notable_signals']}")
+        rec_status = c.get("status")
+        if rec_status:
+            lines.append(f"- **Recommendation:** {rec_status.replace('_', ' ').title()} "
+                         f"— {(c.get('status_reasons') or [''])[0]}")
         lines.append(f"- **Why:** {'; '.join(c['why'])}.")
         if c["watchouts"]:
             lines.append(f"- **Watch-outs:** {'; '.join(c['watchouts'])}.")
