@@ -269,7 +269,7 @@ def _parse_two_sided(market):
     return player, line, sides["OVER"], sides["UNDER"]
 
 
-def fetch_pitcher_strikeouts(max_workers=8):
+def fetch_pitcher_strikeouts(max_workers=8, strict=False):
     """Two-sided strikeout markets for tonight's starters.
 
     Returns {normalized_name: {"line": float, "over": int, "under": int,
@@ -277,11 +277,13 @@ def fetch_pitcher_strikeouts(max_workers=8):
     where true_over is de-vigged EXACTLY from both sides."""
     import prop_probability as pp
     out = {}
+    failures = []
     for event_id, name, _start in list_games():
         for tab in ("pitcher-props", "popular"):
             try:
                 d = _get(f"event-page?eventId={event_id}&tab={tab}&_ak={AK}")
-            except Exception:
+            except Exception as exc:
+                failures.append(f"event={event_id} tab={tab}: {exc}")
                 continue
             for m in (d.get("attachments", {}).get("markets") or {}).values():
                 if m.get("marketType") not in TWO_SIDED_MARKETS:
@@ -301,6 +303,8 @@ def fetch_pitcher_strikeouts(max_workers=8):
                     "true_over": t_over, "true_under": t_under, "hold": hold,
                     "game": name,
                 }
+    if strict and failures:
+        raise RuntimeError("incomplete strikeouts feed: " + "; ".join(failures[:5]))
     return out
 
 
@@ -324,7 +328,7 @@ def _parse_outs_runner(name):
     return m.group(1).strip(), m.group(2).upper(), float(m.group(3))
 
 
-def fetch_pitcher_outs():
+def fetch_pitcher_outs(strict=False):
     """Two-sided "Pitcher Outs Recorded" markets for tonight's starters --
     market type suffix _OUTS_RECORDED_SB (PITCHER_A/B/C/D/E/F_..., same
     per-pitcher-slot naming fetch_pitcher_strikeouts already reuses).
@@ -338,11 +342,13 @@ def fetch_pitcher_outs():
                                "true_under": float, "hold": float}}."""
     import prop_probability as pp
     out = {}
+    failures = []
     for event_id, name, _start in list_games():
         for tab in ("pitcher-props", "popular"):
             try:
                 d = _get(f"event-page?eventId={event_id}&tab={tab}&_ak={AK}")
-            except Exception:
+            except Exception as exc:
+                failures.append(f"event={event_id} tab={tab}: {exc}")
                 continue
             for m in (d.get("attachments", {}).get("markets") or {}).values():
                 if not (m.get("marketType") or "").endswith("_OUTS_RECORDED_SB"):
@@ -373,13 +379,15 @@ def fetch_pitcher_outs():
                     "true_over": t_over, "true_under": t_under, "hold": hold,
                     "game": name,
                 }
+    if strict and failures:
+        raise RuntimeError("incomplete pitcher-outs feed: " + "; ".join(failures[:5]))
     return out
 
 
 _COMBINED_K_RE = re.compile(r"^(.+?)\s*&\s*(.+?)\s+(\d+)\+\s*Combined Strikeouts$", re.I)
 
 
-def fetch_combined_pitcher_strikeouts():
+def fetch_combined_pitcher_strikeouts(strict=False):
     """"Starting Pitcher Combined Alt Strikeouts" -- the combined strikeout
     total of BOTH starters, found live under the same pitcher-props/popular
     tabs fetch_pitcher_outs already scans. Confirmed real and unmapped:
@@ -405,12 +413,14 @@ def fetch_combined_pitcher_strikeouts():
     Returns {matchup: {"pitchers": (name_a, name_b),
                         "rungs": {threshold: american_odds}}}."""
     out = {}
+    failures = []
     for event_id, name, _start in list_games():
         matchup = re.sub(r"\s*\([^)]*\)", "", name).strip()
         for tab in ("pitcher-props", "popular"):
             try:
                 d = _get(f"event-page?eventId={event_id}&tab={tab}&_ak={AK}")
-            except Exception:
+            except Exception as exc:
+                failures.append(f"event={event_id} tab={tab}: {exc}")
                 continue
             for m in (d.get("attachments", {}).get("markets") or {}).values():
                 if (m.get("marketType") or "") != "STARTING_PITCHER_COMBINED_ALT_STRIKEOUTS":
@@ -432,10 +442,12 @@ def fetch_combined_pitcher_strikeouts():
                     rungs[threshold] = odds
                 if pitchers and rungs:
                     out[matchup] = {"pitchers": pitchers, "rungs": rungs}
+    if strict and failures:
+        raise RuntimeError("incomplete combined-K feed: " + "; ".join(failures[:5]))
     return out
 
 
-def fetch_first_inning_totals():
+def fetch_first_inning_totals(strict=False):
     """The REAL both-teams NRFI/YRFI price -- market type
     ***OVER/UNDER_0.5_RUNS_1ST_INNINGS, under the "innings" tab (never
     "batter-props"/"popular"/"pitcher-props", which is the entire reason
@@ -461,11 +473,13 @@ def fetch_first_inning_totals():
                        "true_under": float, "hold": float}}."""
     import prop_probability as pp
     out = {}
+    failures = []
     for event_id, name, _start in list_games():
         matchup = re.sub(r"\s*\([^)]*\)", "", name).strip()
         try:
             d = _get(f"event-page?eventId={event_id}&tab=innings&_ak={AK}")
-        except Exception:
+        except Exception as exc:
+            failures.append(f"event={event_id} tab=innings: {exc}")
             continue
         for m in (d.get("attachments", {}).get("markets") or {}).values():
             if m.get("marketType") != "***OVER/UNDER_0.5_RUNS_1ST_INNINGS":
@@ -486,11 +500,14 @@ def fetch_first_inning_totals():
             t_over, t_under, hold = pp.devig_two_sided(over, under)
             out[matchup] = {"over": over, "under": under,
                            "true_over": t_over, "true_under": t_under, "hold": hold}
+    if strict and failures:
+        raise RuntimeError("incomplete first-inning feed: " + "; ".join(failures[:5]))
     return out
 
 
-def _event_props(event_id):
+def _event_props(event_id, strict=False):
     rows = []
+    failures = []
     # REAL BUG, found live 2026-08-13 checking why hard_hit_105/hard_hit_110
     # (the Laser prop) showed 0/17 real prices attached every single night,
     # a 100% miss rate that -- combined with select_main_board's price_clears
@@ -509,7 +526,8 @@ def _event_props(event_id):
     for tab in ("batter-props", "popular", "lasers", "moonshots"):
         try:
             d = _get(f"event-page?eventId={event_id}&tab={tab}&_ak={AK}")
-        except Exception:
+        except Exception as exc:
+            failures.append(f"event={event_id} tab={tab}: {exc}")
             continue
         for m in (d.get("attachments", {}).get("markets") or {}).values():
             mapped = MARKET_MAP.get(m.get("marketType"))
@@ -526,10 +544,12 @@ def _event_props(event_id):
                              "stat": stat, "needs": need,
                              "american": int(odds), "event_id": event_id,
                              "in_play": bool(m.get("inPlay"))})
+    if strict and failures:
+        raise RuntimeError("incomplete batter-props feed: " + "; ".join(failures[:5]))
     return rows
 
 
-def fetch_prop_prices(max_workers=8):
+def fetch_prop_prices(max_workers=8, strict=False):
     """Every priced batter prop on the slate.
 
     Returns {normalized_name: {(stat, needs): american_odds}}. In-play markets
@@ -540,7 +560,7 @@ def fetch_prop_prices(max_workers=8):
     if not games:
         return out
     with ThreadPoolExecutor(max_workers=max_workers) as ex:
-        for rows in ex.map(lambda g: _event_props(g[0]), games):
+        for rows in ex.map(lambda g: _event_props(g[0], strict=strict), games):
             for r in rows:
                 if r["in_play"]:
                     continue

@@ -1,0 +1,281 @@
+# Live lifecycle, publication, grading, and Pages delivery
+
+- Date verified: 2026-08-17
+- Agent: Codex
+- Scope: Pre-Phase-V live lifecycle hardening, including the adversarial correction pass
+- Status: **remediation implemented on draft PR #51; unmerged**
+- Model/recommendation policy impact: **none**
+
+This audit records the evidence and lifecycle contract implemented on PR #51.
+It supersedes the first-pass claim that live hits were permanently terminal.
+The correct invariant is result authority: a live observation is provisional
+and may yield to authoritative final settlement.
+
+## Original diagnosis
+
+### HIGH — Repository live-state commits did not update the active Pages artifact
+
+**CONFIRMED.** The former price and grade workflows committed repository JSON
+but did not upload a Pages artifact. Refresh run `32049619252` included a
+Pages deployment; later price run `32057441977` updated the repository without
+one. An uploaded Pages artifact does not mutate when `docs/live.json` changes.
+
+### HIGH — The reduced live-grading environment could not import the grader
+
+**CONFIRMED.** `refresh_grades.py -> grade_results.py -> mlb_daily.py` eagerly
+required `pybaseball`, which the reduced workflow did not install. Run
+`32056821159`, job `95468790326`, failed on that chain; the 20 most recent
+former grading runs inspected had failed. The new live boundary avoids that
+eager import and has a subprocess import/execution regression.
+
+### HIGH — A full rebuild removed a published Top Pick after first pitch
+
+**CONFIRMED.** Pregame filtering correctly omitted started games, then the old
+full build replaced `data.json` and cleared `live.json`. No durable exposure
+source authorized carrying the exact wager forward.
+
+### HIGH — Whole-file writers could regress independent facts
+
+**CONFIRMED / QUALIFIED.** Three workflows wrote overlapping generated JSON
+under different concurrency groups. Git push rejection prevented some silent
+last-writer wins, but it did not merge independent price/grade facts, compare
+result authority, or distinguish unreadable state from empty state.
+
+### HIGH — Exact market disappearance could look freshly priced
+
+**CONFIRMED.** The former refresher attached into a row that retained the old
+quote, then freshness-stamped and reclassified it even when the exact line was
+absent from a successful board.
+
+### MEDIUM — Frontend lifecycle rendering and overlay merge were incomplete
+
+**QUALIFIED.** Polling and live/hit/miss chips existed. Void/ungraded,
+provisional authority, lifecycle card colors, recency comparison, immutable
+published snapshots, and overlay reapplication after a full-board swap did not.
+
+## Adversarial correction findings
+
+The numbers correspond to the correction request for PR #51.
+
+| # | Severity | Conclusion | Evidence and disposition |
+|---|---|---|---|
+| 1 | HIGH | **CONFIRMED** | First-pass `hit` was terminal and tests prevented a final correction. Live threshold hits now use `provisional_hit`; official Final may confirm or replace the entire settlement fact. |
+| 2 | HIGH | **CONFIRMED** | The first-pass status mapper treated most non-Preview/non-Final states as live. Explicit MLB abstract/detailed mappings now distinguish pregame, live, delayed, suspended, postponed, final, cancelled, and unknown; unknown preserves prior state and blocks new bets. |
+| 3 | HIGH | **CONFIRMED** | Status was fetched before slow sportsbook/build work, leaving a first-pitch race. Both price and full-build finalizers refetch state and apply scheduled `game_start` as an absolute cutoff. Deployment staging also reserves 15 minutes so a candidate cannot first become public after first pitch. |
+| 4 | HIGH | **CONFIRMED** | A shared non-cancelling concurrency group did not prove retention of every pending important run. Full/lineup rebuilds now use their own non-cancelling true queue and finalize against current `main`; live updates cannot displace them. |
+| 4B | MEDIUM | **QUALIFIED** | True queuing every five-minute observation would create stale backlog. Live observations deliberately retain GitHub's single-pending coalescing semantics, checkout current `main`, and make a fresh observation when they start. The workflow installs only `requests` and `mlb-statsapi`; post-merge runtime remains an operational check. |
+| 5 | HIGH | **CONFIRMED** | Successful exact absence and source failure were conflated. General, strikeout, pitcher-outs, first-inning, and combo-K families now produce `MATCHED`, `NOT_POSTED`, `FETCH_FAILED`, or `IN_PLAY` independently. |
+| 6 | CRITICAL | **CONFIRMED** | Canonical daily picks are overwritten and timestamp archives do not prove public exposure. A minimal deployment-proven registry now stores an immutable first-exposure snapshot. It is lifecycle infrastructure, not the future event ledger. |
+| 6B | CRITICAL | **CONFIRMED** | A visually carried wager absent from final daily picks could evade official Top Pick history. Durable grading now consumes registry snapshots separately, idempotently, without changing legacy/canonical population semantics. |
+| 7 | HIGH | **CONFIRMED** | First-pass visual rollover worked, but grade status lookup could still use a single payload/slate date. Public grading now requests the actual feed by `game_pk`; prior-slate games remain gradeable after UTC midnight. |
+| 8 | HIGH | **CONFIRMED** | `_proven_void()` depended partly on reason text and did not encode market action requirements. `settlement_rules.py` separates action eligibility from threshold grading and fails ungraded where the official rule cannot be established. |
+| 9 | HIGH | **QUALIFIED** | First pass added full combo participants, but participant order, inconsistent supplied IDs, duplicate settlement identities, and bounded migration remained open. Identity schema v2 canonicalizes commutative combo-K participants and rejects inconsistencies/duplicates. |
+| 10 | HIGH | **CONFIRMED** | A single lifecycle/grade field mixed game progress and wager outcome. Recommendation, game, and settlement states are now independent canonical facts; no generated compatibility `grade` field is authoritative. |
+| 11 | CRITICAL | **CONFIRMED** | Local qualification, repository commit, and successful public deployment were conflated. Only post-`deploy-pages` confirmation establishes exposure; the staged public manifest provides recoverable provenance. |
+| 11B | HIGH | **QUALIFIED** | Rollout needs existing legitimate public picks, but legacy status alone is not permanent proof. A versioned one-time migration reads only the verified currently deployed artifact and its HTTP deployment provenance; arbitrary archives are excluded. |
+| 12 | MEDIUM | **CONFIRMED** | Preventing rebuild reset left the overlay unbounded. Compaction is now conditional on official terminal settlement being durable and no current/suspended/postponed/recovery dependency remaining. |
+| 13 | HIGH | **CONFIRMED** | New-state parsing formerly accepted naive timestamps as UTC. New lifecycle state accepts only `Z` or zero-offset `+00:00`; a bounded schema-v1/v2 migration path alone accepts legacy naive values. |
+| 14 | HIGH | **CONFIRMED** | The first verifier mostly checked file existence and shallow JSON shape. It now validates schema/identity uniqueness, strict timestamps, enums, state combinations, publication proof, retention legality, hashes, and frontend overlay consumption. |
+
+## Canonical lifecycle contract
+
+Three independent concepts are persisted:
+
+| Concept | Values |
+|---|---|
+| Recommendation | `top_pick`, `lean`, `value`, `neutral` |
+| Game | `pregame`, `live`, `delayed`, `suspended`, `postponed`, `final`, `cancelled`, `unknown` |
+| Settlement | `open`, `provisional_hit`, `hit`, `miss`, `void`, `ungraded` |
+
+Result authority is strictly:
+
+1. `none`
+2. `live_observation`
+3. `official_final`
+
+Settlement state, authority, actual, reason, source, and observation timestamp
+are one atomic fact. An older or lower-authority observation cannot partially
+replace it. Equal-time conflicting incoming state loses to already-persisted
+current-main state. Repeating an identical final settlement is idempotent.
+
+The game-state parser maps only supported MLB abstract/detailed states.
+Delayed before play is not live. Suspended preserves the last legitimate
+settlement. Postponed/cancelled never imply sportsbook void by themselves.
+Unknown source state preserves last-known-good state and blocks a new wager.
+
+## First-pitch and immutable recommendation boundary
+
+Scheduled `game_start` is an absolute conservative cutoff even when MLB still
+reports Preview. New Top Pick publication requires explicit pregame state,
+current UTC before scheduled start, and a final status refetch at the last
+writer boundary. The Pages artifact admits a new candidate only when start is
+at least 15 minutes after preparation, while the deploy job has a 10-minute
+timeout. A candidate deployed at/after first pitch cannot be confirmed.
+
+After the boundary, only game and settlement facts advance. The registry's
+immutable snapshot preserves the exact wager identity, displayed definition,
+publication probability/price/implied probability/edge, recommendation status
+and reasons, available versions, and available board/prediction timestamps.
+No missing version value is fabricated. Live repricing cannot alter that
+snapshot. A never-public started prop cannot appear as a new public bet.
+
+## Public exposure and ownership
+
+`published_top_pick_at` means the first successful Pages deployment containing
+the exact Top Pick. Qualification and repository persistence are not exposure.
+
+Ownership is:
+
+- full-build workflow: only complete `docs/data.json` owner;
+- consolidated live workflow: only `docs/live.json` owner;
+- Pages deploy workflow: stages/verifies/deploys the exact artifact and is the
+  only first-exposure confirmer;
+- `data/public_top_picks/registry.json`: authoritative public population;
+- intraday grader: provisional/live display settlement;
+- daily grader: durable registry-backed public history;
+- merge/finalization tools: compaction only after durable proof.
+
+The deployment manifest records artifact ID, hashes for staged data/live,
+source commit, prepared time, cutoff, candidate immutable snapshots, and known
+publication proofs. Confirmation adds workflow/deployment IDs and URL when
+GitHub exposes them. A failed deploy creates no public entry. If deployment
+succeeds but the registry push fails, the publicly deployed manifest and its
+HTTP `Last-Modified` allow an idempotent next-run recovery. The registry-only
+commit does not trigger deployment because deployment listens to completed
+dashboard state-owner workflows, not arbitrary pushes.
+
+## Odds observation semantics
+
+| Observation | Meaning | Action |
+|---|---|---|
+| `MATCHED` | Relevant family succeeded and exact market exists | Replace quote and advance that family's successful observation time. |
+| `NOT_POSTED` | Relevant family succeeded but exact market is absent | Clear current bettable quote and fail closed through unchanged policy. |
+| `FETCH_FAILED` | Relevant family could not be observed | Preserve prior quote; record failure separately; do not freshness-stamp or reclassify because of false absence. |
+| `IN_PLAY` | Wager boundary crossed | Freeze published snapshot; do not reprice or reclassify. |
+
+Families are independent: a successful general board cannot make a failed
+strikeout, pitcher-outs, first-inning, or combo-K quote fresh.
+
+## FanDuel settlement eligibility
+
+Verified 2026-08-17 against current official FanDuel sportsbook rules:
+
+- Illinois: https://www.fanduel.com/fanduel-sportsbook-house-rules-il
+- Pennsylvania: https://www.fanduel.com/fanduel-sportsbook-house-rules-pa
+
+The repository does not configure an operating jurisdiction, so the
+implementation settles only cases where the inspected rules agree and the
+official MLB feed proves the requirement:
+
+- hits: Illinois requires a start while Pennsylvania requires a plate
+  appearance. Start+PA is eligible and neither is void; the two mixed cases
+  are jurisdiction-dependent and remain ungraded;
+- home run: Illinois requires a start while Pennsylvania requires start+PA.
+  Start+PA is eligible, non-starters are void, and starter-without-PA remains
+  ungraded;
+- total bases, runs, RBIs, stolen bases: start or record a plate appearance;
+- hits+runs+RBIs: record a plate appearance;
+- pitcher strikeouts/outs: listed pitcher must start; later relief work does
+  not make a non-starting listed pitcher eligible;
+- combined starter strikeouts: both listed pitchers must start;
+- NRFI/YRFI: an official first-inning result must be present;
+- postponed, cancelled, or suspended status alone: ungraded pending verified
+  sportsbook settlement;
+- shortened final: settle only an unequivocally determined result; otherwise
+  ungraded. Scheduled seven-inning games use their official scheduled length;
+- unsupported specialty-market action rules: ungraded, never invented.
+
+FanDuel recognizes MLB's official result and applicable stat corrections.
+Therefore early threshold hits remain provisional until official Final.
+
+## Durable grading and retention
+
+Public Top Picks are graded from immutable registry snapshots even when absent
+from the later canonical picks file. They are keyed by canonical ID, written
+once logically, retryable while ungraded, and correctable in place by a later
+official result. Canonical and registry copies never double-count. Voids do not
+enter the public hit/miss denominator. Pre-rollout dates are not guessed.
+
+Live overlay compaction may remove an old entry only when all are true:
+
+- official terminal hit/miss/void is present;
+- the same or newer settlement is durable in public history;
+- the entry is not needed by the current board;
+- it is not unresolved, provisional, suspended, or postponed;
+- no publication/recovery persistence depends on it.
+
+Compaction is atomic and idempotent. UTC date change alone never prunes state.
+
+## Workflow and failure-safety contract
+
+- Full/lineup builds use the separate non-cancelling full-rebuild queue and
+  always finalize against current `main` after any queue/build delay.
+- Five-minute live observations coalesce obsolete pending runs, checkout
+  current `main`, and perform a current observation rather than replaying an
+  old dispatch snapshot.
+- Push retries fetch current `main` and semantically merge facts. Grade then
+  price, price then grade, stale writers, provisional/final, and rebuild/live
+  overlaps preserve the newest authoritative independent fields.
+- JSON reads fail closed. Corrupt persistent state is never converted to empty
+  state. Writes use a temp file, flush/fsync, and `os.replace`.
+- Total MLB status failure preserves prior recommendation/game/settlement and
+  logs the source failure; it blocks a new wager.
+- Deployment verifies staged state before upload. Invalid staging cannot
+  replace the last successfully deployed Pages artifact.
+
+## Artifact validation contract
+
+`verify_pages_artifact.py` requires all static/data/live/manifest files,
+lifecycle schema 3, identity schema 2, a props list and live-delta object,
+nonempty unique canonical IDs, unique settlement identities, strict UTC,
+supported enums, internally consistent result authority, legal publication
+proof, valid candidate tokens, legal retained orphans, exact manifest hashes,
+and a frontend that polls and consumes the separated live overlay. Corrupt,
+duplicate, impossible, stale-authority, or partially proven state fails
+deployment.
+
+## Post-merge operational checklist
+
+1. Observe or trigger the first Dashboard Live Update.
+2. Verify it checks out current `main` at runtime.
+3. Verify live state writes successfully.
+4. Verify Dashboard Pages Deploy follows.
+5. Verify deploy checks out newest `main`.
+6. Verify the deployed artifact contains expected data/live state.
+7. Compare public `live.json` with the deployed manifest/hash.
+8. Confirm the frontend fetches and applies it.
+9. Observe one public Top Pick cross first pitch.
+10. Confirm its immutable recommendation snapshot freezes.
+11. Confirm it becomes live/yellow.
+12. Observe a mathematically definitive live over hit if available.
+13. Confirm it becomes green as `provisional_hit`.
+14. Confirm Final verifies or corrects it.
+15. Observe a full rebuild while a public pick is live.
+16. Confirm that pick survives and no new started prop appears.
+17. Confirm exposure is recorded exactly once after successful deployment.
+18. Confirm durable history retains it if a later board omits it.
+19. Verify a lineup rebuild is not displaced.
+20. Verify stale live observations do not create a backlog or regress state.
+21. Verify independent price/grade facts survive retries.
+22. Deliberately observe a failed deployment leaving last-good Pages intact.
+23. Confirm no registry-commit deployment loop occurs.
+24. Confirm compaction retains every unresolved/provisional/suspended item.
+25. Record actual live/deploy durations against the five-minute cadence and
+    revisit cadence only if execution approaches overlap persistently.
+
+## Remaining limitations
+
+- Scheduled workflows and a real public deployment cannot execute from this
+  unmerged branch; every operational checklist item remains required.
+- This is not the future full recommendation-event ledger.
+- Early unders deliberately wait for Final. The shortened-game conservative
+  rule can still leave a sportsbook-settled wager ungraded until exact
+  settlement is independently known.
+- The repository has no configured FanDuel jurisdiction. Rules that differ by
+  jurisdiction or are unavailable for a specialty market fail ungraded.
+- Durable correction polling is automatic for a bounded recent window; an
+  older correction can be rerun explicitly by date.
+- One workflow already executing under a deleted pre-rollout definition may
+  finish once during rollout.
+
+Phase V has **not** begun.

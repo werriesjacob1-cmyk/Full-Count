@@ -1,184 +1,268 @@
 #!/usr/bin/env python3
-"""dashboard/refresh_prices.py — repricing-only refresh for the Full Count
-Board dashboard. Direct request: "I want all props to update with new
-odds as FanDuel changes them, and compute in real time the edge and
-whether it keeps it on the top 10."
+"""Reprice only explicitly pregame dashboard rows into ``live.json``.
 
-build_dashboard.py's full rebuild is deliberately infrequent (a live
-rescoring pass against FanGraphs/Statcast/lineups -- see its own
-docstring, "not something to run every few minutes"). But re-pricing an
-EXISTING candidate against a fresh FanDuel line has nothing to do with
-the model: the candidate's hit_probability doesn't change, only the price
-does, and odds_fanduel.attach_market_prices() already does exactly that
-recompute (market_odds/market_implied/market_edge/price_clears) given a
-probability and a price. Both odds_fanduel.py and prop_probability.py
-import nothing beyond `requests` and the stdlib, so this script is cheap
-enough to run every few minutes -- the "not every few minutes" constraint
-belongs to the full rebuild, not to this.
-
-PHASE 4 REBUILD (2026-08-16): the payload is now one flat `props` array
-(see build_dashboard.py's build_payload()), each row carrying a stable
-`id` (game_pk-subject-stat-needs) instead of the old (name, prop) string
-match. That kills the entire old "propagate the same update into every
-duplicate tab" step below -- there IS no duplicate tab anymore, so this
-script now mutates `props` once and is done. It also kills the old
-"grandfather a started game's Top Pick back in" hack: that existed only
-because the old board capped/sorted a separate "top_picks" bucket
-server-side, so an unrelated price move elsewhere could evict an
-in-progress pick from the Top-N list right as it was resolving. There is
-no server-side cap anymore (direct instruction: "never force Top Picks");
-the client filters recommendation_status=="top_pick" straight out of the
-full array, so a pick that already earned that status keeps showing
-unless its own inputs genuinely change.
-
-Reprices every row in payload["props"] in place, re-runs
-recommendation.classify_recommendation() (the one authoritative
-Top Pick/Lean/Value/Neutral decision, also used by the full build) since
-a price move can genuinely flip that verdict, recomputes summary counts,
-writes data.json back whole (so a fresh page load always gets today's
-latest price even between full rebuilds), and merges a small live.json
-delta keyed by id (only the fields that actually changed) for
-app.js's pollLive() -- the cheap, frequent channel that lets an
-already-open tab pick up a price move without re-fetching the whole
-board. See dashboard/static/app.js's pollLive()/pollFullBoard().
-
-Never touches docs/index.html, docs/app.css, docs/app.js, or
-generated_at -- those represent the last real rescoring pass.
-
-    python3 dashboard/refresh_prices.py [--data docs/data.json] [--live docs/live.json]
+Sportsbook observations distinguish a successful absence (``NOT_POSTED``)
+from a failed fetch (``FETCH_FAILED``). A failure preserves the prior quote,
+successful-observation timestamp, and recommendation classification.
 """
 from __future__ import annotations
 
 import argparse
+import copy
 import json
 import os
 import sys
-from datetime import datetime, timezone
 
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, REPO_ROOT)
 
-# Fields a reprice/reclassify pass can change on a row. Used both to detect
-# what actually changed (for the live.json delta) and to know what to send.
-LIVE_FIELDS = ("market_odds", "market_implied", "market_edge", "price_clears",
-              "market_hold", "recommendation_status", "status_reasons", "stale")
+try:
+    from .live_state import (
+        PRICE_FIELDS, apply_live_overlay, atomic_write_json, before_betting_cutoff,
+        game_state, load_live_state, merge_prop_fields, stable_prop_id,
+        touch_channel, utc_now,
+    )
+    from .publication_registry import DEFAULT_REGISTRY_PATH, load_registry
+    from .prepare_pages_artifact import normalize_live, normalize_payload
+except ImportError:
+    from live_state import (
+        PRICE_FIELDS, apply_live_overlay, atomic_write_json, before_betting_cutoff,
+        game_state, load_live_state, merge_prop_fields, stable_prop_id,
+        touch_channel, utc_now,
+    )
+    from publication_registry import DEFAULT_REGISTRY_PATH, load_registry
+    from prepare_pages_artifact import normalize_live, normalize_payload
 
 
-def _load_live(live_path):
+OBSERVATION_STATES = frozenset(("MATCHED", "NOT_POSTED", "FETCH_FAILED", "IN_PLAY"))
+MARKET_VALUE_FIELDS = (
+    "market_odds", "market_implied", "market_edge", "price_clears", "market_hold",
+)
+LIVE_FIELDS = tuple(sorted(PRICE_FIELDS | frozenset((
+    "market_fetch_state", "market_fetch_checked_at",
+))))
+
+
+def _refresh_summary(payload):
+    props = payload.get("props") or []
+    summary = payload.setdefault("summary", {})
+    summary["n_top_pick"] = sum(row.get("recommendation_status") == "top_pick" for row in props)
+    summary["n_lean"] = sum(row.get("recommendation_status") == "lean" for row in props)
+    summary["n_value"] = sum(row.get("recommendation_status") == "value" for row in props)
+
+
+def _market_family(row):
+    stat = (row.get("projection") or {}).get("stat") or row.get("stat")
+    return {
+        "strikeouts": "strikeouts",
+        "pitcher_outs": "pitcher_outs",
+        "nrfi_combined": "first_inning",
+        "combined_strikeouts": "combined_strikeouts",
+    }.get(stat, "general_batter")
+
+
+def _fetch_family(name, fetcher):
     try:
-        with open(live_path, encoding="utf-8") as f:
-            return json.load(f)
-    except Exception:
-        return {"prices_updated_at": None, "grades_updated_at": None, "props": {}}
+        return {"family": name, "ok": True, "values": fetcher(strict=True), "error": None}
+    except Exception as exc:
+        return {"family": name, "ok": False, "values": None,
+                "error": f"{type(exc).__name__}: {exc}"[:300]}
 
 
-def _write_live(live_path, live):
-    with open(live_path, "w", encoding="utf-8") as f:
-        json.dump(live, f, separators=(",", ":"))
+def _game_fact(state, stamp, source="mlb_game_feed_by_game_pk"):
+    return {
+        "game_state": state,
+        "game_state_observed_at": stamp,
+        "game_state_source": source,
+    }
 
 
-def refresh(data_path, live_path=None):
+def _family_args(feeds):
+    return {
+        "prices": feeds["general_batter"]["values"] or {},
+        "k_prices": feeds["strikeouts"]["values"] or {},
+        "fi_prices": feeds["first_inning"]["values"] or {},
+        "po_prices": feeds["pitcher_outs"]["values"] or {},
+        "combined_k_prices": feeds["combined_strikeouts"]["values"] or {},
+    }
+
+
+def refresh(data_path, live_path=None, registry_path=DEFAULT_REGISTRY_PATH):
     live_path = live_path or os.path.join(os.path.dirname(os.path.abspath(data_path)), "live.json")
-
-    with open(data_path, encoding="utf-8") as f:
-        payload = json.load(f)
-
-    props = payload.get("props")
+    try:
+        with open(data_path, encoding="utf-8") as handle:
+            raw_payload = json.load(handle)
+    except (OSError, json.JSONDecodeError) as exc:
+        raise RuntimeError(f"dashboard data is unreadable: {data_path}: {exc}") from exc
+    if not isinstance(raw_payload, dict) or not isinstance(raw_payload.get("props"), list):
+        raise RuntimeError(f"dashboard data has an invalid schema: {data_path}")
+    try:
+        payload, id_map = normalize_payload(raw_payload)
+        if os.path.exists(live_path):
+            with open(live_path, encoding="utf-8") as handle:
+                raw_live = json.load(handle)
+        else:
+            raw_live = {"props": {}}
+        live = normalize_live(raw_live, id_map)
+    except (OSError, json.JSONDecodeError, ValueError, RuntimeError) as exc:
+        raise RuntimeError(f"dashboard lifecycle state is unreadable/invalid: {exc}") from exc
+    original_live = copy.deepcopy(live)
+    effective = apply_live_overlay(payload, live)
+    props = effective.get("props") or []
     if not props:
         print(f"{data_path}: no props to reprice -- nothing to do.")
-        return payload
+        return effective
 
+    import grade_results as gr
     import odds_fanduel as fd
     import recommendation as gprec
 
-    prices = fd.fetch_prop_prices()
-    try:
-        k_prices = fd.fetch_pitcher_strikeouts()
-    except Exception:
-        k_prices = {}
-    try:
-        fi_prices = fd.fetch_first_inning_totals()
-    except Exception:
-        fi_prices = {}
-    try:
-        po_prices = fd.fetch_pitcher_outs()
-    except Exception:
-        po_prices = {}
-    try:
-        combined_k_prices = fd.fetch_combined_pitcher_strikeouts()
-    except Exception:
-        combined_k_prices = {}
+    registry = load_registry(registry_path)
+    public_ids = set(registry["entries"])
+    initial_at = utc_now()
+    contexts = gr.fetch_game_contexts([row.get("game_pk") for row in props], refresh=True)
+    if not contexts:
+        print("No MLB game feeds returned by game_pk; refusing all new wagering decisions.")
+        return effective
 
-    before = {r["id"]: {f: r.get(f) for f in LIVE_FIELDS} for r in props}
+    pregame = []
+    for row in props:
+        prop_id = stable_prop_id(row)
+        try:
+            game_pk = int(row.get("game_pk"))
+        except (TypeError, ValueError):
+            continue
+        context = contexts.get(game_pk)
+        current = game_state((context or {}).get("status"), row=row, now=initial_at)
+        if context is None or current == "unknown":
+            continue
+        if current != "pregame" or not before_betting_cutoff(row, initial_at):
+            # Freeze selection/price after the wagering boundary. Game state
+            # may advance, but this price owner never reclassifies it.
+            merge_prop_fields(live, prop_id, {
+                **_game_fact(current, initial_at),
+                "market_fetch_state": "IN_PLAY",
+                "market_fetch_checked_at": initial_at,
+            }, initial_at)
+            continue
+        pregame.append(row)
 
-    _, matched = fd.attach_market_prices(props, prices=prices, k_prices=k_prices, fi_prices=fi_prices,
-                                         po_prices=po_prices, combined_k_prices=combined_k_prices)
-    print(f"Repriced {matched} of {len(props)} candidates against fresh FanDuel lines.")
+    if not pregame:
+        if live != original_live:
+            atomic_write_json(live_path, live)
+        print("No explicitly pregame props remain; prices and classifications are frozen.")
+        return apply_live_overlay(payload, live)
 
-    # RECOMMENDATION LAYER, 2026-08-15 rebuild. A price move can genuinely
-    # flip a pick's real recommendation status -- a shortened price can push
-    # a Top Pick's own robustness test negative, or a lengthened one can
-    # newly clear it -- so this re-runs the SAME classify_recommendation()
-    # build_dashboard.py uses at full-build time, on the SAME Python module,
-    # rather than approximating it with a second, separate rule that could
-    # silently drift from what a full rebuild would actually say. One
-    # authoritative implementation, called from both places.
-    odds_fetched_at = datetime.now(timezone.utc).isoformat()
-    board_generated_at = payload.get("generated_at")
-    gprec.attach_recommendations(props, odds_fetched_at=odds_fetched_at,
-                                 board_generated_at=board_generated_at)
-    # attach_recommendations() writes its verdict into "status" (the field
-    # name generate_picks.py's candidates carry); the payload's own schema
-    # calls that same concept "recommendation_status" (see build_dashboard.
-    # py's clean()). Fold it back so the payload never carries both names.
-    for r in props:
-        r["recommendation_status"] = r.pop("status", r.get("recommendation_status"))
+    feeds = {
+        "general_batter": _fetch_family("general_batter", fd.fetch_prop_prices),
+        "strikeouts": _fetch_family("strikeouts", fd.fetch_pitcher_strikeouts),
+        "pitcher_outs": _fetch_family("pitcher_outs", fd.fetch_pitcher_outs),
+        "first_inning": _fetch_family("first_inning", fd.fetch_first_inning_totals),
+        "combined_strikeouts": _fetch_family(
+            "combined_strikeouts", fd.fetch_combined_pitcher_strikeouts,
+        ),
+    }
+    fetched_at = utc_now()
+    successful_families = {name for name, result in feeds.items() if result["ok"]}
+    failures = {name: result["error"] for name, result in feeds.items() if not result["ok"]}
+    family_args = _family_args(feeds)
 
-    n_top_pick = sum(1 for r in props if r.get("recommendation_status") == "top_pick")
-    n_lean = sum(1 for r in props if r.get("recommendation_status") == "lean")
-    n_value = sum(1 for r in props if r.get("recommendation_status") == "value")
-    summary = payload.setdefault("summary", {})
-    summary["n_top_pick"] = n_top_pick
-    summary["n_lean"] = n_lean
-    summary["n_value"] = n_value
+    successful_rows = []
+    before = {}
+    for row in pregame:
+        prop_id = stable_prop_id(row)
+        family = _market_family(row)
+        before[prop_id] = {field: copy.deepcopy(row.get(field)) for field in LIVE_FIELDS}
+        if family not in successful_families:
+            merge_prop_fields(live, prop_id, {
+                "market_fetch_state": "FETCH_FAILED",
+                "market_fetch_checked_at": fetched_at,
+                "market_fetch_failed_at": fetched_at,
+                "market_failure_reason": failures[family],
+                "market_family": family,
+            }, fetched_at)
+            continue
+        working = copy.deepcopy(row)
+        for field in MARKET_VALUE_FIELDS:
+            working[field] = None
+        working["stale"] = False
+        _, matched = fd.attach_market_prices([working], **family_args)
+        working["market_fetch_state"] = "MATCHED" if matched else "NOT_POSTED"
+        working["market_observation_state"] = working["market_fetch_state"]
+        working["market_fetch_checked_at"] = fetched_at
+        working["market_observed_at"] = fetched_at
+        working["market_family"] = family
+        working["price_basis_board_generated_at"] = effective.get("generated_at")
+        working["market_fetch_failed_at"] = row.get("market_fetch_failed_at")
+        working["market_failure_reason"] = None
+        successful_rows.append(working)
 
-    payload["odds_fetched_at"] = odds_fetched_at
-    payload["prices_updated_at"] = odds_fetched_at
+    if successful_rows:
+        # This calls the existing, unchanged recommendation policy. Only
+        # successfully observed relevant families may be reclassified.
+        gprec.attach_recommendations(
+            successful_rows, odds_fetched_at=fetched_at,
+            board_generated_at=effective.get("generated_at"),
+        )
+        for row in successful_rows:
+            row["recommendation_status"] = row.pop("status", row.get("recommendation_status"))
 
-    with open(data_path, "w", encoding="utf-8") as f:
-        json.dump(payload, f, separators=(",", ":"))
-    print(f"Wrote {data_path} ({n_top_pick} top picks, {n_lean} leans, {n_value} value after repricing)")
+    # Revalidate every successfully fetched row immediately before committing
+    # any price/classification fact. This freezes already-public snapshots too:
+    # a game can cross first pitch while sportsbook requests are in flight even
+    # when the row is not a newly qualifying Top Pick.
+    final_at = utc_now() if successful_rows else None
+    final_contexts = gr.fetch_game_contexts(
+        [row.get("game_pk") for row in successful_rows], refresh=True,
+    ) if successful_rows else {}
 
-    live = _load_live(live_path)
-    live["prices_updated_at"] = odds_fetched_at
-    live_props = live.setdefault("props", {})
     n_changed = 0
-    for r in props:
-        old = before[r["id"]]
-        new = {f: r.get(f) for f in LIVE_FIELDS}
-        if new != old:
-            live_props.setdefault(r["id"], {}).update(new)
-            n_changed += 1
-    _write_live(live_path, live)
-    print(f"Wrote {live_path} ({n_changed} prop(s) changed)")
+    for row in successful_rows:
+        prop_id = stable_prop_id(row)
+        old = before[prop_id]
+        new_status = row.get("recommendation_status")
+        newly_public_candidate = new_status == "top_pick" and prop_id not in public_ids
+        try:
+            game_pk = int(row.get("game_pk"))
+        except (TypeError, ValueError):
+            game_pk = None
+        current = game_state(
+            (final_contexts.get(game_pk) or {}).get("status"), row=row, now=final_at,
+        )
+        if current != "pregame" or not before_betting_cutoff(row, final_at):
+            label = "new Top Pick candidate" if newly_public_candidate else "pregame quote"
+            print(f"Suppressed post-cutoff {label} {prop_id} during final gate.")
+            continue
 
-    return payload
+        new = {field: copy.deepcopy(row.get(field)) for field in LIVE_FIELDS}
+        changes = {field: value for field, value in new.items() if old.get(field) != value}
+        if not changes:
+            continue
+        merge_prop_fields(live, prop_id, changes, fetched_at, channel="prices")
+        n_changed += 1
+
+    if successful_rows:
+        touch_channel(live, "prices", fetched_at)
+    atomic_write_json(live_path, live)
+    effective = apply_live_overlay(payload, live)
+    _refresh_summary(effective)
+    print(
+        f"Wrote {live_path} atomically ({n_changed} successful-family prop change(s), "
+        f"{len(failures)} failed family/families preserved); left {data_path} unchanged."
+    )
+    return effective
 
 
 def main():
-    ap = argparse.ArgumentParser(description=__doc__)
-    ap.add_argument("--data", default=os.path.join(REPO_ROOT, "docs", "data.json"),
-                    help="path to the payload build_dashboard.py's --data-out wrote")
-    ap.add_argument("--live", default=None,
-                    help="path to the small delta file app.js's pollLive() fetches "
-                         "(default: live.json next to --data)")
-    args = ap.parse_args()
-
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--data", default=os.path.join(REPO_ROOT, "docs", "data.json"))
+    parser.add_argument("--live", default=None)
+    parser.add_argument("--registry", default=DEFAULT_REGISTRY_PATH)
+    args = parser.parse_args()
     if not os.path.exists(args.data):
-        print(f"{args.data} doesn't exist yet -- nothing to reprice until a full build runs first.")
+        print(f"{args.data} does not exist yet -- nothing to reprice.")
         return 0
-
-    refresh(args.data, live_path=args.live)
+    refresh(args.data, live_path=args.live, registry_path=args.registry)
     return 0
 
 

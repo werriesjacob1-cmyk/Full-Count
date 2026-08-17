@@ -21,9 +21,9 @@ day), this is a no-op — it must never block the rest of the pipeline.
 """
 import glob, os, sys, json
 from collections import defaultdict
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
-import mlb_daily as m
+import grading_sources as m
 
 OUTPUT_DIR = os.environ.get("OUTPUT_DIR", "output")
 RESULTS_DIR = os.environ.get("RESULTS_DIR", "results")
@@ -31,12 +31,16 @@ os.makedirs(RESULTS_DIR, exist_ok=True)
 
 YESTERDAY = os.environ.get("GRADE_DATE") or (datetime.now() - timedelta(days=1)).strftime("%Y-%m-%d")
 HISTORY_FILE = os.path.join(RESULTS_DIR, "history.json")
+PUBLIC_REGISTRY_FILE = os.environ.get("PUBLIC_TOP_PICK_REGISTRY") or os.path.join(
+    os.path.dirname(os.path.abspath(__file__)), "data", "public_top_picks", "registry.json"
+)
 
 # How far back a catch-up pass will look. Bounded so a long-running season
 # doesn't re-walk hundreds of days every morning, and so genuinely
 # unresolvable days (a pick whose player was scratched, say) stop being
 # retried forever.
 CATCHUP_WINDOW_DAYS = 14
+PUBLIC_CORRECTION_RECHECK_DAYS = 3
 
 
 def picks_path(date):  return os.path.join(OUTPUT_DIR, f"picks_{date}.json")
@@ -76,7 +80,45 @@ def dates_needing_grading():
                 out.append(d)
         except (json.JSONDecodeError, OSError):
             out.append(d)  # unreadable grades file -> regrade it
-    return sorted(out)
+    # Deployment-proven Top Picks are a durable population independent of
+    # the mutable daily canonical file. Their unresolved dates remain
+    # retryable even when the canonical board later omitted the wager.
+    try:
+        from dashboard.publication_registry import load_registry
+        registry = load_registry(PUBLIC_REGISTRY_FILE)
+        expected_by_date = defaultdict(int)
+        for entry in registry["entries"].values():
+            if entry.get("slate_date"):
+                expected_by_date[entry["slate_date"]] += 1
+        public_dates = sorted(expected_by_date)
+    except RuntimeError:
+        raise
+    except Exception:
+        public_dates = []
+    for d in public_dates:
+        gp = grades_path(d)
+        if not os.path.exists(gp):
+            out.append(d)
+            continue
+        try:
+            with open(gp, encoding="utf-8") as handle:
+                prior = json.load(handle)
+            counts = prior.get("public_top_pick_counts") or {}
+            recorded = sum(counts.get(key, 0) for key in ("hits", "misses", "voids", "ungraded"))
+            if recorded != expected_by_date[d] or counts.get("ungraded", 0) > 0:
+                out.append(d)
+        except (json.JSONDecodeError, OSError):
+            out.append(d)
+    # FanDuel may resettle when the official result changes. Recheck the
+    # recent deployment-proven public population even when it is already
+    # terminal, so a final scoring correction updates history rather than
+    # only the live overlay. Older corrections remain available through an
+    # explicit GRADE_DATE rerun instead of re-fetching the whole season.
+    correction_floor = (
+        datetime.now(timezone.utc).date() - timedelta(days=PUBLIC_CORRECTION_RECHECK_DAYS)
+    ).isoformat()
+    out.extend(d for d in public_dates if d >= correction_floor)
+    return sorted(set(out))
 
 
 def days_with_no_board():
@@ -143,6 +185,45 @@ def fetch_game_statuses(date):
     except Exception as e:
         m.warn(f"Grading: couldn't fetch game statuses for {date}: {e}")
         return {}
+
+
+_GAME_FEED_CACHE = {}
+
+
+def fetch_game_feed(game_pk, refresh=False):
+    """Fetch one game by stable game identity, independent of slate date."""
+    if not refresh and game_pk in _GAME_FEED_CACHE:
+        return _GAME_FEED_CACHE[game_pk]
+    try:
+        r = m.retry_get(f"https://statsapi.mlb.com/api/v1.1/game/{game_pk}/feed/live",
+                        headers={"User-Agent": "Mozilla/5.0"}, timeout=20, retries=2)
+        r.raise_for_status()
+        feed = r.json()
+        if not isinstance(feed, dict) or not (feed.get("gameData") or {}).get("status"):
+            raise ValueError("MLB game feed omitted gameData.status")
+        _GAME_FEED_CACHE[game_pk] = feed
+        return feed
+    except Exception as exc:
+        m.warn(f"Grading: couldn't fetch game {game_pk} by identity: {exc}")
+        return None
+
+
+def fetch_game_contexts(game_pks, refresh=False):
+    """Return last current status/feed per game; failures remain absent."""
+    contexts = {}
+    for raw_game_pk in sorted({value for value in game_pks if value is not None}, key=str):
+        try:
+            game_pk = int(raw_game_pk)
+        except (TypeError, ValueError):
+            continue
+        feed = fetch_game_feed(game_pk, refresh=refresh)
+        if feed is None:
+            continue
+        contexts[game_pk] = {
+            "status": ((feed.get("gameData") or {}).get("status") or {}),
+            "feed": feed,
+        }
+    return contexts
 
 
 def is_final(status):
@@ -397,13 +478,22 @@ def opportunity_context(pick, row, game_pk):
     return ctx
 
 
-def grade_pick(pick, game_statuses, date=None):
+def _is_under_pick(pick):
+    """True only for an explicitly identified under; never infer from name."""
+    for key in ("bet_side", "market_side", "direction"):
+        if str(pick.get(key) or "").strip().lower() == "under":
+            return True
+    return str(pick.get("prop") or "").strip().lower().startswith("under ")
+
+
+def grade_pick(pick, game_statuses, date=None, allow_in_progress=False):
     game_pk = pick.get("game_pk")
     player_id = pick.get("player_id")
     if not game_pk or not player_id:
         return {**pick, "grade": "ungraded", "reason": "missing game_pk/player_id"}
     status = game_statuses.get(game_pk)
-    if not is_final(status):
+    final = is_final(status)
+    if not final and not allow_in_progress:
         detail = (status or {}).get("detailedState", "unknown")
         return {**pick, "grade": "ungraded", "reason": f"game not final yet (status: {detail})"}
 
@@ -428,10 +518,10 @@ def grade_pick(pick, game_statuses, date=None):
                 return {**pick, "grade": "ungraded",
                         "reason": f"box line unavailable for one starter: {err}"}
             total_k += float(row.get("k", 0) or 0)
-        hit = total_k >= needs
+        hit = total_k < needs if _is_under_pick(pick) else total_k >= needs
         return {**pick, "grade": "hit" if hit else "miss", "actual": total_k,
                 "actual_stat": "combined_strikeouts",
-                **opportunity_context(pick, None, game_pk)}
+                **(opportunity_context(pick, None, game_pk) if final else {})}
 
     if stat in ("hard_hit_105", "hard_hit_110"):
         # Not on the pick's own record -- the caller knows what date it's
@@ -646,10 +736,78 @@ def grade_pick(pick, game_statuses, date=None):
         # Legacy picks (generated before thresholds were chosen by probability)
         # keep the old reconstruction, which is documented at length above.
         threshold = 1.5 if stat == "total_bases" else proj - 0.5
-    hit = actual > threshold
+    hit = actual < threshold if _is_under_pick(pick) else actual > threshold
     return {**pick, "grade": "hit" if hit else "miss", "actual": actual,
             "actual_stat": actual_stat, "threshold": threshold,
-            **opportunity_context(pick, row, game_pk)}
+            **(opportunity_context(pick, row, game_pk) if final else {})}
+
+
+def grade_public_pick(pick, context, date=None):
+    """Authoritative public settlement with structured action eligibility."""
+    from dashboard.live_state import game_state
+    from dashboard.settlement_rules import settlement_eligibility
+
+    context = context or {}
+    status = context.get("status") or {}
+    feed = context.get("feed")
+    current_game_state = game_state(status)
+    eligibility = settlement_eligibility(pick, feed, current_game_state)
+    if eligibility["eligibility"] == "void":
+        return {
+            **pick, "grade": "void", "settlement_state": "void",
+            "reason": eligibility["reason_code"], "eligibility": eligibility,
+        }
+    if eligibility["eligibility"] not in ("eligible", "conditional"):
+        return {
+            **pick, "grade": "ungraded", "settlement_state": "ungraded",
+            "reason": eligibility["reason_code"], "eligibility": eligibility,
+        }
+    result = grade_pick(pick, {pick.get("game_pk"): status}, date=date)
+    result["eligibility"] = eligibility
+    result["settlement_state"] = result.get("grade", "ungraded")
+    if eligibility["eligibility"] == "conditional":
+        stat = (pick.get("projection") or {}).get("stat") or pick.get("stat")
+        under = _is_under_pick(pick)
+        unequivocal = (
+            stat == "nrfi_combined"
+            or (not under and result.get("grade") == "hit")
+            or (under and result.get("grade") == "miss")
+        )
+        if not unequivocal:
+            return {
+                **pick, "grade": "ungraded", "settlement_state": "ungraded",
+                "reason": eligibility["reason_code"], "eligibility": eligibility,
+            }
+    return result
+
+
+def merge_durable_public_result(previous, incoming):
+    """Preserve authoritative public settlement across retries/failures.
+
+    A new official hit/miss/void may correct an older official result. An
+    unavailable/unsupported retry may not erase one. Repeating an identical
+    final observation keeps the prior record byte-stable, including its first
+    authoritative observation timestamp.
+    """
+    if not previous:
+        return incoming
+    ranks = {"none": 0, "live_observation": 1, "official_final": 2}
+    previous_rank = ranks.get(previous.get("settlement_authority"), -1)
+    incoming_rank = ranks.get(incoming.get("settlement_authority"), -1)
+    if incoming_rank < previous_rank:
+        return previous
+    previous_terminal = previous.get("settlement_state") in ("hit", "miss", "void")
+    incoming_terminal = incoming.get("settlement_state") in ("hit", "miss", "void")
+    if previous_terminal and not incoming_terminal:
+        return previous
+    if previous_rank == incoming_rank == 2 and previous_terminal and incoming_terminal:
+        semantic_fields = (
+            "grade", "settlement_state", "actual", "actual_stat", "threshold",
+            "reason", "eligibility",
+        )
+        if all(previous.get(field) == incoming.get(field) for field in semantic_fields):
+            return previous
+    return incoming
 
 
 def grade_day(date) -> bool:
@@ -657,27 +815,32 @@ def grade_day(date) -> bool:
     PICKS_JSON = picks_path(date)
     GRADES_FILE = grades_path(date)
     YESTERDAY = date  # local alias: this function used to be hardcoded to yesterday
+    from dashboard.publication_registry import load_registry, published_snapshots_for_date
+    registry = load_registry(PUBLIC_REGISTRY_FILE)
+    public_picks = published_snapshots_for_date(registry, date)
+    payload = {}
+    picks = []
     if not os.path.exists(PICKS_JSON):
-        print(f"No picks file for {YESTERDAY} ({PICKS_JSON}) — nothing to grade.")
-        return 0
+        print(f"No canonical picks file for {YESTERDAY} ({PICKS_JSON}).")
     # generate_picks.py writes this file with a direct json.dump (no temp-file +
     # atomic rename), so a process kill mid-write (OOM, step timeout) can leave it
     # truncated/invalid. Same "must never block the rest of the pipeline" contract
     # as the missing-file case above -- a decode failure degrades to a no-op
     # instead of an uncaught exception that would kill this step and, with no
     # continue-on-error on it, the "Run daily pipeline" step behind it.
-    try:
-        with open(PICKS_JSON, encoding="utf-8") as f:
-            payload = json.load(f)
-    except (json.JSONDecodeError, OSError) as e:
-        print(f"Picks file for {YESTERDAY} unreadable ({e}) — nothing to grade.")
-        return 0
-    picks = payload.get("picks", [])
-    if not picks:
-        print(f"No picks recorded for {YESTERDAY} — nothing to grade.")
+    else:
+        try:
+            with open(PICKS_JSON, encoding="utf-8") as f:
+                payload = json.load(f)
+            picks = payload.get("picks", [])
+        except (json.JSONDecodeError, OSError) as e:
+            print(f"Canonical picks file for {YESTERDAY} unreadable ({e}); "
+                  "public registry grading remains independent.")
+    if not picks and not public_picks:
+        print(f"No canonical picks or deployment-proven public Top Picks for {YESTERDAY}.")
         return False
 
-    game_statuses = fetch_game_statuses(YESTERDAY)
+    game_statuses = fetch_game_statuses(YESTERDAY) if picks else {}
     # Verified live: grade_pick() reads pick["type"] via direct bracket access (kept
     # that way deliberately -- see below), and this module's docstring commits to
     # "never block the rest of the pipeline". But before this, nothing stood between
@@ -699,6 +862,57 @@ def grade_day(date) -> bool:
             graded.append(grade_pick(p, game_statuses, date=YESTERDAY))
         except Exception as e:
             graded.append({**p, "grade": "ungraded", "reason": f"grader error: {e}"})
+
+    # Public Top Picks are graded from immutable first-exposure snapshots,
+    # never from the later overwriteable canonical board. Direct game_pk
+    # lookup keeps prior-slate West Coast/suspended games gradeable after UTC
+    # rollover. On source failure, retain the prior logical record for retry.
+    prior_public = {}
+    if os.path.exists(GRADES_FILE):
+        try:
+            with open(GRADES_FILE, encoding="utf-8") as handle:
+                prior_grade_payload = json.load(handle)
+            prior_public = {row.get("id"): row for row in
+                            (prior_grade_payload.get("public_top_picks") or []) if row.get("id")}
+        except (OSError, json.JSONDecodeError):
+            prior_public = {}
+    public_contexts = fetch_game_contexts(
+        [pick.get("game_pk") for pick in public_picks], refresh=True,
+    ) if public_picks else {}
+    from dashboard.live_state import utc_now
+    public_observed_at = utc_now()
+    public_graded = []
+    for pick in public_picks:
+        try:
+            game_pk = int(pick.get("game_pk"))
+        except (TypeError, ValueError):
+            game_pk = None
+        context = public_contexts.get(game_pk)
+        if context is None:
+            previous = prior_public.get(pick.get("id"))
+            if previous:
+                public_graded.append(previous)
+            else:
+                public_graded.append({
+                    **pick, "grade": "ungraded", "settlement_state": "ungraded",
+                    "reason": "MLB game feed unavailable by game_pk; retryable",
+                })
+            continue
+        try:
+            result = {**pick, **grade_public_pick(pick, context, date=YESTERDAY)}
+        except Exception as exc:
+            result = {**pick, "grade": "ungraded", "settlement_state": "ungraded",
+                      "reason": f"public grader error: {exc}"}
+        from dashboard.live_state import game_state as lifecycle_game_state
+        authoritative = lifecycle_game_state(context.get("status")) == "final"
+        result["settlement_authority"] = "official_final" if authoritative else "none"
+        result["settlement_observed_at"] = public_observed_at
+        result["settlement_source"] = (
+            "durable_morning_grader" if authoritative else "durable_morning_status_observation"
+        )
+        public_graded.append(merge_durable_public_result(
+            prior_public.get(pick.get("id")), result,
+        ))
     hits = sum(1 for g in graded if g["grade"] == "hit")
     misses = sum(1 for g in graded if g["grade"] == "miss")
     ungraded = sum(1 for g in graded if g["grade"] == "ungraded")
@@ -723,7 +937,8 @@ def grade_day(date) -> bool:
     # -- still worth watching, but a very different picture. New keys only;
     # every existing key here is untouched, so nothing already reading this
     # file breaks.
-    _GRADE_TO_KEY = {"hit": "hits", "miss": "misses", "ungraded": "ungraded"}
+    _GRADE_TO_KEY = {"hit": "hits", "miss": "misses", "void": "voids",
+                     "ungraded": "ungraded"}
     by_category = defaultdict(lambda: {"hits": 0, "misses": 0, "ungraded": 0})
     for g in graded:
         cat = g.get("category") or "main"
@@ -744,10 +959,21 @@ def grade_day(date) -> bool:
     # all -- bucketed "unclassified" rather than guessed into one of the
     # four real states, so old and new results are never silently blended
     # under a label neither the model nor the audit ever actually assigned.
+    # Preserve the established all-modelled-recommendations population on this
+    # axis. Deployment-proven public Top Picks are tracked separately below;
+    # replacing this bucket with the public subset would erase analytical
+    # history for qualified-but-never-deployed recommendations.
     by_rec_status = defaultdict(lambda: {"hits": 0, "misses": 0, "ungraded": 0})
     for g in graded:
         rs = g.get("recommendation_status") or "unclassified"
-        by_rec_status[rs][_GRADE_TO_KEY[g["grade"]]] += 1
+        key = _GRADE_TO_KEY.get(g.get("grade"), "ungraded")
+        by_rec_status[rs]["ungraded" if key == "voids" else key] += 1
+    public_counts = {"hits": 0, "misses": 0, "voids": 0, "ungraded": 0}
+    for result in public_graded:
+        key = _GRADE_TO_KEY.get(result.get("grade"), "ungraded")
+        public_counts[key] += 1
+    if public_graded:
+        by_rec_status["top_pick"] = dict(public_counts)
     by_rec_status = {k: dict(v) for k, v in by_rec_status.items()}
 
     # SHADOW TRACKING -- direct request: "There should be no prop not rated
@@ -773,14 +999,18 @@ def grade_day(date) -> bool:
         shadow_by_category[key][_GRADE_TO_KEY[g["grade"]]] += 1
     shadow_by_category = {k: dict(v) for k, v in shadow_by_category.items()}
 
-    with open(GRADES_FILE, "w", encoding="utf-8") as f:
-        json.dump({"date": YESTERDAY, "hits": hits, "misses": misses, "ungraded": ungraded,
-                   "fair_hits": fair_hits, "fair_misses": fair_misses,
-                   "by_category": by_category,
-                   "by_recommendation_status": by_rec_status,
-                   "shadow_by_category": shadow_by_category,
-                   "picks": graded,
-                   "shadow_tracking": shadow_graded}, f, indent=2)
+    from dashboard.live_state import atomic_write_json
+    atomic_write_json(GRADES_FILE, {
+        "date": YESTERDAY, "hits": hits, "misses": misses, "ungraded": ungraded,
+        "fair_hits": fair_hits, "fair_misses": fair_misses,
+        "by_category": by_category,
+        "by_recommendation_status": by_rec_status,
+        "public_top_pick_counts": public_counts,
+        "public_top_picks": public_graded,
+        "shadow_by_category": shadow_by_category,
+        "picks": graded,
+        "shadow_tracking": shadow_graded,
+    }, indent=2)
 
     history = {"days": []}
     if os.path.exists(HISTORY_FILE):
@@ -790,6 +1020,7 @@ def grade_day(date) -> bool:
     history["days"].append({"date": YESTERDAY, "hits": hits, "misses": misses, "ungraded": ungraded,
                             "fair_hits": fair_hits, "fair_misses": fair_misses,
                             "by_category": by_category, "by_recommendation_status": by_rec_status,
+                            "public_top_pick_counts": public_counts,
                             "shadow_by_category": shadow_by_category})
     history["days"].sort(key=lambda d: d["date"])
 
@@ -832,17 +1063,36 @@ def grade_day(date) -> bool:
     # counts only picks that carried recommendation_status=="top_pick" on
     # the day they were made, never a pick that merely reached the top10
     # board or scored well by quality score alone.
-    rec_status_totals = defaultdict(lambda: {"hits": 0, "misses": 0, "ungraded": 0})
+    rec_status_totals = defaultdict(lambda: {"hits": 0, "misses": 0,
+                                              "ungraded": 0})
     for d in history["days"]:
         for rs, counts in d.get("by_recommendation_status", {}).items():
             for k in ("hits", "misses", "ungraded"):
                 rec_status_totals[rs][k] += counts.get(k, 0)
     history["by_recommendation_status_totals"] = {k: dict(v) for k, v in rec_status_totals.items()}
-    tp = rec_status_totals.get("top_pick")
-    if tp and (tp["hits"] + tp["misses"]) > 0:
-        history["top_pick_hit_rate"] = round(tp["hits"] / (tp["hits"] + tp["misses"]), 3)
+    modeled_tp = rec_status_totals.get("top_pick")
+    if modeled_tp and (modeled_tp["hits"] + modeled_tp["misses"]) > 0:
+        history["modeled_top_pick_hit_rate"] = round(
+            modeled_tp["hits"] / (modeled_tp["hits"] + modeled_tp["misses"]), 3,
+        )
     else:
-        history["top_pick_hit_rate"] = None
+        history["modeled_top_pick_hit_rate"] = None
+
+    # PUBLIC TOP PICK TOTALS -- the official customer-facing record is based
+    # only on deployment-proven registry snapshots. This is deliberately
+    # separate from by_recommendation_status_totals, which continues to track
+    # every modelled recommendation and therefore preserves its old semantics.
+    public_totals = {"hits": 0, "misses": 0, "voids": 0, "ungraded": 0}
+    for d in history["days"]:
+        counts = d.get("public_top_pick_counts") or {}
+        for key in public_totals:
+            public_totals[key] += counts.get(key, 0)
+    history["public_top_pick_totals"] = public_totals
+    public_graded_total = public_totals["hits"] + public_totals["misses"]
+    history["top_pick_hit_rate"] = (
+        round(public_totals["hits"] / public_graded_total, 3)
+        if public_graded_total else None
+    )
 
     # SHADOW TOTALS -- accumulates every alternate-threshold pick's real
     # outcome across days, keyed "stat@needs" (e.g. "hard_hit_110@1"), so
@@ -876,18 +1126,33 @@ def grade_day(date) -> bool:
     # shipped. Days graded before this rebuild have no
     # by_recommendation_status at all, so they contribute zero to this
     # window rather than being silently folded in as unclassified hits.
-    recent_tp_hits = sum(d.get("by_recommendation_status", {}).get("top_pick", {}).get("hits", 0)
-                         for d in recent)
-    recent_tp_misses = sum(d.get("by_recommendation_status", {}).get("top_pick", {}).get("misses", 0)
-                           for d in recent)
+    recent_modeled_tp_hits = sum(
+        d.get("by_recommendation_status", {}).get("top_pick", {}).get("hits", 0)
+        for d in recent
+    )
+    recent_modeled_tp_misses = sum(
+        d.get("by_recommendation_status", {}).get("top_pick", {}).get("misses", 0)
+        for d in recent
+    )
+    recent_modeled_tp_n = recent_modeled_tp_hits + recent_modeled_tp_misses
+    history["last_14_days_modeled_top_pick_hit_rate"] = (
+        round(recent_modeled_tp_hits / recent_modeled_tp_n, 3)
+        if recent_modeled_tp_n else None
+    )
+    history["last_14_days_modeled_top_pick_n"] = recent_modeled_tp_n
+    recent_tp_hits = sum(
+        (d.get("public_top_pick_counts") or {}).get("hits", 0) for d in recent
+    )
+    recent_tp_misses = sum(
+        (d.get("public_top_pick_counts") or {}).get("misses", 0) for d in recent
+    )
     recent_tp_graded = recent_tp_hits + recent_tp_misses
     history["last_14_days_top_pick_hit_rate"] = (
         round(recent_tp_hits / recent_tp_graded, 3) if recent_tp_graded else None
     )
     history["last_14_days_top_pick_n"] = recent_tp_graded
 
-    with open(HISTORY_FILE, "w", encoding="utf-8") as f:
-        json.dump(history, f, indent=2)
+    atomic_write_json(HISTORY_FILE, history, indent=2)
 
     day_rate = round(hits / (hits + misses), 3) if (hits + misses) else "n/a"
     fair_rate = round(fair_hits / (fair_hits + fair_misses), 3) if (fair_hits + fair_misses) else "n/a"
@@ -901,12 +1166,12 @@ def grade_day(date) -> bool:
               f"best-of-category): {m_totals.get('hits', 0)} hits / {m_totals.get('misses', 0)} "
               f"misses (rate: {history['main_hit_rate']})")
     if history["top_pick_hit_rate"] is not None:
-        tp_totals = history["by_recommendation_status_totals"].get("top_pick", {})
+        tp_totals = history["public_top_pick_totals"]
         # Deliberately printed as its own line, never averaged with the
         # blended rate above -- this is the number the rebuild exists to
         # make trustworthy: only picks recommendation.classify_recommendation
         # actually designated top_pick, not "reached the top10 board."
-        print(f"  Top Picks only (recommendation_status=='top_pick'): "
+        print(f"  Public Top Picks only (deployment-proven exposure): "
               f"{tp_totals.get('hits', 0)} hits / {tp_totals.get('misses', 0)} misses "
               f"(all-time rate: {history['top_pick_hit_rate']}, last 14 days: "
               f"{history['last_14_days_top_pick_hit_rate']} over "

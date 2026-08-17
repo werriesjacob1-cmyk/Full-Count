@@ -332,7 +332,23 @@ main { max-width: 1180px; margin: 0 auto; padding: 20px 16px 80px; }
 .chip-grade-hit { background: var(--good); color: #fff; }
 .chip-grade-miss { background: var(--bad); color: #fff; }
 .chip-grade-live { background: var(--warn); color: var(--accent-ink); animation: pulse 2s ease-in-out infinite; }
+.chip-grade-void, .chip-grade-ungraded { background: var(--neutral-soft); color: var(--neutral); }
 @keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:.55;} }
+
+/* Lifecycle is deliberately stronger than the recommendation-status trim:
+   yellow while unresolved live, green/red only after mathematical settlement. */
+.pick-card.lifecycle-live, .prop-row.lifecycle-live {
+  border-color: var(--warn); background: color-mix(in srgb, var(--warn-soft) 32%, var(--surface));
+}
+.pick-card.lifecycle-hit, .prop-row.lifecycle-hit {
+  border-color: var(--good); background: color-mix(in srgb, var(--good-soft) 34%, var(--surface));
+}
+.pick-card.lifecycle-miss, .prop-row.lifecycle-miss {
+  border-color: var(--bad); background: color-mix(in srgb, var(--bad-soft) 34%, var(--surface));
+}
+.pick-card.lifecycle-live::before { border-color: var(--warn); }
+.pick-card.lifecycle-hit::before { border-color: var(--good); }
+.pick-card.lifecycle-miss::before { border-color: var(--bad); }
 
 .pc-why { font-size: 13px; color: var(--ink-dim); line-height: 1.45; }
 .pc-why b { color: var(--ink); }

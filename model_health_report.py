@@ -130,7 +130,7 @@ def section_current_version_record():
     with open(path, encoding="utf-8") as f:
         h = json.load(f)
     tp_rate = h.get("top_pick_hit_rate")
-    tp_totals = (h.get("by_recommendation_status_totals") or {}).get("top_pick", {})
+    tp_totals = h.get("public_top_pick_totals") or {}
     print(f"  All-time Top Pick record: {tp_totals.get('hits', 0)} hits / "
           f"{tp_totals.get('misses', 0)} misses "
           f"(rate: {tp_rate if tp_rate is not None else 'n/a'})")

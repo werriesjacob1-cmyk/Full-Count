@@ -1,235 +1,257 @@
 #!/usr/bin/env python3
-"""test_refresh_prices.py — coverage for dashboard/refresh_prices.py, the
-lightweight repricing-only refresh. Direct request: "I want all props to
-update with new odds as FanDuel changes them, and compute in real time
-the edge and whether it keeps it on the top 10."
+"""Structured sportsbook observation and first-pitch race regressions."""
+from __future__ import annotations
 
-Mocks every odds_fanduel fetch (same pattern as test_il_returns.py) rather
-than hitting FanDuel -- this tests the merge/recompute logic, not the
-network layer, which odds_fanduel.py's own tests already cover.
-
-PHASE 4 REWRITE NOTE (2026-08-16): the old version of this file tested the
-payload["data"]["all"]/["hits"]/["top_picks"] per-tab-duplication schema and
-a "started top pick survives an artificial top-N cap" grandfathering rule.
-Both are gone: the payload is now one flat `props` array (see
-build_dashboard.py's build_payload()), so there is no separate tab to
-propagate an update into, and there is no server-side Top Picks cap to be
-grandfathered out of in the first place (direct instruction: "never force
-Top Picks" -- the client filters recommendation_status=="top_pick" straight
-out of the full array, with no ranking/eviction). refresh_prices.py's own
-module docstring documents this simplification directly.
-
-    /tmp/mlbvenv/bin/python3 test_refresh_prices.py
-"""
 import json
 import os
-import sys
 import tempfile
-import unittest.mock as mock
-from datetime import datetime, timezone, timedelta
+import unittest
+from contextlib import ExitStack
+from unittest import mock
 
-sys.path.insert(0, __file__.rsplit("/", 1)[0] if "/" in __file__ else ".")
-sys.path.insert(0, __file__.rsplit("/", 1)[0] + "/dashboard" if "/" in __file__ else "dashboard")
-
-VERBOSE = "-v" in sys.argv or "--verbose" in sys.argv
-_results = []
-
-
-def check(cond, msg, detail=""):
-    _results.append((bool(cond), msg, detail))
-    if VERBOSE or not cond:
-        tag = "PASS" if cond else "FAIL"
-        line = "  [%s] %s" % (tag, msg)
-        if detail and (VERBOSE or not cond):
-            line += "\n         " + detail
-        print(line)
-
-
-def head(t):
-    if VERBOSE:
-        print()
-    print("-- %s" % t)
-
-
-import refresh_prices as rp
+import grade_results as gr
 import odds_fanduel as fd
-
-_row_id = [0]
-
-
-def row(name, prop, stat, needs, prob, matchup="A @ B", lean=None, reliability=None,
-       lineup_assumed=False, lift=None, prob_ci=None, market_odds=None):
-    _row_id[0] += 1
-    return {"id": f"fixture-{_row_id[0]}", "name": name, "prop": prop, "matchup": matchup,
-            "lean": lean, "projection": {"stat": stat, "needs": needs},
-            "hit_probability": prob,
-            "market_odds": market_odds, "market_implied": None, "market_edge": None,
-            "price_clears": None, "market_hold": None,
-            "reliability": reliability, "lineup_assumed": lineup_assumed, "lift": lift,
-            "prob_ci": prob_ci, "recommendation_status": None, "status_reasons": [],
-            "stale": False}
+import recommendation
+from dashboard import refresh_prices as rp
+from dashboard.live_state import atomic_write_json, canonical_prop_id, default_live_state, merge_prop_fields
+from dashboard.publication_registry import (
+    build_publication_manifest, confirm_publication, default_registry, write_registry,
+)
 
 
-def _mocked_fetch(return_value):
-    return (mock.patch.object(fd, "fetch_prop_prices", return_value=return_value),
-           mock.patch.object(fd, "fetch_pitcher_strikeouts", return_value={}),
-           mock.patch.object(fd, "fetch_first_inning_totals", return_value={}),
-           mock.patch.object(fd, "fetch_pitcher_outs", return_value={}),
-           mock.patch.object(fd, "fetch_combined_pitcher_strikeouts", return_value={}))
+PREVIEW = {"abstractGameState": "Preview", "detailedState": "Scheduled", "codedGameState": "S"}
+LIVE = {"abstractGameState": "Live", "detailedState": "In Progress", "codedGameState": "I"}
+T0 = "2026-08-17T17:00:00Z"
+T1 = "2026-08-17T18:00:00Z"
+T2 = "2026-08-17T18:00:01Z"
 
 
-head("1. refresh() reprices every row in the flat 'props' array against fresh FanDuel "
-     "prices, using the real odds_fanduel.attach_market_prices() and recommendation."
-     "attach_recommendations() -- not a reimplementation of either")
-
-r1 = row("Aaron Judge", "Over 0.5 Hits", "hits", 1, 0.70)
-payload1 = {"generated_at": "2026-08-14T18:00:00", "props": [r1], "summary": {}}
-path1 = tempfile.mktemp(suffix=".json")
-json.dump(payload1, open(path1, "w"))
-live1 = tempfile.mktemp(suffix=".json")
-
-with mock.patch.object(fd, "fetch_prop_prices") as mp, \
-     mock.patch.object(fd, "fetch_pitcher_strikeouts", return_value={}), \
-     mock.patch.object(fd, "fetch_first_inning_totals", return_value={}), \
-     mock.patch.object(fd, "fetch_pitcher_outs", return_value={}), \
-     mock.patch.object(fd, "fetch_combined_pitcher_strikeouts", return_value={}):
-    mp.return_value = {fd.normalize_name("Aaron Judge"): {("hits", 1): -150}}
-    out1 = rp.refresh(path1, live_path=live1)
-
-check(out1["props"][0]["market_odds"] == -150, "the row picked up the fresh price",
-      f"got {out1['props'][0]}")
-check(out1["props"][0]["price_clears"] is not None, "price_clears got recomputed, not left None")
-check("status" not in out1["props"][0],
-      "the internal 'status' key attach_recommendations() writes is folded back into "
-      "'recommendation_status' and never leaks into the payload as a second, duplicate field",
-      f"got {out1['props'][0]}")
+def row(stat="hits", game_pk=1, player_id=101):
+    value = {
+        "identity_version": 2, "type": "pitcher" if stat in ("strikeouts", "pitcher_outs") else "batter",
+        "name": "Fixture", "team": "A", "matchup": "A @ B", "game_pk": game_pk,
+        "game_start": T1, "player_id": player_id,
+        "combo_player_ids": [101, 202] if stat == "combined_strikeouts" else None,
+        "projection": {"stat": stat, "needs": 5 if stat in ("strikeouts", "pitcher_outs") else 1,
+                       "value": 5 if stat in ("strikeouts", "pitcher_outs") else 1},
+        "stat": stat, "market_side": "over", "lean": "NRFI" if stat == "nrfi_combined" else None,
+        "prop": "Fixture prop", "recommendation_status": "top_pick",
+        "status_reasons": ["prior"], "hit_probability": .7,
+        "market_odds": -120, "market_implied": .545, "market_edge": .155,
+        "price_clears": True, "market_hold": None, "stale": False,
+    }
+    if stat == "nrfi_combined":
+        value["player_id"] = None
+        value["type"] = "game"
+    value["id"] = canonical_prop_id(value)
+    return value
 
 
-head("2. recommendation_status is recomputed fresh via the real recommendation."
-     "classify_recommendation() for every row -- 2026-08-15 rebuild: NO cap exists on Top "
-     "Picks (\"if only 3 bets qualify, show 3\"), so a real 15-qualifier night ships all 15")
-
-rows3 = [row(f"P{i}", f"prop{i}", "hits", 1, 0.9, reliability="A", lift=0.10,
-            prob_ci=[0.75, 0.95]) for i in range(15)]
-generated_at3 = datetime.now(timezone.utc).isoformat()
-payload3 = {"generated_at": generated_at3, "props": rows3, "summary": {}}
-path3 = tempfile.mktemp(suffix=".json")
-json.dump(payload3, open(path3, "w"))
-live3 = tempfile.mktemp(suffix=".json")
-
-with mock.patch.object(fd, "fetch_prop_prices") as mp, \
-     mock.patch.object(fd, "fetch_pitcher_strikeouts", return_value={}), \
-     mock.patch.object(fd, "fetch_first_inning_totals", return_value={}), \
-     mock.patch.object(fd, "fetch_pitcher_outs", return_value={}), \
-     mock.patch.object(fd, "fetch_combined_pitcher_strikeouts", return_value={}):
-    # Every candidate prices at -110 (a real, clearly-acceptable price for
-    # a 90% model probability, robust even at the pessimistic 75% end of
-    # its own real interval) so every one of the 15 genuinely qualifies.
-    mp.return_value = {fd.normalize_name(f"P{i}"): {("hits", 1): -110} for i in range(15)}
-    out3 = rp.refresh(path3, live_path=live3)
-
-top_picks3 = [r for r in out3["props"] if r["recommendation_status"] == "top_pick"]
-check(len(top_picks3) == 15,
-      "every one of the 15 genuinely qualifying picks ships, uncapped -- there is no "
-      "server-side Top Picks list to trim in the new architecture at all",
-      f"got {len(top_picks3)}")
-check(all(tp.get("price_clears") for tp in top_picks3),
-      "every Top Pick genuinely has price_clears==True")
-check(out3["summary"]["n_top_pick"] == 15,
-      "summary.n_top_pick is recomputed to match the real repriced count",
-      f"got {out3['summary']}")
+def payload(rows):
+    return {
+        "schema_version": 3, "identity_schema_version": 2, "date": "2026-08-17",
+        "generated_at": T0, "odds_fetched_at": T0, "props": rows, "summary": {},
+    }
 
 
-head("3. prices_updated_at is stamped, generated_at is left untouched -- this is a "
-     "repricing pass, not a rebuild, and the page needs to tell the two apart")
-
-check("prices_updated_at" in out3, "prices_updated_at was added")
-check(out3["generated_at"] == generated_at3,
-      "generated_at (the last real rescoring pass) is never touched here")
-# Real bug, found live 2026-08-15: a naive datetime.now().isoformat() (no
-# tz suffix) gets parsed by a browser's `new Date(iso)` as LOCAL time, not
-# UTC -- the page showed an "Updated" time hours in the future for anyone
-# west of UTC. Must carry a real UTC offset.
-check("+00:00" in out3["prices_updated_at"] or out3["prices_updated_at"].endswith("Z"),
-      "prices_updated_at is timezone-aware, not a naive local timestamp a browser would "
-      "misread as local time", f"got {out3['prices_updated_at']!r}")
+def load_json(path):
+    with open(path, encoding="utf-8") as handle:
+        return json.load(handle)
 
 
-head("4. a merged live.json delta is written alongside data.json, containing only the "
-     "fields that actually changed, keyed by the row's stable id -- the cheap channel "
-     "app.js's pollLive() polls every few minutes instead of re-fetching the whole board")
+class TempPrice(unittest.TestCase):
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory()
+        self.data = os.path.join(self.tmp.name, "data.json")
+        self.live = os.path.join(self.tmp.name, "live.json")
+        self.registry = os.path.join(self.tmp.name, "registry.json")
+        atomic_write_json(self.live, default_live_state())
+        write_registry(self.registry, default_registry())
 
-with open(live3, encoding="utf-8") as f:
-    live_out3 = json.load(f)
-check(live_out3["prices_updated_at"] == out3["prices_updated_at"],
-      "live.json's prices_updated_at matches the same stamp written into data.json")
-check(set(live_out3["props"].keys()) == {r["id"] for r in rows3},
-      "every repriced row (all 15 changed from no-price to a real price) has a delta "
-      "entry keyed by its real id", f"got {list(live_out3['props'].keys())}")
-sample_delta = live_out3["props"][rows3[0]["id"]]
-check(sample_delta.get("market_odds") == -110 and sample_delta.get("recommendation_status") == "top_pick",
-      "the delta entry itself carries the real changed field values, not just an empty marker",
-      f"got {sample_delta}")
+    def tearDown(self):
+        self.tmp.cleanup()
 
+    def seed(self, rows, live=None):
+        atomic_write_json(self.data, payload(rows))
+        if live is not None:
+            atomic_write_json(self.live, live)
 
-head("5. refresh() merges into an EXISTING live.json rather than overwriting it -- "
-     "dashboard-prices.yml and dashboard-grades.yml are separate 5-minute workflows that "
-     "both write this same file, so a price refresh must never blow away a grade another "
-     "cycle already recorded for the same id")
-
-existing_live = {"prices_updated_at": "2026-08-14T00:00:00+00:00",
-                 "grades_updated_at": "2026-08-14T00:05:00+00:00",
-                 "props": {rows3[0]["id"]: {"grade": "hit"}}}
-live5 = tempfile.mktemp(suffix=".json")
-json.dump(existing_live, open(live5, "w"))
-path5b = tempfile.mktemp(suffix=".json")
-json.dump({"generated_at": generated_at3, "props": [dict(rows3[0])], "summary": {}}, open(path5b, "w"))
-
-with mock.patch.object(fd, "fetch_prop_prices") as mp, \
-     mock.patch.object(fd, "fetch_pitcher_strikeouts", return_value={}), \
-     mock.patch.object(fd, "fetch_first_inning_totals", return_value={}), \
-     mock.patch.object(fd, "fetch_pitcher_outs", return_value={}), \
-     mock.patch.object(fd, "fetch_combined_pitcher_strikeouts", return_value={}):
-    mp.return_value = {fd.normalize_name("P0"): {("hits", 1): -200}}
-    rp.refresh(path5b, live_path=live5)
-
-with open(live5, encoding="utf-8") as f:
-    merged_live = json.load(f)
-check(merged_live["grades_updated_at"] == "2026-08-14T00:05:00+00:00",
-      "a price-only refresh never touches the grades_updated_at another workflow wrote",
-      f"got {merged_live}")
-check(merged_live["props"][rows3[0]["id"]].get("grade") == "hit",
-      "an existing grade delta for this id survives a later price refresh -- fields "
-      "merge per-id, the row isn't overwritten wholesale", f"got {merged_live['props'][rows3[0]['id']]}")
-check(merged_live["props"][rows3[0]["id"]].get("market_odds") == -200,
-      "the new price delta is ALSO present alongside the surviving grade -- both a price "
-      "and a grade delta can coexist for the same id", f"got {merged_live['props'][rows3[0]['id']]}")
+    def feed_patches(self, failures=()):
+        funcs = {
+            "general_batter": "fetch_prop_prices", "strikeouts": "fetch_pitcher_strikeouts",
+            "pitcher_outs": "fetch_pitcher_outs", "first_inning": "fetch_first_inning_totals",
+            "combined_strikeouts": "fetch_combined_pitcher_strikeouts",
+        }
+        stack = ExitStack()
+        for family, name in funcs.items():
+            if family in failures:
+                stack.enter_context(mock.patch.object(fd, name, side_effect=RuntimeError(f"{family} down")))
+            else:
+                stack.enter_context(mock.patch.object(fd, name, return_value={}))
+        return stack
 
 
-head("6. a payload with no props at all (e.g. a no-games night) is a clean no-op")
+class ObservationTests(TempPrice):
+    def test_matched_and_successful_not_posted_are_distinct(self):
+        matched_row, absent_row = row("hits", 1, 101), row("hits", 2, 202)
+        self.seed([matched_row, absent_row])
 
-payload6 = {"generated_at": "x", "props": [], "summary": {}}
-path6 = tempfile.mktemp(suffix=".json")
-json.dump(payload6, open(path6, "w"))
-out6 = rp.refresh(path6)
-check(out6["props"] == [], "an empty props list doesn't crash and returns the payload unchanged")
+        def attach(rows, **_feeds):
+            if rows[0]["game_pk"] == 1:
+                rows[0].update({"market_odds": -150, "market_implied": .6,
+                                "market_edge": .1, "price_clears": True})
+                return rows, 1
+            return rows, 0
 
-for p in (path1, path3, path5b, path6):
-    os.remove(p)
-for p in (live1, live3, live5):
-    if os.path.exists(p):
-        os.remove(p)
+        def classify(rows, **_kwargs):
+            for value in rows:
+                value["status"] = "top_pick" if value.get("market_odds") is not None else "lean"
+                value["status_reasons"] = []
 
-n_pass = sum(1 for ok, _, _ in _results if ok)
-n_total = len(_results)
-print("\n" + "=" * 78)
-print(f"RESULT: {n_pass}/{n_total} checks passed")
-if n_pass < n_total:
-    print()
-    for ok, msg, detail in _results:
-        if not ok:
-            print(f"  FAILED: {msg}")
-            if detail:
-                print(f"          {detail}")
-print("=" * 78)
-sys.exit(0 if n_pass == n_total else 1)
+        contexts = {1: {"status": PREVIEW, "feed": {}}, 2: {"status": PREVIEW, "feed": {}}}
+        with self.feed_patches(), \
+             mock.patch.object(gr, "fetch_game_contexts", return_value=contexts), \
+             mock.patch.object(fd, "attach_market_prices", side_effect=attach), \
+             mock.patch.object(recommendation, "attach_recommendations", side_effect=classify), \
+             mock.patch.object(rp, "utc_now", side_effect=[T0, T0, T0, T0]):
+            rp.refresh(self.data, self.live, self.registry)
+        live = load_json(self.live)["props"]
+        self.assertEqual(live[matched_row["id"]]["market_observation_state"], "MATCHED")
+        self.assertEqual(live[matched_row["id"]]["market_odds"], -150)
+        self.assertEqual(live[absent_row["id"]]["market_observation_state"], "NOT_POSTED")
+        self.assertIsNone(live[absent_row["id"]]["market_odds"])
+        self.assertEqual(live[absent_row["id"]]["recommendation_status"], "lean")
+
+    def test_total_primary_failure_preserves_quote_and_success_timestamp(self):
+        value = row("hits")
+        live = default_live_state()
+        merge_prop_fields(live, value["id"], {
+            "market_odds": -125, "market_observed_at": "2026-08-17T16:00:00Z",
+            "market_observation_state": "MATCHED", "market_family": "general_batter",
+            "price_basis_board_generated_at": T0,
+        }, "2026-08-17T16:00:00Z", channel="prices")
+        self.seed([value], live)
+        with self.feed_patches(failures={"general_batter"}), \
+             mock.patch.object(gr, "fetch_game_contexts", return_value={1: {"status": PREVIEW, "feed": {}}}), \
+             mock.patch.object(rp, "utc_now", side_effect=[T0, T0]):
+            rp.refresh(self.data, self.live, self.registry)
+        delta = load_json(self.live)["props"][value["id"]]
+        self.assertEqual(delta["market_odds"], -125)
+        self.assertEqual(delta["market_observed_at"], "2026-08-17T16:00:00Z")
+        self.assertEqual(delta["market_fetch_state"], "FETCH_FAILED")
+        self.assertEqual(delta["market_fetch_failed_at"], T0)
+
+    def test_each_failed_special_family_preserves_its_quote(self):
+        cases = (("strikeouts", "strikeouts"), ("pitcher_outs", "pitcher_outs"),
+                 ("nrfi_combined", "first_inning"),
+                 ("combined_strikeouts", "combined_strikeouts"))
+        for index, (stat, family) in enumerate(cases, 1):
+            with self.subTest(family=family):
+                value = row(stat, game_pk=index, player_id=100 + index)
+                self.seed([value])
+                with self.feed_patches(failures={family}), \
+                     mock.patch.object(gr, "fetch_game_contexts", return_value={index: {"status": PREVIEW, "feed": {}}}), \
+                     mock.patch.object(rp, "utc_now", side_effect=[T0, T0]):
+                    rp.refresh(self.data, self.live, self.registry)
+                delta = load_json(self.live)["props"][value["id"]]
+                self.assertNotIn("market_observed_at", delta)
+                self.assertEqual(delta["market_fetch_state"], "FETCH_FAILED")
+                self.assertNotIn("recommendation_status", delta)
+
+    def test_started_market_freezes_without_fetch_or_reclassification(self):
+        value = row("hits")
+        self.seed([value])
+        with mock.patch.object(gr, "fetch_game_contexts", return_value={1: {"status": LIVE, "feed": {}}}), \
+             mock.patch.object(fd, "fetch_prop_prices") as fetch, \
+             mock.patch.object(recommendation, "attach_recommendations") as classify, \
+             mock.patch.object(rp, "utc_now", return_value=T2):
+            result = rp.refresh(self.data, self.live, self.registry)
+        self.assertFalse(fetch.called)
+        self.assertFalse(classify.called)
+        self.assertEqual(result["props"][0]["market_odds"], -120)
+        delta = load_json(self.live)["props"][value["id"]]
+        self.assertEqual(delta["market_fetch_state"], "IN_PLAY")
+
+    def test_preview_to_clock_crossing_during_fetch_cannot_publish_top_pick(self):
+        value = row("hits")
+        value["recommendation_status"] = "lean"
+        self.seed([value])
+
+        def attach(rows, **_kwargs):
+            rows[0]["market_odds"] = -110
+            return rows, 1
+
+        def classify(rows, **_kwargs):
+            rows[0]["status"] = "top_pick"
+
+        with self.feed_patches(), \
+             mock.patch.object(gr, "fetch_game_contexts", side_effect=[
+                 {1: {"status": PREVIEW, "feed": {}}},
+                 {1: {"status": PREVIEW, "feed": {}}},
+             ]), \
+             mock.patch.object(fd, "attach_market_prices", side_effect=attach), \
+             mock.patch.object(recommendation, "attach_recommendations", side_effect=classify), \
+             mock.patch.object(rp, "utc_now", side_effect=[T0, "2026-08-17T17:59:59Z", T2]):
+            result = rp.refresh(self.data, self.live, self.registry)
+        self.assertEqual(result["props"][0]["recommendation_status"], "lean")
+        self.assertNotIn(value["id"], load_json(self.live)["props"])
+
+    def test_legacy_rollout_state_is_canonicalized_before_live_write(self):
+        value = row("hits")
+        legacy_id = "1-101-hits-1"
+        legacy_row = dict(value)
+        legacy_row["id"] = legacy_id
+        legacy_row.pop("identity_version")
+        legacy_payload = payload([legacy_row])
+        legacy_payload.pop("schema_version")
+        legacy_payload.pop("identity_schema_version")
+        atomic_write_json(self.data, legacy_payload)
+        atomic_write_json(self.live, {
+            "prices_updated_at": "2026-08-17T16:00:00Z",
+            "grades_updated_at": None,
+            "props": {legacy_id: {"market_odds": -125}},
+        })
+        with self.feed_patches(failures={"general_batter"}), \
+             mock.patch.object(gr, "fetch_game_contexts", return_value={1: {"status": PREVIEW, "feed": {}}}), \
+             mock.patch.object(rp, "utc_now", side_effect=[T0, T0]):
+            rp.refresh(self.data, self.live, self.registry)
+        written = load_json(self.live)
+        self.assertEqual(written["schema_version"], 3)
+        self.assertIn(value["id"], written["props"])
+        self.assertNotIn(legacy_id, written["props"])
+        self.assertEqual(written["props"][value["id"]]["market_odds"], -125)
+
+    def test_published_snapshot_cannot_reprice_or_demote_across_start_race(self):
+        value = row("hits")
+        self.seed([value])
+        registry = default_registry()
+        manifest = build_publication_manifest(
+            payload([value]), default_live_state(), registry, "sha", T0,
+        )
+        confirm_publication(registry, manifest, T0, {})
+        write_registry(self.registry, registry)
+
+        def attach(rows, **_kwargs):
+            rows[0]["market_odds"] = -150
+            return rows, 1
+
+        def classify(rows, **_kwargs):
+            rows[0]["status"] = "lean"
+
+        with self.feed_patches(), \
+             mock.patch.object(gr, "fetch_game_contexts", side_effect=[
+                 {1: {"status": PREVIEW, "feed": {}}},
+                 {1: {"status": LIVE, "feed": {}}},
+             ]), \
+             mock.patch.object(fd, "attach_market_prices", side_effect=attach), \
+             mock.patch.object(recommendation, "attach_recommendations", side_effect=classify), \
+             mock.patch.object(rp, "utc_now", side_effect=[T0, T0, T2]):
+            result = rp.refresh(self.data, self.live, self.registry)
+        self.assertEqual(result["props"][0]["market_odds"], -120)
+        self.assertEqual(result["props"][0]["recommendation_status"], "top_pick")
+        with open(self.live, encoding="utf-8") as handle:
+            self.assertNotIn(value["id"], json.load(handle)["props"])
+
+
+if __name__ == "__main__":
+    unittest.main(verbosity=2)
