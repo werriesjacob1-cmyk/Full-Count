@@ -1304,3 +1304,124 @@ reflect what actually happened, including this correction.
 
 Phase V has **not** begun. This rollout was operational verification of the
 Pre-Phase-V incident correction only.
+
+## 2026-08-18 — Recommendation classification integrity (A1/A2/A3): investigation and fix
+
+Agent:
+Claude
+
+Branch:
+`pre-phase-v/recommendation-classification-integrity`
+
+Objective:
+Independent re-investigation of four candidate Pre-Phase-V findings (A1-A4)
+requested by the user, followed by an authorized fix for three of them
+(A1/A2/A3, this PR) scoped strictly to `recommendation.py`/
+`prop_probability.py`. A4 (alternate-line candidates bypass calibration) is
+real and confirmed but is separately-scoped follow-up work, not touched
+here.
+
+Findings, independently re-traced from current executable code:
+
+- **A1, CONFIRMED.** `recommendation.py`'s `classify_recommendation()` passed
+  `prob_lo=(ci[0] if ci else None)` into `prop_probability.value_verdict()`.
+  When `prob_lo is None`, `value_verdict`'s `robust` stayed `None` (never
+  `False`), so the "positive expectation at the pessimistic end of its own
+  confidence interval" test the module's own docstring calls mandatory
+  silently never ran, and any candidate clearing plain ROI got `verdict:
+  "BET"`. Not a rare case: `prob_ci` is honestly `None` by design for
+  `modelled_shrunk`/`league_only`-basis lines (hits/total_bases/home_runs
+  whenever a true league rate exists, per `generate_picks.py`'s own
+  documented policy that no CI should ever be invented or borrowed) --
+  hitting this path was the DEFAULT for large parts of the board, not an
+  edge case.
+- **A2, CONFIRMED, direct consequence of A1.** The Top Pick rationale text
+  unconditionally claimed "the price/value test at the pessimistic end of
+  its own interval" whenever a Top Pick fired, with no check that a CI
+  actually existed.
+- **A3, CONFIRMED as a real defect, unreachable in current production.**
+  `freshness_check()`'s `price_dt = _parse_iso(odds_fetched_at) or
+  board_dt` directly contradicted the function's own documented invariant
+  ("a missing timestamp is NOT treated as fresh"). Empirically verified:
+  `freshness_check(odds_fetched_at=None, board_generated_at=<fresh>)`
+  returned `fresh=True`. All three real call sites (`generate_picks.py`,
+  `dashboard/build_dashboard.py`, `dashboard/refresh_prices.py`) always pass
+  a real `odds_fetched_at`, so this was dead code today, not an active
+  incident -- but untested and a latent regression trap of the exact
+  failure class this repo has already shipped once (PR #51/#52).
+- **A4, CONFIRMED, independently re-traced from scratch per the user's
+  explicit instruction not to trust any prior diagnosis, and live in
+  production.** `apply_calibration()` only ever rewrites the primary line's
+  `hit_probability`; `select_best_by_category()`'s `line_options` expansion
+  (which IS reached by the live dashboard build, `dashboard/
+  build_dashboard.py:337`) prices and classifies every alternate line off
+  its raw, never-calibrated probability. Board family counts indicate this
+  is the default state for most non-primary batter props, not an edge case.
+  Out of scope for this PR; tracked as a separate, authorized follow-up
+  (`pre-phase-v/alternate-line-calibration-parity`).
+
+Fix (A1/A2/A3 only):
+
+- `prop_probability.value_verdict()` gained a keyword-only
+  `require_robust=False` parameter, default `False` to preserve every
+  existing caller's exact behavior (specifically `value_board.py`'s own
+  intentional `--no-robust` opt-out, which passes `prob_lo=None` on purpose
+  to widen a manual screen -- that escape hatch must keep working). When
+  `require_robust=True` and `prob_lo is None`, `robust` is now explicitly
+  `False` (not skipped): an honestly-absent interval is a required-test
+  FAILURE, not a skipped test.
+- `recommendation.py`'s `classify_recommendation()` now passes
+  `require_robust=True` -- this policy's Top Pick/Value requirements
+  include the pessimistic-end test, so a missing CI now correctly fails
+  closed for both.
+- The Top Pick rationale text is now conditional on whether `ci` was
+  actually present (defense-in-depth: A1's fix already makes the false-claim
+  path structurally unreachable, but the wording no longer depends solely on
+  that coupling holding forever).
+- `freshness_check()` no longer falls back to `board_dt` when
+  `odds_fetched_at` is missing -- a missing price-fetch timestamp is now
+  treated exactly like a missing board timestamp: unknown age, fails closed.
+
+Real-board materiality (current live committed board, 2673 props,
+`generated_at 2026-08-18T20:48:06Z`, re-classified with the fixed code
+using the exact same `recommendation.classify_recommendation()` the
+production pipeline calls): Top Picks 6 -> 2, Value 60 -> 1. **4 of the 6
+currently-published Top Picks** (Keider Montero, Zebby Matthews, Tyler
+Mahle, Griffin Conine -- all `prob_ci: None`) would not have qualified
+under the corrected policy; the 2 that survive (Chase Meidroth, Kevin
+McGonigle) both carry real, defensible CIs. All 20 "upward" (neutral ->
+lean) transitions were independently verified coherent, not new leniency:
+they are candidates whose `prob_ci` absence previously let them wrongly
+enter the `clears_value and prob < TOP_PICK_MIN_PROB` / SUSPECT-blocked
+"neutral" branch even though they should never have reached `clears_value`
+at all; post-fix they correctly fall through to the honest "real positive
+lift, too-thin evidence" Lean branch instead (see `LEAN_MIN_LIFT`, existing
+test #15's own stated invariant -- "a real positive lift... lands as a
+Lean, not silently dropped to Neutral"). No case moved to a MORE favorable
+status than a Lean-or-below prior status.
+
+**Operational note, not acted on in this PR:** the 4 disqualified picks
+above were already publicly exposed via the publication registry
+(`published_top_pick_at: 2026-08-18T20:33:11Z`, real deployment
+provenance) before this fix existed. This PR does not retroactively alter
+or un-publish that historical exposure -- the registry's immutable
+first-exposure snapshot is a durable historical record, not something this
+fix should silently rewrite. Whether/how to handle already-published picks
+that would not have qualified under the corrected policy is a product/
+operational decision for the user, not something decided unilaterally here.
+
+Tests: `test_recommendation.py` (2 new sections, 18-19, 13 checks: missing
+CI blocks Top Pick and Value, rationale never claims an untested interval,
+a real CI still reaches Top Pick, missing `odds_fetched_at` fails closed
+end-to-end including the `stale` flag, valid timestamps unaffected) and
+`test_prop_probability_pricing.py` (section 13B, 5 checks: default
+`require_robust` behavior unchanged, explicit opt-out still works, explicit
+opt-in fails closed with an honestly distinct reason, opt-in with a real
+passing CI is unaffected). `test_value_board.py` and
+`test_threshold_sensitivity.py` (both consume `classify_recommendation`/
+`value_verdict` for real) re-run clean with zero changes. Full repository
+suite: 77/77 files pass.
+
+Phase V has **not** begun. Scope held strictly to `recommendation.py`/
+`prop_probability.py`/tests -- no `generate_picks.py` calibration, scoring
+weight, model coefficient, calibrator fitting, or threshold change.

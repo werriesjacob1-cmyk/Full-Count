@@ -183,6 +183,42 @@ check(v4["verdict"] == "BET" and v4["robust_to_uncertainty"] is True,
       "a pessimistic floor (78%) that's STILL above break-even (75%) at this price lets "
       "the bet through as BET, robust_to_uncertainty=True", f"got {v4}")
 
+head("13B. 2026-08-18 Pre-Phase-V finding A1: require_robust= controls whether a missing "
+     "prob_lo is a SKIPPED test (default, existing behavior) or a FAILED one (opt-in, "
+     "for a policy that requires it before calling something a recommendation)")
+
+v5_default = pp.value_verdict(0.62, -110)  # no prob_lo, require_robust not passed at all
+check(v5_default["verdict"] == "BET" and "robust_to_uncertainty" not in v5_default,
+      "default behavior (no prob_lo, require_robust omitted) is completely unchanged: "
+      "still BET off ROI alone, no robustness key even added to the output",
+      f"got {v5_default}")
+
+v6_explicit_skip = pp.value_verdict(0.62, -110, require_robust=False)
+check(v6_explicit_skip["verdict"] == "BET",
+      "an explicit require_robust=False (value_board.py's own --no-robust escape hatch) "
+      "still gets a real BET verdict off ROI alone -- the fix must not silently convert "
+      "an intentional opt-out into an always-NO-BET wall", f"got {v6_explicit_skip}")
+
+v7_required_missing = pp.value_verdict(0.62, -110, require_robust=True)
+check(v7_required_missing["verdict"] == "NO BET",
+      "require_robust=True with no prob_lo fails closed -- an honestly absent interval is "
+      "not evidence of robustness for a policy that requires the test",
+      f"got {v7_required_missing}")
+check(v7_required_missing["robust_to_uncertainty"] is False
+      and v7_required_missing["roi_at_worst_case"] is None,
+      "the failure is explicit and honestly labeled (robust_to_uncertainty=False, no "
+      "fabricated worst-case ROI number), not a silent generic NO BET",
+      f"got {v7_required_missing}")
+check("no defensible confidence interval" in v7_required_missing["why"],
+      "the reason names the actual gap (no CI exists), distinct from the wording used "
+      "when a real CI existed and genuinely failed the test",
+      f"got {v7_required_missing['why']!r}")
+
+v8_required_present = pp.value_verdict(0.85, -300, prob_lo=0.78, require_robust=True)
+check(v8_required_present["verdict"] == "BET",
+      "require_robust=True does not change the outcome when a real, passing CI is "
+      "actually supplied -- only the missing-CI case changes", f"got {v8_required_present}")
+
 head("== devig / market_agreement / devig_two_sided ==")
 head("14. devig removes the assumed hold, always producing a smaller number than the raw implied")
 
