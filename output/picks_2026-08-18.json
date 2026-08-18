@@ -1,0 +1,2121 @@
+{
+  "date": "2026-08-18",
+  "generated": "2026-08-18T15:07:05.812250",
+  "picks": [
+    {
+      "rank": 1,
+      "type": "pitcher",
+      "name": "Keider Montero",
+      "player_id": 672456,
+      "team": "Detroit Tigers",
+      "matchup": "Detroit Tigers @ Pittsburgh Pirates",
+      "game_pk": 823341,
+      "side": "away",
+      "combo_player_ids": null,
+      "prop": "Over 15.5 Outs Recorded",
+      "projection": {
+        "stat": "pitcher_outs",
+        "value": 15.5,
+        "needs": 16
+      },
+      "lean": null,
+      "score": 72.2,
+      "confidence": "High",
+      "notable_signals": 1,
+      "category": null,
+      "hit_probability": 0.6705,
+      "signals": {
+        "outs_rate": 0.6705,
+        "avg_outs_per_start": 17.15
+      },
+      "base_rate": 0.5724,
+      "lift": 0.0981,
+      "raw_hit_probability": null,
+      "calibrated_by": null,
+      "prob_ci": null,
+      "sample_n": 20,
+      "reliability": "A",
+      "lineup_assumed": null,
+      "max_acceptable_price": -203,
+      "estimated_odds": -240,
+      "market_odds": -132,
+      "market_implied": 0.5298,
+      "market_hold": 0.0739,
+      "market_edge": 0.1407,
+      "price_clears": true,
+      "probability_basis": "empirical_shrunk",
+      "probability_detail": {
+        "empirical": 0.6705,
+        "modelled": null
+      },
+      "alternatives": [
+        {
+          "stat": "pitcher_outs",
+          "line": 11.5,
+          "needs": 12,
+          "prob": 0.9856,
+          "base_rate": 0.9376,
+          "lift": 0.048
+        },
+        {
+          "stat": "pitcher_outs",
+          "line": 12.5,
+          "needs": 13,
+          "prob": 0.9733,
+          "base_rate": 0.8842,
+          "lift": 0.0891
+        },
+        {
+          "stat": "pitcher_outs",
+          "line": 13.5,
+          "needs": 14,
+          "prob": 0.885,
+          "base_rate": 0.8352,
+          "lift": 0.0498
+        }
+      ],
+      "why": [
+        "Recorded 16+ outs (5.1 IP) in 67.0% of his last 20 real starts (league 57.2%, avg 17.15 outs/start)"
+      ],
+      "watchouts": [],
+      "signal_weight_adjustment": -9.6,
+      "recommendation_status": "top_pick",
+      "status_reasons": [
+        "clears the real probability floor (>= 60%), a real evidence grade (A), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+        "note: the market itself disagrees with this read (14.4 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+      ],
+      "stale": false,
+      "model_version": "2026.08.15",
+      "selection_policy_version": "1.0.0",
+      "calibration_version": "1.0.0",
+      "feature_version": "1.0.0",
+      "git_sha": "a73bf41",
+      "prediction_timestamp": "2026-08-18T15:07:05.811735+00:00",
+      "odds_timestamp": "2026-08-18T15:07:05.808707+00:00",
+      "lineup_checked_at": "2026-08-18T15:07:05.808707+00:00"
+    },
+    {
+      "rank": 2,
+      "type": "pitcher",
+      "name": "Zebby Matthews",
+      "player_id": 805673,
+      "team": "Minnesota Twins",
+      "matchup": "Atlanta Braves @ Minnesota Twins",
+      "game_pk": 823667,
+      "side": "home",
+      "combo_player_ids": null,
+      "prop": "Over 15.5 Outs Recorded",
+      "projection": {
+        "stat": "pitcher_outs",
+        "value": 15.5,
+        "needs": 16
+      },
+      "lean": null,
+      "score": 57.2,
+      "confidence": "Medium",
+      "notable_signals": 0,
+      "category": null,
+      "hit_probability": 0.6106,
+      "signals": {
+        "outs_rate": 0.6106,
+        "avg_outs_per_start": 17.06
+      },
+      "base_rate": 0.5724,
+      "lift": 0.0382,
+      "raw_hit_probability": null,
+      "calibrated_by": null,
+      "prob_ci": null,
+      "sample_n": 16,
+      "reliability": "A",
+      "lineup_assumed": null,
+      "max_acceptable_price": -157,
+      "estimated_odds": -182,
+      "market_odds": -125,
+      "market_implied": 0.5169,
+      "market_hold": 0.0748,
+      "market_edge": 0.0937,
+      "price_clears": true,
+      "probability_basis": "empirical_shrunk",
+      "probability_detail": {
+        "empirical": 0.6106,
+        "modelled": null
+      },
+      "alternatives": [
+        {
+          "stat": "pitcher_outs",
+          "line": 11.5,
+          "needs": 12,
+          "prob": 0.9375,
+          "base_rate": 0.9376,
+          "lift": -0.0001
+        },
+        {
+          "stat": "pitcher_outs",
+          "line": 12.5,
+          "needs": 13,
+          "prob": 0.923,
+          "base_rate": 0.8842,
+          "lift": 0.0388
+        },
+        {
+          "stat": "pitcher_outs",
+          "line": 13.5,
+          "needs": 14,
+          "prob": 0.8641,
+          "base_rate": 0.8352,
+          "lift": 0.0289
+        }
+      ],
+      "why": [
+        "Recorded 16+ outs (5.1 IP) in 61.1% of his last 16 real starts (league 57.2%, avg 17.06 outs/start)"
+      ],
+      "watchouts": [],
+      "signal_weight_adjustment": -9.58,
+      "recommendation_status": "top_pick",
+      "status_reasons": [
+        "clears the real probability floor (>= 60%), a real evidence grade (A), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+        "note: the market itself disagrees with this read (9.6 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+      ],
+      "stale": false,
+      "model_version": "2026.08.15",
+      "selection_policy_version": "1.0.0",
+      "calibration_version": "1.0.0",
+      "feature_version": "1.0.0",
+      "git_sha": "a73bf41",
+      "prediction_timestamp": "2026-08-18T15:07:05.811735+00:00",
+      "odds_timestamp": "2026-08-18T15:07:05.808707+00:00",
+      "lineup_checked_at": "2026-08-18T15:07:05.808707+00:00"
+    },
+    {
+      "rank": 3,
+      "type": "pitcher",
+      "name": "Braxton Ashcraft",
+      "player_id": 677952,
+      "team": "Pittsburgh Pirates",
+      "matchup": "Detroit Tigers @ Pittsburgh Pirates",
+      "game_pk": 823341,
+      "side": "home",
+      "combo_player_ids": null,
+      "prop": "Over 17.5 Outs Recorded",
+      "projection": {
+        "stat": "pitcher_outs",
+        "value": 17.5,
+        "needs": 18
+      },
+      "lean": null,
+      "score": 65.0,
+      "confidence": "Medium",
+      "notable_signals": 1,
+      "category": null,
+      "hit_probability": 0.55,
+      "signals": {
+        "outs_rate": 0.55,
+        "avg_outs_per_start": 17.67
+      },
+      "base_rate": 0.4165,
+      "lift": 0.1335,
+      "raw_hit_probability": null,
+      "calibrated_by": null,
+      "prob_ci": null,
+      "sample_n": 24,
+      "reliability": "A",
+      "lineup_assumed": null,
+      "max_acceptable_price": -122,
+      "estimated_odds": -141,
+      "market_odds": -102,
+      "market_implied": 0.4718,
+      "market_hold": 0.0702,
+      "market_edge": 0.0782,
+      "price_clears": true,
+      "probability_basis": "empirical_shrunk",
+      "probability_detail": {
+        "empirical": 0.55,
+        "modelled": null
+      },
+      "alternatives": [
+        {
+          "stat": "pitcher_outs",
+          "line": 11.5,
+          "needs": 12,
+          "prob": 0.9542,
+          "base_rate": 0.9376,
+          "lift": 0.0166
+        },
+        {
+          "stat": "pitcher_outs",
+          "line": 12.5,
+          "needs": 13,
+          "prob": 0.9435,
+          "base_rate": 0.8842,
+          "lift": 0.0593
+        },
+        {
+          "stat": "pitcher_outs",
+          "line": 13.5,
+          "needs": 14,
+          "prob": 0.9004,
+          "base_rate": 0.8352,
+          "lift": 0.0652
+        }
+      ],
+      "why": [
+        "Recorded 18+ outs (6.0 IP) in 55.0% of his last 24 real starts (league 41.6%, avg 17.67 outs/start)"
+      ],
+      "watchouts": [],
+      "signal_weight_adjustment": -9.98,
+      "recommendation_status": "neutral",
+      "status_reasons": [
+        "positive-EV on the model's own number, but the model disagrees sharply with the market on this low-probability read (8.2 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 treated as unreliable rather than genuine value"
+      ],
+      "stale": false,
+      "model_version": "2026.08.15",
+      "selection_policy_version": "1.0.0",
+      "calibration_version": "1.0.0",
+      "feature_version": "1.0.0",
+      "git_sha": "a73bf41",
+      "prediction_timestamp": "2026-08-18T15:07:05.811735+00:00",
+      "odds_timestamp": "2026-08-18T15:07:05.808707+00:00",
+      "lineup_checked_at": "2026-08-18T15:07:05.808707+00:00"
+    },
+    {
+      "rank": 4,
+      "type": "game",
+      "name": "Atlanta Braves @ Minnesota Twins \u2014 1st Inning (Both Teams)",
+      "player_id": "nrfi_823667",
+      "team": null,
+      "matchup": "Atlanta Braves @ Minnesota Twins",
+      "game_pk": 823667,
+      "side": "both",
+      "combo_player_ids": null,
+      "prop": "A run scores in the 1st (either team)",
+      "projection": {
+        "stat": "nrfi_combined",
+        "value": 55.2
+      },
+      "lean": "YRFI",
+      "score": 65.1,
+      "confidence": "Medium",
+      "notable_signals": 0,
+      "category": null,
+      "hit_probability": 0.5523,
+      "signals": {
+        "home_team_scores_p": 0.3138,
+        "away_team_scores_p": 0.3475,
+        "fi_n_starts": 15.0
+      },
+      "base_rate": 0.5016,
+      "lift": 0.0507,
+      "raw_hit_probability": null,
+      "calibrated_by": null,
+      "prob_ci": null,
+      "sample_n": 15,
+      "reliability": "B",
+      "lineup_assumed": null,
+      "max_acceptable_price": -123,
+      "estimated_odds": -142,
+      "market_odds": -115,
+      "market_implied": 0.5042,
+      "market_hold": 0.061,
+      "market_edge": 0.0481,
+      "price_clears": true,
+      "probability_basis": "combined_shrunk",
+      "probability_detail": {
+        "empirical": null,
+        "modelled": null
+      },
+      "alternatives": null,
+      "why": [
+        "Minnesota Twins scores off Tyler Mahle (away SP) in the bottom 1st: 31.4% (shrunk, 19 starts)",
+        "Atlanta Braves scores off Zebby Matthews (home SP) in the top 1st: 34.8% (shrunk, 15 starts)",
+        "This is the real both-teams NRFI/YRFI market -- combines both starters' halves of the 1st, not a one-sided team read."
+      ],
+      "watchouts": [],
+      "signal_weight_adjustment": 9.94,
+      "recommendation_status": "lean",
+      "status_reasons": [
+        "a real, positive read that doesn't clear every Top Pick requirement"
+      ],
+      "stale": false,
+      "model_version": "2026.08.15",
+      "selection_policy_version": "1.0.0",
+      "calibration_version": "1.0.0",
+      "feature_version": "1.0.0",
+      "git_sha": "a73bf41",
+      "prediction_timestamp": "2026-08-18T15:07:05.811735+00:00",
+      "odds_timestamp": "2026-08-18T15:07:05.808707+00:00",
+      "lineup_checked_at": "2026-08-18T15:07:05.808707+00:00"
+    },
+    {
+      "rank": 5,
+      "type": "pitcher",
+      "name": "Jack Perkins",
+      "player_id": 678022,
+      "team": "Athletics",
+      "matchup": "Athletics @ Kansas City Royals",
+      "game_pk": 824075,
+      "side": null,
+      "combo_player_ids": null,
+      "prop": "Over 3.5 Strikeouts",
+      "projection": {
+        "stat": "strikeouts",
+        "value": 3.5,
+        "needs": 4
+      },
+      "lean": null,
+      "score": 53.2,
+      "confidence": "Low",
+      "notable_signals": 0,
+      "category": "best_of_category",
+      "hit_probability": 0.6219,
+      "signals": {
+        "opp_team_k_pct": 42.0,
+        "same_hand_ratio": 43.75,
+        "l14_k_pct": 0.0,
+        "env_neutral": 50.0
+      },
+      "base_rate": 0.7122,
+      "lift": -0.0903,
+      "raw_hit_probability": 0.7397,
+      "calibrated_by": "strikeouts",
+      "prob_ci": null,
+      "sample_n": 11,
+      "reliability": "B",
+      "lineup_assumed": null,
+      "max_acceptable_price": -164,
+      "estimated_odds": -191,
+      "market_odds": -140,
+      "market_implied": 0.5506,
+      "market_hold": null,
+      "market_edge": 0.0713,
+      "price_clears": true,
+      "probability_basis": "modelled_shrunk",
+      "probability_detail": {
+        "empirical": 0.7692,
+        "modelled": 0.7673
+      },
+      "alternatives": [
+        {
+          "line": 4.5,
+          "needs": 5,
+          "prob": 0.5584,
+          "basis": "modelled_shrunk",
+          "base_rate": 0.538,
+          "lift": 0.0204,
+          "empirical": 0.5314,
+          "modelled": 0.5788
+        },
+        {
+          "line": 5.5,
+          "needs": 6,
+          "prob": 0.3786,
+          "basis": "modelled_shrunk",
+          "base_rate": 0.3767,
+          "lift": 0.0019,
+          "empirical": 0.4199,
+          "modelled": 0.3805
+        },
+        {
+          "line": 6.5,
+          "needs": 7,
+          "prob": 0.23,
+          "basis": "modelled_shrunk",
+          "base_rate": 0.2442,
+          "lift": -0.0142,
+          "empirical": 0.2566,
+          "modelled": 0.2158
+        }
+      ],
+      "why": [
+        "Opposing team K% 21.2 (MLB Stats API \u2014 FanGraphs team page unreachable)",
+        "Expected workload 22.6 batters faced (his own 22.0/start over 2 real starts, shrunk toward the 23.1 league mean)",
+        "3/8 known-hand opposing batters same-handed",
+        "L14 K% 11.4 (44 PA)",
+        "Recency-weighted K rate 22.0% (exp. decay, halflife 30d, 11 real starts / 238 BF) \u2014 drives the strikeout probability model"
+      ],
+      "watchouts": [
+        "Workload estimate rests on only 2 starts in the L14 window \u2014 most start-to-start variation in batters faced is noise, so this is shrunk heavily toward league average"
+      ],
+      "signal_weight_adjustment": null,
+      "recommendation_status": "top_pick",
+      "status_reasons": [
+        "clears the real probability floor (>= 60%), a real evidence grade (B), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+        "note: the market itself disagrees with this read (8.2 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+      ],
+      "stale": false,
+      "model_version": "2026.08.15",
+      "selection_policy_version": "1.0.0",
+      "calibration_version": "1.0.0",
+      "feature_version": "1.0.0",
+      "git_sha": "a73bf41",
+      "prediction_timestamp": "2026-08-18T15:07:05.811735+00:00",
+      "odds_timestamp": "2026-08-18T15:07:05.808707+00:00",
+      "lineup_checked_at": "2026-08-18T15:07:05.808707+00:00"
+    },
+    {
+      "rank": 6,
+      "type": "pitcher",
+      "name": "Cal Quantrill",
+      "player_id": 615698,
+      "team": "Texas Rangers",
+      "matchup": "Washington Nationals @ Texas Rangers",
+      "game_pk": 822859,
+      "side": null,
+      "combo_player_ids": null,
+      "prop": "Over 3.5 Strikeouts",
+      "projection": {
+        "stat": "strikeouts",
+        "value": 3.5,
+        "needs": 4
+      },
+      "lean": null,
+      "score": 45.5,
+      "confidence": "Low",
+      "notable_signals": 0,
+      "category": "best_of_category",
+      "hit_probability": 0.6157,
+      "signals": {
+        "opp_team_k_pct": 46.0,
+        "same_hand_ratio": 57.1429,
+        "l14_k_pct": 52.9412,
+        "env_neutral": 50.0
+      },
+      "base_rate": 0.7122,
+      "lift": -0.0965,
+      "raw_hit_probability": 0.7085,
+      "calibrated_by": "strikeouts",
+      "prob_ci": null,
+      "sample_n": 8,
+      "reliability": "C",
+      "lineup_assumed": null,
+      "max_acceptable_price": -160,
+      "estimated_odds": -186,
+      "market_odds": -115,
+      "market_implied": 0.5042,
+      "market_hold": null,
+      "market_edge": 0.1115,
+      "price_clears": true,
+      "probability_basis": "modelled_shrunk",
+      "probability_detail": {
+        "empirical": 0.5768,
+        "modelled": 0.7049
+      },
+      "alternatives": [
+        {
+          "line": 4.5,
+          "needs": 5,
+          "prob": 0.5195,
+          "basis": "modelled_shrunk",
+          "base_rate": 0.538,
+          "lift": -0.0185,
+          "empirical": 0.431,
+          "modelled": 0.5009
+        },
+        {
+          "line": 5.5,
+          "needs": 6,
+          "prob": 0.3417,
+          "basis": "modelled_shrunk",
+          "base_rate": 0.3767,
+          "lift": -0.035,
+          "empirical": 0.2956,
+          "modelled": 0.3067
+        },
+        {
+          "line": 6.5,
+          "needs": 7,
+          "prob": 0.2025,
+          "basis": "modelled_shrunk",
+          "base_rate": 0.2442,
+          "lift": -0.0417,
+          "empirical": 0.1688,
+          "modelled": 0.1608
+        }
+      ],
+      "why": [
+        "Opposing team K% 21.6 (MLB Stats API \u2014 FanGraphs team page unreachable)",
+        "Expected workload 22.8 batters faced (his own 22.0/start over 1 real start, shrunk toward the 23.1 league mean)",
+        "3/7 known-hand opposing batters same-handed",
+        "L14 K% 24.0 (25 PA)",
+        "Recency-weighted K rate 20.2% (exp. decay, halflife 30d, 8 real starts / 156 BF) \u2014 drives the strikeout probability model"
+      ],
+      "watchouts": [
+        "Workload estimate rests on only 1 start in the L14 window \u2014 most start-to-start variation in batters faced is noise, so this is shrunk heavily toward league average"
+      ],
+      "signal_weight_adjustment": null,
+      "recommendation_status": "lean",
+      "status_reasons": [
+        "reliability grade C is too thin a sample to stand behind as a Top Pick yet, even though the read itself is real"
+      ],
+      "stale": false,
+      "model_version": "2026.08.15",
+      "selection_policy_version": "1.0.0",
+      "calibration_version": "1.0.0",
+      "feature_version": "1.0.0",
+      "git_sha": "a73bf41",
+      "prediction_timestamp": "2026-08-18T15:07:05.811735+00:00",
+      "odds_timestamp": "2026-08-18T15:07:05.808707+00:00",
+      "lineup_checked_at": "2026-08-18T15:07:05.808707+00:00"
+    },
+    {
+      "rank": 7,
+      "type": "pitcher",
+      "name": "Jackson Kent",
+      "player_id": 800600,
+      "team": "Washington Nationals",
+      "matchup": "Washington Nationals @ Texas Rangers",
+      "game_pk": 822859,
+      "side": null,
+      "combo_player_ids": null,
+      "prop": "Over 4.5 Strikeouts",
+      "projection": {
+        "stat": "strikeouts",
+        "value": 4.5,
+        "needs": 5
+      },
+      "lean": null,
+      "score": 38.4,
+      "confidence": "Low",
+      "notable_signals": 0,
+      "category": "best_of_category",
+      "hit_probability": 0.6149,
+      "signals": {
+        "opp_team_k_pct": 59.0,
+        "same_hand_ratio": 33.3333,
+        "l14_k_pct": 97.6471,
+        "env_neutral": 50.0
+      },
+      "base_rate": 0.538,
+      "lift": 0.0769,
+      "raw_hit_probability": 0.7044,
+      "calibrated_by": "strikeouts",
+      "prob_ci": null,
+      "sample_n": 0,
+      "reliability": "D",
+      "lineup_assumed": null,
+      "max_acceptable_price": -160,
+      "estimated_odds": -186,
+      "market_odds": 142,
+      "market_implied": 0.3894,
+      "market_hold": null,
+      "market_edge": 0.2255,
+      "price_clears": true,
+      "probability_basis": "modelled_shrunk",
+      "probability_detail": {
+        "empirical": null,
+        "modelled": 0.8708
+      },
+      "alternatives": [
+        {
+          "line": 3.5,
+          "needs": 4,
+          "prob": 0.8309,
+          "basis": "modelled_shrunk",
+          "base_rate": 0.7122,
+          "lift": 0.1187,
+          "empirical": null,
+          "modelled": 0.9496
+        },
+        {
+          "line": 5.5,
+          "needs": 6,
+          "prob": 0.5583,
+          "basis": "modelled_shrunk",
+          "base_rate": 0.3767,
+          "lift": 0.1816,
+          "empirical": null,
+          "modelled": 0.7399
+        },
+        {
+          "line": 6.5,
+          "needs": 7,
+          "prob": 0.4066,
+          "basis": "modelled_shrunk",
+          "base_rate": 0.2442,
+          "lift": 0.1624,
+          "empirical": null,
+          "modelled": 0.569
+        }
+      ],
+      "why": [
+        "Opposing team K% 22.9 (MLB Stats API \u2014 FanGraphs team page unreachable)",
+        "Expected workload 22.0 batters faced (his own 19.0/start over 1 real start, shrunk toward the 23.1 league mean)",
+        "3/9 known-hand opposing batters same-handed",
+        "L14 K% 31.6 (19 PA)"
+      ],
+      "watchouts": [
+        "Workload estimate rests on only 1 start in the L14 window \u2014 most start-to-start variation in batters faced is noise, so this is shrunk heavily toward league average"
+      ],
+      "signal_weight_adjustment": null,
+      "recommendation_status": "lean",
+      "status_reasons": [
+        "reliability grade D is too thin a sample to stand behind as a Top Pick yet, even though the read itself is real"
+      ],
+      "stale": false,
+      "model_version": "2026.08.15",
+      "selection_policy_version": "1.0.0",
+      "calibration_version": "1.0.0",
+      "feature_version": "1.0.0",
+      "git_sha": "a73bf41",
+      "prediction_timestamp": "2026-08-18T15:07:05.811735+00:00",
+      "odds_timestamp": "2026-08-18T15:07:05.808707+00:00",
+      "lineup_checked_at": "2026-08-18T15:07:05.808707+00:00"
+    },
+    {
+      "rank": 8,
+      "type": "pitcher",
+      "name": "Carlos Rod\u00f3n",
+      "player_id": 607074,
+      "team": "New York Yankees",
+      "matchup": "New York Yankees @ Baltimore Orioles",
+      "game_pk": 824803,
+      "side": null,
+      "combo_player_ids": null,
+      "prop": "Over 4.5 Strikeouts",
+      "projection": {
+        "stat": "strikeouts",
+        "value": 4.5,
+        "needs": 5
+      },
+      "lean": null,
+      "score": 46.2,
+      "confidence": "Low",
+      "notable_signals": 0,
+      "category": "best_of_category",
+      "hit_probability": 0.6066,
+      "signals": {
+        "opp_team_k_pct": 73.0,
+        "same_hand_ratio": 12.5,
+        "env_neutral": 50.0
+      },
+      "base_rate": 0.538,
+      "lift": 0.0686,
+      "raw_hit_probability": 0.663,
+      "calibrated_by": "strikeouts",
+      "prob_ci": null,
+      "sample_n": 9,
+      "reliability": "B",
+      "lineup_assumed": null,
+      "max_acceptable_price": -154,
+      "estimated_odds": -179,
+      "market_odds": -148,
+      "market_implied": 0.5631,
+      "market_hold": null,
+      "market_edge": 0.0435,
+      "price_clears": true,
+      "probability_basis": "modelled_shrunk",
+      "probability_detail": {
+        "empirical": 0.6689,
+        "modelled": 0.7881
+      },
+      "alternatives": [
+        {
+          "line": 3.5,
+          "needs": 4,
+          "prob": 0.8089,
+          "basis": "modelled_shrunk",
+          "base_rate": 0.7122,
+          "lift": 0.0967,
+          "empirical": 0.805,
+          "modelled": 0.9057
+        },
+        {
+          "line": 5.5,
+          "needs": 6,
+          "prob": 0.4994,
+          "basis": "modelled_shrunk",
+          "base_rate": 0.3767,
+          "lift": 0.1227,
+          "empirical": 0.5425,
+          "modelled": 0.622
+        },
+        {
+          "line": 6.5,
+          "needs": 7,
+          "prob": 0.3405,
+          "basis": "modelled_shrunk",
+          "base_rate": 0.2442,
+          "lift": 0.0963,
+          "empirical": 0.3575,
+          "modelled": 0.4368
+        }
+      ],
+      "why": [
+        "Opposing team K% 24.3 (MLB Stats API \u2014 FanGraphs team page unreachable)",
+        "Expected workload 23.1 batters faced (league average \u2014 no real start found for him in the L14 window)",
+        "2/8 known-hand opposing batters same-handed",
+        "Recency-weighted K rate 27.0% (exp. decay, halflife 30d, 9 real starts / 194 BF) \u2014 drives the strikeout probability model"
+      ],
+      "watchouts": [
+        "L14 Statcast sample too thin \u2014 recent-form read falls back to season K%",
+        "No L14 start found for this pitcher \u2014 workload defaulted to the league average"
+      ],
+      "signal_weight_adjustment": null,
+      "recommendation_status": "lean",
+      "status_reasons": [
+        "a real, positive read that doesn't clear every Top Pick requirement"
+      ],
+      "stale": false,
+      "model_version": "2026.08.15",
+      "selection_policy_version": "1.0.0",
+      "calibration_version": "1.0.0",
+      "feature_version": "1.0.0",
+      "git_sha": "a73bf41",
+      "prediction_timestamp": "2026-08-18T15:07:05.811735+00:00",
+      "odds_timestamp": "2026-08-18T15:07:05.808707+00:00",
+      "lineup_checked_at": "2026-08-18T15:07:05.808707+00:00"
+    },
+    {
+      "rank": 9,
+      "type": "pitcher",
+      "name": "Tyler Mahle",
+      "player_id": 641816,
+      "team": "Atlanta Braves",
+      "matchup": "Atlanta Braves @ Minnesota Twins",
+      "game_pk": 823667,
+      "side": null,
+      "combo_player_ids": null,
+      "prop": "Over 4.5 Strikeouts",
+      "projection": {
+        "stat": "strikeouts",
+        "value": 4.5,
+        "needs": 5
+      },
+      "lean": null,
+      "score": 39.6,
+      "confidence": "Low",
+      "notable_signals": 0,
+      "category": "best_of_category",
+      "hit_probability": 0.6016,
+      "signals": {
+        "opp_team_k_pct": 45.0,
+        "same_hand_ratio": 100.0,
+        "l14_k_pct": 100.0,
+        "env_neutral": 50.0
+      },
+      "base_rate": 0.538,
+      "lift": 0.0636,
+      "raw_hit_probability": 0.6379,
+      "calibrated_by": "strikeouts",
+      "prob_ci": null,
+      "sample_n": 20,
+      "reliability": "A",
+      "lineup_assumed": null,
+      "max_acceptable_price": -151,
+      "estimated_odds": -175,
+      "market_odds": -122,
+      "market_implied": 0.5188,
+      "market_hold": null,
+      "market_edge": 0.0828,
+      "price_clears": true,
+      "probability_basis": "modelled_shrunk",
+      "probability_detail": {
+        "empirical": 0.5782,
+        "modelled": 0.7379
+      },
+      "alternatives": [
+        {
+          "line": 3.5,
+          "needs": 4,
+          "prob": 0.7942,
+          "basis": "modelled_shrunk",
+          "base_rate": 0.7122,
+          "lift": 0.082,
+          "empirical": 0.7721,
+          "modelled": 0.8763
+        },
+        {
+          "line": 5.5,
+          "needs": 6,
+          "prob": 0.4669,
+          "basis": "modelled_shrunk",
+          "base_rate": 0.3767,
+          "lift": 0.0902,
+          "empirical": 0.3899,
+          "modelled": 0.5571
+        },
+        {
+          "line": 6.5,
+          "needs": 7,
+          "prob": 0.3074,
+          "basis": "modelled_shrunk",
+          "base_rate": 0.2442,
+          "lift": 0.0632,
+          "empirical": 0.2063,
+          "modelled": 0.3706
+        }
+      ],
+      "why": [
+        "Opposing team K% 21.5 (MLB Stats API \u2014 FanGraphs team page unreachable)",
+        "Expected workload 22.6 batters faced (his own 22.0/start over 2 real starts, shrunk toward the 23.1 league mean)",
+        "5/7 known-hand opposing batters same-handed",
+        "L14 K% 36.4 (44 PA)",
+        "Recency-weighted K rate 26.0% (exp. decay, halflife 30d, 20 real starts / 448 BF) \u2014 drives the strikeout probability model"
+      ],
+      "watchouts": [
+        "Workload estimate rests on only 2 starts in the L14 window \u2014 most start-to-start variation in batters faced is noise, so this is shrunk heavily toward league average"
+      ],
+      "signal_weight_adjustment": null,
+      "recommendation_status": "top_pick",
+      "status_reasons": [
+        "clears the real probability floor (>= 60%), a real evidence grade (A), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+        "note: the market itself disagrees with this read (9.3 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+      ],
+      "stale": false,
+      "model_version": "2026.08.15",
+      "selection_policy_version": "1.0.0",
+      "calibration_version": "1.0.0",
+      "feature_version": "1.0.0",
+      "git_sha": "a73bf41",
+      "prediction_timestamp": "2026-08-18T15:07:05.811735+00:00",
+      "odds_timestamp": "2026-08-18T15:07:05.808707+00:00",
+      "lineup_checked_at": "2026-08-18T15:07:05.808707+00:00"
+    },
+    {
+      "rank": 10,
+      "type": "pitcher",
+      "name": "Carlos Rod\u00f3n",
+      "player_id": 607074,
+      "team": "New York Yankees",
+      "matchup": "New York Yankees @ Baltimore Orioles",
+      "game_pk": 824803,
+      "side": "away",
+      "combo_player_ids": null,
+      "prop": "Over 14.5 Outs Recorded",
+      "projection": {
+        "stat": "pitcher_outs",
+        "value": 14.5,
+        "needs": 15
+      },
+      "lean": null,
+      "score": 46.5,
+      "confidence": "Low",
+      "notable_signals": 0,
+      "category": "best_of_category",
+      "hit_probability": 0.7838,
+      "signals": {
+        "outs_rate": 0.7838,
+        "avg_outs_per_start": 15.44
+      },
+      "base_rate": 0.7929,
+      "lift": -0.0091,
+      "raw_hit_probability": null,
+      "calibrated_by": null,
+      "prob_ci": null,
+      "sample_n": 9,
+      "reliability": "B",
+      "lineup_assumed": null,
+      "max_acceptable_price": -350,
+      "estimated_odds": -452,
+      "market_odds": null,
+      "market_implied": null,
+      "market_hold": null,
+      "market_edge": null,
+      "price_clears": null,
+      "probability_basis": "empirical_shrunk",
+      "probability_detail": {
+        "empirical": 0.7838,
+        "modelled": null
+      },
+      "alternatives": [
+        {
+          "stat": "pitcher_outs",
+          "line": 11.5,
+          "needs": 12,
+          "prob": 0.9084,
+          "base_rate": 0.9376,
+          "lift": -0.0292
+        },
+        {
+          "stat": "pitcher_outs",
+          "line": 12.5,
+          "needs": 13,
+          "prob": 0.887,
+          "base_rate": 0.8842,
+          "lift": 0.0028
+        },
+        {
+          "stat": "pitcher_outs",
+          "line": 13.5,
+          "needs": 14,
+          "prob": 0.8007,
+          "base_rate": 0.8352,
+          "lift": -0.0345
+        }
+      ],
+      "why": [
+        "Recorded 15+ outs (5.0 IP) in 78.4% of his last 9 real starts (league 79.3%, avg 15.44 outs/start)"
+      ],
+      "watchouts": [
+        "Only 9 real starts of workload history -- shrunk heavily toward league average",
+        "No real FanDuel line found for this pitcher yet -- this threshold is model-anchored to his average workload, not a posted market number",
+        "No positive read here: 0.9 pts BELOW the 79% league base rate for this market"
+      ],
+      "signal_weight_adjustment": null,
+      "recommendation_status": "neutral",
+      "status_reasons": [
+        "no market price posted, and no strong enough read to lean on regardless"
+      ],
+      "stale": false,
+      "model_version": "2026.08.15",
+      "selection_policy_version": "1.0.0",
+      "calibration_version": "1.0.0",
+      "feature_version": "1.0.0",
+      "git_sha": "a73bf41",
+      "prediction_timestamp": "2026-08-18T15:07:05.811735+00:00",
+      "odds_timestamp": "2026-08-18T15:07:05.808707+00:00",
+      "lineup_checked_at": "2026-08-18T15:07:05.808707+00:00"
+    },
+    {
+      "rank": 11,
+      "type": "pitcher",
+      "name": "Carson Whisenhunt",
+      "player_id": 687931,
+      "team": "San Francisco Giants",
+      "matchup": "San Francisco Giants @ Cleveland Guardians",
+      "game_pk": 824398,
+      "side": "away",
+      "combo_player_ids": null,
+      "prop": "Over 14.5 Outs Recorded",
+      "projection": {
+        "stat": "pitcher_outs",
+        "value": 14.5,
+        "needs": 15
+      },
+      "lean": null,
+      "score": 47.3,
+      "confidence": "Low",
+      "notable_signals": 0,
+      "category": "best_of_category",
+      "hit_probability": 0.7298,
+      "signals": {
+        "outs_rate": 0.7298,
+        "avg_outs_per_start": 14.0
+      },
+      "base_rate": 0.7929,
+      "lift": -0.0631,
+      "raw_hit_probability": null,
+      "calibrated_by": null,
+      "prob_ci": null,
+      "sample_n": 6,
+      "reliability": "C",
+      "lineup_assumed": null,
+      "max_acceptable_price": -270,
+      "estimated_odds": -325,
+      "market_odds": -192,
+      "market_implied": 0.6141,
+      "market_hold": null,
+      "market_edge": 0.1157,
+      "price_clears": true,
+      "probability_basis": "empirical_shrunk",
+      "probability_detail": {
+        "empirical": 0.7298,
+        "modelled": null
+      },
+      "alternatives": [
+        {
+          "stat": "pitcher_outs",
+          "line": 11.5,
+          "needs": 12,
+          "prob": 0.8022,
+          "base_rate": 0.9376,
+          "lift": -0.1354
+        },
+        {
+          "stat": "pitcher_outs",
+          "line": 12.5,
+          "needs": 13,
+          "prob": 0.7754,
+          "base_rate": 0.8842,
+          "lift": -0.1088
+        },
+        {
+          "stat": "pitcher_outs",
+          "line": 13.5,
+          "needs": 14,
+          "prob": 0.7509,
+          "base_rate": 0.8352,
+          "lift": -0.0843
+        }
+      ],
+      "why": [
+        "Recorded 15+ outs (5.0 IP) in 73.0% of his last 6 real starts (league 79.3%, avg 14.0 outs/start)"
+      ],
+      "watchouts": [
+        "Only 6 real starts of workload history -- shrunk heavily toward league average",
+        "No positive read here: 6.3 pts BELOW the 79% league base rate for this market"
+      ],
+      "signal_weight_adjustment": null,
+      "recommendation_status": "lean",
+      "status_reasons": [
+        "reliability grade C is too thin a sample to stand behind as a Top Pick yet, even though the read itself is real"
+      ],
+      "stale": false,
+      "model_version": "2026.08.15",
+      "selection_policy_version": "1.0.0",
+      "calibration_version": "1.0.0",
+      "feature_version": "1.0.0",
+      "git_sha": "a73bf41",
+      "prediction_timestamp": "2026-08-18T15:07:05.811735+00:00",
+      "odds_timestamp": "2026-08-18T15:07:05.808707+00:00",
+      "lineup_checked_at": "2026-08-18T15:07:05.808707+00:00"
+    },
+    {
+      "rank": 12,
+      "type": "pitcher",
+      "name": "Eric Lauer",
+      "player_id": 641778,
+      "team": "Los Angeles Dodgers",
+      "matchup": "Los Angeles Dodgers @ Colorado Rockies",
+      "game_pk": 824319,
+      "side": "away",
+      "combo_player_ids": null,
+      "prop": "Over 14.5 Outs Recorded",
+      "projection": {
+        "stat": "pitcher_outs",
+        "value": 14.5,
+        "needs": 15
+      },
+      "lean": null,
+      "score": 51.5,
+      "confidence": "Low",
+      "notable_signals": 0,
+      "category": "best_of_category",
+      "hit_probability": 0.7162,
+      "signals": {
+        "outs_rate": 0.7162,
+        "avg_outs_per_start": 15.44
+      },
+      "base_rate": 0.7929,
+      "lift": -0.0767,
+      "raw_hit_probability": null,
+      "calibrated_by": null,
+      "prob_ci": null,
+      "sample_n": 16,
+      "reliability": "A",
+      "lineup_assumed": null,
+      "max_acceptable_price": -252,
+      "estimated_odds": -302,
+      "market_odds": null,
+      "market_implied": null,
+      "market_hold": null,
+      "market_edge": null,
+      "price_clears": null,
+      "probability_basis": "empirical_shrunk",
+      "probability_detail": {
+        "empirical": 0.7162,
+        "modelled": null
+      },
+      "alternatives": [
+        {
+          "stat": "pitcher_outs",
+          "line": 11.5,
+          "needs": 12,
+          "prob": 0.9375,
+          "base_rate": 0.9376,
+          "lift": -0.0001
+        },
+        {
+          "stat": "pitcher_outs",
+          "line": 12.5,
+          "needs": 13,
+          "prob": 0.8775,
+          "base_rate": 0.8842,
+          "lift": -0.0067
+        },
+        {
+          "stat": "pitcher_outs",
+          "line": 13.5,
+          "needs": 14,
+          "prob": 0.7732,
+          "base_rate": 0.8352,
+          "lift": -0.062
+        }
+      ],
+      "why": [
+        "Recorded 15+ outs (5.0 IP) in 71.6% of his last 16 real starts (league 79.3%, avg 15.44 outs/start)"
+      ],
+      "watchouts": [
+        "No real FanDuel line found for this pitcher yet -- this threshold is model-anchored to his average workload, not a posted market number",
+        "No positive read here: 7.7 pts BELOW the 79% league base rate for this market"
+      ],
+      "signal_weight_adjustment": null,
+      "recommendation_status": "neutral",
+      "status_reasons": [
+        "no market price posted, and no strong enough read to lean on regardless"
+      ],
+      "stale": false,
+      "model_version": "2026.08.15",
+      "selection_policy_version": "1.0.0",
+      "calibration_version": "1.0.0",
+      "feature_version": "1.0.0",
+      "git_sha": "a73bf41",
+      "prediction_timestamp": "2026-08-18T15:07:05.811735+00:00",
+      "odds_timestamp": "2026-08-18T15:07:05.808707+00:00",
+      "lineup_checked_at": "2026-08-18T15:07:05.808707+00:00"
+    },
+    {
+      "rank": 13,
+      "type": "pitcher",
+      "name": "Jack Perkins",
+      "player_id": 678022,
+      "team": "Athletics",
+      "matchup": "Athletics @ Kansas City Royals",
+      "game_pk": 824075,
+      "side": "away",
+      "combo_player_ids": null,
+      "prop": "Over 13.5 Outs Recorded",
+      "projection": {
+        "stat": "pitcher_outs",
+        "value": 13.5,
+        "needs": 14
+      },
+      "lean": null,
+      "score": 43.7,
+      "confidence": "Low",
+      "notable_signals": 0,
+      "category": "best_of_category",
+      "hit_probability": 0.7065,
+      "signals": {
+        "outs_rate": 0.7065,
+        "avg_outs_per_start": 13.82
+      },
+      "base_rate": 0.8352,
+      "lift": -0.1287,
+      "raw_hit_probability": null,
+      "calibrated_by": null,
+      "prob_ci": null,
+      "sample_n": 11,
+      "reliability": "B",
+      "lineup_assumed": null,
+      "max_acceptable_price": -241,
+      "estimated_odds": -287,
+      "market_odds": null,
+      "market_implied": null,
+      "market_hold": null,
+      "market_edge": null,
+      "price_clears": null,
+      "probability_basis": "empirical_shrunk",
+      "probability_detail": {
+        "empirical": 0.7065,
+        "modelled": null
+      },
+      "alternatives": [
+        {
+          "stat": "pitcher_outs",
+          "line": 11.5,
+          "needs": 12,
+          "prob": 0.8603,
+          "base_rate": 0.9376,
+          "lift": -0.0773
+        },
+        {
+          "stat": "pitcher_outs",
+          "line": 12.5,
+          "needs": 13,
+          "prob": 0.7238,
+          "base_rate": 0.8842,
+          "lift": -0.1604
+        },
+        {
+          "stat": "pitcher_outs",
+          "line": 14.5,
+          "needs": 15,
+          "prob": 0.6916,
+          "base_rate": 0.7929,
+          "lift": -0.1013
+        }
+      ],
+      "why": [
+        "Recorded 14+ outs (4.2 IP) in 70.7% of his last 11 real starts (league 83.5%, avg 13.82 outs/start)"
+      ],
+      "watchouts": [
+        "No real FanDuel line found for this pitcher yet -- this threshold is model-anchored to his average workload, not a posted market number",
+        "No positive read here: 12.9 pts BELOW the 84% league base rate for this market"
+      ],
+      "signal_weight_adjustment": null,
+      "recommendation_status": "neutral",
+      "status_reasons": [
+        "no market price posted, and no strong enough read to lean on regardless"
+      ],
+      "stale": false,
+      "model_version": "2026.08.15",
+      "selection_policy_version": "1.0.0",
+      "calibration_version": "1.0.0",
+      "feature_version": "1.0.0",
+      "git_sha": "a73bf41",
+      "prediction_timestamp": "2026-08-18T15:07:05.811735+00:00",
+      "odds_timestamp": "2026-08-18T15:07:05.808707+00:00",
+      "lineup_checked_at": "2026-08-18T15:07:05.808707+00:00"
+    },
+    {
+      "rank": 14,
+      "type": "pitcher",
+      "name": "Keider Montero",
+      "player_id": 672456,
+      "team": "Detroit Tigers",
+      "matchup": "Detroit Tigers @ Pittsburgh Pirates",
+      "game_pk": 823341,
+      "side": "away",
+      "combo_player_ids": null,
+      "prop": "Over 15.5 Outs Recorded",
+      "projection": {
+        "stat": "pitcher_outs",
+        "value": 15.5,
+        "needs": 16
+      },
+      "lean": null,
+      "score": 72.2,
+      "confidence": "High",
+      "notable_signals": 1,
+      "category": "best_of_category",
+      "hit_probability": 0.6705,
+      "signals": {
+        "outs_rate": 0.6705,
+        "avg_outs_per_start": 17.15
+      },
+      "base_rate": 0.5724,
+      "lift": 0.0981,
+      "raw_hit_probability": null,
+      "calibrated_by": null,
+      "prob_ci": null,
+      "sample_n": 20,
+      "reliability": "A",
+      "lineup_assumed": null,
+      "max_acceptable_price": -203,
+      "estimated_odds": -240,
+      "market_odds": -132,
+      "market_implied": 0.5298,
+      "market_hold": null,
+      "market_edge": 0.1407,
+      "price_clears": true,
+      "probability_basis": "empirical_shrunk",
+      "probability_detail": {
+        "empirical": 0.6705,
+        "modelled": null
+      },
+      "alternatives": [
+        {
+          "stat": "pitcher_outs",
+          "line": 11.5,
+          "needs": 12,
+          "prob": 0.9856,
+          "base_rate": 0.9376,
+          "lift": 0.048
+        },
+        {
+          "stat": "pitcher_outs",
+          "line": 12.5,
+          "needs": 13,
+          "prob": 0.9733,
+          "base_rate": 0.8842,
+          "lift": 0.0891
+        },
+        {
+          "stat": "pitcher_outs",
+          "line": 13.5,
+          "needs": 14,
+          "prob": 0.885,
+          "base_rate": 0.8352,
+          "lift": 0.0498
+        }
+      ],
+      "why": [
+        "Recorded 16+ outs (5.1 IP) in 67.0% of his last 20 real starts (league 57.2%, avg 17.15 outs/start)"
+      ],
+      "watchouts": [],
+      "signal_weight_adjustment": null,
+      "recommendation_status": "top_pick",
+      "status_reasons": [
+        "clears the real probability floor (>= 60%), a real evidence grade (A), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+        "note: the market itself disagrees with this read (14.4 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+      ],
+      "stale": false,
+      "model_version": "2026.08.15",
+      "selection_policy_version": "1.0.0",
+      "calibration_version": "1.0.0",
+      "feature_version": "1.0.0",
+      "git_sha": "a73bf41",
+      "prediction_timestamp": "2026-08-18T15:07:05.811735+00:00",
+      "odds_timestamp": "2026-08-18T15:07:05.808707+00:00",
+      "lineup_checked_at": "2026-08-18T15:07:05.808707+00:00"
+    },
+    {
+      "rank": 15,
+      "type": "game",
+      "name": "Atlanta Braves @ Minnesota Twins \u2014 1st Inning (Both Teams)",
+      "player_id": "nrfi_823667",
+      "team": null,
+      "matchup": "Atlanta Braves @ Minnesota Twins",
+      "game_pk": 823667,
+      "side": "both",
+      "combo_player_ids": null,
+      "prop": "A run scores in the 1st (either team)",
+      "projection": {
+        "stat": "nrfi_combined",
+        "value": 55.2
+      },
+      "lean": "YRFI",
+      "score": 65.1,
+      "confidence": "Medium",
+      "notable_signals": 0,
+      "category": "best_of_category",
+      "hit_probability": 0.5523,
+      "signals": {
+        "home_team_scores_p": 0.3138,
+        "away_team_scores_p": 0.3475,
+        "fi_n_starts": 15.0
+      },
+      "base_rate": 0.5016,
+      "lift": 0.0507,
+      "raw_hit_probability": null,
+      "calibrated_by": null,
+      "prob_ci": null,
+      "sample_n": 15,
+      "reliability": "B",
+      "lineup_assumed": null,
+      "max_acceptable_price": -123,
+      "estimated_odds": -142,
+      "market_odds": -115,
+      "market_implied": 0.5042,
+      "market_hold": null,
+      "market_edge": 0.0481,
+      "price_clears": true,
+      "probability_basis": "combined_shrunk",
+      "probability_detail": {
+        "empirical": null,
+        "modelled": null
+      },
+      "alternatives": null,
+      "why": [
+        "Minnesota Twins scores off Tyler Mahle (away SP) in the bottom 1st: 31.4% (shrunk, 19 starts)",
+        "Atlanta Braves scores off Zebby Matthews (home SP) in the top 1st: 34.8% (shrunk, 15 starts)",
+        "This is the real both-teams NRFI/YRFI market -- combines both starters' halves of the 1st, not a one-sided team read."
+      ],
+      "watchouts": [],
+      "signal_weight_adjustment": null,
+      "recommendation_status": "lean",
+      "status_reasons": [
+        "a real, positive read that doesn't clear every Top Pick requirement"
+      ],
+      "stale": false,
+      "model_version": "2026.08.15",
+      "selection_policy_version": "1.0.0",
+      "calibration_version": "1.0.0",
+      "feature_version": "1.0.0",
+      "git_sha": "a73bf41",
+      "prediction_timestamp": "2026-08-18T15:07:05.811735+00:00",
+      "odds_timestamp": "2026-08-18T15:07:05.808707+00:00",
+      "lineup_checked_at": "2026-08-18T15:07:05.808707+00:00"
+    },
+    {
+      "rank": 16,
+      "type": "game",
+      "name": "Detroit Tigers @ Pittsburgh Pirates \u2014 1st Inning (Both Teams)",
+      "player_id": "nrfi_823341",
+      "team": null,
+      "matchup": "Detroit Tigers @ Pittsburgh Pirates",
+      "game_pk": 823341,
+      "side": "both",
+      "combo_player_ids": null,
+      "prop": "No runs in the 1st (both teams)",
+      "projection": {
+        "stat": "nrfi_combined",
+        "value": 54.7
+      },
+      "lean": "NRFI",
+      "score": 66.1,
+      "confidence": "Medium",
+      "notable_signals": 0,
+      "category": "best_of_category",
+      "hit_probability": 0.5468,
+      "signals": {
+        "home_team_scores_p": 0.2506,
+        "away_team_scores_p": 0.2704,
+        "fi_n_starts": 17.0
+      },
+      "base_rate": 0.4984,
+      "lift": 0.0484,
+      "raw_hit_probability": null,
+      "calibrated_by": null,
+      "prob_ci": null,
+      "sample_n": 17,
+      "reliability": "A",
+      "lineup_assumed": null,
+      "max_acceptable_price": -121,
+      "estimated_odds": -139,
+      "market_odds": -125,
+      "market_implied": 0.5239,
+      "market_hold": null,
+      "market_edge": 0.0229,
+      "price_clears": false,
+      "probability_basis": "combined_shrunk",
+      "probability_detail": {
+        "empirical": null,
+        "modelled": null
+      },
+      "alternatives": null,
+      "why": [
+        "Pittsburgh Pirates scores off Keider Montero (away SP) in the bottom 1st: 25.1% (shrunk, 17 starts)",
+        "Detroit Tigers scores off Braxton Ashcraft (home SP) in the top 1st: 27.0% (shrunk, 23 starts)",
+        "This is the real both-teams NRFI/YRFI market -- combines both starters' halves of the 1st, not a one-sided team read."
+      ],
+      "watchouts": [],
+      "signal_weight_adjustment": null,
+      "recommendation_status": "lean",
+      "status_reasons": [
+        "a real, positive read that doesn't clear every Top Pick requirement"
+      ],
+      "stale": false,
+      "model_version": "2026.08.15",
+      "selection_policy_version": "1.0.0",
+      "calibration_version": "1.0.0",
+      "feature_version": "1.0.0",
+      "git_sha": "a73bf41",
+      "prediction_timestamp": "2026-08-18T15:07:05.811735+00:00",
+      "odds_timestamp": "2026-08-18T15:07:05.808707+00:00",
+      "lineup_checked_at": "2026-08-18T15:07:05.808707+00:00"
+    },
+    {
+      "rank": 17,
+      "type": "game",
+      "name": "Toronto Blue Jays @ Tampa Bay Rays \u2014 1st Inning (Both Teams)",
+      "player_id": "nrfi_822938",
+      "team": null,
+      "matchup": "Toronto Blue Jays @ Tampa Bay Rays",
+      "game_pk": 822938,
+      "side": "both",
+      "combo_player_ids": null,
+      "prop": "No runs in the 1st (both teams)",
+      "projection": {
+        "stat": "nrfi_combined",
+        "value": 53.2
+      },
+      "lean": "NRFI",
+      "score": 65.2,
+      "confidence": "Medium",
+      "notable_signals": 0,
+      "category": "best_of_category",
+      "hit_probability": 0.5319,
+      "signals": {
+        "home_team_scores_p": 0.2839,
+        "away_team_scores_p": 0.2572,
+        "fi_n_starts": 23.0
+      },
+      "base_rate": 0.4984,
+      "lift": 0.0335,
+      "raw_hit_probability": null,
+      "calibrated_by": null,
+      "prob_ci": null,
+      "sample_n": 23,
+      "reliability": "A",
+      "lineup_assumed": null,
+      "max_acceptable_price": -114,
+      "estimated_odds": -131,
+      "market_odds": -130,
+      "market_implied": 0.5331,
+      "market_hold": null,
+      "market_edge": -0.0012,
+      "price_clears": false,
+      "probability_basis": "combined_shrunk",
+      "probability_detail": {
+        "empirical": null,
+        "modelled": null
+      },
+      "alternatives": null,
+      "why": [
+        "Tampa Bay Rays scores off Jos\u00e9 Soriano (away SP) in the bottom 1st: 28.4% (shrunk, 23 starts)",
+        "Toronto Blue Jays scores off Nick Martinez (home SP) in the top 1st: 25.7% (shrunk, 23 starts)",
+        "This is the real both-teams NRFI/YRFI market -- combines both starters' halves of the 1st, not a one-sided team read."
+      ],
+      "watchouts": [],
+      "signal_weight_adjustment": null,
+      "recommendation_status": "lean",
+      "status_reasons": [
+        "a real, positive read that doesn't clear every Top Pick requirement"
+      ],
+      "stale": false,
+      "model_version": "2026.08.15",
+      "selection_policy_version": "1.0.0",
+      "calibration_version": "1.0.0",
+      "feature_version": "1.0.0",
+      "git_sha": "a73bf41",
+      "prediction_timestamp": "2026-08-18T15:07:05.811735+00:00",
+      "odds_timestamp": "2026-08-18T15:07:05.808707+00:00",
+      "lineup_checked_at": "2026-08-18T15:07:05.808707+00:00"
+    },
+    {
+      "rank": 18,
+      "type": "game",
+      "name": "Seattle Mariners @ Milwaukee Brewers \u2014 1st Inning (Both Teams)",
+      "player_id": "nrfi_823749",
+      "team": null,
+      "matchup": "Seattle Mariners @ Milwaukee Brewers",
+      "game_pk": 823749,
+      "side": "both",
+      "combo_player_ids": null,
+      "prop": "No runs in the 1st (both teams)",
+      "projection": {
+        "stat": "nrfi_combined",
+        "value": 52.9
+      },
+      "lean": "NRFI",
+      "score": 60.8,
+      "confidence": "Medium",
+      "notable_signals": 0,
+      "category": "best_of_category",
+      "hit_probability": 0.5287,
+      "signals": {
+        "home_team_scores_p": 0.2702,
+        "away_team_scores_p": 0.2755,
+        "fi_n_starts": 12.0
+      },
+      "base_rate": 0.4984,
+      "lift": 0.0303,
+      "raw_hit_probability": null,
+      "calibrated_by": null,
+      "prob_ci": null,
+      "sample_n": 12,
+      "reliability": "B",
+      "lineup_assumed": null,
+      "max_acceptable_price": -112,
+      "estimated_odds": -129,
+      "market_odds": -125,
+      "market_implied": 0.5239,
+      "market_hold": null,
+      "market_edge": 0.0048,
+      "price_clears": false,
+      "probability_basis": "combined_shrunk",
+      "probability_detail": {
+        "empirical": null,
+        "modelled": null
+      },
+      "alternatives": null,
+      "why": [
+        "Milwaukee Brewers scores off Bryce Miller (away SP) in the bottom 1st: 27.0% (shrunk, 12 starts)",
+        "Seattle Mariners scores off Kyle Harrison (home SP) in the top 1st: 27.5% (shrunk, 18 starts)",
+        "This is the real both-teams NRFI/YRFI market -- combines both starters' halves of the 1st, not a one-sided team read."
+      ],
+      "watchouts": [],
+      "signal_weight_adjustment": null,
+      "recommendation_status": "lean",
+      "status_reasons": [
+        "a real, positive read that doesn't clear every Top Pick requirement"
+      ],
+      "stale": false,
+      "model_version": "2026.08.15",
+      "selection_policy_version": "1.0.0",
+      "calibration_version": "1.0.0",
+      "feature_version": "1.0.0",
+      "git_sha": "a73bf41",
+      "prediction_timestamp": "2026-08-18T15:07:05.811735+00:00",
+      "odds_timestamp": "2026-08-18T15:07:05.808707+00:00",
+      "lineup_checked_at": "2026-08-18T15:07:05.808707+00:00"
+    },
+    {
+      "rank": 19,
+      "type": "game",
+      "name": "Arizona Diamondbacks @ Boston Red Sox \u2014 1st Inning (Both Teams)",
+      "player_id": "nrfi_824723",
+      "team": null,
+      "matchup": "Arizona Diamondbacks @ Boston Red Sox",
+      "game_pk": 824723,
+      "side": "both",
+      "combo_player_ids": null,
+      "prop": "A run scores in the 1st (either team)",
+      "projection": {
+        "stat": "nrfi_combined",
+        "value": 52.0
+      },
+      "lean": "YRFI",
+      "score": 64.0,
+      "confidence": "Medium",
+      "notable_signals": 0,
+      "category": "best_of_category",
+      "hit_probability": 0.5204,
+      "signals": {
+        "home_team_scores_p": 0.319,
+        "away_team_scores_p": 0.2957,
+        "fi_n_starts": 20.0
+      },
+      "base_rate": 0.5016,
+      "lift": 0.0188,
+      "raw_hit_probability": null,
+      "calibrated_by": null,
+      "prob_ci": null,
+      "sample_n": 20,
+      "reliability": "A",
+      "lineup_assumed": null,
+      "max_acceptable_price": -109,
+      "estimated_odds": -125,
+      "market_odds": 120,
+      "market_implied": 0.4285,
+      "market_hold": null,
+      "market_edge": 0.0919,
+      "price_clears": true,
+      "probability_basis": "combined_shrunk",
+      "probability_detail": {
+        "empirical": null,
+        "modelled": null
+      },
+      "alternatives": null,
+      "why": [
+        "Boston Red Sox scores off Merrill Kelly (away SP) in the bottom 1st: 31.9% (shrunk, 21 starts)",
+        "Arizona Diamondbacks scores off Ranger Suarez (home SP) in the top 1st: 29.6% (shrunk, 20 starts)",
+        "This is the real both-teams NRFI/YRFI market -- combines both starters' halves of the 1st, not a one-sided team read."
+      ],
+      "watchouts": [],
+      "signal_weight_adjustment": null,
+      "recommendation_status": "neutral",
+      "status_reasons": [
+        "positive-EV on the model's own number, but the model disagrees sharply with the market on this low-probability read (10.0 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 treated as unreliable rather than genuine value"
+      ],
+      "stale": false,
+      "model_version": "2026.08.15",
+      "selection_policy_version": "1.0.0",
+      "calibration_version": "1.0.0",
+      "feature_version": "1.0.0",
+      "git_sha": "a73bf41",
+      "prediction_timestamp": "2026-08-18T15:07:05.811735+00:00",
+      "odds_timestamp": "2026-08-18T15:07:05.808707+00:00",
+      "lineup_checked_at": "2026-08-18T15:07:05.808707+00:00"
+    }
+  ],
+  "shadow_tracking": [
+    {
+      "rank": 1,
+      "type": "pitcher",
+      "name": "Foster Griffin",
+      "player_id": 656492,
+      "team": "Cleveland Guardians",
+      "matchup": "San Francisco Giants @ Cleveland Guardians",
+      "game_pk": 824398,
+      "side": "home",
+      "combo_player_ids": null,
+      "prop": "[shadow] Over 11.5 Pitcher Outs Recorded",
+      "projection": {
+        "stat": "pitcher_outs",
+        "value": 11.5,
+        "needs": 12
+      },
+      "lean": null,
+      "score": 48.5,
+      "confidence": "Low",
+      "notable_signals": 0,
+      "category": "shadow",
+      "hit_probability": 0.9875,
+      "signals": {
+        "outs_rate": 0.4833,
+        "avg_outs_per_start": 17.29
+      },
+      "base_rate": 0.9376,
+      "lift": 0.0499,
+      "raw_hit_probability": null,
+      "calibrated_by": null,
+      "prob_ci": null,
+      "sample_n": null,
+      "reliability": null,
+      "lineup_assumed": null,
+      "max_acceptable_price": -350,
+      "estimated_odds": -19900,
+      "market_odds": null,
+      "market_implied": null,
+      "market_hold": null,
+      "market_edge": null,
+      "price_clears": null,
+      "probability_basis": "empirical_shrunk",
+      "probability_detail": null,
+      "alternatives": null,
+      "why": [
+        "Tracked for hit-rate measurement only -- an alternate threshold that lost selection against the real candidate, never a live bet."
+      ],
+      "watchouts": [],
+      "signal_weight_adjustment": null,
+      "recommendation_status": "neutral",
+      "status_reasons": [
+        "no market price posted, and no strong enough read to lean on regardless"
+      ],
+      "stale": false,
+      "model_version": "2026.08.15",
+      "selection_policy_version": "1.0.0",
+      "calibration_version": "1.0.0",
+      "feature_version": "1.0.0",
+      "git_sha": "a73bf41",
+      "prediction_timestamp": "2026-08-18T15:07:05.811735+00:00",
+      "odds_timestamp": "2026-08-18T15:07:05.808707+00:00",
+      "lineup_checked_at": "2026-08-18T15:07:05.808707+00:00"
+    },
+    {
+      "rank": 2,
+      "type": "pitcher",
+      "name": "Merrill Kelly",
+      "player_id": 518876,
+      "team": "Arizona Diamondbacks",
+      "matchup": "Arizona Diamondbacks @ Boston Red Sox",
+      "game_pk": 824723,
+      "side": "away",
+      "combo_player_ids": null,
+      "prop": "[shadow] Over 12.5 Pitcher Outs Recorded",
+      "projection": {
+        "stat": "pitcher_outs",
+        "value": 12.5,
+        "needs": 13
+      },
+      "lean": null,
+      "score": 51.3,
+      "confidence": "Low",
+      "notable_signals": 0,
+      "category": "shadow",
+      "hit_probability": 0.9752,
+      "signals": {
+        "outs_rate": 0.5869,
+        "avg_outs_per_start": 17.05
+      },
+      "base_rate": 0.8842,
+      "lift": 0.091,
+      "raw_hit_probability": null,
+      "calibrated_by": null,
+      "prob_ci": null,
+      "sample_n": null,
+      "reliability": null,
+      "lineup_assumed": null,
+      "max_acceptable_price": -350,
+      "estimated_odds": -19900,
+      "market_odds": null,
+      "market_implied": null,
+      "market_hold": null,
+      "market_edge": null,
+      "price_clears": null,
+      "probability_basis": "empirical_shrunk",
+      "probability_detail": null,
+      "alternatives": null,
+      "why": [
+        "Tracked for hit-rate measurement only -- an alternate threshold that lost selection against the real candidate, never a live bet."
+      ],
+      "watchouts": [],
+      "signal_weight_adjustment": null,
+      "recommendation_status": "neutral",
+      "status_reasons": [
+        "no market price posted, and no strong enough read to lean on regardless"
+      ],
+      "stale": false,
+      "model_version": "2026.08.15",
+      "selection_policy_version": "1.0.0",
+      "calibration_version": "1.0.0",
+      "feature_version": "1.0.0",
+      "git_sha": "a73bf41",
+      "prediction_timestamp": "2026-08-18T15:07:05.811735+00:00",
+      "odds_timestamp": "2026-08-18T15:07:05.808707+00:00",
+      "lineup_checked_at": "2026-08-18T15:07:05.808707+00:00"
+    },
+    {
+      "rank": 3,
+      "type": "pitcher",
+      "name": "Bryce Miller",
+      "player_id": 682243,
+      "team": "Seattle Mariners",
+      "matchup": "Seattle Mariners @ Milwaukee Brewers",
+      "game_pk": 823749,
+      "side": "away",
+      "combo_player_ids": null,
+      "prop": "[shadow] Over 13.5 Pitcher Outs Recorded",
+      "projection": {
+        "stat": "pitcher_outs",
+        "value": 13.5,
+        "needs": 14
+      },
+      "lean": null,
+      "score": 41.1,
+      "confidence": "Low",
+      "notable_signals": 0,
+      "category": "shadow",
+      "hit_probability": 0.9506,
+      "signals": {
+        "outs_rate": 0.497,
+        "avg_outs_per_start": 17.14
+      },
+      "base_rate": 0.8352,
+      "lift": 0.1154,
+      "raw_hit_probability": null,
+      "calibrated_by": null,
+      "prob_ci": null,
+      "sample_n": null,
+      "reliability": null,
+      "lineup_assumed": null,
+      "max_acceptable_price": -350,
+      "estimated_odds": -6844,
+      "market_odds": null,
+      "market_implied": null,
+      "market_hold": null,
+      "market_edge": null,
+      "price_clears": null,
+      "probability_basis": "empirical_shrunk",
+      "probability_detail": null,
+      "alternatives": null,
+      "why": [
+        "Tracked for hit-rate measurement only -- an alternate threshold that lost selection against the real candidate, never a live bet."
+      ],
+      "watchouts": [],
+      "signal_weight_adjustment": null,
+      "recommendation_status": "neutral",
+      "status_reasons": [
+        "no market price posted, and no strong enough read to lean on regardless"
+      ],
+      "stale": false,
+      "model_version": "2026.08.15",
+      "selection_policy_version": "1.0.0",
+      "calibration_version": "1.0.0",
+      "feature_version": "1.0.0",
+      "git_sha": "a73bf41",
+      "prediction_timestamp": "2026-08-18T15:07:05.811735+00:00",
+      "odds_timestamp": "2026-08-18T15:07:05.808707+00:00",
+      "lineup_checked_at": "2026-08-18T15:07:05.808707+00:00"
+    },
+    {
+      "rank": 4,
+      "type": "pitcher",
+      "name": "Jack Perkins",
+      "player_id": 678022,
+      "team": "Athletics",
+      "matchup": "Athletics @ Kansas City Royals",
+      "game_pk": 824075,
+      "side": "away",
+      "combo_player_ids": null,
+      "prop": "[shadow] Over 14.5 Pitcher Outs Recorded",
+      "projection": {
+        "stat": "pitcher_outs",
+        "value": 14.5,
+        "needs": 15
+      },
+      "lean": null,
+      "score": 43.7,
+      "confidence": "Low",
+      "notable_signals": 0,
+      "category": "shadow",
+      "hit_probability": 0.6916,
+      "signals": {
+        "outs_rate": 0.7065,
+        "avg_outs_per_start": 13.82
+      },
+      "base_rate": 0.7929,
+      "lift": -0.1013,
+      "raw_hit_probability": null,
+      "calibrated_by": null,
+      "prob_ci": null,
+      "sample_n": null,
+      "reliability": null,
+      "lineup_assumed": null,
+      "max_acceptable_price": -224,
+      "estimated_odds": -266,
+      "market_odds": null,
+      "market_implied": null,
+      "market_hold": null,
+      "market_edge": null,
+      "price_clears": null,
+      "probability_basis": "empirical_shrunk",
+      "probability_detail": null,
+      "alternatives": null,
+      "why": [
+        "Tracked for hit-rate measurement only -- an alternate threshold that lost selection against the real candidate, never a live bet."
+      ],
+      "watchouts": [],
+      "signal_weight_adjustment": null,
+      "recommendation_status": "neutral",
+      "status_reasons": [
+        "no market price posted, and no strong enough read to lean on regardless"
+      ],
+      "stale": false,
+      "model_version": "2026.08.15",
+      "selection_policy_version": "1.0.0",
+      "calibration_version": "1.0.0",
+      "feature_version": "1.0.0",
+      "git_sha": "a73bf41",
+      "prediction_timestamp": "2026-08-18T15:07:05.811735+00:00",
+      "odds_timestamp": "2026-08-18T15:07:05.808707+00:00",
+      "lineup_checked_at": "2026-08-18T15:07:05.808707+00:00"
+    },
+    {
+      "rank": 5,
+      "type": "pitcher",
+      "name": "Jack Perkins",
+      "player_id": 678022,
+      "team": "Athletics",
+      "matchup": "Athletics @ Kansas City Royals",
+      "game_pk": 824075,
+      "side": null,
+      "combo_player_ids": null,
+      "prop": "Over 3.5 Strikeouts",
+      "projection": {
+        "stat": "strikeouts",
+        "value": 3.5,
+        "needs": 4
+      },
+      "lean": null,
+      "score": 53.2,
+      "confidence": "Low",
+      "notable_signals": 0,
+      "category": "shadow",
+      "hit_probability": 0.6219,
+      "signals": {
+        "opp_team_k_pct": 42.0,
+        "same_hand_ratio": 43.75,
+        "l14_k_pct": 0.0,
+        "env_neutral": 50.0
+      },
+      "base_rate": 0.7122,
+      "lift": -0.0903,
+      "raw_hit_probability": 0.7397,
+      "calibrated_by": "strikeouts",
+      "prob_ci": null,
+      "sample_n": 11,
+      "reliability": "B",
+      "lineup_assumed": null,
+      "max_acceptable_price": -164,
+      "estimated_odds": -191,
+      "market_odds": -140,
+      "market_implied": 0.5506,
+      "market_hold": null,
+      "market_edge": 0.0713,
+      "price_clears": true,
+      "probability_basis": "modelled_shrunk",
+      "probability_detail": {
+        "empirical": 0.7692,
+        "modelled": 0.7673
+      },
+      "alternatives": [
+        {
+          "line": 4.5,
+          "needs": 5,
+          "prob": 0.5584,
+          "basis": "modelled_shrunk",
+          "base_rate": 0.538,
+          "lift": 0.0204,
+          "empirical": 0.5314,
+          "modelled": 0.5788
+        },
+        {
+          "line": 5.5,
+          "needs": 6,
+          "prob": 0.3786,
+          "basis": "modelled_shrunk",
+          "base_rate": 0.3767,
+          "lift": 0.0019,
+          "empirical": 0.4199,
+          "modelled": 0.3805
+        },
+        {
+          "line": 6.5,
+          "needs": 7,
+          "prob": 0.23,
+          "basis": "modelled_shrunk",
+          "base_rate": 0.2442,
+          "lift": -0.0142,
+          "empirical": 0.2566,
+          "modelled": 0.2158
+        }
+      ],
+      "why": [
+        "Opposing team K% 21.2 (MLB Stats API \u2014 FanGraphs team page unreachable)",
+        "Expected workload 22.6 batters faced (his own 22.0/start over 2 real starts, shrunk toward the 23.1 league mean)",
+        "3/8 known-hand opposing batters same-handed",
+        "L14 K% 11.4 (44 PA)",
+        "Recency-weighted K rate 22.0% (exp. decay, halflife 30d, 11 real starts / 238 BF) \u2014 drives the strikeout probability model"
+      ],
+      "watchouts": [
+        "Workload estimate rests on only 2 starts in the L14 window \u2014 most start-to-start variation in batters faced is noise, so this is shrunk heavily toward league average"
+      ],
+      "signal_weight_adjustment": null,
+      "recommendation_status": "top_pick",
+      "status_reasons": [
+        "clears the real probability floor (>= 60%), a real evidence grade (B), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+        "note: the market itself disagrees with this read (8.2 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+      ],
+      "stale": false,
+      "model_version": "2026.08.15",
+      "selection_policy_version": "1.0.0",
+      "calibration_version": "1.0.0",
+      "feature_version": "1.0.0",
+      "git_sha": "a73bf41",
+      "prediction_timestamp": "2026-08-18T15:07:05.811735+00:00",
+      "odds_timestamp": "2026-08-18T15:07:05.808707+00:00",
+      "lineup_checked_at": "2026-08-18T15:07:05.808707+00:00"
+    },
+    {
+      "rank": 6,
+      "type": "game",
+      "name": "Atlanta Braves @ Minnesota Twins \u2014 1st Inning (Both Teams)",
+      "player_id": "nrfi_823667",
+      "team": null,
+      "matchup": "Atlanta Braves @ Minnesota Twins",
+      "game_pk": 823667,
+      "side": "both",
+      "combo_player_ids": null,
+      "prop": "A run scores in the 1st (either team)",
+      "projection": {
+        "stat": "nrfi_combined",
+        "value": 55.2
+      },
+      "lean": "YRFI",
+      "score": 65.1,
+      "confidence": "Medium",
+      "notable_signals": 0,
+      "category": "shadow",
+      "hit_probability": 0.5523,
+      "signals": {
+        "home_team_scores_p": 0.3138,
+        "away_team_scores_p": 0.3475,
+        "fi_n_starts": 15.0
+      },
+      "base_rate": 0.5016,
+      "lift": 0.0507,
+      "raw_hit_probability": null,
+      "calibrated_by": null,
+      "prob_ci": null,
+      "sample_n": 15,
+      "reliability": "B",
+      "lineup_assumed": null,
+      "max_acceptable_price": -123,
+      "estimated_odds": -142,
+      "market_odds": -115,
+      "market_implied": 0.5042,
+      "market_hold": null,
+      "market_edge": 0.0481,
+      "price_clears": true,
+      "probability_basis": "combined_shrunk",
+      "probability_detail": {
+        "empirical": null,
+        "modelled": null
+      },
+      "alternatives": null,
+      "why": [
+        "Minnesota Twins scores off Tyler Mahle (away SP) in the bottom 1st: 31.4% (shrunk, 19 starts)",
+        "Atlanta Braves scores off Zebby Matthews (home SP) in the top 1st: 34.8% (shrunk, 15 starts)",
+        "This is the real both-teams NRFI/YRFI market -- combines both starters' halves of the 1st, not a one-sided team read."
+      ],
+      "watchouts": [],
+      "signal_weight_adjustment": null,
+      "recommendation_status": "lean",
+      "status_reasons": [
+        "a real, positive read that doesn't clear every Top Pick requirement"
+      ],
+      "stale": false,
+      "model_version": "2026.08.15",
+      "selection_policy_version": "1.0.0",
+      "calibration_version": "1.0.0",
+      "feature_version": "1.0.0",
+      "git_sha": "a73bf41",
+      "prediction_timestamp": "2026-08-18T15:07:05.811735+00:00",
+      "odds_timestamp": "2026-08-18T15:07:05.808707+00:00",
+      "lineup_checked_at": "2026-08-18T15:07:05.808707+00:00"
+    }
+  ],
+  "recommendation_metadata": {
+    "model_version": "2026.08.15",
+    "selection_policy_version": "1.0.0",
+    "calibration_version": "1.0.0",
+    "feature_version": "1.0.0",
+    "git_sha": "a73bf41",
+    "prediction_timestamp": "2026-08-18T15:07:05.811735+00:00",
+    "odds_fetched_at": "2026-08-18T15:07:05.808707+00:00",
+    "board_generated_at": "2026-08-18T15:07:05.808707+00:00"
+  }
+}

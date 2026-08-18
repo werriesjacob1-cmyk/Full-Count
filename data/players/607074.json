@@ -1,0 +1,64 @@
+{
+  "player_id": 607074,
+  "name": "Carlos Rod\u00f3n",
+  "snapshots": [
+    {
+      "date": "2026-08-18",
+      "evaluations": [
+        {
+          "prop": "Over 4.5 Strikeouts",
+          "type": "pitcher",
+          "score": 46.2,
+          "notable_signals": 0,
+          "matchup": "New York Yankees @ Baltimore Orioles",
+          "game_pk": 824803,
+          "team": "New York Yankees",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_k_pct": 73.0,
+            "same_hand_ratio": 12.5,
+            "env_neutral": 50.0
+          },
+          "hit_probability": 0.6066,
+          "raw_hit_probability": 0.663,
+          "lift": 0.0686,
+          "reliability": "B",
+          "sample_n": 9,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 4.5,
+            "needs": 5
+          }
+        },
+        {
+          "prop": "Over 14.5 Outs Recorded",
+          "type": "pitcher",
+          "score": 46.5,
+          "notable_signals": 0,
+          "matchup": "New York Yankees @ Baltimore Orioles",
+          "game_pk": 824803,
+          "team": "New York Yankees",
+          "side": "away",
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "outs_rate": 0.7838,
+            "avg_outs_per_start": 15.44
+          },
+          "hit_probability": 0.7838,
+          "raw_hit_probability": null,
+          "lift": -0.0091,
+          "reliability": "B",
+          "sample_n": 9,
+          "projection": {
+            "stat": "pitcher_outs",
+            "value": 14.5,
+            "needs": 15
+          }
+        }
+      ]
+    }
+  ]
+}

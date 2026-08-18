@@ -1,0 +1,37 @@
+{
+  "player_id": "nrfi_824723",
+  "name": "Arizona Diamondbacks @ Boston Red Sox \u2014 1st Inning (Both Teams)",
+  "snapshots": [
+    {
+      "date": "2026-08-18",
+      "evaluations": [
+        {
+          "prop": "A run scores in the 1st (either team)",
+          "type": "game",
+          "score": 64.0,
+          "notable_signals": 0,
+          "matchup": "Arizona Diamondbacks @ Boston Red Sox",
+          "game_pk": 824723,
+          "team": null,
+          "side": "both",
+          "lean": "YRFI",
+          "combo_player_ids": null,
+          "signals": {
+            "home_team_scores_p": 0.319,
+            "away_team_scores_p": 0.2957,
+            "fi_n_starts": 20.0
+          },
+          "hit_probability": 0.5204,
+          "raw_hit_probability": null,
+          "lift": 0.0188,
+          "reliability": "A",
+          "sample_n": 20,
+          "projection": {
+            "stat": "nrfi_combined",
+            "value": 52.0
+          }
+        }
+      ]
+    }
+  ]
+}

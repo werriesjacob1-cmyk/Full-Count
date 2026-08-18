@@ -1,0 +1,37 @@
+{
+  "player_id": "nrfi_823586",
+  "name": "San Diego Padres @ New York Mets \u2014 1st Inning (Both Teams)",
+  "snapshots": [
+    {
+      "date": "2026-08-18",
+      "evaluations": [
+        {
+          "prop": "A run scores in the 1st (either team)",
+          "type": "game",
+          "score": 55.8,
+          "notable_signals": 0,
+          "matchup": "San Diego Padres @ New York Mets",
+          "game_pk": 823586,
+          "team": null,
+          "side": "both",
+          "lean": "YRFI",
+          "combo_player_ids": null,
+          "signals": {
+            "home_team_scores_p": 0.2572,
+            "away_team_scores_p": 0.3438,
+            "fi_n_starts": 7.0
+          },
+          "hit_probability": 0.5126,
+          "raw_hit_probability": null,
+          "lift": 0.011,
+          "reliability": "C",
+          "sample_n": 7,
+          "projection": {
+            "stat": "nrfi_combined",
+            "value": 51.3
+          }
+        }
+      ]
+    }
+  ]
+}

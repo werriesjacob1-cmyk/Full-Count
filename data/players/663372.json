@@ -152,6 +152,65 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-18",
+      "evaluations": [
+        {
+          "prop": "Over 3.5 Strikeouts",
+          "type": "pitcher",
+          "score": 52.7,
+          "notable_signals": 0,
+          "matchup": "Los Angeles Dodgers @ Colorado Rockies",
+          "game_pk": 824319,
+          "team": "Colorado Rockies",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_k_pct": 35.0,
+            "same_hand_ratio": 43.75,
+            "l14_k_pct": 0.0,
+            "env_neutral": 50.0
+          },
+          "hit_probability": 0.5861,
+          "raw_hit_probability": 0.5618,
+          "lift": -0.1261,
+          "reliability": "A",
+          "sample_n": 18,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 3.5,
+            "needs": 4
+          }
+        },
+        {
+          "prop": "Over 15.5 Outs Recorded",
+          "type": "pitcher",
+          "score": 35.6,
+          "notable_signals": 0,
+          "matchup": "Los Angeles Dodgers @ Colorado Rockies",
+          "game_pk": 824319,
+          "team": "Colorado Rockies",
+          "side": "home",
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "outs_rate": 0.5181,
+            "avg_outs_per_start": 14.5
+          },
+          "hit_probability": 0.5181,
+          "raw_hit_probability": null,
+          "lift": -0.0543,
+          "reliability": "A",
+          "sample_n": 18,
+          "projection": {
+            "stat": "pitcher_outs",
+            "value": 15.5,
+            "needs": 16
+          }
+        }
+      ]
     }
   ]
 }

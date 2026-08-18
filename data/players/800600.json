@@ -35,6 +35,39 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-18",
+      "evaluations": [
+        {
+          "prop": "Over 4.5 Strikeouts",
+          "type": "pitcher",
+          "score": 38.4,
+          "notable_signals": 0,
+          "matchup": "Washington Nationals @ Texas Rangers",
+          "game_pk": 822859,
+          "team": "Washington Nationals",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_k_pct": 59.0,
+            "same_hand_ratio": 33.3333,
+            "l14_k_pct": 97.6471,
+            "env_neutral": 50.0
+          },
+          "hit_probability": 0.6149,
+          "raw_hit_probability": 0.7044,
+          "lift": 0.0769,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 4.5,
+            "needs": 5
+          }
+        }
+      ]
     }
   ]
 }
