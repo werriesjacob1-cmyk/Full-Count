@@ -394,4 +394,25 @@ again, independent repo + public-artifact verification) remains required and
 had not been executed as of this addendum, pending explicit merge
 authorization for the correction above.
 
+**Update, same day, post-merge:** the correction merged (`5916e3549af1bc09
+6dd5b80107ec1e2f18c9ccf8`) and the full sequential rollout above was executed
+and independently verified against both repository state and the live public
+Pages site at every step -- see `engineering/ENGINEERING_HANDOFF.md`'s
+"sequential post-merge incident-recovery rollout" entry for the run ids,
+timestamps, and independent-fetch evidence. Checklist item 20 is CLOSED for
+the specific orphan-migration failure mode that reopened it (stale/orphaned
+legacy live observations no longer brick normalization or regress state);
+it remains open in the broader ordinary-staleness sense the original PR #51
+audit intended. Six real Top Picks were published during the rollout with
+correct provenance -- genuine, non-manufactured lifecycle evidence that
+"pipeline repaired and publishing again" is CONFIRMED. This is a narrower
+claim than "every PR #51 lifecycle invariant has been observed on a real
+public Top Pick," which remains NOT YET PROVEN pending real game progression
+(survival across first pitch, live yellow, provisional hit, official-final
+confirmation, durable next-day grading). One naturally scheduled (non-manual)
+`dashboard-live.yml` tick had not yet fired as of this update despite the
+5-minute cron -- recorded as a pending operational observation rather than
+assumed proven, consistent with GitHub Actions' own known scheduling latency
+rather than a defect in this correction.
+
 Phase V has **not** begun.
