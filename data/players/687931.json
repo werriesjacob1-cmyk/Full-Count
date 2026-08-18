@@ -88,7 +88,7 @@
         {
           "prop": "Over 3.5 Strikeouts",
           "type": "pitcher",
-          "score": 53.9,
+          "score": 55.1,
           "notable_signals": 0,
           "matchup": "San Francisco Giants @ Cleveland Guardians",
           "game_pk": 824398,
@@ -98,10 +98,13 @@
           "combo_player_ids": null,
           "signals": {
             "opp_team_k_pct": 48.0,
-            "same_hand_ratio": 50.0,
+            "same_hand_ratio": 75.0,
             "l14_k_pct": 0.0,
             "tto_penalty": -8.0,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 52.5574,
+            "ump_k_pct": -0.444,
+            "ump_bb_pct": -0.012
           },
           "hit_probability": 0.6003,
           "raw_hit_probability": 0.6318,
@@ -126,18 +129,46 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.7298,
+            "outs_rate": 0.7245,
             "avg_outs_per_start": 14.0
           },
-          "hit_probability": 0.7298,
+          "hit_probability": 0.7245,
           "raw_hit_probability": null,
-          "lift": -0.0631,
+          "lift": -0.0579,
           "reliability": "C",
           "sample_n": 6,
           "projection": {
             "stat": "pitcher_outs",
             "value": 14.5,
             "needs": 15
+          }
+        },
+        {
+          "prop": "Over 8.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 10.7,
+          "notable_signals": 0,
+          "matchup": "San Francisco Giants @ Cleveland Guardians",
+          "game_pk": 824398,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            687931,
+            656492
+          ],
+          "signals": {
+            "combined_k_edge": -0.2126
+          },
+          "hit_probability": 0.4251,
+          "raw_hit_probability": null,
+          "lift": -0.2126,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 8.5,
+            "needs": 9
           }
         }
       ]

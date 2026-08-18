@@ -1,6 +1,6 @@
 {
   "player_id": 677951,
-  "name": "Bobby Witt",
+  "name": "Bobby Witt Jr.",
   "snapshots": [
     {
       "date": "2026-08-04",
@@ -1066,6 +1066,137 @@
           "lift": 0.0157,
           "reliability": "A",
           "sample_n": 106,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-08-18",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 89.2,
+          "notable_signals": 3,
+          "matchup": "Athletics @ Kansas City Royals",
+          "game_pk": 824075,
+          "team": "Kansas City Royals",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 100.0,
+            "pitch_exploit": 8.0,
+            "park_hr_index": 60.5,
+            "season_barrel_pct": 59.3333,
+            "lineup_slot": 87.5,
+            "bullpen_fatigue": 71.4286,
+            "platoon_barrel_pct": 2.96,
+            "platoon_xwoba": 3.36,
+            "park_hand_index": 0.94,
+            "opp_catcher_framing": -1.44,
+            "days_rest": 0.0,
+            "woba_ahead": 31.8182,
+            "woba_behind": 52.7273,
+            "pull_park_synergy": 0.0921,
+            "hard_hit_105_rate": 0.5,
+            "team_total_move": 0.0,
+            "team_total_open": 0.0,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": -0.08,
+            "vs_rp_ops": 1.104,
+            "ump_k_pct": -0.096,
+            "ump_bb_pct": 0.168
+          },
+          "hit_probability": 0.6533,
+          "raw_hit_probability": 0.6412,
+          "lift": 0.1018,
+          "reliability": "A",
+          "sample_n": 107,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 79.7,
+          "notable_signals": 1,
+          "matchup": "Athletics @ Kansas City Royals",
+          "game_pk": 824075,
+          "team": "Kansas City Royals",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": -1.02,
+            "sprint_speed": 90.625,
+            "catcher_poptime": 14.2857,
+            "on_base": 83.6852
+          },
+          "hit_probability": 0.2663,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 107,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 9.3,
+          "notable_signals": 0,
+          "matchup": "Athletics @ Kansas City Royals",
+          "game_pk": 824075,
+          "team": "Kansas City Royals",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0666
+          },
+          "hit_probability": 0.0666,
+          "raw_hit_probability": null,
+          "lift": 0.0172,
+          "reliability": "A",
+          "sample_n": 107,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 6.0,
+          "notable_signals": 0,
+          "matchup": "Athletics @ Kansas City Royals",
+          "game_pk": 824075,
+          "team": "Kansas City Royals",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0369
+          },
+          "hit_probability": 0.0369,
+          "raw_hit_probability": null,
+          "lift": 0.0154,
+          "reliability": "A",
+          "sample_n": 107,
           "projection": {
             "stat": "moonshot_420",
             "value": 1,

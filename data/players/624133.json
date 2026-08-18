@@ -116,7 +116,7 @@
         {
           "prop": "Over 4.5 Strikeouts",
           "type": "pitcher",
-          "score": 45.0,
+          "score": 31.1,
           "notable_signals": 0,
           "matchup": "Arizona Diamondbacks @ Boston Red Sox",
           "game_pk": 824723,
@@ -128,7 +128,10 @@
             "opp_team_k_pct": 23.0,
             "same_hand_ratio": 0.0,
             "l14_k_pct": 0.0,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 49.0416,
+            "ump_k_pct": 0.468,
+            "ump_bb_pct": 0.42
           },
           "hit_probability": 0.583,
           "raw_hit_probability": 0.5467,
@@ -144,7 +147,7 @@
         {
           "prop": "Over 15.5 Outs Recorded",
           "type": "pitcher",
-          "score": 11.2,
+          "score": 11.9,
           "notable_signals": 0,
           "matchup": "Arizona Diamondbacks @ Boston Red Sox",
           "game_pk": 824723,
@@ -153,12 +156,12 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.4235,
+            "outs_rate": 0.4218,
             "avg_outs_per_start": 15.43
           },
-          "hit_probability": 0.4235,
+          "hit_probability": 0.4218,
           "raw_hit_probability": null,
-          "lift": -0.1489,
+          "lift": -0.143,
           "reliability": "A",
           "sample_n": 21,
           "projection": {

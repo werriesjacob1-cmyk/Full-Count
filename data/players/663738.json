@@ -70,6 +70,42 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-18",
+      "evaluations": [
+        {
+          "prop": "Over 3.5 Strikeouts",
+          "type": "pitcher",
+          "score": 41.4,
+          "notable_signals": 0,
+          "matchup": "Athletics @ Kansas City Royals",
+          "game_pk": 824075,
+          "team": "Kansas City Royals",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_k_pct": 56.0,
+            "same_hand_ratio": 0.0,
+            "l14_k_pct": 58.8235,
+            "env_neutral": 50.0,
+            "ump_accuracy": 32.6859,
+            "ump_k_pct": 0.096,
+            "ump_bb_pct": -0.168
+          },
+          "hit_probability": 0.612,
+          "raw_hit_probability": 0.6897,
+          "lift": -0.1002,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 3.5,
+            "needs": 4
+          }
+        }
+      ]
     }
   ]
 }

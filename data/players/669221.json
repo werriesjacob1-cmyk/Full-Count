@@ -245,6 +245,51 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-18",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 44.2,
+          "notable_signals": 3,
+          "matchup": "Atlanta Braves @ Minnesota Twins",
+          "game_pk": 823667,
+          "team": "Atlanta Braves",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 78.0,
+            "park_hr_index": 29.8,
+            "lineup_slot": 0.0,
+            "bullpen_fatigue": 76.9231,
+            "park_hand_index": -0.94,
+            "opp_catcher_framing": -0.24,
+            "days_rest": 4.0,
+            "woba_ahead": 22.7273,
+            "woba_behind": 59.0909,
+            "team_total_move": 0.0,
+            "team_total_open": 0.0,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "ump_k_pct": -0.792,
+            "ump_bb_pct": 0.66
+          },
+          "hit_probability": 0.4193,
+          "raw_hit_probability": 0.4727,
+          "lift": -0.1322,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

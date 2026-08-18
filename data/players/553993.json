@@ -793,6 +793,108 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-18",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 59.6,
+          "notable_signals": 0,
+          "matchup": "St. Louis Cardinals @ Cincinnati Reds",
+          "game_pk": 824475,
+          "team": "Cincinnati Reds",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 26.8571,
+            "park_hr_index": 64.8,
+            "season_barrel_pct": 56.6667,
+            "lineup_slot": 62.5,
+            "bullpen_fatigue": 64.1026,
+            "platoon_barrel_pct": 0.88,
+            "platoon_xwoba": -2.94,
+            "park_hand_index": 1.42,
+            "opp_catcher_framing": -1.08,
+            "days_rest": 0.0,
+            "woba_ahead": 52.7273,
+            "woba_behind": 33.6364,
+            "pull_park_synergy": 0.994,
+            "hard_hit_105_rate": 0.235,
+            "team_total_move": 6.0,
+            "team_total_open": 0.0,
+            "getaway_day": 0.0,
+            "series_game": 2.0,
+            "sp_rp_ops_gap": -0.096,
+            "vs_rp_ops": -0.24,
+            "ump_k_pct": 0.552,
+            "ump_bb_pct": 0.18
+          },
+          "hit_probability": 0.6256,
+          "raw_hit_probability": 0.5966,
+          "lift": -0.0482,
+          "reliability": "A",
+          "sample_n": 94,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 6.7,
+          "notable_signals": 0,
+          "matchup": "St. Louis Cardinals @ Cincinnati Reds",
+          "game_pk": 824475,
+          "team": "Cincinnati Reds",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.056
+          },
+          "hit_probability": 0.056,
+          "raw_hit_probability": null,
+          "lift": 0.0066,
+          "reliability": "A",
+          "sample_n": 94,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 4.8,
+          "notable_signals": 0,
+          "matchup": "St. Louis Cardinals @ Cincinnati Reds",
+          "game_pk": 824475,
+          "team": "Cincinnati Reds",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0321
+          },
+          "hit_probability": 0.0321,
+          "raw_hit_probability": null,
+          "lift": 0.0106,
+          "reliability": "A",
+          "sample_n": 94,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

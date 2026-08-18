@@ -514,6 +514,132 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-18",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 72.6,
+          "notable_signals": 2,
+          "matchup": "San Francisco Giants @ Cleveland Guardians",
+          "game_pk": 824398,
+          "team": "Cleveland Guardians",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "sp_era_weak": 100.0,
+            "pitch_exploit": 1.7143,
+            "park_hr_index": 51.8,
+            "season_barrel_pct": 37.3333,
+            "lineup_slot": 62.5,
+            "bullpen_fatigue": 64.1026,
+            "platoon_barrel_pct": -0.48,
+            "platoon_xwoba": 0.78,
+            "days_rest": 2.0,
+            "woba_ahead": 6.3636,
+            "woba_behind": 19.0909,
+            "hard_hit_105_rate": 1.175,
+            "team_total_move": 0.0,
+            "team_total_open": 0.0,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": -0.192,
+            "vs_rp_ops": -0.432,
+            "ump_k_pct": 0.444,
+            "ump_bb_pct": 0.012
+          },
+          "hit_probability": 0.6037,
+          "raw_hit_probability": 0.6038,
+          "lift": 0.0522,
+          "reliability": "B",
+          "sample_n": 78,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 33.4,
+          "notable_signals": 0,
+          "matchup": "San Francisco Giants @ Cleveland Guardians",
+          "game_pk": 824398,
+          "team": "Cleveland Guardians",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": 0.66,
+            "sprint_speed": 9.375,
+            "on_base": 39.5393
+          },
+          "hit_probability": 0.1081,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "B",
+          "sample_n": 78,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 16.1,
+          "notable_signals": 0,
+          "matchup": "San Francisco Giants @ Cleveland Guardians",
+          "game_pk": 824398,
+          "team": "Cleveland Guardians",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0936
+          },
+          "hit_probability": 0.0936,
+          "raw_hit_probability": null,
+          "lift": 0.0442,
+          "reliability": "B",
+          "sample_n": 78,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 0.0,
+          "notable_signals": 0,
+          "matchup": "San Francisco Giants @ Cleveland Guardians",
+          "game_pk": 824398,
+          "team": "Cleveland Guardians",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0045
+          },
+          "hit_probability": 0.0045,
+          "raw_hit_probability": null,
+          "lift": -0.017,
+          "reliability": "B",
+          "sample_n": 78,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

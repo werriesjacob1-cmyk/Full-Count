@@ -8,8 +8,8 @@
         {
           "prop": "Over 4.5 Strikeouts",
           "type": "pitcher",
-          "score": 46.2,
-          "notable_signals": 0,
+          "score": 41.4,
+          "notable_signals": 1,
           "matchup": "New York Yankees @ Baltimore Orioles",
           "game_pk": 824803,
           "team": "New York Yankees",
@@ -19,7 +19,10 @@
           "signals": {
             "opp_team_k_pct": 73.0,
             "same_hand_ratio": 12.5,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 72.0452,
+            "ump_k_pct": -0.264,
+            "ump_bb_pct": -0.24
           },
           "hit_probability": 0.6066,
           "raw_hit_probability": 0.663,
@@ -44,18 +47,46 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.7838,
+            "outs_rate": 0.7796,
             "avg_outs_per_start": 15.44
           },
-          "hit_probability": 0.7838,
+          "hit_probability": 0.7796,
           "raw_hit_probability": null,
-          "lift": -0.0091,
+          "lift": -0.0028,
           "reliability": "B",
           "sample_n": 9,
           "projection": {
             "stat": "pitcher_outs",
             "value": 14.5,
             "needs": 15
+          }
+        },
+        {
+          "prop": "Over 10.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 51.3,
+          "notable_signals": 0,
+          "matchup": "New York Yankees @ Baltimore Orioles",
+          "game_pk": 824803,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            607074,
+            669358
+          ],
+          "signals": {
+            "combined_k_edge": -0.0295
+          },
+          "hit_probability": 0.5572,
+          "raw_hit_probability": null,
+          "lift": -0.0295,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 10.5,
+            "needs": 11
           }
         }
       ]

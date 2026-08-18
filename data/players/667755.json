@@ -129,7 +129,7 @@
         {
           "prop": "Over 4.5 Strikeouts",
           "type": "pitcher",
-          "score": 48.7,
+          "score": 35.6,
           "notable_signals": 0,
           "matchup": "Toronto Blue Jays @ Tampa Bay Rays",
           "game_pk": 822938,
@@ -141,7 +141,10 @@
             "opp_team_k_pct": 18.0,
             "same_hand_ratio": 12.5,
             "l14_k_pct": 10.0,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 50.6817,
+            "ump_k_pct": -0.312,
+            "ump_bb_pct": -0.54
           },
           "hit_probability": 0.58,
           "raw_hit_probability": 0.5321,
@@ -157,7 +160,7 @@
         {
           "prop": "Over 16.5 Outs Recorded",
           "type": "pitcher",
-          "score": 33.2,
+          "score": 33.8,
           "notable_signals": 0,
           "matchup": "Toronto Blue Jays @ Tampa Bay Rays",
           "game_pk": 822938,
@@ -166,18 +169,46 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.4647,
+            "outs_rate": 0.4634,
             "avg_outs_per_start": 16.71
           },
-          "hit_probability": 0.4647,
+          "hit_probability": 0.4634,
           "raw_hit_probability": null,
-          "lift": -0.0253,
+          "lift": -0.0201,
           "reliability": "A",
           "sample_n": 24,
           "projection": {
             "stat": "pitcher_outs",
             "value": 16.5,
             "needs": 17
+          }
+        },
+        {
+          "prop": "Over 7.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 55.0,
+          "notable_signals": 0,
+          "matchup": "Toronto Blue Jays @ Tampa Bay Rays",
+          "game_pk": 822938,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            667755,
+            607259
+          ],
+          "signals": {
+            "combined_k_edge": 0.0077
+          },
+          "hit_probability": 0.5729,
+          "raw_hit_probability": null,
+          "lift": 0.0077,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 7.5,
+            "needs": 8
           }
         }
       ]
