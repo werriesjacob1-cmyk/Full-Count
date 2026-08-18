@@ -210,5 +210,69 @@ class GameIdentityLookupTests(unittest.TestCase):
         self.assertEqual({row["id"] for row in selected}, {current["id"], old_open["id"]})
 
 
+class LiveGraderChannelTests(unittest.TestCase):
+    """2026-08-18 Pre-Phase-V production incident: dashboard-live.yml's
+    grading channel (this module's own refresh()) shares the exact same
+    normalize_live() call as the price channel and full rebuild -- see
+    engineering/ENGINEERING_HANDOFF.md's incident entry. Exercises the real
+    refresh() entry point, not just normalize_live() in isolation."""
+
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory()
+        self.data = os.path.join(self.tmp.name, "data.json")
+        self.live = os.path.join(self.tmp.name, "live.json")
+        self.registry = os.path.join(self.tmp.name, "registry.json")
+        board_row = pick("hits", player_id=30, type_="batter")
+        atomic_write_json(self.data, {
+            "schema_version": 3, "identity_schema_version": 2,
+            "date": "2026-08-17", "generated_at": "2026-08-17T17:00:00Z",
+            "odds_fetched_at": "2026-08-17T17:00:00Z", "props": [board_row], "summary": {},
+        })
+        registry = default_registry()
+        registry["migration"] = {
+            "version": registry["rollout_version"], "completed_at": "2026-08-17T16:00:00Z",
+            "source_artifact_id": "legacy-proof",
+        }
+        registry["updated_at"] = "2026-08-17T16:00:00Z"
+        write_registry(self.registry, registry)
+
+    def tearDown(self):
+        self.tmp.cleanup()
+
+    def test_stale_unmappable_legacy_orphan_no_longer_bricks_the_grading_channel(self):
+        # The literal id/content shape from the real incident: no registry
+        # entries exist yet (nothing has ever been published), so refresh()
+        # has nothing to grade -- but it must still get past normalize_live()
+        # without raising, since that call happens before the early return.
+        incident_id = "824077-686930-strikeouts-4"
+        atomic_write_json(self.live, {
+            "prices_updated_at": "2026-08-17T16:00:00Z", "grades_updated_at": None,
+            "props": {incident_id: {
+                "market_odds": 112, "market_implied": 0.4456, "market_edge": 0.1654,
+                "price_clears": True, "market_hold": 0.0585,
+                "recommendation_status": "lean", "status_reasons": [], "stale": False,
+            }},
+        })
+        result = rg.refresh(self.data, self.live, self.registry)  # must not raise
+        self.assertTrue(result["props"])
+
+    def test_orphan_with_durable_settlement_state_still_fails_closed(self):
+        # The grading channel must not silently launder away a real wager
+        # outcome either -- same fail-closed guarantee proven for the price
+        # channel and prepare(), exercised here through refresh() directly.
+        incident_id = "824077-686930-strikeouts-4"
+        atomic_write_json(self.live, {
+            "prices_updated_at": "2026-08-17T16:00:00Z", "grades_updated_at": None,
+            "props": {incident_id: {
+                "settlement_state": "hit", "settlement_authority": "live_observation",
+                "settlement_observed_at": "2026-08-17T20:00:00Z",
+                "settlement_source": "legacy_schema_v2", "result_actual": 5,
+            }},
+        })
+        with self.assertRaises(RuntimeError) as ctx:
+            rg.refresh(self.data, self.live, self.registry)
+        self.assertIn("durable settlement/publication state", str(ctx.exception))
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)

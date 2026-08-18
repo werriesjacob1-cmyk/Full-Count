@@ -57,6 +57,7 @@ PUBLICATION_FIELDS = frozenset((
     "publication_run_id", "publication_deployment_id",
 ))
 PROP_META_FIELDS = frozenset(("_field_updated_at",))
+DURABLE_FIELDS = SETTLEMENT_FIELDS | PUBLICATION_FIELDS
 
 _GAME_LEVEL_STATS = frozenset(("nrfi_combined",))
 _COMMUTATIVE_COMBO_STATS = frozenset(("combined_strikeouts",))
@@ -280,6 +281,22 @@ def default_live_state():
         "grades_updated_at": None,
         "props": {},
     }
+
+
+def carries_durable_state(delta):
+    """True if a live overlay delta records a settlement or publication fact.
+
+    Settlement (what is known about a wager's outcome) and publication (proof
+    it actually reached a public deployment) are the only facts a live
+    overlay entry can hold that this repository does not already regenerate
+    from scratch every cycle -- market/price fields are re-fetched fresh,
+    game-progress fields are re-derived from the live MLB feed, and
+    recommendation_status is recomputed pregame. Anything durable is exactly
+    SETTLEMENT_FIELDS union PUBLICATION_FIELDS; nothing else in a delta can
+    represent state this repository cannot simply recompute."""
+    if not isinstance(delta, dict):
+        return False
+    return bool(DURABLE_FIELDS.intersection(delta))
 
 
 def _migrate_legacy_live(live):

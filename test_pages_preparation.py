@@ -9,8 +9,8 @@ import unittest
 from unittest import mock
 
 from dashboard.confirm_publication import confirm
-from dashboard.live_state import atomic_write_json
-from dashboard.prepare_pages_artifact import normalize_payload, prepare
+from dashboard.live_state import atomic_write_json, canonical_prop_id
+from dashboard.prepare_pages_artifact import normalize_live, normalize_payload, prepare
 from dashboard.publication_registry import default_registry, load_registry, write_registry
 from dashboard.verify_pages_artifact import verify
 
@@ -203,6 +203,119 @@ class PagesPreparationTests(unittest.TestCase):
         )
         self.assertFalse(changed_again)
         self.assertEqual(len(registry_again["entries"]), 1)
+
+
+    # ── 2026-08-18 Pre-Phase-V production incident regression coverage ──
+    # normalize_live() raised unconditionally on ANY legacy live-state id it
+    # could not map onto today's board, bricking dashboard-live.yml (100% of
+    # scheduled runs), dashboard-refresh.yml's commit step, and
+    # dashboard-deploy.yml's staging step -- see the append-only
+    # engineering/ENGINEERING_HANDOFF.md entry documenting the incident and
+    # engineering/AUDIT/live-lifecycle-2026-08-17.md's updated disposition.
+    # Every case below exercises the real prepare() staging path
+    # (dashboard-deploy.yml's own entry point), not just normalize_live() in
+    # isolation, since that is the exact function call chain that crashed.
+
+    def test_stale_orphan_legacy_delta_no_longer_bricks_preparation(self):
+        # The literal id/content shape from the real incident: a legacy
+        # (pre-identity-schema-v2) id for a game/prop no longer on any
+        # current board, carrying only PRICE_FIELDS -- fully reproducible,
+        # non-durable content.
+        incident_id = "824077-686930-strikeouts-4"
+        with open(os.path.join(self.source, "live.json"), encoding="utf-8") as handle:
+            live = json.load(handle)
+        live["props"][incident_id] = {
+            "market_odds": 112, "market_implied": 0.4456, "market_edge": 0.1654,
+            "price_clears": True, "market_hold": 0.0585,
+            "recommendation_status": "lean",
+            "status_reasons": ["reliability grade D is too thin a sample"],
+            "stale": False,
+        }
+        atomic_write_json(os.path.join(self.source, "live.json"), live)
+
+        manifest = self.prepare()  # must not raise
+        self.assertEqual(verify(self.stage)["props"], 1)
+        with open(os.path.join(self.stage, "live.json"), encoding="utf-8") as handle:
+            staged_live = json.load(handle)
+        self.assertNotIn(incident_id, staged_live["props"],
+                         "the stale non-durable orphan must be pruned, not carried forward")
+
+    def test_mappable_legacy_id_still_migrates_and_preserves_its_fields(self):
+        # The default fixture's live.json delta (market_odds=-125) keys off
+        # the SAME legacy id as the one row on today's board -- this must
+        # still migrate onto the row's real canonical id with its price
+        # field intact, not be treated as an orphan.
+        with open(os.path.join(self.source, "data.json"), encoding="utf-8") as handle:
+            data = json.load(handle)
+        canonical_id = canonical_prop_id(data["props"][0])
+        self.prepare()
+        with open(os.path.join(self.stage, "live.json"), encoding="utf-8") as handle:
+            staged_live = json.load(handle)
+        self.assertIn(canonical_id, staged_live["props"])
+        self.assertEqual(staged_live["props"][canonical_id]["market_odds"], -125)
+
+    def test_orphan_carrying_settlement_state_fails_closed_not_pruned(self):
+        # An unmappable legacy id whose delta records a real settlement fact
+        # (a wager outcome) must never be silently discarded -- this bounded
+        # migration cannot prove that fact is durably recorded anywhere else.
+        with open(os.path.join(self.source, "live.json"), encoding="utf-8") as handle:
+            live = json.load(handle)
+        live["props"]["824077-686930-strikeouts-4"] = {
+            "settlement_state": "hit", "settlement_authority": "live_observation",
+            "settlement_observed_at": "2026-08-17T20:00:00Z",
+            "settlement_source": "legacy_schema_v2", "result_actual": 5,
+        }
+        atomic_write_json(os.path.join(self.source, "live.json"), live)
+        with self.assertRaises(ValueError) as ctx:
+            self.prepare()
+        self.assertIn("durable settlement/publication state", str(ctx.exception))
+
+    def test_orphan_carrying_publication_marker_fails_closed_not_pruned(self):
+        # Same guarantee for a real public-exposure fact rather than a
+        # settlement fact -- proof this repository ever showed this wager
+        # to a real visitor as an official Top Pick.
+        with open(os.path.join(self.source, "live.json"), encoding="utf-8") as handle:
+            live = json.load(handle)
+        live["props"]["824077-686930-strikeouts-4"] = {
+            "published_top_pick_at": "2026-08-17T15:00:00Z",
+            "publication_artifact_id": "a" * 64,
+        }
+        atomic_write_json(os.path.join(self.source, "live.json"), live)
+        with self.assertRaises(ValueError) as ctx:
+            self.prepare()
+        self.assertIn("durable settlement/publication state", str(ctx.exception))
+
+    def test_current_schema_orphan_fails_closed_even_without_durable_content(self):
+        # Preserve the OTHER fail-closed invariant this correction must not
+        # weaken: a document that already CLAIMS the current schema (not a
+        # legacy migration input at all) containing a non-canonical id is
+        # corruption, not a stale legacy artifact -- it must still fail
+        # closed even though its content alone looks prunable.
+        current_schema_live = {
+            "schema_version": 3, "identity_schema_version": 2,
+            "updated_at": "2026-08-17T17:00:00Z", "prices_updated_at": None,
+            "grades_updated_at": None,
+            "props": {"824077-686930-strikeouts-4": {"market_odds": 112, "stale": False}},
+        }
+        with self.assertRaises(ValueError) as ctx:
+            normalize_live(current_schema_live, {})
+        self.assertIn("corruption", str(ctx.exception))
+
+    def test_normalize_live_directly_reproduces_and_resolves_the_incident(self):
+        # Fast, isolated confirmation at the exact function boundary that
+        # crashed, using the literal id string from the real incident,
+        # independent of the prepare()-level integration coverage above.
+        incident_id = "824077-686930-strikeouts-4"
+        legacy_live = {
+            "props": {incident_id: {
+                "market_odds": 112, "market_implied": 0.4456, "market_edge": 0.1654,
+                "price_clears": True, "market_hold": 0.0585,
+                "recommendation_status": "lean", "status_reasons": [], "stale": False,
+            }},
+        }
+        result = normalize_live(legacy_live, id_map={})
+        self.assertNotIn(incident_id, result["props"])
+        self.assertEqual(result["schema_version"], 3)
 
 
 if __name__ == "__main__":

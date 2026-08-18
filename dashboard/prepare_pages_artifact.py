@@ -21,7 +21,8 @@ try:
     from . import build_dashboard as bd
     from .live_state import (
         IDENTITY_SCHEMA_VERSION, SCHEMA_VERSION, atomic_write_json,
-        before_betting_cutoff, canonical_prop_id, default_live_state, market_side_token,
+        before_betting_cutoff, canonical_prop_id, carries_durable_state,
+        default_live_state, market_side_token,
         merge_live_states, migrate_legacy_live, parse_legacy_utc, parse_utc,
         stable_prop_id, state_digest, utc_now, validate_live_state,
         validate_payload_identities,
@@ -37,7 +38,8 @@ except ImportError:
     import build_dashboard as bd
     from live_state import (
         IDENTITY_SCHEMA_VERSION, SCHEMA_VERSION, atomic_write_json,
-        before_betting_cutoff, canonical_prop_id, default_live_state, market_side_token,
+        before_betting_cutoff, canonical_prop_id, carries_durable_state,
+        default_live_state, market_side_token,
         merge_live_states, migrate_legacy_live, parse_legacy_utc, parse_utc,
         stable_prop_id, state_digest, utc_now, validate_live_state,
         validate_payload_identities,
@@ -120,9 +122,37 @@ def normalize_payload(data):
 
 
 def normalize_live(live, id_map):
+    """Migrate a live overlay's per-id deltas onto the current canonical ids.
+
+    ``id_map`` only ever contains ids for rows on TODAY's board (built by
+    ``normalize_payload`` from the current ``data.json``). A delta whose id
+    is absent from it belongs to a game/prop no longer on any board this
+    repository can reconstruct -- there is no canonical identity to migrate
+    it onto.
+
+    That absence is not by itself proof the delta is safe to discard, and
+    this leniency is bounded to the same place ``normalize_payload`` already
+    draws that same line: a genuinely LEGACY source document (schema absent
+    or v1/v2). A document that already claims the current schema and still
+    contains a non-canonical id is not a migration input at all -- it is
+    corruption, and corruption fails closed unconditionally, exactly like
+    ``normalize_payload``'s own current-schema identity check.
+
+    Within that bounded legacy case, the line is durable content, not
+    whether an id happens to still be mappable: a delta carrying only
+    market/price observations is fully reproducible next cycle (every field
+    in it gets re-fetched or recomputed from scratch regardless), so
+    dropping it loses nothing. A delta carrying any SETTLEMENT_FIELDS or
+    PUBLICATION_FIELDS content could be the only remaining record of a real
+    wager outcome or a real public exposure -- this function has no way to
+    prove that fact is durably recorded anywhere else, so it fails closed
+    exactly as it always has for that case, rather than guessing it is safe
+    to erase.
+    """
     if not isinstance(live, dict):
         raise ValueError("live state must be an object")
-    if live.get("schema_version") in (None, 1, 2):
+    legacy = live.get("schema_version") in (None, 1, 2)
+    if legacy:
         normalized = migrate_legacy_live(live)
     else:
         normalized = copy.deepcopy(live)
@@ -132,7 +162,20 @@ def normalize_live(live, id_map):
     for old_id, delta in (normalized.get("props") or {}).items():
         new_id = id_map.get(old_id, old_id)
         if not new_id.startswith("fc2:"):
-            raise ValueError(f"cannot safely migrate orphan legacy live id {old_id!r}")
+            if legacy and not carries_durable_state(delta):
+                # Bounded legacy cleanup only: a stale, fully-reproducible
+                # price/game-progress observation for a prop no longer on
+                # any board this repository can reconstruct. Pruning it is
+                # not a migration -- there is nothing here migration could
+                # produce a new id for.
+                continue
+            reason = (
+                "it carries durable settlement/publication state with no current "
+                "canonical identity to reconcile it against" if legacy else
+                "the document already claims the current schema, so a non-canonical "
+                "id is corruption, not a legacy migration input"
+            )
+            raise ValueError(f"cannot safely migrate orphan legacy live id {old_id!r}: {reason}")
         one = default_live_state()
         one["updated_at"] = normalized.get("updated_at")
         one["prices_updated_at"] = normalized.get("prices_updated_at")

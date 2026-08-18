@@ -454,6 +454,32 @@ class ObservationTests(TempPrice):
         self.assertNotIn(legacy_id, written["props"])
         self.assertEqual(written["props"][value["id"]]["market_odds"], -125)
 
+    def test_stale_unmappable_legacy_orphan_no_longer_bricks_the_price_channel(self):
+        # 2026-08-18 Pre-Phase-V production incident: this exact real-workflow
+        # path (dashboard-live.yml's price channel, refresh_prices.refresh())
+        # failed on every single scheduled run once docs/live.json accumulated
+        # a legacy id for a game/prop no longer on any current board -- see
+        # engineering/ENGINEERING_HANDOFF.md's incident entry. This id/content
+        # shape is the literal one from the incident.
+        value = row("hits")
+        self.seed([value])
+        incident_id = "824077-686930-strikeouts-4"
+        atomic_write_json(self.live, {
+            "prices_updated_at": "2026-08-17T16:00:00Z", "grades_updated_at": None,
+            "props": {incident_id: {
+                "market_odds": 112, "market_implied": 0.4456, "market_edge": 0.1654,
+                "price_clears": True, "market_hold": 0.0585,
+                "recommendation_status": "lean", "status_reasons": [], "stale": False,
+            }},
+        })
+        with self.feed_patches(), \
+             mock.patch.object(gr, "fetch_game_contexts", return_value={1: {"status": PREVIEW, "feed": {}}}), \
+             mock.patch.object(rp, "utc_now", return_value=T1):
+            rp.refresh(self.data, self.live, self.registry)  # must not raise
+        written = load_json(self.live)
+        self.assertNotIn(incident_id, written["props"])
+        self.assertIn(value["id"], written["props"])
+
     def test_published_snapshot_cannot_reprice_or_demote_across_start_race(self):
         value = row("hits")
         self.seed([value])
