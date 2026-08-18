@@ -652,6 +652,109 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-18",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 71.0,
+          "notable_signals": 2,
+          "matchup": "Seattle Mariners @ Milwaukee Brewers",
+          "game_pk": 823749,
+          "team": "Milwaukee Brewers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 16.5714,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 30.0,
+            "lineup_slot": 62.5,
+            "bullpen_fatigue": 69.4444,
+            "platoon_barrel_pct": 1.68,
+            "platoon_xwoba": 1.26,
+            "park_hand_index": 0.47,
+            "opp_catcher_framing": 0.6,
+            "days_rest": 2.0,
+            "consecutive_games": -0.6,
+            "woba_ahead": 81.8182,
+            "woba_behind": 13.6364,
+            "pull_park_synergy": 0.1036,
+            "hard_hit_105_rate": 0.8175,
+            "team_total_move": 6.0,
+            "team_total_open": 0.0,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": -0.312,
+            "vs_rp_ops": -0.384,
+            "ump_k_pct": 0.18,
+            "ump_bb_pct": 0.228
+          },
+          "hit_probability": 0.6098,
+          "raw_hit_probability": 0.6083,
+          "lift": 0.0583,
+          "reliability": "A",
+          "sample_n": 116,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 12.5,
+          "notable_signals": 0,
+          "matchup": "Seattle Mariners @ Milwaukee Brewers",
+          "game_pk": 823749,
+          "team": "Milwaukee Brewers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0793
+          },
+          "hit_probability": 0.0793,
+          "raw_hit_probability": null,
+          "lift": 0.0299,
+          "reliability": "A",
+          "sample_n": 116,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 5.6,
+          "notable_signals": 0,
+          "matchup": "Seattle Mariners @ Milwaukee Brewers",
+          "game_pk": 823749,
+          "team": "Milwaukee Brewers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0352
+          },
+          "hit_probability": 0.0352,
+          "raw_hit_probability": null,
+          "lift": 0.0137,
+          "reliability": "A",
+          "sample_n": 116,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

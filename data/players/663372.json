@@ -159,7 +159,7 @@
         {
           "prop": "Over 3.5 Strikeouts",
           "type": "pitcher",
-          "score": 52.7,
+          "score": 48.7,
           "notable_signals": 0,
           "matchup": "Los Angeles Dodgers @ Colorado Rockies",
           "game_pk": 824319,
@@ -171,7 +171,10 @@
             "opp_team_k_pct": 35.0,
             "same_hand_ratio": 43.75,
             "l14_k_pct": 0.0,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 61.3614,
+            "ump_k_pct": -0.636,
+            "ump_bb_pct": -0.3
           },
           "hit_probability": 0.5861,
           "raw_hit_probability": 0.5618,
@@ -187,7 +190,7 @@
         {
           "prop": "Over 15.5 Outs Recorded",
           "type": "pitcher",
-          "score": 36.2,
+          "score": 39.4,
           "notable_signals": 0,
           "matchup": "Los Angeles Dodgers @ Colorado Rockies",
           "game_pk": 824319,
@@ -196,12 +199,12 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.5162,
+            "outs_rate": 0.5068,
             "avg_outs_per_start": 14.5
           },
-          "hit_probability": 0.5162,
+          "hit_probability": 0.5068,
           "raw_hit_probability": null,
-          "lift": -0.0486,
+          "lift": -0.0202,
           "reliability": "A",
           "sample_n": 18,
           "projection": {

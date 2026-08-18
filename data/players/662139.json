@@ -914,6 +914,136 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-18",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 60.3,
+          "notable_signals": 0,
+          "matchup": "Los Angeles Angels @ Houston Astros",
+          "game_pk": 824154,
+          "team": "Houston Astros",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 100.0,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 22.6667,
+            "lineup_slot": 50.0,
+            "bullpen_fatigue": 64.1026,
+            "platoon_barrel_pct": 0.16,
+            "platoon_xwoba": -1.14,
+            "park_hand_index": 2.31,
+            "opp_catcher_framing": -1.08,
+            "days_rest": 2.0,
+            "woba_ahead": 12.7273,
+            "woba_behind": 40.9091,
+            "pull_park_synergy": 1.2289,
+            "hard_hit_105_rate": -0.1075,
+            "team_total_move": 0.0,
+            "team_total_open": 0.0,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": 0.08,
+            "vs_rp_ops": -0.384,
+            "ump_k_pct": 0.432,
+            "ump_bb_pct": -0.096
+          },
+          "hit_probability": 0.6656,
+          "raw_hit_probability": 0.6638,
+          "lift": -0.0108,
+          "reliability": "A",
+          "sample_n": 105,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 24.0,
+          "notable_signals": 0,
+          "matchup": "Los Angeles Angels @ Houston Astros",
+          "game_pk": 824154,
+          "team": "Houston Astros",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": 2.58,
+            "sprint_speed": 3.125,
+            "catcher_poptime": 11.4286,
+            "on_base": 32.8215
+          },
+          "hit_probability": 0.089,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 105,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 3.2,
+          "notable_signals": 0,
+          "matchup": "Los Angeles Angels @ Houston Astros",
+          "game_pk": 824154,
+          "team": "Houston Astros",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0423
+          },
+          "hit_probability": 0.0423,
+          "raw_hit_probability": null,
+          "lift": -0.0071,
+          "reliability": "A",
+          "sample_n": 105,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 0.0,
+          "notable_signals": 0,
+          "matchup": "Los Angeles Angels @ Houston Astros",
+          "game_pk": 824154,
+          "team": "Houston Astros",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0036
+          },
+          "hit_probability": 0.0036,
+          "raw_hit_probability": null,
+          "lift": -0.0179,
+          "reliability": "A",
+          "sample_n": 105,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

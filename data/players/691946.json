@@ -129,6 +129,34 @@
             "value": 4.5,
             "needs": 5
           }
+        },
+        {
+          "prop": "Over 8.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 0.1,
+          "notable_signals": 0,
+          "matchup": "Los Angeles Angels @ Houston Astros",
+          "game_pk": 824154,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            691946,
+            664299
+          ],
+          "signals": {
+            "combined_k_edge": -0.3697
+          },
+          "hit_probability": 0.2204,
+          "raw_hit_probability": null,
+          "lift": -0.3697,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 8.5,
+            "needs": 9
+          }
         }
       ]
     }
