@@ -35,6 +35,7 @@ def head(t):
 
 import generate_picks as gp
 import odds_fanduel as fd
+import prop_probability as pp
 
 
 def batter_with_options(name="Batter", score=70, player_id=5, **over):
@@ -176,6 +177,39 @@ assumed_pitcher_out = gp.select_best_by_category([single_line_pitcher(lineup_ass
 check(assumed_pitcher_out["strikeouts"][0]["lineup_assumed"] is True,
       "the single-line branch (pitchers/stolen_base/nrfi) preserves lineup_assumed too",
       f"got {assumed_pitcher_out}")
+
+head("12. 2026-08-18 Pre-Phase-V finding A4, end to end: apply_calibration() -> "
+     "select_best_by_category() -- the corrected pipeline order every real caller (live "
+     "dashboard, static pipeline, value_board.py, backtest/threshold_sensitivity.py all "
+     "share via score_slate()/_build_and_score()). The calibrated, market-specific "
+     "probability must be what reaches pricing/classification, not the raw pre-calibration "
+     "value this finding was about.")
+
+per_market = {"hits": lambda p: p * 0.9, "total_bases": lambda p: p * 0.7}
+glob = lambda p: p * 0.5
+batter = batter_with_options()
+gp.apply_calibration([batter], (per_market, glob))
+prices = {fd.normalize_name("Batter"): {("hits", 1): -140, ("total_bases", 1): -200}}
+out12 = gp.select_best_by_category([batter], prices, fd)
+
+check(abs(out12["hits"][0]["hit_probability"] - (0.72 * 0.9)) < 1e-9,
+      "the hits category's final hit_probability is the CALIBRATED value (0.72*0.9=0.648), "
+      "not the raw pre-calibration 0.72 this finding was about",
+      f"got {out12['hits'][0]['hit_probability']}")
+check(out12["hits"][0]["raw_hit_probability"] == 0.72 and out12["hits"][0]["calibrated_by"] == "hits",
+      "the hits category's own provenance is correct and market-specific",
+      str({k: out12["hits"][0][k] for k in ("raw_hit_probability", "calibrated_by")}))
+check(abs(out12["total_bases"][0]["hit_probability"] - (0.75 * 0.7)) < 1e-9,
+      "the total_bases category independently uses the TOTAL_BASES curve (0.75*0.7=0.525), "
+      "never the hits curve or the primary line's own calibration",
+      f"got {out12['total_bases'][0]['hit_probability']}")
+check(out12["total_bases"][0]["calibrated_by"] == "total_bases",
+      "total_bases reports its own market-specific calibrated_by, distinct from hits'")
+
+check(abs(out12["hits"][0]["market_edge"] - round(0.648 - pp.implied_probability(-140), 4)) < 1e-9,
+      "market_edge for the hits category is computed from the CALIBRATED probability "
+      "(requirement: pricing/market_edge must use the calibrated probability)",
+      f"got {out12['hits'][0]['market_edge']}")
 
 n_pass = sum(1 for ok, _, _ in _results if ok)
 n_total = len(_results)

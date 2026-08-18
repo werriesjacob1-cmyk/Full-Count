@@ -128,6 +128,160 @@ head("10. an empty candidate list returns cleanly")
 
 check(gp.apply_calibration([], (per_market, glob)) == [], "an empty list returns an empty list")
 
+head("11. 2026-08-18 Pre-Phase-V finding A4: every line_options entry is calibrated against "
+     "its OWN stat, never the candidate's primary stat -- a Home Runs alternate on a "
+     "Hits-primary candidate must use the Home Runs curve")
+
+per_market_multi = {"hits": lambda p: p * 0.8, "home_runs": lambda p: p * 0.6}
+glob_multi = lambda p: p * 0.5
+c = cand("hits", hit_probability=0.70, base_rate=0.50)
+c["line_options"] = [
+    {"stat": "hits", "needs": 1, "line": 0.5, "prob": 0.70, "base_rate": 0.50, "lift": 0.20, "basis": "empirical"},
+    {"stat": "home_runs", "needs": 1, "line": 0.5, "prob": 0.20, "base_rate": 0.10, "lift": 0.10, "basis": "empirical"},
+    {"stat": "total_bases", "needs": 2, "line": 1.5, "prob": 0.55, "base_rate": 0.45, "lift": 0.10, "basis": "empirical"},
+]
+out = gp.apply_calibration([c], (per_market_multi, glob_multi))
+opts_by_stat = {o["stat"]: o for o in out[0]["line_options"]}
+
+check(abs(opts_by_stat["hits"]["prob"] - 0.56) < 1e-9,
+      "the hits alternate line uses the hits curve (0.70*0.8=0.56), matching the primary line's "
+      "own treatment for the same stat", f"got {opts_by_stat['hits']['prob']}")
+check(abs(opts_by_stat["home_runs"]["prob"] - 0.12) < 1e-9,
+      "the home_runs alternate line uses the HOME_RUNS curve (0.20*0.6=0.12), NOT the hits curve "
+      "(which would give 0.16) and NOT the candidate's own primary stat", f"got {opts_by_stat['home_runs']['prob']}")
+check(abs(opts_by_stat["total_bases"]["prob"] - 0.275) < 1e-9,
+      "the total_bases alternate line (no per-market curve) correctly falls back to the pooled "
+      "curve (0.55*0.5=0.275), independently of the other two options",
+      f"got {opts_by_stat['total_bases']['prob']}")
+
+head("12. raw_prob is preserved per-option, and calibrated_by is market-specific -- never "
+     "borrowed from the primary line or another option")
+
+check(opts_by_stat["hits"]["raw_prob"] == 0.70 and opts_by_stat["hits"]["calibrated_by"] == "hits",
+      "the hits option's own raw value and calibrated_by are correct and self-consistent",
+      str(opts_by_stat["hits"]))
+check(opts_by_stat["home_runs"]["raw_prob"] == 0.20 and opts_by_stat["home_runs"]["calibrated_by"] == "home_runs",
+      "the home_runs option's raw value and calibrated_by are its OWN, not the hits primary "
+      "line's (0.70/'hits')", str(opts_by_stat["home_runs"]))
+check(opts_by_stat["total_bases"]["raw_prob"] == 0.55 and opts_by_stat["total_bases"]["calibrated_by"] == "pooled",
+      "the total_bases option correctly reports 'pooled', distinct from the two per-market options",
+      str(opts_by_stat["total_bases"]))
+check(out[0]["raw_hit_probability"] == 0.70 and out[0]["calibrated_by"] == "hits",
+      "the PRIMARY line's own provenance is unaffected by calibrating its line_options siblings",
+      str({k: out[0][k] for k in ("raw_hit_probability", "calibrated_by")}))
+
+head("13. lift is recomputed per-option from the calibrated probability, exactly matching "
+     "the primary line's own treatment")
+
+check(abs(opts_by_stat["hits"]["lift"] - (0.56 - 0.50)) < 1e-9,
+      "the hits option's lift moves with its own calibrated probability, not left stale "
+      "against the raw 0.70", f"got {opts_by_stat['hits']['lift']}")
+check(abs(opts_by_stat["home_runs"]["lift"] - (0.12 - 0.10)) < 1e-9,
+      "the home_runs option's lift is independently recomputed from ITS OWN calibrated "
+      "probability and base_rate", f"got {opts_by_stat['home_runs']['lift']}")
+
+head("14. an option with no applicable calibrator (no per-market fit, no pooled fallback) "
+     "stays explicitly, honestly uncalibrated -- never invented")
+
+c2 = cand("hits", hit_probability=0.70, base_rate=0.50)
+c2["line_options"] = [
+    {"stat": "hits", "needs": 1, "line": 0.5, "prob": 0.70, "base_rate": 0.50, "lift": 0.20, "basis": "empirical"},
+    {"stat": "runs", "needs": 1, "line": 0.5, "prob": 0.40, "base_rate": 0.30, "lift": 0.10, "basis": "empirical"},
+]
+out2 = gp.apply_calibration([c2], ({"hits": lambda p: p * 0.8}, None))  # no pooled fallback
+opt_runs = next(o for o in out2[0]["line_options"] if o["stat"] == "runs")
+check(opt_runs["prob"] == 0.40, "with no per-market curve for 'runs' and no pooled fallback, "
+      "the option's raw probability is left completely untouched")
+check("raw_prob" not in opt_runs and "calibrated_by" not in opt_runs,
+      "no calibration bookkeeping is stamped on an option that was never actually calibrated -- "
+      "truthful absence, not a fabricated 'calibrated_by: none' or similar")
+check(opt_runs["lift"] == 0.10, "lift is also left untouched when no calibration was applied "
+      "to this option")
+
+head("15. an option that raises during calibration is skipped for THAT option only, not fatal "
+     "to the candidate or the rest of its line_options")
+
+def _boom_opt(p):
+    raise ValueError("bad curve")
+
+c3 = cand("hits", hit_probability=0.70, base_rate=0.50)
+c3["line_options"] = [
+    {"stat": "hits", "needs": 1, "line": 0.5, "prob": 0.70, "base_rate": 0.50, "lift": 0.20, "basis": "empirical"},
+    {"stat": "total_bases", "needs": 2, "line": 1.5, "prob": 0.55, "base_rate": 0.45, "lift": 0.10, "basis": "empirical"},
+]
+out3 = gp.apply_calibration([c3], ({"total_bases": _boom_opt}, glob_multi))
+opts3 = {o["stat"]: o for o in out3[0]["line_options"]}
+check(opts3["total_bases"]["prob"] == 0.55,
+      "the option whose curve raises keeps its raw probability, not a crash or a fabricated value")
+check(abs(opts3["hits"]["prob"] - 0.35) < 1e-9,
+      "the OTHER option in the same candidate's line_options is still calibrated normally "
+      "(0.70*0.5=0.35, pooled since no per-market 'hits' curve was given here)",
+      f"got {opts3['hits']['prob']}")
+
+head("16. a candidate with no line_options at all (pitcher/game/no alternates) is unaffected -- "
+     "the new per-option loop must not require the key to exist")
+
+c4 = cand("strikeouts", hit_probability=0.65, base_rate=0.50)
+out4 = gp.apply_calibration([c4], (per_market_multi, glob_multi))
+check("line_options" not in out4[0] or not out4[0].get("line_options"),
+      "a candidate with no line_options is calibrated normally on its primary line with no error")
+check(abs(out4[0]["hit_probability"] - 0.325) < 1e-9,
+      "primary-line calibration for a candidate with no line_options is unaffected",
+      f"got {out4[0]['hit_probability']}")
+
+head("17. calibration never touches, invents, or widens a line_options entry's ci -- CI "
+     "semantics are entirely orthogonal to whether a calibrator exists for that market")
+
+c5 = cand("hits", hit_probability=0.70, base_rate=0.50)
+c5["line_options"] = [
+    {"stat": "hits", "needs": 1, "line": 0.5, "prob": 0.70, "base_rate": 0.50, "lift": 0.20,
+     "basis": "empirical", "ci": [0.63, 0.77]},
+    {"stat": "home_runs", "needs": 1, "line": 0.5, "prob": 0.20, "base_rate": 0.10, "lift": 0.10,
+     "basis": "modelled_shrunk", "ci": None},
+]
+out5 = gp.apply_calibration([c5], (per_market_multi, glob_multi))
+opts5 = {o["stat"]: o for o in out5[0]["line_options"]}
+check(opts5["hits"]["ci"] == [0.63, 0.77],
+      "a real, defensible ci is left exactly as computed -- calibration changes the "
+      "probability it describes, not the interval itself", str(opts5["hits"]["ci"]))
+check(opts5["home_runs"]["ci"] is None,
+      "an honestly-absent ci (modelled_shrunk basis) stays None even though this option WAS "
+      "successfully calibrated (home_runs has a real per-market curve here) -- calibration "
+      "existing is not license to invent a CI that was never defensible", str(opts5["home_runs"]))
+check(opts5["home_runs"]["prob"] == 0.12,
+      "sanity: the home_runs option really was calibrated (0.20*0.6=0.12) even though its ci "
+      "correctly remains None", f"got {opts5['home_runs']['prob']}")
+
+head("18. 2026-08-18 A4 follow-up (found by independent subagent review): c[\"alternatives\"] "
+     "(consumed by select_shadow_tracking(), a SEPARATE list of dict objects from "
+     "line_options -- see _keep_options() vs the raw opts slice) also gets calibrated, "
+     "with its own independent provenance, not just line_options")
+
+c6 = cand("hits", hit_probability=0.70, base_rate=0.50)
+c6["line_options"] = [
+    {"stat": "hits", "needs": 1, "line": 0.5, "prob": 0.70, "base_rate": 0.50, "lift": 0.20, "basis": "empirical"},
+]
+c6["alternatives"] = [
+    {"stat": "home_runs", "needs": 1, "line": 0.5, "prob": 0.20, "base_rate": 0.10, "lift": 0.10, "basis": "empirical"},
+    {"stat": "runs", "needs": 1, "line": 0.5, "prob": 0.40, "base_rate": 0.30, "lift": 0.10, "basis": "empirical"},
+]
+out6 = gp.apply_calibration([c6], ({"hits": lambda p: p * 0.8, "home_runs": lambda p: p * 0.6}, glob_multi))
+alts_by_stat = {a["stat"]: a for a in out6[0]["alternatives"]}
+check(abs(alts_by_stat["home_runs"]["prob"] - 0.12) < 1e-9,
+      "an alternatives entry is calibrated against its OWN stat (home_runs: 0.20*0.6=0.12), "
+      "exactly the same as a line_options entry would be", f"got {alts_by_stat['home_runs']['prob']}")
+check(alts_by_stat["home_runs"]["raw_prob"] == 0.20 and alts_by_stat["home_runs"]["calibrated_by"] == "home_runs",
+      "the alternatives entry's own provenance is correct and independent",
+      str(alts_by_stat["home_runs"]))
+check(abs(alts_by_stat["runs"]["prob"] - 0.20) < 1e-9,
+      "an alternatives entry with no per-market curve falls back to pooled (0.40*0.5=0.20), "
+      "independently of the home_runs entry in the same list", f"got {alts_by_stat['runs']['prob']}")
+check(alts_by_stat["runs"]["calibrated_by"] == "pooled",
+      "the pooled-fallback alternatives entry reports 'pooled' correctly")
+check(out6[0]["line_options"][0]["prob"] != alts_by_stat["home_runs"]["prob"],
+      "sanity: line_options and alternatives are genuinely separate objects, both correctly "
+      "calibrated independently, neither borrowing the other's value")
+
 n_pass = sum(1 for ok, _, _ in _results if ok)
 n_total = len(_results)
 print("\n" + "=" * 78)
