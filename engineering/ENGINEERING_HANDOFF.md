@@ -1169,3 +1169,138 @@ Information Claude should know when resuming:
   alternate-line-calibration, slate-date, calibration-cache, and frontend
   findings from the Pre-Phase-V audit remain open and were deliberately not
   bundled into this fix.
+
+## 2026-08-18 — PR #52 merged; sequential post-merge incident-recovery rollout
+
+Agent:
+Claude
+
+Branch:
+`pre-phase-v/live-artifact-orphan-migration-fix` (merged)
+
+Commit(s):
+Merge `5916e3549af1bc096dd5b80107ec1e2f18c9ccf8` (PR #52 into `main`).
+
+Objective:
+User reviewed PR #52 independently, confirmed the bounded migration semantics
+were acceptable, and authorized merge plus the sequential incident-recovery
+rollout this entry documents. This is proof the pipeline is actually
+repaired in production, not just that the code changed.
+
+Pre-merge check: only two commits existed between the PR's base and current
+`main` at authorization time (`90ddb2f1`, `0996bd71`), both pure
+`dashboard/lineup_watch_state.json` automation churn — no source, workflow,
+test, or engineering-doc changes. PR mergeable_state was `clean`, CI green on
+head, diff scope exactly the 7 intended files. Merged via `merge_pull_request`
+(merge commit `5916e3549af1bc096dd5b80107ec1e2f18c9ccf8`), confirmed an
+ancestor of `main` immediately after with zero unrelated changes since.
+
+Sequential rollout, each step confirmed via GitHub Actions run IDs, repository
+state, and independent live fetches of the public Pages site (not inferred
+from CI green alone):
+
+1. **Canary** — `dashboard-live.yml` run `32181932000` (head
+   `5916e354`) succeeded; the previously-fatal "Commit and push live state"
+   step completed normally. Repository `docs/live.json` afterward:
+   schema v3 / identity v2, 873 props, 0 non-`fc2:` orphan ids, incident id
+   `824077-686930-strikeouts-4` absent, `updated_at` fresh
+   (`2026-08-18T20:23:52Z`).
+2. **Canary deploy** — `dashboard-deploy.yml` run `32182145480` succeeded
+   (registry verify, artifact stage, artifact contract verify, Pages deploy,
+   durable-exposure confirmation all green). Independently fetched
+   `https://werriesjacob1-cmyk.github.io/Full-Count/live.json`: matched
+   repository state exactly (schema v3, 0 orphans, incident id absent).
+   `data.json` was still the stale pre-fix board at this point
+   (`generated_at` 02:21 UTC, 0 Top Picks) — expected, since the canary only
+   proves the live-writer path, not board freshness.
+3. **Full Dashboard Refresh** — `dashboard-refresh.yml` run `32182476342`
+   (head `3f0fde3d`) succeeded, replacing the stale board:
+   `generated_at 2026-08-18T20:31:16Z`, `odds_fetched_at 20:31:10Z`,
+   `n_props: 2670, n_top_pick: 6, n_lean: 1050, n_value: 60, n_games: 15`. No
+   Top Picks were forced; 6 is what the pipeline computed honestly against
+   the real current slate.
+4. **Fresh-board deploy** — `dashboard-deploy.yml` run `32182740384`
+   succeeded. Independently fetched the public site: `data.json`
+   `generated_at` and summary matched the repository exactly. A real
+   publication event fired during this step:
+   `data/public_top_picks/registry.json` gained 6 new entries (all 6 fresh
+   Top Picks), each with real provenance (`source_commit`, `workflow_run_id
+   32182740384`, `deployment_url`, `data_hash`/`live_hash`). This is genuine
+   real-world lifecycle evidence, not manufactured — see "Top Pick lifecycle"
+   below.
+5. **Second live cycle** — `dashboard-live.yml` run `32183081737` (head
+   `cc605477`, i.e. against the fresh board plus the new registry entries)
+   succeeded: `grades_updated_at` and `prices_updated_at` both advanced,
+   890 props, 0 orphans, all 6 newly-published Top Pick ids present with
+   `game_state: pregame` merged in correctly. `dashboard-deploy.yml` run
+   `32183286789` for this cycle also succeeded; independently re-fetched the
+   public `live.json` and it matched repository state exactly
+   (`updated_at 2026-08-18T20:36:25Z`, 890 props, 0 orphans, incident id
+   absent).
+6. **Scheduled recurrence** — no naturally `schedule`-triggered
+   `dashboard-live.yml` run had fired as of ~22 minutes after merge despite
+   the 5-minute cron, versus GitHub Actions' own well-known scheduling
+   latency under load. Not sat out indefinitely per the operating brief's own
+   instruction on this point. **Recorded as PENDING operational observation,
+   not proven** — the next naturally scheduled tick should be checked
+   opportunistically rather than assumed clean.
+
+One non-finding worth recording so it isn't mistaken for a new defect: one
+published Top Pick's live-overlay delta (`fc2:824639:...hits_runs_rbis:1:over`)
+still carried a `stale: True` / "board is 18.0h old" `status_reasons` message
+from before the refresh, because its price fields were not touched by the
+second live cycle (`_field_updated_at` showed `market_odds`/`market_implied`
+still stamped at the canary's 20:23:52, while `game_state` had advanced to
+20:35:56). This reads as the immutable-price-snapshot invariant for published
+Top Picks doing its job (frozen price context, not stale corruption), not a
+regression from this fix. Recorded for completeness, not flagged as a defect.
+
+Repository vs. public artifact freshness proof:
+- Orphan legacy-id count: 216 (real pre-fix `docs/live.json`) -> 0 (post-fix,
+  confirmed at every step above).
+- `publication_manifest.json` on the public site reflected the fresh-board
+  deploy's artifact id and 6 real candidates with correct provenance.
+- A raw byte-hash comparison attempt against the manifest's declared
+  `data_hash` initially appeared to mismatch; root-caused to my own flawed
+  local reproduction (re-running `prepare_pages_artifact.py` against a
+  registry state that already contained the 6 new entries, producing a
+  different "new exposure candidate" count and therefore a different hash
+  than the real run saw) -- not a production defect. The authoritative check
+  is the real deploy job's own "Verify complete Pages artifact contract"
+  step, which passed on every run above.
+
+Top Pick lifecycle -- what is and is not proven:
+CONFIRMED by this rollout: pipeline repaired, full rebuild reachable again,
+public exposure of 6 real, non-manufactured Top Picks before first pitch
+(earliest game start ~22:40Z, published ~20:33Z), correct provenance
+recorded, live overlay merging game-state facts onto published picks without
+disturbing their identity. NOT YET PROVEN (genuinely pending real game
+progression, not something this session can or should force): survival
+across first pitch, live yellow, provisional hit, official-final
+confirmation/correction, durable next-day grading, and an observed
+correction event. These are two different claims and must stay distinct:
+"pipeline repaired and production publishing again" is CONFIRMED;
+"every PR #51 lifecycle invariant observed on a real public Top Pick" is
+NOT YET PROVEN and was not overclaimed.
+
+Lifecycle audit checklist item 20 ("verify stale live observations do not
+create a backlog or regress state") -- reopened by the earlier addendum in
+this file -- can now be considered CLOSED for the specific orphan-migration
+failure mode that reopened it: canary and second-cycle runs both confirm
+stale/orphaned live observations no longer brick normalization and no longer
+regress state. It remains open in the broader sense the original PR #51 audit
+intended (ordinary staleness/backlog behavior under normal live-observation
+churn), which was never specifically about this failure mode.
+
+No new defect was discovered during rollout beyond the scheduling-latency
+observation above (not a defect, an infrastructure characteristic to note).
+
+Note on this entry's own history: an earlier attempt to write this same
+entry was accidentally discarded by a `git reset --hard` run against the
+wrong branch state mid-session, before it was committed. No production
+state was affected — this is a transparency note about the documentation
+process itself, recorded because the handoff is append-only and should
+reflect what actually happened, including this correction.
+
+Phase V has **not** begun. This rollout was operational verification of the
+Pre-Phase-V incident correction only.
