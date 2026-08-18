@@ -32,6 +32,7 @@ try:
         PUBLICATION_DEPLOYMENT_LEAD_SECONDS,
         publication_candidate, validate_manifest,
     )
+    from .settlement_rules import supports_public_settlement
 except ImportError:
     import build_dashboard as bd
     from live_state import (
@@ -47,6 +48,7 @@ except ImportError:
         PUBLICATION_DEPLOYMENT_LEAD_SECONDS,
         publication_candidate, validate_manifest,
     )
+    from settlement_rules import supports_public_settlement
 
 
 DEFAULT_PUBLIC_BASE_URL = "https://werriesjacob1-cmyk.github.io/Full-Count"
@@ -350,10 +352,19 @@ def prepare(source, destination, registry_path=DEFAULT_REGISTRY_PATH,
         )
         candidate_ids = {candidate["canonical_id"] for candidate in preliminary["candidates"]}
         known_ids = set(registry["entries"])
-        # A local Top Pick too close to first pitch cannot be proven to finish
-        # deployment before the wagering boundary. Omit it from this staged
-        # artifact instead of exposing a recommendation that cannot enter the
-        # durable public population safely. Source docs/ remains untouched.
+        # A local Top Pick too close to first pitch or lacking a structured
+        # settlement path cannot safely enter the official public population.
+        # Omit it from only this staged artifact; source docs/ remains untouched.
+        for row in data.get("props") or []:
+            if (row.get("recommendation_status") == "top_pick"
+                    and row.get("id") not in candidate_ids
+                    and row.get("id") not in known_ids):
+                reason = (
+                    "unsupported structured settlement path"
+                    if not supports_public_settlement(row)
+                    else "insufficient deployment reserve before betting cutoff"
+                )
+                print(f"::warning::Withholding unproven Top Pick {row.get('id')}: {reason}.")
         data["props"] = [
             row for row in data.get("props") or []
             if row.get("recommendation_status") != "top_pick"

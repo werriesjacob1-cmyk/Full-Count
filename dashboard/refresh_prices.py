@@ -63,9 +63,14 @@ def _market_family(row):
 
 def _fetch_family(name, fetcher):
     try:
-        return {"family": name, "ok": True, "values": fetcher(strict=True), "error": None}
+        observation = fetcher(strict=True, with_evidence=True)
+        if not (hasattr(observation, "root_state")
+                and hasattr(observation, "events")
+                and hasattr(observation, "values")):
+            raise RuntimeError("fetcher omitted structured market-observation evidence")
+        return {"family": name, "observation": observation, "error": None}
     except Exception as exc:
-        return {"family": name, "ok": False, "values": None,
+        return {"family": name, "observation": None,
                 "error": f"{type(exc).__name__}: {exc}"[:300]}
 
 
@@ -77,14 +82,18 @@ def _game_fact(state, stamp, source="mlb_game_feed_by_game_pk"):
     }
 
 
-def _family_args(feeds):
-    return {
-        "prices": feeds["general_batter"]["values"] or {},
-        "k_prices": feeds["strikeouts"]["values"] or {},
-        "fi_prices": feeds["first_inning"]["values"] or {},
-        "po_prices": feeds["pitcher_outs"]["values"] or {},
-        "combined_k_prices": feeds["combined_strikeouts"]["values"] or {},
+def _family_args(family, values):
+    args = {
+        "prices": {}, "k_prices": {}, "fi_prices": {},
+        "po_prices": {}, "combined_k_prices": {},
     }
+    key = {
+        "general_batter": "prices", "strikeouts": "k_prices",
+        "first_inning": "fi_prices", "pitcher_outs": "po_prices",
+        "combined_strikeouts": "combined_k_prices",
+    }[family]
+    args[key] = values or {}
+    return args
 
 
 def refresh(data_path, live_path=None, registry_path=DEFAULT_REGISTRY_PATH):
@@ -163,9 +172,12 @@ def refresh(data_path, live_path=None, registry_path=DEFAULT_REGISTRY_PATH):
         ),
     }
     fetched_at = utc_now()
-    successful_families = {name for name, result in feeds.items() if result["ok"]}
-    failures = {name: result["error"] for name, result in feeds.items() if not result["ok"]}
-    family_args = _family_args(feeds)
+    failed_families = {
+        name for name, result in feeds.items()
+        if result["observation"] is None
+        or result["observation"].root_state != fd.EVENTS_DISCOVERED
+        or result["observation"].errors
+    }
 
     successful_rows = []
     before = {}
@@ -173,20 +185,34 @@ def refresh(data_path, live_path=None, registry_path=DEFAULT_REGISTRY_PATH):
         prop_id = stable_prop_id(row)
         family = _market_family(row)
         before[prop_id] = {field: copy.deepcopy(row.get(field)) for field in LIVE_FIELDS}
-        if family not in successful_families:
+        result = feeds[family]
+        if result["observation"] is None:
             merge_prop_fields(live, prop_id, {
                 "market_fetch_state": "FETCH_FAILED",
                 "market_fetch_checked_at": fetched_at,
                 "market_fetch_failed_at": fetched_at,
-                "market_failure_reason": failures[family],
+                "market_failure_reason": result["error"],
                 "market_family": family,
             }, fetched_at)
             continue
+        evidence = fd.market_evidence_for_row(result["observation"], row)
         working = copy.deepcopy(row)
         for field in MARKET_VALUE_FIELDS:
             working[field] = None
         working["stale"] = False
-        _, matched = fd.attach_market_prices([working], **family_args)
+        _, matched = fd.attach_market_prices(
+            [working], **_family_args(family, evidence["values"]),
+        )
+        if not matched and not evidence["absence_proven"]:
+            merge_prop_fields(live, prop_id, {
+                "market_fetch_state": "FETCH_FAILED",
+                "market_fetch_checked_at": fetched_at,
+                "market_fetch_failed_at": fetched_at,
+                "market_failure_reason": evidence["reason"][:300],
+                "market_family": family,
+            }, fetched_at)
+            failed_families.add(family)
+            continue
         working["market_fetch_state"] = "MATCHED" if matched else "NOT_POSTED"
         working["market_observation_state"] = working["market_fetch_state"]
         working["market_fetch_checked_at"] = fetched_at
@@ -248,7 +274,8 @@ def refresh(data_path, live_path=None, registry_path=DEFAULT_REGISTRY_PATH):
     _refresh_summary(effective)
     print(
         f"Wrote {live_path} atomically ({n_changed} successful-family prop change(s), "
-        f"{len(failures)} failed family/families preserved); left {data_path} unchanged."
+        f"{len(failed_families)} indeterminate family/families preserved); "
+        f"left {data_path} unchanged."
     )
     return effective
 

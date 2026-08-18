@@ -30,9 +30,10 @@ expansion.
 - [`live-lifecycle-2026-08-17.md`](live-lifecycle-2026-08-17.md) — **HIGH / MEDIUM**:
   includes **CRITICAL / HIGH / MEDIUM** publication, grading, identity,
   settlement-authority, odds-observation, retention, workflow, Pages-delivery,
-  and frontend findings. It defines the corrected lifecycle contract, official
-  settlement-rule evidence, and post-merge verification checklist. Remediation
-  is implemented on draft PR #51 and remains unmerged.
+  lineup acknowledgement, settlement-capability, and frontend findings. It
+  defines the corrected lifecycle contract, event-scoped sportsbook evidence,
+  official IL/PA/TN settlement-rule evidence, and post-merge verification
+  checklist. Remediation is implemented on draft PR #51 and remains unmerged.
 
 Initial hypotheses not indexed here remain provisional in
 `engineering/ENGINEERING_HANDOFF.md`. Each future finding should include

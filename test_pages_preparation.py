@@ -145,6 +145,22 @@ class PagesPreparationTests(unittest.TestCase):
             self.assertEqual(json.load(handle)["props"], {})
         self.assertEqual(verify(near_stage)["props"], 0)
 
+    def test_unsupported_settlement_market_cannot_first_publish_as_top_pick(self):
+        with open(os.path.join(self.source, "data.json"), encoding="utf-8") as handle:
+            source = json.load(handle)
+        source["props"][0]["projection"] = {"stat": "doubles", "needs": 1, "value": 1}
+        source["props"][0]["stat"] = "doubles"
+        source["props"][0]["prop"] = "1+ Double"
+        atomic_write_json(os.path.join(self.source, "data.json"), source)
+
+        unsupported_stage = os.path.join(self.tmp.name, "unsupported-stage")
+        manifest = self.prepare(destination=unsupported_stage)
+        self.assertEqual(manifest["candidates"], [])
+        with open(os.path.join(unsupported_stage, "data.json"), encoding="utf-8") as handle:
+            staged = json.load(handle)
+        self.assertEqual(staged["props"], [])
+        self.assertEqual(verify(unsupported_stage)["publication_candidates"], 0)
+
     def test_deployed_manifest_recovers_failed_registry_persistence(self):
         first_manifest = self.prepare()
         # Pages deploy succeeded, but confirm_publication/push did not. The

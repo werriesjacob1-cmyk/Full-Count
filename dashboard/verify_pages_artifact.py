@@ -16,6 +16,7 @@ try:
         validate_payload_identities,
     )
     from .publication_registry import PUBLICATION_DEPLOYMENT_LEAD_SECONDS, validate_manifest
+    from .settlement_rules import supports_public_settlement
 except ImportError:
     from live_state import (
         GAME_STATES, RECOMMENDATION_STATES, SETTLEMENT_STATES,
@@ -23,6 +24,7 @@ except ImportError:
         validate_payload_identities,
     )
     from publication_registry import PUBLICATION_DEPLOYMENT_LEAD_SECONDS, validate_manifest
+    from settlement_rules import supports_public_settlement
 
 
 REQUIRED_FILES = (
@@ -79,6 +81,14 @@ def _validate_row(row, known_publications, candidate_ids):
                 or state_digest(snapshot) != proof.get("snapshot_hash")):
             raise ValueError(f"prop {row['id']!r} has unproven publication provenance")
     token = row.get("publication_candidate_token")
+    if (recommendation == "top_pick"
+            and row["id"] not in known_publications
+            and row["id"] not in candidate_ids):
+        raise ValueError(f"prop {row['id']!r} is an unproven public Top Pick")
+    if row["id"] in candidate_ids and not supports_public_settlement(row):
+        raise ValueError(f"prop {row['id']!r} has no supported settlement path")
+    if row["id"] in candidate_ids and token is None:
+        raise ValueError(f"prop {row['id']!r} is missing its publication candidate token")
     if token is not None:
         if (row["id"] not in candidate_ids
                 or re.fullmatch(r"[0-9a-f]{64}", str(token)) is None):

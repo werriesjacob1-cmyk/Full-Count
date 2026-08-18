@@ -190,6 +190,40 @@ check(999 in state_after_9[100]["away"] and 9 not in state_after_9[100]["away"],
       "the new (post-scratch) roster overwrites the stale one in state",
       f"got {state_after_9[100]['away']}")
 
+head("10. an unacknowledged candidate remains retryable: dispatch failure or a "
+     "post-dispatch state-push failure can safely enqueue the same rebuild again")
+
+tmpdir10 = tempfile.mkdtemp()
+state_path10 = os.path.join(tmpdir10, "lineup_watch_state.json")
+candidate_outputs = []
+for attempt in (1, 2):
+    gh_out10 = os.path.join(tmpdir10, f"gh_output_{attempt}.txt")
+    # The workflow has not acknowledged either candidate on remote main. A
+    # failed dispatch leaves the file uncommitted; a successful dispatch plus
+    # failed push has the same durable state. Recreate that old checkout before
+    # the next poll and prove the observation is retried at least once.
+    if os.path.exists(state_path10):
+        os.unlink(state_path10)
+    with mock.patch.object(cl, "STATE_PATH", state_path10), \
+         mock.patch.object(cl, "today", return_value="2026-08-15"), \
+         mock.patch.dict(os.environ, {"GITHUB_OUTPUT": gh_out10}), \
+         mock.patch.object(cl.requests, "get") as mp10:
+        mp10.return_value.json.return_value = schedule_resp([
+            (100, lineup(9, 1), lineup(9, 101)),
+        ])
+        mp10.return_value.raise_for_status = lambda: None
+        cl.main()
+    with open(gh_out10) as f:
+        candidate_outputs.append(f.read())
+
+check(candidate_outputs == ["changed=true\n", "changed=true\n"],
+      "the same unacknowledged lineup is reported again after either failure boundary",
+      f"got {candidate_outputs!r}")
+with open(state_path10, encoding="utf-8") as f:
+    duplicate_candidate = json.load(f)
+check(duplicate_candidate["games"]["100"]["away"] == list(range(1, 10)),
+      "duplicate candidate generation is deterministic/idempotent")
+
 n_pass = sum(1 for ok, _, _ in _results if ok)
 n_total = len(_results)
 print("\n" + "=" * 78)

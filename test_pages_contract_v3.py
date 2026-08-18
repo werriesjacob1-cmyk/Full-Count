@@ -24,7 +24,7 @@ def row():
         "identity_version": 2, "type": "batter", "game_pk": 1,
         "game_start": "2026-08-17T18:00:00Z", "player_id": 101,
         "combo_player_ids": None, "projection": {"stat": "hits", "needs": 1},
-        "stat": "hits", "market_side": "over", "recommendation_status": "top_pick",
+        "stat": "hits", "market_side": "over", "recommendation_status": "neutral",
         "game_state": "pregame", "game_state_observed_at": "2026-08-17T17:00:00Z",
         "game_state_source": "fixture", "settlement_state": "open",
         "settlement_authority": "none", "settlement_observed_at": "2026-08-17T17:00:00Z",
@@ -138,6 +138,23 @@ class PagesContractTests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 verify(root)
 
+    def test_unproven_or_unsupported_top_pick_cannot_enter_pages_artifact(self):
+        with tempfile.TemporaryDirectory() as root:
+            one = row()
+            one["recommendation_status"] = "top_pick"
+            artifact(root, [one])
+            with self.assertRaises(ValueError):
+                verify(root)
+        with tempfile.TemporaryDirectory() as root:
+            one = row()
+            one["projection"] = {"stat": "doubles", "needs": 1}
+            one["stat"] = "doubles"
+            one["recommendation_status"] = "top_pick"
+            one["id"] = canonical_prop_id(one)
+            artifact(root, [one])
+            with self.assertRaises(ValueError):
+                verify(root)
+
     def test_lower_authority_live_result_over_final_board_is_rejected(self):
         with tempfile.TemporaryDirectory() as root:
             one = row()
@@ -197,6 +214,24 @@ class PagesContractTests(unittest.TestCase):
         self.assertIn("git checkout --detach origin/main", live_source)
         self.assertIn("finalize_dashboard_state.py", full_source)
         self.assertIn("git checkout --detach origin/main", full_source)
+
+        lineup_steps = lineup["jobs"]["check-and-trigger"]["steps"]
+        dispatch_index = next(
+            index for index, step in enumerate(lineup_steps)
+            if step.get("name") == "Trigger a queued full dashboard rebuild"
+        )
+        commit_index = next(
+            index for index, step in enumerate(lineup_steps)
+            if step.get("name") == "Acknowledge lineup state after accepted rebuild"
+        )
+        dispatch = lineup_steps[dispatch_index]
+        acknowledge = lineup_steps[commit_index]
+        self.assertLess(dispatch_index, commit_index)
+        self.assertEqual(dispatch.get("id"), "dispatch")
+        self.assertNotIn("continue-on-error", dispatch)
+        self.assertIn("steps.dispatch.outcome == 'success'", acknowledge.get("if", ""))
+        self.assertIn("gh workflow run dashboard-refresh.yml --ref main", dispatch["run"])
+        self.assertEqual(full["concurrency"]["queue"], "max")
 
 
 if __name__ == "__main__":

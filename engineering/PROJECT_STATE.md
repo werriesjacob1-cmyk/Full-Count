@@ -1,7 +1,10 @@
 # Full Count Project State
 
 - Last verified: 2026-08-17
-- Code verification base: `main` at `fd20785769e1de25581e873317d2b2230389ba13`
+- Latest `main` inspected: `1bdd4b90c9b117d67de31b83d0ebab9f29d36d74`
+- Latest PR-relevant source base: `fd20785769e1de25581e873317d2b2230389ba13`
+  (intervening `main` commits through the inspected SHA are generated/state
+  churn only)
 
 This file is the concise map of the system that exists now. Use
 `engineering/ENGINEERING_HANDOFF.md` for chronology and
@@ -153,6 +156,15 @@ known metadata inconsistency must remain visible until audited: the current
 screen is produced by `value_board.py`; hourly captured prices are persisted
 under `data/props/` for forward settlement by `grade_value.py`.
 
+Lifecycle-sensitive refreshes do not treat an empty parsed mapping as proof of
+market absence. The fetch layer distinguishes transport/root failure,
+malformed or structurally empty root data, usable event discovery, and
+event/family response completeness. `NOT_POSTED` requires a uniquely matched
+relevant event whose required family tabs were structurally inspected; an
+exact `MATCHED` quote may be used as positive evidence even if an unrelated tab
+failed. Indeterminate observations preserve the last known quote and its last
+successful observation timestamp.
+
 `eval_lib.market_probability()` uses exact two-sided no-vig probability when
 both sides or an already de-vigged value are persisted. One-sided production
 recommendation checks currently use `prop_probability.value_verdict()` and
@@ -182,6 +194,13 @@ silently describes as already solved.
 The freshness function currently substitutes board generation time when the
 price timestamp is missing. That implementation differs from its fail-closed
 documentation and is also an explicit audit item.
+
+Recommendation classification remains wholly owned by `recommendation.py`.
+Separately, Pages publication applies a settlement-capability gate: a newly
+exposed official Top Pick must have a structured, verified settlement path.
+Unsupported specialty markets can remain research rows but are omitted from a
+prospective public artifact if they locally classify as an unproven Top Pick.
+This does not change model scores, probabilities, thresholds, or policy.
 
 ## Persistence and prediction history
 
@@ -260,19 +279,25 @@ authority, and observation timestamp merge as one logical fact.
 `dashboard/refresh_prices.py` observes each supported market family as
 `MATCHED`, `NOT_POSTED`, `FETCH_FAILED`, or `IN_PLAY`. A matched quote replaces
 the quote and advances that family's successful observation time. A successful
-exact absence clears bettable fields. A fetch failure preserves the prior quote
-without freshness-stamping or reclassification from false absence. Started
-markets freeze. The final publication gate refetches game status and also
-rejects new publication at or after scheduled `game_start`; unknown fails
-closed. `recommendation.py` remains the unchanged classifier.
+exact absence clears bettable fields only when the relevant FanDuel event and
+all required family tabs were structurally observed. Root/feed emptiness,
+malformed pages, failed tabs, or ambiguous event identity are `FETCH_FAILED`:
+they preserve the prior quote and timestamp and cannot trigger
+reclassification. Started markets freeze. The final publication gate refetches
+game status and also rejects new publication at or after scheduled
+`game_start`; unknown fails closed. `recommendation.py` remains the unchanged
+classifier.
 
 `dashboard/refresh_grades.py` advances registry-proven public Top Picks by
 direct `game_pk` feeds. It uses provisional green hits only for mathematically
 definitive live overs. Misses and all unders wait for authoritative Final.
 Action eligibility is separate from threshold grading and follows the
-documented FanDuel-US rules in `dashboard/settlement_rules.py`. Because the
-repository has no configured jurisdiction, a case on which inspected state
-rules differ remains ungraded; unsupported special-market rules do as well.
+documented FanDuel Illinois, Pennsylvania, and Tennessee rules in
+`dashboard/settlement_rules.py`. Because the repository has no configured
+jurisdiction, a case on which inspected state rules differ remains ungraded;
+unsupported special-market rules do as well. Singles, doubles, and triples
+have statistical graders but no verified structured action rule and therefore
+cannot first publish as official Top Picks.
 Source failure preserves last-known-good state.
 
 `dashboard/live_state.py` performs atomic stable-ID writes, strict UTC-aware
@@ -339,19 +364,21 @@ non-worsening calibration, and no loss relative to the market benchmark.
 |---|---|
 | `mlb-daily.yml` | Grades prior picks, measures signals, generates picks/value output, runs the full data package, and commits artifacts on multiple daily windows or manual dispatch |
 | `odds-snapshot.yml` | Captures odds and player-prop prices hourly |
-| `lineup-watch.yml` | Checks lineups every ten minutes, persists watch state, and triggers a full dashboard rebuild when needed |
+| `lineup-watch.yml` | Checks lineups every ten minutes, dispatches a queued full rebuild before acknowledging changed lineup state, and safely retries unacknowledged changes |
 | `dashboard-refresh.yml` | Sole `data.json` writer; rebuilds the board and static assets on two-hour/lineup-triggered windows |
 | `dashboard-live.yml` | Sole `live.json` writer; failure-isolated grading then pregame repricing every five minutes |
 | `dashboard-deploy.yml` | Verifies and deploys newest `main:docs/` after either dashboard writer completes |
 | `calibration-recheck.yml` | Runs the weekly held-out per-market calibration recheck and commits promoted fits/report |
 | `test.yml` | Installs `requirements.txt` and runs every root `test_*.py` on pushes and pull requests |
 
-Dashboard state ownership is disjoint (`data.json` versus `live.json`) and the
-two state writers share one non-cancelling concurrency lane. Pages deployment
-has a separate latest-wins concurrency group and always checks out current
-`main`, so an older completed writer cannot intentionally deploy its stale
-checkout. Other generated-artifact workflows retain their existing ownership
-and retry/rebase behavior.
+Dashboard state ownership is disjoint (`data.json` versus `live.json`).
+Significant full/lineup rebuilds use the non-cancelling
+`dashboard-full-rebuild` true queue; replaceable five-minute live observations
+use a separate coalescing lane. Both re-read current `main` at their writer
+boundary. Lineup state is acknowledged only after GitHub accepts the rebuild
+dispatch, giving at-least-once behavior. Pages deployment has a separate
+coalescing concurrency group and always checks out current `main`, so an older
+completed writer cannot intentionally deploy its stale checkout.
 
 ## Important sources of truth
 

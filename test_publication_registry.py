@@ -14,7 +14,9 @@ from dashboard.publication_registry import (
     confirm_publication,
     default_registry,
     load_registry,
+    publication_candidate,
     published_snapshots_for_date,
+    validate_manifest,
     validate_registry,
 )
 
@@ -23,13 +25,13 @@ T1 = "2026-08-17T17:00:00Z"
 T2 = "2026-08-17T17:05:00+00:00"
 
 
-def prop(status="top_pick", odds=-120):
+def prop(status="top_pick", odds=-120, stat="hits"):
     row = {
         "identity_version": 2, "type": "batter", "game_pk": 1,
         "game_start": "2026-08-17T18:00:00Z", "player_id": 101,
         "combo_player_ids": None, "name": "Fixture", "team": "A",
-        "matchup": "A @ B", "prop": "Over 0.5 Hits",
-        "projection": {"stat": "hits", "needs": 1}, "stat": "hits",
+        "matchup": "A @ B", "prop": f"1+ {stat}",
+        "projection": {"stat": stat, "needs": 1}, "stat": stat,
         "market_side": "over", "recommendation_status": status,
         "status_reasons": ["fixture"], "hit_probability": .7,
         "market_odds": odds, "market_implied": .545, "market_edge": .155,
@@ -106,6 +108,31 @@ class PublicationRegistryTests(unittest.TestCase):
         bad["entries"] = {"wrong": {"canonical_id": "other"}}
         with self.assertRaises(ValueError):
             validate_registry(bad)
+
+    def test_new_public_top_pick_requires_structured_settlement_support(self):
+        registry = default_registry()
+        supported = build_publication_manifest(
+            payload([prop(stat="hits")]), {"schema_version": 3, "props": {}},
+            registry, "sha", T1,
+        )
+        self.assertEqual(len(supported["candidates"]), 1)
+        for stat in ("singles", "doubles", "triples", "first_inning_run"):
+            with self.subTest(stat=stat):
+                unsupported = build_publication_manifest(
+                    payload([prop(stat=stat)]), {"schema_version": 3, "props": {}},
+                    registry, "sha", T1,
+                )
+                self.assertEqual(unsupported["candidates"], [])
+
+        injected = build_publication_manifest(
+            payload([prop(stat="hits")]), {"schema_version": 3, "props": {}},
+            registry, "sha", T1,
+        )
+        injected["candidates"] = [
+            publication_candidate(prop(stat="doubles"), payload([prop(stat="doubles")]))
+        ]
+        with self.assertRaises(ValueError):
+            validate_manifest(injected)
 
 
 if __name__ == "__main__":

@@ -885,3 +885,172 @@ Information Claude should know when resuming:
 The lifecycle correction itself did not fail. The only failing check was the
 undeclared PyYAML dependency used by the workflow-contract test; it is now
 declared and the complete suite passes locally. Phase V has not begun.
+
+## 2026-08-17 — PR #51 final feed/lineup/settleability hardening
+
+Agent:
+Codex
+
+Branch:
+`pre-phase-v/live-lifecycle-hardening`
+
+Commit(s):
+`d17aa837f455dee030d93189537cd77dd87eb5f7` (implementation and audit updates);
+the handoff-only commit containing this entry follows it on PR #51.
+
+PR:
+[#51 — Pre-Phase-V: harden live pick lifecycle](https://github.com/werriesjacob1-cmyk/Full-Count/pull/51) (draft, unmerged)
+
+Objective:
+Close two independently reported HIGH lifecycle gaps on the existing PR:
+structurally empty/malformed FanDuel responses being mislabeled as positive
+market absence, and lineup changes being acknowledged before an important
+full rebuild was accepted. Also ensure a newly public Top Pick has a verified
+structured settlement path, without changing model or recommendation policy.
+
+What I inspected:
+
+- Latest remote `main` through
+  `1bdd4b90c9b117d67de31b83d0ebab9f29d36d74`; every intervening change after
+  the PR's source base was generated odds/dashboard/output/state churn, not a
+  PR-relevant Python, workflow, JS, or CSS source change.
+- `odds_fanduel.py` root discovery, every supported family fetcher, event/tab
+  parsing, all callers, and `dashboard/refresh_prices.py` field merge and
+  classification behavior.
+- `lineup-watch.yml`, `dashboard/check_lineups.py`, full-rebuild queueing, push
+  retries, and failure boundaries between dispatch and durable acknowledgement.
+- Publication staging, manifest validation, rollout/recovery behavior,
+  settlement eligibility, durable grading, and Pages verification.
+- Current official FanDuel Illinois, Pennsylvania, and Tennessee house rules.
+  Tennessee's page was effective 2026-07-30 and materially differs for core
+  batter props and H+R+RBI.
+
+What I found:
+
+- **CONFIRMED (HIGH):** `fetch_prop_prices(strict=True)` returned `{}` for an
+  HTTP-success `{}` or empty `attachments.events`, and the live refresher then
+  cleared valid quotes, advanced successful observation time, and could demote
+  a recommendation as `NOT_POSTED`.
+- **CONFIRMED (HIGH):** lineup watch committed the changed roster before
+  `gh workflow run`; a dispatch failure after that commit made later polls
+  believe the unapplied lineup was already handled.
+- **CONFIRMED / QUALIFIED (MEDIUM):** singles/doubles/triples have statistical
+  grading and sportsbook prices but no verified structured action rule. Their
+  probability floors make public exposure unlikely, but an official public
+  Top Pick without a settlement path is still invalid.
+- The prior two-jurisdiction conservative implementation was incomplete once
+  Tennessee was inspected. Jurisdiction-dependent core-batter and H+R+RBI
+  cases must remain ungraded because Full Count has no configured jurisdiction.
+
+What I changed:
+
+- Added explicit FanDuel root states (`ROOT_FETCH_FAILED`, `ROOT_MALFORMED`,
+  `ROOT_EMPTY`, `EVENTS_DISCOVERED`) plus event-scoped family observations.
+- A `MATCHED` exact market is positive evidence; `NOT_POSTED` now requires one
+  uniquely relevant event and structurally valid responses from every required
+  tab for that family. Missing/malformed/failed/ambiguous evidence becomes
+  `FETCH_FAILED`, preserving prior quote, recommendation, and last successful
+  observation timestamp.
+- Live refresh consumes only relevant-event family values, so an unrelated
+  event or successful family cannot freshness-stamp a failed one.
+- Reordered lineup watch to dispatch the queued full rebuild before committing
+  seen state. Dispatch failure remains retryable; dispatch success followed by
+  state-push failure may safely produce an idempotent duplicate rebuild.
+- Added `supports_public_settlement()` as a Pages-publication capability gate.
+  Unsupported new local Top Picks are omitted from the staged public artifact;
+  source board classification remains untouched. Proven rollout exposure is
+  still preserved and remains ungraded rather than erased.
+- Extended conservative settlement evidence to Tennessee and corrected core
+  batter/H+R+RBI jurisdiction-dependent branches.
+- Strengthened the Pages verifier to reject unproven Top Picks, missing
+  candidate tokens, and prospective candidates without settlement support.
+
+Architectural decisions:
+
+- Parser emptiness is not sportsbook evidence. Exact absence is an
+  event-scoped assertion requiring complete structural observation.
+- Positive exact-match evidence can advance even if an unrelated tab failed;
+  absence cannot.
+- Lineup processing is deliberately at least once: duplicate rebuilds are
+  safer than acknowledging a change whose rebuild was never accepted.
+- Settlement capability is a public-delivery constraint, separate from
+  recommendation policy. No policy output is rewritten in source state.
+- Jurisdiction disagreement remains `ungraded`; Tennessee-only semantics are
+  not assumed without product configuration.
+
+Tests added:
+
+- HTTP-success empty/missing root events, malformed family pages, total event
+  request failure, all five family structures, partial-tab exact match,
+  independent family success/failure, quote/timestamp/recommendation
+  preservation, genuine exact-market absence, all-in-play/no-pregame behavior.
+- Dispatch-before-ack workflow ordering, no acknowledgement after dispatch
+  failure, retry after state-push failure, deterministic duplicate candidates,
+  and retained full-rebuild `queue: max` contract.
+- Prospective settlement capability, staged-artifact omission, injected
+  manifest rejection, unproven Top Pick rejection, and Tennessee-dependent
+  batter action cases.
+
+Test results:
+
+- Final blocker-focused set: 6 files, 65/65 reported tests/checks passed.
+- Complete CI-equivalent root suite: 77/77 files and 1,493/1,493 reported
+  tests/checks passed; failure-signature scan clean.
+- Eight workflow YAML files parsed; full Python `compileall` passed; source and
+  deployed JavaScript both passed `node --check`; source/deployed CSS and JS
+  were byte-identical; `git diff --check` passed.
+- A staged artifact from the actual checked-in dashboard passed the CLI Pages
+  verifier with 1,637 props, 326 live deltas, one supported candidate, and
+  artifact ID
+  `f56dbb9963d32a78d7e341486779b91f6a300361f1be4b73bb530025397de48a`.
+- Publication registry verifier passed with the intentionally empty
+  verification registry.
+
+Behavior intentionally unchanged:
+
+- `recommendation.py`, score weights/formulas, model features, probabilities,
+  calibration, signal weights, value/recommendation thresholds, and policy
+  versions.
+- Generated `docs/data.json`, `docs/live.json`, prediction history, odds/prop
+  snapshots, daily outputs, model artifacts, and calibration artifacts.
+- Frontend assets and unrelated product/Search behavior.
+
+Risks / known limitations:
+
+- Real scheduled workflow dispatch, queue acceptance, FanDuel failure
+  observation, and public Pages deployment cannot be operationally proven from
+  an unmerged draft PR. The audit checklist remains mandatory after merge.
+- FanDuel event association uses exact UTC start and normalized matchup and
+  fails closed when it cannot identify exactly one event. Source naming/time
+  drift can therefore preserve an older quote rather than clear it.
+- Full Count still has no configured sportsbook jurisdiction. Ambiguous
+  settlement stays ungraded.
+- Singles/doubles/triples and unsupported special markets remain unavailable
+  for new official Top Pick exposure until exact action rules are verified.
+
+New issues discovered:
+
+- The project-state workflow paragraph still described the obsolete shared
+  writer lane; it was corrected to the actual full-queue/live-coalescing split.
+- A technically successful HTTP response needs structural source-health
+  evidence; exception-only failure modeling is insufficient for external JSON
+  feeds generally.
+
+Recommended next work:
+
+- Independently review commits and replacement CI on draft PR #51; do not mark
+  ready or merge without explicit user instruction.
+- If later merged, execute the 27-item post-merge audit checklist, including a
+  malformed/empty feed observation and a failed lineup dispatch retry.
+- Configure sportsbook jurisdiction only as a separate, explicitly reviewed
+  operational task.
+
+Information Claude should know when resuming:
+
+- `NOT_POSTED` is now proven at the relevant FanDuel event/tab boundary; an
+  empty parser result is `FETCH_FAILED`, not absence.
+- Lineup state is an acknowledgement written only after rebuild dispatch is
+  accepted; duplicates are intentional at-least-once safety.
+- The settlement-capability gate is Pages lifecycle infrastructure and does
+  not change `recommendation.py` or model policy.
+- PR #51 remains draft and unmerged. Phase V has not begun.

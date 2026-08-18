@@ -5,6 +5,7 @@ Verified 2026-08-17 against current official FanDuel house rules:
 
 * Illinois: https://www.fanduel.com/fanduel-sportsbook-house-rules-il
 * Pennsylvania: https://www.fanduel.com/fanduel-sportsbook-house-rules-pa
+* Tennessee: https://www.fanduel.com/fanduel-sportsbook-house-rules-tn
 
 The repository has no configured operating jurisdiction. This module settles
 only outcomes on which the inspected state rule sets agree and that can be
@@ -14,10 +15,11 @@ remains ``ungraded`` rather than being invented.
 from __future__ import annotations
 
 
-RULESET_VERSION = "fanduel-us-conservative-2026-08-17"
+RULESET_VERSION = "fanduel-us-conservative-2026-08-17-v2"
 RULE_SOURCE_URLS = (
     "https://www.fanduel.com/fanduel-sportsbook-house-rules-il",
     "https://www.fanduel.com/fanduel-sportsbook-house-rules-pa",
+    "https://www.fanduel.com/fanduel-sportsbook-house-rules-tn",
 )
 
 BATTER_START_OR_PA_REQUIRED = frozenset((
@@ -29,6 +31,22 @@ BATTER_STATS = (
     | BATTER_START_OR_PA_REQUIRED | BATTER_PA_REQUIRED
 )
 PITCHER_STATS = frozenset(("strikeouts", "pitcher_outs"))
+PUBLIC_SETTLEMENT_STATS = (
+    BATTER_STATS | PITCHER_STATS
+    | frozenset(("combined_strikeouts", "nrfi_combined"))
+)
+
+
+def supports_public_settlement(pick):
+    """Whether a prospective public Top Pick has a structured final path.
+
+    This is a publication capability gate, not recommendation policy. Markets
+    with a statistical grader but no verified cross-jurisdiction action rule
+    (currently singles/doubles/triples and other specialties) remain research
+    rows and cannot become a new official public Top Pick.
+    """
+    stat = (pick.get("projection") or {}).get("stat") or pick.get("stat")
+    return stat in PUBLIC_SETTLEMENT_STATS
 
 
 def _players(feed):
@@ -155,10 +173,10 @@ def settlement_eligibility(pick, feed, current_game_state):
         batting_order = str(raw.get("battingOrder") or "").strip()
         was_starter = bool(batting_order) and not bool(game_status.get("isSubstitute"))
         if stat == "hits":
-            # Illinois requires the listed hitter to start; Pennsylvania
-            # requires a plate appearance. With no product jurisdiction
-            # configured, only the intersection (both) and unanimous void
-            # case (neither) are authoritative.
+            # Illinois/Tennessee require the listed hitter to start;
+            # Pennsylvania requires a plate appearance. With no product
+            # jurisdiction configured, only the intersection (both) and
+            # unanimous void case (neither) are authoritative.
             if was_starter and pa > 0:
                 return completed_action(_eligible(
                     "batter_started_and_recorded_plate_appearance",
@@ -176,7 +194,8 @@ def settlement_eligibility(pick, feed, current_game_state):
                 was_starter=was_starter,
             )
         elif stat == "home_runs":
-            # Illinois requires a start; Pennsylvania requires start + PA.
+            # Illinois and Tennessee require a start; Pennsylvania requires a
+            # start plus PA. Only unanimous outcomes are authoritative.
             if was_starter and pa > 0:
                 return completed_action(_eligible(
                     "batter_started_and_recorded_plate_appearance",
@@ -189,26 +208,49 @@ def settlement_eligibility(pick, feed, current_game_state):
                     was_starter=was_starter,
                 )
             return _ungraded(
-                "jurisdiction_specific_home_run_plate_appearance_requirement",
+                "jurisdiction_specific_home_run_action_requirement",
                 player_id=player_id, plate_appearances=pa,
                 was_starter=was_starter,
             )
         elif stat in BATTER_PA_REQUIRED:
-            eligible = pa > 0
-            reason = "batter_recorded_plate_appearance"
-            void_reason = "batter_recorded_no_plate_appearance"
+            # Illinois/Pennsylvania require a PA for H+R+RBI; Tennessee
+            # requires the batter to be in the starting lineup.
+            if was_starter and pa > 0:
+                return completed_action(_eligible(
+                    "batter_started_and_recorded_plate_appearance",
+                    plate_appearances=pa, was_starter=was_starter,
+                ))
+            if not was_starter and pa == 0:
+                return _void(
+                    "batter_not_in_starting_lineup_and_no_plate_appearance",
+                    player_id=player_id, plate_appearances=pa,
+                    was_starter=was_starter,
+                )
+            return _ungraded(
+                "jurisdiction_specific_hrr_action_requirement",
+                player_id=player_id, plate_appearances=pa,
+                was_starter=was_starter,
+            )
         else:
-            eligible = was_starter or pa > 0
-            reason = "batter_started_or_recorded_plate_appearance"
-            void_reason = "batter_not_in_starting_lineup_and_no_plate_appearance"
-        if eligible:
-            return completed_action(_eligible(
-                reason, plate_appearances=pa, was_starter=was_starter,
-            ))
-        return _void(
-            void_reason, player_id=player_id,
-            plate_appearances=pa, was_starter=was_starter,
-        )
+            # Tennessee requires core batter props to start. Illinois and
+            # Pennsylvania allow a start OR a recorded PA. A starter is
+            # unanimous action; a pinch hitter with a PA is jurisdictional.
+            if was_starter:
+                return completed_action(_eligible(
+                    "batter_in_starting_lineup",
+                    plate_appearances=pa, was_starter=was_starter,
+                ))
+            if pa == 0:
+                return _void(
+                    "batter_not_in_starting_lineup_and_no_plate_appearance",
+                    player_id=player_id, plate_appearances=pa,
+                    was_starter=was_starter,
+                )
+            return _ungraded(
+                "jurisdiction_specific_core_batter_action_requirement",
+                player_id=player_id, plate_appearances=pa,
+                was_starter=was_starter,
+            )
 
     if stat == "nrfi_combined":
         innings = (((feed.get("liveData") or {}).get("linescore") or {}).get("innings") or [])

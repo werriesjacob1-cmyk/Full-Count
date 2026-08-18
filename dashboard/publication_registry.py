@@ -38,6 +38,11 @@ except ImportError:  # direct script execution
         validate_payload_identities,
     )
 
+try:
+    from .settlement_rules import supports_public_settlement
+except ImportError:  # direct script execution
+    from settlement_rules import supports_public_settlement
+
 
 REGISTRY_SCHEMA_VERSION = 1
 PUBLICATION_MANIFEST_SCHEMA_VERSION = 1
@@ -187,7 +192,12 @@ def _candidate(row, payload):
 
 
 def publication_candidate(row, payload):
-    """Public helper used only by the verified rollout-artifact migration."""
+    """Snapshot proven legacy exposure during the bounded rollout migration.
+
+    This deliberately does not apply the prospective settleability gate: if an
+    unsupported market was already public, the registry must preserve that
+    truth and leave it ungraded rather than erase exposure retroactively.
+    """
     return _candidate(row, payload)
 
 
@@ -213,6 +223,8 @@ def build_publication_manifest(data, live, registry, source_commit, prepared_at,
         if prop_id in registry["entries"]:
             continue
         if row.get("recommendation_status") != "top_pick":
+            continue
+        if not supports_public_settlement(row):
             continue
         if row.get("game_state") not in (None, "pregame"):
             continue
@@ -298,6 +310,8 @@ def validate_manifest(manifest):
         if (snapshot.get("recommendation_status") != "top_pick"
                 or candidate.get("settlement_identity") != _identity_json(snapshot)):
             raise ValueError("publication candidate is not a canonical Top Pick snapshot")
+        if not supports_public_settlement(snapshot):
+            raise ValueError("publication candidate has no supported settlement path")
         if not before_betting_cutoff(snapshot, cutoff):
             raise ValueError("publication candidate crosses its artifact betting cutoff")
         seen.add(prop_id)

@@ -31,9 +31,10 @@ permissions:
   contents: write
   actions: write
 
-# This cheap observer writes only lineup_watch_state.json. It must finish the
-# commit-then-dispatch pair once started; cancellation between those steps
-# could record a lineup as seen without ever queuing its important rebuild.
+# This cheap observer writes only lineup_watch_state.json. A detected change is
+# dispatched before it is durably acknowledged. Dispatch failure therefore
+# leaves remote state unchanged for the next poll to retry; dispatch success
+# followed by push failure may enqueue a harmless duplicate (at-least-once).
 concurrency:
   group: lineup-watch
   cancel-in-progress: false
@@ -64,8 +65,15 @@ jobs:
         id: check
         run: python3 dashboard/check_lineups.py
 
-      - name: Commit and push updated lineup-watch state
+      - name: Trigger a queued full dashboard rebuild
+        id: dispatch
         if: steps.check.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run dashboard-refresh.yml --ref main
+
+      - name: Acknowledge lineup state after accepted rebuild
+        if: steps.check.outputs.changed == 'true' && steps.dispatch.outcome == 'success'
         run: |
           git config user.name "mlb-pipeline-bot"
           git config user.email "actions@github.com"
@@ -93,9 +101,3 @@ jobs:
           done
           echo "::error::Failed to push lineup-watch state after 5 attempts."
           exit 1
-
-      - name: Trigger a queued full dashboard rebuild
-        if: steps.check.outputs.changed == 'true'
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: gh workflow run dashboard-refresh.yml --ref main

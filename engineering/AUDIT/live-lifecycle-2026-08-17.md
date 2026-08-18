@@ -64,7 +64,7 @@ The numbers correspond to the correction request for PR #51.
 | 3 | HIGH | **CONFIRMED** | Status was fetched before slow sportsbook/build work, leaving a first-pitch race. Both price and full-build finalizers refetch state and apply scheduled `game_start` as an absolute cutoff. Deployment staging also reserves 15 minutes so a candidate cannot first become public after first pitch. |
 | 4 | HIGH | **CONFIRMED** | A shared non-cancelling concurrency group did not prove retention of every pending important run. Full/lineup rebuilds now use their own non-cancelling true queue and finalize against current `main`; live updates cannot displace them. |
 | 4B | MEDIUM | **QUALIFIED** | True queuing every five-minute observation would create stale backlog. Live observations deliberately retain GitHub's single-pending coalescing semantics, checkout current `main`, and make a fresh observation when they start. The workflow installs only `requests` and `mlb-statsapi`; post-merge runtime remains an operational check. |
-| 5 | HIGH | **CONFIRMED** | Successful exact absence and source failure were conflated. General, strikeout, pitcher-outs, first-inning, and combo-K families now produce `MATCHED`, `NOT_POSTED`, `FETCH_FAILED`, or `IN_PLAY` independently. |
+| 5 | HIGH | **CONFIRMED** | Successful exact absence and source failure were conflated. The final hardening review also proved that a 200-OK but empty/malformed response still masqueraded as absence. General, strikeout, pitcher-outs, first-inning, and combo-K families now produce event-scoped `MATCHED`, `NOT_POSTED`, `FETCH_FAILED`, or `IN_PLAY` evidence independently; absence requires a structurally complete relevant-event observation. |
 | 6 | CRITICAL | **CONFIRMED** | Canonical daily picks are overwritten and timestamp archives do not prove public exposure. A minimal deployment-proven registry now stores an immutable first-exposure snapshot. It is lifecycle infrastructure, not the future event ledger. |
 | 6B | CRITICAL | **CONFIRMED** | A visually carried wager absent from final daily picks could evade official Top Pick history. Durable grading now consumes registry snapshots separately, idempotently, without changing legacy/canonical population semantics. |
 | 7 | HIGH | **CONFIRMED** | First-pass visual rollover worked, but grade status lookup could still use a single payload/slate date. Public grading now requests the actual feed by `game_pk`; prior-slate games remain gradeable after UTC midnight. |
@@ -76,6 +76,57 @@ The numbers correspond to the correction request for PR #51.
 | 12 | MEDIUM | **CONFIRMED** | Preventing rebuild reset left the overlay unbounded. Compaction is now conditional on official terminal settlement being durable and no current/suspended/postponed/recovery dependency remaining. |
 | 13 | HIGH | **CONFIRMED** | New-state parsing formerly accepted naive timestamps as UTC. New lifecycle state accepts only `Z` or zero-offset `+00:00`; a bounded schema-v1/v2 migration path alone accepts legacy naive values. |
 | 14 | HIGH | **CONFIRMED** | The first verifier mostly checked file existence and shallow JSON shape. It now validates schema/identity uniqueness, strict timestamps, enums, state combinations, publication proof, retention legality, hashes, and frontend overlay consumption. |
+
+## Final high-blocker review
+
+### HIGH — Structurally empty sportsbook responses still failed open
+
+**CONFIRMED.** Before this pass, patch-head `odds_fanduel.list_games()` parsed
+`attachments.events` and could return `[]` for `{}`, a missing/empty events
+object, or no usable events. `fetch_prop_prices(strict=True)` then returned
+`{}` without failing. `refresh_prices.py` cleared quote fields, called the
+unchanged classifier, stamped `market_observed_at`, and labeled the result
+`NOT_POSTED`. A direct reproduction returned `{}` from strict mode for an
+HTTP-success `{}` root payload.
+
+The corrected fetch boundary records root transport failure, malformed root,
+structurally empty root, and usable event discovery separately. Each family
+then records required-tab structural completeness per FanDuel event. An exact
+parsed market is positive `MATCHED` evidence even if another tab failed, but
+`NOT_POSTED` requires exactly one relevant event (matched by scheduled UTC
+start and/or normalized matchup) with every required family tab structurally
+valid. Otherwise the row is `FETCH_FAILED`; prior quote, recommendation, and
+successful observation timestamp remain intact.
+
+### HIGH — Lineup state could acknowledge a change before rebuild dispatch
+
+**CONFIRMED.** `lineup-watch.yml` committed
+`dashboard/lineup_watch_state.json` before invoking
+`gh workflow run dashboard-refresh.yml --ref main`. A successful state push
+followed by a failed dispatch made the next poll see no change and therefore
+lose the important lineup rebuild.
+
+The workflow now dispatches first and only acknowledges state after the
+dispatch step succeeds. Dispatch rejection/failure leaves remote state old so
+the next poll retries. Dispatch success followed by state-push failure can
+enqueue a duplicate on the next poll; that is intentionally safe at-least-once
+behavior because full rebuilds are idempotent, use `queue: max`, and finalize
+against current `main`.
+
+### MEDIUM — A new public Top Pick could lack a structured settlement path
+
+**CONFIRMED / QUALIFIED.** `grade_results.py` can calculate singles, doubles,
+and triples, and FanDuel prices them, but `settlement_rules.py` has no verified
+cross-jurisdiction action rule for those exact markets. Their current
+probability floors make public exposure unlikely, so immediate production
+frequency is bounded; the integrity defect remains real.
+
+Pages publication now requires `supports_public_settlement()` for a new Top
+Pick. Unsupported local Top Picks are omitted only from the staged public
+artifact; the classifier and source board are unchanged. A bounded rollout
+still records any unsupported Top Pick proven to have already been public,
+because historical exposure must not be erased; it remains ungraded. The Pages
+verifier rejects a new unproven Top Pick or candidate without this capability.
 
 ## Canonical lifecycle contract
 
@@ -149,12 +200,14 @@ dashboard state-owner workflows, not arbitrary pushes.
 | Observation | Meaning | Action |
 |---|---|---|
 | `MATCHED` | Relevant family succeeded and exact market exists | Replace quote and advance that family's successful observation time. |
-| `NOT_POSTED` | Relevant family succeeded but exact market is absent | Clear current bettable quote and fail closed through unchanged policy. |
-| `FETCH_FAILED` | Relevant family could not be observed | Preserve prior quote; record failure separately; do not freshness-stamp or reclassify because of false absence. |
+| `NOT_POSTED` | A unique relevant event was discovered, every required family tab was structurally valid, and the exact market is absent | Clear current bettable quote and fail closed through unchanged policy. |
+| `FETCH_FAILED` | Root transport/structure/discovery is indeterminate, a required relevant-event tab failed/malformed, or event identity is ambiguous | Preserve prior quote; record failure separately; do not freshness-stamp or reclassify because of false absence. |
 | `IN_PLAY` | Wager boundary crossed | Freeze published snapshot; do not reprice or reclassify. |
 
-Families are independent: a successful general board cannot make a failed
-strikeout, pitcher-outs, first-inning, or combo-K quote fresh.
+Families and events are independent: a successful general board or unrelated
+game cannot make a failed strikeout, pitcher-outs, first-inning, combo-K, or
+other-game quote fresh. When there are no relevant pregame rows (including an
+all-in-play slate), the refresher does not manufacture a source failure.
 
 ## FanDuel settlement eligibility
 
@@ -162,19 +215,29 @@ Verified 2026-08-17 against current official FanDuel sportsbook rules:
 
 - Illinois: https://www.fanduel.com/fanduel-sportsbook-house-rules-il
 - Pennsylvania: https://www.fanduel.com/fanduel-sportsbook-house-rules-pa
+- Tennessee: https://www.fanduel.com/fanduel-sportsbook-house-rules-tn
+
+The Tennessee page was current with an effective date of 2026-07-30 when
+verified. It differs materially from Illinois/Pennsylvania for core batter
+props and H+R+RBI. The implementation does not select Tennessee semantics;
+there is no configured Full Count jurisdiction.
 
 The repository does not configure an operating jurisdiction, so the
 implementation settles only cases where the inspected rules agree and the
 official MLB feed proves the requirement:
 
-- hits: Illinois requires a start while Pennsylvania requires a plate
+- hits: Illinois/Tennessee require a start while Pennsylvania requires a plate
   appearance. Start+PA is eligible and neither is void; the two mixed cases
   are jurisdiction-dependent and remain ungraded;
-- home run: Illinois requires a start while Pennsylvania requires start+PA.
-  Start+PA is eligible, non-starters are void, and starter-without-PA remains
+- home run: Illinois/Tennessee require a start while Pennsylvania requires
+  start+PA. Start+PA is eligible, non-starters are unanimously void, and
+  starter-without-PA remains ungraded;
+- total bases, runs, RBIs, stolen bases: Illinois/Pennsylvania allow a start or
+  PA; Tennessee requires a start. A starter is eligible, neither is void, and
+  a non-starting pinch hitter with a PA remains ungraded;
+- hits+runs+RBIs: Illinois/Pennsylvania require a PA; Tennessee requires a
+  start. Both is eligible, neither is void, and either mixed case remains
   ungraded;
-- total bases, runs, RBIs, stolen bases: start or record a plate appearance;
-- hits+runs+RBIs: record a plate appearance;
 - pitcher strikeouts/outs: listed pitcher must start; later relief work does
   not make a non-starting listed pitcher eligible;
 - combined starter strikeouts: both listed pitchers must start;
@@ -183,7 +246,9 @@ official MLB feed proves the requirement:
   sportsbook settlement;
 - shortened final: settle only an unequivocally determined result; otherwise
   ungraded. Scheduled seven-inning games use their official scheduled length;
-- unsupported specialty-market action rules: ungraded, never invented.
+- singles/doubles/triples and unsupported specialty-market action rules:
+  ungraded, never invented, and ineligible for first official Top Pick
+  publication until a structured rule exists.
 
 FanDuel recognizes MLB's official result and applicable stat corrections.
 Therefore early threshold hits remain provisional until official Final.
@@ -210,6 +275,9 @@ Compaction is atomic and idempotent. UTC date change alone never prunes state.
 
 - Full/lineup builds use the separate non-cancelling full-rebuild queue and
   always finalize against current `main` after any queue/build delay.
+- Lineup changes are dispatched into that queue before watcher state is
+  acknowledged. Failure before dispatch is retryable; a duplicate after
+  dispatch-but-before-ack is safe.
 - Five-minute live observations coalesce obsolete pending runs, checkout
   current `main`, and perform a current observation rather than replaying an
   old dispatch snapshot.
@@ -229,9 +297,10 @@ Compaction is atomic and idempotent. UTC date change alone never prunes state.
 lifecycle schema 3, identity schema 2, a props list and live-delta object,
 nonempty unique canonical IDs, unique settlement identities, strict UTC,
 supported enums, internally consistent result authority, legal publication
-proof, valid candidate tokens, legal retained orphans, exact manifest hashes,
-and a frontend that polls and consumes the separated live overlay. Corrupt,
-duplicate, impossible, stale-authority, or partially proven state fails
+proof, valid candidate tokens, prospective Top Pick settlement capability,
+legal retained orphans, exact manifest hashes, and a frontend that polls and
+consumes the separated live overlay. Corrupt, duplicate, impossible,
+unsupported/unproven Top Pick, stale-authority, or partially proven state fails
 deployment.
 
 ## Post-merge operational checklist
@@ -262,6 +331,10 @@ deployment.
 24. Confirm compaction retains every unresolved/provisional/suspended item.
 25. Record actual live/deploy durations against the five-minute cadence and
     revisit cadence only if execution approaches overlap persistently.
+26. Exercise or observe a structurally empty/malformed FanDuel family response
+    and confirm the last quote/timestamp/recommendation remain intact.
+27. Exercise a failed lineup rebuild dispatch and confirm the next watcher poll
+    retries without having acknowledged the changed lineup.
 
 ## Remaining limitations
 

@@ -84,7 +84,7 @@ class EligibilityTests(unittest.TestCase):
         substitute_pa = feed({"ID30": raw_player(30, pa=1, substitute=True)})
         self.assertEqual(settlement_eligibility(p, no_action, "final")["eligibility"], "void")
         self.assertEqual(settlement_eligibility(p, starter_no_pa, "final")["eligibility"], "eligible")
-        self.assertEqual(settlement_eligibility(p, substitute_pa, "final")["eligibility"], "eligible")
+        self.assertEqual(settlement_eligibility(p, substitute_pa, "final")["eligibility"], "ungraded")
 
         hit = pick("hits", player_id=30, type_="batter")
         starter_pa = feed({"ID30": raw_player(30, pa=1, substitute=False, batting_order="100")})
@@ -100,7 +100,21 @@ class EligibilityTests(unittest.TestCase):
         self.assertEqual(settlement_eligibility(homer, starter_pa, "final")["eligibility"], "eligible")
 
         hrr = pick("hits_runs_rbis", player_id=30, type_="batter")
-        self.assertEqual(settlement_eligibility(hrr, substitute_pa, "final")["eligibility"], "eligible")
+        self.assertEqual(settlement_eligibility(hrr, no_action, "final")["eligibility"], "void")
+        self.assertEqual(settlement_eligibility(hrr, substitute_pa, "final")["eligibility"], "ungraded")
+        self.assertEqual(settlement_eligibility(hrr, starter_no_pa, "final")["eligibility"], "ungraded")
+        self.assertEqual(settlement_eligibility(hrr, starter_pa, "final")["eligibility"], "eligible")
+
+    def test_unverified_hit_type_action_rules_fail_ungraded(self):
+        for stat in ("singles", "doubles", "triples"):
+            with self.subTest(stat=stat):
+                p = pick(stat, player_id=30, type_="batter")
+                official = feed({
+                    "ID30": raw_player(30, pa=4, substitute=False, batting_order="100"),
+                })
+                result = settlement_eligibility(p, official, "final")
+                self.assertEqual(result["eligibility"], "ungraded")
+                self.assertEqual(result["reason_code"], "unsupported_market_rule")
 
     def test_game_state_is_not_itself_void_proof(self):
         p = pick()
