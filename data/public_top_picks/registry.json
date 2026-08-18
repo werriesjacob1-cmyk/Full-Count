@@ -2,11 +2,509 @@
   "schema_version": 1,
   "identity_schema_version": 2,
   "rollout_version": "pre-phase-v-live-lifecycle-v1",
-  "updated_at": "2026-08-17T23:14:57+00:00",
+  "updated_at": "2026-08-18T20:33:11.970227+00:00",
   "migration": {
     "version": "pre-phase-v-live-lifecycle-v1",
     "completed_at": "2026-08-17T23:14:57+00:00",
     "source_artifact_id": "0ae9f2d32c8f6711c78eef4c50bb79332d7769207536d08492daa7a7a1fdf622"
   },
-  "entries": {}
+  "entries": {
+    "fc2:823341:player-672456:pitcher_outs:17:over": {
+      "canonical_id": "fc2:823341:player-672456:pitcher_outs:17:over",
+      "settlement_identity": [
+        "823341",
+        [
+          "player",
+          "672456"
+        ],
+        "pitcher_outs",
+        "17",
+        "over"
+      ],
+      "slate_date": "2026-08-18",
+      "first_published_at": "2026-08-18T20:33:11.970227+00:00",
+      "publication_provenance": {
+        "artifact_id": "88efeec1c1ad5c6815f53bfd1cf471a040d136f2446da0f87a6ed3f126c7ede6",
+        "source_commit": "2595ca6a67a620a7bc843583d403bc70b955f8ce",
+        "workflow_run_id": "32182740384",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-08-18T20:32:54.453310+00:00",
+        "data_hash": "89fdcc9829136f63eac9b2a3d11e6ef262b691afe545de0e9a60e242bc74ac9f",
+        "live_hash": "209cdfcc3d855f91527797c721cefbbca0c795ab60d36b416e723d29af36e537"
+      },
+      "snapshot": {
+        "id": "fc2:823341:player-672456:pitcher_outs:17:over",
+        "identity_version": 2,
+        "game_pk": 823341,
+        "player_id": 672456,
+        "combo_player_ids": null,
+        "type": "pitcher",
+        "name": "Keider Montero",
+        "team": "Detroit Tigers",
+        "matchup": "Detroit Tigers @ Pittsburgh Pirates",
+        "game_start": "2026-08-18T22:40:00Z",
+        "stat": "pitcher_outs",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "pitcher_outs",
+          "value": 16.5,
+          "needs": 17
+        },
+        "prop": "Over 16.5 Outs Recorded",
+        "hit_probability": 0.6116,
+        "market_odds": -118,
+        "market_implied": 0.504,
+        "market_edge": 0.1076,
+        "market_hold": null,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (A), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (11.0 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "Recorded 17+ outs (5.2 IP) in 61.2% of his last 20 real starts (league 48.4%, avg 17.15 outs/start)"
+        ],
+        "watchouts": [],
+        "prob_ci": null,
+        "reliability": "A",
+        "reliability_note": null,
+        "sample_n": 20,
+        "lineup_assumed": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "3f0fde3d",
+          "prediction_timestamp": "2026-08-18T20:31:16.728190+00:00",
+          "odds_fetched_at": "2026-08-18T20:31:10.130974+00:00",
+          "board_generated_at": "2026-08-18T20:31:16.694267+00:00"
+        },
+        "qualification_timestamp": "2026-08-18T20:31:16.728190+00:00",
+        "board_timestamp": "2026-08-18T20:31:16.694267+00:00",
+        "slate_date": "2026-08-18"
+      }
+    },
+    "fc2:823667:player-805673:pitcher_outs:16:over": {
+      "canonical_id": "fc2:823667:player-805673:pitcher_outs:16:over",
+      "settlement_identity": [
+        "823667",
+        [
+          "player",
+          "805673"
+        ],
+        "pitcher_outs",
+        "16",
+        "over"
+      ],
+      "slate_date": "2026-08-18",
+      "first_published_at": "2026-08-18T20:33:11.970227+00:00",
+      "publication_provenance": {
+        "artifact_id": "88efeec1c1ad5c6815f53bfd1cf471a040d136f2446da0f87a6ed3f126c7ede6",
+        "source_commit": "2595ca6a67a620a7bc843583d403bc70b955f8ce",
+        "workflow_run_id": "32182740384",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-08-18T20:32:54.453310+00:00",
+        "data_hash": "89fdcc9829136f63eac9b2a3d11e6ef262b691afe545de0e9a60e242bc74ac9f",
+        "live_hash": "209cdfcc3d855f91527797c721cefbbca0c795ab60d36b416e723d29af36e537"
+      },
+      "snapshot": {
+        "id": "fc2:823667:player-805673:pitcher_outs:16:over",
+        "identity_version": 2,
+        "game_pk": 823667,
+        "player_id": 805673,
+        "combo_player_ids": null,
+        "type": "pitcher",
+        "name": "Zebby Matthews",
+        "team": "Minnesota Twins",
+        "matchup": "Atlanta Braves @ Minnesota Twins",
+        "game_start": "2026-08-18T23:40:00Z",
+        "stat": "pitcher_outs",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "pitcher_outs",
+          "value": 15.5,
+          "needs": 16
+        },
+        "prop": "Over 15.5 Outs Recorded",
+        "hit_probability": 0.6086,
+        "market_odds": -125,
+        "market_implied": 0.5169,
+        "market_edge": 0.0917,
+        "market_hold": null,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (A), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (9.4 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "Recorded 16+ outs (5.1 IP) in 60.9% of his last 16 real starts (league 56.5%, avg 17.06 outs/start)"
+        ],
+        "watchouts": [],
+        "prob_ci": null,
+        "reliability": "A",
+        "reliability_note": null,
+        "sample_n": 16,
+        "lineup_assumed": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "3f0fde3d",
+          "prediction_timestamp": "2026-08-18T20:31:16.728190+00:00",
+          "odds_fetched_at": "2026-08-18T20:31:10.130974+00:00",
+          "board_generated_at": "2026-08-18T20:31:16.694267+00:00"
+        },
+        "qualification_timestamp": "2026-08-18T20:31:16.728190+00:00",
+        "board_timestamp": "2026-08-18T20:31:16.694267+00:00",
+        "slate_date": "2026-08-18"
+      }
+    },
+    "fc2:823667:player-641816:strikeouts:5:over": {
+      "canonical_id": "fc2:823667:player-641816:strikeouts:5:over",
+      "settlement_identity": [
+        "823667",
+        [
+          "player",
+          "641816"
+        ],
+        "strikeouts",
+        "5",
+        "over"
+      ],
+      "slate_date": "2026-08-18",
+      "first_published_at": "2026-08-18T20:33:11.970227+00:00",
+      "publication_provenance": {
+        "artifact_id": "88efeec1c1ad5c6815f53bfd1cf471a040d136f2446da0f87a6ed3f126c7ede6",
+        "source_commit": "2595ca6a67a620a7bc843583d403bc70b955f8ce",
+        "workflow_run_id": "32182740384",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-08-18T20:32:54.453310+00:00",
+        "data_hash": "89fdcc9829136f63eac9b2a3d11e6ef262b691afe545de0e9a60e242bc74ac9f",
+        "live_hash": "209cdfcc3d855f91527797c721cefbbca0c795ab60d36b416e723d29af36e537"
+      },
+      "snapshot": {
+        "id": "fc2:823667:player-641816:strikeouts:5:over",
+        "identity_version": 2,
+        "game_pk": 823667,
+        "player_id": 641816,
+        "combo_player_ids": null,
+        "type": "pitcher",
+        "name": "Tyler Mahle",
+        "team": "Atlanta Braves",
+        "matchup": "Atlanta Braves @ Minnesota Twins",
+        "game_start": "2026-08-18T23:40:00Z",
+        "stat": "strikeouts",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "strikeouts",
+          "value": 4.5,
+          "needs": 5
+        },
+        "prop": "Over 4.5 Strikeouts",
+        "hit_probability": 0.6014,
+        "market_odds": -120,
+        "market_implied": 0.5146,
+        "market_edge": 0.0868,
+        "market_hold": null,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (A), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (9.6 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "Opposing team K% 21.5 (MLB Stats API \u2014 FanGraphs team page unreachable)",
+          "Expected workload 22.6 batters faced (his own 22.0/start over 2 real starts, shrunk toward the 23.1 league mean)",
+          "4/7 known-hand opposing batters same-handed",
+          "L14 K% 36.4 (44 PA)"
+        ],
+        "watchouts": [
+          "Workload estimate rests on only 2 starts in the L14 window \u2014 most start-to-start variation in batters faced is noise, so this is shrunk heavily toward league average"
+        ],
+        "prob_ci": null,
+        "reliability": "A",
+        "reliability_note": null,
+        "sample_n": 20,
+        "lineup_assumed": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "3f0fde3d",
+          "prediction_timestamp": "2026-08-18T20:31:16.728190+00:00",
+          "odds_fetched_at": "2026-08-18T20:31:10.130974+00:00",
+          "board_generated_at": "2026-08-18T20:31:16.694267+00:00"
+        },
+        "qualification_timestamp": "2026-08-18T20:31:16.728190+00:00",
+        "board_timestamp": "2026-08-18T20:31:16.694267+00:00",
+        "slate_date": "2026-08-18"
+      }
+    },
+    "fc2:823423:player-665052:hits:1:over": {
+      "canonical_id": "fc2:823423:player-665052:hits:1:over",
+      "settlement_identity": [
+        "823423",
+        [
+          "player",
+          "665052"
+        ],
+        "hits",
+        "1",
+        "over"
+      ],
+      "slate_date": "2026-08-18",
+      "first_published_at": "2026-08-18T20:33:11.970227+00:00",
+      "publication_provenance": {
+        "artifact_id": "88efeec1c1ad5c6815f53bfd1cf471a040d136f2446da0f87a6ed3f126c7ede6",
+        "source_commit": "2595ca6a67a620a7bc843583d403bc70b955f8ce",
+        "workflow_run_id": "32182740384",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-08-18T20:32:54.453310+00:00",
+        "data_hash": "89fdcc9829136f63eac9b2a3d11e6ef262b691afe545de0e9a60e242bc74ac9f",
+        "live_hash": "209cdfcc3d855f91527797c721cefbbca0c795ab60d36b416e723d29af36e537"
+      },
+      "snapshot": {
+        "id": "fc2:823423:player-665052:hits:1:over",
+        "identity_version": 2,
+        "game_pk": 823423,
+        "player_id": 665052,
+        "combo_player_ids": null,
+        "type": "batter",
+        "name": "Griffin Conine",
+        "team": "Miami Marlins",
+        "matchup": "Miami Marlins @ Philadelphia Phillies",
+        "game_start": "2026-08-18T22:40:00Z",
+        "stat": "hits",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "hits",
+          "value": 0.5,
+          "needs": 1
+        },
+        "prop": "Over 0.5 Hits",
+        "hit_probability": 0.6122,
+        "market_odds": -120,
+        "market_implied": 0.5455,
+        "market_edge": 0.0667,
+        "market_hold": null,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (B), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (10.7 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "Projected 4.14 PA (slot 4, 3.28-run implied team total)",
+          "Platoon: L bat vs RHP (favorable)",
+          "Pitch-type exploit: RV/100 +1.7 vs FF (opposing SP throws it 35.3% of the time)",
+          "Opposing SP ERA 2.89"
+        ],
+        "watchouts": [],
+        "prob_ci": null,
+        "reliability": "B",
+        "reliability_note": null,
+        "sample_n": 58,
+        "lineup_assumed": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "3f0fde3d",
+          "prediction_timestamp": "2026-08-18T20:31:16.728190+00:00",
+          "odds_fetched_at": "2026-08-18T20:31:10.130974+00:00",
+          "board_generated_at": "2026-08-18T20:31:16.694267+00:00"
+        },
+        "qualification_timestamp": "2026-08-18T20:31:16.728190+00:00",
+        "board_timestamp": "2026-08-18T20:31:16.694267+00:00",
+        "slate_date": "2026-08-18"
+      }
+    },
+    "fc2:824639:player-805367:hits_runs_rbis:1:over": {
+      "canonical_id": "fc2:824639:player-805367:hits_runs_rbis:1:over",
+      "settlement_identity": [
+        "824639",
+        [
+          "player",
+          "805367"
+        ],
+        "hits_runs_rbis",
+        "1",
+        "over"
+      ],
+      "slate_date": "2026-08-18",
+      "first_published_at": "2026-08-18T20:33:11.970227+00:00",
+      "publication_provenance": {
+        "artifact_id": "88efeec1c1ad5c6815f53bfd1cf471a040d136f2446da0f87a6ed3f126c7ede6",
+        "source_commit": "2595ca6a67a620a7bc843583d403bc70b955f8ce",
+        "workflow_run_id": "32182740384",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-08-18T20:32:54.453310+00:00",
+        "data_hash": "89fdcc9829136f63eac9b2a3d11e6ef262b691afe545de0e9a60e242bc74ac9f",
+        "live_hash": "209cdfcc3d855f91527797c721cefbbca0c795ab60d36b416e723d29af36e537"
+      },
+      "snapshot": {
+        "id": "fc2:824639:player-805367:hits_runs_rbis:1:over",
+        "identity_version": 2,
+        "game_pk": 824639,
+        "player_id": 805367,
+        "combo_player_ids": null,
+        "type": "batter",
+        "name": "Chase Meidroth",
+        "team": "Chicago White Sox",
+        "matchup": "Chicago White Sox @ Chicago Cubs",
+        "game_start": "2026-08-19T00:05:00Z",
+        "stat": "hits_runs_rbis",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "hits_runs_rbis",
+          "value": 0.5,
+          "needs": 1
+        },
+        "prop": "Over 0.5 Hits+Runs+RBIs",
+        "hit_probability": 0.7542,
+        "market_odds": -240,
+        "market_implied": 0.7059,
+        "market_edge": 0.0483,
+        "market_hold": null,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (A), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (10.1 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "Projected 3.84 PA (slot 7, 3.97-run implied team total)",
+          "Platoon: R bat vs RHP (unfavorable)",
+          "Opposing SP ERA 4.53",
+          "L7 avg EV 88.3mph (league ~88.5)"
+        ],
+        "watchouts": [
+          "AVG vs xBA: 0.275 vs 0.235 (+0.040) \u2014 outperforming his contact quality, regression risk",
+          "wOBA vs xwOBA: 0.338 vs 0.295 (+0.043) \u2014 outperforming his contact quality, regression risk"
+        ],
+        "prob_ci": [
+          0.7082,
+          0.8535
+        ],
+        "reliability": "A",
+        "reliability_note": null,
+        "sample_n": 119,
+        "lineup_assumed": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "3f0fde3d",
+          "prediction_timestamp": "2026-08-18T20:31:16.728190+00:00",
+          "odds_fetched_at": "2026-08-18T20:31:10.130974+00:00",
+          "board_generated_at": "2026-08-18T20:31:16.694267+00:00"
+        },
+        "qualification_timestamp": "2026-08-18T20:31:16.728190+00:00",
+        "board_timestamp": "2026-08-18T20:31:16.694267+00:00",
+        "slate_date": "2026-08-18"
+      }
+    },
+    "fc2:823341:player-805808:hits_runs_rbis:1:over": {
+      "canonical_id": "fc2:823341:player-805808:hits_runs_rbis:1:over",
+      "settlement_identity": [
+        "823341",
+        [
+          "player",
+          "805808"
+        ],
+        "hits_runs_rbis",
+        "1",
+        "over"
+      ],
+      "slate_date": "2026-08-18",
+      "first_published_at": "2026-08-18T20:33:11.970227+00:00",
+      "publication_provenance": {
+        "artifact_id": "88efeec1c1ad5c6815f53bfd1cf471a040d136f2446da0f87a6ed3f126c7ede6",
+        "source_commit": "2595ca6a67a620a7bc843583d403bc70b955f8ce",
+        "workflow_run_id": "32182740384",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-08-18T20:32:54.453310+00:00",
+        "data_hash": "89fdcc9829136f63eac9b2a3d11e6ef262b691afe545de0e9a60e242bc74ac9f",
+        "live_hash": "209cdfcc3d855f91527797c721cefbbca0c795ab60d36b416e723d29af36e537"
+      },
+      "snapshot": {
+        "id": "fc2:823341:player-805808:hits_runs_rbis:1:over",
+        "identity_version": 2,
+        "game_pk": 823341,
+        "player_id": 805808,
+        "combo_player_ids": null,
+        "type": "batter",
+        "name": "Kevin McGonigle",
+        "team": "Detroit Tigers",
+        "matchup": "Detroit Tigers @ Pittsburgh Pirates",
+        "game_start": "2026-08-18T22:40:00Z",
+        "stat": "hits_runs_rbis",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "hits_runs_rbis",
+          "value": 0.5,
+          "needs": 1
+        },
+        "prop": "Over 0.5 Hits+Runs+RBIs",
+        "hit_probability": 0.7915,
+        "market_odds": -290,
+        "market_implied": 0.7436,
+        "market_edge": 0.0479,
+        "market_hold": null,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (A), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (10.3 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "Projected 4.38 PA (slot 2, 3.72-run implied team total)",
+          "Platoon: L bat vs RHP (favorable)",
+          "Pitch-type exploit: RV/100 +1.7 vs CU (opposing SP throws it 26.2% of the time)",
+          "Opposing SP ERA 3.82"
+        ],
+        "watchouts": [],
+        "prob_ci": [
+          0.7677,
+          0.8971
+        ],
+        "reliability": "A",
+        "reliability_note": null,
+        "sample_n": 121,
+        "lineup_assumed": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "3f0fde3d",
+          "prediction_timestamp": "2026-08-18T20:31:16.728190+00:00",
+          "odds_fetched_at": "2026-08-18T20:31:10.130974+00:00",
+          "board_generated_at": "2026-08-18T20:31:16.694267+00:00"
+        },
+        "qualification_timestamp": "2026-08-18T20:31:16.728190+00:00",
+        "board_timestamp": "2026-08-18T20:31:16.694267+00:00",
+        "slate_date": "2026-08-18"
+      }
+    }
+  }
 }
