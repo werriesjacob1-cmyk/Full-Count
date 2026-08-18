@@ -380,6 +380,92 @@ check(meta["odds_fetched_at"] == BOARD_NOW and meta["board_generated_at"] == BOA
       "the real, passed-in timestamps are carried through unchanged, not re-derived")
 
 
+head("18. 2026-08-18 Pre-Phase-V finding A1/A2: missing prob_ci must fail closed for Top "
+     "Pick/Value, not silently skip the pessimistic-end robustness test -- see "
+     "engineering/ENGINEERING_HANDOFF.md's A1-A4 investigation entry")
+
+no_ci_strong = cand(0.62, -110, ci=None, lift=0.05)
+r18 = classify(no_ci_strong)
+check(r18["status"] != "top_pick",
+      "a candidate that clears plain ROI with NO defensible confidence interval cannot "
+      f"become Top Pick -- absence of a CI is not evidence of robustness, got {r18['status']!r}",
+      str(r18["status_reasons"]))
+check(r18["status"] != "value",
+      "the same absent-CI reasoning blocks the Value bucket too -- this policy's Value "
+      f"requirement shares the same pessimistic-end test as Top Pick, got {r18['status']!r}")
+check(not any("pessimistic end of its own interval" in reason
+             for reason in r18["status_reasons"]),
+      "the rationale never claims a pessimistic-interval test that could not have run",
+      str(r18["status_reasons"]))
+
+# A real, well-evidenced CI still reaches Top Pick and still names the real test that ran --
+# the fix must not weaken the honest, positive path.
+still_works = cand(0.68, -130, ci=[0.61, 0.75])
+r18b = classify(still_works)
+check(r18b["status"] == "top_pick",
+      f"a genuine, well-evidenced CI still reaches Top Pick after the fix, got {r18b['status']!r}",
+      str(r18b["status_reasons"]))
+check(any("pessimistic end of its own interval" in reason
+         for reason in r18b["status_reasons"]),
+      "the rationale correctly claims the pessimistic-interval test when a real CI existed "
+      "and was actually tested", str(r18b["status_reasons"]))
+
+# A missing CI does not have to mean total silence -- a real, positive lift with everything
+# else clean should still surface as a coherent Lean, not get dropped to a confusing Neutral.
+no_ci_leanable = cand(0.62, -110, ci=None, lift=0.06)
+r18c = classify(no_ci_leanable)
+check(r18c["status"] == "lean",
+      f"missing CI with a real positive lift lands as a coherent Lean, not silently dropped "
+      f"or forced to Neutral, got {r18c['status']!r}", str(r18c["status_reasons"]))
+
+head("19. 2026-08-18 Pre-Phase-V finding A3: freshness_check must fail closed on missing "
+     "odds_fetched_at, never borrow board_generated_at as evidence the price is fresh")
+
+missing_odds_fresh_board, missing_odds_reasons = rec.freshness_check(
+    now=NOW, odds_fetched_at=None, board_generated_at=BOARD_NOW)
+check(missing_odds_fresh_board is False,
+      "a missing odds_fetched_at is treated as unknown/stale even when board_generated_at "
+      "is genuinely fresh -- the board's own timestamp is not evidence this specific price "
+      "was ever verified", str(missing_odds_reasons))
+check(any("price fetch time unknown" in r for r in missing_odds_reasons),
+      "the reason names the actual gap (price time unknown), not a generic staleness message",
+      str(missing_odds_reasons))
+
+# The existing, valid-timestamp path must be unaffected by the fix.
+valid_odds_fresh, valid_odds_reasons = rec.freshness_check(
+    now=NOW, odds_fetched_at=BOARD_NOW, board_generated_at=BOARD_NOW)
+check(valid_odds_fresh is True,
+      "a real, current odds_fetched_at is still correctly fresh after the fix",
+      str(valid_odds_reasons))
+
+# End-to-end: a candidate that would otherwise clearly be a Top Pick is still blocked when
+# the BOARD-level freshness verdict itself is built from a missing odds_fetched_at.
+fresh_missing_odds, reasons_missing_odds = rec.freshness_check(
+    now=NOW, odds_fetched_at=None, board_generated_at=BOARD_NOW)
+would_be_top_pick = cand(0.68, -130, ci=[0.61, 0.75])
+r19 = classify(would_be_top_pick, fresh_tuple=(fresh_missing_odds, reasons_missing_odds))
+check(r19["status"] != "top_pick",
+      "an otherwise-clean Top Pick is correctly blocked end-to-end when the board's own "
+      f"price-fetch time is unknown, got {r19['status']!r}", str(r19["status_reasons"]))
+check(r19.get("stale") is True,
+      "the stale flag is surfaced on the end-to-end path too, not just a silent downgrade")
+
+head("20. value_verdict()'s new require_robust parameter defaults to False -- existing "
+     "callers (value_board.py's own --no-robust escape hatch) that pass prob_lo=None on "
+     "purpose to intentionally skip the test must keep getting a real BET/NO BET verdict "
+     "off ROI alone, not be silently converted to always-NO-BET")
+
+default_verdict = pp.value_verdict(0.62, -110, prob_lo=None)
+check(default_verdict["verdict"] == "BET",
+      "value_verdict's default behavior (require_robust not passed) is UNCHANGED from "
+      "before this fix -- only callers that explicitly opt in get the stricter contract",
+      str(default_verdict))
+required_verdict = pp.value_verdict(0.62, -110, prob_lo=None, require_robust=True)
+check(required_verdict["verdict"] == "NO BET" and required_verdict.get("robust_to_uncertainty") is False,
+      "an explicit require_robust=True caller correctly fails closed on a missing interval",
+      str(required_verdict))
+
+
 n_pass = sum(1 for ok, _, _ in _results if ok)
 n_total = len(_results)
 print("\n" + "=" * 78)

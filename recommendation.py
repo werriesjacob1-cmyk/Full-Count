@@ -215,7 +215,13 @@ def freshness_check(*, now=None, odds_fetched_at=None, board_generated_at=None,
         if age > max_board_age_s:
             ok = False
             reasons.append(f"board is {age/3600:.1f}h old (limit {max_board_age_s/3600:.1f}h)")
-    price_dt = _parse_iso(odds_fetched_at) or board_dt
+    # Deliberately NOT "or board_dt". A board can be freshly generated while
+    # a specific price was never actually re-verified this run (or a caller
+    # simply forgot to pass its own fetch time) -- borrowing board_dt here
+    # would let that unverified price pass as fresh on the board's own
+    # unrelated timestamp, exactly the "assume the best of an unknown age"
+    # this function's own docstring says it exists not to do.
+    price_dt = _parse_iso(odds_fetched_at)
     if price_dt is None:
         ok = False
         reasons.append("price fetch time unknown")
@@ -275,8 +281,16 @@ def classify_recommendation(candidate, *, now=None, data_fresh=True, fresh_reaso
         return _result("neutral", ["no market price posted, and no strong enough read to "
                                    "lean on regardless"])
 
+    # require_robust=True: this policy's Top Pick/Value requirements include
+    # the pessimistic-end robustness test (see this module's own docstring
+    # on "positive-EV at the PESSIMISTIC end of its own real, correctly-
+    # scoped interval"). An honestly-absent interval (modelled_shrunk/
+    # league_only lines never get one -- see generate_picks.py's
+    # attach_hit_probabilities) is not evidence the bet is robust; it means
+    # this exact question cannot be answered for this line, which is a
+    # required-test failure, not a skipped one.
     verdict = pp.value_verdict(prob, odds, prob_lo=(ci[0] if ci else None),
-                               min_roi=TOP_PICK_MIN_ROI)
+                               min_roi=TOP_PICK_MIN_ROI, require_robust=True)
     agreement = pp.market_agreement(prob, odds)
     suspect = agreement["agreement"] == "SUSPECT"
     clears_value = verdict["verdict"] == "BET"
@@ -298,10 +312,24 @@ def classify_recommendation(candidate, *, now=None, data_fresh=True, fresh_reaso
     # a low-probability bet whose only case IS "the market disagrees with us"
     # deserves more scrutiny on that disagreement than a favorite does.
     if prob >= TOP_PICK_MIN_PROB and evidence_ok and lineup_ok and clears_value and data_fresh:
+        # ci-conditional wording is defense-in-depth, not the primary fix --
+        # require_robust=True above already makes clears_value structurally
+        # impossible to reach with ci is None (see value_verdict). Kept
+        # explicit anyway so this rationale can never claim a test that
+        # did not actually run, even if that coupling changes later.
+        price_test_clause = (
+            "the price/value test at the pessimistic end of its own interval"
+            if ci else
+            # Structurally unreachable post-fix (require_robust=True forces
+            # clears_value False whenever ci is None -- see above), but
+            # worded honestly rather than claiming a test that ci's absence
+            # means never actually ran, in case that coupling ever changes.
+            "the price/value test (no defensible per-line interval exists for "
+            "this line, so the pessimistic-end check could not run)"
+        )
         reasons = ["clears the real probability floor (>= "
                    f"{TOP_PICK_MIN_PROB*100:.0f}%), a real evidence grade ({reliability}), "
-                   f"a confirmed lineup, live pricing, and the price/value test at the "
-                   f"pessimistic end of its own interval"]
+                   f"a confirmed lineup, live pricing, and {price_test_clause}"]
         if suspect:
             reasons.append(f"note: the market itself disagrees with this read "
                            f"({agreement['note']}) — still a Top Pick on the model's own "

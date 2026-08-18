@@ -552,16 +552,31 @@ def kelly_fraction(prob, american):
     return max(0.0, f)
 
 
-def value_verdict(prob, american, prob_lo=None, min_roi=MIN_ROI):
+def value_verdict(prob, american, prob_lo=None, min_roi=MIN_ROI, require_robust=False):
     """Does a good read and a fair price meet on this prop?
 
     prob     — the calibrated model probability
     american — the real posted price
     prob_lo  — pessimistic end of the model's interval, if known
+    require_robust — if True, a missing prob_lo is NOT a skipped test, it is
+                     a FAILED one. Some callers (value_board.py's own
+                     `--no-robust` mode) intentionally omit prob_lo to widen
+                     a manual screen ("shows more, trust less") and that
+                     opt-out must keep working -- so this defaults to False,
+                     preserving every existing caller's exact behavior
+                     unless it explicitly asks for the stricter contract.
+                     A caller whose policy requires the pessimistic-end
+                     test before it will call something a real
+                     recommendation (see recommendation.py's own docstring
+                     on this) must pass True.
 
-    Returns a dict with the verdict and the arithmetic behind it. Both tests
-    must pass: the bet must clear min_roi at the model's estimate, AND still
-    be positive expectation at the bottom of its own confidence interval."""
+    Returns a dict with the verdict and the arithmetic behind it. When the
+    pessimistic-end test is required (require_robust=True) or was actually
+    run (prob_lo given), both tests must pass: the bet must clear min_roi at
+    the model's estimate, AND still be positive expectation at the bottom of
+    its own confidence interval. An honestly absent interval is not evidence
+    of robustness -- it is exactly the "we cannot verify this" case a
+    required test must fail closed on, never silently skip."""
     d = decimal_odds(american)
     implied = implied_probability(american)
     roi = expected_roi(prob, american)
@@ -579,6 +594,10 @@ def value_verdict(prob, american, prob_lo=None, min_roi=MIN_ROI):
         robust = expected_roi(prob_lo, american) > 0
         out["roi_at_worst_case"] = round(expected_roi(prob_lo, american), 4)
         out["robust_to_uncertainty"] = bool(robust)
+    elif require_robust:
+        robust = False
+        out["roi_at_worst_case"] = None
+        out["robust_to_uncertainty"] = False
     if roi < min_roi:
         out["verdict"] = "NO BET"
         out["why"] = (f"{roi*100:+.1f}% return is under the {min_roi*100:.0f}% floor — "
@@ -586,9 +605,14 @@ def value_verdict(prob, american, prob_lo=None, min_roi=MIN_ROI):
                       f"model says {float(prob)*100:.1f}%")
     elif robust is False:
         out["verdict"] = "NO BET"
-        out["why"] = ("edge disappears at the pessimistic end of the model's own "
-                      "confidence interval — the disagreement with the market is "
-                      "inside our margin of error")
+        if prob_lo is None:
+            out["why"] = ("no defensible confidence interval exists for this exact line, "
+                          "so the required pessimistic-end robustness test cannot be "
+                          "passed -- an absent interval is not evidence of robustness")
+        else:
+            out["why"] = ("edge disappears at the pessimistic end of the model's own "
+                          "confidence interval — the disagreement with the market is "
+                          "inside our margin of error")
     else:
         out["verdict"] = "BET"
         out["why"] = (f"{roi*100:+.1f}% expected return; break-even is "
