@@ -3740,6 +3740,15 @@ def select_shadow_tracking(candidates, n_per_key=1):
                 "hit_probability": alt["prob"], "signals": c.get("signals") or {},
                 "base_rate": alt.get("base_rate"), "lift": alt.get("lift"),
                 "probability_basis": "empirical_shrunk",
+                # raw_hit_probability/calibrated_by: this alternate's OWN
+                # apply_calibration() provenance (see that function), never
+                # borrowed from the primary candidate. Honestly absent when
+                # no calibrator applied to this exact market -- a future
+                # signal-promotion analysis over shadow_tracking must be
+                # able to tell a calibrated probability from a raw one, the
+                # same discipline the real board's categories already get.
+                "raw_hit_probability": alt.get("raw_prob"),
+                "calibrated_by": alt.get("calibrated_by"),
                 "why": ["Tracked for hit-rate measurement only -- an alternate threshold "
                         "that lost selection against the real candidate, never a live bet."],
                 "watchouts": [],
@@ -5152,24 +5161,49 @@ def apply_calibration(candidates, calibrator):
     raw one alongside for comparison. Each market uses its own curve where one
     was fitted, falling back to the pooled curve otherwise.
 
-    ALSO calibrates every alternate line in c["line_options"] -- the exact
-    audit finding this fixes: select_best_by_category() (and select_moonshots
-    and value_board.py, all three real consumers of line_options) priced and
-    classified every alternate line off its raw, never-calibrated
-    probability, because this function used to touch only the primary line's
-    hit_probability. Each option is calibrated against its OWN stat (a
-    Home Runs alternate on a Hits-primary candidate must use the Home Runs
-    curve, never Hits'), never the candidate's primary stat, and never
-    borrows the primary line's raw_hit_probability/calibrated_by. This is
-    the ONLY call site of apply_calibration() in the whole codebase (see
+    ALSO calibrates every alternate line in c["line_options"] AND
+    c["alternatives"] -- the exact audit finding this fixes:
+    select_best_by_category() (and select_moonshots and value_board.py, all
+    real consumers of line_options) priced and classified every alternate
+    line off its raw, never-calibrated probability, because this function
+    used to touch only the primary line's hit_probability.
+    select_shadow_tracking() reads c["alternatives"] the same way for its
+    own recorded-but-never-bet probabilities -- a SEPARATE list of dict
+    objects from line_options (see _keep_options() vs the raw `opts` slice),
+    so it needs its own pass, not just line_options' fix incidentally
+    covering it. Leaving it raw would have meant every OTHER category
+    (main, moonshot, best_of_category) got corrected while shadow-tracking's
+    own recorded probability silently stayed on the old, biased number --
+    exactly the apples-to-oranges comparison this project's own
+    record/measure/promote discipline exists to prevent when a shadow
+    signal is later evaluated for promotion.
+
+    Each option/alternative is calibrated against its OWN stat (a Home Runs
+    alternate on a Hits-primary candidate must use the Home Runs curve,
+    never Hits'), never the candidate's primary stat, and never borrows the
+    primary line's raw_hit_probability/calibrated_by. This is the ONLY call
+    site of apply_calibration() in the whole codebase (see
     score_slate()/_build_and_score()), so every consumer -- live dashboard,
-    static pipeline, value_board.py, moonshots -- sees the same corrected
-    line_options in one pass; nothing here can calibrate a probability
-    twice."""
+    static pipeline, value_board.py, moonshots, shadow tracking -- sees the
+    same corrected data in one pass; nothing here can calibrate a
+    probability twice."""
     if calibrator is None:
         return candidates
     per_market, glob = calibrator
     used = defaultdict(int)
+
+    def _calibrate_option_list(opts):
+        for opt in opts or []:
+            ocp, oby = _calibrate_one(opt.get("prob"), opt.get("stat"), per_market, glob)
+            if ocp is None:
+                continue
+            opt["raw_prob"] = opt["prob"]
+            opt["prob"] = ocp
+            opt["calibrated_by"] = oby
+            if opt.get("base_rate") is not None:
+                opt["lift"] = round(opt["prob"] - opt["base_rate"], 4)
+            used[oby] += 1
+
     for c in candidates:
         stat = (c.get("projection") or {}).get("stat")
         cp, by = _calibrate_one(c.get("hit_probability"), stat, per_market, glob)
@@ -5181,17 +5215,8 @@ def apply_calibration(candidates, calibrator):
             if c.get("base_rate") is not None:
                 c["lift"] = round(c["hit_probability"] - c["base_rate"], 4)
             used[by] += 1
-        for opt in c.get("line_options") or []:
-            opt_stat = opt.get("stat")
-            ocp, oby = _calibrate_one(opt.get("prob"), opt_stat, per_market, glob)
-            if ocp is None:
-                continue
-            opt["raw_prob"] = opt["prob"]
-            opt["prob"] = ocp
-            opt["calibrated_by"] = oby
-            if opt.get("base_rate") is not None:
-                opt["lift"] = round(opt["prob"] - opt["base_rate"], 4)
-            used[oby] += 1
+        _calibrate_option_list(c.get("line_options"))
+        _calibrate_option_list(c.get("alternatives"))
     if used:
         detail = ", ".join(f"{k}:{v}" for k, v in sorted(used.items()))
         print(f"    Calibration applied ({detail})")

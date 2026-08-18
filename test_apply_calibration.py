@@ -252,6 +252,36 @@ check(opts5["home_runs"]["prob"] == 0.12,
       "sanity: the home_runs option really was calibrated (0.20*0.6=0.12) even though its ci "
       "correctly remains None", f"got {opts5['home_runs']['prob']}")
 
+head("18. 2026-08-18 A4 follow-up (found by independent subagent review): c[\"alternatives\"] "
+     "(consumed by select_shadow_tracking(), a SEPARATE list of dict objects from "
+     "line_options -- see _keep_options() vs the raw opts slice) also gets calibrated, "
+     "with its own independent provenance, not just line_options")
+
+c6 = cand("hits", hit_probability=0.70, base_rate=0.50)
+c6["line_options"] = [
+    {"stat": "hits", "needs": 1, "line": 0.5, "prob": 0.70, "base_rate": 0.50, "lift": 0.20, "basis": "empirical"},
+]
+c6["alternatives"] = [
+    {"stat": "home_runs", "needs": 1, "line": 0.5, "prob": 0.20, "base_rate": 0.10, "lift": 0.10, "basis": "empirical"},
+    {"stat": "runs", "needs": 1, "line": 0.5, "prob": 0.40, "base_rate": 0.30, "lift": 0.10, "basis": "empirical"},
+]
+out6 = gp.apply_calibration([c6], ({"hits": lambda p: p * 0.8, "home_runs": lambda p: p * 0.6}, glob_multi))
+alts_by_stat = {a["stat"]: a for a in out6[0]["alternatives"]}
+check(abs(alts_by_stat["home_runs"]["prob"] - 0.12) < 1e-9,
+      "an alternatives entry is calibrated against its OWN stat (home_runs: 0.20*0.6=0.12), "
+      "exactly the same as a line_options entry would be", f"got {alts_by_stat['home_runs']['prob']}")
+check(alts_by_stat["home_runs"]["raw_prob"] == 0.20 and alts_by_stat["home_runs"]["calibrated_by"] == "home_runs",
+      "the alternatives entry's own provenance is correct and independent",
+      str(alts_by_stat["home_runs"]))
+check(abs(alts_by_stat["runs"]["prob"] - 0.20) < 1e-9,
+      "an alternatives entry with no per-market curve falls back to pooled (0.40*0.5=0.20), "
+      "independently of the home_runs entry in the same list", f"got {alts_by_stat['runs']['prob']}")
+check(alts_by_stat["runs"]["calibrated_by"] == "pooled",
+      "the pooled-fallback alternatives entry reports 'pooled' correctly")
+check(out6[0]["line_options"][0]["prob"] != alts_by_stat["home_runs"]["prob"],
+      "sanity: line_options and alternatives are genuinely separate objects, both correctly "
+      "calibrated independently, neither borrowing the other's value")
+
 n_pass = sum(1 for ok, _, _ in _results if ok)
 n_total = len(_results)
 print("\n" + "=" * 78)
