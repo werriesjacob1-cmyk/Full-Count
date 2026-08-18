@@ -1,7 +1,7 @@
 name: Dashboard Refresh
 
 # Rebuilds the standalone Full Count Board dashboard (dashboard/build_dashboard.py)
-# and publishes it to GitHub Pages, on its own schedule, with no manual
+# and commits the complete board snapshot, on its own schedule, with no manual
 # trigger from either Jacob or Claude. Direct request: "I want the dashboard
 # to auto update each day, as prices change, and as lineups come out...
 # I want this to run separately from you. No effort from either of us."
@@ -11,11 +11,8 @@ name: Dashboard Refresh
 # calls to FanGraphs/Statcast/FanDuel -- "this is not something to run
 # every few minutes." Spread across the day this still catches lineups as
 # MLB posts them progressively through the afternoon/evening and refreshes
-# FanDuel prices each time. The published page ALSO prunes itself
-# client-side the moment a game starts and reloads every 30 minutes on its
-# own (see build_dashboard.py's pruneStartedGames()/the trailing
-# setInterval calls) -- so the two together approximate a live page
-# without the underlying pipeline ever running on a live cadence.
+# FanDuel prices each time. The separate Dashboard Live Update workflow
+# owns live.json, and Dashboard Pages Deploy publishes the current pair.
 #
 # Multiple cron entries, same reasoning as mlb-daily.yml's own multi-window
 # schedule: GitHub documents that scheduled runs are delayed under load and
@@ -39,12 +36,13 @@ on:
 permissions:
   contents: write
 
-# Distinct group from every other workflow's -- a slow dashboard build must
-# never block or be blocked by the main picks pipeline, the odds snapshot,
-# or the calibration recheck, and vice versa.
+# Significant full/lineup rebuilds use GitHub's true bounded queue. They must
+# never be displaced by a later five-minute observation. State correctness is
+# still merge-based rather than relying on queue ordering.
 concurrency:
-  group: dashboard-refresh
-  cancel-in-progress: true
+  group: dashboard-full-rebuild
+  cancel-in-progress: false
+  queue: max
 
 jobs:
   build-and-publish:
@@ -53,6 +51,9 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -64,76 +65,36 @@ jobs:
         run: pip install -r requirements.txt
 
       - name: Build dashboard
-        run: python3 dashboard/build_dashboard.py --out-dir docs
+        run: python3 dashboard/build_dashboard.py --out-dir "$RUNNER_TEMP/dashboard-build"
 
       - name: Commit and push
         run: |
           git config user.name "mlb-pipeline-bot"
           git config user.email "actions@github.com"
-          # PHASE 4 REBUILD (2026-08-16): the page is no longer a single
-          # self-contained docs/index.html -- build_dashboard.py now copies
-          # index.html/app.css/app.js (the static shell, unchanged by
-          # today's data) alongside writing data.json (today's payload) and
-          # resetting live.json (the small polled delta refresh_prices.py/
-          # refresh_grades.py write between rebuilds). All five must be
-          # staged, matching the real bug this same comment used to
-          # document for docs/data.json alone: whichever of these isn't
-          # committed here is simply never live on the deployed site.
-          git add docs/index.html docs/app.css docs/app.js docs/data.json docs/live.json
-          if git diff --cached --quiet; then
-            echo "No change to the dashboard -- nothing to publish."
-            exit 0
-          fi
-          git commit -m "Dashboard refresh $(date -u +'%F %H:%M') UTC"
-          # Same retry-with-rebase as odds-snapshot.yml. docs/data.json and
-          # docs/live.json are also written by dashboard-prices.yml/
-          # dashboard-grades.yml on their own 5-minute cadence, so a rebase
-          # here CAN hit a real conflict on those two files (both are
-          # minified to one line, so any concurrent edit collides at the
-          # line level) -- unlike a plain single-writer file, this is not
-          # guaranteed to resolve cleanly. That's an accepted, pre-existing
-          # risk (docs/data.json was already shared this way before this
-          # rebuild); a failed run here just means the next scheduled
-          # window republishes.
+          cp "$RUNNER_TEMP/dashboard-build/data.json" "$RUNNER_TEMP/data-candidate.json"
           for attempt in 1 2 3 4 5; do
-            if git push; then
+            # The job may have waited in queue or spent minutes scoring. Base
+            # publication on current main at actual write time, then rerun the
+            # first-pitch/registry/live reconciliation against that state.
+            git fetch origin main
+            git checkout --detach origin/main
+            python3 dashboard/finalize_dashboard_state.py \
+              --candidate "$RUNNER_TEMP/data-candidate.json" \
+              --current docs/data.json --live docs/live.json --out docs/data.json
+            cp "$RUNNER_TEMP/dashboard-build/index.html" docs/index.html
+            cp "$RUNNER_TEMP/dashboard-build/app.css" docs/app.css
+            cp "$RUNNER_TEMP/dashboard-build/app.js" docs/app.js
+            git add docs/index.html docs/app.css docs/app.js docs/data.json
+            if git diff --cached --quiet; then
+              echo "No newer complete-board change to publish."
+              exit 0
+            fi
+            git commit -m "Dashboard refresh $(date -u +'%F %H:%M') UTC"
+            if git push origin HEAD:main; then
               echo "Pushed on attempt $attempt."
               exit 0
             fi
-            echo "Push rejected (attempt $attempt/5) -- rebasing onto origin/main."
-            git fetch origin main
-            if ! git rebase origin/main; then
-              echo "::error::Rebase conflict -- aborting rather than leaving a broken tree."
-              git rebase --abort
-              exit 1
-            fi
+            echo "Push rejected (attempt $attempt/5); regenerating from current main."
           done
           echo "::error::Failed to push dashboard rebuild after 5 attempts."
           exit 1
-
-  deploy-pages:
-    needs: build-and-publish
-    runs-on: ubuntu-latest
-    permissions:
-      pages: write
-      id-token: write
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
-      - name: Checkout repo
-        uses: actions/checkout@v4
-        with:
-          ref: main
-
-      - name: Configure Pages
-        uses: actions/configure-pages@v5
-
-      - name: Upload dashboard artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: docs
-
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4

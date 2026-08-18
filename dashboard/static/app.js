@@ -19,6 +19,7 @@ let filters = { search: "", family: "all", status: "all", evidence: "all", sort:
 let lastPollStamp = null;
 let lastFullFetchAt = 0;
 let lastFocusedEl = null; // element to restore focus to when a modal sheet/dialog closes
+let LIVE_CACHE = { updated_at: null, prices_updated_at: null, grades_updated_at: null, props: {} };
 
 const ROUTES = ["today", "props", "games", "performance", "watchlist"];
 const LONGSHOT_PROB_CEILING = 0.35; // display-only split of the real "value" status into
@@ -144,11 +145,40 @@ function evidenceChip(p) {
   const eq = evidenceQuality(p);
   return eq ? `<span class="chip chip-evidence-${eq.tone}">${eq.label}</span>` : "";
 }
+function settlementState(p) {
+  const state = p.settlement_state || "open";
+  return ["open", "provisional_hit", "hit", "miss", "void", "ungraded"].includes(state)
+    ? state : "ungraded";
+}
+function gameState(p) {
+  const state = p.game_state || "unknown";
+  return ["pregame", "live", "delayed", "suspended", "postponed", "final", "cancelled", "unknown"].includes(state)
+    ? state : "unknown";
+}
+function lifecycleState(p) {
+  const settlement = settlementState(p);
+  if (settlement !== "open") return settlement;
+  return gameState(p);
+}
+function lifecycleClass(p) {
+  const state = lifecycleState(p);
+  return `lifecycle-${state === "provisional_hit" ? "hit" : state}`;
+}
 function gradeChip(p) {
-  if (!p.grade) return "";
-  if (p.grade === "live") return `<span class="chip chip-grade-live">Live</span>`;
-  if (p.grade === "hit") return `<span class="chip chip-grade-hit">Hit ✓</span>`;
-  if (p.grade === "miss") return `<span class="chip chip-grade-miss">Miss</span>`;
+  const state = lifecycleState(p);
+  if (state === "pregame") return "";
+  if (state === "live") return `<span class="chip chip-grade-live">Live</span>`;
+  if (state === "delayed") return `<span class="chip chip-grade-ungraded">Delayed</span>`;
+  if (state === "suspended") return `<span class="chip chip-grade-ungraded">Suspended</span>`;
+  if (state === "postponed") return `<span class="chip chip-grade-ungraded">Postponed</span>`;
+  if (state === "cancelled") return `<span class="chip chip-grade-ungraded">Cancelled · Awaiting settlement</span>`;
+  if (state === "unknown") return `<span class="chip chip-grade-ungraded">Status unavailable</span>`;
+  if (state === "final") return `<span class="chip chip-grade-ungraded">Final · Awaiting grade</span>`;
+  if (state === "provisional_hit") return `<span class="chip chip-grade-hit">Cashed · Awaiting final</span>`;
+  if (state === "hit") return `<span class="chip chip-grade-hit">Hit ✓</span>`;
+  if (state === "miss") return `<span class="chip chip-grade-miss">Miss</span>`;
+  if (state === "void") return `<span class="chip chip-grade-void">Void</span>`;
+  if (state === "ungraded") return `<span class="chip chip-grade-ungraded">Ungraded</span>`;
   return "";
 }
 
@@ -226,7 +256,37 @@ async function fetchJSON(path) {
   return res.json();
 }
 function indexProps() {
-  PROPS_BY_ID = new Map((DATA.props || []).map(p => [p.id, p]));
+  const next = new Map();
+  for (const p of (DATA.props || [])) {
+    if (!p.id || next.has(p.id)) throw new Error(`Invalid or duplicate canonical prop id: ${p.id}`);
+    next.set(p.id, p);
+  }
+  PROPS_BY_ID = next;
+}
+function gameHasStarted(p) {
+  if (["live", "suspended", "final", "cancelled"].includes(gameState(p))) return true;
+  if (!p.game_start) return false;
+  const start = new Date(p.game_start);
+  return !isNaN(start) && start <= new Date();
+}
+function publicProps() {
+  return (DATA.props || []).filter(p => !gameHasStarted(p)
+    || (!!p.published_top_pick_at && !!p.publication_artifact_id)
+    || !!p.publication_candidate_token);
+}
+function freezePublishedSnapshot(p) {
+  if (!gameHasStarted(p) || !p.publication_snapshot) return;
+  if (!((p.published_top_pick_at && p.publication_artifact_id)
+        || p.publication_candidate_token)) return;
+  for (const [field, value] of Object.entries(p.publication_snapshot)) p[field] = value;
+}
+function refreshSummary() {
+  const props = publicProps();
+  DATA.summary = DATA.summary || {};
+  DATA.summary.n_props = props.length;
+  DATA.summary.n_top_pick = props.filter(p => p.recommendation_status === "top_pick").length;
+  DATA.summary.n_lean = props.filter(p => p.recommendation_status === "lean").length;
+  DATA.summary.n_value = props.filter(p => p.recommendation_status === "value").length;
 }
 
 // ══════════════════════════════════════════════════════════════════════
@@ -350,7 +410,7 @@ function pickCard(p, opts) {
   const rankBadge = opts.rank ? `<span class="pc-rank">TOP PICK #${opts.rank}</span>` : "";
   const why = (p.why || [])[0] ? `<div class="pc-why">${esc(capSentence(humanizeReason(p.why[0])))}</div>` : "";
   const starred = watchlist.has(p.id);
-  return `<button class="pick-card status-${p.recommendation_status || "neutral"}${p.stale ? " status-stale" : ""}" data-open="${p.id}">
+  return `<button class="pick-card status-${p.recommendation_status || "neutral"} ${lifecycleClass(p)}${p.stale ? " status-stale" : ""}" data-open="${p.id}">
     <div class="pc-top">
       <div>
         <div class="pc-name">${esc(p.name)}</div>
@@ -370,7 +430,7 @@ function pickCard(p, opts) {
 }
 function propRow(p) {
   const chips = [statusChip(p), lineupChip(p), staleChip(p), gradeChip(p)].filter(Boolean).join("");
-  return `<button class="prop-row" data-open="${p.id}">
+  return `<button class="prop-row ${lifecycleClass(p)}" data-open="${p.id}">
     <div class="pr-main">
       <div class="pr-name">${esc(p.name)}</div>
       <div class="pr-prop">${esc(p.prop)}</div>
@@ -386,7 +446,7 @@ function propRow(p) {
 // ══════════════════════════════════════════════════════════════════════
 function renderToday() {
   const el = document.getElementById("page-today");
-  const props = DATA.props || [];
+  const props = publicProps();
   const topPicks = props.filter(p => p.recommendation_status === "top_pick")
     .sort((a, b) => (b.market_edge || 0) - (a.market_edge || 0));
   const value = props.filter(p => p.recommendation_status === "value" && !isLongshot(p))
@@ -515,10 +575,11 @@ function applyFilters(props) {
 function renderProps() {
   const el = document.getElementById("page-props");
   const families = DATA.families || [];
-  const rows = applyFilters(DATA.props || []);
+  const visible = publicProps();
+  const rows = applyFilters(visible);
 
   el.innerHTML = `
-    <div class="section-head"><h2>All Props</h2><span class="section-sub">${rows.length} of ${(DATA.props || []).length} props</span></div>
+    <div class="section-head"><h2>All Props</h2><span class="section-sub">${rows.length} of ${visible.length} props</span></div>
     <div class="filter-bar">
       <div class="filter-inline" style="display:flex;gap:8px;flex-wrap:wrap;">
         <select class="filter-select" id="f-family" aria-label="Filter by prop type">
@@ -862,7 +923,7 @@ function initSearch() {
   const run = debounce(() => {
     const q = input.value.trim().toLowerCase();
     if (q.length < 2) { results.hidden = true; results.innerHTML = ""; return; }
-    const props = (DATA.props || []).filter(p =>
+    const props = publicProps().filter(p =>
       (p.name || "").toLowerCase().includes(q) || (p.team || "").toLowerCase().includes(q)
       || (p.matchup || "").toLowerCase().includes(q)).slice(0, 8);
     const games = (DATA.schedule || []).filter(g =>
@@ -915,23 +976,142 @@ function renderFreshness() {
 //  (price/status/grade), keyed by the same stable id every prop already
 //  carries -- see dashboard/refresh_prices.py / refresh_grades.py.
 // ══════════════════════════════════════════════════════════════════════
+const LIVE_PRICE_FIELDS = new Set([
+  "market_odds", "market_implied", "market_edge", "price_clears", "market_hold",
+  "recommendation_status", "status_reasons", "stale", "market_observation_state",
+  "market_observed_at", "market_family", "market_fetch_state", "market_fetch_checked_at",
+  "market_fetch_failed_at", "market_failure_reason",
+  "price_basis_board_generated_at",
+]);
+const LIVE_SETTLEMENT_FIELDS = new Set([
+  "settlement_state", "settlement_authority", "settlement_observed_at",
+  "settlement_source", "result_actual", "result_reason",
+]);
+const LIVE_GAME_FIELDS = new Set(["game_state", "game_state_observed_at", "game_state_source"]);
+const RESULT_AUTHORITY = { none: 0, live_observation: 1, official_final: 2 };
+function timeMs(iso) {
+  const ms = Date.parse(iso || "");
+  return Number.isFinite(ms) ? ms : null;
+}
+function newerStamp(a, b) {
+  const am = timeMs(a), bm = timeMs(b);
+  if (bm == null) return a || null;
+  return am == null || bm > am ? b : a;
+}
+function incomingFieldStamp(doc, delta, field) {
+  return (delta._field_updated_at || {})[field]
+    || (LIVE_SETTLEMENT_FIELDS.has(field) || LIVE_GAME_FIELDS.has(field) ? doc.grades_updated_at : null)
+    || (LIVE_PRICE_FIELDS.has(field) ? doc.prices_updated_at : null)
+    || doc.updated_at;
+}
+function sameSettlement(a, b) {
+  return [...LIVE_SETTLEMENT_FIELDS].every(field => (a[field] ?? null) === (b[field] ?? null));
+}
+function acceptSettlement(current, incoming) {
+  if (!current.settlement_state) return true;
+  const priorRank = RESULT_AUTHORITY[current.settlement_authority] ?? -1;
+  const nextRank = RESULT_AUTHORITY[incoming.settlement_authority] ?? -1;
+  if (priorRank !== nextRank) return nextRank > priorRank;
+  const priorAt = timeMs(current.settlement_observed_at);
+  const nextAt = timeMs(incoming.settlement_observed_at);
+  if (nextAt == null) return false;
+  if (priorAt == null || nextAt > priorAt) return true;
+  return nextAt === priorAt && sameSettlement(current, incoming);
+}
+function applyFact(target, source, fields, stamp) {
+  target._field_updated_at = target._field_updated_at || {};
+  for (const field of fields) {
+    if (Object.hasOwn(source, field)) target[field] = source[field];
+    else delete target[field];
+    if (stamp) target._field_updated_at[field] = stamp;
+  }
+}
+function ingestLiveDocument(fresh) {
+  for (const [id, delta] of Object.entries(fresh.props || {})) {
+    const cached = LIVE_CACHE.props[id] || (LIVE_CACHE.props[id] = { _field_updated_at: {} });
+    cached._field_updated_at = cached._field_updated_at || {};
+    if (delta.settlement_state && acceptSettlement(cached, delta)) {
+      applyFact(cached, delta, LIVE_SETTLEMENT_FIELDS, delta.settlement_observed_at);
+    }
+    if (delta.game_state) {
+      const priorAt = timeMs(cached.game_state_observed_at);
+      const nextAt = timeMs(delta.game_state_observed_at);
+      const preservesKnown = delta.game_state === "unknown" && cached.game_state && cached.game_state !== "unknown";
+      const regressesFinal = cached.game_state === "final" && delta.game_state !== "final";
+      if (!preservesKnown && !regressesFinal && nextAt != null && (priorAt == null || nextAt >= priorAt)) {
+        applyFact(cached, delta, LIVE_GAME_FIELDS, delta.game_state_observed_at);
+      }
+    }
+    for (const [field, value] of Object.entries(delta)) {
+      if (field === "_field_updated_at" || LIVE_SETTLEMENT_FIELDS.has(field) || LIVE_GAME_FIELDS.has(field)) continue;
+      const nextAt = incomingFieldStamp(fresh, delta, field);
+      const priorAt = cached._field_updated_at[field];
+      if (timeMs(priorAt) != null
+          && (timeMs(nextAt) == null || timeMs(nextAt) < timeMs(priorAt))) continue;
+      cached[field] = value;
+      if (nextAt) cached._field_updated_at[field] = nextAt;
+    }
+  }
+  for (const key of ["updated_at", "prices_updated_at", "grades_updated_at"]) {
+    LIVE_CACHE[key] = newerStamp(LIVE_CACHE[key], fresh[key]);
+  }
+}
+function applyCachedLive() {
+  let changed = 0;
+  const boardOddsAt = timeMs(DATA.odds_fetched_at || DATA.generated_at);
+  for (const [id, delta] of Object.entries(LIVE_CACHE.props || {})) {
+    const p = PROPS_BY_ID.get(id);
+    if (!p) continue;
+    if (delta.settlement_state && acceptSettlement(p, delta)) {
+      for (const field of LIVE_SETTLEMENT_FIELDS) {
+        const before = p[field];
+        if (Object.hasOwn(delta, field)) p[field] = delta[field]; else delete p[field];
+        if (p[field] !== before) changed++;
+      }
+    }
+    if (delta.game_state) {
+      const priorAt = timeMs(p.game_state_observed_at);
+      const nextAt = timeMs(delta.game_state_observed_at);
+      const preservesKnown = delta.game_state === "unknown" && p.game_state && p.game_state !== "unknown";
+      const regressesFinal = p.game_state === "final" && delta.game_state !== "final";
+      if (!preservesKnown && !regressesFinal && nextAt != null && (priorAt == null || nextAt >= priorAt)) {
+        for (const field of LIVE_GAME_FIELDS) {
+          const before = p[field];
+          if (Object.hasOwn(delta, field)) p[field] = delta[field]; else delete p[field];
+          if (p[field] !== before) changed++;
+        }
+      }
+    }
+    // The board may have been repriced or reclassified before this browser
+    // learned that the game crossed its wagering boundary. Restore the exact
+    // deployment-proven recommendation snapshot before considering any live
+    // price fields. Game and settlement facts remain independently mutable.
+    freezePublishedSnapshot(p);
+    for (const [field, value] of Object.entries(delta)) {
+      if (field === "_field_updated_at" || LIVE_SETTLEMENT_FIELDS.has(field) || LIVE_GAME_FIELDS.has(field)) continue;
+      const frozenExposure = gameHasStarted(p)
+        && ((!!p.published_top_pick_at && !!p.publication_artifact_id)
+          || !!p.publication_candidate_token);
+      if (frozenExposure && LIVE_PRICE_FIELDS.has(field)) continue;
+      const fieldAt = timeMs((delta._field_updated_at || {})[field]);
+      if (LIVE_PRICE_FIELDS.has(field) && boardOddsAt != null && fieldAt != null && fieldAt < boardOddsAt) continue;
+      if (p[field] !== value) changed++;
+      p[field] = value;
+    }
+  }
+  if (LIVE_CACHE.prices_updated_at) DATA.prices_updated_at = LIVE_CACHE.prices_updated_at;
+  if (LIVE_CACHE.grades_updated_at) DATA.grades_updated_at = LIVE_CACHE.grades_updated_at;
+  refreshSummary();
+  return changed;
+}
 async function pollLive() {
   try {
     const fresh = await fetchJSON("live.json");
-    const stamp = (fresh.prices_updated_at || "") + "|" + (fresh.grades_updated_at || "");
+    const stamp = fresh.updated_at || ((fresh.prices_updated_at || "") + "|" + (fresh.grades_updated_at || ""));
     if (stamp === lastPollStamp) return;
     lastPollStamp = stamp;
-    let changed = 0;
-    for (const [id, delta] of Object.entries(fresh.props || {})) {
-      const p = PROPS_BY_ID.get(id);
-      if (!p) continue;
-      for (const k of Object.keys(delta)) {
-        if (p[k] !== delta[k]) changed++;
-        p[k] = delta[k];
-      }
-    }
-    if (fresh.prices_updated_at) DATA.prices_updated_at = fresh.prices_updated_at;
-    if (fresh.grades_updated_at) DATA.grades_updated_at = fresh.grades_updated_at;
+    ingestLiveDocument(fresh);
+    const changed = applyCachedLive();
     if (changed > 0) { renderRoute(); }
     renderFreshness();
   } catch (e) { /* a missed poll just tries again next interval */ }
@@ -945,10 +1125,13 @@ async function pollLive() {
 async function pollFullBoard() {
   try {
     const fresh = await fetchJSON("data.json");
-    if (fresh.generated_at === DATA.generated_at) return;
+    const freshVersion = fresh.lifecycle_prepared_at || fresh.generated_at;
+    const currentVersion = DATA.lifecycle_prepared_at || DATA.generated_at;
+    if (freshVersion === currentVersion) return;
     const scrollY = window.scrollY;
     DATA = fresh;
     indexProps();
+    applyCachedLive();
     renderFreshness();
     renderRoute();
     updateWatchCount();

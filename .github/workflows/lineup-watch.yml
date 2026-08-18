@@ -14,7 +14,7 @@ name: Lineup Watch
 # would otherwise sit on the live board looking fully live until the next
 # fixed-window rebuild.
 #
-# This is the cheap half of the same split dashboard-prices.yml already
+# This is the cheap trigger half of the same split Dashboard Live Update
 # uses for FanDuel odds: a fast, free MLB schedule call every 10 minutes
 # (dashboard/check_lineups.py), and Dashboard Refresh only actually gets
 # triggered when a game's lineup status genuinely changed since the last
@@ -31,12 +31,13 @@ permissions:
   contents: write
   actions: write
 
-# Distinct group from every other workflow's, same isolation reasoning as
-# dashboard-refresh.yml and dashboard-prices.yml -- this must never wait
-# on or block anything else, and vice versa.
+# This cheap observer writes only lineup_watch_state.json. A detected change is
+# dispatched before it is durably acknowledged. Dispatch failure therefore
+# leaves remote state unchanged for the next poll to retry; dispatch success
+# followed by push failure may enqueue a harmless duplicate (at-least-once).
 concurrency:
   group: lineup-watch
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   check-and-trigger:
@@ -45,6 +46,9 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -61,14 +65,15 @@ jobs:
         id: check
         run: python3 dashboard/check_lineups.py
 
-      - name: Trigger a full dashboard rebuild
+      - name: Trigger a queued full dashboard rebuild
+        id: dispatch
         if: steps.check.outputs.changed == 'true'
         env:
           GH_TOKEN: ${{ github.token }}
         run: gh workflow run dashboard-refresh.yml --ref main
 
-      - name: Commit and push updated lineup-watch state
-        if: steps.check.outputs.changed == 'true'
+      - name: Acknowledge lineup state after accepted rebuild
+        if: steps.check.outputs.changed == 'true' && steps.dispatch.outcome == 'success'
         run: |
           git config user.name "mlb-pipeline-bot"
           git config user.email "actions@github.com"

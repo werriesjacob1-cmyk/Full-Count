@@ -244,6 +244,7 @@ with tempfile.TemporaryDirectory() as td:
             "by_category_totals": {"main": {"hits": 26, "misses": 21, "ungraded": 0}},
             "top_pick_hit_rate": 0.70, "last_14_days_top_pick_hit_rate": 0.70,
             "last_14_days_top_pick_n": 3,
+            "public_top_pick_totals": {"hits": 7, "misses": 3, "voids": 0},
             "by_recommendation_status_totals": {"top_pick": {"hits": 7, "misses": 3}},
         }, f)
     tr = bd.load_track_record(hist_path)
@@ -251,11 +252,11 @@ with tempfile.TemporaryDirectory() as td:
           "overall figure", f"got {tr['legacy']}")
     check(tr["legacy"]["n"] == 47, "legacy n is hits+misses from by_category_totals.main",
           f"got {tr['legacy']}")
-    check(tr["current"]["hit_rate"] == 0.70, "current reads top_pick_hit_rate from the "
-          "recommendation-status-segmented totals, a completely separate figure from legacy",
+    check(tr["current"]["hit_rate"] == 0.70, "current reads the deployment-proven public "
+          "Top Pick rate, a completely separate figure from legacy/modelled status totals",
           f"got {tr['current']}")
     check(tr["current"]["n"] == 10, "current n is hits+misses from "
-          "by_recommendation_status_totals.top_pick", f"got {tr['current']}")
+          "public_top_pick_totals", f"got {tr['current']}")
 
     zero_current_path = os.path.join(td, "zero_current.json")
     with open(zero_current_path, "w") as f:
@@ -263,6 +264,7 @@ with tempfile.TemporaryDirectory() as td:
             "main_hit_rate": 0.50,
             "by_category_totals": {"main": {"hits": 10, "misses": 10}},
             "top_pick_hit_rate": None,
+            "public_top_pick_totals": {},
             "by_recommendation_status_totals": {},
         }, f)
     tr_zc = bd.load_track_record(zero_current_path)
@@ -368,9 +370,8 @@ check(payload10b["suggested_parlay"] == result10b["suggested_parlay"],
       "misread as a list of candidate rows", f"got {payload10b['suggested_parlay']}")
 
 
-head("9. _game_schedule -- direct request: \"as games start I want those "
-     "props removed\". Parses MLB's schedule endpoint into "
-     "{game_pk: {started, start}}, non-fatal on failure. Unchanged by the Phase 4 rebuild.")
+head("9. _game_schedule returns pregame filtering and raw lifecycle status fields, "
+     "and remains non-fatal on a schedule outage")
 
 import unittest.mock as mock
 import mlb_daily as m

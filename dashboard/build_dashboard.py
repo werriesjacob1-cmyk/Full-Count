@@ -41,6 +41,25 @@ import tempfile
 from collections import defaultdict
 from datetime import datetime, timezone
 
+try:
+    from .live_state import (GAME_FIELDS, PUBLICATION_FIELDS, SETTLEMENT_FIELDS,
+                             IDENTITY_SCHEMA_VERSION, SCHEMA_VERSION,
+                             apply_live_overlay, atomic_write_json,
+                             before_betting_cutoff, canonical_prop_id, game_state,
+                             load_live_state, market_side_token, prop_identity_key,
+                             stable_prop_id, utc_now, validate_payload_identities)
+    from .publication_registry import (DEFAULT_REGISTRY_PATH, all_published_snapshots,
+                                       load_registry)
+except ImportError:  # direct script execution: python dashboard/build_dashboard.py
+    from live_state import (GAME_FIELDS, PUBLICATION_FIELDS, SETTLEMENT_FIELDS,
+                            IDENTITY_SCHEMA_VERSION, SCHEMA_VERSION,
+                            apply_live_overlay, atomic_write_json,
+                            before_betting_cutoff, canonical_prop_id, game_state,
+                            load_live_state, market_side_token, prop_identity_key,
+                            stable_prop_id, utc_now, validate_payload_identities)
+    from publication_registry import (DEFAULT_REGISTRY_PATH, all_published_snapshots,
+                                      load_registry)
+
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DASHBOARD_DIR = os.path.join(REPO_ROOT, "dashboard")
 
@@ -50,14 +69,14 @@ def log(msg):
 
 
 def _game_schedule(date):
-    """{game_pk: {"started": bool, "start": iso8601 str or None}} for every
-    game MLB's schedule has for `date`. Direct request: "as games start I
-    want those props removed" -- the header text already claimed "any game
-    already underway when this ran is excluded, since its FanDuel lines are
-    closed," but nothing actually enforced that; this is what makes it true.
-    Non-fatal on failure (empty dict) -- a schedule fetch that fails must
-    never take down the whole dashboard build, same discipline as every
-    other network call in this pipeline."""
+    """Return start time and raw MLB status keyed by game id for ``date``.
+
+    New candidate generation uses ``started`` to remain pregame-only. The
+    raw status also drives publication-lifecycle reconciliation so an exact
+    previously published Top Pick remains visible for settlement. Non-fatal
+    on failure (empty dict): timestamps and prior state still fail closed,
+    and a schedule outage must not erase the public board.
+    """
     import mlb_daily as m
     try:
         r = m.retry_get("https://statsapi.mlb.com/api/v1/schedule", params={"sportId": 1, "date": date},
@@ -65,7 +84,7 @@ def _game_schedule(date):
         r.raise_for_status()
         games = r.json().get("dates", [{}])[0].get("games", [])
         return {g["gamePk"]: {"started": g.get("status", {}).get("abstractGameState") != "Preview",
-                              "start": g.get("gameDate")}
+                              "start": g.get("gameDate"), "status": g.get("status", {})}
                 for g in games}
     except Exception as e:
         log(f"  (couldn't fetch game schedule/status: {e} -- game-start filtering skipped this build)")
@@ -213,7 +232,8 @@ def run_live_fetch():
     result = gp._build_and_score()
     if result is None:
         log("No games / nothing bettable right now.")
-        return {"generated_at": datetime.now(timezone.utc).isoformat(), "date": gp.m.TODAY}
+        return {"generated_at": datetime.now(timezone.utc).isoformat(), "date": gp.m.TODAY,
+                "_game_schedule": _game_schedule(gp.m.TODAY)}
 
     candidates, ctx = result
     game_meta = ctx["game_meta"]; park_wx = ctx["park_wx"]
@@ -319,16 +339,12 @@ def run_live_fetch():
     for stat, entries in by_category_full.items():
         log(f"  {stat}: {len(entries)} candidates")
 
-    # GAME-START FILTERING. Direct request: "as games start I want those
-    # props removed" -- and the header text below already promised this
-    # ("any game already underway when this ran is excluded") without
-    # anything actually enforcing it. Two layers: drop already-started
-    # games right here (catches anything live by the moment this build
-    # runs), and carry each survivor's game_pk/game_start through clean()
-    # so the page itself can keep pruning client-side between rebuilds
-    # (this script is deliberately not run every few minutes -- see the
-    # module docstring -- so a game that starts mid-window needs a
-    # non-rebuild way to disappear).
+    # GAME-START FILTERING. Candidate generation/recommendation remains
+    # pregame-only: drop games already underway by the moment this scoring
+    # pass runs, and carry game_pk/game_start through clean() so the client
+    # can hide ordinary research rows that cross first pitch between builds.
+    # reconcile_public_lifecycle() later restores only exact props proven to
+    # have been public Top Picks; those must remain visible for settlement.
     schedule = _game_schedule(gp.m.TODAY)
     started = {pk for pk, info in schedule.items() if info["started"]}
     if started:
@@ -376,13 +392,13 @@ def run_live_fetch():
             # threshold is the same identity grade_pick() itself keys a
             # settlement on -- reusing it here rather than inventing a
             # separate one.
-            subject = r.get("player_id") or ("+".join(str(x) for x in combo) if combo else "game")
-            prop_id = f"{game_pk}-{subject}-{stat}-{proj.get('needs')}"
-            out.append({
-                "id": prop_id,
+            market_side = market_side_token(r)
+            cleaned = {
+                "identity_version": IDENTITY_SCHEMA_VERSION,
                 "type": r.get("type"), "name": r.get("name"), "team": r.get("team"),
                 "matchup": r.get("matchup"), "side": r.get("side"), "prop": r.get("prop"),
                 "projection": proj, "stat": stat, "lean": r.get("lean"),
+                "market_side": market_side,
                 "score": r.get("score"), "confidence": r.get("confidence"),
                 "hit_probability": r.get("hit_probability"),
                 "market_odds": r.get("market_odds"), "market_implied": r.get("market_implied"),
@@ -435,11 +451,14 @@ def run_live_fetch():
                 # inferred from which tab it's rendered in) so the client
                 # can visibly flag it no matter where it ends up.
                 "lineup_assumed": r.get("lineup_assumed"),
-            })
+            }
+            cleaned["id"] = canonical_prop_id(cleaned)
+            out.append(cleaned)
         return out
 
     out = {"generated_at": board_generated_at, "date": gp.m.TODAY,
           "odds_fetched_at": odds_fetched_at,
+          "_game_schedule": schedule,
           "recommendation_metadata": gprec.build_metadata(odds_fetched_at=odds_fetched_at,
                                                           board_generated_at=board_generated_at),
           "moonshot": clean(moonshots_full), "suggested_parlay": suggested_parlay}
@@ -452,10 +471,10 @@ def run_live_fetch():
     # Built from the exact same weather/umpire data score_batter() already
     # used to score tonight's candidates -- this isn't a second, separate
     # read, just exposing the real reasoning instead of leaving it buried
-    # inside the model. Already-started games are skipped, same rule as
-    # everywhere else on this page ("as games start I want those props
-    # removed" -- a schedule entry with no live props to show would be a
-    # dead end, not useful).
+    # inside the model. Already-started games are omitted from this schedule
+    # research surface because it is built only from the new pregame scoring
+    # pass. Published live picks remain visible on the pick surfaces through
+    # the lifecycle reconciliation below.
     all_priced = clean(moonshots_full)
     for entries in by_category_full.values():
         all_priced.extend(clean(entries))
@@ -623,7 +642,7 @@ def load_track_record(path=None):
     imply that legacy -26.8% ROI represents the current recommendation
     architecture... do not pretend the new architecture has proven itself
     before it has enough observations." Reads exactly the fields Phase 3
-    built for this: by_recommendation_status_totals.top_pick / top_pick_
+    built for this: deployment-proven public_top_pick_totals / top_pick_
     hit_rate / last_14_days_top_pick_hit_rate (current) alongside the
     pre-existing by_category_totals.main / main_hit_rate / last_14_days_
     hit_rate (legacy) -- see results/ANALYSIS.md for the full tier
@@ -644,7 +663,7 @@ def load_track_record(path=None):
     except Exception:
         return {"current": None, "legacy": None}
 
-    tp = (h.get("by_recommendation_status_totals") or {}).get("top_pick") or {}
+    tp = h.get("public_top_pick_totals") or {}
     tp_n = (tp.get("hits") or 0) + (tp.get("misses") or 0)
     current = None
     if tp_n > 0 and h.get("top_pick_hit_rate") is not None:
@@ -696,7 +715,7 @@ def build_payload(result, track_record=None):
     result.pop("home_runs", None)
 
     meta_keys = {"generated_at", "date", "suggested_parlay", "game_context", "streaks",
-                "odds_fetched_at", "recommendation_metadata"}
+                "odds_fetched_at", "recommendation_metadata", "_game_schedule"}
     all_rows = []
     family_counts = {}
     for stat, rows in result.items():
@@ -740,6 +759,8 @@ def build_payload(result, track_record=None):
     n_value = sum(1 for r in all_rows if r.get("recommendation_status") == "value")
 
     return {
+        "schema_version": SCHEMA_VERSION,
+        "identity_schema_version": IDENTITY_SCHEMA_VERSION,
         "date": result.get("date"),
         "generated_at": result.get("generated_at"),
         "odds_fetched_at": result.get("odds_fetched_at"),
@@ -753,6 +774,158 @@ def build_payload(result, track_record=None):
         "track_record": track_record,
         "suggested_parlay": result.get("suggested_parlay"),
     }
+
+
+def _status_for(schedule, game_pk):
+    entry = (schedule or {}).get(game_pk) or {}
+    return entry.get("status") or {}
+
+
+def _recount_payload(payload):
+    props = payload.get("props") or []
+    summary = payload.setdefault("summary", {})
+    summary["n_props"] = len(props)
+    summary["n_top_pick"] = sum(r.get("recommendation_status") == "top_pick" for r in props)
+    summary["n_lean"] = sum(r.get("recommendation_status") == "lean" for r in props)
+    summary["n_value"] = sum(r.get("recommendation_status") == "value" for r in props)
+
+
+def _publication_provenance(row):
+    return {key: row.get(key) for key in (
+        "published_top_pick_at", "publication_artifact_id", "publication_source_commit",
+        "publication_run_id", "publication_deployment_id",
+    ) if row.get(key) is not None}
+
+
+def _publication_snapshot(row):
+    """Return the immutable registry snapshot without deployment fields."""
+    return {key: value for key, value in row.items() if key not in PUBLICATION_FIELDS}
+
+
+def _with_base_lifecycle(row, state, observed_at, source="mlb_schedule"):
+    row["game_state"] = state
+    row["game_state_observed_at"] = observed_at
+    row["game_state_source"] = source
+    row.setdefault("settlement_state", "open")
+    row.setdefault("settlement_authority", "none")
+    row.setdefault("settlement_observed_at", observed_at)
+    row.setdefault("settlement_source", "dashboard_builder")
+    return row
+
+
+def reconcile_public_lifecycle(payload, prior_payload=None, live=None, schedule=None,
+                               now=None, registry=None):
+    """Apply the final publication gate and carry deployment-proven Top Picks.
+
+    ``prior_payload`` is accepted only for call compatibility; it is never
+    treated as publication proof. The durable registry is the sole proof that
+    a wager actually reached a successful Pages deployment.
+    """
+    del prior_payload
+    now = now or utc_now()
+    schedule = schedule or {}
+    live = live or {"schema_version": SCHEMA_VERSION,
+                    "identity_schema_version": IDENTITY_SCHEMA_VERSION, "props": {}}
+    registry = registry or load_registry(DEFAULT_REGISTRY_PATH)
+    published = all_published_snapshots(registry)
+    published_by_identity = {prop_identity_key(row): row for row in published}
+
+    reconciled = []
+    seen_identities = set()
+    frozen_by_id = {}
+    for source_row in payload.get("props") or []:
+        row = dict(source_row)
+        stable_prop_id(row)
+        identity = prop_identity_key(row)
+        if identity in seen_identities:
+            raise ValueError(f"duplicate settlement identity during dashboard build: {identity!r}")
+        registered = published_by_identity.get(identity)
+        status = _status_for(schedule, row.get("game_pk"))
+        state = game_state(status, row=row, now=now)
+        before_cutoff = before_betting_cutoff(row, now)
+
+        # Unknown/non-pregame status and the scheduled start are independent
+        # fail-closed gates. A local Top Pick is not proof of publication.
+        if (state != "pregame" or not before_cutoff) and registered is None:
+            continue
+
+        if registered is not None and (state != "pregame" or not before_cutoff):
+            # At the wagering boundary the immutable exposure snapshot wins;
+            # later rescoring/repricing cannot mutate the bet users saw.
+            frozen = dict(registered)
+            if state == "unknown":
+                state = frozen.get("game_state") or "unknown"
+            row = frozen
+        elif registered is not None:
+            # Pregame display may legitimately reflect a later demotion or
+            # quote, while the immutable first-exposure record remains intact.
+            row.update(_publication_provenance(registered))
+        if registered is not None:
+            row["publication_snapshot"] = _publication_snapshot(registered)
+
+        source = "mlb_schedule" if status else "mlb_status_unavailable"
+        _with_base_lifecycle(row, state, now, source=source)
+        if registered is not None and (state != "pregame" or not before_cutoff):
+            frozen_by_id[stable_prop_id(row)] = dict(registered)
+        reconciled.append(row)
+        seen_identities.add(identity)
+
+    # A full scoring pass deliberately excludes started games. Restore only
+    # exact registry snapshots after their cutoff; never infer from archives,
+    # names, or an old recommendation_status field.
+    for registered in published:
+        identity = prop_identity_key(registered)
+        if identity in seen_identities:
+            continue
+        status = _status_for(schedule, registered.get("game_pk"))
+        observed = game_state(status, row=registered, now=now)
+        existing = apply_live_overlay({"props": [registered]}, live)["props"][0]
+        if observed == "unknown":
+            observed = existing.get("game_state") or "unknown"
+        crossed = not before_betting_cutoff(registered, now) or observed != "pregame"
+        if not crossed:
+            # A demoted/withdrawn pregame recommendation remains in history,
+            # but need not remain on the current wagering board before start.
+            continue
+        settlement = existing.get("settlement_state") or "open"
+        if (registered.get("slate_date") != payload.get("date")
+                and settlement in ("hit", "miss", "void")):
+            continue
+        carried = dict(registered)
+        carried["publication_snapshot"] = _publication_snapshot(registered)
+        _with_base_lifecycle(
+            carried, observed, now,
+            source="mlb_schedule" if status else existing.get("game_state_source", "last_known_good"),
+        )
+        frozen_by_id[stable_prop_id(carried)] = dict(registered)
+        reconciled.append(carried)
+        seen_identities.add(identity)
+
+    payload["schema_version"] = SCHEMA_VERSION
+    payload["identity_schema_version"] = IDENTITY_SCHEMA_VERSION
+    payload["props"] = reconciled
+    payload = apply_live_overlay(payload, live)
+    if frozen_by_id:
+        # The immutable exposure snapshot is the only recommendation/price
+        # truth after the wagering boundary. Reapply only independent game
+        # and settlement facts from live state; all price/reclassification
+        # fields remain frozen at first public exposure.
+        for index, row in enumerate(payload["props"]):
+            frozen = frozen_by_id.get(row.get("id"))
+            if frozen is None:
+                continue
+            lifecycle = {
+                field: row[field] for field in (GAME_FIELDS | SETTLEMENT_FIELDS)
+                if field in row
+            }
+            payload["props"][index] = {
+                **frozen,
+                "publication_snapshot": _publication_snapshot(frozen),
+                **lifecycle,
+            }
+    validate_payload_identities(payload)
+    _recount_payload(payload)
+    return payload
 
 
 
@@ -803,41 +976,56 @@ def main():
                     help="deploy directory (default: docs/, GitHub Pages' own root)")
     ap.add_argument("--data-out", default=None,
                     help="also write the raw JSON payload here (default: data.json inside "
-                         "--out-dir) -- this is what dashboard/refresh_prices.py rewrites "
-                         "between full rebuilds and what the page itself polls for live "
-                         "updates via live.json, see dashboard/static/app.js's pollLive()")
+                         "--out-dir); frequent price/grade changes are written separately "
+                         "to live.json, see dashboard/static/app.js's pollLive()")
     args = ap.parse_args()
+
+    data_out = args.data_out or os.path.join(args.out_dir, "data.json")
+    live_out = os.path.join(os.path.dirname(data_out) or ".", "live.json")
+
+    prior_payload = None
+    if os.path.exists(data_out):
+        try:
+            with open(data_out, encoding="utf-8") as handle:
+                prior_payload = json.load(handle)
+        except (OSError, json.JSONDecodeError) as exc:
+            raise RuntimeError(
+                f"refusing to replace unreadable public board {data_out}: {exc}"
+            ) from exc
+    live = load_live_state(live_out)
 
     result = run_live_fetch()
     track_record = load_track_record()
     payload = build_payload(result, track_record=track_record)
+    # Final pre-publication observation. Candidate generation's earlier
+    # schedule response may be stale after a multi-minute scoring pass.
+    final_schedule = _game_schedule(payload.get("date"))
+    registry = load_registry(DEFAULT_REGISTRY_PATH)
+    payload = reconcile_public_lifecycle(
+        payload,
+        prior_payload=prior_payload,
+        live=live,
+        schedule=final_schedule,
+        now=utc_now(),
+        registry=registry,
+    )
 
     written = copy_static_assets(args.out_dir)
     for path in written:
         print(f"Wrote {path} ({os.path.getsize(path)} bytes)")
 
-    data_out = args.data_out or os.path.join(args.out_dir, "data.json")
     os.makedirs(os.path.dirname(os.path.abspath(data_out)) or ".", exist_ok=True)
-    with open(data_out, "w", encoding="utf-8") as f:
-        json.dump(payload, f, separators=(",", ":"))
+    atomic_write_json(data_out, payload)
 
     summary = payload["summary"]
     print(f"Wrote {data_out} ({os.path.getsize(data_out)} bytes, {summary['n_props']} props, "
           f"{summary['n_top_pick']} top picks, {summary['n_lean']} leans, "
           f"{summary['n_value']} value)")
 
-    # A full rebuild already carries every prop's current price/status/grade
-    # in data.json itself, so any deltas refresh_prices.py/refresh_grades.py
-    # accumulated in live.json since the last rebuild are now redundant --
-    # and their ids are stale anyway (ids embed today's game_pk, so a new
-    # day's board never matches yesterday's leftover entries). Reset it here
-    # so live.json stays small indefinitely instead of growing across every
-    # 5-minute cycle since the pipeline was first deployed.
-    live_out = os.path.join(os.path.dirname(data_out) or ".", "live.json")
-    with open(live_out, "w", encoding="utf-8") as f:
-        json.dump({"prices_updated_at": None, "grades_updated_at": None, "props": {}}, f,
-                  separators=(",", ":"))
-    print(f"Wrote {live_out} (reset for this rebuild)")
+    # Ownership boundary: the full rebuild owns data.json; the consolidated
+    # live updater owns live.json.  Never clear the overlay here -- it may
+    # contain a newer terminal result or price than this build's checkout.
+    print(f"Preserved {live_out}; full rebuild does not own live state.")
 
 
 if __name__ == "__main__":

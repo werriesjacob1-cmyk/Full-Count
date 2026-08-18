@@ -16,9 +16,11 @@ generate_picks.write_json()'s _row(). A pick can be category=None (i.e.
 recommendation_status is "lean", not "top_pick" -- exactly the case the
 old blended reporting could never separate out.
 
-This locks in that by_recommendation_status/by_recommendation_status_totals/
-top_pick_hit_rate/last_14_days_top_pick_hit_rate are computed correctly,
-additively (no existing field removed or renamed), and degrade gracefully
+This locks in that by_recommendation_status/by_recommendation_status_totals
+retain the complete modelled-recommendation population, while the official
+top_pick_hit_rate fields are reserved for the separate deployment-proven public
+population. The modelled Top Pick rate remains available under an explicit
+modeled_* name. Both populations degrade gracefully
 against older history.json days written before recommendation_status
 existed at all (no by_recommendation_status key, or picks with the field
 simply absent -- bucketed "unclassified", never guessed into "top_pick").
@@ -124,8 +126,7 @@ check(brs.get("unclassified") == {"hits": 1, "misses": 0, "ungraded": 0},
       "the pick with no recommendation_status at all lands in 'unclassified', not silently "
       "counted as a top_pick", f"got {brs.get('unclassified')}")
 
-head("3. history.json records the same breakdown per-day, plus running "
-     "by_recommendation_status_totals and top_pick_hit_rate")
+head("3. history.json preserves modelled-status totals without guessing public exposure")
 
 with open(gr.HISTORY_FILE) as f:
     history = json.load(f)
@@ -134,10 +135,12 @@ check(history["days"][-1]["by_recommendation_status"] == brs,
 check(history["by_recommendation_status_totals"]["top_pick"] == {"hits": 1, "misses": 1, "ungraded": 0},
       "by_recommendation_status_totals correctly accumulates 'top_pick' across history "
       "(only one day so far)", f"got {history['by_recommendation_status_totals'].get('top_pick')}")
-check(abs(history["top_pick_hit_rate"] - 0.5) < 1e-9,
-      "top_pick_hit_rate is exactly 1/2=0.5 -- computed ONLY from picks that actually "
-      "carried recommendation_status=='top_pick', not diluted by the lean/value/unclassified "
-      "misses", f"got {history['top_pick_hit_rate']}")
+check(abs(history["modeled_top_pick_hit_rate"] - 0.5) < 1e-9,
+      "modeled_top_pick_hit_rate is exactly 1/2=0.5 for all qualified model outputs",
+      f"got {history['modeled_top_pick_hit_rate']}")
+check(history["top_pick_hit_rate"] is None and history["public_top_pick_totals"]["hits"] == 0,
+      "canonical status alone is not guessed into the deployment-proven public record",
+      f"got rate={history['top_pick_hit_rate']} totals={history['public_top_pick_totals']}")
 check(abs(history["overall_hit_rate"] - (2 / 5)) < 1e-9,
       "overall_hit_rate (the pre-existing blended field) is still 2/5 -- confirming "
       "top_pick_hit_rate is a genuinely different, additional number, not a rename",
@@ -146,18 +149,23 @@ check(abs(history["overall_hit_rate"] - (2 / 5)) < 1e-9,
 head("4. the rolling 14-day Top-Pick-only rate is a SEPARATE number from the blended "
      "last_14_days_hit_rate -- direct instruction: never display them as comparable")
 
-check(abs(history["last_14_days_top_pick_hit_rate"] - 0.5) < 1e-9,
-      "last_14_days_top_pick_hit_rate is 1/2=0.5, matching top_pick_hit_rate on day one",
-      f"got {history['last_14_days_top_pick_hit_rate']}")
-check(history["last_14_days_top_pick_n"] == 2,
-      "last_14_days_top_pick_n reports exactly the 2 top_pick-graded picks in the window, "
-      "not all 5 picks", f"got {history['last_14_days_top_pick_n']}")
+check(abs(history["last_14_days_modeled_top_pick_hit_rate"] - 0.5) < 1e-9,
+      "the separate rolling modelled Top Pick rate is 1/2",
+      f"got {history['last_14_days_modeled_top_pick_hit_rate']}")
+check(history["last_14_days_modeled_top_pick_n"] == 2,
+      "the modelled window reports exactly the 2 qualified Top Picks",
+      f"got {history['last_14_days_modeled_top_pick_n']}")
+check(history["last_14_days_top_pick_hit_rate"] is None
+      and history["last_14_days_top_pick_n"] == 0,
+      "the official rolling public record remains empty without deployment proof",
+      f"got rate={history['last_14_days_top_pick_hit_rate']} "
+      f"n={history['last_14_days_top_pick_n']}")
 check(abs(history["last_14_days_hit_rate"] - (2 / 5)) < 1e-9,
       "the pre-existing blended last_14_days_hit_rate is untouched (2/5), genuinely "
-      "different from last_14_days_top_pick_hit_rate (1/2) -- they must never be shown "
+      "different from the explicit modelled Top Pick rate (1/2) -- they must never be shown "
       "as though they answer the same question",
       f"blended={history['last_14_days_hit_rate']} top_pick_only="
-      f"{history['last_14_days_top_pick_hit_rate']}")
+      f"{history['last_14_days_modeled_top_pick_hit_rate']}")
 
 head("5. a SECOND day accumulates correctly into by_recommendation_status_totals across days")
 
@@ -171,8 +179,11 @@ with open(gr.HISTORY_FILE) as f:
 check(history2["by_recommendation_status_totals"]["top_pick"] == {"hits": 2, "misses": 1, "ungraded": 0},
       "top_pick totals accumulate correctly across both days (1+1 hits, 1+0 misses)",
       f"got {history2['by_recommendation_status_totals']['top_pick']}")
-check(abs(history2["top_pick_hit_rate"] - round(2 / 3, 3)) < 1e-9,
-      "top_pick_hit_rate updates to 2/3 after the second day", f"got {history2['top_pick_hit_rate']}")
+check(abs(history2["modeled_top_pick_hit_rate"] - round(2 / 3, 3)) < 1e-9,
+      "modeled_top_pick_hit_rate updates to 2/3 after the second day",
+      f"got {history2['modeled_top_pick_hit_rate']}")
+check(history2["top_pick_hit_rate"] is None,
+      "official public rate remains empty after another non-deployment-proven day")
 
 head("6. graceful degradation: an OLDER history day with no by_recommendation_status key at "
      "all doesn't crash and is silently excluded from the breakdown")

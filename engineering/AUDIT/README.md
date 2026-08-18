@@ -27,8 +27,15 @@ expansion.
 
 ## Index
 
-No audit finding has been finalized in this directory yet. Initial hypotheses
-are listed in `engineering/ENGINEERING_HANDOFF.md`; promote one here only after
-independent verification. Each future finding should include severity,
-status, evidence, reproduction, impact, affected sources of truth, remediation
-authorization, tests, and follow-up.
+- [`live-lifecycle-2026-08-17.md`](live-lifecycle-2026-08-17.md) — **HIGH / MEDIUM**:
+  includes **CRITICAL / HIGH / MEDIUM** publication, grading, identity,
+  settlement-authority, odds-observation, retention, workflow, Pages-delivery,
+  lineup acknowledgement, settlement-capability, and frontend findings. It
+  defines the corrected lifecycle contract, event-scoped sportsbook evidence,
+  official IL/PA/TN settlement-rule evidence, and post-merge verification
+  checklist. Remediation is implemented on draft PR #51 and remains unmerged.
+
+Initial hypotheses not indexed here remain provisional in
+`engineering/ENGINEERING_HANDOFF.md`. Each future finding should include
+severity, status, evidence, reproduction, impact, affected sources of truth,
+remediation authorization, tests, and follow-up.

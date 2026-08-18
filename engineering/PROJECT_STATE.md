@@ -1,7 +1,10 @@
 # Full Count Project State
 
 - Last verified: 2026-08-17
-- Code verification base: `main` at `a31fa26d925597935a39ea43cd5f42e0412ef524`
+- Latest `main` inspected: `1bdd4b90c9b117d67de31b83d0ebab9f29d36d74`
+- Latest PR-relevant source base: `fd20785769e1de25581e873317d2b2230389ba13`
+  (intervening `main` commits through the inspected SHA are generated/state
+  churn only)
 
 This file is the concise map of the system that exists now. Use
 `engineering/ENGINEERING_HANDOFF.md` for chronology and
@@ -31,11 +34,11 @@ dashboard into `docs/`, and deploy that directory to GitHub Pages.
 | Sportsbook pricing | `odds_fanduel.py`, `odds_snapshot.py`, `prop_snapshot.py` | Attached FanDuel prices, `data/odds/*.json`, `data/props/*.json` |
 | Recommendation policy | `recommendation.py` | `top_pick`, `lean`, `value`, or `neutral`, plus provenance metadata |
 | Daily persistence | `generate_picks.write_json()` and workflow commits | `output/picks_YYYY-MM-DD.json`, rendered boards, value-board files |
-| Grading and records | `grade_results.py`, `grade_value.py` | `results/grades_*.json`, `results/history.json`, `results/value_screen_record.json` |
+| Grading and records | `grade_results.py`, `grade_value.py` | `results/grades_*.json`, `results/history.json`, `results/value_screen_record.json`; deployment-proven public Top Pick population from `data/public_top_picks/registry.json` |
 | Evaluation | `eval_lib.py`, `backtest/`, `model_health_report.py` | Backtest rows/reports, calibration and market benchmarks, health output |
 | Challenger evaluation | `champion_challenger.py` | Shadow files under `data/challengers/` when challengers run |
-| Dashboard | `dashboard/build_dashboard.py`, `dashboard/static/` | `docs/index.html`, `docs/app.css`, `docs/app.js`, `docs/data.json`, `docs/live.json` |
-| Deployment | `.github/workflows/dashboard-refresh.yml` | GitHub Pages artifact built from the entire `docs/` directory |
+| Dashboard | `dashboard/build_dashboard.py`, `dashboard/live_state.py`, `dashboard/static/` | Full snapshot in `docs/data.json`; field-level live overlay in `docs/live.json`; static application assets |
+| Deployment | `.github/workflows/dashboard-deploy.yml`, `dashboard/prepare_pages_artifact.py` | Normalized and contract-verified GitHub Pages artifact, deployment manifest, and post-deploy exposure confirmation from newest `main` |
 
 ## Data ingestion sources
 
@@ -153,6 +156,15 @@ known metadata inconsistency must remain visible until audited: the current
 screen is produced by `value_board.py`; hourly captured prices are persisted
 under `data/props/` for forward settlement by `grade_value.py`.
 
+Lifecycle-sensitive refreshes do not treat an empty parsed mapping as proof of
+market absence. The fetch layer distinguishes transport/root failure,
+malformed or structurally empty root data, usable event discovery, and
+event/family response completeness. `NOT_POSTED` requires a uniquely matched
+relevant event whose required family tabs were structurally inspected; an
+exact `MATCHED` quote may be used as positive evidence even if an unrelated tab
+failed. Indeterminate observations preserve the last known quote and its last
+successful observation timestamp.
+
 `eval_lib.market_probability()` uses exact two-sided no-vig probability when
 both sides or an already de-vigged value are persisted. One-sided production
 recommendation checks currently use `prop_probability.value_verdict()` and
@@ -183,6 +195,13 @@ The freshness function currently substitutes board generation time when the
 price timestamp is missing. That implementation differs from its fail-closed
 documentation and is also an explicit audit item.
 
+Recommendation classification remains wholly owned by `recommendation.py`.
+Separately, Pages publication applies a settlement-capability gate: a newly
+exposed official Top Pick must have a structured, verified settlement path.
+Unsupported specialty markets can remain research rows but are omitted from a
+prospective public artifact if they locally classify as an unproven Top Pick.
+This does not change model scores, probabilities, thresholds, or policy.
+
 ## Persistence and prediction history
 
 Daily prediction provenance is stored both at the board level and on persisted
@@ -190,17 +209,50 @@ rows in `output/picks_YYYY-MM-DD.json`, including version identifiers, git SHA
 when available, prediction timestamp, price timestamp, and board timestamp.
 Grades are written separately under `results/`.
 
-The repository does not yet contain a fully immutable published-recommendation
-ledger. Daily generated files and dashboard payloads are updated by scheduled
-jobs. No engineer may silently rewrite historical recommendations; immutable
-lifecycle design is part of the audit/hardening work.
+The repository does not yet contain the planned full Prediction Receipts event
+ledger. It does contain a deliberately smaller lifecycle registry at
+`data/public_top_picks/registry.json`. Only a successful Pages deployment may
+establish a public Top Pick in that registry. The entry stores one immutable
+first-exposure snapshot and deployment provenance for the canonical wager;
+local qualification or a repository commit is not public exposure. The
+registry is the durable public Top Pick grading population even when a later
+`output/picks_YYYY-MM-DD.json` or dashboard board no longer contains the wager.
+
+`published_top_pick_at`, `publication_artifact_id`, and
+`publication_snapshot` in a dashboard artifact are derived from registry
+proof. They are lifecycle facts, not a transition log and not a substitute
+for the future receipt/ledger. A bounded rollout imports only Top Picks proven
+to exist in the currently deployed public artifact; historical archives are
+never guessed into public exposure. Daily generated files remain separate
+artifacts. No engineer may silently rewrite historical recommendations.
 
 ## Dashboard build
 
-`dashboard/build_dashboard.py` builds one canonical, deduplicated `props`
-array in `docs/data.json`. Static source assets live in `dashboard/static/`
-and are copied to `docs/`. The client implements the Today, All Props, Games,
-Performance, and Watchlist views with progressive research sheets.
+`dashboard/build_dashboard.py` is the sole writer of the complete canonical,
+deduplicated `props` array in `docs/data.json`. Candidate generation remains
+pregame-only. At commit/retry time, `dashboard/finalize_dashboard_state.py`
+rereads current `main`, the durable publication registry, and the live overlay;
+it refetches game state and enforces scheduled `game_start` as an absolute,
+conservative first-publication cutoff. Only an exact registry-proven public Top
+Pick may survive first pitch, a full rebuild, and UTC date rollover. A started
+prop that was never public cannot be created or promoted.
+
+Canonical identity schema v2 includes game, stable player/game/combination
+subject, market/stat, threshold, and side. Participants are sorted for the
+commutative combined-starter strikeout market. Duplicate settlement identities
+and supplied IDs inconsistent with their row fail closed. A bounded rollout
+normalizes legacy IDs at every writer/deployment boundary; current-schema
+identity corruption is not silently rewritten. The build never clears or
+writes `docs/live.json`.
+
+Static source assets live in `dashboard/static/` and are copied to `docs/`.
+The client implements the Today, All Props, Games, Performance, and Watchlist
+views with progressive research sheets. It consumes three independent facts:
+`recommendation_status`, `game_state`, and `settlement_state`. Pregame/open is
+normal, live/open is yellow, provisional or final hits are green, misses are
+red, and void/ungraded are explicit. It hides started non-published props,
+restores the immutable publication snapshot after first pitch, and reapplies a
+newer live overlay after a full-board poll.
 
 `dashboard.load_track_record()` derives separate current Top Pick and legacy
 main-board views from fields in `results/history.json`; `history.json` does
@@ -210,26 +262,77 @@ as `unclassified`, so the site must not imply a proven current track record.
 
 ## Live updates
 
-`dashboard/refresh_prices.py` reprices rows, re-runs recommendation
-classification, rewrites `docs/data.json`, and merges per-ID deltas into
-`docs/live.json`. `dashboard/refresh_grades.py` grades currently published Top
-Picks for live display and merges grade deltas. Both scheduled workflows run
-every five minutes and commit generated JSON.
+The lifecycle schema separates:
 
-Those two workflows do not invoke the Pages deployment action. Only the full
-dashboard refresh uploads and deploys the Pages artifact. Whether intermediate
-repository commits become visible on the active artifact before the next full
-deployment is a live deployment audit item.
+- recommendation state: `top_pick`, `lean`, `value`, `neutral`;
+- game state: `pregame`, `live`, `delayed`, `suspended`, `postponed`, `final`,
+  `cancelled`, `unknown`;
+- settlement state: `open`, `provisional_hit`, `hit`, `miss`, `void`,
+  `ungraded`.
+
+Result authority is `none < live_observation < official_final`. A threshold
+proved during play is `provisional_hit`, not an immutable final result. The
+authoritative final feed may confirm or correct it; stale live evidence cannot
+override an official final result. Settlement state, actual, reason, source,
+authority, and observation timestamp merge as one logical fact.
+
+`dashboard/refresh_prices.py` observes each supported market family as
+`MATCHED`, `NOT_POSTED`, `FETCH_FAILED`, or `IN_PLAY`. A matched quote replaces
+the quote and advances that family's successful observation time. A successful
+exact absence clears bettable fields only when the relevant FanDuel event and
+all required family tabs were structurally observed. Root/feed emptiness,
+malformed pages, failed tabs, or ambiguous event identity are `FETCH_FAILED`:
+they preserve the prior quote and timestamp and cannot trigger
+reclassification. Started markets freeze. The final publication gate refetches
+game status and also rejects new publication at or after scheduled
+`game_start`; unknown fails closed. `recommendation.py` remains the unchanged
+classifier.
+
+`dashboard/refresh_grades.py` advances registry-proven public Top Picks by
+direct `game_pk` feeds. It uses provisional green hits only for mathematically
+definitive live overs. Misses and all unders wait for authoritative Final.
+Action eligibility is separate from threshold grading and follows the
+documented FanDuel Illinois, Pennsylvania, and Tennessee rules in
+`dashboard/settlement_rules.py`. Because the repository has no configured
+jurisdiction, a case on which inspected state rules differ remains ungraded;
+unsupported special-market rules do as well. Singles, doubles, and triples
+have statistical graders but no verified structured action rule and therefore
+cannot first publish as official Top Picks.
+Source failure preserves last-known-good state.
+
+`dashboard/live_state.py` performs atomic stable-ID writes, strict UTC-aware
+timestamp validation, per-field recency merges, result-authority comparison,
+and bounded compaction. An unresolved/provisional/suspended/postponed or not-
+yet-durable result is never removed merely because the UTC date changed.
+
+`.github/workflows/dashboard-live.yml` is the sole `live.json` writer. It
+coalesces obsolete five-minute observations, checks out latest `main`, runs
+grade then price with failure isolation, and retries by rereading/semantically
+merging current state. Significant scheduled or lineup-triggered full builds
+use the separate non-cancelling `dashboard-full-rebuild` true queue and finalize
+against current `main`; a live observation cannot displace one. The dedicated
+Pages workflow stages and normalizes newest `main`, requires a 15-minute
+publication window inside a 10-minute deployment timeout, verifies the complete
+schema, deploys, then idempotently records exposure. A repository commit alone
+is not public delivery.
 
 ## Grading
 
-`grade_results.py` grades persisted daily picks from MLB box scores, writes a
-per-day grade file, and updates `results/history.json`. It separately
-aggregates recommendation statuses so the official public result can be Top
-Picks rather than a mixed population. `dashboard/refresh_grades.py` is a
-display-oriented intraday grader for Top Picks; it is not the durable daily
-record. `grade_value.py` separately settles the value screen against captured
-prices.
+`grade_results.py` retains the established canonical daily-picks and legacy
+history semantics. Separately, it grades immutable public snapshots from the
+publication registry into `public_top_picks` within each daily grade artifact.
+Canonical picks and registry snapshots do not double-count. Public entries are
+idempotent by canonical ID, absent-board wagers remain gradeable, voids are
+excluded from hit/miss denominators, unavailable games remain retryable, and
+authoritative corrections replace the same logical result rather than adding a
+duplicate. Direct `game_pk` lookup keeps a prior-slate game gradeable after UTC
+midnight. Pre-registry dates are not inferred as public Top Picks.
+
+`dashboard/refresh_grades.py` is the intraday lifecycle path; the daily grader
+is the durable historical path. `grading_sources.py` provides a lightweight
+requests/MLB-StatsAPI boundary and lazy Statcast dependency, avoiding the full
+`mlb_daily.py` import chain in the five-minute job. `grade_value.py` separately
+settles the value screen against captured prices.
 
 ## Evaluation and backtesting
 
@@ -261,16 +364,21 @@ non-worsening calibration, and no loss relative to the market benchmark.
 |---|---|
 | `mlb-daily.yml` | Grades prior picks, measures signals, generates picks/value output, runs the full data package, and commits artifacts on multiple daily windows or manual dispatch |
 | `odds-snapshot.yml` | Captures odds and player-prop prices hourly |
-| `lineup-watch.yml` | Checks lineups every ten minutes, persists watch state, and triggers a full dashboard rebuild when needed |
-| `dashboard-refresh.yml` | Rebuilds the static dashboard on two-hour windows, commits the five dashboard artifacts, and deploys `docs/` to Pages |
-| `dashboard-prices.yml` | Reprices dashboard data every five minutes and commits `data.json`/`live.json` changes |
-| `dashboard-grades.yml` | Refreshes live Top Pick grades every five minutes and commits `data.json`/`live.json` changes |
+| `lineup-watch.yml` | Checks lineups every ten minutes, dispatches a queued full rebuild before acknowledging changed lineup state, and safely retries unacknowledged changes |
+| `dashboard-refresh.yml` | Sole `data.json` writer; rebuilds the board and static assets on two-hour/lineup-triggered windows |
+| `dashboard-live.yml` | Sole `live.json` writer; failure-isolated grading then pregame repricing every five minutes |
+| `dashboard-deploy.yml` | Verifies and deploys newest `main:docs/` after either dashboard writer completes |
 | `calibration-recheck.yml` | Runs the weekly held-out per-market calibration recheck and commits promoted fits/report |
 | `test.yml` | Installs `requirements.txt` and runs every root `test_*.py` on pushes and pull requests |
 
-Several workflows write overlapping generated files to `main` under distinct
-concurrency groups. Rebase/retry logic exists, but cross-workflow ownership and
-deployment ordering remain audit subjects.
+Dashboard state ownership is disjoint (`data.json` versus `live.json`).
+Significant full/lineup rebuilds use the non-cancelling
+`dashboard-full-rebuild` true queue; replaceable five-minute live observations
+use a separate coalescing lane. Both re-read current `main` at their writer
+boundary. Lineup state is acknowledged only after GitHub accepts the rebuild
+dispatch, giving at-least-once behavior. Pages deployment has a separate
+coalescing concurrency group and always checks out current `main`, so an older
+completed writer cannot intentionally deploy its stale checkout.
 
 ## Important sources of truth
 
@@ -291,6 +399,8 @@ deployment ordering remain audit subjects.
 | Calibration implementation/artifacts | `backtest/calibration.py`, `backtest/calibrators_by_market.json`, `backtest/calibration_recheck_report.json` |
 | Backtest contract | `backtest/SCHEMA.md`, `backtest/engine.py` |
 | Dashboard payload construction | `dashboard/build_dashboard.py` |
+| Dashboard live-state schema/merge | `dashboard/live_state.py` |
+| Lightweight grading sources | `grading_sources.py` |
 | Dashboard client source | `dashboard/static/index.html`, `dashboard/static/app.css`, `dashboard/static/app.js` |
 | Published dashboard artifacts | `docs/` |
 | Automation/deployment behavior | `.github/workflows/*.yml` |

@@ -57,6 +57,8 @@ is the same standard every other signal in this project had to clear.
 import re
 import unicodedata
 from concurrent.futures import ThreadPoolExecutor
+from dataclasses import dataclass
+from datetime import datetime, timezone
 
 import requests
 
@@ -74,6 +76,49 @@ HOSTS = ["sbapi.nj", "sbapi.pa", "sbapi.az", "sbapi.co"]
 UA = {"User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
                     "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0 Safari/537.36",
       "Accept": "application/json"}
+
+# A parsed empty mapping is not proof that FanDuel successfully inspected a
+# relevant event. These states preserve the distinction between transport,
+# structural, discovery, and exact-market outcomes for the live price owner.
+ROOT_FETCH_FAILED = "ROOT_FETCH_FAILED"
+ROOT_MALFORMED = "ROOT_MALFORMED"
+ROOT_EMPTY = "ROOT_EMPTY"
+EVENTS_DISCOVERED = "EVENTS_DISCOVERED"
+
+
+@dataclass(frozen=True)
+class MarketEventObservation:
+    """One FanDuel event's evidence for one market family.
+
+    ``complete`` means every tab required to prove absence for that family was
+    structurally valid. Parsed matches in ``values`` remain usable even when a
+    different tab failed; only a claimed absence requires complete evidence.
+    """
+
+    event_id: object
+    name: str
+    start: object
+    complete: bool
+    values: dict
+    errors: tuple = ()
+
+
+@dataclass(frozen=True)
+class MarketFeedObservation:
+    """Structured source evidence returned to lifecycle-sensitive callers."""
+
+    family: str
+    root_state: str
+    values: dict
+    events: tuple
+    errors: tuple = ()
+
+
+@dataclass(frozen=True)
+class _GameDiscovery:
+    root_state: str
+    games: tuple
+    errors: tuple = ()
 
 # FanDuel market type -> (this pipeline's stat name, integer count needed).
 # Deliberately explicit rather than pattern-matched on the market name: the
@@ -209,18 +254,182 @@ def _get(path, timeout=20):
     raise RuntimeError(f"all FanDuel hosts failed ({last})")
 
 
-def list_games():
-    """Tonight's MLB events. Returns [(event_id, name, start_iso)]."""
-    d = _get(f"content-managed-page?page=CUSTOM&customPageId=mlb&_ak={AK}")
-    out = []
-    for e in (d.get("attachments", {}).get("events") or {}).values():
-        name = e.get("name") or ""
+def _discover_games():
+    """Parse the MLB root feed without conflating empty with healthy."""
+    try:
+        payload = _get(f"content-managed-page?page=CUSTOM&customPageId=mlb&_ak={AK}")
+    except Exception as exc:
+        return _GameDiscovery(
+            ROOT_FETCH_FAILED, (), (f"{type(exc).__name__}: {exc}",),
+        )
+    if not isinstance(payload, dict):
+        return _GameDiscovery(ROOT_MALFORMED, (), ("root payload is not an object",))
+    attachments = payload.get("attachments")
+    if not isinstance(attachments, dict) or "events" not in attachments:
+        return _GameDiscovery(
+            ROOT_MALFORMED, (), ("root payload has no attachments.events object",),
+        )
+    events = attachments.get("events")
+    if not isinstance(events, dict):
+        return _GameDiscovery(
+            ROOT_MALFORMED, (), ("root attachments.events is not an object",),
+        )
+    if not events:
+        return _GameDiscovery(ROOT_EMPTY, (), ("root attachments.events is empty",))
+
+    games = []
+    invalid = 0
+    for event in events.values():
+        if not isinstance(event, dict):
+            invalid += 1
+            continue
+        name = event.get("name") or ""
+        event_id = event.get("eventId")
         # Real games carry "AWAY @ HOME"; the feed also lists futures,
         # awards and season-long markets that must not be treated as games.
         if " @ " not in name:
             continue
-        out.append((e.get("eventId"), name, e.get("openDate")))
-    return out
+        if event_id in (None, ""):
+            invalid += 1
+            continue
+        games.append((event_id, name, event.get("openDate")))
+    if not games:
+        detail = "root contained no usable MLB game events"
+        if invalid:
+            detail += f" ({invalid} structurally invalid event(s))"
+        return _GameDiscovery(ROOT_EMPTY, (), (detail,))
+    return _GameDiscovery(EVENTS_DISCOVERED, tuple(games))
+
+
+def _discovery_failure(discovery, family):
+    detail = "; ".join(discovery.errors) or discovery.root_state
+    return MarketFeedObservation(
+        family=family, root_state=discovery.root_state,
+        values={}, events=(), errors=(detail,),
+    )
+
+
+def _require_discovery(discovery, family, strict):
+    if discovery.root_state == EVENTS_DISCOVERED:
+        return True
+    # Transport failures historically propagated to callers; keep that
+    # behavior. Structural emptiness remains fail-soft only for legacy
+    # research callers, while strict/lifecycle callers reject it.
+    if strict or discovery.root_state == ROOT_FETCH_FAILED:
+        detail = "; ".join(discovery.errors) or discovery.root_state
+        raise RuntimeError(f"indeterminate {family} root feed: {detail}")
+    return False
+
+
+def list_games(strict=False):
+    """Tonight's usable MLB events as ``(event_id, name, start_iso)``.
+
+    Legacy callers retain the list interface. Lifecycle-sensitive callers use
+    the structured family observations below; ``strict=True`` now correctly
+    rejects a malformed or structurally empty root feed.
+    """
+    discovery = _discover_games()
+    if not _require_discovery(discovery, "MLB", strict):
+        return []
+    return list(discovery.games)
+
+
+def _matchup_key(value):
+    value = re.sub(r"\s*\([^)]*\)", "", str(value or ""))
+    value = unicodedata.normalize("NFKD", value).encode("ascii", "ignore").decode()
+    return re.sub(r"\s+", " ", value).strip().lower()
+
+
+def _utc_instant(value):
+    if not isinstance(value, str) or not value.strip():
+        return None
+    try:
+        parsed = datetime.fromisoformat(value.strip().replace("Z", "+00:00"))
+    except ValueError:
+        return None
+    if parsed.tzinfo is None:
+        return None
+    return parsed.astimezone(timezone.utc)
+
+
+def _relevant_events(observation, row):
+    """Map a canonical dashboard row to exactly one sportsbook event.
+
+    Scheduled UTC start is the strongest key and safely disambiguates
+    doubleheaders. Matchup is used as a fallback for source naming/time drift;
+    conflicting or multiple matches remain indeterminate rather than borrowing
+    proof from an unrelated event.
+    """
+    row_start = _utc_instant(row.get("game_start"))
+    row_matchup = _matchup_key(row.get("matchup"))
+    by_start = [event for event in observation.events
+                if row_start is not None and _utc_instant(event.start) == row_start]
+    by_matchup = [event for event in observation.events
+                  if row_matchup and _matchup_key(event.name) == row_matchup]
+    both = [event for event in by_start if event in by_matchup]
+    if len(both) == 1:
+        return both
+    if by_start and by_matchup:
+        return []
+    if len(by_start) == 1:
+        return by_start
+    if len(by_matchup) == 1:
+        return by_matchup
+    return []
+
+
+def market_evidence_for_row(observation, row):
+    """Return event-scoped values and whether exact absence is provable."""
+    if not isinstance(observation, MarketFeedObservation):
+        return {
+            "values": {}, "absence_proven": False,
+            "reason": "fetcher did not return structured market evidence",
+        }
+    if observation.root_state != EVENTS_DISCOVERED:
+        return {
+            "values": {}, "absence_proven": False,
+            "reason": "; ".join(observation.errors) or observation.root_state,
+        }
+    events = _relevant_events(observation, row)
+    if len(events) != 1:
+        return {
+            "values": {}, "absence_proven": False,
+            "reason": "no unique relevant FanDuel event was observed",
+        }
+    event = events[0]
+    return {
+        "values": event.values,
+        "absence_proven": bool(event.complete),
+        "reason": "; ".join(event.errors) if event.errors else (
+            "relevant event family inspected" if event.complete
+            else "relevant event family observation incomplete"
+        ),
+        "event_id": event.event_id,
+    }
+
+
+def _market_pages(event_id, tabs):
+    markets = []
+    failures = []
+    for tab in tabs:
+        try:
+            payload = _get(f"event-page?eventId={event_id}&tab={tab}&_ak={AK}")
+        except Exception as exc:
+            failures.append(f"event={event_id} tab={tab}: {exc}")
+            continue
+        if not isinstance(payload, dict):
+            failures.append(f"event={event_id} tab={tab}: payload is not an object")
+            continue
+        attachments = payload.get("attachments")
+        if (not isinstance(attachments, dict)
+                or "markets" not in attachments
+                or not isinstance(attachments.get("markets"), dict)):
+            failures.append(
+                f"event={event_id} tab={tab}: missing/invalid attachments.markets"
+            )
+            continue
+        markets.extend(attachments["markets"].values())
+    return markets, not failures, tuple(failures)
 
 
 # Two-sided line markets: a handicap plus an Over and an Under, rather than a
@@ -269,38 +478,57 @@ def _parse_two_sided(market):
     return player, line, sides["OVER"], sides["UNDER"]
 
 
-def fetch_pitcher_strikeouts(max_workers=8):
+def fetch_pitcher_strikeouts(max_workers=8, strict=False, with_evidence=False):
     """Two-sided strikeout markets for tonight's starters.
 
     Returns {normalized_name: {"line": float, "over": int, "under": int,
                                "needs": int, "true_over": float, "hold": float}}
     where true_over is de-vigged EXACTLY from both sides."""
     import prop_probability as pp
+    discovery = _discover_games()
+    if discovery.root_state != EVENTS_DISCOVERED:
+        if with_evidence:
+            return _discovery_failure(discovery, "strikeouts")
+        if not _require_discovery(discovery, "strikeouts", strict):
+            return {}
     out = {}
-    for event_id, name, _start in list_games():
-        for tab in ("pitcher-props", "popular"):
-            try:
-                d = _get(f"event-page?eventId={event_id}&tab={tab}&_ak={AK}")
-            except Exception:
+    failures = []
+    event_observations = []
+    for event_id, name, start in discovery.games:
+        markets, complete, event_failures = _market_pages(
+            event_id, ("pitcher-props", "popular"),
+        )
+        failures.extend(event_failures)
+        event_values = {}
+        for m in markets:
+            if not isinstance(m, dict) or m.get("marketType") not in TWO_SIDED_MARKETS:
                 continue
-            for m in (d.get("attachments", {}).get("markets") or {}).values():
-                if m.get("marketType") not in TWO_SIDED_MARKETS:
-                    continue
-                if m.get("inPlay"):
-                    continue
-                parsed = _parse_two_sided(m)
-                if not parsed:
-                    continue
-                player, line, over, under = parsed
-                t_over, t_under, hold = pp.devig_two_sided(over, under)
-                out[normalize_name(player)] = {
-                    "player": player, "line": line,
-                    # "Over 3.5" settles on 4 or more.
-                    "needs": int(line) + 1 if float(line).is_integer() else int(line + 0.5),
-                    "over": over, "under": under,
-                    "true_over": t_over, "true_under": t_under, "hold": hold,
-                    "game": name,
-                }
+            if m.get("inPlay"):
+                continue
+            parsed = _parse_two_sided(m)
+            if not parsed:
+                continue
+            player, line, over, under = parsed
+            t_over, t_under, hold = pp.devig_two_sided(over, under)
+            event_values[normalize_name(player)] = {
+                "player": player, "line": line,
+                # "Over 3.5" settles on 4 or more.
+                "needs": int(line) + 1 if float(line).is_integer() else int(line + 0.5),
+                "over": over, "under": under,
+                "true_over": t_over, "true_under": t_under, "hold": hold,
+                "game": name,
+            }
+        out.update(event_values)
+        event_observations.append(MarketEventObservation(
+            event_id, name, start, complete, event_values, event_failures,
+        ))
+    if with_evidence:
+        return MarketFeedObservation(
+            "strikeouts", EVENTS_DISCOVERED, out,
+            tuple(event_observations), tuple(failures),
+        )
+    if strict and failures:
+        raise RuntimeError("incomplete strikeouts feed: " + "; ".join(failures[:5]))
     return out
 
 
@@ -324,7 +552,7 @@ def _parse_outs_runner(name):
     return m.group(1).strip(), m.group(2).upper(), float(m.group(3))
 
 
-def fetch_pitcher_outs():
+def fetch_pitcher_outs(strict=False, with_evidence=False):
     """Two-sided "Pitcher Outs Recorded" markets for tonight's starters --
     market type suffix _OUTS_RECORDED_SB (PITCHER_A/B/C/D/E/F_..., same
     per-pitcher-slot naming fetch_pitcher_strikeouts already reuses).
@@ -337,49 +565,68 @@ def fetch_pitcher_outs():
                                "needs": int, "true_over": float,
                                "true_under": float, "hold": float}}."""
     import prop_probability as pp
+    discovery = _discover_games()
+    if discovery.root_state != EVENTS_DISCOVERED:
+        if with_evidence:
+            return _discovery_failure(discovery, "pitcher_outs")
+        if not _require_discovery(discovery, "pitcher_outs", strict):
+            return {}
     out = {}
-    for event_id, name, _start in list_games():
-        for tab in ("pitcher-props", "popular"):
-            try:
-                d = _get(f"event-page?eventId={event_id}&tab={tab}&_ak={AK}")
-            except Exception:
+    failures = []
+    event_observations = []
+    for event_id, name, start in discovery.games:
+        markets, complete, event_failures = _market_pages(
+            event_id, ("pitcher-props", "popular"),
+        )
+        failures.extend(event_failures)
+        event_values = {}
+        for m in markets:
+            if not isinstance(m, dict) or not (m.get("marketType") or "").endswith("_OUTS_RECORDED_SB"):
                 continue
-            for m in (d.get("attachments", {}).get("markets") or {}).values():
-                if not (m.get("marketType") or "").endswith("_OUTS_RECORDED_SB"):
+            if m.get("inPlay"):
+                continue
+            player = line = None
+            sides = {}
+            for rn in (m.get("runners") or []):
+                parsed = _parse_outs_runner(rn.get("runnerName"))
+                if not parsed:
                     continue
-                if m.get("inPlay"):
+                p, side, ln = parsed
+                odds = ((rn.get("winRunnerOdds") or {})
+                        .get("americanDisplayOdds", {}) or {}).get("americanOddsInt")
+                if odds is None:
                     continue
-                player = line = None
-                sides = {}
-                for rn in (m.get("runners") or []):
-                    parsed = _parse_outs_runner(rn.get("runnerName"))
-                    if not parsed:
-                        continue
-                    p, side, ln = parsed
-                    odds = ((rn.get("winRunnerOdds") or {})
-                            .get("americanDisplayOdds", {}) or {}).get("americanOddsInt")
-                    if odds is None:
-                        continue
-                    player, line = p, ln
-                    sides[side] = odds
-                if not player or line is None or "OVER" not in sides or "UNDER" not in sides:
-                    continue
-                over, under = sides["OVER"], sides["UNDER"]
-                t_over, t_under, hold = pp.devig_two_sided(over, under)
-                out[normalize_name(player)] = {
-                    "player": player, "line": line,
-                    "needs": int(line) + 1 if float(line).is_integer() else int(line + 0.5),
-                    "over": over, "under": under,
-                    "true_over": t_over, "true_under": t_under, "hold": hold,
-                    "game": name,
-                }
+                player, line = p, ln
+                sides[side] = odds
+            if not player or line is None or "OVER" not in sides or "UNDER" not in sides:
+                continue
+            over, under = sides["OVER"], sides["UNDER"]
+            t_over, t_under, hold = pp.devig_two_sided(over, under)
+            event_values[normalize_name(player)] = {
+                "player": player, "line": line,
+                "needs": int(line) + 1 if float(line).is_integer() else int(line + 0.5),
+                "over": over, "under": under,
+                "true_over": t_over, "true_under": t_under, "hold": hold,
+                "game": name,
+            }
+        out.update(event_values)
+        event_observations.append(MarketEventObservation(
+            event_id, name, start, complete, event_values, event_failures,
+        ))
+    if with_evidence:
+        return MarketFeedObservation(
+            "pitcher_outs", EVENTS_DISCOVERED, out,
+            tuple(event_observations), tuple(failures),
+        )
+    if strict and failures:
+        raise RuntimeError("incomplete pitcher-outs feed: " + "; ".join(failures[:5]))
     return out
 
 
 _COMBINED_K_RE = re.compile(r"^(.+?)\s*&\s*(.+?)\s+(\d+)\+\s*Combined Strikeouts$", re.I)
 
 
-def fetch_combined_pitcher_strikeouts():
+def fetch_combined_pitcher_strikeouts(strict=False, with_evidence=False):
     """"Starting Pitcher Combined Alt Strikeouts" -- the combined strikeout
     total of BOTH starters, found live under the same pitcher-props/popular
     tabs fetch_pitcher_outs already scans. Confirmed real and unmapped:
@@ -404,38 +651,58 @@ def fetch_combined_pitcher_strikeouts():
 
     Returns {matchup: {"pitchers": (name_a, name_b),
                         "rungs": {threshold: american_odds}}}."""
+    discovery = _discover_games()
+    if discovery.root_state != EVENTS_DISCOVERED:
+        if with_evidence:
+            return _discovery_failure(discovery, "combined_strikeouts")
+        if not _require_discovery(discovery, "combined_strikeouts", strict):
+            return {}
     out = {}
-    for event_id, name, _start in list_games():
+    failures = []
+    event_observations = []
+    for event_id, name, start in discovery.games:
         matchup = re.sub(r"\s*\([^)]*\)", "", name).strip()
-        for tab in ("pitcher-props", "popular"):
-            try:
-                d = _get(f"event-page?eventId={event_id}&tab={tab}&_ak={AK}")
-            except Exception:
+        markets, complete, event_failures = _market_pages(
+            event_id, ("pitcher-props", "popular"),
+        )
+        failures.extend(event_failures)
+        event_values = {}
+        for m in markets:
+            if (not isinstance(m, dict)
+                    or (m.get("marketType") or "") != "STARTING_PITCHER_COMBINED_ALT_STRIKEOUTS"):
                 continue
-            for m in (d.get("attachments", {}).get("markets") or {}).values():
-                if (m.get("marketType") or "") != "STARTING_PITCHER_COMBINED_ALT_STRIKEOUTS":
+            if m.get("inPlay"):
+                continue
+            pitchers = None
+            rungs = {}
+            for rn in (m.get("runners") or []):
+                match = _COMBINED_K_RE.match((rn.get("runnerName") or "").strip())
+                if not match:
                     continue
-                if m.get("inPlay"):
+                a, b, threshold = match.group(1).strip(), match.group(2).strip(), int(match.group(3))
+                odds = ((rn.get("winRunnerOdds") or {})
+                        .get("americanDisplayOdds", {}) or {}).get("americanOddsInt")
+                if odds is None:
                     continue
-                pitchers = None
-                rungs = {}
-                for rn in (m.get("runners") or []):
-                    match = _COMBINED_K_RE.match((rn.get("runnerName") or "").strip())
-                    if not match:
-                        continue
-                    a, b, threshold = match.group(1).strip(), match.group(2).strip(), int(match.group(3))
-                    odds = ((rn.get("winRunnerOdds") or {})
-                            .get("americanDisplayOdds", {}) or {}).get("americanOddsInt")
-                    if odds is None:
-                        continue
-                    pitchers = (a, b)
-                    rungs[threshold] = odds
-                if pitchers and rungs:
-                    out[matchup] = {"pitchers": pitchers, "rungs": rungs}
+                pitchers = (a, b)
+                rungs[threshold] = odds
+            if pitchers and rungs:
+                event_values[matchup] = {"pitchers": pitchers, "rungs": rungs}
+        out.update(event_values)
+        event_observations.append(MarketEventObservation(
+            event_id, name, start, complete, event_values, event_failures,
+        ))
+    if with_evidence:
+        return MarketFeedObservation(
+            "combined_strikeouts", EVENTS_DISCOVERED, out,
+            tuple(event_observations), tuple(failures),
+        )
+    if strict and failures:
+        raise RuntimeError("incomplete combined-K feed: " + "; ".join(failures[:5]))
     return out
 
 
-def fetch_first_inning_totals():
+def fetch_first_inning_totals(strict=False, with_evidence=False):
     """The REAL both-teams NRFI/YRFI price -- market type
     ***OVER/UNDER_0.5_RUNS_1ST_INNINGS, under the "innings" tab (never
     "batter-props"/"popular"/"pitcher-props", which is the entire reason
@@ -460,15 +727,23 @@ def fetch_first_inning_totals():
     Returns {matchup: {"over": int, "under": int, "true_over": float,
                        "true_under": float, "hold": float}}."""
     import prop_probability as pp
+    discovery = _discover_games()
+    if discovery.root_state != EVENTS_DISCOVERED:
+        if with_evidence:
+            return _discovery_failure(discovery, "first_inning")
+        if not _require_discovery(discovery, "first_inning", strict):
+            return {}
     out = {}
-    for event_id, name, _start in list_games():
+    failures = []
+    event_observations = []
+    for event_id, name, start in discovery.games:
         matchup = re.sub(r"\s*\([^)]*\)", "", name).strip()
-        try:
-            d = _get(f"event-page?eventId={event_id}&tab=innings&_ak={AK}")
-        except Exception:
-            continue
-        for m in (d.get("attachments", {}).get("markets") or {}).values():
-            if m.get("marketType") != "***OVER/UNDER_0.5_RUNS_1ST_INNINGS":
+        markets, complete, event_failures = _market_pages(event_id, ("innings",))
+        failures.extend(event_failures)
+        event_values = {}
+        for m in markets:
+            if (not isinstance(m, dict)
+                    or m.get("marketType") != "***OVER/UNDER_0.5_RUNS_1ST_INNINGS"):
                 continue
             if m.get("inPlay"):
                 continue
@@ -479,17 +754,32 @@ def fetch_first_inning_totals():
                         .get("americanDisplayOdds", {}) or {}).get("americanOddsInt")
                 if odds is None:
                     continue
-                if side == "OVER": over = odds
-                elif side == "UNDER": under = odds
+                if side == "OVER":
+                    over = odds
+                elif side == "UNDER":
+                    under = odds
             if over is None or under is None:
                 continue
             t_over, t_under, hold = pp.devig_two_sided(over, under)
-            out[matchup] = {"over": over, "under": under,
-                           "true_over": t_over, "true_under": t_under, "hold": hold}
+            event_values[matchup] = {
+                "over": over, "under": under,
+                "true_over": t_over, "true_under": t_under, "hold": hold,
+            }
+        out.update(event_values)
+        event_observations.append(MarketEventObservation(
+            event_id, name, start, complete, event_values, event_failures,
+        ))
+    if with_evidence:
+        return MarketFeedObservation(
+            "first_inning", EVENTS_DISCOVERED, out,
+            tuple(event_observations), tuple(failures),
+        )
+    if strict and failures:
+        raise RuntimeError("incomplete first-inning feed: " + "; ".join(failures[:5]))
     return out
 
 
-def _event_props(event_id):
+def _event_props(event_id, strict=False, with_evidence=False):
     rows = []
     # REAL BUG, found live 2026-08-13 checking why hard_hit_105/hard_hit_110
     # (the Laser prop) showed 0/17 real prices attached every single night,
@@ -506,45 +796,78 @@ def _event_props(event_id):
     # MARKET_MAP's own comment) lives ONLY under this tab -- confirmed live,
     # absent from batter-props/popular/lasers across every game checked --
     # same "real market, wrong tab" story as lasers above.
-    for tab in ("batter-props", "popular", "lasers", "moonshots"):
-        try:
-            d = _get(f"event-page?eventId={event_id}&tab={tab}&_ak={AK}")
-        except Exception:
+    markets, complete, failures = _market_pages(
+        event_id, ("batter-props", "popular", "lasers", "moonshots"),
+    )
+    for m in markets:
+        if not isinstance(m, dict):
             continue
-        for m in (d.get("attachments", {}).get("markets") or {}).values():
-            mapped = MARKET_MAP.get(m.get("marketType"))
-            if not mapped:
+        mapped = MARKET_MAP.get(m.get("marketType"))
+        if not mapped:
+            continue
+        stat, need = mapped
+        for rn in (m.get("runners") or []):
+            odds = ((rn.get("winRunnerOdds") or {})
+                    .get("americanDisplayOdds", {}) or {}).get("americanOddsInt")
+            if odds is None:
                 continue
-            stat, need = mapped
-            for rn in (m.get("runners") or []):
-                odds = ((rn.get("winRunnerOdds") or {})
-                        .get("americanDisplayOdds", {}) or {}).get("americanOddsInt")
-                if odds is None:
-                    continue
-                rows.append({"player": rn.get("runnerName"),
-                             "norm": normalize_name(rn.get("runnerName")),
-                             "stat": stat, "needs": need,
-                             "american": int(odds), "event_id": event_id,
-                             "in_play": bool(m.get("inPlay"))})
+            rows.append({"player": rn.get("runnerName"),
+                         "norm": normalize_name(rn.get("runnerName")),
+                         "stat": stat, "needs": need,
+                         "american": int(odds), "event_id": event_id,
+                         "in_play": bool(m.get("inPlay"))})
+    if with_evidence:
+        return rows, complete, failures
+    if strict and failures:
+        raise RuntimeError("incomplete batter-props feed: " + "; ".join(failures[:5]))
     return rows
 
 
-def fetch_prop_prices(max_workers=8):
+def fetch_prop_prices(max_workers=8, strict=False, with_evidence=False):
     """Every priced batter prop on the slate.
 
     Returns {normalized_name: {(stat, needs): american_odds}}. In-play markets
     are excluded: once a game starts the price reflects the remaining at-bats,
     which is a different bet from the pregame one this pipeline models."""
-    games = list_games()
+    discovery = _discover_games()
+    if discovery.root_state != EVENTS_DISCOVERED:
+        if with_evidence:
+            return _discovery_failure(discovery, "general_batter")
+        if not _require_discovery(discovery, "general batter", strict):
+            return {}
     out = {}
-    if not games:
-        return out
+    failures = []
+    event_observations = []
+
+    def fetch_one(game):
+        rows, complete, errors = _event_props(
+            game[0], strict=False, with_evidence=True,
+        )
+        return game, rows, complete, errors
+
     with ThreadPoolExecutor(max_workers=max_workers) as ex:
-        for rows in ex.map(lambda g: _event_props(g[0]), games):
-            for r in rows:
-                if r["in_play"]:
+        for game, rows, complete, errors in ex.map(fetch_one, discovery.games):
+            event_id, name, start = game
+            event_values = {}
+            for result in rows:
+                if result["in_play"]:
                     continue
-                out.setdefault(r["norm"], {})[(r["stat"], r["needs"])] = r["american"]
+                event_values.setdefault(result["norm"], {})[
+                    (result["stat"], result["needs"])
+                ] = result["american"]
+            for player, markets in event_values.items():
+                out.setdefault(player, {}).update(markets)
+            failures.extend(errors)
+            event_observations.append(MarketEventObservation(
+                event_id, name, start, complete, event_values, errors,
+            ))
+    if with_evidence:
+        return MarketFeedObservation(
+            "general_batter", EVENTS_DISCOVERED, out,
+            tuple(event_observations), tuple(failures),
+        )
+    if strict and failures:
+        raise RuntimeError("incomplete batter-props feed: " + "; ".join(failures[:5]))
     return out
 
 

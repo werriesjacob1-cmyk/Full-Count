@@ -1,0 +1,92 @@
+name: Dashboard Pages Deploy
+
+# Repository commits do not mutate an already-uploaded Pages artifact.
+# Deploy the newest main/docs snapshot after either state owner completes,
+# including a partial live run that successfully committed one channel.
+on:
+  workflow_run:
+    workflows: [Dashboard Refresh, Dashboard Live Update]
+    types: [completed]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: dashboard-pages-deployment
+  # Do not cancel a run after deploy-pages may already have made its artifact
+  # public. Default single-pending behavior coalesces redundant deploy requests.
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.head_branch == 'main'
+    runs-on: ubuntu-latest
+    # New exposure candidates are admitted only when first pitch is at least
+    # 15 minutes beyond artifact preparation. A successful job is bounded to
+    # 10 minutes, so it cannot first expose one after the betting cutoff.
+    timeout-minutes: 10
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Checkout newest main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Verify publication registry
+        run: python3 dashboard/verify_publication_registry.py
+
+      - name: Stage exact Pages artifact
+        run: |
+          python3 dashboard/prepare_pages_artifact.py \
+            --source docs --out "$RUNNER_TEMP/pages-artifact" \
+            --source-commit "$(git rev-parse HEAD)"
+
+      - name: Verify complete Pages artifact contract
+        run: python3 dashboard/verify_pages_artifact.py "$RUNNER_TEMP/pages-artifact"
+
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload dashboard artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ${{ runner.temp }}/pages-artifact
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+
+      - name: Confirm durable public exposure
+        env:
+          PAGES_DEPLOYMENT_URL: ${{ steps.deployment.outputs.page_url }}
+        run: |
+          cp "$RUNNER_TEMP/pages-artifact/publication_manifest.json" \
+            "$RUNNER_TEMP/deployed-publication-manifest.json"
+          git config user.name "mlb-pipeline-bot"
+          git config user.email "actions@github.com"
+          for attempt in 1 2 3 4 5; do
+            git fetch origin main
+            git checkout --detach origin/main
+            python3 dashboard/confirm_publication.py \
+              --manifest "$RUNNER_TEMP/deployed-publication-manifest.json" \
+              --registry data/public_top_picks/registry.json
+            git add data/public_top_picks/registry.json
+            if git diff --cached --quiet; then
+              echo "Publication registry already contains this deployment."
+              exit 0
+            fi
+            git commit -m "Record deployed Top Pick exposure $(date -u +'%F %H:%M') UTC"
+            if git push origin HEAD:main; then
+              echo "Recorded public exposure on attempt $attempt."
+              exit 0
+            fi
+            echo "Registry push rejected (attempt $attempt/5); retrying idempotently from current main."
+          done
+          echo "::error::Pages deployed, but publication registry persistence failed. Rerun this deployment to recover from its public manifest."
+          exit 1

@@ -1,0 +1,103 @@
+name: Dashboard Live Update
+
+# The sole writer of docs/live.json. Grading and pricing run sequentially
+# against one checkout so their field-level deltas cannot race. Each channel
+# is failure-isolated: a failed grader still permits a valid price update to
+# commit, and a failed price fetch still permits a valid lifecycle result.
+on:
+  schedule:
+    - cron: '*/5 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  # Default single-pending semantics deliberately coalesce obsolete five-
+  # minute observations instead of building an hours-long queue.
+  group: dashboard-live-observation
+  cancel-in-progress: false
+
+jobs:
+  update-live-state:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install live-update dependencies
+        # Statcast-only final markets remain retryable for the durable daily
+        # grader; five-minute threshold/status work does not initialize pandas
+        # and pybaseball on every observation.
+        run: pip install --quiet 'requests~=2.34.2' 'mlb-statsapi~=1.9.0'
+
+      - name: Grade published Top Picks
+        id: grades
+        continue-on-error: true
+        run: |
+          if [ ! -f docs/data.json ]; then
+            echo "docs/data.json does not exist yet; nothing to grade."
+            exit 0
+          fi
+          python3 dashboard/refresh_grades.py
+
+      - name: Reprice pregame candidates
+        id: prices
+        continue-on-error: true
+        run: |
+          if [ ! -f docs/data.json ]; then
+            echo "docs/data.json does not exist yet; nothing to reprice."
+            exit 0
+          fi
+          python3 dashboard/refresh_prices.py
+
+      - name: Commit and push live state
+        if: always()
+        run: |
+          git config user.name "mlb-pipeline-bot"
+          git config user.email "actions@github.com"
+          if [ ! -f docs/live.json ]; then
+            echo "No live state was produced."
+            exit 0
+          fi
+          cp docs/live.json "$RUNNER_TEMP/live-candidate.json"
+          git restore docs/live.json
+          for attempt in 1 2 3 4 5; do
+            # Both a stale checkout and a push rejection re-read current main,
+            # then semantically merge by per-field recency/result authority.
+            git fetch origin main
+            git checkout --detach origin/main
+            python3 dashboard/merge_live_files.py \
+              --base docs/live.json --incoming "$RUNNER_TEMP/live-candidate.json" \
+              --out docs/live.json --data docs/data.json \
+              --registry data/public_top_picks/registry.json --results-dir results
+            git add docs/live.json
+            if git diff --cached --quiet; then
+              echo "No newer live-state change to publish."
+              exit 0
+            fi
+            git commit -m "Dashboard live update $(date -u +'%F %H:%M') UTC"
+            if git push origin HEAD:main; then
+              echo "Pushed on attempt $attempt."
+              exit 0
+            fi
+            echo "Push rejected (attempt $attempt/5); rereading and merging current main."
+          done
+          echo "::error::Failed to push live state after 5 attempts."
+          exit 1
+
+      - name: Report partial live-update failure
+        if: always() && (steps.grades.outcome == 'failure' || steps.prices.outcome == 'failure')
+        run: |
+          echo "::error::At least one live channel failed. Any successful channel was preserved and committed."
+          exit 1
