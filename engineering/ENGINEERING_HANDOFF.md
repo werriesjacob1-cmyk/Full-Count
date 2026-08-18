@@ -1055,3 +1055,117 @@ Information Claude should know when resuming:
 - The settlement-capability gate is Pages lifecycle infrastructure and does
   not change `recommendation.py` or model policy.
 - PR #51 remains draft and unmerged. Phase V has not begun.
+
+## 2026-08-18 — PR #51 merged; post-merge live-artifact orphan-migration production incident and correction
+
+Agent:
+Claude
+
+Branch:
+`pre-phase-v/live-artifact-orphan-migration-fix`
+
+Objective:
+This entry supersedes nothing above — the prior entry's "PR #51 remains draft
+and unmerged" line was accurate when written and is left intact as historical
+record. It became stale shortly afterward: PR #51 was merged, and the merge
+caused a real production outage. This entry documents both facts and the
+correction that closed the outage, independently verified against the
+repository's actual Git history, Actions run history, and committed
+artifacts, not against any prior agent's claims.
+
+PR #51 merge, independently verified:
+- Merge commit: `9275b5bdd7d955a7a2e2f149b4814dad69ec95ea`.
+- Reviewed/merged head: `87db8cd7a340caf6dfeb0d431746f437ee40f4a3`.
+- Post-merge CI on the merge commit: workflow run `32088820525`, conclusion
+  `success`.
+- This confirms the prior handoff entry's "draft and unmerged" statement
+  described true state at the time it was written, and became stale purely
+  because of the subsequent merge event, not because it was inaccurate when
+  authored.
+
+Post-merge production outage:
+- Root cause: `dashboard/prepare_pages_artifact.py`'s `normalize_live()`
+  unconditionally raised `ValueError` for any live-overlay id it could not
+  remap onto a current-schema `fc2:` canonical id. Once `docs/live.json`
+  accumulated even one id for a game/prop no longer on any board this
+  repository can reconstruct — the real trigger was the orphaned legacy id
+  `824077-686930-strikeouts-4` — every caller of this function began failing
+  unconditionally.
+- Blast radius: all three production call sites share this one function, so
+  all three broke together:
+  - `dashboard-live.yml` (the sole `docs/live.json` writer, 5-minute cadence):
+    100% failure rate from shortly after the merge onward.
+  - `dashboard-refresh.yml` (the sole `docs/data.json` writer, full rebuild):
+    failing since its last successful run at 02:16 UTC.
+  - `dashboard-deploy.yml` (Pages artifact staging/deploy): failing on the
+    same dependency chain via its own `prepare_pages_artifact.py` invocation.
+- Observed impact: the public site was stuck on a board roughly 17 hours
+  stale, publicly showing 0 Top Picks, while a real full-rebuild pass run
+  during investigation independently computed 3 legitimate Top Picks and 53
+  Value picks that the broken pipeline discarded before they could reach
+  `docs/data.json` or Pages. No recommendation, scoring, calibration, or
+  threshold logic was implicated — this was a lifecycle/publication-pipeline
+  defect, not a model defect.
+- Verified against real committed data: inspected all 216 entries in the
+  actual committed `docs/live.json` against the current `docs/data.json`'s id
+  set. 100% were orphans relative to the current board; 0% carried any
+  settlement or publication content — confirming the outage was caused
+  exclusively by content this fix classifies as safely prunable, not by any
+  durable state the old fail-closed behavior was correctly protecting.
+
+Correction made:
+- Added `DURABLE_FIELDS` (`SETTLEMENT_FIELDS | PUBLICATION_FIELDS`) and
+  `carries_durable_state(delta)` to `dashboard/live_state.py`, reusing the
+  field taxonomy the module already defined rather than inventing new
+  categories.
+- `normalize_live()` now mirrors the bounded-legacy-migration boundary
+  `normalize_payload()` already draws (`legacy = schema_version in (None, 1,
+  2)`). Within that legacy case only, an orphaned id whose delta carries no
+  durable settlement/publication content is pruned as fully-reproducible,
+  stale, non-public state. Everything else still fails closed exactly as
+  before:
+  - Any orphan (legacy or not) carrying `SETTLEMENT_FIELDS` or
+    `PUBLICATION_FIELDS` content still raises `ValueError` — a live "hit" or a
+    publication marker with no reconcilable current identity is never
+    silently discarded.
+  - Any non-canonical id in a document that already claims the current
+    schema still raises unconditionally — this is corruption, not a
+    migration input, and gets no leniency at all.
+
+Regression evidence:
+- Reproduced the exact incident against the real committed
+  `824077-686930-strikeouts-4` shape with the fix removed (`git stash`),
+  confirmed the crash, then restored the fix and confirmed resolution.
+- New tests exercise the real workflow entry points, not just the helper in
+  isolation: `test_pages_preparation.py` (deploy path, 6 new cases including
+  the literal incident id, a durable-settlement orphan, a durable-publication
+  orphan, and a current-schema orphan), `test_refresh_prices.py` (price
+  channel, 1 new case), and a new `LiveGraderChannelTests` class in
+  `test_refresh_grades.py` (grading channel, 2 new cases including a
+  durable-settlement orphan that still fails closed).
+- Full repository test suite passed with the fix in place.
+- Ran the real CLIs (`prepare_pages_artifact.py`, `verify_pages_artifact.py`,
+  `refresh_grades.py`, `refresh_prices.py`, the last including a genuine live
+  FanDuel network fetch) against a temporary copy of the actual committed
+  incident data; all succeeded.
+
+Remaining operational proof still required after merge (not yet executed —
+contingent on explicit merge authorization): the sequential canary rollout
+— sync to newest `main`, trigger one live writer as a canary, confirm success
+and Pages deployment, then trigger a full `dashboard-refresh.yml`, confirm
+its deployment, run the live writer again, and independently verify both the
+repository state and the public Pages artifacts show fresh, schema-v3 data
+with no blocking orphan ids and no lost publication/settlement state.
+
+Information Claude should know when resuming:
+- PR #51 is merged. The prior entry's "draft and unmerged" line is
+  historical and must not be edited — read it as true-at-the-time, not as
+  current state.
+- Phase V has still not begun. This was a Pre-Phase-V production-incident
+  correction, tightly scoped to lifecycle publication restoration only — no
+  `recommendation.py`, `prop_probability.py`, scoring, probability, model, or
+  calibration change was made or is implied by this entry.
+- The missing-CI, false-interval-rationale, sportsbook-freshness,
+  alternate-line-calibration, slate-date, calibration-cache, and frontend
+  findings from the Pre-Phase-V audit remain open and were deliberately not
+  bundled into this fix.

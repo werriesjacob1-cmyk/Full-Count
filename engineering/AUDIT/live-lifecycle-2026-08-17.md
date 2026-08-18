@@ -1,9 +1,13 @@
 # Live lifecycle, publication, grading, and Pages delivery
 
-- Date verified: 2026-08-17
-- Agent: Codex
+- Date verified: 2026-08-17; post-merge incident addendum added 2026-08-18
+- Agent: Codex (original); Claude (2026-08-18 addendum)
 - Scope: Pre-Phase-V live lifecycle hardening, including the adversarial correction pass
-- Status: **remediation implemented on draft PR #51; unmerged**
+- Status: PR #51 merged (`9275b5bdd7d955a7a2e2f149b4814dad69ec95ea`) 2026-08-17/18;
+  see "Post-merge addendum" below — the merge was followed by a real
+  production outage, since corrected. The line below is left as originally
+  written and is no longer current; it is not evidence the rollout was clean.
+- ~~Status: **remediation implemented on draft PR #51; unmerged**~~ (superseded, see addendum)
 - Model/recommendation policy impact: **none**
 
 This audit records the evidence and lifecycle contract implemented on PR #51.
@@ -350,5 +354,44 @@ deployment.
   older correction can be rerun explicitly by date.
 - One workflow already executing under a deleted pre-rollout definition may
   finish once during rollout.
+
+## Post-merge addendum (2026-08-18, Claude)
+
+PR #51 merged at `9275b5bdd7d955a7a2e2f149b4814dad69ec95ea` (reviewed head
+`87db8cd7a340caf6dfeb0d431746f437ee40f4a3`), with a passing post-merge CI run
+(`32088820525`). The rollout was **not** clean: shortly after merge, real
+`docs/live.json` content accumulated an id — `824077-686930-strikeouts-4` —
+for a game/prop no longer on any board this repository could reconstruct.
+`prepare_pages_artifact.normalize_live()` unconditionally raised on any such
+unmappable id, with no distinction between stale reproducible content and
+durable settlement/publication facts. Every production caller of that
+function shared it, so `dashboard-live.yml`, `dashboard-refresh.yml`, and
+`dashboard-deploy.yml` all began failing. The public site was stuck roughly
+17 hours stale, publicly showing 0 Top Picks, while a real rebuild run during
+investigation independently computed 3 legitimate Top Picks and 53 Value
+picks that never reached `docs/data.json` or Pages. This is a real gap in
+the checklist above item 20 ("verify stale live observations do not create a
+backlog or regress state") — the prior verification did not anticipate an
+orphaned, fully-stale legacy id bricking normalization outright, as opposed
+to merely regressing state. Checklist item 20 should be considered
+re-opened until the canary rollout below is executed and observed.
+
+The correction (branch `pre-phase-v/live-artifact-orphan-migration-fix`,
+scoped strictly to lifecycle publication restoration, no
+`recommendation.py`/model/calibration change) added
+`carries_durable_state()` to `dashboard/live_state.py` and bounded
+`normalize_live()`'s leniency to genuinely legacy-schema input carrying no
+`SETTLEMENT_FIELDS`/`PUBLICATION_FIELDS` content — mirroring the
+legacy/current-schema boundary `normalize_payload()` already enforced. An
+orphan carrying durable settlement or publication content, or any orphan in
+a current-schema document, still fails closed exactly as before. Full detail,
+regression evidence, and remaining required post-merge proof are recorded in
+`engineering/ENGINEERING_HANDOFF.md`'s 2026-08-18 entry; that account is the
+authoritative record of this incident and should be read alongside this
+addendum. The sequential canary rollout (canary live-writer run, confirmed
+Pages deploy, full `dashboard-refresh.yml`, confirmed deploy, live writer
+again, independent repo + public-artifact verification) remains required and
+had not been executed as of this addendum, pending explicit merge
+authorization for the correction above.
 
 Phase V has **not** begun.
