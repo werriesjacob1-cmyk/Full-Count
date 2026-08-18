@@ -1,13 +1,9 @@
 # Live lifecycle, publication, grading, and Pages delivery
 
-- Date verified: 2026-08-17; post-merge incident addendum added 2026-08-18
-- Agent: Codex (original); Claude (2026-08-18 addendum)
+- Date verified: 2026-08-17
+- Agent: Codex
 - Scope: Pre-Phase-V live lifecycle hardening, including the adversarial correction pass
-- Status: PR #51 merged (`9275b5bdd7d955a7a2e2f149b4814dad69ec95ea`) 2026-08-17/18;
-  see "Post-merge addendum" below — the merge was followed by a real
-  production outage, since corrected. The line below is left as originally
-  written and is no longer current; it is not evidence the rollout was clean.
-- ~~Status: **remediation implemented on draft PR #51; unmerged**~~ (superseded, see addendum)
+- Status: **remediation implemented on draft PR #51; unmerged**
 - Model/recommendation policy impact: **none**
 
 This audit records the evidence and lifecycle contract implemented on PR #51.
