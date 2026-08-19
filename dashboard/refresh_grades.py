@@ -25,6 +25,7 @@ try:
         DEFAULT_REGISTRY_PATH, all_published_snapshots, load_registry,
     )
     from .prepare_pages_artifact import normalize_live, normalize_payload
+    from .settlement_rules import player_game_status
 except ImportError:
     from live_state import (
         apply_live_overlay, atomic_write_json, game_state, load_live_state,
@@ -34,6 +35,7 @@ except ImportError:
         DEFAULT_REGISTRY_PATH, all_published_snapshots, load_registry,
     )
     from prepare_pages_artifact import normalize_live, normalize_payload
+    from settlement_rules import player_game_status
 
 
 EARLY_HIT_STATS = frozenset((
@@ -42,6 +44,17 @@ EARLY_HIT_STATS = frozenset((
     "stolen_base", "walks", "pitcher_outs",
 ))
 LIVE_CORRECTION_WINDOW_HOURS = 72
+
+# 2026-08-19 Live Integrity PR 2 (the Keider Montero incident: needed 17
+# outs recorded, was pulled after 15, stayed "open" instead of showing a
+# live miss). Deliberately narrower than EARLY_HIT_STATS: this is a
+# player's OWN counting stat, and ROLE-TERMINAL (gameStatus.isCurrentPitcher
+# going false) only proves that specific player can add no more to it.
+# combined_strikeouts is excluded on purpose -- it sums TWO starters, and
+# one being pulled says nothing about whether the other's continuing
+# outing can still carry the total past the threshold; correctly handling
+# that needs both players' role status, not implemented here.
+PITCHER_ROLE_TERMINAL_STATS = frozenset(("strikeouts", "pitcher_outs"))
 
 
 def _active_public_snapshots(snapshots, payload, live, now):
@@ -136,12 +149,39 @@ def _game_fact(state, stamp, source="mlb_game_feed_by_game_pk"):
     }
 
 
+def _role_terminal_pitcher_removed(row, context):
+    """True if the live feed's own gameStatus shows this pick's pitcher has
+    left the mound (isCurrentPitcher is false) -- the real, standard MLB
+    StatsAPI signal this codebase already relies on for eligibility
+    determination (settlement_rules._players/gameStatus.isSubstitute).
+    A removed pitcher cannot record another out or strikeout in this game.
+
+    ROLE-TERMINAL, not threshold-terminal: this is evidence about WHO can
+    still act, not an independently-provable mathematical impossibility
+    (that would require reasoning about outs/innings remaining regardless
+    of any one player's status -- deliberately not attempted here, see
+    PITCHER_ROLE_TERMINAL_STATS' own comment). Because it is role evidence,
+    the caller must re-evaluate this every single cycle and always write
+    an explicit fact either way, never remembering a stale conclusion --
+    see the call site's own comment."""
+    stat = (row.get("projection") or {}).get("stat") or row.get("stat")
+    if stat not in PITCHER_ROLE_TERMINAL_STATS:
+        return None
+    player_id = row.get("player_id")
+    status = player_game_status((context or {}).get("feed"), player_id)
+    if status is None or "isCurrentPitcher" not in status:
+        return None
+    return not bool(status["isCurrentPitcher"])
+
+
 def _settlement_fact(state, authority, stamp, source, result=None):
     result = result or {}
     reason = result.get("reason")
     if not reason:
         if state == "provisional_hit":
             reason = "live statistic reached the displayed threshold"
+        elif state == "provisional_miss":
+            reason = "pitcher removed from the mound before reaching the displayed threshold"
         elif state in ("hit", "miss"):
             reason = "official final statistic compared with the displayed threshold"
         elif state == "open":
@@ -206,7 +246,8 @@ def refresh(data_path, live_path=None, registry_path=DEFAULT_REGISTRY_PATH):
     changed_ids = set()
     observed_counts = {key: 0 for key in (
         "pregame", "live", "delayed", "suspended", "postponed", "final",
-        "cancelled", "unknown", "provisional_hit", "hit", "miss", "void", "ungraded",
+        "cancelled", "unknown", "provisional_hit", "provisional_miss",
+        "hit", "miss", "void", "ungraded",
     )}
 
     for row in published:
@@ -256,12 +297,30 @@ def refresh(data_path, live_path=None, registry_path=DEFAULT_REGISTRY_PATH):
                             changes.update(fact)
                         observed_counts["provisional_hit"] += 1
                     elif row.get("settlement_state") not in ("provisional_hit", "hit", "miss", "void"):
-                        fact = _settlement_fact(
-                            "open", "live_observation", stamp,
-                            "mlb_live_box_score", observed,
+                        # Re-derived every cycle, never remembered: role-terminal
+                        # evidence is reversible (a later fact can reopen it),
+                        # so both branches below must always write an explicit
+                        # fact rather than skip writing when the prior cycle's
+                        # conclusion no longer holds.
+                        removed = (
+                            _role_terminal_pitcher_removed(row, context)
+                            if observed.get("grade") == "miss" else None
                         )
-                        if not _same_settlement(row, fact):
-                            changes.update(fact)
+                        if removed:
+                            fact = _settlement_fact(
+                                "provisional_miss", "live_observation", stamp,
+                                "mlb_live_role_terminal_pitching_change", observed,
+                            )
+                            if not _same_settlement(row, fact):
+                                changes.update(fact)
+                            observed_counts["provisional_miss"] += 1
+                        else:
+                            fact = _settlement_fact(
+                                "open", "live_observation", stamp,
+                                "mlb_live_box_score", observed,
+                            )
+                            if not _same_settlement(row, fact):
+                                changes.update(fact)
                 elif row.get("settlement_state") not in ("provisional_hit", "hit", "miss", "void"):
                     # Unders and non-monotonic markets never settle early.
                     fact = _settlement_fact(
@@ -301,7 +360,9 @@ def refresh(data_path, live_path=None, registry_path=DEFAULT_REGISTRY_PATH):
     atomic_write_json(live_path, live)
     print(
         f"Wrote {live_path} atomically for {len(changed_ids)} published Top Pick(s); "
-        f"provisional={observed_counts['provisional_hit']} final-hit={observed_counts['hit']} "
+        f"provisional-hit={observed_counts['provisional_hit']} "
+        f"provisional-miss={observed_counts['provisional_miss']} "
+        f"final-hit={observed_counts['hit']} "
         f"final-miss={observed_counts['miss']} void={observed_counts['void']} "
         f"ungraded={observed_counts['ungraded']}."
     )

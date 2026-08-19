@@ -34,10 +34,17 @@ GAME_STATES = frozenset((
     "cancelled", "unknown",
 ))
 SETTLEMENT_STATES = frozenset((
-    "open", "provisional_hit", "hit", "miss", "void", "ungraded",
+    "open", "provisional_hit", "provisional_miss", "hit", "miss", "void", "ungraded",
 ))
 RESULT_AUTHORITIES = frozenset(("none", "live_observation", "official_final"))
 RESULT_AUTHORITY_RANK = {"none": 0, "live_observation": 1, "official_final": 2}
+# provisional_hit is deliberately NOT reversible once observed (a proven
+# threshold crossing cannot un-happen) -- see _first_inning_provisional_hit's
+# own docstring. provisional_miss (2026-08-19 Live Integrity PR 2) is
+# deliberately NOT in this set for the opposite reason: it is ROLE-TERMINAL
+# evidence (a pitcher's own gameStatus.isCurrentPitcher went false), not a
+# permanent mathematical fact, so it must remain re-derivable and explicitly
+# supersedable every cycle rather than protected like a proven hit.
 TERMINAL_SETTLEMENT_STATES = frozenset(("hit", "miss", "void"))
 
 PRICE_FIELDS = frozenset((
@@ -464,11 +471,11 @@ def _validate_settlement_fact(fact):
         raise ValueError(f"{state} requires official_final authority")
     if authority == "official_final" and state not in (*TERMINAL_SETTLEMENT_STATES, "ungraded"):
         raise ValueError("official_final authority requires a final/void/ungraded settlement")
-    if authority == "live_observation" and state not in ("open", "provisional_hit"):
+    if authority == "live_observation" and state not in ("open", "provisional_hit", "provisional_miss"):
         raise ValueError("live observation cannot authoritatively settle hit/miss/void")
     if authority == "none" and state not in ("open", "ungraded"):
         raise ValueError("authority none is valid only for open/ungraded")
-    if state in ("provisional_hit", "hit", "miss") and fact.get("result_actual") is None:
+    if state in ("provisional_hit", "provisional_miss", "hit", "miss") and fact.get("result_actual") is None:
         raise ValueError(f"{state} requires an observed result_actual")
 
 
