@@ -1289,6 +1289,138 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-19",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 88.7,
+          "notable_signals": 3,
+          "matchup": "Los Angeles Dodgers @ Colorado Rockies",
+          "game_pk": 824318,
+          "team": "Los Angeles Dodgers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 100.0,
+            "pitch_exploit": 4.5714,
+            "park_hr_index": 56.2,
+            "season_barrel_pct": 90.0,
+            "lineup_slot": 100.0,
+            "bullpen_fatigue": 66.6667,
+            "bvp_ops": 4.0,
+            "platoon_barrel_pct": 5.0,
+            "platoon_xwoba": 3.96,
+            "park_hand_index": 1.67,
+            "opp_catcher_framing": 0.48,
+            "days_rest": 0.0,
+            "consecutive_games": -1.8,
+            "woba_behind": 50.0,
+            "pull_park_synergy": 1.1515,
+            "hard_hit_105_rate": 3.325,
+            "team_total_move": 0.0,
+            "team_total_open": 6.0,
+            "getaway_day": -2.0,
+            "series_game": 2.0,
+            "sp_rp_ops_gap": -1.4,
+            "vs_rp_ops": 1.44,
+            "ump_k_pct": 0.228,
+            "ump_bb_pct": -0.036
+          },
+          "hit_probability": 0.6597,
+          "raw_hit_probability": 0.6462,
+          "lift": 0.108,
+          "reliability": "A",
+          "sample_n": 117,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 47.4,
+          "notable_signals": 1,
+          "matchup": "Los Angeles Dodgers @ Colorado Rockies",
+          "game_pk": 824318,
+          "team": "Los Angeles Dodgers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": 4.92,
+            "sprint_speed": 12.5,
+            "catcher_poptime": 25.7143,
+            "on_base": 100.0
+          },
+          "hit_probability": 0.0596,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 117,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 37.7,
+          "notable_signals": 1,
+          "matchup": "Los Angeles Dodgers @ Colorado Rockies",
+          "game_pk": 824318,
+          "team": "Los Angeles Dodgers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.1796
+          },
+          "hit_probability": 0.1796,
+          "raw_hit_probability": null,
+          "lift": 0.1301,
+          "reliability": "A",
+          "sample_n": 117,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 13.3,
+          "notable_signals": 1,
+          "matchup": "Los Angeles Dodgers @ Colorado Rockies",
+          "game_pk": 824318,
+          "team": "Los Angeles Dodgers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0659
+          },
+          "hit_probability": 0.0659,
+          "raw_hit_probability": null,
+          "lift": 0.0443,
+          "reliability": "A",
+          "sample_n": 117,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

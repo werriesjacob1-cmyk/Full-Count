@@ -431,9 +431,9 @@
       "date": "2026-08-19",
       "evaluations": [
         {
-          "prop": "Over 0.5 Hits",
+          "prop": "Over 0.5 Hits+Runs+RBIs",
           "type": "batter",
-          "score": 76.4,
+          "score": 76.2,
           "notable_signals": 1,
           "matchup": "Washington Nationals @ Texas Rangers",
           "game_pk": 822860,
@@ -465,13 +465,13 @@
             "ump_k_pct": -0.18,
             "ump_bb_pct": -0.072
           },
-          "hit_probability": 0.5989,
-          "raw_hit_probability": 0.6003,
-          "lift": 0.0472,
+          "hit_probability": 0.6344,
+          "raw_hit_probability": 0.6111,
+          "lift": -0.0328,
           "reliability": "A",
           "sample_n": 114,
           "projection": {
-            "stat": "hits",
+            "stat": "hits_runs_rbis",
             "value": 0.5,
             "needs": 1
           }
