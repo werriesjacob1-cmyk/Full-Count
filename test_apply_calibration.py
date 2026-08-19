@@ -229,8 +229,11 @@ check(abs(out4[0]["hit_probability"] - 0.325) < 1e-9,
       "primary-line calibration for a candidate with no line_options is unaffected",
       f"got {out4[0]['hit_probability']}")
 
-head("17. calibration never touches, invents, or widens a line_options entry's ci -- CI "
-     "semantics are entirely orthogonal to whether a calibrator exists for that market")
+head("17. H1 fix (2026-08-19 structural audit): calibration WITHHOLDS a line_options entry's "
+     "ci once that option is actually calibrated -- a raw-scale Wilson interval no longer "
+     "describes a Platt-calibrated point estimate, and no defensible calibrated-interval "
+     "method exists yet, so the honest answer is None, not the stale raw interval. An "
+     "option's ci is left untouched ONLY when no calibrator actually applied to it.")
 
 c5 = cand("hits", hit_probability=0.70, base_rate=0.50)
 c5["line_options"] = [
@@ -241,16 +244,42 @@ c5["line_options"] = [
 ]
 out5 = gp.apply_calibration([c5], (per_market_multi, glob_multi))
 opts5 = {o["stat"]: o for o in out5[0]["line_options"]}
-check(opts5["hits"]["ci"] == [0.63, 0.77],
-      "a real, defensible ci is left exactly as computed -- calibration changes the "
-      "probability it describes, not the interval itself", str(opts5["hits"]["ci"]))
+check(opts5["hits"]["ci"] is None,
+      "a real, previously-defensible ci is WITHHELD once its option is actually calibrated "
+      "(hits has a real per-market curve here) -- the raw-scale interval no longer describes "
+      "the now-calibrated probability, so H1's fix suppresses it rather than keep a "
+      "scale-mismatched number or mechanically push it through the curve",
+      str(opts5["hits"]))
+check(abs(opts5["hits"]["prob"] - 0.56) < 1e-9,
+      "sanity: the hits option really was calibrated (0.70*0.8=0.56) -- ci suppression is not "
+      "calibration failing, it's the interval being honestly withheld", f"got {opts5['hits']['prob']}")
 check(opts5["home_runs"]["ci"] is None,
-      "an honestly-absent ci (modelled_shrunk basis) stays None even though this option WAS "
-      "successfully calibrated (home_runs has a real per-market curve here) -- calibration "
-      "existing is not license to invent a CI that was never defensible", str(opts5["home_runs"]))
+      "an honestly-absent ci (modelled_shrunk basis, never had a defensible interval to begin "
+      "with) stays None -- calibration existing is not license to invent a CI that was never "
+      "defensible", str(opts5["home_runs"]))
 check(opts5["home_runs"]["prob"] == 0.12,
       "sanity: the home_runs option really was calibrated (0.20*0.6=0.12) even though its ci "
       "correctly remains None", f"got {opts5['home_runs']['prob']}")
+
+# A separate call, deliberately with NO pooled fallback (glob=None), so "runs" truly has
+# no applicable calibrator at all -- per_market_multi has no "runs" entry either. This is
+# the genuine no-calibration-applied case, distinct from c5 above (which used glob_multi,
+# so even a stat with no per-market curve still gets pooled-calibrated).
+c5b = cand("runs", hit_probability=0.40, base_rate=0.30)
+c5b["line_options"] = [
+    {"stat": "runs", "needs": 1, "line": 0.5, "prob": 0.40, "base_rate": 0.30, "lift": 0.10,
+     "basis": "empirical", "ci": [0.30, 0.51]},
+]
+out5b = gp.apply_calibration([c5b], (per_market_multi, None))
+opt_runs = out5b[0]["line_options"][0]
+check(opt_runs["ci"] == [0.30, 0.51],
+      "an option with NO applicable calibrator at all (no per-market curve for 'runs' and no "
+      "pooled fallback) keeps its real, defensible ci EXACTLY as computed -- suppression only "
+      "fires when calibration actually changed the probability the interval described",
+      str(opt_runs))
+check(opt_runs["prob"] == 0.40 and opt_runs.get("calibrated_by") is None,
+      "sanity: runs really was left uncalibrated (no curve applies at all), which is why its "
+      "ci correctly survives untouched", str(opt_runs))
 
 head("18. 2026-08-18 A4 follow-up (found by independent subagent review): c[\"alternatives\"] "
      "(consumed by select_shadow_tracking(), a SEPARATE list of dict objects from "
