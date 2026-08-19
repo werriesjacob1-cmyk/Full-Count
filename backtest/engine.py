@@ -150,7 +150,9 @@ import mlb_sources as msrc      # noqa: E402
 import odds_fanduel as fd       # noqa: E402  -- only ever used for .normalize_name() below;
                                  # backtest never fetches live prices, so nothing here touches
                                  # the network.
-import recommendation as grec   # noqa: E402  -- only used for .git_sha() below, see to_row()
+import recommendation as grec   # noqa: E402  -- .git_sha() (see to_row()) and, when
+                                 # apply_policy=True, attach_recommendations() (see
+                                 # simulate_date() and the "POLICY-ACCURATE REPLAY" section)
 
 CACHE_DIR = os.environ.get("BACKTEST_CACHE", os.path.join(os.path.dirname(os.path.abspath(__file__)), ".cache"))
 os.makedirs(CACHE_DIR, exist_ok=True)
@@ -1107,7 +1109,17 @@ def to_row(date, pick, graded, keep_unpriced=False):
         "sb_cat_skill": pick.get("sb_cat_skill"),
         "sb_cat_matchup": pick.get("sb_cat_matchup"),
         "sb_cat_context": pick.get("sb_cat_context"),
-        "predicted_prob": pick.get("hit_probability"),
+        # ALWAYS the raw, pre-calibration probability, even when apply_policy
+        # ran apply_calibration() -- that mutates pick["hit_probability"] to
+        # the CALIBRATED value in place (see apply_calibration()'s own
+        # code: c["raw_hit_probability"] = c["hit_probability"]; c[
+        # "hit_probability"] = cp), so reading pick["hit_probability"]
+        # directly here would have silently made predicted_prob mean two
+        # different things depending on whether --apply-policy ran --
+        # exactly the "never fit calibration on already-calibrated values"
+        # violation this schema exists to prevent. See calibrated_prob
+        # below for the actual policy-classified number.
+        "predicted_prob": pick.get("raw_hit_probability", pick.get("hit_probability")),
         "outcome": 1 if grade == "hit" else 0,
         "actual": actual,
         # Kept per-row and NEVER pre-filtered, per SCHEMA.md. A pick that got
@@ -1128,6 +1140,42 @@ def to_row(date, pick, graded, keep_unpriced=False):
         row["team"] = pick["team"]
     if graded.get("actual_ip") is not None:
         row["actual_ip"] = graded["actual_ip"]
+    # POLICY-ACCURATE REPLAY (Stage 5): only present when simulate_date() was
+    # called with apply_policy=True -- pick.get() returns None otherwise, so
+    # a default (apply_policy=False) run's row shape is byte-for-byte
+    # unchanged from before this existed (see test_apply_policy_default_off_
+    # matches_pre_policy_row_shape). recommendation_status can structurally
+    # only ever be "lean" or "neutral" here, NEVER "top_pick"/"value" --
+    # market_odds/prob_ci are never populated by a point-in-time replay (see
+    # this module's own coverage_report comment: backtest never fetches live
+    # FanDuel prices), and classify_recommendation()'s own require_robust
+    # gate makes both of those states structurally unreachable without a
+    # real price. This is an honest, structural ceiling, not a bug -- it
+    # measures whether the pre-price probability+evidence gate is sound out
+    # of sample, not whether a specific historical board would have shown a
+    # bettable Top Pick (it could not have, with no real historical odds).
+    # Matches generate_picks.write_json()'s own rename exactly: the candidate
+    # dict attach_recommendations() mutates carries "status" (see
+    # recommendation.classify_recommendation()'s own return shape and
+    # generate_picks.py's own comment: "c.get('status') here, not
+    # 'recommendation_status'"); the OUTPUT row renames it, same as write_json.
+    if pick.get("status") is not None:
+        row["recommendation_status"] = pick["status"]
+        row["status_reasons"] = pick.get("status_reasons") or []
+    if pick.get("reliability") is not None:
+        row["reliability"] = pick["reliability"]
+    # The actual number classify_recommendation() evaluated (raw
+    # predicted_prob run through the real fitted curve), kept OUT of
+    # predicted_prob itself so that field's meaning never depends on
+    # whether --apply-policy ran. calibrated_by is None both when no
+    # curve applies to this market and when it does but this exact
+    # probability sat outside its own support region (see
+    # generate_picks._calibrate_one()'s own docstring) -- recorded either
+    # way so a reader can tell "not calibrated" from "calibration declined,
+    # out of support" rather than treating both as the same silence.
+    if pick.get("raw_hit_probability") is not None:
+        row["calibrated_prob"] = pick.get("hit_probability")
+        row["calibrated_by"] = pick.get("calibrated_by")
     return row
 
 
@@ -1186,11 +1234,59 @@ def best_of_category_extras(candidates):
     ]
 
 
+def apply_replay_policy_precalibration(candidates, emp_batters, emp_pitchers):
+    """Stage 5, POLICY-ACCURATE REPLAY: the calibration/reliability half of
+    generate_picks.py's _build_and_score(), reused verbatim and in its real
+    order -- "Calibrate BEFORE ranking and before the positive-read floor,
+    so both operate on the honest number rather than the overstated one."
+    Mutates `candidates` in place (matching apply_calibration's/
+    attach_reliability's own in-place convention). Split out from
+    apply_replay_policy_classification() specifically so it runs BEFORE
+    best_of_category_extras() -- calibrating here is what lets those
+    extras inherit already-calibrated line_options/alternatives, matching
+    how select_best_by_category() consumes them live."""
+    gp.apply_calibration(candidates, gp.load_calibrator())
+    gp.attach_reliability(candidates, emp_batters, emp_pitchers)
+
+
+def apply_replay_policy_classification(candidates, extra_candidates, date):
+    """Stage 5, POLICY-ACCURATE REPLAY: the real recommendation.
+    attach_recommendations(), reused verbatim, run on both the main
+    candidates and the best-of-category extras.
+
+    No real historical market odds or board-refresh timestamp exist for a
+    point-in-time replay (this module's own coverage_report explicitly
+    documents that backtest never fetches live FanDuel prices) -- board_dt
+    stands in as a fixed, honest "now" so freshness_check() measures zero
+    staleness rather than reporting a false "board is thousands of hours
+    old" reason that has nothing to do with the real question this
+    answers. It is classify_recommendation()'s own market_odds-is-None
+    branch (not this) that actually, correctly caps every row at "lean" or
+    below -- see to_row()'s own comment on why "top_pick"/"value" are
+    structurally unreachable here."""
+    board_iso = f"{date}T12:00:00+00:00"
+    board_dt = datetime.fromisoformat(board_iso)
+    grec.attach_recommendations(candidates, now=board_dt, board_generated_at=board_iso)
+    grec.attach_recommendations(extra_candidates, now=board_dt, board_generated_at=board_iso)
+
+
 def simulate_date(date, store, use_weather=True, use_bullpen=True, keep_unpriced=False,
-                  verbose=True) -> DateResult:
+                  verbose=True, apply_policy=False) -> DateResult:
     """Reconstruct, score and grade one past date. Never raises for data
     problems — a failed date is reported, not fatal, so a 60-day run does not
-    die on one bad slate."""
+    die on one bad slate.
+
+    apply_policy=True (Stage 5, POLICY-ACCURATE REPLAY): additionally runs
+    the exact real functions generate_picks.py's live path calls, in the
+    exact same order (see generate_picks.py's _build_and_score(), the one
+    real call site this mirrors) -- gp.apply_calibration() then
+    gp.attach_reliability() on `candidates` (which also calibrates every
+    line_options/alternatives entry, so best_of_category_extras() below
+    inherits calibrated values exactly like the live board does), then
+    recommendation.attach_recommendations() on the combined candidate +
+    extras list. Nothing here is reimplemented; every one of those is the
+    same function production calls. Default False leaves every existing
+    caller, and every existing backtest row's exact shape, untouched."""
     res = DateResult(date)
     cutoff = shift(date, -1)
     try:
@@ -1247,6 +1343,13 @@ def simulate_date(date, store, use_weather=True, use_bullpen=True, keep_unpriced
             league_rates = msrc.league_base_rates()
             gp.attach_hit_probabilities(candidates, comp_table, emp_batters, emp_pitchers, league_rates)
 
+            if apply_policy:
+                # Calibrating here (not after best_of_category_extras below)
+                # is what lets extras inherit already-calibrated
+                # line_options/alternatives, matching how
+                # select_best_by_category() consumes them live.
+                apply_replay_policy_precalibration(candidates, emp_batters, emp_pitchers)
+
             # Best-of-category candidates: total_bases/home_runs/runs/rbis/
             # doubles/triples never win build_candidates()'s single-pick
             # slot per batter, but ship live every night via
@@ -1254,6 +1357,9 @@ def simulate_date(date, store, use_weather=True, use_bullpen=True, keep_unpriced
             # docstring for the full reasoning.
             extra_candidates = best_of_category_extras(candidates)
             res.n_candidates = len(candidates) + len(extra_candidates)
+
+            if apply_policy:
+                apply_replay_policy_classification(candidates, extra_candidates, date)
     except LookaheadError:
         raise                            # never degrade a leak into a warning
     except Exception as e:
@@ -1538,7 +1644,7 @@ def dates_already_in_output(out_path):
 
 def run_backtest(start, end, out_path, store=None, sleep=DEFAULT_SLEEP,
                  use_weather=True, use_bullpen=True, keep_unpriced=False,
-                 force=False, verbose=True):
+                 force=False, verbose=True, apply_policy=False):
     dates = date_range(start, end)
     os.makedirs(os.path.dirname(os.path.abspath(out_path)) or ".", exist_ok=True)
 
@@ -1577,7 +1683,7 @@ def run_backtest(start, end, out_path, store=None, sleep=DEFAULT_SLEEP,
             t0 = time.time()
             res = simulate_date(d, store, use_weather=use_weather,
                                 use_bullpen=use_bullpen, keep_unpriced=keep_unpriced,
-                                verbose=verbose)
+                                verbose=verbose, apply_policy=apply_policy)
             elapsed = round(time.time() - t0, 1)
 
             if res.status == "no_games":
@@ -1728,6 +1834,13 @@ def main(argv=None) -> int:
     ap.add_argument("--force", action="store_true",
                     help="ignore existing state and re-simulate every date "
                          "(truncates the output file)")
+    ap.add_argument("--apply-policy", action="store_true",
+                    help="Stage 5: also run the real apply_calibration()/attach_reliability()/"
+                         "attach_recommendations() and record recommendation_status/reliability "
+                         "on each row. No real historical market odds exist, so "
+                         "recommendation_status can only ever reach lean/neutral here, never "
+                         "top_pick/value -- this validates the probability+evidence gate "
+                         "out of sample, not a literal historical board")
     ap.add_argument("--quiet", action="store_true")
     args = ap.parse_args(argv)
 
@@ -1762,7 +1875,8 @@ def main(argv=None) -> int:
     summary, state = run_backtest(
         args.start, args.end, args.out, store=store, sleep=args.sleep,
         use_weather=not args.no_weather, use_bullpen=not args.no_bullpen,
-        keep_unpriced=args.keep_unpriced, force=args.force, verbose=verbose)
+        keep_unpriced=args.keep_unpriced, force=args.force, verbose=verbose,
+        apply_policy=args.apply_policy)
 
     print(coverage_report(args.out, state))
     print(f"\nWrote {summary['rows']} new rows to {args.out}")

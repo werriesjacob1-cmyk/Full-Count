@@ -29,7 +29,10 @@ happened. This is the single interface between the three pieces.
   "fair_test": true,
   "actual_pa": 4,
   "code_git_sha": "6d01e83",
-  "backtest_generated_at": "2026-08-16T14:02:11+00:00"
+  "backtest_generated_at": "2026-08-16T14:02:11+00:00",
+  "recommendation_status": "lean",
+  "status_reasons": ["a real read, but no market price is posted yet to grade a Top Pick's price/value requirement against"],
+  "reliability": "A"
 }
 ```
 
@@ -78,6 +81,44 @@ happened. This is the single interface between the three pieces.
   `code_git_sha` as "unknown formula version," never as a specific one,
   when segmenting historical rows for the data-integrity tiers this
   enables (see `results/ANALYSIS.md`).
+- `recommendation_status`/`status_reasons`/`reliability` — Stage 5,
+  POLICY-ACCURATE REPLAY, added 2026-08-19. Present ONLY when a run used
+  `--apply-policy` (`simulate_date(..., apply_policy=True)`); absent
+  entirely (not `null`) on every row from a default run, including every
+  row already in `backtest/rows.jsonl` today. When present, these are the
+  REAL `generate_picks.apply_calibration()`/`attach_reliability()` and
+  `recommendation.attach_recommendations()` — the identical functions and
+  call order `generate_picks.py`'s live board uses, reused verbatim, never
+  reimplemented (see `backtest/engine.py`'s `apply_replay_policy_
+  precalibration()`/`apply_replay_policy_classification()`). This answers
+  "does the CURRENT probability+evidence+calibration policy hold up out of
+  sample on historical data it never saw," not "what would this exact
+  historical date's board have shown" — `recommendation_status` here can
+  only ever be `"lean"` or `"neutral"`, structurally NEVER `"top_pick"` or
+  `"value"`, because no real historical market odds exist for a
+  point-in-time replay (market signals are explicitly out of scope for
+  backtesting, same limitation as always). Do not read a `"lean"` row here
+  as "this would have been published" — it means "the model's own read,
+  independent of price, was real and positive."
+- `predicted_prob` above is always the raw, pre-calibration probability
+  regardless of `--apply-policy` — Stage 5 does not change what
+  `predicted_prob` means; the calibrated value lives only inside the
+  `recommendation_status` classification, matching how `hit_probability`
+  is likewise only ever calibrated on the live candidate object, never on
+  the row's own probability field.
+- `calibrated_prob`/`calibrated_by` — Stage 5, present only alongside
+  `recommendation_status` (same `--apply-policy` gate). The actual number
+  `classify_recommendation()` evaluated: raw `predicted_prob` run through
+  the real fitted calibrator, kept OUT of `predicted_prob` itself for the
+  exact reason above (a real bug caught while building this: `apply_
+  calibration()` mutates the live candidate's probability in place, so
+  reading it directly here would have silently changed `predicted_prob`'s
+  meaning whenever `--apply-policy` was used). `calibrated_by` is `None`
+  both when no curve exists for this market AND when one exists but this
+  exact probability sat outside its own fitted support region (see
+  `generate_picks._calibrate_one()`'s own docstring) — the two are told
+  apart by whether `calibrated_prob` actually differs from `predicted_prob`,
+  never by `calibrated_by` alone.
 
 ## THE RULE THAT MATTERS MOST: no lookahead
 

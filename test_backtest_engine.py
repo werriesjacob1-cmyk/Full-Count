@@ -155,6 +155,127 @@ check(row6b["code_git_sha"] == row6["code_git_sha"] and
      "two different historical dates in the SAME run share the identical code/run stamp -- "
      "confirming this is a real run-level constant, not per-row noise")
 
+head("7. STAGE 5 (policy-accurate replay): to_row() only carries "
+     "recommendation_status/status_reasons/reliability when apply_policy actually set them "
+     "on the pick -- a default (apply_policy=False) run's row shape must stay byte-for-byte "
+     "identical to before this existed")
+
+row7_bare = bt.to_row("2026-06-14", pick6, graded6)
+check("recommendation_status" not in row7_bare, "no recommendation_status key at all when "
+      "the pick never carried one -- not a None value, genuinely absent",
+      f"row keys={sorted(row7_bare)}")
+check("status_reasons" not in row7_bare, "same for status_reasons")
+check("reliability" not in row7_bare, "same for reliability")
+
+pick7_policy = dict(pick6, status="lean",
+                    status_reasons=["a real, positive read that doesn't clear every Top "
+                                    "Pick requirement"], reliability="B")
+row7_policy = bt.to_row("2026-06-14", pick7_policy, graded6)
+check(row7_policy.get("recommendation_status") == "lean",
+      "the candidate's own 'status' field (classify_recommendation()'s real return key, "
+      "matching generate_picks.write_json()'s own rename convention) becomes the row's "
+      "recommendation_status")
+check(row7_policy.get("status_reasons") == pick7_policy["status_reasons"],
+      "status_reasons carried through verbatim")
+check(row7_policy.get("reliability") == "B", "reliability carried through")
+
+head("8. STAGE 5: apply_replay_policy_precalibration() runs the REAL "
+     "apply_calibration()/attach_reliability(), in generate_picks.py's own real order, "
+     "against the real shipped calibrator")
+
+cand8 = {
+    "player_id": 501, "type": "batter",
+    "projection": {"stat": "hits", "needs": 1, "value": 0.5},
+    "hit_probability": 0.55, "line_options": [], "alternatives": [],
+}
+bt.apply_replay_policy_precalibration([cand8], emp_batters={501: {"games": 62}}, emp_pitchers={})
+check(cand8.get("reliability") is not None,
+      "attach_reliability() ran and set a real letter grade", f"got {cand8.get('reliability')!r}")
+check("raw_hit_probability" in cand8 or cand8.get("calibrated_by") is None,
+      "either the real hits calibrator transformed this probability (raw_hit_probability kept "
+      "alongside it, matching apply_calibration()'s own contract) or it genuinely declined to "
+      "(calibrated_by is None) -- never silently neither",
+      f"hit_probability={cand8.get('hit_probability')!r} "
+      f"calibrated_by={cand8.get('calibrated_by')!r} "
+      f"raw_hit_probability={cand8.get('raw_hit_probability')!r}")
+
+head("9. STAGE 5: apply_replay_policy_classification() runs the REAL "
+     "recommendation.attach_recommendations() -- and recommendation_status can only ever "
+     "reach lean/neutral here, NEVER top_pick/value, because no real historical market_odds "
+     "exists for a point-in-time replay (this is a structural ceiling, not a bug)")
+
+strong_no_odds = {
+    "player_id": 502, "type": "batter",
+    "projection": {"stat": "hits", "needs": 1, "value": 0.5},
+    "hit_probability": 0.90, "reliability": "A", "lineup_assumed": False,
+    "lift": 0.30, "line_options": [], "alternatives": [],
+    # Deliberately no market_odds/prob_ci -- exactly what a real backtest
+    # replay candidate looks like (see this module's own coverage_report:
+    # backtest never fetches live FanDuel prices).
+}
+weak = {
+    "player_id": 503, "type": "batter",
+    "projection": {"stat": "hits", "needs": 1, "value": 0.5},
+    "hit_probability": 0.50, "reliability": "D", "lineup_assumed": False,
+    "lift": 0.0, "line_options": [], "alternatives": [],
+}
+bt.apply_replay_policy_classification([strong_no_odds, weak], [], "2026-06-14")
+check(strong_no_odds.get("status") in ("lean", "neutral", "value", "top_pick"),
+      "a real status was assigned at all", f"got {strong_no_odds.get('status')!r}")
+check(strong_no_odds.get("status") not in ("top_pick", "value"),
+      "even a 90% probability, grade-A, confirmed-lineup, strongly-lifted candidate cannot "
+      "reach top_pick/value without real market_odds -- classify_recommendation()'s own "
+      "require_robust gate makes this structurally unreachable, exactly matching what a "
+      "real historical board could and could not have shown without real historical prices",
+      f"got {strong_no_odds.get('status')!r}")
+check(strong_no_odds.get("status") == "lean",
+      "specifically lean: strong probability+evidence+lineup with no price to test is exactly "
+      "classify_recommendation()'s own odds-is-None -> lean branch",
+      f"got {strong_no_odds.get('status')!r} / "
+      f"reasons={strong_no_odds.get('status_reasons')!r}")
+check(any("market price" in r for r in (strong_no_odds.get("status_reasons") or [])),
+      "the real reason string explains the missing price honestly, not a generic refusal",
+      f"got {strong_no_odds.get('status_reasons')!r}")
+check(weak.get("status") == "neutral",
+      "a genuinely weak read with no price stays neutral, not lean",
+      f"got {weak.get('status')!r}")
+
+head("9b. STAGE 5: to_row() correctly renders the FULL replay pipeline's output -- "
+     "apply_replay_policy_classification()'s candidate (carrying 'status') becomes a row "
+     "carrying 'recommendation_status', end to end")
+
+row9 = bt.to_row("2026-06-14", strong_no_odds, graded6)
+check(row9.get("recommendation_status") == "lean",
+      "the row correctly shows 'lean', not the raw internal 'status' key name nor None",
+      f"got row keys={sorted(row9)}")
+
+head("10. STAGE 5, real bug caught while building this: apply_calibration() mutates "
+     "pick['hit_probability'] to the CALIBRATED value in place -- to_row()'s predicted_prob "
+     "must stay the RAW value regardless of --apply-policy, or every future calibration fit "
+     "against a policy-annotated row would be fitting a curve on already-calibrated numbers")
+
+cand10 = {
+    "player_id": 504, "type": "batter",
+    "projection": {"stat": "hits", "needs": 1, "value": 0.5},
+    "hit_probability": 0.55, "line_options": [], "alternatives": [],
+}
+bt.apply_replay_policy_precalibration([cand10], emp_batters={504: {"games": 62}}, emp_pitchers={})
+check(cand10.get("hit_probability") != 0.55,
+      "sanity check on the fixture itself: the real hits calibrator actually transformed "
+      "this probability (otherwise this test would pass vacuously)",
+      f"got hit_probability={cand10.get('hit_probability')!r}")
+row10 = bt.to_row("2026-06-14", cand10, graded6)
+check(row10.get("predicted_prob") == 0.55,
+      "predicted_prob is still the RAW 0.55, not the calibrated in-place value",
+      f"got predicted_prob={row10.get('predicted_prob')!r}")
+check(row10.get("calibrated_prob") == cand10.get("hit_probability"),
+      "the calibrated number is recorded separately as calibrated_prob, so it isn't lost -- "
+      "just kept out of predicted_prob's single, stable meaning",
+      f"got calibrated_prob={row10.get('calibrated_prob')!r} "
+      f"vs candidate hit_probability={cand10.get('hit_probability')!r}")
+check(row10.get("calibrated_by") == "hits", "calibrated_by carried through too",
+      f"got {row10.get('calibrated_by')!r}")
+
 n_pass = sum(1 for ok, _, _ in _results if ok)
 n_total = len(_results)
 print("\n" + "=" * 78)
