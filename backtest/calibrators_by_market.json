@@ -13,6 +13,131 @@
       "date_range": [
         "2026-07-10",
         "2026-08-08"
+      ],
+      "support_bin_width": 0.05,
+      "support_min_count": 30,
+      "support_rows_basis": "train_only_reconstructed",
+      "support_bins": [
+        {
+          "lo": 0.0,
+          "hi": 0.05,
+          "count": 0,
+          "supported": false
+        },
+        {
+          "lo": 0.05,
+          "hi": 0.1,
+          "count": 0,
+          "supported": false
+        },
+        {
+          "lo": 0.1,
+          "hi": 0.15,
+          "count": 0,
+          "supported": false
+        },
+        {
+          "lo": 0.15,
+          "hi": 0.2,
+          "count": 0,
+          "supported": false
+        },
+        {
+          "lo": 0.2,
+          "hi": 0.25,
+          "count": 0,
+          "supported": false
+        },
+        {
+          "lo": 0.25,
+          "hi": 0.3,
+          "count": 0,
+          "supported": false
+        },
+        {
+          "lo": 0.3,
+          "hi": 0.35,
+          "count": 0,
+          "supported": false
+        },
+        {
+          "lo": 0.35,
+          "hi": 0.4,
+          "count": 0,
+          "supported": false
+        },
+        {
+          "lo": 0.4,
+          "hi": 0.45,
+          "count": 8,
+          "supported": false
+        },
+        {
+          "lo": 0.45,
+          "hi": 0.5,
+          "count": 23,
+          "supported": false
+        },
+        {
+          "lo": 0.5,
+          "hi": 0.55,
+          "count": 156,
+          "supported": false
+        },
+        {
+          "lo": 0.55,
+          "hi": 0.6,
+          "count": 307,
+          "supported": true
+        },
+        {
+          "lo": 0.6,
+          "hi": 0.65,
+          "count": 2391,
+          "supported": true
+        },
+        {
+          "lo": 0.65,
+          "hi": 0.7,
+          "count": 203,
+          "supported": true
+        },
+        {
+          "lo": 0.7,
+          "hi": 0.75,
+          "count": 8,
+          "supported": false
+        },
+        {
+          "lo": 0.75,
+          "hi": 0.8,
+          "count": 0,
+          "supported": false
+        },
+        {
+          "lo": 0.8,
+          "hi": 0.85,
+          "count": 0,
+          "supported": false
+        },
+        {
+          "lo": 0.85,
+          "hi": 0.9,
+          "count": 0,
+          "supported": false
+        },
+        {
+          "lo": 0.9,
+          "hi": 0.95,
+          "count": 0,
+          "supported": false
+        },
+        {
+          "lo": 0.95,
+          "hi": 1.0,
+          "count": 0,
+          "supported": false
+        }
       ]
     }
   },
@@ -30,6 +155,131 @@
       "date_range": [
         "2026-07-10",
         "2026-08-08"
+      ],
+      "support_bin_width": 0.05,
+      "support_min_count": 30,
+      "support_rows_basis": "train_only_reconstructed",
+      "support_bins": [
+        {
+          "lo": 0.0,
+          "hi": 0.05,
+          "count": 0,
+          "supported": false
+        },
+        {
+          "lo": 0.05,
+          "hi": 0.1,
+          "count": 0,
+          "supported": false
+        },
+        {
+          "lo": 0.1,
+          "hi": 0.15,
+          "count": 0,
+          "supported": false
+        },
+        {
+          "lo": 0.15,
+          "hi": 0.2,
+          "count": 0,
+          "supported": false
+        },
+        {
+          "lo": 0.2,
+          "hi": 0.25,
+          "count": 0,
+          "supported": false
+        },
+        {
+          "lo": 0.25,
+          "hi": 0.3,
+          "count": 0,
+          "supported": false
+        },
+        {
+          "lo": 0.3,
+          "hi": 0.35,
+          "count": 0,
+          "supported": false
+        },
+        {
+          "lo": 0.35,
+          "hi": 0.4,
+          "count": 0,
+          "supported": false
+        },
+        {
+          "lo": 0.4,
+          "hi": 0.45,
+          "count": 0,
+          "supported": false
+        },
+        {
+          "lo": 0.45,
+          "hi": 0.5,
+          "count": 1,
+          "supported": false
+        },
+        {
+          "lo": 0.5,
+          "hi": 0.55,
+          "count": 27,
+          "supported": false
+        },
+        {
+          "lo": 0.55,
+          "hi": 0.6,
+          "count": 384,
+          "supported": true
+        },
+        {
+          "lo": 0.6,
+          "hi": 0.65,
+          "count": 1342,
+          "supported": true
+        },
+        {
+          "lo": 0.65,
+          "hi": 0.7,
+          "count": 1135,
+          "supported": true
+        },
+        {
+          "lo": 0.7,
+          "hi": 0.75,
+          "count": 424,
+          "supported": true
+        },
+        {
+          "lo": 0.75,
+          "hi": 0.8,
+          "count": 123,
+          "supported": true
+        },
+        {
+          "lo": 0.8,
+          "hi": 0.85,
+          "count": 0,
+          "supported": false
+        },
+        {
+          "lo": 0.85,
+          "hi": 0.9,
+          "count": 0,
+          "supported": false
+        },
+        {
+          "lo": 0.9,
+          "hi": 0.95,
+          "count": 0,
+          "supported": false
+        },
+        {
+          "lo": 0.95,
+          "hi": 1.0,
+          "count": 0,
+          "supported": false
+        }
       ]
     }
   },
@@ -47,6 +297,131 @@
       "date_range": [
         "2026-07-09",
         "2026-08-03"
+      ],
+      "support_bin_width": 0.05,
+      "support_min_count": 30,
+      "support_rows_basis": "train_only_reconstructed",
+      "support_bins": [
+        {
+          "lo": 0.0,
+          "hi": 0.05,
+          "count": 0,
+          "supported": false
+        },
+        {
+          "lo": 0.05,
+          "hi": 0.1,
+          "count": 0,
+          "supported": false
+        },
+        {
+          "lo": 0.1,
+          "hi": 0.15,
+          "count": 0,
+          "supported": false
+        },
+        {
+          "lo": 0.15,
+          "hi": 0.2,
+          "count": 0,
+          "supported": false
+        },
+        {
+          "lo": 0.2,
+          "hi": 0.25,
+          "count": 0,
+          "supported": false
+        },
+        {
+          "lo": 0.25,
+          "hi": 0.3,
+          "count": 0,
+          "supported": false
+        },
+        {
+          "lo": 0.3,
+          "hi": 0.35,
+          "count": 0,
+          "supported": false
+        },
+        {
+          "lo": 0.35,
+          "hi": 0.4,
+          "count": 11,
+          "supported": false
+        },
+        {
+          "lo": 0.4,
+          "hi": 0.45,
+          "count": 28,
+          "supported": false
+        },
+        {
+          "lo": 0.45,
+          "hi": 0.5,
+          "count": 14,
+          "supported": false
+        },
+        {
+          "lo": 0.5,
+          "hi": 0.55,
+          "count": 28,
+          "supported": false
+        },
+        {
+          "lo": 0.55,
+          "hi": 0.6,
+          "count": 35,
+          "supported": true
+        },
+        {
+          "lo": 0.6,
+          "hi": 0.65,
+          "count": 154,
+          "supported": true
+        },
+        {
+          "lo": 0.65,
+          "hi": 0.7,
+          "count": 164,
+          "supported": true
+        },
+        {
+          "lo": 0.7,
+          "hi": 0.75,
+          "count": 131,
+          "supported": true
+        },
+        {
+          "lo": 0.75,
+          "hi": 0.8,
+          "count": 44,
+          "supported": true
+        },
+        {
+          "lo": 0.8,
+          "hi": 0.85,
+          "count": 0,
+          "supported": false
+        },
+        {
+          "lo": 0.85,
+          "hi": 0.9,
+          "count": 0,
+          "supported": false
+        },
+        {
+          "lo": 0.9,
+          "hi": 0.95,
+          "count": 0,
+          "supported": false
+        },
+        {
+          "lo": 0.95,
+          "hi": 1.0,
+          "count": 0,
+          "supported": false
+        }
       ]
     }
   }

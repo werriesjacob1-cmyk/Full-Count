@@ -329,6 +329,79 @@ def calibration_curve_ascii(rows, n_bins=10, fair_test_only=False, prop_type=Non
 
 
 # ══════════════════════════════════════════════════════════════════════════
+#  3b. Support region -- where a fitted curve has real evidence behind it
+# ══════════════════════════════════════════════════════════════════════════
+#
+# A fitted 2-parameter curve is defined over all of [0,1] mathematically, but
+# it only has real EVIDENCE where the fitting data actually had rows. Outside
+# that, "calibration" is unconstrained extrapolation that can produce large,
+# confident-looking corrections in a region with zero support -- found live,
+# 2026-08-19: the strikeouts curve's own inflection point sits at raw
+# p~=0.15, a region neither its 609 training rows nor its 252 held-out rows
+# ever touched (real floor closer to raw ~0.36-0.50 depending on how
+# "enough evidence" is defined), yet it was being applied there anyway,
+# manufacturing corrections of +40 percentage points on zero data.
+#
+# SUPPORT DEFINITION, chosen after comparing raw min/max, quantile bounds,
+# and local sample density (see the PR that added this): LOCAL DENSITY,
+# not min/max. A single outlier row defining a market's entire usable range,
+# or an unnoticed gap in the middle of the range (found live: `hits`' own
+# curve has a near-empty band around its own p=0.53 midpoint despite a raw
+# min/max spanning nearly [0,1]), are both real failure modes min/max alone
+# cannot see. min_count reuses MIN_BIN_COUNT verbatim -- the same number
+# this module already uses to decide "trustworthy bin" everywhere else, not
+# a new invented threshold.
+SUPPORT_BIN_WIDTH = 0.05
+
+
+def compute_support_bins(rows, bin_width=SUPPORT_BIN_WIDTH, min_count=MIN_BIN_COUNT):
+    """{lo, hi, count, supported} for every bin_width-wide bin across [0,1],
+    counting real rows by predicted_prob. A bin is "supported" (has enough
+    evidence to trust a calibrator's correction there) iff count >= min_count.
+
+    `rows` should be exactly the rows a calibrator was fit on (or, for a
+    combined train+held-out basis, their union -- held-out rows never
+    influenced the fitted parameters, so including them to characterize
+    support is corroboration, not double-dipping; keep the accuracy claim
+    itself held-out-only regardless). Deliberately a plain function of rows,
+    not tied to a Calibrator instance, so it can be computed once and stored
+    in .meta rather than re-derived from raw rows at apply time -- apply-time
+    code has no access to (and should not need) the original row file."""
+    n_bins = int(round(1.0 / bin_width))
+    counts = [0] * n_bins
+    for r in rows:
+        try:
+            p = float(r["predicted_prob"])
+        except (KeyError, TypeError, ValueError):
+            continue
+        # +1e-9 guards against float division landing an exact bin-boundary
+        # value (e.g. 0.6/0.05 == 11.999999999999998 in real IEEE-754
+        # arithmetic) one bin low -- negligible next to bin_width=0.05,
+        # decisive at an exact boundary.
+        idx = min(n_bins - 1, max(0, int((p + 1e-9) / bin_width)))
+        counts[idx] += 1
+    bins = []
+    for i in range(n_bins):
+        lo, hi = round(i * bin_width, 10), round((i + 1) * bin_width, 10)
+        bins.append({"lo": lo, "hi": hi, "count": counts[i], "supported": counts[i] >= min_count})
+    return bins
+
+
+def in_support(p, support_bins):
+    """Whether probability p falls in a bin compute_support_bins marked
+    supported. Returns None (not a guess in either direction) when
+    support_bins itself is missing/empty -- absence of support information
+    is not evidence either way, and the caller must decide how to treat
+    that rather than this function silently defaulting to "yes" or "no"."""
+    if not support_bins:
+        return None
+    for b in support_bins:
+        if b["lo"] <= p < b["hi"] or (p >= 1.0 and b["hi"] >= 1.0):
+            return bool(b["supported"])
+    return False
+
+
+# ══════════════════════════════════════════════════════════════════════════
 #  4. Fitting calibrators -- Platt scaling and isotonic regression (PAV)
 # ══════════════════════════════════════════════════════════════════════════
 
@@ -507,6 +580,11 @@ def fit_calibrator(rows, method="isotonic", fair_test_only=False, prop_type=None
         "fair_test_only": fair_test_only,
         "prop_type": prop_type or "all",
         "date_range": [min(dates), max(dates)] if dates else None,
+        "support_bin_width": SUPPORT_BIN_WIDTH,
+        "support_min_count": MIN_BIN_COUNT,
+        "support_rows_basis": "train_only",
+        "support_bins": compute_support_bins(filtered, bin_width=SUPPORT_BIN_WIDTH,
+                                             min_count=MIN_BIN_COUNT),
     }
     if method == "isotonic":
         x_pts, y_pts = _fit_isotonic(p, y)

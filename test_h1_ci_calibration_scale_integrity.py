@@ -237,11 +237,13 @@ head("8. recommendation.py and prop_probability.py are byte-for-byte untouched b
 
 _repo_dir = os.path.dirname(os.path.abspath(__file__))
 _diff_files = os.popen("git -C %s diff --name-only origin/main -- recommendation.py "
-                       "prop_probability.py backtest/calibrators_by_market.json"
+                       "prop_probability.py"
                        % _repo_dir).read().strip()
-check(_diff_files == "", "no working-tree diff against origin/main in recommendation.py, "
-      "prop_probability.py, or the calibrator artifact -- the entire fix lives in "
-      "generate_picks.py plus tests", f"got changed files: {_diff_files!r}")
+check(_diff_files == "", "no diff against origin/main in recommendation.py or "
+      "prop_probability.py -- H1's own fix lives entirely in generate_picks.py plus tests. "
+      "(The calibrator artifact's fitted PARAMS specifically -- not the whole file -- are "
+      "checked directly in section 6 above; a later PR may add metadata alongside them "
+      "without invalidating this check.)", f"got changed files: {_diff_files!r}")
 
 
 n_pass = sum(1 for ok, _, _ in _results if ok)
