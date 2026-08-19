@@ -802,6 +802,108 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-19",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 83.8,
+          "notable_signals": 3,
+          "matchup": "New York Yankees @ Baltimore Orioles",
+          "game_pk": 824801,
+          "team": "New York Yankees",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 79.1429,
+            "pitch_exploit": 3.4286,
+            "park_hr_index": 76.2,
+            "season_barrel_pct": 84.0,
+            "lineup_slot": 87.5,
+            "bullpen_fatigue": 71.4286,
+            "bvp_ops": -0.72,
+            "platoon_barrel_pct": 5.0,
+            "platoon_xwoba": 5.0,
+            "opp_catcher_framing": -0.12,
+            "days_rest": 0.0,
+            "woba_ahead": 17.2727,
+            "woba_behind": 69.0909,
+            "hard_hit_105_rate": 1.465,
+            "team_total_move": 0.0,
+            "team_total_open": 0.0,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": 1.376,
+            "vs_rp_ops": 3.072,
+            "ump_k_pct": -0.96,
+            "ump_bb_pct": -0.444
+          },
+          "hit_probability": 0.609,
+          "raw_hit_probability": 0.6077,
+          "lift": 0.0573,
+          "reliability": "A",
+          "sample_n": 120,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 19.0,
+          "notable_signals": 1,
+          "matchup": "New York Yankees @ Baltimore Orioles",
+          "game_pk": 824801,
+          "team": "New York Yankees",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.1052
+          },
+          "hit_probability": 0.1052,
+          "raw_hit_probability": null,
+          "lift": 0.0557,
+          "reliability": "A",
+          "sample_n": 120,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 7.0,
+          "notable_signals": 0,
+          "matchup": "New York Yankees @ Baltimore Orioles",
+          "game_pk": 824801,
+          "team": "New York Yankees",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0408
+          },
+          "hit_probability": 0.0408,
+          "raw_hit_probability": null,
+          "lift": 0.0192,
+          "reliability": "A",
+          "sample_n": 120,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

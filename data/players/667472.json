@@ -1088,6 +1088,135 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-19",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 70.4,
+          "notable_signals": 1,
+          "matchup": "St. Louis Cardinals @ Cincinnati Reds",
+          "game_pk": 824476,
+          "team": "Cincinnati Reds",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 75.7143,
+            "park_hr_index": 43.7,
+            "season_barrel_pct": 12.0,
+            "lineup_slot": 75.0,
+            "bullpen_fatigue": 64.1026,
+            "platoon_barrel_pct": 0.88,
+            "platoon_xwoba": 2.88,
+            "park_hand_index": 1.34,
+            "opp_catcher_framing": -0.84,
+            "days_rest": 0.0,
+            "woba_ahead": 50.9091,
+            "woba_behind": 9.0909,
+            "pull_park_synergy": -0.1829,
+            "team_total_move": 0.0,
+            "team_total_open": 0.0,
+            "getaway_day": 0.0,
+            "series_game": 3.0,
+            "sp_rp_ops_gap": -0.832,
+            "vs_rp_ops": -0.444,
+            "ump_k_pct": -0.84,
+            "ump_bb_pct": -0.072
+          },
+          "hit_probability": 0.6106,
+          "raw_hit_probability": 0.6089,
+          "lift": 0.0589,
+          "reliability": "A",
+          "sample_n": 81,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 35.9,
+          "notable_signals": 0,
+          "matchup": "St. Louis Cardinals @ Cincinnati Reds",
+          "game_pk": 824476,
+          "team": "Cincinnati Reds",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": 3.36,
+            "sprint_speed": 18.75,
+            "catcher_poptime": 5.7143,
+            "on_base": 58.7332
+          },
+          "hit_probability": 0.1142,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 81,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 0.0,
+          "notable_signals": 0,
+          "matchup": "St. Louis Cardinals @ Cincinnati Reds",
+          "game_pk": 824476,
+          "team": "Cincinnati Reds",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0105
+          },
+          "hit_probability": 0.0105,
+          "raw_hit_probability": null,
+          "lift": -0.039,
+          "reliability": "A",
+          "sample_n": 81,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 0.0,
+          "notable_signals": 0,
+          "matchup": "St. Louis Cardinals @ Cincinnati Reds",
+          "game_pk": 824476,
+          "team": "Cincinnati Reds",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0046
+          },
+          "hit_probability": 0.0046,
+          "raw_hit_probability": null,
+          "lift": -0.017,
+          "reliability": "A",
+          "sample_n": 81,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

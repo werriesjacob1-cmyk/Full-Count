@@ -157,7 +157,7 @@
         {
           "prop": "Over 6.5 Strikeouts",
           "type": "pitcher",
-          "score": 39.8,
+          "score": 41.2,
           "notable_signals": 0,
           "matchup": "San Francisco Giants @ Cleveland Guardians",
           "game_pk": 824394,
@@ -167,9 +167,12 @@
           "combo_player_ids": null,
           "signals": {
             "opp_team_k_pct": 39.0,
-            "same_hand_ratio": 33.3333,
+            "same_hand_ratio": 61.1111,
             "l14_k_pct": 80.0,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 53.2574,
+            "ump_k_pct": 0.252,
+            "ump_bb_pct": -0.252
           },
           "hit_probability": 0.3019,
           "raw_hit_probability": 0.3019,
@@ -185,7 +188,7 @@
         {
           "prop": "Over 17.5 Outs Recorded",
           "type": "pitcher",
-          "score": 29.8,
+          "score": 31.6,
           "notable_signals": 0,
           "matchup": "San Francisco Giants @ Cleveland Guardians",
           "game_pk": 824394,
@@ -194,12 +197,12 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.4249,
+            "outs_rate": 0.4214,
             "avg_outs_per_start": 17.79
           },
-          "hit_probability": 0.4249,
+          "hit_probability": 0.4214,
           "raw_hit_probability": null,
-          "lift": -0.0327,
+          "lift": -0.0188,
           "reliability": "A",
           "sample_n": 24,
           "projection": {

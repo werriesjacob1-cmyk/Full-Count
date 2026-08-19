@@ -1063,6 +1063,133 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-19",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 82.4,
+          "notable_signals": 1,
+          "matchup": "New York Yankees @ Baltimore Orioles",
+          "game_pk": 824801,
+          "team": "Baltimore Orioles",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 48.0,
+            "park_hr_index": 76.2,
+            "season_barrel_pct": 34.0,
+            "lineup_slot": 100.0,
+            "bullpen_fatigue": 64.1026,
+            "bvp_ops": -1.482,
+            "platoon_barrel_pct": 0.8,
+            "platoon_xwoba": 0.54,
+            "opp_catcher_framing": -0.6,
+            "days_rest": 0.0,
+            "woba_behind": 57.2727,
+            "team_total_move": 0.0,
+            "team_total_open": 0.0,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": 0.728,
+            "vs_rp_ops": 0.444,
+            "ump_k_pct": -0.96,
+            "ump_bb_pct": -0.444
+          },
+          "hit_probability": 0.6367,
+          "raw_hit_probability": 0.6149,
+          "lift": -0.0286,
+          "reliability": "B",
+          "sample_n": 74,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 51.0,
+          "notable_signals": 0,
+          "matchup": "New York Yankees @ Baltimore Orioles",
+          "game_pk": 824801,
+          "team": "Baltimore Orioles",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": 1.14,
+            "sprint_speed": 37.5,
+            "catcher_poptime": 20.0,
+            "on_base": 66.4107
+          },
+          "hit_probability": 0.0827,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "B",
+          "sample_n": 74,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 0.0,
+          "notable_signals": 0,
+          "matchup": "New York Yankees @ Baltimore Orioles",
+          "game_pk": 824801,
+          "team": "Baltimore Orioles",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0252
+          },
+          "hit_probability": 0.0252,
+          "raw_hit_probability": null,
+          "lift": -0.0243,
+          "reliability": "B",
+          "sample_n": 74,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 0.0,
+          "notable_signals": 0,
+          "matchup": "New York Yankees @ Baltimore Orioles",
+          "game_pk": 824801,
+          "team": "Baltimore Orioles",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0055
+          },
+          "hit_probability": 0.0055,
+          "raw_hit_probability": null,
+          "lift": -0.0161,
+          "reliability": "B",
+          "sample_n": 74,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

@@ -770,6 +770,108 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-19",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 65.0,
+          "notable_signals": 1,
+          "matchup": "San Francisco Giants @ Cleveland Guardians",
+          "game_pk": 824394,
+          "team": "San Francisco Giants",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 2.0,
+            "park_hr_index": 51.8,
+            "season_barrel_pct": 53.3333,
+            "lineup_slot": 87.5,
+            "bullpen_fatigue": 59.5238,
+            "platoon_barrel_pct": 2.56,
+            "platoon_xwoba": -1.92,
+            "park_hand_index": -0.86,
+            "opp_catcher_framing": 0.72,
+            "days_rest": 0.0,
+            "woba_ahead": 31.8182,
+            "woba_behind": 10.0,
+            "pull_park_synergy": -0.2829,
+            "hard_hit_105_rate": 0.885,
+            "team_total_move": 0.0,
+            "team_total_open": -6.0,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": 0.928,
+            "vs_rp_ops": 1.632,
+            "ump_k_pct": -0.252,
+            "ump_bb_pct": 0.252
+          },
+          "hit_probability": 0.5997,
+          "raw_hit_probability": 0.6009,
+          "lift": 0.048,
+          "reliability": "A",
+          "sample_n": 125,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 13.2,
+          "notable_signals": 0,
+          "matchup": "San Francisco Giants @ Cleveland Guardians",
+          "game_pk": 824394,
+          "team": "San Francisco Giants",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.082
+          },
+          "hit_probability": 0.082,
+          "raw_hit_probability": null,
+          "lift": 0.0325,
+          "reliability": "A",
+          "sample_n": 125,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 5.0,
+          "notable_signals": 0,
+          "matchup": "San Francisco Giants @ Cleveland Guardians",
+          "game_pk": 824394,
+          "team": "San Francisco Giants",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0331
+          },
+          "hit_probability": 0.0331,
+          "raw_hit_probability": null,
+          "lift": 0.0115,
+          "reliability": "A",
+          "sample_n": 125,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

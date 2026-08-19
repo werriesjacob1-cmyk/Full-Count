@@ -190,6 +190,57 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-19",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 54.4,
+          "notable_signals": 0,
+          "matchup": "Los Angeles Angels @ Houston Astros",
+          "game_pk": 824155,
+          "team": "Houston Astros",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 9.4286,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 4.0,
+            "lineup_slot": 50.0,
+            "bullpen_fatigue": 64.1026,
+            "platoon_barrel_pct": 1.2,
+            "platoon_xwoba": -1.56,
+            "park_hand_index": 2.29,
+            "opp_catcher_framing": 0.36,
+            "days_rest": 4.0,
+            "woba_ahead": 12.7273,
+            "woba_behind": 14.5455,
+            "pull_park_synergy": 0.8015,
+            "team_total_move": 0.0,
+            "team_total_open": 0.0,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": 0.984,
+            "vs_rp_ops": 0.588,
+            "ump_k_pct": -0.384,
+            "ump_bb_pct": -0.456
+          },
+          "hit_probability": 0.6427,
+          "raw_hit_probability": 0.625,
+          "lift": -0.0226,
+          "reliability": "C",
+          "sample_n": 32,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

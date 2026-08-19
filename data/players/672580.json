@@ -259,6 +259,131 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-19",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 67.5,
+          "notable_signals": 1,
+          "matchup": "Athletics @ Kansas City Royals",
+          "game_pk": 824076,
+          "team": "Kansas City Royals",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 100.0,
+            "park_hr_index": 52.2,
+            "season_barrel_pct": 12.6667,
+            "lineup_slot": 62.5,
+            "bullpen_fatigue": 76.9231,
+            "platoon_barrel_pct": 2.4,
+            "platoon_xwoba": 5.0,
+            "park_hand_index": 0.78,
+            "opp_catcher_framing": 0.24,
+            "days_rest": 0.0,
+            "woba_ahead": 52.7273,
+            "woba_behind": 4.5455,
+            "pull_park_synergy": 0.2621,
+            "getaway_day": 0.0,
+            "series_game": 2.0,
+            "sp_rp_ops_gap": -2.136,
+            "vs_rp_ops": -2.328
+          },
+          "hit_probability": 0.7115,
+          "raw_hit_probability": 0.7462,
+          "lift": 0.0462,
+          "reliability": "B",
+          "sample_n": 71,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 35.2,
+          "notable_signals": 0,
+          "matchup": "Athletics @ Kansas City Royals",
+          "game_pk": 824076,
+          "team": "Kansas City Royals",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": -1.44,
+            "sprint_speed": 12.5,
+            "catcher_poptime": 25.7143,
+            "on_base": 44.3378
+          },
+          "hit_probability": 0.07,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "B",
+          "sample_n": 71,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 0.0,
+          "notable_signals": 0,
+          "matchup": "Athletics @ Kansas City Royals",
+          "game_pk": 824076,
+          "team": "Kansas City Royals",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0212
+          },
+          "hit_probability": 0.0212,
+          "raw_hit_probability": null,
+          "lift": -0.0283,
+          "reliability": "B",
+          "sample_n": 71,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 0.0,
+          "notable_signals": 0,
+          "matchup": "Athletics @ Kansas City Royals",
+          "game_pk": 824076,
+          "team": "Kansas City Royals",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0046
+          },
+          "hit_probability": 0.0046,
+          "raw_hit_probability": null,
+          "lift": -0.017,
+          "reliability": "B",
+          "sample_n": 71,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

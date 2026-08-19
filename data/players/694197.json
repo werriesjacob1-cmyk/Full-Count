@@ -405,6 +405,48 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-19",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 56.1,
+          "notable_signals": 1,
+          "matchup": "San Francisco Giants @ Cleveland Guardians",
+          "game_pk": 824394,
+          "team": "Cleveland Guardians",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "park_hr_index": 51.8,
+            "lineup_slot": 37.5,
+            "bullpen_fatigue": 89.7436,
+            "opp_catcher_framing": 1.32,
+            "days_rest": 0.0,
+            "woba_ahead": 29.0909,
+            "woba_behind": 0.0,
+            "team_total_move": 6.0,
+            "team_total_open": 0.0,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "ump_k_pct": -0.252,
+            "ump_bb_pct": 0.252
+          },
+          "hit_probability": 0.6591,
+          "raw_hit_probability": 0.6457,
+          "lift": 0.1074,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

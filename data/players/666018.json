@@ -864,6 +864,109 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-19",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 64.2,
+          "notable_signals": 1,
+          "matchup": "Toronto Blue Jays @ Tampa Bay Rays",
+          "game_pk": 822937,
+          "team": "Tampa Bay Rays",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 100.0,
+            "pitch_exploit": 0.5714,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 46.0,
+            "lineup_slot": 75.0,
+            "bullpen_fatigue": 41.6667,
+            "platoon_barrel_pct": 3.84,
+            "platoon_xwoba": 3.24,
+            "park_hand_index": -1.5,
+            "opp_catcher_framing": -1.92,
+            "days_rest": 0.0,
+            "woba_ahead": 89.0909,
+            "woba_behind": 66.3636,
+            "pull_park_synergy": -0.3728,
+            "hard_hit_105_rate": -0.0625,
+            "team_total_move": 0.0,
+            "team_total_open": 0.0,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": 0.08,
+            "vs_rp_ops": 0.972,
+            "ump_k_pct": 0.936,
+            "ump_bb_pct": 0.012
+          },
+          "hit_probability": 0.6361,
+          "raw_hit_probability": 0.628,
+          "lift": 0.0844,
+          "reliability": "A",
+          "sample_n": 122,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 3.6,
+          "notable_signals": 0,
+          "matchup": "Toronto Blue Jays @ Tampa Bay Rays",
+          "game_pk": 822937,
+          "team": "Tampa Bay Rays",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0441
+          },
+          "hit_probability": 0.0441,
+          "raw_hit_probability": null,
+          "lift": -0.0054,
+          "reliability": "A",
+          "sample_n": 122,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 0.0,
+          "notable_signals": 0,
+          "matchup": "Toronto Blue Jays @ Tampa Bay Rays",
+          "game_pk": 822937,
+          "team": "Tampa Bay Rays",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0032
+          },
+          "hit_probability": 0.0032,
+          "raw_hit_probability": null,
+          "lift": -0.0184,
+          "reliability": "A",
+          "sample_n": 122,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

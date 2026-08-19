@@ -117,8 +117,8 @@
         {
           "prop": "Over 5.5 Strikeouts",
           "type": "pitcher",
-          "score": 47.6,
-          "notable_signals": 0,
+          "score": 50.2,
+          "notable_signals": 1,
           "matchup": "Seattle Mariners @ Milwaukee Brewers",
           "game_pk": 823748,
           "team": "Milwaukee Brewers",
@@ -129,7 +129,10 @@
             "opp_team_k_pct": 60.0,
             "same_hand_ratio": 57.1429,
             "l14_k_pct": 46.4706,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 76.1664,
+            "ump_k_pct": -0.324,
+            "ump_bb_pct": 0.06
           },
           "hit_probability": 0.4486,
           "raw_hit_probability": 0.4486,
@@ -145,7 +148,7 @@
         {
           "prop": "Over 17.5 Outs Recorded",
           "type": "pitcher",
-          "score": 51.6,
+          "score": 53.4,
           "notable_signals": 1,
           "matchup": "Seattle Mariners @ Milwaukee Brewers",
           "game_pk": 823748,
@@ -154,12 +157,12 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.5085,
+            "outs_rate": 0.5049,
             "avg_outs_per_start": 15.91
           },
-          "hit_probability": 0.5085,
+          "hit_probability": 0.5049,
           "raw_hit_probability": null,
-          "lift": 0.0509,
+          "lift": 0.0647,
           "reliability": "A",
           "sample_n": 23,
           "projection": {
