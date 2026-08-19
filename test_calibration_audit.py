@@ -90,6 +90,41 @@ check("1 of these carry a current-architecture" in out2,
       "main() correctly counts exactly 1 current-architecture pick out of 2 total",
       out2.splitlines()[1] if len(out2.splitlines()) > 1 else out2)
 
+head("3. main(current_only=True): excludes every legacy (no recommendation_status) pick "
+     "entirely, not just from the summary count -- the pooled/family calibration tables "
+     "themselves must reflect ONLY current-architecture picks")
+
+TMPDIR3 = tempfile.mkdtemp(prefix="gridiron_test_calibration_audit_current_only_")
+old_results_dir3 = el.RESULTS_DIR
+el.RESULTS_DIR = TMPDIR3
+
+grades_payload3 = {"date": "2026-08-16", "picks": [
+    mk_pick(1, 0.65, "hit", status="top_pick"),
+    mk_pick(2, 0.65, "hit", status="lean"),
+    mk_pick(3, 0.10, "miss", status=None),  # legacy -- must be fully excluded
+    mk_pick(4, 0.10, "miss", status=None),  # legacy -- must be fully excluded
+]}
+with open(os.path.join(TMPDIR3, "grades_2026-08-16.json"), "w") as f:
+    json.dump(grades_payload3, f)
+
+buf3 = io.StringIO()
+try:
+    with contextlib.redirect_stdout(buf3):
+        rc3 = ca.main(current_only=True)
+finally:
+    el.RESULTS_DIR = old_results_dir3
+    shutil.rmtree(TMPDIR3, ignore_errors=True)
+
+out3 = buf3.getvalue()
+check(rc3 == 0, "main(current_only=True) returns 0 on a real fixture", f"got {rc3}")
+check("2 CURRENT-ARCHITECTURE-ONLY" in out3, "the summary line reports exactly 2 picks -- "
+     "the 2 legacy picks are gone, not just uncounted", out3.splitlines()[0])
+check("0.10" not in out3, "the legacy picks' 0.10 probability never appears anywhere in "
+     "the output -- they were excluded before any table was built, not merely mislabeled",
+     out3)
+check("every legacy (pre-2026-08-15) pick excluded" in out3, "the output states the "
+     "filter was applied, so this can never be mistaken for the unfiltered report")
+
 n_pass = sum(1 for ok, _, _ in _results if ok)
 n_total = len(_results)
 print("\n" + "=" * 78)

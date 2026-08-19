@@ -49,22 +49,40 @@ def _print_table(pairs, indent="  "):
               f"logloss={row['log_loss']:.4f}{flag}")
 
 
-def main():
+def main(current_only=False):
+    """current_only=True restricts the whole audit to picks carrying a real
+    recommendation_status (2026-08-15+ architecture only) -- the pooled
+    number below otherwise blends in whatever legacy Tier 3 picks are still
+    in the graded window (see results/ANALYSIS.md), which can hide or
+    fabricate an apparent calibration story that belongs to a scoring
+    system no longer running. Use this whenever the question is "is TODAY's
+    system calibrated," not "what has this graded window looked like
+    overall.\""""
     picks = el.graded_only(el.load_graded_picks())
+    if current_only:
+        picks = [p for p in picks if p.get("recommendation_status")]
+
     pairs_all = [(p["hit_probability"], 1.0 if p["grade"] == "hit" else 0.0)
                 for p in picks if p.get("hit_probability") is not None]
     if not pairs_all:
-        print("No graded, probability-carrying picks found — nothing to audit.")
+        scope = "current-architecture, probability-carrying" if current_only else \
+            "graded, probability-carrying"
+        print(f"No {scope} picks found — nothing to audit.")
         return 1
 
     dates = sorted({p.get("_date") for p in picks if p.get("_date")})
     n_current = sum(1 for p in picks if p.get("recommendation_status"))
-    print(f"{len(pairs_all)} graded, probability-carrying picks across {len(dates)} day(s): "
-          f"{dates[0]} .. {dates[-1]}")
-    print(f"{n_current} of these carry a current-architecture recommendation_status "
-          f"(2026-08-15+); {len(pairs_all) - n_current} are legacy (Tier 3, see "
-          f"results/ANALYSIS.md) -- calibration below reflects whichever the model actually "
-          f"produced across this whole window, not a claim isolated to today's system.\n")
+    if current_only:
+        print(f"{len(pairs_all)} CURRENT-ARCHITECTURE-ONLY graded, probability-carrying "
+              f"picks across {len(dates)} day(s): {dates[0]} .. {dates[-1]} -- every legacy "
+              f"(pre-2026-08-15) pick excluded from everything below.\n")
+    else:
+        print(f"{len(pairs_all)} graded, probability-carrying picks across {len(dates)} day(s): "
+              f"{dates[0]} .. {dates[-1]}")
+        print(f"{n_current} of these carry a current-architecture recommendation_status "
+              f"(2026-08-15+); {len(pairs_all) - n_current} are legacy (Tier 3, see "
+              f"results/ANALYSIS.md) -- calibration below reflects whichever the model actually "
+              f"produced across this whole window, not a claim isolated to today's system.\n")
 
     print("=" * 90)
     print("POOLED CALIBRATION (every graded pick, every family)")
@@ -112,4 +130,11 @@ def main():
 
 
 if __name__ == "__main__":
-    sys.exit(main())
+    import argparse
+    parser = argparse.ArgumentParser(description=__doc__,
+        formatter_class=argparse.RawDescriptionHelpFormatter)
+    parser.add_argument("--current-only", action="store_true",
+        help="restrict to picks carrying a real recommendation_status (2026-08-15+ "
+             "architecture only), excluding legacy Tier 3 picks entirely")
+    args = parser.parse_args()
+    sys.exit(main(current_only=args.current_only))
