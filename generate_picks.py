@@ -5426,7 +5426,8 @@ def attach_hit_probabilities(candidates, comp_table, emp_batters, emp_pitchers,
                     prob, basis = _blend(empirical, modelled)
                 if prob is None:
                     continue
-                opts.append({"line": t - 0.5, "needs": t, "prob": round(prob, 4),
+                opts.append({"stat": "strikeouts", "line": t - 0.5, "needs": t,
+                             "prob": round(prob, 4),
                              "basis": basis,
                              "base_rate": base,
                              "lift": None if base is None else round(prob - base, 4),
