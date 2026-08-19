@@ -19,7 +19,10 @@ let filters = { search: "", family: "all", status: "all", evidence: "all", sort:
 let lastPollStamp = null;
 let lastFullFetchAt = 0;
 let lastFocusedEl = null; // element to restore focus to when a modal sheet/dialog closes
-let LIVE_CACHE = { updated_at: null, prices_updated_at: null, grades_updated_at: null, props: {} };
+let LIVE_CACHE = {
+  updated_at: null, prices_updated_at: null, grades_updated_at: null,
+  grades_checked_at: null, prices_checked_at: null, props: {},
+};
 
 const ROUTES = ["today", "props", "games", "performance", "watchlist"];
 const LONGSHOT_PROB_CEILING = 0.35; // display-only split of the real "value" status into
@@ -406,7 +409,7 @@ function marketBlock(p) {
 }
 function pickCard(p, opts) {
   opts = opts || {};
-  const chips = [statusChip(p), lineupChip(p), evidenceChip(p), staleChip(p), gradeChip(p)].filter(Boolean).join("");
+  const chips = [statusChip(p), lineupChip(p), evidenceChip(p), staleChip(p), liveStaleChip(p), gradeChip(p)].filter(Boolean).join("");
   const rankBadge = opts.rank ? `<span class="pc-rank">TOP PICK #${opts.rank}</span>` : "";
   const why = (p.why || [])[0] ? `<div class="pc-why">${esc(capSentence(humanizeReason(p.why[0])))}</div>` : "";
   const starred = watchlist.has(p.id);
@@ -429,7 +432,7 @@ function pickCard(p, opts) {
   </button>`;
 }
 function propRow(p) {
-  const chips = [statusChip(p), lineupChip(p), staleChip(p), gradeChip(p)].filter(Boolean).join("");
+  const chips = [statusChip(p), lineupChip(p), staleChip(p), liveStaleChip(p), gradeChip(p)].filter(Boolean).join("");
   return `<button class="prop-row ${lifecycleClass(p)}" data-open="${p.id}">
     <div class="pr-main">
       <div class="pr-name">${esc(p.name)}</div>
@@ -889,7 +892,7 @@ function detailBody(p) {
         <div>Edge: ${p.market_edge != null ? (p.market_edge >= 0 ? "+" : "") + Math.round(p.market_edge * 100) + " pts" : "—"}</div>
       </div>
     </div>
-    <div class="pc-chips" style="margin-bottom:18px;">${[statusChip(p), lineupChip(p), evidenceChip(p), staleChip(p), gradeChip(p)].filter(Boolean).join("")}</div>
+    <div class="pc-chips" style="margin-bottom:18px;">${[statusChip(p), lineupChip(p), evidenceChip(p), staleChip(p), liveStaleChip(p), gradeChip(p)].filter(Boolean).join("")}</div>
 
     ${reasons ? `<div class="detail-section"><h3>Why Full Count Likes It</h3><div class="reason-list">${reasons}</div></div>` : ""}
     ${watchouts ? `<div class="detail-section"><h3>What Could Go Wrong</h3><div class="reason-list">${watchouts}</div></div>` : ""}
@@ -961,13 +964,103 @@ function initSearch() {
 // ══════════════════════════════════════════════════════════════════════
 //  FRESHNESS
 // ══════════════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════════════════
+//  LIVE FRESHNESS — 2026-08-19 Live Integrity PR 1. Deterministic,
+//  wall-clock-relative staleness for LIVE GAME data specifically --
+//  distinct from p.stale (recommendation.py's PREGAME board/price
+//  freshness gate for Top Pick eligibility; a different concept, already
+//  handled by staleChip() below).
+//
+//  Never trust a backend-computed boolean for this: a boolean written by a
+//  scheduler that has stopped running would go stale right along with
+//  everything else it wrote. Instead this compares wall-clock `now`
+//  (always available to the browser, even if every backend workflow has
+//  silently stopped) against grades_checked_at -- a heartbeat that
+//  dashboard/live_state.py's touch_heartbeat() advances every time
+//  refresh_grades.py completes a REAL attempt against the live MLB feed,
+//  whether or not anything actually changed (see that function's own
+//  docstring). grades_updated_at is deliberately NOT used here: it only
+//  advances when a fact changed, so a long scoreless stretch would look
+//  identical to a stopped scheduler if this used that field instead.
+//
+//  THRESHOLD BASIS (not an assumed SLA): dashboard-live.yml declares a
+//  */5 cron, but real measured gaps during the 2026-08-18 Chase Meidroth
+//  incident investigation (27 real observed gaps that day) were median
+//  30.3min / p90 46.8min / p95 50.8min / max 57.9min, with 27/27 exceeding
+//  10 minutes and 26/27 exceeding 20 minutes -- GitHub's own cron
+//  scheduling alone cannot be trusted to fire every 5 minutes. 15 minutes
+//  is chosen because it sits well inside that measured failure band (so
+//  this correctly flags STALE during the exact kind of gap that produced
+//  the incident) while staying loose enough that one ordinary retry-cycle
+//  blip does not flicker the banner. Revisit once the independent
+//  scheduling watchdog is live and a fresh healthy-state cadence has
+//  actually been measured against it.
+// ══════════════════════════════════════════════════════════════════════
+const LIVE_STALE_THRESHOLD_SECONDS = 15 * 60;
+const LIVE_IN_PROGRESS_GAME_STATES = new Set(["live", "delayed", "suspended", "unknown"]);
+
+// Pure and deterministic: `now` is always an explicit argument, never
+// Date.now() read internally, so this can be exercised with a fake clock
+// (see test_live_freshness.py) instead of approximated.
+function liveFreshnessState(nowMs, doc, props) {
+  const anyInProgress = (props || []).some(p => LIVE_IN_PROGRESS_GAME_STATES.has(p.game_state));
+  if (!anyInProgress) {
+    return { applicable: false, stale: false, ageSeconds: null, reason: null };
+  }
+  const checkedAtMs = timeMs(doc && doc.grades_checked_at);
+  if (checkedAtMs == null) {
+    // A live/delayed/suspended/unknown game exists, but this browser has
+    // no record of the grading channel ever having checked it -- honestly
+    // uncertain, not confidently fresh. Never silently show a settlement
+    // state as current when there is no evidence anyone has verified it.
+    return { applicable: true, stale: true, ageSeconds: null, reason: "never_checked" };
+  }
+  const ageSeconds = Math.max(0, Math.round((nowMs - checkedAtMs) / 1000));
+  const stale = ageSeconds > LIVE_STALE_THRESHOLD_SECONDS;
+  return { applicable: true, stale, ageSeconds, reason: stale ? "age_exceeded" : null };
+}
+
+let LIVE_FRESHNESS = { applicable: false, stale: false, ageSeconds: null, reason: null };
+
+function liveFreshnessAgoText(seconds) {
+  if (seconds == null) return "unknown";
+  const mins = Math.round(seconds / 60);
+  if (mins < 1) return "just now";
+  if (mins < 60) return `${mins}m ago`;
+  return `${Math.round(mins / 60)}h ago`;
+}
+
+// Per-prop chip, deliberately separate markup/copy from staleChip() above
+// (which is p.stale, a different concept) even though it reuses the same
+// visual treatment -- both mean "do not trust this number at face value,"
+// which is exactly the shared affordance a viewer should learn to read.
+function liveStaleChip(p) {
+  if (!LIVE_FRESHNESS.applicable || !LIVE_FRESHNESS.stale) return "";
+  if (!LIVE_IN_PROGRESS_GAME_STATES.has(p.game_state)) return "";
+  const label = LIVE_FRESHNESS.reason === "never_checked" ? "Live Status Unknown" : "Live Data Stale";
+  return `<span class="chip chip-stale">${label}</span>`;
+}
+
 function renderFreshness() {
   const bar = document.getElementById("freshness-bar");
   const parts = [];
   if (DATA.generated_at) parts.push(`Board built ${_agoText(DATA.generated_at)}`);
   if (DATA.prices_updated_at) parts.push(`odds updated ${_agoText(DATA.prices_updated_at)}`);
   const dateLabel = DATA.date ? LOCAL_DATE_FMT.format(new Date(DATA.date + "T12:00:00Z")) : "";
-  bar.innerHTML = `${esc(dateLabel)}${dateLabel ? " · " : ""}${esc(parts.join(" · "))}`;
+  const wasStale = LIVE_FRESHNESS.applicable && LIVE_FRESHNESS.stale;
+  LIVE_FRESHNESS = liveFreshnessState(Date.now(), DATA, [...PROPS_BY_ID.values()]);
+  let staleHtml = "";
+  if (LIVE_FRESHNESS.applicable && LIVE_FRESHNESS.stale) {
+    const msg = LIVE_FRESHNESS.reason === "never_checked"
+      ? "LIVE DATA STATUS UNKNOWN — no live check on record"
+      : `LIVE DATA STALE — last verified ${liveFreshnessAgoText(LIVE_FRESHNESS.ageSeconds)}`;
+    staleHtml = ` · <span class="stale-flag">${esc(msg)}</span>`;
+  }
+  bar.innerHTML = `${esc(dateLabel)}${dateLabel ? " · " : ""}${esc(parts.join(" · "))}${staleHtml}`;
+  // Only re-render prop cards when the verdict actually flips -- avoids a
+  // needless full re-render every 60s while still guaranteeing per-prop
+  // chips (liveStaleChip) never lag more than one tick behind the bar.
+  if (LIVE_FRESHNESS.applicable && LIVE_FRESHNESS.stale !== wasStale) renderRoute();
 }
 
 // ══════════════════════════════════════════════════════════════════════
@@ -1052,7 +1145,8 @@ function ingestLiveDocument(fresh) {
       if (nextAt) cached._field_updated_at[field] = nextAt;
     }
   }
-  for (const key of ["updated_at", "prices_updated_at", "grades_updated_at"]) {
+  for (const key of ["updated_at", "prices_updated_at", "grades_updated_at",
+                     "grades_checked_at", "prices_checked_at"]) {
     LIVE_CACHE[key] = newerStamp(LIVE_CACHE[key], fresh[key]);
   }
 }
@@ -1101,13 +1195,24 @@ function applyCachedLive() {
   }
   if (LIVE_CACHE.prices_updated_at) DATA.prices_updated_at = LIVE_CACHE.prices_updated_at;
   if (LIVE_CACHE.grades_updated_at) DATA.grades_updated_at = LIVE_CACHE.grades_updated_at;
+  if (LIVE_CACHE.grades_checked_at) DATA.grades_checked_at = LIVE_CACHE.grades_checked_at;
+  if (LIVE_CACHE.prices_checked_at) DATA.prices_checked_at = LIVE_CACHE.prices_checked_at;
   refreshSummary();
   return changed;
 }
 async function pollLive() {
   try {
     const fresh = await fetchJSON("live.json");
-    const stamp = fresh.updated_at || ((fresh.prices_updated_at || "") + "|" + (fresh.grades_updated_at || ""));
+    // grades_checked_at/prices_checked_at MUST be part of this dedup key,
+    // not just the *_updated_at triplet: a heartbeat-only poll (system
+    // healthy, nothing else changed this cycle) would otherwise be
+    // silently dropped by the stamp===lastPollStamp guard below, meaning
+    // ingestLiveDocument() never runs and the live freshness contract's
+    // whole recovery path -- the browser noticing the backend is checking
+    // again -- would never fire. The stale banner would then stay stuck
+    // forever even once the backend is perfectly healthy again.
+    const stamp = [fresh.updated_at, fresh.prices_updated_at, fresh.grades_updated_at,
+                   fresh.grades_checked_at, fresh.prices_checked_at].join("|");
     if (stamp === lastPollStamp) return;
     lastPollStamp = stamp;
     ingestLiveDocument(fresh);

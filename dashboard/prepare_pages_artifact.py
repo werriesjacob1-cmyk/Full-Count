@@ -157,7 +157,8 @@ def normalize_live(live, id_map):
     else:
         normalized = copy.deepcopy(live)
     remapped = default_live_state()
-    for key in ("updated_at", "prices_updated_at", "grades_updated_at"):
+    for key in ("updated_at", "prices_updated_at", "grades_updated_at",
+                "grades_checked_at", "prices_checked_at"):
         remapped[key] = normalized.get(key)
     for old_id, delta in (normalized.get("props") or {}).items():
         new_id = id_map.get(old_id, old_id)

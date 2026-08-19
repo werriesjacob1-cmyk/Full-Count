@@ -19,7 +19,7 @@ sys.path.insert(0, REPO_ROOT)
 try:
     from .live_state import (
         apply_live_overlay, atomic_write_json, game_state, load_live_state,
-        merge_prop_fields, parse_utc, stable_prop_id, touch_channel, utc_now,
+        merge_prop_fields, parse_utc, stable_prop_id, touch_channel, touch_heartbeat, utc_now,
     )
     from .publication_registry import (
         DEFAULT_REGISTRY_PATH, all_published_snapshots, load_registry,
@@ -28,7 +28,7 @@ try:
 except ImportError:
     from live_state import (
         apply_live_overlay, atomic_write_json, game_state, load_live_state,
-        merge_prop_fields, parse_utc, stable_prop_id, touch_channel, utc_now,
+        merge_prop_fields, parse_utc, stable_prop_id, touch_channel, touch_heartbeat, utc_now,
     )
     from publication_registry import (
         DEFAULT_REGISTRY_PATH, all_published_snapshots, load_registry,
@@ -296,8 +296,15 @@ def refresh(data_path, live_path=None, registry_path=DEFAULT_REGISTRY_PATH):
 
     if not changed_ids:
         print("No authoritative game/settlement fact changed; live state preserved.")
+        # A no-op cycle is still real evidence the grading channel actually
+        # looked -- freshness (2026-08-19 Live Integrity PR 1) depends on
+        # this heartbeat, not on grades_updated_at, precisely so a long
+        # scoreless stretch is never mistaken for a stopped scheduler.
+        touch_heartbeat(live, "grades", stamp)
+        atomic_write_json(live_path, live)
         return apply_live_overlay(payload, live)
     touch_channel(live, "grades", stamp)
+    touch_heartbeat(live, "grades", stamp)
     atomic_write_json(live_path, live)
     print(
         f"Wrote {live_path} atomically for {len(changed_ids)} published Top Pick(s); "

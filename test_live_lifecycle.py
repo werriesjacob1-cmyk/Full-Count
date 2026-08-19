@@ -180,7 +180,20 @@ class LiveSettlementTests(TempLifecycle):
         self.assertEqual(delta["result_reason"], "official scoring correction")
         self.assertEqual(first["props"][row["id"]]["settlement_state"],
                          second["props"][row["id"]]["settlement_state"])
-        self.assertEqual(first, second)
+        # Idempotent means the SETTLEMENT fact does not re-transform on a
+        # second call against an already-final state -- already proven
+        # field-by-field above. It does not mean the whole document is
+        # byte-identical: 2026-08-19 Live Integrity PR 1 added
+        # grades_checked_at, a heartbeat that correctly advances on EVERY
+        # real check attempt (including a stable-final no-op one) so a
+        # viewer can tell the grading channel is still actually running.
+        # Excluding it here, not disabling it, is the correct fix -- a
+        # frozen heartbeat would silently defeat the whole freshness
+        # contract this same PR built.
+        first_stable = {k: v for k, v in first.items() if k not in ("grades_checked_at", "prices_checked_at")}
+        second_stable = {k: v for k, v in second.items() if k not in ("grades_checked_at", "prices_checked_at")}
+        self.assertEqual(first_stable, second_stable)
+        self.assertGreaterEqual(second["grades_checked_at"], first["grades_checked_at"])
 
     def test_final_hit_and_source_failure_preservation(self):
         row = prop()

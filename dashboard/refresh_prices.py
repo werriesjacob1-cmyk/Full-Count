@@ -20,7 +20,7 @@ try:
     from .live_state import (
         PRICE_FIELDS, apply_live_overlay, atomic_write_json, before_betting_cutoff,
         game_state, load_live_state, merge_prop_fields, stable_prop_id,
-        touch_channel, utc_now,
+        touch_channel, touch_heartbeat, utc_now,
     )
     from .publication_registry import DEFAULT_REGISTRY_PATH, load_registry
     from .prepare_pages_artifact import normalize_live, normalize_payload
@@ -28,7 +28,7 @@ except ImportError:
     from live_state import (
         PRICE_FIELDS, apply_live_overlay, atomic_write_json, before_betting_cutoff,
         game_state, load_live_state, merge_prop_fields, stable_prop_id,
-        touch_channel, utc_now,
+        touch_channel, touch_heartbeat, utc_now,
     )
     from publication_registry import DEFAULT_REGISTRY_PATH, load_registry
     from prepare_pages_artifact import normalize_live, normalize_payload
@@ -157,8 +157,13 @@ def refresh(data_path, live_path=None, registry_path=DEFAULT_REGISTRY_PATH):
         pregame.append(row)
 
     if not pregame:
-        if live != original_live:
-            atomic_write_json(live_path, live)
+        # Real contexts were fetched (the `if not contexts` guard above
+        # already returned otherwise), so this is a genuine completed check
+        # even though no prop needed a new price -- see touch_heartbeat's
+        # own docstring for why this must be recorded distinctly from
+        # prices_updated_at.
+        touch_heartbeat(live, "prices", initial_at)
+        atomic_write_json(live_path, live)
         print("No explicitly pregame props remain; prices and classifications are frozen.")
         return apply_live_overlay(payload, live)
 
@@ -269,6 +274,10 @@ def refresh(data_path, live_path=None, registry_path=DEFAULT_REGISTRY_PATH):
 
     if successful_rows:
         touch_channel(live, "prices", fetched_at)
+    # Unconditional: every family was actually attempted this cycle
+    # (feeds/failed_families above), whether or not any row ended up
+    # successfully repriced -- see touch_heartbeat's own docstring.
+    touch_heartbeat(live, "prices", fetched_at)
     atomic_write_json(live_path, live)
     effective = apply_live_overlay(payload, live)
     _refresh_summary(effective)
