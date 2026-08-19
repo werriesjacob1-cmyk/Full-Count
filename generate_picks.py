@@ -5135,20 +5135,54 @@ def load_calibrator():
         return None
 
 
+def _in_calibrator_support(prob, fn):
+    """Whether `prob` falls in a bin fn's own fitted support_bins marks
+    supported. Returns None when fn carries no support_bins at all (an
+    older calibrator artifact, or a bug -- absence of support information
+    is not evidence either way, and the caller decides how to treat it,
+    same discipline as calibration.in_support())."""
+    support_bins = getattr(fn, "meta", {}).get("support_bins")
+    if not support_bins:
+        return None
+    for b in support_bins:
+        if b["lo"] <= prob < b["hi"] or (prob >= 1.0 and b["hi"] >= 1.0):
+            return bool(b["supported"])
+    return False
+
+
 def _calibrate_one(prob, stat, per_market, glob):
     """The single calibration lookup+apply, factored out so the primary line
     and every alternate line in a candidate's own line_options use IDENTICAL
     logic keyed to their OWN stat -- never the candidate's primary stat.
-    Returns (calibrated_prob, calibrated_by) or (None, None) when no real
-    calibrator applies (no per-market fit AND no pooled fallback, or the
-    curve raised on this exact probability). None, honestly, is correct
-    there -- see this function's callers for why an absent calibration must
-    never be invented."""
+
+    SUPPORT-BOUNDARY GATE, 2026-08-19 audit: a fitted curve is only real
+    evidence where its own fitting data actually had rows (see
+    backtest/calibration.py's compute_support_bins docstring for the full
+    reasoning and the strikeouts-curve incident that found this). When
+    `prob` falls in a bin the curve's own .meta["support_bins"] marks
+    unsupported, this returns the probability UNCHANGED with
+    calibrated_by=None -- honestly declining to transform it, never
+    manufacturing a correction with zero evidence behind it, and never
+    silently dropping the candidate either (raw stays a real, shippable
+    number, matching this codebase's own established "raw is honest about
+    what it is" convention for every other uncalibrated market). This is a
+    real, distinguishable outcome from "no calibrator exists for this
+    market at all" -- callers that set raw_hit_probability/calibrated_by
+    unconditionally whenever this returns a non-None probability correctly
+    record "evaluated, found unsupported" rather than silence.
+
+    Returns (calibrated_prob, calibrated_by) where calibrated_by is None
+    for BOTH "no calibrator applies" and "probability outside this curve's
+    support" -- callers distinguish the two by whether the returned
+    probability actually differs from the input (see apply_calibration's
+    own comment on this)."""
     if prob is None:
         return None, None
     fn = per_market.get(stat) or glob
     if fn is None:
         return None, None
+    if _in_calibrator_support(prob, fn) is False:
+        return prob, None
     try:
         cp = float(fn(prob))
     except Exception:
@@ -5202,21 +5236,33 @@ def apply_calibration(candidates, calibrator):
             opt["calibrated_by"] = oby
             if opt.get("base_rate") is not None:
                 opt["lift"] = round(opt["prob"] - opt["base_rate"], 4)
-            # H1, 2026-08-19: opt["ci"] (when present) was computed by
-            # _batter_options BEFORE this function ever runs -- a Wilson
-            # interval on this exact line's raw empirical count, honest for
-            # the RAW probability it sat beside at the time. Now that this
-            # option's probability has been replaced with a Platt-calibrated
-            # value, that interval describes a different number than
-            # opt["prob"]. Same rule as attach_reliability's primary-line
-            # fix, applied identically here for parity: no defensible
-            # calibrated-interval method exists yet, so withhold rather than
-            # keep a scale-mismatched interval or fabricate one by pushing
-            # the endpoints through a curve whose own uncertainty (severe in
-            # under-supported regions, e.g. the strikeouts tail) this would
-            # silently ignore.
-            opt["ci"] = None
-            used[oby] += 1
+            # oby is None both when no calibrator applies to this stat AND
+            # when the calibrator applies but this exact probability sat
+            # outside its support region (_calibrate_one returns the prob
+            # UNCHANGED in that case, 2026-08-19 support-boundary audit) --
+            # in neither case did the point estimate actually move, so the
+            # pre-existing ci is still describing the same number shown on
+            # screen and must NOT be suppressed. Only a REAL transform
+            # (oby is not None) invalidates it. Guards against the exact
+            # regression this would otherwise be: an out-of-support
+            # evaluation silently nulling out a perfectly defensible CI for
+            # a probability that never actually changed.
+            if oby is not None:
+                # H1, 2026-08-19: opt["ci"] (when present) was computed by
+                # _batter_options BEFORE this function ever runs -- a Wilson
+                # interval on this exact line's raw empirical count, honest for
+                # the RAW probability it sat beside at the time. Now that this
+                # option's probability has been replaced with a Platt-calibrated
+                # value, that interval describes a different number than
+                # opt["prob"]. Same rule as attach_reliability's primary-line
+                # fix, applied identically here for parity: no defensible
+                # calibrated-interval method exists yet, so withhold rather than
+                # keep a scale-mismatched interval or fabricate one by pushing
+                # the endpoints through a curve whose own uncertainty (severe in
+                # under-supported regions, e.g. the strikeouts tail) this would
+                # silently ignore.
+                opt["ci"] = None
+                used[oby] += 1
 
     for c in candidates:
         stat = (c.get("projection") or {}).get("stat")
@@ -5228,7 +5274,8 @@ def apply_calibration(candidates, calibrator):
             # Lift has to move with it, or the two disagree about the same pick.
             if c.get("base_rate") is not None:
                 c["lift"] = round(c["hit_probability"] - c["base_rate"], 4)
-            used[by] += 1
+            if by is not None:
+                used[by] += 1
         _calibrate_option_list(c.get("line_options"))
         _calibrate_option_list(c.get("alternatives"))
     if used:
