@@ -1,0 +1,24 @@
+# Full Count independent-scheduling watchdog. See src/index.js's own
+# docstring for why this exists (measured GitHub Actions cron unreliability)
+# and the exact reasoning behind its two independent trigger paths.
+#
+# Deploy: cd cloudflare-watchdog && wrangler deploy
+# Secrets (set once, never committed):
+#   wrangler secret put GITHUB_PAT     # fine-grained PAT, see README.md
+#   wrangler secret put PING_TOKEN     # any random string, shared with the external pinger only
+
+name = "full-count-freshness-watchdog"
+main = "src/index.js"
+compatibility_date = "2026-08-01"
+
+[triggers]
+# Independent of GitHub Actions' own scheduler by construction -- a
+# different platform's cron implementation entirely. Offset from :00 on
+# purpose so this and dashboard-live.yml's own */5 cron rarely fire in the
+# exact same second (harmless either way, given the existing concurrency
+# group, but avoids two redundant API calls landing simultaneously).
+crons = ["2-59/5 * * * *"]
+
+[vars]
+REPO_OWNER = "werriesjacob1-cmyk"
+REPO_NAME = "Full-Count"

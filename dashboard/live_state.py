@@ -279,6 +279,21 @@ def default_live_state():
         "updated_at": None,
         "prices_updated_at": None,
         "grades_updated_at": None,
+        # Heartbeats, distinct from the *_updated_at triplet above. The
+        # updated_at fields only advance when a channel actually WROTE a
+        # changed fact -- exactly the semantics test_lifecycle_contract_v3.py/
+        # test_state_races.py lock in, so they must not change meaning here.
+        # A live game that simply hasn't produced a new fact yet (a long
+        # scoreless stretch) would otherwise look identical, from the
+        # timestamp alone, to a scheduler that silently stopped running.
+        # *_checked_at instead advances every time the channel completes a
+        # real attempt against a live upstream source, whether or not
+        # anything changed -- see touch_heartbeat(). The freshness contract
+        # (2026-08-19 Live Integrity PR 1) is built on these, not on
+        # *_updated_at, precisely because "nothing changed" and "nobody is
+        # watching" must never be indistinguishable to a viewer.
+        "grades_checked_at": None,
+        "prices_checked_at": None,
         "props": {},
     }
 
@@ -362,7 +377,8 @@ def validate_live_state(live, strict_ids=False):
         raise ValueError(f"unsupported live schema version {live.get('schema_version')!r}")
     if live.get("identity_schema_version") != IDENTITY_SCHEMA_VERSION:
         raise ValueError("unsupported live identity schema version")
-    for key in ("updated_at", "prices_updated_at", "grades_updated_at"):
+    for key in ("updated_at", "prices_updated_at", "grades_updated_at",
+                "grades_checked_at", "prices_checked_at"):
         if live.get(key) is not None and parse_utc(live[key]) is None:
             raise ValueError(f"live state has invalid UTC timestamp {key}={live[key]!r}")
     for prop_id, delta in live["props"].items():
@@ -597,6 +613,32 @@ def touch_channel(live, channel, updated_at):
     return live
 
 
+def touch_heartbeat(live, channel, checked_at):
+    """Record that a channel completed a real attempt against its live
+    upstream source, whether or not that attempt produced a changed fact.
+
+    Deliberately separate from touch_channel(): *_updated_at must keep
+    meaning "the last time a fact actually changed" (existing merge/race
+    tests depend on that), while *_checked_at means "the last time this
+    channel successfully looked." A caller should only call this after a
+    genuine check happened -- e.g. refresh_grades.py calls it once real
+    game contexts were fetched, never on a total upstream-fetch failure,
+    so an unadvanced heartbeat always means "nobody has actually looked
+    since then," never "looked and found nothing new" (that case DOES
+    advance the heartbeat)."""
+    if parse_utc(checked_at) is None:
+        raise ValueError(f"live update timestamp is not valid strict UTC ISO-8601: {checked_at!r}")
+    live["schema_version"] = SCHEMA_VERSION
+    live["identity_schema_version"] = IDENTITY_SCHEMA_VERSION
+    if channel == "prices":
+        live["prices_checked_at"] = _newer(live.get("prices_checked_at"), checked_at)
+    elif channel == "grades":
+        live["grades_checked_at"] = _newer(live.get("grades_checked_at"), checked_at)
+    else:
+        raise ValueError(f"unknown live-state channel: {channel!r}")
+    return live
+
+
 def merge_live_states(base, incoming):
     """Semantic merge: stale full documents cannot overwrite newer facts."""
     merged = copy.deepcopy(base or default_live_state())
@@ -616,7 +658,8 @@ def merge_live_states(base, incoming):
                 continue
             channel = "prices" if field in PRICE_FIELDS else None
             merge_prop_fields(merged, prop_id, {field: value}, stamp, channel=channel)
-    for key in ("updated_at", "prices_updated_at", "grades_updated_at"):
+    for key in ("updated_at", "prices_updated_at", "grades_updated_at",
+                "grades_checked_at", "prices_checked_at"):
         merged[key] = _newer(merged.get(key), incoming.get(key))
     validate_live_state(merged)
     return merged
