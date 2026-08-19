@@ -178,6 +178,87 @@ check(cmp_stale["brier_delta"] is None, "no delta computed across mismatched cut
 check("NOT comparable" in cmp_stale["note"], "the reason is stated explicitly",
      f"got {cmp_stale.get('note')!r}")
 
+head("7. challenger_predict_fn(): adapts a REAL champion_challenger.py-registered "
+     "Challenger's score_fn(candidate) into a predict_fn(row) usable against backtest "
+     "rows -- never reimplements the challenger's own logic")
+
+import champion_challenger as cc
+
+def _fake_score_fn(candidate):
+    hp = candidate.get("hit_probability")
+    sig = (candidate.get("signals") or {}).get("boost")
+    if hp is None or sig is None:
+        return None
+    return hp + sig
+
+cc.register("_test_fixture_challenger", _fake_score_fn, "test fixture only")
+
+adapted = al.challenger_predict_fn("_test_fixture_challenger")
+row_with_signal = {"predicted_prob": 0.4, "signals": {"boost": 0.1}}
+check(adapted(row_with_signal) == 0.5, "predict_fn builds the candidate's hit_probability "
+     "from champion_predict_fn(row) and passes the row's own signals through verbatim, "
+     "so the challenger's real registered score_fn runs unmodified",
+     f"got {adapted(row_with_signal)!r}")
+
+row_calibrated = {"predicted_prob": 0.4, "calibrated_prob": 0.6, "signals": {"boost": 0.1}}
+check(adapted(row_calibrated) == 0.7, "when the row carries a calibrated_prob, the "
+     "adapter's base number is champion_predict_fn(row) (calibrated_prob wins), not the "
+     "raw predicted_prob -- an honest apples-to-apples base for the nudge",
+     f"got {adapted(row_calibrated)!r}")
+
+row_no_signal = {"predicted_prob": 0.4, "signals": {}}
+check(adapted(row_no_signal) is None, "no 'boost' signal on this row -> the real score_fn "
+     "itself returns None (no opinion) -> the adapter passes that through honestly, never "
+     "coercing it into a guess")
+
+def _raising_score_fn(candidate):
+    raise KeyError("boom")
+
+cc.register("_test_fixture_raising_challenger", _raising_score_fn, "test fixture only")
+adapted_raising = al.challenger_predict_fn("_test_fixture_raising_challenger")
+check(adapted_raising({"predicted_prob": 0.4, "signals": {}}) is None,
+     "a challenger that raises on a row is caught and treated as 'no opinion' for that "
+     "row only, matching run_shadow()'s own one-broken-idea-must-not-take-down-the-run "
+     "discipline -- never lets one bad row crash the whole holdout evaluation")
+
+raised_unknown = False
+try:
+    al.challenger_predict_fn("_no_such_challenger_registered")
+except ValueError as e:
+    raised_unknown = True
+    check("_no_such_challenger_registered" in str(e) and "registered:" in str(e),
+         "the error names the missing challenger AND lists what IS actually registered, "
+         "so a typo is immediately diagnosable", f"got: {e}")
+check(raised_unknown, "ValueError was actually raised for an unregistered challenger name")
+
+head("8. challenger_predict_fn() end-to-end through evaluate_predictor_on_holdout(): the "
+     "adapted predict_fn scores correctly against the locked holdout like any other label")
+
+result_adapted = al.evaluate_predictor_on_holdout(
+    "_test_fixture_challenger", al.challenger_predict_fn("_test_fixture_challenger"), rows_path)
+check(result_adapted["n_holdout_rows"] == len(holdout1), "scored the same holdout row count "
+     "as every other label -- the adapter didn't change which rows are in scope")
+check(result_adapted["n_skipped_no_opinion"] == result_adapted["n_holdout_rows"],
+     "this fixture's rows carry no 'boost' signal, so the real registered score_fn "
+     "returns None on every one -- all of them honestly skipped, none guessed",
+     f"got n_skipped_no_opinion={result_adapted['n_skipped_no_opinion']} of "
+     f"{result_adapted['n_holdout_rows']}")
+
+head("9. compare(): when the two sides scored a DIFFERENT NUMBER of rows (one skipped "
+     "some as 'no opinion'), the delta is still returned but flagged with a caution note "
+     "-- same cutoff_date is not the same thing as the same row subset")
+
+cmp_mismatched_n = al.compare("champion", "skipper")
+check(cmp_mismatched_n["brier_delta"] is not None, "a delta is still computed -- this is "
+     "informative, not a hard block like the cutoff-mismatch case")
+check(cmp_mismatched_n.get("note") is not None and "CAUTION" in cmp_mismatched_n["note"],
+     "a real, English-language caution note explains the row-subset asymmetry",
+     f"got note={cmp_mismatched_n.get('note')!r}")
+
+cmp_matched_n = al.compare("champion", "champion")
+check(cmp_matched_n.get("note") is None, "no spurious caution note when both sides "
+     "scored the identical row count")
+
 n_pass = sum(1 for ok, _, _ in _results if ok)
 n_total = len(_results)
 print("\n" + "=" * 78)

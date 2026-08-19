@@ -150,6 +150,40 @@ def champion_predict_fn(row):
     return row.get("predicted_prob")
 
 
+def challenger_predict_fn(challenger_name):
+    """Stage 7 bridge: adapt a champion_challenger.py-REGISTERED Challenger
+    (score_fn(candidate: dict), using the live candidate's own field names
+    -- hit_probability/signals/market_odds/projection) into a predict_fn
+    usable against backtest rows (predicted_prob/calibrated_prob/signals/
+    prop_type). Reuses the real registered score_fn verbatim -- never
+    reimplements a challenger's own logic here. The candidate's
+    hit_probability is built from champion_predict_fn(row), so the
+    challenger nudges the exact same base number the Champion itself is
+    evaluated against, an honest apples-to-apples starting point. A
+    challenger raising an exception on one row is caught and treated as
+    "no opinion" for that row only, matching run_shadow()'s own
+    one-broken-idea-must-not-take-down-the-run discipline."""
+    import champion_challenger as cc
+    spec = cc.registered().get(challenger_name)
+    if spec is None:
+        raise ValueError(f"no registered challenger named {challenger_name!r} -- "
+                         f"registered: {sorted(cc.registered())}")
+    score_fn = spec["score_fn"]
+
+    def predict_fn(row):
+        candidate = {
+            "hit_probability": champion_predict_fn(row),
+            "signals": row.get("signals") or {},
+            "market_odds": row.get("market_odds"),
+            "projection": {"stat": row.get("prop_type"), "needs": row.get("needs")},
+        }
+        try:
+            return score_fn(candidate)
+        except Exception:
+            return None
+    return predict_fn
+
+
 def evaluate_predictor_on_holdout(label, predict_fn, rows_path=DEFAULT_ROWS_PATH,
                                   holdout_frac=0.2, prop_type=None):
     """Score predict_fn(row) -> float or None against ONLY the locked
@@ -228,7 +262,7 @@ def compare(label_a, label_b):
                     f"{a['cutoff_date']!r} but {label_b} against {b['cutoff_date']!r} "
                     f"-- the holdout lock changed between the two evaluations",
         }
-    return {
+    result = {
         "label_a": label_a, "label_b": label_b,
         "cutoff_date": a["cutoff_date"],
         "a_evaluated_at": a["evaluated_at"], "b_evaluated_at": b["evaluated_at"],
@@ -240,6 +274,19 @@ def compare(label_a, label_b):
         "log_loss_delta": (round(a["log_loss"] - b["log_loss"], 5)
                            if a["log_loss"] is not None and b["log_loss"] is not None else None),
     }
+    if a["n_scored"] != b["n_scored"]:
+        # Same locked holdout row SET, but one side may have declined to
+        # opine on some rows (returned None -- see evaluate_predictor_on_
+        # holdout's n_skipped_no_opinion). The delta above is still real,
+        # but it is comparing two different row SUBSETS, not identical
+        # ones -- say so rather than letting "same cutoff_date" imply more
+        # than it does.
+        result["note"] = (
+            f"CAUTION: {label_a} scored {a['n_scored']} rows but {label_b} scored "
+            f"{b['n_scored']} -- one of them skipped rows it had no opinion on (see "
+            f"n_skipped_no_opinion), so this delta compares two different row "
+            f"subsets of the same holdout, not an identical one")
+    return result
 
 
 def main():
