@@ -17,6 +17,7 @@ try:
         confirm_verified_rollout_artifact, load_registry, validate_manifest,
         write_registry,
     )
+    from .prediction_ledger import DEFAULT_LEDGER_PATH, append_publication_event
 except ImportError:
     from live_state import utc_now
     from publication_registry import (
@@ -24,10 +25,11 @@ except ImportError:
         confirm_verified_rollout_artifact, load_registry, validate_manifest,
         write_registry,
     )
+    from prediction_ledger import DEFAULT_LEDGER_PATH, append_publication_event
 
 
 def confirm(manifest_path, registry_path=DEFAULT_REGISTRY_PATH,
-            deployed_at=None, provenance=None):
+            deployed_at=None, provenance=None, ledger_path=DEFAULT_LEDGER_PATH):
     try:
         with open(manifest_path, encoding="utf-8") as handle:
             manifest = json.load(handle)
@@ -35,6 +37,7 @@ def confirm(manifest_path, registry_path=DEFAULT_REGISTRY_PATH,
         raise RuntimeError(f"publication manifest is unreadable: {manifest_path}: {exc}") from exc
     validate_manifest(manifest)
     registry = load_registry(registry_path)
+    before_ids = set(registry["entries"])
     deployed_at = deployed_at or utc_now()
     changed = False
     migration = manifest.get("rollout_migration")
@@ -49,6 +52,12 @@ def confirm(manifest_path, registry_path=DEFAULT_REGISTRY_PATH,
     changed |= confirm_publication(registry, manifest, deployed_at, provenance)
     if changed:
         write_registry(registry_path, registry)
+        # Every newly confirmed registry entry -- regardless of which of the
+        # three paths above created it -- also becomes one immutable,
+        # hash-chained ledger event, using the registry's own just-written
+        # entry as the event payload so the two can never drift apart.
+        for prop_id in sorted(set(registry["entries"]) - before_ids):
+            append_publication_event(registry["entries"][prop_id], path=ledger_path)
     return changed, registry
 
 
@@ -56,6 +65,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--manifest", required=True)
     parser.add_argument("--registry", default=DEFAULT_REGISTRY_PATH)
+    parser.add_argument("--ledger", default=DEFAULT_LEDGER_PATH)
     parser.add_argument("--deployed-at", default=None)
     parser.add_argument("--deployment-id", default=os.environ.get("PAGES_DEPLOYMENT_ID"))
     parser.add_argument("--deployment-url", default=os.environ.get("PAGES_DEPLOYMENT_URL"))
@@ -68,7 +78,7 @@ def main():
     }
     changed, registry = confirm(
         args.manifest, registry_path=args.registry,
-        deployed_at=args.deployed_at, provenance=provenance,
+        deployed_at=args.deployed_at, provenance=provenance, ledger_path=args.ledger,
     )
     print(
         f"Publication registry {'updated' if changed else 'already current'}: "
