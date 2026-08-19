@@ -25,6 +25,7 @@ class PagesPreparationTests(unittest.TestCase):
         self.source = os.path.join(self.tmp.name, "docs")
         self.stage = os.path.join(self.tmp.name, "stage")
         self.registry_path = os.path.join(self.tmp.name, "registry.json")
+        self.ledger_path = os.path.join(self.tmp.name, "ledger.jsonl")
         os.makedirs(self.source)
         for name, content in {
             "index.html": '<script src="app.js"></script>', "app.css": "body{}",
@@ -86,6 +87,7 @@ class PagesPreparationTests(unittest.TestCase):
         changed, registry = confirm(
             manifest_path, self.registry_path, "2026-08-17T17:06:00Z",
             {"source_commit": "abc", "run_id": "10", "deployment_id": "20"},
+            ledger_path=self.ledger_path,
         )
         self.assertTrue(changed)
         self.assertEqual(len(registry["entries"]), 1)
@@ -93,10 +95,24 @@ class PagesPreparationTests(unittest.TestCase):
         self.assertEqual(saved["snapshot"]["market_odds"], -125)
         changed_again, registry_again = confirm(
             manifest_path, self.registry_path, "2026-08-17T17:10:00Z", {"run_id": "11"},
+            ledger_path=self.ledger_path,
         )
         self.assertFalse(changed_again)
         self.assertEqual(next(iter(registry_again["entries"].values()))["first_published_at"],
                          "2026-08-17T17:06:00Z")
+        # Regression guard (2026-08-19): confirm()'s ledger append landed in the
+        # very same PR that also merged data/prediction_ledger/events.jsonl as a
+        # real, git-tracked production file. Every confirm() call in this suite
+        # MUST isolate ledger_path -- a call that silently fell through to
+        # DEFAULT_LEDGER_PATH corrupted the real production ledger with a test
+        # fixture event exactly once, caught only by manual post-merge
+        # inspection, not by any test. This proves it can't happen again.
+        self.assertGreater(os.path.getsize(self.ledger_path), 0)
+        from dashboard.prediction_ledger import DEFAULT_LEDGER_PATH
+        if os.path.exists(DEFAULT_LEDGER_PATH):
+            with open(DEFAULT_LEDGER_PATH, encoding="utf-8") as handle:
+                for line in handle:
+                    self.assertNotIn('"fc2:1:player-101:hits:1:over"', line)
 
     def test_corrupt_source_fails_without_replacing_it(self):
         data_path = os.path.join(self.source, "data.json")
@@ -191,6 +207,7 @@ class PagesPreparationTests(unittest.TestCase):
             os.path.join(second_stage, "publication_manifest.json"),
             self.registry_path, "2026-08-17T18:11:00Z",
             {"source_commit": "def", "run_id": "12", "deployment_id": "22"},
+            ledger_path=self.ledger_path,
         )
         self.assertTrue(changed)
         entry = next(iter(registry["entries"].values()))
@@ -200,6 +217,7 @@ class PagesPreparationTests(unittest.TestCase):
         changed_again, registry_again = confirm(
             os.path.join(second_stage, "publication_manifest.json"),
             self.registry_path, "2026-08-17T18:12:00Z", {"run_id": "13"},
+            ledger_path=self.ledger_path,
         )
         self.assertFalse(changed_again)
         self.assertEqual(len(registry_again["entries"]), 1)
