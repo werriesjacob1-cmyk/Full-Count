@@ -5202,6 +5202,20 @@ def apply_calibration(candidates, calibrator):
             opt["calibrated_by"] = oby
             if opt.get("base_rate") is not None:
                 opt["lift"] = round(opt["prob"] - opt["base_rate"], 4)
+            # H1, 2026-08-19: opt["ci"] (when present) was computed by
+            # _batter_options BEFORE this function ever runs -- a Wilson
+            # interval on this exact line's raw empirical count, honest for
+            # the RAW probability it sat beside at the time. Now that this
+            # option's probability has been replaced with a Platt-calibrated
+            # value, that interval describes a different number than
+            # opt["prob"]. Same rule as attach_reliability's primary-line
+            # fix, applied identically here for parity: no defensible
+            # calibrated-interval method exists yet, so withhold rather than
+            # keep a scale-mismatched interval or fabricate one by pushing
+            # the endpoints through a curve whose own uncertainty (severe in
+            # under-supported regions, e.g. the strikeouts tail) this would
+            # silently ignore.
+            opt["ci"] = None
             used[oby] += 1
 
     for c in candidates:
@@ -5710,7 +5724,33 @@ def attach_reliability(candidates, emp_batters, emp_pitchers):
         # drop or never touch the empirical term -- computing a CI from
         # `rate` there would describe a different number than the one on
         # screen, the exact mismatch the 2026-08-15 audit found live.
-        if rate and c.get("probability_basis") not in ("modelled_shrunk", "league_only"):
+        #
+        # H1, 2026-08-19 structural audit: the same borrowed-CI failure also
+        # crosses the CALIBRATION boundary, not just the basis boundary
+        # above. apply_calibration() runs BEFORE this function (see
+        # score_slate()'s call order) and replaces c["hit_probability"] with
+        # a Platt-scaled value for any candidate whose market has a fitted
+        # curve (currently hits/hits_runs_rbis/strikeouts) -- but the Wilson
+        # interval below is still computed from the RAW pre-calibration
+        # rate table. A raw-scale interval no longer describes the
+        # calibrated number displayed next to it: Platt scaling is a
+        # population-level correction, not a transformation of one player's
+        # own sampling uncertainty, and mechanically pushing the interval
+        # endpoints through the same sigmoid would ALSO ignore the fitted
+        # curve's own uncertainty (real, and in the strikeouts market's
+        # unsupported low-probability tail, severe -- see the 2026-08-19
+        # calibrator-tail investigation). No defensible calibrated-interval
+        # method exists yet. Per this codebase's own standing rule ("if a
+        # defensible CI does not exist for a particular line, show no CI
+        # rather than inventing or borrowing one" -- _batter_options, same
+        # rule applied one boundary over), the honest answer is to withhold
+        # prob_ci entirely for a calibrated line, not transform or keep the
+        # mismatched one. This can and does cost real Top Picks/Value picks
+        # via classify_recommendation's require_robust=True gate (A1) --
+        # accepted: a missing interval failing closed is correct; a
+        # mismatched-scale interval passing was not.
+        if (rate and c.get("probability_basis") not in ("modelled_shrunk", "league_only")
+                and not c.get("calibrated_by")):
             lo, hi = _wilson_interval(rate.get("hit", 0), rate.get("n", n) or 1)
             c["prob_ci"] = [round(lo, 4), round(hi, 4)]
         c["sample_n"] = int(n)

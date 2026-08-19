@@ -203,6 +203,38 @@ for stat in ("hard_hit_105", "hard_hit_110"):
           f"at n=23) -- these are real per-game batter rates, not pitcher starts",
           f"got {out[0]['reliability']!r}")
 
+head("15. H1 fix (2026-08-19 structural audit): a candidate whose probability was already "
+     "Platt-calibrated (apply_calibration runs BEFORE this function -- see score_slate's "
+     "call order) gets NO prob_ci at all, even with a real matching rate entry -- a raw-scale "
+     "Wilson interval no longer describes a calibrated point estimate, and no defensible "
+     "calibrated-interval method exists yet, so the honest answer is absence, not a "
+     "scale-mismatched number.")
+
+c_calibrated = cand("hits", player_id=1, needs=2, probability_basis="empirical",
+                    calibrated_by="hits")
+out = gp.attach_reliability(
+    [c_calibrated],
+    emp_batters={1: {"games": 100, "rates": {"hits_2plus": {"hit": 40, "n": 100}}}},
+    emp_pitchers={})
+check("prob_ci" not in out[0], "a calibrated candidate (calibrated_by set) with an otherwise "
+      "qualifying rate entry gets NO prob_ci -- same rate table as check 9's positive case, "
+      "the only difference is calibrated_by", f"got keys={sorted(out[0].keys())}")
+
+head("16. H1 fix: the SAME candidate with calibrated_by absent (no calibrator applied to this "
+     "market) still gets its real prob_ci exactly as before -- the fix only withholds the "
+     "interval when calibration actually moved the point estimate")
+
+c_uncalibrated = cand("hits", player_id=1, needs=2, probability_basis="empirical")
+out2 = gp.attach_reliability(
+    [c_uncalibrated],
+    emp_batters={1: {"games": 100, "rates": {"hits_2plus": {"hit": 40, "n": 100}}}},
+    emp_pitchers={})
+check("prob_ci" in out2[0], "an uncalibrated candidate with the identical rate entry keeps "
+      "getting its real prob_ci -- H1's fix is scoped to calibrated lines only, existing "
+      "uncalibrated behavior (check 9) is unaffected", f"got keys={sorted(out2[0].keys())}")
+check(len(out2[0]["prob_ci"]) == 2 and out2[0]["prob_ci"][0] <= out2[0]["prob_ci"][1],
+      "and it's still a valid [lo, hi] pair", f"got {out2[0]['prob_ci']}")
+
 n_pass = sum(1 for ok, _, _ in _results if ok)
 n_total = len(_results)
 print("\n" + "=" * 78)
