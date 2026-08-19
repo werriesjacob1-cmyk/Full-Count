@@ -60,6 +60,25 @@ def _players(feed):
     return out
 
 
+def player_game_status(feed, player_id):
+    """The live feed's own gameStatus object for one player, or None if
+    unavailable. Real MLB StatsAPI field (isCurrentPitcher/isSubstitute/
+    isCurrentBatter/isOnBench) -- the same boxscore.teams.*.players shape
+    _players() above already reads for eligibility determination. Used by
+    dashboard/refresh_grades.py's role-terminal pitcher-removed detection
+    (2026-08-19 Live Integrity PR 2)."""
+    if player_id is None:
+        return None
+    try:
+        pid = int(player_id)
+    except (TypeError, ValueError):
+        return None
+    player = _players(feed).get(pid)
+    if player is None:
+        return None
+    return player.get("gameStatus") or {}
+
+
 def _int(value, default=0):
     try:
         return int(value or 0)

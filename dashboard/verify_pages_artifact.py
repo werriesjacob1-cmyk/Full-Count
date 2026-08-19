@@ -63,7 +63,7 @@ def _validate_row(row, known_publications, candidate_ids):
         "props": {row["id"]: fact},
     }
     validate_live_state(probe, strict_ids=True)
-    if current_game == "final" and settlement == "provisional_hit":
+    if current_game == "final" and settlement in ("provisional_hit", "provisional_miss"):
         raise ValueError(f"prop {row['id']!r} is Final with only a provisional settlement")
     if current_game == "pregame" and settlement != "open":
         raise ValueError(f"prop {row['id']!r} has a non-open pregame settlement")

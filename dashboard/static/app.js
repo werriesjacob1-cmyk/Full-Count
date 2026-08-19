@@ -150,7 +150,7 @@ function evidenceChip(p) {
 }
 function settlementState(p) {
   const state = p.settlement_state || "open";
-  return ["open", "provisional_hit", "hit", "miss", "void", "ungraded"].includes(state)
+  return ["open", "provisional_hit", "provisional_miss", "hit", "miss", "void", "ungraded"].includes(state)
     ? state : "ungraded";
 }
 function gameState(p) {
@@ -165,7 +165,9 @@ function lifecycleState(p) {
 }
 function lifecycleClass(p) {
   const state = lifecycleState(p);
-  return `lifecycle-${state === "provisional_hit" ? "hit" : state}`;
+  if (state === "provisional_hit") return "lifecycle-hit";
+  if (state === "provisional_miss") return "lifecycle-miss";
+  return `lifecycle-${state}`;
 }
 function gradeChip(p) {
   const state = lifecycleState(p);
@@ -178,6 +180,7 @@ function gradeChip(p) {
   if (state === "unknown") return `<span class="chip chip-grade-ungraded">Status unavailable</span>`;
   if (state === "final") return `<span class="chip chip-grade-ungraded">Final · Awaiting grade</span>`;
   if (state === "provisional_hit") return `<span class="chip chip-grade-hit">Cashed · Awaiting final</span>`;
+  if (state === "provisional_miss") return `<span class="chip chip-grade-miss">Trending miss · Awaiting final</span>`;
   if (state === "hit") return `<span class="chip chip-grade-hit">Hit ✓</span>`;
   if (state === "miss") return `<span class="chip chip-grade-miss">Miss</span>`;
   if (state === "void") return `<span class="chip chip-grade-void">Void</span>`;
