@@ -106,6 +106,23 @@ def backfill(calibrators_path=CALIBRATORS_PATH, rows_path=ROWS_PATH, dry_run=Fal
         recon_rows = rows_for_calibrator(all_rows, market, prop_type, date_range) if date_range else []
         support_bins = cal.compute_support_bins(recon_rows, bin_width=cal.SUPPORT_BIN_WIDTH,
                                                  min_count=cal.MIN_BIN_COUNT)
+        # rows.jsonl is gitignored and grows over time -- when the current
+        # reconstruction has MORE rows than the calibrator's own recorded
+        # n_rows, the extra rows could be inflating a bin's count above the
+        # support threshold in a way the ORIGINAL fit-time data never
+        # actually supported (a dataset that grew after a calibrator was
+        # fitted must not silently expand that old calibrator's claimed
+        # support). Apply the worst-case per-bin bound: no single bin's
+        # count can be off by more than the total row-count discrepancy,
+        # so subtract it before checking the threshold. (When reconstructed
+        # < recorded, the current data can only UNDERSTATE true historical
+        # support, which is the safe direction -- no adjustment needed.)
+        recon_n = len(recon_rows)
+        excess_margin = max(0, recon_n - (recorded_n or 0))
+        if excess_margin:
+            for b in support_bins:
+                if b["supported"] and (b["count"] - excess_margin) < cal.MIN_BIN_COUNT:
+                    b["supported"] = False
         n_supported = sum(1 for b in support_bins if b["supported"])
 
         updated[market]["meta"]["support_bin_width"] = cal.SUPPORT_BIN_WIDTH
