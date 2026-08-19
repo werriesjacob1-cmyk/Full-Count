@@ -69,6 +69,70 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-19",
+      "evaluations": [
+        {
+          "prop": "Over 4.5 Strikeouts",
+          "type": "pitcher",
+          "score": 51.6,
+          "notable_signals": 0,
+          "matchup": "Detroit Tigers @ Pittsburgh Pirates",
+          "game_pk": 823342,
+          "team": "Detroit Tigers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_k_pct": 71.0,
+            "same_hand_ratio": 75.0,
+            "l14_k_pct": 32.3529,
+            "env_neutral": 50.0,
+            "ump_accuracy": 53.0467,
+            "ump_k_pct": -0.096,
+            "ump_bb_pct": -0.228
+          },
+          "hit_probability": 0.4991,
+          "raw_hit_probability": 0.4991,
+          "lift": -0.0384,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 4.5,
+            "needs": 5
+          }
+        },
+        {
+          "prop": "Over 10.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 55.0,
+          "notable_signals": 0,
+          "matchup": "Detroit Tigers @ Pittsburgh Pirates",
+          "game_pk": 823342,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            695549,
+            694973
+          ],
+          "signals": {
+            "combined_k_edge": 0.0235
+          },
+          "hit_probability": 0.5731,
+          "raw_hit_probability": null,
+          "lift": 0.0235,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 10.5,
+            "needs": 11
+          }
+        }
+      ]
     }
   ]
 }

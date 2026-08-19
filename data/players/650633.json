@@ -152,6 +152,96 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-19",
+      "evaluations": [
+        {
+          "prop": "Over 4.5 Strikeouts",
+          "type": "pitcher",
+          "score": 52.8,
+          "notable_signals": 1,
+          "matchup": "San Diego Padres @ New York Mets",
+          "game_pk": 823587,
+          "team": "San Diego Padres",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_k_pct": 57.0,
+            "same_hand_ratio": 75.0,
+            "l14_k_pct": 37.0588,
+            "env_neutral": 50.0,
+            "ump_accuracy": 82.4825,
+            "ump_k_pct": -0.288,
+            "ump_bb_pct": -0.084
+          },
+          "hit_probability": 0.5421,
+          "raw_hit_probability": 0.5421,
+          "lift": 0.0046,
+          "reliability": "A",
+          "sample_n": 25,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 4.5,
+            "needs": 5
+          }
+        },
+        {
+          "prop": "Over 17.5 Outs Recorded",
+          "type": "pitcher",
+          "score": 74.4,
+          "notable_signals": 1,
+          "matchup": "San Diego Padres @ New York Mets",
+          "game_pk": 823587,
+          "team": "San Diego Padres",
+          "side": "away",
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "outs_rate": 0.606,
+            "avg_outs_per_start": 17.08
+          },
+          "hit_probability": 0.606,
+          "raw_hit_probability": null,
+          "lift": 0.1416,
+          "reliability": "A",
+          "sample_n": 25,
+          "projection": {
+            "stat": "pitcher_outs",
+            "value": 17.5,
+            "needs": 18
+          }
+        },
+        {
+          "prop": "Over 8.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 55.0,
+          "notable_signals": 1,
+          "matchup": "San Diego Padres @ New York Mets",
+          "game_pk": 823587,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            650633,
+            476594
+          ],
+          "signals": {
+            "combined_k_edge": 0.0733
+          },
+          "hit_probability": 0.646,
+          "raw_hit_probability": null,
+          "lift": 0.0733,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 8.5,
+            "needs": 9
+          }
+        }
+      ]
     }
   ]
 }

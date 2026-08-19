@@ -675,6 +675,108 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-19",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 56.4,
+          "notable_signals": 2,
+          "matchup": "San Diego Padres @ New York Mets",
+          "game_pk": 823587,
+          "team": "New York Mets",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 24.8571,
+            "park_hr_index": 80.1,
+            "season_barrel_pct": 92.0,
+            "lineup_slot": 37.5,
+            "bullpen_fatigue": 76.9231,
+            "platoon_barrel_pct": 5.0,
+            "platoon_xwoba": 1.86,
+            "park_hand_index": -0.26,
+            "opp_catcher_framing": 0.84,
+            "days_rest": 0.0,
+            "woba_ahead": 44.5455,
+            "woba_behind": 0.0,
+            "pull_park_synergy": -0.1665,
+            "hard_hit_105_rate": 0.8525,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": -2.0,
+            "series_game": 2.0,
+            "sp_rp_ops_gap": -1.184,
+            "vs_rp_ops": -0.564,
+            "ump_k_pct": 0.288,
+            "ump_bb_pct": 0.084
+          },
+          "hit_probability": 0.665,
+          "raw_hit_probability": 0.6628,
+          "lift": -0.0094,
+          "reliability": "A",
+          "sample_n": 87,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 12.9,
+          "notable_signals": 0,
+          "matchup": "San Diego Padres @ New York Mets",
+          "game_pk": 823587,
+          "team": "New York Mets",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0807
+          },
+          "hit_probability": 0.0807,
+          "raw_hit_probability": null,
+          "lift": 0.0312,
+          "reliability": "A",
+          "sample_n": 87,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 2.9,
+          "notable_signals": 0,
+          "matchup": "San Diego Padres @ New York Mets",
+          "game_pk": 823587,
+          "team": "New York Mets",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0246
+          },
+          "hit_probability": 0.0246,
+          "raw_hit_probability": null,
+          "lift": 0.003,
+          "reliability": "A",
+          "sample_n": 87,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

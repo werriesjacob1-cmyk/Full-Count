@@ -895,6 +895,109 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-19",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 81.2,
+          "notable_signals": 3,
+          "matchup": "Atlanta Braves @ Minnesota Twins",
+          "game_pk": 823664,
+          "team": "Atlanta Braves",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 36.0,
+            "pitch_exploit": 12.5714,
+            "park_hr_index": 39.9,
+            "season_barrel_pct": 84.0,
+            "lineup_slot": 75.0,
+            "bullpen_fatigue": 89.7436,
+            "platoon_barrel_pct": 5.0,
+            "platoon_xwoba": 3.66,
+            "park_hand_index": -2.27,
+            "opp_catcher_framing": -0.12,
+            "days_rest": 0.0,
+            "woba_ahead": 59.0909,
+            "woba_behind": 54.5455,
+            "pull_park_synergy": -1.1441,
+            "hard_hit_105_rate": 2.7625,
+            "team_total_move": 0.0,
+            "team_total_open": 0.0,
+            "getaway_day": -2.0,
+            "series_game": 2.0,
+            "sp_rp_ops_gap": 0.736,
+            "vs_rp_ops": 2.652,
+            "ump_k_pct": -0.648,
+            "ump_bb_pct": 0.084
+          },
+          "hit_probability": 0.7083,
+          "raw_hit_probability": 0.7402,
+          "lift": 0.0339,
+          "reliability": "A",
+          "sample_n": 126,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 32.1,
+          "notable_signals": 1,
+          "matchup": "Atlanta Braves @ Minnesota Twins",
+          "game_pk": 823664,
+          "team": "Atlanta Braves",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.1571
+          },
+          "hit_probability": 0.1571,
+          "raw_hit_probability": null,
+          "lift": 0.1076,
+          "reliability": "A",
+          "sample_n": 126,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 13.7,
+          "notable_signals": 1,
+          "matchup": "Atlanta Braves @ Minnesota Twins",
+          "game_pk": 823664,
+          "team": "Atlanta Braves",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0674
+          },
+          "hit_probability": 0.0674,
+          "raw_hit_probability": null,
+          "lift": 0.0458,
+          "reliability": "A",
+          "sample_n": 126,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

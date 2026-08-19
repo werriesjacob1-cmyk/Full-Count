@@ -150,6 +150,65 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-19",
+      "evaluations": [
+        {
+          "prop": "Over 6.5 Strikeouts",
+          "type": "pitcher",
+          "score": 43.3,
+          "notable_signals": 0,
+          "matchup": "Seattle Mariners @ Milwaukee Brewers",
+          "game_pk": 823748,
+          "team": "Seattle Mariners",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_k_pct": 46.0,
+            "same_hand_ratio": 61.1111,
+            "l14_k_pct": 67.6471,
+            "env_neutral": 50.0
+          },
+          "hit_probability": 0.3477,
+          "raw_hit_probability": 0.3477,
+          "lift": 0.104,
+          "reliability": "A",
+          "sample_n": 24,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 6.5,
+            "needs": 7
+          }
+        },
+        {
+          "prop": "Over 17.5 Outs Recorded",
+          "type": "pitcher",
+          "score": 79.0,
+          "notable_signals": 1,
+          "matchup": "Seattle Mariners @ Milwaukee Brewers",
+          "game_pk": 823748,
+          "team": "Seattle Mariners",
+          "side": "away",
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "outs_rate": 0.6262,
+            "avg_outs_per_start": 18.17
+          },
+          "hit_probability": 0.6262,
+          "raw_hit_probability": null,
+          "lift": 0.1618,
+          "reliability": "A",
+          "sample_n": 24,
+          "projection": {
+            "stat": "pitcher_outs",
+            "value": 17.5,
+            "needs": 18
+          }
+        }
+      ]
     }
   ]
 }

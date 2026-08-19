@@ -64,6 +64,42 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-19",
+      "evaluations": [
+        {
+          "prop": "Over 3.5 Strikeouts",
+          "type": "pitcher",
+          "score": 43.8,
+          "notable_signals": 0,
+          "matchup": "Chicago White Sox @ Chicago Cubs",
+          "game_pk": 824640,
+          "team": "Chicago White Sox",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_k_pct": 48.0,
+            "same_hand_ratio": 57.1429,
+            "l14_k_pct": 74.1176,
+            "env_neutral": 50.0,
+            "ump_accuracy": 65.42,
+            "ump_k_pct": -0.444,
+            "ump_bb_pct": -0.204
+          },
+          "hit_probability": 0.623,
+          "raw_hit_probability": 0.7452,
+          "lift": -0.0886,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 3.5,
+            "needs": 4
+          }
+        }
+      ]
     }
   ]
 }

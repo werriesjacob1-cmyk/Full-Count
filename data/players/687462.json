@@ -439,6 +439,106 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-19",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 76.1,
+          "notable_signals": 2,
+          "matchup": "Detroit Tigers @ Pittsburgh Pirates",
+          "game_pk": 823342,
+          "team": "Pittsburgh Pirates",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 0.0,
+            "park_hr_index": 29.1,
+            "season_barrel_pct": 32.6667,
+            "lineup_slot": 100.0,
+            "bullpen_fatigue": 76.9231,
+            "platoon_barrel_pct": 1.68,
+            "platoon_xwoba": 1.98,
+            "park_hand_index": 2.31,
+            "opp_catcher_framing": -1.2,
+            "days_rest": 0.0,
+            "woba_behind": 50.9091,
+            "pull_park_synergy": 0.9136,
+            "team_total_move": 0.0,
+            "team_total_open": 0.0,
+            "getaway_day": -2.0,
+            "series_game": 2.0,
+            "sp_rp_ops_gap": 0.456,
+            "vs_rp_ops": 1.104,
+            "ump_k_pct": 0.096,
+            "ump_bb_pct": 0.228
+          },
+          "hit_probability": 0.6146,
+          "raw_hit_probability": 0.6119,
+          "lift": 0.0629,
+          "reliability": "A",
+          "sample_n": 86,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 2.5,
+          "notable_signals": 0,
+          "matchup": "Detroit Tigers @ Pittsburgh Pirates",
+          "game_pk": 823342,
+          "team": "Pittsburgh Pirates",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0399
+          },
+          "hit_probability": 0.0399,
+          "raw_hit_probability": null,
+          "lift": -0.0096,
+          "reliability": "A",
+          "sample_n": 86,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 0.3,
+          "notable_signals": 0,
+          "matchup": "Detroit Tigers @ Pittsburgh Pirates",
+          "game_pk": 823342,
+          "team": "Pittsburgh Pirates",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0143
+          },
+          "hit_probability": 0.0143,
+          "raw_hit_probability": null,
+          "lift": -0.0073,
+          "reliability": "A",
+          "sample_n": 86,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

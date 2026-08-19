@@ -1,0 +1,37 @@
+{
+  "player_id": "nrfi_823748",
+  "name": "Seattle Mariners @ Milwaukee Brewers \u2014 1st Inning (Both Teams)",
+  "snapshots": [
+    {
+      "date": "2026-08-19",
+      "evaluations": [
+        {
+          "prop": "A run scores in the 1st (either team)",
+          "type": "game",
+          "score": 66.9,
+          "notable_signals": 0,
+          "matchup": "Seattle Mariners @ Milwaukee Brewers",
+          "game_pk": 823748,
+          "team": null,
+          "side": "both",
+          "lean": "YRFI",
+          "combo_player_ids": null,
+          "signals": {
+            "home_team_scores_p": 0.3419,
+            "away_team_scores_p": 0.3148,
+            "fi_n_starts": 22.0
+          },
+          "hit_probability": 0.5491,
+          "raw_hit_probability": null,
+          "lift": 0.0475,
+          "reliability": "A",
+          "sample_n": 22,
+          "projection": {
+            "stat": "nrfi_combined",
+            "value": 54.9
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,37 @@
+{
+  "player_id": "nrfi_824476",
+  "name": "St. Louis Cardinals @ Cincinnati Reds \u2014 1st Inning (Both Teams)",
+  "snapshots": [
+    {
+      "date": "2026-08-19",
+      "evaluations": [
+        {
+          "prop": "No runs in the 1st (both teams)",
+          "type": "game",
+          "score": 62.6,
+          "notable_signals": 0,
+          "matchup": "St. Louis Cardinals @ Cincinnati Reds",
+          "game_pk": 824476,
+          "team": null,
+          "side": "both",
+          "lean": "NRFI",
+          "combo_player_ids": null,
+          "signals": {
+            "home_team_scores_p": 0.3282,
+            "away_team_scores_p": 0.247,
+            "fi_n_starts": 22.0
+          },
+          "hit_probability": 0.5059,
+          "raw_hit_probability": null,
+          "lift": 0.0075,
+          "reliability": "A",
+          "sample_n": 22,
+          "projection": {
+            "stat": "nrfi_combined",
+            "value": 50.6
+          }
+        }
+      ]
+    }
+  ]
+}
