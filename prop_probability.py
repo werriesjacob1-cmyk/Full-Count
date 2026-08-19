@@ -216,6 +216,16 @@ def p_at_least_home_runs(threshold, pa_dist, n_pa):
     return _binom_at_least(n_pa, pa_dist.get(4, 0.0), threshold)
 
 
+def p_at_least_singles(threshold, pa_dist, n_pa):
+    """A single is exactly 1 base in one PA -- pa_dist[1] is precisely that
+    per-PA probability (see pa_outcome_distribution's own {0,1,2,3,4} key
+    convention), so this is the direct analogue of p_at_least_home_runs
+    (which reads pa_dist[4]) rather than a different construction. Binomial
+    across n_pa plate appearances, same as every other single-outcome-type
+    batter market here."""
+    return _binom_at_least(n_pa, pa_dist.get(1, 0.0), threshold)
+
+
 def p_at_least_strikeouts(threshold, batters_faced, k_rate):
     """Pitcher Ks. k_rate is per batter faced (K% / 100)."""
     return _binom_at_least(batters_faced, k_rate, threshold)
