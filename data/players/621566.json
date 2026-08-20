@@ -998,6 +998,107 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-20",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 68.8,
+          "notable_signals": 3,
+          "matchup": "Atlanta Braves @ Chicago White Sox",
+          "game_pk": 824589,
+          "team": "Atlanta Braves",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 42.8571,
+            "pitch_exploit": 7.4286,
+            "park_hr_index": 27.0,
+            "season_barrel_pct": 85.3333,
+            "lineup_slot": 75.0,
+            "bullpen_fatigue": 44.4444,
+            "platoon_barrel_pct": 4.24,
+            "platoon_xwoba": 2.1,
+            "opp_catcher_framing": -0.12,
+            "days_rest": 0.0,
+            "woba_ahead": 59.0909,
+            "woba_behind": 22.7273,
+            "hard_hit_105_rate": 2.7325,
+            "team_total_move": 0.0,
+            "team_total_open": 0.0,
+            "getaway_day": -2.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": 0.848,
+            "vs_rp_ops": 2.748,
+            "ump_k_pct": -0.384,
+            "ump_bb_pct": 0.252
+          },
+          "hit_probability": 0.7105,
+          "raw_hit_probability": 0.7443,
+          "lift": 0.0482,
+          "reliability": "A",
+          "sample_n": 127,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 31.8,
+          "notable_signals": 1,
+          "matchup": "Atlanta Braves @ Chicago White Sox",
+          "game_pk": 824589,
+          "team": "Atlanta Braves",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.1559
+          },
+          "hit_probability": 0.1559,
+          "raw_hit_probability": null,
+          "lift": 0.1065,
+          "reliability": "A",
+          "sample_n": 127,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 13.6,
+          "notable_signals": 1,
+          "matchup": "Atlanta Braves @ Chicago White Sox",
+          "game_pk": 824589,
+          "team": "Atlanta Braves",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0669
+          },
+          "hit_probability": 0.0669,
+          "raw_hit_probability": null,
+          "lift": 0.0453,
+          "reliability": "A",
+          "sample_n": 127,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

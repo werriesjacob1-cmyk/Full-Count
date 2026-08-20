@@ -159,9 +159,9 @@
           }
         },
         {
-          "prop": "Over 15.5 Outs Recorded",
+          "prop": "Over 16.5 Outs Recorded",
           "type": "pitcher",
-          "score": 31.0,
+          "score": 23.8,
           "notable_signals": 0,
           "matchup": "Athletics @ Kansas City Royals",
           "game_pk": 824074,
@@ -170,18 +170,46 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.4906,
+            "outs_rate": 0.4255,
             "avg_outs_per_start": 15.6
           },
-          "hit_probability": 0.4906,
+          "hit_probability": 0.4255,
           "raw_hit_probability": null,
-          "lift": -0.0599,
+          "lift": -0.0638,
           "reliability": "B",
           "sample_n": 15,
           "projection": {
             "stat": "pitcher_outs",
-            "value": 15.5,
-            "needs": 16
+            "value": 16.5,
+            "needs": 17
+          }
+        },
+        {
+          "prop": "Over 8.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 54.9,
+          "notable_signals": 1,
+          "matchup": "Athletics @ Kansas City Royals",
+          "game_pk": 824074,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            695611,
+            677976
+          ],
+          "signals": {
+            "combined_k_edge": 0.1937
+          },
+          "hit_probability": 0.6888,
+          "raw_hit_probability": null,
+          "lift": 0.1937,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 8.5,
+            "needs": 9
           }
         }
       ]
