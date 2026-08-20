@@ -297,6 +297,36 @@ class BuildPersistenceTests(unittest.TestCase):
         )
         self.assertEqual(out["props"], [])
 
+    def test_settled_prior_slate_pick_excluded_even_after_live_overlay_is_pruned(self):
+        # Regression for the REAL failure mode found deploying the fix
+        # above, live, 2026-08-20: the settlement-state check worked while
+        # live.json still carried the settlement fact, but the very next
+        # live-update cycle's compact_live_state() legitimately pruned that
+        # fact -- it is no longer in current_ids once the pick correctly
+        # dropped off the board, its settlement is officially final, and it
+        # is durably recorded in results/grades_*.json, which is exactly
+        # what compaction is FOR. The settlement-based exclusion check then
+        # found nothing, defaulted to "open", and readmitted the pick to
+        # the public board a second time. Fixed by keying exclusion on game
+        # state (observable from live.json's game_state, which only gets
+        # pruned once the game itself is no longer "live"/"suspended"/
+        # "postponed" -- i.e. never while that would matter) instead of the
+        # settlement fact, which has no such guarantee.
+        row = prop()
+        registry = published_registry(row)
+        live = default_live_state()  # no overlay entry for row at all
+        out = bd.reconcile_public_lifecycle(
+            payload([row], date="2026-08-19"), live=live, registry=registry,
+            schedule={}, now="2026-08-19T20:11:00Z",
+        )
+        self.assertEqual(out["props"], [])
+        # Same story via the carry-forward path (row NOT already in props).
+        out2 = bd.reconcile_public_lifecycle(
+            payload([], date="2026-08-19"), live=live, registry=registry,
+            schedule={}, now="2026-08-19T20:11:00Z",
+        )
+        self.assertEqual(out2["props"], [])
+
     def test_same_slate_settled_pick_still_shows_after_first_loop_check(self):
         # The new stale-prior-slate check must not exclude a pick that
         # settled EARLIER TODAY on the board's own slate date -- that is a

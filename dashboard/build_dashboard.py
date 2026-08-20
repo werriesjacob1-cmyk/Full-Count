@@ -844,8 +844,8 @@ def reconcile_public_lifecycle(payload, prior_payload=None, live=None, schedule=
         state = game_state(status, row=row, now=now)
         before_cutoff = before_betting_cutoff(row, now)
 
-        # A registry-backed row from a PRIOR slate that has already reached
-        # a terminal settlement no longer belongs on the current board --
+        # A registry-backed row from a PRIOR slate no longer belongs on the
+        # current board unless its game is verifiably still incomplete --
         # apply the same rule the carry-forward loop below applies to
         # registry entries not already present in payload["props"]. Without
         # this, a pick correctly carried forward once (e.g. while its game
@@ -855,10 +855,23 @@ def reconcile_public_lifecycle(payload, prior_payload=None, live=None, schedule=
         # loop had no age/staleness check of its own. Verified live
         # 2026-08-20: a graded Aug 18 Top Pick was still showing as today's
         # #1 Top Pick because of exactly this gap.
+        #
+        # Deliberately keyed on GAME state, not settlement state: once a
+        # prior-slate pick drops off the current board, live.json's own
+        # compact_live_state() correctly prunes its now-durably-recorded
+        # settlement fact on the very next live-update cycle (it is no
+        # longer in current_ids). A settlement-state check would then find
+        # nothing, default to "open", and immediately readmit the pick --
+        # reproduced live 2026-08-20 on this exact identity. Game state
+        # doesn't have that failure mode: a still-incomplete game is never
+        # eligible for that compaction (it can't hold an official_final
+        # settlement yet), so "live"/"suspended"/"postponed" stays reliably
+        # observable for as long as it's true, with no durable-archive
+        # fallback needed.
         if registered is not None and registered.get("slate_date") != payload.get("date"):
             existing = apply_live_overlay({"props": [dict(row)]}, live)["props"][0]
-            settlement = existing.get("settlement_state") or row.get("settlement_state") or "open"
-            if settlement in ("hit", "miss", "void"):
+            observed = state if state != "unknown" else (existing.get("game_state") or "unknown")
+            if observed not in ("live", "suspended", "postponed"):
                 continue
 
         # Unknown/non-pregame status and the scheduled start are independent
@@ -904,9 +917,13 @@ def reconcile_public_lifecycle(payload, prior_payload=None, live=None, schedule=
             # A demoted/withdrawn pregame recommendation remains in history,
             # but need not remain on the current wagering board before start.
             continue
-        settlement = existing.get("settlement_state") or "open"
-        if (registered.get("slate_date") != payload.get("date")
-                and settlement in ("hit", "miss", "void")):
+        # Keyed on game state, not settlement state, for the same reason as
+        # the identical check above: a prior-slate pick's settlement fact in
+        # live.json is legitimately pruned by compact_live_state() once it
+        # drops off the current board, and a settlement-based check would
+        # then default to "open" and readmit it forever.
+        if registered.get("slate_date") != payload.get("date") and observed not in (
+                "live", "suspended", "postponed"):
             continue
         carried = dict(registered)
         carried["publication_snapshot"] = _publication_snapshot(registered)
