@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """_sweep_league_rate_window.py -- tests window_days in {7, 14, 21, 30}
-against identical historical inputs for the "hits" market, extending the
-OLD-vs-NEW verification already done for the shipped 30-day default.
-Scratch tooling, not part of the shipped pipeline.
+against identical historical inputs for hits/total_bases/home_runs/singles
+-- every market that shares league_base_rates()'s MODEL_SHRINK_K shrink
+path -- extending the OLD-vs-NEW verification already done for the shipped
+30-day default. Scratch tooling, not part of the shipped pipeline.
 
 WHY 7/14/21/30 AND NOT A WIDER SET (e.g. 45): a direct point-in-time check
 (2024-04-10 through 2024-05-20) found that on early-season dates, window=30
@@ -19,12 +20,16 @@ This sweep tests whether a shorter window trades that unresponsiveness for
 an acceptable amount of week-to-week noise, rather than assuming either
 direction.
 
-Reuses the exact same 68-date target set as the original league-rate
-verification (60 April 2024/2025 dates -- where the cold-start bias was
-found -- plus 8 June-Sept control dates), so results are directly
-comparable to the already-shipped evidence. All three windows are computed
-from the SAME point-in-time fetch per date (one real fetch, three probes),
-isolating the comparison from any other code drift.
+WHY ALL FOUR MARKETS, NOT JUST HITS: total_bases and home_runs share the
+exact mechanism (already validated together in the shipped 30-day PR).
+singles ALSO now shares it -- generate_picks.py's MODEL_SHRINK_K branch
+fires for any family with fn is not None, and singles' fn stopped being
+None the moment the singles modelled-probability fix shipped. So singles
+is silently exposed to the same window-length choice, even though its own
+verification predates the window fix going live. total_bases/home_runs
+almost never win build_candidates()'s single primary-pick slot per batter
+(see engine.py's own comment above best_of_category_extras()) -- captured
+from there, exactly like _verify_league_rate_tbhr.py had to.
 
     /tmp/mlbvenv/bin/python3 backtest/_sweep_league_rate_window.py
 """
@@ -43,6 +48,7 @@ import mlb_daily as m
 import grade_results as gr
 
 WINDOWS = (7, 14, 21, 30)
+STATS = ("hits", "total_bases", "home_runs", "singles")
 ROWS_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "rows.jsonl")
 OUT_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "_sweep_window_pairs.jsonl")
 STATE_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "_sweep_window_state.json")
@@ -87,6 +93,9 @@ def save_state(state):
 
 
 def run_one_pass(date, store, window_days):
+    """One point-in-time-safe candidate build for this window_days value,
+    returning every hits/total_bases/home_runs/singles entry (primary
+    candidates AND best_of_category_extras -- see module docstring)."""
     try:
         with eng.PointInTime(date, store) as pit:
             game_meta, kwargs, comp_table, _pit_df, log = eng.build_inputs(
@@ -99,11 +108,13 @@ def run_one_pass(date, store, window_days):
             league_rates = msrc.league_base_rates(window_days=window_days)
             gp.attach_hit_probabilities(candidates, comp_table, emp_batters,
                                         emp_pitchers, league_rates)
-        hits_entries = []
-        for c in candidates:
-            if (c.get("projection") or {}).get("stat") == "hits":
-                hits_entries.append(dict(c))
-        return hits_entries, "ok"
+            extra_candidates = eng.best_of_category_extras(candidates)
+        by_stat = {s: [] for s in STATS}
+        for c in list(candidates) + list(extra_candidates):
+            stat = (c.get("projection") or {}).get("stat")
+            if stat in by_stat:
+                by_stat[stat].append(dict(c))
+        return by_stat, "ok"
     except eng.LookaheadError:
         raise
     except Exception as e:
@@ -126,7 +137,7 @@ def real_outcome(entry, statuses, date):
 def main():
     dates = target_dates()
     print(f"{len(dates)} target dates: {dates[0][0]} .. {dates[-1][0]}, "
-          f"windows={WINDOWS}", flush=True)
+          f"windows={WINDOWS}, stats={STATS}", flush=True)
 
     state = load_state()
     done = set(state["done"])
@@ -163,11 +174,11 @@ def main():
             status_ok = True
             for w in WINDOWS:
                 msrc._LEAGUE_RATES_CACHE.clear()
-                entries, status = run_one_pass(d, store, window_days=w)
+                by_stat, status = run_one_pass(d, store, window_days=w)
                 if status != "ok":
                     status_ok = False
                     break
-                by_window[w] = {(e["player_id"], e["game_pk"]): e for e in entries}
+                by_window[w] = by_stat
             elapsed = round(time.time() - t0, 1)
             if not status_ok:
                 print(f"[{i}/{len(dates)}] {d} ({tag})  FAILED", flush=True)
@@ -175,32 +186,37 @@ def main():
                 save_state(state)
                 continue
 
-            all_keys = set()
-            for w in WINDOWS:
-                all_keys |= set(by_window[w].keys())
             statuses = gr.fetch_game_statuses(d)
-
             pairs_this_date = 0
             with open(OUT_PATH, "a", encoding="utf-8") as f:
-                for key in all_keys:
-                    entries = {w: by_window[w].get(key) for w in WINDOWS}
-                    grading_entry = next((e for e in entries.values() if e), None)
-                    if grading_entry is None:
-                        continue
-                    outcome = real_outcome(grading_entry, statuses, d)
-                    if outcome is None:
-                        continue
-                    row = {
-                        "date": d, "tag": tag, "player_id": key[0], "game_pk": key[1],
-                        "player_name": grading_entry.get("name"),
-                        "outcome": outcome,
-                    }
+                for stat in STATS:
+                    by_window_key = {}
                     for w in WINDOWS:
-                        e = entries[w]
-                        row[f"prob_{w}"] = e.get("hit_probability") if e else None
-                        row[f"basis_{w}"] = e.get("probability_basis") if e else None
-                    f.write(json.dumps(row) + "\n")
-                    pairs_this_date += 1
+                        by_window_key[w] = {(e["player_id"], e["game_pk"]): e
+                                            for e in by_window[w][stat]}
+                    all_keys = set()
+                    for w in WINDOWS:
+                        all_keys |= set(by_window_key[w].keys())
+                    for key in all_keys:
+                        entries = {w: by_window_key[w].get(key) for w in WINDOWS}
+                        grading_entry = next((e for e in entries.values() if e), None)
+                        if grading_entry is None:
+                            continue
+                        outcome = real_outcome(grading_entry, statuses, d)
+                        if outcome is None:
+                            continue
+                        row = {
+                            "date": d, "tag": tag, "stat": stat,
+                            "player_id": key[0], "game_pk": key[1],
+                            "player_name": grading_entry.get("name"),
+                            "outcome": outcome,
+                        }
+                        for w in WINDOWS:
+                            e = entries[w]
+                            row[f"prob_{w}"] = e.get("hit_probability") if e else None
+                            row[f"basis_{w}"] = e.get("probability_basis") if e else None
+                        f.write(json.dumps(row) + "\n")
+                        pairs_this_date += 1
             n_pairs_total += pairs_this_date
             print(f"[{i}/{len(dates)}] {d} ({tag})  graded_pairs={pairs_this_date} "
                  f"{elapsed}s (total so far: {n_pairs_total})", flush=True)
