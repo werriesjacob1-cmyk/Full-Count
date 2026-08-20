@@ -28,6 +28,20 @@ jobs:
         with:
           ref: main
           fetch-depth: 1
+          # sparse-checkout alone only limits what's MATERIALIZED into the
+          # working tree -- it does not stop `git fetch` from downloading
+          # blob content for paths outside it. Verified live: run 102
+          # (sparse-checkout, no filter) still took 11m25s and got
+          # cancelled, even though "Checkout repo" itself dropped to 3s --
+          # "Commit and push live state" was still slow because its retry
+          # loop's `git fetch origin main` calls kept pulling full
+          # data/props/data/odds blob history from the many other
+          # workflows committing to main every few minutes. filter:
+          # blob:none makes this a real partial clone: blobs outside the
+          # sparse-checkout cone are never fetched at all (not "fetched
+          # then discarded"), so every retry's fetch+checkout stays cheap
+          # regardless of how large data/props/ grows.
+          filter: blob:none
           # This job only ever reads/writes docs/, results/, dashboard/, and
           # data/public_top_picks/ (root-level *.py modules come along for
           # free in cone mode). data/props/ and data/odds/ are multi-hundred-
