@@ -79,6 +79,7 @@ on:
 
 permissions:
   contents: write
+  actions: write
 
 concurrency:
   group: mlb-daily-pipeline
@@ -207,6 +208,7 @@ jobs:
         run: python3 grade_value.py || true
 
       - name: Commit picks immediately
+        id: commit_picks
         # PICKS ARE COMMITTED BEFORE THE LONG REPORT RUNS, deliberately.
         #
         # Two scheduled runs on 2026-08-06 were cancelled by the runner at
@@ -250,12 +252,14 @@ jobs:
           git add output/top10_picks_*.md output/picks_*.json output/scratches_*.json output/value_board_*.json output/early_look_*.md output/board_*.html output/full_board_*.html output/parlay_example_*.html results/*.json data/players/*.json
           if git diff --cached --quiet; then
             echo "No picks to commit."
+            echo "committed=false" >> "$GITHUB_OUTPUT"
             exit 0
           fi
           git commit -m "Picks $(date -u +%F)"
           for attempt in 1 2 3 4 5; do
             if git push; then
               echo "Pushed picks on attempt $attempt."
+              echo "committed=true" >> "$GITHUB_OUTPUT"
               exit 0
             fi
             echo "Push rejected (attempt $attempt/5) — rebasing onto origin/main."
@@ -268,6 +272,32 @@ jobs:
           done
           echo "::error::Failed to push picks after 5 attempts."
           exit 1
+
+      - name: Trigger a queued full dashboard rebuild
+        # A fresh official picks generation is exactly "a materially new
+        # board state exists" -- direct evidence, not inferred: on
+        # 2026-08-20, "Picks 2026-08-20" landed at 17:32 UTC, 7 minutes
+        # after the prior Dashboard Refresh (17:25 UTC, docs/data.json
+        # generated_at 17:22 UTC), and NO Dashboard Refresh ran again until
+        # the next fixed 2-hour cron window -- the new picks sat unpublished
+        # for over an hour with nothing else able to trigger a rebuild.
+        # Bounded to at most 5 dispatches/day (this workflow's own run
+        # count), the same order of magnitude as the existing 8x/day fixed
+        # cron, so this cannot create the "hours-long queue" dashboard-
+        # refresh.yml's own queue:max concurrency exists to bound.
+        #
+        # Deliberately NOT added to odds-snapshot.yml (checked first):
+        # dashboard/build_dashboard.py calls odds_fanduel directly for its
+        # own live price fetch every time it runs -- it never reads
+        # data/odds/*.json at all, so a committed odds snapshot is not an
+        # unpublished board input the way a fresh picks generation is.
+        # Dispatching a rebuild from an hourly workflow would risk exactly
+        # the backlog this comment's sibling step avoids, for no freshness
+        # benefit -- see this project's website-staleness fix report.
+        if: ${{ steps.commit_picks.outputs.committed == 'true' }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run dashboard-refresh.yml --ref main
 
       - name: Run daily pipeline
         env:

@@ -233,6 +233,74 @@ class PagesContractTests(unittest.TestCase):
         self.assertIn("gh workflow run dashboard-refresh.yml --ref main", dispatch["run"])
         self.assertEqual(full["concurrency"]["queue"], "max")
 
+    def test_picks_generation_triggers_dashboard_refresh(self):
+        """Website-staleness fix, verified 2026-08-20: a fresh official picks
+        generation (mlb-daily.yml) is a materially new board state, but
+        nothing dispatched a rebuild for it before this fix -- reproduced
+        live, "Picks 2026-08-20" landed 7 minutes after the prior Dashboard
+        Refresh and then sat unpublished for over an hour with no other
+        trigger able to catch it before the next fixed 2-hour cron window.
+        mlb-daily.yml now dispatches dashboard-refresh.yml the same way
+        lineup-watch.yml already does, but ONLY when a real commit happened
+        (never on a "no picks to commit" no-op, which would otherwise fire
+        this on every dry_run/skip_picks/no-op invocation)."""
+        with open(os.path.join(ROOT, ".github", "workflows", "mlb-daily.yml"),
+                 encoding="utf-8") as handle:
+            daily = yaml.safe_load(handle)
+        self.assertEqual(daily["permissions"].get("actions"), "write")
+        steps = daily["jobs"]["run-pipeline"]["steps"]
+        commit_index = next(
+            index for index, step in enumerate(steps)
+            if step.get("name") == "Commit picks immediately"
+        )
+        dispatch_index = next(
+            index for index, step in enumerate(steps)
+            if step.get("name") == "Trigger a queued full dashboard rebuild"
+        )
+        commit_step = steps[commit_index]
+        dispatch_step = steps[dispatch_index]
+        self.assertLess(commit_index, dispatch_index)
+        self.assertEqual(commit_step.get("id"), "commit_picks")
+        self.assertIn("committed=false", commit_step["run"])
+        self.assertIn("committed=true", commit_step["run"])
+        self.assertIn("steps.commit_picks.outputs.committed == 'true'", dispatch_step.get("if", ""))
+        self.assertIn("gh workflow run dashboard-refresh.yml --ref main", dispatch_step["run"])
+
+        with open(os.path.join(ROOT, ".github", "workflows", "odds-snapshot.yml"),
+                 encoding="utf-8") as handle:
+            odds = yaml.safe_load(handle)
+        odds_steps = odds["jobs"]["snapshot"]["steps"]
+        self.assertFalse(
+            any("dashboard-refresh.yml" in (step.get("run") or "") for step in odds_steps),
+            "odds-snapshot.yml runs hourly; build_dashboard.py fetches its own live "
+            "FanDuel prices directly and never reads data/odds/*.json, so a committed "
+            "odds snapshot is not an unpublished board input -- dispatching a rebuild "
+            "here would risk the exact backlog dashboard-refresh.yml's queue:max "
+            "concurrency exists to bound, for no freshness benefit.",
+        )
+
+    def test_finalize_dashboard_state_rejects_stale_candidate(self):
+        """A queued/delayed full rebuild must never overwrite a newer board
+        already published while it was running -- dashboard/
+        finalize_dashboard_state.py's own stale-candidate guard, verified
+        directly rather than assumed during the website-staleness fix."""
+        from dashboard.finalize_dashboard_state import finalize
+        with tempfile.TemporaryDirectory() as tmp:
+            candidate_path = os.path.join(tmp, "candidate.json")
+            current_path = os.path.join(tmp, "current.json")
+            live_path = os.path.join(tmp, "live.json")
+            out_path = os.path.join(tmp, "out.json")
+            with open(candidate_path, "w", encoding="utf-8") as handle:
+                json.dump({"date": "2026-08-20", "generated_at": "2026-08-20T10:00:00Z",
+                          "props": []}, handle)
+            with open(current_path, "w", encoding="utf-8") as handle:
+                json.dump({"date": "2026-08-20", "generated_at": "2026-08-20T12:00:00Z",
+                          "props": []}, handle)
+            changed = finalize(candidate_path, current_path, live_path, out_path,
+                              registry_path=os.path.join(tmp, "registry.json"), contexts={})
+            self.assertFalse(changed)
+            self.assertFalse(os.path.exists(out_path))
+
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)
