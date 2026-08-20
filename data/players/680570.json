@@ -146,9 +146,9 @@
       "date": "2026-08-20",
       "evaluations": [
         {
-          "prop": "Over 4.5 Strikeouts",
+          "prop": "Over 3.5 Strikeouts",
           "type": "pitcher",
-          "score": 38.9,
+          "score": 38.4,
           "notable_signals": 1,
           "matchup": "Los Angeles Angels @ Houston Astros",
           "game_pk": 824153,
@@ -158,7 +158,7 @@
           "combo_player_ids": null,
           "signals": {
             "opp_team_k_pct": 45.0,
-            "same_hand_ratio": 100.0,
+            "same_hand_ratio": 88.8889,
             "l14_k_pct": 100.0,
             "tto_penalty": 8.0,
             "env_neutral": 50.0,
@@ -166,21 +166,21 @@
             "ump_k_pct": -0.348,
             "ump_bb_pct": 0.132
           },
-          "hit_probability": 0.5386,
-          "raw_hit_probability": 0.5386,
-          "lift": 0.0083,
+          "hit_probability": 0.6179,
+          "raw_hit_probability": 0.7192,
+          "lift": -0.0765,
           "reliability": "B",
           "sample_n": 13,
           "projection": {
             "stat": "strikeouts",
-            "value": 4.5,
-            "needs": 5
+            "value": 3.5,
+            "needs": 4
           }
         },
         {
-          "prop": "Over 15.5 Outs Recorded",
+          "prop": "Over 13.5 Outs Recorded",
           "type": "pitcher",
-          "score": 4.2,
+          "score": 15.7,
           "notable_signals": 0,
           "matchup": "Los Angeles Angels @ Houston Astros",
           "game_pk": 824153,
@@ -189,18 +189,18 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.3863,
+            "outs_rate": 0.5571,
             "avg_outs_per_start": 13.62
           },
-          "hit_probability": 0.3863,
+          "hit_probability": 0.5571,
           "raw_hit_probability": null,
-          "lift": -0.1703,
+          "lift": -0.2071,
           "reliability": "B",
           "sample_n": 13,
           "projection": {
             "stat": "pitcher_outs",
-            "value": 15.5,
-            "needs": 16
+            "value": 13.5,
+            "needs": 14
           }
         }
       ]
