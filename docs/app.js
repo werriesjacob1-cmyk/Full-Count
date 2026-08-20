@@ -1289,7 +1289,18 @@ async function boot() {
   renderFreshness();
   setInterval(renderFreshness, 60000);
   setInterval(pollLive, 3 * 60000);
-  setInterval(pollFullBoard, 10 * 60000);
+  // Was 10 minutes -- the actual data.json publish cadence in production
+  // (odds/lineup workflows dispatching Dashboard Refresh) runs as often as
+  // every 15-20 minutes, so a 10-minute poll left an already-open tab up to
+  // ~10 min behind a fresh board even when everything upstream (build,
+  // deploy, CDN) was already healthy -- a real, bounded staleness window,
+  // not a defect in the fetch/compare logic itself (fetchJSON already
+  // cache-busts with ?t=Date.now() + {cache:"no-store"}, and pollFullBoard
+  // already compares generated_at correctly). Matching pollLive's own 3-
+  // minute cadence tightens that window without adding real load: this is
+  // one small JSON GET, not the multi-minute FanGraphs/Statcast/FanDuel
+  // pull Dashboard Refresh itself avoids running too often for.
+  setInterval(pollFullBoard, 3 * 60000);
   pollLive();
 
   document.querySelectorAll("[data-close-detail]").forEach(el => el.addEventListener("click", closeDetail));
