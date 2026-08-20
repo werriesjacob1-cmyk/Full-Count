@@ -122,6 +122,97 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-20",
+      "evaluations": [
+        {
+          "prop": "Over 4.5 Strikeouts",
+          "type": "pitcher",
+          "score": 34.4,
+          "notable_signals": 2,
+          "matchup": "San Francisco Giants @ Cleveland Guardians",
+          "game_pk": 824395,
+          "team": "San Francisco Giants",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_k_pct": 48.0,
+            "same_hand_ratio": 0.0,
+            "l14_k_pct": 7.6471,
+            "tto_penalty": 8.0,
+            "env_neutral": 50.0,
+            "ump_accuracy": 74.9169,
+            "ump_k_pct": -0.132,
+            "ump_bb_pct": 0.276
+          },
+          "hit_probability": 0.5293,
+          "raw_hit_probability": 0.5293,
+          "lift": -0.001,
+          "reliability": "A",
+          "sample_n": 24,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 4.5,
+            "needs": 5
+          }
+        },
+        {
+          "prop": "Over 15.5 Outs Recorded",
+          "type": "pitcher",
+          "score": 52.2,
+          "notable_signals": 0,
+          "matchup": "San Francisco Giants @ Cleveland Guardians",
+          "game_pk": 824395,
+          "team": "San Francisco Giants",
+          "side": "away",
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "outs_rate": 0.5768,
+            "avg_outs_per_start": 16.17
+          },
+          "hit_probability": 0.5768,
+          "raw_hit_probability": null,
+          "lift": 0.0263,
+          "reliability": "A",
+          "sample_n": 24,
+          "projection": {
+            "stat": "pitcher_outs",
+            "value": 15.5,
+            "needs": 16
+          }
+        },
+        {
+          "prop": "Over 11.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 54.9,
+          "notable_signals": 1,
+          "matchup": "San Francisco Giants @ Cleveland Guardians",
+          "game_pk": 824395,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            694738,
+            668909
+          ],
+          "signals": {
+            "combined_k_edge": 0.1105
+          },
+          "hit_probability": 0.6641,
+          "raw_hit_probability": null,
+          "lift": 0.1105,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 11.5,
+            "needs": 12
+          }
+        }
+      ]
     }
   ]
 }

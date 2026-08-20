@@ -45,6 +45,51 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-20",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 77.4,
+          "notable_signals": 2,
+          "matchup": "Toronto Blue Jays @ Tampa Bay Rays",
+          "game_pk": 822934,
+          "team": "Toronto Blue Jays",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 46.0,
+            "park_hr_index": 50.0,
+            "lineup_slot": 87.5,
+            "bullpen_fatigue": 83.3333,
+            "park_hand_index": 2.14,
+            "opp_catcher_framing": 0.84,
+            "days_rest": 0.0,
+            "woba_ahead": 44.5455,
+            "woba_behind": 45.4545,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": -2.0,
+            "series_game": 2.0,
+            "ump_k_pct": 0.24,
+            "ump_bb_pct": 0.576
+          },
+          "hit_probability": 0.5443,
+          "raw_hit_probability": 0.5611,
+          "lift": -0.0168,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

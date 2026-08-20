@@ -123,6 +123,96 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-20",
+      "evaluations": [
+        {
+          "prop": "Over 3.5 Strikeouts",
+          "type": "pitcher",
+          "score": 50.2,
+          "notable_signals": 0,
+          "matchup": "Toronto Blue Jays @ Tampa Bay Rays",
+          "game_pk": 822934,
+          "team": "Toronto Blue Jays",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_k_pct": 17.0,
+            "same_hand_ratio": 88.8889,
+            "l14_k_pct": 22.3529,
+            "env_neutral": 50.0,
+            "ump_accuracy": 55.9623,
+            "ump_k_pct": -0.24,
+            "ump_bb_pct": -0.576
+          },
+          "hit_probability": 0.6051,
+          "raw_hit_probability": 0.6553,
+          "lift": -0.0893,
+          "reliability": "B",
+          "sample_n": 10,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 3.5,
+            "needs": 4
+          }
+        },
+        {
+          "prop": "Over 16.5 Outs Recorded",
+          "type": "pitcher",
+          "score": 42.1,
+          "notable_signals": 0,
+          "matchup": "Toronto Blue Jays @ Tampa Bay Rays",
+          "game_pk": 822934,
+          "team": "Toronto Blue Jays",
+          "side": "away",
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "outs_rate": 0.496,
+            "avg_outs_per_start": 14.6
+          },
+          "hit_probability": 0.496,
+          "raw_hit_probability": null,
+          "lift": 0.0067,
+          "reliability": "B",
+          "sample_n": 10,
+          "projection": {
+            "stat": "pitcher_outs",
+            "value": 16.5,
+            "needs": 17
+          }
+        },
+        {
+          "prop": "Over 10.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 54.8,
+          "notable_signals": 1,
+          "matchup": "Toronto Blue Jays @ Tampa Bay Rays",
+          "game_pk": 822934,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            669456,
+            693855
+          ],
+          "signals": {
+            "combined_k_edge": 0.3517
+          },
+          "hit_probability": 0.6743,
+          "raw_hit_probability": null,
+          "lift": 0.3517,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 10.5,
+            "needs": 11
+          }
+        }
+      ]
     }
   ]
 }

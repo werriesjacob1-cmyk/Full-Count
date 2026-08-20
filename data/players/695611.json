@@ -122,6 +122,69 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-20",
+      "evaluations": [
+        {
+          "prop": "Over 4.5 Strikeouts",
+          "type": "pitcher",
+          "score": 42.1,
+          "notable_signals": 1,
+          "matchup": "Athletics @ Kansas City Royals",
+          "game_pk": 824074,
+          "team": "Athletics",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_k_pct": 40.0,
+            "same_hand_ratio": 12.5,
+            "l14_k_pct": 52.9412,
+            "tto_penalty": 8.0,
+            "env_neutral": 50.0,
+            "ump_accuracy": 49.7526,
+            "ump_k_pct": 1.5,
+            "ump_bb_pct": 0.432
+          },
+          "hit_probability": 0.6032,
+          "raw_hit_probability": 0.646,
+          "lift": 0.0729,
+          "reliability": "B",
+          "sample_n": 15,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 4.5,
+            "needs": 5
+          }
+        },
+        {
+          "prop": "Over 15.5 Outs Recorded",
+          "type": "pitcher",
+          "score": 31.0,
+          "notable_signals": 0,
+          "matchup": "Athletics @ Kansas City Royals",
+          "game_pk": 824074,
+          "team": "Athletics",
+          "side": "away",
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "outs_rate": 0.4906,
+            "avg_outs_per_start": 15.6
+          },
+          "hit_probability": 0.4906,
+          "raw_hit_probability": null,
+          "lift": -0.0599,
+          "reliability": "B",
+          "sample_n": 15,
+          "projection": {
+            "stat": "pitcher_outs",
+            "value": 15.5,
+            "needs": 16
+          }
+        }
+      ]
     }
   ]
 }
