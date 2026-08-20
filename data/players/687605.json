@@ -104,6 +104,51 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-20",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 26.7,
+          "notable_signals": 1,
+          "matchup": "Washington Nationals @ Texas Rangers",
+          "game_pk": 822861,
+          "team": "Washington Nationals",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 41.4286,
+            "park_hr_index": 50.0,
+            "lineup_slot": 0.0,
+            "bullpen_fatigue": 55.5556,
+            "park_hand_index": 0.87,
+            "opp_catcher_framing": 1.68,
+            "days_rest": 2.0,
+            "woba_ahead": 0.0,
+            "woba_behind": 11.8182,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": -2.0,
+            "series_game": 2.0,
+            "ump_k_pct": 1.104,
+            "ump_bb_pct": -0.312
+          },
+          "hit_probability": 0.5443,
+          "raw_hit_probability": 0.5611,
+          "lift": -0.0168,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

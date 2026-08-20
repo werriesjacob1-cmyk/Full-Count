@@ -129,7 +129,7 @@
         {
           "prop": "Over 5.5 Strikeouts",
           "type": "pitcher",
-          "score": 51.6,
+          "score": 31.8,
           "notable_signals": 1,
           "matchup": "Los Angeles Angels @ Houston Astros",
           "game_pk": 824153,
@@ -139,10 +139,13 @@
           "combo_player_ids": null,
           "signals": {
             "opp_team_k_pct": 82.0,
-            "same_hand_ratio": 75.0,
+            "same_hand_ratio": 43.75,
             "l14_k_pct": 27.0588,
             "tto_penalty": 8.0,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 42.8977,
+            "ump_k_pct": -0.348,
+            "ump_bb_pct": 0.132
           },
           "hit_probability": 0.4347,
           "raw_hit_probability": 0.4347,
@@ -158,7 +161,7 @@
         {
           "prop": "Over 17.5 Outs Recorded",
           "type": "pitcher",
-          "score": 37.8,
+          "score": 33.9,
           "notable_signals": 0,
           "matchup": "Los Angeles Angels @ Houston Astros",
           "game_pk": 824153,
@@ -167,12 +170,12 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.4169,
+            "outs_rate": 0.4235,
             "avg_outs_per_start": 16.95
           },
-          "hit_probability": 0.4169,
+          "hit_probability": 0.4235,
           "raw_hit_probability": null,
-          "lift": 0.0407,
+          "lift": 0.0178,
           "reliability": "A",
           "sample_n": 21,
           "projection": {

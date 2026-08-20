@@ -157,7 +157,7 @@
         {
           "prop": "Over 4.5 Strikeouts",
           "type": "pitcher",
-          "score": 48.2,
+          "score": 30.5,
           "notable_signals": 0,
           "matchup": "Washington Nationals @ Texas Rangers",
           "game_pk": 822861,
@@ -169,7 +169,10 @@
             "opp_team_k_pct": 60.0,
             "same_hand_ratio": 33.3333,
             "l14_k_pct": 0.0,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 54.5877,
+            "ump_k_pct": -1.104,
+            "ump_bb_pct": 0.312
           },
           "hit_probability": 0.4399,
           "raw_hit_probability": 0.4399,
@@ -185,7 +188,7 @@
         {
           "prop": "Over 14.5 Outs Recorded",
           "type": "pitcher",
-          "score": 14.1,
+          "score": 13.3,
           "notable_signals": 0,
           "matchup": "Washington Nationals @ Texas Rangers",
           "game_pk": 822861,
@@ -194,12 +197,12 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.5161,
+            "outs_rate": 0.5153,
             "avg_outs_per_start": 14.5
           },
-          "hit_probability": 0.5161,
+          "hit_probability": 0.5153,
           "raw_hit_probability": null,
-          "lift": -0.1934,
+          "lift": -0.1922,
           "reliability": "B",
           "sample_n": 10,
           "projection": {
