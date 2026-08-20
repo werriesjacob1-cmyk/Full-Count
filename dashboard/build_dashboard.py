@@ -844,6 +844,23 @@ def reconcile_public_lifecycle(payload, prior_payload=None, live=None, schedule=
         state = game_state(status, row=row, now=now)
         before_cutoff = before_betting_cutoff(row, now)
 
+        # A registry-backed row from a PRIOR slate that has already reached
+        # a terminal settlement no longer belongs on the current board --
+        # apply the same rule the carry-forward loop below applies to
+        # registry entries not already present in payload["props"]. Without
+        # this, a pick correctly carried forward once (e.g. while its game
+        # was still live, before settlement was known) gets baked into a
+        # future payload/props list and then stays stuck on every board
+        # after it forever, because -- unlike the carry-forward loop -- this
+        # loop had no age/staleness check of its own. Verified live
+        # 2026-08-20: a graded Aug 18 Top Pick was still showing as today's
+        # #1 Top Pick because of exactly this gap.
+        if registered is not None and registered.get("slate_date") != payload.get("date"):
+            existing = apply_live_overlay({"props": [dict(row)]}, live)["props"][0]
+            settlement = existing.get("settlement_state") or row.get("settlement_state") or "open"
+            if settlement in ("hit", "miss", "void"):
+                continue
+
         # Unknown/non-pregame status and the scheduled start are independent
         # fail-closed gates. A local Top Pick is not proof of publication.
         if (state != "pregame" or not before_cutoff) and registered is None:

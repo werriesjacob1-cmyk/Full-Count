@@ -262,6 +262,65 @@ class BuildPersistenceTests(unittest.TestCase):
         )
         self.assertEqual([value["id"] for value in out["props"]], [row["id"]])
 
+    def test_settled_prior_slate_pick_does_not_stick_once_baked_into_props(self):
+        # Regression for a real production bug found 2026-08-20: once a
+        # registry-backed pick was carried into payload["props"] on some
+        # earlier build (e.g. while its game was still live, before
+        # settlement was known), the *next* build's first loop -- which
+        # walks payload["props"], not the registry -- had no age/staleness
+        # check of its own. It kept re-freezing the same row forever, so a
+        # Top Pick from days ago that had long since graded hit/miss stayed
+        # pinned as if it were part of tonight's board. The carry-forward
+        # loop already excluded a stale settled registry entry that was NOT
+        # in payload["props"]; this proves the first loop now does too, for
+        # a registry entry that already IS baked into the disk payload.
+        row = prop()
+        registry = published_registry(row)
+        live = default_live_state()
+        merge_prop_fields(live, row["id"], {
+            "settlement_state": "miss", "settlement_authority": "official_final",
+            "settlement_observed_at": "2026-08-19T01:18:09Z",
+            "settlement_source": "mlb_official_final_with_fanduel_eligibility",
+            "result_actual": 0, "result_reason": "official final statistic compared with the displayed threshold",
+        }, "2026-08-19T01:18:09Z", channel="grades")
+        merge_prop_fields(live, row["id"], {
+            "game_state": "final", "game_state_source": "mlb_game_feed_by_game_pk",
+            "game_state_observed_at": "2026-08-20T20:06:22Z",
+        }, "2026-08-20T20:06:22Z", channel="grades")
+
+        # row itself (published for 2026-08-17) is already present as a
+        # source_row in a payload dated two days later -- exactly what a
+        # stale docs/data.json committed by an earlier build looks like.
+        out = bd.reconcile_public_lifecycle(
+            payload([row], date="2026-08-19"), live=live, registry=registry,
+            schedule={}, now="2026-08-19T20:11:00Z",
+        )
+        self.assertEqual(out["props"], [])
+
+    def test_same_slate_settled_pick_still_shows_after_first_loop_check(self):
+        # The new stale-prior-slate check must not exclude a pick that
+        # settled EARLIER TODAY on the board's own slate date -- that is a
+        # legitimate, still-relevant graded Top Pick from tonight's board.
+        row = prop()
+        registry = published_registry(row)
+        live = default_live_state()
+        merge_prop_fields(live, row["id"], {
+            "settlement_state": "hit", "settlement_authority": "official_final",
+            "settlement_observed_at": T2,
+            "settlement_source": "mlb_official_final_with_fanduel_eligibility",
+            "result_actual": 1, "result_reason": "official final statistic compared with the displayed threshold",
+        }, T2, channel="grades")
+        merge_prop_fields(live, row["id"], {
+            "game_state": "final", "game_state_source": "mlb_game_feed_by_game_pk",
+            "game_state_observed_at": T2,
+        }, T2, channel="grades")
+        out = bd.reconcile_public_lifecycle(
+            payload([row], date="2026-08-17"), live=live, registry=registry,
+            schedule={}, now=T2,
+        )
+        self.assertEqual([value["id"] for value in out["props"]], [row["id"]])
+        self.assertEqual(out["props"][0]["settlement_state"], "hit")
+
 
 class DeliveryAndImportTests(unittest.TestCase):
     def test_live_grader_imports_without_pybaseball(self):
