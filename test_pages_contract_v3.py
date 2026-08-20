@@ -301,6 +301,52 @@ class PagesContractTests(unittest.TestCase):
             self.assertFalse(changed)
             self.assertFalse(os.path.exists(out_path))
 
+    def test_deploy_verifies_public_site_after_publish(self):
+        """Real incident, 2026-08-20: main/docs/data.json was current, deploy-
+        pages reported success, but nothing in the workflow had ever actually
+        fetched the deployed PUBLIC URL to prove it served that content --
+        "GitHub Actions is green" and "the public site is current" were
+        silently treated as the same claim. dashboard-deploy.yml now polls
+        the public publication_manifest.json + data.json after deploy-pages
+        and fails the job if they never converge to what this run deployed.
+
+        Also locks in a real bug caught by testing this against production
+        BEFORE shipping it: the first draft compared sha256(raw response
+        bytes) against publication_manifest.json's own files["data.json"]
+        field -- which is dashboard/live_state.py's state_digest() (a hash
+        of the NORMALIZED, canonically-reserialized dict), not a raw-bytes
+        hash, so it would have mismatched on every real deploy. The shipped
+        version compares source_commit and data.json's own generated_at
+        field instead -- verified convergent against the real production
+        site before merge."""
+        with open(os.path.join(ROOT, ".github", "workflows", "dashboard-deploy.yml"),
+                 encoding="utf-8") as handle:
+            deploy = yaml.safe_load(handle)
+        steps = deploy["jobs"]["deploy"]["steps"]
+        deploy_index = next(
+            index for index, step in enumerate(steps) if step.get("id") == "deployment"
+        )
+        verify_index = next(
+            index for index, step in enumerate(steps)
+            if step.get("name") == "Verify public site converges to deployed artifact"
+        )
+        confirm_index = next(
+            index for index, step in enumerate(steps)
+            if step.get("name") == "Confirm durable public exposure"
+        )
+        self.assertLess(deploy_index, verify_index)
+        self.assertLess(verify_index, confirm_index)
+        verify_step = steps[verify_index]
+        run = verify_step["run"]
+        # Must never repeat the raw-bytes-hash mistake, and must actually
+        # compare the two real provenance fields.
+        self.assertNotIn('hashlib.sha256(public_data_raw)', run)
+        self.assertIn("source_commit", run)
+        self.assertIn("generated_at", run)
+        self.assertIn("publication_manifest.json", run)
+        self.assertIn("sys.exit(1)", run)  # must fail loudly, not just warn
+        self.assertIn("PAGES_DEPLOYMENT_URL", verify_step.get("env", {}))
+
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)

@@ -62,6 +62,102 @@ jobs:
         id: deployment
         uses: actions/deploy-pages@v4
 
+      - name: Verify public site converges to deployed artifact
+        # A green deploy-pages step only means our upload succeeded -- it is
+        # not proof a real browser fetching the public URL right now gets
+        # this artifact. Verified live 2026-08-20: GitHub Pages' own CDN
+        # (Fastly) serves data.json with `Cache-Control: max-age=600` and
+        # answered a freshly cache-busted request (`?t=<unique>`) with
+        # `x-cache: HIT` -- the query-string trick client code already uses
+        # does not reliably defeat this edge cache, so there is a real,
+        # previously-unverified propagation window after every deploy.
+        # Poll the public publication_manifest.json (the artifact's own
+        # content-addressed provenance record, already deployed alongside
+        # data.json/live.json) for source_commit to match this run's
+        # checkout, bounded so a real outage still fails the job instead of
+        # hanging past the 10-minute job timeout.
+        env:
+          PAGES_DEPLOYMENT_URL: ${{ steps.deployment.outputs.page_url }}
+        run: |
+          python3 - "$RUNNER_TEMP/pages-artifact" "$PAGES_DEPLOYMENT_URL" <<'PYEOF'
+          import json
+          import sys
+          import time
+          import urllib.request
+
+          # NOTE on what NOT to compare: publication_manifest.json's own
+          # files["data.json"] is dashboard/live_state.py's state_digest() --
+          # sha256 of json.dumps(data, sort_keys=True, separators=(",",":"))
+          # over the NORMALIZED in-memory dict -- not a hash of the raw bytes
+          # actually written to disk/served (atomic_write_json's own
+          # formatting differs: different key order, indentation). Verified
+          # live before shipping this step: hashing the raw served response
+          # bytes and comparing against that field mismatches on every real
+          # deploy, which would have made this gate permanently red. The
+          # correct, meaningful signals are source_commit (content-addressed,
+          # baked into the SAME manifest file served alongside data.json/
+          # live.json from one atomic Pages artifact upload) and data.json's
+          # own generated_at field, both compared below.
+          artifact_dir, base_url = sys.argv[1], sys.argv[2].rstrip("/")
+          with open(f"{artifact_dir}/publication_manifest.json", encoding="utf-8") as f:
+              local_manifest = json.load(f)
+          with open(f"{artifact_dir}/data.json", encoding="utf-8") as f:
+              local_data = json.load(f)
+          expected_commit = local_manifest["source_commit"]
+          expected_generated_at = local_data.get("generated_at")
+          print(f"Expecting source_commit={expected_commit} generated_at={expected_generated_at}")
+
+          ATTEMPTS, DELAY_S = 12, 5
+          for attempt in range(1, ATTEMPTS + 1):
+              cachebust = f"{time.time_ns()}-{attempt}"
+              try:
+                  req = urllib.request.Request(
+                      f"{base_url}/publication_manifest.json?cb={cachebust}",
+                      headers={"Cache-Control": "no-cache", "Pragma": "no-cache"},
+                  )
+                  with urllib.request.urlopen(req, timeout=15) as resp:
+                      public_manifest = json.loads(resp.read())
+              except Exception as e:
+                  print(f"[{attempt}/{ATTEMPTS}] fetch failed: {type(e).__name__}: {e}", flush=True)
+                  time.sleep(DELAY_S)
+                  continue
+              public_commit = public_manifest.get("source_commit")
+              if public_commit != expected_commit:
+                  print(f"[{attempt}/{ATTEMPTS}] public source_commit={public_commit} "
+                       f"!= expected {expected_commit}; retrying in {DELAY_S}s", flush=True)
+                  time.sleep(DELAY_S)
+                  continue
+
+              try:
+                  req = urllib.request.Request(
+                      f"{base_url}/data.json?cb={cachebust}",
+                      headers={"Cache-Control": "no-cache", "Pragma": "no-cache"},
+                  )
+                  with urllib.request.urlopen(req, timeout=15) as resp:
+                      public_data = json.loads(resp.read())
+              except Exception as e:
+                  print(f"[{attempt}/{ATTEMPTS}] data.json fetch failed: {type(e).__name__}: {e}", flush=True)
+                  time.sleep(DELAY_S)
+                  continue
+              public_generated_at = public_data.get("generated_at")
+              if public_generated_at != expected_generated_at:
+                  print(f"[{attempt}/{ATTEMPTS}] manifest converged but public data.json "
+                       f"generated_at={public_generated_at} != expected {expected_generated_at}; "
+                       f"retrying in {DELAY_S}s", flush=True)
+                  time.sleep(DELAY_S)
+                  continue
+
+              print(f"CONVERGED on attempt {attempt}/{ATTEMPTS}: public source_commit="
+                   f"{public_commit}, data.json generated_at={public_generated_at} matches artifact.")
+              sys.exit(0)
+
+          print(f"::error::Public site never converged to source_commit={expected_commit} "
+               f"generated_at={expected_generated_at} after {ATTEMPTS} attempts "
+               f"({ATTEMPTS * DELAY_S}s) -- deploy-pages reported success but the live public "
+               f"URL is still serving something else. Do not treat this run as a successful publish.")
+          sys.exit(1)
+          PYEOF
+
       - name: Confirm durable public exposure
         env:
           PAGES_DEPLOYMENT_URL: ${{ steps.deployment.outputs.page_url }}
