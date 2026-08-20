@@ -1,5 +1,5 @@
 MLB DAILY DATA PACKAGE V5 — 2026-08-20
-Generated : 2026-08-20  16:03:48
+Generated : 2026-08-20  17:32:33
 Season    : 2026
 Windows   : L3 2026-08-17→2026-08-19 | L7 2026-08-13→2026-08-19 | L14 2026-08-06→2026-08-19 | L30 2026-07-21→2026-08-19
 Sources   : FanGraphs | Statcast/Baseball Savant | MLB Stats API | UmpScorecards | FIC | Open-Meteo | Covers.com
@@ -32,7 +32,7 @@ Sources   : FanGraphs | Statcast/Baseball Savant | MLB Stats API | UmpScorecards
 
 ────────────────────────────────────────────────────────────
   St. Louis Cardinals (65-63)  @  Cincinnati Reds (61-66)
-  12:40 PM ET  |  Great American Ball Park  |  Pre-Game
+  12:40 PM ET  |  Great American Ball Park  |  In Progress
   Series: Game 5 of 5  🚌 GETAWAY DAY
   HP Ump : Hunter Wendelstedt
   SP Away: Michael McGreevy  
@@ -62,7 +62,7 @@ Sources   : FanGraphs | Statcast/Baseball Savant | MLB Stats API | UmpScorecards
 
 ────────────────────────────────────────────────────────────
   San Francisco Giants (52-74)  @  Cleveland Guardians (61-66)
-  1:10 PM ET  |  Progressive Field  |  Pre-Game
+  1:10 PM ET  |  Progressive Field  |  In Progress
   Series: Game 3 of 3  🚌 GETAWAY DAY  📋 GAME 3 (full adjustment)
   HP Ump : Steven Jaschinski
   SP Away: Landen Roupp  
@@ -92,7 +92,7 @@ Sources   : FanGraphs | Statcast/Baseball Savant | MLB Stats API | UmpScorecards
 
 ────────────────────────────────────────────────────────────
   Toronto Blue Jays (62-66)  @  Tampa Bay Rays (76-50)
-  1:10 PM ET  |  Tropicana Field  |  Pre-Game
+  1:10 PM ET  |  Tropicana Field  |  In Progress
   Series: Game 3 of 3  🚌 GETAWAY DAY  📋 GAME 3 (full adjustment)
   HP Ump : Sean Barber
   SP Away: Shane Bieber  
@@ -199,16 +199,16 @@ Sources   : FanGraphs | Statcast/Baseball Savant | MLB Stats API | UmpScorecards
     8. Jhonny Pereda (R) — C  [proj ~609 PA/yr]
     9. Brock Rodden (S) — SS  [proj ~585 PA/yr]
 
-  Milwaukee Brewers Batting Order  (source: Rotowire fallback, best-effort):
+  Milwaukee Brewers Batting Order:
     1. Brice Turang (L) — 2B  [proj ~750 PA/yr]
     2. Jackson Chourio (R) — LF  [proj ~732 PA/yr]
-    3. Jake Bauers (L) — RF  [proj ~714 PA/yr]
-    4. William Contreras (R) — C  [proj ~693 PA/yr]
-    5. Garrett Mitchell (L) — CF  [proj ~672 PA/yr]
-    6. Andrew Vaughn (R) — 1B  [proj ~651 PA/yr]
-    7. Christian Yelich (L) — DH  [proj ~630 PA/yr]
+    3. Jake Bauers (L) — 1B  [proj ~714 PA/yr]
+    4. Gary Sánchez (R) — C  [proj ~693 PA/yr]
+    5. Christian Yelich (L) — DH  [proj ~672 PA/yr]
+    6. Joey Ortiz (R) — SS  [proj ~651 PA/yr]
+    7. Garrett Mitchell (L) — CF  [proj ~630 PA/yr]
     8. David Hamilton (L) — 3B  [proj ~609 PA/yr]
-    9. Cooper Pratt (R) — SS  [proj ~585 PA/yr]
+    9. Luis Lara (S) — RF  [proj ~585 PA/yr]
 
 ────────────────────────────────────────────────────────────
   New York Yankees (71-55)  @  Baltimore Orioles (61-66)
@@ -401,6 +401,7 @@ Sources   : FanGraphs | Statcast/Baseball Savant | MLB Stats API | UmpScorecards
   Adolis García               PHI    RF    60-Day IL       
   Brad Keller                 PHI    P     60-Day IL       
   Caleb Kilian                PHI    P     15-Day IL       
+  Felix Reyes                 PHI    LF    60-Day IL       
   Johan Rojas                 PHI    CF    60-Day IL       
   Rafael Marchán              PHI    C     10-Day IL       
   Tanner Banks                PHI    P     60-Day IL       
@@ -663,7 +664,7 @@ Sources   : FanGraphs | Statcast/Baseball Savant | MLB Stats API | UmpScorecards
   San Francisco Giants @ Cleveland Guardians
   Venue   : Progressive Field  |  Elev: 653ft  |  Surface: grass
   Temp    : 78°F  |  Humidity: 64%
-  Rain%   : 7%  (0.00in expected)
+  Rain%   : 21%  (0.00in expected)
   Wind    : 6mph from NNE (22°)
   vs Field: diagonal (322° off CF)
   AirDens : 0.9390  →  ball carries 6.1% FARTHER vs sea-level
@@ -710,13 +711,13 @@ Sources   : FanGraphs | Statcast/Baseball Savant | MLB Stats API | UmpScorecards
   New York Yankees @ Baltimore Orioles
   Venue   : Camden Yards  |  Elev: 20ft  |  Surface: grass
   Temp    : 77°F  |  Humidity: 91%
-  Rain%   : 36%  (1.08in expected)
+  Rain%   : 68%  (1.08in expected)
   Wind    : 13mph from WSW (244°)
   vs Field: blowing OUT to CF 🔴 hitter-friendly ⚡
   AirDens : 0.9626  →  ball carries 3.7% FARTHER vs sea-level
   Humidor : No
   HP Ump  : TBD
-  ⚠ FLAGS : 🚨 RAIN 36%  |  🔴 WIND OUT — HR boost  |  🔵 WIND IN — HR suppressed
+  ⚠ FLAGS : 🚨 RAIN 68%  |  ⛔ HIGH POSTPONEMENT RISK  |  🔴 WIND OUT — HR boost  |  🔵 WIND IN — HR suppressed
 
 ──────────────────────────────────────────────────
   Washington Nationals @ Texas Rangers
@@ -861,56 +862,57 @@ Sources   : FanGraphs | Statcast/Baseball Savant | MLB Stats API | UmpScorecards
 3      Leody Taveras        Gerrit Cole        New York Yankees @ Baltimore Orioles  11  4   1  .364  1.091  7   0
 4      Isaac Paredes  Grayson Rodriguez         Los Angeles Angels @ Houston Astros  11  3   0  .273   .637  0   0
 5     Daulton Varsho  Grayson Rodriguez         Los Angeles Angels @ Houston Astros  11  2   1  .182   .886  2   1
-6      Trent Grisham       Kyle Bradish        New York Yankees @ Baltimore Orioles  10  2   1  .200   .985  4   3
-7           Ben Rice       Kyle Bradish        New York Yankees @ Baltimore Orioles  10  4   1  .400  1.155  3   1
-8     Yordan Alvarez  Grayson Rodriguez         Los Angeles Angels @ Houston Astros  10  0   0  .000   .167  3   2
-9        Jose Altuve  Grayson Rodriguez         Los Angeles Angels @ Houston Astros  10  3   0  .300   .764  1   1
-10     Alec Burleson       Brady Singer       St. Louis Cardinals @ Cincinnati Reds   9  5   2  .556  1.944  1   0
+6      Alec Burleson       Brady Singer       St. Louis Cardinals @ Cincinnati Reds  10  5   2  .500  1.755  1   0
+7      Trent Grisham       Kyle Bradish        New York Yankees @ Baltimore Orioles  10  2   1  .200   .985  4   3
+8           Ben Rice       Kyle Bradish        New York Yankees @ Baltimore Orioles  10  4   1  .400  1.155  3   1
+9     Yordan Alvarez  Grayson Rodriguez         Los Angeles Angels @ Houston Astros  10  0   0  .000   .167  3   2
+10       Jose Altuve  Grayson Rodriguez         Los Angeles Angels @ Houston Astros  10  3   0  .300   .764  1   1
 11     Jordan Walker       Brady Singer       St. Louis Cardinals @ Cincinnati Reds   9  1   0  .111   .222  5   0
 12        Yandy Díaz       Shane Bieber          Toronto Blue Jays @ Tampa Bay Rays   9  2   0  .222   .522  2   1
 13   George Springer        Ian Seymour          Toronto Blue Jays @ Tampa Bay Rays   9  5   0  .556  1.267  1   1
 14       Lane Thomas        Anthony Kay          Atlanta Braves @ Chicago White Sox   9  4   0  .444   .844  1   0
-15     Andrew Vaughn       George Kirby        Seattle Mariners @ Milwaukee Brewers   9  1   0  .111   .222  1   0
-16       Jeremy Pena  Grayson Rodriguez         Los Angeles Angels @ Houston Astros   9  3   1  .333  1.000  4   0
+15       Jeremy Pena  Grayson Rodriguez         Los Angeles Angels @ Houston Astros   9  3   1  .333  1.000  4   0
+16      Iván Herrera       Brady Singer       St. Louis Cardinals @ Cincinnati Reds   7  2   0  .286   .686  0   1
 17    Cedric Mullins       Shane Bieber          Toronto Blue Jays @ Tampa Bay Rays   7  1   1  .143   .714  3   0
 18    Alejandro Kirk        Ian Seymour          Toronto Blue Jays @ Tampa Bay Rays   7  2   1  .286  1.107  1   0
 19       Jake Bauers       George Kirby        Seattle Mariners @ Milwaukee Brewers   7  0   0  .000   .000  2   0
 20     Colton Cowser        Gerrit Cole        New York Yankees @ Baltimore Orioles   7  0   0  .000   .000  6   0
 21        Mike Trout      Peter Lambert         Los Angeles Angels @ Houston Astros   7  2   1  .286  1.000  3   0
 22         Zach Neto      Peter Lambert         Los Angeles Angels @ Houston Astros   7  1   0  .143   .286  4   0
-23       Matt McLain   Michael McGreevy       St. Louis Cardinals @ Cincinnati Reds   6  1   1  .167   .834  1   0
-24      Iván Herrera       Brady Singer       St. Louis Cardinals @ Cincinnati Reds   6  1   0  .167   .500  0   1
+23   Elly De La Cruz   Michael McGreevy       St. Louis Cardinals @ Cincinnati Reds   6  3   0  .500  1.071  1   1
+24       Matt McLain   Michael McGreevy       St. Louis Cardinals @ Cincinnati Reds   6  1   1  .167   .834  1   0
 25      Jimmy Crooks       Brady Singer       St. Louis Cardinals @ Cincinnati Reds   6  1   0  .167   .334  2   0
 26  Chandler Simpson       Shane Bieber          Toronto Blue Jays @ Tampa Bay Rays   6  0   0  .000   .000  0   0
 27       Pete Alonso        Gerrit Cole        New York Yankees @ Baltimore Orioles   6  1   1  .167   .953  2   1
 28      Austin Wells       Kyle Bradish        New York Yankees @ Baltimore Orioles   6  0   0  .000   .000  3   0
 29      Wade Meckler      Peter Lambert         Los Angeles Angels @ Houston Astros   6  0   0  .000   .000  3   0
-30   Elly De La Cruz   Michael McGreevy       St. Louis Cardinals @ Cincinnati Reds   5  2   0  .400   .900  1   1
-31       Sal Stewart   Michael McGreevy       St. Louis Cardinals @ Cincinnati Reds   5  0   0  .000   .167  0   1
-32  Tyler Stephenson   Michael McGreevy       St. Louis Cardinals @ Cincinnati Reds   5  1   1  .200  1.000  1   0
-33    Ke'Bryan Hayes   Michael McGreevy       St. Louis Cardinals @ Cincinnati Reds   5  0   0  .000   .000  0   0
-34   Junior Caminero       Shane Bieber          Toronto Blue Jays @ Tampa Bay Rays   5  1   1  .200  1.133  2   1
-35   Jonathan Aranda       Shane Bieber          Toronto Blue Jays @ Tampa Bay Rays   5  1   1  .200  1.000  0   0
-36       Myles Straw        Ian Seymour          Toronto Blue Jays @ Tampa Bay Rays   5  1   0  .200   .629  2   2
-37     Jazz Chisholm       Kyle Bradish        New York Yankees @ Baltimore Orioles   5  1   0  .200   .733  3   1
-38  Christian Walker  Grayson Rodriguez         Los Angeles Angels @ Houston Astros   5  2   0  .400  1.100  2   1
-39         Cam Smith  Grayson Rodriguez         Los Angeles Angels @ Houston Astros   5  2   0  .400  1.200  2   0
-40       Yainer Diaz  Grayson Rodriguez         Los Angeles Angels @ Houston Astros   5  2   1  .400  1.500  0   1
-41      Willy Adames     Gavin Williams  San Francisco Giants @ Cleveland Guardians   4  1   1  .250  1.400  1   1
-42       Jorge Mateo       Shane Bieber          Toronto Blue Jays @ Tampa Bay Rays   4  1   0  .250   .750  1   0
-43      Keibert Ruiz       Jacob deGrom        Washington Nationals @ Texas Rangers   4  1   0  .250   .500  1   0
-44    Nolan Schanuel      Peter Lambert         Los Angeles Angels @ Houston Astros   4  1   0  .250   .500  0   0
-45         JJ Bleday   Michael McGreevy       St. Louis Cardinals @ Cincinnati Reds   3  0   0  .000   .000  0   0
-46    Nathaniel Lowe       Landen Roupp  San Francisco Giants @ Cleveland Guardians   3  1   0  .333   .666  0   0
-47      Jonny DeLuca       Shane Bieber          Toronto Blue Jays @ Tampa Bay Rays   3  1   0  .333  1.000  0   0
-48      Brice Turang       George Kirby        Seattle Mariners @ Milwaukee Brewers   3  1   0  .333  1.000  0   0
-49   Jackson Chourio       George Kirby        Seattle Mariners @ Milwaukee Brewers   3  1   0  .333  1.000  0   0
-50  Christian Yelich       George Kirby        Seattle Mariners @ Milwaukee Brewers   3  1   0  .333   .666  1   0
-51     Tyler O'Neill        Gerrit Cole        New York Yankees @ Baltimore Orioles   3  1   0  .333  1.000  0   2
-52      Amed Rosario       Kyle Bradish        New York Yankees @ Baltimore Orioles   3  0   0  .000   .000  1   0
-53         CJ Abrams       Jacob deGrom        Washington Nationals @ Texas Rangers   3  0   0  .000   .000  1   0
-54   Taylor Trammell  Grayson Rodriguez         Los Angeles Angels @ Houston Astros   3  0   0  .000   .250  0   1
-55    Vaughn Grissom      Peter Lambert         Los Angeles Angels @ Houston Astros   3  2   0  .667  1.334  1   0
+30       Sal Stewart   Michael McGreevy       St. Louis Cardinals @ Cincinnati Reds   5  0   0  .000   .167  0   1
+31  Tyler Stephenson   Michael McGreevy       St. Louis Cardinals @ Cincinnati Reds   5  1   1  .200  1.000  1   0
+32    Ke'Bryan Hayes   Michael McGreevy       St. Louis Cardinals @ Cincinnati Reds   5  0   0  .000   .000  0   0
+33   Junior Caminero       Shane Bieber          Toronto Blue Jays @ Tampa Bay Rays   5  1   1  .200  1.133  2   1
+34   Jonathan Aranda       Shane Bieber          Toronto Blue Jays @ Tampa Bay Rays   5  1   1  .200  1.000  0   0
+35       Myles Straw        Ian Seymour          Toronto Blue Jays @ Tampa Bay Rays   5  1   0  .200   .629  2   2
+36     Jazz Chisholm       Kyle Bradish        New York Yankees @ Baltimore Orioles   5  1   0  .200   .733  3   1
+37  Christian Walker  Grayson Rodriguez         Los Angeles Angels @ Houston Astros   5  2   0  .400  1.100  2   1
+38         Cam Smith  Grayson Rodriguez         Los Angeles Angels @ Houston Astros   5  2   0  .400  1.200  2   0
+39       Yainer Diaz  Grayson Rodriguez         Los Angeles Angels @ Houston Astros   5  2   1  .400  1.500  0   1
+40      Willy Adames     Gavin Williams  San Francisco Giants @ Cleveland Guardians   4  1   1  .250  1.400  1   1
+41       Jorge Mateo       Shane Bieber          Toronto Blue Jays @ Tampa Bay Rays   4  1   0  .250   .750  1   0
+42      Keibert Ruiz       Jacob deGrom        Washington Nationals @ Texas Rangers   4  1   0  .250   .500  1   0
+43    Nolan Schanuel      Peter Lambert         Los Angeles Angels @ Houston Astros   4  1   0  .250   .500  0   0
+44         JJ Bleday   Michael McGreevy       St. Louis Cardinals @ Cincinnati Reds   3  0   0  .000   .000  0   0
+45    Michael Toglia   Michael McGreevy       St. Louis Cardinals @ Cincinnati Reds   3  0   0  .000   .000  0   0
+46      Bryan Torres       Brady Singer       St. Louis Cardinals @ Cincinnati Reds   3  0   0  .000   .000  0   0
+47    Nathaniel Lowe       Landen Roupp  San Francisco Giants @ Cleveland Guardians   3  1   0  .333   .666  0   0
+48      Jonny DeLuca       Shane Bieber          Toronto Blue Jays @ Tampa Bay Rays   3  1   0  .333  1.000  0   0
+49      Brice Turang       George Kirby        Seattle Mariners @ Milwaukee Brewers   3  1   0  .333  1.000  0   0
+50   Jackson Chourio       George Kirby        Seattle Mariners @ Milwaukee Brewers   3  1   0  .333  1.000  0   0
+51  Christian Yelich       George Kirby        Seattle Mariners @ Milwaukee Brewers   3  1   0  .333   .666  1   0
+52     Tyler O'Neill        Gerrit Cole        New York Yankees @ Baltimore Orioles   3  1   0  .333  1.000  0   2
+53      Amed Rosario       Kyle Bradish        New York Yankees @ Baltimore Orioles   3  0   0  .000   .000  1   0
+54         CJ Abrams       Jacob deGrom        Washington Nationals @ Texas Rangers   3  0   0  .000   .000  1   0
+55   Taylor Trammell  Grayson Rodriguez         Los Angeles Angels @ Houston Astros   3  0   0  .000   .250  0   1
+56    Vaughn Grissom      Peter Lambert         Los Angeles Angels @ Houston Astros   3  2   0  .667  1.334  1   0
 
 ════════════════════════════════════════════════════════════════════════
   SECTION 11: HEAD-TO-HEAD PITCH-BY-PITCH AB HISTORY (tonight's matchups via Statcast)
@@ -1378,56 +1380,56 @@ Sources   : FanGraphs | Statcast/Baseball Savant | MLB Stats API | UmpScorecards
   Michael McGreevy — Last 5 Starts:
   Date         Opp      IP    H    R    ER   BB   K    HR     PC
   -----------------------------------------------------------------
-  2026-07-23   AZ       6.1   7    4    4    3    3    1      95
   2026-07-28   CHC      1.2   8    7    7    2    2    0      63
   2026-08-03   NYY      4.1   4    2    2    1    5    1      91
   2026-08-09   COL      5.2   8    3    3    2    4    1     102
   2026-08-15   CHC      6.0   5    3    0    2    6    1     102
+  2026-08-20   CIN      3.0   1    0    0    0    1    0      34
 
   Brady Singer — Last 5 Starts:
   Date         Opp      IP    H    R    ER   BB   K    HR     PC
   -----------------------------------------------------------------
-  2026-07-22   SEA      6.2   6    3    3    1    6    0     101
   2026-07-29   CLE      4.1   7    4    4    4    3    0     100
   2026-08-04   ATH      6.0   5    3    3    3    6    0     101
   2026-08-09   WSH      6.0   8    3    3    1    3    1     103
   2026-08-15   MIA      6.0   8    3    3    2    4    2      93
+  2026-08-20   STL      3.0   3    4    4    1    3    1      72
 
   Landen Roupp — Last 5 Starts:
   Date         Opp      IP    H    R    ER   BB   K    HR     PC
   -----------------------------------------------------------------
-  2026-07-22   KC       6.0   4    2    2    0    7    1      91
   2026-07-28   MIL      3.2   4    4    4    3    1    0      84
   2026-08-02   SD       4.2   6    5    5    4    6    1      99
   2026-08-08   DET      5.1   2    1    1    5    3    0      85
   2026-08-14   COL      5.2   5    4    4    3    5    1      91
+  2026-08-20   CLE      1.0   3    3    2    1    1    0      23
 
   Gavin Williams — Last 5 Starts:
   Date         Opp      IP    H    R    ER   BB   K    HR     PC
   -----------------------------------------------------------------
-  2026-07-23   MIN      7.0   2    0    0    0    11   0      97
   2026-07-28   CIN      7.0   3    2    2    1    12   1     101
   2026-08-02   AZ       5.2   1    0    0    1    10   0      89
   2026-08-08   CWS      5.2   3    2    2    2    7    1     102
   2026-08-14   SD       4.1   7    5    5    4    5    2      91
+  2026-08-20   SF       1.1   0    0    0    1    3    0      24
 
   Shane Bieber — Last 5 Starts:
   Date         Opp      IP    H    R    ER   BB   K    HR     PC
   -----------------------------------------------------------------
-  2026-07-23   TB       7.0   3    1    1    0    3    0      86
   2026-07-28   WSH      0.2   1    4    4    6    0    0      42
   2026-08-03   HOU      5.2   9    1    1    2    6    0      87
   2026-08-09   PHI      5.2   6    5    5    3    4    2      97
   2026-08-14   NYY      6.0   4    1    1    1    5    1      84
+  2026-08-20   TB       1.0   0    0    0    0    2    0      14
 
   Ian Seymour — Last 5 Starts:
   Date         Opp      IP    H    R    ER   BB   K    HR     PC
   -----------------------------------------------------------------
-  2026-07-23   TOR      6.0   5    2    2    1    7    0      87
   2026-07-29   TEX      4.2   2    0    0    1    4    0      71
   2026-08-03   COL      6.0   7    2    2    0    9    1      90
   2026-08-09   SEA      6.0   5    1    1    2    7    0      98
   2026-08-15   BAL      6.0   6    3    3    1    9    2      93
+  2026-08-20   TOR      2.0   3    1    1    0    3    1      34
 
   Gage Jump — Last 5 Starts:
   Date         Opp      IP    H    R    ER   BB   K    HR     PC
@@ -6978,7 +6980,7 @@ pc_bucket
   Ozzie Albies                14.4    6.6
   Mauricio Dubón              13.7    6.1
 
-  Seattle Mariners @ Milwaukee Brewers — Milwaukee Brewers lineup facing George Kirby (avg K% 22.0):
+  Seattle Mariners @ Milwaukee Brewers — Milwaukee Brewers lineup facing George Kirby (avg K% 22.7):
   Batter                        K%    BB%
   Garrett Mitchell            32.2   11.5 🎯 K prop target
   Christian Yelich            26.7   10.5 🎯 K prop target
@@ -6986,9 +6988,9 @@ pc_bucket
   Jackson Chourio             24.1    6.4
   Brice Turang                23.3   13.0
   David Hamilton              21.1    8.6
-  Cooper Pratt                19.1   13.8
-  William Contreras           13.9    8.6
-  Andrew Vaughn               12.1   10.9
+  Joey Ortiz                  19.0    9.4
+  Gary Sánchez                18.1   17.6
+  Luis Lara                   13.8   11.2
 
   Seattle Mariners @ Milwaukee Brewers — Seattle Mariners lineup facing Robert Gasser (avg K% 19.0):
   Batter                        K%    BB%
@@ -7109,7 +7111,7 @@ pc_bucket
 2            Chicago Cubs  5041  .248  .337  .418  .755  164  656   95 21.800 10.800  .293
 3      Pittsburgh Pirates  5012  .256  .333  .411  .744  155  646  108 24.100  9.200  .315
 4        Colorado Rockies  4833  .254  .323  .418  .741  142  611   87 22.700  8.200  .305
-5          Tampa Bay Rays  4770  .262  .332  .408  .740  133  578  127 18.700  8.600  .301
+5          Tampa Bay Rays  4773  .262  .331  .408  .739  133  578  127 18.700  8.600  .301
 6       Milwaukee Brewers  4930  .252  .337  .396  .733  118  635  127 21.600 10.800  .307
 7       Chicago White Sox  4813  .239  .319  .411  .730  167  605   70 23.800  9.100  .287
 8          Boston Red Sox  4809  .250  .323  .405  .728  131  575   96 21.500  8.400  .298
@@ -7123,17 +7125,17 @@ pc_bucket
 16       New York Yankees  4690  .229  .308  .407  .715  173  559  121 24.700  9.700  .274
 17   Arizona Diamondbacks  4846  .243  .316  .398  .714  126  579   85 19.300  8.900  .281
 18  Philadelphia Phillies  4808  .241  .312  .401  .713  155  574   95 22.500  8.500  .284
-19   San Francisco Giants  4708  .248  .306  .406  .712  138  511   56 21.100  7.000  .290
+19   San Francisco Giants  4715  .248  .305  .405  .710  138  511   56 21.200  7.000  .290
 20     Kansas City Royals  4790  .245  .313  .395  .708  128  535   97 21.000  8.300  .288
 21          Texas Rangers  4731  .242  .315  .393  .708  140  512   60 23.000  8.500  .292
 22       San Diego Padres  4758  .238  .315  .389  .704  143  543  124 21.800  9.200  .280
-23    St. Louis Cardinals  4850  .241  .317  .382  .699  132  562   79 20.500  8.600  .281
-24        Cincinnati Reds  4746  .226  .305  .391  .696  164  514   88 25.500  9.500  .275
-25          New York Mets  4799  .235  .307  .388  .695  155  531   66 22.700  8.600  .277
+23    St. Louis Cardinals  4866  .241  .317  .382  .699  133  566   79 20.500  8.600  .281
+24          New York Mets  4799  .235  .307  .388  .695  155  531   66 22.700  8.600  .277
+25        Cincinnati Reds  4755  .226  .304  .391  .695  164  514   88 25.500  9.500  .274
 26       Seattle Mariners  4740  .230  .310  .377  .687  145  496   89 23.000  8.900  .274
-27      Toronto Blue Jays  4771  .244  .305  .377  .682  120  508   63 19.500  7.400  .282
+27      Toronto Blue Jays  4780  .244  .305  .377  .682  121  509   65 19.500  7.400  .282
 28     Los Angeles Angels  4747  .235  .309  .373  .682  126  512   68 25.200  8.400  .296
-29    Cleveland Guardians  4774  .233  .312  .369  .681  120  502  122 21.800  9.600  .279
+29    Cleveland Guardians  4782  .233  .313  .369  .682  120  505  122 21.700  9.600  .280
 
 ════════════════════════════════════════════════════════════════════════
   SECTION 50: FANGRAPHS TEAM PITCHING 2026
@@ -7147,12 +7149,12 @@ pc_bucket
 3          Detroit Tigers  3.57  1.21  1125.1  8.34  3.14  1.02 22.200  8.300  26  28     60
 4          Atlanta Braves  3.67  1.25  1128.0  8.63  3.46  1.16 22.800  9.200  38  17     90
 5     Los Angeles Dodgers  3.70  1.17  1132.2  9.17  3.19  1.17 24.600  8.500  36  18     83
-6     Cleveland Guardians  3.80  1.27  1124.2  9.46  3.32  1.17 24.900  8.700  35  14     93
-7          Tampa Bay Rays  3.85  1.16  1125.0  8.23  2.59  1.28 22.100  7.000  50  14     96
+6     Cleveland Guardians  3.79  1.26  1126.2  9.47  3.32  1.17 24.900  8.700  35  14     93
+7          Tampa Bay Rays  3.85  1.17  1127.0  8.24  2.59  1.29 22.100  6.900  50  14     96
 8           Miami Marlins  3.96  1.25  1121.0  8.48  3.42  1.03 22.200  9.000  29  16     69
 9        Seattle Mariners  3.97  1.22  1121.0  8.64  2.59  1.14 23.000  6.900  29  20     67
-10      Toronto Blue Jays  3.99  1.31  1140.1  8.74  3.69  1.04 22.800  9.700  43  15     83
-11    St. Louis Cardinals  4.01  1.32  1141.1  7.81  3.38  0.99 20.400  8.800  37  22     84
+10      Toronto Blue Jays  3.98  1.31  1141.1  8.75  3.69  1.04 22.900  9.700  43  15     83
+11    St. Louis Cardinals  4.00  1.32  1144.1  7.80  3.37  0.98 20.400  8.800  37  22     84
 12       San Diego Padres  4.05  1.31  1130.0  8.25  3.52  1.12 21.600  9.200  38  15     80
 13          New York Mets  4.06  1.30  1139.2  9.11  3.59  1.09 23.600  9.300  25  14     56
 14      Chicago White Sox  4.08  1.30  1125.0  8.50  3.66  1.12 22.100  9.500  33  25     54
@@ -7162,9 +7164,9 @@ pc_bucket
 18      Baltimore Orioles  4.23  1.35  1128.2  8.07  3.38  1.08 20.800  8.700  33  18     67
 19          Texas Rangers  4.28  1.30  1111.1  8.56  3.06  1.26 22.200  7.900  35  16     63
 20     Pittsburgh Pirates  4.29  1.32  1150.2  9.35  3.68  1.04 24.100  9.500  25  20     51
-21   San Francisco Giants  4.35  1.35  1112.0  7.71  3.82  0.95 19.900  9.900  24  19     61
+21   San Francisco Giants  4.36  1.36  1113.0  7.71  3.82  0.95 19.900  9.900  24  19     61
 22     Los Angeles Angels  4.36  1.34  1118.1  9.21  4.23  1.10 23.600 10.900  20  21     69
-23        Cincinnati Reds  4.48  1.40  1130.0  8.23  4.18  1.26 20.800 10.600  33  19     71
+23        Cincinnati Reds  4.49  1.40  1133.1  8.23  4.18  1.26 20.800 10.600  33  19     71
 24         Houston Astros  4.55  1.36  1127.1  8.85  4.18  1.34 22.800 10.700  39   8     63
 25        Minnesota Twins  4.62  1.38  1130.2  8.42  3.71  1.17 21.500  9.500  37  14     88
 26   Washington Nationals  4.69  1.39  1139.0  7.77  3.54  1.40 19.800  9.000  33  32     66
@@ -7181,7 +7183,7 @@ pc_bucket
 0            Chicago Cubs  .990  47      26  100  4.05   6          69  25  .266
 1    Arizona Diamondbacks  .989  48      17  114  3.98   4          76  17  .183
 2     Los Angeles Dodgers  .988  52      25   71  3.91  13          76  20  .208
-3     St. Louis Cardinals  .988  55      21  126  4.05   7          88  21  .193
+3     St. Louis Cardinals  .988  55      21  127  4.05   7          88  21  .193
 4        San Diego Padres  .988  55      29  103  3.99   1          81  40  .331
 5           Texas Rangers  .988  53      30   80  3.88   3          77  22  .222
 6      Kansas City Royals  .988  56      38  111  4.04  11          64  32  .333
@@ -7197,13 +7199,13 @@ pc_bucket
 16       Seattle Mariners  .985  66      44  103  3.92   5          90  28  .237
 17      Chicago White Sox  .985  68      34   87  3.92  11         100  33  .248
 18    Cleveland Guardians  .985  68      38   84  3.88   7          88  18  .170
-19        Cincinnati Reds  .985  69      31   87  3.90   3         120  25  .172
+19        Cincinnati Reds  .985  69      31   87  3.91   3         120  25  .172
 20     Los Angeles Angels  .983  74      35   75  3.93   8          88  23  .207
-21         Tampa Bay Rays  .983  75      40   84  3.89   5         107  28  .207
+21         Tampa Bay Rays  .983  75      40   84  3.89   5         109  28  .204
 22      Toronto Blue Jays  .983  78      40   87  3.97   2         122  39  .242
 23      Baltimore Orioles  .982  81      38   91  3.96   6          67  29  .302
 24     Pittsburgh Pirates  .982  81      47  104  3.88   7          78  26  .250
-25   San Francisco Giants  .982  82      48  116  4.06   8         103  32  .237
+25   San Francisco Giants  .982  83      48  116  4.06   8         103  32  .237
 26          New York Mets  .982  82      43   80  3.89  11          56  27  .325
 27       Colorado Rockies  .982  82      36  105  3.96   8          99  20  .168
 28          Miami Marlins  .982  82      41   94  3.94  11         106  32  .232
@@ -7214,7 +7216,7 @@ pc_bucket
 ════════════════════════════════════════════════════════════════════════
 
   [FanGraphs unavailable this run — real SP/RP splits via MLB Stats API / Statcast instead]
-  Starters (340 pitchers, 24264.8 IP): ERA 4.16  K/9 8.41  BB/9 3.22  WHIP 1.288
+  Starters (340 pitchers, 24278.4 IP): ERA 4.16  K/9 8.41  BB/9 3.22  WHIP 1.288
   Relievers (472 pitchers, 9431.3 IP): ERA 4.29  K/9 8.85  BB/9 4.01  WHIP 1.367
 
   K/9 gap (RP - SP): 0.44 — relievers miss more bats per inning,
@@ -7251,7 +7253,7 @@ pc_bucket
 
   HITS:
      1. Hunter Goodman            ?     746
-     2. Tyler Stephenson          ?     737
+     2. Tyler Stephenson          ?     741
      3. J.T. Realmuto             ?     730
      4. Dillon Dingler            ?     694
      5. William Contreras         ?     691
@@ -7271,13 +7273,13 @@ pc_bucket
      7. Chase Burns               ?     .208
      8. Parker Messick            ?     .208
      9. Keider Montero            ?     .209
-    10. Logan Gilbert             ?     .211
+    10. Gavin Williams            ?     .210
 
   RBI:
      1. Sal Stewart               ?     94
-     2. Alec Burleson             ?     92
-     3. CJ Abrams                 ?     91
-     4. Jordan Walker             ?     90
+     2. Jordan Walker             ?     94
+     3. Alec Burleson             ?     92
+     4. CJ Abrams                 ?     91
      5. Yordan Alvarez            ?     88
      6. Pete Alonso               ?     82
      7. Dillon Dingler            ?     82
@@ -7298,7 +7300,7 @@ pc_bucket
     10. Robbie Ray                ?     17
 
   RUNS:
-     1. Tyler Stephenson          ?     419
+     1. Tyler Stephenson          ?     423
      2. Hunter Goodman            ?     418
      3. Dillon Dingler            ?     364
      4. Keibert Ruiz              ?     361
@@ -7312,7 +7314,7 @@ pc_bucket
   STRIKEOUTS:
      1. Jacob Misiorowski         ?     210
      2. Dylan Cease               ?     201
-     3. Gavin Williams            ?     190
+     3. Gavin Williams            ?     194
      4. Cam Schlittler            ?     189
      5. Cristopher Sánchez        ?     187
      6. Jesús Luzardo             ?     185
@@ -7376,7 +7378,7 @@ pc_bucket
      4. James Wood                ?     .928
      5. Willson Contreras         ?     .927
      6. Munetaka Murakami         ?     .904
-     7. Junior Caminero           ?     .899
+     7. Junior Caminero           ?     .897
      8. Jake Bauers               ?     .888
      9. Kyle Schwarber            ?     .888
     10. Matt Olson                ?     .886
@@ -7838,46 +7840,46 @@ San Francisco Giants 52 74 .413 24.0 12
   JJ Wetherholt — Game Logs L14:
   Date         Opp    AB  H   HR  RBI  BB  K   AVG
   -------------------------------------------------------
-  2026-08-14   CHC    4   0   0   0    0   1   .243
   2026-08-15   CHC    4   0   0   0    1   0   .241
   2026-08-16   CHC    4   2   0   1    1   0   .243
   2026-08-17   CIN    2   0   0   0    0   0   .242
   2026-08-17   CIN    5   2   0   0    0   2   .244
   2026-08-18   CIN    5   0   0   0    0   2   .241
   2026-08-19   CIN    4   2   0   0    0   0   .243
+  2026-08-20   CIN    1   1   0   0    0   0   .245
 
   Iván Herrera — Game Logs L14:
   Date         Opp    AB  H   HR  RBI  BB  K   AVG
   -------------------------------------------------------
-  2026-08-14   CHC    4   1   0   0    0   0   .249
   2026-08-15   CHC    2   0   0   0    1   0   .248
   2026-08-16   CHC    3   1   0   1    1   1   .249
   2026-08-17   CIN    2   0   0   0    3   0   .248
   2026-08-17   CIN    4   1   1   1    1   2   .248
   2026-08-18   CIN    4   0   0   0    0   2   .246
   2026-08-19   CIN    4   0   0   0    1   1   .244
+  2026-08-20   CIN    1   1   0   0    1   0   .245
 
   Alec Burleson — Game Logs L14:
   Date         Opp    AB  H   HR  RBI  BB  K   AVG
   -------------------------------------------------------
-  2026-08-14   CHC    4   0   0   0    0   0   .285
   2026-08-15   CHC    3   1   1   2    1   0   .285
   2026-08-16   CHC    5   3   1   4    0   1   .288
   2026-08-17   CIN    4   2   0   2    0   1   .290
   2026-08-17   CIN    5   1   0   0    0   1   .289
   2026-08-18   CIN    4   1   0   0    0   2   .289
   2026-08-19   CIN    4   1   0   0    1   1   .289
+  2026-08-20   CIN    2   0   0   0    0   1   .287
 
   Jordan Walker — Game Logs L14:
   Date         Opp    AB  H   HR  RBI  BB  K   AVG
   -------------------------------------------------------
-  2026-08-14   CHC    3   0   0   0    1   1   .282
   2026-08-15   CHC    4   0   0   0    0   0   .280
   2026-08-16   CHC    4   3   1   4    0   0   .284
   2026-08-17   CIN    4   2   0   0    0   1   .286
   2026-08-17   CIN    5   3   0   0    0   1   .289
   2026-08-18   CIN    4   1   0   0    0   0   .289
   2026-08-19   CIN    4   1   1   2    1   3   .288
+  2026-08-20   CIN    2   1   1   4    0   0   .289
 
   Joshua Báez — Game Logs L14:
   Date         Opp    AB  H   HR  RBI  BB  K   AVG
@@ -7888,215 +7890,216 @@ San Francisco Giants 52 74 .413 24.0 12
   2026-08-17   CIN    5   0   0   0    0   2   .167
   2026-08-18   CIN    3   0   0   1    0   1   .143
   2026-08-19   CIN    1   1   0   0    1   0   .182
+  2026-08-20   CIN    2   0   0   0    0   1   .167
 
   Nathan Church — Game Logs L14:
   Date         Opp    AB  H   HR  RBI  BB  K   AVG
   -------------------------------------------------------
-  2026-08-12   PHI    3   1   0   2    0   0   .239
   2026-08-14   CHC    4   0   0   0    0   0   .236
   2026-08-16   CHC    4   0   0   0    1   0   .233
   2026-08-17   CIN    0   0   0   0    0   0   .233
   2026-08-17   CIN    3   1   0   1    0   0   .234
   2026-08-18   CIN    0   0   0   0    0   0   .234
   2026-08-19   CIN    3   1   0   1    0   1   .235
+  2026-08-20   CIN    2   0   0   0    0   1   .233
 
   Bryan Torres — Game Logs L14:
   Date         Opp    AB  H   HR  RBI  BB  K   AVG
   -------------------------------------------------------
-  2026-08-07   COL    1   0   0   1    0   0   .229
   2026-08-08   COL    2   0   0   0    1   0   .224
   2026-08-09   COL    4   1   0   0    0   2   .225
   2026-08-10   PHI    1   0   0   0    0   0   .223
   2026-08-14   CHC    3   1   0   0    0   1   .226
   2026-08-17   CIN    3   1   0   1    1   0   .229
   2026-08-19   CIN    2   1   0   1    0   0   .234
+  2026-08-20   CIN    2   1   0   0    0   0   .239
 
   Blaze Jordan — Game Logs L14:
   Date         Opp    AB  H   HR  RBI  BB  K   AVG
   -------------------------------------------------------
-  2026-08-12   PHI    2   0   0   0    0   1   .246
   2026-08-15   CHC    4   1   1   1    0   0   .247
   2026-08-16   CHC    5   2   0   1    0   2   .252
   2026-08-17   CIN    3   1   0   0    1   1   .253
   2026-08-17   CIN    4   1   0   1    0   1   .253
   2026-08-18   CIN    4   0   0   0    0   0   .247
   2026-08-19   CIN    3   1   0   0    1   2   .248
+  2026-08-20   CIN    2   0   0   0    0   0   .246
 
   Jimmy Crooks — Game Logs L14:
   Date         Opp    AB  H   HR  RBI  BB  K   AVG
   -------------------------------------------------------
-  2026-08-07   COL    4   1   0   0    0   1   .190
   2026-08-09   COL    3   0   0   1    0   0   .184
   2026-08-10   PHI    4   0   0   0    0   2   .178
   2026-08-12   PHI    3   0   0   0    0   1   .173
   2026-08-16   CHC    4   2   0   0    1   1   .184
   2026-08-17   CIN    1   0   0   0    0   1   .183
   2026-08-19   CIN    4   0   0   0    0   2   .176
+  2026-08-20   CIN    1   0   0   0    0   0   .175
 
   Elly De La Cruz — Game Logs L14:
   Date         Opp    AB  H   HR  RBI  BB  K   AVG
   -------------------------------------------------------
-  2026-08-14   MIA    3   0   0   0    1   0   .266
   2026-08-15   MIA    4   0   0   0    0   2   .264
   2026-08-16   MIA    3   0   0   0    1   1   .262
   2026-08-17   STL    4   0   0   0    0   4   .259
   2026-08-17   STL    4   2   0   1    1   1   .261
   2026-08-18   STL    4   0   0   0    0   2   .259
   2026-08-19   STL    4   1   0   0    0   1   .259
+  2026-08-20   STL    1   1   0   0    0   0   .261
 
   Sal Stewart — Game Logs L14:
   Date         Opp    AB  H   HR  RBI  BB  K   AVG
   -------------------------------------------------------
-  2026-08-14   MIA    4   1   0   0    0   0   .259
   2026-08-15   MIA    4   2   0   2    0   1   .261
   2026-08-16   MIA    4   0   0   0    0   1   .259
   2026-08-17   STL    4   1   0   0    0   1   .258
   2026-08-17   STL    4   1   0   0    0   1   .258
   2026-08-18   STL    4   1   0   0    0   0   .258
   2026-08-19   STL    3   1   1   3    1   1   .259
+  2026-08-20   STL    1   0   0   0    0   0   .258
 
   JJ Bleday — Game Logs L14:
   Date         Opp    AB  H   HR  RBI  BB  K   AVG
   -------------------------------------------------------
-  2026-08-14   MIA    3   1   0   0    1   0   .219
   2026-08-15   MIA    4   1   0   0    0   1   .219
   2026-08-16   MIA    3   0   0   0    1   0   .217
   2026-08-17   STL    1   0   0   0    0   0   .217
   2026-08-17   STL    4   3   0   0    0   1   .223
   2026-08-18   STL    4   0   0   0    0   2   .220
   2026-08-19   STL    3   0   0   0    0   2   .218
+  2026-08-20   STL    1   0   0   0    0   0   .218
 
   Tyler Stephenson — Game Logs L14:
   Date         Opp    AB  H   HR  RBI  BB  K   AVG
   -------------------------------------------------------
-  2026-08-14   MIA    4   1   0   0    0   0   .252
   2026-08-15   MIA    4   0   0   0    0   2   .248
   2026-08-16   MIA    1   1   1   1    0   0   .251
   2026-08-17   STL    3   0   0   0    1   2   .248
   2026-08-17   STL    1   0   0   0    0   0   .248
   2026-08-18   STL    3   0   0   0    0   3   .245
   2026-08-19   STL    4   0   0   0    0   2   .242
+  2026-08-20   STL    1   0   0   0    0   0   .241
 
   Matt McLain — Game Logs L14:
   Date         Opp    AB  H   HR  RBI  BB  K   AVG
   -------------------------------------------------------
-  2026-08-14   MIA    2   0   0   0    1   1   .190
   2026-08-15   MIA    4   3   1   1    0   1   .197
   2026-08-16   MIA    4   0   0   0    0   3   .194
   2026-08-17   STL    2   0   0   0    1   0   .193
   2026-08-17   STL    4   1   0   0    0   2   .194
   2026-08-18   STL    3   0   0   0    0   0   .192
   2026-08-19   STL    3   3   0   0    0   0   .199
+  2026-08-20   STL    1   0   0   0    0   0   .199
 
   Michael Toglia — Game Logs L14:
   Date         Opp    AB  H   HR  RBI  BB  K   AVG
   -------------------------------------------------------
-  2026-08-12   CWS    3   0   0   0    0   3   .200
   2026-08-14   MIA    2   1   0   0    1   0   .286
   2026-08-15   MIA    1   0   0   0    0   1   .250
   2026-08-16   MIA    4   0   0   0    0   1   .167
   2026-08-17   STL    3   0   0   0    1   2   .133
   2026-08-17   STL    4   1   0   1    0   1   .158
   2026-08-19   STL    3   0   0   0    0   2   .136
+  2026-08-20   STL    1   0   0   0    0   0   .130
 
   Dane Myers — Game Logs L14:
   Date         Opp    AB  H   HR  RBI  BB  K   AVG
   -------------------------------------------------------
-  2026-08-13   CWS    3   1   0   0    2   1   .255
   2026-08-14   MIA    4   0   0   0    0   0   .250
   2026-08-15   MIA    4   1   0   0    0   0   .250
   2026-08-17   STL    4   2   1   1    0   1   .255
   2026-08-17   STL    1   1   1   1    0   0   .259
   2026-08-18   STL    3   1   0   0    0   0   .260
   2026-08-19   STL    4   1   0   1    0   1   .260
+  2026-08-20   STL    1   0   0   0    0   0   .259
 
   Héctor Rodríguez — Game Logs L14:
   Date         Opp    AB  H   HR  RBI  BB  K   AVG
   -------------------------------------------------------
-  2026-08-09   WSH    3   0   0   0    0   0   .154
   2026-08-11   CWS    4   0   0   0    0   4   .118
   2026-08-12   CWS    1   0   0   0    1   0   .111
   2026-08-13   CWS    5   0   0   0    0   0   .087
   2026-08-15   MIA    1   0   0   0    0   1   .083
   2026-08-17   STL    4   1   0   2    0   1   .107
   2026-08-18   STL    3   0   0   0    0   0   .097
+  2026-08-20   STL    1   0   0   0    0   1   .094
 
   Ke'Bryan Hayes — Game Logs L14:
   Date         Opp    AB  H   HR  RBI  BB  K   AVG
   -------------------------------------------------------
-  2026-08-14   MIA    1   1   0   0    0   0   .145
   2026-08-15   MIA    3   1   1   1    0   1   .149
   2026-08-16   MIA    1   0   0   0    1   1   .148
   2026-08-17   STL    2   0   0   0    0   1   .146
   2026-08-17   STL    0   0   0   0    0   0   .146
   2026-08-18   STL    3   1   0   0    0   0   .149
   2026-08-19   STL    0   0   0   0    0   0   .149
+  2026-08-20   STL    1   0   0   0    0   0   .148
 
   Drew Gilbert — Game Logs L14:
   Date         Opp    AB  H   HR  RBI  BB  K   AVG
   -------------------------------------------------------
-  2026-08-10   HOU    3   1   1   2    0   1   .237
   2026-08-11   HOU    3   1   0   1    1   1   .238
   2026-08-12   HOU    3   0   0   0    1   1   .235
   2026-08-15   COL    4   3   1   3    1   1   .243
   2026-08-16   COL    5   1   0   1    0   0   .242
   2026-08-18   CLE    3   0   0   0    1   2   .240
   2026-08-19   CLE    1   0   0   0    0   1   .239
+  2026-08-20   CLE    1   0   0   0    0   1   .238
 
   Rafael Devers — Game Logs L14:
   Date         Opp    AB  H   HR  RBI  BB  K   AVG
   -------------------------------------------------------
-  2026-08-11   HOU    2   0   0   0    2   1   .246
   2026-08-12   HOU    3   0   0   0    1   1   .244
   2026-08-14   COL    4   1   0   1    0   1   .245
   2026-08-15   COL    5   1   0   1    0   0   .244
   2026-08-16   COL    5   2   1   3    0   0   .246
   2026-08-18   CLE    4   0   0   0    0   3   .244
   2026-08-19   CLE    4   1   0   0    0   1   .244
+  2026-08-20   CLE    0   0   0   0    1   0   .244
 
   Willy Adames — Game Logs L14:
   Date         Opp    AB  H   HR  RBI  BB  K   AVG
   -------------------------------------------------------
-  2026-08-07   DET    4   1   1   1    0   2   .221
   2026-08-08   DET    3   1   0   0    0   1   .222
   2026-08-09   DET    3   1   0   0    1   0   .222
   2026-08-10   HOU    3   0   0   0    1   1   .221
   2026-08-11   HOU    4   2   0   0    0   0   .223
   2026-08-12   HOU    3   1   0   0    1   0   .224
   2026-08-19   CLE    4   3   0   0    0   0   .229
+  2026-08-20   CLE    1   0   0   0    0   1   .228
 
   Bryce Eldridge — Game Logs L14:
   Date         Opp    AB  H   HR  RBI  BB  K   AVG
   -------------------------------------------------------
-  2026-08-11   HOU    4   1   1   1    0   1   .248
   2026-08-12   HOU    3   0   0   0    1   2   .245
   2026-08-14   COL    4   1   1   1    0   0   .246
   2026-08-15   COL    4   1   0   1    0   1   .246
   2026-08-16   COL    3   1   0   1    2   1   .247
   2026-08-18   CLE    4   2   1   1    0   2   .250
   2026-08-19   CLE    4   0   0   0    0   2   .247
+  2026-08-20   CLE    1   0   0   0    0   0   .246
 
   Jung Hoo Lee — Game Logs L14:
   Date         Opp    AB  H   HR  RBI  BB  K   AVG
   -------------------------------------------------------
-  2026-08-10   HOU    5   2   1   1    0   0   .300
   2026-08-11   HOU    4   0   0   0    0   1   .297
   2026-08-12   HOU    5   0   0   0    0   0   .293
   2026-08-14   COL    4   0   0   0    0   0   .290
   2026-08-15   COL    3   2   0   0    1   0   .293
   2026-08-16   COL    5   1   0   0    0   0   .292
   2026-08-19   CLE    4   2   0   0    0   1   .294
+  2026-08-20   CLE    1   0   0   0    0   1   .293
 
   Osleivis Basabe — Game Logs L14:
   Date         Opp    AB  H   HR  RBI  BB  K   AVG
   -------------------------------------------------------
-  2026-08-11   HOU    4   2   0   0    0   0   .282
   2026-08-12   HOU    4   0   0   0    0   2   .256
   2026-08-14   COL    3   2   0   0    0   0   .283
   2026-08-15   COL    4   1   0   0    0   0   .280
   2026-08-16   COL    3   1   0   0    0   1   .283
   2026-08-18   CLE    3   0   0   0    1   0   .268
   2026-08-19   CLE    4   0   0   0    0   1   .250
+  2026-08-20   CLE    1   0   0   0    0   1   .246
 
   Turner Hill — Game Logs L14:
   Date         Opp    AB  H   HR  RBI  BB  K   AVG
@@ -8104,6 +8107,7 @@ San Francisco Giants 52 74 .413 24.0 12
   2026-08-15   COL    3   0   0   1    0   1   .000
   2026-08-16   COL    3   1   0   1    1   1   .167
   2026-08-18   CLE    1   1   0   0    0   0   .286
+  2026-08-20   CLE    1   0   0   0    0   0   .250
 
 
 ════════════════════════════════════════════════════════════════════════
@@ -8112,36 +8116,36 @@ San Francisco Giants 52 74 .413 24.0 12
 
   Player                       2026_BABIP Career_BABIP   Delta Signal
   ----------------------------------------------------------------------
-  JJ Wetherholt                     0.266        0.266  +0.000 🟡 Normal
-  Iván Herrera                      0.279        0.312  -0.033 🟢 DUE UP
-  Alec Burleson                     0.316        0.291  +0.025 🟡 Normal
-  Jordan Walker                     0.343        0.321  +0.022 🟡 Normal
-  Joshua Báez                       0.077        0.077  +0.000 🟡 Normal
-  Nathan Church                     0.265        0.261  +0.004 🟡 Normal
-  Bryan Torres                      0.265        0.265  +0.000 🟡 Normal
-  Blaze Jordan                      0.279        0.279  +0.000 🟡 Normal
-  Jimmy Crooks                      0.233        0.220  +0.013 🟡 Normal
-  Elly De La Cruz                   0.326        0.341  -0.015 🟡 Normal
-  Sal Stewart                       0.286        0.283  +0.003 🟡 Normal
-  JJ Bleday                         0.232        0.250  -0.018 🟡 Normal
-  Tyler Stephenson                  0.304        0.324  -0.020 🟡 Normal
-  Matt McLain                       0.253        0.309  -0.056 🟢 DUE UP
-  Michael Toglia                    0.250        0.274  -0.024 🟡 Normal
-  Dane Myers                        0.340        0.324  +0.016 🟡 Normal
+  JJ Wetherholt                     0.268        0.268  +0.000 🟡 Normal
+  Iván Herrera                      0.281        0.313  -0.032 🟢 DUE UP
+  Alec Burleson                     0.315        0.291  +0.024 🟡 Normal
+  Jordan Walker                     0.342        0.321  +0.021 🟡 Normal
+  Joshua Báez                       0.071        0.071  +0.000 🟡 Normal
+  Nathan Church                     0.265        0.260  +0.005 🟡 Normal
+  Bryan Torres                      0.271        0.262  +0.009 🟡 Normal
+  Blaze Jordan                      0.277        0.277  +0.000 🟡 Normal
+  Jimmy Crooks                      0.230        0.218  +0.012 🟡 Normal
+  Elly De La Cruz                   0.329        0.341  -0.012 🟡 Normal
+  Sal Stewart                       0.285        0.282  +0.003 🟡 Normal
+  JJ Bleday                         0.231        0.249  -0.018 🟡 Normal
+  Tyler Stephenson                  0.303        0.324  -0.021 🟡 Normal
+  Matt McLain                       0.252        0.309  -0.057 🟢 DUE UP
+  Michael Toglia                    0.231        0.273  -0.042 🟢 DUE UP
+  Dane Myers                        0.338        0.323  +0.015 🟡 Normal
   Héctor Rodríguez                  0.130        0.130  +0.000 🟡 Normal
-  Ke'Bryan Hayes                    0.159        0.296  -0.137 🟢 DUE UP
+  Ke'Bryan Hayes                    0.158        0.296  -0.138 🟢 DUE UP
   Drew Gilbert                      0.273        0.254  +0.019 🟡 Normal
   Rafael Devers                     0.290        0.313  -0.023 🟡 Normal
   Willy Adames                      0.281        0.299  -0.018 🟡 Normal
-  Bryce Eldridge                    0.307        0.298  +0.009 🟡 Normal
+  Bryce Eldridge                    0.306        0.297  +0.009 🟡 Normal
   Jung Hoo Lee                      0.310        0.296  +0.014 🟡 Normal
   Osleivis Basabe                   0.250        0.275  -0.025 🟡 Normal
-  Turner Hill                       0.333        0.333  +0.000 🟡 Normal
+  Turner Hill                       0.286        0.286  +0.000 🟡 Normal
   Drew Cavanaugh                    0.328        0.328  +0.000 🟡 Normal
   Christian Koss                    0.266        0.313  -0.047 🟢 DUE UP
   Steven Kwan                       0.294        0.299  -0.005 🟡 Normal
-  Travis Bazzana                    0.284        0.284  +0.000 🟡 Normal
-  José Ramírez                      0.249        0.278  -0.029 🟡 Normal
+  Travis Bazzana                    0.287        0.287  +0.000 🟡 Normal
+  José Ramírez                      0.252        0.278  -0.026 🟡 Normal
 
 
 ════════════════════════════════════════════════════════════════════════
@@ -10240,76 +10244,76 @@ San Francisco Giants 52 74 .413 24.0 12
   St. Louis Cardinals @ Cincinnati Reds — Great American Ball Park:
   LF(328ft/12ft wall)  CF(404ft)  RF(325ft/9ft wall)
   Surface: grass  Humidor: No  Batter Eye: easy
-  Air density: 0.9536  Altitude bonus: 1.1440
-  Wind pull-side boost: 0.987  Oppo-side boost: 1.013
-  PULL HITTERS HR INDEX: 1.184
-  OPPO HITTERS HR INDEX: 1.216
+  Air density: 0.9540  Altitude bonus: 1.1440
+  Wind pull-side boost: 0.996  Oppo-side boost: 1.004
+  PULL HITTERS HR INDEX: 1.194
+  OPPO HITTERS HR INDEX: 1.204
 
   San Francisco Giants @ Cleveland Guardians — Progressive Field:
   LF(325ft/19ft wall)  CF(405ft)  RF(325ft/19ft wall)
   Surface: grass  Humidor: No  Batter Eye: easy
-  Air density: 0.9390  Altitude bonus: 1.1388
-  Wind pull-side boost: 1.020  Oppo-side boost: 0.981
-  PULL HITTERS HR INDEX: 1.236
-  OPPO HITTERS HR INDEX: 1.189
+  Air density: 0.9470  Altitude bonus: 1.1388
+  Wind pull-side boost: 1.013  Oppo-side boost: 0.987
+  PULL HITTERS HR INDEX: 1.218
+  OPPO HITTERS HR INDEX: 1.187
 
   Toronto Blue Jays @ Tampa Bay Rays — Tropicana Field:
   LF(315ft/11ft wall)  CF(404ft)  RF(322ft/11ft wall)
   Surface: turf  Humidor: No  Batter Eye: hard
-  Air density: 0.9423  Altitude bonus: 1.0000
-  Wind pull-side boost: 1.015  Oppo-side boost: 0.985
-  PULL HITTERS HR INDEX: 1.077
-  OPPO HITTERS HR INDEX: 1.046
+  Air density: 0.9456  Altitude bonus: 1.0000
+  Wind pull-side boost: 1.022  Oppo-side boost: 0.978
+  PULL HITTERS HR INDEX: 1.081
+  OPPO HITTERS HR INDEX: 1.034
 
   Athletics @ Kansas City Royals — Kauffman Stadium:
   LF(330ft/9ft wall)  CF(410ft)  RF(330ft/9ft wall)
   Surface: grass  Humidor: No  Batter Eye: easy
-  Air density: 0.9240  Altitude bonus: 1.1311
-  Wind pull-side boost: 1.015  Oppo-side boost: 0.985
-  PULL HITTERS HR INDEX: 1.242
-  OPPO HITTERS HR INDEX: 1.206
+  Air density: 0.9248  Altitude bonus: 1.1311
+  Wind pull-side boost: 1.013  Oppo-side boost: 0.987
+  PULL HITTERS HR INDEX: 1.239
+  OPPO HITTERS HR INDEX: 1.207
 
   Atlanta Braves @ Chicago White Sox — Guaranteed Rate Field:
   LF(330ft/8ft wall)  CF(400ft)  RF(335ft/8ft wall)
   Surface: grass  Humidor: No  Batter Eye: easy
-  Air density: 0.9496  Altitude bonus: 1.1405
-  Wind pull-side boost: 1.029  Oppo-side boost: 0.971
-  PULL HITTERS HR INDEX: 1.236
-  OPPO HITTERS HR INDEX: 1.166
+  Air density: 0.9494  Altitude bonus: 1.1405
+  Wind pull-side boost: 1.032  Oppo-side boost: 0.968
+  PULL HITTERS HR INDEX: 1.24
+  OPPO HITTERS HR INDEX: 1.163
+  🔴 WIND IN — HR suppressed (11mph from CF)
 
   Seattle Mariners @ Milwaukee Brewers — American Family Field:
   LF(344ft/8ft wall)  CF(400ft)  RF(345ft/8ft wall)
   Surface: grass  Humidor: No  Batter Eye: easy
-  Air density: 0.9433  Altitude bonus: 1.0000
-  Wind pull-side boost: 1.000  Oppo-side boost: 1.000
-  PULL HITTERS HR INDEX: 1.06
-  OPPO HITTERS HR INDEX: 1.06
+  Air density: 0.9416  Altitude bonus: 1.0000
+  Wind pull-side boost: 0.978  Oppo-side boost: 1.022
+  PULL HITTERS HR INDEX: 1.038
+  OPPO HITTERS HR INDEX: 1.086
 
   New York Yankees @ Baltimore Orioles — Camden Yards:
   LF(333ft/7ft wall)  CF(410ft)  RF(318ft/7ft wall)
   Surface: grass  Humidor: No  Batter Eye: easy
-  Air density: 0.9626  Altitude bonus: 1.1578
-  Wind pull-side boost: 0.961  Oppo-side boost: 1.039
-  PULL HITTERS HR INDEX: 1.156
-  OPPO HITTERS HR INDEX: 1.249
-  🔴 WIND IN — suppresses all HRs (13mph from CF)
+  Air density: 0.9614  Altitude bonus: 1.1578
+  Wind pull-side boost: 0.994  Oppo-side boost: 1.006
+  PULL HITTERS HR INDEX: 1.197
+  OPPO HITTERS HR INDEX: 1.212
 
   Washington Nationals @ Texas Rangers — Globe Life Field:
   LF(332ft/8ft wall)  CF(407ft)  RF(326ft/8ft wall)
   Surface: grass  Humidor: YES  Batter Eye: easy
-  Air density: 0.9081  Altitude bonus: 1.0000
-  Wind pull-side boost: 0.978  Oppo-side boost: 1.022
-  PULL HITTERS HR INDEX: 1.077
-  OPPO HITTERS HR INDEX: 1.125
+  Air density: 0.9086  Altitude bonus: 1.0000
+  Wind pull-side boost: 0.976  Oppo-side boost: 1.024
+  PULL HITTERS HR INDEX: 1.075
+  OPPO HITTERS HR INDEX: 1.127
   ✅ HUMIDOR: ball stored at ~50°F/50% humidity — reduces carry vs dry conditions
 
   Los Angeles Angels @ Houston Astros — Daikin Park:
   LF(315ft/21ft wall)  CF(435ft)  RF(326ft/7ft wall)
   Surface: grass  Humidor: No  Batter Eye: medium
-  Air density: 0.9447  Altitude bonus: 1.0000
-  Wind pull-side boost: 0.987  Oppo-side boost: 1.013
-  PULL HITTERS HR INDEX: 1.045
-  OPPO HITTERS HR INDEX: 1.072
+  Air density: 0.9453  Altitude bonus: 1.0000
+  Wind pull-side boost: 0.977  Oppo-side boost: 1.023
+  PULL HITTERS HR INDEX: 1.034
+  OPPO HITTERS HR INDEX: 1.082
 
 
 ════════════════════════════════════════════════════════════════════════
@@ -10465,13 +10469,13 @@ San Francisco Giants 52 74 .413 24.0 12
   --------------------------------------------------------------------------------
   1     Brice Turang                    750  n/a        Jackson Chourio
   2     Jackson Chourio                 732  n/a        Jake Bauers
-  3     Jake Bauers                     714  n/a        William Contreras
-  4     William Contreras               693  n/a        Garrett Mitchell
-  5     Garrett Mitchell                672  n/a        Andrew Vaughn
-  6     Andrew Vaughn                   651  n/a        Christian Yelich
-  7     Christian Yelich                630  n/a        David Hamilton
-  8     David Hamilton                  609  n/a        Cooper Pratt
-  9     Cooper Pratt                    585  n/a        Brice Turang
+  3     Jake Bauers                     714  n/a        Gary Sánchez
+  4     Gary Sánchez                    693  n/a        Christian Yelich
+  5     Christian Yelich                672  n/a        Joey Ortiz
+  6     Joey Ortiz                      651  n/a        Garrett Mitchell
+  7     Garrett Mitchell                630  n/a        David Hamilton
+  8     David Hamilton                  609  n/a        Luis Lara
+  9     Luis Lara                       585  n/a        Brice Turang
 
   New York Yankees lineup context:
   Slot  Player                    ProjPA/yr  OBP ahead  Protected by
@@ -14199,54 +14203,54 @@ San Francisco Giants 52 74 .413 24.0 12
 83                  Dylan Beavers        New York Yankees @ Baltimore Orioles  135 51.100 34.800
 84                     Elias Diaz        Washington Nationals @ Texas Rangers  100 51.000 40.000
 85                    Jorge Mateo          Toronto Blue Jays @ Tampa Bay Rays  106 50.900 33.000
-86                 Yordan Alvarez         Los Angeles Angels @ Houston Astros  331 50.500 33.200
-87                  JJ Wetherholt       St. Louis Cardinals @ Cincinnati Reds  363 50.400 31.400
-88                   Iván Herrera       St. Louis Cardinals @ Cincinnati Reds  344 50.300 36.600
-89                    Yainer Diaz         Los Angeles Angels @ Houston Astros  185 50.300 35.100
-90                 Ezequiel Duran        Washington Nationals @ Texas Rangers  279 50.200 36.600
-91               Christian Yelich        Seattle Mariners @ Milwaukee Brewers  223 50.200 36.300
-92                    Jacob Young        Washington Nationals @ Texas Rangers  260 50.000 33.100
-93                 Travis Bazzana  San Francisco Giants @ Cleveland Guardians  244 50.000 35.200
-94                 Christian Koss  San Francisco Giants @ Cleveland Guardians   48 50.000 37.500
-95               Jackson Holliday        New York Yankees @ Baltimore Orioles  132 50.000 33.300
-96                  Nathan Church       St. Louis Cardinals @ Cincinnati Reds  241 49.800 36.900
-97                 Andrés Giménez          Toronto Blue Jays @ Tampa Bay Rays  282 49.600 36.500
-98                  Rafael Devers  San Francisco Giants @ Cleveland Guardians  313 49.200 34.800
-99                  Maikel Garcia              Athletics @ Kansas City Royals  243 49.000 36.200
-100              Ronald Acuña Jr.          Atlanta Braves @ Chicago White Sox  173 48.600 37.000
-101             Braden Montgomery          Atlanta Braves @ Chicago White Sox  136 48.500 37.500
-102                David Hamilton        Seattle Mariners @ Milwaukee Brewers  194 48.500 43.300
-103              Garrett Mitchell        Seattle Mariners @ Milwaukee Brewers  215 48.400 38.100
-104                  Wade Meckler         Los Angeles Angels @ Houston Astros  122 48.400 32.800
+86                      Luis Lara        Seattle Mariners @ Milwaukee Brewers   59 50.800 37.300
+87                 Yordan Alvarez         Los Angeles Angels @ Houston Astros  331 50.500 33.200
+88                   Gary Sánchez        Seattle Mariners @ Milwaukee Brewers  133 50.400 34.600
+89                  JJ Wetherholt       St. Louis Cardinals @ Cincinnati Reds  363 50.400 31.400
+90                   Iván Herrera       St. Louis Cardinals @ Cincinnati Reds  344 50.300 36.600
+91                    Yainer Diaz         Los Angeles Angels @ Houston Astros  185 50.300 35.100
+92               Christian Yelich        Seattle Mariners @ Milwaukee Brewers  223 50.200 36.300
+93                 Ezequiel Duran        Washington Nationals @ Texas Rangers  279 50.200 36.600
+94               Jackson Holliday        New York Yankees @ Baltimore Orioles  132 50.000 33.300
+95                    Jacob Young        Washington Nationals @ Texas Rangers  260 50.000 33.100
+96                 Christian Koss  San Francisco Giants @ Cleveland Guardians   48 50.000 37.500
+97                 Travis Bazzana  San Francisco Giants @ Cleveland Guardians  244 50.000 35.200
+98                  Nathan Church       St. Louis Cardinals @ Cincinnati Reds  241 49.800 36.900
+99                 Andrés Giménez          Toronto Blue Jays @ Tampa Bay Rays  282 49.600 36.500
+100                 Rafael Devers  San Francisco Giants @ Cleveland Guardians  313 49.200 34.800
+101                 Maikel Garcia              Athletics @ Kansas City Royals  243 49.000 36.200
+102              Ronald Acuña Jr.          Atlanta Braves @ Chicago White Sox  173 48.600 37.000
+103             Braden Montgomery          Atlanta Braves @ Chicago White Sox  136 48.500 37.500
+104                David Hamilton        Seattle Mariners @ Milwaukee Brewers  194 48.500 43.300
 105                     Josh Lowe         Los Angeles Angels @ Houston Astros  155 48.400 36.100
-106                   Pete Alonso        New York Yankees @ Baltimore Orioles  325 48.300 34.800
-107                Patrick Bailey  San Francisco Giants @ Cleveland Guardians  169 47.900 38.500
-108            Moises Ballesteros         Los Angeles Angels @ Houston Astros  138 47.800 39.100
-109                 Leody Taveras        New York Yankees @ Baltimore Orioles  235 47.700 35.700
-110               Julio Rodríguez        Seattle Mariners @ Milwaukee Brewers  329 47.700 35.900
-111                     Cam Smith         Los Angeles Angels @ Houston Astros  278 47.500 37.400
-112               Elly De La Cruz       St. Louis Cardinals @ Cincinnati Reds  270 47.400 37.400
-113                  Jorbit Vivas        Washington Nationals @ Texas Rangers  184 47.300 37.500
-114               Jonathan Aranda          Toronto Blue Jays @ Tampa Bay Rays  317 47.000 39.400
-115                   Brady House        Washington Nationals @ Texas Rangers  147 46.900 36.100
-116                 Brandon Nimmo        Washington Nationals @ Texas Rangers  326 46.900 32.200
-117             William Contreras        Seattle Mariners @ Milwaukee Brewers  359 46.500 36.800
-118                 Carlos Cortes              Athletics @ Kansas City Royals  205 46.300 37.100
-119              Tyler Stephenson       St. Louis Cardinals @ Cincinnati Reds  197 46.200 38.600
-120                  Amed Rosario        New York Yankees @ Baltimore Orioles  140 45.700 35.000
-121                   Henry Bolte              Athletics @ Kansas City Royals  167 45.500 37.700
-122                 Andrew Vaughn        Seattle Mariners @ Milwaukee Brewers  178 45.500 38.800
+106                  Wade Meckler         Los Angeles Angels @ Houston Astros  122 48.400 32.800
+107              Garrett Mitchell        Seattle Mariners @ Milwaukee Brewers  215 48.400 38.100
+108                   Pete Alonso        New York Yankees @ Baltimore Orioles  325 48.300 34.800
+109                Patrick Bailey  San Francisco Giants @ Cleveland Guardians  169 47.900 38.500
+110            Moises Ballesteros         Los Angeles Angels @ Houston Astros  138 47.800 39.100
+111               Julio Rodríguez        Seattle Mariners @ Milwaukee Brewers  329 47.700 35.900
+112                 Leody Taveras        New York Yankees @ Baltimore Orioles  235 47.700 35.700
+113                     Cam Smith         Los Angeles Angels @ Houston Astros  278 47.500 37.400
+114               Elly De La Cruz       St. Louis Cardinals @ Cincinnati Reds  270 47.400 37.400
+115                  Jorbit Vivas        Washington Nationals @ Texas Rangers  184 47.300 37.500
+116               Jonathan Aranda          Toronto Blue Jays @ Tampa Bay Rays  317 47.000 39.400
+117                   Brady House        Washington Nationals @ Texas Rangers  147 46.900 36.100
+118                 Brandon Nimmo        Washington Nationals @ Texas Rangers  326 46.900 32.200
+119                 Carlos Cortes              Athletics @ Kansas City Royals  205 46.300 37.100
+120              Tyler Stephenson       St. Louis Cardinals @ Cincinnati Reds  197 46.200 38.600
+121                  Amed Rosario        New York Yankees @ Baltimore Orioles  140 45.700 35.000
+122                   Henry Bolte              Athletics @ Kansas City Royals  167 45.500 37.700
 123                   Matt McLain       St. Louis Cardinals @ Cincinnati Reds  216 45.400 38.000
 124                 Drake Baldwin          Atlanta Braves @ Chicago White Sox  289 45.300 38.800
 125                  Heliot Ramos        New York Yankees @ Baltimore Orioles  217 45.200 39.600
-126               Randy Arozarena        Seattle Mariners @ Milwaukee Brewers  313 44.400 39.600
-127                   Sal Stewart       St. Louis Cardinals @ Cincinnati Reds  337 44.200 40.400
-128                Mauricio Dubón          Atlanta Braves @ Chicago White Sox  364 43.700 43.400
-129                Ke'Bryan Hayes       St. Louis Cardinals @ Cincinnati Reds  129 43.400 44.200
-130                   Taylor Ward        Seattle Mariners @ Milwaukee Brewers  313 43.100 39.300
-131                  Nathan Lukes          Toronto Blue Jays @ Tampa Bay Rays  224 42.900 45.100
-132              Chandler Simpson          Toronto Blue Jays @ Tampa Bay Rays  380 42.600 45.000
-133                  Cooper Pratt        Seattle Mariners @ Milwaukee Brewers   99 42.400 42.400
+126                    Joey Ortiz        Seattle Mariners @ Milwaukee Brewers  220 45.000 40.000
+127               Randy Arozarena        Seattle Mariners @ Milwaukee Brewers  313 44.400 39.600
+128                   Sal Stewart       St. Louis Cardinals @ Cincinnati Reds  337 44.200 40.400
+129                Mauricio Dubón          Atlanta Braves @ Chicago White Sox  364 43.700 43.400
+130                Ke'Bryan Hayes       St. Louis Cardinals @ Cincinnati Reds  129 43.400 44.200
+131                   Taylor Ward        Seattle Mariners @ Milwaukee Brewers  313 43.100 39.300
+132                  Nathan Lukes          Toronto Blue Jays @ Tampa Bay Rays  224 42.900 45.100
+133              Chandler Simpson          Toronto Blue Jays @ Tampa Bay Rays  380 42.600 45.000
 134                Bobby Witt Jr.              Athletics @ Kansas City Royals  312 42.300 41.700
 135                Alejandro Kirk          Toronto Blue Jays @ Tampa Bay Rays  128 42.200 47.700
 136  Christian Encarnacion-Strand        New York Yankees @ Baltimore Orioles   38 42.100 34.200
@@ -14552,87 +14556,87 @@ San Francisco Giants 52 74 .413 24.0 12
 
   [DRS/UZR are proprietary (BIS/FanGraphs) and unavailable — these are MLB's official
    fielding stats. Statcast Outs Above Average in Section 82 is the advanced equivalent.]
-                   Name Pos      Inn   Fld%  E   DP  RF/9
-0            Will Smith   C  393.000   .993  3    0  9.87
-1           Ali Sánchez   C  191.000   .981  4    0  9.85
-2       Travis d'Arnaud   C  143.200  1.000  0    1  9.82
-3     Christian Vázquez   C  562.000   .998  1    4  9.82
-4         Logan O'Hoppe   C  594.000   .992  5    2  9.82
-5        Patrick Bailey   C  652.000   .992  6    6  9.80
-6        Alejandro Kirk   C  393.200   .995  2    4  9.78
-7     Francisco Alvarez   C  541.100   .993  4    5  9.73
-8           Pavin Smith  1B  113.000  1.000  0   12  9.72
-9          Luis Torrens   C  550.100   .997  2    2  9.67
-10      Shea Langeliers   C  634.000   .996  3    3  9.62
-11        Casey Schmitt  1B  115.200   .984  2   11  9.55
-12           Elias Díaz   C  389.000   .988  5    0  9.53
-13            Bo Naylor   C  203.000   .995  1    1  9.49
-14       Endy Rodríguez   C  273.200   .986  4    1  9.49
-15       Carlos Narváez   C  594.000   .990  6    2  9.47
-16     Sebastián Rivero   C  144.100   .981  3    0  9.44
-17         Alex Jackson   C  148.000   .981  3    0  9.43
-18         Austin Wells   C  718.000   .993  5    2  9.41
-19       Chadwick Tromp   C  132.000   .986  2    1  9.41
-20          Yainer Diaz   C  475.100   .996  2    2  9.40
-21        Rafael Devers  1B  776.000   .991  7   69  9.39
-22       Dalton Rushing   C  472.100   .998  1    1  9.38
-23        Freddy Fermin   C  534.100   .988  7    3  9.34
-24       Jac Caglianone  1B  273.100   .990  3   21  9.33
-25       Garrett Stubbs   C  116.000   .992  1    0  9.31
-26      Victor Caratini   C  523.000   .998  1    0  9.29
-27         J.C. Escarra   C  216.200   .991  2    5  9.29
-28             Joe Mack   C  590.100   .990  6    3  9.29
-29            Drew Romo   C  427.000   .984  7    0  9.27
-30        Jhonny Pereda   C  188.100  1.000  0    0  9.24
-31           Sandy León   C  134.200   .993  1    2  9.20
-32           Liam Hicks   C  373.000   .995  2    1  9.17
-33         Danny Jansen   C  322.100   .991  3    1  9.17
-34   Brandon Valenzuela   C  529.000   .984  9    3  9.15
-35         Jose Trevino   C  267.000   .982  5    0  9.10
-36       Samuel Basallo   C  382.000   .997  1    1  9.05
-37          Curtis Mead  1B  201.000   .981  4   16  9.04
-38         Gary Sánchez   C  267.000   .993  2    1  9.00
-39        Alec Burleson  1B 1065.100   .993  8  108  9.00
-40       Salvador Perez  1B  151.000   .987  2   14  9.00
-41     Tyler Stephenson   C  778.000   .996  3    3  8.97
-42          Connor Wong   C  462.100   .996  2    0  8.96
-43          TJ Rumfield  1B  893.100   .997  3   80  8.94
-44      Kyle Higashioka   C  388.000   .982  7    3  8.93
-45          Jake Rogers   C  340.100  1.000  0    2  8.92
-46       Dillon Dingler   C  787.200   .996  3    2  8.91
-47            Joey Bart   C  288.100   .990  3    3  8.88
-48       Bryce Eldridge  1B  199.100   .995  1   24  8.86
-49      Agustín Ramírez   C  164.200   .976  4    0  8.84
-50         Daniel Susac   C  351.000   .994  2    4  8.82
-51    Spencer Torkelson  1B 1060.100   .998  2   89  8.79
-52        Drake Baldwin   C  574.200   .996  2    1  8.78
-53          Nick Fortes   C  615.200   .987  8    1  8.78
-54           Jonah Heim   C  420.100   .990  4    0  8.76
-55      Hunter Feduccia   C  491.200   .990  5    1  8.76
-56          Cal Raleigh   C  645.200   .995  3    4  8.75
-57          Edgar Quero   C  438.000   .984  7    0  8.75
-58        Mickey Gasper   C  101.000  1.000  0    0  8.73
-59      Luis García Jr.  1B  765.000   .993  5   68  8.72
-60             Ben Rice  1B  465.200   .991  4   37  8.71
-61        Michael Busch  1B 1109.200   .996  4   93  8.68
-62       Jose Fernandez  1B  140.100   .993  1   13  8.68
-63  Adrian Del Castillo   C  136.100   .992  1    0  8.67
-64          Pedro Pagés   C  465.200   .989  5    4  8.65
-65       Salvador Perez   C  377.100   .994  2    1  8.62
-66      Ildemaro Vargas  1B  438.100  1.000  0   32  8.61
-67       Luis Campusano   C  340.000   .991  3    2  8.58
-68          Pete Alonso  1B 1018.100   .997  3   74  8.45
-69    Willson Contreras  1B  955.100   .994  5   76  8.43
-70         Keibert Ruiz   C  656.000   .992  5    5  8.42
-71           Harry Ford   C  119.100  1.000  0    1  8.39
-72         Austin Wynns   C  207.200   .985  3    1  8.39
-73    Christopher Morel  1B  111.000   .990  1    8  8.35
-74         Ryan Jeffers   C  459.200   .998  1    3  8.31
-75            Ty France  1B  752.000   .996  3   52  8.31
-76             Tim Tawa  1B  209.000  1.000  0   22  8.27
-77   Vinnie Pasquantino  1B  694.000   .994  4   71  8.27
-78         Miguel Amaya   C  451.100   .998  1    1  8.26
-79         Jimmy Crooks   C  266.100   .996  1    0  8.26
+                     Name Pos      Inn   Fld%  E   DP  RF/9
+0              Will Smith   C  393.000   .993  3    0  9.87
+1             Ali Sánchez   C  191.000   .981  4    0  9.85
+2          Patrick Bailey   C  653.200   .992  6    6  9.84
+3         Travis d'Arnaud   C  143.200  1.000  0    1  9.82
+4       Christian Vázquez   C  562.000   .998  1    4  9.82
+5           Logan O'Hoppe   C  594.000   .992  5    2  9.82
+6          Alejandro Kirk   C  395.000   .995  2    4  9.80
+7       Francisco Alvarez   C  541.100   .993  4    5  9.73
+8             Pavin Smith  1B  113.000  1.000  0   12  9.72
+9            Luis Torrens   C  550.100   .997  2    2  9.67
+10        Shea Langeliers   C  634.000   .996  3    3  9.62
+11          Casey Schmitt  1B  115.200   .984  2   11  9.55
+12             Elias Díaz   C  389.000   .988  5    0  9.53
+13              Bo Naylor   C  203.000   .995  1    1  9.49
+14         Endy Rodríguez   C  273.200   .986  4    1  9.49
+15         Carlos Narváez   C  594.000   .990  6    2  9.47
+16       Sebastián Rivero   C  144.100   .981  3    0  9.44
+17           Alex Jackson   C  148.000   .981  3    0  9.43
+18           Austin Wells   C  718.000   .993  5    2  9.41
+19         Chadwick Tromp   C  132.000   .986  2    1  9.41
+20            Yainer Diaz   C  475.100   .996  2    2  9.40
+21          Rafael Devers  1B  776.000   .991  7   69  9.39
+22         Dalton Rushing   C  472.100   .998  1    1  9.38
+23          Freddy Fermin   C  534.100   .988  7    3  9.34
+24         Jac Caglianone  1B  273.100   .990  3   21  9.33
+25         Garrett Stubbs   C  116.000   .992  1    0  9.31
+26        Victor Caratini   C  523.000   .998  1    0  9.29
+27           J.C. Escarra   C  216.200   .991  2    5  9.29
+28               Joe Mack   C  590.100   .990  6    3  9.29
+29              Drew Romo   C  427.000   .984  7    0  9.27
+30          Jhonny Pereda   C  188.100  1.000  0    0  9.24
+31             Sandy León   C  134.200   .993  1    2  9.20
+32             Liam Hicks   C  373.000   .995  2    1  9.17
+33           Danny Jansen   C  322.100   .991  3    1  9.17
+34     Brandon Valenzuela   C  529.000   .984  9    3  9.15
+35           Jose Trevino   C  267.000   .982  5    0  9.10
+36         Samuel Basallo   C  382.000   .997  1    1  9.05
+37            Curtis Mead  1B  201.000   .981  4   16  9.04
+38          Alec Burleson  1B 1068.100   .993  8  109  9.03
+39           Gary Sánchez   C  267.000   .993  2    1  9.00
+40         Salvador Perez  1B  151.000   .987  2   14  9.00
+41       Tyler Stephenson   C  781.000   .996  3    3  8.97
+42            Connor Wong   C  462.100   .996  2    0  8.96
+43            TJ Rumfield  1B  893.100   .997  3   80  8.94
+44        Kyle Higashioka   C  388.000   .982  7    3  8.93
+45            Jake Rogers   C  340.100  1.000  0    2  8.92
+46         Dillon Dingler   C  787.200   .996  3    2  8.91
+47              Joey Bart   C  288.100   .990  3    3  8.88
+48         Bryce Eldridge  1B  200.200   .995  1   24  8.87
+49        Agustín Ramírez   C  164.200   .976  4    0  8.84
+50           Daniel Susac   C  351.000   .994  2    4  8.82
+51            Nick Fortes   C  617.000   .987  8    1  8.80
+52      Spencer Torkelson  1B 1060.100   .998  2   89  8.79
+53          Drake Baldwin   C  574.200   .996  2    1  8.78
+54             Jonah Heim   C  420.100   .990  4    0  8.76
+55        Hunter Feduccia   C  491.200   .990  5    1  8.76
+56            Cal Raleigh   C  645.200   .995  3    4  8.75
+57            Edgar Quero   C  438.000   .984  7    0  8.75
+58          Mickey Gasper   C  101.000  1.000  0    0  8.73
+59        Luis García Jr.  1B  765.000   .993  5   68  8.72
+60               Ben Rice  1B  465.200   .991  4   37  8.71
+61          Michael Busch  1B 1109.200   .996  4   93  8.68
+62         Jose Fernandez  1B  140.100   .993  1   13  8.68
+63    Adrian Del Castillo   C  136.100   .992  1    0  8.67
+64            Pedro Pagés   C  465.200   .989  5    4  8.65
+65         Salvador Perez   C  377.100   .994  2    1  8.62
+66        Ildemaro Vargas  1B  438.100  1.000  0   32  8.61
+67         Luis Campusano   C  340.000   .991  3    2  8.58
+68            Pete Alonso  1B 1018.100   .997  3   74  8.45
+69      Willson Contreras  1B  955.100   .994  5   76  8.43
+70           Keibert Ruiz   C  656.000   .992  5    5  8.42
+71             Harry Ford   C  119.100  1.000  0    1  8.39
+72           Austin Wynns   C  207.200   .985  3    1  8.39
+73      Christopher Morel  1B  111.000   .990  1    8  8.35
+74           Ryan Jeffers   C  459.200   .998  1    3  8.31
+75              Ty France  1B  752.000   .996  3   52  8.31
+76               Tim Tawa  1B  209.000  1.000  0   22  8.27
+77     Vinnie Pasquantino  1B  694.000   .994  4   71  8.27
+78           Miguel Amaya   C  451.100   .998  1    1  8.26
+79  Vladimir Guerrero Jr.  1B  871.200   .991  7   64  8.26
 
 ════════════════════════════════════════════════════════════════════════
   SECTION 84: STATCAST SPRINT SPEED 2026
@@ -15777,8 +15781,8 @@ San Francisco Giants 52 74 .413 24.0 12
   [FanGraphs unavailable this run — official team K% via MLB Stats API / Statcast instead]
   Michael McGreevy         vs Cincinnati Reds          team K% 25.5 🎯 high-K lineup
   Brady Singer             vs St. Louis Cardinals      team K% 20.5
-  Landen Roupp             vs Cleveland Guardians      team K% 21.8
-  Gavin Williams           vs San Francisco Giants     team K% 21.1
+  Landen Roupp             vs Cleveland Guardians      team K% 21.7
+  Gavin Williams           vs San Francisco Giants     team K% 21.2
   Shane Bieber             vs Tampa Bay Rays           team K% 18.7 ⚠️ contact lineup
   Ian Seymour              vs Toronto Blue Jays        team K% 19.5
   Gage Jump                vs Kansas City Royals       team K% 21.0
