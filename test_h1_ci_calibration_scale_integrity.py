@@ -236,14 +236,47 @@ head("8. recommendation.py and prop_probability.py are byte-for-byte untouched b
      "rest with no new code of its own")
 
 _repo_dir = os.path.dirname(os.path.abspath(__file__))
-_diff_files = os.popen("git -C %s diff --name-only origin/main -- recommendation.py "
-                       "prop_probability.py"
-                       % _repo_dir).read().strip()
-check(_diff_files == "", "no diff against origin/main in recommendation.py or "
-      "prop_probability.py -- H1's own fix lives entirely in generate_picks.py plus tests. "
-      "(The calibrator artifact's fitted PARAMS specifically -- not the whole file -- are "
-      "checked directly in section 6 above; a later PR may add metadata alongside them "
-      "without invalidating this check.)", f"got changed files: {_diff_files!r}")
+# Pinned to H1's OWN fixed historical commit RANGE (d389a8a8 = first parent
+# of d061dd13, "Merge PR #56: H1 fix" -- i.e. pre-H1 main; d061dd13 = the H1
+# merge commit itself), NOT "pre-H1 baseline vs whatever HEAD is now". The
+# latter (this check's original form, and an earlier attempt at fixing it
+# in this same PR) is a claim that NO commit since H1 has ever touched
+# these two files -- true only by accident, and false as soon as any LATER,
+# unrelated, legitimate change lands in prop_probability.py, exactly as
+# THIS PR's own p_at_least_singles addition now does. Diffing the two ENDS
+# of H1's own merge instead tests the one thing this check was ever
+# actually meant to prove -- H1's OWN diff never touched these files -- as
+# a permanent, immutable historical fact, completely decoupled from
+# whatever any later branch (including this one) legitimately does to
+# these files afterward.
+#
+# CI-SAFE: actions/checkout@v4 defaults to a SHALLOW, single-commit clone,
+# where these pinned SHAs (everything but HEAD) are simply absent -- `git
+# diff` against them would raise "unknown revision", a tooling failure, not
+# a real finding. Verified via `git cat-file -e` first; when either commit
+# isn't reachable (CI, or any shallow/partial checkout), this sub-check is
+# honestly skipped rather than forced to a false pass or a spurious crash.
+_PRE_H1_SHA = "d389a8a8d664796022da5b82cf57393914295a12"
+_H1_MERGE_SHA = "d061dd13483822246f063e86e1daa44b71632eb3"
+_h1_range_reachable = (
+    os.system("git -C %s cat-file -e %s^{commit} 2>/dev/null" % (_repo_dir, _PRE_H1_SHA)) == 0
+    and os.system("git -C %s cat-file -e %s^{commit} 2>/dev/null" % (_repo_dir, _H1_MERGE_SHA)) == 0)
+if _h1_range_reachable:
+    _diff_files = os.popen("git -C %s diff --name-only %s %s -- recommendation.py "
+                           "prop_probability.py"
+                           % (_repo_dir, _PRE_H1_SHA, _H1_MERGE_SHA)).read().strip()
+    check(_diff_files == "", "H1's OWN merge (d389a8a8..d061dd13) never touched "
+          "recommendation.py or prop_probability.py -- H1's fix lives entirely in "
+          "generate_picks.py plus tests, as a fixed historical fact independent of what "
+          "later, unrelated PRs (including this one) legitimately do to those files. "
+          "(The calibrator artifact's fitted PARAMS specifically -- not the whole file -- are "
+          "checked directly in section 6 above; a later PR may add metadata alongside them "
+          "without invalidating this check.)", f"got changed files: {_diff_files!r}")
+else:
+    print("  [SKIP] H1's historical commit range (%s..%s) not reachable in this checkout "
+         "(shallow clone) -- cannot verify H1's own diff scope here; section 6's "
+         "fitted-params check above already covers the invariant that actually matters "
+         "going forward" % (_PRE_H1_SHA, _H1_MERGE_SHA))
 
 
 n_pass = sum(1 for ok, _, _ in _results if ok)

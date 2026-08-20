@@ -4833,7 +4833,22 @@ def _batter_options(c, comp, emp, league=None):
         ("runs", "Runs", [(0.5, 1), (1.5, 2), (2.5, 3)], None),
         ("rbis", "RBIs", [(0.5, 1), (1.5, 2), (2.5, 3), (3.5, 4)], None),
         ("hits_runs_rbis", "Hits+Runs+RBIs", [(0.5, 1), (1.5, 2), (2.5, 3), (3.5, 4)], None),
-        ("singles", "Singles", [(0.5, 1)], None),
+        # 2026-08-19 accuracy investigation: singles is NOT like runs/rbis
+        # above -- unlike those (which depend on teammates and genuinely
+        # have no per-batter distribution to draw from), a single is just
+        # "exactly 1 base" in the SAME pa_dist already built for hits/
+        # total_bases/home_runs (dist[1], directly analogous to home_runs'
+        # dist[4] -- see p_at_least_singles's own docstring). This was the
+        # one real gap in the "computed, then discarded" family: the
+        # modelled component was never built for this market at all, not
+        # merely never called. Doubles/triples deliberately left as-is
+        # (fn=None, empirical only) -- large-scale calibration measurement
+        # found singles alone showing a real, reportable miscalibration
+        # (694 rows/130 dates, predicted 35.9% vs actual 44.8%); doubles
+        # and triples did not, so extending the same fix to them would be
+        # unevidenced, not principled.
+        ("singles", "Singles", [(0.5, 1)],
+         (lambda k: pp.p_at_least_singles(k, dist, pa)) if dist and pa else None),
         ("doubles", "Doubles", [(0.5, 1)], None),
         ("triples", "Triples", [(0.5, 1)], None),
     ]
@@ -4870,9 +4885,9 @@ def _batter_options(c, comp, emp, league=None):
             # from a real overconfidence gap to within +/-0.003 of exact.
             #
             # SCOPE, deliberately narrow: only stats with a modelled term.
-            # runs/rbis/hits_runs_rbis/singles/doubles/triples have no `fn`
-            # here at all (see the families list above), so there is nothing
-            # to shrink FROM -- they keep using empirical exactly as before,
+            # runs/rbis/hits_runs_rbis/doubles/triples have no `fn` here at
+            # all (see the families list above), so there is nothing to
+            # shrink FROM -- they keep using empirical exactly as before,
             # which is itself already shrunk toward the league rate by
             # mlb_sources._apply_shrinkage, a real and already-good mechanism
             # this change does not touch.
