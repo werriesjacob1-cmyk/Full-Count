@@ -1,8 +1,23 @@
 #!/usr/bin/env python3
-"""_sweep_league_rate_window.py -- tests window_days in {21, 30, 45} against
-identical historical inputs for the "hits" market, extending the OLD-vs-NEW
-verification already done for the shipped 30-day default. Scratch tooling,
-not part of the shipped pipeline.
+"""_sweep_league_rate_window.py -- tests window_days in {7, 14, 21, 30}
+against identical historical inputs for the "hits" market, extending the
+OLD-vs-NEW verification already done for the shipped 30-day default.
+Scratch tooling, not part of the shipped pipeline.
+
+WHY 7/14/21/30 AND NOT A WIDER SET (e.g. 45): a direct point-in-time check
+(2024-04-10 through 2024-05-20) found that on early-season dates, window=30
+is frequently IDENTICAL to window=None (no window at all) -- e.g. at
+2024-04-10 (season 10 days old), window=30 and window=None both read
+hits_1plus=0.486, while window=7 reads 0.556 and window=14 reads 0.551.
+A trailing N-day window can only differ from the cumulative average once
+the season itself is older than N days; a 30-day window is therefore
+nearly powerless to fix the EARLY April dates specifically, which is where
+the largest slice of hits' calibration gap concentrates (checked directly:
+excluding April, the historically worst-miscalibrated probability bucket's
+gap drops from +0.100 to +0.026 -- in line with every other bucket).
+This sweep tests whether a shorter window trades that unresponsiveness for
+an acceptable amount of week-to-week noise, rather than assuming either
+direction.
 
 Reuses the exact same 68-date target set as the original league-rate
 verification (60 April 2024/2025 dates -- where the cold-start bias was
@@ -27,7 +42,7 @@ import mlb_sources as msrc
 import mlb_daily as m
 import grade_results as gr
 
-WINDOWS = (21, 30, 45)
+WINDOWS = (7, 14, 21, 30)
 ROWS_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "rows.jsonl")
 OUT_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "_sweep_window_pairs.jsonl")
 STATE_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "_sweep_window_state.json")
