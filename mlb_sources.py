@@ -1867,6 +1867,16 @@ def exp_weighted_pitcher_k_rate(pitcher_ids, halflife_days=_K_RATE_HALFLIFE_DAYS
 # opener rather than a start. See the note in league_base_rates.
 MIN_BF_FOR_START = 15
 
+# Validated 2026-08-20 (accuracy/league-rate-rolling-window): OLD (cumulative)
+# vs NEW (this window) backtested on 68 real historical dates across
+# hits/total_bases/home_runs, 15,790-15,858 matched pairs each -- calibration
+# gap closed in every market and every slice (April cold-start AND June-Sept
+# steady-state control), no overcorrection. See that branch's commit message
+# for the full numbers. Every live call site should pass this, not a bare
+# league_base_rates() call, so a future refactor can't silently drop back to
+# the cumulative-average behavior this window was built to fix.
+LEAGUE_RATE_WINDOW_DAYS = 30
+
 _LEAGUE_RATES_CACHE = {}
 
 

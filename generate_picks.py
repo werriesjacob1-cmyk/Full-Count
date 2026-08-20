@@ -3283,7 +3283,7 @@ def _build_and_score():
                    if c.get("type") == "pitcher" and c.get("player_id")]
         emp_batters = _src.empirical_batter_prop_rates(bat_ids)
         emp_pitchers = _src.empirical_pitcher_k_rates(pit_ids)
-        league_rates = _src.league_base_rates()
+        league_rates = _src.league_base_rates(window_days=_src.LEAGUE_RATE_WINDOW_DAYS)
         if league_rates:
             print(f"    League base rates from {league_rates.get('_n_starts', 0)} starts / "
                   f"{league_rates.get('_n_batter_games', 0)} batter-games "

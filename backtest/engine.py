@@ -1340,7 +1340,7 @@ def simulate_date(date, store, use_weather=True, use_bullpen=True, keep_unpriced
             # season-aggregate-with-no-date-window shape to poison. Its own
             # module-level cache is cleared per-date by PointInTime now too
             # (see __enter__/__exit__), so date 5 cannot see date 1's rate.
-            league_rates = msrc.league_base_rates()
+            league_rates = msrc.league_base_rates(window_days=msrc.LEAGUE_RATE_WINDOW_DAYS)
             gp.attach_hit_probabilities(candidates, comp_table, emp_batters, emp_pitchers, league_rates)
 
             if apply_policy:

@@ -148,7 +148,7 @@ def model_probabilities(prices, min_games=40, use_pipeline=True):
                for pid, v in comp.items() if v.get("name")}
     ids = [by_norm[n][0] for n in prices if n in by_norm]
     emp = src_mod.empirical_batter_prop_rates(ids)
-    league = src_mod.league_base_rates()
+    league = src_mod.league_base_rates(window_days=src_mod.LEAGUE_RATE_WINDOW_DAYS)
 
     for name_n, markets in prices.items():
         hit = by_norm.get(name_n)
