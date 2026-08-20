@@ -1870,16 +1870,64 @@ MIN_BF_FOR_START = 15
 _LEAGUE_RATES_CACHE = {}
 
 
-def league_base_rates():
-    """P(clearing each standard line) across the entire league. Cached."""
-    if _LEAGUE_RATES_CACHE:
-        return _LEAGUE_RATES_CACHE
+def league_base_rates(window_days=None):
+    """P(clearing each standard line) across the entire league. Cached
+    (per the (window_days) key actually requested -- see _LEAGUE_RATES_CACHE
+    below).
+
+    window_days=None (default): every game since Opening Day, an
+    unweighted cumulative season-to-date average -- the original, still-
+    default behavior every existing caller keeps unless it opts in.
+
+    window_days=N: restricted to the trailing N days ending at (point-in-
+    time) TODAY, i.e. [TODAY - N, TODAY]. EVIDENCE THIS EXISTS TO FIX,
+    2026-08-19/20 accuracy investigation: a season-to-date CUMULATIVE
+    average structurally lags real early-season conditions (MLB offense is
+    measurably lower in the season's first weeks -- a well-documented cold-
+    weather effect -- then rises). Checked point-in-time, live, on the real
+    cached data, all three seasons on record: hits_1plus reads 0.4712-
+    0.4867 in early April, every year, and does not reach its converged
+    ~0.535-0.539 value until mid-May -- NOT a small-sample artifact
+    (5,000-6,000+ batter-games already backing the April reading, an order
+    of magnitude more than needed for that gap to be noise). The rate is a
+    precise measurement of a real, temporary, early-season effect that a
+    cumulative average keeps smearing into every later date's estimate
+    long after conditions have moved on. total_bases_2plus and
+    home_runs_1plus show the identical pattern. A rolling window fixes
+    this by construction: once the season's coldest early week ages out of
+    the window, it stops dragging the estimate down.
+
+    Not yet the default for every caller -- see backtest verification
+    (this PR) before any call site opts in for real, live-board use."""
+    cache_key = window_days
+    if _LEAGUE_RATES_CACHE.get(cache_key):
+        return _LEAGUE_RATES_CACHE[cache_key]
     out = {}
     try:
         df = m.fetch_season_statcast()
         if df is None or df.empty:
             return out
         pa = df[df["events"].notna()]
+        if window_days is not None:
+            # m.TODAY is the point-in-time cutoff (repointed per-date by
+            # backtest/engine.py's PointInTime -- see its own __enter__),
+            # never "today" in the live sense during a replay. Left-
+            # inclusive, right-inclusive: a batter-game ON the window's
+            # first day still counts.
+            cutoff = _dt.datetime.strptime(m.TODAY, "%Y-%m-%d")
+            window_start = (cutoff - _dt.timedelta(days=window_days)).strftime("%Y-%m-%d")
+            # String comparison, not pd.to_datetime -- game_date's exact
+            # dtype coming out of m.fetch_season_statcast() (raw pybaseball
+            # return) isn't guaranteed the same as StatcastStore's own
+            # loading path (backtest/engine.py explicitly normalizes it to
+            # a "%Y-%m-%d" string there; this module never has, so it
+            # can't be assumed already converted). Slicing to the first 10
+            # chars normalizes either a plain date string or a
+            # str(Timestamp) with a time-of-day suffix to the same
+            # YYYY-MM-DD form used everywhere else in this codebase for
+            # date comparisons, without adding a pandas import to a module
+            # that doesn't otherwise need one.
+            pa = pa[pa["game_date"].astype(str).str[:10] >= window_start]
         if pa.empty:
             return out
 
@@ -1945,7 +1993,7 @@ def league_base_rates():
             out["_n_batter_games"] = int(len(g))
     except Exception as e:
         m.warn("League base rates: %s" % e)
-    _LEAGUE_RATES_CACHE.update(out)
+    _LEAGUE_RATES_CACHE[cache_key] = out
     return out
 
 
