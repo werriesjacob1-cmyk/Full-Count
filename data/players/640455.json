@@ -178,7 +178,7 @@
         {
           "prop": "Over 17.5 Outs Recorded",
           "type": "pitcher",
-          "score": 53.0,
+          "score": 53.8,
           "notable_signals": 1,
           "matchup": "New York Mets @ Chicago White Sox",
           "game_pk": 824559,
@@ -187,18 +187,46 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.5517,
+            "outs_rate": 0.5462,
             "avg_outs_per_start": 17.0
           },
-          "hit_probability": 0.5517,
+          "hit_probability": 0.5462,
           "raw_hit_probability": null,
-          "lift": 0.0633,
+          "lift": 0.0743,
           "reliability": "B",
           "sample_n": 12,
           "projection": {
             "stat": "pitcher_outs",
             "value": 17.5,
             "needs": 18
+          }
+        },
+        {
+          "prop": "Over 11.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 55.0,
+          "notable_signals": 0,
+          "matchup": "New York Mets @ Chicago White Sox",
+          "game_pk": 824559,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            640455,
+            680732
+          ],
+          "signals": {
+            "combined_k_edge": 0.0099
+          },
+          "hit_probability": 0.6311,
+          "raw_hit_probability": null,
+          "lift": 0.0099,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 11.5,
+            "needs": 12
           }
         }
       ]

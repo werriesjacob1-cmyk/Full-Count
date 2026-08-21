@@ -178,7 +178,7 @@
         {
           "prop": "Over 4.5 Strikeouts",
           "type": "pitcher",
-          "score": 49.3,
+          "score": 50.3,
           "notable_signals": 0,
           "matchup": "Chicago Cubs @ Seattle Mariners",
           "game_pk": 823101,
@@ -190,7 +190,10 @@
             "opp_team_k_pct": 48.0,
             "same_hand_ratio": 92.8571,
             "l14_k_pct": 38.8235,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 60.4471,
+            "ump_k_pct": 0.072,
+            "ump_bb_pct": 0.12
           },
           "hit_probability": 0.5878,
           "raw_hit_probability": 0.5701,
@@ -206,7 +209,7 @@
         {
           "prop": "Over 17.5 Outs Recorded",
           "type": "pitcher",
-          "score": 52.6,
+          "score": 53.7,
           "notable_signals": 1,
           "matchup": "Chicago Cubs @ Seattle Mariners",
           "game_pk": 823101,
@@ -215,12 +218,12 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.5493,
+            "outs_rate": 0.5459,
             "avg_outs_per_start": 16.7
           },
-          "hit_probability": 0.5493,
+          "hit_probability": 0.5459,
           "raw_hit_probability": null,
-          "lift": 0.0609,
+          "lift": 0.074,
           "reliability": "A",
           "sample_n": 23,
           "projection": {

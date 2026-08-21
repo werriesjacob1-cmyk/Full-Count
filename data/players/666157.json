@@ -129,7 +129,7 @@
         {
           "prop": "Over 3.5 Strikeouts",
           "type": "pitcher",
-          "score": 34.5,
+          "score": 34.3,
           "notable_signals": 1,
           "matchup": "Cincinnati Reds @ Arizona Diamondbacks",
           "game_pk": 825045,
@@ -161,7 +161,7 @@
         {
           "prop": "Over 15.5 Outs Recorded",
           "type": "pitcher",
-          "score": 18.5,
+          "score": 18.8,
           "notable_signals": 0,
           "matchup": "Cincinnati Reds @ Arizona Diamondbacks",
           "game_pk": 825045,
@@ -170,18 +170,46 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.4838,
+            "outs_rate": 0.4799,
             "avg_outs_per_start": 15.36
           },
-          "hit_probability": 0.4838,
+          "hit_probability": 0.4799,
           "raw_hit_probability": null,
-          "lift": -0.1288,
+          "lift": -0.1197,
           "reliability": "B",
           "sample_n": 14,
           "projection": {
             "stat": "pitcher_outs",
             "value": 15.5,
             "needs": 16
+          }
+        },
+        {
+          "prop": "Over 8.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 17.8,
+          "notable_signals": 0,
+          "matchup": "Cincinnati Reds @ Arizona Diamondbacks",
+          "game_pk": 825045,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            666157,
+            593958
+          ],
+          "signals": {
+            "combined_k_edge": -0.1653
+          },
+          "hit_probability": 0.4249,
+          "raw_hit_probability": null,
+          "lift": -0.1653,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 8.5,
+            "needs": 9
           }
         }
       ]

@@ -142,7 +142,7 @@
         {
           "prop": "Over 4.5 Strikeouts",
           "type": "pitcher",
-          "score": 53.4,
+          "score": 54.3,
           "notable_signals": 0,
           "matchup": "Athletics @ Houston Astros",
           "game_pk": 824152,
@@ -154,7 +154,10 @@
             "opp_team_k_pct": 45.0,
             "same_hand_ratio": 100.0,
             "l14_k_pct": 13.5294,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 59.4511,
+            "ump_k_pct": -0.096,
+            "ump_bb_pct": -0.528
           },
           "hit_probability": 0.5873,
           "raw_hit_probability": 0.5679,
@@ -170,7 +173,7 @@
         {
           "prop": "Over 15.5 Outs Recorded",
           "type": "pitcher",
-          "score": 72.6,
+          "score": 73.1,
           "notable_signals": 1,
           "matchup": "Athletics @ Houston Astros",
           "game_pk": 824152,
@@ -179,18 +182,46 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.7027,
+            "outs_rate": 0.6999,
             "avg_outs_per_start": 16.41
           },
-          "hit_probability": 0.7027,
+          "hit_probability": 0.6999,
           "raw_hit_probability": null,
-          "lift": 0.0901,
+          "lift": 0.1003,
           "reliability": "A",
           "sample_n": 22,
           "projection": {
             "stat": "pitcher_outs",
             "value": 15.5,
             "needs": 16
+          }
+        },
+        {
+          "prop": "Over 9.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 45.4,
+          "notable_signals": 0,
+          "matchup": "Athletics @ Houston Astros",
+          "game_pk": 824152,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            669372,
+            669713
+          ],
+          "signals": {
+            "combined_k_edge": -0.0278
+          },
+          "hit_probability": 0.496,
+          "raw_hit_probability": null,
+          "lift": -0.0278,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 9.5,
+            "needs": 10
           }
         }
       ]

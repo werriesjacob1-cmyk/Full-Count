@@ -189,18 +189,46 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.3649,
+            "outs_rate": 0.3624,
             "avg_outs_per_start": 14.5
           },
-          "hit_probability": 0.3649,
+          "hit_probability": 0.3624,
           "raw_hit_probability": null,
-          "lift": -0.2477,
+          "lift": -0.2372,
           "reliability": "A",
           "sample_n": 26,
           "projection": {
             "stat": "pitcher_outs",
             "value": 15.5,
             "needs": 16
+          }
+        },
+        {
+          "prop": "Over 8.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 55.0,
+          "notable_signals": 0,
+          "matchup": "Cleveland Guardians @ Colorado Rockies",
+          "game_pk": 824317,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            676282,
+            685299
+          ],
+          "signals": {
+            "combined_k_edge": 0.0114
+          },
+          "hit_probability": 0.5913,
+          "raw_hit_probability": null,
+          "lift": 0.0114,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 8.5,
+            "needs": 9
           }
         }
       ]
