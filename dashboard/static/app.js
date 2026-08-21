@@ -412,7 +412,11 @@ function marketBlock(p) {
 }
 function pickCard(p, opts) {
   opts = opts || {};
-  const chips = [statusChip(p), lineupChip(p), evidenceChip(p), staleChip(p), liveStaleChip(p), gradeChip(p)].filter(Boolean).join("");
+  // Evidence quality is deliberately NOT repeated here -- it's one tap away
+  // in the detail sheet's "Underlying data," and showing it on every single
+  // card in a grid of a dozen-plus picks was pure chip clutter, not a
+  // decision a viewer needs to make before opening a card.
+  const chips = [statusChip(p), lineupChip(p), staleChip(p), liveStaleChip(p), gradeChip(p)].filter(Boolean).join("");
   const rankBadge = opts.rank ? `<span class="pc-rank">TOP PICK #${opts.rank}</span>` : "";
   const why = (p.why || [])[0] ? `<div class="pc-why">${esc(capSentence(humanizeReason(p.why[0])))}</div>` : "";
   const starred = watchlist.has(p.id);
@@ -455,12 +459,22 @@ function renderToday() {
   const props = publicProps();
   const topPicks = props.filter(p => p.recommendation_status === "top_pick")
     .sort((a, b) => (b.market_edge || 0) - (a.market_edge || 0));
-  const value = props.filter(p => p.recommendation_status === "value" && !isLongshot(p))
-    .sort((a, b) => (b.market_edge || 0) - (a.market_edge || 0)).slice(0, 6);
-  const longshots = props.filter(isLongshot)
-    .sort((a, b) => (b.market_edge || 0) - (a.market_edge || 0)).slice(0, 6);
-  const leans = props.filter(p => p.recommendation_status === "lean")
-    .sort((a, b) => (b.lift || 0) - (a.lift || 0)).slice(0, 6);
+  const valueAll = props.filter(p => p.recommendation_status === "value" && !isLongshot(p))
+    .sort((a, b) => (b.market_edge || 0) - (a.market_edge || 0));
+  const longshotsAll = props.filter(isLongshot)
+    .sort((a, b) => (b.market_edge || 0) - (a.market_edge || 0));
+  const leansAll = props.filter(p => p.recommendation_status === "lean")
+    .sort((a, b) => (b.lift || 0) - (a.lift || 0));
+  const value = valueAll.slice(0, 6);
+  const longshots = longshotsAll.slice(0, 6);
+  const leans = leansAll.slice(0, 6);
+  // Full Count Radar: the real remainder of tonight's Lean/Value pool
+  // beyond the handful already featured as full cards/rows above -- not a
+  // new bucket, not an invented "almost qualified" tier, just the rest of
+  // recommendation_status "lean"/"value" that real board volume otherwise
+  // buries in All Props. Sorted by the same real edge/lift fields.
+  const radar = [...leansAll.slice(6), ...valueAll.slice(6), ...longshotsAll.slice(6)]
+    .sort((a, b) => (b.market_edge ?? b.lift ?? 0) - (a.market_edge ?? a.lift ?? 0));
 
   const summary = DATA.summary || {};
   let html = `
@@ -488,6 +502,11 @@ function renderToday() {
   html += `</section>`;
 
   if (value.length || longshots.length) {
+    html += `<div class="value-explainer">
+      <b>Probability and value are different questions.</b> Probability asks "will this happen?" Value asks
+      "does the price pay fairly for that chance?" A Top Pick can win often at a mediocre price; a Longshot can be
+      a smart bet despite being unlikely to hit. Every card below shows both numbers separately — never one standing in for the other.
+    </div>`;
     html += `<section class="section"><div class="section-head"><h2>Best Value</h2>
       <span class="section-sub">Real sportsbook mispricing — the price pays more than the win probability alone would justify.</span></div>`;
     html += value.length
@@ -510,6 +529,13 @@ function renderToday() {
     ? `<div class="prop-list">${leans.map(propRow).join("")}</div>`
     : `<p class="section-sub">No strong leans on tonight's board yet.</p>`;
   html += `</section>`;
+
+  if (radar.length) {
+    html += `<section class="section"><div class="section-head"><h2>Full Count Radar</h2>
+      <span class="section-sub">Everything else on tonight's board with a real Lean or Value read, beyond the featured picks above — same real numbers, just more of the board.</span>
+      <a class="see-all" href="#/props?status=lean">See all research →</a></div>
+      <div class="prop-list">${radar.slice(0, 24).map(propRow).join("")}</div></section>`;
+  }
 
   if (DATA.suggested_parlay && DATA.suggested_parlay.legs && DATA.suggested_parlay.legs.length) {
     html += suggestedParlayBlock(DATA.suggested_parlay);
@@ -874,13 +900,49 @@ function closeDetail() {
   document.body.style.overflow = "";
   closeModal();
 }
+// Cross-references a prop's own game_pk against DATA.schedule (already
+// real, already computed by dashboard/build_dashboard.py's game_context --
+// see gameCard() above, which shows the same fields on the Games page).
+// Not a new data source: this only surfaces, inside the prop detail sheet,
+// context that already exists elsewhere in the same payload for the same
+// game. Never fabricates a value that isn't already on the schedule entry.
+function gameContextFor(p) {
+  if (!p.game_pk) return null;
+  return (DATA.schedule || []).find(g => g.game_pk === p.game_pk) || null;
+}
+function weatherText(wx) {
+  if (!wx) return null;
+  if (wx.dome) return "Dome — weather neutral";
+  const bits = [];
+  if (wx.temp != null) bits.push(`${wx.temp}°F`);
+  if (wx.wind_mph != null) bits.push(`wind ${wx.wind_mph}mph${wx.wind_effect ? " " + wx.wind_effect : ""}`);
+  return bits.length ? bits.join(", ") : null;
+}
 function detailBody(p) {
   const eq = evidenceQuality(p);
+  const game = gameContextFor(p);
   const reasons = (p.why || []).map(w => `<div class="reason-item positive"><span class="r-icon">＋</span><span>${esc(capSentence(humanizeReason(w)))}</span></div>`).join("");
   const watchouts = (p.watchouts || []).map(w => `<div class="reason-item negative"><span class="r-icon">－</span><span>${esc(capSentence(humanizeReason(w)))}</span></div>`).join("")
     + (p.sample_n != null && p.sample_n > 0 && p.sample_n < 30
       ? `<div class="reason-item negative"><span class="r-icon">－</span><span>This read leans on a smaller sample (${p.sample_n} games) — treat it with a little extra caution.</span></div>` : "")
     + (p.stale ? `<div class="reason-item negative"><span class="r-icon">－</span><span>${esc((p.status_reasons || [])[0] || "Underlying data is stale.")}</span></div>` : "");
+
+  // Real game-level facts already on the schedule entry for this prop's
+  // game_pk -- starters, park/weather, home-plate umpire -- shown here so
+  // the reasoning above ("Platoon: R bat vs LHP", "Opposing SP ERA 3.72")
+  // has the actual matchup it refers to right next to it, instead of only
+  // living on the separate Games page.
+  const contextRows = [];
+  if (game) {
+    if (game.away_sp || game.home_sp) {
+      contextRows.push(["Starters", `${esc(game.away_sp || "TBD")} @ ${esc(game.home_sp || "TBD")}`]);
+    }
+    const wx = weatherText(game.weather);
+    if (wx) contextRows.push(["Park / weather", esc(wx)]);
+    if (game.umpire) {
+      contextRows.push(["HP umpire", `${esc(game.umpire.name)} — ${pct(game.umpire.k_pct, 1)} K, ${pct(game.umpire.bb_pct, 1)} BB rate`]);
+    }
+  }
 
   return `
     <div class="detail-head">
@@ -888,17 +950,24 @@ function detailBody(p) {
       <div class="d-sub">${esc(p.prop)} · ${esc(p.team || p.matchup || "")}</div>
     </div>
     <div class="detail-hero">
-      <div class="prob-big">${pctBig(p.hit_probability)}</div>
+      <div>
+        <div class="prob-big">${pctBig(p.hit_probability)}</div>
+        <div class="hero-metric-label">Full Count win probability</div>
+      </div>
       <div class="hero-meta">
         <div><b>${esc(statusLabel(p))}</b></div>
         <div>Market: ${fmtOdds(p.market_odds) ?? "not posted"} ${p.market_implied != null ? `(${pct(p.market_implied, 0)} implied${p.market_hold != null ? ", exact no-vig" : ""})` : ""}</div>
-        <div>Edge: ${p.market_edge != null ? (p.market_edge >= 0 ? "+" : "") + Math.round(p.market_edge * 100) + " pts" : "—"}</div>
+        <div class="hero-value-line">Betting value: <b>${p.market_edge != null ? (p.market_edge >= 0 ? "+" : "") + Math.round(p.market_edge * 100) + " pts" : "—"}</b>
+          <span class="hero-value-note">— how much better this price pays than the win probability alone justifies. A different question from probability itself.</span></div>
       </div>
     </div>
     <div class="pc-chips" style="margin-bottom:18px;">${[statusChip(p), lineupChip(p), evidenceChip(p), staleChip(p), liveStaleChip(p), gradeChip(p)].filter(Boolean).join("")}</div>
 
     ${reasons ? `<div class="detail-section"><h3>Why Full Count Likes It</h3><div class="reason-list">${reasons}</div></div>` : ""}
     ${watchouts ? `<div class="detail-section"><h3>What Could Go Wrong</h3><div class="reason-list">${watchouts}</div></div>` : ""}
+    ${contextRows.length ? `<div class="detail-section"><h3>Game Context</h3>
+      <div class="underlying-data">${contextRows.map(([k, v]) => `<div class="ud-item"><div class="k">${esc(k)}</div><div class="v" style="font-family:var(--font-body);font-weight:500;">${v}</div></div>`).join("")}</div>
+    </div>` : ""}
 
     <div class="detail-section">
       <button class="underlying-toggle" id="detail-underlying-toggle" aria-expanded="false">
