@@ -160,7 +160,7 @@
         {
           "prop": "Over 15.5 Outs Recorded",
           "type": "pitcher",
-          "score": 7.6,
+          "score": 8.8,
           "notable_signals": 0,
           "matchup": "Pittsburgh Pirates @ Los Angeles Dodgers",
           "game_pk": 823911,
@@ -169,18 +169,46 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.4344,
+            "outs_rate": 0.4319,
             "avg_outs_per_start": 15.13
           },
-          "hit_probability": 0.4344,
+          "hit_probability": 0.4319,
           "raw_hit_probability": null,
-          "lift": -0.1652,
+          "lift": -0.1554,
           "reliability": "A",
           "sample_n": 23,
           "projection": {
             "stat": "pitcher_outs",
             "value": 15.5,
             "needs": 16
+          }
+        },
+        {
+          "prop": "Over 10.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 10.0,
+          "notable_signals": 0,
+          "matchup": "Pittsburgh Pirates @ Los Angeles Dodgers",
+          "game_pk": 823911,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            696149,
+            808967
+          ],
+          "signals": {
+            "combined_k_edge": -0.2217
+          },
+          "hit_probability": 0.4311,
+          "raw_hit_probability": null,
+          "lift": -0.2217,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 10.5,
+            "needs": 11
           }
         }
       ]

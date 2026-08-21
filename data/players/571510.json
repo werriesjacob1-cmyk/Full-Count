@@ -163,8 +163,8 @@
         {
           "prop": "Over 16.5 Outs Recorded",
           "type": "pitcher",
-          "score": 52.8,
-          "notable_signals": 0,
+          "score": 54.7,
+          "notable_signals": 1,
           "matchup": "Chicago Cubs @ Seattle Mariners",
           "game_pk": 823101,
           "team": "Chicago Cubs",
@@ -172,18 +172,46 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.5826,
+            "outs_rate": 0.5757,
             "avg_outs_per_start": 17.0
           },
-          "hit_probability": 0.5826,
+          "hit_probability": 0.5757,
           "raw_hit_probability": null,
-          "lift": 0.0436,
+          "lift": 0.0606,
           "reliability": "B",
           "sample_n": 15,
           "projection": {
             "stat": "pitcher_outs",
             "value": 16.5,
             "needs": 17
+          }
+        },
+        {
+          "prop": "Over 9.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 0.1,
+          "notable_signals": 0,
+          "matchup": "Chicago Cubs @ Seattle Mariners",
+          "game_pk": 823101,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            571510,
+            676106
+          ],
+          "signals": {
+            "combined_k_edge": -0.2568
+          },
+          "hit_probability": 0.3464,
+          "raw_hit_probability": null,
+          "lift": -0.2568,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 9.5,
+            "needs": 10
           }
         }
       ]

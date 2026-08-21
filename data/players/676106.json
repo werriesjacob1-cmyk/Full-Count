@@ -176,7 +176,7 @@
       "date": "2026-08-21",
       "evaluations": [
         {
-          "prop": "Over 4.5 Strikeouts",
+          "prop": "Over 5.5 Strikeouts",
           "type": "pitcher",
           "score": 50.3,
           "notable_signals": 0,
@@ -195,21 +195,21 @@
             "ump_k_pct": 0.072,
             "ump_bb_pct": 0.12
           },
-          "hit_probability": 0.5878,
-          "raw_hit_probability": 0.5701,
-          "lift": 0.0628,
+          "hit_probability": 0.391,
+          "raw_hit_probability": 0.391,
+          "lift": 0.0283,
           "reliability": "A",
           "sample_n": 23,
           "projection": {
             "stat": "strikeouts",
-            "value": 4.5,
-            "needs": 5
+            "value": 5.5,
+            "needs": 6
           }
         },
         {
           "prop": "Over 17.5 Outs Recorded",
           "type": "pitcher",
-          "score": 53.7,
+          "score": 56.6,
           "notable_signals": 1,
           "matchup": "Chicago Cubs @ Seattle Mariners",
           "game_pk": 823101,
@@ -218,12 +218,12 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.5459,
+            "outs_rate": 0.5399,
             "avg_outs_per_start": 16.7
           },
-          "hit_probability": 0.5459,
+          "hit_probability": 0.5399,
           "raw_hit_probability": null,
-          "lift": 0.074,
+          "lift": 0.0971,
           "reliability": "A",
           "sample_n": 23,
           "projection": {
