@@ -1,0 +1,37 @@
+{
+  "player_id": "nrfi_823510",
+  "name": "Toronto Blue Jays @ New York Yankees \u2014 1st Inning (Both Teams)",
+  "snapshots": [
+    {
+      "date": "2026-08-21",
+      "evaluations": [
+        {
+          "prop": "No runs in the 1st (both teams)",
+          "type": "game",
+          "score": 25.5,
+          "notable_signals": 0,
+          "matchup": "Toronto Blue Jays @ New York Yankees",
+          "game_pk": 823510,
+          "team": null,
+          "side": "both",
+          "lean": "NRFI",
+          "combo_player_ids": null,
+          "signals": {
+            "home_team_scores_p": 0.2961,
+            "away_team_scores_p": 0.2441,
+            "fi_n_starts": 3.0
+          },
+          "hit_probability": 0.5321,
+          "raw_hit_probability": null,
+          "lift": 0.0337,
+          "reliability": "D",
+          "sample_n": 3,
+          "projection": {
+            "stat": "nrfi_combined",
+            "value": 53.2
+          }
+        }
+      ]
+    }
+  ]
+}

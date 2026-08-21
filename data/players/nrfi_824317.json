@@ -1,0 +1,37 @@
+{
+  "player_id": "nrfi_824317",
+  "name": "Cleveland Guardians @ Colorado Rockies \u2014 1st Inning (Both Teams)",
+  "snapshots": [
+    {
+      "date": "2026-08-21",
+      "evaluations": [
+        {
+          "prop": "No runs in the 1st (both teams)",
+          "type": "game",
+          "score": 57.1,
+          "notable_signals": 0,
+          "matchup": "Cleveland Guardians @ Colorado Rockies",
+          "game_pk": 824317,
+          "team": null,
+          "side": "both",
+          "lean": "NRFI",
+          "combo_player_ids": null,
+          "signals": {
+            "home_team_scores_p": 0.273,
+            "away_team_scores_p": 0.2931,
+            "fi_n_starts": 7.0
+          },
+          "hit_probability": 0.5139,
+          "raw_hit_probability": null,
+          "lift": 0.0155,
+          "reliability": "C",
+          "sample_n": 7,
+          "projection": {
+            "stat": "nrfi_combined",
+            "value": 51.4
+          }
+        }
+      ]
+    }
+  ]
+}

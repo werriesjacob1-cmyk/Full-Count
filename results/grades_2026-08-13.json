@@ -1,15 +1,15 @@
 {
   "date": "2026-08-13",
   "hits": 11,
-  "misses": 11,
-  "ungraded": 7,
+  "misses": 17,
+  "ungraded": 1,
   "fair_hits": 11,
-  "fair_misses": 11,
+  "fair_misses": 17,
   "by_category": {
     "main": {
       "hits": 5,
-      "misses": 0,
-      "ungraded": 5
+      "misses": 5,
+      "ungraded": 0
     },
     "moonshot": {
       "hits": 0,
@@ -18,15 +18,15 @@
     },
     "best_of_category": {
       "hits": 6,
-      "misses": 6,
-      "ungraded": 2
+      "misses": 7,
+      "ungraded": 1
     }
   },
   "by_recommendation_status": {
     "unclassified": {
       "hits": 11,
-      "misses": 11,
-      "ungraded": 7
+      "misses": 17,
+      "ungraded": 1
     }
   },
   "public_top_pick_counts": {
@@ -96,8 +96,17 @@
       ],
       "watchouts": [],
       "signal_weight_adjustment": 0.37,
-      "grade": "ungraded",
-      "reason": "no batted-ball Statcast data for this game"
+      "grade": "miss",
+      "actual": false,
+      "actual_stat": "hr_at_exit_velocity",
+      "game_innings": 9,
+      "shortened_game": false,
+      "actual_ab": 4,
+      "actual_pa_est": 4,
+      "was_substitute": false,
+      "batting_order": 7,
+      "fair_test": true,
+      "opportunity": "full (4 PA)"
     },
     {
       "rank": 2,
@@ -157,8 +166,17 @@
       ],
       "watchouts": [],
       "signal_weight_adjustment": 0.4,
-      "grade": "ungraded",
-      "reason": "no batted-ball Statcast data for this game"
+      "grade": "miss",
+      "actual": false,
+      "actual_stat": "hr_at_exit_velocity",
+      "game_innings": 9,
+      "shortened_game": false,
+      "actual_ab": 5,
+      "actual_pa_est": 5,
+      "was_substitute": false,
+      "batting_order": 2,
+      "fair_test": true,
+      "opportunity": "full (5 PA)"
     },
     {
       "rank": 3,
@@ -218,8 +236,17 @@
       ],
       "watchouts": [],
       "signal_weight_adjustment": 0.45,
-      "grade": "ungraded",
-      "reason": "no batted-ball Statcast data for this game"
+      "grade": "miss",
+      "actual": false,
+      "actual_stat": "hr_at_exit_velocity",
+      "game_innings": 9,
+      "shortened_game": false,
+      "actual_ab": 4,
+      "actual_pa_est": 4,
+      "was_substitute": false,
+      "batting_order": 1,
+      "fair_test": true,
+      "opportunity": "full (4 PA)"
     },
     {
       "rank": 4,
@@ -279,8 +306,17 @@
       ],
       "watchouts": [],
       "signal_weight_adjustment": 0.37,
-      "grade": "ungraded",
-      "reason": "no batted-ball Statcast data for this game"
+      "grade": "miss",
+      "actual": false,
+      "actual_stat": "hr_at_exit_velocity",
+      "game_innings": 9,
+      "shortened_game": false,
+      "actual_ab": 5,
+      "actual_pa_est": 5,
+      "was_substitute": false,
+      "batting_order": 2,
+      "fair_test": true,
+      "opportunity": "full (5 PA)"
     },
     {
       "rank": 5,
@@ -340,8 +376,17 @@
       ],
       "watchouts": [],
       "signal_weight_adjustment": 0.38,
-      "grade": "ungraded",
-      "reason": "no batted-ball Statcast data for this game"
+      "grade": "miss",
+      "actual": false,
+      "actual_stat": "hr_at_exit_velocity",
+      "game_innings": 9,
+      "shortened_game": false,
+      "actual_ab": 4,
+      "actual_pa_est": 5,
+      "was_substitute": false,
+      "batting_order": 1,
+      "fair_test": true,
+      "opportunity": "full (5 PA)"
     },
     {
       "rank": 6,
@@ -2437,8 +2482,17 @@
       ],
       "watchouts": [],
       "signal_weight_adjustment": null,
-      "grade": "ungraded",
-      "reason": "no batted-ball Statcast data for this game"
+      "grade": "miss",
+      "actual": false,
+      "actual_stat": "hr_at_exit_velocity",
+      "game_innings": 9,
+      "shortened_game": false,
+      "actual_ab": 4,
+      "actual_pa_est": 4,
+      "was_substitute": false,
+      "batting_order": 1,
+      "fair_test": true,
+      "opportunity": "full (4 PA)"
     },
     {
       "rank": 27,

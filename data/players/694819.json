@@ -151,6 +151,65 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-21",
+      "evaluations": [
+        {
+          "prop": "Over 5.5 Strikeouts",
+          "type": "pitcher",
+          "score": 37.6,
+          "notable_signals": 0,
+          "matchup": "Atlanta Braves @ Milwaukee Brewers",
+          "game_pk": 823746,
+          "team": "Milwaukee Brewers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_k_pct": 46.0,
+            "same_hand_ratio": 43.75,
+            "l14_k_pct": 99.4118,
+            "env_neutral": 50.0
+          },
+          "hit_probability": 0.6049,
+          "raw_hit_probability": 0.6544,
+          "lift": 0.2422,
+          "reliability": "A",
+          "sample_n": 23,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 5.5,
+            "needs": 6
+          }
+        },
+        {
+          "prop": "Over 18.5 Outs Recorded",
+          "type": "pitcher",
+          "score": 24.8,
+          "notable_signals": 1,
+          "matchup": "Atlanta Braves @ Milwaukee Brewers",
+          "game_pk": 823746,
+          "team": "Milwaukee Brewers",
+          "side": "home",
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "outs_rate": 0.291,
+            "avg_outs_per_start": 18.13
+          },
+          "hit_probability": 0.291,
+          "raw_hit_probability": null,
+          "lift": 0.0512,
+          "reliability": "A",
+          "sample_n": 23,
+          "projection": {
+            "stat": "pitcher_outs",
+            "value": 18.5,
+            "needs": 19
+          }
+        }
+      ]
     }
   ]
 }

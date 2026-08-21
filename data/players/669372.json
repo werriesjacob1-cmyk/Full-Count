@@ -135,6 +135,65 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-21",
+      "evaluations": [
+        {
+          "prop": "Over 4.5 Strikeouts",
+          "type": "pitcher",
+          "score": 53.4,
+          "notable_signals": 0,
+          "matchup": "Athletics @ Houston Astros",
+          "game_pk": 824152,
+          "team": "Athletics",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_k_pct": 45.0,
+            "same_hand_ratio": 100.0,
+            "l14_k_pct": 13.5294,
+            "env_neutral": 50.0
+          },
+          "hit_probability": 0.5873,
+          "raw_hit_probability": 0.5679,
+          "lift": 0.0623,
+          "reliability": "A",
+          "sample_n": 22,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 4.5,
+            "needs": 5
+          }
+        },
+        {
+          "prop": "Over 15.5 Outs Recorded",
+          "type": "pitcher",
+          "score": 70.6,
+          "notable_signals": 1,
+          "matchup": "Athletics @ Houston Astros",
+          "game_pk": 824152,
+          "team": "Athletics",
+          "side": "away",
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "outs_rate": 0.7072,
+            "avg_outs_per_start": 16.41
+          },
+          "hit_probability": 0.7072,
+          "raw_hit_probability": null,
+          "lift": 0.0737,
+          "reliability": "A",
+          "sample_n": 22,
+          "projection": {
+            "stat": "pitcher_outs",
+            "value": 15.5,
+            "needs": 16
+          }
+        }
+      ]
     }
   ]
 }
