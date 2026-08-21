@@ -177,7 +177,7 @@
         {
           "prop": "Over 6.5 Strikeouts",
           "type": "pitcher",
-          "score": 49.2,
+          "score": 49.6,
           "notable_signals": 0,
           "matchup": "New York Mets @ Chicago White Sox",
           "game_pk": 824559,
@@ -189,7 +189,10 @@
             "opp_team_k_pct": 57.0,
             "same_hand_ratio": 75.0,
             "l14_k_pct": 39.4118,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 54.869,
+            "ump_k_pct": -0.084,
+            "ump_bb_pct": -0.168
           },
           "hit_probability": 0.3706,
           "raw_hit_probability": 0.3706,
@@ -205,7 +208,7 @@
         {
           "prop": "Over 17.5 Outs Recorded",
           "type": "pitcher",
-          "score": 33.4,
+          "score": 35.2,
           "notable_signals": 0,
           "matchup": "New York Mets @ Chicago White Sox",
           "game_pk": 824559,
@@ -214,12 +217,12 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.483,
+            "outs_rate": 0.4789,
             "avg_outs_per_start": 16.43
           },
-          "hit_probability": 0.483,
+          "hit_probability": 0.4789,
           "raw_hit_probability": null,
-          "lift": -0.0238,
+          "lift": -0.0095,
           "reliability": "A",
           "sample_n": 21,
           "projection": {

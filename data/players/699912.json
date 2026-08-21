@@ -130,6 +130,137 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-21",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 45.4,
+          "notable_signals": 1,
+          "matchup": "Cincinnati Reds @ Arizona Diamondbacks",
+          "game_pk": 825045,
+          "team": "Arizona Diamondbacks",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 57.7143,
+            "l7_avg_ev": 37.8125,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 9.3333,
+            "lineup_slot": 12.5,
+            "bullpen_fatigue": 83.3333,
+            "platoon_barrel_pct": 0.56,
+            "platoon_xwoba": -0.18,
+            "park_hand_index": -0.61,
+            "opp_catcher_framing": 0.96,
+            "days_rest": 2.0,
+            "woba_ahead": 20.0,
+            "woba_behind": 31.8182,
+            "pull_park_synergy": -0.3779,
+            "team_total_move": 0.0,
+            "team_total_open": 0.0,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": -1.968,
+            "vs_rp_ops": -2.22,
+            "ump_k_pct": -0.0,
+            "ump_bb_pct": -0.228
+          },
+          "hit_probability": 0.6034,
+          "raw_hit_probability": 0.6036,
+          "lift": 0.0443,
+          "reliability": "B",
+          "sample_n": 55,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 60.2,
+          "notable_signals": 0,
+          "matchup": "Cincinnati Reds @ Arizona Diamondbacks",
+          "game_pk": 825045,
+          "team": "Arizona Diamondbacks",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": 4.32,
+            "sprint_speed": 68.75,
+            "catcher_poptime": 25.7143,
+            "on_base": 29.9424
+          },
+          "hit_probability": 0.1242,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "B",
+          "sample_n": 55,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 0.0,
+          "notable_signals": 0,
+          "matchup": "Cincinnati Reds @ Arizona Diamondbacks",
+          "game_pk": 825045,
+          "team": "Arizona Diamondbacks",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0132
+          },
+          "hit_probability": 0.0132,
+          "raw_hit_probability": null,
+          "lift": -0.0355,
+          "reliability": "B",
+          "sample_n": 55,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 0.0,
+          "notable_signals": 0,
+          "matchup": "Cincinnati Reds @ Arizona Diamondbacks",
+          "game_pk": 825045,
+          "team": "Arizona Diamondbacks",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0057
+          },
+          "hit_probability": 0.0057,
+          "raw_hit_probability": null,
+          "lift": -0.0156,
+          "reliability": "B",
+          "sample_n": 55,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

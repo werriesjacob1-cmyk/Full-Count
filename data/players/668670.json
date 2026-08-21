@@ -441,6 +441,105 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-21",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 41.9,
+          "notable_signals": 1,
+          "matchup": "New York Mets @ Chicago White Sox",
+          "game_pk": 824559,
+          "team": "Chicago White Sox",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 49.1429,
+            "l7_avg_ev": 0.0,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 69.8,
+            "season_barrel_pct": 39.3333,
+            "lineup_slot": 12.5,
+            "bullpen_fatigue": 69.4444,
+            "platoon_barrel_pct": -1.12,
+            "platoon_xwoba": -0.42,
+            "opp_catcher_framing": -0.0,
+            "days_rest": 0.0,
+            "woba_ahead": 0.0,
+            "woba_behind": 40.0,
+            "team_total_move": 0.0,
+            "team_total_open": 0.0,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "ump_k_pct": 0.084,
+            "ump_bb_pct": 0.168
+          },
+          "hit_probability": 0.6101,
+          "raw_hit_probability": 0.5714,
+          "lift": -0.0575,
+          "reliability": "C",
+          "sample_n": 43,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 0.2,
+          "notable_signals": 0,
+          "matchup": "New York Mets @ Chicago White Sox",
+          "game_pk": 824559,
+          "team": "Chicago White Sox",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0299
+          },
+          "hit_probability": 0.0299,
+          "raw_hit_probability": null,
+          "lift": -0.0188,
+          "reliability": "C",
+          "sample_n": 43,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 0.0,
+          "notable_signals": 0,
+          "matchup": "New York Mets @ Chicago White Sox",
+          "game_pk": 824559,
+          "team": "Chicago White Sox",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0064
+          },
+          "hit_probability": 0.0064,
+          "raw_hit_probability": null,
+          "lift": -0.0149,
+          "reliability": "C",
+          "sample_n": 43,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

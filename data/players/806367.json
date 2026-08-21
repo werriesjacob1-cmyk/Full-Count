@@ -135,6 +135,53 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-21",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 38.4,
+          "notable_signals": 1,
+          "matchup": "San Francisco Giants @ Boston Red Sox",
+          "game_pk": 824721,
+          "team": "San Francisco Giants",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 4.2857,
+            "l7_avg_ev": 7.0312,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 39.0,
+            "lineup_slot": 25.0,
+            "bullpen_fatigue": 64.1026,
+            "park_hand_index": -2.17,
+            "opp_catcher_framing": -0.72,
+            "days_rest": 0.0,
+            "woba_ahead": 16.3636,
+            "woba_behind": 0.0,
+            "team_total_move": -6.0,
+            "team_total_open": -6.0,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "ump_k_pct": -0.324,
+            "ump_bb_pct": -0.288
+          },
+          "hit_probability": 0.5415,
+          "raw_hit_probability": 0.5591,
+          "lift": -0.0176,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

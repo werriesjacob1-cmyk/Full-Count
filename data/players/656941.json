@@ -976,6 +976,108 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-21",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 87.1,
+          "notable_signals": 2,
+          "matchup": "St. Louis Cardinals @ Philadelphia Phillies",
+          "game_pk": 823420,
+          "team": "Philadelphia Phillies",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 26.2857,
+            "pitch_exploit": 2.8571,
+            "l7_avg_ev": 10.3906,
+            "l7_barrel_pct": 75.0,
+            "park_hr_index": 51.2,
+            "season_barrel_pct": 94.6667,
+            "lineup_slot": 100.0,
+            "bullpen_fatigue": 76.9231,
+            "platoon_barrel_pct": 5.0,
+            "platoon_xwoba": 2.22,
+            "park_hand_index": 1.78,
+            "opp_catcher_framing": -0.96,
+            "days_rest": 2.0,
+            "woba_behind": 13.6364,
+            "pull_park_synergy": 1.5949,
+            "hard_hit_105_rate": 2.8225,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": -0.712,
+            "vs_rp_ops": 1.344,
+            "ump_k_pct": 0.288,
+            "ump_bb_pct": -0.012
+          },
+          "hit_probability": 0.6015,
+          "raw_hit_probability": 0.6022,
+          "lift": 0.0424,
+          "reliability": "A",
+          "sample_n": 122,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 32.8,
+          "notable_signals": 1,
+          "matchup": "St. Louis Cardinals @ Philadelphia Phillies",
+          "game_pk": 823420,
+          "team": "Philadelphia Phillies",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.1595
+          },
+          "hit_probability": 0.1595,
+          "raw_hit_probability": null,
+          "lift": 0.1108,
+          "reliability": "A",
+          "sample_n": 122,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 8.0,
+          "notable_signals": 0,
+          "matchup": "St. Louis Cardinals @ Philadelphia Phillies",
+          "game_pk": 823420,
+          "team": "Philadelphia Phillies",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0446
+          },
+          "hit_probability": 0.0446,
+          "raw_hit_probability": null,
+          "lift": 0.0233,
+          "reliability": "A",
+          "sample_n": 122,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

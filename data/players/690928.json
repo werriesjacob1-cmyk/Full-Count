@@ -163,6 +163,96 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-21",
+      "evaluations": [
+        {
+          "prop": "Over 3.5 Strikeouts",
+          "type": "pitcher",
+          "score": 40.9,
+          "notable_signals": 0,
+          "matchup": "St. Louis Cardinals @ Philadelphia Phillies",
+          "game_pk": 823420,
+          "team": "St. Louis Cardinals",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_k_pct": 55.0,
+            "same_hand_ratio": 33.3333,
+            "l14_k_pct": 89.4118,
+            "env_neutral": 50.0,
+            "ump_accuracy": 65.3528,
+            "ump_k_pct": -0.288,
+            "ump_bb_pct": 0.012
+          },
+          "hit_probability": 0.6259,
+          "raw_hit_probability": 0.7598,
+          "lift": -0.0737,
+          "reliability": "C",
+          "sample_n": 7,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 3.5,
+            "needs": 4
+          }
+        },
+        {
+          "prop": "Over 14.5 Outs Recorded",
+          "type": "pitcher",
+          "score": 44.5,
+          "notable_signals": 0,
+          "matchup": "St. Louis Cardinals @ Philadelphia Phillies",
+          "game_pk": 823420,
+          "team": "St. Louis Cardinals",
+          "side": "away",
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "outs_rate": 0.7451,
+            "avg_outs_per_start": 15.43
+          },
+          "hit_probability": 0.7451,
+          "raw_hit_probability": null,
+          "lift": -0.036,
+          "reliability": "C",
+          "sample_n": 7,
+          "projection": {
+            "stat": "pitcher_outs",
+            "value": 14.5,
+            "needs": 15
+          }
+        },
+        {
+          "prop": "Over 11.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 54.9,
+          "notable_signals": 1,
+          "matchup": "St. Louis Cardinals @ Philadelphia Phillies",
+          "game_pk": 823420,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            690928,
+            666200
+          ],
+          "signals": {
+            "combined_k_edge": 0.2276
+          },
+          "hit_probability": 0.6993,
+          "raw_hit_probability": null,
+          "lift": 0.2276,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 11.5,
+            "needs": 12
+          }
+        }
+      ]
     }
   ]
 }

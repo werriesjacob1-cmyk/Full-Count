@@ -178,7 +178,7 @@
         {
           "prop": "Over 7.5 Strikeouts",
           "type": "pitcher",
-          "score": 36.4,
+          "score": 38.0,
           "notable_signals": 0,
           "matchup": "St. Louis Cardinals @ Philadelphia Phillies",
           "game_pk": 823420,
@@ -191,7 +191,10 @@
             "same_hand_ratio": 5.5556,
             "l14_k_pct": 100.0,
             "tto_penalty": -8.0,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 65.3528,
+            "ump_k_pct": -0.288,
+            "ump_bb_pct": 0.012
           },
           "hit_probability": 0.3497,
           "raw_hit_probability": 0.3497,
@@ -207,7 +210,7 @@
         {
           "prop": "Over 17.5 Outs Recorded",
           "type": "pitcher",
-          "score": 73.6,
+          "score": 75.5,
           "notable_signals": 1,
           "matchup": "St. Louis Cardinals @ Philadelphia Phillies",
           "game_pk": 823420,
@@ -216,12 +219,12 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.6465,
+            "outs_rate": 0.6429,
             "avg_outs_per_start": 18.04
           },
-          "hit_probability": 0.6465,
+          "hit_probability": 0.6429,
           "raw_hit_probability": null,
-          "lift": 0.1397,
+          "lift": 0.1545,
           "reliability": "A",
           "sample_n": 25,
           "projection": {

@@ -177,7 +177,7 @@
         {
           "prop": "Over 4.5 Strikeouts",
           "type": "pitcher",
-          "score": 44.2,
+          "score": 41.4,
           "notable_signals": 0,
           "matchup": "Washington Nationals @ Miami Marlins",
           "game_pk": 823830,
@@ -189,7 +189,10 @@
             "opp_team_k_pct": 48.0,
             "same_hand_ratio": 57.1429,
             "l14_k_pct": 62.3529,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 22.8117,
+            "ump_k_pct": 0.012,
+            "ump_bb_pct": 0.24
           },
           "hit_probability": 0.5161,
           "raw_hit_probability": 0.5161,
@@ -214,12 +217,12 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.3983,
+            "outs_rate": 0.3933,
             "avg_outs_per_start": 12.09
           },
-          "hit_probability": 0.3983,
+          "hit_probability": 0.3933,
           "raw_hit_probability": null,
-          "lift": -0.397,
+          "lift": -0.3878,
           "reliability": "B",
           "sample_n": 11,
           "projection": {

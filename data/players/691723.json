@@ -1201,6 +1201,135 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-21",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 51.3,
+          "notable_signals": 2,
+          "matchup": "Tampa Bay Rays @ Baltimore Orioles",
+          "game_pk": 824800,
+          "team": "Baltimore Orioles",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 79.1429,
+            "l7_avg_ev": 99.5833,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 4.725,
+            "park_hr_index": 41.2,
+            "season_barrel_pct": 61.3333,
+            "lineup_slot": 25.0,
+            "bullpen_fatigue": 83.3333,
+            "platoon_barrel_pct": -1.12,
+            "platoon_xwoba": -3.66,
+            "days_rest": 2.0,
+            "woba_ahead": 10.0,
+            "woba_behind": 8.1818,
+            "hard_hit_105_rate": 1.585,
+            "team_total_move": -6.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": -0.136,
+            "vs_rp_ops": -0.192,
+            "ump_k_pct": 0.312,
+            "ump_bb_pct": -0.048
+          },
+          "hit_probability": 0.6345,
+          "raw_hit_probability": 0.6112,
+          "lift": -0.0331,
+          "reliability": "A",
+          "sample_n": 96,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 39.6,
+          "notable_signals": 0,
+          "matchup": "Tampa Bay Rays @ Baltimore Orioles",
+          "game_pk": 824800,
+          "team": "Baltimore Orioles",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": 2.76,
+            "sprint_speed": 18.75,
+            "on_base": 46.2572
+          },
+          "hit_probability": 0.0258,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 96,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 20.3,
+          "notable_signals": 1,
+          "matchup": "Tampa Bay Rays @ Baltimore Orioles",
+          "game_pk": 824800,
+          "team": "Baltimore Orioles",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.11
+          },
+          "hit_probability": 0.11,
+          "raw_hit_probability": null,
+          "lift": 0.0613,
+          "reliability": "A",
+          "sample_n": 96,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 12.6,
+          "notable_signals": 1,
+          "matchup": "Tampa Bay Rays @ Baltimore Orioles",
+          "game_pk": 824800,
+          "team": "Baltimore Orioles",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0629
+          },
+          "hit_probability": 0.0629,
+          "raw_hit_probability": null,
+          "lift": 0.0416,
+          "reliability": "A",
+          "sample_n": 96,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

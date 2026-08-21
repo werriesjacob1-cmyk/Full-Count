@@ -154,6 +154,136 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-21",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 70.3,
+          "notable_signals": 0,
+          "matchup": "Toronto Blue Jays @ New York Yankees",
+          "game_pk": 823510,
+          "team": "New York Yankees",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 36.5714,
+            "l7_avg_ev": 100.0,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 51.0,
+            "season_barrel_pct": 53.3333,
+            "lineup_slot": 87.5,
+            "bullpen_fatigue": 47.619,
+            "platoon_barrel_pct": 1.92,
+            "platoon_xwoba": -1.2,
+            "park_hand_index": 1.03,
+            "opp_catcher_framing": -0.96,
+            "days_rest": 4.0,
+            "woba_ahead": 36.3636,
+            "woba_behind": 8.1818,
+            "pull_park_synergy": 0.1911,
+            "hard_hit_105_rate": 0.7725,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": 1.848,
+            "vs_rp_ops": 1.368,
+            "ump_k_pct": 0.168,
+            "ump_bb_pct": 0.252
+          },
+          "hit_probability": 0.5997,
+          "raw_hit_probability": 0.6009,
+          "lift": 0.0406,
+          "reliability": "B",
+          "sample_n": 72,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 45.8,
+          "notable_signals": 0,
+          "matchup": "Toronto Blue Jays @ New York Yankees",
+          "game_pk": 823510,
+          "team": "New York Yankees",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": 0.48,
+            "sprint_speed": 37.5,
+            "catcher_poptime": 25.7143,
+            "on_base": 35.7006
+          },
+          "hit_probability": 0.0229,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "B",
+          "sample_n": 72,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 12.2,
+          "notable_signals": 0,
+          "matchup": "Toronto Blue Jays @ New York Yankees",
+          "game_pk": 823510,
+          "team": "New York Yankees",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0775
+          },
+          "hit_probability": 0.0775,
+          "raw_hit_probability": null,
+          "lift": 0.0288,
+          "reliability": "B",
+          "sample_n": 72,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 3.5,
+          "notable_signals": 0,
+          "matchup": "Toronto Blue Jays @ New York Yankees",
+          "game_pk": 823510,
+          "team": "New York Yankees",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0269
+          },
+          "hit_probability": 0.0269,
+          "raw_hit_probability": null,
+          "lift": 0.0056,
+          "reliability": "B",
+          "sample_n": 72,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

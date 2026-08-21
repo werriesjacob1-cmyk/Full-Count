@@ -609,6 +609,106 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-21",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 56.5,
+          "notable_signals": 1,
+          "matchup": "San Francisco Giants @ Boston Red Sox",
+          "game_pk": 824721,
+          "team": "Boston Red Sox",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "sp_era_weak": 28.5714,
+            "l7_avg_ev": 17.2321,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 39.0,
+            "season_barrel_pct": 29.3333,
+            "lineup_slot": 50.0,
+            "bullpen_fatigue": 71.4286,
+            "platoon_barrel_pct": 1.36,
+            "platoon_xwoba": 2.22,
+            "opp_catcher_framing": 0.72,
+            "days_rest": 2.0,
+            "woba_ahead": 100.0,
+            "woba_behind": 28.1818,
+            "team_total_move": -6.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": 0.016,
+            "vs_rp_ops": 0.54,
+            "ump_k_pct": -0.324,
+            "ump_bb_pct": -0.288
+          },
+          "hit_probability": 0.6768,
+          "raw_hit_probability": 0.6834,
+          "lift": 0.0092,
+          "reliability": "B",
+          "sample_n": 75,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 0.0,
+          "notable_signals": 0,
+          "matchup": "San Francisco Giants @ Boston Red Sox",
+          "game_pk": 824721,
+          "team": "Boston Red Sox",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0197
+          },
+          "hit_probability": 0.0197,
+          "raw_hit_probability": null,
+          "lift": -0.029,
+          "reliability": "B",
+          "sample_n": 75,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 0.0,
+          "notable_signals": 0,
+          "matchup": "San Francisco Giants @ Boston Red Sox",
+          "game_pk": 824721,
+          "team": "Boston Red Sox",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0043
+          },
+          "hit_probability": 0.0043,
+          "raw_hit_probability": null,
+          "lift": -0.017,
+          "reliability": "B",
+          "sample_n": 75,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }
