@@ -553,6 +553,18 @@ function suggestedParlayBlock(parlay) {
 // ══════════════════════════════════════════════════════════════════════
 //  ALL PROPS PAGE
 // ══════════════════════════════════════════════════════════════════════
+// DATA.families' "Home Runs" entry carries stat: "moonshot" -- that's
+// dashboard/build_dashboard.py's internal result-dict grouping key
+// (kept separate from select_best_by_category's own "home_runs" list only
+// to avoid double-counting the same real candidates twice; see that
+// file's build_payload() comment). It never appears on any actual prop
+// row: every real home-run candidate's own p.stat is "home_runs" (see
+// score_batter/select_moonshots' real row construction). Every family
+// filter value used against p.stat must go through this single mapping so
+// the "Home Runs" tab/option filters real rows instead of matching zero.
+function familyFilterValue(stat) {
+  return stat === "moonshot" ? "home_runs" : stat;
+}
 function applyFilters(props) {
   let rows = props;
   if (filters.family !== "all") rows = rows.filter(p => p.stat === filters.family);
@@ -590,7 +602,7 @@ function renderProps() {
       <div class="filter-inline" style="display:flex;gap:8px;flex-wrap:wrap;">
         <select class="filter-select" id="f-family" aria-label="Filter by prop type">
           <option value="all">All prop types</option>
-          ${families.map(f => `<option value="${f.stat}">${esc(f.label)} (${f.count})</option>`).join("")}
+          ${families.map(f => `<option value="${familyFilterValue(f.stat)}">${esc(f.label)} (${f.count})</option>`).join("")}
         </select>
         <select class="filter-select" id="f-status" aria-label="Filter by recommendation">
           <option value="all">Any status</option>
@@ -652,8 +664,8 @@ function openFilterSheet() {
   sheet.innerHTML = `
     <h3 id="filter-sheet-title">Filter &amp; sort</h3>
     <div class="filter-sheet-group"><div class="label">Prop type</div>
-      <div class="filter-sheet-options">${["all", ...families.map(f => f.stat)].map(v =>
-        `<button class="filter-chip-btn" data-k="family" data-v="${v}" aria-pressed="${filters.family === v}">${v === "all" ? "All" : esc((families.find(f => f.stat === v) || {}).label || v)}</button>`).join("")}</div></div>
+      <div class="filter-sheet-options">${[{ value: "all", label: "All" }, ...families.map(f => ({ value: familyFilterValue(f.stat), label: f.label }))].map(({ value, label }) =>
+        `<button class="filter-chip-btn" data-k="family" data-v="${value}" aria-pressed="${filters.family === value}">${esc(label)}</button>`).join("")}</div></div>
     <div class="filter-sheet-group"><div class="label">Status</div>
       <div class="filter-sheet-options">${[["all", "Any"], ["top_pick", "Top Pick"], ["lean", "Lean"], ["value", "Value"], ["longshot", "Longshot"], ["neutral", "No Strong Lean"]].map(([v, l]) =>
         `<button class="filter-chip-btn" data-k="status" data-v="${v}" aria-pressed="${filters.status === v}">${l}</button>`).join("")}</div></div>
