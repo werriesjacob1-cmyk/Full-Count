@@ -375,6 +375,57 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-22",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 47.0,
+          "notable_signals": 1,
+          "matchup": "Pittsburgh Pirates @ Los Angeles Dodgers",
+          "game_pk": 823910,
+          "team": "Pittsburgh Pirates",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 10.0,
+            "l7_avg_ev": 64.125,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 31.5,
+            "season_barrel_pct": 100.0,
+            "lineup_slot": 50.0,
+            "bullpen_fatigue": 59.5238,
+            "platoon_barrel_pct": 5.0,
+            "platoon_xwoba": 5.0,
+            "opp_catcher_framing": 1.44,
+            "days_rest": 0.0,
+            "woba_ahead": 64.5455,
+            "woba_behind": 34.5455,
+            "team_total_move": 0.0,
+            "team_total_open": -6.0,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": 5.0,
+            "vs_rp_ops": 5.0,
+            "ump_k_pct": 0.204,
+            "ump_bb_pct": -0.012
+          },
+          "hit_probability": 0.6252,
+          "raw_hit_probability": 0.6198,
+          "lift": 0.0671,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

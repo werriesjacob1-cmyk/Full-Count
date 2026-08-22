@@ -178,7 +178,7 @@
         {
           "prop": "Over 3.5 Strikeouts",
           "type": "pitcher",
-          "score": 26.5,
+          "score": 25.8,
           "notable_signals": 1,
           "matchup": "Cleveland Guardians @ Colorado Rockies",
           "game_pk": 824316,
@@ -191,7 +191,10 @@
             "same_hand_ratio": 0.0,
             "l14_k_pct": 0.0,
             "tto_penalty": 8.0,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 42.9689,
+            "ump_k_pct": 0.12,
+            "ump_bb_pct": 0.048
           },
           "hit_probability": 0.6083,
           "raw_hit_probability": 0.6713,
@@ -216,12 +219,12 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.7229,
+            "outs_rate": 0.71,
             "avg_outs_per_start": 14.86
           },
-          "hit_probability": 0.7229,
+          "hit_probability": 0.71,
           "raw_hit_probability": null,
-          "lift": -0.01,
+          "lift": 0.005,
           "reliability": "C",
           "sample_n": 7,
           "projection": {

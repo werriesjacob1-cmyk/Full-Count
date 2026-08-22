@@ -793,6 +793,88 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-22",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 36.8,
+          "notable_signals": 1,
+          "matchup": "Detroit Tigers @ Kansas City Royals",
+          "game_pk": 824073,
+          "team": "Detroit Tigers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 30.8571,
+            "l7_avg_ev": 37.3611,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 2.25,
+            "park_hr_index": 38.5,
+            "season_barrel_pct": 0.0,
+            "lineup_slot": 12.5,
+            "bullpen_fatigue": 47.619,
+            "platoon_barrel_pct": -5.0,
+            "platoon_xwoba": -1.68,
+            "park_hand_index": -1.44,
+            "opp_catcher_framing": -0.24,
+            "days_rest": 0.0,
+            "woba_ahead": 26.3636,
+            "woba_behind": 30.0,
+            "pull_park_synergy": -0.0554,
+            "team_total_move": 0.0,
+            "team_total_open": 0.0,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": -0.752,
+            "vs_rp_ops": -0.624,
+            "ump_k_pct": -0.336,
+            "ump_bb_pct": -0.132
+          },
+          "hit_probability": 0.5978,
+          "raw_hit_probability": 0.5995,
+          "lift": 0.0397,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 43.5,
+          "notable_signals": 0,
+          "matchup": "Detroit Tigers @ Kansas City Royals",
+          "game_pk": 824073,
+          "team": "Detroit Tigers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": -5.4,
+            "sprint_speed": 37.5,
+            "catcher_poptime": 0.0,
+            "on_base": 57.7735
+          },
+          "hit_probability": null,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

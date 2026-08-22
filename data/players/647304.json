@@ -1107,6 +1107,110 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-22",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 50.1,
+          "notable_signals": 1,
+          "matchup": "Chicago Cubs @ Seattle Mariners",
+          "game_pk": 823100,
+          "team": "Seattle Mariners",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 79.7143,
+            "l7_avg_ev": 24.7283,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 12.0,
+            "lineup_slot": 50.0,
+            "bullpen_fatigue": 66.6667,
+            "platoon_barrel_pct": -1.12,
+            "platoon_xwoba": -0.78,
+            "park_hand_index": 1.61,
+            "opp_catcher_framing": 0.48,
+            "days_rest": 0.0,
+            "woba_ahead": 29.0909,
+            "woba_behind": 30.9091,
+            "pull_park_synergy": 0.772,
+            "hard_hit_105_rate": -0.1275,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": 1.472,
+            "vs_rp_ops": 1.092,
+            "ump_k_pct": -0.168,
+            "ump_bb_pct": -0.192
+          },
+          "hit_probability": 0.6226,
+          "raw_hit_probability": 0.6178,
+          "lift": 0.0645,
+          "reliability": "A",
+          "sample_n": 120,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 3.1,
+          "notable_signals": 0,
+          "matchup": "Chicago Cubs @ Seattle Mariners",
+          "game_pk": 823100,
+          "team": "Seattle Mariners",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0415
+          },
+          "hit_probability": 0.0415,
+          "raw_hit_probability": null,
+          "lift": -0.0072,
+          "reliability": "A",
+          "sample_n": 120,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 1.0,
+          "notable_signals": 0,
+          "matchup": "Chicago Cubs @ Seattle Mariners",
+          "game_pk": 823100,
+          "team": "Seattle Mariners",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0169
+          },
+          "hit_probability": 0.0169,
+          "raw_hit_probability": null,
+          "lift": -0.0044,
+          "reliability": "A",
+          "sample_n": 120,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

@@ -36,6 +36,70 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-22",
+      "evaluations": [
+        {
+          "prop": "Over 4.5 Strikeouts",
+          "type": "pitcher",
+          "score": 38.1,
+          "notable_signals": 0,
+          "matchup": "St. Louis Cardinals @ Philadelphia Phillies",
+          "game_pk": 823422,
+          "team": "St. Louis Cardinals",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_k_pct": 54.0,
+            "same_hand_ratio": 33.3333,
+            "l14_k_pct": 100.0,
+            "env_neutral": 50.0,
+            "ump_accuracy": 54.8152,
+            "ump_k_pct": -0.192,
+            "ump_bb_pct": 0.168
+          },
+          "hit_probability": 0.6229,
+          "raw_hit_probability": 0.7447,
+          "lift": 0.108,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 4.5,
+            "needs": 5
+          }
+        },
+        {
+          "prop": "Over 10.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 54.7,
+          "notable_signals": 1,
+          "matchup": "St. Louis Cardinals @ Philadelphia Phillies",
+          "game_pk": 823422,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            687273,
+            691725
+          ],
+          "signals": {
+            "combined_k_edge": 0.5484
+          },
+          "hit_probability": 0.8115,
+          "raw_hit_probability": null,
+          "lift": 0.5484,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 10.5,
+            "needs": 11
+          }
+        }
+      ]
     }
   ]
 }

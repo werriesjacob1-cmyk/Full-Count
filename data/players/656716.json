@@ -1073,6 +1073,138 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-22",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 39.6,
+          "notable_signals": 0,
+          "matchup": "Detroit Tigers @ Kansas City Royals",
+          "game_pk": 824073,
+          "team": "Detroit Tigers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 30.8571,
+            "l7_avg_ev": 0.0,
+            "l7_barrel_pct": 0.0,
+            "park_hr_index": 38.5,
+            "season_barrel_pct": 0.0,
+            "lineup_slot": 50.0,
+            "bullpen_fatigue": 47.619,
+            "bvp_ops": 0.552,
+            "platoon_barrel_pct": -3.44,
+            "platoon_xwoba": -1.38,
+            "park_hand_index": -1.44,
+            "opp_catcher_framing": -0.24,
+            "days_rest": 0.0,
+            "woba_ahead": 53.6364,
+            "woba_behind": 100.0,
+            "pull_park_synergy": -0.6149,
+            "team_total_move": 0.0,
+            "team_total_open": 0.0,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": 0.176,
+            "vs_rp_ops": -0.84,
+            "ump_k_pct": -0.336,
+            "ump_bb_pct": -0.132
+          },
+          "hit_probability": 0.653,
+          "raw_hit_probability": 0.6423,
+          "lift": -0.0203,
+          "reliability": "A",
+          "sample_n": 101,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 26.5,
+          "notable_signals": 0,
+          "matchup": "Detroit Tigers @ Kansas City Royals",
+          "game_pk": 824073,
+          "team": "Detroit Tigers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": -5.4,
+            "sprint_speed": 18.75,
+            "catcher_poptime": 0.0,
+            "on_base": 23.2246
+          },
+          "hit_probability": 0.0154,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 101,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 0.0,
+          "notable_signals": 0,
+          "matchup": "Detroit Tigers @ Kansas City Royals",
+          "game_pk": 824073,
+          "team": "Detroit Tigers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0077
+          },
+          "hit_probability": 0.0077,
+          "raw_hit_probability": null,
+          "lift": -0.041,
+          "reliability": "A",
+          "sample_n": 101,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 0.0,
+          "notable_signals": 0,
+          "matchup": "Detroit Tigers @ Kansas City Royals",
+          "game_pk": 824073,
+          "team": "Detroit Tigers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0034
+          },
+          "hit_probability": 0.0034,
+          "raw_hit_probability": null,
+          "lift": -0.0179,
+          "reliability": "A",
+          "sample_n": 101,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

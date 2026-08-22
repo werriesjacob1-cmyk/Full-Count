@@ -149,7 +149,7 @@
         {
           "prop": "Over 4.5 Strikeouts",
           "type": "pitcher",
-          "score": 42.3,
+          "score": 34.7,
           "notable_signals": 0,
           "matchup": "Detroit Tigers @ Kansas City Royals",
           "game_pk": 824073,
@@ -159,9 +159,12 @@
           "combo_player_ids": null,
           "signals": {
             "opp_team_k_pct": 54.0,
-            "same_hand_ratio": 88.8889,
+            "same_hand_ratio": 61.1111,
             "l14_k_pct": 11.7647,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 52.335,
+            "ump_k_pct": 0.336,
+            "ump_bb_pct": 0.132
           },
           "hit_probability": 0.4536,
           "raw_hit_probability": 0.4536,
@@ -186,12 +189,12 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.6505,
+            "outs_rate": 0.6498,
             "avg_outs_per_start": 18.68
           },
-          "hit_probability": 0.6505,
+          "hit_probability": 0.6498,
           "raw_hit_probability": null,
-          "lift": 0.2898,
+          "lift": 0.2927,
           "reliability": "A",
           "sample_n": 25,
           "projection": {

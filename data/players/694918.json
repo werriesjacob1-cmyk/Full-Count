@@ -91,7 +91,7 @@
         {
           "prop": "Over 3.5 Strikeouts",
           "type": "pitcher",
-          "score": 46.2,
+          "score": 42.3,
           "notable_signals": 0,
           "matchup": "San Francisco Giants @ Boston Red Sox",
           "game_pk": 824718,
@@ -103,7 +103,10 @@
             "opp_team_k_pct": 44.0,
             "same_hand_ratio": 100.0,
             "l14_k_pct": 12.3529,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 50.7646,
+            "ump_k_pct": -0.348,
+            "ump_bb_pct": -0.18
           },
           "hit_probability": 0.5881,
           "raw_hit_probability": 0.5715,
@@ -114,6 +117,34 @@
             "stat": "strikeouts",
             "value": 3.5,
             "needs": 4
+          }
+        },
+        {
+          "prop": "Over 8.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 27.9,
+          "notable_signals": 0,
+          "matchup": "San Francisco Giants @ Boston Red Sox",
+          "game_pk": 824718,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            694918,
+            663776
+          ],
+          "signals": {
+            "combined_k_edge": -0.148
+          },
+          "hit_probability": 0.4999,
+          "raw_hit_probability": null,
+          "lift": -0.148,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 8.5,
+            "needs": 9
           }
         }
       ]

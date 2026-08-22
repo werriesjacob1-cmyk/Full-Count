@@ -180,6 +180,80 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-22",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 46.5,
+          "notable_signals": 0,
+          "matchup": "Detroit Tigers @ Kansas City Royals",
+          "game_pk": 824073,
+          "team": "Detroit Tigers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 30.8571,
+            "l7_avg_ev": 32.875,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 38.5,
+            "lineup_slot": 37.5,
+            "bullpen_fatigue": 47.619,
+            "park_hand_index": -1.44,
+            "opp_catcher_framing": -0.24,
+            "days_rest": 0.0,
+            "woba_ahead": 0.0,
+            "woba_behind": 26.3636,
+            "team_total_move": 0.0,
+            "team_total_open": 0.0,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "ump_k_pct": -0.336,
+            "ump_bb_pct": -0.132
+          },
+          "hit_probability": 0.5401,
+          "raw_hit_probability": 0.5581,
+          "lift": -0.018,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 44.9,
+          "notable_signals": 0,
+          "matchup": "Detroit Tigers @ Kansas City Royals",
+          "game_pk": 824073,
+          "team": "Detroit Tigers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": -5.4,
+            "sprint_speed": 43.75,
+            "catcher_poptime": 0.0
+          },
+          "hit_probability": null,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

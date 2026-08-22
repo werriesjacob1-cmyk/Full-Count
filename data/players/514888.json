@@ -1447,6 +1447,139 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-22",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 65.5,
+          "notable_signals": 2,
+          "matchup": "Athletics @ Houston Astros",
+          "game_pk": 824151,
+          "team": "Houston Astros",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 77.7143,
+            "pitch_exploit": 4.5714,
+            "l7_avg_ev": 0.0,
+            "l7_barrel_pct": 80.7143,
+            "bat_speed_trend": 2.25,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 12.6667,
+            "lineup_slot": 62.5,
+            "bullpen_fatigue": 51.2821,
+            "platoon_barrel_pct": -2.16,
+            "platoon_xwoba": 0.12,
+            "park_hand_index": 2.03,
+            "opp_catcher_framing": 0.12,
+            "days_rest": 0.0,
+            "woba_ahead": 49.0909,
+            "woba_behind": 31.8182,
+            "pull_park_synergy": 1.5347,
+            "team_total_move": 0.0,
+            "team_total_open": 0.0,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": 0.592,
+            "vs_rp_ops": 0.396,
+            "ump_k_pct": -0.108,
+            "ump_bb_pct": 0.156
+          },
+          "hit_probability": 0.6129,
+          "raw_hit_probability": 0.6106,
+          "lift": 0.0548,
+          "reliability": "A",
+          "sample_n": 103,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 31.4,
+          "notable_signals": 0,
+          "matchup": "Athletics @ Houston Astros",
+          "game_pk": 824151,
+          "team": "Houston Astros",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": -1.98,
+            "sprint_speed": 3.125,
+            "catcher_poptime": 25.7143,
+            "on_base": 48.1766
+          },
+          "hit_probability": 0.0359,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 103,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 0.0,
+          "notable_signals": 0,
+          "matchup": "Athletics @ Houston Astros",
+          "game_pk": 824151,
+          "team": "Houston Astros",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0234
+          },
+          "hit_probability": 0.0234,
+          "raw_hit_probability": null,
+          "lift": -0.0253,
+          "reliability": "A",
+          "sample_n": 103,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 0.0,
+          "notable_signals": 0,
+          "matchup": "Athletics @ Houston Astros",
+          "game_pk": 824151,
+          "team": "Houston Astros",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0034
+          },
+          "hit_probability": 0.0034,
+          "raw_hit_probability": null,
+          "lift": -0.0179,
+          "reliability": "A",
+          "sample_n": 103,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

@@ -445,6 +445,107 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-22",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 59.6,
+          "notable_signals": 3,
+          "matchup": "Cincinnati Reds @ Arizona Diamondbacks",
+          "game_pk": 825044,
+          "team": "Arizona Diamondbacks",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "sp_era_weak": 76.2857,
+            "pitch_exploit": 6.8571,
+            "l7_avg_ev": 57.5,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 4.6667,
+            "lineup_slot": 25.0,
+            "bullpen_fatigue": 77.7778,
+            "platoon_barrel_pct": -4.16,
+            "platoon_xwoba": -1.92,
+            "opp_catcher_framing": 0.96,
+            "days_rest": 0.0,
+            "woba_ahead": 3.6364,
+            "woba_behind": 1.8182,
+            "team_total_move": 0.0,
+            "team_total_open": 0.0,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": 0.832,
+            "vs_rp_ops": 0.48,
+            "ump_k_pct": -0.012,
+            "ump_bb_pct": 0.204
+          },
+          "hit_probability": 0.6102,
+          "raw_hit_probability": 0.6086,
+          "lift": 0.0521,
+          "reliability": "A",
+          "sample_n": 107,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 0.3,
+          "notable_signals": 0,
+          "matchup": "Cincinnati Reds @ Arizona Diamondbacks",
+          "game_pk": 825044,
+          "team": "Arizona Diamondbacks",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0303
+          },
+          "hit_probability": 0.0303,
+          "raw_hit_probability": null,
+          "lift": -0.0184,
+          "reliability": "A",
+          "sample_n": 107,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 3.4,
+          "notable_signals": 0,
+          "matchup": "Cincinnati Reds @ Arizona Diamondbacks",
+          "game_pk": 825044,
+          "team": "Arizona Diamondbacks",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0262
+          },
+          "hit_probability": 0.0262,
+          "raw_hit_probability": null,
+          "lift": 0.0049,
+          "reliability": "A",
+          "sample_n": 107,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

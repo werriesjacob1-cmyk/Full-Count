@@ -1594,6 +1594,139 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-22",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 79.8,
+          "notable_signals": 2,
+          "matchup": "Detroit Tigers @ Kansas City Royals",
+          "game_pk": 824073,
+          "team": "Kansas City Royals",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 43.1429,
+            "pitch_exploit": 2.8571,
+            "l7_avg_ev": 51.5909,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 38.5,
+            "season_barrel_pct": 57.3333,
+            "lineup_slot": 87.5,
+            "bullpen_fatigue": 76.9231,
+            "platoon_barrel_pct": 2.72,
+            "platoon_xwoba": 3.6,
+            "park_hand_index": -0.07,
+            "opp_catcher_framing": -1.08,
+            "days_rest": 0.0,
+            "woba_ahead": 16.3636,
+            "woba_behind": 60.0,
+            "pull_park_synergy": -0.0056,
+            "hard_hit_105_rate": 0.3125,
+            "team_total_move": -6.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": -0.256,
+            "vs_rp_ops": 1.02,
+            "ump_k_pct": -0.336,
+            "ump_bb_pct": -0.132
+          },
+          "hit_probability": 0.6543,
+          "raw_hit_probability": 0.642,
+          "lift": 0.0962,
+          "reliability": "A",
+          "sample_n": 111,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 75.2,
+          "notable_signals": 1,
+          "matchup": "Detroit Tigers @ Kansas City Royals",
+          "game_pk": 824073,
+          "team": "Kansas City Royals",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": -0.78,
+            "sprint_speed": 87.5,
+            "catcher_poptime": 0.0,
+            "on_base": 88.4837
+          },
+          "hit_probability": 0.2566,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 111,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 7.6,
+          "notable_signals": 0,
+          "matchup": "Detroit Tigers @ Kansas City Royals",
+          "game_pk": 824073,
+          "team": "Kansas City Royals",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0591
+          },
+          "hit_probability": 0.0591,
+          "raw_hit_probability": null,
+          "lift": 0.0104,
+          "reliability": "A",
+          "sample_n": 111,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 5.0,
+          "notable_signals": 0,
+          "matchup": "Detroit Tigers @ Kansas City Royals",
+          "game_pk": 824073,
+          "team": "Kansas City Royals",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0328
+          },
+          "hit_probability": 0.0328,
+          "raw_hit_probability": null,
+          "lift": 0.0115,
+          "reliability": "A",
+          "sample_n": 111,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }
