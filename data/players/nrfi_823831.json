@@ -1,0 +1,37 @@
+{
+  "player_id": "nrfi_823831",
+  "name": "Washington Nationals @ Miami Marlins \u2014 1st Inning (Both Teams)",
+  "snapshots": [
+    {
+      "date": "2026-08-22",
+      "evaluations": [
+        {
+          "prop": "No runs in the 1st (both teams)",
+          "type": "game",
+          "score": 62.5,
+          "notable_signals": 0,
+          "matchup": "Washington Nationals @ Miami Marlins",
+          "game_pk": 823831,
+          "team": null,
+          "side": "both",
+          "lean": "NRFI",
+          "combo_player_ids": null,
+          "signals": {
+            "home_team_scores_p": 0.2982,
+            "away_team_scores_p": 0.2801,
+            "fi_n_starts": 16.0
+          },
+          "hit_probability": 0.5052,
+          "raw_hit_probability": null,
+          "lift": 0.0068,
+          "reliability": "A",
+          "sample_n": 16,
+          "projection": {
+            "stat": "nrfi_combined",
+            "value": 50.5
+          }
+        }
+      ]
+    }
+  ]
+}

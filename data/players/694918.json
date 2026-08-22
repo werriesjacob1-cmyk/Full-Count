@@ -84,6 +84,39 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-22",
+      "evaluations": [
+        {
+          "prop": "Over 3.5 Strikeouts",
+          "type": "pitcher",
+          "score": 45.2,
+          "notable_signals": 0,
+          "matchup": "San Francisco Giants @ Boston Red Sox",
+          "game_pk": 824718,
+          "team": "San Francisco Giants",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_k_pct": 44.0,
+            "same_hand_ratio": 92.8571,
+            "l14_k_pct": 12.3529,
+            "env_neutral": 50.0
+          },
+          "hit_probability": 0.5881,
+          "raw_hit_probability": 0.5715,
+          "lift": -0.1048,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 3.5,
+            "needs": 4
+          }
+        }
+      ]
     }
   ]
 }

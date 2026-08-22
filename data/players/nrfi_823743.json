@@ -1,0 +1,37 @@
+{
+  "player_id": "nrfi_823743",
+  "name": "Atlanta Braves @ Milwaukee Brewers \u2014 1st Inning (Both Teams)",
+  "snapshots": [
+    {
+      "date": "2026-08-22",
+      "evaluations": [
+        {
+          "prop": "No runs in the 1st (both teams)",
+          "type": "game",
+          "score": 61.7,
+          "notable_signals": 0,
+          "matchup": "Atlanta Braves @ Milwaukee Brewers",
+          "game_pk": 823743,
+          "team": null,
+          "side": "both",
+          "lean": "NRFI",
+          "combo_player_ids": null,
+          "signals": {
+            "home_team_scores_p": 0.3052,
+            "away_team_scores_p": 0.2544,
+            "fi_n_starts": 12.0
+          },
+          "hit_probability": 0.518,
+          "raw_hit_probability": null,
+          "lift": 0.0196,
+          "reliability": "B",
+          "sample_n": 12,
+          "projection": {
+            "stat": "nrfi_combined",
+            "value": 51.8
+          }
+        }
+      ]
+    }
+  ]
+}

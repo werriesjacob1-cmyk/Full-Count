@@ -142,6 +142,65 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-22",
+      "evaluations": [
+        {
+          "prop": "Over 4.5 Strikeouts",
+          "type": "pitcher",
+          "score": 42.3,
+          "notable_signals": 0,
+          "matchup": "Detroit Tigers @ Kansas City Royals",
+          "game_pk": 824073,
+          "team": "Kansas City Royals",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_k_pct": 54.0,
+            "same_hand_ratio": 88.8889,
+            "l14_k_pct": 11.7647,
+            "env_neutral": 50.0
+          },
+          "hit_probability": 0.4536,
+          "raw_hit_probability": 0.4536,
+          "lift": -0.0613,
+          "reliability": "A",
+          "sample_n": 25,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 4.5,
+            "needs": 5
+          }
+        },
+        {
+          "prop": "Over 17.5 Outs Recorded",
+          "type": "pitcher",
+          "score": 88.0,
+          "notable_signals": 1,
+          "matchup": "Detroit Tigers @ Kansas City Royals",
+          "game_pk": 824073,
+          "team": "Kansas City Royals",
+          "side": "home",
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "outs_rate": 0.6505,
+            "avg_outs_per_start": 18.68
+          },
+          "hit_probability": 0.6505,
+          "raw_hit_probability": null,
+          "lift": 0.2898,
+          "reliability": "A",
+          "sample_n": 25,
+          "projection": {
+            "stat": "pitcher_outs",
+            "value": 17.5,
+            "needs": 18
+          }
+        }
+      ]
     }
   ]
 }
