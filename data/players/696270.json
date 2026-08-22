@@ -150,7 +150,7 @@
         {
           "prop": "Over 3.5 Strikeouts",
           "type": "pitcher",
-          "score": 44.6,
+          "score": 46.5,
           "notable_signals": 1,
           "matchup": "Los Angeles Angels @ Texas Rangers",
           "game_pk": 822858,
@@ -182,7 +182,7 @@
         {
           "prop": "Over 14.5 Outs Recorded",
           "type": "pitcher",
-          "score": 26.3,
+          "score": 26.1,
           "notable_signals": 0,
           "matchup": "Los Angeles Angels @ Texas Rangers",
           "game_pk": 822858,
@@ -191,18 +191,46 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.5683,
+            "outs_rate": 0.5708,
             "avg_outs_per_start": 13.83
           },
-          "hit_probability": 0.5683,
+          "hit_probability": 0.5708,
           "raw_hit_probability": null,
-          "lift": -0.1367,
+          "lift": -0.1416,
           "reliability": "B",
           "sample_n": 12,
           "projection": {
             "stat": "pitcher_outs",
             "value": 14.5,
             "needs": 15
+          }
+        },
+        {
+          "prop": "Over 8.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 0.2,
+          "notable_signals": 0,
+          "matchup": "Los Angeles Angels @ Texas Rangers",
+          "game_pk": 822858,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            696270,
+            674003
+          ],
+          "signals": {
+            "combined_k_edge": -0.2704
+          },
+          "hit_probability": 0.3296,
+          "raw_hit_probability": null,
+          "lift": -0.2704,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 8.5,
+            "needs": 9
           }
         }
       ]

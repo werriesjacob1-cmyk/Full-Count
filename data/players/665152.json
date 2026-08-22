@@ -149,7 +149,7 @@
         {
           "prop": "Over 4.5 Strikeouts",
           "type": "pitcher",
-          "score": 44.8,
+          "score": 44.9,
           "notable_signals": 0,
           "matchup": "Minnesota Twins @ San Diego Padres",
           "game_pk": 823261,
@@ -161,7 +161,10 @@
             "opp_team_k_pct": 48.0,
             "same_hand_ratio": 100.0,
             "l14_k_pct": 68.8235,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 51.0488,
+            "ump_k_pct": -0.828,
+            "ump_bb_pct": -0.06
           },
           "hit_probability": 0.5853,
           "raw_hit_probability": 0.5581,
@@ -177,7 +180,7 @@
         {
           "prop": "Over 16.5 Outs Recorded",
           "type": "pitcher",
-          "score": 26.1,
+          "score": 25.9,
           "notable_signals": 0,
           "matchup": "Minnesota Twins @ San Diego Padres",
           "game_pk": 823261,
@@ -186,18 +189,46 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.4142,
+            "outs_rate": 0.4179,
             "avg_outs_per_start": 16.0
           },
-          "hit_probability": 0.4142,
+          "hit_probability": 0.4179,
           "raw_hit_probability": null,
-          "lift": -0.0237,
+          "lift": -0.0298,
           "reliability": "B",
           "sample_n": 10,
           "projection": {
             "stat": "pitcher_outs",
             "value": 16.5,
             "needs": 17
+          }
+        },
+        {
+          "prop": "Over 8.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 55.0,
+          "notable_signals": 0,
+          "matchup": "Minnesota Twins @ San Diego Padres",
+          "game_pk": 823261,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            665152,
+            663554
+          ],
+          "signals": {
+            "combined_k_edge": 0.041
+          },
+          "hit_probability": 0.6564,
+          "raw_hit_probability": null,
+          "lift": 0.041,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 8.5,
+            "needs": 9
           }
         }
       ]

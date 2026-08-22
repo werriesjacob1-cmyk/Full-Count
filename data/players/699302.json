@@ -334,6 +334,56 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-22",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 32.3,
+          "notable_signals": 1,
+          "matchup": "Cincinnati Reds @ Arizona Diamondbacks",
+          "game_pk": 825044,
+          "team": "Cincinnati Reds",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 12.5714,
+            "l7_avg_ev": 17.9688,
+            "l7_barrel_pct": 75.0,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 8.6667,
+            "lineup_slot": 12.5,
+            "bullpen_fatigue": 62.5,
+            "platoon_barrel_pct": -2.24,
+            "platoon_xwoba": -5.0,
+            "park_hand_index": -1.03,
+            "opp_catcher_framing": -0.0,
+            "days_rest": 2.0,
+            "woba_ahead": 32.7273,
+            "woba_behind": 0.0,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "ump_k_pct": -0.012,
+            "ump_bb_pct": 0.204
+          },
+          "hit_probability": 0.4496,
+          "raw_hit_probability": 0.4496,
+          "lift": -0.1085,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }
