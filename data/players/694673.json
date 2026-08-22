@@ -477,6 +477,59 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-22",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 54.4,
+          "notable_signals": 1,
+          "matchup": "Washington Nationals @ Miami Marlins",
+          "game_pk": 823831,
+          "team": "Washington Nationals",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 20.8571,
+            "l7_avg_ev": 96.1538,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 91.3333,
+            "lineup_slot": 62.5,
+            "bullpen_fatigue": 51.2821,
+            "platoon_barrel_pct": 5.0,
+            "platoon_xwoba": 4.8,
+            "park_hand_index": -1.47,
+            "opp_catcher_framing": 0.48,
+            "days_rest": 0.0,
+            "woba_ahead": 9.0909,
+            "woba_behind": 32.7273,
+            "pull_park_synergy": -1.0805,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": -3.784,
+            "vs_rp_ops": -2.316,
+            "ump_k_pct": -0.168,
+            "ump_bb_pct": -0.252
+          },
+          "hit_probability": 0.6127,
+          "raw_hit_probability": 0.6105,
+          "lift": 0.0546,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

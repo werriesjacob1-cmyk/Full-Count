@@ -90,6 +90,53 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-22",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 50.4,
+          "notable_signals": 3,
+          "matchup": "Toronto Blue Jays @ New York Yankees",
+          "game_pk": 823509,
+          "team": "Toronto Blue Jays",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 30.2857,
+            "l7_avg_ev": 20.3125,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 36.0,
+            "lineup_slot": 25.0,
+            "bullpen_fatigue": 69.4444,
+            "park_hand_index": 0.89,
+            "opp_catcher_framing": -0.6,
+            "days_rest": 2.0,
+            "woba_ahead": 19.0909,
+            "woba_behind": 44.5455,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "ump_k_pct": -0.168,
+            "ump_bb_pct": -0.024
+          },
+          "hit_probability": 0.5401,
+          "raw_hit_probability": 0.5581,
+          "lift": -0.018,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

@@ -950,6 +950,139 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-22",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 74.7,
+          "notable_signals": 2,
+          "matchup": "Atlanta Braves @ Milwaukee Brewers",
+          "game_pk": 823743,
+          "team": "Milwaukee Brewers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 18.5714,
+            "pitch_exploit": 16.0,
+            "l7_avg_ev": 30.2885,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 32.6667,
+            "lineup_slot": 87.5,
+            "bullpen_fatigue": 71.4286,
+            "platoon_barrel_pct": -2.16,
+            "platoon_xwoba": -1.98,
+            "park_hand_index": -1.0,
+            "opp_catcher_framing": 0.36,
+            "days_rest": 0.0,
+            "woba_ahead": 53.6364,
+            "woba_behind": 20.9091,
+            "pull_park_synergy": -0.0805,
+            "hard_hit_105_rate": 0.415,
+            "team_total_move": -6.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": 0.92,
+            "vs_rp_ops": 1.74,
+            "ump_k_pct": 0.12,
+            "ump_bb_pct": -0.192
+          },
+          "hit_probability": 0.7191,
+          "raw_hit_probability": 0.7606,
+          "lift": 0.0478,
+          "reliability": "A",
+          "sample_n": 119,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 53.5,
+          "notable_signals": 1,
+          "matchup": "Atlanta Braves @ Milwaukee Brewers",
+          "game_pk": 823743,
+          "team": "Milwaukee Brewers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": 5.88,
+            "sprint_speed": 40.625,
+            "catcher_poptime": 8.5714,
+            "on_base": 85.6046
+          },
+          "hit_probability": 0.1424,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 119,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 8.6,
+          "notable_signals": 0,
+          "matchup": "Atlanta Braves @ Milwaukee Brewers",
+          "game_pk": 823743,
+          "team": "Milwaukee Brewers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0632
+          },
+          "hit_probability": 0.0632,
+          "raw_hit_probability": null,
+          "lift": 0.0145,
+          "reliability": "A",
+          "sample_n": 119,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 4.6,
+          "notable_signals": 0,
+          "matchup": "Atlanta Braves @ Milwaukee Brewers",
+          "game_pk": 823743,
+          "team": "Milwaukee Brewers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0312
+          },
+          "hit_probability": 0.0312,
+          "raw_hit_probability": null,
+          "lift": 0.0099,
+          "reliability": "A",
+          "sample_n": 119,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }
