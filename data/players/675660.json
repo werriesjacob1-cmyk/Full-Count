@@ -157,7 +157,7 @@
         {
           "prop": "Over 4.5 Strikeouts",
           "type": "pitcher",
-          "score": 48.9,
+          "score": 49.5,
           "notable_signals": 0,
           "matchup": "Atlanta Braves @ Milwaukee Brewers",
           "game_pk": 823745,
@@ -169,7 +169,10 @@
             "opp_team_k_pct": 46.0,
             "same_hand_ratio": 43.75,
             "l14_k_pct": 25.8824,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 61.4957,
+            "ump_k_pct": -0.492,
+            "ump_bb_pct": -0.168
           },
           "hit_probability": 0.5895,
           "raw_hit_probability": 0.5787,
@@ -185,7 +188,7 @@
         {
           "prop": "Over 14.5 Outs Recorded",
           "type": "pitcher",
-          "score": 65.6,
+          "score": 66.6,
           "notable_signals": 0,
           "matchup": "Atlanta Braves @ Milwaukee Brewers",
           "game_pk": 823745,
@@ -194,12 +197,12 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.7913,
+            "outs_rate": 0.79,
             "avg_outs_per_start": 15.79
           },
-          "hit_probability": 0.7913,
+          "hit_probability": 0.79,
           "raw_hit_probability": null,
-          "lift": -0.013,
+          "lift": -0.01,
           "reliability": "B",
           "sample_n": 14,
           "projection": {

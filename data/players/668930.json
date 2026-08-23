@@ -1083,6 +1083,136 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-23",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 73.0,
+          "notable_signals": 3,
+          "matchup": "Atlanta Braves @ Milwaukee Brewers",
+          "game_pk": 823745,
+          "team": "Milwaukee Brewers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 58.0,
+            "pitch_exploit": 16.0,
+            "l7_avg_ev": 24.0,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 0.375,
+            "season_barrel_pct": 32.6667,
+            "lineup_slot": 87.5,
+            "bullpen_fatigue": 69.4444,
+            "platoon_barrel_pct": 1.68,
+            "platoon_xwoba": 3.18,
+            "opp_catcher_framing": -0.36,
+            "days_rest": 0.0,
+            "woba_ahead": 53.6364,
+            "woba_behind": 20.9091,
+            "hard_hit_105_rate": 0.405,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": -2.0,
+            "series_game": 2.0,
+            "sp_rp_ops_gap": 0.936,
+            "vs_rp_ops": 1.68,
+            "ump_k_pct": 0.492,
+            "ump_bb_pct": 0.168
+          },
+          "hit_probability": 0.7281,
+          "raw_hit_probability": 0.7778,
+          "lift": 0.0334,
+          "reliability": "A",
+          "sample_n": 120,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 59.1,
+          "notable_signals": 1,
+          "matchup": "Atlanta Braves @ Milwaukee Brewers",
+          "game_pk": 823745,
+          "team": "Milwaukee Brewers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": 5.88,
+            "sprint_speed": 40.625,
+            "on_base": 85.6046
+          },
+          "hit_probability": 0.1403,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 120,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 8.5,
+          "notable_signals": 0,
+          "matchup": "Atlanta Braves @ Milwaukee Brewers",
+          "game_pk": 823745,
+          "team": "Milwaukee Brewers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0628
+          },
+          "hit_probability": 0.0628,
+          "raw_hit_probability": null,
+          "lift": 0.014,
+          "reliability": "A",
+          "sample_n": 120,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 4.6,
+          "notable_signals": 0,
+          "matchup": "Atlanta Braves @ Milwaukee Brewers",
+          "game_pk": 823745,
+          "team": "Milwaukee Brewers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.031
+          },
+          "hit_probability": 0.031,
+          "raw_hit_probability": null,
+          "lift": 0.0097,
+          "reliability": "A",
+          "sample_n": 120,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

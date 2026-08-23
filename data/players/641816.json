@@ -221,7 +221,7 @@
         {
           "prop": "Over 5.5 Strikeouts",
           "type": "pitcher",
-          "score": 46.6,
+          "score": 47.7,
           "notable_signals": 1,
           "matchup": "Atlanta Braves @ Milwaukee Brewers",
           "game_pk": 823745,
@@ -234,7 +234,10 @@
             "same_hand_ratio": 61.1111,
             "l14_k_pct": 39.4118,
             "tto_penalty": 8.0,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 61.4957,
+            "ump_k_pct": -0.492,
+            "ump_bb_pct": -0.168
           },
           "hit_probability": 0.4196,
           "raw_hit_probability": 0.4196,
@@ -250,7 +253,7 @@
         {
           "prop": "Over 15.5 Outs Recorded",
           "type": "pitcher",
-          "score": 35.8,
+          "score": 39.3,
           "notable_signals": 0,
           "matchup": "Atlanta Braves @ Milwaukee Brewers",
           "game_pk": 823745,
@@ -259,18 +262,46 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.5347,
+            "outs_rate": 0.528,
             "avg_outs_per_start": 16.19
           },
-          "hit_probability": 0.5347,
+          "hit_probability": 0.528,
           "raw_hit_probability": null,
-          "lift": -0.0381,
+          "lift": -0.0149,
           "reliability": "A",
           "sample_n": 21,
           "projection": {
             "stat": "pitcher_outs",
             "value": 15.5,
             "needs": 16
+          }
+        },
+        {
+          "prop": "Over 9.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 55.0,
+          "notable_signals": 1,
+          "matchup": "Atlanta Braves @ Milwaukee Brewers",
+          "game_pk": 823745,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            641816,
+            675660
+          ],
+          "signals": {
+            "combined_k_edge": 0.0815
+          },
+          "hit_probability": 0.6682,
+          "raw_hit_probability": null,
+          "lift": 0.0815,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 9.5,
+            "needs": 10
           }
         }
       ]

@@ -335,6 +335,53 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-23",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 43.8,
+          "notable_signals": 3,
+          "matchup": "Atlanta Braves @ Milwaukee Brewers",
+          "game_pk": 823745,
+          "team": "Atlanta Braves",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 38.8571,
+            "l7_avg_ev": 0.0,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 4.5,
+            "season_barrel_pct": 0.0,
+            "lineup_slot": 0.0,
+            "bullpen_fatigue": 71.4286,
+            "opp_catcher_framing": 0.36,
+            "days_rest": 4.0,
+            "woba_ahead": 2.7273,
+            "woba_behind": 50.9091,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": -2.0,
+            "series_game": 2.0,
+            "ump_k_pct": 0.492,
+            "ump_bb_pct": 0.168
+          },
+          "hit_probability": 0.4753,
+          "raw_hit_probability": 0.4753,
+          "lift": -0.0828,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }
