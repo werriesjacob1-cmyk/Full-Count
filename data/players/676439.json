@@ -960,6 +960,105 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-23",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 36.3,
+          "notable_signals": 1,
+          "matchup": "Pittsburgh Pirates @ Los Angeles Dodgers",
+          "game_pk": 823909,
+          "team": "Los Angeles Dodgers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 37.1429,
+            "l7_avg_ev": 76.0714,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 35.9,
+            "season_barrel_pct": 38.6667,
+            "lineup_slot": 0.0,
+            "bullpen_fatigue": 64.1026,
+            "platoon_barrel_pct": 0.64,
+            "platoon_xwoba": 0.78,
+            "opp_catcher_framing": -0.36,
+            "days_rest": 2.0,
+            "woba_ahead": 0.0,
+            "woba_behind": 95.4545,
+            "team_total_move": -6.0,
+            "team_total_open": 0.0,
+            "getaway_day": -2.0,
+            "series_game": 2.0,
+            "ump_k_pct": -0.336,
+            "ump_bb_pct": -0.276
+          },
+          "hit_probability": 0.6331,
+          "raw_hit_probability": 0.609,
+          "lift": -0.0344,
+          "reliability": "B",
+          "sample_n": 70,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 0.7,
+          "notable_signals": 0,
+          "matchup": "Pittsburgh Pirates @ Los Angeles Dodgers",
+          "game_pk": 823909,
+          "team": "Los Angeles Dodgers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.032
+          },
+          "hit_probability": 0.032,
+          "raw_hit_probability": null,
+          "lift": -0.0168,
+          "reliability": "B",
+          "sample_n": 70,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 0.6,
+          "notable_signals": 0,
+          "matchup": "Pittsburgh Pirates @ Los Angeles Dodgers",
+          "game_pk": 823909,
+          "team": "Los Angeles Dodgers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0153
+          },
+          "hit_probability": 0.0153,
+          "raw_hit_probability": null,
+          "lift": -0.006,
+          "reliability": "B",
+          "sample_n": 70,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

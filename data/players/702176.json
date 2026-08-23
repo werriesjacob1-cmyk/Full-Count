@@ -448,6 +448,109 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-23",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 45.7,
+          "notable_signals": 1,
+          "matchup": "Minnesota Twins @ San Diego Padres",
+          "game_pk": 823258,
+          "team": "Minnesota Twins",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 65.4286,
+            "l7_avg_ev": 0.0,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 42.0,
+            "season_barrel_pct": 17.3333,
+            "lineup_slot": 25.0,
+            "bullpen_fatigue": 75.7576,
+            "platoon_barrel_pct": 0.4,
+            "platoon_xwoba": 1.08,
+            "park_hand_index": -1.43,
+            "opp_catcher_framing": 0.84,
+            "days_rest": 4.0,
+            "woba_ahead": 21.8182,
+            "woba_behind": 0.9091,
+            "pull_park_synergy": -0.2653,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": -2.0,
+            "series_game": 2.0,
+            "sp_rp_ops_gap": 2.528,
+            "vs_rp_ops": 0.744,
+            "ump_k_pct": -0.156,
+            "ump_bb_pct": -0.108
+          },
+          "hit_probability": 0.6452,
+          "raw_hit_probability": 0.6291,
+          "lift": -0.0223,
+          "reliability": "C",
+          "sample_n": 25,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 0.0,
+          "notable_signals": 0,
+          "matchup": "Minnesota Twins @ San Diego Padres",
+          "game_pk": 823258,
+          "team": "Minnesota Twins",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0195
+          },
+          "hit_probability": 0.0195,
+          "raw_hit_probability": null,
+          "lift": -0.0293,
+          "reliability": "C",
+          "sample_n": 25,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 0.0,
+          "notable_signals": 0,
+          "matchup": "Minnesota Twins @ San Diego Padres",
+          "game_pk": 823258,
+          "team": "Minnesota Twins",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0085
+          },
+          "hit_probability": 0.0085,
+          "raw_hit_probability": null,
+          "lift": -0.0128,
+          "reliability": "C",
+          "sample_n": 25,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

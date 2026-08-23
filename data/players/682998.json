@@ -1216,6 +1216,138 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-23",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 74.1,
+          "notable_signals": 1,
+          "matchup": "Cincinnati Reds @ Arizona Diamondbacks",
+          "game_pk": 825043,
+          "team": "Arizona Diamondbacks",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 44.8571,
+            "l7_avg_ev": 93.0556,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 58.0,
+            "lineup_slot": 87.5,
+            "bullpen_fatigue": 66.6667,
+            "platoon_barrel_pct": -0.16,
+            "platoon_xwoba": 2.04,
+            "park_hand_index": -0.85,
+            "opp_catcher_framing": 0.84,
+            "days_rest": 0.0,
+            "woba_ahead": 19.0909,
+            "woba_behind": 75.4545,
+            "pull_park_synergy": -0.6218,
+            "hard_hit_105_rate": 0.6525,
+            "team_total_move": 0.0,
+            "team_total_open": 0.0,
+            "getaway_day": -2.0,
+            "series_game": 2.0,
+            "sp_rp_ops_gap": -0.144,
+            "vs_rp_ops": 1.224,
+            "ump_k_pct": -0.12,
+            "ump_bb_pct": -0.06
+          },
+          "hit_probability": 0.6098,
+          "raw_hit_probability": 0.6083,
+          "lift": 0.0517,
+          "reliability": "A",
+          "sample_n": 126,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 77.0,
+          "notable_signals": 1,
+          "matchup": "Cincinnati Reds @ Arizona Diamondbacks",
+          "game_pk": 825043,
+          "team": "Arizona Diamondbacks",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": 4.62,
+            "sprint_speed": 75.0,
+            "catcher_poptime": 25.7143,
+            "on_base": 92.3225
+          },
+          "hit_probability": 0.1286,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 126,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 11.0,
+          "notable_signals": 0,
+          "matchup": "Cincinnati Reds @ Arizona Diamondbacks",
+          "game_pk": 825043,
+          "team": "Arizona Diamondbacks",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0727
+          },
+          "hit_probability": 0.0727,
+          "raw_hit_probability": null,
+          "lift": 0.0239,
+          "reliability": "A",
+          "sample_n": 126,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 4.1,
+          "notable_signals": 0,
+          "matchup": "Cincinnati Reds @ Arizona Diamondbacks",
+          "game_pk": 825043,
+          "team": "Arizona Diamondbacks",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0293
+          },
+          "hit_probability": 0.0293,
+          "raw_hit_probability": null,
+          "lift": 0.008,
+          "reliability": "A",
+          "sample_n": 126,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

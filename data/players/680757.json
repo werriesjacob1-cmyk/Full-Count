@@ -1187,6 +1187,109 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-23",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 87.8,
+          "notable_signals": 2,
+          "matchup": "Cleveland Guardians @ Colorado Rockies",
+          "game_pk": 824315,
+          "team": "Cleveland Guardians",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 62.8571,
+            "l7_avg_ev": 11.1184,
+            "l7_barrel_pct": 23.5714,
+            "bat_speed_trend": 2.325,
+            "park_hr_index": 42.5,
+            "season_barrel_pct": 0.0,
+            "lineup_slot": 100.0,
+            "bullpen_fatigue": 58.8235,
+            "platoon_barrel_pct": -5.0,
+            "platoon_xwoba": 0.84,
+            "park_hand_index": 1.36,
+            "opp_catcher_framing": 0.36,
+            "days_rest": 0.0,
+            "woba_behind": 55.4545,
+            "pull_park_synergy": 0.0428,
+            "team_total_move": 0.0,
+            "team_total_open": 6.0,
+            "getaway_day": -2.0,
+            "series_game": 2.0,
+            "sp_rp_ops_gap": 0.048,
+            "vs_rp_ops": -0.312,
+            "ump_k_pct": 0.264,
+            "ump_bb_pct": -0.18
+          },
+          "hit_probability": 0.6279,
+          "raw_hit_probability": 0.6218,
+          "lift": 0.0698,
+          "reliability": "A",
+          "sample_n": 119,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 0.0,
+          "notable_signals": 0,
+          "matchup": "Cleveland Guardians @ Colorado Rockies",
+          "game_pk": 824315,
+          "team": "Cleveland Guardians",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0067
+          },
+          "hit_probability": 0.0067,
+          "raw_hit_probability": null,
+          "lift": -0.0421,
+          "reliability": "A",
+          "sample_n": 119,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 0.0,
+          "notable_signals": 0,
+          "matchup": "Cleveland Guardians @ Colorado Rockies",
+          "game_pk": 824315,
+          "team": "Cleveland Guardians",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0029
+          },
+          "hit_probability": 0.0029,
+          "raw_hit_probability": null,
+          "lift": -0.0184,
+          "reliability": "A",
+          "sample_n": 119,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

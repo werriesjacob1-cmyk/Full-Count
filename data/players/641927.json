@@ -150,7 +150,7 @@
         {
           "prop": "Over 3.5 Strikeouts",
           "type": "pitcher",
-          "score": 51.9,
+          "score": 50.9,
           "notable_signals": 0,
           "matchup": "Minnesota Twins @ San Diego Padres",
           "game_pk": 823258,
@@ -163,7 +163,10 @@
             "same_hand_ratio": 100.0,
             "l14_k_pct": 14.1176,
             "tto_penalty": -8.0,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 47.0711,
+            "ump_k_pct": 0.156,
+            "ump_bb_pct": 0.108
           },
           "hit_probability": 0.5902,
           "raw_hit_probability": 0.582,
@@ -200,6 +203,34 @@
             "stat": "pitcher_outs",
             "value": 16.5,
             "needs": 17
+          }
+        },
+        {
+          "prop": "Over 7.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 55.0,
+          "notable_signals": 0,
+          "matchup": "Minnesota Twins @ San Diego Padres",
+          "game_pk": 823258,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            641927,
+            621111
+          ],
+          "signals": {
+            "combined_k_edge": 0.0261
+          },
+          "hit_probability": 0.5406,
+          "raw_hit_probability": null,
+          "lift": 0.0261,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 7.5,
+            "needs": 8
           }
         }
       ]
