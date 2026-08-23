@@ -106,6 +106,42 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-23",
+      "evaluations": [
+        {
+          "prop": "Over 3.5 Strikeouts",
+          "type": "pitcher",
+          "score": 37.5,
+          "notable_signals": 0,
+          "matchup": "Detroit Tigers @ Kansas City Royals",
+          "game_pk": 824071,
+          "team": "Kansas City Royals",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_k_pct": 54.0,
+            "same_hand_ratio": 5.5556,
+            "l14_k_pct": 5.8824,
+            "env_neutral": 50.0,
+            "ump_accuracy": 65.8802,
+            "ump_k_pct": -0.324,
+            "ump_bb_pct": -0.156
+          },
+          "hit_probability": 0.5182,
+          "raw_hit_probability": 0.5182,
+          "lift": -0.1753,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 3.5,
+            "needs": 4
+          }
+        }
+      ]
     }
   ]
 }

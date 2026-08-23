@@ -1,0 +1,37 @@
+{
+  "player_id": "nrfi_822856",
+  "name": "Los Angeles Angels @ Texas Rangers \u2014 1st Inning (Both Teams)",
+  "snapshots": [
+    {
+      "date": "2026-08-23",
+      "evaluations": [
+        {
+          "prop": "No runs in the 1st (both teams)",
+          "type": "game",
+          "score": 57.8,
+          "notable_signals": 0,
+          "matchup": "Los Angeles Angels @ Texas Rangers",
+          "game_pk": 822856,
+          "team": null,
+          "side": "both",
+          "lean": "NRFI",
+          "combo_player_ids": null,
+          "signals": {
+            "home_team_scores_p": 0.3048,
+            "away_team_scores_p": 0.267,
+            "fi_n_starts": 8.0
+          },
+          "hit_probability": 0.5096,
+          "raw_hit_probability": null,
+          "lift": 0.0112,
+          "reliability": "C",
+          "sample_n": 8,
+          "projection": {
+            "stat": "nrfi_combined",
+            "value": 51.0
+          }
+        }
+      ]
+    }
+  ]
+}

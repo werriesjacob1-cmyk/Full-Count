@@ -1191,6 +1191,107 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-23",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 65.5,
+          "notable_signals": 0,
+          "matchup": "Detroit Tigers @ Kansas City Royals",
+          "game_pk": 824071,
+          "team": "Kansas City Royals",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 65.0,
+            "l7_avg_ev": 76.25,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 38.1,
+            "season_barrel_pct": 74.6667,
+            "lineup_slot": 75.0,
+            "bullpen_fatigue": 64.1026,
+            "park_hand_index": -1.45,
+            "opp_catcher_framing": -1.2,
+            "days_rest": 0.0,
+            "woba_ahead": 57.2727,
+            "woba_behind": 0.0,
+            "pull_park_synergy": -0.883,
+            "hard_hit_105_rate": 1.435,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": -2.0,
+            "series_game": 2.0,
+            "sp_rp_ops_gap": 0.008,
+            "vs_rp_ops": 1.2,
+            "ump_k_pct": 0.324,
+            "ump_bb_pct": 0.156
+          },
+          "hit_probability": 0.649,
+          "raw_hit_probability": 0.6379,
+          "lift": 0.0909,
+          "reliability": "A",
+          "sample_n": 121,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 18.8,
+          "notable_signals": 1,
+          "matchup": "Detroit Tigers @ Kansas City Royals",
+          "game_pk": 824071,
+          "team": "Kansas City Royals",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.104
+          },
+          "hit_probability": 0.104,
+          "raw_hit_probability": null,
+          "lift": 0.0552,
+          "reliability": "A",
+          "sample_n": 121,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 13.3,
+          "notable_signals": 1,
+          "matchup": "Detroit Tigers @ Kansas City Royals",
+          "game_pk": 824071,
+          "team": "Kansas City Royals",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0655
+          },
+          "hit_probability": 0.0655,
+          "raw_hit_probability": null,
+          "lift": 0.0442,
+          "reliability": "A",
+          "sample_n": 121,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

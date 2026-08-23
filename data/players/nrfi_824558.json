@@ -1,0 +1,37 @@
+{
+  "player_id": "nrfi_824558",
+  "name": "New York Mets @ Chicago White Sox \u2014 1st Inning (Both Teams)",
+  "snapshots": [
+    {
+      "date": "2026-08-23",
+      "evaluations": [
+        {
+          "prop": "No runs in the 1st (both teams)",
+          "type": "game",
+          "score": 23.8,
+          "notable_signals": 0,
+          "matchup": "New York Mets @ Chicago White Sox",
+          "game_pk": 824558,
+          "team": null,
+          "side": "both",
+          "lean": "NRFI",
+          "combo_player_ids": null,
+          "signals": {
+            "home_team_scores_p": 0.2895,
+            "away_team_scores_p": 0.278,
+            "fi_n_starts": 3.0
+          },
+          "hit_probability": 0.513,
+          "raw_hit_probability": null,
+          "lift": 0.0146,
+          "reliability": "D",
+          "sample_n": 3,
+          "projection": {
+            "stat": "nrfi_combined",
+            "value": 51.3
+          }
+        }
+      ]
+    }
+  ]
+}

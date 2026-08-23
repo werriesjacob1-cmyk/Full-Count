@@ -1,0 +1,64 @@
+{
+  "player_id": 579328,
+  "name": "Yusei Kikuchi",
+  "snapshots": [
+    {
+      "date": "2026-08-23",
+      "evaluations": [
+        {
+          "prop": "Over 4.5 Strikeouts",
+          "type": "pitcher",
+          "score": 26.8,
+          "notable_signals": 0,
+          "matchup": "Los Angeles Angels @ Texas Rangers",
+          "game_pk": 822856,
+          "team": "Los Angeles Angels",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_k_pct": 59.0,
+            "same_hand_ratio": 33.3333,
+            "env_neutral": 50.0
+          },
+          "hit_probability": 0.5915,
+          "raw_hit_probability": 0.5884,
+          "lift": 0.0776,
+          "reliability": "C",
+          "sample_n": 7,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 4.5,
+            "needs": 5
+          }
+        },
+        {
+          "prop": "Over 14.5 Outs Recorded",
+          "type": "pitcher",
+          "score": 39.3,
+          "notable_signals": 0,
+          "matchup": "Los Angeles Angels @ Texas Rangers",
+          "game_pk": 822856,
+          "team": "Los Angeles Angels",
+          "side": "away",
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "outs_rate": 0.6789,
+            "avg_outs_per_start": 13.29
+          },
+          "hit_probability": 0.6789,
+          "raw_hit_probability": null,
+          "lift": -0.1254,
+          "reliability": "C",
+          "sample_n": 7,
+          "projection": {
+            "stat": "pitcher_outs",
+            "value": 14.5,
+            "needs": 15
+          }
+        }
+      ]
+    }
+  ]
+}

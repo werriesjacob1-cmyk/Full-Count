@@ -143,6 +143,65 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-23",
+      "evaluations": [
+        {
+          "prop": "Over 4.5 Strikeouts",
+          "type": "pitcher",
+          "score": 49.6,
+          "notable_signals": 0,
+          "matchup": "Cleveland Guardians @ Colorado Rockies",
+          "game_pk": 824315,
+          "team": "Cleveland Guardians",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_k_pct": 57.0,
+            "same_hand_ratio": 57.1429,
+            "l14_k_pct": 32.3529,
+            "env_neutral": 50.0
+          },
+          "hit_probability": 0.5128,
+          "raw_hit_probability": 0.5128,
+          "lift": -0.0011,
+          "reliability": "A",
+          "sample_n": 25,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 4.5,
+            "needs": 5
+          }
+        },
+        {
+          "prop": "Over 17.5 Outs Recorded",
+          "type": "pitcher",
+          "score": 51.9,
+          "notable_signals": 1,
+          "matchup": "Cleveland Guardians @ Colorado Rockies",
+          "game_pk": 824315,
+          "team": "Cleveland Guardians",
+          "side": "away",
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "outs_rate": 0.4974,
+            "avg_outs_per_start": 17.32
+          },
+          "hit_probability": 0.4974,
+          "raw_hit_probability": null,
+          "lift": 0.0941,
+          "reliability": "A",
+          "sample_n": 25,
+          "projection": {
+            "stat": "pitcher_outs",
+            "value": 17.5,
+            "needs": 18
+          }
+        }
+      ]
     }
   ]
 }

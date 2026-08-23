@@ -1,0 +1,37 @@
+{
+  "player_id": "nrfi_824799",
+  "name": "Tampa Bay Rays @ Baltimore Orioles \u2014 1st Inning (Both Teams)",
+  "snapshots": [
+    {
+      "date": "2026-08-23",
+      "evaluations": [
+        {
+          "prop": "No runs in the 1st (both teams)",
+          "type": "game",
+          "score": 63.0,
+          "notable_signals": 0,
+          "matchup": "Tampa Bay Rays @ Baltimore Orioles",
+          "game_pk": 824799,
+          "team": null,
+          "side": "both",
+          "lean": "NRFI",
+          "combo_player_ids": null,
+          "signals": {
+            "home_team_scores_p": 0.26,
+            "away_team_scores_p": 0.3113,
+            "fi_n_starts": 26.0
+          },
+          "hit_probability": 0.5096,
+          "raw_hit_probability": null,
+          "lift": 0.0112,
+          "reliability": "A",
+          "sample_n": 26,
+          "projection": {
+            "stat": "nrfi_combined",
+            "value": 51.0
+          }
+        }
+      ]
+    }
+  ]
+}

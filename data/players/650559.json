@@ -149,6 +149,87 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-23",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 37.7,
+          "notable_signals": 2,
+          "matchup": "St. Louis Cardinals @ Philadelphia Phillies",
+          "game_pk": 823421,
+          "team": "Philadelphia Phillies",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 21.1429,
+            "l7_avg_ev": 57.1429,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 5.55,
+            "park_hr_index": 74.7,
+            "season_barrel_pct": 35.3333,
+            "lineup_slot": 0.0,
+            "bullpen_fatigue": 64.1026,
+            "platoon_barrel_pct": 0.56,
+            "platoon_xwoba": -4.02,
+            "park_hand_index": 0.09,
+            "opp_catcher_framing": -0.84,
+            "days_rest": 0.0,
+            "woba_ahead": 0.0,
+            "woba_behind": 81.8182,
+            "pull_park_synergy": 0.0148,
+            "team_total_move": 0.0,
+            "team_total_open": 0.0,
+            "getaway_day": -2.0,
+            "series_game": 2.0,
+            "sp_rp_ops_gap": -5.0,
+            "vs_rp_ops": -2.976,
+            "ump_k_pct": -0.252,
+            "ump_bb_pct": 0.168
+          },
+          "hit_probability": 0.6463,
+          "raw_hit_probability": 0.6358,
+          "lift": 0.0882,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 44.1,
+          "notable_signals": 0,
+          "matchup": "St. Louis Cardinals @ Philadelphia Phillies",
+          "game_pk": 823421,
+          "team": "Philadelphia Phillies",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": 3.54,
+            "sprint_speed": 40.625,
+            "catcher_poptime": 2.8571
+          },
+          "hit_probability": null,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }
