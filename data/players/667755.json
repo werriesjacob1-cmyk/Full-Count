@@ -219,7 +219,7 @@
         {
           "prop": "Over 5.5 Strikeouts",
           "type": "pitcher",
-          "score": 35.2,
+          "score": 34.1,
           "notable_signals": 1,
           "matchup": "Toronto Blue Jays @ New York Yankees",
           "game_pk": 823507,
@@ -229,7 +229,7 @@
           "combo_player_ids": null,
           "signals": {
             "opp_team_k_pct": 78.0,
-            "same_hand_ratio": 33.3333,
+            "same_hand_ratio": 5.5556,
             "l14_k_pct": 0.0,
             "env_neutral": 50.0,
             "ump_accuracy": 74.0741,
@@ -271,6 +271,34 @@
             "stat": "pitcher_outs",
             "value": 16.5,
             "needs": 17
+          }
+        },
+        {
+          "prop": "Over 9.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 42.0,
+          "notable_signals": 0,
+          "matchup": "Toronto Blue Jays @ New York Yankees",
+          "game_pk": 823507,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            667755,
+            607074
+          ],
+          "signals": {
+            "combined_k_edge": -0.0783
+          },
+          "hit_probability": 0.5371,
+          "raw_hit_probability": null,
+          "lift": -0.0783,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 9.5,
+            "needs": 10
           }
         }
       ]

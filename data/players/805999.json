@@ -1450,6 +1450,135 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-23",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 45.8,
+          "notable_signals": 2,
+          "matchup": "New York Mets @ Chicago White Sox",
+          "game_pk": 824558,
+          "team": "New York Mets",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 0.5714,
+            "l7_avg_ev": 0.0,
+            "l7_barrel_pct": 95.7143,
+            "park_hr_index": 26.5,
+            "season_barrel_pct": 33.3333,
+            "lineup_slot": 12.5,
+            "bullpen_fatigue": 89.7436,
+            "platoon_barrel_pct": 2.56,
+            "platoon_xwoba": 0.06,
+            "opp_catcher_framing": 0.6,
+            "days_rest": 0.0,
+            "woba_ahead": 0.0,
+            "woba_behind": 19.0909,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": -2.0,
+            "series_game": 2.0,
+            "sp_rp_ops_gap": -1.032,
+            "vs_rp_ops": -1.344,
+            "ump_k_pct": 0.12,
+            "ump_bb_pct": -0.144
+          },
+          "hit_probability": 0.6618,
+          "raw_hit_probability": 0.6573,
+          "lift": -0.007,
+          "reliability": "A",
+          "sample_n": 89,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 60.0,
+          "notable_signals": 0,
+          "matchup": "New York Mets @ Chicago White Sox",
+          "game_pk": 824558,
+          "team": "New York Mets",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": -0.0,
+            "sprint_speed": 65.625,
+            "catcher_poptime": 17.1429,
+            "on_base": 47.2169
+          },
+          "hit_probability": 0.1699,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 89,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 1.9,
+          "notable_signals": 0,
+          "matchup": "New York Mets @ Chicago White Sox",
+          "game_pk": 824558,
+          "team": "New York Mets",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0368
+          },
+          "hit_probability": 0.0368,
+          "raw_hit_probability": null,
+          "lift": -0.012,
+          "reliability": "A",
+          "sample_n": 89,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 2.4,
+          "notable_signals": 0,
+          "matchup": "New York Mets @ Chicago White Sox",
+          "game_pk": 824558,
+          "team": "New York Mets",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0225
+          },
+          "hit_probability": 0.0225,
+          "raw_hit_probability": null,
+          "lift": 0.0012,
+          "reliability": "A",
+          "sample_n": 89,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

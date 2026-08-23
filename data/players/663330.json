@@ -203,6 +203,130 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-23",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 94.3,
+          "notable_signals": 2,
+          "matchup": "San Francisco Giants @ Boston Red Sox",
+          "game_pk": 824720,
+          "team": "Boston Red Sox",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "park_hr_index": 50.8,
+            "season_barrel_pct": 41.3333,
+            "lineup_slot": 100.0,
+            "bullpen_fatigue": 83.3333,
+            "platoon_barrel_pct": 3.04,
+            "platoon_xwoba": 1.86,
+            "park_hand_index": -2.32,
+            "opp_catcher_framing": 1.8,
+            "days_rest": 0.0,
+            "woba_behind": 44.5455,
+            "pull_park_synergy": -2.298,
+            "team_total_move": 0.0,
+            "team_total_open": 0.0,
+            "getaway_day": -2.0,
+            "series_game": 2.0,
+            "ump_k_pct": 0.828,
+            "ump_bb_pct": 0.06
+          },
+          "hit_probability": 0.5689,
+          "raw_hit_probability": 0.5786,
+          "lift": 0.0108,
+          "reliability": "B",
+          "sample_n": 71,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 42.3,
+          "notable_signals": 0,
+          "matchup": "San Francisco Giants @ Boston Red Sox",
+          "game_pk": 824720,
+          "team": "Boston Red Sox",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": 0.24,
+            "sprint_speed": 34.375,
+            "on_base": 23.2246
+          },
+          "hit_probability": 0.0621,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "B",
+          "sample_n": 71,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 3.7,
+          "notable_signals": 0,
+          "matchup": "San Francisco Giants @ Boston Red Sox",
+          "game_pk": 824720,
+          "team": "Boston Red Sox",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0442
+          },
+          "hit_probability": 0.0442,
+          "raw_hit_probability": null,
+          "lift": -0.0046,
+          "reliability": "B",
+          "sample_n": 71,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 0.8,
+          "notable_signals": 0,
+          "matchup": "San Francisco Giants @ Boston Red Sox",
+          "game_pk": 824720,
+          "team": "Boston Red Sox",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0158
+          },
+          "hit_probability": 0.0158,
+          "raw_hit_probability": null,
+          "lift": -0.0055,
+          "reliability": "B",
+          "sample_n": 71,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

@@ -353,6 +353,59 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-23",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 56.0,
+          "notable_signals": 0,
+          "matchup": "Detroit Tigers @ Kansas City Royals",
+          "game_pk": 824071,
+          "team": "Detroit Tigers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 9.4286,
+            "l7_avg_ev": 0.0,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 40.6,
+            "season_barrel_pct": 100.0,
+            "lineup_slot": 62.5,
+            "bullpen_fatigue": 47.619,
+            "platoon_barrel_pct": 5.0,
+            "platoon_xwoba": 0.54,
+            "park_hand_index": 0.06,
+            "opp_catcher_framing": -2.4,
+            "days_rest": 2.0,
+            "woba_ahead": 62.7273,
+            "woba_behind": 26.3636,
+            "pull_park_synergy": 0.0187,
+            "team_total_move": 0.0,
+            "team_total_open": 0.0,
+            "getaway_day": -2.0,
+            "series_game": 2.0,
+            "sp_rp_ops_gap": 1.776,
+            "vs_rp_ops": 5.0,
+            "ump_k_pct": 0.324,
+            "ump_bb_pct": 0.156
+          },
+          "hit_probability": 0.7115,
+          "raw_hit_probability": 0.6885,
+          "lift": 0.1534,
+          "reliability": "D",
+          "sample_n": 21,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }
