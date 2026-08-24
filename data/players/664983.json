@@ -1707,6 +1707,137 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-24",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 74.5,
+          "notable_signals": 2,
+          "matchup": "Colorado Rockies @ Washington Nationals",
+          "game_pk": 822695,
+          "team": "Colorado Rockies",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 24.5714,
+            "l7_avg_ev": 24.7368,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 15.0,
+            "park_hr_index": 32.5,
+            "season_barrel_pct": 11.3333,
+            "lineup_slot": 100.0,
+            "bullpen_fatigue": 59.5238,
+            "platoon_barrel_pct": -2.08,
+            "platoon_xwoba": -0.24,
+            "park_hand_index": 3.05,
+            "opp_catcher_framing": -0.12,
+            "days_rest": 0.0,
+            "woba_behind": 60.0,
+            "pull_park_synergy": 1.6226,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": 0.336,
+            "vs_rp_ops": 1.524,
+            "ump_k_pct": -0.312,
+            "ump_bb_pct": 0.228
+          },
+          "hit_probability": 0.6703,
+          "raw_hit_probability": 0.6545,
+          "lift": 0.1094,
+          "reliability": "A",
+          "sample_n": 111,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 83.5,
+          "notable_signals": 1,
+          "matchup": "Colorado Rockies @ Washington Nationals",
+          "game_pk": 822695,
+          "team": "Colorado Rockies",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": 1.2,
+            "sprint_speed": 81.25,
+            "catcher_poptime": 40.0,
+            "on_base": 89.4434
+          },
+          "hit_probability": 0.1937,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 111,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 0.0,
+          "notable_signals": 0,
+          "matchup": "Colorado Rockies @ Washington Nationals",
+          "game_pk": 822695,
+          "team": "Colorado Rockies",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.029
+          },
+          "hit_probability": 0.029,
+          "raw_hit_probability": null,
+          "lift": -0.0196,
+          "reliability": "A",
+          "sample_n": 111,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 6.7,
+          "notable_signals": 0,
+          "matchup": "Colorado Rockies @ Washington Nationals",
+          "game_pk": 822695,
+          "team": "Colorado Rockies",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0396
+          },
+          "hit_probability": 0.0396,
+          "raw_hit_probability": null,
+          "lift": 0.0184,
+          "reliability": "A",
+          "sample_n": 111,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

@@ -1516,6 +1516,139 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-24",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 66.8,
+          "notable_signals": 2,
+          "matchup": "Colorado Rockies @ Washington Nationals",
+          "game_pk": 822695,
+          "team": "Colorado Rockies",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 24.5714,
+            "pitch_exploit": 5.1429,
+            "l7_avg_ev": 100.0,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 32.5,
+            "season_barrel_pct": 50.6667,
+            "lineup_slot": 87.5,
+            "bullpen_fatigue": 59.5238,
+            "platoon_barrel_pct": 2.88,
+            "platoon_xwoba": 0.0,
+            "park_hand_index": 3.05,
+            "opp_catcher_framing": -0.12,
+            "days_rest": 0.0,
+            "woba_ahead": 58.1818,
+            "woba_behind": 40.0,
+            "pull_park_synergy": 2.2738,
+            "hard_hit_105_rate": 0.785,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": 0.192,
+            "vs_rp_ops": 1.56,
+            "ump_k_pct": -0.312,
+            "ump_bb_pct": 0.228
+          },
+          "hit_probability": 0.6337,
+          "raw_hit_probability": 0.6262,
+          "lift": 0.0728,
+          "reliability": "A",
+          "sample_n": 91,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 58.9,
+          "notable_signals": 1,
+          "matchup": "Colorado Rockies @ Washington Nationals",
+          "game_pk": 822695,
+          "team": "Colorado Rockies",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": 1.2,
+            "sprint_speed": 31.25,
+            "catcher_poptime": 40.0,
+            "on_base": 91.3628
+          },
+          "hit_probability": 0.0165,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 91,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 12.3,
+          "notable_signals": 0,
+          "matchup": "Colorado Rockies @ Washington Nationals",
+          "game_pk": 822695,
+          "team": "Colorado Rockies",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.078
+          },
+          "hit_probability": 0.078,
+          "raw_hit_probability": null,
+          "lift": 0.0294,
+          "reliability": "A",
+          "sample_n": 91,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 19.6,
+          "notable_signals": 1,
+          "matchup": "Colorado Rockies @ Washington Nationals",
+          "game_pk": 822695,
+          "team": "Colorado Rockies",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0906
+          },
+          "hit_probability": 0.0906,
+          "raw_hit_probability": null,
+          "lift": 0.0694,
+          "reliability": "A",
+          "sample_n": 91,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

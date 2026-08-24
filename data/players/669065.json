@@ -243,6 +243,109 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-24",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 78.0,
+          "notable_signals": 4,
+          "matchup": "Boston Red Sox @ Miami Marlins",
+          "game_pk": 823828,
+          "team": "Miami Marlins",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 26.2857,
+            "pitch_exploit": 20.0,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 56.0,
+            "lineup_slot": 75.0,
+            "bullpen_fatigue": 97.2222,
+            "platoon_barrel_pct": -4.08,
+            "platoon_xwoba": -3.72,
+            "park_hand_index": -1.58,
+            "opp_catcher_framing": -0.72,
+            "days_rest": 4.0,
+            "woba_ahead": 32.7273,
+            "woba_behind": 13.6364,
+            "pull_park_synergy": -1.2608,
+            "hard_hit_105_rate": 0.985,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": 1.192,
+            "vs_rp_ops": 1.872,
+            "ump_k_pct": -0.264,
+            "ump_bb_pct": 0.204
+          },
+          "hit_probability": 0.6619,
+          "raw_hit_probability": 0.6575,
+          "lift": -0.011,
+          "reliability": "A",
+          "sample_n": 94,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 14.3,
+          "notable_signals": 0,
+          "matchup": "Boston Red Sox @ Miami Marlins",
+          "game_pk": 823828,
+          "team": "Miami Marlins",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.086
+          },
+          "hit_probability": 0.086,
+          "raw_hit_probability": null,
+          "lift": 0.0374,
+          "reliability": "A",
+          "sample_n": 94,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 4.2,
+          "notable_signals": 0,
+          "matchup": "Boston Red Sox @ Miami Marlins",
+          "game_pk": 823828,
+          "team": "Miami Marlins",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0295
+          },
+          "hit_probability": 0.0295,
+          "raw_hit_probability": null,
+          "lift": 0.0083,
+          "reliability": "A",
+          "sample_n": 94,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

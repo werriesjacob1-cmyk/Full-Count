@@ -219,7 +219,7 @@
         {
           "prop": "Over 4.5 Strikeouts",
           "type": "pitcher",
-          "score": 36.4,
+          "score": 30.5,
           "notable_signals": 0,
           "matchup": "Texas Rangers @ Chicago White Sox",
           "game_pk": 824557,
@@ -231,7 +231,10 @@
             "opp_team_k_pct": 69.0,
             "same_hand_ratio": 21.4286,
             "l14_k_pct": 0.0,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 52.0584,
+            "ump_k_pct": -0.564,
+            "ump_bb_pct": 0.012
           },
           "hit_probability": 0.5037,
           "raw_hit_probability": 0.5037,
@@ -268,6 +271,34 @@
             "stat": "pitcher_outs",
             "value": 14.5,
             "needs": 15
+          }
+        },
+        {
+          "prop": "Over 10.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 54.8,
+          "notable_signals": 1,
+          "matchup": "Texas Rangers @ Chicago White Sox",
+          "game_pk": 824557,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            677958,
+            664353
+          ],
+          "signals": {
+            "combined_k_edge": 0.3572
+          },
+          "hit_probability": 0.6557,
+          "raw_hit_probability": null,
+          "lift": 0.3572,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 10.5,
+            "needs": 11
           }
         }
       ]
