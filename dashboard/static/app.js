@@ -529,10 +529,27 @@ function renderToday() {
   el.innerHTML = html;
   wireCardOpeners(el);
 }
+// Real bug, found 2026-08-24: a player can carry several distinct
+// streak entries (e.g. Chandler Simpson: 14 straight games with a hit,
+// 14 straight with a single, 14 straight with a hit+run+RBI -- three
+// genuinely different, real streaks_compute_streaks() correctly tracks
+// separately via streak_stat). The chip rendered identical text for all
+// three ("14 straight — Chandler Simpson"), with no way to tell them
+// apart -- misleading, not just repetitive. Every streak's own linked
+// prop (p.prop) already carries the exact real market text that
+// distinguishes it ("Over 0.5 Hits" vs "Over 0.5 Singles" vs "Over 0.5
+// Hits+Runs+RBIs"); stripping its "Over/Under <line> " prefix reuses
+// that same real text as a compact market label instead of inventing a
+// new one.
+function streakMarketLabel(p) {
+  return (p.prop || "").replace(/^(Over|Under)\s+[\d.]+\s+/i, "");
+}
 function streakChip(s) {
   const p = PROPS_BY_ID.get(s.id);
   if (!p) return "";
-  return `<button class="streak-chip" data-open="${p.id}"><b>${s.streak}</b> straight — ${esc(p.name)}</button>`;
+  const label = streakMarketLabel(p);
+  return `<button class="streak-chip" data-open="${p.id}"><b>${s.streak}</b> straight —
+    <span class="streak-chip-name">${esc(p.name)}</span>${label ? ` <span class="streak-chip-stat">(${esc(label)})</span>` : ""}</button>`;
 }
 function scheduleChip(g) {
   return `<button class="schedule-chip" data-game="${g.game_pk}">
