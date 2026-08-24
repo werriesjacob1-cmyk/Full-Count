@@ -190,7 +190,17 @@ check(abs(in_support_alt_raw - 0.6582) < 5e-4,
       "sanity: the t=6 alternative (0.6582) is the one inside support in this fixture",
       str(sorted(alts_before)))
 
+# 2026-08-24 second-CI-path fix: an in-support alternative's nulled ci can now
+# be earned back by a real historical reliability band (own dedicated
+# coverage in test_h1_ci_calibration_scale_integrity.py sections 9-13).
+# Isolate this fixture from backtest/reliability_bands.json's real,
+# still-growing content so check 10 below keeps testing H1's suppression
+# rule itself, not whichever strikeouts bucket happens to have real coverage
+# today.
+_prior_bands_cache = gp._RELIABILITY_BANDS_CACHE
+gp._RELIABILITY_BANDS_CACHE = {}
 out1b = gp.apply_calibration([copy.deepcopy(c1_pristine)], _cal)
+gp._RELIABILITY_BANDS_CACHE = _prior_bands_cache
 alts_after = {round(o.get("raw_prob", o["prob"]), 4): o for o in out1b[0]["alternatives"]}
 in_support_after = alts_after[round(in_support_alt_raw, 4)]
 check(in_support_after.get("calibrated_by") == "strikeouts",

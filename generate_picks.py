@@ -5364,7 +5364,19 @@ def apply_calibration(candidates, calibrator):
                 # the endpoints through a curve whose own uncertainty (severe in
                 # under-supported regions, e.g. the strikeouts tail) this would
                 # silently ignore.
-                opt["ci"] = None
+                #
+                # 2026-08-24 second-CI-path fix: this is the OTHER call site
+                # (besides attach_reliability's primary line) that nulls a CI
+                # at exactly this same calibration-scale boundary -- and it
+                # was missed when the historical-band fallback was first
+                # added, which is why hits/hits_runs_rbis/strikeouts stayed
+                # 86-100% CI-less on select_best_by_category()'s per-line
+                # path (the one that actually populates most of the live
+                # board) even after that fix merged. Same fallback, same
+                # fail-closed default (None) when no reportable band exists
+                # yet -- this does not lower the MIN_RELIABILITY_BAND_N floor
+                # or change anything else about what counts as "supported."
+                opt["ci"] = historical_prob_ci(opt.get("stat"), opt.get("needs"), opt["prob"])
                 used[oby] += 1
 
     for c in candidates:
