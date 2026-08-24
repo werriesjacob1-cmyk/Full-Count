@@ -1,5 +1,5 @@
 MLB DAILY DATA PACKAGE V5 — 2026-08-24
-Generated : 2026-08-24  17:36:41
+Generated : 2026-08-24  20:49:06
 Season    : 2026
 Windows   : L3 2026-08-21→2026-08-23 | L7 2026-08-17→2026-08-23 | L14 2026-08-10→2026-08-23 | L30 2026-07-25→2026-08-23
 Sources   : FanGraphs | Statcast/Baseball Savant | MLB Stats API | UmpScorecards | FIC | Open-Meteo | Covers.com
@@ -9,9 +9,11 @@ Sources   : FanGraphs | Statcast/Baseball Savant | MLB Stats API | UmpScorecards
   SECTION 0: RUN SUMMARY — what's missing at a glance (see run_log JSON for machine-readable form)
 ════════════════════════════════════════════════════════════════════════
 
-  88 sections attempted  |  88 OK  |  0 empty  |  0 failed
+  88 sections attempted  |  87 OK  |  1 empty  |  0 failed
 
-  All sections returned data.
+
+  EMPTY sections (no data returned — often expected, e.g. HP umpire TBD before game morning):
+    Section   7: HP UMPIRE OVER/UNDER BETTING RECORDS (Covers.com)
 
 
 ════════════════════════════════════════════════════════════════════════
@@ -21,103 +23,103 @@ Sources   : FanGraphs | Statcast/Baseball Savant | MLB Stats API | UmpScorecards
 
 ────────────────────────────────────────────────────────────
   Tampa Bay Rays (77-53)  @  Detroit Tigers (61-69)
-  6:40 PM ET  |  Comerica Park  |  Scheduled
+  6:40 PM ET  |  Comerica Park  |  Pre-Game
   Series: Game 1 of 3  🔵 SERIES OPENER
-  HP Ump : TBD
+  HP Ump : Quinn Wolcott
   SP Away: Drew Rasmussen  
   SP Home: Framber Valdez  
 
-  Tampa Bay Rays Batting Order  (source: Rotowire fallback, best-effort):
-    1. Yandy Diaz (R) — DH  [proj ~750 PA/yr]
-    2. Jonathan Aranda (L) — 1B  [proj ~732 PA/yr]
+  Tampa Bay Rays Batting Order:
+    1. Yandy Díaz (R) — DH  [proj ~750 PA/yr]
+    2. Ryan Vilade (R) — RF  [proj ~732 PA/yr]
     3. Junior Caminero (R) — 3B  [proj ~714 PA/yr]
-    4. Ryan Vilade (R) — RF  [proj ~693 PA/yr]
-    5. Chandler Simpson (L) — LF  [proj ~672 PA/yr]
-    6. Jonny DeLuca (R) — CF  [proj ~651 PA/yr]
-    7. Jorge Mateo (R) — 2B  [proj ~630 PA/yr]
-    8. Nick Fortes (R) — C  [proj ~609 PA/yr]
+    4. Jonny DeLuca (R) — CF  [proj ~693 PA/yr]
+    5. Jonathan Aranda (L) — 1B  [proj ~672 PA/yr]
+    6. Jorge Mateo (R) — 2B  [proj ~651 PA/yr]
+    7. Nick Fortes (R) — C  [proj ~630 PA/yr]
+    8. Chandler Simpson (L) — LF  [proj ~609 PA/yr]
     9. Taylor Walls (S) — SS  [proj ~585 PA/yr]
 
-  Detroit Tigers Batting Order  (source: Rotowire fallback, best-effort):
-    1. Kevin McGonigle (L) — SS  [proj ~750 PA/yr]
-    2. Gleyber Torres (R) — 2B  [proj ~732 PA/yr]
-    3. Colt Keith (L) — DH  [proj ~714 PA/yr]
+  Detroit Tigers Batting Order:
+    1. Colt Keith (L) — DH  [proj ~750 PA/yr]
+    2. Hao-Yu Lee (R) — 2B  [proj ~732 PA/yr]
+    3. Kevin McGonigle (L) — 3B  [proj ~714 PA/yr]
     4. Dillon Dingler (R) — C  [proj ~693 PA/yr]
-    5. Zach McKinstry (L) — RF  [proj ~672 PA/yr]
-    6. Brett Callahan (R) — LF  [proj ~651 PA/yr]
+    5. Brett Callahan (L) — LF  [proj ~672 PA/yr]
+    6. Zach McKinstry (L) — RF  [proj ~651 PA/yr]
     7. Spencer Torkelson (R) — 1B  [proj ~630 PA/yr]
     8. Max Clark (L) — CF  [proj ~609 PA/yr]
-    9. Hao-Yu Lee (R) — 3B  [proj ~585 PA/yr]
+    9. Javier Báez (R) — SS  [proj ~585 PA/yr]
 
 ────────────────────────────────────────────────────────────
   Boston Red Sox (71-59)  @  Miami Marlins (67-64)
-  6:40 PM ET  |  loanDepot park  |  Scheduled
+  6:40 PM ET  |  loanDepot park  |  Pre-Game
   Series: Game 1 of 3  🔵 SERIES OPENER
-  HP Ump : TBD
+  HP Ump : Ron Kulpa
   SP Away: Ranger Suarez  
   SP Home: Sandy Alcantara  
 
-  Boston Red Sox Batting Order  (source: Rotowire fallback, best-effort):
-    1. Nick Sogard (S) — 2B  [proj ~750 PA/yr]
+  Boston Red Sox Batting Order:
+    1. Nick Sogard (S) — SS  [proj ~750 PA/yr]
     2. Ceddanne Rafaela (R) — CF  [proj ~732 PA/yr]
     3. Wilyer Abreu (L) — RF  [proj ~714 PA/yr]
     4. Willson Contreras (R) — 1B  [proj ~693 PA/yr]
     5. Adley Rutschman (S) — C  [proj ~672 PA/yr]
     6. Caleb Durbin (R) — 3B  [proj ~651 PA/yr]
     7. Jarren Duran (L) — LF  [proj ~630 PA/yr]
-    8. Andruw Monasterio (R) — SS  [proj ~609 PA/yr]
-    9. Mickey Gasper (S) — DH  [proj ~585 PA/yr]
+    8. Mickey Gasper (S) — DH  [proj ~609 PA/yr]
+    9. Anthony Seigler (S) — 2B  [proj ~585 PA/yr]
 
-  Miami Marlins Batting Order  (source: Rotowire fallback, best-effort):
-    1. Esteury Ruiz (R) — CF  [proj ~750 PA/yr]
-    2. Heriberto Hernandez (R) — LF  [proj ~732 PA/yr]
-    3. Xavier Edwards (S) — 2B  [proj ~714 PA/yr]
-    4. Agustin Ramirez (R) — DH  [proj ~693 PA/yr]
-    5. Otto Lopez (R) — SS  [proj ~672 PA/yr]
-    6. Kyle Stowers (L) — 1B  [proj ~651 PA/yr]
-    7. Javier Sanoja (R) — RF  [proj ~630 PA/yr]
-    8. Leo Jimenez (R) — 3B  [proj ~609 PA/yr]
-    9. Brian Navarreto (R) — C  [proj ~585 PA/yr]
+  Miami Marlins Batting Order:
+    1. Otto Lopez (R) — SS  [proj ~750 PA/yr]
+    2. Heriberto Hernández (R) — LF  [proj ~732 PA/yr]
+    3. Kyle Stowers (L) — 1B  [proj ~714 PA/yr]
+    4. Agustín Ramírez (R) — DH  [proj ~693 PA/yr]
+    5. Xavier Edwards (S) — 2B  [proj ~672 PA/yr]
+    6. Jakob Marsee (L) — CF  [proj ~651 PA/yr]
+    7. Javier Sanoja (R) — 3B  [proj ~630 PA/yr]
+    8. Esteury Ruiz (R) — RF  [proj ~609 PA/yr]
+    9. Joe Mack (L) — C  [proj ~585 PA/yr]
 
 ────────────────────────────────────────────────────────────
   Colorado Rockies (50-80)  @  Washington Nationals (61-71)
-  6:45 PM ET  |  Nationals Park  |  Scheduled
+  6:45 PM ET  |  Nationals Park  |  Pre-Game
   Series: Game 1 of 4  🔵 SERIES OPENER
-  HP Ump : TBD
+  HP Ump : Nick Mahrley
   SP Away: Ryan Feltner  
   SP Home: Cade Cavalli  
 
-  Colorado Rockies Batting Order  (source: Rotowire fallback, best-effort):
-    1. Jake McCarthy (L) — LF  [proj ~750 PA/yr]
-    2. Cole Carrigg (S) — CF  [proj ~732 PA/yr]
-    3. Mickey Moniak (L) — DH  [proj ~714 PA/yr]
+  Colorado Rockies Batting Order:
+    1. Jake McCarthy (L) — CF  [proj ~750 PA/yr]
+    2. Mickey Moniak (L) — RF  [proj ~732 PA/yr]
+    3. Willi Castro (S) — 3B  [proj ~714 PA/yr]
     4. TJ Rumfield (L) — 1B  [proj ~693 PA/yr]
-    5. Willi Castro (S) — 3B  [proj ~672 PA/yr]
-    6. Zac Veen (L) — RF  [proj ~651 PA/yr]
-    7. Connor Norby (R) — 2B  [proj ~630 PA/yr]
-    8. Brett Sullivan (L) — C  [proj ~609 PA/yr]
+    5. Troy Johnston (L) — DH  [proj ~672 PA/yr]
+    6. Connor Norby (R) — 2B  [proj ~651 PA/yr]
+    7. Brett Sullivan (L) — C  [proj ~630 PA/yr]
+    8. Zac Veen (L) — LF  [proj ~609 PA/yr]
     9. Ezequiel Tovar (R) — SS  [proj ~585 PA/yr]
 
-  Washington Nationals Batting Order  (source: Rotowire fallback, best-effort):
-    1. CJ Abrams (L) — SS  [proj ~750 PA/yr]
+  Washington Nationals Batting Order:
+    1. CJ Abrams (L) — DH  [proj ~750 PA/yr]
     2. Abimelec Ortiz (L) — 1B  [proj ~732 PA/yr]
-    3. Brady House (R) — 3B  [proj ~714 PA/yr]
+    3. Dylan Crews (R) — RF  [proj ~714 PA/yr]
     4. Daylen Lile (L) — LF  [proj ~693 PA/yr]
-    5. Dylan Crews (R) — RF  [proj ~672 PA/yr]
+    5. Brady House (R) — 3B  [proj ~672 PA/yr]
     6. Keibert Ruiz (S) — C  [proj ~651 PA/yr]
-    7. Andres Chaparro (R) — DH  [proj ~630 PA/yr]
-    8. Nasim Nunez (S) — 2B  [proj ~609 PA/yr]
-    9. Jacob Young (R) — CF  [proj ~585 PA/yr]
+    7. Jacob Young (R) — CF  [proj ~630 PA/yr]
+    8. Jorbit Vivas (L) — 2B  [proj ~609 PA/yr]
+    9. Nasim Nuñez (S) — SS  [proj ~585 PA/yr]
 
 ────────────────────────────────────────────────────────────
   Texas Rangers (65-66)  @  Chicago White Sox (68-62)
-  7:40 PM ET  |  Rate Field  |  Scheduled
+  7:40 PM ET  |  Rate Field  |  Pre-Game
   Series: Game 1 of 3  🔵 SERIES OPENER
-  HP Ump : TBD
+  HP Ump : Chris Guccione
   SP Away: Kumar Rocker  
   SP Home: José Urquidy  
 
-  Texas Rangers Batting Order  (source: Rotowire fallback, best-effort):
+  Texas Rangers Batting Order:
     1. Joc Pederson (L) — DH  [proj ~750 PA/yr]
     2. Corey Seager (L) — SS  [proj ~732 PA/yr]
     3. Wyatt Langford (R) — LF  [proj ~714 PA/yr]
@@ -125,10 +127,10 @@ Sources   : FanGraphs | Statcast/Baseball Savant | MLB Stats API | UmpScorecards
     5. Ezequiel Duran (R) — 3B  [proj ~672 PA/yr]
     6. Evan Carter (L) — CF  [proj ~651 PA/yr]
     7. Jake Burger (R) — 1B  [proj ~630 PA/yr]
-    8. Nicky Lopez (L) — 2B  [proj ~609 PA/yr]
-    9. Danny Jansen (R) — C  [proj ~585 PA/yr]
+    8. Elias Díaz (R) — C  [proj ~609 PA/yr]
+    9. Cody Freeman (R) — 2B  [proj ~585 PA/yr]
 
-  Chicago White Sox Batting Order  (source: Rotowire fallback, best-effort):
+  Chicago White Sox Batting Order:
     1. Sam Antonacci (L) — LF  [proj ~750 PA/yr]
     2. Munetaka Murakami (L) — 1B  [proj ~732 PA/yr]
     3. Miguel Vargas (R) — 3B  [proj ~714 PA/yr]
@@ -445,7 +447,6 @@ Sources   : FanGraphs | Statcast/Baseball Savant | MLB Stats API | UmpScorecards
   Adam Mazur                  MIA    P     60-Day IL       
   Andrew Nardi                MIA    P     60-Day IL       
   Anthony Bender              MIA    P     15-Day IL       
-  Kyle Stowers                MIA    1B    10-Day IL       
   Max Meyer                   MIA    P     15-Day IL       
   Robby Snelling              MIA    P     60-Day IL       
   Ronny Henriquez             MIA    P     60-Day IL       
@@ -536,6 +537,7 @@ Sources   : FanGraphs | Statcast/Baseball Savant | MLB Stats API | UmpScorecards
   Hunter Goodman              COL    C     10-Day IL       
   Jose Quintana               COL    P     60-Day IL       
   Kris Bryant                 COL    DH    60-Day IL       
+  Kyle Freeland               COL    P     15-Day IL       
   Kyle Karros                 COL    3B    7-Day IL        
   McCade Brown                COL    P     60-Day IL       
   Pierson Ohl                 COL    P     60-Day IL       
@@ -660,51 +662,51 @@ Sources   : FanGraphs | Statcast/Baseball Savant | MLB Stats API | UmpScorecards
 ──────────────────────────────────────────────────
   Tampa Bay Rays @ Detroit Tigers
   Venue   : Comerica Park  |  Elev: 585ft  |  Surface: grass
-  Temp    : 74°F  |  Humidity: 46%
+  Temp    : 74°F  |  Humidity: 49%
   Rain%   : 1%  (0.00in expected)
-  Wind    : 8mph from NW (310°)
+  Wind    : 8mph from WNW (303°)
   vs Field: blowing R→L crossfield
-  AirDens : 0.9503  →  ball carries 5.0% FARTHER vs sea-level
+  AirDens : 0.9491  →  ball carries 5.1% FARTHER vs sea-level
   Humidor : No
-  HP Ump  : TBD
+  HP Ump  : Quinn Wolcott
 
 ──────────────────────────────────────────────────
   Boston Red Sox @ Miami Marlins
   Venue  : loanDepot park (DOME — weather irrelevant)
   Humidor: No
   Surface: grass
-  HP Ump : TBD
+  HP Ump : Ron Kulpa
 
 ──────────────────────────────────────────────────
   Colorado Rockies @ Washington Nationals
   Venue   : Nationals Park  |  Elev: 25ft  |  Surface: grass
-  Temp    : 83°F  |  Humidity: 42%
+  Temp    : 80°F  |  Humidity: 45%
   Rain%   : 5%  (0.00in expected)
-  Wind    : 5mph from SSW (211°)
-  vs Field: blowing OUT to CF 🔴 hitter-friendly ⚡
-  AirDens : 0.9533  →  ball carries 4.7% FARTHER vs sea-level
+  Wind    : 8mph from NW (326°)
+  vs Field: blowing R→L crossfield
+  AirDens : 0.9586  →  ball carries 4.1% FARTHER vs sea-level
   Humidor : No
-  HP Ump  : TBD
+  HP Ump  : Nick Mahrley
 
 ──────────────────────────────────────────────────
   Texas Rangers @ Chicago White Sox
   Venue   : Guaranteed Rate Field  |  Elev: 595ft  |  Surface: grass
-  Temp    : 68°F  |  Humidity: 65%
+  Temp    : 68°F  |  Humidity: 63%
   Rain%   : 0%  (0.00in expected)
-  Wind    : 6mph from ENE (67°)
-  vs Field: diagonal (52° off CF)
-  AirDens : 0.9592  →  ball carries 4.1% FARTHER vs sea-level
+  Wind    : 7mph from NE (52°)
+  vs Field: diagonal (37° off CF)
+  AirDens : 0.9602  →  ball carries 4.0% FARTHER vs sea-level
   Humidor : No
-  HP Ump  : TBD
+  HP Ump  : Chris Guccione
 
 ──────────────────────────────────────────────────
   Cleveland Guardians @ Los Angeles Angels
   Venue   : Angel Stadium  |  Elev: 160ft  |  Surface: grass
-  Temp    : 74°F  |  Humidity: 79%
+  Temp    : 74°F  |  Humidity: 83%
   Rain%   : 1%  (0.00in expected)
-  Wind    : 6mph from SSW (206°)
+  Wind    : 8mph from S (190°)
   vs Field: blowing R→L crossfield
-  AirDens : 0.9636  →  ball carries 3.6% FARTHER vs sea-level
+  AirDens : 0.9629  →  ball carries 3.7% FARTHER vs sea-level
   Humidor : No
   HP Ump  : TBD
 
@@ -718,22 +720,22 @@ Sources   : FanGraphs | Statcast/Baseball Savant | MLB Stats API | UmpScorecards
 ──────────────────────────────────────────────────
   Pittsburgh Pirates @ San Diego Padres
   Venue   : Petco Park  |  Elev: 13ft  |  Surface: grass
-  Temp    : 72°F  |  Humidity: 89%
+  Temp    : 72°F  |  Humidity: 88%
   Rain%   : 1%  (0.00in expected)
-  Wind    : 3mph from S (184°)
-  vs Field: diagonal (229° off CF)
-  AirDens : 0.9728  →  ball carries 2.7% FARTHER vs sea-level
+  Wind    : 2mph from S (180°)
+  vs Field: diagonal (225° off CF)
+  AirDens : 0.9714  →  ball carries 2.9% FARTHER vs sea-level
   Humidor : No
   HP Ump  : TBD
 
 ──────────────────────────────────────────────────
   Minnesota Twins @ Athletics
   Venue   : Sutter Health Park  |  Elev: 25ft  |  Surface: grass
-  Temp    : 74°F  |  Humidity: 41%
+  Temp    : 75°F  |  Humidity: 44%
   Rain%   : 0%  (0.00in expected)
-  Wind    : 8mph from SW (216°)
-  vs Field: diagonal (306° off CF)
-  AirDens : 0.9685  →  ball carries 3.1% FARTHER vs sea-level
+  Wind    : 8mph from SW (217°)
+  vs Field: diagonal (307° off CF)
+  AirDens : 0.9676  →  ball carries 3.2% FARTHER vs sea-level
   Humidor : No
   HP Ump  : TBD
 
@@ -747,11 +749,11 @@ Sources   : FanGraphs | Statcast/Baseball Savant | MLB Stats API | UmpScorecards
 ──────────────────────────────────────────────────
   Cincinnati Reds @ San Francisco Giants
   Venue   : Oracle Park  |  Elev: 10ft  |  Surface: grass
-  Temp    : 57°F  |  Humidity: 97%
+  Temp    : 58°F  |  Humidity: 98%
   Rain%   : 1%  (0.00in expected)
-  Wind    : 12mph from WNW (285°)
+  Wind    : 13mph from WNW (286°)
   vs Field: blowing IN from CF 🔵 pitcher-friendly
-  AirDens : 1.0009  →  ball carries 0.1% shorter vs sea-level
+  AirDens : 0.9993  →  ball carries 0.1% FARTHER vs sea-level
   Humidor : No
   HP Ump  : TBD
   ⚠ FLAGS : 🔵 WIND IN — HR suppressed
@@ -761,14 +763,24 @@ Sources   : FanGraphs | Statcast/Baseball Savant | MLB Stats API | UmpScorecards
   SECTION 6: HP UMPIRE CAREER STATS — K%, BB%, accuracy, favor, zone size (UmpScorecards)
 ════════════════════════════════════════════════════════════════════════
 
-  No HP umpires found.
+  Umpire               Matchup                                       Accur%  Consis%  RunImpact  Challng  Overturn
+  ------------------------------------------------------------------------------------------------------------------
+  Quinn Wolcott        Tampa Bay Rays @ Detroit Tigers                 93.6     93.8        1.3      108        54
+  Ron Kulpa            Boston Red Sox @ Miami Marlins                  91.9     93.1        1.7       82        44
+  Nick Mahrley         Colorado Rockies @ Washington Nationals         93.6     93.1        1.3       71        36
+  Chris Guccione       Texas Rangers @ Chicago White Sox               93.1     93.3        1.4      107        60
+
+  Accur%=career ball/strike call accuracy  Consis%=zone consistency start-to-start
+  RunImpact=avg runs added/removed by missed calls (higher=more impactful misses)
+  Challng/Overturn=2026 ABS Challenge System career totals — cross-ref Section 9
+  Large accuracy + high consistency → tight zone → walks/hits UP, K props DOWN
 
 
 ════════════════════════════════════════════════════════════════════════
   SECTION 7: HP UMPIRE OVER/UNDER BETTING RECORDS (Covers.com)
 ════════════════════════════════════════════════════════════════════════
 
-  No HP umpires.
+  Covers.com umpire index not found (site structure may have changed again).
 
 
 ════════════════════════════════════════════════════════════════════════
@@ -778,35 +790,35 @@ Sources   : FanGraphs | Statcast/Baseball Savant | MLB Stats API | UmpScorecards
   Three-way interaction score: Umpire zone size × Catcher framing × Pitcher Zone%
   Higher = more strikes called = K props UP | Lower = walks/hits UP
 
-  Drew Rasmussen (Tampa Bay Rays @ Detroit Tigers) | HP Ump: TBD
+  Drew Rasmussen (Tampa Bay Rays @ Detroit Tigers) | HP Ump: Quinn Wolcott
     Pitcher Zone%: unavailable (FanGraphs unreachable or no name match)
     → Cross-reference with ump zone size (Section 6) + catcher framing (Section 79)
     → Three-way score = zone_pct × ump_zone_factor × catcher_frames
-  Framber Valdez (Tampa Bay Rays @ Detroit Tigers) | HP Ump: TBD
+  Framber Valdez (Tampa Bay Rays @ Detroit Tigers) | HP Ump: Quinn Wolcott
     Pitcher Zone%: unavailable (FanGraphs unreachable or no name match)
     → Cross-reference with ump zone size (Section 6) + catcher framing (Section 79)
     → Three-way score = zone_pct × ump_zone_factor × catcher_frames
-  Ranger Suarez (Boston Red Sox @ Miami Marlins) | HP Ump: TBD
+  Ranger Suarez (Boston Red Sox @ Miami Marlins) | HP Ump: Ron Kulpa
     Pitcher Zone%: unavailable (FanGraphs unreachable or no name match)
     → Cross-reference with ump zone size (Section 6) + catcher framing (Section 79)
     → Three-way score = zone_pct × ump_zone_factor × catcher_frames
-  Sandy Alcantara (Boston Red Sox @ Miami Marlins) | HP Ump: TBD
+  Sandy Alcantara (Boston Red Sox @ Miami Marlins) | HP Ump: Ron Kulpa
     Pitcher Zone%: unavailable (FanGraphs unreachable or no name match)
     → Cross-reference with ump zone size (Section 6) + catcher framing (Section 79)
     → Three-way score = zone_pct × ump_zone_factor × catcher_frames
-  Ryan Feltner (Colorado Rockies @ Washington Nationals) | HP Ump: TBD
+  Ryan Feltner (Colorado Rockies @ Washington Nationals) | HP Ump: Nick Mahrley
     Pitcher Zone%: unavailable (FanGraphs unreachable or no name match)
     → Cross-reference with ump zone size (Section 6) + catcher framing (Section 79)
     → Three-way score = zone_pct × ump_zone_factor × catcher_frames
-  Cade Cavalli (Colorado Rockies @ Washington Nationals) | HP Ump: TBD
+  Cade Cavalli (Colorado Rockies @ Washington Nationals) | HP Ump: Nick Mahrley
     Pitcher Zone%: unavailable (FanGraphs unreachable or no name match)
     → Cross-reference with ump zone size (Section 6) + catcher framing (Section 79)
     → Three-way score = zone_pct × ump_zone_factor × catcher_frames
-  Kumar Rocker (Texas Rangers @ Chicago White Sox) | HP Ump: TBD
+  Kumar Rocker (Texas Rangers @ Chicago White Sox) | HP Ump: Chris Guccione
     Pitcher Zone%: unavailable (FanGraphs unreachable or no name match)
     → Cross-reference with ump zone size (Section 6) + catcher framing (Section 79)
     → Three-way score = zone_pct × ump_zone_factor × catcher_frames
-  José Urquidy (Texas Rangers @ Chicago White Sox) | HP Ump: TBD
+  José Urquidy (Texas Rangers @ Chicago White Sox) | HP Ump: Chris Guccione
     Pitcher Zone%: unavailable (FanGraphs unreachable or no name match)
     → Cross-reference with ump zone size (Section 6) + catcher framing (Section 79)
     → Three-way score = zone_pct × ump_zone_factor × catcher_frames
@@ -889,22 +901,22 @@ Sources   : FanGraphs | Statcast/Baseball Savant | MLB Stats API | UmpScorecards
 11          Jorge Mateo   Framber Valdez           Tampa Bay Rays @ Detroit Tigers  12  3   0  .250   .500  3   0
 12          Luis Arraez    Logan Gilbert  Philadelphia Phillies @ Seattle Mariners  12  2   1  .167   .667  2   0
 13            Alec Bohm    Logan Gilbert  Philadelphia Phillies @ Seattle Mariners  10  3   0  .300   .600  3   0
-14       Gleyber Torres   Drew Rasmussen           Tampa Bay Rays @ Detroit Tigers   9  2   0  .222   .633  2   1
-15           Yandy Diaz   Framber Valdez           Tampa Bay Rays @ Detroit Tigers   9  3   0  .333   .899  2   2
-16         Corey Seager     José Urquidy         Texas Rangers @ Chicago White Sox   9  3   1  .333  1.111  1   0
-17         Taylor Walls   Framber Valdez           Tampa Bay Rays @ Detroit Tigers   8  3   0  .375  1.125  0   0
-18    Willson Contreras  Sandy Alcantara            Boston Red Sox @ Miami Marlins   8  3   1  .375  1.375  2   2
-19        Michael Busch    Merrill Kelly       Chicago Cubs @ Arizona Diamondbacks   8  4   1  .500  1.850  0   2
-20         Alex Bregman    Merrill Kelly       Chicago Cubs @ Arizona Diamondbacks   8  0   0  .000   .111  2   1
-21         Carson Kelly    Merrill Kelly       Chicago Cubs @ Arizona Diamondbacks   8  1   0  .125   .250  0   0
-22       Bryan Reynolds       Robbie Ray     Pittsburgh Pirates @ San Diego Padres   8  2   0  .250   .583  1   1
-23         Ryan Jeffers  Jeffrey Springs               Minnesota Twins @ Athletics   8  2   0  .250   .583  2   1
-24          Trea Turner    Logan Gilbert  Philadelphia Phillies @ Seattle Mariners   8  1   1  .125   .625  1   0
-25         Byron Buxton  Jeffrey Springs               Minnesota Twins @ Athletics   7  0   0  .000   .000  2   0
-26         Bryson Stott    Logan Gilbert  Philadelphia Phillies @ Seattle Mariners   7  3   0  .429  1.071  3   1
+14           Yandy Díaz   Framber Valdez           Tampa Bay Rays @ Detroit Tigers   9  3   0  .333   .899  2   2
+15         Corey Seager     José Urquidy         Texas Rangers @ Chicago White Sox   9  3   1  .333  1.111  1   0
+16         Taylor Walls   Framber Valdez           Tampa Bay Rays @ Detroit Tigers   8  3   0  .375  1.125  0   0
+17    Willson Contreras  Sandy Alcantara            Boston Red Sox @ Miami Marlins   8  3   1  .375  1.375  2   2
+18        Michael Busch    Merrill Kelly       Chicago Cubs @ Arizona Diamondbacks   8  4   1  .500  1.850  0   2
+19         Alex Bregman    Merrill Kelly       Chicago Cubs @ Arizona Diamondbacks   8  0   0  .000   .111  2   1
+20         Carson Kelly    Merrill Kelly       Chicago Cubs @ Arizona Diamondbacks   8  1   0  .125   .250  0   0
+21       Bryan Reynolds       Robbie Ray     Pittsburgh Pirates @ San Diego Padres   8  2   0  .250   .583  1   1
+22         Ryan Jeffers  Jeffrey Springs               Minnesota Twins @ Athletics   8  2   0  .250   .583  2   1
+23          Trea Turner    Logan Gilbert  Philadelphia Phillies @ Seattle Mariners   8  1   1  .125   .625  1   0
+24         Byron Buxton  Jeffrey Springs               Minnesota Twins @ Athletics   7  0   0  .000   .000  2   0
+25         Bryson Stott    Logan Gilbert  Philadelphia Phillies @ Seattle Mariners   7  3   0  .429  1.071  3   1
+26          Javier Báez   Drew Rasmussen           Tampa Bay Rays @ Detroit Tigers   6  1   0  .167   .500  3   0
 27          Nick Fortes   Framber Valdez           Tampa Bay Rays @ Detroit Tigers   6  1   0  .167   .500  0   0
-28       Xavier Edwards    Ranger Suarez            Boston Red Sox @ Miami Marlins   6  1   0  .167   .334  2   0
-29           Otto Lopez    Ranger Suarez            Boston Red Sox @ Miami Marlins   6  0   0  .000   .143  1   1
+28           Otto Lopez    Ranger Suarez            Boston Red Sox @ Miami Marlins   6  0   0  .000   .143  1   1
+29       Xavier Edwards    Ranger Suarez            Boston Red Sox @ Miami Marlins   6  1   0  .167   .334  2   0
 30         Jarren Duran  Sandy Alcantara            Boston Red Sox @ Miami Marlins   6  0   0  .000   .000  2   0
 31      Ildemaro Vargas    Kevin Gausman       Chicago Cubs @ Arizona Diamondbacks   6  2   0  .333   .666  1   0
 32          Royce Lewis  Jeffrey Springs               Minnesota Twins @ Athletics   6  2   0  .333   .762  1   1
@@ -923,18 +935,18 @@ Sources   : FanGraphs | Statcast/Baseball Savant | MLB Stats API | UmpScorecards
 45      Lawrence Butler   Zebby Matthews               Minnesota Twins @ Athletics   4  1   0  .250   .450  1   0
 46          Taylor Ward     Zack Wheeler  Philadelphia Phillies @ Seattle Mariners   4  1   0  .250   .500  2   0
 47    Spencer Torkelson   Drew Rasmussen           Tampa Bay Rays @ Detroit Tigers   3  2   0  .667  2.000  0   0
-48      Jonathan Aranda   Framber Valdez           Tampa Bay Rays @ Detroit Tigers   3  1   0  .333   .666  1   0
+48          Ryan Vilade   Framber Valdez           Tampa Bay Rays @ Detroit Tigers   3  0   0  .000   .000  0   0
 49      Junior Caminero   Framber Valdez           Tampa Bay Rays @ Detroit Tigers   3  0   0  .000   .000  2   0
-50          Ryan Vilade   Framber Valdez           Tampa Bay Rays @ Detroit Tigers   3  0   0  .000   .000  0   0
-51  Heriberto Hernandez    Ranger Suarez            Boston Red Sox @ Miami Marlins   3  0   0  .000   .000  2   0
-52      Agustin Ramirez    Ranger Suarez            Boston Red Sox @ Miami Marlins   3  0   0  .000   .000  1   0
+50      Jonathan Aranda   Framber Valdez           Tampa Bay Rays @ Detroit Tigers   3  1   0  .333   .666  1   0
+51  Heriberto Hernández    Ranger Suarez            Boston Red Sox @ Miami Marlins   3  0   0  .000   .000  2   0
+52      Agustín Ramírez    Ranger Suarez            Boston Red Sox @ Miami Marlins   3  0   0  .000   .000  1   0
 53      Adley Rutschman  Sandy Alcantara            Boston Red Sox @ Miami Marlins   3  1   0  .333   .666  0   0
 54            CJ Abrams     Ryan Feltner   Colorado Rockies @ Washington Nationals   3  0   0  .000   .000  0   0
 55         Keibert Ruiz     Ryan Feltner   Colorado Rockies @ Washington Nationals   3  0   0  .000   .000  0   0
 56        Jake McCarthy     Cade Cavalli   Colorado Rockies @ Washington Nationals   3  1   0  .333  1.000  1   0
-57         Cole Carrigg     Cade Cavalli   Colorado Rockies @ Washington Nationals   3  0   0  .000   .000  2   0
-58        Mickey Moniak     Cade Cavalli   Colorado Rockies @ Washington Nationals   3  0   0  .000   .000  0   0
-59          TJ Rumfield     Cade Cavalli   Colorado Rockies @ Washington Nationals   3  1   0  .333  1.000  0   0
+57        Mickey Moniak     Cade Cavalli   Colorado Rockies @ Washington Nationals   3  0   0  .000   .000  0   0
+58          TJ Rumfield     Cade Cavalli   Colorado Rockies @ Washington Nationals   3  1   0  .333  1.000  0   0
+59        Troy Johnston     Cade Cavalli   Colorado Rockies @ Washington Nationals   3  0   0  .000   .250  0   0
 60        Brandon Nimmo     José Urquidy         Texas Rangers @ Chicago White Sox   3  1   0  .333   .666  0   0
 61           Mike Trout   Parker Messick  Cleveland Guardians @ Los Angeles Angels   3  0   0  .000   .000  1   0
 62      Geraldo Perdomo    Kevin Gausman       Chicago Cubs @ Arizona Diamondbacks   3  0   0  .000   .000  1   0
@@ -1303,7 +1315,7 @@ Sources   : FanGraphs | Statcast/Baseball Savant | MLB Stats API | UmpScorecards
 
   🚨 THRESHOLD CROSSING ALERTS — Non-linear edge indicators
 
-  💨 Cincinnati Reds @ San Francisco Giants: Wind 12mph — THRESHOLD CROSSED (10+mph = significant carry effect)
+  💨 Cincinnati Reds @ San Francisco Giants: Wind 13mph — THRESHOLD CROSSED (10+mph = significant carry effect)
 
   Pitcher velocity threshold alerts (see Section 23 for per-pitcher detail)
   Rule: If last-start velo is >1.5mph below season avg → 🚨 RED FLAG
@@ -7183,7 +7195,7 @@ pc_bucket
     1st inning pitched      104   23.0   20    8   7.83   .280   .768
     first 75 pitches        424   99.1  101   31      -   .256   .710
     pitches 76+             116   27.2   26    5      -   .270   .725
-    7th inning or later      10    2.1    1    -   3.86   .300   .900  🔴 small sample
+    7th inning or later       3    1.0    1    -   0.00   .000   .000  🔴 small sample
 
   Kumar Rocker:
     Situation                BF     IP    K   BB    ERA    AVG    OPS
@@ -7442,7 +7454,7 @@ pc_bucket
   Hao-Yu Lee                  22.3    5.9
   Dillon Dingler              21.6    5.9
   Max Clark                   20.7    8.0
-  Gleyber Torres              18.8   13.7
+  Javier Báez                 18.5    3.0
   Colt Keith                  18.1    7.9
   Zach McKinstry              15.7    9.8
   Kevin McGonigle             13.9   13.9
@@ -7455,54 +7467,54 @@ pc_bucket
   Ryan Vilade                 22.1    8.1
   Jonny DeLuca                19.1    4.2
   Junior Caminero             18.1   11.6
-  Yandy Diaz                  14.2    8.3
+  Yandy Díaz                  14.2    8.3
   Nick Fortes                 12.1    3.4
   Chandler Simpson             8.4    4.3
 
-  Boston Red Sox @ Miami Marlins — Miami Marlins lineup facing Ranger Suarez (avg K% 21.9):
+  Boston Red Sox @ Miami Marlins — Miami Marlins lineup facing Ranger Suarez (avg K% 21.4):
   Batter                        K%    BB%
   Esteury Ruiz                31.5    9.6 🎯 K prop target
   Kyle Stowers                30.9    9.4 🎯 K prop target
-  Brian Navarreto             30.0    5.0 🎯 K prop target
-  Heriberto Hernandez         27.7   10.5 🎯 K prop target
-  Agustin Ramirez             22.2   11.9
-  Leo Jimenez                 20.3    7.5
+  Heriberto Hernández         27.7   10.5 🎯 K prop target
+  Joe Mack                    24.9    6.2
+  Agustín Ramírez             22.2   11.9
+  Jakob Marsee                21.1   12.8
   Xavier Edwards              13.4   11.2
   Otto Lopez                  12.6    5.3
   Javier Sanoja                8.5    5.2
 
-  Boston Red Sox @ Miami Marlins — Boston Red Sox lineup facing Sandy Alcantara (avg K% 19.1):
+  Boston Red Sox @ Miami Marlins — Boston Red Sox lineup facing Sandy Alcantara (avg K% 18.8):
   Batter                        K%    BB%
   Jarren Duran                27.7    7.1 🎯 K prop target
   Willson Contreras           25.0   11.0 🎯 K prop target
   Ceddanne Rafaela            20.2    4.4
   Wilyer Abreu                20.0   10.5
-  Andruw Monasterio           18.9    7.4
+  Anthony Seigler             16.5    8.9
   Nick Sogard                 16.0   16.0
   Mickey Gasper               15.5    8.1
   Adley Rutschman             15.2   10.9
   Caleb Durbin                13.5    7.3
 
-  Colorado Rockies @ Washington Nationals — Washington Nationals lineup facing Ryan Feltner (avg K% 20.7):
+  Colorado Rockies @ Washington Nationals — Washington Nationals lineup facing Ryan Feltner (avg K% 19.9):
   Batter                        K%    BB%
   Brady House                 27.5    6.9 🎯 K prop target
   Dylan Crews                 24.5    6.6
   CJ Abrams                   22.9    8.5
-  Andres Chaparro             22.3   12.0
   Abimelec Ortiz              22.1    4.4
-  Nasim Nunez                 20.4   11.1
+  Nasim Nuñez                 20.4   11.1
   Daylen Lile                 19.2    5.5
   Jacob Young                 17.2    7.4
+  Jorbit Vivas                14.4   10.3
   Keibert Ruiz                10.6    5.1
 
-  Colorado Rockies @ Washington Nationals — Colorado Rockies lineup facing Cade Cavalli (avg K% 24.6):
+  Colorado Rockies @ Washington Nationals — Colorado Rockies lineup facing Cade Cavalli (avg K% 24.2):
   Batter                        K%    BB%
   Zac Veen                    43.5    4.3 🎯 K prop target
   Connor Norby                30.4   10.7 🎯 K prop target
   Mickey Moniak               27.0    5.3 🎯 K prop target
   Willi Castro                27.0    8.2 🎯 K prop target
   Ezequiel Tovar              25.1    6.3 🎯 K prop target
-  Cole Carrigg                21.0   10.7
+  Troy Johnston               17.8    8.3
   Brett Sullivan              16.7    5.4
   Jake McCarthy               16.4    5.0
   TJ Rumfield                 13.9    9.4
@@ -7519,17 +7531,17 @@ pc_bucket
   Miguel Vargas               17.4   14.2
   Sam Antonacci               15.6    8.0
 
-  Texas Rangers @ Chicago White Sox — Texas Rangers lineup facing José Urquidy (avg K% 23.7):
+  Texas Rangers @ Chicago White Sox — Texas Rangers lineup facing José Urquidy (avg K% 23.9):
   Batter                        K%    BB%
-  Danny Jansen                30.2    9.3 🎯 K prop target
   Jake Burger                 26.8    7.6 🎯 K prop target
+  Cody Freeman                25.0   10.0 🎯 K prop target
   Evan Carter                 24.8   11.7
   Corey Seager                24.7   11.7
   Joc Pederson                24.4   11.3
   Ezequiel Duran              23.9    7.1
+  Elias Díaz                  22.5    2.3
   Brandon Nimmo               21.6    8.1
   Wyatt Langford              21.2    8.5
-  Nicky Lopez                 16.1    4.7
 
   Cleveland Guardians @ Los Angeles Angels — Los Angeles Angels lineup facing Parker Messick (avg K% 28.5):
   Batter                        K%    BB%
@@ -8143,29 +8155,13 @@ San Francisco Giants 52 78 .400 27.5  5
 ════════════════════════════════════════════════════════════════════════
 
 
-  Yandy Diaz:
+  Yandy Díaz:
     Home Games           AVG:.353  OBP:.421  SLG:.583  HR:14  PA:266 🟢
     Away Games           AVG:.263  OBP:.329  SLG:.363  HR:5  PA:289 🟢
     Day Games            AVG:.345  OBP:.396  SLG:.438  HR:4  PA:222 🟢
     Night Games          AVG:.278  OBP:.357  SLG:.488  HR:15  PA:333 🟢
     vs Left              AVG:.292  OBP:.357  SLG:.489  HR:7  PA:154 🟢
     vs Right             AVG:.311  OBP:.379  SLG:.459  HR:12  PA:401 🟢
-
-  Jonathan Aranda:
-    Home Games           AVG:.291  OBP:.369  SLG:.460  HR:9  PA:271 🟢
-    Away Games           AVG:.269  OBP:.358  SLG:.372  HR:6  PA:282 🟢
-    Day Games            AVG:.253  OBP:.351  SLG:.374  HR:5  PA:222 🟢
-    Night Games          AVG:.298  OBP:.372  SLG:.443  HR:10  PA:331 🟢
-    vs Left              AVG:.242  OBP:.338  SLG:.288  HR:1  PA:154 🟢
-    vs Right             AVG:.294  OBP:.373  SLG:.464  HR:14  PA:399 🟢
-
-  Junior Caminero:
-    Home Games           AVG:.288  OBP:.382  SLG:.571  HR:18  PA:280 🟢
-    Away Games           AVG:.266  OBP:.345  SLG:.496  HR:17  PA:287 🟢
-    Day Games            AVG:.266  OBP:.355  SLG:.502  HR:14  PA:234 🟢
-    Night Games          AVG:.283  OBP:.369  SLG:.553  HR:21  PA:333 🟢
-    vs Left              AVG:.290  OBP:.417  SLG:.508  HR:7  PA:151 🟢
-    vs Right             AVG:.272  OBP:.344  SLG:.540  HR:28  PA:416 🟢
 
   Ryan Vilade:
     Home Games           AVG:.287  OBP:.339  SLG:.594  HR:8  PA:113 🟡 MED SAMPLE
@@ -8175,13 +8171,13 @@ San Francisco Giants 52 78 .400 27.5  5
     vs Left              AVG:.280  OBP:.331  SLG:.525  HR:7  PA:130 🟡 MED SAMPLE
     vs Right             AVG:.237  OBP:.314  SLG:.421  HR:4  PA:87 🟡 MED SAMPLE
 
-  Chandler Simpson:
-    Home Games           AVG:.295  OBP:.320  SLG:.354  HR:0  PA:253 🟢
-    Away Games           AVG:.326  OBP:.356  SLG:.376  HR:0  PA:240 🟢
-    Day Games            AVG:.299  OBP:.325  SLG:.366  HR:0  PA:205 🟢
-    Night Games          AVG:.318  OBP:.346  SLG:.364  HR:0  PA:288 🟢
-    vs Left              AVG:.276  OBP:.287  SLG:.345  HR:0  PA:155 🟢
-    vs Right             AVG:.326  OBP:.360  SLG:.374  HR:0  PA:338 🟢
+  Junior Caminero:
+    Home Games           AVG:.288  OBP:.382  SLG:.571  HR:18  PA:280 🟢
+    Away Games           AVG:.266  OBP:.345  SLG:.496  HR:17  PA:287 🟢
+    Day Games            AVG:.266  OBP:.355  SLG:.502  HR:14  PA:234 🟢
+    Night Games          AVG:.283  OBP:.369  SLG:.553  HR:21  PA:333 🟢
+    vs Left              AVG:.290  OBP:.417  SLG:.508  HR:7  PA:151 🟢
+    vs Right             AVG:.272  OBP:.344  SLG:.540  HR:28  PA:416 🟢
 
   Jonny DeLuca:
     Home Games           AVG:.212  OBP:.234  SLG:.336  HR:3  PA:143 🟡 MED SAMPLE
@@ -8190,6 +8186,14 @@ San Francisco Giants 52 78 .400 27.5  5
     Night Games          AVG:.283  OBP:.319  SLG:.434  HR:5  PA:161 🟢
     vs Left              AVG:.264  OBP:.297  SLG:.396  HR:2  PA:112 🟡 MED SAMPLE
     vs Right             AVG:.270  OBP:.299  SLG:.459  HR:6  PA:155 🟢
+
+  Jonathan Aranda:
+    Home Games           AVG:.291  OBP:.369  SLG:.460  HR:9  PA:271 🟢
+    Away Games           AVG:.269  OBP:.358  SLG:.372  HR:6  PA:282 🟢
+    Day Games            AVG:.253  OBP:.351  SLG:.374  HR:5  PA:222 🟢
+    Night Games          AVG:.298  OBP:.372  SLG:.443  HR:10  PA:331 🟢
+    vs Left              AVG:.242  OBP:.338  SLG:.288  HR:1  PA:154 🟢
+    vs Right             AVG:.294  OBP:.373  SLG:.464  HR:14  PA:399 🟢
 
   Jorge Mateo:
     Home Games           AVG:.207  OBP:.258  SLG:.293  HR:1  PA:62 🟡 MED SAMPLE
@@ -8207,6 +8211,14 @@ San Francisco Giants 52 78 .400 27.5  5
     vs Left              AVG:.254  OBP:.321  SLG:.339  HR:1  PA:133 🟡 MED SAMPLE
     vs Right             AVG:.275  OBP:.301  SLG:.391  HR:3  PA:144 🟡 MED SAMPLE
 
+  Chandler Simpson:
+    Home Games           AVG:.295  OBP:.320  SLG:.354  HR:0  PA:253 🟢
+    Away Games           AVG:.326  OBP:.356  SLG:.376  HR:0  PA:240 🟢
+    Day Games            AVG:.299  OBP:.325  SLG:.366  HR:0  PA:205 🟢
+    Night Games          AVG:.318  OBP:.346  SLG:.364  HR:0  PA:288 🟢
+    vs Left              AVG:.276  OBP:.287  SLG:.345  HR:0  PA:155 🟢
+    vs Right             AVG:.326  OBP:.360  SLG:.374  HR:0  PA:338 🟢
+
   Taylor Walls:
     Home Games           AVG:.229  OBP:.305  SLG:.299  HR:0  PA:182 🟢
     Away Games           AVG:.206  OBP:.304  SLG:.288  HR:2  PA:189 🟢
@@ -8214,22 +8226,6 @@ San Francisco Giants 52 78 .400 27.5  5
     Night Games          AVG:.230  OBP:.318  SLG:.316  HR:2  PA:230 🟢
     vs Left              AVG:.200  OBP:.270  SLG:.273  HR:1  PA:127 🟡 MED SAMPLE
     vs Right             AVG:.227  OBP:.322  SLG:.304  HR:1  PA:244 🟢
-
-  Kevin McGonigle:
-    Home Games           AVG:.268  OBP:.382  SLG:.373  HR:3  PA:272 🟢
-    Away Games           AVG:.297  OBP:.387  SLG:.480  HR:11  PA:297 🟢
-    Day Games            AVG:.277  OBP:.378  SLG:.473  HR:7  PA:217 🟢
-    Night Games          AVG:.287  OBP:.389  SLG:.403  HR:7  PA:352 🟢
-    vs Left              AVG:.245  OBP:.325  SLG:.350  HR:3  PA:163 🟢
-    vs Right             AVG:.299  OBP:.409  SLG:.463  HR:11  PA:406 🟢
-
-  Gleyber Torres:
-    Home Games           AVG:.295  OBP:.368  SLG:.451  HR:4  PA:136 🟡 MED SAMPLE
-    Away Games           AVG:.234  OBP:.368  SLG:.331  HR:4  PA:190 🟢
-    Day Games            AVG:.281  OBP:.355  SLG:.405  HR:3  PA:138 🟡 MED SAMPLE
-    Night Games          AVG:.245  OBP:.378  SLG:.368  HR:5  PA:188 🟢
-    vs Left              AVG:.164  OBP:.367  SLG:.328  HR:2  PA:90 🟡 MED SAMPLE
-    vs Right             AVG:.292  OBP:.369  SLG:.402  HR:6  PA:236 🟢
 
   Colt Keith:
     Home Games           AVG:.264  OBP:.326  SLG:.436  HR:5  PA:178 🟢
@@ -8239,6 +8235,22 @@ San Francisco Giants 52 78 .400 27.5  5
     vs Left              AVG:.125  OBP:.160  SLG:.125  HR:0  PA:25 🔴 LOW SAMPLE
     vs Right             AVG:.279  OBP:.338  SLG:.441  HR:9  PA:346 🟢
 
+  Hao-Yu Lee:
+    Home Games           AVG:.257  OBP:.294  SLG:.366  HR:2  PA:110 🟡 MED SAMPLE
+    Away Games           AVG:.300  OBP:.344  SLG:.500  HR:5  PA:128 🟡 MED SAMPLE
+    Day Games            AVG:.234  OBP:.294  SLG:.416  HR:3  PA:85 🟡 MED SAMPLE
+    Night Games          AVG:.306  OBP:.336  SLG:.451  HR:4  PA:153 🟢
+    vs Left              AVG:.255  OBP:.287  SLG:.392  HR:2  PA:109 🟡 MED SAMPLE
+    vs Right             AVG:.303  OBP:.349  SLG:.479  HR:5  PA:129 🟡 MED SAMPLE
+
+  Kevin McGonigle:
+    Home Games           AVG:.268  OBP:.382  SLG:.373  HR:3  PA:272 🟢
+    Away Games           AVG:.297  OBP:.387  SLG:.480  HR:11  PA:297 🟢
+    Day Games            AVG:.277  OBP:.378  SLG:.473  HR:7  PA:217 🟢
+    Night Games          AVG:.287  OBP:.389  SLG:.403  HR:7  PA:352 🟢
+    vs Left              AVG:.245  OBP:.325  SLG:.350  HR:3  PA:163 🟢
+    vs Right             AVG:.299  OBP:.409  SLG:.463  HR:11  PA:406 🟢
+
   Dillon Dingler:
     Home Games           AVG:.233  OBP:.297  SLG:.416  HR:10  PA:241 🟢
     Away Games           AVG:.271  OBP:.336  SLG:.546  HR:16  PA:268 🟢
@@ -8247,14 +8259,6 @@ San Francisco Giants 52 78 .400 27.5  5
     vs Left              AVG:.218  OBP:.274  SLG:.359  HR:4  PA:157 🟢
     vs Right             AVG:.268  OBP:.337  SLG:.539  HR:22  PA:352 🟢
 
-  Zach McKinstry:
-    Home Games           AVG:.252  OBP:.337  SLG:.400  HR:4  PA:179 🟢
-    Away Games           AVG:.196  OBP:.278  SLG:.259  HR:0  PA:178 🟢
-    Day Games            AVG:.252  OBP:.346  SLG:.369  HR:3  PA:127 🟡 MED SAMPLE
-    Night Games          AVG:.208  OBP:.286  SLG:.307  HR:1  PA:230 🟢
-    vs Left              AVG:.169  OBP:.279  SLG:.186  HR:0  PA:70 🟡 MED SAMPLE
-    vs Right             AVG:.236  OBP:.315  SLG:.362  HR:4  PA:287 🟢
-
   Brett Callahan:
     Home Games           AVG:.500  OBP:.500  SLG:1.500  HR:0  PA:2 🔴 LOW SAMPLE
     Away Games           AVG:.250  OBP:.333  SLG:.500  HR:1  PA:18 🔴 LOW SAMPLE
@@ -8262,6 +8266,14 @@ San Francisco Giants 52 78 .400 27.5  5
     Night Games          AVG:.308  OBP:.308  SLG:.615  HR:1  PA:13 🔴 LOW SAMPLE
     vs Left              AVG:.000  OBP:1.000  SLG:.000  HR:0  PA:1 🔴 LOW SAMPLE
     vs Right             AVG:.278  OBP:.316  SLG:.611  HR:1  PA:19 🔴 LOW SAMPLE
+
+  Zach McKinstry:
+    Home Games           AVG:.252  OBP:.337  SLG:.400  HR:4  PA:179 🟢
+    Away Games           AVG:.196  OBP:.278  SLG:.259  HR:0  PA:178 🟢
+    Day Games            AVG:.252  OBP:.346  SLG:.369  HR:3  PA:127 🟡 MED SAMPLE
+    Night Games          AVG:.208  OBP:.286  SLG:.307  HR:1  PA:230 🟢
+    vs Left              AVG:.169  OBP:.279  SLG:.186  HR:0  PA:70 🟡 MED SAMPLE
+    vs Right             AVG:.236  OBP:.315  SLG:.362  HR:4  PA:287 🟢
 
   Spencer Torkelson:
     Home Games           AVG:.215  OBP:.305  SLG:.426  HR:11  PA:240 🟢
@@ -8279,13 +8291,13 @@ San Francisco Giants 52 78 .400 27.5  5
     vs Left              AVG:.261  OBP:.370  SLG:.391  HR:0  PA:27 🔴 LOW SAMPLE
     vs Right             AVG:.250  OBP:.288  SLG:.375  HR:1  PA:59 🟡 MED SAMPLE
 
-  Hao-Yu Lee:
-    Home Games           AVG:.257  OBP:.294  SLG:.366  HR:2  PA:110 🟡 MED SAMPLE
-    Away Games           AVG:.300  OBP:.344  SLG:.500  HR:5  PA:128 🟡 MED SAMPLE
-    Day Games            AVG:.234  OBP:.294  SLG:.416  HR:3  PA:85 🟡 MED SAMPLE
-    Night Games          AVG:.306  OBP:.336  SLG:.451  HR:4  PA:153 🟢
-    vs Left              AVG:.255  OBP:.287  SLG:.392  HR:2  PA:109 🟡 MED SAMPLE
-    vs Right             AVG:.303  OBP:.349  SLG:.479  HR:5  PA:129 🟡 MED SAMPLE
+  Javier Báez:
+    Home Games           AVG:.263  OBP:.283  SLG:.368  HR:1  PA:60 🟡 MED SAMPLE
+    Away Games           AVG:.256  OBP:.289  SLG:.360  HR:1  PA:90 🟡 MED SAMPLE
+    Day Games            AVG:.305  OBP:.328  SLG:.373  HR:0  PA:61 🟡 MED SAMPLE
+    Night Games          AVG:.226  OBP:.258  SLG:.357  HR:2  PA:89 🟡 MED SAMPLE
+    vs Left              AVG:.256  OBP:.275  SLG:.385  HR:1  PA:40 🔴 LOW SAMPLE
+    vs Right             AVG:.260  OBP:.291  SLG:.356  HR:1  PA:110 🟡 MED SAMPLE
 
   Nick Sogard:
     Home Games           AVG:.348  OBP:.456  SLG:.591  HR:2  PA:82 🟡 MED SAMPLE
@@ -8343,14 +8355,6 @@ San Francisco Giants 52 78 .400 27.5  5
     vs Left              AVG:.216  OBP:.290  SLG:.279  HR:1  PA:125 🟡 MED SAMPLE
     vs Right             AVG:.204  OBP:.256  SLG:.388  HR:16  PA:387 🟢
 
-  Andruw Monasterio:
-    Home Games           AVG:.241  OBP:.316  SLG:.345  HR:0  PA:133 🟡 MED SAMPLE
-    Away Games           AVG:.263  OBP:.311  SLG:.467  HR:6  PA:165 🟢
-    Day Games            AVG:.252  OBP:.328  SLG:.470  HR:3  PA:129 🟡 MED SAMPLE
-    Night Games          AVG:.255  OBP:.302  SLG:.373  HR:3  PA:169 🟢
-    vs Left              AVG:.261  OBP:.346  SLG:.543  HR:5  PA:104 🟡 MED SAMPLE
-    vs Right             AVG:.250  OBP:.295  SLG:.347  HR:1  PA:194 🟢
-
   Mickey Gasper:
     Home Games           AVG:.299  OBP:.397  SLG:.552  HR:3  PA:79 🟡 MED SAMPLE
     Away Games           AVG:.211  OBP:.246  SLG:.228  HR:0  PA:61 🟡 MED SAMPLE
@@ -8359,15 +8363,23 @@ San Francisco Giants 52 78 .400 27.5  5
     vs Left              AVG:.105  OBP:.105  SLG:.105  HR:0  PA:20 🔴 LOW SAMPLE
     vs Right             AVG:.286  OBP:.367  SLG:.457  HR:3  PA:120 🟡 MED SAMPLE
 
-  Esteury Ruiz:
-    Home Games           AVG:.222  OBP:.380  SLG:.417  HR:2  PA:94 🟡 MED SAMPLE
-    Away Games           AVG:.262  OBP:.340  SLG:.452  HR:4  PA:94 🟡 MED SAMPLE
-    Day Games            AVG:.291  OBP:.406  SLG:.532  HR:4  PA:98 🟡 MED SAMPLE
-    Night Games          AVG:.195  OBP:.311  SLG:.338  HR:2  PA:90 🟡 MED SAMPLE
-    vs Left              AVG:.264  OBP:.372  SLG:.528  HR:4  PA:86 🟡 MED SAMPLE
-    vs Right             AVG:.226  OBP:.350  SLG:.357  HR:2  PA:102 🟡 MED SAMPLE
+  Anthony Seigler:
+    Home Games           AVG:.304  OBP:.364  SLG:.507  HR:2  PA:77 🟡 MED SAMPLE
+    Away Games           AVG:.200  OBP:.278  SLG:.300  HR:1  PA:81 🟡 MED SAMPLE
+    Day Games            AVG:.174  OBP:.278  SLG:.304  HR:1  PA:55 🟡 MED SAMPLE
+    Night Games          AVG:.290  OBP:.343  SLG:.452  HR:2  PA:103 🟡 MED SAMPLE
+    vs Left              AVG:.167  OBP:.244  SLG:.306  HR:1  PA:42 🔴 LOW SAMPLE
+    vs Right             AVG:.282  OBP:.348  SLG:.437  HR:2  PA:116 🟡 MED SAMPLE
 
-  Heriberto Hernandez:
+  Otto Lopez:
+    Home Games           AVG:.309  OBP:.344  SLG:.448  HR:4  PA:276 🟢
+    Away Games           AVG:.302  OBP:.342  SLG:.440  HR:5  PA:275 🟢
+    Day Games            AVG:.332  OBP:.369  SLG:.481  HR:4  PA:233 🟢
+    Night Games          AVG:.288  OBP:.324  SLG:.418  HR:5  PA:318 🟢
+    vs Left              AVG:.364  OBP:.375  SLG:.517  HR:2  PA:128 🟡 MED SAMPLE
+    vs Right             AVG:.288  OBP:.333  SLG:.422  HR:7  PA:423 🟢
+
+  Heriberto Hernández:
     Home Games           AVG:.229  OBP:.308  SLG:.477  HR:10  PA:172 🟢
     Away Games           AVG:.228  OBP:.309  SLG:.433  HR:9  PA:191 🟢
     Day Games            AVG:.221  OBP:.298  SLG:.456  HR:9  PA:151 🟢
@@ -8375,13 +8387,13 @@ San Francisco Giants 52 78 .400 27.5  5
     vs Left              AVG:.245  OBP:.331  SLG:.557  HR:9  PA:121 🟡 MED SAMPLE
     vs Right             AVG:.220  OBP:.298  SLG:.404  HR:10  PA:242 🟢
 
-  Xavier Edwards:
-    Home Games           AVG:.282  OBP:.346  SLG:.398  HR:5  PA:270 🟢
-    Away Games           AVG:.288  OBP:.383  SLG:.364  HR:1  PA:279 🟢
-    Day Games            AVG:.260  OBP:.328  SLG:.346  HR:4  PA:233 🟢
-    Night Games          AVG:.305  OBP:.392  SLG:.409  HR:2  PA:316 🟢
-    vs Left              AVG:.259  OBP:.339  SLG:.393  HR:4  PA:128 🟡 MED SAMPLE
-    vs Right             AVG:.293  OBP:.372  SLG:.378  HR:2  PA:421 🟢
+  Kyle Stowers:
+    Home Games           AVG:.233  OBP:.333  SLG:.459  HR:8  PA:186 🟢
+    Away Games           AVG:.250  OBP:.321  SLG:.464  HR:8  PA:213 🟢
+    Day Games            AVG:.207  OBP:.317  SLG:.400  HR:5  PA:164 🟢
+    Night Games          AVG:.265  OBP:.333  SLG:.502  HR:11  PA:235 🟢
+    vs Left              AVG:.169  OBP:.244  SLG:.286  HR:1  PA:86 🟡 MED SAMPLE
+    vs Right             AVG:.263  OBP:.349  SLG:.511  HR:15  PA:313 🟢
 
 
 ════════════════════════════════════════════════════════════════════════
@@ -8589,7 +8601,7 @@ San Francisco Giants 52 78 .400 27.5  5
 ════════════════════════════════════════════════════════════════════════
 
 
-  Yandy Diaz — Game Logs L14:
+  Yandy Díaz — Game Logs L14:
   Date         Opp    AB  H   HR  RBI  BB  K   AVG
   -------------------------------------------------------
   2026-08-17   BAL    3   2   1   1    1   1   .304
@@ -8599,28 +8611,6 @@ San Francisco Giants 52 78 .400 27.5  5
   2026-08-21   BAL    4   0   0   0    0   1   .305
   2026-08-22   BAL    5   2   0   0    0   0   .306
   2026-08-23   BAL    4   1   0   0    0   0   .306
-
-  Jonathan Aranda — Game Logs L14:
-  Date         Opp    AB  H   HR  RBI  BB  K   AVG
-  -------------------------------------------------------
-  2026-08-17   BAL    5   2   0   1    0   1   .286
-  2026-08-18   TOR    5   1   0   0    0   2   .285
-  2026-08-19   TOR    4   0   0   0    0   1   .283
-  2026-08-20   TOR    4   1   0   0    0   2   .282
-  2026-08-21   BAL    1   0   0   0    0   1   .282
-  2026-08-22   BAL    3   0   0   0    1   1   .280
-  2026-08-23   BAL    4   1   0   0    0   1   .280
-
-  Junior Caminero — Game Logs L14:
-  Date         Opp    AB  H   HR  RBI  BB  K   AVG
-  -------------------------------------------------------
-  2026-08-17   BAL    4   1   0   0    0   1   .273
-  2026-08-18   TOR    5   2   0   0    0   0   .275
-  2026-08-19   TOR    4   1   0   1    0   1   .274
-  2026-08-20   TOR    4   1   0   1    0   1   .274
-  2026-08-21   BAL    4   2   0   0    0   0   .276
-  2026-08-22   BAL    4   1   0   1    0   0   .276
-  2026-08-23   BAL    3   1   0   1    1   0   .276
 
   Ryan Vilade — Game Logs L14:
   Date         Opp    AB  H   HR  RBI  BB  K   AVG
@@ -8633,16 +8623,16 @@ San Francisco Giants 52 78 .400 27.5  5
   2026-08-21   BAL    4   2   0   0    0   1   .264
   2026-08-22   BAL    1   0   0   0    0   1   .263
 
-  Chandler Simpson — Game Logs L14:
+  Junior Caminero — Game Logs L14:
   Date         Opp    AB  H   HR  RBI  BB  K   AVG
   -------------------------------------------------------
-  2026-08-17   BAL    4   1   0   0    0   0   .309
-  2026-08-18   TOR    5   2   0   0    0   0   .310
-  2026-08-19   TOR    4   1   0   1    0   1   .309
-  2026-08-20   TOR    4   1   0   0    0   0   .309
-  2026-08-21   BAL    4   1   0   1    0   1   .308
-  2026-08-22   BAL    4   1   0   0    0   0   .308
-  2026-08-23   BAL    3   2   0   1    1   0   .310
+  2026-08-17   BAL    4   1   0   0    0   1   .273
+  2026-08-18   TOR    5   2   0   0    0   0   .275
+  2026-08-19   TOR    4   1   0   1    0   1   .274
+  2026-08-20   TOR    4   1   0   1    0   1   .274
+  2026-08-21   BAL    4   2   0   0    0   0   .276
+  2026-08-22   BAL    4   1   0   1    0   0   .276
+  2026-08-23   BAL    3   1   0   1    1   0   .276
 
   Jonny DeLuca — Game Logs L14:
   Date         Opp    AB  H   HR  RBI  BB  K   AVG
@@ -8654,6 +8644,17 @@ San Francisco Giants 52 78 .400 27.5  5
   2026-08-21   BAL    3   1   0   0    0   0   .264
   2026-08-22   BAL    4   2   0   0    0   1   .268
   2026-08-23   BAL    4   1   0   0    0   0   .268
+
+  Jonathan Aranda — Game Logs L14:
+  Date         Opp    AB  H   HR  RBI  BB  K   AVG
+  -------------------------------------------------------
+  2026-08-17   BAL    5   2   0   1    0   1   .286
+  2026-08-18   TOR    5   1   0   0    0   2   .285
+  2026-08-19   TOR    4   0   0   0    0   1   .283
+  2026-08-20   TOR    4   1   0   0    0   2   .282
+  2026-08-21   BAL    1   0   0   0    0   1   .282
+  2026-08-22   BAL    3   0   0   0    1   1   .280
+  2026-08-23   BAL    4   1   0   0    0   1   .280
 
   Jorge Mateo — Game Logs L14:
   Date         Opp    AB  H   HR  RBI  BB  K   AVG
@@ -8675,6 +8676,17 @@ San Francisco Giants 52 78 .400 27.5  5
   2026-08-17   BAL    0   0   0   0    0   0   .269
   2026-08-20   TOR    3   0   0   0    0   1   .266
 
+  Chandler Simpson — Game Logs L14:
+  Date         Opp    AB  H   HR  RBI  BB  K   AVG
+  -------------------------------------------------------
+  2026-08-17   BAL    4   1   0   0    0   0   .309
+  2026-08-18   TOR    5   2   0   0    0   0   .310
+  2026-08-19   TOR    4   1   0   1    0   1   .309
+  2026-08-20   TOR    4   1   0   0    0   0   .309
+  2026-08-21   BAL    4   1   0   1    0   1   .308
+  2026-08-22   BAL    4   1   0   0    0   0   .308
+  2026-08-23   BAL    3   2   0   1    1   0   .310
+
   Taylor Walls — Game Logs L14:
   Date         Opp    AB  H   HR  RBI  BB  K   AVG
   -------------------------------------------------------
@@ -8685,28 +8697,6 @@ San Francisco Giants 52 78 .400 27.5  5
   2026-08-21   BAL    3   0   0   0    0   2   .222
   2026-08-22   BAL    3   0   0   0    1   0   .220
   2026-08-23   BAL    3   0   0   0    1   1   .218
-
-  Kevin McGonigle — Game Logs L14:
-  Date         Opp    AB  H   HR  RBI  BB  K   AVG
-  -------------------------------------------------------
-  2026-08-16   CWS    4   0   0   0    1   2   .281
-  2026-08-17   PIT    6   2   1   2    0   1   .282
-  2026-08-18   PIT    4   1   0   0    0   0   .281
-  2026-08-19   PIT    3   1   0   2    0   1   .282
-  2026-08-21   KC     4   2   0   1    1   0   .284
-  2026-08-22   KC     4   0   0   0    0   0   .281
-  2026-08-23   KC     4   2   1   3    1   1   .283
-
-  Gleyber Torres — Game Logs L14:
-  Date         Opp    AB  H   HR  RBI  BB  K   AVG
-  -------------------------------------------------------
-  2026-08-16   CWS    5   2   0   0    0   0   .271
-  2026-08-17   PIT    4   1   0   0    2   1   .271
-  2026-08-18   PIT    4   1   0   0    0   0   .270
-  2026-08-19   PIT    3   1   0   1    1   1   .271
-  2026-08-21   KC     5   0   0   0    0   1   .266
-  2026-08-22   KC     4   0   0   0    0   0   .262
-  2026-08-23   KC     5   1   0   1    0   0   .261
 
   Colt Keith — Game Logs L14:
   Date         Opp    AB  H   HR  RBI  BB  K   AVG
@@ -8719,6 +8709,28 @@ San Francisco Giants 52 78 .400 27.5  5
   2026-08-22   KC     3   0   0   0    1   1   .270
   2026-08-23   KC     2   0   0   0    0   0   .268
 
+  Hao-Yu Lee — Game Logs L14:
+  Date         Opp    AB  H   HR  RBI  BB  K   AVG
+  -------------------------------------------------------
+  2026-08-16   CWS    1   0   0   0    0   0   .265
+  2026-08-17   PIT    3   3   0   2    2   0   .275
+  2026-08-18   PIT    1   0   0   0    0   0   .274
+  2026-08-19   PIT    2   1   0   0    2   1   .276
+  2026-08-21   KC     3   1   0   0    0   0   .277
+  2026-08-22   KC     3   1   1   1    0   0   .278
+  2026-08-23   KC     5   2   0   1    0   0   .281
+
+  Kevin McGonigle — Game Logs L14:
+  Date         Opp    AB  H   HR  RBI  BB  K   AVG
+  -------------------------------------------------------
+  2026-08-16   CWS    4   0   0   0    1   2   .281
+  2026-08-17   PIT    6   2   1   2    0   1   .282
+  2026-08-18   PIT    4   1   0   0    0   0   .281
+  2026-08-19   PIT    3   1   0   2    0   1   .282
+  2026-08-21   KC     4   2   0   1    1   0   .284
+  2026-08-22   KC     4   0   0   0    0   0   .281
+  2026-08-23   KC     4   2   1   3    1   1   .283
+
   Dillon Dingler — Game Logs L14:
   Date         Opp    AB  H   HR  RBI  BB  K   AVG
   -------------------------------------------------------
@@ -8730,17 +8742,6 @@ San Francisco Giants 52 78 .400 27.5  5
   2026-08-21   KC     5   0   0   0    0   1   .252
   2026-08-22   KC     3   1   0   0    0   1   .253
 
-  Zach McKinstry — Game Logs L14:
-  Date         Opp    AB  H   HR  RBI  BB  K   AVG
-  -------------------------------------------------------
-  2026-08-16   CWS    2   0   0   0    1   0   .216
-  2026-08-17   PIT    4   3   0   1    1   0   .223
-  2026-08-18   PIT    3   0   0   0    0   1   .221
-  2026-08-19   PIT    3   1   0   0    1   2   .222
-  2026-08-21   KC     2   1   0   1    0   0   .224
-  2026-08-22   KC     3   0   0   0    1   1   .222
-  2026-08-23   KC     2   1   0   0    0   1   .224
-
   Brett Callahan — Game Logs L14:
   Date         Opp    AB  H   HR  RBI  BB  K   AVG
   -------------------------------------------------------
@@ -8751,6 +8752,17 @@ San Francisco Giants 52 78 .400 27.5  5
   2026-08-21   KC     2   0   0   0    0   1   .308
   2026-08-22   KC     4   1   0   0    0   2   .294
   2026-08-23   KC     1   0   0   0    1   1   .278
+
+  Zach McKinstry — Game Logs L14:
+  Date         Opp    AB  H   HR  RBI  BB  K   AVG
+  -------------------------------------------------------
+  2026-08-16   CWS    2   0   0   0    1   0   .216
+  2026-08-17   PIT    4   3   0   1    1   0   .223
+  2026-08-18   PIT    3   0   0   0    0   1   .221
+  2026-08-19   PIT    3   1   0   0    1   2   .222
+  2026-08-21   KC     2   1   0   1    0   0   .224
+  2026-08-22   KC     3   0   0   0    1   1   .222
+  2026-08-23   KC     2   1   0   0    0   1   .224
 
   Spencer Torkelson — Game Logs L14:
   Date         Opp    AB  H   HR  RBI  BB  K   AVG
@@ -8774,16 +8786,16 @@ San Francisco Giants 52 78 .400 27.5  5
   2026-08-22   KC     3   0   0   0    0   1   .250
   2026-08-23   KC     3   1   0   1    1   0   .253
 
-  Hao-Yu Lee — Game Logs L14:
+  Javier Báez — Game Logs L14:
   Date         Opp    AB  H   HR  RBI  BB  K   AVG
   -------------------------------------------------------
-  2026-08-16   CWS    1   0   0   0    0   0   .265
-  2026-08-17   PIT    3   3   0   2    2   0   .275
-  2026-08-18   PIT    1   0   0   0    0   0   .274
-  2026-08-19   PIT    2   1   0   0    2   1   .276
-  2026-08-21   KC     3   1   0   0    0   0   .277
-  2026-08-22   KC     3   1   1   1    0   0   .278
-  2026-08-23   KC     5   2   0   1    0   0   .281
+  2026-08-13   CLE    3   1   0   0    0   1   .285
+  2026-08-15   CWS    3   0   0   0    0   1   .278
+  2026-08-16   CWS    4   0   0   0    0   0   .269
+  2026-08-17   PIT    4   0   0   0    0   1   .261
+  2026-08-18   PIT    3   0   0   0    0   0   .255
+  2026-08-21   KC     4   1   0   0    0   1   .255
+  2026-08-23   KC     2   1   0   0    0   0   .259
 
   Nick Sogard — Game Logs L14:
   Date         Opp    AB  H   HR  RBI  BB  K   AVG
@@ -8869,24 +8881,24 @@ San Francisco Giants 52 78 .400 27.5  5
 
   Player                       2026_BABIP Career_BABIP   Delta Signal
   ----------------------------------------------------------------------
-  Yandy Diaz                        0.329        0.323  +0.006 🟡 Normal
-  Jonathan Aranda                   0.349        0.350  -0.001 🟡 Normal
-  Junior Caminero                   0.284        0.273  +0.011 🟡 Normal
+  Yandy Díaz                        0.329        0.323  +0.006 🟡 Normal
   Ryan Vilade                       0.292        0.262  +0.030 🟡 Normal
-  Chandler Simpson                  0.336        0.332  +0.004 🟡 Normal
+  Junior Caminero                   0.284        0.273  +0.011 🟡 Normal
   Jonny DeLuca                      0.311        0.297  +0.014 🟡 Normal
+  Jonathan Aranda                   0.349        0.350  -0.001 🟡 Normal
   Jorge Mateo                       0.301        0.285  +0.016 🟡 Normal
   Nick Fortes                       0.292        0.258  +0.034 🔴 DUE DOWN
+  Chandler Simpson                  0.336        0.332  +0.004 🟡 Normal
   Taylor Walls                      0.294        0.262  +0.032 🔴 DUE DOWN
-  Kevin McGonigle                   0.312        0.312  +0.000 🟡 Normal
-  Gleyber Torres                    0.303        0.299  +0.004 🟡 Normal
   Colt Keith                        0.311        0.308  +0.003 🟡 Normal
+  Hao-Yu Lee                        0.337        0.337  +0.000 🟡 Normal
+  Kevin McGonigle                   0.312        0.312  +0.000 🟡 Normal
   Dillon Dingler                    0.279        0.306  -0.027 🟡 Normal
-  Zach McKinstry                    0.259        0.281  -0.022 🟡 Normal
   Brett Callahan                    0.364        0.364  +0.000 🟡 Normal
+  Zach McKinstry                    0.259        0.281  -0.022 🟡 Normal
   Spencer Torkelson                 0.289        0.276  +0.013 🟡 Normal
   Max Clark                         0.317        0.317  +0.000 🟡 Normal
-  Hao-Yu Lee                        0.337        0.337  +0.000 🟡 Normal
+  Javier Báez                       0.304        0.314  -0.010 🟡 Normal
   Nick Sogard                       0.344        0.356  -0.012 🟡 Normal
   Ceddanne Rafaela                  0.340        0.314  +0.026 🟡 Normal
   Wilyer Abreu                      0.285        0.302  -0.017 🟡 Normal
@@ -8894,11 +8906,11 @@ San Francisco Giants 52 78 .400 27.5  5
   Adley Rutschman                   0.259        0.277  -0.018 🟡 Normal
   Caleb Durbin                      0.272        0.269  +0.003 🟡 Normal
   Jarren Duran                      0.255        0.324  -0.069 🟢 DUE UP
-  Andruw Monasterio                 0.297        0.313  -0.016 🟡 Normal
   Mickey Gasper                     0.290        0.228  +0.062 🔴 DUE DOWN
-  Esteury Ruiz                      0.352        0.311  +0.041 🔴 DUE DOWN
-  Heriberto Hernandez               0.268        0.299  -0.031 🟢 DUE UP
-  Xavier Edwards                    0.322        0.341  -0.019 🟡 Normal
+  Anthony Seigler                   0.286        0.277  +0.009 🟡 Normal
+  Otto Lopez                        0.333        0.306  +0.027 🟡 Normal
+  Heriberto Hernández               0.268        0.299  -0.031 🟢 DUE UP
+  Kyle Stowers                      0.325        0.331  -0.006 🟡 Normal
 
 
 ════════════════════════════════════════════════════════════════════════
@@ -11076,72 +11088,72 @@ San Francisco Giants 52 78 .400 27.5  5
   Tampa Bay Rays @ Detroit Tigers — Comerica Park:
   LF(345ft/14ft wall)  CF(420ft)  RF(330ft/8ft wall)
   Surface: grass  Humidor: No  Batter Eye: easy
-  Air density: 0.9502  Altitude bonus: 1.1408
+  Air density: 0.9491  Altitude bonus: 1.1408
   Wind pull-side boost: 0.975  Oppo-side boost: 1.025
-  PULL HITTERS HR INDEX: 1.171
-  OPPO HITTERS HR INDEX: 1.23
+  PULL HITTERS HR INDEX: 1.172
+  OPPO HITTERS HR INDEX: 1.232
 
   Boston Red Sox @ Miami Marlins — loanDepot park:
   LF(344ft/8ft wall)  CF(418ft)  RF(335ft/8ft wall)
   Surface: grass  Humidor: No  Batter Eye: easy
-  Air density: 0.9447  Altitude bonus: 1.0000
-  Wind pull-side boost: 0.976  Oppo-side boost: 1.024
-  PULL HITTERS HR INDEX: 1.033
-  OPPO HITTERS HR INDEX: 1.084
+  Air density: 0.9451  Altitude bonus: 1.0000
+  Wind pull-side boost: 0.980  Oppo-side boost: 1.020
+  PULL HITTERS HR INDEX: 1.037
+  OPPO HITTERS HR INDEX: 1.079
 
   Colorado Rockies @ Washington Nationals — Nationals Park:
   LF(336ft/8ft wall)  CF(402ft)  RF(335ft/8ft wall)
   Surface: grass  Humidor: No  Batter Eye: easy
-  Air density: 0.9546  Altitude bonus: 1.1577
-  Wind pull-side boost: 0.978  Oppo-side boost: 1.022
-  PULL HITTERS HR INDEX: 1.187
-  OPPO HITTERS HR INDEX: 1.239
+  Air density: 0.9586  Altitude bonus: 1.1577
+  Wind pull-side boost: 1.024  Oppo-side boost: 0.976
+  PULL HITTERS HR INDEX: 1.237
+  OPPO HITTERS HR INDEX: 1.178
 
   Texas Rangers @ Chicago White Sox — Guaranteed Rate Field:
   LF(330ft/8ft wall)  CF(400ft)  RF(335ft/8ft wall)
   Surface: grass  Humidor: No  Batter Eye: easy
-  Air density: 0.9590  Altitude bonus: 1.1405
+  Air density: 0.9602  Altitude bonus: 1.1405
   Wind pull-side boost: 1.000  Oppo-side boost: 1.000
-  PULL HITTERS HR INDEX: 1.189
-  OPPO HITTERS HR INDEX: 1.189
+  PULL HITTERS HR INDEX: 1.188
+  OPPO HITTERS HR INDEX: 1.188
 
   Cleveland Guardians @ Los Angeles Angels — Angel Stadium:
   LF(330ft/8ft wall)  CF(396ft)  RF(330ft/8ft wall)
   Surface: grass  Humidor: No  Batter Eye: easy
-  Air density: 0.9648  Altitude bonus: 1.1536
-  Wind pull-side boost: 1.021  Oppo-side boost: 0.979
-  PULL HITTERS HR INDEX: 1.22
+  Air density: 0.9629  Altitude bonus: 1.1536
+  Wind pull-side boost: 1.022  Oppo-side boost: 0.978
+  PULL HITTERS HR INDEX: 1.225
   OPPO HITTERS HR INDEX: 1.171
 
   Chicago Cubs @ Arizona Diamondbacks — Chase Field:
   LF(330ft/7ft wall)  CF(407ft)  RF(334ft/7ft wall)
   Surface: grass  Humidor: YES  Batter Eye: easy
-  Air density: 0.8962  Altitude bonus: 1.0000
-  Wind pull-side boost: 0.985  Oppo-side boost: 1.015
-  PULL HITTERS HR INDEX: 1.099
-  OPPO HITTERS HR INDEX: 1.133
+  Air density: 0.8998  Altitude bonus: 1.0000
+  Wind pull-side boost: 0.988  Oppo-side boost: 1.012
+  PULL HITTERS HR INDEX: 1.098
+  OPPO HITTERS HR INDEX: 1.125
   ✅ HUMIDOR: ball stored at ~50°F/50% humidity — reduces carry vs dry conditions
 
   Pittsburgh Pirates @ San Diego Padres — Petco Park:
   LF(336ft/8ft wall)  CF(396ft)  RF(322ft/8ft wall)
   Surface: grass  Humidor: No  Batter Eye: medium
-  Air density: 0.9728  Altitude bonus: 1.1580
-  Wind pull-side boost: 0.993  Oppo-side boost: 1.007
-  PULL HITTERS HR INDEX: 1.182
+  Air density: 0.9714  Altitude bonus: 1.1580
+  Wind pull-side boost: 0.995  Oppo-side boost: 1.005
+  PULL HITTERS HR INDEX: 1.186
   OPPO HITTERS HR INDEX: 1.199
 
   Minnesota Twins @ Athletics — Sutter Health Park:
   LF(330ft/8ft wall)  CF(403ft)  RF(325ft/8ft wall)
   Surface: grass  Humidor: No  Batter Eye: hard
   Air density: 0.9676  Altitude bonus: 1.1577
-  Wind pull-side boost: 1.024  Oppo-side boost: 0.976
-  PULL HITTERS HR INDEX: 1.225
-  OPPO HITTERS HR INDEX: 1.167
+  Wind pull-side boost: 1.022  Oppo-side boost: 0.978
+  PULL HITTERS HR INDEX: 1.223
+  OPPO HITTERS HR INDEX: 1.169
 
   Philadelphia Phillies @ Seattle Mariners — T-Mobile Park:
   LF(331ft/8ft wall)  CF(401ft)  RF(326ft/8ft wall)
   Surface: grass  Humidor: No  Batter Eye: medium
-  Air density: 0.9831  Altitude bonus: 1.0000
+  Air density: 0.9829  Altitude bonus: 1.0000
   Wind pull-side boost: 1.000  Oppo-side boost: 1.000
   PULL HITTERS HR INDEX: 1.017
   OPPO HITTERS HR INDEX: 1.017
@@ -11149,11 +11161,11 @@ San Francisco Giants 52 78 .400 27.5  5
   Cincinnati Reds @ San Francisco Giants — Oracle Park:
   LF(339ft/8ft wall)  CF(399ft)  RF(309ft/8ft wall)
   Surface: grass  Humidor: No  Batter Eye: hard
-  Air density: 0.9997  Altitude bonus: 1.1581
-  Wind pull-side boost: 1.035  Oppo-side boost: 0.965
-  PULL HITTERS HR INDEX: 1.199
-  OPPO HITTERS HR INDEX: 1.117
-  🔴 WIND IN — HR suppressed (12mph from CF)
+  Air density: 0.9993  Altitude bonus: 1.1581
+  Wind pull-side boost: 1.038  Oppo-side boost: 0.962
+  PULL HITTERS HR INDEX: 1.203
+  OPPO HITTERS HR INDEX: 1.114
+  🔴 WIND IN — HR suppressed (13mph from CF)
 
 
 ════════════════════════════════════════════════════════════════════════
@@ -11164,28 +11176,28 @@ San Francisco Giants 52 78 .400 27.5  5
   Tampa Bay Rays lineup context:
   Slot  Player                    ProjPA/yr  OBP ahead  Protected by
   --------------------------------------------------------------------------------
-  1     Yandy Diaz                      750  n/a        Jonathan Aranda
-  2     Jonathan Aranda                 732  n/a        Junior Caminero
-  3     Junior Caminero                 714  n/a        Ryan Vilade
-  4     Ryan Vilade                     693  n/a        Chandler Simpson
-  5     Chandler Simpson                672  n/a        Jonny DeLuca
-  6     Jonny DeLuca                    651  n/a        Jorge Mateo
-  7     Jorge Mateo                     630  n/a        Nick Fortes
-  8     Nick Fortes                     609  n/a        Taylor Walls
-  9     Taylor Walls                    585  n/a        Yandy Diaz
+  1     Yandy Díaz                      750  n/a        Ryan Vilade
+  2     Ryan Vilade                     732  n/a        Junior Caminero
+  3     Junior Caminero                 714  n/a        Jonny DeLuca
+  4     Jonny DeLuca                    693  n/a        Jonathan Aranda
+  5     Jonathan Aranda                 672  n/a        Jorge Mateo
+  6     Jorge Mateo                     651  n/a        Nick Fortes
+  7     Nick Fortes                     630  n/a        Chandler Simpson
+  8     Chandler Simpson                609  n/a        Taylor Walls
+  9     Taylor Walls                    585  n/a        Yandy Díaz
 
   Detroit Tigers lineup context:
   Slot  Player                    ProjPA/yr  OBP ahead  Protected by
   --------------------------------------------------------------------------------
-  1     Kevin McGonigle                 750  n/a        Gleyber Torres
-  2     Gleyber Torres                  732  n/a        Colt Keith
-  3     Colt Keith                      714  n/a        Dillon Dingler
-  4     Dillon Dingler                  693  n/a        Zach McKinstry
-  5     Zach McKinstry                  672  n/a        Brett Callahan
-  6     Brett Callahan                  651  n/a        Spencer Torkelson
+  1     Colt Keith                      750  n/a        Hao-Yu Lee
+  2     Hao-Yu Lee                      732  n/a        Kevin McGonigle
+  3     Kevin McGonigle                 714  n/a        Dillon Dingler
+  4     Dillon Dingler                  693  n/a        Brett Callahan
+  5     Brett Callahan                  672  n/a        Zach McKinstry
+  6     Zach McKinstry                  651  n/a        Spencer Torkelson
   7     Spencer Torkelson               630  n/a        Max Clark
-  8     Max Clark                       609  n/a        Hao-Yu Lee
-  9     Hao-Yu Lee                      585  n/a        Kevin McGonigle
+  8     Max Clark                       609  n/a        Javier Báez
+  9     Javier Báez                     585  n/a        Colt Keith
 
   Boston Red Sox lineup context:
   Slot  Player                    ProjPA/yr  OBP ahead  Protected by
@@ -11196,48 +11208,48 @@ San Francisco Giants 52 78 .400 27.5  5
   4     Willson Contreras               693  n/a        Adley Rutschman
   5     Adley Rutschman                 672  n/a        Caleb Durbin
   6     Caleb Durbin                    651  n/a        Jarren Duran
-  7     Jarren Duran                    630  n/a        Andruw Monasterio
-  8     Andruw Monasterio               609  n/a        Mickey Gasper
-  9     Mickey Gasper                   585  n/a        Nick Sogard
+  7     Jarren Duran                    630  n/a        Mickey Gasper
+  8     Mickey Gasper                   609  n/a        Anthony Seigler
+  9     Anthony Seigler                 585  n/a        Nick Sogard
 
   Miami Marlins lineup context:
   Slot  Player                    ProjPA/yr  OBP ahead  Protected by
   --------------------------------------------------------------------------------
-  1     Esteury Ruiz                    750  n/a        Heriberto Hernandez
-  2     Heriberto Hernandez             732  n/a        Xavier Edwards
-  3     Xavier Edwards                  714  n/a        Agustin Ramirez
-  4     Agustin Ramirez                 693  n/a        Otto Lopez
-  5     Otto Lopez                      672  n/a        Kyle Stowers
-  6     Kyle Stowers                    651  n/a        Javier Sanoja
-  7     Javier Sanoja                   630  n/a        Leo Jimenez
-  8     Leo Jimenez                     609  n/a        Brian Navarreto
-  9     Brian Navarreto                 585  n/a        Esteury Ruiz
+  1     Otto Lopez                      750  n/a        Heriberto Hernández
+  2     Heriberto Hernández             732  n/a        Kyle Stowers
+  3     Kyle Stowers                    714  n/a        Agustín Ramírez
+  4     Agustín Ramírez                 693  n/a        Xavier Edwards
+  5     Xavier Edwards                  672  n/a        Jakob Marsee
+  6     Jakob Marsee                    651  n/a        Javier Sanoja
+  7     Javier Sanoja                   630  n/a        Esteury Ruiz
+  8     Esteury Ruiz                    609  n/a        Joe Mack
+  9     Joe Mack                        585  n/a        Otto Lopez
 
   Colorado Rockies lineup context:
   Slot  Player                    ProjPA/yr  OBP ahead  Protected by
   --------------------------------------------------------------------------------
-  1     Jake McCarthy                   750  n/a        Cole Carrigg
-  2     Cole Carrigg                    732  n/a        Mickey Moniak
-  3     Mickey Moniak                   714  n/a        TJ Rumfield
-  4     TJ Rumfield                     693  n/a        Willi Castro
-  5     Willi Castro                    672  n/a        Zac Veen
-  6     Zac Veen                        651  n/a        Connor Norby
-  7     Connor Norby                    630  n/a        Brett Sullivan
-  8     Brett Sullivan                  609  n/a        Ezequiel Tovar
+  1     Jake McCarthy                   750  n/a        Mickey Moniak
+  2     Mickey Moniak                   732  n/a        Willi Castro
+  3     Willi Castro                    714  n/a        TJ Rumfield
+  4     TJ Rumfield                     693  n/a        Troy Johnston
+  5     Troy Johnston                   672  n/a        Connor Norby
+  6     Connor Norby                    651  n/a        Brett Sullivan
+  7     Brett Sullivan                  630  n/a        Zac Veen
+  8     Zac Veen                        609  n/a        Ezequiel Tovar
   9     Ezequiel Tovar                  585  n/a        Jake McCarthy
 
   Washington Nationals lineup context:
   Slot  Player                    ProjPA/yr  OBP ahead  Protected by
   --------------------------------------------------------------------------------
   1     CJ Abrams                       750  n/a        Abimelec Ortiz
-  2     Abimelec Ortiz                  732  n/a        Brady House
-  3     Brady House                     714  n/a        Daylen Lile
-  4     Daylen Lile                     693  n/a        Dylan Crews
-  5     Dylan Crews                     672  n/a        Keibert Ruiz
-  6     Keibert Ruiz                    651  n/a        Andres Chaparro
-  7     Andres Chaparro                 630  n/a        Nasim Nunez
-  8     Nasim Nunez                     609  n/a        Jacob Young
-  9     Jacob Young                     585  n/a        CJ Abrams
+  2     Abimelec Ortiz                  732  n/a        Dylan Crews
+  3     Dylan Crews                     714  n/a        Daylen Lile
+  4     Daylen Lile                     693  n/a        Brady House
+  5     Brady House                     672  n/a        Keibert Ruiz
+  6     Keibert Ruiz                    651  n/a        Jacob Young
+  7     Jacob Young                     630  n/a        Jorbit Vivas
+  8     Jorbit Vivas                    609  n/a        Nasim Nuñez
+  9     Nasim Nuñez                     585  n/a        CJ Abrams
 
   Texas Rangers lineup context:
   Slot  Player                    ProjPA/yr  OBP ahead  Protected by
@@ -11248,9 +11260,9 @@ San Francisco Giants 52 78 .400 27.5  5
   4     Brandon Nimmo                   693  n/a        Ezequiel Duran
   5     Ezequiel Duran                  672  n/a        Evan Carter
   6     Evan Carter                     651  n/a        Jake Burger
-  7     Jake Burger                     630  n/a        Nicky Lopez
-  8     Nicky Lopez                     609  n/a        Danny Jansen
-  9     Danny Jansen                    585  n/a        Joc Pederson
+  7     Jake Burger                     630  n/a        Elias Díaz
+  8     Elias Díaz                      609  n/a        Cody Freeman
+  9     Cody Freeman                    585  n/a        Joc Pederson
 
   Chicago White Sox lineup context:
   Slot  Player                    ProjPA/yr  OBP ahead  Protected by
@@ -14986,177 +14998,178 @@ San Francisco Giants 52 78 .400 27.5  5
                   Batter                                   Matchup  BBE  Pull%  Oppo%
 1           Esteury Ruiz            Boston Red Sox @ Miami Marlins  105 69.500 21.900
 2           Keibert Ruiz   Colorado Rockies @ Washington Nationals  259 69.500 18.900
-3           Danny Jansen         Texas Rangers @ Chicago White Sox   93 68.800 20.400
-4         Kyle Schwarber  Philadelphia Phillies @ Seattle Mariners  290 65.900 22.100
+3         Kyle Schwarber  Philadelphia Phillies @ Seattle Mariners  290 65.900 22.100
+4       Kaelen Culpepper               Minnesota Twins @ Athletics   32 65.600 28.100
 5      Andrew Benintendi         Texas Rangers @ Chicago White Sox  270 65.600 23.700
-6       Kaelen Culpepper               Minnesota Twins @ Athletics   32 65.600 28.100
-7         Brett Sullivan   Colorado Rockies @ Washington Nationals  156 64.100 25.000
+6         Brett Sullivan   Colorado Rockies @ Washington Nationals  156 64.100 25.000
+7            Javier Báez           Tampa Bay Rays @ Detroit Tigers  129 63.600 23.300
 8            Cal Raleigh  Philadelphia Phillies @ Seattle Mariners  231 63.200 25.100
 9         Tristan Peters         Texas Rangers @ Chicago White Sox  290 62.800 26.900
 10          Kyle Stowers            Boston Red Sox @ Miami Marlins  234 62.800 26.100
 11      Hector Rodriguez    Cincinnati Reds @ San Francisco Giants   32 62.500 28.100
 12     Colson Montgomery         Texas Rangers @ Chicago White Sox  299 62.200 25.400
 13          Brandon Lowe     Pittsburgh Pirates @ San Diego Padres  342 62.000 25.400
-14   Heriberto Hernandez            Boston Red Sox @ Miami Marlins  228 61.800 22.800
+14   Heriberto Hernández            Boston Red Sox @ Miami Marlins  228 61.800 22.800
 15          Jose Ramirez  Cleveland Guardians @ Los Angeles Angels  321 61.700 25.200
 16           Angel Genao  Cleveland Guardians @ Los Angeles Angels   52 61.500 26.900
 17         Nolan Arenado       Chicago Cubs @ Arizona Diamondbacks  339 61.400 26.300
 18         Mickey Moniak   Colorado Rockies @ Washington Nationals  240 61.300 25.000
 19        Corbin Carroll       Chicago Cubs @ Arizona Diamondbacks  364 61.000 28.600
-20       Andres Chaparro   Colorado Rockies @ Washington Nationals  102 60.800 25.500
+20              Joe Mack            Boston Red Sox @ Miami Marlins  173 60.700 28.300
 21   Pete Crow-Armstrong       Chicago Cubs @ Arizona Diamondbacks  352 60.500 27.300
 22         Weston Wilson  Philadelphia Phillies @ Seattle Mariners   78 60.300 32.100
 23          Byron Buxton               Minnesota Twins @ Athletics  271 60.100 26.200
 24     Willson Contreras            Boston Red Sox @ Miami Marlins  299 59.900 27.800
 25           Royce Lewis               Minnesota Twins @ Athletics  274 59.900 27.400
 26         Miguel Vargas         Texas Rangers @ Chicago White Sox  392 59.700 28.600
-27             JJ Bleday    Cincinnati Reds @ San Francisco Giants  275 59.600 23.600
-28      Michael Conforto       Chicago Cubs @ Arizona Diamondbacks  151 59.600 23.200
-29        Eugenio Suarez    Cincinnati Reds @ San Francisco Giants  213 59.600 31.900
-30           Nick Fortes           Tampa Bay Rays @ Detroit Tigers  235 59.600 28.100
+27      Michael Conforto       Chicago Cubs @ Arizona Diamondbacks  151 59.600 23.200
+28        Eugenio Suarez    Cincinnati Reds @ San Francisco Giants  213 59.600 31.900
+29           Nick Fortes           Tampa Bay Rays @ Detroit Tigers  235 59.600 28.100
+30             JJ Bleday    Cincinnati Reds @ San Francisco Giants  275 59.600 23.600
 31           Nick Sogard            Boston Red Sox @ Miami Marlins  104 59.600 26.900
-32          Willy Adames    Cincinnati Reds @ San Francisco Giants  333 59.500 27.300
-33         Rafael Flores     Pittsburgh Pirates @ San Diego Padres   42 59.500 28.600
+32         Rafael Flores     Pittsburgh Pirates @ San Diego Padres   42 59.500 28.600
+33          Willy Adames    Cincinnati Reds @ San Francisco Giants  333 59.500 27.300
 34          Kody Clemens               Minnesota Twins @ Athletics  334 59.300 30.800
 35         Jorge Barrosa       Chicago Cubs @ Arizona Diamondbacks  113 59.300 31.000
-36        Luis Campusano     Pittsburgh Pirates @ San Diego Padres  110 59.100 25.500
-37          Willi Castro   Colorado Rockies @ Washington Nationals  286 59.100 29.000
+36          Willi Castro   Colorado Rockies @ Washington Nationals  286 59.100 29.000
+37        Luis Campusano     Pittsburgh Pirates @ San Diego Padres  110 59.100 25.500
 38       Junior Caminero           Tampa Bay Rays @ Detroit Tigers  405 58.500 27.900
 39        Abimelec Ortiz   Colorado Rockies @ Washington Nationals   48 58.300 20.800
 40          Alex Bregman       Chicago Cubs @ Arizona Diamondbacks  427 58.300 27.400
 41             Max Muncy               Minnesota Twins @ Athletics  141 58.200 31.200
 42            Jonah Heim               Minnesota Twins @ Athletics  228 57.900 27.200
 43            Brooks Lee               Minnesota Twins @ Athletics  398 57.500 28.600
-44            Oneil Cruz     Pittsburgh Pirates @ San Diego Padres  166 57.200 28.300
-45       Ildemaro Vargas       Chicago Cubs @ Arizona Diamondbacks  353 57.200 28.600
+44       Ildemaro Vargas       Chicago Cubs @ Arizona Diamondbacks  353 57.200 28.600
+45            Oneil Cruz     Pittsburgh Pirates @ San Diego Padres  166 57.200 28.300
 46     Spencer Torkelson           Tampa Bay Rays @ Detroit Tigers  305 57.000 29.500
-47       Geraldo Perdomo       Chicago Cubs @ Arizona Diamondbacks  406 56.900 30.500
-48             Drew Romo         Texas Rangers @ Chicago White Sox  123 56.900 26.800
+47             Drew Romo         Texas Rangers @ Chicago White Sox  123 56.900 26.800
+48       Geraldo Perdomo       Chicago Cubs @ Arizona Diamondbacks  406 56.900 30.500
 49             Josh Bell               Minnesota Twins @ Athletics  370 56.800 29.700
 50             Zach Neto  Cleveland Guardians @ Los Angeles Angels  338 56.800 29.900
-51       Agustin Ramirez            Boston Red Sox @ Miami Marlins  120 56.700 31.700
+51       Agustín Ramírez            Boston Red Sox @ Miami Marlins  120 56.700 31.700
 52          Corey Seager         Texas Rangers @ Chicago White Sox  198 56.600 30.300
-53          Cole Carrigg   Colorado Rockies @ Washington Nationals  166 56.600 29.500
-54          Jonny DeLuca           Tampa Bay Rays @ Detroit Tigers  216 56.500 34.300
-55        Donovan Walton               Minnesota Twins @ Athletics  138 56.500 27.500
+53          Jonny DeLuca           Tampa Bay Rays @ Detroit Tigers  216 56.500 34.300
+54        Donovan Walton               Minnesota Twins @ Athletics  138 56.500 27.500
+55         Mickey Gasper            Boston Red Sox @ Miami Marlins  110 56.400 28.200
 56          Taylor Walls           Tampa Bay Rays @ Detroit Tigers  243 56.400 34.200
-57         Mickey Gasper            Boston Red Sox @ Miami Marlins  110 56.400 28.200
-58           Jake Burger         Texas Rangers @ Chicago White Sox  329 56.200 31.900
-59       Dominic Canzone  Philadelphia Phillies @ Seattle Mariners  285 56.100 27.700
-60         Jordan Lawlar       Chicago Cubs @ Arizona Diamondbacks   50 56.000 34.000
-61       Xander Bogaerts     Pittsburgh Pirates @ San Diego Padres  350 56.000 30.900
-62             CJ Abrams   Colorado Rockies @ Washington Nationals  366 56.000 30.600
-63     Munetaka Murakami         Texas Rangers @ Chicago White Sox  213 55.900 28.600
-64         Pedro Ramirez       Chicago Cubs @ Arizona Diamondbacks  129 55.800 31.000
-65          Jarren Duran            Boston Red Sox @ Miami Marlins  336 55.700 27.400
-66            Cole Young  Philadelphia Phillies @ Seattle Mariners  408 55.600 29.900
-67          Connor Norby   Colorado Rockies @ Washington Nationals  157 55.400 35.000
-68              Ian Happ       Chicago Cubs @ Arizona Diamondbacks  305 55.400 31.800
-69         Jake McCarthy   Colorado Rockies @ Washington Nationals  366 55.200 29.800
-70        Brayan Rocchio  Cleveland Guardians @ Los Angeles Angels  384 54.700 30.200
-71          Drew Gilbert    Cincinnati Reds @ San Francisco Giants  232 54.700 35.300
-72          Bryson Stott  Philadelphia Phillies @ Seattle Mariners  372 54.600 31.200
-73       Osleivis Basabe    Cincinnati Reds @ San Francisco Giants   66 54.500 30.300
-74         Denzer Guzman  Cleveland Guardians @ Los Angeles Angels  143 54.500 30.100
-75          Seiya Suzuki       Chicago Cubs @ Arizona Diamondbacks  305 54.400 31.100
+57           Jake Burger         Texas Rangers @ Chicago White Sox  329 56.200 31.900
+58       Dominic Canzone  Philadelphia Phillies @ Seattle Mariners  285 56.100 27.700
+59         Jordan Lawlar       Chicago Cubs @ Arizona Diamondbacks   50 56.000 34.000
+60       Xander Bogaerts     Pittsburgh Pirates @ San Diego Padres  350 56.000 30.900
+61             CJ Abrams   Colorado Rockies @ Washington Nationals  366 56.000 30.600
+62     Munetaka Murakami         Texas Rangers @ Chicago White Sox  213 55.900 28.600
+63         Pedro Ramirez       Chicago Cubs @ Arizona Diamondbacks  129 55.800 31.000
+64          Jarren Duran            Boston Red Sox @ Miami Marlins  336 55.700 27.400
+65            Cole Young  Philadelphia Phillies @ Seattle Mariners  408 55.600 29.900
+66          Connor Norby   Colorado Rockies @ Washington Nationals  157 55.400 35.000
+67              Ian Happ       Chicago Cubs @ Arizona Diamondbacks  305 55.400 31.800
+68         Jake McCarthy   Colorado Rockies @ Washington Nationals  366 55.200 29.800
+69        Brayan Rocchio  Cleveland Guardians @ Los Angeles Angels  384 54.700 30.200
+70          Drew Gilbert    Cincinnati Reds @ San Francisco Giants  232 54.700 35.300
+71          Bryson Stott  Philadelphia Phillies @ Seattle Mariners  372 54.600 31.200
+72       Osleivis Basabe    Cincinnati Reds @ San Francisco Giants   66 54.500 30.300
+73         Denzer Guzman  Cleveland Guardians @ Los Angeles Angels  143 54.500 30.100
+74          Seiya Suzuki       Chicago Cubs @ Arizona Diamondbacks  305 54.400 31.100
+75          Jakob Marsee            Boston Red Sox @ Miami Marlins  320 54.400 34.700
 76        Christian Koss    Cincinnati Reds @ San Francisco Giants   83 54.200 34.900
-77          Bryce Harper  Philadelphia Phillies @ Seattle Mariners  354 54.000 31.100
-78           Josh Naylor  Philadelphia Phillies @ Seattle Mariners  421 53.900 31.400
-79           TJ Rumfield   Colorado Rockies @ Washington Nationals  393 53.900 31.300
-80          Caleb Durbin            Boston Red Sox @ Miami Marlins  377 53.800 34.200
-81        Dillon Dingler           Tampa Bay Rays @ Detroit Tigers  367 53.700 31.300
-82          Joc Pederson         Texas Rangers @ Chicago White Sox  254 53.500 30.300
-83        Nathaniel Lowe  Cleveland Guardians @ Los Angeles Angels  232 53.400 31.000
-84           Jeff McNeil               Minnesota Twins @ Athletics  335 53.400 32.500
-85        Wyatt Langford         Texas Rangers @ Chicago White Sox  246 53.300 33.300
-86           Evan Carter         Texas Rangers @ Chicago White Sox  239 53.100 31.800
-87              Tim Tawa       Chicago Cubs @ Arizona Diamondbacks  179 53.100 26.800
-88          Ryan Jeffers               Minnesota Twins @ Athletics  202 53.000 35.600
-89         Manny Machado     Pittsburgh Pirates @ San Diego Padres  370 53.000 35.100
-90        Bryan Reynolds     Pittsburgh Pirates @ San Diego Padres  361 52.900 35.200
+77         Troy Johnston   Colorado Rockies @ Washington Nationals  286 54.200 30.100
+78          Bryce Harper  Philadelphia Phillies @ Seattle Mariners  354 54.000 31.100
+79           Josh Naylor  Philadelphia Phillies @ Seattle Mariners  421 53.900 31.400
+80           TJ Rumfield   Colorado Rockies @ Washington Nationals  393 53.900 31.300
+81          Caleb Durbin            Boston Red Sox @ Miami Marlins  377 53.800 34.200
+82        Dillon Dingler           Tampa Bay Rays @ Detroit Tigers  367 53.700 31.300
+83          Joc Pederson         Texas Rangers @ Chicago White Sox  254 53.500 30.300
+84        Nathaniel Lowe  Cleveland Guardians @ Los Angeles Angels  232 53.400 31.000
+85           Jeff McNeil               Minnesota Twins @ Athletics  335 53.400 32.500
+86        Wyatt Langford         Texas Rangers @ Chicago White Sox  246 53.300 33.300
+87           Evan Carter         Texas Rangers @ Chicago White Sox  239 53.100 31.800
+88              Tim Tawa       Chicago Cubs @ Arizona Diamondbacks  179 53.100 26.800
+89          Ryan Jeffers               Minnesota Twins @ Athletics  202 53.000 35.600
+90         Manny Machado     Pittsburgh Pirates @ San Diego Padres  370 53.000 35.100
 91         J.T. Realmuto  Philadelphia Phillies @ Seattle Mariners  261 52.900 32.200
-92         Michael Busch       Chicago Cubs @ Arizona Diamondbacks  377 52.800 33.400
-93        Vaughn Grissom  Cleveland Guardians @ Los Angeles Angels  248 52.800 32.300
+92        Bryan Reynolds     Pittsburgh Pirates @ San Diego Padres  361 52.900 35.200
+93         Michael Busch       Chicago Cubs @ Arizona Diamondbacks  377 52.800 33.400
 94           Daylen Lile   Colorado Rockies @ Washington Nationals  415 52.800 34.200
-95         Brandon Marsh  Philadelphia Phillies @ Seattle Mariners  348 52.600 35.600
-96       Jackson Merrill     Pittsburgh Pirates @ San Diego Padres  379 52.500 34.800
-97        Chase DeLauter  Cleveland Guardians @ Los Angeles Angels  362 52.500 34.300
-98        Zach McKinstry           Tampa Bay Rays @ Detroit Tigers  275 52.400 34.500
-99        Chase Meidroth         Texas Rangers @ Chicago White Sox  368 52.400 35.900
-100         Jared Triolo     Pittsburgh Pirates @ San Diego Padres  218 52.300 35.300
-101       Ezequiel Duran         Texas Rangers @ Chicago White Sox  324 52.200 35.800
-102            Jose Siri  Cleveland Guardians @ Los Angeles Angels  108 51.900 32.400
-103      Lawrence Butler               Minnesota Twins @ Athletics  258 51.600 32.900
-104         Gavin Sheets     Pittsburgh Pirates @ San Diego Padres  281 51.600 37.000
-105          Dylan Crews   Colorado Rockies @ Washington Nationals  219 51.600 31.500
-106           Zack Gelof               Minnesota Twins @ Athletics  205 51.200 32.200
-107         Jung Hoo Lee    Cincinnati Reds @ San Francisco Giants  418 51.200 34.700
-108         Luis Rengifo     Pittsburgh Pirates @ San Diego Padres  274 51.100 37.200
-109       Luke Keaschall               Minnesota Twins @ Athletics  363 51.000 36.100
-110    Braden Montgomery         Texas Rangers @ Chicago White Sox  167 50.900 35.300
+95        Vaughn Grissom  Cleveland Guardians @ Los Angeles Angels  248 52.800 32.300
+96         Brandon Marsh  Philadelphia Phillies @ Seattle Mariners  348 52.600 35.600
+97       Jackson Merrill     Pittsburgh Pirates @ San Diego Padres  379 52.500 34.800
+98        Chase DeLauter  Cleveland Guardians @ Los Angeles Angels  362 52.500 34.300
+99        Zach McKinstry           Tampa Bay Rays @ Detroit Tigers  275 52.400 34.500
+100       Chase Meidroth         Texas Rangers @ Chicago White Sox  368 52.400 35.900
+101         Jared Triolo     Pittsburgh Pirates @ San Diego Padres  218 52.300 35.300
+102       Ezequiel Duran         Texas Rangers @ Chicago White Sox  324 52.200 35.800
+103            Jose Siri  Cleveland Guardians @ Los Angeles Angels  108 51.900 32.400
+104          Dylan Crews   Colorado Rockies @ Washington Nationals  219 51.600 31.500
+105         Gavin Sheets     Pittsburgh Pirates @ San Diego Padres  281 51.600 37.000
+106      Lawrence Butler               Minnesota Twins @ Athletics  258 51.600 32.900
+107           Zack Gelof               Minnesota Twins @ Athletics  205 51.200 32.200
+108         Jung Hoo Lee    Cincinnati Reds @ San Francisco Giants  418 51.200 34.700
+109         Luis Rengifo     Pittsburgh Pirates @ San Diego Padres  274 51.100 37.200
+110       Luke Keaschall               Minnesota Twins @ Athletics  363 51.000 36.100
 111          Ryan Vilade           Tampa Bay Rays @ Detroit Tigers  161 50.900 31.700
-112           Colt Keith           Tampa Bay Rays @ Detroit Tigers  286 50.700 35.700
-113          Nasim Nunez   Colorado Rockies @ Washington Nationals  304 50.700 34.500
-114          Jorge Mateo           Tampa Bay Rays @ Detroit Tigers  111 50.500 34.200
-115           Mike Trout  Cleveland Guardians @ Los Angeles Angels  284 50.400 37.300
+112    Braden Montgomery         Texas Rangers @ Chicago White Sox  167 50.900 35.300
+113          Nasim Nuñez   Colorado Rockies @ Washington Nationals  304 50.700 34.500
+114           Colt Keith           Tampa Bay Rays @ Detroit Tigers  286 50.700 35.700
+115          Jorge Mateo           Tampa Bay Rays @ Detroit Tigers  111 50.500 34.200
 116       Travis Bazzana  Cleveland Guardians @ Los Angeles Angels  282 50.400 33.700
-117             Jo Adell  Cleveland Guardians @ Los Angeles Angels  365 50.400 35.600
-118        Javier Sanoja            Boston Red Sox @ Miami Marlins  312 50.300 37.200
-119        Sam Antonacci         Texas Rangers @ Chicago White Sox  315 50.200 34.000
-120            Ty France     Pittsburgh Pirates @ San Diego Padres  272 50.000 36.800
-121       Patrick Bailey  Cleveland Guardians @ Los Angeles Angels  195 49.700 36.400
-122      Kevin McGonigle           Tampa Bay Rays @ Detroit Tigers  421 49.600 34.000
-123         Jose Trevino    Cincinnati Reds @ San Francisco Giants   97 49.500 36.100
-124          Nicky Lopez         Texas Rangers @ Chicago White Sox  182 49.500 31.900
-125        Nick Gonzales     Pittsburgh Pirates @ San Diego Padres  390 49.500 37.900
-126      Adley Rutschman            Boston Red Sox @ Miami Marlins  249 49.000 34.100
-127   Moises Ballesteros  Cleveland Guardians @ Los Angeles Angels  186 48.900 38.200
-128          Jacob Young   Colorado Rockies @ Washington Nationals  298 48.700 34.600
-129         Wilyer Abreu            Boston Red Sox @ Miami Marlins  389 48.600 37.000
-130       Fernando Tatis     Pittsburgh Pirates @ San Diego Padres  408 48.500 36.800
-131      Julio Rodriguez  Philadelphia Phillies @ Seattle Mariners  370 48.400 35.400
-132         Carson Kelly       Chicago Cubs @ Arizona Diamondbacks  258 48.400 38.000
-133      Victor Caratini               Minnesota Twins @ Athletics  238 48.300 35.700
-134        Brandon Nimmo         Texas Rangers @ Chicago White Sox  377 48.300 32.100
-135        Rafael Devers    Cincinnati Reds @ San Francisco Giants  354 48.300 35.000
-136       Ezequiel Tovar   Colorado Rockies @ Washington Nationals  302 48.000 36.800
-137      Jonathan Aranda           Tampa Bay Rays @ Detroit Tigers  368 47.800 39.400
-138      Victor Bericoto    Cincinnati Reds @ San Francisco Giants   69 47.800 36.200
-139       Gabriel Moreno       Chicago Cubs @ Arizona Diamondbacks  314 47.800 43.000
-140          Matt McLain    Cincinnati Reds @ San Francisco Giants  252 47.200 37.300
-141     Jake Cronenworth     Pittsburgh Pirates @ San Diego Padres  212 47.200 40.600
-142        Carlos Cortes               Minnesota Twins @ Athletics  230 47.000 37.000
-143          Tommy White               Minnesota Twins @ Athletics  107 46.700 40.200
-144          Brady House   Colorado Rockies @ Washington Nationals  177 46.300 37.900
-145      Elly De La Cruz    Cincinnati Reds @ San Francisco Giants  315 46.300 38.400
-146          Trea Turner  Philadelphia Phillies @ Seattle Mariners  415 46.300 38.600
-147          Leo Jimenez            Boston Red Sox @ Miami Marlins  124 46.000 33.100
-148     Ceddanne Rafaela            Boston Red Sox @ Miami Marlins  403 45.900 42.400
-149      Esmerlyn Valdez     Pittsburgh Pirates @ San Diego Padres  114 45.600 35.100
-150      Randy Arozarena  Philadelphia Phillies @ Seattle Mariners  360 45.300 38.600
-151    Andruw Monasterio            Boston Red Sox @ Miami Marlins  227 44.900 36.600
-152     Tyler Stephenson    Cincinnati Reds @ San Francisco Giants  231 44.200 39.400
-153          Sal Stewart    Cincinnati Reds @ San Francisco Giants  388 44.100 40.500
-154          Henry Bolte               Minnesota Twins @ Athletics  207 44.000 36.200
-155           Hao-Yu Lee           Tampa Bay Rays @ Detroit Tigers  171 43.300 44.400
-156          Taylor Ward  Philadelphia Phillies @ Seattle Mariners  343 42.900 38.500
-157     Chandler Simpson           Tampa Bay Rays @ Detroit Tigers  442 42.800 44.300
-158            Max Clark           Tampa Bay Rays @ Detroit Tigers   61 42.600 45.900
-159         Nico Hoerner       Chicago Cubs @ Arizona Diamondbacks  476 42.600 40.300
-160           Otto Lopez            Boston Red Sox @ Miami Marlins  455 42.600 42.200
-161            Alec Bohm  Philadelphia Phillies @ Seattle Mariners  414 42.500 38.900
-162          Luis Arraez  Philadelphia Phillies @ Seattle Mariners  492 42.300 43.300
-163       Xavier Edwards            Boston Red Sox @ Miami Marlins  422 41.700 46.000
-164      Travis d'Arnaud  Cleveland Guardians @ Los Angeles Angels   41 41.500 46.300
-165          Steven Kwan  Cleveland Guardians @ Los Angeles Angels  388 40.700 45.100
-166           Nick Yorke     Pittsburgh Pirates @ San Diego Padres   91 40.700 51.600
-167          Jake Mangum     Pittsburgh Pirates @ San Diego Padres  291 38.800 49.100
-168       Drew Cavanaugh    Cincinnati Reds @ San Francisco Giants   60 38.300 51.700
-169      Justin Crawford  Philadelphia Phillies @ Seattle Mariners  299 38.100 48.500
-170         James McCann       Chicago Cubs @ Arizona Diamondbacks  100 36.000 44.000
-171           Yandy Diaz           Tampa Bay Rays @ Detroit Tigers  436 35.800 47.900
-172       Gleyber Torres           Tampa Bay Rays @ Detroit Tigers  224 35.300 52.700
-173           Dane Myers    Cincinnati Reds @ San Francisco Giants  164 32.900 51.200
+117           Mike Trout  Cleveland Guardians @ Los Angeles Angels  284 50.400 37.300
+118             Jo Adell  Cleveland Guardians @ Los Angeles Angels  365 50.400 35.600
+119           Elias Díaz         Texas Rangers @ Chicago White Sox  129 50.400 39.500
+120        Javier Sanoja            Boston Red Sox @ Miami Marlins  312 50.300 37.200
+121        Sam Antonacci         Texas Rangers @ Chicago White Sox  315 50.200 34.000
+122         Cody Freeman         Texas Rangers @ Chicago White Sox   26 50.000 42.300
+123      Anthony Seigler            Boston Red Sox @ Miami Marlins  116 50.000 41.400
+124            Ty France     Pittsburgh Pirates @ San Diego Padres  272 50.000 36.800
+125       Patrick Bailey  Cleveland Guardians @ Los Angeles Angels  195 49.700 36.400
+126      Kevin McGonigle           Tampa Bay Rays @ Detroit Tigers  421 49.600 34.000
+127        Nick Gonzales     Pittsburgh Pirates @ San Diego Padres  390 49.500 37.900
+128         Jose Trevino    Cincinnati Reds @ San Francisco Giants   97 49.500 36.100
+129      Adley Rutschman            Boston Red Sox @ Miami Marlins  249 49.000 34.100
+130   Moises Ballesteros  Cleveland Guardians @ Los Angeles Angels  186 48.900 38.200
+131          Jacob Young   Colorado Rockies @ Washington Nationals  298 48.700 34.600
+132         Wilyer Abreu            Boston Red Sox @ Miami Marlins  389 48.600 37.000
+133       Fernando Tatis     Pittsburgh Pirates @ San Diego Padres  408 48.500 36.800
+134      Julio Rodriguez  Philadelphia Phillies @ Seattle Mariners  370 48.400 35.400
+135         Carson Kelly       Chicago Cubs @ Arizona Diamondbacks  258 48.400 38.000
+136      Victor Caratini               Minnesota Twins @ Athletics  238 48.300 35.700
+137        Brandon Nimmo         Texas Rangers @ Chicago White Sox  377 48.300 32.100
+138        Rafael Devers    Cincinnati Reds @ San Francisco Giants  354 48.300 35.000
+139       Ezequiel Tovar   Colorado Rockies @ Washington Nationals  302 48.000 36.800
+140      Victor Bericoto    Cincinnati Reds @ San Francisco Giants   69 47.800 36.200
+141       Gabriel Moreno       Chicago Cubs @ Arizona Diamondbacks  314 47.800 43.000
+142      Jonathan Aranda           Tampa Bay Rays @ Detroit Tigers  368 47.800 39.400
+143         Jorbit Vivas   Colorado Rockies @ Washington Nationals  213 47.400 38.000
+144     Jake Cronenworth     Pittsburgh Pirates @ San Diego Padres  212 47.200 40.600
+145          Matt McLain    Cincinnati Reds @ San Francisco Giants  252 47.200 37.300
+146        Carlos Cortes               Minnesota Twins @ Athletics  230 47.000 37.000
+147          Tommy White               Minnesota Twins @ Athletics  107 46.700 40.200
+148      Elly De La Cruz    Cincinnati Reds @ San Francisco Giants  315 46.300 38.400
+149          Trea Turner  Philadelphia Phillies @ Seattle Mariners  415 46.300 38.600
+150          Brady House   Colorado Rockies @ Washington Nationals  177 46.300 37.900
+151     Ceddanne Rafaela            Boston Red Sox @ Miami Marlins  403 45.900 42.400
+152      Esmerlyn Valdez     Pittsburgh Pirates @ San Diego Padres  114 45.600 35.100
+153      Randy Arozarena  Philadelphia Phillies @ Seattle Mariners  360 45.300 38.600
+154     Tyler Stephenson    Cincinnati Reds @ San Francisco Giants  231 44.200 39.400
+155          Sal Stewart    Cincinnati Reds @ San Francisco Giants  388 44.100 40.500
+156          Henry Bolte               Minnesota Twins @ Athletics  207 44.000 36.200
+157           Hao-Yu Lee           Tampa Bay Rays @ Detroit Tigers  171 43.300 44.400
+158          Taylor Ward  Philadelphia Phillies @ Seattle Mariners  343 42.900 38.500
+159     Chandler Simpson           Tampa Bay Rays @ Detroit Tigers  442 42.800 44.300
+160         Nico Hoerner       Chicago Cubs @ Arizona Diamondbacks  476 42.600 40.300
+161            Max Clark           Tampa Bay Rays @ Detroit Tigers   61 42.600 45.900
+162           Otto Lopez            Boston Red Sox @ Miami Marlins  455 42.600 42.200
+163            Alec Bohm  Philadelphia Phillies @ Seattle Mariners  414 42.500 38.900
+164          Luis Arraez  Philadelphia Phillies @ Seattle Mariners  492 42.300 43.300
+165       Xavier Edwards            Boston Red Sox @ Miami Marlins  422 41.700 46.000
+166      Travis d'Arnaud  Cleveland Guardians @ Los Angeles Angels   41 41.500 46.300
+167           Nick Yorke     Pittsburgh Pirates @ San Diego Padres   91 40.700 51.600
+168          Steven Kwan  Cleveland Guardians @ Los Angeles Angels  388 40.700 45.100
+169          Jake Mangum     Pittsburgh Pirates @ San Diego Padres  291 38.800 49.100
+170       Drew Cavanaugh    Cincinnati Reds @ San Francisco Giants   60 38.300 51.700
+171      Justin Crawford  Philadelphia Phillies @ Seattle Mariners  299 38.100 48.500
+172         James McCann       Chicago Cubs @ Arizona Diamondbacks  100 36.000 44.000
+173           Yandy Díaz           Tampa Bay Rays @ Detroit Tigers  436 35.800 47.900
+174           Dane Myers    Cincinnati Reds @ San Francisco Giants  164 32.900 51.200
 
 ════════════════════════════════════════════════════════════════════════
   SECTION 82: STATCAST OUTS ABOVE AVERAGE — FIELDING 2026
@@ -16549,7 +16562,7 @@ San Francisco Giants 52 78 .400 27.5  5
   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
   Tampa Bay Rays @ Detroit Tigers
   SP Away: Drew Rasmussen  vs  SP Home: Framber Valdez
-  HP Umpire: TBD
+  HP Umpire: Quinn Wolcott
   Park: Comerica Park  |  Dome: No  |  Surface: grass  |  Humidor: No
   Dimensions: LF345/CF420/RF330  Wall: LF14ft/RF8ft
   Batter eye: easy  |  Retractable roof: No
@@ -16558,7 +16571,7 @@ San Francisco Giants 52 78 .400 27.5  5
   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
   Boston Red Sox @ Miami Marlins
   SP Away: Ranger Suarez  vs  SP Home: Sandy Alcantara
-  HP Umpire: TBD
+  HP Umpire: Ron Kulpa
   Park: loanDepot park  |  Dome: YES  |  Surface: grass  |  Humidor: No
   Dimensions: LF344/CF418/RF335  Wall: LF8ft/RF8ft
   Batter eye: easy  |  Retractable roof: YES
@@ -16567,7 +16580,7 @@ San Francisco Giants 52 78 .400 27.5  5
   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
   Colorado Rockies @ Washington Nationals
   SP Away: Ryan Feltner  vs  SP Home: Cade Cavalli
-  HP Umpire: TBD
+  HP Umpire: Nick Mahrley
   Park: Nationals Park  |  Dome: No  |  Surface: grass  |  Humidor: No
   Dimensions: LF336/CF402/RF335  Wall: LF8ft/RF8ft
   Batter eye: easy  |  Retractable roof: No
@@ -16576,7 +16589,7 @@ San Francisco Giants 52 78 .400 27.5  5
   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
   Texas Rangers @ Chicago White Sox
   SP Away: Kumar Rocker  vs  SP Home: José Urquidy
-  HP Umpire: TBD
+  HP Umpire: Chris Guccione
   Park: Guaranteed Rate Field  |  Dome: No  |  Surface: grass  |  Humidor: No
   Dimensions: LF330/CF400/RF335  Wall: LF8ft/RF8ft
   Batter eye: easy  |  Retractable roof: No
