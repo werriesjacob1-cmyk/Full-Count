@@ -23,7 +23,7 @@ try:
         IDENTITY_SCHEMA_VERSION, SCHEMA_VERSION, atomic_write_json,
         before_betting_cutoff, canonical_prop_id, carries_durable_state,
         default_live_state, market_side_token,
-        merge_live_states, migrate_legacy_live, parse_legacy_utc, parse_utc,
+        merge_live_state_delta_into, migrate_legacy_live, parse_legacy_utc, parse_utc,
         stable_prop_id, state_digest, utc_now, validate_live_state,
         validate_payload_identities,
     )
@@ -40,7 +40,7 @@ except ImportError:
         IDENTITY_SCHEMA_VERSION, SCHEMA_VERSION, atomic_write_json,
         before_betting_cutoff, canonical_prop_id, carries_durable_state,
         default_live_state, market_side_token,
-        merge_live_states, migrate_legacy_live, parse_legacy_utc, parse_utc,
+        merge_live_state_delta_into, migrate_legacy_live, parse_legacy_utc, parse_utc,
         stable_prop_id, state_digest, utc_now, validate_live_state,
         validate_payload_identities,
     )
@@ -182,7 +182,22 @@ def normalize_live(live, id_map):
         one["prices_updated_at"] = normalized.get("prices_updated_at")
         one["grades_updated_at"] = normalized.get("grades_updated_at")
         one["props"][new_id] = copy.deepcopy(delta)
-        remapped = merge_live_states(remapped, one)
+        # PERF, 2026-08-24 freshness-outage investigation: this used to call
+        # merge_live_states(remapped, one), which deep-copies its entire
+        # `base` argument on every call -- here, once PER INCOMING ENTRY, so
+        # cost scaled with the accumulator's own growing size (O(n) work
+        # repeated n times, O(n^2) total). Measured directly against the
+        # real, uncompacted docs/live.json (~9,850 entries -- itself a
+        # separate, real bug: compaction only runs after this function
+        # returns successfully, so a run that times out here never gets the
+        # chance to shrink the file for next time): 6+ minutes in this loop
+        # alone, the dominant cost behind the Dashboard Live Update
+        # workflow's 15-minute timeout. merge_live_state_delta_into() is the
+        # exact same per-field reconciliation, mutating this function's own
+        # freshly-built `remapped` accumulator in place -- safe because
+        # nothing else holds a reference to it yet -- instead of copying it
+        # wholesale on every one of potentially thousands of iterations.
+        merge_live_state_delta_into(remapped, one)
     validate_live_state(remapped, strict_ids=True)
     return remapped
 

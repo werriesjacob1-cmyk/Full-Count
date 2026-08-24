@@ -646,9 +646,24 @@ def touch_heartbeat(live, channel, checked_at):
     return live
 
 
-def merge_live_states(base, incoming):
-    """Semantic merge: stale full documents cannot overwrite newer facts."""
-    merged = copy.deepcopy(base or default_live_state())
+def merge_live_state_delta_into(merged, incoming):
+    """The actual per-field semantic reconciliation merge_live_states()
+    performs (stale full documents cannot overwrite newer facts), factored
+    out so a caller building up ONE accumulator across MANY small incoming
+    documents -- normalize_live()'s per-entry migration loop is the real
+    case -- can mutate that accumulator directly instead of paying
+    merge_live_states()'s copy.deepcopy(base) cost on every single call.
+
+    2026-08-24 freshness-outage investigation: normalize_live() used to call
+    merge_live_states(remapped, one) once per incoming prop_id, and
+    merge_live_states() deep-copies its entire `base` argument every call --
+    O(current accumulator size) work repeated once per entry, O(n^2) total
+    for n entries. Measured directly against the real, uncompacted 9853-
+    entry docs/live.json this caused: 6+ minutes in this one function alone,
+    the dominant cost behind the Dashboard Live Update workflow's 15-minute
+    timeout (see backtest/measure_normalize_live_perf.py). This helper's own
+    behavior is byte-for-byte identical to merge_live_states()'s inner loop;
+    only the redundant whole-accumulator copy is removed."""
     incoming = incoming or default_live_state()
     for prop_id, delta in (incoming.get("props") or {}).items():
         if SETTLEMENT_FIELDS.intersection(delta):
@@ -668,6 +683,12 @@ def merge_live_states(base, incoming):
     for key in ("updated_at", "prices_updated_at", "grades_updated_at",
                 "grades_checked_at", "prices_checked_at"):
         merged[key] = _newer(merged.get(key), incoming.get(key))
+
+
+def merge_live_states(base, incoming):
+    """Semantic merge: stale full documents cannot overwrite newer facts."""
+    merged = copy.deepcopy(base or default_live_state())
+    merge_live_state_delta_into(merged, incoming)
     validate_live_state(merged)
     return merged
 
