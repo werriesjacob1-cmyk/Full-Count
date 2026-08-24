@@ -247,7 +247,7 @@
         {
           "prop": "Over 6.5 Strikeouts",
           "type": "pitcher",
-          "score": 42.5,
+          "score": 43.0,
           "notable_signals": 0,
           "matchup": "Philadelphia Phillies @ Seattle Mariners",
           "game_pk": 823097,
@@ -259,7 +259,10 @@
             "opp_team_k_pct": 52.0,
             "same_hand_ratio": 33.3333,
             "l14_k_pct": 68.8235,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 54.8004,
+            "ump_k_pct": -0.264,
+            "ump_bb_pct": 0.18
           },
           "hit_probability": 0.3021,
           "raw_hit_probability": 0.3021,
@@ -275,7 +278,7 @@
         {
           "prop": "Over 17.5 Outs Recorded",
           "type": "pitcher",
-          "score": 67.3,
+          "score": 70.2,
           "notable_signals": 1,
           "matchup": "Philadelphia Phillies @ Seattle Mariners",
           "game_pk": 823097,
@@ -284,12 +287,12 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.6108,
+            "outs_rate": 0.6053,
             "avg_outs_per_start": 18.04
           },
-          "hit_probability": 0.6108,
+          "hit_probability": 0.6053,
           "raw_hit_probability": null,
-          "lift": 0.1217,
+          "lift": 0.1446,
           "reliability": "A",
           "sample_n": 25,
           "projection": {

@@ -192,7 +192,7 @@
         {
           "prop": "Over 6.5 Strikeouts",
           "type": "pitcher",
-          "score": 37.9,
+          "score": 38.2,
           "notable_signals": 0,
           "matchup": "Cincinnati Reds @ San Francisco Giants",
           "game_pk": 823183,
@@ -204,7 +204,10 @@
             "opp_team_k_pct": 43.0,
             "same_hand_ratio": 61.1111,
             "l14_k_pct": 100.0,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 53.1152,
+            "ump_k_pct": -0.06,
+            "ump_bb_pct": -0.228
           },
           "hit_probability": 0.3839,
           "raw_hit_probability": 0.3839,
@@ -220,7 +223,7 @@
         {
           "prop": "Over 17.5 Outs Recorded",
           "type": "pitcher",
-          "score": 39.1,
+          "score": 41.9,
           "notable_signals": 0,
           "matchup": "Cincinnati Reds @ San Francisco Giants",
           "game_pk": 823183,
@@ -229,12 +232,12 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.4978,
+            "outs_rate": 0.4921,
             "avg_outs_per_start": 17.0
           },
-          "hit_probability": 0.4978,
+          "hit_probability": 0.4921,
           "raw_hit_probability": null,
-          "lift": 0.0087,
+          "lift": 0.0314,
           "reliability": "A",
           "sample_n": 24,
           "projection": {

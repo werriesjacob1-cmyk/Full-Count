@@ -426,6 +426,59 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-24",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 50.9,
+          "notable_signals": 0,
+          "matchup": "Pittsburgh Pirates @ San Diego Padres",
+          "game_pk": 823260,
+          "team": "Pittsburgh Pirates",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 20.0,
+            "l7_avg_ev": 52.0,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 48.1,
+            "season_barrel_pct": 100.0,
+            "lineup_slot": 50.0,
+            "bullpen_fatigue": 55.5556,
+            "platoon_barrel_pct": 5.0,
+            "platoon_xwoba": 1.02,
+            "park_hand_index": 0.4,
+            "opp_catcher_framing": -0.0,
+            "days_rest": 0.0,
+            "woba_ahead": 64.5455,
+            "woba_behind": 49.0909,
+            "pull_park_synergy": 0.273,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": 5.0,
+            "vs_rp_ops": 5.0,
+            "ump_k_pct": -0.18,
+            "ump_bb_pct": -0.132
+          },
+          "hit_probability": 0.5968,
+          "raw_hit_probability": 0.5988,
+          "lift": 0.0359,
+          "reliability": "D",
+          "sample_n": 20,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

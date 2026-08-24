@@ -1011,6 +1011,111 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-24",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 80.2,
+          "notable_signals": 2,
+          "matchup": "Cleveland Guardians @ Los Angeles Angels",
+          "game_pk": 823992,
+          "team": "Cleveland Guardians",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 35.4286,
+            "pitch_exploit": 7.4286,
+            "l7_avg_ev": 100.0,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 39.3,
+            "season_barrel_pct": 22.6667,
+            "lineup_slot": 87.5,
+            "bullpen_fatigue": 69.4444,
+            "platoon_barrel_pct": 0.4,
+            "platoon_xwoba": 2.82,
+            "park_hand_index": -2.4,
+            "opp_catcher_framing": 0.84,
+            "days_rest": 0.0,
+            "woba_ahead": 26.3636,
+            "woba_behind": 24.5455,
+            "pull_park_synergy": -1.05,
+            "hard_hit_105_rate": 0.3,
+            "team_total_move": 0.0,
+            "team_total_open": 0.0,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": 0.648,
+            "vs_rp_ops": 1.656,
+            "ump_k_pct": 0.168,
+            "ump_bb_pct": -0.06
+          },
+          "hit_probability": 0.6569,
+          "raw_hit_probability": 0.644,
+          "lift": 0.096,
+          "reliability": "A",
+          "sample_n": 110,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 7.5,
+          "notable_signals": 0,
+          "matchup": "Cleveland Guardians @ Los Angeles Angels",
+          "game_pk": 823992,
+          "team": "Cleveland Guardians",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0586
+          },
+          "hit_probability": 0.0586,
+          "raw_hit_probability": null,
+          "lift": 0.01,
+          "reliability": "A",
+          "sample_n": 110,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 8.6,
+          "notable_signals": 0,
+          "matchup": "Cleveland Guardians @ Los Angeles Angels",
+          "game_pk": 823992,
+          "team": "Cleveland Guardians",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0472
+          },
+          "hit_probability": 0.0472,
+          "raw_hit_probability": null,
+          "lift": 0.026,
+          "reliability": "A",
+          "sample_n": 110,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

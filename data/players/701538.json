@@ -1721,6 +1721,140 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-24",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 60.7,
+          "notable_signals": 2,
+          "matchup": "Pittsburgh Pirates @ San Diego Padres",
+          "game_pk": 823260,
+          "team": "San Diego Padres",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 33.7143,
+            "pitch_exploit": 5.7143,
+            "l7_avg_ev": 100.0,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 10.125,
+            "park_hr_index": 48.1,
+            "season_barrel_pct": 54.0,
+            "lineup_slot": 50.0,
+            "bullpen_fatigue": 59.5238,
+            "platoon_barrel_pct": 4.8,
+            "platoon_xwoba": 2.16,
+            "park_hand_index": -1.24,
+            "opp_catcher_framing": 0.12,
+            "days_rest": 0.0,
+            "woba_ahead": 71.8182,
+            "woba_behind": 4.5455,
+            "pull_park_synergy": -0.5425,
+            "hard_hit_105_rate": 1.445,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": 0.936,
+            "vs_rp_ops": 0.708,
+            "ump_k_pct": -0.18,
+            "ump_bb_pct": -0.132
+          },
+          "hit_probability": 0.5986,
+          "raw_hit_probability": 0.6001,
+          "lift": 0.0377,
+          "reliability": "A",
+          "sample_n": 127,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 53.1,
+          "notable_signals": 0,
+          "matchup": "Pittsburgh Pirates @ San Diego Padres",
+          "game_pk": 823260,
+          "team": "San Diego Padres",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": -0.0,
+            "sprint_speed": 53.125,
+            "catcher_poptime": 20.0,
+            "on_base": 40.499
+          },
+          "hit_probability": 0.1726,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 127,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 18.9,
+          "notable_signals": 1,
+          "matchup": "Pittsburgh Pirates @ San Diego Padres",
+          "game_pk": 823260,
+          "team": "San Diego Padres",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.1044
+          },
+          "hit_probability": 0.1044,
+          "raw_hit_probability": null,
+          "lift": 0.0558,
+          "reliability": "A",
+          "sample_n": 127,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 10.7,
+          "notable_signals": 1,
+          "matchup": "Pittsburgh Pirates @ San Diego Padres",
+          "game_pk": 823260,
+          "team": "San Diego Padres",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0551
+          },
+          "hit_probability": 0.0551,
+          "raw_hit_probability": null,
+          "lift": 0.0339,
+          "reliability": "A",
+          "sample_n": 127,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

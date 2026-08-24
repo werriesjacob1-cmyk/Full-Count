@@ -1,0 +1,83 @@
+{
+  "player_id": 687957,
+  "name": "Dustin Harris",
+  "snapshots": [
+    {
+      "date": "2026-08-24",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 31.4,
+          "notable_signals": 0,
+          "matchup": "Pittsburgh Pirates @ San Diego Padres",
+          "game_pk": 823260,
+          "team": "San Diego Padres",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 33.7143,
+            "park_hr_index": 48.1,
+            "season_barrel_pct": 0.0,
+            "lineup_slot": 0.0,
+            "bullpen_fatigue": 59.5238,
+            "platoon_barrel_pct": -5.0,
+            "platoon_xwoba": 1.32,
+            "park_hand_index": -1.24,
+            "opp_catcher_framing": 0.12,
+            "days_rest": 4.0,
+            "woba_ahead": 0.0,
+            "woba_behind": 48.1818,
+            "pull_park_synergy": -1.4105,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "ump_k_pct": -0.18,
+            "ump_bb_pct": -0.132
+          },
+          "hit_probability": 0.5449,
+          "raw_hit_probability": 0.5449,
+          "lift": -0.016,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 44.5,
+          "notable_signals": 0,
+          "matchup": "Pittsburgh Pirates @ San Diego Padres",
+          "game_pk": 823260,
+          "team": "San Diego Padres",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": -0.0,
+            "sprint_speed": 40.625,
+            "catcher_poptime": 20.0,
+            "on_base": 29.9424
+          },
+          "hit_probability": 0.2711,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
+    }
+  ]
+}
