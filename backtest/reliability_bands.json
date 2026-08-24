@@ -1,0 +1,278 @@
+{
+ "_meta": {
+  "bucket_width": 0.05,
+  "built_at": "2026-08-24T19:34:52.653546+00:00",
+  "date_range": [
+   "2024-04-01",
+   "2025-03-24"
+  ],
+  "git_sha": "2a685d4f",
+  "min_band_n": 150,
+  "n_cells_seen": 107,
+  "n_dates": 225,
+  "n_reportable_cells": 30,
+  "n_rows_considered": 80320,
+  "n_rows_skipped": 332106,
+  "source_rows_path": "backtest/rows_backfill.jsonl"
+ },
+ "bands": {
+  "hard_hit_105_1": {
+   "0.00": {
+    "actual_rate": 0.0331,
+    "bias": 0.0063,
+    "n": 16244,
+    "predicted_mean": 0.0268,
+    "wilson_hi": 0.036,
+    "wilson_lo": 0.0305
+   },
+   "0.05": {
+    "actual_rate": 0.0766,
+    "bias": 0.0062,
+    "n": 9902,
+    "predicted_mean": 0.0703,
+    "wilson_hi": 0.082,
+    "wilson_lo": 0.0715
+   },
+   "0.10": {
+    "actual_rate": 0.1213,
+    "bias": 0.0011,
+    "n": 2909,
+    "predicted_mean": 0.1203,
+    "wilson_hi": 0.1337,
+    "wilson_lo": 0.11
+   },
+   "0.15": {
+    "actual_rate": 0.1789,
+    "bias": 0.0097,
+    "n": 408,
+    "predicted_mean": 0.1692,
+    "wilson_hi": 0.2191,
+    "wilson_lo": 0.1448
+   },
+   "0.20": {
+    "actual_rate": 0.2558,
+    "bias": 0.034,
+    "n": 172,
+    "predicted_mean": 0.2218,
+    "wilson_hi": 0.3259,
+    "wilson_lo": 0.1964
+   }
+  },
+  "hits_1": {
+   "0.40": {
+    "actual_rate": 0.5858,
+    "bias": 0.1458,
+    "n": 1924,
+    "predicted_mean": 0.4399,
+    "wilson_hi": 0.6076,
+    "wilson_lo": 0.5636
+   },
+   "0.45": {
+    "actual_rate": 0.6068,
+    "bias": 0.1323,
+    "n": 2134,
+    "predicted_mean": 0.4745,
+    "wilson_hi": 0.6274,
+    "wilson_lo": 0.5859
+   },
+   "0.50": {
+    "actual_rate": 0.5838,
+    "bias": 0.0519,
+    "n": 2585,
+    "predicted_mean": 0.5319,
+    "wilson_hi": 0.6026,
+    "wilson_lo": 0.5646
+   },
+   "0.55": {
+    "actual_rate": 0.5993,
+    "bias": 0.0248,
+    "n": 3342,
+    "predicted_mean": 0.5745,
+    "wilson_hi": 0.6158,
+    "wilson_lo": 0.5826
+   },
+   "0.60": {
+    "actual_rate": 0.6445,
+    "bias": 0.0198,
+    "n": 11499,
+    "predicted_mean": 0.6247,
+    "wilson_hi": 0.6532,
+    "wilson_lo": 0.6357
+   },
+   "0.65": {
+    "actual_rate": 0.6682,
+    "bias": -0.0,
+    "n": 5840,
+    "predicted_mean": 0.6682,
+    "wilson_hi": 0.6801,
+    "wilson_lo": 0.656
+   },
+   "0.70": {
+    "actual_rate": 0.7147,
+    "bias": 0.0058,
+    "n": 680,
+    "predicted_mean": 0.7089,
+    "wilson_hi": 0.7474,
+    "wilson_lo": 0.6796
+   }
+  },
+  "hits_runs_rbis_1": {
+   "0.50": {
+    "actual_rate": 0.7056,
+    "bias": 0.1679,
+    "n": 180,
+    "predicted_mean": 0.5377,
+    "wilson_hi": 0.7673,
+    "wilson_lo": 0.6352
+   },
+   "0.60": {
+    "actual_rate": 0.6506,
+    "bias": 0.0183,
+    "n": 4926,
+    "predicted_mean": 0.6323,
+    "wilson_hi": 0.6638,
+    "wilson_lo": 0.6372
+   },
+   "0.65": {
+    "actual_rate": 0.683,
+    "bias": 0.0123,
+    "n": 7094,
+    "predicted_mean": 0.6707,
+    "wilson_hi": 0.6937,
+    "wilson_lo": 0.672
+   },
+   "0.70": {
+    "actual_rate": 0.7384,
+    "bias": 0.0252,
+    "n": 2653,
+    "predicted_mean": 0.7132,
+    "wilson_hi": 0.7548,
+    "wilson_lo": 0.7213
+   }
+  },
+  "pitcher_outs_15": {
+   "0.70": {
+    "actual_rate": 0.7742,
+    "bias": 0.0513,
+    "n": 155,
+    "predicted_mean": 0.7229,
+    "wilson_hi": 0.8329,
+    "wilson_lo": 0.7022
+   }
+  },
+  "pitcher_outs_16": {
+   "0.50": {
+    "actual_rate": 0.6102,
+    "bias": 0.0845,
+    "n": 177,
+    "predicted_mean": 0.5257,
+    "wilson_hi": 0.679,
+    "wilson_lo": 0.5367
+   },
+   "0.55": {
+    "actual_rate": 0.592,
+    "bias": 0.0174,
+    "n": 250,
+    "predicted_mean": 0.5746,
+    "wilson_hi": 0.6511,
+    "wilson_lo": 0.5301
+   },
+   "0.60": {
+    "actual_rate": 0.6575,
+    "bias": 0.0364,
+    "n": 181,
+    "predicted_mean": 0.6211,
+    "wilson_hi": 0.7227,
+    "wilson_lo": 0.5857
+   }
+  },
+  "pitcher_outs_17": {
+   "0.50": {
+    "actual_rate": 0.5752,
+    "bias": 0.0484,
+    "n": 153,
+    "predicted_mean": 0.5268,
+    "wilson_hi": 0.6507,
+    "wilson_lo": 0.4959
+   },
+   "0.55": {
+    "actual_rate": 0.6121,
+    "bias": 0.0356,
+    "n": 232,
+    "predicted_mean": 0.5765,
+    "wilson_hi": 0.6725,
+    "wilson_lo": 0.548
+   },
+   "0.60": {
+    "actual_rate": 0.6198,
+    "bias": -0.0046,
+    "n": 192,
+    "predicted_mean": 0.6244,
+    "wilson_hi": 0.6855,
+    "wilson_lo": 0.5494
+   }
+  },
+  "strikeouts_4": {
+   "0.45": {
+    "actual_rate": 0.6954,
+    "bias": 0.2207,
+    "n": 174,
+    "predicted_mean": 0.4747,
+    "wilson_hi": 0.759,
+    "wilson_lo": 0.6234
+   },
+   "0.50": {
+    "actual_rate": 0.6733,
+    "bias": 0.1472,
+    "n": 202,
+    "predicted_mean": 0.526,
+    "wilson_hi": 0.7342,
+    "wilson_lo": 0.6059
+   },
+   "0.55": {
+    "actual_rate": 0.7047,
+    "bias": 0.1123,
+    "n": 464,
+    "predicted_mean": 0.5925,
+    "wilson_hi": 0.7444,
+    "wilson_lo": 0.6617
+   },
+   "0.60": {
+    "actual_rate": 0.6966,
+    "bias": 0.0782,
+    "n": 1846,
+    "predicted_mean": 0.6184,
+    "wilson_hi": 0.7172,
+    "wilson_lo": 0.6753
+   }
+  },
+  "strikeouts_5": {
+   "0.60": {
+    "actual_rate": 0.6694,
+    "bias": 0.0592,
+    "n": 983,
+    "predicted_mean": 0.6101,
+    "wilson_hi": 0.6981,
+    "wilson_lo": 0.6394
+   }
+  },
+  "strikeouts_6": {
+   "0.55": {
+    "actual_rate": 0.6211,
+    "bias": 0.0243,
+    "n": 161,
+    "predicted_mean": 0.5968,
+    "wilson_hi": 0.6924,
+    "wilson_lo": 0.5442
+   },
+   "0.60": {
+    "actual_rate": 0.5816,
+    "bias": -0.0237,
+    "n": 239,
+    "predicted_mean": 0.6053,
+    "wilson_hi": 0.6424,
+    "wilson_lo": 0.5182
+   }
+  }
+ }
+}

@@ -466,6 +466,33 @@ check(required_verdict["verdict"] == "NO BET" and required_verdict.get("robust_t
       str(required_verdict))
 
 
+head("21. 2026-08-24 real live case (Jose Urquidy): sample_n==0 (zero real MLB games/starts "
+     "behind this line, pure league-average/fallback workload) caps status at neutral, even "
+     "with a high raw probability and a real-looking lift/lineup/price -- D-tier's own "
+     "stated meaning is 'barely more than a base rate,' and zero evidence is the literal, "
+     "most extreme case of that, not just another point on the same thin-sample scale")
+
+zero_evidence = cand(0.8264, -156, reliability="D", lineup_assumed=False, lift=0.1342)
+zero_evidence["sample_n"] = 0
+r21 = classify(zero_evidence)
+check(r21["status"] == "neutral",
+      "an 82.6% probability with a +13.4pt lift and a clean price still cannot be a Lean "
+      "when sample_n is literally zero", str(r21))
+check(any("no real MLB track record" in reason for reason in r21["status_reasons"]),
+      "the reason names the actual gap (zero real track record), not a generic refusal",
+      str(r21["status_reasons"]))
+
+head("21b. contrast: the IDENTICAL candidate but with sample_n=1 (thin, but not zero) reaches "
+     "its normal D-tier Lean status exactly as before this fix -- the gate is scoped to "
+     "genuinely zero evidence, not tightened for every thin sample")
+
+thin_but_real = cand(0.8264, -156, reliability="D", lineup_assumed=False, lift=0.1342)
+thin_but_real["sample_n"] = 1
+r21b = classify(thin_but_real)
+check(r21b["status"] == "lean",
+      "one real game/start of evidence is enough to keep the existing D-tier Lean path "
+      "reachable -- unaffected by the zero-evidence gate", str(r21b))
+
 n_pass = sum(1 for ok, _, _ in _results if ok)
 n_total = len(_results)
 print("\n" + "=" * 78)

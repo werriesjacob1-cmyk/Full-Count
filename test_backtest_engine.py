@@ -276,6 +276,38 @@ check(row10.get("calibrated_prob") == cand10.get("hit_probability"),
 check(row10.get("calibrated_by") == "hits", "calibrated_by carried through too",
       f"got {row10.get('calibrated_by')!r}")
 
+head("11. REAL BUG, 2026-08-24 accuracy investigation: predicted_prob must fall back to "
+     "hit_probability when raw_hit_probability is a REAL KEY set to None (every candidate "
+     "from generate_picks.py's per-family builders carries this -- best.get('raw_prob') is "
+     "None until apply_calibration() overwrites it, and 7 of 13 markets have no fitted "
+     "curve to ever overwrite it with), not just when the key is absent entirely. "
+     "dict.get(key, default) only falls back on an ABSENT key -- a present key holding None "
+     "silently wins, which is exactly what made backtest/rows_backfill.jsonl 100% null on "
+     "predicted_prob for home_run/total_bases/singles/doubles/triples/runs/rbis despite "
+     "every one of those candidates having a real, non-null hit_probability the whole time")
+
+cand11 = {"projection": {"stat": "total_bases", "needs": 2, "value": 1.5}, "game_pk": 1,
+         "player_id": 9, "name": "Uncalibrated Market Player", "hit_probability": 0.61,
+         "score": 65.0, "raw_hit_probability": None, "calibrated_by": None}
+row11 = bt.to_row("2026-06-14", cand11, graded6)
+check(row11.get("predicted_prob") == 0.61,
+      "predicted_prob falls back to the real hit_probability, not the explicitly-None "
+      "raw_hit_probability key",
+      f"got predicted_prob={row11.get('predicted_prob')!r}")
+
+head("11b. the same fallback still correctly stays RAW (not calibrated) when "
+     "raw_hit_probability genuinely WAS set by a real calibration transform -- 11 must not "
+     "have fixed the null-fallback bug by breaking check 10's raw-vs-calibrated distinction")
+
+cand11b = {"projection": {"stat": "hits", "needs": 1, "value": 0.5}, "game_pk": 1,
+          "player_id": 10, "name": "Calibrated Market Player", "hit_probability": 0.70,
+          "raw_hit_probability": 0.55, "calibrated_by": "hits"}
+row11b = bt.to_row("2026-06-14", cand11b, graded6)
+check(row11b.get("predicted_prob") == 0.55,
+      "predicted_prob is still the real pre-calibration 0.55, never the calibrated 0.70, "
+      "when raw_hit_probability was genuinely set (not the None-default sentinel)",
+      f"got predicted_prob={row11b.get('predicted_prob')!r}")
+
 n_pass = sum(1 for ok, _, _ in _results if ok)
 n_total = len(_results)
 print("\n" + "=" * 78)

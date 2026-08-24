@@ -15,17 +15,29 @@ into recommendation.classify_recommendation()'s mandatory (require_robust=
 True, PR #54/A1) pessimistic-end robustness test at prop_probability.
 value_verdict().
 
-THE FIX: no defensible calibrated-interval method exists yet (see the
-2026-08-19 audit and this fix's own PR description for why a mechanical
-sigmoid-transform of the endpoints is NOT considered defensible here -- it
+THE FIX: no defensible calibrated-interval method existed at the time (see
+the 2026-08-19 audit and this fix's own PR description for why a mechanical
+sigmoid-transform of the endpoints is NOT considered defensible -- it
 ignores the fitted curve's own uncertainty, which is severe in
-under-supported regions). So a line's prob_ci/ci is withheld (set to None)
+under-supported regions). So a line's prob_ci/ci was withheld (set to None)
 the moment that line is actually calibrated, in BOTH the primary-line path
 (generate_picks.attach_reliability) and the alternate-line path
-(generate_picks.apply_calibration's _calibrate_option_list). Downstream,
-the ALREADY-CORRECT A1 fail-closed behavior (missing ci -> robust=False,
-never invented) does the rest -- this fix changes no code in
-recommendation.py or prop_probability.py at all.
+(generate_picks.apply_calibration's _calibrate_option_list). This file still
+locks that fail-closed default in for line_options/alternatives, and for
+the primary line whenever no real historical evidence exists.
+
+2026-08-24 UPDATE, accuracy investigation: attach_reliability() now has a
+SECOND, real way to earn a primary-line prob_ci back -- backtest/
+reliability_bands.py's historically-measured bands (see generate_picks.
+historical_prob_ci's own docstring). This is NOT a reversion of H1: it is
+a different, real interval built from real graded historical outcomes at
+the CALIBRATED probability's own bucket (attach_reliability runs AFTER
+apply_calibration in score_slate's call order, so c["hit_probability"] is
+already the calibrated number by the time historical_prob_ci sees it) --
+never a raw-scale Wilson interval borrowed from the wrong number, which is
+the one thing H1 actually forbids. Section 1b/3b below prove the new path
+is scale-correct; sections 1/2/3 are otherwise unchanged and still prove
+the ABSENT-by-default behavior whenever no real band exists.
 
     /tmp/mlbvenv/bin/python3 test_h1_ci_calibration_scale_integrity.py
 """
@@ -59,6 +71,15 @@ import os
 import generate_picks as gp
 import recommendation as rec
 import prop_probability as pp
+
+
+def set_reliability_bands(bands):
+    """Force generate_picks.historical_prob_ci()'s cache to a controlled
+    fixture, decoupling these checks from backtest/reliability_bands.json's
+    real, still-growing content (which legitimately changes as backtest/
+    rows_backfill.jsonl grows -- these checks must stay deterministic
+    regardless of what real coverage currently exists on disk)."""
+    gp._RELIABILITY_BANDS_CACHE = bands
 
 
 def make_candidate(stat, needs, hit_probability, hits, n, lift=0.10, market_odds=-150,
@@ -101,10 +122,12 @@ def classify(c):
 
 
 head("1. END-TO-END: a calibrated market's primary line reaches classify_recommendation() "
-     "with NO ci at all, never a raw-scale one -- the exact bug this fix closes, proven "
-     "through the real pipeline functions (apply_calibration -> attach_reliability -> "
-     "classify_recommendation), not a mock of any of them")
+     "with NO ci at all, never a raw-scale one, WHEN NO REAL HISTORICAL BAND COVERS IT -- "
+     "the exact bug this fix closes, proven through the real pipeline functions "
+     "(apply_calibration -> attach_reliability -> classify_recommendation), not a mock of any "
+     "of them")
 
+set_reliability_bands({})  # no historical coverage at all -- the pre-2026-08-24 world
 c, emp = make_candidate("hits", 1, hit_probability=0.75, hits=75, n=100, lift=0.15)
 gp.apply_calibration([c], ({"hits": lambda p: p * 0.90}, None))
 gp.attach_reliability([c], emp_batters={1: emp}, emp_pitchers={})
@@ -114,8 +137,9 @@ check(abs(c["hit_probability"] - 0.675) < 1e-9,
       "sanity: hit_probability really did move to the calibrated value (0.75*0.90=0.675)",
       f"got {c['hit_probability']}")
 check("prob_ci" not in c or c.get("prob_ci") is None,
-      "prob_ci is honestly absent on the calibrated line -- NOT the raw-scale Wilson interval "
-      "a pre-fix run would have attached from the same rate table", f"got {c.get('prob_ci')}")
+      "prob_ci is honestly absent on the calibrated line when no historical band covers it -- "
+      "NOT the raw-scale Wilson interval a pre-fix run would have attached from the same rate "
+      "table", f"got {c.get('prob_ci')}")
 result = classify(c)
 check(result["status"] != "top_pick",
       "classify_recommendation() correctly refuses Top Pick status without a defensible "
@@ -128,6 +152,43 @@ check("no defensible confidence interval" in verdict["why"],
       "the actual reason surfaced to a reader is the honest one A1 already writes for a "
       "missing interval -- this fix produces that exact path, not a new one",
       verdict["why"])
+
+head("1b. 2026-08-24 UPDATE: the SAME calibrated line, but a real historical reliability band "
+     "now covers its exact (stat, needs, bucket) cell -- prob_ci is now attached, and it is "
+     "built around the CALIBRATED 67.5%, never the raw 75% -- proving the new mechanism does "
+     "NOT reintroduce the scale-mismatch bug H1 exists to prevent")
+
+set_reliability_bands({
+    "hits_1": {"0.65": {"n": 500, "actual_rate": 0.66, "predicted_mean": 0.665,
+                        "bias": -0.005, "wilson_lo": 0.62, "wilson_hi": 0.70}},
+})
+c1b, emp1b = make_candidate("hits", 1, hit_probability=0.75, hits=75, n=100, lift=0.15)
+gp.apply_calibration([c1b], ({"hits": lambda p: p * 0.90}, None))
+gp.attach_reliability([c1b], emp_batters={1: emp1b}, emp_pitchers={})
+check(abs(c1b["hit_probability"] - 0.675) < 1e-9, "sanity: still calibrated to 0.675",
+      f"got {c1b['hit_probability']}")
+check(c1b.get("prob_ci") is not None, "a real historical band now produces a prob_ci",
+      f"got {c1b.get('prob_ci')}")
+if c1b.get("prob_ci"):
+    lo, hi = c1b["prob_ci"]
+    check(lo < 0.675 < hi or abs(lo - 0.675) < 0.15,
+          "the interval is centered on/near the CALIBRATED 0.675, not the raw 0.75 -- proving "
+          "this is a scale-correct interval, not the exact bug H1 forbids",
+          f"got [{lo}, {hi}] around calibrated 0.675 (raw was 0.75)")
+    check(hi < 0.9, "sanity: the interval is a real, bounded band, not degenerate",
+          f"got hi={hi}")
+check(c1b.get("prob_ci_source") == "historical_reliability_band",
+      "the source is explicitly labeled so a reader (or a future audit) can always tell this "
+      "interval came from the historical-band mechanism, not the per-player empirical path",
+      f"got {c1b.get('prob_ci_source')!r}")
+result1b = classify(c1b)
+check(result1b["status"] == "top_pick",
+      "with a real, defensible pessimistic-end estimate now available, this candidate -- "
+      "probability, evidence, lineup and price all otherwise clean -- can finally reach Top "
+      "Pick. This is the actual eligibility restoration the 2026-08-24 investigation set out "
+      "to build, proven end-to-end through the unmodified real classify_recommendation()",
+      str(result1b))
+set_reliability_bands({})  # reset for the sections that follow
 
 head("2. Contrast: the IDENTICAL candidate, but this market has NO calibrator (no curve "
      "applies) -- keeps its real Wilson CI and DOES reach Top Pick, proving the fix is "
@@ -147,8 +208,10 @@ check(result2["status"] == "top_pick",
       "already-correct uncalibrated path", str(result2))
 
 head("3. Each of the three currently-calibrated real markets (hits, hits_runs_rbis, "
-     "strikeouts) gets honest CI absence when calibrated -- not just 'hits' from check 1")
+     "strikeouts) gets honest CI absence when calibrated AND no historical band covers it -- "
+     "not just 'hits' from check 1")
 
+set_reliability_bands({})
 for stat in ("hits", "hits_runs_rbis", "strikeouts"):
     c3, emp3 = make_candidate(stat, 1, hit_probability=0.70, hits=70, n=100, lift=0.12)
     gp.apply_calibration([c3], ({stat: lambda p: p * 0.85}, None))
