@@ -2,7 +2,7 @@
   "schema_version": 1,
   "identity_schema_version": 2,
   "rollout_version": "pre-phase-v-live-lifecycle-v1",
-  "updated_at": "2026-08-18T20:33:11.970227+00:00",
+  "updated_at": "2026-08-24T23:28:18.172722+00:00",
   "migration": {
     "version": "pre-phase-v-live-lifecycle-v1",
     "completed_at": "2026-08-17T23:14:57+00:00",
@@ -504,6 +504,698 @@
         "qualification_timestamp": "2026-08-18T20:31:16.728190+00:00",
         "board_timestamp": "2026-08-18T20:31:16.694267+00:00",
         "slate_date": "2026-08-18"
+      }
+    },
+    "fc2:823097:player-642215:hits_runs_rbis:1:over": {
+      "canonical_id": "fc2:823097:player-642215:hits_runs_rbis:1:over",
+      "settlement_identity": [
+        "823097",
+        [
+          "player",
+          "642215"
+        ],
+        "hits_runs_rbis",
+        "1",
+        "over"
+      ],
+      "slate_date": "2026-08-24",
+      "first_published_at": "2026-08-24T23:28:18.172722+00:00",
+      "publication_provenance": {
+        "artifact_id": "b160a5053602b33da68243220b0395bd869cbc60600287ebda113b13b3ef5869",
+        "source_commit": "21601ab06ab4edefc9448b21c6944d49379548fb",
+        "workflow_run_id": "32789280296",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-08-24T23:28:06.718101+00:00",
+        "data_hash": "6d6a1acc17258dc1a48abffbeec8e49f5d050a503a2ea9841a6375fa39d36507",
+        "live_hash": "ce9a75efd886f607812092856c3d14c031926811dcb186e961d63339af99e293"
+      },
+      "snapshot": {
+        "id": "fc2:823097:player-642215:hits_runs_rbis:1:over",
+        "identity_version": 2,
+        "game_pk": 823097,
+        "player_id": 642215,
+        "combo_player_ids": null,
+        "type": "batter",
+        "name": "Weston Wilson",
+        "team": "Seattle Mariners",
+        "matchup": "Philadelphia Phillies @ Seattle Mariners",
+        "game_start": "2026-08-25T01:40:00Z",
+        "stat": "hits_runs_rbis",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "hits_runs_rbis",
+          "value": 0.5,
+          "needs": 1
+        },
+        "prop": "Over 0.5 Hits+Runs+RBIs",
+        "hit_probability": 0.6174,
+        "market_odds": -125,
+        "market_implied": 0.5556,
+        "market_edge": 0.0618,
+        "market_hold": null,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (B), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (10.3 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "Projected 3.63 PA (slot 8, 3.08-run implied team total)",
+          "Platoon: R bat vs RHP (unfavorable)",
+          "Opposing SP ERA 2.92",
+          "L7 avg EV 82.8mph (league ~88.5)"
+        ],
+        "watchouts": [
+          "L7 sample is thin (6 PA) \u2014 treat recent-form read with caution",
+          "wOBA vs xwOBA: 0.297 vs 0.267 (+0.030) \u2014 outperforming his contact quality, regression risk"
+        ],
+        "prob_ci": [
+          0.6041,
+          0.649
+        ],
+        "reliability": "B",
+        "reliability_note": null,
+        "sample_n": 46,
+        "lineup_assumed": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "1f206a09",
+          "prediction_timestamp": "2026-08-24T23:25:25.866233+00:00",
+          "odds_fetched_at": "2026-08-24T23:25:17.888193+00:00",
+          "board_generated_at": "2026-08-24T23:25:25.855120+00:00"
+        },
+        "qualification_timestamp": "2026-08-24T23:25:25.866233+00:00",
+        "board_timestamp": "2026-08-24T23:25:25.855120+00:00",
+        "slate_date": "2026-08-24"
+      }
+    },
+    "fc2:823097:player-702222:hits_runs_rbis:1:over": {
+      "canonical_id": "fc2:823097:player-702222:hits_runs_rbis:1:over",
+      "settlement_identity": [
+        "823097",
+        [
+          "player",
+          "702222"
+        ],
+        "hits_runs_rbis",
+        "1",
+        "over"
+      ],
+      "slate_date": "2026-08-24",
+      "first_published_at": "2026-08-24T23:28:18.172722+00:00",
+      "publication_provenance": {
+        "artifact_id": "b160a5053602b33da68243220b0395bd869cbc60600287ebda113b13b3ef5869",
+        "source_commit": "21601ab06ab4edefc9448b21c6944d49379548fb",
+        "workflow_run_id": "32789280296",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-08-24T23:28:06.718101+00:00",
+        "data_hash": "6d6a1acc17258dc1a48abffbeec8e49f5d050a503a2ea9841a6375fa39d36507",
+        "live_hash": "ce9a75efd886f607812092856c3d14c031926811dcb186e961d63339af99e293"
+      },
+      "snapshot": {
+        "id": "fc2:823097:player-702222:hits_runs_rbis:1:over",
+        "identity_version": 2,
+        "game_pk": 823097,
+        "player_id": 702222,
+        "combo_player_ids": null,
+        "type": "batter",
+        "name": "Justin Crawford",
+        "team": "Philadelphia Phillies",
+        "matchup": "Philadelphia Phillies @ Seattle Mariners",
+        "game_start": "2026-08-25T01:40:00Z",
+        "stat": "hits_runs_rbis",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "hits_runs_rbis",
+          "value": 0.5,
+          "needs": 1
+        },
+        "prop": "Over 0.5 Hits+Runs+RBIs",
+        "hit_probability": 0.661,
+        "market_odds": -150,
+        "market_implied": 0.6,
+        "market_edge": 0.061,
+        "market_hold": null,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (A), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (10.5 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "Projected 3.52 PA (slot 9, 3.42-run implied team total)",
+          "Platoon: L bat vs RHP (favorable)",
+          "Opposing SP ERA 3.35",
+          "L7 avg EV 85.7mph (league ~88.5)"
+        ],
+        "watchouts": [],
+        "prob_ci": [
+          0.6502,
+          0.6842
+        ],
+        "reliability": "A",
+        "reliability_note": null,
+        "sample_n": 117,
+        "lineup_assumed": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "1f206a09",
+          "prediction_timestamp": "2026-08-24T23:25:25.866233+00:00",
+          "odds_fetched_at": "2026-08-24T23:25:17.888193+00:00",
+          "board_generated_at": "2026-08-24T23:25:25.855120+00:00"
+        },
+        "qualification_timestamp": "2026-08-24T23:25:25.866233+00:00",
+        "board_timestamp": "2026-08-24T23:25:25.855120+00:00",
+        "slate_date": "2026-08-24"
+      }
+    },
+    "fc2:823992:player-642350:hits:1:over": {
+      "canonical_id": "fc2:823992:player-642350:hits:1:over",
+      "settlement_identity": [
+        "823992",
+        [
+          "player",
+          "642350"
+        ],
+        "hits",
+        "1",
+        "over"
+      ],
+      "slate_date": "2026-08-24",
+      "first_published_at": "2026-08-24T23:28:18.172722+00:00",
+      "publication_provenance": {
+        "artifact_id": "b160a5053602b33da68243220b0395bd869cbc60600287ebda113b13b3ef5869",
+        "source_commit": "21601ab06ab4edefc9448b21c6944d49379548fb",
+        "workflow_run_id": "32789280296",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-08-24T23:28:06.718101+00:00",
+        "data_hash": "6d6a1acc17258dc1a48abffbeec8e49f5d050a503a2ea9841a6375fa39d36507",
+        "live_hash": "ce9a75efd886f607812092856c3d14c031926811dcb186e961d63339af99e293"
+      },
+      "snapshot": {
+        "id": "fc2:823992:player-642350:hits:1:over",
+        "identity_version": 2,
+        "game_pk": 823992,
+        "player_id": 642350,
+        "combo_player_ids": null,
+        "type": "batter",
+        "name": "Jose Siri",
+        "team": "Los Angeles Angels",
+        "matchup": "Cleveland Guardians @ Los Angeles Angels",
+        "game_start": "2026-08-25T01:38:00Z",
+        "stat": "hits",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "hits",
+          "value": 0.5,
+          "needs": 1
+        },
+        "prop": "Over 0.5 Hits",
+        "hit_probability": 0.6087,
+        "market_odds": -125,
+        "market_implied": 0.5556,
+        "market_edge": 0.0531,
+        "market_hold": null,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (B), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (9.4 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "Projected 4.02 PA (slot 5, 3.23-run implied team total)",
+          "Platoon: R bat vs LHP (favorable)",
+          "Pitch-type exploit: RV/100 +2.5 vs FF (opposing SP throws it 39.1% of the time)",
+          "Opposing SP ERA 2.54"
+        ],
+        "watchouts": [
+          "AVG vs xBA: 0.257 vs 0.229 (+0.028) \u2014 outperforming his contact quality, regression risk"
+        ],
+        "prob_ci": [
+          0.5999,
+          0.6373
+        ],
+        "reliability": "B",
+        "reliability_note": null,
+        "sample_n": 64,
+        "lineup_assumed": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "1f206a09",
+          "prediction_timestamp": "2026-08-24T23:25:25.866233+00:00",
+          "odds_fetched_at": "2026-08-24T23:25:17.888193+00:00",
+          "board_generated_at": "2026-08-24T23:25:25.855120+00:00"
+        },
+        "qualification_timestamp": "2026-08-24T23:25:25.866233+00:00",
+        "board_timestamp": "2026-08-24T23:25:25.855120+00:00",
+        "slate_date": "2026-08-24"
+      }
+    },
+    "fc2:823097:player-621493:hits_runs_rbis:1:over": {
+      "canonical_id": "fc2:823097:player-621493:hits_runs_rbis:1:over",
+      "settlement_identity": [
+        "823097",
+        [
+          "player",
+          "621493"
+        ],
+        "hits_runs_rbis",
+        "1",
+        "over"
+      ],
+      "slate_date": "2026-08-24",
+      "first_published_at": "2026-08-24T23:28:18.172722+00:00",
+      "publication_provenance": {
+        "artifact_id": "b160a5053602b33da68243220b0395bd869cbc60600287ebda113b13b3ef5869",
+        "source_commit": "21601ab06ab4edefc9448b21c6944d49379548fb",
+        "workflow_run_id": "32789280296",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-08-24T23:28:06.718101+00:00",
+        "data_hash": "6d6a1acc17258dc1a48abffbeec8e49f5d050a503a2ea9841a6375fa39d36507",
+        "live_hash": "ce9a75efd886f607812092856c3d14c031926811dcb186e961d63339af99e293"
+      },
+      "snapshot": {
+        "id": "fc2:823097:player-621493:hits_runs_rbis:1:over",
+        "identity_version": 2,
+        "game_pk": 823097,
+        "player_id": 621493,
+        "combo_player_ids": null,
+        "type": "batter",
+        "name": "Taylor Ward",
+        "team": "Seattle Mariners",
+        "matchup": "Philadelphia Phillies @ Seattle Mariners",
+        "game_start": "2026-08-25T01:40:00Z",
+        "stat": "hits_runs_rbis",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "hits_runs_rbis",
+          "value": 0.5,
+          "needs": 1
+        },
+        "prop": "Over 0.5 Hits+Runs+RBIs",
+        "hit_probability": 0.699,
+        "market_odds": -185,
+        "market_implied": 0.6491,
+        "market_edge": 0.0499,
+        "market_hold": null,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (A), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (9.8 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "Projected 4.0 PA (slot 5, 3.08-run implied team total)",
+          "Platoon: R bat vs RHP (unfavorable)",
+          "Opposing SP ERA 2.92",
+          "L7 avg EV 86.0mph (league ~88.5)"
+        ],
+        "watchouts": [
+          "L7 sample is thin (5 PA) \u2014 treat recent-form read with caution"
+        ],
+        "prob_ci": [
+          0.6882,
+          0.7221
+        ],
+        "reliability": "A",
+        "reliability_note": null,
+        "sample_n": 123,
+        "lineup_assumed": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "1f206a09",
+          "prediction_timestamp": "2026-08-24T23:25:25.866233+00:00",
+          "odds_fetched_at": "2026-08-24T23:25:17.888193+00:00",
+          "board_generated_at": "2026-08-24T23:25:25.855120+00:00"
+        },
+        "qualification_timestamp": "2026-08-24T23:25:25.866233+00:00",
+        "board_timestamp": "2026-08-24T23:25:25.855120+00:00",
+        "slate_date": "2026-08-24"
+      }
+    },
+    "fc2:823992:player-694203:hits_runs_rbis:1:over": {
+      "canonical_id": "fc2:823992:player-694203:hits_runs_rbis:1:over",
+      "settlement_identity": [
+        "823992",
+        [
+          "player",
+          "694203"
+        ],
+        "hits_runs_rbis",
+        "1",
+        "over"
+      ],
+      "slate_date": "2026-08-24",
+      "first_published_at": "2026-08-24T23:28:18.172722+00:00",
+      "publication_provenance": {
+        "artifact_id": "b160a5053602b33da68243220b0395bd869cbc60600287ebda113b13b3ef5869",
+        "source_commit": "21601ab06ab4edefc9448b21c6944d49379548fb",
+        "workflow_run_id": "32789280296",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-08-24T23:28:06.718101+00:00",
+        "data_hash": "6d6a1acc17258dc1a48abffbeec8e49f5d050a503a2ea9841a6375fa39d36507",
+        "live_hash": "ce9a75efd886f607812092856c3d14c031926811dcb186e961d63339af99e293"
+      },
+      "snapshot": {
+        "id": "fc2:823992:player-694203:hits_runs_rbis:1:over",
+        "identity_version": 2,
+        "game_pk": 823992,
+        "player_id": 694203,
+        "combo_player_ids": null,
+        "type": "batter",
+        "name": "Denzer Guzman",
+        "team": "Los Angeles Angels",
+        "matchup": "Cleveland Guardians @ Los Angeles Angels",
+        "game_start": "2026-08-25T01:38:00Z",
+        "stat": "hits_runs_rbis",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "hits_runs_rbis",
+          "value": 0.5,
+          "needs": 1
+        },
+        "prop": "Over 0.5 Hits+Runs+RBIs",
+        "hit_probability": 0.6767,
+        "market_odds": -170,
+        "market_implied": 0.6296,
+        "market_edge": 0.0471,
+        "market_hold": null,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (B), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (9.4 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "Projected 3.64 PA (slot 8, 3.23-run implied team total)",
+          "Platoon: R bat vs LHP (favorable)",
+          "Opposing SP ERA 2.54",
+          "L7 avg EV 90.0mph (league ~88.5)"
+        ],
+        "watchouts": [],
+        "prob_ci": [
+          0.6659,
+          0.6998
+        ],
+        "reliability": "B",
+        "reliability_note": null,
+        "sample_n": 53,
+        "lineup_assumed": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "1f206a09",
+          "prediction_timestamp": "2026-08-24T23:25:25.866233+00:00",
+          "odds_fetched_at": "2026-08-24T23:25:17.888193+00:00",
+          "board_generated_at": "2026-08-24T23:25:25.855120+00:00"
+        },
+        "qualification_timestamp": "2026-08-24T23:25:25.866233+00:00",
+        "board_timestamp": "2026-08-24T23:25:25.855120+00:00",
+        "slate_date": "2026-08-24"
+      }
+    },
+    "fc2:823097:player-669016:hits_runs_rbis:1:over": {
+      "canonical_id": "fc2:823097:player-669016:hits_runs_rbis:1:over",
+      "settlement_identity": [
+        "823097",
+        [
+          "player",
+          "669016"
+        ],
+        "hits_runs_rbis",
+        "1",
+        "over"
+      ],
+      "slate_date": "2026-08-24",
+      "first_published_at": "2026-08-24T23:28:18.172722+00:00",
+      "publication_provenance": {
+        "artifact_id": "b160a5053602b33da68243220b0395bd869cbc60600287ebda113b13b3ef5869",
+        "source_commit": "21601ab06ab4edefc9448b21c6944d49379548fb",
+        "workflow_run_id": "32789280296",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-08-24T23:28:06.718101+00:00",
+        "data_hash": "6d6a1acc17258dc1a48abffbeec8e49f5d050a503a2ea9841a6375fa39d36507",
+        "live_hash": "ce9a75efd886f607812092856c3d14c031926811dcb186e961d63339af99e293"
+      },
+      "snapshot": {
+        "id": "fc2:823097:player-669016:hits_runs_rbis:1:over",
+        "identity_version": 2,
+        "game_pk": 823097,
+        "player_id": 669016,
+        "combo_player_ids": null,
+        "type": "batter",
+        "name": "Brandon Marsh",
+        "team": "Philadelphia Phillies",
+        "matchup": "Philadelphia Phillies @ Seattle Mariners",
+        "game_start": "2026-08-25T01:40:00Z",
+        "stat": "hits_runs_rbis",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "hits_runs_rbis",
+          "value": 0.5,
+          "needs": 1
+        },
+        "prop": "Over 0.5 Hits+Runs+RBIs",
+        "hit_probability": 0.6907,
+        "market_odds": -185,
+        "market_implied": 0.6491,
+        "market_edge": 0.0416,
+        "market_hold": null,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (A), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (9.0 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "Projected 3.78 PA (slot 7, 3.42-run implied team total)",
+          "Platoon: L bat vs RHP (favorable)",
+          "Opposing SP ERA 3.35",
+          "L7 avg EV 85.4mph (league ~88.5)"
+        ],
+        "watchouts": [
+          "BvP: 2-for-17 vs Logan Gilbert (standard error \u00b18 pts on a 17-AB career sample -- weighted lightly on that basis, not just because the count looks small)"
+        ],
+        "prob_ci": [
+          0.6799,
+          0.7138
+        ],
+        "reliability": "A",
+        "reliability_note": null,
+        "sample_n": 124,
+        "lineup_assumed": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "1f206a09",
+          "prediction_timestamp": "2026-08-24T23:25:25.866233+00:00",
+          "odds_fetched_at": "2026-08-24T23:25:17.888193+00:00",
+          "board_generated_at": "2026-08-24T23:25:25.855120+00:00"
+        },
+        "qualification_timestamp": "2026-08-24T23:25:25.866233+00:00",
+        "board_timestamp": "2026-08-24T23:25:25.855120+00:00",
+        "slate_date": "2026-08-24"
+      }
+    },
+    "fc2:825041:player-814439:hits_runs_rbis:1:over": {
+      "canonical_id": "fc2:825041:player-814439:hits_runs_rbis:1:over",
+      "settlement_identity": [
+        "825041",
+        [
+          "player",
+          "814439"
+        ],
+        "hits_runs_rbis",
+        "1",
+        "over"
+      ],
+      "slate_date": "2026-08-24",
+      "first_published_at": "2026-08-24T23:28:18.172722+00:00",
+      "publication_provenance": {
+        "artifact_id": "b160a5053602b33da68243220b0395bd869cbc60600287ebda113b13b3ef5869",
+        "source_commit": "21601ab06ab4edefc9448b21c6944d49379548fb",
+        "workflow_run_id": "32789280296",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-08-24T23:28:06.718101+00:00",
+        "data_hash": "6d6a1acc17258dc1a48abffbeec8e49f5d050a503a2ea9841a6375fa39d36507",
+        "live_hash": "ce9a75efd886f607812092856c3d14c031926811dcb186e961d63339af99e293"
+      },
+      "snapshot": {
+        "id": "fc2:825041:player-814439:hits_runs_rbis:1:over",
+        "identity_version": 2,
+        "game_pk": 825041,
+        "player_id": 814439,
+        "combo_player_ids": null,
+        "type": "batter",
+        "name": "Ryan Waldschmidt",
+        "team": "Arizona Diamondbacks",
+        "matchup": "Chicago Cubs @ Arizona Diamondbacks",
+        "game_start": "2026-08-25T01:40:00Z",
+        "stat": "hits_runs_rbis",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "hits_runs_rbis",
+          "value": 0.5,
+          "needs": 1
+        },
+        "prop": "Over 0.5 Hits+Runs+RBIs",
+        "hit_probability": 0.6727,
+        "market_odds": -175,
+        "market_implied": 0.6364,
+        "market_edge": 0.0363,
+        "market_hold": null,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (B), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (8.3 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "Projected 3.58 PA (slot 9, 4.08-run implied team total)",
+          "Platoon: R bat vs RHP (unfavorable)",
+          "Opposing SP ERA 4.58",
+          "L7 avg EV 81.7mph (league ~88.5)"
+        ],
+        "watchouts": [
+          "Public heavy on Arizona Diamondbacks (money% trails tickets% by 14 pts) \u2014 sharp money is fading this side",
+          "L7 AVG 0.417 isn't backed by barrel rate (0.0%) \u2014 likely BABIP-driven, due to cool off"
+        ],
+        "prob_ci": [
+          0.6619,
+          0.6958
+        ],
+        "reliability": "B",
+        "reliability_note": null,
+        "sample_n": 63,
+        "lineup_assumed": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "1f206a09",
+          "prediction_timestamp": "2026-08-24T23:25:25.866233+00:00",
+          "odds_fetched_at": "2026-08-24T23:25:17.888193+00:00",
+          "board_generated_at": "2026-08-24T23:25:25.855120+00:00"
+        },
+        "qualification_timestamp": "2026-08-24T23:25:25.866233+00:00",
+        "board_timestamp": "2026-08-24T23:25:25.855120+00:00",
+        "slate_date": "2026-08-24"
+      }
+    },
+    "fc2:823097:player-663728:hits_runs_rbis:1:over": {
+      "canonical_id": "fc2:823097:player-663728:hits_runs_rbis:1:over",
+      "settlement_identity": [
+        "823097",
+        [
+          "player",
+          "663728"
+        ],
+        "hits_runs_rbis",
+        "1",
+        "over"
+      ],
+      "slate_date": "2026-08-24",
+      "first_published_at": "2026-08-24T23:28:18.172722+00:00",
+      "publication_provenance": {
+        "artifact_id": "b160a5053602b33da68243220b0395bd869cbc60600287ebda113b13b3ef5869",
+        "source_commit": "21601ab06ab4edefc9448b21c6944d49379548fb",
+        "workflow_run_id": "32789280296",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-08-24T23:28:06.718101+00:00",
+        "data_hash": "6d6a1acc17258dc1a48abffbeec8e49f5d050a503a2ea9841a6375fa39d36507",
+        "live_hash": "ce9a75efd886f607812092856c3d14c031926811dcb186e961d63339af99e293"
+      },
+      "snapshot": {
+        "id": "fc2:823097:player-663728:hits_runs_rbis:1:over",
+        "identity_version": 2,
+        "game_pk": 823097,
+        "player_id": 663728,
+        "combo_player_ids": null,
+        "type": "batter",
+        "name": "Cal Raleigh",
+        "team": "Seattle Mariners",
+        "matchup": "Philadelphia Phillies @ Seattle Mariners",
+        "game_start": "2026-08-25T01:40:00Z",
+        "stat": "hits_runs_rbis",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "hits_runs_rbis",
+          "value": 0.5,
+          "needs": 1
+        },
+        "prop": "Over 0.5 Hits+Runs+RBIs",
+        "hit_probability": 0.6304,
+        "market_odds": -150,
+        "market_implied": 0.6,
+        "market_edge": 0.0304,
+        "market_hold": null,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (A), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (7.5 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "wOBA vs xwOBA: 0.266 vs 0.295 (-0.029) \u2014 underperforming his contact quality, positive regression candidate",
+          "Projected 3.86 PA (slot 6, 3.08-run implied team total)",
+          "Platoon: S bat vs RHP (favorable)",
+          "Opposing SP ERA 2.92"
+        ],
+        "watchouts": [],
+        "prob_ci": [
+          0.6171,
+          0.662
+        ],
+        "reliability": "A",
+        "reliability_note": null,
+        "sample_n": 97,
+        "lineup_assumed": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "1f206a09",
+          "prediction_timestamp": "2026-08-24T23:25:25.866233+00:00",
+          "odds_fetched_at": "2026-08-24T23:25:17.888193+00:00",
+          "board_generated_at": "2026-08-24T23:25:25.855120+00:00"
+        },
+        "qualification_timestamp": "2026-08-24T23:25:25.866233+00:00",
+        "board_timestamp": "2026-08-24T23:25:25.855120+00:00",
+        "slate_date": "2026-08-24"
       }
     }
   }
