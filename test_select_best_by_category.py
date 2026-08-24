@@ -211,6 +211,30 @@ check(abs(out12["hits"][0]["market_edge"] - round(0.648 - pp.implied_probability
       "(requirement: pricing/market_edge must use the calibrated probability)",
       f"got {out12['hits'][0]['market_edge']}")
 
+head("13. 2026-08-24 combined-strikeouts settlement investigation: combo_player_ids survives "
+     "into the single-line branch's output row -- real bug, found live via 28/28 real "
+     "combined_strikeouts rows in results/grades_*.json permanently stuck 'ungraded: missing "
+     "combo_player_ids'. Same failure class as lineup_assumed in check 11: this function's own "
+     "fixed field list silently dropped combo_player_ids, the one field grade_pick()'s "
+     "combined_strikeouts branch requires to settle from two starters' box scores.")
+
+combo_pitcher_out = gp.select_best_by_category(
+    [single_line_pitcher(name="Starter A & Starter B", stat="combined_strikeouts", needs=11,
+                         type="pitcher_combo", combo_player_ids=[501, 502])],
+    {}, fd,
+)
+check(combo_pitcher_out["combined_strikeouts"][0].get("combo_player_ids") == [501, 502],
+      "the single-line branch (pitcher_combo) preserves combo_player_ids -- this is the exact "
+      "field grade_pick() reads to settle from both starters' box scores",
+      f"got {combo_pitcher_out['combined_strikeouts'][0]}")
+
+single_starter_out = gp.select_best_by_category(
+    [single_line_pitcher(name="Solo Starter", stat="strikeouts", needs=5)], {}, fd,
+)
+check(single_starter_out["strikeouts"][0].get("combo_player_ids") is None,
+      "a normal (non-combo) pitcher with no combo_player_ids key stays honestly absent, not "
+      "manufactured", f"got {single_starter_out['strikeouts'][0]}")
+
 n_pass = sum(1 for ok, _, _ in _results if ok)
 n_total = len(_results)
 print("\n" + "=" * 78)
