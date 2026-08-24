@@ -548,8 +548,20 @@ main { max-width: 1180px; margin: 0 auto; padding: 20px 16px 80px; }
 .parlay-legs { display: flex; flex-direction: column; gap: 6px; margin: 10px 0; }
 .parlay-leg { display: flex; justify-content: space-between; font-size: 13px; }
 .streak-strip { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 4px; }
-.streak-chip { flex: none; background: var(--surface); border: 1px solid var(--line); border-radius: 999px; padding: 8px 14px; font-size: 12.5px; cursor: pointer; }
+.streak-chip {
+  flex: none; background: var(--surface); border: 1px solid var(--line); border-radius: 999px;
+  padding: 8px 14px; font-size: 12.5px; cursor: pointer; max-width: 260px;
+}
 .streak-chip b { color: var(--accent); }
+/* A long real name (or a strip that's otherwise all short ones) could
+   otherwise balloon one chip's width and break the strip's rhythm --
+   never hide the streak count or the market label, only the name, and
+   only once it's genuinely too long to fit. */
+.streak-chip-name {
+  display: inline-block; max-width: 130px; overflow: hidden; text-overflow: ellipsis;
+  white-space: nowrap; vertical-align: bottom;
+}
+.streak-chip-stat { color: var(--ink-faint); }
 
 @media (max-width: 480px) {
   .pc-prob { font-size: 38px; }
