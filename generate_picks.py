@@ -6116,6 +6116,17 @@ def quality_control(candidates, game_meta, park_wx, emp_pitchers):
                               f"strikeouts prop assumes normal starter workload from both")
                     break
 
+        # type == "batter" ONLY, verified deliberate 2026-08-24 accuracy
+        # investigation (not an accidental gap): a pitcher candidate's own
+        # batting-order slot is irrelevant to a strikeout/outs prop -- what
+        # matters is (a) a REAL, named starter, which already can't exist
+        # here at all until MLB confirms it (gm["away_sp"]/["home_sp"] !=
+        # "TBD" gates candidate creation itself, well before batting
+        # lineups post) and (b) the OPPOSING team's season-long aggregate
+        # rate, not its exact 1-9 order. So a pitcher candidate correctly
+        # never reaches the is_assumed branch below -- lineup_assumed stays
+        # unset regardless of either team's batting-lineup state. See
+        # test_quality_control.py's own coverage for this (check 8).
         if reason is None and c.get("type") == "batter":
             gp = c.get("game_pk")
             side = "away" if c.get("team") == next(

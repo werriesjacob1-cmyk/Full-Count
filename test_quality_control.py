@@ -170,6 +170,35 @@ check(len(rejected) == 1 and "not confirmed" in rejected[0]["qc_reason"],
       "a candidate whose game isn't in game_meta at all is treated as an unconfirmed lineup, "
       "not a crash", f"got {rejected}")
 
+head("8. 2026-08-24 accuracy investigation, real live finding: pitcher candidates are NEVER "
+     "put through the batting-lineup confirmation check at all -- lineup_assumed stays unset "
+     "for a pitcher regardless of whether either team's batting lineup is confirmed, missing, "
+     "or a guessed fallback. Verified deliberate and correct, not an oversight: a strikeout/"
+     "outs prop needs a REAL, named starting pitcher (never 'TBD' -- see generate_picks.py's "
+     "own gm['away_sp'] != 'TBD' guard before a pitcher candidate is ever built at all, which "
+     "MLB typically confirms 1-5 days out) and the OPPOSING team's season-long aggregate rate, "
+     "neither of which depends on the exact 1-9 batting order the way a batter's own PA-count "
+     "projection does. This test locks that real, already-correct behavior in so a future "
+     "'tighten the lineup gate' change doesn't accidentally start blocking legitimate early-day "
+     "pitcher Top Picks that were never lineup-dependent to begin with.")
+
+for lineup_state_label, away_lu, home_lu in [
+    ("both lineups fully confirmed", CONFIRMED_LINEUP, CONFIRMED_LINEUP),
+    ("both lineups entirely missing", [], []),
+    ("away lineup a guessed fallback", ASSUMED_LINEUP, CONFIRMED_LINEUP),
+]:
+    kept, rejected, assumed = gp.quality_control(
+        [pitcher_pick("strikeouts", player_id=501)],
+        game_meta(away_lineup=away_lu, home_lineup=home_lu), NO_RAIN, {501: REAL_STARTER})
+    check(len(kept) == 1 and not rejected and not assumed,
+          f"pitcher candidate is kept as a normal, non-assumed pick when {lineup_state_label} "
+          "-- the batting-lineup state never touches a pitcher candidate at all",
+          f"got kept={kept} rejected={rejected} assumed={assumed}")
+    if kept:
+        check(not kept[0].get("lineup_assumed"),
+              f"lineup_assumed is falsy on the pitcher candidate when {lineup_state_label}",
+              f"got lineup_assumed={kept[0].get('lineup_assumed')!r}")
+
 n_pass = sum(1 for ok, _, _ in _results if ok)
 n_total = len(_results)
 print("\n" + "=" * 78)
