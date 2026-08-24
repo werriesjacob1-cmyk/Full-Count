@@ -256,6 +256,28 @@ def classify_recommendation(candidate, *, now=None, data_fresh=True, fresh_reaso
     if prob is None:
         return _result("neutral", ["no real probability computed for this line"])
 
+    # 2026-08-24 accuracy investigation, real live case: Jose Urquidy,
+    # recalled from the minors 10 days prior, zero real starts on record
+    # this stint (sample_n=0) -- graded reliability "D" ("very thin sample
+    # -- the number is barely more than a base rate"), yet the board showed
+    # an 82.6% strikeout probability and a +13.4pt "lift" as a Lean, built
+    # entirely from a league-average workload GUESS ("no real start found
+    # for him in the L14 window") stacked on a 35-PA relief sample. D-tier's
+    # own stated meaning is "barely more than a base rate" -- sample_n==0 is
+    # the literal, most extreme case of that description (not thin, ZERO),
+    # and RELIABILITY_TIERS/PITCHER_STARTS_RELIABILITY_TIERS both silently
+    # folded it into the same bucket as "a handful of real starts," letting
+    # a candidate built on pure fallback assumptions still surface as an
+    # actionable Lean with a headline number that looked like a real edge.
+    # A genuinely zero-evidence read is a real 'no opinion' -- exactly what
+    # NEUTRAL already exists to say -- never a Lean, regardless of how large
+    # its raw probability or lift happens to compute.
+    if candidate.get("sample_n") == 0:
+        return _result("neutral", ["no real MLB track record behind this line at all -- "
+                                   "the read leans entirely on league-average/fallback "
+                                   "assumptions rather than this player's own data, so it "
+                                   "cannot stand as even a Lean yet"])
+
     reliability = candidate.get("reliability")
     lineup_assumed = bool(candidate.get("lineup_assumed"))
     lift = candidate.get("lift")

@@ -5120,6 +5120,94 @@ CALIBRATOR_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)),
                                "backtest", "calibrator.json")
 CALIBRATORS_BY_MARKET_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)),
                                           "backtest", "calibrators_by_market.json")
+RELIABILITY_BANDS_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                      "backtest", "reliability_bands.json")
+
+_RELIABILITY_BANDS_CACHE = None
+
+
+def load_reliability_bands():
+    """Load backtest/reliability_bands.json once per process, or None if it
+    doesn't exist yet (a fresh checkout, or before the first
+    reliability_bands.py build). Never fatal -- a board without historical
+    reliability bands falls back to today's existing behavior (no prob_ci
+    for modelled_shrunk/league_only/uncalibrated lines), exactly as before
+    this existed."""
+    global _RELIABILITY_BANDS_CACHE
+    if _RELIABILITY_BANDS_CACHE is not None:
+        return _RELIABILITY_BANDS_CACHE
+    if not os.path.exists(RELIABILITY_BANDS_PATH):
+        _RELIABILITY_BANDS_CACHE = {}
+        return _RELIABILITY_BANDS_CACHE
+    try:
+        with open(RELIABILITY_BANDS_PATH) as f:
+            data = json.load(f)
+        _RELIABILITY_BANDS_CACHE = data.get("bands") or {}
+    except Exception as e:
+        m.warn(f"Reliability bands unreadable ({e}) — no historical prob_ci fallback")
+        _RELIABILITY_BANDS_CACHE = {}
+    return _RELIABILITY_BANDS_CACHE
+
+
+# A cell needs at least this many real graded historical rows before its
+# measured spread is trusted as a genuine market-level answer -- matches
+# backtest/reliability_bands.py's own MIN_BAND_N, restated here rather than
+# imported so this module never depends on importing something under
+# backtest/ at runtime (mirrors load_calibrator()'s own sys.path dance,
+# done deliberately rather than reused, for the same reason).
+MIN_RELIABILITY_BAND_N = 150
+
+
+def historical_prob_ci(stat, needs, prob):
+    """A real, historically-measured confidence interval for a probability
+    this pipeline could not otherwise build one for -- see backtest/
+    reliability_bands.py's own module docstring for the full method and
+    why it is a defensible answer, not an invented one.
+
+    Returns [lo, hi] anchored to THIS candidate's own point estimate `prob`
+    (never replacing it -- only bracketing it), using the REAL historical
+    spread AND bias measured for real graded predictions that landed in the
+    same (stat, needs, probability bucket) cell:
+
+        halfwidth = half the Wilson interval width on the bucket's own
+                    (actual hits, n) count -- real sampling uncertainty on
+                    how well that bucket's true rate is actually known.
+        bias      = bucket's actual hit rate minus its predicted mean --
+                    when negative (the model has historically been
+                    overconfident in this exact bucket), it pulls the
+                    pessimistic end down further; when positive, it widens
+                    the optimistic end instead of tightening the
+                    pessimistic one, so a historically-UNDERconfident
+                    bucket never gets a narrower interval than the honest
+                    sampling noise alone would justify.
+
+    Returns None when no cell exists for this (stat, needs) or the
+    matching bucket never reached MIN_RELIABILITY_BAND_N real rows --
+    failing exactly as closed as an absent prob_ci does today. A market
+    with no backtest coverage yet (or not enough) gets no interval, same
+    as before this function existed."""
+    if prob is None or needs is None:
+        return None
+    # backtest/rows_backfill.jsonl (and therefore reliability_bands.json)
+    # is keyed on backtest/engine.py's PROP_TYPE_BY_STAT schema vocabulary,
+    # which differs from this module's own candidate stat name in exactly
+    # one case: "home_runs" here is "home_run" there (singular -- matches
+    # grade_results.py's own market vocabulary). Every other stat name is
+    # identical in both places (verified directly against PROP_TYPE_BY_STAT).
+    band_stat = "home_run" if stat == "home_runs" else stat
+    bands = load_reliability_bands()
+    cell_group = bands.get(f"{band_stat}_{int(needs)}")
+    if not cell_group:
+        return None
+    bucket = round(min(max(int(float(prob) // 0.05) * 0.05, 0.0), 0.95), 2)
+    cell = cell_group.get(f"{bucket:.2f}")
+    if not cell or cell.get("n", 0) < MIN_RELIABILITY_BAND_N:
+        return None
+    halfwidth = (cell["wilson_hi"] - cell["wilson_lo"]) / 2.0
+    bias = cell["bias"]
+    lo = float(prob) + min(0.0, bias) - halfwidth
+    hi = float(prob) + max(0.0, bias) + halfwidth
+    return [round(max(0.0, lo), 4), round(min(1.0, hi), 4)]
 
 
 def load_calibrator():
@@ -5816,6 +5904,29 @@ def attach_reliability(candidates, emp_batters, emp_pitchers):
                 and not c.get("calibrated_by")):
             lo, hi = _wilson_interval(rate.get("hit", 0), rate.get("n", n) or 1)
             c["prob_ci"] = [round(lo, 4), round(hi, 4)]
+        # 2026-08-24 accuracy investigation: the branch above is the only
+        # per-PLAYER interval this pipeline can build, and it structurally
+        # cannot cover modelled_shrunk/league_only/calibrated lines (see the
+        # long comment above explaining exactly why not). That is correct
+        # as far as it goes, but it made every one of those bases
+        # PERMANENTLY ineligible for Top Pick/Value regardless of how much
+        # real evidence accumulated -- classify_recommendation's
+        # require_robust=True gate has no other way to pass. Real historical
+        # evidence now exists for some of these markets (backtest/
+        # reliability_bands.py, built from backtest/rows_backfill.jsonl's
+        # real graded point-in-time predictions) -- try it whenever the
+        # per-player interval above didn't fire, and use it only when a
+        # market/bucket has actually earned real backtest coverage
+        # (MIN_RELIABILITY_BAND_N rows; see historical_prob_ci's own
+        # docstring). A market/bucket without that coverage yet gets
+        # nothing here either, same fail-closed behavior as before this
+        # existed -- this adds a real path to eligibility, it does not
+        # remove the requirement to earn it.
+        if c.get("prob_ci") is None:
+            hci = historical_prob_ci(stat, needs, c.get("hit_probability"))
+            if hci is not None:
+                c["prob_ci"] = hci
+                c["prob_ci_source"] = "historical_reliability_band"
         c["sample_n"] = int(n)
         tiers = PITCHER_STARTS_RELIABILITY_TIERS if stat in PITCHER_STARTS_STATS else RELIABILITY_TIERS
         for floor, grade, blurb in tiers:

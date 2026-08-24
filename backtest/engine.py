@@ -1119,7 +1119,37 @@ def to_row(date, pick, graded, keep_unpriced=False):
         # exactly the "never fit calibration on already-calibrated values"
         # violation this schema exists to prevent. See calibrated_prob
         # below for the actual policy-classified number.
-        "predicted_prob": pick.get("raw_hit_probability", pick.get("hit_probability")),
+        #
+        # BUG FOUND 2026-08-24, accuracy investigation: this used to be
+        # pick.get("raw_hit_probability", pick.get("hit_probability")).
+        # dict.get(key, default) only falls back when the KEY IS ABSENT --
+        # but every candidate carries a real "raw_hit_probability" key from
+        # construction (generate_picks.py's per-family candidate builders
+        # set it to best.get("raw_prob"), which is None until
+        # apply_calibration() actually overwrites it -- see that function's
+        # own comment: "when none did, raw_hit_probability... correctly
+        # absent below, never invented" -- "absent" there meant semantically
+        # unset, not dict-key-absent). So for every market with no fitted
+        # calibration curve (home_run/total_bases/singles/doubles/triples/
+        # runs/rbis -- 7 of 13) this silently wrote None here on EVERY row,
+        # even though pick["hit_probability"] (verified non-None by the
+        # Unusable guard above) was a perfectly real, usable number the
+        # whole time. Measured on backtest/rows_backfill.jsonl before this
+        # fix: 100% null for those 7 markets, 35%/52% null for hits/
+        # hits_runs_rbis (null whenever calibration didn't run or declined
+        # this exact probability as out-of-support), 0% null for strikeouts/
+        # pitcher_outs/hard_hit_105 (built via a different candidate path
+        # that never pre-sets the key, so the old .get() fallback worked by
+        # accident there). Same "computed, then silently discarded" failure
+        # class this codebase has caught repeatedly elsewhere -- caught here
+        # via the accuracy investigation that needed real historical
+        # predicted-probability coverage for exactly these markets to build
+        # market-level reliability bands (backtest/reliability_bands.py) and
+        # found the coverage wasn't there despite the model having priced
+        # every one of these candidates all along.
+        "predicted_prob": (pick.get("raw_hit_probability")
+                           if pick.get("raw_hit_probability") is not None
+                           else pick.get("hit_probability")),
         "outcome": 1 if grade == "hit" else 0,
         "actual": actual,
         # Kept per-row and NEVER pre-filtered, per SCHEMA.md. A pick that got
