@@ -185,6 +185,65 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-24",
+      "evaluations": [
+        {
+          "prop": "Over 6.5 Strikeouts",
+          "type": "pitcher",
+          "score": 36.9,
+          "notable_signals": 0,
+          "matchup": "Cincinnati Reds @ San Francisco Giants",
+          "game_pk": 823183,
+          "team": "Cincinnati Reds",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_k_pct": 43.0,
+            "same_hand_ratio": 33.3333,
+            "l14_k_pct": 100.0,
+            "env_neutral": 50.0
+          },
+          "hit_probability": 0.3839,
+          "raw_hit_probability": 0.3839,
+          "lift": 0.1607,
+          "reliability": "A",
+          "sample_n": 24,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 6.5,
+            "needs": 7
+          }
+        },
+        {
+          "prop": "Over 17.5 Outs Recorded",
+          "type": "pitcher",
+          "score": 38.2,
+          "notable_signals": 0,
+          "matchup": "Cincinnati Reds @ San Francisco Giants",
+          "game_pk": 823183,
+          "team": "Cincinnati Reds",
+          "side": "away",
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "outs_rate": 0.4995,
+            "avg_outs_per_start": 17.0
+          },
+          "hit_probability": 0.4995,
+          "raw_hit_probability": null,
+          "lift": 0.002,
+          "reliability": "A",
+          "sample_n": 24,
+          "projection": {
+            "stat": "pitcher_outs",
+            "value": 17.5,
+            "needs": 18
+          }
+        }
+      ]
     }
   ]
 }

@@ -1,0 +1,37 @@
+{
+  "player_id": "nrfi_823097",
+  "name": "Philadelphia Phillies @ Seattle Mariners \u2014 1st Inning (Both Teams)",
+  "snapshots": [
+    {
+      "date": "2026-08-24",
+      "evaluations": [
+        {
+          "prop": "No runs in the 1st (both teams)",
+          "type": "game",
+          "score": 62.3,
+          "notable_signals": 0,
+          "matchup": "Philadelphia Phillies @ Seattle Mariners",
+          "game_pk": 823097,
+          "team": null,
+          "side": "both",
+          "lean": "NRFI",
+          "combo_player_ids": null,
+          "signals": {
+            "home_team_scores_p": 0.2506,
+            "away_team_scores_p": 0.3284,
+            "fi_n_starts": 21.0
+          },
+          "hit_probability": 0.5033,
+          "raw_hit_probability": null,
+          "lift": 0.0049,
+          "reliability": "A",
+          "sample_n": 21,
+          "projection": {
+            "stat": "nrfi_combined",
+            "value": 50.3
+          }
+        }
+      ]
+    }
+  ]
+}
