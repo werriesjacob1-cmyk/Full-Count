@@ -2268,6 +2268,41 @@ def score_pitcher_outs(sp_name, sp_id, gm, side, outs_rates, po_prices=None):
     }
 
 
+def _combined_k_starter_note(pitcher_c):
+    """One line summarizing the real drivers behind a single starter's OWN
+    strikeout projection, read directly off his already-scored
+    score_pitcher() candidate. No new computation, no padding: a field
+    that isn't actually known for this start (thin recent-form window, no
+    matched opponent K%, etc.) is simply omitted rather than filled with a
+    guess, and a starter the pipeline genuinely has little on gets a short,
+    honest note instead of a padded one."""
+    pitcher_c = pitcher_c or {}
+    name = pitcher_c.get("name") or "?"
+    proj = (pitcher_c.get("projection") or {}).get("value")
+    exp_bf = pitcher_c.get("expected_bf")
+    k_rate = pitcher_c.get("k_rate")
+    sig = pitcher_c.get("signals") or {}
+    opp_k = sig.get("opp_team_k_pct")
+    l14_k = sig.get("l14_k_pct")
+    csw = sig.get("csw_pct")
+    parts = []
+    if proj is not None:
+        parts.append(f"proj. {proj} Ks")
+    if exp_bf is not None:
+        parts.append(f"{exp_bf:.1f} exp. BF")
+    if k_rate is not None:
+        parts.append(f"K rate {k_rate*100:.1f}%")
+    if opp_k is not None:
+        parts.append(f"opp K% {opp_k:.1f}")
+    if l14_k is not None:
+        parts.append(f"L14 K% {l14_k:.1f}")
+    if csw is not None:
+        parts.append(f"CSW% {csw}")
+    if not parts:
+        return f"{name}: little real data behind this projection yet"
+    return f"{name}: " + ", ".join(parts)
+
+
 def score_combined_strikeouts(gm, away_pitcher_c, home_pitcher_c, combined_prices):
     """"Starting Pitcher Combined Alt Strikeouts" -- found live under the
     same tab fetch_pitcher_outs already scans, a real ladder market
@@ -2331,8 +2366,28 @@ def score_combined_strikeouts(gm, away_pitcher_c, home_pitcher_c, combined_price
     thin = (away_pitcher_c.get("confidence") == "Low" or home_pitcher_c.get("confidence") == "Low")
     if thin:
         score = min(score, 55)
+    # 2026-08-24 explanation-quality pass: this used to be a single
+    # "Model: X% chance..." line and nothing else -- the model probability
+    # restated, not an explanation of what produced it. Each starter's own
+    # score_pitcher() candidate ALREADY carries the real drivers behind his
+    # individual projection (his own projected Ks, expected BF, K rate,
+    # opponent K%, recent-form K%, CSW%) -- _combined_k_starter_note()
+    # below just reads those straight off the candidate, no new
+    # computation, no padding. A starter this pipeline has little on gets
+    # a correspondingly short note instead of a fabricated one.
     why = [f"Model: {best['prob']*100:.1f}% chance of {best['threshold']}+ combined Ks "
-          f"({name_a} + {name_b}), priced at {best['odds']:+d} ({best['base_rate']*100:.1f}% implied)"]
+          f"({name_a} + {name_b}), priced at {best['odds']:+d} ({best['base_rate']*100:.1f}% implied)",
+          _combined_k_starter_note(away_pitcher_c), _combined_k_starter_note(home_pitcher_c)]
+    ump_k = ((away_pitcher_c.get("signals") or {}).get("ump_k_pct")
+             or (home_pitcher_c.get("signals") or {}).get("ump_k_pct"))
+    if ump_k is not None:
+        why.append(f"HP umpire strikeout rate {ump_k:.1f}% for tonight's game")
+    watchouts = ["This is a newer market on the board -- not enough graded combined-strikeout "
+                 "picks yet for a reliability grade. Treat it as unproven until more results come in."]
+    if thin:
+        thin_names = [c.get("name") for c in (away_pitcher_c, home_pitcher_c) if c.get("confidence") == "Low"]
+        watchouts.append(f"Thin evidence behind {' and '.join(n for n in thin_names if n)}'s own strikeout "
+                          f"projection -- capping how much this pick can be trusted")
     alternatives = [{"stat": "combined_strikeouts", "line": o["threshold"] - 0.5, "needs": o["threshold"],
                      "prob": o["prob"], "base_rate": o["base_rate"], "lift": o["lift"], "odds": o["odds"]}
                     for o in opts if o is not best][:3]
@@ -2354,8 +2409,7 @@ def score_combined_strikeouts(gm, away_pitcher_c, home_pitcher_c, combined_price
         "sample_n": None, "alternatives": alternatives,
         "signals": {"combined_k_edge": best["lift"]},
         "score": round(score, 1),
-        "why": why, "watchouts": ["Combined-strikeout picks aren't in the confidence "
-                                   "measurement suite yet -- brand new, treat as unproven."],
+        "why": why, "watchouts": watchouts,
         "notable_signals": 1 if best["lift"] >= 0.05 else 0,
         "confidence": "High" if score >= 70 and not thin else ("Medium" if score >= 55 else "Low"),
     }

@@ -130,6 +130,38 @@ head("7. this market is explicitly flagged as unproven (not in the confidence me
 check(any("unproven" in w or "brand new" in w for w in c["watchouts"]),
       "every combined_strikeouts candidate carries a watchout flagging it as unmeasured",
       f"got {c['watchouts']}")
+check(not any("MLB Stats API" in w or "FanGraphs" in w for w in c["watchouts"]),
+      "the public copy names no internal data provider", f"got {c['watchouts']}")
+
+head("8. 2026-08-24 explanation-quality pass: why now includes each starter's real "
+     "drivers (projected Ks, expected BF, K rate, opponent K%, recent-form K%, CSW%), "
+     "read straight off his own already-scored score_pitcher() candidate -- not just the "
+     "model's restated probability. A thin-data starter gets an honest short note, not "
+     "a padded one.")
+
+rich_away = {**AWAY_C, "name": "JP Sears",
+             "projection": {"stat": "strikeouts", "value": 6.5},
+             "signals": {"opp_team_k_pct": 24.1, "l14_k_pct": 27.3, "csw_pct": 30.2}}
+rich_home = {**HOME_C, "name": "Framber Valdez",
+             "projection": {"stat": "strikeouts", "value": 7.0},
+             "signals": {"opp_team_k_pct": 21.8}}
+c_rich = gp.score_combined_strikeouts(GM, rich_away, rich_home, prices({12: -150, 13: -110}))
+check(any("JP Sears" in w and "proj. 6.5 Ks" in w and "24.0 exp. BF" in w and "opp K% 24.1" in w
+          and "L14 K% 27.3" in w and "CSW% 30.2" in w for w in c_rich["why"]),
+      "the away starter's own driver line carries his real projected Ks/expected BF/K rate/"
+      "opponent K%/recent-form K%/CSW%, not a restated probability", f"got {c_rich['why']}")
+check(any("Framber Valdez" in w and "proj. 7.0 Ks" in w and "opp K% 21.8" in w for w in c_rich["why"]),
+      "the home starter gets his own line with only the fields actually known for him "
+      "(no L14/CSW here) -- not padded with the away starter's numbers",
+      f"got {c_rich['why']}")
+
+thin_away2 = {"player_id": 501, "expected_bf": 24.0, "k_rate": 0.26, "confidence": "High"}
+c_thin_note = gp.score_combined_strikeouts(GM, thin_away2, rich_home, prices({12: -150, 13: -110}))
+check(any(w == "?: 24.0 exp. BF, K rate 26.0%" for w in c_thin_note["why"]),
+      "a starter with no name/projection/signals (only the two fields expected_bf/k_rate "
+      "the function itself requires just to run at all) gets an honest short note -- "
+      "unknown name shown as '?', no opponent-K%/recent-form/CSW fabricated, and no "
+      "padding from the other starter's real numbers", f"got {c_thin_note['why']}")
 
 n_pass = sum(1 for ok, _, _ in _results if ok)
 n_total = len(_results)
