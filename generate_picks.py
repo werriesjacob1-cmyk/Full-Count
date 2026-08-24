@@ -3631,6 +3631,18 @@ def select_best_by_category(candidates, prices, fd, n_per_category=1, k_prices=N
             # real two-sided price on `c` moments earlier in the same run.
             by_category[stat].append({
                 "type": c["type"], "name": c["name"], "player_id": c.get("player_id"),
+                # 2026-08-24 combined-strikeouts settlement investigation:
+                # real bug, found live via 28/28 combined_strikeouts rows in
+                # results/grades_*.json permanently stuck "ungraded: missing
+                # combo_player_ids" -- this fixed field list silently dropped
+                # combo_player_ids, the one field grade_pick()'s
+                # combined_strikeouts branch requires to settle from two
+                # starters' box scores. Every pitcher_combo candidate reaching
+                # the board through this branch (the by-category/dashboard
+                # path, not the primary top10 list) lost its combo identity
+                # here and could never be graded -- same "computed, then
+                # discarded" failure class as lineup_assumed below.
+                "combo_player_ids": c.get("combo_player_ids"),
                 "team": c.get("team"), "matchup": c.get("matchup"), "game_pk": c.get("game_pk"),
                 "side": c.get("side"), "prop": c.get("prop"),
                 "projection": c.get("projection"),
