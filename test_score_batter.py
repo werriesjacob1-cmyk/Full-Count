@@ -132,6 +132,32 @@ c7 = call(batter={"name": "X", "id": 9, "team": "Athletics", "bats": "?"}, opp_s
 check(REQUIRED_KEYS.issubset(c7.keys()),
       "unknown handedness on both sides falls back to the neutral platoon score, not a crash")
 
+head("8. 2026-08-24 explanation-quality fix: opposing SP ERA only lands in `why` (the "
+     "positive-reasons list) when it's actually a FAVORABLE matchup for the batter -- "
+     "previously the raw ERA number was appended to `why` unconditionally, so an elite "
+     "1.90-ERA opposing starter read as a positive reason to like the batter, which is "
+     "backwards. sp_weak = scale(sp_era, 2.5, 6.0) is already directional: high ERA "
+     "(shaky pitcher) -> favorable for the batter; low ERA (elite pitcher) -> unfavorable.")
+
+c8_shaky = call(opp_sp_row={"ERA": 5.80}, opp_sp_hand="R")
+check(any("Opposing SP ERA 5.80" in w for w in c8_shaky["why"]),
+      "a shaky (high) opposing ERA lands in why -- genuinely favorable for the batter",
+      f"got why={c8_shaky['why']}")
+
+c8_elite = call(opp_sp_row={"ERA": 2.10}, opp_sp_hand="R")
+check(not any("Opposing SP ERA" in w for w in c8_elite["why"]),
+      "an elite (low) opposing ERA must NOT land in why -- it is not a reason to like the "
+      "batter, it's the opposite", f"got why={c8_elite['why']}")
+check(any("Opposing SP ERA 2.10" in w and "elite pitcher" in w for w in c8_elite["watchouts"]),
+      "the elite-ERA case instead lands in watchouts, correctly framed as a tough matchup",
+      f"got watchouts={c8_elite['watchouts']}")
+
+c8_mid = call(opp_sp_row={"ERA": 4.10}, opp_sp_hand="R")
+check(not any("Opposing SP ERA" in w for w in c8_mid["why"] + c8_mid["watchouts"]),
+      "a middling ERA (neither clearly favorable nor unfavorable) stays silent in both "
+      "lists rather than padding either one with a non-distinctive number",
+      f"got why={c8_mid['why']} watchouts={c8_mid['watchouts']}")
+
 n_pass = sum(1 for ok, _, _ in _results if ok)
 n_total = len(_results)
 print("\n" + "=" * 78)

@@ -1551,7 +1551,21 @@ def score_batter(batter, gm, opp_sp_row, opp_sp_id, opp_sp_hand, park_wx, batter
     if exploit:
         why.append(f"Pitch-type exploit: RV/100 {exploit['run_value_per_100']:+.1f} vs {exploit['pitch_type']} "
                     f"(opposing SP throws it {exploit['usage_pct']}% of the time)")
-    if sp_era is not None: why.append(f"Opposing SP ERA {sp_era:.2f}")
+    # 2026-08-24 explanation-quality fix: this used to append the opposing
+    # SP's ERA to `why` (the positive-reasons list) unconditionally,
+    # regardless of whether that ERA was actually favorable to the batter.
+    # sp_weak = scale(sp_era, 2.5, 6.0) already exists and is genuinely
+    # directional (low ERA/elite pitcher -> low score -> bad for the
+    # batter; high ERA/shaky pitcher -> high score -> good for the batter)
+    # -- reuse it instead of restating the raw number as if a bare ERA
+    # digit were self-evidently good news. A pitcher in the neutral middle
+    # isn't a real reason either way, so this stays silent there rather
+    # than padding the list.
+    if sp_era is not None:
+        if sp_weak >= 65:
+            why.append(f"Opposing SP ERA {sp_era:.2f} — shaky matchup for the pitcher")
+        elif sp_weak <= 35:
+            watchouts.append(f"Opposing SP ERA {sp_era:.2f} — elite pitcher, tough matchup")
     if l7.get("avg_EV"): why.append(f"L7 avg EV {l7['avg_EV']:.1f}mph (league ~{LEAGUE_AVG_EV})")
     if l7.get("barrel_pct") is not None: why.append(f"L7 barrel% {l7['barrel_pct']}")
     if bs_trend is not None and bs_trend >= 1.0: why.append(f"Bat speed trending up L14 ({bs_trend:+.1f}mph 2nd-half vs 1st-half)")
@@ -2018,16 +2032,29 @@ def score_pitcher(sp_name, sp_id, sp_hand, gm, side, pit_season_lookup, l14_form
                     f"found for him in the L14 window)")
         watchouts.append("No L14 start found for this pitcher — workload defaulted to the league average")
 
+    # 2026-08-24 explanation-quality fix: this note used to name the
+    # specific internal data source and its failure mode directly to the
+    # user ("MLB Stats API -- FanGraphs team page unreachable", "FanGraphs
+    # and MLB Stats API team pages both unreachable") -- raw provider/outage
+    # detail that means nothing to a bettor and reads like leaked debug
+    # output (real complaint, Jose Urquidy card). "team" and "mlb_team" are
+    # both genuine full-team K% numbers, so they read identically in public
+    # copy; the confirmed-batters-average fallback is a real methodology
+    # difference (a partial-lineup proxy, not the full team rate) so THAT
+    # distinction stays, phrased in terms of what the number IS rather than
+    # why the preferred source was unavailable.
     if opp_team_k_pct is not None:
-        if opp_k_source == "team":
+        if opp_k_source in ("team", "mlb_team"):
             k_note = f"Opposing team K% {opp_team_k_pct:.1f}"
-        elif opp_k_source == "mlb_team":
-            k_note = f"Opposing team K% {opp_team_k_pct:.1f} (MLB Stats API — FanGraphs team page unreachable)"
         else:
-            k_note = f"Opposing lineup K% {opp_team_k_pct:.1f} (avg of {opp_k_source} confirmed batters — FanGraphs and MLB Stats API team pages both unreachable)"
+            k_note = f"Opposing lineup K% {opp_team_k_pct:.1f} (based on {opp_k_source} confirmed lineup batters, not the full team rate)"
+        why = [k_note]
     else:
-        k_note = "Opposing team K% unavailable (FanGraphs and MLB Stats API team pages both empty, and no confirmed/assumed lineup batters matched)"
-    why = [k_note]
+        # Missing data is not a reason TO like the pick -- belongs in
+        # watchouts, not why (this unconditionally landed in `why`, the
+        # positive-reasons list, until this fix).
+        watchouts.append("Opposing team strikeout tendency unavailable — no team or confirmed-lineup K% data could be matched")
+        why = []
     if workload_note: why.append(workload_note)
     why.append(f"{same_hand}/{known} known-hand opposing batters same-handed" if known else "Opposing lineup handedness mostly unknown")
     if k_pct: why.append(f"Season K% {k_pct}")
