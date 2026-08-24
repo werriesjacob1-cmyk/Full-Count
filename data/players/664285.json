@@ -176,7 +176,7 @@
       "date": "2026-08-24",
       "evaluations": [
         {
-          "prop": "Over 4.5 Strikeouts",
+          "prop": "Over 3.5 Strikeouts",
           "type": "pitcher",
           "score": 36.9,
           "notable_signals": 0,
@@ -192,21 +192,21 @@
             "l14_k_pct": 0.0,
             "env_neutral": 50.0
           },
-          "hit_probability": 0.4867,
-          "raw_hit_probability": 0.4867,
-          "lift": -0.0272,
+          "hit_probability": 0.61,
+          "raw_hit_probability": 0.6798,
+          "lift": -0.0822,
           "reliability": "A",
           "sample_n": 25,
           "projection": {
             "stat": "strikeouts",
-            "value": 4.5,
-            "needs": 5
+            "value": 3.5,
+            "needs": 4
           }
         },
         {
           "prop": "Over 18.5 Outs Recorded",
           "type": "pitcher",
-          "score": 14.3,
+          "score": 14.6,
           "notable_signals": 0,
           "matchup": "Tampa Bay Rays @ Detroit Tigers",
           "game_pk": 824235,
@@ -215,12 +215,12 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.2357,
+            "outs_rate": 0.235,
             "avg_outs_per_start": 16.64
           },
-          "hit_probability": 0.2357,
+          "hit_probability": 0.235,
           "raw_hit_probability": null,
-          "lift": 0.0179,
+          "lift": 0.0209,
           "reliability": "A",
           "sample_n": 25,
           "projection": {
