@@ -447,6 +447,63 @@ function propRow(p) {
   </button>`;
 }
 
+// Categorizes the real status_reasons text classify_recommendation() already
+// attached to every non-top-pick candidate, so an empty Top Picks section can
+// explain WHY honestly instead of just showing a generic "nothing today"
+// message. Matched against the exact phrasing recommendation.py emits --
+// see classify_recommendation()'s _result() calls -- so this only ever
+// reports real, already-computed reasons, never an invented category.
+function topPickGapSummary(props) {
+  const counts = { lineupPending: 0, pricePending: 0, closeRead: 0, thinSample: 0, other: 0 };
+  for (const p of props) {
+    if (p.recommendation_status === "top_pick") continue;
+    const reason = (p.status_reasons || [])[0] || "";
+    if (reason.includes("lineup slot is still a projection")) counts.lineupPending++;
+    else if (reason.includes("no market price is posted yet")) counts.pricePending++;
+    else if (reason.includes("doesn't clear every Top Pick requirement")) counts.closeRead++;
+    else if (reason.includes("too thin a sample")) counts.thinSample++;
+    else counts.other++;
+  }
+  let earliestStart = null;
+  for (const g of (DATA.schedule || [])) {
+    if (!g.game_start) continue;
+    const d = new Date(g.game_start);
+    if (!isNaN(d) && (!earliestStart || d < earliestStart)) earliestStart = d;
+  }
+  return { counts, earliestStart };
+}
+
+function topPickGapExplainer(props) {
+  const { counts, earliestStart } = topPickGapSummary(props);
+  const lines = [];
+  if (counts.lineupPending) {
+    lines.push(`<li><b>${counts.lineupPending}</b> props are waiting on a confirmed starting lineup — Full Count won't call a Top Pick off a projected lineup slot.</li>`);
+  }
+  if (counts.pricePending) {
+    lines.push(`<li><b>${counts.pricePending}</b> real, positive reads have no live sportsbook price posted yet to grade against.</li>`);
+  }
+  if (counts.closeRead) {
+    lines.push(`<li><b>${counts.closeRead}</b> props have a real, positive read that falls just short of the full Top Pick bar (these are today's Leans).</li>`);
+  }
+  if (counts.thinSample) {
+    lines.push(`<li><b>${counts.thinSample}</b> props look promising but rest on too thin a track record to stand behind yet.</li>`);
+  }
+  const startNote = earliestStart
+    ? `First pitch tonight is ${gameTimeLabel(earliestStart.toISOString())} — lineups typically confirm shortly before then, which is when most of the "waiting on lineup" props above can resolve one way or the other.`
+    : "";
+  return `<div class="empty-state">
+    <div class="es-icon">⚾</div>
+    <h3>No bets currently meet Full Count's Top Pick standards.</h3>
+    <p>That's a real, honest result — not every slate has one. Here's exactly where tonight's candidates stand:</p>
+    ${lines.length ? `<ul class="gap-reasons">${lines.join("")}</ul>` : ""}
+    ${startNote ? `<p class="gap-start-note">${esc(startNote)}</p>` : ""}
+    <p>Explore Leans below, or browse the full research board for every prop Full Count can analyze tonight.</p>
+    <div class="es-cta">
+      <a class="btn btn-primary" href="#/props">Browse All Props</a>
+    </div>
+  </div>`;
+}
+
 // ══════════════════════════════════════════════════════════════════════
 //  TODAY PAGE
 // ══════════════════════════════════════════════════════════════════════
@@ -476,14 +533,7 @@ function renderToday() {
   if (topPicks.length) {
     html += `<div class="card-grid">${topPicks.map((p, i) => pickCard(p, { rank: i + 1 })).join("")}</div>`;
   } else {
-    html += `<div class="empty-state">
-      <div class="es-icon">⚾</div>
-      <h3>No bets currently meet Full Count's Top Pick standards.</h3>
-      <p>That's a real, honest result — not every slate has one. Explore Leans below, or browse the full research board for every prop Full Count can analyze tonight.</p>
-      <div class="es-cta">
-        <a class="btn btn-primary" href="#/props">Browse All Props</a>
-      </div>
-    </div>`;
+    html += topPickGapExplainer(props);
   }
   html += `</section>`;
 
