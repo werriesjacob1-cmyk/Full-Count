@@ -221,12 +221,21 @@ cand2 = {
     ],
     "alternatives": [],
 }
+# 2026-08-24 second-CI-path fix: a nulled ci can now be earned back by a real
+# historical reliability band (own dedicated coverage in
+# test_h1_ci_calibration_scale_integrity.py sections 9-13). Isolate this check
+# from backtest/reliability_bands.json's real, still-growing content so it
+# keeps testing the support-boundary guard itself, not whichever buckets
+# happen to have real coverage today.
+_prior_bands_cache = gp._RELIABILITY_BANDS_CACHE
+gp._RELIABILITY_BANDS_CACHE = {}
 gp.apply_calibration([cand2], (per_market, None))
+gp._RELIABILITY_BANDS_CACHE = _prior_bands_cache
 check(abs(cand2["hit_probability"] - 0.56) < 1e-9 and cand2.get("calibrated_by") == "hits",
       "sanity: this one really was calibrated (0.70*0.8=0.56)", str(cand2["hit_probability"]))
 check(cand2["line_options"][0]["ci"] is None,
-      "a REAL transform (in-support) still correctly nulls the now-stale ci -- H1's own "
-      "behavior, unregressed", str(cand2["line_options"][0]))
+      "a REAL transform (in-support) still correctly nulls the now-stale ci when no "
+      "historical band covers it -- H1's own behavior, unregressed", str(cand2["line_options"][0]))
 
 head("11. No double calibration: a candidate evaluated once produces exactly one "
      "application of the curve, in-support or out -- verified both ways")

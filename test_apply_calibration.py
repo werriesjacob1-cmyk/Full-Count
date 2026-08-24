@@ -235,6 +235,16 @@ head("17. H1 fix (2026-08-19 structural audit): calibration WITHHOLDS a line_opt
      "method exists yet, so the honest answer is None, not the stale raw interval. An "
      "option's ci is left untouched ONLY when no calibrator actually applied to it.")
 
+# 2026-08-24 second-CI-path fix: a withheld ci can now be earned back by a real
+# historical reliability band (see test_h1_ci_calibration_scale_integrity.py
+# sections 9-13 for that mechanism's own dedicated coverage). Force the cache
+# empty here so THIS section keeps testing the underlying suppression rule in
+# isolation, decoupled from backtest/reliability_bands.json's real, still-
+# growing content -- otherwise this check would start failing the day a real
+# band happens to cover hits' 0.55-0.60 bucket, which is not what it tests.
+_prior_bands_cache = gp._RELIABILITY_BANDS_CACHE
+gp._RELIABILITY_BANDS_CACHE = {}
+
 c5 = cand("hits", hit_probability=0.70, base_rate=0.50)
 c5["line_options"] = [
     {"stat": "hits", "needs": 1, "line": 0.5, "prob": 0.70, "base_rate": 0.50, "lift": 0.20,
@@ -280,6 +290,8 @@ check(opt_runs["ci"] == [0.30, 0.51],
 check(opt_runs["prob"] == 0.40 and opt_runs.get("calibrated_by") is None,
       "sanity: runs really was left uncalibrated (no curve applies at all), which is why its "
       "ci correctly survives untouched", str(opt_runs))
+
+gp._RELIABILITY_BANDS_CACHE = _prior_bands_cache  # restore real cache state for later sections
 
 head("18. 2026-08-18 A4 follow-up (found by independent subagent review): c[\"alternatives\"] "
      "(consumed by select_shadow_tracking(), a SEPARATE list of dict objects from "

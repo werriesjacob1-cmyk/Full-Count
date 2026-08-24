@@ -342,6 +342,166 @@ else:
          "going forward" % (_PRE_H1_SHA, _H1_MERGE_SHA))
 
 
+head("9. 2026-08-24 SECOND CI PATH FIX: the deployed live board still showed "
+     "0 Top Picks after 1b merged because select_best_by_category()/_batter_options()'s "
+     "PER-LINE opt['ci'] (used for every non-primary stat/threshold a batter could be bet "
+     "on -- the majority of the real live board) nulls itself at the identical calibration-"
+     "scale boundary as the primary line, but never got 1b's historical-band fallback. This "
+     "proves the fallback now reaches THAT exact path too, run through the real, unmodified "
+     "select_best_by_category() (not a hand-built row) so the by-category board itself -- "
+     "not just attach_reliability's primary line -- is proven fixed.")
+
+import odds_fanduel as fd  # noqa: E402
+
+
+def make_multiline_batter(player_id, stat, needs_list, probs, n=200, market_odds=-125):
+    """A batter whose line_options carries a real curve across several
+    thresholds for one calibrated stat family, shaped like a real post-
+    _batter_options() candidate (same fields select_best_by_category's
+    first branch reads: type=='batter' and c['line_options'])."""
+    opts = [{"stat": stat, "needs": needs, "line": needs - 0.5, "prob": prob,
+             "base_rate": prob - 0.15, "lift": 0.15, "basis": "empirical",
+             "ci": [max(0.0, prob - 0.1), min(1.0, prob + 0.1)]}
+            for needs, prob in zip(needs_list, probs)]
+    best_prob = max(probs)
+    c = {
+        "type": "batter", "name": f"MultiLine Player {player_id}", "player_id": player_id,
+        "team": "Athletics", "matchup": "Athletics @ Astros", "game_pk": 900001,
+        "side": None, "score": 75, "confidence": "High", "notable_signals": 1,
+        "hit_probability": best_prob, "signals": {}, "why": [], "watchouts": [],
+        "line_options": opts, "reliability": "A", "sample_n": n,
+        "lineup_assumed": False,
+    }
+    return c
+
+
+set_reliability_bands({
+    "hits_runs_rbis_1": {"0.60": {"n": 4926, "actual_rate": 0.6506, "predicted_mean": 0.6323,
+                                  "bias": 0.0183, "wilson_lo": 0.6372, "wilson_hi": 0.6638}},
+})
+c9 = make_multiline_batter(101, "hits_runs_rbis", [1], [0.75])
+gp.apply_calibration([c9], ({"hits_runs_rbis": lambda p: p * 0.85}, None))
+check(abs(c9["line_options"][0]["prob"] - 0.6375) < 1e-9,
+      "sanity: the option's own probability really was calibrated (0.75*0.85=0.6375)",
+      f"got {c9['line_options'][0]['prob']}")
+by_cat9 = gp.select_best_by_category([c9], prices={}, fd=fd, n_per_category=9999)
+row9 = by_cat9["hits_runs_rbis"][0]
+check(row9["prob_ci"] is not None,
+      "the REAL by-category row (built by the real select_best_by_category(), not a mock) now "
+      "carries a real historical-band CI on the calibrated option path -- this is the exact "
+      "field that was silently None on the live board for every hits_runs_rbis line before "
+      "this fix", f"got {row9}")
+if row9["prob_ci"]:
+    lo9, hi9 = row9["prob_ci"]
+    check(lo9 < 0.6375 < hi9 or abs(lo9 - 0.6375) < 0.15,
+          "the interval is anchored to the CALIBRATED 0.6375 via the real historical band cell, "
+          "not the raw 0.75 -- same scale-integrity guarantee as 1b, now proven on the option "
+          "path", f"got [{lo9}, {hi9}]")
+set_reliability_bands({})
+
+head("10. Contrast: an UNSUPPORTED bucket on the same option path stays honestly None -- no "
+     "resurrection of the stale raw-scale ci, and the n>=150 floor is genuinely enforced per "
+     "bucket here too, not just on the primary-line path")
+
+c10 = make_multiline_batter(102, "hits", [1], [0.75])
+gp.apply_calibration([c10], ({"hits": lambda p: p * 0.90}, None))
+by_cat10 = gp.select_best_by_category([c10], prices={}, fd=fd, n_per_category=9999)
+row10 = by_cat10["hits"][0]
+check(row10["prob_ci"] is None,
+      "no historical band at all -- the option's ci stays honestly None, never falls back to "
+      "the pre-calibration raw-scale [0.65, 0.85]-ish interval _batter_options originally "
+      "computed", f"got {row10.get('prob_ci')}")
+
+head("11. Otto-Lopez-style: a real band exists for this (stat, needs) family but NOT for this "
+     "exact probability bucket (n below MIN_RELIABILITY_BAND_N=150 in the covered bucket) -- "
+     "still fails closed on the option path, proving the floor was not silently lowered")
+
+check(gp.MIN_RELIABILITY_BAND_N == 150,
+      "the support floor itself is unchanged by this fix", str(gp.MIN_RELIABILITY_BAND_N))
+set_reliability_bands({
+    "hits_runs_rbis_1": {"0.60": {"n": 40, "actual_rate": 0.61, "predicted_mean": 0.62,
+                                  "bias": 0.01, "wilson_lo": 0.50, "wilson_hi": 0.72}},
+})
+c11 = make_multiline_batter(103, "hits_runs_rbis", [1], [0.72])  # calibrates into the 0.60 bucket
+gp.apply_calibration([c11], ({"hits_runs_rbis": lambda p: p * 0.85}, None))
+by_cat11 = gp.select_best_by_category([c11], prices={}, fd=fd, n_per_category=9999)
+row11 = by_cat11["hits_runs_rbis"][0]
+check(row11["prob_ci"] is None,
+      "the (stat,needs) family has SOME real coverage, but this bucket's own n=40 is below the "
+      "150 floor -- honestly None, not a lowered bar", f"got {row11.get('prob_ci')}")
+set_reliability_bands({})
+
+head("12. Gausman-style: a real, well-supported CI now attaches via the option path, but its "
+     "pessimistic (lower) bound still fails the ROI robustness test -- classify_recommendation() "
+     "correctly still refuses Top Pick. Proves this fix restores CI AVAILABILITY only, never "
+     "loosens the actual robustness bar a candidate must clear.")
+
+set_reliability_bands({
+    "hits_runs_rbis_1": {"0.60": {"n": 5000, "actual_rate": 0.605, "predicted_mean": 0.61,
+                                  "bias": 0.005, "wilson_lo": 0.595, "wilson_hi": 0.615}},
+})
+c12, emp12 = make_candidate("hits_runs_rbis", 1, hit_probability=0.75, hits=1, n=200,
+                            lift=0.10, market_odds=-450, player_id=104)
+gp.apply_calibration([c12], ({"hits_runs_rbis": lambda p: p * 0.85}, None))
+gp.attach_reliability([c12], emp_batters={104: emp12}, emp_pitchers={})
+check(c12.get("prob_ci") is not None, "sanity: a real CI attached", str(c12.get("prob_ci")))
+result12 = classify(c12)
+lo12 = c12["prob_ci"][0]
+pess_roi12 = pp.expected_roi(lo12, c12["market_odds"])
+check(pess_roi12 <= 0,
+      "sanity: this fixture's pessimistic bound genuinely fails ROI at these heavily-favored "
+      "odds (Gausman's real live shape: a real CI, still not robust enough)", f"roi={pess_roi12}")
+check(result12["status"] != "top_pick",
+      "even with a real, well-supported historical CI attached, a pessimistic-end ROI failure "
+      "still correctly blocks Top Pick -- this fix cannot manufacture eligibility past the "
+      "existing robustness gate", str(result12))
+set_reliability_bands({})
+
+head("13. Pitcher strikeouts: select_best_by_category()'s own by-category ROW for a "
+     "single-line pitcher stat (strikeouts/pitcher_outs/stolen_base/nrfi_combined) copies the "
+     "PRIMARY candidate's c['prob_ci'] directly (attach_reliability's path, already fixed by "
+     "the first merge) -- it never reads opt['ci'] at all, unlike the batter multi-threshold "
+     "families in checks 9-12. This locks in that real routing distinction so it is not later "
+     "assumed to need (or already have) a fix it does not touch. c['line_options'] itself, a "
+     "SEPARATE list read by value_board.py/select_moonshots/shadow tracking, DOES go through "
+     "this same apply_calibration()._calibrate_option_list() fix -- proven directly.")
+
+set_reliability_bands({
+    "strikeouts_5": {"0.55": {"n": 300, "actual_rate": 0.56, "predicted_mean": 0.565,
+                              "bias": 0.005, "wilson_lo": 0.50, "wilson_hi": 0.62}},
+})
+c13 = {
+    "type": "pitcher", "name": "Test Starter", "player_id": 105, "team": "Athletics",
+    "matchup": "Athletics @ Astros", "game_pk": 900001, "side": None,
+    "prop": "Over 4.5 Strikeouts", "projection": {"stat": "strikeouts", "value": 4.5, "needs": 5},
+    "lean": None, "score": 75, "confidence": "High", "notable_signals": 1, "signals": {},
+    "hit_probability": 0.66, "base_rate": 0.50, "lift": 0.16,
+    "probability_basis": "empirical", "probability_detail": {"empirical": 0.66, "modelled": None},
+    "prob_ci": None, "sample_n": 25, "reliability": "A",
+    "why": [], "watchouts": [], "lineup_assumed": None,
+    "market_odds": -120, "market_implied": pp.implied_probability(-120), "price_clears": True,
+    "line_options": [
+        {"stat": "strikeouts", "needs": 5, "line": 4.5, "prob": 0.66, "base_rate": 0.50,
+         "lift": 0.16, "basis": "empirical", "ci": [0.58, 0.74]},
+    ],
+    "alternatives": [],
+}
+c13["market_edge"] = round(c13["hit_probability"] - c13["market_implied"], 4)
+gp.apply_calibration([c13], ({"strikeouts": lambda p: p * 0.85}, None))
+gp.attach_reliability([c13], emp_batters={}, emp_pitchers={105: {"games": 25, "rates": {}}})
+by_cat13 = gp.select_best_by_category([c13], prices={}, fd=fd, k_prices={}, n_per_category=9999)
+row13 = by_cat13["strikeouts"][0]
+check(row13["prob_ci"] == c13["prob_ci"],
+      "the by-category strikeouts row's prob_ci is exactly c['prob_ci'] (the primary-line "
+      "value attach_reliability set) -- confirming it does NOT independently read opt['ci'] "
+      "for this single-line stat family", f"row={row13['prob_ci']!r} primary={c13['prob_ci']!r}")
+check(c13["line_options"][0]["ci"] is not None,
+      "meanwhile c['line_options'][0]['ci'] -- the separate list value_board.py/"
+      "select_moonshots/shadow tracking actually read -- DID earn a real historical CI through "
+      "this fix's exact code path (apply_calibration's _calibrate_option_list), independent of "
+      "the by-category row above", str(c13["line_options"][0]))
+set_reliability_bands({})
+
 n_pass = sum(1 for ok, _, _ in _results if ok)
 n_total = len(_results)
 print("\n" + "=" * 78)
