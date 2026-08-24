@@ -181,7 +181,9 @@ input, select, textarea { font: inherit; color: inherit; }
 .header-actions { display: flex; align-items: center; gap: 6px; flex: none; }
 .icon-btn {
   display: flex; align-items: center; justify-content: center;
-  width: 38px; height: 38px; border-radius: 999px; border: 1px solid var(--line);
+  /* 44px is the standard minimum comfortable touch target (Apple HIG /
+     WCAG 2.5.5) -- was 38px, visibly tight to hit accurately on a phone. */
+  width: 44px; height: 44px; border-radius: 999px; border: 1px solid var(--line);
   background: var(--surface-2); color: var(--ink-dim); cursor: pointer;
 }
 .icon-btn:hover { color: var(--ink); border-color: var(--ink-faint); }
@@ -362,6 +364,16 @@ main { max-width: 1180px; margin: 0 auto; padding: 20px 16px 80px; }
 .empty-state h3 { font-size: 17px; margin-bottom: 6px; color: var(--ink); }
 .empty-state p { font-size: 13.5px; max-width: 46ch; margin: 0 auto; }
 .empty-state .es-cta { margin-top: 14px; display: inline-flex; gap: 10px; }
+.empty-state .gap-reasons {
+  text-align: left; max-width: 52ch; margin: 14px auto; padding: 0; list-style: none;
+  display: flex; flex-direction: column; gap: 8px;
+}
+.empty-state .gap-reasons li {
+  font-size: 13px; line-height: 1.45; padding: 10px 12px;
+  background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-md);
+}
+.empty-state .gap-reasons b { color: var(--ink); }
+.empty-state .gap-start-note { font-size: 12.5px; max-width: 50ch; color: var(--ink-dim); }
 
 .loading-state, .error-state {
   display: flex; flex-direction: column; align-items: center; justify-content: center;
@@ -373,6 +385,12 @@ main { max-width: 1180px; margin: 0 auto; padding: 20px 16px 80px; }
   animation: spin .8s linear infinite;
 }
 @keyframes spin { to { transform: rotate(360deg); } }
+
+.value-explainer {
+  background: var(--surface-2); border: 1px solid var(--line-soft); border-radius: var(--radius);
+  padding: 12px 16px; font-size: 13px; line-height: 1.5; color: var(--ink-dim); margin-bottom: 16px;
+}
+.value-explainer b { color: var(--ink); }
 
 /* ── Buttons ──────────────────────────────────────────────────────── */
 .btn {
@@ -396,6 +414,7 @@ main { max-width: 1180px; margin: 0 auto; padding: 20px 16px 80px; }
 .filter-select, .filter-chip-btn {
   border: 1px solid var(--line); background: var(--surface); color: var(--ink);
   border-radius: 999px; padding: 8px 13px; font-size: 13px; font-weight: 600; cursor: pointer;
+  min-height: 40px;
 }
 .filter-chip-btn[aria-pressed="true"] { background: var(--accent-soft); border-color: var(--accent); color: var(--accent-bright); }
 .filter-count { font-size: 12.5px; color: var(--ink-faint); margin-left: auto; white-space: nowrap; }
@@ -453,20 +472,23 @@ main { max-width: 1180px; margin: 0 auto; padding: 20px 16px 80px; }
   .detail-sheet-panel { left: 0; top: auto; width: auto; max-height: 88vh; border-radius: 20px 20px 0 0; }
 }
 .detail-close {
-  position: absolute; top: 14px; right: 14px; width: 34px; height: 34px; border-radius: 50%;
+  position: absolute; top: 14px; right: 14px; width: 44px; height: 44px; border-radius: 50%;
   border: 1px solid var(--line); background: var(--surface-2); cursor: pointer; color: var(--ink-dim);
 }
 .detail-close svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; }
-.detail-head { margin-bottom: 18px; padding-right: 40px; }
+.detail-head { margin-bottom: 18px; padding-right: 52px; }
 .detail-head h2 { font-size: 21px; margin-bottom: 3px; }
 .detail-head .d-sub { color: var(--ink-faint); font-size: 13px; }
 .detail-hero {
-  display: flex; align-items: center; gap: 18px; background: var(--surface-2);
+  display: flex; align-items: flex-start; gap: 18px; background: var(--surface-2);
   border-radius: var(--radius); padding: 16px; margin-bottom: 18px;
 }
 .detail-hero .prob-big { font-family: var(--font-mono); font-size: 42px; font-weight: 700; line-height: 1; }
+.hero-metric-label { font-size: 10.5px; color: var(--ink-faint); text-transform: uppercase; letter-spacing: .03em; margin-top: 3px; max-width: 90px; line-height: 1.25; }
 .detail-hero .hero-meta { font-size: 12.5px; color: var(--ink-faint); }
 .detail-hero .hero-meta div { margin-top: 2px; }
+.hero-value-line b { color: var(--ink); font-family: var(--font-mono); }
+.hero-value-note { display: block; margin-top: 1px; font-size: 11.5px; }
 .detail-section { margin-bottom: 20px; }
 .detail-section h3 { font-size: 13px; text-transform: uppercase; letter-spacing: .04em; color: var(--ink-faint); margin-bottom: 9px; }
 .reason-list { display: flex; flex-direction: column; gap: 8px; }
@@ -525,7 +547,7 @@ main { max-width: 1180px; margin: 0 auto; padding: 20px 16px 80px; }
   font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 999px;
 }
 .star-btn {
-  flex: none; width: 34px; height: 34px; border-radius: 50%; border: 1px solid var(--line);
+  flex: none; width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--line);
   background: var(--surface-2); cursor: pointer; display: flex; align-items: center; justify-content: center;
   color: var(--ink-faint);
 }
@@ -548,12 +570,29 @@ main { max-width: 1180px; margin: 0 auto; padding: 20px 16px 80px; }
 .parlay-legs { display: flex; flex-direction: column; gap: 6px; margin: 10px 0; }
 .parlay-leg { display: flex; justify-content: space-between; font-size: 13px; }
 .streak-strip { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 4px; }
-.streak-chip { flex: none; background: var(--surface); border: 1px solid var(--line); border-radius: 999px; padding: 8px 14px; font-size: 12.5px; cursor: pointer; }
+.streak-chip {
+  flex: none; background: var(--surface); border: 1px solid var(--line); border-radius: 999px;
+  padding: 8px 14px; font-size: 12.5px; cursor: pointer; max-width: 260px;
+}
 .streak-chip b { color: var(--accent); }
+/* A long real name (or a strip that's otherwise all short ones) could
+   otherwise balloon one chip's width and break the strip's rhythm --
+   never hide the streak count or the market label, only the name, and
+   only once it's genuinely too long to fit. */
+.streak-chip-name {
+  display: inline-block; max-width: 130px; overflow: hidden; text-overflow: ellipsis;
+  white-space: nowrap; vertical-align: bottom;
+}
+.streak-chip-stat { color: var(--ink-faint); }
 
 @media (max-width: 480px) {
   .pc-prob { font-size: 38px; }
-  .pick-card { padding: 15px; }
+  /* minmax(300px,...) doesn't leave room on a 320px-wide viewport (main's
+     12px side padding leaves 296px of content) -- force a single column so
+     the grid track's 300px floor can never force horizontal overflow. */
+  .card-grid { grid-template-columns: 1fr; }
+  .pick-card { padding: 14px; gap: 9px; }
+  .pc-prob-row { gap: 8px; }
   main { padding: 16px 12px 70px; }
   .brand-word { font-size: 17px; }
 }
