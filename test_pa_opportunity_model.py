@@ -175,12 +175,51 @@ class EqualVolumeRankingComparisonTests(unittest.TestCase):
 
 
 class CandidateKeyTests(unittest.TestCase):
+    def _row(self, **overrides):
+        r = {"date": "2024-05-14", "game_pk": 1, "player_id": 100, "prop_type": "total_bases",
+             "line": 0.5}
+        r.update(overrides)
+        return r
+
     def test_builds_composite_key_from_real_fields(self):
-        r = {"date": "2024-05-14", "game_pk": 1, "player_id": 100, "prop_type": "hits"}
-        self.assertEqual(pom.candidate_key(r), ("2024-05-14", 1, 100, "hits"))
+        self.assertEqual(pom.candidate_key(self._row()),
+                          ("2024-05-14", 1, 100, "total_bases", 0.5, None))
 
     def test_missing_required_field_returns_none(self):
         self.assertIsNone(pom.candidate_key({"date": "2024-05-14", "game_pk": 1}))
+
+    def test_missing_line_returns_none(self):
+        # Real canonical backtest rows always carry `line` -- a row without
+        # one (e.g. a malformed fixture) should not silently get a key.
+        r = self._row()
+        del r["line"]
+        self.assertIsNone(pom.candidate_key(r))
+
+    def test_alternate_lines_for_same_player_market_produce_distinct_keys(self):
+        """Real gap found 2026-08-25: two genuinely different lines for the
+        same player/game/market (Over 0.5 Total Bases vs Over 1.5 Total
+        Bases) must never be collapsed into one candidate identity."""
+        half = pom.candidate_key(self._row(line=0.5))
+        one_half = pom.candidate_key(self._row(line=1.5))
+        self.assertNotEqual(half, one_half)
+
+    def test_opposite_side_same_line_produces_distinct_keys(self):
+        # No real backtest row carries `side` today (engine.py never
+        # writes one -- this product's backtest only grades Over bets),
+        # but the key must not collapse Over/Under if that ever changes.
+        over = pom.candidate_key(self._row(side="over"))
+        under = pom.candidate_key(self._row(side="under"))
+        self.assertNotEqual(over, under)
+
+    def test_different_game_date_produces_distinct_key(self):
+        a = pom.candidate_key(self._row(date="2024-05-14", game_pk=1))
+        b = pom.candidate_key(self._row(date="2024-05-15", game_pk=2))
+        self.assertNotEqual(a, b)
+
+    def test_same_logical_candidate_reconstructed_produces_the_same_key(self):
+        a = pom.candidate_key(self._row())
+        b = pom.candidate_key(self._row())  # separately built, same real-world candidate
+        self.assertEqual(a, b)
 
 
 class EqualVolumeRankingIdentityAuditTests(unittest.TestCase):
@@ -228,6 +267,21 @@ class EqualVolumeRankingIdentityAuditTests(unittest.TestCase):
         a = self._row(0.65, 0.50, 1, key=("2024-05-14", 1, 100, "hits"))
         b = self._row(0.65, 0.55, 0, key=("2024-05-14", 1, 100, "total_bases"))
         result = pom.equal_volume_ranking_comparison([a, b], min_line_prob=0.60)
+        self.assertEqual(result["n_current_selected"], 2)
+
+    def test_alternate_line_same_player_market_game_not_treated_as_duplicate(self):
+        # End-to-end proof (not just candidate_key() in isolation): Over 0.5
+        # Total Bases vs Over 1.5 Total Bases for the same player/game must
+        # both survive as distinct candidates through the full comparison.
+        half = self._row(0.65, 0.50, 1, key=("2024-05-14", 1, 100, "total_bases", 0.5, None))
+        one_half = self._row(0.62, 0.45, 0, key=("2024-05-14", 1, 100, "total_bases", 1.5, None))
+        result = pom.equal_volume_ranking_comparison([half, one_half], min_line_prob=0.60)
+        self.assertEqual(result["n_current_selected"], 2)
+
+    def test_opposite_side_same_line_not_treated_as_duplicate(self):
+        over = self._row(0.65, 0.50, 1, key=("2024-05-14", 1, 100, "hits", 0.5, "over"))
+        under = self._row(0.65, 0.55, 0, key=("2024-05-14", 1, 100, "hits", 0.5, "under"))
+        result = pom.equal_volume_ranking_comparison([over, under], min_line_prob=0.60)
         self.assertEqual(result["n_current_selected"], 2)
 
     def test_reordering_the_input_list_does_not_change_the_result(self):

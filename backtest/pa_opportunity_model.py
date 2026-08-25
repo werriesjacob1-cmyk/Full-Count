@@ -138,24 +138,54 @@ def challenger_probability(order, pa_dist, hit_rate_given_pa):
 
 def candidate_key(row):
     """Best-effort composite real-world identity for a comparisons row:
-    (date, game_pk, player_id, prop_type) -- deliberately NOT player name
-    alone, and deliberately including prop_type/market since this key is
-    meant to be self-describing even though every current caller only ever
-    populates `comparisons` for one fixed market per call. Returns None if
-    the row doesn't carry every field needed (e.g. a hand-built test
-    fixture) -- rows without a key are simply excluded from the duplicate
-    check below. Unlike shadow_policy_framework.compare_policies()'s
-    snapshot guard (which fails closed by default on missing metadata,
-    since a real run_policies() selection should always carry a
-    snapshot_id), a missing key here is not itself suspicious: this
-    function's own id()-based identity is already structurally correct
-    with or without a key (see equal_volume_ranking_comparison()'s own
-    docstring), so the key is pure additional duplicate-detection
-    insurance, not the primary correctness mechanism -- there's no
-    equivalent "this should always be populated" expectation to enforce."""
-    if not all(k in row for k in ("date", "game_pk", "player_id", "prop_type")):
+    (date, game_pk, player_id, prop_type, line, side) -- deliberately NOT
+    player name alone, and deliberately including prop_type/market since
+    this key is meant to be self-describing even though every current
+    caller only ever populates `comparisons` for one fixed market per
+    call. Returns None if the row doesn't carry every REQUIRED field (e.g.
+    a hand-built test fixture) -- rows without a key are simply excluded
+    from the duplicate check below.
+
+    ALTERNATE-LINE SAFETY (audited 2026-08-25, explicit directive: "the
+    candidate universe can contain alternate lines... candidate identity
+    MUST distinguish" them): `line` is REQUIRED (every real canonical
+    backtest row carries one) and included in the key specifically so two
+    genuinely different lines for the same player/game/market (Over 0.5
+    Total Bases vs Over 1.5 Total Bases) are never collapsed. Verified
+    empirically against 143,237 real rows from the in-progress canonical
+    rebuild: `line` is currently always 1:1 with (date, game_pk,
+    player_id, prop_type) in this dataset -- the backtest engine only
+    ever grades ONE line per player-game-market today, so this field is
+    presently redundant with the other four for every real caller. It is
+    included anyway as forward-looking correctness insurance: if a future
+    alternate-line-aware backtest ever produces multiple lines per
+    player-game-market (a known, separately-documented gap -- see
+    backtest/candidate_dataset_feasibility_2026-08-25.md), this key
+    continues to distinguish them correctly instead of silently colliding.
+
+    `side` is included in the tuple (via `.get`, NOT required for a key
+    to be built) for the same forward-looking reason, but is NOT required
+    -- verified empirically that no real canonical backtest row carries a
+    `side` field at all (`backtest/engine.py` never writes one; this
+    product's backtest only ever grades Over bets today). Requiring it
+    would silently disable this entire duplicate check for every real
+    row. `.get("side")` returns None uniformly today, which changes
+    nothing about current key values, but the field is ready the moment
+    a real `side` value is ever written.
+
+    Unlike shadow_policy_framework.compare_policies()'s snapshot guard
+    (which fails closed by default on missing metadata, since a real
+    run_policies() selection should always carry a snapshot_id), a
+    missing key here is not itself suspicious: this function's own
+    id()-based identity is already structurally correct with or without a
+    key (see equal_volume_ranking_comparison()'s own docstring), so the
+    key is pure additional duplicate-detection insurance, not the primary
+    correctness mechanism -- there's no equivalent "this should always be
+    populated" expectation to enforce."""
+    if not all(k in row for k in ("date", "game_pk", "player_id", "prop_type", "line")):
         return None
-    return (row.get("date"), row.get("game_pk"), row.get("player_id"), row.get("prop_type"))
+    return (row.get("date"), row.get("game_pk"), row.get("player_id"), row.get("prop_type"),
+            row.get("line"), row.get("side"))
 
 
 def equal_volume_ranking_comparison(comparisons, min_line_prob=MIN_LINE_PROB):
