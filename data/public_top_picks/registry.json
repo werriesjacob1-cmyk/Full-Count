@@ -2,7 +2,7 @@
   "schema_version": 1,
   "identity_schema_version": 2,
   "rollout_version": "pre-phase-v-live-lifecycle-v1",
-  "updated_at": "2026-08-25T20:15:09.363749+00:00",
+  "updated_at": "2026-08-25T20:51:30.074073+00:00",
   "migration": {
     "version": "pre-phase-v-live-lifecycle-v1",
     "completed_at": "2026-08-17T23:14:57+00:00",
@@ -1927,6 +1927,189 @@
         },
         "qualification_timestamp": "2026-08-25T20:08:24.858498+00:00",
         "board_timestamp": "2026-08-25T20:08:24.824101+00:00",
+        "slate_date": "2026-08-25"
+      }
+    },
+    "fc2:824556:player-695657:hits_runs_rbis:1:over": {
+      "canonical_id": "fc2:824556:player-695657:hits_runs_rbis:1:over",
+      "settlement_identity": [
+        "824556",
+        [
+          "player",
+          "695657"
+        ],
+        "hits_runs_rbis",
+        "1",
+        "over"
+      ],
+      "slate_date": "2026-08-25",
+      "first_published_at": "2026-08-25T20:51:30.074073+00:00",
+      "publication_provenance": {
+        "artifact_id": "5eb50bdf9aaca113157a458d1f03448257d76c4da240f10b6f5ada29e7ebf473",
+        "source_commit": "dd2a2435c157dbbc37fcfd5415d427a3f757e3b9",
+        "workflow_run_id": "32897674417",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-08-25T20:51:16.663528+00:00",
+        "data_hash": "405560141e81128d5e10d7d547f832b93ddd9f01a6eb579e6f39b33a58ce9f54",
+        "live_hash": "7dff0aa5441e96ced61a04edbfe0da71b4b92b3b0de2a568f23c77ef0cb2a5bd"
+      },
+      "snapshot": {
+        "id": "fc2:824556:player-695657:hits_runs_rbis:1:over",
+        "identity_version": 2,
+        "game_pk": 824556,
+        "player_id": 695657,
+        "combo_player_ids": null,
+        "type": "batter",
+        "name": "Colson Montgomery",
+        "team": "Chicago White Sox",
+        "matchup": "Texas Rangers @ Chicago White Sox",
+        "game_start": "2026-08-25T23:40:00Z",
+        "stat": "hits_runs_rbis",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "hits_runs_rbis",
+          "value": 0.5,
+          "needs": 1
+        },
+        "prop": "Over 0.5 Hits+Runs+RBIs",
+        "hit_probability": 0.6457,
+        "market_odds": -155,
+        "market_implied": 0.6078,
+        "market_edge": 0.0379,
+        "market_hold": null,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (A), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (8.3 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "Projected 4.06 PA (batting slot 5)",
+          "Platoon: L bat vs RHP (favorable)",
+          "L7 avg EV 91.8mph (league ~88.5) \u2014 hot recent contact",
+          "L7 barrel% 33.3 \u2014 hot recent contact"
+        ],
+        "watchouts": [
+          "Team implied for 3.6 runs (league avg 4.245; line 3.5, game total 7.5) \u2014 a weak offensive environment"
+        ],
+        "prob_ci": [
+          0.6324,
+          0.6773
+        ],
+        "reliability": "A",
+        "reliability_note": null,
+        "sample_n": 124,
+        "lineup_assumed": null,
+        "base_rate": 0.6715,
+        "lift": -0.0258,
+        "lift_reference_rate": null,
+        "stable_lift": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "1b17c8c0",
+          "prediction_timestamp": "2026-08-25T20:45:23.632793+00:00",
+          "odds_fetched_at": "2026-08-25T20:45:18.146869+00:00",
+          "board_generated_at": "2026-08-25T20:45:23.601125+00:00"
+        },
+        "qualification_timestamp": "2026-08-25T20:45:23.632793+00:00",
+        "board_timestamp": "2026-08-25T20:45:23.601125+00:00",
+        "slate_date": "2026-08-25"
+      }
+    },
+    "fc2:824556:player-671976:hits:1:over": {
+      "canonical_id": "fc2:824556:player-671976:hits:1:over",
+      "settlement_identity": [
+        "824556",
+        [
+          "player",
+          "671976"
+        ],
+        "hits",
+        "1",
+        "over"
+      ],
+      "slate_date": "2026-08-25",
+      "first_published_at": "2026-08-25T20:51:30.074073+00:00",
+      "publication_provenance": {
+        "artifact_id": "5eb50bdf9aaca113157a458d1f03448257d76c4da240f10b6f5ada29e7ebf473",
+        "source_commit": "dd2a2435c157dbbc37fcfd5415d427a3f757e3b9",
+        "workflow_run_id": "32897674417",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-08-25T20:51:16.663528+00:00",
+        "data_hash": "405560141e81128d5e10d7d547f832b93ddd9f01a6eb579e6f39b33a58ce9f54",
+        "live_hash": "7dff0aa5441e96ced61a04edbfe0da71b4b92b3b0de2a568f23c77ef0cb2a5bd"
+      },
+      "snapshot": {
+        "id": "fc2:824556:player-671976:hits:1:over",
+        "identity_version": 2,
+        "game_pk": 824556,
+        "player_id": 671976,
+        "combo_player_ids": null,
+        "type": "batter",
+        "name": "Tristan Peters",
+        "team": "Chicago White Sox",
+        "matchup": "Texas Rangers @ Chicago White Sox",
+        "game_start": "2026-08-25T23:40:00Z",
+        "stat": "hits",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "hits",
+          "value": 0.5,
+          "needs": 1
+        },
+        "prop": "Over 0.5 Hits",
+        "hit_probability": 0.608,
+        "market_odds": -135,
+        "market_implied": 0.5745,
+        "market_edge": 0.0335,
+        "market_hold": null,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (A), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (7.6 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "Platoon: L bat vs RHP (favorable)",
+          "L7 avg EV 88.5mph (league ~88.5)",
+          "L7 barrel% 44.4 \u2014 hot recent contact",
+          "Opposing bullpen fatigue: 5/13 relievers over 60 pitches in L7 (fresh pen)"
+        ],
+        "watchouts": [
+          "wOBA vs xwOBA: 0.340 vs 0.308 (+0.032) \u2014 outperforming his contact quality, regression risk",
+          "Projected 3.8 PA (batting slot 7) \u2014 a tough lineup slot for plate appearances"
+        ],
+        "prob_ci": [
+          0.5993,
+          0.6365
+        ],
+        "reliability": "A",
+        "reliability_note": null,
+        "sample_n": 121,
+        "lineup_assumed": null,
+        "base_rate": 0.5636,
+        "lift": 0.0444,
+        "lift_reference_rate": null,
+        "stable_lift": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "1b17c8c0",
+          "prediction_timestamp": "2026-08-25T20:45:23.632793+00:00",
+          "odds_fetched_at": "2026-08-25T20:45:18.146869+00:00",
+          "board_generated_at": "2026-08-25T20:45:23.601125+00:00"
+        },
+        "qualification_timestamp": "2026-08-25T20:45:23.632793+00:00",
+        "board_timestamp": "2026-08-25T20:45:23.601125+00:00",
         "slate_date": "2026-08-25"
       }
     }
