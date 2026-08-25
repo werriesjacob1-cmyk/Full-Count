@@ -112,6 +112,28 @@ def diff_market_state(prev, cur):
     return touched
 
 
+def props_for_current_matchup(mlb_state, market_state):
+    """"identify exactly which prop(s) each event affects": when the game
+    state changes (new batter/pitcher at the plate), the props that are
+    MEANINGFULLY affected right now are that specific batter's and
+    pitcher's own live props -- not "all props," and not "no props." Real
+    name matching against FanDuel's own runner names (last-name substring,
+    the simplest thing that works for this prototype -- a production
+    version would use the same stable player_id matching odds_fanduel.py
+    already does elsewhere in this codebase)."""
+    names = [n for n in (mlb_state.get("batter"), mlb_state.get("pitcher")) if n]
+    if not names:
+        return []
+    last_names = [n.split()[-1].lower() for n in names]
+    affected = []
+    for mid, mk in market_state.items():
+        for rid, r in mk["runners"].items():
+            rn = (r.get("name") or "").lower()
+            if any(ln in rn for ln in last_names):
+                affected.append({"market_id": mid, "market_name": mk["name"], "runner": r["name"]})
+    return affected
+
+
 def recompute_affected(touched, market_state, pregame_probs):
     """The SELECTIVE-recompute step. For each touched runner, re-derive
     market_edge against its last known pregame probability (NOT a live
@@ -138,9 +160,10 @@ def recompute_affected(touched, market_state, pregame_probs):
     return out, elapsed
 
 
-def run(game_pk, event_id, cycles, interval_s):
+def run(game_pk, event_id, cycles, interval_s, slate_prop_count=None):
     prev_game, prev_market = None, None
     pregame_probs = {}
+    total_recomputed, total_slate_equivalent = 0, 0
     for i in range(cycles):
         cycle_t0 = time.time()
         mlb_state, mlb_lat = fetch_mlb_state(game_pk)
@@ -152,25 +175,48 @@ def run(game_pk, event_id, cycles, interval_s):
         detect_lat = time.time() - t_detect0
 
         recomputed, recompute_lat = recompute_affected(market_touched, fd_state, pregame_probs)
+        # "identify exactly which prop(s) each event affects": the batter/
+        # pitcher currently at the plate, matched by name against FanDuel's
+        # own runner names -- these are the props a game-state change alone
+        # (no price move yet) should be considered "affected" for, since
+        # their live win-probability context just changed even if FanDuel
+        # hasn't repriced them yet.
+        matchup_affected = props_for_current_matchup(mlb_state, fd_state) if game_changes else []
 
         t_pub0 = time.time()
         delta_payload = json.dumps({"ts": datetime.now(timezone.utc).isoformat(),
                                     "game_state": mlb_state, "game_changes": game_changes,
-                                    "recomputed": recomputed})
+                                    "recomputed": recomputed, "matchup_affected": matchup_affected})
         pub_lat = time.time() - t_pub0  # serialization only -- no real push transport wired up yet
 
         cycle_total = time.time() - cycle_t0
+        n_touched_props = len(recomputed) + len(matchup_affected)
+        total_recomputed += n_touched_props
+        if slate_prop_count:
+            total_slate_equivalent += slate_prop_count
+
         print(f"[cycle {i+1}/{cycles}] mlb_fetch={mlb_lat:.3f}s fd_fetch={fd_lat:.3f}s "
               f"detect={detect_lat*1000:.1f}ms recompute={recompute_lat*1000:.1f}ms "
               f"serialize={pub_lat*1000:.1f}ms  TOTAL={cycle_total:.3f}s")
         print(f"    game_changes={game_changes}  market_touched={len(market_touched)}  "
-              f"recomputed_rows={len(recomputed)}  payload_bytes={len(delta_payload)}")
+              f"recomputed_rows={len(recomputed)}  matchup_affected={len(matchup_affected)}  "
+              f"payload_bytes={len(delta_payload)}")
+        if slate_prop_count:
+            avoided = slate_prop_count - n_touched_props
+            pct = 100 * avoided / slate_prop_count if slate_prop_count else 0
+            print(f"    vs full-slate rebuild ({slate_prop_count} props): recomputed only "
+                  f"{n_touched_props} ({pct:.1f}% avoided this cycle)")
         if fd_failures:
             print(f"    FanDuel fetch failures: {fd_failures}")
 
         prev_game, prev_market = mlb_state, fd_state
         if i < cycles - 1:
             time.sleep(max(1.0, interval_s - cycle_total))
+
+    if slate_prop_count and cycles:
+        print(f"\nOver {cycles} cycles: {total_recomputed} total prop-recomputes vs "
+              f"{total_slate_equivalent} a naive full-slate-rebuild-every-cycle approach "
+              f"would have done ({100*(1 - total_recomputed/total_slate_equivalent):.1f}% avoided).")
 
 
 if __name__ == "__main__":
@@ -179,6 +225,10 @@ if __name__ == "__main__":
     ap.add_argument("--event-id", type=int, default=None, help="FanDuel eventId (looked up by matching team names if omitted)")
     ap.add_argument("--cycles", type=int, default=5)
     ap.add_argument("--interval", type=float, default=15)
+    ap.add_argument("--slate-props", type=int, default=None,
+                    help="Total props on tonight's real slate (docs/data.json's summary.n_props), "
+                         "to report how many recomputes a selective approach avoids vs a naive "
+                         "full-slate rebuild every cycle.")
     args = ap.parse_args()
     event_id = args.event_id
     if event_id is None:
@@ -188,4 +238,4 @@ if __name__ == "__main__":
         # for how to discover one).
         print("Pass --event-id explicitly (see fanduel_live_observer.py's pick_live_games()).")
         sys.exit(1)
-    run(args.game_pk, event_id, args.cycles, args.interval)
+    run(args.game_pk, event_id, args.cycles, args.interval, slate_prop_count=args.slate_props)
