@@ -328,6 +328,35 @@ with tempfile.TemporaryDirectory() as td:
           f"got {tr['current']}")
     check(tr["current"]["n"] == 10, "current n is hits+misses from "
           "public_top_pick_totals", f"got {tr['current']}")
+    # Real bug, found 2026-08-25: the Performance page showed a bare
+    # hit-rate percentage with no indication of how thin the underlying
+    # sample is -- sample_label (via eval_lib's shared sample-size-honesty
+    # gate, MIN_N_DIRECTIONAL=5/MIN_N_REPORTABLE=20/MIN_N_CONFIDENT=100)
+    # is what the frontend now reads to render an honest caveat.
+    check(tr["legacy"]["sample_label"] == "directional",
+          "legacy n=47 (>=20, <100) is labeled 'directional', the same shared eval_lib gate "
+          "used elsewhere in this project -- not a new, inconsistent threshold",
+          f"got {tr['legacy']['sample_label']}")
+    check(tr["current"]["sample_label"] == "thin",
+          "current n=10 (>=5, <20) is labeled 'thin'", f"got {tr['current']['sample_label']}")
+
+    tiny_path = os.path.join(td, "tiny.json")
+    with open(tiny_path, "w") as f:
+        json.dump({
+            "main_hit_rate": 1.0,
+            "by_category_totals": {"main": {"hits": 2, "misses": 0}},
+            "top_pick_hit_rate": 1.0,
+            "public_top_pick_totals": {"hits": 100, "misses": 20},
+        }, f)
+    tr_tiny = bd.load_track_record(tiny_path)
+    check(tr_tiny["legacy"]["sample_label"] == "insufficient",
+          "a 100% hit rate off only 2 graded picks (n<5) is labeled 'insufficient' -- the "
+          "exact case this fix exists for: an early, meaningless-looking-perfect number must "
+          "never be shown without a caveat that it means nothing yet",
+          f"got {tr_tiny['legacy']['sample_label']}")
+    check(tr_tiny["current"]["sample_label"] == "reportable",
+          "current n=120 (>=100) is labeled 'reportable' -- a real, mature sample gets no "
+          "caveat", f"got {tr_tiny['current']['sample_label']}")
 
     zero_current_path = os.path.join(td, "zero_current.json")
     with open(zero_current_path, "w") as f:
@@ -736,6 +765,65 @@ console.log("all " + CASES.length + " reason translations passed");
         os.remove(harness_path)
 else:
     check(True, "node not available -- reason-translation check skipped, not failed")
+
+
+head("13b. sampleLabelCaveat() (2026-08-25): the Performance page used to show a bare "
+     "hit-rate percentage with no caveat at all, so an early 100% off 2 graded picks read as "
+     "trustworthy as a mature record. Verifies the honest caveat text renders for each thin "
+     "eval_lib.sample_size_label() tier the backend can send, and renders NOTHING for a real, "
+     "reportable (n>=100) sample -- a mature number gets no unnecessary warning.")
+
+if node:
+    harness_sample_caveat = """
+const document = {getElementById: () => ({addEventListener(){}, textContent:'', dataset:{},
+    style:{}, setAttribute(){}, querySelectorAll: () => [], querySelector: () => null}),
+  documentElement: {setAttribute(){}, removeAttribute(){}, getAttribute: () => null},
+  querySelectorAll: () => [], querySelector: () => null, createElement: () => ({style:{}}),
+  addEventListener(){}, body: {style:{}, append(){}}};
+const window = {matchMedia: () => ({matches:false}), location: {hash:''}, scrollY: 0, scrollTo(){}};
+const localStorage = {getItem: () => null, setItem(){}};
+const fetch = () => Promise.reject(new Error("no network in test"));
+const setInterval = () => {};
+try { """ + open(APP_JS_PATH, encoding="utf-8").read() + """ } catch (e) {}
+let ok = true;
+function assertTrue(cond, msg) { if (!cond) { console.error("FAIL: " + msg); ok = false; } }
+
+const insufficient = sampleLabelCaveat("insufficient", 2);
+assertTrue(insufficient && insufficient.includes("2") && /far too few/i.test(insufficient),
+  "insufficient (n=2) renders a real caveat naming the exact n and saying it's far too few, got " + insufficient);
+
+const thin = sampleLabelCaveat("thin", 10);
+assertTrue(thin && thin.includes("10") && /thin sample/i.test(thin),
+  "thin (n=10) renders a real caveat naming the exact n, got " + thin);
+
+const directional = sampleLabelCaveat("directional", 47);
+assertTrue(directional && directional.includes("47"),
+  "directional (n=47) renders a real caveat naming the exact n, got " + directional);
+
+const reportable = sampleLabelCaveat("reportable", 200);
+assertTrue(reportable === null,
+  "reportable (n>=100, a real mature sample) renders NO caveat -- got " + JSON.stringify(reportable));
+
+const unknown = sampleLabelCaveat(undefined, 5);
+assertTrue(unknown === null,
+  "a missing/unrecognized sample_label (e.g. an older payload before this field existed) " +
+  "degrades to no caveat rather than crashing, got " + JSON.stringify(unknown));
+
+if (!ok) process.exit(1);
+console.log("sampleLabelCaveat() checks passed");
+"""
+    harness_path_sample_caveat = tempfile.mktemp(suffix=".js")
+    with open(harness_path_sample_caveat, "w") as f:
+        f.write(harness_sample_caveat)
+    try:
+        r = subprocess.run([node, harness_path_sample_caveat], capture_output=True, text=True)
+        check(r.returncode == 0, "sampleLabelCaveat() renders an honest, real caveat for every "
+              "thin sample tier and stays silent for a real reportable sample",
+              r.stdout + r.stderr)
+    finally:
+        os.remove(harness_path_sample_caveat)
+else:
+    check(True, "node not available -- sampleLabelCaveat check skipped, not failed")
 
 
 head("16. Today-page PASS 2/3 redesign (2026-08-25): the query-string half of a route hash "

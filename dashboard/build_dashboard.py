@@ -755,6 +755,19 @@ def load_track_record(path=None):
     except Exception:
         return {"current": None, "legacy": None}
 
+    # sample_label: real bug, found 2026-08-25 -- the Performance page
+    # showed a bare hit-rate percentage with NO indication of how thin the
+    # underlying sample is, so an early "100%" off 2 graded picks read the
+    # same as a mature, trustworthy number. eval_lib.py already built the
+    # shared sample-size-honesty gate ("one shared gate so 'too small to
+    # say anything' is applied the same way everywhere in Phase 3") for
+    # exactly this problem -- reused here rather than inventing a second,
+    # inconsistent threshold, so the caveat this function's own docstring
+    # already promises ("do not pretend the new architecture has proven
+    # itself before it has enough observations") is actually shown, not
+    # just asserted in a comment.
+    import eval_lib
+
     tp = h.get("public_top_pick_totals") or {}
     tp_n = (tp.get("hits") or 0) + (tp.get("misses") or 0)
     current = None
@@ -764,6 +777,7 @@ def load_track_record(path=None):
             "hits": tp.get("hits", 0), "misses": tp.get("misses", 0),
             "last_14d_hit_rate": h.get("last_14_days_top_pick_hit_rate"),
             "last_14d_n": h.get("last_14_days_top_pick_n"),
+            "sample_label": eval_lib.sample_size_label(tp_n),
         }
 
     main = (h.get("by_category_totals") or {}).get("main") or {}
@@ -774,6 +788,7 @@ def load_track_record(path=None):
             "hit_rate": h["main_hit_rate"], "n": main_n,
             "hits": main.get("hits", 0), "misses": main.get("misses", 0),
             "last_14d_hit_rate": h.get("last_14_days_hit_rate"),
+            "sample_label": eval_lib.sample_size_label(main_n),
         }
 
     return {"current": current, "legacy": legacy}

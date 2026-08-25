@@ -585,6 +585,7 @@ main { max-width: 1180px; margin: 0 auto; padding: 20px 16px 80px; }
 .perf-metric-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px,1fr)); gap: 14px; }
 .perf-metric .pm-n { font-family: var(--font-mono); font-size: 26px; font-weight: 700; }
 .perf-metric .pm-l { font-size: 12px; color: var(--ink-faint); margin-top: 2px; }
+.perf-sample-caveat { background: var(--warn-soft); color: var(--warn); border-radius: var(--radius); padding: 10px 14px; font-size: 13px; line-height: 1.5; margin-top: 14px; font-weight: 600; }
 .perf-explain { background: var(--surface-2); border-radius: var(--radius); padding: 14px 16px; font-size: 13.5px; line-height: 1.5; color: var(--ink-dim); margin-top: 14px; }
 .perf-explain b { color: var(--ink); }
 .tag-current { background: var(--good-soft); color: var(--good); }
