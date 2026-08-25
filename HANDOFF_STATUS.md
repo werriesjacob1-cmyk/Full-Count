@@ -1,29 +1,51 @@
 # Full Count — session handoff status
 
-Last updated: 2026-08-25 ~04:55 UTC by Claude (this session).
+Last updated: 2026-08-25 ~05:10 UTC by Claude (this session).
 Purpose: let a fresh session resume with zero hidden chat context.
 
 ## Branch / HEAD
 
-- Branch: `claude/gridiron-continuation-dvaljm` at `fc438e40`, fully pushed,
-  clean working tree, matches `origin/main` exactly (no divergence).
+- Branch: `claude/gridiron-continuation-dvaljm` at `5f714294`, fully pushed,
+  clean working tree, matches `origin/main` exactly (no divergence) modulo
+  this HANDOFF_STATUS.md update itself (commit immediately after editing).
 - PR #64 (Weston fix + provenance validator) MERGED, sha `1ead2fb1`.
 - PR #65 (event-targeted observer upgrade + on_1b fix) MERGED, sha `610cfe17`.
 - No open PRs. Everything on this branch this update is already on `main`.
 - Repo has moved to `werriesjacob1-cmyk/Full-Count` (GitHub redirects
   PROJECT-GRIDIRON pushes there).
 
-## Long-running background jobs
+## CANONICAL HISTORY IS NOW LIVE — the main blocker is CLEARED
 
-- **Main backfill**: PID 3663, `backtest/engine.py --start 2024-04-01 --end
-  2026-06-30 --out backtest/rows_backfill.jsonl --no-weather`. Started
-  2026-08-24 21:53:13 UTC. At last check: ~6h51m elapsed, healthy. **Still
-  the long pole for everything below "BLOCKED ON CANONICAL HISTORY."**
-  Check with `ps -p 3663 -o pid,etime,cmd`. **When it completes**: verify
-  821/821 intended dates, no gaps, inspect failures, then run
-  `backtest/build_canonical_backtest.py` (already written, tested, and
-  wired to `provenance.require_single_regime()` as a hard gate) to produce
-  `backtest/rows_canonical.jsonl`. Do NOT launch another giant backfill.
+- **Main backfill FINISHED**: PID 3663 completed 2026-08-25T05:00:47Z. All
+  821 intended calendar dates processed (578 real game dates "ok", 243
+  correctly `no_games` -- offseason/All-Star break), zero gaps, zero
+  unexplained failures. Console leakage-check did NOT fire (all per-market
+  hit rates in the sane 50-65%-ish band).
+- **Canonical reconciliation RUN**: `backtest/build_canonical_backtest.py`
+  produced `backtest/rows_canonical.jsonl` -- 1,027,462 rows, 578 dates,
+  2024-04-01..2026-06-30, **single-regime PROVENANCE CHECK: PASS**
+  (`code_git_sha=6b748538` throughout; the known-bad pre-919456e5 portion
+  of the main backfill was correctly dropped in favor of the repair file
+  for 2024-04-01..2025-02-26). `rows_canonical.jsonl` itself is gitignored
+  (`backtest/*.jsonl`) -- regenerate any time via that script, fully
+  deterministic and idempotent.
+- **Control baseline RUN**: `backtest/canonical_baseline_report.py` against
+  real `rows_canonical.jsonl` for the first time. Full real numbers
+  persisted at `backtest/canonical_baseline_2026-08-25.md` (NOT
+  gitignored, read this for the real headline numbers). Key result: at
+  `predicted_prob >= 0.60` (generate_picks.py's own MIN_LINE_PROB floor,
+  a RECONSTRUCTED proxy for board eligibility, not real eligibility),
+  141,998 rows realize a **66.39% hit rate** -- inside the board's
+  intended 60-80% band, at real multi-year scale, single clean regime.
+  Probability-bucket calibration is close to monotonic across 1M+ rows.
+- **NEXT (Priority 6, in progress or about to start depending on when this
+  is read)**: same-nominal-probability subgroup trustworthiness analysis --
+  "which 65% predictions are actually trustworthy?" controlling for the
+  probability the model already believes, segmented by
+  market/support-bucket/etc. This is now UNBLOCKED and is the top research
+  priority. If a script for this exists when you resume, check whether it
+  ran to completion and whether its findings were persisted to a `.md` file
+  (never trust an unpersisted terminal-only conclusion).
 
 ## CLOSED work this session — do not redo
 
@@ -98,21 +120,53 @@ Purpose: let a fresh session resume with zero hidden chat context.
     `backtest/*.jsonl` gitignore rule. **Honest gap**: market prices aren't
     attached yet (every record's `market` section is null this run) — a
     real, scoped, documented follow-up, not hidden.
+11. **Candidate funnel lifecycle CLOSED — outcome-join grader built**:
+    `backtest/candidate_funnel_grader.py` (13 tests). Reduces the append-only
+    funnel changelog to the latest record per `candidate_id`, reconstructs a
+    `grade_results.grade_pick()`-compatible pick from each record's identity
+    section, grades EVERY candidate (kept/rejected/assumed_lineup alike, not
+    just selected ones) with the real `grade_results.fetch_game_contexts()`/
+    `grade_pick()` (never reimplemented), writes outcomes to a SEPARATE
+    `candidate_funnel_outcomes_{date}.jsonl` keyed by `candidate_id` — the
+    pregame file is never touched. All 6 lifecycle sub-items now complete
+    (identity, snapshot semantics, outcome join, decision trace, storage
+    discipline, non-mutation). Also added `"type"` to the logger's identity
+    section (needed since `grade_pick()` reads `pick["type"]` via direct
+    bracket access). Not yet run against a real graded slate (built same day
+    the funnel logger's first live data was still same-day/ungradeable) —
+    next live slate is the first real end-to-end validation opportunity.
+12. **CANONICAL HISTORY BUILT + CONTROL BASELINE RUN — see the new section
+    above.** This is the single biggest state change this session: the
+    long-standing blocker is gone and Track A accuracy research is
+    unblocked for the first time.
 
 ## OPEN THREADS
 
-### BLOCKED on canonical history (main backfill, PID 3663)
-Once it finishes: verify date coverage/gaps/failures/row counts, reconcile
-via `backtest/build_canonical_backtest.py` (already gated by
-`provenance.py`), produce `rows_canonical.jsonl`, persist the reconciliation
-report. THEN, and only then: Track A historical accuracy research (fragility,
-source/role certainty, model disagreement, market specialization, shrinkage
-strength, opportunity modeling, conditional calibration, fallback-source
-value) — full question design already exists in this session's own
-instruction history. Track B (prospective, using the new candidate-funnel
-log) can start accumulating data independently of canonical history, but
-needs many days of real logged slates before it has enough volume to
-analyze — not blocked, just not yet informative with one day's data.
+### Track A historical accuracy research — UNBLOCKED, now the top priority
+Canonical history + control baseline are both done (see section above).
+Next: same-nominal-probability subgroup trustworthiness analysis (Priority
+6 — "which 65% predictions are actually trustworthy?", controlling for the
+probability the model already believes, segmented by
+market/support-bucket/probability-basis/etc.), then fragility (Priority 7,
+empirical forecast-error perturbations, never invented values), model
+disagreement (Priority 8), market specialization (Priority 9), shrinkage
+audit (Priority 10, ONLY where current math has a tunable shrinkage —
+do not revisit the closed H+R+RBI stable-lift decision), opportunity/PA
+modeling (Priority 11), then prospective policy research design (Priority
+12, Champion vs Shadows A-F, frozen pregame selections, never touching the
+public board). Full question design already exists in this session's own
+instruction history (the directive that opened this segment). If you resume
+and find partial analysis code/output with no persisted `.md` writeup,
+finish persisting it before trusting or extending it — an unpersisted
+terminal-only finding does not count as done per this project's own
+interruption-safety rule.
+
+Track B (prospective, using `candidate_funnel_logger.py` +
+`candidate_funnel_grader.py`) can keep accumulating independently of Track
+A — not blocked, just needs many days of real logged-and-graded slates
+before it has enough volume to analyze on its own. Run the logger again on
+every live slate with real pregame runway; the grader can be run the
+morning after once games are final.
 
 ### NOT blocked, but correctly deferred tonight (do not manufacture)
 - **Priority 12 (narrower FanDuel player-prop experiment)**: checked for a
@@ -138,20 +192,31 @@ analyze — not blocked, just not yet informative with one day's data.
 
 ## How to resume
 
-1. `git status` / `git log --oneline -5` to confirm you're at `fc438e40`
+1. `git status` / `git log --oneline -5` to confirm you're at `5f714294`
    or later, clean, matching `origin/main`.
-2. `ps -p 3663` for the main backfill. If it's gone, canonical-history
-   reconciliation is the immediate top priority (see OPEN THREADS above)
-   — do NOT start any accuracy analysis before it's validated.
-3. If a fresh MLB slate is live with real pregame runway, consider: (a)
-   running `backtest/candidate_funnel_logger.py` again to keep building
-   Track B's prospective dataset (safe, isolated, already proven live), and
-   (b) Priority 12's targeted player-prop FanDuel experiment (deferred
-   tonight, see OPEN THREADS above).
-4. If ops/external_heartbeat/ hasn't been deployed yet and the user wants
+2. Canonical history is DONE (see section above) — `rows_canonical.jsonl`
+   is gitignored so it won't exist on a fresh clone; regenerate via
+   `python3 backtest/build_canonical_backtest.py` (fast, deterministic,
+   reads the also-gitignored `rows_backfill.jsonl`/`rows_backfill_repair.jsonl`
+   — if THOSE are also missing on a fresh checkout, the backfill would need
+   re-running, which is slow; check before assuming it's a quick regenerate).
+   The real numbers from the one real run are permanently captured in
+   `backtest/canonical_baseline_2026-08-25.md` regardless.
+3. Track A accuracy research (Priority 6 onward) is the top priority now —
+   see OPEN THREADS above for the full sequence. Do not skip ahead to
+   fragility/disagreement/market-specialization before Priority 6's
+   subgroup trustworthiness analysis exists, per the standing priority
+   ordering.
+4. If a fresh MLB slate is live with real pregame runway, also: (a) run
+   `backtest/candidate_funnel_logger.py` again to keep building Track B's
+   prospective dataset, (b) the morning after, run
+   `backtest/candidate_funnel_grader.py <date>` to grade that day's funnel,
+   and (c) consider Priority 12's targeted player-prop FanDuel experiment
+   (deferred every night so far — see OPEN THREADS above).
+5. If ops/external_heartbeat/ hasn't been deployed yet and the user wants
    to proceed, walk them through README.md's 7 steps (needs their own
    Cloudflare account + GitHub token — cannot be done by an agent alone).
-5. Run `for f in test_*.py; do /tmp/mlbvenv/bin/python3 "$f" || echo "FAIL: $f"; done`
-   before every commit. Fully green as of `fc438e40`. (The
+6. Run `for f in test_*.py; do /tmp/mlbvenv/bin/python3 "$f" || echo "FAIL: $f"; done`
+   before every commit. Fully green as of `5f714294`. (The
    `ops/external_heartbeat/` JS tests are separate: `node
    ops/external_heartbeat/test_worker.mjs`, also passing.)
