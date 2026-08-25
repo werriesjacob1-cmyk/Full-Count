@@ -1544,10 +1544,52 @@ def score_batter(batter, gm, opp_sp_row, opp_sp_id, opp_sp_hand, park_wx, batter
 
     why = []
     why.extend(reg_why_notes)
-    why.append(f"Projected {projected_pa} PA (slot {order}"
-                + (f", {implied_total}-run implied team total)" if implied_total is not None
-                   else ", league-average run environment — no market total available)"))
-    why.append(f"Platoon: {bats} bat vs {opp_sp_hand or '?'}HP ({'favorable' if platoon>=65 else 'unfavorable'})")
+    # 2026-08-24 explanation-quality fix, part 2 (real live complaint, Weston
+    # Wilson: batting 8th on a 3.08-run-implied team shown as a green-positive
+    # reason). This used to be one combined sentence, unconditionally in
+    # `why`, regardless of whether the batting slot or the implied total were
+    # actually favorable. lineup_context (CONTEXT's own scale(10-order,1,9)
+    # -- the single highest-weighted score component in this whole formula,
+    # 64% of score) and run_env (already computed above, inside the
+    # implied_total branch) are both genuinely directional -- reused here
+    # instead of restating bottom-of-the-order or a weak implied total as if
+    # they were self-evidently good news. Split into two independently-
+    # routed facts, since order and implied total can disagree (a leadoff
+    # hitter on a low-scoring team, or a #8 hitter in a laugher).
+    pa_note = f"Projected {projected_pa} PA (batting slot {order})"
+    if lineup_context >= 65:
+        why.append(pa_note + " — a favorable lineup slot")
+    elif lineup_context <= 35:
+        watchouts.append(pa_note + " — a tough lineup slot for plate appearances")
+    else:
+        why.append(pa_note)
+    if implied_total is not None:
+        total_note = (f"Team implied for {implied_total} runs (league avg {LEAGUE_TEAM_RUNS_MEAN}; "
+                       f"line {(sharp_bias or {}).get('implied_total_line')}, "
+                       f"game total {(sharp_bias or {}).get('game_total')})")
+        if run_env >= 65:
+            why.append(total_note + " — a strong offensive environment")
+        elif run_env <= 35:
+            watchouts.append(total_note + " — a weak offensive environment")
+        else:
+            why.append(total_note)
+    else:
+        why.append("No market implied team total available — run environment assumed league-average")
+    # 2026-08-24 explanation-quality fix, part 4: same live complaint,
+    # Weston Wilson's card literally said "Platoon: R bat vs RHP
+    # (unfavorable)" and still put the whole line under `why`, the
+    # positive-reasons list -- the word "unfavorable" was honest, but the
+    # placement wasn't. platoon is always exactly one of {80 favorable, 65
+    # unknown/neutral, 35 unfavorable} (see its own three-way assignment
+    # above), so this routes on the same real value already driving score,
+    # not a second guess at what the sentence "sounds like".
+    platoon_note = f"Platoon: {bats} bat vs {opp_sp_hand or '?'}HP"
+    if platoon >= 80:
+        why.append(platoon_note + " (favorable)")
+    elif platoon <= 35:
+        watchouts.append(platoon_note + " (unfavorable)")
+    else:
+        why.append(platoon_note + " (handedness unknown)")
     if exploit:
         why.append(f"Pitch-type exploit: RV/100 {exploit['run_value_per_100']:+.1f} vs {exploit['pitch_type']} "
                     f"(opposing SP throws it {exploit['usage_pct']}% of the time)")
@@ -1566,14 +1608,30 @@ def score_batter(batter, gm, opp_sp_row, opp_sp_id, opp_sp_hand, park_wx, batter
             why.append(f"Opposing SP ERA {sp_era:.2f} — shaky matchup for the pitcher")
         elif sp_weak <= 35:
             watchouts.append(f"Opposing SP ERA {sp_era:.2f} — elite pitcher, tough matchup")
-    if l7.get("avg_EV"): why.append(f"L7 avg EV {l7['avg_EV']:.1f}mph (league ~{LEAGUE_AVG_EV})")
-    if l7.get("barrel_pct") is not None: why.append(f"L7 barrel% {l7['barrel_pct']}")
+    # 2026-08-24 explanation-quality fix, part 3 (same live complaint, Weston
+    # Wilson: "L7 avg EV 82.8mph (league ~88.5)" -- 5.7mph BELOW league,
+    # shown as a plain fact in `why` with no directional judgment attached).
+    # sc_l7_ev/sc_l7_barrel (RECENT FORM's own scale() calls, already
+    # computed above) are exactly as directional as sp_weak was -- reused
+    # the same way, same neutral-middle-stays-silent rule.
+    if l7.get("avg_EV"):
+        ev_note = f"L7 avg EV {l7['avg_EV']:.1f}mph (league ~{LEAGUE_AVG_EV})"
+        if sc_l7_ev >= 65:
+            why.append(ev_note + " — hot recent contact")
+        elif sc_l7_ev <= 35:
+            watchouts.append(ev_note + " — cold recent contact")
+        else:
+            why.append(ev_note)
+    if l7.get("barrel_pct") is not None:
+        barrel_note = f"L7 barrel% {l7['barrel_pct']}"
+        if sc_l7_barrel >= 65:
+            why.append(barrel_note + " — hot recent contact")
+        elif sc_l7_barrel <= 35:
+            watchouts.append(barrel_note + " — cold recent contact")
+        else:
+            why.append(barrel_note)
     if bs_trend is not None and bs_trend >= 1.0: why.append(f"Bat speed trending up L14 ({bs_trend:+.1f}mph 2nd-half vs 1st-half)")
     if bs.get("wRC+"): why.append(f"Season wRC+ {bs['wRC+']:.0f}")
-    if implied_total is not None:
-        why.append(f"Market implied team total {implied_total} runs "
-                    f"(league avg {LEAGUE_TEAM_RUNS_MEAN}; line {(sharp_bias or {}).get('implied_total_line')}, "
-                    f"game total {(sharp_bias or {}).get('game_total')})")
     if not park_wx or park_wx.get("dome"): why.append("Dome — weather neutral")
     elif park_wx.get("wind_effect") == "out": why.append(f"Wind blowing OUT ({park_wx.get('wind_mph',0):.0f}mph) — HR boost")
     elif park_wx.get("wind_effect") == "in": why.append("Wind blowing IN — power suppressed")
