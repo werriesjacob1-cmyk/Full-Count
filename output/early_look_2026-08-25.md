@@ -20,7 +20,7 @@ Every player below is projected into last night's/his last game's batting slot f
 - **Alex Bregman** (Chicago Cubs) — Over 0.5 Hits+Runs+RBIs — 70.2% [Chicago Cubs @ Arizona Diamondbacks]
 - **Nico Hoerner** (Chicago Cubs) — Over 0.5 Hits+Runs+RBIs — 70.2% [Chicago Cubs @ Arizona Diamondbacks]
 - **Taylor Ward** (Seattle Mariners) — Over 0.5 Hits+Runs+RBIs — 70.1% [Philadelphia Phillies @ Seattle Mariners]
-- **Eduardo Valencia** (Detroit Tigers) — Over 0.5 Hits — 70.0% [Tampa Bay Rays @ Detroit Tigers]
+- **Eduardo Valencia** (Detroit Tigers) — Over 0.5 Hits — 70.1% [Tampa Bay Rays @ Detroit Tigers]
 - **Miguel Vargas** (Chicago White Sox) — Over 0.5 Hits+Runs+RBIs — 69.6% [Texas Rangers @ Chicago White Sox]
 - **Munetaka Murakami** (Chicago White Sox) — Over 0.5 Hits+Runs+RBIs — 69.5% [Texas Rangers @ Chicago White Sox]
 - **Bryce Harper** (Philadelphia Phillies) — Over 0.5 Hits+Runs+RBIs — 69.5% [Philadelphia Phillies @ Seattle Mariners]
