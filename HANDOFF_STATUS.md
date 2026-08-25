@@ -1,7 +1,101 @@
 # Full Count — session handoff status
 
-Last updated: 2026-08-25 ~20:05 UTC by Claude (this session).
+Last updated: 2026-08-25 ~21:10 UTC by Claude (this session).
 Purpose: let a fresh session resume with zero hidden chat context.
+
+## PASS 3/3: DETAIL SHEET + MY BOARD + SEARCH REBUILD (2026-08-25 ~20:05-21:10 UTC)
+
+Per the standing directive's three named targets: make the detail sheet
+argue both sides with real data, turn Watchlist into My Board (a real
+return-loop), and make search understand baseball entities. Committed
+and pushed as `908de613`.
+
+**Detail Sheet** -- full field audit first
+(`frontend/detail_sheet_data_audit_2026-08-25.md`), reading
+`generate_picks.py`'s REAL fitted score formulas rather than assuming
+the old nominal 35/25/15/15/10 weights still applied. Finding that
+mattered most: batters' `skill` component and pitchers' `form`
+component carry NEGATIVE fitted weights, so raw `cat_*` values are not
+safely gradable Supportive/Concern by simple thresholding -- this is
+why the "THE CASE" component-grade table suggested in the directive was
+deliberately NOT built this pass (a real evidence-based decision, not a
+skip). Rebuilt `detailBody()`: Full Count's Read hero, Why It Could Hit,
+an honest Why It Could Miss (real structured concerns from
+`status_reasons`/`watchouts` only -- never invented to force symmetry;
+falls back to "No major model-side concern beyond normal baseball
+variance" when that's the honest read), a new `priceFreshnessState()`
+distinguishing CURRENT/STALE/UNPOSTED/LIVE (previously computed
+upstream but never rendered), Opportunity (only shown with a real
+`batting_order` fact -- added a new `_derive_batting_order()` in
+`build_dashboard.py`, mirroring `backtest/opportunity_decomposition
+.derive_batting_order()`'s inversion of the scaled `lineup_slot` signal
+since `signals.lineup_slot` stores the SCALED value, not raw order), and
+Why Not a Top Pick (`whyNotTopPickReason()` -- real `status_reasons[0]`
+verbatim, gated on `WHY_NOT_TOP_PICK_MIN_PROB=0.60`, reusing
+`generate_picks.py`'s real `MIN_LINE_PROB` board-eligibility concept so
+it only shows for an already-interesting non-Top-Pick).
+
+**My Board** (renamed from Watchlist) -- audited the REAL current
+snapshot shape by direct code read first (`{status, odds,
+lineup_assumed, started}`, confirming the directive's correction was
+accurate) before building on top of it.
+`WATCH_SNAPSHOT_SCHEMA_VERSION=2` expands the save-time snapshot with
+real pregame fields (`hit_probability`, `market_odds`, `market_implied`,
+`market_edge`, `recommendation_status`, `saved_at`).
+`normalizeSnapshot()` migrates an old v1 save without crashing --
+fields v1 never captured render explicitly `null`, never backfilled
+from current state and presented as if historical. `sinceYouSavedChanges
+()`/`changeSummary()` surface only real deltas past presentation-only
+display thresholds (`WATCH_DISPLAY_THRESHOLD_PROB`/`_EDGE = 0.02`, 2
+percentage points -- explicitly NOT a model/recommendation threshold,
+just an alert-fatigue guard) and NEVER hide deterioration: a probability
+drop or edge shrink renders with `stronger:false`, same as an
+improvement renders `stronger:true`. Added sort (game time / probability
+/ recently-changed) and a "Clear all" control (native `confirm()`, no
+new UI framework).
+
+**Search** -- replaced flat substring matching with `runSearch()`,
+returning structured `{teams, games, players, props, propsTotal,
+marketFamily}`. Deterministic, non-fuzzy `_matchScore()` (exact=100 /
+prefix=80 / word-prefix=60 / substring=40 / none=0) -- explicitly no
+fuzzy-search dependency per direction. `MARKET_ALIASES` maps real
+customer phrasing ("home runs", "hr", "homers") to the real family key
+`familyFilterValue()` already produces -- customer navigation, not model
+logic. `TEAM_ABBR_ALIASES` maps standard abbreviations to a distinctive
+real nickname substring (not a hardcoded full team name, so it stays
+robust to naming changes). Two-team queries ("Yankees Red Sox" or "NYY
+BOS") resolve the same real game via alias-expanded searchable text
+(`_gameSearchText()`), not full NLP. Results capped at a few per group
+with a "See all N matching props" overflow link (`propsTotal` reports
+the honest full count).
+
+**Tests**: new head-19 Node-harness block in `test_build_dashboard.py`
+covering `_matchScore`/`_marketFamilyForQuery`/`runSearch()` (team/game/
+player/prop grouping, alias resolution, 5-result truncation). Combined
+with the existing head-17 (detail sheet) and head-18 (My Board) blocks
+from PASS 1/2 groundwork, `test_build_dashboard.py` is 82/82 passing.
+`docs/{app.js,app.css,index.html}` resynced via `copy_static_assets()`
+and `node --check` verified on both the source and the synced copy;
+`StaticSourceParityTests` reverified byte-identical.
+
+**Full repo test suite**: kicked off in background
+(`for f in test_*.py; do python3 "$f" || echo FAIL; done`) after the
+head-19 block was verified green in isolation; still running as of this
+update with zero `FAIL:` lines observed so far. **Re-check its final
+result before relying on "full suite green" in a future session** --
+confirm no `FAIL:` lines before assuming this pass is fully verified.
+
+No probability, scoring, recommendation, grading, or publication logic
+touched. Full 17-item report (data audit, before/after examples,
+screenshots/mobile verification, creative additions, rejected features,
+bugs found, Radar/Live compatibility notes, self-reflection questions)
+still owed to the user as of this update -- see conversation for the
+exact required format. Mobile verification at 375/390/430px (explicitly
+requested for Detail/My Board/Search) has NOT been done yet this pass.
+
+**PID 3304 at this update**: healthy, ~2h31m elapsed, still running the
+same `--start 2024-04-01 --end 2026-06-30 --no-weather` canonical
+rebuild. Untouched by this work. Do not kill it.
 
 ## PASS 2/3: TODAY REDESIGN + TWO RE-AUDITS (2026-08-25 ~19:35-20:05 UTC)
 
