@@ -431,6 +431,23 @@ def run_live_fetch():
                 # scoped per exact line (see generate_picks._batter_options'
                 # own fix) before it ever reaches this boundary.
                 "prob_ci": r.get("prob_ci"),
+                # 2026-08-2X data-integrity fix (HR probability/base-rate/
+                # sample semantics trace + CI provenance-honesty audit):
+                # all three of these were computed upstream in
+                # generate_picks.py and silently dropped at this exact
+                # serialization boundary -- the same "computed, then
+                # discarded" failure prob_ci itself (comment above) was
+                # already found and fixed for once. Without them, the
+                # public payload had no way to say whether a given
+                # hit_probability was a real empirical rate, a modelled
+                # blend, a league-only fallback, or a shrunk mix of the
+                # two -- or whether prob_ci (when present) came from this
+                # player's own record vs a market/bucket-level historical
+                # band. A viewer could not tell "we have real evidence"
+                # from "we don't" for the exact same displayed number.
+                "probability_basis": r.get("probability_basis"),
+                "probability_detail": r.get("probability_detail"),
+                "prob_ci_source": r.get("prob_ci_source"),
                 # The single field this whole rebuild exists to add: which
                 # of the four real recommendation states this row earned,
                 # and why -- computed once, above, by recommendation.py,
