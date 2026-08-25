@@ -60,6 +60,21 @@ SNAPSHOT_FIELDS = (
     "market_odds", "market_implied", "market_edge", "market_hold", "price_clears",
     "recommendation_status", "status_reasons", "why", "watchouts", "prob_ci",
     "reliability", "reliability_note", "sample_n", "lineup_assumed",
+    # 2026-08-25 registry-integrity reconciliation: these two were the real,
+    # concrete gap found -- docs/data.json's own `props` rows (the exact
+    # `row` this function reads) already carry both `lift` (hit_probability
+    # minus the market/league-rate baseline) and `base_rate` (that baseline
+    # itself), but neither was ever copied into the immutable snapshot, so
+    # the one durable, first-exposure record of a published Top Pick could
+    # never answer "was this a positive- or negative-lift pick" after the
+    # fact -- exactly the field a lift-vs-outcome accuracy comparison needs.
+    # Purely additive: immutable_snapshot() already skips any field absent
+    # from a given row, so this changes nothing about already-written
+    # registry entries (which simply won't have these two keys -- the same
+    # graceful degradation this project already applies to every other
+    # historical-data-integrity boundary), only what NEW entries capture
+    # going forward.
+    "base_rate", "lift",
 )
 VERSION_FIELDS = (
     "model_version", "selection_policy_version", "calibration_version",

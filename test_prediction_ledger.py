@@ -364,5 +364,40 @@ class ConfirmPublicationWiringTests(LedgerPathTests):
         self.assertEqual(summary["event_count"], 1)
 
 
+class SnapshotPreservesLiftAndBaseRateTests(LedgerPathTests):
+    """2026-08-25 registry-integrity reconciliation: real gap found while
+    tracing why registry.json's published Top Picks and results/grades_*
+    .json's "picks" list are different populations (they're SUPPOSED to be
+    -- two independently-selected candidate pools from two different
+    pipeline runs, not a defect; see the reconciliation report for the full
+    trace). The one real, fixable gap found along the way: docs/data.json's
+    own rows already carry `lift`/`base_rate`, but SNAPSHOT_FIELDS never
+    listed them, so the one immutable, first-exposure record of a published
+    Top Pick could never answer "was this a positive- or negative-lift
+    pick" after the fact -- exactly what a lift-vs-outcome accuracy
+    comparison needs the canonical published history to carry."""
+
+    def test_lift_and_base_rate_flow_into_the_immutable_snapshot(self):
+        row = prop()
+        row["lift"] = -0.0517
+        row["base_rate"] = 0.6691
+        registry, entry = published_registry_entry(row=row)
+        self.assertEqual(entry["snapshot"].get("lift"), -0.0517,
+                         "a real negative lift on the source row survives into the "
+                         "durable snapshot -- this is the exact field the negative-lift "
+                         "Top Pick investigation needs the canonical history to carry")
+        self.assertEqual(entry["snapshot"].get("base_rate"), 0.6691)
+
+    def test_absence_degrades_gracefully_not_a_fabricated_zero(self):
+        row = prop()  # no lift/base_rate set -- some callers may never have them
+        self.assertNotIn("lift", row)
+        registry, entry = published_registry_entry(row=row)
+        self.assertNotIn("lift", entry["snapshot"],
+                         "a row with no real lift computed leaves the field absent in the "
+                         "snapshot, never a fabricated 0.0 -- same 'absent is not zero' "
+                         "discipline this project holds everywhere else")
+        self.assertNotIn("base_rate", entry["snapshot"])
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)
