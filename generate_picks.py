@@ -1660,15 +1660,35 @@ def score_batter(batter, gm, opp_sp_row, opp_sp_id, opp_sp_hand, park_wx, batter
     if not park_wx or park_wx.get("dome"): why.append("Dome — weather neutral")
     elif park_wx.get("wind_effect") == "out": why.append(f"Wind blowing OUT ({park_wx.get('wind_mph',0):.0f}mph) — HR boost")
     elif park_wx.get("wind_effect") == "in": watchouts.append(f"Wind blowing IN ({park_wx.get('wind_mph',0):.0f}mph) — power suppressed")
+    # 2026-08-2X explanation-quality fix (data-integrity/directionality
+    # audit, real complaint: Jacob saw a "fresh pen" bullpen note under
+    # "Why It Could Hit"). Same class of bug as the wind-in fix just above
+    # -- all three of bullpen fatigue, bullpen quality, and sharp money
+    # used to land in `why` unconditionally regardless of which way the
+    # real value actually cut. A fresh/rested bullpen and an elite bullpen
+    # are both genuinely BAD news for a batter (harder relievers to face
+    # late); sharp money FADING this side is real negative context, not a
+    # reason to like the pick. Routed on the same real, already-computed
+    # values already driving these facts, not a second guess.
     if bullpen_fatigue_pct is not None:
-        why.append(f"Opposing bullpen fatigue: {fatigued}/{tracked} relievers over 60 pitches in L7 "
-                    f"({'tired pen — favorable late' if bullpen_fatigue_pct >= 40 else 'fresh pen'})")
+        note = (f"Opposing bullpen fatigue: {fatigued}/{tracked} relievers over 60 pitches in L7")
+        if bullpen_fatigue_pct >= 40:
+            why.append(note + " (tired pen — favorable late)")
+        else:
+            watchouts.append(note + " (fresh pen — tougher matchup late)")
     if bullpen_era_diff is not None and abs(bullpen_era_diff) >= 0.5:
-        why.append(f"Opposing bullpen ERA {bp_era} (league ~{LEAGUE_AVG_BULLPEN_ERA}, "
-                    f"{'shaky' if bullpen_era_diff > 0 else 'elite'} pen)")
+        note = f"Opposing bullpen ERA {bp_era} (league ~{LEAGUE_AVG_BULLPEN_ERA})"
+        if bullpen_era_diff > 0:
+            why.append(note + " — shaky pen")
+        else:
+            watchouts.append(note + " — elite pen")
     if sharp_divergence is not None and abs(sharp_divergence) >= 10:
-        why.append(f"Sharp money {'backing' if sharp_divergence > 0 else 'fading'} {batter.get('team')} "
-                    f"(money% {'+' if sharp_divergence>0 else ''}{sharp_divergence} pts vs ticket%)")
+        if sharp_divergence > 0:
+            why.append(f"Sharp money backing {batter.get('team')} "
+                        f"(money% +{sharp_divergence} pts vs ticket%)")
+        else:
+            watchouts.append(f"Sharp money fading {batter.get('team')} "
+                              f"(money% {sharp_divergence} pts vs ticket%) — smart money moving away from this side")
 
     signals = {}
     _sig(signals, "platoon", bats if bats in ("L", "R") else None, platoon)
