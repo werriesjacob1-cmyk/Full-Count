@@ -1,7 +1,68 @@
 # Full Count — session handoff status
 
-Last updated: 2026-08-25 ~17:35 UTC by Claude (this session).
+Last updated: 2026-08-25 ~18:20 UTC by Claude (this session).
 Purpose: let a fresh session resume with zero hidden chat context.
+
+## METHODOLOGICAL REVIEW OF THE RESEARCH LAB WHILE PID 3304 RUNS (2026-08-25 ~17:35-18:20 UTC)
+
+Per the "KEEP PID 3304 HEALTHY... only low-risk preparation" directive's
+Priority 2(A)/2(B), reviewed the already-built research lab for real
+methodological mistakes before the decisive disagreement test ever runs
+against rebuilt data. Two real, distinct bugs found and fixed, both
+committed and pushed:
+
+1. **`equal_volume_ranking_comparison()` value-tuple identity bug**
+   (`backtest/pa_opportunity_model.py`, commit `65683351`). The
+   overlap/removed/added set logic identified candidates by a VALUE tuple
+   `(order, current_prob, challenger_prob, outcome)` instead of object
+   identity. That tuple collides by construction in the disagreement work
+   specifically -- `challenger_prob` is a shared empirical rate across an
+   entire (probability bucket, conflict tier) cell (~21 possible values),
+   so many genuinely distinct candidates can carry the identical tuple.
+   When a tie straddled the top-N cutoff, the old code silently
+   undercounted `removed` and overcounted `overlap`. Reproduced
+   empirically (pre-fix: overlap=4/removed=0 on a constructed scenario
+   where the correct answer is overlap=2/removed=2), fixed via `id()`-
+   based object identity (exact and free -- all three lists are built
+   from the same dict objects, never copies), locked in with a permanent
+   regression test. This function is shared by `residual_challenger_model.py`,
+   `disagreement_challenger_model.py`, and (via `primary_challenger_result()`)
+   `disagreement_experiment_runner.py` -- so the fix reaches the not-yet-run
+   decisive test automatically. Does NOT reopen the already-closed
+   opportunity thread's reported numbers (per standing instruction, those
+   are not being rerun/re-corrected).
+2. **`compare_policies()` candidate-universe-mismatch gap**
+   (`backtest/shadow_policy_framework.py`, commit `80a7dc58`). Comparing
+   two `PolicySelection`s built from different snapshots (different
+   dates, or the same date re-fetched after the live board moved) used to
+   silently produce a plausible-looking but meaningless overlap/added/
+   removed result -- no check existed that both selections came from the
+   same `snapshot_id`. Fixed: raises `ValueError` when both selections
+   carry a real, differing `snapshot_id` (a `None` on either side --
+   e.g. hand-built test selections -- is treated as "untagged," not a
+   mismatch, so existing tests are unaffected). Also reviewed
+   `champion_policy()`'s use of `recommendation_funnel.classify_with_trace()`/
+   `gate_trace()` for postgame leakage: confirmed it reads only pregame
+   fields (`hit_probability`, `reliability`, `lineup_assumed`,
+   `market_odds`, `prob_ci`) -- no leak found.
+
+Full test suite (`for f in test_*.py; do ...; done`) reverified green
+after each fix, individually and combined -- confirmed via direct exit-
+code checking (the 4 log files that matched a raw `grep FAIL` were all
+false positives: docstring text like "FAIL-CLOSED"/"FAIL-SAFE", not
+actual failures; every suite's own printed pass count was full).
+
+**Not yet done from Priority 2's list**: (C) the optional per-market
+runner (deliberately deferred per `harness_readiness_2026-08-25.md` --
+build once canonical history returns, not blind), (D) the optional QC
+research-only all-reason instrumentation (not yet started). Neither is
+required before the decisive test; both remain optional low-risk
+preparation if PID 3304 is still running next time this is picked up.
+
+**PID 3304 status at this update**: healthy, ~1h11m elapsed, 86,642+ rows
+written, currently processing dates in mid-May 2024 at a normal ~85-90s/
+date pace (consistent with the runtime-profile finding above -- no
+slowdown). Untouched by any of this turn's work.
 
 ## PREPARATORY RESEARCH INFRASTRUCTURE BUILT WHILE BACKFILL RERUNS (2026-08-25 ~16:00-17:35 UTC)
 
@@ -250,15 +311,15 @@ finished (or died) without this file being updated with that news.
 
 ## Branch / HEAD
 
-- Branch: `claude/gridiron-continuation-dvaljm` at `69f86520` (this
-  session's HEAD before the restart -- confirmed intact via
-  `git fetch`/fast-forward after the restart). `f7c120a3` is an earlier
-  commit in this same branch's history (an earlier segment of this
-  session) -- it's the most recent commit anywhere in this branch's
-  ancestry that touched scoring code, used above only to confirm scoring
-  logic hasn't changed since. Fully pushed once this HANDOFF_STATUS.md
-  update + the recreated disagreement files are committed. Clean working
-  tree otherwise.
+- Branch: `claude/gridiron-continuation-dvaljm` at `80a7dc58` (pushed) as
+  of this update, plus this HANDOFF_STATUS.md commit on top once pushed.
+  `f7c120a3` is an earlier commit in this same branch's history (an
+  earlier segment of this session) -- it's the most recent commit
+  anywhere in this branch's ancestry that touched scoring code, used
+  above only to confirm scoring logic hasn't changed since (still true --
+  nothing has touched `generate_picks.py`/`backtest/engine.py`/
+  `backtest/signals.py`/`mlb_sources.py` this session past that commit,
+  so PID 3304 remains single-regime). Clean working tree otherwise.
 - PR #64 (Weston fix + provenance validator) MERGED, sha `1ead2fb1`.
 - PR #65 (event-targeted observer upgrade + on_1b fix) MERGED, sha `610cfe17`.
 - No open PRs. Everything on this branch this update is already on `main`.
