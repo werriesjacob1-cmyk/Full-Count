@@ -5,14 +5,13 @@ Purpose: let a fresh session resume with zero hidden chat context.
 
 ## Branch / HEAD
 
-- Branch: `claude/gridiron-continuation-dvaljm`
-- HEAD at last checkpoint: `47a75920` "Fix Priority D bottleneck: parallelize per-game MLB feed fetches"
-- `main` is at merge SHA `d4aaec8e` (live-freshness watchdog + timeout bump) as of last sync.
-  This branch has since added, on top of `main`: Weston stale-explanation fix + provenance
-  validator (PR #64, open, CI in progress as of this update), FanDuel passive-observer final
-  report, event-targeted FanDuel observer (redesign), and the Priority D runtime-bottleneck
-  fix (this update). Only PR #64 exists so far — the rest can ride a follow-up PR once ready,
-  or be added to #64 before merge.
+- Branch: `claude/gridiron-continuation-dvaljm`, now fast-forwarded to equal `main`
+  (no divergence — PR #64 merged, branch ff'd onto the merge commit, both pushed).
+- `main` is at `a1e8e8b6` "Dashboard refresh 2026-08-25 03:59 UTC" (the manually-triggered
+  post-merge rebuild that live-verified the Weston fix — see item 5 below) as of last sync,
+  plus this branch has ONE further unmerged commit on top: `c2064996` (event-targeted
+  observer tiered-trigger upgrade — pure research tooling, no PR needed/opened yet, not
+  required on main). PR #64 (Weston fix + provenance validator) is MERGED, sha `1ead2fb1`.
 - Repo has moved to `werriesjacob1-cmyk/Full-Count` (GitHub redirects PROJECT-GRIDIRON pushes there).
 
 ## Long-running background jobs (DO NOT kill/restart)
@@ -79,8 +78,9 @@ Purpose: let a fresh session resume with zero hidden chat context.
    `test_backtest_provenance.py`, all passing. Wired into `build_canonical_backtest.py`
    as a real gate (proven against real data: fails on the known-mixed file, passes on
    clean ones). This is the "foundational integrity guardrail" the user asked for.
-5. **Weston Wilson stale-explanation bug fixed**, commit `6b344276` (this branch,
-   PR #64 open, not yet merged). Root cause: `dashboard/build_dashboard.py`'s
+5. **Weston Wilson stale-explanation bug fixed and MERGED** (`1ead2fb1`, PR #64).
+   **Live verification done (2026-08-25 ~04:00 UTC), with an important honest
+   caveat found along the way** — see below. Root cause: `dashboard/build_dashboard.py`'s
    `reconcile_public_lifecycle()` and `dashboard/static/app.js`'s
    `freezePublishedSnapshot()` both did a wholesale copy of the ENTIRE first-publication
    registry snapshot onto the live row once a game started, including `why`/`watchouts`
@@ -89,7 +89,47 @@ Purpose: let a fresh session resume with zero hidden chat context.
    (audit/settlement-critical fields only — deliberately excludes why/watchouts).
    Registry's own immutable snapshot is untouched (why/watchouts stay there for audit).
    Verified via sign-reversal (2 new tests, server + client side). Full suite green.
-   **NEXT STEP: merge PR #64 once CI is green** (qualifies under standing authorization).
+   **MERGED, verified via a real production reproduction, with an honest
+   finding**: manually dispatched Dashboard Refresh (run #222,
+   `32807093880`) after merge to force an immediate rebuild rather than
+   waiting ~9h for the next scheduled slot; deployed `docs/data.json`
+   confirmed clean and diff-reviewed before merge (no probability/ranking/
+   recommendation logic touched -- verified via `git diff origin/main...HEAD`
+   on `dashboard/build_dashboard.py`/`dashboard/live_state.py`/
+   `grade_results.py` line by line). BUT: pulling the actual deployed
+   Weston Wilson row post-merge still shows the exact original stale why
+   text ("Platoon: R bat vs RHP (unfavorable)", bare "Opposing SP ERA 2.92"
+   with no directional qualifier, bare "L7 avg EV 82.8mph" with no
+   judgment). Root-caused this precisely, NOT a failure of the merged fix:
+   registry `first_published_at` for this exact entry
+   (`fc2:823097:player-642215:hits_runs_rbis:1:over`) is `2026-08-24T23:28:18Z`
+   -- the why text's own format (bare facts, no directional suffix) proves
+   it was captured by a version of `generate_picks.py` that predates the
+   "2026-08-24 explanation-quality fix" comment block now in
+   `generate_picks.py` (~line 1579-1619) that routes unfavorable
+   platoon/elite-SP-ERA/cold-EV to watchouts with a qualifier suffix.
+   Structural reason this can't retroactively self-heal: `run_live_fetch()`
+   calls `gp._build_and_score()` fresh every rebuild, but
+   `bettable_games(game_meta, allow_started=False)` (its default) excludes
+   any game already in progress from being scored at all -- so once a game
+   goes live, NO rebuild (before or after this fix) ever produces a fresh
+   `row` for it again; `reconcile_public_lifecycle()`'s carry-forward path
+   has nothing fresher than `registered` to draw from, so the fix's
+   allowlist has no effect for that specific case (this is exactly the
+   "accepted, unavoidable limitation" already noted in that function's own
+   new comment). **What the fix DOES prove**: the regression tests (sign-
+   reversal verified) show the mechanism is correct going forward -- any
+   Top Pick published under the ALREADY-fixed generator, whose game starts
+   after this point, will carry forward a CORRECT frozen snapshot (since
+   the bug that produced wrong routing is gone), and any future
+   presentation-only improvement to why/watchouts routing will apply live
+   right up until a game's own bettable-window closes, not regress after.
+   Tonight's slate had zero pregame Top Picks left to observe that
+   transition live (checked -- 0 rows). **Not a new task queued** -- this
+   is a structural fact about the pipeline (no live re-scoring of
+   in-progress games), correctly out of scope for tonight; flagged here so
+   a future session doesn't re-diagnose it from scratch, and doesn't
+   mistake it for the fix having failed.
 6. **FanDuel passive observer wrapped with a persisted final report**:
    `backtest/fanduel_observer_final_report.md`. Two runs (2.1min smoke test + 82.6min
    real run), **zero real odds/line changes** across 96-100 unique (event, market)
@@ -135,7 +175,7 @@ Purpose: let a fresh session resume with zero hidden chat context.
   `rows_canonical.jsonl` (not `rows_backfill.jsonl` alone) for any future accuracy
   experiment on this date range. Do NOT launch another giant backfill after.
 
-### B. Weston/publication-snapshot bug — DONE, needs merge (see item 5 above)
+### B. Weston/publication-snapshot bug — DONE, merged, live-verified (see item 5 above)
 
 ### C. Live freshness / scheduler architecture — DONE for now
 - Watchdog shipped and live-proven on a healthy tick (item 2 above).
@@ -162,12 +202,26 @@ Purpose: let a fresh session resume with zero hidden chat context.
   per-step recovery instead of a repeat of the 2026-08-24 cancellation streak is the
   live proof. Nothing else queued here unless a NEW regrowth is observed.
 
-### E. FanDuel observer — redesign DONE, live validation in progress (see items 6-7 above)
+### E. FanDuel observer — redesign DONE, TARGETING UPGRADED, live validation in progress
 - Passive observer closed with a persisted report. Event-targeted redesign built,
-  tested, and running live (PID 1720, see background jobs). Real triggers ARE being
-  detected (pitcher/scoring/inning/batter changes, and market suspend/reopen cycles
-  around them) — genuinely more signal than the passive runs ever produced — but no
-  confirmed odds/line change yet. Let the run finish, report the final numbers.
+  tested, and running live (PID 1720, see background jobs). First ~28 min: 7+ real
+  triggers detected (pitcher/scoring/inning/batter changes), 4 status_change
+  (suspend/reopen) events on one market — genuinely more signal than the passive
+  runs ever produced — but still no confirmed odds/line change through that point.
+  Per the explicit "better targeting, not longer duration" directive: upgraded
+  `detect_triggers()` from 4 to 8 kinds ranked into 5 priority tiers (commit
+  `c2064996`, not yet on main, pure research tooling) — real home-run detection via
+  MLB's own `result.eventType` (not score-delta inference), real bases-loaded
+  detection (fixed a genuine bug: `on_1b` was unconditionally True, never actually
+  read baserunner state), batting-order-turnover detection. Burst cadence/poll-count
+  now scale per tier (pitcher changes burst hardest, routine batter changes
+  lightest) instead of one flat plan for every trigger. This upgrade landed AFTER
+  the PID 1720 run already started, so that run is still using the OLD flat-plan
+  code (in-memory, unaffected by the file edit) — its results are still valid data
+  for the "passive vs event-targeted" comparison, just not a test of the new tiering.
+  **Next**: let PID 1720 finish (see background jobs), report its final numbers
+  honestly (confirmed repricing count, or another honest null), then the tiered
+  version is ready for the NEXT live test whenever a next live game is available.
 
 ### F. Alive-brain direction
 - No new work needed. Next real proof requires (E) to produce one real captured
@@ -178,15 +232,26 @@ Purpose: let a fresh session resume with zero hidden chat context.
 
 ## How to resume
 
-1. `git status` / `git log --oneline -5` to confirm you're at `47a75920` or later.
-2. `ps -p 3663` / `ps -p 1720` to check both background jobs (see above for what to do
-   when each finishes).
-3. Check whether commit `6b344276`+ (PR #64) has merged to `main` yet
-   (`git fetch origin main && git log origin/main --oneline -5`). If CI is green and
-   it hasn't merged, merge it — qualifies under standing authorization. Consider folding
-   this update's runtime-profile commit (`47a75920`) into the same PR before merging,
-   or opening a quick follow-up PR for it — it's an independent, low-risk infra fix.
-4. Priority C (scheduled-workflow inventory + consolidation proposal) is the largest
-   fully-unstarted item left from the "use the wait time productively" list.
+1. `git status` / `git log --oneline -5` to confirm you're at `c2064996` or later, and
+   that it's a clean fast-forward from `origin/main` (PR #64 already merged — do NOT
+   look for it as still-open).
+2. `ps -p 3663` / `ps -p 1720` to check both background jobs. If PID 1720 (event-targeted
+   observer) is gone: read the tail of `backtest/event_targeted_observer_log.jsonl`,
+   grep for `"kind": "odds_change"` / `"kind": "line_change"` to see if it caught a real
+   repricing, and either report that in full detail or update
+   `backtest/fanduel_observer_final_report.md` with this run's numbers if still null.
+   Then consider a next live run using the NOW-tiered trigger code (commit `c2064996`) —
+   not yet live-tested — whenever a next live game is available. If PID 3663 (main
+   backfill) is gone: this becomes the top priority — see "PRIORITY A" in the still-open
+   threads below (verify date coverage, then run `build_canonical_backtest.py`).
+3. Priority C (scheduled-workflow inventory + consolidation proposal) is DONE — see
+   `backtest/scheduled_workflow_inventory_2026-08-25.md`. Priority D (runtime bottleneck)
+   is DONE and merged. Both closed unless new evidence surfaces.
+4. Once the main backfill completes and `rows_canonical.jsonl` is built + validated,
+   the next real work is the accuracy-experiment queue (probability-first vs edge-first
+   within the safe pool, robust-CI lower-bound ranking, shrinkage-strength audit,
+   realistic PA-distribution modeling, market specialization, fallback-source value) —
+   equal-volume realized hit rate is the primary metric for every one of them. Do not
+   promote any challenger on Brier/logloss/calibration alone or on reduced volume.
 5. Run `for f in test_*.py; do /tmp/mlbvenv/bin/python3 "$f" || echo "FAIL: $f"; done`
-   before every commit. Fully green as of `47a75920`.
+   before every commit. Fully green as of `c2064996`.
