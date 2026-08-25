@@ -44,6 +44,9 @@ import json
 import sys
 from collections import Counter
 
+sys.path.insert(0, __file__.rsplit("/", 1)[0] if "/" in __file__ else ".")
+import provenance
+
 MAIN_FILE = "/home/user/PROJECT-GRIDIRON/backtest/rows_backfill.jsonl"
 REPAIR_FILE = "/home/user/PROJECT-GRIDIRON/backtest/rows_backfill_repair.jsonl"
 OUT_FILE = "/home/user/PROJECT-GRIDIRON/backtest/rows_canonical.jsonl"
@@ -116,6 +119,23 @@ def main():
         print("  NOTE: main contributed 0 rows -- main backfill has not yet reached "
               f"{REPAIR_CUTOVER} or has not completed. Re-run this script once it has "
               "progressed further; safe to re-run any time, fully deterministic.")
+
+    # Final, independent verification via provenance.py -- not just trusting
+    # this script's own KNOWN_GOOD_SHAS check above. The canonical output
+    # SHOULD be a single clean regime (repair and main's kept portion both
+    # run 6b748538 in the case that motivated this script); if it isn't,
+    # something about the reconciliation rule itself is wrong and any
+    # accuracy experiment run against this file would silently be comparing
+    # across incompatible code regimes -- exactly the failure class this
+    # whole module exists to catch automatically instead of by luck.
+    print()
+    try:
+        report = provenance.require_single_regime(OUT_FILE)
+        regime = next(iter(report))
+        print(f"PROVENANCE CHECK: PASS -- {OUT_FILE} is a single regime {regime}.")
+    except provenance.MixedRegimeError as e:
+        print(f"PROVENANCE CHECK: FAIL\n{e}", file=sys.stderr)
+        sys.exit(1)
 
 
 if __name__ == "__main__":
