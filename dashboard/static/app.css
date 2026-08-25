@@ -335,6 +335,9 @@ main { max-width: 1180px; margin: 0 auto; padding: 20px 16px 80px; }
 .chip-lineup-confirmed { background: var(--good-soft); color: var(--good); }
 .chip-lineup-assumed { background: var(--warn-soft); color: var(--warn); }
 .chip-stale { background: var(--bad-soft); color: var(--bad); }
+.chip-suspect { background: var(--warn-soft); color: var(--warn); }
+.top-pick-warning { background: var(--warn-soft); border-radius: 10px; padding: 10px 14px; margin-bottom: 18px; }
+.top-pick-warning .section-sub { color: var(--warn); font-weight: 600; margin: 0; }
 .chip-evidence-strong { background: var(--good-soft); color: var(--good); }
 .chip-evidence-solid { background: var(--lean-soft); color: var(--lean); }
 .chip-evidence-developing { background: var(--warn-soft); color: var(--warn); }

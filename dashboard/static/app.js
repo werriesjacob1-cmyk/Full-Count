@@ -128,6 +128,45 @@ function evidenceQuality(p) {
 }
 
 // ══════════════════════════════════════════════════════════════════════
+//  PROBABILITY BASIS — 2026-08-2X data-integrity fix (probability-drivers-
+//  vs-matchup-context separation). Direct instruction: "do not let
+//  contextual reasons imply they mathematically generated the headline
+//  probability when they didn't." p.hit_probability (the big number) and
+//  p.score (what ranks/labels the card) are TWO DIFFERENT numbers computed
+//  by different mechanisms -- the "Why It Could Hit"/"Why It Could Miss"
+//  facts below explain the SCORE and today's matchup context, not a
+//  literal derivation of the probability. probability_basis/
+//  probability_detail (newly exposed on the public payload -- see
+//  dashboard/build_dashboard.py's clean()) are what actually produced the
+//  probability, and belong here, in Evidence, not folded into Why.
+const PROBABILITY_BASIS_LABELS = {
+  empirical: "His own real rate this season",
+  empirical_shrunk: "His own real rate, shrunk toward the league rate for a small sample",
+  modelled: "A modelled projection (no direct empirical rate available)",
+  modelled_shrunk: "A modelled projection, shrunk toward the league rate",
+  blended: "A blend of his own real rate and a modelled projection",
+  league_only: "The league rate — not enough of his own data to move off it",
+  combined_shrunk: "A modelled combination for both starters, shrunk toward the league rate",
+  modelled_independent_binomials: "A modelled combination for both starters (treated as independent)",
+  unavailable: "Not available",
+};
+function probabilityBasisText(p) {
+  const label = PROBABILITY_BASIS_LABELS[p.probability_basis];
+  if (!label) return null;
+  const detail = p.probability_detail || {};
+  const parts = [];
+  if (detail.empirical != null) parts.push(`his own rate ${pct(detail.empirical, 1)}`);
+  if (detail.modelled != null) parts.push(`modelled ${pct(detail.modelled, 1)}`);
+  return parts.length ? `${label} (${parts.join(", ")})` : label;
+}
+function probCiSourceText(p) {
+  if (!p.prob_ci) return null;
+  if (p.prob_ci_source === "historical_reliability_band") return "From this market's own historical track record, not this player's individual sample";
+  if (p.prob_ci_source === "player_empirical") return "From this player's own real sample";
+  return null;
+}
+
+// ══════════════════════════════════════════════════════════════════════
 //  RECOMMENDATION STATUS — display metadata for the four real states
 // ══════════════════════════════════════════════════════════════════════
 const STATUS_META = {
@@ -155,6 +194,27 @@ function lineupChip(p) {
 }
 function staleChip(p) {
   return p.stale ? `<span class="chip chip-stale">Stale Data</span>` : "";
+}
+// 2026-08-2X data-integrity fix (P0-5, Top Pick warning visibility): a Top
+// Pick candidate that classify_recommendation() flagged SUSPECT (the
+// market itself disagrees with the model's read) gets a SECOND entry in
+// status_reasons -- "note: the market itself disagrees with this read
+// (...) -- still a Top Pick on the model's own probability and price
+// test, but size with that in mind." Real bug: this note was computed and
+// then structurally unreachable everywhere on the site -- the only reader
+// of status_reasons, whyNotTopPickReason() (detail view), explicitly
+// returns null whenever recommendation_status === "top_pick" (it exists
+// to explain why something ISN'T a Top Pick), so a Top Pick's own warning
+// about itself was silently hidden precisely because it still qualified.
+// isTopPickSuspect()/topPickWarning() are the real fix: they read the
+// SAME field, gated the opposite way, so a Top Pick that earned this
+// warning shows it everywhere a Top Pick can appear -- the compact card
+// grid, not just one tap deeper in the detail sheet.
+function isTopPickSuspect(p) {
+  return p.recommendation_status === "top_pick" && (p.status_reasons || []).length > 1;
+}
+function suspectChip(p) {
+  return isTopPickSuspect(p) ? `<span class="chip chip-suspect" title="The market disagrees with this read -- still a Top Pick, but size with that in mind">⚠ Market Disagrees</span>` : "";
 }
 function evidenceChip(p) {
   const eq = evidenceQuality(p);
@@ -564,7 +624,7 @@ function pickCard(p) {
   // in the detail sheet's "Underlying data," and showing it on every single
   // card in a grid of a dozen-plus picks was pure chip clutter, not a
   // decision a viewer needs to make before opening a card.
-  const chips = [statusChip(p), lineupChip(p), staleChip(p), liveStaleChip(p), gradeChip(p)].filter(Boolean).join("");
+  const chips = [statusChip(p), suspectChip(p), lineupChip(p), staleChip(p), liveStaleChip(p), gradeChip(p)].filter(Boolean).join("");
   // No "TOP PICK #N" ordinal badge here (removed 2026-08-25). Audited
   // whether production has a real canonical order for this UNCAPPED
   // top_pick population and found it does not: classify_recommendation()
@@ -601,7 +661,7 @@ function pickCard(p) {
   </button>`;
 }
 function propRow(p) {
-  const chips = [statusChip(p), lineupChip(p), staleChip(p), liveStaleChip(p), gradeChip(p)].filter(Boolean).join("");
+  const chips = [statusChip(p), suspectChip(p), lineupChip(p), staleChip(p), liveStaleChip(p), gradeChip(p)].filter(Boolean).join("");
   return `<button class="prop-row ${lifecycleClass(p)}" data-open="${p.id}">
     <div class="pr-main">
       <div class="pr-name">${esc(p.name)}</div>
@@ -1376,9 +1436,14 @@ function detailBody(p) {
         <div>FanDuel: ${fmtOdds(p.market_odds) ?? "not posted"}</div>
       </div>
     </div>
-    <div class="pc-chips" style="margin-bottom:18px;">${[statusChip(p), lineupChip(p), evidenceChip(p), staleChip(p), liveStaleChip(p), gradeChip(p)].filter(Boolean).join("")}</div>
+    <div class="pc-chips" style="margin-bottom:18px;">${[statusChip(p), suspectChip(p), lineupChip(p), evidenceChip(p), staleChip(p), liveStaleChip(p), gradeChip(p)].filter(Boolean).join("")}</div>
+    ${isTopPickSuspect(p) ? `<div class="detail-section top-pick-warning">
+      <p class="section-sub">${esc(capSentence(p.status_reasons[p.status_reasons.length - 1]))}</p>
+    </div>` : ""}
 
-    ${renderReasons(hitItems, "positive", "＋") ? `<div class="detail-section"><h3>Why It Could Hit</h3>${renderReasons(hitItems, "positive", "＋")}</div>` : ""}
+    ${renderReasons(hitItems, "positive", "＋") ? `<div class="detail-section"><h3>Why It Could Hit</h3>
+      <p class="section-sub">What shapes Full Count's read of this matchup — see Evidence below for what actually produced the probability number above.</p>
+      ${renderReasons(hitItems, "positive", "＋")}</div>` : ""}
     <div class="detail-section"><h3>Why It Could Miss</h3>${
       missItems.length ? renderReasons(missItems, "negative", "－")
         : `<p class="section-sub">No major model-side concern beyond normal baseball variance.</p>`
@@ -1401,10 +1466,12 @@ function detailBody(p) {
 
     <div class="detail-section">
       <h3>Evidence</h3>
+      <p class="section-sub">What actually produced the probability number above.</p>
       ${renderRows([
+        ["What produced this number", probabilityBasisText(p) || "—"],
         ["Evidence quality", eq ? eq.label : "—"],
         ["Sample size", p.sample_n ?? "—"],
-        ["95% interval", p.prob_ci ? pct(p.prob_ci[0], 0) + "–" + pct(p.prob_ci[1], 0) : "Not defensible for this line"],
+        ["95% interval", p.prob_ci ? pct(p.prob_ci[0], 0) + "–" + pct(p.prob_ci[1], 0) + (probCiSourceText(p) ? ` (${probCiSourceText(p)})` : "") : "Not defensible for this line"],
       ])}
     </div>
 
