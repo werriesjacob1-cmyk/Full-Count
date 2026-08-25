@@ -1,0 +1,71 @@
+name: Live Freshness Watchdog
+
+# 2026-08-25 incident hardening. docs/live.json went stale for ~1 hour
+# after Dashboard Live Update run #271 -- that run itself succeeded
+# cleanly at 01:17:44Z (verified via its own job step timings), but
+# GitHub's cron scheduler created no new run for the workflow for the
+# following hour despite its concurrency group being completely idle the
+# whole time. This watchdog does not replace dashboard-live.yml and does
+# NOT write to docs/live.json itself (one semantic writer path, unchanged
+# -- see dashboard-live.yml's own header comment). It only checks
+# freshness and, if the SLA is exceeded, dispatches the real canonical
+# workflow via workflow_dispatch -- the same recovery action a human
+# manually performed during the incident, now automatic.
+#
+# Runs on its own 5-minute cron (independent trigger source, not chained
+# off dashboard-live.yml, so a scheduler gap affecting one doesn't
+# necessarily affect both) offset by 2 minutes from dashboard-live.yml's
+# */5 schedule so the two don't compete for the scheduler in the same
+# minute.
+on:
+  schedule:
+    - cron: '2-59/5 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: write
+
+concurrency:
+  group: live-freshness-watchdog
+  cancel-in-progress: false
+
+jobs:
+  check-and-recover:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 1
+          filter: blob:none
+          sparse-checkout: |
+            docs/live.json
+            dashboard/check_live_freshness.py
+          sparse-checkout-cone-mode: true
+
+      - name: Check docs/live.json freshness
+        id: freshness
+        run: |
+          if python3 dashboard/check_live_freshness.py docs/live.json; then
+            echo "stale=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "stale=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Dispatch Dashboard Live Update (recovery attempt)
+        if: steps.freshness.outputs.stale == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          echo "::warning::docs/live.json exceeded the freshness SLA -- dispatching Dashboard Live Update to recover."
+          gh workflow run dashboard-live.yml --ref main \
+            --repo "${{ github.repository }}"
+
+      - name: Fail visibly on a stale finding
+        if: steps.freshness.outputs.stale == 'true'
+        run: |
+          echo "::error::LIVE DATA STALE -- docs/live.json exceeded the freshness SLA. A recovery dispatch was sent to Dashboard Live Update; this watchdog run is marked failed so the condition is visible (Actions tab / badge) until the next successful check confirms recovery."
+          exit 1

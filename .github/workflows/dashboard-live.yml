@@ -26,15 +26,26 @@ jobs:
     # down to 3s and materially shrank "Commit and push live state", but
     # run 104 still finished at 10m34s and got cancelled -- every single
     # step succeeded, it was ~34s over budget. Grading (2m38s) + repricing
-    # (2m41s) alone now take 5m19s (docs/data.json is 1075 props, 1.6MB;
-    # each grades a real MLB boxscore check), leaving too little room for
-    # the push-retry loop given how many OTHER workflows commit to main
-    # every few minutes. This is real, demonstrated workload, not a git
-    # inefficiency -- give it the headroom the job actually needs rather
-    # than attempting a fourth speculative optimization. If grading/
-    # repricing runtime itself keeps growing, that's a separate follow-up,
-    # not a freshness-bug-fix-scope change.
-    timeout-minutes: 15
+    # (2m41s) alone took 5m19s on 2026-08-20 (docs/data.json was 1075
+    # props, 1.6MB; each grades a real MLB boxscore check), leaving too
+    # little room for the push-retry loop given how many OTHER workflows
+    # commit to main every few minutes.
+    #
+    # 2026-08-25 incident follow-up: that same measurement had regrown to
+    # ~15 minutes combined in 5 days (run 267's own job log: "Grade
+    # published Top Picks" 7m34s, "Reprice pregame candidates" cancelled
+    # mid-step at 7m31s in) -- consuming the ENTIRE 15-minute budget before
+    # "Commit and push live state" could even finish, and this was the
+    # dominant cause of that day's long streak of cancelled scheduled runs
+    # (a real, separate mechanism from the live-freshness-watchdog.yml
+    # scheduler-gap fix added the same day). Bumped again on the same
+    # "give it the headroom the real, demonstrated workload needs" basis
+    # as the prior three fixes -- not a git inefficiency, not something a
+    # fourth checkout optimization would touch. If this keeps regrowing,
+    # that points at grading/repricing's own per-prop cost (docs/data.json
+    # size, or MLB boxscore-check latency) needing investigation, which is
+    # out of scope for a workflow-YAML freshness fix.
+    timeout-minutes: 25
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
