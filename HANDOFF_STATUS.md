@@ -177,8 +177,22 @@ Purpose: let a fresh session resume with zero hidden chat context.
 
 ### B. Weston/publication-snapshot bug — DONE, merged, live-verified (see item 5 above)
 
-### C. Live freshness / scheduler architecture — DONE for now
+### C. Live freshness / scheduler architecture — DONE for now, one open question flagged
 - Watchdog shipped and live-proven on a healthy tick (item 2 above).
+- **NEW real live incident observed and resolved this update** (2026-08-25
+  ~03:29-04:09 UTC) — see `backtest/live_incident_2026-08-25_0329.md` for full
+  detail. Dashboard Live Update AND its own watchdog both went quiet for
+  30-40+ minutes on their 5-minute crons (Lineup Watch showed a similar,
+  independently-timed 47.5-min gap), well AFTER the Priority D runtime fix
+  was already merged — confirms this is a SEPARATE incident class from
+  2026-08-24's (a scheduling/trigger-delivery gap, not a runtime bottleneck).
+  Proof: manually dispatched `dashboard-live.yml` as recovery; it ran in
+  **35 seconds** once it actually started — the pipeline itself was never
+  slow, only the trigger delivery was delayed. `docs/live.json` freshness
+  restored. **Open question, NOT answered, flagged for a future session**:
+  why did the watchdog itself (cheap, 3-min timeout, check-only) also go
+  quiet on its own cron for 30+ minutes? Don't guess at this — investigate
+  with real data if it recurs.
 - **Full inventory DONE**: `backtest/scheduled_workflow_inventory_2026-08-25.md`.
   ≈1,050 workflow invocations/day total; ≥720/day are independent `git push
   origin HEAD:main` attempts from 4 workflows effectively on the same ~5-minute
