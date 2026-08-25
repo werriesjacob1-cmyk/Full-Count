@@ -1102,6 +1102,13 @@ assertTrue(!strip.includes("family=strikeouts"),
   "a family with a real count of 0 tonight gets no chip -- never a dead tap");
 assertTrue(strip.includes(">More<"), "a More chip always appears, linking to the full board");
 assertTrue(strip.includes('href="#/props">More'), "More chip links to the unfiltered All Props page");
+// Real bug, found 2026-08-25: on mobile the chip strip (up to 7 chips
+// including More) routinely overflows the viewport with no visual cue that
+// more chips exist past the hard-cut edge -- a viewer could easily never
+// discover the "More" chip sits just out of view. explore-strip-wrap gives
+// app.css a real edge-fade affordance to hang off of.
+assertTrue(strip.includes('class="explore-strip-wrap"'),
+  "the scrollable strip is wrapped so a real edge-fade discoverability affordance can render, got " + strip);
 
 // -- pickCard: no invented ordinal ranking --
 const p = {id:"x1", name:"Test Player", team:"NYY", prop:"Over 0.5 Hits", hit_probability:0.65,
