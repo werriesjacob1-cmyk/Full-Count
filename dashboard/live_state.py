@@ -66,6 +66,39 @@ PUBLICATION_FIELDS = frozenset((
 PROP_META_FIELDS = frozenset(("_field_updated_at",))
 DURABLE_FIELDS = SETTLEMENT_FIELDS | PUBLICATION_FIELDS
 
+# 2026-08-25 Weston Wilson investigation: a published Top Pick's audit/
+# settlement-critical facts (the bet a user actually saw) must never
+# regress after a game starts, but its PRESENTATION (why/watchouts) must
+# keep reflecting the CURRENT generator's routing, not whatever text
+# existed at the moment of first publication. Before this fix,
+# reconcile_public_lifecycle() and the frontend's freezePublishedSnapshot()
+# both did a wholesale copy of every field in the registry's immutable
+# snapshot onto the live row once a game started -- correct for probability/
+# odds/status, wrong for why/watchouts, which are pure presentation and were
+# never meant to be frozen. Real case: Weston Wilson's Over 0.5 Hits+Runs+RBIs
+# kept showing pre-fix negative-context bullets (batting 8th, tough platoon,
+# elite opposing SP, cold recent EV) as green "WHY FULL COUNT LIKES IT"
+# evidence on the live site long after generate_picks.py was fixed to route
+# those same facts to watchouts, because the frozen snapshot from BEFORE
+# that fix was still being reapplied wholesale on every rebuild.
+#
+# A field belongs here only if getting it wrong after publication would
+# misrepresent the actual bet a user saw, or the settlement/audit record --
+# never merely because publication_registry.SNAPSHOT_FIELDS happens to
+# capture it for historical audit. "why"/"watchouts" ARE kept in the
+# registry's own immutable snapshot (real, deliberate audit value -- "what
+# did we say at the time"), just never reapplied onto the live/current row.
+FROZEN_PUBLICATION_FIELDS = frozenset((
+    "id", "identity_version", "game_pk", "player_id", "combo_player_ids",
+    "type", "name", "team", "matchup", "game_start", "stat", "market_side",
+    "bet_side", "direction", "lean", "projection", "prop",
+    "hit_probability", "market_odds", "market_implied", "market_edge",
+    "market_hold", "price_clears", "recommendation_status", "status_reasons",
+    "prob_ci", "reliability", "reliability_note", "sample_n", "lineup_assumed",
+    "base_rate", "lift", "lift_reference_rate", "stable_lift",
+    "published_top_pick_at",
+))
+
 _GAME_LEVEL_STATS = frozenset(("nrfi_combined",))
 _COMMUTATIVE_COMBO_STATS = frozenset(("combined_strikeouts",))
 _FIXED_HALF_RUN_STATS = frozenset(("nrfi_combined", "first_inning_run"))
