@@ -115,20 +115,42 @@ def run_phase(phase_idx, targets, minutes, interval_s, log_path, prev_state, las
     phase_requests = 0
     phase_latencies = []
     healthy = True
+    active = list(targets)
     with open(log_path, "a") as log:
         while time.time() < deadline:
             poll_started = time.time()
             poll_n += 1
-            for event_id, name, _ in targets:
+            if not active:
+                print(f"  [phase {phase_idx}] every target game has concluded -- ending phase early.")
+                break
+            for target in list(active):
+                event_id, name, _ = target
                 by_id, elapsed, failures = snapshot_event(event_id)
                 phase_requests += 1
                 phase_latencies.append(elapsed)
-                if failures:
+                # A game that just went Final returns this exact shape (no
+                # attachments.markets at all, on every tab) -- that is the
+                # book pulling markets for a finished game, not an endpoint
+                # reliability problem, and must not trip the health gate
+                # that protects the OTHER, still-live games' cadence step-
+                # down. Any other failure (timeout, malformed JSON on a
+                # market that should exist, HTTP error) still counts.
+                concluded = bool(failures) and all(
+                    "missing/invalid attachments.markets" in f for f in failures
+                )
+                if concluded:
+                    _log(log, {"kind": "game_concluded", "ts": _now(), "event_id": event_id,
+                               "game": name, "poll": poll_n})
+                    active.remove(target)
+                    print(f"  [phase {phase_idx}] {name} appears concluded (no markets on any "
+                          f"tracked tab) -- dropping from active monitoring, not counted as a "
+                          f"reliability failure.")
+                elif failures:
                     phase_failures += 1
                 rec = {"kind": "poll", "ts": _now(), "phase": phase_idx, "interval_s": interval_s,
                        "poll": poll_n, "event_id": event_id, "game": name,
                        "request_s": round(elapsed, 3), "n_markets": len(by_id),
-                       "failures": list(failures)}
+                       "failures": list(failures), "treated_as_concluded": concluded}
                 _log(log, rec)
 
                 prior = prev_state.get(event_id, {})
