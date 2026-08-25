@@ -1,11 +1,11 @@
 # Full Count — session handoff status
 
-Last updated: 2026-08-25 ~05:45 UTC by Claude (this session).
+Last updated: 2026-08-25 ~06:10 UTC by Claude (this session).
 Purpose: let a fresh session resume with zero hidden chat context.
 
 ## Branch / HEAD
 
-- Branch: `claude/gridiron-continuation-dvaljm` at `47cf24e6`, fully pushed,
+- Branch: `claude/gridiron-continuation-dvaljm` at `e64fd582`, fully pushed,
   clean working tree, matches `origin/main` exactly (no divergence) modulo
   this HANDOFF_STATUS.md update itself (commit immediately after editing).
 - PR #64 (Weston fix + provenance validator) MERGED, sha `1ead2fb1`.
@@ -72,16 +72,42 @@ Purpose: let a fresh session resume with zero hidden chat context.
   challenger mostly rediscovers what's already priced in. Reported
   honestly as marginal, not spun as a win. **This challenger does NOT earn
   shadow testing.**
-- **NEXT**: per the mechanistic finding above, a richer challenger
-  capturing the RESIDUAL opportunity info beyond what CONTEXT's linear
-  order treatment already extracts (e.g. order + days_rest/bullpen_fatigue
-  jointly, or examining whether CONTEXT's linear order treatment under/
-  over-weights the tails) is the next concrete step -- not yet built.
-  Otherwise: Priority 5 (fragility, now opportunity-centered), Priority 6
-  (model/context disagreement -- test whether it survives
-  opportunity-adjustment), Priority 7 (market specialization, extend
-  beyond `hits`), Priority 8 (pitcher opportunity/workload, a structurally
-  different mechanism, deliberately not started).
+- **Residual-opportunity phase (new continuation directive, 2026-08-25)
+  Priority 1/2 DONE**: clean target definition
+  (`is_shortfall = (actual_pa - E[actual_pa|order]) <= -1.0`) +
+  decomposition. Persisted: `backtest/residual_priority1_2_2026-08-25.md`.
+  Real bug found and fixed BEFORE publishing any conclusion:
+  `generate_picks.py:1891` stores `getaway_day` as -2 (true)/0 (false),
+  not a 0/1 flag -- an initial check silently matched zero real rows;
+  fixed, regression test added. **Two real, independent, year-stable
+  residual predictors found beyond order**: `days_rest` (0 days rest 8.56%
+  shortfall -> 4+ days rest 13.73%) and `getaway_day` (12.52% vs 8.86%),
+  both holding in every order slot and (mostly) every probability bucket.
+  `consecutive_games` (10+ streak) is real but in the OPPOSITE direction
+  (a role-stability/reliability signal, not fatigue risk).
+- **Priority 3/4/5 DONE -- thread CLOSED**:
+  `backtest/residual_challenger_model.py` (11 tests). Joint (order +
+  days_rest + getaway_day) empirical PA distribution, same strict
+  train(2024-2025)/holdout(2026) discipline. Persisted:
+  `backtest/priority3_4_5_residual_challenger_closure_2026-08-25.md`.
+  Result: directionally slightly better than the order-only challenger
+  (equal-volume net gain +0.34pp vs +0.22pp) but **NOT statistically
+  distinguishable from noise** (two-proportion z-test on added-vs-removed
+  picks: z=0.80, p≈0.42). Per the directive's own explicit closure
+  criteria: **"OPPORTUNITY SHORTFALL IS A REAL OUTCOME MECHANISM BUT IS
+  ALREADY SUFFICIENTLY PRICED INTO CURRENT SELECTION FOR PRACTICAL
+  PURPOSES." The opportunity-selection thread is CLOSED.** Do not reopen
+  without materially new evidence (a pitcher-workload analogue is a
+  distinct mechanism, not covered by this closure).
+- **NEXT**: per the directive's own instruction on closure, move directly
+  to model/context disagreement (does disagreement add independent
+  trustworthiness signal now that opportunity is ruled out as the
+  dominant explanation), market specialization (extend beyond `hits`),
+  and shrinkage-strength audit. Fragility (as originally scoped, tied to
+  opportunity) is effectively superseded by this closure -- a future
+  fragility metric would need to be grounded in whatever DOES survive as
+  a real trustworthiness dimension, not re-derived from the now-closed
+  opportunity mechanism.
 
 ## CLOSED work this session — do not redo
 
