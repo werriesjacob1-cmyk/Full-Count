@@ -143,6 +143,39 @@ check(c_slow_catcher["score"] > c_fast_catcher["score"],
       "steal score than an elite-armed catcher", f"slow={c_slow_catcher['score']} "
       f"fast={c_fast_catcher['score']}")
 
+head("9. 2026-08-25 explanation-quality fix (release-readiness audit): sprint speed / catcher "
+     "pop time / on-base ability must not land unqualified in `why` when they're actually "
+     "WEAK readings. Real production bug found via docs/data.json: Bobby Witt Jr.'s matchup "
+     "against a 1.88s (elite, hard-to-steal-on) catcher rendered under 'Why It Could Hit' "
+     "with no qualifying language -- 180 total stolen_base props affected on one real slate.")
+
+c9_fast_catcher = call(opp_catcher_poptime=1.85)
+check(not any("Opposing catcher pop time" in w for w in c9_fast_catcher["why"]),
+      "REGRESSION GUARD: an elite/fast catcher pop time (matchup<=35, hard to run on) must "
+      "NOT appear in why -- it isn't a reason to like the pick", f"got {c9_fast_catcher['why']}")
+check(any("Opposing catcher pop time 1.85" in w and "hard-to-run-on" in w for w in c9_fast_catcher["watchouts"]),
+      "that same fast pop time instead lands in watchouts, honestly labeled",
+      f"got {c9_fast_catcher['watchouts']}")
+
+c9_slow_catcher = call(opp_catcher_poptime=2.30)
+check(any("Opposing catcher pop time 2.30" in w and "easier to run on" in w for w in c9_slow_catcher["why"]),
+      "a genuinely slow (favorable) catcher pop time is labeled as such in why",
+      f"got {c9_slow_catcher['why']}")
+
+c9_weak_ob = call(batter_season={"wOBA": 0.26, "pa": 200})
+check(not any("On-base ability" in w for w in c9_weak_ob["why"]),
+      "REGRESSION GUARD: a weak on-base rate (on_base<=25) must NOT appear in why -- the "
+      "existing 'Fast, but a weak on-base rate' watchout already covers this fact, so it "
+      "must not also render as unqualified support", f"got {c9_weak_ob['why']}")
+check(any("weak on-base rate" in w for w in c9_weak_ob["watchouts"]),
+      "the weak on-base rate is still surfaced, honestly, in watchouts",
+      f"got {c9_weak_ob['watchouts']}")
+
+c9_strong_ob = call(batter_season={"wOBA": 0.40, "pa": 200})
+check(any("On-base ability" in w and "(favorable)" in w for w in c9_strong_ob["why"]),
+      "a genuinely strong on-base rate is labeled favorable in why",
+      f"got {c9_strong_ob['why']}")
+
 n_pass = sum(1 for ok, _, _ in _results if ok)
 n_total = len(_results)
 print("\n" + "=" * 78)

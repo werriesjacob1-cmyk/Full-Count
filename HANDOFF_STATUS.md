@@ -1,185 +1,801 @@
 # Full Count — session handoff status
 
-Last updated: 2026-08-25 ~04:35 UTC by Claude (this session).
+Last updated: 2026-08-25 ~21:10 UTC by Claude (this session).
 Purpose: let a fresh session resume with zero hidden chat context.
+
+## PASS 3/3: DETAIL SHEET + MY BOARD + SEARCH REBUILD (2026-08-25 ~20:05-21:10 UTC)
+
+Per the standing directive's three named targets: make the detail sheet
+argue both sides with real data, turn Watchlist into My Board (a real
+return-loop), and make search understand baseball entities. Committed
+and pushed as `908de613`.
+
+**Detail Sheet** -- full field audit first
+(`frontend/detail_sheet_data_audit_2026-08-25.md`), reading
+`generate_picks.py`'s REAL fitted score formulas rather than assuming
+the old nominal 35/25/15/15/10 weights still applied. Finding that
+mattered most: batters' `skill` component and pitchers' `form`
+component carry NEGATIVE fitted weights, so raw `cat_*` values are not
+safely gradable Supportive/Concern by simple thresholding -- this is
+why the "THE CASE" component-grade table suggested in the directive was
+deliberately NOT built this pass (a real evidence-based decision, not a
+skip). Rebuilt `detailBody()`: Full Count's Read hero, Why It Could Hit,
+an honest Why It Could Miss (real structured concerns from
+`status_reasons`/`watchouts` only -- never invented to force symmetry;
+falls back to "No major model-side concern beyond normal baseball
+variance" when that's the honest read), a new `priceFreshnessState()`
+distinguishing CURRENT/STALE/UNPOSTED/LIVE (previously computed
+upstream but never rendered), Opportunity (only shown with a real
+`batting_order` fact -- added a new `_derive_batting_order()` in
+`build_dashboard.py`, mirroring `backtest/opportunity_decomposition
+.derive_batting_order()`'s inversion of the scaled `lineup_slot` signal
+since `signals.lineup_slot` stores the SCALED value, not raw order), and
+Why Not a Top Pick (`whyNotTopPickReason()` -- real `status_reasons[0]`
+verbatim, gated on `WHY_NOT_TOP_PICK_MIN_PROB=0.60`, reusing
+`generate_picks.py`'s real `MIN_LINE_PROB` board-eligibility concept so
+it only shows for an already-interesting non-Top-Pick).
+
+**My Board** (renamed from Watchlist) -- audited the REAL current
+snapshot shape by direct code read first (`{status, odds,
+lineup_assumed, started}`, confirming the directive's correction was
+accurate) before building on top of it.
+`WATCH_SNAPSHOT_SCHEMA_VERSION=2` expands the save-time snapshot with
+real pregame fields (`hit_probability`, `market_odds`, `market_implied`,
+`market_edge`, `recommendation_status`, `saved_at`).
+`normalizeSnapshot()` migrates an old v1 save without crashing --
+fields v1 never captured render explicitly `null`, never backfilled
+from current state and presented as if historical. `sinceYouSavedChanges
+()`/`changeSummary()` surface only real deltas past presentation-only
+display thresholds (`WATCH_DISPLAY_THRESHOLD_PROB`/`_EDGE = 0.02`, 2
+percentage points -- explicitly NOT a model/recommendation threshold,
+just an alert-fatigue guard) and NEVER hide deterioration: a probability
+drop or edge shrink renders with `stronger:false`, same as an
+improvement renders `stronger:true`. Added sort (game time / probability
+/ recently-changed) and a "Clear all" control (native `confirm()`, no
+new UI framework).
+
+**Search** -- replaced flat substring matching with `runSearch()`,
+returning structured `{teams, games, players, props, propsTotal,
+marketFamily}`. Deterministic, non-fuzzy `_matchScore()` (exact=100 /
+prefix=80 / word-prefix=60 / substring=40 / none=0) -- explicitly no
+fuzzy-search dependency per direction. `MARKET_ALIASES` maps real
+customer phrasing ("home runs", "hr", "homers") to the real family key
+`familyFilterValue()` already produces -- customer navigation, not model
+logic. `TEAM_ABBR_ALIASES` maps standard abbreviations to a distinctive
+real nickname substring (not a hardcoded full team name, so it stays
+robust to naming changes). Two-team queries ("Yankees Red Sox" or "NYY
+BOS") resolve the same real game via alias-expanded searchable text
+(`_gameSearchText()`), not full NLP. Results capped at a few per group
+with a "See all N matching props" overflow link (`propsTotal` reports
+the honest full count).
+
+**Tests**: new head-19 Node-harness block in `test_build_dashboard.py`
+covering `_matchScore`/`_marketFamilyForQuery`/`runSearch()` (team/game/
+player/prop grouping, alias resolution, 5-result truncation). Combined
+with the existing head-17 (detail sheet) and head-18 (My Board) blocks
+from PASS 1/2 groundwork, `test_build_dashboard.py` is 82/82 passing.
+`docs/{app.js,app.css,index.html}` resynced via `copy_static_assets()`
+and `node --check` verified on both the source and the synced copy;
+`StaticSourceParityTests` reverified byte-identical.
+
+**Full repo test suite**: kicked off in background
+(`for f in test_*.py; do python3 "$f" || echo FAIL; done`) after the
+head-19 block was verified green in isolation; still running as of this
+update with zero `FAIL:` lines observed so far. **Re-check its final
+result before relying on "full suite green" in a future session** --
+confirm no `FAIL:` lines before assuming this pass is fully verified.
+
+No probability, scoring, recommendation, grading, or publication logic
+touched. Full 17-item report (data audit, before/after examples,
+screenshots/mobile verification, creative additions, rejected features,
+bugs found, Radar/Live compatibility notes, self-reflection questions)
+still owed to the user as of this update -- see conversation for the
+exact required format. Mobile verification at 375/390/430px (explicitly
+requested for Detail/My Board/Search) has NOT been done yet this pass.
+
+**PID 3304 at this update**: healthy, ~2h31m elapsed, still running the
+same `--start 2024-04-01 --end 2026-06-30 --no-weather` canonical
+rebuild. Untouched by this work. Do not kill it.
+
+## PASS 2/3: TODAY REDESIGN + TWO RE-AUDITS (2026-08-25 ~19:35-20:05 UTC)
+
+Per the "creative freedom on the website, but re-audit both prior fixes
+first" directive. Two commits, both pushed:
+
+**`ce78a972`** -- Research Correctness Check 1: `candidate_key()`
+hardened for alternate-line/side safety. Verified empirically (143,237
+real in-progress-rebuild rows) that `line` varies across the dataset but
+is currently 1:1 with (date, game_pk, player_id, prop_type) -- no false
+positives today, but not future-proof. Added `line` (required) and
+`side` (optional, never present in real rows today) to the key. Full
+requested test matrix: alternate lines distinct, opposite side distinct,
+reconstructed duplicate still raises, different game/date distinct.
+36/36 passing in `test_pa_opportunity_model.py`.
+
+**`8c05ea22`** -- Research Correctness Check 2 + frontend PASS 2/3:
+- Re-audited `_assign_top_pick_rank()` and concluded it is NOT an
+  official ranking (the real `rank_for_board()` policy belongs to the
+  separate, CAPPED static top10 pipeline; this live dashboard's
+  `top_pick` population is uncapped, no top-N selection exists). Fixed
+  by removing the "TOP PICK #N" ordinal badge from `pickCard()` entirely
+  -- `p.rank` survives only as an undisplayed internal sort tiebreak.
+- Source/generated safety: header comments on all 3
+  `dashboard/static/*` files + `StaticSourceParityTests` in
+  `test_build_dashboard.py` (byte-identical check against `docs/`, run
+  on every test invocation; verified it actually fires).
+- Real P0 found+fixed: `onRouteChange()` discarded every route's query
+  string, so `#/props?status=lean` links were dead navigation. Fixed;
+  this also makes the new Explore-by-Prop feature work.
+- Today page restructured: Best Bets / Explore by Prop (new) / More
+  Picks (merged Value+Longshots+Leans+Radar, still individually
+  labeled) / Tonight's Games / Trends / Suggested Parlay (demoted to
+  bottom). Zero backend recommendation states removed. Glance tiles now
+  tappable. Full writeup: `frontend/customer_experience_audit_2026-08-25.md`.
+- 73/73 passing in `test_build_dashboard.py` (7 new checks). Full repo
+  suite green.
+
+No model probabilities/thresholds/gates/publication/grading logic
+touched by either commit.
+
+**PID 3304 at this update**: healthy, ~1h59m elapsed, 167,178+ rows,
+normal pace throughout. Untouched by this work.
+
+## TWO PARALLEL WORKSTREAMS (2026-08-25 ~18:20-19:35 UTC): candidate-identity audit + frontend PASS 1
+
+Per the "TWO ACTIVE WORKSTREAMS" directive: (A) accuracy/research continues
+gating on PID 3304, and (B) customer-facing website work proceeds in
+parallel WITHOUT touching model probabilities/thresholds/ranking/
+publication lifecycle/grading.
+
+**Workstream A -- candidate identity audit (both priorities complete,
+committed `4061d027`)**:
+1. Audited every real caller of `equal_volume_ranking_comparison()`
+   (`pa_opportunity_model.build_report`, `disagreement_challenger_model.
+   build_report`, `residual_challenger_model.build_report`,
+   `disagreement_experiment_runner.primary_challenger_result`). Each
+   builds exactly ONE fresh `comparisons` list per call -- `id()`-based
+   identity is a structural guarantee of the function's own single-list
+   signature (documented in its own docstring now), not an accident of
+   current callers. Found a DIFFERENT real gap this audit surfaced: no
+   protection against the same real-world candidate entering the list
+   twice as two distinct objects. Added `candidate_key()` (composite
+   date/game_pk/player_id/prop_type identity, populated at all 4
+   construction sites) with a duplicate-key raise inside the function.
+   Added the full requested regression suite (tied probabilities, copied-
+   but-distinct dicts, reconstructed-duplicate detection, reordering
+   invariance, algebraic invariants over 25 randomized populations,
+   cross-invocation determinism) to `test_pa_opportunity_model.py`.
+2. Hardened `shadow_policy_framework.compare_policies()`'s snapshot
+   guard: missing `snapshot_id` on either side now FAILS CLOSED by
+   default (was previously silently treated as "untagged, not a
+   mismatch") -- pass `allow_missing_snapshot=True` for an explicit
+   legacy/test path only. Added tests for same-policy-different-snapshot
+   (raises), different-policy-same-snapshot (valid), copied candidate
+   objects from the same logical snapshot (valid -- candidate_ids are
+   semantic strings, not object identity, by design), and both the
+   fail-closed default and the explicit opt-in.
+
+**Verdict on the earlier commit's Priority-1 fix**: `id()`-based identity
+in `equal_volume_ranking_comparison()` is now UNQUESTIONABLY correct
+(structural proof + exhaustive tests), per the directive's own
+precondition before the decisive disagreement experiment may run.
+
+**Workstream B -- frontend PASS 1 (audit + one real P0 fix, committed
+`4a4cf42a`)**: full audit in
+`frontend/customer_experience_audit_2026-08-25.md`. Headline P0 finding
+and fix: `docs/app.js`'s Top Pick ordering was computed client-side by
+`market_edge` alone -- an independently-invented ranking, which this
+project's frontend/backend boundary explicitly forbids. Traced the real
+production tiebreak (`generate_picks.rank_for_board()`: reliability,
+then edge, then probability) and found the live dashboard's `top_pick`
+population is a SEPARATE pipeline from the static top10 board with no
+shared ordering contract. Fixed by adding `dashboard/build_dashboard.py`'s
+`_assign_top_pick_rank()` (reuses `generate_picks._RELIABILITY_ORDER` via
+import, never reimplemented) and having `app.js` prefer that `rank`
+field, falling back to the old edge-sort only for a stale pre-`rank`
+cached payload. Also caught and fixed a real process risk: `docs/app.js`
+is a BUILD OUTPUT copy (`copy_static_assets()` overwrites it from
+`dashboard/static/app.js` on every real build) -- the fix was applied to
+both, and this is now documented so a future edit doesn't land only in
+the copy and silently vanish. 7 new tests in `test_build_dashboard.py`
+(69/69 passing). No model/ranking/recommendation/publication/grading
+logic touched -- purely a display-order fix for an already-selected
+population. Remaining audit findings (P1: two independent Top-Pick
+pipelines with no cross-check, search's 2-way vs 4-way grouping;
+P2/P3/scope boundary) are documented for PASS 2+, not yet started.
+
+**PID 3304 status at this update**: healthy, ~1h32m elapsed, 123,131+
+rows written, still on a normal ~85-90s/date pace in 2024. Untouched by
+either workstream's work this turn.
+
+## METHODOLOGICAL REVIEW OF THE RESEARCH LAB WHILE PID 3304 RUNS (2026-08-25 ~17:35-18:20 UTC)
+
+Per the "KEEP PID 3304 HEALTHY... only low-risk preparation" directive's
+Priority 2(A)/2(B), reviewed the already-built research lab for real
+methodological mistakes before the decisive disagreement test ever runs
+against rebuilt data. Two real, distinct bugs found and fixed, both
+committed and pushed:
+
+1. **`equal_volume_ranking_comparison()` value-tuple identity bug**
+   (`backtest/pa_opportunity_model.py`, commit `65683351`). The
+   overlap/removed/added set logic identified candidates by a VALUE tuple
+   `(order, current_prob, challenger_prob, outcome)` instead of object
+   identity. That tuple collides by construction in the disagreement work
+   specifically -- `challenger_prob` is a shared empirical rate across an
+   entire (probability bucket, conflict tier) cell (~21 possible values),
+   so many genuinely distinct candidates can carry the identical tuple.
+   When a tie straddled the top-N cutoff, the old code silently
+   undercounted `removed` and overcounted `overlap`. Reproduced
+   empirically (pre-fix: overlap=4/removed=0 on a constructed scenario
+   where the correct answer is overlap=2/removed=2), fixed via `id()`-
+   based object identity (exact and free -- all three lists are built
+   from the same dict objects, never copies), locked in with a permanent
+   regression test. This function is shared by `residual_challenger_model.py`,
+   `disagreement_challenger_model.py`, and (via `primary_challenger_result()`)
+   `disagreement_experiment_runner.py` -- so the fix reaches the not-yet-run
+   decisive test automatically. Does NOT reopen the already-closed
+   opportunity thread's reported numbers (per standing instruction, those
+   are not being rerun/re-corrected).
+2. **`compare_policies()` candidate-universe-mismatch gap**
+   (`backtest/shadow_policy_framework.py`, commit `80a7dc58`). Comparing
+   two `PolicySelection`s built from different snapshots (different
+   dates, or the same date re-fetched after the live board moved) used to
+   silently produce a plausible-looking but meaningless overlap/added/
+   removed result -- no check existed that both selections came from the
+   same `snapshot_id`. Fixed: raises `ValueError` when both selections
+   carry a real, differing `snapshot_id` (a `None` on either side --
+   e.g. hand-built test selections -- is treated as "untagged," not a
+   mismatch, so existing tests are unaffected). Also reviewed
+   `champion_policy()`'s use of `recommendation_funnel.classify_with_trace()`/
+   `gate_trace()` for postgame leakage: confirmed it reads only pregame
+   fields (`hit_probability`, `reliability`, `lineup_assumed`,
+   `market_odds`, `prob_ci`) -- no leak found.
+
+Full test suite (`for f in test_*.py; do ...; done`) reverified green
+after each fix, individually and combined -- confirmed via direct exit-
+code checking (the 4 log files that matched a raw `grep FAIL` were all
+false positives: docstring text like "FAIL-CLOSED"/"FAIL-SAFE", not
+actual failures; every suite's own printed pass count was full).
+
+**Not yet done from Priority 2's list**: (C) the optional per-market
+runner (deliberately deferred per `harness_readiness_2026-08-25.md` --
+build once canonical history returns, not blind), (D) the optional QC
+research-only all-reason instrumentation (not yet started). Neither is
+required before the decisive test; both remain optional low-risk
+preparation if PID 3304 is still running next time this is picked up.
+
+**PID 3304 status at this update**: healthy, ~1h11m elapsed, 86,642+ rows
+written, currently processing dates in mid-May 2024 at a normal ~85-90s/
+date pace (consistent with the runtime-profile finding above -- no
+slowdown). Untouched by any of this turn's work.
+
+## PREPARATORY RESEARCH INFRASTRUCTURE BUILT WHILE BACKFILL RERUNS (2026-08-25 ~16:00-17:35 UTC)
+
+Per the "NO FAKE RESULTS BUT MAXIMUM PRODUCTIVE PREPARATION" directive,
+built the following while PID 3304 (still healthy, ~37 min elapsed at
+last check) continues in the background -- none of this touched PID 3304
+or ran against complete/real canonical data; every module below is
+tested against synthetic fixtures, with real-data smoke tests explicitly
+discarded (never treated as a conclusion).
+
+1. **Runtime investigation** (`backtest/backfill_runtime_profile_2026-08-25.md`):
+   the earlier "~14h" projection for PID 3304 was very likely an
+   extrapolation artifact, not a real slowdown -- current early-April
+   per-date timings (~85s) are not worse than the prior successful run's
+   same dates (~115-140s), and that prior run's own true 7h07m total
+   implies a season-wide average (~43-44s/date) roughly half of April's
+   cost. No code regression found; resume-hardening's own runtime cost
+   proven negligible.
+2. **Locked experiment protocol** (`backtest/disagreement_experiment_protocol.md`):
+   the disagreement promotion methodology (safe pool, matched volume,
+   primary challenger, 2 predeclared secondary variants, z>=1.96
+   significance bar, year-stability requirement) written BEFORE the
+   rebuilt canonical dataset exists, so it can't be unconsciously tuned
+   after seeing results.
+3. **One-command disagreement runner** (`backtest/disagreement_experiment_runner.py`,
+   21 tests): wraps `disagreement_decomposition.py`/
+   `disagreement_challenger_model.py` end to end -- data audit, component
+   correlation map, REPRODUCED/PARTIALLY_REPRODUCED/NOT_REPRODUCED check
+   against the pre-restart reference numbers, the primary challenger's
+   equal-volume result with year stability, and a machine-readable
+   EARNS_SHADOW/CLOSED verdict per market implementing the locked
+   protocol exactly. Smoke-tested against real partial data (proved it
+   runs on real row shapes) -- output discarded immediately, no
+   conclusion drawn from incomplete history.
+4. **Selection information-loss audit** (`backtest/selection_information_loss_audit_2026-08-25.md`):
+   one real, newly-verified gap -- `quality_control()`'s rejection reason
+   is short-circuited (only the first failing check recorded). Important
+   verified counterpoint: the LATER Top-Pick-funnel gates
+   (`recommendation_funnel.gate_trace()`) are NOT short-circuited and are
+   already captured for every candidate (kept or rejected) in the
+   prospective funnel logger -- multi-gate regret analysis is already
+   well-supported there. Everything else audited (signals dict, cat_*
+   components, prob_ci) was already fully captured.
+5. **Pitcher-workload data audit** (`backtest/pitcher_workload_data_audit_2026-08-25.md`):
+   checked against real partial data. `actual_ip` (100% present) makes
+   the mechanism question directly answerable once canonical history
+   returns. But no `days_rest`-equivalent pregame signal exists for
+   pitchers (`score_pitcher` never wires one in, unlike `score_batter`) --
+   only `tto_penalty` is a plausible lead, and it's sparse (19.7%). Audit
+   only, no model built.
+6. **Shadow-policy framework** (`backtest/shadow_policy_framework.py`,
+   19 tests): the same frozen candidate universe consumable by multiple
+   research policies (champion, probability_first, reliability_first,
+   ci_lower_bound -- never fabricates a CI for a market without one).
+   Non-mutation and no-postgame-leakage both tested directly.
+   `compare_policies()`/`grade_policy_selection()` join outcomes from a
+   separate source, mirroring the funnel logger/grader's own pregame/
+   postgame separation. Never touches the public board.
+7. **Prospective candidate reporting** (`backtest/prospective_reporting.py`,
+   13 tests): slate summaries, highest-probability-rejected, alternate-
+   line winner comparison, gate-regret (correctly excludes multi-gate-
+   blocked candidates from single-gate attribution). Synthetic fixtures
+   only -- this session's own earlier live-logged funnel data was ALSO
+   lost to the container restarts (gitignored by design).
+8. **Harness readiness note** (`backtest/harness_readiness_2026-08-25.md`):
+   honest scope triage. CI-lower-bound (item 6 above) and the general
+   equal-volume machinery market specialization needs are already real
+   and tested -- not separately rebuilt. The market-specialization RUNNER
+   script and the shrinkage sweep harness are the two genuinely
+   outstanding items, deliberately left unbuilt rather than written blind
+   against no data.
+
+**None of Priorities 8 (pitcher opportunity full analysis), the
+disagreement reproduction itself, or the decisive equal-volume test have
+been run** -- all still genuinely blocked on PID 3304 finishing. The
+moment it does: raw validation -> canonical rebuild -> run
+`disagreement_experiment_runner.py` for real -> read its own
+REPRODUCED/EARNS_SHADOW verdict.
+
+## RESTART-SAFETY HARDENING DONE (2026-08-25 ~14:30-15:05 UTC)
+
+Per the continuation directive after the two restarts documented below,
+audited `backtest/engine.py`'s existing backfill write/resume semantics
+BEFORE assuming anything needed building from scratch. Real finding:
+**`run_backtest()` was already genuinely interruption-resumable** --
+per-date state-file checkpointing (`load_state`/`save_state`), and
+critically `dates_already_in_output()` trusts the REAL output file over
+the state-file bookkeeping (so even a missing/corrupted state file can't
+cause duplicate work), no_games and failed dates both checkpointed
+distinctly (failed dates auto-retry on resume, no_games/ok dates are
+skipped). **Re-running the exact same command after a crash already
+resumes correctly -- this was true before this session's edits too.**
+Proved this with 7 new tests
+(`test_backfill_resume.py::FreshRunTests`/`InterruptionResumeTests`/
+`ForceFlagTests`, all mocking `simulate_date` for deterministic,
+network-free testing) -- all passed against the UNMODIFIED code.
+
+One real, narrow gap found and fixed (`backtest/engine.py`'s
+`run_backtest()`): a date's rows were written via a per-row loop of
+`f.write()` calls -- if the process died mid-loop, that date could be
+left PARTIALLY in the output file yet still get treated as "already
+done" on resume (since `dates_already_in_output()` only checks date
+PRESENCE, not completeness). Fixed: build the whole date's blob in memory
+and issue ONE `f.write()` call instead -- narrows the crash window from
+"however many rows this date has" to a single syscall. Locked in by
+`AtomicWritePerDateTests` (failed against the old per-row-loop code,
+passes against the fix).
+
+Also added `check_regime_consistency(out_path, current_sha=None)` --
+surfaces (WARN-level, not a hard gate; `provenance.require_single_regime()`
+remains the hard enforcement point at canonical-build time) whether a
+resumed file already contains more than one `code_git_sha`, using the
+code_git_sha every row already carries (no new tracking invented). Wired
+as a startup warning in `run_backtest()`'s resume path. 5 new tests
+(`RegimeConsistencyTests`).
+
+**Practical implication**: PID 3304 (the current backfill attempt) uses
+this exact `run_backtest()` path. If it dies again, re-running the SAME
+command (`--start 2024-04-01 --end 2026-06-30 --out
+backtest/rows_canonical_rebuild.jsonl --no-weather`, no `--force`) will
+resume from the first incomplete date, not restart from date 1 -- this
+was already true, and is now slightly more crash-safe on top.
+
+**Durable persistence (Priority 4) -- evaluated, not yet executed**:
+full option comparison in
+`backtest/durable_artifact_persistence_2026-08-25.md`. Checked directly,
+not assumed: no GitHub Release create/upload-asset tool exists in this
+session's MCP toolset (only read tools), no `gh`/`hub` CLI available,
+`git-lfs` is not installed in this container. **Recommended and ready to
+execute the moment the backfill finishes**: gzip-compress
+`rows_canonical.jsonl`, split into <100MB chunks, commit directly to git
+(`git add -f`, overriding the `backtest/*.jsonl` gitignore rule for just
+those specific compressed snapshot files) -- durable indefinitely, free,
+needs no new tools/credentials. A GitHub-Actions-based, date-sharded
+parallel backfill (so the computation itself survives this session
+entirely) is flagged as the better long-term fix but was NOT attempted
+this pass -- too large a change to risk half-finishing across another
+restart; see that doc's own "what was not done" section.
+
+## IMPORTANT: session worker restart + data recovery in progress (2026-08-25 ~10:50 UTC, SECOND restart ~11:05 UTC)
+
+This session's container/worker was restarted mid-turn -- TWICE. Both
+times, git-committed state was completely unaffected (confirmed via
+`git fetch` + fast-forward merge each time -- nothing has ever been lost
+from git). Both times, the same casualty: a long-running background
+backfill process (started via `nohup ... &`) was killed outright, along
+with its local monitor process and the local working directory being
+reset to a stale `main` checkout.
+
+**Restart 1** (~10:50 UTC): killed the original canonical dataset in
+progress reconstruction. Recovery: relaunched backfill as PID 8145,
+committed `7dcfdb4a`/`ef4ef292`.
+
+**Restart 2** (~11:05-11:10 UTC, noticed when the user asked "is backfill
+done"): killed PID 8145 before meaningful progress (checked at ~03:11
+elapsed the one time before it died). Recovery: relaunched AGAIN as a new
+PID (check `ps aux | grep backtest/engine.py` for the current one --
+don't trust any PID number written here, it will be stale by the time you
+read it). Local stale `backtest/rows_backfill.jsonl`/`.state.json` files
+(leftover from main's old 2026-08-20 state) were deleted again before
+relaunching.
+
+**Lesson learned, applied going forward**: a local `nohup`'d background
+monitor does NOT survive a worker restart (verified twice) -- do not trust
+one to notify reliably for a multi-hour job in this environment. Prefer
+checking `ps aux | grep backtest/engine.py` and the row count of
+`backtest/rows_canonical_rebuild.jsonl` directly when resuming, and/or a
+server-side scheduled check-in (`send_later`/routine), not a local
+background watcher, for anything that needs to survive a restart.
+
+**What this means for resuming, if you land here mid-backfill AGAIN**:
+1. `git fetch origin claude/gridiron-continuation-dvaljm` then
+   `git checkout claude/gridiron-continuation-dvaljm && git merge --ff-only
+   origin/claude/gridiron-continuation-dvaljm` -- this ALWAYS recovers full
+   git state instantly, has never failed across two restarts so far.
+2. Check `ps aux | grep "[b]acktest/engine.py"` -- if nothing is running,
+   the backfill died with the restart (again) and needs relaunching:
+   `rm -f backtest/rows_backfill.jsonl backtest/rows_backfill.jsonl.state.json`
+   (clean up any stale main-branch leftover file first), then
+   `nohup /tmp/mlbvenv/bin/python3 backtest/engine.py --start 2024-04-01
+   --end 2026-06-30 --out backtest/rows_canonical_rebuild.jsonl --no-weather
+   > backtest/_backfill_rebuild.log 2>&1 &`.
+3. Do NOT assume progress carries over between relaunches -- `engine.py`
+   writes to a fresh output file each invocation named here
+   (`rows_canonical_rebuild.jsonl`); check its row count / the state JSON
+   next to it if one exists to see how far a given attempt got before
+   dying, but each relaunch starts the date range over from scratch unless
+   `engine.py` itself has resume support (check its own `--help`/state-file
+   handling before assuming either way).
+4. `backtest/disagreement_decomposition.py`, `disagreement_challenger_model.py`,
+   and their tests are safely committed now (unlike after restart 1) --
+   no need to recreate them again.
+
+## Original restart-1 recovery notes (superseded in relevance by the above, kept for the full timeline)
+
+Data recovery in progress (2026-08-25 ~10:50 UTC)
+
+This session's container/worker was restarted mid-turn. The git-committed
+state (branch/commits/all `.md` findings) was NOT affected -- everything
+already committed and pushed is fully intact, confirmed via
+`git fetch origin claude/gridiron-continuation-dvaljm` after the restart.
+**What WAS lost**: the large, gitignored (`backtest/*.jsonl`) raw data
+files -- `backtest/rows_canonical.jsonl` (1,027,462 rows, the whole
+canonical dataset the backfill took ~7 hours to build) and
+`backtest/rows_backfill_repair.jsonl` -- were on local disk only, never
+in git by design, and did not survive the restart. A stale, wrong
+`backtest/rows_backfill.jsonl` from 2026-08-20 (a much earlier, unrelated
+run) was also found on disk and has been DELETED to avoid confusion.
+
+**Recovery action taken, already in progress**: relaunched the full
+backfill fresh -- `backtest/engine.py --start 2024-04-01 --end
+2026-06-30 --out backtest/rows_canonical_rebuild.jsonl --no-weather`,
+PID 8145, started ~10:55 UTC. Verified before launching: no commit since
+`f7c120a3` has touched `generate_picks.py`/`backtest/engine.py`/
+`backtest/signals.py`/`mlb_sources.py` (confirmed via
+`git log -1 -- <those paths>`), and this session will not touch them
+while the backfill runs -- so this run will be a SINGLE consistent
+`code_git_sha` throughout, meaning **the old repair-file/main-file
+reconciliation dance (`build_canonical_backtest.py`) is no longer
+necessary** -- `rows_canonical_rebuild.jsonl` can become
+`rows_canonical.jsonl` directly once it finishes and passes
+`provenance.require_single_regime()`, no merge step needed. A background
+monitor (nohup'd, PID 8518, survives detached from this session) is
+watching PID 8145 and will report completion.
+
+**What this means for resuming**: every `.md` finding in this repo
+(canonical baseline, opportunity-decomposition, residual-opportunity,
+disagreement-decomposition) represents REAL, already-verified conclusions
+from the FIRST successful canonical build -- they are not invalidated by
+this data loss, since nothing about the scoring code changed. But no NEW
+live query against canonical history is possible until the rebuild
+finishes. **Two source files (`backtest/disagreement_decomposition.py`,
+`backtest/disagreement_challenger_model.py`, and their tests) were
+recreated from this session's own prior context after the restart wiped
+them from disk before they'd been committed -- their content is
+byte-for-byte what was tested and run against real data before the
+restart, but they have NOT been re-verified against live data since
+recovery. Re-run them once `rows_canonical.jsonl` exists again and
+confirm the numbers in `backtest/disagreement_priority1_2_3_2026-08-25.md`
+reproduce before extending that work further.**
+
+If you resume and PID 8145 is gone with no completion message in
+`backtest/_backfill_rebuild.log`, check `ps -p 8145` first, then check for
+a fresher `backtest/rows_canonical_rebuild.jsonl` -- the process may have
+finished (or died) without this file being updated with that news.
 
 ## Branch / HEAD
 
-- Branch: `claude/gridiron-continuation-dvaljm` at `c72883ef`, fully pushed.
-- `main` is at `a652eccb` "Dashboard live update 2026-08-25 04:09 UTC".
+- Branch: `claude/gridiron-continuation-dvaljm` at `8c05ea22` (pushed) as
+  of this update, plus this HANDOFF_STATUS.md commit on top once pushed.
+  `f7c120a3` is an earlier commit in this same branch's history (an
+  earlier segment of this session) -- it's the most recent commit
+  anywhere in this branch's ancestry that touched scoring code, used
+  above only to confirm scoring logic hasn't changed since (still true --
+  nothing has touched `generate_picks.py`/`backtest/engine.py`/
+  `backtest/signals.py`/`mlb_sources.py` this session past that commit,
+  so PID 3304 remains single-regime). Clean working tree otherwise.
 - PR #64 (Weston fix + provenance validator) MERGED, sha `1ead2fb1`.
-- **PR #65 OPEN** (https://github.com/werriesjacob1-cmyk/Full-Count/pull/65):
-  event-targeted observer tiered-trigger upgrade + real `on_1b` bug fix +
-  this session's incident docs. Pure research tooling, no production code.
-  CI was `unstable`/in-progress as of last check (just pushed more commits
-  onto the same branch/PR) — **check CI and merge once green, qualifies
-  under standing authorization** (diff-reviewable: only
-  `backtest/alive_brain_prototype.py`, `backtest/event_targeted_observer.py`,
-  `backtest/candidate_dataset.py`, test files, and markdown docs).
+- PR #65 (event-targeted observer upgrade + on_1b fix) MERGED, sha `610cfe17`.
+- No open PRs. Everything on this branch this update is already on `main`.
 - Repo has moved to `werriesjacob1-cmyk/Full-Count` (GitHub redirects
   PROJECT-GRIDIRON pushes there).
 
-## Long-running background jobs
+## CANONICAL HISTORY IS NOW LIVE — the main blocker is CLEARED
 
-- **Main backfill**: PID 3663, `backtest/engine.py --start 2024-04-01 --end
-  2026-06-30 --out backtest/rows_backfill.jsonl --no-weather`. Started
-  2026-08-24 21:53:13 UTC. At last check: ~6.5h elapsed, healthy, still the
-  long pole for everything in "OPEN THREADS" below. Check with
-  `ps -p 3663 -o pid,etime,cmd`. **When it completes**: verify 821/821
-  intended dates, no gaps, inspect failures, then run
-  `backtest/build_canonical_backtest.py` (already written, tested, and wired
-  to `provenance.require_single_regime()` as a hard gate) to produce
-  `backtest/rows_canonical.jsonl`. Do NOT launch another giant backfill.
-- **Event-targeted FanDuel observer**: FINISHED (PID 1720 completed
-  2026-08-25T04:20:52Z). Results fully written up in
-  `backtest/fanduel_observer_final_report.md`'s "Event-targeted observer —
-  first full run" section — 27 real triggers (15 batter/8 inning/4 pitcher),
-  233 FanDuel polls, 0 endpoint failures, 58 status_change events (30
-  suspend/28 reopen) tightly bound to inning transitions specifically, still
-  **zero confirmed odds/line changes** across all 3 runs (~130 min total).
-  Real finding: suspend/reopen on the tracked market looks like routine
-  per-inning market rollover, not a leverage reaction — future targeting
-  should track actual PLAYER PROP markets during a trigger window, not
-  inning-special markets (not yet tried). This run used the PRE-tiering
-  observer code (upgrade landed mid-run); the tiered version (PR #65) is
-  ready for the next live test whenever a next live game is available.
+- **Main backfill FINISHED**: PID 3663 completed 2026-08-25T05:00:47Z. All
+  821 intended calendar dates processed (578 real game dates "ok", 243
+  correctly `no_games` -- offseason/All-Star break), zero gaps, zero
+  unexplained failures. Console leakage-check did NOT fire (all per-market
+  hit rates in the sane 50-65%-ish band).
+- **Canonical reconciliation RUN**: `backtest/build_canonical_backtest.py`
+  produced `backtest/rows_canonical.jsonl` -- 1,027,462 rows, 578 dates,
+  2024-04-01..2026-06-30, **single-regime PROVENANCE CHECK: PASS**
+  (`code_git_sha=6b748538` throughout; the known-bad pre-919456e5 portion
+  of the main backfill was correctly dropped in favor of the repair file
+  for 2024-04-01..2025-02-26). `rows_canonical.jsonl` itself is gitignored
+  (`backtest/*.jsonl`) -- regenerate any time via that script, fully
+  deterministic and idempotent.
+- **Control baseline RUN**: `backtest/canonical_baseline_report.py` against
+  real `rows_canonical.jsonl` for the first time. Full real numbers
+  persisted at `backtest/canonical_baseline_2026-08-25.md` (NOT
+  gitignored, read this for the real headline numbers). Key result: at
+  `predicted_prob >= 0.60` (generate_picks.py's own MIN_LINE_PROB floor,
+  a RECONSTRUCTED proxy for board eligibility, not real eligibility),
+  141,998 rows realize a **66.39% hit rate** -- inside the board's
+  intended 60-80% band, at real multi-year scale, single clean regime.
+  Probability-bucket calibration is close to monotonic across 1M+ rows.
+- **Priority 6 DONE** (previous directive's numbering): same-nominal-
+  probability subgroup trustworthiness analysis.
+  `backtest/prob_subgroup_trust_report.py` (11 tests). Persisted:
+  `backtest/priority6_subgroup_trust_2026-08-25.md`. Headline: opportunity
+  shortfall (`fair_test=False`, low `actual_pa`) is the dominant source of
+  within-probability-bucket variance. Both fields are POSTGAME-only,
+  motivating the opportunity-modeling phase below.
+- **Opportunity-modeling phase (new directive, 2026-08-25 continuation)
+  Priority 1 DONE**: full decomposition of the opportunity finding before
+  modeling. `backtest/opportunity_decomposition.py` (21 tests). Persisted:
+  `backtest/priority1_opportunity_decomposition_2026-08-25.md`. KEY
+  DISCOVERY: `signals.lineup_slot` (89% of rows) is an invertible,
+  PREGAME-KNOWABLE encoding of real batting order
+  (`generate_picks.py:1379`). Load-bearing result: within nearly every
+  0.05 probability bucket 0.05-0.80, batting order STILL separates
+  realized hit rate (top_1_3 > mid_4_6 > bottom_7_9), pooled and
+  per-market, stable across all 3 years (~8pp gap each year) --
+  `predicted_prob` does not fully absorb what batting order carries.
+- **Priorities 2/3/4 DONE**: PA distribution model + challenger
+  probability + the equal-volume test.
+  `backtest/pa_opportunity_model.py` (19 tests). Persisted:
+  `backtest/priority2_3_4_pa_opportunity_model_2026-08-25.md`. Empirical
+  `P(actual_pa|order)` fit on 2024-2025, evaluated STRICTLY on 2026
+  holdout. Two results: (a) within-bucket discrimination is real (+4-7pp
+  across every populated bucket 0.40-0.70) but (b) **the equal-volume test
+  -- the one that actually matters -- shows only +0.22pp net gain at fixed
+  volume, and added-pick hit rate (62.50%) is statistically
+  indistinguishable from removed-pick hit rate (62.04%). Does NOT meet the
+  promotion bar.** Root cause identified: `generate_picks.py:1379/1386`
+  already feeds batting order into `score_batter`'s CONTEXT component --
+  order is not new information to the current model, so an order-only
+  challenger mostly rediscovers what's already priced in. Reported
+  honestly as marginal, not spun as a win. **This challenger does NOT earn
+  shadow testing.**
+- **Residual-opportunity phase (new continuation directive, 2026-08-25)
+  Priority 1/2 DONE**: clean target definition
+  (`is_shortfall = (actual_pa - E[actual_pa|order]) <= -1.0`) +
+  decomposition. Persisted: `backtest/residual_priority1_2_2026-08-25.md`.
+  Real bug found and fixed BEFORE publishing any conclusion:
+  `generate_picks.py:1891` stores `getaway_day` as -2 (true)/0 (false),
+  not a 0/1 flag -- an initial check silently matched zero real rows;
+  fixed, regression test added. **Two real, independent, year-stable
+  residual predictors found beyond order**: `days_rest` (0 days rest 8.56%
+  shortfall -> 4+ days rest 13.73%) and `getaway_day` (12.52% vs 8.86%),
+  both holding in every order slot and (mostly) every probability bucket.
+  `consecutive_games` (10+ streak) is real but in the OPPOSITE direction
+  (a role-stability/reliability signal, not fatigue risk).
+- **Priority 3/4/5 DONE -- thread CLOSED**:
+  `backtest/residual_challenger_model.py` (11 tests). Joint (order +
+  days_rest + getaway_day) empirical PA distribution, same strict
+  train(2024-2025)/holdout(2026) discipline. Persisted:
+  `backtest/priority3_4_5_residual_challenger_closure_2026-08-25.md`.
+  Result: directionally slightly better than the order-only challenger
+  (equal-volume net gain +0.34pp vs +0.22pp) but **NOT statistically
+  distinguishable from noise** (two-proportion z-test on added-vs-removed
+  picks: z=0.80, p≈0.42). Per the directive's own explicit closure
+  criteria: **"OPPORTUNITY SHORTFALL IS A REAL OUTCOME MECHANISM BUT IS
+  ALREADY SUFFICIENTLY PRICED INTO CURRENT SELECTION FOR PRACTICAL
+  PURPOSES." The opportunity-selection thread is CLOSED.** Do not reopen
+  without materially new evidence (a pitcher-workload analogue is a
+  distinct mechanism, not covered by this closure).
+- **NEXT**: per the directive's own instruction on closure, move directly
+  to model/context disagreement (does disagreement add independent
+  trustworthiness signal now that opportunity is ruled out as the
+  dominant explanation), market specialization (extend beyond `hits`),
+  and shrinkage-strength audit. Fragility (as originally scoped, tied to
+  opportunity) is effectively superseded by this closure -- a future
+  fragility metric would need to be grounded in whatever DOES survive as
+  a real trustworthiness dimension, not re-derived from the now-closed
+  opportunity mechanism.
 
 ## CLOSED work this session — do not redo
 
-1. **H+R+RBI stable-lift** merged to main, PR #62, sha `6c2ce0d6`. Scope:
-   hits_runs_rbis Lean gate ONLY. Do not extend to runs/rbis or add a Top
-   Pick lift gate. Do not touch the shrinkage prior.
+1. **H+R+RBI stable-lift** merged, PR #62, sha `6c2ce0d6`. Scope:
+   hits_runs_rbis Lean gate ONLY.
 2. **Live-freshness watchdog + dashboard-live.yml timeout bump** merged,
-   PR #63, sha `d4aaec8e`. Watchdog fired successfully once (03:36:09 UTC,
-   correct no-op on a fresh state) — see item 9 below for what happened
-   after that.
-3. **12 repair-vs-main row-count discrepancies root-caused**, tooling built,
-   NOT yet run to completion (waiting on main backfill). Real cause:
-   `code_git_sha` proves the main backfill's early portion predates commit
-   `919456e5` (fixed a real `predicted_prob` nulling bug for 7/13 markets).
-4. **Fail-fast provenance/regime validator**: `backtest/provenance.py`,
-   8 tests, wired into `build_canonical_backtest.py` as a real gate.
-5. **Weston Wilson stale-explanation bug fixed, MERGED, live-verified**
-   (`1ead2fb1`). Root cause: wholesale-copy of the immutable registry
-   snapshot onto the live row once a game started, including `why`/
-   `watchouts` (pure presentation). Fixed via `FROZEN_PUBLICATION_FIELDS`
-   allowlist (audit/settlement-critical fields only). Verified via
-   sign-reversal regression tests AND a real production reproduction
-   (manually dispatched `dashboard-refresh.yml`, diff-reviewed the merge —
-   no probability/ranking logic touched). **Honest boundary case found**:
-   the ORIGINAL Weston Wilson registry entry still shows pre-fix text,
-   because (a) its snapshot was captured by a generator version that
-   predates the explanation-quality routing fix (proven by the text's own
-   bare/unqualified format — no directional suffix), and (b)
-   `bettable_games(allow_started=False)` means NO rebuild, before or after
-   this fix, ever re-scores an already-started game, so there's no fresher
-   `row` for `reconcile_public_lifecycle()`'s carry-forward path to draw
-   from. This is a real, structural, PERMANENT limitation of the
-   pregame-only recomputation architecture — not a bug, not something to
-   patch with a one-off historical-registry rewrite (explicitly forbidden).
-   The fix DOES prevent this exact regression for every future publication.
-6. **FanDuel passive observer CLOSED** with a persisted final report —
-   zero real odds/line changes across ~85 min, 3-4 games, 96-100 markets.
-7. **Event-targeted observer built AND run to completion AND upgraded**
-   — see background jobs above and PR #65.
-8. **Priority D runtime bottleneck FOUND + FIXED + forward-verified**:
-   `grade_results.fetch_game_contexts()` was sequential (one MLB feed fetch
-   fully awaited per distinct game, called 3x/cycle) — real MLB API
-   slowness got multiplied into the 2026-08-24 23-run cancellation streak.
-   Fixed via bounded `ThreadPoolExecutor` (`47a75920`, merged). **Forward
-   proof**: when a completely SEPARATE scheduling incident hit on
-   2026-08-25 (item 9), the manually-recovered run completed in **35
-   seconds** — proves the runtime fix holds; that incident was NOT a
-   runtime regression.
-9. **NEW scheduling-delivery incident investigated + partially resolved**:
-   `dashboard-live.yml` AND `live-freshness-watchdog.yml` (a SEPARATE,
-   independently-scheduled workflow) both went silent on their own 5-minute
-   crons simultaneously, ~03:29-04:16+ UTC. Zero queued/in-progress runs
-   during the gap (ruled out capacity issues — this was trigger-DELIVERY,
-   not job-execution). Manual `workflow_dispatch` of `dashboard-live.yml`
-   restored freshness (35s run) but did **NOT** restore either workflow's
-   recurring schedule — as of last check (~04:16 UTC) both were STILL
-   silent on their own cron, 47+ min for Dashboard Live Update, 40+ min for
-   the watchdog. **A fresh session should re-check whether the cron has
-   resumed on its own.** Full timeline:
-   `backtest/live_incident_2026-08-25_0329.md`. This is real, strong,
-   first-party evidence that a GitHub-schedule-based watchdog cannot serve
-   as an independent recovery domain for a GitHub-schedule-based primary
-   workflow — produced the requested architecture comparison:
-   `backtest/independent_recovery_design_2026-08-25.md` (recommends Option
-   A: an external heartbeat + `workflow_dispatch` trigger, reusing
-   `dashboard/check_live_freshness.py`'s existing logic; explicitly does
-   NOT recommend Option B, moving primary orchestration off GitHub, without
-   more evidence — "do not deploy a large migration yet"). **Not
-   implemented** — this is the requested recommendation, not authorization
-   to build it; needs the user to weigh in on which external scheduler/
-   credential to use before it's built.
-10. **Candidate-level decision dataset: feasibility analysis + reusable
-    builder** (Priority 3, the accuracy-research prep). See
-    `backtest/candidate_dataset_feasibility_2026-08-25.md` for the full
-    gap analysis (IDENTITY/PREDICTION/OUTCOME/PROVENANCE: buildable today;
-    MARKET: permanently absent from backtest rows per SCHEMA.md; DECISION:
-    the hard part — `recommendation_funnel.gate_trace()` — already exists,
-    just never persisted). **Most important finding**: Priority 5
-    (within-slate pairwise selection — "why did the better candidate win")
-    CANNOT be answered from `rows_canonical.jsonl` as currently produced,
-    because `build_candidates()` keeps only ONE candidate per batter,
-    discarding the losing alternatives. Flagged now so it isn't a late
-    discovery once canonical history lands. Built
-    `backtest/candidate_dataset.py` (a pure, point-in-time-safe overlay
-    builder — no new fetches, no new lookahead risk) + 14 tests against
-    synthetic fixtures. Deliberately NOT a full historical build yet.
+   PR #63, sha `d4aaec8e`.
+3. **Fail-fast provenance/regime validator**: `backtest/provenance.py`,
+   wired into `build_canonical_backtest.py` as a real gate.
+4. **Weston Wilson stale-explanation bug fixed, MERGED, live-verified**
+   (`1ead2fb1`). Fixed via `FROZEN_PUBLICATION_FIELDS` allowlist. Honest,
+   PERMANENT boundary case documented: the original Weston registry entry
+   still shows pre-fix text because `bettable_games(allow_started=False)`
+   means no rebuild ever re-scores an already-started game — not a bug,
+   not something to patch with a historical-registry rewrite (forbidden).
+5. **FanDuel passive observer CLOSED** — zero real odds/line changes,
+   ~85 min, 96-100 markets.
+6. **Event-targeted observer built, run to completion, upgraded, MERGED**
+   (`610cfe17`). Full run: 27 triggers, 233 polls, 0 endpoint failures, 58
+   status_change events (30 suspend/28 reopen) bound tightly to inning
+   transitions specifically — reads as routine market rollover, not a
+   leverage reaction. **Still zero confirmed odds/line changes across 3
+   runs, ~130 min total observation.** Full writeup:
+   `backtest/fanduel_observer_final_report.md`.
+7. **Priority D runtime bottleneck FOUND + FIXED + forward-verified twice**:
+   `47a75920` (parallelized `fetch_game_contexts()`). Forward proof #1: a
+   manually-recovered run completed in 35s during a later, UNRELATED
+   scheduling incident (see #8). Runtime is not the open question anymore.
+8. **Scheduling-delivery incident investigated, partially resolved, real
+   architecture built for the rest**: `dashboard-live.yml` AND its
+   independent watchdog both went silent on their own 5-minute crons
+   simultaneously (~03:29-04:19 UTC, ~50 min). Zero queued/in-progress
+   runs during the gap (ruled out capacity — this was trigger-DELIVERY).
+   Manual dispatch restored freshness (35s) but did NOT restore the
+   recurring schedule for ~50 minutes; **a real scheduled run (`event:
+   schedule`) DID resume on its own at 04:19:16 UTC** (10 min after the
+   manual dispatch) — the incident appears to have cleared on its own by
+   then, though the exact mechanism (GitHub-side congestion vs. something
+   the manual dispatch indirectly triggered) was never conclusively
+   identified and is NOT re-investigatable now (evidence window has
+   passed). Full timeline: `backtest/live_incident_2026-08-25_0329.md`.
+   Architecture recommendation: `backtest/independent_recovery_design_2026-08-25.md`
+   (Option A: external heartbeat). **Built the actual Option A
+   implementation**: `ops/external_heartbeat/` — a Cloudflare Worker
+   (`worker.js`), 9 passing tests on synthetic timestamps
+   (`test_worker.mjs`, zero network/credentials), deployment config
+   (`wrangler.toml`), and a README documenting the exact 7 one-time user
+   actions needed to deploy (Cloudflare account, wrangler auth, KV
+   namespace, least-privilege GitHub token, deploy, dry-run verify,
+   go-live). **NOT deployed** — stops at the credential/account boundary
+   per the standing instruction; needs the user to actually create the
+   Cloudflare account and GitHub token, since those are real credentials
+   this session cannot safely create on its own.
+9. **Candidate-level decision dataset: feasibility analysis + reusable
+   builder**: `backtest/candidate_dataset_feasibility_2026-08-25.md` +
+   `backtest/candidate_dataset.py` (14 tests). Key finding: Priority 5-style
+   within-slate pairwise selection can't be answered from
+   `rows_canonical.jsonl` as currently produced (one candidate per batter).
+10. **Prospective full-candidate research funnel logger — built AND
+    LIVE-VALIDATED**: `backtest/candidate_funnel_logger.py` (19 tests).
+    Discovered `generate_picks.py` already computes and discards the full
+    alternate-line curve per batter via `_keep_options()`/`line_options`
+    ("THE MODEL ALREADY COMPUTES THIS AND THREW IT AWAY" — that function's
+    own docstring) — this logger persists what's already computed, no new
+    scoring logic. Mirrors `dashboard/build_dashboard.py`'s
+    `run_live_fetch()` isolation pattern exactly (own scratch OUTPUT_DIR,
+    cannot touch production). **Ran for real against tonight's actual
+    slate**: 969 real candidates captured, 297 with 2+ alternate lines, 906
+    correctly flagged `assumed_lineup` (exact match to generate_picks.py's
+    own console output), gate traces on all 969. Confirmed live that
+    `output/` was untouched and the new `.jsonl` file correctly matches the
+    `backtest/*.jsonl` gitignore rule. **Honest gap**: market prices aren't
+    attached yet (every record's `market` section is null this run) — a
+    real, scoped, documented follow-up, not hidden.
+11. **Candidate funnel lifecycle CLOSED — outcome-join grader built**:
+    `backtest/candidate_funnel_grader.py` (13 tests). Reduces the append-only
+    funnel changelog to the latest record per `candidate_id`, reconstructs a
+    `grade_results.grade_pick()`-compatible pick from each record's identity
+    section, grades EVERY candidate (kept/rejected/assumed_lineup alike, not
+    just selected ones) with the real `grade_results.fetch_game_contexts()`/
+    `grade_pick()` (never reimplemented), writes outcomes to a SEPARATE
+    `candidate_funnel_outcomes_{date}.jsonl` keyed by `candidate_id` — the
+    pregame file is never touched. All 6 lifecycle sub-items now complete
+    (identity, snapshot semantics, outcome join, decision trace, storage
+    discipline, non-mutation). Also added `"type"` to the logger's identity
+    section (needed since `grade_pick()` reads `pick["type"]` via direct
+    bracket access). Not yet run against a real graded slate (built same day
+    the funnel logger's first live data was still same-day/ungradeable) —
+    next live slate is the first real end-to-end validation opportunity.
+12. **CANONICAL HISTORY BUILT + CONTROL BASELINE RUN — see the new section
+    above.** This is the single biggest state change this session: the
+    long-standing blocker is gone and Track A accuracy research is
+    unblocked for the first time.
 
-## OPEN THREADS (in the order the user's last message prioritized)
+## OPEN THREADS
 
-### 1. Finish current moving work
-- Event-targeted observer: DONE (see background jobs above).
-- PR #65: review CI, merge once green (see Branch/HEAD above).
-- Main backfill: still the long pole, untouched, healthy.
+### Track A historical accuracy research — UNBLOCKED, now the top priority
+Canonical history + control baseline are both done (see section above).
+Next: same-nominal-probability subgroup trustworthiness analysis (Priority
+6 — "which 65% predictions are actually trustworthy?", controlling for the
+probability the model already believes, segmented by
+market/support-bucket/probability-basis/etc.), then fragility (Priority 7,
+empirical forecast-error perturbations, never invented values), model
+disagreement (Priority 8), market specialization (Priority 9), shrinkage
+audit (Priority 10, ONLY where current math has a tunable shrinkage —
+do not revisit the closed H+R+RBI stable-lift decision), opportunity/PA
+modeling (Priority 11), then prospective policy research design (Priority
+12, Champion vs Shadows A-F, frozen pregame selections, never touching the
+public board). Full question design already exists in this session's own
+instruction history (the directive that opened this segment). If you resume
+and find partial analysis code/output with no persisted `.md` writeup,
+finish persisting it before trusting or extending it — an unpersisted
+terminal-only finding does not count as done per this project's own
+interruption-safety rule.
 
-### 2. Scheduler failure domain — investigated, architecture recommended, NOT implemented
-- See item 9 above. Real open question still unresolved: does the cron
-  resume on its own eventually, or does it need another manual kick? Check
-  opportunistically, don't poll idly. If Option A (external heartbeat) is
-  ever authorized to build, it needs: a concrete external scheduler choice
-  (user decision), a scoped-down GitHub PAT/App token, and wiring the
-  existing `dashboard/check_live_freshness.py` logic to run there instead.
+Track B (prospective, using `candidate_funnel_logger.py` +
+`candidate_funnel_grader.py`) can keep accumulating independently of Track
+A — not blocked, just needs many days of real logged-and-graded slates
+before it has enough volume to analyze on its own. Run the logger again on
+every live slate with real pregame runway; the grader can be run the
+morning after once games are final.
 
-### 3. Accuracy research lab prep — DONE for what could be done pre-canonical-history
-- See item 10 above. Ready the moment `rows_canonical.jsonl` exists.
-- **Remaining real gap, scoped but not built**: capturing ALL within-slate
-  competing candidates (not just the one `_pick_line` winner) is needed for
-  Priority 5 — requires a scoped change to `backtest/engine.py`'s candidate
-  generation call, itself production-adjacent code needing careful review
-  even though it wouldn't touch scoring/probability math. Not started.
-
-### 4. Canonical history — BLOCKED on main backfill (item above)
-Once PID 3663 finishes: verify date coverage/gaps/failures/row counts,
-reconcile via `backtest/build_canonical_backtest.py` (already gated by
-`provenance.py`), produce `rows_canonical.jsonl`, persist the reconciliation
-report. Do NOT launch another giant backfill after.
-
-### 5-10. All deep accuracy questions (pairwise selection, fragility, source/
-role certainty, market specialization, disagreement archetypes, shadow
-tournament) — correctly BLOCKED on canonical history, per the user's own
-instruction not to manufacture premature analysis. Full question design
-already exists in this session's own instruction history (not re-copied
-here — see the governing instruction set) plus the feasibility groundwork
-in item 10 above.
+### NOT blocked, but correctly deferred tonight (do not manufacture)
+- **Priority 12 (narrower FanDuel player-prop experiment)**: checked for a
+  live game at ~04:53 UTC — only ONE live game exists (the same
+  Pirates@Padres game already tracked extensively), and it's genuinely in
+  the 9th inning, tied 2-2, likely ending soon or heading to extras. Not
+  enough runway to properly set up a deliberate, well-targeted player-prop
+  experiment (confirm the target prop is posted, identify its stable
+  market/runner id, THEN watch a real trigger window) per the priority's
+  own explicit setup requirement. **Next actionable step**: run this the
+  moment a fresh slate's games are live with real time to prepare (ideally
+  a few hours before first pitch on the next slate) — target actual
+  player-prop markets (hit/TB/HR, K/outs), not the inning-special market
+  that dominated the last run.
+- **Candidate funnel logger's market-price gap**: scoped, documented,
+  not built tonight — see item 10 above.
+- **`dashboard-live.yml`'s scheduling-gap root mechanism**: cleared on its
+  own; the evidence window to diagnose WHY has passed. If it recurs, the
+  external heartbeat (once deployed) will both recover it faster AND
+  produce independent KV-logged evidence of exactly when/how often it
+  happens — a much better position than trying to diagnose retroactively
+  from GitHub's own run history again.
 
 ## How to resume
 
-1. `git status` / `git log --oneline -5` to confirm you're at `c72883ef`
-   or later.
-2. Check PR #65's CI (`mcp__github__pull_request_read` method `get_check_runs`
-   on PR 65) and merge if green — qualifies under standing authorization.
-3. `ps -p 3663` for the main backfill. If it's gone, this becomes the
-   immediate top priority (see OPEN THREADS #4 above) — do NOT start any
-   accuracy analysis before canonical history is validated.
-4. Re-check whether `dashboard-live.yml`/`live-freshness-watchdog.yml`
-   scheduled (not manual) runs have resumed on their own
-   (`list_workflow_runs` with `event: schedule` filter) — if still silent
-   after a long gap, that's worth a fresh look; if resumed, note when and
-   close the open question in item 9 above.
-5. Run `for f in test_*.py; do /tmp/mlbvenv/bin/python3 "$f" || echo "FAIL: $f"; done`
-   before every commit. Fully green as of `c72883ef`.
+1. `git status` / `git log --oneline -5` to confirm you're at `5f714294`
+   or later, clean, matching `origin/main`.
+2. Canonical history is DONE (see section above) — `rows_canonical.jsonl`
+   is gitignored so it won't exist on a fresh clone; regenerate via
+   `python3 backtest/build_canonical_backtest.py` (fast, deterministic,
+   reads the also-gitignored `rows_backfill.jsonl`/`rows_backfill_repair.jsonl`
+   — if THOSE are also missing on a fresh checkout, the backfill would need
+   re-running, which is slow; check before assuming it's a quick regenerate).
+   The real numbers from the one real run are permanently captured in
+   `backtest/canonical_baseline_2026-08-25.md` regardless.
+3. Track A accuracy research (Priority 6 onward) is the top priority now —
+   see OPEN THREADS above for the full sequence. Do not skip ahead to
+   fragility/disagreement/market-specialization before Priority 6's
+   subgroup trustworthiness analysis exists, per the standing priority
+   ordering.
+4. If a fresh MLB slate is live with real pregame runway, also: (a) run
+   `backtest/candidate_funnel_logger.py` again to keep building Track B's
+   prospective dataset, (b) the morning after, run
+   `backtest/candidate_funnel_grader.py <date>` to grade that day's funnel,
+   and (c) consider Priority 12's targeted player-prop FanDuel experiment
+   (deferred every night so far — see OPEN THREADS above).
+5. If ops/external_heartbeat/ hasn't been deployed yet and the user wants
+   to proceed, walk them through README.md's 7 steps (needs their own
+   Cloudflare account + GitHub token — cannot be done by an agent alone).
+6. Run `for f in test_*.py; do /tmp/mlbvenv/bin/python3 "$f" || echo "FAIL: $f"; done`
+   before every commit. Fully green as of `5f714294`. (The
+   `ops/external_heartbeat/` JS tests are separate: `node
+   ops/external_heartbeat/test_worker.mjs`, also passing.)

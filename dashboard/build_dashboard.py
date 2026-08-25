@@ -459,6 +459,29 @@ def run_live_fetch():
                 # inferred from which tab it's rendered in) so the client
                 # can visibly flag it no matter where it ends up.
                 "lineup_assumed": r.get("lineup_assumed"),
+                # OPPORTUNITY fact for the detail sheet (2026-08-25): the real
+                # batting-order slot. score_batter() records it in `signals`
+                # via _sig(signals, "lineup_slot", order, lineup_context) --
+                # but _sig() stores the SCALED value (lineup_context =
+                # scale(10 - order, 1, 9), generate_picks.py:1379), not the
+                # raw order number, and no other field on the candidate ever
+                # carries the raw order directly. Inverted back here (the
+                # exact same formula backtest/opportunity_decomposition.
+                # derive_batting_order() already uses for the same purpose --
+                # mirrored rather than imported, since a live production
+                # payload builder depending on the offline research package
+                # would be a strange, unnecessary coupling) so the payload
+                # carries a real, human "batting order" fact instead of a
+                # meaningless 0-100 scaled number. Deliberately just the slot
+                # number, not a derived "supportive/concern" judgment -- see
+                # frontend/detail_sheet_data_audit_2026-08-25.md for why the
+                # underlying cat_context component is NOT safely gradable
+                # without the fitted score weights (which differ by market
+                # and aren't exposed here). "Batting Nth" needs no weight to
+                # state as a plain fact. None for pitchers (no batting slot)
+                # and for any row where the signal never fired.
+                "batting_order": _derive_batting_order(
+                    (r.get("signals") or {}).get("lineup_slot")),
             }
             cleaned["id"] = canonical_prop_id(cleaned)
             out.append(cleaned)
@@ -695,6 +718,63 @@ def load_track_record(path=None):
     return {"current": current, "legacy": legacy}
 
 
+def _assign_top_pick_rank(rows):
+    """Attaches an explicit, 1-indexed `rank` to every row with
+    recommendation_status == "top_pick", mutating in place. Reuses
+    generate_picks.py's own _RELIABILITY_ORDER (imported, never
+    reimplemented) as the tiebreak: reliability tier first, then market
+    edge, then win probability, all descending.
+
+    NOT AN OFFICIAL PRODUCTION RANKING -- re-audited 2026-08-25 per an
+    explicit "do not assume this is canonical merely because it's
+    production code" directive. Checked directly: this live dashboard's
+    top_pick population (via run_live_fetch() -> classify_recommendation())
+    is UNCAPPED -- every candidate that clears the Top Pick gates ships,
+    with no top-N selection at all (a real 15-Top-Pick night ships all 15).
+    The one place a genuine, capped, ordered Top Pick collection DOES
+    exist in this codebase is generate_picks.rank_for_board()/
+    select_main_board(ranked, n=10) -- but that's a SEPARATE pipeline (the
+    static top10 board), operating on a separately-fetched candidate pool,
+    with no shared identity or ordering contract to this one. There is
+    therefore no real "official order of already-selected Top Picks" for
+    THIS population to preserve.
+
+    Given that, `rank` here is deliberately NOT presented to the
+    customer as an ordinal ("Top Pick #1/#2/#3") -- see docs/app.js's
+    pickCard(), which dropped that badge for exactly this reason. This
+    field exists ONLY to give the frontend a stable, backend-owned default
+    display order (so cards don't jitter between renders) without the
+    frontend independently inventing one -- a real, defensible, narrower
+    purpose than "this is the official ranking." If a genuine canonical
+    Top-Pick ordering is ever built for this population, replace this
+    function's sort key, not just its docstring.
+
+    Every OTHER row (lean/value/neutral) gets rank=None -- this function
+    only ever defines a display order among Top Picks, never invents one
+    for a population the product has no ordering concept for at all."""
+    import generate_picks as gp
+    top_picks = [r for r in rows if r.get("recommendation_status") == "top_pick"]
+    top_picks.sort(key=lambda r: (-gp._RELIABILITY_ORDER.get(r.get("reliability") or "D", 1),
+                                   r.get("market_edge") or 0, r.get("hit_probability") or 0),
+                   reverse=True)
+    for i, r in enumerate(top_picks, 1):
+        r["rank"] = i
+
+
+def _derive_batting_order(lineup_slot):
+    """Inverts generate_picks.py:1379's scale(10 - order, 1, 9) -> order.
+    Mirrors backtest/opportunity_decomposition.derive_batting_order()
+    exactly (same formula, same rounding, same 1-9 sanity bound) -- not
+    imported from there, since this live payload builder depending on the
+    offline research package would be an unnecessary coupling for one
+    three-line formula. Returns None when the signal never fired (no
+    signals dict, pitcher row, or a genuinely out-of-range value)."""
+    if lineup_slot is None:
+        return None
+    order = round(9.0 - lineup_slot * 8.0 / 100.0)
+    return order if 1 <= order <= 9 else None
+
+
 def build_payload(result, track_record=None):
     """PHASE 4 REBUILD (2026-08-16): ONE canonical `props` array, no
     duplication. The pre-rebuild version of this function serialized every
@@ -748,8 +828,17 @@ def build_payload(result, track_record=None):
     # sorting above several real, priced, lower-probability Strikeouts
     # candidates for exactly this reason. Within that, Top Pick first (the
     # one state that's an actual recommendation), then by edge -- a
-    # sensible default order for anyone rendering the raw payload order,
-    # even though every real view in app.js re-sorts explicitly anyway.
+    # sensible default order for anyone rendering the raw payload order.
+    # docs/app.js's renderToday() used to re-sort the top_pick population by
+    # market_edge alone -- a real, independently-invented ranking, which the
+    # project's own frontend/backend boundary forbids ("frontend must not
+    # invent new ranking"). Found 2026-08-25 during a frontend correctness
+    # audit. _assign_top_pick_rank() below moves that DISPLAY-ORDER policy
+    # here (Python, one place) instead of leaving it re-derived in JS -- but
+    # see that function's own docstring for the honest boundary: this is a
+    # stable default display order, not a claim that a real canonical
+    # ranking of this uncapped population exists. app.js no longer renders
+    # it as an ordinal ("Top Pick #N") for exactly that reason.
     _STATUS_RANK = {"top_pick": 0, "lean": 1, "value": 2, "neutral": 3, None: 4}
 
     def _default_order(r):
@@ -757,6 +846,7 @@ def build_payload(result, track_record=None):
                -(r.get("market_edge") or 0))
 
     all_rows.sort(key=_default_order)
+    _assign_top_pick_rank(all_rows)
 
     families = [{"stat": stat, "label": CATEGORY_LABELS.get(stat, stat.replace("_", " ").title()),
                 "count": count}

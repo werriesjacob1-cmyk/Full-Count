@@ -1,3 +1,9 @@
+/* ============================================================================
+   THIS IS THE SOURCE FILE. Edit here, not docs/app.css -- see
+   dashboard/static/app.js's own header comment for why (docs/ is build
+   output, silently overwritten by copy_static_assets() on every real
+   build). test_build_dashboard.py's StaticSourceParityTests enforces this.
+   ============================================================================ */
 /* Full Count — Phase 4 design system.
    No webfonts: a deliberate choice for a data-dense stats product (see
    dashboard/build_dashboard.py's module docstring) — system-ui/serif
@@ -256,7 +262,14 @@ main { max-width: 1180px; margin: 0 auto; padding: 20px 16px 80px; }
 @media (max-width: 640px) {
   .stat-row { grid-template-columns: repeat(2, 1fr); }
 }
-.stat-tile { background: var(--surface); padding: 13px 16px; }
+/* Tappable (PASS: tiles used to be inert -- a real number with nowhere to
+   go). Now real <a> links straight into the matching filtered All Props
+   view; min-height keeps the tap target honest on mobile. */
+.stat-tile {
+  background: var(--surface); padding: 13px 16px; display: block; text-decoration: none;
+  color: inherit; min-height: 44px; transition: background-color .12s ease;
+}
+.stat-tile:hover, .stat-tile:focus-visible { background: var(--surface-2); }
 .stat-tile .n { font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-size: 22px; font-weight: 700; color: var(--accent); display: block; }
 .stat-tile .l { font-size: 11.5px; color: var(--ink-faint); margin-top: 1px; }
 
@@ -283,11 +296,6 @@ main { max-width: 1180px; margin: 0 auto; padding: 20px 16px 80px; }
 .pc-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
 .pc-name { font-family: var(--font-display); font-size: 18px; font-weight: 700; line-height: 1.2; }
 .pc-sub { font-size: 12.5px; color: var(--ink-faint); margin-top: 2px; }
-.pc-rank {
-  flex: none; font-family: var(--font-mono); font-size: 11px; font-weight: 700;
-  background: var(--accent-soft); color: var(--accent-bright); border-radius: 999px;
-  padding: 3px 9px;
-}
 
 .pc-prop { font-size: 14.5px; font-weight: 600; color: var(--ink-dim); }
 
@@ -386,11 +394,6 @@ main { max-width: 1180px; margin: 0 auto; padding: 20px 16px 80px; }
 }
 @keyframes spin { to { transform: rotate(360deg); } }
 
-.value-explainer {
-  background: var(--surface-2); border: 1px solid var(--line-soft); border-radius: var(--radius);
-  padding: 12px 16px; font-size: 13px; line-height: 1.5; color: var(--ink-dim); margin-bottom: 16px;
-}
-.value-explainer b { color: var(--ink); }
 
 /* ── Buttons ──────────────────────────────────────────────────────── */
 .btn {
@@ -507,6 +510,23 @@ main { max-width: 1180px; margin: 0 auto; padding: 20px 16px 80px; }
   width: 100%; margin-top: 6px;
 }
 
+/* ── Detail sheet: Model vs. Market + price freshness (2026-08-25) ──── */
+.model-vs-market {
+  background: var(--surface-2); border-radius: var(--radius); padding: 12px 14px; margin-bottom: 8px;
+}
+.mvm-row { display: flex; justify-content: space-between; align-items: baseline; padding: 4px 0; font-size: 13.5px; }
+.mvm-row + .mvm-row { border-top: 1px solid var(--line-soft); }
+.mvm-label { color: var(--ink-faint); }
+.mvm-value { font-family: var(--font-mono); font-weight: 700; }
+.mvm-row.mvm-diff .mvm-value { color: var(--accent); font-size: 15px; }
+.price-freshness-note { font-size: 12px; margin-top: 4px; }
+.price-freshness-note.tone-current { color: var(--good); }
+.price-freshness-note.tone-stale, .price-freshness-note.tone-unposted { color: var(--warn); }
+.price-freshness-note.tone-live { color: var(--accent); }
+.why-not-top-pick { background: var(--surface-2); border-radius: var(--radius); padding: 12px 14px; }
+.why-not-top-pick h3 { margin-bottom: 5px; }
+.why-not-top-pick .section-sub { margin: 0; }
+
 /* ── Games page ───────────────────────────────────────────────────── */
 .game-list { display: flex; flex-direction: column; gap: 12px; }
 .game-card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-lg); padding: 16px; }
@@ -517,6 +537,24 @@ main { max-width: 1180px; margin: 0 auto; padding: 20px 16px 80px; }
 .game-picks { display: flex; flex-direction: column; gap: 6px; }
 .game-pick-line { display: flex; justify-content: space-between; gap: 10px; font-size: 13px; padding: 6px 0; border-top: 1px solid var(--line-soft); }
 .game-pick-line:first-child { border-top: none; }
+
+/* ── Explore by Prop (Today page quick-nav) ──────────────────────────
+   Mobile-first jump strip: one tap from Today straight into a filtered
+   All Props view for one market family. Thumb-friendly (44px min tap
+   target, matching the site's existing nav convention), no wall of 15
+   markets -- only the highest-interest families, plus a "More" chip that
+   opens the full research board. Real counts only; a family with zero
+   real props tonight doesn't get a chip at all (never a dead tap). */
+.explore-strip { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 6px; }
+.explore-chip {
+  flex: none; display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 2px; min-width: 76px; min-height: 44px; padding: 10px 16px; background: var(--surface);
+  border: 1px solid var(--line); border-radius: var(--radius-lg); text-decoration: none; color: inherit;
+  cursor: pointer;
+}
+.explore-chip-label { font-weight: 700; font-size: 13.5px; }
+.explore-chip-count { font-size: 11px; color: var(--ink-faint); font-family: var(--font-mono); }
+.explore-chip-more { background: var(--surface-2); color: var(--ink-faint); font-weight: 600; }
 
 .schedule-strip { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 6px; margin-bottom: 26px; }
 .schedule-chip {
@@ -540,12 +578,31 @@ main { max-width: 1180px; margin: 0 auto; padding: 20px 16px 80px; }
 .tag-legacy { background: var(--neutral-soft); color: var(--neutral); }
 .perf-tag { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; padding: 3px 9px; border-radius: 999px; }
 
-/* ── Watchlist ────────────────────────────────────────────────────── */
-.watchlist-item { position: relative; }
+/* ── My Board (2026-08-25 redesign; class/DOM names still say
+   "watchlist" -- see app.js's module header) ─────────────────────────
+   Redesigned from an absolutely-positioned corner badge (fine for a
+   single short word, not for real summary text like "3 changes · Model
+   stronger") to a normal block above the row -- mobile-safe, never
+   clipped or overlapping the card content. */
+.watchlist-item { display: flex; flex-direction: column; gap: 4px; }
 .watch-change-badge {
-  position: absolute; top: -6px; right: -6px; background: var(--accent); color: var(--accent-ink);
-  font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 999px;
+  align-self: flex-start; background: var(--accent-soft); color: var(--accent);
+  font-size: 11.5px; font-weight: 700; padding: 3px 10px; border-radius: 999px;
 }
+.since-saved {
+  background: var(--surface-2); border-radius: var(--radius); padding: 10px 14px;
+  display: flex; flex-direction: column; gap: 6px;
+}
+.since-saved-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .03em; color: var(--ink-faint); }
+.since-row { display: flex; justify-content: space-between; align-items: baseline; font-size: 13px; gap: 10px; }
+.since-field { color: var(--ink-faint); flex: none; }
+.since-delta { font-family: var(--font-mono); font-weight: 600; text-align: right; }
+.since-from { color: var(--ink-faint); }
+.since-to { color: var(--ink); }
+.since-arrow.up { color: var(--good); }
+.since-arrow.down { color: var(--bad); }
+.since-none { font-size: 13px; color: var(--ink-faint); }
+.my-board-list .watchlist-item { margin-bottom: 4px; }
 .star-btn {
   flex: none; width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--line);
   background: var(--surface-2); cursor: pointer; display: flex; align-items: center; justify-content: center;

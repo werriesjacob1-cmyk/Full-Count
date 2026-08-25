@@ -1632,10 +1632,34 @@ def score_batter(batter, gm, opp_sp_row, opp_sp_id, opp_sp_hand, park_wx, batter
         else:
             why.append(barrel_note)
     if bs_trend is not None and bs_trend >= 1.0: why.append(f"Bat speed trending up L14 ({bs_trend:+.1f}mph 2nd-half vs 1st-half)")
-    if bs.get("wRC+"): why.append(f"Season wRC+ {bs['wRC+']:.0f}")
+    # 2026-08-25 explanation-quality fix (release-readiness audit, same class
+    # as the L14-K%/sp_era/ev_note/barrel_note/wind fixes above): season
+    # wRC+ used to land in `why` unconditionally. sc_wrc = scale(wRC+, 70,
+    # 140) already exists (it's SKILL's own component) and is exactly as
+    # directional -- reused the same way. Not observed live in today's
+    # slate (no genuinely below-average wRC+ batter happened to qualify),
+    # but the same unconditional-append shape as the fixed bugs, so closed
+    # proactively rather than left for the next slate to surface it.
+    if bs.get("wRC+"):
+        wrc_note = f"Season wRC+ {bs['wRC+']:.0f}"
+        if sc_wrc >= 65:
+            why.append(wrc_note + " — above-average hitter")
+        elif sc_wrc <= 35:
+            watchouts.append(wrc_note + " — below-average hitter this season")
+        else:
+            why.append(wrc_note)
+    # 2026-08-25 explanation-quality fix (release-readiness audit): the wind-
+    # in branch used to land in `why`, the positive-reasons list, even
+    # though its own text says "power suppressed" -- a real, self-
+    # contradictory placement (the sentence itself is negative) confirmed
+    # live in 163 currently-published props across Hits/Total Bases/
+    # Doubles/Hits+Runs+RBIs. Wind blowing in suppresses offense broadly
+    # (fewer balls carry out or find the gap), so it belongs in watchouts,
+    # same as the wind-OUT branch correctly stays in why (its own text is
+    # genuinely positive -- "HR boost").
     if not park_wx or park_wx.get("dome"): why.append("Dome — weather neutral")
     elif park_wx.get("wind_effect") == "out": why.append(f"Wind blowing OUT ({park_wx.get('wind_mph',0):.0f}mph) — HR boost")
-    elif park_wx.get("wind_effect") == "in": why.append("Wind blowing IN — power suppressed")
+    elif park_wx.get("wind_effect") == "in": watchouts.append(f"Wind blowing IN ({park_wx.get('wind_mph',0):.0f}mph) — power suppressed")
     if bullpen_fatigue_pct is not None:
         why.append(f"Opposing bullpen fatigue: {fatigued}/{tracked} relievers over 60 pitches in L7 "
                     f"({'tired pen — favorable late' if bullpen_fatigue_pct >= 40 else 'fresh pen'})")
@@ -2119,7 +2143,29 @@ def score_pitcher(sp_name, sp_id, sp_hand, gm, side, pit_season_lookup, l14_form
     if k_pct: why.append(f"Season K% {k_pct}")
     if csw: why.append(f"CSW% {csw}")
     if stuff: why.append(f"Stuff+ {stuff}")
-    if l14.get("l14_k_pct") is not None: why.append(f"L14 K% {l14['l14_k_pct']} ({l14.get('l14_pa')} PA)")
+    # 2026-08-25 explanation-quality fix (same class of bug as the
+    # 2026-08-24 batter-side fixes above, found during a release-readiness
+    # directional-safety audit): this used to append L14 K% to `why` (the
+    # positive-reasons list) unconditionally, regardless of whether the
+    # number was actually strong. Real production example: Clay Holmes'
+    # L14 K% of 6.7% -- an extremely cold recent strikeout rate for an
+    # Over-strikeouts pick -- rendered under "Why It Could Hit" with no
+    # qualifying language. form_l14_raw = scale(l14_k_pct, 15, 32) already
+    # exists (it IS the RECENT FORM component's own raw value before
+    # blending) and is exactly as directional as sc_l7_ev/sc_l7_barrel
+    # were for batters -- reused the same way, same neutral-middle-stays-
+    # plain rule. When form_l14_raw is None (thin L14 sample), the number
+    # stays an unqualified plain fact, same as before -- the separate
+    # "L14 Statcast sample too thin" watchout above already covers that
+    # case, so this doesn't double up on a thin-sample caveat.
+    if l14.get("l14_k_pct") is not None:
+        l14_k_note = f"L14 K% {l14['l14_k_pct']} ({l14.get('l14_pa')} PA)"
+        if form_l14_raw is not None and form_l14_raw >= 65:
+            why.append(l14_k_note + " — hot recent form")
+        elif form_l14_raw is not None and form_l14_raw <= 35:
+            watchouts.append(l14_k_note + " — cold recent form")
+        else:
+            why.append(l14_k_note)
     if exp_k and exp_k.get("k_rate") is not None:
         why.append(f"Recency-weighted K rate {exp_k['k_rate']*100:.1f}% (exp. decay, halflife 30d, "
                     f"{exp_k['n_starts']} real starts / {exp_k['raw_bf']} BF) — drives the strikeout probability model")
@@ -2538,14 +2584,54 @@ def score_stolen_base(batter, gm, opp_catcher_poptime, sprint_speed, batter_seas
     if season_sb and season_sb >= 15: notable_signals += 1
     if on_base is not None and on_base >= 75: notable_signals += 1
 
-    why = [f"Sprint speed {sprint_speed:.1f}ft/s (league ~{LEAGUE_AVG_SPRINT})"]
-    if opp_catcher_poptime: why.append(f"Opposing catcher pop time {opp_catcher_poptime:.2f}s to 2B (league ~{LEAGUE_AVG_POPTIME}s)")
-    if on_base_note: why.append(f"On-base ability: {on_base_note} — gates how often he's on first to run at all")
+    # 2026-08-25 explanation-quality fix (release-readiness audit, same class
+    # of bug as generate_picks.py's L14-K%/sp_era/ev_note/barrel_note fixes
+    # above): all three of these used to land in `why` unconditionally
+    # whenever the raw value existed, regardless of whether it was actually
+    # a GOOD reading. Real production examples found via docs/data.json: a
+    # 1.88s catcher pop time (an elite, hard-to-steal-on arm -- matchup
+    # scores near 0) rendered under "Why It Could Hit" for Bobby Witt Jr.
+    # and 180 total stolen_base props on today's slate; Jose Ramirez's
+    # 27.7ft/s sprint speed (barely above the 27.3 qualifying floor, skill
+    # scores ~13) rendered the same way. `skill`/`matchup`/`on_base` are the
+    # scored components' own already-computed directional values -- reused
+    # the same way, same neutral-middle-stays-plain rule.
+    why = []
+    if skill >= 65:
+        why.append(f"Sprint speed {sprint_speed:.1f}ft/s (league ~{LEAGUE_AVG_SPRINT}) — plus speed")
+    else:
+        why.append(f"Sprint speed {sprint_speed:.1f}ft/s (league ~{LEAGUE_AVG_SPRINT})")
+    if opp_catcher_poptime:
+        poptime_note = f"Opposing catcher pop time {opp_catcher_poptime:.2f}s to 2B (league ~{LEAGUE_AVG_POPTIME}s)"
+        if matchup >= 65:
+            why.append(poptime_note + " — a slow-armed catcher, easier to run on")
+        elif matchup <= 35:
+            # NOT appended here; folded into the opp_cs_pct-style watchout
+            # below instead, which already exists at the >=0.30 CS%
+            # threshold -- see the watchouts block for the poptime-specific
+            # variant of that same "hard to run on" fact.
+            pass
+        else:
+            why.append(poptime_note)
+    if on_base_note:
+        if on_base is not None and on_base >= 65:
+            why.append(f"On-base ability: {on_base_note} — gates how often he's on first to run at all (favorable)")
+        elif on_base is not None and on_base <= 25:
+            # NOT appended to why -- the existing "Fast, but a weak
+            # on-base rate..." watchout below already covers this fact
+            # more specifically; showing the plain note here too would
+            # put the same weak reading in both lists.
+            pass
+        else:
+            why.append(f"On-base ability: {on_base_note} — gates how often he's on first to run at all")
     if season_sb is not None: why.append(f"Season SB: {season_sb}")
     watchouts = []
     if opp_cs_pct is not None and opp_cs_pct >= 0.30:
         watchouts.append(f"Opposing team throws out {opp_cs_pct*100:.0f}% of runners "
                           f"(league ~25%) — a genuinely hard team to run on")
+    if opp_catcher_poptime and matchup <= 35:
+        watchouts.append(f"Opposing catcher pop time {opp_catcher_poptime:.2f}s to 2B (league ~{LEAGUE_AVG_POPTIME}s) "
+                          f"— a fast, hard-to-run-on arm")
     if not opp_catcher_poptime: watchouts.append(f"Opposing catcher pop time unavailable — matchup component defaulted to the league average ({LEAGUE_AVG_POPTIME}s)")
     if on_base is None:
         watchouts.append("No usable on-base rate (no OBP, and wOBA sample under 40 PA) — "
