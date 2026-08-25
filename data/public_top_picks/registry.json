@@ -2,7 +2,7 @@
   "schema_version": 1,
   "identity_schema_version": 2,
   "rollout_version": "pre-phase-v-live-lifecycle-v1",
-  "updated_at": "2026-08-25T15:54:19.645362+00:00",
+  "updated_at": "2026-08-25T19:38:33.043077+00:00",
   "migration": {
     "version": "pre-phase-v-live-lifecycle-v1",
     "completed_at": "2026-08-17T23:14:57+00:00",
@@ -1378,6 +1378,371 @@
         },
         "qualification_timestamp": "2026-08-25T15:53:06.389226+00:00",
         "board_timestamp": "2026-08-25T15:53:06.357475+00:00",
+        "slate_date": "2026-08-25"
+      }
+    },
+    "fc2:823826:player-663969:strikeouts:4:over": {
+      "canonical_id": "fc2:823826:player-663969:strikeouts:4:over",
+      "settlement_identity": [
+        "823826",
+        [
+          "player",
+          "663969"
+        ],
+        "strikeouts",
+        "4",
+        "over"
+      ],
+      "slate_date": "2026-08-25",
+      "first_published_at": "2026-08-25T19:38:33.043077+00:00",
+      "publication_provenance": {
+        "artifact_id": "7319d35d574a436c1f831608df9827d01b265917a1e3e0ed99f655dfa437fe25",
+        "source_commit": "f7bb203364fe398bacc540e11f1f237a6398d1a1",
+        "workflow_run_id": "32890644388",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-08-25T19:38:20.688938+00:00",
+        "data_hash": "19950f045cc7388c979be011d06a301f36e95e4886827189632cb39e14591d63",
+        "live_hash": "3da1a4163978894cd0bf8476d2c97662ef88a92d86120a5c78dc3081535b1e8d"
+      },
+      "snapshot": {
+        "id": "fc2:823826:player-663969:strikeouts:4:over",
+        "identity_version": 2,
+        "game_pk": 823826,
+        "player_id": 663969,
+        "combo_player_ids": null,
+        "type": "pitcher",
+        "name": "Tyler Phillips",
+        "team": "Miami Marlins",
+        "matchup": "Boston Red Sox @ Miami Marlins",
+        "game_start": "2026-08-25T22:40:00Z",
+        "stat": "strikeouts",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "strikeouts",
+          "value": 3.5,
+          "needs": 4
+        },
+        "prop": "Over 3.5 Strikeouts",
+        "hit_probability": 0.6056,
+        "market_odds": -120,
+        "market_implied": 0.5146,
+        "market_edge": 0.091,
+        "market_hold": null,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (B), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (10.1 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "Opposing team K% 21.3",
+          "Expected workload 23.1 batters faced (his own 23.0/start over 1 real start, shrunk toward the 23.1 league mean)",
+          "4/6 known-hand opposing batters same-handed",
+          "L14 K% 27.3 (33 PA) \u2014 hot recent form"
+        ],
+        "watchouts": [
+          "Workload estimate rests on only 1 start in the L14 window \u2014 most start-to-start variation in batters faced is noise, so this is shrunk heavily toward league average"
+        ],
+        "prob_ci": [
+          0.5847,
+          0.7047
+        ],
+        "reliability": "B",
+        "reliability_note": null,
+        "sample_n": 14,
+        "lineup_assumed": null,
+        "base_rate": 0.692,
+        "lift": -0.0864,
+        "lift_reference_rate": null,
+        "stable_lift": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "f67245fb",
+          "prediction_timestamp": "2026-08-25T19:37:30.476847+00:00",
+          "odds_fetched_at": "2026-08-25T19:37:19.850588+00:00",
+          "board_generated_at": "2026-08-25T19:37:30.458085+00:00"
+        },
+        "qualification_timestamp": "2026-08-25T19:37:30.476847+00:00",
+        "board_timestamp": "2026-08-25T19:37:30.458085+00:00",
+        "slate_date": "2026-08-25"
+      }
+    },
+    "fc2:824881:player-573262:hits_runs_rbis:1:over": {
+      "canonical_id": "fc2:824881:player-573262:hits_runs_rbis:1:over",
+      "settlement_identity": [
+        "824881",
+        [
+          "player",
+          "573262"
+        ],
+        "hits_runs_rbis",
+        "1",
+        "over"
+      ],
+      "slate_date": "2026-08-25",
+      "first_published_at": "2026-08-25T19:38:33.043077+00:00",
+      "publication_provenance": {
+        "artifact_id": "7319d35d574a436c1f831608df9827d01b265917a1e3e0ed99f655dfa437fe25",
+        "source_commit": "f7bb203364fe398bacc540e11f1f237a6398d1a1",
+        "workflow_run_id": "32890644388",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-08-25T19:38:20.688938+00:00",
+        "data_hash": "19950f045cc7388c979be011d06a301f36e95e4886827189632cb39e14591d63",
+        "live_hash": "3da1a4163978894cd0bf8476d2c97662ef88a92d86120a5c78dc3081535b1e8d"
+      },
+      "snapshot": {
+        "id": "fc2:824881:player-573262:hits_runs_rbis:1:over",
+        "identity_version": 2,
+        "game_pk": 824881,
+        "player_id": 573262,
+        "combo_player_ids": null,
+        "type": "batter",
+        "name": "Mike Yastrzemski",
+        "team": "Atlanta Braves",
+        "matchup": "Los Angeles Dodgers @ Atlanta Braves",
+        "game_start": "2026-08-25T23:15:00Z",
+        "stat": "hits_runs_rbis",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "hits_runs_rbis",
+          "value": 0.5,
+          "needs": 1
+        },
+        "prop": "Over 0.5 Hits+Runs+RBIs",
+        "hit_probability": 0.6235,
+        "market_odds": -140,
+        "market_implied": 0.5833,
+        "market_edge": 0.0402,
+        "market_hold": null,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (A), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (8.3 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "Platoon: L bat vs RHP (favorable)",
+          "Pitch-type exploit: RV/100 +2.2 vs CU (opposing SP throws it 29.5% of the time)",
+          "L7 avg EV 99.1mph (league ~88.5) \u2014 hot recent contact",
+          "L7 barrel% 60.0 \u2014 hot recent contact"
+        ],
+        "watchouts": [
+          "L7 sample is thin (5 PA) \u2014 treat recent-form read with caution",
+          "Projected 3.81 PA (batting slot 7) \u2014 a tough lineup slot for plate appearances"
+        ],
+        "prob_ci": [
+          0.6102,
+          0.6551
+        ],
+        "reliability": "A",
+        "reliability_note": null,
+        "sample_n": 111,
+        "lineup_assumed": null,
+        "base_rate": 0.6715,
+        "lift": -0.048,
+        "lift_reference_rate": null,
+        "stable_lift": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "f67245fb",
+          "prediction_timestamp": "2026-08-25T19:37:30.476847+00:00",
+          "odds_fetched_at": "2026-08-25T19:37:19.850588+00:00",
+          "board_generated_at": "2026-08-25T19:37:30.458085+00:00"
+        },
+        "qualification_timestamp": "2026-08-25T19:37:30.476847+00:00",
+        "board_timestamp": "2026-08-25T19:37:30.458085+00:00",
+        "slate_date": "2026-08-25"
+      }
+    },
+    "fc2:823826:player-669364:hits_runs_rbis:1:over": {
+      "canonical_id": "fc2:823826:player-669364:hits_runs_rbis:1:over",
+      "settlement_identity": [
+        "823826",
+        [
+          "player",
+          "669364"
+        ],
+        "hits_runs_rbis",
+        "1",
+        "over"
+      ],
+      "slate_date": "2026-08-25",
+      "first_published_at": "2026-08-25T19:38:33.043077+00:00",
+      "publication_provenance": {
+        "artifact_id": "7319d35d574a436c1f831608df9827d01b265917a1e3e0ed99f655dfa437fe25",
+        "source_commit": "f7bb203364fe398bacc540e11f1f237a6398d1a1",
+        "workflow_run_id": "32890644388",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-08-25T19:38:20.688938+00:00",
+        "data_hash": "19950f045cc7388c979be011d06a301f36e95e4886827189632cb39e14591d63",
+        "live_hash": "3da1a4163978894cd0bf8476d2c97662ef88a92d86120a5c78dc3081535b1e8d"
+      },
+      "snapshot": {
+        "id": "fc2:823826:player-669364:hits_runs_rbis:1:over",
+        "identity_version": 2,
+        "game_pk": 823826,
+        "player_id": 669364,
+        "combo_player_ids": null,
+        "type": "batter",
+        "name": "Xavier Edwards",
+        "team": "Miami Marlins",
+        "matchup": "Boston Red Sox @ Miami Marlins",
+        "game_start": "2026-08-25T22:40:00Z",
+        "stat": "hits_runs_rbis",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "hits_runs_rbis",
+          "value": 0.5,
+          "needs": 1
+        },
+        "prop": "Over 0.5 Hits+Runs+RBIs",
+        "hit_probability": 0.7243,
+        "market_odds": -220,
+        "market_implied": 0.6875,
+        "market_edge": 0.0368,
+        "market_hold": null,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (A), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (8.8 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "Projected 4.0 PA (batting slot 5)",
+          "Platoon: S bat vs LHP (handedness unknown)",
+          "Pitch-type exploit: RV/100 +1.5 vs FF (opposing SP throws it 45.8% of the time)",
+          "L7 barrel% 16.7 \u2014 hot recent contact"
+        ],
+        "watchouts": [
+          "Team implied for 3.06 runs (league avg 4.245; line 2.5, game total 7) \u2014 a weak offensive environment",
+          "Opposing SP ERA 3.08 \u2014 elite pitcher, tough matchup"
+        ],
+        "prob_ci": [
+          0.7076,
+          0.7663
+        ],
+        "reliability": "A",
+        "reliability_note": null,
+        "sample_n": 130,
+        "lineup_assumed": null,
+        "base_rate": 0.6715,
+        "lift": 0.0528,
+        "lift_reference_rate": null,
+        "stable_lift": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "f67245fb",
+          "prediction_timestamp": "2026-08-25T19:37:30.476847+00:00",
+          "odds_fetched_at": "2026-08-25T19:37:19.850588+00:00",
+          "board_generated_at": "2026-08-25T19:37:30.458085+00:00"
+        },
+        "qualification_timestamp": "2026-08-25T19:37:30.476847+00:00",
+        "board_timestamp": "2026-08-25T19:37:30.458085+00:00",
+        "slate_date": "2026-08-25"
+      }
+    },
+    "fc2:823585:player-805999:hits_runs_rbis:1:over": {
+      "canonical_id": "fc2:823585:player-805999:hits_runs_rbis:1:over",
+      "settlement_identity": [
+        "823585",
+        [
+          "player",
+          "805999"
+        ],
+        "hits_runs_rbis",
+        "1",
+        "over"
+      ],
+      "slate_date": "2026-08-25",
+      "first_published_at": "2026-08-25T19:38:33.043077+00:00",
+      "publication_provenance": {
+        "artifact_id": "7319d35d574a436c1f831608df9827d01b265917a1e3e0ed99f655dfa437fe25",
+        "source_commit": "f7bb203364fe398bacc540e11f1f237a6398d1a1",
+        "workflow_run_id": "32890644388",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-08-25T19:38:20.688938+00:00",
+        "data_hash": "19950f045cc7388c979be011d06a301f36e95e4886827189632cb39e14591d63",
+        "live_hash": "3da1a4163978894cd0bf8476d2c97662ef88a92d86120a5c78dc3081535b1e8d"
+      },
+      "snapshot": {
+        "id": "fc2:823585:player-805999:hits_runs_rbis:1:over",
+        "identity_version": 2,
+        "game_pk": 823585,
+        "player_id": 805999,
+        "combo_player_ids": null,
+        "type": "batter",
+        "name": "A.J. Ewing",
+        "team": "New York Mets",
+        "matchup": "Milwaukee Brewers @ New York Mets",
+        "game_start": "2026-08-25T23:10:00Z",
+        "stat": "hits_runs_rbis",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "hits_runs_rbis",
+          "value": 0.5,
+          "needs": 1
+        },
+        "prop": "Over 0.5 Hits+Runs+RBIs",
+        "hit_probability": 0.6641,
+        "market_odds": -170,
+        "market_implied": 0.6296,
+        "market_edge": 0.0345,
+        "market_hold": null,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (A), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (8.1 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "L7 barrel% 8.3",
+          "Opposing bullpen fatigue: 7/14 relievers over 60 pitches in L7 (tired pen \u2014 favorable late)"
+        ],
+        "watchouts": [
+          "Projected 3.5 PA (batting slot 9) \u2014 a tough lineup slot for plate appearances",
+          "Team implied for 3.24 runs (league avg 4.245; line 3.5, game total 7.5) \u2014 a weak offensive environment"
+        ],
+        "prob_ci": [
+          0.6533,
+          0.6872
+        ],
+        "reliability": "A",
+        "reliability_note": null,
+        "sample_n": 90,
+        "lineup_assumed": null,
+        "base_rate": 0.6715,
+        "lift": -0.0074,
+        "lift_reference_rate": null,
+        "stable_lift": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "f67245fb",
+          "prediction_timestamp": "2026-08-25T19:37:30.476847+00:00",
+          "odds_fetched_at": "2026-08-25T19:37:19.850588+00:00",
+          "board_generated_at": "2026-08-25T19:37:30.458085+00:00"
+        },
+        "qualification_timestamp": "2026-08-25T19:37:30.476847+00:00",
+        "board_timestamp": "2026-08-25T19:37:30.458085+00:00",
         "slate_date": "2026-08-25"
       }
     }
