@@ -192,7 +192,21 @@ function lineupChip(p) {
   if (p.lineup_assumed === false) return `<span class="chip chip-lineup-confirmed">Confirmed Lineup</span>`;
   return "";
 }
+// Real bug, found 2026-08-25: this only ever checked p.stale, a SEPARATE
+// field from market_fetch_state -- dashboard/refresh_prices.py's
+// FETCH_FAILED branch (a genuinely failed FanDuel re-fetch) never sets
+// stale=True, it only sets market_fetch_state/market_failure_reason. So a
+// price whose most recent fetch actually failed showed no chip at all on
+// the compact card grid, looking identical to a freshly, successfully
+// checked price -- even though priceFreshnessState() (the detail sheet)
+// already correctly flagged this same row as "Last known - price fetch
+// failed". Plain, simplified wording here (not the internal
+// "FETCH_FAILED"/"market_failure_reason" jargon) so a viewer scanning
+// cards, not opening every detail sheet, sees the same honest signal.
 function staleChip(p) {
+  if (p.market_fetch_state === "FETCH_FAILED") {
+    return `<span class="chip chip-stale">Price May Be Outdated</span>`;
+  }
   return p.stale ? `<span class="chip chip-stale">Stale Data</span>` : "";
 }
 // 2026-08-2X data-integrity fix (P0-5, Top Pick warning visibility): a Top

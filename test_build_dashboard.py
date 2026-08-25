@@ -826,6 +826,60 @@ else:
     check(True, "node not available -- sampleLabelCaveat check skipped, not failed")
 
 
+head("13c. staleChip() (2026-08-25): real bug -- a price whose most recent FanDuel re-fetch "
+     "actually FAILED (market_fetch_state === \"FETCH_FAILED\") showed no chip at all on the "
+     "compact card grid, since this only ever checked the separate p.stale field, which "
+     "refresh_prices.py's FETCH_FAILED branch never sets. The detail sheet's own "
+     "priceFreshnessState() already flagged this same row correctly -- the compact card just "
+     "never surfaced it. Verifies the plain, simplified 'Price May Be Outdated' wording "
+     "renders for a genuinely failed fetch, ordinary 'Stale Data' still renders for the "
+     "pre-existing p.stale case, and neither renders for a normal, successfully-priced row.")
+
+if node:
+    harness_stale_chip = """
+const document = {getElementById: () => ({addEventListener(){}, textContent:'', dataset:{},
+    style:{}, setAttribute(){}, querySelectorAll: () => [], querySelector: () => null}),
+  documentElement: {setAttribute(){}, removeAttribute(){}, getAttribute: () => null},
+  querySelectorAll: () => [], querySelector: () => null, createElement: () => ({style:{}}),
+  addEventListener(){}, body: {style:{}, append(){}}};
+const window = {matchMedia: () => ({matches:false}), location: {hash:''}, scrollY: 0, scrollTo(){}};
+const localStorage = {getItem: () => null, setItem(){}};
+const fetch = () => Promise.reject(new Error("no network in test"));
+const setInterval = () => {};
+try { """ + open(APP_JS_PATH, encoding="utf-8").read() + """ } catch (e) {}
+let ok = true;
+function assertTrue(cond, msg) { if (!cond) { console.error("FAIL: " + msg); ok = false; } }
+
+const failedFetch = staleChip({ market_odds: -120, market_fetch_state: "FETCH_FAILED", stale: false });
+assertTrue(failedFetch.includes("Price May Be Outdated"),
+  "a genuinely failed fetch (market_fetch_state=FETCH_FAILED) renders the plain 'Price May Be " +
+  "Outdated' chip even though p.stale is false -- got " + JSON.stringify(failedFetch));
+
+const oldStale = staleChip({ market_odds: -120, market_fetch_state: "MATCHED", stale: true });
+assertTrue(oldStale.includes("Stale Data"),
+  "the pre-existing p.stale=true case (an older successful check) still renders 'Stale Data' " +
+  "unchanged -- got " + JSON.stringify(oldStale));
+
+const fresh = staleChip({ market_odds: -120, market_fetch_state: "MATCHED", stale: false });
+assertTrue(fresh === "",
+  "a normal, freshly and successfully priced row renders no chip at all -- got " + JSON.stringify(fresh));
+
+if (!ok) process.exit(1);
+console.log("staleChip() checks passed");
+"""
+    harness_path_stale_chip = tempfile.mktemp(suffix=".js")
+    with open(harness_path_stale_chip, "w") as f:
+        f.write(harness_stale_chip)
+    try:
+        r = subprocess.run([node, harness_path_stale_chip], capture_output=True, text=True)
+        check(r.returncode == 0, "staleChip() surfaces a genuinely failed price re-fetch on the "
+              "compact card grid, in plain wording, not just in the detail sheet", r.stdout + r.stderr)
+    finally:
+        os.remove(harness_path_stale_chip)
+else:
+    check(True, "node not available -- staleChip check skipped, not failed")
+
+
 head("16. Today-page PASS 2/3 redesign (2026-08-25): the query-string half of a route hash "
      "used to be silently discarded (onRouteChange() split it off and threw it away) -- every "
      "\"See all research -> #/props?status=lean\" link on the page was a real navigation that "
