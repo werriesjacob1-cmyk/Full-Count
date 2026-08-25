@@ -75,6 +75,18 @@ SNAPSHOT_FIELDS = (
     # historical-data-integrity boundary), only what NEW entries capture
     # going forward.
     "base_rate", "lift",
+    # 2026-08-25 stable-lift-reference rollout: the shrinkage prior
+    # (base_rate, above -- unchanged, still feeds predicted_prob) and the
+    # LIFT REFERENCE (this pair) are now two separate concepts -- see
+    # stable_base_rate.py's own docstring. Additive, same graceful
+    # degradation as base_rate/lift above: absent on every entry published
+    # before this rollout and on every stat other than hits_runs_rbis/
+    # runs/rbis, present going forward wherever a real season-to-date
+    # reference existed at publication time. Lets a future audit answer
+    # "did this pick's ACTUAL Lean-gating lift differ from its slate-scoped
+    # display lift" from the immutable record itself, without recomputing
+    # anything.
+    "lift_reference_rate", "stable_lift",
 )
 VERSION_FIELDS = (
     "model_version", "selection_policy_version", "calibration_version",
