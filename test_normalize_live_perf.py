@@ -179,6 +179,54 @@ check(elapsed < 5.0,
       f"ceiling -- real observed time is well under 1s); the old O(n^2) algorithm "
       f"would take minutes at this size", f"elapsed={elapsed:.3f}s")
 
+head("5. PERFORMANCE GUARD, a second live-freshness-critical function: "
+     "compact_live_state() -- the function that runs on EVERY successful "
+     "dashboard-live.yml completion and is what actually shrinks docs/live.json "
+     "back down (9,853 -> 14 entries, confirmed live) once normalize_live()'s "
+     "O(n^2) bug stopped starving it of a chance to run at all. It has its own, "
+     "different O(n) shape (a single loop, dict/set membership checks -- see its "
+     "own docstring) but carries no regression test of its own yet. Added here, "
+     "next to normalize_live()'s, so a future change to either can't reintroduce "
+     "the same failure class (a stray list where a set/dict was assumed, an "
+     "accidental nested loop) without a fast, obvious CI failure -- exactly the "
+     "kind of regression this freshness-outage investigation exists to catch "
+     "before it reaches production again, not after 16+ hours of stale odds.")
+
+from dashboard.live_state import compact_live_state  # noqa: E402
+
+N2 = 5000
+big_live2 = default_live_state()
+big_live2["updated_at"] = "2026-08-24T20:00:00+00:00"
+for i in range(N2):
+    pid = f"fc2:900001:player-{i}:hits:1:over"
+    if i % 3 == 0:
+        big_live2["props"][pid] = {
+            "settlement_state": "hit", "settlement_authority": "official_final",
+            "settlement_source": "mlb_game_feed_by_game_pk", "result_actual": 1,
+            "settlement_observed_at": "2026-08-24T18:00:00+00:00",
+        }
+    else:
+        big_live2["props"][pid] = {"settlement_state": "open", "settlement_authority": "none",
+                                   "settlement_source": "dashboard_builder",
+                                   "settlement_observed_at": "2026-08-24T18:00:00+00:00"}
+# A realistic compaction call: most props are neither current nor published,
+# so they're real candidates for the eligibility checks compact_live_state()
+# runs per entry -- the shape that would expose an accidental O(n^2) the same
+# way the real 9,853-entry docs/live.json exposed normalize_live()'s.
+current_ids2 = {f"fc2:900001:player-{i}:hits:1:over" for i in range(0, N2, 100)}
+published_ids2 = {f"fc2:900001:player-{i}:hits:1:over" for i in range(0, N2, 50)}
+durable2 = {f"fc2:900001:player-{i}:hits:1:over": ("hit", "2026-08-24T19:00:00+00:00")
+           for i in range(0, N2, 3)}
+t0 = time.time()
+compacted = compact_live_state(big_live2, current_ids=current_ids2, published_ids=published_ids2,
+                               durable_settlements=durable2)
+elapsed2 = time.time() - t0
+check(len(compacted["props"]) <= N2, "sanity: compaction never grows the prop count",
+      f"got {len(compacted['props'])} of {N2}")
+check(elapsed2 < 5.0,
+      f"compact_live_state() on {N2} synthetic entries completes in under 5s -- same "
+      f"generous ceiling as normalize_live()'s own guard above", f"elapsed={elapsed2:.3f}s")
+
 n_pass = sum(1 for ok, _, _ in _results if ok)
 n_total = len(_results)
 print("\n" + "=" * 78)
