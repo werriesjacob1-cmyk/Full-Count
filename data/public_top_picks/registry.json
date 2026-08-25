@@ -2,7 +2,7 @@
   "schema_version": 1,
   "identity_schema_version": 2,
   "rollout_version": "pre-phase-v-live-lifecycle-v1",
-  "updated_at": "2026-08-25T22:20:42.546175+00:00",
+  "updated_at": "2026-08-25T23:19:14.999170+00:00",
   "migration": {
     "version": "pre-phase-v-live-lifecycle-v1",
     "completed_at": "2026-08-17T23:14:57+00:00",
@@ -2754,6 +2754,97 @@
         },
         "qualification_timestamp": "2026-08-25T21:59:46.170620+00:00",
         "board_timestamp": "2026-08-25T21:59:46.144233+00:00",
+        "slate_date": "2026-08-25"
+      }
+    },
+    "fc2:823259:player-669134:hits:1:over": {
+      "canonical_id": "fc2:823259:player-669134:hits:1:over",
+      "settlement_identity": [
+        "823259",
+        [
+          "player",
+          "669134"
+        ],
+        "hits",
+        "1",
+        "over"
+      ],
+      "slate_date": "2026-08-25",
+      "first_published_at": "2026-08-25T23:19:14.999170+00:00",
+      "publication_provenance": {
+        "artifact_id": "01b70d01756c27bf0c03b93c33a0cc43521be8759c41d2cf8cf4e3d603ede8f7",
+        "source_commit": "13cc47d54fd0e3da4b1fc734a853370c9466126c",
+        "workflow_run_id": "32910169225",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-08-25T23:18:59.761172+00:00",
+        "data_hash": "b8c92004447fd52bee254c488083f4244f7e73f8d1d7843abdaed92af528d1c3",
+        "live_hash": "1d92e60464817ddff3c29420c242eb148fd4365d3687b156b2654db53b5d6e7e"
+      },
+      "snapshot": {
+        "id": "fc2:823259:player-669134:hits:1:over",
+        "identity_version": 2,
+        "game_pk": 823259,
+        "player_id": 669134,
+        "combo_player_ids": null,
+        "type": "batter",
+        "name": "Luis Campusano",
+        "team": "San Diego Padres",
+        "matchup": "Pittsburgh Pirates @ San Diego Padres",
+        "game_start": "2026-08-26T01:40:00Z",
+        "stat": "hits",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "hits",
+          "value": 0.5,
+          "needs": 1
+        },
+        "prop": "Over 0.5 Hits",
+        "hit_probability": 0.6158,
+        "market_odds": -140,
+        "market_implied": 0.5833,
+        "market_edge": 0.0325,
+        "market_hold": null,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (B), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (7.6 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "Pitch-type exploit: RV/100 +2.1 vs FF (opposing SP throws it 41.5% of the time)",
+          "L7 barrel% 16.7 \u2014 hot recent contact",
+          "Opposing bullpen fatigue: 6/14 relievers over 60 pitches in L7 (tired pen \u2014 favorable late)"
+        ],
+        "watchouts": [
+          "L7 sample is thin (6 PA) \u2014 treat recent-form read with caution",
+          "AVG vs xBA: 0.293 vs 0.250 (+0.043) \u2014 outperforming his contact quality, regression risk"
+        ],
+        "prob_ci": [
+          0.6071,
+          0.6443
+        ],
+        "reliability": "B",
+        "reliability_note": null,
+        "sample_n": 50,
+        "lineup_assumed": null,
+        "base_rate": 0.5636,
+        "lift": 0.0522,
+        "lift_reference_rate": null,
+        "stable_lift": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "19e61f2b",
+          "prediction_timestamp": "2026-08-25T23:18:11.454364+00:00",
+          "odds_fetched_at": "2026-08-25T23:17:59.344108+00:00",
+          "board_generated_at": "2026-08-25T23:18:11.443153+00:00"
+        },
+        "qualification_timestamp": "2026-08-25T23:18:11.454364+00:00",
+        "board_timestamp": "2026-08-25T23:18:11.443153+00:00",
         "slate_date": "2026-08-25"
       }
     }
