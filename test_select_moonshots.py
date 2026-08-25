@@ -193,6 +193,23 @@ check(out_neg[0]["confidence"] == "Low",
       "a negative lift (the model actually likes this LESS than his own base rate) is Low "
       "regardless of how reliable his track record is", f"got {out_neg[0]['confidence']}")
 
+head("2026-08-2X HR base-rate semantics fix (data-integrity audit): base_rate here is "
+     "the LEAGUE home_runs_1plus rate (or a slate-scoped fallback), never this player's "
+     "own rate -- real complaint, Abimelec Ortiz's card read 'vs his own 10.1% season "
+     "base rate' with the identical 10.1% shared by 82 different real players on the same "
+     "live board, proving it wasn't anyone's 'own' number.")
+
+ortiz_like = batter_c(name="Test Slugger", hr_prob=0.191, base_rate=0.101,
+                       reliability="D", sample_n=21)
+out_ortiz = gp.select_moonshots([ortiz_like], {}, fd)
+why0 = out_ortiz[0]["why"][0]
+check("vs the 10.1% league base rate" in why0,
+      "the why note correctly attributes base_rate to the LEAGUE, not the player",
+      f"got {why0!r}")
+check("vs his own" not in why0,
+      "REGRESSION GUARD: 'vs his own ... base rate' must never appear again -- it asserts "
+      "a number this player's own history never produced", f"got {why0!r}")
+
 n_pass = sum(1 for ok, _, _ in _results if ok)
 n_total = len(_results)
 print("\n" + "=" * 78)

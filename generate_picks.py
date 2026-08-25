@@ -3676,19 +3676,21 @@ def _build_and_score():
     }
 
 
-# How much of a real HR-specific edge over a player's OWN season base rate
-# a moonshot pick needs to earn "High" confidence. Direct request: "does the
-# math support it? Or is it just because we have an edge?" -- found live
-# 2026-08-15 that select_moonshots() was labeling picks High off the
-# batter's HITS/TOTAL-BASES confidence (his primary, most-likely
+# How much of a real HR-specific edge over the LEAGUE home-run base rate (NOT
+# this player's own rate -- see base_rate's real definition, "his own" was
+# corrected 2026-08-2X as part of the HR probability/base-rate semantics
+# trace) a moonshot pick needs to earn "High" confidence. Direct request:
+# "does the math support it? Or is it just because we have an edge?" --
+# found live 2026-08-15 that select_moonshots() was labeling picks High off
+# the batter's HITS/TOTAL-BASES confidence (his primary, most-likely
 # projection), reused wholesale for the home-run entry even though nothing
 # about it was computed for home runs specifically. A real Gleyber Torres
-# case: 11.07% HR probability vs his own 10.34% base rate -- a 0.73-point
+# case: 11.07% HR probability vs a 10.34% league base rate -- a 0.73-point
 # lift, indistinguishable from noise -- carried a borrowed "High" tag with
 # an empty why/reliability/sample_n, because none of that was ever computed
 # for the HR read either. 3 points is a real, not-noise elevation for a
-# single-digit-percent event (a double-digit relative lift over a real base
-# rate), not an arbitrary round number picked to look scientific.
+# single-digit-percent event (a double-digit relative lift over the league
+# base rate), not an arbitrary round number picked to look scientific.
 MOONSHOT_LOCK_LIFT = 0.03
 
 
@@ -3752,9 +3754,19 @@ def select_moonshots(candidates, prices, fd, n=5):
         why = []
         if base_rate is not None and lift is not None:
             sample_n = c.get("sample_n") or 0
+            # 2026-08-2X data-integrity fix (HR probability/base-rate
+            # semantics trace): base_rate here is true_league_rates'
+            # league-wide home_runs_1plus rate (or, when that's absent for
+            # this exact key, a slate-scoped fallback -- see base_rates'
+            # own definition above in attach_hit_probabilities) -- NOT this
+            # player's own rate. The old wording ("vs his own X% season
+            # base rate") asserted a number this player's own history never
+            # produced. hr_opt['prob'] is the one number here that's
+            # actually his -- a shrunk blend of his own empirical rate and
+            # the model -- so it stays "his."
             why.append(
-                f"{hr_opt['prob']*100:.1f}% real model probability to homer tonight vs his own "
-                f"{base_rate*100:.1f}% season base rate ({lift*100:+.1f} points) -- built on "
+                f"{hr_opt['prob']*100:.1f}% real model probability to homer tonight vs the "
+                f"{base_rate*100:.1f}% league base rate ({lift*100:+.1f} points) -- built on "
                 f"{sample_n} real batter-games, reliability grade {reliability or '?'}")
         # Full candidate shape, not a stripped-down dict -- write_json appends
         # these into the same `picks` list grade_results.py already knows how
@@ -6301,6 +6313,15 @@ def attach_reliability(candidates, emp_batters, emp_pitchers):
                 and not c.get("calibrated_by")):
             lo, hi = _wilson_interval(rate.get("hit", 0), rate.get("n", n) or 1)
             c["prob_ci"] = [round(lo, 4), round(hi, 4)]
+            # 2026-08-2X CI-provenance-honesty fix (data-integrity audit):
+            # this is a real per-PLAYER Wilson interval off his own
+            # empirical hit/n count -- a materially different, more direct
+            # kind of evidence than the historical_reliability_band path
+            # below (a market/bucket-level backtest measurement, not this
+            # player's own record). prob_ci_source was previously only ever
+            # set on the historical-band path, leaving this one implicitly
+            # unlabeled (None) even though a real, named source exists.
+            c["prob_ci_source"] = "player_empirical"
         # 2026-08-24 accuracy investigation: the branch above is the only
         # per-PLAYER interval this pipeline can build, and it structurally
         # cannot cover modelled_shrunk/league_only/calibrated lines (see the
