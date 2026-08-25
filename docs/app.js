@@ -128,6 +128,45 @@ function evidenceQuality(p) {
 }
 
 // ══════════════════════════════════════════════════════════════════════
+//  PROBABILITY BASIS — 2026-08-2X data-integrity fix (probability-drivers-
+//  vs-matchup-context separation). Direct instruction: "do not let
+//  contextual reasons imply they mathematically generated the headline
+//  probability when they didn't." p.hit_probability (the big number) and
+//  p.score (what ranks/labels the card) are TWO DIFFERENT numbers computed
+//  by different mechanisms -- the "Why It Could Hit"/"Why It Could Miss"
+//  facts below explain the SCORE and today's matchup context, not a
+//  literal derivation of the probability. probability_basis/
+//  probability_detail (newly exposed on the public payload -- see
+//  dashboard/build_dashboard.py's clean()) are what actually produced the
+//  probability, and belong here, in Evidence, not folded into Why.
+const PROBABILITY_BASIS_LABELS = {
+  empirical: "His own real rate this season",
+  empirical_shrunk: "His own real rate, shrunk toward the league rate for a small sample",
+  modelled: "A modelled projection (no direct empirical rate available)",
+  modelled_shrunk: "A modelled projection, shrunk toward the league rate",
+  blended: "A blend of his own real rate and a modelled projection",
+  league_only: "The league rate — not enough of his own data to move off it",
+  combined_shrunk: "A modelled combination for both starters, shrunk toward the league rate",
+  modelled_independent_binomials: "A modelled combination for both starters (treated as independent)",
+  unavailable: "Not available",
+};
+function probabilityBasisText(p) {
+  const label = PROBABILITY_BASIS_LABELS[p.probability_basis];
+  if (!label) return null;
+  const detail = p.probability_detail || {};
+  const parts = [];
+  if (detail.empirical != null) parts.push(`his own rate ${pct(detail.empirical, 1)}`);
+  if (detail.modelled != null) parts.push(`modelled ${pct(detail.modelled, 1)}`);
+  return parts.length ? `${label} (${parts.join(", ")})` : label;
+}
+function probCiSourceText(p) {
+  if (!p.prob_ci) return null;
+  if (p.prob_ci_source === "historical_reliability_band") return "From this market's own historical track record, not this player's individual sample";
+  if (p.prob_ci_source === "player_empirical") return "From this player's own real sample";
+  return null;
+}
+
+// ══════════════════════════════════════════════════════════════════════
 //  RECOMMENDATION STATUS — display metadata for the four real states
 // ══════════════════════════════════════════════════════════════════════
 const STATUS_META = {
@@ -1378,7 +1417,9 @@ function detailBody(p) {
     </div>
     <div class="pc-chips" style="margin-bottom:18px;">${[statusChip(p), lineupChip(p), evidenceChip(p), staleChip(p), liveStaleChip(p), gradeChip(p)].filter(Boolean).join("")}</div>
 
-    ${renderReasons(hitItems, "positive", "＋") ? `<div class="detail-section"><h3>Why It Could Hit</h3>${renderReasons(hitItems, "positive", "＋")}</div>` : ""}
+    ${renderReasons(hitItems, "positive", "＋") ? `<div class="detail-section"><h3>Why It Could Hit</h3>
+      <p class="section-sub">What shapes Full Count's read of this matchup — see Evidence below for what actually produced the probability number above.</p>
+      ${renderReasons(hitItems, "positive", "＋")}</div>` : ""}
     <div class="detail-section"><h3>Why It Could Miss</h3>${
       missItems.length ? renderReasons(missItems, "negative", "－")
         : `<p class="section-sub">No major model-side concern beyond normal baseball variance.</p>`
@@ -1401,10 +1442,12 @@ function detailBody(p) {
 
     <div class="detail-section">
       <h3>Evidence</h3>
+      <p class="section-sub">What actually produced the probability number above.</p>
       ${renderRows([
+        ["What produced this number", probabilityBasisText(p) || "—"],
         ["Evidence quality", eq ? eq.label : "—"],
         ["Sample size", p.sample_n ?? "—"],
-        ["95% interval", p.prob_ci ? pct(p.prob_ci[0], 0) + "–" + pct(p.prob_ci[1], 0) : "Not defensible for this line"],
+        ["95% interval", p.prob_ci ? pct(p.prob_ci[0], 0) + "–" + pct(p.prob_ci[1], 0) + (probCiSourceText(p) ? ` (${probCiSourceText(p)})` : "") : "Not defensible for this line"],
       ])}
     </div>
 
