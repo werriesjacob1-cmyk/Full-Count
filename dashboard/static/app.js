@@ -280,11 +280,31 @@ function publicProps() {
     || (!!p.published_top_pick_at && !!p.publication_artifact_id)
     || !!p.publication_candidate_token);
 }
+// FROZEN_PUBLICATION_FIELDS: audit/settlement-critical facts that must
+// never regress after a game starts -- the bet a user actually saw.
+// Deliberately excludes presentation (why/watchouts), which must keep
+// reflecting the CURRENT generator's routing rather than whatever text
+// existed at first publication. Mirrors dashboard/live_state.py's
+// FROZEN_PUBLICATION_FIELDS exactly (2026-08-25 Weston Wilson
+// investigation) -- kept in sync by hand since this is a small, rarely-
+// changing contract, not a shared build artifact between Python and JS.
+const FROZEN_PUBLICATION_FIELDS = new Set([
+  "id", "identity_version", "game_pk", "player_id", "combo_player_ids",
+  "type", "name", "team", "matchup", "game_start", "stat", "market_side",
+  "bet_side", "direction", "lean", "projection", "prop",
+  "hit_probability", "market_odds", "market_implied", "market_edge",
+  "market_hold", "price_clears", "recommendation_status", "status_reasons",
+  "prob_ci", "reliability", "reliability_note", "sample_n", "lineup_assumed",
+  "base_rate", "lift", "lift_reference_rate", "stable_lift",
+  "published_top_pick_at",
+]);
 function freezePublishedSnapshot(p) {
   if (!gameHasStarted(p) || !p.publication_snapshot) return;
   if (!((p.published_top_pick_at && p.publication_artifact_id)
         || p.publication_candidate_token)) return;
-  for (const [field, value] of Object.entries(p.publication_snapshot)) p[field] = value;
+  for (const [field, value] of Object.entries(p.publication_snapshot)) {
+    if (FROZEN_PUBLICATION_FIELDS.has(field)) p[field] = value;
+  }
 }
 function refreshSummary() {
   const props = publicProps();

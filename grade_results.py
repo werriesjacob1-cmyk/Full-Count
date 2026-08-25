@@ -21,6 +21,7 @@ day), this is a no-op — it must never block the rest of the pipeline.
 """
 import glob, os, sys, json
 from collections import defaultdict
+from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timedelta, timezone
 
 import grading_sources as m
@@ -208,21 +209,43 @@ def fetch_game_feed(game_pk, refresh=False):
         return None
 
 
+GAME_FEED_FETCH_WORKERS = 8
+
 def fetch_game_contexts(game_pks, refresh=False):
-    """Return last current status/feed per game; failures remain absent."""
-    contexts = {}
+    """Return last current status/feed per game; failures remain absent.
+
+    2026-08-25: this loop was sequential -- one MLB feed request, fully
+    awaited, per distinct game_pk. Every distinct game normally in the
+    active/recent-correction population (see refresh_grades.py's
+    _active_public_snapshots) costs one independent HTTP round trip with
+    its own retries/backoff (grade_results.fetch_game_feed -> m.retry_get,
+    up to 2 retries x 20s timeout each); real MLB Stats API slowness on
+    2026-08-24 (~15 hours of degraded/slow responses) turned that into a
+    multi-minute SEQUENTIAL sum across every game, consuming most of
+    dashboard-live.yml's timeout budget on both the grading and repricing
+    steps (see that workflow's own step-timing comment). These requests
+    are independent, side-effect-free reads -- fetching them concurrently
+    bounds total wall time to roughly the slowest single game instead of
+    the sum of every game, with no change to what is fetched or returned.
+    """
+    game_pks_int = []
     for raw_game_pk in sorted({value for value in game_pks if value is not None}, key=str):
         try:
-            game_pk = int(raw_game_pk)
+            game_pks_int.append(int(raw_game_pk))
         except (TypeError, ValueError):
             continue
-        feed = fetch_game_feed(game_pk, refresh=refresh)
-        if feed is None:
-            continue
-        contexts[game_pk] = {
-            "status": ((feed.get("gameData") or {}).get("status") or {}),
-            "feed": feed,
-        }
+    if not game_pks_int:
+        return {}
+    contexts = {}
+    with ThreadPoolExecutor(max_workers=min(GAME_FEED_FETCH_WORKERS, len(game_pks_int))) as pool:
+        for game_pk, feed in zip(game_pks_int, pool.map(
+                lambda pk: fetch_game_feed(pk, refresh=refresh), game_pks_int)):
+            if feed is None:
+                continue
+            contexts[game_pk] = {
+                "status": ((feed.get("gameData") or {}).get("status") or {}),
+                "feed": feed,
+            }
     return contexts
 
 

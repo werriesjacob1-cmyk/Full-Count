@@ -102,6 +102,77 @@ class FrontendLifecycleTests(unittest.TestCase):
         self.assertEqual(result["visibleIds"], ["fc2:1:player-1:hits:1:over"])
         self.assertTrue(result["duplicateRejected"])
 
+    def test_why_watchouts_do_not_regress_to_stale_first_publication_snapshot(self):
+        # 2026-08-25 Weston Wilson investigation: freezePublishedSnapshot()
+        # used to copy EVERY key in publication_snapshot onto the live row,
+        # including why/watchouts -- so a Top Pick first published while
+        # generate_picks.py had a real directionality bug (routing negative
+        # context into "why" instead of "watchouts") kept showing that
+        # stale, wrong explanation forever after the game started, even
+        # after the generator itself was fixed and every subsequent rebuild
+        # computed the correct why/watchouts. Real case: Weston Wilson's
+        # Over 0.5 Hits+Runs+RBIs kept showing "Opposing SP ERA 2.92" as a
+        # green WHY bullet instead of a watchout.
+        completed = subprocess.run(
+            ["node", "-e", WESTON_HARNESS, APP], cwd=ROOT,
+            check=False, text=True, capture_output=True,
+        )
+        self.assertEqual(completed.returncode, 0, completed.stderr)
+        result = json.loads(completed.stdout)
+        # PRESENTATION must reflect the CURRENT (fixed) generator, not the
+        # stale snapshot from first publication -- the real fix.
+        self.assertEqual(result["why"], ["wOBA vs xwOBA underperforming -- positive regression candidate"])
+        self.assertEqual(result["watchouts"], ["Opposing SP ERA 2.92 -- elite pitcher, tough matchup"])
+        self.assertNotIn("Opposing SP ERA 2.92 -- elite pitcher, tough matchup", result["why"])
+        # AUDIT/SETTLEMENT-CRITICAL fields still freeze to first publication,
+        # proving this isn't a blanket "stop freezing anything" regression.
+        self.assertEqual(result["market_odds"], -120)
+        self.assertEqual(result["hit_probability"], 0.7)
+        self.assertEqual(result["recommendation_status"], "top_pick")
+
+
+WESTON_HARNESS = r"""
+const fs = require("fs");
+const vm = require("vm");
+const source = fs.readFileSync(process.argv[1], "utf8");
+const document = {
+  addEventListener() {}, querySelector() { return null; }, querySelectorAll() { return []; },
+  createElement() { return { textContent: "", innerHTML: "" }; },
+};
+const context = {
+  console, document, window: { scrollY: 0, scrollTo() {} },
+  localStorage: { getItem() { return null; }, setItem() {} },
+  setTimeout, clearTimeout, setInterval() {}, fetch: async () => ({}),
+  Intl, Date, Map, Set, Object, Array, JSON, Math, Number, String,
+};
+vm.createContext(context);
+vm.runInContext(source, context);
+const result = vm.runInContext(`(() => {
+  const p = {
+    id:"fc2:1:player-1:hits_runs_rbis:1:over", game_start:"2020-01-01T00:00:00Z",
+    game_pk:1, player_id:1, stat:"hits_runs_rbis", market_side:"over",
+    recommendation_status:"top_pick", market_odds:-120, hit_probability:0.7,
+    why:["wOBA vs xwOBA underperforming -- positive regression candidate"],
+    watchouts:["Opposing SP ERA 2.92 -- elite pitcher, tough matchup"],
+    published_top_pick_at:"2020-01-01T00:00:00Z", publication_artifact_id:"a".repeat(64),
+    publication_snapshot:{
+      id:"fc2:1:player-1:hits_runs_rbis:1:over", game_pk:1, player_id:1,
+      stat:"hits_runs_rbis", market_side:"over", recommendation_status:"top_pick",
+      market_odds:-120, hit_probability:0.7,
+      why:["Opposing SP ERA 2.92 -- elite pitcher, tough matchup"],
+      watchouts:[],
+    },
+    game_state:"live", game_state_observed_at:"2020-01-01T00:01:00Z",
+    settlement_state:"open", settlement_authority:"none",
+    settlement_observed_at:"2020-01-01T00:01:00Z", settlement_source:"fixture",
+  };
+  freezePublishedSnapshot(p);
+  return {why: p.why, watchouts: p.watchouts, market_odds: p.market_odds,
+          hit_probability: p.hit_probability, recommendation_status: p.recommendation_status};
+})()`, context);
+process.stdout.write(JSON.stringify(result));
+"""
+
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)

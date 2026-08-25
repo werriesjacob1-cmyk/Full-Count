@@ -42,7 +42,8 @@ from collections import defaultdict
 from datetime import datetime, timezone
 
 try:
-    from .live_state import (GAME_FIELDS, PUBLICATION_FIELDS, SETTLEMENT_FIELDS,
+    from .live_state import (FROZEN_PUBLICATION_FIELDS, GAME_FIELDS, PUBLICATION_FIELDS,
+                             SETTLEMENT_FIELDS,
                              IDENTITY_SCHEMA_VERSION, SCHEMA_VERSION,
                              apply_live_overlay, atomic_write_json,
                              before_betting_cutoff, canonical_prop_id, game_state,
@@ -51,7 +52,8 @@ try:
     from .publication_registry import (DEFAULT_REGISTRY_PATH, all_published_snapshots,
                                        load_registry)
 except ImportError:  # direct script execution: python dashboard/build_dashboard.py
-    from live_state import (GAME_FIELDS, PUBLICATION_FIELDS, SETTLEMENT_FIELDS,
+    from live_state import (FROZEN_PUBLICATION_FIELDS, GAME_FIELDS, PUBLICATION_FIELDS,
+                            SETTLEMENT_FIELDS,
                             IDENTITY_SCHEMA_VERSION, SCHEMA_VERSION,
                             apply_live_overlay, atomic_write_json,
                             before_betting_cutoff, canonical_prop_id, game_state,
@@ -886,12 +888,19 @@ def reconcile_public_lifecycle(payload, prior_payload=None, live=None, schedule=
             continue
 
         if registered is not None and (state != "pregame" or not before_cutoff):
-            # At the wagering boundary the immutable exposure snapshot wins;
-            # later rescoring/repricing cannot mutate the bet users saw.
+            # At the wagering boundary the immutable exposure snapshot wins
+            # for audit/settlement-critical facts (FROZEN_PUBLICATION_FIELDS)
+            # -- later rescoring/repricing cannot mutate the bet users saw.
+            # Presentation (why/watchouts) is deliberately NOT in that
+            # allowlist: it keeps reflecting the CURRENT generator's routing
+            # rather than being pinned to whatever text existed at first
+            # publication -- see FROZEN_PUBLICATION_FIELDS' own docstring
+            # (2026-08-25 Weston Wilson investigation) for the real case
+            # this fixes.
             frozen = dict(registered)
             if state == "unknown":
                 state = frozen.get("game_state") or "unknown"
-            row = frozen
+            row = {**row, **{k: frozen[k] for k in (FROZEN_PUBLICATION_FIELDS | PUBLICATION_FIELDS) if k in frozen}}
         elif registered is not None:
             # Pregame display may legitimately reflect a later demotion or
             # quote, while the immutable first-exposure record remains intact.
@@ -958,8 +967,18 @@ def reconcile_public_lifecycle(payload, prior_payload=None, live=None, schedule=
                 field: row[field] for field in (GAME_FIELDS | SETTLEMENT_FIELDS)
                 if field in row
             }
+            # `row` as the base (not `frozen`) is the actual fix: presentation
+            # (why/watchouts) must keep reflecting the CURRENT generator's
+            # routing. Only FROZEN_PUBLICATION_FIELDS get pinned to the
+            # immutable registry snapshot -- see that constant's own
+            # docstring for the real Weston Wilson case this closes. The
+            # carry-forward loop above has no fresher `row` than `registered`
+            # itself (the pick isn't in today's candidate pool at all), so
+            # for those this overlay is a no-op beyond what's already there --
+            # an accepted, unavoidable limitation, not a regression.
             payload["props"][index] = {
-                **frozen,
+                **row,
+                **{k: frozen[k] for k in (FROZEN_PUBLICATION_FIELDS | PUBLICATION_FIELDS) if k in frozen},
                 "publication_snapshot": _publication_snapshot(frozen),
                 **lifecycle,
             }

@@ -327,6 +327,60 @@ class BuildPersistenceTests(unittest.TestCase):
         )
         self.assertEqual(out2["props"], [])
 
+    def test_why_watchouts_reflect_current_generator_not_stale_first_publication(self):
+        # 2026-08-25 Weston Wilson investigation: the real production bug.
+        # reconcile_public_lifecycle() used to do `row = frozen` wholesale
+        # (and the final freeze pass did `{**frozen, ...}` wholesale) once a
+        # game started -- correct for audit/settlement-critical facts, wrong
+        # for why/watchouts, which are pure presentation. A pick first
+        # published while generate_picks.py had a real directionality bug
+        # (routing negative context like an elite opposing SP ERA into
+        # "why" instead of "watchouts") kept showing that stale, wrong
+        # explanation forever after the game started, even after the
+        # generator was fixed and every later rebuild computed the correct
+        # why/watchouts for the SAME candidate. This proves the fix: the
+        # registry's immutable snapshot (real, deliberate audit history --
+        # "what did we say at the time") still has the bad why/watchouts,
+        # but the live row must show the CURRENT rebuild's corrected ones.
+        stale_row = prop()
+        stale_row["why"] = ["Opposing SP ERA 2.92 -- elite pitcher, tough matchup"]
+        stale_row["watchouts"] = []
+        registry = published_registry(stale_row)
+
+        current_row = prop()
+        current_row["why"] = ["wOBA vs xwOBA underperforming -- positive regression candidate"]
+        current_row["watchouts"] = ["Opposing SP ERA 2.92 -- elite pitcher, tough matchup"]
+        # Changed on purpose to prove these do NOT leak through even though
+        # why/watchouts correctly does -- audit/settlement facts must stay
+        # pinned to first publication, never regress to a later rebuild.
+        current_row["market_odds"] = -999
+        current_row["hit_probability"] = 0.01
+
+        out = bd.reconcile_public_lifecycle(
+            payload([current_row]), live=default_live_state(), registry=registry,
+            schedule={1: {"status": LIVE}}, now=T2,
+        )
+        self.assertEqual(len(out["props"]), 1)
+        published = out["props"][0]
+
+        # PRESENTATION reflects the CURRENT (fixed) generator -- the fix.
+        self.assertEqual(published["why"], current_row["why"])
+        self.assertEqual(published["watchouts"], current_row["watchouts"])
+        self.assertNotIn("Opposing SP ERA 2.92 -- elite pitcher, tough matchup",
+                         published["why"])
+
+        # AUDIT/SETTLEMENT-CRITICAL fields stay frozen to first publication.
+        self.assertEqual(published["market_odds"], -120)
+        self.assertEqual(published["hit_probability"], 0.7)
+        self.assertEqual(published["recommendation_status"], "top_pick")
+
+        # The registry's own immutable record is untouched -- historical
+        # audit value ("what did we say at the time") is preserved, not
+        # rewritten, exactly as instructed.
+        entry = next(iter(registry["entries"].values()))
+        self.assertEqual(entry["snapshot"]["why"],
+                         ["Opposing SP ERA 2.92 -- elite pitcher, tough matchup"])
+
     def test_same_slate_settled_pick_still_shows_after_first_loop_check(self):
         # The new stale-prior-slate check must not exclude a pick that
         # settled EARLIER TODAY on the board's own slate date -- that is a
