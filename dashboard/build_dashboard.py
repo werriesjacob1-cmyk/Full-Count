@@ -699,21 +699,36 @@ def _assign_top_pick_rank(rows):
     """Attaches an explicit, 1-indexed `rank` to every row with
     recommendation_status == "top_pick", mutating in place. Reuses
     generate_picks.py's own _RELIABILITY_ORDER (imported, never
-    reimplemented) so this live-dashboard ordering can't silently drift
-    from the tiebreak policy generate_picks.rank_for_board() applies to
-    the separate static top10 board's own "clears" population: reliability
-    tier first, then market edge, then win probability, all descending.
-    (In practice TOP_PICK_MIN_RELIABILITY = ("A", "B") means every real
-    top_pick row already carries reliability A or B, and _RELIABILITY_ORDER
-    ranks both identically -- so this reduces to edge-then-probability for
-    the population that actually reaches this function, matching what
-    app.js's own prior ad-hoc edge sort already produced in practice. The
-    real fix is architectural, not a behavior change: the policy now lives
-    in exactly one place instead of being independently re-derived in JS.)
+    reimplemented) as the tiebreak: reliability tier first, then market
+    edge, then win probability, all descending.
+
+    NOT AN OFFICIAL PRODUCTION RANKING -- re-audited 2026-08-25 per an
+    explicit "do not assume this is canonical merely because it's
+    production code" directive. Checked directly: this live dashboard's
+    top_pick population (via run_live_fetch() -> classify_recommendation())
+    is UNCAPPED -- every candidate that clears the Top Pick gates ships,
+    with no top-N selection at all (a real 15-Top-Pick night ships all 15).
+    The one place a genuine, capped, ordered Top Pick collection DOES
+    exist in this codebase is generate_picks.rank_for_board()/
+    select_main_board(ranked, n=10) -- but that's a SEPARATE pipeline (the
+    static top10 board), operating on a separately-fetched candidate pool,
+    with no shared identity or ordering contract to this one. There is
+    therefore no real "official order of already-selected Top Picks" for
+    THIS population to preserve.
+
+    Given that, `rank` here is deliberately NOT presented to the
+    customer as an ordinal ("Top Pick #1/#2/#3") -- see docs/app.js's
+    pickCard(), which dropped that badge for exactly this reason. This
+    field exists ONLY to give the frontend a stable, backend-owned default
+    display order (so cards don't jitter between renders) without the
+    frontend independently inventing one -- a real, defensible, narrower
+    purpose than "this is the official ranking." If a genuine canonical
+    Top-Pick ordering is ever built for this population, replace this
+    function's sort key, not just its docstring.
 
     Every OTHER row (lean/value/neutral) gets rank=None -- this function
-    only ever defines an order among Top Picks, never invents one for a
-    population the product has no ranking philosophy for."""
+    only ever defines a display order among Top Picks, never invents one
+    for a population the product has no ordering concept for at all."""
     import generate_picks as gp
     top_picks = [r for r in rows if r.get("recommendation_status") == "top_pick"]
     top_picks.sort(key=lambda r: (-gp._RELIABILITY_ORDER.get(r.get("reliability") or "D", 1),
@@ -781,10 +796,12 @@ def build_payload(result, track_record=None):
     # market_edge alone -- a real, independently-invented ranking, which the
     # project's own frontend/backend boundary forbids ("frontend must not
     # invent new ranking"). Found 2026-08-25 during a frontend correctness
-    # audit. _assign_top_pick_rank() below gives the frontend a real
-    # canonical `rank` to preserve instead, so the ranking POLICY lives here
-    # (Python, one place) even though this live-dashboard candidate pool is
-    # independently computed from the static top10 board's own pipeline.
+    # audit. _assign_top_pick_rank() below moves that DISPLAY-ORDER policy
+    # here (Python, one place) instead of leaving it re-derived in JS -- but
+    # see that function's own docstring for the honest boundary: this is a
+    # stable default display order, not a claim that a real canonical
+    # ranking of this uncapped population exists. app.js no longer renders
+    # it as an ordinal ("Top Pick #N") for exactly that reason.
     _STATUS_RANK = {"top_pick": 0, "lean": 1, "value": 2, "neutral": 3, None: 4}
 
     def _default_order(r):

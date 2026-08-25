@@ -1,3 +1,9 @@
+/* ============================================================================
+   THIS IS THE SOURCE FILE. Edit here, not docs/app.css -- see
+   dashboard/static/app.js's own header comment for why (docs/ is build
+   output, silently overwritten by copy_static_assets() on every real
+   build). test_build_dashboard.py's StaticSourceParityTests enforces this.
+   ============================================================================ */
 /* Full Count — Phase 4 design system.
    No webfonts: a deliberate choice for a data-dense stats product (see
    dashboard/build_dashboard.py's module docstring) — system-ui/serif
@@ -256,7 +262,14 @@ main { max-width: 1180px; margin: 0 auto; padding: 20px 16px 80px; }
 @media (max-width: 640px) {
   .stat-row { grid-template-columns: repeat(2, 1fr); }
 }
-.stat-tile { background: var(--surface); padding: 13px 16px; }
+/* Tappable (PASS: tiles used to be inert -- a real number with nowhere to
+   go). Now real <a> links straight into the matching filtered All Props
+   view; min-height keeps the tap target honest on mobile. */
+.stat-tile {
+  background: var(--surface); padding: 13px 16px; display: block; text-decoration: none;
+  color: inherit; min-height: 44px; transition: background-color .12s ease;
+}
+.stat-tile:hover, .stat-tile:focus-visible { background: var(--surface-2); }
 .stat-tile .n { font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-size: 22px; font-weight: 700; color: var(--accent); display: block; }
 .stat-tile .l { font-size: 11.5px; color: var(--ink-faint); margin-top: 1px; }
 
@@ -283,11 +296,6 @@ main { max-width: 1180px; margin: 0 auto; padding: 20px 16px 80px; }
 .pc-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
 .pc-name { font-family: var(--font-display); font-size: 18px; font-weight: 700; line-height: 1.2; }
 .pc-sub { font-size: 12.5px; color: var(--ink-faint); margin-top: 2px; }
-.pc-rank {
-  flex: none; font-family: var(--font-mono); font-size: 11px; font-weight: 700;
-  background: var(--accent-soft); color: var(--accent-bright); border-radius: 999px;
-  padding: 3px 9px;
-}
 
 .pc-prop { font-size: 14.5px; font-weight: 600; color: var(--ink-dim); }
 
@@ -386,11 +394,6 @@ main { max-width: 1180px; margin: 0 auto; padding: 20px 16px 80px; }
 }
 @keyframes spin { to { transform: rotate(360deg); } }
 
-.value-explainer {
-  background: var(--surface-2); border: 1px solid var(--line-soft); border-radius: var(--radius);
-  padding: 12px 16px; font-size: 13px; line-height: 1.5; color: var(--ink-dim); margin-bottom: 16px;
-}
-.value-explainer b { color: var(--ink); }
 
 /* ── Buttons ──────────────────────────────────────────────────────── */
 .btn {
@@ -517,6 +520,24 @@ main { max-width: 1180px; margin: 0 auto; padding: 20px 16px 80px; }
 .game-picks { display: flex; flex-direction: column; gap: 6px; }
 .game-pick-line { display: flex; justify-content: space-between; gap: 10px; font-size: 13px; padding: 6px 0; border-top: 1px solid var(--line-soft); }
 .game-pick-line:first-child { border-top: none; }
+
+/* ── Explore by Prop (Today page quick-nav) ──────────────────────────
+   Mobile-first jump strip: one tap from Today straight into a filtered
+   All Props view for one market family. Thumb-friendly (44px min tap
+   target, matching the site's existing nav convention), no wall of 15
+   markets -- only the highest-interest families, plus a "More" chip that
+   opens the full research board. Real counts only; a family with zero
+   real props tonight doesn't get a chip at all (never a dead tap). */
+.explore-strip { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 6px; }
+.explore-chip {
+  flex: none; display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 2px; min-width: 76px; min-height: 44px; padding: 10px 16px; background: var(--surface);
+  border: 1px solid var(--line); border-radius: var(--radius-lg); text-decoration: none; color: inherit;
+  cursor: pointer;
+}
+.explore-chip-label { font-weight: 700; font-size: 13.5px; }
+.explore-chip-count { font-size: 11px; color: var(--ink-faint); font-family: var(--font-mono); }
+.explore-chip-more { background: var(--surface-2); color: var(--ink-faint); font-weight: 600; }
 
 .schedule-strip { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 6px; margin-bottom: 26px; }
 .schedule-chip {

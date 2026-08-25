@@ -657,6 +657,118 @@ else:
     check(True, "node not available -- reason-translation check skipped, not failed")
 
 
+head("16. Today-page PASS 2/3 redesign (2026-08-25): the query-string half of a route hash "
+     "used to be silently discarded (onRouteChange() split it off and threw it away) -- every "
+     "\"See all research -> #/props?status=lean\" link on the page was a real navigation that "
+     "did nothing, since the filter it claimed to apply never actually landed. Also verifies "
+     "Explore by Prop's real-counts-only chip strip and the removal of the invented "
+     "\"TOP PICK #N\" ordinal badge (see Research Correctness Check 2 / _assign_top_pick_rank()'s "
+     "own docstring for why no such canonical order exists for this population).")
+
+if node:
+    harness2 = """
+function makeEl() {
+  let _text = '';
+  return {
+    addEventListener(){}, dataset:{}, style:{}, setAttribute(){}, removeAttribute(){},
+    getAttribute: () => null, querySelectorAll: () => [], querySelector: () => null,
+    get textContent() { return _text; }, set textContent(v) { _text = String(v); },
+    get innerHTML() {
+      return _text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+    },
+    hidden: false, append(){},
+  };
+}
+const document = {getElementById: () => makeEl(), documentElement: {setAttribute(){}, removeAttribute(){}, getAttribute: () => null},
+  querySelectorAll: () => [], querySelector: () => null, createElement: () => makeEl(),
+  addEventListener(){}, body: {style:{}, append(){}}};
+const window = {matchMedia: () => ({matches:false}), location: {hash:''}, scrollY: 0, scrollTo(){}};
+let location = window.location;
+const localStorage = {getItem: () => null, setItem(){}};
+const fetch = () => Promise.reject(new Error("no network in test"));
+const setInterval = () => {};
+let ok = true;
+function assertEq(actual, expected, label) {
+  if (actual !== expected) { console.error("FAIL " + label + ": got " + JSON.stringify(actual) + " want " + JSON.stringify(expected)); ok = false; }
+}
+function assertTrue(cond, label) {
+  if (!cond) { console.error("FAIL " + label); ok = false; }
+}
+
+try {
+""" + open(APP_JS_PATH, encoding="utf-8").read() + """
+
+// The assertions below run INSIDE this try block deliberately: route/
+// filters/DATA are `let`-scoped to app.js's own top level, and pasting the
+// whole file inside try{...} means those bindings are block-scoped to
+// THIS block, not visible after the closing brace (only `function`
+// declarations like onRouteChange/exploreByPropStrip/pickCard, which get
+// hoisted out under sloppy-mode Annex B semantics, would survive outside
+// it). Testing real internal state (not just return values) requires
+// staying in this scope.
+
+// -- query-string routing: a URL's filter params must actually apply --
+location.hash = "#/props?status=lean";
+onRouteChange();
+assertEq(route, "props", "route parsed from hash despite query string");
+assertEq(filters.status, "lean", "status=lean from the URL actually reached filters.status");
+
+location.hash = "#/props?family=home_runs";
+onRouteChange();
+assertEq(filters.family, "home_runs", "family=home_runs from the URL actually reached filters.family");
+
+// An absent param must never silently clear a filter already set via the UI.
+filters.status = "top_pick";
+location.hash = "#/props?family=hits";
+onRouteChange();
+assertEq(filters.status, "top_pick", "absent status param does not reset an existing filter");
+assertEq(filters.family, "hits", "family=hits from the URL still applied");
+
+// -- Explore by Prop: real counts only, correct family mapping, no dead chips --
+const families = [
+  {stat: "hits", label: "Hits", count: 12},
+  {stat: "moonshot", label: "Home Runs", count: 4},
+  {stat: "strikeouts", label: "Strikeouts", count: 0},
+  {stat: "singles", label: "Singles", count: 3},
+];
+const strip = exploreByPropStrip(families);
+assertTrue(strip.includes('href="#/props?family=hits"'), "Hits chip links to family=hits");
+assertTrue(strip.includes(">12 tonight<"), "Hits chip shows the real count");
+assertTrue(strip.includes('href="#/props?family=home_runs"'),
+  "moonshot family correctly maps to home_runs via familyFilterValue() (reused, not reimplemented)");
+assertTrue(!strip.includes("family=strikeouts"),
+  "a family with a real count of 0 tonight gets no chip -- never a dead tap");
+assertTrue(strip.includes(">More<"), "a More chip always appears, linking to the full board");
+assertTrue(strip.includes('href="#/props">More'), "More chip links to the unfiltered All Props page");
+
+// -- pickCard: no invented ordinal ranking --
+const p = {id:"x1", name:"Test Player", team:"NYY", prop:"Over 0.5 Hits", hit_probability:0.65,
+  recommendation_status:"top_pick", market_odds:-150, market_implied:0.60, market_edge:0.05,
+  reliability:"B", why:[]};
+const card = pickCard(p);
+assertTrue(!card.includes("TOP PICK #"), "pickCard never renders a 'TOP PICK #N' ordinal badge");
+assertTrue(card.includes("TOP PICK"), "the card still shows the real TOP PICK status chip once");
+
+} catch (e) { console.error(e); process.exit(1); }
+
+if (!ok) process.exit(1);
+console.log("Today-page routing/Explore-by-Prop/no-invented-rank checks passed");
+"""
+    harness_path2 = tempfile.mktemp(suffix=".js")
+    with open(harness_path2, "w") as f:
+        f.write(harness2)
+    try:
+        r = subprocess.run([node, harness_path2], capture_output=True, text=True)
+        check(r.returncode == 0, "URL filter params apply on navigation, Explore by Prop shows only "
+              "real non-zero counts with correct family mapping, and pickCard never renders an "
+              "invented 'TOP PICK #N' ordinal", r.stdout + r.stderr)
+    finally:
+        os.remove(harness_path2)
+else:
+    check(True, "node not available -- Today-page routing/Explore-by-Prop check skipped, not failed")
+
+
 head("14. Assumed-lineup candidates: direct follow-up request, verbatim -- \"our system should "
      "use assumed lineups... we shouldn't have to wait for lineups.\" By the time a row "
      "reaches build_payload(), it's indistinguishable in SHAPE from a confirmed one, just "
@@ -682,6 +794,26 @@ check(assumed_out["recommendation_status"] == "lean",
       "build_payload passes the real upstream status through as-is -- a lineup-assumed row "
       "that recommendation.py already downgraded to a Lean is never silently promoted or "
       "further demoted here", f"got {assumed_out['recommendation_status']}")
+
+
+head("15. StaticSourceParityTests: dashboard/static/{index.html,app.css,app.js} is the ONLY "
+     "real source for the frontend shell -- docs/ is build output copy_static_assets() "
+     "overwrites unconditionally on every real build. Real incident, 2026-08-25: a frontend "
+     "fix initially landed only in docs/app.js and would have silently reverted on the next "
+     "build. This check catches that exact mistake on every test run, not just at deploy "
+     "time -- comparing the byte content directly (not re-running copy_static_assets(), so "
+     "it also catches a botched copy step, not just a forgotten edit).")
+
+for _name in bd.STATIC_FILES:
+    _src_path = os.path.join(bd.STATIC_DIR, _name)
+    _docs_path = os.path.join(bd.REPO_ROOT, "docs", _name)
+    with open(_src_path, encoding="utf-8") as _f:
+        _src_content = _f.read()
+    with open(_docs_path, encoding="utf-8") as _f:
+        _docs_content = _f.read()
+    check(_src_content == _docs_content,
+          f"docs/{_name} byte-identical to dashboard/static/{_name} (source of truth)",
+          f"first divergence check: len(src)={len(_src_content)} len(docs)={len(_docs_content)}")
 
 
 n_pass = sum(1 for ok, _, _ in _results if ok)

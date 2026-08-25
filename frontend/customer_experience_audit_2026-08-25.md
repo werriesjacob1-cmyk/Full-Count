@@ -1,5 +1,99 @@
 # Front-end customer-experience audit — 2026-08-25
 
+## PASS 2/3 UPDATE (same day, later session): Today redesign + a real P0 URL bug
+
+Building on PASS 1 below. Two research-correctness re-audits requested
+first, then Today-page simplification + Explore by Prop.
+
+**Research Correctness Check 1 (candidate_key alternate-line safety)**:
+verified empirically against 143,237 real rows from the in-progress
+canonical rebuild that `line` genuinely varies across the dataset but is
+currently always 1:1 with `(date, game_pk, player_id, prop_type)` --
+the backtest engine only ever grades one line per player-game-market
+today, so the prior 4-field key wasn't producing false positives, but it
+also wasn't future-proof. Added `line` (required) and `side` (optional,
+never present in real backtest rows today -- this product's backtest
+only tracks Over bets) to `candidate_key()`. Full requested test matrix
+added: alternate lines distinct, opposite side distinct, same candidate
+reconstructed as a separate object still raises, different game/date
+distinct. See `backtest/pa_opportunity_model.py`'s `candidate_key()` own
+docstring for the complete empirical basis.
+
+**Research Correctness Check 2 (Top Pick ordering, re-audited)**: the
+PASS 1 fix below (`_assign_top_pick_rank()`) was itself re-examined
+against an explicit "don't assume this is canonical just because it's
+production code" directive. Conclusion: it is NOT an official ranking.
+`generate_picks.rank_for_board()`'s reliability/edge/probability policy
+belongs to a genuinely different, CAPPED pipeline (the static top10
+board), while this live dashboard's `top_pick` population is UNCAPPED
+(every gate-clearing candidate ships, no top-N selection at all). There
+is no real "official order of already-selected Top Picks" for this
+population to preserve. Correction applied: `pickCard()` no longer
+renders a "TOP PICK #N" ordinal badge at all (the directive's own PASS 4
+card mockup doesn't show one either) -- `p.rank` is kept only as an
+internal, undisplayed backend-owned tiebreak for stable card ordering
+across renders, explicitly documented as NOT a ranking claim in
+`_assign_top_pick_rank()`'s own docstring.
+
+**Source/generated file safety**: added a clear "THIS IS THE SOURCE
+FILE" header comment to all three `dashboard/static/{index.html,app.css,
+app.js}` files, plus `StaticSourceParityTests` in `test_build_dashboard.py`
+-- a byte-for-byte comparison of every static file against its `docs/`
+copy, run on every test-suite invocation (this project's own existing
+pre-commit discipline). Verified the guard actually fires (deliberately
+broke parity, confirmed the check failed with the right message, restored
+it). This is the smallest robust protection that would have caught this
+session's own earlier mistake automatically, without new build tooling.
+
+**New P0 found and fixed**: `onRouteChange()`'s hash router discarded the
+query-string half of every route (`.split("?")[0]`), so `href="#/props?
+status=lean"` links -- used by the Leans and (former) Radar "See all
+research →" links -- were dead: real navigation, zero actual effect, the
+filter never applied. Fixed by parsing `family`/`status` params on route
+entry (only when actually present in the URL, so an absent param never
+resets a filter already set via the page's own UI). This also makes the
+new Explore by Prop navigator (below) work via real URLs.
+
+**Today-page PASS 2 simplification implemented**: eight competing
+homepage concepts (Top Picks / Best Value / Longshots / Leans / Full
+Count Radar / Suggested Parlay / Hot Streaks / Games) collapsed to the
+directive's own proposed shape, with zero backend recommendation states
+removed -- every card still carries its own real Lean/Value/Longshot
+label:
+- Glance tiles: now real tappable links into a filtered All Props view
+  (previously inert numbers with nowhere to go).
+- **Best Bets** (renamed from "Top Picks" as a section heading only --
+  "Top Pick" stays the glossary/badge term).
+- **Explore by Prop** (new): Hits / 2+ Bases / HR / H+R+RBI / Ks / Outs
+  quick-nav strip with real per-family counts (a family with 0 real props
+  tonight gets no chip -- never a dead tap), plus a "More" chip to the
+  full board. Reuses `familyFilterValue()` (not reimplemented) so
+  "moonshot" correctly maps to "home_runs".
+- **More Picks** (merged Best Value + Longshots + Leans + Full Count
+  Radar into one list, ranked by each item's own real edge/lift, capped
+  at 18, each row still individually labeled).
+- **Tonight's Games** (moved up, ahead of Trends, matching the
+  directive's own ordering).
+- **Trends** (renamed from "Hot Streaks," explicit "context, not a
+  recommendation" subhead per PASS 13).
+- **Suggested Parlay** (moved to the very bottom -- demoted, not removed;
+  still the real correlation-screened engine, unchanged).
+
+Full Count Radar's *content* wasn't deleted -- it's folded into More
+Picks (same real remainder-of-the-board rows). The directive's own
+"What Is Changing Right Now?" reframing for Radar was explicitly NOT
+attempted (no real live-delta data exists yet to back it -- would be
+exactly the kind of fabricated capability the directive forbids). Left
+as a documented future direction for the Live workstream, not built.
+
+New Node-harness checks in `test_build_dashboard.py` (URL routing
+correctness, Explore by Prop's real-counts-only rendering, no invented
+ordinal badge) plus the source-parity check -- 73/73 passing in that file
+alone. The 6 new `candidate_key()` alternate-line tests live separately
+in `test_pa_opportunity_model.py` (36/36 passing there).
+
+---
+
 Written as PASS 1 of the website workstream's own recommended sequence
 ("Audit + P0 correctness fixes" before any broader redesign). Scope
 covered this pass: `docs/index.html`, `docs/app.js`/`dashboard/static/app.js`

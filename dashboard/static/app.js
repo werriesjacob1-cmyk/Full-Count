@@ -1,4 +1,16 @@
 "use strict";
+/* ============================================================================
+   THIS IS THE SOURCE FILE. Edit here, not docs/app.js.
+   dashboard/build_dashboard.py's copy_static_assets() overwrites docs/app.js
+   from THIS file on every real dashboard build -- an edit made only to
+   docs/app.js is silently lost the next time the site is rebuilt. (Real
+   incident, 2026-08-25: a frontend fix initially landed only in docs/app.js.)
+   test_build_dashboard.py's StaticSourceParityTests catches any drift
+   between this file and docs/app.js on every test run -- resync from the
+   repo root with:
+       python3 -c "import sys; sys.path.insert(0,'dashboard'); \
+           import build_dashboard as bd; bd.copy_static_assets(bd.REPO_ROOT+'/docs')"
+   ============================================================================ */
 /* Full Count — Phase 4 application shell.
    No framework, no build step (see dashboard/build_dashboard.py's module
    docstring for why) -- plain DOM rendering, keyed by each prop's real
@@ -394,15 +406,28 @@ function initRouter() {
   window.addEventListener("hashchange", onRouteChange);
   onRouteChange();
 }
+// Real bug found 2026-08-25: the query-string half of a route hash
+// (`#/props?status=lean`) was parsed off and thrown away here, so every
+// "See all research →" link on the Today page silently landed on an
+// UNFILTERED All Props page -- a link that looked like real navigation
+// but did nothing. Now applied to `filters` on route entry, ONLY when a
+// param is actually present in the URL (an absent param must never
+// silently clear a filter the user already set via the page's own UI).
 function onRouteChange() {
-  const h = (location.hash.replace(/^#\/?/, "") || "today").split("?")[0];
-  route = ROUTES.includes(h) ? h : "today";
+  const stripped = location.hash.replace(/^#\/?/, "") || "today";
+  const [rawRoute, rawQuery] = stripped.split("?");
+  route = ROUTES.includes(rawRoute) ? rawRoute : "today";
+  if (route === "props" && rawQuery) {
+    const params = new URLSearchParams(rawQuery);
+    if (params.has("family")) filters.family = params.get("family");
+    if (params.has("status")) filters.status = params.get("status");
+  }
   $all(".main-nav a").forEach(a => a.classList.toggle("active", a.dataset.route === route));
   $all(".page").forEach(p => p.hidden = true);
   document.getElementById(`page-${route}`).hidden = false;
   renderRoute();
 }
-function go(newRoute) { location.hash = "#/" + newRoute; }
+function go(newRoute, query) { location.hash = "#/" + newRoute + (query ? "?" + query : ""); }
 
 function renderRoute() {
   if (!DATA) return;
@@ -430,14 +455,28 @@ function marketBlock(p) {
     <div class="pc-edge ${edgeClass}">${edgeText} edge</div>
   </div>`;
 }
-function pickCard(p, opts) {
-  opts = opts || {};
+function pickCard(p) {
   // Evidence quality is deliberately NOT repeated here -- it's one tap away
   // in the detail sheet's "Underlying data," and showing it on every single
   // card in a grid of a dozen-plus picks was pure chip clutter, not a
   // decision a viewer needs to make before opening a card.
   const chips = [statusChip(p), lineupChip(p), staleChip(p), liveStaleChip(p), gradeChip(p)].filter(Boolean).join("");
-  const rankBadge = opts.rank ? `<span class="pc-rank">TOP PICK #${opts.rank}</span>` : "";
+  // No "TOP PICK #N" ordinal badge here (removed 2026-08-25). Audited
+  // whether production has a real canonical order for this UNCAPPED
+  // top_pick population and found it does not: classify_recommendation()
+  // labels every candidate that clears the gates, with no top-N selection
+  // at all (a real 15-Top-Pick night ships all 15, uncapped -- see
+  // test_build_dashboard.py check "every real qualifying Top Pick ships,
+  // uncapped"). generate_picks.rank_for_board()'s reliability/edge/
+  // probability ordering is real, but belongs to the SEPARATE, capped
+  // static top10 board pipeline (select_main_board(ranked, n=10)), not
+  // this one. Claiming "#1 Top Pick" for this population would assert an
+  // authoritative ranking that doesn't actually exist here -- exactly
+  // what "do not invent #1/#2/#3" forbids. p.rank (still attached by
+  // dashboard/build_dashboard.py's _assign_top_pick_rank()) is kept ONLY
+  // as an internal display-order tiebreak for stable card ordering across
+  // renders -- statusChip(p) above already shows "TOP PICK" once, which
+  // is the one real, defensible claim this card makes.
   const why = (p.why || [])[0] ? `<div class="pc-why">${esc(capSentence(humanizeReason(p.why[0])))}</div>` : "";
   const starred = watchlist.has(p.id);
   return `<button class="pick-card status-${p.recommendation_status || "neutral"} ${lifecycleClass(p)}${p.stale ? " status-stale" : ""}" data-open="${p.id}">
@@ -446,7 +485,6 @@ function pickCard(p, opts) {
         <div class="pc-name">${esc(p.name)}</div>
         <div class="pc-sub">${esc(p.team || p.matchup || "")}</div>
       </div>
-      ${rankBadge}
     </div>
     <div class="pc-prop">${esc(p.prop)}</div>
     <div class="pc-prob-row">
@@ -531,17 +569,29 @@ function topPickGapExplainer(props) {
 // ══════════════════════════════════════════════════════════════════════
 //  TODAY PAGE
 // ══════════════════════════════════════════════════════════════════════
+// PASS 2 SIMPLIFICATION (2026-08-25): the Today page used to surface Top
+// Picks / Best Value / Longshots / Leans / Full Count Radar / Suggested
+// Parlay / Hot Streaks / Games as eight separate, competing concepts --
+// too much taxonomy for a first glance. Nothing about the underlying
+// recommendation_status states changed (every card still carries its own
+// real Lean/Value/Longshot label via statusChip -- see pickCard/propRow),
+// only how many top-level SECTIONS a visitor has to parse before reaching
+// real research. New shape: glance tiles -> Best Bets (official Top
+// Picks) -> Explore by Prop (quick market jump) -> More Picks (every
+// other real Lean/Value/Longshot read, one merged list, still individually
+// labeled) -> Tonight's Games -> Trends (renamed from Hot Streaks, framed
+// explicitly as trend context, not a recommendation) -> Suggested Parlay
+// (demoted to the very bottom -- real, but never the homepage's point).
 function renderToday() {
   const el = document.getElementById("page-today");
   const props = publicProps();
-  // Prefer the backend's own canonical `rank` (dashboard/build_dashboard.py's
-  // _assign_top_pick_rank() -- mirrors generate_picks.py's rank_for_board()
-  // tiebreak policy: reliability, then edge, then probability). Found
-  // 2026-08-25: this used to be an edge-only sort computed here in JS, which
-  // is exactly the kind of independently-invented ranking this project's own
-  // frontend/backend boundary forbids. The edge-only fallback below only
-  // matters for a stale cached data.json from before `rank` existed -- never
-  // a second, competing ranking policy for current data.
+  // Prefer the backend's own display order (dashboard/build_dashboard.py's
+  // _assign_top_pick_rank()) for stable card ordering -- but this is NOT a
+  // claim of an authoritative "#1 Top Pick" (re-audited 2026-08-25; see
+  // that function's own docstring for why no such canonical order exists
+  // for this uncapped population). pickCard() no longer renders an
+  // ordinal for exactly that reason. The edge-only fallback below only
+  // matters for a stale cached data.json from before `rank` existed.
   const topPicks = props.filter(p => p.recommendation_status === "top_pick")
     .sort((a, b) => (a.rank != null && b.rank != null) ? a.rank - b.rank
                     : (b.market_edge || 0) - (a.market_edge || 0));
@@ -551,78 +601,41 @@ function renderToday() {
     .sort((a, b) => (b.market_edge || 0) - (a.market_edge || 0));
   const leansAll = props.filter(p => p.recommendation_status === "lean")
     .sort((a, b) => (b.lift || 0) - (a.lift || 0));
-  const value = valueAll.slice(0, 6);
-  const longshots = longshotsAll.slice(0, 6);
-  const leans = leansAll.slice(0, 6);
-  // Full Count Radar: the real remainder of tonight's Lean/Value pool
-  // beyond the handful already featured as full cards/rows above -- not a
-  // new bucket, not an invented "almost qualified" tier, just the rest of
-  // recommendation_status "lean"/"value" that real board volume otherwise
-  // buries in All Props. Sorted by the same real edge/lift fields.
-  const radar = [...leansAll.slice(6), ...valueAll.slice(6), ...longshotsAll.slice(6)]
+  // MORE PICKS: every real Lean/Value/Longshot read in one list, ranked by
+  // whichever real number each one actually has (edge for Value/Longshot,
+  // lift for Lean -- never blended into one fake combined score). Each
+  // card/row still shows its own real status chip, so nothing about which
+  // KIND of read this is gets lost by merging the sections.
+  const morePicks = [...leansAll, ...valueAll, ...longshotsAll]
     .sort((a, b) => (b.market_edge ?? b.lift ?? 0) - (a.market_edge ?? a.lift ?? 0));
 
   const summary = DATA.summary || {};
   let html = `
     <div class="stat-row">
-      <div class="stat-tile"><span class="n">${summary.n_top_pick ?? 0}</span><span class="l">Top Picks tonight</span></div>
-      <div class="stat-tile"><span class="n">${summary.n_lean ?? 0}</span><span class="l">Leans on the board</span></div>
-      <div class="stat-tile"><span class="n">${summary.n_value ?? 0}</span><span class="l">Value / Longshots</span></div>
-      <div class="stat-tile"><span class="n">${summary.n_games ?? 0}</span><span class="l">Games tonight</span></div>
+      <a class="stat-tile" href="#/props?status=top_pick"><span class="n">${summary.n_top_pick ?? 0}</span><span class="l">Top Picks tonight</span></a>
+      <a class="stat-tile" href="#/props?status=lean"><span class="n">${summary.n_lean ?? 0}</span><span class="l">Leans on the board</span></a>
+      <a class="stat-tile" href="#/props?status=value"><span class="n">${summary.n_value ?? 0}</span><span class="l">Value / Longshots</span></a>
+      <a class="stat-tile" href="#/games"><span class="n">${summary.n_games ?? 0}</span><span class="l">Games tonight</span></a>
     </div>`;
 
-  html += `<section class="section"><div class="section-head"><h2>Top Picks</h2>
-    <span class="section-sub">Full Count's official recommendations — probability, evidence, price, and freshness all cleared.</span></div>`;
+  html += `<section class="section"><div class="section-head"><h2>Best Bets</h2>
+    <span class="section-sub">Full Count's official Top Picks — probability, evidence, price, and freshness all cleared.</span></div>`;
   if (topPicks.length) {
-    html += `<div class="card-grid">${topPicks.map((p, i) => pickCard(p, { rank: i + 1 })).join("")}</div>`;
+    html += `<div class="card-grid">${topPicks.map(p => pickCard(p)).join("")}</div>`;
   } else {
     html += topPickGapExplainer(props);
   }
   html += `</section>`;
 
-  if (value.length || longshots.length) {
-    html += `<div class="value-explainer">
-      <b>Probability and value are different questions.</b> Probability asks "will this happen?" Value asks
-      "does the price pay fairly for that chance?" A Top Pick can win often at a mediocre price; a Longshot can be
-      a smart bet despite being unlikely to hit. Every card below shows both numbers separately — never one standing in for the other.
-    </div>`;
-    html += `<section class="section"><div class="section-head"><h2>Best Value</h2>
-      <span class="section-sub">Real sportsbook mispricing — the price pays more than the win probability alone would justify.</span></div>`;
-    html += value.length
-      ? `<div class="card-grid">${value.map(p => pickCard(p)).join("")}</div>`
-      : `<p class="section-sub">Nothing clears Full Count's value bar right now.</p>`;
-    html += `</section>`;
-
-    html += `<section class="section"><div class="section-head"><h2>Longshots &amp; High Variance</h2>
-      <span class="section-sub">Home runs, steals, and other low-probability plays where Full Count sees real price value — never a recommendation that this is likely to win.</span></div>`;
-    html += longshots.length
-      ? `<div class="card-grid">${longshots.map(p => pickCard(p)).join("")}</div>`
-      : `<p class="section-sub">No standout longshots on tonight's board.</p>`;
-    html += `</section>`;
+  if ((DATA.families || []).length) {
+    html += exploreByPropStrip(DATA.families);
   }
 
-  html += `<section class="section"><div class="section-head"><h2>Leans</h2>
-    <span class="section-sub">Full Count's data favors a side — not an official recommendation.</span>
-    <a class="see-all" href="#/props?status=lean">See all research →</a></div>`;
-  html += leans.length
-    ? `<div class="prop-list">${leans.map(propRow).join("")}</div>`
-    : `<p class="section-sub">No strong leans on tonight's board yet.</p>`;
-  html += `</section>`;
-
-  if (radar.length) {
-    html += `<section class="section"><div class="section-head"><h2>Full Count Radar</h2>
-      <span class="section-sub">Everything else on tonight's board with a real Lean or Value read, beyond the featured picks above — same real numbers, just more of the board.</span>
-      <a class="see-all" href="#/props?status=lean">See all research →</a></div>
-      <div class="prop-list">${radar.slice(0, 24).map(propRow).join("")}</div></section>`;
-  }
-
-  if (DATA.suggested_parlay && DATA.suggested_parlay.legs && DATA.suggested_parlay.legs.length) {
-    html += suggestedParlayBlock(DATA.suggested_parlay);
-  }
-
-  if ((DATA.streaks || []).length) {
-    html += `<section class="section"><div class="section-head"><h2>Hot Streaks</h2></div>
-      <div class="streak-strip">${DATA.streaks.slice(0, 12).map(streakChip).join("")}</div></section>`;
+  if (morePicks.length) {
+    html += `<section class="section"><div class="section-head"><h2>More Picks</h2>
+      <span class="section-sub">Every other real read on tonight's board — Leans, Value, and Longshots, each still labeled on its own card. Probability asks "will this happen?" Value asks "does the price pay fairly for that chance?" — two different questions, never blended into one.</span>
+      <a class="see-all" href="#/props">See all research →</a></div>
+      <div class="prop-list">${morePicks.slice(0, 18).map(propRow).join("")}</div></section>`;
   }
 
   if ((DATA.schedule || []).length) {
@@ -631,8 +644,49 @@ function renderToday() {
       <div class="schedule-strip">${DATA.schedule.slice(0, 15).map(scheduleChip).join("")}</div></section>`;
   }
 
+  if ((DATA.streaks || []).length) {
+    html += `<section class="section"><div class="section-head"><h2>Trends</h2>
+      <span class="section-sub">Real streaks worth knowing about — context, not a recommendation. A hot streak alone is never why Full Count likes a prop.</span></div>
+      <div class="streak-strip">${DATA.streaks.slice(0, 12).map(streakChip).join("")}</div></section>`;
+  }
+
+  if (DATA.suggested_parlay && DATA.suggested_parlay.legs && DATA.suggested_parlay.legs.length) {
+    html += suggestedParlayBlock(DATA.suggested_parlay);
+  }
+
   el.innerHTML = html;
   wireCardOpeners(el);
+}
+// Mobile-first quick navigator (PASS 3): one tap from Today straight into
+// a filtered All Props view for the highest-interest markets -- no wall of
+// every family FanDuel prices. Real counts only (DATA.families, already
+// deduplicated/computed server-side -- see build_dashboard.py's
+// build_payload()); a family with zero real props tonight simply doesn't
+// get a chip, never a dead tap. familyFilterValue() reused, not
+// reimplemented, so this maps "moonshot" -> "home_runs" the exact same way
+// the All Props filter dropdown already does.
+const EXPLORE_PROP_CHIPS = [
+  { family: "hits", label: "Hits" },
+  { family: "total_bases", label: "2+ Bases" },
+  { family: "home_runs", label: "HR" },
+  { family: "hits_runs_rbis", label: "H+R+RBI" },
+  { family: "strikeouts", label: "Ks" },
+  { family: "pitcher_outs", label: "Outs" },
+];
+function exploreByPropStrip(families) {
+  const countByFamily = {};
+  for (const f of families) countByFamily[familyFilterValue(f.stat)] = f.count;
+  const chips = EXPLORE_PROP_CHIPS.map(({ family, label }) => {
+    const count = countByFamily[family];
+    if (!count) return "";
+    return `<a class="explore-chip" href="#/props?family=${family}">
+      <span class="explore-chip-label">${esc(label)}</span>
+      <span class="explore-chip-count">${count} tonight</span>
+    </a>`;
+  }).filter(Boolean).join("");
+  if (!chips) return "";
+  return `<section class="section explore-by-prop"><div class="section-head"><h2>Explore by Prop</h2></div>
+    <div class="explore-strip">${chips}<a class="explore-chip explore-chip-more" href="#/props">More</a></div></section>`;
 }
 // Real bug, found 2026-08-24: a player can carry several distinct
 // streak entries (e.g. Chandler Simpson: 14 straight games with a hit,
