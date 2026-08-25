@@ -369,6 +369,10 @@ const FROZEN_PUBLICATION_FIELDS = new Set([
   "prob_ci", "reliability", "reliability_note", "sample_n", "lineup_assumed",
   "base_rate", "lift", "lift_reference_rate", "stable_lift",
   "published_top_pick_at",
+  // 2026-08-2X market-edge-semantics fix (P0-6) -- kept in sync with
+  // dashboard/live_state.py's FROZEN_PUBLICATION_FIELDS by hand, same as
+  // every other entry here.
+  "posted_implied", "market_fair", "market_fair_method", "edge_vs_fair",
 ]);
 function freezePublishedSnapshot(p) {
   if (!gameHasStarted(p) || !p.publication_snapshot) return;
@@ -1457,10 +1461,14 @@ function detailBody(p) {
       <h3>Model vs. Market</h3>
       <div class="model-vs-market">
         <div class="mvm-row"><span class="mvm-label">Full Count</span><span class="mvm-value">${pctBig(p.hit_probability)}</span></div>
-        <div class="mvm-row"><span class="mvm-label">Market implied</span><span class="mvm-value">${p.market_implied != null ? pct(p.market_implied, 0) : "—"}</span></div>
-        <div class="mvm-row mvm-diff"><span class="mvm-label">Difference</span><span class="mvm-value">${p.market_edge != null ? (p.market_edge >= 0 ? "+" : "") + Math.round(p.market_edge * 100) + " pts" : "—"}</span></div>
+        <div class="mvm-row"><span class="mvm-label">Market fair value</span><span class="mvm-value">${(p.market_fair ?? p.market_implied) != null ? pct(p.market_fair ?? p.market_implied, 0) : "—"}</span></div>
+        <div class="mvm-row mvm-diff"><span class="mvm-label">Edge</span><span class="mvm-value">${(p.edge_vs_fair ?? p.market_edge) != null ? ((p.edge_vs_fair ?? p.market_edge) >= 0 ? "+" : "") + Math.round((p.edge_vs_fair ?? p.market_edge) * 100) + " pts" : "—"}</span></div>
       </div>
-      <p class="section-sub">FanDuel ${fmtOdds(p.market_odds) ?? "— not posted"}${p.market_hold != null ? " · exact no-vig" : ""}</p>
+      <p class="section-sub">FanDuel ${fmtOdds(p.market_odds) ?? "— not posted"}${p.posted_implied != null ? ` (${pct(p.posted_implied, 0)} raw)` : ""}${
+        p.market_fair_method === "exact_two_sided" ? " · exact no-vig (both sides priced)"
+        : p.market_fair_method === "assumed_hold" ? " · estimated no-vig (only one side posted)"
+        : (p.market_hold != null ? " · exact no-vig" : "")
+      }</p>
       <p class="price-freshness-note tone-${freshness.tone}">${esc(freshness.label)}${freshness.detail ? " — " + esc(freshness.detail) : ""}</p>
     </div>
 
@@ -1813,6 +1821,10 @@ const LIVE_PRICE_FIELDS = new Set([
   "market_observed_at", "market_family", "market_fetch_state", "market_fetch_checked_at",
   "market_fetch_failed_at", "market_failure_reason",
   "price_basis_board_generated_at",
+  // market-edge-semantics fix (P0-6) -- kept in sync with
+  // dashboard/live_state.py's PRICE_FIELDS by hand, same as every other
+  // entry here.
+  "posted_implied", "market_fair", "market_fair_method", "edge_vs_fair",
 ]);
 const LIVE_SETTLEMENT_FIELDS = new Set([
   "settlement_state", "settlement_authority", "settlement_observed_at",
