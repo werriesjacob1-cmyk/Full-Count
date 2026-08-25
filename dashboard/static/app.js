@@ -938,13 +938,33 @@ function scheduleChip(g) {
     <div class="sc-teams">${esc(g.away_team || "")} @ ${esc(g.home_team || "")}</div>
   </button>`;
 }
+// Real bug, found 2026-08-25: this read l.american and parlay.combined_american
+// -- neither field exists. parlay_builder.py / dashboard/build_dashboard.py's
+// _build_suggested_parlay() actually name them market_odds (per leg) and
+// combined_american_odds (the combined figure). Every real, correctly priced
+// leg silently rendered a blank price, and the "Combined:" line always fell
+// back to "--" -- never a fabricated number, but a fully-priced real parlay
+// looked broken/unpriced regardless. Also: naive_probability_note and
+// correlation_notes -- the backend's own honesty context explaining that the
+// combined figure assumes leg independence and is a conservative floor, not
+// a final answer -- were computed and never reached the page at all (the
+// same "computed, then discarded" bug class found repeatedly elsewhere in
+// this project). Fixed field names, and the combined odds line is now
+// explicitly labeled "Estimated" with that real caveat text surfaced.
 function suggestedParlayBlock(parlay) {
   const legs = (parlay.legs || []).map(l =>
-    `<div class="parlay-leg"><span>${esc(l.name)} — ${esc(l.prop)}</span><span>${fmtOdds(l.american) ?? ""}</span></div>`).join("");
+    `<div class="parlay-leg"><span>${esc(l.name)} — ${esc(l.prop)}</span><span>${fmtOdds(l.market_odds) ?? "—"}</span></div>`).join("");
+  const combined = fmtOdds(parlay.combined_american_odds);
+  const note = parlay.naive_probability_note
+    ? `<p class="parlay-note">${esc(parlay.naive_probability_note)}</p>` : "";
+  const corrNotes = (parlay.correlation_notes || []).length
+    ? `<ul class="parlay-corr-notes">${parlay.correlation_notes.map(n => `<li>${esc(n)}</li>`).join("")}</ul>` : "";
   return `<section class="section"><div class="parlay-card">
     <div class="section-head"><h2 style="font-size:16px">Suggested Parlay</h2></div>
     <div class="parlay-legs">${legs}</div>
-    <div class="pc-sub">Combined: ${fmtOdds(parlay.combined_american) ?? "—"}</div>
+    <div class="pc-sub">Estimated combined odds: ${combined ?? "unavailable"}</div>
+    ${note}
+    ${corrNotes}
   </div></section>`;
 }
 
