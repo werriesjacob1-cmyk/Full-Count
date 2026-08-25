@@ -1344,6 +1344,94 @@ else:
     check(True, "node not available -- My Board check skipped, not failed")
 
 
+head("18b. renderWatchlist() My Board audit (2026-08-25): two real bugs. (1) The save-button "
+     "label text was a stray leftover of the pre-rename product name -- \"Save to Watchlist\" -- "
+     "even though this module's own header comment already states the rule: \"only user-facing "
+     "text says My Board.\" (2) A saved prop's canonical id bakes in game_pk (see "
+     "canonical_prop_id()), so an id saved on an earlier day can NEVER resolve against today's "
+     "PROPS_BY_ID again -- the nav badge (raw watchlist.size, every id ever saved) could say "
+     "\"3\" while this page silently rendered the exact same \"My Board is empty\" message shown "
+     "to someone who has never saved anything at all, with no explanation for the mismatch.")
+
+if node:
+    harness_myboard_audit = """
+function makeCaptureEl() {
+  let html = '';
+  return {
+    get innerHTML() { return html; }, set innerHTML(v) { html = v; },
+    querySelectorAll: () => [], querySelector: () => null,
+    addEventListener(){}, dataset:{}, style:{}, setAttribute(){}, getAttribute: () => null,
+  };
+}
+// document.getElementById must return the SAME element instance for the
+// same id on every call -- renderWatchlist() sets innerHTML on it, then
+// the test reads it back via a separate getElementById call; a fresh
+// element per call (the pattern used elsewhere in this file, fine when
+// nothing reads innerHTML back) would silently read back empty every time.
+const _elById = new Map();
+function getElById(id) {
+  if (!_elById.has(id)) _elById.set(id, makeCaptureEl());
+  return _elById.get(id);
+}
+const document = {getElementById: getElById,
+  documentElement: {setAttribute(){}, removeAttribute(){}, getAttribute: () => null},
+  querySelectorAll: () => [], querySelector: () => null, createElement: () => makeCaptureEl(),
+  addEventListener(){}, body: {style:{}, append(){}}};
+const window = {matchMedia: () => ({matches:false}), location: {hash:''}, scrollY: 0, scrollTo(){}};
+const localStorage = {getItem: () => null, setItem(){}};
+const fetch = () => Promise.reject(new Error("no network in test"));
+const setInterval = () => {};
+let ok = true;
+function assertTrue(cond, label) { if (!cond) { console.error("FAIL " + label); ok = false; } }
+
+try {
+""" + open(APP_JS_PATH, encoding="utf-8").read() + """
+
+// -- genuinely empty: never saved anything at all --
+watchlist = new Set();
+PROPS_BY_ID = new Map();
+renderWatchlist();
+const genuinelyEmptyHtml = document.getElementById("page-watchlist").innerHTML;
+assertTrue(genuinelyEmptyHtml.includes("My Board is empty"),
+  "watchlist.size===0 still shows the real 'My Board is empty' first-time message");
+assertTrue(!genuinelyEmptyHtml.includes("saved prop"),
+  "the genuinely-empty message never mentions a saved-prop count that doesn't exist");
+
+// -- real bug: 3 saved ids, all from a prior day (none resolve in today's
+// PROPS_BY_ID) -- the honest mismatch message, not the misleading generic
+// empty-board one, and nothing gets silently deleted from watchlist itself --
+watchlist = new Set(["stale-id-1", "stale-id-2", "stale-id-3"]);
+PROPS_BY_ID = new Map();  // today's board -- none of the 3 saved ids are in it
+renderWatchlist();
+const mismatchHtml = document.getElementById("page-watchlist").innerHTML;
+assertTrue(mismatchHtml.includes("3") && mismatchHtml.includes("on tonight's board"),
+  "3 saved-but-unresolvable ids get an honest message naming the real count, not the generic " +
+  "'My Board is empty' text a true first-time visitor sees -- got " + JSON.stringify(mismatchHtml));
+assertTrue(!mismatchHtml.includes("My Board is empty"),
+  "the misleading generic empty message must NOT render when the badge count is nonzero");
+assertTrue(watchlist.size === 3,
+  "nothing was silently deleted from watchlist -- a prop can legitimately reappear/be " +
+  "re-evaluated later the same day (a late-posted lineup), so stale ids are explained, never pruned");
+
+} catch (e) { console.error(e); process.exit(1); }
+
+if (!ok) process.exit(1);
+console.log("My Board audit (stray Watchlist text + badge/empty-board honesty) checks passed");
+"""
+    harness_path_myboard_audit = tempfile.mktemp(suffix=".js")
+    with open(harness_path_myboard_audit, "w") as f:
+        f.write(harness_myboard_audit)
+    try:
+        r = subprocess.run([node, harness_path_myboard_audit], capture_output=True, text=True)
+        check(r.returncode == 0, "My Board never shows a misleading generic empty message when the "
+              "saved-props badge count is actually nonzero, and never silently deletes saved ids",
+              r.stdout + r.stderr)
+    finally:
+        os.remove(harness_path_myboard_audit)
+else:
+    check(True, "node not available -- My Board audit check skipped, not failed")
+
+
 head("14. Assumed-lineup candidates: direct follow-up request, verbatim -- \"our system should "
      "use assumed lineups... we shouldn't have to wait for lineups.\" By the time a row "
      "reaches build_payload(), it's indistinguishable in SHAPE from a confirmed one, just "
