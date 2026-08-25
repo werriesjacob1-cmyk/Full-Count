@@ -37,6 +37,11 @@ except ImportError:
 OBSERVATION_STATES = frozenset(("MATCHED", "NOT_POSTED", "FETCH_FAILED", "IN_PLAY"))
 MARKET_VALUE_FIELDS = (
     "market_odds", "market_implied", "market_edge", "price_clears", "market_hold",
+    # market-edge-semantics fix (P0-6): cleared first for the same reason
+    # as the fields above -- a failed reprice attempt (no match) must not
+    # let a stale market_fair/edge_vs_fair from the PRIOR successful price
+    # survive on `working` and be reported as current.
+    "posted_implied", "market_fair", "market_fair_method", "edge_vs_fair",
 )
 LIVE_FIELDS = tuple(sorted(PRICE_FIELDS | frozenset((
     "market_fetch_state", "market_fetch_checked_at",

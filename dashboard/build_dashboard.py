@@ -412,6 +412,21 @@ def run_live_fetch():
                 # assumed one. Surfaced so the detail view can say "exact
                 # market price" instead of "estimated" where it's actually true.
                 "market_hold": r.get("market_hold"),
+                # 2026-08-2X market-edge-semantics fix (P0-6): same
+                # "computed, then discarded" boundary as market_hold above
+                # -- posted_implied (the raw price-implied probability,
+                # always present when a price exists) / market_fair (the
+                # honest fair-value comparator -- exact when market_hold is
+                # present, an assumed-hold approximation otherwise) /
+                # market_fair_method (which of those two it is) /
+                # edge_vs_fair (model probability minus market_fair -- the
+                # one edge number that's honestly comparable across every
+                # market family, unlike market_edge, which mixes exact and
+                # approximate comparators under one name).
+                "posted_implied": r.get("posted_implied"),
+                "market_fair": r.get("market_fair"),
+                "market_fair_method": r.get("market_fair_method"),
+                "edge_vs_fair": r.get("edge_vs_fair"),
                 "reliability": r.get("reliability"), "reliability_note": r.get("reliability_note"),
                 "sample_n": r.get("sample_n"),
                 "why": (r.get("why") or [])[:4],

@@ -2630,6 +2630,15 @@ def score_combined_strikeouts(gm, away_pitcher_c, home_pitcher_c, combined_price
         "probability_detail": {"empirical": None, "modelled": best["prob"]},
         "market_odds": best["odds"], "market_implied": round(best["base_rate"], 4),
         "market_edge": best["lift"],
+        # market-edge-semantics fix (P0-6): combined_strikeouts is a
+        # one-sided ladder (12+, 13+, ... escalating odds, no paired
+        # Under), so base_rate/market_implied is the RAW posted implied
+        # probability, never de-vigged -- same honesty fix as
+        # odds_fanduel.attach_market_prices' own generic branch.
+        "posted_implied": round(best["base_rate"], 4),
+        "market_fair": round(pp.devig(best["base_rate"]), 4),
+        "market_fair_method": "assumed_hold",
+        "edge_vs_fair": round(best["prob"] - pp.devig(best["base_rate"]), 4),
         "price_clears": pp.price_is_acceptable(best["odds"], best["prob"]),
         "sample_n": None, "alternatives": alternatives,
         "signals": {"combined_k_edge": best["lift"]},
@@ -3787,6 +3796,14 @@ def select_moonshots(candidates, prices, fd, n=5):
             "probability_detail": {"empirical": hr_opt.get("empirical"), "modelled": hr_opt.get("modelled")},
             "market_odds": odds, "market_implied": implied,
             "market_edge": None if implied is None else round(hr_opt["prob"] - implied, 4),
+            # market-edge-semantics fix (P0-6): one-sided market (home run
+            # yes/no), never de-vigged -- same honesty fix as
+            # odds_fanduel.attach_market_prices' own generic branch.
+            "posted_implied": implied,
+            "market_fair": None if implied is None else round(pp.devig(implied), 4),
+            "market_fair_method": None if implied is None else "assumed_hold",
+            "edge_vs_fair": (None if implied is None
+                              else round(hr_opt["prob"] - pp.devig(implied), 4)),
             "price_clears": pp.price_is_acceptable(odds, hr_opt["prob"]),
             "category": "moonshot",
             "lineup_assumed": c.get("lineup_assumed"),
@@ -3831,6 +3848,12 @@ def select_deep_moonshots(candidates, prices, fd, n=5):
         row["market_odds"] = odds
         row["market_implied"] = implied
         row["market_edge"] = None if implied is None else round(c["hit_probability"] - implied, 4)
+        # market-edge-semantics fix (P0-6): one-sided market, never de-vigged.
+        row["posted_implied"] = implied
+        row["market_fair"] = None if implied is None else round(pp.devig(implied), 4)
+        row["market_fair_method"] = None if implied is None else "assumed_hold"
+        row["edge_vs_fair"] = (None if implied is None
+                                else round(c["hit_probability"] - pp.devig(implied), 4))
         row["price_clears"] = pp.price_is_acceptable(odds, c["hit_probability"])
         row["category"] = "moonshot_420"
         out.append(row)
@@ -4017,6 +4040,14 @@ def select_best_by_category(candidates, prices, fd, n_per_category=1, k_prices=N
                 "why": c.get("why"), "watchouts": c.get("watchouts"),
                 "market_odds": c.get("market_odds"), "market_implied": c.get("market_implied"),
                 "market_edge": c.get("market_edge"), "price_clears": c.get("price_clears"),
+                # market-edge-semantics fix (P0-6): same "computed, then
+                # discarded" failure class as combo_player_ids/lineup_assumed
+                # above -- these four fields would otherwise silently vanish
+                # for every candidate reaching the board through this
+                # by-category/dashboard path.
+                "posted_implied": c.get("posted_implied"), "market_fair": c.get("market_fair"),
+                "market_fair_method": c.get("market_fair_method"),
+                "edge_vs_fair": c.get("edge_vs_fair"),
                 "lineup_assumed": c.get("lineup_assumed"),
                 "_needs_price_lookup": False,
             })
@@ -4026,6 +4057,10 @@ def select_best_by_category(candidates, prices, fd, n_per_category=1, k_prices=N
             if e.pop("_needs_price_lookup", True):
                 needs = (e.get("projection") or {}).get("needs")
                 market_stat = _fd_stat_alias(stat)
+                # market-edge-semantics fix (P0-6): fair/method mirror
+                # odds_fanduel.attach_market_prices' own two branches exactly
+                # -- strikeouts is genuinely two-sided (exact no-vig via
+                # true_over), everything else here is one-sided (assumed hold).
                 if market_stat == "strikeouts" and k_prices is not None:
                     # Same two-sided lookup odds_fanduel.attach_market_prices
                     # uses -- FanDuel posts one line per starter, so this only
@@ -4034,12 +4069,21 @@ def select_best_by_category(candidates, prices, fd, n_per_category=1, k_prices=N
                     k = k_prices.get(fd.normalize_name(e["name"]))
                     odds = k["over"] if (k and k.get("needs") == needs) else None
                     implied = round(k["true_over"], 4) if odds is not None else None
+                    fair, fair_method = implied, ("exact_two_sided" if implied is not None else None)
+                    posted = round(pp.implied_probability(odds), 4) if odds is not None else None
                 else:
                     odds = (prices.get(fd.normalize_name(e["name"])) or {}).get((market_stat, needs))
                     implied = round(pp.implied_probability(odds), 4) if odds is not None else None
+                    posted = implied
+                    fair = round(pp.devig(implied), 4) if implied is not None else None
+                    fair_method = "assumed_hold" if implied is not None else None
                 e["market_odds"] = odds
                 e["market_implied"] = implied
                 e["market_edge"] = None if implied is None else round(e["hit_probability"] - implied, 4)
+                e["posted_implied"] = posted
+                e["market_fair"] = fair
+                e["market_fair_method"] = fair_method
+                e["edge_vs_fair"] = None if fair is None else round(e["hit_probability"] - fair, 4)
                 e["price_clears"] = pp.price_is_acceptable(odds, e["hit_probability"])
             e["category"] = "best_of_category"
             e["clears_main_board_floor"] = e["hit_probability"] >= MIN_LINE_PROB
@@ -4123,6 +4167,8 @@ def select_shadow_tracking(candidates, n_per_key=1):
                         "that lost selection against the real candidate, never a live bet."],
                 "watchouts": [],
                 "market_odds": None, "market_implied": None, "market_edge": None,
+                "posted_implied": None, "market_fair": None, "market_fair_method": None,
+                "edge_vs_fair": None,
                 "price_clears": None,
                 "category": "shadow",
             })
@@ -4684,6 +4730,17 @@ def write_json(top10, moonshots=(), by_category=None, deep_moonshots=(), shadow_
             # (market_hold present) from an 8%-ASSUMED approximation
             # (market_hold absent) at analysis time, per pick.
             "market_hold": c.get("market_hold"),
+            # market-edge-semantics fix (P0-6): same "computed, then
+            # discarded" boundary as market_hold directly above it --
+            # posted_implied/market_fair/market_fair_method/edge_vs_fair
+            # make the exact-vs-assumed-hold distinction explicit and
+            # comparable across every market family (see
+            # odds_fanduel.attach_market_prices' own docstring for the
+            # full rationale).
+            "posted_implied": c.get("posted_implied"),
+            "market_fair": c.get("market_fair"),
+            "market_fair_method": c.get("market_fair_method"),
+            "edge_vs_fair": c.get("edge_vs_fair"),
             "market_edge": c.get("market_edge"),
             "price_clears": c.get("price_clears"),
             "probability_basis": c.get("probability_basis"),
@@ -6166,6 +6223,8 @@ def _build_combined_nrfi(candidates):
             "raw_hit_probability": None, "calibrated_by": None, "prob_ci": None,
             "sample_n": n_min, "reliability": None,
             "market_odds": None, "market_implied": None, "market_edge": None,
+            "posted_implied": None, "market_fair": None, "market_fair_method": None,
+            "edge_vs_fair": None,
             "price_clears": None, "alternatives": None,
         })
     return combined
