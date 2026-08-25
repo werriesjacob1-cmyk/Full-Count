@@ -459,6 +459,29 @@ def run_live_fetch():
                 # inferred from which tab it's rendered in) so the client
                 # can visibly flag it no matter where it ends up.
                 "lineup_assumed": r.get("lineup_assumed"),
+                # OPPORTUNITY fact for the detail sheet (2026-08-25): the real
+                # batting-order slot. score_batter() records it in `signals`
+                # via _sig(signals, "lineup_slot", order, lineup_context) --
+                # but _sig() stores the SCALED value (lineup_context =
+                # scale(10 - order, 1, 9), generate_picks.py:1379), not the
+                # raw order number, and no other field on the candidate ever
+                # carries the raw order directly. Inverted back here (the
+                # exact same formula backtest/opportunity_decomposition.
+                # derive_batting_order() already uses for the same purpose --
+                # mirrored rather than imported, since a live production
+                # payload builder depending on the offline research package
+                # would be a strange, unnecessary coupling) so the payload
+                # carries a real, human "batting order" fact instead of a
+                # meaningless 0-100 scaled number. Deliberately just the slot
+                # number, not a derived "supportive/concern" judgment -- see
+                # frontend/detail_sheet_data_audit_2026-08-25.md for why the
+                # underlying cat_context component is NOT safely gradable
+                # without the fitted score weights (which differ by market
+                # and aren't exposed here). "Batting Nth" needs no weight to
+                # state as a plain fact. None for pitchers (no batting slot)
+                # and for any row where the signal never fired.
+                "batting_order": _derive_batting_order(
+                    (r.get("signals") or {}).get("lineup_slot")),
             }
             cleaned["id"] = canonical_prop_id(cleaned)
             out.append(cleaned)
@@ -736,6 +759,20 @@ def _assign_top_pick_rank(rows):
                    reverse=True)
     for i, r in enumerate(top_picks, 1):
         r["rank"] = i
+
+
+def _derive_batting_order(lineup_slot):
+    """Inverts generate_picks.py:1379's scale(10 - order, 1, 9) -> order.
+    Mirrors backtest/opportunity_decomposition.derive_batting_order()
+    exactly (same formula, same rounding, same 1-9 sanity bound) -- not
+    imported from there, since this live payload builder depending on the
+    offline research package would be an unnecessary coupling for one
+    three-line formula. Returns None when the signal never fired (no
+    signals dict, pitcher row, or a genuinely out-of-range value)."""
+    if lineup_slot is None:
+        return None
+    order = round(9.0 - lineup_slot * 8.0 / 100.0)
+    return order if 1 <= order <= 9 else None
 
 
 def build_payload(result, track_record=None):

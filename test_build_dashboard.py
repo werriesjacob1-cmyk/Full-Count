@@ -80,7 +80,7 @@ _row_counter = [0]
 
 def row(name, stat, prob, needs=1, value=0.5, odds=None, implied=None, edge=None,
        clears=None, confidence="Medium", ptype="batter", recommendation_status=None,
-       lineup_assumed=None, prob_ci=None, lift=None, reliability="B"):
+       lineup_assumed=None, prob_ci=None, lift=None, reliability="B", batting_order=None):
     _row_counter[0] += 1
     return {
         # A stable id per row -- real clean()'d rows always carry one
@@ -99,9 +99,16 @@ def row(name, stat, prob, needs=1, value=0.5, odds=None, implied=None, edge=None
         # run_live_fetch() output, which means recommendation_status is
         # already computed by recommendation.py by the time build_payload()
         # ever sees it -- these fixtures set it directly rather than
-        # re-deriving it, matching that real shape.
+        # re-deriving it, matching that real shape. batting_order is the
+        # SAME story: clean() (a function nested inside run_live_fetch(),
+        # not reachable from build_payload()) is what actually computes it
+        # from signals.lineup_slot -- build_payload() itself only ever
+        # passes the already-cleaned value through untouched, so this
+        # fixture sets the POST-clean() value directly, matching every
+        # other field here.
         "recommendation_status": recommendation_status, "status_reasons": [], "stale": False,
         "lineup_assumed": lineup_assumed,
+        "batting_order": batting_order,
     }
 
 
@@ -185,6 +192,36 @@ check(by_name["B Grade Higher Edge"] == 1,
       "(TOP_PICK_MIN_RELIABILITY=('A','B')), edge is the real deciding tiebreak in practice, so "
       "the higher-edge B-grade pick correctly outranks the lower-edge A-grade pick",
       f"got {by_name}")
+
+
+head("1d. _derive_batting_order()/batting_order (2026-08-25, detail-sheet OPPORTUNITY fact): "
+     "signals.lineup_slot stores the SCALED 0-100 lineup_context value (scale(10-order,1,9)), "
+     "not the raw order number -- _sig() only records `scaled`, never `raw`. Inverting it back "
+     "so the payload carries a real human fact ('batting 2nd') instead of a meaningless scaled "
+     "number a customer could never interpret.")
+
+check(bd._derive_batting_order(87.5) == 2, "lineup_slot=87.5 inverts to order 2 (leadoff-ish)",
+      f"got {bd._derive_batting_order(87.5)}")
+check(bd._derive_batting_order(100) == 1, "lineup_slot=100 inverts to order 1 (leadoff)")
+check(bd._derive_batting_order(0) == 9, "lineup_slot=0 inverts to order 9 (bottom of order)")
+check(bd._derive_batting_order(None) is None, "no signal fired (e.g. a pitcher row) -> None, never a fabricated order")
+
+# clean() (the function that actually inverts signals.lineup_slot -> batting_order)
+# is nested inside run_live_fetch(), not reachable from build_payload() -- this
+# checks the pass-through boundary build_payload() IS responsible for: an
+# already-cleaned batting_order value must survive unchanged, same as every
+# other clean()'d field this file already tests this way.
+order_case = {"generated_at": "x", "date": "2026-08-16",
+    "hits": [row("Leadoff Guy", "hits", 0.65, batting_order=1),
+            row("Pitcher Row", "strikeouts", 0.55, ptype="pitcher", batting_order=None)]}
+payload_order = bd.build_payload(order_case)
+by_name_order = {r["name"]: r.get("batting_order") for r in payload_order["props"]}
+check(by_name_order["Leadoff Guy"] == 1,
+      "build_payload passes an already-cleaned batting_order value through unchanged",
+      f"got {by_name_order}")
+check(by_name_order["Pitcher Row"] is None,
+      "a row with no real batting order (e.g. a pitcher market) stays None, never a fabricated guess",
+      f"got {by_name_order}")
 
 
 head("2. home_runs is dropped as a duplicate of moonshot (same underlying field, per audit) "
@@ -769,6 +806,241 @@ else:
     check(True, "node not available -- Today-page routing/Explore-by-Prop check skipped, not failed")
 
 
+head("17. Detail sheet PASS (2026-08-25): priceFreshnessState()/whyNotTopPickReason()/"
+     "_ordinalSuffix() directionality, and detailBody() end to end -- confirms no naive "
+     "Supportive/Concern component grading was (re)introduced (see "
+     "frontend/detail_sheet_data_audit_2026-08-25.md for why that's unsafe), Why It Could Miss "
+     "never fabricates a concern to force symmetry, Opportunity only appears with a real "
+     "batting_order fact, and Why Not a Top Pick only fires for status_reasons that are real.")
+
+if node:
+    harness3 = """
+function makeEl() {
+  let _text = '';
+  return {
+    addEventListener(){}, dataset:{}, style:{}, setAttribute(){}, removeAttribute(){},
+    getAttribute: () => null, querySelectorAll: () => [], querySelector: () => null,
+    get textContent() { return _text; }, set textContent(v) { _text = String(v); },
+    get innerHTML() {
+      return _text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+    },
+    hidden: false, append(){},
+  };
+}
+const document = {getElementById: () => makeEl(), documentElement: {setAttribute(){}, removeAttribute(){}, getAttribute: () => null},
+  querySelectorAll: () => [], querySelector: () => null, createElement: () => makeEl(),
+  addEventListener(){}, body: {style:{}, append(){}}};
+const window = {matchMedia: () => ({matches:false}), location: {hash:''}, scrollY: 0, scrollTo(){}};
+let location = window.location;
+const localStorage = {getItem: () => null, setItem(){}};
+const fetch = () => Promise.reject(new Error("no network in test"));
+const setInterval = () => {};
+let ok = true;
+function assertEq(actual, expected, label) {
+  if (actual !== expected) { console.error("FAIL " + label + ": got " + JSON.stringify(actual) + " want " + JSON.stringify(expected)); ok = false; }
+}
+function assertTrue(cond, label) {
+  if (!cond) { console.error("FAIL " + label); ok = false; }
+}
+
+try {
+""" + open(APP_JS_PATH, encoding="utf-8").read() + """
+
+DATA = { schedule: [] };
+
+// -- priceFreshnessState(): real states only, never a fabricated one --
+assertEq(priceFreshnessState({market_odds: null}).tone, "unposted", "no market_odds -> unposted");
+assertEq(priceFreshnessState({market_odds: -150, market_fetch_state: "FETCH_FAILED"}).tone, "stale",
+  "FETCH_FAILED -> stale tone (last known, not treated as current)");
+assertEq(priceFreshnessState({market_odds: -150, market_fetch_state: "IN_PLAY"}).tone, "live", "IN_PLAY -> live tone");
+assertEq(priceFreshnessState({market_odds: -150, stale: true}).tone, "stale", "board-level stale flag -> stale tone");
+assertEq(priceFreshnessState({market_odds: -150, market_fetch_state: "MATCHED", stale: false}).tone, "current",
+  "a real, fresh, matched price -> current tone");
+
+// -- whyNotTopPickReason(): only for an already-interesting non-Top-Pick --
+assertEq(whyNotTopPickReason({recommendation_status: "top_pick", status_reasons: ["x"]}), null,
+  "a real Top Pick never shows a 'why not' reason");
+assertEq(whyNotTopPickReason({recommendation_status: "lean", status_reasons: ["a real reason"]}), "a real reason",
+  "a Lean's real status_reasons[0] is surfaced verbatim");
+assertEq(whyNotTopPickReason({recommendation_status: "neutral", hit_probability: 0.45, status_reasons: ["x"]}), null,
+  "a low-probability Neutral doesn't clutter with a 'why not' reason");
+assertEq(whyNotTopPickReason({recommendation_status: "neutral", hit_probability: 0.65, status_reasons: ["thin evidence"]}),
+  "thin evidence", "a genuinely interesting (>=60%) Neutral DOES surface its real reason");
+
+// -- _ordinalSuffix(): plain English ordinals, including the 11/12/13 exception --
+assertEq(_ordinalSuffix(1), "st", "1st");
+assertEq(_ordinalSuffix(2), "nd", "2nd");
+assertEq(_ordinalSuffix(3), "rd", "3rd");
+assertEq(_ordinalSuffix(4), "th", "4th");
+assertEq(_ordinalSuffix(11), "th", "11th (not 11st)");
+assertEq(_ordinalSuffix(12), "th", "12th (not 12nd)");
+assertEq(_ordinalSuffix(13), "th", "13th (not 13rd)");
+
+// -- detailBody(): no naive component grading, honest empty-miss fallback,
+// Opportunity only with a real fact, Why Not a Top Pick only when it applies --
+const topPickNoMiss = {
+  id: "a", name: "Player A", team: "NYY", prop: "Over 0.5 Hits", hit_probability: 0.68,
+  recommendation_status: "top_pick", market_odds: -150, market_implied: 0.60, market_edge: 0.08,
+  reliability: "B", sample_n: 80, why: [], watchouts: [], status_reasons: [], batting_order: null,
+};
+const body1 = detailBody(topPickNoMiss);
+// Matches a LABEL/badge usage (tag-adjacent), not the word appearing in
+// ordinary prose -- the honest "no major model-side concern" fallback
+// sentence legitimately contains "concern" and must not trip this check.
+assertTrue(!/>\s*(Supportive|Concern|Mixed)\s*<|THE CASE/i.test(body1),
+  "detailBody() never renders naive Supportive/Concern/Mixed component-grade labels");
+assertTrue(body1.includes("No major model-side concern"),
+  "an empty watchouts list renders the honest fallback, never a fabricated concern");
+assertTrue(!body1.includes("Opportunity"), "no Opportunity section when batting_order is null");
+assertTrue(!body1.includes("Why Not a Top Pick"), "a real Top Pick never shows Why Not a Top Pick");
+
+const leanWithOrder = {
+  id: "b", name: "Player B", team: "BOS", prop: "Over 1.5 Total Bases", hit_probability: 0.63,
+  recommendation_status: "lean", market_odds: null, market_implied: null, market_edge: null,
+  reliability: "B", sample_n: 80, why: ["Season barrel% 12"], watchouts: [],
+  status_reasons: ["a real read, but no market price is posted yet"], batting_order: 2,
+};
+const body2 = detailBody(leanWithOrder);
+assertTrue(body2.includes("Opportunity") && body2.includes("2nd in the order"),
+  "a real batting_order renders as a plain ordinal fact in Opportunity");
+assertTrue(body2.includes("Why Not a Top Pick") && body2.includes("A real read, but no market price is posted yet"),
+  "an interesting Lean surfaces its real status_reasons[0] (capSentence-cased, otherwise verbatim), not a guess");
+
+} catch (e) { console.error(e); process.exit(1); }
+
+if (!ok) process.exit(1);
+console.log("Detail sheet directionality/priceFreshness/whyNotTopPick/ordinal checks passed");
+"""
+    harness_path3 = tempfile.mktemp(suffix=".js")
+    with open(harness_path3, "w") as f:
+        f.write(harness3)
+    try:
+        r = subprocess.run([node, harness_path3], capture_output=True, text=True)
+        check(r.returncode == 0, "priceFreshnessState/whyNotTopPickReason/_ordinalSuffix/detailBody() "
+              "all behave correctly and no naive component-grading language appears",
+              r.stdout + r.stderr)
+    finally:
+        os.remove(harness_path3)
+else:
+    check(True, "node not available -- detail sheet check skipped, not failed")
+
+
+head("18. My Board PASS (2026-08-25): snapshot versioning/migration, 'Since You Saved This' "
+     "deltas (real presentation thresholds, deterioration never hidden), and changeSummary(). "
+     "Audited the REAL pre-existing v1 snapshot shape first ({status, odds, lineup_assumed, "
+     "started} -- confirmed by direct code read, not assumed) before building v2 on top of it.")
+
+if node:
+    harness4 = """
+function makeEl() {
+  let _text = '';
+  return {
+    addEventListener(){}, dataset:{}, style:{}, setAttribute(){}, removeAttribute(){},
+    getAttribute: () => null, querySelectorAll: () => [], querySelector: () => null,
+    get textContent() { return _text; }, set textContent(v) { _text = String(v); },
+    get innerHTML() {
+      return _text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+    },
+    hidden: false, append(){},
+  };
+}
+const document = {getElementById: () => makeEl(), documentElement: {setAttribute(){}, removeAttribute(){}, getAttribute: () => null},
+  querySelectorAll: () => [], querySelector: () => null, createElement: () => makeEl(),
+  addEventListener(){}, body: {style:{}, append(){}}};
+const window = {matchMedia: () => ({matches:false}), location: {hash:''}, scrollY: 0, scrollTo(){}};
+let location = window.location;
+const localStorage = {getItem: () => null, setItem(){}};
+const fetch = () => Promise.reject(new Error("no network in test"));
+const setInterval = () => {};
+let ok = true;
+function assertEq(actual, expected, label) {
+  if (actual !== expected) { console.error("FAIL " + label + ": got " + JSON.stringify(actual) + " want " + JSON.stringify(expected)); ok = false; }
+}
+function assertTrue(cond, label) {
+  if (!cond) { console.error("FAIL " + label); ok = false; }
+}
+
+try {
+""" + open(APP_JS_PATH, encoding="utf-8").read() + """
+
+// -- normalizeSnapshot(): real v1 shape migrates cleanly, never crashes,
+// never invents a value v1 didn't capture --
+assertEq(normalizeSnapshot(null), null, "no snapshot at all -> null, not a crash");
+const v1Raw = { status: "lean", odds: -120, lineup_assumed: true, started: false };
+const v1Norm = normalizeSnapshot(v1Raw);
+assertEq(v1Norm.market_odds, -120, "v1 odds maps to market_odds");
+assertEq(v1Norm.recommendation_status, "lean", "v1 status maps to recommendation_status");
+assertEq(v1Norm.hit_probability, null, "v1 NEVER captured probability -- must stay null, not backfilled");
+assertEq(v1Norm.market_edge, null, "v1 NEVER captured edge -- must stay null, not backfilled");
+
+const v2Raw = { schema_version: WATCH_SNAPSHOT_SCHEMA_VERSION, hit_probability: 0.63, market_odds: 140,
+  market_implied: 0.55, market_edge: 0.05, recommendation_status: "lean", lineup_assumed: true, started: false };
+assertEq(normalizeSnapshot(v2Raw).hit_probability, 0.63, "a real v2 snapshot passes through unchanged");
+
+// -- sinceYouSavedChanges(): presentation thresholds, real deltas only --
+watchSnapshot = { "v1-id": v1Raw };
+const v1CurrentProp = { id: "v1-id", hit_probability: 0.70, market_odds: -105, market_implied: 0.52,
+  market_edge: 0.09, recommendation_status: "top_pick", lineup_assumed: false, game_start: null };
+const v1Changes = sinceYouSavedChanges(v1CurrentProp);
+assertTrue(!v1Changes.some(c => c.key === "probability"),
+  "a v1 snapshot never shows a probability delta -- it never captured one");
+assertTrue(v1Changes.some(c => c.key === "odds"), "a v1 snapshot DOES show a real odds delta -- it captured that");
+assertTrue(v1Changes.some(c => c.key === "lineup"), "v1's lineup_assumed=true -> now false shows as Confirmed");
+assertTrue(v1Changes.some(c => c.key === "status"), "v1's status changed lean -> top_pick shows as a real status change");
+
+watchSnapshot = { "v2-id": v2Raw };
+const tinyMove = { id: "v2-id", hit_probability: 0.64, market_odds: 140, market_implied: 0.55,
+  market_edge: 0.06, recommendation_status: "lean", lineup_assumed: true, game_start: null };
+assertEq(sinceYouSavedChanges(tinyMove).length, 0,
+  "a 1pp probability move and a 1pp edge move both stay under the 2pp presentation threshold -- no noise shown");
+
+const bigImprove = { id: "v2-id", hit_probability: 0.70, market_odds: 140, market_implied: 0.55,
+  market_edge: 0.10, recommendation_status: "lean", lineup_assumed: true, game_start: null };
+const improveChanges = sinceYouSavedChanges(bigImprove);
+const probUp = improveChanges.find(c => c.key === "probability");
+assertTrue(probUp && probUp.stronger === true, "a real 7pp probability GAIN shows as stronger=true");
+
+const bigWorsen = { id: "v2-id", hit_probability: 0.55, market_odds: 140, market_implied: 0.55,
+  market_edge: -0.02, recommendation_status: "lean", lineup_assumed: true, game_start: null };
+const worsenChanges = sinceYouSavedChanges(bigWorsen);
+const probDown = worsenChanges.find(c => c.key === "probability");
+const edgeDown = worsenChanges.find(c => c.key === "edge");
+assertTrue(probDown && probDown.stronger === false,
+  "DETERIORATION IS NEVER HIDDEN -- an 8pp probability DROP still renders, with stronger=false");
+assertTrue(edgeDown && edgeDown.stronger === false, "a real edge shrink also renders honestly");
+
+// -- changeSummary(): compact, favors the strength signal, never silent on a real change --
+assertEq(changeSummary([]), null, "no changes -> no badge at all");
+assertEq(changeSummary([{key:"odds", label:"FanDuel", from:"+140", to:"+120"}]), "FanDuel changed",
+  "a single non-strength change gets a plain one-line summary");
+const summary = changeSummary([
+  {key:"probability", label:"Model", from:"63%", to:"70%", stronger:true},
+  {key:"odds", label:"FanDuel", from:"+140", to:"+120"},
+]);
+assertTrue(summary.includes("2 changes") && summary.includes("Model stronger"),
+  "multiple changes: count + the strength headline, matching the directive's own 'Model stronger' example");
+
+} catch (e) { console.error(e); process.exit(1); }
+
+if (!ok) process.exit(1);
+console.log("My Board snapshot versioning/since-you-saved/changeSummary checks passed");
+"""
+    harness_path4 = tempfile.mktemp(suffix=".js")
+    with open(harness_path4, "w") as f:
+        f.write(harness4)
+    try:
+        r = subprocess.run([node, harness_path4], capture_output=True, text=True)
+        check(r.returncode == 0, "My Board snapshot migration never crashes/fabricates, presentation "
+              "thresholds suppress noise without hiding real deterioration, changeSummary matches spec",
+              r.stdout + r.stderr)
+    finally:
+        os.remove(harness_path4)
+else:
+    check(True, "node not available -- My Board check skipped, not failed")
+
+
 head("14. Assumed-lineup candidates: direct follow-up request, verbatim -- \"our system should "
      "use assumed lineups... we shouldn't have to wait for lineups.\" By the time a row "
      "reaches build_payload(), it's indistinguishable in SHAPE from a confirmed one, just "
@@ -794,6 +1066,143 @@ check(assumed_out["recommendation_status"] == "lean",
       "build_payload passes the real upstream status through as-is -- a lineup-assumed row "
       "that recommendation.py already downgraded to a Lean is never silently promoted or "
       "further demoted here", f"got {assumed_out['recommendation_status']}")
+
+
+head("19. Search PASS (2026-08-25): structured baseball navigation (Teams/Games/Players/Props) "
+     "via runSearch(), replacing naive substring matching. Covers exact/prefix/word-prefix "
+     "ranking (_matchScore), market-intent aliases (e.g. \"home runs\" -> the home_runs family, "
+     "ranked by probability, never matching players), team abbreviations resolving to a real "
+     "team via a distinctive nickname substring, two-team game queries (\"Yankees Red Sox\" and "
+     "\"NYY BOS\" alike), and the 5-result cap with an honest propsTotal for the \"See all\" link. "
+     "A small deterministic scoring function only -- no fuzzy-search dependency, per direction.")
+
+if node:
+    harness5 = """
+function makeEl() {
+  let _text = '';
+  return {
+    addEventListener(){}, dataset:{}, style:{}, setAttribute(){}, removeAttribute(){},
+    getAttribute: () => null, querySelectorAll: () => [], querySelector: () => null,
+    get textContent() { return _text; }, set textContent(v) { _text = String(v); },
+    get innerHTML() {
+      return _text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+    },
+    hidden: false, append(){},
+  };
+}
+const document = {getElementById: () => makeEl(), documentElement: {setAttribute(){}, removeAttribute(){}, getAttribute: () => null},
+  querySelectorAll: () => [], querySelector: () => null, createElement: () => makeEl(),
+  addEventListener(){}, body: {style:{}, append(){}}};
+const window = {matchMedia: () => ({matches:false}), location: {hash:''}, scrollY: 0, scrollTo(){}};
+let location = window.location;
+const localStorage = {getItem: () => null, setItem(){}};
+const fetch = () => Promise.reject(new Error("no network in test"));
+const setInterval = () => {};
+let ok = true;
+function assertEq(actual, expected, label) {
+  if (actual !== expected) { console.error("FAIL " + label + ": got " + JSON.stringify(actual) + " want " + JSON.stringify(expected)); ok = false; }
+}
+function assertTrue(cond, label) {
+  if (!cond) { console.error("FAIL " + label); ok = false; }
+}
+
+try {
+""" + open(APP_JS_PATH, encoding="utf-8").read() + """
+
+DATA = { schedule: [], families: [] };
+
+const schedule = [
+  { game_pk: 1, away_team: "Philadelphia Phillies", home_team: "Atlanta Braves", game_start: "2026-08-25T23:20:00Z" },
+  { game_pk: 2, away_team: "New York Yankees", home_team: "Boston Red Sox", game_start: "2026-08-25T23:05:00Z" },
+];
+const props = [
+  { id: "p1", player_id: 1, name: "Bryce Harper", team: "Philadelphia Phillies", matchup: "PHI @ ATL", prop: "Over 0.5 Hits", stat: "hits", hit_probability: 0.68 },
+  { id: "p2", player_id: 2, name: "Trea Turner", team: "Philadelphia Phillies", matchup: "PHI @ ATL", prop: "Over 1.5 Total Bases", stat: "total_bases", hit_probability: 0.60 },
+  { id: "p3", player_id: 3, name: "Kyle Schwarber", team: "Philadelphia Phillies", matchup: "PHI @ ATL", prop: "To Hit a Home Run", stat: "home_runs", hit_probability: 0.22 },
+  { id: "p4", player_id: 4, name: "Ronald Acuna Jr", team: "Atlanta Braves", matchup: "PHI @ ATL", prop: "To Hit a Home Run", stat: "home_runs", hit_probability: 0.31 },
+  { id: "p5", player_id: 5, name: "Matt Olson", team: "Atlanta Braves", matchup: "PHI @ ATL", prop: "To Hit a Home Run", stat: "home_runs", hit_probability: 0.19 },
+  { id: "p6", player_id: 6, name: "Aaron Judge", team: "New York Yankees", matchup: "NYY @ BOS", prop: "To Hit a Home Run", stat: "home_runs", hit_probability: 0.35 },
+  { id: "p7", player_id: 7, name: "Rafael Devers", team: "Boston Red Sox", matchup: "NYY @ BOS", prop: "Over 0.5 Hits", stat: "hits", hit_probability: 0.58 },
+];
+// Six more Phillies-team-text props so a plain "phillies" substring query
+// exercises the 5-result cap and propsTotal truncation honestly.
+for (let i = 0; i < 6; i++) {
+  props.push({ id: "extra" + i, player_id: 100 + i, name: "Bench Guy " + i, team: "Philadelphia Phillies",
+    matchup: "PHI @ ATL", prop: "Over 0.5 Hits", stat: "hits", hit_probability: 0.5 - i * 0.01 });
+}
+
+// -- _matchScore(): deterministic, no fuzzy dependency --
+assertEq(_matchScore("Bryce Harper", "bryce harper"), 100, "exact match (case-insensitive) -> 100");
+assertEq(_matchScore("Bryce Harper", "bryce"), 80, "prefix match -> 80");
+assertEq(_matchScore("Bryce Harper", "harp"), 60, "word-prefix match ('harper' starts with 'harp') -> 60");
+assertEq(_matchScore("Bryce Harper", "yce har"), 40, "plain substring, no prefix -> 40");
+assertEq(_matchScore("Bryce Harper", "zzz"), 0, "no match -> 0, never shown");
+
+// -- _marketFamilyForQuery(): the customer's market-intent words, not model logic --
+assertEq(_marketFamilyForQuery("home runs"), "home_runs", "'home runs' resolves to the real home_runs family");
+assertEq(_marketFamilyForQuery("hr"), "home_runs", "'hr' alias also resolves to home_runs");
+assertEq(_marketFamilyForQuery("strikeouts"), "strikeouts", "'strikeouts' resolves to strikeouts");
+assertEq(_marketFamilyForQuery("bryce harper"), null, "a player name is never mistaken for a market alias");
+
+// -- runSearch(): below the 2-char floor returns nothing (never an accidental full-board dump) --
+const empty = runSearch("h", props, schedule);
+assertTrue(empty.teams.length === 0 && empty.games.length === 0 && empty.players.length === 0 && empty.props.length === 0,
+  "a 1-char query returns nothing in every group");
+
+// -- TEAMS + PROPS for a real team-name query. PLAYERS is deliberately
+// name-scoped (not team-scoped) -- a team query correctly surfaces no
+// players, since a market/team word won't match any real player's name;
+// the team's props still surface via the team-text match in PROPS. --
+const rPhillies = runSearch("phillies", props, schedule);
+assertTrue(rPhillies.teams.length === 1 && rPhillies.teams[0].name === "Philadelphia Phillies",
+  "'phillies' resolves the one real matching team by substring word-prefix");
+assertTrue(rPhillies.players.length === 0, "a team-name query doesn't spuriously match any player by name");
+assertTrue(rPhillies.propsTotal === 9 && rPhillies.props.length === 5,
+  "propsTotal reports the real full count (9 Phillies props, matched via team text) while only 5 are shown -- the 'See all' link needs the honest total");
+
+// -- Team abbreviation resolves via a distinctive nickname substring --
+const rNyy = runSearch("nyy", props, schedule);
+assertTrue(rNyy.teams.length === 1 && rNyy.teams[0].name === "New York Yankees",
+  "'nyy' resolves to New York Yankees via the yankees nickname alias, not a literal 'nyy' substring match");
+
+// -- Market-intent alias: ranks the whole family by probability, surfaces no players --
+const rHr = runSearch("home runs", props, schedule);
+assertEq(rHr.marketFamily, "home_runs", "marketFamily is reported so the UI can label the group and build the family link");
+assertTrue(rHr.players.length === 0, "a pure market-intent query never matches a player by name");
+assertTrue(rHr.props.length === 4 && rHr.props[0].name === "Aaron Judge" && rHr.props[1].name === "Ronald Acuna Jr",
+  "home_runs props are ranked by real hit_probability descending (0.35, 0.31, 0.22, 0.19), not text-match order");
+
+// -- Two-team game query: "Yankees Red Sox" and "NYY BOS" both resolve the same real game --
+const rFullNames = runSearch("yankees red sox", props, schedule);
+assertTrue(rFullNames.games.length === 1 && rFullNames.games[0].game_pk === 2,
+  "'yankees red sox' resolves the real NYY @ BOS game by full team names");
+const rAbbrevs = runSearch("nyy bos", props, schedule);
+assertTrue(rAbbrevs.games.length === 1 && rAbbrevs.games[0].game_pk === 2,
+  "'nyy bos' resolves the SAME real game via alias-expanded searchable text, without full NLP");
+
+// -- A player-name query never accidentally matches an unrelated game or team --
+const rHarper = runSearch("bryce harper", props, schedule);
+assertTrue(rHarper.games.length === 0, "a specific player name doesn't spuriously match a game");
+assertTrue(rHarper.players.length === 1 && rHarper.players[0].name === "Bryce Harper", "exact player name resolves to exactly that player");
+
+} catch (e) { console.error(e); process.exit(1); }
+
+if (!ok) process.exit(1);
+console.log("Search (runSearch/_matchScore/_marketFamilyForQuery) checks passed");
+"""
+    harness_path5 = tempfile.mktemp(suffix=".js")
+    with open(harness_path5, "w") as f:
+        f.write(harness5)
+    try:
+        r = subprocess.run([node, harness_path5], capture_output=True, text=True)
+        check(r.returncode == 0, "runSearch() correctly groups Teams/Games/Players/Props, market "
+              "aliases and team abbreviations resolve to real entities, and the 5-result cap "
+              "reports an honest propsTotal for the 'See all' link", r.stdout + r.stderr)
+    finally:
+        os.remove(harness_path5)
+else:
+    check(True, "node not available -- search check skipped, not failed")
 
 
 head("15. StaticSourceParityTests: dashboard/static/{index.html,app.css,app.js} is the ONLY "

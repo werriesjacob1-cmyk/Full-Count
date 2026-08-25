@@ -328,14 +328,41 @@ function refreshSummary() {
 }
 
 // ══════════════════════════════════════════════════════════════════════
-//  WATCHLIST (localStorage) — item 14: notice odds moved, lineup confirmed,
-//  lean changed, became a top pick, or the game started, since the user
-//  starred it. A lightweight snapshot per id, diffed against the live
-//  prop on every render -- no server, no accounts, exactly what a static
-//  localStorage-only architecture can honestly support.
+//  MY BOARD (localStorage) -- "these are the props I'm considering
+//  tonight," not a static bookmark list. A versioned snapshot per saved
+//  id, captured once at save time, diffed against the live prop on every
+//  render -- no server, no accounts, exactly what a static localStorage-
+//  only architecture can honestly support. Route/storage keys keep their
+//  original "watchlist" names (URLs and existing localStorage entries
+//  stay valid); only user-facing text says "My Board."
+//
+//  SNAPSHOT VERSIONING (2026-08-25 expansion). v1 (pre-2026-08-25,
+//  already live in real users' localStorage) only ever captured
+//  {status, odds, lineup_assumed, started} -- genuinely audited before
+//  touching this, not assumed: NO historical probability/edge/implied
+//  was ever recorded, so "Since You Saved This" cannot show a
+//  probability delta for a v1 save. normalizeSnapshot() below maps a v1
+//  snapshot's fields onto the v2 shape it can honestly fill (status/
+//  odds/lineup/started) and leaves everything v1 never captured
+//  (hit_probability/market_implied/market_edge/saved_at) explicitly
+//  undefined -- NEVER backfilled from the CURRENT prop and presented as
+//  if it were the historical value, which would be a fabricated delta.
+//  A fresh v2 save captures the full pregame-visible field set.
 // ══════════════════════════════════════════════════════════════════════
 const WATCH_KEY = "fc_watchlist_v1";
 const WATCH_SNAP_KEY = "fc_watch_snapshot_v1";
+const WATCH_SNAPSHOT_SCHEMA_VERSION = 2;
+// Presentation-only thresholds: whether a real, structured delta is
+// SURFACED as a "change" on My Board. These do NOT touch recommendation/
+// model thresholds anywhere -- purely "is this movement big enough to
+// bother telling the user about," to avoid alert fatigue on every
+// sub-point wiggle. 2 percentage points is chosen as noticeably more than
+// typical run-to-run float noise while still catching a real, meaningful
+// move; both probability and edge share it since edge is itself a
+// probability-scale quantity.
+const WATCH_DISPLAY_THRESHOLD_PROB = 0.02;
+const WATCH_DISPLAY_THRESHOLD_EDGE = 0.02;
+
 function loadWatchlist() {
   watchlist = new Set(safeGetJSON(WATCH_KEY, []));
   watchSnapshot = safeGetJSON(WATCH_SNAP_KEY, {});
@@ -359,20 +386,97 @@ function toggleWatch(id) {
   if (route === "watchlist") renderWatchlist();
 }
 function snapshotOf(p) {
-  return { status: p.recommendation_status, odds: p.market_odds, lineup_assumed: p.lineup_assumed,
-          started: !!(p.game_start && new Date(p.game_start) <= new Date()) };
+  return {
+    schema_version: WATCH_SNAPSHOT_SCHEMA_VERSION,
+    saved_at: new Date().toISOString(),
+    hit_probability: p.hit_probability,
+    market_odds: p.market_odds,
+    market_implied: p.market_implied,
+    market_edge: p.market_edge,
+    recommendation_status: p.recommendation_status,
+    lineup_assumed: p.lineup_assumed,
+    game_start: p.game_start,
+    started: !!(p.game_start && new Date(p.game_start) <= new Date()),
+  };
 }
-function watchChanges(p) {
-  const snap = watchSnapshot[p.id];
+// Migrates a raw stored snapshot (v1 shape, or a hand-built v2 shape) to
+// the one shape the rest of this module reads. Never crashes on an old
+// entry, never invents a historical value a v1 save never captured.
+function normalizeSnapshot(raw) {
+  if (!raw) return null;
+  if (raw.schema_version === WATCH_SNAPSHOT_SCHEMA_VERSION) return raw;
+  // v1 (no schema_version field at all): map what genuinely corresponds,
+  // leave the rest honestly absent.
+  return {
+    schema_version: 1,
+    saved_at: null,
+    hit_probability: null,
+    market_odds: raw.odds ?? null,
+    market_implied: null,
+    market_edge: null,
+    recommendation_status: raw.status ?? null,
+    lineup_assumed: raw.lineup_assumed ?? null,
+    game_start: null,
+    started: !!raw.started,
+  };
+}
+// "SINCE YOU SAVED THIS" -- a real, structured delta list, only for
+// fields the snapshot actually captured, only past the presentation
+// thresholds above (or, for categorical fields, any real change at all).
+// Deterioration is never hidden: a shrinking edge or a falling
+// probability renders exactly like an improving one, just with a
+// different arrow/word, because trust is the entire point of showing
+// this at all (direct instruction: "negative changes are part of what
+// makes My Board trustworthy").
+function sinceYouSavedChanges(p) {
+  const snap = normalizeSnapshot(watchSnapshot[p.id]);
   if (!snap) return [];
   const changes = [];
-  if (snap.odds !== p.market_odds && p.market_odds != null) changes.push("Price moved");
-  if (snap.status !== "top_pick" && p.recommendation_status === "top_pick") changes.push("Became a Top Pick");
-  if (snap.status !== p.recommendation_status) changes.push(`Now: ${statusLabel(p)}`);
-  if (snap.lineup_assumed === true && p.lineup_assumed === false) changes.push("Lineup confirmed");
+  if (snap.hit_probability != null && p.hit_probability != null
+      && Math.abs(p.hit_probability - snap.hit_probability) >= WATCH_DISPLAY_THRESHOLD_PROB) {
+    changes.push({ key: "probability", label: "Model", from: pctBig(snap.hit_probability), to: pctBig(p.hit_probability),
+      stronger: p.hit_probability > snap.hit_probability });
+  }
+  if (snap.market_odds != null && p.market_odds != null && snap.market_odds !== p.market_odds) {
+    changes.push({ key: "odds", label: "FanDuel", from: fmtOdds(snap.market_odds), to: fmtOdds(p.market_odds) });
+  }
+  if (snap.market_implied != null && p.market_implied != null
+      && Math.abs(p.market_implied - snap.market_implied) >= WATCH_DISPLAY_THRESHOLD_PROB) {
+    changes.push({ key: "implied", label: "Market implied", from: pct(snap.market_implied, 0), to: pct(p.market_implied, 0) });
+  }
+  if (snap.market_edge != null && p.market_edge != null
+      && Math.abs(p.market_edge - snap.market_edge) >= WATCH_DISPLAY_THRESHOLD_EDGE) {
+    const fmt = v => (v >= 0 ? "+" : "") + Math.round(v * 100) + " pts";
+    changes.push({ key: "edge", label: "Edge", from: fmt(snap.market_edge), to: fmt(p.market_edge),
+      stronger: p.market_edge > snap.market_edge });
+  }
+  if (snap.lineup_assumed === true && p.lineup_assumed === false) {
+    changes.push({ key: "lineup", label: "Lineup", from: "Projected", to: "Confirmed" });
+  }
+  if (snap.recommendation_status != null && snap.recommendation_status !== p.recommendation_status) {
+    changes.push({ key: "status", label: "Status", from: STATUS_META[snap.recommendation_status]?.label || snap.recommendation_status,
+      to: statusLabel(p) });
+  }
   const startedNow = !!(p.game_start && new Date(p.game_start) <= new Date());
-  if (!snap.started && startedNow) changes.push("Game started");
+  if (!snap.started && startedNow) changes.push({ key: "started", label: "Game", from: "Not started", to: "Started" });
   return changes;
+}
+// Compact one-line summary for the collapsed My Board row -- "N changes"
+// plus the most tellable single change, never every tiny wiggle spelled
+// out. Deliberately favors a probability/edge direction word (matches the
+// directive's own "Model stronger" / "Model weaker" examples) over a
+// flatter fact like "Price moved" when both are present.
+function changeSummary(changes) {
+  if (!changes.length) return null;
+  const strengthChange = changes.find(c => c.key === "probability" || c.key === "edge");
+  let headline;
+  if (strengthChange) {
+    headline = `${strengthChange.label} ${strengthChange.stronger ? "stronger" : "weaker"}`;
+  } else {
+    const first = changes[0];
+    headline = first.key === "status" ? `Now: ${first.to}` : `${first.label} changed`;
+  }
+  return changes.length > 1 ? `${changes.length} changes · ${headline}` : headline;
 }
 function updateWatchCount() {
   const el = document.getElementById("watchlist-count");
@@ -971,23 +1075,69 @@ function renderPerformance() {
 }
 
 // ══════════════════════════════════════════════════════════════════════
-//  WATCHLIST PAGE
+//  MY BOARD PAGE (route/DOM ids stay "watchlist" -- see the module header
+//  above for why). Mental model: "these are the props I'm considering
+//  tonight," with a real return-loop -- save, come back, see what
+//  changed, re-evaluate.
 // ══════════════════════════════════════════════════════════════════════
+const MY_BOARD_SORT_KEY = "fc_my_board_sort_v1";
+function myBoardSort() { return safeGet(MY_BOARD_SORT_KEY) || "game_time"; }
+function setMyBoardSort(v) { safeSet(MY_BOARD_SORT_KEY, v); }
+const MY_BOARD_SORTERS = {
+  game_time: (a, b) => new Date(a.p.game_start || 0) - new Date(b.p.game_start || 0),
+  probability: (a, b) => (b.p.hit_probability || 0) - (a.p.hit_probability || 0),
+  recently_changed: (a, b) => b.changes.length - a.changes.length,
+};
 function renderWatchlist() {
   const el = document.getElementById("page-watchlist");
   const items = [...watchlist].map(id => PROPS_BY_ID.get(id)).filter(Boolean);
   if (!items.length) {
-    el.innerHTML = `<div class="empty-state"><div class="es-icon">☆</div><h3>Your watchlist is empty</h3>
-      <p>Star any player or prop to track it here — you'll see when the price moves, the lineup confirms, or it becomes a Top Pick.</p>
+    el.innerHTML = `<div class="empty-state"><div class="es-icon">☆</div><h3>My Board is empty</h3>
+      <p>Save any player or prop you're considering tonight -- come back later and see exactly what changed since you saved it.</p>
       <div class="es-cta"><a class="btn btn-primary" href="#/props">Browse All Props</a></div></div>`;
     return;
   }
-  el.innerHTML = `<div class="section-head"><h2>Watchlist</h2><span class="section-sub">${items.length} saved</span></div>
-    <div class="prop-list">${items.map(p => {
-      const changes = watchChanges(p);
-      return `<div class="watchlist-item">${changes.length ? `<span class="watch-change-badge">${esc(changes[0])}</span>` : ""}${propRow(p)}</div>`;
-    }).join("")}</div>`;
+  const sortKey = myBoardSort();
+  const rows = items.map(p => ({ p, changes: sinceYouSavedChanges(p) }))
+    .sort(MY_BOARD_SORTERS[sortKey] || MY_BOARD_SORTERS.game_time);
+
+  el.innerHTML = `<div class="section-head"><h2>My Board</h2><span class="section-sub">${items.length} saved</span></div>
+    <div class="filter-bar">
+      <select class="filter-select" id="mb-sort" aria-label="Sort My Board">
+        <option value="game_time">Sort: Game time</option>
+        <option value="probability">Sort: Probability</option>
+        <option value="recently_changed">Sort: Recently changed</option>
+      </select>
+      <button class="filter-chip-btn" id="mb-clear-all">Clear all</button>
+    </div>
+    <div class="prop-list my-board-list">${rows.map(({ p, changes }) => myBoardItem(p, changes)).join("")}</div>`;
+  $("#mb-sort", el).value = sortKey;
+  $("#mb-sort", el).addEventListener("change", e => { setMyBoardSort(e.target.value); renderWatchlist(); });
+  $("#mb-clear-all", el).addEventListener("click", () => {
+    if (!confirm(`Remove all ${items.length} saved props from My Board?`)) return;
+    watchlist.clear();
+    watchSnapshot = {};
+    saveWatchlist();
+    updateWatchCount();
+    renderWatchlist();
+  });
   wireCardOpeners(el);
+}
+// One saved prop's card: the compact row (unchanged, same component every
+// other list uses) plus, only when something real changed, a genuine
+// "Since You Saved This" breakdown -- every changed field shown, never
+// hidden for a deterioration, and no field invented for one a v1 snapshot
+// never captured.
+function myBoardItem(p, changes) {
+  const summary = changeSummary(changes);
+  const sinceRows = changes.length ? `<div class="since-saved">
+    <div class="since-saved-label">Since you saved this</div>
+    ${changes.map(c => `<div class="since-row"><span class="since-field">${esc(c.label)}</span>
+      <span class="since-delta"><span class="since-from">${esc(String(c.from))}</span> → <span class="since-to">${esc(String(c.to))}</span>${
+        "stronger" in c ? ` <span class="since-arrow ${c.stronger ? "up" : "down"}">${c.stronger ? "↑" : "↓"}</span>` : ""
+      }</span></div>`).join("")}
+  </div>` : "";
+  return `<div class="watchlist-item">${summary ? `<div class="watch-change-badge">${esc(summary)}</div>` : ""}${propRow(p)}${sinceRows}</div>`;
 }
 
 // ══════════════════════════════════════════════════════════════════════
@@ -1080,31 +1230,107 @@ function weatherText(wx) {
   if (wx.wind_mph != null) bits.push(`wind ${wx.wind_mph}mph${wx.wind_effect ? " " + wx.wind_effect : ""}`);
   return bits.length ? bits.join(", ") : null;
 }
+
+// PRICE FRESHNESS STATE (detail-sheet PASS, 2026-08-25) -- market_fetch_state
+// et al. are real fields dashboard/refresh_prices.py has written into the
+// live overlay all along (MATCHED/NOT_POSTED/FETCH_FAILED/IN_PLAY -- see
+// that file's own real state assignments) and app.js's LIVE_PRICE_FIELDS
+// has merged them into every prop for just as long -- but nothing ever
+// actually displayed them. This maps those REAL states to a plain label;
+// it does not invent a state refresh_prices.py doesn't actually produce.
+// A stale/failed price must never look equally current as a verified one.
+function priceFreshnessState(p) {
+  if (p.market_odds == null) {
+    return { label: "Not posted", tone: "unposted", detail: "FanDuel hasn't posted a price for this line yet." };
+  }
+  const state = p.market_fetch_state;
+  if (state === "FETCH_FAILED") {
+    return { label: "Last known · price fetch failed", tone: "stale",
+      detail: "The last successful FanDuel fetch is shown below; the most recent check didn't succeed." };
+  }
+  if (state === "IN_PLAY") {
+    return { label: "In play", tone: "live", detail: "This game is live -- the price can move quickly." };
+  }
+  if (p.stale) {
+    return { label: "Last known", tone: "stale", detail: "This price is from an earlier check, not the most recent one." };
+  }
+  const checkedAgo = _agoText(p.market_fetch_checked_at || DATA.prices_updated_at || DATA.generated_at);
+  return { label: checkedAgo ? `Current · checked ${checkedAgo}` : "Current",
+    tone: "current", detail: null };
+}
+
+// WHY NOT A TOP PICK -- 2026-08-25. status_reasons is real, uncapped, and
+// already plain English straight from recommendation.classify_recommendation()
+// -- shown verbatim here, never re-derived or guessed at. Only surfaced for a
+// candidate that already looks interesting (an actual Lean/Value read, or a
+// Neutral with a real priced probability at or above the board's own 60%
+// eligibility floor -- MIN_LINE_PROB in generate_picks.py, not a number
+// invented here) so it answers "why isn't THIS a Top Pick" and doesn't
+// clutter every long-shot Neutral on the board.
+const WHY_NOT_TOP_PICK_MIN_PROB = 0.60;
+function whyNotTopPickReason(p) {
+  if (!p.recommendation_status || p.recommendation_status === "top_pick") return null;
+  const interesting = p.recommendation_status === "lean" || p.recommendation_status === "value"
+    || (p.hit_probability != null && p.hit_probability >= WHY_NOT_TOP_PICK_MIN_PROB);
+  if (!interesting) return null;
+  return (p.status_reasons || [])[0] || null;
+}
+
 function detailBody(p) {
   const eq = evidenceQuality(p);
   const game = gameContextFor(p);
-  const reasons = (p.why || []).map(w => `<div class="reason-item positive"><span class="r-icon">＋</span><span>${esc(capSentence(humanizeReason(w)))}</span></div>`).join("");
-  const watchouts = (p.watchouts || []).map(w => `<div class="reason-item negative"><span class="r-icon">－</span><span>${esc(capSentence(humanizeReason(w)))}</span></div>`).join("")
-    + (p.sample_n != null && p.sample_n > 0 && p.sample_n < 30
-      ? `<div class="reason-item negative"><span class="r-icon">－</span><span>This read leans on a smaller sample (${p.sample_n} games) — treat it with a little extra caution.</span></div>` : "")
-    + (p.stale ? `<div class="reason-item negative"><span class="r-icon">－</span><span>${esc((p.status_reasons || [])[0] || "Underlying data is stale.")}</span></div>` : "");
+  const freshness = priceFreshnessState(p);
 
-  // Real game-level facts already on the schedule entry for this prop's
-  // game_pk -- starters, park/weather, home-plate umpire -- shown here so
-  // the reasoning above ("Platoon: R bat vs LHP", "Opposing SP ERA 3.72")
-  // has the actual matchup it refers to right next to it, instead of only
-  // living on the separate Games page.
-  const contextRows = [];
+  // WHY IT COULD HIT: why[] verbatim -- real, generated by the same code
+  // that computes score, sign already correct (see
+  // frontend/detail_sheet_data_audit_2026-08-25.md).
+  const hitItems = (p.why || []).map(w => capSentence(humanizeReason(w)));
+
+  // WHY IT COULD MISS: watchouts[] verbatim, plus exactly two SAFE
+  // structured additions that need no fitted-weight sign to interpret --
+  // thin sample (existing) and an unconfirmed lineup slot (new). Never
+  // fabricated to force symmetry with the hit case -- an honest "no major
+  // concern" message ships when this list is genuinely empty.
+  const missItems = (p.watchouts || []).map(w => capSentence(humanizeReason(w)));
+  if (p.sample_n != null && p.sample_n > 0 && p.sample_n < 30) {
+    missItems.push(`This read leans on a smaller sample (${p.sample_n} games) — treat it with a little extra caution.`);
+  }
+  if (p.lineup_assumed === true) {
+    missItems.push("The batting order slot is still a projection, not a confirmed lineup — it could change before first pitch.");
+  }
+  if (p.stale) {
+    missItems.push((p.status_reasons || [])[0] || "Underlying data is stale.");
+  }
+
+  const whyNotTopPick = whyNotTopPickReason(p);
+
+  // OPPORTUNITY: a plain fact (batting order), not a graded judgment --
+  // see the audit doc for why the underlying cat_context component is NOT
+  // safely gradable Supportive/Concern without the fitted score weights.
+  // Batter markets only; never fabricated for a pitcher row.
+  const opportunityRows = [];
+  if (p.batting_order != null) {
+    opportunityRows.push(["Batting order", `${esc(String(p.batting_order))}${_ordinalSuffix(p.batting_order)} in the order`]);
+  }
+
+  // MATCHUP: real game-level facts already on the schedule entry for this
+  // prop's game_pk -- starters, park/weather, home-plate umpire.
+  const matchupRows = [];
   if (game) {
     if (game.away_sp || game.home_sp) {
-      contextRows.push(["Starters", `${esc(game.away_sp || "TBD")} @ ${esc(game.home_sp || "TBD")}`]);
+      matchupRows.push(["Starters", `${esc(game.away_sp || "TBD")} @ ${esc(game.home_sp || "TBD")}`]);
     }
     const wx = weatherText(game.weather);
-    if (wx) contextRows.push(["Park / weather", esc(wx)]);
+    if (wx) matchupRows.push(["Park / weather", esc(wx)]);
     if (game.umpire) {
-      contextRows.push(["HP umpire", `${esc(game.umpire.name)} — ${pct(game.umpire.k_pct, 1)} K, ${pct(game.umpire.bb_pct, 1)} BB rate`]);
+      matchupRows.push(["HP umpire", `${esc(game.umpire.name)} — ${pct(game.umpire.k_pct, 1)} K, ${pct(game.umpire.bb_pct, 1)} BB rate`]);
     }
   }
+
+  const renderReasons = (items, cls, icon) => items.length
+    ? `<div class="reason-list">${items.map(t => `<div class="reason-item ${cls}"><span class="r-icon">${icon}</span><span>${esc(t)}</span></div>`).join("")}</div>` : "";
+  const renderRows = rows => rows.length
+    ? `<div class="underlying-data">${rows.map(([k, v]) => `<div class="ud-item"><div class="k">${esc(k)}</div><div class="v" style="font-family:var(--font-body);font-weight:500;">${v}</div></div>`).join("")}</div>` : "";
 
   return `
     <div class="detail-head">
@@ -1114,33 +1340,52 @@ function detailBody(p) {
     <div class="detail-hero">
       <div>
         <div class="prob-big">${pctBig(p.hit_probability)}</div>
-        <div class="hero-metric-label">Full Count win probability</div>
+        <div class="hero-metric-label">Full Count's read</div>
       </div>
       <div class="hero-meta">
         <div><b>${esc(statusLabel(p))}</b></div>
-        <div>Market: ${fmtOdds(p.market_odds) ?? "not posted"} ${p.market_implied != null ? `(${pct(p.market_implied, 0)} implied${p.market_hold != null ? ", exact no-vig" : ""})` : ""}</div>
-        <div class="hero-value-line">Betting value: <b>${p.market_edge != null ? (p.market_edge >= 0 ? "+" : "") + Math.round(p.market_edge * 100) + " pts" : "—"}</b>
-          <span class="hero-value-note">— how much better this price pays than the win probability alone justifies. A different question from probability itself.</span></div>
+        <div>FanDuel: ${fmtOdds(p.market_odds) ?? "not posted"}</div>
       </div>
     </div>
     <div class="pc-chips" style="margin-bottom:18px;">${[statusChip(p), lineupChip(p), evidenceChip(p), staleChip(p), liveStaleChip(p), gradeChip(p)].filter(Boolean).join("")}</div>
 
-    ${reasons ? `<div class="detail-section"><h3>Why Full Count Likes It</h3><div class="reason-list">${reasons}</div></div>` : ""}
-    ${watchouts ? `<div class="detail-section"><h3>What Could Go Wrong</h3><div class="reason-list">${watchouts}</div></div>` : ""}
-    ${contextRows.length ? `<div class="detail-section"><h3>Game Context</h3>
-      <div class="underlying-data">${contextRows.map(([k, v]) => `<div class="ud-item"><div class="k">${esc(k)}</div><div class="v" style="font-family:var(--font-body);font-weight:500;">${v}</div></div>`).join("")}</div>
-    </div>` : ""}
+    ${renderReasons(hitItems, "positive", "＋") ? `<div class="detail-section"><h3>Why It Could Hit</h3>${renderReasons(hitItems, "positive", "＋")}</div>` : ""}
+    <div class="detail-section"><h3>Why It Could Miss</h3>${
+      missItems.length ? renderReasons(missItems, "negative", "－")
+        : `<p class="section-sub">No major model-side concern beyond normal baseball variance.</p>`
+    }</div>
+    ${whyNotTopPick ? `<div class="detail-section why-not-top-pick"><h3>Why Not a Top Pick?</h3>
+      <p class="section-sub">${esc(capSentence(whyNotTopPick))}</p></div>` : ""}
+    ${opportunityRows.length ? `<div class="detail-section"><h3>Opportunity</h3>${renderRows(opportunityRows)}</div>` : ""}
+    ${matchupRows.length ? `<div class="detail-section"><h3>Matchup</h3>${renderRows(matchupRows)}</div>` : ""}
+
+    <div class="detail-section">
+      <h3>Model vs. Market</h3>
+      <div class="model-vs-market">
+        <div class="mvm-row"><span class="mvm-label">Full Count</span><span class="mvm-value">${pctBig(p.hit_probability)}</span></div>
+        <div class="mvm-row"><span class="mvm-label">Market implied</span><span class="mvm-value">${p.market_implied != null ? pct(p.market_implied, 0) : "—"}</span></div>
+        <div class="mvm-row mvm-diff"><span class="mvm-label">Difference</span><span class="mvm-value">${p.market_edge != null ? (p.market_edge >= 0 ? "+" : "") + Math.round(p.market_edge * 100) + " pts" : "—"}</span></div>
+      </div>
+      <p class="section-sub">FanDuel ${fmtOdds(p.market_odds) ?? "— not posted"}${p.market_hold != null ? " · exact no-vig" : ""}</p>
+      <p class="price-freshness-note tone-${freshness.tone}">${esc(freshness.label)}${freshness.detail ? " — " + esc(freshness.detail) : ""}</p>
+    </div>
+
+    <div class="detail-section">
+      <h3>Evidence</h3>
+      ${renderRows([
+        ["Evidence quality", eq ? eq.label : "—"],
+        ["Sample size", p.sample_n ?? "—"],
+        ["95% interval", p.prob_ci ? pct(p.prob_ci[0], 0) + "–" + pct(p.prob_ci[1], 0) : "Not defensible for this line"],
+      ])}
+    </div>
 
     <div class="detail-section">
       <button class="underlying-toggle" id="detail-underlying-toggle" aria-expanded="false">
-        <span class="u-caret">▸</span> Underlying data
+        <span class="u-caret">▸</span> Deeper data
       </button>
       <div class="underlying-data" id="detail-underlying" hidden>
-        <div class="ud-item"><div class="k">Evidence quality</div><div class="v">${eq ? eq.label : "—"}</div></div>
-        <div class="ud-item"><div class="k">Sample size</div><div class="v">${p.sample_n ?? "—"}</div></div>
         <div class="ud-item"><div class="k">Base rate</div><div class="v">${pct(p.base_rate, 1)}</div></div>
         <div class="ud-item"><div class="k">Lift vs. base rate</div><div class="v">${p.lift != null ? (p.lift >= 0 ? "+" : "") + Math.round(p.lift * 100) + " pts" : "—"}</div></div>
-        <div class="ud-item"><div class="k">95% interval</div><div class="v">${p.prob_ci ? pct(p.prob_ci[0], 0) + "–" + pct(p.prob_ci[1], 0) : "Not defensible for this line"}</div></div>
         <div class="ud-item"><div class="k">Quality score</div><div class="v">${p.score ?? "—"}/100</div></div>
       </div>
     </div>
@@ -1150,40 +1395,184 @@ function detailBody(p) {
     </button>
   `;
 }
+function _ordinalSuffix(n) {
+  const rem100 = n % 100;
+  if (rem100 >= 11 && rem100 <= 13) return "th";
+  switch (n % 10) { case 1: return "st"; case 2: return "nd"; case 3: return "rd"; default: return "th"; }
+}
 
 // ══════════════════════════════════════════════════════════════════════
 //  GLOBAL SEARCH
 // ══════════════════════════════════════════════════════════════════════
+// REDESIGNED 2026-08-25: structured baseball navigation (Teams/Games/
+// Players/Props), not naive substring matching over one flat list. A
+// small, deterministic scoring function -- no fuzzy-search dependency,
+// per explicit direction "do not install a huge fuzzy search dependency."
+
+// Standard MLB abbreviations -> a real, DISTINCTIVE nickname substring of
+// that team's own name (never the exact full team-name string -- names
+// can legitimately vary/change; matching on the stable nickname portion
+// is robust to that, and still correctly finds "New York Yankees" for a
+// "nyy" query without hardcoding a name that could go stale).
+const TEAM_ABBR_ALIASES = {
+  ari: "diamondbacks", atl: "braves", bal: "orioles", bos: "red sox",
+  chc: "cubs", cws: "white sox", chw: "white sox", cin: "reds",
+  cle: "guardians", col: "rockies", det: "tigers", hou: "astros",
+  kc: "royals", laa: "angels", lad: "dodgers", mia: "marlins",
+  mil: "brewers", min: "twins", nym: "mets", nyy: "yankees",
+  oak: "athletics", ath: "athletics", phi: "phillies", pit: "pirates",
+  sd: "padres", sf: "giants", sea: "mariners", stl: "cardinals",
+  tb: "rays", tex: "rangers", tor: "blue jays", wsh: "nationals", was: "nationals",
+};
+// Market-intent aliases -- "customer navigation, not model logic": maps
+// what a baseball fan actually types to the real family key
+// familyFilterValue() already produces, never a new market invented here.
+const MARKET_ALIASES = {
+  hits: ["hits", "hit"],
+  total_bases: ["total bases", "bases", "2+ bases", "tb"],
+  home_runs: ["home run", "home runs", "hr", "homers", "homer"],
+  hits_runs_rbis: ["h+r+rbi", "hits runs rbis", "hits+runs+rbis"],
+  strikeouts: ["strikeouts", "strikeout", "ks", "k's"],
+  pitcher_outs: ["outs", "pitcher outs", "outs recorded"],
+  stolen_base: ["stolen base", "stolen bases", "steal", "steals", "sb"],
+};
+
+// Deterministic relevance score, most-specific first: exact match, then
+// prefix, then any-word-prefix (so "harper" ranks "Bryce Harper" highly),
+// then broad substring. Returns 0 (never shown) when nothing matches.
+function _matchScore(text, q) {
+  const t = (text || "").toLowerCase();
+  if (!q || !t) return 0;
+  if (t === q) return 100;
+  if (t.startsWith(q)) return 80;
+  if (t.split(/\s+/).some(w => w.startsWith(q))) return 60;
+  if (t.includes(q)) return 40;
+  return 0;
+}
+// A game's full searchable text, expanded with any abbreviation whose
+// nickname is a real substring of either real team name -- so "NYY BOS"
+// and "Yankees Red Sox" both resolve the same game.
+function _gameSearchText(g) {
+  const parts = [g.away_team || "", g.home_team || ""];
+  for (const [abbr, nickname] of Object.entries(TEAM_ABBR_ALIASES)) {
+    if ((g.away_team || "").toLowerCase().includes(nickname) || (g.home_team || "").toLowerCase().includes(nickname)) {
+      parts.push(abbr);
+    }
+  }
+  return parts.join(" ").toLowerCase();
+}
+function _marketFamilyForQuery(q) {
+  for (const [family, aliases] of Object.entries(MARKET_ALIASES)) {
+    if (aliases.some(a => a === q || q.includes(a))) return family;
+  }
+  return null;
+}
+
+// Pure ranking function, deliberately separate from DOM rendering so it's
+// directly testable. Returns { teams, games, players, props, marketFamily }.
+function runSearch(query, props, schedule) {
+  const q = (query || "").trim().toLowerCase();
+  if (q.length < 2) return { teams: [], games: [], players: [], props: [], marketFamily: null };
+
+  const visible = props || [];
+  const marketFamily = _marketFamilyForQuery(q);
+
+  // TEAMS: unique real team names from the schedule, scored by name match
+  // OR an abbreviation alias whose nickname the team name contains.
+  const teamNames = new Set();
+  for (const g of (schedule || [])) { if (g.away_team) teamNames.add(g.away_team); if (g.home_team) teamNames.add(g.home_team); }
+  const aliasNickname = TEAM_ABBR_ALIASES[q] || null;
+  const teams = [...teamNames]
+    .map(name => ({ name, score: Math.max(_matchScore(name, q), aliasNickname && name.toLowerCase().includes(aliasNickname) ? 90 : 0) }))
+    .filter(t => t.score > 0).sort((a, b) => b.score - a.score).slice(0, 3);
+
+  // GAMES: every word in the query must appear somewhere in the game's
+  // (alias-expanded) searchable text -- handles both "Yankees Red Sox"
+  // and "NYY BOS" without full NLP.
+  const qWords = q.split(/\s+/).filter(Boolean);
+  const games = (schedule || [])
+    .map(g => ({ g, text: _gameSearchText(g) }))
+    .filter(({ text }) => qWords.every(w => text.includes(w)))
+    .slice(0, 3).map(({ g }) => g);
+
+  // PLAYERS: unique players (by id) ranked by their best name match; a
+  // pure market-intent query (e.g. "home runs") correctly surfaces no
+  // players, since a market name won't match any real player's name.
+  const byPlayer = new Map();
+  for (const p of visible) {
+    const key = p.player_id ?? p.combo_player_ids ?? p.name;
+    const score = _matchScore(p.name, q);
+    if (score <= 0) continue;
+    const cur = byPlayer.get(key);
+    if (!cur || score > cur.score || (score === cur.score && (p.hit_probability || 0) > (cur.p.hit_probability || 0))) {
+      byPlayer.set(key, { p, score });
+    }
+  }
+  const players = [...byPlayer.values()].sort((a, b) => b.score - a.score).slice(0, 4).map(x => x.p);
+
+  // PROPS: a real market-intent query ranks that whole family by
+  // probability (the customer's actual question is "what's strongest for
+  // HR tonight," not text search); otherwise rank by name/team/prop text
+  // match, breaking ties toward the stronger real read.
+  let propResults;
+  if (marketFamily) {
+    propResults = visible.filter(p => p.stat === marketFamily)
+      .slice().sort((a, b) => (b.hit_probability || 0) - (a.hit_probability || 0));
+  } else {
+    propResults = visible
+      .map(p => ({ p, score: Math.max(_matchScore(p.name, q), _matchScore(p.team, q), _matchScore(p.matchup, q), _matchScore(p.prop, q) * 0.9) }))
+      .filter(x => x.score > 0)
+      .sort((a, b) => b.score - a.score || (b.p.hit_probability || 0) - (a.p.hit_probability || 0))
+      .map(x => x.p);
+  }
+  const propsTotal = propResults.length;
+  const propsShown = propResults.slice(0, 5);
+
+  return { teams, games, players, props: propsShown, propsTotal, marketFamily };
+}
+
 function initSearch() {
   const input = document.getElementById("global-search");
   const results = document.getElementById("search-results");
   const run = debounce(() => {
-    const q = input.value.trim().toLowerCase();
-    if (q.length < 2) { results.hidden = true; results.innerHTML = ""; return; }
-    const props = publicProps().filter(p =>
-      (p.name || "").toLowerCase().includes(q) || (p.team || "").toLowerCase().includes(q)
-      || (p.matchup || "").toLowerCase().includes(q)).slice(0, 8);
-    const games = (DATA.schedule || []).filter(g =>
-      `${g.away_team} ${g.home_team}`.toLowerCase().includes(q)).slice(0, 4);
-    if (!props.length && !games.length) {
-      results.innerHTML = `<div class="search-empty">No matches for "${esc(input.value)}"</div>`;
+    const query = input.value.trim();
+    if (query.length < 2) { results.hidden = true; results.innerHTML = ""; return; }
+    const { teams, games, players, props, propsTotal, marketFamily } = runSearch(query, publicProps(), DATA.schedule || []);
+    if (!teams.length && !games.length && !players.length && !props.length) {
+      results.innerHTML = `<div class="search-empty">No matches for "${esc(query)}"</div>`;
     } else {
       let html = "";
-      if (props.length) {
-        html += `<div class="search-group-label">Players &amp; Props</div>`;
-        html += props.map(p => `<button class="search-item" data-open="${p.id}">
-          <span>${esc(p.name)} — ${esc(p.prop)}</span><span class="s-sub">${pctBig(p.hit_probability)}</span></button>`).join("");
+      if (teams.length) {
+        html += `<div class="search-group-label">Teams</div>`;
+        html += teams.map(t => `<button class="search-item" data-team="${esc(t.name)}">
+          <span>${esc(t.name)}</span></button>`).join("");
       }
       if (games.length) {
         html += `<div class="search-group-label">Games</div>`;
         html += games.map(g => `<button class="search-item" data-game="${g.game_pk}">
           <span>${esc(g.away_team)} @ ${esc(g.home_team)}</span><span class="s-sub">${gameTimeLabel(g.game_start)}</span></button>`).join("");
       }
+      if (players.length) {
+        html += `<div class="search-group-label">Players</div>`;
+        html += players.map(p => `<button class="search-item" data-open="${p.id}">
+          <span>${esc(p.name)}</span><span class="s-sub">${esc(p.team || "")}</span></button>`).join("");
+      }
+      if (props.length) {
+        html += `<div class="search-group-label">${marketFamily ? "Props · " + esc(CATEGORY_LABEL_FOR_FAMILY(marketFamily)) : "Props"}</div>`;
+        html += props.map(p => `<button class="search-item" data-open="${p.id}">
+          <span>${esc(p.name)} — ${esc(p.prop)}</span><span class="s-sub">${pctBig(p.hit_probability)}</span></button>`).join("");
+        if (propsTotal > props.length) {
+          html += `<a class="search-item search-see-all" href="#/props${marketFamily ? "?family=" + marketFamily : ""}">See all ${propsTotal} matching props →</a>`;
+        }
+      }
       results.innerHTML = html;
     }
     results.hidden = false;
     $all("[data-open]", results).forEach(b => b.addEventListener("click", () => { openDetail(b.dataset.open); results.hidden = true; input.blur(); }));
     $all("[data-game]", results).forEach(b => b.addEventListener("click", () => { go("games"); results.hidden = true; input.blur(); }));
+    $all("[data-team]", results).forEach(b => b.addEventListener("click", () => {
+      input.value = b.dataset.team; results.hidden = true; input.blur(); go("props"); filters.search = b.dataset.team; renderProps();
+    }));
   }, 150);
   input.addEventListener("input", run);
   input.addEventListener("focus", run);
@@ -1193,6 +1582,10 @@ function initSearch() {
   input.addEventListener("keydown", e => {
     if (e.key === "Escape") { results.hidden = true; input.blur(); }
   });
+}
+function CATEGORY_LABEL_FOR_FAMILY(family) {
+  const f = (DATA.families || []).find(x => familyFilterValue(x.stat) === family);
+  return f ? f.label : family;
 }
 
 // ══════════════════════════════════════════════════════════════════════
