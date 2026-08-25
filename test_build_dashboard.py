@@ -854,6 +854,20 @@ assertEq(priceFreshnessState({market_odds: null}).tone, "unposted", "no market_o
 assertEq(priceFreshnessState({market_odds: -150, market_fetch_state: "FETCH_FAILED"}).tone, "stale",
   "FETCH_FAILED -> stale tone (last known, not treated as current)");
 assertEq(priceFreshnessState({market_odds: -150, market_fetch_state: "IN_PLAY"}).tone, "live", "IN_PLAY -> live tone");
+// 2026-08-25 release-readiness audit (Audit B): traced IN_PLAY to dashboard/refresh_prices.py's
+// real behavior -- once a game passes the pregame wagering cutoff, the price is FROZEN and
+// never re-fetched; only game-state fields keep advancing. The old wording ("In play... the
+// price can move quickly") falsely implied real-time in-game repricing this pipeline doesn't
+// do. Must say the game is live AND the price is a locked pregame snapshot -- never imply the
+// number itself is current/moving.
+const inPlayState = priceFreshnessState({market_odds: -150, market_fetch_state: "IN_PLAY"});
+assertTrue(!/can move quickly|^In play$/.test(inPlayState.label + " " + inPlayState.detail),
+  "IN_PLAY wording never claims the displayed price itself is moving/current",
+  "got label=" + inPlayState.label + " detail=" + inPlayState.detail);
+assertTrue(/locked|frozen|preserved/i.test(inPlayState.label + inPlayState.detail)
+  && /live/i.test(inPlayState.label),
+  "IN_PLAY wording says the GAME is live but the PRICE is a locked/frozen pregame snapshot -- both facts stated honestly, never conflated",
+  "got label=" + inPlayState.label + " detail=" + inPlayState.detail);
 assertEq(priceFreshnessState({market_odds: -150, stale: true}).tone, "stale", "board-level stale flag -> stale tone");
 assertEq(priceFreshnessState({market_odds: -150, market_fetch_state: "MATCHED", stale: false}).tone, "current",
   "a real, fresh, matched price -> current tone");

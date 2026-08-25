@@ -1266,7 +1266,19 @@ function priceFreshnessState(p) {
       detail: "The last successful FanDuel fetch is shown below; the most recent check didn't succeed." };
   }
   if (state === "IN_PLAY") {
-    return { label: "In play", tone: "live", detail: "This game is live -- the price can move quickly." };
+    // 2026-08-25 release-readiness audit: traced this state to
+    // dashboard/refresh_prices.py's real behavior -- once a game passes
+    // the pregame wagering cutoff, this pipeline FREEZES the price and
+    // never fetches a fresh one again (the prop is explicitly excluded
+    // from the re-fetch loop; only game-state fields keep advancing).
+    // The old wording ("In play... the price can move quickly") claimed
+    // real-time in-game pricing capability this pipeline does not have --
+    // it implied the NUMBER itself was live, when only the GAME is live
+    // and the number is a preserved pregame snapshot. Full Count has no
+    // live in-game repricing yet (that's the future Live differentiator,
+    // not built now) -- say so honestly instead of implying it exists.
+    return { label: "Game live · price locked pregame", tone: "live",
+      detail: "This price was locked in before first pitch and won't update while the game is live -- check FanDuel directly for a current in-play line." };
   }
   if (p.stale) {
     return { label: "Last known", tone: "stale", detail: "This price is from an earlier check, not the most recent one." };

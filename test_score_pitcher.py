@@ -166,6 +166,43 @@ check(any("Opposing team strikeout tendency unavailable" in w for w in c8_none["
       "the same information now lands in watchouts instead, still honest about what's missing, "
       "without naming internal providers by name", f"got {c8_none['watchouts']}")
 
+head("9. 2026-08-25 explanation-quality fix (release-readiness audit): L14 K% must not land "
+     "unqualified in `why` when it's actually a COLD recent-form reading -- real production "
+     "bug found via docs/data.json: Clay Holmes' L14 K% of 6.7% rendered under 'Why It Could "
+     "Hit' with no qualifying language. form_l14_raw = scale(l14_k_pct, 15, 32) is the "
+     "RECENT FORM component's own already-computed directional value -- same class of fix as "
+     "check 8's opposing-K% routing and the batter-side ev_note/barrel_note pattern.")
+
+c9_hot = call(l14_form={"Framber Valdez": {"l14_pa": 90, "l14_k_pct": 30.0}})
+check(any("L14 K% 30.0" in w and "hot recent form" in w for w in c9_hot["why"]),
+      "a genuinely hot L14 K% (scale>=65) is labeled 'hot recent form' in why",
+      f"got {c9_hot['why']}")
+
+c9_cold = call(l14_form={"Framber Valdez": {"l14_pa": 90, "l14_k_pct": 6.7}})
+check(not any("L14 K%" in w for w in c9_cold["why"]),
+      "REGRESSION GUARD: a cold L14 K% (Clay Holmes' real 6.7%) must NOT appear anywhere in "
+      "why -- the positive-reasons list -- since it isn't a reason to like the pick",
+      f"got {c9_cold['why']}")
+check(any("L14 K% 6.7" in w and "cold recent form" in w for w in c9_cold["watchouts"]),
+      "that same cold L14 K% instead lands in watchouts, honestly labeled",
+      f"got {c9_cold['watchouts']}")
+
+c9_neutral = call(l14_form={"Framber Valdez": {"l14_pa": 90, "l14_k_pct": 23.5}})
+check(any(w == "L14 K% 23.5 (90 PA)" for w in c9_neutral["why"]),
+      "a neutral-middle L14 K% stays an unqualified plain fact in why, exactly as before -- "
+      "no invented judgment where the real number doesn't clearly support one",
+      f"got {c9_neutral['why']}")
+
+c9_thin = call(l14_form={"Framber Valdez": {"l14_pa": 10, "l14_k_pct": 5.0}})
+check(any(w == "L14 K% 5.0 (10 PA)" for w in c9_thin["why"]),
+      "a thin-sample L14 K% (below the 15-PA low_sample_form floor) stays plain and "
+      "unqualified in why -- the separate 'L14 Statcast sample too thin' watchout already "
+      "covers the caveat, so this doesn't double up or over-interpret a noisy number",
+      f"got {c9_thin['why']}")
+check(not any("cold recent form" in w or "hot recent form" in w for w in c9_thin["why"] + c9_thin["watchouts"]),
+      "a thin sample never gets a hot/cold label at all -- form_l14_raw is None there, so "
+      "neither threshold branch can fire", f"got why={c9_thin['why']} watchouts={c9_thin['watchouts']}")
+
 n_pass = sum(1 for ok, _, _ in _results if ok)
 n_total = len(_results)
 print("\n" + "=" * 78)

@@ -288,6 +288,51 @@ check(p_skill_weak["hit_probability"] < p_skill_avg["hit_probability"] < p_skill
       f"{p_skill_weak['hit_probability']} < {p_skill_avg['hit_probability']} < "
       f"{p_skill_strong['hit_probability']}")
 
+head("5. 2026-08-25 release-readiness audit: wind blowing IN is a real, self-contradictory "
+     "placement bug found live in 163 currently-published props (docs/data.json) across "
+     "Hits/Total Bases/Doubles/Hits+Runs+RBIs -- the note's own text said 'power suppressed' "
+     "while it rendered under `why`, the positive-reasons list. Fixed by moving the wind-in "
+     "branch to watchouts (wind-out, whose own text is genuinely positive -- 'HR boost' -- "
+     "correctly stays in why).")
+
+wind_in_candidate = build(wind_dir=0)
+check(not any("Wind blowing IN" in w for w in wind_in_candidate["why"]),
+      "REGRESSION GUARD: a self-contradictory 'power suppressed' note must never appear in "
+      "why -- the positive-reasons list", f"why={wind_in_candidate['why']}")
+check(any("Wind blowing IN" in w and "power suppressed" in w for w in wind_in_candidate["watchouts"]),
+      "...it appears in watchouts instead, where its own negative text is honestly placed",
+      f"watchouts={wind_in_candidate['watchouts']}")
+
+wind_out_candidate = build(wind_dir=180)
+check(any("Wind blowing OUT" in w and "HR boost" in w for w in wind_out_candidate["why"]),
+      "wind blowing OUT correctly stays in why -- its own text is genuinely positive",
+      f"why={wind_out_candidate['why']}")
+check(not any("Wind blowing OUT" in w for w in wind_out_candidate["watchouts"]),
+      "wind blowing OUT never lands in watchouts", f"watchouts={wind_out_candidate['watchouts']}")
+
+head("6. 2026-08-25 release-readiness audit: season wRC+ closed proactively (not yet observed "
+     "live, but the identical unconditional-append shape as the fixed bugs above).")
+
+wrc_weak = gp.score_batter(
+    {"name": "Weak Bat", "id": 700, "team": "Away", "bats": "R", "order": 5},
+    GM, {"ERA": 4.25}, None, "R", {},
+    {"wRC+": 60, "ISO": 0.10, "Barrel%": 5}, {"avg_EV": 88.5, "barrel_pct": 8, "PA": 20},
+    {}, {}, {}, extras={}, sharp_bias={"implied_total": 4.5})
+check(not any("Season wRC+ 60" in w for w in wrc_weak["why"]),
+      "REGRESSION GUARD: a genuinely below-average wRC+ (60) must not land in why",
+      f"why={wrc_weak['why']}")
+check(any("Season wRC+ 60" in w and "below-average" in w for w in wrc_weak["watchouts"]),
+      "...it lands in watchouts instead, honestly labeled", f"watchouts={wrc_weak['watchouts']}")
+
+wrc_strong = gp.score_batter(
+    {"name": "Strong Bat", "id": 701, "team": "Away", "bats": "R", "order": 5},
+    GM, {"ERA": 4.25}, None, "R", {},
+    {"wRC+": 150, "ISO": 0.22, "Barrel%": 12}, {"avg_EV": 88.5, "barrel_pct": 8, "PA": 20},
+    {}, {}, {}, extras={}, sharp_bias={"implied_total": 4.5})
+check(any("Season wRC+ 150" in w and "above-average" in w for w in wrc_strong["why"]),
+      "a genuinely above-average wRC+ (150) is labeled as such in why",
+      f"why={wrc_strong['why']}")
+
 n_pass = sum(1 for ok, _, _ in _results if ok)
 n_total = len(_results)
 print("\n" + "=" * 78)
