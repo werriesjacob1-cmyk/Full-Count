@@ -144,6 +144,35 @@ class EqualVolumeRankingComparisonTests(unittest.TestCase):
         result = pom.equal_volume_ranking_comparison(comparisons, min_line_prob=0.60)
         self.assertEqual(result["n_current_selected"], 0)
 
+    def test_tied_challenger_prob_at_the_selection_boundary_is_counted_by_identity_not_value(self):
+        """Real bug found and fixed 2026-08-25 during a methodological
+        review ahead of the (not-yet-run) decisive disagreement test:
+        identity used to be a VALUE tuple (order, current_prob,
+        challenger_prob, outcome). Ties on that tuple are common by
+        construction in the disagreement work -- challenger_prob is a
+        shared empirical rate across an entire (bucket, tier) cell -- so
+        multiple genuinely distinct candidates can carry the identical
+        tuple. When such a tie straddles the top-N cutoff, the old code
+        treated "does this exact tuple exist ANYWHERE in
+        challenger_selected" as true for every tied candidate, silently
+        undercounting `removed` and overcounting `overlap`. This reproduces
+        that exact scenario: 4 candidates share one tuple and are all
+        current-selected; 2 higher-challenger-prob candidates outrank them
+        and are NOT current-selected. Only 2 of the 4 tied candidates
+        should genuinely survive the top-4 challenger cut."""
+        # order shares the SAME value across all of these too (default=1) --
+        # under the old value-tuple identity this was the worst case
+        # (every field tied); id()-based identity is unaffected either way.
+        tied = [self._comp(0.65, 0.50, 1) for _ in range(4)]
+        higher_not_current = [self._comp(0.10, 0.99, 1) for _ in range(2)]
+        comparisons = tied + higher_not_current
+
+        result = pom.equal_volume_ranking_comparison(comparisons, min_line_prob=0.60)
+        self.assertEqual(result["n_current_selected"], 4)
+        self.assertEqual(result["n_overlap"], 2)
+        self.assertEqual(result["n_removed_by_challenger"], 2)
+        self.assertEqual(result["n_added_by_challenger"], 2)
+
 
 class BuildReportTests(unittest.TestCase):
     def test_train_holdout_split_by_year(self):

@@ -153,15 +153,26 @@ def equal_volume_ranking_comparison(comparisons, min_line_prob=MIN_LINE_PROB):
     ranked_by_challenger = sorted(comparisons, key=lambda c: c["challenger_prob"], reverse=True)
     challenger_selected = ranked_by_challenger[:n]
 
-    def _id(c):
-        return (c.get("order"), c["current_prob"], c["challenger_prob"], c["outcome"])
+    # Real bug found and fixed 2026-08-25 during a methodological review of
+    # the (not-yet-run) decisive disagreement test: identity here used to be
+    # a VALUE tuple (order, current_prob, challenger_prob, outcome). Ties on
+    # that tuple are common by construction in the disagreement work
+    # specifically -- challenger_prob is a shared empirical rate across an
+    # entire (probability_bucket, conflict_tier) cell, so many genuinely
+    # distinct candidates can carry the identical tuple. When a tie straddles
+    # the top-N cutoff, the OLD code treated "does this exact tuple exist
+    # ANYWHERE in challenger_selected" as true for every tied candidate, not
+    # just the ones actually cut in -- silently undercounting `removed` and
+    # overcounting `overlap`. `id(c)` (Python object identity) is exact and
+    # free: every element of current_selected/challenger_selected/ranked_by_
+    # challenger is the SAME dict object as in `comparisons` (sorting/slicing
+    # never copies), so this has zero risk of a false match and zero cost.
+    current_ids = {id(c) for c in current_selected}
+    challenger_ids = {id(c) for c in challenger_selected}
 
-    current_ids = {_id(c) for c in current_selected}
-    challenger_ids = {_id(c) for c in challenger_selected}
-
-    overlap = [c for c in current_selected if _id(c) in challenger_ids]
-    removed = [c for c in current_selected if _id(c) not in challenger_ids]  # in current, not challenger
-    added = [c for c in challenger_selected if _id(c) not in current_ids]    # in challenger, not current
+    overlap = [c for c in current_selected if id(c) in challenger_ids]
+    removed = [c for c in current_selected if id(c) not in challenger_ids]  # in current, not challenger
+    added = [c for c in challenger_selected if id(c) not in current_ids]    # in challenger, not current
 
     def _hit_rate(items):
         return _rate(sum(c["outcome"] for c in items), len(items))
