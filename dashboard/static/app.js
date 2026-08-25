@@ -415,7 +415,11 @@ function refreshSummary() {
 //  render -- no server, no accounts, exactly what a static localStorage-
 //  only architecture can honestly support. Route/storage keys keep their
 //  original "watchlist" names (URLs and existing localStorage entries
-//  stay valid); only user-facing text says "My Board."
+//  stay valid); only user-facing text says "My Board." Real bug, found
+//  2026-08-25: the save/detail-sheet star button's own label text was a
+//  stray leftover that never got the "My Board" rename applied to it --
+//  "Save to Watchlist"/"Saved to Watchlist" -- fixed to match this rule
+//  the module itself already states.
 //
 //  SNAPSHOT VERSIONING (2026-08-25 expansion). v1 (pre-2026-08-25,
 //  already live in real users' localStorage) only ever captured
@@ -1246,6 +1250,28 @@ function renderWatchlist() {
   const el = document.getElementById("page-watchlist");
   const items = [...watchlist].map(id => PROPS_BY_ID.get(id)).filter(Boolean);
   if (!items.length) {
+    // Real bug, found 2026-08-25: a saved id's canonical prop id bakes in
+    // game_pk (see canonical_prop_id() / prop_identity_key() in
+    // dashboard/live_state.py), so a prop saved on an earlier day can NEVER
+    // resolve against today's PROPS_BY_ID again -- that game_pk simply
+    // won't recur. Before this fix, that made the "My Board" nav badge
+    // (updateWatchCount(), which reads the raw watchlist.size -- every id
+    // ever saved) silently disagree with this page: the badge could say
+    // "3" while the page claimed "My Board is empty," with nothing telling
+    // the viewer why. Auto-pruning the stale ids was considered and
+    // rejected: a prop can ALSO temporarily drop out of today's OWN board
+    // mid-day (a late scratch, a lineup-window gap -- generate_picks.py's
+    // own docs: "a player who doesn't end up in a real lineup simply isn't
+    // generated as a candidate on the next rebuild"), and silently deleting
+    // a user's save the moment that happens, with no way back, is worse
+    // than an honest explanation. So: never delete anything, just tell the
+    // truth about why the page looks empty when the badge doesn't.
+    if (watchlist.size > 0) {
+      el.innerHTML = `<div class="empty-state"><div class="es-icon">☆</div><h3>None of your ${watchlist.size} saved prop${watchlist.size === 1 ? "" : "s"} ${watchlist.size === 1 ? "is" : "are"} on tonight's board</h3>
+        <p>They're either from an earlier day (a saved prop is tied to that exact game and can't carry over) or no longer a candidate tonight. Nothing was deleted -- save fresh picks from tonight's board below.</p>
+        <div class="es-cta"><a class="btn btn-primary" href="#/props">Browse All Props</a></div></div>`;
+      return;
+    }
     el.innerHTML = `<div class="empty-state"><div class="es-icon">☆</div><h3>My Board is empty</h3>
       <p>Save any player or prop you're considering tonight -- come back later and see exactly what changed since you saved it.</p>
       <div class="es-cta"><a class="btn btn-primary" href="#/props">Browse All Props</a></div></div>`;
@@ -1361,7 +1387,7 @@ function openDetail(id) {
   sheet.setAttribute("aria-hidden", "false");
   document.body.style.overflow = "hidden";
   const star = $("#detail-star");
-  if (star) star.addEventListener("click", () => { toggleWatch(id); star.setAttribute("aria-pressed", String(watchlist.has(id))); star.querySelector(".star-label").textContent = watchlist.has(id) ? "Saved to Watchlist" : "Save to Watchlist"; });
+  if (star) star.addEventListener("click", () => { toggleWatch(id); star.setAttribute("aria-pressed", String(watchlist.has(id))); star.querySelector(".star-label").textContent = watchlist.has(id) ? "Saved to My Board" : "Save to My Board"; });
   $("#detail-underlying-toggle")?.addEventListener("click", (e) => {
     const box = document.getElementById("detail-underlying");
     const open = box.hidden;
@@ -1585,7 +1611,7 @@ function detailBody(p) {
     </div>
 
     <button class="btn watchlist-toggle-btn" id="detail-star" aria-pressed="${watchlist.has(p.id)}">
-      <span class="star-label">${watchlist.has(p.id) ? "Saved to Watchlist" : "Save to Watchlist"}</span>
+      <span class="star-label">${watchlist.has(p.id) ? "Saved to My Board" : "Save to My Board"}</span>
     </button>
   `;
 }
