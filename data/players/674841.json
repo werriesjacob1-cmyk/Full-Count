@@ -212,6 +212,65 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-25",
+      "evaluations": [
+        {
+          "prop": "Over 4.5 Strikeouts",
+          "type": "pitcher",
+          "score": 49.3,
+          "notable_signals": 0,
+          "matchup": "Colorado Rockies @ Washington Nationals",
+          "game_pk": 822693,
+          "team": "Washington Nationals",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_k_pct": 58.0,
+            "same_hand_ratio": 57.1429,
+            "l14_k_pct": 34.7059,
+            "env_neutral": 50.0
+          },
+          "hit_probability": 0.4626,
+          "raw_hit_probability": 0.4626,
+          "lift": -0.0494,
+          "reliability": "B",
+          "sample_n": 11,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 4.5,
+            "needs": 5
+          }
+        },
+        {
+          "prop": "Over 14.5 Outs Recorded",
+          "type": "pitcher",
+          "score": 17.5,
+          "notable_signals": 0,
+          "matchup": "Colorado Rockies @ Washington Nationals",
+          "game_pk": 822693,
+          "team": "Washington Nationals",
+          "side": "home",
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "outs_rate": 0.555,
+            "avg_outs_per_start": 14.55
+          },
+          "hit_probability": 0.555,
+          "raw_hit_probability": null,
+          "lift": -0.184,
+          "reliability": "B",
+          "sample_n": 11,
+          "projection": {
+            "stat": "pitcher_outs",
+            "value": 14.5,
+            "needs": 15
+          }
+        }
+      ]
     }
   ]
 }

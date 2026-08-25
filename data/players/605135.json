@@ -123,6 +123,65 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-25",
+      "evaluations": [
+        {
+          "prop": "Over 3.5 Strikeouts",
+          "type": "pitcher",
+          "score": 49.9,
+          "notable_signals": 0,
+          "matchup": "Baltimore Orioles @ St. Louis Cardinals",
+          "game_pk": 823016,
+          "team": "Baltimore Orioles",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_k_pct": 36.0,
+            "same_hand_ratio": 61.1111,
+            "l14_k_pct": 22.3529,
+            "env_neutral": 50.0
+          },
+          "hit_probability": 0.6025,
+          "raw_hit_probability": 0.6423,
+          "lift": -0.0895,
+          "reliability": "B",
+          "sample_n": 12,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 3.5,
+            "needs": 4
+          }
+        },
+        {
+          "prop": "Over 13.5 Outs Recorded",
+          "type": "pitcher",
+          "score": 48.4,
+          "notable_signals": 0,
+          "matchup": "Baltimore Orioles @ St. Louis Cardinals",
+          "game_pk": 823016,
+          "team": "Baltimore Orioles",
+          "side": "away",
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "outs_rate": 0.7082,
+            "avg_outs_per_start": 14.25
+          },
+          "hit_probability": 0.7082,
+          "raw_hit_probability": null,
+          "lift": -0.083,
+          "reliability": "B",
+          "sample_n": 12,
+          "projection": {
+            "stat": "pitcher_outs",
+            "value": 13.5,
+            "needs": 14
+          }
+        }
+      ]
     }
   ]
 }

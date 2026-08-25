@@ -212,6 +212,65 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-25",
+      "evaluations": [
+        {
+          "prop": "Over 4.5 Strikeouts",
+          "type": "pitcher",
+          "score": 47.6,
+          "notable_signals": 0,
+          "matchup": "Texas Rangers @ Chicago White Sox",
+          "game_pk": 824556,
+          "team": "Chicago White Sox",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_k_pct": 58.0,
+            "same_hand_ratio": 33.3333,
+            "l14_k_pct": 39.4118,
+            "env_neutral": 50.0
+          },
+          "hit_probability": 0.5012,
+          "raw_hit_probability": 0.5012,
+          "lift": -0.0108,
+          "reliability": "A",
+          "sample_n": 24,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 4.5,
+            "needs": 5
+          }
+        },
+        {
+          "prop": "Over 16.5 Outs Recorded",
+          "type": "pitcher",
+          "score": 0,
+          "notable_signals": 0,
+          "matchup": "Texas Rangers @ Chicago White Sox",
+          "game_pk": 824556,
+          "team": "Chicago White Sox",
+          "side": "home",
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "outs_rate": 0.3344,
+            "avg_outs_per_start": 15.04
+          },
+          "hit_probability": 0.3344,
+          "raw_hit_probability": null,
+          "lift": -0.1708,
+          "reliability": "A",
+          "sample_n": 24,
+          "projection": {
+            "stat": "pitcher_outs",
+            "value": 16.5,
+            "needs": 17
+          }
+        }
+      ]
     }
   ]
 }

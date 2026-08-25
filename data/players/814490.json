@@ -36,6 +36,39 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-25",
+      "evaluations": [
+        {
+          "prop": "Over 4.5 Strikeouts",
+          "type": "pitcher",
+          "score": 47.6,
+          "notable_signals": 0,
+          "matchup": "Houston Astros @ New York Yankees",
+          "game_pk": 823505,
+          "team": "Houston Astros",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_k_pct": 79.0,
+            "same_hand_ratio": 5.5556,
+            "l14_k_pct": 42.3529,
+            "env_neutral": 50.0
+          },
+          "hit_probability": 0.5285,
+          "raw_hit_probability": 0.5285,
+          "lift": 0.0165,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 4.5,
+            "needs": 5
+          }
+        }
+      ]
     }
   ]
 }

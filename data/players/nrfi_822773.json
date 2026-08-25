@@ -1,0 +1,37 @@
+{
+  "player_id": "nrfi_822773",
+  "name": "Kansas City Royals @ Toronto Blue Jays \u2014 1st Inning (Both Teams)",
+  "snapshots": [
+    {
+      "date": "2026-08-25",
+      "evaluations": [
+        {
+          "prop": "A run scores in the 1st (either team)",
+          "type": "game",
+          "score": 66.7,
+          "notable_signals": 0,
+          "matchup": "Kansas City Royals @ Toronto Blue Jays",
+          "game_pk": 822773,
+          "team": null,
+          "side": "both",
+          "lean": "YRFI",
+          "combo_player_ids": null,
+          "signals": {
+            "home_team_scores_p": 0.3453,
+            "away_team_scores_p": 0.3326,
+            "fi_n_starts": 12.0
+          },
+          "hit_probability": 0.5631,
+          "raw_hit_probability": null,
+          "lift": 0.0615,
+          "reliability": "B",
+          "sample_n": 12,
+          "projection": {
+            "stat": "nrfi_combined",
+            "value": 56.3
+          }
+        }
+      ]
+    }
+  ]
+}
