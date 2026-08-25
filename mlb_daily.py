@@ -1220,9 +1220,44 @@ def _bullpen_fetch_one(args):
         # old `teamId=` call raised "unexpected keyword argument" on current
         # mlb-statsapi (verified against installed 1.9.0 signature).
         schedule=statsapi.schedule(start_date=L7_START,end_date=TODAY,team=team_id)
-        game_ids=[g["game_id"] for g in schedule[:7]]
-        usage=defaultdict(lambda:{"IP":0.0,"apps":0,"pitches":0})
-        for gid in game_ids[:5]:
+        # [:7] here is a sanity cap against an unexpectedly large schedule()
+        # result, not a real truncation of the L7 window -- see the real bug
+        # this replaced, below.
+        games=[(g["game_id"], g.get("game_date")) for g in schedule[:7]]
+        # REAL BUG FOUND LIVE (2026-08-25, release-readiness audit): every
+        # pitcher in the box score -- including that game's OWN STARTER --
+        # was being folded into `usage`, the same dict downstream code and
+        # customer-facing text both call "relievers" ("X/Y relievers over 60
+        # pitches in L7"). Verified against several real box scores
+        # (statsapi.boxscore_data): a team's pitchers are always listed in
+        # the order they appeared, starter first -- the header row
+        # (personId==0) was already skipped; the very next entry is always
+        # the starter, whether or not he got an official decision (a
+        # reliever's own `note` field is empty unless he picked up a W/L/S;
+        # the starter's IP/pitch-count are also always the largest in the
+        # game, consistent with this). A starter commonly clears 60+
+        # pitches, so this silently inflated both `tracked` (the "how many
+        # relievers do we have a read on" denominator) and `fatigued` (the
+        # "how many are gassed" numerator) with a pitcher who was never
+        # actually part of bullpen availability at all. Excluded him
+        # explicitly by position (first non-header entry) rather than an
+        # IP/pitch-count heuristic, which would misclassify a real bullpen
+        # game/opener the same way a name-based guess would.
+        #
+        # Also folded in the real "L7" window bug found alongside it: this
+        # used to request up to 7 games of schedule but only ever fetch box
+        # scores for the first 5 (`game_ids[:5]`) -- an undocumented
+        # truncation that silently dropped up to 2 real recent games while
+        # still being labeled "L7" everywhere downstream. Now processes
+        # every game actually returned for the L7_START..TODAY window.
+        #
+        # Each reliever's individual per-game appearances are now preserved
+        # (date/IP/pitches), not just the L7-aggregate totals -- needed for
+        # a customer-facing "name real relievers, not vague copy" pass;
+        # existing readers of IP/apps/pitches are unaffected, they just
+        # don't read the added "games" key.
+        usage=defaultdict(lambda:{"IP":0.0,"apps":0,"pitches":0,"games":[]})
+        for gid, gdate in games:
             try:
                 box=statsapi.boxscore_data(gid)
                 # box["away"]/box["home"]["pitchers"] is just a list of person IDs, not
@@ -1233,8 +1268,10 @@ def _bullpen_fetch_one(args):
                 # as if it were a dict of stat objects — it never was, on any version.
                 away_id=box.get("away",{}).get("team",{}).get("id")
                 side_key="awayPitchers" if away_id==team_id else "homePitchers"
-                for pdata in box.get(side_key,[]):
-                    if not pdata.get("personId"): continue  # skip team-header row
+                pitchers=[p for p in box.get(side_key,[]) if p.get("personId")]
+                for idx, pdata in enumerate(pitchers):
+                    if idx == 0:
+                        continue  # that game's starter, not a reliever -- see above
                     pname=pdata.get("name","?").split(",")[0].strip()
                     try: ip=float(pdata.get("ip",0) or 0)
                     except (TypeError,ValueError): ip=0.0
@@ -1243,6 +1280,7 @@ def _bullpen_fetch_one(args):
                     usage[pname]["IP"]+=ip
                     usage[pname]["apps"]+=1
                     usage[pname]["pitches"]+=pitches
+                    usage[pname]["games"].append({"date": gdate, "ip": ip, "pitches": pitches})
             except Exception: pass
         return (team_name, usage, None)
     except Exception as e:

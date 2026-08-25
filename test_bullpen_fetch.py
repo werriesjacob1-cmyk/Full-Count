@@ -1,0 +1,168 @@
+#!/usr/bin/env python3
+"""test_bullpen_fetch.py — regression coverage for the real bullpen-fatigue
+defect found during the 2026-08-2X data-integrity audit:
+_bullpen_fetch_one() (mlb_daily.py, reused directly by generate_picks.py's
+fetch_bullpen_scores()) was folding a team's OWN STARTING PITCHER into the
+same `usage` dict downstream code and customer-facing text both call
+"relievers" -- a starter commonly clears the 60-pitch fatigue threshold, so
+this silently inflated both the "how many relievers do we have a read on"
+denominator (`tracked`) and the "how many are gassed" numerator
+(`fatigued`). bullpen_fatigue_pct (built from tracked/fatigued) feeds
+directly into score_batter()'s `context` component at 30% weight, and
+`context` itself is 64% of the real fitted batter formula -- not a
+cosmetic-copy bug.
+
+Also covers the paired "L7" window bug: schedule() was asked for up to 7
+games but box scores were only ever fetched for the first 5
+(`game_ids[:5]`), silently dropping up to 2 real recent games while still
+being labeled "L7" everywhere downstream.
+
+Mocked boundary, same philosophy as the rest of this suite:
+statsapi.schedule()/statsapi.boxscore_data() are real MLB Stats API network
+calls -- hand-built fixture data stands in for them here, shaped exactly
+like the real box scores this fix was verified against live (see
+mlb_daily.py's own comment for the real games checked).
+
+    /tmp/mlbvenv/bin/python3 test_bullpen_fetch.py
+"""
+import sys
+from unittest import mock
+
+sys.path.insert(0, __file__.rsplit("/", 1)[0] if "/" in __file__ else ".")
+
+VERBOSE = "-v" in sys.argv or "--verbose" in sys.argv
+_results = []
+
+
+def check(cond, msg, detail=""):
+    _results.append((bool(cond), msg, detail))
+    if VERBOSE or not cond:
+        tag = "PASS" if cond else "FAIL"
+        line = "  [%s] %s" % (tag, msg)
+        if detail and (VERBOSE or not cond):
+            line += "\n         " + detail
+        print(line)
+
+
+def head(t):
+    if VERBOSE:
+        print()
+    print("-- %s" % t)
+
+
+import mlb_daily as m  # noqa: E402
+
+TEAM_ID = 116  # Detroit Tigers, arbitrary real id
+
+
+def _header_row():
+    return {"namefield": "Tigers Pitchers", "ip": "IP", "h": "H", "r": "R", "er": "ER",
+            "bb": "BB", "k": "K", "hr": "HR", "era": "ERA", "p": "P", "s": "S",
+            "name": "Tigers Pitchers", "personId": 0, "note": ""}
+
+
+def _pitcher_row(name, ip, pitches, note=""):
+    return {"namefield": f"{name}  {note}".strip(), "ip": str(ip), "p": str(pitches),
+            "name": name, "personId": hash(name) % 900000 + 100000, "note": note}
+
+
+def _box_for(game_id, starter_pitches, reliever_rows, team_is_home=True):
+    """reliever_rows: list of (name, pitches) tuples, real relievers only."""
+    pitchers = [_header_row(), _pitcher_row("Starter One", 6.0, starter_pitches, "(W, 8-2)")]
+    for name, pitches in reliever_rows:
+        pitchers.append(_pitcher_row(name, 1.0, pitches))
+    side_key = "homePitchers" if team_is_home else "awayPitchers"
+    other_key = "awayPitchers" if team_is_home else "homePitchers"
+    return {
+        "away": {"team": {"id": 999 if team_is_home else TEAM_ID}},
+        "home": {"team": {"id": TEAM_ID if team_is_home else 999}},
+        side_key: pitchers,
+        other_key: [_header_row()],
+    }
+
+
+head("1. REGRESSION GUARD: a game's own starter never lands in `usage`, the dict "
+     "downstream code and customer text both call 'relievers' -- real bug, a "
+     "starter who threw 95 pitches used to silently count as a fatigued reliever.")
+
+games = [{"game_id": 1001, "game_date": "2026-08-19"}]
+box = _box_for(1001, starter_pitches=95, reliever_rows=[("Rainey", 31), ("Holton", 15)])
+
+with mock.patch.object(m.statsapi, "schedule", return_value=games), \
+     mock.patch.object(m.statsapi, "boxscore_data", return_value=box):
+    team_name, usage, err = m._bullpen_fetch_one(("Detroit Tigers", TEAM_ID))
+
+check(err is None, "no error on a well-formed fixture", f"got err={err}")
+check("Starter One" not in usage,
+      "REGRESSION GUARD: the starter (95 pitches, would trip the >60 fatigue threshold) "
+      "must NOT appear in usage at all", f"got usage keys={list(usage.keys())}")
+check("Rainey" in usage and "Holton" in usage,
+      "the two real relievers are still tracked correctly", f"got {list(usage.keys())}")
+check(usage["Rainey"]["pitches"] == 31 and usage["Holton"]["pitches"] == 15,
+      "real relievers' pitch counts are untouched by the starter exclusion",
+      f"got Rainey={usage['Rainey']} Holton={usage['Holton']}")
+
+head("2. Downstream fatigue math (generate_picks.fetch_bullpen_scores' own shape) is "
+     "honest once the starter is excluded: tracked=2 real relievers, fatigued=0 "
+     "(neither cleared 60) -- the old bug would have reported tracked=3, fatigued=1 "
+     "(the 95-pitch starter miscounted as a fatigued reliever).")
+
+fatigued = sum(1 for u in usage.values() if u["pitches"] > 60)
+tracked = len(usage)
+check(tracked == 2, "tracked == 2 (only the real relievers)", f"got tracked={tracked}")
+check(fatigued == 0, "fatigued == 0 (neither real reliever cleared 60 pitches)",
+      f"got fatigued={fatigued}")
+
+head("3. REGRESSION GUARD: the 'L7' window processes every game returned for the "
+     "L7 date range, not just the first 5 -- real bug, game_ids[:5] silently "
+     "dropped up to 2 real recent games while the feature stayed labeled 'L7'.")
+
+six_games = [{"game_id": 2000 + i, "game_date": f"2026-08-{14+i}"} for i in range(6)]
+boxes = {2000 + i: _box_for(2000 + i, starter_pitches=90,
+                             reliever_rows=[(f"Reliever{i}", 20)]) for i in range(6)}
+
+def _boxscore_side_effect(gid):
+    return boxes[gid]
+
+with mock.patch.object(m.statsapi, "schedule", return_value=six_games), \
+     mock.patch.object(m.statsapi, "boxscore_data", side_effect=_boxscore_side_effect):
+    _, usage6, err6 = m._bullpen_fetch_one(("Detroit Tigers", TEAM_ID))
+
+check(err6 is None, "no error across 6 games", f"got err={err6}")
+check("Reliever5" in usage6,
+      "REGRESSION GUARD: the 6th game's reliever is tracked -- the old [:5] cap "
+      "would have silently dropped this real game", f"got usage keys={list(usage6.keys())}")
+check(len(usage6) == 6, "all 6 distinct relievers across all 6 games are tracked",
+      f"got {sorted(usage6.keys())}")
+
+head("4. Per-appearance detail (date/IP/pitches) is preserved per reliever, not just "
+     "the L7-aggregate totals -- needed for naming real relievers in customer copy "
+     "instead of vague 'X of Y relievers used' language.")
+
+check(usage["Rainey"]["games"] == [{"date": "2026-08-19", "ip": 1.0, "pitches": 31}],
+      "a real reliever's single L7 appearance is recorded with its real date/IP/pitches",
+      f"got {usage['Rainey']['games']}")
+
+head("5. A team with zero recent games (all-star break edge case, or a brand-new "
+     "season start) returns an empty-but-valid usage dict, not a crash.")
+
+with mock.patch.object(m.statsapi, "schedule", return_value=[]), \
+     mock.patch.object(m.statsapi, "boxscore_data"):
+    _, usage_empty, err_empty = m._bullpen_fetch_one(("Detroit Tigers", TEAM_ID))
+check(err_empty is None and usage_empty == {},
+      "zero games in the window returns an empty dict, not an exception",
+      f"got err={err_empty} usage={usage_empty}")
+
+n_pass = sum(1 for ok, _, _ in _results if ok)
+n_total = len(_results)
+print("\n" + "=" * 78)
+print(f"RESULT: {n_pass}/{n_total} checks passed")
+if n_pass < n_total:
+    print()
+    for ok, msg, detail in _results:
+        if not ok:
+            print(f"  FAILED: {msg}")
+            if detail:
+                print(f"          {detail}")
+print("=" * 78)
+sys.exit(0 if n_pass == n_total else 1)
