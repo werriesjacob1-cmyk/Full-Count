@@ -880,6 +880,93 @@ else:
     check(True, "node not available -- staleChip check skipped, not failed")
 
 
+head("13d. suggestedParlayBlock() (2026-08-25): real bug -- this read l.american and "
+     "parlay.combined_american, neither of which exists. dashboard/build_dashboard.py's "
+     "_build_suggested_parlay() (already covered by check 7's Python tests) actually names "
+     "them market_odds (per leg) and combined_american_odds. Every real, correctly priced "
+     "parlay leg rendered a blank price, and the combined-odds line always fell back to '--' "
+     "-- a fully-priced real parlay looked broken. Also verifies naive_probability_note and "
+     "correlation_notes (the backend's own honesty context -- computed, but never reaching "
+     "the page before this fix, the same 'computed then discarded' bug class found elsewhere "
+     "in this project) now render, and the combined figure is explicitly labeled 'Estimated'.")
+
+if node:
+    harness_parlay = """
+// esc() (dashboard/static/app.js) round-trips through a real
+// document.createElement("div").textContent/.innerHTML escape -- a bare
+// {style:{}} stub (fine for harnesses that never call esc()) silently makes
+// EVERY esc() call return undefined, since .textContent/.innerHTML aren't
+// real getters/setters on a plain object literal. This harness calls esc()
+// (via suggestedParlayBlock's own name/prop/note rendering), so it needs
+// the same real-escaping element mock the My Board harness (check 18b) uses.
+function makeEscEl() {
+  let t = '';
+  return { set textContent(v) { t = String(v); }, get textContent() { return t; },
+    get innerHTML() {
+      return t.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+    } };
+}
+const document = {getElementById: () => ({addEventListener(){}, textContent:'', dataset:{},
+    style:{}, setAttribute(){}, querySelectorAll: () => [], querySelector: () => null}),
+  documentElement: {setAttribute(){}, removeAttribute(){}, getAttribute: () => null},
+  querySelectorAll: () => [], querySelector: () => null, createElement: () => makeEscEl(),
+  addEventListener(){}, body: {style:{}, append(){}}};
+const window = {matchMedia: () => ({matches:false}), location: {hash:''}, scrollY: 0, scrollTo(){}};
+const localStorage = {getItem: () => null, setItem(){}};
+const fetch = () => Promise.reject(new Error("no network in test"));
+const setInterval = () => {};
+try { """ + open(APP_JS_PATH, encoding="utf-8").read() + """ } catch (e) {}
+let ok = true;
+function assertTrue(cond, msg) { if (!cond) { console.error("FAIL: " + msg); ok = false; } }
+
+const realParlay = {
+  legs: [
+    { name: "A", prop: "Over 0.5 Hits", market_odds: -150, hit_probability: 0.72 },
+    { name: "B", prop: "Over 0.5 Total Bases", market_odds: -130, hit_probability: 0.68 },
+  ],
+  combined_american_odds: -400,
+  naive_probability_note: "Product of each leg's own probability, assuming independence.",
+  correlation_notes: ["A + B: same game, positively correlated"],
+};
+const html = suggestedParlayBlock(realParlay);
+assertTrue(html.includes("-150") && html.includes("-130"),
+  "each real leg's own market_odds price actually renders on the card, not a blank -- got " + html);
+assertTrue(html.includes("-400"),
+  "the real combined_american_odds figure renders, not the permanent '--' fallback of the field-name bug -- got " + html);
+assertTrue(/Estimated combined odds/i.test(html),
+  "the combined figure is explicitly labeled Estimated, not presented as a certain number -- got " + html);
+assertTrue(html.includes("assuming independence"),
+  "the backend's own naive_probability_note caveat now reaches the page -- got " + html);
+assertTrue(html.includes("positively correlated"),
+  "correlation_notes now reach the page -- got " + html);
+
+// A real parlay whose combined odds genuinely could not be computed (should
+// not happen given build_dashboard.py's own priced_pool filter, but honest
+// degradation matters) must say so, never silently show a stale/blank dash
+// with no explanation.
+const noCombined = { legs: [{ name: "A", prop: "X", market_odds: -110, hit_probability: 0.6 }] };
+const html2 = suggestedParlayBlock(noCombined);
+assertTrue(/unavailable/i.test(html2),
+  "a missing combined_american_odds says 'unavailable' explicitly rather than a bare dash -- got " + html2);
+
+if (!ok) process.exit(1);
+console.log("suggestedParlayBlock() checks passed");
+"""
+    harness_path_parlay = tempfile.mktemp(suffix=".js")
+    with open(harness_path_parlay, "w") as f:
+        f.write(harness_parlay)
+    try:
+        r = subprocess.run([node, harness_path_parlay], capture_output=True, text=True)
+        check(r.returncode == 0, "suggestedParlayBlock() renders real leg prices and the real "
+              "combined odds under their actual field names, honestly labeled Estimated, with "
+              "the backend's own independence/correlation caveats surfaced", r.stdout + r.stderr)
+    finally:
+        os.remove(harness_path_parlay)
+else:
+    check(True, "node not available -- suggestedParlayBlock check skipped, not failed")
+
+
 head("16. Today-page PASS 2/3 redesign (2026-08-25): the query-string half of a route hash "
      "used to be silently discarded (onRouteChange() split it off and threw it away) -- every "
      "\"See all research -> #/props?status=lean\" link on the page was a real navigation that "
