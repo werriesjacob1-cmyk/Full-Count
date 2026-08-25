@@ -187,6 +187,34 @@ class ComparePoliciesTests(unittest.TestCase):
         self.assertIsNone(result["overlap_hit_rate"])
         self.assertEqual(result["overlap_n_graded"], 0)
 
+    def test_mismatched_snapshot_ids_raise_instead_of_silently_comparing(self):
+        """Real gap found 2026-08-25 during a leakage/candidate-universe-
+        mismatch review of the shadow-policy framework: comparing two
+        selections built from different snapshots (different dates, or the
+        same date re-fetched after the live board moved) used to silently
+        produce a plausible-looking but meaningless overlap/added/removed
+        result. Both real run_policies() selections always carry a real
+        snapshot_id, so this guard is exactly effective on the path that
+        matters."""
+        champion = {"selected_candidate_ids": ["a"], "snapshot_id": "snap-1"}
+        challenger = {"selected_candidate_ids": ["a"], "snapshot_id": "snap-2"}
+        with self.assertRaises(ValueError):
+            spf.compare_policies(champion, challenger, {})
+
+    def test_untagged_snapshot_ids_are_not_treated_as_a_mismatch(self):
+        # Neither side carries a snapshot_id (hand-built selections, as in
+        # every other test in this class) -- must NOT raise.
+        champion = {"selected_candidate_ids": ["a"]}
+        challenger = {"selected_candidate_ids": ["a"]}
+        result = spf.compare_policies(champion, challenger, {})
+        self.assertEqual(result["n_overlap"], 1)
+
+    def test_matching_snapshot_ids_do_not_raise(self):
+        champion = {"selected_candidate_ids": ["a"], "snapshot_id": "snap-1"}
+        challenger = {"selected_candidate_ids": ["a"], "snapshot_id": "snap-1"}
+        result = spf.compare_policies(champion, challenger, {})
+        self.assertEqual(result["n_overlap"], 1)
+
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)

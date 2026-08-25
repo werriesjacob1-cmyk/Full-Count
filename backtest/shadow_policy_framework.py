@@ -210,6 +210,23 @@ def compare_policies(champion_selection, challenger_selection, outcomes_by_candi
     len(champion_selection['selected_candidate_ids']) before calling this,
     keeping that policy decision explicit at the call site rather than
     hidden in this function."""
+    # Candidate-universe-mismatch guard: two selections built from different
+    # snapshots (e.g. different dates, or the same date re-fetched after the
+    # live board moved) are not comparable -- overlap/added/removed would be
+    # silently meaningless, not just noisy. Only enforced when BOTH selections
+    # actually carry a snapshot_id (real run_policies() output always does);
+    # a None on either side is treated as "untagged", not a mismatch, so
+    # hand-built selections without snapshot bookkeeping (as in this module's
+    # own unit tests) are unaffected.
+    champ_snap = champion_selection.get("snapshot_id")
+    chall_snap = challenger_selection.get("snapshot_id")
+    if champ_snap is not None and chall_snap is not None and champ_snap != chall_snap:
+        raise ValueError(
+            f"compare_policies: snapshot_id mismatch (champion={champ_snap!r}, "
+            f"challenger={chall_snap!r}) -- these selections were built from "
+            "different candidate universes and cannot be compared."
+        )
+
     champ_ids = set(champion_selection["selected_candidate_ids"])
     chall_ids = set(challenger_selection["selected_candidate_ids"])
     overlap = champ_ids & chall_ids
