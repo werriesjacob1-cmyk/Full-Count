@@ -601,6 +601,7 @@ main { max-width: 1180px; margin: 0 auto; padding: 20px 16px 80px; }
 .since-to { color: var(--ink); }
 .since-arrow.up { color: var(--good); }
 .since-arrow.down { color: var(--bad); }
+.since-none { font-size: 13px; color: var(--ink-faint); }
 .my-board-list .watchlist-item { margin-bottom: 4px; }
 .star-btn {
   flex: none; width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--line);

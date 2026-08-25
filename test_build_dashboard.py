@@ -1022,6 +1022,27 @@ const summary = changeSummary([
 assertTrue(summary.includes("2 changes") && summary.includes("Model stronger"),
   "multiple changes: count + the strength headline, matching the directive's own 'Model stronger' example");
 
+// -- myBoardItem(): "if nothing changed, say so" -- but ONLY when there's
+// a real v2 baseline (saved_at) to honestly compare against. An old v1
+// save has nothing real to compare, so it must stay silent rather than
+// claim "nothing changed" over data it never actually captured.
+const v2WithSavedAt = { schema_version: WATCH_SNAPSHOT_SCHEMA_VERSION, saved_at: "2026-08-24T12:00:00Z",
+  hit_probability: 0.63, market_odds: 140, market_implied: 0.55, market_edge: 0.05,
+  recommendation_status: "lean", lineup_assumed: true, started: false };
+watchSnapshot = { "unchanged-id": v2WithSavedAt };
+const unchangedProp = { id: "unchanged-id", hit_probability: 0.63, market_odds: 140, market_implied: 0.55,
+  market_edge: 0.05, recommendation_status: "lean", lineup_assumed: true, game_start: null };
+const unchangedHtml = myBoardItem(unchangedProp, sinceYouSavedChanges(unchangedProp));
+assertTrue(unchangedHtml.includes("Nothing has changed since you saved this"),
+  "a real v2 baseline with zero real deltas says so honestly, rather than silently omitting the section");
+
+watchSnapshot = { "v1-unchanged-id": v1Raw };
+const v1UnchangedProp = { id: "v1-unchanged-id", hit_probability: 0.71, market_odds: -120, market_implied: 0.52,
+  market_edge: 0.09, recommendation_status: "lean", lineup_assumed: true, game_start: null };
+const v1UnchangedHtml = myBoardItem(v1UnchangedProp, sinceYouSavedChanges(v1UnchangedProp));
+assertTrue(!v1UnchangedHtml.includes("Nothing has changed"),
+  "an old v1 save with no real saved_at baseline never claims 'nothing changed' -- it has nothing real to compare");
+
 } catch (e) { console.error(e); process.exit(1); }
 
 if (!ok) process.exit(1);
@@ -1185,6 +1206,31 @@ assertTrue(rAbbrevs.games.length === 1 && rAbbrevs.games[0].game_pk === 2,
 const rHarper = runSearch("bryce harper", props, schedule);
 assertTrue(rHarper.games.length === 0, "a specific player name doesn't spuriously match a game");
 assertTrue(rHarper.players.length === 1 && rHarper.players[0].name === "Bryce Harper", "exact player name resolves to exactly that player");
+
+// -- Real bugs found + fixed 2026-08-25, against real production data
+// (docs/data.json): a "phillies" search was surfacing Seattle Mariners
+// players (via the shared p.matchup text) and a non-player NRFI combo
+// entry (via its game-description p.name) under Players/Props. --
+const oppMatchupProps = props.concat([
+  // A Braves player in a real Phillies game -- matchup mentions "Phillies"
+  // in full, but this player is NOT on the Phillies and must not surface
+  // as a Phillies PROP.
+  { id: "opp1", player_id: 200, name: "Some Brave", team: "Atlanta Braves",
+    matchup: "Philadelphia Phillies @ Atlanta Braves", prop: "Over 0.5 Hits", stat: "hits", hit_probability: 0.5 },
+  // A real NRFI combo entry: no individual player, team is null, and its
+  // name is a full game description that happens to contain "Phillies".
+  { id: "combo1", player_id: "nrfi_999", team: null,
+    name: "Philadelphia Phillies @ Atlanta Braves — 1st Inning (Both Teams)",
+    matchup: "Philadelphia Phillies @ Atlanta Braves", prop: "A run scores in the 1st (either team)",
+    stat: "nrfi_combined", hit_probability: 0.55 },
+]);
+const rPhilliesFull = runSearch("phillies", oppMatchupProps, schedule);
+assertTrue(!rPhilliesFull.props.some(p => p.id === "opp1"),
+  "an opposing team's player (matched only via the shared game-level matchup text) never surfaces under a single-team PROPS search");
+assertTrue(!rPhilliesFull.players.some(p => p.id === "combo1"),
+  "a team-level combo market with no real individual player (team is null) never surfaces under Players, even though its game-description name contains the query text");
+assertTrue(rPhilliesFull.props.some(p => p.id === "combo1"),
+  "that same combo market DOES legitimately surface under Props -- its own name genuinely names the Phillies, unlike opp1 which only shares a game");
 
 } catch (e) { console.error(e); process.exit(1); }
 

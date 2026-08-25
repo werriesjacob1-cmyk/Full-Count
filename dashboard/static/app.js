@@ -1130,13 +1130,30 @@ function renderWatchlist() {
 // never captured.
 function myBoardItem(p, changes) {
   const summary = changeSummary(changes);
-  const sinceRows = changes.length ? `<div class="since-saved">
-    <div class="since-saved-label">Since you saved this</div>
-    ${changes.map(c => `<div class="since-row"><span class="since-field">${esc(c.label)}</span>
-      <span class="since-delta"><span class="since-from">${esc(String(c.from))}</span> → <span class="since-to">${esc(String(c.to))}</span>${
-        "stronger" in c ? ` <span class="since-arrow ${c.stronger ? "up" : "down"}">${c.stronger ? "↑" : "↓"}</span>` : ""
-      }</span></div>`).join("")}
-  </div>` : "";
+  // A real v2 snapshot with a saved_at timestamp means we actually HAVE a
+  // trustworthy baseline to compare against -- only then is "nothing has
+  // changed" an honest claim. An old v1 save (no saved_at, no historical
+  // probability) has nothing real to compare, so this stays silent rather
+  // than assert "no changes" over data we never actually captured.
+  const snap = normalizeSnapshot(watchSnapshot[p.id]);
+  const hasRealBaseline = !!(snap && snap.schema_version === WATCH_SNAPSHOT_SCHEMA_VERSION && snap.saved_at);
+  let sinceRows;
+  if (changes.length) {
+    sinceRows = `<div class="since-saved">
+      <div class="since-saved-label">Since you saved this</div>
+      ${changes.map(c => `<div class="since-row"><span class="since-field">${esc(c.label)}</span>
+        <span class="since-delta"><span class="since-from">${esc(String(c.from))}</span> → <span class="since-to">${esc(String(c.to))}</span>${
+          "stronger" in c ? ` <span class="since-arrow ${c.stronger ? "up" : "down"}">${c.stronger ? "↑" : "↓"}</span>` : ""
+        }</span></div>`).join("")}
+    </div>`;
+  } else if (hasRealBaseline) {
+    sinceRows = `<div class="since-saved since-saved-none">
+      <div class="since-saved-label">Since you saved this</div>
+      <div class="since-none">Nothing has changed since you saved this.</div>
+    </div>`;
+  } else {
+    sinceRows = "";
+  }
   return `<div class="watchlist-item">${summary ? `<div class="watch-change-badge">${esc(summary)}</div>` : ""}${propRow(p)}${sinceRows}</div>`;
 }
 
@@ -1498,8 +1515,16 @@ function runSearch(query, props, schedule) {
   // PLAYERS: unique players (by id) ranked by their best name match; a
   // pure market-intent query (e.g. "home runs") correctly surfaces no
   // players, since a market name won't match any real player's name.
+  // Real bug found 2026-08-25: a game-level combo market (e.g. NRFI's
+  // "Philadelphia Phillies @ Seattle Mariners -- 1st Inning (Both Teams)")
+  // has no individual player behind it -- team is null and player_id is a
+  // synthetic "nrfi_<game_pk>" string, never a real MLB player id -- but
+  // its `name` field is a full game description, so a team-name query like
+  // "phillies" matched it by substring and it rendered under Players. Every
+  // REAL individual-player prop always carries a real team; require that.
   const byPlayer = new Map();
   for (const p of visible) {
+    if (!p.team) continue;
     const key = p.player_id ?? p.combo_player_ids ?? p.name;
     const score = _matchScore(p.name, q);
     if (score <= 0) continue;
@@ -1513,14 +1538,21 @@ function runSearch(query, props, schedule) {
   // PROPS: a real market-intent query ranks that whole family by
   // probability (the customer's actual question is "what's strongest for
   // HR tonight," not text search); otherwise rank by name/team/prop text
-  // match, breaking ties toward the stronger real read.
+  // match, breaking ties toward the stronger real read. Deliberately does
+  // NOT match against p.matchup here -- real bug found 2026-08-25:
+  // matchup describes the whole game (e.g. "Philadelphia Phillies @
+  // Seattle Mariners"), so a single-team query like "phillies" matched
+  // it for BOTH teams' props, surfacing Seattle Mariners players under a
+  // Phillies search. Full two-team game context is already handled by
+  // the GAMES group above; PROPS stays scoped to the entity actually
+  // named in the query.
   let propResults;
   if (marketFamily) {
     propResults = visible.filter(p => p.stat === marketFamily)
       .slice().sort((a, b) => (b.hit_probability || 0) - (a.hit_probability || 0));
   } else {
     propResults = visible
-      .map(p => ({ p, score: Math.max(_matchScore(p.name, q), _matchScore(p.team, q), _matchScore(p.matchup, q), _matchScore(p.prop, q) * 0.9) }))
+      .map(p => ({ p, score: Math.max(_matchScore(p.name, q), _matchScore(p.team, q), _matchScore(p.prop, q) * 0.9) }))
       .filter(x => x.score > 0)
       .sort((a, b) => b.score - a.score || (b.p.hit_probability || 0) - (a.p.hit_probability || 0))
       .map(x => x.p);
