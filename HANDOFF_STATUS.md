@@ -1,11 +1,11 @@
 # Full Count — session handoff status
 
-Last updated: 2026-08-25 ~05:20 UTC by Claude (this session).
+Last updated: 2026-08-25 ~05:45 UTC by Claude (this session).
 Purpose: let a fresh session resume with zero hidden chat context.
 
 ## Branch / HEAD
 
-- Branch: `claude/gridiron-continuation-dvaljm` at `eacdfcdf`, fully pushed,
+- Branch: `claude/gridiron-continuation-dvaljm` at `47cf24e6`, fully pushed,
   clean working tree, matches `origin/main` exactly (no divergence) modulo
   this HANDOFF_STATUS.md update itself (commit immediately after editing).
 - PR #64 (Weston fix + provenance validator) MERGED, sha `1ead2fb1`.
@@ -38,23 +38,50 @@ Purpose: let a fresh session resume with zero hidden chat context.
   141,998 rows realize a **66.39% hit rate** -- inside the board's
   intended 60-80% band, at real multi-year scale, single clean regime.
   Probability-bucket calibration is close to monotonic across 1M+ rows.
-- **Priority 6 DONE**: same-nominal-probability subgroup trustworthiness
-  analysis. `backtest/prob_subgroup_trust_report.py` (11 tests), run for
-  real against all 1,027,462 canonical rows. Full findings persisted:
+- **Priority 6 DONE** (previous directive's numbering): same-nominal-
+  probability subgroup trustworthiness analysis.
+  `backtest/prob_subgroup_trust_report.py` (11 tests). Persisted:
   `backtest/priority6_subgroup_trust_2026-08-25.md`. Headline: opportunity
   shortfall (`fair_test=False`, low `actual_pa`) is the dominant source of
-  within-probability-bucket variance (`fair_test=False`, 5.4% of rows,
-  pools to 13% hit rate regardless of predicted_prob; underperforms its
-  own bucket by 20-45pp almost everywhere). Both fields are POSTGAME-only
-  today, so this is not directly actionable yet -- it's the empirical case
-  for prioritizing Priority 7 next: prediction fragility.
-- **NEXT (Priority 7)**: prediction fragility -- sensitivity to reasonable
-  assumption perturbations, using empirical forecast-error distributions
-  (never invented stress values). Then Priority 8 (model/context
-  disagreement), 9 (market specialization), 10 (shrinkage audit, ONLY
-  where tunable shrinkage exists — do not revisit the closed H+R+RBI
-  decision), 11 (opportunity/PA modeling — now has direct empirical
-  backing from Priority 6's finding above).
+  within-probability-bucket variance. Both fields are POSTGAME-only,
+  motivating the opportunity-modeling phase below.
+- **Opportunity-modeling phase (new directive, 2026-08-25 continuation)
+  Priority 1 DONE**: full decomposition of the opportunity finding before
+  modeling. `backtest/opportunity_decomposition.py` (21 tests). Persisted:
+  `backtest/priority1_opportunity_decomposition_2026-08-25.md`. KEY
+  DISCOVERY: `signals.lineup_slot` (89% of rows) is an invertible,
+  PREGAME-KNOWABLE encoding of real batting order
+  (`generate_picks.py:1379`). Load-bearing result: within nearly every
+  0.05 probability bucket 0.05-0.80, batting order STILL separates
+  realized hit rate (top_1_3 > mid_4_6 > bottom_7_9), pooled and
+  per-market, stable across all 3 years (~8pp gap each year) --
+  `predicted_prob` does not fully absorb what batting order carries.
+- **Priorities 2/3/4 DONE**: PA distribution model + challenger
+  probability + the equal-volume test.
+  `backtest/pa_opportunity_model.py` (19 tests). Persisted:
+  `backtest/priority2_3_4_pa_opportunity_model_2026-08-25.md`. Empirical
+  `P(actual_pa|order)` fit on 2024-2025, evaluated STRICTLY on 2026
+  holdout. Two results: (a) within-bucket discrimination is real (+4-7pp
+  across every populated bucket 0.40-0.70) but (b) **the equal-volume test
+  -- the one that actually matters -- shows only +0.22pp net gain at fixed
+  volume, and added-pick hit rate (62.50%) is statistically
+  indistinguishable from removed-pick hit rate (62.04%). Does NOT meet the
+  promotion bar.** Root cause identified: `generate_picks.py:1379/1386`
+  already feeds batting order into `score_batter`'s CONTEXT component --
+  order is not new information to the current model, so an order-only
+  challenger mostly rediscovers what's already priced in. Reported
+  honestly as marginal, not spun as a win. **This challenger does NOT earn
+  shadow testing.**
+- **NEXT**: per the mechanistic finding above, a richer challenger
+  capturing the RESIDUAL opportunity info beyond what CONTEXT's linear
+  order treatment already extracts (e.g. order + days_rest/bullpen_fatigue
+  jointly, or examining whether CONTEXT's linear order treatment under/
+  over-weights the tails) is the next concrete step -- not yet built.
+  Otherwise: Priority 5 (fragility, now opportunity-centered), Priority 6
+  (model/context disagreement -- test whether it survives
+  opportunity-adjustment), Priority 7 (market specialization, extend
+  beyond `hits`), Priority 8 (pitcher opportunity/workload, a structurally
+  different mechanism, deliberately not started).
 
 ## CLOSED work this session — do not redo
 
