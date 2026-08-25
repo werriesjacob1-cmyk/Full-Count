@@ -104,6 +104,12 @@ FROZEN_PUBLICATION_FIELDS = frozenset((
     "prob_ci", "reliability", "reliability_note", "sample_n", "lineup_assumed",
     "base_rate", "lift", "lift_reference_rate", "stable_lift",
     "published_top_pick_at",
+    # CI-provenance-honesty fix (P0-7): prob_ci_source sits directly beside
+    # prob_ci above and must be frozen with it -- a game that started must
+    # never show the SAME interval later relabeled with a different source
+    # (player_empirical vs historical_reliability_band) than what a user
+    # actually saw at publication time.
+    "prob_ci_source",
     # 2026-08-2X market-edge-semantics fix (P0-6): the same "actual bet a
     # user saw" reasoning above governs the fair-value comparator sitting
     # right next to market_odds/market_implied/market_edge/market_hold --

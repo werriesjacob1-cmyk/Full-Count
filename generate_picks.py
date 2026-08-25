@@ -3982,7 +3982,15 @@ def select_best_by_category(candidates, prices, fd, n_per_category=1, k_prices=N
                     # record exists for this player at all is a fact that
                     # doesn't change per stat family, unlike a specific
                     # probability's own interval.
-                    "prob_ci": best.get("ci"), "sample_n": c.get("sample_n"),
+                    "prob_ci": best.get("ci"),
+                    # CI-provenance-honesty fix (P0-7): same "computed, then
+                    # discarded" boundary as prob_ci itself was fixed for --
+                    # ci_source (player_empirical vs historical_reliability_
+                    # band, see _batter_options/select_best_by_category's own
+                    # comments) was always computed alongside prob_ci but
+                    # never carried into this dict.
+                    "prob_ci_source": best.get("ci_source"),
+                    "sample_n": c.get("sample_n"),
                     "reliability": c.get("reliability"),
                     "why": c.get("why"), "watchouts": c.get("watchouts"),
                     # Real bug, found live 2026-08-15: this fixed field list
@@ -4035,7 +4043,8 @@ def select_best_by_category(candidates, prices, fd, n_per_category=1, k_prices=N
                 "probability_detail": c.get("probability_detail"),
                 "raw_hit_probability": c.get("raw_hit_probability"),
                 "calibrated_by": c.get("calibrated_by"),
-                "prob_ci": c.get("prob_ci"), "sample_n": c.get("sample_n"),
+                "prob_ci": c.get("prob_ci"), "prob_ci_source": c.get("prob_ci_source"),
+                "sample_n": c.get("sample_n"),
                 "reliability": c.get("reliability"), "alternatives": c.get("alternatives"),
                 "why": c.get("why"), "watchouts": c.get("watchouts"),
                 "market_odds": c.get("market_odds"), "market_implied": c.get("market_implied"),
@@ -4699,7 +4708,8 @@ def write_json(top10, moonshots=(), by_category=None, deep_moonshots=(), shadow_
             "stable_lift": c.get("stable_lift"),
             "raw_hit_probability": c.get("raw_hit_probability"),
             "calibrated_by": c.get("calibrated_by"),
-            "prob_ci": c.get("prob_ci"), "sample_n": c.get("sample_n"),
+            "prob_ci": c.get("prob_ci"), "prob_ci_source": c.get("prob_ci_source"),
+            "sample_n": c.get("sample_n"),
             "reliability": c.get("reliability"),
             # PHASE 3, ITEM 3: real gap found while wiring per-row versioning
             # -- quality_control() sets this on the candidate, classify_
@@ -5108,7 +5118,12 @@ def _keep_options(opts, default_stat=None):
              # from falling back to a stale, wrong-stat CI carried over from
              # the candidate's primary projection -- see _batter_options'
              # own comment on the same fix for the full story.
-             "ci": o.get("ci")}
+             "ci": o.get("ci"),
+             # CI-provenance-honesty fix (P0-7): same "computed, then
+             # discarded" boundary as ci directly above -- ci_source was
+             # added to _batter_options'/apply_calibration's own opt dicts
+             # but this exact trim silently dropped it too.
+             "ci_source": o.get("ci_source")}
             for o in (opts or []) if o.get("needs") is not None
             and o.get("prob") is not None]
 
@@ -5407,6 +5422,14 @@ def _batter_options(c, comp, emp, league=None):
                 "empirical": None if empirical is None else round(empirical, 4),
                 "modelled": None if modelled is None else round(modelled, 4),
                 "ci": ci,
+                # CI-provenance-honesty fix (P0-7): this is a real per-line
+                # Wilson interval off THIS player's own empirical hit/n
+                # count (see raw_rates immediately above) -- same source as
+                # attach_reliability's own primary-line "player_empirical"
+                # label, applied here at the per-line-option level so it
+                # survives into select_best_by_category()'s by-category
+                # board, not just the primary candidate.
+                "ci_source": "player_empirical" if ci is not None else None,
             })
     options.sort(key=lambda o: o["prob"], reverse=True)
     return options
@@ -5824,6 +5847,13 @@ def apply_calibration(candidates, calibrator):
                 # yet -- this does not lower the MIN_RELIABILITY_BAND_N floor
                 # or change anything else about what counts as "supported."
                 opt["ci"] = historical_prob_ci(opt.get("stat"), opt.get("needs"), opt["prob"])
+                # CI-provenance-honesty fix (P0-7): this replaces whatever
+                # ci_source the option carried (a player_empirical interval
+                # describing the RAW probability, now stale post-calibration)
+                # with the real source of the new one -- a market/bucket-level
+                # historical band, same label attach_reliability's own
+                # fallback uses.
+                opt["ci_source"] = "historical_reliability_band" if opt["ci"] is not None else None
                 used[oby] += 1
 
     for c in candidates:
@@ -6221,6 +6251,7 @@ def _build_combined_nrfi(candidates):
             "probability_basis": "combined_shrunk",
             "probability_detail": {"empirical": None, "modelled": None},
             "raw_hit_probability": None, "calibrated_by": None, "prob_ci": None,
+            "prob_ci_source": None,
             "sample_n": n_min, "reliability": None,
             "market_odds": None, "market_implied": None, "market_edge": None,
             "posted_implied": None, "market_fair": None, "market_fair_method": None,

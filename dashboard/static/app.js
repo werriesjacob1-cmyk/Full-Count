@@ -369,6 +369,9 @@ const FROZEN_PUBLICATION_FIELDS = new Set([
   "prob_ci", "reliability", "reliability_note", "sample_n", "lineup_assumed",
   "base_rate", "lift", "lift_reference_rate", "stable_lift",
   "published_top_pick_at",
+  // CI-provenance-honesty fix (P0-7) -- kept in sync with
+  // dashboard/live_state.py's FROZEN_PUBLICATION_FIELDS by hand.
+  "prob_ci_source",
   // 2026-08-2X market-edge-semantics fix (P0-6) -- kept in sync with
   // dashboard/live_state.py's FROZEN_PUBLICATION_FIELDS by hand, same as
   // every other entry here.
