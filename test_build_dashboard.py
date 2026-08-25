@@ -755,12 +755,63 @@ location.hash = "#/props?family=home_runs";
 onRouteChange();
 assertEq(filters.family, "home_runs", "family=home_runs from the URL actually reached filters.family");
 
-// An absent param must never silently clear a filter already set via the UI.
+// 2026-08-2X route-filter-leakage fix ("Top Pick filter escape", Part 2 UX
+// audit): this used to assert the OPPOSITE -- that an absent status param
+// preserved whatever filters.status a PRIOR navigation had left behind.
+// That was traced to a real bug: renderProps()'s own <select> handlers
+// mutate `filters` directly and never touch location.hash, so on-page
+// filter changes never re-trigger onRouteChange() at all -- the only
+// caller of onRouteChange() is a fresh hash navigation INTO the props
+// route (nav-bar click, a stat-tile link, browser back/forward). A user
+// who filtered to Top Pick, navigated to Games, then clicked "All Props"
+// in the main nav (a plain #/props link, no query) got the stale
+// status=top_pick filter silently reapplied with no visible reason and no
+// obvious way out. Every real navigation into props now resets to
+// defaults FIRST, then applies whatever params THIS link actually
+// carries -- a link can still deliberately pre-filter, it just can't
+// leave a previous, unrelated visit's filter behind.
 filters.status = "top_pick";
 location.hash = "#/props?family=hits";
 onRouteChange();
-assertEq(filters.status, "top_pick", "absent status param does not reset an existing filter");
-assertEq(filters.family, "hits", "family=hits from the URL still applied");
+assertEq(filters.status, "all", "REGRESSION GUARD: a fresh navigation into props resets a stale " +
+  "status filter left over from a previous visit -- the exact 'Top Pick filter escape' bug");
+assertEq(filters.family, "hits", "family=hits from the URL still applied, on top of the reset");
+
+// A plain nav-bar-style entry (no query at all) resets every filter,
+// including one set via the page's own dropdown UI moments earlier.
+filters.family = "strikeouts"; filters.status = "value"; filters.evidence = "A"; filters.search = "ohtani";
+location.hash = "#/props";
+onRouteChange();
+assertEq(filters.family, "all", "a plain #/props entry resets family");
+assertEq(filters.status, "all", "a plain #/props entry resets status");
+assertEq(filters.evidence, "all", "a plain #/props entry resets evidence");
+assertEq(filters.search, "", "a plain #/props entry resets search");
+
+// destination-integrity fix: the global-search "See all N matching props"
+// link now carries the search text itself for a plain (non-market-intent)
+// query, so the link doesn't land on the full unfiltered list.
+location.hash = "#/props?search=ohtani";
+onRouteChange();
+assertEq(filters.search, "ohtani", "search=ohtani from the URL actually reached filters.search");
+
+// Value/Longshot count-integrity fix: status=longshot is a real, distinct
+// filter value (applyFilters already special-cases it via isLongshot()),
+// separate from status=value -- confirms the URL contract this fix's new
+// Longshots tile relies on.
+location.hash = "#/props?status=longshot";
+onRouteChange();
+assertEq(filters.status, "longshot", "status=longshot from the URL reached filters.status");
+const valueRow = {recommendation_status: "value", hit_probability: 0.5};
+const longshotRow = {recommendation_status: "value", hit_probability: 0.1};
+const splitRows = applyFilters([valueRow, longshotRow]);
+assertEq(splitRows.length, 1, "status=longshot excludes the non-longshot value row");
+assertTrue(splitRows[0] === longshotRow, "status=longshot keeps only the real longshot row");
+filters.status = "value";
+const valueOnlyRows = applyFilters([valueRow, longshotRow]);
+assertEq(valueOnlyRows.length, 1, "status=value excludes the longshot row (unchanged behavior) -- " +
+  "this is the real split the Today page's two separate tiles/counts must match");
+assertTrue(valueOnlyRows[0] === valueRow, "status=value keeps only the real non-longshot value row");
+filters.status = "all"; filters.search = "";
 
 // -- Explore by Prop: real counts only, correct family mapping, no dead chips --
 const families = [
@@ -1210,6 +1261,37 @@ assertEq(_marketFamilyForQuery("home runs"), "home_runs", "'home runs' resolves 
 assertEq(_marketFamilyForQuery("hr"), "home_runs", "'hr' alias also resolves to home_runs");
 assertEq(_marketFamilyForQuery("strikeouts"), "strikeouts", "'strikeouts' resolves to strikeouts");
 assertEq(_marketFamilyForQuery("bryce harper"), null, "a player name is never mistaken for a market alias");
+
+// -- Real bug found + fixed 2026-08-25: _marketFamilyForQuery() used a plain
+// substring check (q.includes(alias)), so any player name that happens to
+// CONTAIN a market alias as a substring -- "christian" contains "hr" is false
+// (that's "hristian"), but real cases like "Whitlock"/"Perkins"/"Hawkins"
+// contain "hr"? No -- the real substrings that broke were alias-in-name
+// matches: "hr" is contained in "Christian" -> "C-hr-istian", "Jenkins" ->
+// "Jen-k-ins" contains "ks"? no, but "Jenkins" contains "kin" not "ks";
+// the actual failures observed against real docs/data.json were "hr" inside
+// "Christian" and "Whitlock", and "ks" inside "Jenkins" and "Perkins" and
+// "Hawkins" -- one-sided substring matching has no word-boundary concept, so
+// these single-name queries were silently reclassified as a market-intent
+// search (home_runs / strikeouts) instead of a player-name search, hiding
+// the real player entirely. Fixed via word-boundary regex matching; these
+// names must now resolve to null exactly like "bryce harper" above.
+assertEq(_marketFamilyForQuery("christian"), null, "'christian' (contains 'hr' as a substring) is a player-name query, not a home_runs market alias");
+assertEq(_marketFamilyForQuery("whitlock"), null, "'whitlock' (contains 'hr' as a substring) is a player-name query, not a home_runs market alias");
+assertEq(_marketFamilyForQuery("jenkins"), null, "'jenkins' (contains 'ks' as a substring) is a player-name query, not a strikeouts market alias");
+assertEq(_marketFamilyForQuery("perkins"), null, "'perkins' (contains 'ks' as a substring) is a player-name query, not a strikeouts market alias");
+assertEq(_marketFamilyForQuery("hawkins"), null, "'hawkins' (contains 'ks' as a substring) is a player-name query, not a strikeouts market alias");
+// Genuine short market queries must still resolve correctly after the fix --
+// the word-boundary regex must match a whole alias word, not just reject
+// everything.
+assertEq(_marketFamilyForQuery("hr"), "home_runs", "'hr' alone (whole-word) still resolves to home_runs after the word-boundary fix");
+assertEq(_marketFamilyForQuery("hr tonight"), "home_runs", "'hr tonight' (whole-word 'hr' plus trailing text) still resolves to home_runs");
+assertEq(_marketFamilyForQuery("ks"), "strikeouts", "'ks' alone (whole-word) still resolves to strikeouts after the word-boundary fix");
+assertEq(_marketFamilyForQuery("k's"), "strikeouts", "k-apostrophe-s (whole-word alias with punctuation) still resolves to strikeouts");
+assertEq(_marketFamilyForQuery("sb"), "stolen_base", "'sb' alone (whole-word) still resolves to stolen_base");
+assertEq(_marketFamilyForQuery("stolen base"), "stolen_base", "'stolen base' (multi-word alias) still resolves to stolen_base");
+assertEq(_marketFamilyForQuery("kris"), null, "'kris' (contains 'ks'? no -- contains 'kri', not an alias substring at all, and not a whole-word alias either) resolves to null");
+assertEq(_marketFamilyForQuery("ohtani"), null, "an ordinary player name with no alias substring at all still resolves to null");
 
 // -- runSearch(): below the 2-char floor returns nothing (never an accidental full-board dump) --
 const empty = runSearch("h", props, schedule);
