@@ -41,10 +41,21 @@ jobs:
     # scheduler-gap fix added the same day). Bumped again on the same
     # "give it the headroom the real, demonstrated workload needs" basis
     # as the prior three fixes -- not a git inefficiency, not something a
-    # fourth checkout optimization would touch. If this keeps regrowing,
-    # that points at grading/repricing's own per-prop cost (docs/data.json
-    # size, or MLB boxscore-check latency) needing investigation, which is
-    # out of scope for a workflow-YAML freshness fix.
+    # fourth checkout optimization would touch.
+    #
+    # 2026-08-25 root cause found + fixed (see backtest/runtime_profile_
+    # 2026-08-25.md for the full evidence): the actual population was
+    # small (7 distinct game_pks) -- the multi-minute cost was
+    # grade_results.fetch_game_contexts() fetching every distinct game's
+    # MLB feed SEQUENTIALLY, three times a cycle (once from grading, twice
+    # from repricing), so real MLB Stats API slowness that day (23
+    # consecutive cancelled runs, 07:41-22:59 UTC) got multiplied by N
+    # games x 3 calls instead of absorbed. Fixed by fetching concurrently
+    # (bounded thread pool) -- same requests, same data, just parallel.
+    # Leaving timeout-minutes at 25 as headroom rather than immediately
+    # shrinking it back: this fix removes the SEQUENTIAL amplification,
+    # not MLB's own latency, so keep the margin until a future slow-MLB
+    # window proves recovery is fast again.
     timeout-minutes: 25
     steps:
       - name: Checkout repo
