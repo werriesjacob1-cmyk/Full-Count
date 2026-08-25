@@ -415,6 +415,12 @@ def run_live_fetch():
                 "why": (r.get("why") or [])[:4],
                 "watchouts": (r.get("watchouts") or [])[:2],
                 "base_rate": r.get("base_rate"), "lift": r.get("lift"),
+                # Additive lift-reference concept, separate from base_rate/
+                # lift -- see stable_base_rate.py. None except on
+                # hits_runs_rbis/runs/rbis where a real season-to-date
+                # reference exists.
+                "lift_reference_rate": r.get("lift_reference_rate"),
+                "stable_lift": r.get("stable_lift"),
                 # prob_ci: real bug, found in the same audit -- this field
                 # was computed (attach_reliability) and never even reached
                 # the live dashboard's payload at all, so a mismatched CI

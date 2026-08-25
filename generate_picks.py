@@ -59,6 +59,7 @@ import pandas as pd
 
 import mlb_daily as m
 import prop_probability as pp
+import stable_base_rate as sbr
 
 OUTPUT_DIR = os.environ.get("OUTPUT_DIR", "output")
 os.makedirs(OUTPUT_DIR, exist_ok=True)
@@ -4426,6 +4427,12 @@ def write_json(top10, moonshots=(), by_category=None, deep_moonshots=(), shadow_
             "hit_probability": c.get("hit_probability"),
             "signals": c.get("signals") or {},
             "base_rate": c.get("base_rate"), "lift": c.get("lift"),
+            # Additive, separate concept from base_rate/lift -- see
+            # stable_base_rate.py. None on every stat except
+            # hits_runs_rbis/runs/rbis where a real season-to-date
+            # reference exists.
+            "lift_reference_rate": c.get("lift_reference_rate"),
+            "stable_lift": c.get("stable_lift"),
             "raw_hit_probability": c.get("raw_hit_probability"),
             "calibrated_by": c.get("calibrated_by"),
             "prob_ci": c.get("prob_ci"), "sample_n": c.get("sample_n"),
@@ -5098,6 +5105,17 @@ def _batter_options(c, comp, emp, league=None):
                 if r and r.get("n"):
                     lo, hi = _wilson_interval(r.get("hit", 0), r["n"])
                     ci = [round(lo, 4), round(hi, 4)]
+            # STABLE LIFT REFERENCE, separate from and additive to base_rate/
+            # lift above -- see stable_base_rate.py's own docstring for the
+            # full rationale. base_rate/lift/prob are computed exactly as
+            # before this addition; this is a second, independent number,
+            # not a replacement. hits_runs_rbis/runs/rbis only -- the three
+            # markets backtest/stable_baseline_challenger.py actually
+            # measured. None for every other stat (no ledger exists, and
+            # none was ever validated for one).
+            lift_reference_rate, _stable_n = (
+                sbr.stable_base_rate(stat, need, m.TODAY) if stat in sbr.SUPPORTED_STATS
+                else (None, 0))
             options.append({
                 "stat": stat, "line": line, "needs": need,
                 "label": f"Over {line} {label}",
@@ -5108,6 +5126,9 @@ def _batter_options(c, comp, emp, league=None):
                 # whether the model actually has an opinion about it.
                 "base_rate": base,
                 "lift": None if base is None else round(prob - base, 4),
+                "lift_reference_rate": lift_reference_rate,
+                "stable_lift": (None if lift_reference_rate is None
+                                else round(prob - lift_reference_rate, 4)),
                 "empirical": None if empirical is None else round(empirical, 4),
                 "modelled": None if modelled is None else round(modelled, 4),
                 "ci": ci,
@@ -5599,6 +5620,13 @@ def attach_hit_probabilities(candidates, comp_table, emp_batters, emp_pitchers,
             c["probability_basis"] = best["basis"]
             c["base_rate"] = best.get("base_rate")
             c["lift"] = best.get("lift")
+            # Additive, separate from base_rate/lift above -- see
+            # stable_base_rate.py's own docstring. Present (non-None) only
+            # for hits_runs_rbis/runs/rbis when a real season-to-date
+            # reference exists; None otherwise, which recommendation.py
+            # treats as "unavailable, fall back to current behavior."
+            c["lift_reference_rate"] = best.get("lift_reference_rate")
+            c["stable_lift"] = best.get("stable_lift")
             c["probability_detail"] = {"empirical": best["empirical"],
                                        "modelled": best["modelled"]}
             c["alternatives"] = [o for o in opts if o is not best][:3]

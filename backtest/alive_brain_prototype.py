@@ -70,7 +70,7 @@ def fetch_mlb_state(game_pk):
 
 def fetch_fanduel_state(event_id):
     t0 = time.time()
-    markets, ok, failures = fd._market_pages(event_id, ("popular", "batter-props"))
+    markets, ok, failures = fd._market_pages(event_id, ("popular", "batter-props", "innings"))
     elapsed = time.time() - t0
     by_market = {}
     for mk in markets:

@@ -282,6 +282,40 @@ def classify_recommendation(candidate, *, now=None, data_fresh=True, fresh_reaso
     lineup_assumed = bool(candidate.get("lineup_assumed"))
     lift = candidate.get("lift")
     odds = candidate.get("market_odds")
+    # STABLE LIFT REFERENCE, hits_runs_rbis Lean gate only -- 2026-08-25
+    # accuracy investigation. backtest/stable_baseline_challenger.py
+    # replayed real historical outcomes and found the slate-scoped `lift`
+    # this function used to read unconditionally gives hits_runs_rbis a
+    # BACKWARDS Lean-gate separation (-2.5pp: candidates it calls
+    # "Lean-eligible" hit LESS often than the ones it doesn't). A
+    # season-to-date stable reference (stable_base_rate.py's `stable_lift`,
+    # computed entirely separately from the probability/shrinkage prior --
+    # see that module's own docstring) gives +5.1 to +5.3pp, stable across
+    # every year/season-phase bucket with enough data to check --
+    # confirmed again by the exact-change replay in
+    # backtest/replay_stable_lift_change.py before this shipped.
+    #
+    # SCOPE, deliberately narrow: hits_runs_rbis ONLY. runs/rbis showed a
+    # similar direction in research but only have one season of data on
+    # record and stay shadow-only (candidate carries stable_lift, this
+    # function does not read it for them yet -- see PRIORITY #3 of the
+    # authorizing instruction). Every other stat is untouched: `lift` stays
+    # exactly as it was.
+    #
+    # FAIL-SAFE: candidate["stable_lift"] is None whenever
+    # stable_base_rate.py's season-to-date sample was insufficient or the
+    # ledger doesn't cover this date -- falls back to the existing
+    # slate-scoped `lift` automatically in that case, never a stricter or
+    # more lenient behavior than today by omission.
+    effective_lift = lift
+    # candidate["stat"] is not a field this candidate schema carries at this
+    # stage (it lives under candidate["projection"]["stat"] here --
+    # dashboard/build_dashboard.py only promotes it to a top-level "stat"
+    # key later, after classification already ran). Checked directly
+    # against the real shape rather than assumed.
+    cand_stat = (candidate.get("projection") or {}).get("stat")
+    if cand_stat == "hits_runs_rbis" and candidate.get("stable_lift") is not None:
+        effective_lift = candidate["stable_lift"]
     # ci must already be scoped to this EXACT line (see attach_reliability's
     # per-line fix) -- this function trusts whatever it's handed rather than
     # re-deriving it, which is exactly the trust that was misplaced before
@@ -291,7 +325,7 @@ def classify_recommendation(candidate, *, now=None, data_fresh=True, fresh_reaso
 
     evidence_ok = reliability in TOP_PICK_MIN_RELIABILITY
     lineup_ok = not lineup_assumed
-    has_real_lean = lift is not None and lift >= LEAN_MIN_LIFT
+    has_real_lean = effective_lift is not None and effective_lift >= LEAN_MIN_LIFT
 
     if odds is None:
         # No real price exists to test value or the pessimistic-CI floor
