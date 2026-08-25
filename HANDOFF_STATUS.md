@@ -1,13 +1,70 @@
 # Full Count — session handoff status
 
-Last updated: 2026-08-25 ~06:10 UTC by Claude (this session).
+Last updated: 2026-08-25 ~10:56 UTC by Claude (this session).
 Purpose: let a fresh session resume with zero hidden chat context.
+
+## IMPORTANT: session worker restart + data recovery in progress (2026-08-25 ~10:50 UTC)
+
+This session's container/worker was restarted mid-turn. The git-committed
+state (branch/commits/all `.md` findings) was NOT affected -- everything
+already committed and pushed is fully intact, confirmed via
+`git fetch origin claude/gridiron-continuation-dvaljm` after the restart.
+**What WAS lost**: the large, gitignored (`backtest/*.jsonl`) raw data
+files -- `backtest/rows_canonical.jsonl` (1,027,462 rows, the whole
+canonical dataset the backfill took ~7 hours to build) and
+`backtest/rows_backfill_repair.jsonl` -- were on local disk only, never
+in git by design, and did not survive the restart. A stale, wrong
+`backtest/rows_backfill.jsonl` from 2026-08-20 (a much earlier, unrelated
+run) was also found on disk and has been DELETED to avoid confusion.
+
+**Recovery action taken, already in progress**: relaunched the full
+backfill fresh -- `backtest/engine.py --start 2024-04-01 --end
+2026-06-30 --out backtest/rows_canonical_rebuild.jsonl --no-weather`,
+PID 8145, started ~10:55 UTC. Verified before launching: no commit since
+`f7c120a3` has touched `generate_picks.py`/`backtest/engine.py`/
+`backtest/signals.py`/`mlb_sources.py` (confirmed via
+`git log -1 -- <those paths>`), and this session will not touch them
+while the backfill runs -- so this run will be a SINGLE consistent
+`code_git_sha` throughout, meaning **the old repair-file/main-file
+reconciliation dance (`build_canonical_backtest.py`) is no longer
+necessary** -- `rows_canonical_rebuild.jsonl` can become
+`rows_canonical.jsonl` directly once it finishes and passes
+`provenance.require_single_regime()`, no merge step needed. A background
+monitor (nohup'd, PID 8518, survives detached from this session) is
+watching PID 8145 and will report completion.
+
+**What this means for resuming**: every `.md` finding in this repo
+(canonical baseline, opportunity-decomposition, residual-opportunity,
+disagreement-decomposition) represents REAL, already-verified conclusions
+from the FIRST successful canonical build -- they are not invalidated by
+this data loss, since nothing about the scoring code changed. But no NEW
+live query against canonical history is possible until the rebuild
+finishes. **Two source files (`backtest/disagreement_decomposition.py`,
+`backtest/disagreement_challenger_model.py`, and their tests) were
+recreated from this session's own prior context after the restart wiped
+them from disk before they'd been committed -- their content is
+byte-for-byte what was tested and run against real data before the
+restart, but they have NOT been re-verified against live data since
+recovery. Re-run them once `rows_canonical.jsonl` exists again and
+confirm the numbers in `backtest/disagreement_priority1_2_3_2026-08-25.md`
+reproduce before extending that work further.**
+
+If you resume and PID 8145 is gone with no completion message in
+`backtest/_backfill_rebuild.log`, check `ps -p 8145` first, then check for
+a fresher `backtest/rows_canonical_rebuild.jsonl` -- the process may have
+finished (or died) without this file being updated with that news.
 
 ## Branch / HEAD
 
-- Branch: `claude/gridiron-continuation-dvaljm` at `e64fd582`, fully pushed,
-  clean working tree, matches `origin/main` exactly (no divergence) modulo
-  this HANDOFF_STATUS.md update itself (commit immediately after editing).
+- Branch: `claude/gridiron-continuation-dvaljm` at `69f86520` (this
+  session's HEAD before the restart -- confirmed intact via
+  `git fetch`/fast-forward after the restart). `f7c120a3` is an earlier
+  commit in this same branch's history (an earlier segment of this
+  session) -- it's the most recent commit anywhere in this branch's
+  ancestry that touched scoring code, used above only to confirm scoring
+  logic hasn't changed since. Fully pushed once this HANDOFF_STATUS.md
+  update + the recreated disagreement files are committed. Clean working
+  tree otherwise.
 - PR #64 (Weston fix + provenance validator) MERGED, sha `1ead2fb1`.
 - PR #65 (event-targeted observer upgrade + on_1b fix) MERGED, sha `610cfe17`.
 - No open PRs. Everything on this branch this update is already on `main`.
