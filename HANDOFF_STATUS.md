@@ -1,11 +1,11 @@
 # Full Count — session handoff status
 
-Last updated: 2026-08-25 ~05:10 UTC by Claude (this session).
+Last updated: 2026-08-25 ~05:20 UTC by Claude (this session).
 Purpose: let a fresh session resume with zero hidden chat context.
 
 ## Branch / HEAD
 
-- Branch: `claude/gridiron-continuation-dvaljm` at `5f714294`, fully pushed,
+- Branch: `claude/gridiron-continuation-dvaljm` at `eacdfcdf`, fully pushed,
   clean working tree, matches `origin/main` exactly (no divergence) modulo
   this HANDOFF_STATUS.md update itself (commit immediately after editing).
 - PR #64 (Weston fix + provenance validator) MERGED, sha `1ead2fb1`.
@@ -38,14 +38,23 @@ Purpose: let a fresh session resume with zero hidden chat context.
   141,998 rows realize a **66.39% hit rate** -- inside the board's
   intended 60-80% band, at real multi-year scale, single clean regime.
   Probability-bucket calibration is close to monotonic across 1M+ rows.
-- **NEXT (Priority 6, in progress or about to start depending on when this
-  is read)**: same-nominal-probability subgroup trustworthiness analysis --
-  "which 65% predictions are actually trustworthy?" controlling for the
-  probability the model already believes, segmented by
-  market/support-bucket/etc. This is now UNBLOCKED and is the top research
-  priority. If a script for this exists when you resume, check whether it
-  ran to completion and whether its findings were persisted to a `.md` file
-  (never trust an unpersisted terminal-only conclusion).
+- **Priority 6 DONE**: same-nominal-probability subgroup trustworthiness
+  analysis. `backtest/prob_subgroup_trust_report.py` (11 tests), run for
+  real against all 1,027,462 canonical rows. Full findings persisted:
+  `backtest/priority6_subgroup_trust_2026-08-25.md`. Headline: opportunity
+  shortfall (`fair_test=False`, low `actual_pa`) is the dominant source of
+  within-probability-bucket variance (`fair_test=False`, 5.4% of rows,
+  pools to 13% hit rate regardless of predicted_prob; underperforms its
+  own bucket by 20-45pp almost everywhere). Both fields are POSTGAME-only
+  today, so this is not directly actionable yet -- it's the empirical case
+  for prioritizing Priority 7 next: prediction fragility.
+- **NEXT (Priority 7)**: prediction fragility -- sensitivity to reasonable
+  assumption perturbations, using empirical forecast-error distributions
+  (never invented stress values). Then Priority 8 (model/context
+  disagreement), 9 (market specialization), 10 (shrinkage audit, ONLY
+  where tunable shrinkage exists — do not revisit the closed H+R+RBI
+  decision), 11 (opportunity/PA modeling — now has direct empirical
+  backing from Priority 6's finding above).
 
 ## CLOSED work this session — do not redo
 
