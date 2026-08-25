@@ -1,0 +1,79 @@
+{
+  "generated_at": "2026-08-25T21:24:04.923253+00:00",
+  "purpose": "Before/after record for the all-30 park/roof data-integrity fix -- Truist Park dome misclassification + honest per-game OPEN/CLOSED/UNKNOWN roof model for retractable-roof parks. Proves and quantifies the real scoring-input correction, does not retune anything.",
+  "measurement_date": "2026-08-25",
+  "games_at_affected_parks_today": 5,
+  "games_materially_changed": 4,
+  "records": [
+    {
+      "venue": "loanDepot park",
+      "matchup": "Boston Red Sox @ Miami Marlins",
+      "mlb_weather_condition": "Roof Closed",
+      "roof_status": "closed",
+      "old_dome": true,
+      "old_park_hr_index": 50,
+      "new_dome": true,
+      "new_park_hr_index": 50,
+      "reference_batter_score_old": 57.5,
+      "reference_batter_score_new": 57.5,
+      "reference_batter_score_delta": 0.0,
+      "materially_changed": false
+    },
+    {
+      "venue": "Rogers Centre",
+      "matchup": "Kansas City Royals @ Toronto Blue Jays",
+      "mlb_weather_condition": "Clear",
+      "roof_status": "open",
+      "old_dome": true,
+      "old_park_hr_index": 50,
+      "new_dome": false,
+      "new_park_hr_index": 54.8,
+      "reference_batter_score_old": 57.5,
+      "reference_batter_score_new": 58.4,
+      "reference_batter_score_delta": 0.9,
+      "materially_changed": true
+    },
+    {
+      "venue": "Truist Park",
+      "matchup": "Los Angeles Dodgers @ Atlanta Braves",
+      "mlb_weather_condition": "Clear",
+      "roof_status": null,
+      "old_dome": true,
+      "old_park_hr_index": 50,
+      "new_dome": false,
+      "new_park_hr_index": 60.7,
+      "reference_batter_score_old": 57.5,
+      "reference_batter_score_new": 59.6,
+      "reference_batter_score_delta": 2.1,
+      "materially_changed": true
+    },
+    {
+      "venue": "Chase Field",
+      "matchup": "Chicago Cubs @ Arizona Diamondbacks",
+      "mlb_weather_condition": null,
+      "roof_status": "unknown",
+      "old_dome": true,
+      "old_park_hr_index": 50,
+      "new_dome": false,
+      "new_park_hr_index": 45.5,
+      "reference_batter_score_old": 57.5,
+      "reference_batter_score_new": 56.6,
+      "reference_batter_score_delta": -0.9,
+      "materially_changed": true
+    },
+    {
+      "venue": "T-Mobile Park",
+      "matchup": "Philadelphia Phillies @ Seattle Mariners",
+      "mlb_weather_condition": null,
+      "roof_status": "unknown",
+      "old_dome": true,
+      "old_park_hr_index": 50,
+      "new_dome": false,
+      "new_park_hr_index": 51.2,
+      "reference_batter_score_old": 57.5,
+      "reference_batter_score_new": 57.7,
+      "reference_batter_score_delta": 0.2,
+      "materially_changed": true
+    }
+  ]
+}

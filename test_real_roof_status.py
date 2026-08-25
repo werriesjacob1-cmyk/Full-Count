@@ -1,0 +1,201 @@
+#!/usr/bin/env python3
+"""test_real_roof_status.py — regression coverage for the 2026-08-2X
+all-30-park roof-model fix (data-integrity audit).
+
+Two real bugs fixed together:
+  1. Truist Park (Atlanta) was wrongly classified dome=True/retract=True
+     in mlb_daily.STADIUMS. It is a fully open-air ballpark with NO roof
+     of any kind. Confirmed live against the MLB Stats API's own per-game
+     weather field on 2026-08-25: {"condition": "Clear", "temp": "89",
+     "wind": "3 mph, Out To CF"} -- a real outdoor reading, not a dome.
+  2. Every retractable-roof park (Rogers Centre, Globe Life Field, Daikin
+     Park, T-Mobile Park, loanDepot park, American Family Field, Chase
+     Field) was force-treated as PERMANENTLY closed on every game,
+     regardless of real per-game roof state -- and Rogers Centre's own
+     retractable_roof flag was additionally wrong (False, should be True).
+     mlb_daily.real_roof_status() reads the MLB Stats API's own real
+     weather.condition string per game instead of assuming.
+
+    /tmp/mlbvenv/bin/python3 test_real_roof_status.py
+"""
+import sys
+from unittest.mock import patch, MagicMock
+
+sys.path.insert(0, __file__.rsplit("/", 1)[0] if "/" in __file__ else ".")
+
+VERBOSE = "-v" in sys.argv or "--verbose" in sys.argv
+_results = []
+
+
+def check(cond, msg, detail=""):
+    _results.append((bool(cond), msg, detail))
+    if VERBOSE or not cond:
+        tag = "PASS" if cond else "FAIL"
+        line = "  [%s] %s" % (tag, msg)
+        if detail and (VERBOSE or not cond):
+            line += "\n         " + detail
+        print(line)
+
+
+def head(t):
+    if VERBOSE:
+        print()
+    print("-- %s" % t)
+
+
+import mlb_daily as m  # noqa: E402
+import generate_picks as gp  # noqa: E402
+
+head("1. real_roof_status(): a non-retractable park (retract=False) is N/A -- "
+     "not this function's concern (a fixed dome or open-air park is fully "
+     "determined by the dome flag alone, no per-game check needed)")
+
+check(m.real_roof_status("Roof Closed", False) is None, "retract=False always returns None")
+check(m.real_roof_status(None, False) is None, "retract=False returns None even with no condition data")
+
+head("2. real_roof_status(): a retractable park with no real condition data yet "
+     "(MLB hasn't populated weather.condition -- common well before first pitch) "
+     "is UNKNOWN, not silently CLOSED")
+
+check(m.real_roof_status(None, True) == "unknown", "condition=None -> 'unknown'")
+check(m.real_roof_status("", True) == "unknown", "condition='' -> 'unknown'")
+check(m.real_roof_status("   ", True) == "unknown", "condition=whitespace-only -> 'unknown'")
+
+head("3. real_roof_status(): a real 'Roof Closed' reading is CLOSED")
+
+check(m.real_roof_status("Roof Closed", True) == "closed",
+      "real MLB 'Roof Closed' condition (loanDepot park, 2026-08-25 live slate) -> 'closed'")
+check(m.real_roof_status("roof closed", True) == "closed", "case-insensitive")
+
+head("4. real_roof_status(): a real outdoor-weather reading is OPEN")
+
+check(m.real_roof_status("Partly Cloudy", True) == "open",
+      "real MLB 'Partly Cloudy' condition (Rogers Centre, 2026-08-25 live slate) -> 'open'")
+check(m.real_roof_status("Clear", True) == "open", "'Clear' -> 'open'")
+check(m.real_roof_status("Sunny", True) == "open", "'Sunny' -> 'open'")
+
+head("5. mlb_daily.STADIUMS table corrections")
+
+truist = m.STADIUMS["Truist Park"]
+check(truist[2] is False, "Truist Park is no longer classified as a dome (index 2, is_dome)")
+check(truist[16] is False, "Truist Park's retractable_roof flag is also False -- it has no roof at all")
+
+rogers = m.STADIUMS["Rogers Centre"]
+check(rogers[2] is True, "Rogers Centre stays classified as having a roof (it does -- can close)")
+check(rogers[16] is True, "Rogers Centre's retractable_roof flag is now True -- it was the first "
+      "retractable-roof stadium in pro sports (1989) and was wrongly marked non-retractable")
+
+tropicana = m.STADIUMS["Tropicana Field"]
+check(tropicana[2] is True and tropicana[16] is False,
+      "Tropicana Field is untouched -- a genuine fixed dome with no way to open at all")
+
+
+def _fake_meteo(condition_desc, wind_deg=180, wind_mph=12.0):
+    return {"timezone": "America/New_York", "hourly": {
+        "time": ["2026-08-25T19:00"],
+        "temperature_2m": [78.0], "windspeed_10m": [wind_mph],
+        "winddirection_10m": [wind_deg], "relativehumidity_2m": [50.0],
+        "precipitation_probability": [10]}}
+
+
+def _mock_retry_get(url, **kw):
+    resp = MagicMock()
+    resp.raise_for_status = lambda: None
+    if "open-meteo" in url:
+        resp.json = lambda: _fake_meteo("n/a")
+    else:
+        raise Exception("NWS unreachable in test")
+    return resp
+
+
+head("6. fetch_park_weather(): Truist Park (now dome=False) fetches real weather "
+     "instead of the old fabricated neutral 50")
+
+gm_truist = {"matchup": "Test @ Atlanta Braves", "venue": "Truist Park",
+             "game_start_utc": "2026-08-25T23:20:00Z", "hour": 19,
+             "mlb_weather_condition": "Clear"}
+with patch.object(gp.m, "retry_get", side_effect=_mock_retry_get), \
+     patch.object(gp, "fetch_nws_weather", return_value=None):
+    out = gp.fetch_park_weather([gm_truist])
+c = out["Test @ Atlanta Braves"]
+check(c["dome"] is False, "Truist Park no longer forced to dome=True")
+check(c["park_hr_index"] != 50 or c.get("wind_mph") is not None,
+      "Truist Park gets a real weather-derived read, not the old fabricated neutral-50 short-circuit",
+      f"got {c}")
+
+head("7. fetch_park_weather(): a retractable park confirmed CLOSED today still gets "
+     "the honest neutral/indoor treatment (this is real, not fabricated)")
+
+gm_closed = {"matchup": "Test @ Miami Marlins", "venue": "loanDepot park",
+             "game_start_utc": "2026-08-25T23:20:00Z", "hour": 19,
+             "mlb_weather_condition": "Roof Closed"}
+out = gp.fetch_park_weather([gm_closed])
+c = out["Test @ Miami Marlins"]
+check(c["dome"] is True and c["park_hr_index"] == 50 and c.get("roof_status") == "closed",
+      "a real confirmed-closed roof correctly stays neutral/indoor", f"got {c}")
+
+head("8. fetch_park_weather(): a retractable park confirmed OPEN today fetches real "
+     "weather instead of being force-treated as a permanently-closed dome -- the "
+     "core bug (real complaint pattern: Rogers Centre reporting real outdoor wind)")
+
+gm_open = {"matchup": "Test @ Toronto Blue Jays", "venue": "Rogers Centre",
+           "game_start_utc": "2026-08-25T23:20:00Z", "hour": 19,
+           "mlb_weather_condition": "Partly Cloudy"}
+with patch.object(gp.m, "retry_get", side_effect=_mock_retry_get), \
+     patch.object(gp, "fetch_nws_weather", return_value=None):
+    out = gp.fetch_park_weather([gm_open])
+c = out["Test @ Toronto Blue Jays"]
+check(c["dome"] is False, "REGRESSION GUARD: a confirmed-open retractable roof must NOT be forced to dome=True",
+      f"got {c}")
+check(c.get("roof_status") == "open", "roof_status is honestly recorded as 'open'", f"got {c}")
+
+head("9. fetch_park_weather(): a retractable park with UNKNOWN status (MLB hasn't "
+     "posted weather.condition yet) fetches real weather as a best estimate AND "
+     "flags the uncertainty -- never silently treated as confirmed-closed")
+
+gm_unknown = {"matchup": "Test @ Arizona Diamondbacks", "venue": "Chase Field",
+              "game_start_utc": "2026-08-25T23:20:00Z", "hour": 19,
+              "mlb_weather_condition": None}
+with patch.object(gp.m, "retry_get", side_effect=_mock_retry_get), \
+     patch.object(gp, "fetch_nws_weather", return_value=None):
+    out = gp.fetch_park_weather([gm_unknown])
+c = out["Test @ Arizona Diamondbacks"]
+check(c["dome"] is False,
+      "REGRESSION GUARD: unknown roof status must NOT silently default to dome=True/indoor-neutral",
+      f"got {c}")
+check(c.get("roof_status") == "unknown", "the uncertainty is honestly recorded, not hidden", f"got {c}")
+
+head("10. score_batter(): the roof_status=='unknown' case is surfaced to the user as "
+     "an honest watchout, not silently baked into the weather note")
+
+batter = {"name": "Test Batter", "id": 1, "team": "Away", "bats": "R", "order": 3}
+gm2 = {"matchup": "Away @ Home", "away_team": "Away", "home_team": "Home", "game_pk": 1, "series_game": 1}
+park_wx_unknown = {"dome": False, "park_hr_index": 55, "wind_effect": "out", "wind_mph": 10,
+                    "roof_status": "unknown"}
+c10 = gp.score_batter(batter, gm2, {"ERA": 4.25}, None, "R", park_wx_unknown,
+                       {"wRC+": 100, "ISO": 0.16, "Barrel%": 8},
+                       {"avg_EV": 88.5, "barrel_pct": 8, "PA": 20}, {}, {}, {}, extras={})
+check(any("roof status" in w.lower() and "wasn't confirmed" in w for w in c10["watchouts"]),
+      "an unconfirmed retractable-roof read gets an honest watchout", f"got {c10['watchouts']}")
+
+park_wx_confirmed = {"dome": False, "park_hr_index": 55, "wind_effect": "out", "wind_mph": 10,
+                      "roof_status": "open"}
+c10b = gp.score_batter(batter, gm2, {"ERA": 4.25}, None, "R", park_wx_confirmed,
+                        {"wRC+": 100, "ISO": 0.16, "Barrel%": 8},
+                        {"avg_EV": 88.5, "barrel_pct": 8, "PA": 20}, {}, {}, {}, extras={})
+check(not any("wasn't confirmed" in w for w in c10b["watchouts"]),
+      "a confirmed-open roof read does not get the uncertainty watchout", f"got {c10b['watchouts']}")
+
+n_pass = sum(1 for ok, _, _ in _results if ok)
+n_total = len(_results)
+print("\n" + "=" * 78)
+print(f"RESULT: {n_pass}/{n_total} checks passed")
+if n_pass < n_total:
+    print()
+    for ok, msg, detail in _results:
+        if not ok:
+            print(f"  FAILED: {msg}")
+            if detail:
+                print(f"          {detail}")
+print("=" * 78)
+sys.exit(0 if n_pass == n_total else 1)
