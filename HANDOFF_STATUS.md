@@ -55,11 +55,16 @@ Purpose: let a fresh session resume with zero hidden chat context.
    PR #63, sha `d4aaec8e`. `.github/workflows/live-freshness-watchdog.yml` (new,
    independent 5-min cron, dispatches `dashboard-live.yml` via `workflow_dispatch`
    if `docs/live.json`'s `updated_at` exceeds 15 min, never writes live.json itself).
-   **STATUS: shipped, still NOT confirmed to have fired yet** — check opportunistically
-   via `mcp__github__actions_list` `list_workflow_runs` on `live-freshness-watchdog.yml`.
-   Note: dashboard-live.yml's own 23-run cancellation streak on 2026-08-24 (see item 5
-   below) self-recovered via a MANUAL `workflow_dispatch` at 23:29 UTC, not via this
-   watchdog — worth checking whether the watchdog ever actually tried during that window.
+   **STATUS: fired for real the first time at 2026-08-25 03:36:09 UTC** (run #1,
+   completed successfully in 9s) — "Check docs/live.json freshness" ran and passed,
+   correctly SKIPPED both the recovery-dispatch and fail-visibly steps because
+   live.json was genuinely fresh at that moment. Real live proof the plumbing works
+   end to end on a healthy tick. NOT yet observed: an actual recovery dispatch (only
+   happens if live.json goes stale again — hasn't recurred since the Priority D fix).
+   Full detail in `backtest/scheduled_workflow_inventory_2026-08-25.md`. Note: the
+   2026-08-24 cancellation streak (item 8) self-recovered via a MANUAL
+   `workflow_dispatch`, not this watchdog — the watchdog didn't exist yet at that time
+   (it was part of the same-day PR #63 that merged after the incident).
 3. **12 repair-vs-main row-count discrepancies root-caused**, tooling built (not yet
    run to completion — waiting on main backfill). Real cause: `code_git_sha` proves the
    main backfill's early portion (tag `c182b186`) predates commit `919456e5`, which fixed
@@ -132,17 +137,24 @@ Purpose: let a fresh session resume with zero hidden chat context.
 
 ### B. Weston/publication-snapshot bug — DONE, needs merge (see item 5 above)
 
-### C. Live freshness / scheduler architecture
-- Watchdog shipped (item 2), still not confirmed to have fired live.
-- **NOT YET DONE**: full inventory of all cron-triggered workflows (name, cadence, avg
-  duration, concurrency group, writer targets) to test the "repo-wide scheduled-workflow
-  congestion" hypothesis. Real evidence in hand supporting it: Lineup Watch's own 10-min
-  cron showed similar irregular gaps the same day. Workflows known to exist (from
-  `list_workflows`): Calibration Recheck, Dashboard Pages Deploy, Dashboard Live Update
-  (`*/5`), Dashboard Refresh, Lineup Watch (`*/10`), MLB Daily Pipeline, Odds Snapshot,
-  Test Suite, Live Freshness Watchdog (`2-59/5`). Exact cadences for the others not yet
-  pulled from their YAML files.
-- **NOT YET DONE**: a measured consolidation/reduction proposal. Do NOT consolidate blindly.
+### C. Live freshness / scheduler architecture — DONE for now
+- Watchdog shipped and live-proven on a healthy tick (item 2 above).
+- **Full inventory DONE**: `backtest/scheduled_workflow_inventory_2026-08-25.md`.
+  ≈1,050 workflow invocations/day total; ≥720/day are independent `git push
+  origin HEAD:main` attempts from 4 workflows effectively on the same ~5-minute
+  rhythm (Dashboard Live Update, Dashboard Pages Deploy which chains off it,
+  Live Freshness Watchdog, Lineup Watch). Real support for the congestion
+  hypothesis as a secondary/background cost — but NOT the cause of the
+  2026-08-24 incident specifically (that was the sequential MLB-fetch loop,
+  already fixed — see item 8).
+- **Consolidation proposal DONE (measured, not implemented)**: one tempting
+  idea (fold the watchdog's check into Dashboard Live Update itself) is
+  recorded as explicitly WRONG — it would defeat the watchdog's purpose of
+  detecting Dashboard Live Update when THAT workflow is the one stuck. One
+  more defensible candidate (merging Dashboard Pages Deploy's own commit into
+  Dashboard Live Update's) is recorded but deliberately NOT implemented —
+  needs its own measurement pass. Nothing further queued here unless new
+  evidence surfaces.
 
 ### D. dashboard-live.yml runtime growth — ROOT CAUSE FOUND + FIXED (see item 8 above)
 - Real fix shipped this update (`47a75920`). Remaining: watch for a live confirmation
