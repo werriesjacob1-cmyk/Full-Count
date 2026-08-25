@@ -186,6 +186,66 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-25",
+      "evaluations": [
+        {
+          "prop": "Over 5.5 Strikeouts",
+          "type": "pitcher",
+          "score": 46.2,
+          "notable_signals": 1,
+          "matchup": "Minnesota Twins @ Athletics",
+          "game_pk": 824962,
+          "team": "Minnesota Twins",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_k_pct": 55.0,
+            "same_hand_ratio": 75.0,
+            "l14_k_pct": 48.8235,
+            "tto_penalty": 8.0,
+            "env_neutral": 50.0
+          },
+          "hit_probability": 0.4486,
+          "raw_hit_probability": 0.4486,
+          "lift": 0.0873,
+          "reliability": "A",
+          "sample_n": 25,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 5.5,
+            "needs": 6
+          }
+        },
+        {
+          "prop": "Over 17.5 Outs Recorded",
+          "type": "pitcher",
+          "score": 48.1,
+          "notable_signals": 1,
+          "matchup": "Minnesota Twins @ Athletics",
+          "game_pk": 824962,
+          "team": "Minnesota Twins",
+          "side": "away",
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "outs_rate": 0.5046,
+            "avg_outs_per_start": 16.88
+          },
+          "hit_probability": 0.5046,
+          "raw_hit_probability": null,
+          "lift": 0.0641,
+          "reliability": "A",
+          "sample_n": 25,
+          "projection": {
+            "stat": "pitcher_outs",
+            "value": 17.5,
+            "needs": 18
+          }
+        }
+      ]
     }
   ]
 }

@@ -1,0 +1,37 @@
+{
+  "player_id": "nrfi_824233",
+  "name": "Tampa Bay Rays @ Detroit Tigers \u2014 1st Inning (Both Teams)",
+  "snapshots": [
+    {
+      "date": "2026-08-25",
+      "evaluations": [
+        {
+          "prop": "A run scores in the 1st (either team)",
+          "type": "game",
+          "score": 22.7,
+          "notable_signals": 0,
+          "matchup": "Tampa Bay Rays @ Detroit Tigers",
+          "game_pk": 824233,
+          "team": null,
+          "side": "both",
+          "lean": "YRFI",
+          "combo_player_ids": null,
+          "signals": {
+            "home_team_scores_p": 0.2744,
+            "away_team_scores_p": 0.3143,
+            "fi_n_starts": 3.0
+          },
+          "hit_probability": 0.5025,
+          "raw_hit_probability": null,
+          "lift": 0.0009,
+          "reliability": "D",
+          "sample_n": 3,
+          "projection": {
+            "stat": "nrfi_combined",
+            "value": 50.2
+          }
+        }
+      ]
+    }
+  ]
+}

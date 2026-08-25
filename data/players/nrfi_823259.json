@@ -1,0 +1,37 @@
+{
+  "player_id": "nrfi_823259",
+  "name": "Pittsburgh Pirates @ San Diego Padres \u2014 1st Inning (Both Teams)",
+  "snapshots": [
+    {
+      "date": "2026-08-25",
+      "evaluations": [
+        {
+          "prop": "No runs in the 1st (both teams)",
+          "type": "game",
+          "score": 66.3,
+          "notable_signals": 0,
+          "matchup": "Pittsburgh Pirates @ San Diego Padres",
+          "game_pk": 823259,
+          "team": null,
+          "side": "both",
+          "lean": "NRFI",
+          "combo_player_ids": null,
+          "signals": {
+            "home_team_scores_p": 0.282,
+            "away_team_scores_p": 0.2441,
+            "fi_n_starts": 27.0
+          },
+          "hit_probability": 0.5427,
+          "raw_hit_probability": null,
+          "lift": 0.0443,
+          "reliability": "A",
+          "sample_n": 27,
+          "projection": {
+            "stat": "nrfi_combined",
+            "value": 54.3
+          }
+        }
+      ]
+    }
+  ]
+}

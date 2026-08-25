@@ -212,6 +212,65 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-25",
+      "evaluations": [
+        {
+          "prop": "Over 6.5 Strikeouts",
+          "type": "pitcher",
+          "score": 46.8,
+          "notable_signals": 0,
+          "matchup": "Boston Red Sox @ Miami Marlins",
+          "game_pk": 823826,
+          "team": "Boston Red Sox",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_k_pct": 46.0,
+            "same_hand_ratio": 12.5,
+            "l14_k_pct": 34.1176,
+            "env_neutral": 50.0
+          },
+          "hit_probability": 0.3975,
+          "raw_hit_probability": 0.3975,
+          "lift": 0.1802,
+          "reliability": "A",
+          "sample_n": 21,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 6.5,
+            "needs": 7
+          }
+        },
+        {
+          "prop": "Over 17.5 Outs Recorded",
+          "type": "pitcher",
+          "score": 57.5,
+          "notable_signals": 1,
+          "matchup": "Boston Red Sox @ Miami Marlins",
+          "game_pk": 823826,
+          "team": "Boston Red Sox",
+          "side": "away",
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "outs_rate": 0.5423,
+            "avg_outs_per_start": 17.14
+          },
+          "hit_probability": 0.5423,
+          "raw_hit_probability": null,
+          "lift": 0.1018,
+          "reliability": "A",
+          "sample_n": 21,
+          "projection": {
+            "stat": "pitcher_outs",
+            "value": 17.5,
+            "needs": 18
+          }
+        }
+      ]
     }
   ]
 }
