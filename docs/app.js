@@ -195,6 +195,27 @@ function lineupChip(p) {
 function staleChip(p) {
   return p.stale ? `<span class="chip chip-stale">Stale Data</span>` : "";
 }
+// 2026-08-2X data-integrity fix (P0-5, Top Pick warning visibility): a Top
+// Pick candidate that classify_recommendation() flagged SUSPECT (the
+// market itself disagrees with the model's read) gets a SECOND entry in
+// status_reasons -- "note: the market itself disagrees with this read
+// (...) -- still a Top Pick on the model's own probability and price
+// test, but size with that in mind." Real bug: this note was computed and
+// then structurally unreachable everywhere on the site -- the only reader
+// of status_reasons, whyNotTopPickReason() (detail view), explicitly
+// returns null whenever recommendation_status === "top_pick" (it exists
+// to explain why something ISN'T a Top Pick), so a Top Pick's own warning
+// about itself was silently hidden precisely because it still qualified.
+// isTopPickSuspect()/topPickWarning() are the real fix: they read the
+// SAME field, gated the opposite way, so a Top Pick that earned this
+// warning shows it everywhere a Top Pick can appear -- the compact card
+// grid, not just one tap deeper in the detail sheet.
+function isTopPickSuspect(p) {
+  return p.recommendation_status === "top_pick" && (p.status_reasons || []).length > 1;
+}
+function suspectChip(p) {
+  return isTopPickSuspect(p) ? `<span class="chip chip-suspect" title="The market disagrees with this read -- still a Top Pick, but size with that in mind">⚠ Market Disagrees</span>` : "";
+}
 function evidenceChip(p) {
   const eq = evidenceQuality(p);
   return eq ? `<span class="chip chip-evidence-${eq.tone}">${eq.label}</span>` : "";
@@ -603,7 +624,7 @@ function pickCard(p) {
   // in the detail sheet's "Underlying data," and showing it on every single
   // card in a grid of a dozen-plus picks was pure chip clutter, not a
   // decision a viewer needs to make before opening a card.
-  const chips = [statusChip(p), lineupChip(p), staleChip(p), liveStaleChip(p), gradeChip(p)].filter(Boolean).join("");
+  const chips = [statusChip(p), suspectChip(p), lineupChip(p), staleChip(p), liveStaleChip(p), gradeChip(p)].filter(Boolean).join("");
   // No "TOP PICK #N" ordinal badge here (removed 2026-08-25). Audited
   // whether production has a real canonical order for this UNCAPPED
   // top_pick population and found it does not: classify_recommendation()
@@ -640,7 +661,7 @@ function pickCard(p) {
   </button>`;
 }
 function propRow(p) {
-  const chips = [statusChip(p), lineupChip(p), staleChip(p), liveStaleChip(p), gradeChip(p)].filter(Boolean).join("");
+  const chips = [statusChip(p), suspectChip(p), lineupChip(p), staleChip(p), liveStaleChip(p), gradeChip(p)].filter(Boolean).join("");
   return `<button class="prop-row ${lifecycleClass(p)}" data-open="${p.id}">
     <div class="pr-main">
       <div class="pr-name">${esc(p.name)}</div>
@@ -1415,7 +1436,10 @@ function detailBody(p) {
         <div>FanDuel: ${fmtOdds(p.market_odds) ?? "not posted"}</div>
       </div>
     </div>
-    <div class="pc-chips" style="margin-bottom:18px;">${[statusChip(p), lineupChip(p), evidenceChip(p), staleChip(p), liveStaleChip(p), gradeChip(p)].filter(Boolean).join("")}</div>
+    <div class="pc-chips" style="margin-bottom:18px;">${[statusChip(p), suspectChip(p), lineupChip(p), evidenceChip(p), staleChip(p), liveStaleChip(p), gradeChip(p)].filter(Boolean).join("")}</div>
+    ${isTopPickSuspect(p) ? `<div class="detail-section top-pick-warning">
+      <p class="section-sub">${esc(capSentence(p.status_reasons[p.status_reasons.length - 1]))}</p>
+    </div>` : ""}
 
     ${renderReasons(hitItems, "positive", "＋") ? `<div class="detail-section"><h3>Why It Could Hit</h3>
       <p class="section-sub">What shapes Full Count's read of this matchup — see Evidence below for what actually produced the probability number above.</p>

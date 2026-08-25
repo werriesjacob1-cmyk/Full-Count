@@ -882,6 +882,37 @@ assertEq(whyNotTopPickReason({recommendation_status: "neutral", hit_probability:
 assertEq(whyNotTopPickReason({recommendation_status: "neutral", hit_probability: 0.65, status_reasons: ["thin evidence"]}),
   "thin evidence", "a genuinely interesting (>=60%) Neutral DOES surface its real reason");
 
+// -- isTopPickSuspect()/suspectChip(): P0-5 fix, real complaint -- "a Top
+// Pick with a major market-disagreement/SUSPECT warning must show that
+// warning, not hide it because it still qualified." classify_recommendation()
+// appends a SECOND status_reasons entry only for a SUSPECT Top Pick; the
+// old-only reader of status_reasons (whyNotTopPickReason, tested above)
+// explicitly returns null for every top_pick, so this note was previously
+// unreachable everywhere on the site. --
+assertTrue(isTopPickSuspect({recommendation_status: "top_pick", status_reasons: ["primary reason", "note: the market itself disagrees"]}),
+  "a Top Pick with 2 status_reasons (the SUSPECT-note shape) is flagged suspect");
+assertTrue(!isTopPickSuspect({recommendation_status: "top_pick", status_reasons: ["primary reason"]}),
+  "a normal Top Pick with only 1 status_reasons is NOT flagged suspect");
+assertTrue(!isTopPickSuspect({recommendation_status: "lean", status_reasons: ["a", "b"]}),
+  "a non-Top-Pick with 2 status_reasons is never flagged suspect -- this is Top-Pick-specific");
+assertTrue(suspectChip({recommendation_status: "top_pick", status_reasons: ["p", "note: market disagrees"]}).includes("Market Disagrees"),
+  "suspectChip() renders a real, visible chip for a suspect Top Pick");
+assertEq(suspectChip({recommendation_status: "top_pick", status_reasons: ["p"]}), "",
+  "suspectChip() renders nothing for a non-suspect Top Pick");
+
+const suspectTopPick = {
+  id: "c", name: "Player C", team: "SEA", prop: "Over 0.5 Hits", hit_probability: 0.66,
+  recommendation_status: "top_pick", market_odds: -140, market_implied: 0.583, market_edge: 0.077,
+  reliability: "A", sample_n: 120, why: ["Season wRC+ 130 — above-average hitter"], watchouts: [],
+  status_reasons: ["clears the real probability floor", "note: the market itself disagrees with this read (ratio 2.1x vs devigged) — still a Top Pick on the model's own probability and price test, but size with that in mind"],
+  batting_order: null,
+};
+const body3 = detailBody(suspectTopPick);
+assertTrue(body3.includes("Market Disagrees"), "a suspect Top Pick's card chip renders in the detail view too");
+assertTrue(body3.includes("the market itself disagrees with this read"),
+  "a suspect Top Pick's detail view shows the REAL warning text verbatim, not hidden");
+assertTrue(body3.includes("top-pick-warning"), "the warning renders in its own visually-distinct section");
+
 // -- _ordinalSuffix(): plain English ordinals, including the 11/12/13 exception --
 assertEq(_ordinalSuffix(1), "st", "1st");
 assertEq(_ordinalSuffix(2), "nd", "2nd");
