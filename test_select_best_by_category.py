@@ -138,6 +138,62 @@ head("7. a home_runs candidate can appear here too (select_moonshots owns displa
 check("home_runs" in gp.CATEGORY_LABELS, "home_runs is present in CATEGORY_LABELS -- the "
       "exact regression this function's own audit comment describes")
 
+head("7b. 2026-08-2X HR/moonshot population-consistency fix (P0-8 data-integrity audit): "
+     "the SAME batter's SAME home_runs read must not get a different confidence label "
+     "depending on which of the two real home_runs populations (select_moonshots' capped "
+     "Moonshots list, or this function's uncapped by-category board) happens to show it. "
+     "Real bug, found live: this function used to reuse the batter's OVERALL (hits/total-"
+     "bases-dominated) c['confidence'] verbatim for the home_runs row -- the exact "
+     "borrowed-confidence bug MOONSHOT_LOCK_LIFT's own docstring already documents fixing "
+     "for select_moonshots specifically (a real Gleyber Torres case), just never applied "
+     "to this function's separately-added home_runs branch.")
+
+hr_strong = batter_with_options(
+    name="HR Slugger", player_id=77, confidence="Low",  # overall confidence deliberately LOW
+    reliability="A",
+    line_options=[{"stat": "home_runs", "needs": 1, "line": 0.5, "prob": 0.18,
+                   "base_rate": 0.10, "lift": 0.08, "basis": "modelled"}])
+out_ms = gp.select_moonshots([hr_strong], {}, fd)
+out_bc = gp.select_best_by_category([hr_strong], {}, fd)
+check(out_ms[0]["confidence"] == "High",
+      "select_moonshots' own dedicated rule (reliability A/B + lift>=0.03) correctly "
+      "grades this real HR read High", f"got {out_ms[0]['confidence']}")
+check(out_bc["home_runs"][0]["confidence"] == "High",
+      "REGRESSION GUARD: select_best_by_category's home_runs row now matches select_"
+      "moonshots' real, dedicated confidence -- NOT the batter's unrelated overall "
+      "'Low' confidence that was set on this exact fixture", f"got {out_bc['home_runs'][0]}")
+
+hr_weak = batter_with_options(
+    name="HR Weak", player_id=78, confidence="High",  # overall confidence deliberately HIGH
+    reliability="D",
+    line_options=[{"stat": "home_runs", "needs": 1, "line": 0.5, "prob": 0.11,
+                   "base_rate": 0.10, "lift": 0.01, "basis": "modelled"}])
+out_ms2 = gp.select_moonshots([hr_weak], {}, fd)
+out_bc2 = gp.select_best_by_category([hr_weak], {}, fd)
+check(out_ms2[0]["confidence"] == "Low", "a genuinely weak HR read (D reliability, "
+      "0.01 lift) is correctly Low via select_moonshots", f"got {out_ms2[0]['confidence']}")
+check(out_bc2["home_runs"][0]["confidence"] == "Low",
+      "REGRESSION GUARD: the by-category row does NOT borrow the batter's unrelated "
+      "'High' overall confidence for this genuinely weak HR read either",
+      f"got {out_bc2['home_runs'][0]}")
+
+hr_and_hits = batter_with_options(
+    name="Dual Family", player_id=79, confidence="Low", reliability="A",
+    line_options=[
+        {"stat": "home_runs", "needs": 1, "line": 0.5, "prob": 0.18,
+         "base_rate": 0.10, "lift": 0.08, "basis": "modelled"},
+        {"stat": "hits", "needs": 1, "line": 0.5, "prob": 0.72,
+         "base_rate": 0.60, "lift": 0.12, "basis": "empirical_shrunk"},
+    ])
+out_bc3 = gp.select_best_by_category([hr_and_hits], {}, fd)
+check(out_bc3["hits"][0]["confidence"] == "Low",
+      "non-home_runs categories are UNCHANGED by this fix on the SAME candidate -- still "
+      "the batter's real overall confidence, borrowed exactly as before (that reuse is "
+      "legitimate there)", f"got {out_bc3['hits'][0]}")
+check(out_bc3["home_runs"][0]["confidence"] == "High",
+      "...while home_runs, on that same candidate, gets the dedicated computation",
+      f"got {out_bc3['home_runs'][0]}")
+
 head("8. an unpriceable candidate (hit_probability=None) never enters any category")
 
 no_prob = single_line_pitcher(hit_probability=None)

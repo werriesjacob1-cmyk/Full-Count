@@ -3862,9 +3862,22 @@ def select_deep_moonshots(candidates, prices, fd, n=5):
 
 
 # Every prop family this board can price, and the display label for each.
-# home_runs is deliberately absent -- select_moonshots() already owns that
-# category at n=5 with its own framing ("Moonshots"); listing it again here
-# would just be the same players under a second heading.
+# home_runs WAS deliberately absent at one point (select_moonshots() already
+# owns an HR category at n=5 -- "Moonshots" -- and listing it again here
+# looked like the same players under a second heading), but that left home
+# runs "structurally unable to appear here at all" (this function's own
+# docstring names that as the exact failure it exists to prevent) for any
+# batter outside select_moonshots' capped top-5-by-probability list -- a
+# real silently-discarded-candidate bug, not a cosmetic one. Restored below.
+# The two populations can legitimately show the SAME player with the SAME
+# probability -- that is not a duplicate to dedupe away, since Moonshots
+# (capped, ranked by raw probability across the whole slate) and this
+# by-category board (uncapped, one best-of-family per player) answer
+# different real questions ("best HR bets tonight" vs "this player's best
+# read in every family"). What must NOT differ between them is the
+# CONFIDENCE label for the identical read -- see the home_runs-specific
+# confidence computation right below, which reuses select_moonshots' own
+# rule so the two populations never disagree about the same number.
 # "walks" and "first_inning_run" (the one-sided per-pitcher read) are
 # deliberately absent -- verified live against FanDuel's raw API that
 # neither corresponds to a real, bettable market (see score_walk's and
@@ -3959,12 +3972,39 @@ def select_best_by_category(candidates, prices, fd, n_per_category=1, k_prices=N
                 # did (no per-market fit and no pooled fallback), best["prob"]
                 # is honestly still the raw one and raw_hit_probability/
                 # calibrated_by are correctly absent below, never invented.
+                # HR/moonshot population-consistency fix (P0-8 data-integrity
+                # audit): home_runs is the one family here where c.get(
+                # "confidence") is actively WRONG, not just imprecise --
+                # verified with real code execution: the identical batter/
+                # probability/lift/reliability run through select_moonshots()
+                # (the dedicated, MOONSHOT_LOCK_LIFT-based HR confidence
+                # rule -- see its own docstring for the real Gleyber Torres
+                # bug this rule was built to fix) produced "High", while this
+                # function's generic c.get("confidence") -- the batter's
+                # OVERALL score-derived label, dominated by his hits/total-
+                # bases read, unrelated to his HR-specific lift/reliability --
+                # produced "Low" for the exact same read. Two structurally
+                # different populations of "home_runs" candidates
+                # (select_moonshots' n=5-capped Moonshots list, and this
+                # function's uncapped by-category list) must not disagree
+                # about the same player's same number. Reuses the identical
+                # rule, not a new one.
+                confidence = c.get("confidence")
+                if stat == "home_runs":
+                    hr_lift = best.get("lift")
+                    hr_rel = c.get("reliability")
+                    if hr_rel in ("A", "B") and hr_lift is not None and hr_lift >= MOONSHOT_LOCK_LIFT:
+                        confidence = "High"
+                    elif hr_rel in ("A", "B", "C") and hr_lift is not None and hr_lift >= MOONSHOT_LOCK_LIFT / 2:
+                        confidence = "Medium"
+                    else:
+                        confidence = "Low"
                 by_category[stat].append({
                     "type": "batter", "name": c["name"], "player_id": c.get("player_id"),
                     "team": c.get("team"), "matchup": c.get("matchup"), "game_pk": c.get("game_pk"),
                     "side": c.get("side"), "prop": f"Over {best['line']} {CATEGORY_LABELS.get(stat, stat)}",
                     "projection": {"stat": stat, "value": best["line"], "needs": best["needs"]},
-                    "lean": None, "score": c.get("score"), "confidence": c.get("confidence"),
+                    "lean": None, "score": c.get("score"), "confidence": confidence,
                     "notable_signals": c.get("notable_signals", 0),
                     "hit_probability": best["prob"], "signals": c.get("signals") or {},
                     "base_rate": best.get("base_rate"), "lift": best.get("lift"),
