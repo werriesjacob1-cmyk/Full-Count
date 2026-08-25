@@ -34,7 +34,7 @@ from disagreement_decomposition import (
 from disagreement_challenger_model import (
     fit_bucket_tier_hit_rate, challenger_probability, TRAIN_YEARS, HOLDOUT_YEARS,
 )
-from pa_opportunity_model import equal_volume_ranking_comparison, _rate
+from pa_opportunity_model import equal_volume_ranking_comparison, candidate_key, _rate
 
 DEFAULT_PATH = "backtest/rows_canonical.jsonl"
 
@@ -183,7 +183,8 @@ def primary_challenger_result(rows, market):
         if challenger is None:
             continue
         comparisons.append({"current_prob": r.get("predicted_prob"), "challenger_prob": challenger,
-                             "outcome": r["outcome"], "date": r.get("date")})
+                             "outcome": r["outcome"], "date": r.get("date"),
+                             "_candidate_key": candidate_key(r)})
     equal_volume = equal_volume_ranking_comparison(comparisons, min_line_prob=SAFE_POOL_MIN_PROB)
 
     z = None

@@ -202,25 +202,41 @@ def grade_policy_selection(selection, outcomes_by_candidate_id):
     }
 
 
-def compare_policies(champion_selection, challenger_selection, outcomes_by_candidate_id):
+def compare_policies(champion_selection, challenger_selection, outcomes_by_candidate_id,
+                      *, allow_missing_snapshot=False):
     """Pairwise champion-vs-challenger comparison: overlap, champion-only
     (removed by the challenger), challenger-only (added), and each group's
     hit rate. Does NOT force equal volume -- callers wanting a matched-
     volume comparison should truncate the challenger's own ranked list to
     len(champion_selection['selected_candidate_ids']) before calling this,
     keeping that policy decision explicit at the call site rather than
-    hidden in this function."""
-    # Candidate-universe-mismatch guard: two selections built from different
-    # snapshots (e.g. different dates, or the same date re-fetched after the
-    # live board moved) are not comparable -- overlap/added/removed would be
-    # silently meaningless, not just noisy. Only enforced when BOTH selections
-    # actually carry a snapshot_id (real run_policies() output always does);
-    # a None on either side is treated as "untagged", not a mismatch, so
-    # hand-built selections without snapshot bookkeeping (as in this module's
-    # own unit tests) are unaffected.
+    hidden in this function.
+
+    SNAPSHOT GUARD (hardened 2026-08-25 per an explicit "fail closed on
+    missing metadata" directive): two selections built from different
+    snapshots (e.g. different dates, or the same date re-fetched after the
+    live board moved) are not comparable -- overlap/added/removed would be
+    silently meaningless, not just noisy. By default this is now FAIL
+    CLOSED against missing bookkeeping too, not just a real mismatch: if
+    EITHER selection lacks a snapshot_id at all, this raises, because a
+    real run_policies() selection should always carry one, and a caller
+    that forgot to pass snapshot_id is exactly the kind of accidental
+    candidate-universe mismatch this guard exists to catch. Pass
+    allow_missing_snapshot=True ONLY for an explicit legacy/test path
+    (this module's own unit tests that hand-build selections without
+    snapshot bookkeeping) -- never as a convenience in real research code."""
     champ_snap = champion_selection.get("snapshot_id")
     chall_snap = challenger_selection.get("snapshot_id")
-    if champ_snap is not None and chall_snap is not None and champ_snap != chall_snap:
+    if champ_snap is None or chall_snap is None:
+        if not allow_missing_snapshot:
+            raise ValueError(
+                "compare_policies: missing snapshot_id on champion_selection "
+                f"({champ_snap!r}) and/or challenger_selection ({chall_snap!r}). "
+                "Comparing selections without real snapshot bookkeeping is unsafe by "
+                "default -- pass allow_missing_snapshot=True only for an explicit "
+                "legacy/test path, never as a convenience in real research code."
+            )
+    elif champ_snap != chall_snap:
         raise ValueError(
             f"compare_policies: snapshot_id mismatch (champion={champ_snap!r}, "
             f"challenger={chall_snap!r}) -- these selections were built from "

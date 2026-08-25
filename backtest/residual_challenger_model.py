@@ -35,7 +35,7 @@ from canonical_baseline_report import prob_bucket, load_rows
 from opportunity_decomposition import derive_batting_order, pa_bucket_fine, HITTER_MARKETS
 from pa_opportunity_model import (
     dedupe_player_games, fit_pa_distribution, fit_hit_rate_given_pa,
-    equal_volume_ranking_comparison, PA_STATES, _rate,
+    equal_volume_ranking_comparison, candidate_key, PA_STATES, _rate,
 )
 from residual_opportunity_decomposition import _days_rest_group, _getaway_day_group
 
@@ -136,6 +136,7 @@ def build_report(rows, market="hits"):
             "challenger_prob": challenger,
             "outcome": r["outcome"],
             "used_joint_cell": used_joint,
+            "_candidate_key": candidate_key(r),
         })
 
     by_current_bucket = defaultdict(list)

@@ -136,6 +136,28 @@ def challenger_probability(order, pa_dist, hit_rate_given_pa):
     return round(total / total_weight, 6)
 
 
+def candidate_key(row):
+    """Best-effort composite real-world identity for a comparisons row:
+    (date, game_pk, player_id, prop_type) -- deliberately NOT player name
+    alone, and deliberately including prop_type/market since this key is
+    meant to be self-describing even though every current caller only ever
+    populates `comparisons` for one fixed market per call. Returns None if
+    the row doesn't carry every field needed (e.g. a hand-built test
+    fixture) -- rows without a key are simply excluded from the duplicate
+    check below. Unlike shadow_policy_framework.compare_policies()'s
+    snapshot guard (which fails closed by default on missing metadata,
+    since a real run_policies() selection should always carry a
+    snapshot_id), a missing key here is not itself suspicious: this
+    function's own id()-based identity is already structurally correct
+    with or without a key (see equal_volume_ranking_comparison()'s own
+    docstring), so the key is pure additional duplicate-detection
+    insurance, not the primary correctness mechanism -- there's no
+    equivalent "this should always be populated" expectation to enforce."""
+    if not all(k in row for k in ("date", "game_pk", "player_id", "prop_type")):
+        return None
+    return (row.get("date"), row.get("game_pk"), row.get("player_id"), row.get("prop_type"))
+
+
 def equal_volume_ranking_comparison(comparisons, min_line_prob=MIN_LINE_PROB):
     """Priority 4's actual promotion-relevant test: hold total selected
     VOLUME constant at what the CURRENT policy already selects
@@ -144,7 +166,44 @@ def equal_volume_ranking_comparison(comparisons, min_line_prob=MIN_LINE_PROB):
     SAME volume (its own top-N by challenger_prob). Reports overlap,
     added/removed picks, and each population's realized hit rate -- a
     challenger that only cuts volume or only wins by shrinking the pool
-    does not show up as a win here, since N is fixed to match CURRENT."""
+    does not show up as a win here, since N is fixed to match CURRENT.
+
+    CANDIDATE IDENTITY, audited 2026-08-25 in response to an explicit
+    "do not assume id() is the permanent solution" directive: this
+    function takes exactly ONE `comparisons` list and derives
+    current_selected/ranked_by_challenger/challenger_selected purely by
+    filtering/sorting/slicing that SAME list -- there is no code path,
+    for any caller, that could hand this function a "challenger" list
+    built from separately-constructed objects representing the same
+    candidates as "current". That makes `id()`-based identity a
+    structural guarantee here (verified against every real caller:
+    pa_opportunity_model.build_report, disagreement_challenger_model.
+    build_report, residual_challenger_model.build_report,
+    disagreement_experiment_runner.primary_challenger_result -- each
+    builds ONE fresh comparisons list, appending exactly one dict per
+    candidate, never merging two independently-built lists), not an
+    accident of current call sites that a future caller could break.
+
+    What `id()` alone does NOT catch: the same real-world candidate
+    entering `comparisons` TWICE as two separate dict objects (e.g. a
+    canonical-data duplication bug upstream). The duplicate-candidate_key
+    check immediately below guards specifically against that, using a
+    real composite identity when callers populate it."""
+    keys_seen = {}
+    for c in comparisons:
+        key = c.get("_candidate_key")
+        if key is None:
+            continue
+        if key in keys_seen:
+            raise ValueError(
+                f"equal_volume_ranking_comparison: duplicate candidate_key {key!r} "
+                "(date, game_pk, player_id, prop_type) in comparisons -- two distinct "
+                "dict objects represent the same real-world candidate. This would "
+                "corrupt overlap/added/removed counting; fix the upstream row "
+                "construction rather than proceeding."
+            )
+        keys_seen[key] = True
+
     current_selected = [c for c in comparisons if (c["current_prob"] or 0) >= min_line_prob]
     n = len(current_selected)
     if n == 0:
@@ -167,6 +226,8 @@ def equal_volume_ranking_comparison(comparisons, min_line_prob=MIN_LINE_PROB):
     # free: every element of current_selected/challenger_selected/ranked_by_
     # challenger is the SAME dict object as in `comparisons` (sorting/slicing
     # never copies), so this has zero risk of a false match and zero cost.
+    # See this function's own docstring above for the full audit of WHY
+    # id() is structurally safe here, not merely observed-safe.
     current_ids = {id(c) for c in current_selected}
     challenger_ids = {id(c) for c in challenger_selected}
 
@@ -235,6 +296,7 @@ def build_report(rows, market="hits"):
         comparisons.append({
             "current_prob": r.get("predicted_prob"),
             "challenger_prob": challenger,
+            "_candidate_key": candidate_key(r),
             "order": order,
             "outcome": r["outcome"],
         })

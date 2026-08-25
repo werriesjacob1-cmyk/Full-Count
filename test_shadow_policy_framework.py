@@ -171,7 +171,7 @@ class ComparePoliciesTests(unittest.TestCase):
         challenger = {"selected_candidate_ids": ["b", "c", "d"]}
         outcomes = {"a": {"grade": "miss"}, "b": {"grade": "hit"}, "c": {"grade": "hit"},
                     "d": {"grade": "hit"}}
-        result = spf.compare_policies(champion, challenger, outcomes)
+        result = spf.compare_policies(champion, challenger, outcomes, allow_missing_snapshot=True)
         self.assertEqual(result["n_overlap"], 2)  # b, c
         self.assertEqual(result["n_champion_only_removed_by_challenger"], 1)  # a
         self.assertEqual(result["n_challenger_only_added"], 1)  # d
@@ -182,7 +182,7 @@ class ComparePoliciesTests(unittest.TestCase):
     def test_ungraded_ids_excluded_from_rate_but_counted_in_selection_size(self):
         champion = {"selected_candidate_ids": ["a"]}
         challenger = {"selected_candidate_ids": ["a"]}
-        result = spf.compare_policies(champion, challenger, {})  # nothing graded yet
+        result = spf.compare_policies(champion, challenger, {}, allow_missing_snapshot=True)
         self.assertEqual(result["n_overlap"], 1)
         self.assertIsNone(result["overlap_hit_rate"])
         self.assertEqual(result["overlap_n_graded"], 0)
@@ -195,18 +195,35 @@ class ComparePoliciesTests(unittest.TestCase):
         produce a plausible-looking but meaningless overlap/added/removed
         result. Both real run_policies() selections always carry a real
         snapshot_id, so this guard is exactly effective on the path that
-        matters."""
-        champion = {"selected_candidate_ids": ["a"], "snapshot_id": "snap-1"}
-        challenger = {"selected_candidate_ids": ["a"], "snapshot_id": "snap-2"}
+        matters. Same policy on both sides, different snapshot -- still
+        must raise; the guard cares about candidate-universe identity, not
+        which policy produced the selection."""
+        champion = {"policy_name": "champion", "selected_candidate_ids": ["a"], "snapshot_id": "snap-1"}
+        challenger = {"policy_name": "champion", "selected_candidate_ids": ["a"], "snapshot_id": "snap-2"}
         with self.assertRaises(ValueError):
             spf.compare_policies(champion, challenger, {})
 
-    def test_untagged_snapshot_ids_are_not_treated_as_a_mismatch(self):
-        # Neither side carries a snapshot_id (hand-built selections, as in
-        # every other test in this class) -- must NOT raise.
+    def test_missing_snapshot_metadata_fails_closed_by_default(self):
+        """Hardened 2026-08-25 per an explicit "fail closed on missing
+        metadata" directive: a selection missing snapshot_id entirely used
+        to be silently treated as "untagged, not a mismatch." That was too
+        permissive -- a real run_policies() selection should always carry a
+        snapshot_id, so a missing one is itself a signal something upstream
+        is wrong, not a benign default. Now raises unless the caller
+        explicitly opts into the legacy path."""
+        champion = {"selected_candidate_ids": ["a"]}  # no snapshot_id at all
+        challenger = {"selected_candidate_ids": ["a"], "snapshot_id": "snap-1"}
+        with self.assertRaises(ValueError):
+            spf.compare_policies(champion, challenger, {})
+        # Neither side tagged -- still fails closed by default.
+        challenger_untagged = {"selected_candidate_ids": ["a"]}
+        with self.assertRaises(ValueError):
+            spf.compare_policies(champion, challenger_untagged, {})
+
+    def test_missing_snapshot_metadata_allowed_via_explicit_legacy_opt_in(self):
         champion = {"selected_candidate_ids": ["a"]}
         challenger = {"selected_candidate_ids": ["a"]}
-        result = spf.compare_policies(champion, challenger, {})
+        result = spf.compare_policies(champion, challenger, {}, allow_missing_snapshot=True)
         self.assertEqual(result["n_overlap"], 1)
 
     def test_matching_snapshot_ids_do_not_raise(self):
@@ -214,6 +231,35 @@ class ComparePoliciesTests(unittest.TestCase):
         challenger = {"selected_candidate_ids": ["a"], "snapshot_id": "snap-1"}
         result = spf.compare_policies(champion, challenger, {})
         self.assertEqual(result["n_overlap"], 1)
+
+    def test_different_policy_same_snapshot_is_valid(self):
+        # The real, intended use case: two DIFFERENT policies' selections
+        # from the SAME candidate universe -- must compare cleanly.
+        champion = {"policy_name": "champion", "selected_candidate_ids": ["a", "b"], "snapshot_id": "snap-1"}
+        challenger = {"policy_name": "probability_first", "selected_candidate_ids": ["b", "c"], "snapshot_id": "snap-1"}
+        result = spf.compare_policies(champion, challenger, {})
+        self.assertEqual(result["n_overlap"], 1)  # b
+        self.assertEqual(result["n_challenger_only_added"], 1)  # c
+        self.assertEqual(result["n_champion_only_removed_by_challenger"], 1)  # a
+
+    def test_copied_candidate_objects_same_snapshot_compare_correctly_by_id_string(self):
+        # candidate_ids in a PolicySelection are semantic strings (built by
+        # _candidate_id() from real fields), not Python object identity --
+        # so two selections built from SEPARATELY reconstructed candidate
+        # dicts (e.g. re-run_policies() on a re-fetched-but-logically-
+        # identical snapshot) still compare correctly as long as the
+        # candidate_id strings themselves match.
+        candidates_a = [dict(date="2024-05-14", game_pk=1, player_id=100,
+                              projection={"stat": "hits"}, hit_probability=0.65)]
+        candidates_b = [dict(date="2024-05-14", game_pk=1, player_id=100,
+                              projection={"stat": "hits"}, hit_probability=0.65)]  # separate objects
+        self.assertIsNot(candidates_a[0], candidates_b[0])
+        sel_a = spf.run_policies(candidates_a, ["probability_first"], snapshot_id="snap-1")["probability_first"]
+        sel_b = spf.run_policies(candidates_b, ["probability_first"], snapshot_id="snap-1")["probability_first"]
+        result = spf.compare_policies(sel_a, sel_b, {})
+        self.assertEqual(result["n_overlap"], 1)
+        self.assertEqual(result["n_champion_only_removed_by_challenger"], 0)
+        self.assertEqual(result["n_challenger_only_added"], 0)
 
 
 if __name__ == "__main__":

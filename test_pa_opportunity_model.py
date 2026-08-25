@@ -174,10 +174,116 @@ class EqualVolumeRankingComparisonTests(unittest.TestCase):
         self.assertEqual(result["n_added_by_challenger"], 2)
 
 
+class CandidateKeyTests(unittest.TestCase):
+    def test_builds_composite_key_from_real_fields(self):
+        r = {"date": "2024-05-14", "game_pk": 1, "player_id": 100, "prop_type": "hits"}
+        self.assertEqual(pom.candidate_key(r), ("2024-05-14", 1, 100, "hits"))
+
+    def test_missing_required_field_returns_none(self):
+        self.assertIsNone(pom.candidate_key({"date": "2024-05-14", "game_pk": 1}))
+
+
+class EqualVolumeRankingIdentityAuditTests(unittest.TestCase):
+    """Locks in the 2026-08-25 candidate-identity audit: id()-based
+    selection-set membership is structurally correct (this function takes
+    ONE comparisons list, never merges two independently-built lists), and
+    the separate _candidate_key duplicate check catches the one thing
+    id() alone cannot: the same real-world candidate entering the list
+    twice as two distinct dict objects."""
+
+    def _row(self, current_prob, challenger_prob, outcome, key=None):
+        c = {"current_prob": current_prob, "challenger_prob": challenger_prob, "outcome": outcome}
+        if key is not None:
+            c["_candidate_key"] = key
+        return c
+
+    def test_copied_but_logically_identical_dicts_without_key_are_not_collapsed(self):
+        # Two SEPARATE dict objects, identical values, no _candidate_key --
+        # id() must treat them as two distinct candidates (not silently
+        # dedupe by value), since without a real key there is no basis to
+        # assume they're the same real-world candidate.
+        a = self._row(0.65, 0.50, 1)
+        b = dict(a)  # a genuine copy -- distinct object, identical values
+        comparisons = [a, b]
+        result = pom.equal_volume_ranking_comparison(comparisons, min_line_prob=0.60)
+        self.assertEqual(result["n_current_selected"], 2)
+
+    def test_same_candidate_key_reconstructed_as_separate_object_raises(self):
+        # Simulates a JSON round-trip or duplicate upstream row: two
+        # DISTINCT dict objects sharing the same real-world identity.
+        key = ("2024-05-14", 1, 100, "hits")
+        a = self._row(0.65, 0.50, 1, key=key)
+        b = self._row(0.65, 0.50, 1, key=key)  # reconstructed separately, same key
+        self.assertIsNot(a, b)
+        with self.assertRaises(ValueError):
+            pom.equal_volume_ranking_comparison([a, b], min_line_prob=0.60)
+
+    def test_same_player_different_games_not_treated_as_duplicate(self):
+        a = self._row(0.65, 0.50, 1, key=("2024-05-14", 1, 100, "hits"))
+        b = self._row(0.65, 0.55, 0, key=("2024-05-15", 2, 100, "hits"))  # same player, diff game/date
+        result = pom.equal_volume_ranking_comparison([a, b], min_line_prob=0.60)
+        self.assertEqual(result["n_current_selected"], 2)
+
+    def test_different_market_same_player_game_not_treated_as_duplicate(self):
+        a = self._row(0.65, 0.50, 1, key=("2024-05-14", 1, 100, "hits"))
+        b = self._row(0.65, 0.55, 0, key=("2024-05-14", 1, 100, "total_bases"))
+        result = pom.equal_volume_ranking_comparison([a, b], min_line_prob=0.60)
+        self.assertEqual(result["n_current_selected"], 2)
+
+    def test_reordering_the_input_list_does_not_change_the_result(self):
+        rows = [self._row(0.70, 0.10, 1), self._row(0.65, 0.15, 0),
+                self._row(0.50, 0.90, 1), self._row(0.40, 0.85, 1)]
+        forward = pom.equal_volume_ranking_comparison(list(rows), min_line_prob=0.60)
+        reversed_order = pom.equal_volume_ranking_comparison(list(reversed(rows)), min_line_prob=0.60)
+        for field in ("n_current_selected", "n_challenger_selected", "n_overlap",
+                      "n_removed_by_challenger", "n_added_by_challenger",
+                      "added_hit_rate", "removed_hit_rate"):
+            self.assertEqual(forward[field], reversed_order[field], field)
+
+    def test_invariants_hold_across_varied_synthetic_populations(self):
+        import random
+        rng = random.Random(20260825)
+        for trial in range(25):
+            comparisons = []
+            for i in range(rng.randint(5, 60)):
+                comparisons.append(self._row(
+                    current_prob=round(rng.uniform(0.30, 0.85), 3),
+                    challenger_prob=round(rng.choice([0.40, 0.50, 0.55, 0.60, 0.65, 0.70]), 3),
+                    outcome=rng.randint(0, 1),
+                ))
+            result = pom.equal_volume_ranking_comparison(comparisons, min_line_prob=0.60)
+            if result["n_current_selected"] == 0:
+                continue
+            n_current = result["n_current_selected"]
+            n_challenger = result["n_challenger_selected"]
+            n_overlap = result["n_overlap"]
+            n_removed = result["n_removed_by_challenger"]
+            n_added = result["n_added_by_challenger"]
+            self.assertEqual(n_overlap + n_removed, n_current, f"trial {trial}")
+            self.assertEqual(n_overlap + n_added, n_challenger, f"trial {trial}")
+            if n_current == n_challenger:
+                self.assertEqual(n_added, n_removed, f"trial {trial}")
+
+    def test_determinism_across_separate_invocations_with_fresh_objects(self):
+        def build():
+            return [self._row(0.70, 0.10, 1), self._row(0.65, 0.15, 0),
+                    self._row(0.50, 0.90, 1), self._row(0.40, 0.85, 1),
+                    self._row(0.65, 0.50, 1), self._row(0.65, 0.50, 0)]
+        first = pom.equal_volume_ranking_comparison(build(), min_line_prob=0.60)
+        second = pom.equal_volume_ranking_comparison(build(), min_line_prob=0.60)
+        self.assertEqual(first, second)
+
+
 class BuildReportTests(unittest.TestCase):
     def test_train_holdout_split_by_year(self):
-        rows = ([row(date="2024-05-01") for _ in range(50)] +
-                [row(date="2026-05-01", player_id=999) for _ in range(50)])
+        # One real "hits" row per player-game side -- pre-2026-08-25 this
+        # test fed 50 LITERAL duplicate (date, game_pk, player_id, "hits")
+        # rows per side into equal_volume_ranking_comparison(), which never
+        # occurs in real canonical data (one row per player-game-market) and
+        # is now correctly rejected by the duplicate-candidate_key guard.
+        # dedupe_player_games()'s own collapse-to-one-player-game behavior
+        # (what this test actually checks) needs only one row per side.
+        rows = [row(date="2024-05-01"), row(date="2026-05-01", player_id=999)]
         report = pom.build_report(rows, market="hits")
         self.assertEqual(report["n_train_player_games"], 1)  # all same player_id=100
         self.assertEqual(report["n_holdout_player_games"], 1)

@@ -27,7 +27,7 @@ from collections import defaultdict
 
 sys.path.insert(0, __file__.rsplit("/", 1)[0] if "/" in __file__ else ".")
 from canonical_baseline_report import prob_bucket, load_rows
-from pa_opportunity_model import equal_volume_ranking_comparison, _rate
+from pa_opportunity_model import equal_volume_ranking_comparison, candidate_key, _rate
 from disagreement_decomposition import baseline_context_conflict, conflict_tier
 
 DEFAULT_PATH = "backtest/rows_canonical.jsonl"
@@ -99,6 +99,7 @@ def build_report(rows, market):
             "current_prob": r.get("predicted_prob"),
             "challenger_prob": challenger,
             "outcome": r["outcome"],
+            "_candidate_key": candidate_key(r),
         })
 
     by_current_bucket = defaultdict(list)
