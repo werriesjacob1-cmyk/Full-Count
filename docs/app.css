@@ -558,6 +558,22 @@ main { max-width: 1180px; margin: 0 auto; padding: 20px 16px 80px; }
    markets -- only the highest-interest families, plus a "More" chip that
    opens the full research board. Real counts only; a family with zero
    real props tonight doesn't get a chip at all (never a dead tap). */
+/* .explore-strip-wrap: real bug, found 2026-08-25 -- the chip strip
+   routinely overflows a phone-width viewport (up to 7 chips including
+   "More"), and overflow-x:auto alone gives no visual cue that more chips
+   exist past the hard-cut right edge -- a mobile viewer could easily never
+   discover "More" (the only link off this strip to the full All Props
+   page) sits just out of view. A right-edge fade to the page background is
+   a standard, well-understood "there's more this way" affordance for a
+   horizontally scrolling strip; kept even when nothing actually overflows,
+   since it then just fades to the same background color it already sits
+   on and is imperceptible. */
+.explore-strip-wrap { position: relative; }
+.explore-strip-wrap::after {
+  content: ""; position: absolute; top: 0; right: 0; bottom: 6px; width: 36px;
+  background: linear-gradient(to right, transparent, var(--ground) 75%);
+  pointer-events: none;
+}
 .explore-strip { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 6px; }
 .explore-chip {
   flex: none; display: flex; flex-direction: column; align-items: center; justify-content: center;

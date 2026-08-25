@@ -907,8 +907,17 @@ function exploreByPropStrip(families) {
     </a>`;
   }).filter(Boolean).join("");
   if (!chips) return "";
+  // Real bug, found 2026-08-25: on mobile, EXPLORE_PROP_CHIPS plus the
+  // trailing "More" chip routinely overflows the viewport width (up to 7
+  // chips at ~86px each, ~600px total, against a ~375-430px phone screen),
+  // so the strip needed a horizontal scroll -- but overflow-x:auto alone
+  // gives no visual hint that more chips (including "More," the one link to
+  // the full All Props page) exist past the hard-cut right edge. Wrapped in
+  // .explore-strip-wrap so app.css can add a real edge-fade affordance
+  // (a common, well-understood "there's more this way" mobile pattern)
+  // without changing the chip markup/behavior itself.
   return `<section class="section explore-by-prop"><div class="section-head"><h2>Explore by Prop</h2></div>
-    <div class="explore-strip">${chips}<a class="explore-chip explore-chip-more" href="#/props">More</a></div></section>`;
+    <div class="explore-strip-wrap"><div class="explore-strip">${chips}<a class="explore-chip explore-chip-more" href="#/props">More</a></div></div></section>`;
 }
 // Real bug, found 2026-08-24: a player can carry several distinct
 // streak entries (e.g. Chandler Simpson: 14 straight games with a hit,
