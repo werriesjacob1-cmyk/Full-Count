@@ -1134,6 +1134,26 @@ function gameCard(g) {
 //  PERFORMANCE PAGE — item 9/10: current vs legacy, never blended,
 //  translated into plain language.
 // ══════════════════════════════════════════════════════════════════════
+// Real bug, found 2026-08-25: the Performance page rendered a bare hit-rate
+// percentage with no caveat at all, so an early "100%" off 2 graded picks
+// looked exactly as trustworthy as a mature 500-pick record -- the opposite
+// of what this page's own load_track_record() docstring already promises
+// ("do not pretend the new architecture has proven itself before it has
+// enough observations"). dashboard/build_dashboard.py now computes
+// sample_label via eval_lib's own shared sample-size-honesty gate (the
+// SAME thresholds/wording already used for calibration/Brier reporting
+// elsewhere in this project, not a new invented one); this just surfaces it.
+const SAMPLE_LABEL_CAVEATS = {
+  insufficient: n => `Only ${n} graded pick${n === 1 ? "" : "s"} so far — far too few to mean anything. Read this as "no real signal yet," not as evidence either way.`,
+  thin: n => `Only ${n} graded picks — still a thin sample. A single new outcome can swing this rate noticeably; treat it as a rough early read, not a settled record.`,
+  directional: n => `${n} graded picks is enough to be directional, but not yet a large, confident sample.`,
+  reportable: null,
+};
+function sampleLabelCaveat(tier, n) {
+  const fn = SAMPLE_LABEL_CAVEATS[tier];
+  return fn ? fn(n) : null;
+}
+
 function renderPerformance() {
   const el = document.getElementById("page-performance");
   const tr = DATA.track_record || {};
@@ -1147,12 +1167,14 @@ function renderPerformance() {
     <h3 style="margin-top:10px;">2026-08-15 architecture forward</h3>
     <p class="perf-sub">The Top Pick/Lean/Value/Neutral system in place today. Every number below is only from picks made under this exact system.</p>`;
   if (cur && cur.n > 0) {
+    const curCaveat = sampleLabelCaveat(cur.sample_label, cur.n);
     html += `<div class="perf-metric-grid">
       <div class="perf-metric"><div class="pm-n">${pct(cur.hit_rate, 1)}</div><div class="pm-l">Top Pick hit rate</div></div>
       <div class="perf-metric"><div class="pm-n">${cur.hits}-${cur.misses}</div><div class="pm-l">Record</div></div>
       <div class="perf-metric"><div class="pm-n">${cur.n}</div><div class="pm-l">Graded picks</div></div>
       ${cur.last_14d_hit_rate != null ? `<div class="perf-metric"><div class="pm-n">${pct(cur.last_14d_hit_rate, 1)}</div><div class="pm-l">Last 14 days (n=${cur.last_14d_n})</div></div>` : ""}
     </div>`;
+    if (curCaveat) html += `<p class="perf-sample-caveat">${esc(curCaveat)}</p>`;
   } else {
     html += `<div class="empty-state">
       <div class="es-icon">📊</div>
@@ -1166,12 +1188,14 @@ function renderPerformance() {
     <h3 style="margin-top:10px;">Pre-rebuild system (through 2026-08-14)</h3>
     <p class="perf-sub">The old price-clears/quality-score system, before the recommendation-layer rebuild. A real historical record — never evidence about the current system.</p>`;
   if (leg && leg.n > 0) {
+    const legCaveat = sampleLabelCaveat(leg.sample_label, leg.n);
     html += `<div class="perf-metric-grid">
       <div class="perf-metric"><div class="pm-n">${pct(leg.hit_rate, 1)}</div><div class="pm-l">Main-board hit rate</div></div>
       <div class="perf-metric"><div class="pm-n">${leg.hits}-${leg.misses}</div><div class="pm-l">Record</div></div>
       <div class="perf-metric"><div class="pm-n">${leg.n}</div><div class="pm-l">Graded picks</div></div>
       ${leg.last_14d_hit_rate != null ? `<div class="perf-metric"><div class="pm-n">${pct(leg.last_14d_hit_rate, 1)}</div><div class="pm-l">Last 14 days</div></div>` : ""}
     </div>`;
+    if (legCaveat) html += `<p class="perf-sample-caveat">${esc(legCaveat)}</p>`;
   } else {
     html += `<p class="section-sub">No legacy record on file.</p>`;
   }
