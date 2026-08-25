@@ -240,8 +240,18 @@ def fetch_park_weather(game_meta):
         if not sk or sk in seen: continue
         seen.add(sk)
         lat, lon, dome, team, cf_deg, elev, lf, cf_d, rf, lfw, cfw, rfw, foul, surf, humidor, eye, retract = m.STADIUMS[sk]
-        if dome:
-            out[gm["matchup"]] = {"dome": True, "park_hr_index": 50, "wind_effect": "dome", "temp": None}
+        # 2026-08-2X data-integrity fix: a retractable-roof park (retract=
+        # True) is no longer force-treated as permanently closed. Real
+        # per-game roof state comes from m.real_roof_status() (the MLB
+        # Stats API's own weather.condition field) -- only a genuinely
+        # closed roof (or a true fixed dome, retract=False) gets the
+        # neutral/indoor treatment below. "unknown" falls through to a
+        # real outdoor-weather fetch too, honestly flagged via
+        # roof_status rather than silently assumed closed.
+        roof_status = m.real_roof_status(gm.get("mlb_weather_condition"), retract)
+        if dome and (not retract or roof_status == "closed"):
+            out[gm["matchup"]] = {"dome": True, "park_hr_index": 50, "wind_effect": "dome", "temp": None,
+                                   "roof_status": "closed" if retract else None}
             continue
         try:
             r = m.retry_get("https://api.open-meteo.com/v1/forecast", params={
@@ -268,13 +278,17 @@ def fetch_park_weather(game_meta):
                 if nws.get("wind_mph") is not None and (wx_disagreement is None):
                     wsp = round((wsp + nws["wind_mph"]) / 2, 1)
 
-            idx_score, wind_effect = park_hr_index(temp, wsp, wdir, humid, cf_deg, elev, dome)
+            # dome is always False on this path now -- either a real
+            # open-air park, or a retractable roof confirmed/assumed open.
+            idx_score, wind_effect = park_hr_index(temp, wsp, wdir, humid, cf_deg, elev, False)
             out[gm["matchup"]] = {"dome": False, "park_hr_index": idx_score,
                                    "wind_effect": wind_effect, "temp": temp, "wind_mph": wsp,
-                                   "wx_disagreement": wx_disagreement, "precip_prob": precip_prob}
+                                   "wx_disagreement": wx_disagreement, "precip_prob": precip_prob,
+                                   "roof_status": roof_status if retract else None}
         except Exception as e:
             m.warn(f"Picks weather {sk}: {e}")
-            out[gm["matchup"]] = {"dome": False, "park_hr_index": 50, "wind_effect": "unknown", "temp": None}
+            out[gm["matchup"]] = {"dome": False, "park_hr_index": 50, "wind_effect": "unknown", "temp": None,
+                                   "roof_status": roof_status if retract else None}
     return out
 
 
@@ -1660,6 +1674,17 @@ def score_batter(batter, gm, opp_sp_row, opp_sp_id, opp_sp_hand, park_wx, batter
     if not park_wx or park_wx.get("dome"): why.append("Dome — weather neutral")
     elif park_wx.get("wind_effect") == "out": why.append(f"Wind blowing OUT ({park_wx.get('wind_mph',0):.0f}mph) — HR boost")
     elif park_wx.get("wind_effect") == "in": watchouts.append(f"Wind blowing IN ({park_wx.get('wind_mph',0):.0f}mph) — power suppressed")
+    # 2026-08-2X honest-roof-model fix (all-30 park/roof audit): a
+    # retractable-roof park whose real per-game status couldn't be confirmed
+    # at fetch time (MLB hadn't posted its weather field yet) still gets a
+    # real outdoor-weather-based read above rather than a fabricated
+    # indoor-neutral one -- but that read is an ASSUMPTION (roof probably
+    # open), not a confirmed fact, so it's flagged here rather than left
+    # silent. Never fires for a confirmed-open, confirmed-closed, or
+    # non-retractable park (roof_status is None or "open"/"closed" there).
+    if park_wx and park_wx.get("roof_status") == "unknown":
+        watchouts.append("Retractable-roof park — real roof status wasn't confirmed yet when this was "
+                          "generated, so the weather read above assumes the roof is open")
     # 2026-08-2X explanation-quality fix (data-integrity/directionality
     # audit, real complaint: Jacob saw a "fresh pen" bullpen note under
     # "Why It Could Hit"). Same class of bug as the wind-in fix just above

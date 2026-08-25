@@ -148,7 +148,12 @@ STADIUMS = {
     "Yankee Stadium":          (40.8296,-73.9262,False,"NYY",30, 55, 318,408,314,  8, 8, 8,  "avg",  "grass",False,"easy",  False),
     "Fenway Park":             (42.3467,-71.0972,False,"BOS",60, 20, 310,420,302, 37, 17,5,  "small","grass",False,"medium",False),
     "Camden Yards":            (39.2838,-76.6218,False,"BAL",75, 20, 333,410,318, 7,  7, 7,  "avg",  "grass",False,"easy",  False),
-    "Rogers Centre":           (43.6414,-79.3894,True, "TOR",0,  76, 328,400,328, 12, 10,12, "avg",  "turf", False,"medium",False),
+    # retractable_roof fixed to True 2026-08-2X (data-integrity audit):
+    # Rogers Centre (opened 1989 as SkyDome) was and remains the first
+    # retractable-roof stadium in pro sports -- it was wrongly marked
+    # non-retractable, forcing every game there to be scored as a
+    # permanently-closed dome regardless of real per-game roof state.
+    "Rogers Centre":           (43.6414,-79.3894,True, "TOR",0,  76, 328,400,328, 12, 10,12, "avg",  "turf", False,"medium",True),
     "Tropicana Field":         (27.7683,-82.6534,True, "TB", 0,  10, 315,404,322, 11, 8, 11, "large","turf", False,"hard",  False),
     "Guaranteed Rate Field":   (41.8300,-87.6338,False,"CWS",15, 595,330,400,335, 8,  8, 8,  "avg",  "grass",False,"easy",  False),
     "Wrigley Field":           (41.9484,-87.6553,False,"CHC",50, 595,355,400,353, 15, 9, 11, "small","grass",False,"medium",False),
@@ -166,7 +171,16 @@ STADIUMS = {
     "Oracle Park":             (37.7786,-122.389,False,"SF", 270,10, 339,399,309, 8,  25,8,  "large","grass",False,"hard",  False),
     "T-Mobile Park":           (47.5915,-122.333,True, "SEA",0,  20, 331,401,326, 8,  8, 8,  "avg",  "grass",False,"medium",True),
     "loanDepot park":          (25.7781,-80.2197,True, "MIA",0,  6,  344,418,335, 8,  8, 8,  "avg",  "grass",False,"easy",  True),
-    "Truist Park":             (33.8908,-84.4678,True, "ATL",0,  1050,335,400,325,8,  8, 8,  "avg",  "grass",False,"easy",  True),
+    # dome/retractable_roof fixed to False 2026-08-2X (data-integrity audit,
+    # real complaint: Truist Park suspected wrongly classified as a dome).
+    # Truist Park is a fully open-air ballpark -- it has NO roof of any
+    # kind, fixed or retractable. Confirmed live against the MLB Stats API's
+    # own per-game weather field on 2026-08-25: {"condition": "Clear",
+    # "temp": "89", "wind": "3 mph, Out To CF"} -- a real outdoor weather
+    # reading MLB itself reports for this park, directly contradicting the
+    # old dome=True entry, which forced every Truist Park game to a
+    # fabricated neutral park_hr_index=50 with zero real wind/weather input.
+    "Truist Park":             (33.8908,-84.4678,False,"ATL",0,  1050,335,400,325,8,  8, 8,  "avg",  "grass",False,"easy",  False),
     "American Family Field":   (43.0280,-87.9712,True, "MIL",0,  634,344,400,345, 8,  8, 8,  "avg",  "grass",False,"easy",  True),
     "Busch Stadium":           (38.6226,-90.1928,False,"STL",30, 455,336,400,335, 8,  8, 8,  "avg",  "grass",False,"easy",  False),
     "Coors Field":             (39.7559,-104.994,False,"COL",15,5200,347,415,350, 8,  8, 8,  "large","grass",True, "easy",  False),
@@ -318,6 +332,13 @@ def fetch_lineups(date):
                           # which games are still bettable.
                           "status":status,
                           "game_start_utc":g.get("gameDate",""),
+                          # MLB's own per-game weather.condition string (e.g.
+                          # "Roof Closed", "Partly Cloudy") -- the real,
+                          # per-game signal used to tell a retractable-roof
+                          # park's actual open/closed state apart from just
+                          # assuming "has a roof" always means "closed
+                          # today." See real_roof_status()'s own docstring.
+                          "mlb_weather_condition":(g.get("weather") or {}).get("condition"),
                           "away_team":at,"home_team":ht,
                           # Structured lineups (name/id/pos/bats/order), populated below —
                           # kept alongside the human-readable text report so downstream
@@ -880,6 +901,46 @@ def forecast_hour_index(game_start_utc, meteo_json):
     return 19  # matches the existing "TBD start time" fallback used elsewhere
 
 
+def real_roof_status(mlb_weather_condition, retract):
+    """Honest per-game OPEN/CLOSED/UNKNOWN roof state for a RETRACTABLE-roof
+    park (retract=True in STADIUMS), read off the MLB Stats API's own real
+    per-game weather.condition string, rather than the old blanket
+    assumption that any park with a roof is always closed.
+
+    REAL BUG this replaces (2026-08-2X data-integrity audit, the same audit
+    that found Truist Park's dome misclassification): every retractable-roof
+    park (Rogers Centre, Globe Life Field, Daikin Park, T-Mobile Park,
+    loanDepot park, American Family Field, Chase Field) was scored as a
+    permanently-closed dome on every single game, regardless of whether the
+    roof was actually open that day. Verified live, 2026-08-25 real slate:
+    Rogers Centre's own MLB weather field read {"condition": "Partly
+    Cloudy", "wind": "5 mph, In From LF"} -- real outdoor conditions that
+    only make sense with the roof open -- while loanDepot park's read
+    {"condition": "Roof Closed", ...} the same day, genuinely closed. One
+    static "always closed" table entry cannot honestly represent both.
+
+    Returns "closed" when MLB's own condition string says so, "open" when a
+    real (non-closed) condition string is present, or "unknown" when MLB
+    has not yet populated the field for this game (common well before first
+    pitch) -- the caller must NOT silently treat "unknown" as "closed"/
+    indoor-neutral (that would just reintroduce the same bug under a new
+    name); the honest response is to fetch real outdoor weather as the best
+    available estimate and flag the result as uncertain.
+
+    Not applicable to a FIXED dome (retract=False, e.g. Tropicana Field --
+    a true dome with no way to open at all) or an open-air park (dome=False
+    entirely, e.g. Truist Park after this same fix) -- both are handled by
+    the caller without calling this at all."""
+    if not retract:
+        return None
+    cond = (mlb_weather_condition or "").strip().lower()
+    if not cond:
+        return "unknown"
+    if "closed" in cond or cond == "dome":
+        return "closed"
+    return "open"
+
+
 def fetch_weather(game_meta):
     step("Game-time weather + air density + directional HR scores...")
     lines=[]
@@ -895,13 +956,18 @@ def fetch_weather(game_meta):
         if sk in seen: continue
         seen.add(sk)
         lat,lon,dome,team,cf_deg,elev,lf,cf_d,rf,lfw,cfw,rfw,foul,surf,humidor,eye,retract=STADIUMS[sk]
-        if dome:
+        roof_status = real_roof_status(gm.get("mlb_weather_condition"), retract)
+        if dome and (not retract or roof_status == "closed"):
+            roof_line = "DOME — weather irrelevant" if not retract else f"RETRACTABLE ROOF — closed today (MLB: {gm.get('mlb_weather_condition')!r})"
             lines+=[f"\n{THIN[:50]}",f"  {gm['matchup']}",
-                    f"  Venue  : {sk} (DOME — weather irrelevant)",
+                    f"  Venue  : {sk} ({roof_line})",
                     f"  Humidor: {'YES ✅' if humidor else 'No'}",
                     f"  Surface: {surf}",
                     f"  HP Ump : {gm['hp_ump']}"]
             continue
+        if dome and roof_status == "unknown":
+            lines.append(f"  ⚠ {sk}: retractable roof, real status unknown at fetch time — "
+                          f"outdoor weather below is a best-effort estimate, not a confirmed open roof")
         try:
             r=retry_get("https://api.open-meteo.com/v1/forecast",params={
                 "latitude":lat,"longitude":lon,
@@ -915,7 +981,7 @@ def fetch_weather(game_meta):
             wsp=h["windspeed_10m"][idx]; wdir=h["winddirection_10m"][idx]
             humid=h["relativehumidity_2m"][idx]; precip=h["precipitation"][idx]
             wdir_txt=wind_dir(wdir)
-            wvf=wind_vs_field(wdir,cf_deg,dome)
+            wvf=wind_vs_field(wdir,cf_deg,False)  # real weather was fetched below this line, so real wind applies
             dens=air_density_pct(elev,temp,humid)
             dens_pct=(dens-1.0)*100
             carry_str=f"{abs(dens_pct):.1f}% {'FARTHER' if dens_pct<0 else 'shorter'}"
