@@ -45,15 +45,33 @@ MLB_LIVE_FEED = "https://statsapi.mlb.com/api/v1.1/game/{game_pk}/feed/live"
 
 
 def fetch_mlb_state(game_pk):
+    """2026-08-25: on_1b was a real bug -- `bool((current.get("runners") or
+    [{}]))` is unconditionally True (a falsy `runners` falls back to the
+    non-empty placeholder list `[{}]`, which is itself truthy), so it never
+    actually reported baserunner state. `linescore.offense.first/second/
+    third` are the real, honest per-base occupancy fields (present only
+    when a runner is actually on that base) -- verified live against a real
+    in-progress game's feed. Also now surfaces `linescore.offense.
+    battingOrder` (real lineup-slot number, for detecting a genuine lineup
+    turnover rather than just "the batter's name changed") and the most
+    recent play's real `eventType`/`event` (e.g. "home_run", "walk",
+    "mound_visit") from `plays.currentPlay.result` -- MLB's own play
+    classification, not inferred from score deltas. Honest caveat:
+    `currentPlay` reflects the play in progress or most recently completed
+    AS OF THIS FETCH, not a guaranteed real-time push -- a fast poll cadence
+    can still miss two events landing between polls.
+    """
     t0 = time.time()
     r = requests.get(MLB_LIVE_FEED.format(game_pk=game_pk), timeout=10)
     r.raise_for_status()
     payload = r.json()
     elapsed = time.time() - t0
     linescore = (payload.get("liveData") or {}).get("linescore") or {}
+    offense = linescore.get("offense") or {}
     plays = (payload.get("liveData") or {}).get("plays") or {}
     current = plays.get("currentPlay") or {}
     matchup = current.get("matchup") or {}
+    result = current.get("result") or {}
     state = {
         "inning": linescore.get("currentInning"),
         "half": linescore.get("inningState"),
@@ -62,7 +80,12 @@ def fetch_mlb_state(game_pk):
         "home_score": (linescore.get("teams") or {}).get("home", {}).get("runs"),
         "batter": (matchup.get("batter") or {}).get("fullName"),
         "pitcher": (matchup.get("pitcher") or {}).get("fullName"),
-        "on_1b": bool((current.get("runners") or [{}])),  # coarse; real baserunner detail below
+        "on_1b": "first" in offense,
+        "on_2b": "second" in offense,
+        "on_3b": "third" in offense,
+        "batting_order": offense.get("battingOrder"),
+        "last_event_type": result.get("eventType"),
+        "last_event": result.get("event"),
         "abstract_state": (payload.get("gameData") or {}).get("status", {}).get("abstractGameState"),
     }
     return state, elapsed
