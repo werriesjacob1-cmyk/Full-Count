@@ -1,7 +1,50 @@
 # Full Count — session handoff status
 
-Last updated: 2026-08-25 ~19:35 UTC by Claude (this session).
+Last updated: 2026-08-25 ~20:05 UTC by Claude (this session).
 Purpose: let a fresh session resume with zero hidden chat context.
+
+## PASS 2/3: TODAY REDESIGN + TWO RE-AUDITS (2026-08-25 ~19:35-20:05 UTC)
+
+Per the "creative freedom on the website, but re-audit both prior fixes
+first" directive. Two commits, both pushed:
+
+**`ce78a972`** -- Research Correctness Check 1: `candidate_key()`
+hardened for alternate-line/side safety. Verified empirically (143,237
+real in-progress-rebuild rows) that `line` varies across the dataset but
+is currently 1:1 with (date, game_pk, player_id, prop_type) -- no false
+positives today, but not future-proof. Added `line` (required) and
+`side` (optional, never present in real rows today) to the key. Full
+requested test matrix: alternate lines distinct, opposite side distinct,
+reconstructed duplicate still raises, different game/date distinct.
+36/36 passing in `test_pa_opportunity_model.py`.
+
+**`8c05ea22`** -- Research Correctness Check 2 + frontend PASS 2/3:
+- Re-audited `_assign_top_pick_rank()` and concluded it is NOT an
+  official ranking (the real `rank_for_board()` policy belongs to the
+  separate, CAPPED static top10 pipeline; this live dashboard's
+  `top_pick` population is uncapped, no top-N selection exists). Fixed
+  by removing the "TOP PICK #N" ordinal badge from `pickCard()` entirely
+  -- `p.rank` survives only as an undisplayed internal sort tiebreak.
+- Source/generated safety: header comments on all 3
+  `dashboard/static/*` files + `StaticSourceParityTests` in
+  `test_build_dashboard.py` (byte-identical check against `docs/`, run
+  on every test invocation; verified it actually fires).
+- Real P0 found+fixed: `onRouteChange()` discarded every route's query
+  string, so `#/props?status=lean` links were dead navigation. Fixed;
+  this also makes the new Explore-by-Prop feature work.
+- Today page restructured: Best Bets / Explore by Prop (new) / More
+  Picks (merged Value+Longshots+Leans+Radar, still individually
+  labeled) / Tonight's Games / Trends / Suggested Parlay (demoted to
+  bottom). Zero backend recommendation states removed. Glance tiles now
+  tappable. Full writeup: `frontend/customer_experience_audit_2026-08-25.md`.
+- 73/73 passing in `test_build_dashboard.py` (7 new checks). Full repo
+  suite green.
+
+No model probabilities/thresholds/gates/publication/grading logic
+touched by either commit.
+
+**PID 3304 at this update**: healthy, ~1h59m elapsed, 167,178+ rows,
+normal pace throughout. Untouched by this work.
 
 ## TWO PARALLEL WORKSTREAMS (2026-08-25 ~18:20-19:35 UTC): candidate-identity audit + frontend PASS 1
 
@@ -379,7 +422,7 @@ finished (or died) without this file being updated with that news.
 
 ## Branch / HEAD
 
-- Branch: `claude/gridiron-continuation-dvaljm` at `4a4cf42a` (pushed) as
+- Branch: `claude/gridiron-continuation-dvaljm` at `8c05ea22` (pushed) as
   of this update, plus this HANDOFF_STATUS.md commit on top once pushed.
   `f7c120a3` is an earlier commit in this same branch's history (an
   earlier segment of this session) -- it's the most recent commit
