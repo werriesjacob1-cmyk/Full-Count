@@ -251,8 +251,8 @@ def fetch_park_weather(game_meta):
                 "timezone": "auto", "forecast_days": 1,
             }, timeout=20, retries=2)
             r.raise_for_status()
-            h = r.json()["hourly"]
-            idx = min(max(gm["hour"], 0), 23)
+            meteo = r.json(); h = meteo["hourly"]
+            idx = m.forecast_hour_index(gm.get("game_start_utc"), meteo)
             temp = h["temperature_2m"][idx]; wsp = h["windspeed_10m"][idx]
             wdir = h["winddirection_10m"][idx]; humid = h["relativehumidity_2m"][idx]
             precip_prob = h.get("precipitation_probability", [None]*24)[idx]
