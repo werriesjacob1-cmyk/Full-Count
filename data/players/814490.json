@@ -43,7 +43,7 @@
         {
           "prop": "Over 4.5 Strikeouts",
           "type": "pitcher",
-          "score": 47.6,
+          "score": 34.9,
           "notable_signals": 0,
           "matchup": "Houston Astros @ New York Yankees",
           "game_pk": 823505,
@@ -55,7 +55,10 @@
             "opp_team_k_pct": 79.0,
             "same_hand_ratio": 5.5556,
             "l14_k_pct": 42.3529,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 64.0651,
+            "ump_k_pct": -0.192,
+            "ump_bb_pct": 0.504
           },
           "hit_probability": 0.5285,
           "raw_hit_probability": 0.5285,
@@ -66,6 +69,34 @@
             "stat": "strikeouts",
             "value": 4.5,
             "needs": 5
+          }
+        },
+        {
+          "prop": "Over 8.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 55.0,
+          "notable_signals": 0,
+          "matchup": "Houston Astros @ New York Yankees",
+          "game_pk": 823505,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            814490,
+            701542
+          ],
+          "signals": {
+            "combined_k_edge": 0.0167
+          },
+          "hit_probability": 0.6463,
+          "raw_hit_probability": null,
+          "lift": 0.0167,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 8.5,
+            "needs": 9
           }
         }
       ]

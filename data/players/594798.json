@@ -221,7 +221,7 @@
         {
           "prop": "Over 6.5 Strikeouts",
           "type": "pitcher",
-          "score": 38.3,
+          "score": 39.3,
           "notable_signals": 0,
           "matchup": "Texas Rangers @ Chicago White Sox",
           "game_pk": 824556,
@@ -231,9 +231,12 @@
           "combo_player_ids": null,
           "signals": {
             "opp_team_k_pct": 70.0,
-            "same_hand_ratio": 21.4286,
+            "same_hand_ratio": 57.1429,
             "l14_k_pct": 100.0,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 45.5865,
+            "ump_k_pct": 0.12,
+            "ump_bb_pct": -0.144
           },
           "hit_probability": 0.3396,
           "raw_hit_probability": 0.3396,
@@ -249,7 +252,7 @@
         {
           "prop": "Over 16.5 Outs Recorded",
           "type": "pitcher",
-          "score": 46.5,
+          "score": 48.8,
           "notable_signals": 0,
           "matchup": "Texas Rangers @ Chicago White Sox",
           "game_pk": 824556,
@@ -258,18 +261,46 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.5344,
+            "outs_rate": 0.5298,
             "avg_outs_per_start": 15.83
           },
-          "hit_probability": 0.5344,
+          "hit_probability": 0.5298,
           "raw_hit_probability": null,
-          "lift": 0.0292,
+          "lift": 0.0474,
           "reliability": "A",
           "sample_n": 24,
           "projection": {
             "stat": "pitcher_outs",
             "value": 16.5,
             "needs": 17
+          }
+        },
+        {
+          "prop": "Over 10.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 39.2,
+          "notable_signals": 0,
+          "matchup": "Texas Rangers @ Chicago White Sox",
+          "game_pk": 824556,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            594798,
+            641743
+          ],
+          "signals": {
+            "combined_k_edge": -0.1026
+          },
+          "hit_probability": 0.5453,
+          "raw_hit_probability": null,
+          "lift": -0.1026,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 10.5,
+            "needs": 11
           }
         }
       ]

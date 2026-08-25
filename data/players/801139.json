@@ -219,7 +219,7 @@
         {
           "prop": "Over 6.5 Strikeouts",
           "type": "pitcher",
-          "score": 46.8,
+          "score": 35.0,
           "notable_signals": 0,
           "matchup": "Boston Red Sox @ Miami Marlins",
           "game_pk": 823826,
@@ -229,9 +229,12 @@
           "combo_player_ids": null,
           "signals": {
             "opp_team_k_pct": 46.0,
-            "same_hand_ratio": 12.5,
+            "same_hand_ratio": 0.0,
             "l14_k_pct": 34.1176,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 48.6144,
+            "ump_k_pct": -0.228,
+            "ump_bb_pct": 0.3
           },
           "hit_probability": 0.3975,
           "raw_hit_probability": 0.3975,
@@ -247,7 +250,7 @@
         {
           "prop": "Over 17.5 Outs Recorded",
           "type": "pitcher",
-          "score": 57.5,
+          "score": 59.5,
           "notable_signals": 1,
           "matchup": "Boston Red Sox @ Miami Marlins",
           "game_pk": 823826,
@@ -256,18 +259,46 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.5423,
+            "outs_rate": 0.5378,
             "avg_outs_per_start": 17.14
           },
-          "hit_probability": 0.5423,
+          "hit_probability": 0.5378,
           "raw_hit_probability": null,
-          "lift": 0.1018,
+          "lift": 0.1179,
           "reliability": "A",
           "sample_n": 21,
           "projection": {
             "stat": "pitcher_outs",
             "value": 17.5,
             "needs": 18
+          }
+        },
+        {
+          "prop": "Over 9.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 55.0,
+          "notable_signals": 1,
+          "matchup": "Boston Red Sox @ Miami Marlins",
+          "game_pk": 823826,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            801139,
+            663969
+          ],
+          "signals": {
+            "combined_k_edge": 0.0832
+          },
+          "hit_probability": 0.6956,
+          "raw_hit_probability": null,
+          "lift": 0.0832,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 9.5,
+            "needs": 10
           }
         }
       ]

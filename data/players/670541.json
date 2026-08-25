@@ -1298,6 +1298,111 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-25",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 79.5,
+          "notable_signals": 2,
+          "matchup": "Houston Astros @ New York Yankees",
+          "game_pk": 823505,
+          "team": "Houston Astros",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 54.8571,
+            "pitch_exploit": 4.5714,
+            "l7_avg_ev": 90.8654,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 33.6,
+            "season_barrel_pct": 96.0,
+            "lineup_slot": 87.5,
+            "bullpen_fatigue": 76.9231,
+            "platoon_barrel_pct": 5.0,
+            "platoon_xwoba": 5.0,
+            "park_hand_index": 3.47,
+            "opp_catcher_framing": -0.6,
+            "days_rest": 2.0,
+            "woba_ahead": 55.4545,
+            "woba_behind": 49.0909,
+            "pull_park_synergy": 1.3117,
+            "hard_hit_105_rate": 2.4025,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": -2.184,
+            "vs_rp_ops": 1.812,
+            "ump_k_pct": 0.192,
+            "ump_bb_pct": -0.504
+          },
+          "hit_probability": 0.6633,
+          "raw_hit_probability": 0.649,
+          "lift": 0.0998,
+          "reliability": "A",
+          "sample_n": 129,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 28.5,
+          "notable_signals": 1,
+          "matchup": "Houston Astros @ New York Yankees",
+          "game_pk": 823505,
+          "team": "Houston Astros",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.1427
+          },
+          "hit_probability": 0.1427,
+          "raw_hit_probability": null,
+          "lift": 0.0941,
+          "reliability": "A",
+          "sample_n": 129,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 17.1,
+          "notable_signals": 1,
+          "matchup": "Houston Astros @ New York Yankees",
+          "game_pk": 823505,
+          "team": "Houston Astros",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0807
+          },
+          "hit_probability": 0.0807,
+          "raw_hit_probability": null,
+          "lift": 0.0595,
+          "reliability": "A",
+          "sample_n": 129,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

@@ -1163,6 +1163,106 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-25",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 80.8,
+          "notable_signals": 2,
+          "matchup": "Milwaukee Brewers @ New York Mets",
+          "game_pk": 823585,
+          "team": "New York Mets",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "sp_era_weak": 9.7143,
+            "l7_avg_ev": 24.7222,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 33.0,
+            "season_barrel_pct": 42.6667,
+            "lineup_slot": 100.0,
+            "bullpen_fatigue": 83.3333,
+            "platoon_barrel_pct": -0.24,
+            "platoon_xwoba": 0.48,
+            "opp_catcher_framing": 0.36,
+            "days_rest": 2.0,
+            "woba_behind": 16.3636,
+            "hard_hit_105_rate": 0.3575,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": 1.144,
+            "vs_rp_ops": 1.308,
+            "ump_k_pct": 0.24,
+            "ump_bb_pct": 0.048
+          },
+          "hit_probability": 0.6011,
+          "raw_hit_probability": 0.6019,
+          "lift": 0.0376,
+          "reliability": "B",
+          "sample_n": 73,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 8.0,
+          "notable_signals": 0,
+          "matchup": "Milwaukee Brewers @ New York Mets",
+          "game_pk": 823585,
+          "team": "New York Mets",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0609
+          },
+          "hit_probability": 0.0609,
+          "raw_hit_probability": null,
+          "lift": 0.0123,
+          "reliability": "B",
+          "sample_n": 73,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 3.0,
+          "notable_signals": 0,
+          "matchup": "Milwaukee Brewers @ New York Mets",
+          "game_pk": 823585,
+          "team": "New York Mets",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0247
+          },
+          "hit_probability": 0.0247,
+          "raw_hit_probability": null,
+          "lift": 0.0035,
+          "reliability": "B",
+          "sample_n": 73,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

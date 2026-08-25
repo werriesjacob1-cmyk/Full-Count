@@ -946,6 +946,135 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-25",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 51.8,
+          "notable_signals": 1,
+          "matchup": "Milwaukee Brewers @ New York Mets",
+          "game_pk": 823585,
+          "team": "Milwaukee Brewers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "sp_era_weak": 15.4286,
+            "pitch_exploit": 0.5714,
+            "l7_avg_ev": 50.1875,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 33.0,
+            "season_barrel_pct": 15.3333,
+            "lineup_slot": 37.5,
+            "bullpen_fatigue": 64.1026,
+            "platoon_barrel_pct": -5.0,
+            "platoon_xwoba": -1.38,
+            "opp_catcher_framing": -0.12,
+            "days_rest": 2.0,
+            "woba_ahead": 64.5455,
+            "woba_behind": 40.9091,
+            "team_total_move": 0.0,
+            "team_total_open": 0.0,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": 3.624,
+            "vs_rp_ops": 2.604,
+            "ump_k_pct": 0.24,
+            "ump_bb_pct": 0.048
+          },
+          "hit_probability": 0.6069,
+          "raw_hit_probability": 0.6062,
+          "lift": 0.0434,
+          "reliability": "C",
+          "sample_n": 34,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 38.5,
+          "notable_signals": 0,
+          "matchup": "Milwaukee Brewers @ New York Mets",
+          "game_pk": 823585,
+          "team": "Milwaukee Brewers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": -4.26,
+            "sprint_speed": 34.375,
+            "catcher_poptime": 0.0,
+            "on_base": 42.4184
+          },
+          "hit_probability": 0.0632,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "C",
+          "sample_n": 34,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 0.0,
+          "notable_signals": 0,
+          "matchup": "Milwaukee Brewers @ New York Mets",
+          "game_pk": 823585,
+          "team": "Milwaukee Brewers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0168
+          },
+          "hit_probability": 0.0168,
+          "raw_hit_probability": null,
+          "lift": -0.0318,
+          "reliability": "C",
+          "sample_n": 34,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 0.0,
+          "notable_signals": 0,
+          "matchup": "Milwaukee Brewers @ New York Mets",
+          "game_pk": 823585,
+          "team": "Milwaukee Brewers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0073
+          },
+          "hit_probability": 0.0073,
+          "raw_hit_probability": null,
+          "lift": -0.0139,
+          "reliability": "C",
+          "sample_n": 34,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

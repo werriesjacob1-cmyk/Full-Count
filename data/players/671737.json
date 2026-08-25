@@ -193,7 +193,7 @@
         {
           "prop": "Over 5.5 Strikeouts",
           "type": "pitcher",
-          "score": 46.2,
+          "score": 46.4,
           "notable_signals": 1,
           "matchup": "Minnesota Twins @ Athletics",
           "game_pk": 824962,
@@ -206,7 +206,10 @@
             "same_hand_ratio": 75.0,
             "l14_k_pct": 48.8235,
             "tto_penalty": 8.0,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 51.8593,
+            "ump_k_pct": 0.216,
+            "ump_bb_pct": -0.036
           },
           "hit_probability": 0.4486,
           "raw_hit_probability": 0.4486,
@@ -222,7 +225,7 @@
         {
           "prop": "Over 17.5 Outs Recorded",
           "type": "pitcher",
-          "score": 48.1,
+          "score": 50.2,
           "notable_signals": 1,
           "matchup": "Minnesota Twins @ Athletics",
           "game_pk": 824962,
@@ -231,12 +234,12 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.5046,
+            "outs_rate": 0.5006,
             "avg_outs_per_start": 16.88
           },
-          "hit_probability": 0.5046,
+          "hit_probability": 0.5006,
           "raw_hit_probability": null,
-          "lift": 0.0641,
+          "lift": 0.0807,
           "reliability": "A",
           "sample_n": 25,
           "projection": {

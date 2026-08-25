@@ -219,7 +219,7 @@
         {
           "prop": "Over 3.5 Strikeouts",
           "type": "pitcher",
-          "score": 48.4,
+          "score": 35.8,
           "notable_signals": 0,
           "matchup": "Milwaukee Brewers @ New York Mets",
           "game_pk": 823585,
@@ -231,7 +231,10 @@
             "opp_team_k_pct": 46.0,
             "same_hand_ratio": 12.5,
             "l14_k_pct": 24.1176,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 35.3284,
+            "ump_k_pct": -0.24,
+            "ump_bb_pct": -0.048
           },
           "hit_probability": 0.6042,
           "raw_hit_probability": 0.6508,
@@ -256,12 +259,12 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.558,
+            "outs_rate": 0.5505,
             "avg_outs_per_start": 16.78
           },
-          "hit_probability": 0.558,
+          "hit_probability": 0.5505,
           "raw_hit_probability": null,
-          "lift": -0.0036,
+          "lift": 0.0075,
           "reliability": "B",
           "sample_n": 9,
           "projection": {

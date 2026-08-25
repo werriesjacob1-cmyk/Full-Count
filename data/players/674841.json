@@ -219,7 +219,7 @@
         {
           "prop": "Over 4.5 Strikeouts",
           "type": "pitcher",
-          "score": 49.3,
+          "score": 48.4,
           "notable_signals": 0,
           "matchup": "Colorado Rockies @ Washington Nationals",
           "game_pk": 822693,
@@ -231,7 +231,10 @@
             "opp_team_k_pct": 58.0,
             "same_hand_ratio": 57.1429,
             "l14_k_pct": 34.7059,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 41.5271,
+            "ump_k_pct": 0.384,
+            "ump_bb_pct": 0.012
           },
           "hit_probability": 0.4626,
           "raw_hit_probability": 0.4626,
@@ -247,7 +250,7 @@
         {
           "prop": "Over 14.5 Outs Recorded",
           "type": "pitcher",
-          "score": 17.5,
+          "score": 18.0,
           "notable_signals": 0,
           "matchup": "Colorado Rockies @ Washington Nationals",
           "game_pk": 822693,
@@ -256,12 +259,12 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.555,
+            "outs_rate": 0.5519,
             "avg_outs_per_start": 14.55
           },
-          "hit_probability": 0.555,
+          "hit_probability": 0.5519,
           "raw_hit_probability": null,
-          "lift": -0.184,
+          "lift": -0.1786,
           "reliability": "B",
           "sample_n": 11,
           "projection": {

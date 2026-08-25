@@ -149,10 +149,10 @@
       "date": "2026-08-25",
       "evaluations": [
         {
-          "prop": "Over 4.5 Strikeouts",
+          "prop": "Over 3.5 Strikeouts",
           "type": "pitcher",
-          "score": 45.2,
-          "notable_signals": 0,
+          "score": 34.1,
+          "notable_signals": 1,
           "matchup": "Los Angeles Dodgers @ Atlanta Braves",
           "game_pk": 824881,
           "team": "Atlanta Braves",
@@ -163,23 +163,26 @@
             "opp_team_k_pct": 36.0,
             "same_hand_ratio": 12.5,
             "l14_k_pct": 39.4118,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 82.1779,
+            "ump_k_pct": -0.192,
+            "ump_bb_pct": -0.108
           },
-          "hit_probability": 0.4643,
-          "raw_hit_probability": 0.4643,
-          "lift": -0.0477,
+          "hit_probability": 0.6062,
+          "raw_hit_probability": 0.6609,
+          "lift": -0.0858,
           "reliability": "A",
           "sample_n": 24,
           "projection": {
             "stat": "strikeouts",
-            "value": 4.5,
-            "needs": 5
+            "value": 3.5,
+            "needs": 4
           }
         },
         {
           "prop": "Over 15.5 Outs Recorded",
           "type": "pitcher",
-          "score": 73.5,
+          "score": 75.4,
           "notable_signals": 1,
           "matchup": "Los Angeles Dodgers @ Atlanta Braves",
           "game_pk": 824881,
@@ -188,12 +191,12 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.679,
+            "outs_rate": 0.6753,
             "avg_outs_per_start": 17.21
           },
-          "hit_probability": 0.679,
+          "hit_probability": 0.6753,
           "raw_hit_probability": null,
-          "lift": 0.1174,
+          "lift": 0.1323,
           "reliability": "A",
           "sample_n": 24,
           "projection": {

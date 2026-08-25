@@ -1480,6 +1480,111 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-25",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 69.2,
+          "notable_signals": 1,
+          "matchup": "Tampa Bay Rays @ Detroit Tigers",
+          "game_pk": 824233,
+          "team": "Tampa Bay Rays",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 100.0,
+            "l7_avg_ev": 100.0,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 51.7,
+            "season_barrel_pct": 69.3333,
+            "lineup_slot": 75.0,
+            "bullpen_fatigue": 76.9231,
+            "platoon_barrel_pct": 5.0,
+            "platoon_xwoba": 2.34,
+            "park_hand_index": 1.02,
+            "opp_catcher_framing": -1.2,
+            "days_rest": 0.0,
+            "consecutive_games": -1.2,
+            "woba_ahead": 51.8182,
+            "woba_behind": 59.0909,
+            "pull_park_synergy": 0.6676,
+            "hard_hit_105_rate": 2.355,
+            "team_total_move": -6.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": -1.192,
+            "vs_rp_ops": 0.984,
+            "ump_k_pct": -0.06,
+            "ump_bb_pct": -0.324
+          },
+          "hit_probability": 0.7099,
+          "raw_hit_probability": 0.7432,
+          "lift": 0.0386,
+          "reliability": "A",
+          "sample_n": 131,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 28.0,
+          "notable_signals": 1,
+          "matchup": "Tampa Bay Rays @ Detroit Tigers",
+          "game_pk": 824233,
+          "team": "Tampa Bay Rays",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.1408
+          },
+          "hit_probability": 0.1408,
+          "raw_hit_probability": null,
+          "lift": 0.0922,
+          "reliability": "A",
+          "sample_n": 131,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 21.6,
+          "notable_signals": 1,
+          "matchup": "Tampa Bay Rays @ Detroit Tigers",
+          "game_pk": 824233,
+          "team": "Tampa Bay Rays",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0989
+          },
+          "hit_probability": 0.0989,
+          "raw_hit_probability": null,
+          "lift": 0.0777,
+          "reliability": "A",
+          "sample_n": 131,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

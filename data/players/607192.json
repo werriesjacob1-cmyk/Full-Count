@@ -8,8 +8,8 @@
         {
           "prop": "Over 5.5 Strikeouts",
           "type": "pitcher",
-          "score": 36.0,
-          "notable_signals": 0,
+          "score": 25.9,
+          "notable_signals": 1,
           "matchup": "Los Angeles Dodgers @ Atlanta Braves",
           "game_pk": 824881,
           "team": "Los Angeles Dodgers",
@@ -18,8 +18,11 @@
           "combo_player_ids": null,
           "signals": {
             "opp_team_k_pct": 46.0,
-            "same_hand_ratio": 43.75,
-            "env_neutral": 50.0
+            "same_hand_ratio": 75.0,
+            "env_neutral": 50.0,
+            "ump_accuracy": 82.1779,
+            "ump_k_pct": -0.192,
+            "ump_bb_pct": -0.108
           },
           "hit_probability": 0.595,
           "raw_hit_probability": 0.6055,
@@ -44,18 +47,46 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.7207,
+            "outs_rate": 0.7121,
             "avg_outs_per_start": 17.0
           },
-          "hit_probability": 0.7207,
+          "hit_probability": 0.7121,
           "raw_hit_probability": null,
-          "lift": 0.1591,
+          "lift": 0.1691,
           "reliability": "C",
           "sample_n": 7,
           "projection": {
             "stat": "pitcher_outs",
             "value": 15.5,
             "needs": 16
+          }
+        },
+        {
+          "prop": "Over 10.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 54.9,
+          "notable_signals": 1,
+          "matchup": "Los Angeles Dodgers @ Atlanta Braves",
+          "game_pk": 824881,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            607192,
+            693821
+          ],
+          "signals": {
+            "combined_k_edge": 0.2282
+          },
+          "hit_probability": 0.6912,
+          "raw_hit_probability": null,
+          "lift": 0.2282,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 10.5,
+            "needs": 11
           }
         }
       ]

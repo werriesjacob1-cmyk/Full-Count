@@ -1,6 +1,6 @@
 {
-  "player_id": "nrfi_824233",
-  "name": "Tampa Bay Rays @ Detroit Tigers \u2014 1st Inning (Both Teams)",
+  "player_id": "nrfi_823826",
+  "name": "Boston Red Sox @ Miami Marlins \u2014 1st Inning (Both Teams)",
   "snapshots": [
     {
       "date": "2026-08-25",
@@ -8,27 +8,27 @@
         {
           "prop": "A run scores in the 1st (either team)",
           "type": "game",
-          "score": 23.5,
+          "score": 62.9,
           "notable_signals": 0,
-          "matchup": "Tampa Bay Rays @ Detroit Tigers",
-          "game_pk": 824233,
+          "matchup": "Boston Red Sox @ Miami Marlins",
+          "game_pk": 823826,
           "team": null,
           "side": "both",
           "lean": "YRFI",
           "combo_player_ids": null,
           "signals": {
-            "home_team_scores_p": 0.2858,
-            "away_team_scores_p": 0.3143,
-            "fi_n_starts": 3.0
+            "home_team_scores_p": 0.2917,
+            "away_team_scores_p": 0.3074,
+            "fi_n_starts": 14.0
           },
-          "hit_probability": 0.5103,
+          "hit_probability": 0.5094,
           "raw_hit_probability": null,
-          "lift": 0.0087,
-          "reliability": "D",
-          "sample_n": 3,
+          "lift": 0.0078,
+          "reliability": "B",
+          "sample_n": 14,
           "projection": {
             "stat": "nrfi_combined",
-            "value": 51.0
+            "value": 50.9
           }
         }
       ]
