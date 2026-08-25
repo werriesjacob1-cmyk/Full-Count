@@ -1,7 +1,85 @@
 # Full Count — session handoff status
 
-Last updated: 2026-08-25 ~15:05 UTC by Claude (this session).
+Last updated: 2026-08-25 ~17:35 UTC by Claude (this session).
 Purpose: let a fresh session resume with zero hidden chat context.
+
+## PREPARATORY RESEARCH INFRASTRUCTURE BUILT WHILE BACKFILL RERUNS (2026-08-25 ~16:00-17:35 UTC)
+
+Per the "NO FAKE RESULTS BUT MAXIMUM PRODUCTIVE PREPARATION" directive,
+built the following while PID 3304 (still healthy, ~37 min elapsed at
+last check) continues in the background -- none of this touched PID 3304
+or ran against complete/real canonical data; every module below is
+tested against synthetic fixtures, with real-data smoke tests explicitly
+discarded (never treated as a conclusion).
+
+1. **Runtime investigation** (`backtest/backfill_runtime_profile_2026-08-25.md`):
+   the earlier "~14h" projection for PID 3304 was very likely an
+   extrapolation artifact, not a real slowdown -- current early-April
+   per-date timings (~85s) are not worse than the prior successful run's
+   same dates (~115-140s), and that prior run's own true 7h07m total
+   implies a season-wide average (~43-44s/date) roughly half of April's
+   cost. No code regression found; resume-hardening's own runtime cost
+   proven negligible.
+2. **Locked experiment protocol** (`backtest/disagreement_experiment_protocol.md`):
+   the disagreement promotion methodology (safe pool, matched volume,
+   primary challenger, 2 predeclared secondary variants, z>=1.96
+   significance bar, year-stability requirement) written BEFORE the
+   rebuilt canonical dataset exists, so it can't be unconsciously tuned
+   after seeing results.
+3. **One-command disagreement runner** (`backtest/disagreement_experiment_runner.py`,
+   21 tests): wraps `disagreement_decomposition.py`/
+   `disagreement_challenger_model.py` end to end -- data audit, component
+   correlation map, REPRODUCED/PARTIALLY_REPRODUCED/NOT_REPRODUCED check
+   against the pre-restart reference numbers, the primary challenger's
+   equal-volume result with year stability, and a machine-readable
+   EARNS_SHADOW/CLOSED verdict per market implementing the locked
+   protocol exactly. Smoke-tested against real partial data (proved it
+   runs on real row shapes) -- output discarded immediately, no
+   conclusion drawn from incomplete history.
+4. **Selection information-loss audit** (`backtest/selection_information_loss_audit_2026-08-25.md`):
+   one real, newly-verified gap -- `quality_control()`'s rejection reason
+   is short-circuited (only the first failing check recorded). Important
+   verified counterpoint: the LATER Top-Pick-funnel gates
+   (`recommendation_funnel.gate_trace()`) are NOT short-circuited and are
+   already captured for every candidate (kept or rejected) in the
+   prospective funnel logger -- multi-gate regret analysis is already
+   well-supported there. Everything else audited (signals dict, cat_*
+   components, prob_ci) was already fully captured.
+5. **Pitcher-workload data audit** (`backtest/pitcher_workload_data_audit_2026-08-25.md`):
+   checked against real partial data. `actual_ip` (100% present) makes
+   the mechanism question directly answerable once canonical history
+   returns. But no `days_rest`-equivalent pregame signal exists for
+   pitchers (`score_pitcher` never wires one in, unlike `score_batter`) --
+   only `tto_penalty` is a plausible lead, and it's sparse (19.7%). Audit
+   only, no model built.
+6. **Shadow-policy framework** (`backtest/shadow_policy_framework.py`,
+   19 tests): the same frozen candidate universe consumable by multiple
+   research policies (champion, probability_first, reliability_first,
+   ci_lower_bound -- never fabricates a CI for a market without one).
+   Non-mutation and no-postgame-leakage both tested directly.
+   `compare_policies()`/`grade_policy_selection()` join outcomes from a
+   separate source, mirroring the funnel logger/grader's own pregame/
+   postgame separation. Never touches the public board.
+7. **Prospective candidate reporting** (`backtest/prospective_reporting.py`,
+   13 tests): slate summaries, highest-probability-rejected, alternate-
+   line winner comparison, gate-regret (correctly excludes multi-gate-
+   blocked candidates from single-gate attribution). Synthetic fixtures
+   only -- this session's own earlier live-logged funnel data was ALSO
+   lost to the container restarts (gitignored by design).
+8. **Harness readiness note** (`backtest/harness_readiness_2026-08-25.md`):
+   honest scope triage. CI-lower-bound (item 6 above) and the general
+   equal-volume machinery market specialization needs are already real
+   and tested -- not separately rebuilt. The market-specialization RUNNER
+   script and the shrinkage sweep harness are the two genuinely
+   outstanding items, deliberately left unbuilt rather than written blind
+   against no data.
+
+**None of Priorities 8 (pitcher opportunity full analysis), the
+disagreement reproduction itself, or the decisive equal-volume test have
+been run** -- all still genuinely blocked on PID 3304 finishing. The
+moment it does: raw validation -> canonical rebuild -> run
+`disagreement_experiment_runner.py` for real -> read its own
+REPRODUCED/EARNS_SHADOW verdict.
 
 ## RESTART-SAFETY HARDENING DONE (2026-08-25 ~14:30-15:05 UTC)
 
