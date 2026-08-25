@@ -15,9 +15,14 @@ sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "bac
 import event_targeted_observer as eto
 
 
-def mlb(inning=1, half="Top", outs=0, away=0, home=0, batter="Batter A", pitcher="Pitcher A"):
+def mlb(inning=1, half="Top", outs=0, away=0, home=0, batter="Batter A", pitcher="Pitcher A",
+        on_1b=None, on_2b=None, on_3b=None, batting_order=None,
+        last_event_type=None, last_event=None):
     return {"inning": inning, "half": half, "outs": outs, "away_score": away,
             "home_score": home, "batter": batter, "pitcher": pitcher,
+            "on_1b": on_1b, "on_2b": on_2b, "on_3b": on_3b,
+            "batting_order": batting_order,
+            "last_event_type": last_event_type, "last_event": last_event,
             "abstract_state": "Live"}
 
 
@@ -69,6 +74,96 @@ class TriggerDetectionTests(unittest.TestCase):
         cur = mlb(inning=1, half="Bottom", batter="B", pitcher="Y")
         kinds = {t[0] for t in eto.detect_triggers(prev, cur)}
         self.assertEqual(kinds, {"inning_transition", "batter_change", "pitcher_change"})
+
+    def test_real_home_run_detected_via_mlb_event_type_not_score_delta(self):
+        # 2026-08-25 upgrade: a real home run is detected from MLB's own
+        # result.eventType (via fetch_mlb_state), not inferred from a score
+        # jump -- a solo HR is only a 1-run delta, which the old score-only
+        # heuristic could never distinguish from a bases-empty single that
+        # somehow scored a run on an error.
+        prev = mlb(away=2, home=1, batter="A", last_event_type=None)
+        cur = mlb(away=3, home=1, batter="A", last_event_type="home_run", last_event="Home Run")
+        kinds = {t[0] for t in eto.detect_triggers(prev, cur)}
+        self.assertIn("home_run", kinds)
+
+    def test_home_run_not_re_triggered_every_poll_while_still_current_play(self):
+        prev = mlb(batter="A", last_event_type="home_run", last_event="Home Run")
+        cur = mlb(batter="A", last_event_type="home_run", last_event="Home Run")
+        kinds = {t[0] for t in eto.detect_triggers(prev, cur)}
+        self.assertNotIn("home_run", kinds)
+
+    def test_multi_run_scoring_play_distinguished_from_single_run(self):
+        prev = mlb(away=1, home=1)
+        cur = mlb(away=1, home=4)  # +3 in one poll
+        kinds = {t[0] for t in eto.detect_triggers(prev, cur)}
+        self.assertIn("multi_run_scoring_play", kinds)
+        self.assertNotIn("scoring_play", kinds)
+
+    def test_single_run_stays_plain_scoring_play(self):
+        prev = mlb(away=1, home=1)
+        cur = mlb(away=1, home=2)
+        kinds = {t[0] for t in eto.detect_triggers(prev, cur)}
+        self.assertIn("scoring_play", kinds)
+        self.assertNotIn("multi_run_scoring_play", kinds)
+
+    def test_bases_loaded_detected_from_real_occupancy(self):
+        prev = mlb(on_1b=True, on_2b=False, on_3b=False)
+        cur = mlb(on_1b=True, on_2b=True, on_3b=True)
+        kinds = {t[0] for t in eto.detect_triggers(prev, cur)}
+        self.assertIn("bases_loaded", kinds)
+
+    def test_bases_loaded_not_triggered_when_unknown(self):
+        # Old/incomplete state (on_Nb fields absent -> None) must never be
+        # treated as "loaded" -- an honestly-unknown base state is not a
+        # leverage event.
+        prev = mlb()
+        cur = mlb()
+        kinds = {t[0] for t in eto.detect_triggers(prev, cur)}
+        self.assertNotIn("bases_loaded", kinds)
+
+    def test_bases_loaded_only_fires_on_the_transition_not_every_poll(self):
+        prev = mlb(on_1b=True, on_2b=True, on_3b=True)
+        cur = mlb(on_1b=True, on_2b=True, on_3b=True)
+        kinds = {t[0] for t in eto.detect_triggers(prev, cur)}
+        self.assertNotIn("bases_loaded", kinds)
+
+    def test_batting_order_turnover_detected_on_wraparound(self):
+        prev = mlb(batter="I", batting_order=9)
+        cur = mlb(batter="J", batting_order=1)
+        kinds = {t[0] for t in eto.detect_triggers(prev, cur)}
+        self.assertIn("batting_order_turnover", kinds)
+        self.assertNotIn("batter_change", kinds)  # turnover supersedes the generic kind
+
+    def test_normal_batting_order_increase_is_a_plain_batter_change(self):
+        prev = mlb(batter="A", batting_order=3)
+        cur = mlb(batter="B", batting_order=4)
+        kinds = {t[0] for t in eto.detect_triggers(prev, cur)}
+        self.assertIn("batter_change", kinds)
+        self.assertNotIn("batting_order_turnover", kinds)
+
+
+class BurstPlanTests(unittest.TestCase):
+    def test_no_triggers_uses_the_default_plan(self):
+        self.assertEqual(eto.burst_plan_for([]), (eto.BURST_INTERVAL_S, eto.BURST_POLLS))
+
+    def test_pitcher_change_bursts_at_the_hardest_tier(self):
+        plan = eto.burst_plan_for([("pitcher_change", "x -> y")])
+        self.assertEqual(plan, eto.TIER_BURST_PLAN[1])
+
+    def test_routine_batter_change_bursts_at_the_lightest_tier(self):
+        plan = eto.burst_plan_for([("batter_change", "x -> y")])
+        self.assertEqual(plan, eto.TIER_BURST_PLAN[5])
+
+    def test_simultaneous_triggers_use_the_more_aggressive_tier(self):
+        # A batter change alongside a pitcher change must burst as hard as
+        # the pitcher change alone -- the lower-priority trigger must never
+        # dilute the response to the higher-priority one.
+        plan = eto.burst_plan_for([("batter_change", "x"), ("pitcher_change", "y")])
+        self.assertEqual(plan, eto.TIER_BURST_PLAN[1])
+
+    def test_every_trigger_kind_has_an_assigned_tier(self):
+        for kind in eto.TRIGGER_KINDS:
+            self.assertIn(kind, eto.TRIGGER_TIERS, f"{kind} has no tier assigned")
 
 
 def market(status="OPEN", runners=None):

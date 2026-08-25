@@ -44,9 +44,61 @@ from fanduel_live_observer import pick_live_games, snapshot_event  # noqa: E402
 
 DEFAULT_LOG = __file__.rsplit("/", 1)[0] + "/event_targeted_observer_log.jsonl"
 BASE_INTERVAL_S = 25.0   # idle cadence: cheap MLB poll every cycle, slow FD poll to hold a baseline
-BURST_INTERVAL_S = 8.0   # FanDuel polling cadence during a triggered window
-BURST_POLLS = 10         # bounded burst length -- never open-ended
-TRIGGER_KINDS = ("pitcher_change", "scoring_play", "inning_transition", "batter_change")
+BURST_INTERVAL_S = 8.0   # FanDuel polling cadence during a triggered window (default tier)
+BURST_POLLS = 10         # bounded burst length -- never open-ended (default tier)
+TRIGGER_KINDS = (
+    "pitcher_change", "home_run", "multi_run_scoring_play", "scoring_play",
+    "bases_loaded", "inning_transition", "batting_order_turnover", "batter_change",
+)
+
+# 2026-08-25: ranked by expected FanDuel pricing impact, per the explicit
+# targeting-strategy improvement this session was asked for after the first
+# live run produced real triggers but zero confirmed repricing -- the fix
+# for "more signal, still no price change" is BETTER TARGETING, not a
+# longer run. Tier 1 = burst hardest (most polls, fastest cadence); tier 5
+# = lightest touch (a real event worth logging, but not worth spending
+# request budget chasing as hard). Honest limitation: MLB's coarse live
+# feed lets us detect a REAL home run via `result.eventType == "home_run"`
+# (not inferred from score deltas -- see alive_brain_prototype.fetch_mlb_state's
+# own docstring), but cannot distinguish "starter pulled for a reliever"
+# from "regularly scheduled pitching change" without deeper roster-role
+# context this prototype doesn't carry -- pitcher_change is treated as
+# tier 1 regardless, since either case is a real event that can move a
+# pitcher-specific market.
+TRIGGER_TIERS = {
+    "pitcher_change": 1,
+    "home_run": 2,
+    "multi_run_scoring_play": 2,
+    "scoring_play": 3,          # single-run or otherwise-unclassified scoring
+    "bases_loaded": 3,
+    "inning_transition": 4,
+    "batting_order_turnover": 5,
+    "batter_change": 5,
+}
+# (burst_interval_s, burst_polls) per tier -- tier 1 hardest, tier 5 lightest.
+# Tier 1's ceiling (14 polls @ 5s = 70s of coverage) is deliberately ABOVE
+# the old flat default (10 @ 8s = 80s -- comparable total window, tighter
+# cadence) specifically for pitcher changes, the single highest-value
+# trigger; tier 5 is deliberately BELOW it (6 @ 10s = 60s) so a routine
+# batter change doesn't spend the same request budget as a real event.
+TIER_BURST_PLAN = {
+    1: (5.0, 14),
+    2: (6.0, 12),
+    3: (7.0, 10),
+    4: (8.0, 8),
+    5: (10.0, 6),
+}
+
+
+def burst_plan_for(triggers):
+    """Given this cycle's detected (kind, detail) triggers, return the
+    (interval_s, n_polls) burst plan for the single HIGHEST-priority tier
+    present -- simultaneous triggers (e.g. a scoring play during an inning
+    transition) burst at the more aggressive of the two, not diluted."""
+    if not triggers:
+        return BURST_INTERVAL_S, BURST_POLLS
+    best_tier = min(TRIGGER_TIERS.get(kind, 5) for kind, _detail in triggers)
+    return TIER_BURST_PLAN[best_tier]
 
 
 def _now():
@@ -59,27 +111,54 @@ def _log(handle, rec):
 
 
 def detect_triggers(prev_mlb, cur_mlb):
-    """Real, cheap, robust triggers from fetch_mlb_state()'s own fields --
-    deliberately NOT attempting a full baserunner/leverage parse (that
-    needs the play-by-play detail this coarse state doesn't carry); a
-    pitcher change, a scoring play, an inning transition, and a batter
-    change already cover the moments most likely to move a live market,
-    and each is a single, unambiguous field comparison -- no guessing."""
+    """Real, cheap, robust triggers from fetch_mlb_state()'s own fields, each
+    a single unambiguous comparison -- no guessing. 2026-08-25: upgraded from
+    4 to 8 trigger kinds (see TRIGGER_TIERS) once alive_brain_prototype's
+    fetch_mlb_state() started surfacing real baserunner occupancy, batting
+    order, and MLB's own play-classification (`result.eventType`) instead of
+    just inning/score/batter/pitcher -- lets this distinguish an actual home
+    run from a routine scoring play, and real bases-loaded leverage / lineup
+    turnover from a generic batter change, rather than only inferring from
+    score deltas. Backward-compatible: a caller still passing the old
+    4-field state dict (no on_1b/on_2b/on_3b/batting_order/last_event_type)
+    simply won't trigger the new kinds -- .get() everywhere, no KeyError."""
     if prev_mlb is None:
         return []
     triggers = []
     if cur_mlb.get("pitcher") and cur_mlb.get("pitcher") != prev_mlb.get("pitcher"):
         triggers.append(("pitcher_change",
                          f"{prev_mlb.get('pitcher')!r} -> {cur_mlb.get('pitcher')!r}"))
+
+    if cur_mlb.get("last_event_type") == "home_run" and (
+            prev_mlb.get("last_event_type") != "home_run"
+            or prev_mlb.get("batter") != cur_mlb.get("batter")):
+        triggers.append(("home_run", f"{cur_mlb.get('batter')!r} — {cur_mlb.get('last_event')!r}"))
+
     prev_score = (prev_mlb.get("away_score"), prev_mlb.get("home_score"))
     cur_score = (cur_mlb.get("away_score"), cur_mlb.get("home_score"))
     if None not in prev_score and None not in cur_score and prev_score != cur_score:
-        triggers.append(("scoring_play", f"{prev_score} -> {cur_score}"))
+        run_delta = (cur_score[0] - prev_score[0]) + (cur_score[1] - prev_score[1])
+        if run_delta >= 2:
+            triggers.append(("multi_run_scoring_play", f"{prev_score} -> {cur_score} (+{run_delta})"))
+        else:
+            triggers.append(("scoring_play", f"{prev_score} -> {cur_score}"))
+
+    bases_now = (cur_mlb.get("on_1b"), cur_mlb.get("on_2b"), cur_mlb.get("on_3b"))
+    if all(v is not None for v in bases_now) and all(bases_now):
+        bases_before = (prev_mlb.get("on_1b"), prev_mlb.get("on_2b"), prev_mlb.get("on_3b"))
+        if bases_before != bases_now:
+            triggers.append(("bases_loaded", f"outs={cur_mlb.get('outs')}"))
+
     if (cur_mlb.get("inning"), cur_mlb.get("half")) != (prev_mlb.get("inning"), prev_mlb.get("half")):
         triggers.append(("inning_transition",
                          f"{prev_mlb.get('half')} {prev_mlb.get('inning')} -> "
                          f"{cur_mlb.get('half')} {cur_mlb.get('inning')}"))
-    if cur_mlb.get("batter") and cur_mlb.get("batter") != prev_mlb.get("batter"):
+
+    prev_order, cur_order = prev_mlb.get("batting_order"), cur_mlb.get("batting_order")
+    if (isinstance(prev_order, int) and isinstance(cur_order, int)
+            and cur_order < prev_order):
+        triggers.append(("batting_order_turnover", f"slot {prev_order} -> {cur_order}"))
+    elif cur_mlb.get("batter") and cur_mlb.get("batter") != prev_mlb.get("batter"):
         triggers.append(("batter_change",
                          f"{prev_mlb.get('batter')!r} -> {cur_mlb.get('batter')!r}"))
     return triggers
@@ -144,17 +223,22 @@ def run(game_pk, event_id, total_minutes, log_path):
 
             if triggers:
                 n_triggers += len(triggers)
+                burst_interval, burst_polls = burst_plan_for(triggers)
+                best_tier = min(TRIGGER_TIERS.get(kind, 5) for kind, _detail in triggers)
                 for kind, detail in triggers:
                     _log(handle, {"kind": "trigger_detected", "ts": _now(),
-                                  "trigger": kind, "detail": detail})
+                                  "trigger": kind, "detail": detail,
+                                  "tier": TRIGGER_TIERS.get(kind, 5)})
+                _log(handle, {"kind": "burst_plan", "ts": _now(), "tier": best_tier,
+                              "burst_interval_s": burst_interval, "burst_polls": burst_polls})
                 # BURST WINDOW: bounded, aborts on any real FanDuel failure.
-                for i in range(BURST_POLLS):
+                for i in range(burst_polls):
                     fd_state, fd_lat, failures = snapshot_event(event_id)
                     n_burst_polls += 1
                     changes = diff_fanduel(prev_fd, fd_state)
                     for ch in changes:
                         ch.update({"kind_prefix": "fd_change_during_burst", "ts": _now(),
-                                   "burst_poll": i})
+                                   "burst_poll": i, "trigger_tier": best_tier})
                         _log(handle, ch)
                         n_changes += 1
                     _log(handle, {"kind": "fd_burst_poll", "ts": _now(), "burst_poll": i,
@@ -165,8 +249,8 @@ def run(game_pk, event_id, total_minutes, log_path):
                         _log(handle, {"kind": "burst_aborted_on_failure", "ts": _now(),
                                       "burst_poll": i, "failures": failures})
                         break
-                    if i < BURST_POLLS - 1:
-                        time.sleep(BURST_INTERVAL_S)
+                    if i < burst_polls - 1:
+                        time.sleep(burst_interval)
                 prev_mlb = cur_mlb
                 continue
 
