@@ -22,7 +22,8 @@
 """
 
 import os, sys, re, json, math, warnings, unicodedata, requests, pandas as pd, numpy as np
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
+from zoneinfo import ZoneInfo
 from collections import defaultdict
 from concurrent.futures import ThreadPoolExecutor
 from bs4 import BeautifulSoup
@@ -831,6 +832,54 @@ def ballpark_table():
 #  SECTIONS 5-8 — WEATHER, UMPIRES, BvP, TRAVEL
 # ══════════════════════════════════════════════════════════════════════════════
 
+def forecast_hour_index(game_start_utc, meteo_json):
+    """The real stadium-local hour index into an Open-Meteo `timezone=auto`
+    hourly array, matched against the forecast's OWN auto-detected IANA
+    timezone and its own returned local timestamps -- never a hardcoded
+    UTC offset.
+
+    REAL BUG this replaces (found live, 2026-08-2X data-integrity audit):
+    every call site used to index this array with `game_meta["hour"]`,
+    which is the game's EASTERN hour (`gameDate` UTC minus a hardcoded 4
+    hours, computed once when game_meta is built) -- but Open-Meteo's
+    `timezone=auto` array is indexed in STADIUM-LOCAL hours, not Eastern.
+    Verified live: a real Central-zone stadium's forecast response comes
+    back with `"timezone": "America/Chicago"` and `hourly.time` values like
+    "2026-08-25T19:00" -- genuinely Central local time, with no UTC-offset
+    suffix. Using the Eastern hour as that array's index is exact only for
+    an Eastern-zone park (roughly half the league) by coincidence: it's off
+    by ~1 hour for Central parks, ~2 for Mountain, ~3 for Pacific, silently
+    pulling the wrong hour's temperature/wind/humidity for every game west
+    of the Eastern time zone.
+
+    Fixed by converting the game's real UTC start instant into whatever
+    timezone THIS forecast response says it auto-detected (never assuming
+    which zone a park is in ourselves), then finding that exact local hour
+    in the response's own `hourly.time` array -- so this is correct even
+    across a local date rollover for a very late start, and never drifts
+    out of sync with whatever zone Open-Meteo actually used to build the
+    rest of the array.
+    """
+    try:
+        dt_utc = datetime.strptime(game_start_utc, "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=timezone.utc)
+    except (TypeError, ValueError):
+        dt_utc = None
+    tz_name = (meteo_json or {}).get("timezone")
+    local_dt = None
+    if dt_utc is not None:
+        try:
+            local_dt = dt_utc.astimezone(ZoneInfo(tz_name)) if tz_name else dt_utc
+        except Exception:
+            local_dt = dt_utc
+    times = (meteo_json or {}).get("hourly", {}).get("time", [])
+    if local_dt is not None:
+        local_hour_str = local_dt.strftime("%Y-%m-%dT%H:00")
+        if local_hour_str in times:
+            return times.index(local_hour_str)
+        return min(max(local_dt.hour, 0), 23)
+    return 19  # matches the existing "TBD start time" fallback used elsewhere
+
+
 def fetch_weather(game_meta):
     step("Game-time weather + air density + directional HR scores...")
     lines=[]
@@ -860,8 +909,8 @@ def fetch_weather(game_meta):
                 "temperature_unit":"fahrenheit","windspeed_unit":"mph",
                 "precipitation_unit":"inch","timezone":"auto","forecast_days":1
             },timeout=20,retries=2); r.raise_for_status()
-            h=r.json()["hourly"]
-            idx=min(max(gm["hour"],0),23)
+            meteo=r.json(); h=meteo["hourly"]
+            idx=forecast_hour_index(gm.get("game_start_utc"), meteo)
             temp=h["temperature_2m"][idx]; precip_p=h["precipitation_probability"][idx]
             wsp=h["windspeed_10m"][idx]; wdir=h["winddirection_10m"][idx]
             humid=h["relativehumidity_2m"][idx]; precip=h["precipitation"][idx]
@@ -2211,8 +2260,8 @@ def compute_directional_hr_score(game_meta, bat_df=None):
                 "hourly":"temperature_2m,windspeed_10m,winddirection_10m,relativehumidity_2m",
                 "temperature_unit":"fahrenheit","windspeed_unit":"mph","timezone":"auto","forecast_days":1
             },timeout=15,retries=2); r.raise_for_status()
-            h=r.json()["hourly"]
-            idx=min(max(gm["hour"],0),23)
+            meteo=r.json(); h=meteo["hourly"]
+            idx=forecast_hour_index(gm.get("game_start_utc"), meteo)
             temp=h["temperature_2m"][idx]; wsp=h["windspeed_10m"][idx]; wdir=h["winddirection_10m"][idx]; humid=h["relativehumidity_2m"][idx]
         except Exception:
             temp=72; wsp=5; wdir=cf_deg; humid=50; wx_is_estimate=True
@@ -2362,8 +2411,8 @@ def compute_threshold_flags(game_meta):
                 "hourly":"temperature_2m,windspeed_10m,winddirection_10m",
                 "temperature_unit":"fahrenheit","windspeed_unit":"mph","timezone":"auto","forecast_days":1
             },timeout=15,retries=2); r.raise_for_status()
-            h=r.json()["hourly"]
-            idx=min(max(gm["hour"],0),23)
+            meteo=r.json(); h=meteo["hourly"]
+            idx=forecast_hour_index(gm.get("game_start_utc"), meteo)
             temp=h["temperature_2m"][idx]; wsp=h["windspeed_10m"][idx]
             if wsp>=10: lines.append(f"  💨 {gm['matchup']}: Wind {wsp:.0f}mph — THRESHOLD CROSSED (10+mph = significant carry effect)")
             if wsp>=15: lines.append(f"  🌪️ {gm['matchup']}: Wind {wsp:.0f}mph — HIGH WIND (15+mph = major factor)")
