@@ -534,8 +534,17 @@ function topPickGapExplainer(props) {
 function renderToday() {
   const el = document.getElementById("page-today");
   const props = publicProps();
+  // Prefer the backend's own canonical `rank` (dashboard/build_dashboard.py's
+  // _assign_top_pick_rank() -- mirrors generate_picks.py's rank_for_board()
+  // tiebreak policy: reliability, then edge, then probability). Found
+  // 2026-08-25: this used to be an edge-only sort computed here in JS, which
+  // is exactly the kind of independently-invented ranking this project's own
+  // frontend/backend boundary forbids. The edge-only fallback below only
+  // matters for a stale cached data.json from before `rank` existed -- never
+  // a second, competing ranking policy for current data.
   const topPicks = props.filter(p => p.recommendation_status === "top_pick")
-    .sort((a, b) => (b.market_edge || 0) - (a.market_edge || 0));
+    .sort((a, b) => (a.rank != null && b.rank != null) ? a.rank - b.rank
+                    : (b.market_edge || 0) - (a.market_edge || 0));
   const valueAll = props.filter(p => p.recommendation_status === "value" && !isLongshot(p))
     .sort((a, b) => (b.market_edge || 0) - (a.market_edge || 0));
   const longshotsAll = props.filter(isLongshot)

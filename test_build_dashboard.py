@@ -153,6 +153,40 @@ check(sum(1 for r in payload2["props"] if r["recommendation_status"] == "top_pic
       "silently trimmed (there is no server-side cap in the new architecture at all)")
 
 
+head("1b. _assign_top_pick_rank(): every top_pick row gets a real 1-indexed rank matching "
+     "generate_picks.py's own reliability/edge/probability tiebreak (found 2026-08-25 -- "
+     "docs/app.js's renderToday() used to invent this ordering itself in JS via an edge-only "
+     "sort, which this project's own frontend/backend boundary forbids: 'frontend must not "
+     "invent new ranking')")
+
+ranked_by_name = {r["name"]: r.get("rank") for r in payload["props"]
+                  if r["recommendation_status"] == "top_pick"}
+check(ranked_by_name["Big Edge Top Pick"] == 1,
+      "highest edge ranks #1 among equal-reliability top picks", f"got {ranked_by_name}")
+check(ranked_by_name["Mid Edge Top Pick"] == 2, "middle edge ranks #2", f"got {ranked_by_name}")
+check(ranked_by_name["Small Edge Top Pick"] == 3, "lowest edge ranks #3", f"got {ranked_by_name}")
+non_top_pick_ranks = [r.get("rank") for r in payload["props"] if r["recommendation_status"] != "top_pick"]
+check(all(r is None for r in non_top_pick_ranks),
+      "non-top_pick rows never get a fabricated rank -- this function only ever defines an "
+      "order among Top Picks", f"got {non_top_pick_ranks}")
+
+reliability_case = {"generated_at": "x", "date": "2026-08-16",
+    "hits": [
+        row("A Grade Low Edge", "hits", 0.65, odds=-120, implied=0.55, edge=0.03, clears=True,
+           recommendation_status="top_pick", reliability="A"),
+        row("B Grade Higher Edge", "hits", 0.65, odds=-120, implied=0.55, edge=0.20, clears=True,
+           recommendation_status="top_pick", reliability="B"),
+    ]}
+payload_rel = bd.build_payload(reliability_case)
+by_name = {r["name"]: r.get("rank") for r in payload_rel["props"]}
+check(by_name["B Grade Higher Edge"] == 1,
+      "A and B reliability are treated identically by generate_picks._RELIABILITY_ORDER (both "
+      "map to 0) -- since only A/B can ever reach top_pick status at all "
+      "(TOP_PICK_MIN_RELIABILITY=('A','B')), edge is the real deciding tiebreak in practice, so "
+      "the higher-edge B-grade pick correctly outranks the lower-edge A-grade pick",
+      f"got {by_name}")
+
+
 head("2. home_runs is dropped as a duplicate of moonshot (same underlying field, per audit) "
      "-- families reflects only the real, deduplicated stat keys")
 

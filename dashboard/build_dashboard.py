@@ -695,6 +695,34 @@ def load_track_record(path=None):
     return {"current": current, "legacy": legacy}
 
 
+def _assign_top_pick_rank(rows):
+    """Attaches an explicit, 1-indexed `rank` to every row with
+    recommendation_status == "top_pick", mutating in place. Reuses
+    generate_picks.py's own _RELIABILITY_ORDER (imported, never
+    reimplemented) so this live-dashboard ordering can't silently drift
+    from the tiebreak policy generate_picks.rank_for_board() applies to
+    the separate static top10 board's own "clears" population: reliability
+    tier first, then market edge, then win probability, all descending.
+    (In practice TOP_PICK_MIN_RELIABILITY = ("A", "B") means every real
+    top_pick row already carries reliability A or B, and _RELIABILITY_ORDER
+    ranks both identically -- so this reduces to edge-then-probability for
+    the population that actually reaches this function, matching what
+    app.js's own prior ad-hoc edge sort already produced in practice. The
+    real fix is architectural, not a behavior change: the policy now lives
+    in exactly one place instead of being independently re-derived in JS.)
+
+    Every OTHER row (lean/value/neutral) gets rank=None -- this function
+    only ever defines an order among Top Picks, never invents one for a
+    population the product has no ranking philosophy for."""
+    import generate_picks as gp
+    top_picks = [r for r in rows if r.get("recommendation_status") == "top_pick"]
+    top_picks.sort(key=lambda r: (-gp._RELIABILITY_ORDER.get(r.get("reliability") or "D", 1),
+                                   r.get("market_edge") or 0, r.get("hit_probability") or 0),
+                   reverse=True)
+    for i, r in enumerate(top_picks, 1):
+        r["rank"] = i
+
+
 def build_payload(result, track_record=None):
     """PHASE 4 REBUILD (2026-08-16): ONE canonical `props` array, no
     duplication. The pre-rebuild version of this function serialized every
@@ -748,8 +776,15 @@ def build_payload(result, track_record=None):
     # sorting above several real, priced, lower-probability Strikeouts
     # candidates for exactly this reason. Within that, Top Pick first (the
     # one state that's an actual recommendation), then by edge -- a
-    # sensible default order for anyone rendering the raw payload order,
-    # even though every real view in app.js re-sorts explicitly anyway.
+    # sensible default order for anyone rendering the raw payload order.
+    # docs/app.js's renderToday() used to re-sort the top_pick population by
+    # market_edge alone -- a real, independently-invented ranking, which the
+    # project's own frontend/backend boundary forbids ("frontend must not
+    # invent new ranking"). Found 2026-08-25 during a frontend correctness
+    # audit. _assign_top_pick_rank() below gives the frontend a real
+    # canonical `rank` to preserve instead, so the ranking POLICY lives here
+    # (Python, one place) even though this live-dashboard candidate pool is
+    # independently computed from the static top10 board's own pipeline.
     _STATUS_RANK = {"top_pick": 0, "lean": 1, "value": 2, "neutral": 3, None: 4}
 
     def _default_order(r):
@@ -757,6 +792,7 @@ def build_payload(result, track_record=None):
                -(r.get("market_edge") or 0))
 
     all_rows.sort(key=_default_order)
+    _assign_top_pick_rank(all_rows)
 
     families = [{"stat": stat, "label": CATEGORY_LABELS.get(stat, stat.replace("_", " ").title()),
                 "count": count}
