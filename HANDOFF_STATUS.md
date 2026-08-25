@@ -3,7 +3,63 @@
 Last updated: 2026-08-25 ~10:56 UTC by Claude (this session).
 Purpose: let a fresh session resume with zero hidden chat context.
 
-## IMPORTANT: session worker restart + data recovery in progress (2026-08-25 ~10:50 UTC)
+## IMPORTANT: session worker restart + data recovery in progress (2026-08-25 ~10:50 UTC, SECOND restart ~11:05 UTC)
+
+This session's container/worker was restarted mid-turn -- TWICE. Both
+times, git-committed state was completely unaffected (confirmed via
+`git fetch` + fast-forward merge each time -- nothing has ever been lost
+from git). Both times, the same casualty: a long-running background
+backfill process (started via `nohup ... &`) was killed outright, along
+with its local monitor process and the local working directory being
+reset to a stale `main` checkout.
+
+**Restart 1** (~10:50 UTC): killed the original canonical dataset in
+progress reconstruction. Recovery: relaunched backfill as PID 8145,
+committed `7dcfdb4a`/`ef4ef292`.
+
+**Restart 2** (~11:05-11:10 UTC, noticed when the user asked "is backfill
+done"): killed PID 8145 before meaningful progress (checked at ~03:11
+elapsed the one time before it died). Recovery: relaunched AGAIN as a new
+PID (check `ps aux | grep backtest/engine.py` for the current one --
+don't trust any PID number written here, it will be stale by the time you
+read it). Local stale `backtest/rows_backfill.jsonl`/`.state.json` files
+(leftover from main's old 2026-08-20 state) were deleted again before
+relaunching.
+
+**Lesson learned, applied going forward**: a local `nohup`'d background
+monitor does NOT survive a worker restart (verified twice) -- do not trust
+one to notify reliably for a multi-hour job in this environment. Prefer
+checking `ps aux | grep backtest/engine.py` and the row count of
+`backtest/rows_canonical_rebuild.jsonl` directly when resuming, and/or a
+server-side scheduled check-in (`send_later`/routine), not a local
+background watcher, for anything that needs to survive a restart.
+
+**What this means for resuming, if you land here mid-backfill AGAIN**:
+1. `git fetch origin claude/gridiron-continuation-dvaljm` then
+   `git checkout claude/gridiron-continuation-dvaljm && git merge --ff-only
+   origin/claude/gridiron-continuation-dvaljm` -- this ALWAYS recovers full
+   git state instantly, has never failed across two restarts so far.
+2. Check `ps aux | grep "[b]acktest/engine.py"` -- if nothing is running,
+   the backfill died with the restart (again) and needs relaunching:
+   `rm -f backtest/rows_backfill.jsonl backtest/rows_backfill.jsonl.state.json`
+   (clean up any stale main-branch leftover file first), then
+   `nohup /tmp/mlbvenv/bin/python3 backtest/engine.py --start 2024-04-01
+   --end 2026-06-30 --out backtest/rows_canonical_rebuild.jsonl --no-weather
+   > backtest/_backfill_rebuild.log 2>&1 &`.
+3. Do NOT assume progress carries over between relaunches -- `engine.py`
+   writes to a fresh output file each invocation named here
+   (`rows_canonical_rebuild.jsonl`); check its row count / the state JSON
+   next to it if one exists to see how far a given attempt got before
+   dying, but each relaunch starts the date range over from scratch unless
+   `engine.py` itself has resume support (check its own `--help`/state-file
+   handling before assuming either way).
+4. `backtest/disagreement_decomposition.py`, `disagreement_challenger_model.py`,
+   and their tests are safely committed now (unlike after restart 1) --
+   no need to recreate them again.
+
+## Original restart-1 recovery notes (superseded in relevance by the above, kept for the full timeline)
+
+Data recovery in progress (2026-08-25 ~10:50 UTC)
 
 This session's container/worker was restarted mid-turn. The git-committed
 state (branch/commits/all `.md` findings) was NOT affected -- everything
