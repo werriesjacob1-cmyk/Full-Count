@@ -2,7 +2,7 @@
   "schema_version": 1,
   "identity_schema_version": 2,
   "rollout_version": "pre-phase-v-live-lifecycle-v1",
-  "updated_at": "2026-08-25T21:20:57.909115+00:00",
+  "updated_at": "2026-08-25T21:21:53.421103+00:00",
   "migration": {
     "version": "pre-phase-v-live-lifecycle-v1",
     "completed_at": "2026-08-17T23:14:57+00:00",
@@ -2202,6 +2202,190 @@
         },
         "qualification_timestamp": "2026-08-25T20:54:47.217404+00:00",
         "board_timestamp": "2026-08-25T20:54:47.183604+00:00",
+        "slate_date": "2026-08-25"
+      }
+    },
+    "fc2:824556:player-805367:hits_runs_rbis:1:over": {
+      "canonical_id": "fc2:824556:player-805367:hits_runs_rbis:1:over",
+      "settlement_identity": [
+        "824556",
+        [
+          "player",
+          "805367"
+        ],
+        "hits_runs_rbis",
+        "1",
+        "over"
+      ],
+      "slate_date": "2026-08-25",
+      "first_published_at": "2026-08-25T21:21:53.421103+00:00",
+      "publication_provenance": {
+        "artifact_id": "641261f3f8194f83d165b2badd967e9a669e8efef7076a168bf66bc938f1c227",
+        "source_commit": "23b38e7c1a4f83e0900e65c843e2b43c1fe562eb",
+        "workflow_run_id": "32900506695",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-08-25T21:21:40.139167+00:00",
+        "data_hash": "992d61609e8af8f7108ce740a8e5f2ba1bdc2c1216df6e5363bff97f9e0a01e1",
+        "live_hash": "04c0aabafedd526df62286d0a52e2f5da3689619e1a7e94e6a9b06f1ad15ce16"
+      },
+      "snapshot": {
+        "id": "fc2:824556:player-805367:hits_runs_rbis:1:over",
+        "identity_version": 2,
+        "game_pk": 824556,
+        "player_id": 805367,
+        "combo_player_ids": null,
+        "type": "batter",
+        "name": "Chase Meidroth",
+        "team": "Chicago White Sox",
+        "matchup": "Texas Rangers @ Chicago White Sox",
+        "game_start": "2026-08-25T23:40:00Z",
+        "stat": "hits_runs_rbis",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "hits_runs_rbis",
+          "value": 0.5,
+          "needs": 1
+        },
+        "prop": "Over 0.5 Hits+Runs+RBIs",
+        "hit_probability": 0.7089,
+        "market_odds": -195,
+        "market_implied": 0.661,
+        "market_edge": 0.0479,
+        "market_hold": null,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (A), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (9.7 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "Projected 3.92 PA (batting slot 6)",
+          "L7 barrel% 22.7 \u2014 hot recent contact",
+          "Opposing bullpen fatigue: 5/13 relievers over 60 pitches in L7 (fresh pen)",
+          "Sharp money backing Chicago White Sox (money% +19 pts vs ticket%)"
+        ],
+        "watchouts": [
+          "AVG vs xBA: 0.268 vs 0.233 (+0.035) \u2014 outperforming his contact quality, regression risk",
+          "wOBA vs xwOBA: 0.328 vs 0.291 (+0.037) \u2014 outperforming his contact quality, regression risk"
+        ],
+        "prob_ci": [
+          0.6922,
+          0.7509
+        ],
+        "reliability": "A",
+        "reliability_note": null,
+        "sample_n": 126,
+        "lineup_assumed": null,
+        "base_rate": 0.6717,
+        "lift": 0.0372,
+        "lift_reference_rate": null,
+        "stable_lift": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "df2d97da",
+          "prediction_timestamp": "2026-08-25T21:20:31.085048+00:00",
+          "odds_fetched_at": "2026-08-25T21:20:25.693349+00:00",
+          "board_generated_at": "2026-08-25T21:20:31.053730+00:00"
+        },
+        "qualification_timestamp": "2026-08-25T21:20:31.085048+00:00",
+        "board_timestamp": "2026-08-25T21:20:31.053730+00:00",
+        "slate_date": "2026-08-25"
+      }
+    },
+    "fc2:823989:player-545361:hits_runs_rbis:1:over": {
+      "canonical_id": "fc2:823989:player-545361:hits_runs_rbis:1:over",
+      "settlement_identity": [
+        "823989",
+        [
+          "player",
+          "545361"
+        ],
+        "hits_runs_rbis",
+        "1",
+        "over"
+      ],
+      "slate_date": "2026-08-25",
+      "first_published_at": "2026-08-25T21:21:53.421103+00:00",
+      "publication_provenance": {
+        "artifact_id": "641261f3f8194f83d165b2badd967e9a669e8efef7076a168bf66bc938f1c227",
+        "source_commit": "23b38e7c1a4f83e0900e65c843e2b43c1fe562eb",
+        "workflow_run_id": "32900506695",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-08-25T21:21:40.139167+00:00",
+        "data_hash": "992d61609e8af8f7108ce740a8e5f2ba1bdc2c1216df6e5363bff97f9e0a01e1",
+        "live_hash": "04c0aabafedd526df62286d0a52e2f5da3689619e1a7e94e6a9b06f1ad15ce16"
+      },
+      "snapshot": {
+        "id": "fc2:823989:player-545361:hits_runs_rbis:1:over",
+        "identity_version": 2,
+        "game_pk": 823989,
+        "player_id": 545361,
+        "combo_player_ids": null,
+        "type": "batter",
+        "name": "Mike Trout",
+        "team": "Los Angeles Angels",
+        "matchup": "Cleveland Guardians @ Los Angeles Angels",
+        "game_start": "2026-08-26T01:38:00Z",
+        "stat": "hits_runs_rbis",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "hits_runs_rbis",
+          "value": 0.5,
+          "needs": 1
+        },
+        "prop": "Over 0.5 Hits+Runs+RBIs",
+        "hit_probability": 0.7077,
+        "market_odds": -200,
+        "market_implied": 0.6667,
+        "market_edge": 0.041,
+        "market_hold": null,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (A), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (9.0 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "Projected 4.32 PA (batting slot 2) \u2014 a favorable lineup slot",
+          "Pitch-type exploit: RV/100 +2.5 vs ST (opposing SP throws it 28.4% of the time)",
+          "L7 barrel% 17.6 \u2014 hot recent contact",
+          "Opposing bullpen fatigue: 5/12 relievers over 60 pitches in L7 (tired pen \u2014 favorable late)"
+        ],
+        "watchouts": [
+          "Team implied for 3.08 runs (league avg 4.245; line 2.5, game total 7) \u2014 a weak offensive environment",
+          "Platoon: R bat vs RHP (unfavorable)"
+        ],
+        "prob_ci": [
+          0.6909,
+          0.7496
+        ],
+        "reliability": "A",
+        "reliability_note": null,
+        "sample_n": 113,
+        "lineup_assumed": null,
+        "base_rate": 0.6717,
+        "lift": 0.036,
+        "lift_reference_rate": null,
+        "stable_lift": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "df2d97da",
+          "prediction_timestamp": "2026-08-25T21:20:31.085048+00:00",
+          "odds_fetched_at": "2026-08-25T21:20:25.693349+00:00",
+          "board_generated_at": "2026-08-25T21:20:31.053730+00:00"
+        },
+        "qualification_timestamp": "2026-08-25T21:20:31.085048+00:00",
+        "board_timestamp": "2026-08-25T21:20:31.053730+00:00",
         "slate_date": "2026-08-25"
       }
     }
