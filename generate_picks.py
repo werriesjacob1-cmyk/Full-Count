@@ -2146,23 +2146,79 @@ def score_pitcher(sp_name, sp_id, sp_hand, gm, side, pit_season_lookup, l14_form
     # difference (a partial-lineup proxy, not the full team rate) so THAT
     # distinction stays, phrased in terms of what the number IS rather than
     # why the preferred source was unavailable.
+    # 2026-08-2X explanation-directionality fix (pitcher-strikeout market,
+    # same audit that fixed the batter-side bullpen/sharp-money bugs
+    # above): opposing K%, the platoon (same-hand) note, season K%, CSW%,
+    # and Stuff+ all used to land in `why` unconditionally, regardless of
+    # whether the real, already-computed scale (sc_opp_k/sc_same_hand/
+    # sc_season_k/sc_csw/sc_stuff -- each already feeds the score formula
+    # above) said the number was actually favorable, neutral, or
+    # unfavorable. A contact-oriented opposing lineup, a mostly-opposite-
+    # handed lineup, or a below-average K%/CSW%/Stuff+ reading are all
+    # genuinely bad news for a strikeouts prop -- they must not render as
+    # unqualified positive evidence. Neutral-middle values stay a plain,
+    # unqualified fact, matching the identical wRC+/L14-K%/wind convention
+    # used elsewhere in this file (>=65 favorable, <=35 unfavorable, else
+    # plain).
+    why = []
     if opp_team_k_pct is not None:
         if opp_k_source in ("team", "mlb_team"):
             k_note = f"Opposing team K% {opp_team_k_pct:.1f}"
         else:
             k_note = f"Opposing lineup K% {opp_team_k_pct:.1f} (based on {opp_k_source} confirmed lineup batters, not the full team rate)"
-        why = [k_note]
+        if sc_opp_k >= 65:
+            why.append(k_note + " — strikeout-prone lineup")
+        elif sc_opp_k <= 35:
+            watchouts.append(k_note + " — contact-oriented lineup, tougher matchup")
+        else:
+            why.append(k_note)
     else:
         # Missing data is not a reason TO like the pick -- belongs in
         # watchouts, not why (this unconditionally landed in `why`, the
         # positive-reasons list, until this fix).
         watchouts.append("Opposing team strikeout tendency unavailable — no team or confirmed-lineup K% data could be matched")
-        why = []
     if workload_note: why.append(workload_note)
-    why.append(f"{same_hand}/{known} known-hand opposing batters same-handed" if known else "Opposing lineup handedness mostly unknown")
-    if k_pct: why.append(f"Season K% {k_pct}")
-    if csw: why.append(f"CSW% {csw}")
-    if stuff: why.append(f"Stuff+ {stuff}")
+    # Natural-language platoon note (real complaint: "known-hand" is
+    # internal jargon that means nothing to a bettor) -- was previously
+    # "4/9 known-hand opposing batters same-handed", unconditionally in
+    # why regardless of whether that ratio actually favored the pitcher.
+    hand_word = {"R": "right-handed", "L": "left-handed"}.get(sp_hand)
+    if known and hand_word:
+        platoon_fact = f"{same_hand} of {known} projected hitters bat {hand_word} against this {sp_hand}HP"
+        if sc_same_hand >= 65:
+            why.append(f"Platoon advantage: {platoon_fact}")
+        elif sc_same_hand <= 35:
+            watchouts.append(f"Platoon disadvantage: {platoon_fact} (mostly opposite-handed lineup)")
+        else:
+            why.append(platoon_fact[0].upper() + platoon_fact[1:])
+    elif known:
+        why.append(f"{same_hand} of {known} opposing batters match the pitcher's throwing hand")
+    else:
+        watchouts.append("Opposing lineup handedness unavailable — could not compute a platoon-matchup read")
+    if k_pct:
+        k_skill_note = f"Season K% {k_pct}"
+        if sc_season_k >= 65:
+            why.append(k_skill_note + " — above-average strikeout rate")
+        elif sc_season_k <= 35:
+            watchouts.append(k_skill_note + " — below-average strikeout rate this season")
+        else:
+            why.append(k_skill_note)
+    if csw:
+        csw_note = f"CSW% {csw}"
+        if sc_csw >= 65:
+            why.append(csw_note + " — above-average called+swinging strike rate")
+        elif sc_csw <= 35:
+            watchouts.append(csw_note + " — below-average called+swinging strike rate")
+        else:
+            why.append(csw_note)
+    if stuff:
+        stuff_note = f"Stuff+ {stuff}"
+        if sc_stuff >= 65:
+            why.append(stuff_note + " — above-average per pitch-modeling")
+        elif sc_stuff <= 35:
+            watchouts.append(stuff_note + " — below-average per pitch-modeling")
+        else:
+            why.append(stuff_note)
     # 2026-08-25 explanation-quality fix (same class of bug as the
     # 2026-08-24 batter-side fixes above, found during a release-readiness
     # directional-safety audit): this used to append L14 K% to `why` (the
@@ -2187,10 +2243,29 @@ def score_pitcher(sp_name, sp_id, sp_hand, gm, side, pit_season_lookup, l14_form
         else:
             why.append(l14_k_note)
     if exp_k and exp_k.get("k_rate") is not None:
-        why.append(f"Recency-weighted K rate {exp_k['k_rate']*100:.1f}% (exp. decay, halflife 30d, "
-                    f"{exp_k['n_starts']} real starts / {exp_k['raw_bf']} BF) — drives the strikeout probability model")
+        # Same fix, reusing season K%'s own (15, 32) scale bound -- exp_k's
+        # k_rate is the same underlying quantity (K% of batters faced),
+        # just recency-weighted instead of season-long, so the same bound
+        # is a direct reuse, not a new invented judgment.
+        exp_k_pct = exp_k['k_rate'] * 100
+        sc_exp_k = scale(exp_k_pct, 15, 32)
+        exp_k_note = (f"Recency-weighted K rate {exp_k_pct:.1f}% (exp. decay, halflife 30d, "
+                    f"{exp_k['n_starts']} real starts / {exp_k['raw_bf']} BF)")
+        if sc_exp_k >= 65:
+            why.append(exp_k_note + " — drives a favorable strikeout-probability read")
+        elif sc_exp_k <= 35:
+            watchouts.append(exp_k_note + " — drives a below-average strikeout-probability read")
+        else:
+            why.append(exp_k_note + " — drives the strikeout probability model")
     if tto_note and "Maintains" in tto_note: why.append(tto_note)
-    if ump.get("accuracy"): why.append(f"HP ump accuracy {ump['accuracy']:.1f}%")
+    if ump.get("accuracy"):
+        ump_note = f"HP ump accuracy {ump['accuracy']:.1f}%"
+        if context >= 65:
+            why.append(ump_note + " — tight, accurate zone favors called strikes")
+        elif context <= 35:
+            watchouts.append(ump_note + " — shakier ball-strike accuracy, fewer called strikes")
+        else:
+            why.append(ump_note)
 
     signals = {}
     _sig(signals, "opp_team_k_pct", opp_team_k_pct, sc_opp_k)
