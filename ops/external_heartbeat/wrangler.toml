@@ -1,0 +1,26 @@
+# wrangler.toml -- Cloudflare Worker config for the Priority 3 external
+# freshness-recovery heartbeat (worker.js). See README.md for deployment.
+
+name = "fullcount-live-heartbeat"
+main = "worker.js"
+compatibility_date = "2026-08-01"
+
+# Every 5 minutes -- matches dashboard-live.yml's own intended cadence.
+# This cron lives on Cloudflare's scheduler, not GitHub's, which is the
+# entire point (see worker.js's own module docstring for why).
+[triggers]
+crons = ["*/5 * * * *"]
+
+[[kv_namespaces]]
+binding = "HEARTBEAT_KV"
+id = "REPLACE_WITH_REAL_KV_NAMESPACE_ID"  # see README.md step 3
+
+[vars]
+# "true" while verifying the deployment; flip to "false" only once you've
+# watched a few real ticks in `wrangler tail` and are ready for it to
+# actually dispatch on a real stale reading.
+DRY_RUN = "true"
+
+# GITHUB_TOKEN is NOT set here -- it is a Worker *secret*, never committed
+# to source or wrangler.toml. Set via `wrangler secret put GITHUB_TOKEN`
+# (see README.md step 4).
