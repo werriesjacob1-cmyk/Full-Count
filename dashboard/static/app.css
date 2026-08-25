@@ -248,19 +248,24 @@ main { max-width: 1180px; margin: 0 auto; padding: 20px 16px 80px; }
 .section-head .see-all { font-size: 13px; font-weight: 600; color: var(--accent); text-decoration: none; flex: none; }
 
 .stat-row {
-  /* Always exactly 4 tiles (renderToday() renders top_pick/lean/value/
-     games). auto-fit's column count depends on container width in a way
-     that doesn't divide 4 evenly at common phone widths (e.g. 3 columns
-     leaves one bare cell in row 2) -- that empty cell then renders as a
-     blank box with nothing to distinguish it from a broken/loading state.
-     Fixed 4-across / 2x2 always divides evenly, so there's never a
-     leftover cell. */
-  display: grid; grid-template-columns: repeat(4, 1fr);
+  /* Always exactly 5 tiles (renderToday() renders top_pick/lean/value/
+     longshot/games -- value and longshot split into their own tiles
+     2026-08-2X so each tile's count matches what its own link actually
+     filters to; see renderToday()'s own comment on that fix). auto-fit's
+     column count depends on container width in a way that doesn't divide
+     evenly at common phone widths (e.g. 3 columns leaves one bare cell in
+     row 2) -- that empty cell then renders as a blank box with nothing to
+     distinguish it from a broken/loading state. Fixed 5-across on desktop
+     always divides evenly. On mobile (2 columns), 5 doesn't divide evenly
+     either -- the last tile explicitly spans both columns below so the
+     final row is always full, never a lone orphan cell. */
+  display: grid; grid-template-columns: repeat(5, 1fr);
   gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: var(--radius);
   overflow: hidden; margin-bottom: 26px;
 }
 @media (max-width: 640px) {
   .stat-row { grid-template-columns: repeat(2, 1fr); }
+  .stat-row > :last-child { grid-column: span 2; }
 }
 /* Tappable (PASS: tiles used to be inert -- a real number with nowhere to
    go). Now real <a> links straight into the matching filtered All Props
@@ -425,6 +430,11 @@ main { max-width: 1180px; margin: 0 auto; padding: 20px 16px 80px; }
 .filter-chip-btn[aria-pressed="true"] { background: var(--accent-soft); border-color: var(--accent); color: var(--accent-bright); }
 .filter-count { font-size: 12.5px; color: var(--ink-faint); margin-left: auto; white-space: nowrap; }
 .filter-more-btn { display: none; }
+.active-search-note { margin: -8px 0 12px; }
+.link-btn {
+  background: none; border: none; padding: 0; margin-left: 4px; cursor: pointer;
+  color: var(--accent); font-size: inherit; font-weight: 600; text-decoration: underline;
+}
 
 @media (max-width: 720px) {
   .filter-bar { gap: 8px; }

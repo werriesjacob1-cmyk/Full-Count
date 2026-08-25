@@ -581,17 +581,40 @@ function initRouter() {
 // (`#/props?status=lean`) was parsed off and thrown away here, so every
 // "See all research →" link on the Today page silently landed on an
 // UNFILTERED All Props page -- a link that looked like real navigation
-// but did nothing. Now applied to `filters` on route entry, ONLY when a
-// param is actually present in the URL (an absent param must never
-// silently clear a filter the user already set via the page's own UI).
+// but did nothing. Now applied to `filters` on route entry.
+//
+// 2026-08-2X route-filter-leakage fix (Part 2 UX audit): the params were
+// previously applied WITHOUT first resetting `filters`, on the theory that
+// "an absent param must never silently clear a filter the user already
+// set via the page's own UI" -- but renderProps()'s own <select> handlers
+// mutate `filters` and re-render DIRECTLY (see the f-family/f-status/etc.
+// handlers below), never touching location.hash, so onRouteChange() is
+// NEVER re-entered by on-page filter changes -- that worry described a
+// path that doesn't exist. What DOES happen, confirmed live: click a
+// status=top_pick tile -> filtered Props list -> navigate to Games ->
+// click "All Props" in the main nav (a plain #/props link, no query) ->
+// the OLD status=top_pick filter was still silently applied, with no
+// visible reason and no easy way out ("Top Pick filter escape"). Every
+// real hash-navigation INTO the props route is a fresh entry from outside
+// the page, so it resets to defaults first, then applies whatever params
+// this specific link actually carries -- a link can still pre-filter on
+// purpose, it just can't leave a PREVIOUS visit's filter behind.
 function onRouteChange() {
   const stripped = location.hash.replace(/^#\/?/, "") || "today";
   const [rawRoute, rawQuery] = stripped.split("?");
   route = ROUTES.includes(rawRoute) ? rawRoute : "today";
-  if (route === "props" && rawQuery) {
-    const params = new URLSearchParams(rawQuery);
-    if (params.has("family")) filters.family = params.get("family");
-    if (params.has("status")) filters.status = params.get("status");
+  if (route === "props") {
+    filters = { search: "", family: "all", status: "all", evidence: "all", sort: filters.sort };
+    if (rawQuery) {
+      const params = new URLSearchParams(rawQuery);
+      if (params.has("family")) filters.family = params.get("family");
+      if (params.has("status")) filters.status = params.get("status");
+      // "See all N matching props" (global search, no single-market
+      // intent) -- destination-integrity fix: this link used to carry no
+      // filter at all for a plain name/team search, landing on the full,
+      // unfiltered list instead of the N props it promised.
+      if (params.has("search")) filters.search = params.get("search");
+    }
   }
   $all(".main-nav a").forEach(a => a.classList.toggle("active", a.dataset.route === route));
   $all(".page").forEach(p => p.hidden = true);
@@ -781,11 +804,21 @@ function renderToday() {
     .sort((a, b) => (b.market_edge ?? b.lift ?? 0) - (a.market_edge ?? a.lift ?? 0));
 
   const summary = DATA.summary || {};
+  // Value/Longshot count-integrity fix (Part 2 UX audit): this used to be
+  // one combined "Value / Longshots" tile showing summary.n_value (EVERY
+  // real recommendation_status==="value" row, longshots included) linking
+  // to #/props?status=value -- but applyFilters()'s own "value" branch
+  // explicitly EXCLUDES longshots (`!isLongshot(p)`), so the destination
+  // page always showed FEWER rows than the tile promised. valueAll/
+  // longshotsAll (computed above, the same real split "More Picks" itself
+  // renders from) are the two real, mutually exclusive counts -- each now
+  // gets its own tile linking to its own correctly-filtered destination.
   let html = `
     <div class="stat-row">
       <a class="stat-tile" href="#/props?status=top_pick"><span class="n">${summary.n_top_pick ?? 0}</span><span class="l">Top Picks tonight</span></a>
       <a class="stat-tile" href="#/props?status=lean"><span class="n">${summary.n_lean ?? 0}</span><span class="l">Leans on the board</span></a>
-      <a class="stat-tile" href="#/props?status=value"><span class="n">${summary.n_value ?? 0}</span><span class="l">Value / Longshots</span></a>
+      <a class="stat-tile" href="#/props?status=value"><span class="n">${valueAll.length}</span><span class="l">Value bets</span></a>
+      <a class="stat-tile" href="#/props?status=longshot"><span class="n">${longshotsAll.length}</span><span class="l">Longshots</span></a>
       <a class="stat-tile" href="#/games"><span class="n">${summary.n_games ?? 0}</span><span class="l">Games tonight</span></a>
     </div>`;
 
@@ -977,7 +1010,9 @@ function renderProps() {
       </div>
       <button class="filter-chip-btn mobile-only filter-more-btn" id="f-open-sheet">Filters</button>
       <span class="filter-count desktop-only">${activeFilterCount()} active</span>
+      ${activeFilterCount() > 0 ? `<button class="filter-chip-btn" id="f-clear-all">Clear all</button>` : ""}
     </div>
+    ${filters.search ? `<div class="active-search-note section-sub">Filtered to "${esc(filters.search)}" <button class="link-btn" id="f-clear-search">clear</button></div>` : ""}
     <div class="prop-list" id="props-list"></div>
   `;
   $("#f-family", el).value = filters.family;
@@ -989,6 +1024,20 @@ function renderProps() {
   $("#f-evidence", el).addEventListener("change", e => { filters.evidence = e.target.value; renderProps(); });
   $("#f-sort", el).addEventListener("change", e => { filters.sort = e.target.value; renderProps(); });
   $("#f-open-sheet", el).addEventListener("click", () => openFilterSheet());
+  // "Top Pick filter escape" fix (Part 2 UX audit): the filter dropdowns
+  // were each individually resettable, but there was no single control to
+  // exit a filtered view in one action -- a real gap once combined with
+  // the route-filter-leakage fix above (that fix stops a STALE filter
+  // from a past visit leaking in on fresh navigation, but a user still
+  // deliberately filtering the page in the current visit needs a fast,
+  // obvious way out).
+  const clearAllBtn = $("#f-clear-all", el);
+  if (clearAllBtn) clearAllBtn.addEventListener("click", () => {
+    filters = { search: "", family: "all", status: "all", evidence: "all", sort: filters.sort };
+    renderProps();
+  });
+  const clearSearchBtn = $("#f-clear-search", el);
+  if (clearSearchBtn) clearSearchBtn.addEventListener("click", () => { filters.search = ""; renderProps(); });
 
   const list = $("#props-list", el);
   list.innerHTML = rows.length ? rows.map(propRow).join("")
@@ -1568,9 +1617,26 @@ function _gameSearchText(g) {
   }
   return parts.join(" ").toLowerCase();
 }
+// Real bug found 2026-08-2X (Part 2 UX audit): q.includes(a) was a blind
+// substring check with NO word-boundary awareness -- a short alias like
+// "hr" (home_runs) or "hit"/"ks"/"tb"/"sb" is itself just a fragment
+// embedded inside many real MLB surnames ("Christian" contains "hr" --
+// C-HR-istian; "Whitlock" contains "hit" -- w-HIT-lock; "Jenkins"/
+// "Perkins"/"Hawkins" all contain "ks"). Searching a player whose name
+// happened to contain one of these fragments silently became a MARKET
+// filter instead of a name search -- "Christian Yelich" would show every
+// home-run candidate on the slate ranked by probability, never Yelich
+// himself. Fixed with a real word-boundary match: an alias only counts as
+// present when it appears as its own bounded token in the query (a real
+// short market query like "hr" or "hr tonight" still matches -- there IS
+// a boundary around it there -- but the fragment buried mid-word in a
+// surname no longer does).
+function _escapeRegex(s) {
+  return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
 function _marketFamilyForQuery(q) {
   for (const [family, aliases] of Object.entries(MARKET_ALIASES)) {
-    if (aliases.some(a => a === q || q.includes(a))) return family;
+    if (aliases.some(a => new RegExp("\\b" + _escapeRegex(a) + "\\b").test(q))) return family;
   }
   return null;
 }
@@ -1684,7 +1750,14 @@ function initSearch() {
         html += props.map(p => `<button class="search-item" data-open="${p.id}">
           <span>${esc(p.name)} — ${esc(p.prop)}</span><span class="s-sub">${pctBig(p.hit_probability)}</span></button>`).join("");
         if (propsTotal > props.length) {
-          html += `<a class="search-item search-see-all" href="#/props${marketFamily ? "?family=" + marketFamily : ""}">See all ${propsTotal} matching props →</a>`;
+          // destination-integrity fix: a market-intent query links to the
+          // real family filter (unchanged); a plain name/team/prop-text
+          // query now carries the search text itself, so this link lands
+          // on (approximately) the same N props it promised, not the full
+          // unfiltered list.
+          const seeAllQuery = marketFamily ? "family=" + encodeURIComponent(marketFamily)
+                                            : "search=" + encodeURIComponent(query);
+          html += `<a class="search-item search-see-all" href="#/props?${seeAllQuery}">See all ${propsTotal} matching props →</a>`;
         }
       }
       results.innerHTML = html;
