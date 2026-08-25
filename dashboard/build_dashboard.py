@@ -541,19 +541,50 @@ def run_live_fetch():
     all_priced = clean(moonshots_full)
     for entries in by_category_full.values():
         all_priced.extend(clean(entries))
+    ump_kbb = ctx.get("ump_kbb") or {}
+    out["game_context"] = _build_game_context(all_priced, game_meta, park_wx, ump_kbb, started, schedule)
+    out["streaks"] = _compute_streaks(all_priced)
+    return out
+
+
+def _build_game_context(all_priced, game_meta, park_wx, ump_kbb, started, schedule):
+    """Per-game schedule breakdown. Direct request: "I want people to be able
+    to click on a game on the schedule, and get a breakdown of why X props
+    might be best for A B C reasons. Think time, weather, etc." Built from the
+    exact same weather/umpire data score_batter() already used to score
+    tonight's candidates -- this isn't a second, separate read, just exposing
+    the real reasoning instead of leaving it buried inside the model.
+    Already-started games are omitted from this schedule research surface
+    because it is built only from the new pregame scoring pass. Published
+    live picks remain visible on the pick surfaces through the lifecycle
+    reconciliation elsewhere. Extracted into its own function (2026-08-25) so
+    the picks_by_game dedup below -- and the doubleheader bug found in it --
+    has direct test coverage, without needing run_live_fetch()'s full live
+    network path (this module's own top docstring: that path is not tested)."""
     picks_by_game = defaultdict(list)
     seen_pick_keys = set()
     for r in all_priced:
         pk = r.get("game_pk")
         if not pk or r.get("hit_probability") is None:
             continue
-        key = (r.get("name"), r.get("prop"))
+        # Real bug, found 2026-08-25: this key used to be (name, prop) alone,
+        # with no game_pk. On a doubleheader, the same player can have the
+        # same prop type (e.g. "To Hit a Home Run") as a real, distinct
+        # candidate in BOTH Game 1 and Game 2 -- two different games, two
+        # different real predictions. Since the key didn't include game_pk,
+        # the second game's candidate was seen as a "duplicate" of the
+        # first and silently dropped from picks_by_game entirely, so that
+        # game's drill-down page never showed it. game_pk is now part of
+        # the key: it still collapses the real overlap this dedup exists
+        # for (moonshot and best-of-category can both produce a candidate
+        # for the same player+prop+game), but no longer conflates the same
+        # player+prop across two genuinely different games.
+        key = (pk, r.get("name"), r.get("prop"))
         if key in seen_pick_keys:
-            continue  # moonshot/best-of-category can overlap on the same player+prop
+            continue  # moonshot/best-of-category can overlap on the same player+prop+game
         seen_pick_keys.add(key)
         picks_by_game[pk].append(r)
 
-    ump_kbb = ctx.get("ump_kbb") or {}
     game_context = []
     for gm in game_meta:
         pk = gm.get("game_pk")
@@ -587,9 +618,7 @@ def run_live_fetch():
                       "market_odds": r.get("market_odds"), "price_clears": r.get("price_clears"),
                       "why": (r.get("why") or [None])[0]} for r in game_picks],
         })
-    out["game_context"] = game_context
-    out["streaks"] = _compute_streaks(all_priced)
-    return out
+    return game_context
 
 
 def _decimal_to_american(dec):

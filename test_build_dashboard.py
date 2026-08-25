@@ -637,6 +637,50 @@ check("+00:00" in out21["generated_at"] or out21["generated_at"].endswith("Z"),
       f"got {out21['generated_at']!r}")
 
 
+head("12b. _build_game_context(): real bug, found 2026-08-25 -- the picks_by_game dedup key "
+     "used to be (name, prop) alone, with no game_pk. On a doubleheader, the same player can "
+     "have the same real prop type (e.g. \"To Hit a Home Run\") as a genuinely distinct "
+     "candidate in BOTH Game 1 and Game 2. Since the key omitted game_pk, Game 2's candidate "
+     "was silently treated as a duplicate of Game 1's and dropped entirely -- so Game 2's "
+     "drill-down page never showed it. Extracted from run_live_fetch() into its own function "
+     "specifically so this fix gets direct test coverage without the live network path.")
+
+DH_GAME_1, DH_GAME_2 = 111111, 222222
+dh_game_meta = [
+    {"game_pk": DH_GAME_1, "matchup": "SEA @ OAK (Gm 1)", "away_team": "Seattle Mariners",
+     "home_team": "Oakland Athletics", "away_sp": "P One", "home_sp": "P Two",
+     "hp_ump": "Ump A", "is_getaway": False, "is_opener": False},
+    {"game_pk": DH_GAME_2, "matchup": "SEA @ OAK (Gm 2)", "away_team": "Seattle Mariners",
+     "home_team": "Oakland Athletics", "away_sp": "P Three", "home_sp": "P Four",
+     "hp_ump": "Ump B", "is_getaway": False, "is_opener": False},
+]
+dh_all_priced = [
+    # Same player, same prop TEXT, in each half of a real doubleheader --
+    # two distinct real candidates, not a duplicate of one another.
+    {"name": "Julio Rodriguez", "prop": "To Hit a Home Run", "game_pk": DH_GAME_1,
+     "hit_probability": 0.30, "market_odds": -120, "price_clears": True, "why": ["Game 1 why"]},
+    {"name": "Julio Rodriguez", "prop": "To Hit a Home Run", "game_pk": DH_GAME_2,
+     "hit_probability": 0.22, "market_odds": +140, "price_clears": True, "why": ["Game 2 why"]},
+    # A genuine intra-game overlap (moonshot AND best-of-category both
+    # produced the SAME player+prop+game candidate) -- this is the real
+    # case the dedup exists for, and must still collapse to one entry.
+    {"name": "Julio Rodriguez", "prop": "To Hit a Home Run", "game_pk": DH_GAME_1,
+     "hit_probability": 0.30, "market_odds": -120, "price_clears": True, "why": ["dup of Game 1"]},
+]
+dh_ctx = bd._build_game_context(dh_all_priced, dh_game_meta, {}, {}, set(), {})
+dh_by_pk = {g["game_pk"]: g for g in dh_ctx}
+check(len(dh_ctx) == 2, "both halves of the doubleheader get their own game_context entry",
+      f"got {len(dh_ctx)}")
+check(len(dh_by_pk[DH_GAME_1]["picks"]) == 1, "Game 1's intra-game moonshot/category overlap "
+      "still collapses to one real pick", f"got {dh_by_pk[DH_GAME_1]['picks']}")
+check(len(dh_by_pk[DH_GAME_2]["picks"]) == 1,
+      "Game 2's real, distinct candidate for the SAME player+prop is NOT dropped as a false "
+      "duplicate of Game 1's -- this is the exact bug: before the game_pk-aware key, this "
+      "list was empty", f"got {dh_by_pk[DH_GAME_2]['picks']}")
+check(dh_by_pk[DH_GAME_2]["picks"][0]["hit_probability"] == 0.22,
+      "Game 2's own real probability survives, not Game 1's", f"got {dh_by_pk[DH_GAME_2]['picks'][0]}")
+
+
 head("13. app.js's humanizeReason() actually translates real jargon strings, not just "
      "parses without crashing. Loaded directly from dashboard/static/app.js (a real, plain "
      "file now -- no more extracting a <script> block out of server-rendered HTML). These "
