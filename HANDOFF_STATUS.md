@@ -1,7 +1,75 @@
 # Full Count — session handoff status
 
-Last updated: 2026-08-25 ~18:20 UTC by Claude (this session).
+Last updated: 2026-08-25 ~19:35 UTC by Claude (this session).
 Purpose: let a fresh session resume with zero hidden chat context.
+
+## TWO PARALLEL WORKSTREAMS (2026-08-25 ~18:20-19:35 UTC): candidate-identity audit + frontend PASS 1
+
+Per the "TWO ACTIVE WORKSTREAMS" directive: (A) accuracy/research continues
+gating on PID 3304, and (B) customer-facing website work proceeds in
+parallel WITHOUT touching model probabilities/thresholds/ranking/
+publication lifecycle/grading.
+
+**Workstream A -- candidate identity audit (both priorities complete,
+committed `4061d027`)**:
+1. Audited every real caller of `equal_volume_ranking_comparison()`
+   (`pa_opportunity_model.build_report`, `disagreement_challenger_model.
+   build_report`, `residual_challenger_model.build_report`,
+   `disagreement_experiment_runner.primary_challenger_result`). Each
+   builds exactly ONE fresh `comparisons` list per call -- `id()`-based
+   identity is a structural guarantee of the function's own single-list
+   signature (documented in its own docstring now), not an accident of
+   current callers. Found a DIFFERENT real gap this audit surfaced: no
+   protection against the same real-world candidate entering the list
+   twice as two distinct objects. Added `candidate_key()` (composite
+   date/game_pk/player_id/prop_type identity, populated at all 4
+   construction sites) with a duplicate-key raise inside the function.
+   Added the full requested regression suite (tied probabilities, copied-
+   but-distinct dicts, reconstructed-duplicate detection, reordering
+   invariance, algebraic invariants over 25 randomized populations,
+   cross-invocation determinism) to `test_pa_opportunity_model.py`.
+2. Hardened `shadow_policy_framework.compare_policies()`'s snapshot
+   guard: missing `snapshot_id` on either side now FAILS CLOSED by
+   default (was previously silently treated as "untagged, not a
+   mismatch") -- pass `allow_missing_snapshot=True` for an explicit
+   legacy/test path only. Added tests for same-policy-different-snapshot
+   (raises), different-policy-same-snapshot (valid), copied candidate
+   objects from the same logical snapshot (valid -- candidate_ids are
+   semantic strings, not object identity, by design), and both the
+   fail-closed default and the explicit opt-in.
+
+**Verdict on the earlier commit's Priority-1 fix**: `id()`-based identity
+in `equal_volume_ranking_comparison()` is now UNQUESTIONABLY correct
+(structural proof + exhaustive tests), per the directive's own
+precondition before the decisive disagreement experiment may run.
+
+**Workstream B -- frontend PASS 1 (audit + one real P0 fix, committed
+`4a4cf42a`)**: full audit in
+`frontend/customer_experience_audit_2026-08-25.md`. Headline P0 finding
+and fix: `docs/app.js`'s Top Pick ordering was computed client-side by
+`market_edge` alone -- an independently-invented ranking, which this
+project's frontend/backend boundary explicitly forbids. Traced the real
+production tiebreak (`generate_picks.rank_for_board()`: reliability,
+then edge, then probability) and found the live dashboard's `top_pick`
+population is a SEPARATE pipeline from the static top10 board with no
+shared ordering contract. Fixed by adding `dashboard/build_dashboard.py`'s
+`_assign_top_pick_rank()` (reuses `generate_picks._RELIABILITY_ORDER` via
+import, never reimplemented) and having `app.js` prefer that `rank`
+field, falling back to the old edge-sort only for a stale pre-`rank`
+cached payload. Also caught and fixed a real process risk: `docs/app.js`
+is a BUILD OUTPUT copy (`copy_static_assets()` overwrites it from
+`dashboard/static/app.js` on every real build) -- the fix was applied to
+both, and this is now documented so a future edit doesn't land only in
+the copy and silently vanish. 7 new tests in `test_build_dashboard.py`
+(69/69 passing). No model/ranking/recommendation/publication/grading
+logic touched -- purely a display-order fix for an already-selected
+population. Remaining audit findings (P1: two independent Top-Pick
+pipelines with no cross-check, search's 2-way vs 4-way grouping;
+P2/P3/scope boundary) are documented for PASS 2+, not yet started.
+
+**PID 3304 status at this update**: healthy, ~1h32m elapsed, 123,131+
+rows written, still on a normal ~85-90s/date pace in 2024. Untouched by
+either workstream's work this turn.
 
 ## METHODOLOGICAL REVIEW OF THE RESEARCH LAB WHILE PID 3304 RUNS (2026-08-25 ~17:35-18:20 UTC)
 
@@ -311,7 +379,7 @@ finished (or died) without this file being updated with that news.
 
 ## Branch / HEAD
 
-- Branch: `claude/gridiron-continuation-dvaljm` at `80a7dc58` (pushed) as
+- Branch: `claude/gridiron-continuation-dvaljm` at `4a4cf42a` (pushed) as
   of this update, plus this HANDOFF_STATUS.md commit on top once pushed.
   `f7c120a3` is an earlier commit in this same branch's history (an
   earlier segment of this session) -- it's the most recent commit
