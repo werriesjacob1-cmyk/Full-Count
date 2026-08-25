@@ -1826,6 +1826,137 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-25",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 62.7,
+          "notable_signals": 2,
+          "matchup": "Texas Rangers @ Chicago White Sox",
+          "game_pk": 824556,
+          "team": "Texas Rangers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 42.8571,
+            "pitch_exploit": 0.5714,
+            "l7_avg_ev": 66.0227,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 35.8,
+            "season_barrel_pct": 49.3333,
+            "lineup_slot": 62.5,
+            "bullpen_fatigue": 76.9231,
+            "platoon_barrel_pct": -0.72,
+            "platoon_xwoba": 1.26,
+            "opp_catcher_framing": -0.36,
+            "days_rest": 0.0,
+            "woba_ahead": 43.6364,
+            "woba_behind": 30.0,
+            "hard_hit_105_rate": -0.01,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": -0.24,
+            "vs_rp_ops": 0.036,
+            "ump_k_pct": -0.12,
+            "ump_bb_pct": 0.144
+          },
+          "hit_probability": 0.623,
+          "raw_hit_probability": 0.6181,
+          "lift": 0.0595,
+          "reliability": "A",
+          "sample_n": 126,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 44.3,
+          "notable_signals": 0,
+          "matchup": "Texas Rangers @ Chicago White Sox",
+          "game_pk": 824556,
+          "team": "Texas Rangers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": -0.66,
+            "sprint_speed": 28.125,
+            "catcher_poptime": 8.5714,
+            "on_base": 72.1689
+          },
+          "hit_probability": 0.0487,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 126,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 4.3,
+          "notable_signals": 0,
+          "matchup": "Texas Rangers @ Chicago White Sox",
+          "game_pk": 824556,
+          "team": "Texas Rangers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0462
+          },
+          "hit_probability": 0.0462,
+          "raw_hit_probability": null,
+          "lift": -0.0024,
+          "reliability": "A",
+          "sample_n": 126,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 4.1,
+          "notable_signals": 0,
+          "matchup": "Texas Rangers @ Chicago White Sox",
+          "game_pk": 824556,
+          "team": "Texas Rangers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0293
+          },
+          "hit_probability": 0.0293,
+          "raw_hit_probability": null,
+          "lift": 0.0081,
+          "reliability": "A",
+          "sample_n": 126,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

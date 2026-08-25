@@ -872,6 +872,110 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-25",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 41.9,
+          "notable_signals": 2,
+          "matchup": "Pittsburgh Pirates @ San Diego Padres",
+          "game_pk": 823259,
+          "team": "San Diego Padres",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 39.4286,
+            "pitch_exploit": 3.4286,
+            "l7_avg_ev": 0.0,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 47.5,
+            "season_barrel_pct": 46.6667,
+            "lineup_slot": 25.0,
+            "bullpen_fatigue": 71.4286,
+            "platoon_barrel_pct": 3.28,
+            "platoon_xwoba": 1.5,
+            "park_hand_index": 0.35,
+            "opp_catcher_framing": -0.48,
+            "days_rest": 0.0,
+            "woba_ahead": 3.6364,
+            "woba_behind": 4.5455,
+            "pull_park_synergy": 0.2279,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": 0.392,
+            "vs_rp_ops": 2.22,
+            "ump_k_pct": 0.084,
+            "ump_bb_pct": -0.216
+          },
+          "hit_probability": 0.6158,
+          "raw_hit_probability": 0.6128,
+          "lift": 0.0523,
+          "reliability": "B",
+          "sample_n": 50,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 2.6,
+          "notable_signals": 0,
+          "matchup": "Pittsburgh Pirates @ San Diego Padres",
+          "game_pk": 823259,
+          "team": "San Diego Padres",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0396
+          },
+          "hit_probability": 0.0396,
+          "raw_hit_probability": null,
+          "lift": -0.009,
+          "reliability": "B",
+          "sample_n": 50,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 1.6,
+          "notable_signals": 0,
+          "matchup": "Pittsburgh Pirates @ San Diego Padres",
+          "game_pk": 823259,
+          "team": "San Diego Padres",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.019
+          },
+          "hit_probability": 0.019,
+          "raw_hit_probability": null,
+          "lift": -0.0022,
+          "reliability": "B",
+          "sample_n": 50,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

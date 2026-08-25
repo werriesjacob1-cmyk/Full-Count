@@ -220,7 +220,7 @@
         {
           "prop": "Over 5.5 Strikeouts",
           "type": "pitcher",
-          "score": 39.1,
+          "score": 40.0,
           "notable_signals": 0,
           "matchup": "Philadelphia Phillies @ Seattle Mariners",
           "game_pk": 823098,
@@ -232,7 +232,10 @@
             "opp_team_k_pct": 61.0,
             "same_hand_ratio": 57.1429,
             "l14_k_pct": 100.0,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 59.4439,
+            "ump_k_pct": -0.3,
+            "ump_bb_pct": 0.192
           },
           "hit_probability": 0.5001,
           "raw_hit_probability": 0.5001,
@@ -248,7 +251,7 @@
         {
           "prop": "Over 17.5 Outs Recorded",
           "type": "pitcher",
-          "score": 7.7,
+          "score": 6.3,
           "notable_signals": 0,
           "matchup": "Philadelphia Phillies @ Seattle Mariners",
           "game_pk": 823098,
@@ -257,18 +260,46 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.3287,
+            "outs_rate": 0.3313,
             "avg_outs_per_start": 15.81
           },
-          "hit_probability": 0.3287,
+          "hit_probability": 0.3313,
           "raw_hit_probability": null,
-          "lift": -0.0912,
+          "lift": -0.1025,
           "reliability": "A",
           "sample_n": 26,
           "projection": {
             "stat": "pitcher_outs",
             "value": 17.5,
             "needs": 18
+          }
+        },
+        {
+          "prop": "Over 10.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 38.7,
+          "notable_signals": 0,
+          "matchup": "Philadelphia Phillies @ Seattle Mariners",
+          "game_pk": 823098,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            605400,
+            669923
+          ],
+          "signals": {
+            "combined_k_edge": -0.0565
+          },
+          "hit_probability": 0.4718,
+          "raw_hit_probability": null,
+          "lift": -0.0565,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 10.5,
+            "needs": 11
           }
         }
       ]

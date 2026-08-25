@@ -1323,6 +1323,111 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-25",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 78.2,
+          "notable_signals": 2,
+          "matchup": "Philadelphia Phillies @ Seattle Mariners",
+          "game_pk": 823098,
+          "team": "Seattle Mariners",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 80.8571,
+            "pitch_exploit": 1.1429,
+            "l7_avg_ev": 38.6111,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 0.075,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 29.3333,
+            "lineup_slot": 100.0,
+            "bullpen_fatigue": 64.1026,
+            "platoon_barrel_pct": 1.52,
+            "platoon_xwoba": 2.64,
+            "park_hand_index": 0.74,
+            "opp_catcher_framing": 0.12,
+            "days_rest": 0.0,
+            "woba_behind": 63.6364,
+            "pull_park_synergy": 0.1347,
+            "hard_hit_105_rate": -0.01,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": 0.4,
+            "vs_rp_ops": 1.752,
+            "ump_k_pct": 0.3,
+            "ump_bb_pct": -0.192
+          },
+          "hit_probability": 0.6386,
+          "raw_hit_probability": 0.6299,
+          "lift": 0.0751,
+          "reliability": "A",
+          "sample_n": 124,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 4.3,
+          "notable_signals": 0,
+          "matchup": "Philadelphia Phillies @ Seattle Mariners",
+          "game_pk": 823098,
+          "team": "Seattle Mariners",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0462
+          },
+          "hit_probability": 0.0462,
+          "raw_hit_probability": null,
+          "lift": -0.0024,
+          "reliability": "A",
+          "sample_n": 124,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 2.5,
+          "notable_signals": 0,
+          "matchup": "Philadelphia Phillies @ Seattle Mariners",
+          "game_pk": 823098,
+          "team": "Seattle Mariners",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0227
+          },
+          "hit_probability": 0.0227,
+          "raw_hit_probability": null,
+          "lift": 0.0015,
+          "reliability": "A",
+          "sample_n": 124,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

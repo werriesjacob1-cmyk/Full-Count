@@ -249,7 +249,7 @@
         {
           "prop": "Over 5.5 Strikeouts",
           "type": "pitcher",
-          "score": 47.4,
+          "score": 31.8,
           "notable_signals": 0,
           "matchup": "Pittsburgh Pirates @ San Diego Padres",
           "game_pk": 823259,
@@ -261,7 +261,10 @@
             "opp_team_k_pct": 74.0,
             "same_hand_ratio": 57.1429,
             "l14_k_pct": 4.1176,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 54.6043,
+            "ump_k_pct": -0.084,
+            "ump_bb_pct": 0.216
           },
           "hit_probability": 0.3582,
           "raw_hit_probability": 0.3582,
@@ -277,7 +280,7 @@
         {
           "prop": "Over 17.5 Outs Recorded",
           "type": "pitcher",
-          "score": 77.5,
+          "score": 76.1,
           "notable_signals": 1,
           "matchup": "Pittsburgh Pirates @ San Diego Padres",
           "game_pk": 823259,
@@ -286,12 +289,12 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.61,
+            "outs_rate": 0.6126,
             "avg_outs_per_start": 17.19
           },
-          "hit_probability": 0.61,
+          "hit_probability": 0.6126,
           "raw_hit_probability": null,
-          "lift": 0.1901,
+          "lift": 0.1788,
           "reliability": "A",
           "sample_n": 26,
           "projection": {

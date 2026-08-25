@@ -139,6 +139,52 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-25",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 44.8,
+          "notable_signals": 2,
+          "matchup": "Cleveland Guardians @ Los Angeles Angels",
+          "game_pk": 823989,
+          "team": "Los Angeles Angels",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 35.7143,
+            "l7_avg_ev": 24.8214,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 40.0,
+            "lineup_slot": 37.5,
+            "bullpen_fatigue": 69.4444,
+            "park_hand_index": -1.54,
+            "opp_catcher_framing": -0.12,
+            "days_rest": 0.0,
+            "woba_ahead": 0.0,
+            "team_total_move": -6.0,
+            "team_total_open": -6.0,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "ump_k_pct": 0.012,
+            "ump_bb_pct": -0.576
+          },
+          "hit_probability": 0.5107,
+          "raw_hit_probability": 0.5107,
+          "lift": -0.0528,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

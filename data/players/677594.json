@@ -1746,6 +1746,139 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-25",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 64.1,
+          "notable_signals": 1,
+          "matchup": "Philadelphia Phillies @ Seattle Mariners",
+          "game_pk": 823098,
+          "team": "Seattle Mariners",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 80.8571,
+            "pitch_exploit": 11.4286,
+            "l7_avg_ev": 49.0789,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 40.6667,
+            "lineup_slot": 75.0,
+            "bullpen_fatigue": 64.1026,
+            "platoon_barrel_pct": 0.96,
+            "platoon_xwoba": 1.14,
+            "park_hand_index": 0.74,
+            "opp_catcher_framing": 0.12,
+            "days_rest": 0.0,
+            "woba_ahead": 63.6364,
+            "woba_behind": 21.8182,
+            "pull_park_synergy": 0.2279,
+            "hard_hit_105_rate": 1.59,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": 0.344,
+            "vs_rp_ops": 0.384,
+            "ump_k_pct": 0.3,
+            "ump_bb_pct": -0.192
+          },
+          "hit_probability": 0.6981,
+          "raw_hit_probability": 0.7214,
+          "lift": 0.0316,
+          "reliability": "A",
+          "sample_n": 121,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 48.4,
+          "notable_signals": 0,
+          "matchup": "Philadelphia Phillies @ Seattle Mariners",
+          "game_pk": 823098,
+          "team": "Seattle Mariners",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": -3.24,
+            "sprint_speed": 46.875,
+            "catcher_poptime": 0.0,
+            "on_base": 58.7332
+          },
+          "hit_probability": 0.1128,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 121,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 20.4,
+          "notable_signals": 1,
+          "matchup": "Philadelphia Phillies @ Seattle Mariners",
+          "game_pk": 823098,
+          "team": "Seattle Mariners",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.1102
+          },
+          "hit_probability": 0.1102,
+          "raw_hit_probability": null,
+          "lift": 0.0616,
+          "reliability": "A",
+          "sample_n": 121,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 2.7,
+          "notable_signals": 0,
+          "matchup": "Philadelphia Phillies @ Seattle Mariners",
+          "game_pk": 823098,
+          "team": "Seattle Mariners",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0236
+          },
+          "hit_probability": 0.0236,
+          "raw_hit_probability": null,
+          "lift": 0.0024,
+          "reliability": "A",
+          "sample_n": 121,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }
