@@ -1,7 +1,67 @@
 # Full Count — session handoff status
 
-Last updated: 2026-08-25 ~10:56 UTC by Claude (this session).
+Last updated: 2026-08-25 ~15:05 UTC by Claude (this session).
 Purpose: let a fresh session resume with zero hidden chat context.
+
+## RESTART-SAFETY HARDENING DONE (2026-08-25 ~14:30-15:05 UTC)
+
+Per the continuation directive after the two restarts documented below,
+audited `backtest/engine.py`'s existing backfill write/resume semantics
+BEFORE assuming anything needed building from scratch. Real finding:
+**`run_backtest()` was already genuinely interruption-resumable** --
+per-date state-file checkpointing (`load_state`/`save_state`), and
+critically `dates_already_in_output()` trusts the REAL output file over
+the state-file bookkeeping (so even a missing/corrupted state file can't
+cause duplicate work), no_games and failed dates both checkpointed
+distinctly (failed dates auto-retry on resume, no_games/ok dates are
+skipped). **Re-running the exact same command after a crash already
+resumes correctly -- this was true before this session's edits too.**
+Proved this with 7 new tests
+(`test_backfill_resume.py::FreshRunTests`/`InterruptionResumeTests`/
+`ForceFlagTests`, all mocking `simulate_date` for deterministic,
+network-free testing) -- all passed against the UNMODIFIED code.
+
+One real, narrow gap found and fixed (`backtest/engine.py`'s
+`run_backtest()`): a date's rows were written via a per-row loop of
+`f.write()` calls -- if the process died mid-loop, that date could be
+left PARTIALLY in the output file yet still get treated as "already
+done" on resume (since `dates_already_in_output()` only checks date
+PRESENCE, not completeness). Fixed: build the whole date's blob in memory
+and issue ONE `f.write()` call instead -- narrows the crash window from
+"however many rows this date has" to a single syscall. Locked in by
+`AtomicWritePerDateTests` (failed against the old per-row-loop code,
+passes against the fix).
+
+Also added `check_regime_consistency(out_path, current_sha=None)` --
+surfaces (WARN-level, not a hard gate; `provenance.require_single_regime()`
+remains the hard enforcement point at canonical-build time) whether a
+resumed file already contains more than one `code_git_sha`, using the
+code_git_sha every row already carries (no new tracking invented). Wired
+as a startup warning in `run_backtest()`'s resume path. 5 new tests
+(`RegimeConsistencyTests`).
+
+**Practical implication**: PID 3304 (the current backfill attempt) uses
+this exact `run_backtest()` path. If it dies again, re-running the SAME
+command (`--start 2024-04-01 --end 2026-06-30 --out
+backtest/rows_canonical_rebuild.jsonl --no-weather`, no `--force`) will
+resume from the first incomplete date, not restart from date 1 -- this
+was already true, and is now slightly more crash-safe on top.
+
+**Durable persistence (Priority 4) -- evaluated, not yet executed**:
+full option comparison in
+`backtest/durable_artifact_persistence_2026-08-25.md`. Checked directly,
+not assumed: no GitHub Release create/upload-asset tool exists in this
+session's MCP toolset (only read tools), no `gh`/`hub` CLI available,
+`git-lfs` is not installed in this container. **Recommended and ready to
+execute the moment the backfill finishes**: gzip-compress
+`rows_canonical.jsonl`, split into <100MB chunks, commit directly to git
+(`git add -f`, overriding the `backtest/*.jsonl` gitignore rule for just
+those specific compressed snapshot files) -- durable indefinitely, free,
+needs no new tools/credentials. A GitHub-Actions-based, date-sharded
+parallel backfill (so the computation itself survives this session
+entirely) is flagged as the better long-term fix but was NOT attempted
+this pass -- too large a change to risk half-finishing across another
+restart; see that doc's own "what was not done" section.
 
 ## IMPORTANT: session worker restart + data recovery in progress (2026-08-25 ~10:50 UTC, SECOND restart ~11:05 UTC)
 

@@ -1672,6 +1672,36 @@ def dates_already_in_output(out_path):
     return seen
 
 
+def check_regime_consistency(out_path, current_sha=None):
+    """Priority 2 of the restart-safety hardening (2026-08-25): does
+    resuming into this output file risk silently mixing code regimes?
+    Every row already carries its own code_git_sha (to_row(), via
+    recommendation.git_sha()) -- this just surfaces what's already there
+    rather than inventing new tracking. Returns
+    {"shas": {sha: n_rows}, "current_sha": ..., "consistent": bool} --
+    WARN-level by design (see run_backtest()'s own call site): a
+    genuinely mixed-regime file is still caught hard downstream by
+    provenance.require_single_regime() at canonical-build time, so this
+    check's job is an early, cheap heads-up during a long resume, not a
+    second enforcement gate that could wrongly halt a legitimate resume
+    on a false positive this session hasn't had time to fully harden."""
+    current_sha = current_sha or grec.git_sha()
+    shas = defaultdict(int)
+    if os.path.exists(out_path):
+        with open(out_path, encoding="utf-8") as f:
+            for line in f:
+                line = line.strip()
+                if not line:
+                    continue
+                try:
+                    shas[json.loads(line).get("code_git_sha")] += 1
+                except json.JSONDecodeError:
+                    continue
+    distinct = set(shas) - {None}
+    consistent = len(distinct) <= 1 and (not distinct or current_sha in distinct or current_sha is None)
+    return {"shas": dict(shas), "current_sha": current_sha, "consistent": consistent}
+
+
 def run_backtest(start, end, out_path, store=None, sleep=DEFAULT_SLEEP,
                  use_weather=True, use_bullpen=True, keep_unpriced=False,
                  force=False, verbose=True, apply_policy=False):
@@ -1682,6 +1712,13 @@ def run_backtest(start, end, out_path, store=None, sleep=DEFAULT_SLEEP,
     in_output = dates_already_in_output(out_path)
     if force:
         state, in_output = {"dates": {}}, set()
+    elif in_output and verbose:
+        regime = check_regime_consistency(out_path)
+        if not regime["consistent"]:
+            print(f"  WARNING: resuming into a mixed-regime file -- code_git_sha counts "
+                  f"{regime['shas']}, current sha {regime['current_sha']}. New rows will "
+                  f"carry the current sha; run provenance.require_single_regime() before "
+                  f"trusting this file as canonical.", flush=True)
 
     if store is None:
         store = StatcastStore(dparse(dates[0]).year, shift(dates[-1], -1), verbose=verbose)
@@ -1728,10 +1765,14 @@ def run_backtest(start, end, out_path, store=None, sleep=DEFAULT_SLEEP,
                 # Append only after the whole date succeeded. A partially
                 # written date is the one thing resumability cannot repair,
                 # because there is no way to tell a partial date from a
-                # complete one after the fact.
+                # complete one after the fact. Building the full blob first
+                # and issuing ONE write() call (rather than one per row)
+                # narrows that crash window from "however many rows this
+                # date has" down to a single syscall -- a process killed
+                # between dates can never leave this date half-written.
+                blob = "".join(json.dumps(row) + "\n" for row in res.rows)
                 with open(out_path, "a", encoding="utf-8") as f:
-                    for row in res.rows:
-                        f.write(json.dumps(row) + "\n")
+                    f.write(blob)
                 state["dates"][d] = {
                     "status": "ok", "rows": len(res.rows), "games": res.n_games,
                     "candidates": res.n_candidates, "ungraded": res.n_ungraded,
