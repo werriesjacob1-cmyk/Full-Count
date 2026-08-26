@@ -1587,10 +1587,43 @@ assertTrue(body2.includes("Opportunity") && body2.includes("2nd in the order"),
 assertTrue(body2.includes("Why Not a Top Pick") && body2.includes("A real read, but no market price is posted yet"),
   "an interesting Lean surfaces its real status_reasons[0] (capSentence-cased, otherwise verbatim), not a guess");
 
+// -- detailBody(): opposing bullpen (Part 1, detailed detail-view work, 2026-08-26). Real
+// gap: game-level bullpen context (_team_bullpen_context(), dashboard/build_dashboard.py)
+// was never surfaced on the per-PROP detail sheet at all -- gameContextFor(p) already
+// resolves p.game_pk to the same schedule entry that carries it, so this is pure wiring,
+// no new data needed. Batter markets only; shows the OPPOSING team's bullpen (the one this
+// batter could actually face late), never his own team's.
+DATA.schedule = [{ game_pk: 777, away_team: "Seattle Mariners", home_team: "Oakland Athletics",
+  away_team_bullpen: { fatigue_summary: "Mostly rested", relievers: [] },
+  home_team_bullpen: { fatigue_summary: "Late-inning group heavily taxed",
+    relievers: [{ name: "Real Reliever Two", pitches_last_outing: 22, days_since_last_outing: 0, appearances_l7: 2 }] } }];
+const batterFacingHomePen = {
+  id: "d", name: "Player D", team: "Seattle Mariners", prop: "Over 0.5 Hits", hit_probability: 0.6,
+  recommendation_status: "lean", type: "batter", game_pk: 777,
+  reliability: "B", sample_n: 80, why: [], watchouts: [], status_reasons: [], batting_order: null,
+};
+const body4 = detailBody(batterFacingHomePen);
+assertTrue(body4.includes("Real Reliever Two") && body4.includes("Late-inning group heavily taxed"),
+  "a Seattle batter's detail sheet shows Oakland's (the OPPOSING team's) real bullpen detail, " +
+  "got " + body4);
+assertTrue(!body4.includes("Mostly rested"),
+  "the batter's OWN team's bullpen (Seattle, 'Mostly rested') never renders on his own prop -- " +
+  "only the opposing one is relevant to a batter he could actually face");
+
+const pitcherProp = {
+  id: "e", name: "Pitcher E", team: "Seattle Mariners", prop: "Over 6.5 Ks", hit_probability: 0.6,
+  recommendation_status: "lean", type: "pitcher", game_pk: 777,
+  reliability: "B", sample_n: 80, why: [], watchouts: [], status_reasons: [], batting_order: null,
+};
+const body5 = detailBody(pitcherProp);
+assertTrue(!body5.includes("Real Reliever Two") && !body5.includes("Mostly rested"),
+  "REGRESSION GUARD: a pitcher's own prop never shows a bullpen section -- a pitcher doesn't " +
+  "face a bullpen himself, so this would be a non-sequitur, got " + body5);
+
 } catch (e) { console.error(e); process.exit(1); }
 
 if (!ok) process.exit(1);
-console.log("Detail sheet directionality/priceFreshness/whyNotTopPick/ordinal checks passed");
+console.log("Detail sheet directionality/priceFreshness/whyNotTopPick/ordinal/bullpen checks passed");
 """
     harness_path3 = tempfile.mktemp(suffix=".js")
     with open(harness_path3, "w") as f:
