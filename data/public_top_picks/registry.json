@@ -2,7 +2,7 @@
   "schema_version": 1,
   "identity_schema_version": 2,
   "rollout_version": "pre-phase-v-live-lifecycle-v1",
-  "updated_at": "2026-08-26T16:23:58.307245+00:00",
+  "updated_at": "2026-08-26T18:54:33.235915+00:00",
   "migration": {
     "version": "pre-phase-v-live-lifecycle-v1",
     "completed_at": "2026-08-17T23:14:57+00:00",
@@ -3574,6 +3574,208 @@
         },
         "qualification_timestamp": "2026-08-26T16:16:40.148962+00:00",
         "board_timestamp": "2026-08-26T16:16:40.117578+00:00",
+        "slate_date": "2026-08-26"
+      }
+    },
+    "fc2:823096:player-641487:hits_runs_rbis:1:over": {
+      "canonical_id": "fc2:823096:player-641487:hits_runs_rbis:1:over",
+      "settlement_identity": [
+        "823096",
+        [
+          "player",
+          "641487"
+        ],
+        "hits_runs_rbis",
+        "1",
+        "over"
+      ],
+      "slate_date": "2026-08-26",
+      "first_published_at": "2026-08-26T18:54:33.235915+00:00",
+      "publication_provenance": {
+        "artifact_id": "3116eff98e64e8fa6d53e514fc5e0fbf6ee4d7d4526666254259a94ef3bd0e61",
+        "source_commit": "3361402906fd728bb391b75804e78560a0be46c3",
+        "workflow_run_id": "33002155929",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-08-26T18:54:23.242980+00:00",
+        "data_hash": "16a4ae8889565af4aefe3689abd41d97cd1a51dca8381c558b535a37d9ca78c0",
+        "live_hash": "4d9944ea8a45913724ede53ae1df1b5616e8519b231a9c27da1e5d592190f91b"
+      },
+      "snapshot": {
+        "id": "fc2:823096:player-641487:hits_runs_rbis:1:over",
+        "identity_version": 2,
+        "game_pk": 823096,
+        "player_id": 641487,
+        "combo_player_ids": null,
+        "type": "batter",
+        "name": "J.P. Crawford",
+        "team": "Seattle Mariners",
+        "matchup": "Philadelphia Phillies @ Seattle Mariners",
+        "game_start": "2026-08-26T20:10:00Z",
+        "stat": "hits_runs_rbis",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "hits_runs_rbis",
+          "value": 0.5,
+          "needs": 1
+        },
+        "prop": "Over 0.5 Hits+Runs+RBIs",
+        "hit_probability": 0.6531,
+        "market_odds": -160,
+        "market_implied": 0.6154,
+        "market_edge": 0.0377,
+        "market_hold": null,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (A), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (8.3 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "L7 avg EV 95.3mph (league ~88.5) \u2014 hot recent contact",
+          "L7 barrel% 50.0 \u2014 hot recent contact",
+          "Projected 3.87 PA (batting slot 6)",
+          "AVG vs xBA: 0.213 vs 0.240 (-0.027) \u2014 underperforming his contact quality, positive regression candidate",
+          "Pitch-type exploit: RV/100 +4.8 vs CH (opposing SP throws it 18.6% of the time)"
+        ],
+        "watchouts": [
+          "Platoon: L bat vs LHP (unfavorable)",
+          "Opposing SP ERA 3.23 \u2014 elite pitcher, tough matchup",
+          "Hitters batting ahead of him: 0.172 wOBA (league ~.320) \u2014 a weak on-base group ahead of him, fewer runners to drive in",
+          "Hitter batting behind him: 0.288 wOBA (league ~.320) \u2014 little lineup protection, an easier batter to pitch around",
+          "Team implied for 3.18 runs (league avg 4.245; line 2.5, game total 7) \u2014 a weak offensive environment",
+          "L7 sample is thin (2 PA) \u2014 treat recent-form read with caution",
+          "Activated from the 10-day injured list 1 day(s) ago \u2014 early performance back can be inconsistent",
+          "Public heavy on Seattle Mariners (money% trails tickets% by 18 pts) \u2014 sharp money is fading this side",
+          "Season barrel% 6.3 \u2014 below-average barrel rate",
+          "Opposing bullpen fatigue: 0/8 relievers over 60 pitches in L7 (fresh pen \u2014 tougher matchup late)",
+          "Sharp money fading Seattle Mariners (money% -18 pts vs ticket%) \u2014 smart money moving away from this side"
+        ],
+        "prob_ci": [
+          0.6422,
+          0.6763
+        ],
+        "reliability": "A",
+        "reliability_note": null,
+        "sample_n": 87,
+        "lineup_assumed": null,
+        "base_rate": 0.6721,
+        "lift": -0.019,
+        "lift_reference_rate": null,
+        "stable_lift": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "88991d3b",
+          "prediction_timestamp": "2026-08-26T18:52:58.085864+00:00",
+          "odds_fetched_at": "2026-08-26T18:52:51.813377+00:00",
+          "board_generated_at": "2026-08-26T18:52:58.062220+00:00"
+        },
+        "qualification_timestamp": "2026-08-26T18:52:58.085864+00:00",
+        "board_timestamp": "2026-08-26T18:52:58.062220+00:00",
+        "slate_date": "2026-08-26"
+      }
+    },
+    "fc2:823096:player-642215:hits_runs_rbis:1:over": {
+      "canonical_id": "fc2:823096:player-642215:hits_runs_rbis:1:over",
+      "settlement_identity": [
+        "823096",
+        [
+          "player",
+          "642215"
+        ],
+        "hits_runs_rbis",
+        "1",
+        "over"
+      ],
+      "slate_date": "2026-08-26",
+      "first_published_at": "2026-08-26T18:54:33.235915+00:00",
+      "publication_provenance": {
+        "artifact_id": "3116eff98e64e8fa6d53e514fc5e0fbf6ee4d7d4526666254259a94ef3bd0e61",
+        "source_commit": "3361402906fd728bb391b75804e78560a0be46c3",
+        "workflow_run_id": "33002155929",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-08-26T18:54:23.242980+00:00",
+        "data_hash": "16a4ae8889565af4aefe3689abd41d97cd1a51dca8381c558b535a37d9ca78c0",
+        "live_hash": "4d9944ea8a45913724ede53ae1df1b5616e8519b231a9c27da1e5d592190f91b"
+      },
+      "snapshot": {
+        "id": "fc2:823096:player-642215:hits_runs_rbis:1:over",
+        "identity_version": 2,
+        "game_pk": 823096,
+        "player_id": 642215,
+        "combo_player_ids": null,
+        "type": "batter",
+        "name": "Weston Wilson",
+        "team": "Seattle Mariners",
+        "matchup": "Philadelphia Phillies @ Seattle Mariners",
+        "game_start": "2026-08-26T20:10:00Z",
+        "stat": "hits_runs_rbis",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "hits_runs_rbis",
+          "value": 0.5,
+          "needs": 1
+        },
+        "prop": "Over 0.5 Hits+Runs+RBIs",
+        "hit_probability": 0.6191,
+        "market_odds": -140,
+        "market_implied": 0.5833,
+        "market_edge": 0.0358,
+        "market_hold": null,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (B), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (7.9 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "L7 barrel% 14.3 \u2014 hot recent contact",
+          "Platoon: R bat vs LHP (favorable)"
+        ],
+        "watchouts": [
+          "L7 avg EV 83.2mph (league ~88.5) \u2014 cold recent contact",
+          "Opposing SP ERA 3.23 \u2014 elite pitcher, tough matchup",
+          "Projected 3.76 PA (batting slot 7) \u2014 a tough lineup slot for plate appearances",
+          "Hitters batting ahead of him: 0.308 wOBA (league ~.320) \u2014 a weak on-base group ahead of him, fewer runners to drive in",
+          "Hitter batting behind him: 0.299 wOBA (league ~.320) \u2014 little lineup protection, an easier batter to pitch around",
+          "Team implied for 3.18 runs (league avg 4.245; line 2.5, game total 7) \u2014 a weak offensive environment",
+          "wOBA vs xwOBA: 0.288 vs 0.259 (+0.029) \u2014 outperforming his contact quality, regression risk",
+          "L7 sample is thin (7 PA) \u2014 treat recent-form read with caution",
+          "Public heavy on Seattle Mariners (money% trails tickets% by 18 pts) \u2014 sharp money is fading this side",
+          "Season barrel% 5.4 \u2014 below-average barrel rate",
+          "Opposing bullpen fatigue: 0/8 relievers over 60 pitches in L7 (fresh pen \u2014 tougher matchup late)",
+          "Sharp money fading Seattle Mariners (money% -18 pts vs ticket%) \u2014 smart money moving away from this side"
+        ],
+        "prob_ci": [
+          0.6058,
+          0.6507
+        ],
+        "reliability": "B",
+        "reliability_note": null,
+        "sample_n": 47,
+        "lineup_assumed": null,
+        "base_rate": 0.6721,
+        "lift": -0.053,
+        "lift_reference_rate": null,
+        "stable_lift": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "88991d3b",
+          "prediction_timestamp": "2026-08-26T18:52:58.085864+00:00",
+          "odds_fetched_at": "2026-08-26T18:52:51.813377+00:00",
+          "board_generated_at": "2026-08-26T18:52:58.062220+00:00"
+        },
+        "qualification_timestamp": "2026-08-26T18:52:58.085864+00:00",
+        "board_timestamp": "2026-08-26T18:52:58.062220+00:00",
         "slate_date": "2026-08-26"
       }
     }
