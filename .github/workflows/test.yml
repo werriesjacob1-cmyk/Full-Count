@@ -46,6 +46,15 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
+      # test_browser_e2e.py (frontend automation, 2026-08-26) drives a real
+      # headless Chromium against the docs/ build -- without this step it
+      # would ModuleNotFoundError/browser-not-found and silently reduce the
+      # "major interaction contracts" (routing, filters, Games drill-down,
+      # detail sheet, mobile viewports) back to manual-only coverage, the
+      # exact thing this suite exists to end.
+      - name: Install Playwright Chromium
+        run: python3 -m playwright install --with-deps chromium
+
       - name: Run test suite
         run: |
           set -e

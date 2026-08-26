@@ -12,3 +12,10 @@ mlb-statsapi~=1.9.0
 scikit-learn~=1.9.0
 # Workflow contract tests parse Actions YAML as part of the CI gate.
 PyYAML~=6.0.2
+# test_browser_e2e.py (frontend automation, 2026-08-26): real headless-Chromium
+# coverage of the docs/ build, so the major interaction contracts (routing,
+# multi-select filters, Games drill-down, detail sheet, My Board, mobile
+# viewports) aren't manual-Playwright-only. test.yml's own "Install Playwright
+# Chromium" step installs the matching browser build for this exact pinned
+# version -- keep the two in sync if this version changes.
+playwright==1.62.0
