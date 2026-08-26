@@ -2,7 +2,7 @@
   "schema_version": 1,
   "identity_schema_version": 2,
   "rollout_version": "pre-phase-v-live-lifecycle-v1",
-  "updated_at": "2026-08-25T23:19:14.999170+00:00",
+  "updated_at": "2026-08-26T00:34:41.492344+00:00",
   "migration": {
     "version": "pre-phase-v-live-lifecycle-v1",
     "completed_at": "2026-08-17T23:14:57+00:00",
@@ -2845,6 +2845,374 @@
         },
         "qualification_timestamp": "2026-08-25T23:18:11.454364+00:00",
         "board_timestamp": "2026-08-25T23:18:11.443153+00:00",
+        "slate_date": "2026-08-25"
+      }
+    },
+    "fc2:823098:player-702284:hits_runs_rbis:1:over": {
+      "canonical_id": "fc2:823098:player-702284:hits_runs_rbis:1:over",
+      "settlement_identity": [
+        "823098",
+        [
+          "player",
+          "702284"
+        ],
+        "hits_runs_rbis",
+        "1",
+        "over"
+      ],
+      "slate_date": "2026-08-25",
+      "first_published_at": "2026-08-26T00:34:41.492344+00:00",
+      "publication_provenance": {
+        "artifact_id": "53980b3ec8d79e430b0154a9a50b314d83d76cea97112f3a8e42ddf6430a01cf",
+        "source_commit": "36c3de6cdd37f66507fc545caf4da6cb6c9651af",
+        "workflow_run_id": "32915588993",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-08-26T00:34:29.741400+00:00",
+        "data_hash": "e1f89bed84f954cb6703647c36d582c6247376493631b16e6c714263ce70b025",
+        "live_hash": "f073bb7f241ee0e475d5ff0581c3dd4275779f34d33ee5cdc1eb0433c542ba02"
+      },
+      "snapshot": {
+        "id": "fc2:823098:player-702284:hits_runs_rbis:1:over",
+        "identity_version": 2,
+        "game_pk": 823098,
+        "player_id": 702284,
+        "combo_player_ids": null,
+        "type": "batter",
+        "name": "Cole Young",
+        "team": "Seattle Mariners",
+        "matchup": "Philadelphia Phillies @ Seattle Mariners",
+        "game_start": "2026-08-26T01:40:00Z",
+        "stat": "hits_runs_rbis",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "hits_runs_rbis",
+          "value": 0.5,
+          "needs": 1
+        },
+        "prop": "Over 0.5 Hits+Runs+RBIs",
+        "hit_probability": 0.6835,
+        "market_odds": -160,
+        "market_implied": 0.6154,
+        "market_edge": 0.0681,
+        "market_hold": null,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (A), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (11.4 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "Projected 3.95 PA (batting slot 6)",
+          "Team implied for 3.96 runs (league avg 4.245; line 3.5, game total 8)",
+          "Platoon: L bat vs RHP (favorable)",
+          "Opposing SP ERA 5.12 \u2014 shaky matchup for the pitcher"
+        ],
+        "watchouts": [
+          "Public heavy on Seattle Mariners (money% trails tickets% by 12 pts) \u2014 sharp money is fading this side",
+          "L7 avg EV 84.0mph (league ~88.5) \u2014 cold recent contact"
+        ],
+        "prob_ci": [
+          0.6726,
+          0.7067
+        ],
+        "reliability": "A",
+        "reliability_note": null,
+        "sample_n": 132,
+        "lineup_assumed": null,
+        "base_rate": 0.6693,
+        "lift": 0.0142,
+        "lift_reference_rate": null,
+        "stable_lift": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "ca672a7f",
+          "prediction_timestamp": "2026-08-26T00:00:51.410163+00:00",
+          "odds_fetched_at": "2026-08-26T00:00:44.631925+00:00",
+          "board_generated_at": "2026-08-26T00:00:51.394711+00:00"
+        },
+        "qualification_timestamp": "2026-08-26T00:00:51.410163+00:00",
+        "board_timestamp": "2026-08-26T00:00:51.394711+00:00",
+        "slate_date": "2026-08-25"
+      }
+    },
+    "fc2:823098:player-702284:hits:1:over": {
+      "canonical_id": "fc2:823098:player-702284:hits:1:over",
+      "settlement_identity": [
+        "823098",
+        [
+          "player",
+          "702284"
+        ],
+        "hits",
+        "1",
+        "over"
+      ],
+      "slate_date": "2026-08-25",
+      "first_published_at": "2026-08-26T00:34:41.492344+00:00",
+      "publication_provenance": {
+        "artifact_id": "53980b3ec8d79e430b0154a9a50b314d83d76cea97112f3a8e42ddf6430a01cf",
+        "source_commit": "36c3de6cdd37f66507fc545caf4da6cb6c9651af",
+        "workflow_run_id": "32915588993",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-08-26T00:34:29.741400+00:00",
+        "data_hash": "e1f89bed84f954cb6703647c36d582c6247376493631b16e6c714263ce70b025",
+        "live_hash": "f073bb7f241ee0e475d5ff0581c3dd4275779f34d33ee5cdc1eb0433c542ba02"
+      },
+      "snapshot": {
+        "id": "fc2:823098:player-702284:hits:1:over",
+        "identity_version": 2,
+        "game_pk": 823098,
+        "player_id": 702284,
+        "combo_player_ids": null,
+        "type": "batter",
+        "name": "Cole Young",
+        "team": "Seattle Mariners",
+        "matchup": "Philadelphia Phillies @ Seattle Mariners",
+        "game_start": "2026-08-26T01:40:00Z",
+        "stat": "hits",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "hits",
+          "value": 0.5,
+          "needs": 1
+        },
+        "prop": "Over 0.5 Hits",
+        "hit_probability": 0.6011,
+        "market_odds": -120,
+        "market_implied": 0.5455,
+        "market_edge": 0.0556,
+        "market_hold": null,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (A), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (9.6 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "Projected 3.95 PA (batting slot 6)",
+          "Team implied for 3.96 runs (league avg 4.245; line 3.5, game total 8)",
+          "Platoon: L bat vs RHP (favorable)",
+          "Opposing SP ERA 5.12 \u2014 shaky matchup for the pitcher"
+        ],
+        "watchouts": [
+          "Public heavy on Seattle Mariners (money% trails tickets% by 12 pts) \u2014 sharp money is fading this side",
+          "L7 avg EV 84.0mph (league ~88.5) \u2014 cold recent contact"
+        ],
+        "prob_ci": [
+          0.5923,
+          0.6297
+        ],
+        "reliability": "A",
+        "reliability_note": null,
+        "sample_n": 132,
+        "lineup_assumed": null,
+        "base_rate": 0.5636,
+        "lift": 0.0375,
+        "lift_reference_rate": null,
+        "stable_lift": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "ca672a7f",
+          "prediction_timestamp": "2026-08-26T00:00:51.410163+00:00",
+          "odds_fetched_at": "2026-08-26T00:00:44.631925+00:00",
+          "board_generated_at": "2026-08-26T00:00:51.394711+00:00"
+        },
+        "qualification_timestamp": "2026-08-26T00:00:51.410163+00:00",
+        "board_timestamp": "2026-08-26T00:00:51.394711+00:00",
+        "slate_date": "2026-08-25"
+      }
+    },
+    "fc2:823098:player-686527:hits:1:over": {
+      "canonical_id": "fc2:823098:player-686527:hits:1:over",
+      "settlement_identity": [
+        "823098",
+        [
+          "player",
+          "686527"
+        ],
+        "hits",
+        "1",
+        "over"
+      ],
+      "slate_date": "2026-08-25",
+      "first_published_at": "2026-08-26T00:34:41.492344+00:00",
+      "publication_provenance": {
+        "artifact_id": "53980b3ec8d79e430b0154a9a50b314d83d76cea97112f3a8e42ddf6430a01cf",
+        "source_commit": "36c3de6cdd37f66507fc545caf4da6cb6c9651af",
+        "workflow_run_id": "32915588993",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-08-26T00:34:29.741400+00:00",
+        "data_hash": "e1f89bed84f954cb6703647c36d582c6247376493631b16e6c714263ce70b025",
+        "live_hash": "f073bb7f241ee0e475d5ff0581c3dd4275779f34d33ee5cdc1eb0433c542ba02"
+      },
+      "snapshot": {
+        "id": "fc2:823098:player-686527:hits:1:over",
+        "identity_version": 2,
+        "game_pk": 823098,
+        "player_id": 686527,
+        "combo_player_ids": null,
+        "type": "batter",
+        "name": "Dominic Canzone",
+        "team": "Seattle Mariners",
+        "matchup": "Philadelphia Phillies @ Seattle Mariners",
+        "game_start": "2026-08-26T01:40:00Z",
+        "stat": "hits",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "hits",
+          "value": 0.5,
+          "needs": 1
+        },
+        "prop": "Over 0.5 Hits",
+        "hit_probability": 0.627,
+        "market_odds": -145,
+        "market_implied": 0.5918,
+        "market_edge": 0.0352,
+        "market_hold": null,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (A), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (7.9 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "Projected 4.41 PA (batting slot 2) \u2014 a favorable lineup slot",
+          "Team implied for 3.96 runs (league avg 4.245; line 3.5, game total 8)",
+          "Platoon: L bat vs RHP (favorable)",
+          "Pitch-type exploit: RV/100 +2.4 vs CU (opposing SP throws it 33.1% of the time)"
+        ],
+        "watchouts": [
+          "Public heavy on Seattle Mariners (money% trails tickets% by 12 pts) \u2014 sharp money is fading this side",
+          "L7 avg EV 86.0mph (league ~88.5) \u2014 cold recent contact"
+        ],
+        "prob_ci": [
+          0.6182,
+          0.6556
+        ],
+        "reliability": "A",
+        "reliability_note": null,
+        "sample_n": 117,
+        "lineup_assumed": null,
+        "base_rate": 0.5636,
+        "lift": 0.0634,
+        "lift_reference_rate": null,
+        "stable_lift": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "ca672a7f",
+          "prediction_timestamp": "2026-08-26T00:00:51.410163+00:00",
+          "odds_fetched_at": "2026-08-26T00:00:44.631925+00:00",
+          "board_generated_at": "2026-08-26T00:00:51.394711+00:00"
+        },
+        "qualification_timestamp": "2026-08-26T00:00:51.410163+00:00",
+        "board_timestamp": "2026-08-26T00:00:51.394711+00:00",
+        "slate_date": "2026-08-25"
+      }
+    },
+    "fc2:823098:player-641487:hits_runs_rbis:1:over": {
+      "canonical_id": "fc2:823098:player-641487:hits_runs_rbis:1:over",
+      "settlement_identity": [
+        "823098",
+        [
+          "player",
+          "641487"
+        ],
+        "hits_runs_rbis",
+        "1",
+        "over"
+      ],
+      "slate_date": "2026-08-25",
+      "first_published_at": "2026-08-26T00:34:41.492344+00:00",
+      "publication_provenance": {
+        "artifact_id": "53980b3ec8d79e430b0154a9a50b314d83d76cea97112f3a8e42ddf6430a01cf",
+        "source_commit": "36c3de6cdd37f66507fc545caf4da6cb6c9651af",
+        "workflow_run_id": "32915588993",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-08-26T00:34:29.741400+00:00",
+        "data_hash": "e1f89bed84f954cb6703647c36d582c6247376493631b16e6c714263ce70b025",
+        "live_hash": "f073bb7f241ee0e475d5ff0581c3dd4275779f34d33ee5cdc1eb0433c542ba02"
+      },
+      "snapshot": {
+        "id": "fc2:823098:player-641487:hits_runs_rbis:1:over",
+        "identity_version": 2,
+        "game_pk": 823098,
+        "player_id": 641487,
+        "combo_player_ids": null,
+        "type": "batter",
+        "name": "J.P. Crawford",
+        "team": "Seattle Mariners",
+        "matchup": "Philadelphia Phillies @ Seattle Mariners",
+        "game_start": "2026-08-26T01:40:00Z",
+        "stat": "hits_runs_rbis",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "hits_runs_rbis",
+          "value": 0.5,
+          "needs": 1
+        },
+        "prop": "Over 0.5 Hits+Runs+RBIs",
+        "hit_probability": 0.6488,
+        "market_odds": -160,
+        "market_implied": 0.6154,
+        "market_edge": 0.0334,
+        "market_hold": null,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (A), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (7.9 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "AVG vs xBA: 0.212 vs 0.240 (-0.028) \u2014 underperforming his contact quality, positive regression candidate",
+          "Team implied for 3.96 runs (league avg 4.245; line 3.5, game total 8)",
+          "Platoon: L bat vs RHP (favorable)",
+          "Pitch-type exploit: RV/100 +4.8 vs CH (opposing SP throws it 16.3% of the time)"
+        ],
+        "watchouts": [
+          "L7 sample is thin (0 PA) \u2014 treat recent-form read with caution",
+          "Public heavy on Seattle Mariners (money% trails tickets% by 12 pts) \u2014 sharp money is fading this side"
+        ],
+        "prob_ci": [
+          0.6355,
+          0.6804
+        ],
+        "reliability": "A",
+        "reliability_note": null,
+        "sample_n": 86,
+        "lineup_assumed": null,
+        "base_rate": 0.6693,
+        "lift": -0.0205,
+        "lift_reference_rate": null,
+        "stable_lift": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "ca672a7f",
+          "prediction_timestamp": "2026-08-26T00:00:51.410163+00:00",
+          "odds_fetched_at": "2026-08-26T00:00:44.631925+00:00",
+          "board_generated_at": "2026-08-26T00:00:51.394711+00:00"
+        },
+        "qualification_timestamp": "2026-08-26T00:00:51.410163+00:00",
+        "board_timestamp": "2026-08-26T00:00:51.394711+00:00",
         "slate_date": "2026-08-25"
       }
     }
