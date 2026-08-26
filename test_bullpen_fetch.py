@@ -153,6 +153,56 @@ check(err_empty is None and usage_empty == {},
       "zero games in the window returns an empty dict, not an exception",
       f"got err={err_empty} usage={usage_empty}")
 
+head("6. generate_picks._reliever_detail() (detailed-bullpen-presentation fix, "
+     "2026-08-26): real bug -- generate_picks.fetch_bullpen_scores() discarded the "
+     "same real per-reliever detail (name, real dated appearances) checks 1-4 above "
+     "already prove _bullpen_fetch_one() fetches, collapsing it down to two bare "
+     "counts. Direct instruction: 'Jacob specifically wants names and context... "
+     "Cade Smith, 27 pitches yesterday, 3 appearances in 4 days.'")
+
+import generate_picks as gp  # noqa: E402
+from datetime import datetime, timedelta  # noqa: E402
+
+today_str = datetime.now().strftime("%Y-%m-%d")
+yesterday_str = (datetime.now() - timedelta(days=1)).strftime("%Y-%m-%d")
+detail_usage = {
+    "Cade Smith": {"IP": 3.0, "apps": 3, "pitches": 60,
+                   "games": [{"date": "2026-08-10", "ip": 1.0, "pitches": 18},
+                             {"date": "2026-08-12", "ip": 1.0, "pitches": 15},
+                             {"date": yesterday_str, "ip": 1.0, "pitches": 27}]},
+    "Emmanuel Clase": {"IP": 1.0, "apps": 1, "pitches": 22,
+                       "games": [{"date": today_str, "ip": 1.0, "pitches": 22}]},
+    "No Games Reliever": {"IP": 0.0, "apps": 0, "pitches": 0, "games": []},
+}
+detail = gp._reliever_detail(detail_usage)
+by_name = {r["name"]: r for r in detail}
+check("No Games Reliever" not in by_name,
+      "a reliever with no real recorded appearances in the window is never included "
+      "-- no fact to report, so nothing is fabricated", f"got names={list(by_name)}")
+check(by_name["Cade Smith"]["pitches_last_outing"] == 27,
+      "pitches_last_outing is the REAL most recent game (27, from yesterday), not an "
+      "earlier one in the window", f"got {by_name['Cade Smith']}")
+check(by_name["Cade Smith"]["appearances_l7"] == 3,
+      "appearances_l7 is his real total appearance count in the window",
+      f"got {by_name['Cade Smith']}")
+check(by_name["Cade Smith"]["days_since_last_outing"] == 1,
+      "days_since_last_outing is computed from his real last-outing date",
+      f"got {by_name['Cade Smith']}")
+check(by_name["Emmanuel Clase"]["days_since_last_outing"] == 0,
+      "a reliever who pitched today shows 0 days since his last outing, not None or a "
+      "stale value", f"got {by_name['Emmanuel Clase']}")
+names_by_recency = [r["name"] for r in detail]
+check(names_by_recency[0] == "Emmanuel Clase" and names_by_recency[1] == "Cade Smith",
+      "relievers are sorted most-recently-used first -- the read a bettor actually "
+      "wants (who pitched last night), not alphabetical", f"got {names_by_recency}")
+check(gp._reliever_detail({}) == [], "an empty usage dict returns an empty list, not a crash")
+many_relievers = {f"Reliever{i}": {"IP": 1.0, "apps": 1, "pitches": 20,
+                                    "games": [{"date": today_str, "ip": 1.0, "pitches": 20}]}
+                  for i in range(12)}
+check(len(gp._reliever_detail(many_relievers)) == 8,
+      "a full bullpen's raw usage table is capped at 8 -- real names past that are noise, "
+      "not context, on a per-game presentation surface")
+
 n_pass = sum(1 for ok, _, _ in _results if ok)
 n_total = len(_results)
 print("\n" + "=" * 78)
