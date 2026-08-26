@@ -718,6 +718,15 @@ function pickCard(p) {
   // renders -- statusChip(p) above already shows "TOP PICK" once, which
   // is the one real, defensible claim this card makes.
   const why = (p.why || [])[0] ? `<div class="pc-why">${esc(capSentence(humanizeReason(p.why[0])))}</div>` : "";
+  // Real bug, found 2026-08-26 (Part 2 item 5, richer compact cards): this
+  // was computed and then never once used anywhere in the template below --
+  // a viewer browsing a grid of a dozen-plus cards had no way to see which
+  // ones they'd already saved to My Board without opening each one. Not
+  // made independently clickable here (the whole card is already a single
+  // <button data-open>, and nesting a real <button> inside it would be
+  // invalid, inaccessible HTML) -- a plain visual indicator, same
+  // "computed, then discarded" pattern already fixed elsewhere in this
+  // project, just for a boolean instead of a sentence.
   const starred = watchlist.has(p.id);
   return `<button class="pick-card status-${p.recommendation_status || "neutral"} ${lifecycleClass(p)}${p.stale ? " status-stale" : ""}" data-open="${p.id}">
     <div class="pc-top">
@@ -725,6 +734,7 @@ function pickCard(p) {
         <div class="pc-name">${esc(p.name)}</div>
         <div class="pc-sub">${esc(p.team || p.matchup || "")}</div>
       </div>
+      ${starred ? `<span class="pc-saved" aria-label="Saved to My Board">★</span>` : ""}
     </div>
     <div class="pc-prop">${esc(p.prop)}</div>
     <div class="pc-prob-row">
