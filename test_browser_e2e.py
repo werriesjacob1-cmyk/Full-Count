@@ -136,8 +136,11 @@ try:
         page.wait_for_timeout(200)
         visible = page.eval_on_selector(f"#page-{route}", "el => !el.hidden")
         check(visible, f"#page-{route} is visible after navigating to #/{route}")
-        active = page.eval_on_selector(f'.main-nav a[data-route="{route}"]',
-                                        "el => el.classList.contains('active')")
+        # Performance moved to the header icon (#performance-link), not
+        # .main-nav (UX decision, 2026-08-26) -- the other 4 routes are
+        # still real .main-nav pills.
+        sel = "#performance-link" if route == "performance" else f'.main-nav a[data-route="{route}"]'
+        active = page.eval_on_selector(sel, "el => el.classList.contains('active')")
         check(active, f"nav link for {route} carries the active class")
     check(len(page._console_errors) == 0, "zero console errors across all 5 route navigations",
           f"errors: {page._console_errors}")
@@ -322,26 +325,57 @@ try:
     # ── 8. Mobile: 375 / 390 / 430 + one short-height viewport ────────────
     for w, h, label in [(375, 812, "iPhone SE/mini width"), (390, 844, "iPhone 12/13/14 width"),
                          (430, 932, "iPhone Pro Max width"), (375, 600, "short-height viewport")]:
-        head(f"8. Mobile ({w}x{h}, {label}): nav is fully discoverable (no clipped "
-             "'My Bo…'), no page-level horizontal scroll, the detail sheet fits the "
-             "viewport, and the props filter bar is actually sticky.")
+        head(f"8. Mobile ({w}x{h}, {label}): UX decision (2026-08-26) -- Today/Props/"
+             "Games/My Board are ALL directly reachable with zero horizontal nav-scroll "
+             "at this width (My Board is a primary destination and must never sit behind "
+             "a swipe), Performance stays one tap away via the header icon, no page-level "
+             "horizontal scroll, the detail sheet fits the viewport, and the props filter "
+             "bar is actually sticky.")
         ctx, page = new_page(w, h)
         load(page, "#/today")
         # No page-level horizontal overflow anywhere on Today.
         overflow_x = page.evaluate("() => document.documentElement.scrollWidth - window.innerWidth")
         check(overflow_x <= 1, f"no horizontal page overflow at {w}px (Today)", f"got overflow={overflow_x}")
-        # "My Board" nav label renders without CSS ellipsis-clipping its text.
+        # REGRESSION GUARD (2026-08-26 UX decision): all 4 primary nav
+        # destinations -- not just "not clipped," but actually WITHIN the
+        # viewport bounds at the nav's own default (unscrolled) position --
+        # are simultaneously reachable with no horizontal nav-scroll needed.
+        # This is the exact real gap the earlier 5-item row had: "not
+        # clipped" alone was true even when My Board sat off-screen, only
+        # reachable via a horizontal swipe within the nav strip.
+        nav_scroll_left = page.evaluate("() => document.querySelector('.main-nav').scrollLeft")
+        check(nav_scroll_left == 0, "the nav's default scroll position is 0 (nothing is "
+              "pre-scrolled to hide the start of the list)", f"got scrollLeft={nav_scroll_left}")
+        primary_routes = ["today", "props", "games", "watchlist"]
+        for route in primary_routes:
+            box = page.evaluate(
+                f"() => document.querySelector('.main-nav a[data-route=\"{route}\"]')"
+                ".getBoundingClientRect()")
+            check(box["width"] > 0, f"'{route}' nav destination has a nonzero rendered width",
+                  f"got {box}")
+            check(box["left"] >= 0 and box["right"] <= w,
+                  f"REGRESSION GUARD: '{route}' nav destination is fully within the "
+                  f"{w}px viewport with zero nav scroll -- not clipped, not off-screen, "
+                  "not reachable only via a horizontal swipe", f"got box={box} viewport={w}")
+        # "My Board" nav label specifically renders without CSS ellipsis-clipping.
         watch_link = page.query_selector('.main-nav a[data-route="watchlist"]')
-        if watch_link:
-            clipped = page.evaluate(
-                "(el) => el.scrollWidth > el.clientWidth + 1",
-                watch_link)
-            check(not clipped, "'My Board' nav label is not clipped/ellipsis-truncated at this width",
-                  f"scrollWidth vs clientWidth mismatch: {clipped}")
-        all_nav_visible = page.eval_on_selector_all(
-            ".main-nav a", "els => els.every(el => el.getBoundingClientRect().width > 0)")
-        check(all_nav_visible, "every primary nav destination has a nonzero rendered width "
-              "(none silently collapsed/hidden) at this width")
+        clipped = page.evaluate(
+            "(el) => el.scrollWidth > el.clientWidth + 1", watch_link)
+        check(not clipped, "'My Board' nav label is not clipped/ellipsis-truncated at this width",
+              f"scrollWidth vs clientWidth mismatch: {clipped}")
+        # Performance: no longer a primary-row pill, but still one tap away via
+        # the always-visible header icon -- verify it's real, present, and links
+        # to the real route (not silently buried/removed).
+        perf_link = page.query_selector("#performance-link")
+        check(perf_link is not None, "the Performance header icon link exists")
+        if perf_link:
+            perf_box = page.evaluate("(el) => el.getBoundingClientRect()", perf_link)
+            check(perf_box["width"] > 0 and perf_box["left"] >= 0 and perf_box["right"] <= w,
+                  "the Performance header icon is itself fully visible within the viewport, "
+                  "not clipped off the header row", f"got box={perf_box} viewport={w}")
+            href = perf_link.get_attribute("href")
+            check(href == "#/performance", "the Performance icon links to the real route",
+                  f"got href={href!r}")
         # Props page: filter bar sticky + no overflow.
         page.evaluate("() => { location.hash = '#/props'; }")
         page.wait_for_timeout(250)
