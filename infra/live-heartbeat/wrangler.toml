@@ -1,0 +1,20 @@
+# FULL COUNT live heartbeat -- Cloudflare Worker config.
+#
+# No secrets live in this file. GITHUB_PAT is set with:
+#   wrangler secret put GITHUB_PAT
+# See README.md for exact setup steps.
+
+name = "fc-live-heartbeat"
+main = "src/index.js"
+compatibility_date = "2026-08-01"
+
+# Every 5 minutes. Cloudflare Cron Triggers run independently of GitHub's
+# own `schedule` trigger infrastructure -- see README.md for why that
+# independence matters here and how it's being verified with a soak test.
+[triggers]
+crons = ["*/5 * * * *"]
+
+# Deliberately no [vars] section: nothing here is non-secret configuration
+# beyond what's hardcoded in src/index.js (owner/repo/workflow/ref), and
+# none of it should be publicly readable via `wrangler deploy --dry-run`
+# output or the Cloudflare dashboard's plaintext vars view.
