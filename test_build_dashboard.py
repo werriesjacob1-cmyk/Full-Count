@@ -46,6 +46,7 @@ a capped/ranked Top Picks list). Concretely:
 """
 import json
 import os
+import re
 import sys
 import tempfile
 
@@ -2471,6 +2472,36 @@ check(_hr_candidate[0]["why"] == bd._select_market_evidence(_REAL_WHY_TEMPLATES,
 check(_hr_candidate[0]["watchouts"] == bd._select_market_evidence(_REAL_WATCHOUTS_TEMPLATES, "home_runs"),
       "_clean_candidate_rows() actually calls _select_market_evidence() for watchouts too",
       f"got {_hr_candidate[0]['watchouts']!r}")
+
+
+head("23. Mobile FanDuel-odds-visibility regression (frontend automation prep, 2026-08-26): "
+     "real bug -- app.css's @media(max-width:640px) rule hid .pr-price (the real FanDuel "
+     "price rendered by propRow(), used by the All Props list, the Today-page overflow "
+     "list, AND My Board) entirely on mobile via display:none. Direct violation of the "
+     "explicit 'Mobile FanDuel odds mandatory' requirement. Asserts the mobile media query "
+     "no longer hides it, and that it's given a real position (grid-area) so it actually "
+     "renders somewhere, not just technically present but zero-size/off-grid.")
+
+with open(os.path.join(bd.STATIC_DIR, "app.css"), encoding="utf-8") as _f:
+    _css = _f.read()
+# app.css has several separate @media(max-width:640px) blocks (one per
+# component section, not merged) -- must find the ONE that actually
+# targets .prop-row/.pr-price, not just the first max-width:640px block
+# in the file (a real mistake caught while first writing this check).
+_mobile_blocks = re.findall(r"@media \(max-width:\s*640px\)\s*\{(.*?)\n\}", _css, re.S)
+_mobile_block = next((b for b in _mobile_blocks if ".pr-price" in b), "")
+check(_mobile_block != "",
+      "some mobile (max-width:640px) media query block targets .pr-price at all",
+      f"got {len(_mobile_blocks)} max-width:640px blocks total")
+_pr_price_rule = re.search(r"\.pr-price\s*\{([^}]*)\}", _mobile_block)
+check(_pr_price_rule is not None and "display: none" not in _pr_price_rule.group(1)
+      and "display:none" not in _pr_price_rule.group(1),
+      "REGRESSION GUARD: .pr-price is never display:none inside the mobile media query -- "
+      "the real FanDuel price must stay visible on mobile",
+      f"got rule={_pr_price_rule.group(1) if _pr_price_rule else None!r}")
+check(_pr_price_rule is not None and "grid-area" in _pr_price_rule.group(1),
+      ".pr-price is given a real grid-area placement on mobile, not just left un-hidden "
+      "with nowhere to render", f"got rule={_pr_price_rule.group(1) if _pr_price_rule else None!r}")
 
 
 head("15. StaticSourceParityTests: dashboard/static/{index.html,app.css,app.js} is the ONLY "
