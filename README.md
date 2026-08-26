@@ -902,3 +902,4 @@ Explicitly deferred, not forgotten:
   "How picks are generated").
 - Any bet placement, sizing, or bankroll logic. This repo produces research
   and a shortlist — Jacob decides and executes manually.
+# durability test edit 1787778226
