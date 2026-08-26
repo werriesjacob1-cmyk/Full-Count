@@ -1854,6 +1854,138 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-26",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 43.2,
+          "notable_signals": 1,
+          "matchup": "Boston Red Sox @ Miami Marlins",
+          "game_pk": 823825,
+          "team": "Boston Red Sox",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 62.8571,
+            "l7_avg_ev": 68.5833,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 42.0,
+            "lineup_slot": 25.0,
+            "bullpen_fatigue": 18.5185,
+            "platoon_barrel_pct": 2.4,
+            "platoon_xwoba": -1.32,
+            "park_hand_index": -1.4,
+            "opp_catcher_framing": 0.6,
+            "days_rest": 0.0,
+            "woba_ahead": 30.9091,
+            "woba_behind": 25.4545,
+            "pull_park_synergy": -0.7742,
+            "hard_hit_105_rate": 0.7,
+            "team_total_move": 0.0,
+            "team_total_open": 0.0,
+            "getaway_day": -2.0,
+            "series_game": 2.0,
+            "sp_rp_ops_gap": 1.056,
+            "vs_rp_ops": -0.096,
+            "ump_k_pct": -0.432,
+            "ump_bb_pct": -0.168
+          },
+          "hit_probability": 0.6723,
+          "raw_hit_probability": 0.6754,
+          "lift": 0.0008,
+          "reliability": "A",
+          "sample_n": 124,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 40.7,
+          "notable_signals": 0,
+          "matchup": "Boston Red Sox @ Miami Marlins",
+          "game_pk": 823825,
+          "team": "Boston Red Sox",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": 0.72,
+            "sprint_speed": 53.125,
+            "catcher_poptime": 0.0,
+            "on_base": 9.7889
+          },
+          "hit_probability": 0.131,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 124,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 11.5,
+          "notable_signals": 0,
+          "matchup": "Boston Red Sox @ Miami Marlins",
+          "game_pk": 823825,
+          "team": "Boston Red Sox",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0746
+          },
+          "hit_probability": 0.0746,
+          "raw_hit_probability": null,
+          "lift": 0.0261,
+          "reliability": "A",
+          "sample_n": 124,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 4.4,
+          "notable_signals": 0,
+          "matchup": "Boston Red Sox @ Miami Marlins",
+          "game_pk": 823825,
+          "team": "Boston Red Sox",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0301
+          },
+          "hit_probability": 0.0301,
+          "raw_hit_probability": null,
+          "lift": 0.009,
+          "reliability": "A",
+          "sample_n": 124,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

@@ -70,8 +70,8 @@
         {
           "prop": "Over 3.5 Strikeouts",
           "type": "pitcher",
-          "score": 36.5,
-          "notable_signals": 0,
+          "score": 33.4,
+          "notable_signals": 1,
           "matchup": "Colorado Rockies @ Washington Nationals",
           "game_pk": 822692,
           "team": "Colorado Rockies",
@@ -82,7 +82,10 @@
             "opp_team_k_pct": 46.0,
             "same_hand_ratio": 92.8571,
             "l14_k_pct": 0.0,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 70.2871,
+            "ump_k_pct": -0.852,
+            "ump_bb_pct": -0.468
           },
           "hit_probability": 0.5107,
           "raw_hit_probability": 0.5107,
@@ -107,12 +110,12 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.2476,
+            "outs_rate": 0.2532,
             "avg_outs_per_start": 14.17
           },
-          "hit_probability": 0.2476,
+          "hit_probability": 0.2532,
           "raw_hit_probability": null,
-          "lift": -0.2475,
+          "lift": -0.2532,
           "reliability": "C",
           "sample_n": 6,
           "projection": {

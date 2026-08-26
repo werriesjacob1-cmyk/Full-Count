@@ -1602,6 +1602,138 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-26",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 48.2,
+          "notable_signals": 1,
+          "matchup": "Chicago Cubs @ Arizona Diamondbacks",
+          "game_pk": 825039,
+          "team": "Arizona Diamondbacks",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 43.4286,
+            "l7_avg_ev": 100.0,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 14.925,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 40.0,
+            "lineup_slot": 50.0,
+            "bullpen_fatigue": 18.5185,
+            "platoon_barrel_pct": -0.8,
+            "platoon_xwoba": -0.84,
+            "park_hand_index": -0.69,
+            "opp_catcher_framing": -0.12,
+            "days_rest": 0.0,
+            "woba_ahead": 38.1818,
+            "woba_behind": 1.8182,
+            "pull_park_synergy": -0.3067,
+            "team_total_move": -6.0,
+            "team_total_open": -4.0,
+            "getaway_day": -2.0,
+            "series_game": 2.0,
+            "sp_rp_ops_gap": -0.456,
+            "vs_rp_ops": -0.516,
+            "ump_k_pct": 0.024,
+            "ump_bb_pct": -0.012
+          },
+          "hit_probability": 0.6013,
+          "raw_hit_probability": 0.6021,
+          "lift": 0.0366,
+          "reliability": "B",
+          "sample_n": 70,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 28.5,
+          "notable_signals": 0,
+          "matchup": "Chicago Cubs @ Arizona Diamondbacks",
+          "game_pk": 825039,
+          "team": "Arizona Diamondbacks",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": -0.6,
+            "sprint_speed": 9.375,
+            "catcher_poptime": 17.1429,
+            "on_base": 31.8618
+          },
+          "hit_probability": 0.097,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "B",
+          "sample_n": 70,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 0.6,
+          "notable_signals": 0,
+          "matchup": "Chicago Cubs @ Arizona Diamondbacks",
+          "game_pk": 825039,
+          "team": "Arizona Diamondbacks",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0316
+          },
+          "hit_probability": 0.0316,
+          "raw_hit_probability": null,
+          "lift": -0.0169,
+          "reliability": "B",
+          "sample_n": 70,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 0.6,
+          "notable_signals": 0,
+          "matchup": "Chicago Cubs @ Arizona Diamondbacks",
+          "game_pk": 825039,
+          "team": "Arizona Diamondbacks",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0151
+          },
+          "hit_probability": 0.0151,
+          "raw_hit_probability": null,
+          "lift": -0.006,
+          "reliability": "B",
+          "sample_n": 70,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

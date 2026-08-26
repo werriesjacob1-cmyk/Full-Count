@@ -251,10 +251,13 @@
           "combo_player_ids": null,
           "signals": {
             "opp_team_k_pct": 47.0,
-            "same_hand_ratio": 21.4286,
+            "same_hand_ratio": 12.5,
             "l14_k_pct": 29.4118,
             "tto_penalty": 8.0,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 53.7298,
+            "ump_k_pct": -0.024,
+            "ump_bb_pct": 0.012
           },
           "hit_probability": 0.4523,
           "raw_hit_probability": 0.4523,
@@ -270,7 +273,7 @@
         {
           "prop": "Over 17.5 Outs Recorded",
           "type": "pitcher",
-          "score": 78.2,
+          "score": 75.9,
           "notable_signals": 1,
           "matchup": "Chicago Cubs @ Arizona Diamondbacks",
           "game_pk": 825039,
@@ -279,12 +282,12 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.611,
+            "outs_rate": 0.6151,
             "avg_outs_per_start": 17.88
           },
-          "hit_probability": 0.611,
+          "hit_probability": 0.6151,
           "raw_hit_probability": null,
-          "lift": 0.1858,
+          "lift": 0.1681,
           "reliability": "A",
           "sample_n": 26,
           "projection": {

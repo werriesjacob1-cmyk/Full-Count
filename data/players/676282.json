@@ -239,7 +239,7 @@
         {
           "prop": "Over 6.5 Strikeouts",
           "type": "pitcher",
-          "score": 22.8,
+          "score": 18.1,
           "notable_signals": 0,
           "matchup": "Cleveland Guardians @ Los Angeles Angels",
           "game_pk": 823988,
@@ -251,7 +251,10 @@
             "opp_team_k_pct": 82.0,
             "same_hand_ratio": 0.0,
             "l14_k_pct": 75.8824,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 48.7977,
+            "ump_k_pct": 0.372,
+            "ump_bb_pct": 0.012
           },
           "hit_probability": 0.3373,
           "raw_hit_probability": 0.3373,
@@ -276,12 +279,12 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.3452,
+            "outs_rate": 0.346,
             "avg_outs_per_start": 14.48
           },
-          "hit_probability": 0.3452,
+          "hit_probability": 0.346,
           "raw_hit_probability": null,
-          "lift": -0.2198,
+          "lift": -0.2239,
           "reliability": "A",
           "sample_n": 27,
           "projection": {
