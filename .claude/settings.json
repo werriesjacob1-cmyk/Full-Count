@@ -6,7 +6,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "mkdir -p /home/user/fullcount-tooling/.claude/.autosave-state; f=/home/user/fullcount-tooling/.claude/.autosave-state/last-run; now=$(date +%s); last=$(cat \"$f\" 2>/dev/null || echo 0); if [ $((now - last)) -ge 180 ]; then echo \"$now\" > \"$f\"; nohup bash /home/user/fullcount-tooling/.claude/worktree-autosave.sh >> /home/user/fullcount-tooling/.claude/.autosave-state/run.log 2>&1 & fi",
+            "command": "ROOT=\"$(git rev-parse --show-toplevel 2>/dev/null)\"; [ -n \"$ROOT\" ] || exit 0; mkdir -p \"$ROOT/.claude/.autosave-state\"; f=\"$ROOT/.claude/.autosave-state/last-run\"; now=$(date +%s); last=$(cat \"$f\" 2>/dev/null || echo 0); if [ $((now - last)) -ge 180 ]; then echo \"$now\" > \"$f\"; nohup bash \"$ROOT/.claude/worktree-autosave.sh\" >> \"$ROOT/.claude/.autosave-state/run.log\" 2>&1 & fi",
             "timeout": 5,
             "statusMessage": "Autosave check..."
           }
@@ -18,7 +18,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash /home/user/fullcount-tooling/.claude/worktree-autosave.sh >> /home/user/fullcount-tooling/.claude/.autosave-state/run.log 2>&1 || true",
+            "command": "ROOT=\"$(git rev-parse --show-toplevel 2>/dev/null)\"; [ -n \"$ROOT\" ] || exit 0; mkdir -p \"$ROOT/.claude/.autosave-state\"; bash \"$ROOT/.claude/worktree-autosave.sh\" >> \"$ROOT/.claude/.autosave-state/run.log\" 2>&1 || true",
             "timeout": 30,
             "statusMessage": "Final autosave..."
           }
