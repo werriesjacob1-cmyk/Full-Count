@@ -25,13 +25,26 @@
 #
 # WHAT IT DOES. Snapshots current tracked modifications + safe untracked
 # source files into a throwaway commit object (via a temporary index +
-# `write-tree`/`commit-tree`, never the real index) and pushes that object
-# to a dedicated `refs/heads/autosave/<branch>` ref. The real branch's HEAD,
-# the real staging area, and the real working tree are never touched by this
-# script -- a crash mid-run leaves the agent's actual state exactly as it
-# was. `main`/`master` and any detached HEAD are refused outright (log only,
-# no commit, no push) so this can never land an automatic commit on the
-# branch other agents/CI treat as ground truth.
+# `write-tree`/`commit-tree`, never the real index), points a dedicated
+# LOCAL ref (`refs/autosave/<branch>`) at it, THEN attempts to push that
+# same commit to a dedicated remote ref (`refs/heads/autosave/<branch>`).
+# The real branch's HEAD, the real staging area, and the real working tree
+# are never touched by this script -- a crash mid-run leaves the agent's
+# actual state exactly as it was. `main`/`master` and any detached HEAD are
+# refused outright (log only, no commit, no push) so this can never land an
+# automatic commit on the branch other agents/CI treat as ground truth.
+#
+# DURABILITY (2026-08-26, Part 12). A bare `commit-tree` result with no ref
+# pointing at it is a dangling object: reachable only by SHA, eligible for
+# GC, and gone the instant this container is -- calling that "safe locally"
+# overstated it. The local ref is created BEFORE the network push is even
+# attempted, so a push failure still leaves a durably-referenced local
+# snapshot (survives `git gc`/reflog expiry the same way any branch tip
+# does), not just a recoverable-if-you-know-the-SHA object. Log lines say
+# exactly which is true: "REMOTE BACKUP COMPLETE" only when the push
+# actually succeeded; "LOCAL SNAPSHOT EXISTS / REMOTE DURABILITY FAILED"
+# when it didn't -- the container-loss risk is real in that case and the
+# message says so instead of claiming off-container safety it doesn't have.
 set -uo pipefail
 
 ROOT="$(git rev-parse --show-toplevel 2>/dev/null)" || { echo "$(date -u +%H:%M:%S) autosave: not inside a git worktree, skipping"; exit 0; }
@@ -127,9 +140,23 @@ Committed automatically by .claude/worktree-autosave.sh, not by the agent.
 Lives on refs/heads/autosave/$branch, NOT on $branch itself -- the real
 branch HEAD was never advanced. Safe to inspect/cherry-pick/discard.")" || exit 0
 
-ref="refs/heads/autosave/$(printf '%s' "$branch" | tr '/' '-')"
-if git push -q --force origin "$commit:$ref" 2>/dev/null; then
-  echo "$(date -u +%H:%M:%S) autosaved $n file(s) from $branch -> $ref ($commit)"
+sanitized="$(printf '%s' "$branch" | tr '/' '-')"
+local_ref="refs/autosave/$sanitized"
+remote_ref="refs/heads/autosave/$sanitized"
+
+# Local ref FIRST, before attempting the network push. `commit-tree` alone
+# produces a dangling object -- reachable only by SHA, eligible for GC, and
+# gone the instant this container is. Pointing a real local ref at it makes
+# the object reachable the same way any branch tip is, survives an ordinary
+# `git gc`/reflog-expiry pass, and costs nothing else: it never touches HEAD,
+# the real index, or the working tree.
+if ! git update-ref "$local_ref" "$commit" 2>/dev/null; then
+  echo "$(date -u +%H:%M:%S) autosave: FAILED to create local ref $local_ref for commit $commit -- snapshot commit exists but is NOT durably referenced (do not treat this run as safe)"
+  exit 0
+fi
+
+if git push -q --force origin "$commit:$remote_ref" 2>/dev/null; then
+  echo "$(date -u +%H:%M:%S) REMOTE BACKUP COMPLETE: $n file(s) from $branch -> $remote_ref ($commit), local ref $local_ref also updated"
 else
-  echo "$(date -u +%H:%M:%S) autosave commit $commit created locally for $branch, push to $ref failed (local object is safe; nothing on disk was mutated)"
+  echo "$(date -u +%H:%M:%S) LOCAL SNAPSHOT EXISTS ($local_ref -> $commit, $n files) / REMOTE DURABILITY FAILED (push to $remote_ref did not succeed -- this snapshot has NOT left the container; a container loss before the next successful push destroys it)"
 fi

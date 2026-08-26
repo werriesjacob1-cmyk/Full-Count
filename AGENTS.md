@@ -29,3 +29,4 @@ Repository memory:
 21. Do not knowingly implement an inferior workaround just because the clean solution touches more files.
 22. Stay inside the OBJECTIVE of the task, but modify any architecture/files genuinely required to solve that objective correctly.
 23. Never merge your own PR unless explicitly instructed by the user.
+24. Auto-generated compaction/handoff/session summaries are navigation aids, not authoritative evidence. Verify any material claim recovered only from one (a security finding, process/branch state, a research conclusion) against primary evidence -- git state, actual source, raw logs, real artifacts, GitHub API, live process state -- before it affects policy, merge, or architecture decisions.
