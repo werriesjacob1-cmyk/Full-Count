@@ -204,6 +204,66 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-26",
+      "evaluations": [
+        {
+          "prop": "Over 4.5 Strikeouts",
+          "type": "pitcher",
+          "score": 26.6,
+          "notable_signals": 1,
+          "matchup": "Cleveland Guardians @ Los Angeles Angels",
+          "game_pk": 823988,
+          "team": "Los Angeles Angels",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_k_pct": 45.0,
+            "same_hand_ratio": 0.0,
+            "l14_k_pct": 58.8235,
+            "tto_penalty": 8.0,
+            "env_neutral": 50.0
+          },
+          "hit_probability": 0.5861,
+          "raw_hit_probability": 0.5617,
+          "lift": 0.0714,
+          "reliability": "B",
+          "sample_n": 14,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 4.5,
+            "needs": 5
+          }
+        },
+        {
+          "prop": "Over 16.5 Outs Recorded",
+          "type": "pitcher",
+          "score": 0,
+          "notable_signals": 0,
+          "matchup": "Cleveland Guardians @ Los Angeles Angels",
+          "game_pk": 823988,
+          "team": "Los Angeles Angels",
+          "side": "home",
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "outs_rate": 0.2985,
+            "avg_outs_per_start": 14.14
+          },
+          "hit_probability": 0.2985,
+          "raw_hit_probability": null,
+          "lift": -0.1966,
+          "reliability": "B",
+          "sample_n": 14,
+          "projection": {
+            "stat": "pitcher_outs",
+            "value": 16.5,
+            "needs": 17
+          }
+        }
+      ]
     }
   ]
 }

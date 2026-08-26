@@ -172,6 +172,65 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-26",
+      "evaluations": [
+        {
+          "prop": "Over 5.5 Strikeouts",
+          "type": "pitcher",
+          "score": 33.7,
+          "notable_signals": 0,
+          "matchup": "Philadelphia Phillies @ Seattle Mariners",
+          "game_pk": 823096,
+          "team": "Seattle Mariners",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_k_pct": 53.0,
+            "same_hand_ratio": 33.3333,
+            "l14_k_pct": 45.2941,
+            "env_neutral": 50.0
+          },
+          "hit_probability": 0.4344,
+          "raw_hit_probability": 0.4344,
+          "lift": 0.0734,
+          "reliability": "A",
+          "sample_n": 24,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 5.5,
+            "needs": 6
+          }
+        },
+        {
+          "prop": "Over 17.5 Outs Recorded",
+          "type": "pitcher",
+          "score": 72.1,
+          "notable_signals": 1,
+          "matchup": "Philadelphia Phillies @ Seattle Mariners",
+          "game_pk": 823096,
+          "team": "Seattle Mariners",
+          "side": "home",
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "outs_rate": 0.585,
+            "avg_outs_per_start": 17.29
+          },
+          "hit_probability": 0.585,
+          "raw_hit_probability": null,
+          "lift": 0.1598,
+          "reliability": "A",
+          "sample_n": 24,
+          "projection": {
+            "stat": "pitcher_outs",
+            "value": 17.5,
+            "needs": 18
+          }
+        }
+      ]
     }
   ]
 }

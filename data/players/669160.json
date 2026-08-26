@@ -172,6 +172,66 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-26",
+      "evaluations": [
+        {
+          "prop": "Over 4.5 Strikeouts",
+          "type": "pitcher",
+          "score": 28.1,
+          "notable_signals": 1,
+          "matchup": "Milwaukee Brewers @ New York Mets",
+          "game_pk": 823584,
+          "team": "Milwaukee Brewers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_k_pct": 56.0,
+            "same_hand_ratio": 75.0,
+            "l14_k_pct": 12.3529,
+            "tto_penalty": 8.0,
+            "env_neutral": 50.0
+          },
+          "hit_probability": 0.539,
+          "raw_hit_probability": 0.539,
+          "lift": 0.0243,
+          "reliability": "A",
+          "sample_n": 24,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 4.5,
+            "needs": 5
+          }
+        },
+        {
+          "prop": "Over 15.5 Outs Recorded",
+          "type": "pitcher",
+          "score": 59.2,
+          "notable_signals": 0,
+          "matchup": "Milwaukee Brewers @ New York Mets",
+          "game_pk": 823584,
+          "team": "Milwaukee Brewers",
+          "side": "away",
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "outs_rate": 0.613,
+            "avg_outs_per_start": 15.5
+          },
+          "hit_probability": 0.613,
+          "raw_hit_probability": null,
+          "lift": 0.048,
+          "reliability": "A",
+          "sample_n": 24,
+          "projection": {
+            "stat": "pitcher_outs",
+            "value": 15.5,
+            "needs": 16
+          }
+        }
+      ]
     }
   ]
 }

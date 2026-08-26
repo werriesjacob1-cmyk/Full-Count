@@ -1,0 +1,37 @@
+{
+  "player_id": "nrfi_824963",
+  "name": "Minnesota Twins @ Athletics \u2014 1st Inning (Both Teams)",
+  "snapshots": [
+    {
+      "date": "2026-08-26",
+      "evaluations": [
+        {
+          "prop": "A run scores in the 1st (either team)",
+          "type": "game",
+          "score": 62.4,
+          "notable_signals": 0,
+          "matchup": "Minnesota Twins @ Athletics",
+          "game_pk": 824963,
+          "team": null,
+          "side": "both",
+          "lean": "YRFI",
+          "combo_player_ids": null,
+          "signals": {
+            "home_team_scores_p": 0.3326,
+            "away_team_scores_p": 0.2572,
+            "fi_n_starts": 18.0
+          },
+          "hit_probability": 0.5043,
+          "raw_hit_probability": null,
+          "lift": 0.0027,
+          "reliability": "A",
+          "sample_n": 18,
+          "projection": {
+            "stat": "nrfi_combined",
+            "value": 50.4
+          }
+        }
+      ]
+    }
+  ]
+}

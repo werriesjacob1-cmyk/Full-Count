@@ -1,0 +1,268 @@
+{
+  "date": "2026-08-26",
+  "hits": 0,
+  "misses": 0,
+  "ungraded": 0,
+  "fair_hits": 0,
+  "fair_misses": 0,
+  "by_category": {},
+  "by_recommendation_status": {
+    "top_pick": {
+      "hits": 0,
+      "misses": 0,
+      "voids": 0,
+      "ungraded": 3
+    }
+  },
+  "public_top_pick_counts": {
+    "hits": 0,
+    "misses": 0,
+    "voids": 0,
+    "ungraded": 3
+  },
+  "public_top_picks": [
+    {
+      "id": "fc2:823015:player-700241:pitcher_outs:17:over",
+      "identity_version": 2,
+      "game_pk": 823015,
+      "player_id": 700241,
+      "combo_player_ids": null,
+      "type": "pitcher",
+      "name": "Michael McGreevy",
+      "team": "St. Louis Cardinals",
+      "matchup": "Baltimore Orioles @ St. Louis Cardinals",
+      "game_start": "2026-08-26T23:45:00Z",
+      "stat": "pitcher_outs",
+      "market_side": "over",
+      "lean": null,
+      "projection": {
+        "stat": "pitcher_outs",
+        "value": 16.5,
+        "needs": 17
+      },
+      "prop": "Over 16.5 Outs Recorded",
+      "hit_probability": 0.6442,
+      "market_odds": -125,
+      "market_implied": 0.5192,
+      "market_edge": 0.125,
+      "market_hold": 0.0701,
+      "price_clears": true,
+      "recommendation_status": "top_pick",
+      "status_reasons": [
+        "clears the real probability floor (>= 60%), a real evidence grade (A), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+        "note: the market itself disagrees with this read (13.0 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+      ],
+      "why": [
+        "Recorded 17+ outs (5.2 IP) in 64.4% of his last 25 real starts (league 49.5%, avg 16.48 outs/start)"
+      ],
+      "watchouts": [],
+      "prob_ci": [
+        0.5716,
+        0.7123
+      ],
+      "reliability": "A",
+      "reliability_note": null,
+      "sample_n": 25,
+      "lineup_assumed": null,
+      "base_rate": 0.4951,
+      "lift": 0.1491,
+      "lift_reference_rate": null,
+      "stable_lift": null,
+      "versions": {
+        "model_version": "2026.08.15",
+        "selection_policy_version": "1.0.0",
+        "calibration_version": "1.0.0",
+        "feature_version": "1.0.0",
+        "git_sha": "7af6fa99",
+        "prediction_timestamp": "2026-08-26T13:58:15.463582+00:00",
+        "odds_fetched_at": "2026-08-26T13:58:10.042501+00:00",
+        "board_generated_at": "2026-08-26T13:58:15.430230+00:00"
+      },
+      "qualification_timestamp": "2026-08-26T13:58:15.463582+00:00",
+      "board_timestamp": "2026-08-26T13:58:15.430230+00:00",
+      "slate_date": "2026-08-26",
+      "published_top_pick_at": "2026-08-26T14:26:33.458202+00:00",
+      "publication_artifact_id": "2a6aa090d6ed6808bec7a11360c67e4c590c2fef532afe3b45bbe8a0887cf86a",
+      "publication_source_commit": "b08393ba88133c396b00100287122808abc41780",
+      "publication_run_id": "32980226063",
+      "publication_deployment_id": null,
+      "grade": "ungraded",
+      "settlement_state": "ungraded",
+      "reason": "game_not_authoritatively_final",
+      "eligibility": {
+        "eligibility": "ungraded",
+        "reason_code": "game_not_authoritatively_final",
+        "ruleset_version": "fanduel-us-conservative-2026-08-17-v2",
+        "game_state": "pregame"
+      },
+      "settlement_authority": "none",
+      "settlement_observed_at": "2026-08-26T15:59:03.490007+00:00",
+      "settlement_source": "durable_morning_status_observation"
+    },
+    {
+      "id": "fc2:823584:player-669160:pitcher_outs:16:over",
+      "identity_version": 2,
+      "game_pk": 823584,
+      "player_id": 669160,
+      "combo_player_ids": null,
+      "type": "pitcher",
+      "name": "Dustin May",
+      "team": "Milwaukee Brewers",
+      "matchup": "Milwaukee Brewers @ New York Mets",
+      "game_start": "2026-08-26T23:10:00Z",
+      "stat": "pitcher_outs",
+      "market_side": "over",
+      "lean": null,
+      "projection": {
+        "stat": "pitcher_outs",
+        "value": 15.5,
+        "needs": 16
+      },
+      "prop": "Over 15.5 Outs Recorded",
+      "hit_probability": 0.613,
+      "market_odds": -108,
+      "market_implied": 0.4858,
+      "market_edge": 0.1272,
+      "market_hold": null,
+      "price_clears": true,
+      "recommendation_status": "top_pick",
+      "status_reasons": [
+        "clears the real probability floor (>= 60%), a real evidence grade (A), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+        "note: the market itself disagrees with this read (13.2 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+      ],
+      "why": [
+        "Recorded 16+ outs (5.1 IP) in 61.3% of his last 24 real starts (league 56.5%, avg 15.5 outs/start)"
+      ],
+      "watchouts": [],
+      "prob_ci": [
+        0.5445,
+        0.7179
+      ],
+      "reliability": "A",
+      "reliability_note": null,
+      "sample_n": 24,
+      "lineup_assumed": null,
+      "base_rate": 0.565,
+      "lift": 0.048,
+      "lift_reference_rate": null,
+      "stable_lift": null,
+      "versions": {
+        "model_version": "2026.08.15",
+        "selection_policy_version": "1.0.0",
+        "calibration_version": "1.0.0",
+        "feature_version": "1.0.0",
+        "git_sha": "7af6fa99",
+        "prediction_timestamp": "2026-08-26T13:58:15.463582+00:00",
+        "odds_fetched_at": "2026-08-26T13:58:10.042501+00:00",
+        "board_generated_at": "2026-08-26T13:58:15.430230+00:00"
+      },
+      "qualification_timestamp": "2026-08-26T13:58:15.463582+00:00",
+      "board_timestamp": "2026-08-26T13:58:15.430230+00:00",
+      "slate_date": "2026-08-26",
+      "published_top_pick_at": "2026-08-26T14:00:24.303042+00:00",
+      "publication_artifact_id": "72d7df772ee7201eb1c1460ce988d1aab209f534b4349f3600687342f4ca99e7",
+      "publication_source_commit": "4ad422432cb7474aab396fdf695895b0611e54a4",
+      "publication_run_id": "32977426915",
+      "publication_deployment_id": null,
+      "grade": "ungraded",
+      "settlement_state": "ungraded",
+      "reason": "game_not_authoritatively_final",
+      "eligibility": {
+        "eligibility": "ungraded",
+        "reason_code": "game_not_authoritatively_final",
+        "ruleset_version": "fanduel-us-conservative-2026-08-17-v2",
+        "game_state": "pregame"
+      },
+      "settlement_authority": "none",
+      "settlement_observed_at": "2026-08-26T15:59:03.490007+00:00",
+      "settlement_source": "durable_morning_status_observation"
+    },
+    {
+      "id": "fc2:823825:player-687473:strikeouts:4:over",
+      "identity_version": 2,
+      "game_pk": 823825,
+      "player_id": 687473,
+      "combo_player_ids": null,
+      "type": "pitcher",
+      "name": "Ryan Gusto",
+      "team": "Miami Marlins",
+      "matchup": "Boston Red Sox @ Miami Marlins",
+      "game_start": "2026-08-26T22:40:00Z",
+      "stat": "strikeouts",
+      "market_side": "over",
+      "lean": null,
+      "projection": {
+        "stat": "strikeouts",
+        "value": 3.5,
+        "needs": 4
+      },
+      "prop": "Over 3.5 Strikeouts",
+      "hit_probability": 0.6073,
+      "market_odds": -128,
+      "market_implied": 0.5289,
+      "market_edge": 0.0784,
+      "market_hold": null,
+      "price_clears": true,
+      "recommendation_status": "top_pick",
+      "status_reasons": [
+        "clears the real probability floor (>= 60%), a real evidence grade (B), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+        "note: the market itself disagrees with this read (8.7 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+      ],
+      "why": [
+        "Opposing team K% 21.3",
+        "Expected workload 21.5 batters faced (his own 19.5/start over 2 real starts, shrunk toward the 23.1 league mean)",
+        "4/7 known-hand opposing batters same-handed",
+        "Recency-weighted K rate 19.8% (exp. decay, halflife 30d, 12 real starts / 218 BF) \u2014 drives the strikeout probability model"
+      ],
+      "watchouts": [
+        "Workload estimate rests on only 2 starts in the L14 window \u2014 most start-to-start variation in batters faced is noise, so this is shrunk heavily toward league average",
+        "L14 K% 20.5 (39 PA) \u2014 cold recent form"
+      ],
+      "prob_ci": [
+        0.5863,
+        0.7065
+      ],
+      "reliability": "B",
+      "reliability_note": null,
+      "sample_n": 12,
+      "lineup_assumed": null,
+      "base_rate": 0.6907,
+      "lift": -0.0834,
+      "lift_reference_rate": null,
+      "stable_lift": null,
+      "versions": {
+        "model_version": "2026.08.15",
+        "selection_policy_version": "1.0.0",
+        "calibration_version": "1.0.0",
+        "feature_version": "1.0.0",
+        "git_sha": "b6c39908",
+        "prediction_timestamp": "2026-08-26T02:30:45.082476+00:00",
+        "odds_fetched_at": "2026-08-26T02:30:37.169169+00:00",
+        "board_generated_at": "2026-08-26T02:30:45.062350+00:00"
+      },
+      "qualification_timestamp": "2026-08-26T02:30:45.082476+00:00",
+      "board_timestamp": "2026-08-26T02:30:45.062350+00:00",
+      "slate_date": "2026-08-26",
+      "published_top_pick_at": "2026-08-26T02:31:49.022814+00:00",
+      "publication_artifact_id": "ff437436d62b65dfb0f0c2a8914344e6519007db9344d784c3da134208979012",
+      "publication_source_commit": "f59893300e24e1a19931ab92ccdfb161f1b34438",
+      "publication_run_id": "32923005089",
+      "publication_deployment_id": null,
+      "grade": "ungraded",
+      "settlement_state": "ungraded",
+      "reason": "game_not_authoritatively_final",
+      "eligibility": {
+        "eligibility": "ungraded",
+        "reason_code": "game_not_authoritatively_final",
+        "ruleset_version": "fanduel-us-conservative-2026-08-17-v2",
+        "game_state": "pregame"
+      },
+      "settlement_authority": "none",
+      "settlement_observed_at": "2026-08-26T15:59:03.490007+00:00",
+      "settlement_source": "durable_morning_status_observation"
+    }
+  ],
+  "shadow_by_category": {},
+  "picks": [],
+  "shadow_tracking": []
+}

@@ -212,6 +212,65 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-26",
+      "evaluations": [
+        {
+          "prop": "Over 4.5 Strikeouts",
+          "type": "pitcher",
+          "score": 45.8,
+          "notable_signals": 0,
+          "matchup": "Pittsburgh Pirates @ San Diego Padres",
+          "game_pk": 823255,
+          "team": "Pittsburgh Pirates",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_k_pct": 48.0,
+            "same_hand_ratio": 100.0,
+            "l14_k_pct": 62.3529,
+            "env_neutral": 50.0
+          },
+          "hit_probability": 0.5115,
+          "raw_hit_probability": 0.5115,
+          "lift": -0.0032,
+          "reliability": "A",
+          "sample_n": 24,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 4.5,
+            "needs": 5
+          }
+        },
+        {
+          "prop": "Over 15.5 Outs Recorded",
+          "type": "pitcher",
+          "score": 9.4,
+          "notable_signals": 0,
+          "matchup": "Pittsburgh Pirates @ San Diego Padres",
+          "game_pk": 823255,
+          "team": "Pittsburgh Pirates",
+          "side": "away",
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "outs_rate": 0.413,
+            "avg_outs_per_start": 15.0
+          },
+          "hit_probability": 0.413,
+          "raw_hit_probability": null,
+          "lift": -0.152,
+          "reliability": "A",
+          "sample_n": 24,
+          "projection": {
+            "stat": "pitcher_outs",
+            "value": 15.5,
+            "needs": 16
+          }
+        }
+      ]
     }
   ]
 }

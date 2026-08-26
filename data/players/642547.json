@@ -225,6 +225,96 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-26",
+      "evaluations": [
+        {
+          "prop": "Over 4.5 Strikeouts",
+          "type": "pitcher",
+          "score": 27.3,
+          "notable_signals": 0,
+          "matchup": "Tampa Bay Rays @ Detroit Tigers",
+          "game_pk": 824234,
+          "team": "Tampa Bay Rays",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_k_pct": 55.0,
+            "same_hand_ratio": 61.1111,
+            "l14_k_pct": 14.1176,
+            "env_neutral": 50.0,
+            "ump_accuracy": 37.4783,
+            "ump_k_pct": -0.552,
+            "ump_bb_pct": -0.216
+          },
+          "hit_probability": 0.5011,
+          "raw_hit_probability": 0.5011,
+          "lift": -0.0136,
+          "reliability": "A",
+          "sample_n": 26,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 4.5,
+            "needs": 5
+          }
+        },
+        {
+          "prop": "Over 16.5 Outs Recorded",
+          "type": "pitcher",
+          "score": 25.4,
+          "notable_signals": 0,
+          "matchup": "Tampa Bay Rays @ Detroit Tigers",
+          "game_pk": 824234,
+          "team": "Tampa Bay Rays",
+          "side": "away",
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "outs_rate": 0.4366,
+            "avg_outs_per_start": 15.58
+          },
+          "hit_probability": 0.4366,
+          "raw_hit_probability": null,
+          "lift": -0.0585,
+          "reliability": "A",
+          "sample_n": 26,
+          "projection": {
+            "stat": "pitcher_outs",
+            "value": 16.5,
+            "needs": 17
+          }
+        },
+        {
+          "prop": "Over 8.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 54.9,
+          "notable_signals": 1,
+          "matchup": "Tampa Bay Rays @ Detroit Tigers",
+          "game_pk": 824234,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            642547,
+            675512
+          ],
+          "signals": {
+            "combined_k_edge": 0.0838
+          },
+          "hit_probability": 0.6121,
+          "raw_hit_probability": null,
+          "lift": 0.0838,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 8.5,
+            "needs": 9
+          }
+        }
+      ]
     }
   ]
 }
