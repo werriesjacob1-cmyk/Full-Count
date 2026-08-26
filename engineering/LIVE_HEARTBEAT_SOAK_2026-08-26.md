@@ -51,6 +51,7 @@ way to reach CONFIRMED.
 | 3 | 23:01 | 2026-08-26T23:01:03Z | 33021736856 | success | eb703150 | +5:03 |
 | 4 | 23:06 | 2026-08-26T23:06:00Z | 33022033985 | success | 67ff084a | +4:57 |
 | 5 | 23:11 | 2026-08-26T23:11:02Z | 33022312465 | success | aa2d08d1 | +5:02 |
+| 6 | 23:16 | 2026-08-26T23:16:00Z | 33022671829 | success | f69ff673 | +4:58 |
 
 Zero duplicate/coalesced runs observed so far (each dispatch got its own
 run, no overlapping in-progress runs colliding) — `dashboard-live.yml`'s
@@ -92,3 +93,17 @@ checking during an active game window before declaring success.
 **Conclusion: too early to call the soak complete.** Continue periodic,
 non-wasteful checks (not every 5 minutes) through at least one real
 in-game window before considering P0 RESOLVED.
+
+## Update (near-end-of-turn check, 6th dispatch, 23:16 UTC)
+
+6 consecutive successful dispatches now observed, cadence holding at
+4:58-5:03 every cycle. No `dashboard-live.yml` commit message this
+session has shown live in-game state-change language (all read as
+routine "Dashboard live update"/"Odds + prop-price snapshot" refreshes)
+— this session cannot confirm whether a real MLB game was in a
+live/in-progress state during this observation window, so the hardest
+soak conditions (gap recovery under a real live game, settlement
+latency, duplicate-dispatch handling under overlap) remain genuinely
+untested, not just unconfirmed. Do not read the clean 6/6 record as
+proof beyond what it actually shows: dispatch-to-run-to-file-update
+reliability under routine conditions.
