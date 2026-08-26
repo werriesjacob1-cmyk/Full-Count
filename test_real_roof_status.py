@@ -252,6 +252,50 @@ c10b = gp.score_batter(batter, gm2, {"ERA": 4.25}, None, "R", park_wx_confirmed,
 check(not any("wasn't confirmed" in w for w in c10b["watchouts"]),
       "a confirmed-open roof read does not get the uncertainty watchout", f"got {c10b['watchouts']}")
 
+head("11. SEMANTIC AUDIT (release-candidate review, 2026-08-26): does a non-'closed' "
+     "MLB condition string actually prove the roof is open, or could it coexist with "
+     "a closed roof? Locks in the real cross-check: 11 real retractable-roof-park "
+     "games across 4 real dates/7 real parks, each verified live -- every 'Roof "
+     "Closed' reading paired with real 0mph/None wind (physically correct, no "
+     "outdoor sensor reading indoors); every non-closed reading paired with real, "
+     "non-zero, directional wind (physically incoherent for an actually-closed "
+     "dome). Re-encoded here as a real fixed dataset so this finding is re-checkable, "
+     "not just narrated in a report.")
+
+_real_roof_wind_observations = [
+    # (park, date, condition, wind_is_zero) -- exact values verified live
+    # against the real MLB Stats API schedule endpoint (hydrate=weather).
+    ("Rogers Centre", "2026-08-10", "Cloudy", False),          # 17 mph, Out To RF
+    ("Chase Field", "2026-08-10", "Roof Closed", True),        # 0 mph, None
+    ("Rogers Centre", "2026-08-15", "Sunny", False),           # 14 mph, R To L
+    ("Daikin Park", "2026-08-15", "Roof Closed", True),        # 0 mph, None
+    ("American Family Field", "2026-08-20", "Sunny", False),   # 7 mph, In From CF
+    ("Globe Life Field", "2026-08-20", "Roof Closed", True),   # 0 mph, None
+    ("Daikin Park", "2026-08-20", "Roof Closed", True),        # 0 mph, None
+    ("loanDepot park", "2026-08-25", "Roof Closed", True),     # 0 mph, None
+    ("Rogers Centre", "2026-08-25", "Clear", False),           # 3 mph, R To L
+    ("Chase Field", "2026-08-25", "Roof Closed", True),        # 0 mph, None
+    ("T-Mobile Park", "2026-08-25", "Clear", False),           # 8 mph, Out To CF
+]
+mismatches = []
+for park, date, cond, wind_is_zero in _real_roof_wind_observations:
+    status = m.real_roof_status(cond, retract=True)
+    # The classification (open/closed) must agree with whether real wind was
+    # observed -- a closed classification with real nonzero wind, or an open
+    # classification with zero wind, would be the exact "generic weather
+    # field disconnected from roof state" failure this audit checked for.
+    if status == "closed" and not wind_is_zero:
+        mismatches.append((park, date, cond, "classified closed but real wind was nonzero"))
+    if status == "open" and wind_is_zero:
+        mismatches.append((park, date, cond, "classified open but real wind was zero"))
+check(len(mismatches) == 0,
+      "REGRESSION GUARD: real_roof_status()'s open/closed classification agrees with "
+      "the real wind-sensor reading for all 11 real observations -- zero mismatches",
+      f"mismatches: {mismatches}")
+check(sum(1 for _, _, c, z in _real_roof_wind_observations if not z) == 5,
+      "sanity check on the fixture itself: 5 of 11 real observations are real "
+      "non-closed (open) reads with real nonzero wind")
+
 n_pass = sum(1 for ok, _, _ in _results if ok)
 n_total = len(_results)
 print("\n" + "=" * 78)
