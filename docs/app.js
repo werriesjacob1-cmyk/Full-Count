@@ -686,12 +686,23 @@ function marketBlock(p) {
   if (marketOdds === null) {
     return `<div class="pc-market"><span class="m-detail">Not yet posted on FanDuel</span></div>`;
   }
-  const edge = p.market_edge;
+  // Real bug, found 2026-08-26 (Part 2 item 5, richer compact cards): this
+  // used p.market_implied (the raw price-implied probability) and
+  // p.market_edge unconditionally -- the SAME market-edge-semantics gap
+  // the P0-6 fix already closed for the detail sheet (market_edge "mixes
+  // exact and approximate comparators under one name," per
+  // dashboard/build_dashboard.py's own clean() comment). detailBody()
+  // already prefers market_fair/edge_vs_fair (the honest, market-hold-
+  // aware comparator) when present, falling back to the older fields only
+  // when it isn't -- mirrored here so the compact card and the detail
+  // sheet never show two different "edge" numbers for the same prop.
+  const marketProb = p.market_fair ?? p.market_implied;
+  const edge = p.edge_vs_fair ?? p.market_edge;
   const edgeText = edge == null ? "—" : (edge >= 0 ? "+" : "") + Math.round(edge * 100) + " pts";
   const edgeClass = edge == null ? "" : (edge >= 0 ? "pos" : "neg");
   return `<div class="pc-market">
     <div><span class="book-price">${marketOdds}</span> <span class="m-detail">FanDuel</span></div>
-    <div class="m-detail">Market: ${pct(p.market_implied, 0)}</div>
+    <div class="m-detail">Market: ${pct(marketProb, 0)}</div>
     <div class="pc-edge ${edgeClass}">${edgeText} edge</div>
   </div>`;
 }

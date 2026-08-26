@@ -1339,6 +1339,31 @@ assertTrue(cardWithGame.includes("NYY @ BOS"),
 assertTrue(/\d{1,2}:\d{2}\s*(AM|PM)/.test(cardWithGame),
   "the compact card shows a real game start time, not just team context, got " + cardWithGame);
 
+// -- marketBlock: honest fair-value/edge-vs-fair (Part 2 item 5, 2026-08-26).
+// Real bug: this used p.market_implied/p.market_edge unconditionally --
+// the SAME market-edge-semantics gap the P0-6 fix already closed for the
+// detail sheet (detailBody() prefers market_fair/edge_vs_fair when
+// present). Mirrored here so the card and the detail sheet never disagree
+// about the same prop's edge number.
+const pTwoSided = {id:"x3", name:"Two Sided", prop:"Over 6.5 Ks", hit_probability:0.6,
+  market_odds:-120, market_implied:0.545, market_edge:0.055,
+  market_fair:0.50, edge_vs_fair:0.10, why:[]};
+const marketHtml = marketBlock(pTwoSided);
+assertTrue(marketHtml.includes("Market: 50%"),
+  "when market_fair exists, the card shows the honest fair value (50%), not the raw vig-inclusive " +
+  "implied probability (54.5%), got " + marketHtml);
+assertTrue(marketHtml.includes("+10 pts edge"),
+  "when edge_vs_fair exists, the card shows it (+10 pts), not the older market_edge (+5.5 pts), " +
+  "got " + marketHtml);
+
+const pOneSidedOnly = {id:"x4", name:"One Sided", prop:"Home Run", hit_probability:0.2,
+  market_odds:450, market_implied:0.18, market_edge:0.02, why:[]};
+const marketHtmlFallback = marketBlock(pOneSidedOnly);
+assertTrue(marketHtmlFallback.includes("Market: 18%") && marketHtmlFallback.includes("+2 pts edge"),
+  "when market_fair/edge_vs_fair are genuinely absent (a one-sided market with no exact devig), " +
+  "the card correctly falls back to market_implied/market_edge instead of showing nothing, " +
+  "got " + marketHtmlFallback);
+
 } catch (e) { console.error(e); process.exit(1); }
 
 if (!ok) process.exit(1);
