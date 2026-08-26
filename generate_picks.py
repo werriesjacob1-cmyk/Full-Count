@@ -1623,6 +1623,18 @@ def score_batter(batter, gm, opp_sp_row, opp_sp_id, opp_sp_hand, park_wx, batter
             why.append(f"Opposing SP ERA {sp_era:.2f} — shaky matchup for the pitcher")
         elif sp_weak <= 35:
             watchouts.append(f"Opposing SP ERA {sp_era:.2f} — elite pitcher, tough matchup")
+    elif not opp_sp_row:
+        # 2026-08-26 market-specific-explanation fix: when the opposing
+        # starter genuinely isn't confirmed yet (opp_sp_row is empty, not
+        # just missing an ERA field), this used to stay completely silent on
+        # the starter matchup -- no ERA-based fact, and no explanation for
+        # why not. Direct instruction: "If the starter is TBD, explicitly say
+        # starter-specific [matchup] analysis is unavailable rather than
+        # padding the case." sp_weak still defaults to a neutral 50 for
+        # SCORING (scale()'s own documented behavior for a missing input),
+        # which is correct there -- this is purely about the explanation
+        # text saying so honestly instead of padding with nothing.
+        watchouts.append("Opposing starter not yet confirmed — starter-specific matchup analysis unavailable")
     # 2026-08-24 explanation-quality fix, part 3 (same live complaint, Weston
     # Wilson: "L7 avg EV 82.8mph (league ~88.5)" -- 5.7mph BELOW league,
     # shown as a plain fact in `why` with no directional judgment attached).
@@ -1662,6 +1674,64 @@ def score_batter(batter, gm, opp_sp_row, opp_sp_id, opp_sp_hand, park_wx, batter
             watchouts.append(wrc_note + " — below-average hitter this season")
         else:
             why.append(wrc_note)
+    # 2026-08-26 market-specific-explanation fix: ISO and season Barrel% were
+    # both already computed above (sc_iso/sc_barrel, SKILL's own components)
+    # and never once rendered as text -- the exact "computed, then discarded"
+    # failure this codebase has already found and fixed for several other
+    # fields. Real, direct complaint: a home-run detail view showed
+    # probability vs. league base rate and almost nothing about the batter's
+    # actual power profile. ISO and Barrel% are the two power-specific season
+    # stats a home-run/total-bases read should lead with -- wRC+ above is a
+    # general hitting-quality stat, not a power-specific one. Same neutral-
+    # middle-stays-plain convention as every other directional note here.
+    if bs.get("ISO") is not None:
+        iso_note = f"Season ISO {bs['ISO']:.3f}"
+        if sc_iso >= 65:
+            why.append(iso_note + " — real power, above-average isolated power")
+        elif sc_iso <= 35:
+            watchouts.append(iso_note + " — below-average isolated power")
+        else:
+            why.append(iso_note)
+    if bs.get("Barrel%") is not None:
+        barrel_season_note = f"Season barrel% {bs['Barrel%']}"
+        if sc_barrel >= 65:
+            why.append(barrel_season_note + " — well above-average barrel rate")
+        elif sc_barrel <= 35:
+            watchouts.append(barrel_season_note + " — below-average barrel rate")
+        else:
+            why.append(barrel_season_note)
+    # 2026-08-26 market-specific-explanation fix: lineup protection
+    # (woba_ahead/woba_behind) was wired into `signals` for backtest fitting
+    # (see the "Lineup context" block further down, ex = extras or {}) but
+    # never surfaced as a human fact -- same discarded-computation failure.
+    # Directly relevant to RBI/Runs/Hits+Runs+RBIs: who's on base ahead of
+    # this batter (his own RBI opportunity) and how well the lineup protects
+    # him (whether pitchers will pitch around him). Real per-batter wOBA, not
+    # a made-up composite. Uses `extras` directly, not `ex` -- `ex = extras
+    # or {}` isn't assigned until further down in this function (see the
+    # IL-returns check above for the identical reason).
+    lwc_note = ((extras or {}).get("lineup_woba") or {}).get(bid) if bid else None
+    if lwc_note:
+        woba_ahead = lwc_note.get("woba_ahead")
+        if woba_ahead is not None:
+            sc_ahead = scale(woba_ahead, 0.290, 0.400)
+            ahead_note = f"Hitters batting ahead of him: {woba_ahead:.3f} wOBA (league ~.320)"
+            if sc_ahead >= 65:
+                why.append(ahead_note + " — real RBI opportunity on base ahead of him")
+            elif sc_ahead <= 35:
+                watchouts.append(ahead_note + " — a weak on-base group ahead of him, fewer runners to drive in")
+            else:
+                why.append(ahead_note)
+        woba_behind = lwc_note.get("woba_behind")
+        if woba_behind is not None:
+            sc_behind = scale(woba_behind, 0.290, 0.400)
+            behind_note = f"Hitter batting behind him: {woba_behind:.3f} wOBA (league ~.320)"
+            if sc_behind >= 65:
+                why.append(behind_note + " — real lineup protection, pitchers can't just pitch around him")
+            elif sc_behind <= 35:
+                watchouts.append(behind_note + " — little lineup protection, an easier batter to pitch around")
+            else:
+                why.append(behind_note)
     # 2026-08-25 explanation-quality fix (release-readiness audit): the wind-
     # in branch used to land in `why`, the positive-reasons list, even
     # though its own text says "power suppressed" -- a real, self-
@@ -3724,15 +3794,31 @@ def select_moonshots(candidates, prices, fd, n=5):
     feeds the main board -- only the quality gate (MIN_QUALITY_SCORE)
     still applies, same floor every other candidate has to clear.
 
-    confidence/reliability/sample_n/why are computed HERE, independently of
-    the batter's own (hits/total-bases) versions of those same fields --
-    see MOONSHOT_LOCK_LIFT's own comment for the real bug this replaces.
+    confidence/reliability/sample_n are computed HERE, independently of the
+    batter's own (hits/total-bases) versions of those same fields -- see
+    MOONSHOT_LOCK_LIFT's own comment for the real bug this replaces.
     reliability/sample_n still describe how much real MLB track record this
     player has (a legitimate, real thing to carry over -- it says nothing
     about home runs specifically, just how trustworthy ANY read on him is),
-    but confidence additionally requires a real HR-specific lift, and why
-    is written fresh from the real HR numbers instead of borrowing a
-    sentence about a different stat entirely."""
+    and confidence additionally requires a real HR-specific lift.
+
+    why/watchouts: real bug, found 2026-08-26 (market-specific-explanation
+    audit, direct complaint -- a home-run detail view showed probability vs.
+    league base rate and almost nothing about why that day was a favorable
+    HR spot). This used to build its own single-sentence why from scratch,
+    restating hr_opt['prob'] vs base_rate as a paragraph -- a plain
+    restatement of hit_probability/base_rate/lift, all three of which are
+    ALREADY on this row as their own fields (see below), not new information.
+    Meanwhile it discarded the real batter-level evidence (platoon,
+    opposing-SP quality, pitch-type exploit, recent/season power profile,
+    park/weather/wind, bullpen, lineup slot) c["why"]/c["watchouts"] already
+    computed one call up in score_batter() -- exactly the "computed, then
+    discarded" failure this codebase keeps finding and fixing elsewhere.
+    Reused directly here instead: dashboard/build_dashboard.py's
+    _select_market_evidence() (structured evidence contract, Part 2 item 4)
+    filters/reorders this same real list for the home_runs market
+    specifically at the public-payload boundary, so nothing here needs its
+    own HR-flavored copy of the same facts."""
     out = []
     for c in candidates:
         if c.get("type") != "batter":
@@ -3760,23 +3846,17 @@ def select_moonshots(candidates, prices, fd, n=5):
         else:
             confidence = "Low"
         base_rate = hr_opt.get("base_rate")
-        why = []
-        if base_rate is not None and lift is not None:
-            sample_n = c.get("sample_n") or 0
-            # 2026-08-2X data-integrity fix (HR probability/base-rate
-            # semantics trace): base_rate here is true_league_rates'
-            # league-wide home_runs_1plus rate (or, when that's absent for
-            # this exact key, a slate-scoped fallback -- see base_rates'
-            # own definition above in attach_hit_probabilities) -- NOT this
-            # player's own rate. The old wording ("vs his own X% season
-            # base rate") asserted a number this player's own history never
-            # produced. hr_opt['prob'] is the one number here that's
-            # actually his -- a shrunk blend of his own empirical rate and
-            # the model -- so it stays "his."
-            why.append(
-                f"{hr_opt['prob']*100:.1f}% real model probability to homer tonight vs the "
-                f"{base_rate*100:.1f}% league base rate ({lift*100:+.1f} points) -- built on "
-                f"{sample_n} real batter-games, reliability grade {reliability or '?'}")
+        # 2026-08-2X data-integrity fix (HR probability/base-rate semantics
+        # trace), still true: base_rate here is true_league_rates' league-
+        # wide home_runs_1plus rate (or a slate-scoped fallback), NOT this
+        # player's own rate -- hr_opt['prob'] is the one number that's
+        # actually his. That comparison is real and stays on the row via
+        # base_rate/lift/hit_probability/probability_basis below; it no
+        # longer needs its own sentence duplicated into `why` (see this
+        # function's own docstring for why -- the Evidence section already
+        # renders it from those fields).
+        why = list(c.get("why") or [])
+        watchouts = list(c.get("watchouts") or [])
         # Full candidate shape, not a stripped-down dict -- write_json appends
         # these into the same `picks` list grade_results.py already knows how
         # to grade (it reads pick["type"], pick["projection"]["stat"]/["needs"]
@@ -3808,7 +3888,7 @@ def select_moonshots(candidates, prices, fd, n=5):
             "category": "moonshot",
             "lineup_assumed": c.get("lineup_assumed"),
             "reliability": reliability, "sample_n": c.get("sample_n"),
-            "why": why, "watchouts": [],
+            "why": why, "watchouts": watchouts,
         })
     out.sort(key=lambda o: o["hit_probability"], reverse=True)
     return out[:n]
