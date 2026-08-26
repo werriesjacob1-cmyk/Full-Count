@@ -2121,6 +2121,101 @@ check(_empty[0]["why"] == [] and _empty[0]["watchouts"] == [],
       "list, not None")
 
 
+head("22. _select_market_evidence()/_tag_evidence_text() (Part 2 item 4, market-specific "
+     "explanation system, 2026-08-26): real bug -- score_batter() is called ONCE per batter "
+     "and its one why/watchouts list used to get reused verbatim no matter which of 9 real "
+     "stat families (hits/total_bases/home_runs/runs/rbis/hits_runs_rbis/singles/doubles/"
+     "triples) that batter's candidate ended up representing. Direct complaint: a home-run "
+     "detail view showed probability vs. league base rate and almost nothing about why THAT "
+     "DAY was a favorable HR spot. Uses the REAL, verbatim sentence templates score_batter() "
+     "emits (copied directly from generate_picks.py), not guessed examples.")
+
+# Real, verbatim templates (copied from generate_picks.py's score_batter()) covering every
+# tag _tag_evidence_text() knows about, in a deliberately scrambled order so a passing test
+# can't be explained by accidental input-order preservation.
+_REAL_WHY_TEMPLATES = [
+    "Season wRC+ 142 — above-average hitter",                       # season_quality
+    "Sharp money backing NYY (money% +14 pts vs ticket%)",           # sharp_money
+    "Season ISO 0.260 — real power, above-average isolated power",  # power_season
+    "Dome — weather neutral",                                       # park_weather
+    "Projected 4.20 PA (batting slot 2) — a favorable lineup slot", # lineup_slot
+    "Platoon: R bat vs LHP (favorable)",                            # platoon
+    "L7 avg EV 92.1mph (league ~88.5) — hot recent contact",        # power_recent
+    "Team implied for 5.4 runs (league avg 4.245; line None, game total None) — a strong offensive environment",  # team_run_env
+    "Opposing SP ERA 5.10 — shaky matchup for the pitcher",         # opp_sp_quality
+    "Pitch-type exploit: RV/100 +3.2 vs Slider (opposing SP throws it 28% of the time)",  # pitch_exploit
+    "Hitters batting ahead of him: 0.380 wOBA (league ~.320) — real RBI opportunity on base ahead of him",  # lineup_protection
+    "A completely novel sentence no pattern will ever match",       # untagged
+]
+_REAL_WATCHOUTS_TEMPLATES = [
+    "L7 sample is thin (5 PA) — treat recent-form read with caution",     # sample_thin
+    "Recalled from the minors 3 day(s) ago — thin or no MLB track record behind his season/rolling stats",  # fresh_return
+    "Built mainly on season-long star power with no additional converging signal — likely already priced by the market",  # star_profile
+    "Opposing bullpen ERA 3.10 (league ~4.05) — elite pen",         # bullpen
+]
+
+for text in _REAL_WHY_TEMPLATES + _REAL_WATCHOUTS_TEMPLATES:
+    tag = bd._tag_evidence_text(text)
+    if text.startswith("A completely novel"):
+        check(tag is None, f"a genuinely unrecognized template classifies to None -- got {tag!r}")
+    else:
+        check(tag is not None, f"a real, known score_batter() template must classify to a real "
+              f"tag, never silently fall through as unrecognized -- text={text!r}")
+
+# home_runs: power/platoon/matchup/park facts lead; season_wrc/team_run_env/lineup_protection
+# (none of which are in home_runs' relevance set) are demoted but NEVER dropped.
+_hr_why = bd._select_market_evidence(_REAL_WHY_TEMPLATES, "home_runs")
+check(set(_hr_why) == set(_REAL_WHY_TEMPLATES),
+      "market-specific selection only ever REORDERS why -- nothing computed is ever silently "
+      "dropped, even a fact this specific market's relevance list didn't ask for",
+      f"got {_hr_why!r}")
+_hr_power_idx = next(i for i, t in enumerate(_hr_why) if t.startswith("Season ISO"))
+_hr_wrc_idx = next(i for i, t in enumerate(_hr_why) if t.startswith("Season wRC+"))
+check(_hr_power_idx < _hr_wrc_idx,
+      "for home_runs specifically, real power evidence (Season ISO) is prioritized ahead of "
+      "a generic season-quality fact (wRC+) that isn't in home_runs' relevance set",
+      f"got order={_hr_why!r}")
+_hr_platoon_idx = next(i for i, t in enumerate(_hr_why) if t.startswith("Platoon"))
+_hr_team_env_idx = next(i for i, t in enumerate(_hr_why) if t.startswith("Team implied"))
+check(_hr_platoon_idx < _hr_team_env_idx,
+      "platoon (in home_runs' relevance set) is prioritized ahead of team run environment "
+      "(not in home_runs' relevance set)", f"got order={_hr_why!r}")
+
+# rbis: lineup-protection/team-run-environment/lineup-slot facts lead; raw power facts (ISO,
+# not in rbis' relevance set) are demoted but still present.
+_rbi_why = bd._select_market_evidence(_REAL_WHY_TEMPLATES, "rbis")
+check(set(_rbi_why) == set(_REAL_WHY_TEMPLATES),
+      "rbis selection also never drops a fact, only reorders", f"got {_rbi_why!r}")
+_rbi_protection_idx = next(i for i, t in enumerate(_rbi_why) if t.startswith("Hitters batting ahead"))
+_rbi_power_idx = next(i for i, t in enumerate(_rbi_why) if t.startswith("Season ISO"))
+check(_rbi_protection_idx < _rbi_power_idx,
+      "for rbis specifically, real lineup-protection/RBI-opportunity evidence is prioritized "
+      "ahead of a generic power fact (Season ISO) that isn't in rbis' relevance set",
+      f"got order={_rbi_why!r}")
+
+# A market NOT in MARKET_EVIDENCE_TAGS (e.g. a pitcher strikeouts stat, already separately
+# audited and confirmed market-specific at the source) passes through completely unchanged.
+_unfiltered = bd._select_market_evidence(_REAL_WHY_TEMPLATES, "strikeouts")
+check(_unfiltered == _REAL_WHY_TEMPLATES,
+      "a stat family not in MARKET_EVIDENCE_TAGS is returned byte-for-byte unchanged, not "
+      "reordered or filtered -- deliberately conservative for markets not audited here",
+      f"got {_unfiltered!r}")
+
+# Wired into _clean_candidate_rows(): a raw candidate whose stat is "home_runs" gets its
+# why/watchouts run through the real selector, not the raw unfiltered list.
+_hr_candidate = bd._clean_candidate_rows(
+    [_raw_candidate(why=list(_REAL_WHY_TEMPLATES), watchouts=list(_REAL_WATCHOUTS_TEMPLATES),
+                     stat="home_runs")],
+    schedule={},
+)
+check(_hr_candidate[0]["why"] == bd._select_market_evidence(_REAL_WHY_TEMPLATES, "home_runs"),
+      "_clean_candidate_rows() actually calls _select_market_evidence() for why, not just the "
+      "raw pass-through list", f"got {_hr_candidate[0]['why']!r}")
+check(_hr_candidate[0]["watchouts"] == bd._select_market_evidence(_REAL_WATCHOUTS_TEMPLATES, "home_runs"),
+      "_clean_candidate_rows() actually calls _select_market_evidence() for watchouts too",
+      f"got {_hr_candidate[0]['watchouts']!r}")
+
+
 head("15. StaticSourceParityTests: dashboard/static/{index.html,app.css,app.js} is the ONLY "
      "real source for the frontend shell -- docs/ is build output copy_static_assets() "
      "overwrites unconditionally on every real build. Real incident, 2026-08-25: a frontend "

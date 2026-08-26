@@ -213,6 +213,159 @@ def _compute_streaks(all_priced, max_workers=12):
     return entries[:15]
 
 
+# ══════════════════════════════════════════════════════════════════════
+#  MARKET-SPECIFIC EVIDENCE SELECTION (Part 2 item 4, structured evidence
+#  contract, 2026-08-26)
+# ══════════════════════════════════════════════════════════════════════
+# Direct instruction: "the explanation should answer why THIS specific
+# market could hit today, not just reuse whatever generic batter/pitcher
+# facts happen to exist." Real complaint: a home-run detail view showed
+# probability vs. league base rate and almost nothing about why that day
+# was a favorable HR spot -- an audit found score_batter() is called ONCE
+# per batter and its one why/watchouts list gets reused verbatim no matter
+# which of 9 real stat families (hits/total_bases/home_runs/runs/rbis/
+# hits_runs_rbis/singles/doubles/triples) that batter's candidate ends up
+# representing, with zero market-specific selection anywhere.
+#
+# DELIBERATELY POST-HOC, not a generate_picks.py rewrite: score_batter()'s
+# ~270 lines of why/watchouts construction are each individually audited
+# and commented (see that function's own explanation-quality-fix comments)
+# -- restructuring that in place would touch the live scoring/explanation
+# engine across ~20 call sites for a presentation-layer concern. Classifying
+# the ALREADY-COMPUTED text at this exact serialization boundary instead
+# (the same boundary the why/watchouts-truncation fix above already uses)
+# keeps 100% of that logic untouched and is independently testable against
+# the real, verbatim sentence templates below.
+#
+# ONLY applied to stat families in MARKET_EVIDENCE_TAGS -- score_pitcher()
+# (Ks), score_pitcher_outs() (Outs), and score_stolen_base() (SB) were each
+# separately audited and found to already build genuinely market-specific
+# evidence from scratch (see the 2026-08-26 evidence audit notes in this
+# repo's session history) with no generic batter facts leaking in -- so
+# they are deliberately NOT in this table and pass through unfiltered,
+# rather than risk misclassifying an unaudited template.
+_EVIDENCE_TAG_PATTERNS = [
+    # (tag, substring) -- first match wins. Matched against the REAL,
+    # verbatim text templates score_batter()/select_moonshots() emit (see
+    # generate_picks.py) -- not a guessed pattern.
+    ("sample_thin", "L7 sample is thin ("),
+    ("fresh_return", "-day injured list"),
+    ("fresh_return", "Recalled from the minors"),
+    ("star_profile", "Built mainly on season-long star power"),
+    ("contact_quality", "isn't backed by barrel rate"),
+    ("contact_quality", "AVG vs xBA"),
+    ("contact_quality", "wOBA vs xwOBA"),
+    ("lineup_slot", "Projected "),  # "Projected N PA (batting slot M)"
+    ("lineup_protection", "Hitters batting ahead of him:"),
+    ("lineup_protection", "Hitter batting behind him:"),
+    ("team_run_env", "Team implied for "),
+    ("team_run_env", "No market implied team total available"),
+    ("platoon", "Platoon: "),
+    ("pitch_exploit", "Pitch-type exploit: "),
+    ("opp_sp_quality", "Opposing SP ERA "),
+    ("opp_sp_quality", "Opposing starter not yet confirmed"),
+    ("power_recent", "L7 avg EV "),
+    ("power_recent", "L7 barrel% "),
+    ("power_recent", "Bat speed trending up"),
+    ("power_season", "Season ISO "),
+    ("power_season", "Season barrel% "),
+    ("season_quality", "Season wRC+ "),
+    ("park_weather", "Dome — weather neutral"),
+    ("park_weather", "Wind blowing OUT"),
+    ("park_weather", "Wind blowing IN"),
+    ("park_weather", "Retractable-roof park"),
+    ("bullpen", "Opposing bullpen fatigue:"),
+    ("bullpen", "Opposing bullpen ERA"),
+    ("sharp_money", "Public heavy on "),
+    ("sharp_money", "Sharp money backing"),
+    ("sharp_money", "Sharp money fading"),
+]
+
+# Real risk/quality caveats that apply no matter which market a candidate
+# ends up representing -- never filtered out for any market.
+_UNIVERSAL_EVIDENCE_TAGS = {"sample_thin", "fresh_return", "star_profile"}
+
+# Priority order facts are surfaced in, once selected for a given market.
+# Includes _UNIVERSAL_EVIDENCE_TAGS at the tail (risk/quality caveats,
+# always real and always relevant, but never the LEAD reason for any
+# specific market) so they still get a defined, stable position rather
+# than only surviving via the unrecognized-leftover pass below.
+_EVIDENCE_PRIORITY_ORDER = [
+    "power_recent", "power_season", "platoon", "pitch_exploit", "opp_sp_quality",
+    "park_weather", "lineup_slot", "lineup_protection", "team_run_env",
+    "season_quality", "bullpen", "sharp_money", "contact_quality",
+    "sample_thin", "fresh_return", "star_profile",
+]
+
+# Direct instruction, per market: "Do not force every market to have every
+# factor... Generic facts may still be shared when genuinely relevant, but
+# the displayed hierarchy and wording should be market-specific."
+MARKET_EVIDENCE_TAGS = {
+    "home_runs": {"power_recent", "power_season", "platoon", "pitch_exploit",
+                  "opp_sp_quality", "park_weather", "lineup_slot", "bullpen"},
+    "total_bases": {"power_recent", "power_season", "platoon", "pitch_exploit",
+                     "opp_sp_quality", "park_weather", "lineup_slot"},
+    "hits": {"contact_quality", "platoon", "opp_sp_quality", "lineup_slot", "power_recent"},
+    "singles": {"contact_quality", "platoon", "opp_sp_quality", "lineup_slot", "power_recent"},
+    "doubles": {"power_recent", "power_season", "platoon", "opp_sp_quality", "park_weather"},
+    "triples": {"power_recent", "platoon", "opp_sp_quality", "park_weather", "lineup_slot"},
+    "rbis": {"lineup_protection", "lineup_slot", "team_run_env", "opp_sp_quality", "bullpen"},
+    "runs": {"lineup_slot", "lineup_protection", "team_run_env", "opp_sp_quality"},
+    "hits_runs_rbis": {"lineup_slot", "lineup_protection", "team_run_env", "platoon",
+                        "opp_sp_quality", "power_recent", "contact_quality"},
+}
+
+
+def _tag_evidence_text(text):
+    """Classify one why/watchout sentence by its underlying signal, matched
+    against the real, stable prefix each template above always starts or
+    contains verbatim. None when the text matches nothing known -- callers
+    must never drop an unrecognized fact, only decline to prioritize it."""
+    for tag, pattern in _EVIDENCE_TAG_PATTERNS:
+        if pattern in text:
+            return tag
+    return None
+
+
+def _select_market_evidence(items, stat):
+    """Filter and reorder one already-computed why/watchouts list for the
+    specific market (stat family) this candidate ended up representing.
+
+    NEVER drops a fact whose tag can't be identified (see _tag_evidence_text)
+    -- an unrecognized template is real, already-computed evidence, and
+    dropping it silently would be the same "computed, then discarded"
+    failure this fix exists to close, just moved one boundary over. Markets
+    not in MARKET_EVIDENCE_TAGS pass through completely unchanged (see the
+    module comment above for which markets those are and why)."""
+    relevant = MARKET_EVIDENCE_TAGS.get(stat)
+    if relevant is None or not items:
+        return list(items)
+    # Indexed by position, not the text/id -- two genuinely distinct items
+    # can share identical text (and CPython may or may not intern short
+    # string literals the same way), so tracking "seen" by string identity
+    # or value would risk dropping a real duplicate fact instead of just
+    # reordering it.
+    tagged = [(_tag_evidence_text(t), t) for t in items]
+    selected, seen = [], set()
+    for tag in _EVIDENCE_PRIORITY_ORDER:
+        if tag not in relevant and tag not in _UNIVERSAL_EVIDENCE_TAGS:
+            continue
+        for i, (t_tag, text) in enumerate(tagged):
+            if t_tag == tag and i not in seen:
+                selected.append(text)
+                seen.add(i)
+    # Anything left over -- an untagged fact (unrecognized template) or a
+    # recognized one this specific market's relevance list didn't ask for --
+    # is genuinely relevant-enough evidence score_batter() already decided
+    # to compute, so it still ships, just deprioritized to the end rather
+    # than silently dropped.
+    for i, (t_tag, text) in enumerate(tagged):
+        if i not in seen:
+            selected.append(text)
+            seen.add(i)
+    return selected
+
+
 def _clean_candidate_rows(rows, schedule):
     out = []
     for r in rows:
@@ -281,8 +434,8 @@ def _clean_candidate_rows(rows, schedule):
             # change to correctly show everything once this stopped
             # cutting it off. The compact card (pickCard()) only ever
             # showed why[0] anyway and is unaffected either way.
-            "why": r.get("why") or [],
-            "watchouts": r.get("watchouts") or [],
+            "why": _select_market_evidence(r.get("why") or [], stat),
+            "watchouts": _select_market_evidence(r.get("watchouts") or [], stat),
             "base_rate": r.get("base_rate"), "lift": r.get("lift"),
             # Additive lift-reference concept, separate from base_rate/
             # lift -- see stable_base_rate.py. None except on

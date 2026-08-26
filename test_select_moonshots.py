@@ -165,9 +165,13 @@ check(out11[0]["confidence"] == "Low",
       "a thin (0.73-point) lift never earns High or Medium confidence, no matter how "
       "reliable the player's own track record is or what his HITS confidence says",
       f"got {out11[0]['confidence']}")
-check(out11[0]["why"] and "0.73" not in out11[0]["why"][0] and "11.1%" in out11[0]["why"][0],
-      "a real, HR-specific why sentence is generated with the real computed numbers",
-      f"got {out11[0]['why']}")
+# why/watchouts are the batter's own real evidence, reused verbatim (see the
+# dedicated market-specific-explanation checks below) -- this fixture never
+# set them, so an honest empty list is correct here, not a fabricated
+# per-market summary sentence invented from hr_prob/base_rate alone.
+check(out11[0]["why"] == [],
+      "no fabricated why sentence is invented when the batter candidate carries no real "
+      "evidence of its own", f"got {out11[0]['why']}")
 
 real_lock = batter_c(hr_prob=0.20, base_rate=0.15, reliability="A", sample_n=120)  # lift=0.05
 out_lock = gp.select_moonshots([real_lock], {}, fd)
@@ -197,18 +201,56 @@ head("2026-08-2X HR base-rate semantics fix (data-integrity audit): base_rate he
      "the LEAGUE home_runs_1plus rate (or a slate-scoped fallback), never this player's "
      "own rate -- real complaint, Abimelec Ortiz's card read 'vs his own 10.1% season "
      "base rate' with the identical 10.1% shared by 82 different real players on the same "
-     "live board, proving it wasn't anyone's 'own' number.")
+     "live board, proving it wasn't anyone's 'own' number. base_rate now lives ONLY as a "
+     "real field (below), never restated as its own why sentence -- see the next check for "
+     "why: that restatement was dropped entirely as part of the market-specific-explanation "
+     "fix (2026-08-26), not reworded.")
 
 ortiz_like = batter_c(name="Test Slugger", hr_prob=0.191, base_rate=0.101,
                        reliability="D", sample_n=21)
 out_ortiz = gp.select_moonshots([ortiz_like], {}, fd)
-why0 = out_ortiz[0]["why"][0]
-check("vs the 10.1% league base rate" in why0,
-      "the why note correctly attributes base_rate to the LEAGUE, not the player",
-      f"got {why0!r}")
-check("vs his own" not in why0,
-      "REGRESSION GUARD: 'vs his own ... base rate' must never appear again -- it asserts "
-      "a number this player's own history never produced", f"got {why0!r}")
+check(out_ortiz[0]["base_rate"] == 0.101,
+      "base_rate is still a real field on the row, correctly the LEAGUE rate passed in via "
+      "line_options, never relabeled as the player's own", f"got {out_ortiz[0]['base_rate']!r}")
+for w in out_ortiz[0]["why"]:
+    check("vs his own" not in w,
+          "REGRESSION GUARD: 'vs his own ... base rate' must never appear again -- it asserts "
+          "a number this player's own history never produced", f"got {w!r}")
+
+head("2026-08-26 market-specific-explanation fix: select_moonshots() used to build its own "
+     "single-sentence why from scratch (just a restatement of hit_probability/base_rate/lift, "
+     "all three already real fields on this same row) and discarded the actual batter-level "
+     "evidence -- platoon, opposing-SP quality, recent/season power, park/weather, bullpen -- "
+     "score_batter() already computed one call up. Real, direct complaint: a home-run detail "
+     "view showed probability vs. league base rate and almost nothing about why THAT DAY was "
+     "a favorable HR spot. Now reuses c['why']/c['watchouts'] verbatim (list copies, not the "
+     "same object) instead of fabricating a new one-line summary.")
+
+rich_evidence_batter = batter_c(
+    name="Rich Evidence Slugger", hr_prob=0.191, base_rate=0.101, reliability="B", sample_n=120,
+    why=["Season ISO 0.245 — real power, above-average isolated power",
+         "Season barrel% 12.4 — well above-average barrel rate",
+         "Platoon: R bat vs LHP (favorable)"],
+    watchouts=["Opposing SP ERA 3.10 — elite pitcher, tough matchup"],
+)
+out_rich = gp.select_moonshots([rich_evidence_batter], {}, fd)
+check(out_rich[0]["why"] == rich_evidence_batter["why"],
+      "why is the batter's real, already-computed evidence list, reused verbatim -- not a "
+      "fabricated probability-vs-base-rate sentence", f"got {out_rich[0]['why']!r}")
+check(out_rich[0]["watchouts"] == rich_evidence_batter["watchouts"],
+      "watchouts is likewise reused verbatim -- select_moonshots() used to hardcode this to "
+      "an empty list unconditionally, discarding real risk context (e.g. a tough opposing "
+      "starter) for every single HR pick", f"got {out_rich[0]['watchouts']!r}")
+check(out_rich[0]["why"] is not rich_evidence_batter["why"],
+      "why is a real, independent list copy on the output row, not the same object as the "
+      "input candidate's own why (list(...) makes a copy)")
+
+no_evidence_batter = batter_c(name="No Evidence Slugger", hr_prob=0.15, base_rate=0.10)
+out_no_evidence = gp.select_moonshots([no_evidence_batter], {}, fd)
+check(out_no_evidence[0]["why"] == [] and out_no_evidence[0]["watchouts"] == [],
+      "a candidate with no why/watchouts computed upstream (this fixture doesn't set them) "
+      "degrades to real empty lists, not a crash or a fabricated fallback sentence",
+      f"got why={out_no_evidence[0]['why']!r} watchouts={out_no_evidence[0]['watchouts']!r}")
 
 n_pass = sum(1 for ok, _, _ in _results if ok)
 n_total = len(_results)
