@@ -12,6 +12,13 @@ mlb-statsapi~=1.9.0
 scikit-learn~=1.9.0
 # Workflow contract tests parse Actions YAML as part of the CI gate.
 PyYAML~=6.0.2
+# test_check_live_freshness_hypothesis.py (Part 9, 2026-08-26): property-based
+# coverage for dashboard/check_live_freshness.py's freshness-staleness invariants.
+# Needs both hypothesis (the property-testing library) and pytest (the test
+# file's own __main__ entrypoint runs its @given-decorated functions via
+# pytest.main() -- plain `python3 file.py` cannot invoke them on its own).
+hypothesis~=6.165.10
+pytest~=9.1.1
 # test_browser_e2e.py (frontend automation, 2026-08-26): real headless-Chromium
 # coverage of the docs/ build, so the major interaction contracts (routing,
 # multi-select filters, Games drill-down, detail sheet, My Board, mobile
