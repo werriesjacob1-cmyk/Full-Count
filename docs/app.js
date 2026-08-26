@@ -728,11 +728,20 @@ function pickCard(p) {
   // "computed, then discarded" pattern already fixed elsewhere in this
   // project, just for a boolean instead of a sentence.
   const starred = watchlist.has(p.id);
+  // Real bug, found 2026-08-26 (Part 2 item 5, richer compact cards): this
+  // preferred p.team (the player's OWN team alone, e.g. "Athletics") over
+  // p.matchup (the real game, "Athletics @ Astros") whenever both existed
+  // -- which is every real row -- so the compact card never showed the
+  // opponent at all, and never showed a start time despite p.game_start
+  // already being on every row. A viewer had to open the detail sheet just
+  // to see who a player was actually facing or when the game started.
+  const subLine = esc(p.matchup || p.team || "") +
+    (p.game_start ? ` · ${esc(gameTimeLabel(p.game_start))}` : "");
   return `<button class="pick-card status-${p.recommendation_status || "neutral"} ${lifecycleClass(p)}${p.stale ? " status-stale" : ""}" data-open="${p.id}">
     <div class="pc-top">
       <div>
         <div class="pc-name">${esc(p.name)}</div>
-        <div class="pc-sub">${esc(p.team || p.matchup || "")}</div>
+        <div class="pc-sub">${subLine}</div>
       </div>
       ${starred ? `<span class="pc-saved" aria-label="Saved to My Board">★</span>` : ""}
     </div>

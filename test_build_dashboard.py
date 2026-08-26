@@ -1324,6 +1324,21 @@ const cardOtherSaved = pickCard(p);
 assertTrue(!cardOtherSaved.includes('class="pc-saved"'),
   "the saved indicator only fires for THIS card's own id, not because the watchlist is merely non-empty");
 
+// -- pickCard: game/opponent/start-time context (Part 2 item 5, richer
+// compact cards, 2026-08-26). Real bug: this preferred p.team (the
+// player's OWN team alone) over p.matchup (the real game, which shows the
+// opponent) whenever both existed -- true on every real row -- so the
+// compact card never showed who a player was actually facing, and never
+// showed a start time despite p.game_start already being on every row.
+const pWithGame = {id:"x2", name:"Test Player 2", team:"NYY", matchup:"NYY @ BOS",
+  prop:"Over 0.5 Hits", hit_probability:0.6, recommendation_status:"lean",
+  game_start:"2099-06-01T23:05:00Z", why:[]};
+const cardWithGame = pickCard(pWithGame);
+assertTrue(cardWithGame.includes("NYY @ BOS"),
+  "the compact card shows the real matchup (opponent), not just the player's own team, got " + cardWithGame);
+assertTrue(/\d{1,2}:\d{2}\s*(AM|PM)/.test(cardWithGame),
+  "the compact card shows a real game start time, not just team context, got " + cardWithGame);
+
 } catch (e) { console.error(e); process.exit(1); }
 
 if (!ok) process.exit(1);
