@@ -245,13 +245,58 @@ def fetch_park_weather(game_meta):
         # per-game roof state comes from m.real_roof_status() (the MLB
         # Stats API's own weather.condition field) -- only a genuinely
         # closed roof (or a true fixed dome, retract=False) gets the
-        # neutral/indoor treatment below. "unknown" falls through to a
-        # real outdoor-weather fetch too, honestly flagged via
-        # roof_status rather than silently assumed closed.
+        # neutral/indoor treatment below.
         roof_status = m.real_roof_status(gm.get("mlb_weather_condition"), retract)
-        if dome and (not retract or roof_status == "closed"):
+        if dome and not retract:
             out[gm["matchup"]] = {"dome": True, "park_hr_index": 50, "wind_effect": "dome", "temp": None,
-                                   "roof_status": "closed" if retract else None}
+                                   "roof_status": None}
+            continue
+        if dome and roof_status == "closed":
+            out[gm["matchup"]] = {"dome": True, "park_hr_index": 50, "wind_effect": "dome", "temp": None,
+                                   "roof_status": "closed"}
+            continue
+        # UNKNOWN-ROOF INTEGRITY FIX (2026-08-26, PR #67 release-candidate
+        # review): "unknown" used to fall through to the real outdoor-weather
+        # fetch below, same as a confirmed-open roof -- awarding directional
+        # temp/wind/HR credit as though open were known, with only a customer-
+        # facing caveat sentence, not a neutral model input. Audited: MLB's
+        # weather.condition field is commonly still completely blank 8-12
+        # hours before first pitch (verified live, 2026-08-26: all 4 of that
+        # day's still-to-play retractable-park games showed condition=None at
+        # T-8.2h to T-11.7h) -- squarely inside this pipeline's own daily
+        # generation window (14:30 UTC and later cron runs, `.github/
+        # workflows/mlb-daily.yml`). And "unknown" is NOT evidence of "open":
+        # a real 8-day/7-park eventual-outcome sample found 4 of the 7
+        # retractable parks (Chase Field, Daikin Park, Globe Life Field,
+        # loanDepot park) closed in 100% of observed games, T-Mobile Park
+        # open in 100%, and the rest mixed -- concretely, tonight's real
+        # unknown-roof loanDepot park forecast (86F, 6.8mph wind blowing out)
+        # would have scored park_hr_index=76.6 (a real HR-boost "why" line)
+        # under the old policy, at a park that was CLOSED in all 4 sampled
+        # games this season -- directional credit built on absence of
+        # evidence, not evidence itself. Absence of a "closed" reading is not
+        # affirmative evidence the roof is open. Per the 11/11 audit already
+        # in real_roof_status()'s own docstring: a PRESENT non-closed reading
+        # is real evidence of open (kept as-is, unchanged). A MISSING reading
+        # is not that -- it is no evidence either way.
+        #
+        # Fix: unknown now gets the same neutral numeric treatment as a
+        # confirmed-closed roof (dome=False here, not True, so downstream
+        # consumers -- the rain-risk QC checks, the dashboard game-weather
+        # widget -- correctly see "no weather data", never a fabricated
+        # "confirmed dome/closed" signal; roof_status stays "unknown", never
+        # silently rewritten to "closed"). generate_picks.score_batter()'s
+        # explicit roof_status=="unknown" watchout (search that function)
+        # already surfaces the real uncertainty to the customer; its wording
+        # was updated in the same commit to stop saying "assumes the roof is
+        # open" now that it no longer does. A later refresh that obtains a
+        # real MLB condition string naturally re-classifies as open/closed on
+        # its own next call -- no special-cased update path needed, since
+        # every candidate is regenerated from live inputs each run, not
+        # patched in place.
+        if dome and roof_status == "unknown":
+            out[gm["matchup"]] = {"dome": False, "park_hr_index": 50, "wind_effect": "unknown", "temp": None,
+                                   "roof_status": "unknown"}
             continue
         try:
             r = m.retry_get("https://api.open-meteo.com/v1/forecast", params={
@@ -1834,17 +1879,25 @@ def score_batter(batter, gm, opp_sp_row, opp_sp_id, opp_sp_hand, park_wx, batter
     if not park_wx or park_wx.get("dome"): why.append("Dome — weather neutral")
     elif park_wx.get("wind_effect") == "out": why.append(f"Wind blowing OUT ({park_wx.get('wind_mph',0):.0f}mph) — HR boost")
     elif park_wx.get("wind_effect") == "in": watchouts.append(f"Wind blowing IN ({park_wx.get('wind_mph',0):.0f}mph) — power suppressed")
-    # 2026-08-2X honest-roof-model fix (all-30 park/roof audit): a
-    # retractable-roof park whose real per-game status couldn't be confirmed
-    # at fetch time (MLB hadn't posted its weather field yet) still gets a
-    # real outdoor-weather-based read above rather than a fabricated
-    # indoor-neutral one -- but that read is an ASSUMPTION (roof probably
-    # open), not a confirmed fact, so it's flagged here rather than left
-    # silent. Never fires for a confirmed-open, confirmed-closed, or
-    # non-retractable park (roof_status is None or "open"/"closed" there).
+    # 2026-08-26 UNKNOWN-ROOF INTEGRITY FIX (PR #67 release-candidate review):
+    # a retractable-roof park whose real per-game status couldn't be
+    # confirmed at fetch time (MLB hadn't posted its weather field yet, which
+    # real data shows is common 8-12 hours before first pitch -- squarely
+    # inside this pipeline's own generation window) used to still get a real
+    # outdoor-weather-based read above, as though open were known, on the
+    # unproven assumption that "not yet reported closed" meant "open."
+    # Measured: absence of a "closed" reading is not affirmative evidence of
+    # an open roof -- a real 8-day/7-park sample found 4 of the 7 parks
+    # closed in 100% of observed games. fetch_park_weather() no longer awards
+    # that directional credit for "unknown" (same neutral park_hr_index=50
+    # treatment as a confirmed-closed roof, but never mislabeled as
+    # "closed" -- roof_status stays "unknown"); this watchout is the
+    # customer-facing side of that fix. Never fires for a confirmed-open,
+    # confirmed-closed, or non-retractable park (roof_status is None or
+    # "open"/"closed" there).
     if park_wx and park_wx.get("roof_status") == "unknown":
         watchouts.append("Retractable-roof park — real roof status wasn't confirmed yet when this was "
-                          "generated, so the weather read above assumes the roof is open")
+                          "generated, so no directional weather effect is being applied until it's known")
     # 2026-08-2X explanation-quality fix (data-integrity/directionality
     # audit, real complaint: Jacob saw a "fresh pen" bullpen note under
     # "Why It Could Hit"). Same class of bug as the wind-in fix just above

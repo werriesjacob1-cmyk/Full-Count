@@ -216,8 +216,10 @@ check(c["dome"] is False, "REGRESSION GUARD: a confirmed-open retractable roof m
 check(c.get("roof_status") == "open", "roof_status is honestly recorded as 'open'", f"got {c}")
 
 head("9. fetch_park_weather(): a retractable park with UNKNOWN status (MLB hasn't "
-     "posted weather.condition yet) fetches real weather as a best estimate AND "
-     "flags the uncertainty -- never silently treated as confirmed-closed")
+     "posted weather.condition yet) gets NEUTRAL numeric treatment -- absence of a "
+     "'closed' reading is not affirmative evidence the roof is open, so no real "
+     "outdoor temp/wind/HR credit is awarded on that assumption -- while roof_status "
+     "stays honestly 'unknown', never silently rewritten to 'closed'")
 
 gm_unknown = {"matchup": "Test @ Arizona Diamondbacks", "venue": "Chase Field",
               "game_start_utc": "2026-08-25T23:20:00Z", "hour": 19,
@@ -226,10 +228,83 @@ with patch.object(gp.m, "retry_get", side_effect=_mock_retry_get), \
      patch.object(gp, "fetch_nws_weather", return_value=None):
     out = gp.fetch_park_weather([gm_unknown])
 c = out["Test @ Arizona Diamondbacks"]
-check(c["dome"] is False,
-      "REGRESSION GUARD: unknown roof status must NOT silently default to dome=True/indoor-neutral",
-      f"got {c}")
 check(c.get("roof_status") == "unknown", "the uncertainty is honestly recorded, not hidden", f"got {c}")
+check(c["dome"] is False,
+      "REGRESSION GUARD: unknown roof status must NOT be mislabeled as a confirmed dome/closed roof "
+      "(downstream rain-risk QC and the dashboard weather widget both branch on 'dome')",
+      f"got {c}")
+check(c["park_hr_index"] == 50,
+      "REGRESSION GUARD: unknown must NOT award real outdoor park/weather credit -- the mocked "
+      "Open-Meteo fixture (78F, 12mph wind) would produce a real non-50 index if this were still "
+      "fetched and used, same as the old (pre-fix) 'unknown -> outdoor' behavior did",
+      f"got {c}")
+check(c["wind_effect"] == "unknown" and c.get("temp") is None,
+      "REGRESSION GUARD: no directional wind_effect or temp reading is carried for an unknown roof",
+      f"got {c}")
+
+head("9b. fetch_park_weather(): a TRUE fixed dome (retract=False, e.g. Tropicana "
+     "Field) still gets the plain indoor-neutral treatment with roof_status=None -- "
+     "unaffected by the unknown-roof fix, since a fixed dome never calls "
+     "real_roof_status() at all")
+
+gm_fixed_dome = {"matchup": "Test @ Tampa Bay Rays", "venue": "Tropicana Field",
+                  "game_start_utc": "2026-08-25T23:20:00Z", "hour": 19,
+                  "mlb_weather_condition": None}
+out_fd = gp.fetch_park_weather([gm_fixed_dome])
+c_fd = out_fd["Test @ Tampa Bay Rays"]
+check(c_fd["dome"] is True and c_fd["park_hr_index"] == 50 and c_fd.get("roof_status") is None,
+      "a fixed dome is indoor-neutral with roof_status=None (not 'closed'/'unknown' -- "
+      "there is no per-game roof state to report for a park with no roof to move at all)",
+      f"got {c_fd}")
+
+head("9c. fetch_park_weather(): a later same-day refresh that obtains a real MLB "
+     "condition string re-classifies an UNKNOWN game as OPEN or CLOSED on its own "
+     "next call -- no special-cased 'update in place' path exists or is needed, "
+     "since every full pipeline run rebuilds park_wx from the live inputs available "
+     "at that call, not by mutating a previously cached unknown result")
+
+gm_transition = {"matchup": "Test @ Toronto Blue Jays", "venue": "Rogers Centre",
+                  "game_start_utc": "2026-08-25T23:20:00Z", "hour": 19,
+                  "mlb_weather_condition": None}
+out_before = gp.fetch_park_weather([gm_transition])
+c_before = out_before["Test @ Toronto Blue Jays"]
+check(c_before.get("roof_status") == "unknown" and c_before["park_hr_index"] == 50,
+      "pregame, before MLB has posted a real condition: neutral + unknown", f"got {c_before}")
+
+gm_transition_open = dict(gm_transition, mlb_weather_condition="Partly Cloudy")
+with patch.object(gp.m, "retry_get", side_effect=_mock_retry_get), \
+     patch.object(gp, "fetch_nws_weather", return_value=None):
+    out_after_open = gp.fetch_park_weather([gm_transition_open])
+c_after_open = out_after_open["Test @ Toronto Blue Jays"]
+check(c_after_open.get("roof_status") == "open" and c_after_open["dome"] is False,
+      "REGRESSION GUARD: the SAME game, once MLB posts a non-closed condition, "
+      "transitions cleanly to real outdoor weather -- the earlier 'unknown' call "
+      "didn't leave any stale state behind to block this", f"got {c_after_open}")
+
+gm_transition_closed = dict(gm_transition, mlb_weather_condition="Roof Closed")
+out_after_closed = gp.fetch_park_weather([gm_transition_closed])
+c_after_closed = out_after_closed["Test @ Toronto Blue Jays"]
+check(c_after_closed.get("roof_status") == "closed" and c_after_closed["dome"] is True
+      and c_after_closed["park_hr_index"] == 50,
+      "REGRESSION GUARD: the same game, if MLB instead posts 'Roof Closed', "
+      "transitions cleanly to confirmed-closed indoor-neutral", f"got {c_after_closed}")
+
+head("9d. Started-game lifecycle freeze: architectural invariant check, not a "
+     "regression guard against this specific fix (this was already true before "
+     "it and stays true after -- park weather is only ever computed once, at "
+     "full pregame candidate build time). Confirms the unknown-roof fix opened "
+     "no loophole in the live-refresh path (dashboard/refresh_prices.py, "
+     "dashboard/live_state.py), which owns the existing freshness-contract/"
+     "started-game freeze and has zero knowledge of park weather/roof state")
+
+import os as _os
+_repo_root = _os.path.dirname(_os.path.abspath(__file__))
+for _relpath in ("dashboard/refresh_prices.py", "dashboard/live_state.py"):
+    with open(_os.path.join(_repo_root, _relpath)) as _f:
+        _src = _f.read()
+    check("park_wx" not in _src and "roof_status" not in _src,
+          f"{_relpath} has zero references to park_wx/roof_status -- the live-refresh/"
+          "started-game path cannot mutate pregame weather state after a game has started")
 
 head("10. score_batter(): the roof_status=='unknown' case is surfaced to the user as "
      "an honest watchout, not silently baked into the weather note")
@@ -295,6 +370,67 @@ check(len(mismatches) == 0,
 check(sum(1 for _, _, c, z in _real_roof_wind_observations if not z) == 5,
       "sanity check on the fixture itself: 5 of 11 real observations are real "
       "non-closed (open) reads with real nonzero wind")
+
+head("12. UNKNOWN-ROOF FREQUENCY AUDIT (release-candidate review, 2026-08-26): does "
+     "'unknown at generation time' actually happen in practice, close enough to first "
+     "pitch to matter? Locks in a real cross-sectional snapshot, taken live against "
+     "the real MLB Stats API, of every one of that day's not-yet-started retractable-"
+     "park games: ALL 4 (100%) still showed weather.condition=None at T-8.2h to "
+     "T-11.7h before first pitch -- squarely inside this pipeline's own daily "
+     "generation window (mlb-daily.yml's cron runs at 14:30 UTC and later). This is "
+     "the concrete evidence the old 'unknown -> outdoor' policy was not a rare edge "
+     "case -- it was the norm for same-day pregame generation.")
+
+_real_unknown_snapshot_2026_08_26 = [
+    # (park, game_pk, hours_before_first_pitch, condition) -- verified live
+    # against the real MLB Stats API at 2026-08-26T11:27 UTC.
+    ("Chase Field", 825039, 8.2, None),
+    ("T-Mobile Park", 823096, 8.7, None),
+    ("loanDepot park", 823825, 11.2, None),
+    ("Rogers Centre", 822772, 11.7, None),
+]
+check(all(cond is None for _, _, _, cond in _real_unknown_snapshot_2026_08_26),
+      "REGRESSION GUARD (data honesty, not code): all 4 real not-yet-started "
+      "retractable-park games in this real snapshot were genuinely unresolved "
+      "(condition=None) -- confirms 'unknown' is a common, not rare, live state",
+      f"{_real_unknown_snapshot_2026_08_26}")
+check(min(h for _, _, h, _ in _real_unknown_snapshot_2026_08_26) < 10,
+      "the CLOSEST of these real games was still under 10 hours from first pitch and "
+      "still had condition=None -- a same-day generation run this close to first "
+      "pitch cannot assume open just because it hasn't seen 'closed' yet")
+
+head("13. EVENTUAL-STATE BASE RATE (release-candidate review, 2026-08-26): does "
+     "'unknown' have strong point-in-time evidence of leaning OPEN? Locks in a real "
+     "8-day/7-park sample of EVENTUAL (now-final, i.e. this uses only past, already-"
+     "resolved games, never feeding future knowledge into a live prediction) roof "
+     "state: over 26 real games, the OVERALL split was 18 closed / 8 open (69% "
+     "closed) -- and per-park rates ranged from 0% open (Chase Field, Daikin Park, "
+     "Globe Life Field, loanDepot park -- 4 of 7 parks were CLOSED in every single "
+     "observed game) to 100% open (T-Mobile Park). Absence of a 'closed' reading is "
+     "not affirmative evidence of an open roof; for over half the parks modeled, the "
+     "opposite is true more often than not.")
+
+_real_eventual_roof_sample_aug2026 = {
+    "American Family Field": {"closed": 1, "open": 2},
+    "Chase Field": {"closed": 4, "open": 0},
+    "Daikin Park": {"closed": 5, "open": 0},
+    "Globe Life Field": {"closed": 3, "open": 0},
+    "Rogers Centre": {"closed": 1, "open": 3},
+    "T-Mobile Park": {"closed": 0, "open": 3},
+    "loanDepot park": {"closed": 4, "open": 0},
+}
+total_closed = sum(v["closed"] for v in _real_eventual_roof_sample_aug2026.values())
+total_open = sum(v["open"] for v in _real_eventual_roof_sample_aug2026.values())
+check(total_closed == 18 and total_open == 8,
+      "sanity check on the fixture itself: 18 closed / 8 open across the real "
+      "8-day/7-park sample (26 real games total)", f"closed={total_closed} open={total_open}")
+zero_open_parks = [p for p, v in _real_eventual_roof_sample_aug2026.items()
+                    if v["open"] == 0 and v["closed"] > 0]
+check(len(zero_open_parks) == 4,
+      "REGRESSION GUARD (data honesty, not code): 4 of 7 real retractable parks "
+      "were closed in 100% of their observed games this sample -- 'unknown' at "
+      "those parks specifically has real evidence AGAINST assuming open, not for it",
+      f"zero-open parks: {zero_open_parks}")
 
 n_pass = sum(1 for ok, _, _ in _results if ok)
 n_total = len(_results)
