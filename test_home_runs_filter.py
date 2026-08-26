@@ -96,13 +96,15 @@ const result = vm.runInContext(`(() => {
   const hrFamily = fixture.families.find(f => f.label === "Home Runs");
   const hrFilterValue = familyFilterValue(hrFamily.stat);
 
-  // 3. Selecting Home Runs (as the real <select>/filter-sheet wiring does)
-  //    returns exactly the real HR props, excluding non-HR ones.
-  filters.family = hrFilterValue;
+  // 3. Selecting Home Runs (as the real filter-dropdown/filter-sheet wiring
+  //    does -- multi-select fix, Part 2 2026-08-26: filters.family is now
+  //    filters.families, a Set, not a single string) returns exactly the
+  //    real HR props, excluding non-HR ones.
+  filters.families = new Set([hrFilterValue]);
   const selected = applyFilters(publicProps()).map(p => p.id);
 
   // 4. Clearing the filter restores the full board.
-  filters.family = "all";
+  filters.families = new Set();
   const cleared = applyFilters(publicProps()).map(p => p.id);
 
   return { allIds, hrIdsPresent, hrFilterValue, selected, cleared };

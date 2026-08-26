@@ -967,6 +967,93 @@ else:
     check(True, "node not available -- suggestedParlayBlock check skipped, not failed")
 
 
+head("13e. Multi-select prop filtering (Part 2, 2026-08-26): activeFilterCount()/"
+     "filterDropdown() -- the two pure functions behind the new multi-select UI. "
+     "activeFilterCount() must sum real selections across all three dimensions (not just "
+     "report 0-or-1 per dimension the way the old single-select 'all'-sentinel version did), "
+     "and filterDropdown()'s checkbox markup must reflect exactly what's actually selected in "
+     "filters[setKey], so a re-render (e.g. after navigating away and back) never silently "
+     "shows an unchecked box for a filter that's still real and active.")
+
+if node:
+    harness_multiselect = """
+// esc() round-trips through a real document.createElement("div").textContent/
+// .innerHTML escape -- see the identical comment on the suggestedParlayBlock
+// harness above. filterDropdown()'s option labels go through esc() too.
+function makeEscEl() {
+  let t = '';
+  return { set textContent(v) { t = String(v); }, get textContent() { return t; },
+    get innerHTML() {
+      return t.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+    } };
+}
+const document = {getElementById: () => ({addEventListener(){}, textContent:'', dataset:{},
+    style:{}, setAttribute(){}, querySelectorAll: () => [], querySelector: () => null}),
+  documentElement: {setAttribute(){}, removeAttribute(){}, getAttribute: () => null},
+  querySelectorAll: () => [], querySelector: () => null, createElement: () => makeEscEl(),
+  addEventListener(){}, body: {style:{}, append(){}}};
+const window = {matchMedia: () => ({matches:false}), location: {hash:''}, scrollY: 0, scrollTo(){}};
+const localStorage = {getItem: () => null, setItem(){}};
+const fetch = () => Promise.reject(new Error("no network in test"));
+const setInterval = () => {};
+let ok = true;
+function assertEq(actual, expected, label) {
+  if (actual !== expected) { console.error("FAIL " + label + ": got " + JSON.stringify(actual) + " want " + JSON.stringify(expected)); ok = false; }
+}
+function assertTrue(cond, label) { if (!cond) { console.error("FAIL " + label); ok = false; } }
+
+try {
+""" + open(APP_JS_PATH, encoding="utf-8").read() + """
+
+// filters, activeFilterCount(), and filterDropdown() are all declared at
+// app.js's top level -- must stay INSIDE this same try block (a `let`
+// binding is block-scoped; unlike a hoisted function declaration, it is
+// NOT visible after the block closes) to actually reach them below.
+assertEq(activeFilterCount(), 0, "a fresh filters object (all three Sets empty, no search) reports 0 active");
+
+filters.families = new Set(["hits", "home_runs"]);
+filters.statuses = new Set(["top_pick"]);
+assertEq(activeFilterCount(), 3, "activeFilterCount SUMS real selections per dimension (2 families " +
+  "+ 1 status), not a flat 0-or-1-per-dimension count -- the old single-select semantics");
+
+filters.evidences = new Set(["A", "B"]);
+filters.search = "ohtani";
+assertEq(activeFilterCount(), 6, "every dimension's real selection count contributes, plus 1 for a " +
+  "real search term");
+filters.families = new Set(); filters.statuses = new Set(); filters.evidences = new Set(); filters.search = "";
+
+// filterDropdown(): rendered checkbox state must match filters[setKey] exactly.
+filters.families = new Set(["hits", "strikeouts"]);
+const html = filterDropdown("families", "Prop type", [["hits", "Hits (5)"], ["home_runs", "HR (2)"], ["strikeouts", "Ks (3)"]]);
+assertTrue(/value="hits"[^>]*checked/.test(html), "a real selected family (hits) renders its checkbox checked, got " + html);
+assertTrue(/value="strikeouts"[^>]*checked/.test(html), "a second real selection (strikeouts) also renders checked");
+assertTrue(!/value="home_runs"[^>]*checked/.test(html), "an UNselected family (home_runs) renders unchecked");
+assertTrue(html.includes("Prop type (2)"), "the summary badge shows the real 2-selection count, got " + html);
+filters.families = new Set();
+const emptyHtml = filterDropdown("families", "Prop type", [["hits", "Hits (5)"]]);
+assertTrue(emptyHtml.includes("Prop type</summary>") || emptyHtml.includes("Prop type<"),
+  "zero selections in this dimension shows no count badge at all, got " + emptyHtml);
+
+} catch (e) { console.error(e); process.exit(1); }
+
+if (!ok) process.exit(1);
+console.log("Multi-select activeFilterCount()/filterDropdown() checks passed");
+"""
+    harness_path_multiselect = tempfile.mktemp(suffix=".js")
+    with open(harness_path_multiselect, "w") as f:
+        f.write(harness_multiselect)
+    try:
+        r = subprocess.run([node, harness_path_multiselect], capture_output=True, text=True)
+        check(r.returncode == 0, "activeFilterCount() sums real per-dimension selections and "
+              "filterDropdown() renders checkbox state that matches filters[setKey] exactly",
+              r.stdout + r.stderr)
+    finally:
+        os.remove(harness_path_multiselect)
+else:
+    check(True, "node not available -- multi-select filter check skipped, not failed")
+
+
 head("16. Today-page PASS 2/3 redesign (2026-08-25): the query-string half of a route hash "
      "used to be silently discarded (onRouteChange() split it off and threw it away) -- every "
      "\"See all research -> #/props?status=lean\" link on the page was a real navigation that "
@@ -1022,11 +1109,25 @@ try {
 location.hash = "#/props?status=lean";
 onRouteChange();
 assertEq(route, "props", "route parsed from hash despite query string");
-assertEq(filters.status, "lean", "status=lean from the URL actually reached filters.status");
+assertTrue(filters.statuses.has("lean") && filters.statuses.size === 1,
+  "status=lean from the URL actually reached filters.statuses", [...filters.statuses].join(","));
 
 location.hash = "#/props?family=home_runs";
 onRouteChange();
-assertEq(filters.family, "home_runs", "family=home_runs from the URL actually reached filters.family");
+assertTrue(filters.families.has("home_runs") && filters.families.size === 1,
+  "family=home_runs from the URL actually reached filters.families", [...filters.families].join(","));
+
+// Multi-select fix (Part 2, 2026-08-26): a link can request more than one
+// value per dimension via a comma-separated list -- same real feature the
+// UI's own checkboxes/chips now let a viewer build interactively.
+location.hash = "#/props?family=hits,home_runs&status=top_pick,lean";
+onRouteChange();
+assertTrue(filters.families.has("hits") && filters.families.has("home_runs") && filters.families.size === 2,
+  "a comma-separated family list resolves to a real 2-entry filters.families Set",
+  [...filters.families].join(","));
+assertTrue(filters.statuses.has("top_pick") && filters.statuses.has("lean") && filters.statuses.size === 2,
+  "a comma-separated status list resolves to a real 2-entry filters.statuses Set",
+  [...filters.statuses].join(","));
 
 // 2026-08-2X route-filter-leakage fix ("Top Pick filter escape", Part 2 UX
 // audit): this used to assert the OPPOSITE -- that an absent status param
@@ -1043,21 +1144,26 @@ assertEq(filters.family, "home_runs", "family=home_runs from the URL actually re
 // defaults FIRST, then applies whatever params THIS link actually
 // carries -- a link can still deliberately pre-filter, it just can't
 // leave a previous, unrelated visit's filter behind.
-filters.status = "top_pick";
+filters.statuses = new Set(["top_pick"]);
 location.hash = "#/props?family=hits";
 onRouteChange();
-assertEq(filters.status, "all", "REGRESSION GUARD: a fresh navigation into props resets a stale " +
+assertEq(filters.statuses.size, 0, "REGRESSION GUARD: a fresh navigation into props resets a stale " +
   "status filter left over from a previous visit -- the exact 'Top Pick filter escape' bug");
-assertEq(filters.family, "hits", "family=hits from the URL still applied, on top of the reset");
+assertTrue(filters.families.has("hits") && filters.families.size === 1,
+  "family=hits from the URL still applied, on top of the reset");
 
 // A plain nav-bar-style entry (no query at all) resets every filter,
-// including one set via the page's own dropdown UI moments earlier.
-filters.family = "strikeouts"; filters.status = "value"; filters.evidence = "A"; filters.search = "ohtani";
+// including one set via the page's own multi-select checkboxes moments
+// earlier (real multiple selections, not just a single leftover value).
+filters.families = new Set(["strikeouts", "hits"]);
+filters.statuses = new Set(["value", "lean"]);
+filters.evidences = new Set(["A"]);
+filters.search = "ohtani";
 location.hash = "#/props";
 onRouteChange();
-assertEq(filters.family, "all", "a plain #/props entry resets family");
-assertEq(filters.status, "all", "a plain #/props entry resets status");
-assertEq(filters.evidence, "all", "a plain #/props entry resets evidence");
+assertEq(filters.families.size, 0, "a plain #/props entry resets family, including a real multi-selection");
+assertEq(filters.statuses.size, 0, "a plain #/props entry resets status, including a real multi-selection");
+assertEq(filters.evidences.size, 0, "a plain #/props entry resets evidence");
 assertEq(filters.search, "", "a plain #/props entry resets search");
 
 // destination-integrity fix: the global-search "See all N matching props"
@@ -1073,18 +1179,41 @@ assertEq(filters.search, "ohtani", "search=ohtani from the URL actually reached 
 // Longshots tile relies on.
 location.hash = "#/props?status=longshot";
 onRouteChange();
-assertEq(filters.status, "longshot", "status=longshot from the URL reached filters.status");
+assertTrue(filters.statuses.has("longshot") && filters.statuses.size === 1,
+  "status=longshot from the URL reached filters.statuses");
 const valueRow = {recommendation_status: "value", hit_probability: 0.5};
 const longshotRow = {recommendation_status: "value", hit_probability: 0.1};
 const splitRows = applyFilters([valueRow, longshotRow]);
 assertEq(splitRows.length, 1, "status=longshot excludes the non-longshot value row");
 assertTrue(splitRows[0] === longshotRow, "status=longshot keeps only the real longshot row");
-filters.status = "value";
+filters.statuses = new Set(["value"]);
 const valueOnlyRows = applyFilters([valueRow, longshotRow]);
 assertEq(valueOnlyRows.length, 1, "status=value excludes the longshot row (unchanged behavior) -- " +
   "this is the real split the Today page's two separate tiles/counts must match");
 assertTrue(valueOnlyRows[0] === valueRow, "status=value keeps only the real non-longshot value row");
-filters.status = "all"; filters.search = "";
+
+// -- multi-select semantics: OR across selected values within ONE
+// dimension, AND across dimensions -- e.g. "(Hits OR Home Runs) AND
+// (Top Pick OR Lean)" is the real, expected meaning of picking multiple
+// prop types and multiple statuses at once.
+filters.statuses = new Set(["top_pick", "lean"]);
+const topPickRow = {recommendation_status: "top_pick", hit_probability: 0.7, stat: "hits"};
+const leanRow2 = {recommendation_status: "lean", hit_probability: 0.6, stat: "hits"};
+const neutralRow = {recommendation_status: "neutral", hit_probability: 0.4, stat: "hits"};
+const multiStatusRows = applyFilters([topPickRow, leanRow2, neutralRow]);
+assertEq(multiStatusRows.length, 2, "multi-select status is OR across selected values -- both Top " +
+  "Pick and Lean rows pass, Neutral is excluded", `got ${multiStatusRows.length}`);
+
+filters.statuses = new Set();
+filters.families = new Set(["hits", "home_runs"]);
+const hitsRow = {recommendation_status: "lean", hit_probability: 0.6, stat: "hits"};
+const hrRow = {recommendation_status: "lean", hit_probability: 0.3, stat: "home_runs"};
+const strikeoutsRow = {recommendation_status: "lean", hit_probability: 0.6, stat: "strikeouts"};
+const multiFamilyRows = applyFilters([hitsRow, hrRow, strikeoutsRow]);
+assertEq(multiFamilyRows.length, 2, "multi-select family is OR across selected values -- both Hits " +
+  "and Home Runs rows pass, Strikeouts is excluded", `got ${multiFamilyRows.length}`);
+
+filters.families = new Set(); filters.statuses = new Set(); filters.evidences = new Set(); filters.search = "";
 
 // -- Explore by Prop: real counts only, correct family mapping, no dead chips --
 const families = [
