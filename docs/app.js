@@ -2382,6 +2382,20 @@ function applyCachedLive() {
     // deployment-proven recommendation snapshot before considering any live
     // price fields. Game and settlement facts remain independently mutable.
     freezePublishedSnapshot(p);
+    // Price-race regression guard (Phase 5 / P0 lifecycle audit, 2026-08-26):
+    // this loop used to protect a price field ONLY against being older than
+    // the board's own single odds_fetched_at/generated_at stamp
+    // (boardOddsAt) -- with no comparison against whatever this SAME
+    // browser session already applied from an earlier, newer live.json
+    // poll. A live.json fetch that returns an older snapshot than one
+    // already merged (a CDN/proxy cache hit, or a slow request that lands
+    // after a faster later one) could silently move a price BACKWARDS.
+    // p._field_updated_at now records what this merge itself last applied,
+    // so a strictly older incoming stamp for the same field is rejected --
+    // the identical discipline ingestLiveDocument() already applies when
+    // accumulating documents into LIVE_CACHE, now also enforced at the
+    // point those cached deltas actually land on the displayed prop.
+    p._field_updated_at = p._field_updated_at || {};
     for (const [field, value] of Object.entries(delta)) {
       if (field === "_field_updated_at" || LIVE_SETTLEMENT_FIELDS.has(field) || LIVE_GAME_FIELDS.has(field)) continue;
       const frozenExposure = gameHasStarted(p)
@@ -2390,8 +2404,11 @@ function applyCachedLive() {
       if (frozenExposure && LIVE_PRICE_FIELDS.has(field)) continue;
       const fieldAt = timeMs((delta._field_updated_at || {})[field]);
       if (LIVE_PRICE_FIELDS.has(field) && boardOddsAt != null && fieldAt != null && fieldAt < boardOddsAt) continue;
+      const appliedAt = timeMs(p._field_updated_at[field]);
+      if (fieldAt != null && appliedAt != null && fieldAt < appliedAt) continue;
       if (p[field] !== value) changed++;
       p[field] = value;
+      if (fieldAt != null) p._field_updated_at[field] = (delta._field_updated_at || {})[field];
     }
   }
   if (LIVE_CACHE.prices_updated_at) DATA.prices_updated_at = LIVE_CACHE.prices_updated_at;
