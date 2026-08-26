@@ -769,6 +769,63 @@ check(bd._game_pick_sections([]) == [], "a game with no real picks at all return
       "not a crash or a fabricated empty-looking section")
 
 
+head("12d. _team_bullpen_context()/_bullpen_fatigue_summary() (detailed bullpen presentation, "
+     "2026-08-26): direct instruction -- \"Jacob specifically wants names and context\" -- and "
+     "the two conservative-summary requirements: never claim a reliever is 'likely to appear' "
+     "without a real, verified role model, and never show a fabricated block for a team whose "
+     "bullpen genuinely wasn't fetchable tonight.")
+
+bp_heavy = {"tracked": 5, "fatigued_relievers": 3,
+            "relievers": [{"name": "Cade Smith", "pitches_last_outing": 27,
+                           "days_since_last_outing": 1, "appearances_l7": 3, "pitches_l7": 60}]}
+check(bd._bullpen_fatigue_summary(bp_heavy) == "Late-inning group heavily taxed",
+      "3/5 = 60% fatigued clears the same 40% threshold score_batter()'s own why/watchouts "
+      "text already uses for 'tired pen' framing -- these two surfaces must never disagree "
+      "about the same real number", f"got {bd._bullpen_fatigue_summary(bp_heavy)!r}")
+bp_moderate = {"tracked": 5, "fatigued_relievers": 1, "relievers": []}
+check(bd._bullpen_fatigue_summary(bp_moderate) == "Moderately taxed",
+      "1/5 = 20% fatigued lands in the moderate band", f"got {bd._bullpen_fatigue_summary(bp_moderate)!r}")
+bp_rested = {"tracked": 5, "fatigued_relievers": 0, "relievers": []}
+check(bd._bullpen_fatigue_summary(bp_rested) == "Mostly rested",
+      "0/5 fatigued is genuinely rested", f"got {bd._bullpen_fatigue_summary(bp_rested)!r}")
+check(bd._bullpen_fatigue_summary({"tracked": 0, "fatigued_relievers": 0}) ==
+      "No strong bullpen-availability signal",
+      "zero tracked relievers (a real fetch gap) gets the honest 'no signal' label, never a "
+      "fabricated 'rested' claim built from a division by zero")
+
+bullpen_scores_fixture = {"Seattle Mariners": bp_heavy}
+ctx_known = bd._team_bullpen_context(bullpen_scores_fixture, "Seattle Mariners")
+check(ctx_known["relievers"][0]["name"] == "Cade Smith" and
+      ctx_known["fatigue_summary"] == "Late-inning group heavily taxed",
+      "a team with real bullpen data returns real reliever names plus the honest summary label",
+      f"got {ctx_known}")
+check(bd._team_bullpen_context(bullpen_scores_fixture, "Oakland Athletics") is None,
+      "a team with genuinely no bullpen data fetched tonight returns None, not a fabricated "
+      "empty-but-present block")
+
+head("12e. _build_game_context() wires the real bullpen context onto each game, keyed by each "
+     "team's OWN bullpen (away_team_bullpen/home_team_bullpen) -- the natural framing for a "
+     "whole-game overview, not score_batter()'s batter-matchup-specific opponent framing.")
+
+bp_game_meta = [{"game_pk": 555, "matchup": "Seattle Mariners @ Oakland Athletics",
+                 "away_team": "Seattle Mariners", "home_team": "Oakland Athletics",
+                 "away_sp": "SP A", "home_sp": "SP B", "hp_ump": "Ump Y",
+                 "is_getaway": False, "is_opener": False}]
+bp_ctx = bd._build_game_context([], bp_game_meta, {}, {}, set(), {}, bullpen_scores_fixture)
+check(bp_ctx[0]["away_team_bullpen"]["relievers"][0]["name"] == "Cade Smith",
+      "the away team's own bullpen (Seattle, which has real data in the fixture) is attached "
+      "under away_team_bullpen", f"got {bp_ctx[0]['away_team_bullpen']}")
+check(bp_ctx[0]["home_team_bullpen"] is None,
+      "the home team (Oakland, no real data in the fixture) honestly gets None, not a "
+      "fabricated block", f"got {bp_ctx[0]['home_team_bullpen']}")
+# REGRESSION GUARD: omitting bullpen_scores entirely (the pre-existing call shape, still used
+# by check 12b/12c's doubleheader/section fixtures above) must not crash.
+bp_ctx_omitted = bd._build_game_context([], bp_game_meta, {}, {}, set(), {})
+check(bp_ctx_omitted[0]["away_team_bullpen"] is None and bp_ctx_omitted[0]["home_team_bullpen"] is None,
+      "omitting bullpen_scores entirely degrades to honest None for both teams, not a crash",
+      f"got {bp_ctx_omitted[0]}")
+
+
 head("13. app.js's humanizeReason() actually translates real jargon strings, not just "
      "parses without crashing. Loaded directly from dashboard/static/app.js (a real, plain "
      "file now -- no more extracting a <script> block out of server-rendered HTML). These "
@@ -2069,7 +2126,10 @@ const g1 = { game_pk: 111, matchup: "SEA @ OAK", away_team: "Seattle Mariners", 
   weather: { dome: false, temp: 68, wind_mph: 5, wind_effect: "Out to CF" },
   umpire: { name: "Ump X", k_pct: 0.24, bb_pct: 0.08 }, is_getaway: false, is_opener: false,
   pick_sections: [{ label: "Best Overall Read", picks: [
-    { name: "Julio Rodriguez", prop: "To Hit a Home Run", hit_probability: 0.22, market_odds: 450 }] }] };
+    { name: "Julio Rodriguez", prop: "To Hit a Home Run", hit_probability: 0.22, market_odds: 450 }] }],
+  away_team_bullpen: { fatigue_summary: "Late-inning group heavily taxed",
+    relievers: [{ name: "Real Reliever One", pitches_last_outing: 27, days_since_last_outing: 1, appearances_l7: 3 }] },
+  home_team_bullpen: null };
 const g2 = { game_pk: 222, matchup: "NYY @ BOS", away_team: "New York Yankees", home_team: "Boston Red Sox",
   game_start: "2099-01-01T01:00:00Z", pick_sections: [] };
 DATA = { schedule: [g1, g2], props: [
@@ -2135,6 +2195,20 @@ assertTrue(detailHtml.includes('href="#/props?game_pk=111"'),
   "the See-all link's real destination carries game_pk, got " + detailHtml);
 assertTrue(detailHtml.includes("Seattle Mariners") && detailHtml.includes("Oakland Athletics"),
   "the real team names render in the detail view");
+
+// -- bullpenBlock(): detailed bullpen presentation (2026-08-26) -- real reliever
+// names/context render, and a team with no real bullpen data (Oakland, null in
+// the fixture) is honestly omitted, not shown as a fabricated empty block.
+assertTrue(detailHtml.includes("Real Reliever One") && detailHtml.includes("27 pitches yesterday"),
+  "a real reliever's name and dated pitch-count fact render in the drill-down -- direct " +
+  "instruction: 'Jacob specifically wants names and context', got " + detailHtml);
+assertTrue(detailHtml.includes("Late-inning group heavily taxed"),
+  "the honest conservative fatigue-summary label renders alongside the real reliever detail");
+const bullpenSectionCount = (detailHtml.match(/class="bullpen-team"/g) || []).length;
+assertEq(bullpenSectionCount, 1,
+  "only Seattle's real bullpen block renders -- Oakland's (null in the fixture, no real data " +
+  "fetched tonight) is honestly omitted rather than shown as an empty fabricated block, " +
+  "got " + bullpenSectionCount);
 
 // A stale/non-matching game_pk (an old link, a game that already started
 // and dropped off tonight's board) gets an honest fallback, never a blank

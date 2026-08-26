@@ -1356,6 +1356,42 @@ function gameCard(g) {
     ${picks || `<p class="section-sub">No standout research for this game yet.</p>`}
   </a>`;
 }
+// Detailed bullpen presentation, direct instruction: "Jacob specifically
+// wants names and context" -- real reliever names with a real, dated
+// pitch-count/appearance fact each, not vague "bullpen is tired" copy.
+// Never claims a reliever is "likely to appear" -- see
+// dashboard/build_dashboard.py's _reliever_detail()/_team_bullpen_context()
+// docstrings for why that would need a real, verified role model this
+// codebase does not have. teamBullpen is null (not an empty object) when
+// this team's bullpen genuinely wasn't fetchable tonight -- rendered as an
+// honest omission, never a fabricated "no data" block for every game.
+function bullpenTeamBlock(teamName, teamBullpen) {
+  if (!teamBullpen) return "";
+  const relLines = (teamBullpen.relievers || []).map(r => {
+    const parts = [];
+    if (r.pitches_last_outing != null) {
+      const when = r.days_since_last_outing === 0 ? "today"
+        : r.days_since_last_outing === 1 ? "yesterday"
+        : r.days_since_last_outing != null ? `${r.days_since_last_outing}d ago` : null;
+      parts.push(`${r.pitches_last_outing} pitches${when ? " " + when : ""}`);
+    }
+    if (r.appearances_l7 != null) {
+      parts.push(`${r.appearances_l7} appearance${r.appearances_l7 === 1 ? "" : "s"} in L7`);
+    }
+    return `<div class="bullpen-reliever"><span class="br-name">${esc(r.name)}</span>` +
+      (parts.length ? `<span class="br-detail">${esc(parts.join(" · "))}</span>` : "") + `</div>`;
+  }).join("");
+  return `<div class="bullpen-team">
+    <div class="bullpen-team-head"><b>${esc(teamName)}</b><span>${esc(teamBullpen.fatigue_summary)}</span></div>
+    ${relLines || `<p class="section-sub">No individual reliever usage found tonight.</p>`}
+  </div>`;
+}
+function bullpenBlock(g) {
+  const away = bullpenTeamBlock(g.away_team, g.away_team_bullpen);
+  const home = bullpenTeamBlock(g.home_team, g.home_team_bullpen);
+  if (!away && !home) return "";
+  return `<div class="detail-section"><h3>Bullpen</h3>${away}${home}</div>`;
+}
 // The drill-down itself: everything gameCard() already shows, at full size
 // (no truncation), plus a real "See all N props" link into All Props
 // scoped to this exact game_pk -- the "in-game prop filtering" this page
@@ -1381,6 +1417,7 @@ function renderGameDetail(el, g) {
       ${g.is_opener ? `<span>Bullpen/opener day</span>` : ""}
     </div>
     ${picks || `<p class="section-sub">No standout research for this game yet.</p>`}
+    ${bullpenBlock(g)}
     ${totalPropsForGame > 0 ? `<div style="margin-top:16px;"><a class="btn btn-primary" href="#/props?game_pk=${g.game_pk}">See all ${totalPropsForGame} props for this game →</a></div>` : ""}
   `;
 }

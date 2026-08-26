@@ -715,7 +715,9 @@ def run_live_fetch():
     for entries in by_category_full.values():
         all_priced.extend(clean(entries))
     ump_kbb = ctx.get("ump_kbb") or {}
-    out["game_context"] = _build_game_context(all_priced, game_meta, park_wx, ump_kbb, started, schedule)
+    bullpen_scores = ctx.get("bullpen_scores") or {}
+    out["game_context"] = _build_game_context(all_priced, game_meta, park_wx, ump_kbb, started,
+                                              schedule, bullpen_scores)
     out["streaks"] = _compute_streaks(all_priced)
     return out
 
@@ -788,7 +790,42 @@ def _game_pick_sections(game_picks):
     return sections
 
 
-def _build_game_context(all_priced, game_meta, park_wx, ump_kbb, started, schedule):
+# Same 40%-fatigued threshold score_batter()'s own why/watchouts text
+# already uses for "tired pen" framing (generate_picks.py: "if
+# bullpen_fatigue_pct >= 40: ... tired pen"), reused here so this summary
+# label and that per-prop text never disagree about the same real number.
+# The 20% "moderately taxed" midpoint has no equivalent existing precedent
+# to mirror -- a reasonable middle band, not an independently validated cut.
+def _bullpen_fatigue_summary(bp):
+    tracked = bp.get("tracked") or 0
+    if tracked == 0:
+        return "No strong bullpen-availability signal"
+    pct = (bp.get("fatigued_relievers") or 0) / tracked * 100
+    if pct >= 40:
+        return "Late-inning group heavily taxed"
+    if pct >= 20:
+        return "Moderately taxed"
+    return "Mostly rested"
+
+
+def _team_bullpen_context(bullpen_scores, team_name):
+    """Real reliever names/usage for one team, direct instruction: "Jacob
+    specifically wants names and context." Never claims a reliever is
+    "likely to appear" -- that would require a real, verified role model
+    this codebase does not have (see _reliever_detail()'s own docstring).
+    None when this team's bullpen genuinely wasn't fetchable tonight (a
+    real network/lookup failure), not a fabricated empty-but-present block."""
+    bp = bullpen_scores.get(team_name)
+    if not bp:
+        return None
+    return {
+        "relievers": bp.get("relievers") or [],
+        "tracked": bp.get("tracked"), "fatigued_relievers": bp.get("fatigued_relievers"),
+        "fatigue_summary": _bullpen_fatigue_summary(bp),
+    }
+
+
+def _build_game_context(all_priced, game_meta, park_wx, ump_kbb, started, schedule, bullpen_scores=None):
     """Per-game schedule breakdown. Direct request: "I want people to be able
     to click on a game on the schedule, and get a breakdown of why X props
     might be best for A B C reasons. Think time, weather, etc." Built from the
@@ -854,6 +891,16 @@ def _build_game_context(all_priced, game_meta, park_wx, ump_kbb, started, schedu
             "weather": weather, "umpire": umpire,
             "is_getaway": bool(gm.get("is_getaway")), "is_opener": bool(gm.get("is_opener")),
             "pick_sections": _game_pick_sections(picks_by_game.get(pk, [])),
+            # Detailed bullpen presentation, direct instruction: "Jacob
+            # specifically wants names and context" -- real per-reliever
+            # usage (see _team_bullpen_context()), not just a vague
+            # fatigue-percentage number. Each team's OWN bullpen, keyed the
+            # natural way for a whole-game overview (not the batter-
+            # matchup-specific "which pen do THIS team's batters face"
+            # framing score_batter()'s own opp_bullpen assignment uses,
+            # which only makes sense scoped to one specific batter).
+            "away_team_bullpen": _team_bullpen_context(bullpen_scores or {}, gm.get("away_team")),
+            "home_team_bullpen": _team_bullpen_context(bullpen_scores or {}, gm.get("home_team")),
         })
     return game_context
 

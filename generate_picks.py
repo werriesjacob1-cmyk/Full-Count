@@ -558,8 +558,59 @@ def fetch_bullpen_scores(game_meta):
             for team_name, usage, err in ex.map(m._bullpen_fetch_one, jobs):
                 if usage:
                     fatigued = sum(1 for u in usage.values() if u["pitches"] > 60)
-                    out[team_name] = {"fatigued_relievers": fatigued, "tracked": len(usage)}
+                    out[team_name] = {
+                        "fatigued_relievers": fatigued, "tracked": len(usage),
+                        # Real bug, found 2026-08-26 (detailed-bullpen-presentation
+                        # audit): mlb_daily._bullpen_fetch_one() already fetches each
+                        # reliever's real name and per-game (date/ip/pitches) usage --
+                        # the exact detail a customer-facing "name real relievers, not
+                        # vague copy" pass needs (see that function's own 2026-08-25
+                        # comment, which added the "games" list for exactly this
+                        # reason) -- but this function discarded all of it down to two
+                        # bare counts. Direct instruction: "Jacob specifically wants
+                        # names and context... Cade Smith, 27 pitches yesterday, 3
+                        # appearances in 4 days." Surfaced here as its own field,
+                        # additive only -- fatigued_relievers/tracked (what scoring
+                        # actually uses) are unchanged.
+                        "relievers": _reliever_detail(usage),
+                    }
     return out
+
+
+def _reliever_detail(usage):
+    """Real per-reliever usage facts for a team's bullpen, from the same
+    `usage` dict fetch_bullpen_scores() already has -- see that function's
+    own comment for the "computed, then discarded" bug this closes. Sorted
+    by most-recently-used first (the read a bettor actually wants: who
+    pitched last night, not an alphabetical list), capped at 8 -- a whole
+    bullpen's raw usage table is not "context," it's noise past the real
+    late-inning-relevant names.
+
+    `games` entries are chronological (oldest first, matching
+    _bullpen_fetch_one()'s own append order), so games[-1] is always the
+    most recent outing. Never fabricates a role ("closer", "likely to
+    appear") -- that would require a real, verified role model this
+    function does not have; only real, dated facts are reported."""
+    out = []
+    for name, u in usage.items():
+        games = u.get("games") or []
+        if not games:
+            continue
+        last = games[-1]
+        days_ago = None
+        if last.get("date"):
+            try:
+                d = datetime.strptime(last["date"], "%Y-%m-%d")
+                days_ago = (datetime.now() - d).days
+            except (TypeError, ValueError):
+                days_ago = None
+        out.append({
+            "name": name, "pitches_last_outing": last.get("pitches"),
+            "days_since_last_outing": days_ago, "appearances_l7": u.get("apps"),
+            "pitches_l7": u.get("pitches"),
+        })
+    out.sort(key=lambda r: (r["days_since_last_outing"] if r["days_since_last_outing"] is not None else 999))
+    return out[:8]
 
 
 def fetch_l7_batter_form():
