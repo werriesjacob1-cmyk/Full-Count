@@ -495,8 +495,15 @@ main { max-width: 1180px; margin: 0 auto; padding: 20px 16px 80px; }
 .pr-status { flex: none; }
 
 @media (max-width: 640px) {
-  .prop-row { grid-template-columns: 1fr auto; grid-template-areas: "main prob" "chips chips"; row-gap: 8px; }
-  .pr-price { display: none; }
+  /* Real bug, found 2026-08-26 (frontend automation prep): this used to
+     hide .pr-price (the real FanDuel price) entirely on mobile -- the
+     exact "Mobile FanDuel odds mandatory" requirement violated, on the
+     All Props list, the Today-page overflow list, and My Board, all three
+     of which render rows via this same propRow(). Repositioned into the
+     mobile grid's second row instead of dropped, so the price a bettor
+     is actually being asked to pay stays visible on every real device. */
+  .prop-row { grid-template-columns: 1fr auto; grid-template-areas: "main prob" "chips price"; row-gap: 8px; }
+  .pr-price { grid-area: price; min-width: 0; }
   .pr-status { grid-area: chips; }
 }
 
