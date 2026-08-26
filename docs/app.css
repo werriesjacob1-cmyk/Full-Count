@@ -193,6 +193,11 @@ input, select, textarea { font: inherit; color: inherit; }
   background: var(--surface-2); color: var(--ink-dim); cursor: pointer;
 }
 .icon-btn:hover { color: var(--ink); border-color: var(--ink-faint); }
+/* #performance-link is an .icon-btn that is ALSO a primary-route nav link
+   (moved out of .main-nav, UX decision 2026-08-26) -- same active treatment
+   the nav pills use, so it's not the one destination with no visual
+   "you are here" state. */
+.icon-btn.active { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
 .icon-btn svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; }
 .icon-sun { display: block; }
 .icon-moon { display: none; }
@@ -206,9 +211,15 @@ input, select, textarea { font: inherit; color: inherit; }
 .main-nav {
   display: flex; gap: 4px; max-width: 1180px; margin: 0 auto; padding: 0 16px 10px;
   overflow-x: auto; scrollbar-width: none;
-  /* All 5 destinations don't fit unscrolled below ~460px -- fade the
-     trailing edge so "there's more" reads at a glance instead of Watchlist
-     just silently sitting off-screen with no visual hint. */
+  /* UX decision (2026-08-26): the primary row is now 4 destinations
+     (Today/Props/Games/My Board -- Performance moved to the always-visible
+     header icon, see index.html) and fits unscrolled at every real phone
+     width down to 375px (verified: test_browser_e2e.py's mobile checks).
+     overflow-x/mask stay only as a safety net for an unusually narrow
+     viewport or a future locale with longer label text -- NOT the primary
+     discovery mechanism any of these 4 destinations should ever depend on;
+     a primary destination sitting only reachable via this scroll would be
+     the same real problem the old 5-item row had. */
   -webkit-mask-image: linear-gradient(to right, black calc(100% - 28px), transparent);
   mask-image: linear-gradient(to right, black calc(100% - 28px), transparent);
 }
@@ -222,6 +233,14 @@ input, select, textarea { font: inherit; color: inherit; }
 .main-nav a.active { color: var(--accent-ink); background: var(--accent); }
 @media (max-width: 899px) {
   .main-nav a { min-height: 44px; padding: 7px 14px; }
+}
+@media (max-width: 400px) {
+  /* Real headroom check at 375px (iPhone SE/mini, the narrowest width this
+     product supports): 4 items at the 899px-breakpoint padding above measure
+     ~15-20px tighter than comfortable. Tightened here rather than shrinking
+     the 44px touch-target height that padding also provides. */
+  .main-nav { gap: 2px; padding: 0 10px 10px; }
+  .main-nav a { padding: 7px 9px; font-size: 13px; }
 }
 .nav-count {
   display: inline-block; margin-left: 5px; background: var(--bad); color: #fff;

@@ -662,7 +662,10 @@ function onRouteChange() {
     const params = rawQuery ? new URLSearchParams(rawQuery) : null;
     selectedGamePk = params && params.has("game_pk") ? Number(params.get("game_pk")) : null;
   }
-  $all(".main-nav a").forEach(a => a.classList.toggle("active", a.dataset.route === route));
+  // Performance moved out of .main-nav into the always-visible header icon
+  // (UX decision, 2026-08-26) -- included here explicitly so it still gets
+  // the real active-state indication every other primary destination does.
+  $all(".main-nav a, #performance-link").forEach(a => a.classList.toggle("active", a.dataset.route === route));
   $all(".page").forEach(p => p.hidden = true);
   document.getElementById(`page-${route}`).hidden = false;
   renderRoute();
