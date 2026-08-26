@@ -26,3 +26,7 @@ backtest/_sweep_short_windows_state.json
 dashboard/fullcount_board.html
 .serena/cache/
 .serena/*.log
+
+# Autosave-hook operational state (throttle marker + run log) -- not
+# meaningful history, would otherwise churn on every ~3-minute cycle.
+.claude/.autosave-state/

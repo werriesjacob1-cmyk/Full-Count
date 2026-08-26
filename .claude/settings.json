@@ -1,0 +1,29 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Bash|Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "mkdir -p /home/user/fullcount-tooling/.claude/.autosave-state; f=/home/user/fullcount-tooling/.claude/.autosave-state/last-run; now=$(date +%s); last=$(cat \"$f\" 2>/dev/null || echo 0); if [ $((now - last)) -ge 180 ]; then echo \"$now\" > \"$f\"; nohup bash /home/user/fullcount-tooling/.claude/worktree-autosave.sh >> /home/user/fullcount-tooling/.claude/.autosave-state/run.log 2>&1 & fi",
+            "timeout": 5,
+            "statusMessage": "Autosave check..."
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash /home/user/fullcount-tooling/.claude/worktree-autosave.sh >> /home/user/fullcount-tooling/.claude/.autosave-state/run.log 2>&1 || true",
+            "timeout": 30,
+            "statusMessage": "Final autosave..."
+          }
+        ]
+      }
+    ]
+  }
+}
