@@ -113,9 +113,41 @@ installed by default; install only when the specific task needs it) /
 - PINNED VERSION: 1.7
 - INSTALL STATUS: **INSTALLED**
 
-## Playwright (CLI, exploratory QA)
+## Context7 (external library/API documentation)
 
-- MODE: CLI/npx, on-demand
+- MODE: CLI + on-demand skill (`npx ctx7 setup --claude`), NOT MCP
+- PURPOSE: current, version-specific documentation for EXTERNAL
+  libraries/APIs (Cloudflare, Playwright, MLflow, GitHub API, etc.).
+  Serena handles this repo's own code; Context7 handles everything
+  outside it. Never use it for normal source navigation.
+- ALLOWED AGENT: all agents, on-demand only
+- WHEN TO USE: "what's the current signature/behavior of external library
+  X" -- exactly the kind of check this session did manually via WebFetch
+  for Cloudflare's Workers Builds docs and the `@cloudflare/vitest-plugin`
+  API this turn; Context7 would be the more direct tool for that once set
+  up.
+- WHEN NOT TO USE: this repo's own code (Serena's job); do not permanently
+  load it as an always-on MCP connector.
+- TOKEN COST: **CLI + Skills mode chosen over MCP mode specifically for
+  token cost** -- MCP mode would add a permanently-loaded tool schema to
+  every session regardless of whether a given task needs it; CLI + Skills
+  loads only on demand. (Context7's own docs present both modes as
+  equally valid without a token-efficiency recommendation either way --
+  this preference is FULL COUNT's own reasoning, not upstream's.)
+- CREDENTIALS: OAuth device-auth flow during `npx ctx7 setup`, generates
+  an API key afterward (`context7.com/dashboard`)
+- PINNED VERSION: n/a
+- INSTALL STATUS: **IDENTIFIED, NOT INSTALLED** -- setup requires an
+  interactive OAuth flow only Jacob can complete (phone browser is fine:
+  the flow is a normal OAuth redirect). Stop-here boundary; not attempted
+  this session.
+
+## Playwright CLI (exploratory QA, project-local)
+
+- MODE: CLI via `npx @playwright/cli` (verified resolvable this session,
+  v0.1.18 -- confirmed real and working, though still an early version
+  number, worth treating as young/less battle-tested than Playwright Test
+  itself), NOT the always-loaded browser MCP server
 - PURPOSE: exploratory browser QA -- screenshots, mobile viewport checks,
   console-error checks, light/dark mode
 - ALLOWED AGENT: fc-ux only
@@ -124,10 +156,16 @@ installed by default; install only when the specific task needs it) /
 - WHEN NOT TO USE: as a replacement for the deterministic
   `test_browser_e2e.py` suite -- a real behavior change still needs a real
   regression check added there, not just a screenshot
-- TOKEN COST: n/a (browser automation, not an LLM call)
+- TOKEN COST: **confirmed lower than the browser MCP server by
+  Playwright's own current docs** -- "concise CLI output, skills loaded
+  on demand" (CLI) vs. "tool schemas + snapshots in context" (MCP),
+  stated directly on `playwright.dev/agent-cli/introduction`. Skills
+  install via `<the CLI> install --skills`.
 - CREDENTIALS: none
-- PINNED VERSION: 1.56.1 (resolved via `npx playwright`)
-- INSTALL STATUS: **ON-DEMAND** (present via npx; not wired into any
+- PINNED VERSION: `@playwright/cli` 0.1.18 (via npx, project-local --
+  Playwright's own docs default to a global `npm install -g`, overridden
+  here per the governing instruction to prefer project-local/npx)
+- INSTALL STATUS: **ON-DEMAND** (verified resolvable via npx; not wired
   always-run path)
 
 ## Lighthouse
@@ -277,10 +315,59 @@ installed by default; install only when the specific task needs it) /
 - INSTALL STATUS: **DEFERRED** -- confirmed not installed; install
   on-demand, pytest-timeout first if any is added
 
+## MLflow (evaluate, do not force)
+
+- MODE: n/a -- not standing up a server
+- PURPOSE: experiment parameters/metrics/artifacts/model-version tracking
+  with a remote artifact store backend
+- ALLOWED AGENT: n/a (not adopted)
+- WHEN TO USE: n/a yet
+- WHEN NOT TO USE: as a permanent standing server "because it exists" --
+  the governing instruction is explicit that this must reduce actual
+  ambiguity/overhead to be worth adopting
+- TOKEN COST: n/a
+- CREDENTIALS: n/a
+- PINNED VERSION: n/a
+- INSTALL STATUS: **DEFERRED, STAGED DECISION**. NOW: the manifest +
+  checksum + R2 design in `engineering/RESEARCH_ARTIFACT_DURABILITY.md`
+  already covers artifact durability without a server. LATER: if research
+  overhead from tracking multiple challenger experiments by hand actually
+  becomes the bottleneck (not hypothetically), MLflow's tracking metadata
+  could layer on top of the same R2 artifact store as the backend --
+  revisit then, with a concrete pain point named, not preemptively.
+
+## Observability: Grafana Cloud / OpenTelemetry / k6 (planned option, not adopted)
+
+- MODE: n/a -- not instrumented yet
+- PURPOSE: future SLI/SLO tracking once the Live system has enough moving
+  parts to justify it -- heartbeat success/failure, GitHub dispatch
+  latency, workflow start latency, live/settlement/pricing freshness age,
+  error rates, traces (Grafana Cloud); load/latency testing for a future
+  customer-facing delta endpoint or transport (k6, part of the same
+  ecosystem)
+- ALLOWED AGENT: n/a (not adopted)
+- WHEN TO USE: n/a yet -- for the P0 soak specifically, simple structured
+  logs (already how `infra/live-heartbeat/src/index.js` logs) are
+  sufficient; don't add a metrics backend to prove out one heartbeat
+- WHEN NOT TO USE: as a production dependency before there are enough
+  real SLIs/SLOs defined to make it worth the operational overhead
+- TOKEN COST: n/a
+- CREDENTIALS: Grafana Cloud has a real free-forever tier (moved up from
+  "random future tool" to "planned option" per this decision pass, not
+  independently re-verified this session beyond that classification)
+- PINNED VERSION: n/a
+- INSTALL STATUS: **PLANNED OPTION, NOT ADOPTED**. Define the actual few
+  SLIs/SLOs that matter first (this session's own P0 soak-test contract
+  in `infra/live-heartbeat/README.md` is a starting list); instrument
+  only what those require, prefer OpenTelemetry/Prometheus-style open
+  standards over a vendor-specific agent, and do not make Grafana itself
+  a production dependency.
+
 ---
 
 ## Deliberately NOT installed (project decision, see governing prompt)
 
-Agent Reach (full stack), Claude Mem, LightRAG, Sentry, Grafana, Obsidian,
-GSD. Not needed for the immediate foundation/P0 work. Revisit only if a
-concrete task requires one specifically.
+Agent Reach (full stack), Claude Mem, LightRAG, Obsidian, GSD. Not needed
+for the immediate foundation/P0 work. Revisit only if a concrete task
+requires one specifically. (Grafana moved to "planned option" above,
+2026-08-26 -- no longer in this deferred-indefinitely list.)
