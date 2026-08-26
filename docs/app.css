@@ -565,7 +565,12 @@ main { max-width: 1180px; margin: 0 auto; padding: 20px 16px 80px; }
 
 /* ── Games page ───────────────────────────────────────────────────── */
 .game-list { display: flex; flex-direction: column; gap: 12px; }
-.game-card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-lg); padding: 16px; }
+/* .game-card is now a real <a> link into the game's drill-down page (Part
+   2, 2026-08-26) -- display:block/text-decoration:none restore the same
+   layout an unstyled <div> gave it for free; color:inherit + the existing
+   global `a { color: inherit }` keep team-name text from turning link-blue. */
+.game-card { display: block; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-lg); padding: 16px; text-decoration: none; color: inherit; cursor: pointer; }
+.game-card:hover { border-color: var(--accent); }
 .game-card-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 10px; }
 .game-teams { font-family: var(--font-display); font-weight: 700; font-size: 16px; }
 .game-time { font-family: var(--font-mono); font-size: 12.5px; color: var(--ink-faint); }

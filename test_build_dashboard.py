@@ -1875,6 +1875,190 @@ else:
     check(True, "node not available -- search check skipped, not failed")
 
 
+head("20. Games drill-down (Part 2, 2026-08-26): direct request -- \"I want people to be able "
+     "to click on a game on the schedule, and get a breakdown.\" Real bugs found building this: "
+     "(1) gameCard() rendered a plain, non-clickable <div> -- nothing to click at all. (2) TWO "
+     "existing [data-game] handlers (a Today-page schedule chip, a search result) already had "
+     "the real game_pk sitting in the element's own dataset and threw it away, always sending "
+     "the viewer to the generic, unscoped Games list. (3) The Games route silently discarded "
+     "its own query string (onRouteChange() only ever read rawQuery for the props route), so "
+     "even a correct #/games?game_pk=X link would have done nothing. Verifies game_pk survives "
+     "route entry, the click-preserving fix on the real DOM element, applyFilters()'s new "
+     "game_pk scope, gameCard()'s real href, and renderGameDetail()'s honest "
+     "'See all N props' count (the real total, not the picks list's own 6-item highlight cap) "
+     "plus its honest fallback for a stale/non-matching game_pk.")
+
+if node:
+    harness_games = """
+function makeHtmlEl() {
+  let html = '';
+  const handlers = {};
+  return {
+    get innerHTML() { return html; }, set innerHTML(v) { html = v; },
+    addEventListener(type, fn) { (handlers[type] = handlers[type] || []).push(fn); },
+    _dispatch(type) { (handlers[type] || []).forEach(fn => fn()); },
+    dataset: {}, style: {}, setAttribute(){}, removeAttribute(){}, getAttribute: () => null,
+    // A permissive stub (not null) -- this harness also exercises
+    // onRouteChange() for the props route, which triggers the real, full
+    // renderProps() as a side effect (route dispatch isn't something this
+    // test can selectively skip); renderProps() queries a handful of its
+    // own just-rendered elements (#f-sort etc.) via $()/querySelector and
+    // assigns .value/.addEventListener on the result, so it needs a real
+    // writable object back, not null, to avoid crashing on DOM structure
+    // this test doesn't otherwise care about.
+    querySelectorAll: () => [], querySelector: () => makeHtmlEl(), hidden: false, append(){}, value: "",
+  };
+}
+// esc() (dashboard/static/app.js) round-trips through a real
+// document.createElement("div").textContent/.innerHTML escape -- makeHtmlEl()
+// above is a plain innerHTML passthrough (right for reading back a rendered
+// page), not an escaper, so esc() needs its OWN element kind here or every
+// esc() call in renderGameDetail() (team names, etc.) would silently return
+// empty. Same pattern as the other harnesses in this file that call esc().
+function makeEscEl() {
+  let t = '';
+  return { set textContent(v) { t = String(v); }, get textContent() { return t; },
+    get innerHTML() {
+      return t.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+    } };
+}
+const _elById = new Map();
+function getElById(id) {
+  if (!_elById.has(id)) _elById.set(id, makeHtmlEl());
+  return _elById.get(id);
+}
+const document = {getElementById: getElById,
+  documentElement: {setAttribute(){}, removeAttribute(){}, getAttribute: () => null},
+  querySelectorAll: () => [], querySelector: () => null, createElement: () => makeEscEl(),
+  addEventListener(){}, body: {style:{}, append(){}}};
+const window = {matchMedia: () => ({matches:false}), location: {hash:''}, scrollY: 0, scrollTo(){}};
+let location = window.location;
+const localStorage = {getItem: () => null, setItem(){}};
+const fetch = () => Promise.reject(new Error("no network in test"));
+const setInterval = () => {};
+let ok = true;
+function assertEq(actual, expected, label) {
+  if (actual !== expected) { console.error("FAIL " + label + ": got " + JSON.stringify(actual) + " want " + JSON.stringify(expected)); ok = false; }
+}
+function assertTrue(cond, label) { if (!cond) { console.error("FAIL " + label); ok = false; } }
+
+try {
+""" + open(APP_JS_PATH, encoding="utf-8").read() + """
+
+const g1 = { game_pk: 111, matchup: "SEA @ OAK", away_team: "Seattle Mariners", home_team: "Oakland Athletics",
+  game_start: "2099-01-01T00:00:00Z", away_sp: "Pitcher A", home_sp: "Pitcher B", hp_ump: "Ump X",
+  weather: { dome: false, temp: 68, wind_mph: 5, wind_effect: "Out to CF" },
+  umpire: { name: "Ump X", k_pct: 0.24, bb_pct: 0.08 }, is_getaway: false, is_opener: false,
+  picks: [{ name: "Julio Rodriguez", prop: "To Hit a Home Run", hit_probability: 0.22, market_odds: 450 }] };
+const g2 = { game_pk: 222, matchup: "NYY @ BOS", away_team: "New York Yankees", home_team: "Boston Red Sox",
+  game_start: "2099-01-01T01:00:00Z", picks: [] };
+DATA = { schedule: [g1, g2], props: [
+  { id: "p1", name: "Julio Rodriguez", prop: "To Hit a Home Run", stat: "home_runs", game_pk: 111, hit_probability: 0.22 },
+  { id: "p2", name: "Cal Raleigh", prop: "Over 0.5 Hits", stat: "hits", game_pk: 111, hit_probability: 0.6 },
+  { id: "p3", name: "Aaron Judge", prop: "Over 0.5 Hits", stat: "hits", game_pk: 222, hit_probability: 0.65 },
+] };
+indexProps();
+
+// -- applyFilters(): game_pk scoping (AND with any other active filter) --
+filters.gamePk = 111;
+const gameScoped = applyFilters(DATA.props);
+assertEq(gameScoped.length, 2, "filters.gamePk === 111 keeps only the 2 real props from that game",
+  `got ${gameScoped.map(p => p.id)}`);
+assertTrue(gameScoped.every(p => p.game_pk === 111), "every scoped row genuinely belongs to game_pk 111");
+filters.families = new Set(["hits"]);
+const gameAndFamily = applyFilters(DATA.props);
+assertEq(gameAndFamily.length, 1, "game_pk scope combines with a real family filter (AND, not OR) -- " +
+  "only Cal Raleigh's Hits prop is both game 111 AND family hits", `got ${gameAndFamily.map(p => p.id)}`);
+filters.gamePk = null; filters.families = new Set();
+
+// -- onRouteChange(): game_pk survives route entry for BOTH routes it now applies to --
+location.hash = "#/games?game_pk=111";
+onRouteChange();
+assertEq(route, "games", "route parsed correctly despite the query string");
+assertEq(selectedGamePk, 111, "game_pk=111 from the URL actually reached selectedGamePk",
+  `got ${selectedGamePk}`);
+
+// REGRESSION GUARD: a plain #/games entry (no query -- a real nav-bar
+// click) must reset selectedGamePk, the same route-filter-leakage
+// discipline as the props route -- otherwise clicking "Games" in the main
+// nav after drilling into one game would silently keep showing that same
+// game's detail forever.
+location.hash = "#/games";
+onRouteChange();
+assertEq(selectedGamePk, null, "REGRESSION GUARD: a plain #/games entry resets a stale " +
+  "selectedGamePk left over from a previous drill-down");
+
+location.hash = "#/props?game_pk=111";
+onRouteChange();
+assertEq(filters.gamePk, 111, "game_pk=111 from the URL reached filters.gamePk on the props route " +
+  "too -- the 'See all N props for this game' link's real destination contract");
+filters.gamePk = null;
+
+// -- gameCard(): a real, clickable link that preserves game_pk, not a dead <div> --
+const cardHtml = gameCard(g1);
+assertTrue(cardHtml.trim().startsWith('<a '), "gameCard() renders a real <a> link, not a plain " +
+  "non-clickable <div> -- got " + cardHtml.slice(0, 40));
+assertTrue(cardHtml.includes('href="#/games?game_pk=111"'),
+  "the card's href preserves the real game_pk, got " + cardHtml);
+
+// -- renderGameDetail() via renderGames(): honest 'See all N props' count and fallback --
+selectedGamePk = 111;
+renderGames();
+const detailHtml = document.getElementById("page-games").innerHTML;
+assertTrue(detailHtml.includes("See all 2 props for this game"),
+  "the See-all link uses the REAL total props for this game (2, from DATA.props) -- not the " +
+  "picks list's own highlight cap (g1.picks has only 1 entry) -- got " + detailHtml);
+assertTrue(detailHtml.includes('href="#/props?game_pk=111"'),
+  "the See-all link's real destination carries game_pk, got " + detailHtml);
+assertTrue(detailHtml.includes("Seattle Mariners") && detailHtml.includes("Oakland Athletics"),
+  "the real team names render in the detail view");
+
+// A stale/non-matching game_pk (an old link, a game that already started
+// and dropped off tonight's board) gets an honest fallback, never a blank
+// page or a crash.
+selectedGamePk = 999999;
+renderGames();
+const fallbackHtml = document.getElementById("page-games").innerHTML;
+assertTrue(/isn.t on tonight.s board/i.test(fallbackHtml),
+  "a game_pk that matches nothing on tonight's real schedule shows an honest explanation, got " + fallbackHtml);
+selectedGamePk = null;
+
+// -- wireCardOpeners(): the [data-game] click handler preserves game_pk --
+// Real bug, found 2026-08-26: two existing call sites (a Today-page
+// schedule chip, a search result) already carried the real game_pk right
+// in the element's own dataset, but the click handler discarded it and
+// always navigated to the bare, unscoped #/games.
+const chip = makeHtmlEl();
+chip.dataset.game = "111";
+const fakeRoot = { querySelectorAll: (sel) => sel === "[data-game]" ? [chip] : [], querySelector: () => null };
+wireCardOpeners(fakeRoot);
+location.hash = "";
+chip._dispatch("click");
+assertEq(location.hash, "#/games?game_pk=111",
+  "clicking a [data-game] element navigates with the real game_pk preserved, not to the bare " +
+  "unscoped #/games -- got " + JSON.stringify(location.hash));
+
+} catch (e) { console.error(e); process.exit(1); }
+
+if (!ok) process.exit(1);
+console.log("Games drill-down checks passed");
+"""
+    harness_path_games = tempfile.mktemp(suffix=".js")
+    with open(harness_path_games, "w") as f:
+        f.write(harness_games)
+    try:
+        r = subprocess.run([node, harness_path_games], capture_output=True, text=True)
+        check(r.returncode == 0, "Games drill-down: game_pk survives route entry on both routes, "
+              "gameCard() is a real clickable link, renderGameDetail() reports an honest 'See all "
+              "N props' count with a real destination, and the [data-game] click handlers no "
+              "longer discard the game_pk sitting in their own dataset", r.stdout + r.stderr)
+    finally:
+        os.remove(harness_path_games)
+else:
+    check(True, "node not available -- Games drill-down check skipped, not failed")
+
+
 head("15. StaticSourceParityTests: dashboard/static/{index.html,app.css,app.js} is the ONLY "
      "real source for the frontend shell -- docs/ is build output copy_static_assets() "
      "overwrites unconditionally on every real build. Real incident, 2026-08-25: a frontend "

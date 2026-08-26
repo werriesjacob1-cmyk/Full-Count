@@ -32,7 +32,12 @@ let watchSnapshot = {}; // id -> {status, odds, lineup_assumed} at time-of-star,
 // ("all"), matching the old sentinel string's meaning, so a user can filter
 // to e.g. Hits + Home Runs, or Top Pick + Lean, simultaneously, instead of
 // being forced to pick exactly one value per dimension.
-let filters = { search: "", families: new Set(), statuses: new Set(), evidences: new Set(), sort: "default" };
+let filters = { search: "", families: new Set(), statuses: new Set(), evidences: new Set(), gamePk: null, sort: "default" };
+// selectedGamePk: which game (if any) the Games route is drilled into --
+// separate from `filters` since it's the Games route's own concept, not an
+// All Props filter (though a drill-down page can link INTO filters.gamePk
+// via a real "See all props for this game" link -- see renderGameDetail()).
+let selectedGamePk = null;
 let lastPollStamp = null;
 let lastFullFetchAt = 0;
 let lastFocusedEl = null; // element to restore focus to when a modal sheet/dialog closes
@@ -627,7 +632,7 @@ function onRouteChange() {
   const [rawRoute, rawQuery] = stripped.split("?");
   route = ROUTES.includes(rawRoute) ? rawRoute : "today";
   if (route === "props") {
-    filters = { search: "", families: new Set(), statuses: new Set(), evidences: new Set(), sort: filters.sort };
+    filters = { search: "", families: new Set(), statuses: new Set(), evidences: new Set(), gamePk: null, sort: filters.sort };
     if (rawQuery) {
       const params = new URLSearchParams(rawQuery);
       // Multi-select fix (Part 2, 2026-08-26): a link can request more than
@@ -642,7 +647,20 @@ function onRouteChange() {
       // filter at all for a plain name/team search, landing on the full,
       // unfiltered list instead of the N props it promised.
       if (params.has("search")) filters.search = params.get("search");
+      // Games drill-down (Part 2, 2026-08-26): "See all N props for this
+      // game" on a game's detail page scopes All Props to exactly that
+      // real game_pk, reusing the same filtering engine multi-select
+      // already runs through -- not a separate, second research surface.
+      if (params.has("game_pk")) filters.gamePk = Number(params.get("game_pk"));
     }
+  }
+  if (route === "games") {
+    // Games drill-down (Part 2, 2026-08-26): same route-filter-leakage
+    // discipline as props above -- a fresh navigation into #/games (a
+    // plain nav-bar click, no query) must show the real list, not silently
+    // keep showing whatever game a PREVIOUS visit drilled into.
+    const params = rawQuery ? new URLSearchParams(rawQuery) : null;
+    selectedGamePk = params && params.has("game_pk") ? Number(params.get("game_pk")) : null;
   }
   $all(".main-nav a").forEach(a => a.classList.toggle("active", a.dataset.route === route));
   $all(".page").forEach(p => p.hidden = true);
@@ -1017,6 +1035,7 @@ function matchesStatusFilter(p, statusSet) {
 }
 function applyFilters(props) {
   let rows = props;
+  if (filters.gamePk != null) rows = rows.filter(p => p.game_pk === filters.gamePk);
   if (filters.families.size) rows = rows.filter(p => filters.families.has(p.stat));
   if (filters.statuses.size) rows = rows.filter(p => matchesStatusFilter(p, filters.statuses));
   if (filters.evidences.size) rows = rows.filter(p => filters.evidences.has(p.reliability));
@@ -1084,6 +1103,7 @@ function renderProps() {
       <span class="filter-count desktop-only" id="props-active-count"></span>
       <button class="filter-chip-btn" id="f-clear-all" hidden>Clear all</button>
     </div>
+    <div class="active-search-note section-sub" id="props-game-note" hidden></div>
     <div class="active-search-note section-sub" id="props-search-note" hidden></div>
     <div class="prop-list" id="props-list"></div>
   `;
@@ -1113,7 +1133,7 @@ function renderProps() {
   // change -- including a multi-select checkbox toggle -- without a full
   // renderProps() re-render.
   $("#f-clear-all", el).addEventListener("click", () => {
-    filters = { search: "", families: new Set(), statuses: new Set(), evidences: new Set(), sort: filters.sort };
+    filters = { search: "", families: new Set(), statuses: new Set(), evidences: new Set(), gamePk: null, sort: filters.sort };
     renderProps();
   });
 
@@ -1137,6 +1157,20 @@ function refreshPropsList(el) {
   const activeCount = activeFilterCount();
   $("#props-active-count", el).textContent = `${activeCount} active`;
   $("#f-clear-all", el).hidden = activeCount === 0;
+  // Games drill-down (Part 2, 2026-08-26): honest context for how a viewer
+  // got here scoped to one real game -- same pattern as the search note,
+  // with its own "clear" that only lifts the game scope (search/other
+  // filters, if any, stay exactly as the viewer set them).
+  const gameNote = $("#props-game-note", el);
+  const scopedGame = filters.gamePk != null ? (DATA.schedule || []).find(g => g.game_pk === filters.gamePk) : null;
+  if (scopedGame) {
+    gameNote.hidden = false;
+    gameNote.innerHTML = `Showing props for ${esc(scopedGame.away_team || "")} @ ${esc(scopedGame.home_team || "")} <button class="link-btn" id="f-clear-game">clear</button>`;
+    $("#f-clear-game", gameNote).addEventListener("click", () => { filters.gamePk = null; refreshPropsList(el); });
+  } else {
+    gameNote.hidden = true;
+    gameNote.innerHTML = "";
+  }
   const searchNote = $("#props-search-note", el);
   if (filters.search) {
     searchNote.hidden = false;
@@ -1152,7 +1186,8 @@ function refreshPropsList(el) {
   wireCardOpeners(el);
 }
 function activeFilterCount() {
-  return filters.families.size + filters.statuses.size + filters.evidences.size + (filters.search ? 1 : 0);
+  return filters.families.size + filters.statuses.size + filters.evidences.size
+    + (filters.search ? 1 : 0) + (filters.gamePk != null ? 1 : 0);
 }
 function openFilterSheet() {
   const backdrop = document.createElement("div");
@@ -1206,9 +1241,37 @@ function openFilterSheet() {
 // ══════════════════════════════════════════════════════════════════════
 //  GAMES PAGE
 // ══════════════════════════════════════════════════════════════════════
+function gameWeatherText(g) {
+  const wx = g.weather;
+  if (!wx) return "";
+  return wx.dome ? "Dome — weather neutral"
+    : `${wx.temp ?? "—"}°F${wx.wind_mph ? `, wind ${wx.wind_mph}mph ${wx.wind_effect || ""}` : ""}`;
+}
+function gameUmpireText(g) {
+  return g.umpire ? `HP Ump: ${esc(g.umpire.name)} (${pct(g.umpire.k_pct, 1)} K, ${pct(g.umpire.bb_pct, 1)} BB)` : "";
+}
+// Games drill-down (Part 2, 2026-08-26): direct request -- "I want people to
+// be able to click on a game on the schedule, and get a breakdown." The list
+// view existed, but nothing was actually clickable and game_pk never
+// survived into the URL, so there was no real per-game page to link to,
+// bookmark, or share. selectedGamePk (set by onRouteChange() from
+// #/games?game_pk=X) switches this same route between the list and one
+// game's detail view.
 function renderGames() {
   const el = document.getElementById("page-games");
   const games = DATA.schedule || [];
+  if (selectedGamePk != null) {
+    const g = games.find(g => g.game_pk === selectedGamePk);
+    if (g) { renderGameDetail(el, g); return; }
+    // A real game_pk that doesn't match tonight's schedule (a stale link
+    // from an earlier day, a typo, a game that's since started and dropped
+    // off this pregame research surface) -- honest fallback, not a silent
+    // blank page or a crash.
+    el.innerHTML = `<div class="empty-state"><div class="es-icon">🗓️</div><h3>That game isn't on tonight's board</h3>
+      <p>It may have already started, or this link is from an earlier day.</p>
+      <div class="es-cta"><a class="btn btn-primary" href="#/games">See tonight's games</a></div></div>`;
+    return;
+  }
   if (!games.length) {
     el.innerHTML = `<div class="empty-state"><div class="es-icon">🗓️</div><h3>No games with a research breakdown yet</h3><p>Check back once tonight's games are set.</p></div>`;
     return;
@@ -1217,18 +1280,13 @@ function renderGames() {
     <div class="game-list">${games.map(gameCard).join("")}</div>`;
 }
 function gameCard(g) {
-  const wx = g.weather;
-  let wxText = "";
-  if (wx) {
-    wxText = wx.dome ? "Dome — weather neutral"
-      : `${wx.temp ?? "—"}°F${wx.wind_mph ? `, wind ${wx.wind_mph}mph ${wx.wind_effect || ""}` : ""}`;
-  }
-  const ump = g.umpire ? `HP Ump: ${esc(g.umpire.name)} (${pct(g.umpire.k_pct, 1)} K, ${pct(g.umpire.bb_pct, 1)} BB)` : "";
+  const wxText = gameWeatherText(g);
+  const ump = gameUmpireText(g);
   const picks = (g.picks || []).map(p => `<div class="game-pick-line">
       <span>${esc(p.name)} — ${esc(p.prop)}</span>
       <span>${pctBig(p.hit_probability)}${p.market_odds != null ? " · " + fmtOdds(p.market_odds) : ""}</span>
     </div>`).join("");
-  return `<div class="game-card">
+  return `<a class="game-card" href="#/games?game_pk=${g.game_pk}">
     <div class="game-card-head">
       <div class="game-teams">${esc(g.away_team || "")} @ ${esc(g.home_team || "")}</div>
       <div class="game-time">${gameTimeLabel(g.game_start)}</div>
@@ -1239,7 +1297,38 @@ function gameCard(g) {
       ${ump ? `<span>${esc(ump)}</span>` : ""}
     </div>
     ${picks ? `<div class="game-picks">${picks}</div>` : `<p class="section-sub">No standout research for this game yet.</p>`}
-  </div>`;
+  </a>`;
+}
+// The drill-down itself: everything gameCard() already shows, at full size
+// (no truncation), plus a real "See all N props" link into All Props
+// scoped to this exact game_pk -- the "in-game prop filtering" this page
+// exists to lead into, reusing the same multi-select-capable applyFilters()
+// engine rather than building a second, parallel prop list here.
+function renderGameDetail(el, g) {
+  const wxText = gameWeatherText(g);
+  const ump = gameUmpireText(g);
+  const picks = (g.picks || []).map(p => `<div class="game-pick-line">
+      <span>${esc(p.name)} — ${esc(p.prop)}</span>
+      <span>${pctBig(p.hit_probability)}${p.market_odds != null ? " · " + fmtOdds(p.market_odds) : ""}</span>
+    </div>`).join("");
+  // Real, honest total -- not the up-to-6 highlight count g.picks itself
+  // caps at (see _build_game_context()'s own docstring for why it caps
+  // there: a curated highlight list, not the full research surface).
+  const totalPropsForGame = publicProps().filter(p => p.game_pk === g.game_pk).length;
+  el.innerHTML = `
+    <a class="link-btn" href="#/games" style="display:inline-block;margin-bottom:14px;">← All games</a>
+    <div class="section-head"><h2>${esc(g.away_team || "")} @ ${esc(g.home_team || "")}</h2>
+      <span class="section-sub">${gameTimeLabel(g.game_start)}</span></div>
+    <div class="game-meta-row" style="margin-bottom:16px;">
+      ${g.away_sp ? `<span>${esc(g.away_sp)} vs ${esc(g.home_sp || "TBD")}</span>` : ""}
+      ${wxText ? `<span>${esc(wxText)}</span>` : ""}
+      ${ump ? `<span>${esc(ump)}</span>` : ""}
+      ${g.is_getaway ? `<span>Getaway day</span>` : ""}
+      ${g.is_opener ? `<span>Bullpen/opener day</span>` : ""}
+    </div>
+    ${picks ? `<div class="game-picks">${picks}</div>` : `<p class="section-sub">No standout research for this game yet.</p>`}
+    ${totalPropsForGame > 0 ? `<div style="margin-top:16px;"><a class="btn btn-primary" href="#/props?game_pk=${g.game_pk}">See all ${totalPropsForGame} props for this game →</a></div>` : ""}
+  `;
 }
 
 // ══════════════════════════════════════════════════════════════════════
@@ -1467,8 +1556,12 @@ function wireCardOpeners(root) {
   $all("[data-open]", root).forEach(btn => {
     btn.addEventListener("click", () => openDetail(btn.dataset.open));
   });
+  // Real bug, found 2026-08-26 (Games drill-down build): this discarded
+  // the real game_pk sitting right in data-game and always sent the viewer
+  // to the generic, unscoped Games list -- a schedule chip or search result
+  // for one specific game silently lost which game it was for.
   $all("[data-game]", root).forEach(btn => {
-    btn.addEventListener("click", () => { go("games"); });
+    btn.addEventListener("click", () => { go("games", "game_pk=" + btn.dataset.game); });
   });
 }
 function openDetail(id) {
@@ -1922,7 +2015,7 @@ function initSearch() {
     }
     results.hidden = false;
     $all("[data-open]", results).forEach(b => b.addEventListener("click", () => { openDetail(b.dataset.open); results.hidden = true; input.blur(); }));
-    $all("[data-game]", results).forEach(b => b.addEventListener("click", () => { go("games"); results.hidden = true; input.blur(); }));
+    $all("[data-game]", results).forEach(b => b.addEventListener("click", () => { go("games", "game_pk=" + b.dataset.game); results.hidden = true; input.blur(); }));
     $all("[data-team]", results).forEach(b => b.addEventListener("click", () => {
       input.value = b.dataset.team; results.hidden = true; input.blur(); go("props"); filters.search = b.dataset.team; renderProps();
     }));
