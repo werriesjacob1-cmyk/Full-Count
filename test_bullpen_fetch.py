@@ -276,6 +276,90 @@ check(len(gp._reliever_detail(many_relievers)) == 8,
       "a full bullpen's raw usage table is capped at 8 -- real names past that are noise, "
       "not context, on a per-game presentation surface")
 
+head("7. ROLE AUDIT (release-candidate review, 2026-08-26): _bullpen_fetch_one()'s "
+     "is_rotation_starter parameter lets a real opener/bulk-reliever who happened to "
+     "be listed first in a box score be counted as real bullpen usage, instead of "
+     "unconditionally excluded as 'that game's starter.' Found via a real week of "
+     "games (2026-08-18..25): 6 of 8 short-outing 'starters' were season-long "
+     "primarily-relief pitchers (Cade Gibson G=33 GS=1 among them) -- a real ~5% "
+     "misclassification rate, not a theoretical edge case. is_rotation_starter=None "
+     "(the default, every existing caller/test above) preserves the exact prior "
+     "behavior -- checks 1-6 above already prove that unchanged.")
+
+box_opener = _box_for(5001, starter_pitches=23, reliever_rows=[("Holton", 15)])
+
+with mock.patch.object(m.statsapi, "schedule", return_value=[{"game_id": 5001, "game_date": "2026-08-19"}]), \
+     mock.patch.object(m.statsapi, "boxscore_data", return_value=box_opener):
+    _, usage_no_classifier, _ = m._bullpen_fetch_one(("Detroit Tigers", TEAM_ID))
+check("Starter One" not in usage_no_classifier,
+      "with no classifier (is_rotation_starter=None, the default), the game's first "
+      "pitcher is still always excluded -- unchanged prior behavior",
+      f"got usage keys={list(usage_no_classifier.keys())}")
+
+with mock.patch.object(m.statsapi, "schedule", return_value=[{"game_id": 5001, "game_date": "2026-08-19"}]), \
+     mock.patch.object(m.statsapi, "boxscore_data", return_value=box_opener):
+    _, usage_confirmed_starter, _ = m._bullpen_fetch_one(
+        ("Detroit Tigers", TEAM_ID), is_rotation_starter=lambda name, pid: True)
+check("Starter One" not in usage_confirmed_starter,
+      "a classifier that CONFIRMS he's a real rotation starter (True) still excludes "
+      "him, same as unknown", f"got usage keys={list(usage_confirmed_starter.keys())}")
+
+with mock.patch.object(m.statsapi, "schedule", return_value=[{"game_id": 5001, "game_date": "2026-08-19"}]), \
+     mock.patch.object(m.statsapi, "boxscore_data", return_value=box_opener):
+    _, usage_unknown_role, _ = m._bullpen_fetch_one(
+        ("Detroit Tigers", TEAM_ID), is_rotation_starter=lambda name, pid: None)
+check("Starter One" not in usage_unknown_role,
+      "a classifier that returns None (unknown role -- e.g. Statcast-fallback season "
+      "data with no G/GS columns) still conservatively excludes him, never guesses",
+      f"got usage keys={list(usage_unknown_role.keys())}")
+
+with mock.patch.object(m.statsapi, "schedule", return_value=[{"game_id": 5001, "game_date": "2026-08-19"}]), \
+     mock.patch.object(m.statsapi, "boxscore_data", return_value=box_opener):
+    _, usage_real_opener, _ = m._bullpen_fetch_one(
+        ("Detroit Tigers", TEAM_ID), is_rotation_starter=lambda name, pid: False)
+check("Starter One" in usage_real_opener,
+      "REGRESSION GUARD: a classifier that CONFIRMS he's primarily a reliever (False) "
+      "now counts him as real bullpen usage, using his real IP/pitches from this game",
+      f"got usage keys={list(usage_real_opener.keys())}")
+check(usage_real_opener.get("Starter One", {}).get("pitches") == 23,
+      "his real pitch count from this game (23, an opener-length outing) is what's "
+      "recorded, not a fabricated number", f"got {usage_real_opener.get('Starter One')}")
+
+head("8. generate_picks._bullpen_role_classifier(): the real function that builds the "
+     "is_rotation_starter callable from a season-to-date pitching frame, using the "
+     "SAME >=0.5 gamesStarted/games convention this codebase already uses elsewhere "
+     "(compute_bullpen_era, the stadium role split) -- not a new heuristic.")
+
+import pandas as pd  # noqa: E402
+import generate_picks as gp2  # noqa: E402
+
+season_df = pd.DataFrame([
+    {"player_id": 806188, "Name": "Cade Gibson", "G": 33, "GS": 1},   # real example
+    {"player_id": 669160, "Name": "Dustin May", "G": 24, "GS": 24},   # real rotation starter
+    {"player_id": 999999, "Name": "No Games Guy", "G": 0, "GS": 0},   # G=0 edge case
+])
+classify = gp2._bullpen_role_classifier(season_df)
+check(classify is not None, "a real, non-empty season frame produces a real classifier")
+check(classify("Cade Gibson", 806188) is False,
+      "REGRESSION GUARD: the real Cade Gibson example (G=33 GS=1, GS/G=0.03) "
+      "classifies as NOT a rotation starter", f"got {classify('Cade Gibson', 806188)}")
+check(classify("Dustin May", 669160) is True,
+      "a real full-season rotation starter (G=24 GS=24, GS/G=1.0) classifies as a "
+      "rotation starter", f"got {classify('Dustin May', 669160)}")
+check(classify("No Games Guy", 999999) is None,
+      "G=0 (no real games to compute a ratio from) returns None (unknown), never a "
+      "fabricated True/False", f"got {classify('No Games Guy', 999999)}")
+check(classify("Nobody Real", 1) is None,
+      "a person_id/name with no row at all in the season frame returns None",
+      f"got {classify('Nobody Real', 1)}")
+check(gp2._bullpen_role_classifier(None) is None,
+      "no season frame at all (e.g. every real fetch failed) returns None -- "
+      "fetch_bullpen_scores() then passes is_rotation_starter=None through, the exact "
+      "prior always-exclude behavior")
+check(gp2._bullpen_role_classifier(pd.DataFrame()) is None,
+      "an empty season frame (e.g. the Statcast-fallback path returning nothing) also "
+      "returns None rather than a classifier that would only ever answer None anyway")
+
 n_pass = sum(1 for ok, _, _ in _results if ok)
 n_total = len(_results)
 print("\n" + "=" * 78)

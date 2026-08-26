@@ -52,7 +52,7 @@ cache (already enabled, same cache dir within one job run), re-calling shared
 fetchers here does not mean a second round of network traffic for anything
 mlb_daily.py already pulled.
 """
-import os, sys, json, re, unicodedata, math
+import os, sys, json, re, unicodedata, math, functools
 from datetime import datetime, timezone
 from collections import defaultdict
 import pandas as pd
@@ -538,8 +538,45 @@ def fetch_public_betting_bias(game_meta):
     return out
 
 
-def fetch_bullpen_scores(game_meta):
-    """Reuses mlb_daily.py's already-fixed, parallelized bullpen fetch directly."""
+def _bullpen_role_classifier(pit_season_df):
+    """callable(name, person_id) -> True/False/None for _bullpen_fetch_one()'s
+    is_rotation_starter parameter (bullpen ROLE AUDIT, 2026-08-26): a real,
+    already-established convention in THIS codebase (mlb_daily.py's stadium
+    role split and compute_bullpen_era() below both already use gamesStarted/
+    games >= 0.5 to call a pitcher a "starter") applied to a new call site,
+    not a new heuristic. Reuses lookup_player()'s already-trusted MLBAM-id-
+    first/name-fallback matching -- no new fetch, no name-matching risk this
+    codebase hasn't already measured and closed elsewhere.
+
+    None whenever the season frame lacks G/GS for this pitcher (most notably
+    the Statcast-fallback pitching frame used when FanGraphs 403s, which
+    carries no games/starts columns at all) -- degrades to the exact prior
+    behavior (always exclude the game's first pitcher) rather than ever
+    guessing from an absent signal."""
+    if pit_season_df is None or pit_season_df.empty:
+        return None
+    lookup = name_lookup(pit_season_df)
+
+    def classify(name, person_id):
+        row = lookup_player(lookup, name, person_id)
+        if not row:
+            return None
+        g, gs = row.get("G"), row.get("GS")
+        if not g or g <= 0 or gs is None:
+            return None
+        return (gs / g) >= 0.5
+    return classify
+
+
+def fetch_bullpen_scores(game_meta, pit_season_df=None):
+    """Reuses mlb_daily.py's already-fixed, parallelized bullpen fetch directly.
+
+    pit_season_df (optional): season-to-date pitching frame, used only to
+    build a role classifier so a real opener/bulk-reliever isn't
+    misclassified as "that game's starter, not a reliever" -- see
+    _bullpen_role_classifier()'s own docstring and _bullpen_fetch_one()'s
+    ROLE AUDIT comment. Omitting it (existing callers, existing tests)
+    preserves the exact prior behavior."""
     teams_seen = {}
     jobs = []
     for gm in game_meta:
@@ -554,8 +591,10 @@ def fetch_bullpen_scores(game_meta):
                 pass
     out = {}
     if jobs:
+        role_classifier = _bullpen_role_classifier(pit_season_df)
+        fetch_one = functools.partial(m._bullpen_fetch_one, is_rotation_starter=role_classifier)
         with m.ThreadPoolExecutor(max_workers=10) as ex:
-            for team_name, usage, err in ex.map(m._bullpen_fetch_one, jobs):
+            for team_name, usage, err in ex.map(fetch_one, jobs):
                 if usage:
                     fatigued = sum(1 for u in usage.values() if u["pitches"] > 60)
                     out[team_name] = {
@@ -3527,7 +3566,7 @@ def _build_and_score():
     team_bat_df = m.fg_team_bat(m.YEAR)
     park_wx = fetch_park_weather(game_meta)
     ump_scores = fetch_umpire_scores(game_meta)
-    bullpen_scores = fetch_bullpen_scores(game_meta)
+    bullpen_scores = fetch_bullpen_scores(game_meta, pit_season_df)
     bullpen_quality = compute_bullpen_era(pit_season_df)
     sharp_bias = fetch_public_betting_bias(game_meta)
     l7_form = fetch_l7_batter_form()
