@@ -94,6 +94,47 @@ class GameStateTests(unittest.TestCase):
     def test_empty_status_does_not_guess_from_clock(self):
         self.assertEqual(game_state({}, row=row(), now=T3), "unknown")
 
+    def test_live_feed_before_scheduled_start_never_settles(self):
+        """Real 2026-08-26 incident: MLB's feed reported abstractGameState
+        =="live" 19 minutes before game_pk 823584's own scheduled first
+        pitch, and refresh_grades.py wrote a role-terminal provisional_miss
+        for Dustin May off that claim -- a customer saw a settled prop
+        before the game had thrown a pitch. game_state() must refuse "live"
+        (and "final") before the clock says the game could have started,
+        regardless of what the feed claims."""
+        live_status = {"abstractGameState": "Live", "detailedState": "In Progress", "codedGameState": "I"}
+        final_status = {"abstractGameState": "Final", "detailedState": "Final", "codedGameState": "F"}
+        before_start = row(game_start=T1)
+        self.assertEqual(game_state(live_status, row=before_start, now=T0), "pregame")
+        self.assertEqual(game_state(final_status, row=before_start, now=T0), "pregame")
+        # Same feed claim, same row, only the clock changed -- must resolve
+        # normally once actually at/after the scheduled start.
+        self.assertEqual(game_state(live_status, row=before_start, now=T2), "live")
+        self.assertEqual(game_state(final_status, row=before_start, now=T2), "final")
+
+    def test_pregame_guard_never_suppresses_non_settlement_states(self):
+        """cancelled/postponed/delayed/suspended are legitimate
+        pregame-announceable facts, not settlement claims -- the clock
+        guard added for the Dustin May incident must never touch them."""
+        before_start = row(game_start=T1)
+        cases = {
+            "cancelled": {"abstractGameState": "Final", "detailedState": "Cancelled", "codedGameState": "C"},
+            "postponed": {"abstractGameState": "Preview", "detailedState": "Postponed", "codedGameState": "P"},
+            "delayed": {"abstractGameState": "Preview", "detailedState": "Delayed Start", "codedGameState": "D"},
+            "suspended": {"abstractGameState": "Live", "detailedState": "Suspended", "codedGameState": "U"},
+        }
+        for expected, status in cases.items():
+            with self.subTest(expected=expected):
+                self.assertEqual(game_state(status, row=before_start, now=T0), expected)
+
+    def test_missing_row_or_clock_falls_back_to_unguarded_mapping(self):
+        """Callers that don't pass row/now (the plain-mapping test above)
+        must be completely unaffected by the clock guard."""
+        live_status = {"abstractGameState": "Live", "detailedState": "In Progress", "codedGameState": "I"}
+        self.assertEqual(game_state(live_status), "live")
+        self.assertEqual(game_state(live_status, row=row(game_start=T1)), "live")
+        self.assertEqual(game_state(live_status, now=T0), "live")
+
     def test_scheduled_start_is_absolute_publication_cutoff(self):
         self.assertTrue(before_betting_cutoff(row(), T0))
         self.assertFalse(before_betting_cutoff(row(), T1))

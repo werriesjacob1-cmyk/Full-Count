@@ -297,12 +297,25 @@ def game_state(status, row=None, now=None):
         return "suspended"
     if "delay" in combined or coded == "D":
         return "delayed"
+    # Real 2026-08-26 incident (Dustin May, game_pk 823584): the live feed
+    # briefly reported abstractGameState=="live" 19 minutes before that
+    # game's own scheduled first pitch, and nothing downstream re-checked
+    # the claim against the clock -- a role-terminal settlement fact got
+    # written (dashboard/refresh_grades.py) for a game that had not thrown
+    # a pitch. "live"/"final" are the two states settlement actually acts
+    # on, so before the scheduled start neither is ever trusted no matter
+    # what the feed says -- cancelled/postponed/delayed/suspended above are
+    # legitimate pregame-announceable states, not settlement claims, and
+    # are unaffected by this guard.
+    start = parse_utc(row.get("game_start")) if row else None
+    now_dt = parse_utc(now) if isinstance(now, str) else now
+    before_start = start is not None and now_dt is not None and now_dt < start
     if coded in ("F", "O") or "final" in detailed or "completed" in detailed or "game over" in detailed:
-        return "final"
+        return "pregame" if before_start else "final"
     if abstract == "live" or coded in ("I", "M") or detailed in (
         "in progress", "manager challenge", "review",
     ):
-        return "live"
+        return "pregame" if before_start else "live"
     if abstract == "preview" and detailed in (
         "", "scheduled", "pre-game", "pregame", "warmup", "warm-up",
     ):
