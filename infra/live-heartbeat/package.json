@@ -1,0 +1,17 @@
+{
+  "name": "fc-live-heartbeat",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Cloudflare Worker: wakes dashboard-live.yml every ~5 minutes via workflow_dispatch. A clock, nothing more.",
+  "type": "module",
+  "scripts": {
+    "test": "vitest run",
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy"
+  },
+  "devDependencies": {
+    "@cloudflare/vitest-plugin": "^1.1.0",
+    "vitest": "^4.1.11",
+    "wrangler": "^4.126.0"
+  }
+}
