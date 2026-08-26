@@ -25,7 +25,8 @@ backtest/_sweep_short_windows_state.json
 # committed) is the only dashboard/ asset meant to be tracked.
 dashboard/fullcount_board.html
 .serena/cache/
-.serena/*.log
+.serena/logs/
+.serena/project.local.yml
 
 # Autosave-hook operational state (throttle marker + run log) -- not
 # meaningful history, would otherwise churn on every ~3-minute cycle.
