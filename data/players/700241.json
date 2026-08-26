@@ -248,8 +248,8 @@
         {
           "prop": "Over 4.5 Strikeouts",
           "type": "pitcher",
-          "score": 26.0,
-          "notable_signals": 0,
+          "score": 27.5,
+          "notable_signals": 1,
           "matchup": "Baltimore Orioles @ St. Louis Cardinals",
           "game_pk": 823015,
           "team": "St. Louis Cardinals",
@@ -260,7 +260,10 @@
             "opp_team_k_pct": 74.0,
             "same_hand_ratio": 43.75,
             "l14_k_pct": 42.3529,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 78.2018,
+            "ump_k_pct": 0.036,
+            "ump_bb_pct": 0.084
           },
           "hit_probability": 0.4572,
           "raw_hit_probability": 0.4572,
@@ -276,7 +279,7 @@
         {
           "prop": "Over 16.5 Outs Recorded",
           "type": "pitcher",
-          "score": 75.7,
+          "score": 74.4,
           "notable_signals": 1,
           "matchup": "Baltimore Orioles @ St. Louis Cardinals",
           "game_pk": 823015,
@@ -285,12 +288,12 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.6464,
+            "outs_rate": 0.6493,
             "avg_outs_per_start": 16.48
           },
-          "hit_probability": 0.6464,
+          "hit_probability": 0.6493,
           "raw_hit_probability": null,
-          "lift": 0.14,
+          "lift": 0.1279,
           "reliability": "A",
           "sample_n": 25,
           "projection": {

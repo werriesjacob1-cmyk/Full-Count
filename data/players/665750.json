@@ -1797,6 +1797,135 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-26",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 33.7,
+          "notable_signals": 0,
+          "matchup": "Baltimore Orioles @ St. Louis Cardinals",
+          "game_pk": 823015,
+          "team": "Baltimore Orioles",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "sp_era_weak": 28.0,
+            "l7_avg_ev": 0.0,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 41.4,
+            "season_barrel_pct": 8.6667,
+            "lineup_slot": 25.0,
+            "bullpen_fatigue": 33.3333,
+            "platoon_barrel_pct": -1.04,
+            "platoon_xwoba": -1.08,
+            "opp_catcher_framing": -0.6,
+            "days_rest": 0.0,
+            "woba_ahead": 10.0,
+            "woba_behind": 8.1818,
+            "hard_hit_105_rate": -0.025,
+            "team_total_move": 6.0,
+            "team_total_open": 0.0,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": 0.04,
+            "vs_rp_ops": -0.732,
+            "ump_k_pct": -0.036,
+            "ump_bb_pct": -0.084
+          },
+          "hit_probability": 0.6566,
+          "raw_hit_probability": 0.6484,
+          "lift": 0.0089,
+          "reliability": "A",
+          "sample_n": 111,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 45.1,
+          "notable_signals": 0,
+          "matchup": "Baltimore Orioles @ St. Louis Cardinals",
+          "game_pk": 823015,
+          "team": "Baltimore Orioles",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": 3.54,
+            "sprint_speed": 50.0,
+            "catcher_poptime": 0.0,
+            "on_base": 36.6603
+          },
+          "hit_probability": 0.0895,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 111,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 4.1,
+          "notable_signals": 0,
+          "matchup": "Baltimore Orioles @ St. Louis Cardinals",
+          "game_pk": 823015,
+          "team": "Baltimore Orioles",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0456
+          },
+          "hit_probability": 0.0456,
+          "raw_hit_probability": null,
+          "lift": -0.0029,
+          "reliability": "A",
+          "sample_n": 111,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 0.0,
+          "notable_signals": 0,
+          "matchup": "Baltimore Orioles @ St. Louis Cardinals",
+          "game_pk": 823015,
+          "team": "Baltimore Orioles",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0109
+          },
+          "hit_probability": 0.0109,
+          "raw_hit_probability": null,
+          "lift": -0.0102,
+          "reliability": "A",
+          "sample_n": 111,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

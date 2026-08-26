@@ -373,6 +373,58 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-26",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 37.8,
+          "notable_signals": 2,
+          "matchup": "Texas Rangers @ Chicago White Sox",
+          "game_pk": 824555,
+          "team": "Texas Rangers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 18.5714,
+            "l7_avg_ev": 0.0,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 3.15,
+            "park_hr_index": 77.2,
+            "season_barrel_pct": 0.0,
+            "lineup_slot": 0.0,
+            "bullpen_fatigue": 55.5556,
+            "platoon_barrel_pct": -5.0,
+            "platoon_xwoba": -2.04,
+            "opp_catcher_framing": 0.6,
+            "days_rest": 0.0,
+            "woba_ahead": 0.0,
+            "woba_behind": 56.3636,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": -2.0,
+            "series_game": 2.0,
+            "sp_rp_ops_gap": -3.888,
+            "vs_rp_ops": -3.456,
+            "ump_k_pct": 0.312,
+            "ump_bb_pct": 0.288
+          },
+          "hit_probability": 0.6118,
+          "raw_hit_probability": 0.6098,
+          "lift": 0.0471,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

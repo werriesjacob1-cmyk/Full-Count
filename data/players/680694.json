@@ -220,8 +220,8 @@
         {
           "prop": "Over 4.5 Strikeouts",
           "type": "pitcher",
-          "score": 34.7,
-          "notable_signals": 0,
+          "score": 30.8,
+          "notable_signals": 1,
           "matchup": "Baltimore Orioles @ St. Louis Cardinals",
           "game_pk": 823015,
           "team": "Baltimore Orioles",
@@ -230,9 +230,12 @@
           "combo_player_ids": null,
           "signals": {
             "opp_team_k_pct": 36.0,
-            "same_hand_ratio": 61.1111,
+            "same_hand_ratio": 33.3333,
             "l14_k_pct": 2.3529,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 78.2018,
+            "ump_k_pct": 0.036,
+            "ump_bb_pct": 0.084
           },
           "hit_probability": 0.5205,
           "raw_hit_probability": 0.5205,
@@ -248,7 +251,7 @@
         {
           "prop": "Over 17.5 Outs Recorded",
           "type": "pitcher",
-          "score": 41.3,
+          "score": 38.9,
           "notable_signals": 0,
           "matchup": "Baltimore Orioles @ St. Louis Cardinals",
           "game_pk": 823015,
@@ -257,18 +260,46 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.4736,
+            "outs_rate": 0.4783,
             "avg_outs_per_start": 16.64
           },
-          "hit_probability": 0.4736,
+          "hit_probability": 0.4783,
           "raw_hit_probability": null,
-          "lift": 0.0266,
+          "lift": 0.0069,
           "reliability": "A",
           "sample_n": 25,
           "projection": {
             "stat": "pitcher_outs",
             "value": 17.5,
             "needs": 18
+          }
+        },
+        {
+          "prop": "Over 8.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 45.8,
+          "notable_signals": 0,
+          "matchup": "Baltimore Orioles @ St. Louis Cardinals",
+          "game_pk": 823015,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            680694,
+            700241
+          ],
+          "signals": {
+            "combined_k_edge": -0.05
+          },
+          "hit_probability": 0.5334,
+          "raw_hit_probability": null,
+          "lift": -0.05,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 8.5,
+            "needs": 9
           }
         }
       ]

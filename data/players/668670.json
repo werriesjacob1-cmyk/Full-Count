@@ -640,6 +640,106 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-26",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 48.8,
+          "notable_signals": 2,
+          "matchup": "Texas Rangers @ Chicago White Sox",
+          "game_pk": 824555,
+          "team": "Chicago White Sox",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 55.7143,
+            "l7_avg_ev": 100.0,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 4.125,
+            "park_hr_index": 77.2,
+            "season_barrel_pct": 39.3333,
+            "lineup_slot": 25.0,
+            "bullpen_fatigue": 41.6667,
+            "platoon_barrel_pct": 5.0,
+            "platoon_xwoba": 1.14,
+            "opp_catcher_framing": 0.24,
+            "days_rest": 4.0,
+            "woba_ahead": 0.0,
+            "woba_behind": 40.0,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": -2.0,
+            "series_game": 2.0,
+            "ump_k_pct": 0.312,
+            "ump_bb_pct": 0.288
+          },
+          "hit_probability": 0.5988,
+          "raw_hit_probability": 0.5532,
+          "lift": -0.0489,
+          "reliability": "B",
+          "sample_n": 45,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 0.0,
+          "notable_signals": 0,
+          "matchup": "Texas Rangers @ Chicago White Sox",
+          "game_pk": 824555,
+          "team": "Chicago White Sox",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.029
+          },
+          "hit_probability": 0.029,
+          "raw_hit_probability": null,
+          "lift": -0.0195,
+          "reliability": "B",
+          "sample_n": 45,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 0.0,
+          "notable_signals": 0,
+          "matchup": "Texas Rangers @ Chicago White Sox",
+          "game_pk": 824555,
+          "team": "Chicago White Sox",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0062
+          },
+          "hit_probability": 0.0062,
+          "raw_hit_probability": null,
+          "lift": -0.0149,
+          "reliability": "B",
+          "sample_n": 45,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

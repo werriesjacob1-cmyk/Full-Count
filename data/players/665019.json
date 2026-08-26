@@ -1838,6 +1838,139 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-26",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 54.7,
+          "notable_signals": 2,
+          "matchup": "Minnesota Twins @ Athletics",
+          "game_pk": 824963,
+          "team": "Minnesota Twins",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 29.4286,
+            "l7_avg_ev": 100.0,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 3.0,
+            "park_hr_index": 60.1,
+            "season_barrel_pct": 58.6667,
+            "lineup_slot": 50.0,
+            "bullpen_fatigue": 18.5185,
+            "platoon_barrel_pct": 3.92,
+            "platoon_xwoba": 0.9,
+            "park_hand_index": 2.63,
+            "opp_catcher_framing": 0.24,
+            "days_rest": 0.0,
+            "woba_ahead": 84.5455,
+            "woba_behind": 26.3636,
+            "pull_park_synergy": 1.7674,
+            "hard_hit_105_rate": -0.27,
+            "team_total_move": 0.0,
+            "team_total_open": 4.0,
+            "getaway_day": -2.0,
+            "series_game": 2.0,
+            "sp_rp_ops_gap": -2.184,
+            "vs_rp_ops": -1.536,
+            "ump_k_pct": -0.24,
+            "ump_bb_pct": -0.24
+          },
+          "hit_probability": 0.6065,
+          "raw_hit_probability": 0.6059,
+          "lift": 0.0418,
+          "reliability": "A",
+          "sample_n": 115,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 40.6,
+          "notable_signals": 0,
+          "matchup": "Minnesota Twins @ Athletics",
+          "game_pk": 824963,
+          "team": "Minnesota Twins",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": -1.74,
+            "sprint_speed": 15.625,
+            "catcher_poptime": 25.7143,
+            "on_base": 61.6123
+          },
+          "hit_probability": 0.0687,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 115,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 1.7,
+          "notable_signals": 0,
+          "matchup": "Minnesota Twins @ Athletics",
+          "game_pk": 824963,
+          "team": "Minnesota Twins",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0358
+          },
+          "hit_probability": 0.0358,
+          "raw_hit_probability": null,
+          "lift": -0.0127,
+          "reliability": "A",
+          "sample_n": 115,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 0.0,
+          "notable_signals": 0,
+          "matchup": "Minnesota Twins @ Athletics",
+          "game_pk": 824963,
+          "team": "Minnesota Twins",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0102
+          },
+          "hit_probability": 0.0102,
+          "raw_hit_probability": null,
+          "lift": -0.0109,
+          "reliability": "A",
+          "sample_n": 115,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }
