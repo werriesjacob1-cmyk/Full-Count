@@ -90,6 +90,72 @@ check(tropicana[2] is True and tropicana[16] is False,
       "Tropicana Field is untouched -- a genuine fixed dome with no way to open at all")
 
 
+head("5b. mlb_daily.STADIUMS: full all-30-park roof/dome/humidor ground-truth audit "
+     "(2026-08-26 P0 ledger reconciliation) -- the original audit found and fixed 2 real "
+     "errors (Truist Park, Rogers Centre) via live-data spot verification, but nothing "
+     "durably locked in the correctness of the other 28 parks' dome/retractable/humidor "
+     "facts -- a future accidental edit to this table would go uncaught. This is the missing "
+     "regression guard: real-world ground truth for is_dome/retractable_roof/humidor for "
+     "every one of the 30 real MLB teams, cross-checked against STADIUMS by team abbreviation "
+     "(not dict key, since venue names change -- e.g. Minute Maid Park -> Daikin Park -- but "
+     "team abbreviations are the stable join key). is_dome here means 'has a roof that can be "
+     "closed, fixed or retractable' per this file's own STADIUMS comment header and "
+     "fetch_weather()'s actual usage (dome=True + retract=False => permanently closed; "
+     "dome=True + retract=True => real per-game roof state; dome=False => never has a roof "
+     "at all, real outdoor weather always applies).")
+
+# (team_abbr, is_dome, retractable_roof, humidor) -- the 30 real facts as of the
+# 2026 season. Fixed/permanent domes: Tropicana Field (TB) only. Retractable-roof
+# parks: Rogers Centre (TOR), Globe Life Field (TEX), Daikin Park (HOU), T-Mobile
+# Park (SEA), loanDepot park (MIA), American Family Field (MIL), Chase Field
+# (ARI). Every other park is fully open-air (is_dome=False). Publicly known
+# humidor parks: Coors Field (COL, since 2002), Chase Field (ARI, since 2018),
+# Globe Life Field (TEX, since it opened in 2020).
+ROOF_GROUND_TRUTH = {
+    "NYY": (False, False, False), "BOS": (False, False, False), "BAL": (False, False, False),
+    "TOR": (True, True, False), "TB": (True, False, False), "CWS": (False, False, False),
+    "CHC": (False, False, False), "CIN": (False, False, False), "CLE": (False, False, False),
+    "KC": (False, False, False), "MIN": (False, False, False), "WSH": (False, False, False),
+    "TEX": (True, True, True), "HOU": (True, True, False), "LAA": (False, False, False),
+    "ATH": (False, False, False), "LAD": (False, False, False), "SD": (False, False, False),
+    "SF": (False, False, False), "SEA": (True, True, False), "MIA": (True, True, False),
+    "ATL": (False, False, False), "MIL": (True, True, False), "STL": (False, False, False),
+    "COL": (False, False, True), "ARI": (True, True, True), "DET": (False, False, False),
+    "PHI": (False, False, False), "PIT": (False, False, False), "NYM": (False, False, False),
+}
+check(len(ROOF_GROUND_TRUTH) == 30, "ground truth itself covers exactly the 30 real MLB teams, "
+      "not a stale/incomplete list", f"got {len(ROOF_GROUND_TRUTH)}")
+
+by_team = {row[3]: (name, row) for name, row in m.STADIUMS.items()}
+check(len(by_team) == 30, "STADIUMS has exactly 30 entries -- no team missing, none duplicated "
+      "under two different venue-name keys", f"got {len(by_team)}: {sorted(by_team)}")
+check(set(by_team) == set(ROOF_GROUND_TRUTH),
+      "STADIUMS' real team abbreviations exactly match the ground-truth set -- no team "
+      "missing from either side", f"STADIUMS only: {set(by_team) - set(ROOF_GROUND_TRUTH)}, "
+      f"ground-truth only: {set(ROOF_GROUND_TRUTH) - set(by_team)}")
+
+for team, (want_dome, want_retract, want_humidor) in ROOF_GROUND_TRUTH.items():
+    if team not in by_team:
+        continue  # already flagged by the set-equality check above
+    venue, row = by_team[team]
+    got_dome, got_humidor, got_retract = row[2], row[14], row[16]
+    check(got_dome is want_dome,
+          f"{team} ({venue}): is_dome should be {want_dome}", f"got {got_dome}")
+    check(got_retract is want_retract,
+          f"{team} ({venue}): retractable_roof should be {want_retract}", f"got {got_retract}")
+    check(got_humidor is want_humidor,
+          f"{team} ({venue}): humidor should be {want_humidor}", f"got {got_humidor}")
+    # A fixed dome with a real per-game "retractable" read makes no physical
+    # sense (nothing to retract), and a park marked as having no roof at all
+    # can't simultaneously be retractable -- catches a future edit that sets
+    # these two flags into a combination fetch_weather()/real_roof_status()
+    # was never designed to handle, independent of whether it happens to
+    # match either ground-truth row above.
+    check(not (got_dome is False and got_retract is True),
+          f"{team} ({venue}): retractable_roof=True with is_dome=False is a self-contradiction "
+          "-- a park with no roof at all cannot have a retractable one")
+
+
 def _fake_meteo(condition_desc, wind_deg=180, wind_mph=12.0):
     return {"timezone": "America/New_York", "hourly": {
         "time": ["2026-08-25T19:00"],
