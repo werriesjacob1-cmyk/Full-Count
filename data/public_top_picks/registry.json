@@ -2,7 +2,7 @@
   "schema_version": 1,
   "identity_schema_version": 2,
   "rollout_version": "pre-phase-v-live-lifecycle-v1",
-  "updated_at": "2026-08-26T14:26:33.458202+00:00",
+  "updated_at": "2026-08-26T16:23:58.307245+00:00",
   "migration": {
     "version": "pre-phase-v-live-lifecycle-v1",
     "completed_at": "2026-08-17T23:14:57+00:00",
@@ -3477,6 +3477,103 @@
         },
         "qualification_timestamp": "2026-08-26T13:58:15.463582+00:00",
         "board_timestamp": "2026-08-26T13:58:15.430230+00:00",
+        "slate_date": "2026-08-26"
+      }
+    },
+    "fc2:824234:player-690993:hits:1:over": {
+      "canonical_id": "fc2:824234:player-690993:hits:1:over",
+      "settlement_identity": [
+        "824234",
+        [
+          "player",
+          "690993"
+        ],
+        "hits",
+        "1",
+        "over"
+      ],
+      "slate_date": "2026-08-26",
+      "first_published_at": "2026-08-26T16:23:58.307245+00:00",
+      "publication_provenance": {
+        "artifact_id": "7a1331dafe8a9d273e50e5ed5eb8157709da8914053b55cdb3a04c08aed66952",
+        "source_commit": "a0be12c06b34ac1790c1111f5c89e7a8bcb7e03a",
+        "workflow_run_id": "32988072173",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-08-26T16:23:30.471620+00:00",
+        "data_hash": "3022547d69b4af0c88ab06fa8e672fb1bc6224f7a87edc8d2cea119ba7b63330",
+        "live_hash": "0d9eb823ebd82f0356f9ffdd595eb101eff32f236961535b7b3381325c00591a"
+      },
+      "snapshot": {
+        "id": "fc2:824234:player-690993:hits:1:over",
+        "identity_version": 2,
+        "game_pk": 824234,
+        "player_id": 690993,
+        "combo_player_ids": null,
+        "type": "batter",
+        "name": "Colt Keith",
+        "team": "Detroit Tigers",
+        "matchup": "Tampa Bay Rays @ Detroit Tigers",
+        "game_start": "2026-08-26T17:10:00Z",
+        "stat": "hits",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "hits",
+          "value": 0.5,
+          "needs": 1
+        },
+        "prop": "Over 0.5 Hits",
+        "hit_probability": 0.6328,
+        "market_odds": -150,
+        "market_implied": 0.6,
+        "market_edge": 0.0328,
+        "market_hold": null,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (A), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (7.7 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "L7 avg EV 96.5mph (league ~88.5) \u2014 hot recent contact",
+          "L7 barrel% 50.0 \u2014 hot recent contact",
+          "Bat speed trending up L14 (+2.2mph 2nd-half vs 1st-half)",
+          "Platoon: L bat vs RHP (favorable)",
+          "Opposing SP ERA 5.33 \u2014 shaky matchup for the pitcher",
+          "Projected 4.19 PA (batting slot 4)",
+          "Hitters batting ahead of him: 0.337 wOBA (league ~.320)",
+          "Hitter batting behind him: 0.346 wOBA (league ~.320)"
+        ],
+        "watchouts": [
+          "Team implied for 3.75 runs (league avg 4.245; line 3.5, game total 7.5) \u2014 a weak offensive environment",
+          "Season barrel% 7.3 \u2014 below-average barrel rate",
+          "Opposing bullpen fatigue: 1/9 relievers over 60 pitches in L7 (fresh pen \u2014 tougher matchup late)"
+        ],
+        "prob_ci": [
+          0.624,
+          0.6614
+        ],
+        "reliability": "A",
+        "reliability_note": null,
+        "sample_n": 121,
+        "lineup_assumed": null,
+        "base_rate": 0.5647,
+        "lift": 0.0681,
+        "lift_reference_rate": null,
+        "stable_lift": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "e139b800",
+          "prediction_timestamp": "2026-08-26T16:16:40.148962+00:00",
+          "odds_fetched_at": "2026-08-26T16:16:32.198048+00:00",
+          "board_generated_at": "2026-08-26T16:16:40.117578+00:00"
+        },
+        "qualification_timestamp": "2026-08-26T16:16:40.148962+00:00",
+        "board_timestamp": "2026-08-26T16:16:40.117578+00:00",
         "slate_date": "2026-08-26"
       }
     }
