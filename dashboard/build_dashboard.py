@@ -244,6 +244,20 @@ def _compute_streaks(all_priced, max_workers=12):
 # repo's session history) with no generic batter facts leaking in -- so
 # they are deliberately NOT in this table and pass through unfiltered,
 # rather than risk misclassifying an unaudited template.
+#
+# KNOWN TECH DEBT (2026-08-26, transitional -- not being migrated in this
+# PR): this whole classifier depends on stable substring matching against
+# score_batter()'s/select_moonshots()'s literal English text templates. It
+# is safe by construction (an unmatched string is never dropped, only
+# unprioritized -- see _select_market_evidence()'s docstring), but it is
+# still string-matching a presentation layer, not a stable contract. Any
+# future wording change to one of the templates below needs a matching
+# update to _EVIDENCE_TAG_PATTERNS or that fact quietly stops being
+# recognized as market-specific (it still displays, just unprioritized).
+# The durable fix is to have score_batter()/select_moonshots() attach a
+# structured reason code to each why/watchout item at the point they're
+# generated, instead of this function re-deriving one from rendered text
+# after the fact -- out of scope for this already-large PR.
 _EVIDENCE_TAG_PATTERNS = [
     # (tag, substring) -- first match wins. Matched against the REAL,
     # verbatim text templates score_batter()/select_moonshots() emit (see
