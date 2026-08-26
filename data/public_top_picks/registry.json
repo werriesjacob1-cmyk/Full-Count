@@ -2,7 +2,7 @@
   "schema_version": 1,
   "identity_schema_version": 2,
   "rollout_version": "pre-phase-v-live-lifecycle-v1",
-  "updated_at": "2026-08-26T14:00:24.303042+00:00",
+  "updated_at": "2026-08-26T14:26:33.458202+00:00",
   "migration": {
     "version": "pre-phase-v-live-lifecycle-v1",
     "completed_at": "2026-08-17T23:14:57+00:00",
@@ -3377,6 +3377,92 @@
         "lineup_assumed": null,
         "base_rate": 0.565,
         "lift": 0.048,
+        "lift_reference_rate": null,
+        "stable_lift": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "7af6fa99",
+          "prediction_timestamp": "2026-08-26T13:58:15.463582+00:00",
+          "odds_fetched_at": "2026-08-26T13:58:10.042501+00:00",
+          "board_generated_at": "2026-08-26T13:58:15.430230+00:00"
+        },
+        "qualification_timestamp": "2026-08-26T13:58:15.463582+00:00",
+        "board_timestamp": "2026-08-26T13:58:15.430230+00:00",
+        "slate_date": "2026-08-26"
+      }
+    },
+    "fc2:823015:player-700241:pitcher_outs:17:over": {
+      "canonical_id": "fc2:823015:player-700241:pitcher_outs:17:over",
+      "settlement_identity": [
+        "823015",
+        [
+          "player",
+          "700241"
+        ],
+        "pitcher_outs",
+        "17",
+        "over"
+      ],
+      "slate_date": "2026-08-26",
+      "first_published_at": "2026-08-26T14:26:33.458202+00:00",
+      "publication_provenance": {
+        "artifact_id": "2a6aa090d6ed6808bec7a11360c67e4c590c2fef532afe3b45bbe8a0887cf86a",
+        "source_commit": "b08393ba88133c396b00100287122808abc41780",
+        "workflow_run_id": "32980226063",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-08-26T14:26:22.287382+00:00",
+        "data_hash": "c8a617b4e544e51d9b022b3a1aeb566434a3a71d70696dadd59b467a8f386428",
+        "live_hash": "e165f2db8ca6321fa6f4fe49d71fb33bc2abce9e30825274632b8123de2073ad"
+      },
+      "snapshot": {
+        "id": "fc2:823015:player-700241:pitcher_outs:17:over",
+        "identity_version": 2,
+        "game_pk": 823015,
+        "player_id": 700241,
+        "combo_player_ids": null,
+        "type": "pitcher",
+        "name": "Michael McGreevy",
+        "team": "St. Louis Cardinals",
+        "matchup": "Baltimore Orioles @ St. Louis Cardinals",
+        "game_start": "2026-08-26T23:45:00Z",
+        "stat": "pitcher_outs",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "pitcher_outs",
+          "value": 16.5,
+          "needs": 17
+        },
+        "prop": "Over 16.5 Outs Recorded",
+        "hit_probability": 0.6442,
+        "market_odds": -125,
+        "market_implied": 0.5192,
+        "market_edge": 0.125,
+        "market_hold": 0.0701,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (A), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (13.0 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "Recorded 17+ outs (5.2 IP) in 64.4% of his last 25 real starts (league 49.5%, avg 16.48 outs/start)"
+        ],
+        "watchouts": [],
+        "prob_ci": [
+          0.5716,
+          0.7123
+        ],
+        "reliability": "A",
+        "reliability_note": null,
+        "sample_n": 25,
+        "lineup_assumed": null,
+        "base_rate": 0.4951,
+        "lift": 0.1491,
         "lift_reference_rate": null,
         "stable_lift": null,
         "versions": {
