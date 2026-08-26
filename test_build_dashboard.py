@@ -1518,23 +1518,23 @@ assertEq(whyNotTopPickReason({recommendation_status: "neutral", hit_probability:
 assertEq(whyNotTopPickReason({recommendation_status: "neutral", hit_probability: 0.65, status_reasons: ["thin evidence"]}),
   "thin evidence", "a genuinely interesting (>=60%) Neutral DOES surface its real reason");
 
-// -- isTopPickSuspect()/suspectChip(): P0-5 fix, real complaint -- "a Top
-// Pick with a major market-disagreement/SUSPECT warning must show that
-// warning, not hide it because it still qualified." classify_recommendation()
-// appends a SECOND status_reasons entry only for a SUSPECT Top Pick; the
-// old-only reader of status_reasons (whyNotTopPickReason, tested above)
-// explicitly returns null for every top_pick, so this note was previously
-// unreachable everywhere on the site. --
+// -- isTopPickSuspect(): P0-5's original structured signal, KEPT (Phase 8,
+// 2026-08-26: "prefer internal structured data remains available while
+// customer-facing warning presentation is removed/reworded") -- only its
+// presentation changed. classify_recommendation() still appends a SECOND
+// status_reasons entry for a SUSPECT Top Pick; isTopPickSuspect() still
+// reads that shape. --
 assertTrue(isTopPickSuspect({recommendation_status: "top_pick", status_reasons: ["primary reason", "note: the market itself disagrees"]}),
   "a Top Pick with 2 status_reasons (the SUSPECT-note shape) is flagged suspect");
 assertTrue(!isTopPickSuspect({recommendation_status: "top_pick", status_reasons: ["primary reason"]}),
   "a normal Top Pick with only 1 status_reasons is NOT flagged suspect");
 assertTrue(!isTopPickSuspect({recommendation_status: "lean", status_reasons: ["a", "b"]}),
   "a non-Top-Pick with 2 status_reasons is never flagged suspect -- this is Top-Pick-specific");
-assertTrue(suspectChip({recommendation_status: "top_pick", status_reasons: ["p", "note: market disagrees"]}).includes("Market Disagrees"),
-  "suspectChip() renders a real, visible chip for a suspect Top Pick");
-assertEq(suspectChip({recommendation_status: "top_pick", status_reasons: ["p"]}), "",
-  "suspectChip() renders nothing for a non-suspect Top Pick");
+assertEq(typeof suspectChip, "undefined",
+  "REGRESSION GUARD (product decision, 2026-08-26): suspectChip() -- the '⚠ Market Disagrees' " +
+  "badge renderer -- no longer exists. A Top Pick must never look like it's warning the " +
+  "customer not to trust itself; market context now lives ONLY in the neutral Full Count vs. " +
+  "Market comparison (modelVsMarketBlock()), never as a warning badge next to TOP PICK.");
 
 const suspectTopPick = {
   id: "c", name: "Player C", team: "SEA", prop: "Over 0.5 Hits", hit_probability: 0.66,
@@ -1544,10 +1544,15 @@ const suspectTopPick = {
   batting_order: null,
 };
 const body3 = detailBody(suspectTopPick);
-assertTrue(body3.includes("Market Disagrees"), "a suspect Top Pick's card chip renders in the detail view too");
-assertTrue(body3.includes("the market itself disagrees with this read"),
-  "a suspect Top Pick's detail view shows the REAL warning text verbatim, not hidden");
-assertTrue(body3.includes("top-pick-warning"), "the warning renders in its own visually-distinct section");
+assertTrue(!body3.includes("Market Disagrees"),
+  "REGRESSION GUARD: a suspect Top Pick's detail view never shows the old '⚠ Market Disagrees' badge text");
+assertTrue(!body3.includes("size with that in mind") && !body3.includes("far more often a gap in the model"),
+  "REGRESSION GUARD: the alarmist warning-box prose never renders anywhere in the detail view");
+assertTrue(!body3.includes("top-pick-warning"),
+  "REGRESSION GUARD: the old visually-distinct warning section is gone entirely");
+assertTrue(body3.includes("Full Count vs. Market") && body3.includes("mvm-bar-fill"),
+  "the neutral Full Count vs. Market visual comparison still renders for every prop, suspect or not "+
+  "-- market disagreement is context, never hidden, just not a warning label");
 
 // -- _ordinalSuffix(): plain English ordinals, including the 11/12/13 exception --
 assertEq(_ordinalSuffix(1), "st", "1st");
@@ -1595,14 +1600,15 @@ assertTrue(body6.includes("Why This Qualified") && body6.includes("Clears the re
   "a real Top Pick's own real qualification reason (status_reasons[0], already computed by " +
   "recommendation.py) now renders (capSentence-cased), got " + body6);
 // REGRESSION GUARD: the suspect Top Pick fixture (defined above, body3) carries a SECOND
-// status_reasons entry (the SUSPECT note) -- that one must stay exclusively in the separate
-// top-pick-warning section, never duplicated into Why This Qualified.
+// status_reasons entry (the SUSPECT note) -- that alarmist second reason must never render
+// anywhere in the detail view at all now (2026-08-26 product decision), including inside
+// Why This Qualified, which shows only the real, non-alarmist status_reasons[0].
 assertTrue(body3.includes("Why This Qualified") && body3.includes("Clears the real probability floor"),
   "a suspect Top Pick still shows its real primary qualification reason");
 const qualifiedSectionOnly = body3.split("Why This Qualified")[1] || "";
 assertTrue(!qualifiedSectionOnly.slice(0, 300).includes("the market itself disagrees"),
   "REGRESSION GUARD: the SUSPECT-specific second reason is never duplicated into Why This " +
-  "Qualified -- it already has its own visually-distinct warning section, got " + qualifiedSectionOnly.slice(0, 300));
+  "Qualified, got " + qualifiedSectionOnly.slice(0, 300));
 
 const leanWithOrder = {
   id: "b", name: "Player B", team: "BOS", prop: "Over 1.5 Total Bases", hit_probability: 0.63,

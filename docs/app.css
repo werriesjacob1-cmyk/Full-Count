@@ -304,7 +304,13 @@ input, select, textarea { font: inherit; color: inherit; }
   text-align: center; font-size: 12px; color: var(--ink-faint); font-family: var(--font-mono);
   padding: 6px 12px; border-bottom: 1px solid var(--line-soft);
 }
-.freshness-bar .stale-flag { color: var(--warn); font-weight: 700; }
+/* Calm delayed-state wording (Part 6 of the UX revamp, 2026-08-26) --
+   was font-weight:700 (bold, shouting) rendering literal ALL-CAPS engineering
+   text ("LIVE DATA STALE"). freshnessBarMessage() in app.js now supplies
+   sentence-case, channel-specific phrasing; this class only needs a mild
+   color distinction from the neutral baseline text next to it, not visual
+   alarm. The engineering-visible alert stays loud in Actions/logs. */
+.freshness-bar .stale-flag { color: var(--warn); font-weight: 500; }
 
 /* ── Layout ───────────────────────────────────────────────────────── */
 main { max-width: 1180px; margin: 0 auto; padding: 20px 16px 80px; }
@@ -453,9 +459,6 @@ main { max-width: 1180px; margin: 0 auto; padding: 20px 16px 80px; }
 .chip-lineup-confirmed { background: var(--good-soft); color: var(--good); }
 .chip-lineup-assumed { background: var(--warn-soft); color: var(--warn); }
 .chip-stale { background: var(--bad-soft); color: var(--bad); }
-.chip-suspect { background: var(--warn-soft); color: var(--warn); }
-.top-pick-warning { background: var(--warn-soft); border-radius: 10px; padding: 10px 14px; margin-bottom: 18px; }
-.top-pick-warning .section-sub { color: var(--warn); font-weight: 600; margin: 0; }
 .chip-evidence-strong { background: var(--good-soft); color: var(--good); }
 .chip-evidence-solid { background: var(--lean-soft); color: var(--lean); }
 .chip-evidence-developing { background: var(--warn-soft); color: var(--warn); }

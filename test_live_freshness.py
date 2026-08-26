@@ -122,7 +122,7 @@ const result = vm.runInContext(`(() => {
   result.chips = {
     liveGetsChip: liveStaleChip(livePropFull) !== "",
     finalGetsNoChipEvenWhileGlobalStale: liveStaleChip(finalPropFull) === "",
-    barShowsStale: bar.innerHTML.includes("LIVE DATA STALE"),
+    barShowsStale: bar.innerHTML.includes('class="stale-flag"'),
   };
 
   // ---- integration: clock advances while backend silently stops ---------
@@ -145,11 +145,47 @@ const result = vm.runInContext(`(() => {
   renderFreshness();
   const callsAfterSecondStaleTick = globalThis.__renderRouteCalls;
   result.clockAdvance = {
-    freshBarHadNoStale: !freshBar.includes("LIVE DATA STALE"),
+    freshBarHadNoStale: !freshBar.includes('class="stale-flag"'),
     freshCallsAfterFirst,
-    staleBarShowsStale: staleBar.includes("LIVE DATA STALE"),
+    staleBarShowsStale: staleBar.includes('class="stale-flag"'),
     renderRouteCalledExactlyOnceOnFlip: callsAfterFlipToStale - freshCallsAfterFirst === 1,
     noExtraRenderRouteOnRepeatStaleTick: callsAfterSecondStaleTick === callsAfterFlipToStale,
+  };
+
+  // ---- calm, tiered freshness wording (Part 6 of the UX revamp,
+  // 2026-08-26; direct product decision after a real incident where a
+  // finished, LOST Top Pick still showed "Live" + an ALL-CAPS "LIVE DATA
+  // STALE"/"LIVE DATA STATUS UNKNOWN" alarm). Detection thresholds are
+  // UNCHANGED (still LIVE_STALE_THRESHOLD_SECONDS=15m for "delayed",
+  // LIVE_INCIDENT_THRESHOLD_SECONDS=30m for the wording-only escalation)
+  // -- only wording is under test here. -----------------------------------
+  DATA = {
+    // prices_updated_at deliberately omitted -- isolates the game/settlement
+    // channel's wording tiers from the odds channel's, which is exercised
+    // separately (freshnessBarMessage()'s oddsIncident/gameIncident branches).
+    generated_at: docT0.grades_checked_at, date: "2020-06-01",
+    grades_checked_at: docT0.grades_checked_at,
+    props: [livePropFull], summary: {},
+  };
+  indexProps();
+  FAKE_NOW = T0 + 60 * 1000; // healthy: nothing alarming
+  renderFreshness();
+  const healthyBar = bar.innerHTML;
+  FAKE_NOW = T0 + 20 * 60 * 1000; // 20m: small delay, still calm, no "delayed" word
+  renderFreshness();
+  const smallDelayBar = bar.innerHTML;
+  FAKE_NOW = T0 + 40 * 60 * 1000; // 40m: real incident tier
+  renderFreshness();
+  const incidentBar = bar.innerHTML;
+  result.tieredWording = {
+    healthyHasNoStaleFlag: !healthyBar.includes('class="stale-flag"'),
+    smallDelayShowsPlainFact: smallDelayBar.includes("Game status checked") && smallDelayBar.includes("20m ago"),
+    // Strip HTML tags/attributes first -- the .stale-flag CLASS NAME itself
+    // contains the substring "stale" and must not trip this check; only the
+    // visible TEXT is under test here.
+    smallDelayHasNoAlarmWords: !/STALE|UNKNOWN|delayed/i.test(smallDelayBar.replace(/<[^>]*>/g, "")),
+    incidentUsesCalmDelayedWording: incidentBar.includes("Game updates delayed") && incidentBar.includes("last checked"),
+    incidentHasNoAllCaps: !/[A-Z]{4,}/.test(incidentBar.replace(/<[^>]*>/g, "").replace(/UTC|Aug|PM|AM/g, "")),
   };
 
   // ---- regression: a poll carrying ONLY a heartbeat advance (no other
@@ -251,6 +287,19 @@ class LiveFreshnessTests(unittest.TestCase):
         # healthy no-op check cycle) would be silently dropped, and the
         # stale banner would never clear even once the backend recovers.
         self.assertTrue(self.result["heartbeatOnlyPollRegression"]["pickedUpNewHeartbeat"])
+
+    def test_calm_tiered_freshness_wording_no_all_caps_alarm(self):
+        t = self.result["tieredWording"]
+        self.assertTrue(t["healthyHasNoStaleFlag"], "a healthy freshness state shows nothing alarming")
+        self.assertTrue(t["smallDelayShowsPlainFact"],
+                         "a small delay (20m, under the 30m incident threshold) reads as a plain fact")
+        self.assertTrue(t["smallDelayHasNoAlarmWords"],
+                         "a small delay must not use STALE/UNKNOWN/delayed-style alarm words")
+        self.assertTrue(t["incidentUsesCalmDelayedWording"],
+                         "a real incident (40m) uses calm 'delayed' wording, not an ALL-CAPS alarm")
+        self.assertTrue(t["incidentHasNoAllCaps"],
+                         "REGRESSION GUARD: no ALL-CAPS text anywhere in the incident-tier bar "
+                         "(the literal old 'LIVE DATA STALE'/'STATUS UNKNOWN' phrasing must be gone)")
 
     def test_clock_advancing_with_no_backend_write_still_surfaces_staleness(self):
         c = self.result["clockAdvance"]

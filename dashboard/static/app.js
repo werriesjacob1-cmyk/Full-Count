@@ -219,26 +219,24 @@ function staleChip(p) {
   }
   return p.stale ? `<span class="chip chip-stale">Stale Data</span>` : "";
 }
-// 2026-08-2X data-integrity fix (P0-5, Top Pick warning visibility): a Top
-// Pick candidate that classify_recommendation() flagged SUSPECT (the
-// market itself disagrees with the model's read) gets a SECOND entry in
-// status_reasons -- "note: the market itself disagrees with this read
-// (...) -- still a Top Pick on the model's own probability and price
-// test, but size with that in mind." Real bug: this note was computed and
-// then structurally unreachable everywhere on the site -- the only reader
-// of status_reasons, whyNotTopPickReason() (detail view), explicitly
-// returns null whenever recommendation_status === "top_pick" (it exists
-// to explain why something ISN'T a Top Pick), so a Top Pick's own warning
-// about itself was silently hidden precisely because it still qualified.
-// isTopPickSuspect()/topPickWarning() are the real fix: they read the
-// SAME field, gated the opposite way, so a Top Pick that earned this
-// warning shows it everywhere a Top Pick can appear -- the compact card
-// grid, not just one tap deeper in the detail sheet.
+// isTopPickSuspect(): true when classify_recommendation() flagged this Top
+// Pick as one the market itself disagrees with (status_reasons carries a
+// second entry -- see recommendation.py). PRODUCT DECISION (2026-08-26,
+// direct instruction): the prior "⚠ Market Disagrees" badge + alarmist
+// warning-box prose ("a large disagreement... is far more often a gap in
+// the model than an edge in the market... size with that in mind") sat
+// directly next to the TOP PICK badge and read as "this is one of our
+// best picks, but maybe don't trust us" -- bad product hierarchy, and not
+// something the (still fully open) locked disagreement research has
+// earned the right to editorialize about yet. The signal itself is kept
+// (still real, still computed, still available for internal/shadow use)
+// -- only the customer-facing warning presentation is gone. Market
+// disagreement is still shown, neutrally, via the Full Count vs. Market
+// bars every prop already gets (modelVsMarketBlock()) -- that IS the
+// honest "Full Count sees this differently from the market" context,
+// without editorializing about which side is more likely right.
 function isTopPickSuspect(p) {
   return p.recommendation_status === "top_pick" && (p.status_reasons || []).length > 1;
-}
-function suspectChip(p) {
-  return isTopPickSuspect(p) ? `<span class="chip chip-suspect" title="The market disagrees with this read -- still a Top Pick, but size with that in mind">⚠ Market Disagrees</span>` : "";
 }
 function evidenceChip(p) {
   const eq = evidenceQuality(p);
@@ -768,7 +766,7 @@ function pickCard(p) {
   // in the detail sheet's "Underlying data," and showing it on every single
   // card in a grid of a dozen-plus picks was pure chip clutter, not a
   // decision a viewer needs to make before opening a card.
-  const chips = [statusChip(p), suspectChip(p), lineupChip(p), staleChip(p), liveStaleChip(p), gradeChip(p)].filter(Boolean).join("");
+  const chips = [statusChip(p), lineupChip(p), staleChip(p), liveStaleChip(p), gradeChip(p)].filter(Boolean).join("");
   // No "TOP PICK #N" ordinal badge here (removed 2026-08-25). Audited
   // whether production has a real canonical order for this UNCAPPED
   // top_pick population and found it does not: classify_recommendation()
@@ -824,7 +822,7 @@ function pickCard(p) {
   </button>`;
 }
 function propRow(p) {
-  const chips = [statusChip(p), suspectChip(p), lineupChip(p), staleChip(p), liveStaleChip(p), gradeChip(p)].filter(Boolean).join("");
+  const chips = [statusChip(p), lineupChip(p), staleChip(p), liveStaleChip(p), gradeChip(p)].filter(Boolean).join("");
   return `<button class="prop-row ${lifecycleClass(p)}" data-open="${p.id}">
     <div class="pr-main">
       <div class="pr-name">${esc(p.name)}</div>
@@ -1964,9 +1962,11 @@ function detailBody(p) {
   // _result("top_pick", reasons) call) -- but whyNotTopPickReason() above
   // is deliberately null for every top_pick (it only ever answers "why
   // NOT"), so this real, already-computed sentence was never rendered
-  // anywhere. The SUSPECT-specific second reason is intentionally excluded
-  // here -- isTopPickSuspect()/suspectChip() already surface that one, in
-  // its own visually-distinct warning section, not duplicated here.
+  // anywhere. The SUSPECT-specific second reason (status_reasons[1], when
+  // isTopPickSuspect(p) is true) is intentionally excluded here too -- no
+  // longer surfaced as customer-facing warning prose anywhere (2026-08-26
+  // product decision, see isTopPickSuspect()'s own comment) -- only the
+  // first, real "why this qualified" sentence renders.
   const whyTopPickQualified = p.recommendation_status === "top_pick"
     ? (p.status_reasons || [])[0] || null : null;
 
@@ -2049,10 +2049,7 @@ function detailBody(p) {
         ${eq ? `<div>Evidence: ${esc(eq.label)}</div>` : ""}
       </div>
     </div>
-    <div class="pc-chips" style="margin-bottom:18px;">${[statusChip(p), suspectChip(p), lineupChip(p), evidenceChip(p), staleChip(p), liveStaleChip(p), gradeChip(p)].filter(Boolean).join("")}</div>
-    ${isTopPickSuspect(p) ? `<div class="detail-section top-pick-warning">
-      <p class="section-sub">${esc(capSentence(p.status_reasons[p.status_reasons.length - 1]))}</p>
-    </div>` : ""}
+    <div class="pc-chips" style="margin-bottom:18px;">${[statusChip(p), lineupChip(p), evidenceChip(p), staleChip(p), liveStaleChip(p), gradeChip(p)].filter(Boolean).join("")}</div>
 
     ${renderReasons(hitItems, "positive", "↑", "Favorable") ? `<div class="detail-section"><h3>Why It Could Hit</h3>
       <p class="section-sub">What shapes Full Count's read of this matchup — see Evidence below for what actually produced the probability number above.</p>
@@ -2366,6 +2363,16 @@ function CATEGORY_LABEL_FOR_FAMILY(family) {
 //  actually been measured against it.
 // ══════════════════════════════════════════════════════════════════════
 const LIVE_STALE_THRESHOLD_SECONDS = 15 * 60;
+// Wording-only escalation point (Part 6 of the UX revamp, 2026-08-26) --
+// does NOT change when a channel counts as "stale" for liveStaleChip()'s
+// per-prop appearance or any other detection logic (that stays exactly
+// LIVE_STALE_THRESHOLD_SECONDS, unchanged, per the explicit instruction
+// not to weaken the underlying SLA just to make a warning quieter). It
+// only decides which of two calm phrasings the sitewide bar uses: a
+// "small delay" note (informational, no visual alarm) below this point,
+// versus "updates delayed" (still calm, no red/yellow sitewide banner,
+// no ALL-CAPS) above it.
+const LIVE_INCIDENT_THRESHOLD_SECONDS = 30 * 60;
 const LIVE_IN_PROGRESS_GAME_STATES = new Set(["live", "delayed", "suspended", "unknown"]);
 
 // Pure and deterministic: `now` is always an explicit argument, never
@@ -2403,11 +2410,64 @@ function liveFreshnessAgoText(seconds) {
 // (which is p.stale, a different concept) even though it reuses the same
 // visual treatment -- both mean "do not trust this number at face value,"
 // which is exactly the shared affordance a viewer should learn to read.
+// Calm wording (Part 6, 2026-08-26): the trigger point is UNCHANGED
+// (LIVE_FRESHNESS.stale, still the same LIVE_STALE_THRESHOLD_SECONDS) --
+// only the label changed, from an engineering-style "Live Data Stale" /
+// "Live Status Unknown" pair to one plain, non-alarming phrase. The fuller
+// per-channel explanation lives in the sitewide bar (renderFreshness()),
+// not duplicated here at chip scale.
 function liveStaleChip(p) {
   if (!LIVE_FRESHNESS.applicable || !LIVE_FRESHNESS.stale) return "";
   if (!LIVE_IN_PROGRESS_GAME_STATES.has(p.game_state)) return "";
-  const label = LIVE_FRESHNESS.reason === "never_checked" ? "Live Status Unknown" : "Live Data Stale";
-  return `<span class="chip chip-stale">${label}</span>`;
+  return `<span class="chip chip-stale">Status Delayed</span>`;
+}
+
+// Calm, channel-specific freshness copy (Part 6 of the UX revamp,
+// 2026-08-26; direct product decision). The OLD behavior showed a
+// sitewide ALL-CAPS "LIVE DATA STALE"/"LIVE DATA STATUS UNKNOWN" alarm the
+// instant the SLA was exceeded, with no distinction between "the odds
+// feed is a little behind" and "we have no idea if this game ended." Real
+// production incident (2026-08-26, see P0_LIVE_LIFECYCLE_INCIDENT doc on
+// the P0 branch): a customer saw a finished, LOST Top Pick still marked
+// "Live" + that same all-caps banner -- individually honest, but alarming
+// and confusing together. The underlying SLA/detection is NOT weakened
+// here (LIVE_STALE_THRESHOLD_SECONDS, the exact same 15-minute trigger,
+// still drives every boolean below) -- only the WORDING changes: healthy
+// shows nothing alarming, a small delay reads as a plain fact, and only a
+// genuinely prolonged gap gets "delayed" language -- still calm, never a
+// full-width red/yellow banner. The engineering-visible alert stays loud
+// in Actions/logs (dashboard/check_live_freshness.py, unchanged); this is
+// the customer-facing half only.
+function freshnessBarMessage(now) {
+  const oddsAt = timeMs(DATA.prices_updated_at);
+  const oddsAgeSec = oddsAt != null ? Math.max(0, Math.round((now - oddsAt) / 1000)) : null;
+  const oddsDelayed = oddsAgeSec != null && oddsAgeSec > LIVE_STALE_THRESHOLD_SECONDS;
+  const oddsIncident = oddsAgeSec != null && oddsAgeSec > LIVE_INCIDENT_THRESHOLD_SECONDS;
+
+  const game = LIVE_FRESHNESS;
+  const gameDelayed = game.applicable && game.stale;
+  const gameIncident = game.applicable
+    && (game.reason === "never_checked" || (game.ageSeconds != null && game.ageSeconds > LIVE_INCIDENT_THRESHOLD_SECONDS));
+
+  if (!oddsDelayed && !gameDelayed) return null; // healthy: nothing alarming to add
+
+  if (gameIncident && oddsIncident) {
+    return `Updates delayed · last verified ${game.reason === "never_checked" ? "unknown" : liveFreshnessAgoText(game.ageSeconds)}`;
+  }
+  if (gameIncident) {
+    return game.reason === "never_checked"
+      ? "Game updates delayed · no check on record yet"
+      : `Game updates delayed · last checked ${liveFreshnessAgoText(game.ageSeconds)}`;
+  }
+  if (oddsIncident) {
+    return `FanDuel prices delayed · game status current`;
+  }
+  // Small delay only (under the incident threshold): a plain fact, no
+  // "delayed"/alarm framing at all -- exactly the numbers already shown
+  // in the baseline "odds updated Xm ago" text, plus the equivalent for
+  // game status when that specific channel is the one running behind.
+  if (gameDelayed) return `Game status checked ${liveFreshnessAgoText(game.ageSeconds)}`;
+  return null;
 }
 
 function renderFreshness() {
@@ -2418,13 +2478,8 @@ function renderFreshness() {
   const dateLabel = DATA.date ? LOCAL_DATE_FMT.format(new Date(DATA.date + "T12:00:00Z")) : "";
   const wasStale = LIVE_FRESHNESS.applicable && LIVE_FRESHNESS.stale;
   LIVE_FRESHNESS = liveFreshnessState(Date.now(), DATA, [...PROPS_BY_ID.values()]);
-  let staleHtml = "";
-  if (LIVE_FRESHNESS.applicable && LIVE_FRESHNESS.stale) {
-    const msg = LIVE_FRESHNESS.reason === "never_checked"
-      ? "LIVE DATA STATUS UNKNOWN — no live check on record"
-      : `LIVE DATA STALE — last verified ${liveFreshnessAgoText(LIVE_FRESHNESS.ageSeconds)}`;
-    staleHtml = ` · <span class="stale-flag">${esc(msg)}</span>`;
-  }
+  const msg = freshnessBarMessage(Date.now());
+  const staleHtml = msg ? ` · <span class="stale-flag">${esc(msg)}</span>` : "";
   bar.innerHTML = `${esc(dateLabel)}${dateLabel ? " · " : ""}${esc(parts.join(" · "))}${staleHtml}`;
   // Only re-render prop cards when the verdict actually flips -- avoids a
   // needless full re-render every 60s while still guaranteeing per-prop

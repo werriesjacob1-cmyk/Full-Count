@@ -225,6 +225,20 @@ try:
         check(aria_modal == "true", "detail sheet panel is a real aria-modal dialog")
         n_sections = page.eval_on_selector_all(".detail-section", "els => els.length")
         check(n_sections >= 1, "at least one real .detail-section rendered", f"got {n_sections}")
+        # Product decision (2026-08-26): no "Market Disagrees" warning badge
+        # or alarmist prose anywhere, on any card or detail view -- checked
+        # across the WHOLE page body text, not just this one open sheet, so
+        # a suspect Top Pick elsewhere on Today can't slip one through.
+        page_text = page.evaluate("() => document.body.innerText")
+        check("Market Disagrees" not in page_text,
+              "REGRESSION GUARD: no '⚠ Market Disagrees' badge text anywhere on the page")
+        check("size with that in mind" not in page_text
+              and "far more often a gap in the model" not in page_text,
+              "REGRESSION GUARD: no alarmist market-disagreement prose anywhere on the page")
+        mvm = page.query_selector(".model-vs-market")
+        if mvm:
+            check("Full Count vs. Market" in page_text or page.query_selector(".mvm-bar-fill") is not None,
+                  "the neutral Full Count vs. Market bar component renders when market data exists")
         # Escape closes it
         page.keyboard.press("Escape")
         page.wait_for_timeout(200)
