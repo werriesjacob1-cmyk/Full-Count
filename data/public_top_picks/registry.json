@@ -2,7 +2,7 @@
   "schema_version": 1,
   "identity_schema_version": 2,
   "rollout_version": "pre-phase-v-live-lifecycle-v1",
-  "updated_at": "2026-08-26T02:31:49.022814+00:00",
+  "updated_at": "2026-08-26T14:00:24.303042+00:00",
   "migration": {
     "version": "pre-phase-v-live-lifecycle-v1",
     "completed_at": "2026-08-17T23:14:57+00:00",
@@ -3305,6 +3305,92 @@
         },
         "qualification_timestamp": "2026-08-26T02:30:45.082476+00:00",
         "board_timestamp": "2026-08-26T02:30:45.062350+00:00",
+        "slate_date": "2026-08-26"
+      }
+    },
+    "fc2:823584:player-669160:pitcher_outs:16:over": {
+      "canonical_id": "fc2:823584:player-669160:pitcher_outs:16:over",
+      "settlement_identity": [
+        "823584",
+        [
+          "player",
+          "669160"
+        ],
+        "pitcher_outs",
+        "16",
+        "over"
+      ],
+      "slate_date": "2026-08-26",
+      "first_published_at": "2026-08-26T14:00:24.303042+00:00",
+      "publication_provenance": {
+        "artifact_id": "72d7df772ee7201eb1c1460ce988d1aab209f534b4349f3600687342f4ca99e7",
+        "source_commit": "4ad422432cb7474aab396fdf695895b0611e54a4",
+        "workflow_run_id": "32977426915",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-08-26T13:59:05.773699+00:00",
+        "data_hash": "5539960d49ab5c52224062be3308f1bc0d791bb5842e973ab267904aef0ecc99",
+        "live_hash": "e65dee4fd7b681f82b853c942efe64a8fa1b5d1943c781879f456da9035ad680"
+      },
+      "snapshot": {
+        "id": "fc2:823584:player-669160:pitcher_outs:16:over",
+        "identity_version": 2,
+        "game_pk": 823584,
+        "player_id": 669160,
+        "combo_player_ids": null,
+        "type": "pitcher",
+        "name": "Dustin May",
+        "team": "Milwaukee Brewers",
+        "matchup": "Milwaukee Brewers @ New York Mets",
+        "game_start": "2026-08-26T23:10:00Z",
+        "stat": "pitcher_outs",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "pitcher_outs",
+          "value": 15.5,
+          "needs": 16
+        },
+        "prop": "Over 15.5 Outs Recorded",
+        "hit_probability": 0.613,
+        "market_odds": -108,
+        "market_implied": 0.4858,
+        "market_edge": 0.1272,
+        "market_hold": null,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (A), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (13.2 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "Recorded 16+ outs (5.1 IP) in 61.3% of his last 24 real starts (league 56.5%, avg 15.5 outs/start)"
+        ],
+        "watchouts": [],
+        "prob_ci": [
+          0.5445,
+          0.7179
+        ],
+        "reliability": "A",
+        "reliability_note": null,
+        "sample_n": 24,
+        "lineup_assumed": null,
+        "base_rate": 0.565,
+        "lift": 0.048,
+        "lift_reference_rate": null,
+        "stable_lift": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "7af6fa99",
+          "prediction_timestamp": "2026-08-26T13:58:15.463582+00:00",
+          "odds_fetched_at": "2026-08-26T13:58:10.042501+00:00",
+          "board_generated_at": "2026-08-26T13:58:15.430230+00:00"
+        },
+        "qualification_timestamp": "2026-08-26T13:58:15.463582+00:00",
+        "board_timestamp": "2026-08-26T13:58:15.430230+00:00",
         "slate_date": "2026-08-26"
       }
     }
