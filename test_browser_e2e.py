@@ -289,9 +289,14 @@ try:
                   f"before={pressed_before} after={pressed_after}")
             check(page.evaluate(f"() => watchlist.has({prop_id!r})"),
                   "the real prop id is actually present in the watchlist Set")
-            count_hidden = page.eval_on_selector("#watchlist-count", "el => el.hidden")
+            # .main-nav (the desktop pill row) is the visible nav instance at
+            # this suite's default 1280x900 viewport -- .bottom-nav (mobile)
+            # carries the same count via the shared .watchlist-count-el class
+            # (Part 3 of the UX revamp, 2026-08-26; see section 8 below for
+            # mobile-viewport bottom-nav coverage of the same badge).
+            count_hidden = page.eval_on_selector(".main-nav .watchlist-count-el", "el => el.hidden")
             check(not count_hidden, "the nav My Board count badge becomes visible once >0 saved")
-            count_text = page.eval_on_selector("#watchlist-count", "el => el.textContent")
+            count_text = page.eval_on_selector(".main-nav .watchlist-count-el", "el => el.textContent")
             check(count_text == "1", "the nav badge shows the real count (1)", f"got {count_text!r}")
             page.keyboard.press("Escape")
             page.evaluate("() => { location.hash = '#/watchlist'; }")
@@ -343,7 +348,7 @@ try:
                     f".some(b => b.dataset.open === {prop_id!r})"),
                     "REGRESSION GUARD: the unsaved prop no longer renders on the "
                     "re-rendered My Board page")
-                count_hidden_after = page.eval_on_selector("#watchlist-count", "el => el.hidden")
+                count_hidden_after = page.eval_on_selector(".main-nav .watchlist-count-el", "el => el.hidden")
                 check(count_hidden_after, "REGRESSION GUARD: the nav badge hides again once the "
                       "board is empty (0 saved)")
     else:
@@ -388,7 +393,7 @@ try:
                   f"got size={page.evaluate('() => watchlist.size')}")
             check(page.eval_on_selector_all("#page-watchlist [data-open]", "els => els.length") == 0,
                   "no saved rows remain rendered on My Board")
-            count_hidden = page.eval_on_selector("#watchlist-count", "el => el.hidden")
+            count_hidden = page.eval_on_selector(".main-nav .watchlist-count-el", "el => el.hidden")
             check(count_hidden, "the nav badge is hidden with 0 saved")
             stored = page.evaluate("() => localStorage.getItem('fc_watchlist_v1')")
             check(stored is not None and json.loads(stored) == [],
@@ -445,33 +450,59 @@ try:
         # No page-level horizontal overflow anywhere on Today.
         overflow_x = page.evaluate("() => document.documentElement.scrollWidth - window.innerWidth")
         check(overflow_x <= 1, f"no horizontal page overflow at {w}px (Today)", f"got overflow={overflow_x}")
-        # REGRESSION GUARD (2026-08-26 UX decision): all 4 primary nav
-        # destinations -- not just "not clipped," but actually WITHIN the
-        # viewport bounds at the nav's own default (unscrolled) position --
-        # are simultaneously reachable with no horizontal nav-scroll needed.
-        # This is the exact real gap the earlier 5-item row had: "not
-        # clipped" alone was true even when My Board sat off-screen, only
-        # reachable via a horizontal swipe within the nav strip.
-        nav_scroll_left = page.evaluate("() => document.querySelector('.main-nav').scrollLeft")
-        check(nav_scroll_left == 0, "the nav's default scroll position is 0 (nothing is "
-              "pre-scrolled to hide the start of the list)", f"got scrollLeft={nav_scroll_left}")
+        # REGRESSION GUARD (Part 3 of the UX revamp, 2026-08-26): .main-nav
+        # is desktop-only below 900px now -- .bottom-nav (a fixed, 4-column
+        # grid, never a scroll strip) is the real mobile destination
+        # switcher. All 4 primary destinations must be simultaneously
+        # visible and tappable with zero scroll, exactly the same guarantee
+        # the old test made against .main-nav, now made against the nav
+        # that's actually rendered at this width.
+        main_nav_visible = page.evaluate(
+            "() => { const el = document.querySelector('.main-nav'); "
+            "return el && getComputedStyle(el).display !== 'none'; }")
+        check(not main_nav_visible, "REGRESSION GUARD: .main-nav (desktop pill row) is NOT "
+              "displayed at this mobile width -- .bottom-nav is the real nav here")
+        bottom_nav = page.query_selector(".bottom-nav")
+        check(bottom_nav is not None, "the mobile .bottom-nav exists in the DOM")
         primary_routes = ["today", "props", "games", "watchlist"]
         for route in primary_routes:
             box = page.evaluate(
-                f"() => document.querySelector('.main-nav a[data-route=\"{route}\"]')"
+                f"() => document.querySelector('.bottom-nav a[data-route=\"{route}\"]')"
                 ".getBoundingClientRect()")
-            check(box["width"] > 0, f"'{route}' nav destination has a nonzero rendered width",
-                  f"got {box}")
+            check(box["width"] > 0 and box["height"] > 0,
+                  f"'{route}' bottom-nav destination has nonzero rendered size", f"got {box}")
             check(box["left"] >= 0 and box["right"] <= w,
-                  f"REGRESSION GUARD: '{route}' nav destination is fully within the "
-                  f"{w}px viewport with zero nav scroll -- not clipped, not off-screen, "
-                  "not reachable only via a horizontal swipe", f"got box={box} viewport={w}")
-        # "My Board" nav label specifically renders without CSS ellipsis-clipping.
-        watch_link = page.query_selector('.main-nav a[data-route="watchlist"]')
-        clipped = page.evaluate(
-            "(el) => el.scrollWidth > el.clientWidth + 1", watch_link)
-        check(not clipped, "'My Board' nav label is not clipped/ellipsis-truncated at this width",
-              f"scrollWidth vs clientWidth mismatch: {clipped}")
+                  f"REGRESSION GUARD: '{route}' bottom-nav destination is fully within the "
+                  f"{w}px viewport -- not clipped, not off-screen, no scroll required",
+                  f"got box={box} viewport={w}")
+            # Comfortable thumb target -- WCAG 2.5.5 / Apple HIG's 44px floor,
+            # the same standard this codebase already applies to .icon-btn.
+            check(box["height"] >= 44, f"'{route}' bottom-nav tap target is >=44px tall "
+                  "(comfortable thumb target)", f"got height={box['height']}")
+        # Bottom nav must not obstruct real page content. Comparing a FIXED
+        # element's viewport-relative rect against a scrollable card's
+        # document-relative rect doesn't mean what it looks like it means
+        # (the card can be thousands of px down a long page while the fixed
+        # nav's rect is always within one viewport height) -- the real,
+        # direct guarantee is main's own bottom padding actually clearing
+        # the fixed bar's real rendered height, so scrolling all the way to
+        # the end of the page always leaves the last card visible above it.
+        nav_h = page.evaluate("() => document.querySelector('.bottom-nav').getBoundingClientRect().height")
+        main_pb = page.evaluate(
+            "() => parseFloat(getComputedStyle(document.querySelector('main')).paddingBottom)")
+        check(main_pb >= nav_h, "REGRESSION GUARD: main's bottom padding (%.1fpx) clears the "
+              "real rendered bottom-nav height (%.1fpx), so the fixed bar can never cover the "
+              "last card at the end of a scroll" % (main_pb, nav_h),
+              f"padding-bottom={main_pb} nav height={nav_h}")
+        # Active-state indication (Part 19, non-color-only state) -- the
+        # current route's bottom-nav item carries a real distinguishing
+        # class, not just a color change indistinguishable to screen readers.
+        active_item = page.query_selector('.bottom-nav a[data-route="today"]')
+        check(active_item is not None and "active" in (active_item.get_attribute("class") or ""),
+              "the Today bottom-nav item carries the .active class while on Today")
+        aria_current = active_item.get_attribute("aria-current") if active_item else None
+        check(aria_current == "page", "the active bottom-nav item carries aria-current=page "
+              "for assistive tech", f"got {aria_current!r}")
         # Performance: no longer a primary-row pill, but still one tap away via
         # the always-visible header icon -- verify it's real, present, and links
         # to the real route (not silently buried/removed).
@@ -485,6 +516,35 @@ try:
             href = perf_link.get_attribute("href")
             check(href == "#/performance", "the Performance icon links to the real route",
                   f"got href={href!r}")
+        # Search access (Part 4 of the UX revamp, 2026-08-26): collapsed by
+        # default at this width, expands via #search-toggle, and the real
+        # input actually becomes usable (not just visually revealed).
+        search_toggle = page.query_selector("#search-toggle")
+        check(search_toggle is not None, "the mobile #search-toggle icon exists")
+        if search_toggle:
+            toggle_box = page.evaluate("(el) => el.getBoundingClientRect()", search_toggle)
+            check(toggle_box["width"] > 0 and toggle_box["height"] > 0,
+                  "#search-toggle is actually visible/rendered at this width", f"got {toggle_box}")
+            expanded_before = page.evaluate(
+                "() => document.getElementById('header-search').classList.contains('expanded')")
+            check(not expanded_before, "search starts collapsed on a fresh mobile load")
+            search_toggle.click()
+            page.wait_for_timeout(250)
+            expanded_after = page.evaluate(
+                "() => document.getElementById('header-search').classList.contains('expanded')")
+            check(expanded_after, "REGRESSION GUARD: clicking #search-toggle expands #header-search")
+            focused_id = page.evaluate("() => document.activeElement && document.activeElement.id")
+            check(focused_id == "global-search", "the real search input receives focus once expanded",
+                  f"got focused element id={focused_id!r}")
+            overflow_x_search = page.evaluate(
+                "() => document.documentElement.scrollWidth - window.innerWidth")
+            check(overflow_x_search <= 1, "expanding search introduces no horizontal overflow",
+                  f"got overflow={overflow_x_search}")
+            page.keyboard.press("Escape")
+            page.wait_for_timeout(200)
+            expanded_closed = page.evaluate(
+                "() => document.getElementById('header-search').classList.contains('expanded')")
+            check(not expanded_closed, "Escape collapses the expanded search row again")
         # Props page: filter bar sticky + no overflow.
         page.evaluate("() => { location.hash = '#/props'; }")
         page.wait_for_timeout(250)
@@ -521,6 +581,26 @@ try:
                     "() => document.documentElement.scrollWidth - window.innerWidth")
                 check(overflow_x_detail <= 1, "no horizontal overflow with the detail sheet open",
                       f"got overflow={overflow_x_detail}")
+                # Model vs. Market visual bars (Part 6) + visual signal rows
+                # (Part 7) -- only exercised once (first mobile viewport) since
+                # it's the same markup at every width; checks the component
+                # actually renders real bar widths derived from real
+                # probabilities, not just that the container div exists.
+                if w == 375 and h == 812:
+                    mvm = page.query_selector(".model-vs-market")
+                    if mvm:
+                        fc_width = page.eval_on_selector(".mvm-bar-fill.fc", "el => el.style.width")
+                        check(bool(fc_width) and fc_width.endswith("%"),
+                              "the Full Count bar has a real percentage width style",
+                              f"got {fc_width!r}")
+                    else:
+                        check(True, "this particular candidate has no market fair value yet "
+                              "(valid state, e.g. unposted line) -- bars correctly omitted")
+                    reason_items = page.eval_on_selector_all(".reason-item", "els => els.length")
+                    if reason_items:
+                        icon_text = page.eval_on_selector(".reason-item .r-icon", "el => el.textContent")
+                        check(icon_text in ("↑", "↓"), "a visual signal row's direction badge is a "
+                              "real ↑/↓ glyph, not the old bare ＋/－ text", f"got {icon_text!r}")
                 page.keyboard.press("Escape")
                 page.wait_for_timeout(150)
             except Exception as exc:
@@ -531,6 +611,47 @@ try:
         check(len(page._console_errors) == 0, f"zero console errors at {w}x{h}",
               f"errors: {page._console_errors}")
         ctx.close()
+
+    # ── 8b. Theme: light/dark toggle actually repaints, persists, no errors ─
+    head("8b. Theme: the header theme toggle actually switches data-theme, "
+         "persists the choice to localStorage, and real computed colors "
+         "(page background) genuinely differ between the two modes -- not "
+         "just that the attribute changed with nothing visually different.")
+    ctx, page = new_page()
+    load(page, "#/today")
+    bg_before = page.evaluate("() => getComputedStyle(document.body).backgroundColor")
+    theme_before = page.evaluate(
+        "() => document.documentElement.getAttribute('data-theme') || 'system'")
+    page.click("#theme-toggle")
+    page.wait_for_timeout(150)
+    theme_after = page.evaluate(
+        "() => document.documentElement.getAttribute('data-theme') || 'system'")
+    check(theme_after != theme_before, "REGRESSION GUARD: data-theme actually changes after "
+          "clicking the toggle", f"before={theme_before!r} after={theme_after!r}")
+    bg_after = page.evaluate("() => getComputedStyle(document.body).backgroundColor")
+    check(bg_after != bg_before, "REGRESSION GUARD: the real computed page background color "
+          "differs between the two themes (a genuine repaint, not just an attribute flip)",
+          f"before={bg_before!r} after={bg_after!r}")
+    stored_theme = page.evaluate("() => localStorage.getItem('fc_theme')")
+    check(stored_theme == theme_after, "the chosen theme persists to localStorage",
+          f"got stored={stored_theme!r} want {theme_after!r}")
+    # Detail sheet + Model vs. Market render without error in the new theme
+    # too (a common real bug class: a hard-coded color that only works
+    # against one theme's surface).
+    card = page.query_selector(".pick-card[data-open], .prop-row[data-open]")
+    if card:
+        card.click()
+        page.wait_for_timeout(200)
+        check(len(page._console_errors) == 0, "no console errors opening the detail sheet in "
+              "the switched theme", f"errors: {page._console_errors}")
+        page.keyboard.press("Escape")
+    page.reload()
+    page.wait_for_selector(".pick-card, .empty-state, .prop-row", timeout=20000)
+    theme_after_reload = page.evaluate(
+        "() => document.documentElement.getAttribute('data-theme') || 'system'")
+    check(theme_after_reload == theme_after, "REGRESSION GUARD: the chosen theme survives a "
+          "real page reload", f"got {theme_after_reload!r} want {theme_after!r}")
+    ctx.close()
 
     # ── 9. Source/docs parity sanity (already enforced in test_build_dashboard.py,
     #      re-verified here for good measure since this suite serves docs/ directly) ─

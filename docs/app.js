@@ -574,9 +574,13 @@ function changeSummary(changes) {
   return changes.length > 1 ? `${changes.length} changes · ${headline}` : headline;
 }
 function updateWatchCount() {
-  const el = document.getElementById("watchlist-count");
-  el.textContent = String(watchlist.size);
-  el.hidden = watchlist.size === 0;
+  // Two nav instances now carry the My Board count -- .main-nav (desktop
+  // pill row) and .bottom-nav (mobile, Part 3 of the UX revamp) -- both
+  // share the .watchlist-count-el class instead of a single unique id.
+  $all(".watchlist-count-el").forEach(el => {
+    el.textContent = String(watchlist.size);
+    el.hidden = watchlist.size === 0;
+  });
 }
 
 // ══════════════════════════════════════════════════════════════════════
@@ -596,6 +600,38 @@ function initTheme() {
     applyTheme(next);
     safeSet("fc_theme", next);
   });
+}
+
+// Mobile search collapse/expand (Part 4 of the UX revamp, 2026-08-26).
+// #search-toggle only exists in the DOM below 560px in practice (CSS hides
+// it above that width); wiring it unconditionally here is harmless since
+// nothing calls .click() on a hidden button. Toggling .expanded on
+// #header-search is a pure presentation change -- the input, its value,
+// and every existing search listener (initSearch(), below) are untouched.
+function initSearchToggle() {
+  const toggle = document.getElementById("search-toggle");
+  const wrap = document.getElementById("header-search");
+  const input = document.getElementById("global-search");
+  if (!toggle || !wrap || !input) return;
+  const setExpanded = (open) => {
+    wrap.classList.toggle("expanded", open);
+    toggle.classList.toggle("active", open);
+    toggle.setAttribute("aria-expanded", String(open));
+    if (open) {
+      // Wait for the expand transition to start before focusing so
+      // iOS Safari doesn't jump-scroll the page while it's still 0-height.
+      requestAnimationFrame(() => input.focus());
+    } else {
+      $("#search-results", wrap).hidden = true;
+    }
+  };
+  toggle.addEventListener("click", () => setExpanded(!wrap.classList.contains("expanded")));
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && wrap.classList.contains("expanded")) setExpanded(false);
+  });
+  // Route changes (tapping a nav destination while search is open) should
+  // collapse it back rather than leaving an empty expanded row behind.
+  window.addEventListener("hashchange", () => setExpanded(false));
 }
 
 // ══════════════════════════════════════════════════════════════════════
@@ -665,7 +701,14 @@ function onRouteChange() {
   // Performance moved out of .main-nav into the always-visible header icon
   // (UX decision, 2026-08-26) -- included here explicitly so it still gets
   // the real active-state indication every other primary destination does.
-  $all(".main-nav a, #performance-link").forEach(a => a.classList.toggle("active", a.dataset.route === route));
+  // .bottom-nav (Part 3 of the UX revamp, 2026-08-26) shares the same
+  // data-route contract as .main-nav, so one selector covers both --
+  // whichever one is actually visible at the current viewport width shows
+  // the right active state without any extra wiring.
+  $all(".main-nav a, .bottom-nav a, #performance-link").forEach(a => {
+    a.classList.toggle("active", a.dataset.route === route);
+    if (a.classList.contains("bn-item")) a.setAttribute("aria-current", a.dataset.route === route ? "page" : "false");
+  });
   $all(".page").forEach(p => p.hidden = true);
   document.getElementById(`page-${route}`).hidden = false;
   renderRoute();
@@ -703,10 +746,21 @@ function marketBlock(p) {
   const edge = p.edge_vs_fair ?? p.market_edge;
   const edgeText = edge == null ? "—" : (edge >= 0 ? "+" : "") + Math.round(edge * 100) + " pts";
   const edgeClass = edge == null ? "" : (edge >= 0 ? "pos" : "neg");
+  // Mini Full-Count-vs-Market bar (Part 12 of the UX revamp, 2026-08-26):
+  // a filled track at Full Count's probability with a tick mark at the
+  // market's fair probability -- the same two numbers already printed as
+  // text just above, given a second, visual form. Skipped entirely when
+  // either number is missing rather than drawing a misleading partial bar.
+  const miniBar = (p.hit_probability != null && marketProb != null)
+    ? `<div class="pc-mini-track" aria-hidden="true">
+         <div class="pc-mini-fill" style="width:${Math.round(p.hit_probability * 100)}%"></div>
+         <div class="pc-mini-mark" style="left:${Math.round(marketProb * 100)}%"></div>
+       </div>` : "";
   return `<div class="pc-market">
     <div><span class="book-price">${marketOdds}</span> <span class="m-detail">FanDuel</span></div>
     <div class="m-detail">Market: ${pct(marketProb, 0)}</div>
     <div class="pc-edge ${edgeClass}">${edgeText} edge</div>
+    ${miniBar}
   </div>`;
 }
 function pickCard(p) {
@@ -839,6 +893,50 @@ function topPickGapExplainer(props) {
   </div>`;
 }
 
+// Slate Pulse (Part 9 of the UX revamp, 2026-08-26): one glanceable strip
+// of real facts about tonight's slate, replacing the plain "Today" heading
+// this page used to open with -- date, games, top picks, how many games
+// have a confirmed lineup (derived, not fabricated: a game counts as
+// confirmed only once every batter prop attached to it has
+// lineup_assumed === false; a game with zero batter props on the board
+// yet is simply excluded from the denominator rather than guessed at),
+// and how long ago prices were last checked (reuses _agoText/
+// DATA.prices_updated_at, the same source priceFreshnessState() already
+// trusts in the detail sheet). Every number here is a real count; nothing
+// is invented "activity."
+function slatePulse(props) {
+  const dateLabel = DATA.date
+    ? new Date(DATA.date + "T12:00:00Z").toLocaleDateString(undefined, { weekday: "short", month: "short", day: "numeric" })
+    : "";
+  const nGames = (DATA.schedule || []).length;
+  const nTopPick = (DATA.summary || {}).n_top_pick ?? 0;
+
+  const byGame = new Map();
+  for (const p of props) {
+    if (p.type !== "batter" || !p.game_pk) continue;
+    if (!byGame.has(p.game_pk)) byGame.set(p.game_pk, true);
+    if (p.lineup_assumed === true) byGame.set(p.game_pk, false);
+  }
+  const gamesWithBatterProps = byGame.size;
+  const gamesConfirmed = Array.from(byGame.values()).filter(Boolean).length;
+
+  // "Odds updated Xm ago" deliberately NOT repeated here -- #freshness-bar
+  // (rendered just above this, renderFreshness()) already owns that exact
+  // fact, with the stale-data warning treatment it needs; duplicating it
+  // in plainer styling right underneath would bury the one place that
+  // warning is supposed to stand out.
+  const facts = [];
+  facts.push(`<span class="sp-fact"><b>${nGames}</b> game${nGames === 1 ? "" : "s"}</span>`);
+  facts.push(`<span class="sp-fact"><b>${nTopPick}</b> Top Pick${nTopPick === 1 ? "" : "s"}</span>`);
+  if (gamesWithBatterProps > 0) {
+    facts.push(`<span class="sp-fact"><b>${gamesConfirmed}/${gamesWithBatterProps}</b> lineups confirmed</span>`);
+  }
+  return `<div class="slate-pulse">
+    ${dateLabel ? `<span class="sp-date">${esc(dateLabel).toUpperCase()}</span>` : ""}
+    ${facts.join(`<span class="sp-dot">·</span>`)}
+  </div>`;
+}
+
 // ══════════════════════════════════════════════════════════════════════
 //  TODAY PAGE
 // ══════════════════════════════════════════════════════════════════════
@@ -892,7 +990,8 @@ function renderToday() {
   // longshotsAll (computed above, the same real split "More Picks" itself
   // renders from) are the two real, mutually exclusive counts -- each now
   // gets its own tile linking to its own correctly-filtered destination.
-  let html = `
+  let html = slatePulse(props);
+  html += `
     <div class="stat-row">
       <a class="stat-tile" href="#/props?status=top_pick"><span class="n">${summary.n_top_pick ?? 0}</span><span class="l">Top Picks tonight</span></a>
       <a class="stat-tile" href="#/props?status=lean"><span class="n">${summary.n_lean ?? 0}</span><span class="l">Leans on the board</span></a>
@@ -1667,6 +1766,10 @@ function openDetail(id) {
   sheet.hidden = false;
   sheet.setAttribute("aria-hidden", "false");
   document.body.style.overflow = "hidden";
+  // Entrance transition (Part 18): [data-open] added one frame after
+  // unhiding so the CSS transition actually has a starting state to
+  // animate from, instead of jumping straight to its resting position.
+  requestAnimationFrame(() => sheet.setAttribute("data-open", "true"));
   const star = $("#detail-star");
   if (star) star.addEventListener("click", () => { toggleWatch(id); star.setAttribute("aria-pressed", String(watchlist.has(id))); star.querySelector(".star-label").textContent = watchlist.has(id) ? "Saved to My Board" : "Save to My Board"; });
   $("#detail-underlying-toggle")?.addEventListener("click", (e) => {
@@ -1686,6 +1789,7 @@ function closeDetail() {
   const sheet = document.getElementById("detail-sheet");
   if (sheet.hidden) return;
   sheet.hidden = true;
+  sheet.removeAttribute("data-open");
   sheet.setAttribute("aria-hidden", "true");
   document.body.style.overflow = "";
   closeModal();
@@ -1766,6 +1870,65 @@ function whyNotTopPickReason(p) {
   return (p.status_reasons || [])[0] || null;
 }
 
+// Model vs. Market visual bars (Part 6 of the UX revamp, 2026-08-26).
+// Replaces a plain "Full Count 63% / Market fair 55% / Edge +7.7 pts" text
+// row list with two horizontal bars plus one plain-English line, so a real
+// disagreement reads as a shape (bar length + gap), not just three numbers
+// a viewer has to subtract themselves. Every number is unchanged from the
+// old row list -- p.hit_probability, p.market_fair ?? p.market_implied,
+// p.edge_vs_fair ?? p.market_edge, still the exact same honest-devig-aware
+// fields the compact card's marketBlock() already prefers. The
+// assumed_hold/exact_two_sided distinction is preserved verbatim (never
+// hidden), just translated into plainer wording per spec, with the raw
+// field names still available one line down for anyone who wants them.
+function modelVsMarketBlock(p, freshness) {
+  const fcProb = p.hit_probability;
+  const marketProb = p.market_fair ?? p.market_implied;
+  const edge = p.edge_vs_fair ?? p.market_edge;
+  const edgePts = edge != null ? Math.round(edge * 100) : null;
+  const edgeClass = edgePts == null ? "" : (edgePts >= 0 ? "pos" : "neg");
+  const edgeText = edgePts == null ? "—" : (edgePts >= 0 ? "+" : "") + edgePts + " pts";
+  const bars = (fcProb != null && marketProb != null) ? `
+      <div class="mvm-bar-row">
+        <span class="mvm-bar-label">Full Count</span>
+        <div class="mvm-bar-track"><div class="mvm-bar-fill fc" style="width:${Math.round(fcProb * 100)}%"></div></div>
+        <span class="mvm-bar-pct">${pct(fcProb, 0)}</span>
+      </div>
+      <div class="mvm-bar-row">
+        <span class="mvm-bar-label">Market fair</span>
+        <div class="mvm-bar-track"><div class="mvm-bar-fill mkt" style="width:${Math.round(marketProb * 100)}%"></div></div>
+        <span class="mvm-bar-pct">${pct(marketProb, 0)}</span>
+      </div>
+      <div class="mvm-gap-line">Gap <b class="${edgeClass}">${edgeText}</b>${Math.abs(edgePts || 0) >= 7 ? `<span class="mvm-gap-flag">⚠ Large disagreement</span>` : ""}</div>`
+    : `<p class="section-sub">Market fair value not available for this line yet.</p>`;
+  // Plain-English translation of the gap, direction-only (never a magnitude
+  // claim beyond what the bars themselves already show) -- honest about
+  // uncertainty rather than framing a gap as automatic value, per the
+  // house rule against casino-style "the market is wrong, bet now" framing.
+  let explain = "";
+  if (edgePts != null && Math.abs(edgePts) >= 7) {
+    explain = edgePts > 0
+      ? "The sportsbook is materially less bullish than Full Count. Treat this as extra uncertainty, not automatic value."
+      : "The sportsbook is materially more bullish than Full Count here — Full Count's own read is the more cautious one.";
+  } else if (edgePts != null) {
+    explain = "Full Count and the market are broadly in agreement on this one.";
+  }
+  return `
+    <div class="detail-section">
+      <h3>Full Count vs. Market</h3>
+      <div class="model-vs-market">
+        ${bars}
+        ${explain ? `<p class="mvm-explain">${esc(explain)}</p>` : ""}
+      </div>
+      <p class="section-sub">FanDuel ${fmtOdds(p.market_odds) ?? "— not posted"}${p.posted_implied != null ? ` (${pct(p.posted_implied, 0)} raw)` : ""}${
+        p.market_fair_method === "exact_two_sided" ? " · exact no-vig (both sides priced)"
+        : p.market_fair_method === "assumed_hold" ? " · estimated no-vig (only one side posted)"
+        : (p.market_hold != null ? " · exact no-vig" : "")
+      }</p>
+      <p class="price-freshness-note tone-${freshness.tone}">${esc(freshness.label)}${freshness.detail ? " — " + esc(freshness.detail) : ""}</p>
+    </div>`;
+}
+
 function detailBody(p) {
   const eq = evidenceQuality(p);
   const game = gameContextFor(p);
@@ -1844,15 +2007,35 @@ function detailBody(p) {
     else if (p.team === game.home_team) { oppBullpenName = game.away_team; oppBullpen = game.away_team_bullpen; }
   }
 
-  const renderReasons = (items, cls, icon) => items.length
-    ? `<div class="reason-list">${items.map(t => `<div class="reason-item ${cls}"><span class="r-icon">${icon}</span><span>${esc(t)}</span></div>`).join("")}</div>` : "";
+  // Visual signal rows (Part 7 of the UX revamp, 2026-08-26): a round
+  // direction badge (↑ favorable / ↓ concern) replaces the old bare ＋/－
+  // glyph, and app.css now gives each row its own card + colored left
+  // rail instead of a flush-left text list. The sentence itself is still
+  // exactly why[]/watchouts[] verbatim -- no new data, no re-derived
+  // direction (the badge's meaning still comes from which list a given
+  // item came from, same as the old glyph did).
+  const renderReasons = (items, cls, icon, srLabel) => items.length
+    ? `<div class="reason-list">${items.map(t => `<div class="reason-item ${cls}"><span class="r-icon" aria-hidden="true">${icon}</span><span><span class="sr-only">${srLabel}: </span>${esc(t)}</span></div>`).join("")}</div>` : "";
   const renderRows = rows => rows.length
     ? `<div class="underlying-data">${rows.map(([k, v]) => `<div class="ud-item"><div class="k">${esc(k)}</div><div class="v" style="font-family:var(--font-body);font-weight:500;">${v}</div></div>`).join("")}</div>` : "";
 
+  // Decision Snapshot (Part 5/8 of the UX revamp, 2026-08-26): the first
+  // viewport of the sheet should answer "what does Full Count like, how
+  // much, what's the price, what does the market think, and how solid is
+  // the evidence" without any scrolling or reading a sentence -- so the
+  // hero now also carries market fair value + the gap (same numbers
+  // modelVsMarketBlock() renders again, larger, further down for anyone
+  // who wants the bar-chart form) and evidence quality, alongside the
+  // status/price it already had. Nothing here is a new computation --
+  // every value already existed in this function or evidenceQuality(p).
+  const heroMarketProb = p.market_fair ?? p.market_implied;
+  const heroEdge = p.edge_vs_fair ?? p.market_edge;
+  const heroEdgeText = heroEdge == null ? null : (heroEdge >= 0 ? "+" : "") + Math.round(heroEdge * 100) + " pts";
+  const heroEdgeClass = heroEdge == null ? "" : (heroEdge >= 0 ? "pos" : "neg");
   return `
     <div class="detail-head">
       <h2 id="detail-title">${esc(p.name)}</h2>
-      <div class="d-sub">${esc(p.prop)} · ${esc(p.team || p.matchup || "")}</div>
+      <div class="d-sub">${esc(p.prop)} · ${esc(p.matchup || p.team || "")}${p.game_start ? ` · ${esc(gameTimeLabel(p.game_start))}` : ""}</div>
     </div>
     <div class="detail-hero">
       <div>
@@ -1862,6 +2045,8 @@ function detailBody(p) {
       <div class="hero-meta">
         <div><b>${esc(statusLabel(p))}</b></div>
         <div>FanDuel: ${fmtOdds(p.market_odds) ?? "not posted"}</div>
+        <div>Market fair: ${heroMarketProb != null ? pct(heroMarketProb, 0) : "—"}${heroEdgeText ? ` <span class="pc-edge ${heroEdgeClass}">(${heroEdgeText})</span>` : ""}</div>
+        ${eq ? `<div>Evidence: ${esc(eq.label)}</div>` : ""}
       </div>
     </div>
     <div class="pc-chips" style="margin-bottom:18px;">${[statusChip(p), suspectChip(p), lineupChip(p), evidenceChip(p), staleChip(p), liveStaleChip(p), gradeChip(p)].filter(Boolean).join("")}</div>
@@ -1869,11 +2054,11 @@ function detailBody(p) {
       <p class="section-sub">${esc(capSentence(p.status_reasons[p.status_reasons.length - 1]))}</p>
     </div>` : ""}
 
-    ${renderReasons(hitItems, "positive", "＋") ? `<div class="detail-section"><h3>Why It Could Hit</h3>
+    ${renderReasons(hitItems, "positive", "↑", "Favorable") ? `<div class="detail-section"><h3>Why It Could Hit</h3>
       <p class="section-sub">What shapes Full Count's read of this matchup — see Evidence below for what actually produced the probability number above.</p>
-      ${renderReasons(hitItems, "positive", "＋")}</div>` : ""}
+      ${renderReasons(hitItems, "positive", "↑", "Favorable")}</div>` : ""}
     <div class="detail-section"><h3>Why It Could Miss</h3>${
-      missItems.length ? renderReasons(missItems, "negative", "－")
+      missItems.length ? renderReasons(missItems, "negative", "↓", "Concern")
         : `<p class="section-sub">No major model-side concern beyond normal baseball variance.</p>`
     }</div>
     ${whyNotTopPick ? `<div class="detail-section why-not-top-pick"><h3>Why Not a Top Pick?</h3>
@@ -1884,20 +2069,7 @@ function detailBody(p) {
     ${matchupRows.length ? `<div class="detail-section"><h3>Matchup</h3>${renderRows(matchupRows)}</div>` : ""}
     ${oppBullpen ? `<div class="detail-section"><h3>Bullpen</h3>${bullpenTeamBlock(oppBullpenName, oppBullpen)}</div>` : ""}
 
-    <div class="detail-section">
-      <h3>Model vs. Market</h3>
-      <div class="model-vs-market">
-        <div class="mvm-row"><span class="mvm-label">Full Count</span><span class="mvm-value">${pctBig(p.hit_probability)}</span></div>
-        <div class="mvm-row"><span class="mvm-label">Market fair value</span><span class="mvm-value">${(p.market_fair ?? p.market_implied) != null ? pct(p.market_fair ?? p.market_implied, 0) : "—"}</span></div>
-        <div class="mvm-row mvm-diff"><span class="mvm-label">Edge</span><span class="mvm-value">${(p.edge_vs_fair ?? p.market_edge) != null ? ((p.edge_vs_fair ?? p.market_edge) >= 0 ? "+" : "") + Math.round((p.edge_vs_fair ?? p.market_edge) * 100) + " pts" : "—"}</span></div>
-      </div>
-      <p class="section-sub">FanDuel ${fmtOdds(p.market_odds) ?? "— not posted"}${p.posted_implied != null ? ` (${pct(p.posted_implied, 0)} raw)` : ""}${
-        p.market_fair_method === "exact_two_sided" ? " · exact no-vig (both sides priced)"
-        : p.market_fair_method === "assumed_hold" ? " · estimated no-vig (only one side posted)"
-        : (p.market_hold != null ? " · exact no-vig" : "")
-      }</p>
-      <p class="price-freshness-note tone-${freshness.tone}">${esc(freshness.label)}${freshness.detail ? " — " + esc(freshness.detail) : ""}</p>
-    </div>
+    ${modelVsMarketBlock(p, freshness)}
 
     <div class="detail-section">
       <h3>Evidence</h3>
@@ -2466,6 +2638,7 @@ function showToast(msg) {
 async function boot() {
   loadWatchlist();
   initTheme();
+  initSearchToggle();
   const main = document.getElementById("main");
   for (const r of ROUTES) document.getElementById(`page-${r}`).innerHTML = `<div class="loading-state"><div class="spinner" role="status" aria-label="Loading"></div><p>Loading tonight's board…</p></div>`;
   document.getElementById(`page-today`).hidden = true;

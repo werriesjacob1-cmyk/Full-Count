@@ -25,7 +25,18 @@
       <span class="brand-word">Full Count</span>
     </a>
 
-    <div class="header-search">
+    <!-- Mobile UX pass (2026-08-26): the search row used to always occupy
+         its own full-width line on phones (~52px of permanent vertical
+         cost before any baseball content appears at all). It now starts
+         collapsed to a single icon on narrow viewports and expands into an
+         overlay row only when actually used -- see #search-toggle below
+         and .header-search's collapsed/expanded rules in app.css. Nothing
+         about the search ENGINE changed: same input, same #search-results,
+         same runSearch()/initSearch() wiring, just given room back when
+         it's idle. Desktop keeps the always-visible inline row (there's
+         width to spare there, and requiring a tap to search on desktop
+         would be a pure regression). -->
+    <div class="header-search" id="header-search">
       <label class="sr-only" for="global-search">Search players, teams, games, or prop types</label>
       <input id="global-search" type="search" placeholder="Search players, teams, games…" autocomplete="off" aria-describedby="search-hint">
       <span id="search-hint" class="sr-only">Results update as you type</span>
@@ -33,14 +44,17 @@
     </div>
 
     <div class="header-actions">
+      <button id="search-toggle" class="icon-btn mobile-only" type="button" aria-label="Search" aria-expanded="false" aria-controls="header-search">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+      </button>
       <!-- UX decision (2026-08-26, release-candidate pass): My Board is a
            primary destination (discover -> save -> return -> see what
            changed) and must never sit behind a horizontal nav swipe at
            normal phone widths. Performance matters for trust but isn't an
-           everyday-navigation destination, so it moved out of the 5-item
-           primary row into this always-visible icon slot instead -- still
-           one tap away on every page, never buried, but no longer
-           competing with My Board for primary-nav space. -->
+           everyday-navigation destination, so it moved out of the primary
+           row into this always-visible icon slot instead -- still one tap
+           away on every page, never buried, but no longer competing with
+           My Board for primary-nav space. -->
       <a id="performance-link" class="icon-btn" href="#/performance" data-route="performance" aria-label="Performance — the real track record">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V10M11 20V4M18 20v-7"/></svg>
       </a>
@@ -51,15 +65,49 @@
     </div>
   </div>
 
-  <nav class="main-nav" aria-label="Primary">
+  <!-- Desktop-only pill row (>=900px). Below that, .bottom-nav (end of
+       <body>) is the primary destination switcher instead -- see Part 3 of
+       the UX revamp: a fixed bottom app-nav reads more like a native app
+       and keeps all 4 destinations one thumb-reach away without eating
+       header space. Same data-route contract both navs share, so
+       onRouteChange()'s active-state + My Board count wiring covers both
+       with one selector each (`.main-nav a, .bottom-nav a, #performance-link`). -->
+  <nav class="main-nav desktop-only" aria-label="Primary">
     <a href="#/today" data-route="today">Today</a>
     <a href="#/props" data-route="props">Props</a>
     <a href="#/games" data-route="games">Games</a>
     <a href="#/watchlist" data-route="watchlist">
-      My Board <span id="watchlist-count" class="nav-count" hidden>0</span>
+      My Board <span class="nav-count watchlist-count-el" hidden>0</span>
     </a>
   </nav>
 </header>
+
+<!-- Mobile app-style bottom nav (Part 3 of the UX revamp, 2026-08-26).
+     Fixed, safe-area aware, 4 primary destinations always visible with no
+     scroll -- Live is deliberately NOT a 5th item here (it doesn't exist
+     yet; adding it as a real destination once it's a real feature is a
+     one-line addition to this list, not an architecture change). Shares
+     data-route/.active wiring with .main-nav (see onRouteChange() in
+     app.js) so both stay in sync automatically. -->
+<nav class="bottom-nav mobile-only" aria-label="Primary">
+  <a href="#/today" data-route="today" class="bn-item">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16v16H4z"/><path d="M4 10h16M10 4v16"/></svg>
+    <span>Today</span>
+  </a>
+  <a href="#/props" data-route="props" class="bn-item">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h10"/></svg>
+    <span>Props</span>
+  </a>
+  <a href="#/games" data-route="games" class="bn-item">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3L21 12L12 21L3 12Z"/><circle cx="12" cy="12" r="2.4"/></svg>
+    <span>Games</span>
+  </a>
+  <a href="#/watchlist" data-route="watchlist" class="bn-item">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l2.6 5.9 6.4.6-4.8 4.3 1.4 6.3L12 16.9 6.4 20.1l1.4-6.3-4.8-4.3 6.4-.6z"/></svg>
+    <span>My Board</span>
+    <span class="nav-count bn-count watchlist-count-el" hidden>0</span>
+  </a>
+</nav>
 
 <div id="freshness-bar" class="freshness-bar" role="status" aria-live="polite"></div>
 
