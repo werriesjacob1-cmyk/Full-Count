@@ -83,6 +83,28 @@ head("9. staleness_minutes() returns None for a missing field, not a fabricated 
 age, reason = clf.staleness_minutes({}, now=NOW)
 check(age is None, f"missing field must report age=None, not a guessed number, got {age}", reason)
 
+head("10. channel_staleness() reports game-state/settlement and pricing SEPARATELY "
+     "(P0 lifecycle audit, 2026-08-26) -- the real Colt Keith/live-freshness "
+     "incident showed grading and pricing can be behind by different amounts; "
+     "one combined blob hides that. Grading fresh, pricing stale.")
+state = {
+    "grades_checked_at": iso(NOW - timedelta(minutes=2)),
+    "prices_checked_at": iso(NOW - timedelta(minutes=43)),
+}
+channels = clf.channel_staleness(state, now=NOW)
+check(channels["game_state_and_settlement"][1] is False,
+      "grading channel (2m old) is fresh", str(channels["game_state_and_settlement"]))
+check(channels["sportsbook_price"][1] is True,
+      "pricing channel (43m old) is stale", str(channels["sportsbook_price"]))
+
+head("11. channel_staleness() fail-closed: a channel field entirely absent "
+     "(older live.json shape) reports stale, never silently fresh")
+channels = clf.channel_staleness({}, now=NOW)
+check(channels["game_state_and_settlement"] == (None, True),
+      "missing grades_checked_at reports (None, stale=True)", str(channels["game_state_and_settlement"]))
+check(channels["sportsbook_price"] == (None, True),
+      "missing prices_checked_at reports (None, stale=True)", str(channels["sportsbook_price"]))
+
 print()
 passed = sum(1 for ok, _, _ in _results if ok)
 total = len(_results)

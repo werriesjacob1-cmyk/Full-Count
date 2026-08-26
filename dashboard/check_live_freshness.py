@@ -66,6 +66,42 @@ def is_stale(live_state, now=None, sla_minutes=SLA_MINUTES):
     return age > sla_minutes, reason
 
 
+# Per-channel freshness (P0 lifecycle audit, 2026-08-26): `updated_at` alone
+# answers "did SOMETHING change," not "which channel is actually behind."
+# The real incident this module was built for (and the 2026-08-26 Colt
+# Keith incident that reconfirmed it) both trace to the same root cause --
+# dashboard-live.yml not being invoked on schedule -- which stalls the
+# grading/game-state channel and the pricing channel together, so `main()`
+# still gates its exit code on the one combined `updated_at` SLA (the
+# recovery action, re-dispatching that same workflow, is identical either
+# way). This function exists purely for OBSERVABILITY: when a human or a
+# future automated report looks at *why* something is stale, "grading
+# hasn't checked in 43 minutes, pricing 4 minutes" is a materially
+# different, more actionable fact than one undifferentiated "stale."
+CHANNELS = {
+    "game_state_and_settlement": "grades_checked_at",
+    "sportsbook_price": "prices_checked_at",
+}
+
+
+def channel_staleness(live_state, now=None, sla_minutes=SLA_MINUTES):
+    """Returns {channel_name: (age_minutes_or_None, stale_bool)} for each
+    named channel field in CHANNELS. A channel whose field is entirely
+    absent (an older live.json predating that field) reports (None, True)
+    -- unknown is never treated as fresh, same convention staleness_minutes()
+    already uses for the combined check."""
+    now = now or datetime.now(timezone.utc)
+    out = {}
+    for channel, field in CHANNELS.items():
+        dt = _parse_iso((live_state or {}).get(field))
+        if dt is None:
+            out[channel] = (None, True)
+        else:
+            age = (now - dt).total_seconds() / 60.0
+            out[channel] = (age, age > sla_minutes)
+    return out
+
+
 def main():
     path = sys.argv[1] if len(sys.argv) > 1 else "docs/live.json"
     try:
@@ -75,6 +111,10 @@ def main():
         print(f"STALE: could not read/parse {path}: {e}")
         sys.exit(2)
     stale, reason = is_stale(live_state)
+    for channel, (age, chan_stale) in channel_staleness(live_state).items():
+        age_text = f"{age:.1f}m old" if age is not None else "never checked"
+        tag = "STALE" if chan_stale else "fresh"
+        print(f"  [{tag}] {channel}: {age_text}")
     if stale:
         print(f"STALE: {reason} (SLA {SLA_MINUTES}m)")
         sys.exit(1)

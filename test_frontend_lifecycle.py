@@ -130,6 +130,52 @@ class FrontendLifecycleTests(unittest.TestCase):
         self.assertEqual(result["hit_probability"], 0.7)
         self.assertEqual(result["recommendation_status"], "top_pick")
 
+    def test_colt_keith_style_final_state_never_regresses_to_a_stale_live_poll(self):
+        # Real incident, 2026-08-26 (game_pk 824234, Colt Keith, Over 0.5
+        # Hits). Root cause reconstructed from the actual production data:
+        # docs/data.json's own game_state (written by the periodic FULL
+        # rebuild, "Dashboard refresh") had already observed this game as
+        # final, but docs/live.json (the fast 5-minute channel
+        # dashboard-live.yml maintains) was still carrying its own LAST
+        # SUCCESSFUL check from BEFORE the game ended (game_state:"live",
+        # settlement_state:"open") -- because GitHub's schedule trigger for
+        # dashboard-live.yml had gone ~100+ minutes between actual runs
+        # that day (confirmed via the real Actions run history, not
+        # inferred). A customer whose browser polled live.json in that
+        # window would merge an OLDER "still live" delta on top of an
+        # ALREADY-final base -- exactly the regression this guard exists to
+        # prevent. This test proves the guard holds: ingestLiveDocument()/
+        # applyCachedLive() must refuse to let a game ever un-final itself,
+        # and must never let a stale "open" settlement overwrite an already
+        # -graded MISS. If this test ever fails, a customer WILL see a
+        # finished, lost Top Pick sitting on "Live" again.
+        completed = subprocess.run(
+            ["node", "-e", COLT_KEITH_HARNESS, APP], cwd=ROOT,
+            check=False, text=True, capture_output=True,
+        )
+        self.assertEqual(completed.returncode, 0, completed.stderr)
+        result = json.loads(completed.stdout)
+        # The already-final, already-graded MISS must survive an older,
+        # staler "still live" poll completely intact.
+        self.assertEqual(result["afterStaleLivePoll"], {
+            "game_state": "final", "settlement_state": "miss",
+        })
+        # A genuinely NEWER poll (observed after the base's own final
+        # observation) reporting a corrected/confirmed final result is the
+        # one case allowed to update an already-final row -- proven by
+        # forcing miss -> void via a later, official-authority timestamp.
+        self.assertEqual(result["afterNewerCorrection"], {
+            "game_state": "final", "settlement_state": "void",
+        })
+        # HIT case: same chain, opposite real result, same guard exercised.
+        self.assertEqual(result["hitCaseAfterStaleLivePoll"], {
+            "game_state": "final", "settlement_state": "hit",
+        })
+        # PRICE RACE (Phase 5's explicit ask): an older price delta must not
+        # overwrite a newer one, independent of the game/settlement guard.
+        self.assertEqual(result["priceAfterOlderDelta"], -150,
+                          "an older price observation must not overwrite a newer one")
+
 
 WESTON_HARNESS = r"""
 const fs = require("fs");
@@ -169,6 +215,101 @@ const result = vm.runInContext(`(() => {
   freezePublishedSnapshot(p);
   return {why: p.why, watchouts: p.watchouts, market_odds: p.market_odds,
           hit_probability: p.hit_probability, recommendation_status: p.recommendation_status};
+})()`, context);
+process.stdout.write(JSON.stringify(result));
+"""
+
+
+COLT_KEITH_HARNESS = r"""
+const fs = require("fs");
+const vm = require("vm");
+const source = fs.readFileSync(process.argv[1], "utf8");
+const document = {
+  addEventListener() {}, querySelector() { return null; }, querySelectorAll() { return []; },
+  createElement() { return { textContent: "", innerHTML: "" }; },
+};
+const context = {
+  console, document, window: { scrollY: 0, scrollTo() {} },
+  localStorage: { getItem() { return null; }, setItem() {} },
+  setTimeout, clearTimeout, setInterval() {}, fetch: async () => ({}),
+  Intl, Date, Map, Set, Object, Array, JSON, Math, Number, String,
+};
+vm.createContext(context);
+vm.runInContext(source, context);
+const result = vm.runInContext(`(() => {
+  function baseRow(id, settlementState, authority, observedAt) {
+    return {
+      id, game_pk: 824234, player_id: 690993, stat: "hits", market_side: "over",
+      recommendation_status: "top_pick", market_odds: -150,
+      game_state: "final", game_state_observed_at: observedAt, game_state_source: "mlb_schedule",
+      settlement_state: settlementState, settlement_authority: authority,
+      settlement_observed_at: observedAt, settlement_source: "mlb_official_final_with_fanduel_eligibility",
+      result_actual: settlementState === "hit" ? 1 : 0, result_reason: "final",
+    };
+  }
+  const missRow = baseRow("fc2:824234:player-690993:hits:1:over", "miss", "official_final", "2020-01-01T00:10:00Z");
+  const hitRow = baseRow("fc2:824234:player-691000:hits:1:over", "hit", "official_final", "2020-01-01T00:10:00Z");
+  const priceRow = {...baseRow("fc2:824234:player-691001:hits:1:over", "miss", "official_final", "2020-01-01T00:10:00Z"),
+                     market_odds: -150};
+  priceRow._field_updated_at = { market_odds: "2020-01-01T00:10:00Z" };
+  DATA = {generated_at:"2020-01-01T00:11:00Z", odds_fetched_at:"2020-01-01T00:00:00Z",
+          props:[missRow, hitRow, priceRow], summary:{}};
+  indexProps();
+  // A stale live.json poll: last real check ran BEFORE the game went
+  // final (matches the real Colt Keith incident -- dashboard-live.yml's
+  // own last successful run predated MLB reporting the game final).
+  const staleLiveDoc = {
+    updated_at:"2020-01-01T00:06:00Z", grades_updated_at:"2020-01-01T00:06:00Z",
+    prices_updated_at:"2020-01-01T00:06:00Z",
+    props: {
+      [missRow.id]: {
+        game_state:"live", game_state_observed_at:"2020-01-01T00:05:00Z", game_state_source:"mlb_game_feed_by_game_pk",
+        settlement_state:"open", settlement_authority:"live_observation",
+        settlement_observed_at:"2020-01-01T00:05:00Z", settlement_source:"mlb_live_box_score",
+        result_actual:0, result_reason:"awaiting authoritative final settlement",
+      },
+      [hitRow.id]: {
+        game_state:"live", game_state_observed_at:"2020-01-01T00:05:00Z", game_state_source:"mlb_game_feed_by_game_pk",
+        settlement_state:"open", settlement_authority:"live_observation",
+        settlement_observed_at:"2020-01-01T00:05:00Z", settlement_source:"mlb_live_box_score",
+        result_actual:0, result_reason:"awaiting authoritative final settlement",
+      },
+      [priceRow.id]: {
+        market_odds: -200,
+        _field_updated_at: { market_odds: "2020-01-01T00:03:00Z" },
+      },
+    },
+  };
+  ingestLiveDocument(staleLiveDoc);
+  applyCachedLive();
+  const afterStaleLivePoll = {
+    game_state: PROPS_BY_ID.get(missRow.id).game_state,
+    settlement_state: PROPS_BY_ID.get(missRow.id).settlement_state,
+  };
+  const hitCaseAfterStaleLivePoll = {
+    game_state: PROPS_BY_ID.get(hitRow.id).game_state,
+    settlement_state: PROPS_BY_ID.get(hitRow.id).settlement_state,
+  };
+  const priceAfterOlderDelta = PROPS_BY_ID.get(priceRow.id).market_odds;
+
+  // A genuinely NEWER, equal-or-higher-authority correction (e.g. a box
+  // score amendment) legitimately updates an already-final row.
+  const correctionDoc = {
+    updated_at:"2020-01-01T00:15:00Z", grades_updated_at:"2020-01-01T00:15:00Z",
+    props: { [missRow.id]: {
+      game_state:"final", game_state_observed_at:"2020-01-01T00:15:00Z", game_state_source:"mlb_schedule",
+      settlement_state:"void", settlement_authority:"official_final",
+      settlement_observed_at:"2020-01-01T00:15:00Z", settlement_source:"mlb_official_final_with_fanduel_eligibility",
+      result_actual:0, result_reason:"corrected: game called, market voided",
+    }},
+  };
+  ingestLiveDocument(correctionDoc);
+  applyCachedLive();
+  const afterNewerCorrection = {
+    game_state: PROPS_BY_ID.get(missRow.id).game_state,
+    settlement_state: PROPS_BY_ID.get(missRow.id).settlement_state,
+  };
+  return {afterStaleLivePoll, afterNewerCorrection, hitCaseAfterStaleLivePoll, priceAfterOlderDelta};
 })()`, context);
 process.stdout.write(JSON.stringify(result));
 """
