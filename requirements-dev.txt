@@ -1,0 +1,17 @@
+# Pinned development/tooling dependencies for the FULL COUNT Claude
+# development environment (claude/full-count-superhero-tooling-01,
+# 2026-08-26). NOT required to run the production pipeline itself --
+# see requirements.txt (if present) / the pipeline's own install steps in
+# .github/workflows/*.yml for that. This file exists so
+# scripts/claude-bootstrap.sh can reproduce the exact same tool versions
+# after a fresh container/clone, instead of "whatever pip resolves today."
+#
+#   /tmp/mlbvenv/bin/python3 -m pip install -r requirements-dev.txt
+#
+# Deliberately excludes: Serena (installed as a standalone `uv tool`, not a
+# pip package importable from the project venv -- see
+# scripts/claude-bootstrap.sh and .mcp.json), n8n/Context7 (claude.ai
+# connectors, not pip packages).
+
+hypothesis==6.165.10
+ruff==0.16.4
