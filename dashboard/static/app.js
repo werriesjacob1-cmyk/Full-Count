@@ -27,7 +27,12 @@ let PROPS_BY_ID = new Map();
 let route = "today";
 let watchlist = new Set();
 let watchSnapshot = {}; // id -> {status, odds, lineup_assumed} at time-of-star, for change detection
-let filters = { search: "", family: "all", status: "all", evidence: "all", sort: "default" };
+// Multi-select prop filtering (Part 2, 2026-08-26): family/status/evidence
+// are each a Set of selected values -- an EMPTY Set means unrestricted
+// ("all"), matching the old sentinel string's meaning, so a user can filter
+// to e.g. Hits + Home Runs, or Top Pick + Lean, simultaneously, instead of
+// being forced to pick exactly one value per dimension.
+let filters = { search: "", families: new Set(), statuses: new Set(), evidences: new Set(), sort: "default" };
 let lastPollStamp = null;
 let lastFullFetchAt = 0;
 let lastFocusedEl = null; // element to restore focus to when a modal sheet/dialog closes
@@ -604,9 +609,9 @@ function initRouter() {
 // 2026-08-2X route-filter-leakage fix (Part 2 UX audit): the params were
 // previously applied WITHOUT first resetting `filters`, on the theory that
 // "an absent param must never silently clear a filter the user already
-// set via the page's own UI" -- but renderProps()'s own <select> handlers
-// mutate `filters` and re-render DIRECTLY (see the f-family/f-status/etc.
-// handlers below), never touching location.hash, so onRouteChange() is
+// set via the page's own UI" -- but renderProps()'s own checkbox/sort
+// handlers mutate `filters` and re-render DIRECTLY (see the filter-dropdown
+// checkbox/f-sort handlers below), never touching location.hash, so onRouteChange() is
 // NEVER re-entered by on-page filter changes -- that worry described a
 // path that doesn't exist. What DOES happen, confirmed live: click a
 // status=top_pick tile -> filtered Props list -> navigate to Games ->
@@ -622,11 +627,16 @@ function onRouteChange() {
   const [rawRoute, rawQuery] = stripped.split("?");
   route = ROUTES.includes(rawRoute) ? rawRoute : "today";
   if (route === "props") {
-    filters = { search: "", family: "all", status: "all", evidence: "all", sort: filters.sort };
+    filters = { search: "", families: new Set(), statuses: new Set(), evidences: new Set(), sort: filters.sort };
     if (rawQuery) {
       const params = new URLSearchParams(rawQuery);
-      if (params.has("family")) filters.family = params.get("family");
-      if (params.has("status")) filters.status = params.get("status");
+      // Multi-select fix (Part 2, 2026-08-26): a link can request more than
+      // one value per dimension via a comma-separated list (e.g.
+      // "?family=hits,home_runs"), same convention on both sides -- see
+      // the "See all" link builders in initSearch()/renderToday() below,
+      // which still emit a single value and work unchanged as a 1-entry set.
+      if (params.has("family")) filters.families = new Set(params.get("family").split(",").filter(Boolean));
+      if (params.has("status")) filters.statuses = new Set(params.get("status").split(",").filter(Boolean));
       // "See all N matching props" (global search, no single-market
       // intent) -- destination-integrity fix: this link used to carry no
       // filter at all for a plain name/team search, landing on the full,
@@ -992,15 +1002,24 @@ function suggestedParlayBlock(parlay) {
 function familyFilterValue(stat) {
   return stat === "moonshot" ? "home_runs" : stat;
 }
+// A row matches the status filter if it matches ANY selected status
+// (OR, not AND -- "Top Pick + Lean" means show both, never neither).
+// Longshot/Value each need their own real recommendation_status/probability
+// check (see isLongshot()'s own definition), not a plain equality, so this
+// is pulled out to a shared helper rather than duplicated per call site.
+function matchesStatusFilter(p, statusSet) {
+  for (const s of statusSet) {
+    if (s === "longshot" ? isLongshot(p)
+      : s === "value" ? (p.recommendation_status === "value" && !isLongshot(p))
+      : p.recommendation_status === s) return true;
+  }
+  return false;
+}
 function applyFilters(props) {
   let rows = props;
-  if (filters.family !== "all") rows = rows.filter(p => p.stat === filters.family);
-  if (filters.status !== "all") {
-    rows = filters.status === "longshot" ? rows.filter(isLongshot)
-         : filters.status === "value" ? rows.filter(p => p.recommendation_status === "value" && !isLongshot(p))
-         : rows.filter(p => p.recommendation_status === filters.status);
-  }
-  if (filters.evidence !== "all") rows = rows.filter(p => p.reliability === filters.evidence);
+  if (filters.families.size) rows = rows.filter(p => filters.families.has(p.stat));
+  if (filters.statuses.size) rows = rows.filter(p => matchesStatusFilter(p, filters.statuses));
+  if (filters.evidences.size) rows = rows.filter(p => filters.evidences.has(p.reliability));
   if (filters.search) {
     const q = filters.search.toLowerCase();
     rows = rows.filter(p => (p.name || "").toLowerCase().includes(q)
@@ -1017,35 +1036,41 @@ function applyFilters(props) {
   };
   return rows.slice().sort(sorters[filters.sort] || sorters.default);
 }
+// filterDropdown(): a native <details>/<summary> multi-select popover --
+// checkboxes inside, real keyboard/screen-reader support for free (no
+// bespoke open/close/outside-click JS needed), styled to match the site's
+// existing pill-button filter chips. setKey is the filters.* Set this
+// dropdown edits directly ("families"/"statuses"/"evidences").
+function filterDropdown(setKey, label, options) {
+  const selected = filters[setKey];
+  return `<details class="filter-dropdown" data-set="${setKey}">
+    <summary class="filter-select">${esc(label)}${selected.size ? ` (${selected.size})` : ""}</summary>
+    <div class="filter-dropdown-panel">
+      ${options.map(([v, l]) => `<label class="filter-dropdown-opt">
+        <input type="checkbox" value="${esc(v)}"${selected.has(v) ? " checked" : ""}> ${esc(l)}
+      </label>`).join("")}
+    </div>
+  </details>`;
+}
+const STATUS_FILTER_OPTIONS = [
+  ["top_pick", "Top Pick"], ["lean", "Lean"], ["value", "Value"],
+  ["longshot", "Longshot"], ["neutral", "No Strong Lean"],
+];
+const EVIDENCE_FILTER_OPTIONS = [
+  ["A", "Strong evidence"], ["B", "Solid evidence"], ["C", "Developing evidence"], ["D", "Limited evidence"],
+];
 function renderProps() {
   const el = document.getElementById("page-props");
   const families = DATA.families || [];
-  const visible = publicProps();
-  const rows = applyFilters(visible);
+  const familyOptions = families.map(f => [familyFilterValue(f.stat), `${f.label} (${f.count})`]);
 
   el.innerHTML = `
-    <div class="section-head"><h2>All Props</h2><span class="section-sub">${rows.length} of ${visible.length} props</span></div>
+    <div class="section-head"><h2>All Props</h2><span class="section-sub" id="props-count"></span></div>
     <div class="filter-bar">
       <div class="filter-inline" style="display:flex;gap:8px;flex-wrap:wrap;">
-        <select class="filter-select" id="f-family" aria-label="Filter by prop type">
-          <option value="all">All prop types</option>
-          ${families.map(f => `<option value="${familyFilterValue(f.stat)}">${esc(f.label)} (${f.count})</option>`).join("")}
-        </select>
-        <select class="filter-select" id="f-status" aria-label="Filter by recommendation">
-          <option value="all">Any status</option>
-          <option value="top_pick">Top Pick</option>
-          <option value="lean">Lean</option>
-          <option value="value">Value</option>
-          <option value="longshot">Longshot</option>
-          <option value="neutral">No Strong Lean</option>
-        </select>
-        <select class="filter-select" id="f-evidence" aria-label="Filter by evidence quality">
-          <option value="all">Any evidence</option>
-          <option value="A">Strong evidence</option>
-          <option value="B">Solid evidence</option>
-          <option value="C">Developing evidence</option>
-          <option value="D">Limited evidence</option>
-        </select>
+        ${filterDropdown("families", "Prop type", familyOptions)}
+        ${filterDropdown("statuses", "Status", STATUS_FILTER_OPTIONS)}
+        ${filterDropdown("evidences", "Evidence", EVIDENCE_FILTER_OPTIONS)}
         <select class="filter-select" id="f-sort" aria-label="Sort by">
           <option value="default">Sort: Recommended</option>
           <option value="probability">Sort: Highest probability</option>
@@ -1056,43 +1081,78 @@ function renderProps() {
         </select>
       </div>
       <button class="filter-chip-btn mobile-only filter-more-btn" id="f-open-sheet">Filters</button>
-      <span class="filter-count desktop-only">${activeFilterCount()} active</span>
-      ${activeFilterCount() > 0 ? `<button class="filter-chip-btn" id="f-clear-all">Clear all</button>` : ""}
+      <span class="filter-count desktop-only" id="props-active-count"></span>
+      <button class="filter-chip-btn" id="f-clear-all" hidden>Clear all</button>
     </div>
-    ${filters.search ? `<div class="active-search-note section-sub">Filtered to "${esc(filters.search)}" <button class="link-btn" id="f-clear-search">clear</button></div>` : ""}
+    <div class="active-search-note section-sub" id="props-search-note" hidden></div>
     <div class="prop-list" id="props-list"></div>
   `;
-  $("#f-family", el).value = filters.family;
-  $("#f-status", el).value = filters.status;
-  $("#f-evidence", el).value = filters.evidence;
   $("#f-sort", el).value = filters.sort;
-  $("#f-family", el).addEventListener("change", e => { filters.family = e.target.value; renderProps(); });
-  $("#f-status", el).addEventListener("change", e => { filters.status = e.target.value; renderProps(); });
-  $("#f-evidence", el).addEventListener("change", e => { filters.evidence = e.target.value; renderProps(); });
-  $("#f-sort", el).addEventListener("change", e => { filters.sort = e.target.value; renderProps(); });
+  $("#f-sort", el).addEventListener("change", e => { filters.sort = e.target.value; refreshPropsList(el); });
   $("#f-open-sheet", el).addEventListener("click", () => openFilterSheet());
+  // Multi-select fix (Part 2, 2026-08-26): a checkbox toggle only needs the
+  // count/list to update, never a full innerHTML replace of the filter bar
+  // -- replacing the <details> element the checkbox lives inside would
+  // instantly close the dropdown the user is still interacting with.
+  $all(".filter-dropdown", el).forEach(dd => {
+    const setKey = dd.dataset.set;
+    $all('input[type="checkbox"]', dd).forEach(cb => cb.addEventListener("change", () => {
+      if (cb.checked) filters[setKey].add(cb.value); else filters[setKey].delete(cb.value);
+      refreshPropsList(el);
+    }));
+  });
   // "Top Pick filter escape" fix (Part 2 UX audit): the filter dropdowns
   // were each individually resettable, but there was no single control to
   // exit a filtered view in one action -- a real gap once combined with
   // the route-filter-leakage fix above (that fix stops a STALE filter
   // from a past visit leaking in on fresh navigation, but a user still
   // deliberately filtering the page in the current visit needs a fast,
-  // obvious way out).
-  const clearAllBtn = $("#f-clear-all", el);
-  if (clearAllBtn) clearAllBtn.addEventListener("click", () => {
-    filters = { search: "", family: "all", status: "all", evidence: "all", sort: filters.sort };
+  // obvious way out). Persistent (2026-08-26): the button is always in the
+  // DOM now (just hidden when nothing is active) rather than conditionally
+  // inserted/removed, so refreshPropsList() can toggle it on every filter
+  // change -- including a multi-select checkbox toggle -- without a full
+  // renderProps() re-render.
+  $("#f-clear-all", el).addEventListener("click", () => {
+    filters = { search: "", families: new Set(), statuses: new Set(), evidences: new Set(), sort: filters.sort };
     renderProps();
   });
-  const clearSearchBtn = $("#f-clear-search", el);
-  if (clearSearchBtn) clearSearchBtn.addEventListener("click", () => { filters.search = ""; renderProps(); });
 
+  refreshPropsList(el);
+  wireCardOpeners(el);
+}
+// The part of renderProps() that changes on every filter/sort interaction:
+// the result count, each dropdown's own selected-count badge, the active-
+// filter count, Clear-all visibility, the search note, and the list itself.
+// Deliberately never touches the <details> elements' own open/closed state
+// or rebuilds their checkbox markup -- see the checkbox handler's comment.
+function refreshPropsList(el) {
+  const visible = publicProps();
+  const rows = applyFilters(visible);
+  $("#props-count", el).textContent = `${rows.length} of ${visible.length} props`;
+  $all(".filter-dropdown", el).forEach(dd => {
+    const n = filters[dd.dataset.set].size;
+    const base = dd.querySelector("summary").textContent.replace(/\s*\(\d+\)$/, "");
+    dd.querySelector("summary").textContent = n ? `${base} (${n})` : base;
+  });
+  const activeCount = activeFilterCount();
+  $("#props-active-count", el).textContent = `${activeCount} active`;
+  $("#f-clear-all", el).hidden = activeCount === 0;
+  const searchNote = $("#props-search-note", el);
+  if (filters.search) {
+    searchNote.hidden = false;
+    searchNote.innerHTML = `Filtered to "${esc(filters.search)}" <button class="link-btn" id="f-clear-search">clear</button>`;
+    $("#f-clear-search", searchNote).addEventListener("click", () => { filters.search = ""; refreshPropsList(el); });
+  } else {
+    searchNote.hidden = true;
+    searchNote.innerHTML = "";
+  }
   const list = $("#props-list", el);
   list.innerHTML = rows.length ? rows.map(propRow).join("")
     : `<div class="empty-state"><div class="es-icon">🔍</div><h3>No props match these filters</h3><p>Try widening your search or clearing a filter.</p></div>`;
   wireCardOpeners(el);
 }
 function activeFilterCount() {
-  return ["family", "status", "evidence"].filter(k => filters[k] !== "all").length + (filters.search ? 1 : 0);
+  return filters.families.size + filters.statuses.size + filters.evidences.size + (filters.search ? 1 : 0);
 }
 function openFilterSheet() {
   const backdrop = document.createElement("div");
@@ -1107,14 +1167,14 @@ function openFilterSheet() {
   sheet.innerHTML = `
     <h3 id="filter-sheet-title">Filter &amp; sort</h3>
     <div class="filter-sheet-group"><div class="label">Prop type</div>
-      <div class="filter-sheet-options">${[{ value: "all", label: "All" }, ...families.map(f => ({ value: familyFilterValue(f.stat), label: f.label }))].map(({ value, label }) =>
-        `<button class="filter-chip-btn" data-k="family" data-v="${value}" aria-pressed="${filters.family === value}">${esc(label)}</button>`).join("")}</div></div>
+      <div class="filter-sheet-options">${families.map(f => ({ value: familyFilterValue(f.stat), label: f.label })).map(({ value, label }) =>
+        `<button class="filter-chip-btn" data-set="families" data-v="${value}" aria-pressed="${filters.families.has(value)}">${esc(label)}</button>`).join("")}</div></div>
     <div class="filter-sheet-group"><div class="label">Status</div>
-      <div class="filter-sheet-options">${[["all", "Any"], ["top_pick", "Top Pick"], ["lean", "Lean"], ["value", "Value"], ["longshot", "Longshot"], ["neutral", "No Strong Lean"]].map(([v, l]) =>
-        `<button class="filter-chip-btn" data-k="status" data-v="${v}" aria-pressed="${filters.status === v}">${l}</button>`).join("")}</div></div>
+      <div class="filter-sheet-options">${STATUS_FILTER_OPTIONS.map(([v, l]) =>
+        `<button class="filter-chip-btn" data-set="statuses" data-v="${v}" aria-pressed="${filters.statuses.has(v)}">${l}</button>`).join("")}</div></div>
     <div class="filter-sheet-group"><div class="label">Evidence quality</div>
-      <div class="filter-sheet-options">${[["all", "Any"], ["A", "Strong"], ["B", "Solid"], ["C", "Developing"], ["D", "Limited"]].map(([v, l]) =>
-        `<button class="filter-chip-btn" data-k="evidence" data-v="${v}" aria-pressed="${filters.evidence === v}">${l}</button>`).join("")}</div></div>
+      <div class="filter-sheet-options">${[["A", "Strong"], ["B", "Solid"], ["C", "Developing"], ["D", "Limited"]].map(([v, l]) =>
+        `<button class="filter-chip-btn" data-set="evidences" data-v="${v}" aria-pressed="${filters.evidences.has(v)}">${l}</button>`).join("")}</div></div>
     <button class="btn btn-primary" id="f-sheet-apply" style="width:100%;margin-top:6px;">Show results</button>
   `;
   document.body.append(backdrop, sheet);
@@ -1131,9 +1191,14 @@ function openFilterSheet() {
   openModal(sheet);
   document.addEventListener("keydown", onKeydown);
   backdrop.addEventListener("click", close);
-  $all("[data-k]", sheet).forEach(btn => btn.addEventListener("click", () => {
-    filters[btn.dataset.k] = btn.dataset.v;
-    $all(`[data-k="${btn.dataset.k}"]`, sheet).forEach(b => b.setAttribute("aria-pressed", String(b === btn)));
+  // Multi-select fix (Part 2, 2026-08-26): toggles this chip's OWN
+  // membership in filters[setKey] -- no longer clears sibling chips, so
+  // e.g. Top Pick and Lean can both stay pressed at once.
+  $all("[data-set]", sheet).forEach(btn => btn.addEventListener("click", () => {
+    const set = filters[btn.dataset.set];
+    const pressed = btn.getAttribute("aria-pressed") === "true";
+    if (pressed) set.delete(btn.dataset.v); else set.add(btn.dataset.v);
+    btn.setAttribute("aria-pressed", String(!pressed));
   }));
   $("#f-sheet-apply", sheet).addEventListener("click", () => { close(); renderProps(); });
 }

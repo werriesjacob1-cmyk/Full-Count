@@ -428,6 +428,29 @@ main { max-width: 1180px; margin: 0 auto; padding: 20px 16px 80px; }
   min-height: 40px;
 }
 .filter-chip-btn[aria-pressed="true"] { background: var(--accent-soft); border-color: var(--accent); color: var(--accent-bright); }
+
+/* .filter-dropdown: native <details>/<summary> multi-select popover (Part
+   2, 2026-08-26 -- multi-select prop filtering). Real keyboard/screen-
+   reader open-close behavior for free; only the panel's own contents and
+   position need styling. */
+.filter-dropdown { position: relative; display: inline-block; }
+.filter-dropdown > summary {
+  list-style: none; display: inline-flex; align-items: center; gap: 4px;
+}
+.filter-dropdown > summary::-webkit-details-marker { display: none; }
+.filter-dropdown > summary::after { content: "▾"; font-size: 10px; opacity: .7; }
+.filter-dropdown[open] > summary { background: var(--accent-soft); border-color: var(--accent); color: var(--accent-bright); }
+.filter-dropdown-panel {
+  position: absolute; top: calc(100% + 6px); left: 0; z-index: 30; min-width: 220px; max-height: 320px;
+  overflow-y: auto; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius);
+  box-shadow: var(--shadow-lift); padding: 8px;
+}
+.filter-dropdown-opt {
+  display: flex; align-items: center; gap: 8px; padding: 7px 8px; border-radius: var(--radius-sm);
+  font-size: 13.5px; cursor: pointer; white-space: nowrap;
+}
+.filter-dropdown-opt:hover { background: var(--surface-2); }
+.filter-dropdown-opt input { flex: none; }
 .filter-count { font-size: 12.5px; color: var(--ink-faint); margin-left: auto; white-space: nowrap; }
 .filter-more-btn { display: none; }
 .active-search-note { margin: -8px 0 12px; }
