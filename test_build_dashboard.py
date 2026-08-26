@@ -1247,10 +1247,28 @@ const card = pickCard(p);
 assertTrue(!card.includes("TOP PICK #"), "pickCard never renders a 'TOP PICK #N' ordinal badge");
 assertTrue(card.includes("TOP PICK"), "the card still shows the real TOP PICK status chip once");
 
+// -- pickCard: saved-to-My-Board indicator (Part 2 item 5, richer compact
+// cards, 2026-08-26). Real bug: `starred = watchlist.has(p.id)` was
+// computed and never once used in the returned template -- a viewer
+// browsing a grid of cards had no way to see which ones they'd already
+// saved without opening each one individually.
+watchlist = new Set();
+const cardUnsaved = pickCard(p);
+assertTrue(!cardUnsaved.includes('class="pc-saved"'),
+  "a prop NOT in the watchlist shows no saved indicator on its compact card");
+watchlist = new Set([p.id]);
+const cardSaved = pickCard(p);
+assertTrue(cardSaved.includes('class="pc-saved"') && cardSaved.includes("Saved to My Board"),
+  "a prop already in the watchlist shows a real saved indicator on its compact card, got " + cardSaved);
+watchlist = new Set(["some-other-id"]);
+const cardOtherSaved = pickCard(p);
+assertTrue(!cardOtherSaved.includes('class="pc-saved"'),
+  "the saved indicator only fires for THIS card's own id, not because the watchlist is merely non-empty");
+
 } catch (e) { console.error(e); process.exit(1); }
 
 if (!ok) process.exit(1);
-console.log("Today-page routing/Explore-by-Prop/no-invented-rank checks passed");
+console.log("Today-page routing/Explore-by-Prop/no-invented-rank/saved-indicator checks passed");
 """
     harness_path2 = tempfile.mktemp(suffix=".js")
     with open(harness_path2, "w") as f:
@@ -1258,8 +1276,9 @@ console.log("Today-page routing/Explore-by-Prop/no-invented-rank checks passed")
     try:
         r = subprocess.run([node, harness_path2], capture_output=True, text=True)
         check(r.returncode == 0, "URL filter params apply on navigation, Explore by Prop shows only "
-              "real non-zero counts with correct family mapping, and pickCard never renders an "
-              "invented 'TOP PICK #N' ordinal", r.stdout + r.stderr)
+              "real non-zero counts with correct family mapping, pickCard never renders an "
+              "invented 'TOP PICK #N' ordinal, and pickCard shows a real saved-to-My-Board "
+              "indicator for exactly the watchlisted card, never others", r.stdout + r.stderr)
     finally:
         os.remove(harness_path2)
 else:
