@@ -1790,6 +1790,19 @@ function detailBody(p) {
   }
 
   const whyNotTopPick = whyNotTopPickReason(p);
+  // Real gap, found 2026-08-26 (deep-detail-views audit): recommendation.py's
+  // classify_recommendation() already writes a real, honest "why this
+  // qualified" sentence into status_reasons[0] for every genuine Top Pick
+  // ("clears the real probability floor... a confirmed lineup, live
+  // pricing, and the price/value test..." -- see that function's own
+  // _result("top_pick", reasons) call) -- but whyNotTopPickReason() above
+  // is deliberately null for every top_pick (it only ever answers "why
+  // NOT"), so this real, already-computed sentence was never rendered
+  // anywhere. The SUSPECT-specific second reason is intentionally excluded
+  // here -- isTopPickSuspect()/suspectChip() already surface that one, in
+  // its own visually-distinct warning section, not duplicated here.
+  const whyTopPickQualified = p.recommendation_status === "top_pick"
+    ? (p.status_reasons || [])[0] || null : null;
 
   // OPPORTUNITY: a plain fact (batting order), not a graded judgment --
   // see the audit doc for why the underlying cat_context component is NOT
@@ -1862,6 +1875,8 @@ function detailBody(p) {
     }</div>
     ${whyNotTopPick ? `<div class="detail-section why-not-top-pick"><h3>Why Not a Top Pick?</h3>
       <p class="section-sub">${esc(capSentence(whyNotTopPick))}</p></div>` : ""}
+    ${whyTopPickQualified ? `<div class="detail-section"><h3>Why This Qualified</h3>
+      <p class="section-sub">${esc(capSentence(whyTopPickQualified))}</p></div>` : ""}
     ${opportunityRows.length ? `<div class="detail-section"><h3>Opportunity</h3>${renderRows(opportunityRows)}</div>` : ""}
     ${matchupRows.length ? `<div class="detail-section"><h3>Matchup</h3>${renderRows(matchupRows)}</div>` : ""}
     ${oppBullpen ? `<div class="detail-section"><h3>Bullpen</h3>${bullpenTeamBlock(oppBullpenName, oppBullpen)}</div>` : ""}

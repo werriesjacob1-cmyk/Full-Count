@@ -1574,6 +1574,34 @@ assertTrue(body1.includes("No major model-side concern"),
   "an empty watchouts list renders the honest fallback, never a fabricated concern");
 assertTrue(!body1.includes("Opportunity"), "no Opportunity section when batting_order is null");
 assertTrue(!body1.includes("Why Not a Top Pick"), "a real Top Pick never shows Why Not a Top Pick");
+assertTrue(!body1.includes("Why This Qualified"),
+  "no 'Why This Qualified' section when status_reasons is genuinely empty -- nothing fabricated");
+
+// -- detailBody(): "Why This Qualified" (Part 1, deep-detail-views work, 2026-08-26). Real
+// gap: recommendation.py's classify_recommendation() already writes a real, honest
+// qualification sentence into status_reasons[0] for every Top Pick, but it was never
+// rendered anywhere -- whyNotTopPickReason() is deliberately null for every top_pick.
+const topPickWithReason = {
+  id: "f", name: "Player F", team: "NYY", prop: "Over 0.5 Hits", hit_probability: 0.68,
+  recommendation_status: "top_pick", market_odds: -150, market_implied: 0.60, market_edge: 0.08,
+  reliability: "B", sample_n: 80, why: [], watchouts: [],
+  status_reasons: ["clears the real probability floor (>= 60%), a real evidence grade (B), " +
+    "a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval"],
+  batting_order: null,
+};
+const body6 = detailBody(topPickWithReason);
+assertTrue(body6.includes("Why This Qualified") && body6.includes("Clears the real probability floor"),
+  "a real Top Pick's own real qualification reason (status_reasons[0], already computed by " +
+  "recommendation.py) now renders (capSentence-cased), got " + body6);
+// REGRESSION GUARD: the suspect Top Pick fixture (defined above, body3) carries a SECOND
+// status_reasons entry (the SUSPECT note) -- that one must stay exclusively in the separate
+// top-pick-warning section, never duplicated into Why This Qualified.
+assertTrue(body3.includes("Why This Qualified") && body3.includes("Clears the real probability floor"),
+  "a suspect Top Pick still shows its real primary qualification reason");
+const qualifiedSectionOnly = body3.split("Why This Qualified")[1] || "";
+assertTrue(!qualifiedSectionOnly.slice(0, 300).includes("the market itself disagrees"),
+  "REGRESSION GUARD: the SUSPECT-specific second reason is never duplicated into Why This " +
+  "Qualified -- it already has its own visually-distinct warning section, got " + qualifiedSectionOnly.slice(0, 300));
 
 const leanWithOrder = {
   id: "b", name: "Player B", team: "BOS", prop: "Over 1.5 Total Bases", hit_probability: 0.63,
