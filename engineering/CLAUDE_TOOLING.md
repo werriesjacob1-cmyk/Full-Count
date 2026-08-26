@@ -27,7 +27,15 @@ installed by default; install only when the specific task needs it) /
 - TOKEN COST: low per query once warmed; avoid re-indexing repeatedly
 - CREDENTIALS: none
 - PINNED VERSION: 1.7.0 (`uv tool install --from git+https://github.com/oraios/serena serena-agent`)
-- INSTALL STATUS: **INSTALLED**
+- INSTALL STATUS: **INSTALLED; benchmark pending fresh session.** `serena
+  project health-check` passes against this repo (Pyright LSP up in
+  1.55s, 215 files indexed, `FindSymbolTool`/`FindReferencingSymbolsTool`
+  both functional). No `mcp__serena__*` tools are attached to THIS
+  session's tool surface despite `.mcp.json` declaring it, so the actual
+  precision/time/token comparison against grep for real navigation
+  questions has not been run and should not be forced here -- verify live
+  tool attachment on the next clean session after this branch is merged
+  or otherwise available, not by further detour from P0.
 
 ## Hypothesis (property-based testing)
 
@@ -60,7 +68,7 @@ installed by default; install only when the specific task needs it) /
   global uv tool -- prefer the project-pinned version for this repo
 - INSTALL STATUS: **INSTALLED**
 
-## Type checker (mypy / pyright)
+## Type checker: mypy (DECIDED -- pyright rejected on real evidence)
 
 - MODE: CLI, global uv tool
 - PURPOSE: static type checking
@@ -72,9 +80,22 @@ installed by default; install only when the specific task needs it) /
   a side quest
 - TOKEN COST: n/a
 - CREDENTIALS: none
-- PINNED VERSION: mypy 1.19.1, pyright 1.1.408 -- both present; **pick one**
-  as the project standard before wiring either into CI (not yet decided)
-- INSTALL STATUS: **INSTALLED** (both present; policy choice pending)
+- PINNED VERSION: mypy 1.19.1
+- INSTALL STATUS: **INSTALLED, DECIDED**. Tested both against this
+  codebase directly rather than picking by reputation: `pyright
+  generate_picks.py` **crashed with an internal stack trace** (a real
+  TypeScript-side exception in its reachability analyzer) on the repo's
+  single largest and most central file (421KB); `mypy --ignore-missing-imports
+  generate_picks.py` completed cleanly in under a minute with no crash,
+  and along the way surfaced a real, worth-investigating bug pattern
+  (`generate_picks.py:4830-4845`: assigning to an exception variable `e`
+  and reading it after the `except:` block ends -- Python 3 deletes that
+  binding at block exit, so this is either dead code or a latent
+  NameError depending on the exact control flow; not fixed here, flagged
+  for a real look, out of scope for a tooling-selection pass and
+  secondary to P0). mypy is the project standard going forward. Do not
+  mass-annotate the codebase to satisfy it -- gradual typing only, where
+  a real change already touches a function worth annotating.
 
 ## jq
 
@@ -137,25 +158,31 @@ installed by default; install only when the specific task needs it) /
 - INSTALL STATUS: **DEFERRED** -- not configured; requires credential setup
   Jacob has not yet provided
 
-## n8n-MCP
+## n8n-MCP (reclassified 2026-08-26: no longer P0-blocking)
 
 - MODE: MCP, isolated to FC Live SRE
-- PURPOSE: BUILD/INSPECT/VALIDATE the target n8n automation
-  (n8n deterministic timer -> GitHub workflow dispatch -> dashboard-live.yml
-  -> deterministic Python -> live state). Claude is never the production
-  runtime -- zero Claude tokens at runtime is the hard requirement.
+- PURPOSE: future workflow orchestration/automation (notifications, admin
+  automations, analytics jobs, operational integrations). **Not required
+  for the live-freshness heartbeat** -- that problem is solved by
+  `infra/live-heartbeat/` (a Cloudflare Worker), chosen specifically
+  because it needs no server Full Count maintains, has a free tier, and
+  the job is exactly one authenticated REST call every 5 minutes. n8n
+  remains valuable for future, broader automation needs.
 - ALLOWED AGENT: fc-live-sre only
-- WHEN TO USE: designing/validating the P0-related automation, never for
-  routine live operation
-- WHEN NOT TO USE: as a Claude Routine or a second GitHub cron -- the
-  target architecture is n8n's own timer, not Claude polling anything
-- TOKEN COST: n/a at the automation's runtime by design; MCP calls during
+- WHEN TO USE: a genuine future automation need where BUILD/INSPECT/VALIDATE
+  via n8n-MCP adds real value beyond a single scheduled dispatch. Claude
+  is never the production runtime of anything built this way -- zero
+  Claude tokens at runtime is the hard requirement regardless of which
+  automation tool is used.
+- WHEN NOT TO USE: as a Claude Routine or a second GitHub cron; not for
+  the live-freshness heartbeat specifically now that the Worker exists
+- TOKEN COST: n/a at any automation's runtime by design; MCP calls during
   build/inspect are normal tool-call cost
-- CREDENTIALS: n8n API key/instance URL -- not currently set (see bootstrap
-  report); GitHub workflow-dispatch permissions also required
+- CREDENTIALS: n8n API key/instance URL -- not currently set
 - PINNED VERSION: n/a
-- INSTALL STATUS: **AUTHORIZATION REQUIRED** -- see the tooling-plan report
-  for the exact boundary and what's needed from Jacob to proceed
+- INSTALL STATUS: **ON-DEMAND / FUTURE AUTOMATION** -- do not install or
+  connect now. Revisit only when a concrete future automation task
+  actually needs it.
 
 ## UI/UX design-critique skill ("UI/UX Pro Max")
 
@@ -169,11 +196,35 @@ installed by default; install only when the specific task needs it) /
 - WHEN NOT TO USE: never let it justify a product-identity violation
 - TOKEN COST: skill-invocation cost only, on-demand
 - CREDENTIALS: none expected
-- PINNED VERSION: n/a
-- INSTALL STATUS: **NOT IDENTIFIED YET** -- no marketplace/skill entry
-  matching "UI/UX Pro Max" was located; needs a concrete
-  name/source/marketplace link from Jacob before this can be installed
-  rather than guessed at
+- PINNED VERSION: v2.15.0 confirmed current as of 2026-08-26 (repo:
+  `nextlevelbuilder/ui-ux-pro-max-skill`, releases nearly daily)
+- INSTALL STATUS: **IDENTIFIED, VETTED, NOT YET INSTALLED**. Inspected
+  the actual repository (not old cached documentation): the historical
+  Claude Code install defect the governing prompt warned about ("Zip file
+  contains a symbolic link") is documented as fixed in v2.5.1+, and the
+  current release (v2.15.0) is well past that. `SECURITY.md` is a real,
+  specific policy -- explicitly scopes "arbitrary code execution via the
+  CLI installer or search scripts" and "path traversal/unsafe file writes"
+  as in-scope vulnerability categories (a transparency signal, not
+  itself a red flag), but does not address telemetry/network-access
+  practices (a real gap, not confirmed either way). Two install paths
+  exist: `/plugin marketplace add` + `/plugin install` (a Claude Code
+  slash command, not Bash-scriptable from a session, and installs at
+  user scope by default -- would need the plugin enabled via THIS
+  project's `.claude/settings.json` `enabledPlugins` specifically to
+  satisfy "isolated, project-local only, fc-ux only," not user-level
+  settings), or `npm install -g ui-ux-pro-max-cli` (global by design,
+  conflicts with "project-local only" as written). Neither path was
+  executed this pass -- doing so blindly would either require an
+  interactive `/plugin` command this session can't issue, or a global
+  install that violates the isolation requirement, or trusting the CLI
+  installer's actual script contents (flagged by the project's own
+  SECURITY.md as an in-scope risk surface) without having read them.
+  Recommend: Jacob runs `/plugin marketplace add nextlevelbuilder/ui-ux-pro-max-skill`
+  + `/plugin install ui-ux-pro-max@ui-ux-pro-max-skill` directly (this is
+  a one-time interactive step only a human driving the CLI can do
+  cleanly), after which a Claude session can verify it landed in this
+  project's `enabledPlugins` and is reachable only from fc-ux.
 
 ## Mutation testing (mutmut or equivalent)
 
