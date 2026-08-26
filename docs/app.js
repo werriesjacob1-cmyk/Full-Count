@@ -1814,6 +1814,20 @@ function detailBody(p) {
     }
   }
 
+  // OPPOSING BULLPEN: real per-reliever detail, direct instruction: "Jacob
+  // specifically wants names and context." Reuses the exact same game-level
+  // bullpen data _team_bullpen_context() already attaches per game (see
+  // dashboard/build_dashboard.py) -- gameContextFor(p) already resolves
+  // p.game_pk to that same schedule entry, so no new data plumbing is
+  // needed here, only pointing at the OPPOSING team's block: whichever
+  // side p.team is NOT. Batter markets only -- a pitcher isn't facing a
+  // bullpen himself, so this would be a non-sequitur on his own prop.
+  let oppBullpenName = null, oppBullpen = null;
+  if (game && p.type === "batter" && p.team) {
+    if (p.team === game.away_team) { oppBullpenName = game.home_team; oppBullpen = game.home_team_bullpen; }
+    else if (p.team === game.home_team) { oppBullpenName = game.away_team; oppBullpen = game.away_team_bullpen; }
+  }
+
   const renderReasons = (items, cls, icon) => items.length
     ? `<div class="reason-list">${items.map(t => `<div class="reason-item ${cls}"><span class="r-icon">${icon}</span><span>${esc(t)}</span></div>`).join("")}</div>` : "";
   const renderRows = rows => rows.length
@@ -1850,6 +1864,7 @@ function detailBody(p) {
       <p class="section-sub">${esc(capSentence(whyNotTopPick))}</p></div>` : ""}
     ${opportunityRows.length ? `<div class="detail-section"><h3>Opportunity</h3>${renderRows(opportunityRows)}</div>` : ""}
     ${matchupRows.length ? `<div class="detail-section"><h3>Matchup</h3>${renderRows(matchupRows)}</div>` : ""}
+    ${oppBullpen ? `<div class="detail-section"><h3>Bullpen</h3>${bullpenTeamBlock(oppBullpenName, oppBullpen)}</div>` : ""}
 
     <div class="detail-section">
       <h3>Model vs. Market</h3>
