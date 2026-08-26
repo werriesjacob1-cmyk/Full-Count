@@ -135,6 +135,79 @@ check("Reliever5" in usage6,
 check(len(usage6) == 6, "all 6 distinct relievers across all 6 games are tracked",
       f"got {sorted(usage6.keys())}")
 
+head("3b. POINT-IN-TIME AUDIT (2026-08-26): a team with MORE than 7 games in the "
+     "L7_START..TODAY window (a real doubleheader inside the window makes this "
+     "8+ games in an 8-calendar-day span) keeps the 7 MOST RECENT games, never "
+     "the oldest 7 -- the old schedule[:7] (front slice of an ascending-order "
+     "list) would have silently dropped the freshest, most fatigue-relevant "
+     "game(s), backwards for a signal whose whole point is recency.")
+
+eight_games = [{"game_id": 3000 + i, "game_date": f"2026-08-{14+i}",
+                "game_datetime": f"2026-08-{14+i}T23:00:00Z", "game_num": 1}
+               for i in range(8)]
+boxes8 = {3000 + i: _box_for(3000 + i, starter_pitches=90,
+                              reliever_rows=[(f"R{i}", 20)]) for i in range(8)}
+
+with mock.patch.object(m.statsapi, "schedule", return_value=eight_games), \
+     mock.patch.object(m.statsapi, "boxscore_data", side_effect=lambda gid: boxes8[gid]):
+    _, usage8, err8 = m._bullpen_fetch_one(("Detroit Tigers", TEAM_ID))
+
+check(err8 is None, "no error across 8 games", f"got err={err8}")
+check(len(usage8) == 7, "exactly 7 relievers tracked out of 8 real games (the cap), "
+      "not all 8 and not fewer", f"got {sorted(usage8.keys())}")
+check("R0" not in usage8,
+      "REGRESSION GUARD: the OLDEST game (R0, 2026-08-14) is the one dropped, not a "
+      "recent one", f"got {sorted(usage8.keys())}")
+check("R7" in usage8,
+      "REGRESSION GUARD: the NEWEST game (R7, 2026-08-21) is kept -- the old "
+      "schedule[:7] front-slice would have dropped this exact game",
+      f"got {sorted(usage8.keys())}")
+
+head("3c. POINT-IN-TIME AUDIT (2026-08-26): correctness does not depend on the real "
+     "API returning games in any particular order -- explicitly sorted by real game "
+     "start time rather than trusting unstated statsapi.schedule() ordering. Same "
+     "8-game fixture as 3b, but shuffled into a deliberately adversarial order "
+     "(reverse-chronological) before being handed to _bullpen_fetch_one().")
+
+shuffled = list(reversed(eight_games))
+with mock.patch.object(m.statsapi, "schedule", return_value=shuffled), \
+     mock.patch.object(m.statsapi, "boxscore_data", side_effect=lambda gid: boxes8[gid]):
+    _, usage8_shuf, err8_shuf = m._bullpen_fetch_one(("Detroit Tigers", TEAM_ID))
+
+check(err8_shuf is None, "no error on a reverse-chronological API response",
+      f"got err={err8_shuf}")
+check(sorted(usage8_shuf.keys()) == sorted(usage8.keys()),
+      "the SAME 7 most-recent relievers are kept regardless of the order the real "
+      "API happens to return games in -- reverse-chronological input produces an "
+      "identical result to chronological input",
+      f"forward-order={sorted(usage8.keys())} reverse-order={sorted(usage8_shuf.keys())}")
+
+head("3d. POINT-IN-TIME AUDIT (2026-08-26): a real doubleheader's Game 1 and Game 2 "
+     "(same game_date, different game_datetime/game_num) are ordered chronologically "
+     "by actual start time, not conflated or reversed -- a reliever who pitched in "
+     "both games on the same day shows Game 2 as his real most-recent outing.")
+
+dh_games = [
+    {"game_id": 4001, "game_date": "2026-08-20", "game_datetime": "2026-08-20T18:00:00Z", "game_num": 1},
+    {"game_id": 4002, "game_date": "2026-08-20", "game_datetime": "2026-08-20T22:00:00Z", "game_num": 2},
+]
+dh_boxes = {
+    4001: _box_for(4001, starter_pitches=85, reliever_rows=[("DoubleDipper", 10)]),
+    4002: _box_for(4002, starter_pitches=80, reliever_rows=[("DoubleDipper", 25)]),
+}
+with mock.patch.object(m.statsapi, "schedule", return_value=dh_games), \
+     mock.patch.object(m.statsapi, "boxscore_data", side_effect=lambda gid: dh_boxes[gid]):
+    _, usage_dh, err_dh = m._bullpen_fetch_one(("Detroit Tigers", TEAM_ID))
+
+check(err_dh is None, "no error on a real doubleheader fixture", f"got err={err_dh}")
+check(usage_dh["DoubleDipper"]["apps"] == 2 and usage_dh["DoubleDipper"]["pitches"] == 35,
+      "a reliever who pitched in both ends of a real doubleheader has both real "
+      "appearances counted (10 + 25 = 35 pitches, 2 apps)", f"got {usage_dh['DoubleDipper']}")
+check(usage_dh["DoubleDipper"]["games"][-1]["pitches"] == 25,
+      "the LAST entry in his games list is Game 2 (25 pitches), the real chronologically "
+      "later outing, not Game 1 -- proves doubleheader games are ordered by actual start "
+      "time, not just calendar date", f"got {usage_dh['DoubleDipper']['games']}")
+
 head("4. Per-appearance detail (date/IP/pitches) is preserved per reliever, not just "
      "the L7-aggregate totals -- needed for naming real relievers in customer copy "
      "instead of vague 'X of Y relievers used' language.")
