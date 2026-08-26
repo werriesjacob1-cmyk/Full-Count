@@ -519,8 +519,9 @@ payload14 = bd.build_payload({
          "umpire": {"name": "Z", "k_pct": 0.22, "bb_pct": 0.08, "league_k_pct": 0.221,
                    "league_bb_pct": 0.085},
          "is_getaway": False, "is_opener": False,
-         "picks": [{"name": "B", "prop": "Over 0.5 Hits", "hit_probability": 0.65,
-                   "market_odds": -130, "price_clears": True, "why": "a real reason"}]},
+         "pick_sections": [{"label": "Best Overall Read",
+                            "picks": [{"name": "B", "prop": "Over 0.5 Hits", "hit_probability": 0.65,
+                                      "market_odds": -130, "price_clears": True, "why": "a real reason"}]}]},
     ],
     "streaks": [dict(row("Streaky Batter", "hits", 0.6, odds=-110, implied=0.55, edge=0.05,
                          clears=True), player_id=9, streak=6, streak_stat="hits")],
@@ -696,18 +697,76 @@ dh_all_priced = [
     {"name": "Julio Rodriguez", "prop": "To Hit a Home Run", "game_pk": DH_GAME_1,
      "hit_probability": 0.30, "market_odds": -120, "price_clears": True, "why": ["dup of Game 1"]},
 ]
+def _flat_picks(g):
+    # pick_sections (Part 2 item 4b, honest game-highlight sections, 2026-08-26)
+    # replaced the old flat "picks" list -- flatten back for length/content
+    # assertions that don't care which labeled section a pick landed in.
+    return [p for sec in g["pick_sections"] for p in sec["picks"]]
+
 dh_ctx = bd._build_game_context(dh_all_priced, dh_game_meta, {}, {}, set(), {})
 dh_by_pk = {g["game_pk"]: g for g in dh_ctx}
 check(len(dh_ctx) == 2, "both halves of the doubleheader get their own game_context entry",
       f"got {len(dh_ctx)}")
-check(len(dh_by_pk[DH_GAME_1]["picks"]) == 1, "Game 1's intra-game moonshot/category overlap "
-      "still collapses to one real pick", f"got {dh_by_pk[DH_GAME_1]['picks']}")
-check(len(dh_by_pk[DH_GAME_2]["picks"]) == 1,
+check(len(_flat_picks(dh_by_pk[DH_GAME_1])) == 1, "Game 1's intra-game moonshot/category overlap "
+      "still collapses to one real pick", f"got {_flat_picks(dh_by_pk[DH_GAME_1])}")
+check(len(_flat_picks(dh_by_pk[DH_GAME_2])) == 1,
       "Game 2's real, distinct candidate for the SAME player+prop is NOT dropped as a false "
       "duplicate of Game 1's -- this is the exact bug: before the game_pk-aware key, this "
-      "list was empty", f"got {dh_by_pk[DH_GAME_2]['picks']}")
-check(dh_by_pk[DH_GAME_2]["picks"][0]["hit_probability"] == 0.22,
-      "Game 2's own real probability survives, not Game 1's", f"got {dh_by_pk[DH_GAME_2]['picks'][0]}")
+      "list was empty", f"got {_flat_picks(dh_by_pk[DH_GAME_2])}")
+check(_flat_picks(dh_by_pk[DH_GAME_2])[0]["hit_probability"] == 0.22,
+      "Game 2's own real probability survives, not Game 1's", f"got {_flat_picks(dh_by_pk[DH_GAME_2])[0]}")
+
+
+head("12c. _game_pick_sections(): real bug, found 2026-08-26 (games-drill-down honesty audit, "
+     "direct finding) -- the old per-game highlight list was a flat top-6-by-raw-probability "
+     "sort, which systematically favored hits_runs_rbis (clears on ANY hit, run, OR RBI -- "
+     "inherently higher raw probability than a single specific outcome like a home run) over "
+     "every other market in the game. Verifies a game with a dominant H+R+RBI candidate AND "
+     "real batter/pitcher/power candidates surfaces genuine diversity via honestly-labeled "
+     "sections, never manufactures a section with no real backing candidate.")
+
+diverse_picks = [
+    {"name": "Dominant Hitter", "prop": "Over 0.5 H+R+RBI", "type": "batter",
+     "projection": {"stat": "hits_runs_rbis"}, "hit_probability": 0.85, "why": ["hrrb why"]},
+    {"name": "Second Best HRRBI", "prop": "Over 1.5 H+R+RBI", "type": "batter",
+     "projection": {"stat": "hits_runs_rbis"}, "hit_probability": 0.80, "why": []},
+    {"name": "Power Bat", "prop": "To Hit a Home Run", "type": "batter",
+     "projection": {"stat": "home_runs"}, "hit_probability": 0.22, "why": ["power why"]},
+    {"name": "Ace Pitcher", "prop": "Over 6.5 Strikeouts", "type": "pitcher",
+     "projection": {"stat": "strikeouts"}, "hit_probability": 0.62, "why": ["k why"]},
+    {"name": "Extra Bat", "prop": "Over 0.5 Hits", "type": "batter",
+     "projection": {"stat": "hits"}, "hit_probability": 0.55, "why": []},
+]
+sections = bd._game_pick_sections(diverse_picks)
+labels = [s["label"] for s in sections]
+check(labels == ["Best Overall Read", "Best Batter Read", "Best Pitcher Read", "Best Power Angle", "Other Props"],
+      "with real candidates for every category PLUS a real leftover, all 5 honest sections "
+      "appear, in a stable order -- Other Props only carries the genuinely leftover pick, not "
+      "a repeat of one already claimed above", f"got {labels}")
+check(sections[4]["picks"][0]["name"] == "Extra Bat",
+      "Other Props holds the one real pick not already claimed by a labeled section above",
+      f"got {sections[4]}")
+check(sections[0]["picks"][0]["name"] == "Dominant Hitter",
+      "Best Overall Read is genuinely the highest real probability in the game",
+      f"got {sections[0]}")
+check(sections[1]["picks"][0]["name"] == "Second Best HRRBI",
+      "Best Batter Read is the best REMAINING batter candidate (Dominant Hitter already claimed "
+      "by Best Overall Read) -- not the same player/prop repeated", f"got {sections[1]}")
+check(sections[2]["picks"][0]["name"] == "Ace Pitcher",
+      "Best Pitcher Read is the real pitcher candidate", f"got {sections[2]}")
+check(sections[3]["picks"][0]["name"] == "Power Bat",
+      "Best Power Angle is the real home_runs candidate, NOT one of the higher-probability "
+      "H+R+RBI picks -- this is the exact H+R+RBI-domination bug this fix closes",
+      f"got {sections[3]}")
+# REGRESSION GUARD: no section is ever manufactured when no real, distinct candidate backs it.
+no_pitcher_picks = [p for p in diverse_picks if p["type"] != "pitcher"]
+sections_np = bd._game_pick_sections(no_pitcher_picks)
+check(not any(s["label"] == "Best Pitcher Read" for s in sections_np),
+      "REGRESSION GUARD: a game with genuinely no real pitcher candidate never gets a fabricated "
+      "Best Pitcher Read section -- a category label is navigation, not permission to call a "
+      "weak/nonexistent candidate a recommendation", f"got {[s['label'] for s in sections_np]}")
+check(bd._game_pick_sections([]) == [], "a game with no real picks at all returns no sections, "
+      "not a crash or a fabricated empty-looking section")
 
 
 head("13. app.js's humanizeReason() actually translates real jargon strings, not just "
@@ -1969,9 +2028,10 @@ const g1 = { game_pk: 111, matchup: "SEA @ OAK", away_team: "Seattle Mariners", 
   game_start: "2099-01-01T00:00:00Z", away_sp: "Pitcher A", home_sp: "Pitcher B", hp_ump: "Ump X",
   weather: { dome: false, temp: 68, wind_mph: 5, wind_effect: "Out to CF" },
   umpire: { name: "Ump X", k_pct: 0.24, bb_pct: 0.08 }, is_getaway: false, is_opener: false,
-  picks: [{ name: "Julio Rodriguez", prop: "To Hit a Home Run", hit_probability: 0.22, market_odds: 450 }] };
+  pick_sections: [{ label: "Best Overall Read", picks: [
+    { name: "Julio Rodriguez", prop: "To Hit a Home Run", hit_probability: 0.22, market_odds: 450 }] }] };
 const g2 = { game_pk: 222, matchup: "NYY @ BOS", away_team: "New York Yankees", home_team: "Boston Red Sox",
-  game_start: "2099-01-01T01:00:00Z", picks: [] };
+  game_start: "2099-01-01T01:00:00Z", pick_sections: [] };
 DATA = { schedule: [g1, g2], props: [
   { id: "p1", name: "Julio Rodriguez", prop: "To Hit a Home Run", stat: "home_runs", game_pk: 111, hit_probability: 0.22 },
   { id: "p2", name: "Cal Raleigh", prop: "Over 0.5 Hits", stat: "hits", game_pk: 111, hit_probability: 0.6 },
@@ -2027,7 +2087,10 @@ renderGames();
 const detailHtml = document.getElementById("page-games").innerHTML;
 assertTrue(detailHtml.includes("See all 2 props for this game"),
   "the See-all link uses the REAL total props for this game (2, from DATA.props) -- not the " +
-  "picks list's own highlight cap (g1.picks has only 1 entry) -- got " + detailHtml);
+  "pick_sections' own highlight cap (g1's one section has only 1 entry) -- got " + detailHtml);
+assertTrue(detailHtml.includes('class="gps-label"') && detailHtml.includes("Best Overall Read"),
+  "the honest section label (Part 2 item 4b, 2026-08-26) renders in the full drill-down, not " +
+  "just a flat unlabeled pick list -- got " + detailHtml);
 assertTrue(detailHtml.includes('href="#/props?game_pk=111"'),
   "the See-all link's real destination carries game_pk, got " + detailHtml);
 assertTrue(detailHtml.includes("Seattle Mariners") && detailHtml.includes("Oakland Athletics"),

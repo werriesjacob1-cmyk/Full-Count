@@ -720,6 +720,74 @@ def run_live_fetch():
     return out
 
 
+# Stat families where "how likely is SOMETHING to happen" naturally runs
+# higher than a single specific outcome (H+R+RBI clears on any hit, run, OR
+# RBI; a home run needs one specific outcome). Used only to build a labeled
+# "Best Power Angle" section below, never to change any score/probability.
+# "moonshot_420" is generate_picks.MOONSHOT_THRESHOLD_FT (420) -- hardcoded
+# rather than imported since generate_picks is only ever imported lazily,
+# inside functions, elsewhere in this file (see run_live_fetch()), and this
+# constant needs to exist at module load time.
+_POWER_STATS = {"home_runs", "total_bases", "moonshot_420"}
+
+
+def _game_pick_sections(game_picks):
+    """Real bug, found 2026-08-26 (games-drill-down honesty audit): the old
+    per-game highlight list was a flat top-6-by-raw-hit_probability sort
+    across every stat family in the game. That systematically favored
+    hits_runs_rbis (H+R+RBI clears on ANY hit, run, OR RBI -- inherently
+    higher raw probability than a single specific outcome like a home run),
+    so a game's "highlights" were dominated by one market family, not
+    genuinely the most interesting angles on that game. A category label is
+    navigation/research organization, not permission to call a weak
+    candidate a recommendation -- so this NEVER manufactures a section: a
+    section only ships when a real, distinct candidate exists for it.
+
+    Ranked purely by hit_probability within each bucket -- the same real,
+    already-computed number every other surface on this site ranks by, not
+    a new judgment about which market "matters more."."""
+    ranked = sorted(game_picks, key=lambda r: r.get("hit_probability") or 0, reverse=True)
+
+    def summarize(r):
+        return {"name": r["name"], "prop": r["prop"], "hit_probability": r["hit_probability"],
+                "market_odds": r.get("market_odds"), "price_clears": r.get("price_clears"),
+                "why": (r.get("why") or [None])[0]}
+
+    used = set()
+
+    def pick_key(r):
+        return (r.get("name"), r.get("prop"))
+
+    def take_best(label, matches):
+        for r in ranked:
+            k = pick_key(r)
+            if k in used:
+                continue
+            if matches(r):
+                used.add(k)
+                return {"label": label, "picks": [summarize(r)]}
+        return None
+
+    sections = []
+    s = take_best("Best Overall Read", lambda r: True)
+    if s: sections.append(s)
+    s = take_best("Best Batter Read", lambda r: r.get("type") == "batter")
+    if s: sections.append(s)
+    s = take_best("Best Pitcher Read", lambda r: r.get("type") == "pitcher")
+    if s: sections.append(s)
+    s = take_best("Best Power Angle",
+                  lambda r: (r.get("projection") or {}).get("stat") in _POWER_STATS)
+    if s: sections.append(s)
+    # Real remaining picks (still ranked, still real), never padded -- fills
+    # out to the same total-picks budget the old flat top-6 used, minus
+    # whatever the labeled sections above already claimed.
+    remaining_budget = max(0, 6 - sum(len(sec["picks"]) for sec in sections))
+    others = [r for r in ranked if pick_key(r) not in used][:remaining_budget]
+    if others:
+        sections.append({"label": "Other Props", "picks": [summarize(r) for r in others]})
+    return sections
+
+
 def _build_game_context(all_priced, game_meta, park_wx, ump_kbb, started, schedule):
     """Per-game schedule breakdown. Direct request: "I want people to be able
     to click on a game on the schedule, and get a breakdown of why X props
@@ -777,8 +845,6 @@ def _build_game_context(all_priced, game_meta, park_wx, ump_kbb, started, schedu
             umpire = {"name": gm.get("hp_ump"), "k_pct": uk.get("k_pct"),
                      "bb_pct": uk.get("bb_pct"), "league_k_pct": uk.get("league_k_pct"),
                      "league_bb_pct": uk.get("league_bb_pct")}
-        game_picks = sorted(picks_by_game.get(pk, []),
-                           key=lambda r: r.get("hit_probability") or 0, reverse=True)[:6]
         game_context.append({
             "game_pk": pk, "matchup": gm.get("matchup"),
             "away_team": gm.get("away_team"), "home_team": gm.get("home_team"),
@@ -787,9 +853,7 @@ def _build_game_context(all_priced, game_meta, park_wx, ump_kbb, started, schedu
             "game_start": (schedule.get(pk) or {}).get("start"),
             "weather": weather, "umpire": umpire,
             "is_getaway": bool(gm.get("is_getaway")), "is_opener": bool(gm.get("is_opener")),
-            "picks": [{"name": r["name"], "prop": r["prop"], "hit_probability": r["hit_probability"],
-                      "market_odds": r.get("market_odds"), "price_clears": r.get("price_clears"),
-                      "why": (r.get("why") or [None])[0]} for r in game_picks],
+            "pick_sections": _game_pick_sections(picks_by_game.get(pk, [])),
         })
     return game_context
 

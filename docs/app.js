@@ -1289,13 +1289,40 @@ function renderGames() {
   el.innerHTML = `<div class="section-head"><h2>Games</h2><span class="section-sub">${games.length} games tonight</span></div>
     <div class="game-list">${games.map(gameCard).join("")}</div>`;
 }
+function gamePickLine(p) {
+  return `<div class="game-pick-line">
+      <span>${esc(p.name)} — ${esc(p.prop)}</span>
+      <span>${pctBig(p.hit_probability)}${p.market_odds != null ? " · " + fmtOdds(p.market_odds) : ""}</span>
+    </div>`;
+}
+// Real bug, found 2026-08-26 (games-drill-down honesty audit): the backend
+// used to hand this a flat top-6-by-raw-probability list, which
+// systematically favored hits_runs_rbis (clears on ANY hit, run, OR RBI --
+// inherently higher raw probability than a single specific outcome like a
+// home run) over every other market in the game. pick_sections (see
+// dashboard/build_dashboard.py's _game_pick_sections()) replaces that with
+// real, honestly-labeled sections (Best Overall Read / Best Batter Read /
+// Best Pitcher Read / Best Power Angle / Other Props) -- a section only
+// ever appears when a real, distinct candidate backs it, never manufactured
+// to fill a slot. `headers` controls whether the section labels themselves
+// render (the full drill-down) or just the pick lines, flattened (the
+// compact schedule-list card, where there isn't room for section chrome
+// but the underlying diversity fix still applies).
+function gamePickSections(g, headers) {
+  const sections = g.pick_sections || [];
+  if (!sections.length) return "";
+  if (!headers) {
+    return `<div class="game-picks">${sections.flatMap(s => s.picks).map(gamePickLine).join("")}</div>`;
+  }
+  return sections.map(s => `<div class="game-pick-section">
+      <div class="gps-label">${esc(s.label)}</div>
+      <div class="game-picks">${s.picks.map(gamePickLine).join("")}</div>
+    </div>`).join("");
+}
 function gameCard(g) {
   const wxText = gameWeatherText(g);
   const ump = gameUmpireText(g);
-  const picks = (g.picks || []).map(p => `<div class="game-pick-line">
-      <span>${esc(p.name)} — ${esc(p.prop)}</span>
-      <span>${pctBig(p.hit_probability)}${p.market_odds != null ? " · " + fmtOdds(p.market_odds) : ""}</span>
-    </div>`).join("");
+  const picks = gamePickSections(g, false);
   return `<a class="game-card" href="#/games?game_pk=${g.game_pk}">
     <div class="game-card-head">
       <div class="game-teams">${esc(g.away_team || "")} @ ${esc(g.home_team || "")}</div>
@@ -1306,7 +1333,7 @@ function gameCard(g) {
       ${wxText ? `<span>${esc(wxText)}</span>` : ""}
       ${ump ? `<span>${esc(ump)}</span>` : ""}
     </div>
-    ${picks ? `<div class="game-picks">${picks}</div>` : `<p class="section-sub">No standout research for this game yet.</p>`}
+    ${picks || `<p class="section-sub">No standout research for this game yet.</p>`}
   </a>`;
 }
 // The drill-down itself: everything gameCard() already shows, at full size
@@ -1317,13 +1344,10 @@ function gameCard(g) {
 function renderGameDetail(el, g) {
   const wxText = gameWeatherText(g);
   const ump = gameUmpireText(g);
-  const picks = (g.picks || []).map(p => `<div class="game-pick-line">
-      <span>${esc(p.name)} — ${esc(p.prop)}</span>
-      <span>${pctBig(p.hit_probability)}${p.market_odds != null ? " · " + fmtOdds(p.market_odds) : ""}</span>
-    </div>`).join("");
-  // Real, honest total -- not the up-to-6 highlight count g.picks itself
-  // caps at (see _build_game_context()'s own docstring for why it caps
-  // there: a curated highlight list, not the full research surface).
+  const picks = gamePickSections(g, true);
+  // Real, honest total -- not the up-to-6 highlight count pick_sections
+  // itself caps at (see _game_pick_sections()'s own docstring for why it
+  // caps there: a curated highlight list, not the full research surface).
   const totalPropsForGame = publicProps().filter(p => p.game_pk === g.game_pk).length;
   el.innerHTML = `
     <a class="link-btn" href="#/games" style="display:inline-block;margin-bottom:14px;">← All games</a>
@@ -1336,7 +1360,7 @@ function renderGameDetail(el, g) {
       ${g.is_getaway ? `<span>Getaway day</span>` : ""}
       ${g.is_opener ? `<span>Bullpen/opener day</span>` : ""}
     </div>
-    ${picks ? `<div class="game-picks">${picks}</div>` : `<p class="section-sub">No standout research for this game yet.</p>`}
+    ${picks || `<p class="section-sub">No standout research for this game yet.</p>`}
     ${totalPropsForGame > 0 ? `<div style="margin-top:16px;"><a class="btn btn-primary" href="#/props?game_pk=${g.game_pk}">See all ${totalPropsForGame} props for this game →</a></div>` : ""}
   `;
 }
