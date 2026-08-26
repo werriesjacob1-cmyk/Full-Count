@@ -1328,7 +1328,14 @@ def compute_player_state_indicators():
         warn(f"State indicators: {e}"); return f"  Failed: {e}\n"
 
 
-def _bullpen_fetch_one(args):
+def _bullpen_fetch_one(args, is_rotation_starter=None):
+    """is_rotation_starter: optional callable(name, person_id) -> True/False/
+    None, used to tell a real rotation starter apart from a bullpen/opener
+    arm who happened to be listed first in one game's box score (see the
+    ROLE AUDIT comment below). None (the default, and every existing
+    caller's behavior) means "no classifier available" -- the game's first
+    pitcher is always excluded, unchanged from before this parameter
+    existed."""
     team_name, team_id = args
     try:
         # statsapi.schedule()'s team kwarg is literally `team`, not `teamId` — the
@@ -1406,7 +1413,38 @@ def _bullpen_fetch_one(args):
                 pitchers=[p for p in box.get(side_key,[]) if p.get("personId")]
                 for idx, pdata in enumerate(pitchers):
                     if idx == 0:
-                        continue  # that game's starter, not a reliever -- see above
+                        # ROLE AUDIT (release-candidate review, 2026-08-26): "first
+                        # pitcher in the box score" and "not a bullpen arm" are NOT
+                        # always the same pitcher -- a real opener/bulk-reliever can
+                        # be listed first. Verified against a real week of games
+                        # (2026-08-18..25, 120 real "first pitcher" observations):
+                        # 8 had a short outing (<=2.0 IP or <=35 pitches); checking
+                        # each against his REAL season-to-date role (gamesStarted/
+                        # games, the same >=0.5 convention this codebase already
+                        # uses at compute_bullpen_era() and the stadium-summary
+                        # starter/reliever split) showed 6 of 8 (Cade Gibson G=33
+                        # GS=1, Dylan Lord G=32 GS=4, etc.) are real, primarily-
+                        # relief pitchers, not rotation starters having a short
+                        # night -- a real, measurable ~5% misclassification rate
+                        # in this one window, not a rare theoretical edge case.
+                        # Unlike the game-specific IP/pitch-count heuristic this
+                        # function's own earlier comment already rejected (which
+                        # would ALSO misclassify a real ace knocked out early as a
+                        # "reliever"), season-to-date role is a stable fact about
+                        # the PERSON, not this one outing, and is already fetched
+                        # for other scoring purposes -- no new call, no guessing.
+                        # is_rotation_starter=None (no classifier passed, or the
+                        # classifier returns None/True -- unknown or confirmed
+                        # real starter) keeps the exact prior conservative
+                        # behavior: excluded. Only a CONFIRMED (`is False`)
+                        # primarily-reliever role includes him as real bullpen
+                        # usage below, using his real IP/pitches from this game.
+                        if is_rotation_starter is None:
+                            continue
+                        role = is_rotation_starter(pdata.get("name","?").split(",")[0].strip(),
+                                                    pdata.get("personId"))
+                        if role is not False:
+                            continue
                     pname=pdata.get("name","?").split(",")[0].strip()
                     try: ip=float(pdata.get("ip",0) or 0)
                     except (TypeError,ValueError): ip=0.0
