@@ -52,7 +52,7 @@ cache (already enabled, same cache dir within one job run), re-calling shared
 fetchers here does not mean a second round of network traffic for anything
 mlb_daily.py already pulled.
 """
-import os, sys, json, re, unicodedata, math
+import os, sys, json, re, unicodedata, math, functools
 from datetime import datetime, timezone
 from collections import defaultdict
 import pandas as pd
@@ -240,8 +240,63 @@ def fetch_park_weather(game_meta):
         if not sk or sk in seen: continue
         seen.add(sk)
         lat, lon, dome, team, cf_deg, elev, lf, cf_d, rf, lfw, cfw, rfw, foul, surf, humidor, eye, retract = m.STADIUMS[sk]
-        if dome:
-            out[gm["matchup"]] = {"dome": True, "park_hr_index": 50, "wind_effect": "dome", "temp": None}
+        # 2026-08-2X data-integrity fix: a retractable-roof park (retract=
+        # True) is no longer force-treated as permanently closed. Real
+        # per-game roof state comes from m.real_roof_status() (the MLB
+        # Stats API's own weather.condition field) -- only a genuinely
+        # closed roof (or a true fixed dome, retract=False) gets the
+        # neutral/indoor treatment below.
+        roof_status = m.real_roof_status(gm.get("mlb_weather_condition"), retract)
+        if dome and not retract:
+            out[gm["matchup"]] = {"dome": True, "park_hr_index": 50, "wind_effect": "dome", "temp": None,
+                                   "roof_status": None}
+            continue
+        if dome and roof_status == "closed":
+            out[gm["matchup"]] = {"dome": True, "park_hr_index": 50, "wind_effect": "dome", "temp": None,
+                                   "roof_status": "closed"}
+            continue
+        # UNKNOWN-ROOF INTEGRITY FIX (2026-08-26, PR #67 release-candidate
+        # review): "unknown" used to fall through to the real outdoor-weather
+        # fetch below, same as a confirmed-open roof -- awarding directional
+        # temp/wind/HR credit as though open were known, with only a customer-
+        # facing caveat sentence, not a neutral model input. Audited: MLB's
+        # weather.condition field is commonly still completely blank 8-12
+        # hours before first pitch (verified live, 2026-08-26: all 4 of that
+        # day's still-to-play retractable-park games showed condition=None at
+        # T-8.2h to T-11.7h) -- squarely inside this pipeline's own daily
+        # generation window (14:30 UTC and later cron runs, `.github/
+        # workflows/mlb-daily.yml`). And "unknown" is NOT evidence of "open":
+        # a real 8-day/7-park eventual-outcome sample found 4 of the 7
+        # retractable parks (Chase Field, Daikin Park, Globe Life Field,
+        # loanDepot park) closed in 100% of observed games, T-Mobile Park
+        # open in 100%, and the rest mixed -- concretely, tonight's real
+        # unknown-roof loanDepot park forecast (86F, 6.8mph wind blowing out)
+        # would have scored park_hr_index=76.6 (a real HR-boost "why" line)
+        # under the old policy, at a park that was CLOSED in all 4 sampled
+        # games this season -- directional credit built on absence of
+        # evidence, not evidence itself. Absence of a "closed" reading is not
+        # affirmative evidence the roof is open. Per the 11/11 audit already
+        # in real_roof_status()'s own docstring: a PRESENT non-closed reading
+        # is real evidence of open (kept as-is, unchanged). A MISSING reading
+        # is not that -- it is no evidence either way.
+        #
+        # Fix: unknown now gets the same neutral numeric treatment as a
+        # confirmed-closed roof (dome=False here, not True, so downstream
+        # consumers -- the rain-risk QC checks, the dashboard game-weather
+        # widget -- correctly see "no weather data", never a fabricated
+        # "confirmed dome/closed" signal; roof_status stays "unknown", never
+        # silently rewritten to "closed"). generate_picks.score_batter()'s
+        # explicit roof_status=="unknown" watchout (search that function)
+        # already surfaces the real uncertainty to the customer; its wording
+        # was updated in the same commit to stop saying "assumes the roof is
+        # open" now that it no longer does. A later refresh that obtains a
+        # real MLB condition string naturally re-classifies as open/closed on
+        # its own next call -- no special-cased update path needed, since
+        # every candidate is regenerated from live inputs each run, not
+        # patched in place.
+        if dome and roof_status == "unknown":
+            out[gm["matchup"]] = {"dome": False, "park_hr_index": 50, "wind_effect": "unknown", "temp": None,
+                                   "roof_status": "unknown"}
             continue
         try:
             r = m.retry_get("https://api.open-meteo.com/v1/forecast", params={
@@ -251,8 +306,8 @@ def fetch_park_weather(game_meta):
                 "timezone": "auto", "forecast_days": 1,
             }, timeout=20, retries=2)
             r.raise_for_status()
-            h = r.json()["hourly"]
-            idx = min(max(gm["hour"], 0), 23)
+            meteo = r.json(); h = meteo["hourly"]
+            idx = m.forecast_hour_index(gm.get("game_start_utc"), meteo)
             temp = h["temperature_2m"][idx]; wsp = h["windspeed_10m"][idx]
             wdir = h["winddirection_10m"][idx]; humid = h["relativehumidity_2m"][idx]
             precip_prob = h.get("precipitation_probability", [None]*24)[idx]
@@ -268,13 +323,17 @@ def fetch_park_weather(game_meta):
                 if nws.get("wind_mph") is not None and (wx_disagreement is None):
                     wsp = round((wsp + nws["wind_mph"]) / 2, 1)
 
-            idx_score, wind_effect = park_hr_index(temp, wsp, wdir, humid, cf_deg, elev, dome)
+            # dome is always False on this path now -- either a real
+            # open-air park, or a retractable roof confirmed/assumed open.
+            idx_score, wind_effect = park_hr_index(temp, wsp, wdir, humid, cf_deg, elev, False)
             out[gm["matchup"]] = {"dome": False, "park_hr_index": idx_score,
                                    "wind_effect": wind_effect, "temp": temp, "wind_mph": wsp,
-                                   "wx_disagreement": wx_disagreement, "precip_prob": precip_prob}
+                                   "wx_disagreement": wx_disagreement, "precip_prob": precip_prob,
+                                   "roof_status": roof_status if retract else None}
         except Exception as e:
             m.warn(f"Picks weather {sk}: {e}")
-            out[gm["matchup"]] = {"dome": False, "park_hr_index": 50, "wind_effect": "unknown", "temp": None}
+            out[gm["matchup"]] = {"dome": False, "park_hr_index": 50, "wind_effect": "unknown", "temp": None,
+                                   "roof_status": roof_status if retract else None}
     return out
 
 
@@ -524,8 +583,45 @@ def fetch_public_betting_bias(game_meta):
     return out
 
 
-def fetch_bullpen_scores(game_meta):
-    """Reuses mlb_daily.py's already-fixed, parallelized bullpen fetch directly."""
+def _bullpen_role_classifier(pit_season_df):
+    """callable(name, person_id) -> True/False/None for _bullpen_fetch_one()'s
+    is_rotation_starter parameter (bullpen ROLE AUDIT, 2026-08-26): a real,
+    already-established convention in THIS codebase (mlb_daily.py's stadium
+    role split and compute_bullpen_era() below both already use gamesStarted/
+    games >= 0.5 to call a pitcher a "starter") applied to a new call site,
+    not a new heuristic. Reuses lookup_player()'s already-trusted MLBAM-id-
+    first/name-fallback matching -- no new fetch, no name-matching risk this
+    codebase hasn't already measured and closed elsewhere.
+
+    None whenever the season frame lacks G/GS for this pitcher (most notably
+    the Statcast-fallback pitching frame used when FanGraphs 403s, which
+    carries no games/starts columns at all) -- degrades to the exact prior
+    behavior (always exclude the game's first pitcher) rather than ever
+    guessing from an absent signal."""
+    if pit_season_df is None or pit_season_df.empty:
+        return None
+    lookup = name_lookup(pit_season_df)
+
+    def classify(name, person_id):
+        row = lookup_player(lookup, name, person_id)
+        if not row:
+            return None
+        g, gs = row.get("G"), row.get("GS")
+        if not g or g <= 0 or gs is None:
+            return None
+        return (gs / g) >= 0.5
+    return classify
+
+
+def fetch_bullpen_scores(game_meta, pit_season_df=None):
+    """Reuses mlb_daily.py's already-fixed, parallelized bullpen fetch directly.
+
+    pit_season_df (optional): season-to-date pitching frame, used only to
+    build a role classifier so a real opener/bulk-reliever isn't
+    misclassified as "that game's starter, not a reliever" -- see
+    _bullpen_role_classifier()'s own docstring and _bullpen_fetch_one()'s
+    ROLE AUDIT comment. Omitting it (existing callers, existing tests)
+    preserves the exact prior behavior."""
     teams_seen = {}
     jobs = []
     for gm in game_meta:
@@ -540,12 +636,65 @@ def fetch_bullpen_scores(game_meta):
                 pass
     out = {}
     if jobs:
+        role_classifier = _bullpen_role_classifier(pit_season_df)
+        fetch_one = functools.partial(m._bullpen_fetch_one, is_rotation_starter=role_classifier)
         with m.ThreadPoolExecutor(max_workers=10) as ex:
-            for team_name, usage, err in ex.map(m._bullpen_fetch_one, jobs):
+            for team_name, usage, err in ex.map(fetch_one, jobs):
                 if usage:
                     fatigued = sum(1 for u in usage.values() if u["pitches"] > 60)
-                    out[team_name] = {"fatigued_relievers": fatigued, "tracked": len(usage)}
+                    out[team_name] = {
+                        "fatigued_relievers": fatigued, "tracked": len(usage),
+                        # Real bug, found 2026-08-26 (detailed-bullpen-presentation
+                        # audit): mlb_daily._bullpen_fetch_one() already fetches each
+                        # reliever's real name and per-game (date/ip/pitches) usage --
+                        # the exact detail a customer-facing "name real relievers, not
+                        # vague copy" pass needs (see that function's own 2026-08-25
+                        # comment, which added the "games" list for exactly this
+                        # reason) -- but this function discarded all of it down to two
+                        # bare counts. Direct instruction: "Jacob specifically wants
+                        # names and context... Cade Smith, 27 pitches yesterday, 3
+                        # appearances in 4 days." Surfaced here as its own field,
+                        # additive only -- fatigued_relievers/tracked (what scoring
+                        # actually uses) are unchanged.
+                        "relievers": _reliever_detail(usage),
+                    }
     return out
+
+
+def _reliever_detail(usage):
+    """Real per-reliever usage facts for a team's bullpen, from the same
+    `usage` dict fetch_bullpen_scores() already has -- see that function's
+    own comment for the "computed, then discarded" bug this closes. Sorted
+    by most-recently-used first (the read a bettor actually wants: who
+    pitched last night, not an alphabetical list), capped at 8 -- a whole
+    bullpen's raw usage table is not "context," it's noise past the real
+    late-inning-relevant names.
+
+    `games` entries are chronological (oldest first, matching
+    _bullpen_fetch_one()'s own append order), so games[-1] is always the
+    most recent outing. Never fabricates a role ("closer", "likely to
+    appear") -- that would require a real, verified role model this
+    function does not have; only real, dated facts are reported."""
+    out = []
+    for name, u in usage.items():
+        games = u.get("games") or []
+        if not games:
+            continue
+        last = games[-1]
+        days_ago = None
+        if last.get("date"):
+            try:
+                d = datetime.strptime(last["date"], "%Y-%m-%d")
+                days_ago = (datetime.now() - d).days
+            except (TypeError, ValueError):
+                days_ago = None
+        out.append({
+            "name": name, "pitches_last_outing": last.get("pitches"),
+            "days_since_last_outing": days_ago, "appearances_l7": u.get("apps"),
+            "pitches_l7": u.get("pitches"),
+        })
+    out.sort(key=lambda r: (r["days_since_last_outing"] if r["days_since_last_outing"] is not None else 999))
+    return out[:8]
 
 
 def fetch_l7_batter_form():
@@ -1609,6 +1758,18 @@ def score_batter(batter, gm, opp_sp_row, opp_sp_id, opp_sp_hand, park_wx, batter
             why.append(f"Opposing SP ERA {sp_era:.2f} — shaky matchup for the pitcher")
         elif sp_weak <= 35:
             watchouts.append(f"Opposing SP ERA {sp_era:.2f} — elite pitcher, tough matchup")
+    elif not opp_sp_row:
+        # 2026-08-26 market-specific-explanation fix: when the opposing
+        # starter genuinely isn't confirmed yet (opp_sp_row is empty, not
+        # just missing an ERA field), this used to stay completely silent on
+        # the starter matchup -- no ERA-based fact, and no explanation for
+        # why not. Direct instruction: "If the starter is TBD, explicitly say
+        # starter-specific [matchup] analysis is unavailable rather than
+        # padding the case." sp_weak still defaults to a neutral 50 for
+        # SCORING (scale()'s own documented behavior for a missing input),
+        # which is correct there -- this is purely about the explanation
+        # text saying so honestly instead of padding with nothing.
+        watchouts.append("Opposing starter not yet confirmed — starter-specific matchup analysis unavailable")
     # 2026-08-24 explanation-quality fix, part 3 (same live complaint, Weston
     # Wilson: "L7 avg EV 82.8mph (league ~88.5)" -- 5.7mph BELOW league,
     # shown as a plain fact in `why` with no directional judgment attached).
@@ -1648,6 +1809,64 @@ def score_batter(batter, gm, opp_sp_row, opp_sp_id, opp_sp_hand, park_wx, batter
             watchouts.append(wrc_note + " — below-average hitter this season")
         else:
             why.append(wrc_note)
+    # 2026-08-26 market-specific-explanation fix: ISO and season Barrel% were
+    # both already computed above (sc_iso/sc_barrel, SKILL's own components)
+    # and never once rendered as text -- the exact "computed, then discarded"
+    # failure this codebase has already found and fixed for several other
+    # fields. Real, direct complaint: a home-run detail view showed
+    # probability vs. league base rate and almost nothing about the batter's
+    # actual power profile. ISO and Barrel% are the two power-specific season
+    # stats a home-run/total-bases read should lead with -- wRC+ above is a
+    # general hitting-quality stat, not a power-specific one. Same neutral-
+    # middle-stays-plain convention as every other directional note here.
+    if bs.get("ISO") is not None:
+        iso_note = f"Season ISO {bs['ISO']:.3f}"
+        if sc_iso >= 65:
+            why.append(iso_note + " — real power, above-average isolated power")
+        elif sc_iso <= 35:
+            watchouts.append(iso_note + " — below-average isolated power")
+        else:
+            why.append(iso_note)
+    if bs.get("Barrel%") is not None:
+        barrel_season_note = f"Season barrel% {bs['Barrel%']}"
+        if sc_barrel >= 65:
+            why.append(barrel_season_note + " — well above-average barrel rate")
+        elif sc_barrel <= 35:
+            watchouts.append(barrel_season_note + " — below-average barrel rate")
+        else:
+            why.append(barrel_season_note)
+    # 2026-08-26 market-specific-explanation fix: lineup protection
+    # (woba_ahead/woba_behind) was wired into `signals` for backtest fitting
+    # (see the "Lineup context" block further down, ex = extras or {}) but
+    # never surfaced as a human fact -- same discarded-computation failure.
+    # Directly relevant to RBI/Runs/Hits+Runs+RBIs: who's on base ahead of
+    # this batter (his own RBI opportunity) and how well the lineup protects
+    # him (whether pitchers will pitch around him). Real per-batter wOBA, not
+    # a made-up composite. Uses `extras` directly, not `ex` -- `ex = extras
+    # or {}` isn't assigned until further down in this function (see the
+    # IL-returns check above for the identical reason).
+    lwc_note = ((extras or {}).get("lineup_woba") or {}).get(bid) if bid else None
+    if lwc_note:
+        woba_ahead = lwc_note.get("woba_ahead")
+        if woba_ahead is not None:
+            sc_ahead = scale(woba_ahead, 0.290, 0.400)
+            ahead_note = f"Hitters batting ahead of him: {woba_ahead:.3f} wOBA (league ~.320)"
+            if sc_ahead >= 65:
+                why.append(ahead_note + " — real RBI opportunity on base ahead of him")
+            elif sc_ahead <= 35:
+                watchouts.append(ahead_note + " — a weak on-base group ahead of him, fewer runners to drive in")
+            else:
+                why.append(ahead_note)
+        woba_behind = lwc_note.get("woba_behind")
+        if woba_behind is not None:
+            sc_behind = scale(woba_behind, 0.290, 0.400)
+            behind_note = f"Hitter batting behind him: {woba_behind:.3f} wOBA (league ~.320)"
+            if sc_behind >= 65:
+                why.append(behind_note + " — real lineup protection, pitchers can't just pitch around him")
+            elif sc_behind <= 35:
+                watchouts.append(behind_note + " — little lineup protection, an easier batter to pitch around")
+            else:
+                why.append(behind_note)
     # 2026-08-25 explanation-quality fix (release-readiness audit): the wind-
     # in branch used to land in `why`, the positive-reasons list, even
     # though its own text says "power suppressed" -- a real, self-
@@ -1660,15 +1879,54 @@ def score_batter(batter, gm, opp_sp_row, opp_sp_id, opp_sp_hand, park_wx, batter
     if not park_wx or park_wx.get("dome"): why.append("Dome — weather neutral")
     elif park_wx.get("wind_effect") == "out": why.append(f"Wind blowing OUT ({park_wx.get('wind_mph',0):.0f}mph) — HR boost")
     elif park_wx.get("wind_effect") == "in": watchouts.append(f"Wind blowing IN ({park_wx.get('wind_mph',0):.0f}mph) — power suppressed")
+    # 2026-08-26 UNKNOWN-ROOF INTEGRITY FIX (PR #67 release-candidate review):
+    # a retractable-roof park whose real per-game status couldn't be
+    # confirmed at fetch time (MLB hadn't posted its weather field yet, which
+    # real data shows is common 8-12 hours before first pitch -- squarely
+    # inside this pipeline's own generation window) used to still get a real
+    # outdoor-weather-based read above, as though open were known, on the
+    # unproven assumption that "not yet reported closed" meant "open."
+    # Measured: absence of a "closed" reading is not affirmative evidence of
+    # an open roof -- a real 8-day/7-park sample found 4 of the 7 parks
+    # closed in 100% of observed games. fetch_park_weather() no longer awards
+    # that directional credit for "unknown" (same neutral park_hr_index=50
+    # treatment as a confirmed-closed roof, but never mislabeled as
+    # "closed" -- roof_status stays "unknown"); this watchout is the
+    # customer-facing side of that fix. Never fires for a confirmed-open,
+    # confirmed-closed, or non-retractable park (roof_status is None or
+    # "open"/"closed" there).
+    if park_wx and park_wx.get("roof_status") == "unknown":
+        watchouts.append("Retractable-roof park — real roof status wasn't confirmed yet when this was "
+                          "generated, so no directional weather effect is being applied until it's known")
+    # 2026-08-2X explanation-quality fix (data-integrity/directionality
+    # audit, real complaint: Jacob saw a "fresh pen" bullpen note under
+    # "Why It Could Hit"). Same class of bug as the wind-in fix just above
+    # -- all three of bullpen fatigue, bullpen quality, and sharp money
+    # used to land in `why` unconditionally regardless of which way the
+    # real value actually cut. A fresh/rested bullpen and an elite bullpen
+    # are both genuinely BAD news for a batter (harder relievers to face
+    # late); sharp money FADING this side is real negative context, not a
+    # reason to like the pick. Routed on the same real, already-computed
+    # values already driving these facts, not a second guess.
     if bullpen_fatigue_pct is not None:
-        why.append(f"Opposing bullpen fatigue: {fatigued}/{tracked} relievers over 60 pitches in L7 "
-                    f"({'tired pen — favorable late' if bullpen_fatigue_pct >= 40 else 'fresh pen'})")
+        note = (f"Opposing bullpen fatigue: {fatigued}/{tracked} relievers over 60 pitches in L7")
+        if bullpen_fatigue_pct >= 40:
+            why.append(note + " (tired pen — favorable late)")
+        else:
+            watchouts.append(note + " (fresh pen — tougher matchup late)")
     if bullpen_era_diff is not None and abs(bullpen_era_diff) >= 0.5:
-        why.append(f"Opposing bullpen ERA {bp_era} (league ~{LEAGUE_AVG_BULLPEN_ERA}, "
-                    f"{'shaky' if bullpen_era_diff > 0 else 'elite'} pen)")
+        note = f"Opposing bullpen ERA {bp_era} (league ~{LEAGUE_AVG_BULLPEN_ERA})"
+        if bullpen_era_diff > 0:
+            why.append(note + " — shaky pen")
+        else:
+            watchouts.append(note + " — elite pen")
     if sharp_divergence is not None and abs(sharp_divergence) >= 10:
-        why.append(f"Sharp money {'backing' if sharp_divergence > 0 else 'fading'} {batter.get('team')} "
-                    f"(money% {'+' if sharp_divergence>0 else ''}{sharp_divergence} pts vs ticket%)")
+        if sharp_divergence > 0:
+            why.append(f"Sharp money backing {batter.get('team')} "
+                        f"(money% +{sharp_divergence} pts vs ticket%)")
+        else:
+            watchouts.append(f"Sharp money fading {batter.get('team')} "
+                              f"(money% {sharp_divergence} pts vs ticket%) — smart money moving away from this side")
 
     signals = {}
     _sig(signals, "platoon", bats if bats in ("L", "R") else None, platoon)
@@ -2126,23 +2384,79 @@ def score_pitcher(sp_name, sp_id, sp_hand, gm, side, pit_season_lookup, l14_form
     # difference (a partial-lineup proxy, not the full team rate) so THAT
     # distinction stays, phrased in terms of what the number IS rather than
     # why the preferred source was unavailable.
+    # 2026-08-2X explanation-directionality fix (pitcher-strikeout market,
+    # same audit that fixed the batter-side bullpen/sharp-money bugs
+    # above): opposing K%, the platoon (same-hand) note, season K%, CSW%,
+    # and Stuff+ all used to land in `why` unconditionally, regardless of
+    # whether the real, already-computed scale (sc_opp_k/sc_same_hand/
+    # sc_season_k/sc_csw/sc_stuff -- each already feeds the score formula
+    # above) said the number was actually favorable, neutral, or
+    # unfavorable. A contact-oriented opposing lineup, a mostly-opposite-
+    # handed lineup, or a below-average K%/CSW%/Stuff+ reading are all
+    # genuinely bad news for a strikeouts prop -- they must not render as
+    # unqualified positive evidence. Neutral-middle values stay a plain,
+    # unqualified fact, matching the identical wRC+/L14-K%/wind convention
+    # used elsewhere in this file (>=65 favorable, <=35 unfavorable, else
+    # plain).
+    why = []
     if opp_team_k_pct is not None:
         if opp_k_source in ("team", "mlb_team"):
             k_note = f"Opposing team K% {opp_team_k_pct:.1f}"
         else:
             k_note = f"Opposing lineup K% {opp_team_k_pct:.1f} (based on {opp_k_source} confirmed lineup batters, not the full team rate)"
-        why = [k_note]
+        if sc_opp_k >= 65:
+            why.append(k_note + " — strikeout-prone lineup")
+        elif sc_opp_k <= 35:
+            watchouts.append(k_note + " — contact-oriented lineup, tougher matchup")
+        else:
+            why.append(k_note)
     else:
         # Missing data is not a reason TO like the pick -- belongs in
         # watchouts, not why (this unconditionally landed in `why`, the
         # positive-reasons list, until this fix).
         watchouts.append("Opposing team strikeout tendency unavailable — no team or confirmed-lineup K% data could be matched")
-        why = []
     if workload_note: why.append(workload_note)
-    why.append(f"{same_hand}/{known} known-hand opposing batters same-handed" if known else "Opposing lineup handedness mostly unknown")
-    if k_pct: why.append(f"Season K% {k_pct}")
-    if csw: why.append(f"CSW% {csw}")
-    if stuff: why.append(f"Stuff+ {stuff}")
+    # Natural-language platoon note (real complaint: "known-hand" is
+    # internal jargon that means nothing to a bettor) -- was previously
+    # "4/9 known-hand opposing batters same-handed", unconditionally in
+    # why regardless of whether that ratio actually favored the pitcher.
+    hand_word = {"R": "right-handed", "L": "left-handed"}.get(sp_hand)
+    if known and hand_word:
+        platoon_fact = f"{same_hand} of {known} projected hitters bat {hand_word} against this {sp_hand}HP"
+        if sc_same_hand >= 65:
+            why.append(f"Platoon advantage: {platoon_fact}")
+        elif sc_same_hand <= 35:
+            watchouts.append(f"Platoon disadvantage: {platoon_fact} (mostly opposite-handed lineup)")
+        else:
+            why.append(platoon_fact[0].upper() + platoon_fact[1:])
+    elif known:
+        why.append(f"{same_hand} of {known} opposing batters match the pitcher's throwing hand")
+    else:
+        watchouts.append("Opposing lineup handedness unavailable — could not compute a platoon-matchup read")
+    if k_pct:
+        k_skill_note = f"Season K% {k_pct}"
+        if sc_season_k >= 65:
+            why.append(k_skill_note + " — above-average strikeout rate")
+        elif sc_season_k <= 35:
+            watchouts.append(k_skill_note + " — below-average strikeout rate this season")
+        else:
+            why.append(k_skill_note)
+    if csw:
+        csw_note = f"CSW% {csw}"
+        if sc_csw >= 65:
+            why.append(csw_note + " — above-average called+swinging strike rate")
+        elif sc_csw <= 35:
+            watchouts.append(csw_note + " — below-average called+swinging strike rate")
+        else:
+            why.append(csw_note)
+    if stuff:
+        stuff_note = f"Stuff+ {stuff}"
+        if sc_stuff >= 65:
+            why.append(stuff_note + " — above-average per pitch-modeling")
+        elif sc_stuff <= 35:
+            watchouts.append(stuff_note + " — below-average per pitch-modeling")
+        else:
+            why.append(stuff_note)
     # 2026-08-25 explanation-quality fix (same class of bug as the
     # 2026-08-24 batter-side fixes above, found during a release-readiness
     # directional-safety audit): this used to append L14 K% to `why` (the
@@ -2167,10 +2481,29 @@ def score_pitcher(sp_name, sp_id, sp_hand, gm, side, pit_season_lookup, l14_form
         else:
             why.append(l14_k_note)
     if exp_k and exp_k.get("k_rate") is not None:
-        why.append(f"Recency-weighted K rate {exp_k['k_rate']*100:.1f}% (exp. decay, halflife 30d, "
-                    f"{exp_k['n_starts']} real starts / {exp_k['raw_bf']} BF) — drives the strikeout probability model")
+        # Same fix, reusing season K%'s own (15, 32) scale bound -- exp_k's
+        # k_rate is the same underlying quantity (K% of batters faced),
+        # just recency-weighted instead of season-long, so the same bound
+        # is a direct reuse, not a new invented judgment.
+        exp_k_pct = exp_k['k_rate'] * 100
+        sc_exp_k = scale(exp_k_pct, 15, 32)
+        exp_k_note = (f"Recency-weighted K rate {exp_k_pct:.1f}% (exp. decay, halflife 30d, "
+                    f"{exp_k['n_starts']} real starts / {exp_k['raw_bf']} BF)")
+        if sc_exp_k >= 65:
+            why.append(exp_k_note + " — drives a favorable strikeout-probability read")
+        elif sc_exp_k <= 35:
+            watchouts.append(exp_k_note + " — drives a below-average strikeout-probability read")
+        else:
+            why.append(exp_k_note + " — drives the strikeout probability model")
     if tto_note and "Maintains" in tto_note: why.append(tto_note)
-    if ump.get("accuracy"): why.append(f"HP ump accuracy {ump['accuracy']:.1f}%")
+    if ump.get("accuracy"):
+        ump_note = f"HP ump accuracy {ump['accuracy']:.1f}%"
+        if context >= 65:
+            why.append(ump_note + " — tight, accurate zone favors called strikes")
+        elif context <= 35:
+            watchouts.append(ump_note + " — shakier ball-strike accuracy, fewer called strikes")
+        else:
+            why.append(ump_note)
 
     signals = {}
     _sig(signals, "opp_team_k_pct", opp_team_k_pct, sc_opp_k)
@@ -2510,6 +2843,15 @@ def score_combined_strikeouts(gm, away_pitcher_c, home_pitcher_c, combined_price
         "probability_detail": {"empirical": None, "modelled": best["prob"]},
         "market_odds": best["odds"], "market_implied": round(best["base_rate"], 4),
         "market_edge": best["lift"],
+        # market-edge-semantics fix (P0-6): combined_strikeouts is a
+        # one-sided ladder (12+, 13+, ... escalating odds, no paired
+        # Under), so base_rate/market_implied is the RAW posted implied
+        # probability, never de-vigged -- same honesty fix as
+        # odds_fanduel.attach_market_prices' own generic branch.
+        "posted_implied": round(best["base_rate"], 4),
+        "market_fair": round(pp.devig(best["base_rate"]), 4),
+        "market_fair_method": "assumed_hold",
+        "edge_vs_fair": round(best["prob"] - pp.devig(best["base_rate"]), 4),
         "price_clears": pp.price_is_acceptable(best["odds"], best["prob"]),
         "sample_n": None, "alternatives": alternatives,
         "signals": {"combined_k_edge": best["lift"]},
@@ -3277,7 +3619,7 @@ def _build_and_score():
     team_bat_df = m.fg_team_bat(m.YEAR)
     park_wx = fetch_park_weather(game_meta)
     ump_scores = fetch_umpire_scores(game_meta)
-    bullpen_scores = fetch_bullpen_scores(game_meta)
+    bullpen_scores = fetch_bullpen_scores(game_meta, pit_season_df)
     bullpen_quality = compute_bullpen_era(pit_season_df)
     sharp_bias = fetch_public_betting_bias(game_meta)
     l7_form = fetch_l7_batter_form()
@@ -3556,19 +3898,21 @@ def _build_and_score():
     }
 
 
-# How much of a real HR-specific edge over a player's OWN season base rate
-# a moonshot pick needs to earn "High" confidence. Direct request: "does the
-# math support it? Or is it just because we have an edge?" -- found live
-# 2026-08-15 that select_moonshots() was labeling picks High off the
-# batter's HITS/TOTAL-BASES confidence (his primary, most-likely
+# How much of a real HR-specific edge over the LEAGUE home-run base rate (NOT
+# this player's own rate -- see base_rate's real definition, "his own" was
+# corrected 2026-08-2X as part of the HR probability/base-rate semantics
+# trace) a moonshot pick needs to earn "High" confidence. Direct request:
+# "does the math support it? Or is it just because we have an edge?" --
+# found live 2026-08-15 that select_moonshots() was labeling picks High off
+# the batter's HITS/TOTAL-BASES confidence (his primary, most-likely
 # projection), reused wholesale for the home-run entry even though nothing
 # about it was computed for home runs specifically. A real Gleyber Torres
-# case: 11.07% HR probability vs his own 10.34% base rate -- a 0.73-point
+# case: 11.07% HR probability vs a 10.34% league base rate -- a 0.73-point
 # lift, indistinguishable from noise -- carried a borrowed "High" tag with
 # an empty why/reliability/sample_n, because none of that was ever computed
 # for the HR read either. 3 points is a real, not-noise elevation for a
-# single-digit-percent event (a double-digit relative lift over a real base
-# rate), not an arbitrary round number picked to look scientific.
+# single-digit-percent event (a double-digit relative lift over the league
+# base rate), not an arbitrary round number picked to look scientific.
 MOONSHOT_LOCK_LIFT = 0.03
 
 
@@ -3593,15 +3937,31 @@ def select_moonshots(candidates, prices, fd, n=5):
     feeds the main board -- only the quality gate (MIN_QUALITY_SCORE)
     still applies, same floor every other candidate has to clear.
 
-    confidence/reliability/sample_n/why are computed HERE, independently of
-    the batter's own (hits/total-bases) versions of those same fields --
-    see MOONSHOT_LOCK_LIFT's own comment for the real bug this replaces.
+    confidence/reliability/sample_n are computed HERE, independently of the
+    batter's own (hits/total-bases) versions of those same fields -- see
+    MOONSHOT_LOCK_LIFT's own comment for the real bug this replaces.
     reliability/sample_n still describe how much real MLB track record this
     player has (a legitimate, real thing to carry over -- it says nothing
     about home runs specifically, just how trustworthy ANY read on him is),
-    but confidence additionally requires a real HR-specific lift, and why
-    is written fresh from the real HR numbers instead of borrowing a
-    sentence about a different stat entirely."""
+    and confidence additionally requires a real HR-specific lift.
+
+    why/watchouts: real bug, found 2026-08-26 (market-specific-explanation
+    audit, direct complaint -- a home-run detail view showed probability vs.
+    league base rate and almost nothing about why that day was a favorable
+    HR spot). This used to build its own single-sentence why from scratch,
+    restating hr_opt['prob'] vs base_rate as a paragraph -- a plain
+    restatement of hit_probability/base_rate/lift, all three of which are
+    ALREADY on this row as their own fields (see below), not new information.
+    Meanwhile it discarded the real batter-level evidence (platoon,
+    opposing-SP quality, pitch-type exploit, recent/season power profile,
+    park/weather/wind, bullpen, lineup slot) c["why"]/c["watchouts"] already
+    computed one call up in score_batter() -- exactly the "computed, then
+    discarded" failure this codebase keeps finding and fixing elsewhere.
+    Reused directly here instead: dashboard/build_dashboard.py's
+    _select_market_evidence() (structured evidence contract, Part 2 item 4)
+    filters/reorders this same real list for the home_runs market
+    specifically at the public-payload boundary, so nothing here needs its
+    own HR-flavored copy of the same facts."""
     out = []
     for c in candidates:
         if c.get("type") != "batter":
@@ -3629,13 +3989,17 @@ def select_moonshots(candidates, prices, fd, n=5):
         else:
             confidence = "Low"
         base_rate = hr_opt.get("base_rate")
-        why = []
-        if base_rate is not None and lift is not None:
-            sample_n = c.get("sample_n") or 0
-            why.append(
-                f"{hr_opt['prob']*100:.1f}% real model probability to homer tonight vs his own "
-                f"{base_rate*100:.1f}% season base rate ({lift*100:+.1f} points) -- built on "
-                f"{sample_n} real batter-games, reliability grade {reliability or '?'}")
+        # 2026-08-2X data-integrity fix (HR probability/base-rate semantics
+        # trace), still true: base_rate here is true_league_rates' league-
+        # wide home_runs_1plus rate (or a slate-scoped fallback), NOT this
+        # player's own rate -- hr_opt['prob'] is the one number that's
+        # actually his. That comparison is real and stays on the row via
+        # base_rate/lift/hit_probability/probability_basis below; it no
+        # longer needs its own sentence duplicated into `why` (see this
+        # function's own docstring for why -- the Evidence section already
+        # renders it from those fields).
+        why = list(c.get("why") or [])
+        watchouts = list(c.get("watchouts") or [])
         # Full candidate shape, not a stripped-down dict -- write_json appends
         # these into the same `picks` list grade_results.py already knows how
         # to grade (it reads pick["type"], pick["projection"]["stat"]/["needs"]
@@ -3655,11 +4019,19 @@ def select_moonshots(candidates, prices, fd, n=5):
             "probability_detail": {"empirical": hr_opt.get("empirical"), "modelled": hr_opt.get("modelled")},
             "market_odds": odds, "market_implied": implied,
             "market_edge": None if implied is None else round(hr_opt["prob"] - implied, 4),
+            # market-edge-semantics fix (P0-6): one-sided market (home run
+            # yes/no), never de-vigged -- same honesty fix as
+            # odds_fanduel.attach_market_prices' own generic branch.
+            "posted_implied": implied,
+            "market_fair": None if implied is None else round(pp.devig(implied), 4),
+            "market_fair_method": None if implied is None else "assumed_hold",
+            "edge_vs_fair": (None if implied is None
+                              else round(hr_opt["prob"] - pp.devig(implied), 4)),
             "price_clears": pp.price_is_acceptable(odds, hr_opt["prob"]),
             "category": "moonshot",
             "lineup_assumed": c.get("lineup_assumed"),
             "reliability": reliability, "sample_n": c.get("sample_n"),
-            "why": why, "watchouts": [],
+            "why": why, "watchouts": watchouts,
         })
     out.sort(key=lambda o: o["hit_probability"], reverse=True)
     return out[:n]
@@ -3699,6 +4071,12 @@ def select_deep_moonshots(candidates, prices, fd, n=5):
         row["market_odds"] = odds
         row["market_implied"] = implied
         row["market_edge"] = None if implied is None else round(c["hit_probability"] - implied, 4)
+        # market-edge-semantics fix (P0-6): one-sided market, never de-vigged.
+        row["posted_implied"] = implied
+        row["market_fair"] = None if implied is None else round(pp.devig(implied), 4)
+        row["market_fair_method"] = None if implied is None else "assumed_hold"
+        row["edge_vs_fair"] = (None if implied is None
+                                else round(c["hit_probability"] - pp.devig(implied), 4))
         row["price_clears"] = pp.price_is_acceptable(odds, c["hit_probability"])
         row["category"] = "moonshot_420"
         out.append(row)
@@ -3707,9 +4085,22 @@ def select_deep_moonshots(candidates, prices, fd, n=5):
 
 
 # Every prop family this board can price, and the display label for each.
-# home_runs is deliberately absent -- select_moonshots() already owns that
-# category at n=5 with its own framing ("Moonshots"); listing it again here
-# would just be the same players under a second heading.
+# home_runs WAS deliberately absent at one point (select_moonshots() already
+# owns an HR category at n=5 -- "Moonshots" -- and listing it again here
+# looked like the same players under a second heading), but that left home
+# runs "structurally unable to appear here at all" (this function's own
+# docstring names that as the exact failure it exists to prevent) for any
+# batter outside select_moonshots' capped top-5-by-probability list -- a
+# real silently-discarded-candidate bug, not a cosmetic one. Restored below.
+# The two populations can legitimately show the SAME player with the SAME
+# probability -- that is not a duplicate to dedupe away, since Moonshots
+# (capped, ranked by raw probability across the whole slate) and this
+# by-category board (uncapped, one best-of-family per player) answer
+# different real questions ("best HR bets tonight" vs "this player's best
+# read in every family"). What must NOT differ between them is the
+# CONFIDENCE label for the identical read -- see the home_runs-specific
+# confidence computation right below, which reuses select_moonshots' own
+# rule so the two populations never disagree about the same number.
 # "walks" and "first_inning_run" (the one-sided per-pitcher read) are
 # deliberately absent -- verified live against FanDuel's raw API that
 # neither corresponds to a real, bettable market (see score_walk's and
@@ -3804,12 +4195,39 @@ def select_best_by_category(candidates, prices, fd, n_per_category=1, k_prices=N
                 # did (no per-market fit and no pooled fallback), best["prob"]
                 # is honestly still the raw one and raw_hit_probability/
                 # calibrated_by are correctly absent below, never invented.
+                # HR/moonshot population-consistency fix (P0-8 data-integrity
+                # audit): home_runs is the one family here where c.get(
+                # "confidence") is actively WRONG, not just imprecise --
+                # verified with real code execution: the identical batter/
+                # probability/lift/reliability run through select_moonshots()
+                # (the dedicated, MOONSHOT_LOCK_LIFT-based HR confidence
+                # rule -- see its own docstring for the real Gleyber Torres
+                # bug this rule was built to fix) produced "High", while this
+                # function's generic c.get("confidence") -- the batter's
+                # OVERALL score-derived label, dominated by his hits/total-
+                # bases read, unrelated to his HR-specific lift/reliability --
+                # produced "Low" for the exact same read. Two structurally
+                # different populations of "home_runs" candidates
+                # (select_moonshots' n=5-capped Moonshots list, and this
+                # function's uncapped by-category list) must not disagree
+                # about the same player's same number. Reuses the identical
+                # rule, not a new one.
+                confidence = c.get("confidence")
+                if stat == "home_runs":
+                    hr_lift = best.get("lift")
+                    hr_rel = c.get("reliability")
+                    if hr_rel in ("A", "B") and hr_lift is not None and hr_lift >= MOONSHOT_LOCK_LIFT:
+                        confidence = "High"
+                    elif hr_rel in ("A", "B", "C") and hr_lift is not None and hr_lift >= MOONSHOT_LOCK_LIFT / 2:
+                        confidence = "Medium"
+                    else:
+                        confidence = "Low"
                 by_category[stat].append({
                     "type": "batter", "name": c["name"], "player_id": c.get("player_id"),
                     "team": c.get("team"), "matchup": c.get("matchup"), "game_pk": c.get("game_pk"),
                     "side": c.get("side"), "prop": f"Over {best['line']} {CATEGORY_LABELS.get(stat, stat)}",
                     "projection": {"stat": stat, "value": best["line"], "needs": best["needs"]},
-                    "lean": None, "score": c.get("score"), "confidence": c.get("confidence"),
+                    "lean": None, "score": c.get("score"), "confidence": confidence,
                     "notable_signals": c.get("notable_signals", 0),
                     "hit_probability": best["prob"], "signals": c.get("signals") or {},
                     "base_rate": best.get("base_rate"), "lift": best.get("lift"),
@@ -3827,7 +4245,15 @@ def select_best_by_category(candidates, prices, fd, n_per_category=1, k_prices=N
                     # record exists for this player at all is a fact that
                     # doesn't change per stat family, unlike a specific
                     # probability's own interval.
-                    "prob_ci": best.get("ci"), "sample_n": c.get("sample_n"),
+                    "prob_ci": best.get("ci"),
+                    # CI-provenance-honesty fix (P0-7): same "computed, then
+                    # discarded" boundary as prob_ci itself was fixed for --
+                    # ci_source (player_empirical vs historical_reliability_
+                    # band, see _batter_options/select_best_by_category's own
+                    # comments) was always computed alongside prob_ci but
+                    # never carried into this dict.
+                    "prob_ci_source": best.get("ci_source"),
+                    "sample_n": c.get("sample_n"),
                     "reliability": c.get("reliability"),
                     "why": c.get("why"), "watchouts": c.get("watchouts"),
                     # Real bug, found live 2026-08-15: this fixed field list
@@ -3880,11 +4306,20 @@ def select_best_by_category(candidates, prices, fd, n_per_category=1, k_prices=N
                 "probability_detail": c.get("probability_detail"),
                 "raw_hit_probability": c.get("raw_hit_probability"),
                 "calibrated_by": c.get("calibrated_by"),
-                "prob_ci": c.get("prob_ci"), "sample_n": c.get("sample_n"),
+                "prob_ci": c.get("prob_ci"), "prob_ci_source": c.get("prob_ci_source"),
+                "sample_n": c.get("sample_n"),
                 "reliability": c.get("reliability"), "alternatives": c.get("alternatives"),
                 "why": c.get("why"), "watchouts": c.get("watchouts"),
                 "market_odds": c.get("market_odds"), "market_implied": c.get("market_implied"),
                 "market_edge": c.get("market_edge"), "price_clears": c.get("price_clears"),
+                # market-edge-semantics fix (P0-6): same "computed, then
+                # discarded" failure class as combo_player_ids/lineup_assumed
+                # above -- these four fields would otherwise silently vanish
+                # for every candidate reaching the board through this
+                # by-category/dashboard path.
+                "posted_implied": c.get("posted_implied"), "market_fair": c.get("market_fair"),
+                "market_fair_method": c.get("market_fair_method"),
+                "edge_vs_fair": c.get("edge_vs_fair"),
                 "lineup_assumed": c.get("lineup_assumed"),
                 "_needs_price_lookup": False,
             })
@@ -3894,6 +4329,10 @@ def select_best_by_category(candidates, prices, fd, n_per_category=1, k_prices=N
             if e.pop("_needs_price_lookup", True):
                 needs = (e.get("projection") or {}).get("needs")
                 market_stat = _fd_stat_alias(stat)
+                # market-edge-semantics fix (P0-6): fair/method mirror
+                # odds_fanduel.attach_market_prices' own two branches exactly
+                # -- strikeouts is genuinely two-sided (exact no-vig via
+                # true_over), everything else here is one-sided (assumed hold).
                 if market_stat == "strikeouts" and k_prices is not None:
                     # Same two-sided lookup odds_fanduel.attach_market_prices
                     # uses -- FanDuel posts one line per starter, so this only
@@ -3902,12 +4341,21 @@ def select_best_by_category(candidates, prices, fd, n_per_category=1, k_prices=N
                     k = k_prices.get(fd.normalize_name(e["name"]))
                     odds = k["over"] if (k and k.get("needs") == needs) else None
                     implied = round(k["true_over"], 4) if odds is not None else None
+                    fair, fair_method = implied, ("exact_two_sided" if implied is not None else None)
+                    posted = round(pp.implied_probability(odds), 4) if odds is not None else None
                 else:
                     odds = (prices.get(fd.normalize_name(e["name"])) or {}).get((market_stat, needs))
                     implied = round(pp.implied_probability(odds), 4) if odds is not None else None
+                    posted = implied
+                    fair = round(pp.devig(implied), 4) if implied is not None else None
+                    fair_method = "assumed_hold" if implied is not None else None
                 e["market_odds"] = odds
                 e["market_implied"] = implied
                 e["market_edge"] = None if implied is None else round(e["hit_probability"] - implied, 4)
+                e["posted_implied"] = posted
+                e["market_fair"] = fair
+                e["market_fair_method"] = fair_method
+                e["edge_vs_fair"] = None if fair is None else round(e["hit_probability"] - fair, 4)
                 e["price_clears"] = pp.price_is_acceptable(odds, e["hit_probability"])
             e["category"] = "best_of_category"
             e["clears_main_board_floor"] = e["hit_probability"] >= MIN_LINE_PROB
@@ -3991,6 +4439,8 @@ def select_shadow_tracking(candidates, n_per_key=1):
                         "that lost selection against the real candidate, never a live bet."],
                 "watchouts": [],
                 "market_odds": None, "market_implied": None, "market_edge": None,
+                "posted_implied": None, "market_fair": None, "market_fair_method": None,
+                "edge_vs_fair": None,
                 "price_clears": None,
                 "category": "shadow",
             })
@@ -4521,7 +4971,8 @@ def write_json(top10, moonshots=(), by_category=None, deep_moonshots=(), shadow_
             "stable_lift": c.get("stable_lift"),
             "raw_hit_probability": c.get("raw_hit_probability"),
             "calibrated_by": c.get("calibrated_by"),
-            "prob_ci": c.get("prob_ci"), "sample_n": c.get("sample_n"),
+            "prob_ci": c.get("prob_ci"), "prob_ci_source": c.get("prob_ci_source"),
+            "sample_n": c.get("sample_n"),
             "reliability": c.get("reliability"),
             # PHASE 3, ITEM 3: real gap found while wiring per-row versioning
             # -- quality_control() sets this on the candidate, classify_
@@ -4552,6 +5003,17 @@ def write_json(top10, moonshots=(), by_category=None, deep_moonshots=(), shadow_
             # (market_hold present) from an 8%-ASSUMED approximation
             # (market_hold absent) at analysis time, per pick.
             "market_hold": c.get("market_hold"),
+            # market-edge-semantics fix (P0-6): same "computed, then
+            # discarded" boundary as market_hold directly above it --
+            # posted_implied/market_fair/market_fair_method/edge_vs_fair
+            # make the exact-vs-assumed-hold distinction explicit and
+            # comparable across every market family (see
+            # odds_fanduel.attach_market_prices' own docstring for the
+            # full rationale).
+            "posted_implied": c.get("posted_implied"),
+            "market_fair": c.get("market_fair"),
+            "market_fair_method": c.get("market_fair_method"),
+            "edge_vs_fair": c.get("edge_vs_fair"),
             "market_edge": c.get("market_edge"),
             "price_clears": c.get("price_clears"),
             "probability_basis": c.get("probability_basis"),
@@ -4919,7 +5381,12 @@ def _keep_options(opts, default_stat=None):
              # from falling back to a stale, wrong-stat CI carried over from
              # the candidate's primary projection -- see _batter_options'
              # own comment on the same fix for the full story.
-             "ci": o.get("ci")}
+             "ci": o.get("ci"),
+             # CI-provenance-honesty fix (P0-7): same "computed, then
+             # discarded" boundary as ci directly above -- ci_source was
+             # added to _batter_options'/apply_calibration's own opt dicts
+             # but this exact trim silently dropped it too.
+             "ci_source": o.get("ci_source")}
             for o in (opts or []) if o.get("needs") is not None
             and o.get("prob") is not None]
 
@@ -5218,6 +5685,14 @@ def _batter_options(c, comp, emp, league=None):
                 "empirical": None if empirical is None else round(empirical, 4),
                 "modelled": None if modelled is None else round(modelled, 4),
                 "ci": ci,
+                # CI-provenance-honesty fix (P0-7): this is a real per-line
+                # Wilson interval off THIS player's own empirical hit/n
+                # count (see raw_rates immediately above) -- same source as
+                # attach_reliability's own primary-line "player_empirical"
+                # label, applied here at the per-line-option level so it
+                # survives into select_best_by_category()'s by-category
+                # board, not just the primary candidate.
+                "ci_source": "player_empirical" if ci is not None else None,
             })
     options.sort(key=lambda o: o["prob"], reverse=True)
     return options
@@ -5635,6 +6110,13 @@ def apply_calibration(candidates, calibrator):
                 # yet -- this does not lower the MIN_RELIABILITY_BAND_N floor
                 # or change anything else about what counts as "supported."
                 opt["ci"] = historical_prob_ci(opt.get("stat"), opt.get("needs"), opt["prob"])
+                # CI-provenance-honesty fix (P0-7): this replaces whatever
+                # ci_source the option carried (a player_empirical interval
+                # describing the RAW probability, now stale post-calibration)
+                # with the real source of the new one -- a market/bucket-level
+                # historical band, same label attach_reliability's own
+                # fallback uses.
+                opt["ci_source"] = "historical_reliability_band" if opt["ci"] is not None else None
                 used[oby] += 1
 
     for c in candidates:
@@ -6032,8 +6514,11 @@ def _build_combined_nrfi(candidates):
             "probability_basis": "combined_shrunk",
             "probability_detail": {"empirical": None, "modelled": None},
             "raw_hit_probability": None, "calibrated_by": None, "prob_ci": None,
+            "prob_ci_source": None,
             "sample_n": n_min, "reliability": None,
             "market_odds": None, "market_implied": None, "market_edge": None,
+            "posted_implied": None, "market_fair": None, "market_fair_method": None,
+            "edge_vs_fair": None,
             "price_clears": None, "alternatives": None,
         })
     return combined
@@ -6181,6 +6666,15 @@ def attach_reliability(candidates, emp_batters, emp_pitchers):
                 and not c.get("calibrated_by")):
             lo, hi = _wilson_interval(rate.get("hit", 0), rate.get("n", n) or 1)
             c["prob_ci"] = [round(lo, 4), round(hi, 4)]
+            # 2026-08-2X CI-provenance-honesty fix (data-integrity audit):
+            # this is a real per-PLAYER Wilson interval off his own
+            # empirical hit/n count -- a materially different, more direct
+            # kind of evidence than the historical_reliability_band path
+            # below (a market/bucket-level backtest measurement, not this
+            # player's own record). prob_ci_source was previously only ever
+            # set on the historical-band path, leaving this one implicitly
+            # unlabeled (None) even though a real, named source exists.
+            c["prob_ci_source"] = "player_empirical"
         # 2026-08-24 accuracy investigation: the branch above is the only
         # per-PLAYER interval this pipeline can build, and it structurally
         # cannot cover modelled_shrunk/league_only/calibrated lines (see the

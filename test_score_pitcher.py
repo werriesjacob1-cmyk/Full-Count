@@ -150,13 +150,30 @@ check(any(w == "Opposing team K% 21.0" for w in c8_mlb["why"]),
 check(not any("MLB Stats API" in w or "unreachable" in w for w in c8_mlb["why"]),
       "no raw provider/outage text leaks into the public why list", f"got {c8_mlb['why']}")
 
-c8_lineup = call(opp_team_k_pct=19.5, opp_k_source=6)
-check(any("Opposing lineup K% 19.5" in w and "6 confirmed lineup batters" in w for w in c8_lineup["why"]),
+c8_lineup = call(opp_team_k_pct=23.0, opp_k_source=6)
+check(any("Opposing lineup K% 23.0" in w and "6 confirmed lineup batters" in w for w in c8_lineup["why"]),
       "opp_k_source=<int> still calls out the real methodology difference (a partial-lineup "
       "proxy, not the full team rate) but phrased as what the number IS, not why the "
       "preferred source failed", f"got {c8_lineup['why']}")
 check(not any("unreachable" in w for w in c8_lineup["why"]), "no outage language leaks here either",
       f"got {c8_lineup['why']}")
+
+# 2026-08-25 pitcher-K directionality fix (same audit as check 9): opposing
+# K% -- lineup-average source included -- must not land unqualified in why
+# when the real number is actually a contact-oriented (unfavorable) read.
+c8_lineup_cold = call(opp_team_k_pct=19.5, opp_k_source=6)
+check(not any("Opposing lineup K%" in w for w in c8_lineup_cold["why"]),
+      "REGRESSION GUARD: a contact-oriented opposing lineup K% (19.5, sc_opp_k<=35) must NOT "
+      "appear in why", f"got {c8_lineup_cold['why']}")
+check(any("Opposing lineup K% 19.5" in w and "6 confirmed lineup batters" in w
+          and "contact-oriented" in w for w in c8_lineup_cold["watchouts"]),
+      "...it lands in watchouts instead, still calling out the methodology difference, "
+      "honestly framed as unfavorable", f"got {c8_lineup_cold['watchouts']}")
+
+c8_hot = call(opp_team_k_pct=26.0, opp_k_source="team")
+check(any("Opposing team K% 26.0" in w and "strikeout-prone" in w for w in c8_hot["why"]),
+      "a genuinely strikeout-prone opposing team K% (26.0, sc_opp_k>=65) is labeled as such "
+      "in why", f"got {c8_hot['why']}")
 
 c8_none = call(opp_team_k_pct=None)
 check(not any("Opposing team K%" in w for w in c8_none["why"]),
@@ -202,6 +219,95 @@ check(any(w == "L14 K% 5.0 (10 PA)" for w in c9_thin["why"]),
 check(not any("cold recent form" in w or "hot recent form" in w for w in c9_thin["why"] + c9_thin["watchouts"]),
       "a thin sample never gets a hot/cold label at all -- form_l14_raw is None there, so "
       "neither threshold branch can fire", f"got why={c9_thin['why']} watchouts={c9_thin['watchouts']}")
+
+head("10. 2026-08-25 explanation-directionality fix (pitcher-K market audit): platoon/season "
+     "K%/CSW%/Stuff+/recency-weighted K rate/umpire accuracy must not land unqualified in "
+     "`why` when they're actually unfavorable readings, same class of bug as check 9's L14 K% "
+     "fix. Also removes internal 'known-hand' jargon from the platoon note (real directive: "
+     "translate '4/9 known-hand opposing batters same-handed' into natural language).")
+
+fav_platoon = [{"name": f"B{i}", "id": i, "bats": "R"} for i in range(7)] + \
+              [{"name": f"B{i}", "id": i, "bats": "L"} for i in range(7, 9)]
+c10_platoon_fav = call(sp_hand="R", opp_lineup=fav_platoon)
+check(any("Platoon advantage: 7 of 9 projected hitters bat right-handed against this RHP" in w
+          for w in c10_platoon_fav["why"]),
+      "a genuinely favorable platoon matchup (7/9 same-handed, sc_same_hand>=65) is labeled "
+      "'Platoon advantage' in plain baseball language, no 'known-hand' jargon",
+      f"got {c10_platoon_fav['why']}")
+check(not any("known-hand" in w for w in c10_platoon_fav["why"] + c10_platoon_fav["watchouts"]),
+      "REGRESSION GUARD: 'known-hand' internal jargon must never appear in customer-facing why/watchouts")
+
+unfav_platoon = [{"name": f"B{i}", "id": i, "bats": "R"} for i in range(2)] + \
+                [{"name": f"B{i}", "id": i, "bats": "L"} for i in range(2, 9)]
+c10_platoon_unfav = call(sp_hand="R", opp_lineup=unfav_platoon)
+check(not any("Platoon" in w for w in c10_platoon_unfav["why"]),
+      "REGRESSION GUARD: an unfavorable platoon matchup (2/9 same-handed) must NOT appear in why",
+      f"got {c10_platoon_unfav['why']}")
+check(any("Platoon disadvantage: 2 of 9 projected hitters bat right-handed against this RHP" in w
+          and "mostly opposite-handed" in w for w in c10_platoon_unfav["watchouts"]),
+      "...it lands in watchouts instead, honestly framed", f"got {c10_platoon_unfav['watchouts']}")
+
+c10_no_hand_data = call(opp_lineup=[{"name": "B", "id": 1, "bats": "?"}])
+check(not any("handedness" in w for w in c10_no_hand_data["why"]),
+      "REGRESSION GUARD: unknown lineup handedness (known=0) is missing data, not a reason to "
+      "like the pick -- must not appear in why", f"got {c10_no_hand_data['why']}")
+check(any("handedness unavailable" in w for w in c10_no_hand_data["watchouts"]),
+      "...it's flagged in watchouts instead", f"got {c10_no_hand_data['watchouts']}")
+
+c10_k_hot = call(pit_season_lookup={"Framber Valdez": {"K%": 30.0, "CSW%": 33.0, "ERA": 3.10}})
+check(any("Season K% 30.0" in w and "above-average" in w for w in c10_k_hot["why"]),
+      "a genuinely above-average season K% is labeled as such in why", f"got {c10_k_hot['why']}")
+check(any("CSW% 33.0" in w and "above-average" in w for w in c10_k_hot["why"]),
+      "a genuinely above-average CSW% is labeled as such in why", f"got {c10_k_hot['why']}")
+
+c10_k_cold = call(pit_season_lookup={"Framber Valdez": {"K%": 15.0, "CSW%": 20.0, "ERA": 5.10}})
+check(not any("Season K%" in w for w in c10_k_cold["why"]),
+      "REGRESSION GUARD: a below-average season K% must NOT appear in why", f"got {c10_k_cold['why']}")
+check(any("Season K% 15.0" in w and "below-average" in w for w in c10_k_cold["watchouts"]),
+      "...it lands in watchouts instead", f"got {c10_k_cold['watchouts']}")
+check(not any("CSW%" in w for w in c10_k_cold["why"]),
+      "REGRESSION GUARD: a below-average CSW% must NOT appear in why", f"got {c10_k_cold['why']}")
+check(any("CSW% 20.0" in w and "below-average" in w for w in c10_k_cold["watchouts"]),
+      "...it lands in watchouts instead", f"got {c10_k_cold['watchouts']}")
+
+c10_stuff_hot = call(pit_season_lookup={"Framber Valdez": {"K%": 22.0, "CSW%": 27.0, "Stuff+": 120}})
+check(any("Stuff+ 120" in w and "above-average" in w for w in c10_stuff_hot["why"]),
+      "a genuinely above-average Stuff+ is labeled as such in why", f"got {c10_stuff_hot['why']}")
+
+c10_stuff_cold = call(pit_season_lookup={"Framber Valdez": {"K%": 22.0, "CSW%": 27.0, "Stuff+": 70}})
+check(not any("Stuff+" in w for w in c10_stuff_cold["why"]),
+      "REGRESSION GUARD: a below-average Stuff+ must NOT appear in why", f"got {c10_stuff_cold['why']}")
+check(any("Stuff+ 70" in w and "below-average" in w for w in c10_stuff_cold["watchouts"]),
+      "...it lands in watchouts instead", f"got {c10_stuff_cold['watchouts']}")
+
+c10_expk_hot = call(exp_k_form={501: {"k_rate": 0.30, "n_starts": 5, "raw_bf": 100}})
+check(any("Recency-weighted K rate 30.0%" in w and "favorable" in w for w in c10_expk_hot["why"]),
+      "a genuinely favorable recency-weighted K rate is labeled as such in why",
+      f"got {c10_expk_hot['why']}")
+
+c10_expk_cold = call(exp_k_form={501: {"k_rate": 0.10, "n_starts": 5, "raw_bf": 100}})
+check(not any("Recency-weighted K rate" in w for w in c10_expk_cold["why"]),
+      "REGRESSION GUARD: a below-average recency-weighted K rate must NOT appear in why",
+      f"got {c10_expk_cold['why']}")
+check(any("Recency-weighted K rate 10.0%" in w and "below-average" in w for w in c10_expk_cold["watchouts"]),
+      "...it lands in watchouts instead", f"got {c10_expk_cold['watchouts']}")
+
+c10_expk_neutral = call(exp_k_form={501: {"k_rate": 0.235, "n_starts": 5, "raw_bf": 100}})
+check(any("Recency-weighted K rate 23.5%" in w and "drives the strikeout probability model" in w
+          for w in c10_expk_neutral["why"]),
+      "a neutral-middle recency-weighted K rate stays plain in why, exactly as before",
+      f"got {c10_expk_neutral['why']}")
+
+c10_ump_hot = call(ump_scores={"Athletics @ Astros": {"accuracy": 95.0}})
+check(any("HP ump accuracy 95.0%" in w and "favors called strikes" in w for w in c10_ump_hot["why"]),
+      "a genuinely tight/accurate umpire zone is labeled favorable in why", f"got {c10_ump_hot['why']}")
+
+c10_ump_cold = call(ump_scores={"Athletics @ Astros": {"accuracy": 91.0}})
+check(not any("HP ump accuracy" in w for w in c10_ump_cold["why"]),
+      "REGRESSION GUARD: a shakier umpire zone accuracy must NOT appear in why",
+      f"got {c10_ump_cold['why']}")
+check(any("HP ump accuracy 91.0%" in w and "shakier" in w for w in c10_ump_cold["watchouts"]),
+      "...it lands in watchouts instead", f"got {c10_ump_cold['watchouts']}")
 
 n_pass = sum(1 for ok, _, _ in _results if ok)
 n_total = len(_results)

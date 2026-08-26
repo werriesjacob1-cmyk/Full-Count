@@ -809,8 +809,18 @@ def park_weather_asof(game_meta, date, sleep=0.2):
                 "temperature_unit": "fahrenheit", "windspeed_unit": "mph", "timezone": "auto",
             }, timeout=25, retries=2)
             r.raise_for_status()
-            h = r.json()["hourly"]
-            idx = min(max(gmeta["hour"], 0), 23)
+            meteo_json = r.json()
+            h = meteo_json["hourly"]
+            # Point-in-time audit (2026-08-26): this used the same buggy
+            # Eastern-hour index (gmeta["hour"]) the live-path timezone fix
+            # (mlb_daily.forecast_hour_index(), 8d00954b) already replaced at
+            # all 4 live call sites -- the archive endpoint below is also
+            # requested with timezone=auto, so its hourly.time array is
+            # ALSO stadium-local, not Eastern, with the identical 0/1/2/3-hour
+            # error by zone. Backtest weather was still silently reading the
+            # wrong hour for every non-Eastern park. Reuses the same already-
+            # tested shared function instead of a second copy of the fix.
+            idx = m.forecast_hour_index(gmeta.get("game_start_utc"), meteo_json)
             temp = h["temperature_2m"][idx]
             wsp = h["windspeed_10m"][idx]
             wdir = h["winddirection_10m"][idx]
@@ -887,7 +897,14 @@ def build_inputs(date, store, use_weather=True, use_bullpen=True, verbose=True):
 
     # Bullpen fatigue reads mlb_daily's L7_START/TODAY (repointed) through
     # statsapi schedules and box scores, so it is already point-in-time.
-    bullpen_scores = gp.fetch_bullpen_scores(game_meta) if use_bullpen else {}
+    # pit_df (built above by season_tables_asof(), itself point-in-time
+    # bounded to the day before D) already carries real G/GS columns in the
+    # exact shape gp._bullpen_role_classifier() expects -- passed through so
+    # the backtest path gets the same real opener/rotation-starter role
+    # audit the live path does (2026-08-26), unlike the roof-state gap
+    # documented separately, this one closes cleanly with data already on
+    # hand here, no new fetch and no new leakage surface.
+    bullpen_scores = gp.fetch_bullpen_scores(game_meta, pit_df) if use_bullpen else {}
     bullpen_quality = gp.compute_bullpen_era(pit_df) if not pit_df.empty else {}
 
     park_wx = park_weather_asof(game_meta, date) if use_weather else {}

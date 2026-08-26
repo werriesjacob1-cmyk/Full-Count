@@ -27,7 +27,17 @@ let PROPS_BY_ID = new Map();
 let route = "today";
 let watchlist = new Set();
 let watchSnapshot = {}; // id -> {status, odds, lineup_assumed} at time-of-star, for change detection
-let filters = { search: "", family: "all", status: "all", evidence: "all", sort: "default" };
+// Multi-select prop filtering (Part 2, 2026-08-26): family/status/evidence
+// are each a Set of selected values -- an EMPTY Set means unrestricted
+// ("all"), matching the old sentinel string's meaning, so a user can filter
+// to e.g. Hits + Home Runs, or Top Pick + Lean, simultaneously, instead of
+// being forced to pick exactly one value per dimension.
+let filters = { search: "", families: new Set(), statuses: new Set(), evidences: new Set(), gamePk: null, sort: "default" };
+// selectedGamePk: which game (if any) the Games route is drilled into --
+// separate from `filters` since it's the Games route's own concept, not an
+// All Props filter (though a drill-down page can link INTO filters.gamePk
+// via a real "See all props for this game" link -- see renderGameDetail()).
+let selectedGamePk = null;
 let lastPollStamp = null;
 let lastFullFetchAt = 0;
 let lastFocusedEl = null; // element to restore focus to when a modal sheet/dialog closes
@@ -128,6 +138,45 @@ function evidenceQuality(p) {
 }
 
 // ══════════════════════════════════════════════════════════════════════
+//  PROBABILITY BASIS — 2026-08-2X data-integrity fix (probability-drivers-
+//  vs-matchup-context separation). Direct instruction: "do not let
+//  contextual reasons imply they mathematically generated the headline
+//  probability when they didn't." p.hit_probability (the big number) and
+//  p.score (what ranks/labels the card) are TWO DIFFERENT numbers computed
+//  by different mechanisms -- the "Why It Could Hit"/"Why It Could Miss"
+//  facts below explain the SCORE and today's matchup context, not a
+//  literal derivation of the probability. probability_basis/
+//  probability_detail (newly exposed on the public payload -- see
+//  dashboard/build_dashboard.py's clean()) are what actually produced the
+//  probability, and belong here, in Evidence, not folded into Why.
+const PROBABILITY_BASIS_LABELS = {
+  empirical: "His own real rate this season",
+  empirical_shrunk: "His own real rate, shrunk toward the league rate for a small sample",
+  modelled: "A modelled projection (no direct empirical rate available)",
+  modelled_shrunk: "A modelled projection, shrunk toward the league rate",
+  blended: "A blend of his own real rate and a modelled projection",
+  league_only: "The league rate — not enough of his own data to move off it",
+  combined_shrunk: "A modelled combination for both starters, shrunk toward the league rate",
+  modelled_independent_binomials: "A modelled combination for both starters (treated as independent)",
+  unavailable: "Not available",
+};
+function probabilityBasisText(p) {
+  const label = PROBABILITY_BASIS_LABELS[p.probability_basis];
+  if (!label) return null;
+  const detail = p.probability_detail || {};
+  const parts = [];
+  if (detail.empirical != null) parts.push(`his own rate ${pct(detail.empirical, 1)}`);
+  if (detail.modelled != null) parts.push(`modelled ${pct(detail.modelled, 1)}`);
+  return parts.length ? `${label} (${parts.join(", ")})` : label;
+}
+function probCiSourceText(p) {
+  if (!p.prob_ci) return null;
+  if (p.prob_ci_source === "historical_reliability_band") return "From this market's own historical track record, not this player's individual sample";
+  if (p.prob_ci_source === "player_empirical") return "From this player's own real sample";
+  return null;
+}
+
+// ══════════════════════════════════════════════════════════════════════
 //  RECOMMENDATION STATUS — display metadata for the four real states
 // ══════════════════════════════════════════════════════════════════════
 const STATUS_META = {
@@ -153,8 +202,43 @@ function lineupChip(p) {
   if (p.lineup_assumed === false) return `<span class="chip chip-lineup-confirmed">Confirmed Lineup</span>`;
   return "";
 }
+// Real bug, found 2026-08-25: this only ever checked p.stale, a SEPARATE
+// field from market_fetch_state -- dashboard/refresh_prices.py's
+// FETCH_FAILED branch (a genuinely failed FanDuel re-fetch) never sets
+// stale=True, it only sets market_fetch_state/market_failure_reason. So a
+// price whose most recent fetch actually failed showed no chip at all on
+// the compact card grid, looking identical to a freshly, successfully
+// checked price -- even though priceFreshnessState() (the detail sheet)
+// already correctly flagged this same row as "Last known - price fetch
+// failed". Plain, simplified wording here (not the internal
+// "FETCH_FAILED"/"market_failure_reason" jargon) so a viewer scanning
+// cards, not opening every detail sheet, sees the same honest signal.
 function staleChip(p) {
+  if (p.market_fetch_state === "FETCH_FAILED") {
+    return `<span class="chip chip-stale">Price May Be Outdated</span>`;
+  }
   return p.stale ? `<span class="chip chip-stale">Stale Data</span>` : "";
+}
+// 2026-08-2X data-integrity fix (P0-5, Top Pick warning visibility): a Top
+// Pick candidate that classify_recommendation() flagged SUSPECT (the
+// market itself disagrees with the model's read) gets a SECOND entry in
+// status_reasons -- "note: the market itself disagrees with this read
+// (...) -- still a Top Pick on the model's own probability and price
+// test, but size with that in mind." Real bug: this note was computed and
+// then structurally unreachable everywhere on the site -- the only reader
+// of status_reasons, whyNotTopPickReason() (detail view), explicitly
+// returns null whenever recommendation_status === "top_pick" (it exists
+// to explain why something ISN'T a Top Pick), so a Top Pick's own warning
+// about itself was silently hidden precisely because it still qualified.
+// isTopPickSuspect()/topPickWarning() are the real fix: they read the
+// SAME field, gated the opposite way, so a Top Pick that earned this
+// warning shows it everywhere a Top Pick can appear -- the compact card
+// grid, not just one tap deeper in the detail sheet.
+function isTopPickSuspect(p) {
+  return p.recommendation_status === "top_pick" && (p.status_reasons || []).length > 1;
+}
+function suspectChip(p) {
+  return isTopPickSuspect(p) ? `<span class="chip chip-suspect" title="The market disagrees with this read -- still a Top Pick, but size with that in mind">⚠ Market Disagrees</span>` : "";
 }
 function evidenceChip(p) {
   const eq = evidenceQuality(p);
@@ -309,6 +393,13 @@ const FROZEN_PUBLICATION_FIELDS = new Set([
   "prob_ci", "reliability", "reliability_note", "sample_n", "lineup_assumed",
   "base_rate", "lift", "lift_reference_rate", "stable_lift",
   "published_top_pick_at",
+  // CI-provenance-honesty fix (P0-7) -- kept in sync with
+  // dashboard/live_state.py's FROZEN_PUBLICATION_FIELDS by hand.
+  "prob_ci_source",
+  // 2026-08-2X market-edge-semantics fix (P0-6) -- kept in sync with
+  // dashboard/live_state.py's FROZEN_PUBLICATION_FIELDS by hand, same as
+  // every other entry here.
+  "posted_implied", "market_fair", "market_fair_method", "edge_vs_fair",
 ]);
 function freezePublishedSnapshot(p) {
   if (!gameHasStarted(p) || !p.publication_snapshot) return;
@@ -334,7 +425,11 @@ function refreshSummary() {
 //  render -- no server, no accounts, exactly what a static localStorage-
 //  only architecture can honestly support. Route/storage keys keep their
 //  original "watchlist" names (URLs and existing localStorage entries
-//  stay valid); only user-facing text says "My Board."
+//  stay valid); only user-facing text says "My Board." Real bug, found
+//  2026-08-25: the save/detail-sheet star button's own label text was a
+//  stray leftover that never got the "My Board" rename applied to it --
+//  "Save to Watchlist"/"Saved to Watchlist" -- fixed to match this rule
+//  the module itself already states.
 //
 //  SNAPSHOT VERSIONING (2026-08-25 expansion). v1 (pre-2026-08-25,
 //  already live in real users' localStorage) only ever captured
@@ -514,19 +609,63 @@ function initRouter() {
 // (`#/props?status=lean`) was parsed off and thrown away here, so every
 // "See all research →" link on the Today page silently landed on an
 // UNFILTERED All Props page -- a link that looked like real navigation
-// but did nothing. Now applied to `filters` on route entry, ONLY when a
-// param is actually present in the URL (an absent param must never
-// silently clear a filter the user already set via the page's own UI).
+// but did nothing. Now applied to `filters` on route entry.
+//
+// 2026-08-2X route-filter-leakage fix (Part 2 UX audit): the params were
+// previously applied WITHOUT first resetting `filters`, on the theory that
+// "an absent param must never silently clear a filter the user already
+// set via the page's own UI" -- but renderProps()'s own checkbox/sort
+// handlers mutate `filters` and re-render DIRECTLY (see the filter-dropdown
+// checkbox/f-sort handlers below), never touching location.hash, so onRouteChange() is
+// NEVER re-entered by on-page filter changes -- that worry described a
+// path that doesn't exist. What DOES happen, confirmed live: click a
+// status=top_pick tile -> filtered Props list -> navigate to Games ->
+// click "All Props" in the main nav (a plain #/props link, no query) ->
+// the OLD status=top_pick filter was still silently applied, with no
+// visible reason and no easy way out ("Top Pick filter escape"). Every
+// real hash-navigation INTO the props route is a fresh entry from outside
+// the page, so it resets to defaults first, then applies whatever params
+// this specific link actually carries -- a link can still pre-filter on
+// purpose, it just can't leave a PREVIOUS visit's filter behind.
 function onRouteChange() {
   const stripped = location.hash.replace(/^#\/?/, "") || "today";
   const [rawRoute, rawQuery] = stripped.split("?");
   route = ROUTES.includes(rawRoute) ? rawRoute : "today";
-  if (route === "props" && rawQuery) {
-    const params = new URLSearchParams(rawQuery);
-    if (params.has("family")) filters.family = params.get("family");
-    if (params.has("status")) filters.status = params.get("status");
+  if (route === "props") {
+    filters = { search: "", families: new Set(), statuses: new Set(), evidences: new Set(), gamePk: null, sort: filters.sort };
+    if (rawQuery) {
+      const params = new URLSearchParams(rawQuery);
+      // Multi-select fix (Part 2, 2026-08-26): a link can request more than
+      // one value per dimension via a comma-separated list (e.g.
+      // "?family=hits,home_runs"), same convention on both sides -- see
+      // the "See all" link builders in initSearch()/renderToday() below,
+      // which still emit a single value and work unchanged as a 1-entry set.
+      if (params.has("family")) filters.families = new Set(params.get("family").split(",").filter(Boolean));
+      if (params.has("status")) filters.statuses = new Set(params.get("status").split(",").filter(Boolean));
+      // "See all N matching props" (global search, no single-market
+      // intent) -- destination-integrity fix: this link used to carry no
+      // filter at all for a plain name/team search, landing on the full,
+      // unfiltered list instead of the N props it promised.
+      if (params.has("search")) filters.search = params.get("search");
+      // Games drill-down (Part 2, 2026-08-26): "See all N props for this
+      // game" on a game's detail page scopes All Props to exactly that
+      // real game_pk, reusing the same filtering engine multi-select
+      // already runs through -- not a separate, second research surface.
+      if (params.has("game_pk")) filters.gamePk = Number(params.get("game_pk"));
+    }
   }
-  $all(".main-nav a").forEach(a => a.classList.toggle("active", a.dataset.route === route));
+  if (route === "games") {
+    // Games drill-down (Part 2, 2026-08-26): same route-filter-leakage
+    // discipline as props above -- a fresh navigation into #/games (a
+    // plain nav-bar click, no query) must show the real list, not silently
+    // keep showing whatever game a PREVIOUS visit drilled into.
+    const params = rawQuery ? new URLSearchParams(rawQuery) : null;
+    selectedGamePk = params && params.has("game_pk") ? Number(params.get("game_pk")) : null;
+  }
+  // Performance moved out of .main-nav into the always-visible header icon
+  // (UX decision, 2026-08-26) -- included here explicitly so it still gets
+  // the real active-state indication every other primary destination does.
+  $all(".main-nav a, #performance-link").forEach(a => a.classList.toggle("active", a.dataset.route === route));
   $all(".page").forEach(p => p.hidden = true);
   document.getElementById(`page-${route}`).hidden = false;
   renderRoute();
@@ -550,12 +689,23 @@ function marketBlock(p) {
   if (marketOdds === null) {
     return `<div class="pc-market"><span class="m-detail">Not yet posted on FanDuel</span></div>`;
   }
-  const edge = p.market_edge;
+  // Real bug, found 2026-08-26 (Part 2 item 5, richer compact cards): this
+  // used p.market_implied (the raw price-implied probability) and
+  // p.market_edge unconditionally -- the SAME market-edge-semantics gap
+  // the P0-6 fix already closed for the detail sheet (market_edge "mixes
+  // exact and approximate comparators under one name," per
+  // dashboard/build_dashboard.py's own clean() comment). detailBody()
+  // already prefers market_fair/edge_vs_fair (the honest, market-hold-
+  // aware comparator) when present, falling back to the older fields only
+  // when it isn't -- mirrored here so the compact card and the detail
+  // sheet never show two different "edge" numbers for the same prop.
+  const marketProb = p.market_fair ?? p.market_implied;
+  const edge = p.edge_vs_fair ?? p.market_edge;
   const edgeText = edge == null ? "—" : (edge >= 0 ? "+" : "") + Math.round(edge * 100) + " pts";
   const edgeClass = edge == null ? "" : (edge >= 0 ? "pos" : "neg");
   return `<div class="pc-market">
     <div><span class="book-price">${marketOdds}</span> <span class="m-detail">FanDuel</span></div>
-    <div class="m-detail">Market: ${pct(p.market_implied, 0)}</div>
+    <div class="m-detail">Market: ${pct(marketProb, 0)}</div>
     <div class="pc-edge ${edgeClass}">${edgeText} edge</div>
   </div>`;
 }
@@ -564,7 +714,7 @@ function pickCard(p) {
   // in the detail sheet's "Underlying data," and showing it on every single
   // card in a grid of a dozen-plus picks was pure chip clutter, not a
   // decision a viewer needs to make before opening a card.
-  const chips = [statusChip(p), lineupChip(p), staleChip(p), liveStaleChip(p), gradeChip(p)].filter(Boolean).join("");
+  const chips = [statusChip(p), suspectChip(p), lineupChip(p), staleChip(p), liveStaleChip(p), gradeChip(p)].filter(Boolean).join("");
   // No "TOP PICK #N" ordinal badge here (removed 2026-08-25). Audited
   // whether production has a real canonical order for this UNCAPPED
   // top_pick population and found it does not: classify_recommendation()
@@ -582,13 +732,32 @@ function pickCard(p) {
   // renders -- statusChip(p) above already shows "TOP PICK" once, which
   // is the one real, defensible claim this card makes.
   const why = (p.why || [])[0] ? `<div class="pc-why">${esc(capSentence(humanizeReason(p.why[0])))}</div>` : "";
+  // Real bug, found 2026-08-26 (Part 2 item 5, richer compact cards): this
+  // was computed and then never once used anywhere in the template below --
+  // a viewer browsing a grid of a dozen-plus cards had no way to see which
+  // ones they'd already saved to My Board without opening each one. Not
+  // made independently clickable here (the whole card is already a single
+  // <button data-open>, and nesting a real <button> inside it would be
+  // invalid, inaccessible HTML) -- a plain visual indicator, same
+  // "computed, then discarded" pattern already fixed elsewhere in this
+  // project, just for a boolean instead of a sentence.
   const starred = watchlist.has(p.id);
+  // Real bug, found 2026-08-26 (Part 2 item 5, richer compact cards): this
+  // preferred p.team (the player's OWN team alone, e.g. "Athletics") over
+  // p.matchup (the real game, "Athletics @ Astros") whenever both existed
+  // -- which is every real row -- so the compact card never showed the
+  // opponent at all, and never showed a start time despite p.game_start
+  // already being on every row. A viewer had to open the detail sheet just
+  // to see who a player was actually facing or when the game started.
+  const subLine = esc(p.matchup || p.team || "") +
+    (p.game_start ? ` · ${esc(gameTimeLabel(p.game_start))}` : "");
   return `<button class="pick-card status-${p.recommendation_status || "neutral"} ${lifecycleClass(p)}${p.stale ? " status-stale" : ""}" data-open="${p.id}">
     <div class="pc-top">
       <div>
         <div class="pc-name">${esc(p.name)}</div>
-        <div class="pc-sub">${esc(p.team || p.matchup || "")}</div>
+        <div class="pc-sub">${subLine}</div>
       </div>
+      ${starred ? `<span class="pc-saved" aria-label="Saved to My Board">★</span>` : ""}
     </div>
     <div class="pc-prop">${esc(p.prop)}</div>
     <div class="pc-prob-row">
@@ -601,7 +770,7 @@ function pickCard(p) {
   </button>`;
 }
 function propRow(p) {
-  const chips = [statusChip(p), lineupChip(p), staleChip(p), liveStaleChip(p), gradeChip(p)].filter(Boolean).join("");
+  const chips = [statusChip(p), suspectChip(p), lineupChip(p), staleChip(p), liveStaleChip(p), gradeChip(p)].filter(Boolean).join("");
   return `<button class="prop-row ${lifecycleClass(p)}" data-open="${p.id}">
     <div class="pr-main">
       <div class="pr-name">${esc(p.name)}</div>
@@ -714,11 +883,21 @@ function renderToday() {
     .sort((a, b) => (b.market_edge ?? b.lift ?? 0) - (a.market_edge ?? a.lift ?? 0));
 
   const summary = DATA.summary || {};
+  // Value/Longshot count-integrity fix (Part 2 UX audit): this used to be
+  // one combined "Value / Longshots" tile showing summary.n_value (EVERY
+  // real recommendation_status==="value" row, longshots included) linking
+  // to #/props?status=value -- but applyFilters()'s own "value" branch
+  // explicitly EXCLUDES longshots (`!isLongshot(p)`), so the destination
+  // page always showed FEWER rows than the tile promised. valueAll/
+  // longshotsAll (computed above, the same real split "More Picks" itself
+  // renders from) are the two real, mutually exclusive counts -- each now
+  // gets its own tile linking to its own correctly-filtered destination.
   let html = `
     <div class="stat-row">
       <a class="stat-tile" href="#/props?status=top_pick"><span class="n">${summary.n_top_pick ?? 0}</span><span class="l">Top Picks tonight</span></a>
       <a class="stat-tile" href="#/props?status=lean"><span class="n">${summary.n_lean ?? 0}</span><span class="l">Leans on the board</span></a>
-      <a class="stat-tile" href="#/props?status=value"><span class="n">${summary.n_value ?? 0}</span><span class="l">Value / Longshots</span></a>
+      <a class="stat-tile" href="#/props?status=value"><span class="n">${valueAll.length}</span><span class="l">Value bets</span></a>
+      <a class="stat-tile" href="#/props?status=longshot"><span class="n">${longshotsAll.length}</span><span class="l">Longshots</span></a>
       <a class="stat-tile" href="#/games"><span class="n">${summary.n_games ?? 0}</span><span class="l">Games tonight</span></a>
     </div>`;
 
@@ -789,8 +968,17 @@ function exploreByPropStrip(families) {
     </a>`;
   }).filter(Boolean).join("");
   if (!chips) return "";
+  // Real bug, found 2026-08-25: on mobile, EXPLORE_PROP_CHIPS plus the
+  // trailing "More" chip routinely overflows the viewport width (up to 7
+  // chips at ~86px each, ~600px total, against a ~375-430px phone screen),
+  // so the strip needed a horizontal scroll -- but overflow-x:auto alone
+  // gives no visual hint that more chips (including "More," the one link to
+  // the full All Props page) exist past the hard-cut right edge. Wrapped in
+  // .explore-strip-wrap so app.css can add a real edge-fade affordance
+  // (a common, well-understood "there's more this way" mobile pattern)
+  // without changing the chip markup/behavior itself.
   return `<section class="section explore-by-prop"><div class="section-head"><h2>Explore by Prop</h2></div>
-    <div class="explore-strip">${chips}<a class="explore-chip explore-chip-more" href="#/props">More</a></div></section>`;
+    <div class="explore-strip-wrap"><div class="explore-strip">${chips}<a class="explore-chip explore-chip-more" href="#/props">More</a></div></div></section>`;
 }
 // Real bug, found 2026-08-24: a player can carry several distinct
 // streak entries (e.g. Chandler Simpson: 14 straight games with a hit,
@@ -820,13 +1008,33 @@ function scheduleChip(g) {
     <div class="sc-teams">${esc(g.away_team || "")} @ ${esc(g.home_team || "")}</div>
   </button>`;
 }
+// Real bug, found 2026-08-25: this read l.american and parlay.combined_american
+// -- neither field exists. parlay_builder.py / dashboard/build_dashboard.py's
+// _build_suggested_parlay() actually name them market_odds (per leg) and
+// combined_american_odds (the combined figure). Every real, correctly priced
+// leg silently rendered a blank price, and the "Combined:" line always fell
+// back to "--" -- never a fabricated number, but a fully-priced real parlay
+// looked broken/unpriced regardless. Also: naive_probability_note and
+// correlation_notes -- the backend's own honesty context explaining that the
+// combined figure assumes leg independence and is a conservative floor, not
+// a final answer -- were computed and never reached the page at all (the
+// same "computed, then discarded" bug class found repeatedly elsewhere in
+// this project). Fixed field names, and the combined odds line is now
+// explicitly labeled "Estimated" with that real caveat text surfaced.
 function suggestedParlayBlock(parlay) {
   const legs = (parlay.legs || []).map(l =>
-    `<div class="parlay-leg"><span>${esc(l.name)} — ${esc(l.prop)}</span><span>${fmtOdds(l.american) ?? ""}</span></div>`).join("");
+    `<div class="parlay-leg"><span>${esc(l.name)} — ${esc(l.prop)}</span><span>${fmtOdds(l.market_odds) ?? "—"}</span></div>`).join("");
+  const combined = fmtOdds(parlay.combined_american_odds);
+  const note = parlay.naive_probability_note
+    ? `<p class="parlay-note">${esc(parlay.naive_probability_note)}</p>` : "";
+  const corrNotes = (parlay.correlation_notes || []).length
+    ? `<ul class="parlay-corr-notes">${parlay.correlation_notes.map(n => `<li>${esc(n)}</li>`).join("")}</ul>` : "";
   return `<section class="section"><div class="parlay-card">
     <div class="section-head"><h2 style="font-size:16px">Suggested Parlay</h2></div>
     <div class="parlay-legs">${legs}</div>
-    <div class="pc-sub">Combined: ${fmtOdds(parlay.combined_american) ?? "—"}</div>
+    <div class="pc-sub">Estimated combined odds: ${combined ?? "unavailable"}</div>
+    ${note}
+    ${corrNotes}
   </div></section>`;
 }
 
@@ -845,15 +1053,25 @@ function suggestedParlayBlock(parlay) {
 function familyFilterValue(stat) {
   return stat === "moonshot" ? "home_runs" : stat;
 }
+// A row matches the status filter if it matches ANY selected status
+// (OR, not AND -- "Top Pick + Lean" means show both, never neither).
+// Longshot/Value each need their own real recommendation_status/probability
+// check (see isLongshot()'s own definition), not a plain equality, so this
+// is pulled out to a shared helper rather than duplicated per call site.
+function matchesStatusFilter(p, statusSet) {
+  for (const s of statusSet) {
+    if (s === "longshot" ? isLongshot(p)
+      : s === "value" ? (p.recommendation_status === "value" && !isLongshot(p))
+      : p.recommendation_status === s) return true;
+  }
+  return false;
+}
 function applyFilters(props) {
   let rows = props;
-  if (filters.family !== "all") rows = rows.filter(p => p.stat === filters.family);
-  if (filters.status !== "all") {
-    rows = filters.status === "longshot" ? rows.filter(isLongshot)
-         : filters.status === "value" ? rows.filter(p => p.recommendation_status === "value" && !isLongshot(p))
-         : rows.filter(p => p.recommendation_status === filters.status);
-  }
-  if (filters.evidence !== "all") rows = rows.filter(p => p.reliability === filters.evidence);
+  if (filters.gamePk != null) rows = rows.filter(p => p.game_pk === filters.gamePk);
+  if (filters.families.size) rows = rows.filter(p => filters.families.has(p.stat));
+  if (filters.statuses.size) rows = rows.filter(p => matchesStatusFilter(p, filters.statuses));
+  if (filters.evidences.size) rows = rows.filter(p => filters.evidences.has(p.reliability));
   if (filters.search) {
     const q = filters.search.toLowerCase();
     rows = rows.filter(p => (p.name || "").toLowerCase().includes(q)
@@ -870,35 +1088,41 @@ function applyFilters(props) {
   };
   return rows.slice().sort(sorters[filters.sort] || sorters.default);
 }
+// filterDropdown(): a native <details>/<summary> multi-select popover --
+// checkboxes inside, real keyboard/screen-reader support for free (no
+// bespoke open/close/outside-click JS needed), styled to match the site's
+// existing pill-button filter chips. setKey is the filters.* Set this
+// dropdown edits directly ("families"/"statuses"/"evidences").
+function filterDropdown(setKey, label, options) {
+  const selected = filters[setKey];
+  return `<details class="filter-dropdown" data-set="${setKey}">
+    <summary class="filter-select">${esc(label)}${selected.size ? ` (${selected.size})` : ""}</summary>
+    <div class="filter-dropdown-panel">
+      ${options.map(([v, l]) => `<label class="filter-dropdown-opt">
+        <input type="checkbox" value="${esc(v)}"${selected.has(v) ? " checked" : ""}> ${esc(l)}
+      </label>`).join("")}
+    </div>
+  </details>`;
+}
+const STATUS_FILTER_OPTIONS = [
+  ["top_pick", "Top Pick"], ["lean", "Lean"], ["value", "Value"],
+  ["longshot", "Longshot"], ["neutral", "No Strong Lean"],
+];
+const EVIDENCE_FILTER_OPTIONS = [
+  ["A", "Strong evidence"], ["B", "Solid evidence"], ["C", "Developing evidence"], ["D", "Limited evidence"],
+];
 function renderProps() {
   const el = document.getElementById("page-props");
   const families = DATA.families || [];
-  const visible = publicProps();
-  const rows = applyFilters(visible);
+  const familyOptions = families.map(f => [familyFilterValue(f.stat), `${f.label} (${f.count})`]);
 
   el.innerHTML = `
-    <div class="section-head"><h2>All Props</h2><span class="section-sub">${rows.length} of ${visible.length} props</span></div>
+    <div class="section-head"><h2>All Props</h2><span class="section-sub" id="props-count"></span></div>
     <div class="filter-bar">
       <div class="filter-inline" style="display:flex;gap:8px;flex-wrap:wrap;">
-        <select class="filter-select" id="f-family" aria-label="Filter by prop type">
-          <option value="all">All prop types</option>
-          ${families.map(f => `<option value="${familyFilterValue(f.stat)}">${esc(f.label)} (${f.count})</option>`).join("")}
-        </select>
-        <select class="filter-select" id="f-status" aria-label="Filter by recommendation">
-          <option value="all">Any status</option>
-          <option value="top_pick">Top Pick</option>
-          <option value="lean">Lean</option>
-          <option value="value">Value</option>
-          <option value="longshot">Longshot</option>
-          <option value="neutral">No Strong Lean</option>
-        </select>
-        <select class="filter-select" id="f-evidence" aria-label="Filter by evidence quality">
-          <option value="all">Any evidence</option>
-          <option value="A">Strong evidence</option>
-          <option value="B">Solid evidence</option>
-          <option value="C">Developing evidence</option>
-          <option value="D">Limited evidence</option>
-        </select>
+        ${filterDropdown("families", "Prop type", familyOptions)}
+        ${filterDropdown("statuses", "Status", STATUS_FILTER_OPTIONS)}
+        ${filterDropdown("evidences", "Evidence", EVIDENCE_FILTER_OPTIONS)}
         <select class="filter-select" id="f-sort" aria-label="Sort by">
           <option value="default">Sort: Recommended</option>
           <option value="probability">Sort: Highest probability</option>
@@ -909,27 +1133,94 @@ function renderProps() {
         </select>
       </div>
       <button class="filter-chip-btn mobile-only filter-more-btn" id="f-open-sheet">Filters</button>
-      <span class="filter-count desktop-only">${activeFilterCount()} active</span>
+      <span class="filter-count desktop-only" id="props-active-count"></span>
+      <button class="filter-chip-btn" id="f-clear-all" hidden>Clear all</button>
     </div>
+    <div class="active-search-note section-sub" id="props-game-note" hidden></div>
+    <div class="active-search-note section-sub" id="props-search-note" hidden></div>
     <div class="prop-list" id="props-list"></div>
   `;
-  $("#f-family", el).value = filters.family;
-  $("#f-status", el).value = filters.status;
-  $("#f-evidence", el).value = filters.evidence;
   $("#f-sort", el).value = filters.sort;
-  $("#f-family", el).addEventListener("change", e => { filters.family = e.target.value; renderProps(); });
-  $("#f-status", el).addEventListener("change", e => { filters.status = e.target.value; renderProps(); });
-  $("#f-evidence", el).addEventListener("change", e => { filters.evidence = e.target.value; renderProps(); });
-  $("#f-sort", el).addEventListener("change", e => { filters.sort = e.target.value; renderProps(); });
+  $("#f-sort", el).addEventListener("change", e => { filters.sort = e.target.value; refreshPropsList(el); });
   $("#f-open-sheet", el).addEventListener("click", () => openFilterSheet());
+  // Multi-select fix (Part 2, 2026-08-26): a checkbox toggle only needs the
+  // count/list to update, never a full innerHTML replace of the filter bar
+  // -- replacing the <details> element the checkbox lives inside would
+  // instantly close the dropdown the user is still interacting with.
+  $all(".filter-dropdown", el).forEach(dd => {
+    const setKey = dd.dataset.set;
+    $all('input[type="checkbox"]', dd).forEach(cb => cb.addEventListener("change", () => {
+      if (cb.checked) filters[setKey].add(cb.value); else filters[setKey].delete(cb.value);
+      refreshPropsList(el);
+    }));
+  });
+  // "Top Pick filter escape" fix (Part 2 UX audit): the filter dropdowns
+  // were each individually resettable, but there was no single control to
+  // exit a filtered view in one action -- a real gap once combined with
+  // the route-filter-leakage fix above (that fix stops a STALE filter
+  // from a past visit leaking in on fresh navigation, but a user still
+  // deliberately filtering the page in the current visit needs a fast,
+  // obvious way out). Persistent (2026-08-26): the button is always in the
+  // DOM now (just hidden when nothing is active) rather than conditionally
+  // inserted/removed, so refreshPropsList() can toggle it on every filter
+  // change -- including a multi-select checkbox toggle -- without a full
+  // renderProps() re-render.
+  $("#f-clear-all", el).addEventListener("click", () => {
+    filters = { search: "", families: new Set(), statuses: new Set(), evidences: new Set(), gamePk: null, sort: filters.sort };
+    renderProps();
+  });
 
+  refreshPropsList(el);
+  wireCardOpeners(el);
+}
+// The part of renderProps() that changes on every filter/sort interaction:
+// the result count, each dropdown's own selected-count badge, the active-
+// filter count, Clear-all visibility, the search note, and the list itself.
+// Deliberately never touches the <details> elements' own open/closed state
+// or rebuilds their checkbox markup -- see the checkbox handler's comment.
+function refreshPropsList(el) {
+  const visible = publicProps();
+  const rows = applyFilters(visible);
+  $("#props-count", el).textContent = `${rows.length} of ${visible.length} props`;
+  $all(".filter-dropdown", el).forEach(dd => {
+    const n = filters[dd.dataset.set].size;
+    const base = dd.querySelector("summary").textContent.replace(/\s*\(\d+\)$/, "");
+    dd.querySelector("summary").textContent = n ? `${base} (${n})` : base;
+  });
+  const activeCount = activeFilterCount();
+  $("#props-active-count", el).textContent = `${activeCount} active`;
+  $("#f-clear-all", el).hidden = activeCount === 0;
+  // Games drill-down (Part 2, 2026-08-26): honest context for how a viewer
+  // got here scoped to one real game -- same pattern as the search note,
+  // with its own "clear" that only lifts the game scope (search/other
+  // filters, if any, stay exactly as the viewer set them).
+  const gameNote = $("#props-game-note", el);
+  const scopedGame = filters.gamePk != null ? (DATA.schedule || []).find(g => g.game_pk === filters.gamePk) : null;
+  if (scopedGame) {
+    gameNote.hidden = false;
+    gameNote.innerHTML = `Showing props for ${esc(scopedGame.away_team || "")} @ ${esc(scopedGame.home_team || "")} <button class="link-btn" id="f-clear-game">clear</button>`;
+    $("#f-clear-game", gameNote).addEventListener("click", () => { filters.gamePk = null; refreshPropsList(el); });
+  } else {
+    gameNote.hidden = true;
+    gameNote.innerHTML = "";
+  }
+  const searchNote = $("#props-search-note", el);
+  if (filters.search) {
+    searchNote.hidden = false;
+    searchNote.innerHTML = `Filtered to "${esc(filters.search)}" <button class="link-btn" id="f-clear-search">clear</button>`;
+    $("#f-clear-search", searchNote).addEventListener("click", () => { filters.search = ""; refreshPropsList(el); });
+  } else {
+    searchNote.hidden = true;
+    searchNote.innerHTML = "";
+  }
   const list = $("#props-list", el);
   list.innerHTML = rows.length ? rows.map(propRow).join("")
     : `<div class="empty-state"><div class="es-icon">🔍</div><h3>No props match these filters</h3><p>Try widening your search or clearing a filter.</p></div>`;
   wireCardOpeners(el);
 }
 function activeFilterCount() {
-  return ["family", "status", "evidence"].filter(k => filters[k] !== "all").length + (filters.search ? 1 : 0);
+  return filters.families.size + filters.statuses.size + filters.evidences.size
+    + (filters.search ? 1 : 0) + (filters.gamePk != null ? 1 : 0);
 }
 function openFilterSheet() {
   const backdrop = document.createElement("div");
@@ -944,14 +1235,14 @@ function openFilterSheet() {
   sheet.innerHTML = `
     <h3 id="filter-sheet-title">Filter &amp; sort</h3>
     <div class="filter-sheet-group"><div class="label">Prop type</div>
-      <div class="filter-sheet-options">${[{ value: "all", label: "All" }, ...families.map(f => ({ value: familyFilterValue(f.stat), label: f.label }))].map(({ value, label }) =>
-        `<button class="filter-chip-btn" data-k="family" data-v="${value}" aria-pressed="${filters.family === value}">${esc(label)}</button>`).join("")}</div></div>
+      <div class="filter-sheet-options">${families.map(f => ({ value: familyFilterValue(f.stat), label: f.label })).map(({ value, label }) =>
+        `<button class="filter-chip-btn" data-set="families" data-v="${value}" aria-pressed="${filters.families.has(value)}">${esc(label)}</button>`).join("")}</div></div>
     <div class="filter-sheet-group"><div class="label">Status</div>
-      <div class="filter-sheet-options">${[["all", "Any"], ["top_pick", "Top Pick"], ["lean", "Lean"], ["value", "Value"], ["longshot", "Longshot"], ["neutral", "No Strong Lean"]].map(([v, l]) =>
-        `<button class="filter-chip-btn" data-k="status" data-v="${v}" aria-pressed="${filters.status === v}">${l}</button>`).join("")}</div></div>
+      <div class="filter-sheet-options">${STATUS_FILTER_OPTIONS.map(([v, l]) =>
+        `<button class="filter-chip-btn" data-set="statuses" data-v="${v}" aria-pressed="${filters.statuses.has(v)}">${l}</button>`).join("")}</div></div>
     <div class="filter-sheet-group"><div class="label">Evidence quality</div>
-      <div class="filter-sheet-options">${[["all", "Any"], ["A", "Strong"], ["B", "Solid"], ["C", "Developing"], ["D", "Limited"]].map(([v, l]) =>
-        `<button class="filter-chip-btn" data-k="evidence" data-v="${v}" aria-pressed="${filters.evidence === v}">${l}</button>`).join("")}</div></div>
+      <div class="filter-sheet-options">${[["A", "Strong"], ["B", "Solid"], ["C", "Developing"], ["D", "Limited"]].map(([v, l]) =>
+        `<button class="filter-chip-btn" data-set="evidences" data-v="${v}" aria-pressed="${filters.evidences.has(v)}">${l}</button>`).join("")}</div></div>
     <button class="btn btn-primary" id="f-sheet-apply" style="width:100%;margin-top:6px;">Show results</button>
   `;
   document.body.append(backdrop, sheet);
@@ -968,9 +1259,14 @@ function openFilterSheet() {
   openModal(sheet);
   document.addEventListener("keydown", onKeydown);
   backdrop.addEventListener("click", close);
-  $all("[data-k]", sheet).forEach(btn => btn.addEventListener("click", () => {
-    filters[btn.dataset.k] = btn.dataset.v;
-    $all(`[data-k="${btn.dataset.k}"]`, sheet).forEach(b => b.setAttribute("aria-pressed", String(b === btn)));
+  // Multi-select fix (Part 2, 2026-08-26): toggles this chip's OWN
+  // membership in filters[setKey] -- no longer clears sibling chips, so
+  // e.g. Top Pick and Lean can both stay pressed at once.
+  $all("[data-set]", sheet).forEach(btn => btn.addEventListener("click", () => {
+    const set = filters[btn.dataset.set];
+    const pressed = btn.getAttribute("aria-pressed") === "true";
+    if (pressed) set.delete(btn.dataset.v); else set.add(btn.dataset.v);
+    btn.setAttribute("aria-pressed", String(!pressed));
   }));
   $("#f-sheet-apply", sheet).addEventListener("click", () => { close(); renderProps(); });
 }
@@ -978,9 +1274,37 @@ function openFilterSheet() {
 // ══════════════════════════════════════════════════════════════════════
 //  GAMES PAGE
 // ══════════════════════════════════════════════════════════════════════
+function gameWeatherText(g) {
+  const wx = g.weather;
+  if (!wx) return "";
+  return wx.dome ? "Dome — weather neutral"
+    : `${wx.temp ?? "—"}°F${wx.wind_mph ? `, wind ${wx.wind_mph}mph ${wx.wind_effect || ""}` : ""}`;
+}
+function gameUmpireText(g) {
+  return g.umpire ? `HP Ump: ${esc(g.umpire.name)} (${pct(g.umpire.k_pct, 1)} K, ${pct(g.umpire.bb_pct, 1)} BB)` : "";
+}
+// Games drill-down (Part 2, 2026-08-26): direct request -- "I want people to
+// be able to click on a game on the schedule, and get a breakdown." The list
+// view existed, but nothing was actually clickable and game_pk never
+// survived into the URL, so there was no real per-game page to link to,
+// bookmark, or share. selectedGamePk (set by onRouteChange() from
+// #/games?game_pk=X) switches this same route between the list and one
+// game's detail view.
 function renderGames() {
   const el = document.getElementById("page-games");
   const games = DATA.schedule || [];
+  if (selectedGamePk != null) {
+    const g = games.find(g => g.game_pk === selectedGamePk);
+    if (g) { renderGameDetail(el, g); return; }
+    // A real game_pk that doesn't match tonight's schedule (a stale link
+    // from an earlier day, a typo, a game that's since started and dropped
+    // off this pregame research surface) -- honest fallback, not a silent
+    // blank page or a crash.
+    el.innerHTML = `<div class="empty-state"><div class="es-icon">🗓️</div><h3>That game isn't on tonight's board</h3>
+      <p>It may have already started, or this link is from an earlier day.</p>
+      <div class="es-cta"><a class="btn btn-primary" href="#/games">See tonight's games</a></div></div>`;
+    return;
+  }
   if (!games.length) {
     el.innerHTML = `<div class="empty-state"><div class="es-icon">🗓️</div><h3>No games with a research breakdown yet</h3><p>Check back once tonight's games are set.</p></div>`;
     return;
@@ -988,19 +1312,41 @@ function renderGames() {
   el.innerHTML = `<div class="section-head"><h2>Games</h2><span class="section-sub">${games.length} games tonight</span></div>
     <div class="game-list">${games.map(gameCard).join("")}</div>`;
 }
-function gameCard(g) {
-  const wx = g.weather;
-  let wxText = "";
-  if (wx) {
-    wxText = wx.dome ? "Dome — weather neutral"
-      : `${wx.temp ?? "—"}°F${wx.wind_mph ? `, wind ${wx.wind_mph}mph ${wx.wind_effect || ""}` : ""}`;
-  }
-  const ump = g.umpire ? `HP Ump: ${esc(g.umpire.name)} (${pct(g.umpire.k_pct, 1)} K, ${pct(g.umpire.bb_pct, 1)} BB)` : "";
-  const picks = (g.picks || []).map(p => `<div class="game-pick-line">
+function gamePickLine(p) {
+  return `<div class="game-pick-line">
       <span>${esc(p.name)} — ${esc(p.prop)}</span>
       <span>${pctBig(p.hit_probability)}${p.market_odds != null ? " · " + fmtOdds(p.market_odds) : ""}</span>
+    </div>`;
+}
+// Real bug, found 2026-08-26 (games-drill-down honesty audit): the backend
+// used to hand this a flat top-6-by-raw-probability list, which
+// systematically favored hits_runs_rbis (clears on ANY hit, run, OR RBI --
+// inherently higher raw probability than a single specific outcome like a
+// home run) over every other market in the game. pick_sections (see
+// dashboard/build_dashboard.py's _game_pick_sections()) replaces that with
+// real, honestly-labeled sections (Best Overall Read / Best Batter Read /
+// Best Pitcher Read / Best Power Angle / Other Props) -- a section only
+// ever appears when a real, distinct candidate backs it, never manufactured
+// to fill a slot. `headers` controls whether the section labels themselves
+// render (the full drill-down) or just the pick lines, flattened (the
+// compact schedule-list card, where there isn't room for section chrome
+// but the underlying diversity fix still applies).
+function gamePickSections(g, headers) {
+  const sections = g.pick_sections || [];
+  if (!sections.length) return "";
+  if (!headers) {
+    return `<div class="game-picks">${sections.flatMap(s => s.picks).map(gamePickLine).join("")}</div>`;
+  }
+  return sections.map(s => `<div class="game-pick-section">
+      <div class="gps-label">${esc(s.label)}</div>
+      <div class="game-picks">${s.picks.map(gamePickLine).join("")}</div>
     </div>`).join("");
-  return `<div class="game-card">
+}
+function gameCard(g) {
+  const wxText = gameWeatherText(g);
+  const ump = gameUmpireText(g);
+  const picks = gamePickSections(g, false);
+  return `<a class="game-card" href="#/games?game_pk=${g.game_pk}">
     <div class="game-card-head">
       <div class="game-teams">${esc(g.away_team || "")} @ ${esc(g.home_team || "")}</div>
       <div class="game-time">${gameTimeLabel(g.game_start)}</div>
@@ -1010,14 +1356,99 @@ function gameCard(g) {
       ${wxText ? `<span>${esc(wxText)}</span>` : ""}
       ${ump ? `<span>${esc(ump)}</span>` : ""}
     </div>
-    ${picks ? `<div class="game-picks">${picks}</div>` : `<p class="section-sub">No standout research for this game yet.</p>`}
+    ${picks || `<p class="section-sub">No standout research for this game yet.</p>`}
+  </a>`;
+}
+// Detailed bullpen presentation, direct instruction: "Jacob specifically
+// wants names and context" -- real reliever names with a real, dated
+// pitch-count/appearance fact each, not vague "bullpen is tired" copy.
+// Never claims a reliever is "likely to appear" -- see
+// dashboard/build_dashboard.py's _reliever_detail()/_team_bullpen_context()
+// docstrings for why that would need a real, verified role model this
+// codebase does not have. teamBullpen is null (not an empty object) when
+// this team's bullpen genuinely wasn't fetchable tonight -- rendered as an
+// honest omission, never a fabricated "no data" block for every game.
+function bullpenTeamBlock(teamName, teamBullpen) {
+  if (!teamBullpen) return "";
+  const relLines = (teamBullpen.relievers || []).map(r => {
+    const parts = [];
+    if (r.pitches_last_outing != null) {
+      const when = r.days_since_last_outing === 0 ? "today"
+        : r.days_since_last_outing === 1 ? "yesterday"
+        : r.days_since_last_outing != null ? `${r.days_since_last_outing}d ago` : null;
+      parts.push(`${r.pitches_last_outing} pitches${when ? " " + when : ""}`);
+    }
+    if (r.appearances_l7 != null) {
+      parts.push(`${r.appearances_l7} appearance${r.appearances_l7 === 1 ? "" : "s"} in L7`);
+    }
+    return `<div class="bullpen-reliever"><span class="br-name">${esc(r.name)}</span>` +
+      (parts.length ? `<span class="br-detail">${esc(parts.join(" · "))}</span>` : "") + `</div>`;
+  }).join("");
+  return `<div class="bullpen-team">
+    <div class="bullpen-team-head"><b>${esc(teamName)}</b><span>${esc(teamBullpen.fatigue_summary)}</span></div>
+    ${relLines || `<p class="section-sub">No individual reliever usage found tonight.</p>`}
   </div>`;
+}
+function bullpenBlock(g) {
+  const away = bullpenTeamBlock(g.away_team, g.away_team_bullpen);
+  const home = bullpenTeamBlock(g.home_team, g.home_team_bullpen);
+  if (!away && !home) return "";
+  return `<div class="detail-section"><h3>Bullpen</h3>${away}${home}</div>`;
+}
+// The drill-down itself: everything gameCard() already shows, at full size
+// (no truncation), plus a real "See all N props" link into All Props
+// scoped to this exact game_pk -- the "in-game prop filtering" this page
+// exists to lead into, reusing the same multi-select-capable applyFilters()
+// engine rather than building a second, parallel prop list here.
+function renderGameDetail(el, g) {
+  const wxText = gameWeatherText(g);
+  const ump = gameUmpireText(g);
+  const picks = gamePickSections(g, true);
+  // Real, honest total -- not the up-to-6 highlight count pick_sections
+  // itself caps at (see _game_pick_sections()'s own docstring for why it
+  // caps there: a curated highlight list, not the full research surface).
+  const totalPropsForGame = publicProps().filter(p => p.game_pk === g.game_pk).length;
+  el.innerHTML = `
+    <a class="link-btn" href="#/games" style="display:inline-block;margin-bottom:14px;">← All games</a>
+    <div class="section-head"><h2>${esc(g.away_team || "")} @ ${esc(g.home_team || "")}</h2>
+      <span class="section-sub">${gameTimeLabel(g.game_start)}</span></div>
+    <div class="game-meta-row" style="margin-bottom:16px;">
+      ${g.away_sp ? `<span>${esc(g.away_sp)} vs ${esc(g.home_sp || "TBD")}</span>` : ""}
+      ${wxText ? `<span>${esc(wxText)}</span>` : ""}
+      ${ump ? `<span>${esc(ump)}</span>` : ""}
+      ${g.is_getaway ? `<span>Getaway day</span>` : ""}
+      ${g.is_opener ? `<span>Bullpen/opener day</span>` : ""}
+    </div>
+    ${picks || `<p class="section-sub">No standout research for this game yet.</p>`}
+    ${bullpenBlock(g)}
+    ${totalPropsForGame > 0 ? `<div style="margin-top:16px;"><a class="btn btn-primary" href="#/props?game_pk=${g.game_pk}">See all ${totalPropsForGame} props for this game →</a></div>` : ""}
+  `;
 }
 
 // ══════════════════════════════════════════════════════════════════════
 //  PERFORMANCE PAGE — item 9/10: current vs legacy, never blended,
 //  translated into plain language.
 // ══════════════════════════════════════════════════════════════════════
+// Real bug, found 2026-08-25: the Performance page rendered a bare hit-rate
+// percentage with no caveat at all, so an early "100%" off 2 graded picks
+// looked exactly as trustworthy as a mature 500-pick record -- the opposite
+// of what this page's own load_track_record() docstring already promises
+// ("do not pretend the new architecture has proven itself before it has
+// enough observations"). dashboard/build_dashboard.py now computes
+// sample_label via eval_lib's own shared sample-size-honesty gate (the
+// SAME thresholds/wording already used for calibration/Brier reporting
+// elsewhere in this project, not a new invented one); this just surfaces it.
+const SAMPLE_LABEL_CAVEATS = {
+  insufficient: n => `Only ${n} graded pick${n === 1 ? "" : "s"} so far — far too few to mean anything. Read this as "no real signal yet," not as evidence either way.`,
+  thin: n => `Only ${n} graded picks — still a thin sample. A single new outcome can swing this rate noticeably; treat it as a rough early read, not a settled record.`,
+  directional: n => `${n} graded picks is enough to be directional, but not yet a large, confident sample.`,
+  reportable: null,
+};
+function sampleLabelCaveat(tier, n) {
+  const fn = SAMPLE_LABEL_CAVEATS[tier];
+  return fn ? fn(n) : null;
+}
+
 function renderPerformance() {
   const el = document.getElementById("page-performance");
   const tr = DATA.track_record || {};
@@ -1031,12 +1462,14 @@ function renderPerformance() {
     <h3 style="margin-top:10px;">2026-08-15 architecture forward</h3>
     <p class="perf-sub">The Top Pick/Lean/Value/Neutral system in place today. Every number below is only from picks made under this exact system.</p>`;
   if (cur && cur.n > 0) {
+    const curCaveat = sampleLabelCaveat(cur.sample_label, cur.n);
     html += `<div class="perf-metric-grid">
       <div class="perf-metric"><div class="pm-n">${pct(cur.hit_rate, 1)}</div><div class="pm-l">Top Pick hit rate</div></div>
       <div class="perf-metric"><div class="pm-n">${cur.hits}-${cur.misses}</div><div class="pm-l">Record</div></div>
       <div class="perf-metric"><div class="pm-n">${cur.n}</div><div class="pm-l">Graded picks</div></div>
       ${cur.last_14d_hit_rate != null ? `<div class="perf-metric"><div class="pm-n">${pct(cur.last_14d_hit_rate, 1)}</div><div class="pm-l">Last 14 days (n=${cur.last_14d_n})</div></div>` : ""}
     </div>`;
+    if (curCaveat) html += `<p class="perf-sample-caveat">${esc(curCaveat)}</p>`;
   } else {
     html += `<div class="empty-state">
       <div class="es-icon">📊</div>
@@ -1050,12 +1483,14 @@ function renderPerformance() {
     <h3 style="margin-top:10px;">Pre-rebuild system (through 2026-08-14)</h3>
     <p class="perf-sub">The old price-clears/quality-score system, before the recommendation-layer rebuild. A real historical record — never evidence about the current system.</p>`;
   if (leg && leg.n > 0) {
+    const legCaveat = sampleLabelCaveat(leg.sample_label, leg.n);
     html += `<div class="perf-metric-grid">
       <div class="perf-metric"><div class="pm-n">${pct(leg.hit_rate, 1)}</div><div class="pm-l">Main-board hit rate</div></div>
       <div class="perf-metric"><div class="pm-n">${leg.hits}-${leg.misses}</div><div class="pm-l">Record</div></div>
       <div class="perf-metric"><div class="pm-n">${leg.n}</div><div class="pm-l">Graded picks</div></div>
       ${leg.last_14d_hit_rate != null ? `<div class="perf-metric"><div class="pm-n">${pct(leg.last_14d_hit_rate, 1)}</div><div class="pm-l">Last 14 days</div></div>` : ""}
     </div>`;
+    if (legCaveat) html += `<p class="perf-sample-caveat">${esc(legCaveat)}</p>`;
   } else {
     html += `<p class="section-sub">No legacy record on file.</p>`;
   }
@@ -1092,6 +1527,28 @@ function renderWatchlist() {
   const el = document.getElementById("page-watchlist");
   const items = [...watchlist].map(id => PROPS_BY_ID.get(id)).filter(Boolean);
   if (!items.length) {
+    // Real bug, found 2026-08-25: a saved id's canonical prop id bakes in
+    // game_pk (see canonical_prop_id() / prop_identity_key() in
+    // dashboard/live_state.py), so a prop saved on an earlier day can NEVER
+    // resolve against today's PROPS_BY_ID again -- that game_pk simply
+    // won't recur. Before this fix, that made the "My Board" nav badge
+    // (updateWatchCount(), which reads the raw watchlist.size -- every id
+    // ever saved) silently disagree with this page: the badge could say
+    // "3" while the page claimed "My Board is empty," with nothing telling
+    // the viewer why. Auto-pruning the stale ids was considered and
+    // rejected: a prop can ALSO temporarily drop out of today's OWN board
+    // mid-day (a late scratch, a lineup-window gap -- generate_picks.py's
+    // own docs: "a player who doesn't end up in a real lineup simply isn't
+    // generated as a candidate on the next rebuild"), and silently deleting
+    // a user's save the moment that happens, with no way back, is worse
+    // than an honest explanation. So: never delete anything, just tell the
+    // truth about why the page looks empty when the badge doesn't.
+    if (watchlist.size > 0) {
+      el.innerHTML = `<div class="empty-state"><div class="es-icon">☆</div><h3>None of your ${watchlist.size} saved prop${watchlist.size === 1 ? "" : "s"} ${watchlist.size === 1 ? "is" : "are"} on tonight's board</h3>
+        <p>They're either from an earlier day (a saved prop is tied to that exact game and can't carry over) or no longer a candidate tonight. Nothing was deleted -- save fresh picks from tonight's board below.</p>
+        <div class="es-cta"><a class="btn btn-primary" href="#/props">Browse All Props</a></div></div>`;
+      return;
+    }
     el.innerHTML = `<div class="empty-state"><div class="es-icon">☆</div><h3>My Board is empty</h3>
       <p>Save any player or prop you're considering tonight -- come back later and see exactly what changed since you saved it.</p>
       <div class="es-cta"><a class="btn btn-primary" href="#/props">Browse All Props</a></div></div>`;
@@ -1193,8 +1650,12 @@ function wireCardOpeners(root) {
   $all("[data-open]", root).forEach(btn => {
     btn.addEventListener("click", () => openDetail(btn.dataset.open));
   });
+  // Real bug, found 2026-08-26 (Games drill-down build): this discarded
+  // the real game_pk sitting right in data-game and always sent the viewer
+  // to the generic, unscoped Games list -- a schedule chip or search result
+  // for one specific game silently lost which game it was for.
   $all("[data-game]", root).forEach(btn => {
-    btn.addEventListener("click", () => { go("games"); });
+    btn.addEventListener("click", () => { go("games", "game_pk=" + btn.dataset.game); });
   });
 }
 function openDetail(id) {
@@ -1207,7 +1668,7 @@ function openDetail(id) {
   sheet.setAttribute("aria-hidden", "false");
   document.body.style.overflow = "hidden";
   const star = $("#detail-star");
-  if (star) star.addEventListener("click", () => { toggleWatch(id); star.setAttribute("aria-pressed", String(watchlist.has(id))); star.querySelector(".star-label").textContent = watchlist.has(id) ? "Saved to Watchlist" : "Save to Watchlist"; });
+  if (star) star.addEventListener("click", () => { toggleWatch(id); star.setAttribute("aria-pressed", String(watchlist.has(id))); star.querySelector(".star-label").textContent = watchlist.has(id) ? "Saved to My Board" : "Save to My Board"; });
   $("#detail-underlying-toggle")?.addEventListener("click", (e) => {
     const box = document.getElementById("detail-underlying");
     const open = box.hidden;
@@ -1332,6 +1793,19 @@ function detailBody(p) {
   }
 
   const whyNotTopPick = whyNotTopPickReason(p);
+  // Real gap, found 2026-08-26 (deep-detail-views audit): recommendation.py's
+  // classify_recommendation() already writes a real, honest "why this
+  // qualified" sentence into status_reasons[0] for every genuine Top Pick
+  // ("clears the real probability floor... a confirmed lineup, live
+  // pricing, and the price/value test..." -- see that function's own
+  // _result("top_pick", reasons) call) -- but whyNotTopPickReason() above
+  // is deliberately null for every top_pick (it only ever answers "why
+  // NOT"), so this real, already-computed sentence was never rendered
+  // anywhere. The SUSPECT-specific second reason is intentionally excluded
+  // here -- isTopPickSuspect()/suspectChip() already surface that one, in
+  // its own visually-distinct warning section, not duplicated here.
+  const whyTopPickQualified = p.recommendation_status === "top_pick"
+    ? (p.status_reasons || [])[0] || null : null;
 
   // OPPORTUNITY: a plain fact (batting order), not a graded judgment --
   // see the audit doc for why the underlying cat_context component is NOT
@@ -1356,6 +1830,20 @@ function detailBody(p) {
     }
   }
 
+  // OPPOSING BULLPEN: real per-reliever detail, direct instruction: "Jacob
+  // specifically wants names and context." Reuses the exact same game-level
+  // bullpen data _team_bullpen_context() already attaches per game (see
+  // dashboard/build_dashboard.py) -- gameContextFor(p) already resolves
+  // p.game_pk to that same schedule entry, so no new data plumbing is
+  // needed here, only pointing at the OPPOSING team's block: whichever
+  // side p.team is NOT. Batter markets only -- a pitcher isn't facing a
+  // bullpen himself, so this would be a non-sequitur on his own prop.
+  let oppBullpenName = null, oppBullpen = null;
+  if (game && p.type === "batter" && p.team) {
+    if (p.team === game.away_team) { oppBullpenName = game.home_team; oppBullpen = game.home_team_bullpen; }
+    else if (p.team === game.home_team) { oppBullpenName = game.away_team; oppBullpen = game.away_team_bullpen; }
+  }
+
   const renderReasons = (items, cls, icon) => items.length
     ? `<div class="reason-list">${items.map(t => `<div class="reason-item ${cls}"><span class="r-icon">${icon}</span><span>${esc(t)}</span></div>`).join("")}</div>` : "";
   const renderRows = rows => rows.length
@@ -1376,35 +1864,49 @@ function detailBody(p) {
         <div>FanDuel: ${fmtOdds(p.market_odds) ?? "not posted"}</div>
       </div>
     </div>
-    <div class="pc-chips" style="margin-bottom:18px;">${[statusChip(p), lineupChip(p), evidenceChip(p), staleChip(p), liveStaleChip(p), gradeChip(p)].filter(Boolean).join("")}</div>
+    <div class="pc-chips" style="margin-bottom:18px;">${[statusChip(p), suspectChip(p), lineupChip(p), evidenceChip(p), staleChip(p), liveStaleChip(p), gradeChip(p)].filter(Boolean).join("")}</div>
+    ${isTopPickSuspect(p) ? `<div class="detail-section top-pick-warning">
+      <p class="section-sub">${esc(capSentence(p.status_reasons[p.status_reasons.length - 1]))}</p>
+    </div>` : ""}
 
-    ${renderReasons(hitItems, "positive", "＋") ? `<div class="detail-section"><h3>Why It Could Hit</h3>${renderReasons(hitItems, "positive", "＋")}</div>` : ""}
+    ${renderReasons(hitItems, "positive", "＋") ? `<div class="detail-section"><h3>Why It Could Hit</h3>
+      <p class="section-sub">What shapes Full Count's read of this matchup — see Evidence below for what actually produced the probability number above.</p>
+      ${renderReasons(hitItems, "positive", "＋")}</div>` : ""}
     <div class="detail-section"><h3>Why It Could Miss</h3>${
       missItems.length ? renderReasons(missItems, "negative", "－")
         : `<p class="section-sub">No major model-side concern beyond normal baseball variance.</p>`
     }</div>
     ${whyNotTopPick ? `<div class="detail-section why-not-top-pick"><h3>Why Not a Top Pick?</h3>
       <p class="section-sub">${esc(capSentence(whyNotTopPick))}</p></div>` : ""}
+    ${whyTopPickQualified ? `<div class="detail-section"><h3>Why This Qualified</h3>
+      <p class="section-sub">${esc(capSentence(whyTopPickQualified))}</p></div>` : ""}
     ${opportunityRows.length ? `<div class="detail-section"><h3>Opportunity</h3>${renderRows(opportunityRows)}</div>` : ""}
     ${matchupRows.length ? `<div class="detail-section"><h3>Matchup</h3>${renderRows(matchupRows)}</div>` : ""}
+    ${oppBullpen ? `<div class="detail-section"><h3>Bullpen</h3>${bullpenTeamBlock(oppBullpenName, oppBullpen)}</div>` : ""}
 
     <div class="detail-section">
       <h3>Model vs. Market</h3>
       <div class="model-vs-market">
         <div class="mvm-row"><span class="mvm-label">Full Count</span><span class="mvm-value">${pctBig(p.hit_probability)}</span></div>
-        <div class="mvm-row"><span class="mvm-label">Market implied</span><span class="mvm-value">${p.market_implied != null ? pct(p.market_implied, 0) : "—"}</span></div>
-        <div class="mvm-row mvm-diff"><span class="mvm-label">Difference</span><span class="mvm-value">${p.market_edge != null ? (p.market_edge >= 0 ? "+" : "") + Math.round(p.market_edge * 100) + " pts" : "—"}</span></div>
+        <div class="mvm-row"><span class="mvm-label">Market fair value</span><span class="mvm-value">${(p.market_fair ?? p.market_implied) != null ? pct(p.market_fair ?? p.market_implied, 0) : "—"}</span></div>
+        <div class="mvm-row mvm-diff"><span class="mvm-label">Edge</span><span class="mvm-value">${(p.edge_vs_fair ?? p.market_edge) != null ? ((p.edge_vs_fair ?? p.market_edge) >= 0 ? "+" : "") + Math.round((p.edge_vs_fair ?? p.market_edge) * 100) + " pts" : "—"}</span></div>
       </div>
-      <p class="section-sub">FanDuel ${fmtOdds(p.market_odds) ?? "— not posted"}${p.market_hold != null ? " · exact no-vig" : ""}</p>
+      <p class="section-sub">FanDuel ${fmtOdds(p.market_odds) ?? "— not posted"}${p.posted_implied != null ? ` (${pct(p.posted_implied, 0)} raw)` : ""}${
+        p.market_fair_method === "exact_two_sided" ? " · exact no-vig (both sides priced)"
+        : p.market_fair_method === "assumed_hold" ? " · estimated no-vig (only one side posted)"
+        : (p.market_hold != null ? " · exact no-vig" : "")
+      }</p>
       <p class="price-freshness-note tone-${freshness.tone}">${esc(freshness.label)}${freshness.detail ? " — " + esc(freshness.detail) : ""}</p>
     </div>
 
     <div class="detail-section">
       <h3>Evidence</h3>
+      <p class="section-sub">What actually produced the probability number above.</p>
       ${renderRows([
+        ["What produced this number", probabilityBasisText(p) || "—"],
         ["Evidence quality", eq ? eq.label : "—"],
         ["Sample size", p.sample_n ?? "—"],
-        ["95% interval", p.prob_ci ? pct(p.prob_ci[0], 0) + "–" + pct(p.prob_ci[1], 0) : "Not defensible for this line"],
+        ["95% interval", p.prob_ci ? pct(p.prob_ci[0], 0) + "–" + pct(p.prob_ci[1], 0) + (probCiSourceText(p) ? ` (${probCiSourceText(p)})` : "") : "Not defensible for this line"],
       ])}
     </div>
 
@@ -1420,7 +1922,7 @@ function detailBody(p) {
     </div>
 
     <button class="btn watchlist-toggle-btn" id="detail-star" aria-pressed="${watchlist.has(p.id)}">
-      <span class="star-label">${watchlist.has(p.id) ? "Saved to Watchlist" : "Save to Watchlist"}</span>
+      <span class="star-label">${watchlist.has(p.id) ? "Saved to My Board" : "Save to My Board"}</span>
     </button>
   `;
 }
@@ -1490,9 +1992,26 @@ function _gameSearchText(g) {
   }
   return parts.join(" ").toLowerCase();
 }
+// Real bug found 2026-08-2X (Part 2 UX audit): q.includes(a) was a blind
+// substring check with NO word-boundary awareness -- a short alias like
+// "hr" (home_runs) or "hit"/"ks"/"tb"/"sb" is itself just a fragment
+// embedded inside many real MLB surnames ("Christian" contains "hr" --
+// C-HR-istian; "Whitlock" contains "hit" -- w-HIT-lock; "Jenkins"/
+// "Perkins"/"Hawkins" all contain "ks"). Searching a player whose name
+// happened to contain one of these fragments silently became a MARKET
+// filter instead of a name search -- "Christian Yelich" would show every
+// home-run candidate on the slate ranked by probability, never Yelich
+// himself. Fixed with a real word-boundary match: an alias only counts as
+// present when it appears as its own bounded token in the query (a real
+// short market query like "hr" or "hr tonight" still matches -- there IS
+// a boundary around it there -- but the fragment buried mid-word in a
+// surname no longer does).
+function _escapeRegex(s) {
+  return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
 function _marketFamilyForQuery(q) {
   for (const [family, aliases] of Object.entries(MARKET_ALIASES)) {
-    if (aliases.some(a => a === q || q.includes(a))) return family;
+    if (aliases.some(a => new RegExp("\\b" + _escapeRegex(a) + "\\b").test(q))) return family;
   }
   return null;
 }
@@ -1606,14 +2125,21 @@ function initSearch() {
         html += props.map(p => `<button class="search-item" data-open="${p.id}">
           <span>${esc(p.name)} — ${esc(p.prop)}</span><span class="s-sub">${pctBig(p.hit_probability)}</span></button>`).join("");
         if (propsTotal > props.length) {
-          html += `<a class="search-item search-see-all" href="#/props${marketFamily ? "?family=" + marketFamily : ""}">See all ${propsTotal} matching props →</a>`;
+          // destination-integrity fix: a market-intent query links to the
+          // real family filter (unchanged); a plain name/team/prop-text
+          // query now carries the search text itself, so this link lands
+          // on (approximately) the same N props it promised, not the full
+          // unfiltered list.
+          const seeAllQuery = marketFamily ? "family=" + encodeURIComponent(marketFamily)
+                                            : "search=" + encodeURIComponent(query);
+          html += `<a class="search-item search-see-all" href="#/props?${seeAllQuery}">See all ${propsTotal} matching props →</a>`;
         }
       }
       results.innerHTML = html;
     }
     results.hidden = false;
     $all("[data-open]", results).forEach(b => b.addEventListener("click", () => { openDetail(b.dataset.open); results.hidden = true; input.blur(); }));
-    $all("[data-game]", results).forEach(b => b.addEventListener("click", () => { go("games"); results.hidden = true; input.blur(); }));
+    $all("[data-game]", results).forEach(b => b.addEventListener("click", () => { go("games", "game_pk=" + b.dataset.game); results.hidden = true; input.blur(); }));
     $all("[data-team]", results).forEach(b => b.addEventListener("click", () => {
       input.value = b.dataset.team; results.hidden = true; input.blur(); go("props"); filters.search = b.dataset.team; renderProps();
     }));
@@ -1746,6 +2272,10 @@ const LIVE_PRICE_FIELDS = new Set([
   "market_observed_at", "market_family", "market_fetch_state", "market_fetch_checked_at",
   "market_fetch_failed_at", "market_failure_reason",
   "price_basis_board_generated_at",
+  // market-edge-semantics fix (P0-6) -- kept in sync with
+  // dashboard/live_state.py's PRICE_FIELDS by hand, same as every other
+  // entry here.
+  "posted_implied", "market_fair", "market_fair_method", "edge_vs_fair",
 ]);
 const LIVE_SETTLEMENT_FIELDS = new Set([
   "settlement_state", "settlement_authority", "settlement_observed_at",

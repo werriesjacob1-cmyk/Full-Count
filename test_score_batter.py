@@ -158,6 +158,80 @@ check(not any("Opposing SP ERA" in w for w in c8_mid["why"] + c8_mid["watchouts"
       "lists rather than padding either one with a non-distinctive number",
       f"got why={c8_mid['why']} watchouts={c8_mid['watchouts']}")
 
+head("9. 2026-08-26 market-specific-explanation fix: opposing starter genuinely unconfirmed "
+     "(opp_sp_row falsy, not just missing an ERA field) now says so explicitly instead of "
+     "staying completely silent on the starter matchup -- direct instruction: 'If the starter "
+     "is TBD, explicitly say starter-specific [matchup] analysis is unavailable rather than "
+     "padding the case.'")
+
+c9_tbd = call(opp_sp_row=None, opp_sp_hand=None)
+check(any("Opposing starter not yet confirmed" in w and "unavailable" in w for w in c9_tbd["watchouts"]),
+      "a genuinely unconfirmed starter (opp_sp_row=None) gets an explicit unavailable note",
+      f"got watchouts={c9_tbd['watchouts']}")
+
+c9_known_mid = call(opp_sp_row={"ERA": 4.10}, opp_sp_hand="R")
+check(not any("not yet confirmed" in w for w in c9_known_mid["watchouts"]),
+      "a KNOWN starter with a merely middling ERA does not get the 'unconfirmed' note -- "
+      "that note is reserved for a genuinely missing opp_sp_row, not a neutral real one",
+      f"got watchouts={c9_known_mid['watchouts']}")
+
+head("10. 2026-08-26 market-specific-explanation fix: season ISO and season Barrel% are "
+     "surfaced as their own directional facts -- both already fed the SKILL score component "
+     "(sc_iso/sc_barrel) but were never once rendered as text, the same 'computed, then "
+     "discarded' failure already fixed for wRC+. Real, direct complaint: a home-run detail "
+     "view had almost no power-specific evidence at all.")
+
+c10_power_hot = call(batter_season={"ISO": 0.260, "Barrel%": 14.0})
+check(any("Season ISO 0.260" in w and "above-average" in w for w in c10_power_hot["why"]),
+      "a clearly above-average ISO lands in why, directionally labeled",
+      f"got why={c10_power_hot['why']}")
+check(any("Season barrel% 14.0" in w and "above-average" in w for w in c10_power_hot["why"]),
+      "a clearly above-average season barrel% lands in why, directionally labeled",
+      f"got why={c10_power_hot['why']}")
+
+c10_power_cold = call(batter_season={"ISO": 0.090, "Barrel%": 2.5})
+check(any("Season ISO 0.090" in w and "below-average" in w for w in c10_power_cold["watchouts"]),
+      "a clearly below-average ISO lands in watchouts, not why",
+      f"got watchouts={c10_power_cold['watchouts']}")
+check(any("Season barrel% 2.5" in w and "below-average" in w for w in c10_power_cold["watchouts"]),
+      "a clearly below-average season barrel% lands in watchouts, not why",
+      f"got watchouts={c10_power_cold['watchouts']}")
+
+c10_absent = call(batter_season={})
+check(not any("Season ISO" in w for w in c10_absent["why"] + c10_absent["watchouts"]),
+      "no ISO fact is fabricated when the batter has no real ISO on record",
+      f"got why={c10_absent['why']} watchouts={c10_absent['watchouts']}")
+
+head("11. 2026-08-26 market-specific-explanation fix: lineup protection (woba_ahead/"
+     "woba_behind) was recorded via _sig() for backtest fitting but never surfaced as a "
+     "human fact -- direct instruction for RBI/Runs evidence: 'runners-on-base opportunity "
+     "ahead of the hitter... strength of hitters behind him.' Real per-batter wOBA, keyed by "
+     "the batter's own id (bid=5, the default test batter).")
+
+c11_protected = call(extras={"lineup_woba": {5: {"woba_ahead": 0.380, "woba_behind": 0.370}}})
+check(any("Hitters batting ahead of him: 0.380 wOBA" in w and "RBI opportunity" in w
+          for w in c11_protected["why"]),
+      "a strong on-base group ahead of him lands in why, framed as real RBI opportunity",
+      f"got why={c11_protected['why']}")
+check(any("Hitter batting behind him: 0.370 wOBA" in w and "protection" in w
+          for w in c11_protected["why"]),
+      "a strong hitter batting behind him lands in why, framed as real lineup protection",
+      f"got why={c11_protected['why']}")
+
+c11_exposed = call(extras={"lineup_woba": {5: {"woba_ahead": 0.295, "woba_behind": 0.300}}})
+check(any("fewer runners to drive in" in w for w in c11_exposed["watchouts"]),
+      "a weak on-base group ahead of him lands in watchouts, not why",
+      f"got watchouts={c11_exposed['watchouts']}")
+check(any("easier batter to pitch around" in w for w in c11_exposed["watchouts"]),
+      "little protection behind him lands in watchouts, not why",
+      f"got watchouts={c11_exposed['watchouts']}")
+
+c11_absent = call(extras={})
+check(not any("wOBA" in w and ("ahead of him" in w or "behind him" in w)
+              for w in c11_absent["why"] + c11_absent["watchouts"]),
+      "no lineup-protection fact is fabricated when extras carries no lineup_woba data at all",
+      f"got why={c11_absent['why']} watchouts={c11_absent['watchouts']}")
+
 n_pass = sum(1 for ok, _, _ in _results if ok)
 n_total = len(_results)
 print("\n" + "=" * 78)

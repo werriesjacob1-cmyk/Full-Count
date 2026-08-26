@@ -53,6 +53,13 @@ PRICE_FIELDS = frozenset((
     "market_observation_state", "market_observed_at", "market_family",
     "market_fetch_failed_at", "market_failure_reason", "market_fetch_state",
     "market_fetch_checked_at", "price_basis_board_generated_at",
+    # 2026-08-2X market-edge-semantics fix (P0-6): without these, a live
+    # intraday re-price (refresh_prices.py) would recompute the honest
+    # fair-value fields on the repriced row and then silently drop them at
+    # this exact live.json delta boundary -- the same "computed, then
+    # discarded" failure this field set already exists to prevent for
+    # market_odds/market_implied/market_edge/market_hold.
+    "posted_implied", "market_fair", "market_fair_method", "edge_vs_fair",
 ))
 SETTLEMENT_FIELDS = frozenset((
     "settlement_state", "settlement_authority", "settlement_observed_at",
@@ -97,6 +104,19 @@ FROZEN_PUBLICATION_FIELDS = frozenset((
     "prob_ci", "reliability", "reliability_note", "sample_n", "lineup_assumed",
     "base_rate", "lift", "lift_reference_rate", "stable_lift",
     "published_top_pick_at",
+    # CI-provenance-honesty fix (P0-7): prob_ci_source sits directly beside
+    # prob_ci above and must be frozen with it -- a game that started must
+    # never show the SAME interval later relabeled with a different source
+    # (player_empirical vs historical_reliability_band) than what a user
+    # actually saw at publication time.
+    "prob_ci_source",
+    # 2026-08-2X market-edge-semantics fix (P0-6): the same "actual bet a
+    # user saw" reasoning above governs the fair-value comparator sitting
+    # right next to market_odds/market_implied/market_edge/market_hold --
+    # if these drifted after a game started (a later devig-formula tweak,
+    # a re-fetched price), the Model vs. Market section would show a
+    # different fair-value read than what a user actually decided against.
+    "posted_implied", "market_fair", "market_fair_method", "edge_vs_fair",
 ))
 
 _GAME_LEVEL_STATS = frozenset(("nrfi_combined",))

@@ -213,6 +213,332 @@ def _compute_streaks(all_priced, max_workers=12):
     return entries[:15]
 
 
+# ══════════════════════════════════════════════════════════════════════
+#  MARKET-SPECIFIC EVIDENCE SELECTION (Part 2 item 4, structured evidence
+#  contract, 2026-08-26)
+# ══════════════════════════════════════════════════════════════════════
+# Direct instruction: "the explanation should answer why THIS specific
+# market could hit today, not just reuse whatever generic batter/pitcher
+# facts happen to exist." Real complaint: a home-run detail view showed
+# probability vs. league base rate and almost nothing about why that day
+# was a favorable HR spot -- an audit found score_batter() is called ONCE
+# per batter and its one why/watchouts list gets reused verbatim no matter
+# which of 9 real stat families (hits/total_bases/home_runs/runs/rbis/
+# hits_runs_rbis/singles/doubles/triples) that batter's candidate ends up
+# representing, with zero market-specific selection anywhere.
+#
+# DELIBERATELY POST-HOC, not a generate_picks.py rewrite: score_batter()'s
+# ~270 lines of why/watchouts construction are each individually audited
+# and commented (see that function's own explanation-quality-fix comments)
+# -- restructuring that in place would touch the live scoring/explanation
+# engine across ~20 call sites for a presentation-layer concern. Classifying
+# the ALREADY-COMPUTED text at this exact serialization boundary instead
+# (the same boundary the why/watchouts-truncation fix above already uses)
+# keeps 100% of that logic untouched and is independently testable against
+# the real, verbatim sentence templates below.
+#
+# ONLY applied to stat families in MARKET_EVIDENCE_TAGS -- score_pitcher()
+# (Ks), score_pitcher_outs() (Outs), and score_stolen_base() (SB) were each
+# separately audited and found to already build genuinely market-specific
+# evidence from scratch (see the 2026-08-26 evidence audit notes in this
+# repo's session history) with no generic batter facts leaking in -- so
+# they are deliberately NOT in this table and pass through unfiltered,
+# rather than risk misclassifying an unaudited template.
+#
+# KNOWN TECH DEBT (2026-08-26, transitional -- not being migrated in this
+# PR): this whole classifier depends on stable substring matching against
+# score_batter()'s/select_moonshots()'s literal English text templates. It
+# is safe by construction (an unmatched string is never dropped, only
+# unprioritized -- see _select_market_evidence()'s docstring), but it is
+# still string-matching a presentation layer, not a stable contract. Any
+# future wording change to one of the templates below needs a matching
+# update to _EVIDENCE_TAG_PATTERNS or that fact quietly stops being
+# recognized as market-specific (it still displays, just unprioritized).
+# The durable fix is to have score_batter()/select_moonshots() attach a
+# structured reason code to each why/watchout item at the point they're
+# generated, instead of this function re-deriving one from rendered text
+# after the fact -- out of scope for this already-large PR.
+_EVIDENCE_TAG_PATTERNS = [
+    # (tag, substring) -- first match wins. Matched against the REAL,
+    # verbatim text templates score_batter()/select_moonshots() emit (see
+    # generate_picks.py) -- not a guessed pattern.
+    ("sample_thin", "L7 sample is thin ("),
+    ("fresh_return", "-day injured list"),
+    ("fresh_return", "Recalled from the minors"),
+    ("star_profile", "Built mainly on season-long star power"),
+    ("contact_quality", "isn't backed by barrel rate"),
+    ("contact_quality", "AVG vs xBA"),
+    ("contact_quality", "wOBA vs xwOBA"),
+    ("lineup_slot", "Projected "),  # "Projected N PA (batting slot M)"
+    ("lineup_protection", "Hitters batting ahead of him:"),
+    ("lineup_protection", "Hitter batting behind him:"),
+    ("team_run_env", "Team implied for "),
+    ("team_run_env", "No market implied team total available"),
+    ("platoon", "Platoon: "),
+    ("pitch_exploit", "Pitch-type exploit: "),
+    ("opp_sp_quality", "Opposing SP ERA "),
+    ("opp_sp_quality", "Opposing starter not yet confirmed"),
+    ("power_recent", "L7 avg EV "),
+    ("power_recent", "L7 barrel% "),
+    ("power_recent", "Bat speed trending up"),
+    ("power_season", "Season ISO "),
+    ("power_season", "Season barrel% "),
+    ("season_quality", "Season wRC+ "),
+    ("park_weather", "Dome — weather neutral"),
+    ("park_weather", "Wind blowing OUT"),
+    ("park_weather", "Wind blowing IN"),
+    ("park_weather", "Retractable-roof park"),
+    ("bullpen", "Opposing bullpen fatigue:"),
+    ("bullpen", "Opposing bullpen ERA"),
+    ("sharp_money", "Public heavy on "),
+    ("sharp_money", "Sharp money backing"),
+    ("sharp_money", "Sharp money fading"),
+]
+
+# Real risk/quality caveats that apply no matter which market a candidate
+# ends up representing -- never filtered out for any market.
+_UNIVERSAL_EVIDENCE_TAGS = {"sample_thin", "fresh_return", "star_profile"}
+
+# Priority order facts are surfaced in, once selected for a given market.
+# Includes _UNIVERSAL_EVIDENCE_TAGS at the tail (risk/quality caveats,
+# always real and always relevant, but never the LEAD reason for any
+# specific market) so they still get a defined, stable position rather
+# than only surviving via the unrecognized-leftover pass below.
+_EVIDENCE_PRIORITY_ORDER = [
+    "power_recent", "power_season", "platoon", "pitch_exploit", "opp_sp_quality",
+    "park_weather", "lineup_slot", "lineup_protection", "team_run_env",
+    "season_quality", "bullpen", "sharp_money", "contact_quality",
+    "sample_thin", "fresh_return", "star_profile",
+]
+
+# Direct instruction, per market: "Do not force every market to have every
+# factor... Generic facts may still be shared when genuinely relevant, but
+# the displayed hierarchy and wording should be market-specific."
+MARKET_EVIDENCE_TAGS = {
+    "home_runs": {"power_recent", "power_season", "platoon", "pitch_exploit",
+                  "opp_sp_quality", "park_weather", "lineup_slot", "bullpen"},
+    "total_bases": {"power_recent", "power_season", "platoon", "pitch_exploit",
+                     "opp_sp_quality", "park_weather", "lineup_slot"},
+    "hits": {"contact_quality", "platoon", "opp_sp_quality", "lineup_slot", "power_recent"},
+    "singles": {"contact_quality", "platoon", "opp_sp_quality", "lineup_slot", "power_recent"},
+    "doubles": {"power_recent", "power_season", "platoon", "opp_sp_quality", "park_weather"},
+    "triples": {"power_recent", "platoon", "opp_sp_quality", "park_weather", "lineup_slot"},
+    "rbis": {"lineup_protection", "lineup_slot", "team_run_env", "opp_sp_quality", "bullpen"},
+    "runs": {"lineup_slot", "lineup_protection", "team_run_env", "opp_sp_quality"},
+    "hits_runs_rbis": {"lineup_slot", "lineup_protection", "team_run_env", "platoon",
+                        "opp_sp_quality", "power_recent", "contact_quality"},
+}
+
+
+def _tag_evidence_text(text):
+    """Classify one why/watchout sentence by its underlying signal, matched
+    against the real, stable prefix each template above always starts or
+    contains verbatim. None when the text matches nothing known -- callers
+    must never drop an unrecognized fact, only decline to prioritize it."""
+    for tag, pattern in _EVIDENCE_TAG_PATTERNS:
+        if pattern in text:
+            return tag
+    return None
+
+
+def _select_market_evidence(items, stat):
+    """Filter and reorder one already-computed why/watchouts list for the
+    specific market (stat family) this candidate ended up representing.
+
+    NEVER drops a fact whose tag can't be identified (see _tag_evidence_text)
+    -- an unrecognized template is real, already-computed evidence, and
+    dropping it silently would be the same "computed, then discarded"
+    failure this fix exists to close, just moved one boundary over. Markets
+    not in MARKET_EVIDENCE_TAGS pass through completely unchanged (see the
+    module comment above for which markets those are and why)."""
+    relevant = MARKET_EVIDENCE_TAGS.get(stat)
+    if relevant is None or not items:
+        return list(items)
+    # Indexed by position, not the text/id -- two genuinely distinct items
+    # can share identical text (and CPython may or may not intern short
+    # string literals the same way), so tracking "seen" by string identity
+    # or value would risk dropping a real duplicate fact instead of just
+    # reordering it.
+    tagged = [(_tag_evidence_text(t), t) for t in items]
+    selected, seen = [], set()
+    for tag in _EVIDENCE_PRIORITY_ORDER:
+        if tag not in relevant and tag not in _UNIVERSAL_EVIDENCE_TAGS:
+            continue
+        for i, (t_tag, text) in enumerate(tagged):
+            if t_tag == tag and i not in seen:
+                selected.append(text)
+                seen.add(i)
+    # Anything left over -- an untagged fact (unrecognized template) or a
+    # recognized one this specific market's relevance list didn't ask for --
+    # is genuinely relevant-enough evidence score_batter() already decided
+    # to compute, so it still ships, just deprioritized to the end rather
+    # than silently dropped.
+    for i, (t_tag, text) in enumerate(tagged):
+        if i not in seen:
+            selected.append(text)
+            seen.add(i)
+    return selected
+
+
+def _clean_candidate_rows(rows, schedule):
+    out = []
+    for r in rows:
+        game_pk = r.get("game_pk")
+        proj = r.get("projection") or {}
+        stat = proj.get("stat")
+        combo = r.get("combo_player_ids")
+        # PHASE 4: a real, stable identity for this exact prop -- the
+        # single-array data model (see build_payload()) needs one, and
+        # the fragile (name, prop) STRING matching refresh_prices.py/
+        # refresh_grades.py/mergePriceUpdate() all used before this
+        # (three independent reimplementations of "find this same row
+        # again") collapses into one real key everywhere once every row
+        # carries it directly. game_pk + player (or combo) + stat +
+        # threshold is the same identity grade_pick() itself keys a
+        # settlement on -- reusing it here rather than inventing a
+        # separate one.
+        market_side = market_side_token(r)
+        cleaned = {
+            "identity_version": IDENTITY_SCHEMA_VERSION,
+            "type": r.get("type"), "name": r.get("name"), "team": r.get("team"),
+            "matchup": r.get("matchup"), "side": r.get("side"), "prop": r.get("prop"),
+            "projection": proj, "stat": stat, "lean": r.get("lean"),
+            "market_side": market_side,
+            "score": r.get("score"), "confidence": r.get("confidence"),
+            "hit_probability": r.get("hit_probability"),
+            "market_odds": r.get("market_odds"), "market_implied": r.get("market_implied"),
+            "market_edge": r.get("market_edge"), "price_clears": r.get("price_clears"),
+            # market_hold: PHASE 3 addition (see eval_lib.market_probability)
+            # -- present (a real number) only on the genuinely two-sided
+            # markets (strikeouts/pitcher_outs/nrfi_combined), where it is
+            # the EXACT measured hold from both real posted sides, not an
+            # assumed one. Surfaced so the detail view can say "exact
+            # market price" instead of "estimated" where it's actually true.
+            "market_hold": r.get("market_hold"),
+            # 2026-08-2X market-edge-semantics fix (P0-6): same
+            # "computed, then discarded" boundary as market_hold above
+            # -- posted_implied (the raw price-implied probability,
+            # always present when a price exists) / market_fair (the
+            # honest fair-value comparator -- exact when market_hold is
+            # present, an assumed-hold approximation otherwise) /
+            # market_fair_method (which of those two it is) /
+            # edge_vs_fair (model probability minus market_fair -- the
+            # one edge number that's honestly comparable across every
+            # market family, unlike market_edge, which mixes exact and
+            # approximate comparators under one name).
+            "posted_implied": r.get("posted_implied"),
+            "market_fair": r.get("market_fair"),
+            "market_fair_method": r.get("market_fair_method"),
+            "edge_vs_fair": r.get("edge_vs_fair"),
+            "reliability": r.get("reliability"), "reliability_note": r.get("reliability_note"),
+            "sample_n": r.get("sample_n"),
+            # Real bug, found 2026-08-26 (structured evidence contract
+            # audit): why/watchouts used to be silently truncated to the
+            # first 4/2 items here, with no comment ever explaining why
+            # those specific numbers, and no signal to the frontend that
+            # anything was cut. Measured against the real live payload
+            # (docs/data.json): 78% of props had exactly 4 why items and
+            # 65% had exactly 2 watchouts -- both suspiciously exactly at
+            # the cap, meaning the large majority of real, already-
+            # computed reasoning was being discarded at this exact
+            # serialization boundary. The detail sheet (detailBody() in
+            # app.js) is an explicit progressive-disclosure surface --
+            # "Why It Could Hit"/"Why It Could Miss" already map over
+            # the FULL array it receives, so it needed no frontend
+            # change to correctly show everything once this stopped
+            # cutting it off. The compact card (pickCard()) only ever
+            # showed why[0] anyway and is unaffected either way.
+            "why": _select_market_evidence(r.get("why") or [], stat),
+            "watchouts": _select_market_evidence(r.get("watchouts") or [], stat),
+            "base_rate": r.get("base_rate"), "lift": r.get("lift"),
+            # Additive lift-reference concept, separate from base_rate/
+            # lift -- see stable_base_rate.py. None except on
+            # hits_runs_rbis/runs/rbis where a real season-to-date
+            # reference exists.
+            "lift_reference_rate": r.get("lift_reference_rate"),
+            "stable_lift": r.get("stable_lift"),
+            # prob_ci: real bug, found in the same audit -- this field
+            # was computed (attach_reliability) and never even reached
+            # the live dashboard's payload at all, so a mismatched CI
+            # bug this exact field would have exposed stayed invisible
+            # here (it only showed on the static board). Now correctly
+            # scoped per exact line (see generate_picks._batter_options'
+            # own fix) before it ever reaches this boundary.
+            "prob_ci": r.get("prob_ci"),
+            # 2026-08-2X data-integrity fix (HR probability/base-rate/
+            # sample semantics trace + CI provenance-honesty audit):
+            # all three of these were computed upstream in
+            # generate_picks.py and silently dropped at this exact
+            # serialization boundary -- the same "computed, then
+            # discarded" failure prob_ci itself (comment above) was
+            # already found and fixed for once. Without them, the
+            # public payload had no way to say whether a given
+            # hit_probability was a real empirical rate, a modelled
+            # blend, a league-only fallback, or a shrunk mix of the
+            # two -- or whether prob_ci (when present) came from this
+            # player's own record vs a market/bucket-level historical
+            # band. A viewer could not tell "we have real evidence"
+            # from "we don't" for the exact same displayed number.
+            "probability_basis": r.get("probability_basis"),
+            "probability_detail": r.get("probability_detail"),
+            "prob_ci_source": r.get("prob_ci_source"),
+            # The single field this whole rebuild exists to add: which
+            # of the four real recommendation states this row earned,
+            # and why -- computed once, above, by recommendation.py,
+            # and carried through here rather than re-derived or
+            # dropped at the serialization boundary (the exact "computed,
+            # then discarded" failure this rebuild's own audit found
+            # repeatedly elsewhere in this codebase).
+            "recommendation_status": r.get("status"),
+            "status_reasons": r.get("status_reasons"),
+            "stale": r.get("stale", False),
+            "game_pk": game_pk, "game_start": (schedule.get(game_pk) or {}).get("start"),
+            # player_id/combo_player_ids: not used anywhere in this page's
+            # own rendering, but required by grade_results.grade_pick() --
+            # dashboard/refresh_grades.py reshapes a row back into a
+            # candidate dict to grade it live, and needs these to find the
+            # real box score line. Direct request: "for the top picks,
+            # them to show when it's cashed... make the pick yellow when
+            # the game is happening... green if it cashes, red if it
+            # doesn't."
+            "player_id": r.get("player_id"),
+            "combo_player_ids": combo,
+            # Early Look: True only for a candidate whose batting-order
+            # slot is GUESSED (Rotowire projection or last-known
+            # lineup), never a real posted one -- see quality_control()
+            # in generate_picks.py. Carried on the row itself (not
+            # inferred from which tab it's rendered in) so the client
+            # can visibly flag it no matter where it ends up.
+            "lineup_assumed": r.get("lineup_assumed"),
+            # OPPORTUNITY fact for the detail sheet (2026-08-25): the real
+            # batting-order slot. score_batter() records it in `signals`
+            # via _sig(signals, "lineup_slot", order, lineup_context) --
+            # but _sig() stores the SCALED value (lineup_context =
+            # scale(10 - order, 1, 9), generate_picks.py:1379), not the
+            # raw order number, and no other field on the candidate ever
+            # carries the raw order directly. Inverted back here (the
+            # exact same formula backtest/opportunity_decomposition.
+            # derive_batting_order() already uses for the same purpose --
+            # mirrored rather than imported, since a live production
+            # payload builder depending on the offline research package
+            # would be a strange, unnecessary coupling) so the payload
+            # carries a real, human "batting order" fact instead of a
+            # meaningless 0-100 scaled number. Deliberately just the slot
+            # number, not a derived "supportive/concern" judgment -- see
+            # frontend/detail_sheet_data_audit_2026-08-25.md for why the
+            # underlying cat_context component is NOT safely gradable
+            # without the fitted score weights (which differ by market
+            # and aren't exposed here). "Batting Nth" needs no weight to
+            # state as a plain fact. None for pitchers (no batting slot)
+            # and for any row where the signal never fired.
+            "batting_order": _derive_batting_order(
+                (r.get("signals") or {}).get("lineup_slot")),
+        }
+        cleaned["id"] = canonical_prop_id(cleaned)
+        out.append(cleaned)
+    return out
+
+
 def run_live_fetch():
     """Isolated live re-run of generate_picks.py's scoring pass. Returns the
     same shape fetch_full_depth.py (the scratch prototype this was promoted
@@ -378,114 +704,7 @@ def run_live_fetch():
                                  board_generated_at=board_generated_at)
 
     def clean(rows):
-        out = []
-        for r in rows:
-            game_pk = r.get("game_pk")
-            proj = r.get("projection") or {}
-            stat = proj.get("stat")
-            combo = r.get("combo_player_ids")
-            # PHASE 4: a real, stable identity for this exact prop -- the
-            # single-array data model (see build_payload()) needs one, and
-            # the fragile (name, prop) STRING matching refresh_prices.py/
-            # refresh_grades.py/mergePriceUpdate() all used before this
-            # (three independent reimplementations of "find this same row
-            # again") collapses into one real key everywhere once every row
-            # carries it directly. game_pk + player (or combo) + stat +
-            # threshold is the same identity grade_pick() itself keys a
-            # settlement on -- reusing it here rather than inventing a
-            # separate one.
-            market_side = market_side_token(r)
-            cleaned = {
-                "identity_version": IDENTITY_SCHEMA_VERSION,
-                "type": r.get("type"), "name": r.get("name"), "team": r.get("team"),
-                "matchup": r.get("matchup"), "side": r.get("side"), "prop": r.get("prop"),
-                "projection": proj, "stat": stat, "lean": r.get("lean"),
-                "market_side": market_side,
-                "score": r.get("score"), "confidence": r.get("confidence"),
-                "hit_probability": r.get("hit_probability"),
-                "market_odds": r.get("market_odds"), "market_implied": r.get("market_implied"),
-                "market_edge": r.get("market_edge"), "price_clears": r.get("price_clears"),
-                # market_hold: PHASE 3 addition (see eval_lib.market_probability)
-                # -- present (a real number) only on the genuinely two-sided
-                # markets (strikeouts/pitcher_outs/nrfi_combined), where it is
-                # the EXACT measured hold from both real posted sides, not an
-                # assumed one. Surfaced so the detail view can say "exact
-                # market price" instead of "estimated" where it's actually true.
-                "market_hold": r.get("market_hold"),
-                "reliability": r.get("reliability"), "reliability_note": r.get("reliability_note"),
-                "sample_n": r.get("sample_n"),
-                "why": (r.get("why") or [])[:4],
-                "watchouts": (r.get("watchouts") or [])[:2],
-                "base_rate": r.get("base_rate"), "lift": r.get("lift"),
-                # Additive lift-reference concept, separate from base_rate/
-                # lift -- see stable_base_rate.py. None except on
-                # hits_runs_rbis/runs/rbis where a real season-to-date
-                # reference exists.
-                "lift_reference_rate": r.get("lift_reference_rate"),
-                "stable_lift": r.get("stable_lift"),
-                # prob_ci: real bug, found in the same audit -- this field
-                # was computed (attach_reliability) and never even reached
-                # the live dashboard's payload at all, so a mismatched CI
-                # bug this exact field would have exposed stayed invisible
-                # here (it only showed on the static board). Now correctly
-                # scoped per exact line (see generate_picks._batter_options'
-                # own fix) before it ever reaches this boundary.
-                "prob_ci": r.get("prob_ci"),
-                # The single field this whole rebuild exists to add: which
-                # of the four real recommendation states this row earned,
-                # and why -- computed once, above, by recommendation.py,
-                # and carried through here rather than re-derived or
-                # dropped at the serialization boundary (the exact "computed,
-                # then discarded" failure this rebuild's own audit found
-                # repeatedly elsewhere in this codebase).
-                "recommendation_status": r.get("status"),
-                "status_reasons": r.get("status_reasons"),
-                "stale": r.get("stale", False),
-                "game_pk": game_pk, "game_start": (schedule.get(game_pk) or {}).get("start"),
-                # player_id/combo_player_ids: not used anywhere in this page's
-                # own rendering, but required by grade_results.grade_pick() --
-                # dashboard/refresh_grades.py reshapes a row back into a
-                # candidate dict to grade it live, and needs these to find the
-                # real box score line. Direct request: "for the top picks,
-                # them to show when it's cashed... make the pick yellow when
-                # the game is happening... green if it cashes, red if it
-                # doesn't."
-                "player_id": r.get("player_id"),
-                "combo_player_ids": combo,
-                # Early Look: True only for a candidate whose batting-order
-                # slot is GUESSED (Rotowire projection or last-known
-                # lineup), never a real posted one -- see quality_control()
-                # in generate_picks.py. Carried on the row itself (not
-                # inferred from which tab it's rendered in) so the client
-                # can visibly flag it no matter where it ends up.
-                "lineup_assumed": r.get("lineup_assumed"),
-                # OPPORTUNITY fact for the detail sheet (2026-08-25): the real
-                # batting-order slot. score_batter() records it in `signals`
-                # via _sig(signals, "lineup_slot", order, lineup_context) --
-                # but _sig() stores the SCALED value (lineup_context =
-                # scale(10 - order, 1, 9), generate_picks.py:1379), not the
-                # raw order number, and no other field on the candidate ever
-                # carries the raw order directly. Inverted back here (the
-                # exact same formula backtest/opportunity_decomposition.
-                # derive_batting_order() already uses for the same purpose --
-                # mirrored rather than imported, since a live production
-                # payload builder depending on the offline research package
-                # would be a strange, unnecessary coupling) so the payload
-                # carries a real, human "batting order" fact instead of a
-                # meaningless 0-100 scaled number. Deliberately just the slot
-                # number, not a derived "supportive/concern" judgment -- see
-                # frontend/detail_sheet_data_audit_2026-08-25.md for why the
-                # underlying cat_context component is NOT safely gradable
-                # without the fitted score weights (which differ by market
-                # and aren't exposed here). "Batting Nth" needs no weight to
-                # state as a plain fact. None for pitchers (no batting slot)
-                # and for any row where the signal never fired.
-                "batting_order": _derive_batting_order(
-                    (r.get("signals") or {}).get("lineup_slot")),
-            }
-            cleaned["id"] = canonical_prop_id(cleaned)
-            out.append(cleaned)
-        return out
+        return _clean_candidate_rows(rows, schedule)
 
     out = {"generated_at": board_generated_at, "date": gp.m.TODAY,
           "odds_fetched_at": odds_fetched_at,
@@ -509,19 +728,155 @@ def run_live_fetch():
     all_priced = clean(moonshots_full)
     for entries in by_category_full.values():
         all_priced.extend(clean(entries))
+    ump_kbb = ctx.get("ump_kbb") or {}
+    bullpen_scores = ctx.get("bullpen_scores") or {}
+    out["game_context"] = _build_game_context(all_priced, game_meta, park_wx, ump_kbb, started,
+                                              schedule, bullpen_scores)
+    out["streaks"] = _compute_streaks(all_priced)
+    return out
+
+
+# Stat families where "how likely is SOMETHING to happen" naturally runs
+# higher than a single specific outcome (H+R+RBI clears on any hit, run, OR
+# RBI; a home run needs one specific outcome). Used only to build a labeled
+# "Best Power Angle" section below, never to change any score/probability.
+# "moonshot_420" is generate_picks.MOONSHOT_THRESHOLD_FT (420) -- hardcoded
+# rather than imported since generate_picks is only ever imported lazily,
+# inside functions, elsewhere in this file (see run_live_fetch()), and this
+# constant needs to exist at module load time.
+_POWER_STATS = {"home_runs", "total_bases", "moonshot_420"}
+
+
+def _game_pick_sections(game_picks):
+    """Real bug, found 2026-08-26 (games-drill-down honesty audit): the old
+    per-game highlight list was a flat top-6-by-raw-hit_probability sort
+    across every stat family in the game. That systematically favored
+    hits_runs_rbis (H+R+RBI clears on ANY hit, run, OR RBI -- inherently
+    higher raw probability than a single specific outcome like a home run),
+    so a game's "highlights" were dominated by one market family, not
+    genuinely the most interesting angles on that game. A category label is
+    navigation/research organization, not permission to call a weak
+    candidate a recommendation -- so this NEVER manufactures a section: a
+    section only ships when a real, distinct candidate exists for it.
+
+    Ranked purely by hit_probability within each bucket -- the same real,
+    already-computed number every other surface on this site ranks by, not
+    a new judgment about which market "matters more."."""
+    ranked = sorted(game_picks, key=lambda r: r.get("hit_probability") or 0, reverse=True)
+
+    def summarize(r):
+        return {"name": r["name"], "prop": r["prop"], "hit_probability": r["hit_probability"],
+                "market_odds": r.get("market_odds"), "price_clears": r.get("price_clears"),
+                "why": (r.get("why") or [None])[0]}
+
+    used = set()
+
+    def pick_key(r):
+        return (r.get("name"), r.get("prop"))
+
+    def take_best(label, matches):
+        for r in ranked:
+            k = pick_key(r)
+            if k in used:
+                continue
+            if matches(r):
+                used.add(k)
+                return {"label": label, "picks": [summarize(r)]}
+        return None
+
+    sections = []
+    s = take_best("Best Overall Read", lambda r: True)
+    if s: sections.append(s)
+    s = take_best("Best Batter Read", lambda r: r.get("type") == "batter")
+    if s: sections.append(s)
+    s = take_best("Best Pitcher Read", lambda r: r.get("type") == "pitcher")
+    if s: sections.append(s)
+    s = take_best("Best Power Angle",
+                  lambda r: (r.get("projection") or {}).get("stat") in _POWER_STATS)
+    if s: sections.append(s)
+    # Real remaining picks (still ranked, still real), never padded -- fills
+    # out to the same total-picks budget the old flat top-6 used, minus
+    # whatever the labeled sections above already claimed.
+    remaining_budget = max(0, 6 - sum(len(sec["picks"]) for sec in sections))
+    others = [r for r in ranked if pick_key(r) not in used][:remaining_budget]
+    if others:
+        sections.append({"label": "Other Props", "picks": [summarize(r) for r in others]})
+    return sections
+
+
+# Same 40%-fatigued threshold score_batter()'s own why/watchouts text
+# already uses for "tired pen" framing (generate_picks.py: "if
+# bullpen_fatigue_pct >= 40: ... tired pen"), reused here so this summary
+# label and that per-prop text never disagree about the same real number.
+# The 20% "moderately taxed" midpoint has no equivalent existing precedent
+# to mirror -- a reasonable middle band, not an independently validated cut.
+def _bullpen_fatigue_summary(bp):
+    tracked = bp.get("tracked") or 0
+    if tracked == 0:
+        return "No strong bullpen-availability signal"
+    pct = (bp.get("fatigued_relievers") or 0) / tracked * 100
+    if pct >= 40:
+        return "Late-inning group heavily taxed"
+    if pct >= 20:
+        return "Moderately taxed"
+    return "Mostly rested"
+
+
+def _team_bullpen_context(bullpen_scores, team_name):
+    """Real reliever names/usage for one team, direct instruction: "Jacob
+    specifically wants names and context." Never claims a reliever is
+    "likely to appear" -- that would require a real, verified role model
+    this codebase does not have (see _reliever_detail()'s own docstring).
+    None when this team's bullpen genuinely wasn't fetchable tonight (a
+    real network/lookup failure), not a fabricated empty-but-present block."""
+    bp = bullpen_scores.get(team_name)
+    if not bp:
+        return None
+    return {
+        "relievers": bp.get("relievers") or [],
+        "tracked": bp.get("tracked"), "fatigued_relievers": bp.get("fatigued_relievers"),
+        "fatigue_summary": _bullpen_fatigue_summary(bp),
+    }
+
+
+def _build_game_context(all_priced, game_meta, park_wx, ump_kbb, started, schedule, bullpen_scores=None):
+    """Per-game schedule breakdown. Direct request: "I want people to be able
+    to click on a game on the schedule, and get a breakdown of why X props
+    might be best for A B C reasons. Think time, weather, etc." Built from the
+    exact same weather/umpire data score_batter() already used to score
+    tonight's candidates -- this isn't a second, separate read, just exposing
+    the real reasoning instead of leaving it buried inside the model.
+    Already-started games are omitted from this schedule research surface
+    because it is built only from the new pregame scoring pass. Published
+    live picks remain visible on the pick surfaces through the lifecycle
+    reconciliation elsewhere. Extracted into its own function (2026-08-25) so
+    the picks_by_game dedup below -- and the doubleheader bug found in it --
+    has direct test coverage, without needing run_live_fetch()'s full live
+    network path (this module's own top docstring: that path is not tested)."""
     picks_by_game = defaultdict(list)
     seen_pick_keys = set()
     for r in all_priced:
         pk = r.get("game_pk")
         if not pk or r.get("hit_probability") is None:
             continue
-        key = (r.get("name"), r.get("prop"))
+        # Real bug, found 2026-08-25: this key used to be (name, prop) alone,
+        # with no game_pk. On a doubleheader, the same player can have the
+        # same prop type (e.g. "To Hit a Home Run") as a real, distinct
+        # candidate in BOTH Game 1 and Game 2 -- two different games, two
+        # different real predictions. Since the key didn't include game_pk,
+        # the second game's candidate was seen as a "duplicate" of the
+        # first and silently dropped from picks_by_game entirely, so that
+        # game's drill-down page never showed it. game_pk is now part of
+        # the key: it still collapses the real overlap this dedup exists
+        # for (moonshot and best-of-category can both produce a candidate
+        # for the same player+prop+game), but no longer conflates the same
+        # player+prop across two genuinely different games.
+        key = (pk, r.get("name"), r.get("prop"))
         if key in seen_pick_keys:
-            continue  # moonshot/best-of-category can overlap on the same player+prop
+            continue  # moonshot/best-of-category can overlap on the same player+prop+game
         seen_pick_keys.add(key)
         picks_by_game[pk].append(r)
 
-    ump_kbb = ctx.get("ump_kbb") or {}
     game_context = []
     for gm in game_meta:
         pk = gm.get("game_pk")
@@ -541,8 +896,6 @@ def run_live_fetch():
             umpire = {"name": gm.get("hp_ump"), "k_pct": uk.get("k_pct"),
                      "bb_pct": uk.get("bb_pct"), "league_k_pct": uk.get("league_k_pct"),
                      "league_bb_pct": uk.get("league_bb_pct")}
-        game_picks = sorted(picks_by_game.get(pk, []),
-                           key=lambda r: r.get("hit_probability") or 0, reverse=True)[:6]
         game_context.append({
             "game_pk": pk, "matchup": gm.get("matchup"),
             "away_team": gm.get("away_team"), "home_team": gm.get("home_team"),
@@ -551,13 +904,19 @@ def run_live_fetch():
             "game_start": (schedule.get(pk) or {}).get("start"),
             "weather": weather, "umpire": umpire,
             "is_getaway": bool(gm.get("is_getaway")), "is_opener": bool(gm.get("is_opener")),
-            "picks": [{"name": r["name"], "prop": r["prop"], "hit_probability": r["hit_probability"],
-                      "market_odds": r.get("market_odds"), "price_clears": r.get("price_clears"),
-                      "why": (r.get("why") or [None])[0]} for r in game_picks],
+            "pick_sections": _game_pick_sections(picks_by_game.get(pk, [])),
+            # Detailed bullpen presentation, direct instruction: "Jacob
+            # specifically wants names and context" -- real per-reliever
+            # usage (see _team_bullpen_context()), not just a vague
+            # fatigue-percentage number. Each team's OWN bullpen, keyed the
+            # natural way for a whole-game overview (not the batter-
+            # matchup-specific "which pen do THIS team's batters face"
+            # framing score_batter()'s own opp_bullpen assignment uses,
+            # which only makes sense scoped to one specific batter).
+            "away_team_bullpen": _team_bullpen_context(bullpen_scores or {}, gm.get("away_team")),
+            "home_team_bullpen": _team_bullpen_context(bullpen_scores or {}, gm.get("home_team")),
         })
-    out["game_context"] = game_context
-    out["streaks"] = _compute_streaks(all_priced)
-    return out
+    return game_context
 
 
 def _decimal_to_american(dec):
@@ -694,6 +1053,19 @@ def load_track_record(path=None):
     except Exception:
         return {"current": None, "legacy": None}
 
+    # sample_label: real bug, found 2026-08-25 -- the Performance page
+    # showed a bare hit-rate percentage with NO indication of how thin the
+    # underlying sample is, so an early "100%" off 2 graded picks read the
+    # same as a mature, trustworthy number. eval_lib.py already built the
+    # shared sample-size-honesty gate ("one shared gate so 'too small to
+    # say anything' is applied the same way everywhere in Phase 3") for
+    # exactly this problem -- reused here rather than inventing a second,
+    # inconsistent threshold, so the caveat this function's own docstring
+    # already promises ("do not pretend the new architecture has proven
+    # itself before it has enough observations") is actually shown, not
+    # just asserted in a comment.
+    import eval_lib
+
     tp = h.get("public_top_pick_totals") or {}
     tp_n = (tp.get("hits") or 0) + (tp.get("misses") or 0)
     current = None
@@ -703,6 +1075,7 @@ def load_track_record(path=None):
             "hits": tp.get("hits", 0), "misses": tp.get("misses", 0),
             "last_14d_hit_rate": h.get("last_14_days_top_pick_hit_rate"),
             "last_14d_n": h.get("last_14_days_top_pick_n"),
+            "sample_label": eval_lib.sample_size_label(tp_n),
         }
 
     main = (h.get("by_category_totals") or {}).get("main") or {}
@@ -713,6 +1086,7 @@ def load_track_record(path=None):
             "hit_rate": h["main_hit_rate"], "n": main_n,
             "hits": main.get("hits", 0), "misses": main.get("misses", 0),
             "last_14d_hit_rate": h.get("last_14_days_hit_rate"),
+            "sample_label": eval_lib.sample_size_label(main_n),
         }
 
     return {"current": current, "legacy": legacy}

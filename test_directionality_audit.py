@@ -333,6 +333,66 @@ check(any("Season wRC+ 150" in w and "above-average" in w for w in wrc_strong["w
       "a genuinely above-average wRC+ (150) is labeled as such in why",
       f"why={wrc_strong['why']}")
 
+head("7. 2026-08-25 explanation-quality fix: bullpen fatigue / bullpen ERA / sharp money "
+     "must not land unqualified in `why` when they're actually UNFAVORABLE readings. Real "
+     "complaint: Jacob saw a 'fresh pen' bullpen note under 'Why It Could Hit' -- a fresh, "
+     "rested bullpen is tougher for the batter late, not a reason to like the pick. Same "
+     "bug shape as the wind-in/SP-ERA/L7-EV fixes above, in the block right after them.")
+
+c7_fresh_pen = build(bullpen_fatigue_pct=10, bp_era=4.20)
+check(not any("Opposing bullpen fatigue" in w for w in c7_fresh_pen["why"]),
+      "REGRESSION GUARD: a fresh/rested bullpen (10% fatigued) must NOT appear in why",
+      f"why={c7_fresh_pen['why']}")
+check(any("Opposing bullpen fatigue" in w and "fresh pen" in w and "tougher matchup late" in w
+          for w in c7_fresh_pen["watchouts"]),
+      "...it appears in watchouts instead, honestly framed as tougher late",
+      f"watchouts={c7_fresh_pen['watchouts']}")
+
+c7_tired_pen = build(bullpen_fatigue_pct=70, bp_era=4.20)
+check(any("Opposing bullpen fatigue" in w and "tired pen" in w and "favorable late" in w
+          for w in c7_tired_pen["why"]),
+      "a genuinely tired bullpen (70% fatigued) is labeled favorable in why",
+      f"why={c7_tired_pen['why']}")
+check(not any("Opposing bullpen fatigue" in w for w in c7_tired_pen["watchouts"]),
+      "a tired bullpen never lands in watchouts", f"watchouts={c7_tired_pen['watchouts']}")
+
+c7_elite_pen = build(bullpen_fatigue_pct=40, bp_era=3.00)
+check(not any("Opposing bullpen ERA" in w for w in c7_elite_pen["why"]),
+      "REGRESSION GUARD: an elite opposing bullpen ERA (3.00, well below league) must NOT "
+      "appear in why", f"why={c7_elite_pen['why']}")
+check(any("Opposing bullpen ERA 3.0" in w and "elite pen" in w for w in c7_elite_pen["watchouts"]),
+      "...it appears in watchouts instead, honestly labeled elite", f"watchouts={c7_elite_pen['watchouts']}")
+
+c7_shaky_pen = build(bullpen_fatigue_pct=40, bp_era=5.50)
+check(any("Opposing bullpen ERA 5.5" in w and "shaky pen" in w for w in c7_shaky_pen["why"]),
+      "a genuinely shaky opposing bullpen ERA (5.50) is labeled shaky in why",
+      f"why={c7_shaky_pen['why']}")
+check(not any("Opposing bullpen ERA" in w for w in c7_shaky_pen["watchouts"]),
+      "a shaky bullpen never lands in watchouts", f"watchouts={c7_shaky_pen['watchouts']}")
+
+sharp_fading = gp.score_batter(
+    {"name": "Sharp Test Batter", "id": 702, "team": "Away", "bats": "R", "order": 5},
+    GM, {"ERA": 4.25}, None, "R", {},
+    {"wRC+": 100, "ISO": 0.16, "Barrel%": 8}, {"avg_EV": 88.5, "barrel_pct": 8, "PA": 20},
+    {}, {}, {}, extras={}, sharp_bias={"implied_total": 4.5, "sharp_divergence": -15})
+check(not any("Sharp money" in w for w in sharp_fading["why"]),
+      "REGRESSION GUARD: sharp money FADING this side (-15 pts) must NOT appear in why -- "
+      "it is not a reason to like the pick", f"why={sharp_fading['why']}")
+check(any("Sharp money fading Away" in w and "smart money moving away" in w
+          for w in sharp_fading["watchouts"]),
+      "...it appears in watchouts instead, honestly framed", f"watchouts={sharp_fading['watchouts']}")
+
+sharp_backing = gp.score_batter(
+    {"name": "Sharp Test Batter 2", "id": 703, "team": "Away", "bats": "R", "order": 5},
+    GM, {"ERA": 4.25}, None, "R", {},
+    {"wRC+": 100, "ISO": 0.16, "Barrel%": 8}, {"avg_EV": 88.5, "barrel_pct": 8, "PA": 20},
+    {}, {}, {}, extras={}, sharp_bias={"implied_total": 4.5, "sharp_divergence": 15})
+check(any("Sharp money backing Away" in w and "+15" in w for w in sharp_backing["why"]),
+      "sharp money genuinely BACKING this side (+15 pts) is labeled as such in why",
+      f"why={sharp_backing['why']}")
+check(not any("Sharp money" in w for w in sharp_backing["watchouts"]),
+      "sharp money backing this side never lands in watchouts", f"watchouts={sharp_backing['watchouts']}")
+
 n_pass = sum(1 for ok, _, _ in _results if ok)
 n_total = len(_results)
 print("\n" + "=" * 78)

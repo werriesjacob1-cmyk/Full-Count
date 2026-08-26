@@ -193,6 +193,11 @@ input, select, textarea { font: inherit; color: inherit; }
   background: var(--surface-2); color: var(--ink-dim); cursor: pointer;
 }
 .icon-btn:hover { color: var(--ink); border-color: var(--ink-faint); }
+/* #performance-link is an .icon-btn that is ALSO a primary-route nav link
+   (moved out of .main-nav, UX decision 2026-08-26) -- same active treatment
+   the nav pills use, so it's not the one destination with no visual
+   "you are here" state. */
+.icon-btn.active { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
 .icon-btn svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; }
 .icon-sun { display: block; }
 .icon-moon { display: none; }
@@ -206,9 +211,15 @@ input, select, textarea { font: inherit; color: inherit; }
 .main-nav {
   display: flex; gap: 4px; max-width: 1180px; margin: 0 auto; padding: 0 16px 10px;
   overflow-x: auto; scrollbar-width: none;
-  /* All 5 destinations don't fit unscrolled below ~460px -- fade the
-     trailing edge so "there's more" reads at a glance instead of Watchlist
-     just silently sitting off-screen with no visual hint. */
+  /* UX decision (2026-08-26): the primary row is now 4 destinations
+     (Today/Props/Games/My Board -- Performance moved to the always-visible
+     header icon, see index.html) and fits unscrolled at every real phone
+     width down to 375px (verified: test_browser_e2e.py's mobile checks).
+     overflow-x/mask stay only as a safety net for an unusually narrow
+     viewport or a future locale with longer label text -- NOT the primary
+     discovery mechanism any of these 4 destinations should ever depend on;
+     a primary destination sitting only reachable via this scroll would be
+     the same real problem the old 5-item row had. */
   -webkit-mask-image: linear-gradient(to right, black calc(100% - 28px), transparent);
   mask-image: linear-gradient(to right, black calc(100% - 28px), transparent);
 }
@@ -222,6 +233,14 @@ input, select, textarea { font: inherit; color: inherit; }
 .main-nav a.active { color: var(--accent-ink); background: var(--accent); }
 @media (max-width: 899px) {
   .main-nav a { min-height: 44px; padding: 7px 14px; }
+}
+@media (max-width: 400px) {
+  /* Real headroom check at 375px (iPhone SE/mini, the narrowest width this
+     product supports): 4 items at the 899px-breakpoint padding above measure
+     ~15-20px tighter than comfortable. Tightened here rather than shrinking
+     the 44px touch-target height that padding also provides. */
+  .main-nav { gap: 2px; padding: 0 10px 10px; }
+  .main-nav a { padding: 7px 9px; font-size: 13px; }
 }
 .nav-count {
   display: inline-block; margin-left: 5px; background: var(--bad); color: #fff;
@@ -248,19 +267,24 @@ main { max-width: 1180px; margin: 0 auto; padding: 20px 16px 80px; }
 .section-head .see-all { font-size: 13px; font-weight: 600; color: var(--accent); text-decoration: none; flex: none; }
 
 .stat-row {
-  /* Always exactly 4 tiles (renderToday() renders top_pick/lean/value/
-     games). auto-fit's column count depends on container width in a way
-     that doesn't divide 4 evenly at common phone widths (e.g. 3 columns
-     leaves one bare cell in row 2) -- that empty cell then renders as a
-     blank box with nothing to distinguish it from a broken/loading state.
-     Fixed 4-across / 2x2 always divides evenly, so there's never a
-     leftover cell. */
-  display: grid; grid-template-columns: repeat(4, 1fr);
+  /* Always exactly 5 tiles (renderToday() renders top_pick/lean/value/
+     longshot/games -- value and longshot split into their own tiles
+     2026-08-2X so each tile's count matches what its own link actually
+     filters to; see renderToday()'s own comment on that fix). auto-fit's
+     column count depends on container width in a way that doesn't divide
+     evenly at common phone widths (e.g. 3 columns leaves one bare cell in
+     row 2) -- that empty cell then renders as a blank box with nothing to
+     distinguish it from a broken/loading state. Fixed 5-across on desktop
+     always divides evenly. On mobile (2 columns), 5 doesn't divide evenly
+     either -- the last tile explicitly spans both columns below so the
+     final row is always full, never a lone orphan cell. */
+  display: grid; grid-template-columns: repeat(5, 1fr);
   gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: var(--radius);
   overflow: hidden; margin-bottom: 26px;
 }
 @media (max-width: 640px) {
   .stat-row { grid-template-columns: repeat(2, 1fr); }
+  .stat-row > :last-child { grid-column: span 2; }
 }
 /* Tappable (PASS: tiles used to be inert -- a real number with nowhere to
    go). Now real <a> links straight into the matching filtered All Props
@@ -296,6 +320,7 @@ main { max-width: 1180px; margin: 0 auto; padding: 20px 16px 80px; }
 .pc-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
 .pc-name { font-family: var(--font-display); font-size: 18px; font-weight: 700; line-height: 1.2; }
 .pc-sub { font-size: 12.5px; color: var(--ink-faint); margin-top: 2px; }
+.pc-saved { color: var(--accent); font-size: 16px; line-height: 1; flex-shrink: 0; }
 
 .pc-prop { font-size: 14.5px; font-weight: 600; color: var(--ink-dim); }
 
@@ -335,6 +360,9 @@ main { max-width: 1180px; margin: 0 auto; padding: 20px 16px 80px; }
 .chip-lineup-confirmed { background: var(--good-soft); color: var(--good); }
 .chip-lineup-assumed { background: var(--warn-soft); color: var(--warn); }
 .chip-stale { background: var(--bad-soft); color: var(--bad); }
+.chip-suspect { background: var(--warn-soft); color: var(--warn); }
+.top-pick-warning { background: var(--warn-soft); border-radius: 10px; padding: 10px 14px; margin-bottom: 18px; }
+.top-pick-warning .section-sub { color: var(--warn); font-weight: 600; margin: 0; }
 .chip-evidence-strong { background: var(--good-soft); color: var(--good); }
 .chip-evidence-solid { background: var(--lean-soft); color: var(--lean); }
 .chip-evidence-developing { background: var(--warn-soft); color: var(--warn); }
@@ -420,8 +448,36 @@ main { max-width: 1180px; margin: 0 auto; padding: 20px 16px 80px; }
   min-height: 40px;
 }
 .filter-chip-btn[aria-pressed="true"] { background: var(--accent-soft); border-color: var(--accent); color: var(--accent-bright); }
+
+/* .filter-dropdown: native <details>/<summary> multi-select popover (Part
+   2, 2026-08-26 -- multi-select prop filtering). Real keyboard/screen-
+   reader open-close behavior for free; only the panel's own contents and
+   position need styling. */
+.filter-dropdown { position: relative; display: inline-block; }
+.filter-dropdown > summary {
+  list-style: none; display: inline-flex; align-items: center; gap: 4px;
+}
+.filter-dropdown > summary::-webkit-details-marker { display: none; }
+.filter-dropdown > summary::after { content: "▾"; font-size: 10px; opacity: .7; }
+.filter-dropdown[open] > summary { background: var(--accent-soft); border-color: var(--accent); color: var(--accent-bright); }
+.filter-dropdown-panel {
+  position: absolute; top: calc(100% + 6px); left: 0; z-index: 30; min-width: 220px; max-height: 320px;
+  overflow-y: auto; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius);
+  box-shadow: var(--shadow-lift); padding: 8px;
+}
+.filter-dropdown-opt {
+  display: flex; align-items: center; gap: 8px; padding: 7px 8px; border-radius: var(--radius-sm);
+  font-size: 13.5px; cursor: pointer; white-space: nowrap;
+}
+.filter-dropdown-opt:hover { background: var(--surface-2); }
+.filter-dropdown-opt input { flex: none; }
 .filter-count { font-size: 12.5px; color: var(--ink-faint); margin-left: auto; white-space: nowrap; }
 .filter-more-btn { display: none; }
+.active-search-note { margin: -8px 0 12px; }
+.link-btn {
+  background: none; border: none; padding: 0; margin-left: 4px; cursor: pointer;
+  color: var(--accent); font-size: inherit; font-weight: 600; text-decoration: underline;
+}
 
 @media (max-width: 720px) {
   .filter-bar { gap: 8px; }
@@ -458,8 +514,15 @@ main { max-width: 1180px; margin: 0 auto; padding: 20px 16px 80px; }
 .pr-status { flex: none; }
 
 @media (max-width: 640px) {
-  .prop-row { grid-template-columns: 1fr auto; grid-template-areas: "main prob" "chips chips"; row-gap: 8px; }
-  .pr-price { display: none; }
+  /* Real bug, found 2026-08-26 (frontend automation prep): this used to
+     hide .pr-price (the real FanDuel price) entirely on mobile -- the
+     exact "Mobile FanDuel odds mandatory" requirement violated, on the
+     All Props list, the Today-page overflow list, and My Board, all three
+     of which render rows via this same propRow(). Repositioned into the
+     mobile grid's second row instead of dropped, so the price a bettor
+     is actually being asked to pay stays visible on every real device. */
+  .prop-row { grid-template-columns: 1fr auto; grid-template-areas: "main prob" "chips price"; row-gap: 8px; }
+  .pr-price { grid-area: price; min-width: 0; }
   .pr-status { grid-area: chips; }
 }
 
@@ -494,6 +557,14 @@ main { max-width: 1180px; margin: 0 auto; padding: 20px 16px 80px; }
 .hero-value-note { display: block; margin-top: 1px; font-size: 11.5px; }
 .detail-section { margin-bottom: 20px; }
 .detail-section h3 { font-size: 13px; text-transform: uppercase; letter-spacing: .04em; color: var(--ink-faint); margin-bottom: 9px; }
+.bullpen-team { margin-bottom: 12px; }
+.bullpen-team:last-child { margin-bottom: 0; }
+.bullpen-team-head { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; font-size: 13.5px; margin-bottom: 6px; }
+.bullpen-team-head span { font-size: 12px; color: var(--ink-faint); }
+.bullpen-reliever { display: flex; justify-content: space-between; gap: 10px; font-size: 13px; padding: 5px 0; border-top: 1px solid var(--line-soft); }
+.bullpen-reliever:first-of-type { border-top: none; }
+.br-name { font-weight: 600; }
+.br-detail { color: var(--ink-dim); font-size: 12px; }
 .reason-list { display: flex; flex-direction: column; gap: 8px; }
 .reason-item { display: flex; gap: 9px; font-size: 13.5px; line-height: 1.5; }
 .reason-item .r-icon { flex: none; width: 18px; text-align: center; }
@@ -529,7 +600,12 @@ main { max-width: 1180px; margin: 0 auto; padding: 20px 16px 80px; }
 
 /* ── Games page ───────────────────────────────────────────────────── */
 .game-list { display: flex; flex-direction: column; gap: 12px; }
-.game-card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-lg); padding: 16px; }
+/* .game-card is now a real <a> link into the game's drill-down page (Part
+   2, 2026-08-26) -- display:block/text-decoration:none restore the same
+   layout an unstyled <div> gave it for free; color:inherit + the existing
+   global `a { color: inherit }` keep team-name text from turning link-blue. */
+.game-card { display: block; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-lg); padding: 16px; text-decoration: none; color: inherit; cursor: pointer; }
+.game-card:hover { border-color: var(--accent); }
 .game-card-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 10px; }
 .game-teams { font-family: var(--font-display); font-weight: 700; font-size: 16px; }
 .game-time { font-family: var(--font-mono); font-size: 12.5px; color: var(--ink-faint); }
@@ -537,6 +613,9 @@ main { max-width: 1180px; margin: 0 auto; padding: 20px 16px 80px; }
 .game-picks { display: flex; flex-direction: column; gap: 6px; }
 .game-pick-line { display: flex; justify-content: space-between; gap: 10px; font-size: 13px; padding: 6px 0; border-top: 1px solid var(--line-soft); }
 .game-pick-line:first-child { border-top: none; }
+.game-pick-section { margin-top: 14px; }
+.game-pick-section:first-child { margin-top: 0; }
+.gps-label { font-family: var(--font-display); font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.03em; color: var(--ink-faint); margin-bottom: 4px; }
 
 /* ── Explore by Prop (Today page quick-nav) ──────────────────────────
    Mobile-first jump strip: one tap from Today straight into a filtered
@@ -545,6 +624,22 @@ main { max-width: 1180px; margin: 0 auto; padding: 20px 16px 80px; }
    markets -- only the highest-interest families, plus a "More" chip that
    opens the full research board. Real counts only; a family with zero
    real props tonight doesn't get a chip at all (never a dead tap). */
+/* .explore-strip-wrap: real bug, found 2026-08-25 -- the chip strip
+   routinely overflows a phone-width viewport (up to 7 chips including
+   "More"), and overflow-x:auto alone gives no visual cue that more chips
+   exist past the hard-cut right edge -- a mobile viewer could easily never
+   discover "More" (the only link off this strip to the full All Props
+   page) sits just out of view. A right-edge fade to the page background is
+   a standard, well-understood "there's more this way" affordance for a
+   horizontally scrolling strip; kept even when nothing actually overflows,
+   since it then just fades to the same background color it already sits
+   on and is imperceptible. */
+.explore-strip-wrap { position: relative; }
+.explore-strip-wrap::after {
+  content: ""; position: absolute; top: 0; right: 0; bottom: 6px; width: 36px;
+  background: linear-gradient(to right, transparent, var(--ground) 75%);
+  pointer-events: none;
+}
 .explore-strip { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 6px; }
 .explore-chip {
   flex: none; display: flex; flex-direction: column; align-items: center; justify-content: center;
@@ -572,6 +667,7 @@ main { max-width: 1180px; margin: 0 auto; padding: 20px 16px 80px; }
 .perf-metric-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px,1fr)); gap: 14px; }
 .perf-metric .pm-n { font-family: var(--font-mono); font-size: 26px; font-weight: 700; }
 .perf-metric .pm-l { font-size: 12px; color: var(--ink-faint); margin-top: 2px; }
+.perf-sample-caveat { background: var(--warn-soft); color: var(--warn); border-radius: var(--radius); padding: 10px 14px; font-size: 13px; line-height: 1.5; margin-top: 14px; font-weight: 600; }
 .perf-explain { background: var(--surface-2); border-radius: var(--radius); padding: 14px 16px; font-size: 13.5px; line-height: 1.5; color: var(--ink-dim); margin-top: 14px; }
 .perf-explain b { color: var(--ink); }
 .tag-current { background: var(--good-soft); color: var(--good); }
@@ -626,6 +722,8 @@ main { max-width: 1180px; margin: 0 auto; padding: 20px 16px 80px; }
 .parlay-card { background: linear-gradient(135deg, var(--accent-soft), transparent); border: 1px solid var(--line); border-radius: var(--radius-lg); padding: 16px; margin-bottom: 26px; }
 .parlay-legs { display: flex; flex-direction: column; gap: 6px; margin: 10px 0; }
 .parlay-leg { display: flex; justify-content: space-between; font-size: 13px; }
+.parlay-note { font-size: 12px; color: var(--ink-faint); margin-top: 8px; line-height: 1.4; }
+.parlay-corr-notes { font-size: 12px; color: var(--ink-faint); margin: 6px 0 0; padding-left: 18px; line-height: 1.4; }
 .streak-strip { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 4px; }
 .streak-chip {
   flex: none; background: var(--surface); border: 1px solid var(--line); border-radius: 999px;

@@ -22,7 +22,8 @@
 """
 
 import os, sys, re, json, math, warnings, unicodedata, requests, pandas as pd, numpy as np
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
+from zoneinfo import ZoneInfo
 from collections import defaultdict
 from concurrent.futures import ThreadPoolExecutor
 from bs4 import BeautifulSoup
@@ -147,7 +148,12 @@ STADIUMS = {
     "Yankee Stadium":          (40.8296,-73.9262,False,"NYY",30, 55, 318,408,314,  8, 8, 8,  "avg",  "grass",False,"easy",  False),
     "Fenway Park":             (42.3467,-71.0972,False,"BOS",60, 20, 310,420,302, 37, 17,5,  "small","grass",False,"medium",False),
     "Camden Yards":            (39.2838,-76.6218,False,"BAL",75, 20, 333,410,318, 7,  7, 7,  "avg",  "grass",False,"easy",  False),
-    "Rogers Centre":           (43.6414,-79.3894,True, "TOR",0,  76, 328,400,328, 12, 10,12, "avg",  "turf", False,"medium",False),
+    # retractable_roof fixed to True 2026-08-2X (data-integrity audit):
+    # Rogers Centre (opened 1989 as SkyDome) was and remains the first
+    # retractable-roof stadium in pro sports -- it was wrongly marked
+    # non-retractable, forcing every game there to be scored as a
+    # permanently-closed dome regardless of real per-game roof state.
+    "Rogers Centre":           (43.6414,-79.3894,True, "TOR",0,  76, 328,400,328, 12, 10,12, "avg",  "turf", False,"medium",True),
     "Tropicana Field":         (27.7683,-82.6534,True, "TB", 0,  10, 315,404,322, 11, 8, 11, "large","turf", False,"hard",  False),
     "Guaranteed Rate Field":   (41.8300,-87.6338,False,"CWS",15, 595,330,400,335, 8,  8, 8,  "avg",  "grass",False,"easy",  False),
     "Wrigley Field":           (41.9484,-87.6553,False,"CHC",50, 595,355,400,353, 15, 9, 11, "small","grass",False,"medium",False),
@@ -165,7 +171,16 @@ STADIUMS = {
     "Oracle Park":             (37.7786,-122.389,False,"SF", 270,10, 339,399,309, 8,  25,8,  "large","grass",False,"hard",  False),
     "T-Mobile Park":           (47.5915,-122.333,True, "SEA",0,  20, 331,401,326, 8,  8, 8,  "avg",  "grass",False,"medium",True),
     "loanDepot park":          (25.7781,-80.2197,True, "MIA",0,  6,  344,418,335, 8,  8, 8,  "avg",  "grass",False,"easy",  True),
-    "Truist Park":             (33.8908,-84.4678,True, "ATL",0,  1050,335,400,325,8,  8, 8,  "avg",  "grass",False,"easy",  True),
+    # dome/retractable_roof fixed to False 2026-08-2X (data-integrity audit,
+    # real complaint: Truist Park suspected wrongly classified as a dome).
+    # Truist Park is a fully open-air ballpark -- it has NO roof of any
+    # kind, fixed or retractable. Confirmed live against the MLB Stats API's
+    # own per-game weather field on 2026-08-25: {"condition": "Clear",
+    # "temp": "89", "wind": "3 mph, Out To CF"} -- a real outdoor weather
+    # reading MLB itself reports for this park, directly contradicting the
+    # old dome=True entry, which forced every Truist Park game to a
+    # fabricated neutral park_hr_index=50 with zero real wind/weather input.
+    "Truist Park":             (33.8908,-84.4678,False,"ATL",0,  1050,335,400,325,8,  8, 8,  "avg",  "grass",False,"easy",  False),
     "American Family Field":   (43.0280,-87.9712,True, "MIL",0,  634,344,400,345, 8,  8, 8,  "avg",  "grass",False,"easy",  True),
     "Busch Stadium":           (38.6226,-90.1928,False,"STL",30, 455,336,400,335, 8,  8, 8,  "avg",  "grass",False,"easy",  False),
     "Coors Field":             (39.7559,-104.994,False,"COL",15,5200,347,415,350, 8,  8, 8,  "large","grass",True, "easy",  False),
@@ -317,6 +332,13 @@ def fetch_lineups(date):
                           # which games are still bettable.
                           "status":status,
                           "game_start_utc":g.get("gameDate",""),
+                          # MLB's own per-game weather.condition string (e.g.
+                          # "Roof Closed", "Partly Cloudy") -- the real,
+                          # per-game signal used to tell a retractable-roof
+                          # park's actual open/closed state apart from just
+                          # assuming "has a roof" always means "closed
+                          # today." See real_roof_status()'s own docstring.
+                          "mlb_weather_condition":(g.get("weather") or {}).get("condition"),
                           "away_team":at,"home_team":ht,
                           # Structured lineups (name/id/pos/bats/order), populated below —
                           # kept alongside the human-readable text report so downstream
@@ -831,6 +853,121 @@ def ballpark_table():
 #  SECTIONS 5-8 — WEATHER, UMPIRES, BvP, TRAVEL
 # ══════════════════════════════════════════════════════════════════════════════
 
+def forecast_hour_index(game_start_utc, meteo_json):
+    """The real stadium-local hour index into an Open-Meteo `timezone=auto`
+    hourly array, matched against the forecast's OWN auto-detected IANA
+    timezone and its own returned local timestamps -- never a hardcoded
+    UTC offset.
+
+    REAL BUG this replaces (found live, 2026-08-2X data-integrity audit):
+    every call site used to index this array with `game_meta["hour"]`,
+    which is the game's EASTERN hour (`gameDate` UTC minus a hardcoded 4
+    hours, computed once when game_meta is built) -- but Open-Meteo's
+    `timezone=auto` array is indexed in STADIUM-LOCAL hours, not Eastern.
+    Verified live: a real Central-zone stadium's forecast response comes
+    back with `"timezone": "America/Chicago"` and `hourly.time` values like
+    "2026-08-25T19:00" -- genuinely Central local time, with no UTC-offset
+    suffix. Using the Eastern hour as that array's index is exact only for
+    an Eastern-zone park (roughly half the league) by coincidence: it's off
+    by ~1 hour for Central parks, ~2 for Mountain, ~3 for Pacific, silently
+    pulling the wrong hour's temperature/wind/humidity for every game west
+    of the Eastern time zone.
+
+    Fixed by converting the game's real UTC start instant into whatever
+    timezone THIS forecast response says it auto-detected (never assuming
+    which zone a park is in ourselves), then finding that exact local hour
+    in the response's own `hourly.time` array -- so this is correct even
+    across a local date rollover for a very late start, and never drifts
+    out of sync with whatever zone Open-Meteo actually used to build the
+    rest of the array.
+    """
+    try:
+        dt_utc = datetime.strptime(game_start_utc, "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=timezone.utc)
+    except (TypeError, ValueError):
+        dt_utc = None
+    tz_name = (meteo_json or {}).get("timezone")
+    local_dt = None
+    if dt_utc is not None:
+        try:
+            local_dt = dt_utc.astimezone(ZoneInfo(tz_name)) if tz_name else dt_utc
+        except Exception:
+            local_dt = dt_utc
+    times = (meteo_json or {}).get("hourly", {}).get("time", [])
+    if local_dt is not None:
+        local_hour_str = local_dt.strftime("%Y-%m-%dT%H:00")
+        if local_hour_str in times:
+            return times.index(local_hour_str)
+        return min(max(local_dt.hour, 0), 23)
+    return 19  # matches the existing "TBD start time" fallback used elsewhere
+
+
+def real_roof_status(mlb_weather_condition, retract):
+    """Honest per-game OPEN/CLOSED/UNKNOWN roof state for a RETRACTABLE-roof
+    park (retract=True in STADIUMS), read off the MLB Stats API's own real
+    per-game weather.condition string, rather than the old blanket
+    assumption that any park with a roof is always closed.
+
+    REAL BUG this replaces (2026-08-2X data-integrity audit, the same audit
+    that found Truist Park's dome misclassification): every retractable-roof
+    park (Rogers Centre, Globe Life Field, Daikin Park, T-Mobile Park,
+    loanDepot park, American Family Field, Chase Field) was scored as a
+    permanently-closed dome on every single game, regardless of whether the
+    roof was actually open that day. Verified live, 2026-08-25 real slate:
+    Rogers Centre's own MLB weather field read {"condition": "Partly
+    Cloudy", "wind": "5 mph, In From LF"} -- real outdoor conditions that
+    only make sense with the roof open -- while loanDepot park's read
+    {"condition": "Roof Closed", ...} the same day, genuinely closed. One
+    static "always closed" table entry cannot honestly represent both.
+
+    Returns "closed" when MLB's own condition string says so, "open" when a
+    real (non-closed) condition string is present, or "unknown" when MLB
+    has not yet populated the field for this game (common well before first
+    pitch) -- the caller must NOT silently treat "unknown" as "closed"/
+    indoor-neutral (that would just reintroduce the same bug under a new
+    name); the honest response is to fetch real outdoor weather as the best
+    available estimate and flag the result as uncertain.
+
+    Not applicable to a FIXED dome (retract=False, e.g. Tropicana Field --
+    a true dome with no way to open at all) or an open-air park (dome=False
+    entirely, e.g. Truist Park after this same fix) -- both are handled by
+    the caller without calling this at all.
+
+    SEMANTIC AUDIT (release-candidate review, 2026-08-26): does a non-
+    "closed" MLB condition string ("Partly Cloudy", "Sunny", "Clear", ...)
+    actually prove the roof is open, or is it just a generic weather field
+    that could coexist with a closed roof? Checked 11 real retractable-roof-
+    park games across 4 real dates (2026-08-10/15/20/25) and all 7 real
+    retractable parks, cross-referencing the SAME weather payload's `wind`
+    field against `condition`: every single "Roof Closed" reading paired
+    with wind "0 mph, None" (physically correct -- no real wind to measure
+    indoors), and every single non-closed reading (Rogers Centre 17mph "Out
+    To RF", American Family Field 7mph "In From CF", T-Mobile Park 8mph
+    "Out To CF", etc.) paired with real, non-zero, directionally-varying
+    wind -- a real sensor reading that would be physically incoherent for
+    an actually-closed dome. Zero counterexamples in 11/11 real
+    observations. This does not PROVE the field is contractually guaranteed
+    by MLB, but is real, reproducible, physically-grounded evidence the
+    "open" classification tracks real roof state, not a disconnected
+    generic weather field -- kept as-is on that basis rather than weakened
+    to "unknown" without a real reason to distrust it.
+
+    Also lower-stakes than it might look: the caller (generate_picks.
+    fetch_park_weather()) never trusts this function's condition-string
+    VALUES as the actual temp/wind numbers fed into scoring -- "open" only
+    selects the BRANCH (fetch a real, independent Open-Meteo forecast for
+    the park's real lat/lon, vs. the indoor-neutral park_hr_index=50
+    treatment); no customer-facing text asserts "roof confirmed open" (only
+    the "unknown" branch gets an explicit watchout sentence)."""
+    if not retract:
+        return None
+    cond = (mlb_weather_condition or "").strip().lower()
+    if not cond:
+        return "unknown"
+    if "closed" in cond or cond == "dome":
+        return "closed"
+    return "open"
+
+
 def fetch_weather(game_meta):
     step("Game-time weather + air density + directional HR scores...")
     lines=[]
@@ -846,13 +983,18 @@ def fetch_weather(game_meta):
         if sk in seen: continue
         seen.add(sk)
         lat,lon,dome,team,cf_deg,elev,lf,cf_d,rf,lfw,cfw,rfw,foul,surf,humidor,eye,retract=STADIUMS[sk]
-        if dome:
+        roof_status = real_roof_status(gm.get("mlb_weather_condition"), retract)
+        if dome and (not retract or roof_status == "closed"):
+            roof_line = "DOME — weather irrelevant" if not retract else f"RETRACTABLE ROOF — closed today (MLB: {gm.get('mlb_weather_condition')!r})"
             lines+=[f"\n{THIN[:50]}",f"  {gm['matchup']}",
-                    f"  Venue  : {sk} (DOME — weather irrelevant)",
+                    f"  Venue  : {sk} ({roof_line})",
                     f"  Humidor: {'YES ✅' if humidor else 'No'}",
                     f"  Surface: {surf}",
                     f"  HP Ump : {gm['hp_ump']}"]
             continue
+        if dome and roof_status == "unknown":
+            lines.append(f"  ⚠ {sk}: retractable roof, real status unknown at fetch time — "
+                          f"outdoor weather below is a best-effort estimate, not a confirmed open roof")
         try:
             r=retry_get("https://api.open-meteo.com/v1/forecast",params={
                 "latitude":lat,"longitude":lon,
@@ -860,13 +1002,13 @@ def fetch_weather(game_meta):
                 "temperature_unit":"fahrenheit","windspeed_unit":"mph",
                 "precipitation_unit":"inch","timezone":"auto","forecast_days":1
             },timeout=20,retries=2); r.raise_for_status()
-            h=r.json()["hourly"]
-            idx=min(max(gm["hour"],0),23)
+            meteo=r.json(); h=meteo["hourly"]
+            idx=forecast_hour_index(gm.get("game_start_utc"), meteo)
             temp=h["temperature_2m"][idx]; precip_p=h["precipitation_probability"][idx]
             wsp=h["windspeed_10m"][idx]; wdir=h["winddirection_10m"][idx]
             humid=h["relativehumidity_2m"][idx]; precip=h["precipitation"][idx]
             wdir_txt=wind_dir(wdir)
-            wvf=wind_vs_field(wdir,cf_deg,dome)
+            wvf=wind_vs_field(wdir,cf_deg,False)  # real weather was fetched below this line, so real wind applies
             dens=air_density_pct(elev,temp,humid)
             dens_pct=(dens-1.0)*100
             carry_str=f"{abs(dens_pct):.1f}% {'FARTHER' if dens_pct<0 else 'shorter'}"
@@ -1213,16 +1355,78 @@ def compute_player_state_indicators():
         warn(f"State indicators: {e}"); return f"  Failed: {e}\n"
 
 
-def _bullpen_fetch_one(args):
+def _bullpen_fetch_one(args, is_rotation_starter=None):
+    """is_rotation_starter: optional callable(name, person_id) -> True/False/
+    None, used to tell a real rotation starter apart from a bullpen/opener
+    arm who happened to be listed first in one game's box score (see the
+    ROLE AUDIT comment below). None (the default, and every existing
+    caller's behavior) means "no classifier available" -- the game's first
+    pitcher is always excluded, unchanged from before this parameter
+    existed."""
     team_name, team_id = args
     try:
         # statsapi.schedule()'s team kwarg is literally `team`, not `teamId` — the
         # old `teamId=` call raised "unexpected keyword argument" on current
         # mlb-statsapi (verified against installed 1.9.0 signature).
         schedule=statsapi.schedule(start_date=L7_START,end_date=TODAY,team=team_id)
-        game_ids=[g["game_id"] for g in schedule[:7]]
-        usage=defaultdict(lambda:{"IP":0.0,"apps":0,"pitches":0})
-        for gid in game_ids[:5]:
+        # Point-in-time audit (2026-08-26): schedule[:7] silently assumed
+        # statsapi.schedule() returns results in ascending chronological
+        # order AND that a team never has more than 7 games in the
+        # L7_START..TODAY window -- verified live against the real API that
+        # the order assumption holds today, but a team with a doubleheader
+        # inside this 8-calendar-day window can have 8+ games, and taking
+        # the front slice of an ascending list keeps the OLDEST games and
+        # silently drops the most recent (freshest, most fatigue-relevant)
+        # one(s) -- backwards for a signal whose entire point is recency.
+        # Sorted explicitly by real game start time here instead of trusting
+        # unstated API ordering (the exact risk flagged in this audit), then
+        # the LAST 7 (most recent) are kept, in ascending order so every
+        # existing `games[-1] == most recent` assumption downstream
+        # (generate_picks._reliever_detail()) still holds unchanged.
+        def _game_sort_key(g):
+            dt = g.get("game_datetime")
+            if dt:
+                return dt
+            # Fallback for the rare entry missing game_datetime: date +
+            # game_num (1/2 for a doubleheader) keeps Game 1 before Game 2
+            # on the same calendar date instead of an arbitrary tie.
+            return f"{g.get('game_date','')}T{g.get('game_num',1):02d}"
+        ordered=sorted(schedule, key=_game_sort_key)[-7:]
+        games=[(g["game_id"], g.get("game_date")) for g in ordered]
+        # REAL BUG FOUND LIVE (2026-08-25, release-readiness audit): every
+        # pitcher in the box score -- including that game's OWN STARTER --
+        # was being folded into `usage`, the same dict downstream code and
+        # customer-facing text both call "relievers" ("X/Y relievers over 60
+        # pitches in L7"). Verified against several real box scores
+        # (statsapi.boxscore_data): a team's pitchers are always listed in
+        # the order they appeared, starter first -- the header row
+        # (personId==0) was already skipped; the very next entry is always
+        # the starter, whether or not he got an official decision (a
+        # reliever's own `note` field is empty unless he picked up a W/L/S;
+        # the starter's IP/pitch-count are also always the largest in the
+        # game, consistent with this). A starter commonly clears 60+
+        # pitches, so this silently inflated both `tracked` (the "how many
+        # relievers do we have a read on" denominator) and `fatigued` (the
+        # "how many are gassed" numerator) with a pitcher who was never
+        # actually part of bullpen availability at all. Excluded him
+        # explicitly by position (first non-header entry) rather than an
+        # IP/pitch-count heuristic, which would misclassify a real bullpen
+        # game/opener the same way a name-based guess would.
+        #
+        # Also folded in the real "L7" window bug found alongside it: this
+        # used to request up to 7 games of schedule but only ever fetch box
+        # scores for the first 5 (`game_ids[:5]`) -- an undocumented
+        # truncation that silently dropped up to 2 real recent games while
+        # still being labeled "L7" everywhere downstream. Now processes
+        # every game actually returned for the L7_START..TODAY window.
+        #
+        # Each reliever's individual per-game appearances are now preserved
+        # (date/IP/pitches), not just the L7-aggregate totals -- needed for
+        # a customer-facing "name real relievers, not vague copy" pass;
+        # existing readers of IP/apps/pitches are unaffected, they just
+        # don't read the added "games" key.
+        usage=defaultdict(lambda:{"IP":0.0,"apps":0,"pitches":0,"games":[]})
+        for gid, gdate in games:
             try:
                 box=statsapi.boxscore_data(gid)
                 # box["away"]/box["home"]["pitchers"] is just a list of person IDs, not
@@ -1233,8 +1437,41 @@ def _bullpen_fetch_one(args):
                 # as if it were a dict of stat objects — it never was, on any version.
                 away_id=box.get("away",{}).get("team",{}).get("id")
                 side_key="awayPitchers" if away_id==team_id else "homePitchers"
-                for pdata in box.get(side_key,[]):
-                    if not pdata.get("personId"): continue  # skip team-header row
+                pitchers=[p for p in box.get(side_key,[]) if p.get("personId")]
+                for idx, pdata in enumerate(pitchers):
+                    if idx == 0:
+                        # ROLE AUDIT (release-candidate review, 2026-08-26): "first
+                        # pitcher in the box score" and "not a bullpen arm" are NOT
+                        # always the same pitcher -- a real opener/bulk-reliever can
+                        # be listed first. Verified against a real week of games
+                        # (2026-08-18..25, 120 real "first pitcher" observations):
+                        # 8 had a short outing (<=2.0 IP or <=35 pitches); checking
+                        # each against his REAL season-to-date role (gamesStarted/
+                        # games, the same >=0.5 convention this codebase already
+                        # uses at compute_bullpen_era() and the stadium-summary
+                        # starter/reliever split) showed 6 of 8 (Cade Gibson G=33
+                        # GS=1, Dylan Lord G=32 GS=4, etc.) are real, primarily-
+                        # relief pitchers, not rotation starters having a short
+                        # night -- a real, measurable ~5% misclassification rate
+                        # in this one window, not a rare theoretical edge case.
+                        # Unlike the game-specific IP/pitch-count heuristic this
+                        # function's own earlier comment already rejected (which
+                        # would ALSO misclassify a real ace knocked out early as a
+                        # "reliever"), season-to-date role is a stable fact about
+                        # the PERSON, not this one outing, and is already fetched
+                        # for other scoring purposes -- no new call, no guessing.
+                        # is_rotation_starter=None (no classifier passed, or the
+                        # classifier returns None/True -- unknown or confirmed
+                        # real starter) keeps the exact prior conservative
+                        # behavior: excluded. Only a CONFIRMED (`is False`)
+                        # primarily-reliever role includes him as real bullpen
+                        # usage below, using his real IP/pitches from this game.
+                        if is_rotation_starter is None:
+                            continue
+                        role = is_rotation_starter(pdata.get("name","?").split(",")[0].strip(),
+                                                    pdata.get("personId"))
+                        if role is not False:
+                            continue
                     pname=pdata.get("name","?").split(",")[0].strip()
                     try: ip=float(pdata.get("ip",0) or 0)
                     except (TypeError,ValueError): ip=0.0
@@ -1243,6 +1480,7 @@ def _bullpen_fetch_one(args):
                     usage[pname]["IP"]+=ip
                     usage[pname]["apps"]+=1
                     usage[pname]["pitches"]+=pitches
+                    usage[pname]["games"].append({"date": gdate, "ip": ip, "pitches": pitches})
             except Exception: pass
         return (team_name, usage, None)
     except Exception as e:
@@ -2173,8 +2411,8 @@ def compute_directional_hr_score(game_meta, bat_df=None):
                 "hourly":"temperature_2m,windspeed_10m,winddirection_10m,relativehumidity_2m",
                 "temperature_unit":"fahrenheit","windspeed_unit":"mph","timezone":"auto","forecast_days":1
             },timeout=15,retries=2); r.raise_for_status()
-            h=r.json()["hourly"]
-            idx=min(max(gm["hour"],0),23)
+            meteo=r.json(); h=meteo["hourly"]
+            idx=forecast_hour_index(gm.get("game_start_utc"), meteo)
             temp=h["temperature_2m"][idx]; wsp=h["windspeed_10m"][idx]; wdir=h["winddirection_10m"][idx]; humid=h["relativehumidity_2m"][idx]
         except Exception:
             temp=72; wsp=5; wdir=cf_deg; humid=50; wx_is_estimate=True
@@ -2324,8 +2562,8 @@ def compute_threshold_flags(game_meta):
                 "hourly":"temperature_2m,windspeed_10m,winddirection_10m",
                 "temperature_unit":"fahrenheit","windspeed_unit":"mph","timezone":"auto","forecast_days":1
             },timeout=15,retries=2); r.raise_for_status()
-            h=r.json()["hourly"]
-            idx=min(max(gm["hour"],0),23)
+            meteo=r.json(); h=meteo["hourly"]
+            idx=forecast_hour_index(gm.get("game_start_utc"), meteo)
             temp=h["temperature_2m"][idx]; wsp=h["windspeed_10m"][idx]
             if wsp>=10: lines.append(f"  💨 {gm['matchup']}: Wind {wsp:.0f}mph — THRESHOLD CROSSED (10+mph = significant carry effect)")
             if wsp>=15: lines.append(f"  🌪️ {gm['matchup']}: Wind {wsp:.0f}mph — HIGH WIND (15+mph = major factor)")

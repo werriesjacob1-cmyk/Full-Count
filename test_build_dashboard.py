@@ -46,6 +46,7 @@ a capped/ranked Top Picks list). Concretely:
 """
 import json
 import os
+import re
 import sys
 import tempfile
 
@@ -328,6 +329,35 @@ with tempfile.TemporaryDirectory() as td:
           f"got {tr['current']}")
     check(tr["current"]["n"] == 10, "current n is hits+misses from "
           "public_top_pick_totals", f"got {tr['current']}")
+    # Real bug, found 2026-08-25: the Performance page showed a bare
+    # hit-rate percentage with no indication of how thin the underlying
+    # sample is -- sample_label (via eval_lib's shared sample-size-honesty
+    # gate, MIN_N_DIRECTIONAL=5/MIN_N_REPORTABLE=20/MIN_N_CONFIDENT=100)
+    # is what the frontend now reads to render an honest caveat.
+    check(tr["legacy"]["sample_label"] == "directional",
+          "legacy n=47 (>=20, <100) is labeled 'directional', the same shared eval_lib gate "
+          "used elsewhere in this project -- not a new, inconsistent threshold",
+          f"got {tr['legacy']['sample_label']}")
+    check(tr["current"]["sample_label"] == "thin",
+          "current n=10 (>=5, <20) is labeled 'thin'", f"got {tr['current']['sample_label']}")
+
+    tiny_path = os.path.join(td, "tiny.json")
+    with open(tiny_path, "w") as f:
+        json.dump({
+            "main_hit_rate": 1.0,
+            "by_category_totals": {"main": {"hits": 2, "misses": 0}},
+            "top_pick_hit_rate": 1.0,
+            "public_top_pick_totals": {"hits": 100, "misses": 20},
+        }, f)
+    tr_tiny = bd.load_track_record(tiny_path)
+    check(tr_tiny["legacy"]["sample_label"] == "insufficient",
+          "a 100% hit rate off only 2 graded picks (n<5) is labeled 'insufficient' -- the "
+          "exact case this fix exists for: an early, meaningless-looking-perfect number must "
+          "never be shown without a caveat that it means nothing yet",
+          f"got {tr_tiny['legacy']['sample_label']}")
+    check(tr_tiny["current"]["sample_label"] == "reportable",
+          "current n=120 (>=100) is labeled 'reportable' -- a real, mature sample gets no "
+          "caveat", f"got {tr_tiny['current']['sample_label']}")
 
     zero_current_path = os.path.join(td, "zero_current.json")
     with open(zero_current_path, "w") as f:
@@ -490,8 +520,9 @@ payload14 = bd.build_payload({
          "umpire": {"name": "Z", "k_pct": 0.22, "bb_pct": 0.08, "league_k_pct": 0.221,
                    "league_bb_pct": 0.085},
          "is_getaway": False, "is_opener": False,
-         "picks": [{"name": "B", "prop": "Over 0.5 Hits", "hit_probability": 0.65,
-                   "market_odds": -130, "price_clears": True, "why": "a real reason"}]},
+         "pick_sections": [{"label": "Best Overall Read",
+                            "picks": [{"name": "B", "prop": "Over 0.5 Hits", "hit_probability": 0.65,
+                                      "market_odds": -130, "price_clears": True, "why": "a real reason"}]}]},
     ],
     "streaks": [dict(row("Streaky Batter", "hits", 0.6, odds=-110, implied=0.55, edge=0.05,
                          clears=True), player_id=9, streak=6, streak_stat="hits")],
@@ -637,6 +668,165 @@ check("+00:00" in out21["generated_at"] or out21["generated_at"].endswith("Z"),
       f"got {out21['generated_at']!r}")
 
 
+head("12b. _build_game_context(): real bug, found 2026-08-25 -- the picks_by_game dedup key "
+     "used to be (name, prop) alone, with no game_pk. On a doubleheader, the same player can "
+     "have the same real prop type (e.g. \"To Hit a Home Run\") as a genuinely distinct "
+     "candidate in BOTH Game 1 and Game 2. Since the key omitted game_pk, Game 2's candidate "
+     "was silently treated as a duplicate of Game 1's and dropped entirely -- so Game 2's "
+     "drill-down page never showed it. Extracted from run_live_fetch() into its own function "
+     "specifically so this fix gets direct test coverage without the live network path.")
+
+DH_GAME_1, DH_GAME_2 = 111111, 222222
+dh_game_meta = [
+    {"game_pk": DH_GAME_1, "matchup": "SEA @ OAK (Gm 1)", "away_team": "Seattle Mariners",
+     "home_team": "Oakland Athletics", "away_sp": "P One", "home_sp": "P Two",
+     "hp_ump": "Ump A", "is_getaway": False, "is_opener": False},
+    {"game_pk": DH_GAME_2, "matchup": "SEA @ OAK (Gm 2)", "away_team": "Seattle Mariners",
+     "home_team": "Oakland Athletics", "away_sp": "P Three", "home_sp": "P Four",
+     "hp_ump": "Ump B", "is_getaway": False, "is_opener": False},
+]
+dh_all_priced = [
+    # Same player, same prop TEXT, in each half of a real doubleheader --
+    # two distinct real candidates, not a duplicate of one another.
+    {"name": "Julio Rodriguez", "prop": "To Hit a Home Run", "game_pk": DH_GAME_1,
+     "hit_probability": 0.30, "market_odds": -120, "price_clears": True, "why": ["Game 1 why"]},
+    {"name": "Julio Rodriguez", "prop": "To Hit a Home Run", "game_pk": DH_GAME_2,
+     "hit_probability": 0.22, "market_odds": +140, "price_clears": True, "why": ["Game 2 why"]},
+    # A genuine intra-game overlap (moonshot AND best-of-category both
+    # produced the SAME player+prop+game candidate) -- this is the real
+    # case the dedup exists for, and must still collapse to one entry.
+    {"name": "Julio Rodriguez", "prop": "To Hit a Home Run", "game_pk": DH_GAME_1,
+     "hit_probability": 0.30, "market_odds": -120, "price_clears": True, "why": ["dup of Game 1"]},
+]
+def _flat_picks(g):
+    # pick_sections (Part 2 item 4b, honest game-highlight sections, 2026-08-26)
+    # replaced the old flat "picks" list -- flatten back for length/content
+    # assertions that don't care which labeled section a pick landed in.
+    return [p for sec in g["pick_sections"] for p in sec["picks"]]
+
+dh_ctx = bd._build_game_context(dh_all_priced, dh_game_meta, {}, {}, set(), {})
+dh_by_pk = {g["game_pk"]: g for g in dh_ctx}
+check(len(dh_ctx) == 2, "both halves of the doubleheader get their own game_context entry",
+      f"got {len(dh_ctx)}")
+check(len(_flat_picks(dh_by_pk[DH_GAME_1])) == 1, "Game 1's intra-game moonshot/category overlap "
+      "still collapses to one real pick", f"got {_flat_picks(dh_by_pk[DH_GAME_1])}")
+check(len(_flat_picks(dh_by_pk[DH_GAME_2])) == 1,
+      "Game 2's real, distinct candidate for the SAME player+prop is NOT dropped as a false "
+      "duplicate of Game 1's -- this is the exact bug: before the game_pk-aware key, this "
+      "list was empty", f"got {_flat_picks(dh_by_pk[DH_GAME_2])}")
+check(_flat_picks(dh_by_pk[DH_GAME_2])[0]["hit_probability"] == 0.22,
+      "Game 2's own real probability survives, not Game 1's", f"got {_flat_picks(dh_by_pk[DH_GAME_2])[0]}")
+
+
+head("12c. _game_pick_sections(): real bug, found 2026-08-26 (games-drill-down honesty audit, "
+     "direct finding) -- the old per-game highlight list was a flat top-6-by-raw-probability "
+     "sort, which systematically favored hits_runs_rbis (clears on ANY hit, run, OR RBI -- "
+     "inherently higher raw probability than a single specific outcome like a home run) over "
+     "every other market in the game. Verifies a game with a dominant H+R+RBI candidate AND "
+     "real batter/pitcher/power candidates surfaces genuine diversity via honestly-labeled "
+     "sections, never manufactures a section with no real backing candidate.")
+
+diverse_picks = [
+    {"name": "Dominant Hitter", "prop": "Over 0.5 H+R+RBI", "type": "batter",
+     "projection": {"stat": "hits_runs_rbis"}, "hit_probability": 0.85, "why": ["hrrb why"]},
+    {"name": "Second Best HRRBI", "prop": "Over 1.5 H+R+RBI", "type": "batter",
+     "projection": {"stat": "hits_runs_rbis"}, "hit_probability": 0.80, "why": []},
+    {"name": "Power Bat", "prop": "To Hit a Home Run", "type": "batter",
+     "projection": {"stat": "home_runs"}, "hit_probability": 0.22, "why": ["power why"]},
+    {"name": "Ace Pitcher", "prop": "Over 6.5 Strikeouts", "type": "pitcher",
+     "projection": {"stat": "strikeouts"}, "hit_probability": 0.62, "why": ["k why"]},
+    {"name": "Extra Bat", "prop": "Over 0.5 Hits", "type": "batter",
+     "projection": {"stat": "hits"}, "hit_probability": 0.55, "why": []},
+]
+sections = bd._game_pick_sections(diverse_picks)
+labels = [s["label"] for s in sections]
+check(labels == ["Best Overall Read", "Best Batter Read", "Best Pitcher Read", "Best Power Angle", "Other Props"],
+      "with real candidates for every category PLUS a real leftover, all 5 honest sections "
+      "appear, in a stable order -- Other Props only carries the genuinely leftover pick, not "
+      "a repeat of one already claimed above", f"got {labels}")
+check(sections[4]["picks"][0]["name"] == "Extra Bat",
+      "Other Props holds the one real pick not already claimed by a labeled section above",
+      f"got {sections[4]}")
+check(sections[0]["picks"][0]["name"] == "Dominant Hitter",
+      "Best Overall Read is genuinely the highest real probability in the game",
+      f"got {sections[0]}")
+check(sections[1]["picks"][0]["name"] == "Second Best HRRBI",
+      "Best Batter Read is the best REMAINING batter candidate (Dominant Hitter already claimed "
+      "by Best Overall Read) -- not the same player/prop repeated", f"got {sections[1]}")
+check(sections[2]["picks"][0]["name"] == "Ace Pitcher",
+      "Best Pitcher Read is the real pitcher candidate", f"got {sections[2]}")
+check(sections[3]["picks"][0]["name"] == "Power Bat",
+      "Best Power Angle is the real home_runs candidate, NOT one of the higher-probability "
+      "H+R+RBI picks -- this is the exact H+R+RBI-domination bug this fix closes",
+      f"got {sections[3]}")
+# REGRESSION GUARD: no section is ever manufactured when no real, distinct candidate backs it.
+no_pitcher_picks = [p for p in diverse_picks if p["type"] != "pitcher"]
+sections_np = bd._game_pick_sections(no_pitcher_picks)
+check(not any(s["label"] == "Best Pitcher Read" for s in sections_np),
+      "REGRESSION GUARD: a game with genuinely no real pitcher candidate never gets a fabricated "
+      "Best Pitcher Read section -- a category label is navigation, not permission to call a "
+      "weak/nonexistent candidate a recommendation", f"got {[s['label'] for s in sections_np]}")
+check(bd._game_pick_sections([]) == [], "a game with no real picks at all returns no sections, "
+      "not a crash or a fabricated empty-looking section")
+
+
+head("12d. _team_bullpen_context()/_bullpen_fatigue_summary() (detailed bullpen presentation, "
+     "2026-08-26): direct instruction -- \"Jacob specifically wants names and context\" -- and "
+     "the two conservative-summary requirements: never claim a reliever is 'likely to appear' "
+     "without a real, verified role model, and never show a fabricated block for a team whose "
+     "bullpen genuinely wasn't fetchable tonight.")
+
+bp_heavy = {"tracked": 5, "fatigued_relievers": 3,
+            "relievers": [{"name": "Cade Smith", "pitches_last_outing": 27,
+                           "days_since_last_outing": 1, "appearances_l7": 3, "pitches_l7": 60}]}
+check(bd._bullpen_fatigue_summary(bp_heavy) == "Late-inning group heavily taxed",
+      "3/5 = 60% fatigued clears the same 40% threshold score_batter()'s own why/watchouts "
+      "text already uses for 'tired pen' framing -- these two surfaces must never disagree "
+      "about the same real number", f"got {bd._bullpen_fatigue_summary(bp_heavy)!r}")
+bp_moderate = {"tracked": 5, "fatigued_relievers": 1, "relievers": []}
+check(bd._bullpen_fatigue_summary(bp_moderate) == "Moderately taxed",
+      "1/5 = 20% fatigued lands in the moderate band", f"got {bd._bullpen_fatigue_summary(bp_moderate)!r}")
+bp_rested = {"tracked": 5, "fatigued_relievers": 0, "relievers": []}
+check(bd._bullpen_fatigue_summary(bp_rested) == "Mostly rested",
+      "0/5 fatigued is genuinely rested", f"got {bd._bullpen_fatigue_summary(bp_rested)!r}")
+check(bd._bullpen_fatigue_summary({"tracked": 0, "fatigued_relievers": 0}) ==
+      "No strong bullpen-availability signal",
+      "zero tracked relievers (a real fetch gap) gets the honest 'no signal' label, never a "
+      "fabricated 'rested' claim built from a division by zero")
+
+bullpen_scores_fixture = {"Seattle Mariners": bp_heavy}
+ctx_known = bd._team_bullpen_context(bullpen_scores_fixture, "Seattle Mariners")
+check(ctx_known["relievers"][0]["name"] == "Cade Smith" and
+      ctx_known["fatigue_summary"] == "Late-inning group heavily taxed",
+      "a team with real bullpen data returns real reliever names plus the honest summary label",
+      f"got {ctx_known}")
+check(bd._team_bullpen_context(bullpen_scores_fixture, "Oakland Athletics") is None,
+      "a team with genuinely no bullpen data fetched tonight returns None, not a fabricated "
+      "empty-but-present block")
+
+head("12e. _build_game_context() wires the real bullpen context onto each game, keyed by each "
+     "team's OWN bullpen (away_team_bullpen/home_team_bullpen) -- the natural framing for a "
+     "whole-game overview, not score_batter()'s batter-matchup-specific opponent framing.")
+
+bp_game_meta = [{"game_pk": 555, "matchup": "Seattle Mariners @ Oakland Athletics",
+                 "away_team": "Seattle Mariners", "home_team": "Oakland Athletics",
+                 "away_sp": "SP A", "home_sp": "SP B", "hp_ump": "Ump Y",
+                 "is_getaway": False, "is_opener": False}]
+bp_ctx = bd._build_game_context([], bp_game_meta, {}, {}, set(), {}, bullpen_scores_fixture)
+check(bp_ctx[0]["away_team_bullpen"]["relievers"][0]["name"] == "Cade Smith",
+      "the away team's own bullpen (Seattle, which has real data in the fixture) is attached "
+      "under away_team_bullpen", f"got {bp_ctx[0]['away_team_bullpen']}")
+check(bp_ctx[0]["home_team_bullpen"] is None,
+      "the home team (Oakland, no real data in the fixture) honestly gets None, not a "
+      "fabricated block", f"got {bp_ctx[0]['home_team_bullpen']}")
+# REGRESSION GUARD: omitting bullpen_scores entirely (the pre-existing call shape, still used
+# by check 12b/12c's doubleheader/section fixtures above) must not crash.
+bp_ctx_omitted = bd._build_game_context([], bp_game_meta, {}, {}, set(), {})
+check(bp_ctx_omitted[0]["away_team_bullpen"] is None and bp_ctx_omitted[0]["home_team_bullpen"] is None,
+      "omitting bullpen_scores entirely degrades to honest None for both teams, not a crash",
+      f"got {bp_ctx_omitted[0]}")
+
+
 head("13. app.js's humanizeReason() actually translates real jargon strings, not just "
      "parses without crashing. Loaded directly from dashboard/static/app.js (a real, plain "
      "file now -- no more extracting a <script> block out of server-rendered HTML). These "
@@ -694,6 +884,293 @@ else:
     check(True, "node not available -- reason-translation check skipped, not failed")
 
 
+head("13b. sampleLabelCaveat() (2026-08-25): the Performance page used to show a bare "
+     "hit-rate percentage with no caveat at all, so an early 100% off 2 graded picks read as "
+     "trustworthy as a mature record. Verifies the honest caveat text renders for each thin "
+     "eval_lib.sample_size_label() tier the backend can send, and renders NOTHING for a real, "
+     "reportable (n>=100) sample -- a mature number gets no unnecessary warning.")
+
+if node:
+    harness_sample_caveat = """
+const document = {getElementById: () => ({addEventListener(){}, textContent:'', dataset:{},
+    style:{}, setAttribute(){}, querySelectorAll: () => [], querySelector: () => null}),
+  documentElement: {setAttribute(){}, removeAttribute(){}, getAttribute: () => null},
+  querySelectorAll: () => [], querySelector: () => null, createElement: () => ({style:{}}),
+  addEventListener(){}, body: {style:{}, append(){}}};
+const window = {matchMedia: () => ({matches:false}), location: {hash:''}, scrollY: 0, scrollTo(){}};
+const localStorage = {getItem: () => null, setItem(){}};
+const fetch = () => Promise.reject(new Error("no network in test"));
+const setInterval = () => {};
+try { """ + open(APP_JS_PATH, encoding="utf-8").read() + """ } catch (e) {}
+let ok = true;
+function assertTrue(cond, msg) { if (!cond) { console.error("FAIL: " + msg); ok = false; } }
+
+const insufficient = sampleLabelCaveat("insufficient", 2);
+assertTrue(insufficient && insufficient.includes("2") && /far too few/i.test(insufficient),
+  "insufficient (n=2) renders a real caveat naming the exact n and saying it's far too few, got " + insufficient);
+
+const thin = sampleLabelCaveat("thin", 10);
+assertTrue(thin && thin.includes("10") && /thin sample/i.test(thin),
+  "thin (n=10) renders a real caveat naming the exact n, got " + thin);
+
+const directional = sampleLabelCaveat("directional", 47);
+assertTrue(directional && directional.includes("47"),
+  "directional (n=47) renders a real caveat naming the exact n, got " + directional);
+
+const reportable = sampleLabelCaveat("reportable", 200);
+assertTrue(reportable === null,
+  "reportable (n>=100, a real mature sample) renders NO caveat -- got " + JSON.stringify(reportable));
+
+const unknown = sampleLabelCaveat(undefined, 5);
+assertTrue(unknown === null,
+  "a missing/unrecognized sample_label (e.g. an older payload before this field existed) " +
+  "degrades to no caveat rather than crashing, got " + JSON.stringify(unknown));
+
+if (!ok) process.exit(1);
+console.log("sampleLabelCaveat() checks passed");
+"""
+    harness_path_sample_caveat = tempfile.mktemp(suffix=".js")
+    with open(harness_path_sample_caveat, "w") as f:
+        f.write(harness_sample_caveat)
+    try:
+        r = subprocess.run([node, harness_path_sample_caveat], capture_output=True, text=True)
+        check(r.returncode == 0, "sampleLabelCaveat() renders an honest, real caveat for every "
+              "thin sample tier and stays silent for a real reportable sample",
+              r.stdout + r.stderr)
+    finally:
+        os.remove(harness_path_sample_caveat)
+else:
+    check(True, "node not available -- sampleLabelCaveat check skipped, not failed")
+
+
+head("13c. staleChip() (2026-08-25): real bug -- a price whose most recent FanDuel re-fetch "
+     "actually FAILED (market_fetch_state === \"FETCH_FAILED\") showed no chip at all on the "
+     "compact card grid, since this only ever checked the separate p.stale field, which "
+     "refresh_prices.py's FETCH_FAILED branch never sets. The detail sheet's own "
+     "priceFreshnessState() already flagged this same row correctly -- the compact card just "
+     "never surfaced it. Verifies the plain, simplified 'Price May Be Outdated' wording "
+     "renders for a genuinely failed fetch, ordinary 'Stale Data' still renders for the "
+     "pre-existing p.stale case, and neither renders for a normal, successfully-priced row.")
+
+if node:
+    harness_stale_chip = """
+const document = {getElementById: () => ({addEventListener(){}, textContent:'', dataset:{},
+    style:{}, setAttribute(){}, querySelectorAll: () => [], querySelector: () => null}),
+  documentElement: {setAttribute(){}, removeAttribute(){}, getAttribute: () => null},
+  querySelectorAll: () => [], querySelector: () => null, createElement: () => ({style:{}}),
+  addEventListener(){}, body: {style:{}, append(){}}};
+const window = {matchMedia: () => ({matches:false}), location: {hash:''}, scrollY: 0, scrollTo(){}};
+const localStorage = {getItem: () => null, setItem(){}};
+const fetch = () => Promise.reject(new Error("no network in test"));
+const setInterval = () => {};
+try { """ + open(APP_JS_PATH, encoding="utf-8").read() + """ } catch (e) {}
+let ok = true;
+function assertTrue(cond, msg) { if (!cond) { console.error("FAIL: " + msg); ok = false; } }
+
+const failedFetch = staleChip({ market_odds: -120, market_fetch_state: "FETCH_FAILED", stale: false });
+assertTrue(failedFetch.includes("Price May Be Outdated"),
+  "a genuinely failed fetch (market_fetch_state=FETCH_FAILED) renders the plain 'Price May Be " +
+  "Outdated' chip even though p.stale is false -- got " + JSON.stringify(failedFetch));
+
+const oldStale = staleChip({ market_odds: -120, market_fetch_state: "MATCHED", stale: true });
+assertTrue(oldStale.includes("Stale Data"),
+  "the pre-existing p.stale=true case (an older successful check) still renders 'Stale Data' " +
+  "unchanged -- got " + JSON.stringify(oldStale));
+
+const fresh = staleChip({ market_odds: -120, market_fetch_state: "MATCHED", stale: false });
+assertTrue(fresh === "",
+  "a normal, freshly and successfully priced row renders no chip at all -- got " + JSON.stringify(fresh));
+
+if (!ok) process.exit(1);
+console.log("staleChip() checks passed");
+"""
+    harness_path_stale_chip = tempfile.mktemp(suffix=".js")
+    with open(harness_path_stale_chip, "w") as f:
+        f.write(harness_stale_chip)
+    try:
+        r = subprocess.run([node, harness_path_stale_chip], capture_output=True, text=True)
+        check(r.returncode == 0, "staleChip() surfaces a genuinely failed price re-fetch on the "
+              "compact card grid, in plain wording, not just in the detail sheet", r.stdout + r.stderr)
+    finally:
+        os.remove(harness_path_stale_chip)
+else:
+    check(True, "node not available -- staleChip check skipped, not failed")
+
+
+head("13d. suggestedParlayBlock() (2026-08-25): real bug -- this read l.american and "
+     "parlay.combined_american, neither of which exists. dashboard/build_dashboard.py's "
+     "_build_suggested_parlay() (already covered by check 7's Python tests) actually names "
+     "them market_odds (per leg) and combined_american_odds. Every real, correctly priced "
+     "parlay leg rendered a blank price, and the combined-odds line always fell back to '--' "
+     "-- a fully-priced real parlay looked broken. Also verifies naive_probability_note and "
+     "correlation_notes (the backend's own honesty context -- computed, but never reaching "
+     "the page before this fix, the same 'computed then discarded' bug class found elsewhere "
+     "in this project) now render, and the combined figure is explicitly labeled 'Estimated'.")
+
+if node:
+    harness_parlay = """
+// esc() (dashboard/static/app.js) round-trips through a real
+// document.createElement("div").textContent/.innerHTML escape -- a bare
+// {style:{}} stub (fine for harnesses that never call esc()) silently makes
+// EVERY esc() call return undefined, since .textContent/.innerHTML aren't
+// real getters/setters on a plain object literal. This harness calls esc()
+// (via suggestedParlayBlock's own name/prop/note rendering), so it needs
+// the same real-escaping element mock the My Board harness (check 18b) uses.
+function makeEscEl() {
+  let t = '';
+  return { set textContent(v) { t = String(v); }, get textContent() { return t; },
+    get innerHTML() {
+      return t.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+    } };
+}
+const document = {getElementById: () => ({addEventListener(){}, textContent:'', dataset:{},
+    style:{}, setAttribute(){}, querySelectorAll: () => [], querySelector: () => null}),
+  documentElement: {setAttribute(){}, removeAttribute(){}, getAttribute: () => null},
+  querySelectorAll: () => [], querySelector: () => null, createElement: () => makeEscEl(),
+  addEventListener(){}, body: {style:{}, append(){}}};
+const window = {matchMedia: () => ({matches:false}), location: {hash:''}, scrollY: 0, scrollTo(){}};
+const localStorage = {getItem: () => null, setItem(){}};
+const fetch = () => Promise.reject(new Error("no network in test"));
+const setInterval = () => {};
+try { """ + open(APP_JS_PATH, encoding="utf-8").read() + """ } catch (e) {}
+let ok = true;
+function assertTrue(cond, msg) { if (!cond) { console.error("FAIL: " + msg); ok = false; } }
+
+const realParlay = {
+  legs: [
+    { name: "A", prop: "Over 0.5 Hits", market_odds: -150, hit_probability: 0.72 },
+    { name: "B", prop: "Over 0.5 Total Bases", market_odds: -130, hit_probability: 0.68 },
+  ],
+  combined_american_odds: -400,
+  naive_probability_note: "Product of each leg's own probability, assuming independence.",
+  correlation_notes: ["A + B: same game, positively correlated"],
+};
+const html = suggestedParlayBlock(realParlay);
+assertTrue(html.includes("-150") && html.includes("-130"),
+  "each real leg's own market_odds price actually renders on the card, not a blank -- got " + html);
+assertTrue(html.includes("-400"),
+  "the real combined_american_odds figure renders, not the permanent '--' fallback of the field-name bug -- got " + html);
+assertTrue(/Estimated combined odds/i.test(html),
+  "the combined figure is explicitly labeled Estimated, not presented as a certain number -- got " + html);
+assertTrue(html.includes("assuming independence"),
+  "the backend's own naive_probability_note caveat now reaches the page -- got " + html);
+assertTrue(html.includes("positively correlated"),
+  "correlation_notes now reach the page -- got " + html);
+
+// A real parlay whose combined odds genuinely could not be computed (should
+// not happen given build_dashboard.py's own priced_pool filter, but honest
+// degradation matters) must say so, never silently show a stale/blank dash
+// with no explanation.
+const noCombined = { legs: [{ name: "A", prop: "X", market_odds: -110, hit_probability: 0.6 }] };
+const html2 = suggestedParlayBlock(noCombined);
+assertTrue(/unavailable/i.test(html2),
+  "a missing combined_american_odds says 'unavailable' explicitly rather than a bare dash -- got " + html2);
+
+if (!ok) process.exit(1);
+console.log("suggestedParlayBlock() checks passed");
+"""
+    harness_path_parlay = tempfile.mktemp(suffix=".js")
+    with open(harness_path_parlay, "w") as f:
+        f.write(harness_parlay)
+    try:
+        r = subprocess.run([node, harness_path_parlay], capture_output=True, text=True)
+        check(r.returncode == 0, "suggestedParlayBlock() renders real leg prices and the real "
+              "combined odds under their actual field names, honestly labeled Estimated, with "
+              "the backend's own independence/correlation caveats surfaced", r.stdout + r.stderr)
+    finally:
+        os.remove(harness_path_parlay)
+else:
+    check(True, "node not available -- suggestedParlayBlock check skipped, not failed")
+
+
+head("13e. Multi-select prop filtering (Part 2, 2026-08-26): activeFilterCount()/"
+     "filterDropdown() -- the two pure functions behind the new multi-select UI. "
+     "activeFilterCount() must sum real selections across all three dimensions (not just "
+     "report 0-or-1 per dimension the way the old single-select 'all'-sentinel version did), "
+     "and filterDropdown()'s checkbox markup must reflect exactly what's actually selected in "
+     "filters[setKey], so a re-render (e.g. after navigating away and back) never silently "
+     "shows an unchecked box for a filter that's still real and active.")
+
+if node:
+    harness_multiselect = """
+// esc() round-trips through a real document.createElement("div").textContent/
+// .innerHTML escape -- see the identical comment on the suggestedParlayBlock
+// harness above. filterDropdown()'s option labels go through esc() too.
+function makeEscEl() {
+  let t = '';
+  return { set textContent(v) { t = String(v); }, get textContent() { return t; },
+    get innerHTML() {
+      return t.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+    } };
+}
+const document = {getElementById: () => ({addEventListener(){}, textContent:'', dataset:{},
+    style:{}, setAttribute(){}, querySelectorAll: () => [], querySelector: () => null}),
+  documentElement: {setAttribute(){}, removeAttribute(){}, getAttribute: () => null},
+  querySelectorAll: () => [], querySelector: () => null, createElement: () => makeEscEl(),
+  addEventListener(){}, body: {style:{}, append(){}}};
+const window = {matchMedia: () => ({matches:false}), location: {hash:''}, scrollY: 0, scrollTo(){}};
+const localStorage = {getItem: () => null, setItem(){}};
+const fetch = () => Promise.reject(new Error("no network in test"));
+const setInterval = () => {};
+let ok = true;
+function assertEq(actual, expected, label) {
+  if (actual !== expected) { console.error("FAIL " + label + ": got " + JSON.stringify(actual) + " want " + JSON.stringify(expected)); ok = false; }
+}
+function assertTrue(cond, label) { if (!cond) { console.error("FAIL " + label); ok = false; } }
+
+try {
+""" + open(APP_JS_PATH, encoding="utf-8").read() + """
+
+// filters, activeFilterCount(), and filterDropdown() are all declared at
+// app.js's top level -- must stay INSIDE this same try block (a `let`
+// binding is block-scoped; unlike a hoisted function declaration, it is
+// NOT visible after the block closes) to actually reach them below.
+assertEq(activeFilterCount(), 0, "a fresh filters object (all three Sets empty, no search) reports 0 active");
+
+filters.families = new Set(["hits", "home_runs"]);
+filters.statuses = new Set(["top_pick"]);
+assertEq(activeFilterCount(), 3, "activeFilterCount SUMS real selections per dimension (2 families " +
+  "+ 1 status), not a flat 0-or-1-per-dimension count -- the old single-select semantics");
+
+filters.evidences = new Set(["A", "B"]);
+filters.search = "ohtani";
+assertEq(activeFilterCount(), 6, "every dimension's real selection count contributes, plus 1 for a " +
+  "real search term");
+filters.families = new Set(); filters.statuses = new Set(); filters.evidences = new Set(); filters.search = "";
+
+// filterDropdown(): rendered checkbox state must match filters[setKey] exactly.
+filters.families = new Set(["hits", "strikeouts"]);
+const html = filterDropdown("families", "Prop type", [["hits", "Hits (5)"], ["home_runs", "HR (2)"], ["strikeouts", "Ks (3)"]]);
+assertTrue(/value="hits"[^>]*checked/.test(html), "a real selected family (hits) renders its checkbox checked, got " + html);
+assertTrue(/value="strikeouts"[^>]*checked/.test(html), "a second real selection (strikeouts) also renders checked");
+assertTrue(!/value="home_runs"[^>]*checked/.test(html), "an UNselected family (home_runs) renders unchecked");
+assertTrue(html.includes("Prop type (2)"), "the summary badge shows the real 2-selection count, got " + html);
+filters.families = new Set();
+const emptyHtml = filterDropdown("families", "Prop type", [["hits", "Hits (5)"]]);
+assertTrue(emptyHtml.includes("Prop type</summary>") || emptyHtml.includes("Prop type<"),
+  "zero selections in this dimension shows no count badge at all, got " + emptyHtml);
+
+} catch (e) { console.error(e); process.exit(1); }
+
+if (!ok) process.exit(1);
+console.log("Multi-select activeFilterCount()/filterDropdown() checks passed");
+"""
+    harness_path_multiselect = tempfile.mktemp(suffix=".js")
+    with open(harness_path_multiselect, "w") as f:
+        f.write(harness_multiselect)
+    try:
+        r = subprocess.run([node, harness_path_multiselect], capture_output=True, text=True)
+        check(r.returncode == 0, "activeFilterCount() sums real per-dimension selections and "
+              "filterDropdown() renders checkbox state that matches filters[setKey] exactly",
+              r.stdout + r.stderr)
+    finally:
+        os.remove(harness_path_multiselect)
+else:
+    check(True, "node not available -- multi-select filter check skipped, not failed")
+
+
 head("16. Today-page PASS 2/3 redesign (2026-08-25): the query-string half of a route hash "
      "used to be silently discarded (onRouteChange() split it off and threw it away) -- every "
      "\"See all research -> #/props?status=lean\" link on the page was a real navigation that "
@@ -749,18 +1226,111 @@ try {
 location.hash = "#/props?status=lean";
 onRouteChange();
 assertEq(route, "props", "route parsed from hash despite query string");
-assertEq(filters.status, "lean", "status=lean from the URL actually reached filters.status");
+assertTrue(filters.statuses.has("lean") && filters.statuses.size === 1,
+  "status=lean from the URL actually reached filters.statuses", [...filters.statuses].join(","));
 
 location.hash = "#/props?family=home_runs";
 onRouteChange();
-assertEq(filters.family, "home_runs", "family=home_runs from the URL actually reached filters.family");
+assertTrue(filters.families.has("home_runs") && filters.families.size === 1,
+  "family=home_runs from the URL actually reached filters.families", [...filters.families].join(","));
 
-// An absent param must never silently clear a filter already set via the UI.
-filters.status = "top_pick";
+// Multi-select fix (Part 2, 2026-08-26): a link can request more than one
+// value per dimension via a comma-separated list -- same real feature the
+// UI's own checkboxes/chips now let a viewer build interactively.
+location.hash = "#/props?family=hits,home_runs&status=top_pick,lean";
+onRouteChange();
+assertTrue(filters.families.has("hits") && filters.families.has("home_runs") && filters.families.size === 2,
+  "a comma-separated family list resolves to a real 2-entry filters.families Set",
+  [...filters.families].join(","));
+assertTrue(filters.statuses.has("top_pick") && filters.statuses.has("lean") && filters.statuses.size === 2,
+  "a comma-separated status list resolves to a real 2-entry filters.statuses Set",
+  [...filters.statuses].join(","));
+
+// 2026-08-2X route-filter-leakage fix ("Top Pick filter escape", Part 2 UX
+// audit): this used to assert the OPPOSITE -- that an absent status param
+// preserved whatever filters.status a PRIOR navigation had left behind.
+// That was traced to a real bug: renderProps()'s own <select> handlers
+// mutate `filters` directly and never touch location.hash, so on-page
+// filter changes never re-trigger onRouteChange() at all -- the only
+// caller of onRouteChange() is a fresh hash navigation INTO the props
+// route (nav-bar click, a stat-tile link, browser back/forward). A user
+// who filtered to Top Pick, navigated to Games, then clicked "All Props"
+// in the main nav (a plain #/props link, no query) got the stale
+// status=top_pick filter silently reapplied with no visible reason and no
+// obvious way out. Every real navigation into props now resets to
+// defaults FIRST, then applies whatever params THIS link actually
+// carries -- a link can still deliberately pre-filter, it just can't
+// leave a previous, unrelated visit's filter behind.
+filters.statuses = new Set(["top_pick"]);
 location.hash = "#/props?family=hits";
 onRouteChange();
-assertEq(filters.status, "top_pick", "absent status param does not reset an existing filter");
-assertEq(filters.family, "hits", "family=hits from the URL still applied");
+assertEq(filters.statuses.size, 0, "REGRESSION GUARD: a fresh navigation into props resets a stale " +
+  "status filter left over from a previous visit -- the exact 'Top Pick filter escape' bug");
+assertTrue(filters.families.has("hits") && filters.families.size === 1,
+  "family=hits from the URL still applied, on top of the reset");
+
+// A plain nav-bar-style entry (no query at all) resets every filter,
+// including one set via the page's own multi-select checkboxes moments
+// earlier (real multiple selections, not just a single leftover value).
+filters.families = new Set(["strikeouts", "hits"]);
+filters.statuses = new Set(["value", "lean"]);
+filters.evidences = new Set(["A"]);
+filters.search = "ohtani";
+location.hash = "#/props";
+onRouteChange();
+assertEq(filters.families.size, 0, "a plain #/props entry resets family, including a real multi-selection");
+assertEq(filters.statuses.size, 0, "a plain #/props entry resets status, including a real multi-selection");
+assertEq(filters.evidences.size, 0, "a plain #/props entry resets evidence");
+assertEq(filters.search, "", "a plain #/props entry resets search");
+
+// destination-integrity fix: the global-search "See all N matching props"
+// link now carries the search text itself for a plain (non-market-intent)
+// query, so the link doesn't land on the full unfiltered list.
+location.hash = "#/props?search=ohtani";
+onRouteChange();
+assertEq(filters.search, "ohtani", "search=ohtani from the URL actually reached filters.search");
+
+// Value/Longshot count-integrity fix: status=longshot is a real, distinct
+// filter value (applyFilters already special-cases it via isLongshot()),
+// separate from status=value -- confirms the URL contract this fix's new
+// Longshots tile relies on.
+location.hash = "#/props?status=longshot";
+onRouteChange();
+assertTrue(filters.statuses.has("longshot") && filters.statuses.size === 1,
+  "status=longshot from the URL reached filters.statuses");
+const valueRow = {recommendation_status: "value", hit_probability: 0.5};
+const longshotRow = {recommendation_status: "value", hit_probability: 0.1};
+const splitRows = applyFilters([valueRow, longshotRow]);
+assertEq(splitRows.length, 1, "status=longshot excludes the non-longshot value row");
+assertTrue(splitRows[0] === longshotRow, "status=longshot keeps only the real longshot row");
+filters.statuses = new Set(["value"]);
+const valueOnlyRows = applyFilters([valueRow, longshotRow]);
+assertEq(valueOnlyRows.length, 1, "status=value excludes the longshot row (unchanged behavior) -- " +
+  "this is the real split the Today page's two separate tiles/counts must match");
+assertTrue(valueOnlyRows[0] === valueRow, "status=value keeps only the real non-longshot value row");
+
+// -- multi-select semantics: OR across selected values within ONE
+// dimension, AND across dimensions -- e.g. "(Hits OR Home Runs) AND
+// (Top Pick OR Lean)" is the real, expected meaning of picking multiple
+// prop types and multiple statuses at once.
+filters.statuses = new Set(["top_pick", "lean"]);
+const topPickRow = {recommendation_status: "top_pick", hit_probability: 0.7, stat: "hits"};
+const leanRow2 = {recommendation_status: "lean", hit_probability: 0.6, stat: "hits"};
+const neutralRow = {recommendation_status: "neutral", hit_probability: 0.4, stat: "hits"};
+const multiStatusRows = applyFilters([topPickRow, leanRow2, neutralRow]);
+assertEq(multiStatusRows.length, 2, "multi-select status is OR across selected values -- both Top " +
+  "Pick and Lean rows pass, Neutral is excluded", `got ${multiStatusRows.length}`);
+
+filters.statuses = new Set();
+filters.families = new Set(["hits", "home_runs"]);
+const hitsRow = {recommendation_status: "lean", hit_probability: 0.6, stat: "hits"};
+const hrRow = {recommendation_status: "lean", hit_probability: 0.3, stat: "home_runs"};
+const strikeoutsRow = {recommendation_status: "lean", hit_probability: 0.6, stat: "strikeouts"};
+const multiFamilyRows = applyFilters([hitsRow, hrRow, strikeoutsRow]);
+assertEq(multiFamilyRows.length, 2, "multi-select family is OR across selected values -- both Hits " +
+  "and Home Runs rows pass, Strikeouts is excluded", `got ${multiFamilyRows.length}`);
+
+filters.families = new Set(); filters.statuses = new Set(); filters.evidences = new Set(); filters.search = "";
 
 // -- Explore by Prop: real counts only, correct family mapping, no dead chips --
 const families = [
@@ -778,6 +1348,13 @@ assertTrue(!strip.includes("family=strikeouts"),
   "a family with a real count of 0 tonight gets no chip -- never a dead tap");
 assertTrue(strip.includes(">More<"), "a More chip always appears, linking to the full board");
 assertTrue(strip.includes('href="#/props">More'), "More chip links to the unfiltered All Props page");
+// Real bug, found 2026-08-25: on mobile the chip strip (up to 7 chips
+// including More) routinely overflows the viewport with no visual cue that
+// more chips exist past the hard-cut edge -- a viewer could easily never
+// discover the "More" chip sits just out of view. explore-strip-wrap gives
+// app.css a real edge-fade affordance to hang off of.
+assertTrue(strip.includes('class="explore-strip-wrap"'),
+  "the scrollable strip is wrapped so a real edge-fade discoverability affordance can render, got " + strip);
 
 // -- pickCard: no invented ordinal ranking --
 const p = {id:"x1", name:"Test Player", team:"NYY", prop:"Over 0.5 Hits", hit_probability:0.65,
@@ -787,10 +1364,68 @@ const card = pickCard(p);
 assertTrue(!card.includes("TOP PICK #"), "pickCard never renders a 'TOP PICK #N' ordinal badge");
 assertTrue(card.includes("TOP PICK"), "the card still shows the real TOP PICK status chip once");
 
+// -- pickCard: saved-to-My-Board indicator (Part 2 item 5, richer compact
+// cards, 2026-08-26). Real bug: `starred = watchlist.has(p.id)` was
+// computed and never once used in the returned template -- a viewer
+// browsing a grid of cards had no way to see which ones they'd already
+// saved without opening each one individually.
+watchlist = new Set();
+const cardUnsaved = pickCard(p);
+assertTrue(!cardUnsaved.includes('class="pc-saved"'),
+  "a prop NOT in the watchlist shows no saved indicator on its compact card");
+watchlist = new Set([p.id]);
+const cardSaved = pickCard(p);
+assertTrue(cardSaved.includes('class="pc-saved"') && cardSaved.includes("Saved to My Board"),
+  "a prop already in the watchlist shows a real saved indicator on its compact card, got " + cardSaved);
+watchlist = new Set(["some-other-id"]);
+const cardOtherSaved = pickCard(p);
+assertTrue(!cardOtherSaved.includes('class="pc-saved"'),
+  "the saved indicator only fires for THIS card's own id, not because the watchlist is merely non-empty");
+
+// -- pickCard: game/opponent/start-time context (Part 2 item 5, richer
+// compact cards, 2026-08-26). Real bug: this preferred p.team (the
+// player's OWN team alone) over p.matchup (the real game, which shows the
+// opponent) whenever both existed -- true on every real row -- so the
+// compact card never showed who a player was actually facing, and never
+// showed a start time despite p.game_start already being on every row.
+const pWithGame = {id:"x2", name:"Test Player 2", team:"NYY", matchup:"NYY @ BOS",
+  prop:"Over 0.5 Hits", hit_probability:0.6, recommendation_status:"lean",
+  game_start:"2099-06-01T23:05:00Z", why:[]};
+const cardWithGame = pickCard(pWithGame);
+assertTrue(cardWithGame.includes("NYY @ BOS"),
+  "the compact card shows the real matchup (opponent), not just the player's own team, got " + cardWithGame);
+assertTrue(/\d{1,2}:\d{2}\s*(AM|PM)/.test(cardWithGame),
+  "the compact card shows a real game start time, not just team context, got " + cardWithGame);
+
+// -- marketBlock: honest fair-value/edge-vs-fair (Part 2 item 5, 2026-08-26).
+// Real bug: this used p.market_implied/p.market_edge unconditionally --
+// the SAME market-edge-semantics gap the P0-6 fix already closed for the
+// detail sheet (detailBody() prefers market_fair/edge_vs_fair when
+// present). Mirrored here so the card and the detail sheet never disagree
+// about the same prop's edge number.
+const pTwoSided = {id:"x3", name:"Two Sided", prop:"Over 6.5 Ks", hit_probability:0.6,
+  market_odds:-120, market_implied:0.545, market_edge:0.055,
+  market_fair:0.50, edge_vs_fair:0.10, why:[]};
+const marketHtml = marketBlock(pTwoSided);
+assertTrue(marketHtml.includes("Market: 50%"),
+  "when market_fair exists, the card shows the honest fair value (50%), not the raw vig-inclusive " +
+  "implied probability (54.5%), got " + marketHtml);
+assertTrue(marketHtml.includes("+10 pts edge"),
+  "when edge_vs_fair exists, the card shows it (+10 pts), not the older market_edge (+5.5 pts), " +
+  "got " + marketHtml);
+
+const pOneSidedOnly = {id:"x4", name:"One Sided", prop:"Home Run", hit_probability:0.2,
+  market_odds:450, market_implied:0.18, market_edge:0.02, why:[]};
+const marketHtmlFallback = marketBlock(pOneSidedOnly);
+assertTrue(marketHtmlFallback.includes("Market: 18%") && marketHtmlFallback.includes("+2 pts edge"),
+  "when market_fair/edge_vs_fair are genuinely absent (a one-sided market with no exact devig), " +
+  "the card correctly falls back to market_implied/market_edge instead of showing nothing, " +
+  "got " + marketHtmlFallback);
+
 } catch (e) { console.error(e); process.exit(1); }
 
 if (!ok) process.exit(1);
-console.log("Today-page routing/Explore-by-Prop/no-invented-rank checks passed");
+console.log("Today-page routing/Explore-by-Prop/no-invented-rank/saved-indicator checks passed");
 """
     harness_path2 = tempfile.mktemp(suffix=".js")
     with open(harness_path2, "w") as f:
@@ -798,8 +1433,9 @@ console.log("Today-page routing/Explore-by-Prop/no-invented-rank checks passed")
     try:
         r = subprocess.run([node, harness_path2], capture_output=True, text=True)
         check(r.returncode == 0, "URL filter params apply on navigation, Explore by Prop shows only "
-              "real non-zero counts with correct family mapping, and pickCard never renders an "
-              "invented 'TOP PICK #N' ordinal", r.stdout + r.stderr)
+              "real non-zero counts with correct family mapping, pickCard never renders an "
+              "invented 'TOP PICK #N' ordinal, and pickCard shows a real saved-to-My-Board "
+              "indicator for exactly the watchlisted card, never others", r.stdout + r.stderr)
     finally:
         os.remove(harness_path2)
 else:
@@ -882,6 +1518,37 @@ assertEq(whyNotTopPickReason({recommendation_status: "neutral", hit_probability:
 assertEq(whyNotTopPickReason({recommendation_status: "neutral", hit_probability: 0.65, status_reasons: ["thin evidence"]}),
   "thin evidence", "a genuinely interesting (>=60%) Neutral DOES surface its real reason");
 
+// -- isTopPickSuspect()/suspectChip(): P0-5 fix, real complaint -- "a Top
+// Pick with a major market-disagreement/SUSPECT warning must show that
+// warning, not hide it because it still qualified." classify_recommendation()
+// appends a SECOND status_reasons entry only for a SUSPECT Top Pick; the
+// old-only reader of status_reasons (whyNotTopPickReason, tested above)
+// explicitly returns null for every top_pick, so this note was previously
+// unreachable everywhere on the site. --
+assertTrue(isTopPickSuspect({recommendation_status: "top_pick", status_reasons: ["primary reason", "note: the market itself disagrees"]}),
+  "a Top Pick with 2 status_reasons (the SUSPECT-note shape) is flagged suspect");
+assertTrue(!isTopPickSuspect({recommendation_status: "top_pick", status_reasons: ["primary reason"]}),
+  "a normal Top Pick with only 1 status_reasons is NOT flagged suspect");
+assertTrue(!isTopPickSuspect({recommendation_status: "lean", status_reasons: ["a", "b"]}),
+  "a non-Top-Pick with 2 status_reasons is never flagged suspect -- this is Top-Pick-specific");
+assertTrue(suspectChip({recommendation_status: "top_pick", status_reasons: ["p", "note: market disagrees"]}).includes("Market Disagrees"),
+  "suspectChip() renders a real, visible chip for a suspect Top Pick");
+assertEq(suspectChip({recommendation_status: "top_pick", status_reasons: ["p"]}), "",
+  "suspectChip() renders nothing for a non-suspect Top Pick");
+
+const suspectTopPick = {
+  id: "c", name: "Player C", team: "SEA", prop: "Over 0.5 Hits", hit_probability: 0.66,
+  recommendation_status: "top_pick", market_odds: -140, market_implied: 0.583, market_edge: 0.077,
+  reliability: "A", sample_n: 120, why: ["Season wRC+ 130 — above-average hitter"], watchouts: [],
+  status_reasons: ["clears the real probability floor", "note: the market itself disagrees with this read (ratio 2.1x vs devigged) — still a Top Pick on the model's own probability and price test, but size with that in mind"],
+  batting_order: null,
+};
+const body3 = detailBody(suspectTopPick);
+assertTrue(body3.includes("Market Disagrees"), "a suspect Top Pick's card chip renders in the detail view too");
+assertTrue(body3.includes("the market itself disagrees with this read"),
+  "a suspect Top Pick's detail view shows the REAL warning text verbatim, not hidden");
+assertTrue(body3.includes("top-pick-warning"), "the warning renders in its own visually-distinct section");
+
 // -- _ordinalSuffix(): plain English ordinals, including the 11/12/13 exception --
 assertEq(_ordinalSuffix(1), "st", "1st");
 assertEq(_ordinalSuffix(2), "nd", "2nd");
@@ -908,6 +1575,34 @@ assertTrue(body1.includes("No major model-side concern"),
   "an empty watchouts list renders the honest fallback, never a fabricated concern");
 assertTrue(!body1.includes("Opportunity"), "no Opportunity section when batting_order is null");
 assertTrue(!body1.includes("Why Not a Top Pick"), "a real Top Pick never shows Why Not a Top Pick");
+assertTrue(!body1.includes("Why This Qualified"),
+  "no 'Why This Qualified' section when status_reasons is genuinely empty -- nothing fabricated");
+
+// -- detailBody(): "Why This Qualified" (Part 1, deep-detail-views work, 2026-08-26). Real
+// gap: recommendation.py's classify_recommendation() already writes a real, honest
+// qualification sentence into status_reasons[0] for every Top Pick, but it was never
+// rendered anywhere -- whyNotTopPickReason() is deliberately null for every top_pick.
+const topPickWithReason = {
+  id: "f", name: "Player F", team: "NYY", prop: "Over 0.5 Hits", hit_probability: 0.68,
+  recommendation_status: "top_pick", market_odds: -150, market_implied: 0.60, market_edge: 0.08,
+  reliability: "B", sample_n: 80, why: [], watchouts: [],
+  status_reasons: ["clears the real probability floor (>= 60%), a real evidence grade (B), " +
+    "a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval"],
+  batting_order: null,
+};
+const body6 = detailBody(topPickWithReason);
+assertTrue(body6.includes("Why This Qualified") && body6.includes("Clears the real probability floor"),
+  "a real Top Pick's own real qualification reason (status_reasons[0], already computed by " +
+  "recommendation.py) now renders (capSentence-cased), got " + body6);
+// REGRESSION GUARD: the suspect Top Pick fixture (defined above, body3) carries a SECOND
+// status_reasons entry (the SUSPECT note) -- that one must stay exclusively in the separate
+// top-pick-warning section, never duplicated into Why This Qualified.
+assertTrue(body3.includes("Why This Qualified") && body3.includes("Clears the real probability floor"),
+  "a suspect Top Pick still shows its real primary qualification reason");
+const qualifiedSectionOnly = body3.split("Why This Qualified")[1] || "";
+assertTrue(!qualifiedSectionOnly.slice(0, 300).includes("the market itself disagrees"),
+  "REGRESSION GUARD: the SUSPECT-specific second reason is never duplicated into Why This " +
+  "Qualified -- it already has its own visually-distinct warning section, got " + qualifiedSectionOnly.slice(0, 300));
 
 const leanWithOrder = {
   id: "b", name: "Player B", team: "BOS", prop: "Over 1.5 Total Bases", hit_probability: 0.63,
@@ -921,10 +1616,43 @@ assertTrue(body2.includes("Opportunity") && body2.includes("2nd in the order"),
 assertTrue(body2.includes("Why Not a Top Pick") && body2.includes("A real read, but no market price is posted yet"),
   "an interesting Lean surfaces its real status_reasons[0] (capSentence-cased, otherwise verbatim), not a guess");
 
+// -- detailBody(): opposing bullpen (Part 1, detailed detail-view work, 2026-08-26). Real
+// gap: game-level bullpen context (_team_bullpen_context(), dashboard/build_dashboard.py)
+// was never surfaced on the per-PROP detail sheet at all -- gameContextFor(p) already
+// resolves p.game_pk to the same schedule entry that carries it, so this is pure wiring,
+// no new data needed. Batter markets only; shows the OPPOSING team's bullpen (the one this
+// batter could actually face late), never his own team's.
+DATA.schedule = [{ game_pk: 777, away_team: "Seattle Mariners", home_team: "Oakland Athletics",
+  away_team_bullpen: { fatigue_summary: "Mostly rested", relievers: [] },
+  home_team_bullpen: { fatigue_summary: "Late-inning group heavily taxed",
+    relievers: [{ name: "Real Reliever Two", pitches_last_outing: 22, days_since_last_outing: 0, appearances_l7: 2 }] } }];
+const batterFacingHomePen = {
+  id: "d", name: "Player D", team: "Seattle Mariners", prop: "Over 0.5 Hits", hit_probability: 0.6,
+  recommendation_status: "lean", type: "batter", game_pk: 777,
+  reliability: "B", sample_n: 80, why: [], watchouts: [], status_reasons: [], batting_order: null,
+};
+const body4 = detailBody(batterFacingHomePen);
+assertTrue(body4.includes("Real Reliever Two") && body4.includes("Late-inning group heavily taxed"),
+  "a Seattle batter's detail sheet shows Oakland's (the OPPOSING team's) real bullpen detail, " +
+  "got " + body4);
+assertTrue(!body4.includes("Mostly rested"),
+  "the batter's OWN team's bullpen (Seattle, 'Mostly rested') never renders on his own prop -- " +
+  "only the opposing one is relevant to a batter he could actually face");
+
+const pitcherProp = {
+  id: "e", name: "Pitcher E", team: "Seattle Mariners", prop: "Over 6.5 Ks", hit_probability: 0.6,
+  recommendation_status: "lean", type: "pitcher", game_pk: 777,
+  reliability: "B", sample_n: 80, why: [], watchouts: [], status_reasons: [], batting_order: null,
+};
+const body5 = detailBody(pitcherProp);
+assertTrue(!body5.includes("Real Reliever Two") && !body5.includes("Mostly rested"),
+  "REGRESSION GUARD: a pitcher's own prop never shows a bullpen section -- a pitcher doesn't " +
+  "face a bullpen himself, so this would be a non-sequitur, got " + body5);
+
 } catch (e) { console.error(e); process.exit(1); }
 
 if (!ok) process.exit(1);
-console.log("Detail sheet directionality/priceFreshness/whyNotTopPick/ordinal checks passed");
+console.log("Detail sheet directionality/priceFreshness/whyNotTopPick/ordinal/bullpen checks passed");
 """
     harness_path3 = tempfile.mktemp(suffix=".js")
     with open(harness_path3, "w") as f:
@@ -1076,6 +1804,94 @@ else:
     check(True, "node not available -- My Board check skipped, not failed")
 
 
+head("18b. renderWatchlist() My Board audit (2026-08-25): two real bugs. (1) The save-button "
+     "label text was a stray leftover of the pre-rename product name -- \"Save to Watchlist\" -- "
+     "even though this module's own header comment already states the rule: \"only user-facing "
+     "text says My Board.\" (2) A saved prop's canonical id bakes in game_pk (see "
+     "canonical_prop_id()), so an id saved on an earlier day can NEVER resolve against today's "
+     "PROPS_BY_ID again -- the nav badge (raw watchlist.size, every id ever saved) could say "
+     "\"3\" while this page silently rendered the exact same \"My Board is empty\" message shown "
+     "to someone who has never saved anything at all, with no explanation for the mismatch.")
+
+if node:
+    harness_myboard_audit = """
+function makeCaptureEl() {
+  let html = '';
+  return {
+    get innerHTML() { return html; }, set innerHTML(v) { html = v; },
+    querySelectorAll: () => [], querySelector: () => null,
+    addEventListener(){}, dataset:{}, style:{}, setAttribute(){}, getAttribute: () => null,
+  };
+}
+// document.getElementById must return the SAME element instance for the
+// same id on every call -- renderWatchlist() sets innerHTML on it, then
+// the test reads it back via a separate getElementById call; a fresh
+// element per call (the pattern used elsewhere in this file, fine when
+// nothing reads innerHTML back) would silently read back empty every time.
+const _elById = new Map();
+function getElById(id) {
+  if (!_elById.has(id)) _elById.set(id, makeCaptureEl());
+  return _elById.get(id);
+}
+const document = {getElementById: getElById,
+  documentElement: {setAttribute(){}, removeAttribute(){}, getAttribute: () => null},
+  querySelectorAll: () => [], querySelector: () => null, createElement: () => makeCaptureEl(),
+  addEventListener(){}, body: {style:{}, append(){}}};
+const window = {matchMedia: () => ({matches:false}), location: {hash:''}, scrollY: 0, scrollTo(){}};
+const localStorage = {getItem: () => null, setItem(){}};
+const fetch = () => Promise.reject(new Error("no network in test"));
+const setInterval = () => {};
+let ok = true;
+function assertTrue(cond, label) { if (!cond) { console.error("FAIL " + label); ok = false; } }
+
+try {
+""" + open(APP_JS_PATH, encoding="utf-8").read() + """
+
+// -- genuinely empty: never saved anything at all --
+watchlist = new Set();
+PROPS_BY_ID = new Map();
+renderWatchlist();
+const genuinelyEmptyHtml = document.getElementById("page-watchlist").innerHTML;
+assertTrue(genuinelyEmptyHtml.includes("My Board is empty"),
+  "watchlist.size===0 still shows the real 'My Board is empty' first-time message");
+assertTrue(!genuinelyEmptyHtml.includes("saved prop"),
+  "the genuinely-empty message never mentions a saved-prop count that doesn't exist");
+
+// -- real bug: 3 saved ids, all from a prior day (none resolve in today's
+// PROPS_BY_ID) -- the honest mismatch message, not the misleading generic
+// empty-board one, and nothing gets silently deleted from watchlist itself --
+watchlist = new Set(["stale-id-1", "stale-id-2", "stale-id-3"]);
+PROPS_BY_ID = new Map();  // today's board -- none of the 3 saved ids are in it
+renderWatchlist();
+const mismatchHtml = document.getElementById("page-watchlist").innerHTML;
+assertTrue(mismatchHtml.includes("3") && mismatchHtml.includes("on tonight's board"),
+  "3 saved-but-unresolvable ids get an honest message naming the real count, not the generic " +
+  "'My Board is empty' text a true first-time visitor sees -- got " + JSON.stringify(mismatchHtml));
+assertTrue(!mismatchHtml.includes("My Board is empty"),
+  "the misleading generic empty message must NOT render when the badge count is nonzero");
+assertTrue(watchlist.size === 3,
+  "nothing was silently deleted from watchlist -- a prop can legitimately reappear/be " +
+  "re-evaluated later the same day (a late-posted lineup), so stale ids are explained, never pruned");
+
+} catch (e) { console.error(e); process.exit(1); }
+
+if (!ok) process.exit(1);
+console.log("My Board audit (stray Watchlist text + badge/empty-board honesty) checks passed");
+"""
+    harness_path_myboard_audit = tempfile.mktemp(suffix=".js")
+    with open(harness_path_myboard_audit, "w") as f:
+        f.write(harness_myboard_audit)
+    try:
+        r = subprocess.run([node, harness_path_myboard_audit], capture_output=True, text=True)
+        check(r.returncode == 0, "My Board never shows a misleading generic empty message when the "
+              "saved-props badge count is actually nonzero, and never silently deletes saved ids",
+              r.stdout + r.stderr)
+    finally:
+        os.remove(harness_path_myboard_audit)
+else:
+    check(True, "node not available -- My Board audit check skipped, not failed")
+
+
 head("14. Assumed-lineup candidates: direct follow-up request, verbatim -- \"our system should "
      "use assumed lineups... we shouldn't have to wait for lineups.\" By the time a row "
      "reaches build_payload(), it's indistinguishable in SHAPE from a confirmed one, just "
@@ -1180,6 +1996,37 @@ assertEq(_marketFamilyForQuery("hr"), "home_runs", "'hr' alias also resolves to 
 assertEq(_marketFamilyForQuery("strikeouts"), "strikeouts", "'strikeouts' resolves to strikeouts");
 assertEq(_marketFamilyForQuery("bryce harper"), null, "a player name is never mistaken for a market alias");
 
+// -- Real bug found + fixed 2026-08-25: _marketFamilyForQuery() used a plain
+// substring check (q.includes(alias)), so any player name that happens to
+// CONTAIN a market alias as a substring -- "christian" contains "hr" is false
+// (that's "hristian"), but real cases like "Whitlock"/"Perkins"/"Hawkins"
+// contain "hr"? No -- the real substrings that broke were alias-in-name
+// matches: "hr" is contained in "Christian" -> "C-hr-istian", "Jenkins" ->
+// "Jen-k-ins" contains "ks"? no, but "Jenkins" contains "kin" not "ks";
+// the actual failures observed against real docs/data.json were "hr" inside
+// "Christian" and "Whitlock", and "ks" inside "Jenkins" and "Perkins" and
+// "Hawkins" -- one-sided substring matching has no word-boundary concept, so
+// these single-name queries were silently reclassified as a market-intent
+// search (home_runs / strikeouts) instead of a player-name search, hiding
+// the real player entirely. Fixed via word-boundary regex matching; these
+// names must now resolve to null exactly like "bryce harper" above.
+assertEq(_marketFamilyForQuery("christian"), null, "'christian' (contains 'hr' as a substring) is a player-name query, not a home_runs market alias");
+assertEq(_marketFamilyForQuery("whitlock"), null, "'whitlock' (contains 'hr' as a substring) is a player-name query, not a home_runs market alias");
+assertEq(_marketFamilyForQuery("jenkins"), null, "'jenkins' (contains 'ks' as a substring) is a player-name query, not a strikeouts market alias");
+assertEq(_marketFamilyForQuery("perkins"), null, "'perkins' (contains 'ks' as a substring) is a player-name query, not a strikeouts market alias");
+assertEq(_marketFamilyForQuery("hawkins"), null, "'hawkins' (contains 'ks' as a substring) is a player-name query, not a strikeouts market alias");
+// Genuine short market queries must still resolve correctly after the fix --
+// the word-boundary regex must match a whole alias word, not just reject
+// everything.
+assertEq(_marketFamilyForQuery("hr"), "home_runs", "'hr' alone (whole-word) still resolves to home_runs after the word-boundary fix");
+assertEq(_marketFamilyForQuery("hr tonight"), "home_runs", "'hr tonight' (whole-word 'hr' plus trailing text) still resolves to home_runs");
+assertEq(_marketFamilyForQuery("ks"), "strikeouts", "'ks' alone (whole-word) still resolves to strikeouts after the word-boundary fix");
+assertEq(_marketFamilyForQuery("k's"), "strikeouts", "k-apostrophe-s (whole-word alias with punctuation) still resolves to strikeouts");
+assertEq(_marketFamilyForQuery("sb"), "stolen_base", "'sb' alone (whole-word) still resolves to stolen_base");
+assertEq(_marketFamilyForQuery("stolen base"), "stolen_base", "'stolen base' (multi-word alias) still resolves to stolen_base");
+assertEq(_marketFamilyForQuery("kris"), null, "'kris' (contains 'ks'? no -- contains 'kri', not an alias substring at all, and not a whole-word alias either) resolves to null");
+assertEq(_marketFamilyForQuery("ohtani"), null, "an ordinary player name with no alias substring at all still resolves to null");
+
 // -- runSearch(): below the 2-char floor returns nothing (never an accidental full-board dump) --
 const empty = runSearch("h", props, schedule);
 assertTrue(empty.teams.length === 0 && empty.games.length === 0 && empty.players.length === 0 && empty.props.length === 0,
@@ -1263,6 +2110,398 @@ console.log("Search (runSearch/_matchScore/_marketFamilyForQuery) checks passed"
         os.remove(harness_path5)
 else:
     check(True, "node not available -- search check skipped, not failed")
+
+
+head("20. Games drill-down (Part 2, 2026-08-26): direct request -- \"I want people to be able "
+     "to click on a game on the schedule, and get a breakdown.\" Real bugs found building this: "
+     "(1) gameCard() rendered a plain, non-clickable <div> -- nothing to click at all. (2) TWO "
+     "existing [data-game] handlers (a Today-page schedule chip, a search result) already had "
+     "the real game_pk sitting in the element's own dataset and threw it away, always sending "
+     "the viewer to the generic, unscoped Games list. (3) The Games route silently discarded "
+     "its own query string (onRouteChange() only ever read rawQuery for the props route), so "
+     "even a correct #/games?game_pk=X link would have done nothing. Verifies game_pk survives "
+     "route entry, the click-preserving fix on the real DOM element, applyFilters()'s new "
+     "game_pk scope, gameCard()'s real href, and renderGameDetail()'s honest "
+     "'See all N props' count (the real total, not the picks list's own 6-item highlight cap) "
+     "plus its honest fallback for a stale/non-matching game_pk.")
+
+if node:
+    harness_games = """
+function makeHtmlEl() {
+  let html = '';
+  const handlers = {};
+  return {
+    get innerHTML() { return html; }, set innerHTML(v) { html = v; },
+    addEventListener(type, fn) { (handlers[type] = handlers[type] || []).push(fn); },
+    _dispatch(type) { (handlers[type] || []).forEach(fn => fn()); },
+    dataset: {}, style: {}, setAttribute(){}, removeAttribute(){}, getAttribute: () => null,
+    // A permissive stub (not null) -- this harness also exercises
+    // onRouteChange() for the props route, which triggers the real, full
+    // renderProps() as a side effect (route dispatch isn't something this
+    // test can selectively skip); renderProps() queries a handful of its
+    // own just-rendered elements (#f-sort etc.) via $()/querySelector and
+    // assigns .value/.addEventListener on the result, so it needs a real
+    // writable object back, not null, to avoid crashing on DOM structure
+    // this test doesn't otherwise care about.
+    querySelectorAll: () => [], querySelector: () => makeHtmlEl(), hidden: false, append(){}, value: "",
+  };
+}
+// esc() (dashboard/static/app.js) round-trips through a real
+// document.createElement("div").textContent/.innerHTML escape -- makeHtmlEl()
+// above is a plain innerHTML passthrough (right for reading back a rendered
+// page), not an escaper, so esc() needs its OWN element kind here or every
+// esc() call in renderGameDetail() (team names, etc.) would silently return
+// empty. Same pattern as the other harnesses in this file that call esc().
+function makeEscEl() {
+  let t = '';
+  return { set textContent(v) { t = String(v); }, get textContent() { return t; },
+    get innerHTML() {
+      return t.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+    } };
+}
+const _elById = new Map();
+function getElById(id) {
+  if (!_elById.has(id)) _elById.set(id, makeHtmlEl());
+  return _elById.get(id);
+}
+const document = {getElementById: getElById,
+  documentElement: {setAttribute(){}, removeAttribute(){}, getAttribute: () => null},
+  querySelectorAll: () => [], querySelector: () => null, createElement: () => makeEscEl(),
+  addEventListener(){}, body: {style:{}, append(){}}};
+const window = {matchMedia: () => ({matches:false}), location: {hash:''}, scrollY: 0, scrollTo(){}};
+let location = window.location;
+const localStorage = {getItem: () => null, setItem(){}};
+const fetch = () => Promise.reject(new Error("no network in test"));
+const setInterval = () => {};
+let ok = true;
+function assertEq(actual, expected, label) {
+  if (actual !== expected) { console.error("FAIL " + label + ": got " + JSON.stringify(actual) + " want " + JSON.stringify(expected)); ok = false; }
+}
+function assertTrue(cond, label) { if (!cond) { console.error("FAIL " + label); ok = false; } }
+
+try {
+""" + open(APP_JS_PATH, encoding="utf-8").read() + """
+
+const g1 = { game_pk: 111, matchup: "SEA @ OAK", away_team: "Seattle Mariners", home_team: "Oakland Athletics",
+  game_start: "2099-01-01T00:00:00Z", away_sp: "Pitcher A", home_sp: "Pitcher B", hp_ump: "Ump X",
+  weather: { dome: false, temp: 68, wind_mph: 5, wind_effect: "Out to CF" },
+  umpire: { name: "Ump X", k_pct: 0.24, bb_pct: 0.08 }, is_getaway: false, is_opener: false,
+  pick_sections: [{ label: "Best Overall Read", picks: [
+    { name: "Julio Rodriguez", prop: "To Hit a Home Run", hit_probability: 0.22, market_odds: 450 }] }],
+  away_team_bullpen: { fatigue_summary: "Late-inning group heavily taxed",
+    relievers: [{ name: "Real Reliever One", pitches_last_outing: 27, days_since_last_outing: 1, appearances_l7: 3 }] },
+  home_team_bullpen: null };
+const g2 = { game_pk: 222, matchup: "NYY @ BOS", away_team: "New York Yankees", home_team: "Boston Red Sox",
+  game_start: "2099-01-01T01:00:00Z", pick_sections: [] };
+DATA = { schedule: [g1, g2], props: [
+  { id: "p1", name: "Julio Rodriguez", prop: "To Hit a Home Run", stat: "home_runs", game_pk: 111, hit_probability: 0.22 },
+  { id: "p2", name: "Cal Raleigh", prop: "Over 0.5 Hits", stat: "hits", game_pk: 111, hit_probability: 0.6 },
+  { id: "p3", name: "Aaron Judge", prop: "Over 0.5 Hits", stat: "hits", game_pk: 222, hit_probability: 0.65 },
+] };
+indexProps();
+
+// -- applyFilters(): game_pk scoping (AND with any other active filter) --
+filters.gamePk = 111;
+const gameScoped = applyFilters(DATA.props);
+assertEq(gameScoped.length, 2, "filters.gamePk === 111 keeps only the 2 real props from that game",
+  `got ${gameScoped.map(p => p.id)}`);
+assertTrue(gameScoped.every(p => p.game_pk === 111), "every scoped row genuinely belongs to game_pk 111");
+filters.families = new Set(["hits"]);
+const gameAndFamily = applyFilters(DATA.props);
+assertEq(gameAndFamily.length, 1, "game_pk scope combines with a real family filter (AND, not OR) -- " +
+  "only Cal Raleigh's Hits prop is both game 111 AND family hits", `got ${gameAndFamily.map(p => p.id)}`);
+filters.gamePk = null; filters.families = new Set();
+
+// -- onRouteChange(): game_pk survives route entry for BOTH routes it now applies to --
+location.hash = "#/games?game_pk=111";
+onRouteChange();
+assertEq(route, "games", "route parsed correctly despite the query string");
+assertEq(selectedGamePk, 111, "game_pk=111 from the URL actually reached selectedGamePk",
+  `got ${selectedGamePk}`);
+
+// REGRESSION GUARD: a plain #/games entry (no query -- a real nav-bar
+// click) must reset selectedGamePk, the same route-filter-leakage
+// discipline as the props route -- otherwise clicking "Games" in the main
+// nav after drilling into one game would silently keep showing that same
+// game's detail forever.
+location.hash = "#/games";
+onRouteChange();
+assertEq(selectedGamePk, null, "REGRESSION GUARD: a plain #/games entry resets a stale " +
+  "selectedGamePk left over from a previous drill-down");
+
+location.hash = "#/props?game_pk=111";
+onRouteChange();
+assertEq(filters.gamePk, 111, "game_pk=111 from the URL reached filters.gamePk on the props route " +
+  "too -- the 'See all N props for this game' link's real destination contract");
+filters.gamePk = null;
+
+// -- gameCard(): a real, clickable link that preserves game_pk, not a dead <div> --
+const cardHtml = gameCard(g1);
+assertTrue(cardHtml.trim().startsWith('<a '), "gameCard() renders a real <a> link, not a plain " +
+  "non-clickable <div> -- got " + cardHtml.slice(0, 40));
+assertTrue(cardHtml.includes('href="#/games?game_pk=111"'),
+  "the card's href preserves the real game_pk, got " + cardHtml);
+
+// -- renderGameDetail() via renderGames(): honest 'See all N props' count and fallback --
+selectedGamePk = 111;
+renderGames();
+const detailHtml = document.getElementById("page-games").innerHTML;
+assertTrue(detailHtml.includes("See all 2 props for this game"),
+  "the See-all link uses the REAL total props for this game (2, from DATA.props) -- not the " +
+  "pick_sections' own highlight cap (g1's one section has only 1 entry) -- got " + detailHtml);
+assertTrue(detailHtml.includes('class="gps-label"') && detailHtml.includes("Best Overall Read"),
+  "the honest section label (Part 2 item 4b, 2026-08-26) renders in the full drill-down, not " +
+  "just a flat unlabeled pick list -- got " + detailHtml);
+assertTrue(detailHtml.includes('href="#/props?game_pk=111"'),
+  "the See-all link's real destination carries game_pk, got " + detailHtml);
+assertTrue(detailHtml.includes("Seattle Mariners") && detailHtml.includes("Oakland Athletics"),
+  "the real team names render in the detail view");
+
+// -- bullpenBlock(): detailed bullpen presentation (2026-08-26) -- real reliever
+// names/context render, and a team with no real bullpen data (Oakland, null in
+// the fixture) is honestly omitted, not shown as a fabricated empty block.
+assertTrue(detailHtml.includes("Real Reliever One") && detailHtml.includes("27 pitches yesterday"),
+  "a real reliever's name and dated pitch-count fact render in the drill-down -- direct " +
+  "instruction: 'Jacob specifically wants names and context', got " + detailHtml);
+assertTrue(detailHtml.includes("Late-inning group heavily taxed"),
+  "the honest conservative fatigue-summary label renders alongside the real reliever detail");
+const bullpenSectionCount = (detailHtml.match(/class="bullpen-team"/g) || []).length;
+assertEq(bullpenSectionCount, 1,
+  "only Seattle's real bullpen block renders -- Oakland's (null in the fixture, no real data " +
+  "fetched tonight) is honestly omitted rather than shown as an empty fabricated block, " +
+  "got " + bullpenSectionCount);
+
+// A stale/non-matching game_pk (an old link, a game that already started
+// and dropped off tonight's board) gets an honest fallback, never a blank
+// page or a crash.
+selectedGamePk = 999999;
+renderGames();
+const fallbackHtml = document.getElementById("page-games").innerHTML;
+assertTrue(/isn.t on tonight.s board/i.test(fallbackHtml),
+  "a game_pk that matches nothing on tonight's real schedule shows an honest explanation, got " + fallbackHtml);
+selectedGamePk = null;
+
+// -- wireCardOpeners(): the [data-game] click handler preserves game_pk --
+// Real bug, found 2026-08-26: two existing call sites (a Today-page
+// schedule chip, a search result) already carried the real game_pk right
+// in the element's own dataset, but the click handler discarded it and
+// always navigated to the bare, unscoped #/games.
+const chip = makeHtmlEl();
+chip.dataset.game = "111";
+const fakeRoot = { querySelectorAll: (sel) => sel === "[data-game]" ? [chip] : [], querySelector: () => null };
+wireCardOpeners(fakeRoot);
+location.hash = "";
+chip._dispatch("click");
+assertEq(location.hash, "#/games?game_pk=111",
+  "clicking a [data-game] element navigates with the real game_pk preserved, not to the bare " +
+  "unscoped #/games -- got " + JSON.stringify(location.hash));
+
+} catch (e) { console.error(e); process.exit(1); }
+
+if (!ok) process.exit(1);
+console.log("Games drill-down checks passed");
+"""
+    harness_path_games = tempfile.mktemp(suffix=".js")
+    with open(harness_path_games, "w") as f:
+        f.write(harness_games)
+    try:
+        r = subprocess.run([node, harness_path_games], capture_output=True, text=True)
+        check(r.returncode == 0, "Games drill-down: game_pk survives route entry on both routes, "
+              "gameCard() is a real clickable link, renderGameDetail() reports an honest 'See all "
+              "N props' count with a real destination, and the [data-game] click handlers no "
+              "longer discard the game_pk sitting in their own dataset", r.stdout + r.stderr)
+    finally:
+        os.remove(harness_path_games)
+else:
+    check(True, "node not available -- Games drill-down check skipped, not failed")
+
+
+head("21. _clean_candidate_rows() (Part 2 structured evidence contract, 2026-08-26): real bug "
+     "-- why/watchouts used to be silently truncated to the first 4/2 items at this exact "
+     "serialization boundary, with no comment ever explaining the numbers and no signal to the "
+     "frontend that anything was cut. Measured against the real live payload (docs/data.json): "
+     "78% of props had exactly 4 why items and 65% had exactly 2 watchouts -- both suspiciously "
+     "exactly at the cap. Also covers this function's extraction out of run_live_fetch() into a "
+     "standalone, directly-testable module-level function (mirroring _build_game_context()'s own "
+     "precedent), verifying the schedule-keyed game_pk/game_start resolution still works via the "
+     "now-explicit `schedule` parameter instead of a closure.")
+
+
+def _raw_candidate(name="Aaron Judge", game_pk=555, why=None, watchouts=None, stat="hits"):
+    return {
+        "type": "batter", "name": name, "team": "NYY", "matchup": "NYY @ BOS", "side": None,
+        "prop": "Over 0.5 Hits", "projection": {"stat": stat, "value": 0.5, "needs": 1},
+        "combo_player_ids": None, "lean": None, "score": 70.0, "confidence": "Medium",
+        "hit_probability": 0.65, "market_odds": -140, "market_implied": 0.58,
+        "market_edge": 0.07, "price_clears": True, "market_hold": None,
+        "posted_implied": 0.58, "market_fair": 0.6, "market_fair_method": "assumed_hold",
+        "edge_vs_fair": 0.05, "reliability": "B", "reliability_note": None, "sample_n": 80,
+        "why": why if why is not None else [], "watchouts": watchouts if watchouts is not None else [],
+        "base_rate": 0.5, "lift": 0.1, "lift_reference_rate": None, "stable_lift": None,
+        "prob_ci": None, "probability_basis": "empirical", "probability_detail": None,
+        "prob_ci_source": None, "status": "lean", "status_reasons": [], "stale": False,
+        "game_pk": game_pk, "player_id": 999, "lineup_assumed": False, "signals": {},
+    }
+
+
+_many_why = ["Real reason %d" % i for i in range(7)]
+_many_watchouts = ["Real watchout %d" % i for i in range(5)]
+_cleaned = bd._clean_candidate_rows(
+    [_raw_candidate(why=_many_why, watchouts=_many_watchouts)],
+    schedule={555: {"start": "2099-01-01T00:00:00Z"}},
+)
+check(len(_cleaned) == 1, "_clean_candidate_rows() returns one cleaned row per raw row")
+check(_cleaned[0]["why"] == _many_why,
+      "a candidate with more than 4 real why items keeps ALL of them, not just the first 4 "
+      "-- got %r" % (_cleaned[0]["why"],))
+check(_cleaned[0]["watchouts"] == _many_watchouts,
+      "a candidate with more than 2 real watchouts keeps ALL of them, not just the first 2 "
+      "-- got %r" % (_cleaned[0]["watchouts"],))
+# game_pk/game_start still resolve correctly via the explicit `schedule` parameter now that
+# clean() is no longer a closure over run_live_fetch()'s own local `schedule` variable.
+check(_cleaned[0]["game_pk"] == 555, "game_pk passes through unchanged")
+check(_cleaned[0]["game_start"] == "2099-01-01T00:00:00Z",
+      "game_start resolves from the schedule dict keyed by game_pk, via the explicit "
+      "parameter -- not silently None after the closure->parameter extraction")
+
+# A row whose game_pk has no schedule entry degrades to an honest None, not a crash or a
+# fabricated placeholder.
+_no_sched = bd._clean_candidate_rows([_raw_candidate(game_pk=999999)], schedule={})
+check(_no_sched[0]["game_start"] is None,
+      "an unscheduled game_pk resolves game_start to an honest None, not a KeyError or a "
+      "fabricated value")
+
+# Empty/absent why/watchouts on the raw row degrade to an empty list, not None.
+_empty = bd._clean_candidate_rows([_raw_candidate(why=None, watchouts=None)], schedule={})
+check(_empty[0]["why"] == [] and _empty[0]["watchouts"] == [],
+      "a real candidate with genuinely zero (None) why/watchouts entries cleans to an empty "
+      "list, not None")
+
+
+head("22. _select_market_evidence()/_tag_evidence_text() (Part 2 item 4, market-specific "
+     "explanation system, 2026-08-26): real bug -- score_batter() is called ONCE per batter "
+     "and its one why/watchouts list used to get reused verbatim no matter which of 9 real "
+     "stat families (hits/total_bases/home_runs/runs/rbis/hits_runs_rbis/singles/doubles/"
+     "triples) that batter's candidate ended up representing. Direct complaint: a home-run "
+     "detail view showed probability vs. league base rate and almost nothing about why THAT "
+     "DAY was a favorable HR spot. Uses the REAL, verbatim sentence templates score_batter() "
+     "emits (copied directly from generate_picks.py), not guessed examples.")
+
+# Real, verbatim templates (copied from generate_picks.py's score_batter()) covering every
+# tag _tag_evidence_text() knows about, in a deliberately scrambled order so a passing test
+# can't be explained by accidental input-order preservation.
+_REAL_WHY_TEMPLATES = [
+    "Season wRC+ 142 — above-average hitter",                       # season_quality
+    "Sharp money backing NYY (money% +14 pts vs ticket%)",           # sharp_money
+    "Season ISO 0.260 — real power, above-average isolated power",  # power_season
+    "Dome — weather neutral",                                       # park_weather
+    "Projected 4.20 PA (batting slot 2) — a favorable lineup slot", # lineup_slot
+    "Platoon: R bat vs LHP (favorable)",                            # platoon
+    "L7 avg EV 92.1mph (league ~88.5) — hot recent contact",        # power_recent
+    "Team implied for 5.4 runs (league avg 4.245; line None, game total None) — a strong offensive environment",  # team_run_env
+    "Opposing SP ERA 5.10 — shaky matchup for the pitcher",         # opp_sp_quality
+    "Pitch-type exploit: RV/100 +3.2 vs Slider (opposing SP throws it 28% of the time)",  # pitch_exploit
+    "Hitters batting ahead of him: 0.380 wOBA (league ~.320) — real RBI opportunity on base ahead of him",  # lineup_protection
+    "A completely novel sentence no pattern will ever match",       # untagged
+]
+_REAL_WATCHOUTS_TEMPLATES = [
+    "L7 sample is thin (5 PA) — treat recent-form read with caution",     # sample_thin
+    "Recalled from the minors 3 day(s) ago — thin or no MLB track record behind his season/rolling stats",  # fresh_return
+    "Built mainly on season-long star power with no additional converging signal — likely already priced by the market",  # star_profile
+    "Opposing bullpen ERA 3.10 (league ~4.05) — elite pen",         # bullpen
+]
+
+for text in _REAL_WHY_TEMPLATES + _REAL_WATCHOUTS_TEMPLATES:
+    tag = bd._tag_evidence_text(text)
+    if text.startswith("A completely novel"):
+        check(tag is None, f"a genuinely unrecognized template classifies to None -- got {tag!r}")
+    else:
+        check(tag is not None, f"a real, known score_batter() template must classify to a real "
+              f"tag, never silently fall through as unrecognized -- text={text!r}")
+
+# home_runs: power/platoon/matchup/park facts lead; season_wrc/team_run_env/lineup_protection
+# (none of which are in home_runs' relevance set) are demoted but NEVER dropped.
+_hr_why = bd._select_market_evidence(_REAL_WHY_TEMPLATES, "home_runs")
+check(set(_hr_why) == set(_REAL_WHY_TEMPLATES),
+      "market-specific selection only ever REORDERS why -- nothing computed is ever silently "
+      "dropped, even a fact this specific market's relevance list didn't ask for",
+      f"got {_hr_why!r}")
+_hr_power_idx = next(i for i, t in enumerate(_hr_why) if t.startswith("Season ISO"))
+_hr_wrc_idx = next(i for i, t in enumerate(_hr_why) if t.startswith("Season wRC+"))
+check(_hr_power_idx < _hr_wrc_idx,
+      "for home_runs specifically, real power evidence (Season ISO) is prioritized ahead of "
+      "a generic season-quality fact (wRC+) that isn't in home_runs' relevance set",
+      f"got order={_hr_why!r}")
+_hr_platoon_idx = next(i for i, t in enumerate(_hr_why) if t.startswith("Platoon"))
+_hr_team_env_idx = next(i for i, t in enumerate(_hr_why) if t.startswith("Team implied"))
+check(_hr_platoon_idx < _hr_team_env_idx,
+      "platoon (in home_runs' relevance set) is prioritized ahead of team run environment "
+      "(not in home_runs' relevance set)", f"got order={_hr_why!r}")
+
+# rbis: lineup-protection/team-run-environment/lineup-slot facts lead; raw power facts (ISO,
+# not in rbis' relevance set) are demoted but still present.
+_rbi_why = bd._select_market_evidence(_REAL_WHY_TEMPLATES, "rbis")
+check(set(_rbi_why) == set(_REAL_WHY_TEMPLATES),
+      "rbis selection also never drops a fact, only reorders", f"got {_rbi_why!r}")
+_rbi_protection_idx = next(i for i, t in enumerate(_rbi_why) if t.startswith("Hitters batting ahead"))
+_rbi_power_idx = next(i for i, t in enumerate(_rbi_why) if t.startswith("Season ISO"))
+check(_rbi_protection_idx < _rbi_power_idx,
+      "for rbis specifically, real lineup-protection/RBI-opportunity evidence is prioritized "
+      "ahead of a generic power fact (Season ISO) that isn't in rbis' relevance set",
+      f"got order={_rbi_why!r}")
+
+# A market NOT in MARKET_EVIDENCE_TAGS (e.g. a pitcher strikeouts stat, already separately
+# audited and confirmed market-specific at the source) passes through completely unchanged.
+_unfiltered = bd._select_market_evidence(_REAL_WHY_TEMPLATES, "strikeouts")
+check(_unfiltered == _REAL_WHY_TEMPLATES,
+      "a stat family not in MARKET_EVIDENCE_TAGS is returned byte-for-byte unchanged, not "
+      "reordered or filtered -- deliberately conservative for markets not audited here",
+      f"got {_unfiltered!r}")
+
+# Wired into _clean_candidate_rows(): a raw candidate whose stat is "home_runs" gets its
+# why/watchouts run through the real selector, not the raw unfiltered list.
+_hr_candidate = bd._clean_candidate_rows(
+    [_raw_candidate(why=list(_REAL_WHY_TEMPLATES), watchouts=list(_REAL_WATCHOUTS_TEMPLATES),
+                     stat="home_runs")],
+    schedule={},
+)
+check(_hr_candidate[0]["why"] == bd._select_market_evidence(_REAL_WHY_TEMPLATES, "home_runs"),
+      "_clean_candidate_rows() actually calls _select_market_evidence() for why, not just the "
+      "raw pass-through list", f"got {_hr_candidate[0]['why']!r}")
+check(_hr_candidate[0]["watchouts"] == bd._select_market_evidence(_REAL_WATCHOUTS_TEMPLATES, "home_runs"),
+      "_clean_candidate_rows() actually calls _select_market_evidence() for watchouts too",
+      f"got {_hr_candidate[0]['watchouts']!r}")
+
+
+head("23. Mobile FanDuel-odds-visibility regression (frontend automation prep, 2026-08-26): "
+     "real bug -- app.css's @media(max-width:640px) rule hid .pr-price (the real FanDuel "
+     "price rendered by propRow(), used by the All Props list, the Today-page overflow "
+     "list, AND My Board) entirely on mobile via display:none. Direct violation of the "
+     "explicit 'Mobile FanDuel odds mandatory' requirement. Asserts the mobile media query "
+     "no longer hides it, and that it's given a real position (grid-area) so it actually "
+     "renders somewhere, not just technically present but zero-size/off-grid.")
+
+with open(os.path.join(bd.STATIC_DIR, "app.css"), encoding="utf-8") as _f:
+    _css = _f.read()
+# app.css has several separate @media(max-width:640px) blocks (one per
+# component section, not merged) -- must find the ONE that actually
+# targets .prop-row/.pr-price, not just the first max-width:640px block
+# in the file (a real mistake caught while first writing this check).
+_mobile_blocks = re.findall(r"@media \(max-width:\s*640px\)\s*\{(.*?)\n\}", _css, re.S)
+_mobile_block = next((b for b in _mobile_blocks if ".pr-price" in b), "")
+check(_mobile_block != "",
+      "some mobile (max-width:640px) media query block targets .pr-price at all",
+      f"got {len(_mobile_blocks)} max-width:640px blocks total")
+_pr_price_rule = re.search(r"\.pr-price\s*\{([^}]*)\}", _mobile_block)
+check(_pr_price_rule is not None and "display: none" not in _pr_price_rule.group(1)
+      and "display:none" not in _pr_price_rule.group(1),
+      "REGRESSION GUARD: .pr-price is never display:none inside the mobile media query -- "
+      "the real FanDuel price must stay visible on mobile",
+      f"got rule={_pr_price_rule.group(1) if _pr_price_rule else None!r}")
+check(_pr_price_rule is not None and "grid-area" in _pr_price_rule.group(1),
+      ".pr-price is given a real grid-area placement on mobile, not just left un-hidden "
+      "with nowhere to render", f"got rule={_pr_price_rule.group(1) if _pr_price_rule else None!r}")
 
 
 head("15. StaticSourceParityTests: dashboard/static/{index.html,app.css,app.js} is the ONLY "

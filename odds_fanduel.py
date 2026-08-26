@@ -892,6 +892,29 @@ def attach_market_prices(candidates, prices=None, k_prices=None, fi_prices=None,
     guessing when the prop is not offered -- an unpriced prop is a gap in
     coverage, not a bet at some assumed number.
 
+    ALSO sets `posted_implied`/`market_fair`/`market_fair_method`/
+    `edge_vs_fair` (P0-6 market-edge-semantics fix, additive -- market_odds/
+    market_implied/market_edge keep their exact pre-existing meaning). Real
+    bug this closes: for the genuinely two-sided markets (pitcher_outs,
+    strikeouts, nrfi_combined -- where FanDuel prices BOTH sides and
+    prop_probability.devig_two_sided gives an EXACT no-vig probability),
+    market_implied already IS the fair value. For every one-sided market
+    (combined_strikeouts and the generic branch below -- hits/total_bases/
+    home_runs/RBIs/runs/stolen_base/singles/doubles/triples/
+    hits_runs_rbis/lasers/moonshots, the majority of the real board),
+    market_implied is the RAW posted implied probability, INCLUDING the
+    book's ~8% hold, never de-vigged. Both were exposed to callers under
+    the identical field name/meaning (`market_edge = model - market_implied`),
+    so an "edge" on a one-sided market looked directly comparable to an
+    "edge" on a two-sided one when it structurally was not -- one is edge
+    against an inflated (hold-included) number, the other against the true
+    fair price. market_fair_method ("exact_two_sided" | "assumed_hold")
+    makes that distinction explicit and machine-readable; edge_vs_fair is
+    the one number that's honestly comparable across every market family.
+    eval_lib.market_probability() already built this exact distinction for
+    backtest analysis (see its own docstring) -- this brings the same
+    honesty to the live product these fields actually ship on.
+
     Consults price feeds. `prices` (fetch_prop_prices) is the one-sided
     batter feed; pitcher strikeouts are a separate, two-sided market
     (fetch_pitcher_strikeouts) that this function used to never even
@@ -955,9 +978,19 @@ def attach_market_prices(candidates, prices=None, k_prices=None, fi_prices=None,
             c["market_odds"] = po["over"]
             c["market_implied"] = round(po["true_over"], 4)
             c["market_hold"] = round(po["hold"], 4)
+            # market-edge-semantics fix (P0-6 data-integrity audit): see
+            # this function's own docstring addendum below for why
+            # posted_implied/market_fair/market_fair_method exist alongside
+            # the pre-existing market_implied/market_edge (kept, unchanged,
+            # for backward compatibility). Two-sided market: market_implied
+            # here IS already the exact no-vig fair probability.
+            c["posted_implied"] = round(pp.implied_probability(po["over"]), 4)
+            c["market_fair"] = c["market_implied"]
+            c["market_fair_method"] = "exact_two_sided"
             p = c.get("hit_probability")
             if p is not None:
                 c["market_edge"] = round(p - c["market_implied"], 4)
+                c["edge_vs_fair"] = c["market_edge"]
                 c["price_clears"] = pp.price_is_acceptable(po["over"], p)
             matched += 1
             continue
@@ -980,9 +1013,19 @@ def attach_market_prices(candidates, prices=None, k_prices=None, fi_prices=None,
                 continue
             c["market_odds"] = odds
             c["market_implied"] = round(pp.implied_probability(odds), 4)
+            # market-edge-semantics fix (P0-6): a one-sided ladder like the
+            # generic batter markets below -- FanDuel exposes only this one
+            # side, so market_fair is the assumed-hold approximation, not
+            # an exact no-vig read. Labelled honestly via market_fair_method
+            # rather than left indistinguishable from the exact branches
+            # above/below.
+            c["posted_implied"] = c["market_implied"]
+            c["market_fair"] = round(pp.devig(c["market_implied"]), 4)
+            c["market_fair_method"] = "assumed_hold"
             p = c.get("hit_probability")
             if p is not None:
                 c["market_edge"] = round(p - c["market_implied"], 4)
+                c["edge_vs_fair"] = round(p - c["market_fair"], 4)
                 c["price_clears"] = pp.price_is_acceptable(odds, p)
             matched += 1
             continue
@@ -1001,9 +1044,14 @@ def attach_market_prices(candidates, prices=None, k_prices=None, fi_prices=None,
             c["market_odds"] = odds
             c["market_implied"] = round(implied, 4)
             c["market_hold"] = round(fi["hold"], 4)
+            # market-edge-semantics fix (P0-6): two-sided market, exact fair.
+            c["posted_implied"] = round(pp.implied_probability(odds), 4)
+            c["market_fair"] = c["market_implied"]
+            c["market_fair_method"] = "exact_two_sided"
             p = c.get("hit_probability")
             if p is not None:
                 c["market_edge"] = round(p - c["market_implied"], 4)
+                c["edge_vs_fair"] = c["market_edge"]
                 c["price_clears"] = pp.price_is_acceptable(odds, p)
             matched += 1
             continue
@@ -1021,9 +1069,14 @@ def attach_market_prices(candidates, prices=None, k_prices=None, fi_prices=None,
             c["market_odds"] = k["over"]
             c["market_implied"] = round(k["true_over"], 4)
             c["market_hold"] = round(k["hold"], 4)
+            # market-edge-semantics fix (P0-6): two-sided market, exact fair.
+            c["posted_implied"] = round(pp.implied_probability(k["over"]), 4)
+            c["market_fair"] = c["market_implied"]
+            c["market_fair_method"] = "exact_two_sided"
             p = c.get("hit_probability")
             if p is not None:
                 c["market_edge"] = round(p - c["market_implied"], 4)
+                c["edge_vs_fair"] = c["market_edge"]
                 # NOT a raw >= against max_acceptable_price: that returns
                 # None outside (0,1) exclusive -- true at the extremes
                 # low-probability markets (stolen bases, home runs) actually
@@ -1059,9 +1112,21 @@ def attach_market_prices(candidates, prices=None, k_prices=None, fi_prices=None,
             continue
         c["market_odds"] = odds
         c["market_implied"] = round(pp.implied_probability(odds), 4)
+        # market-edge-semantics fix (P0-6): the majority of the board (every
+        # one-sided batter market: hits/total_bases/home_runs/RBIs/runs/
+        # stolen_base/singles/doubles/triples/hits_runs_rbis/lasers/
+        # moonshots) lands here. FanDuel structurally posts only one side
+        # for these (see market_probability()'s own docstring in eval_lib.py,
+        # which already built this exact distinction for backtest analysis
+        # -- this brings the same honesty to the live product), so
+        # market_fair is the assumed-hold approximation, not exact.
+        c["posted_implied"] = c["market_implied"]
+        c["market_fair"] = round(pp.devig(c["market_implied"]), 4)
+        c["market_fair_method"] = "assumed_hold"
         p = c.get("hit_probability")
         if p is not None:
             c["market_edge"] = round(p - c["market_implied"], 4)
+            c["edge_vs_fair"] = round(p - c["market_fair"], 4)
             c["price_clears"] = pp.price_is_acceptable(odds, p)
         matched += 1
     return candidates, matched
