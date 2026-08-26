@@ -2059,6 +2059,68 @@ else:
     check(True, "node not available -- Games drill-down check skipped, not failed")
 
 
+head("21. _clean_candidate_rows() (Part 2 structured evidence contract, 2026-08-26): real bug "
+     "-- why/watchouts used to be silently truncated to the first 4/2 items at this exact "
+     "serialization boundary, with no comment ever explaining the numbers and no signal to the "
+     "frontend that anything was cut. Measured against the real live payload (docs/data.json): "
+     "78% of props had exactly 4 why items and 65% had exactly 2 watchouts -- both suspiciously "
+     "exactly at the cap. Also covers this function's extraction out of run_live_fetch() into a "
+     "standalone, directly-testable module-level function (mirroring _build_game_context()'s own "
+     "precedent), verifying the schedule-keyed game_pk/game_start resolution still works via the "
+     "now-explicit `schedule` parameter instead of a closure.")
+
+
+def _raw_candidate(name="Aaron Judge", game_pk=555, why=None, watchouts=None, stat="hits"):
+    return {
+        "type": "batter", "name": name, "team": "NYY", "matchup": "NYY @ BOS", "side": None,
+        "prop": "Over 0.5 Hits", "projection": {"stat": stat, "value": 0.5, "needs": 1},
+        "combo_player_ids": None, "lean": None, "score": 70.0, "confidence": "Medium",
+        "hit_probability": 0.65, "market_odds": -140, "market_implied": 0.58,
+        "market_edge": 0.07, "price_clears": True, "market_hold": None,
+        "posted_implied": 0.58, "market_fair": 0.6, "market_fair_method": "assumed_hold",
+        "edge_vs_fair": 0.05, "reliability": "B", "reliability_note": None, "sample_n": 80,
+        "why": why if why is not None else [], "watchouts": watchouts if watchouts is not None else [],
+        "base_rate": 0.5, "lift": 0.1, "lift_reference_rate": None, "stable_lift": None,
+        "prob_ci": None, "probability_basis": "empirical", "probability_detail": None,
+        "prob_ci_source": None, "status": "lean", "status_reasons": [], "stale": False,
+        "game_pk": game_pk, "player_id": 999, "lineup_assumed": False, "signals": {},
+    }
+
+
+_many_why = ["Real reason %d" % i for i in range(7)]
+_many_watchouts = ["Real watchout %d" % i for i in range(5)]
+_cleaned = bd._clean_candidate_rows(
+    [_raw_candidate(why=_many_why, watchouts=_many_watchouts)],
+    schedule={555: {"start": "2099-01-01T00:00:00Z"}},
+)
+check(len(_cleaned) == 1, "_clean_candidate_rows() returns one cleaned row per raw row")
+check(_cleaned[0]["why"] == _many_why,
+      "a candidate with more than 4 real why items keeps ALL of them, not just the first 4 "
+      "-- got %r" % (_cleaned[0]["why"],))
+check(_cleaned[0]["watchouts"] == _many_watchouts,
+      "a candidate with more than 2 real watchouts keeps ALL of them, not just the first 2 "
+      "-- got %r" % (_cleaned[0]["watchouts"],))
+# game_pk/game_start still resolve correctly via the explicit `schedule` parameter now that
+# clean() is no longer a closure over run_live_fetch()'s own local `schedule` variable.
+check(_cleaned[0]["game_pk"] == 555, "game_pk passes through unchanged")
+check(_cleaned[0]["game_start"] == "2099-01-01T00:00:00Z",
+      "game_start resolves from the schedule dict keyed by game_pk, via the explicit "
+      "parameter -- not silently None after the closure->parameter extraction")
+
+# A row whose game_pk has no schedule entry degrades to an honest None, not a crash or a
+# fabricated placeholder.
+_no_sched = bd._clean_candidate_rows([_raw_candidate(game_pk=999999)], schedule={})
+check(_no_sched[0]["game_start"] is None,
+      "an unscheduled game_pk resolves game_start to an honest None, not a KeyError or a "
+      "fabricated value")
+
+# Empty/absent why/watchouts on the raw row degrade to an empty list, not None.
+_empty = bd._clean_candidate_rows([_raw_candidate(why=None, watchouts=None)], schedule={})
+check(_empty[0]["why"] == [] and _empty[0]["watchouts"] == [],
+      "a real candidate with genuinely zero (None) why/watchouts entries cleans to an empty "
+      "list, not None")
+
+
 head("15. StaticSourceParityTests: dashboard/static/{index.html,app.css,app.js} is the ONLY "
      "real source for the frontend shell -- docs/ is build output copy_static_assets() "
      "overwrites unconditionally on every real build. Real incident, 2026-08-25: a frontend "

@@ -213,6 +213,165 @@ def _compute_streaks(all_priced, max_workers=12):
     return entries[:15]
 
 
+def _clean_candidate_rows(rows, schedule):
+    out = []
+    for r in rows:
+        game_pk = r.get("game_pk")
+        proj = r.get("projection") or {}
+        stat = proj.get("stat")
+        combo = r.get("combo_player_ids")
+        # PHASE 4: a real, stable identity for this exact prop -- the
+        # single-array data model (see build_payload()) needs one, and
+        # the fragile (name, prop) STRING matching refresh_prices.py/
+        # refresh_grades.py/mergePriceUpdate() all used before this
+        # (three independent reimplementations of "find this same row
+        # again") collapses into one real key everywhere once every row
+        # carries it directly. game_pk + player (or combo) + stat +
+        # threshold is the same identity grade_pick() itself keys a
+        # settlement on -- reusing it here rather than inventing a
+        # separate one.
+        market_side = market_side_token(r)
+        cleaned = {
+            "identity_version": IDENTITY_SCHEMA_VERSION,
+            "type": r.get("type"), "name": r.get("name"), "team": r.get("team"),
+            "matchup": r.get("matchup"), "side": r.get("side"), "prop": r.get("prop"),
+            "projection": proj, "stat": stat, "lean": r.get("lean"),
+            "market_side": market_side,
+            "score": r.get("score"), "confidence": r.get("confidence"),
+            "hit_probability": r.get("hit_probability"),
+            "market_odds": r.get("market_odds"), "market_implied": r.get("market_implied"),
+            "market_edge": r.get("market_edge"), "price_clears": r.get("price_clears"),
+            # market_hold: PHASE 3 addition (see eval_lib.market_probability)
+            # -- present (a real number) only on the genuinely two-sided
+            # markets (strikeouts/pitcher_outs/nrfi_combined), where it is
+            # the EXACT measured hold from both real posted sides, not an
+            # assumed one. Surfaced so the detail view can say "exact
+            # market price" instead of "estimated" where it's actually true.
+            "market_hold": r.get("market_hold"),
+            # 2026-08-2X market-edge-semantics fix (P0-6): same
+            # "computed, then discarded" boundary as market_hold above
+            # -- posted_implied (the raw price-implied probability,
+            # always present when a price exists) / market_fair (the
+            # honest fair-value comparator -- exact when market_hold is
+            # present, an assumed-hold approximation otherwise) /
+            # market_fair_method (which of those two it is) /
+            # edge_vs_fair (model probability minus market_fair -- the
+            # one edge number that's honestly comparable across every
+            # market family, unlike market_edge, which mixes exact and
+            # approximate comparators under one name).
+            "posted_implied": r.get("posted_implied"),
+            "market_fair": r.get("market_fair"),
+            "market_fair_method": r.get("market_fair_method"),
+            "edge_vs_fair": r.get("edge_vs_fair"),
+            "reliability": r.get("reliability"), "reliability_note": r.get("reliability_note"),
+            "sample_n": r.get("sample_n"),
+            # Real bug, found 2026-08-26 (structured evidence contract
+            # audit): why/watchouts used to be silently truncated to the
+            # first 4/2 items here, with no comment ever explaining why
+            # those specific numbers, and no signal to the frontend that
+            # anything was cut. Measured against the real live payload
+            # (docs/data.json): 78% of props had exactly 4 why items and
+            # 65% had exactly 2 watchouts -- both suspiciously exactly at
+            # the cap, meaning the large majority of real, already-
+            # computed reasoning was being discarded at this exact
+            # serialization boundary. The detail sheet (detailBody() in
+            # app.js) is an explicit progressive-disclosure surface --
+            # "Why It Could Hit"/"Why It Could Miss" already map over
+            # the FULL array it receives, so it needed no frontend
+            # change to correctly show everything once this stopped
+            # cutting it off. The compact card (pickCard()) only ever
+            # showed why[0] anyway and is unaffected either way.
+            "why": r.get("why") or [],
+            "watchouts": r.get("watchouts") or [],
+            "base_rate": r.get("base_rate"), "lift": r.get("lift"),
+            # Additive lift-reference concept, separate from base_rate/
+            # lift -- see stable_base_rate.py. None except on
+            # hits_runs_rbis/runs/rbis where a real season-to-date
+            # reference exists.
+            "lift_reference_rate": r.get("lift_reference_rate"),
+            "stable_lift": r.get("stable_lift"),
+            # prob_ci: real bug, found in the same audit -- this field
+            # was computed (attach_reliability) and never even reached
+            # the live dashboard's payload at all, so a mismatched CI
+            # bug this exact field would have exposed stayed invisible
+            # here (it only showed on the static board). Now correctly
+            # scoped per exact line (see generate_picks._batter_options'
+            # own fix) before it ever reaches this boundary.
+            "prob_ci": r.get("prob_ci"),
+            # 2026-08-2X data-integrity fix (HR probability/base-rate/
+            # sample semantics trace + CI provenance-honesty audit):
+            # all three of these were computed upstream in
+            # generate_picks.py and silently dropped at this exact
+            # serialization boundary -- the same "computed, then
+            # discarded" failure prob_ci itself (comment above) was
+            # already found and fixed for once. Without them, the
+            # public payload had no way to say whether a given
+            # hit_probability was a real empirical rate, a modelled
+            # blend, a league-only fallback, or a shrunk mix of the
+            # two -- or whether prob_ci (when present) came from this
+            # player's own record vs a market/bucket-level historical
+            # band. A viewer could not tell "we have real evidence"
+            # from "we don't" for the exact same displayed number.
+            "probability_basis": r.get("probability_basis"),
+            "probability_detail": r.get("probability_detail"),
+            "prob_ci_source": r.get("prob_ci_source"),
+            # The single field this whole rebuild exists to add: which
+            # of the four real recommendation states this row earned,
+            # and why -- computed once, above, by recommendation.py,
+            # and carried through here rather than re-derived or
+            # dropped at the serialization boundary (the exact "computed,
+            # then discarded" failure this rebuild's own audit found
+            # repeatedly elsewhere in this codebase).
+            "recommendation_status": r.get("status"),
+            "status_reasons": r.get("status_reasons"),
+            "stale": r.get("stale", False),
+            "game_pk": game_pk, "game_start": (schedule.get(game_pk) or {}).get("start"),
+            # player_id/combo_player_ids: not used anywhere in this page's
+            # own rendering, but required by grade_results.grade_pick() --
+            # dashboard/refresh_grades.py reshapes a row back into a
+            # candidate dict to grade it live, and needs these to find the
+            # real box score line. Direct request: "for the top picks,
+            # them to show when it's cashed... make the pick yellow when
+            # the game is happening... green if it cashes, red if it
+            # doesn't."
+            "player_id": r.get("player_id"),
+            "combo_player_ids": combo,
+            # Early Look: True only for a candidate whose batting-order
+            # slot is GUESSED (Rotowire projection or last-known
+            # lineup), never a real posted one -- see quality_control()
+            # in generate_picks.py. Carried on the row itself (not
+            # inferred from which tab it's rendered in) so the client
+            # can visibly flag it no matter where it ends up.
+            "lineup_assumed": r.get("lineup_assumed"),
+            # OPPORTUNITY fact for the detail sheet (2026-08-25): the real
+            # batting-order slot. score_batter() records it in `signals`
+            # via _sig(signals, "lineup_slot", order, lineup_context) --
+            # but _sig() stores the SCALED value (lineup_context =
+            # scale(10 - order, 1, 9), generate_picks.py:1379), not the
+            # raw order number, and no other field on the candidate ever
+            # carries the raw order directly. Inverted back here (the
+            # exact same formula backtest/opportunity_decomposition.
+            # derive_batting_order() already uses for the same purpose --
+            # mirrored rather than imported, since a live production
+            # payload builder depending on the offline research package
+            # would be a strange, unnecessary coupling) so the payload
+            # carries a real, human "batting order" fact instead of a
+            # meaningless 0-100 scaled number. Deliberately just the slot
+            # number, not a derived "supportive/concern" judgment -- see
+            # frontend/detail_sheet_data_audit_2026-08-25.md for why the
+            # underlying cat_context component is NOT safely gradable
+            # without the fitted score weights (which differ by market
+            # and aren't exposed here). "Batting Nth" needs no weight to
+            # state as a plain fact. None for pitchers (no batting slot)
+            # and for any row where the signal never fired.
+            "batting_order": _derive_batting_order(
+                (r.get("signals") or {}).get("lineup_slot")),
+        }
+        cleaned["id"] = canonical_prop_id(cleaned)
+        out.append(cleaned)
+    return out
+
+
 def run_live_fetch():
     """Isolated live re-run of generate_picks.py's scoring pass. Returns the
     same shape fetch_full_depth.py (the scratch prototype this was promoted
@@ -378,146 +537,7 @@ def run_live_fetch():
                                  board_generated_at=board_generated_at)
 
     def clean(rows):
-        out = []
-        for r in rows:
-            game_pk = r.get("game_pk")
-            proj = r.get("projection") or {}
-            stat = proj.get("stat")
-            combo = r.get("combo_player_ids")
-            # PHASE 4: a real, stable identity for this exact prop -- the
-            # single-array data model (see build_payload()) needs one, and
-            # the fragile (name, prop) STRING matching refresh_prices.py/
-            # refresh_grades.py/mergePriceUpdate() all used before this
-            # (three independent reimplementations of "find this same row
-            # again") collapses into one real key everywhere once every row
-            # carries it directly. game_pk + player (or combo) + stat +
-            # threshold is the same identity grade_pick() itself keys a
-            # settlement on -- reusing it here rather than inventing a
-            # separate one.
-            market_side = market_side_token(r)
-            cleaned = {
-                "identity_version": IDENTITY_SCHEMA_VERSION,
-                "type": r.get("type"), "name": r.get("name"), "team": r.get("team"),
-                "matchup": r.get("matchup"), "side": r.get("side"), "prop": r.get("prop"),
-                "projection": proj, "stat": stat, "lean": r.get("lean"),
-                "market_side": market_side,
-                "score": r.get("score"), "confidence": r.get("confidence"),
-                "hit_probability": r.get("hit_probability"),
-                "market_odds": r.get("market_odds"), "market_implied": r.get("market_implied"),
-                "market_edge": r.get("market_edge"), "price_clears": r.get("price_clears"),
-                # market_hold: PHASE 3 addition (see eval_lib.market_probability)
-                # -- present (a real number) only on the genuinely two-sided
-                # markets (strikeouts/pitcher_outs/nrfi_combined), where it is
-                # the EXACT measured hold from both real posted sides, not an
-                # assumed one. Surfaced so the detail view can say "exact
-                # market price" instead of "estimated" where it's actually true.
-                "market_hold": r.get("market_hold"),
-                # 2026-08-2X market-edge-semantics fix (P0-6): same
-                # "computed, then discarded" boundary as market_hold above
-                # -- posted_implied (the raw price-implied probability,
-                # always present when a price exists) / market_fair (the
-                # honest fair-value comparator -- exact when market_hold is
-                # present, an assumed-hold approximation otherwise) /
-                # market_fair_method (which of those two it is) /
-                # edge_vs_fair (model probability minus market_fair -- the
-                # one edge number that's honestly comparable across every
-                # market family, unlike market_edge, which mixes exact and
-                # approximate comparators under one name).
-                "posted_implied": r.get("posted_implied"),
-                "market_fair": r.get("market_fair"),
-                "market_fair_method": r.get("market_fair_method"),
-                "edge_vs_fair": r.get("edge_vs_fair"),
-                "reliability": r.get("reliability"), "reliability_note": r.get("reliability_note"),
-                "sample_n": r.get("sample_n"),
-                "why": (r.get("why") or [])[:4],
-                "watchouts": (r.get("watchouts") or [])[:2],
-                "base_rate": r.get("base_rate"), "lift": r.get("lift"),
-                # Additive lift-reference concept, separate from base_rate/
-                # lift -- see stable_base_rate.py. None except on
-                # hits_runs_rbis/runs/rbis where a real season-to-date
-                # reference exists.
-                "lift_reference_rate": r.get("lift_reference_rate"),
-                "stable_lift": r.get("stable_lift"),
-                # prob_ci: real bug, found in the same audit -- this field
-                # was computed (attach_reliability) and never even reached
-                # the live dashboard's payload at all, so a mismatched CI
-                # bug this exact field would have exposed stayed invisible
-                # here (it only showed on the static board). Now correctly
-                # scoped per exact line (see generate_picks._batter_options'
-                # own fix) before it ever reaches this boundary.
-                "prob_ci": r.get("prob_ci"),
-                # 2026-08-2X data-integrity fix (HR probability/base-rate/
-                # sample semantics trace + CI provenance-honesty audit):
-                # all three of these were computed upstream in
-                # generate_picks.py and silently dropped at this exact
-                # serialization boundary -- the same "computed, then
-                # discarded" failure prob_ci itself (comment above) was
-                # already found and fixed for once. Without them, the
-                # public payload had no way to say whether a given
-                # hit_probability was a real empirical rate, a modelled
-                # blend, a league-only fallback, or a shrunk mix of the
-                # two -- or whether prob_ci (when present) came from this
-                # player's own record vs a market/bucket-level historical
-                # band. A viewer could not tell "we have real evidence"
-                # from "we don't" for the exact same displayed number.
-                "probability_basis": r.get("probability_basis"),
-                "probability_detail": r.get("probability_detail"),
-                "prob_ci_source": r.get("prob_ci_source"),
-                # The single field this whole rebuild exists to add: which
-                # of the four real recommendation states this row earned,
-                # and why -- computed once, above, by recommendation.py,
-                # and carried through here rather than re-derived or
-                # dropped at the serialization boundary (the exact "computed,
-                # then discarded" failure this rebuild's own audit found
-                # repeatedly elsewhere in this codebase).
-                "recommendation_status": r.get("status"),
-                "status_reasons": r.get("status_reasons"),
-                "stale": r.get("stale", False),
-                "game_pk": game_pk, "game_start": (schedule.get(game_pk) or {}).get("start"),
-                # player_id/combo_player_ids: not used anywhere in this page's
-                # own rendering, but required by grade_results.grade_pick() --
-                # dashboard/refresh_grades.py reshapes a row back into a
-                # candidate dict to grade it live, and needs these to find the
-                # real box score line. Direct request: "for the top picks,
-                # them to show when it's cashed... make the pick yellow when
-                # the game is happening... green if it cashes, red if it
-                # doesn't."
-                "player_id": r.get("player_id"),
-                "combo_player_ids": combo,
-                # Early Look: True only for a candidate whose batting-order
-                # slot is GUESSED (Rotowire projection or last-known
-                # lineup), never a real posted one -- see quality_control()
-                # in generate_picks.py. Carried on the row itself (not
-                # inferred from which tab it's rendered in) so the client
-                # can visibly flag it no matter where it ends up.
-                "lineup_assumed": r.get("lineup_assumed"),
-                # OPPORTUNITY fact for the detail sheet (2026-08-25): the real
-                # batting-order slot. score_batter() records it in `signals`
-                # via _sig(signals, "lineup_slot", order, lineup_context) --
-                # but _sig() stores the SCALED value (lineup_context =
-                # scale(10 - order, 1, 9), generate_picks.py:1379), not the
-                # raw order number, and no other field on the candidate ever
-                # carries the raw order directly. Inverted back here (the
-                # exact same formula backtest/opportunity_decomposition.
-                # derive_batting_order() already uses for the same purpose --
-                # mirrored rather than imported, since a live production
-                # payload builder depending on the offline research package
-                # would be a strange, unnecessary coupling) so the payload
-                # carries a real, human "batting order" fact instead of a
-                # meaningless 0-100 scaled number. Deliberately just the slot
-                # number, not a derived "supportive/concern" judgment -- see
-                # frontend/detail_sheet_data_audit_2026-08-25.md for why the
-                # underlying cat_context component is NOT safely gradable
-                # without the fitted score weights (which differ by market
-                # and aren't exposed here). "Batting Nth" needs no weight to
-                # state as a plain fact. None for pitchers (no batting slot)
-                # and for any row where the signal never fired.
-                "batting_order": _derive_batting_order(
-                    (r.get("signals") or {}).get("lineup_slot")),
-            }
-            cleaned["id"] = canonical_prop_id(cleaned)
-            out.append(cleaned)
-        return out
+        return _clean_candidate_rows(rows, schedule)
 
     out = {"generated_at": board_generated_at, "date": gp.m.TODAY,
           "odds_fetched_at": odds_fetched_at,
