@@ -809,8 +809,18 @@ def park_weather_asof(game_meta, date, sleep=0.2):
                 "temperature_unit": "fahrenheit", "windspeed_unit": "mph", "timezone": "auto",
             }, timeout=25, retries=2)
             r.raise_for_status()
-            h = r.json()["hourly"]
-            idx = min(max(gmeta["hour"], 0), 23)
+            meteo_json = r.json()
+            h = meteo_json["hourly"]
+            # Point-in-time audit (2026-08-26): this used the same buggy
+            # Eastern-hour index (gmeta["hour"]) the live-path timezone fix
+            # (mlb_daily.forecast_hour_index(), 8d00954b) already replaced at
+            # all 4 live call sites -- the archive endpoint below is also
+            # requested with timezone=auto, so its hourly.time array is
+            # ALSO stadium-local, not Eastern, with the identical 0/1/2/3-hour
+            # error by zone. Backtest weather was still silently reading the
+            # wrong hour for every non-Eastern park. Reuses the same already-
+            # tested shared function instead of a second copy of the fix.
+            idx = m.forecast_hour_index(gmeta.get("game_start_utc"), meteo_json)
             temp = h["temperature_2m"][idx]
             wsp = h["windspeed_10m"][idx]
             wdir = h["winddirection_10m"][idx]

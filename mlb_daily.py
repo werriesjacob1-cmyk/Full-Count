@@ -1335,10 +1335,30 @@ def _bullpen_fetch_one(args):
         # old `teamId=` call raised "unexpected keyword argument" on current
         # mlb-statsapi (verified against installed 1.9.0 signature).
         schedule=statsapi.schedule(start_date=L7_START,end_date=TODAY,team=team_id)
-        # [:7] here is a sanity cap against an unexpectedly large schedule()
-        # result, not a real truncation of the L7 window -- see the real bug
-        # this replaced, below.
-        games=[(g["game_id"], g.get("game_date")) for g in schedule[:7]]
+        # Point-in-time audit (2026-08-26): schedule[:7] silently assumed
+        # statsapi.schedule() returns results in ascending chronological
+        # order AND that a team never has more than 7 games in the
+        # L7_START..TODAY window -- verified live against the real API that
+        # the order assumption holds today, but a team with a doubleheader
+        # inside this 8-calendar-day window can have 8+ games, and taking
+        # the front slice of an ascending list keeps the OLDEST games and
+        # silently drops the most recent (freshest, most fatigue-relevant)
+        # one(s) -- backwards for a signal whose entire point is recency.
+        # Sorted explicitly by real game start time here instead of trusting
+        # unstated API ordering (the exact risk flagged in this audit), then
+        # the LAST 7 (most recent) are kept, in ascending order so every
+        # existing `games[-1] == most recent` assumption downstream
+        # (generate_picks._reliever_detail()) still holds unchanged.
+        def _game_sort_key(g):
+            dt = g.get("game_datetime")
+            if dt:
+                return dt
+            # Fallback for the rare entry missing game_datetime: date +
+            # game_num (1/2 for a doubleheader) keeps Game 1 before Game 2
+            # on the same calendar date instead of an arbitrary tie.
+            return f"{g.get('game_date','')}T{g.get('game_num',1):02d}"
+        ordered=sorted(schedule, key=_game_sort_key)[-7:]
+        games=[(g["game_id"], g.get("game_date")) for g in ordered]
         # REAL BUG FOUND LIVE (2026-08-25, release-readiness audit): every
         # pitcher in the box score -- including that game's OWN STARTER --
         # was being folded into `usage`, the same dict downstream code and
