@@ -29,6 +29,7 @@ from __future__ import annotations
 
 import functools
 import http.server
+import json
 import os
 import sys
 import threading
@@ -251,10 +252,25 @@ try:
               "detail-sheet open/close against")
     ctx.close()
 
-    # ── 6. My Board (watchlist): star from detail, appears, unstars ───────
-    head("6. My Board: saving a prop from the detail sheet's real star "
-         "button actually adds it to My Board (route: watchlist), updates "
-         "the nav count badge, and unstarring removes it again.")
+    # ── 6. My Board (watchlist): save, individual unsave, Clear All ───────
+    # Real bug found in THIS test (release-candidate review, 2026-08-26):
+    # the old Clear All check's fallback assertion was
+    #   confirmed is True or page.evaluate("() => watchlist.size") >= 0
+    # -- the second half is ALWAYS true (a Set's .size can never be
+    # negative), so this never actually failed even when Clear All did
+    # nothing. Root cause of why Clear All silently did nothing: Playwright
+    # auto-DISMISSES confirm()/alert() dialogs unless a handler is
+    # registered, and #mb-clear-all's own click handler is
+    # `if (!confirm(...)) return;` -- so every prior run of this test
+    # clicked Clear All, had the browser auto-dismiss the confirm(), and
+    # the handler returned immediately without clearing anything. Fixed by
+    # registering a real dialog-accept handler before clicking, and
+    # removing the tautological fallback entirely.
+    head("6a. My Board: saving a prop from the detail sheet's real star "
+         "button adds it, and the real available unsave control -- opening "
+         "that same saved row from My Board and clicking the detail "
+         "sheet's star again -- removes exactly that one id, updates the "
+         "nav badge, and updates the rendered page.")
     ctx, page = new_page()
     load(page, "#/today")
     card = page.query_selector(".pick-card[data-open], .prop-row[data-open]")
@@ -271,36 +287,129 @@ try:
             pressed_after = page.eval_on_selector("#detail-star", "el => el.getAttribute('aria-pressed')")
             check(pressed_before != pressed_after, "aria-pressed flips after clicking the star button",
                   f"before={pressed_before} after={pressed_after}")
-            in_watchlist = page.evaluate(f"() => watchlist.has({prop_id!r})")
-            check(in_watchlist, "the real prop id is actually present in the watchlist Set")
+            check(page.evaluate(f"() => watchlist.has({prop_id!r})"),
+                  "the real prop id is actually present in the watchlist Set")
             count_hidden = page.eval_on_selector("#watchlist-count", "el => el.hidden")
             check(not count_hidden, "the nav My Board count badge becomes visible once >0 saved")
+            count_text = page.eval_on_selector("#watchlist-count", "el => el.textContent")
+            check(count_text == "1", "the nav badge shows the real count (1)", f"got {count_text!r}")
             page.keyboard.press("Escape")
             page.evaluate("() => { location.hash = '#/watchlist'; }")
             page.wait_for_timeout(250)
-            item_present = page.evaluate(
-                f"() => [...document.querySelectorAll('[data-open]')].some(b => b.dataset.open === {prop_id!r})")
-            check(item_present, "the saved prop actually renders on the My Board page")
-            # unstar via My Board's own Clear all (real, always-present affordance)
-            clear_btn = page.query_selector("#mb-clear-all")
-            if clear_btn:
-                clear_btn.click()
+            check(page.evaluate(
+                f"() => [...document.querySelectorAll('#page-watchlist [data-open]')]"
+                f".some(b => b.dataset.open === {prop_id!r})"),
+                "the saved prop actually renders on the My Board page")
+            # THE ACTUAL AVAILABLE UNSAVE CONTROL: My Board rows have no
+            # inline star (propRow() is a single <button data-open>, see its
+            # own comment on why a nested real <button> would be invalid,
+            # inaccessible HTML) -- unsaving goes through opening the row
+            # (which opens the SAME detail sheet) and clicking its star
+            # again. This IS the real, only individual-unsave path; testing
+            # it is testing real UX, not inventing a shortcut.
+            #
+            # Scoped to #page-watchlist specifically -- real bug found
+            # writing this test: navigating away from Today does not clear
+            # its DOM, only hides it ([hidden] on the container), so an
+            # unscoped `[data-open="ID"]` selector can match the SAME real
+            # prop's card still sitting hidden on #page-today and return
+            # THAT element (wrong page, invisible) instead of the one on
+            # My Board.
+            try:
+                row = page.wait_for_selector(f'#page-watchlist [data-open="{prop_id}"]',
+                                              state="visible", timeout=8000)
+            except Exception:
+                row = None
+            check(row is not None, "the saved row on My Board is itself openable")
+            if row:
+                row.click()
                 page.wait_for_timeout(200)
-                confirmed = None
-                for _ in range(5):
-                    if page.evaluate("() => watchlist.size") == 0:
-                        confirmed = True
-                        break
-                    page.wait_for_timeout(100)
-                # Clear all may route through a confirm() dialog in some builds;
-                # if watchlist still has the item, directly verify toggleWatch()
-                # itself works as a fallback (already proven above) rather than
-                # false-failing on an unrelated confirm-dialog UX choice.
-                check(confirmed is True or page.evaluate("() => watchlist.size") >= 0,
-                      "My Board's clear-all path was exercised without throwing",
-                      f"watchlist.size={page.evaluate('() => watchlist.size')}")
+                unstar_btn = page.query_selector("#detail-star")
+                pressed_mid = page.eval_on_selector("#detail-star", "el => el.getAttribute('aria-pressed')")
+                check(pressed_mid == "true", "re-opening the saved prop shows it as still saved "
+                      "(aria-pressed=true) before unsaving", f"got {pressed_mid!r}")
+                unstar_btn.click()
+                page.wait_for_timeout(200)
+                pressed_final = page.eval_on_selector("#detail-star", "el => el.getAttribute('aria-pressed')")
+                check(pressed_final == "false", "REGRESSION GUARD: clicking the star a second time "
+                      "un-presses it", f"got {pressed_final!r}")
+                check(not page.evaluate(f"() => watchlist.has({prop_id!r})"),
+                      "REGRESSION GUARD: that exact id is gone from the real watchlist Set after unsaving",
+                      f"watchlist contents: {page.evaluate('() => [...watchlist]')}")
+                page.keyboard.press("Escape")
+                page.wait_for_timeout(200)
+                check(not page.evaluate(
+                    f"() => [...document.querySelectorAll('#page-watchlist [data-open]')]"
+                    f".some(b => b.dataset.open === {prop_id!r})"),
+                    "REGRESSION GUARD: the unsaved prop no longer renders on the "
+                    "re-rendered My Board page")
+                count_hidden_after = page.eval_on_selector("#watchlist-count", "el => el.hidden")
+                check(count_hidden_after, "REGRESSION GUARD: the nav badge hides again once the "
+                      "board is empty (0 saved)")
     else:
-        check(False, "at least one clickable card exists to test My Board save/unsave against")
+        check(False, "at least one clickable card exists to test My Board individual unsave against")
+    ctx.close()
+
+    head("6b. My Board: Clear All (with a real dialog-accept handler, not the "
+         "auto-dismiss Playwright applies by default) removes every saved prop, "
+         "the nav badge hides, localStorage reflects the empty state, and it "
+         "STAYS empty after a real page reload (persistence, not just in-memory "
+         "state).")
+    ctx, page = new_page()
+    load(page, "#/today")
+    cards = page.query_selector_all(".pick-card[data-open], .prop-row[data-open]")
+    ids = []
+    for c in cards:
+        pid = c.get_attribute("data-open")
+        if pid not in ids:
+            ids.append(pid)
+        if len(ids) >= 2:
+            break
+    if len(ids) >= 2:
+        for pid in ids:
+            page.evaluate(f"(id) => toggleWatch(id)", pid)
+        page.wait_for_timeout(150)
+        check(page.evaluate("() => watchlist.size") == len(ids),
+              f"REGRESSION GUARD setup: {len(ids)} distinct real props are actually saved before "
+              "testing Clear All", f"watchlist={page.evaluate('() => [...watchlist]')}")
+        page.evaluate("() => { location.hash = '#/watchlist'; }")
+        page.wait_for_timeout(250)
+        # Register the accept handler BEFORE the click that triggers confirm() --
+        # this is the exact fix for the false-positive this check replaces.
+        page.once("dialog", lambda dialog: dialog.accept())
+        clear_btn = page.query_selector("#mb-clear-all")
+        check(clear_btn is not None, "the real #mb-clear-all button exists")
+        if clear_btn:
+            clear_btn.click()
+            page.wait_for_timeout(300)
+            check(page.evaluate("() => watchlist.size") == 0,
+                  "REGRESSION GUARD: watchlist.size is genuinely 0 after Clear All is confirmed "
+                  "(this is the exact assertion the old tautological fallback never actually made)",
+                  f"got size={page.evaluate('() => watchlist.size')}")
+            check(page.eval_on_selector_all("#page-watchlist [data-open]", "els => els.length") == 0,
+                  "no saved rows remain rendered on My Board")
+            count_hidden = page.eval_on_selector("#watchlist-count", "el => el.hidden")
+            check(count_hidden, "the nav badge is hidden with 0 saved")
+            stored = page.evaluate("() => localStorage.getItem('fc_watchlist_v1')")
+            check(stored is not None and json.loads(stored) == [],
+                  "REGRESSION GUARD: localStorage's real persisted value is an empty array, "
+                  "not just the in-memory Set", f"got stored={stored!r}")
+            # Real reload -- proves persistence, not just that the in-memory
+            # Set was cleared for the current page load.
+            page.reload()
+            page.wait_for_selector(".pick-card, .empty-state, .prop-row", timeout=20000)
+            page.wait_for_timeout(200)
+            check(page.evaluate("() => watchlist.size") == 0,
+                  "REGRESSION GUARD: after a real browser reload, the watchlist is STILL empty -- "
+                  "the clear genuinely persisted, it wasn't just cleared in memory for this session",
+                  f"got size={page.evaluate('() => watchlist.size')}")
+            page.evaluate("() => { location.hash = '#/watchlist'; }")
+            page.wait_for_timeout(250)
+            check(page.eval_on_selector_all("#page-watchlist [data-open]", "els => els.length") == 0,
+                  "My Board still renders as empty after reload, not repopulated from stale state")
+    else:
+        check(False, "the current slate has at least 2 distinct real props to test Clear All "
+              "against (needs >=2 to prove it clears more than one)")
     ctx.close()
 
     # ── 7. Parlay: Suggested Parlay never shows a broken/fabricated price ─
