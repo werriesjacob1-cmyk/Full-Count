@@ -743,8 +743,8 @@ class EqualVolumeExperiment:
                 "eligible_population_content_fingerprint": self.population.content_fingerprint,
                 "same_population_both_sides": True,  # structural: one object
                 "same_operational_volume_by_date": (
-                    self.volume_by_date is not None
-                    and self._selection_count_by_date(champ_sel)
+                    None if self.volume_by_date is None else
+                    self._selection_count_by_date(champ_sel)
                     == self._selection_count_by_date(chal_sel)
                     == dict(sorted(self.volume_by_date.items()))
                 ),
@@ -811,6 +811,12 @@ def format_report(report):
                f"eligibility {p['eligibility_definition_version']}")
     out.append(f"requested volume: {report['requested_volume']}  "
                f"outcome policy: {report['outcome_policy']['outcome_mode']}")
+    if report.get("allocation_mode") == "per_date_locked":
+        sched = report.get("requested_volume_by_date") or {}
+        out.append(f"allocation: per-date locked across {len(sched)} eligible dates "
+                   f"(including explicit zero-pick dates)")
+    else:
+        out.append("allocation: aggregate top-N (not promotion-grade operational volume)")
     out.append("")
     out.append("REALIZED HIT RATE (the promotion standard)")
     out.append(f"  champion   {c['policy_name']} v{c['policy_version']}: "
