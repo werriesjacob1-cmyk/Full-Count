@@ -450,6 +450,44 @@ def fetch_live_market_snapshot(ctx, *, fd=None, observed_at=None):
     return feeds, market_context
 
 
+def prepare_research_candidates(candidates, ctx, *, gp, fd, date,
+                                observed_at=None):
+    """Mirror live QC/signal/market mutation on a deep research copy only."""
+    import copy
+
+    research_candidates = copy.deepcopy(candidates)
+    kept, rejected, assumed_lineup = gp.quality_control(
+        research_candidates, ctx["game_meta"], ctx["park_wx"],
+        ctx["emp_pitchers"])
+
+    signal_trust = gp.load_signal_trust()
+    gp.apply_signal_weights(kept, trust=signal_trust)
+
+    feeds, market_context = fetch_live_market_snapshot(
+        ctx, fd=fd, observed_at=observed_at)
+    fd.attach_market_prices(
+        research_candidates,
+        prices=feeds["prices"],
+        k_prices=feeds["k_prices"],
+        fi_prices=feeds["fi_prices"],
+        po_prices=feeds["po_prices"],
+        combined_k_prices=feeds["combined_k_prices"],
+    )
+
+    qc_index = {}
+    for candidate in kept:
+        qc_index[candidate_identity(candidate, date=date)] = (
+            "confirmed_lineup", None)
+    for candidate in assumed_lineup:
+        qc_index[candidate_identity(candidate, date=date)] = (
+            "assumed_lineup", "lineup not confirmed")
+    for candidate in rejected:
+        qc_index[candidate_identity(candidate, date=date)] = (
+            "rejected", candidate.get("qc_reason"))
+
+    return research_candidates, qc_index, market_context
+
+
 def run_live_snapshot(out_dir=DEFAULT_OUT_DIR):
     """The one function in this module that actually runs a real,
     independent scoring pass -- NOT unit tested directly (matches this
@@ -470,7 +508,6 @@ def run_live_snapshot(out_dir=DEFAULT_OUT_DIR):
     snapshot-manifest event on EVERY observation, so an unchanged candidate
     can be proven present at 13:00 even when its deduplicated changelog row
     was last written at 12:00."""
-    import copy
     import sys
     import tempfile
     from datetime import datetime, timezone
@@ -501,43 +538,13 @@ def run_live_snapshot(out_dir=DEFAULT_OUT_DIR):
         park_wx = ctx["park_wx"]
         emp_pitchers = ctx["emp_pitchers"]
 
-        # From this boundary onward every mutating production helper operates
-        # ONLY on the research copy. quality_control() annotates rejected and
-        # assumed-lineup candidates; apply_signal_weights() changes score; and
-        # attach_market_prices() adds market fields. Keeping all three off the
-        # source list makes run_live_snapshot genuinely observational with
-        # respect to the scoring pass it just captured.
-        research_candidates = copy.deepcopy(candidates)
-        kept, rejected, assumed_lineup = gp.quality_control(
-            research_candidates, game_meta, park_wx, emp_pitchers)
-
-        # Match the real production decision surface for candidates that clear
-        # QC: live-only signal trust is applied after QC in generate_picks.main.
-        # Rejected/assumed candidates keep their pre-QC score, which is honest:
-        # production never advances them into this ranking adjustment.
-        signal_trust = gp.load_signal_trust()
-        gp.apply_signal_weights(kept, trust=signal_trust)
-
-        odds_observed_at = datetime.now(timezone.utc).isoformat()
-        feeds, market_context = fetch_live_market_snapshot(
-            ctx, fd=fd, observed_at=odds_observed_at)
-        fd.attach_market_prices(
-            research_candidates,
-            prices=feeds["prices"],
-            k_prices=feeds["k_prices"],
-            fi_prices=feeds["fi_prices"],
-            po_prices=feeds["po_prices"],
-            combined_k_prices=feeds["combined_k_prices"],
-        )
-
         date = gp.m.TODAY
-        qc_index = {}
-        for c in kept:
-            qc_index[candidate_identity(c, date=date)] = ("confirmed_lineup", None)
-        for c in assumed_lineup:
-            qc_index[candidate_identity(c, date=date)] = ("assumed_lineup", "lineup not confirmed")
-        for c in rejected:
-            qc_index[candidate_identity(c, date=date)] = ("rejected", c.get("qc_reason"))
+        odds_observed_at = datetime.now(timezone.utc).isoformat()
+        research_candidates, qc_index, market_context = (
+            prepare_research_candidates(
+                candidates, ctx, gp=gp, fd=fd, date=date,
+                observed_at=odds_observed_at)
+        )
 
         generated_at = datetime.now(timezone.utc).isoformat()
         now = datetime.now(timezone.utc)
