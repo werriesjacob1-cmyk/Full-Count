@@ -644,6 +644,15 @@ def push_durable_checkpoint(run_dir, manifest, *, dates=None, environment=None,
                       env=env, timeout=30)
             return blob if up.returncode == 0 else None
 
+        def require_stage(path_in_tree, data_bytes, *, executable=False):
+            blob = stage_blob(path_in_tree, data_bytes, executable=executable)
+            if blob is None:
+                result["reason"] = (
+                    f"failed to stage required durable blob {path_in_tree!r}; "
+                    "refusing to create or push a partial checkpoint commit")
+                return False
+            return True
+
         for d in dates:
             paths = durable_paths(run_id, d)
             meta_local = os.path.join(run_dir, "checkpoints", f"{d}.meta.json")
@@ -653,26 +662,36 @@ def push_durable_checkpoint(run_dir, manifest, *, dates=None, environment=None,
             if paths["meta"] in present and paths["rows_gz"] in present:
                 result["dates_skipped_present"] += 1
                 continue
+            if include_rows and not os.path.exists(data_local):
+                result["reason"] = (
+                    f"checkpoint {d} has metadata but no rows file at {data_local!r}; "
+                    "refusing to publish an incomplete durable date")
+                return result
             with open(meta_local, "rb") as f:
                 meta_bytes = f.read()
-            stage_blob(paths["meta"], meta_bytes)
-            if include_rows and os.path.exists(data_local):
+            if not require_stage(paths["meta"], meta_bytes):
+                return result
+            if include_rows:
                 with open(data_local, "rb") as f:
                     raw = f.read()
                 gz = gzip.compress(raw, compresslevel=9)
-                stage_blob(paths["rows_gz"], gz)
+                if not require_stage(paths["rows_gz"], gz):
+                    return result
                 result["bytes_written"] += len(gz)
             result["dates_written"] += 1
 
         with open(os.path.join(run_dir, "manifest.json"), "rb") as f:
-            stage_blob(dp["manifest"], f.read())
+            if not require_stage(dp["manifest"], f.read()):
+                return result
 
         index = build_durable_index(
             manifest, state_summary or {}, environment=environment,
             lineage=lineage, cache_mode=cache_mode,
             dates=durable_date_ledger(run_dir, dates),
         )
-        stage_blob(dp["index"], json.dumps(index, indent=2, sort_keys=True).encode())
+        if not require_stage(
+                dp["index"], json.dumps(index, indent=2, sort_keys=True).encode()):
+            return result
 
         tree = _git(["write-tree"], env=env, timeout=60)
         if tree.returncode != 0:
