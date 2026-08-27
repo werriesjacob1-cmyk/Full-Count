@@ -135,9 +135,12 @@ class EqualVolumeIntegrationTests(unittest.TestCase):
         champ = ev.SelectionPolicy("champion_score", "1.0", ev.rank_by(SCORE))
         chal = ev.SelectionPolicy("best_expression", "1.0",
                                   be.best_expression_rank_fn(SCORE))
+        # This fixture tests Best Expression's exact-volume integration,
+        # not promotion-grade dataset provenance. Promotion-grade evidence now
+        # requires a real Accuracy Lab manifest + artifact and is covered in
+        # test_equal_volume.py.
         rep = ev.EqualVolumeExperiment(population=population, champion=champ,
-                                       challenger=chal, volume=3,
-                                       promotion_grade=True).run()
+                                       challenger=chal, volume=3).run()
         self.assertEqual(rep["champion"]["selected_n"], 3)
         self.assertEqual(rep["challenger"]["selected_n"], 3)
         a = rep["selection_anatomy"]
