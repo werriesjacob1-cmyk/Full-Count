@@ -157,6 +157,107 @@ class EligiblePopulation:
         }
 
 
+class OutcomeLeakage(Exception):
+    """A ranking policy tried to read a post-event field."""
+
+
+# Fields that exist only AFTER the event. A ranking policy that reads any of
+# them is not selecting -- it is remembering.
+#
+# Demonstrated on 2026-08-27, not hypothesised: a policy ranking by "actual"
+# scored a 1.000 hit rate at equal N against a champion's 0.450, and the
+# framework accepted it without a word. That result would have looked like the
+# largest improvement in this project's history. Equal volume, deterministic
+# ranking and outcome policy were all satisfied -- none of them constrains
+# WHICH FIELDS a ranker may read.
+OUTCOME_FIELD_DENYLIST = frozenset({
+    "actual", "actual_pa", "actual_value", "outcome", "graded", "grade",
+    "hit", "miss", "result", "won", "settlement_state", "settled",
+    "final_line", "closing_line", "box_score", "post_game",
+})
+
+
+def _is_outcome_field(key):
+    k = str(key).lower()
+    return k in OUTCOME_FIELD_DENYLIST or k.startswith("actual_") or k.startswith("outcome_")
+
+
+class RankingRow(dict):
+    """A canonical row with its post-event fields structurally unreadable.
+
+    A dict subclass so every legitimate access -- r["hit_probability"],
+    r.get("prop_type"), iteration over items -- works unchanged, while an
+    outcome read raises instead of quietly returning the answer.
+    """
+
+    def __getitem__(self, key):
+        if _is_outcome_field(key):
+            raise OutcomeLeakage(
+                f"ranking policy read post-event field {key!r}. Selection may only "
+                f"use information available BEFORE the event; reading the outcome "
+                f"produces a perfect-looking result that measures nothing.")
+        return super().__getitem__(key)
+
+    def get(self, key, default=None):
+        if _is_outcome_field(key):
+            raise OutcomeLeakage(
+                f"ranking policy read post-event field {key!r} via .get(). Selection "
+                f"may only use information available BEFORE the event.")
+        return super().get(key, default)
+
+    def keys(self):
+        return [k for k in super().keys() if not _is_outcome_field(k)]
+
+    def items(self):
+        return [(k, v) for k, v in super().items() if not _is_outcome_field(k)]
+
+    def values(self):
+        return [v for k, v in super().items() if not _is_outcome_field(k)]
+
+    def __iter__(self):
+        return iter(self.keys())
+
+    def __contains__(self, key):
+        return not _is_outcome_field(key) and super().__contains__(key)
+
+
+class RankingView:
+    """The population as a ranking policy is allowed to see it.
+
+    Same surface as EligiblePopulation -- .rows, [identity], len(), .identities,
+    .fingerprint -- so existing policies need no change. Only the rows differ.
+    """
+
+    def __init__(self, population):
+        self._population = population
+        self.rows = [RankingRow(r) for r in population.rows]
+        self.identities = list(population.identities)
+        self.fingerprint = population.fingerprint
+        self.definition = population.definition
+        self.definition_version = population.definition_version
+        self.evidence_regime = population.evidence_regime
+        self.dataset_identity = dict(population.dataset_identity)
+        self.exclusions = list(getattr(population, "exclusions", []))
+        self._by_identity = dict(zip(self.identities, self.rows))
+
+    def __len__(self):
+        return len(self.rows)
+
+    def __contains__(self, identity):
+        return identity in self._by_identity
+
+    def row(self, identity):
+        return self._by_identity[identity]
+
+    def __getitem__(self, identity):
+        return self._by_identity[identity]
+
+    def describe(self):
+        # Delegates: the description is aggregate metadata about the
+        # population (dates, markets, fingerprint), none of it post-event.
+        return self._population.describe()
+
+
 class SelectionPolicy:
     """A named, versioned ranking over an eligible population.
 
@@ -179,7 +280,11 @@ class SelectionPolicy:
         self.description = description or ""
 
     def rank(self, population):
-        order = list(self.rank_fn(population))
+        # Rank against a masked view, never the raw rows. This is the only
+        # place selection meets the data, so it is the only place the
+        # information boundary can be enforced by construction.
+        view = population if isinstance(population, RankingView) else RankingView(population)
+        order = list(self.rank_fn(view))
         seen, out = set(), []
         for ident in order:
             ident = tuple(ident)
