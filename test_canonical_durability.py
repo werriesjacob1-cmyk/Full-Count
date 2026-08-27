@@ -262,6 +262,25 @@ def main():
             except cd.IdentityMismatch:
                 ok(f"{label}: IdentityMismatch (fail closed)")
 
+        # A remote manifest that disagrees with the durable index must be
+        # rejected BEFORE restore creates any local run directory or manifest.
+        # The pre-fix path wrote manifest.json first and only then checked
+        # identity, contradicting restore_from_durable()'s own recovery contract.
+        poisoned = json.loads(json.dumps(idx))
+        poisoned["identity"]["code_git_sha"] = "b" * 40
+        no_write_dir = os.path.join(repo2, "backtest", "canonical_runs", "identity-reject")
+        _real_load = cd.load_durable_index
+        cd.load_durable_index = lambda *a, **k: poisoned
+        try:
+            cd.restore_from_durable(no_write_dir, RUN, repo_root=repo2)
+            bad("incompatible remote manifest/index: accepted")
+        except cd.IdentityMismatch:
+            ok("incompatible remote manifest/index rejected before restore writes")
+        finally:
+            cd.load_durable_index = _real_load
+        check("identity rejection created no local run directory",
+              os.path.exists(no_write_dir), False)
+
         # Corrupted checksum in the ledger must be caught on restore.
         repo3 = os.path.join(sandbox, "container-3")
         git(["clone", "-q", origin, repo3], cwd=sandbox, env=GIT_ENV)
