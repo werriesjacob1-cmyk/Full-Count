@@ -363,6 +363,21 @@ class StatcastStore:
         df = pd.concat(frames, ignore_index=True)
         df["game_date"] = pd.to_datetime(df["game_date"]).dt.strftime("%Y-%m-%d")
         df.to_parquet(self.path, index=False)
+
+        # Record the exact bytes/schema/coverage we just persisted so canonical
+        # durability can provenance-bind a fresh-source pull just as strongly as
+        # a reused cache. This is observational metadata only: it deliberately
+        # does not change which rows are used by the scoring engine.
+        try:
+            from backtest.canonical_durability import (
+                validate_statcast_cache, REQUIRED_STATCAST_COLUMNS)
+            required = [c for c in REQUIRED_STATCAST_COLUMNS if c in STATCAST_COLUMNS]
+            self.cache_report = validate_statcast_cache(
+                self.path, expected_end=self.through,
+                required_columns=required, strict=False)
+        except ImportError:
+            self.cache_report = None
+
         self._log(f"stored {len(df)} pitches -> {os.path.basename(self.path)}")
         self._df = df
         return df
