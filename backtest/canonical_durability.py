@@ -894,9 +894,24 @@ def restore_from_durable(run_dir, run_id, *, branch=DURABLE_BRANCH, remote="orig
         meta_p = os.path.join(run_dir, "checkpoints", f"{d}.meta.json")
         data_p = os.path.join(run_dir, "checkpoints", f"{d}.jsonl")
         if os.path.exists(meta_p) and os.path.exists(data_p):
-            if not verify or _sha256_file(data_p) == (entry.get("data_sha256") or _sha256_file(data_p)):
+            if not verify:
                 report["skipped_present"].append(d)
                 continue
+
+            want_data = entry.get("data_sha256")
+            want_meta = entry.get("meta_sha256")
+            data_matches = (
+                want_data is not None and _sha256_file(data_p) == want_data
+            )
+            meta_matches = (
+                want_meta is not None and _sha256_file(meta_p) == want_meta
+            )
+            if data_matches and meta_matches:
+                report["skipped_present"].append(d)
+                continue
+            # A local pair is trusted only when BOTH blobs match the durable
+            # ledger. Otherwise fall through to verified remote restoration,
+            # which repairs the local copy from the durable source of truth.
 
         paths = durable_paths(run_id, d)
         meta_raw = _read_durable_blob(paths["meta"], branch=branch, remote=remote, repo_root=repo_root)
