@@ -404,6 +404,52 @@ def default_path_for_date(date, out_dir=DEFAULT_OUT_DIR):
     return os.path.join(out_dir, f"candidate_funnel_{date}.jsonl")
 
 
+def fetch_live_market_snapshot(ctx, *, fd=None, observed_at=None):
+    """Fetch/reuse the exact FanDuel families needed to price funnel candidates.
+
+    Returns (feeds, market_context). Feed-state labels are deliberately
+    conservative: an empty reused/fetched dict is UNKNOWN_EMPTY, not a claim
+    that no market was posted. Only an exception we directly observe earns
+    FETCH_FAILED.
+    """
+    from datetime import datetime, timezone
+
+    if fd is None:
+        import odds_fanduel as fd
+
+    observed_at = observed_at or datetime.now(timezone.utc).isoformat()
+    states = {}
+
+    def _fetch(name, fn):
+        try:
+            value = fn() or {}
+        except Exception:
+            states[name] = "FETCH_FAILED"
+            return {}
+        states[name] = "AVAILABLE" if value else "UNKNOWN_EMPTY"
+        return value
+
+    def _reuse(name, value):
+        value = value or {}
+        states[name] = "AVAILABLE" if value else "UNKNOWN_EMPTY"
+        return value
+
+    feeds = {
+        "prices": _fetch("batter_props", fd.fetch_prop_prices),
+        "k_prices": _reuse("pitcher_strikeouts", ctx.get("k_prices")),
+        "fi_prices": _fetch("first_inning", fd.fetch_first_inning_totals),
+        "po_prices": _reuse("pitcher_outs", ctx.get("po_prices")),
+        "combined_k_prices": _reuse(
+            "combined_strikeouts", ctx.get("combined_k_prices")),
+    }
+    market_context = {
+        "book": "fanduel",
+        "observed_at": observed_at,
+        "family_states": states,
+    }
+    return feeds, market_context
+
+
 def run_live_snapshot(out_dir=DEFAULT_OUT_DIR):
     """The one function in this module that actually runs a real,
     independent scoring pass -- NOT unit tested directly (matches this
@@ -416,16 +462,15 @@ def run_live_snapshot(out_dir=DEFAULT_OUT_DIR):
     import time), so this can never write to the real output/ directory or
     interfere with a concurrently-running production pipeline.
 
-    HONEST GAP, live-verified 2026-08-25: this does NOT call
-    fd.attach_market_prices() the way run_live_fetch() does, so every
-    record's `market` section is currently None -- verified live (969 real
-    candidates captured, 297 with 2+ alt lines, all `market.*` fields null
-    as expected). Adding that is a real, scoped follow-up (needs the same
-    prices/k_prices/fi_prices/po_prices/combined_k_prices fetch
-    run_live_fetch() already does) -- not done tonight to keep this run
-    fast and because MARKET-layer research has always been explicitly
-    bounded to registry-covered dates anyway (see
-    candidate_dataset_feasibility_2026-08-25.md's MARKET row)."""
+    Prospective-truth hardening (SUPERCHAD quarantine branch): this pass now
+    performs the same FanDuel family attachment needed to preserve actual
+    point-in-time prices, but only inside this already-isolated research
+    process. It prices a deep-copied research candidate universe; it never
+    writes or mutates the production board. It also writes one compact
+    snapshot-manifest event on EVERY observation, so an unchanged candidate
+    can be proven present at 13:00 even when its deduplicated changelog row
+    was last written at 12:00."""
+    import copy
     import sys
     import tempfile
     from datetime import datetime, timezone
@@ -442,6 +487,8 @@ def run_live_snapshot(out_dir=DEFAULT_OUT_DIR):
     os.chdir(repo_root)
     try:
         import generate_picks as gp
+        import odds_fanduel as fd
+        import recommendation as rec
         import recommendation_funnel as funnel
 
         result = gp._build_and_score()
@@ -456,6 +503,30 @@ def run_live_snapshot(out_dir=DEFAULT_OUT_DIR):
         kept, rejected, assumed_lineup = gp.quality_control(
             candidates, game_meta, park_wx, emp_pitchers)
 
+        # Match the real production decision surface for candidates that clear
+        # QC: live-only signal trust is applied after QC in generate_picks.main.
+        # Rejected/assumed candidates keep their pre-QC score, which is honest:
+        # production never advances them into this ranking adjustment.
+        signal_trust = gp.load_signal_trust()
+        gp.apply_signal_weights(kept, trust=signal_trust)
+
+        # Price a DEEP COPY of the full funnel. Market attachment mutates its
+        # input dicts by design; doing it on the copy gives research the live
+        # book state without altering even this isolated scoring pass's source
+        # candidate objects.
+        research_candidates = copy.deepcopy(candidates)
+        odds_observed_at = datetime.now(timezone.utc).isoformat()
+        feeds, market_context = fetch_live_market_snapshot(
+            ctx, fd=fd, observed_at=odds_observed_at)
+        fd.attach_market_prices(
+            research_candidates,
+            prices=feeds["prices"],
+            k_prices=feeds["k_prices"],
+            fi_prices=feeds["fi_prices"],
+            po_prices=feeds["po_prices"],
+            combined_k_prices=feeds["combined_k_prices"],
+        )
+
         date = gp.m.TODAY
         qc_index = {}
         for c in kept:
@@ -465,36 +536,71 @@ def run_live_snapshot(out_dir=DEFAULT_OUT_DIR):
         for c in rejected:
             qc_index[candidate_identity(c, date=date)] = ("rejected", c.get("qc_reason"))
 
+        generated_at = datetime.now(timezone.utc).isoformat()
+        now = datetime.now(timezone.utc)
+        fresh, fresh_reasons = rec.freshness_check(
+            now=now, odds_fetched_at=odds_observed_at,
+            board_generated_at=generated_at)
+
         gate_traces = {}
-        for c in candidates:
+        for c in research_candidates:
             try:
-                gate_traces[candidate_identity(c, date=date)] = funnel.classify_with_trace(c)
+                gate_traces[candidate_identity(c, date=date)] = (
+                    funnel.classify_with_trace(
+                        c, now=now, data_fresh=fresh,
+                        fresh_reasons=fresh_reasons)
+                )
             except Exception as exc:
                 # A gate-trace failure for one candidate must never drop
                 # the whole snapshot -- record the record without a trace
                 # rather than lose real prediction/evidence data over it.
                 print(f"gate_trace failed for one candidate: {exc}")
 
-        generated_at = datetime.now(timezone.utc).isoformat()
+        code_git_sha = _current_git_sha(repo_root, short=False)
+        run_metadata = rec.build_metadata(
+            odds_fetched_at=odds_observed_at,
+            board_generated_at=generated_at)
+        # build_metadata() independently reads git; use the exact SHA captured
+        # for this logger when available so the candidate and snapshot manifest
+        # share one code identity rather than two differently-shortened forms.
+        if code_git_sha:
+            run_metadata["git_sha"] = code_git_sha
+
         records = build_funnel_records(
-            candidates, date=date, generated_at=generated_at,
-            code_git_sha=_current_git_sha(repo_root),
+            research_candidates, date=date, generated_at=generated_at,
+            code_git_sha=code_git_sha,
             gate_traces=gate_traces, quality_control_index=qc_index,
+            market_context=market_context, run_metadata=run_metadata,
         )
         path = default_path_for_date(date, out_dir=out_dir)
         n_written, n_skipped = append_new_snapshots(records, path)
+
+        snapshot = build_snapshot_manifest(
+            records, date=date, observed_at=generated_at,
+            code_git_sha=code_git_sha, market_context=market_context,
+            run_metadata=run_metadata)
+        snapshot_path = default_snapshot_path_for_date(date, out_dir=out_dir)
+        snapshot_written = append_snapshot_manifest(snapshot, snapshot_path)
+
         print(f"Wrote {n_written} new/changed candidate snapshot(s), "
               f"skipped {n_skipped} unchanged duplicate(s) -> {path}")
+        print(f"Recorded observation manifest {snapshot['snapshot_id'][:12]} "
+              f"({snapshot['n_candidates']} candidates; appended={bool(snapshot_written)}) "
+              f"-> {snapshot_path}")
         return path
     finally:
         os.chdir(prev_cwd)
 
 
-def _current_git_sha(repo_root):
+def _current_git_sha(repo_root, *, short=True):
     import subprocess
     try:
+        args = ["git", "rev-parse"]
+        if short:
+            args.append("--short")
+        args.append("HEAD")
         return subprocess.check_output(
-            ["git", "rev-parse", "--short", "HEAD"], cwd=repo_root,
+            args, cwd=repo_root,
         ).decode().strip()
     except Exception:
         return None
