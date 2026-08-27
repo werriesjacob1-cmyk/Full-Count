@@ -238,6 +238,51 @@ def lineage_fingerprint(records):
     return _sha256_bytes("\n".join(keyed).encode())
 
 
+def assert_certifiable_source_lineage(index):
+    """Fail closed unless durable source provenance is explicitly complete.
+
+    Non-empty lineage is not the same thing as complete lineage. Recording one
+    mutable source (for example Statcast) while omitting other upstream inputs
+    must never be enough to certify a canonical artifact.
+
+    This is a certification gate only; it does not block durability or recovery.
+    """
+    records = index.get("source_lineage") or []
+    if not records:
+        raise DurableIntegrityError(
+            "canonical source lineage is absent; durability does not prove source provenance")
+    if not index.get("source_lineage_complete"):
+        raise DurableIntegrityError(
+            "canonical source lineage is only partial; every mutable generation "
+            "source must be provenance-bound before certification")
+
+    required = (
+        "source",
+        "request_identity",
+        "content_sha256",
+        "schema_fingerprint",
+        "row_count",
+    )
+    problems = []
+    for i, rec in enumerate(records):
+        missing = [k for k in required if rec.get(k) in (None, "", [])]
+        if missing:
+            problems.append(f"record[{i}] missing {missing}")
+    if problems:
+        raise DurableIntegrityError(
+            "canonical source lineage is marked complete but is not strong enough: "
+            + "; ".join(problems))
+    expected = lineage_fingerprint(records)
+    if index.get("source_lineage_fingerprint") != expected:
+        raise DurableIntegrityError(
+            "canonical source-lineage fingerprint does not match its records")
+    return {
+        "certifiable": True,
+        "records": len(records),
+        "source_lineage_fingerprint": expected,
+    }
+
+
 # ══════════════════════════════════════════════════════════════════════════
 #  STATCAST CACHE INTEGRITY
 # ══════════════════════════════════════════════════════════════════════════
@@ -449,7 +494,8 @@ class DurabilityPolicy:
 # each. A fresh container reads exactly this file to know what it can trust.
 
 def build_durable_index(manifest, state_summary, *, environment=None,
-                        lineage=None, cache_mode=None, dates=None):
+                        lineage=None, lineage_complete=False,
+                        cache_mode=None, dates=None):
     idx = {
         "durability_schema_version": DURABILITY_SCHEMA_VERSION,
         "run_id": manifest["run_id"],
@@ -470,6 +516,12 @@ def build_durable_index(manifest, state_summary, *, environment=None,
         "environment": environment,
         "source_lineage": lineage or [],
         "source_lineage_fingerprint": lineage_fingerprint(lineage) if lineage else None,
+        "source_lineage_complete": bool(lineage_complete),
+        "source_lineage_status": (
+            "complete" if lineage and lineage_complete
+            else "partial" if lineage
+            else "absent"
+        ),
         "cache_mode": cache_mode,
         "dates": dates or {},
         "summary": state_summary,
@@ -570,7 +622,8 @@ def durable_paths(run_id, date=None):
 
 
 def push_durable_checkpoint(run_dir, manifest, *, dates=None, environment=None,
-                            lineage=None, cache_mode=None, state_summary=None,
+                            lineage=None, lineage_complete=False,
+                            cache_mode=None, state_summary=None,
                             branch=DURABLE_BRANCH, remote="origin",
                             repo_root=REPO_ROOT, include_rows=True):
     """Push per-date rows (gzipped) plus meta plus the recovery index.
@@ -737,7 +790,8 @@ def push_durable_checkpoint(run_dir, manifest, *, dates=None, environment=None,
 
         index = build_durable_index(
             manifest, state_summary or {}, environment=environment,
-            lineage=lineage, cache_mode=cache_mode,
+            lineage=lineage, lineage_complete=lineage_complete,
+            cache_mode=cache_mode,
             dates=durable_date_ledger(run_dir, dates),
         )
         if not require_stage(
