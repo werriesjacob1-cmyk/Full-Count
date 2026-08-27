@@ -491,6 +491,68 @@ class OperationalOpportunityExpansionTests(unittest.TestCase):
         self.assertEqual(by_name["Kept"], ("confirmed_lineup", None))
         self.assertEqual(by_name["Rejected"], ("rejected", "rain"))
 
+    def test_started_games_are_removed_before_operational_recommendation_surface(self):
+        started = candidate(
+            player_id=10, name="Started", game_pk=99,
+            game_start="2026-08-25T16:00:00Z")
+        later = candidate(
+            player_id=11, name="Later", game_pk=100,
+            game_start="2026-08-25T23:00:00Z")
+        raw_qc = {
+            cfl.candidate_identity(started, date="2026-08-25"):
+                ("confirmed_lineup", None),
+            cfl.candidate_identity(later, date="2026-08-25"):
+                ("confirmed_lineup", None),
+        }
+
+        def expanded(pool):
+            return {"hits": [
+                {
+                    "type": "batter", "name": src["name"],
+                    "player_id": src["player_id"], "game_pk": src["game_pk"],
+                    "projection": {
+                        "stat": "hits", "value": 0.5, "needs": 1},
+                    "hit_probability": 0.65, "score": 70.0,
+                }
+                for src in pool
+            ]}
+
+        rows, qc, diag = cfl.build_operational_opportunities(
+            [started, later], raw_qc, {"prices": {}, "k_prices": {}},
+            gp=self._gp(expanded), fd=types.SimpleNamespace(),
+            date="2026-08-25", observed_at="2026-08-25T17:00:00Z")
+
+        self.assertEqual([r["name"] for r in rows], ["Later"])
+        self.assertEqual(diag["started_opportunities_excluded"], 1)
+        self.assertEqual(
+            diag["expanded_opportunities_before_pregame_filter"], 2)
+        self.assertEqual(diag["expanded_opportunities"], 1)
+        self.assertEqual(diag["operational_opportunities"], 1)
+        self.assertEqual(len(qc), 1)
+
+    def test_unknown_game_start_is_retained_for_evidence_but_later_eligibility_can_fail_closed(self):
+        raw = candidate(
+            player_id=10, name="Unknown", game_pk=99, game_start=None)
+        raw_qc = {
+            cfl.candidate_identity(raw, date="2026-08-25"):
+                ("confirmed_lineup", None)
+        }
+
+        def expanded(pool):
+            return {"hits": [{
+                "type": "batter", "name": "Unknown", "player_id": 10,
+                "game_pk": 99,
+                "projection": {"stat": "hits", "value": 0.5, "needs": 1},
+                "hit_probability": 0.65, "score": 70.0,
+            }]}
+
+        rows, _, diag = cfl.build_operational_opportunities(
+            [raw], raw_qc, {"prices": {}, "k_prices": {}},
+            gp=self._gp(expanded), fd=types.SimpleNamespace(),
+            date="2026-08-25", observed_at="2026-08-25T17:00:00Z")
+        self.assertEqual(len(rows), 1)
+        self.assertEqual(diag["started_opportunities_excluded"], 0)
+
     def test_duplicate_expanded_candidate_identity_fails_closed(self):
         raw = candidate(player_id=10, game_pk=99)
         raw_qc = {
