@@ -248,6 +248,32 @@ Review risks:
 - External scheduled auto-resume remains blocked until Claude independently
   approves these semantics.
 
+## 9. CI-discovered mock-store provenance regression
+
+Commits:
+- `1fbe4dc7da74fd5730b59bafc86a5fe2baf80fbb`
+- `40c650becc220014ddb09797f5ab1abf784adee6`
+
+Exact-head CI at `908a95cdeee46dac4658650edc01f4c73813ea58`
+failed 15 canonical-run tests with the same traceback:
+
+`statcast_lineage_from_cache_report(...): int(year) -> TypeError on Mock`.
+
+Cause:
+many canonical-run tests intentionally use lightweight/mock stores. A Mock
+`cache_report` attribute is truthy and supports `.get()`, so the new
+provenance helper treated it like a real validation mapping and tried to coerce
+mock scientific identity values.
+
+Fix:
+- provenance is now accepted only from a real `dict` validation report;
+- non-mapping/mock-like reports mean provenance absent, not fabricated;
+- regression check explicitly passes object-like report/year/through and
+  requires None.
+
+This was a real SUPERCHAD-caused compatibility defect caught by GitHub CI,
+not hidden. Claude should verify the fix and exact-head CI independently.
+
 # Important unresolved canonical findings
 
 These remain unresolved unless later sections explicitly record fixes:
