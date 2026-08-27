@@ -178,6 +178,88 @@ with open(legacy_manifest_path, encoding="utf-8") as f:
 check(legacy_manifest_after == legacy_manifest,
      "the legacy manifest file itself was not modified just by reading it")
 
+head("2f. PROMOTION-GRADE GATE: a legacy schema-v1 manifest keeps working in default/"
+     "legacy mode but is REFUSED when the caller claims promotion-grade evidence -- and "
+     "is never rewritten or migrated by the refusal")
+
+# legacy_manifest_path / legacy_rows_path were created in 2e above.
+train_legacy, _, cutoff_legacy = al.lock_holdout(
+    legacy_rows_path, holdout_frac=0.2, manifest_path=legacy_manifest_path)
+check(cutoff_legacy == DATES[-2], "v1 still works in legacy/replay mode (default)")
+
+strength = al.manifest_identity_strength(legacy_manifest)
+check(strength["manifest_schema_version"] == 1, "v1 reported as schema v1")
+check(strength["promotion_grade"] is False, "v1 correctly reported as NOT promotion-grade")
+check(strength["can_detect_content_replacement"] is False,
+     "v1 correctly reported as unable to detect content replacement")
+
+raised = False
+try:
+    al.lock_holdout(legacy_rows_path, holdout_frac=0.2,
+                    manifest_path=legacy_manifest_path,
+                    require_strong_dataset_identity=True)
+except al.WeakDatasetIdentityError as e:
+    raised = True
+    check("may not back a promotion-grade claim" in str(e),
+         "the refusal explains the promotion-grade rule honestly", f"got: {e}")
+    check("NOT being migrated" in str(e), "the refusal states it is not migrating the manifest")
+check(raised, "WeakDatasetIdentityError was raised for v1 in promotion-grade mode")
+with open(legacy_manifest_path, encoding="utf-8") as f:
+    check(json.load(f) == legacy_manifest,
+         "the v1 manifest was NOT mutated/upgraded by the promotion-grade refusal")
+
+head("2g. PROMOTION-GRADE GATE: a schema-v2 manifest is accepted while unchanged, and "
+     "still fails closed on content drift even in promotion-grade mode")
+
+pg_rows_path = os.path.join(TMPDIR, "promotion_grade_rows.jsonl")
+write_rows(pg_rows_path, [fixture_row(d, 1, 1) for d in DATES])
+pg_manifest_path = os.path.join(TMPDIR, "promotion_grade_manifest.json")
+tr, ho, cut = al.lock_holdout(pg_rows_path, holdout_frac=0.2,
+                              manifest_path=pg_manifest_path,
+                              require_strong_dataset_identity=True)
+check(bool(cut), "a NEW manifest is created as v2 and is immediately promotion-grade")
+with open(pg_manifest_path, encoding="utf-8") as f:
+    pg_manifest = json.load(f)
+check(al.manifest_identity_strength(pg_manifest)["promotion_grade"] is True,
+     "freshly locked manifest reports promotion_grade=True")
+
+tr2, ho2, cut2 = al.lock_holdout(pg_rows_path, holdout_frac=0.2,
+                                 manifest_path=pg_manifest_path,
+                                 require_strong_dataset_identity=True)
+check(cut2 == cut, "unchanged v2 artifact is accepted in promotion-grade mode")
+
+write_rows(pg_rows_path, [fixture_row(d, 1, 1) for d in DATES] + [fixture_row(DATES[-1], 9, 0)])
+raised = False
+try:
+    al.lock_holdout(pg_rows_path, holdout_frac=0.2, manifest_path=pg_manifest_path,
+                    require_strong_dataset_identity=True)
+except al.IncompatibleDatasetError:
+    raised = True
+check(raised, "v2 still fails closed on content drift under promotion-grade mode")
+
+head("2h. PROMOTION-GRADE GATE: a different artifact is refused even in promotion-grade "
+     "mode, and a brand-new strong manifest can be locked for the canonical artifact "
+     "WITHOUT touching the old production manifest")
+
+other2 = os.path.join(TMPDIR, "yet_another_artifact.jsonl")
+write_rows(other2, [fixture_row(d, 2, 1) for d in DATES])
+raised = False
+try:
+    al.lock_holdout(other2, holdout_frac=0.2, manifest_path=pg_manifest_path,
+                    require_strong_dataset_identity=True)
+except al.IncompatibleDatasetError:
+    raised = True
+check(raised, "a different artifact against an existing manifest is refused")
+
+canonical_manifest_path = os.path.join(TMPDIR, "canonical_v2_manifest.json")
+_, _, canon_cut = al.lock_holdout(other2, holdout_frac=0.2,
+                                  manifest_path=canonical_manifest_path,
+                                  require_strong_dataset_identity=True)
+check(bool(canon_cut), "a NEW strong manifest locks cleanly for the new artifact")
+with open(legacy_manifest_path, encoding="utf-8") as f:
+    check(json.load(f) == legacy_manifest,
+         "the pre-existing legacy manifest is STILL byte-identical after all of the above")
+
 head("3. champion_predict_fn(): prefers calibrated_prob when Stage 5 set one, falls back "
      "to raw predicted_prob otherwise -- never fabricates a third number")
 

@@ -23,6 +23,8 @@ import os
 import shutil
 import sys
 import tempfile
+import threading
+import time
 import unittest
 from collections import defaultdict
 from unittest import mock
@@ -357,6 +359,163 @@ class ConcurrentWriterTests(CanonicalRunTestBase):
         self.assertTrue(cr.is_lock_stale(remote_lock))
         lock2 = cr.acquire_lock(run_dir, manifest["run_id"], owner_token="rescuer")
         self.assertEqual(lock2["owner_token"], "rescuer")
+
+
+class LockLeaseHardeningTests(CanonicalRunTestBase):
+    """2026-08-27 lock-lease race. The previous is_lock_stale() checked
+    heartbeat age BEFORE PID liveness, so a healthy but busy same-host
+    owner was declared stale purely for taking a long time.
+
+    This was not theoretical. The live canonical run's own lock.json
+    recorded acquired_at=03:40:11 and its first heartbeat_at=03:55:44 --
+    933 seconds apart, against LOCK_STALE_SECONDS=900 -- because Statcast
+    warmup runs before the first date completes and heartbeats were only
+    emitted on date boundaries. For 33 seconds, a second process would
+    have been told it could reclaim the lock from a running, correct,
+    multi-hour job.
+
+    The seven scenarios below are the ones the governing mission requires.
+    """
+
+    def _lock(self, **over):
+        base = {"run_id": "r", "owner_token": "tok",
+                "acquired_at": cr._now_iso(), "heartbeat_at": cr._now_iso(),
+                **cr.owner_process_identity()}
+        base.update(over)
+        return base
+
+    def _ancient(self):
+        import datetime as _dt
+        return (_dt.datetime.now(_dt.timezone.utc)
+                - _dt.timedelta(seconds=cr.LOCK_STALE_SECONDS * 10)).isoformat()
+
+    # 1
+    def test_same_host_alive_pid_with_ancient_heartbeat_is_NOT_stale(self):
+        lock = self._lock(heartbeat_at=self._ancient(), acquired_at=self._ancient())
+        self.assertFalse(cr.is_lock_stale(lock),
+                         "a verifiably-alive same-host owner must never be stale on time alone")
+
+    # 2
+    def test_same_host_dead_pid_with_ancient_heartbeat_is_stale(self):
+        lock = self._lock(pid=999999, pid_start_ticks=None,
+                          heartbeat_at=self._ancient())
+        self.assertTrue(cr.is_lock_stale(lock))
+
+    def test_same_host_dead_pid_with_FRESH_heartbeat_is_still_stale(self):
+        # Crash recovery must not have to wait out the clock.
+        lock = self._lock(pid=999999, pid_start_ticks=None)
+        self.assertTrue(cr.is_lock_stale(lock))
+
+    def test_recycled_pid_is_treated_as_dead(self):
+        # Same PID, different process: start-ticks will not match. Without
+        # this check a recycled PID would let a dead run hold its lock
+        # forever, which is the failure mode that makes "liveness beats
+        # age" safe to adopt in the first place.
+        lock = self._lock(pid_start_ticks=(cr._proc_start_ticks(os.getpid()) or 0) + 987654)
+        self.assertTrue(cr.is_lock_stale(lock))
+
+    def test_reboot_since_lock_is_treated_as_dead(self):
+        lock = self._lock(boot_id="a-different-boot-entirely", heartbeat_at=self._ancient())
+        self.assertTrue(cr.is_lock_stale(lock))
+
+    # 3
+    def test_different_host_ancient_heartbeat_is_stale(self):
+        lock = self._lock(hostname="some-other-container", pid=1,
+                          pid_start_ticks=None, boot_id=None,
+                          heartbeat_at=self._ancient())
+        self.assertTrue(cr.is_lock_stale(lock))
+
+    def test_different_host_FRESH_heartbeat_is_not_stale(self):
+        # A foreign PID number is meaningless locally, so age is the only
+        # honest signal there -- and a fresh one must be respected.
+        lock = self._lock(hostname="some-other-container", pid=1,
+                          pid_start_ticks=None, boot_id=None)
+        self.assertFalse(cr.is_lock_stale(lock))
+
+    # 4
+    def test_live_lease_during_long_operation_keeps_second_owner_out(self):
+        run_dir, manifest = self.new_manifest()
+        lock = cr.acquire_lock(run_dir, manifest["run_id"], owner_token="owner-a")
+        # Simulate the live incident exactly: the lease's LAST recorded
+        # heartbeat is older than the stale threshold (a long phase), yet
+        # the owner process is genuinely alive.
+        stale_looking = dict(lock, heartbeat_at=self._ancient(),
+                             acquired_at=self._ancient())
+        cr._atomic_write_json(cr.lock_path(run_dir), stale_looking)
+        with self.assertRaises(cr.LockHeldElsewhere):
+            cr.acquire_lock(run_dir, manifest["run_id"], owner_token="owner-b")
+
+        # And with an active lease thread the heartbeat does not even go
+        # stale in the first place.
+        lease = cr.LeaseHeartbeat(run_dir, lock, interval=0.05).start()
+        try:
+            deadline = time.time() + 2.0
+            while lease.ticks < 2 and time.time() < deadline:
+                time.sleep(0.02)
+            self.assertGreaterEqual(lease.ticks, 2, "lease thread did not refresh the lock")
+            refreshed = cr.read_lock(run_dir)
+            self.assertFalse(cr.is_lock_stale(refreshed))
+            self.assertEqual(refreshed["owner_token"], "owner-a",
+                             "lease must never change who owns the lock")
+        finally:
+            lease.stop()
+
+    # 5
+    def test_lease_thread_is_cleaned_up_after_normal_completion(self):
+        run_dir, manifest = self.new_manifest()
+        lock = cr.acquire_lock(run_dir, manifest["run_id"])
+        before = threading.active_count()
+        with cr.LeaseHeartbeat(run_dir, lock, interval=0.05) as lease:
+            self.assertTrue(lease.running)
+        self.assertFalse(lease.running)
+        for _ in range(50):
+            if threading.active_count() <= before:
+                break
+            time.sleep(0.02)
+        self.assertLessEqual(threading.active_count(), before, "lease thread leaked")
+
+    # 6
+    def test_lease_thread_is_cleaned_up_after_an_exception(self):
+        run_dir, manifest = self.new_manifest()
+        lock = cr.acquire_lock(run_dir, manifest["run_id"])
+        before = threading.active_count()
+        lease = None
+        with self.assertRaises(RuntimeError):
+            with cr.LeaseHeartbeat(run_dir, lock, interval=0.05) as lease:
+                raise RuntimeError("simulated failure inside the long phase")
+        self.assertFalse(lease.running)
+        for _ in range(50):
+            if threading.active_count() <= before:
+                break
+            time.sleep(0.02)
+        self.assertLessEqual(threading.active_count(), before,
+                             "lease thread leaked on the exception path")
+
+    def test_lease_write_failure_is_survivable_and_not_masked_as_success(self):
+        run_dir, manifest = self.new_manifest()
+        lock = cr.acquire_lock(run_dir, manifest["run_id"])
+        with mock.patch.object(cr, "heartbeat_lock", side_effect=OSError("disk gone")):
+            with cr.LeaseHeartbeat(run_dir, lock, interval=0.05) as lease:
+                deadline = time.time() + 2.0
+                while lease.errors < 2 and time.time() < deadline:
+                    time.sleep(0.02)
+        self.assertGreaterEqual(lease.errors, 2, "write failures must be counted")
+        self.assertEqual(lease.ticks, 0, "a failed write must never count as a tick")
+
+    # 7
+    def test_no_second_writer_admitted_while_original_owner_alive(self):
+        run_dir, manifest = self.new_manifest()
+        results = {d: fake_result(d) for d in DATES}
+        self.run_with_results(run_dir, manifest, results, max_dates=1)
+        # Owner A takes the lock and is alive; a second run() invocation
+        # must be refused before it can write a single checkpoint.
+        cr.acquire_lock(run_dir, manifest["run_id"], owner_token="owner-a")
+        before = {d: cr.validate_checkpoint(run_dir, d)[0] for d in DATES}
+        with self.assertRaises(cr.LockHeldElsewhere):
+            self.run_with_results(run_dir, manifest, results)
+        after = {d: cr.validate_checkpoint(run_dir, d)[0] for d in DATES}
+        self.assertEqual(before, after,
+                         "a refused second owner must not have written anything")
 
 
 class WorktreeCodeMutationTests(CanonicalRunTestBase):

@@ -1,0 +1,262 @@
+{
+  "compared_at": "2026-08-27T04:16:51.070945+00:00",
+  "dates": [
+    "2024-04-01",
+    "2024-07-10",
+    "2024-07-15",
+    "2025-04-20"
+  ],
+  "ignored_provenance_fields": [
+    "backtest_generated_at",
+    "code_git_sha"
+  ],
+  "legacy_sha": "2ce95fe903526c62640d23659d84d37bbaf1d6d2",
+  "per_date": {
+    "2024-04-01": {
+      "date": "2024-04-01",
+      "duplicate_identities_legacy": 0,
+      "duplicate_identities_replay": 0,
+      "equivalent": true,
+      "identities_equal_as_sets": true,
+      "identities_equal_in_order": false,
+      "identities_only_in_legacy": [],
+      "identities_only_in_replay": [],
+      "legacy_status": "ok",
+      "logical_fingerprint_equal": true,
+      "logical_fingerprint_legacy": "cb3c015d49f990f7d5c0190ee259037b6a1f8ab87c196621a11cda33180bb18c",
+      "logical_fingerprint_replay": "cb3c015d49f990f7d5c0190ee259037b6a1f8ab87c196621a11cda33180bb18c",
+      "mismatch_examples": [],
+      "mismatched_fields": {},
+      "n_identities_only_in_legacy": 0,
+      "n_identities_only_in_replay": 0,
+      "n_rows_compared": 1537,
+      "order_note": "within-date row order is not deterministic across runs of identical code (verified directly); excluded from the verdict, reported only",
+      "replay_status": "ok",
+      "required_categories_present": {
+        "actual_value": [
+          "actual"
+        ],
+        "line_and_needs": [
+          "line",
+          "needs"
+        ],
+        "opportunity": [
+          "actual_pa",
+          "fair_test"
+        ],
+        "outcome": [
+          "outcome"
+        ],
+        "predicted_probability": [
+          "predicted_prob"
+        ],
+        "score_and_categories": [
+          "cat_baseline_skill",
+          "cat_context",
+          "cat_environment",
+          "cat_matchup",
+          "cat_recent_form",
+          "sb_cat_context",
+          "sb_cat_matchup",
+          "sb_cat_skill",
+          "score"
+        ],
+        "signals": [
+          "signals"
+        ]
+      },
+      "row_count_equal": true,
+      "row_count_legacy": 1537,
+      "row_count_replay": 1537
+    },
+    "2024-07-10": {
+      "date": "2024-07-10",
+      "duplicate_identities_legacy": 0,
+      "duplicate_identities_replay": 0,
+      "equivalent": true,
+      "identities_equal_as_sets": true,
+      "identities_equal_in_order": false,
+      "identities_only_in_legacy": [],
+      "identities_only_in_replay": [],
+      "legacy_status": "ok",
+      "logical_fingerprint_equal": true,
+      "logical_fingerprint_legacy": "7c1957bb92c9d45436176710c10fdfaec9317d3181e7f35734a204e97862845b",
+      "logical_fingerprint_replay": "7c1957bb92c9d45436176710c10fdfaec9317d3181e7f35734a204e97862845b",
+      "mismatch_examples": [],
+      "mismatched_fields": {},
+      "n_identities_only_in_legacy": 0,
+      "n_identities_only_in_replay": 0,
+      "n_rows_compared": 3020,
+      "order_note": "within-date row order is not deterministic across runs of identical code (verified directly); excluded from the verdict, reported only",
+      "replay_status": "ok",
+      "required_categories_present": {
+        "actual_value": [
+          "actual"
+        ],
+        "line_and_needs": [
+          "line",
+          "needs"
+        ],
+        "opportunity": [
+          "actual_pa",
+          "fair_test"
+        ],
+        "outcome": [
+          "outcome"
+        ],
+        "predicted_probability": [
+          "predicted_prob"
+        ],
+        "score_and_categories": [
+          "cat_baseline_skill",
+          "cat_context",
+          "cat_environment",
+          "cat_matchup",
+          "cat_recent_form",
+          "sb_cat_context",
+          "sb_cat_matchup",
+          "sb_cat_skill",
+          "score"
+        ],
+        "signals": [
+          "signals"
+        ]
+      },
+      "row_count_equal": true,
+      "row_count_legacy": 3020,
+      "row_count_replay": 3020
+    },
+    "2024-07-15": {
+      "date": "2024-07-15",
+      "equivalent": true,
+      "legacy_status": "no_games",
+      "reason": "both regimes independently reported no games",
+      "replay_status": "no_games",
+      "row_count_legacy": 0,
+      "row_count_replay": 0
+    },
+    "2025-04-20": {
+      "date": "2025-04-20",
+      "duplicate_identities_legacy": 0,
+      "duplicate_identities_replay": 0,
+      "equivalent": false,
+      "identities_equal_as_sets": true,
+      "identities_equal_in_order": false,
+      "identities_only_in_legacy": [],
+      "identities_only_in_replay": [],
+      "legacy_status": "ok",
+      "logical_fingerprint_equal": false,
+      "logical_fingerprint_legacy": "88f2ea123454093df1c0aecd692fe89a6681696e1f084edc709fac646dd8ad6b",
+      "logical_fingerprint_replay": "a9979126dab427e0569cc5d52f39871ac22b0507513adeef1494312559f4ff93",
+      "mismatch_examples": [
+        {
+          "field": "signals",
+          "identity": [
+            "2025-04-20",
+            778246,
+            693307,
+            "doubles",
+            0.5
+          ],
+          "legacy": "{'platoon': 35.0, 'sp_era_weak': 52.8571, 'l7_avg_ev': 100.0, 'l7_barrel_pct': 100.0, 'iso': 59.4444, 'season_barrel_pct': 35.3333, 'lineup_slot': 37.5, 'bullpen_fatigue': 0.0, 'platoon_barrel_pct': 4",
+          "replay": "{'platoon': 35.0, 'sp_era_weak': 52.8571, 'l7_avg_ev': 100.0, 'l7_barrel_pct': 100.0, 'iso': 59.4444, 'season_barrel_pct': 35.3333, 'lineup_slot': 37.5, 'bullpen_fatigue': 0.0, 'platoon_barrel_pct': 4"
+        },
+        {
+          "field": "signals",
+          "identity": [
+            "2025-04-20",
+            778246,
+            693307,
+            "hits",
+            0.5
+          ],
+          "legacy": "{'platoon': 35.0, 'sp_era_weak': 52.8571, 'l7_avg_ev': 100.0, 'l7_barrel_pct': 100.0, 'iso': 59.4444, 'season_barrel_pct': 35.3333, 'lineup_slot': 37.5, 'bullpen_fatigue': 0.0, 'platoon_barrel_pct': 4",
+          "replay": "{'platoon': 35.0, 'sp_era_weak': 52.8571, 'l7_avg_ev': 100.0, 'l7_barrel_pct': 100.0, 'iso': 59.4444, 'season_barrel_pct': 35.3333, 'lineup_slot': 37.5, 'bullpen_fatigue': 0.0, 'platoon_barrel_pct': 4"
+        },
+        {
+          "field": "signals",
+          "identity": [
+            "2025-04-20",
+            778246,
+            693307,
+            "home_run",
+            0.5
+          ],
+          "legacy": "{'platoon': 35.0, 'sp_era_weak': 52.8571, 'l7_avg_ev': 100.0, 'l7_barrel_pct': 100.0, 'iso': 59.4444, 'season_barrel_pct': 35.3333, 'lineup_slot': 37.5, 'bullpen_fatigue': 0.0, 'platoon_barrel_pct': 4",
+          "replay": "{'platoon': 35.0, 'sp_era_weak': 52.8571, 'l7_avg_ev': 100.0, 'l7_barrel_pct': 100.0, 'iso': 59.4444, 'season_barrel_pct': 35.3333, 'lineup_slot': 37.5, 'bullpen_fatigue': 0.0, 'platoon_barrel_pct': 4"
+        },
+        {
+          "field": "signals",
+          "identity": [
+            "2025-04-20",
+            778246,
+            693307,
+            "singles",
+            0.5
+          ],
+          "legacy": "{'platoon': 35.0, 'sp_era_weak': 52.8571, 'l7_avg_ev': 100.0, 'l7_barrel_pct': 100.0, 'iso': 59.4444, 'season_barrel_pct': 35.3333, 'lineup_slot': 37.5, 'bullpen_fatigue': 0.0, 'platoon_barrel_pct': 4",
+          "replay": "{'platoon': 35.0, 'sp_era_weak': 52.8571, 'l7_avg_ev': 100.0, 'l7_barrel_pct': 100.0, 'iso': 59.4444, 'season_barrel_pct': 35.3333, 'lineup_slot': 37.5, 'bullpen_fatigue': 0.0, 'platoon_barrel_pct': 4"
+        },
+        {
+          "field": "signals",
+          "identity": [
+            "2025-04-20",
+            778246,
+            693307,
+            "total_bases",
+            1.5
+          ],
+          "legacy": "{'platoon': 35.0, 'sp_era_weak': 52.8571, 'l7_avg_ev': 100.0, 'l7_barrel_pct': 100.0, 'iso': 59.4444, 'season_barrel_pct': 35.3333, 'lineup_slot': 37.5, 'bullpen_fatigue': 0.0, 'platoon_barrel_pct': 4",
+          "replay": "{'platoon': 35.0, 'sp_era_weak': 52.8571, 'l7_avg_ev': 100.0, 'l7_barrel_pct': 100.0, 'iso': 59.4444, 'season_barrel_pct': 35.3333, 'lineup_slot': 37.5, 'bullpen_fatigue': 0.0, 'platoon_barrel_pct': 4"
+        }
+      ],
+      "mismatched_fields": {
+        "signals": 6
+      },
+      "n_identities_only_in_legacy": 0,
+      "n_identities_only_in_replay": 0,
+      "n_rows_compared": 1774,
+      "order_note": "within-date row order is not deterministic across runs of identical code (verified directly); excluded from the verdict, reported only",
+      "replay_status": "ok",
+      "required_categories_present": {
+        "actual_value": [
+          "actual"
+        ],
+        "line_and_needs": [
+          "line",
+          "needs"
+        ],
+        "opportunity": [
+          "actual_pa",
+          "fair_test"
+        ],
+        "outcome": [
+          "outcome"
+        ],
+        "predicted_probability": [
+          "predicted_prob"
+        ],
+        "score_and_categories": [
+          "cat_baseline_skill",
+          "cat_context",
+          "cat_environment",
+          "cat_matchup",
+          "cat_recent_form",
+          "sb_cat_context",
+          "sb_cat_matchup",
+          "sb_cat_skill",
+          "score"
+        ],
+        "signals": [
+          "signals"
+        ]
+      },
+      "row_count_equal": true,
+      "row_count_legacy": 1774,
+      "row_count_replay": 1774
+    }
+  },
+  "record_type": "overlap_replay_comparison",
+  "replay_sha": "022c88299281c5265204fcff548313b9973e9ec7",
+  "verdict": "not_equivalent"
+}

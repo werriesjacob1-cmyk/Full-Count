@@ -1,0 +1,13 @@
+{
+  "alias_explanation": "pre-rename name for the same repository; GitHub redirects it to Full-Count. Confirmed via the GitHub API reporting full_name='werriesjacob1-cmyk/Full-Count' for this repo's own pull requests.",
+  "corrected_at": "2026-08-27T04:17:35.526691+00:00",
+  "corrected_repository_identity": "werriesjacob1-cmyk/Full-Count",
+  "fix_commit": "see commit adding backtest/generation_regime.py on claude/canonical-rebuild-and-accuracy-foundation-01",
+  "manifest_left_unmodified": true,
+  "original_manifest_value": "werriesjacob1-cmyk/PROJECT-GRIDIRON",
+  "original_value_is_known_alias": true,
+  "reason": "build_run_identity() hardcoded the repository's PRE-RENAME name. The configured git remote still uses that URL and GitHub transparently redirects it, so every fetch/push succeeded and nothing surfaced the discrepancy. Verified against GitHub's API, which reports full_name='werriesjacob1-cmyk/Full-Count' for this repository's own pull requests (PR #71 head and base). The live run's manifest is left exactly as written; this record supplies the corrected identity alongside it.",
+  "record_type": "repository_identity_correction",
+  "run_id": "canonical-20260827T033425Z-c5157ef0",
+  "verified_by": "github_api_full_name"
+}

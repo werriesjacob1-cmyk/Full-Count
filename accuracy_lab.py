@@ -69,6 +69,37 @@ DEFAULT_ROWS_PATH = os.path.join(ROOT, "backtest", "rows.jsonl")
 
 MANIFEST_SCHEMA_VERSION = 2  # bumped 2026-08-27 -- see IncompatibleDatasetError
 
+# The lowest manifest schema that can actually PROVE which bytes a holdout
+# was locked against. v1 records only a path and a cutoff; v2 adds
+# artifact_sha256/row_count/date_range, which is what makes content
+# replacement at the same path detectable at all.
+MIN_PROMOTION_GRADE_SCHEMA_VERSION = 2
+
+
+class WeakDatasetIdentityError(Exception):
+    """Raised when a caller asks for PROMOTION-GRADE evidence but the
+    holdout manifest cannot prove what dataset it was locked against.
+
+    2026-08-27, the second half of the dataset-identity hardening. Making
+    v2 the default for NEW locks fixed the going-forward case, but every
+    pre-existing schema-v1 manifest -- including the real production one
+    at data/accuracy_lab/holdout_manifest.json -- remained silently
+    acceptable, and a v1 manifest stores no checksum at all. Against a v1
+    manifest, replacing backtest/rows.jsonl wholesale with a completely
+    different dataset at the same path is undetectable: same path, same
+    holdout_frac, same recorded cutoff, so the lock "matches" and every
+    downstream comparison proceeds against a partition that no longer
+    means what it claims. That is tolerable for replaying an old
+    experiment (where the whole point is to reproduce what was done under
+    the conditions of the time); it is not tolerable as the evidentiary
+    basis for promoting a challenger into production.
+
+    So the rule is a MODE, not a migration: legacy v1 keeps working
+    untouched for reproducibility, historical comparison, and replay, and
+    is refused only where the caller explicitly claims promotion-grade
+    evidence. Nothing is silently rewritten, and no historical research
+    breaks."""
+
 
 class IncompatibleDatasetError(Exception):
     """Raised by lock_holdout() when the manifest at manifest_path is bound
@@ -129,7 +160,50 @@ def _artifact_identity(rows_path, rows, distinct_dates):
     }
 
 
-def lock_holdout(rows_path=DEFAULT_ROWS_PATH, holdout_frac=0.2, manifest_path=None):
+def manifest_identity_strength(manifest):
+    """Describe how strongly a manifest pins its dataset, without judging.
+
+    Separated from the gate so a caller (or a report) can inspect and
+    explain strength without having to trigger an exception to find out.
+    """
+    version = int(manifest.get("manifest_schema_version", 1) or 1)
+    has_checksum = bool(manifest.get("artifact_sha256"))
+    return {
+        "manifest_schema_version": version,
+        "has_artifact_checksum": has_checksum,
+        "has_row_count": manifest.get("artifact_row_count") is not None,
+        "has_date_range": manifest.get("artifact_date_range") is not None,
+        "has_code_sha_at_lock": manifest.get("code_git_sha_at_lock") is not None,
+        "promotion_grade": version >= MIN_PROMOTION_GRADE_SCHEMA_VERSION and has_checksum,
+        "can_detect_content_replacement": has_checksum,
+    }
+
+
+def assert_promotion_grade_manifest(manifest, manifest_path=None):
+    """Fail closed unless this manifest can prove its dataset identity.
+
+    Callable directly by any framework that claims promotion-grade
+    evidence (see backtest/equal_volume.py), so the rule lives in one
+    place rather than being re-implemented per experiment."""
+    strength = manifest_identity_strength(manifest)
+    if strength["promotion_grade"]:
+        return strength
+    raise WeakDatasetIdentityError(
+        f"holdout manifest{f' at {manifest_path!r}' if manifest_path else ''} is "
+        f"schema v{strength['manifest_schema_version']} "
+        f"(artifact_sha256 {'present' if strength['has_artifact_checksum'] else 'ABSENT'}) "
+        f"and cannot prove which dataset it was locked against, so it may not back a "
+        f"promotion-grade claim. A v1 manifest records only a path and a cutoff: the "
+        f"file at that path can be replaced wholesale without the lock noticing. "
+        f"This manifest remains fully valid for legacy replay/reproduction "
+        f"(require_strong_dataset_identity=False) -- it is NOT being migrated or "
+        f"rewritten. For promotion-grade evidence, lock a fresh v"
+        f"{MIN_PROMOTION_GRADE_SCHEMA_VERSION} manifest at a NEW manifest_path against "
+        f"the artifact you intend to certify.")
+
+
+def lock_holdout(rows_path=DEFAULT_ROWS_PATH, holdout_frac=0.2, manifest_path=None,
+                 require_strong_dataset_identity=False):
     """Return (train_rows, holdout_rows, cutoff_date), locking the holdout
     permanently on first call. Every later call (even with a different
     holdout_frac) returns the SAME partition the manifest already recorded
@@ -157,7 +231,17 @@ def lock_holdout(rows_path=DEFAULT_ROWS_PATH, holdout_frac=0.2, manifest_path=No
     version 1, no artifact_sha256) manifest keeps working unmodified for
     calls that still point at its original rows_path, since nothing about
     THAT artifact's identity is actually in question; it is not retro-
-    actively rewritten in place either."""
+    actively rewritten in place either.
+
+    require_strong_dataset_identity (2026-08-27) is the PROMOTION-GRADE
+    mode. Default False preserves every legacy/replay caller exactly.
+    Passing True refuses any manifest that cannot prove which bytes it was
+    locked against -- in practice, any schema-v1 manifest, which stores no
+    checksum and therefore cannot detect the file at its path being
+    replaced wholesale. A newly created manifest is always v2 and so is
+    always promotion-grade; the gate only ever bites on a pre-existing
+    weak one, and it refuses rather than upgrading it (see
+    WeakDatasetIdentityError)."""
     manifest_path = manifest_path if manifest_path is not None else MANIFEST_PATH
     rows = _read_rows(rows_path)
     if not rows:
@@ -169,6 +253,11 @@ def lock_holdout(rows_path=DEFAULT_ROWS_PATH, holdout_frac=0.2, manifest_path=No
     if os.path.exists(manifest_path):
         with open(manifest_path, encoding="utf-8") as f:
             manifest = json.load(f)
+        if require_strong_dataset_identity:
+            # Checked BEFORE any other validation so a weak manifest can
+            # never accidentally satisfy a promotion-grade caller by
+            # passing the checks it is capable of.
+            assert_promotion_grade_manifest(manifest, manifest_path)
         if abs(manifest["holdout_frac"] - holdout_frac) > 1e-9:
             raise ValueError(
                 f"holdout is already locked at holdout_frac={manifest['holdout_frac']!r} "

@@ -5,6 +5,28 @@ production probability/recommendation model is the Champion. New ideas
 become Challengers and make shadow predictions from the same pregame
 information."
 
+SCOPE, AND WHAT LIVES ELSEWHERE (2026-08-27).
+
+This module evaluates WORLD-MODEL quality: given the same pregame
+information, does a challenger estimate the probability of an event
+better? Brier, log-loss and calibration are the right instruments for
+that question and remain primary HERE, because a probability model is
+exactly what they measure.
+
+They are NOT the right instruments for the other question FULL COUNT
+asks -- given the probabilities we already have, does a different
+SELECTOR choose a better equal-sized set of bets? A model can improve
+calibration without changing which props get picked, and a selector can
+lift realized hit rate without touching a single probability. Judging a
+selector on Brier would reward the wrong thing.
+
+So selector/pick-policy promotion lives in backtest/equal_volume.py,
+where the promotion standard is EQUAL-VOLUME REALIZED HIT RATE, exact-N
+is a structural invariant rather than a caller convention, and
+Brier/log-loss/calibration are reported only in a clearly-labelled
+secondary section. The two paths are deliberately separate modules so
+neither question can be answered with the other's evidence.
+
 THE DESIGN.
 
 A Challenger is a plain function: (candidate_dict) -> probability or None.

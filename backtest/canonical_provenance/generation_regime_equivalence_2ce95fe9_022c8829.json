@@ -1,0 +1,84 @@
+{
+  "canonical_eligible": true,
+  "created_at": "2026-08-27T04:17:41.920275+00:00",
+  "note": "Per-row and per-checkpoint code_git_sha values are PRESERVED as originally recorded. This record is additive provenance about the relationship between two regimes; it never rewrites which SHA actually generated any row.",
+  "record_type": "generation_regime_equivalence",
+  "replay_evidence": {
+    "controlled_experiment": {
+      "attribution": "upstream_data_vintage",
+      "design": "2x2 isolating code from upstream data: the same date regenerated under BOTH SHAs on one data snapshot, and under the legacy SHA on both data snapshots.",
+      "detail": "2025-04-20: 6 of 1774 rows differ in exactly one recorded signal, platoon_xwoba (4.5 -> 4.68), all for player 693307 in game 778246. Regenerating the same date under the LEGACY SHA today reproduces 4.68, and pinned-vs-legacy on one snapshot differs in ZERO fields across all 1774 rows. The cause is Statcast revising xwOBA between generation dates, not the code regime. platoon_xwoba is recorded via _sig() for measurement and was explicitly DROPPED from scoring (measured AUC 0.512, 'no separation'), which is consistent with score, predicted_prob and outcome being byte-identical on those same rows.",
+      "same_code_different_data_differing_fields": {
+        "signals": 6
+      },
+      "same_code_different_data_equivalent": false,
+      "same_data_different_code_differing_fields": {},
+      "same_data_different_code_equivalent": true
+    },
+    "ignored_provenance_fields": [
+      "backtest_generated_at",
+      "code_git_sha"
+    ],
+    "per_date_equivalent": {
+      "2024-04-01": true,
+      "2024-07-10": true,
+      "2024-07-15": true,
+      "2025-04-20": false
+    },
+    "replay_dates": [
+      "2024-04-01",
+      "2024-07-10",
+      "2024-07-15",
+      "2025-04-20"
+    ],
+    "row_order_finding": "Within-date row order is NOT deterministic across runs of IDENTICAL code (two 2ce95fe9 runs of 2025-04-20 diverged at index 334 with identical row sets). Order is therefore excluded from the equivalence verdict and content identity is enforced order-independently instead."
+  },
+  "replay_verdict": "equivalent",
+  "status": "mixed_sha_generation_equivalent",
+  "structural_comparison": {
+    "closure_version": 1,
+    "compared_at": "2026-08-27T04:17:41.920242+00:00",
+    "differing_artifacts": {},
+    "differing_files": {
+      "dashboard/live_state.py": {
+        "blob_a": "37751726504c8e4f2356194bcd1feeb186493b8f",
+        "blob_b": "ad01a994af3560ac887091a030178fa55f8e94a7",
+        "functions": {
+          "added": [],
+          "changed": [
+            "game_state"
+          ],
+          "removed": []
+        }
+      },
+      "dashboard/settlement_rules.py": {
+        "blob_a": "a5204bbca03c8b24e7d40812502fbf3ddccaf2ee",
+        "blob_b": "9b1e2c19965d7385b99be1ff2875e4255c413616",
+        "functions": {
+          "added": [
+            "has_authoritative_game_commencement"
+          ],
+          "changed": [],
+          "removed": []
+        }
+      },
+      "grade_results.py": {
+        "blob_a": "2bbef439b05d6f1cccb0d9d67d234a0fc6d741b2",
+        "blob_b": "73189395d9199b716ada2ca460ce0f6e7566e583",
+        "functions": {
+          "added": [],
+          "changed": [
+            "grade_day"
+          ],
+          "removed": []
+        }
+      }
+    },
+    "fingerprint_a": "e6550b8b699c112f16079c6996a76a28fc33ec0a6ecb77a63e194c7e672c161d",
+    "fingerprint_b": "cf8d04a879402a79ed3976f572e8407176f56de695a278dfbd4320bf772995a1",
+    "n_closure_files": 19,
+    "sha_a": "2ce95fe903526c62640d23659d84d37bbaf1d6d2",
+    "sha_b": "022c88299281c5265204fcff548313b9973e9ec7",
+    "structurally_equivalent": false
+  }
+}

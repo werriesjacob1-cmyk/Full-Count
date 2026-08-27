@@ -34,14 +34,26 @@ DESIGN, one requirement at a time:
      project's existing check_regime_consistency() philosophy of "loud
      warning, not a silent blend."
 
-  B. ISOLATION / OWNERSHIP -- acquire_lock()/release_lock()/is_lock_stale().
-     A lock is {run_id, pid, hostname, acquired_at, heartbeat_at}. Stale
-     detection: same host AND pid no longer alive (os.kill(pid, 0) ->
-     ProcessLookupError), OR heartbeat older than LOCK_STALE_SECONDS
-     regardless of host (covers the cross-host/cross-container case this
-     project has actually hit, where the old PID number is meaningless on
-     a fresh container). A stale lock is reclaimable, never a permanent
-     brick -- see reclaim_stale_lock().
+  B. ISOLATION / OWNERSHIP -- acquire_lock()/release_lock()/is_lock_stale()
+     plus LeaseHeartbeat. A lock records the owner's full process identity
+     (pid, hostname, pid_start_ticks, boot_id) so its liveness can later be
+     verified rather than guessed. Staleness rules, in strict precedence:
+     same-host owner verifiably alive -> NEVER stale at any heartbeat age;
+     same-host owner verifiably gone (exited, PID recycled onto a different
+     process, or machine rebooted) -> stale immediately; liveness
+     unknowable (different host/container, no /proc) -> heartbeat age
+     decides, since a foreign PID number means nothing locally. A
+     LeaseHeartbeat thread refreshes the lease during operations of
+     unbounded length (Statcast warmup, one long date) so a busy owner is
+     never mistaken for a dead one. A stale lock is always reclaimable --
+     crash recovery is preserved in every branch.
+
+     This ordering is a real bug fix, not a precaution: the live canonical
+     run's own lock.json showed 933 seconds between acquired_at and its
+     first heartbeat_at against a 900-second threshold, because heartbeats
+     were emitted only on date boundaries and Statcast warmup precedes the
+     first date. For 33 seconds a second process would have been told it
+     could take the lock from a healthy multi-hour job.
 
   C. BOUNDED DURABLE CHECKPOINTS -- one pair of files per date:
      checkpoints/<date>.jsonl (the rows) and checkpoints/<date>.meta.json
@@ -111,6 +123,7 @@ import json
 import os
 import socket
 import sys
+import threading
 import time
 import uuid
 from datetime import datetime, timezone
@@ -120,6 +133,7 @@ if REPO_ROOT not in sys.path:
     sys.path.insert(0, REPO_ROOT)
 
 import recommendation  # noqa: E402 -- git_sha(), version constants
+from backtest import generation_regime as _gr  # noqa: E402 -- repo identity + regime
 
 SCHEMA_VERSION = 1
 LOCK_STALE_SECONDS = 15 * 60  # a heartbeat older than this, on any host, is reclaimable
@@ -234,7 +248,18 @@ def build_run_identity(start, end, out_target, *, sport="mlb",
         "weather_mode": weather_mode,
         "config": extra_config or {},
         "code_git_sha": sha,
-        "repository_identity": repo_identity or "werriesjacob1-cmyk/PROJECT-GRIDIRON",
+        # 2026-08-27: was hardcoded to "werriesjacob1-cmyk/PROJECT-GRIDIRON",
+        # which is the repository's PRE-RENAME name. It survived unnoticed
+        # because the configured git remote still uses that URL and GitHub
+        # transparently redirects it, so every push succeeded. Canonical
+        # provenance has to name the real repository, and the authority for
+        # that is GitHub's own API, which reports full_name=
+        # "werriesjacob1-cmyk/Full-Count" for this repo's pull requests.
+        # Manifests already written with the old value are corrected by an
+        # explicit, additive correction record -- never by editing the
+        # manifest, which would launder the provenance. See
+        # generation_regime.build_repository_identity_correction().
+        "repository_identity": repo_identity or _gr.CANONICAL_REPOSITORY_IDENTITY,
         "model_artifact_versions": {
             "model_version": recommendation.MODEL_VERSION,
             "selection_policy_version": recommendation.SELECTION_POLICY_VERSION,
@@ -300,20 +325,127 @@ def _pid_alive(pid):
     return True
 
 
+def _proc_start_ticks(pid):
+    """Process start time in clock ticks since boot, from /proc/<pid>/stat
+    field 22. Returns None where unavailable (non-Linux, permission,
+    already-exited).
+
+    This is what makes same-host PID liveness trustworthy enough to
+    outrank heartbeat age: a bare os.kill(pid, 0) cannot distinguish "the
+    original owner is still running" from "the OS recycled that PID onto
+    an unrelated process", and a recycled PID would otherwise let a
+    genuinely dead run hold its lock forever."""
+    try:
+        with open(f"/proc/{int(pid)}/stat", "rb") as f:
+            data = f.read()
+    except (OSError, TypeError, ValueError):
+        return None
+    # comm (field 2) is parenthesized and may itself contain spaces or ')',
+    # so split after the LAST ')' rather than tokenizing the whole line.
+    close = data.rfind(b")")
+    if close == -1:
+        return None
+    fields = data[close + 2:].split()
+    if len(fields) < 20:
+        return None
+    try:
+        return int(fields[19])  # field 22 overall; 20th after the comm block
+    except ValueError:
+        return None
+
+
+def _boot_id():
+    """Identifies this specific boot. Start-ticks are measured from boot,
+    so they are only comparable within one boot."""
+    try:
+        with open("/proc/sys/kernel/random/boot_id", encoding="utf-8") as f:
+            return f.read().strip()
+    except OSError:
+        return None
+
+
+def owner_process_identity():
+    """The identity a lock records so its liveness can later be verified
+    without ambiguity."""
+    pid = os.getpid()
+    return {"pid": pid, "hostname": socket.gethostname(),
+            "pid_start_ticks": _proc_start_ticks(pid), "boot_id": _boot_id()}
+
+
+def _same_host_owner_alive(lock):
+    """True only if the ORIGINAL owner process recorded in `lock` is still
+    running on this host. Returns None when liveness cannot be determined
+    (different host, or /proc unavailable), so callers can fall back to
+    heartbeat age rather than guessing."""
+    if lock.get("hostname") != socket.gethostname():
+        return None
+    recorded_boot = lock.get("boot_id")
+    if recorded_boot is not None and _boot_id() is not None and recorded_boot != _boot_id():
+        # Machine rebooted since the lock was taken: the owner cannot
+        # possibly still be running, whatever PID currently exists.
+        return False
+    pid = lock.get("pid")
+    if not _pid_alive(pid):
+        return False
+    recorded_ticks = lock.get("pid_start_ticks")
+    if recorded_ticks is None:
+        # Pre-hardening lock, or a platform without /proc. PID exists and
+        # we have nothing that contradicts it; treat as alive (the caller
+        # still has heartbeat age as a secondary signal for the
+        # can't-verify case -- see is_lock_stale).
+        return True
+    current_ticks = _proc_start_ticks(pid)
+    if current_ticks is None:
+        return True
+    return current_ticks == recorded_ticks
+
+
 def is_lock_stale(lock):
+    """Whether a lock may be reclaimed by a different owner.
+
+    2026-08-27 -- THIS ORDERING IS THE FIX, and the bug it replaces was
+    not hypothetical. The previous implementation tested heartbeat age
+    FIRST and only then looked at PID liveness, so a perfectly healthy
+    same-host owner was declared stale purely for being busy. The live
+    canonical run proved it: its own lock.json shows 933 seconds between
+    `acquired_at` and its first `heartbeat_at` (the Statcast warmup runs
+    before the first date completes, and heartbeats were emitted only on
+    date boundaries), against a 900-second threshold. For 33 seconds a
+    second process would have been told it could take the lock away from
+    a running, correct, irreplaceable multi-hour job.
+
+    The invariant now: DIRECT EVIDENCE BEATS INFERENCE.
+
+      * Same host, original owner verifiably alive  -> never stale, at any
+        heartbeat age. Time is a proxy for liveness; when liveness itself
+        is observable, the proxy is not needed and must not override it.
+      * Same host, owner verifiably gone (exited, PID recycled onto a
+        different process, or machine rebooted) -> stale immediately,
+        without waiting out the clock. This half matters as much as the
+        first: it is what keeps a crash from bricking the run.
+      * Liveness unknowable (different host/container, no /proc) -> a PID
+        number from another machine means nothing here, so heartbeat age
+        is the only honest signal and is used.
+
+    Crash recovery is preserved in every branch -- see the adversarial
+    tests in test_canonical_run.py.
+    """
     if lock is None:
         return True
+
+    alive = _same_host_owner_alive(lock)
+    if alive is True:
+        return False
+    if alive is False:
+        return True
+
     heartbeat = lock.get("heartbeat_at") or lock.get("acquired_at")
     try:
         age = (datetime.now(timezone.utc)
-               - datetime.fromisoformat(heartbeat.replace("Z", "+00:00"))).total_seconds()
+               - datetime.fromisoformat(str(heartbeat).replace("Z", "+00:00"))).total_seconds()
     except (TypeError, ValueError):
         return True  # unparseable heartbeat -- cannot trust it, treat as stale
-    if age > LOCK_STALE_SECONDS:
-        return True
-    if lock.get("hostname") == socket.gethostname() and not _pid_alive(lock.get("pid")):
-        return True
-    return False
+    return age > LOCK_STALE_SECONDS
 
 
 def read_lock(run_dir):
@@ -342,8 +474,9 @@ def acquire_lock(run_dir, run_id, *, owner_token=None):
             f"({LOCK_STALE_SECONDS}s since its last heartbeat) and retry.")
     token = owner_token or uuid.uuid4().hex
     lock = {
-        "run_id": run_id, "pid": os.getpid(), "hostname": socket.gethostname(),
-        "owner_token": token, "acquired_at": _now_iso(), "heartbeat_at": _now_iso(),
+        "run_id": run_id, "owner_token": token,
+        "acquired_at": _now_iso(), "heartbeat_at": _now_iso(),
+        **owner_process_identity(),
     }
     _atomic_write_json(lock_path(run_dir), lock)
     return lock
@@ -354,6 +487,85 @@ def heartbeat_lock(run_dir, lock):
     lock["heartbeat_at"] = _now_iso()
     _atomic_write_json(lock_path(run_dir), lock)
     return lock
+
+
+# Lease refresh interval. Comfortably under LOCK_STALE_SECONDS so that
+# even several consecutive missed ticks cannot age a live lease out.
+LEASE_HEARTBEAT_SECONDS = 60
+
+
+class LeaseHeartbeat:
+    """Keeps a run's lock lease fresh during an operation of unbounded
+    duration, independently of date boundaries.
+
+    2026-08-27, the other half of the is_lock_stale() fix. Even with
+    liveness now outranking age on the same host, a run whose owner is on
+    a DIFFERENT host/container still falls back to heartbeat age -- and a
+    long phase would still age it out there. More simply: emitting a
+    heartbeat only every N completed dates means the very first date of a
+    run is preceded by however long StatcastStore.load() takes, which on
+    the live run was 933 seconds of total silence. A lease should be a
+    statement about the process being alive, not about it having finished
+    a unit of work.
+
+    Deliberately narrow:
+      * writes ONLY lock.json, via the same atomic temp+rename every other
+        writer uses -- it can never touch checkpoints, manifests, model
+        state, or backtest state;
+      * daemon thread, so it cannot keep a dying interpreter alive and
+        cannot outlive the process it vouches for (a heartbeat that could
+        outlive its owner would be exactly the "hides a dead process"
+        failure this must avoid);
+      * a write failure is swallowed and retried on the next tick rather
+        than killing a multi-hour run over a transient fs error -- but it
+        is never masked as success: the thread stops updating and the
+        lease ages out naturally, which is the safe direction;
+      * stop() is idempotent and joins with a timeout, so no thread leaks
+        on either the normal or the exception path.
+    """
+
+    def __init__(self, run_dir, lock, interval=LEASE_HEARTBEAT_SECONDS):
+        self.run_dir = run_dir
+        self.lock = dict(lock)
+        self.interval = interval
+        self._stop = threading.Event()
+        self._thread = None
+        self.ticks = 0
+        self.errors = 0
+
+    def _loop(self):
+        while not self._stop.wait(self.interval):
+            try:
+                self.lock = heartbeat_lock(self.run_dir, self.lock)
+                self.ticks += 1
+            except Exception:
+                # See class docstring: never fatal, never masked.
+                self.errors += 1
+
+    def start(self):
+        if self._thread is not None:
+            return self
+        self._thread = threading.Thread(
+            target=self._loop, name="canonical-run-lease-heartbeat", daemon=True)
+        self._thread.start()
+        return self
+
+    def stop(self):
+        self._stop.set()
+        if self._thread is not None:
+            self._thread.join(timeout=max(5.0, self.interval / 4))
+            self._thread = None
+
+    @property
+    def running(self):
+        return self._thread is not None and self._thread.is_alive()
+
+    def __enter__(self):
+        return self.start()
+
+    def __exit__(self, exc_type, exc, tb):
+        self.stop()
+        return False  # never swallow the caller's exception
 
 
 def release_lock(run_dir, lock):
@@ -714,6 +926,10 @@ def run(run_dir, manifest, *, use_weather=True, use_bullpen=True,
 
     verify_code_identity(manifest, allow_sha_drift=allow_sha_drift)
     lock = acquire_lock(run_dir, manifest["run_id"])
+    # Covers EVERY long phase below -- Statcast warmup and each individual
+    # simulate_date() alike -- rather than only date boundaries. See
+    # LeaseHeartbeat's docstring for the live incident this prevents.
+    lease = LeaseHeartbeat(run_dir, lock).start()
     try:
         requested_dates = date_range(manifest["requested_start_date"], manifest["requested_end_date"])
         state = load_run_state(run_dir, requested_dates)
@@ -745,13 +961,22 @@ def run(run_dir, manifest, *, use_weather=True, use_bullpen=True,
             write_checkpoint(run_dir, d, res.rows if status == "ok" else [], status,
                              elapsed=elapsed, extra=extra)
             if i % heartbeat_every == 0:
+                # Retained as a cheap progress-boundary refresh. The lease
+                # thread is what actually guarantees freshness now, so this
+                # is no longer load-bearing -- it just keeps the on-disk
+                # lease aligned with observable progress for an operator
+                # reading lock.json.
                 lock = heartbeat_lock(run_dir, lock)
+                lease.lock = dict(lock)
             if i < len(remaining):
                 time.sleep(sleep)
         lock = heartbeat_lock(run_dir, lock)
         final_state = load_run_state(run_dir, requested_dates)
         return {"remaining": 0, "state": final_state}
     finally:
+        # Stop the lease BEFORE releasing, so no tick can resurrect a lock
+        # file the release is about to remove.
+        lease.stop()
         release_lock(run_dir, lock)
 
 
