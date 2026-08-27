@@ -256,18 +256,30 @@ def build_funnel_records(candidates, *, date, generated_at=None, code_git_sha=No
     return records
 
 
-def content_hash(record):
-    """Stable hash of a record's substantive content, excluding fields in
-    _HASH_EXCLUDE_KEYS (currently just generated_at) -- so re-running this
-    logger minutes apart on an UNCHANGED candidate produces the same hash
-    and is correctly treated as a duplicate, not a new changelog entry."""
+def canonical_content_record(record):
+    """Timestamp-neutral substantive candidate state used for dedup/storage.
+
+    Observation timing lives in the separate snapshot manifest. Keeping
+    run-level timestamps out of this content object lets one immutable candidate
+    state be referenced by many real observation events without rewriting it.
+    """
     def strip(obj):
         if isinstance(obj, dict):
-            return {k: strip(v) for k, v in obj.items() if k not in _HASH_EXCLUDE_KEYS}
+            return {
+                k: strip(v) for k, v in obj.items()
+                if k not in _HASH_EXCLUDE_KEYS
+            }
         if isinstance(obj, list):
             return [strip(v) for v in obj]
         return obj
-    canonical = json.dumps(strip(record), sort_keys=True, default=str)
+    return strip(record)
+
+
+def content_hash(record):
+    """Stable SHA-256 of the substantive, timestamp-neutral candidate state."""
+    canonical = json.dumps(
+        canonical_content_record(record),
+        sort_keys=True, separators=(",", ":"), default=str)
     return hashlib.sha256(canonical.encode("utf-8")).hexdigest()
 
 
@@ -372,6 +384,9 @@ def build_snapshot_manifest(records, *, date, observed_at,
             "selection_policy_version": run_metadata.get("selection_policy_version"),
             "calibration_version": run_metadata.get("calibration_version"),
             "feature_version": run_metadata.get("feature_version"),
+            "prediction_timestamp": run_metadata.get("prediction_timestamp"),
+            "odds_fetched_at": run_metadata.get("odds_fetched_at"),
+            "board_generated_at": run_metadata.get("board_generated_at"),
         },
     }
 
