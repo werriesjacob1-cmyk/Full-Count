@@ -95,25 +95,22 @@ def pick_from_funnel_record(record):
     }
 
 
-def grade_date(date, out_dir=DEFAULT_OUT_DIR, refresh=True):
-    """Orchestration: read the date's latest funnel records, fetch real game
-    contexts for every distinct game_pk, grade every candidate (kept,
-    rejected, assumed_lineup alike) with the real grade_results.grade_pick(),
-    and return (outcome_records, n_read). Does not write anything -- callers
-    that want persistence call write_outcomes() separately, keeping "grade"
-    and "persist" independently testable."""
-    in_path = funnel_path_for_date(date, out_dir)
-    latest = load_latest_records(in_path)
-    if not latest:
+def grade_records(date, records, refresh=True):
+    """Grade an explicit candidate-id -> record mapping with production logic."""
+    if not records:
         return [], 0
 
-    game_pks = {r.get("identity", {}).get("game_pk") for r in latest.values()}
+    game_pks = {
+        r.get("identity", {}).get("game_pk") for r in records.values()
+        if r.get("identity", {}).get("game_pk") is not None
+    }
     game_statuses = gr.fetch_game_contexts(game_pks, refresh=refresh)
 
     outcomes = []
-    for cid, record in latest.items():
+    for cid, record in sorted(records.items()):
         pick = pick_from_funnel_record(record)
-        graded = gr.grade_pick(pick, game_statuses, date=date, allow_in_progress=False)
+        graded = gr.grade_pick(
+            pick, game_statuses, date=date, allow_in_progress=False)
         outcomes.append({
             "candidate_id": cid,
             "date": date,
@@ -121,10 +118,72 @@ def grade_date(date, out_dir=DEFAULT_OUT_DIR, refresh=True):
             "actual": graded.get("actual"),
             "actual_stat": graded.get("actual_stat"),
             "reason": graded.get("reason"),
-            "quality_control_status": (record.get("decision") or {}).get("quality_control_status"),
+            "quality_control_status": (
+                (record.get("decision") or {}).get("quality_control_status")
+            ),
             "graded_at": datetime.utcnow().isoformat() + "Z",
         })
-    return outcomes, len(latest)
+    return outcomes, len(records)
+
+
+def grade_date(date, out_dir=DEFAULT_OUT_DIR, refresh=True):
+    """Grade the latest state per candidate from the ephemeral JSONL spool."""
+    in_path = funnel_path_for_date(date, out_dir)
+    latest = load_latest_records(in_path)
+    return grade_records(date, latest, refresh=refresh)
+
+
+def load_materialized_date_records(destination_root, date):
+    """Union every candidate identity ever observed in durable snapshots.
+
+    Candidate content can legitimately change through the day, but fields that
+    determine settlement (game/player/stat/needs/threshold/side) may not change
+    under one candidate_id. If they do, the identity contract is broken and
+    grading fails closed instead of silently choosing one version.
+    """
+    try:
+        from backtest import prospective_durability as pdur
+    except ImportError:
+        import prospective_durability as pdur
+
+    snapshots = pdur.discover_materialized_snapshots(
+        destination_root, date=date)
+    by_id = {}
+    settlement_identity = {}
+
+    def settle_key(record):
+        identity = record.get("identity") or {}
+        return {
+            key: identity.get(key)
+            for key in (
+                "candidate_id", "game_pk", "type", "player_id",
+                "combo_player_ids", "stat", "side", "threshold", "needs",
+            )
+        }
+
+    for item in snapshots:
+        _, records = pdur.load_materialized_snapshot(
+            destination_root, date=date, snapshot_id=item["snapshot_id"])
+        for record in records:
+            cid = (record.get("identity") or {}).get("candidate_id")
+            if not cid:
+                raise RuntimeError(
+                    f"durable snapshot {item['snapshot_id']} has candidate without id")
+            key = settle_key(record)
+            if cid in settlement_identity and settlement_identity[cid] != key:
+                raise RuntimeError(
+                    f"candidate identity {cid} changed settlement fields across "
+                    "prospective observations")
+            settlement_identity[cid] = key
+            by_id[cid] = record
+    return by_id, len(snapshots)
+
+
+def grade_materialized_date(destination_root, date, refresh=True):
+    """Grade every candidate identity ever observed in durable date snapshots."""
+    records, _n_snapshots = load_materialized_date_records(
+        destination_root, date)
+    return grade_records(date, records, refresh=refresh)
 
 
 def write_outcomes(outcomes, path):
