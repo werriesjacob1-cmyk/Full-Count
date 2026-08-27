@@ -300,6 +300,37 @@ def main():
               cd._sha256_file(meta_path),
               idx["dates"][meta_victim]["meta_sha256"])
 
+        # A required git staging failure must abort before commit/push. The
+        # previous implementation ignored stage_blob()'s None return and could
+        # continue building a partial durable commit.
+        STAGE_RUN = "canonical-STAGEFAIL-abcd1234"
+        stage_date = "2024-05-01"
+        stage_dir = os.path.join(repo2, "backtest", "canonical_runs", STAGE_RUN)
+        os.makedirs(os.path.join(stage_dir, "checkpoints"), exist_ok=True)
+        stage_manifest = make_manifest(STAGE_RUN, stage_date, stage_date)
+        cr._atomic_write_json(cr.manifest_path(stage_dir), stage_manifest)
+        cr.write_checkpoint(
+            stage_dir, stage_date, synth_rows(stage_date, 2), "ok",
+            source_code_git_sha="a" * 40)
+
+        _real_git = cd._git
+        def _fail_update_index(args, **kwargs):
+            if args and args[0] == "update-index":
+                return subprocess.CompletedProcess(
+                    args=args, returncode=1, stdout="", stderr="simulated stage failure")
+            return _real_git(args, **kwargs)
+
+        cd._git = _fail_update_index
+        try:
+            stage_res = cd.push_durable_checkpoint(
+                stage_dir, stage_manifest, dates=[stage_date], repo_root=repo2)
+        finally:
+            cd._git = _real_git
+        check("required stage failure does not report a push",
+              stage_res["pushed"], False)
+        check("required stage failure is explicit",
+              "failed to stage required durable blob" in (stage_res["reason"] or ""), True)
+
         # Corrupted checksum in the ledger must be caught on restore.
         repo3 = os.path.join(sandbox, "container-3")
         git(["clone", "-q", origin, repo3], cwd=sandbox, env=GIT_ENV)
