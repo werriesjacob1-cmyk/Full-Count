@@ -218,6 +218,35 @@ class EqualVolumeIntegrationTests(unittest.TestCase):
                 len({be.thesis_identity(population.row(i)) for i in selected}),
                 schedule[d])
 
+    def test_strict_policy_schedule_must_match_experiment_schedule(self):
+        rows = [
+            row("2024-05-01", 10, 1, "hits", 1, 100),
+            row("2024-05-01", 11, 2, "hits", 1, 90),
+            row("2024-05-02", 20, 3, "hits", 1, 80),
+            row("2024-05-02", 21, 4, "hits", 1, 70),
+        ]
+        population = pop_from(rows)
+        strict_schedule = {"2024-05-01": 1, "2024-05-02": 1}
+        different_schedule = {"2024-05-01": 2, "2024-05-02": 0}
+        strict_rank = be.best_expression_rank_fn(
+            SCORE, strict_volume_by_date=strict_schedule)
+        chal = ev.SelectionPolicy("best_expression_strict", "1.0", strict_rank)
+
+        self.assertEqual(chal.required_volume_by_date, strict_schedule)
+        self.assertEqual(
+            chal.selection_contract["type"], "best_expression_strict")
+
+        with self.assertRaises(ev.EqualVolumeViolation) as cm:
+            ev.EqualVolumeExperiment(
+                population=population,
+                champion=ev.SelectionPolicy(
+                    "champion_score", "1.0", ev.rank_by(SCORE)),
+                challenger=chal,
+                volume=2,
+                volume_by_date=different_schedule,
+            )
+        self.assertIn("may not be validated against one schedule", str(cm.exception))
+
     def test_challenger_is_more_diversified_than_champion_here(self):
         population = self._population()
         champ = ev.SelectionPolicy("champion_score", "1.0", ev.rank_by(SCORE))
