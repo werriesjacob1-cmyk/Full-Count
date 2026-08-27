@@ -632,4 +632,10 @@ def _current_git_sha(repo_root, *, short=True):
 
 
 if __name__ == "__main__":
-    run_live_snapshot()
+    import argparse
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "--out-dir", default=DEFAULT_OUT_DIR,
+        help="directory for gitignored candidate/snapshot JSONL spool files")
+    args = parser.parse_args()
+    run_live_snapshot(out_dir=args.out_dir)
