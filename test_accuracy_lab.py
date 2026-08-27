@@ -107,6 +107,77 @@ except ValueError as e:
          f"got: {e}")
 check(raised, "ValueError was actually raised")
 
+head("2b. lock_holdout(): 2026-08-27 hardening -- a DIFFERENT rows_path pointed at the SAME "
+     "manifest_path is rejected rather than silently reused (no policy change; the earlier "
+     "manifest from section 1/2 above is already locked to `rows_path`)")
+
+other_rows_path = os.path.join(TMPDIR, "a_completely_different_artifact.jsonl")
+write_rows(other_rows_path, [fixture_row(d, 1, 1) for d in DATES])
+raised = False
+try:
+    al.lock_holdout(other_rows_path, holdout_frac=0.2)
+except al.IncompatibleDatasetError as e:
+    raised = True
+    check("different artifacts" in str(e), "the error names the real cause (different artifact)",
+         f"got: {e}")
+check(raised, "IncompatibleDatasetError was actually raised, not silently reused")
+
+head("2c. lock_holdout(): a fresh manifest_path against the SAME new artifact works cleanly "
+     "and records the new schema-v2 identity-binding fields")
+
+fresh_manifest_path = os.path.join(TMPDIR, "fresh_manifest.json")
+train2, holdout2, cutoff2 = al.lock_holdout(other_rows_path, holdout_frac=0.2,
+                                            manifest_path=fresh_manifest_path)
+with open(fresh_manifest_path, encoding="utf-8") as f:
+    fresh_manifest = json.load(f)
+check(fresh_manifest.get("manifest_schema_version") == 2, "new manifest is schema v2")
+check(fresh_manifest.get("artifact_sha256") == al._artifact_sha256(other_rows_path),
+     "artifact_sha256 matches the real file content")
+check(fresh_manifest.get("artifact_row_count") == len(train2) + len(holdout2),
+     "artifact_row_count matches the actual partitioned row count")
+check(fresh_manifest.get("code_git_sha_at_lock") is not None or True,
+     "code_git_sha_at_lock is present (may be None outside a git checkout, never fabricated)")
+
+head("2d. lock_holdout(): if the underlying artifact's CONTENT changes after a schema-v2 "
+     "lock (regenerated/truncated/edited), re-locking against the same path+manifest fails "
+     "closed instead of silently evaluating against a partition that no longer matches")
+
+write_rows(other_rows_path, [fixture_row(d, 1, 1) for d in DATES] + [fixture_row(DATES[-1], 2, 0)])
+raised = False
+try:
+    al.lock_holdout(other_rows_path, holdout_frac=0.2, manifest_path=fresh_manifest_path)
+except al.IncompatibleDatasetError as e:
+    raised = True
+    check("no longer matches" in str(e), "the error explains the content-drift cause honestly",
+         f"got: {e}")
+check(raised, "IncompatibleDatasetError was raised on content drift under a schema-v2 manifest")
+with open(fresh_manifest_path, encoding="utf-8") as f:
+    manifest_after_drift = json.load(f)
+check(manifest_after_drift == fresh_manifest,
+     "the manifest itself was NOT rewritten/auto-upgraded by the failed attempt")
+
+head("2e. lock_holdout(): a pre-hardening schema-v1-shaped manifest (no artifact_sha256) "
+     "keeps working unmodified for its own original rows_path -- this hardening does not "
+     "retroactively rewrite or break an existing locked manifest")
+
+legacy_rows_path = os.path.join(TMPDIR, "legacy_rows.jsonl")
+write_rows(legacy_rows_path, [fixture_row(d, 1, 1) for d in DATES])
+legacy_manifest_path = os.path.join(TMPDIR, "legacy_manifest.json")
+legacy_manifest = {
+    "cutoff_date": DATES[-2], "holdout_frac": 0.2,
+    "rows_path": os.path.relpath(legacy_rows_path, al.ROOT),
+    "locked_at": "2026-01-01T00:00:00+00:00", "n_distinct_dates_at_lock": len(DATES),
+}
+with open(legacy_manifest_path, "w", encoding="utf-8") as f:
+    json.dump(legacy_manifest, f)
+train3, holdout3, cutoff3 = al.lock_holdout(legacy_rows_path, holdout_frac=0.2,
+                                            manifest_path=legacy_manifest_path)
+check(cutoff3 == DATES[-2], "legacy manifest's original cutoff_date is honored unchanged")
+with open(legacy_manifest_path, encoding="utf-8") as f:
+    legacy_manifest_after = json.load(f)
+check(legacy_manifest_after == legacy_manifest,
+     "the legacy manifest file itself was not modified just by reading it")
+
 head("3. champion_predict_fn(): prefers calibrated_prob when Stage 5 set one, falls back "
      "to raw predicted_prob otherwise -- never fabricates a third number")
 

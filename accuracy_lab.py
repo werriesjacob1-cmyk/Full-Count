@@ -53,17 +53,39 @@ but-different samples compared as if they were the same one.
 from __future__ import annotations
 
 import glob
+import hashlib
 import json
 import os
 from datetime import datetime, timezone
 
 import eval_lib as el
+import recommendation as _rec
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
 LAB_DIR = os.path.join(ROOT, "data", "accuracy_lab")
 MANIFEST_PATH = os.path.join(LAB_DIR, "holdout_manifest.json")
 RESULTS_DIR = os.path.join(LAB_DIR, "results")
 DEFAULT_ROWS_PATH = os.path.join(ROOT, "backtest", "rows.jsonl")
+
+MANIFEST_SCHEMA_VERSION = 2  # bumped 2026-08-27 -- see IncompatibleDatasetError
+
+
+class IncompatibleDatasetError(Exception):
+    """Raised by lock_holdout() when the manifest at manifest_path is bound
+    to a genuinely different artifact than the one being requested now.
+
+    2026-08-27 hardening: the accuracy-lab holdout mechanism previously
+    trusted a manifest's cutoff_date forever, for ANY rows_path a caller
+    happened to pass, as long as holdout_frac matched -- it never checked
+    whether the underlying data was still the SAME data. A new canonical
+    artifact (backtest/canonical_run.py's assembled output, or any future
+    replacement for backtest/rows.jsonl) landing at the same path, or a
+    caller pointing the same manifest_path at a different rows_path, would
+    have been silently accepted and evaluated against a holdout partition
+    that no longer means what it claims to. This exception is that hazard
+    made loud instead of silent, per the governing mission's explicit
+    Phase 5 requirement: 'a holdout/experiment manifest should fail closed
+    against a mismatched dataset... No silent reuse.'"""
 
 
 def _read_rows(rows_path):
@@ -87,6 +109,26 @@ def _content_fingerprint(rows):
     return {"n_rows": len(rows), "n_hits": sum(1 for r in rows if r.get("outcome") == 1)}
 
 
+def _artifact_sha256(rows_path):
+    h = hashlib.sha256()
+    with open(rows_path, "rb") as f:
+        for chunk in iter(lambda: f.read(1 << 20), b""):
+            h.update(chunk)
+    return h.hexdigest()
+
+
+def _artifact_identity(rows_path, rows, distinct_dates):
+    """Every field this run of lock_holdout() can independently re-derive
+    from the file on disk right now -- compared against what a prior lock
+    recorded, never trusted from the manifest alone."""
+    return {
+        "artifact_sha256": _artifact_sha256(rows_path),
+        "artifact_row_count": len(rows),
+        "artifact_n_distinct_dates": len(distinct_dates),
+        "artifact_date_range": [distinct_dates[0], distinct_dates[-1]] if distinct_dates else None,
+    }
+
+
 def lock_holdout(rows_path=DEFAULT_ROWS_PATH, holdout_frac=0.2, manifest_path=None):
     """Return (train_rows, holdout_rows, cutoff_date), locking the holdout
     permanently on first call. Every later call (even with a different
@@ -101,13 +143,28 @@ def lock_holdout(rows_path=DEFAULT_ROWS_PATH, holdout_frac=0.2, manifest_path=No
     binding it there would make a test's `accuracy_lab.MANIFEST_PATH =
     tmpdir` silently not apply to any caller that omits the argument
     (the exact trap test_champion_challenger.py's own docstring already
-    documents hitting once, for SHADOW_DIR/RESULTS_DIR)."""
+    documents hitting once, for SHADOW_DIR/RESULTS_DIR).
+
+    2026-08-27 hardening (see IncompatibleDatasetError): a manifest is now
+    additionally bound to the exact artifact it was locked against --
+    resolved rows_path, content sha256, row count, and date range. A call
+    against an existing manifest whose rows_path resolves elsewhere, or
+    whose CURRENT file content no longer matches what was recorded at lock
+    time, raises IncompatibleDatasetError rather than silently reusing a
+    stale or mismatched cutoff. This never rewrites an old manifest to
+    "fix" a mismatch -- a genuinely new/different dataset must be locked
+    under its own, newly created manifest_path. A pre-hardening (schema
+    version 1, no artifact_sha256) manifest keeps working unmodified for
+    calls that still point at its original rows_path, since nothing about
+    THAT artifact's identity is actually in question; it is not retro-
+    actively rewritten in place either."""
     manifest_path = manifest_path if manifest_path is not None else MANIFEST_PATH
     rows = _read_rows(rows_path)
     if not rows:
         raise ValueError(f"no rows found at {rows_path!r} -- nothing to lock a holdout against")
     dated = sorted(rows, key=lambda r: r["date"])
     distinct_dates = sorted({r["date"] for r in dated})
+    requested_rows_path_rel = os.path.relpath(os.path.abspath(rows_path), ROOT)
 
     if os.path.exists(manifest_path):
         with open(manifest_path, encoding="utf-8") as f:
@@ -119,16 +176,39 @@ def lock_holdout(rows_path=DEFAULT_ROWS_PATH, holdout_frac=0.2, manifest_path=No
                 f"-- passed holdout_frac={holdout_frac!r} does not match. Delete "
                 f"{manifest_path} and re-lock deliberately if the partition should change."
             )
+        if manifest.get("rows_path") != requested_rows_path_rel:
+            raise IncompatibleDatasetError(
+                f"manifest at {manifest_path!r} is locked to rows_path="
+                f"{manifest.get('rows_path')!r}, but this call passed "
+                f"{requested_rows_path_rel!r} -- these are different artifacts. "
+                f"Point at a NEW manifest_path to lock a holdout for this dataset; "
+                f"do not reuse an existing manifest across artifacts.")
+        if manifest.get("manifest_schema_version", 1) >= 2:
+            current_identity = _artifact_identity(rows_path, rows, distinct_dates)
+            recorded_identity = {k: manifest.get(k) for k in current_identity}
+            if current_identity != recorded_identity:
+                raise IncompatibleDatasetError(
+                    f"manifest at {manifest_path!r} no longer matches the artifact at "
+                    f"{rows_path!r}: locked identity was {recorded_identity}, current "
+                    f"file identity is {current_identity}. The underlying dataset changed "
+                    f"since this holdout was locked (regenerated, replaced, or truncated) "
+                    f"-- results evaluated against the old lock are no longer meaningful "
+                    f"for this file. This manifest is NOT automatically updated; either "
+                    f"restore the original artifact or lock a fresh manifest at a new path "
+                    f"for the new one.")
         cutoff_date = manifest["cutoff_date"]
     else:
         n_holdout_dates = max(1, int(round(len(distinct_dates) * holdout_frac)))
         cutoff_date = distinct_dates[len(distinct_dates) - n_holdout_dates]
         manifest = {
+            "manifest_schema_version": MANIFEST_SCHEMA_VERSION,
             "cutoff_date": cutoff_date,
             "holdout_frac": holdout_frac,
-            "rows_path": os.path.relpath(rows_path, ROOT),
+            "rows_path": requested_rows_path_rel,
             "locked_at": datetime.now(timezone.utc).isoformat(),
             "n_distinct_dates_at_lock": len(distinct_dates),
+            "code_git_sha_at_lock": _rec.git_sha(short=False),
+            **_artifact_identity(rows_path, rows, distinct_dates),
         }
         os.makedirs(os.path.dirname(manifest_path), exist_ok=True)
         with open(manifest_path, "w", encoding="utf-8") as f:
