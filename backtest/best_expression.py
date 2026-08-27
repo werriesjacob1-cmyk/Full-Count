@@ -155,6 +155,22 @@ def best_expression_rank_fn(base_key_fn, *, thesis_mode=THESIS_PLAYER_GAME,
         # below every kept one -- never discarded (see module docstring).
         return kept + demoted
 
+    # Publish the strict schedule as machine-readable policy metadata. The
+    # equal-volume framework verifies this contract matches the experiment's
+    # own locked schedule, so a caller cannot validate refill against an easier
+    # quota and then select a larger one.
+    _rank._fc_required_volume_by_date = (
+        dict(sorted(strict_schedule.items()))
+        if strict_schedule is not None else None
+    )
+    _rank._fc_selection_contract = (
+        {
+            "type": "best_expression_strict",
+            "thesis_mode": thesis_mode,
+            "max_per_thesis": max_per_thesis,
+        }
+        if strict_schedule is not None else None
+    )
     return _rank
 
 
