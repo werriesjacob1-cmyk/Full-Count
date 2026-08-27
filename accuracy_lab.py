@@ -226,6 +226,77 @@ def assert_promotion_grade_manifest(manifest, manifest_path=None):
         f"the artifact you intend to certify.")
 
 
+def verify_promotion_grade_dataset_identity(identity):
+    """Verify a promotion dataset identity against the manifest AND artifact.
+
+    A plain dict containing checksum-looking keys is not evidence. Promotion
+    callers must point at the actual locked manifest; this function reloads it,
+    applies the strong-manifest contract, resolves the artifact recorded by the
+    manifest, and recomputes the artifact identity from disk. The returned
+    object is the verified identity used by downstream experiment manifests.
+
+    identity may be the manifest fields plus manifest_path, or simply a dict
+    containing manifest_path. Caller-supplied duplicate fields are checked
+    against the manifest so stale/copied metadata cannot masquerade as
+    verification of a different file.
+    """
+    if not isinstance(identity, dict):
+        raise WeakDatasetIdentityError(
+            "promotion dataset identity must be a dict containing manifest_path")
+    manifest_path = identity.get("manifest_path")
+    if not manifest_path:
+        raise WeakDatasetIdentityError(
+            "promotion dataset identity requires manifest_path; arbitrary checksum "
+            "keys are not proof that a real locked manifest was verified")
+
+    manifest_path_abs = (manifest_path if os.path.isabs(manifest_path)
+                         else os.path.join(ROOT, manifest_path))
+    if not os.path.exists(manifest_path_abs):
+        raise WeakDatasetIdentityError(
+            f"promotion manifest does not exist at {manifest_path_abs!r}")
+
+    with open(manifest_path_abs, encoding="utf-8") as f:
+        manifest = json.load(f)
+    strength = assert_promotion_grade_manifest(manifest, manifest_path_abs)
+
+    mismatched = {}
+    for key in PROMOTION_GRADE_BINDING_FIELDS:
+        if key in identity and identity.get(key) != manifest.get(key):
+            mismatched[key] = {
+                "identity": identity.get(key),
+                "manifest": manifest.get(key),
+            }
+    if mismatched:
+        raise IncompatibleDatasetError(
+            f"dataset identity metadata disagrees with its manifest: {mismatched}")
+
+    rows_path_recorded = manifest["rows_path"]
+    rows_path_abs = (rows_path_recorded if os.path.isabs(rows_path_recorded)
+                     else os.path.join(ROOT, rows_path_recorded))
+    rows = _read_rows(rows_path_abs)
+    if not rows:
+        raise IncompatibleDatasetError(
+            f"manifest points at {rows_path_abs!r}, but no rows can be read there")
+    distinct_dates = sorted({r["date"] for r in rows})
+    current = _artifact_identity(rows_path_abs, rows, distinct_dates)
+    recorded = {k: manifest.get(k) for k in current}
+    if current != recorded:
+        raise IncompatibleDatasetError(
+            f"promotion manifest no longer matches its artifact: recorded={recorded}, "
+            f"current={current}")
+
+    manifest_sha = hashlib.sha256(
+        json.dumps(manifest, sort_keys=True, separators=(",", ":")).encode("utf-8")
+    ).hexdigest()
+    return {
+        **manifest,
+        "manifest_path": os.path.relpath(manifest_path_abs, ROOT),
+        "manifest_content_sha256": manifest_sha,
+        "verified_artifact_path": os.path.relpath(rows_path_abs, ROOT),
+        "identity_strength": strength,
+    }
+
+
 def lock_holdout(rows_path=DEFAULT_ROWS_PATH, holdout_frac=0.2, manifest_path=None,
                  require_strong_dataset_identity=False):
     """Return (train_rows, holdout_rows, cutoff_date), locking the holdout
@@ -323,6 +394,10 @@ def lock_holdout(rows_path=DEFAULT_ROWS_PATH, holdout_frac=0.2, manifest_path=No
             "code_git_sha_at_lock": _rec.git_sha(short=False),
             **_artifact_identity(rows_path, rows, distinct_dates),
         }
+        if require_strong_dataset_identity:
+            # Refuse before writing a supposedly promotion-grade lock if the
+            # runtime cannot populate every binding field.
+            assert_promotion_grade_manifest(manifest, manifest_path)
         os.makedirs(os.path.dirname(manifest_path), exist_ok=True)
         with open(manifest_path, "w", encoding="utf-8") as f:
             json.dump(manifest, f, indent=2)
