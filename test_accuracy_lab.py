@@ -260,6 +260,47 @@ with open(legacy_manifest_path, encoding="utf-8") as f:
     check(json.load(f) == legacy_manifest,
          "the pre-existing legacy manifest is STILL byte-identical after all of the above")
 
+head("2i. PROMOTION DATASET IDENTITY: checksum-shaped caller metadata is not proof; "
+     "the verifier must load the real manifest and recompute the real artifact identity")
+
+verified_identity = al.verify_promotion_grade_dataset_identity({
+    "manifest_path": canonical_manifest_path,
+})
+check(verified_identity["artifact_sha256"] == al._artifact_sha256(other2),
+     "verified identity carries the checksum recomputed from the actual artifact")
+check(verified_identity["manifest_path"] == os.path.relpath(canonical_manifest_path, al.ROOT),
+     "verified identity records the real manifest path")
+
+raised = False
+try:
+    al.verify_promotion_grade_dataset_identity({
+        "manifest_path": canonical_manifest_path,
+        "artifact_sha256": "0" * 64,
+    })
+except al.IncompatibleDatasetError as e:
+    raised = True
+    check("disagrees with its source manifest" in str(e),
+          "fabricated caller metadata paired with a real manifest is rejected",
+          f"got: {e}")
+check(raised, "a fake artifact checksum cannot piggyback on a real manifest")
+
+# Now change the artifact itself after the manifest was locked. The verifier
+# must independently catch this too -- reading a real manifest is necessary
+# but not sufficient if the file at its rows_path has since changed.
+with open(other2, "a", encoding="utf-8") as f:
+    f.write(json.dumps(fixture_row(DATES[-1], 999, 0)) + "\n")
+raised = False
+try:
+    al.verify_promotion_grade_dataset_identity({
+        "manifest_path": canonical_manifest_path,
+    })
+except al.IncompatibleDatasetError as e:
+    raised = True
+    check("no longer matches" in str(e),
+          "content drift after lock is caught by recomputing the real artifact",
+          f"got: {e}")
+check(raised, "promotion verification fails closed when the locked artifact changed")
+
 head("3. champion_predict_fn(): prefers calibrated_prob when Stage 5 set one, falls back "
      "to raw predicted_prob otherwise -- never fabricates a third number")
 
