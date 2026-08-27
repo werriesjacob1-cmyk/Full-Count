@@ -204,6 +204,92 @@ class EqualVolumeSelectorComparisonTests(unittest.TestCase):
         self.assertEqual(report["champion"]["unique_player_entities"], 2)
 
 
+class AggregateEqualVolumeTests(unittest.TestCase):
+    def _report(self, date, champion_grades, challenger_grades):
+        # Build disjoint champion/challenger selections so the expected hit
+        # counts are transparent. Equal volume is enforced per slate.
+        records = []
+        outcomes = []
+        for i, grade in enumerate(champion_grades):
+            cid = f"{date}-champ-{i}"
+            records.append(record(
+                candidate_id=cid, recommendation_status="top_pick",
+                edge_vs_fair=0.01 + i * 0.001))
+            outcomes.append(outcome(cid, grade))
+        for i, grade in enumerate(challenger_grades):
+            cid = f"{date}-chal-{i}"
+            records.append(record(
+                candidate_id=cid, recommendation_status=None,
+                edge_vs_fair=0.50 - i * 0.001))
+            outcomes.append(outcome(cid, grade))
+        return pr.equal_volume_selector_comparison(
+            records, outcomes, challenger_ranking="edge_vs_fair",
+            slate_date=date)
+
+    def test_aggregate_preserves_equal_volume_and_realized_hits(self):
+        r1 = self._report(
+            "2026-08-25", ["hit", "miss"], ["hit", "hit"])
+        r2 = self._report(
+            "2026-08-26", ["miss", "miss"], ["hit", "miss"])
+        agg = pr.aggregate_equal_volume_comparisons(
+            [r1, r2], bootstrap_samples=1000, seed=7)
+        self.assertEqual(agg["selection_volume"], 4)
+        self.assertEqual(agg["champion_hits"], 1)
+        self.assertEqual(agg["challenger_hits"], 3)
+        self.assertEqual(agg["champion_hit_rate"], 0.25)
+        self.assertEqual(agg["challenger_hit_rate"], 0.75)
+        self.assertEqual(agg["realized_hit_rate_delta"], 0.5)
+        self.assertEqual(agg["slate_wins"], 2)
+        self.assertEqual(agg["slate_losses"], 0)
+        self.assertEqual(agg["uncertainty_cluster"], "slate_date")
+        self.assertEqual(agg["bootstrap_samples"], 1000)
+        self.assertEqual(len(agg["cluster_bootstrap_95pct_delta"]), 2)
+
+    def test_bootstrap_is_deterministic_for_same_seed(self):
+        reports = [
+            self._report("2026-08-25", ["hit"], ["miss"]),
+            self._report("2026-08-26", ["miss"], ["hit"]),
+            self._report("2026-08-27", ["miss"], ["hit"]),
+        ]
+        a = pr.aggregate_equal_volume_comparisons(
+            reports, bootstrap_samples=250, seed=11)
+        b = pr.aggregate_equal_volume_comparisons(
+            reports, bootstrap_samples=250, seed=11)
+        self.assertEqual(
+            a["cluster_bootstrap_95pct_delta"],
+            b["cluster_bootstrap_95pct_delta"])
+
+    def test_duplicate_slate_dates_are_rejected_as_double_counting(self):
+        r1 = self._report("2026-08-25", ["hit"], ["miss"])
+        r2 = self._report("2026-08-25", ["miss"], ["hit"])
+        with self.assertRaises(pr.ProspectiveIntegrityError):
+            pr.aggregate_equal_volume_comparisons([r1, r2])
+
+    def test_incomplete_settlement_is_not_silently_dropped(self):
+        r = self._report("2026-08-25", ["hit"], ["hit"])
+        r["comparison_status"] = "INCOMPLETE_SETTLEMENT"
+        with self.assertRaises(pr.ProspectiveIntegrityError):
+            pr.aggregate_equal_volume_comparisons([r])
+
+    def test_multiple_challenger_definitions_cannot_be_pooled(self):
+        r1 = self._report("2026-08-25", ["hit"], ["miss"])
+        r2 = self._report("2026-08-26", ["miss"], ["hit"])
+        r2["challenger_ranking"] = "hit_probability"
+        with self.assertRaises(pr.ProspectiveIntegrityError):
+            pr.aggregate_equal_volume_comparisons([r1, r2])
+
+    def test_zero_volume_slate_is_preserved_without_padding(self):
+        zero = pr.equal_volume_selector_comparison(
+            [record(candidate_id="z")], [outcome("z")],
+            challenger_ranking="edge_vs_fair", slate_date="2026-08-24")
+        nonzero = self._report("2026-08-25", ["hit"], ["hit"])
+        agg = pr.aggregate_equal_volume_comparisons(
+            [zero, nonzero], bootstrap_samples=100, seed=1)
+        self.assertEqual(agg["n_slates"], 2)
+        self.assertEqual(agg["n_zero_volume_slates"], 1)
+        self.assertEqual(agg["selection_volume"], 1)
+
+
 class SlateSummaryTests(unittest.TestCase):
     def test_counts_by_qc_status(self):
         records = [record(qc_status="confirmed_lineup"), record(qc_status="rejected"),
