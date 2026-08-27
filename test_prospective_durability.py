@@ -250,6 +250,81 @@ class DurableReloadTests(unittest.TestCase):
         self.assertEqual([x["n_candidates"] for x in found], [1, 1])
 
 
+class OutcomeDurabilityTests(unittest.TestCase):
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory()
+        self.root = self.tmp.name
+
+    def tearDown(self):
+        self.tmp.cleanup()
+
+    def test_regrading_same_substantive_outcome_is_idempotent(self):
+        a = {
+            "candidate_id": "a", "date": "2026-08-25",
+            "grade": "hit", "actual": 2, "actual_stat": "hits",
+            "reason": None, "graded_at": "2026-08-26T05:00:00Z",
+        }
+        b = {**a, "graded_at": "2026-08-26T06:00:00Z"}
+        first = pdur.materialize_outcomes([a], self.root)
+        second = pdur.materialize_outcomes([b], self.root)
+        self.assertEqual(first["outcome_events_written"], 1)
+        self.assertEqual(second["outcome_events_written"], 0)
+        self.assertEqual(second["outcome_events_reused"], 1)
+        loaded = pdur.load_materialized_outcomes(
+            self.root, date="2026-08-25")
+        self.assertEqual(len(loaded), 1)
+        self.assertEqual(loaded[0]["grade"], "hit")
+        self.assertNotIn("graded_at", loaded[0])
+
+    def test_ungraded_then_final_is_preserved_but_final_is_selected(self):
+        pending = {
+            "candidate_id": "a", "date": "2026-08-25",
+            "grade": "ungraded", "actual": None, "actual_stat": None,
+            "reason": "game not final", "graded_at": "2026-08-26T03:00:00Z",
+        }
+        final = {
+            "candidate_id": "a", "date": "2026-08-25",
+            "grade": "miss", "actual": 0, "actual_stat": "hits",
+            "reason": None, "graded_at": "2026-08-26T06:00:00Z",
+        }
+        pdur.materialize_outcomes([pending], self.root)
+        pdur.materialize_outcomes([final], self.root)
+        loaded = pdur.load_materialized_outcomes(
+            self.root, date="2026-08-25")
+        self.assertEqual(len(loaded), 1)
+        self.assertEqual(loaded[0]["grade"], "miss")
+
+    def test_contradictory_final_settlements_fail_closed(self):
+        hit = {
+            "candidate_id": "a", "date": "2026-08-25",
+            "grade": "hit", "actual": 2, "actual_stat": "hits",
+            "reason": None,
+        }
+        miss = {
+            "candidate_id": "a", "date": "2026-08-25",
+            "grade": "miss", "actual": 0, "actual_stat": "hits",
+            "reason": None,
+        }
+        pdur.materialize_outcomes([hit, miss], self.root)
+        with self.assertRaises(pdur.ProspectiveDurabilityError):
+            pdur.load_materialized_outcomes(
+                self.root, date="2026-08-25")
+
+    def test_outcome_path_tamper_is_detected(self):
+        event = {
+            "candidate_id": "a", "date": "2026-08-25",
+            "grade": "hit", "actual": 2, "actual_stat": "hits",
+            "reason": None,
+        }
+        pdur.materialize_outcomes([event], self.root)
+        path = os.path.join(self.root, pdur.outcome_relpath(event))
+        with open(path, "w", encoding="utf-8") as fh:
+            json.dump({**event, "grade": "miss"}, fh)
+        with self.assertRaises(pdur.ProspectiveDurabilityError):
+            pdur.load_materialized_outcomes(
+                self.root, date="2026-08-25")
+
+
 class SpoolTests(unittest.TestCase):
     def test_latest_snapshot_from_jsonl_spool_materializes(self):
         with tempfile.TemporaryDirectory() as tmp:
