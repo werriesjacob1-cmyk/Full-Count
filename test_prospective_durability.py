@@ -180,6 +180,76 @@ class MaterializeSnapshotTests(unittest.TestCase):
             pdur.materialize_snapshot(rows, snap, self.root)
 
 
+class DurableReloadTests(unittest.TestCase):
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory()
+        self.root = self.tmp.name
+
+    def tearDown(self):
+        self.tmp.cleanup()
+
+    def test_reload_needs_no_original_jsonl_spool(self):
+        rows = records(candidate(1), candidate(2))
+        snap = manifest(rows)
+        pdur.materialize_snapshot(rows, snap, self.root)
+
+        loaded_manifest, loaded_rows = pdur.load_materialized_snapshot(
+            self.root, date=snap["date"], snapshot_id=snap["snapshot_id"])
+        self.assertEqual(
+            loaded_manifest["snapshot_id"], snap["snapshot_id"])
+        self.assertEqual(
+            {r["identity"]["candidate_id"] for r in loaded_rows},
+            {r["identity"]["candidate_id"] for r in rows})
+        self.assertEqual(
+            [cfl.content_hash(r) for r in loaded_rows],
+            sorted(
+                [cfl.content_hash(r) for r in rows],
+                key=lambda h: next(
+                    x["candidate_id"]
+                    for x in snap["candidate_hashes"]
+                    if x["content_hash"] == h),
+            ),
+        )
+
+    def test_missing_candidate_blob_breaks_reconstruction(self):
+        rows = records(candidate(1))
+        snap = manifest(rows)
+        pdur.materialize_snapshot(rows, snap, self.root)
+        h = cfl.content_hash(rows[0])
+        os.unlink(os.path.join(
+            self.root, pdur.candidate_blob_relpath(h)))
+        with self.assertRaises(pdur.ProspectiveDurabilityError):
+            pdur.load_materialized_snapshot(
+                self.root, date=snap["date"], snapshot_id=snap["snapshot_id"])
+
+    def test_tampered_blob_bytes_break_reconstruction(self):
+        rows = records(candidate(1))
+        snap = manifest(rows)
+        pdur.materialize_snapshot(rows, snap, self.root)
+        h = cfl.content_hash(rows[0])
+        path = os.path.join(self.root, pdur.candidate_blob_relpath(h))
+        raw = pdur.candidate_content_bytes(rows[0]) + b" "
+        with open(path, "wb") as fh:
+            fh.write(gzip.compress(raw, mtime=0))
+        with self.assertRaises(pdur.ProspectiveDurabilityError):
+            pdur.load_materialized_snapshot(
+                self.root, date=snap["date"], snapshot_id=snap["snapshot_id"])
+
+    def test_discovery_orders_real_observations_and_keeps_same_date_separate(self):
+        r1 = records(candidate(1), observed_at="2026-08-25T17:00:00Z")
+        r2 = records(candidate(1), observed_at="2026-08-25T18:00:00Z")
+        s1 = manifest(r1, observed_at="2026-08-25T17:00:00Z")
+        s2 = manifest(r2, observed_at="2026-08-25T18:00:00Z")
+        pdur.materialize_snapshot(r2, s2, self.root)
+        pdur.materialize_snapshot(r1, s1, self.root)
+        found = pdur.discover_materialized_snapshots(
+            self.root, date="2026-08-25")
+        self.assertEqual(
+            [x["snapshot_id"] for x in found],
+            [s1["snapshot_id"], s2["snapshot_id"]])
+        self.assertEqual([x["n_candidates"] for x in found], [1, 1])
+
+
 class SpoolTests(unittest.TestCase):
     def test_latest_snapshot_from_jsonl_spool_materializes(self):
         with tempfile.TemporaryDirectory() as tmp:
