@@ -33,6 +33,7 @@ ROOT = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, ROOT)
 
 import backtest.canonical_run as cr
+import backtest.canonical_durability as cd
 from backtest.engine import DateResult
 
 
@@ -131,6 +132,85 @@ class FreshCloneRecoveryPreparationTests(CanonicalRunTestBase):
                 cr.prepare_existing_run(
                     self.base_dir, identity["run_id"], resume_from_remote=True)
         restore_spy.assert_not_called()
+
+
+class PartialSourceLineageWiringTests(CanonicalRunTestBase):
+    def test_validated_statcast_report_is_pushed_as_partial_lineage(self):
+        run_dir, manifest = self.new_manifest(start=DATES[0], end=DATES[0])
+        results = {DATES[0]: fake_result(DATES[0])}
+        store = mock.Mock()
+        store.year = 2024
+        store.through = "2024-03-31"
+        store.cache_report = {
+            "usable": True,
+            "retrieval_timestamp": "2026-08-27T00:00:00+00:00",
+            "row_count": 12,
+            "columns": ["game_date", "launch_speed"],
+            "schema_fingerprint": "schema-sha",
+            "content_sha256": "content-sha",
+            "min_date": "2024-03-01",
+            "max_date": "2024-03-31",
+        }
+        policy = cd.DurabilityPolicy(
+            every_n_dates=1, every_seconds=None, enabled=True)
+        pushed = []
+
+        def fake_push(*args, **kwargs):
+            pushed.append(kwargs)
+            return {
+                "pushed": True,
+                "dates_written": 1,
+                "dates_skipped_present": 0,
+                "bytes_written": 0,
+            }
+
+        with mock.patch(
+                "backtest.engine.simulate_date",
+                side_effect=make_fake_simulate(results)), \
+             mock.patch(
+                "backtest.canonical_durability.push_durable_checkpoint",
+                side_effect=fake_push):
+            cr.run(
+                run_dir, manifest, store=store, sleep=0, verbose=False,
+                durability=policy, cache_mode=cd.CACHE_MODE_FROZEN)
+
+        self.assertTrue(pushed, "durability push was not exercised")
+        lineage = pushed[0].get("lineage")
+        self.assertEqual(len(lineage or []), 1)
+        self.assertEqual(lineage[0]["source"], "statcast")
+        self.assertEqual(lineage[0]["content_sha256"], "content-sha")
+        self.assertFalse(
+            pushed[0].get("lineage_complete"),
+            "Statcast-only auto-lineage must never be promoted to complete provenance")
+
+    def test_unusable_statcast_report_does_not_invent_lineage(self):
+        run_dir, manifest = self.new_manifest(start=DATES[0], end=DATES[0])
+        results = {DATES[0]: fake_result(DATES[0])}
+        store = mock.Mock()
+        store.year = 2024
+        store.through = "2024-03-31"
+        store.cache_report = {"usable": False}
+        policy = cd.DurabilityPolicy(
+            every_n_dates=1, every_seconds=None, enabled=True)
+        pushed = []
+
+        def fake_push(*args, **kwargs):
+            pushed.append(kwargs)
+            return {"pushed": True, "dates_written": 1, "bytes_written": 0}
+
+        with mock.patch(
+                "backtest.engine.simulate_date",
+                side_effect=make_fake_simulate(results)), \
+             mock.patch(
+                "backtest.canonical_durability.push_durable_checkpoint",
+                side_effect=fake_push):
+            cr.run(
+                run_dir, manifest, store=store, sleep=0, verbose=False,
+                durability=policy, cache_mode=cd.CACHE_MODE_FROZEN)
+
+        self.assertTrue(pushed)
+        self.assertIsNone(pushed[0].get("lineage"))
+        self.assertFalse(pushed[0].get("lineage_complete"))
 
 
 class NormalReferenceTests(CanonicalRunTestBase):
