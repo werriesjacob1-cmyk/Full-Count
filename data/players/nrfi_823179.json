@@ -1,0 +1,37 @@
+{
+  "player_id": "nrfi_823179",
+  "name": "Arizona Diamondbacks @ San Francisco Giants \u2014 1st Inning (Both Teams)",
+  "snapshots": [
+    {
+      "date": "2026-08-27",
+      "evaluations": [
+        {
+          "prop": "No runs in the 1st (both teams)",
+          "type": "game",
+          "score": 40.1,
+          "notable_signals": 0,
+          "matchup": "Arizona Diamondbacks @ San Francisco Giants",
+          "game_pk": 823179,
+          "team": null,
+          "side": "both",
+          "lean": "NRFI",
+          "combo_player_ids": null,
+          "signals": {
+            "home_team_scores_p": 0.2909,
+            "away_team_scores_p": 0.273,
+            "fi_n_starts": 4.0
+          },
+          "hit_probability": 0.5155,
+          "raw_hit_probability": null,
+          "lift": 0.0171,
+          "reliability": "D",
+          "sample_n": 4,
+          "projection": {
+            "stat": "nrfi_combined",
+            "value": 51.6
+          }
+        }
+      ]
+    }
+  ]
+}
