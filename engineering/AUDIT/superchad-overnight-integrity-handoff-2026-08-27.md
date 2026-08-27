@@ -373,6 +373,82 @@ auditable.
 - UNKNOWN: exact-SHA CI.
 - VERIFIED-REPO: changed source/test blocks re-fetched after commit.
 
+## Workstream 4 — Operational equal volume by slate/date
+
+**Status:** SUPERCHAD-IMPLEMENTED / NOT YET RUNTIME-VERIFIED / NOT CI-VERIFIED
+
+### Pre-change defect
+
+VERIFIED-REPO: `EqualVolumeExperiment` enforced only one aggregate `volume`
+across the entire eligible population. A champion and challenger could each
+select the same total N while allocating those picks to different dates/slates.
+That can manufacture an apparent selector advantage by moving exposure away
+from difficult slates and toward easier ones.
+
+Aggregate equal N is therefore not sufficient for FULL COUNT's operational
+promotion standard.
+
+### Implementation
+
+1. `fefab31353c144ac5c94c6c54aa7263f1acd5641`
+   - `backtest/equal_volume.py`
+   - adds optional `volume_by_date`
+   - validates non-negative integer quotas
+   - requires schedule sum to equal requested total volume
+   - refuses quotas larger than the eligible population available on a date
+   - when a schedule is present, each policy fills the exact quota independently
+     from its deterministic ranking
+   - promotion-grade mode requires a schedule
+   - promotion-grade schedule keys must cover the **exact eligible date set**,
+     including explicit zero-pick dates
+   - report records requested schedule, allocation mode, and actual selected
+     counts by date for each policy
+   - experiment manifest binds the schedule
+
+2. `78605d16712011f089bc399fdb0ff74067c028e4`
+   - `test_equal_volume.py`
+   - promotion-grade aggregate-only N is rejected
+   - incomplete date coverage is rejected
+   - accepted promotion fixture uses explicit schedule including zero-pick dates
+   - two-slate adversarial fixture proves champion/challenger cannot shift
+     volume between dates even when their global preferences strongly favor
+     opposite slates
+   - schedule sum mismatch and overfilled slate are rejected
+
+3. `2359f0b16a95b4cb8e324a9c53b5ca91e854969f`
+   - `backtest/equal_volume.py`
+   - unenforced aggregate mode now reports
+     `same_operational_volume_by_date=None`, not a misleading `False`
+   - human-readable report explicitly labels per-date locked allocation versus
+     aggregate top-N
+
+4. `8932dc1acedf40c95787c0c403dd62d6dc09b4b8`
+   - `test_equal_volume.py`
+   - locks the "unknown when not enforced" semantics
+
+### Methodology notes
+
+- Date/slate is the enforced unit in this first operational-volume contract.
+  This does not yet freeze market-family allocation within each date.
+- Relative ordering within each date is preserved by filtering each policy's
+  full deterministic ranking to the locked quota for that date.
+- Zero-pick dates must be stated explicitly in promotion mode so a caller cannot
+  silently omit hard/no-selection dates from the schedule.
+- The schedule itself must come from a legitimate predeclared operational
+  benchmark (for example the champion's real/intended slate volume), not be
+  optimized after seeing outcomes. The framework structurally enforces the
+  supplied schedule but cannot prove how a caller chose it.
+- Claude should challenge whether date-level locking is sufficient for the
+  locked disagreement experiment or whether a stricter market-family allocation
+  is necessary for that specific claim.
+
+### Test / CI truth
+
+- SUPERCHAD-IMPLEMENTED: implementation and adversarial tests committed.
+- UNKNOWN: real-runtime execution.
+- UNKNOWN: exact-SHA CI.
+- VERIFIED-REPO: source/test changes re-fetched and reviewed after commit.
+
 ---
 
 # Claude independent review checklist
