@@ -1,5 +1,5 @@
 MLB DAILY DATA PACKAGE V5 — 2026-08-27
-Generated : 2026-08-27  03:35:34
+Generated : 2026-08-27  04:46:10
 Season    : 2026
 Windows   : L3 2026-08-24→2026-08-26 | L7 2026-08-20→2026-08-26 | L14 2026-08-13→2026-08-26 | L30 2026-07-28→2026-08-26
 Sources   : FanGraphs | Statcast/Baseball Savant | MLB Stats API | UmpScorecards | FIC | Open-Meteo | Covers.com
@@ -591,13 +591,14 @@ Sources   : FanGraphs | Statcast/Baseball Savant | MLB Stats API | UmpScorecards
 ──────────────────────────────────────────────────
   Colorado Rockies @ Washington Nationals
   Venue   : Nationals Park  |  Elev: 25ft  |  Surface: grass
-  Temp    : 83°F  |  Humidity: 57%
-  Rain%   : 0%  (0.00in expected)
-  Wind    : 8mph from SSE (165°)
-  vs Field: diagonal (135° off CF)
-  AirDens : 0.9527  →  ball carries 4.7% FARTHER vs sea-level
+  Temp    : 88°F  |  Humidity: 55%
+  Rain%   : 3%  (0.00in expected)
+  Wind    : 10mph from S (191°)
+  vs Field: blowing OUT to CF 🔴 hitter-friendly ⚡
+  AirDens : 0.9434  →  ball carries 5.7% FARTHER vs sea-level
   Humidor : No
   HP Ump  : TBD
+  ⚠ FLAGS : 🔥 HOT 88°F — ball carries
 
 ──────────────────────────────────────────────────
   Baltimore Orioles @ St. Louis Cardinals
@@ -614,11 +615,11 @@ Sources   : FanGraphs | Statcast/Baseball Savant | MLB Stats API | UmpScorecards
 ──────────────────────────────────────────────────
   Houston Astros @ New York Yankees
   Venue   : Yankee Stadium  |  Elev: 55ft  |  Surface: grass
-  Temp    : 77°F  |  Humidity: 68%
-  Rain%   : 0%  (0.00in expected)
-  Wind    : 9mph from S (174°)
-  vs Field: diagonal (144° off CF)
-  AirDens : 0.9618  →  ball carries 3.8% FARTHER vs sea-level
+  Temp    : 76°F  |  Humidity: 87%
+  Rain%   : 22%  (0.00in expected)
+  Wind    : 10mph from S (183°)
+  vs Field: blowing OUT to CF 🔴 hitter-friendly ⚡
+  AirDens : 0.9623  →  ball carries 3.8% FARTHER vs sea-level
   Humidor : No
   HP Ump  : TBD
   ⚠ Rogers Centre: retractable roof, real status unknown at fetch time — outdoor weather below is a best-effort estimate, not a confirmed open roof
@@ -626,36 +627,36 @@ Sources   : FanGraphs | Statcast/Baseball Savant | MLB Stats API | UmpScorecards
 ──────────────────────────────────────────────────
   Kansas City Royals @ Toronto Blue Jays
   Venue   : Rogers Centre  |  Elev: 76ft  |  Surface: turf
-  Temp    : 72°F  |  Humidity: 79%
+  Temp    : 73°F  |  Humidity: 64%
   Rain%   : 0%  (0.00in expected)
-  Wind    : 10mph from E (90°)
-  vs Field: blowing L→R crossfield
-  AirDens : 0.9709  →  ball carries 2.9% FARTHER vs sea-level
+  Wind    : 11mph from WNW (292°)
+  vs Field: blowing R→L crossfield
+  AirDens : 0.9686  →  ball carries 3.1% FARTHER vs sea-level
   Humidor : No
   HP Ump  : TBD
+  ⚠ FLAGS : 🔵 WIND IN — HR suppressed
 
 ──────────────────────────────────────────────────
   Milwaukee Brewers @ New York Mets
   Venue   : Citi Field  |  Elev: 16ft  |  Surface: grass
-  Temp    : 74°F  |  Humidity: 75%
-  Rain%   : 0%  (0.00in expected)
-  Wind    : 10mph from SSE (168°)
-  vs Field: diagonal (138° off CF)
-  AirDens : 0.9678  →  ball carries 3.2% FARTHER vs sea-level
+  Temp    : 76°F  |  Humidity: 87%
+  Rain%   : 13%  (0.00in expected)
+  Wind    : 13mph from S (172°)
+  vs Field: diagonal (142° off CF)
+  AirDens : 0.9631  →  ball carries 3.7% FARTHER vs sea-level
   Humidor : No
   HP Ump  : TBD
 
 ──────────────────────────────────────────────────
   Los Angeles Dodgers @ Atlanta Braves
   Venue   : Truist Park  |  Elev: 1050ft  |  Surface: grass
-  Temp    : 86°F  |  Humidity: 52%
-  Rain%   : 4%  (0.00in expected)
-  Wind    : 6mph from SSE (164°)
-  vs Field: blowing OUT to CF 🔴 hitter-friendly ⚡
-  AirDens : 0.9118  →  ball carries 8.8% FARTHER vs sea-level
+  Temp    : 78°F  |  Humidity: 70%
+  Rain%   : 15%  (0.00in expected)
+  Wind    : 4mph from SE (135°)
+  vs Field: diagonal (135° off CF)
+  AirDens : 0.9256  →  ball carries 7.4% FARTHER vs sea-level
   Humidor : No
   HP Ump  : TBD
-  ⚠ FLAGS : 🔥 HOT 86°F — ball carries
 
 ──────────────────────────────────────────────────
   Arizona Diamondbacks @ San Francisco Giants
@@ -1106,6 +1107,7 @@ Sources   : FanGraphs | Statcast/Baseball Savant | MLB Stats API | UmpScorecards
   🚨 THRESHOLD CROSSING ALERTS — Non-linear edge indicators
 
   🔥 Baltimore Orioles @ St. Louis Cardinals: Temp 90°F — HEAT THRESHOLD (88°F+ = ball carries notably farther)
+  💨 Milwaukee Brewers @ New York Mets: Wind 13mph — THRESHOLD CROSSED (10+mph = significant carry effect)
   💨 Arizona Diamondbacks @ San Francisco Giants: Wind 16mph — THRESHOLD CROSSED (10+mph = significant carry effect)
   🌪️ Arizona Diamondbacks @ San Francisco Giants: Wind 16mph — HIGH WIND (15+mph = major factor)
 
@@ -9663,10 +9665,10 @@ San Francisco Giants 54 78 .409 26.0  5
   Colorado Rockies @ Washington Nationals — Nationals Park:
   LF(336ft/8ft wall)  CF(402ft)  RF(335ft/8ft wall)
   Surface: grass  Humidor: No  Batter Eye: easy
-  Air density: 0.9527  Altitude bonus: 1.1577
-  Wind pull-side boost: 0.976  Oppo-side boost: 1.024
-  PULL HITTERS HR INDEX: 1.186
-  OPPO HITTERS HR INDEX: 1.244
+  Air density: 0.9434  Altitude bonus: 1.1577
+  Wind pull-side boost: 0.971  Oppo-side boost: 1.029
+  PULL HITTERS HR INDEX: 1.192
+  OPPO HITTERS HR INDEX: 1.262
 
   Baltimore Orioles @ St. Louis Cardinals — Busch Stadium:
   LF(336ft/8ft wall)  CF(400ft)  RF(335ft/8ft wall)
@@ -9679,34 +9681,34 @@ San Francisco Giants 54 78 .409 26.0  5
   Houston Astros @ New York Yankees — Yankee Stadium:
   LF(318ft/8ft wall)  CF(408ft)  RF(314ft/8ft wall)
   Surface: grass  Humidor: No  Batter Eye: easy
-  Air density: 0.9618  Altitude bonus: 1.1567
-  Wind pull-side boost: 0.972  Oppo-side boost: 1.028
-  PULL HITTERS HR INDEX: 1.169
-  OPPO HITTERS HR INDEX: 1.236
+  Air density: 0.9623  Altitude bonus: 1.1567
+  Wind pull-side boost: 0.970  Oppo-side boost: 1.030
+  PULL HITTERS HR INDEX: 1.166
+  OPPO HITTERS HR INDEX: 1.238
 
   Kansas City Royals @ Toronto Blue Jays — Rogers Centre:
   LF(328ft/12ft wall)  CF(400ft)  RF(328ft/12ft wall)
   Surface: turf  Humidor: No  Batter Eye: medium
-  Air density: 0.9709  Altitude bonus: 1.0000
-  Wind pull-side boost: 1.000  Oppo-side boost: 1.000
-  PULL HITTERS HR INDEX: 1.03
-  OPPO HITTERS HR INDEX: 1.03
+  Air density: 0.9686  Altitude bonus: 1.0000
+  Wind pull-side boost: 1.032  Oppo-side boost: 0.968
+  PULL HITTERS HR INDEX: 1.065
+  OPPO HITTERS HR INDEX: 1.0
 
   Milwaukee Brewers @ New York Mets — Citi Field:
   LF(335ft/8ft wall)  CF(408ft)  RF(330ft/8ft wall)
   Surface: grass  Humidor: No  Batter Eye: medium
-  Air density: 0.9678  Altitude bonus: 1.1579
-  Wind pull-side boost: 0.971  Oppo-side boost: 1.029
-  PULL HITTERS HR INDEX: 1.162
-  OPPO HITTERS HR INDEX: 1.231
+  Air density: 0.9631  Altitude bonus: 1.1579
+  Wind pull-side boost: 0.962  Oppo-side boost: 1.038
+  PULL HITTERS HR INDEX: 1.156
+  OPPO HITTERS HR INDEX: 1.248
 
   Los Angeles Dodgers @ Atlanta Braves — Truist Park:
   LF(335ft/8ft wall)  CF(400ft)  RF(325ft/8ft wall)
   Surface: grass  Humidor: No  Batter Eye: easy
-  Air density: 0.9118  Altitude bonus: 1.1269
-  Wind pull-side boost: 0.983  Oppo-side boost: 1.017
-  PULL HITTERS HR INDEX: 1.214
-  OPPO HITTERS HR INDEX: 1.257
+  Air density: 0.9256  Altitude bonus: 1.1269
+  Wind pull-side boost: 0.987  Oppo-side boost: 1.013
+  PULL HITTERS HR INDEX: 1.201
+  OPPO HITTERS HR INDEX: 1.234
 
   Arizona Diamondbacks @ San Francisco Giants — Oracle Park:
   LF(339ft/8ft wall)  CF(399ft)  RF(309ft/8ft wall)
