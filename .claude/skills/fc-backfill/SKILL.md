@@ -30,7 +30,12 @@ Requires an **explicit run id**. "The newest run" is not an identity.
 
 ```bash
 RUN=<run_id>; WT=<pinned worktree>; R=$WT/backtest/canonical_runs/$RUN
-ps -eo pid,cmd --no-headers | grep '[c]anonical_run.py'   # MUST be exactly one
+# Count REAL interpreters, not every process whose command string happens to
+# contain the text. A naive grep also matches the parent shell, and -- the way
+# this actually bit -- the health-check command itself, reporting 2 generators
+# when there was 1. Match on comm (the executable), not on the cmdline.
+ps -eo pid,comm,cmd --no-headers \
+  | awk '$2 ~ /^python/ && /canonical_run\.py/ {print $1}'   # MUST be exactly one
 awk '{print $22}' /proc/<pid>/stat                        # starttime
 cat /proc/sys/kernel/random/boot_id
 python3 -c "import json;print(json.load(open('$R/lock.json')))"   # owner pid + run id
@@ -47,6 +52,11 @@ cd.fetch_durable_branch()
 for r in cd.discover_durable_runs():
     print(r["run_id"], r["dates"], r["code_git_sha"], r["updated_at"])
 ```
+
+If that prints more than one PID, confirm each is a real interpreter
+(`readlink /proc/<pid>/exe`, `cat /proc/<pid>/comm`) and that they are not
+parent/child of one another (`awk '{print $4}' /proc/<pid>/stat`) before
+declaring a duplicate. A wrapper shell is not a second generator.
 
 **Identity, not names.** `lock.json`'s `pid` + `run_id` is what proves which
 process owns which run — the run id is often absent from the cmdline, because
