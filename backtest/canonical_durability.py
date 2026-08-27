@@ -17,11 +17,13 @@ This module closes that gap. The design constraint is unchanged -- do not dump
 hundreds of megabytes of uncompressed rows into ordinary git history -- but the
 conclusion is different: per-date rows are pushed, gzipped, as write-once blobs.
 
-Measured, not assumed: a canonical date is a few hundred rows of JSON. Gzipped
-per-date chunks run tens of kilobytes, so a full 2024-04-01..2026-08-25 range
-(~880 dates, ~600 with games) lands in the low tens of megabytes across the
-whole history. Each date's blob is written exactly once and never rewritten, so
-history growth is additive and bounded rather than quadratic.
+Measured on real canonical output, not estimated: 2024-04-01 produced 1537 rows,
+1.22 MB raw, 67 KB gzipped (18x compression); 2024-04-02 produced 1436 rows,
+1.17 MB raw, 66 KB gzipped. At ~66 KB per played date the full
+2024-04-01..2026-08-25 range (~600 dates with games) comes to roughly 40 MB
+across the entire branch history. Each date's blob is written exactly once and
+never rewritten, so growth is additive in dates rather than quadratic in
+pushes x dates.
 
 THE RECOVERY CONTRACT
 =====================
@@ -708,7 +710,9 @@ def durable_date_ledger(run_dir, dates):
                 meta = json.load(f)
         except (OSError, json.JSONDecodeError):
             continue
-        entry = {"status": meta.get("status"), "rows": meta.get("rows"),
+        # write_checkpoint() names this field "row_count"; reading "rows" here
+        # silently recorded None for every date on the durable index.
+        entry = {"status": meta.get("status"), "rows": meta.get("row_count"),
                  "meta_sha256": _sha256_file(meta_p)}
         if os.path.exists(data_p):
             entry["data_sha256"] = _sha256_file(data_p)

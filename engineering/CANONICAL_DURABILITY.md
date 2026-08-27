@@ -30,9 +30,13 @@ canonical/<run_id>/rows/<date>.meta.json   per-date checkpoint meta
 ```
 
 A date already present with a matching checksum is never rewritten, so history
-grows **linearly in dates**, not in pushes × dates. Gzipped per-date payloads
-measured on real data run tens of kilobytes; a full 2024-04-01..2026-08-25 range
-lands in the low tens of megabytes across the whole branch history.
+grows **linearly in dates**, not in pushes × dates.
+
+Measured on real canonical output (not estimated): **2024-04-01 → 1,537 rows,
+1.22 MB raw, 67 KB gzipped (18× compression); 2024-04-02 → 1,436 rows, 1.17 MB
+raw, 66 KB gzipped.** At ~66 KB per played date, the full
+2024-04-01..2026-08-25 range (~600 dates with games) comes to **roughly 40 MB**
+across the entire branch history — comfortably within what git handles well.
 
 All writes use **git plumbing only** — `hash-object`, `write-tree`,
 `commit-tree` against a scratch `GIT_INDEX_FILE`. Never `git add`, `git commit`,
