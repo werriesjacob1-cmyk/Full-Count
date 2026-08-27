@@ -130,10 +130,112 @@ Use:
 
 # Change log
 
-_No implementation from this safe branch has been recorded yet. Add entries
-only after the corresponding commit exists._
+## Workstream 1 — Promotion-grade dataset identity
+
+**Status:** SUPERCHAD-IMPLEMENTED / NOT YET RUNTIME-VERIFIED / NOT CI-VERIFIED
+
+### Pre-change defect
+
+VERIFIED-REPO at base `a3017bce8a9dd41919f546a9e011818c3bf68c15`:
+`backtest/equal_volume.py::EqualVolumeExperiment._assert_promotion_grade_dataset()`
+accepted promotion-grade evidence when `population.dataset_identity` merely
+contained truthy `artifact_sha256` and `artifact_row_count` keys. It did not
+load the Accuracy Lab manifest, verify that the metadata came from that
+manifest, or recompute the artifact identity from the file on disk.
+
+That meant a caller could construct a plausible-looking dict and satisfy
+`promotion_grade=True` without proving which artifact was actually evaluated.
+
+### Implementation
+
+1. `9853ffc156cdf79496e06af95207ce83dec4358b`
+   - `accuracy_lab.py`
+   - added `verify_promotion_grade_dataset_identity(identity)`
+   - promotion identity must contain `manifest_path`
+   - verifier reloads the real manifest
+   - applies the existing strong-manifest gate
+   - rejects duplicated caller metadata that disagrees with the source manifest
+   - resolves the manifest's recorded `rows_path`
+   - calls the existing `lock_holdout(..., require_strong_dataset_identity=True)`
+     path to recompute/compare real artifact SHA, row count, distinct-date count,
+     and date range
+   - returns the verified manifest identity plus a checksum of the manifest
+   - existing-manifest path is read-only; no migration or rewrite
+
+2. `49f8ae2689684a527bc64f0c9a17a64d69d9fc5c`
+   - `test_accuracy_lab.py`
+   - adversarial cases:
+     - real manifest + unchanged artifact verifies
+     - fake checksum metadata cannot piggyback on a real manifest
+     - artifact changed after lock fails closed
+
+3. `e44070a45254f32d517e6d8e3b6d98a59f0d272b`
+   - `backtest/equal_volume.py`
+   - promotion-grade mode now delegates to the Accuracy Lab real-artifact
+     verifier instead of checking two arbitrary dict keys
+   - verified identity is retained in the integrity report
+   - verified identity is bound into `experiment_manifest_id`
+   - exploratory mode remains permissive and does not require a manifest
+
+4. `064260f1f99650fe0673c4bb8e9ee46e18004141`
+   - `test_equal_volume.py`
+   - replaces the old synthetic "strong identity" promotion fixture with a real
+     temporary Accuracy Lab manifest + artifact
+   - explicitly tests the pre-fix cheat: checksum + row count without a
+     manifest must now fail
+   - explicitly tests post-lock artifact drift
+
+5. `55f2d3c825cde9002128bb154cbc60af45faf8e2`
+   - `test_best_expression.py`
+   - its integration fixture no longer falsely claims promotion-grade dataset
+     provenance; it remains an exploratory exact-volume integration test
+   - promotion-grade provenance itself is tested in `test_equal_volume.py`
+
+### Scope audit
+
+VERIFIED-REPO cumulative diff from the exact branch base through
+`55f2d3c825cde9002128bb154cbc60af45faf8e2` touches only:
+- `accuracy_lab.py`
+- `backtest/equal_volume.py`
+- `test_accuracy_lab.py`
+- `test_equal_volume.py`
+- `test_best_expression.py`
+- this audit handoff
+
+No model, recommendation, live, settlement, grading, canonical generation,
+resume, durable checkpoint, workflow, or frontend source was changed.
+
+### Test / CI truth
+
+- SUPERCHAD-IMPLEMENTED: adversarial regression tests are committed.
+- UNKNOWN: targeted Python tests have **not** been executed by SUPERCHAD in the
+  real repository runtime; SUPERCHAD's local container cannot resolve GitHub to
+  clone the repository, and no test workflow was triggered.
+- UNKNOWN: no exact-SHA GitHub CI/status exists for this isolated branch at the
+  time of this entry.
+- VERIFIED-REPO: source was re-fetched after the commits and the resulting
+  implementation/test blocks were re-read.
+- Claude must run these tests independently before accepting the work.
+
+### Compatibility / review risks
+
+- **Intentional fail-closed break:** any caller using
+  `promotion_grade=True` with checksum-shaped metadata but no
+  `manifest_path` now fails. Claude should inventory all such callers and
+  decide whether they should be upgraded to a real manifest or remain
+  exploratory.
+- The new verifier deliberately reuses `lock_holdout()` rather than creating a
+  second artifact-validation implementation. Claude should verify there is no
+  unexpected filesystem mutation on the existing-manifest path.
+- Claude should independently verify that binding the verified manifest identity
+  into `experiment_manifest_id` is sufficient and does not make the ID depend
+  on irrelevant mutable presentation fields.
+- No claim is made that this solves candidate-content identity, ranking-input
+  identity, per-slate equal volume, missing outcomes, or Best Expression strict
+  refill. Those remain separate workstreams.
 
 ---
+
 
 # Claude independent review checklist
 
