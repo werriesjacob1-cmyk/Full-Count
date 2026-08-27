@@ -1,0 +1,93 @@
+{
+  "cache_mode": null,
+  "dates": {
+    "2024-04-01": {
+      "data_bytes": 402,
+      "data_sha256": "55a4e194da6137a08f4aac1dcb6fd920dfeb3c63360906976a4c254e8cda485b",
+      "meta_sha256": "562026be576e6f78de26268527bf6a0f4c9f9edfc15e8f9691355fdd392416d9",
+      "rows": null,
+      "status": "ok"
+    },
+    "2024-04-02": {
+      "data_bytes": 402,
+      "data_sha256": "6a4eea536232696d8f154f324f5f04ca749a81d5569608690a11cb4bf9cec789",
+      "meta_sha256": "f94536cfdf05e8c752337707cdbc78ca5eb089bf88bc554d1b0656fe8dce5deb",
+      "rows": null,
+      "status": "ok"
+    },
+    "2024-04-03": {
+      "data_bytes": 402,
+      "data_sha256": "dc000a1170efce9b57809f0231476d3a3cdfd3a7e44057a6168128ff653d4cd1",
+      "meta_sha256": "f7ba51a54686b14fb099759afa034a60d3f58a07e00c951097ba0d8602bcd96a",
+      "rows": null,
+      "status": "ok"
+    },
+    "2024-04-04": {
+      "data_bytes": 402,
+      "data_sha256": "7eea1ac20926d376ea8c209a932329f488a67099fc8d78e95931c03b7f5844be",
+      "meta_sha256": "53ec50bb2f50060c862f3ee5a4ecb27285e4a7a0014ff7d2877ea315c48dd04e",
+      "rows": null,
+      "status": "ok"
+    },
+    "2024-04-05": {
+      "data_bytes": 402,
+      "data_sha256": "123a95a568e93738502c38cebac37608c1decfa507157864acea90fd49aff6e2",
+      "meta_sha256": "1d0ec6594adac32b83c09471de5d961322dd5f94bf45dd008f7a1e30c7201d78",
+      "rows": null,
+      "status": "ok"
+    }
+  },
+  "durability_schema_version": 1,
+  "environment": {
+    "critical_packages": {
+      "numpy": "2.4.6",
+      "pandas": "3.0.5",
+      "pyarrow": "25.0.1",
+      "pybaseball": "2.2.7",
+      "python-dateutil": "2.9.0.post0",
+      "pytz": null,
+      "requests": "2.34.2",
+      "scikit-learn": "1.9.0",
+      "scipy": "1.17.1"
+    },
+    "environment_fingerprint": "fce26ddc5e58aa1682a7f887f42cbedc75df5d8d119a3f311313d5e32e365d17",
+    "machine": "x86_64",
+    "pip_freeze_package_count": 84,
+    "pip_freeze_sha256": "59017de33ccdc7132d0c39e3a7dc1a83c33e8b63b922c1274a74e072d5612f36",
+    "platform": "Linux-6.18.44-fc-v21-x86_64-with-glibc2.39",
+    "python_implementation": "CPython",
+    "python_version": "3.11.15",
+    "recorded_at": "2026-08-27T13:57:46.024245+00:00"
+  },
+  "identity": {
+    "candidate_identity_fields": [
+      "date",
+      "game_pk",
+      "player_id",
+      "prop_type",
+      "line"
+    ],
+    "code_git_sha": "fixedsha0000000000000000000000000000000",
+    "evidence_regime": "canonical_historical_model_data",
+    "model_artifact_versions": {
+      "calibration_version": "1.0.0",
+      "feature_version": "1.0.0",
+      "model_version": "2026.08.15",
+      "selection_policy_version": "1.0.0"
+    },
+    "repository_identity": "werriesjacob1-cmyk/Full-Count",
+    "requested_end_date": "2024-04-05",
+    "requested_start_date": "2024-04-01",
+    "run_id": "canonical-20260827T135745Z-ed5fd84c",
+    "schema_version": 1,
+    "weather_mode": "no_weather"
+  },
+  "identity_fingerprint": "316accf6a9247584fb68064b5dc55fbbbcc3e68f6818e2f901c39f57134ad93c",
+  "run_id": "canonical-20260827T135745Z-ed5fd84c",
+  "source_lineage": [],
+  "source_lineage_fingerprint": null,
+  "summary": {
+    "ok": 5
+  },
+  "updated_at": "2026-08-27T13:57:46.102487+00:00"
+}
