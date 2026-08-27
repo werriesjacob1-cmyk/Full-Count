@@ -38,11 +38,15 @@ candidate. The consequences fall out for free:
     candidates, automatically, from within the declared population --
     refill can never reach outside it because there is nowhere else to
     reach;
-  * if the population genuinely lacks enough independent candidates, the
-    demoted ones flow back into the top N rather than the experiment
-    quietly running short. The portfolio is then honestly no more
-    diversified than the champion's, which the accounting reports rather
-    than hides.
+  * in SOFT / exploratory mode, if the population genuinely lacks enough
+    independent candidates, the demoted ones flow back into the top N rather
+    than the experiment quietly running short. The accounting reports that the
+    portfolio was not fully refillable;
+  * in STRICT / promotion mode, callers pass the locked per-date volume to
+    best_expression_rank_fn(strict_volume_by_date=...). Every slate must prove
+    enough thesis-distinct capacity to fill its quota. If not, the selector
+    raises StrictRefillViolation instead of re-admitting a redundant expression
+    and pretending the diversification thesis was preserved.
 
 Ranking remains deterministic and independent of input order, because a
 non-reproducible selector cannot be evidence of anything.
