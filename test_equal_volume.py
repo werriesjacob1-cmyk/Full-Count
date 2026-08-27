@@ -454,6 +454,7 @@ class PromotionGradeTests(unittest.TestCase):
                                        challenger=CHAL, volume=3).run()
         self.assertFalse(rep["promotion_grade"])
         self.assertIsNone(rep["integrity"]["verified_dataset_identity"])
+        self.assertIsNone(rep["integrity"]["same_operational_volume_by_date"])
 
 
 class ReportContentTests(unittest.TestCase):
