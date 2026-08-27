@@ -960,9 +960,16 @@ def run(run_dir, manifest, *, use_weather=True, use_bullpen=True,
     if environment is None:
         environment = _cd.environment_identity()
 
+    # Explicit caller lineage wins. Otherwise, once StatcastStore has loaded,
+    # we opportunistically bind the exact persisted Statcast bytes as PARTIAL
+    # lineage. This is intentionally never marked complete here because
+    # canonical simulation consumes additional mutable upstream sources.
+    effective_lineage = list(lineage) if lineage is not None else None
+
     def _push_durable(final=False):
         res = _cd.push_durable_checkpoint(
-            run_dir, manifest, environment=environment, lineage=lineage,
+            run_dir, manifest, environment=environment,
+            lineage=effective_lineage, lineage_complete=False,
             cache_mode=cache_mode,
             state_summary=_status_counts(load_run_state(run_dir, requested_dates)))
         durability.note_pushed(res)
@@ -997,6 +1004,23 @@ def run(run_dir, manifest, *, use_weather=True, use_bullpen=True,
         if store is None:
             store = StatcastStore(dparse(remaining[0]).year, shift(remaining[-1], -1), verbose=verbose)
             store.load()
+
+        if effective_lineage is None:
+            statcast_record = _cd.statcast_lineage_from_cache_report(
+                getattr(store, "cache_report", None),
+                year=getattr(store, "year", dparse(remaining[0]).year),
+                through=getattr(store, "through", shift(remaining[-1], -1)),
+                cache_mode=cache_mode,
+            )
+            if statcast_record is not None:
+                effective_lineage = [statcast_record]
+                if verbose:
+                    print(
+                        "    provenance: bound persisted Statcast bytes as PARTIAL "
+                        "source lineage; canonical certification still requires the "
+                        "remaining mutable sources",
+                        flush=True,
+                    )
 
         for i, d in enumerate(remaining, 1):
             if verbose:
