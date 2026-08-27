@@ -40,8 +40,12 @@ def make_population(n=20, **kw):
         **kw)
 
 
-CHAMP = ev.SelectionPolicy("champion_score", "1.0", ev.rank_by(lambda r: r["score"]))
-CHAL = ev.SelectionPolicy("challenger_prob", "1.0", ev.rank_by(lambda r: r["predicted_prob"]))
+CHAMP = ev.SelectionPolicy(
+    "champion_score", "1.0", ev.rank_by(lambda r: r["score"]),
+    ranking_input_fields=("score",))
+CHAL = ev.SelectionPolicy(
+    "challenger_prob", "1.0", ev.rank_by(lambda r: r["predicted_prob"]),
+    ranking_input_fields=("predicted_prob",))
 
 
 def make_verified_population(n=20):
@@ -154,6 +158,38 @@ class ContentManifestBindingTests(unittest.TestCase):
         self.assertNotEqual(
             ra["experiment_manifest_id"], rb["experiment_manifest_id"],
             "an experiment ID must bind candidate content, not only candidate keys")
+
+
+class RankingInputIdentityTests(unittest.TestCase):
+    def test_ranking_input_fingerprint_changes_when_declared_input_changes(self):
+        rows = [row(f"2024-05-{i+1:02d}", 100+i, 500+i, "hits", 0.5,
+                    i % 2, prob=0.6, score=float(i)) for i in range(8)]
+        changed = [dict(r) for r in rows]
+        changed[0]["score"] = 999.0
+
+        a = ev.EligiblePopulation(rows, definition="d", definition_version="v",
+                                  evidence_regime="r", dataset_identity={})
+        b = ev.EligiblePopulation(changed, definition="d", definition_version="v",
+                                  evidence_regime="r", dataset_identity={})
+        ra = ev.EqualVolumeExperiment(population=a, champion=CHAMP, challenger=CHAL,
+                                      volume=3).run()
+        rb = ev.EqualVolumeExperiment(population=b, champion=CHAMP, challenger=CHAL,
+                                      volume=3).run()
+
+        self.assertNotEqual(
+            ra["integrity"]["ranking_input_fingerprints"]["champion"],
+            rb["integrity"]["ranking_input_fingerprints"]["champion"])
+        self.assertEqual(
+            ra["integrity"]["ranking_input_fingerprints"]["challenger"],
+            rb["integrity"]["ranking_input_fingerprints"]["challenger"],
+            "changing score should not alter predicted_prob's declared-input fingerprint")
+
+    def test_ranking_input_field_order_is_canonicalized(self):
+        a = ev.SelectionPolicy("a", "1", lambda p: p.identities,
+                               ranking_input_fields=("score", "predicted_prob"))
+        b = ev.SelectionPolicy("b", "1", lambda p: p.identities,
+                               ranking_input_fields=("predicted_prob", "score", "score"))
+        self.assertEqual(a.ranking_input_fields, b.ranking_input_fields)
 
 
 class ExactVolumeTests(unittest.TestCase):
@@ -280,6 +316,27 @@ class PromotionGradeTests(unittest.TestCase):
                                      volume=3, promotion_grade=True)
         self.assertIn("manifest_path", str(cm.exception))
 
+    def test_promotion_grade_rejects_policy_without_declared_ranking_inputs(self):
+        pop, _, _ = make_verified_population(10)
+        undeclared = ev.SelectionPolicy(
+            "undeclared_score", "1.0", ev.rank_by(lambda r: r["score"]))
+        with self.assertRaises(ev.EqualVolumeViolation) as cm:
+            ev.EqualVolumeExperiment(
+                population=pop, champion=CHAMP, challenger=undeclared,
+                volume=3, promotion_grade=True)
+        self.assertIn("ranking_input_fields", str(cm.exception))
+
+    def test_promotion_grade_rejects_realized_outcome_as_declared_ranking_input(self):
+        pop, _, _ = make_verified_population(10)
+        leaky = ev.SelectionPolicy(
+            "leaky", "1.0", ev.rank_by(lambda r: r["outcome"]),
+            ranking_input_fields=("outcome",))
+        with self.assertRaises(ev.EqualVolumeViolation) as cm:
+            ev.EqualVolumeExperiment(
+                population=pop, champion=CHAMP, challenger=leaky,
+                volume=3, promotion_grade=True)
+        self.assertIn("outcome information", str(cm.exception))
+
     def test_promotion_grade_accepts_real_verified_manifest_and_artifact(self):
         pop, _, _ = make_verified_population(10)
         rep = ev.EqualVolumeExperiment(
@@ -292,6 +349,13 @@ class PromotionGradeTests(unittest.TestCase):
             verified["artifact_sha256"],
             pop.dataset_identity["artifact_sha256"],
         )
+        fingerprints = rep["integrity"]["ranking_input_fingerprints"]
+        self.assertTrue(fingerprints["champion"])
+        self.assertTrue(fingerprints["challenger"])
+        self.assertEqual(
+            rep["champion"]["ranking_input_fields"], ["score"])
+        self.assertEqual(
+            rep["challenger"]["ranking_input_fields"], ["predicted_prob"])
 
     def test_promotion_grade_rejects_artifact_changed_after_lock(self):
         pop, rows_path, _ = make_verified_population(10)
