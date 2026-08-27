@@ -1040,6 +1040,32 @@ def run(run_dir, manifest, *, use_weather=True, use_bullpen=True,
         release_lock(run_dir, lock)
 
 
+def prepare_existing_run(base_dir, run_id, *, resume_from_remote=False):
+    """Resolve an existing run for CLI use, including a true fresh-clone restore.
+
+    The old CLI called load_manifest() before honoring --resume-from-remote,
+    which made the documented fresh-container recovery path impossible: the
+    local manifest was exactly what a reclaimed container no longer had.
+
+    This helper performs only recovery/control-plane work. It does not bypass
+    verify_code_identity(); generation still runs under the manifest's pinned
+    scientific SHA or fails closed later in run().
+    """
+    rd = run_dir_for(base_dir, run_id)
+    restore_report = None
+
+    if resume_from_remote and not os.path.exists(manifest_path(rd)):
+        from backtest import canonical_durability as _cd
+        fetched = _cd.fetch_durable_branch()
+        if not fetched.get("ok"):
+            raise RuntimeError(
+                f"could not fetch durable branch for {run_id}: {fetched}")
+        restore_report = _cd.restore_from_durable(rd, run_id)
+
+    mf = load_manifest(rd)
+    return rd, mf, restore_report
+
+
 if __name__ == "__main__":
     import argparse
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -1071,9 +1097,11 @@ if __name__ == "__main__":
                     help="declare the pybaseball/Statcast source vintage this run used")
     args = ap.parse_args()
 
+    pre_restore = None
     if args.run_id:
-        rd = run_dir_for(args.base_dir, args.run_id)
-        mf = load_manifest(rd)
+        rd, mf, pre_restore = prepare_existing_run(
+            args.base_dir, args.run_id,
+            resume_from_remote=args.resume_from_remote)
     else:
         identity = build_run_identity(
             args.start, args.end, out_target=os.path.join(args.base_dir, "{run_id}", "assembled", "rows.jsonl"),
@@ -1090,9 +1118,16 @@ if __name__ == "__main__":
         from backtest import canonical_durability as _cd
 
         if args.resume_from_remote:
-            fetched = _cd.fetch_durable_branch()
-            print(f"durable fetch: {fetched}", flush=True)
-            rep = _cd.restore_from_durable(rd, mf["run_id"], manifest=mf)
+            if pre_restore is not None:
+                rep = pre_restore
+                fetched = {"ok": True, "note": "fetched during fresh-clone preparation"}
+            else:
+                fetched = _cd.fetch_durable_branch()
+                print(f"durable fetch: {fetched}", flush=True)
+                if not fetched.get("ok"):
+                    raise RuntimeError(
+                        f"could not fetch durable branch for {mf['run_id']}: {fetched}")
+                rep = _cd.restore_from_durable(rd, mf["run_id"], manifest=mf)
             print(f"restored {len(rep['restored'])} date(s) from the durable branch, "
                   f"{len(rep['skipped_present'])} already present locally, "
                   f"{len(rep['failed'])} failed", flush=True)
