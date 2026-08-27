@@ -267,6 +267,25 @@ def main():
             except cd.IdentityMismatch:
                 ok(f"{label}: IdentityMismatch (fail closed)")
 
+        # Environment drift must fail closed by default. The override is
+        # explicit and must preserve the difference report rather than hiding it.
+        _real_env_identity = cd.environment_identity
+        drifted_env = json.loads(json.dumps(env_id))
+        drifted_env["python_version"] = "0.0-test-drift"
+        cd.environment_identity = lambda *a, **k: drifted_env
+        try:
+            try:
+                cd.assert_identity_compatible(idx, m2)
+                bad("environment drift accepted by default")
+            except cd.IdentityMismatch:
+                ok("environment drift rejected by default")
+            override = cd.assert_identity_compatible(
+                idx, m2, allow_environment_drift=True)
+            check("explicit environment-drift override remains visible",
+                  override["environment"]["compatible"], False)
+        finally:
+            cd.environment_identity = _real_env_identity
+
         # A remote manifest that disagrees with the durable index must be
         # rejected BEFORE restore creates any local run directory or manifest.
         # The pre-fix path wrote manifest.json first and only then checked
