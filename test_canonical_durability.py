@@ -507,6 +507,45 @@ def main():
                       bool(getattr(store2, "cache_report", None)), True)
             finally:
                 _eng.m.pyb.statcast = real
+
+            # Fresh pulls must produce the same provenance surface as cache
+            # reuse. This is metadata-only: generation still uses the exact
+            # DataFrame it just pulled, while cache_report binds the persisted
+            # source bytes for future canonical provenance.
+            fresh_dir = os.path.join(sandbox, "statcast_fresh")
+            os.makedirs(fresh_dir, exist_ok=True)
+            def fake_good_statcast(start_dt=None, end_dt=None, **kwargs):
+                cols = {c: [0] for c in _eng.STATCAST_COLUMNS}
+                cols["game_date"] = [end_dt or "2025-04-01"]
+                return pd.DataFrame(cols)
+
+            _eng.m.pyb.statcast = fake_good_statcast
+            try:
+                fresh_store = _eng.StatcastStore(
+                    2025, "2025-04-01", cache_dir=fresh_dir, verbose=False)
+                fresh_df = fresh_store.load()
+                fresh_report = getattr(fresh_store, "cache_report", None)
+                check("fresh Statcast pull produced rows", len(fresh_df) > 0, True)
+                check("fresh Statcast pull carries a validation report",
+                      bool(fresh_report), True)
+                check("fresh Statcast persisted bytes are provenance-usable",
+                      bool(fresh_report and fresh_report.get("usable")), True)
+                rec = cd.statcast_lineage_from_cache_report(
+                    fresh_report, year=fresh_store.year,
+                    through=fresh_store.through,
+                    cache_mode=cd.CACHE_MODE_FRESH)
+                check("usable persisted Statcast report becomes lineage",
+                      bool(rec), True)
+                check("Statcast lineage binds persisted content checksum",
+                      rec.get("content_sha256") if rec else None,
+                      fresh_report.get("content_sha256") if fresh_report else None)
+                check("unusable report cannot invent Statcast lineage",
+                      cd.statcast_lineage_from_cache_report(
+                          {"usable": False}, year=2025, through="2025-04-01",
+                          cache_mode=cd.CACHE_MODE_FRESH),
+                      None)
+            finally:
+                _eng.m.pyb.statcast = real
         except ImportError:
             print("  --   pandas/engine unavailable; cache wiring check skipped")
 
