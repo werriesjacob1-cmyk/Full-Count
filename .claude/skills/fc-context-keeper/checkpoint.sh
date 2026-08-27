@@ -82,9 +82,28 @@ if [ -f "$ctx" ]; then
       if [ -r "/proc/$p/stat" ]; then
         start="$(awk '{print $22}' "/proc/$p/stat" 2>/dev/null)"
         cmd="$(tr '\0' ' ' < "/proc/$p/cmdline" 2>/dev/null | cut -c1-100)"
+        # Same-boot PID recycling: the kernel reuses numbers, so a live /proc
+        # entry does NOT prove it is the same process. starttime disambiguates.
+        # If the checkpoint recorded one for this pid, it must match.
+        want_start="$(grep -oE "pid[[:space:]]+$p\b[^\n]*starttime[^0-9]*[0-9]+" "$ctx" 2>/dev/null \
+                      | grep -oE 'starttime[^0-9]*[0-9]+' | grep -oE '[0-9]+$' | head -1)"
+        if [ -n "$want_start" ] && [ "$want_start" != "$start" ]; then
+          echo "  pid $p RECYCLED — a live process exists but starttime $start != recorded $want_start."
+          echo "      The process from the checkpoint is DEAD; this is an unrelated process reusing the number."
+          continue
+        fi
+        if [ -z "$cmd" ]; then
+          echo "  pid $p UNVERIFIABLE — live but its cmdline is empty (kernel thread, or a process"
+          echo "      this session cannot inspect). Do NOT treat this as the checkpoint's process."
+          echo "      starttime=$start boot_id=$boot"
+          continue
+        fi
         echo "  pid $p ALIVE as of $now (starttime=$start boot_id=$boot)"
         echo "      cmd: $cmd"
-        echo "      NOTE: starttime+boot_id is the identity. A bare PID is recycled by the kernel."
+        if [ -z "$want_start" ]; then
+          echo "      WARNING: the checkpoint recorded no starttime for this pid, so this is a"
+          echo "      NAME match, not an identity match. Record 'pid $p starttime $start' next time."
+        fi
       else
         echo "  pid $p DEAD as of $now — delete any line in the checkpoint that says otherwise"
       fi
