@@ -318,6 +318,7 @@ class EqualVolumeExperiment:
         self.preregistered = preregistered
         self.notes = notes or ""
         self.volume_by_date = dict(volume_by_date or {})
+        self.verified_dataset_identity = None
 
         if self.volume_by_date:
             bad = {d: n for d, n in self.volume_by_date.items()
@@ -355,11 +356,14 @@ class EqualVolumeExperiment:
         # weaker hand-written key check here.
         try:
             import accuracy_lab as _accuracy_lab
-            _accuracy_lab.assert_promotion_grade_manifest(ident)
+            self.verified_dataset_identity = (
+                _accuracy_lab.verify_promotion_grade_dataset_identity(ident)
+            )
         except Exception as exc:
             raise EqualVolumeViolation(
                 "promotion_grade=True requires a complete strong dataset/holdout "
-                f"manifest accepted by accuracy_lab.assert_promotion_grade_manifest: {exc}") from exc
+                "identity verified against its real manifest and artifact by "
+                f"accuracy_lab.verify_promotion_grade_dataset_identity: {exc}") from exc
 
         for policy in (self.champion, self.challenger):
             if not policy.ranking_input_fields:
@@ -707,6 +711,7 @@ class EqualVolumeExperiment:
                 "post_outcome_population_filtering": False,
                 "duplicate_candidate_identities": 0,
                 "dataset_identity": self.population.dataset_identity,
+                "verified_dataset_identity": self.verified_dataset_identity,
                 "evidence_regime": self.population.evidence_regime,
                 "eligibility_definition_version": self.population.definition_version,
                 "ranking_input_fingerprints": {
@@ -726,7 +731,11 @@ class EqualVolumeExperiment:
         report["experiment_manifest_id"] = _sha({
             "population_identity": self.population.fingerprint,
             "population_content": self.population.content_fingerprint,
-            "dataset_identity": self.population.dataset_identity,
+            "dataset_identity": (
+                self.verified_dataset_identity
+                if self.verified_dataset_identity is not None
+                else self.population.dataset_identity
+            ),
             "champion": self.champion.identity(),
             "challenger": self.challenger.identity(),
             "champion_ranking_inputs": self._ranking_inputs_fingerprint(self.champion),
