@@ -61,6 +61,11 @@ THESIS_PLAYER_DATE = "player_date"   # same player that day (doubleheader-tolera
 THESIS_MODES = (THESIS_PLAYER_GAME, THESIS_GAME, THESIS_PLAYER_DATE)
 
 
+class StrictRefillError(Exception):
+    """Promotion-grade Best Expression could not refill every suppressed
+    top-N slot with an independent thesis from the same operational slate."""
+
+
 def thesis_identity(row, mode=THESIS_PLAYER_GAME):
     """The underlying idea a wager expresses.
 
@@ -117,6 +122,77 @@ def best_expression_rank_fn(base_key_fn, *, thesis_mode=THESIS_PLAYER_GAME,
         # Demoted candidates keep their relative order and sit strictly
         # below every kept one -- never discarded (see module docstring).
         return kept + demoted
+
+    return _rank
+
+
+class _PopulationView:
+    """Minimal read-only population view used for per-slate refill audits."""
+
+    def __init__(self, population, identities):
+        self._population = population
+        self.identities = list(identities)
+
+    def row(self, ident):
+        return self._population.row(ident)
+
+
+def strict_best_expression_rank_fn(base_key_fn, *, volume_by_date,
+                                   thesis_mode=THESIS_PLAYER_GAME,
+                                   max_per_thesis=1, reverse=True):
+    """Promotion-grade Best Expression ranking with fail-closed refill.
+
+    The exploratory ranker deliberately lets redundant expressions flow back
+    into top-N when a slate lacks independent replacements, preserving volume
+    while honestly admitting the portfolio was not fully diversified. That is
+    useful for diagnosis but is too soft for a promotion claim about strict
+    Best Expression. This wrapper audits every locked operational date quota
+    before returning the normal deterministic ranking and raises if any slate
+    cannot refill every suppressed slot independently.
+    """
+    quotas = {str(d): n for d, n in dict(volume_by_date or {}).items()}
+    if not quotas:
+        raise ValueError("strict Best Expression requires non-empty volume_by_date")
+    bad = {d: n for d, n in quotas.items() if not isinstance(n, int) or n <= 0}
+    if bad:
+        raise ValueError(f"volume_by_date must contain positive integer quotas; bad={bad}")
+
+    base_rank = best_expression_rank_fn(
+        base_key_fn, thesis_mode=thesis_mode, max_per_thesis=max_per_thesis,
+        reverse=reverse)
+
+    def _rank(population):
+        by_date = defaultdict(list)
+        for ident in population.identities:
+            by_date[str(population.row(ident).get("date"))].append(ident)
+
+        failures = {}
+        for date, quota in sorted(quotas.items()):
+            view = _PopulationView(population, by_date.get(date, []))
+            if len(view.identities) < quota:
+                failures[date] = {
+                    "reason": "insufficient candidates",
+                    "quota": quota,
+                    "available": len(view.identities),
+                }
+                continue
+            audit = describe_suppression(
+                view, base_key_fn, quota, thesis_mode=thesis_mode,
+                max_per_thesis=max_per_thesis, reverse=reverse)
+            if not audit["fully_refillable"]:
+                failures[date] = {
+                    "reason": "independent refill unavailable",
+                    "quota": quota,
+                    "redundant_expressions_in_base_top_n":
+                        audit["redundant_expressions_in_base_top_n"],
+                    "independent_candidates_available_below_cut":
+                        audit["independent_candidates_available_below_cut"],
+                }
+        if failures:
+            raise StrictRefillError(
+                "strict Best Expression is not fully refillable on every locked "
+                f"operational slate: {failures}")
+        return base_rank(population)
 
     return _rank
 
