@@ -132,6 +132,21 @@ class EligiblePopulation:
         self.identities = identities
         self.fingerprint = _sha(sorted(identities, key=_identity_sort_key))
 
+        # Candidate identity alone is not enough to prove the experimental
+        # population is unchanged: the same player/game/market/line keys can
+        # carry different scores, probabilities, signals, or other selector
+        # inputs. Bind the full candidate content separately while excluding
+        # only the realized outcome, which is joined after selection and must
+        # never become part of a preselection identity.
+        content_rows = []
+        for ident in sorted(identities, key=_identity_sort_key):
+            candidate = self._by_identity[ident]
+            content_rows.append({
+                "identity": ident,
+                "content": {k: v for k, v in candidate.items() if k != "outcome"},
+            })
+        self.content_fingerprint = _sha(content_rows)
+
     def __len__(self):
         return len(self.rows)
 
@@ -146,6 +161,7 @@ class EligiblePopulation:
         return {
             "n_eligible": len(self.rows),
             "eligible_population_fingerprint": self.fingerprint,
+            "eligible_population_content_fingerprint": self.content_fingerprint,
             "definition": self.definition,
             "eligibility_definition_version": self.definition_version,
             "evidence_regime": self.evidence_regime,
@@ -604,6 +620,7 @@ class EqualVolumeExperiment:
 
             "integrity": {
                 "eligible_population_fingerprint": self.population.fingerprint,
+                "eligible_population_content_fingerprint": self.population.content_fingerprint,
                 "same_population_both_sides": True,  # structural: one object
                 "selection_deterministic_verified": True,
                 "outcomes_joined_after_selection": True,
@@ -625,6 +642,7 @@ class EqualVolumeExperiment:
         }
         report["experiment_manifest_id"] = _sha({
             "population": self.population.fingerprint,
+            "population_content": self.population.content_fingerprint,
             "dataset_identity": (
                 self.verified_dataset_identity
                 if self.verified_dataset_identity is not None
