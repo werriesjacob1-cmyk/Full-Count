@@ -500,8 +500,16 @@ def run_live_snapshot(out_dir=DEFAULT_OUT_DIR):
         game_meta = ctx["game_meta"]
         park_wx = ctx["park_wx"]
         emp_pitchers = ctx["emp_pitchers"]
+
+        # From this boundary onward every mutating production helper operates
+        # ONLY on the research copy. quality_control() annotates rejected and
+        # assumed-lineup candidates; apply_signal_weights() changes score; and
+        # attach_market_prices() adds market fields. Keeping all three off the
+        # source list makes run_live_snapshot genuinely observational with
+        # respect to the scoring pass it just captured.
+        research_candidates = copy.deepcopy(candidates)
         kept, rejected, assumed_lineup = gp.quality_control(
-            candidates, game_meta, park_wx, emp_pitchers)
+            research_candidates, game_meta, park_wx, emp_pitchers)
 
         # Match the real production decision surface for candidates that clear
         # QC: live-only signal trust is applied after QC in generate_picks.main.
@@ -510,11 +518,6 @@ def run_live_snapshot(out_dir=DEFAULT_OUT_DIR):
         signal_trust = gp.load_signal_trust()
         gp.apply_signal_weights(kept, trust=signal_trust)
 
-        # Price a DEEP COPY of the full funnel. Market attachment mutates its
-        # input dicts by design; doing it on the copy gives research the live
-        # book state without altering even this isolated scoring pass's source
-        # candidate objects.
-        research_candidates = copy.deepcopy(candidates)
         odds_observed_at = datetime.now(timezone.utc).isoformat()
         feeds, market_context = fetch_live_market_snapshot(
             ctx, fd=fd, observed_at=odds_observed_at)
