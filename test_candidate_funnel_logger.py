@@ -457,6 +457,32 @@ class OperationalOpportunityExpansionTests(unittest.TestCase):
         self.assertEqual(rec["identity"]["game_start"], raw["game_start"])
         self.assertEqual(rec["evidence"]["signal_weight_adjustment"], 3.5)
 
+    def test_under_side_is_restored_before_qc_identity_is_keyed(self):
+        raw = candidate(
+            player_id=10, name="NRFI-like", game_pk=99,
+            bet_side="under", game_start="2026-08-25T23:00:00Z")
+        raw_qc = {
+            cfl.candidate_identity(raw, date="2026-08-25"):
+                ("confirmed_lineup", None)
+        }
+
+        def expanded(pool):
+            return {"hits": [{
+                "type": "batter", "name": "NRFI-like", "player_id": 10,
+                "game_pk": 99,
+                "projection": {"stat": "hits", "value": 0.5, "needs": 1},
+                "hit_probability": 0.65, "score": 70.0,
+            }]}
+
+        rows, qc, _ = cfl.build_operational_opportunities(
+            [raw], raw_qc, {"prices": {}, "k_prices": {}},
+            gp=self._gp(expanded), fd=types.SimpleNamespace(),
+            date="2026-08-25")
+        self.assertEqual(rows[0]["bet_side"], "under")
+        exact_id = cfl.candidate_identity(rows[0], date="2026-08-25")
+        self.assertIn(":under:", exact_id)
+        self.assertEqual(qc[exact_id], ("confirmed_lineup", None))
+
     def test_rejected_expansion_is_kept_counterfactual_and_separate(self):
         kept = candidate(player_id=1, name="Kept", game_pk=99)
         rejected = candidate(player_id=2, name="Rejected", game_pk=100)
