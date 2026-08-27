@@ -7,14 +7,19 @@ import unittest
 
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
-PATH = os.path.join(ROOT, ".github", "workflows", "prospective-shadow.yml")
+CAPTURE_PATH = os.path.join(
+    ROOT, ".github", "workflows", "prospective-shadow.yml")
+GRADE_PATH = os.path.join(
+    ROOT, ".github", "workflows", "prospective-grade.yml")
 
 
 class ProspectiveWorkflowContractTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        with open(PATH, encoding="utf-8") as fh:
+        with open(CAPTURE_PATH, encoding="utf-8") as fh:
             cls.text = fh.read()
+        with open(GRADE_PATH, encoding="utf-8") as fh:
+            cls.grade_text = fh.read()
 
     def test_manual_only_until_separately_authorized(self):
         self.assertIn("workflow_dispatch:", self.text)
@@ -44,8 +49,10 @@ class ProspectiveWorkflowContractTests(unittest.TestCase):
             self.assertNotIn(forbidden, self.text)
 
     def test_writer_is_serialized_not_cancelled_mid_commit(self):
-        self.assertIn("group: prospective-shadow-capture", self.text)
+        self.assertIn("group: prospective-shadow-ledger", self.text)
+        self.assertIn("group: prospective-shadow-ledger", self.grade_text)
         self.assertIn("cancel-in-progress: false", self.text)
+        self.assertIn("cancel-in-progress: false", self.grade_text)
 
     def test_append_only_diff_is_enforced_before_push(self):
         self.assertIn(
@@ -63,6 +70,34 @@ class ProspectiveWorkflowContractTests(unittest.TestCase):
         # ledger checkout before committing.
         self.assertIn(
             "Re-verify against existing ledger and materialize", self.text)
+
+    def test_grading_workflow_is_also_manual_and_opt_in(self):
+        self.assertIn("workflow_dispatch:", self.grade_text)
+        self.assertNotIn("schedule:", self.grade_text)
+        self.assertIn("default: false", self.grade_text)
+        self.assertIn("if: inputs.persist == true", self.grade_text)
+
+    def test_grading_reads_durable_snapshots_not_ephemeral_candidate_spool(self):
+        self.assertIn("--durable-root \"$LEDGER_DIR\"", self.grade_text)
+        self.assertNotIn(
+            "candidate_funnel_logger.py", self.grade_text)
+
+    def test_grading_pushes_only_to_same_dedicated_ledger(self):
+        self.assertIn(
+            "HEAD:refs/heads/prospective-candidate-ledger",
+            self.grade_text)
+        for forbidden in (
+            "HEAD:refs/heads/main",
+            "HEAD:main",
+            "git push origin main",
+        ):
+            self.assertNotIn(forbidden, self.grade_text)
+
+    def test_grading_diff_is_append_only(self):
+        self.assertIn(
+            'awk \'$1 != "A" {print}\'', self.grade_text)
+        self.assertIn(
+            "prospective ledger is append-only", self.grade_text)
 
 
 if __name__ == "__main__":
