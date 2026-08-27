@@ -10,6 +10,7 @@ Every player below is projected into last night's/his last game's batting slot f
 - **Cody Bellinger** (New York Yankees) — Over 0.5 Hits+Runs+RBIs — 69.5% [Houston Astros @ New York Yankees]
 - **Ozzie Albies** (Atlanta Braves) — Over 0.5 Hits+Runs+RBIs — 69.5% [Los Angeles Dodgers @ Atlanta Braves]
 - **Geraldo Perdomo** (Arizona Diamondbacks) — Over 0.5 Hits+Runs+RBIs — 69.5% [Arizona Diamondbacks @ San Francisco Giants]
+- **Ivan Herrera** (St. Louis Cardinals) — Over 0.5 Hits+Runs+RBIs — 68.9% [Baltimore Orioles @ St. Louis Cardinals]
 - **Vinnie Pasquantino** (Kansas City Royals) — Over 0.5 Hits+Runs+RBIs — 68.8% [Kansas City Royals @ Toronto Blue Jays]
 - **Dylan Crews** (Washington Nationals) — Over 0.5 Hits+Runs+RBIs — 68.4% [Colorado Rockies @ Washington Nationals]
 - **George Springer** (Toronto Blue Jays) — Over 0.5 Hits+Runs+RBIs — 68.3% [Kansas City Royals @ Toronto Blue Jays]
@@ -26,4 +27,3 @@ Every player below is projected into last night's/his last game's batting slot f
 - **Nolan Arenado** (Arizona Diamondbacks) — Over 0.5 Hits+Runs+RBIs — 66.6% [Arizona Diamondbacks @ San Francisco Giants]
 - **Luis Robert** (New York Mets) — Over 0.5 Hits+Runs+RBIs — 66.6% [Milwaukee Brewers @ New York Mets]
 - **Yordan Alvarez** (Houston Astros) — Over 0.5 Hits — 66.5% [Houston Astros @ New York Yankees]
-- **Jeremy Pena** (Houston Astros) — Over 0.5 Hits — 66.5% [Houston Astros @ New York Yankees]
