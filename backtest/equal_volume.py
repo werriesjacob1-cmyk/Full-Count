@@ -303,7 +303,8 @@ class EqualVolumeExperiment:
     def __init__(self, *, population, champion, challenger, volume,
                  outcome_policy=None, kind=KIND_SELECTOR,
                  code_git_sha=None, promotion_grade=False,
-                 cluster_field="game_pk", preregistered=False, notes=None):
+                 cluster_field="game_pk", preregistered=False, notes=None,
+                 volume_by_date=None):
         if kind not in (self.KIND_SELECTOR, self.KIND_ELIGIBILITY):
             raise ValueError(f"unknown experiment kind {kind!r}")
         if not isinstance(volume, int) or volume <= 0:
@@ -327,6 +328,33 @@ class EqualVolumeExperiment:
         self.preregistered = preregistered
         self.notes = notes or ""
         self.verified_dataset_identity = None
+        self.volume_by_date = (
+            {str(k): v for k, v in volume_by_date.items()}
+            if volume_by_date is not None else None
+        )
+
+        if self.volume_by_date is not None:
+            bad = {
+                d: n for d, n in self.volume_by_date.items()
+                if isinstance(n, bool) or not isinstance(n, int) or n < 0
+            }
+            if bad:
+                raise EqualVolumeViolation(
+                    f"volume_by_date values must be non-negative integers; bad={bad}")
+            if sum(self.volume_by_date.values()) != self.volume:
+                raise EqualVolumeViolation(
+                    f"volume_by_date sums to {sum(self.volume_by_date.values())}, "
+                    f"but requested volume is {self.volume}")
+
+            available = Counter(str(r.get("date")) for r in self.population.rows)
+            impossible = {
+                d: n for d, n in self.volume_by_date.items()
+                if n > available.get(d, 0)
+            }
+            if impossible:
+                raise EqualVolumeViolation(
+                    "volume_by_date requests more selections than the eligible "
+                    f"population contains on these dates: {impossible}")
 
         if promotion_grade:
             self._assert_promotion_grade_dataset()
@@ -372,6 +400,21 @@ class EqualVolumeExperiment:
                     f"promotion-grade policy {policy.name!r} declares realized outcome "
                     "as a ranking input; outcome information must never enter selection")
 
+        if self.volume_by_date is None:
+            raise EqualVolumeViolation(
+                "promotion_grade=True requires volume_by_date covering every eligible "
+                "slate/date; equal total N across a multi-date corpus is not sufficient "
+                "operational equal volume")
+
+        population_dates = {str(r.get("date")) for r in self.population.rows}
+        schedule_dates = set(self.volume_by_date)
+        if schedule_dates != population_dates:
+            missing = sorted(population_dates - schedule_dates)
+            extra = sorted(schedule_dates - population_dates)
+            raise EqualVolumeViolation(
+                "promotion_grade=True requires volume_by_date to cover the exact "
+                f"eligible date set; missing={missing}, extra={extra}")
+
     # ── selection ──────────────────────────────────────────────────────
 
     def _select(self, policy):
@@ -382,12 +425,36 @@ class EqualVolumeExperiment:
                 f"policy {policy.name!r} is not deterministic: ranking the identical "
                 f"population twice produced different orders. A non-reproducible "
                 f"selection cannot be evidence of anything.")
-        selected = first[:self.volume]
+
+        if self.volume_by_date is None:
+            selected = first[:self.volume]
+        else:
+            remaining = dict(self.volume_by_date)
+            selected = []
+            for ident in first:
+                d = str(self.population.row(ident).get("date"))
+                if remaining.get(d, 0) > 0:
+                    selected.append(ident)
+                    remaining[d] -= 1
+                if len(selected) == self.volume:
+                    break
+            short = {d: n for d, n in remaining.items() if n}
+            if short:
+                raise EqualVolumeViolation(
+                    f"policy {policy.name!r} could not fill locked per-date volume: "
+                    f"{short}")
+
         if len(selected) != self.volume:
             raise EqualVolumeViolation(
                 f"policy {policy.name!r} yielded {len(selected)} selections for a "
                 f"requested volume of {self.volume}")
         return selected
+
+    def _selection_count_by_date(self, selected):
+        counts = Counter(str(self.population.row(i).get("date")) for i in selected)
+        if self.volume_by_date is not None:
+            return {d: counts.get(d, 0) for d in sorted(self.volume_by_date)}
+        return dict(sorted(counts.items()))
 
     def _ranking_input_fingerprint(self, policy):
         """Bind the exact declared ranking-input values for every candidate.
@@ -627,13 +694,23 @@ class EqualVolumeExperiment:
 
             "population": self.population.describe(),
             "requested_volume": self.volume,
+            "requested_volume_by_date": (
+                dict(sorted(self.volume_by_date.items()))
+                if self.volume_by_date is not None else None
+            ),
+            "allocation_mode": (
+                "per_date_locked" if self.volume_by_date is not None
+                else "aggregate_top_n"
+            ),
             "outcome_policy": self.outcome_policy.identity(),
 
             "champion": {**self.champion.identity(), "selected_n": len(champ_sel),
+                         "selected_by_date": self._selection_count_by_date(champ_sel),
                          "hits": champ["hits"], "misses": champ["misses"],
                          "excluded": champ["excluded"],
                          "hit_rate": round(champ["hit_rate"], 4) if champ["hit_rate"] is not None else None},
             "challenger": {**self.challenger.identity(), "selected_n": len(chal_sel),
+                           "selected_by_date": self._selection_count_by_date(chal_sel),
                            "hits": chal["hits"], "misses": chal["misses"],
                            "excluded": chal["excluded"],
                            "hit_rate": round(chal["hit_rate"], 4) if chal["hit_rate"] is not None else None,
@@ -665,6 +742,12 @@ class EqualVolumeExperiment:
                 "eligible_population_fingerprint": self.population.fingerprint,
                 "eligible_population_content_fingerprint": self.population.content_fingerprint,
                 "same_population_both_sides": True,  # structural: one object
+                "same_operational_volume_by_date": (
+                    self.volume_by_date is not None
+                    and self._selection_count_by_date(champ_sel)
+                    == self._selection_count_by_date(chal_sel)
+                    == dict(sorted(self.volume_by_date.items()))
+                ),
                 "selection_deterministic_verified": True,
                 "outcomes_joined_after_selection": True,
                 "post_outcome_population_filtering": False,
@@ -702,6 +785,10 @@ class EqualVolumeExperiment:
                 "challenger": self._ranking_input_fingerprint(self.challenger),
             },
             "volume": self.volume,
+            "volume_by_date": (
+                dict(sorted(self.volume_by_date.items()))
+                if self.volume_by_date is not None else None
+            ),
             "outcome_policy": self.outcome_policy.identity(),
             "kind": self.kind,
             "code_git_sha": self.code_git_sha,
