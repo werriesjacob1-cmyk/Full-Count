@@ -23,6 +23,7 @@ from collections import Counter, defaultdict
 from datetime import datetime, timezone
 import hashlib
 import json
+import random
 
 try:
     from backtest import candidate_funnel_logger as cfl
@@ -199,7 +200,7 @@ def _selection_shape(records):
 
 
 def equal_volume_selector_comparison(records, outcomes, *, challenger_ranking,
-                                     observed_at=None):
+                                     observed_at=None, slate_date=None):
     """Champion vs one PREDECLARED challenger at the champion's exact volume.
 
     This is a per-observation measurement primitive, not a promotion verdict.
@@ -231,6 +232,8 @@ def equal_volume_selector_comparison(records, outcomes, *, challenger_ranking,
         return {
             "comparison_status": "NO_CHAMPION_VOLUME",
             "challenger_ranking": challenger_ranking,
+            "slate_date": slate_date,
+            "observed_at": observed_at,
             "eligible_population": len(eligible),
             "selection_volume": 0,
         }
@@ -276,6 +279,8 @@ def equal_volume_selector_comparison(records, outcomes, *, challenger_ranking,
             "COMPLETE" if complete else "INCOMPLETE_SETTLEMENT"
         ),
         "challenger_ranking": challenger_ranking,
+        "slate_date": slate_date,
+        "observed_at": observed_at,
         "eligible_population": len(eligible),
         "selection_volume": k,
         "champion_candidate_ids": sorted(champ_ids),
@@ -306,6 +311,152 @@ def equal_volume_selector_comparison(records, outcomes, *, challenger_ranking,
             [r for r in champion if r["identity"]["candidate_id"] in removed],
             outcomes_by_id,
         ),
+    }
+
+
+def _quantile(sorted_values, q):
+    if not sorted_values:
+        return None
+    if len(sorted_values) == 1:
+        return sorted_values[0]
+    pos = q * (len(sorted_values) - 1)
+    lo = int(pos)
+    hi = min(lo + 1, len(sorted_values) - 1)
+    frac = pos - lo
+    return (
+        sorted_values[lo] * (1 - frac)
+        + sorted_values[hi] * frac
+    )
+
+
+def aggregate_equal_volume_comparisons(reports, *, bootstrap_samples=4000,
+                                       seed=0):
+    """Aggregate PREDECLARED per-slate comparisons without double-counting days.
+
+    The uncertainty interval resamples whole slate/date clusters, preserving all
+    within-slate player/game dependence. It is deliberately not a claim that
+    within-slate correlation has been modeled perfectly; it simply avoids the
+    much worse fiction that every selected prop is an independent Bernoulli
+    observation.
+    """
+    if not reports:
+        return {
+            "status": "NO_REPORTS",
+            "n_slates": 0,
+            "n_nonzero_slates": 0,
+        }
+
+    rankings = {r.get("challenger_ranking") for r in reports}
+    if len(rankings) != 1:
+        raise ProspectiveIntegrityError(
+            f"cannot aggregate multiple challenger definitions: {sorted(rankings)}")
+
+    dates = [r.get("slate_date") for r in reports]
+    if any(d is None for d in dates):
+        raise ProspectiveIntegrityError(
+            "every report needs an explicit slate_date before aggregation")
+    if len(dates) != len(set(dates)):
+        raise ProspectiveIntegrityError(
+            "multiple prospective observations from the same slate/date cannot "
+            "be pooled as independent evidence; predeclare one observation rule first")
+
+    bad = [
+        r for r in reports
+        if r.get("comparison_status")
+        not in ("COMPLETE", "NO_CHAMPION_VOLUME")
+    ]
+    if bad:
+        raise ProspectiveIntegrityError(
+            "unsettled/incomplete per-slate comparisons cannot enter a realized "
+            "hit-rate aggregate")
+
+    nonzero = [r for r in reports if r.get("selection_volume", 0) > 0]
+    for r in nonzero:
+        k = r["selection_volume"]
+        if r["champion"]["selected"] != k or r["challenger"]["selected"] != k:
+            raise ProspectiveIntegrityError(
+                f"equal-volume invariant broken on {r['slate_date']}")
+
+    champ_hits = sum(r["champion"]["hits"] for r in nonzero)
+    chal_hits = sum(r["challenger"]["hits"] for r in nonzero)
+    champ_n = sum(r["champion"]["selected"] for r in nonzero)
+    chal_n = sum(r["challenger"]["selected"] for r in nonzero)
+    if champ_n != chal_n:
+        raise ProspectiveIntegrityError(
+            f"aggregate volume mismatch champion={champ_n}, challenger={chal_n}")
+
+    champ_rate = _rate(champ_hits, champ_n)
+    chal_rate = _rate(chal_hits, chal_n)
+    delta = (
+        round(chal_rate - champ_rate, 4)
+        if champ_rate is not None and chal_rate is not None else None
+    )
+
+    slate_wins = slate_losses = slate_ties = 0
+    for r in nonzero:
+        diff = r["challenger"]["hits"] - r["champion"]["hits"]
+        if diff > 0:
+            slate_wins += 1
+        elif diff < 0:
+            slate_losses += 1
+        else:
+            slate_ties += 1
+
+    bootstrap_deltas = []
+    if nonzero and bootstrap_samples:
+        rng = random.Random(seed)
+        n_slates = len(nonzero)
+        for _ in range(int(bootstrap_samples)):
+            sample = [nonzero[rng.randrange(n_slates)] for _ in range(n_slates)]
+            c_hits = sum(r["champion"]["hits"] for r in sample)
+            x_hits = sum(r["challenger"]["hits"] for r in sample)
+            n_sel = sum(r["selection_volume"] for r in sample)
+            if n_sel:
+                bootstrap_deltas.append((x_hits - c_hits) / n_sel)
+        bootstrap_deltas.sort()
+
+    champion_market_mix = Counter()
+    challenger_market_mix = Counter()
+    for r in nonzero:
+        champion_market_mix.update(r["champion"].get("market_mix") or {})
+        challenger_market_mix.update(r["challenger"].get("market_mix") or {})
+
+    return {
+        "status": "COMPLETE",
+        "challenger_ranking": next(iter(rankings)),
+        "n_slates": len(reports),
+        "n_nonzero_slates": len(nonzero),
+        "n_zero_volume_slates": len(reports) - len(nonzero),
+        "selection_volume": champ_n,
+        "champion_hits": champ_hits,
+        "challenger_hits": chal_hits,
+        "champion_hit_rate": champ_rate,
+        "challenger_hit_rate": chal_rate,
+        "realized_hit_rate_delta": delta,
+        "overlap_count": sum(r.get("overlap_count", 0) for r in nonzero),
+        "added_hits": sum(r["added"]["hits"] for r in nonzero),
+        "added_selected": sum(r["added"]["selected"] for r in nonzero),
+        "removed_hits": sum(r["removed"]["hits"] for r in nonzero),
+        "removed_selected": sum(r["removed"]["selected"] for r in nonzero),
+        "slate_wins": slate_wins,
+        "slate_losses": slate_losses,
+        "slate_ties": slate_ties,
+        "champion_market_mix": dict(champion_market_mix),
+        "challenger_market_mix": dict(challenger_market_mix),
+        "cluster_bootstrap_95pct_delta": (
+            [
+                round(_quantile(bootstrap_deltas, 0.025), 4),
+                round(_quantile(bootstrap_deltas, 0.975), 4),
+            ]
+            if bootstrap_deltas else None
+        ),
+        "bootstrap_samples": len(bootstrap_deltas),
+        "uncertainty_cluster": "slate_date",
+        "uncertainty_note": (
+            "Bootstrap resamples whole slates, preserving within-slate game/player "
+            "dependence. It does not separately model residual dependence inside a slate."
+        ),
+        "slate_dates": sorted(dates),
     }
 
 
