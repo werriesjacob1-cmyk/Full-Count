@@ -284,6 +284,134 @@ def discover_materialized_snapshots(destination_root, *, date=None):
     )
 
 
+_OUTCOME_TIMESTAMP_KEYS = frozenset(("graded_at",))
+
+
+def canonical_outcome_record(record):
+    """Substantive settlement state; re-grade timestamps are observational."""
+    return {
+        k: v for k, v in record.items()
+        if k not in _OUTCOME_TIMESTAMP_KEYS
+    }
+
+
+def outcome_hash(record):
+    return _sha256_bytes(
+        _canonical_json_bytes(canonical_outcome_record(record)))
+
+
+def outcome_relpath(record):
+    cid = record.get("candidate_id")
+    date = record.get("date")
+    if not cid or not date or "grade" not in record:
+        raise ProspectiveDurabilityError(
+            "outcome requires candidate_id, date, and grade")
+    cid_hash = _sha256_bytes(str(cid).encode("utf-8"))
+    h = outcome_hash(record)
+    return os.path.join(
+        STORAGE_ROOT, "outcomes", str(date), cid_hash[:2], cid_hash,
+        f"{h}.json")
+
+
+def materialize_outcomes(outcomes, destination_root):
+    """Persist substantive grading events as immutable append-only files."""
+    written = reused = 0
+    for outcome in outcomes:
+        canonical = canonical_outcome_record(outcome)
+        raw = _canonical_json_bytes(canonical)
+        expected = outcome_hash(outcome)
+        if _sha256_bytes(raw) != expected:
+            raise ProspectiveDurabilityError(
+                "outcome canonicalization drift")
+        path = os.path.join(destination_root, outcome_relpath(outcome))
+        if os.path.exists(path):
+            with open(path, "rb") as fh:
+                existing = fh.read()
+            if existing != raw:
+                raise ProspectiveDurabilityError(
+                    f"immutable outcome event conflicts at {path}")
+            reused += 1
+            continue
+        _atomic_write(path, raw)
+        written += 1
+    return {
+        "outcome_events_written": written,
+        "outcome_events_reused": reused,
+        "outcomes_seen": len(outcomes),
+    }
+
+
+def load_materialized_outcomes(destination_root, *, date):
+    """Return one integrity-checked substantive outcome per candidate.
+
+    A settled candidate may have earlier ungraded events. Those are harmless.
+    Contradictory settled states (for example both hit and miss) are not.
+    """
+    root = os.path.join(
+        destination_root, STORAGE_ROOT, "outcomes", str(date))
+    if not os.path.isdir(root):
+        return []
+
+    by_candidate = {}
+    for dirpath, _dirs, files in os.walk(root):
+        for name in sorted(files):
+            if not name.endswith(".json"):
+                continue
+            path = os.path.join(dirpath, name)
+            try:
+                with open(path, encoding="utf-8") as fh:
+                    record = json.load(fh)
+            except (OSError, json.JSONDecodeError) as exc:
+                raise ProspectiveDurabilityError(
+                    f"invalid durable outcome {path}: {exc}")
+            if record.get("date") != date:
+                raise ProspectiveDurabilityError(
+                    f"outcome path date {date} contains record for {record.get('date')}")
+            cid = record.get("candidate_id")
+            if not cid:
+                raise ProspectiveDurabilityError(
+                    f"durable outcome {path} has no candidate_id")
+            expected_name = f"{outcome_hash(record)}.json"
+            if name != expected_name:
+                raise ProspectiveDurabilityError(
+                    f"outcome file name/hash mismatch at {path}")
+            cid_hash = _sha256_bytes(str(cid).encode("utf-8"))
+            if os.path.basename(os.path.dirname(path)) != cid_hash:
+                raise ProspectiveDurabilityError(
+                    f"outcome candidate directory does not match candidate_id {cid}")
+            by_candidate.setdefault(cid, []).append(record)
+
+    chosen = []
+    final_grades = {"hit", "miss", "void"}
+    for cid, events in sorted(by_candidate.items()):
+        finals = [e for e in events if e.get("grade") in final_grades]
+        settlement_keys = {
+            (
+                e.get("grade"),
+                json.dumps(e.get("actual"), sort_keys=True, default=str),
+                json.dumps(e.get("actual_stat"), sort_keys=True, default=str),
+            )
+            for e in finals
+        }
+        if len(settlement_keys) > 1:
+            raise ProspectiveDurabilityError(
+                f"contradictory final settlements for candidate {cid}: "
+                f"{sorted(settlement_keys)}")
+        if finals:
+            # Multiple events with the same settlement tuple may differ only in
+            # explanatory reason/QC metadata. Pick deterministically.
+            chosen.append(sorted(
+                finals,
+                key=lambda e: _canonical_json_bytes(e),
+            )[-1])
+        else:
+            chosen.append(sorted(
+                events,
+                key=lambda e: _canonical_json_bytes(e),
+            )[-1])
+    return chosen
+
+
 def load_jsonl(path):
     rows = []
     with open(path, encoding="utf-8") as fh:
