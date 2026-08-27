@@ -202,6 +202,99 @@ def assert_promotion_grade_manifest(manifest, manifest_path=None):
         f"the artifact you intend to certify.")
 
 
+def verify_promotion_grade_dataset_identity(identity):
+    """Verify a promotion-grade identity against its REAL manifest and artifact.
+
+    A caller-provided dict containing checksum-shaped fields is metadata, not
+    proof. Promotion-grade evidence must name the manifest that locked the
+    dataset. This function reloads that manifest from disk, requires the
+    existing strong-manifest contract, checks any duplicated identity fields
+    supplied by the caller against the manifest, and then delegates to
+    lock_holdout() to recompute the artifact identity from the actual rows.
+
+    The function is read-only for an existing manifest: it never creates,
+    upgrades, or rewrites a lock. Exploratory/legacy callers are unaffected
+    unless they explicitly ask for promotion-grade verification.
+    """
+    if not isinstance(identity, dict):
+        raise WeakDatasetIdentityError(
+            "promotion-grade dataset identity must be a dict containing manifest_path")
+
+    manifest_path = identity.get("manifest_path")
+    if not manifest_path:
+        raise WeakDatasetIdentityError(
+            "promotion-grade dataset identity requires manifest_path; arbitrary "
+            "artifact_sha256/artifact_row_count fields do not prove that a real "
+            "locked manifest or artifact was verified")
+
+    manifest_path_abs = (
+        os.path.abspath(manifest_path)
+        if os.path.isabs(manifest_path)
+        else os.path.abspath(os.path.join(ROOT, manifest_path))
+    )
+    if not os.path.exists(manifest_path_abs):
+        raise WeakDatasetIdentityError(
+            f"promotion-grade manifest does not exist at {manifest_path_abs!r}")
+
+    with open(manifest_path_abs, encoding="utf-8") as f:
+        manifest = json.load(f)
+    assert_promotion_grade_manifest(manifest, manifest_path_abs)
+
+    # If a caller copied manifest fields into dataset_identity, they must match
+    # the source manifest exactly. Otherwise stale or fabricated metadata could
+    # be paired with a real but different manifest and appear verified.
+    bound_fields = (
+        "rows_path",
+        "cutoff_date",
+        "holdout_frac",
+        "artifact_sha256",
+        "artifact_row_count",
+        "artifact_n_distinct_dates",
+        "artifact_date_range",
+        "code_git_sha_at_lock",
+    )
+    mismatched = {
+        key: {"identity": identity.get(key), "manifest": manifest.get(key)}
+        for key in bound_fields
+        if key in identity and identity.get(key) != manifest.get(key)
+    }
+    if mismatched:
+        raise IncompatibleDatasetError(
+            f"dataset identity metadata disagrees with its source manifest: {mismatched}")
+
+    rows_path_recorded = manifest.get("rows_path")
+    if not rows_path_recorded:
+        raise WeakDatasetIdentityError(
+            f"promotion-grade manifest at {manifest_path_abs!r} has no rows_path")
+
+    rows_path_abs = (
+        os.path.abspath(rows_path_recorded)
+        if os.path.isabs(rows_path_recorded)
+        else os.path.abspath(os.path.join(ROOT, rows_path_recorded))
+    )
+
+    # This is the important part: re-open the real artifact and recompute its
+    # sha/count/date identity through the same lock verification path used by
+    # Accuracy Lab. A matching-looking dict alone can never satisfy this.
+    lock_holdout(
+        rows_path_abs,
+        holdout_frac=manifest["holdout_frac"],
+        manifest_path=manifest_path_abs,
+        require_strong_dataset_identity=True,
+    )
+
+    h = hashlib.sha256()
+    with open(manifest_path_abs, "rb") as f:
+        for chunk in iter(lambda: f.read(1 << 20), b""):
+            h.update(chunk)
+
+    return {
+        **manifest,
+        "manifest_path": os.path.relpath(manifest_path_abs, ROOT),
+        "manifest_sha256": h.hexdigest(),
+    }
+
+
 def lock_holdout(rows_path=DEFAULT_ROWS_PATH, holdout_frac=0.2, manifest_path=None,
                  require_strong_dataset_identity=False):
     """Return (train_rows, holdout_rows, cutoff_date), locking the holdout
