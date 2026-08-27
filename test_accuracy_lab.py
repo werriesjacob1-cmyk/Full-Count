@@ -222,11 +222,40 @@ with open(pg_manifest_path, encoding="utf-8") as f:
     pg_manifest = json.load(f)
 check(al.manifest_identity_strength(pg_manifest)["promotion_grade"] is True,
      "freshly locked manifest reports promotion_grade=True")
+check(al.manifest_identity_strength(pg_manifest)["missing_binding_fields"] == [],
+     "promotion-grade strength means every required binding field is present")
+
+checksum_only = {
+    "manifest_schema_version": 2,
+    "artifact_sha256": "a" * 64,
+    "artifact_row_count": 10,
+}
+check(al.manifest_identity_strength(checksum_only)["promotion_grade"] is False,
+     "schema-v2 plus a checksum is NOT enough when partition/path/code binding is absent")
+check("rows_path" in al.manifest_identity_strength(checksum_only)["missing_binding_fields"],
+     "strength report names the missing binding fields rather than silently weakening the gate")
 
 tr2, ho2, cut2 = al.lock_holdout(pg_rows_path, holdout_frac=0.2,
                                  manifest_path=pg_manifest_path,
                                  require_strong_dataset_identity=True)
 check(cut2 == cut, "unchanged v2 artifact is accepted in promotion-grade mode")
+
+verified_identity = al.verify_promotion_grade_dataset_identity({
+    **pg_manifest, "manifest_path": pg_manifest_path,
+})
+check(verified_identity["artifact_sha256"] == pg_manifest["artifact_sha256"],
+     "real promotion verification reloads the manifest and recomputes the artifact identity")
+check(bool(verified_identity["manifest_content_sha256"]),
+     "verified identity binds the exact manifest content too")
+
+bad_identity = {**pg_manifest, "manifest_path": pg_manifest_path,
+                "artifact_row_count": pg_manifest["artifact_row_count"] + 1}
+raised = False
+try:
+    al.verify_promotion_grade_dataset_identity(bad_identity)
+except al.IncompatibleDatasetError:
+    raised = True
+check(raised, "caller metadata that disagrees with the real manifest is rejected")
 
 write_rows(pg_rows_path, [fixture_row(d, 1, 1) for d in DATES] + [fixture_row(DATES[-1], 9, 0)])
 raised = False
@@ -236,6 +265,15 @@ try:
 except al.IncompatibleDatasetError:
     raised = True
 check(raised, "v2 still fails closed on content drift under promotion-grade mode")
+
+raised = False
+try:
+    al.verify_promotion_grade_dataset_identity({
+        **pg_manifest, "manifest_path": pg_manifest_path,
+    })
+except al.IncompatibleDatasetError:
+    raised = True
+check(raised, "standalone promotion identity verification also rejects artifact drift")
 
 head("2h. PROMOTION-GRADE GATE: a different artifact is refused even in promotion-grade "
      "mode, and a brand-new strong manifest can be locked for the canonical artifact "
