@@ -196,19 +196,42 @@ def write_outcomes(outcomes, path):
 
 
 def main():
-    if len(sys.argv) < 2:
-        print("usage: candidate_funnel_grader.py YYYY-MM-DD", file=sys.stderr)
-        return 1
-    date = sys.argv[1]
-    outcomes, n_read = grade_date(date)
+    import argparse
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("date")
+    parser.add_argument(
+        "--out-dir", default=DEFAULT_OUT_DIR,
+        help="ephemeral candidate-funnel spool directory")
+    parser.add_argument(
+        "--durable-root",
+        help="grade the union of immutable materialized snapshots instead of the local spool")
+    parser.add_argument(
+        "--outcome-path",
+        help="explicit JSONL output path (default: candidate_funnel_outcomes_DATE.jsonl)")
+    args = parser.parse_args()
+
+    if args.durable_root:
+        outcomes, n_read = grade_materialized_date(
+            args.durable_root, args.date)
+    else:
+        outcomes, n_read = grade_date(
+            args.date, out_dir=args.out_dir)
+
     if n_read == 0:
-        print(f"No candidate funnel records found for {date} -- nothing to grade.", file=sys.stderr)
+        print(
+            f"No candidate funnel records found for {args.date} -- nothing to grade.",
+            file=sys.stderr)
         return 1
-    out_path = outcomes_path_for_date(date)
+    out_path = (
+        args.outcome_path
+        or outcomes_path_for_date(args.date, args.out_dir)
+    )
+    os.makedirs(os.path.dirname(os.path.abspath(out_path)), exist_ok=True)
     n_written = write_outcomes(outcomes, out_path)
     graded = sum(1 for o in outcomes if o["grade"] in ("hit", "miss"))
-    print(f"{date}: read {n_read} candidates, wrote {n_written} outcome records "
-          f"({graded} graded, {n_written - graded} ungraded) to {out_path}")
+    print(
+        f"{args.date}: read {n_read} candidates, wrote {n_written} outcome records "
+        f"({graded} graded, {n_written - graded} ungraded) to {out_path}")
     return 0
 
 
