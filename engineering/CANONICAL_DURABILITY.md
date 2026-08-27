@@ -51,11 +51,30 @@ the end of every invocation so a `--max-dates` chunked run never leaves an
 undurable tail.
 
 **Maximum work lost to a container death: 10 dates, or 15 minutes of
-generation, whichever is smaller.** At the observed rate of the lost run
-(421 dates in ~62 minutes, ≈8.8 s/date) the ten-date rule fires roughly every
-90 seconds, so the 15-minute rule is a floor for slow stretches rather than the
-usual trigger. Against ~5 hours lost on 2026-08-27 that is at least a 20×
-reduction in the worst case.
+generation, whichever comes first.**
+
+### Correction to an earlier claim in this document
+
+A previous version cited "421 dates in ~62 minutes, ≈8.8 s/date" as the observed
+generation rate. **That was wrong.** Those checkpoints carry
+`extra.imported_from = "legacy_rows_backfill_v2"` — they were *salvaged in bulk*
+from an earlier artifact, and their `elapsed_seconds` are the legacy run's
+timings carried forward by the import, not the cost of generating them.
+
+Measured two independent ways, which agree:
+
+| Source | Rate |
+|---|---|
+| The salvaged metas' own recorded timings | **75.1 s/date** avg (min 31.6, max 92.8) |
+| Live fresh generation, run `…141713Z-d6a1050f` | **~92 s/date** |
+
+**Consequences:**
+
+- At ~85 s/date the ten-date rule fires about every 14 minutes, so the two rules
+  effectively coincide. The bound is unchanged — it is a maximum — but "10 dates"
+  and "15 minutes" are the same bound in practice, not two different ones.
+- **A full 877-date run takes roughly 16–22 hours, not 4–5.** Any planning that
+  assumed a single-sitting run was based on the bad rate.
 
 ## Durability is opt-in, and that is deliberate
 
@@ -84,13 +103,31 @@ prints a warning; use it only for a local experiment.
 
 ## Recovering after a container loss
 
-From a **fresh clone**, with no local state at all:
+From a **fresh clone**, with no local state at all.
+
+**Check out the run's pinned `code_git_sha` first.** The resume path verifies
+code identity and *fails closed* on drift, so resuming at whatever `main` happens
+to be will raise `CodeIdentityDrift` — correctly, but confusingly if you were not
+expecting it. Read the SHA off the durable index:
 
 ```bash
+python3 -c "
+import backtest.canonical_durability as cd
+cd.fetch_durable_branch()
+for r in cd.discover_durable_runs():
+    print(r['run_id'], r['code_git_sha'], r['dates'], r['updated_at'])"
+
+git worktree add --detach <run-worktree> <code_git_sha>
+cd <run-worktree>
+
 python3 backtest/canonical_run.py \
     --start 2024-04-01 --end 2026-08-25 --run-id <run_id> \
     --resume-from-remote --no-weather --cache-mode frozen_cache
 ```
+
+Resuming at a different SHA is a deliberate act requiring `--allow-sha-drift`,
+and it makes the artifact mixed-regime — which then needs a formal equivalence
+proof and an overlap replay before it can be called canonical.
 
 To see what is recoverable before committing to anything:
 

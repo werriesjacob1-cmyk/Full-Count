@@ -381,14 +381,27 @@ class DurabilityPolicy:
     and a git commit to each one, and produce ~880 commits for one run.
 
     The chosen bound is `every_n_dates=10` OR `every_seconds=900`, whichever
-    comes first, plus a final push at the end of every invocation. At the
-    observed rate of the 2026-08-27 run (421 dates in ~62 minutes, ~8.8s/date)
-    the ten-date rule fires roughly every 90 seconds, so the 15-minute rule is
-    a floor for slow stretches rather than the usual trigger.
+    comes first, plus a final push at the end of every invocation.
 
     MAXIMUM WORK LOST TO A CONTAINER DEATH: 10 dates, or 15 minutes of
-    generation, whichever is smaller. Against the ~5 hours lost on 2026-08-27
-    that is a reduction of roughly 20x in the worst case and far more typically.
+    generation, whichever comes first.
+
+    A correction, because the first version of this docstring reasoned from a
+    bad number. It claimed the 2026-08-27 run generated 421 dates in ~62
+    minutes (~8.8s/date), and concluded the ten-date rule would fire every ~90
+    seconds. That rate was not a generation rate at all: those checkpoints
+    carry `extra.imported_from = "legacy_rows_backfill_v2"`, meaning they were
+    SALVAGED from an earlier artifact in bulk, and their elapsed_seconds are
+    the legacy run's timings carried forward by the import.
+
+    The real per-date generation cost, measured two ways, agrees:
+      * those same salvaged metas record avg 75.1s/date (min 31.6, max 92.8)
+      * the live 2026-08-27T141713Z run measures ~92s/date on fresh generation
+
+    So at ~85s/date the ten-date rule fires roughly every 14 minutes and the two
+    rules very nearly coincide. The stated bound is unaffected -- it is a
+    maximum, and both rules still cap it -- but "ten dates" and "fifteen
+    minutes" are the same bound in practice, not two very different ones.
     """
 
     def __init__(self, every_n_dates=10, every_seconds=900, enabled=True):
