@@ -298,6 +298,81 @@ can be unchanged while the information used to rank those candidates changes.
 - VERIFIED-REPO: implementation and test source were re-fetched and inspected
   after commit.
 
+## Workstream 3 — Ranking-input identity
+
+**Status:** SUPERCHAD-IMPLEMENTED / NOT YET RUNTIME-VERIFIED / NOT CI-VERIFIED
+
+### Pre-change defect
+
+VERIFIED-REPO: `SelectionPolicy.identity()` recorded policy name/version/
+description, but not the candidate fields that determined ordering. The
+experiment therefore could not distinguish "same policy label, different
+ranking inputs" without reading implementation code and row payloads manually.
+
+### Implementation
+
+1. `ca6e608fe81b1eebec63769cf952b4047031297d`
+   - `backtest/equal_volume.py`
+   - `SelectionPolicy` now accepts optional `ranking_input_fields`
+   - field names are normalized to a deterministic unique sorted tuple
+   - policy identity reports the declaration
+   - promotion-grade mode fails closed if champion or challenger does not
+     declare ranking inputs
+   - promotion-grade mode explicitly rejects `outcome` as a ranking input
+   - experiment computes deterministic fingerprints of the declared input
+     values for every candidate
+   - fingerprints are present in integrity output and bound into
+     `experiment_manifest_id`
+   - exploratory policies remain backward-compatible; declarations are optional
+
+2. `69540742aa91820f80ca408a1ee61f9b3a423502`
+   - `test_equal_volume.py`
+   - champion fixture declares `score`
+   - challenger fixture declares `predicted_prob`
+   - promotion-grade policy with no declaration is rejected
+   - explicit realized-outcome leakage declaration is rejected
+   - changed champion score changes champion input fingerprint while leaving the
+     challenger's predicted-probability fingerprint unchanged
+   - declaration ordering/duplicates normalize deterministically
+   - promotion-grade report asserts both ranking-input fingerprints are present
+
+### Methodology limitation — important
+
+This mechanism is an **explicit contract**, not runtime introspection of
+arbitrary Python. A dishonest or buggy `rank_fn` could theoretically use a
+field that its `ranking_input_fields` declaration omits. The framework cannot
+prove the declaration is complete from arbitrary Python execution.
+
+Therefore Claude's independent review must compare each promotion policy's
+declared fields against the actual rank implementation. For nested structures,
+declaring the containing top-level object (for example `signals`) is safer
+than declaring an incomplete subset.
+
+The existing candidate-content fingerprint from Workstream 2 remains a broader
+backstop: even an undeclared row-content change changes the population-content
+identity, while Workstream 3 makes the exact claimed ranking inputs visible and
+auditable.
+
+### Compatibility / scan status
+
+- Intentional fail-closed behavior: promotion-grade policies without declared
+  ranking inputs now fail.
+- SUPERCHAD scanned the obvious equal-volume / selector / experiment / accuracy
+  files and found `promotion_grade` usage only in the Accuracy Lab /
+  equal-volume test surface already being modified. A repository-wide scan was
+  attempted but the connector's per-call tool limit prevented completing all
+  Python blobs in one orchestration call. Claude must perform a normal
+  repository-wide grep before accepting this API change.
+- Exploratory `SelectionPolicy` construction remains valid without a
+  declaration.
+
+### Test / CI truth
+
+- SUPERCHAD-IMPLEMENTED: tests committed.
+- UNKNOWN: real-runtime test execution.
+- UNKNOWN: exact-SHA CI.
+- VERIFIED-REPO: changed source/test blocks re-fetched after commit.
+
 ---
 
 # Claude independent review checklist
