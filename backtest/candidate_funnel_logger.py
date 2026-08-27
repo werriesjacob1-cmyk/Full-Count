@@ -567,7 +567,7 @@ def _subject_key(candidate):
 
 
 def build_operational_opportunities(research_candidates, qc_index, feeds, *,
-                                    gp, fd, date):
+                                    gp, fd, date, observed_at=None):
     """Expand raw scored players into the same per-market rows the dashboard uses.
 
     Raw _build_and_score() keeps one primary projection per batter and tucks the
@@ -662,13 +662,64 @@ def build_operational_opportunities(research_candidates, qc_index, feeds, *,
             if row.get(field) is None and source.get(field) is not None:
                 row[field] = source.get(field)
 
+    # Match the live dashboard's pregame-only publication boundary. The
+    # scoring pass can span first pitch while it is running; opportunities whose
+    # scheduled game_start is at/before this observation are no longer a
+    # legitimate bet universe. Keep this clock rule local and deterministic
+    # rather than letting a later selector silently drop started Top Picks.
+    started_excluded = 0
+    if observed_at:
+        from datetime import datetime
+
+        def parse_utc(value):
+            if not value:
+                return None
+            try:
+                dt = datetime.fromisoformat(
+                    str(value).replace("Z", "+00:00"))
+            except (TypeError, ValueError):
+                return None
+            return dt
+
+        observed_dt = parse_utc(observed_at)
+        if observed_dt is not None:
+            pregame_rows = []
+            for row in rows:
+                start_dt = parse_utc(row.get("game_start"))
+                if start_dt is not None and start_dt <= observed_dt:
+                    started_excluded += 1
+                    continue
+                pregame_rows.append(row)
+            rows = pregame_rows
+            expanded_qc = {
+                candidate_identity(row, date=date):
+                    expanded_qc[candidate_identity(row, date=date)]
+                for row in rows
+            }
+
     represented_subjects = {_subject_key(r) for r in rows}
     diagnostics = {
         "raw_candidates": len(research_candidates),
+        "expanded_opportunities_before_pregame_filter": (
+            len(rows) + started_excluded),
         "expanded_opportunities": len(rows),
-        "operational_opportunities": len(operational_rows),
-        "rejected_counterfactual_opportunities": len(
-            rejected_counterfactual_rows),
+        "started_opportunities_excluded": started_excluded,
+        "operational_opportunities": (
+            sum(
+                1 for row in rows
+                if expanded_qc.get(
+                    candidate_identity(row, date=date), (None, None)
+                )[0] in ("confirmed_lineup", "assumed_lineup")
+            )
+        ),
+        "rejected_counterfactual_opportunities": (
+            sum(
+                1 for row in rows
+                if expanded_qc.get(
+                    candidate_identity(row, date=date), (None, None)
+                )[0] == "rejected"
+            )
+        ),
         "raw_subjects": len(raw_by_subject),
         "represented_subjects": len(represented_subjects),
         "unrepresented_subjects": len(
@@ -737,7 +788,7 @@ def run_live_snapshot(out_dir=DEFAULT_OUT_DIR):
         research_candidates, qc_index, capture_diagnostics = (
             build_operational_opportunities(
                 research_candidates, raw_qc_index, feeds,
-                gp=gp, fd=fd, date=date)
+                gp=gp, fd=fd, date=date, observed_at=generated_at)
         )
 
         generated_at = datetime.now(timezone.utc).isoformat()
