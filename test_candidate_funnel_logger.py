@@ -251,7 +251,7 @@ class ProspectivePreparationBoundaryTests(unittest.TestCase):
             "combined_k_prices": {"combo": 1},
         }
 
-        research, qc_index, market_context = cfl.prepare_research_candidates(
+        research, qc_index, market_context, feeds = cfl.prepare_research_candidates(
             source, ctx, gp=gp, fd=fd, date="2026-08-25",
             observed_at="2026-08-25T17:00:00Z")
 
@@ -266,6 +266,7 @@ class ProspectivePreparationBoundaryTests(unittest.TestCase):
         self.assertEqual(market_context["book"], "fanduel")
         self.assertEqual(
             market_context["family_states"]["batter_props"], "AVAILABLE")
+        self.assertIn("prices", feeds)
 
     def test_market_fetch_failures_are_explicit_and_empty_is_not_called_not_posted(self):
         class FD:
@@ -312,7 +313,7 @@ class ProspectivePreparationBoundaryTests(unittest.TestCase):
             "game_meta": [], "park_wx": {}, "emp_pitchers": {},
             "k_prices": {}, "po_prices": {}, "combined_k_prices": {},
         }
-        research, qc, _ = cfl.prepare_research_candidates(
+        research, qc, _, _ = cfl.prepare_research_candidates(
             [c1, c2, c3], ctx, gp=gp, fd=fd, date="2026-08-25")
 
         ids = {
@@ -323,6 +324,162 @@ class ProspectivePreparationBoundaryTests(unittest.TestCase):
         self.assertEqual(qc[ids["Rejected"]], ("rejected", "rain"))
         self.assertEqual(
             qc[ids["Assumed"]], ("assumed_lineup", "lineup not confirmed"))
+
+
+class OperationalOpportunityExpansionTests(unittest.TestCase):
+    def _gp(self, expanded):
+        def select_best_by_category(pool, prices, fd, n_per_category=1,
+                                    k_prices=None, min_score=None):
+            # Tests own the exact compact rows returned by the production
+            # expansion seam; function still receives the real pool/feeds.
+            return expanded(pool)
+        return types.SimpleNamespace(
+            select_best_by_category=select_best_by_category)
+
+    def test_expands_multiple_market_families_for_one_batter(self):
+        raw = candidate(
+            player_id=10, name="Batter", game_pk=99,
+            game_start="2026-08-25T23:00:00Z",
+            bet_side="over", signal_weight_adjustment=2.0)
+        raw["line_options"] = [
+            {"stat": "hits", "needs": 1, "line": 0.5, "prob": 0.70},
+            {"stat": "total_bases", "needs": 2, "line": 1.5, "prob": 0.55},
+        ]
+        raw_qc = {
+            cfl.candidate_identity(raw, date="2026-08-25"):
+                ("confirmed_lineup", None)
+        }
+
+        def expanded(pool):
+            self.assertEqual(len(pool), 1)
+            return {
+                "hits": [{
+                    "type": "batter", "name": "Batter", "player_id": 10,
+                    "game_pk": 99, "projection": {
+                        "stat": "hits", "value": 0.5, "needs": 1},
+                    "hit_probability": 0.70, "score": 80.0,
+                    "market_odds": -150,
+                }],
+                "total_bases": [{
+                    "type": "batter", "name": "Batter", "player_id": 10,
+                    "game_pk": 99, "projection": {
+                        "stat": "total_bases", "value": 1.5, "needs": 2},
+                    "hit_probability": 0.55, "score": 80.0,
+                    "market_odds": 110,
+                }],
+            }
+
+        rows, qc, diag = cfl.build_operational_opportunities(
+            [raw], raw_qc,
+            {"prices": {}, "k_prices": {}},
+            gp=self._gp(expanded), fd=types.SimpleNamespace(),
+            date="2026-08-25")
+
+        self.assertEqual(len(rows), 2)
+        self.assertEqual(
+            {(r["projection"]["stat"], r["projection"]["needs"]) for r in rows},
+            {("hits", 1), ("total_bases", 2)})
+        self.assertEqual(diag["raw_candidates"], 1)
+        self.assertEqual(diag["expanded_opportunities"], 2)
+        self.assertEqual(diag["operational_opportunities"], 2)
+        self.assertEqual(len(qc), 2)
+
+    def test_expanded_rows_restore_settlement_and_ranking_provenance(self):
+        raw = candidate(
+            player_id=10, name="Batter", game_pk=99,
+            game_start="2026-08-25T23:00:00Z",
+            bet_side="over", cat_matchup=10.0,
+            signal_weight_adjustment=3.5,
+            reliability_note="real sample")
+        raw_qc = {
+            cfl.candidate_identity(raw, date="2026-08-25"):
+                ("confirmed_lineup", None)
+        }
+
+        def expanded(pool):
+            return {"hits": [{
+                "type": "batter", "name": "Batter", "player_id": 10,
+                "game_pk": 99,
+                "projection": {"stat": "hits", "value": 0.5, "needs": 1},
+                "hit_probability": 0.70, "score": 80.0,
+            }]}
+
+        rows, _, _ = cfl.build_operational_opportunities(
+            [raw], raw_qc, {"prices": {}, "k_prices": {}},
+            gp=self._gp(expanded), fd=types.SimpleNamespace(),
+            date="2026-08-25")
+        row = rows[0]
+        self.assertEqual(row["game_start"], raw["game_start"])
+        self.assertEqual(row["bet_side"], "over")
+        self.assertEqual(row["cat_matchup"], 10.0)
+        self.assertEqual(row["signal_weight_adjustment"], 3.5)
+        self.assertEqual(row["reliability_note"], "real sample")
+
+        rec = cfl.build_funnel_records(
+            rows, date="2026-08-25",
+            quality_control_index={
+                cfl.candidate_identity(row, date="2026-08-25"):
+                    ("confirmed_lineup", None)
+            })[0]
+        self.assertEqual(rec["identity"]["side"], "over")
+        self.assertEqual(rec["identity"]["game_start"], raw["game_start"])
+        self.assertEqual(rec["evidence"]["signal_weight_adjustment"], 3.5)
+
+    def test_rejected_expansion_is_kept_counterfactual_and_separate(self):
+        kept = candidate(player_id=1, name="Kept", game_pk=99)
+        rejected = candidate(player_id=2, name="Rejected", game_pk=100)
+        raw_qc = {
+            cfl.candidate_identity(kept, date="2026-08-25"):
+                ("confirmed_lineup", None),
+            cfl.candidate_identity(rejected, date="2026-08-25"):
+                ("rejected", "rain"),
+        }
+
+        def expanded(pool):
+            out = {}
+            for src in pool:
+                out.setdefault("hits", []).append({
+                    "type": "batter", "name": src["name"],
+                    "player_id": src["player_id"], "game_pk": src["game_pk"],
+                    "projection": {"stat": "hits", "value": 0.5, "needs": 1},
+                    "hit_probability": 0.65, "score": 70.0,
+                })
+            return out
+
+        rows, qc, diag = cfl.build_operational_opportunities(
+            [kept, rejected], raw_qc, {"prices": {}, "k_prices": {}},
+            gp=self._gp(expanded), fd=types.SimpleNamespace(),
+            date="2026-08-25")
+        self.assertEqual(diag["operational_opportunities"], 1)
+        self.assertEqual(diag["rejected_counterfactual_opportunities"], 1)
+        by_name = {
+            r["name"]: qc[cfl.candidate_identity(r, date="2026-08-25")]
+            for r in rows
+        }
+        self.assertEqual(by_name["Kept"], ("confirmed_lineup", None))
+        self.assertEqual(by_name["Rejected"], ("rejected", "rain"))
+
+    def test_duplicate_expanded_candidate_identity_fails_closed(self):
+        raw = candidate(player_id=10, game_pk=99)
+        raw_qc = {
+            cfl.candidate_identity(raw, date="2026-08-25"):
+                ("confirmed_lineup", None)
+        }
+
+        def expanded(pool):
+            row = {
+                "type": "batter", "name": "X", "player_id": 10,
+                "game_pk": 99,
+                "projection": {"stat": "hits", "value": 0.5, "needs": 1},
+                "hit_probability": 0.65, "score": 70.0,
+            }
+            return {"hits": [dict(row), dict(row)]}
+
+        with self.assertRaises(ValueError):
+            cfl.build_operational_opportunities(
+                [raw], raw_qc, {"prices": {}, "k_prices": {}},
+                gp=self._gp(expanded), fd=types.SimpleNamespace(),
+                date="2026-08-25")
 
 
 class ContentHashTests(unittest.TestCase):
