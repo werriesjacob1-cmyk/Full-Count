@@ -9,8 +9,10 @@ attempted below and must raise.
 """
 from __future__ import annotations
 
+import json
 import os
 import sys
+import tempfile
 import unittest
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
@@ -40,6 +42,43 @@ def make_population(n=20, **kw):
 
 CHAMP = ev.SelectionPolicy("champion_score", "1.0", ev.rank_by(lambda r: r["score"]))
 CHAL = ev.SelectionPolicy("challenger_prob", "1.0", ev.rank_by(lambda r: r["predicted_prob"]))
+
+
+def make_verified_population(n=20):
+    """A promotion-grade fixture backed by a REAL Accuracy Lab lock/artifact.
+
+    This is deliberately more work than passing checksum-shaped metadata:
+    promotion-grade tests should exercise the same proof path production
+    research is required to use.
+    """
+    import accuracy_lab as al
+
+    base = make_population(n, dataset_identity={})
+    tmp = tempfile.mkdtemp(prefix="fc_equal_volume_promotion_")
+    rows_path = os.path.join(tmp, "rows.jsonl")
+    manifest_path = os.path.join(tmp, "holdout_manifest.json")
+    with open(rows_path, "w", encoding="utf-8") as f:
+        for r in base.rows:
+            f.write(json.dumps(r) + "\n")
+
+    al.lock_holdout(
+        rows_path,
+        holdout_frac=0.2,
+        manifest_path=manifest_path,
+        require_strong_dataset_identity=True,
+    )
+    with open(manifest_path, encoding="utf-8") as f:
+        ident = json.load(f)
+    ident["manifest_path"] = manifest_path
+
+    population = ev.EligiblePopulation(
+        base.rows,
+        definition=base.definition,
+        definition_version=base.definition_version,
+        evidence_regime=base.evidence_regime,
+        dataset_identity=ident,
+    )
+    return population, rows_path, manifest_path
 
 
 class PopulationIntegrityTests(unittest.TestCase):
@@ -167,31 +206,59 @@ class OutcomeHandlingTests(unittest.TestCase):
 
 
 class PromotionGradeTests(unittest.TestCase):
-    def test_promotion_grade_requires_strong_dataset_identity(self):
+    def test_promotion_grade_requires_dataset_identity(self):
         pop = make_population(10, dataset_identity={})
         with self.assertRaises(ev.EqualVolumeViolation) as cm:
             ev.EqualVolumeExperiment(population=pop, champion=CHAMP, challenger=CHAL,
                                      volume=3, promotion_grade=True)
         self.assertIn("dataset_identity", str(cm.exception))
 
-    def test_promotion_grade_rejects_identity_without_a_checksum(self):
-        pop = make_population(10, dataset_identity={"artifact_row_count": 10})
+    def test_checksum_shaped_metadata_without_manifest_is_rejected(self):
+        # This is the exact pre-fix weakness: these two plausible-looking
+        # fields used to be sufficient for promotion_grade=True.
+        pop = make_population(
+            10,
+            dataset_identity={
+                "artifact_sha256": "a" * 64,
+                "artifact_row_count": 10,
+            },
+        )
         with self.assertRaises(ev.EqualVolumeViolation) as cm:
             ev.EqualVolumeExperiment(population=pop, champion=CHAMP, challenger=CHAL,
                                      volume=3, promotion_grade=True)
-        self.assertIn("artifact_sha256", str(cm.exception))
+        self.assertIn("manifest_path", str(cm.exception))
 
-    def test_promotion_grade_accepted_with_strong_identity(self):
-        rep = ev.EqualVolumeExperiment(population=make_population(10), champion=CHAMP,
-                                       challenger=CHAL, volume=3,
-                                       promotion_grade=True).run()
+    def test_promotion_grade_accepts_real_verified_manifest_and_artifact(self):
+        pop, _, _ = make_verified_population(10)
+        rep = ev.EqualVolumeExperiment(
+            population=pop, champion=CHAMP, challenger=CHAL,
+            volume=3, promotion_grade=True).run()
         self.assertTrue(rep["promotion_grade"])
+        verified = rep["integrity"]["verified_dataset_identity"]
+        self.assertTrue(verified["manifest_sha256"])
+        self.assertEqual(
+            verified["artifact_sha256"],
+            pop.dataset_identity["artifact_sha256"],
+        )
+
+    def test_promotion_grade_rejects_artifact_changed_after_lock(self):
+        pop, rows_path, _ = make_verified_population(10)
+        with open(rows_path, "a", encoding="utf-8") as f:
+            f.write(json.dumps(row(
+                "2024-05-28", 9999, 9999, "hits", 0.5, 1, prob=0.9, score=999.0
+            )) + "\n")
+        with self.assertRaises(ev.EqualVolumeViolation) as cm:
+            ev.EqualVolumeExperiment(
+                population=pop, champion=CHAMP, challenger=CHAL,
+                volume=3, promotion_grade=True)
+        self.assertIn("no longer matches", str(cm.exception))
 
     def test_exploratory_mode_does_not_require_strong_identity(self):
         pop = make_population(10, dataset_identity={})
         rep = ev.EqualVolumeExperiment(population=pop, champion=CHAMP,
                                        challenger=CHAL, volume=3).run()
         self.assertFalse(rep["promotion_grade"])
+        self.assertIsNone(rep["integrity"]["verified_dataset_identity"])
 
 
 class ReportContentTests(unittest.TestCase):
