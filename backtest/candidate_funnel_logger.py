@@ -627,24 +627,12 @@ def build_operational_opportunities(research_candidates, qc_index, feeds, *,
     rejected_counterfactual_rows = expand(rejected)
     rows = operational_rows + rejected_counterfactual_rows
 
-    expanded_qc = {}
-    seen = set()
-    for row in rows:
-        key = _subject_key(row)
-        status_reason = qc_by_subject.get(key)
-        if status_reason is None:
-            raise ValueError(
-                f"expanded prospective opportunity has no source QC state: {key}")
-        cid = candidate_identity(row, date=date)
-        if cid in seen:
-            raise ValueError(
-                f"duplicate expanded prospective candidate identity {cid}")
-        seen.add(cid)
-        expanded_qc[cid] = status_reason
-
     # select_best_by_category() intentionally emits a compact dashboard row.
     # Restore settlement/provenance fields that belong to the source subject
-    # but are not copied by that function, without re-deriving them.
+    # but are not copied by that function, without re-deriving them. This MUST
+    # happen before exact wager identity is computed: side is part of
+    # candidate_id, so deriving the id first could mis-key an Under opportunity
+    # as the default Over side and lose its QC state after restoration.
     for row in rows:
         source = raw_by_subject.get(_subject_key(row)) or {}
         for field in (
@@ -661,6 +649,21 @@ def build_operational_opportunities(research_candidates, qc_index, feeds, *,
         ):
             if row.get(field) is None and source.get(field) is not None:
                 row[field] = source.get(field)
+
+    expanded_qc = {}
+    seen = set()
+    for row in rows:
+        key = _subject_key(row)
+        status_reason = qc_by_subject.get(key)
+        if status_reason is None:
+            raise ValueError(
+                f"expanded prospective opportunity has no source QC state: {key}")
+        cid = candidate_identity(row, date=date)
+        if cid in seen:
+            raise ValueError(
+                f"duplicate expanded prospective candidate identity {cid}")
+        seen.add(cid)
+        expanded_qc[cid] = status_reason
 
     # Match the live dashboard's pregame-only publication boundary. The
     # scoring pass can span first pitch while it is running; opportunities whose
