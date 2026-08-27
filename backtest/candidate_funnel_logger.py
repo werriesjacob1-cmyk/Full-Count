@@ -58,7 +58,13 @@ DEFAULT_OUT_DIR = os.path.dirname(os.path.abspath(__file__))
 # Fields that legitimately differ run-to-run without representing a
 # meaningful change worth a new changelog row (timestamps/provenance-of-
 # THIS-snapshot, not provenance-of-the-candidate).
-_HASH_EXCLUDE_KEYS = frozenset(("generated_at",))
+_HASH_EXCLUDE_KEYS = frozenset((
+    "generated_at",
+    "market_observed_at",
+    "prediction_timestamp",
+    "odds_fetched_at",
+    "board_generated_at",
+))
 
 
 def candidate_identity(candidate, *, date):
@@ -72,6 +78,39 @@ def candidate_identity(candidate, *, date):
     needs = projection.get("needs")
     player_key = candidate.get("combo_player_ids") or candidate.get("player_id")
     return f"{date}:{candidate.get('game_pk')}:{player_key}:{stat}:{needs}"
+
+
+def _market_family(candidate):
+    stat = ((candidate.get("projection") or {}).get("stat")
+            or candidate.get("stat"))
+    if stat == "strikeouts":
+        return "pitcher_strikeouts"
+    if stat == "pitcher_outs":
+        return "pitcher_outs"
+    if stat == "nrfi_combined":
+        return "first_inning"
+    if stat == "combined_strikeouts":
+        return "combined_strikeouts"
+    return "batter_props"
+
+
+def _market_fetch_state(candidate, market_context):
+    """Honest candidate-level price state from one run-level fetch context.
+
+    A successful family fetch plus no attached line is only NOT_MATCHED: the
+    book may not have posted this player/threshold, or it may post a different
+    line. We never upgrade that ambiguity into a fabricated NOT_POSTED fact.
+    """
+    if candidate.get("market_odds") is not None:
+        return "MATCHED"
+    ctx = market_context or {}
+    family = _market_family(candidate)
+    family_state = (ctx.get("family_states") or {}).get(family)
+    if family_state == "FETCH_FAILED":
+        return "FETCH_FAILED"
+    if family_state == "AVAILABLE":
+        return "NOT_MATCHED"
+    return "UNKNOWN"
 
 
 def _alt_line_record(opt):
@@ -90,7 +129,8 @@ def _alt_line_record(opt):
 def funnel_record_from_candidate(candidate, *, date, generated_at=None,
                                   code_git_sha=None, gate_trace=None,
                                   quality_control_status=None,
-                                  quality_control_reason=None):
+                                  quality_control_reason=None,
+                                  market_context=None, run_metadata=None):
     """One research record for one candidate -- read-only over `candidate`
     (only .get() calls; see this module's own safety-contract docstring).
     `gate_trace` is recommendation_funnel.classify_with_trace()'s own
@@ -102,6 +142,9 @@ def funnel_record_from_candidate(candidate, *, date, generated_at=None,
     projection = candidate.get("projection") or {}
     line_options = candidate.get("line_options") or []
     alt_lines = [_alt_line_record(o) for o in line_options]
+    market_context = market_context or {}
+    run_metadata = run_metadata or {}
+    market_family = _market_family(candidate)
 
     record = {
         "identity": {
@@ -129,13 +172,22 @@ def funnel_record_from_candidate(candidate, *, date, generated_at=None,
             "stable_lift": candidate.get("stable_lift"),
         },
         "market": {
+            "book": market_context.get("book"),
+            "feed_family": market_family,
             "market_odds": candidate.get("market_odds"),
+            "posted_implied": candidate.get("posted_implied"),
             "market_implied": candidate.get("market_implied"),
+            "market_fair": candidate.get("market_fair"),
+            "market_fair_method": candidate.get("market_fair_method"),
             "market_edge": candidate.get("market_edge"),
+            "edge_vs_fair": candidate.get("edge_vs_fair"),
             "market_hold": candidate.get("market_hold"),
             "price_clears": candidate.get("price_clears"),
-            "market_fetch_state": candidate.get("market_fetch_state"),
-            "market_observed_at": candidate.get("market_observed_at"),
+            "market_fetch_state": _market_fetch_state(candidate, market_context),
+            "market_observed_at": market_context.get("observed_at"),
+            "family_fetch_state": (
+                (market_context.get("family_states") or {}).get(market_family)
+            ),
         },
         "evidence": {
             "reliability": candidate.get("reliability"),
@@ -148,10 +200,17 @@ def funnel_record_from_candidate(candidate, *, date, generated_at=None,
             "cat_baseline_skill": candidate.get("cat_baseline_skill"),
             "cat_context": candidate.get("cat_context"),
             "signals": candidate.get("signals"),
+            "signal_weight_adjustment": candidate.get("signal_weight_adjustment"),
         },
         "decision": {
-            "recommendation_status": candidate.get("status"),
-            "status_reasons": candidate.get("status_reasons"),
+            "recommendation_status": (
+                candidate.get("status") or (gate_trace or {}).get("status")
+            ),
+            "status_reasons": (
+                candidate.get("status_reasons")
+                if candidate.get("status_reasons") is not None
+                else (gate_trace or {}).get("status_reasons")
+            ),
             "quality_control_status": quality_control_status,
             "quality_control_reason": quality_control_reason,
             "gates": (gate_trace or {}).get("gates"),
@@ -162,13 +221,21 @@ def funnel_record_from_candidate(candidate, *, date, generated_at=None,
         "provenance": {
             "code_git_sha": code_git_sha,
             "generated_at": generated_at,
+            "model_version": run_metadata.get("model_version"),
+            "selection_policy_version": run_metadata.get("selection_policy_version"),
+            "calibration_version": run_metadata.get("calibration_version"),
+            "feature_version": run_metadata.get("feature_version"),
+            "prediction_timestamp": run_metadata.get("prediction_timestamp"),
+            "odds_fetched_at": run_metadata.get("odds_fetched_at"),
+            "board_generated_at": run_metadata.get("board_generated_at"),
         },
     }
     return record
 
 
 def build_funnel_records(candidates, *, date, generated_at=None, code_git_sha=None,
-                          gate_traces=None, quality_control_index=None):
+                          gate_traces=None, quality_control_index=None,
+                          market_context=None, run_metadata=None):
     """Pure, read-only over `candidates` -- builds one record per candidate.
     `gate_traces` and `quality_control_index`, if given, are dicts keyed by
     candidate_identity(candidate, date=date) -> that candidate's own
@@ -184,6 +251,7 @@ def build_funnel_records(candidates, *, date, generated_at=None, code_git_sha=No
             c, date=date, generated_at=generated_at, code_git_sha=code_git_sha,
             gate_trace=gate_traces.get(cid),
             quality_control_status=qc_status, quality_control_reason=qc_reason,
+            market_context=market_context, run_metadata=run_metadata,
         ))
     return records
 
@@ -246,6 +314,90 @@ def append_new_snapshots(records, path):
             for record in to_write:
                 fh.write(json.dumps(record, default=str) + "\n")
     return len(to_write), n_skipped
+
+
+def build_snapshot_manifest(records, *, date, observed_at,
+                            code_git_sha=None, market_context=None,
+                            run_metadata=None):
+    """One immutable observation event for a full candidate-universe snapshot.
+
+    Candidate rows remain a deduplicated changelog, but this manifest is written
+    for EVERY run. It preserves the fact that candidate X with content hash H
+    was actually observed at time T even when X did not materially change since
+    the prior run.
+    """
+    market_context = market_context or {}
+    run_metadata = run_metadata or {}
+    items = sorted(
+        (
+            {
+                "candidate_id": r["identity"]["candidate_id"],
+                "content_hash": content_hash(r),
+            }
+            for r in records
+        ),
+        key=lambda x: x["candidate_id"],
+    )
+    ids = [x["candidate_id"] for x in items]
+    if len(ids) != len(set(ids)):
+        raise ValueError("snapshot contains duplicate candidate_id values")
+    universe_fingerprint = hashlib.sha256(
+        json.dumps(items, sort_keys=True, separators=(",", ":")).encode("utf-8")
+    ).hexdigest()
+    snapshot_id = hashlib.sha256(
+        json.dumps(
+            {
+                "date": date,
+                "observed_at": observed_at,
+                "code_git_sha": code_git_sha,
+                "candidate_universe_fingerprint": universe_fingerprint,
+            },
+            sort_keys=True,
+            separators=(",", ":"),
+        ).encode("utf-8")
+    ).hexdigest()
+    return {
+        "record_type": "candidate_funnel_snapshot_manifest",
+        "schema_version": 1,
+        "snapshot_id": snapshot_id,
+        "date": date,
+        "observed_at": observed_at,
+        "n_candidates": len(items),
+        "candidate_universe_fingerprint": universe_fingerprint,
+        "candidate_hashes": items,
+        "market_context": market_context,
+        "provenance": {
+            "code_git_sha": code_git_sha,
+            "model_version": run_metadata.get("model_version"),
+            "selection_policy_version": run_metadata.get("selection_policy_version"),
+            "calibration_version": run_metadata.get("calibration_version"),
+            "feature_version": run_metadata.get("feature_version"),
+        },
+    }
+
+
+def append_snapshot_manifest(manifest, path):
+    """Append one observation event; refuse accidental duplicate snapshot ids."""
+    seen = set()
+    if os.path.exists(path):
+        with open(path, encoding="utf-8") as fh:
+            for line in fh:
+                try:
+                    row = json.loads(line)
+                except json.JSONDecodeError:
+                    continue
+                sid = row.get("snapshot_id")
+                if sid:
+                    seen.add(sid)
+    if manifest["snapshot_id"] in seen:
+        return 0
+    with open(path, "a", encoding="utf-8") as fh:
+        fh.write(json.dumps(manifest, default=str) + "\n")
+    return 1
+
+
+def default_snapshot_path_for_date(date, out_dir=DEFAULT_OUT_DIR):
+    return os.path.join(out_dir, f"candidate_funnel_snapshots_{date}.jsonl")
 
 
 def default_path_for_date(date, out_dir=DEFAULT_OUT_DIR):
