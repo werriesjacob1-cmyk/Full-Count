@@ -66,7 +66,39 @@ class CandidateIdentityTests(unittest.TestCase):
     def test_uses_combo_player_ids_when_present(self):
         c = candidate(combo_player_ids=[1, 2], player_id=None)
         cid = cfl.candidate_identity(c, date="2026-08-25")
-        self.assertIn("[1, 2]", cid)
+        self.assertIn("[1,2]", cid)
+
+    def test_line_movement_is_new_wager_but_same_market_series(self):
+        a = candidate(
+            projection={"stat": "hits", "value": 0.5, "needs": 1},
+            bet_side="over")
+        b = candidate(
+            projection={"stat": "hits", "value": 1.5, "needs": 2},
+            bet_side="over")
+        self.assertNotEqual(
+            cfl.candidate_identity(a, date="2026-08-25"),
+            cfl.candidate_identity(b, date="2026-08-25"))
+        self.assertEqual(
+            cfl.candidate_series_identity(a, date="2026-08-25"),
+            cfl.candidate_series_identity(b, date="2026-08-25"))
+
+    def test_same_threshold_opposite_side_is_different_wager(self):
+        over = candidate(bet_side="over")
+        under = candidate(bet_side="under")
+        self.assertNotEqual(
+            cfl.candidate_identity(over, date="2026-08-25"),
+            cfl.candidate_identity(under, date="2026-08-25"))
+
+    def test_record_exposes_exact_and_series_identity(self):
+        c = candidate()
+        record = cfl.build_funnel_records(
+            [c], date="2026-08-25")[0]
+        self.assertEqual(
+            record["identity"]["candidate_id"],
+            cfl.candidate_identity(c, date="2026-08-25"))
+        self.assertEqual(
+            record["identity"]["candidate_series_id"],
+            cfl.candidate_series_identity(c, date="2026-08-25"))
 
 
 class BuildFunnelRecordsTests(unittest.TestCase):
