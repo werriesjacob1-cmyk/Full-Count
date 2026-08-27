@@ -32,8 +32,6 @@ set -uo pipefail
 REPO="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$REPO" || exit 1
 
-START=${FC_CANONICAL_START:-2024-04-01}
-END=${FC_CANONICAL_END:-2026-08-25}
 WANT_RUN="${1:-${FC_CANONICAL_RUN_ID:-}}"
 [ -n "$WANT_RUN" ] || {
   echo "FATAL: an exact canonical run_id is required."
@@ -52,21 +50,44 @@ print('  fetch:', r)
 sys.exit(0 if r.get('ok') else 1)
 " || { echo "could not reach the durable branch"; exit 1; }
 
-read -r RUN_ID CODE_SHA DATES <<<"$(python3 -c "
-import sys; sys.path.insert(0,'.')
+read -r RUN_ID CODE_SHA DATES START END WEATHER_MODE CACHE_MODE SLEEP_SECS NO_BULLPEN <<<"$(python3 -c "
+import json, shlex, sys; sys.path.insert(0,'.')
 import backtest.canonical_durability as cd
 want = '$WANT_RUN'
 runs = [r for r in cd.discover_durable_runs() if r['run_id'] == want]
 if len(runs) != 1:
     sys.exit(1)
 r = runs[0]
-print(r['run_id'], r['code_git_sha'], r['dates'])
-")" || { echo "no unique durable run found matching '$WANT_RUN'"; exit 1; }
+idx = cd.load_durable_index(want)
+raw = cd._read_durable_blob(cd.durable_paths(want)['manifest'])
+if idx is None or raw is None:
+    sys.exit(1)
+mf = json.loads(raw)
+argv = shlex.split(mf.get('command') or '')
+def arg_after(flag, default):
+    try:
+        return argv[argv.index(flag) + 1]
+    except (ValueError, IndexError):
+        return default
+cache_mode = idx.get('cache_mode') or arg_after('--cache-mode', 'none')
+sleep_secs = arg_after('--sleep', '1.0')
+no_bullpen = '1' if '--no-bullpen' in argv else '0'
+print(
+    r['run_id'], r['code_git_sha'], r['dates'],
+    mf['requested_start_date'], mf['requested_end_date'],
+    mf['weather_mode'], cache_mode, sleep_secs, no_bullpen
+)
+")" || { echo "no unique durable run contract found matching '$WANT_RUN'"; exit 1; }
 
 [ -n "${RUN_ID:-}" ] || { echo "no durable run found"; exit 1; }
+case "$WEATHER_MODE" in
+  no_weather|with_weather) ;;
+  *) echo "FATAL: unsupported durable weather_mode '$WEATHER_MODE'"; exit 1 ;;
+esac
 say "run        : $RUN_ID"
 say "pinned SHA : $CODE_SHA"
 say "durable    : $DATES date(s) already safe on the remote"
+say "contract   : $START .. $END / $WEATHER_MODE / cache=$CACHE_MODE / sleep=$SLEEP_SECS"
 
 # Idempotence / single-owner gate. If this exact run is already generating in
 # this container, recovery is a no-op. Do not spawn a second process and then
@@ -114,10 +135,9 @@ fi
 RUN_DIR="$WT/backtest/canonical_runs/$RUN_ID"
 say "restoring durable checkpoints into $RUN_DIR (from THIS checkout, not the pinned one)"
 python3 -c "
-import sys, os; sys.path.insert(0,'.')
+import sys; sys.path.insert(0,'.')
 import backtest.canonical_durability as cd
 run_dir = '$RUN_DIR'
-os.makedirs(os.path.join(run_dir,'checkpoints'), exist_ok=True)
 rep = cd.restore_from_durable(run_dir, '$RUN_ID')
 print('  restored %d, already present %d, failed %d' % (
     len(rep['restored']), len(rep['skipped_present']), len(rep['failed'])))
@@ -134,17 +154,25 @@ LOG="backtest/canonical_runs/logs/resume-$(date -u +%Y%m%dT%H%M%SZ).log"
 # correct rows; it just cannot push them durably itself, so we push for it.
 HELP="$(python3 backtest/canonical_run.py --help 2>&1 || true)"
 EXTRA=""
+SCIENCE_FLAGS=""
 PINNED_CAN_PUSH=0
 case "$HELP" in
   *--durable-every-dates*) EXTRA="--durable-every-dates 10 --durable-every-seconds 900"; PINNED_CAN_PUSH=1 ;;
 esac
-case "$HELP" in *--cache-mode*) EXTRA="$EXTRA --cache-mode frozen_cache" ;; esac
+if [ "$CACHE_MODE" != "none" ]; then
+  case "$HELP" in
+    *--cache-mode*) EXTRA="$EXTRA --cache-mode $CACHE_MODE" ;;
+    *) say "NOTE: pinned SHA predates --cache-mode; preserving its original generation interface" ;;
+  esac
+fi
+[ "$WEATHER_MODE" = "no_weather" ] && SCIENCE_FLAGS="$SCIENCE_FLAGS --no-weather"
+[ "$NO_BULLPEN" = "1" ] && SCIENCE_FLAGS="$SCIENCE_FLAGS --no-bullpen"
 [ "$PINNED_CAN_PUSH" -eq 0 ] && say "NOTE: pinned SHA predates durable push; this script pushes after the invocation"
 
 say "generating at the pinned SHA; log -> $WT/$LOG"
 nohup python3 -u backtest/canonical_run.py \
     --start "$START" --end "$END" --run-id "$RUN_ID" \
-    --no-weather --sleep 1.0 $EXTRA > "$LOG" 2>&1 &
+    --sleep "$SLEEP_SECS" $SCIENCE_FLAGS $EXTRA > "$LOG" 2>&1 &
 BGPID=$!
 sleep 6
 
@@ -177,7 +205,12 @@ if [ "$RC" -eq 0 ]; then
 import sys; sys.path.insert(0,'.')
 import backtest.canonical_run as cr, backtest.canonical_durability as cd
 mf = cr.load_manifest('$RUN_DIR')
-print(' ', cd.push_durable_checkpoint('$RUN_DIR', mf, environment=cd.environment_identity()))
+idx = cd.load_durable_index('$RUN_ID') or {}
+print(' ', cd.push_durable_checkpoint(
+    '$RUN_DIR', mf,
+    environment=cd.environment_identity(),
+    lineage=idx.get('source_lineage'),
+    cache_mode=idx.get('cache_mode')))
 " )
   fi
   exit 0
