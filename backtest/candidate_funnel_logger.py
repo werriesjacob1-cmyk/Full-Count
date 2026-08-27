@@ -67,17 +67,44 @@ _HASH_EXCLUDE_KEYS = frozenset((
 ))
 
 
+def candidate_series_identity(candidate, *, date):
+    """Stable subject/market series identity across line movements.
+
+    Useful for longitudinal analysis ("the same player's hits market moved from
+    0.5 to 1.5"), but NOT settlement identity.
+    """
+    projection = candidate.get("projection") or {}
+    stat = projection.get("stat") or candidate.get("stat")
+    player_key = candidate.get("combo_player_ids") or candidate.get("player_id")
+    subject = json.dumps(player_key, sort_keys=True, separators=(",", ":"))
+    return f"{date}:{candidate.get('game_pk')}:{subject}:{stat}"
+
+
 def candidate_identity(candidate, *, date):
-    """Stable identity string: (date, game_pk, player_id or
-    combo_player_ids, stat, needs). Deliberately does NOT include `line`
-    (the threshold) -- line changes as odds move, and this module logs the
-    CANDIDATE's identity across those changes, with the changing fields
-    (including line) captured inside the snapshot content itself."""
+    """Exact wager identity for prospective settlement and selection evidence.
+
+    Threshold/side are deliberately INCLUDED. A player whose FanDuel line moves
+    from Over 0.5 Hits to Over 1.5 Hits has two different bets with different
+    realized settlement conditions; treating them as one candidate would make
+    later grading ambiguous. candidate_series_identity() is the separate stable
+    identity for studying that line movement.
+    """
     projection = candidate.get("projection") or {}
     stat = projection.get("stat") or candidate.get("stat")
     needs = projection.get("needs")
+    threshold = projection.get("value")
+    side = (
+        candidate.get("bet_side")
+        or candidate.get("market_side")
+        or candidate.get("direction")
+        or "over"
+    )
     player_key = candidate.get("combo_player_ids") or candidate.get("player_id")
-    return f"{date}:{candidate.get('game_pk')}:{player_key}:{stat}:{needs}"
+    subject = json.dumps(player_key, sort_keys=True, separators=(",", ":"))
+    return (
+        f"{date}:{candidate.get('game_pk')}:{subject}:{stat}:"
+        f"{side}:{threshold}:{needs}"
+    )
 
 
 def _market_family(candidate):
@@ -164,6 +191,8 @@ def funnel_record_from_candidate(candidate, *, date, generated_at=None,
     record = {
         "identity": {
             "candidate_id": candidate_identity(candidate, date=date),
+            "candidate_series_id": candidate_series_identity(
+                candidate, date=date),
             "date": date, "game_pk": candidate.get("game_pk"),
             "game_start": candidate.get("game_start"),
             "type": candidate.get("type"),
