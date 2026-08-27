@@ -623,6 +623,7 @@ def push_durable_checkpoint(run_dir, manifest, *, dates=None, environment=None,
                 _git(["fetch", "-q", remote, f"refs/heads/{branch}"], env=env, timeout=120)
 
         present = set()
+        parent_ledger = {}
         if parent:
             rt = _git(["read-tree", parent], env=env, timeout=30)
             if rt.returncode != 0:
@@ -630,6 +631,22 @@ def push_durable_checkpoint(run_dir, manifest, *, dates=None, environment=None,
                 return result
             ls_files = _git(["ls-files", "--", f"{dp['base']}/"], env=env, timeout=30)
             present = set(ls_files.stdout.split("\n")) if ls_files.returncode == 0 else set()
+
+            # Existing paths are not proof that the existing bytes belong to
+            # this local checkpoint. Load the parent ledger once so every
+            # "already present" decision can be checksum-backed.
+            idx_existing = _git(
+                ["show", f"{parent}:{dp['index']}"], env=env, timeout=30)
+            if idx_existing.returncode == 0 and idx_existing.stdout.strip():
+                try:
+                    parent_ledger = (
+                        json.loads(idx_existing.stdout).get("dates") or {}
+                    )
+                except json.JSONDecodeError:
+                    result["reason"] = (
+                        f"existing durable index {dp['index']!r} is not valid JSON; "
+                        "refusing to trust path existence alone")
+                    return result
         else:
             _git(["read-tree", "--empty"], env=env, timeout=15)
 
@@ -660,8 +677,38 @@ def push_durable_checkpoint(run_dir, manifest, *, dates=None, environment=None,
             if not os.path.exists(meta_local):
                 continue
             if paths["meta"] in present and paths["rows_gz"] in present:
-                result["dates_skipped_present"] += 1
-                continue
+                remote_entry = parent_ledger.get(d)
+                if remote_entry is None:
+                    result["reason"] = (
+                        f"durable paths for {d} already exist but the parent index "
+                        "has no checksum ledger entry; refusing to trust path existence")
+                    return result
+                local_meta_sha = _sha256_file(meta_local)
+                remote_meta_sha = remote_entry.get("meta_sha256")
+                local_data_sha = (
+                    _sha256_file(data_local)
+                    if os.path.exists(data_local) else None
+                )
+                remote_data_sha = remote_entry.get("data_sha256")
+                meta_matches = (
+                    remote_meta_sha is not None
+                    and local_meta_sha == remote_meta_sha
+                )
+                data_matches = (
+                    not include_rows
+                    or (
+                        remote_data_sha is not None
+                        and local_data_sha == remote_data_sha
+                    )
+                )
+                if meta_matches and data_matches:
+                    result["dates_skipped_present"] += 1
+                    continue
+                result["reason"] = (
+                    f"existing durable date {d} does not match local checkpoint "
+                    f"(meta_match={meta_matches}, data_match={data_matches}); "
+                    "refusing to overwrite or silently skip conflicting durable bytes")
+                return result
             if include_rows and not os.path.exists(data_local):
                 result["reason"] = (
                     f"checkpoint {d} has metadata but no rows file at {data_local!r}; "
