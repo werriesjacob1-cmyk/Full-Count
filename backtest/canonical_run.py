@@ -562,32 +562,79 @@ def push_manifest_snapshot(run_dir, *, branch="canonical-run-manifests", remote=
     """Pushes ONLY the small manifest + per-date meta files (never the bulk
     .jsonl row data -- typically kilobytes vs. hundreds of MB, honoring
     the mission's explicit 'do not commit hundreds of MB/GB into ordinary
-    git history') to a dedicated orphan-ish branch, so a run's identity and
-    checkpoint completion ledger survive even a total loss of local disk.
+    git history') to a dedicated branch, so a run's identity and checkpoint
+    completion ledger survive even a total loss of local disk.
+
+    2026-08-27, found the hard way: an earlier version of this function
+    called plain `git add` + `git commit` in REPO_ROOT -- which, when
+    REPO_ROOT IS the pinned canonical-run worktree (exactly the intended
+    call site), silently advances that worktree's own HEAD. The very next
+    run() invocation then correctly refused to proceed
+    (verify_code_identity() caught the drift it was designed to catch),
+    but the run itself was blocked by the tool meant to protect it. This
+    version uses git PLUMBING ONLY -- hash-object/write-tree/commit-tree
+    against a scratch GIT_INDEX_FILE, never `git commit`, never `git
+    checkout` -- so it cannot move HEAD, the real index, or the working
+    tree in ANY repo it is run from, pinned or not. Only new objects are
+    written to the (shared, worktree-independent) object database and a
+    branch ref is updated on the REMOTE via push; nothing local-and-
+    checked-out is ever touched.
+
     Best-effort: failures are reported, never fatal to the run itself --
     the run's real progress lives in run_dir regardless of whether this
     push succeeds."""
     import subprocess
+    import tempfile
     try:
+        git_common_dir = subprocess.run(
+            ["git", "rev-parse", "--git-common-dir"], cwd=REPO_ROOT,
+            capture_output=True, text=True, timeout=10)
+        if git_common_dir.returncode != 0:
+            return {"pushed": False, "reason": "not a git checkout"}
+        git_dir = git_common_dir.stdout.strip()
+        if not os.path.isabs(git_dir):
+            git_dir = os.path.normpath(os.path.join(REPO_ROOT, git_dir))
+
         meta_files = []
         for root, _, files in os.walk(run_dir):
             for fn in files:
                 if fn.endswith(".meta.json") or fn == "manifest.json" or fn == "lock.json":
-                    meta_files.append(os.path.join(root, fn))
-        # Deliberately shells out to git in the caller's own working tree --
-        # this is metadata-only and safe to run from the pinned canonical
-        # worktree without disturbing its checked-out backfill code.
-        subprocess.run(["git", "add", "-f", *meta_files], cwd=REPO_ROOT, check=True,
-                       capture_output=True, timeout=30)
-        result = subprocess.run(
-            ["git", "commit", "-m", f"Canonical run manifest snapshot {_now_iso()}"],
-            cwd=REPO_ROOT, capture_output=True, text=True, timeout=30)
-        if result.returncode != 0 and "nothing to commit" not in (result.stdout + result.stderr):
-            return {"pushed": False, "reason": result.stderr.strip()[:500]}
-        push = subprocess.run(["git", "push", remote, f"HEAD:refs/heads/{branch}"],
-                              cwd=REPO_ROOT, capture_output=True, text=True, timeout=60)
-        return {"pushed": push.returncode == 0,
-               "reason": None if push.returncode == 0 else push.stderr.strip()[:500]}
+                    meta_files.append(os.path.relpath(os.path.join(root, fn), REPO_ROOT))
+        if not meta_files:
+            return {"pushed": False, "reason": "no manifest/meta files found under run_dir"}
+
+        scratch_index = tempfile.NamedTemporaryFile(delete=False).name
+        env = dict(os.environ, GIT_DIR=git_dir, GIT_INDEX_FILE=scratch_index,
+                  GIT_WORK_TREE=REPO_ROOT)
+        try:
+            parent_proc = subprocess.run(
+                ["git", "rev-parse", f"refs/remotes/{remote}/{branch}"],
+                cwd=REPO_ROOT, env=env, capture_output=True, text=True, timeout=15)
+            parent = parent_proc.stdout.strip() if parent_proc.returncode == 0 else None
+            if parent:
+                subprocess.run(["git", "read-tree", parent], cwd=REPO_ROOT, env=env,
+                               check=True, capture_output=True, timeout=15)
+            subprocess.run(["git", "add", "--", *meta_files], cwd=REPO_ROOT, env=env,
+                           check=True, capture_output=True, timeout=30)
+            tree = subprocess.run(["git", "write-tree"], cwd=REPO_ROOT, env=env,
+                                  capture_output=True, text=True, timeout=15).stdout.strip()
+            commit_args = ["git", "commit-tree", tree, "-m",
+                          f"Canonical run manifest snapshot {_now_iso()}"]
+            if parent:
+                commit_args += ["-p", parent]
+            commit_proc = subprocess.run(commit_args, cwd=REPO_ROOT, env=env,
+                                         capture_output=True, text=True, timeout=15)
+            if commit_proc.returncode != 0:
+                return {"pushed": False, "reason": commit_proc.stderr.strip()[:500]}
+            commit_sha = commit_proc.stdout.strip()
+            push = subprocess.run(
+                ["git", "push", remote, f"{commit_sha}:refs/heads/{branch}"],
+                cwd=REPO_ROOT, env=env, capture_output=True, text=True, timeout=60)
+            return {"pushed": push.returncode == 0,
+                   "reason": None if push.returncode == 0 else push.stderr.strip()[:500]}
+        finally:
+            if os.path.exists(scratch_index):
+                os.remove(scratch_index)
     except Exception as exc:  # best-effort by design -- see docstring
         return {"pushed": False, "reason": str(exc)}
 

@@ -498,5 +498,38 @@ class LegacySalvageImportTests(CanonicalRunTestBase):
             cr.import_legacy(run_dir, legacy_jsonl, legacy_state, legacy_code_git_sha="legacysha")
 
 
+class PushManifestSnapshotNeverMovesHeadTests(CanonicalRunTestBase):
+    """2026-08-27 real incident: an earlier push_manifest_snapshot() called
+    plain `git commit` in REPO_ROOT, which -- when run from inside the
+    pinned canonical-run worktree, exactly its intended call site --
+    silently advanced that worktree's own HEAD and then correctly tripped
+    its own CodeIdentityDrift guard on the very next resume, blocking the
+    real backfill. This locks in the fix: the function must be provably
+    incapable of moving HEAD, the real index, or the working tree of
+    whatever repo it is invoked from."""
+
+    def test_head_and_index_are_unchanged_after_a_successful_snapshot_push(self):
+        import subprocess
+        run_dir, manifest = self.new_manifest(start="2024-04-01", end="2024-04-01")
+        self.run_with_results(run_dir, manifest, {"2024-04-01": fake_result("2024-04-01")})
+
+        head_before = subprocess.run(["git", "rev-parse", "HEAD"], cwd=ROOT,
+                                     capture_output=True, text=True).stdout
+        status_before = subprocess.run(["git", "status", "--porcelain"], cwd=ROOT,
+                                       capture_output=True, text=True).stdout
+
+        result = cr.push_manifest_snapshot(run_dir, branch="canonical-run-manifests-test-noop",
+                                           remote="__no_such_remote__")
+        self.assertFalse(result["pushed"])  # expected: no such remote -- proves the push path ran
+
+        head_after = subprocess.run(["git", "rev-parse", "HEAD"], cwd=ROOT,
+                                    capture_output=True, text=True).stdout
+        status_after = subprocess.run(["git", "status", "--porcelain"], cwd=ROOT,
+                                      capture_output=True, text=True).stdout
+        self.assertEqual(head_before, head_after, "HEAD must never move in the caller's repo")
+        self.assertEqual(status_before, status_after,
+                         "the real index/working tree must show zero changes")
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)
