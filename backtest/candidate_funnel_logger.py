@@ -523,7 +523,109 @@ def prepare_research_candidates(candidates, ctx, *, gp, fd, date,
         qc_index[candidate_identity(candidate, date=date)] = (
             "rejected", candidate.get("qc_reason"))
 
-    return research_candidates, qc_index, market_context
+    return research_candidates, qc_index, market_context, feeds
+
+
+def _subject_key(candidate):
+    combo = candidate.get("combo_player_ids")
+    if combo:
+        subject = ("combo", tuple(combo))
+    elif candidate.get("player_id") is not None:
+        subject = ("player", candidate.get("player_id"))
+    else:
+        subject = ("game", candidate.get("game_pk"), candidate.get("type"))
+    return (candidate.get("game_pk"), subject)
+
+
+def build_operational_opportunities(research_candidates, qc_index, feeds, *,
+                                    gp, fd, date):
+    """Expand raw scored players into the same per-market rows the dashboard uses.
+
+    Raw _build_and_score() keeps one primary projection per batter and tucks the
+    other market families into line_options. The live dashboard expands those
+    options through select_best_by_category(..., n=9999, min_score=0) before
+    recommendation classification. Selector research must compare those actual
+    bet opportunities, not pretend the batter's primary projection is the whole
+    market universe.
+    """
+    qc_by_subject = {}
+    raw_by_subject = {}
+    for candidate in research_candidates:
+        raw_cid = candidate_identity(candidate, date=date)
+        qc = qc_index.get(raw_cid, (None, None))
+        key = _subject_key(candidate)
+        if key in qc_by_subject and qc_by_subject[key] != qc:
+            raise ValueError(
+                f"conflicting QC states for prospective subject {key}: "
+                f"{qc_by_subject[key]} vs {qc}")
+        qc_by_subject[key] = qc
+        raw_by_subject[key] = candidate
+
+    confirmed = []
+    assumed = []
+    rejected = []
+    for candidate in research_candidates:
+        status, _reason = qc_by_subject.get(
+            _subject_key(candidate), (None, None))
+        if status == "confirmed_lineup":
+            confirmed.append(candidate)
+        elif status == "assumed_lineup":
+            assumed.append(candidate)
+        elif status == "rejected":
+            rejected.append(candidate)
+
+    def expand(pool):
+        if not pool:
+            return []
+        by_category = gp.select_best_by_category(
+            pool,
+            feeds["prices"],
+            fd,
+            n_per_category=9999,
+            k_prices=feeds["k_prices"],
+            min_score=0,
+        )
+        return [
+            row
+            for _stat, rows in sorted(by_category.items())
+            for row in rows
+        ]
+
+    # Production dashboard advances confirmed + assumed candidates into the
+    # category/recommendation layer; rejected candidates are expanded
+    # separately only so QC-regret research can ask what was left on the table.
+    operational_rows = expand(confirmed + assumed)
+    rejected_counterfactual_rows = expand(rejected)
+    rows = operational_rows + rejected_counterfactual_rows
+
+    expanded_qc = {}
+    seen = set()
+    for row in rows:
+        key = _subject_key(row)
+        status_reason = qc_by_subject.get(key)
+        if status_reason is None:
+            raise ValueError(
+                f"expanded prospective opportunity has no source QC state: {key}")
+        cid = candidate_identity(row, date=date)
+        if cid in seen:
+            raise ValueError(
+                f"duplicate expanded prospective candidate identity {cid}")
+        seen.add(cid)
+        expanded_qc[cid] = status_reason
+
+    represented_subjects = {_subject_key(r) for r in rows}
+    diagnostics = {
+        "raw_candidates": len(research_candidates),
+        "expanded_opportunities": len(rows),
+        "operational_opportunities": len(operational_rows),
+        "rejected_counterfactual_opportunities": len(
+            rejected_counterfactual_rows),
+        "raw_subjects": len(raw_by_subject),
+        "represented_subjects": len(represented_subjects),
+        "unrepresented_subjects": len(
+            set(raw_by_subject) - represented_subjects),
+    }
+    return rows, expanded_qc, diagnostics
 
 
 def run_live_snapshot(out_dir=DEFAULT_OUT_DIR):
@@ -578,10 +680,15 @@ def run_live_snapshot(out_dir=DEFAULT_OUT_DIR):
 
         date = gp.m.TODAY
         odds_observed_at = datetime.now(timezone.utc).isoformat()
-        research_candidates, qc_index, market_context = (
+        research_candidates, raw_qc_index, market_context, feeds = (
             prepare_research_candidates(
                 candidates, ctx, gp=gp, fd=fd, date=date,
                 observed_at=odds_observed_at)
+        )
+        research_candidates, qc_index, capture_diagnostics = (
+            build_operational_opportunities(
+                research_candidates, raw_qc_index, feeds,
+                gp=gp, fd=fd, date=date)
         )
 
         generated_at = datetime.now(timezone.utc).isoformat()
@@ -627,6 +734,23 @@ def run_live_snapshot(out_dir=DEFAULT_OUT_DIR):
             records, date=date, observed_at=generated_at,
             code_git_sha=code_git_sha, market_context=market_context,
             run_metadata=run_metadata)
+        snapshot["capture_diagnostics"] = capture_diagnostics
+        # capture_diagnostics is part of snapshot identity evidence; refresh the
+        # id after adding it rather than attaching unauthenticated metadata.
+        snapshot_identity = {
+            "date": snapshot["date"],
+            "observed_at": snapshot["observed_at"],
+            "code_git_sha": code_git_sha,
+            "candidate_universe_fingerprint": (
+                snapshot["candidate_universe_fingerprint"]
+            ),
+            "capture_diagnostics": capture_diagnostics,
+        }
+        snapshot["snapshot_id"] = hashlib.sha256(
+            json.dumps(
+                snapshot_identity, sort_keys=True, separators=(",", ":")
+            ).encode("utf-8")
+        ).hexdigest()
         snapshot_path = default_snapshot_path_for_date(date, out_dir=out_dir)
         snapshot_written = append_snapshot_manifest(snapshot, snapshot_path)
 
