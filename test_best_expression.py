@@ -12,6 +12,8 @@ from __future__ import annotations
 import os
 import sys
 import unittest
+import json
+import tempfile
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, ROOT)
@@ -31,6 +33,26 @@ def pop_from(rows):
                                  evidence_regime="test",
                                  dataset_identity={"artifact_sha256": "a" * 64,
                                                    "artifact_row_count": len(rows)})
+
+
+def verified_pop_from(rows):
+    import accuracy_lab as al
+    tmp = tempfile.mkdtemp(prefix="fc_best_expression_verified_")
+    rows_path = os.path.join(tmp, "rows.jsonl")
+    manifest_path = os.path.join(tmp, "holdout_manifest.json")
+    with open(rows_path, "w", encoding="utf-8") as fh:
+        for r in rows:
+            fh.write(json.dumps(r) + "\n")
+    al.lock_holdout(
+        rows_path, holdout_frac=0.2, manifest_path=manifest_path,
+        require_strong_dataset_identity=True)
+    with open(manifest_path, encoding="utf-8") as fh:
+        identity = json.load(fh)
+    identity["manifest_path"] = manifest_path
+    return ev.EligiblePopulation(
+        rows, definition="t", definition_version="v1",
+        evidence_regime="canonical_historical_model_data",
+        dataset_identity=identity)
 
 
 SCORE = lambda r: r["score"]
@@ -90,6 +112,25 @@ class SuppressionTests(unittest.TestCase):
         order = be.best_expression_rank_fn(SCORE)(population)
         self.assertEqual(len(order[:3]), 3)
 
+    def test_strict_promotion_mode_fails_when_same_slate_cannot_refill(self):
+        rows = [row("2024-05-01", 10, 1, p, 0, 100 - i)
+                for i, p in enumerate(["hits", "total_bases", "hits_runs_rbis", "home_run"])]
+        population = pop_from(rows)
+        strict = be.strict_best_expression_rank_fn(
+            SCORE, volume_by_date={"2024-05-01": 3})
+        with self.assertRaises(be.StrictRefillError):
+            strict(population)
+
+    def test_strict_promotion_mode_accepts_fully_refillable_same_slate(self):
+        rows = [row("2024-05-01", 10, 1, p, 0, 100 - i)
+                for i, p in enumerate(["hits", "total_bases", "hits_runs_rbis"])]
+        rows += [row("2024-05-01", 20 + i, 10 + i, "hits", 1, 50 - i)
+                 for i in range(4)]
+        population = pop_from(rows)
+        strict = be.strict_best_expression_rank_fn(
+            SCORE, volume_by_date={"2024-05-01": 3})
+        self.assertEqual(len(strict(population)), len(rows))
+
     def test_max_per_thesis_greater_than_one_is_honoured(self):
         rows = [row("2024-05-01", 10, 1, p, 0, 100 - i)
                 for i, p in enumerate(["hits", "total_bases", "hits_runs_rbis"])]
@@ -123,32 +164,47 @@ class EqualVolumeIntegrationTests(unittest.TestCase):
     """Best Expression must be usable as a drop-in challenger, and the
     equal-volume framework must accept it without special-casing."""
 
-    def _population(self):
+    def _rows(self):
         rows = [row("2024-05-01", 10, 1, p, 0, 100 - i)
                 for i, p in enumerate(["hits", "total_bases", "hits_runs_rbis"])]
-        rows += [row("2024-05-0%d" % (2 + i), 20 + i, 10 + i, "hits", 1, 60 - i)
+        # Independent refill candidates belong to the SAME operational slate.
+        # Cross-date refill would manufacture a selector win by borrowing easy
+        # candidates from a different day's opportunity set.
+        rows += [row("2024-05-01", 20 + i, 10 + i, "hits", 1, 60 - i)
                  for i in range(5)]
-        return pop_from(rows)
+        return rows
 
-    def test_best_expression_passes_the_equal_volume_contract(self):
-        population = self._population()
-        champ = ev.SelectionPolicy("champion_score", "1.0", ev.rank_by(SCORE))
-        chal = ev.SelectionPolicy("best_expression", "1.0",
-                                  be.best_expression_rank_fn(SCORE))
-        rep = ev.EqualVolumeExperiment(population=population, champion=champ,
-                                       challenger=chal, volume=3,
-                                       promotion_grade=True).run()
+    def _population(self):
+        return pop_from(self._rows())
+
+    def test_best_expression_passes_the_promotion_grade_equal_volume_contract(self):
+        population = verified_pop_from(self._rows())
+        quota = {"2024-05-01": 3}
+        champ = ev.SelectionPolicy(
+            "champion_score", "1.0", ev.rank_by(SCORE),
+            ranking_input_fields=("score",))
+        chal = ev.SelectionPolicy(
+            "best_expression", "1.0",
+            be.strict_best_expression_rank_fn(SCORE, volume_by_date=quota),
+            ranking_input_fields=("score", "date", "game_pk", "player_id"))
+        rep = ev.EqualVolumeExperiment(
+            population=population, champion=champ, challenger=chal, volume=3,
+            promotion_grade=True, volume_by_date=quota).run()
         self.assertEqual(rep["champion"]["selected_n"], 3)
         self.assertEqual(rep["challenger"]["selected_n"], 3)
+        self.assertTrue(rep["integrity"]["same_operational_volume_by_date"])
         a = rep["selection_anatomy"]
         self.assertEqual(a["overlap_n"] + a["added"]["n"], 3)
         self.assertEqual(a["overlap_n"] + a["removed"]["n"], 3)
 
     def test_challenger_is_more_diversified_than_champion_here(self):
         population = self._population()
-        champ = ev.SelectionPolicy("champion_score", "1.0", ev.rank_by(SCORE))
-        chal = ev.SelectionPolicy("best_expression", "1.0",
-                                  be.best_expression_rank_fn(SCORE))
+        champ = ev.SelectionPolicy(
+            "champion_score", "1.0", ev.rank_by(SCORE),
+            ranking_input_fields=("score",))
+        chal = ev.SelectionPolicy(
+            "best_expression", "1.0", be.best_expression_rank_fn(SCORE),
+            ranking_input_fields=("score", "game_pk", "player_id"))
         rep = ev.EqualVolumeExperiment(population=population, champion=champ,
                                        challenger=chal, volume=3).run()
         self.assertLess(rep["dependence"]["champion"]["unique_games"],
