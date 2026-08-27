@@ -1186,3 +1186,46 @@ def assert_source_identity(index, current_records):
             "\nNo rows have been generated. Restore the exact bound source artifact, "
             "or start a NEW run id. Do not mix source vintages under one run.")
     return {"verified": True, "reason": "all bound sources matched", "compared": compared}
+
+
+# Certification-time gate. Distinct from assert_source_identity(), which runs
+# during GENERATION to stop a vintage swap. This one runs when someone asks
+# whether a finished artifact may be called canonical.
+#
+# The concept is borrowed from superchad/canonical-integrity-safe-01, which had
+# the right instinct -- non-empty lineage is not complete lineage -- while
+# lacking binding, comparison and accumulation. Adopted here because generation
+# safety and certification eligibility are genuinely different questions.
+REQUIRED_CANONICAL_SOURCES = ("statcast_leaguewide",)
+
+
+def assert_certifiable_source_lineage(index):
+    """Fail closed unless durable source provenance is complete enough to certify.
+
+    Durability succeeding is not certification. A run can push every date with
+    zero failures and still be uncertifiable, because the rows prove what was
+    produced and say nothing about what produced them.
+    """
+    records = bound_source_records(index)
+    if not records:
+        raise DurableIntegrityError(
+            "source lineage is absent: durability does not prove source provenance. "
+            "CERTIFICATION BLOCKED.")
+    have = {r.get("source") for r in records}
+    missing = [s for s in REQUIRED_CANONICAL_SOURCES if s not in have]
+    if missing:
+        raise DurableIntegrityError(
+            f"source lineage is partial: missing {missing}. CERTIFICATION BLOCKED.")
+    weak = [r.get("request_identity") for r in records
+            if not r.get("content_sha256") or len(r.get("content_sha256") or "") != 64]
+    if weak:
+        raise DurableIntegrityError(
+            f"source lineage records lack a full sha256: {weak}. A prefix is not "
+            "identity. CERTIFICATION BLOCKED.")
+    expected = lineage_fingerprint(records)
+    if index.get("source_lineage_fingerprint") != expected:
+        raise DurableIntegrityError(
+            "source-lineage fingerprint does not match its own records. "
+            "CERTIFICATION BLOCKED.")
+    return {"certifiable_sources": True, "sources": sorted(have),
+            "source_lineage_fingerprint": expected}
