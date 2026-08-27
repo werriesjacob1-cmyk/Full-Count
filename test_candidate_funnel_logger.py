@@ -12,6 +12,7 @@ import json
 import os
 import sys
 import tempfile
+import types
 import unittest
 
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "backtest"))
@@ -182,6 +183,121 @@ class BuildFunnelRecordsTests(unittest.TestCase):
             [c], date="2026-08-25", gate_traces=trace)[0]
         self.assertEqual(record["decision"]["recommendation_status"], "value")
         self.assertEqual(record["decision"]["status_reasons"], ["real price edge"])
+
+
+class ProspectivePreparationBoundaryTests(unittest.TestCase):
+    def test_mutating_live_helpers_only_touch_research_copy(self):
+        source = [candidate()]
+        before = copy.deepcopy(source)
+        calls = {"signal": 0, "attach": 0}
+
+        def quality_control(candidates, game_meta, park_wx, emp_pitchers):
+            candidates[0]["qc_marker"] = "mutated-copy"
+            return candidates, [], []
+
+        def apply_signal_weights(candidates, trust=None):
+            calls["signal"] += 1
+            candidates[0]["score"] = 88.0
+            candidates[0]["signal_weight_adjustment"] = 3.0
+
+        gp = types.SimpleNamespace(
+            quality_control=quality_control,
+            load_signal_trust=lambda: {"platoon": 0.1},
+            apply_signal_weights=apply_signal_weights,
+        )
+
+        def attach_market_prices(candidates, **feeds):
+            calls["attach"] += 1
+            candidates[0]["market_odds"] = -125
+            candidates[0]["market_fair"] = 0.54
+            return candidates, 1
+
+        fd = types.SimpleNamespace(
+            fetch_prop_prices=lambda: {"Yordan Alvarez": {("hits", 1): -125}},
+            fetch_first_inning_totals=lambda: {},
+            attach_market_prices=attach_market_prices,
+        )
+        ctx = {
+            "game_meta": [],
+            "park_wx": {},
+            "emp_pitchers": {},
+            "k_prices": {"k": 1},
+            "po_prices": {"po": 1},
+            "combined_k_prices": {"combo": 1},
+        }
+
+        research, qc_index, market_context = cfl.prepare_research_candidates(
+            source, ctx, gp=gp, fd=fd, date="2026-08-25",
+            observed_at="2026-08-25T17:00:00Z")
+
+        self.assertEqual(source, before)
+        self.assertIsNot(research[0], source[0])
+        self.assertEqual(research[0]["qc_marker"], "mutated-copy")
+        self.assertEqual(research[0]["score"], 88.0)
+        self.assertEqual(research[0]["market_odds"], -125)
+        self.assertEqual(calls, {"signal": 1, "attach": 1})
+        cid = cfl.candidate_identity(research[0], date="2026-08-25")
+        self.assertEqual(qc_index[cid], ("confirmed_lineup", None))
+        self.assertEqual(market_context["book"], "fanduel")
+        self.assertEqual(
+            market_context["family_states"]["batter_props"], "AVAILABLE")
+
+    def test_market_fetch_failures_are_explicit_and_empty_is_not_called_not_posted(self):
+        class FD:
+            @staticmethod
+            def fetch_prop_prices():
+                raise RuntimeError("book unavailable")
+
+            @staticmethod
+            def fetch_first_inning_totals():
+                return {}
+
+        feeds, ctx = cfl.fetch_live_market_snapshot(
+            {"k_prices": {}, "po_prices": {}, "combined_k_prices": {}},
+            fd=FD, observed_at="2026-08-25T17:00:00Z")
+        self.assertEqual(feeds["prices"], {})
+        self.assertEqual(
+            ctx["family_states"]["batter_props"], "FETCH_FAILED")
+        self.assertEqual(
+            ctx["family_states"]["first_inning"], "UNKNOWN_EMPTY")
+        self.assertEqual(
+            ctx["family_states"]["pitcher_strikeouts"], "UNKNOWN_EMPTY")
+
+    def test_qc_labels_survive_after_pricing_mutations(self):
+        c1 = candidate(player_id=1, name="Kept")
+        c2 = candidate(player_id=2, name="Rejected")
+        c3 = candidate(player_id=3, name="Assumed")
+
+        def quality_control(candidates, *_args):
+            candidates[1]["qc_reason"] = "rain"
+            candidates[2]["lineup_assumed"] = True
+            return [candidates[0]], [candidates[1]], [candidates[2]]
+
+        gp = types.SimpleNamespace(
+            quality_control=quality_control,
+            load_signal_trust=lambda: {},
+            apply_signal_weights=lambda candidates, trust=None: candidates,
+        )
+        fd = types.SimpleNamespace(
+            fetch_prop_prices=lambda: {},
+            fetch_first_inning_totals=lambda: {},
+            attach_market_prices=lambda candidates, **kwargs: (candidates, 0),
+        )
+        ctx = {
+            "game_meta": [], "park_wx": {}, "emp_pitchers": {},
+            "k_prices": {}, "po_prices": {}, "combined_k_prices": {},
+        }
+        research, qc, _ = cfl.prepare_research_candidates(
+            [c1, c2, c3], ctx, gp=gp, fd=fd, date="2026-08-25")
+
+        ids = {
+            r["name"]: cfl.candidate_identity(r, date="2026-08-25")
+            for r in research
+        }
+        self.assertEqual(qc[ids["Kept"]], ("confirmed_lineup", None))
+        self.assertEqual(qc[ids["Rejected"]], ("rejected", "rain"))
+        self.assertEqual(
+            qc[ids["Assumed"]], ("assumed_lineup", "lineup not confirmed"))
 
 
 class ContentHashTests(unittest.TestCase):
