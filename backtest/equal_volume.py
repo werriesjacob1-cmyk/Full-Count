@@ -293,7 +293,8 @@ class EqualVolumeExperiment:
     def __init__(self, *, population, champion, challenger, volume,
                  outcome_policy=None, kind=KIND_SELECTOR,
                  code_git_sha=None, promotion_grade=False,
-                 cluster_field="game_pk", preregistered=False, notes=None):
+                 cluster_field="game_pk", preregistered=False, notes=None,
+                 volume_by_date=None):
         if kind not in (self.KIND_SELECTOR, self.KIND_ELIGIBILITY):
             raise ValueError(f"unknown experiment kind {kind!r}")
         if not isinstance(volume, int) or volume <= 0:
@@ -316,27 +317,66 @@ class EqualVolumeExperiment:
         self.cluster_field = cluster_field
         self.preregistered = preregistered
         self.notes = notes or ""
+        self.volume_by_date = dict(volume_by_date or {})
+
+        if self.volume_by_date:
+            bad = {d: n for d, n in self.volume_by_date.items()
+                   if not isinstance(n, int) or n <= 0}
+            if bad:
+                raise EqualVolumeViolation(
+                    f"volume_by_date must contain positive integer quotas; bad={bad}")
+            if sum(self.volume_by_date.values()) != self.volume:
+                raise EqualVolumeViolation(
+                    f"volume_by_date sums to {sum(self.volume_by_date.values())}, "
+                    f"but requested volume is {self.volume}")
+            available = Counter(str(r.get("date")) for r in self.population.rows)
+            impossible = {str(d): n for d, n in self.volume_by_date.items()
+                          if available.get(str(d), 0) < n}
+            if impossible:
+                raise EqualVolumeViolation(
+                    f"volume_by_date cannot be filled from the eligible population: "
+                    f"{impossible}; available counts={dict(available)}")
 
         if promotion_grade:
             self._assert_promotion_grade_dataset()
 
     def _assert_promotion_grade_dataset(self):
-        """Promotion-grade evidence requires a dataset whose identity can
-        actually be proven -- delegated to accuracy_lab so the rule has
-        exactly one definition (see WeakDatasetIdentityError there)."""
+        """Promotion-grade evidence must bind the exact dataset, ranking
+        inputs, and operational selection opportunity before outcomes are
+        inspected. Exploratory runs stay permissive; promotion claims fail
+        closed."""
         ident = self.population.dataset_identity
         if not ident:
             raise EqualVolumeViolation(
                 "promotion_grade=True requires a dataset_identity on the eligible "
                 "population; an unidentified dataset cannot back a promotion claim")
-        missing = [k for k in ("artifact_sha256", "artifact_row_count")
-                   if not ident.get(k)]
-        if missing:
+
+        # One source of truth for strong dataset identity. Do not duplicate a
+        # weaker hand-written key check here.
+        try:
+            import accuracy_lab as _accuracy_lab
+            _accuracy_lab.assert_promotion_grade_manifest(ident)
+        except Exception as exc:
             raise EqualVolumeViolation(
-                f"promotion_grade=True requires strong dataset identity; missing "
-                f"{missing}. Lock a schema-v2-or-later Accuracy Lab manifest against "
-                f"the artifact and pass its identity fields here "
-                f"(see accuracy_lab.assert_promotion_grade_manifest).")
+                "promotion_grade=True requires a complete strong dataset/holdout "
+                f"manifest accepted by accuracy_lab.assert_promotion_grade_manifest: {exc}") from exc
+
+        for policy in (self.champion, self.challenger):
+            if not policy.ranking_input_fields:
+                raise EqualVolumeViolation(
+                    f"promotion_grade=True requires policy {policy.name!r} to declare "
+                    "ranking_input_fields so the exact inputs that determined its "
+                    "ordering can be fingerprinted and audited")
+
+        # Aggregate top-N over a multi-day corpus is not operational equal
+        # volume: one policy can move picks from hard slates to easy slates.
+        # Promotion-grade selector evidence therefore requires the caller to
+        # lock an exact per-date allocation before selection.
+        if not self.volume_by_date:
+            raise EqualVolumeViolation(
+                "promotion_grade=True requires volume_by_date: exact-N must be "
+                "preserved within each slate/date, not merely in aggregate across "
+                "the full historical corpus")
 
     # ── selection ──────────────────────────────────────────────────────
 
@@ -348,12 +388,46 @@ class EqualVolumeExperiment:
                 f"policy {policy.name!r} is not deterministic: ranking the identical "
                 f"population twice produced different orders. A non-reproducible "
                 f"selection cannot be evidence of anything.")
-        selected = first[:self.volume]
+
+        if self.volume_by_date:
+            remaining = {str(d): n for d, n in self.volume_by_date.items()}
+            selected = []
+            for ident in first:
+                d = str(self.population.row(ident).get("date"))
+                if remaining.get(d, 0) > 0:
+                    selected.append(ident)
+                    remaining[d] -= 1
+                if len(selected) == self.volume:
+                    break
+            short = {d: n for d, n in remaining.items() if n}
+            if short:
+                raise EqualVolumeViolation(
+                    f"policy {policy.name!r} could not fill locked per-date quotas: "
+                    f"{short}")
+        else:
+            selected = first[:self.volume]
+
         if len(selected) != self.volume:
             raise EqualVolumeViolation(
                 f"policy {policy.name!r} yielded {len(selected)} selections for a "
                 f"requested volume of {self.volume}")
         return selected
+
+    def _ranking_inputs_fingerprint(self, policy):
+        """Fingerprint exactly the fields a policy declares as ranking inputs.
+
+        This does not attempt to introspect arbitrary Python. Instead the policy
+        makes its ranking contract explicit, and promotion-grade mode refuses a
+        policy that declines to declare it.
+        """
+        rows = []
+        for ident in sorted(self.population.identities, key=_identity_sort_key):
+            row = self.population.row(ident)
+            rows.append({
+                "identity": ident,
+                "inputs": {k: row.get(k) for k in policy.ranking_input_fields},
+            })
+        return _sha(rows)
 
     def _grade(self, selected, outcomes):
         hits = misses = excluded = 0
@@ -573,6 +647,11 @@ class EqualVolumeExperiment:
 
             "population": self.population.describe(),
             "requested_volume": self.volume,
+            "requested_volume_by_date": (
+                {str(k): v for k, v in sorted(self.volume_by_date.items())}
+                if self.volume_by_date else None
+            ),
+            "allocation_mode": "per_date_locked" if self.volume_by_date else "aggregate_top_n",
             "outcome_policy": self.outcome_policy.identity(),
 
             "champion": {**self.champion.identity(), "selected_n": len(champ_sel),
@@ -609,7 +688,9 @@ class EqualVolumeExperiment:
 
             "integrity": {
                 "eligible_population_fingerprint": self.population.fingerprint,
+                "eligible_population_content_fingerprint": self.population.content_fingerprint,
                 "same_population_both_sides": True,  # structural: one object
+                "same_operational_volume_by_date": bool(self.volume_by_date),
                 "selection_deterministic_verified": True,
                 "outcomes_joined_after_selection": True,
                 "post_outcome_population_filtering": False,
@@ -617,6 +698,10 @@ class EqualVolumeExperiment:
                 "dataset_identity": self.population.dataset_identity,
                 "evidence_regime": self.population.evidence_regime,
                 "eligibility_definition_version": self.population.definition_version,
+                "ranking_input_fingerprints": {
+                    "champion": self._ranking_inputs_fingerprint(self.champion),
+                    "challenger": self._ranking_inputs_fingerprint(self.challenger),
+                },
             },
 
             "secondary_diagnostics": {
@@ -628,10 +713,18 @@ class EqualVolumeExperiment:
             },
         }
         report["experiment_manifest_id"] = _sha({
-            "population": self.population.fingerprint,
+            "population_identity": self.population.fingerprint,
+            "population_content": self.population.content_fingerprint,
+            "dataset_identity": self.population.dataset_identity,
             "champion": self.champion.identity(),
             "challenger": self.challenger.identity(),
+            "champion_ranking_inputs": self._ranking_inputs_fingerprint(self.champion),
+            "challenger_ranking_inputs": self._ranking_inputs_fingerprint(self.challenger),
             "volume": self.volume,
+            "volume_by_date": (
+                {str(k): v for k, v in sorted(self.volume_by_date.items())}
+                if self.volume_by_date else None
+            ),
             "outcome_policy": self.outcome_policy.identity(),
             "kind": self.kind,
             "code_git_sha": self.code_git_sha,
