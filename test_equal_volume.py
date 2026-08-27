@@ -345,6 +345,59 @@ class OutcomeHandlingTests(unittest.TestCase):
         self.assertEqual(rep["outcome_policy"]["outcome_mode"], ev.OUTCOME_COUNT_AS_MISS)
 
 
+class PairwiseOutcomeIntegrityTests(unittest.TestCase):
+    def test_asymmetric_missing_outcome_fails_closed(self):
+        rows = [
+            row("2024-05-01", 1, 1, "hits", 0.5, None, prob=0.10, score=100.0),
+            row("2024-05-02", 2, 2, "hits", 0.5, 1, prob=0.99, score=90.0),
+            row("2024-05-03", 3, 3, "hits", 0.5, 0, prob=0.98, score=80.0),
+            row("2024-05-04", 4, 4, "hits", 0.5, 1, prob=0.97, score=70.0),
+        ]
+        pop = ev.EligiblePopulation(
+            rows, definition="d", definition_version="v",
+            evidence_regime="r", dataset_identity={})
+        with self.assertRaises(ev.EqualVolumeViolation) as cm:
+            ev.EqualVolumeExperiment(
+                population=pop, champion=CHAMP, challenger=CHAL, volume=2,
+                outcome_policy=ev.OutcomePolicy(ev.OUTCOME_EXCLUDE_PAIRWISE)).run()
+        self.assertIn("asymmetric post-outcome denominators", str(cm.exception))
+
+    def test_equal_missing_counts_but_different_missing_identities_still_fail(self):
+        rows = [
+            row("2024-05-01", 1, 1, "hits", 0.5, None, prob=0.10, score=100.0),
+            row("2024-05-02", 2, 2, "hits", 0.5, 1, prob=0.90, score=90.0),
+            row("2024-05-03", 3, 3, "hits", 0.5, 0, prob=0.80, score=80.0),
+            row("2024-05-04", 4, 4, "hits", 0.5, None, prob=0.99, score=1.0),
+        ]
+        pop = ev.EligiblePopulation(
+            rows, definition="d", definition_version="v",
+            evidence_regime="r", dataset_identity={})
+        # champion top-2 = ids 1/2, challenger top-2 = ids 4/2.
+        # Each side has exactly one missing outcome, but not the SAME missing
+        # candidate. Equal counts alone are not a pairwise exclusion contract.
+        with self.assertRaises(ev.EqualVolumeViolation):
+            ev.EqualVolumeExperiment(
+                population=pop, champion=CHAMP, challenger=CHAL, volume=2,
+                outcome_policy=ev.OutcomePolicy(ev.OUTCOME_EXCLUDE_PAIRWISE)).run()
+
+    def test_same_missing_overlap_can_be_excluded_symmetrically(self):
+        rows = [
+            row("2024-05-01", 1, 1, "hits", 0.5, None, prob=0.99, score=100.0),
+            row("2024-05-02", 2, 2, "hits", 0.5, 1, prob=0.98, score=90.0),
+            row("2024-05-03", 3, 3, "hits", 0.5, 0, prob=0.10, score=1.0),
+        ]
+        pop = ev.EligiblePopulation(
+            rows, definition="d", definition_version="v",
+            evidence_regime="r", dataset_identity={})
+        rep = ev.EqualVolumeExperiment(
+            population=pop, champion=CHAMP, challenger=CHAL, volume=2,
+            outcome_policy=ev.OutcomePolicy(ev.OUTCOME_EXCLUDE_PAIRWISE)).run()
+        self.assertEqual(rep["champion"]["selected_n"], 2)
+        self.assertEqual(rep["challenger"]["selected_n"], 2)
+        self.assertEqual(rep["champion"]["hits"] + rep["champion"]["misses"], 1)
+        self.assertEqual(rep["challenger"]["hits"] + rep["challenger"]["misses"], 1)
+
+
 class PromotionGradeTests(unittest.TestCase):
     def test_promotion_grade_requires_dataset_identity(self):
         pop = make_population(10, dataset_identity={})
