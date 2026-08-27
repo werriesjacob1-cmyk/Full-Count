@@ -190,6 +190,100 @@ def materialize_snapshot(changelog_records, snapshot_manifest, destination_root)
     }
 
 
+def load_materialized_snapshot(destination_root, *, date, snapshot_id):
+    """Read and cryptographically verify one durable prospective snapshot."""
+    spath = os.path.join(
+        destination_root, snapshot_relpath(date, snapshot_id))
+    if not os.path.exists(spath):
+        raise FileNotFoundError(spath)
+    try:
+        with open(spath, encoding="utf-8") as fh:
+            manifest = json.load(fh)
+    except (OSError, json.JSONDecodeError) as exc:
+        raise ProspectiveDurabilityError(
+            f"could not read durable snapshot {spath}: {exc}")
+
+    if manifest.get("storage_schema_version") != STORAGE_SCHEMA_VERSION:
+        raise ProspectiveDurabilityError(
+            f"unsupported prospective storage schema "
+            f"{manifest.get('storage_schema_version')!r}")
+    if manifest.get("snapshot_id") != snapshot_id or manifest.get("date") != date:
+        raise ProspectiveDurabilityError(
+            "durable snapshot path identity does not match stored manifest")
+
+    records = []
+    for entry in manifest.get("candidate_hashes") or []:
+        expected = entry.get("content_hash")
+        cid = entry.get("candidate_id")
+        rel = candidate_blob_relpath(expected)
+        path = os.path.join(destination_root, rel)
+        if not os.path.exists(path):
+            raise ProspectiveDurabilityError(
+                f"durable snapshot {snapshot_id} references missing blob {expected}")
+        raw = _verify_existing_candidate_blob(path, expected)
+        try:
+            record = json.loads(raw)
+        except json.JSONDecodeError as exc:
+            raise ProspectiveDurabilityError(
+                f"candidate blob {expected} is not valid JSON: {exc}")
+        got_cid = (record.get("identity") or {}).get("candidate_id")
+        if got_cid != cid:
+            raise ProspectiveDurabilityError(
+                f"candidate blob identity {got_cid!r} != manifest identity {cid!r}")
+        if cfl.content_hash(record) != expected:
+            raise ProspectiveDurabilityError(
+                f"candidate blob semantic hash changed after decode for {cid}")
+        records.append(record)
+
+    # Re-run the higher-level universe/fingerprint contract after every blob
+    # passed its own byte-level checksum.
+    resolved = pr.resolve_snapshot(records, manifest)
+    return manifest, resolved
+
+
+def discover_materialized_snapshots(destination_root, *, date=None):
+    """List immutable snapshot manifests, ordered by observed_at then id."""
+    root = os.path.join(destination_root, STORAGE_ROOT, "snapshots")
+    if date is not None:
+        roots = [os.path.join(root, str(date))]
+    elif os.path.isdir(root):
+        roots = [
+            os.path.join(root, d) for d in sorted(os.listdir(root))
+            if os.path.isdir(os.path.join(root, d))
+        ]
+    else:
+        roots = []
+
+    found = []
+    for directory in roots:
+        if not os.path.isdir(directory):
+            continue
+        for name in sorted(os.listdir(directory)):
+            if not name.endswith(".json"):
+                continue
+            path = os.path.join(directory, name)
+            try:
+                with open(path, encoding="utf-8") as fh:
+                    manifest = json.load(fh)
+            except (OSError, json.JSONDecodeError) as exc:
+                raise ProspectiveDurabilityError(
+                    f"invalid durable snapshot manifest {path}: {exc}")
+            found.append({
+                "date": manifest.get("date"),
+                "snapshot_id": manifest.get("snapshot_id"),
+                "observed_at": manifest.get("observed_at"),
+                "n_candidates": manifest.get("n_candidates"),
+                "path": path,
+            })
+    return sorted(
+        found,
+        key=lambda x: (
+            x.get("observed_at") or "",
+            x.get("snapshot_id") or "",
+        ),
+    )
+
+
 def load_jsonl(path):
     rows = []
     with open(path, encoding="utf-8") as fh:
