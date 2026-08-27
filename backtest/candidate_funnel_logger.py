@@ -613,6 +613,26 @@ def build_operational_opportunities(research_candidates, qc_index, feeds, *,
         seen.add(cid)
         expanded_qc[cid] = status_reason
 
+    # select_best_by_category() intentionally emits a compact dashboard row.
+    # Restore settlement/provenance fields that belong to the source subject
+    # but are not copied by that function, without re-deriving them.
+    for row in rows:
+        source = raw_by_subject.get(_subject_key(row)) or {}
+        for field in (
+            "game_start",
+            "bet_side",
+            "market_side",
+            "cat_matchup",
+            "cat_recent_form",
+            "cat_environment",
+            "cat_baseline_skill",
+            "cat_context",
+            "signal_weight_adjustment",
+            "reliability_note",
+        ):
+            if row.get(field) is None and source.get(field) is not None:
+                row[field] = source.get(field)
+
     represented_subjects = {_subject_key(r) for r in rows}
     diagnostics = {
         "raw_candidates": len(research_candidates),
