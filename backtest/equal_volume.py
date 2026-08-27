@@ -205,6 +205,13 @@ class SelectionPolicy:
             raise ValueError("ranking_input_fields must contain non-empty field names")
         self.ranking_input_fields = tuple(sorted(set(fields)))
 
+        required_schedule = getattr(rank_fn, "_fc_required_volume_by_date", None)
+        self.required_volume_by_date = (
+            {str(k): v for k, v in required_schedule.items()}
+            if required_schedule is not None else None
+        )
+        self.selection_contract = getattr(rank_fn, "_fc_selection_contract", None)
+
     def rank(self, population):
         order = list(self.rank_fn(population))
         seen, out = set(), []
@@ -232,7 +239,12 @@ class SelectionPolicy:
     def identity(self):
         return {"policy_name": self.name, "policy_version": self.version,
                 "description": self.description,
-                "ranking_input_fields": list(self.ranking_input_fields)}
+                "ranking_input_fields": list(self.ranking_input_fields),
+                "required_volume_by_date": (
+                    dict(sorted(self.required_volume_by_date.items()))
+                    if self.required_volume_by_date is not None else None
+                ),
+                "selection_contract": self.selection_contract}
 
 
 def rank_by(key_fn, *, reverse=True):
@@ -355,6 +367,21 @@ class EqualVolumeExperiment:
                 raise EqualVolumeViolation(
                     "volume_by_date requests more selections than the eligible "
                     f"population contains on these dates: {impossible}")
+
+        for policy in (self.champion, self.challenger):
+            required = policy.required_volume_by_date
+            if required is not None:
+                actual = (
+                    dict(sorted(self.volume_by_date.items()))
+                    if self.volume_by_date is not None else None
+                )
+                expected = dict(sorted(required.items()))
+                if actual != expected:
+                    raise EqualVolumeViolation(
+                        f"policy {policy.name!r} requires locked volume_by_date="
+                        f"{expected}, but experiment uses {actual}. A selector-specific "
+                        "refill contract may not be validated against one schedule and "
+                        "executed against another.")
 
         if promotion_grade:
             self._assert_promotion_grade_dataset()
