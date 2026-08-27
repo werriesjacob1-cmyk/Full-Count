@@ -202,6 +202,52 @@ plus this handoff once committed.
 No scoring, probability, calibration, recommendation, settlement, live
 publication, frontend, main-branch, or durable-data files were changed.
 
+## 8. Resume script exact-target / idempotence hardening
+
+Commits:
+- `d62663b2378cd00140780b7ecd975d29a3380f19`
+- `79bc066aa392a454631021c581ffc8377ccd151d`
+
+Pre-fix VERIFIED-REPO defects:
+- no-argument mode selected the "newest" durable run, which can be a proof/test
+  run rather than the intended long-running artifact;
+- script could launch a second generator while one already owned the run, then
+  generic `pgrep` could find the original PID and falsely report the failed
+  child as "resumed";
+- start/end/weather/cache were partly hard-coded instead of derived from the
+  durable run contract;
+- the restore wrapper created the local checkpoint directory before calling the
+  now fail-closed restore function;
+- proxy durable push for an old pinned SHA could erase existing lineage/cache
+  metadata by omitting them.
+
+Changes:
+- exact run_id is mandatory (argument or `FC_CANONICAL_RUN_ID`);
+- preflight no-ops if the exact run is already alive in the container;
+- post-launch verification checks the actual `$BGPID`, not a generic matching
+  process;
+- start/end/weather/cache/sleep/no-bullpen are derived from durable
+  manifest/index evidence;
+- no local directory is pre-created before restore identity verification;
+- proxy push preserves existing durable lineage/cache metadata while recording
+  the current environment.
+
+Verification:
+- VERIFIED-REPO: full script re-fetched after patch.
+- SUPERCHAD runtime syntax check: exact branch script was copied byte-for-byte
+  from GitHub into an isolated local container and `bash -n` returned
+  `BASH_SYNTAX_OK`.
+- UNKNOWN: full end-to-end recovery execution in the real Claude environment.
+- This is **not** authorization to schedule auto-resume.
+
+Review risks:
+- Claude must still adversarially test simultaneous invocations, healthy-owner
+  no-op, dead-owner exact single launch, and completed-run no-op.
+- Current owner preflight is process/cmdline based; the canonical lock remains
+  the generation-side authority.
+- External scheduled auto-resume remains blocked until Claude independently
+  approves these semantics.
+
 # Important unresolved canonical findings
 
 These remain unresolved unless later sections explicitly record fixes:
