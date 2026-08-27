@@ -1,0 +1,162 @@
+name: Prospective Shadow Grade
+
+# Manual-only while the prospective ledger is under independent review.
+# Grading reads immutable pregame snapshots and uses production grade_pick().
+on:
+  workflow_dispatch:
+    inputs:
+      slate_date:
+        description: "MLB slate date to grade (YYYY-MM-DD)"
+        required: true
+        type: string
+      persist:
+        description: "Persist substantive outcomes to the append-only research ledger"
+        required: true
+        default: false
+        type: boolean
+
+concurrency:
+  group: prospective-shadow-ledger
+  cancel-in-progress: false
+
+jobs:
+  grade:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+    outputs:
+      n_outcomes: ${{ steps.grade.outputs.n_outcomes }}
+    steps:
+      - name: Checkout measurement code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Checkout prospective ledger read-only
+        env:
+          LEDGER_DIR: ${{ runner.temp }}/prospective-ledger
+        run: |
+          set -euo pipefail
+          git fetch origin             refs/heads/prospective-candidate-ledger:refs/remotes/origin/prospective-candidate-ledger
+          git worktree add --detach "$LEDGER_DIR"             refs/remotes/origin/prospective-candidate-ledger
+
+      - name: Grade every candidate ever observed on the slate
+        id: grade
+        env:
+          LEDGER_DIR: ${{ runner.temp }}/prospective-ledger
+          OUTCOMES: ${{ runner.temp }}/prospective-outcomes.jsonl
+          SLATE_DATE: ${{ inputs.slate_date }}
+        run: |
+          set -euo pipefail
+          python3 -u backtest/candidate_funnel_grader.py "$SLATE_DATE"             --durable-root "$LEDGER_DIR"             --outcome-path "$OUTCOMES"
+          n="$(grep -cve '^[[:space:]]*$' "$OUTCOMES")"
+          echo "n_outcomes=$n" >> "$GITHUB_OUTPUT"
+          test "$n" -gt 0
+
+      - name: Verify outcome materialization in scratch storage
+        env:
+          OUTCOMES: ${{ runner.temp }}/prospective-outcomes.jsonl
+          SCRATCH: ${{ runner.temp }}/prospective-outcome-materialized
+        run: |
+          set -euo pipefail
+          mkdir -p "$SCRATCH"
+          python3 - "$OUTCOMES" "$SCRATCH" <<'PY'
+          import json, sys
+          from backtest import prospective_durability as pdur
+          outcomes = pdur.load_jsonl(sys.argv[1])
+          print(json.dumps(
+              pdur.materialize_outcomes(outcomes, sys.argv[2]),
+              indent=2, sort_keys=True))
+          PY
+
+      - name: Upload grading evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: prospective-grade-${{ github.run_id }}
+          path: |
+            ${{ runner.temp }}/prospective-outcomes.jsonl
+            ${{ runner.temp }}/prospective-outcome-materialized/prospective/
+          if-no-files-found: error
+          retention-days: 7
+
+  persist:
+    needs: grade
+    if: inputs.persist == true && needs.grade.outputs.n_outcomes != '0'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout measurement code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Download grading evidence
+        uses: actions/download-artifact@v4
+        with:
+          name: prospective-grade-${{ github.run_id }}
+          path: ${{ runner.temp }}/grade
+
+      - name: Checkout prospective ledger for append-only update
+        env:
+          LEDGER_DIR: ${{ runner.temp }}/prospective-ledger
+        run: |
+          set -euo pipefail
+          git config user.name "FULL COUNT Prospective Ledger"
+          git config user.email "actions@users.noreply.github.com"
+          git fetch origin             refs/heads/prospective-candidate-ledger:refs/remotes/origin/prospective-candidate-ledger
+          git worktree add -B prospective-candidate-ledger             "$LEDGER_DIR" refs/remotes/origin/prospective-candidate-ledger
+
+      - name: Re-verify and materialize outcomes against existing ledger
+        env:
+          LEDGER_DIR: ${{ runner.temp }}/prospective-ledger
+          OUTCOMES: ${{ runner.temp }}/grade/prospective-outcomes.jsonl
+        run: |
+          set -euo pipefail
+          python3 - "$OUTCOMES" "$LEDGER_DIR" <<'PY'
+          import json, sys
+          from backtest import prospective_durability as pdur
+          outcomes = pdur.load_jsonl(sys.argv[1])
+          print(json.dumps(
+              pdur.materialize_outcomes(outcomes, sys.argv[2]),
+              indent=2, sort_keys=True))
+          PY
+
+      - name: Enforce append-only outcome diff and push
+        env:
+          LEDGER_DIR: ${{ runner.temp }}/prospective-ledger
+          SLATE_DATE: ${{ inputs.slate_date }}
+        run: |
+          set -euo pipefail
+          git -C "$LEDGER_DIR" add prospective/v1/outcomes
+
+          if git -C "$LEDGER_DIR" diff --cached --quiet; then
+            echo "Substantive grading state already durably present."
+            exit 0
+          fi
+
+          bad="$(git -C "$LEDGER_DIR" diff --cached --name-status | awk '$1 != "A" {print}')"
+          if [ -n "$bad" ]; then
+            echo "FATAL: prospective ledger is append-only; refusing non-additive outcome diff:"
+            echo "$bad"
+            exit 1
+          fi
+
+          git -C "$LEDGER_DIR" commit -m             "Prospective outcomes ${SLATE_DATE} (run ${GITHUB_RUN_ID})"
+          git -C "$LEDGER_DIR" push origin             HEAD:refs/heads/prospective-candidate-ledger
