@@ -184,6 +184,31 @@ class BuildFunnelRecordsTests(unittest.TestCase):
         self.assertEqual(record["decision"]["recommendation_status"], "value")
         self.assertEqual(record["decision"]["status_reasons"], ["real price edge"])
 
+    def test_qc_rejected_trace_is_counterfactual_not_champion_status(self):
+        c = candidate(status=None, status_reasons=None)
+        cid = cfl.candidate_identity(c, date="2026-08-25")
+        trace = {
+            cid: {
+                "status": "top_pick",
+                "status_reasons": [],
+                "gates": {"has_prob": True},
+                "blocking_gate": None,
+            }
+        }
+        record = cfl.build_funnel_records(
+            [c], date="2026-08-25", gate_traces=trace,
+            quality_control_index={cid: ("rejected", "rain")})[0]
+        self.assertIsNone(record["decision"]["recommendation_status"])
+        self.assertEqual(
+            record["decision"]["recommendation_stage"],
+            "not_reached_qc_reject")
+        self.assertEqual(
+            record["decision"]["counterfactual_recommendation_status"],
+            "top_pick")
+        self.assertEqual(
+            record["decision"]["gate_trace_scope"],
+            "counterfactual_after_qc_rejection")
+
 
 class ProspectivePreparationBoundaryTests(unittest.TestCase):
     def test_mutating_live_helpers_only_touch_research_copy(self):
