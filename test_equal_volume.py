@@ -12,6 +12,8 @@ from __future__ import annotations
 import os
 import sys
 import unittest
+import json
+import tempfile
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, ROOT)
@@ -57,6 +59,30 @@ CHAMP = ev.SelectionPolicy(
 CHAL = ev.SelectionPolicy(
     "challenger_prob", "1.0", ev.rank_by(lambda r: r["predicted_prob"]),
     ranking_input_fields=("predicted_prob",))
+
+
+def verified_population(n=10):
+    """Build a population whose dataset identity is backed by a real
+    schema-v2 Accuracy Lab manifest and artifact, not a synthetic dict."""
+    import accuracy_lab as al
+    base = make_population(n)
+    tmp = tempfile.mkdtemp(prefix="fc_equal_volume_verified_")
+    rows_path = os.path.join(tmp, "rows.jsonl")
+    manifest_path = os.path.join(tmp, "holdout_manifest.json")
+    with open(rows_path, "w", encoding="utf-8") as fh:
+        for r in base.rows:
+            fh.write(json.dumps(r) + "\n")
+    al.lock_holdout(
+        rows_path, holdout_frac=0.2, manifest_path=manifest_path,
+        require_strong_dataset_identity=True)
+    with open(manifest_path, encoding="utf-8") as fh:
+        ident = json.load(fh)
+    ident["manifest_path"] = manifest_path
+    return ev.EligiblePopulation(
+        base.rows, definition=base.definition,
+        definition_version=base.definition_version,
+        evidence_regime=base.evidence_regime,
+        dataset_identity=ident)
 
 
 class PopulationIntegrityTests(unittest.TestCase):
@@ -222,10 +248,23 @@ class PromotionGradeTests(unittest.TestCase):
             ev.EqualVolumeExperiment(population=pop, champion=CHAMP, challenger=CHAL,
                                      volume=3, promotion_grade=True,
                                      volume_by_date=self._quota(pop))
-        self.assertIn("complete strong dataset", str(cm.exception))
+        self.assertIn("manifest_path", str(cm.exception))
+
+    def test_promotion_grade_rejects_manifest_metadata_if_artifact_drifted(self):
+        import accuracy_lab as al
+        pop = verified_population(10)
+        manifest_path = pop.dataset_identity["manifest_path"]
+        rows_path = os.path.join(al.ROOT, pop.dataset_identity["rows_path"])
+        with open(rows_path, "a", encoding="utf-8") as fh:
+            fh.write(json.dumps(row("2024-05-20", 999, 999, "hits", 0.5, 1)) + "\n")
+        with self.assertRaises(ev.EqualVolumeViolation) as cm:
+            ev.EqualVolumeExperiment(
+                population=pop, champion=CHAMP, challenger=CHAL, volume=3,
+                promotion_grade=True, volume_by_date=self._quota(pop))
+        self.assertIn("no longer matches", str(cm.exception))
 
     def test_promotion_grade_requires_declared_ranking_inputs(self):
-        pop = make_population(10)
+        pop = verified_population(10)
         undeclared = ev.SelectionPolicy(
             "undeclared", "1.0", ev.rank_by(lambda r: r["score"]))
         with self.assertRaises(ev.EqualVolumeViolation) as cm:
@@ -235,14 +274,14 @@ class PromotionGradeTests(unittest.TestCase):
         self.assertIn("ranking_input_fields", str(cm.exception))
 
     def test_promotion_grade_requires_per_date_operational_volume(self):
-        pop = make_population(10)
+        pop = verified_population(10)
         with self.assertRaises(ev.EqualVolumeViolation) as cm:
             ev.EqualVolumeExperiment(population=pop, champion=CHAMP, challenger=CHAL,
                                      volume=3, promotion_grade=True)
         self.assertIn("volume_by_date", str(cm.exception))
 
     def test_promotion_grade_accepted_with_strong_identity_and_locked_slates(self):
-        pop = make_population(10)
+        pop = verified_population(10)
         quota = self._quota(pop)
         rep = ev.EqualVolumeExperiment(
             population=pop, champion=CHAMP, challenger=CHAL, volume=3,
