@@ -1,25 +1,25 @@
 {
-  "cache_mode": "frozen_cache",
+  "cache_mode": null,
   "dates": {
     "2024-04-01": {
       "data_bytes": 2425,
       "data_sha256": "e10bebd021ec074b4de43ca0d3a8ec440159de5f8b63a8ec3ac13a9a6375dec5",
       "meta_sha256": "3607bb8bd0dc4db882099d9d422667548aa53972139cc579e2b347293b1b36ce",
-      "rows": null,
+      "rows": 25,
       "status": "ok"
     },
     "2024-04-02": {
       "data_bytes": 2425,
       "data_sha256": "f686382342c6f0a11b3e174fccbb15c4b191898ebe95eb3b83e114386b70a6b0",
       "meta_sha256": "ff17a3f75ec2bcd0eb625f0b2da658ee861171723b9173d929530c511de4cdaf",
-      "rows": null,
+      "rows": 25,
       "status": "ok"
     },
     "2024-04-03": {
       "data_bytes": 2425,
       "data_sha256": "e88102453f96afbbf66bf6492ca9ac6a003968cc045313e3640540cd97e6cda3",
       "meta_sha256": "a9145208dc583d841516d3933dcbcc83a99661b3ae41dc87b99b91ad5a20efcf",
-      "rows": null,
+      "rows": 25,
       "status": "ok"
     }
   },
@@ -43,7 +43,7 @@
     "platform": "Linux-6.18.44-fc-v21-x86_64-with-glibc2.39",
     "python_implementation": "CPython",
     "python_version": "3.11.15",
-    "recorded_at": "2026-08-27T13:56:27.993047+00:00"
+    "recorded_at": "2026-08-27T14:46:25.582426+00:00"
   },
   "identity": {
     "candidate_identity_fields": [
@@ -70,25 +70,8 @@
   },
   "identity_fingerprint": "50df2d1edccd9e538173be079b70f803b15ac5bb7055d29343414dd3e6a637c0",
   "run_id": "canonical-GITHUBPROOF-20260827",
-  "source_lineage": [
-    {
-      "cache_mode": null,
-      "content_sha256": null,
-      "date_coverage": null,
-      "library": null,
-      "library_version": null,
-      "notes": null,
-      "request_identity": "proof",
-      "retrieval_timestamp": "2026-08-27T13:56:27.993124+00:00",
-      "row_count": null,
-      "schema_columns": null,
-      "schema_fingerprint": null,
-      "source": "synthetic"
-    }
-  ],
-  "source_lineage_fingerprint": "c6c623005c8dbc749c8017cded2901964d77f9f29fe324a059b8911ac2801980",
-  "summary": {
-    "ok": 3
-  },
-  "updated_at": "2026-08-27T13:56:28.042024+00:00"
+  "source_lineage": [],
+  "source_lineage_fingerprint": null,
+  "summary": {},
+  "updated_at": "2026-08-27T14:46:25.598017+00:00"
 }
