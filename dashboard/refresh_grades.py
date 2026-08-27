@@ -366,6 +366,24 @@ def refresh(data_path, live_path=None, registry_path=DEFAULT_REGISTRY_PATH):
                 final_state = observed.get("settlement_state") or "ungraded"
                 if final_state not in ("hit", "miss", "void", "ungraded"):
                     final_state = "ungraded"
+                if final_state in ("hit", "miss") and not commenced:
+                    # 2026-08-27 independent-audit finding: a feed claiming
+                    # Final is not itself proof any pitch was ever thrown --
+                    # the exact Dustin May shape (or a delayed start with a
+                    # stale scheduled clock) can in principle reach this
+                    # branch too. A genuine statistical hit/miss requires
+                    # the same direct commencement evidence the live path
+                    # already requires; fail closed rather than trust
+                    # status/eligibility fields alone. void/ungraded
+                    # eligibility outcomes (wrong listed starter, no plate
+                    # appearance, cancelled/postponed/suspended) do not
+                    # require a played pitch and are deliberately NOT gated
+                    # here -- see settlement_rules.settlement_eligibility.
+                    final_state = "ungraded"
+                    observed = {
+                        **observed, "settlement_state": "ungraded",
+                        "reason": "awaiting_proof_game_actually_commenced",
+                    }
                 fact = _settlement_fact(
                     final_state, "official_final", stamp,
                     "mlb_official_final_with_fanduel_eligibility", observed,

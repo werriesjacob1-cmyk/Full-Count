@@ -55,6 +55,7 @@ POSTPONED = {"abstractGameState": "Preview", "detailedState": "Postponed", "code
 CANCELLED = {"abstractGameState": "Final", "detailedState": "Cancelled", "codedGameState": "C"}
 DELAYED = {"abstractGameState": "Preview", "detailedState": "Delayed Start", "codedGameState": "D"}
 SUSPENDED = {"abstractGameState": "Live", "detailedState": "Suspended", "codedGameState": "U"}
+FINAL_STATUS = {"abstractGameState": "Final", "detailedState": "Final", "codedGameState": "F"}
 T_START = "2026-08-26T23:10:00Z"      # the real Dustin May scheduled first pitch
 T_BEFORE_START = "2026-08-26T22:51:19Z"  # the real observed false-live timestamp
 T_AFTER_START = "2026-08-26T23:18:00Z"   # requirement-2 example: 19:18 when start was 19:10
@@ -332,6 +333,172 @@ class InvariantTests(TempLifecycle):
             delta = self.run_refresh(row, final_status, REAL_PITCH_FEED)
         self.assertEqual(delta["game_state"], "final")
         self.assertEqual(delta["settlement_state"], "hit")
+
+
+class FinalSettlementCommencementTests(TempLifecycle):
+    """2026-08-27 independent-audit finding: the LIVE-path gate above left
+    an unconditional ``elif current_game_state == "final":`` settlement
+    path in refresh_grades.py -- a feed claiming Final with no real pitch
+    ever proven thrown could still reach ``gr.grade_public_pick`` and
+    write an official hit/miss. Requirement 2/4 of the follow-up hardening
+    request: a real statistical hit or miss, whether provisional OR
+    final, requires the same commencement evidence. void/ungraded
+    eligibility outcomes (wrong listed starter, no plate appearance) do
+    not require a played pitch and must remain unaffected (requirement 3).
+    """
+
+    def test_final_after_scheduled_time_with_pregame_advisory_cannot_write_hit_or_miss(self):
+        # Scheduled time has passed (forced "now" past T_START) and the
+        # feed claims Final, but the only play evidence is the pregame
+        # administrative advisory -- no real pitch. Even if eligibility/
+        # grading somehow produced a "hit" from this feed shape, the
+        # settlement boundary must refuse to publish it as authoritative.
+        row = prop(game_start=T_START)
+        with mock.patch("dashboard.refresh_grades.utc_now", return_value=T_AFTER_START), \
+             mock.patch.object(gr, "grade_public_pick",
+                                return_value={"settlement_state": "hit", "actual": 5}):
+            delta = self.run_refresh(row, FINAL_STATUS, PREGAME_ADVISORY_FEED)
+        self.assertNotIn(delta["settlement_state"], ("hit", "miss"))
+        self.assertEqual(delta["settlement_state"], "ungraded")
+
+    def test_final_with_missing_malformed_commencement_evidence_cannot_write_hit_or_miss(self):
+        row = prop(game_start=T_START)
+        with mock.patch("dashboard.refresh_grades.utc_now", return_value=T_AFTER_START), \
+             mock.patch.object(gr, "grade_public_pick",
+                                return_value={"settlement_state": "miss", "actual": 0}):
+            delta = self.run_refresh(row, FINAL_STATUS, {})
+        self.assertNotIn(delta["settlement_state"], ("hit", "miss"))
+        self.assertEqual(delta["settlement_state"], "ungraded")
+
+    def test_final_with_real_pitch_evidence_still_writes_normal_official_hit_miss(self):
+        # Sanity: the new gate must not block genuine official settlement
+        # once commencement is actually proven.
+        row = prop(stat="strikeouts", needs=5, game_start=T_START)
+        with mock.patch("dashboard.refresh_grades.utc_now", return_value=T_AFTER_START), \
+             mock.patch.object(gr, "grade_public_pick",
+                                return_value={"settlement_state": "hit", "actual": 6}):
+            delta = self.run_refresh(row, FINAL_STATUS, REAL_PITCH_FEED)
+        self.assertEqual(delta["settlement_state"], "hit")
+
+    def test_final_stale_future_game_start_does_not_suppress_real_final_settlement(self):
+        # Same inverse protection as test_H above, restated explicitly for
+        # the final path this follow-up request focuses on: a stale/wrong
+        # FUTURE stored game_start must not block a real, proven-commenced
+        # official Final settlement.
+        stale_future_start = "2099-01-01T00:00:00Z"
+        row = prop(stat="strikeouts", needs=5, game_start=stale_future_start)
+        with mock.patch.object(gr, "grade_public_pick",
+                                return_value={"settlement_state": "miss", "actual": 2}):
+            delta = self.run_refresh(row, FINAL_STATUS, REAL_PITCH_FEED)
+        self.assertEqual(delta["game_state"], "final")
+        self.assertEqual(delta["settlement_state"], "miss")
+
+    def test_final_void_outcome_not_blocked_by_missing_commencement(self):
+        # void is a structural eligibility outcome (wrong listed starter,
+        # no plate appearance) that does not require a played pitch --
+        # requirement 3 says this must remain unaffected by the new gate.
+        row = prop(game_start=T_START)
+        with mock.patch("dashboard.refresh_grades.utc_now", return_value=T_AFTER_START), \
+             mock.patch.object(gr, "grade_public_pick",
+                                return_value={"settlement_state": "void",
+                                               "reason": "listed_pitcher_did_not_start"}):
+            delta = self.run_refresh(row, FINAL_STATUS, PREGAME_ADVISORY_FEED)
+        self.assertEqual(delta["settlement_state"], "void")
+
+    def test_final_ungraded_outcome_unaffected(self):
+        row = prop(game_start=T_START)
+        with mock.patch("dashboard.refresh_grades.utc_now", return_value=T_AFTER_START), \
+             mock.patch.object(gr, "grade_public_pick",
+                                return_value={"settlement_state": "ungraded",
+                                               "reason": "official_game_completion_unavailable"}):
+            delta = self.run_refresh(row, FINAL_STATUS, PREGAME_ADVISORY_FEED)
+        self.assertEqual(delta["settlement_state"], "ungraded")
+
+
+class DurableMorningGraderCommencementTests(unittest.TestCase):
+    """grade_results.grade_day()'s public_top_picks loop calls the same
+    gr.grade_public_pick() as refresh_grades.py's near-real-time path, but
+    runs on a separate durable/morning retry schedule -- audited 2026-08-27
+    per the follow-up hardening request's explicit instruction to check
+    for other unprotected settlement writers, and found genuinely
+    unprotected (no commencement gate of its own): a hit/miss written
+    here would bypass the invariant entirely on any day this path ran
+    before the near-real-time one caught it. Exercises the real
+    grade_day() integration, not a reimplementation of the gate."""
+
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory()
+        self.output = os.path.join(self.tmp.name, "output")
+        self.results = os.path.join(self.tmp.name, "results")
+        os.makedirs(self.output)
+        os.makedirs(self.results)
+        self.registry_path = os.path.join(self.tmp.name, "registry.json")
+        self.date = "2026-08-26"
+        self.patches = (
+            mock.patch.object(gr, "OUTPUT_DIR", self.output),
+            mock.patch.object(gr, "RESULTS_DIR", self.results),
+            mock.patch.object(gr, "HISTORY_FILE", os.path.join(self.results, "history.json")),
+            mock.patch.object(gr, "PUBLIC_REGISTRY_FILE", self.registry_path),
+        )
+        for patcher in self.patches:
+            patcher.start()
+        with open(os.path.join(self.output, f"picks_{self.date}.json"), "w", encoding="utf-8") as handle:
+            json.dump({"picks": [], "shadow_tracking": []}, handle)
+        row = prop(stat="pitcher_outs", needs=16, game_pk=823584, game_start=T_START)
+        registry = default_registry()
+        manifest = build_publication_manifest(
+            payload([row]), default_live_state(), registry, "sha", T_BEFORE_START,
+        )
+        confirm_publication(registry, manifest, T_BEFORE_START, {"source_commit": "sha"})
+        write_registry(self.registry_path, registry)
+        self.row_id = row["id"]
+
+    def tearDown(self):
+        for patcher in reversed(self.patches):
+            patcher.stop()
+        self.tmp.cleanup()
+
+    def grade(self, feed, grade_public_pick_result):
+        with mock.patch.object(
+                gr, "fetch_game_contexts",
+                return_value={823584: {"status": FINAL_STATUS, "feed": feed}}), \
+             mock.patch.object(gr, "grade_public_pick", return_value=grade_public_pick_result):
+            self.assertTrue(gr.grade_day(self.date))
+        with open(os.path.join(self.results, f"grades_{self.date}.json"), encoding="utf-8") as handle:
+            payload_out = json.load(handle)
+        by_id = {row["id"]: row for row in payload_out["public_top_picks"]}
+        return by_id[self.row_id]
+
+    def test_hit_without_commencement_evidence_downgrades_to_ungraded(self):
+        result = self.grade(
+            PREGAME_ADVISORY_FEED,
+            {"grade": "hit", "settlement_state": "hit", "actual": 5},
+        )
+        self.assertEqual(result["settlement_state"], "ungraded")
+        self.assertEqual(result["settlement_authority"], "none")
+
+    def test_miss_without_commencement_evidence_downgrades_to_ungraded(self):
+        result = self.grade(
+            {},
+            {"grade": "miss", "settlement_state": "miss", "actual": 0},
+        )
+        self.assertEqual(result["settlement_state"], "ungraded")
+
+    def test_hit_with_commencement_evidence_is_preserved(self):
+        result = self.grade(
+            REAL_PITCH_FEED,
+            {"grade": "hit", "settlement_state": "hit", "actual": 5},
+        )
+        self.assertEqual(result["settlement_state"], "hit")
+        self.assertEqual(result["settlement_authority"], "official_final")
+
+    def test_void_without_commencement_evidence_is_unaffected(self):
+        result = self.grade(
+            PREGAME_ADVISORY_FEED,
+            {"grade": "void", "settlement_state": "void",
+             "reason": "listed_pitcher_did_not_start"},
+        )
+        self.assertEqual(result["settlement_state"], "void")
 
 
 if __name__ == "__main__":

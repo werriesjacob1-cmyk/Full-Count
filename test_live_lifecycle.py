@@ -176,7 +176,9 @@ class LiveSettlementTests(TempLifecycle):
             "result_actual": 1, "result_reason": "initial scoring",
         }, T1, channel="grades")
         self.seed(row, live)
-        with mock.patch.object(gr, "fetch_game_contexts", return_value={1: {"status": FINAL, "feed": {}}}), \
+        with mock.patch.object(gr, "fetch_game_contexts",
+                                return_value={1: {"status": FINAL,
+                                                   "feed": {"liveData": {"plays": PITCH_THROWN_PLAYS}}}}), \
              mock.patch.object(gr, "grade_public_pick", return_value={
                  "grade": "miss", "settlement_state": "miss", "actual": 0,
                  "reason": "official scoring correction",
