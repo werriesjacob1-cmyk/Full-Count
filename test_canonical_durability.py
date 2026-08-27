@@ -237,6 +237,41 @@ def main():
               (idx.get("environment") or {}).get("environment_fingerprint"),
               env_id["environment_fingerprint"])
         check("source lineage recorded", len(idx.get("source_lineage") or []), 1)
+        check("lineage is honestly partial unless explicitly completed",
+              idx.get("source_lineage_status"), "partial")
+        try:
+            cd.assert_certifiable_source_lineage(idx)
+            bad("partial lineage accepted as certifiable")
+        except cd.DurableIntegrityError:
+            ok("partial lineage cannot be mistaken for canonical certification")
+
+        complete_idx = cd.build_durable_index(
+            manifest, {"ok": 5, "no_games": 1},
+            environment=env_id, lineage=lineage, lineage_complete=True,
+            cache_mode=cd.CACHE_MODE_FROZEN,
+            dates=idx.get("dates") or {})
+        cert = cd.assert_certifiable_source_lineage(complete_idx)
+        check("explicit complete strong lineage is certifiable",
+              cert["certifiable"], True)
+
+        weak_complete = json.loads(json.dumps(complete_idx))
+        weak_complete["source_lineage"][0]["content_sha256"] = None
+        weak_complete["source_lineage_fingerprint"] = cd.lineage_fingerprint(
+            weak_complete["source_lineage"])
+        try:
+            cd.assert_certifiable_source_lineage(weak_complete)
+            bad("complete flag accepted a lineage record with no content checksum")
+        except cd.DurableIntegrityError:
+            ok("complete lineage still requires strong per-source evidence")
+
+        tampered_lineage = json.loads(json.dumps(complete_idx))
+        tampered_lineage["source_lineage"][0]["row_count"] += 1
+        try:
+            cd.assert_certifiable_source_lineage(tampered_lineage)
+            bad("tampered lineage records accepted with stale fingerprint")
+        except cd.DurableIntegrityError:
+            ok("lineage fingerprint mismatch fails certification")
+
         check("cache mode recorded", idx.get("cache_mode"), cd.CACHE_MODE_FROZEN)
 
         # ══ 10. Adversarial: every incompatibility must FAIL CLOSED.
