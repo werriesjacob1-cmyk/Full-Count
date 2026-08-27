@@ -1,0 +1,20 @@
+{
+  "code_git_sha": "2ce95fe903526c62640d23659d84d37bbaf1d6d2",
+  "date": "2025-02-24",
+  "elapsed_seconds": 57.3,
+  "extra": {
+    "candidates": 300,
+    "games": 15,
+    "imported_from": "legacy_rows_backfill_v2",
+    "ungraded": 282,
+    "ungraded_reasons": {
+      "game not final yet (status: Cancelled)": 92,
+      "missing game_pk/player_id": 28,
+      "no predicted_prob (pipeline could not price this candidate)": 162
+    }
+  },
+  "row_count": 18,
+  "sha256": "6ea2de4f9ab73cf35546006bd00a1e4209b9dd1aa6fda77f8ead148935e26559",
+  "status": "ok",
+  "written_at": "2026-08-27T03:35:14.171752+00:00"
+}
