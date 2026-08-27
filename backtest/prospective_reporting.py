@@ -19,7 +19,294 @@ ONE full day is a small sample of a season.
 """
 from __future__ import annotations
 
-from collections import defaultdict
+from collections import Counter, defaultdict
+from datetime import datetime, timezone
+import hashlib
+import json
+
+try:
+    from backtest import candidate_funnel_logger as cfl
+except ImportError:  # direct script/test execution with backtest/ on sys.path
+    import candidate_funnel_logger as cfl
+
+
+class ProspectiveIntegrityError(RuntimeError):
+    """Point-in-time research evidence is missing, inconsistent, or ambiguous."""
+
+
+def _parse_iso(ts):
+    if not ts:
+        return None
+    try:
+        dt = datetime.fromisoformat(str(ts).replace("Z", "+00:00"))
+    except (TypeError, ValueError):
+        return None
+    if dt.tzinfo is None:
+        dt = dt.replace(tzinfo=timezone.utc)
+    return dt
+
+
+def resolve_snapshot(changelog_records, snapshot_manifest):
+    """Reconstruct the EXACT candidate universe named by one observation.
+
+    Snapshot manifests store candidate_id -> content_hash rather than repeating
+    every full candidate payload. This resolver fails closed if any referenced
+    historical candidate state is missing or if the universe fingerprint does
+    not reproduce exactly.
+    """
+    entries = snapshot_manifest.get("candidate_hashes") or []
+    expected_n = snapshot_manifest.get("n_candidates")
+    if expected_n != len(entries):
+        raise ProspectiveIntegrityError(
+            f"snapshot n_candidates={expected_n} but contains {len(entries)} hash entries")
+
+    ids = [e.get("candidate_id") for e in entries]
+    if None in ids or len(ids) != len(set(ids)):
+        raise ProspectiveIntegrityError(
+            "snapshot candidate identities are missing or duplicated")
+
+    canonical_entries = sorted(
+        (
+            {"candidate_id": e["candidate_id"], "content_hash": e.get("content_hash")}
+            for e in entries
+        ),
+        key=lambda x: x["candidate_id"],
+    )
+    expected_fp = hashlib.sha256(
+        json.dumps(
+            canonical_entries, sort_keys=True, separators=(",", ":")
+        ).encode("utf-8")
+    ).hexdigest()
+    if snapshot_manifest.get("candidate_universe_fingerprint") != expected_fp:
+        raise ProspectiveIntegrityError(
+            "snapshot candidate-universe fingerprint does not match its hash ledger")
+
+    by_key = {}
+    for record in changelog_records:
+        cid = (record.get("identity") or {}).get("candidate_id")
+        if cid is None:
+            continue
+        h = cfl.content_hash(record)
+        key = (cid, h)
+        if key in by_key and by_key[key] != record:
+            raise ProspectiveIntegrityError(
+                f"ambiguous changelog state for {cid} at content hash {h}")
+        by_key[key] = record
+
+    resolved = []
+    for entry in canonical_entries:
+        key = (entry["candidate_id"], entry.get("content_hash"))
+        record = by_key.get(key)
+        if record is None:
+            raise ProspectiveIntegrityError(
+                f"snapshot references missing candidate state {key[0]} @ {key[1]}")
+        resolved.append(record)
+    return resolved
+
+
+def _operational_eligibility_reason(record, *, observed_at=None):
+    """None means legitimately usable at this prospective observation."""
+    identity = record.get("identity") or {}
+    prediction = record.get("prediction") or {}
+    market = record.get("market") or {}
+    decision = record.get("decision") or {}
+
+    if decision.get("quality_control_status") != "confirmed_lineup":
+        return "quality_control_not_confirmed"
+    if prediction.get("hit_probability") is None:
+        return "no_model_probability"
+    if market.get("market_fetch_state") != "MATCHED":
+        return "market_not_matched"
+    if market.get("market_odds") is None:
+        return "no_posted_odds"
+
+    observed = _parse_iso(observed_at)
+    start = _parse_iso(identity.get("game_start"))
+    if observed is not None:
+        if start is None:
+            return "game_start_unknown"
+        if start <= observed:
+            return "game_already_started"
+
+    if not identity.get("candidate_id"):
+        return "candidate_identity_missing"
+    return None
+
+
+def operationally_eligible(records, *, observed_at=None):
+    """Return the point-in-time candidate population a bettor could use."""
+    return [
+        r for r in records
+        if _operational_eligibility_reason(r, observed_at=observed_at) is None
+    ]
+
+
+def _ranking_value(record, field):
+    locations = {
+        "hit_probability": ("prediction", "hit_probability"),
+        "edge_vs_fair": ("market", "edge_vs_fair"),
+        "score": ("evidence", "score"),
+    }
+    if field not in locations:
+        raise ValueError(
+            f"unsupported challenger ranking {field!r}; choose one of {sorted(locations)}")
+    section, key = locations[field]
+    return (record.get(section) or {}).get(key)
+
+
+def _selection_stats(records, outcomes_by_id):
+    hits = misses = 0
+    unresolved = []
+    for record in records:
+        cid = record["identity"]["candidate_id"]
+        outcome = outcomes_by_id.get(cid)
+        grade = outcome.get("grade") if outcome else None
+        if grade == "hit":
+            hits += 1
+        elif grade == "miss":
+            misses += 1
+        else:
+            unresolved.append(cid)
+    n = len(records)
+    graded = hits + misses
+    return {
+        "selected": n,
+        "graded": graded,
+        "hits": hits,
+        "misses": misses,
+        "unresolved_candidate_ids": unresolved,
+        "hit_rate": _rate(hits, graded),
+        "fully_settled": graded == n,
+    }
+
+
+def _selection_shape(records):
+    markets = Counter()
+    games = set()
+    players = set()
+    for record in records:
+        identity = record.get("identity") or {}
+        markets[identity.get("stat")] += 1
+        games.add(identity.get("game_pk"))
+        player_key = identity.get("combo_player_ids") or identity.get("player_id")
+        players.add(json.dumps(player_key, sort_keys=True, default=str))
+    games.discard(None)
+    return {
+        "market_mix": dict(markets),
+        "unique_games": len(games),
+        "unique_player_entities": len(players),
+    }
+
+
+def equal_volume_selector_comparison(records, outcomes, *, challenger_ranking,
+                                     observed_at=None):
+    """Champion vs one PREDECLARED challenger at the champion's exact volume.
+
+    This is a per-observation measurement primitive, not a promotion verdict.
+    It refuses to lower volume, silently lose unsettled picks, or let a public
+    Top Pick survive outside the same operational population offered to the
+    challenger.
+    """
+    eligible = operationally_eligible(records, observed_at=observed_at)
+    eligible_ids = {
+        (r.get("identity") or {}).get("candidate_id") for r in eligible
+    }
+
+    champion = [
+        r for r in records
+        if (r.get("decision") or {}).get("recommendation_status") == "top_pick"
+    ]
+    invalid_champion = [
+        (r.get("identity") or {}).get("candidate_id")
+        for r in champion
+        if (r.get("identity") or {}).get("candidate_id") not in eligible_ids
+    ]
+    if invalid_champion:
+        raise ProspectiveIntegrityError(
+            "champion Top Picks fall outside the legitimate operational "
+            f"population: {invalid_champion}")
+
+    k = len(champion)
+    if k == 0:
+        return {
+            "comparison_status": "NO_CHAMPION_VOLUME",
+            "challenger_ranking": challenger_ranking,
+            "eligible_population": len(eligible),
+            "selection_volume": 0,
+        }
+
+    rankable = [
+        r for r in eligible
+        if _ranking_value(r, challenger_ranking) is not None
+    ]
+    if len(rankable) < k:
+        raise ProspectiveIntegrityError(
+            f"challenger has only {len(rankable)} rankable eligible candidates "
+            f"for champion volume {k}; equal-volume comparison is impossible")
+
+    challenger = sorted(
+        rankable,
+        key=lambda r: (
+            -float(_ranking_value(r, challenger_ranking)),
+            (r.get("identity") or {}).get("candidate_id") or "",
+        ),
+    )[:k]
+
+    outcomes_by_id = {
+        o.get("candidate_id"): o for o in outcomes if o.get("candidate_id")
+    }
+    champ_ids = {
+        r["identity"]["candidate_id"] for r in champion
+    }
+    challenger_ids = {
+        r["identity"]["candidate_id"] for r in challenger
+    }
+    overlap = champ_ids & challenger_ids
+    added = challenger_ids - champ_ids
+    removed = champ_ids - challenger_ids
+
+    champion_stats = _selection_stats(champion, outcomes_by_id)
+    challenger_stats = _selection_stats(challenger, outcomes_by_id)
+    complete = (
+        champion_stats["fully_settled"] and challenger_stats["fully_settled"]
+    )
+
+    return {
+        "comparison_status": (
+            "COMPLETE" if complete else "INCOMPLETE_SETTLEMENT"
+        ),
+        "challenger_ranking": challenger_ranking,
+        "eligible_population": len(eligible),
+        "selection_volume": k,
+        "champion_candidate_ids": sorted(champ_ids),
+        "challenger_candidate_ids": sorted(challenger_ids),
+        "overlap_count": len(overlap),
+        "overlap_candidate_ids": sorted(overlap),
+        "added_candidate_ids": sorted(added),
+        "removed_candidate_ids": sorted(removed),
+        "champion": {
+            **champion_stats,
+            **_selection_shape(champion),
+        },
+        "challenger": {
+            **challenger_stats,
+            **_selection_shape(challenger),
+        },
+        "realized_hit_rate_delta": (
+            round(
+                challenger_stats["hit_rate"] - champion_stats["hit_rate"], 4
+            )
+            if complete else None
+        ),
+        "added": _selection_stats(
+            [r for r in challenger if r["identity"]["candidate_id"] in added],
+            outcomes_by_id,
+        ),
+        "removed": _selection_stats(
+            [r for r in champion if r["identity"]["candidate_id"] in removed],
+            outcomes_by_id,
+        ),
+    }
 
 
 def _rate(hits, n):
