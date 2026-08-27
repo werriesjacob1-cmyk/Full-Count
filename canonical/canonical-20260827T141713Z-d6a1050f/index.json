@@ -1,0 +1,73 @@
+{
+  "cache_mode": "frozen_cache",
+  "dates": {
+    "2024-04-01": {
+      "data_bytes": 1215822,
+      "data_sha256": "056fd5584cdb911ba0b94cd5920324ec30fe740a3b315fc0aab907973c667483",
+      "meta_sha256": "8dcc032dd59f2c05981718829ab81e42f2bc9e11df6c01b58caca9abe1614b8b",
+      "rows": 1537,
+      "status": "ok"
+    },
+    "2024-04-02": {
+      "data_bytes": 1170361,
+      "data_sha256": "313abf8f50355d1ca565fd30045c9faebca08d0847a686cc328a43eb6128a97b",
+      "meta_sha256": "d14580241664c878c1e631eefd3e23a9f24929d61c0503ae1f5734700f768170",
+      "rows": 1436,
+      "status": "ok"
+    }
+  },
+  "durability_schema_version": 1,
+  "environment": {
+    "critical_packages": {
+      "numpy": "2.4.6",
+      "pandas": "3.0.5",
+      "pyarrow": "25.0.1",
+      "pybaseball": "2.2.7",
+      "python-dateutil": "2.9.0.post0",
+      "pytz": null,
+      "requests": "2.34.2",
+      "scikit-learn": "1.9.0",
+      "scipy": "1.17.1"
+    },
+    "environment_fingerprint": "fce26ddc5e58aa1682a7f887f42cbedc75df5d8d119a3f311313d5e32e365d17",
+    "machine": "x86_64",
+    "pip_freeze_package_count": 84,
+    "pip_freeze_sha256": "59017de33ccdc7132d0c39e3a7dc1a83c33e8b63b922c1274a74e072d5612f36",
+    "platform": "Linux-6.18.44-fc-v21-x86_64-with-glibc2.39",
+    "python_implementation": "CPython",
+    "python_version": "3.11.15",
+    "recorded_at": "2026-08-27T14:17:16.436069+00:00"
+  },
+  "identity": {
+    "candidate_identity_fields": [
+      "date",
+      "game_pk",
+      "player_id",
+      "prop_type",
+      "line"
+    ],
+    "code_git_sha": "68b663a38a1fa1ba8d3cd96a88613ce1e73483c6",
+    "evidence_regime": "canonical_historical_model_data",
+    "model_artifact_versions": {
+      "calibration_version": "1.0.0",
+      "feature_version": "1.0.0",
+      "model_version": "2026.08.15",
+      "selection_policy_version": "1.0.0"
+    },
+    "repository_identity": "werriesjacob1-cmyk/Full-Count",
+    "requested_end_date": "2026-08-25",
+    "requested_start_date": "2024-04-01",
+    "run_id": "canonical-20260827T141713Z-d6a1050f",
+    "schema_version": 1,
+    "weather_mode": "no_weather"
+  },
+  "identity_fingerprint": "7eb79fe334f291e56c5030e5ce64cf854586aa59aa7d6aa8fd090afe0100be41",
+  "run_id": "canonical-20260827T141713Z-d6a1050f",
+  "source_lineage": [],
+  "source_lineage_fingerprint": null,
+  "summary": {
+    "never_run": 875,
+    "ok": 2
+  },
+  "updated_at": "2026-08-27T14:32:27.993800+00:00"
+}
