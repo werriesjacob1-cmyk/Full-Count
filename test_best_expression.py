@@ -90,6 +90,47 @@ class SuppressionTests(unittest.TestCase):
         order = be.best_expression_rank_fn(SCORE)(population)
         self.assertEqual(len(order[:3]), 3)
 
+    def test_strict_mode_fails_instead_of_re_admitting_redundant_expression(self):
+        rows = [row("2024-05-01", 10, 1, p, 0, 100 - i)
+                for i, p in enumerate(
+                    ["hits", "total_bases", "hits_runs_rbis", "home_run"])]
+        population = pop_from(rows)
+        with self.assertRaises(be.StrictRefillViolation) as cm:
+            be.best_expression_rank_fn(
+                SCORE,
+                strict_volume_by_date={"2024-05-01": 2},
+            )(population)
+        self.assertIn("cannot fill locked same-slate volume", str(cm.exception))
+
+    def test_strict_mode_succeeds_when_same_slate_has_independent_refill(self):
+        rows = [
+            row("2024-05-01", 10, 1, "hits", 0, 100),
+            row("2024-05-01", 10, 1, "total_bases", 0, 99),
+            row("2024-05-01", 11, 2, "hits", 1, 50),
+            row("2024-05-01", 12, 3, "hits", 1, 40),
+        ]
+        population = pop_from(rows)
+        fn = be.best_expression_rank_fn(
+            SCORE,
+            strict_volume_by_date={"2024-05-01": 3},
+        )
+        top3 = fn(population)[:3]
+        self.assertEqual(
+            len({be.thesis_identity(population.row(i)) for i in top3}), 3)
+
+    def test_strict_schedule_must_cover_every_eligible_date(self):
+        rows = [
+            row("2024-05-01", 10, 1, "hits", 1, 100),
+            row("2024-05-02", 20, 2, "hits", 1, 90),
+        ]
+        population = pop_from(rows)
+        with self.assertRaises(be.StrictRefillViolation) as cm:
+            be.best_expression_rank_fn(
+                SCORE,
+                strict_volume_by_date={"2024-05-01": 1},
+            )(population)
+        self.assertIn("exact eligible date set", str(cm.exception))
+
     def test_max_per_thesis_greater_than_one_is_honoured(self):
         rows = [row("2024-05-01", 10, 1, p, 0, 100 - i)
                 for i, p in enumerate(["hits", "total_bases", "hits_runs_rbis"])]
@@ -146,6 +187,36 @@ class EqualVolumeIntegrationTests(unittest.TestCase):
         a = rep["selection_anatomy"]
         self.assertEqual(a["overlap_n"] + a["added"]["n"], 3)
         self.assertEqual(a["overlap_n"] + a["removed"]["n"], 3)
+
+    def test_strict_best_expression_integrates_with_locked_per_date_volume(self):
+        rows = [
+            row("2024-05-01", 10, 1, "hits", 0, 100),
+            row("2024-05-01", 10, 1, "total_bases", 0, 99),
+            row("2024-05-01", 11, 2, "hits", 1, 50),
+            row("2024-05-02", 20, 3, "hits", 1, 100),
+            row("2024-05-02", 20, 3, "total_bases", 0, 99),
+            row("2024-05-02", 21, 4, "hits", 1, 50),
+        ]
+        population = pop_from(rows)
+        schedule = {"2024-05-01": 2, "2024-05-02": 2}
+        champ = ev.SelectionPolicy("champion_score", "1.0", ev.rank_by(SCORE))
+        chal = ev.SelectionPolicy(
+            "best_expression_strict", "1.0",
+            be.best_expression_rank_fn(
+                SCORE, strict_volume_by_date=schedule))
+        rep = ev.EqualVolumeExperiment(
+            population=population, champion=champ, challenger=chal,
+            volume=4, volume_by_date=schedule).run()
+
+        self.assertEqual(rep["challenger"]["selected_by_date"], schedule)
+        for d in schedule:
+            selected = [
+                ident for ident in chal.rank(population)
+                if population.row(ident)["date"] == d
+            ][:schedule[d]]
+            self.assertEqual(
+                len({be.thesis_identity(population.row(i)) for i in selected}),
+                schedule[d])
 
     def test_challenger_is_more_diversified_than_champion_here(self):
         population = self._population()
