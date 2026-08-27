@@ -298,27 +298,40 @@ class EqualVolumeExperiment:
         self.cluster_field = cluster_field
         self.preregistered = preregistered
         self.notes = notes or ""
+        self.verified_dataset_identity = None
 
         if promotion_grade:
             self._assert_promotion_grade_dataset()
 
     def _assert_promotion_grade_dataset(self):
-        """Promotion-grade evidence requires a dataset whose identity can
-        actually be proven -- delegated to accuracy_lab so the rule has
-        exactly one definition (see WeakDatasetIdentityError there)."""
+        """Promotion-grade evidence must be verified against the real artifact.
+
+        A checksum-shaped dict is not proof. Accuracy Lab owns the dataset-lock
+        contract, so promotion mode delegates to its verifier, which reloads the
+        named manifest and recomputes identity from the artifact on disk.
+        Exploratory experiments keep the existing permissive behavior.
+        """
         ident = self.population.dataset_identity
         if not ident:
             raise EqualVolumeViolation(
                 "promotion_grade=True requires a dataset_identity on the eligible "
                 "population; an unidentified dataset cannot back a promotion claim")
-        missing = [k for k in ("artifact_sha256", "artifact_row_count")
-                   if not ident.get(k)]
-        if missing:
+
+        import accuracy_lab as _accuracy_lab
+        try:
+            self.verified_dataset_identity = (
+                _accuracy_lab.verify_promotion_grade_dataset_identity(ident)
+            )
+        except (
+            _accuracy_lab.WeakDatasetIdentityError,
+            _accuracy_lab.IncompatibleDatasetError,
+            OSError,
+            ValueError,
+            KeyError,
+        ) as exc:
             raise EqualVolumeViolation(
-                f"promotion_grade=True requires strong dataset identity; missing "
-                f"{missing}. Lock a schema-v2-or-later Accuracy Lab manifest against "
-                f"the artifact and pass its identity fields here "
-                f"(see accuracy_lab.assert_promotion_grade_manifest).")
+                "promotion_grade=True requires dataset identity verified against "
+                f"the real Accuracy Lab manifest and artifact: {exc}") from exc
 
     # ── selection ──────────────────────────────────────────────────────
 
@@ -597,6 +610,7 @@ class EqualVolumeExperiment:
                 "post_outcome_population_filtering": False,
                 "duplicate_candidate_identities": 0,
                 "dataset_identity": self.population.dataset_identity,
+                "verified_dataset_identity": self.verified_dataset_identity,
                 "evidence_regime": self.population.evidence_regime,
                 "eligibility_definition_version": self.population.definition_version,
             },
@@ -611,6 +625,11 @@ class EqualVolumeExperiment:
         }
         report["experiment_manifest_id"] = _sha({
             "population": self.population.fingerprint,
+            "dataset_identity": (
+                self.verified_dataset_identity
+                if self.verified_dataset_identity is not None
+                else self.population.dataset_identity
+            ),
             "champion": self.champion.identity(),
             "challenger": self.challenger.identity(),
             "volume": self.volume,
