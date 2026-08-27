@@ -666,9 +666,24 @@ def push_durable_checkpoint(run_dir, manifest, *, dates=None, environment=None,
         with open(os.path.join(run_dir, "manifest.json"), "rb") as f:
             stage_blob(dp["manifest"], f.read())
 
+        # ACCUMULATE lineage; never overwrite it. Read whatever is already
+        # bound on the branch and merge this invocation's records into it. A
+        # conflicting fingerprint for one request identity raises here, before
+        # anything is pushed, leaving the bound record intact.
+        prior_lineage = []
+        if parent:
+            prior_raw = _read_durable_blob(dp["index"], ref=parent, repo_root=repo_root)
+            if prior_raw:
+                try:
+                    prior_lineage = bound_source_records(json.loads(prior_raw))
+                except json.JSONDecodeError:
+                    result["reason"] = f"existing durable index {dp['index']!r} is not valid JSON"
+                    return result
+        merged_lineage = merge_lineage(prior_lineage, lineage)
+
         index = build_durable_index(
             manifest, state_summary or {}, environment=environment,
-            lineage=lineage, cache_mode=cache_mode,
+            lineage=merged_lineage, cache_mode=cache_mode,
             dates=durable_date_ledger(run_dir, dates),
         )
         stage_blob(dp["index"], json.dumps(index, indent=2, sort_keys=True).encode())
@@ -932,3 +947,242 @@ def restore_from_durable(run_dir, run_id, *, branch=DURABLE_BRANCH, remote="orig
         report["restored"].append(d)
 
     return report
+
+
+# ══════════════════════════════════════════════════════════════════════════
+#  SOURCE IDENTITY  (2026-08-27, after a proven near-miss)
+# ══════════════════════════════════════════════════════════════════════════
+#
+# WHAT WENT WRONG
+# ---------------
+# Run canonical-20260827T141713Z-d6a1050f generated 40 dates from
+#   <worktree>/backtest/.cache/statcast_2024_through_2026-08-24.parquet
+#   23,729,742 bytes | 2,151,381 rows | sha256 549a0806...
+# The container was reclaimed and that file died with the worktree. A
+# DIFFERENT cache survived elsewhere on the box:
+#   statcast_2024_through_2026-08-25.parquet
+#   23,778,505 bytes | 2,155,937 rows | sha256 3523a0cc...
+#
+# StatcastStore.load() accepts any cache whose `through` covers the request,
+# so the survivor would have been silently accepted. It also PASSES
+# validate_statcast_cache(), because that function proves a cache is USABLE --
+# correct schema, plausible coverage, non-empty -- and never that it is THE
+# SAME ONE. A resume would have produced 40 dates on vintage A and 837 on
+# vintage B under one run id, undetected: row checksums cover outputs, and run
+# identity covers code, neither covers inputs.
+#
+# THE FIVE CONCEPTS, KEPT SEPARATE
+# --------------------------------
+#   1. OUTPUT DURABILITY      rows survive           (already solved)
+#   2. SOURCE IDENTITY        we know WHICH bytes    (this section)
+#   3. SOURCE BYTE DURABILITY the bytes still exist  (config, below)
+#   4. REGIME IDENTITY        code+env+source bound  (this section)
+#   5. CANONICAL CERTIFICATION a separate verdict    (fc-canonical-certify)
+#
+# A checksum proves the identity of an artifact you HAVE. It does not make an
+# upstream source immutable, and it does not keep the bytes alive. Both matter,
+# so this section does both: it binds identity (2, 4) and it requires the cache
+# to live somewhere that survives worktree loss (3).
+
+class SourceConfigError(Exception):
+    """Canonical source-cache configuration is absent or ambiguous."""
+
+
+class SourceVintageMismatch(Exception):
+    """The source artifact present now is not the one this run was built on."""
+
+
+class SourceLineageConflict(Exception):
+    """A second, conflicting fingerprint was offered for one request identity."""
+
+
+# Explicit, auditable configuration. Canonical generation must state where its
+# source cache lives; it may not inherit whatever happens to be next to the
+# code, because that is inside an ephemeral worktree.
+CANONICAL_SOURCE_CACHE_ENV = "FC_CANONICAL_SOURCE_CACHE"
+DEFAULT_CANONICAL_SOURCE_CACHE = "/root/.fc-statcast-cache"
+
+
+def resolve_canonical_source_cache(*, canonical=True, repo_root=REPO_ROOT,
+                                   explicit=None):
+    """Where the canonical Statcast cache lives. Fails closed when canonical.
+
+    Non-canonical development is untouched: pass canonical=False and the
+    ordinary BACKTEST_CACHE / in-tree default applies. The strict contract is
+    only for canonical generation, because only canonical generation makes a
+    claim that has to survive.
+
+    Canonical mode requires a directory that is NOT inside a git worktree.
+    That single rule is what would have prevented the 2026-08-27 near-miss:
+    the cache died because it sat at <worktree>/backtest/.cache.
+    """
+    if not canonical:
+        return os.environ.get(
+            "BACKTEST_CACHE",
+            os.path.join(repo_root, "backtest", ".cache"))
+
+    path = explicit or os.environ.get(CANONICAL_SOURCE_CACHE_ENV) \
+        or DEFAULT_CANONICAL_SOURCE_CACHE
+    path = os.path.abspath(path)
+
+    # Refuse anything inside a worktree -- including this repo and any sibling
+    # checkout -- since that is precisely the storage that does not survive.
+    probe = subprocess.run(["git", "rev-parse", "--show-toplevel"],
+                           cwd=path if os.path.isdir(path) else os.path.dirname(path) or "/",
+                           capture_output=True, text=True, timeout=10)
+    if probe.returncode == 0 and probe.stdout.strip():
+        raise SourceConfigError(
+            f"canonical source cache {path!r} is inside git worktree "
+            f"{probe.stdout.strip()!r}. A worktree does not survive container "
+            f"reclamation -- that is exactly how the 2026-08-27 vintage was lost. "
+            f"Set {CANONICAL_SOURCE_CACHE_ENV} to a durable path outside any checkout.")
+    os.makedirs(path, exist_ok=True)
+    return path
+
+
+def statcast_artifact_identity(path, *, expected_end=None):
+    """FULL identity of one Statcast parquet. No prefixes.
+
+    Returns the complete sha256 plus the supporting properties. The supporting
+    properties are diagnostics for a human reading a mismatch; the sha256 alone
+    decides identity. Filename, coverage, row count and schema are each
+    individually satisfiable by a different artifact -- the 2026-08-27 survivor
+    matched on all four categories and was a different file.
+    """
+    # Only require columns the store actually retains. REQUIRED_STATCAST_COLUMNS
+    # names player_name and hit_distance_sc, neither of which is in
+    # STATCAST_COLUMNS -- so validating against the full list marks EVERY real
+    # canonical artifact unusable. Identity (the sha256) is unaffected either
+    # way, but a certifier reading usable=False on a good artifact would be
+    # misled, which is its own defect.
+    required = REQUIRED_STATCAST_COLUMNS
+    try:
+        from backtest.engine import STATCAST_COLUMNS
+        required = [c for c in REQUIRED_STATCAST_COLUMNS if c in STATCAST_COLUMNS]
+    except ImportError:
+        pass
+    rep = validate_statcast_cache(path, expected_end=expected_end,
+                                  required_columns=required, strict=False)
+    return {
+        "path": path,
+        "exists": os.path.exists(path),
+        "content_sha256": rep.get("content_sha256"),      # FULL digest
+        "size_bytes": os.path.getsize(path) if os.path.exists(path) else None,
+        "row_count": rep.get("row_count"),
+        "schema_fingerprint": rep.get("schema_fingerprint"),
+        "min_date": rep.get("min_date"),
+        "max_date": rep.get("max_date"),
+        "retrieval_timestamp": rep.get("retrieval_timestamp"),
+        "usable": rep.get("usable"),
+        "problems": rep.get("problems"),
+    }
+
+
+def statcast_source_record(identity, *, year, through, cache_mode,
+                           library="pybaseball", library_version=None):
+    """A lineage record for one Statcast artifact, carrying the full digest."""
+    if not identity.get("content_sha256"):
+        raise SourceConfigError(
+            f"cannot build a source record for {identity.get('path')!r}: no content "
+            "hash. An unfingerprinted source may not back a canonical run.")
+    if library_version is None:
+        try:
+            from importlib import metadata as _md
+            library_version = _md.version(library)
+        except Exception:
+            library_version = None
+    return source_lineage_record(
+        "statcast_leaguewide",
+        request_identity=f"statcast:{year}:through={through}",
+        retrieval_timestamp=identity.get("retrieval_timestamp"),
+        library=library, library_version=library_version,
+        row_count=identity.get("row_count"),
+        content_sha256=identity["content_sha256"],
+        date_coverage=f"{identity.get('min_date')}..{identity.get('max_date')}",
+        cache_mode=cache_mode,
+        notes=f"size={identity.get('size_bytes')} path={identity.get('path')}",
+    )
+
+
+def merge_lineage(prior, new):
+    """Append-only lineage. A conflicting fingerprint is a HARD FAILURE.
+
+    The overwrite bug this replaces: build_durable_index() took whatever
+    lineage the caller passed and wrote it over the field. A resume on a
+    different source vintage therefore REPLACED vintage A's record with
+    vintage B's -- erasing the evidence of the substitution instead of
+    exposing it. Lineage is a history, not a current-value field.
+
+    Two records for one request_identity with different content_sha256 means
+    the upstream artifact changed under a single run. That is the exact
+    corruption we are preventing, so it raises rather than resolving.
+    """
+    prior = list(prior or [])
+    by_request = {}
+    for r in prior:
+        by_request.setdefault(r.get("request_identity"), r)
+
+    merged = list(prior)
+    for r in (new or []):
+        req = r.get("request_identity")
+        seen = by_request.get(req)
+        if seen is None:
+            merged.append(r)
+            by_request[req] = r
+            continue
+        if seen.get("content_sha256") != r.get("content_sha256"):
+            raise SourceLineageConflict(
+                f"source lineage conflict for {req!r}:\n"
+                f"  already bound : {seen.get('content_sha256')}\n"
+                f"  now offered   : {r.get('content_sha256')}\n"
+                "The upstream artifact changed under a single run id. The bound "
+                "record is left intact and untouched; nothing was overwritten. "
+                "Start a NEW run id rather than mixing source vintages.")
+        # Identical fingerprint: nothing new to record.
+    return merged
+
+
+def bound_source_records(index):
+    """The lineage already bound on the durable index (possibly empty)."""
+    return list((index or {}).get("source_lineage") or [])
+
+
+def assert_source_identity(index, current_records):
+    """Fail closed unless every currently-observed source matches what is bound.
+
+    This is the check that did not exist. Row checksums verify OUTPUTS; run
+    identity verifies CODE; this verifies INPUTS. Without it, a resume can
+    change the upstream vintage and every other gate still passes.
+
+    A source present now but not bound is fine (a run may legitimately reach a
+    source later). A source bound but MISSING now, or bound with a different
+    digest, is fatal.
+    """
+    bound = {r.get("request_identity"): r for r in bound_source_records(index)}
+    if not bound:
+        return {"verified": True, "reason": "no source identity bound yet (first push)",
+                "compared": 0}
+
+    now = {r.get("request_identity"): r for r in (current_records or [])}
+    problems, compared = [], 0
+    for req, rec in bound.items():
+        cur = now.get(req)
+        if cur is None:
+            problems.append(
+                f"{req}: bound to {rec.get('content_sha256')} but that source is "
+                "not present in this invocation")
+            continue
+        compared += 1
+        if cur.get("content_sha256") != rec.get("content_sha256"):
+            problems.append(
+                f"{req}:\n      bound  {rec.get('content_sha256')}\n"
+                f"      actual {cur.get('content_sha256')}\n"
+                f"      (bound coverage {rec.get('date_coverage')} rows {rec.get('row_count')}; "
+                f"actual coverage {cur.get('date_coverage')} rows {cur.get('row_count')})")
+    if problems:
+        raise SourceVintageMismatch(
+            "refusing to generate: the source artifacts differ from those this run "
+            "was built on.\n  " + "\n  ".join(problems) +
+            "\nNo rows have been generated. Restore the exact bound source artifact, "
+            "or start a NEW run id. Do not mix source vintages under one run.")
+    return {"verified": True, "reason": "all bound sources matched", "compared": compared}

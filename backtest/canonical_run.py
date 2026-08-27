@@ -926,7 +926,7 @@ def run(run_dir, manifest, *, use_weather=True, use_bullpen=True,
        keep_unpriced=False, apply_policy=False, sleep=1.0, force=False,
        allow_sha_drift=False, verbose=True, store=None, heartbeat_every=5,
        max_dates=None, durability=None, environment=None, lineage=None,
-       cache_mode=None):
+       cache_mode=None, source_cache_dir=None, verify_source_identity=True):
     """The interruption-safe outer loop. Safe to call repeatedly (crash,
     restart, call again with the same run_dir/manifest) -- every call
     starts from load_run_state()'s ground truth, never in-memory belief.
@@ -960,9 +960,18 @@ def run(run_dir, manifest, *, use_weather=True, use_bullpen=True,
     if environment is None:
         environment = _cd.environment_identity()
 
+    source_records = []
+    _durable_index = None
+    if verify_source_identity:
+        try:
+            _durable_index = _cd.load_durable_index(manifest["run_id"])
+        except Exception:
+            _durable_index = None
+
     def _push_durable(final=False):
         res = _cd.push_durable_checkpoint(
-            run_dir, manifest, environment=environment, lineage=lineage,
+            run_dir, manifest, environment=environment,
+            lineage=(lineage or []) + source_records,
             cache_mode=cache_mode,
             state_summary=_status_counts(load_run_state(run_dir, requested_dates)))
         durability.note_pushed(res)
@@ -995,8 +1004,61 @@ def run(run_dir, manifest, *, use_weather=True, use_bullpen=True,
             return {"remaining": 0, "state": state}
 
         if store is None:
-            store = StatcastStore(dparse(remaining[0]).year, shift(remaining[-1], -1), verbose=verbose)
+            sc_year = dparse(remaining[0]).year
+            sc_through = shift(remaining[-1], -1)
+            store = StatcastStore(sc_year, sc_through, verbose=verbose,
+                                  **({"cache_dir": source_cache_dir} if source_cache_dir else {}))
+
+            # ── SOURCE IDENTITY GATE ────────────────────────────────────────
+            # Runs BEFORE store.load() and therefore before a single row is
+            # generated. Order matters: detecting a mixed vintage after 300
+            # dates is worthless, and repulling on a resume is how the vintage
+            # silently changes in the first place.
+            # A store with no real on-disk artifact (an injected test double,
+            # or any future in-memory store) has nothing to fingerprint. Skip
+            # the gate for it, but say so out loud rather than passing quietly:
+            # a silent skip here is exactly the false-success this whole
+            # mechanism exists to prevent.
+            _sc_path = store.path if isinstance(getattr(store, "path", None), str) else None
+            _sc_dir = store.cache_dir if isinstance(getattr(store, "cache_dir", None), str) else None
+            if verify_source_identity and _sc_path is None:
+                if verbose:
+                    print("    source identity SKIPPED: this store exposes no real artifact "
+                          "path; such a run cannot prove its source vintage", flush=True)
+
+            if verify_source_identity and _sc_path is not None:
+                bound = _cd.bound_source_records(_durable_index or {})
+                expected = os.path.join(_sc_dir or os.path.dirname(_sc_path),
+                                        os.path.basename(_sc_path))
+                if bound and not os.path.exists(expected):
+                    raise _cd.SourceVintageMismatch(
+                        f"this run is bound to a source artifact that is not present:\n"
+                        f"  expected {expected}\n"
+                        f"  bound    {[r.get('content_sha256') for r in bound]}\n"
+                        "Refusing to repull, because a fresh pull is a DIFFERENT vintage "
+                        "and would silently split this run across two source regimes. "
+                        "Restore the exact artifact, or start a NEW run id.")
+                if bound:
+                    ident = _cd.statcast_artifact_identity(expected, expected_end=sc_through)
+                    rec = _cd.statcast_source_record(
+                        ident, year=sc_year, through=sc_through,
+                        cache_mode=cache_mode or _cd.CACHE_MODE_FROZEN)
+                    _cd.assert_source_identity(_durable_index, [rec])
+                    if verbose:
+                        print(f"    source identity VERIFIED: {rec['content_sha256'][:16]}... "
+                              f"({ident['row_count']} rows, {ident['min_date']}..{ident['max_date']})",
+                              flush=True)
+
             store.load()
+
+            # Bind (or re-confirm) the source now that the artifact exists.
+            if verify_source_identity and isinstance(getattr(store, "path", None), str) \
+                    and os.path.exists(store.path):
+                ident = _cd.statcast_artifact_identity(store.path, expected_end=sc_through)
+                if ident.get("content_sha256"):
+                    source_records.append(_cd.statcast_source_record(
+                        ident, year=sc_year, through=sc_through,
+                        cache_mode=cache_mode or _cd.CACHE_MODE_FROZEN))
 
         for i, d in enumerate(remaining, 1):
             if verbose:
@@ -1042,6 +1104,7 @@ def run(run_dir, manifest, *, use_weather=True, use_bullpen=True,
 
 if __name__ == "__main__":
     import argparse
+    from backtest.canonical_durability import CANONICAL_SOURCE_CACHE_ENV as _SRC_ENV
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--start", required=True)
     ap.add_argument("--end", required=True)
@@ -1069,6 +1132,13 @@ if __name__ == "__main__":
                          "except a clone. Fails closed on any identity or checksum mismatch.")
     ap.add_argument("--cache-mode", choices=("fresh_source", "frozen_cache"), default="frozen_cache",
                     help="declare the pybaseball/Statcast source vintage this run used")
+    ap.add_argument("--source-cache", default=None,
+                    help="durable directory holding the canonical Statcast artifact. Must be "
+                         "OUTSIDE any git worktree: a worktree does not survive container "
+                         f"reclamation. Defaults to ${{{_SRC_ENV}}} or the standard durable path.")
+    ap.add_argument("--no-source-identity", action="store_true",
+                    help="skip source-identity binding/verification. NOT for canonical work -- "
+                         "a run started this way cannot prove its source vintage.")
     args = ap.parse_args()
 
     if args.run_id:
@@ -1082,6 +1152,8 @@ if __name__ == "__main__":
         os.makedirs(rd, exist_ok=True)
         mf = create_manifest(rd, identity)
         print(f"created run {mf['run_id']} at {rd}", flush=True)
+
+    from backtest import canonical_durability as _cd
 
     if args.assemble:
         summary = assemble(rd, mf)
@@ -1107,9 +1179,21 @@ if __name__ == "__main__":
             print("!! durable push DISABLED -- this run's progress will exist only in "
                   "this container and will not survive its reclamation", flush=True)
 
+        # Resolve the canonical source cache BEFORE anything else. Fails closed
+        # if it would land inside a worktree, which is how the 2026-08-27
+        # vintage was lost.
+        src_dir = None
+        if not args.no_source_identity:
+            src_dir = _cd.resolve_canonical_source_cache(explicit=args.source_cache)
+            print(f"canonical source cache: {src_dir}", flush=True)
+        else:
+            print("!! --no-source-identity: this run CANNOT prove its source vintage "
+                  "and must not be treated as canonical", flush=True)
+
         result = run(rd, mf, use_weather=not args.no_weather, use_bullpen=not args.no_bullpen,
                      sleep=args.sleep, force=args.force, allow_sha_drift=args.allow_sha_drift,
                      max_dates=args.max_dates, durability=policy,
-                     cache_mode=args.cache_mode)
+                     cache_mode=args.cache_mode, source_cache_dir=src_dir,
+                     verify_source_identity=not args.no_source_identity)
         print(f"invocation complete. {result['remaining']} dates still remaining.")
         print(f"durability: {json.dumps(result.get('durability'))}")
