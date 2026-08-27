@@ -449,6 +449,57 @@ promotion standard.
 - UNKNOWN: exact-SHA CI.
 - VERIFIED-REPO: source/test changes re-fetched and reviewed after commit.
 
+## Workstream 5 — Missing-outcome denominator integrity
+
+**Status:** SUPERCHAD-IMPLEMENTED / NOT YET RUNTIME-VERIFIED / NOT CI-VERIFIED
+
+### Pre-change defect
+
+VERIFIED-REPO: under `OUTCOME_EXCLUDE_PAIRWISE`, the framework formed the
+union of graded identities, removed every missing identity from whichever
+selection contained it, and then continued without rechecking effective
+denominator equality.
+
+If a missing-outcome candidate appeared only in the champion selection, the
+champion could finish with one fewer scored wager than the challenger despite
+the original selected N being equal. That violates the comparison contract.
+Outcome-aware refill would be an invalid repair because missingness is known
+only after selection.
+
+### Implementation
+
+1. `8f23affed1229ddf7fa1563e1fe3932ef25d1dc3`
+   - `backtest/equal_volume.py`
+   - computes the exact missing selected identity set independently for each arm
+   - `exclude_pairwise` now proceeds only if the two missing identity sets are
+     exactly equal
+   - otherwise fails closed and explicitly forbids outcome-aware refill
+   - symmetric common missing overlap may still be removed from both sides
+   - adds a final structural assertion that champion/challenger
+     `n_scored` are equal after outcome handling
+
+2. `5962e9223c977ede624362a47747ccf943a9fea3`
+   - `test_equal_volume.py`
+   - missing candidate selected only by one arm must fail
+   - equal missing **counts** with different missing identities must still fail
+   - the exact same missing overlap selected by both arms may be excluded
+     symmetrically and leaves equal scored denominators
+
+### Methodology note
+
+The safest promotion policy remains `OUTCOME_REQUIRED` when complete grading
+is available. This workstream does not encourage exclusion; it prevents the
+explicit exclusion mode from silently changing one side's denominator.
+
+No outcome-aware selection or refill was added.
+
+### Test / CI truth
+
+- SUPERCHAD-IMPLEMENTED: adversarial tests committed.
+- UNKNOWN: real-runtime execution.
+- UNKNOWN: exact-SHA CI.
+- VERIFIED-REPO: implementation/test source inspected after commit.
+
 ---
 
 # Claude independent review checklist
