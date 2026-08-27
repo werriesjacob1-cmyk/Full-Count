@@ -179,6 +179,48 @@ Additionally proven against **real GitHub**, not just a local bare repo: run
 `canonical-GITHUBPROOF-20260827` was pushed to `canonical-durable-checkpoints`,
 then discovered and fully restored in a throwaway clone.
 
+## Known limitations of this design
+
+Stated rather than left for someone to rediscover.
+
+### The loss bound does not cover Statcast warmup
+
+`DurabilityPolicy`'s "10 dates or 15 minutes" applies **only after warmup**. The
+one-time Statcast pull (2024-03-01..2026-08-24, ~2.15 M pitches, ~12 minutes)
+writes its parquet **only at the end**, so a container death during warmup loses
+the whole warmup. Bounded and modest, but not covered by the headline number.
+
+Not fixed here because the alternative — pushing the 23.7 MB parquet durably —
+buys ~12 minutes of protection at the cost of a large binary in git history, and
+the mission's instruction was to avoid building a data lake. `~/.pybaseball`
+(1.1 GB of HTTP cache) makes a re-pull faster than a cold one anyway.
+
+### `verify_no_lookahead()` is not exercised by CI
+
+It lives in `backtest/engine.py:1470` and is a real six-check proof — including a
+positive control, so it cannot pass trivially on an empty dataset. But **no
+`test_*.py` calls it**; it is referenced only in docstrings across four modules.
+It needs a live store, so it cannot sit in the deterministic suite without making
+CI network-dependent and flaky.
+
+Consequence: the leakage guarantee is real but **manually verified, not
+continuously verified**. Re-run it by hand after any change to
+`backtest/engine.py`, pointing at an already-warmed cache so it is cheap:
+
+```python
+store = StatcastStore(2024, "2024-06-01", cache_dir="<run>/backtest/.cache")
+store.load()
+ok, checks = verify_no_lookahead("2024-05-15", store)
+```
+
+### `hit_distance_sc` is never retained
+
+It is absent from `STATCAST_COLUMNS`, so the backtest store drops it. That is why
+runs log `⚠ Moonshot rates: Statcast is missing launch_speed/events/hit_distance_sc`.
+**Moonshot and distance-based rates are structurally degraded in the historical
+reconstruction.** Pre-existing; adding the column would change what the backtest
+produces, which is a science change and out of scope for a durability mission.
+
 ## Scientific caveat — do not overclaim
 
 The canonical historical dataset is **confirmed-starting-lineup historical
