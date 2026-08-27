@@ -165,6 +165,33 @@ conventions live in `.claude/rules/research.md`.
 
 ---
 
+## Enforcement reality — read before trusting the permission table
+
+`.claude/settings.json` is **correct as configuration and is not necessarily
+live**. Claude Code loads project settings from the **session's** project root.
+If a session is rooted somewhere else — a different worktree, the repository
+root on another branch — the settings here are inert for that session.
+
+Proven on 2026-08-27, not assumed: a fixture at `.claude/context/.env`, matching
+the deny glob `Read(**/.env)`, was read successfully; and the `PostToolUse`
+autosave hook's state directory held only entries from a manual invocation,
+with nothing from hours of qualifying tool calls.
+
+**Consequences, stated plainly:**
+
+- These rules become live once this branch's `.claude/` sits at the checked-out
+  project root, **in a fresh session**. Settings are not hot-reloaded mid-session.
+- Until then, the deny rules are a documented intent, not an active control.
+- Even when live, **`Read`/`Edit` deny rules do not constrain Bash subprocesses.**
+  `cat .env` from a shell is not blocked by any of this. The rules are a
+  guardrail against accidental reads by the file tools, never a security
+  boundary against shell access.
+
+`.claude/tests/test_superclaude_acceptance.sh` therefore reports enforcement as
+INFO and never as PASS.
+
+---
+
 ## Orphan check
 
 Every agent has a home above. Every skill maps to at least one agent. No skill
