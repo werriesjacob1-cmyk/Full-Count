@@ -115,7 +115,73 @@ class BuildFunnelRecordsTests(unittest.TestCase):
         self.assertEqual(record["identity"]["player_name"], "Yordan Alvarez")
         self.assertEqual(record["prediction"]["hit_probability"], 0.71)
         self.assertEqual(record["market"]["market_odds"], -130)
+        self.assertEqual(record["market"]["feed_family"], "batter_props")
         self.assertEqual(record["evidence"]["reliability"], "A")
+
+    def test_market_context_distinguishes_matched_failed_and_unmatched(self):
+        ctx = {
+            "book": "fanduel",
+            "observed_at": "2026-08-25T17:00:00Z",
+            "family_states": {
+                "batter_props": "AVAILABLE",
+                "pitcher_strikeouts": "FETCH_FAILED",
+            },
+        }
+        matched = cfl.build_funnel_records(
+            [candidate()], date="2026-08-25", market_context=ctx)[0]
+        self.assertEqual(matched["market"]["market_fetch_state"], "MATCHED")
+        self.assertEqual(matched["market"]["book"], "fanduel")
+        self.assertEqual(
+            matched["market"]["market_observed_at"], "2026-08-25T17:00:00Z")
+
+        unmatched = cfl.build_funnel_records(
+            [candidate(market_odds=None)], date="2026-08-25",
+            market_context=ctx)[0]
+        self.assertEqual(unmatched["market"]["market_fetch_state"], "NOT_MATCHED")
+
+        k = candidate(
+            market_odds=None,
+            projection={"stat": "strikeouts", "value": 5.5, "needs": 6})
+        failed = cfl.build_funnel_records(
+            [k], date="2026-08-25", market_context=ctx)[0]
+        self.assertEqual(failed["market"]["feed_family"], "pitcher_strikeouts")
+        self.assertEqual(failed["market"]["market_fetch_state"], "FETCH_FAILED")
+
+    def test_market_fair_semantics_and_model_versions_are_preserved(self):
+        c = candidate(
+            posted_implied=0.60, market_fair=0.56,
+            market_fair_method="assumed_hold", edge_vs_fair=0.15,
+            signal_weight_adjustment=2.5)
+        meta = {
+            "model_version": "m1", "selection_policy_version": "s1",
+            "calibration_version": "c1", "feature_version": "f1",
+            "prediction_timestamp": "2026-08-25T17:00:01Z",
+            "odds_fetched_at": "2026-08-25T17:00:00Z",
+            "board_generated_at": "2026-08-25T17:00:02Z",
+        }
+        record = cfl.build_funnel_records(
+            [c], date="2026-08-25", run_metadata=meta)[0]
+        self.assertEqual(record["market"]["market_fair_method"], "assumed_hold")
+        self.assertEqual(record["market"]["edge_vs_fair"], 0.15)
+        self.assertEqual(record["evidence"]["signal_weight_adjustment"], 2.5)
+        self.assertEqual(record["provenance"]["model_version"], "m1")
+        self.assertEqual(record["provenance"]["selection_policy_version"], "s1")
+
+    def test_gate_trace_status_fills_decision_when_candidate_has_no_status(self):
+        c = candidate(status=None, status_reasons=None)
+        cid = cfl.candidate_identity(c, date="2026-08-25")
+        trace = {
+            cid: {
+                "status": "value",
+                "status_reasons": ["real price edge"],
+                "gates": {},
+                "blocking_gate": "meets_prob_floor",
+            }
+        }
+        record = cfl.build_funnel_records(
+            [c], date="2026-08-25", gate_traces=trace)[0]
+        self.assertEqual(record["decision"]["recommendation_status"], "value")
+        self.assertEqual(record["decision"]["status_reasons"], ["real price edge"])
 
 
 class ContentHashTests(unittest.TestCase):
@@ -137,6 +203,27 @@ class ContentHashTests(unittest.TestCase):
         r1 = cfl.build_funnel_records([candidate(hit_probability=0.71)], date="2026-08-25")[0]
         r2 = cfl.build_funnel_records([candidate(hit_probability=0.66)], date="2026-08-25")[0]
         self.assertNotEqual(cfl.content_hash(r1), cfl.content_hash(r2))
+
+    def test_observation_timestamps_do_not_create_fake_candidate_changes(self):
+        ctx1 = {"observed_at": "2026-08-25T12:00:00Z"}
+        ctx2 = {"observed_at": "2026-08-25T13:00:00Z"}
+        meta1 = {
+            "prediction_timestamp": "2026-08-25T12:00:01Z",
+            "odds_fetched_at": "2026-08-25T12:00:00Z",
+            "board_generated_at": "2026-08-25T12:00:02Z",
+        }
+        meta2 = {
+            "prediction_timestamp": "2026-08-25T13:00:01Z",
+            "odds_fetched_at": "2026-08-25T13:00:00Z",
+            "board_generated_at": "2026-08-25T13:00:02Z",
+        }
+        r1 = cfl.build_funnel_records(
+            [candidate()], date="2026-08-25",
+            market_context=ctx1, run_metadata=meta1)[0]
+        r2 = cfl.build_funnel_records(
+            [candidate()], date="2026-08-25",
+            market_context=ctx2, run_metadata=meta2)[0]
+        self.assertEqual(cfl.content_hash(r1), cfl.content_hash(r2))
 
 
 class AppendNewSnapshotsTests(unittest.TestCase):
@@ -197,10 +284,86 @@ class AppendNewSnapshotsTests(unittest.TestCase):
         self.assertEqual(n_written, 1)
 
 
+class SnapshotManifestTests(unittest.TestCase):
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory()
+        self.path = os.path.join(
+            self.tmp.name, "candidate_funnel_snapshots_2026-08-25.jsonl")
+
+    def tearDown(self):
+        self.tmp.cleanup()
+
+    def test_unchanged_candidate_can_be_observed_twice_without_duplicate_candidate_rows(self):
+        records = cfl.build_funnel_records(
+            [candidate()], date="2026-08-25",
+            generated_at="2026-08-25T12:00:00Z")
+        candidate_path = os.path.join(
+            self.tmp.name, "candidate_funnel_2026-08-25.jsonl")
+        cfl.append_new_snapshots(records, candidate_path)
+
+        records_later = cfl.build_funnel_records(
+            [candidate()], date="2026-08-25",
+            generated_at="2026-08-25T13:00:00Z")
+        written, skipped = cfl.append_new_snapshots(records_later, candidate_path)
+        self.assertEqual((written, skipped), (0, 1))
+
+        m1 = cfl.build_snapshot_manifest(
+            records, date="2026-08-25",
+            observed_at="2026-08-25T12:00:00Z", code_git_sha="abc")
+        m2 = cfl.build_snapshot_manifest(
+            records_later, date="2026-08-25",
+            observed_at="2026-08-25T13:00:00Z", code_git_sha="abc")
+        self.assertNotEqual(m1["snapshot_id"], m2["snapshot_id"])
+        self.assertEqual(
+            m1["candidate_universe_fingerprint"],
+            m2["candidate_universe_fingerprint"])
+        self.assertEqual(cfl.append_snapshot_manifest(m1, self.path), 1)
+        self.assertEqual(cfl.append_snapshot_manifest(m2, self.path), 1)
+        with open(self.path, encoding="utf-8") as fh:
+            self.assertEqual(len([l for l in fh if l.strip()]), 2)
+
+    def test_snapshot_manifest_binds_every_candidate_content_hash(self):
+        records = cfl.build_funnel_records(
+            [candidate(player_id=1), candidate(player_id=2, name="Other")],
+            date="2026-08-25")
+        manifest = cfl.build_snapshot_manifest(
+            records, date="2026-08-25",
+            observed_at="2026-08-25T12:00:00Z", code_git_sha="abc")
+        self.assertEqual(manifest["n_candidates"], 2)
+        self.assertEqual(len(manifest["candidate_hashes"]), 2)
+        expected = {
+            r["identity"]["candidate_id"]: cfl.content_hash(r) for r in records
+        }
+        self.assertEqual(
+            {x["candidate_id"]: x["content_hash"]
+             for x in manifest["candidate_hashes"]},
+            expected)
+
+    def test_duplicate_candidate_ids_fail_closed(self):
+        records = cfl.build_funnel_records(
+            [candidate(), candidate()], date="2026-08-25")
+        with self.assertRaises(ValueError):
+            cfl.build_snapshot_manifest(
+                records, date="2026-08-25",
+                observed_at="2026-08-25T12:00:00Z")
+
+    def test_same_snapshot_id_is_idempotent(self):
+        records = cfl.build_funnel_records([candidate()], date="2026-08-25")
+        manifest = cfl.build_snapshot_manifest(
+            records, date="2026-08-25",
+            observed_at="2026-08-25T12:00:00Z")
+        self.assertEqual(cfl.append_snapshot_manifest(manifest, self.path), 1)
+        self.assertEqual(cfl.append_snapshot_manifest(manifest, self.path), 0)
+
+
 class DefaultPathTests(unittest.TestCase):
     def test_path_is_per_date_and_matches_the_gitignored_backtest_glob(self):
         path = cfl.default_path_for_date("2026-08-25", out_dir="/tmp/x")
         self.assertTrue(path.endswith("candidate_funnel_2026-08-25.jsonl"))
+        snapshot_path = cfl.default_snapshot_path_for_date(
+            "2026-08-25", out_dir="/tmp/x")
+        self.assertTrue(
+            snapshot_path.endswith("candidate_funnel_snapshots_2026-08-25.jsonl"))
 
 
 if __name__ == "__main__":
