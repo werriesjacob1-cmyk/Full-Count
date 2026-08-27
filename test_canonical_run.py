@@ -86,6 +86,53 @@ class CanonicalRunTestBase(unittest.TestCase):
             return cr.run(run_dir, manifest, sleep=0, **kwargs)
 
 
+class FreshCloneRecoveryPreparationTests(CanonicalRunTestBase):
+    def test_resume_from_remote_restores_manifest_before_loading_it(self):
+        identity = cr.build_run_identity(DATES[0], DATES[-1], out_target="unused")
+        run_id = identity["run_id"]
+        target = cr.run_dir_for(self.base_dir, run_id)
+        self.assertFalse(os.path.exists(cr.manifest_path(target)))
+
+        def fake_restore(run_dir, requested_run_id):
+            self.assertEqual(run_dir, target)
+            self.assertEqual(requested_run_id, run_id)
+            os.makedirs(run_dir, exist_ok=True)
+            cr.create_manifest(run_dir, identity)
+            return {
+                "run_id": run_id,
+                "restored": [],
+                "skipped_present": [],
+                "failed": [],
+            }
+
+        with mock.patch(
+                "backtest.canonical_durability.fetch_durable_branch",
+                return_value={"ok": True}) as fetch_spy, \
+             mock.patch(
+                "backtest.canonical_durability.restore_from_durable",
+                side_effect=fake_restore) as restore_spy:
+            rd, manifest, rep = cr.prepare_existing_run(
+                self.base_dir, run_id, resume_from_remote=True)
+
+        self.assertEqual(rd, target)
+        self.assertEqual(manifest["run_id"], run_id)
+        self.assertEqual(rep["run_id"], run_id)
+        fetch_spy.assert_called_once_with()
+        restore_spy.assert_called_once_with(target, run_id)
+
+    def test_fresh_clone_recovery_fails_if_durable_fetch_fails(self):
+        identity = cr.build_run_identity(DATES[0], DATES[-1], out_target="unused")
+        with mock.patch(
+                "backtest.canonical_durability.fetch_durable_branch",
+                return_value={"ok": False, "reason": "offline"}), \
+             mock.patch(
+                "backtest.canonical_durability.restore_from_durable") as restore_spy:
+            with self.assertRaises(RuntimeError):
+                cr.prepare_existing_run(
+                    self.base_dir, identity["run_id"], resume_from_remote=True)
+        restore_spy.assert_not_called()
+
+
 class NormalReferenceTests(CanonicalRunTestBase):
     """Normal uninterrupted reference run."""
 
