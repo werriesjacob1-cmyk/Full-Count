@@ -85,6 +85,17 @@ def make_verified_population(n=20):
     return population, rows_path, manifest_path
 
 
+def promotion_volume_schedule(population, volume):
+    """Explicitly cover every eligible date, including zero-pick slates."""
+    dates = sorted({str(r["date"]) for r in population.rows})
+    if volume > len(dates):
+        raise ValueError("test helper only supports at most one pick per date")
+    schedule = {d: 0 for d in dates}
+    for d in dates[:volume]:
+        schedule[d] = 1
+    return schedule
+
+
 class PopulationIntegrityTests(unittest.TestCase):
     def test_incomplete_candidate_identity_is_rejected(self):
         rows = [row("2024-05-01", 1, 1, "hits", 0.5, 1), row("2024-05-01", None, 2, "hits", 0.5, 0)]
@@ -190,6 +201,47 @@ class RankingInputIdentityTests(unittest.TestCase):
         b = ev.SelectionPolicy("b", "1", lambda p: p.identities,
                                ranking_input_fields=("predicted_prob", "score", "score"))
         self.assertEqual(a.ranking_input_fields, b.ranking_input_fields)
+
+
+class OperationalSlateVolumeTests(unittest.TestCase):
+    def test_locked_per_date_volume_prevents_cross_slate_volume_shifting(self):
+        rows = [
+            row("2024-05-01", 101, 1, "hits", 0.5, 1, prob=0.10, score=100.0),
+            row("2024-05-01", 102, 2, "hits", 0.5, 0, prob=0.20, score=90.0),
+            row("2024-05-01", 103, 3, "hits", 0.5, 1, prob=0.30, score=80.0),
+            row("2024-05-02", 201, 4, "hits", 0.5, 1, prob=0.99, score=10.0),
+            row("2024-05-02", 202, 5, "hits", 0.5, 0, prob=0.98, score=9.0),
+            row("2024-05-02", 203, 6, "hits", 0.5, 1, prob=0.97, score=8.0),
+        ]
+        pop = ev.EligiblePopulation(
+            rows, definition="two-slate fixture", definition_version="v1",
+            evidence_regime="test", dataset_identity={})
+        schedule = {"2024-05-01": 1, "2024-05-02": 1}
+        rep = ev.EqualVolumeExperiment(
+            population=pop, champion=CHAMP, challenger=CHAL,
+            volume=2, volume_by_date=schedule).run()
+
+        self.assertEqual(rep["champion"]["selected_by_date"], schedule)
+        self.assertEqual(rep["challenger"]["selected_by_date"], schedule)
+        self.assertTrue(rep["integrity"]["same_operational_volume_by_date"])
+
+    def test_volume_schedule_sum_must_match_requested_total(self):
+        pop = make_population(10)
+        with self.assertRaises(ev.EqualVolumeViolation) as cm:
+            ev.EqualVolumeExperiment(
+                population=pop, champion=CHAMP, challenger=CHAL,
+                volume=3, volume_by_date={"2024-05-01": 1, "2024-05-02": 1})
+        self.assertIn("sums to 2", str(cm.exception))
+
+    def test_volume_schedule_cannot_overfill_a_slate(self):
+        pop = make_population(5)
+        schedule = {str(r["date"]): 0 for r in pop.rows}
+        schedule["2024-05-01"] = 2
+        with self.assertRaises(ev.EqualVolumeViolation) as cm:
+            ev.EqualVolumeExperiment(
+                population=pop, champion=CHAMP, challenger=CHAL,
+                volume=2, volume_by_date=schedule)
+        self.assertIn("more selections than the eligible population", str(cm.exception))
 
 
 class ExactVolumeTests(unittest.TestCase):
@@ -337,12 +389,39 @@ class PromotionGradeTests(unittest.TestCase):
                 volume=3, promotion_grade=True)
         self.assertIn("outcome information", str(cm.exception))
 
+    def test_promotion_grade_rejects_aggregate_only_volume(self):
+        pop, _, _ = make_verified_population(10)
+        with self.assertRaises(ev.EqualVolumeViolation) as cm:
+            ev.EqualVolumeExperiment(
+                population=pop, champion=CHAMP, challenger=CHAL,
+                volume=3, promotion_grade=True)
+        self.assertIn("volume_by_date", str(cm.exception))
+
+    def test_promotion_grade_requires_schedule_to_cover_every_eligible_date(self):
+        pop, _, _ = make_verified_population(10)
+        full = promotion_volume_schedule(pop, 3)
+        incomplete = dict(full)
+        incomplete.pop(sorted(incomplete)[-1])
+        with self.assertRaises(ev.EqualVolumeViolation) as cm:
+            ev.EqualVolumeExperiment(
+                population=pop, champion=CHAMP, challenger=CHAL,
+                volume=3, promotion_grade=True,
+                volume_by_date=incomplete)
+        self.assertIn("cover the exact eligible date set", str(cm.exception))
+
     def test_promotion_grade_accepts_real_verified_manifest_and_artifact(self):
         pop, _, _ = make_verified_population(10)
+        schedule = promotion_volume_schedule(pop, 3)
         rep = ev.EqualVolumeExperiment(
             population=pop, champion=CHAMP, challenger=CHAL,
-            volume=3, promotion_grade=True).run()
+            volume=3, promotion_grade=True,
+            volume_by_date=schedule).run()
         self.assertTrue(rep["promotion_grade"])
+        self.assertEqual(rep["allocation_mode"], "per_date_locked")
+        self.assertEqual(rep["requested_volume_by_date"], schedule)
+        self.assertEqual(rep["champion"]["selected_by_date"], schedule)
+        self.assertEqual(rep["challenger"]["selected_by_date"], schedule)
+        self.assertTrue(rep["integrity"]["same_operational_volume_by_date"])
         verified = rep["integrity"]["verified_dataset_identity"]
         self.assertTrue(verified["manifest_sha256"])
         self.assertEqual(
