@@ -170,8 +170,12 @@ class EqualVolumeSelectorComparisonTests(unittest.TestCase):
         records = [
             record(candidate_id="a", recommendation_status="top_pick",
                    edge_vs_fair=0.02),
+            # Champion may legitimately have been selected under its own
+            # policy even when this challenger metric is unavailable. That
+            # must not let the challenger silently compare only one pick
+            # against the champion's two.
             record(candidate_id="b", recommendation_status="top_pick",
-                   edge_vs_fair=0.03),
+                   edge_vs_fair=None),
             record(candidate_id="c", edge_vs_fair=None),
         ]
         with self.assertRaises(pr.ProspectiveIntegrityError):
