@@ -487,13 +487,17 @@ class DurableIntegrityError(Exception):
     """A durable checkpoint's bytes do not match its recorded checksum."""
 
 
-def assert_identity_compatible(index, manifest, *, allow_environment_drift=True):
+def assert_identity_compatible(index, manifest, *, allow_environment_drift=False):
     """Fail closed unless the durable checkpoint provably belongs to this run.
 
     Every field here changes what the rows MEAN. Resuming across any of them
     would silently produce one artifact containing two different regimes, which
     is worse than losing the run: the resulting dataset looks complete and is
     not comparable to itself.
+
+    Environment drift is fail-closed by default for the same reason. An operator
+    may pass allow_environment_drift=True only as an explicit, visible override;
+    the returned environment report still records every difference.
     """
     want = index.get("identity") or {}
     problems = []
@@ -898,7 +902,7 @@ def load_durable_index(run_id, *, branch=DURABLE_BRANCH, remote="origin", repo_r
 
 def restore_from_durable(run_dir, run_id, *, branch=DURABLE_BRANCH, remote="origin",
                          repo_root=REPO_ROOT, manifest=None, verify=True,
-                         allow_environment_drift=True):
+                         allow_environment_drift=False):
     """Rebuild local continuation state from the remote. The recovery contract.
 
     Steps, in this order, because each depends on the previous one holding:
@@ -912,7 +916,9 @@ def restore_from_durable(run_dir, run_id, *, branch=DURABLE_BRANCH, remote="orig
       5. Report what was restored so the caller can resume only what is missing.
 
     Nothing is written to run_dir until step 2 passes. A checkpoint that cannot
-    be proven compatible never lands on disk at all.
+    be proven compatible never lands on disk at all. Environment identity is
+    part of that gate by default; allow_environment_drift=True is an explicit
+    research override, never the silent default.
     """
     report = {"run_id": run_id, "restored": [], "skipped_present": [], "failed": [],
               "manifest_restored": False, "index": None, "identity": None,
