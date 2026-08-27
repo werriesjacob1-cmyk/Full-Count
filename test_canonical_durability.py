@@ -294,6 +294,65 @@ def main():
         except Exception:
             ok("truncated gzip blob raises rather than yielding partial rows")
 
+        # ══ 11. The cache gate is actually WIRED IN, not merely available.
+        print("== 11. StatcastStore rejects a bad cache instead of trusting the filename ==")
+        try:
+            import pandas as pd
+            from backtest import engine as _eng
+
+            cache_dir = os.path.join(sandbox, "statcast_cache")
+            os.makedirs(cache_dir, exist_ok=True)
+            # Filename claims full coverage; contents are missing launch_speed
+            # and every other column scoring depends on. The old code path
+            # accepted exactly this.
+            bad = os.path.join(cache_dir, "statcast_2024_through_2024-10-01.parquet")
+            pd.DataFrame({"game_date": ["2024-04-01"], "batter": [1]}).to_parquet(bad)
+
+            pulled = {"called": False}
+
+            def fake_statcast(*a, **k):
+                pulled["called"] = True
+                return pd.DataFrame()
+
+            real = _eng.m.pyb.statcast
+            _eng.m.pyb.statcast = fake_statcast
+            try:
+                store = _eng.StatcastStore(2024, "2024-05-01", cache_dir=cache_dir, verbose=False)
+                try:
+                    store.load()
+                except RuntimeError:
+                    pass          # expected: fell through to a pull that returned nothing
+                check("bad cache rejected -- store repulled instead of trusting it",
+                      pulled["called"], True)
+                check("bad cache data was not adopted", store._df, None)
+            finally:
+                _eng.m.pyb.statcast = real
+
+            # And a GOOD cache is still accepted, so the gate is not just
+            # "always reject". Coverage must actually span the request: an
+            # earlier version of this fixture used 2024 dates for a 2025 store,
+            # the gate correctly rejected it for insufficient coverage, and the
+            # test then hit the real network. The stub below makes that
+            # impossible to miss again.
+            good_cols = {c: [0, 0] for c in _eng.STATCAST_COLUMNS}
+            good_cols["game_date"] = ["2025-04-01", "2025-06-01"]
+            good = os.path.join(cache_dir, "statcast_2025_through_2025-10-01.parquet")
+            pd.DataFrame(good_cols).to_parquet(good)
+
+            _eng.m.pyb.statcast = fake_statcast     # any pull here is a failure
+            pulled["called"] = False
+            try:
+                store2 = _eng.StatcastStore(2025, "2025-05-01", cache_dir=cache_dir, verbose=False)
+                df = store2.load()
+                check("valid cache still accepted", len(df), 2)
+                check("valid cache did NOT trigger a repull", pulled["called"], False)
+                check("accepted cache carries a validation report",
+                      bool(getattr(store2, "cache_report", None)), True)
+            finally:
+                _eng.m.pyb.statcast = real
+        except ImportError:
+            print("  --   pandas/engine unavailable; cache wiring check skipped")
+
         print()
         print(f"passed: {PASS}   failed: {FAIL}")
         return 0 if FAIL == 0 else 1

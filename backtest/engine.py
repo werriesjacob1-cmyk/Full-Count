@@ -311,9 +311,35 @@ class StatcastStore:
             except ValueError:
                 continue
         if best:
-            self._log(f"cache hit: {os.path.basename(best[0])}")
-            self._df = pd.read_parquet(best[0])
-            return self._df
+            # A filename is a claim by whoever wrote the file. Date coverage in
+            # the name says nothing about whether the parquet is complete, has
+            # the columns scoring depends on, or was truncated by a process that
+            # died mid-write. Validate the CONTENT before trusting it; on any
+            # problem, fall through and repull rather than silently generating a
+            # season of degraded rows from a bad cache.
+            try:
+                from backtest.canonical_durability import (
+                    validate_statcast_cache, REQUIRED_STATCAST_COLUMNS)
+                required = [c for c in REQUIRED_STATCAST_COLUMNS if c in STATCAST_COLUMNS]
+                report = validate_statcast_cache(
+                    best[0], expected_end=self.through,
+                    required_columns=required, strict=False)
+            except ImportError:
+                report = None
+
+            if report is not None and not report["usable"]:
+                self._log(f"cache REJECTED ({os.path.basename(best[0])}): "
+                          f"{'; '.join(report['problems'])} -- repulling")
+                best = None
+            else:
+                self._log(f"cache hit: {os.path.basename(best[0])}")
+                if report is not None:
+                    self.cache_report = report
+                    self._log(f"  validated: {report['row_count']} rows, "
+                              f"{report['min_date']}..{report['max_date']}, "
+                              f"sha256 {report['content_sha256'][:12]}")
+                self._df = pd.read_parquet(best[0])
+                return self._df
 
         start = f"{self.year}{SEASON_START_MMDD}"
         self._log(f"pulling {start} .. {self.through} (one time, then cached)")
