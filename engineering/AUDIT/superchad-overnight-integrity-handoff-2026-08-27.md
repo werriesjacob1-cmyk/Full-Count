@@ -234,8 +234,71 @@ resume, durable checkpoint, workflow, or frontend source was changed.
   identity, per-slate equal volume, missing outcomes, or Best Expression strict
   refill. Those remain separate workstreams.
 
----
+## Workstream 2 — Candidate-content identity
 
+**Status:** SUPERCHAD-IMPLEMENTED / NOT YET RUNTIME-VERIFIED / NOT CI-VERIFIED
+
+### Pre-change defect
+
+VERIFIED-REPO at base and through Workstream 1:
+`EligiblePopulation.fingerprint` hashed only the five candidate identity fields
+(`date, game_pk, player_id, prop_type, line`). Two populations containing the
+same candidate keys but different scores, probabilities, signals, or other
+selector-relevant row content therefore produced the same population
+fingerprint.
+
+That is insufficient evidence for a selector comparison: candidate membership
+can be unchanged while the information used to rank those candidates changes.
+
+### Implementation
+
+1. `e112f6185cdd20be24d23bb21e7e02d42ed5f10e`
+   - `backtest/equal_volume.py`
+   - preserves the existing identity-only fingerprint
+   - adds deterministic `content_fingerprint` over candidate rows sorted by
+     candidate identity
+   - excludes only `outcome`, so the realized answer used for grading does not
+     enter the preselection content identity
+   - exposes the content fingerprint in population description and integrity
+     output
+   - binds it into `experiment_manifest_id`
+
+2. `da49e1b6e6cdc2e624e0ffbb6188f49fdd7d73d8`
+   - `test_equal_volume.py`
+   - verifies identity/content fingerprints are input-order independent
+   - verifies same candidate IDs + changed score keep the identity fingerprint
+     but change the content fingerprint
+   - verifies changing only realized `outcome` does not change preselection
+     content identity
+
+3. `1c6cfdf90501b8445f8e838386ed1f68d36cbef3`
+   - `test_equal_volume.py`
+   - verifies `experiment_manifest_id` changes when candidate content changes,
+     so the new fingerprint is not merely decorative report metadata
+
+### Scope / methodology notes
+
+- This work does **not** yet claim that every field in the content fingerprint
+  is a legitimate ranking input. It intentionally binds the candidate payload
+  broadly, while Workstream 3 will separately bind the exact declared ranking
+  inputs.
+- `outcome` is excluded to avoid putting the answer used for grading into the
+  preselection identity.
+- Other historical/postgame fields that may exist on a row remain part of the
+  broad content fingerprint. Claude should review whether that is desirable
+  strictness or whether a narrower preselection-content contract is preferable.
+- No selector ordering, probability, eligibility, or realized result was
+  changed by this workstream.
+
+### Test / CI truth
+
+- SUPERCHAD-IMPLEMENTED: regression tests are committed.
+- UNKNOWN: tests have not run in the real repository runtime.
+- UNKNOWN: no exact-SHA CI is attached to the isolated branch.
+- VERIFIED-REPO: implementation and test source were re-fetched and inspected
+  after commit.
+
+---
 
 # Claude independent review checklist
 
