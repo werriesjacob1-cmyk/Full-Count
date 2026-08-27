@@ -25,6 +25,20 @@ def row(date, game_pk, player_id, prop_type, line, outcome, prob=0.6, score=50.0
             "predicted_prob": prob, "score": score}
 
 
+def strong_dataset_identity(n):
+    return {
+        "manifest_schema_version": 2,
+        "cutoff_date": "2024-05-15",
+        "holdout_frac": 0.2,
+        "rows_path": "backtest/rows_canonical.jsonl",
+        "artifact_sha256": "a" * 64,
+        "artifact_row_count": n,
+        "artifact_n_distinct_dates": n,
+        "artifact_date_range": ["2024-05-01", f"2024-05-{min(n, 28):02d}"],
+        "code_git_sha_at_lock": "b" * 40,
+    }
+
+
 def make_population(n=20, **kw):
     rows = []
     for i in range(n):
@@ -33,13 +47,16 @@ def make_population(n=20, **kw):
     return ev.EligiblePopulation(
         rows, definition="test population", definition_version="v1",
         evidence_regime="canonical_historical_model_data",
-        dataset_identity=kw.pop("dataset_identity",
-                                {"artifact_sha256": "a" * 64, "artifact_row_count": n}),
+        dataset_identity=kw.pop("dataset_identity", strong_dataset_identity(n)),
         **kw)
 
 
-CHAMP = ev.SelectionPolicy("champion_score", "1.0", ev.rank_by(lambda r: r["score"]))
-CHAL = ev.SelectionPolicy("challenger_prob", "1.0", ev.rank_by(lambda r: r["predicted_prob"]))
+CHAMP = ev.SelectionPolicy(
+    "champion_score", "1.0", ev.rank_by(lambda r: r["score"]),
+    ranking_input_fields=("score",))
+CHAL = ev.SelectionPolicy(
+    "challenger_prob", "1.0", ev.rank_by(lambda r: r["predicted_prob"]),
+    ranking_input_fields=("predicted_prob",))
 
 
 class PopulationIntegrityTests(unittest.TestCase):
@@ -63,6 +80,21 @@ class PopulationIntegrityTests(unittest.TestCase):
                                   definition_version="v", evidence_regime="r",
                                   dataset_identity={})
         self.assertEqual(a.fingerprint, b.fingerprint)
+        self.assertEqual(a.content_fingerprint, b.content_fingerprint)
+
+    def test_content_fingerprint_changes_when_ranking_content_changes(self):
+        rows = [row("2024-05-01", 1, i, "hits", 0.5, i % 2, score=float(i))
+                for i in range(5)]
+        changed = [dict(r) for r in rows]
+        changed[0]["score"] = 999.0
+        a = ev.EligiblePopulation(rows, definition="d", definition_version="v",
+                                  evidence_regime="r", dataset_identity={})
+        b = ev.EligiblePopulation(changed, definition="d", definition_version="v",
+                                  evidence_regime="r", dataset_identity={})
+        self.assertEqual(a.fingerprint, b.fingerprint,
+                         "candidate keys did not change")
+        self.assertNotEqual(a.content_fingerprint, b.content_fingerprint,
+                            "ranking content drift must not hide behind identity-only equality")
 
 
 class ExactVolumeTests(unittest.TestCase):
@@ -167,31 +199,104 @@ class OutcomeHandlingTests(unittest.TestCase):
 
 
 class PromotionGradeTests(unittest.TestCase):
+    @staticmethod
+    def _quota(pop, n=3):
+        dates = sorted({r["date"] for r in pop.rows})[:n]
+        return {d: 1 for d in dates}
+
     def test_promotion_grade_requires_strong_dataset_identity(self):
         pop = make_population(10, dataset_identity={})
         with self.assertRaises(ev.EqualVolumeViolation) as cm:
             ev.EqualVolumeExperiment(population=pop, champion=CHAMP, challenger=CHAL,
-                                     volume=3, promotion_grade=True)
+                                     volume=3, promotion_grade=True,
+                                     volume_by_date=self._quota(pop))
         self.assertIn("dataset_identity", str(cm.exception))
 
-    def test_promotion_grade_rejects_identity_without_a_checksum(self):
-        pop = make_population(10, dataset_identity={"artifact_row_count": 10})
+    def test_promotion_grade_rejects_checksum_only_identity(self):
+        pop = make_population(10, dataset_identity={
+            "manifest_schema_version": 2,
+            "artifact_sha256": "a" * 64,
+            "artifact_row_count": 10,
+        })
+        with self.assertRaises(ev.EqualVolumeViolation) as cm:
+            ev.EqualVolumeExperiment(population=pop, champion=CHAMP, challenger=CHAL,
+                                     volume=3, promotion_grade=True,
+                                     volume_by_date=self._quota(pop))
+        self.assertIn("complete strong dataset", str(cm.exception))
+
+    def test_promotion_grade_requires_declared_ranking_inputs(self):
+        pop = make_population(10)
+        undeclared = ev.SelectionPolicy(
+            "undeclared", "1.0", ev.rank_by(lambda r: r["score"]))
+        with self.assertRaises(ev.EqualVolumeViolation) as cm:
+            ev.EqualVolumeExperiment(
+                population=pop, champion=CHAMP, challenger=undeclared, volume=3,
+                promotion_grade=True, volume_by_date=self._quota(pop))
+        self.assertIn("ranking_input_fields", str(cm.exception))
+
+    def test_promotion_grade_requires_per_date_operational_volume(self):
+        pop = make_population(10)
         with self.assertRaises(ev.EqualVolumeViolation) as cm:
             ev.EqualVolumeExperiment(population=pop, champion=CHAMP, challenger=CHAL,
                                      volume=3, promotion_grade=True)
-        self.assertIn("artifact_sha256", str(cm.exception))
+        self.assertIn("volume_by_date", str(cm.exception))
 
-    def test_promotion_grade_accepted_with_strong_identity(self):
-        rep = ev.EqualVolumeExperiment(population=make_population(10), champion=CHAMP,
-                                       challenger=CHAL, volume=3,
-                                       promotion_grade=True).run()
+    def test_promotion_grade_accepted_with_strong_identity_and_locked_slates(self):
+        pop = make_population(10)
+        quota = self._quota(pop)
+        rep = ev.EqualVolumeExperiment(
+            population=pop, champion=CHAMP, challenger=CHAL, volume=3,
+            promotion_grade=True, volume_by_date=quota).run()
         self.assertTrue(rep["promotion_grade"])
+        self.assertEqual(rep["allocation_mode"], "per_date_locked")
+        self.assertEqual(rep["requested_volume_by_date"], quota)
+        self.assertTrue(rep["integrity"]["same_operational_volume_by_date"])
+        self.assertTrue(rep["integrity"]["ranking_input_fingerprints"]["champion"])
+        self.assertTrue(rep["integrity"]["ranking_input_fingerprints"]["challenger"])
 
     def test_exploratory_mode_does_not_require_strong_identity(self):
         pop = make_population(10, dataset_identity={})
         rep = ev.EqualVolumeExperiment(population=pop, champion=CHAMP,
                                        challenger=CHAL, volume=3).run()
         self.assertFalse(rep["promotion_grade"])
+
+
+class OperationalVolumeTests(unittest.TestCase):
+    def test_per_date_quota_is_structural_for_both_policies(self):
+        pop = make_population(12)
+        quota = {"2024-05-01": 1, "2024-05-02": 1, "2024-05-03": 1}
+        rep = ev.EqualVolumeExperiment(
+            population=pop, champion=CHAMP, challenger=CHAL, volume=3,
+            volume_by_date=quota).run()
+        self.assertEqual(rep["requested_volume_by_date"], quota)
+        # The report is sufficient to prove the locked allocation was active;
+        # _select() itself raises if either policy cannot fill a quota.
+        self.assertEqual(rep["allocation_mode"], "per_date_locked")
+
+    def test_per_date_quota_sum_must_equal_requested_volume(self):
+        pop = make_population(10)
+        with self.assertRaises(ev.EqualVolumeViolation):
+            ev.EqualVolumeExperiment(
+                population=pop, champion=CHAMP, challenger=CHAL, volume=3,
+                volume_by_date={"2024-05-01": 1, "2024-05-02": 1})
+
+
+class PairwiseOutcomeIntegrityTests(unittest.TestCase):
+    def test_asymmetric_missing_outcome_fails_closed(self):
+        rows = [
+            row("2024-05-01", 1, 1, "hits", 0.5, None, score=100.0, prob=0.1),
+            row("2024-05-02", 2, 2, "hits", 0.5, 1, score=90.0, prob=0.9),
+            row("2024-05-03", 3, 3, "hits", 0.5, 0, score=80.0, prob=0.8),
+            row("2024-05-04", 4, 4, "hits", 0.5, 1, score=70.0, prob=0.7),
+        ]
+        pop = ev.EligiblePopulation(
+            rows, definition="d", definition_version="v", evidence_regime="r",
+            dataset_identity={})
+        with self.assertRaises(ev.EqualVolumeViolation) as cm:
+            ev.EqualVolumeExperiment(
+                population=pop, champion=CHAMP, challenger=CHAL, volume=2,
+                outcome_policy=ev.OutcomePolicy(ev.OUTCOME_EXCLUDE_PAIRWISE)).run()
+        self.assertIn("unequal post-outcome denominators", str(cm.exception))
 
 
 class ReportContentTests(unittest.TestCase):
