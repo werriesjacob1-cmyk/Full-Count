@@ -17,6 +17,8 @@ from unittest import mock
 
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "backtest"))
 import candidate_funnel_grader as cfg
+import candidate_funnel_logger as cfl
+import prospective_durability as pdur
 
 
 def funnel_record(candidate_id="2026-08-25:1:100:hits:2", game_pk=1, player_id=100,
@@ -158,6 +160,73 @@ class GradeDateTests(unittest.TestCase):
                                     return_value={"grade": "ungraded", "reason": "game not final yet"}):
                 outcomes, n_read = cfg.grade_date("2026-08-25", out_dir=tmp)
             self.assertEqual(outcomes[0]["grade"], "ungraded")
+
+
+class DurableSnapshotGradingTests(unittest.TestCase):
+    def _snapshot(self, rows, observed_at):
+        return cfl.build_snapshot_manifest(
+            rows, date="2026-08-25", observed_at=observed_at,
+            code_git_sha="a" * 40)
+
+    def test_union_grades_candidates_seen_in_any_durable_snapshot(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            a1 = funnel_record(candidate_id="a", player_id=100)
+            a2 = funnel_record(candidate_id="a", player_id=100)
+            b2 = funnel_record(candidate_id="b", player_id=200)
+            s1 = self._snapshot([a1], "2026-08-25T17:00:00Z")
+            s2 = self._snapshot([a2, b2], "2026-08-25T18:00:00Z")
+            pdur.materialize_snapshot([a1], s1, tmp)
+            pdur.materialize_snapshot([a2, b2], s2, tmp)
+
+            records, n_snapshots = cfg.load_materialized_date_records(
+                tmp, "2026-08-25")
+            self.assertEqual(n_snapshots, 2)
+            self.assertEqual(set(records), {"a", "b"})
+
+            with mock.patch.object(
+                    cfg.gr, "fetch_game_contexts",
+                    return_value={1: {"status": FINAL}}), \
+                 mock.patch.object(
+                    cfg.gr, "grade_pick",
+                    return_value={"grade": "hit", "actual": 2}):
+                outcomes, n_read = cfg.grade_materialized_date(
+                    tmp, "2026-08-25")
+            self.assertEqual(n_read, 2)
+            self.assertEqual({o["candidate_id"] for o in outcomes}, {"a", "b"})
+            self.assertTrue(all(o["grade"] == "hit" for o in outcomes))
+
+    def test_settlement_identity_drift_under_same_candidate_id_fails_closed(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            a1 = funnel_record(
+                candidate_id="a", player_id=100, threshold=1.5, needs=2)
+            a2 = funnel_record(
+                candidate_id="a", player_id=100, threshold=2.5, needs=2)
+            s1 = self._snapshot([a1], "2026-08-25T17:00:00Z")
+            s2 = self._snapshot([a2], "2026-08-25T18:00:00Z")
+            pdur.materialize_snapshot([a1], s1, tmp)
+            pdur.materialize_snapshot([a2], s2, tmp)
+            with self.assertRaises(RuntimeError):
+                cfg.load_materialized_date_records(tmp, "2026-08-25")
+
+    def test_no_ephemeral_funnel_file_is_required_for_durable_grading(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            row = funnel_record(candidate_id="durable-only", player_id=100)
+            snap = self._snapshot([row], "2026-08-25T17:00:00Z")
+            pdur.materialize_snapshot([row], snap, tmp)
+
+            self.assertFalse(os.path.exists(
+                cfg.funnel_path_for_date("2026-08-25", tmp)))
+            with mock.patch.object(
+                    cfg.gr, "fetch_game_contexts",
+                    return_value={1: {"status": FINAL}}), \
+                 mock.patch.object(
+                    cfg.gr, "grade_pick",
+                    return_value={"grade": "miss", "actual": 0}):
+                outcomes, n_read = cfg.grade_materialized_date(
+                    tmp, "2026-08-25")
+            self.assertEqual(n_read, 1)
+            self.assertEqual(outcomes[0]["candidate_id"], "durable-only")
+            self.assertEqual(outcomes[0]["grade"], "miss")
 
 
 class WriteOutcomesTests(unittest.TestCase):
