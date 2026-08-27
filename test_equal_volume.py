@@ -94,7 +94,7 @@ class PopulationIntegrityTests(unittest.TestCase):
             ev.EligiblePopulation([r, dict(r)], definition="d", definition_version="v",
                                   evidence_regime="r", dataset_identity={})
 
-    def test_population_fingerprint_is_order_independent(self):
+    def test_population_fingerprints_are_order_independent(self):
         rows = [row("2024-05-01", 1, i, "hits", 0.5, i % 2) for i in range(5)]
         a = ev.EligiblePopulation(rows, definition="d", definition_version="v",
                                   evidence_regime="r", dataset_identity={})
@@ -102,6 +102,37 @@ class PopulationIntegrityTests(unittest.TestCase):
                                   definition_version="v", evidence_regime="r",
                                   dataset_identity={})
         self.assertEqual(a.fingerprint, b.fingerprint)
+        self.assertEqual(a.content_fingerprint, b.content_fingerprint)
+
+    def test_same_candidate_ids_with_changed_selector_content_are_not_the_same_population(self):
+        rows = [row("2024-05-01", 1, i, "hits", 0.5, i % 2, score=float(i))
+                for i in range(5)]
+        changed = [dict(r) for r in rows]
+        changed[0]["score"] = 999.0
+
+        a = ev.EligiblePopulation(rows, definition="d", definition_version="v",
+                                  evidence_regime="r", dataset_identity={})
+        b = ev.EligiblePopulation(changed, definition="d", definition_version="v",
+                                  evidence_regime="r", dataset_identity={})
+
+        self.assertEqual(a.fingerprint, b.fingerprint,
+                         "candidate identity keys did not change")
+        self.assertNotEqual(a.content_fingerprint, b.content_fingerprint,
+                            "score/input drift must not hide behind identity-only equality")
+
+    def test_realized_outcome_is_excluded_from_preselection_content_identity(self):
+        rows = [row("2024-05-01", 1, i, "hits", 0.5, i % 2, score=float(i))
+                for i in range(5)]
+        regraded = [dict(r) for r in rows]
+        regraded[0]["outcome"] = 1 - regraded[0]["outcome"]
+
+        a = ev.EligiblePopulation(rows, definition="d", definition_version="v",
+                                  evidence_regime="r", dataset_identity={})
+        b = ev.EligiblePopulation(regraded, definition="d", definition_version="v",
+                                  evidence_regime="r", dataset_identity={})
+
+        self.assertEqual(a.content_fingerprint, b.content_fingerprint,
+                         "the answer used for grading must not enter preselection identity")
 
 
 class ExactVolumeTests(unittest.TestCase):
@@ -285,7 +316,8 @@ class ReportContentTests(unittest.TestCase):
 
     def test_report_carries_full_population_and_provenance_identity(self):
         p, i = self.rep["population"], self.rep["integrity"]
-        for key in ("eligible_population_fingerprint", "evidence_regime",
+        for key in ("eligible_population_fingerprint",
+                    "eligible_population_content_fingerprint", "evidence_regime",
                     "eligibility_definition_version", "dataset_identity"):
             self.assertIn(key, {**p, **i})
         self.assertTrue(self.rep["experiment_manifest_id"])
