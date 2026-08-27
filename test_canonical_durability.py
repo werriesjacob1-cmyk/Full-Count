@@ -544,6 +544,11 @@ def main():
                           {"usable": False}, year=2025, through="2025-04-01",
                           cache_mode=cd.CACHE_MODE_FRESH),
                       None)
+                check("non-mapping/mock-like report cannot invent Statcast lineage",
+                      cd.statcast_lineage_from_cache_report(
+                          object(), year=object(), through=object(),
+                          cache_mode=cd.CACHE_MODE_FRESH),
+                      None)
             finally:
                 _eng.m.pyb.statcast = real
         except ImportError:
