@@ -281,6 +281,20 @@ def main():
         check("identity rejection created no local run directory",
               os.path.exists(no_write_dir), False)
 
+        # A locally present date is reusable only when BOTH the row bytes
+        # and metadata bytes match the durable ledger. Corrupting only the meta
+        # file must force a verified restore rather than a silent skip.
+        meta_victim = done[1]
+        meta_path = cr.checkpoint_meta_path(run_dir2, meta_victim)
+        with open(meta_path, "a", encoding="utf-8") as f:
+            f.write("\n")
+        rep_meta = cd.restore_from_durable(run_dir2, RUN, repo_root=repo2)
+        check("corrupt local meta is restored rather than skipped",
+              meta_victim in rep_meta["restored"], True)
+        check("repaired local meta matches durable ledger",
+              cd._sha256_file(meta_path),
+              idx["dates"][meta_victim]["meta_sha256"])
+
         # Corrupted checksum in the ledger must be caught on restore.
         repo3 = os.path.join(sandbox, "container-3")
         git(["clone", "-q", origin, repo3], cwd=sandbox, env=GIT_ENV)
