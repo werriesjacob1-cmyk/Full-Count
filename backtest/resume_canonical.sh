@@ -4,9 +4,12 @@
 #
 # Needs nothing but a clone of the repository.
 #
-#   bash backtest/resume_canonical.sh                # resume the newest run
-#   bash backtest/resume_canonical.sh <run_id>       # resume a specific run
-#   FC_RESUME_DRY_RUN=1 bash backtest/resume_canonical.sh    # report only
+#   bash backtest/resume_canonical.sh <run_id>       # resume this exact run
+#   FC_CANONICAL_RUN_ID=<run_id> bash backtest/resume_canonical.sh
+#   FC_RESUME_DRY_RUN=1 bash backtest/resume_canonical.sh <run_id>  # report only
+#
+# An exact run id is mandatory. "Newest durable run" is not a safe recovery
+# identity: proof/test runs can be newer than the real long-running artifact.
 #
 # ARCHITECTURE, and the bug that shaped it
 # ----------------------------------------
@@ -31,7 +34,12 @@ cd "$REPO" || exit 1
 
 START=${FC_CANONICAL_START:-2024-04-01}
 END=${FC_CANONICAL_END:-2026-08-25}
-WANT_RUN="${1:-}"
+WANT_RUN="${1:-${FC_CANONICAL_RUN_ID:-}}"
+[ -n "$WANT_RUN" ] || {
+  echo "FATAL: an exact canonical run_id is required."
+  echo "       Refusing to guess from the newest durable run."
+  exit 2
+}
 
 say() { printf '%s  %s\n' "$(date -u +%H:%M:%SZ)" "$*"; }
 
@@ -48,19 +56,26 @@ read -r RUN_ID CODE_SHA DATES <<<"$(python3 -c "
 import sys; sys.path.insert(0,'.')
 import backtest.canonical_durability as cd
 want = '$WANT_RUN'
-runs = cd.discover_durable_runs()
-if want:
-    runs = [r for r in runs if r['run_id'] == want]
-if not runs:
+runs = [r for r in cd.discover_durable_runs() if r['run_id'] == want]
+if len(runs) != 1:
     sys.exit(1)
 r = runs[0]
 print(r['run_id'], r['code_git_sha'], r['dates'])
-")" || { echo "no durable run found${WANT_RUN:+ matching '$WANT_RUN'}"; exit 1; }
+")" || { echo "no unique durable run found matching '$WANT_RUN'"; exit 1; }
 
 [ -n "${RUN_ID:-}" ] || { echo "no durable run found"; exit 1; }
 say "run        : $RUN_ID"
 say "pinned SHA : $CODE_SHA"
 say "durable    : $DATES date(s) already safe on the remote"
+
+# Idempotence / single-owner gate. If this exact run is already generating in
+# this container, recovery is a no-op. Do not spawn a second process and then
+# mistake the original PID for the child we just launched.
+EXISTING_PID="$(pgrep -f "backtest/canonical_run.py.*--run-id[ =]$RUN_ID" | head -1 || true)"
+if [ -n "$EXISTING_PID" ] && kill -0 "$EXISTING_PID" 2>/dev/null; then
+  say "already running: pid $EXISTING_PID -- recovery is a no-op"
+  exit 0
+fi
 
 if ! git cat-file -e "${CODE_SHA}^{commit}" 2>/dev/null; then
   say "pinned SHA not present locally; fetching"
@@ -133,10 +148,22 @@ nohup python3 -u backtest/canonical_run.py \
 BGPID=$!
 sleep 6
 
-RPID="$(pgrep -f "canonical_run.py.*--run-id $RUN_ID" | head -1)"
-if [ -n "$RPID" ]; then
-  say "resumed: pid $RPID starttime $(awk '{print $22}' "/proc/$RPID/stat" 2>/dev/null) boot_id $(cat /proc/sys/kernel/random/boot_id 2>/dev/null)"
-  exit 0
+# Verify the process WE launched, not any process that happens to match the run
+# id. The old generic pgrep could report an already-existing owner as "resumed"
+# even when the new child failed immediately on the run lock.
+if kill -0 "$BGPID" 2>/dev/null; then
+  CMDLINE="$(tr '\000' ' ' < "/proc/$BGPID/cmdline" 2>/dev/null || true)"
+  case "$CMDLINE" in
+    *"backtest/canonical_run.py"*"--run-id $RUN_ID"*)
+      say "resumed: pid $BGPID starttime $(awk '{print $22}' "/proc/$BGPID/stat" 2>/dev/null) boot_id $(cat /proc/sys/kernel/random/boot_id 2>/dev/null)"
+      exit 0
+      ;;
+    *)
+      say "FAILED: launched pid $BGPID does not match the intended canonical command"
+      kill "$BGPID" 2>/dev/null || true
+      exit 1
+      ;;
+  esac
 fi
 
 wait "$BGPID" 2>/dev/null
