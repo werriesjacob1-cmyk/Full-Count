@@ -238,6 +238,44 @@ def lineage_fingerprint(records):
     return _sha256_bytes("\n".join(keyed).encode())
 
 
+def statcast_lineage_from_cache_report(report, *, year, through, cache_mode):
+    """Convert StatcastStore's validated persisted-source report to lineage.
+
+    Returns None rather than inventing provenance when the report is absent or
+    unusable. That keeps ordinary durability working while source certification
+    correctly remains blocked.
+    """
+    if not report or not report.get("usable"):
+        return None
+    if not report.get("content_sha256") or not report.get("schema_fingerprint"):
+        return None
+
+    pybaseball_version = None
+    try:
+        from importlib import metadata as _md
+        pybaseball_version = _md.version("pybaseball")
+    except Exception:
+        pass
+
+    return source_lineage_record(
+        "statcast",
+        request_identity={
+            "provider": "pybaseball.statcast",
+            "season_year": int(year),
+            "requested_through": str(through),
+        },
+        retrieval_timestamp=report.get("retrieval_timestamp"),
+        library="pybaseball",
+        library_version=pybaseball_version,
+        row_count=report.get("row_count"),
+        schema_columns=report.get("columns"),
+        content_sha256=report.get("content_sha256"),
+        date_coverage=[report.get("min_date"), report.get("max_date")],
+        cache_mode=cache_mode,
+        notes="Persisted Statcast source bytes used by canonical StatcastStore.",
+    )
+
+
 def assert_certifiable_source_lineage(index):
     """Fail closed unless durable source provenance is explicitly complete.
 
