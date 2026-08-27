@@ -927,7 +927,20 @@ def grade_day(date) -> bool:
             result = {**pick, "grade": "ungraded", "settlement_state": "ungraded",
                       "reason": f"public grader error: {exc}"}
         from dashboard.live_state import game_state as lifecycle_game_state
+        from dashboard.settlement_rules import has_authoritative_game_commencement
         authoritative = lifecycle_game_state(context.get("status")) == "final"
+        # 2026-08-27 independent-audit finding: this durable/morning retry
+        # path calls the same grade_public_pick() as refresh_grades.py's
+        # near-real-time settlement boundary but had no commencement gate
+        # of its own -- a hit/miss written here would bypass that
+        # invariant entirely if this path ever ran before the near-real-
+        # time one caught it. Close it the same way: a feed claiming Final
+        # is not itself proof a pitch was ever thrown.
+        if (result.get("settlement_state") in ("hit", "miss")
+                and not has_authoritative_game_commencement(context.get("feed"))):
+            result = {**pick, "grade": "ungraded", "settlement_state": "ungraded",
+                      "reason": "awaiting_proof_game_actually_commenced"}
+            authoritative = False
         result["settlement_authority"] = "official_final" if authoritative else "none"
         result["settlement_observed_at"] = public_observed_at
         result["settlement_source"] = (

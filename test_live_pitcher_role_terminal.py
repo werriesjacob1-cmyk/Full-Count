@@ -70,14 +70,26 @@ def payload(rows, date="2026-08-19"):
     }
 
 
+# A real pitch already thrown -- see settlement_rules.has_authoritative_
+# game_commencement's own docstring for why this is the one MLB StatsAPI
+# field that cannot appear pregame. Every fixture in this file represents
+# a genuinely live, in-progress game (that's the whole scenario under
+# test -- a pitcher who has already been removed), so this belongs in
+# the shared feed builder rather than repeated per test.
+PITCH_THROWN_PLAYS = {"allPlays": [{"playEvents": [{"isPitch": True}]}]}
+
+
 def feed_with_pitcher_status(player_id, is_current_pitcher):
     return {
-        "liveData": {"boxscore": {"teams": {"away": {"players": {
-            f"ID{player_id}": {
-                "person": {"id": player_id},
-                "gameStatus": {"isCurrentPitcher": is_current_pitcher, "isSubstitute": False},
-            },
-        }}, "home": {"players": {}}}}},
+        "liveData": {
+            "boxscore": {"teams": {"away": {"players": {
+                f"ID{player_id}": {
+                    "person": {"id": player_id},
+                    "gameStatus": {"isCurrentPitcher": is_current_pitcher, "isSubstitute": False},
+                },
+            }}, "home": {"players": {}}}},
+            "plays": PITCH_THROWN_PLAYS,
+        },
     }
 
 

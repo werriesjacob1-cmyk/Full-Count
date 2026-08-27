@@ -17,6 +17,12 @@ from dashboard.publication_registry import (
 
 DATE = "2026-08-17"
 FINAL = {"abstractGameState": "Final", "detailedState": "Final", "codedGameState": "F"}
+# Real-pitch commencement evidence (playEvents[].isPitch == True) -- these
+# tests represent genuinely completed real games, so their mocked feed must
+# satisfy has_authoritative_game_commencement() the same way a real Final
+# game's feed would, per the 2026-08-27 stronger settlement-boundary
+# invariant (dashboard/settlement_rules.has_authoritative_game_commencement).
+COMMENCED_FEED = {"liveData": {"plays": {"allPlays": [{"playEvents": [{"isPitch": True}]}]}}}
 
 
 def pick(status="top_pick"):
@@ -77,7 +83,8 @@ class PublicGradingTests(unittest.TestCase):
             json.dump({"picks": rows, "shadow_tracking": []}, handle)
 
     def grade(self, result):
-        with mock.patch.object(gr, "fetch_game_contexts", return_value={1: {"status": FINAL, "feed": {}}}), \
+        with mock.patch.object(gr, "fetch_game_contexts",
+                                return_value={1: {"status": FINAL, "feed": COMMENCED_FEED}}), \
              mock.patch.object(gr, "grade_public_pick", return_value=result), \
              mock.patch.object(gr, "fetch_game_statuses", return_value={1: FINAL}), \
              mock.patch.object(gr, "grade_pick", return_value={**pick(), "grade": result.get("grade", "ungraded")}):
