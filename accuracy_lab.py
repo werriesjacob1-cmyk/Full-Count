@@ -160,21 +160,44 @@ def _artifact_identity(rows_path, rows, distinct_dates):
     }
 
 
+PROMOTION_GRADE_BINDING_FIELDS = (
+    "cutoff_date",
+    "holdout_frac",
+    "rows_path",
+    "artifact_sha256",
+    "artifact_row_count",
+    "artifact_n_distinct_dates",
+    "artifact_date_range",
+    "code_git_sha_at_lock",
+)
+
+
 def manifest_identity_strength(manifest):
     """Describe how strongly a manifest pins its dataset, without judging.
 
-    Separated from the gate so a caller (or a report) can inspect and
-    explain strength without having to trigger an exception to find out.
+    Promotion-grade means more than "there is a checksum-shaped key".
+    The manifest must bind the artifact bytes, row/date shape, source path,
+    chronological partition, and code identity recorded when the lock was
+    created.  Keeping this definition here gives every downstream research
+    harness one fail-closed source of truth instead of letting each caller
+    invent a weaker subset of fields.
     """
     version = int(manifest.get("manifest_schema_version", 1) or 1)
+    missing = [k for k in PROMOTION_GRADE_BINDING_FIELDS
+               if manifest.get(k) is None or manifest.get(k) == ""]
     has_checksum = bool(manifest.get("artifact_sha256"))
     return {
         "manifest_schema_version": version,
         "has_artifact_checksum": has_checksum,
         "has_row_count": manifest.get("artifact_row_count") is not None,
         "has_date_range": manifest.get("artifact_date_range") is not None,
-        "has_code_sha_at_lock": manifest.get("code_git_sha_at_lock") is not None,
-        "promotion_grade": version >= MIN_PROMOTION_GRADE_SCHEMA_VERSION and has_checksum,
+        "has_code_sha_at_lock": bool(manifest.get("code_git_sha_at_lock")),
+        "required_binding_fields": list(PROMOTION_GRADE_BINDING_FIELDS),
+        "missing_binding_fields": missing,
+        "promotion_grade": (
+            version >= MIN_PROMOTION_GRADE_SCHEMA_VERSION
+            and not missing
+        ),
         "can_detect_content_replacement": has_checksum,
     }
 
@@ -184,18 +207,19 @@ def assert_promotion_grade_manifest(manifest, manifest_path=None):
 
     Callable directly by any framework that claims promotion-grade
     evidence (see backtest/equal_volume.py), so the rule lives in one
-    place rather than being re-implemented per experiment."""
+    place rather than being re-implemented per experiment.
+    """
     strength = manifest_identity_strength(manifest)
     if strength["promotion_grade"]:
         return strength
+    missing = strength["missing_binding_fields"]
     raise WeakDatasetIdentityError(
         f"holdout manifest{f' at {manifest_path!r}' if manifest_path else ''} is "
-        f"schema v{strength['manifest_schema_version']} "
-        f"(artifact_sha256 {'present' if strength['has_artifact_checksum'] else 'ABSENT'}) "
-        f"and cannot prove which dataset it was locked against, so it may not back a "
-        f"promotion-grade claim. A v1 manifest records only a path and a cutoff: the "
-        f"file at that path can be replaced wholesale without the lock noticing. "
-        f"This manifest remains fully valid for legacy replay/reproduction "
+        f"schema v{strength['manifest_schema_version']} and cannot prove the complete "
+        f"dataset/holdout identity required for a promotion-grade claim; missing "
+        f"binding fields={missing}. A checksum alone is not enough to prove the "
+        f"partition, row/date shape, path, and code identity used when the holdout "
+        f"was locked. This manifest remains valid for legacy replay/reproduction "
         f"(require_strong_dataset_identity=False) -- it is NOT being migrated or "
         f"rewritten. For promotion-grade evidence, lock a fresh v"
         f"{MIN_PROMOTION_GRADE_SCHEMA_VERSION} manifest at a NEW manifest_path against "
