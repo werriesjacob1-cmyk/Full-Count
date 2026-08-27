@@ -188,11 +188,22 @@ class SelectionPolicy:
     caught before its numbers are believed.
     """
 
-    def __init__(self, name, version, rank_fn, *, description=None):
+    def __init__(self, name, version, rank_fn, *, description=None,
+                 ranking_input_fields=None):
         self.name = name
         self.version = version
         self.rank_fn = rank_fn
         self.description = description or ""
+
+        if ranking_input_fields is None:
+            fields = ()
+        elif isinstance(ranking_input_fields, str):
+            fields = (ranking_input_fields,)
+        else:
+            fields = tuple(ranking_input_fields)
+        if any(not isinstance(f, str) or not f for f in fields):
+            raise ValueError("ranking_input_fields must contain non-empty field names")
+        self.ranking_input_fields = tuple(sorted(set(fields)))
 
     def rank(self, population):
         order = list(self.rank_fn(population))
@@ -220,7 +231,8 @@ class SelectionPolicy:
 
     def identity(self):
         return {"policy_name": self.name, "policy_version": self.version,
-                "description": self.description}
+                "description": self.description,
+                "ranking_input_fields": list(self.ranking_input_fields)}
 
 
 def rank_by(key_fn, *, reverse=True):
@@ -349,6 +361,17 @@ class EqualVolumeExperiment:
                 "promotion_grade=True requires dataset identity verified against "
                 f"the real Accuracy Lab manifest and artifact: {exc}") from exc
 
+        for policy in (self.champion, self.challenger):
+            if not policy.ranking_input_fields:
+                raise EqualVolumeViolation(
+                    f"promotion_grade=True requires policy {policy.name!r} to declare "
+                    "ranking_input_fields; policy name/version alone cannot prove what "
+                    "candidate information determined the ordering")
+            if "outcome" in policy.ranking_input_fields:
+                raise EqualVolumeViolation(
+                    f"promotion-grade policy {policy.name!r} declares realized outcome "
+                    "as a ranking input; outcome information must never enter selection")
+
     # ── selection ──────────────────────────────────────────────────────
 
     def _select(self, policy):
@@ -365,6 +388,26 @@ class EqualVolumeExperiment:
                 f"policy {policy.name!r} yielded {len(selected)} selections for a "
                 f"requested volume of {self.volume}")
         return selected
+
+    def _ranking_input_fingerprint(self, policy):
+        """Bind the exact declared ranking-input values for every candidate.
+
+        This is an explicit contract, not magical introspection of arbitrary
+        Python rank functions. Promotion-grade mode therefore refuses policies
+        that do not declare their inputs, and independent methodology review
+        must still verify that the declaration matches the implementation.
+        """
+        rows = []
+        for ident in sorted(self.population.identities, key=_identity_sort_key):
+            candidate = self.population.row(ident)
+            rows.append({
+                "identity": ident,
+                "inputs": {
+                    field: candidate.get(field)
+                    for field in policy.ranking_input_fields
+                },
+            })
+        return _sha(rows)
 
     def _grade(self, selected, outcomes):
         hits = misses = excluded = 0
@@ -628,6 +671,10 @@ class EqualVolumeExperiment:
                 "duplicate_candidate_identities": 0,
                 "dataset_identity": self.population.dataset_identity,
                 "verified_dataset_identity": self.verified_dataset_identity,
+                "ranking_input_fingerprints": {
+                    "champion": self._ranking_input_fingerprint(self.champion),
+                    "challenger": self._ranking_input_fingerprint(self.challenger),
+                },
                 "evidence_regime": self.population.evidence_regime,
                 "eligibility_definition_version": self.population.definition_version,
             },
@@ -650,6 +697,10 @@ class EqualVolumeExperiment:
             ),
             "champion": self.champion.identity(),
             "challenger": self.challenger.identity(),
+            "ranking_input_fingerprints": {
+                "champion": self._ranking_input_fingerprint(self.champion),
+                "challenger": self._ranking_input_fingerprint(self.challenger),
+            },
             "volume": self.volume,
             "outcome_policy": self.outcome_policy.identity(),
             "kind": self.kind,
