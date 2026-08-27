@@ -36,6 +36,14 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
+        with:
+          # Full history, deliberately. test_generation_regime.py reads real
+          # git blobs at pinned historical SHAs (022c8829, 2ce95fe9) to prove
+          # the canonical dataset's code-identity closure. checkout@v4 defaults
+          # to fetch-depth: 1, so those objects are absent and the test errored
+          # with RegimeError -- which is why CI went red at 1e23a654 and stayed
+          # red. A shallow clone cannot run a test about code history.
+          fetch-depth: 0
 
       - name: Set up Python
         uses: actions/setup-python@v5

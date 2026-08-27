@@ -22,6 +22,34 @@ LEGACY = "2ce95fe903526c62640d23659d84d37bbaf1d6d2"
 PINNED = "022c88299281c5265204fcff548313b9973e9ec7"
 
 
+def _sha_reachable(sha):
+    """Is this historical commit actually present in the local object store?
+
+    These tests read real blobs at real SHAs, which is the point -- a code
+    identity closure is a claim about history, so proving it needs history.
+    But a shallow clone (actions/checkout@v4 defaults to fetch-depth: 1) has
+    no such objects, and the failure surfaced as a bare RegimeError about a
+    "stale closure definition" -- which is a genuinely alarming message for
+    what is only a missing checkout depth. CI is now configured with
+    fetch-depth: 0 so these run for real; this guard exists so that any OTHER
+    shallow environment reports a precise skip instead of a misleading error.
+    """
+    import subprocess
+    try:
+        r = subprocess.run(["git", "cat-file", "-e", f"{sha}^{{commit}}"],
+                           cwd=ROOT, capture_output=True, timeout=15)
+        return r.returncode == 0
+    except (OSError, subprocess.SubprocessError):
+        return False
+
+
+_HISTORY_AVAILABLE = _sha_reachable(PINNED) and _sha_reachable(LEGACY)
+_NEEDS_HISTORY = unittest.skipUnless(
+    _HISTORY_AVAILABLE,
+    f"requires full git history: {PINNED[:12]} and/or {LEGACY[:12]} are not in this "
+    "clone (shallow checkout?). Run with fetch-depth: 0.")
+
+
 class RepositoryIdentityTests(unittest.TestCase):
     def test_canonical_identity_is_the_post_rename_name(self):
         # Verified against GitHub's API reporting full_name for this repo.
@@ -73,6 +101,7 @@ class RepositoryIdentityTests(unittest.TestCase):
             gr.build_repository_identity_correction(m, reason="x", fix_commit="y")
 
 
+@_NEEDS_HISTORY
 class ClosureAndFingerprintTests(unittest.TestCase):
     def test_closure_is_computed_and_includes_the_undiscoverable_extras(self):
         closure = gr.discover_generation_closure(PINNED)
@@ -104,6 +133,7 @@ class ClosureAndFingerprintTests(unittest.TestCase):
             cmp_["differing_files"]["dashboard/settlement_rules.py"]["functions"]["changed"], [])
 
 
+@_NEEDS_HISTORY
 class EquivalenceRecordTests(unittest.TestCase):
     def _rec(self, **kw):
         return gr.build_equivalence_record(LEGACY, PINNED, **kw)
@@ -131,6 +161,7 @@ class EquivalenceRecordTests(unittest.TestCase):
             self._rec(replay_verdict="probably fine")
 
 
+@_NEEDS_HISTORY
 class DatasetClassificationTests(unittest.TestCase):
     def test_single_sha_is_eligible(self):
         c = gr.classify_dataset_regime([PINNED])
