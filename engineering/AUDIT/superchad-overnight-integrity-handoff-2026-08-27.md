@@ -577,6 +577,83 @@ different quota.
 - VERIFIED-REPO: cumulative source paths remain research/evaluation + tests +
   this handoff only.
 
+## Workstream 6 — Strict Best Expression refill
+
+**Status:** SUPERCHAD-IMPLEMENTED / NOT YET RUNTIME-VERIFIED / NOT CI-VERIFIED
+
+### Pre-change defect
+
+VERIFIED-REPO: Best Expression historically used soft demotion. When an
+eligible population did not contain enough independent theses to refill the
+requested top-N, redundant expressions flowed back into the selected set. That
+is honest exploratory behavior because volume is preserved, but it cannot
+support a promotion claim that specifically says the portfolio remained
+thesis-diversified.
+
+A second subtle risk is schedule mismatch: a strict-refill check is meaningless
+if it proves capacity against one per-date quota and the experiment executes a
+different quota.
+
+### Implementation
+
+1. `ef4b4effe91a97c4e0855c20962316fe4614b120`
+   - `backtest/best_expression.py`
+   - adds `StrictRefillViolation`
+   - adds optional `strict_volume_by_date` to
+     `best_expression_rank_fn()`
+   - strict mode computes same-slate thesis-distinct capacity and fails if any
+     date cannot satisfy its quota without exceeding `max_per_thesis`
+   - adds `strict_refill_capacity()` and `assert_strict_refillable()`
+   - soft mode is preserved when no strict schedule is supplied
+
+2. `1f0f0279fa3341755c6f1c30e6bedfd5a0d656f2`
+   - `test_best_expression.py`
+   - insufficient same-slate independent capacity must raise
+   - sufficient same-slate refill produces distinct theses
+   - strict schedule must cover every eligible date
+   - strict Best Expression integrates with EqualVolumeExperiment's locked
+     per-date allocation
+
+3. `2b284f04c736217836135b2ad42596f54426124e`
+   - module documentation now distinguishes soft/exploratory re-entry from
+     strict/promotion behavior
+
+4. `fe7ee13b02230594c1afd7cab0fb6148488f821c`
+   - strict rank function exposes machine-readable required-volume and selection
+     contract metadata
+
+5. `b4956cb368258e3d533a631dd85490013094e268`
+   - `SelectionPolicy` captures selector-specific required volume metadata
+   - `EqualVolumeExperiment` refuses to execute a selector whose strict refill
+     schedule differs from the experiment's own `volume_by_date`
+   - the contract is included in policy identity, so the experiment manifest
+     binds it
+
+6. `cd95078cb8ecc22b96c559d761e0d21152bbb4df`
+   - adversarial test proves a strict Best Expression policy validated against
+     one schedule cannot be executed under a different schedule
+
+### Methodology notes
+
+- Strict mode proves **capacity**, not accuracy. It does not claim diversified
+  picks win more often.
+- The default thesis remains `player_game`; stronger groupings such as
+  game-wide suppression remain separate hypotheses.
+- Strict failure is preferable to silently changing the experimental thesis.
+  If a slate cannot refill, that is evidence about operational feasibility, not
+  permission to lower N or re-admit redundancy under a promotion label.
+- A future promotion runner must also declare the Best Expression ranking input
+  fields (normally the underlying score plus candidate identity fields already
+  structurally bound). Claude should verify the exact declaration.
+
+### Test / CI truth
+
+- SUPERCHAD-IMPLEMENTED: code and adversarial tests committed.
+- UNKNOWN: real-runtime test execution.
+- UNKNOWN: exact-SHA CI.
+- VERIFIED-REPO: cumulative source paths remain research/evaluation + tests +
+  this handoff only.
+
 ---
 
 # Claude independent review checklist
