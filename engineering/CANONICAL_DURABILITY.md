@@ -160,6 +160,16 @@ nothing about truncation, missing columns, or a process that died mid-write.
 declaration so hidden pybaseball cache state cannot silently determine the
 canonical source vintage.
 
+Observed in production on 2026-08-27, on the real warmed cache:
+
+```
+[statcast] cache hit: statcast_2024_through_2026-08-24.parquet
+[statcast]   validated: 2151381 rows, 2024-03-15..2026-08-24, sha256 549a08063cb9
+```
+
+The row count, real date span, and content checksum are now recorded on every
+acceptance — where previously the filename alone was the entire check.
+
 ## The proof
 
 `test_canonical_durability.py` — **43 checks, all passing.** It reproduces total
@@ -204,8 +214,29 @@ It needs a live store, so it cannot sit in the deterministic suite without makin
 CI network-dependent and flaky.
 
 Consequence: the leakage guarantee is real but **manually verified, not
-continuously verified**. Re-run it by hand after any change to
-`backtest/engine.py`, pointing at an already-warmed cache so it is cheap:
+continuously verified**.
+
+**Last run: 2026-08-27, against code SHA `68b663a3` (the SHA the current
+canonical backfill is pinned to), for 2024-05-15. VERDICT: PASS, 10/10.**
+
+The two positive controls are what make this worth anything — they rule out the
+failure mode where a leakage test passes trivially because the dataset is empty:
+
+- The unrestricted store holds **1,928,314 pitches dated 2024-05-15 or later**,
+  and **4,209 from 2024-05-15 itself** — *none of which reached any input frame*.
+- The cutoff is load-bearing, not decorative: **292 players gained PA** between
+  `endDate=2024-05-14` and `endDate=2024-05-15` (e.g. Mark Vientos, 7 PA vs 11).
+
+Also confirmed: all 40 logged input reads end before the date (latest row seen
+anywhere: 2024-05-14); season leaderboards raise `LookaheadError` rather than
+quietly returning season-to-date numbers; every rolling Statcast window ends on
+or before the cutoff; the season-Statcast memo is cleared on entering each
+simulated date, so a frame pulled for a later date cannot be reused for an
+earlier one; and all 15 graded games are on the date itself — inputs predate it,
+outcomes do not.
+
+Re-run it by hand after any change to `backtest/engine.py`, pointing at an
+already-warmed cache so it is cheap:
 
 ```python
 store = StatcastStore(2024, "2024-06-01", cache_dir="<run>/backtest/.cache")
