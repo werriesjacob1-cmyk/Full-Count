@@ -692,6 +692,13 @@ def plan_remaining(state, *, force=False):
     return sorted(d for d, s in state.items() if s["resolved"] not in ("ok", "no_games"))
 
 
+def _status_counts(state):
+    counts = {}
+    for s in state.values():
+        counts[s["resolved"]] = counts.get(s["resolved"], 0) + 1
+    return counts
+
+
 def validate_complete(state):
     """Requirement F: fail loudly on ANY unexplained gap."""
     bad = {d: s for d, s in state.items() if s["resolved"] not in ("ok", "no_games")}
@@ -918,13 +925,58 @@ def import_legacy(run_dir, legacy_jsonl_path, legacy_state_path, *, legacy_code_
 def run(run_dir, manifest, *, use_weather=True, use_bullpen=True,
        keep_unpriced=False, apply_policy=False, sleep=1.0, force=False,
        allow_sha_drift=False, verbose=True, store=None, heartbeat_every=5,
-       max_dates=None):
+       max_dates=None, durability=None, environment=None, lineage=None,
+       cache_mode=None):
     """The interruption-safe outer loop. Safe to call repeatedly (crash,
     restart, call again with the same run_dir/manifest) -- every call
-    starts from load_run_state()'s ground truth, never in-memory belief."""
+    starts from load_run_state()'s ground truth, never in-memory belief.
+
+    `durability` is a canonical_durability.DurabilityPolicy. It pushes
+    completed dates -- ROWS INCLUDED, gzipped -- to the durable remote branch
+    on a bounded cadence. It is OFF unless a policy is passed, so that only a
+    deliberate canonical launch writes to the shared durable branch; the CLI
+    below passes one.
+
+    This is the part that was missing on 2026-08-27. The loop below was
+    already interruption-safe against process death: every date is checkpointed
+    atomically and load_run_state() re-derives ground truth from disk. What it
+    was not safe against was the DISK going away, which is what happened. Local
+    checkpoint safety is worth nothing once the container is reclaimed."""
     from backtest.engine import StatcastStore, dparse, shift, simulate_date
 
+    from backtest import canonical_durability as _cd
+
     verify_code_identity(manifest, allow_sha_drift=allow_sha_drift)
+    # DEFAULT OFF, deliberately, and the reason is a bug this very change
+    # introduced: with durability defaulting ON, running the ordinary test
+    # suite pushed 34 synthetic test runs to the real durable branch within
+    # about three minutes. Any library caller -- a test, a notebook, an
+    # analysis script -- would do the same. Remote pushes are a side effect on
+    # shared state, so they are opt-in at the one place a human actually means
+    # to launch a canonical run: the CLI in __main__, which passes
+    # durability=DurabilityPolicy(). Everything else is safe by default.
+    if durability is None or durability is False:
+        durability = _cd.DurabilityPolicy(enabled=bool(durability))
+    if environment is None:
+        environment = _cd.environment_identity()
+
+    def _push_durable(final=False):
+        res = _cd.push_durable_checkpoint(
+            run_dir, manifest, environment=environment, lineage=lineage,
+            cache_mode=cache_mode,
+            state_summary=_status_counts(load_run_state(run_dir, requested_dates)))
+        durability.note_pushed(res)
+        if verbose:
+            if res.get("pushed"):
+                print(f"    durable: pushed {res['dates_written']} date(s), "
+                      f"{res['bytes_written']}B gz -> {_cd.DURABLE_BRANCH}", flush=True)
+            else:
+                # Loud on purpose. A run whose durable pushes are silently
+                # failing has exactly the durability of the run we lost.
+                print(f"    !! DURABLE PUSH FAILED ({res.get('reason')}) -- this run's "
+                      f"progress currently exists ONLY in this container", flush=True)
+        return res
+
     lock = acquire_lock(run_dir, manifest["run_id"])
     # Covers EVERY long phase below -- Statcast warmup and each individual
     # simulate_date() alike -- rather than only date boundaries. See
@@ -960,6 +1012,9 @@ def run(run_dir, manifest, *, use_weather=True, use_bullpen=True,
                     "reason": res.reason}
             write_checkpoint(run_dir, d, res.rows if status == "ok" else [], status,
                              elapsed=elapsed, extra=extra)
+            durability.note_date_completed()
+            if durability.should_push():
+                _push_durable()
             if i % heartbeat_every == 0:
                 # Retained as a cheap progress-boundary refresh. The lease
                 # thread is what actually guarantees freshness now, so this
@@ -971,8 +1026,13 @@ def run(run_dir, manifest, *, use_weather=True, use_bullpen=True,
             if i < len(remaining):
                 time.sleep(sleep)
         lock = heartbeat_lock(run_dir, lock)
+        # Always push at the end of an invocation, so an operator who chunks a
+        # run with --max-dates never leaves the tail undurable.
+        if durability.should_push(final=True):
+            _push_durable(final=True)
         final_state = load_run_state(run_dir, requested_dates)
-        return {"remaining": 0, "state": final_state}
+        return {"remaining": 0, "state": final_state,
+                "durability": durability.describe()}
     finally:
         # Stop the lease BEFORE releasing, so no tick can resurrect a lock
         # file the release is about to remove.
@@ -995,6 +1055,20 @@ if __name__ == "__main__":
     ap.add_argument("--max-dates", type=int, default=None,
                     help="process at most this many remaining dates then exit (for supervised chunking)")
     ap.add_argument("--assemble", action="store_true", help="assemble the final artifact instead of running")
+    ap.add_argument("--no-durable-push", action="store_true",
+                    help="do NOT push completed dates to the durable remote branch. "
+                         "Only for local experiments -- a real canonical run without this "
+                         "has no protection against container loss.")
+    ap.add_argument("--durable-every-dates", type=int, default=10,
+                    help="push durably after this many completed dates (default 10)")
+    ap.add_argument("--durable-every-seconds", type=int, default=900,
+                    help="push durably after this many seconds (default 900)")
+    ap.add_argument("--resume-from-remote", action="store_true",
+                    help="before running, restore this run's completed dates from the durable "
+                         "remote branch. Use after a container loss: it needs nothing local "
+                         "except a clone. Fails closed on any identity or checksum mismatch.")
+    ap.add_argument("--cache-mode", choices=("fresh_source", "frozen_cache"), default="frozen_cache",
+                    help="declare the pybaseball/Statcast source vintage this run used")
     args = ap.parse_args()
 
     if args.run_id:
@@ -1013,7 +1087,29 @@ if __name__ == "__main__":
         summary = assemble(rd, mf)
         print(json.dumps(summary, indent=2))
     else:
+        from backtest import canonical_durability as _cd
+
+        if args.resume_from_remote:
+            fetched = _cd.fetch_durable_branch()
+            print(f"durable fetch: {fetched}", flush=True)
+            rep = _cd.restore_from_durable(rd, mf["run_id"], manifest=mf)
+            print(f"restored {len(rep['restored'])} date(s) from the durable branch, "
+                  f"{len(rep['skipped_present'])} already present locally, "
+                  f"{len(rep['failed'])} failed", flush=True)
+            if rep["failed"]:
+                print(json.dumps(rep["failed"], indent=2), flush=True)
+
+        policy = _cd.DurabilityPolicy(
+            every_n_dates=args.durable_every_dates,
+            every_seconds=args.durable_every_seconds,
+            enabled=not args.no_durable_push)
+        if not policy.enabled:
+            print("!! durable push DISABLED -- this run's progress will exist only in "
+                  "this container and will not survive its reclamation", flush=True)
+
         result = run(rd, mf, use_weather=not args.no_weather, use_bullpen=not args.no_bullpen,
                      sleep=args.sleep, force=args.force, allow_sha_drift=args.allow_sha_drift,
-                     max_dates=args.max_dates)
+                     max_dates=args.max_dates, durability=policy,
+                     cache_mode=args.cache_mode)
         print(f"invocation complete. {result['remaining']} dates still remaining.")
+        print(f"durability: {json.dumps(result.get('durability'))}")
