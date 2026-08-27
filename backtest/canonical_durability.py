@@ -244,8 +244,12 @@ def statcast_lineage_from_cache_report(report, *, year, through, cache_mode):
     Returns None rather than inventing provenance when the report is absent or
     unusable. That keeps ordinary durability working while source certification
     correctly remains blocked.
+
+    Tests and callers may supply lightweight/mock stores whose cache_report
+    attribute is not a real mapping. Treat that exactly like absent provenance,
+    never as permission to coerce Mock values into scientific identity.
     """
-    if not report or not report.get("usable"):
+    if not isinstance(report, dict) or not report.get("usable"):
         return None
     if not report.get("content_sha256") or not report.get("schema_fingerprint"):
         return None
