@@ -57,8 +57,22 @@ def git(args, cwd, env=None, check_rc=True):
     return p.stdout.strip()
 
 
-GIT_ENV = dict(os.environ, GIT_AUTHOR_NAME="t", GIT_AUTHOR_EMAIL="t@t",
-               GIT_COMMITTER_NAME="t", GIT_COMMITTER_EMAIL="t@t")
+# Set the identity into os.environ, not merely into a dict handed to this
+# file's own git helper. push_durable_checkpoint() spawns git from os.environ,
+# so an identity that lives only in a local dict never reaches it: commit-tree
+# then fails for want of a committer, the push never happens, and the test
+# fails with the confusing downstream symptom "Not a valid object name
+# canonical-durable-checkpoints".
+#
+# This passed locally and failed in CI for ten minutes of confusion, because
+# this container has a global git identity (Claude <noreply@anthropic.com>)
+# that silently supplied the missing value, while a GitHub runner has none. A
+# test whose result depends on ambient machine configuration is not a test.
+for _k, _v in (("GIT_AUTHOR_NAME", "fc-test"), ("GIT_AUTHOR_EMAIL", "fc-test@example.invalid"),
+               ("GIT_COMMITTER_NAME", "fc-test"), ("GIT_COMMITTER_EMAIL", "fc-test@example.invalid")):
+    os.environ[_k] = _v
+
+GIT_ENV = dict(os.environ)
 
 
 def synth_rows(date, n):
