@@ -860,28 +860,33 @@ def restore_from_durable(run_dir, run_id, *, branch=DURABLE_BRANCH, remote="orig
                        "dates": len(index.get("dates") or {}),
                        "identity_fingerprint": index.get("identity_fingerprint")}
 
-    os.makedirs(os.path.join(run_dir, "checkpoints"), exist_ok=True)
     manifest_path = os.path.join(run_dir, "manifest.json")
 
     if manifest is None and os.path.exists(manifest_path):
         with open(manifest_path, encoding="utf-8") as f:
             manifest = json.load(f)
 
-    if manifest is not None:
-        # Verify BEFORE writing anything.
-        report["identity"] = assert_identity_compatible(
-            index, manifest, allow_environment_drift=allow_environment_drift)
-    else:
-        raw = _read_durable_blob(durable_paths(run_id)["manifest"], branch=branch,
-                                 remote=remote, repo_root=repo_root)
-        if raw is None:
-            raise FileNotFoundError(f"durable index exists for {run_id} but manifest.json does not")
-        manifest = json.loads(raw)
+    manifest_raw = None
+    if manifest is None:
+        manifest_raw = _read_durable_blob(
+            durable_paths(run_id)["manifest"], branch=branch,
+            remote=remote, repo_root=repo_root)
+        if manifest_raw is None:
+            raise FileNotFoundError(
+                f"durable index exists for {run_id} but manifest.json does not")
+        manifest = json.loads(manifest_raw)
+
+    # Identity is the write gate. In particular, when the local run directory
+    # does not yet exist, do not even create it until the durable manifest has
+    # been proven compatible with the durable index.
+    report["identity"] = assert_identity_compatible(
+        index, manifest, allow_environment_drift=allow_environment_drift)
+
+    os.makedirs(os.path.join(run_dir, "checkpoints"), exist_ok=True)
+    if manifest_raw is not None:
         with open(manifest_path, "wb") as f:
-            f.write(raw)
+            f.write(manifest_raw)
         report["manifest_restored"] = True
-        report["identity"] = assert_identity_compatible(
-            index, manifest, allow_environment_drift=allow_environment_drift)
 
     ledger = index.get("dates") or {}
     for d in sorted(ledger):
