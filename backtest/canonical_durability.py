@@ -499,7 +499,8 @@ def assert_identity_compatible(index, manifest, *, allow_environment_drift=True)
     problems = []
     for field in ("run_id", "code_git_sha", "schema_version",
                   "requested_start_date", "requested_end_date",
-                  "weather_mode", "repository_identity"):
+                  "weather_mode", "repository_identity",
+                  "evidence_regime", "candidate_identity_fields"):
         a, b = want.get(field), manifest.get(field)
         if a != b:
             problems.append(f"{field}: durable={a!r} local={b!r}")
