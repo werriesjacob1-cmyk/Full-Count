@@ -91,6 +91,13 @@ class TempLifecycle(unittest.TestCase):
         write_registry(self.registry, published_registry(row))
 
 
+# A real pitch already thrown -- see settlement_rules.has_authoritative_
+# game_commencement's own docstring. "LIVE" status alone is not enough
+# proof any more (2026-08-26 Dustin May incident); any fixture below that
+# means to represent a genuinely in-progress game needs this too.
+PITCH_THROWN_PLAYS = {"allPlays": [{"playEvents": [{"isPitch": True}]}]}
+
+
 class LiveSettlementTests(TempLifecycle):
     def test_monotonic_live_hits_are_explicitly_provisional(self):
         cases = (("hits", 1), ("total_bases", 2), ("home_runs", 1), ("strikeouts", 5))
@@ -98,7 +105,9 @@ class LiveSettlementTests(TempLifecycle):
             with self.subTest(stat=stat):
                 row = prop(stat, needs)
                 self.seed(row)
-                with mock.patch.object(gr, "fetch_game_contexts", return_value={1: {"status": LIVE, "feed": {}}}), \
+                commenced_feed = {"liveData": {"plays": PITCH_THROWN_PLAYS}}
+                with mock.patch.object(gr, "fetch_game_contexts",
+                                        return_value={1: {"status": LIVE, "feed": commenced_feed}}), \
                      mock.patch.object(gr, "grade_pick", return_value={"grade": "hit", "actual": needs}):
                     rg.refresh(self.data, self.live, self.registry)
                 delta = load_json(self.live)["props"][row["id"]]
@@ -128,10 +137,13 @@ class LiveSettlementTests(TempLifecycle):
                 self.seed(row)
                 context = {
                     "status": LIVE,
-                    "feed": {"liveData": {"linescore": {
-                        "currentInning": inning,
-                        "innings": [{"away": {"runs": runs}, "home": {"runs": 0}}],
-                    }}},
+                    "feed": {"liveData": {
+                        "linescore": {
+                            "currentInning": inning,
+                            "innings": [{"away": {"runs": runs}, "home": {"runs": 0}}],
+                        },
+                        "plays": PITCH_THROWN_PLAYS,
+                    }},
                 }
                 with mock.patch.object(gr, "fetch_game_contexts", return_value={1: context}), \
                      mock.patch.object(gr, "grade_pick") as legacy_grader:

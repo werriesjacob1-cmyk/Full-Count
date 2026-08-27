@@ -79,6 +79,56 @@ def player_game_status(feed, player_id):
     return player.get("gameStatus") or {}
 
 
+def has_authoritative_game_commencement(feed):
+    """True only when the live feed shows at least one real pitch has
+    actually been thrown -- the one MLB StatsAPI field reserved
+    specifically for that (``playEvents[].isPitch``), as opposed to any
+    field that can be populated in a misleading pregame combination.
+
+    2026-08-26 Dustin May incident (game_pk 823584): the live feed
+    briefly reported ``abstractGameState=="live"`` 19 minutes before
+    that game's own scheduled first pitch, and every other field this
+    session checked pregame was ALSO already populated with real-looking
+    data at that point -- ``liveData.plays.allPlays`` was non-empty (a
+    "Game Advisory / Status Change - Pre-Game" entry, typed as an
+    ``atBat`` result), ``liveData.linescore.offense``/``defense`` had a
+    real lineup, and ``liveData.linescore.innings[0]`` existed. None of
+    those prove a pitch was thrown. The pregame advisory play's own
+    ``playEvents`` entry has ``isPitch: false``; a genuine pitch (real
+    velocity/strike-zone data in ``pitchData``) has ``isPitch: true``.
+    That is the one unambiguous signal found by inspecting real MLB
+    payloads (a live in-progress game, a genuinely pregame game, and a
+    completed game) rather than assumed from field names.
+
+    Deliberately independent of the row's own stored ``game_start`` or
+    the wall clock -- this reads only what the feed itself proves
+    happened, so a stale/wrong scheduled time can never suppress real
+    commencement evidence, and a feed claiming "live" early can never
+    manufacture it either. Also deliberately state-history-agnostic:
+    once a real pitch has been thrown, this stays true regardless of
+    what happens next (delay, suspension, resumption, Final) -- a pitch
+    cannot un-happen. Fails closed (False) on any missing/malformed feed
+    data, never guesses.
+    """
+    feed = feed or {}
+    if not isinstance(feed, dict):
+        return False
+    plays = ((feed.get("liveData") or {}).get("plays") or {})
+    if not isinstance(plays, dict):
+        return False
+    candidates = list(plays.get("allPlays") or [])
+    current_play = plays.get("currentPlay")
+    if isinstance(current_play, dict):
+        candidates.append(current_play)
+    for play in candidates:
+        if not isinstance(play, dict):
+            continue
+        for event in (play.get("playEvents") or []):
+            if isinstance(event, dict) and event.get("isPitch") is True:
+                return True
+    return False
+
+
 def _int(value, default=0):
     try:
         return int(value or 0)

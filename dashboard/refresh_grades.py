@@ -25,7 +25,7 @@ try:
         DEFAULT_REGISTRY_PATH, all_published_snapshots, load_registry,
     )
     from .prepare_pages_artifact import normalize_live, normalize_payload
-    from .settlement_rules import player_game_status
+    from .settlement_rules import has_authoritative_game_commencement, player_game_status
 except ImportError:
     from live_state import (
         apply_live_overlay, atomic_write_json, game_state, load_live_state,
@@ -35,7 +35,7 @@ except ImportError:
         DEFAULT_REGISTRY_PATH, all_published_snapshots, load_registry,
     )
     from prepare_pages_artifact import normalize_live, normalize_payload
-    from settlement_rules import player_game_status
+    from settlement_rules import has_authoritative_game_commencement, player_game_status
 
 
 EARLY_HIT_STATS = frozenset((
@@ -261,7 +261,21 @@ def refresh(data_path, live_path=None, registry_path=DEFAULT_REGISTRY_PATH):
         if context is None:
             print(f"Game {game_pk} feed failed; preserving {prop_id} for retry.")
             continue
-        current_game_state = game_state(context.get("status"), row=row, now=stamp)
+        # 2026-08-26 Dustin May incident, stronger invariant: a real pitch
+        # already thrown (has_authoritative_game_commencement, reading only
+        # liveData.plays[].playEvents[].isPitch) is direct proof stronger
+        # than any scheduled clock -- when present, trust the feed's own
+        # status fields outright (row/now omitted, matching game_state()'s
+        # own documented unguarded-fallback contract) so a stale/wrong
+        # stored game_start can never suppress genuinely authoritative
+        # live/final evidence. When commencement is NOT yet proven, the
+        # clock guard added for the original incident still applies.
+        commenced = has_authoritative_game_commencement(context.get("feed"))
+        current_game_state = game_state(
+            context.get("status"),
+            row=None if commenced else row,
+            now=None if commenced else stamp,
+        )
         observed_counts[current_game_state] += 1
         if current_game_state == "unknown":
             print(f"Game {game_pk} returned an unknown status; preserving {prop_id}.")
@@ -272,7 +286,22 @@ def refresh(data_path, live_path=None, registry_path=DEFAULT_REGISTRY_PATH):
                 current_game_state, "mlb_game_feed_by_game_pk"):
             changes.update(_game_fact(current_game_state, stamp))
         try:
-            if current_game_state == "live":
+            if current_game_state == "live" and not commenced:
+                # Feed claims live/in-progress play but no real pitch has
+                # been proven thrown yet (the exact Dustin May shape, and
+                # the delayed-start variant: scheduled time has passed but
+                # the game genuinely hasn't started). Never write a
+                # LIVE-derived provisional_hit/provisional_miss without
+                # commencement evidence -- stay open and say why.
+                if row.get("settlement_state") not in ("provisional_hit", "hit", "miss", "void"):
+                    fact = _settlement_fact(
+                        "open", "live_observation", stamp,
+                        "mlb_live_status",
+                        {"reason": "awaiting proof the game has actually begun"},
+                    )
+                    if not _same_settlement(row, fact):
+                        changes.update(fact)
+            elif current_game_state == "live":
                 first_inning_observed = _first_inning_provisional_hit(row, context)
                 if first_inning_observed is not None:
                     fact = _settlement_fact(
