@@ -354,6 +354,83 @@ No merge or deployment has been authorized.
    Capture cadence, compute cost, book-request load, data retention, and
    rollout permissions need explicit review.
 
+## 12. Production-style per-market opportunity expansion + exact wager identity
+
+Key commits:
+- `e2a06650d8da13b2f12adea46065404c7a484612`
+- `9d573bf6fc762a5576d775f2e3e4e54d595bec38`
+- `a064fd7ef583e21839ace9a19fbf99fb612cdfd6`
+- `735873c866dc60dbe69b4009c1d09c8ff6c070d8`
+- `135df4d7334714da7dc3c1098601992d4b98077c`
+- `cf498d84d3ea8d47ff3773ec4869c3960cfb30e9`
+- `3a733e43faaecce227e4d11f5c081b7083311879`
+- `e15b971558de5f7e2fb3f9f1ce9228c920486c84`
+
+Critical parity finding:
+
+`_build_and_score()` is not itself the full live betting-opportunity universe.
+For batters it keeps one primary projection while alternate market families
+remain inside `line_options`. The dashboard expands those through
+`select_best_by_category(..., n_per_category=9999, min_score=0)` before the
+recommendation layer.
+
+Changes:
+
+- the prospective research path now reuses that production expansion seam;
+- confirmed + assumed-lineup candidates advance through the operational
+  opportunity expansion;
+- QC-rejected candidates are expanded separately only as counterfactual regret
+  evidence and cannot masquerade as operational Top Picks;
+- settlement/ranking provenance dropped by the compact dashboard-row builder
+  (game_start, bet_side, category inputs, signal adjustment, reliability note)
+  is restored from the exact source subject rather than recomputed;
+- duplicate expanded wager identity fails closed;
+- already-started games are removed from the point-in-time operational universe
+  before recommendation analysis, matching the production pregame boundary.
+
+Exact wager identity was also corrected:
+
+- `candidate_id` now includes date/game/subject/stat/side/threshold/needs;
+- line movement or opposite side therefore becomes a different wager and can be
+  settled unambiguously;
+- a separate `candidate_series_id` intentionally remains stable across line
+  movement for longitudinal market analysis.
+
+This closes a contradiction in the earlier logger design: one candidate ID
+could previously span changing thresholds while the durable grader correctly
+required settlement-defining fields to remain stable.
+
+Adversarial tests cover:
+
+- one batter expanding into multiple market families;
+- settlement/provenance restoration;
+- separate rejected counterfactual expansion;
+- duplicate expanded identity rejection;
+- line movement exact-id separation with stable series id;
+- opposite-side identity separation;
+- started-game exclusion;
+- unknown game-start retention as evidence rather than fabricated commencement.
+
+## SUPERCHAD bounded finish line
+
+SUPERCHAD should STOP implementation on this branch once all of the following
+are true:
+
+1. the cumulative prospective branch is exact-head green in the repository's
+   full Test Suite;
+2. all new focused prospective tests pass inside that exact run;
+3. cumulative diff remains limited to prospective research/evaluation,
+   dedicated manual-only workflows, tests, and this audit handoff;
+4. no schedule, ledger branch, production/public mutation, merge, deployment,
+   or real persisted prospective run was activated;
+5. Claude has a complete independent-review handoff.
+
+At that point, additional infrastructure is methodological drift. The next work
+belongs to Claude/user review and then, if separately authorized, a single
+persist=false real capture proof followed by a separately authorized durable
+proof. The purpose of the system from there is direct equal-operational-volume
+realized-winner measurement, not more framework construction.
+
 # Claude mandatory independent review
 
 Before any merge or activation, Claude should:
