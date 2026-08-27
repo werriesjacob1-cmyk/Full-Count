@@ -614,12 +614,23 @@ class EqualVolumeExperiment:
         chal = self._grade(chal_sel, outcomes)
 
         if self.outcome_policy.mode == OUTCOME_EXCLUDE_PAIRWISE:
-            # Exclusion must be symmetric or the denominators diverge.
-            keep = {i for i, _ in champ["graded"]} | {i for i, _ in chal["graded"]}
-            dropped = (set(champ_sel) | set(chal_sel)) - keep
-            if dropped:
-                champ = self._grade([i for i in champ_sel if i not in dropped], outcomes)
-                chal = self._grade([i for i in chal_sel if i not in dropped], outcomes)
+            # Post-selection outcome exclusion cannot be used to give the
+            # two arms different effective volumes. Refilling here would be
+            # even worse: it would use knowledge of which candidates have
+            # outcomes after selection. Therefore only an IDENTICAL missing
+            # identity set on both arms may be excluded; otherwise fail closed.
+            champ_missing = {i for i in champ_sel if outcomes.get(i) is None}
+            chal_missing = {i for i in chal_sel if outcomes.get(i) is None}
+            if champ_missing != chal_missing:
+                raise EqualVolumeViolation(
+                    "exclude_pairwise would create unequal post-outcome denominators: "
+                    f"champion missing-only={sorted(champ_missing - chal_missing, key=_identity_sort_key)}, "
+                    f"challenger missing-only={sorted(chal_missing - champ_missing, key=_identity_sort_key)}. "
+                    "Do not repair this by outcome-aware refill; use a dataset with complete "
+                    "outcomes or predeclare a different outcome policy.")
+            if champ_missing:
+                champ = self._grade([i for i in champ_sel if i not in champ_missing], outcomes)
+                chal = self._grade([i for i in chal_sel if i not in chal_missing], outcomes)
 
         cs, ls = set(champ_sel), set(chal_sel)
         overlap, added, removed = sorted(cs & ls, key=_identity_sort_key), \
