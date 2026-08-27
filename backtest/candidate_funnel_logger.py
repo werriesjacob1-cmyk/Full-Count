@@ -146,6 +146,21 @@ def funnel_record_from_candidate(candidate, *, date, generated_at=None,
     run_metadata = run_metadata or {}
     market_family = _market_family(candidate)
 
+    traced_status = (gate_trace or {}).get("status")
+    traced_reasons = (gate_trace or {}).get("status_reasons")
+    qc_rejected = quality_control_status == "rejected"
+    # Production never advances QC-rejected candidates into the recommendation
+    # layer. We still run a counterfactual trace for regret research, but it
+    # must not masquerade as the champion's actual operational decision.
+    operational_status = None if qc_rejected else (
+        candidate.get("status") or traced_status
+    )
+    operational_reasons = None if qc_rejected else (
+        candidate.get("status_reasons")
+        if candidate.get("status_reasons") is not None
+        else traced_reasons
+    )
+
     record = {
         "identity": {
             "candidate_id": candidate_identity(candidate, date=date),
@@ -203,16 +218,24 @@ def funnel_record_from_candidate(candidate, *, date, generated_at=None,
             "signal_weight_adjustment": candidate.get("signal_weight_adjustment"),
         },
         "decision": {
-            "recommendation_status": (
-                candidate.get("status") or (gate_trace or {}).get("status")
-            ),
-            "status_reasons": (
-                candidate.get("status_reasons")
-                if candidate.get("status_reasons") is not None
-                else (gate_trace or {}).get("status_reasons")
-            ),
+            "recommendation_status": operational_status,
+            "status_reasons": operational_reasons,
             "quality_control_status": quality_control_status,
             "quality_control_reason": quality_control_reason,
+            "recommendation_stage": (
+                "not_reached_qc_reject" if qc_rejected
+                else "operational"
+            ),
+            "counterfactual_recommendation_status": (
+                traced_status if qc_rejected else None
+            ),
+            "counterfactual_status_reasons": (
+                traced_reasons if qc_rejected else None
+            ),
+            "gate_trace_scope": (
+                "counterfactual_after_qc_rejection" if qc_rejected
+                else "operational"
+            ),
             "gates": (gate_trace or {}).get("gates"),
             "blocking_gate": (gate_trace or {}).get("blocking_gate"),
             "alt_lines": alt_lines,
