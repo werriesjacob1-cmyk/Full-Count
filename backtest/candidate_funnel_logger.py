@@ -669,7 +669,7 @@ def build_operational_opportunities(research_candidates, qc_index, feeds, *,
     # rather than letting a later selector silently drop started Top Picks.
     started_excluded = 0
     if observed_at:
-        from datetime import datetime
+        from datetime import datetime, timezone
 
         def parse_utc(value):
             if not value:
@@ -679,6 +679,8 @@ def build_operational_opportunities(research_candidates, qc_index, feeds, *,
                     str(value).replace("Z", "+00:00"))
             except (TypeError, ValueError):
                 return None
+            if dt.tzinfo is None:
+                dt = dt.replace(tzinfo=timezone.utc)
             return dt
 
         observed_dt = parse_utc(observed_at)
@@ -785,13 +787,13 @@ def run_live_snapshot(out_dir=DEFAULT_OUT_DIR):
                 candidates, ctx, gp=gp, fd=fd, date=date,
                 observed_at=odds_observed_at)
         )
+        generated_at = datetime.now(timezone.utc).isoformat()
         research_candidates, qc_index, capture_diagnostics = (
             build_operational_opportunities(
                 research_candidates, raw_qc_index, feeds,
                 gp=gp, fd=fd, date=date, observed_at=generated_at)
         )
 
-        generated_at = datetime.now(timezone.utc).isoformat()
         now = datetime.now(timezone.utc)
         fresh, fresh_reasons = rec.freshness_check(
             now=now, odds_fetched_at=odds_observed_at,
