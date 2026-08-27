@@ -132,6 +132,20 @@ class EligiblePopulation:
         self.identities = identities
         self.fingerprint = _sha(sorted(identities, key=_identity_sort_key))
 
+        # Identity-only fingerprints prove that the same candidate KEYS are
+        # present, but not that the score/ranking inputs attached to those
+        # keys are the same. Promotion research needs both. Exclude only the
+        # realized outcome so the fingerprint describes the information
+        # available to a selector rather than the answer it is later graded on.
+        content_rows = []
+        for ident in sorted(identities, key=_identity_sort_key):
+            row = self._by_identity[ident]
+            content_rows.append({
+                "identity": ident,
+                "content": {k: row[k] for k in sorted(row) if k != "outcome"},
+            })
+        self.content_fingerprint = _sha(content_rows)
+
     def __len__(self):
         return len(self.rows)
 
@@ -146,6 +160,7 @@ class EligiblePopulation:
         return {
             "n_eligible": len(self.rows),
             "eligible_population_fingerprint": self.fingerprint,
+            "eligible_population_content_fingerprint": self.content_fingerprint,
             "definition": self.definition,
             "eligibility_definition_version": self.definition_version,
             "evidence_regime": self.evidence_regime,
@@ -172,11 +187,13 @@ class SelectionPolicy:
     caught before its numbers are believed.
     """
 
-    def __init__(self, name, version, rank_fn, *, description=None):
+    def __init__(self, name, version, rank_fn, *, description=None,
+                 ranking_input_fields=None):
         self.name = name
         self.version = version
         self.rank_fn = rank_fn
         self.description = description or ""
+        self.ranking_input_fields = tuple(ranking_input_fields or ())
 
     def rank(self, population):
         order = list(self.rank_fn(population))
@@ -204,7 +221,8 @@ class SelectionPolicy:
 
     def identity(self):
         return {"policy_name": self.name, "policy_version": self.version,
-                "description": self.description}
+                "description": self.description,
+                "ranking_input_fields": list(self.ranking_input_fields)}
 
 
 def rank_by(key_fn, *, reverse=True):
