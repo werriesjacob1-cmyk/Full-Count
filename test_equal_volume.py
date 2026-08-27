@@ -135,6 +135,27 @@ class PopulationIntegrityTests(unittest.TestCase):
                          "the answer used for grading must not enter preselection identity")
 
 
+class ContentManifestBindingTests(unittest.TestCase):
+    def test_experiment_manifest_changes_when_candidate_content_changes(self):
+        rows = [row(f"2024-05-{i+1:02d}", 100+i, 500+i, "hits", 0.5,
+                    i % 2, prob=0.6, score=float(i)) for i in range(8)]
+        changed = [dict(r) for r in rows]
+        changed[0]["score"] = 999.0
+
+        a = ev.EligiblePopulation(rows, definition="d", definition_version="v",
+                                  evidence_regime="r", dataset_identity={})
+        b = ev.EligiblePopulation(changed, definition="d", definition_version="v",
+                                  evidence_regime="r", dataset_identity={})
+        ra = ev.EqualVolumeExperiment(population=a, champion=CHAMP, challenger=CHAL,
+                                      volume=3).run()
+        rb = ev.EqualVolumeExperiment(population=b, champion=CHAMP, challenger=CHAL,
+                                      volume=3).run()
+
+        self.assertNotEqual(
+            ra["experiment_manifest_id"], rb["experiment_manifest_id"],
+            "an experiment ID must bind candidate content, not only candidate keys")
+
+
 class ExactVolumeTests(unittest.TestCase):
     def test_both_sides_always_get_exactly_the_requested_volume(self):
         pop = make_population(20)
