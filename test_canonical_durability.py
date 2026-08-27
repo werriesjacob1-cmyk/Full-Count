@@ -300,6 +300,26 @@ def main():
               cd._sha256_file(meta_path),
               idx["dates"][meta_victim]["meta_sha256"])
 
+        # Existing durable paths are not enough to skip a date. If the
+        # local checkpoint bytes conflict with the durable ledger, push must
+        # fail closed rather than overwrite or silently accept the conflict.
+        conflict_victim = done[2]
+        conflict_data = cr.checkpoint_data_path(run_dir2, conflict_victim)
+        with open(conflict_data, "a", encoding="utf-8") as f:
+            f.write(json.dumps({"tampered": True}) + "\n")
+        conflict_res = cd.push_durable_checkpoint(
+            run_dir2, m2, dates=[conflict_victim], repo_root=repo2)
+        check("conflicting existing durable date does not push",
+              conflict_res["pushed"], False)
+        check("existing durable conflict is reported explicitly",
+              "does not match local checkpoint" in (conflict_res["reason"] or ""), True)
+        repair = cd.restore_from_durable(run_dir2, RUN, repo_root=repo2)
+        check("conflicted local row is repaired from durable source",
+              conflict_victim in repair["restored"], True)
+        check("repaired row checksum returns to durable ledger",
+              cd._sha256_file(conflict_data),
+              idx["dates"][conflict_victim]["data_sha256"])
+
         # A required git staging failure must abort before commit/push. The
         # previous implementation ignored stage_blob()'s None return and could
         # continue building a partial durable commit.
