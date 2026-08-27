@@ -61,6 +61,12 @@ THESIS_PLAYER_DATE = "player_date"   # same player that day (doubleheader-tolera
 THESIS_MODES = (THESIS_PLAYER_GAME, THESIS_GAME, THESIS_PLAYER_DATE)
 
 
+class StrictRefillViolation(Exception):
+    """A strict Best Expression portfolio cannot fill its locked slate volume
+    without exceeding max_per_thesis. Promotion-mode callers must fail rather
+    than silently re-admit a redundant expression."""
+
+
 def thesis_identity(row, mode=THESIS_PLAYER_GAME):
     """The underlying idea a wager expresses.
 
@@ -81,7 +87,8 @@ def thesis_identity(row, mode=THESIS_PLAYER_GAME):
 
 
 def best_expression_rank_fn(base_key_fn, *, thesis_mode=THESIS_PLAYER_GAME,
-                            max_per_thesis=1, reverse=True):
+                            max_per_thesis=1, reverse=True,
+                            strict_volume_by_date=None):
     """Build a ranking that keeps the best `max_per_thesis` expressions of
     each thesis at full strength and demotes the rest below everything
     else.
@@ -89,11 +96,37 @@ def best_expression_rank_fn(base_key_fn, *, thesis_mode=THESIS_PLAYER_GAME,
     `base_key_fn(row)` supplies the underlying preference (the same score
     a non-correlation-aware selector would rank on), so this composes with
     any existing policy rather than replacing its judgement.
+
+    `strict_volume_by_date` is the promotion-safe mode. It is an explicit
+    per-slate quota mapping (including zero-pick dates). Before ranking, the
+    function proves that each slate contains enough thesis-distinct capacity
+    to fill its quota without exceeding `max_per_thesis`. If not, it raises
+    StrictRefillViolation rather than letting demoted redundant expressions
+    flow back into the selected portfolio. Omitting the mapping preserves the
+    historical soft/exploratory behavior.
     """
     if max_per_thesis < 1:
         raise ValueError("max_per_thesis must be at least 1")
 
+    strict_schedule = None
+    if strict_volume_by_date is not None:
+        strict_schedule = {str(k): v for k, v in strict_volume_by_date.items()}
+        bad = {
+            d: n for d, n in strict_schedule.items()
+            if isinstance(n, bool) or not isinstance(n, int) or n < 0
+        }
+        if bad:
+            raise ValueError(
+                f"strict_volume_by_date values must be non-negative integers; bad={bad}")
+
     def _rank(population):
+        if strict_schedule is not None:
+            assert_strict_refillable(
+                population,
+                strict_schedule,
+                thesis_mode=thesis_mode,
+                max_per_thesis=max_per_thesis,
+            )
         scored = []
         for ident in population.identities:
             r = population.row(ident)
@@ -119,6 +152,73 @@ def best_expression_rank_fn(base_key_fn, *, thesis_mode=THESIS_PLAYER_GAME,
         return kept + demoted
 
     return _rank
+
+
+def strict_refill_capacity(population, volume_by_date, *,
+                           thesis_mode=THESIS_PLAYER_GAME, max_per_thesis=1):
+    """Return same-slate independent capacity under a Best Expression thesis.
+
+    Capacity on a date is the number of selections that can be made while
+    respecting max_per_thesis, before any redundant expression would have to be
+    re-admitted. The schedule must explicitly cover the exact eligible date set
+    so a hard slate cannot disappear from a promotion claim by omission.
+    """
+    if max_per_thesis < 1:
+        raise ValueError("max_per_thesis must be at least 1")
+
+    schedule = {str(k): v for k, v in volume_by_date.items()}
+    population_dates = {str(r.get("date")) for r in population.rows}
+    schedule_dates = set(schedule)
+    if schedule_dates != population_dates:
+        missing = sorted(population_dates - schedule_dates)
+        extra = sorted(schedule_dates - population_dates)
+        raise StrictRefillViolation(
+            "strict Best Expression schedule must cover the exact eligible "
+            f"date set; missing={missing}, extra={extra}")
+
+    per_date_theses = defaultdict(Counter)
+    for ident in population.identities:
+        row = population.row(ident)
+        d = str(row.get("date"))
+        per_date_theses[d][thesis_identity(row, thesis_mode)] += 1
+
+    capacity = {}
+    for d in sorted(schedule):
+        capacity[d] = sum(
+            min(count, max_per_thesis)
+            for count in per_date_theses[d].values()
+        )
+    return capacity
+
+
+def assert_strict_refillable(population, volume_by_date, *,
+                             thesis_mode=THESIS_PLAYER_GAME,
+                             max_per_thesis=1):
+    """Fail closed if any locked slate cannot satisfy the thesis constraint."""
+    schedule = {str(k): v for k, v in volume_by_date.items()}
+    bad_values = {
+        d: n for d, n in schedule.items()
+        if isinstance(n, bool) or not isinstance(n, int) or n < 0
+    }
+    if bad_values:
+        raise StrictRefillViolation(
+            f"strict Best Expression schedule has invalid quotas: {bad_values}")
+
+    capacity = strict_refill_capacity(
+        population, schedule,
+        thesis_mode=thesis_mode,
+        max_per_thesis=max_per_thesis,
+    )
+    failures = {
+        d: {"quota": schedule[d], "independent_capacity": capacity[d]}
+        for d in sorted(schedule)
+        if schedule[d] > capacity[d]
+    }
+    if failures:
+        raise StrictRefillViolation(
+            "strict Best Expression cannot fill locked same-slate volume "
+            f"without redundant re-entry: {failures}")
+    return capacity
 
 
 def describe_suppression(population, base_key_fn, volume, *,
