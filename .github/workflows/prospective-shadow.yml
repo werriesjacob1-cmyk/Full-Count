@@ -1,0 +1,167 @@
+name: Prospective Shadow Capture
+
+# QUARANTINE DESIGN: manual-only until the prospective measurement path has
+# been independently reviewed and authorized. There is deliberately NO schedule
+# here. A future schedule is a separate rollout decision, not something this
+# research branch silently activates.
+on:
+  workflow_dispatch:
+    inputs:
+      persist:
+        description: "Persist the captured snapshot to the dedicated append-only research branch"
+        required: true
+        default: false
+        type: boolean
+
+concurrency:
+  group: prospective-shadow-capture
+  cancel-in-progress: false
+
+jobs:
+  capture:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: read
+    outputs:
+      has_snapshot: ${{ steps.locate.outputs.has_snapshot }}
+      slate_date: ${{ steps.locate.outputs.slate_date }}
+    steps:
+      - name: Checkout exact requested code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Capture isolated full-candidate prospective snapshot
+        env:
+          SPOOL: ${{ runner.temp }}/prospective-spool
+        run: |
+          set -euo pipefail
+          mkdir -p "$SPOOL"
+          python3 -u backtest/candidate_funnel_logger.py --out-dir "$SPOOL"
+
+      - name: Locate and materialize latest observation
+        id: locate
+        env:
+          SPOOL: ${{ runner.temp }}/prospective-spool
+          MATERIALIZED: ${{ runner.temp }}/prospective-materialized
+        run: |
+          set -euo pipefail
+          SNAP="$(find "$SPOOL" -maxdepth 1 -type f -name 'candidate_funnel_snapshots_*.jsonl' | sort | tail -1 || true)"
+          if [ -z "$SNAP" ]; then
+            echo "No prospective snapshot was produced (for example: no bettable games)."
+            echo "has_snapshot=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          base="$(basename "$SNAP")"
+          date="${base#candidate_funnel_snapshots_}"
+          date="${date%.jsonl}"
+          CAND="$SPOOL/candidate_funnel_${date}.jsonl"
+          test -s "$CAND"
+          mkdir -p "$MATERIALIZED"
+          python3 backtest/prospective_durability.py             --candidate-path "$CAND"             --snapshot-path "$SNAP"             --destination-root "$MATERIALIZED"
+          echo "has_snapshot=true" >> "$GITHUB_OUTPUT"
+          echo "slate_date=$date" >> "$GITHUB_OUTPUT"
+
+      - name: Upload capture evidence
+        if: steps.locate.outputs.has_snapshot == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: prospective-capture-${{ github.run_id }}
+          path: |
+            ${{ runner.temp }}/prospective-spool/
+            ${{ runner.temp }}/prospective-materialized/prospective/
+          if-no-files-found: error
+          retention-days: 7
+
+  persist:
+    needs: capture
+    if: inputs.persist == true && needs.capture.outputs.has_snapshot == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout exact measurement code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Download captured evidence
+        uses: actions/download-artifact@v4
+        with:
+          name: prospective-capture-${{ github.run_id }}
+          path: ${{ runner.temp }}/capture
+
+      - name: Prepare append-only prospective ledger worktree
+        env:
+          LEDGER_DIR: ${{ runner.temp }}/prospective-ledger
+        run: |
+          set -euo pipefail
+          git config user.name "FULL COUNT Prospective Ledger"
+          git config user.email "actions@users.noreply.github.com"
+
+          if git ls-remote --exit-code --heads origin prospective-candidate-ledger >/dev/null 2>&1; then
+            git fetch origin               refs/heads/prospective-candidate-ledger:refs/remotes/origin/prospective-candidate-ledger
+            git worktree add -B prospective-candidate-ledger               "$LEDGER_DIR" origin/prospective-candidate-ledger
+          else
+            empty_tree="$(git mktree </dev/null)"
+            empty_commit="$(printf '%s\n' 'Initialize prospective candidate ledger' | git commit-tree "$empty_tree")"
+            git branch prospective-candidate-ledger "$empty_commit"
+            git worktree add "$LEDGER_DIR" prospective-candidate-ledger
+          fi
+
+      - name: Re-verify against existing ledger and materialize
+        env:
+          LEDGER_DIR: ${{ runner.temp }}/prospective-ledger
+          CAPTURE: ${{ runner.temp }}/capture
+          SLATE_DATE: ${{ needs.capture.outputs.slate_date }}
+        run: |
+          set -euo pipefail
+          CAND="$CAPTURE/prospective-spool/candidate_funnel_${SLATE_DATE}.jsonl"
+          SNAP="$CAPTURE/prospective-spool/candidate_funnel_snapshots_${SLATE_DATE}.jsonl"
+          test -s "$CAND"
+          test -s "$SNAP"
+
+          # Materialize AGAIN into the actual ledger worktree. This second pass
+          # verifies every pre-existing immutable candidate blob/snapshot before
+          # any commit, so the artifact from the capture job is evidence, not a
+          # blindly trusted copy source.
+          python3 backtest/prospective_durability.py             --candidate-path "$CAND"             --snapshot-path "$SNAP"             --destination-root "$LEDGER_DIR"
+
+      - name: Enforce append-only diff and push dedicated ledger branch
+        env:
+          LEDGER_DIR: ${{ runner.temp }}/prospective-ledger
+          SLATE_DATE: ${{ needs.capture.outputs.slate_date }}
+        run: |
+          set -euo pipefail
+          git -C "$LEDGER_DIR" add prospective/v1
+
+          if git -C "$LEDGER_DIR" diff --cached --quiet; then
+            echo "Snapshot already durably present; nothing to push."
+            exit 0
+          fi
+
+          bad="$(git -C "$LEDGER_DIR" diff --cached --name-status | awk '$1 != "A" {print}')"
+          if [ -n "$bad" ]; then
+            echo "FATAL: prospective ledger is append-only; refusing non-additive diff:"
+            echo "$bad"
+            exit 1
+          fi
+
+          git -C "$LEDGER_DIR" commit -m             "Prospective candidate snapshot ${SLATE_DATE} (run ${GITHUB_RUN_ID})"
+          git -C "$LEDGER_DIR" push origin             HEAD:refs/heads/prospective-candidate-ledger
