@@ -183,42 +183,72 @@ def _is_outcome_field(key):
 
 
 class RankingRow(dict):
-    """A canonical row with its post-event fields structurally unreadable.
+    """A canonical row with its post-event fields ABSENT, not merely guarded.
 
-    A dict subclass so every legitimate access -- r["hit_probability"],
-    r.get("prop_type"), iteration over items -- works unchanged, while an
-    outcome read raises instead of quietly returning the answer.
+    The first version of this class subclassed dict and overrode
+    __getitem__/get/keys/items/values/__iter__/__contains__ while still
+    STORING the outcome. That was not enough, and the gap was not
+    theoretical: dict.setdefault() and dict.pop() are C-level methods that
+    never consult __getitem__, so
+
+        rank_by(lambda r: r.setdefault("actual", 0))
+
+    read the graded outcome straight through the mask and scored a 1.000
+    hit rate against the champion's 0.300 -- the identical attack the
+    override was written to stop. dict.pop() did the same.
+
+    Enumerating dict's accessors and overriding each one is the wrong
+    shape of defence: it fails silently the moment CPython grows another
+    C-level reader, and it cannot stop unbound access like
+    dict.__getitem__(row, "actual"). So the masked fields are simply not
+    copied into the row. There is nothing to leak, by any path, known or
+    not yet invented.
+
+    The explicit raises below are kept for diagnostics only -- so a policy
+    author asking for an outcome field gets a message explaining why
+    rather than a bare KeyError. They are no longer what provides the
+    guarantee.
+
+    KNOWN LIMIT, stated rather than implied: masking is shallow. A nested
+    structure (row["signals"]) is passed through as-is. No outcome data
+    is nested in the canonical schema today (verified against the real
+    artifact: 36 signal keys, all pre-event), but a future field that
+    buried an outcome inside a nested dict would not be caught here.
     """
+
+    def __init__(self, row):
+        super().__init__({k: v for k, v in row.items()
+                          if not _is_outcome_field(k)})
+        # What was withheld, so a report can say so honestly.
+        self.masked_fields = frozenset(k for k in row if _is_outcome_field(k))
+
+    def _refuse(self, key, how):
+        raise OutcomeLeakage(
+            f"ranking policy read post-event field {key!r} via {how}. Selection "
+            f"may only use information available BEFORE the event; reading the "
+            f"outcome produces a perfect-looking result that measures nothing. "
+            f"(The field is not present on this row -- grading reads the "
+            f"unmasked row instead.)")
 
     def __getitem__(self, key):
         if _is_outcome_field(key):
-            raise OutcomeLeakage(
-                f"ranking policy read post-event field {key!r}. Selection may only "
-                f"use information available BEFORE the event; reading the outcome "
-                f"produces a perfect-looking result that measures nothing.")
+            self._refuse(key, "[]")
         return super().__getitem__(key)
 
     def get(self, key, default=None):
         if _is_outcome_field(key):
-            raise OutcomeLeakage(
-                f"ranking policy read post-event field {key!r} via .get(). Selection "
-                f"may only use information available BEFORE the event.")
+            self._refuse(key, ".get()")
         return super().get(key, default)
 
-    def keys(self):
-        return [k for k in super().keys() if not _is_outcome_field(k)]
+    def setdefault(self, key, default=None):
+        if _is_outcome_field(key):
+            self._refuse(key, ".setdefault()")
+        return super().setdefault(key, default)
 
-    def items(self):
-        return [(k, v) for k, v in super().items() if not _is_outcome_field(k)]
-
-    def values(self):
-        return [v for k, v in super().items() if not _is_outcome_field(k)]
-
-    def __iter__(self):
-        return iter(self.keys())
-
-    def __contains__(self, key):
-        return not _is_outcome_field(key) and super().__contains__(key)
+    def pop(self, key, *args):
+        if _is_outcome_field(key):
+            self._refuse(key, ".pop()")
+        return super().pop(key, *args)
 
 
 class RankingView:

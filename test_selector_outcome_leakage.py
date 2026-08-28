@@ -18,7 +18,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from backtest.equal_volume import (EligiblePopulation, SelectionPolicy, OutcomePolicy,
                                    EqualVolumeExperiment, OutcomeLeakage, RankingRow,
-                                   RankingView, OUTCOME_FIELD_DENYLIST)
+                                   RankingView, OUTCOME_FIELD_DENYLIST, rank_by)
 
 ID = ("date", "game_pk", "player_id", "prop_type", "line")
 PASS = FAIL = 0
@@ -54,6 +54,19 @@ def population(n=200, seed=7):
 def policy(name, key):
     return SelectionPolicy(name, "1", lambda p: [tuple(r[k] for k in ID)
                                                  for r in sorted(p.rows, key=key)])
+
+
+def _oracle_population():
+    """A population whose outcome perfectly separates, so a leak is obvious."""
+    rows = [{"date": "2024-04-01", "game_pk": 100 + i // 4,
+             "player_id": 1000 + i, "prop_type": "hits", "line": 0.5,
+             "outcome": i % 3 == 0, "actual": float(i % 3 == 0),
+             "score": float(i), "predicted_prob": i / 60.0}
+            for i in range(60)]
+    return EligiblePopulation(
+        rows, definition="oracle fixture", definition_version="1.0.0",
+        evidence_regime="test", dataset_identity={})
+
 
 
 def main():
@@ -115,10 +128,65 @@ def main():
     for f in ("actual", "outcome", "graded", "grade", "result", "won", "settlement_state"):
         check(f"denylist contains {f}", f in OUTCOME_FIELD_DENYLIST, True)
 
+
+    print("== C-LEVEL BYPASS PATHS (the first fix missed these) ==")
+    # Overriding dict's accessors was NOT enough. dict.setdefault and
+    # dict.pop never consult __getitem__, so an oracle ranking on
+    # r.setdefault("actual", 0) read the outcome straight through the mask
+    # and scored 1.000 against the champion's 0.300. The fix strips the
+    # fields rather than guarding them, so nothing is there to return.
+    r = RankingRow({"player_id": 1, "score": 60.0, "actual": 1,
+                    "outcome": 1, "hit": 1})
+    check("outcome fields are not stored at all",
+          sorted(dict.keys(r)), ["player_id", "score"])
+    check("row reports what it withheld",
+          sorted(r.masked_fields), ["actual", "hit", "outcome"])
+    for how, fn in (("setdefault", lambda: r.setdefault("actual", 0)),
+                    ("pop", lambda: r.pop("actual", 0)),
+                    ("[]", lambda: r["actual"]),
+                    ("get", lambda: r.get("actual"))):
+        try:
+            fn()
+            bad(f"{how} read the outcome")
+        except OutcomeLeakage:
+            ok(f"{how} raises OutcomeLeakage")
+
+    # No override can intercept an unbound dict call. Absence can.
+    check("unbound dict.get finds nothing", dict.get(r, "actual"), None)
+    check("unbound dict.setdefault finds nothing",
+          dict.setdefault(r, "actual", 0), 0)
+    check("unbound dict.pop finds nothing", dict.pop(r, "actual", 0), 0)
+    try:
+        dict.__getitem__(r, "actual")
+        bad("unbound dict.__getitem__ read the outcome")
+    except KeyError:
+        ok("unbound dict.__getitem__ raises KeyError (field absent)")
+
+    for label, made in (("dict(r)", dict(r)), ("{**r}", {**r}),
+                        ("r.copy()", r.copy()), ("r | {}", r | {})):
+        check(f"{label} carries no outcome",
+              any(k in made for k in ("actual", "outcome", "hit")), False)
+
+    print("== the end-to-end oracle attack, via every reader ==")
+    pop = _oracle_population()
+    champ = SelectionPolicy("score", "1", rank_by(lambda x: x["score"]))
+    for how, fn in (("setdefault", lambda x: x.setdefault("actual", 0)),
+                    ("pop", lambda x: x.pop("actual", 0)),
+                    ("[]", lambda x: x["actual"]),
+                    ("get", lambda x: x.get("actual"))):
+        exp = EqualVolumeExperiment(
+            population=pop, champion=champ,
+            challenger=SelectionPolicy(f"oracle_{how}", "1", rank_by(fn)),
+            volume=5)
+        try:
+            res = exp.run(bootstrap_iterations=10)
+            bad(f"oracle via {how} scored {res['challenger']['hit_rate']}")
+        except OutcomeLeakage:
+            ok(f"oracle via {how} is blocked")
+
     print()
     print(f"passed: {PASS}   failed: {FAIL}")
     return 0 if FAIL == 0 else 1
-
 
 if __name__ == "__main__":
     sys.exit(main())
