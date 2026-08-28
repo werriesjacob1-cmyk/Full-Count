@@ -55,15 +55,24 @@ def _confirmed_lineup(game_pk, *, fetcher=None):
         box = r.json()
     except Exception:
         return None
+    # Keyed PER SIDE, because the two teams post independently and a
+    # confirmed away lineup says nothing about the home one.
     out = {}
     for side in ("away", "home"):
         team = (box.get("teams") or {}).get(side) or {}
         order = (team.get("battingOrder") or [])[:9]
         players = team.get("players") or {}
+        slots = {}
         for slot, pid in enumerate(order, 1):
             person = (players.get(f"ID{pid}") or {}).get("person") or {}
             if person.get("id"):
-                out[slot] = int(person["id"])
+                slots[slot] = int(person["id"])
+        # A partial scrape is not a posted lineup. Nine is a real batting
+        # order; fewer means the feed is mid-populate, and treating that as
+        # authoritative would manufacture a mismatch against a lineup MLB
+        # has not actually finished posting.
+        if len(slots) == 9:
+            out[side] = slots
     return out or None
 
 
@@ -79,7 +88,11 @@ def confirmed_lineups(game_pks, *, fetcher=None, max_workers=8):
         return {}
     with ThreadPoolExecutor(max_workers=min(max_workers, len(pks))) as pool:
         results = list(pool.map(lambda p: (p, _confirmed_lineup(p, fetcher=fetcher)), pks))
-    return {p: v for p, v in results if v}
+    out = {}
+    for game_pk, sides in results:
+        for side, slots in (sides or {}).items():
+            out[(game_pk, side)] = slots
+    return out
 
 
 def dispatch_rebuild(*, repo=None, token=None, runner=None):
@@ -133,8 +146,15 @@ def run(data_path, live_path, *, now=None, lineup_fetcher=None, runner=None,
 
     state["last_dispatch_ok"] = dispatched
     state["last_dispatch_reason"] = reason
+    # Reconciliation gets its OWN clock and touches nothing else
+    # (2026-08-28 P0 follow-up). Advancing the global `updated_at` here
+    # would have let a perfectly healthy reconciliation pass make a dead
+    # sportsbook-price or game-state channel look healthy to
+    # check_live_freshness -- the precise architecture this whole branch
+    # exists to remove. reconciliation.checked_at answers only "did
+    # reconciliation run", and check_live_freshness reports it without
+    # ever counting it toward health.
     live["reconciliation"] = state
-    live["updated_at"] = state["checked_at"]
     atomic_write_json(live_path, live)
 
     counts = state["counts"]
