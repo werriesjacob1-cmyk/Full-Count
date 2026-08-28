@@ -289,6 +289,20 @@ input, select, textarea { font: inherit; color: inherit; }
    mean "do not read this number as current", which is the affordance a
    scanner should learn once. */
 .pc-market-moved .m-moved { color: var(--warn); font-weight: 700; font-size: 13px; }
+
+/* Route-level unverified notices (2026-08-28 P0 follow-up). Every one of
+   these sits on a surface a customer can deep-link into without passing
+   through Today. */
+.search-unverified {
+  padding: 9px 14px; font-size: 12.5px; font-weight: 600;
+  color: var(--warn); background: var(--warn-soft);
+  border-bottom: 1px solid var(--warn);
+}
+/* A game read that is no longer current keeps its subject and drops its
+   number -- a sportsbook price beside a live or unverified game reads as
+   something still takeable. */
+.game-pick-line .gp-note { color: var(--warn); font-weight: 600; font-size: 12.5px; }
+.game-pick-void .gp-note, .game-pick-historical .gp-note { color: var(--muted, inherit); }
 .pc-market-moved .m-detail { font-size: 12px; }
 
 /* ── Layout ───────────────────────────────────────────────────────── */

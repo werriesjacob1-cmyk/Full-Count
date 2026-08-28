@@ -1413,6 +1413,19 @@ function gameUmpireText(g) {
 // bookmark, or share. selectedGamePk (set by onRouteChange() from
 // #/games?game_pk=X) switches this same route between the list and one
 // game's detail view.
+// A game's lifecycle, read from the props actually attached to it rather
+// than from the frozen schedule entry (2026-08-28 P0 follow-up).
+// DATA.schedule is written once at build time and preserves its pregame
+// shape indefinitely, so a Games list built from it alone keeps presenting
+// pregame research after first pitch.
+function gameLifecycle(game_pk) {
+  const rows = [...PROPS_BY_ID.values()].filter(p => p.game_pk === game_pk);
+  if (!rows.length) return "unknown";
+  if (rows.some(p => LIVE_IN_PROGRESS_GAME_STATES.has(p.game_state))) return "live";
+  if (rows.every(p => p.game_state === "final")) return "final";
+  return "pregame";
+}
+
 function renderGames() {
   const el = document.getElementById("page-games");
   const games = DATA.schedule || [];
@@ -1432,13 +1445,72 @@ function renderGames() {
     el.innerHTML = `<div class="empty-state"><div class="es-icon">🗓️</div><h3>No games with a research breakdown yet</h3><p>Check back once tonight's games are set.</p></div>`;
     return;
   }
-  el.innerHTML = `<div class="section-head"><h2>Games</h2><span class="section-sub">${games.length} games tonight</span></div>
+  // Route-level fail-closed: #/games is deep-linkable and lists game reads
+  // with sportsbook numbers underneath (2026-08-28 P0 follow-up).
+  const gamesUnverified = (boardIsActionable() || SHOW_UNVERIFIED) ? "" :
+    `<div class="fail-closed fail-closed-inline" role="alert">
+       <p class="fc-why">${esc(failClosedReason())}</p>
+       <p class="fc-what">Game reads below are research only, not current recommendations.</p>
+     </div>`;
+  el.innerHTML = gamesUnverified + `<div class="section-head"><h2>Games</h2><span class="section-sub">${games.length} games tonight</span></div>
     <div class="game-list">${games.map(gameCard).join("")}</div>`;
 }
+// A game highlight is a FROZEN COPY, exactly like a parlay leg
+// (2026-08-28 P0 follow-up). build_dashboard's _game_pick_sections()
+// summarize() writes name/prop/hit_probability/market_odds/price_clears/why
+// once at build time; the live overlay then keeps correcting the real prop
+// underneath it and never touches this copy. Rendering the copied numbers
+// meant a game drill-down could advertise a probability and a FanDuel price
+// that had been superseded hours earlier.
+//
+// Same rule as the parlay: ONE canonical prop identity. Resolve the id
+// through PROPS_BY_ID and render the CURRENT prop. Never mutate the copy,
+// never compute a second opinion here.
+function resolveGamePick(p) {
+  if (p.id && PROPS_BY_ID.has(p.id)) return PROPS_BY_ID.get(p.id);
+  const matches = [...PROPS_BY_ID.values()].filter(
+    x => x.name === p.name && x.prop === p.prop);
+  return matches.length === 1 ? matches[0] : null;
+}
+
 function gamePickLine(p) {
+  const live = resolveGamePick(p);
+  if (!live) {
+    // The prop is gone from the canonical board. Say so rather than let the
+    // frozen copy stand in for it.
+    return `<div class="game-pick-line game-pick-void">
+        <span>${esc(p.name)} — ${esc(p.prop)}</span>
+        <span class="gp-note">No longer on the board</span>
+      </div>`;
+  }
+  const started = (live.game_state || "pregame") !== "pregame";
+  if (started) {
+    // Past first pitch this is preserved context, not an opportunity. The
+    // price is deliberately withheld: a sportsbook number beside a live
+    // game reads as something you can still take.
+    return `<div class="game-pick-line game-pick-historical">
+        <span>${esc(p.name)} — ${esc(p.prop)}</span>
+        <span class="gp-note">Pregame read · game underway</span>
+      </div>`;
+  }
+  if (!boardIsActionable() && !SHOW_UNVERIFIED) {
+    return `<div class="game-pick-line game-pick-unverified">
+        <span>${esc(p.name)} — ${esc(p.prop)}</span>
+        <span class="gp-note">Unverified — not a current read</span>
+      </div>`;
+  }
+  if (live.market_fetch_state === "LINE_MOVED") {
+    const posted = live.market_posted_line != null ? `Over ${live.market_posted_line}` : "a different line";
+    return `<div class="game-pick-line game-pick-moved">
+        <span>${esc(p.name)} — ${esc(p.prop)}</span>
+        <span class="gp-note">Line moved · FanDuel now ${esc(posted)}</span>
+      </div>`;
+  }
+  const priceText = live.market_odds != null ? " · " + fmtOdds(live.market_odds)
+                                             : " · not priced";
   return `<div class="game-pick-line">
-      <span>${esc(p.name)} — ${esc(p.prop)}</span>
-      <span>${pctBig(p.hit_probability)}${p.market_odds != null ? " · " + fmtOdds(p.market_odds) : ""}</span>
+      <span>${esc(live.name)} — ${esc(live.prop)}</span>
+      <span>${pctBig(live.hit_probability)}${priceText}</span>
     </div>`;
 }
 // Real bug, found 2026-08-26 (games-drill-down honesty audit): the backend
@@ -1524,6 +1596,22 @@ function bullpenBlock(g) {
 // exists to lead into, reusing the same multi-select-capable applyFilters()
 // engine rather than building a second, parallel prop list here.
 function renderGameDetail(el, g) {
+  // Deep links land here directly, so the fail-closed and lifecycle
+  // banners have to be applied HERE, not inherited from Today
+  // (2026-08-28 P0 follow-up). A direct link must be exactly as safe as
+  // arriving from the home page.
+  const lifecycle = gameLifecycle(g.game_pk);
+  const lifecycleNotice = lifecycle === "pregame" ? "" :
+    `<div class="fail-closed fail-closed-inline" role="alert">
+       <p class="fc-why">${lifecycle === "final" ? "This game is over." : "This game is underway."}</p>
+       <p class="fc-what">Everything below is the pregame research as it stood before first pitch,
+       kept for reference. It is not a current wagering opportunity.</p>
+     </div>`;
+  const unverifiedNotice = (boardIsActionable() || SHOW_UNVERIFIED) ? "" :
+    `<div class="fail-closed fail-closed-inline" role="alert">
+       <p class="fc-why">${esc(failClosedReason())}</p>
+       <p class="fc-what">Nothing on this page is being offered as a current recommendation.</p>
+     </div>`;
   const wxText = gameWeatherText(g);
   const ump = gameUmpireText(g);
   const picks = gamePickSections(g, true);
@@ -1535,6 +1623,7 @@ function renderGameDetail(el, g) {
     <a class="link-btn" href="#/games" style="display:inline-block;margin-bottom:14px;">← All games</a>
     <div class="section-head"><h2>${esc(g.away_team || "")} @ ${esc(g.home_team || "")}</h2>
       <span class="section-sub">${gameTimeLabel(g.game_start)}</span></div>
+    ${lifecycleNotice}${unverifiedNotice}
     <div class="game-meta-row" style="margin-bottom:16px;">
       ${g.away_sp ? `<span>${esc(g.away_sp)} vs ${esc(g.home_sp || "TBD")}</span>` : ""}
       ${wxText ? `<span>${esc(wxText)}</span>` : ""}
@@ -1648,6 +1737,16 @@ const MY_BOARD_SORTERS = {
 };
 function renderWatchlist() {
   const el = document.getElementById("page-watchlist");
+  // My Board is a deep-linkable route showing saved props with prices and
+  // status chips, so it carries the same actionability obligation as Today
+  // (2026-08-28 P0 follow-up). A customer can bookmark #/watchlist and
+  // never pass through the home page.
+  const unverifiedNotice = (boardIsActionable() || SHOW_UNVERIFIED) ? "" :
+    `<div class="fail-closed fail-closed-inline" role="alert">
+       <p class="fc-why">${esc(failClosedReason())}</p>
+       <p class="fc-what">Your saved props are shown for reference. None of them is being
+       offered as a current recommendation.</p>
+     </div>`;
   const items = [...watchlist].map(id => PROPS_BY_ID.get(id)).filter(Boolean);
   if (!items.length) {
     // Real bug, found 2026-08-25: a saved id's canonical prop id bakes in
@@ -1681,7 +1780,7 @@ function renderWatchlist() {
   const rows = items.map(p => ({ p, changes: sinceYouSavedChanges(p) }))
     .sort(MY_BOARD_SORTERS[sortKey] || MY_BOARD_SORTERS.game_time);
 
-  el.innerHTML = `<div class="section-head"><h2>My Board</h2><span class="section-sub">${items.length} saved</span></div>
+  el.innerHTML = unverifiedNotice + `<div class="section-head"><h2>My Board</h2><span class="section-sub">${items.length} saved</span></div>
     <div class="filter-bar">
       <select class="filter-select" id="mb-sort" aria-label="Sort My Board">
         <option value="game_time">Sort: Game time</option>
@@ -1905,6 +2004,17 @@ function whyNotTopPickReason(p) {
 }
 
 function detailBody(p) {
+  // The detail sheet is the single most recommendation-shaped surface in
+  // the product -- probability hero, FanDuel price, edge, Top Pick
+  // language -- and it opens from search, My Board and game pages, not
+  // only from Today. It gets the notice first, above everything else it
+  // asserts (2026-08-28 P0 follow-up).
+  const unverifiedNotice = (boardIsActionable() || SHOW_UNVERIFIED) ? "" :
+    `<div class="fail-closed fail-closed-inline" role="alert">
+       <p class="fc-why">${esc(failClosedReason())}</p>
+       <p class="fc-what">This is research. The probability and price below are not being
+       offered as a current recommendation.</p>
+     </div>`;
   const eq = evidenceQuality(p);
   const game = gameContextFor(p);
   const freshness = priceFreshnessState(p);
@@ -1992,6 +2102,7 @@ function detailBody(p) {
       <h2 id="detail-title">${esc(p.name)}</h2>
       <div class="d-sub">${esc(p.prop)} · ${esc(p.team || p.matchup || "")}</div>
     </div>
+    ${unverifiedNotice}
     <div class="detail-hero">
       <div>
         <div class="prob-big">${pctBig(p.hit_probability)}</div>
@@ -2242,7 +2353,12 @@ function initSearch() {
     if (!teams.length && !games.length && !players.length && !props.length) {
       results.innerHTML = `<div class="search-empty">No matches for "${esc(query)}"</div>`;
     } else {
-      let html = "";
+      // Search results carry prices and open the detail sheet, so the
+      // notice belongs here too (2026-08-28 P0 follow-up). Search is
+      // reachable from every route, including ones a customer deep-linked
+      // into, so it cannot rely on Today having warned them.
+      let html = (boardIsActionable() || SHOW_UNVERIFIED) ? "" :
+        `<div class="search-unverified">Research only — these numbers aren't verified as current.</div>`;
       if (teams.length) {
         html += `<div class="search-group-label">Teams</div>`;
         html += teams.map(t => `<button class="search-item" data-team="${esc(t.name)}">

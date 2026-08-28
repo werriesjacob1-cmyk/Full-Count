@@ -202,21 +202,39 @@ try:
     # payload this work started from and is no longer true of any payload:
     # MLB added him to the roster (player_id 805805), his id now resolves,
     # and his rows are legitimately published. Asserting his absence would
-    # be asserting a fact about one afternoon's data, and it would go on
-    # "passing" long after it had stopped testing anything.
+    # assert a fact about one afternoon's data, and would go on "passing"
+    # long after it had stopped testing anything.
     #
-    # The real invariant is that nothing reaches the board without a subject
-    # that can actually settle it. A row with neither a player nor a combo
-    # nor a game-level subject is exactly what canonical_prop_id refuses to
-    # mint an id for, and what the quarantine drops.
-    orphans = [r for r in payload["props"]
-               if not r.get("player_id") and not r.get("combo_player_ids")
-               and not str(r.get("id", "")).startswith("fc2:")]
-    check(not orphans,
-          "no published row lacks a settleable subject (the quarantine invariant)",
-          f"{len(orphans)} orphan row(s), e.g. {orphans[:1]}")
-    check(all(str(r.get("id", "")).startswith("fc2:") for r in payload["props"]),
-          "every published id is a real canonical id, never synthesized")
+    # The invariant is settlement identity, and it is checked by calling
+    # the PRODUCTION contract -- live_state.validate_payload_identities,
+    # which runs stable_prop_id + prop_identity_key over every row. A test
+    # that re-implemented the identity algorithm could agree with a bug;
+    # this one fails if the payload's ids are not the ids the settlement
+    # path would derive, including a plausible-looking "fc2:..." that is
+    # not actually this row's identity.
+    from dashboard.live_state import validate_payload_identities
+    try:
+        result = validate_payload_identities(payload)
+        ok, why = True, f"{len(result['ids'])} ids / {len(result['identities'])} identities"
+    except ValueError as exc:
+        ok, why = False, str(exc)
+    check(ok, "the real production identity validator accepts every published row", why)
+    check(ok and len(result["ids"]) == len(payload["props"]),
+          "every published row has a distinct canonical settlement identity")
+
+    # And prove the validator would actually catch a forged id, so the
+    # check above is known to have teeth rather than assumed to.
+    import copy as _copy
+    forged = _copy.deepcopy(payload)
+    forged["props"] = [_copy.deepcopy(payload["props"][0])]
+    forged["props"][0]["id"] = "fc2:looks-valid-but-is-not-the-row-identity"
+    try:
+        validate_payload_identities(forged)
+        caught = False
+    except ValueError:
+        caught = True
+    check(caught, "a forged fc2: id is rejected by the production validator")
+
 finally:
     ctx.close()
 
