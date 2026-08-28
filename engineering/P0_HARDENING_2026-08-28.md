@@ -104,16 +104,38 @@ The new-line price is shown as information about the market and never
 paired with this row's probability — that probability was computed for the
 old threshold.
 
-## G. Thresholds unified
+## G. Thresholds unified, and the recovery number justified
 
-Three conflicting numbers become two, each with one owner:
+Three conflicting numbers became two, each with one owner:
 
-| 90 min | start recovering (`reconcile.py`) |
+| 180 min | start recovering (`reconcile.py`) |
+|---|---|
 | 4 h board / 45 m price | stop being actionable (`recommendation.py`, unchanged) |
 
-Recovery fires early so a rebuild finishes before the product limit is
-reached. The conflicting 6-hour hard-fail concept and its module are
-deleted — it answered no question the other two did not.
+The first pass used **90 minutes**, on the reasoning that 90 < 240. That is
+not a justification. `dashboard-refresh.yml` declares eight windows at
+13/15/17/19/21/23/01/03 UTC — a 120-minute cadence — so a 90-minute
+threshold fires *before the next scheduled rebuild is even due*:
+
+| threshold | fires early? | spurious/day | headroom | attempts |
+|---|---|---|---|---|
+| 90 min | **yes** | 8 | 150 min | 7 |
+| 120 min | no (equal) | 8 | 120 min | 6 |
+| 150 min | no | needs a real miss | 90 min | 4 |
+| **180 min** | no | needs a real miss | 60 min | 3 |
+
+120 equals the cadence, so any jitter trips it. 150 trips on 30 minutes of
+ordinary scheduler lateness. 180 fires only once a window has genuinely
+been missed and still leaves three full observe+rebuild cycles.
+
+Checking that claim turned up something worth recording: **the windows are
+not uniform.** They are 2-hourly through the evening and leave a **10-hour
+overnight gap (03:00–13:00)** — which is exactly where the incident
+happened. Recovery will fire a few times overnight when no cron is due.
+That is correct rather than spurious: a board untouched for three hours is
+stale regardless of why.
+
+The conflicting 6-hour hard-fail concept and its module are deleted.
 
 ## H. Lineup Watch retired
 
@@ -147,10 +169,63 @@ Walker Jenkins quarantine and the systemic identity guard · no synthetic
 ids · first-paint live overlay · the four clocks · same-line price refresh ·
 immutable published wagers · `first_inning_run` deliberately out of scope.
 
-## K. Honest limitation
+## K. Detection and recovery — precisely
 
-Reconciliation runs on Cloudflare's 5-minute cron, so **detection** is
-reliable. The **rebuild it requests** still runs on GitHub Actions, so
-recovery latency remains subject to that queue. This shortens a ten-hour
-outage substantially; it does not bound one. A hard bound needs an
-off-platform check, which is outside this repo.
+The earlier version of this report said reconciliation "runs on Cloudflare,
+so detection is reliable." That is too loose, and the loose version reuses
+a statistic outside its evidence.
+
+The real path:
+
+```
+Cloudflare cron → external heartbeat → workflow_dispatch of dashboard-live.yml
+  → GitHub Actions EXECUTES it → reconciliation runs
+  → possible dashboard-refresh.yml dispatch
+  → GitHub Actions EXECUTES the full rebuild
+```
+
+Four distinct things, which must not be collapsed:
+
+| trigger / dispatch reliability | **improved** by Cloudflare |
+|---|---|
+| observer execution latency | still GitHub Actions |
+| rebuild execution latency | still GitHub Actions |
+| publication reconciliation | the only thing that proves recovery |
+
+The **9%** figure is evidence about GitHub's `schedule` trigger for Lineup
+Watch. It is **not** evidence that externally dispatched runs execute 9% of
+the time, and this report does not use it that way. Cloudflare materially
+improves trigger reliability; it does not remove GitHub Actions from the
+execution path. Under heavy queueing even a reliably dispatched
+`dashboard-live` run can start late, and the rebuild it requests is a
+second, separate execution with its own latency.
+
+No hard detection bound is claimed here, because no measured execution
+evidence supports one.
+
+> **OBSERVATION IS NOT RECOVERY. DISPATCH IS NOT RECOVERY. RECOVERY IS
+> PROVEN ONLY WHEN THE PUBLISHED CUSTOMER STATE RECONCILES TO THE
+> AUTHORITATIVE CURRENT STATE.**
+
+That invariant is why nothing in `reconcile.py` treats a dispatch as
+closure.
+
+## L. What the source now proves that it did not before
+
+| Area | Evidence |
+|---|---|
+| Clock masking | `test_live_health_channels.py` — 13 tests, all **failing on `2ee82ed7`** (verified against a worktree at that commit), passing here |
+| Lineup basis | `test_lineup_basis.py` — 17 tests over the twelve required cases, against the snapshot contract rather than candidate reconstruction |
+| Games / routes | `test_route_fail_closed.py` — 60 checks in real Chromium, every route entered **directly**, under all four unverifiable conditions, plus a healthy control |
+| Identity | `test_fail_closed_surfaces.py` calls the production `validate_payload_identities`, and proves it rejects a forged `fc2:` id |
+
+## M. Corrections to the previous report
+
+Two claims in the earlier version were not supported by the source and are
+withdrawn:
+
+- *"all ten items delivered"* — reconciliation was masking the global
+  health clock, lineup reconciliation was candidate-derived, Games was a
+  second frozen-copy surface, and four routes had no fail-closed path.
+- *"secondary surfaces fully audited"* — the audit had covered the
+  suggested parlay and missed Games entirely.
