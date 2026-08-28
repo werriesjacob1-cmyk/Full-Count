@@ -254,6 +254,18 @@ input, select, textarea { font: inherit; color: inherit; }
 }
 .freshness-bar .stale-flag { color: var(--warn); font-weight: 700; }
 
+/* Board-level alert (2026-08-28 P0). Deliberately NOT a dismissible toast:
+   the condition it reports -- a board too old to bet, or prices this
+   browser could not verify -- persists until the board actually rebuilds,
+   so an affordance that makes it go away would misrepresent it. */
+#board-alert:empty { display: none; }
+.board-alert {
+  max-width: 1180px; margin: 12px auto 0; padding: 12px 16px;
+  border-radius: 10px; font-size: 14px; line-height: 1.5;
+  border: 1px solid var(--warn); background: var(--warn-soft); color: var(--ink);
+}
+.board-alert strong { display: block; margin-bottom: 2px; }
+
 /* ── Layout ───────────────────────────────────────────────────────── */
 main { max-width: 1180px; margin: 0 auto; padding: 20px 16px 80px; }
 .page { }

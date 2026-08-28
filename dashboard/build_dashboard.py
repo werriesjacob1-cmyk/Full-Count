@@ -786,8 +786,31 @@ def run_live_fetch():
     def clean(rows):
         return _clean_candidate_rows(rows, schedule)
 
+    # FRESHNESS SEMANTICS (2026-08-28 P0). One board carries four different
+    # clocks, and collapsing them into generated_at is what made the incident
+    # invisible: a 10.1-hour-old model basis wearing a 2-minute-old price
+    # overlay reads, through a single timestamp, as either "fresh" or "stale"
+    # depending on which one you happen to print -- and the bar printed the
+    # friendlier one. Each is now stated separately and machine-readably, so
+    # a consumer can ask the specific question it actually cares about
+    # instead of inferring all four from one number.
+    #
+    # lineups_observed_at is the one that had no representation at all before
+    # now. It is currently written only by a full board build, because no
+    # lineup-only refresh exists yet -- so today it equals the build time.
+    # That is a real limitation, not a placeholder: the field exists so the
+    # question is answerable and so a future lineup refresh has somewhere
+    # honest to write, not to imply an independent observation that is not
+    # happening.
+    freshness = {
+        "model_basis_at": board_generated_at,
+        "lineups_observed_at": ctx.get("lineups_observed_at") or board_generated_at,
+        "market_prices_at": odds_fetched_at,
+        "live_game_observed_at": None,
+    }
     out = {"generated_at": board_generated_at, "date": gp.m.TODAY,
           "odds_fetched_at": odds_fetched_at,
+          "freshness": freshness,
           "_game_schedule": schedule,
           "recommendation_metadata": gprec.build_metadata(odds_fetched_at=odds_fetched_at,
                                                           board_generated_at=board_generated_at),
@@ -1257,7 +1280,7 @@ def build_payload(result, track_record=None):
     result.pop("home_runs", None)
 
     meta_keys = {"generated_at", "date", "suggested_parlay", "game_context", "streaks",
-                "odds_fetched_at", "recommendation_metadata", "_game_schedule"}
+                "odds_fetched_at", "freshness", "recommendation_metadata", "_game_schedule"}
     all_rows = []
     family_counts = {}
     for stat, rows in result.items():
@@ -1316,6 +1339,16 @@ def build_payload(result, track_record=None):
         "date": result.get("date"),
         "generated_at": result.get("generated_at"),
         "odds_fetched_at": result.get("odds_fetched_at"),
+        # The four separate clocks (2026-08-28 P0). Carried through to the
+        # served payload -- a field computed in run_live_fetch() and dropped
+        # here would be exactly the "computed, then discarded" failure this
+        # codebase has now hit at three separate boundaries.
+        "freshness": result.get("freshness") or {
+            "model_basis_at": result.get("generated_at"),
+            "lineups_observed_at": result.get("generated_at"),
+            "market_prices_at": result.get("odds_fetched_at"),
+            "live_game_observed_at": None,
+        },
         "recommendation_metadata": result.get("recommendation_metadata"),
         "families": families,
         "summary": {"n_props": len(all_rows), "n_top_pick": n_top_pick, "n_lean": n_lean,

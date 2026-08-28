@@ -3588,6 +3588,16 @@ def _build_and_score():
     other's idea of what a candidate is worth.
     """
 
+    # Captured at the ACTUAL lineup fetch, not at the end of the scoring
+    # pass (2026-08-28 P0). The board conflated four different clocks under
+    # one generated_at: when the model ran, when lineups were observed, when
+    # prices were read, and when the game was last looked at. On 2026-08-28
+    # a board built at 06:31 was still labelling Sal Stewart and Pete
+    # Crow-Armstrong "lineup not confirmed" nine hours after MLB posted both
+    # lineups, and nothing in the payload could express that -- the only
+    # timestamp available said "board built 06:31", which is true and does
+    # not answer "when did anyone last LOOK at the lineups".
+    lineups_observed_at = datetime.now(timezone.utc).isoformat()
     lineup_text, game_meta, player_ids = m.fetch_lineups(m.TODAY)
     if not game_meta:
         with open(PICKS_FILE, "w", encoding="utf-8") as f:
@@ -3871,6 +3881,7 @@ def _build_and_score():
     attach_reliability(candidates, emp_batters, emp_pitchers)
     return candidates, {
         "game_meta": game_meta, "park_wx": park_wx,
+        "lineups_observed_at": lineups_observed_at,
         "bullpen_scores": bullpen_scores, "emp_batters": emp_batters,
         "emp_pitchers": emp_pitchers, "comp_table": comp_table,
         "league_rates": league_rates,

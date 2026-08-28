@@ -2234,6 +2234,100 @@ function liveFreshnessState(nowMs, doc, props) {
 
 let LIVE_FRESHNESS = { applicable: false, stale: false, ageSeconds: null, reason: null };
 
+// ── BOARD-AGE FRESHNESS (2026-08-28 P0) ──────────────────────────────────
+// liveFreshnessState() above only applies once a game is IN PROGRESS -- it
+// watches the GRADING channel. Nothing watched the thing that actually went
+// wrong on 2026-08-28: the board's own model basis was 10.1 hours old while
+// the price overlay on top of it was 2 minutes old, and the freshness bar
+// reported that as the neutral sentence "Board built 10 hours ago."
+//
+// recommendation.py already fails Top Pick status closed past these limits
+// and had done so correctly all day. The customer was simply never told.
+// Mirrored here by hand (test_board_first_paint.py asserts the numbers
+// match recommendation.py, so they cannot drift apart silently).
+const MAX_BOARD_AGE_SECONDS = 4 * 60 * 60;
+const MAX_PRICE_AGE_SECONDS = 45 * 60;
+
+// Whether this browser has successfully applied a live overlay yet.
+// "pending" is the honest state before the first poll resolves -- it is NOT
+// the same as "fresh", and must never render as though it were.
+let LIVE_OVERLAY_STATE = "pending";
+
+// The four clocks a board actually carries, resolved from whichever source
+// currently owns each (2026-08-28 P0). model basis and lineup observation
+// come from the build; market price and live-game observation are advanced
+// by the live overlay, so those prefer the overlay's own stamps.
+function boardClocks(doc) {
+  const f = (doc && doc.freshness) || {};
+  return {
+    model_basis_at: f.model_basis_at || (doc && doc.generated_at) || null,
+    lineups_observed_at: f.lineups_observed_at || (doc && doc.generated_at) || null,
+    market_prices_at: (doc && doc.prices_updated_at) || f.market_prices_at
+      || (doc && doc.odds_fetched_at) || null,
+    live_game_observed_at: (doc && doc.grades_checked_at) || f.live_game_observed_at || null,
+  };
+}
+
+function boardFreshnessState(nowMs, doc) {
+  const builtMs = timeMs(boardClocks(doc).model_basis_at);
+  if (builtMs == null) {
+    return { state: "unknown", ageSeconds: null, priceAgeSeconds: null,
+             reason: "board generation time unknown" };
+  }
+  const ageSeconds = Math.max(0, Math.round((nowMs - builtMs) / 1000));
+  const pricedMs = timeMs(boardClocks(doc).market_prices_at);
+  const priceAgeSeconds = pricedMs == null ? null : Math.max(0, Math.round((nowMs - pricedMs) / 1000));
+  if (ageSeconds > MAX_BOARD_AGE_SECONDS) {
+    return { state: "stale", ageSeconds, priceAgeSeconds, reason: "board_age_exceeded" };
+  }
+  if (priceAgeSeconds == null) {
+    return { state: "unknown", ageSeconds, priceAgeSeconds: null,
+             reason: "price fetch time unknown" };
+  }
+  if (priceAgeSeconds > MAX_PRICE_AGE_SECONDS) {
+    return { state: "stale", ageSeconds, priceAgeSeconds, reason: "price_age_exceeded" };
+  }
+  return { state: "fresh", ageSeconds, priceAgeSeconds, reason: null };
+}
+
+function _hoursText(seconds) {
+  if (seconds == null) return "an unknown time";
+  const mins = Math.round(seconds / 60);
+  if (mins < 60) return `${mins} minutes`;
+  return `${(seconds / 3600).toFixed(1)} hours`;
+}
+
+// The board-level banner. Deliberately states the MODEL BASIS age, not the
+// price age -- a fresh price sitting on top of a 10-hour-old projection is
+// the exact combination that made this incident hard to see.
+function boardStalenessBanner(fresh) {
+  if (LIVE_OVERLAY_STATE === "unavailable") {
+    return `<div class="board-alert board-alert-stale" role="alert">
+      <strong>Prices shown may not be current.</strong>
+      This browser could not reach the live price feed, so the numbers below are
+      from the last full board build (${esc(_hoursText(fresh.ageSeconds))} ago) and
+      have not been re-checked against FanDuel. Check FanDuel directly before betting.
+    </div>`;
+  }
+  if (fresh.state === "stale") {
+    const why = fresh.reason === "price_age_exceeded"
+      ? `Prices were last verified ${esc(_hoursText(fresh.priceAgeSeconds))} ago.`
+      : `The projections below were built ${esc(_hoursText(fresh.ageSeconds))} ago, so
+         lineups, scratches and matchups may have changed since.`;
+    return `<div class="board-alert board-alert-stale" role="alert">
+      <strong>This board is out of date.</strong> ${why}
+      Nothing here is being offered as a current recommendation until it rebuilds.
+    </div>`;
+  }
+  if (fresh.state === "unknown") {
+    return `<div class="board-alert board-alert-stale" role="alert">
+      <strong>Board freshness unknown.</strong> ${esc(fresh.reason || "")}. Treat these
+      numbers as unverified rather than current.
+    </div>`;
+  }
+  return "";
+}
+
 function liveFreshnessAgoText(seconds) {
   if (seconds == null) return "unknown";
   const mins = Math.round(seconds / 60);
@@ -2255,9 +2349,16 @@ function liveStaleChip(p) {
 
 function renderFreshness() {
   const bar = document.getElementById("freshness-bar");
+  // Each clock named for what it actually measures (2026-08-28 P0). The
+  // old bar printed "Board built Xh ago · odds updated Ym ago", which is
+  // two of the four and reads as reassuring precision -- the missing one
+  // was lineups, the exact clock that was 10 hours behind reality.
+  const clocks = boardClocks(DATA);
   const parts = [];
-  if (DATA.generated_at) parts.push(`Board built ${_agoText(DATA.generated_at)}`);
-  if (DATA.prices_updated_at) parts.push(`odds updated ${_agoText(DATA.prices_updated_at)}`);
+  if (clocks.model_basis_at) parts.push(`Projections ${_agoText(clocks.model_basis_at)}`);
+  if (clocks.lineups_observed_at) parts.push(`lineups checked ${_agoText(clocks.lineups_observed_at)}`);
+  if (clocks.market_prices_at) parts.push(`odds ${_agoText(clocks.market_prices_at)}`);
+  if (clocks.live_game_observed_at) parts.push(`live scores ${_agoText(clocks.live_game_observed_at)}`);
   const dateLabel = DATA.date ? LOCAL_DATE_FMT.format(new Date(DATA.date + "T12:00:00Z")) : "";
   const wasStale = LIVE_FRESHNESS.applicable && LIVE_FRESHNESS.stale;
   LIVE_FRESHNESS = liveFreshnessState(Date.now(), DATA, [...PROPS_BY_ID.values()]);
@@ -2268,7 +2369,14 @@ function renderFreshness() {
       : `LIVE DATA STALE — last verified ${liveFreshnessAgoText(LIVE_FRESHNESS.ageSeconds)}`;
     staleHtml = ` · <span class="stale-flag">${esc(msg)}</span>`;
   }
+  const boardFresh = boardFreshnessState(Date.now(), DATA);
+  if (boardFresh.state !== "fresh" || LIVE_OVERLAY_STATE === "unavailable") {
+    staleHtml += ` · <span class="stale-flag">${esc(
+      LIVE_OVERLAY_STATE === "unavailable" ? "PRICES UNVERIFIED" : "BOARD OUT OF DATE")}</span>`;
+  }
   bar.innerHTML = `${esc(dateLabel)}${dateLabel ? " · " : ""}${esc(parts.join(" · "))}${staleHtml}`;
+  const alertHost = document.getElementById("board-alert");
+  if (alertHost) alertHost.innerHTML = boardStalenessBanner(boardFresh);
   // Only re-render prop cards when the verdict actually flips -- avoids a
   // needless full re-render every 60s while still guaranteeing per-prop
   // chips (liveStaleChip) never lag more than one tick behind the bar.
@@ -2444,9 +2552,14 @@ function applyCachedLive() {
   refreshSummary();
   return changed;
 }
-async function pollLive() {
+// `silent` is used for the one boot-time call, which runs BEFORE
+// initRouter() has parsed the route: ingest the overlay, but let boot's own
+// initRouter()/renderFreshness() do the first paint rather than rendering a
+// route that has not been resolved yet.
+async function pollLive({ silent = false } = {}) {
   try {
     const fresh = await fetchJSON("live.json");
+    LIVE_OVERLAY_STATE = "applied";
     // grades_checked_at/prices_checked_at MUST be part of this dedup key,
     // not just the *_updated_at triplet: a heartbeat-only poll (system
     // healthy, nothing else changed this cycle) would otherwise be
@@ -2461,9 +2574,24 @@ async function pollLive() {
     lastPollStamp = stamp;
     ingestLiveDocument(fresh);
     const changed = applyCachedLive();
+    if (silent) return;
     if (changed > 0) { renderRoute(); }
     renderFreshness();
-  } catch (e) { /* a missed poll just tries again next interval */ }
+  } catch (e) {
+    // A missed poll on an ALREADY-OVERLAID board just tries again next
+    // interval -- the numbers on screen are still real, just a cycle old.
+    // Never having applied one at all is a different situation: the board
+    // is showing the base data.json values, which carry prices from the
+    // last full build and no stale/suppression flags whatsoever. On
+    // 2026-08-28 that difference was 1,691 of 2,584 props showing a
+    // different price than the current one, and 1,897 rows rendering as
+    // NOT stale that the overlay marks stale. Say so rather than let the
+    // base payload pass as current.
+    if (LIVE_OVERLAY_STATE === "pending") {
+      LIVE_OVERLAY_STATE = "unavailable";
+      if (!silent) renderFreshness();
+    }
+  }
 }
 
 // Replaces the old forced `location.reload()` every 30 minutes: fetch the
@@ -2524,6 +2652,16 @@ async function boot() {
     return;
   }
   indexProps();
+  // Apply the live overlay BEFORE the first paint (2026-08-28 P0).
+  // data.json alone is the base payload: prices as of the last full build,
+  // stale=false on every row, and no suppression reasons -- all of which
+  // live exclusively in live.json. Rendering first and overlaying later
+  // meant every page load briefly showed a fail-OPEN board, and a browser
+  // that could never reach live.json showed one permanently. Awaited, and
+  // failing closed on error, so the first thing a customer sees is either
+  // the overlaid truth or an explicit warning -- never the base payload
+  // wearing the overlay's credibility.
+  await pollLive({ silent: true });
   updateWatchCount();
   initRouter();
   initSearch();
@@ -2542,7 +2680,6 @@ async function boot() {
   // one small JSON GET, not the multi-minute FanGraphs/Statcast/FanDuel
   // pull Dashboard Refresh itself avoids running too often for.
   setInterval(pollFullBoard, 3 * 60000);
-  pollLive();
 
   document.querySelectorAll("[data-close-detail]").forEach(el => el.addEventListener("click", closeDetail));
   document.addEventListener("keydown", e => { if (e.key === "Escape") closeDetail(); });
