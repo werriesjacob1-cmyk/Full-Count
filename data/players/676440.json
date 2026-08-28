@@ -238,9 +238,9 @@
       "date": "2026-08-28",
       "evaluations": [
         {
-          "prop": "Over 3.5 Strikeouts",
+          "prop": "Over 4.5 Strikeouts",
           "type": "pitcher",
-          "score": 24.1,
+          "score": 24.0,
           "notable_signals": 1,
           "matchup": "Kansas City Royals @ Cleveland Guardians",
           "game_pk": 824396,
@@ -249,27 +249,27 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "opp_team_k_pct": 40.0,
+            "opp_team_k_pct": 39.0,
             "same_hand_ratio": 12.5,
             "l14_k_pct": 15.2941,
             "tto_penalty": 8.0,
             "env_neutral": 50.0
           },
-          "hit_probability": 0.6125,
-          "raw_hit_probability": 0.6925,
-          "lift": -0.0802,
+          "hit_probability": 0.5009,
+          "raw_hit_probability": 0.5009,
+          "lift": -0.0135,
           "reliability": "A",
           "sample_n": 27,
           "projection": {
             "stat": "strikeouts",
-            "value": 3.5,
-            "needs": 4
+            "value": 4.5,
+            "needs": 5
           }
         },
         {
           "prop": "Over 16.5 Outs Recorded",
           "type": "pitcher",
-          "score": 74.1,
+          "score": 75.3,
           "notable_signals": 1,
           "matchup": "Kansas City Royals @ Cleveland Guardians",
           "game_pk": 824396,
