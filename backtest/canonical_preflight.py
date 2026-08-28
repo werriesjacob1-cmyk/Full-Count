@@ -131,7 +131,12 @@ def check_durable_push_real(remote="origin", branch=_cd.DURABLE_BRANCH):
     if git_dir is None:
         return Check("DURABLE_PUSH_REAL", False, "not a git checkout")
     env = dict(os.environ, GIT_DIR=git_dir)
-    ref = f"refs/heads/fc-preflight-{int(time.time())}"
+    # A FIXED ref, force-updated, never a timestamped one. Deleting refs is
+    # refused on this host (the RPC swallows the delete and reports
+    # "Everything up-to-date"), so a per-run ref name would leave one
+    # undeletable branch on the remote for every preflight ever run. With a
+    # fixed name the worst case is exactly one scratch ref, forever.
+    ref = "refs/heads/fc-preflight-probe"
     try:
         blob = subprocess.run(["git", "hash-object", "-w", "--stdin"],
                               input=b"fc-preflight", capture_output=True,
@@ -153,7 +158,7 @@ def check_durable_push_real(remote="origin", branch=_cd.DURABLE_BRANCH):
             return Check("DURABLE_PUSH_REAL", False,
                          f"commit-tree failed: {commit.stderr.strip()[:80]}")
         cid = commit.stdout.strip()
-        push = subprocess.run(["git", "push", remote, f"{cid}:{ref}"],
+        push = subprocess.run(["git", "push", remote, f"+{cid}:{ref}"],
                               cwd=REPO_ROOT, env=env, capture_output=True,
                               text=True, timeout=180)
         if push.returncode != 0:
@@ -163,7 +168,9 @@ def check_durable_push_real(remote="origin", branch=_cd.DURABLE_BRANCH):
         # to the run, but say so rather than leaving a silent stray ref.
         rm = subprocess.run(["git", "push", remote, f":{ref}"], cwd=REPO_ROOT,
                             env=env, capture_output=True, text=True, timeout=180)
-        note = "" if rm.returncode == 0 else f" (scratch ref {ref} could not be deleted)"
+        note = ("" if rm.returncode == 0 else
+                f" (scratch ref {ref} not deleted -- this host refuses ref "
+                f"deletion; it is reused, never multiplied)")
         return Check("DURABLE_PUSH_REAL", True, f"real push to {remote} verified{note}")
     except Exception as exc:
         return Check("DURABLE_PUSH_REAL", False, f"{type(exc).__name__}: {exc}"[:110])
