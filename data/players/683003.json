@@ -241,7 +241,7 @@
         {
           "prop": "Over 4.5 Strikeouts",
           "type": "pitcher",
-          "score": 39.4,
+          "score": 40.4,
           "notable_signals": 0,
           "matchup": "Pittsburgh Pirates @ St. Louis Cardinals",
           "game_pk": 823013,
@@ -253,11 +253,14 @@
             "opp_team_k_pct": 37.0,
             "same_hand_ratio": 61.1111,
             "l14_k_pct": 88.2353,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 60.4322,
+            "ump_k_pct": 0.276,
+            "ump_bb_pct": -0.336
           },
           "hit_probability": 0.5972,
-          "raw_hit_probability": 0.6164,
-          "lift": 0.0828,
+          "raw_hit_probability": 0.6166,
+          "lift": 0.0824,
           "reliability": "B",
           "sample_n": 15,
           "projection": {
@@ -267,9 +270,9 @@
           }
         },
         {
-          "prop": "Over 13.5 Outs Recorded",
+          "prop": "Over 14.5 Outs Recorded",
           "type": "pitcher",
-          "score": 11.6,
+          "score": 7.1,
           "notable_signals": 0,
           "matchup": "Pittsburgh Pirates @ St. Louis Cardinals",
           "game_pk": 823013,
@@ -278,18 +281,46 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.5658,
+            "outs_rate": 0.4895,
             "avg_outs_per_start": 13.6
           },
-          "hit_probability": 0.5658,
+          "hit_probability": 0.4895,
           "raw_hit_probability": null,
-          "lift": -0.2477,
+          "lift": -0.2238,
           "reliability": "B",
           "sample_n": 15,
           "projection": {
             "stat": "pitcher_outs",
-            "value": 13.5,
-            "needs": 14
+            "value": 14.5,
+            "needs": 15
+          }
+        },
+        {
+          "prop": "Over 10.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 32.9,
+          "notable_signals": 0,
+          "matchup": "Pittsburgh Pirates @ St. Louis Cardinals",
+          "game_pk": 823013,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            683003,
+            687273
+          ],
+          "signals": {
+            "combined_k_edge": -0.0829
+          },
+          "hit_probability": 0.452,
+          "raw_hit_probability": null,
+          "lift": -0.0829,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 10.5,
+            "needs": 11
           }
         }
       ]

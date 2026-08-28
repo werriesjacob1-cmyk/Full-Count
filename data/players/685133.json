@@ -1294,6 +1294,135 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-28",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 50.8,
+          "notable_signals": 0,
+          "matchup": "Philadelphia Phillies @ Los Angeles Angels",
+          "game_pk": 823985,
+          "team": "Los Angeles Angels",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 100.0,
+            "park_hr_index": 51.6,
+            "season_barrel_pct": 1.3333,
+            "lineup_slot": 75.0,
+            "bullpen_fatigue": 0.0,
+            "platoon_barrel_pct": -2.64,
+            "platoon_xwoba": 0.18,
+            "park_hand_index": -2.84,
+            "opp_catcher_framing": 0.6,
+            "days_rest": 4.0,
+            "woba_ahead": 60.9091,
+            "woba_behind": 16.3636,
+            "pull_park_synergy": -0.8747,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": -2.104,
+            "vs_rp_ops": -1.836,
+            "ump_k_pct": -0.156,
+            "ump_bb_pct": -0.012
+          },
+          "hit_probability": 0.6525,
+          "raw_hit_probability": 0.6406,
+          "lift": 0.0895,
+          "reliability": "B",
+          "sample_n": 67,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 52.2,
+          "notable_signals": 0,
+          "matchup": "Philadelphia Phillies @ Los Angeles Angels",
+          "game_pk": 823985,
+          "team": "Los Angeles Angels",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": -2.88,
+            "sprint_speed": 50.0,
+            "catcher_poptime": 0.0,
+            "on_base": 69.2898
+          },
+          "hit_probability": 0.0945,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "B",
+          "sample_n": 67,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 1.5,
+          "notable_signals": 0,
+          "matchup": "Philadelphia Phillies @ Los Angeles Angels",
+          "game_pk": 823985,
+          "team": "Los Angeles Angels",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0349
+          },
+          "hit_probability": 0.0349,
+          "raw_hit_probability": null,
+          "lift": -0.0135,
+          "reliability": "B",
+          "sample_n": 67,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 0.0,
+          "notable_signals": 0,
+          "matchup": "Philadelphia Phillies @ Los Angeles Angels",
+          "game_pk": 823985,
+          "team": "Los Angeles Angels",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.005
+          },
+          "hit_probability": 0.005,
+          "raw_hit_probability": null,
+          "lift": -0.0161,
+          "reliability": "B",
+          "sample_n": 67,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

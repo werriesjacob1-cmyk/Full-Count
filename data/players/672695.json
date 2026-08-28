@@ -1323,6 +1323,107 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-28",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 63.1,
+          "notable_signals": 2,
+          "matchup": "Arizona Diamondbacks @ San Francisco Giants",
+          "game_pk": 823178,
+          "team": "Arizona Diamondbacks",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "sp_era_weak": 30.8571,
+            "l7_avg_ev": 54.3182,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 3.15,
+            "park_hr_index": 25.2,
+            "season_barrel_pct": 0.0,
+            "lineup_slot": 62.5,
+            "bullpen_fatigue": 50.0,
+            "platoon_barrel_pct": -2.8,
+            "platoon_xwoba": 1.44,
+            "opp_catcher_framing": 0.84,
+            "days_rest": 0.0,
+            "woba_ahead": 71.8182,
+            "woba_behind": 15.4545,
+            "team_total_move": 6.0,
+            "team_total_open": 0.0,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": -1.336,
+            "vs_rp_ops": -1.02,
+            "ump_k_pct": -0.204,
+            "ump_bb_pct": -0.06
+          },
+          "hit_probability": 0.6956,
+          "raw_hit_probability": 0.7169,
+          "lift": 0.0263,
+          "reliability": "A",
+          "sample_n": 130,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 0.0,
+          "notable_signals": 0,
+          "matchup": "Arizona Diamondbacks @ San Francisco Giants",
+          "game_pk": 823178,
+          "team": "Arizona Diamondbacks",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0063
+          },
+          "hit_probability": 0.0063,
+          "raw_hit_probability": null,
+          "lift": -0.0421,
+          "reliability": "A",
+          "sample_n": 130,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 0.0,
+          "notable_signals": 0,
+          "matchup": "Arizona Diamondbacks @ San Francisco Giants",
+          "game_pk": 823178,
+          "team": "Arizona Diamondbacks",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0092
+          },
+          "hit_probability": 0.0092,
+          "raw_hit_probability": null,
+          "lift": -0.0119,
+          "reliability": "A",
+          "sample_n": 130,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

@@ -209,9 +209,9 @@
       "date": "2026-08-28",
       "evaluations": [
         {
-          "prop": "Over 3.5 Strikeouts",
+          "prop": "Over 4.5 Strikeouts",
           "type": "pitcher",
-          "score": 31.4,
+          "score": 33.7,
           "notable_signals": 0,
           "matchup": "Baltimore Orioles @ Athletics",
           "game_pk": 824960,
@@ -221,25 +221,28 @@
           "combo_player_ids": null,
           "signals": {
             "opp_team_k_pct": 56.0,
-            "same_hand_ratio": 75.0,
+            "same_hand_ratio": 100.0,
             "l14_k_pct": 0.0,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 63.3625,
+            "ump_k_pct": -0.252,
+            "ump_bb_pct": -0.024
           },
-          "hit_probability": 0.6056,
-          "raw_hit_probability": 0.6577,
-          "lift": -0.0871,
+          "hit_probability": 0.4617,
+          "raw_hit_probability": 0.4617,
+          "lift": -0.0531,
           "reliability": "A",
           "sample_n": 22,
           "projection": {
             "stat": "strikeouts",
-            "value": 3.5,
-            "needs": 4
+            "value": 4.5,
+            "needs": 5
           }
         },
         {
-          "prop": "Over 16.5 Outs Recorded",
+          "prop": "Over 17.5 Outs Recorded",
           "type": "pitcher",
-          "score": 59.3,
+          "score": 46.5,
           "notable_signals": 1,
           "matchup": "Baltimore Orioles @ Athletics",
           "game_pk": 824960,
@@ -248,18 +251,46 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.5688,
+            "outs_rate": 0.4291,
             "avg_outs_per_start": 16.82
           },
-          "hit_probability": 0.5688,
+          "hit_probability": 0.4291,
           "raw_hit_probability": null,
-          "lift": 0.0812,
+          "lift": 0.0934,
           "reliability": "A",
           "sample_n": 22,
           "projection": {
             "stat": "pitcher_outs",
-            "value": 16.5,
-            "needs": 17
+            "value": 17.5,
+            "needs": 18
+          }
+        },
+        {
+          "prop": "Over 10.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 44.2,
+          "notable_signals": 0,
+          "matchup": "Baltimore Orioles @ Athletics",
+          "game_pk": 824960,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            687064,
+            682052
+          ],
+          "signals": {
+            "combined_k_edge": -0.0429
+          },
+          "hit_probability": 0.5067,
+          "raw_hit_probability": null,
+          "lift": -0.0429,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 10.5,
+            "needs": 11
           }
         }
       ]

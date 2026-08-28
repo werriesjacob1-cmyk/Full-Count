@@ -233,6 +233,69 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-28",
+      "evaluations": [
+        {
+          "prop": "Over 6.5 Strikeouts",
+          "type": "pitcher",
+          "score": 31.0,
+          "notable_signals": 0,
+          "matchup": "Baltimore Orioles @ Athletics",
+          "game_pk": 824960,
+          "team": "Athletics",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_k_pct": 74.0,
+            "same_hand_ratio": 12.5,
+            "l14_k_pct": 99.4118,
+            "tto_penalty": -8.0,
+            "env_neutral": 50.0,
+            "ump_accuracy": 63.3625,
+            "ump_k_pct": -0.252,
+            "ump_bb_pct": -0.024
+          },
+          "hit_probability": 0.3611,
+          "raw_hit_probability": 0.3611,
+          "lift": 0.1455,
+          "reliability": "A",
+          "sample_n": 18,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 6.5,
+            "needs": 7
+          }
+        },
+        {
+          "prop": "Over 16.5 Outs Recorded",
+          "type": "pitcher",
+          "score": 0,
+          "notable_signals": 0,
+          "matchup": "Baltimore Orioles @ Athletics",
+          "game_pk": 824960,
+          "team": "Athletics",
+          "side": "home",
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "outs_rate": 0.2281,
+            "avg_outs_per_start": 14.22
+          },
+          "hit_probability": 0.2281,
+          "raw_hit_probability": null,
+          "lift": -0.1845,
+          "reliability": "A",
+          "sample_n": 18,
+          "projection": {
+            "stat": "pitcher_outs",
+            "value": 16.5,
+            "needs": 17
+          }
+        }
+      ]
     }
   ]
 }

@@ -402,6 +402,86 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-28",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 27.7,
+          "notable_signals": 1,
+          "matchup": "Arizona Diamondbacks @ San Francisco Giants",
+          "game_pk": 823178,
+          "team": "Arizona Diamondbacks",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 30.8571,
+            "l7_avg_ev": 0.0,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 25.2,
+            "season_barrel_pct": 25.3333,
+            "lineup_slot": 0.0,
+            "bullpen_fatigue": 50.0,
+            "platoon_barrel_pct": -2.64,
+            "platoon_xwoba": -1.32,
+            "park_hand_index": -1.12,
+            "opp_catcher_framing": 0.84,
+            "days_rest": 2.0,
+            "woba_ahead": 12.7273,
+            "woba_behind": 5.4545,
+            "pull_park_synergy": -0.6115,
+            "team_total_move": 6.0,
+            "team_total_open": 0.0,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": -2.072,
+            "vs_rp_ops": -0.444,
+            "ump_k_pct": -0.204,
+            "ump_bb_pct": -0.06
+          },
+          "hit_probability": 0.6096,
+          "raw_hit_probability": 0.6082,
+          "lift": 0.0466,
+          "reliability": "D",
+          "sample_n": 20,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 67.0,
+          "notable_signals": 1,
+          "matchup": "Arizona Diamondbacks @ San Francisco Giants",
+          "game_pk": 823178,
+          "team": "Arizona Diamondbacks",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": 0.42,
+            "sprint_speed": 50.0,
+            "on_base": 100.0
+          },
+          "hit_probability": 0.2008,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "D",
+          "sample_n": 20,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

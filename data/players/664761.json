@@ -1590,6 +1590,110 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-28",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 44.9,
+          "notable_signals": 0,
+          "matchup": "Philadelphia Phillies @ Los Angeles Angels",
+          "game_pk": 823985,
+          "team": "Philadelphia Phillies",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 32.0,
+            "l7_avg_ev": 55.8929,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 51.6,
+            "season_barrel_pct": 18.0,
+            "lineup_slot": 50.0,
+            "bullpen_fatigue": 0.0,
+            "platoon_barrel_pct": -0.56,
+            "platoon_xwoba": -0.72,
+            "park_hand_index": -1.41,
+            "opp_catcher_framing": -1.08,
+            "days_rest": 2.0,
+            "woba_ahead": 45.4545,
+            "woba_behind": 99.0909,
+            "pull_park_synergy": -0.1234,
+            "hard_hit_105_rate": -0.02,
+            "team_total_move": -6.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": -0.192,
+            "vs_rp_ops": -0.564,
+            "ump_k_pct": -0.156,
+            "ump_bb_pct": -0.012
+          },
+          "hit_probability": 0.6037,
+          "raw_hit_probability": 0.6038,
+          "lift": 0.0407,
+          "reliability": "A",
+          "sample_n": 127,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 4.2,
+          "notable_signals": 0,
+          "matchup": "Philadelphia Phillies @ Los Angeles Angels",
+          "game_pk": 823985,
+          "team": "Philadelphia Phillies",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0458
+          },
+          "hit_probability": 0.0458,
+          "raw_hit_probability": null,
+          "lift": -0.0026,
+          "reliability": "A",
+          "sample_n": 127,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 0.8,
+          "notable_signals": 0,
+          "matchup": "Philadelphia Phillies @ Los Angeles Angels",
+          "game_pk": 823985,
+          "team": "Philadelphia Phillies",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0159
+          },
+          "hit_probability": 0.0159,
+          "raw_hit_probability": null,
+          "lift": -0.0052,
+          "reliability": "A",
+          "sample_n": 127,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

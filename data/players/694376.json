@@ -189,6 +189,53 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-28",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 36.6,
+          "notable_signals": 1,
+          "matchup": "Arizona Diamondbacks @ San Francisco Giants",
+          "game_pk": 823178,
+          "team": "San Francisco Giants",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 82.8571,
+            "l7_avg_ev": 0.0,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 25.2,
+            "lineup_slot": 37.5,
+            "bullpen_fatigue": 15.1515,
+            "park_hand_index": -1.12,
+            "opp_catcher_framing": 1.32,
+            "days_rest": 0.0,
+            "woba_ahead": 33.6364,
+            "woba_behind": 90.0,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "ump_k_pct": -0.204,
+            "ump_bb_pct": -0.06
+          },
+          "hit_probability": 0.4897,
+          "raw_hit_probability": 0.4897,
+          "lift": -0.0733,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

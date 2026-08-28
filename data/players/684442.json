@@ -27,7 +27,7 @@
         {
           "prop": "Over 3.5 Strikeouts",
           "type": "pitcher",
-          "score": 25.8,
+          "score": 23.4,
           "notable_signals": 0,
           "matchup": "Arizona Diamondbacks @ San Francisco Giants",
           "game_pk": 823178,
@@ -37,8 +37,11 @@
           "combo_player_ids": null,
           "signals": {
             "opp_team_k_pct": 43.0,
-            "same_hand_ratio": 100.0,
-            "env_neutral": 50.0
+            "same_hand_ratio": 61.1111,
+            "env_neutral": 50.0,
+            "ump_accuracy": 64.8892,
+            "ump_k_pct": 0.204,
+            "ump_bb_pct": 0.06
           },
           "hit_probability": 0.5975,
           "raw_hit_probability": 0.6177,
@@ -49,6 +52,34 @@
             "stat": "strikeouts",
             "value": 3.5,
             "needs": 4
+          }
+        },
+        {
+          "prop": "Over 7.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 54.9,
+          "notable_signals": 1,
+          "matchup": "Arizona Diamondbacks @ San Francisco Giants",
+          "game_pk": 823178,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            684442,
+            694918
+          ],
+          "signals": {
+            "combined_k_edge": 0.0881
+          },
+          "hit_probability": 0.6208,
+          "raw_hit_probability": null,
+          "lift": 0.0881,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 7.5,
+            "needs": 8
           }
         }
       ]
