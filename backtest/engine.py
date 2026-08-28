@@ -261,6 +261,31 @@ STATCAST_COLUMNS = [
     # Without them mlb_sources.catcher_framing() always degrades to {} on
     # this store, same failure mode as pull_rates() without hc_x/hc_y.
     "fielder_2", "zone",
+    # RETENTION-ONLY, added before the 2026-08-28 canonical pull. None of these
+    # feeds any score, probability, threshold or recommendation -- retaining a
+    # column does not authorize using it. They are here because this projection
+    # IS the source artifact (see the keep/to_parquet path below), so a field
+    # omitted now costs a full ~23h re-pull and a NEW source vintage to recover.
+    #
+    # Verified against a real frame (2026-08-20, 2735 pitches, 119 columns)
+    # rather than Savant documentation:
+    #   hit_distance_sc   868/2735 (batted balls only) -- moonshot_420 cannot be
+    #                     produced without it; mlb_sources.moonshot_rates()
+    #                     degrades to {} on every date today.
+    #   swing_length      1264/2735 (swings only)   already fetched by
+    #   attack_angle      1264/2735                 mlb_daily.py's bat-tracking
+    #   swing_path_tilt   1264/2735                 section and then discarded.
+    #   attack_direction  1264/2735                 One family; splitting it
+    #                                               would be arbitrary.
+    #   arm_angle        2722/2735 (99.5%) -- pitcher release geometry, the
+    #                     pitcher-side analogue, free from the same frame.
+    #
+    # NOT added, verified ABSENT from this frame: squared_up, blast, pop_time.
+    # Those are derived Baseball Savant leaderboard metrics, not pitch-level
+    # fields, and would need a separate endpoint -- deferred, not forgotten.
+    "hit_distance_sc",
+    "swing_length", "attack_angle", "swing_path_tilt", "attack_direction",
+    "arm_angle",
 ]
 
 HIT_EVENTS = ("single", "double", "triple", "home_run")

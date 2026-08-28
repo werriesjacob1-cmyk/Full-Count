@@ -1108,11 +1108,14 @@ def statcast_artifact_identity(path, *, expected_end=None):
     individually satisfiable by a different artifact -- the 2026-08-27 survivor
     matched on all four categories and was a different file.
     """
-    # Only require columns the store actually retains. REQUIRED_STATCAST_COLUMNS
-    # names player_name and hit_distance_sc, neither of which is in
-    # STATCAST_COLUMNS -- so validating against the full list marks EVERY real
-    # canonical artifact unusable. Identity (the sha256) is unaffected either
-    # way, but a certifier reading usable=False on a good artifact would be
+    # Only require columns the store actually retains. The intersection is
+    # dynamic on purpose: REQUIRED_STATCAST_COLUMNS names fields the store may
+    # or may not keep, and validating against the full list marks every real
+    # canonical artifact unusable. (Originally both player_name and
+    # hit_distance_sc were absent from STATCAST_COLUMNS; hit_distance_sc was
+    # added for the 2026-08-28 pull, which is exactly why this is computed
+    # rather than hardcoded.) Identity -- the sha256 -- is unaffected either
+    # way; a certifier reading usable=False on a good artifact would be
     # misled, which is its own defect.
     required = REQUIRED_STATCAST_COLUMNS
     try:
