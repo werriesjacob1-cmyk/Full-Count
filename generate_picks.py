@@ -3580,6 +3580,45 @@ def score_slate():
     return _build_and_score()
 
 
+def build_lineup_basis(game_meta, *, observed_at):
+    """The immutable record of what batting order this board actually used.
+
+    One entry per (game, side) -- never merged, because the two sides post
+    independently and one being confirmed says nothing about the other.
+
+    `provenance` is the fact that makes PROJECTED -> CONFIRMED meaningful
+    even when the nine names and their order are identical: recommendation
+    eligibility depends on whether a lineup is authoritative, not merely on
+    whether it turned out to be right. Two boards with the same nine hitters
+    and different provenance are genuinely different boards.
+    """
+    out = []
+    for gm in game_meta or []:
+        for side in ("away", "home"):
+            rows = gm.get(f"{side}_lineup") or []
+            slots = []
+            for r in rows:
+                order = r.get("order")
+                if not order:
+                    continue
+                slots.append({"slot": int(order),
+                              "player_id": int(r["id"]) if r.get("id") else None,
+                              "name": r.get("name")})
+            slots.sort(key=lambda x: x["slot"])
+            assumed = any(bool(r.get("assumed")) for r in rows)
+            out.append({
+                "game_pk": gm.get("game_pk"),
+                "side": side,
+                "team": gm.get(f"{side}_team"),
+                "matchup": gm.get("matchup"),
+                "slots": slots,
+                "provenance": "assumed" if assumed else ("confirmed" if slots else "none"),
+                "observed_at": observed_at,
+                "source": "mlb_daily.fetch_lineups",
+            })
+    return out
+
+
 def _build_and_score():
     """The whole scoring pass: fetch, score, price, calibrate.
 
@@ -3599,6 +3638,16 @@ def _build_and_score():
     # not answer "when did anyone last LOOK at the lineups".
     lineups_observed_at = datetime.now(timezone.utc).isoformat()
     lineup_text, game_meta, player_ids = m.fetch_lineups(m.TODAY)
+    # Snapshot the EXACT lineup basis the model is about to consume
+    # (2026-08-28 P0 follow-up). Reconciliation previously reconstructed
+    # "what lineup did we publish" from the candidate rows, which is a
+    # strictly smaller thing: a prop population is a subset of a batting
+    # order. A starter who generated no candidate, a scratch affecting a
+    # player with no prop, an order-only change, or a projected lineup that
+    # happens to become confirmed with the same nine are all invisible to a
+    # candidate-derived view. Captured here, from game_meta, at the moment
+    # of the fetch and before any scoring or filtering touches it.
+    lineup_basis = build_lineup_basis(game_meta, observed_at=lineups_observed_at)
     if not game_meta:
         with open(PICKS_FILE, "w", encoding="utf-8") as f:
             f.write(f"# MLB Top 10 Picks — {m.TODAY}\n\nNo games found today.\n")
@@ -3882,6 +3931,7 @@ def _build_and_score():
     return candidates, {
         "game_meta": game_meta, "park_wx": park_wx,
         "lineups_observed_at": lineups_observed_at,
+        "lineup_basis": lineup_basis,
         "bullpen_scores": bullpen_scores, "emp_batters": emp_batters,
         "emp_pitchers": emp_pitchers, "comp_table": comp_table,
         "league_rates": league_rates,

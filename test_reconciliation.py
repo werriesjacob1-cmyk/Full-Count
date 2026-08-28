@@ -51,7 +51,7 @@ class TestBoardAge(unittest.TestCase):
         self.assertIsNone(rc.board_age_mismatch(board(10), now=NOW))
 
     def test_stale_board_is_a_mismatch(self):
-        m = rc.board_age_mismatch(board(200), now=NOW)
+        m = rc.board_age_mismatch(board(250), now=NOW)
         self.assertEqual(m["kind"], rc.KIND_BOARD_AGE)
 
     def test_unknown_age_is_never_treated_as_fresh(self):
@@ -59,40 +59,47 @@ class TestBoardAge(unittest.TestCase):
         self.assertIsNotNone(m)
 
     def test_recovery_fires_before_actionability_is_lost(self):
-        """The whole point of a separate recovery threshold: start rebuilding
-        while the board is still bettable, so the product limit is never
-        reached. Recovery earlier than suppression, not stricter than it."""
+        """Recovery earlier than suppression, not stricter than it."""
         self.assertLess(rc.RECOVERY_BOARD_AGE_MINUTES,
                         recommendation.MAX_BOARD_AGE_SECONDS / 60)
 
+    def test_recovery_does_not_preempt_the_scheduled_rebuild(self):
+        """A threshold at or below the nominal cadence dispatches a full
+        rebuild in EVERY healthy window -- eight a day, each preempting the
+        scheduled build it beat to the punch. This is the check that 90
+        minutes failed."""
+        self.assertGreater(rc.RECOVERY_BOARD_AGE_MINUTES,
+                           rc.NOMINAL_REBUILD_CADENCE_MINUTES,
+                           "recovery must require a genuinely MISSED window")
 
-class TestLineups(unittest.TestCase):
-    def test_confirmed_lineup_while_we_still_say_assumed(self):
-        p = board(5, [prop(lineup_assumed=True, batting_order=3, player_id=9)])
-        out = rc.lineup_mismatches(p, {1: {3: 9}})
-        self.assertEqual(len(out), 1)
-        self.assertIn("ASSUMED", out[0]["detail"])
+    def test_the_declared_cadence_matches_the_workflow(self):
+        """The calculation is only sound if 120 is really the ACTIVE-window
+        cadence. It also documents the real shape: eight windows 2 hours
+        apart through the evening, then a 10-hour overnight gap."""
+        import os
+        import re
+        path = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                            ".github", "workflows", "dashboard-refresh.yml")
+        with open(path, encoding="utf-8") as fh:
+            hours = sorted(int(h) for h in re.findall(r"cron: '0 (\d+) \* \* \*'", fh.read()))
+        self.assertTrue(hours, "no cron windows found")
+        gaps = sorted((b - a) % 24 for a, b in zip(hours, hours[1:] + [hours[0] + 24]))
+        active = rc.NOMINAL_REBUILD_CADENCE_MINUTES // 60
+        self.assertEqual(gaps.count(active), len(hours) - 1,
+                         f"active-window cadence is not {active}h: {hours}")
+        self.assertLessEqual(max(gaps), 10,
+                             f"overnight gap grew beyond the documented 10h: {hours}")
 
-    def test_published_order_differs_from_confirmed(self):
-        p = board(5, [prop(lineup_assumed=False, batting_order=3, player_id=9)])
-        out = rc.lineup_mismatches(p, {1: {3: 77}})
-        self.assertEqual(len(out), 1)
-        self.assertIn("differs", out[0]["detail"])
+    def test_leaves_room_for_several_recovery_attempts(self):
+        headroom = recommendation.MAX_BOARD_AGE_SECONDS / 60 - rc.RECOVERY_BOARD_AGE_MINUTES
+        self.assertGreaterEqual(headroom // 20, 3,
+                                "must allow at least three observe+rebuild cycles")
 
-    def test_matching_confirmed_lineup_is_not_a_mismatch(self):
-        p = board(5, [prop(lineup_assumed=False, batting_order=3, player_id=9)])
-        self.assertEqual(rc.lineup_mismatches(p, {1: {3: 9}}), [])
 
-    def test_no_posted_lineup_is_not_a_mismatch(self):
-        """Assumed is the honest best answer before anyone posts."""
-        p = board(5, [prop(lineup_assumed=True, batting_order=3, player_id=9)])
-        self.assertEqual(rc.lineup_mismatches(p, {}), [])
-
-    def test_fingerprint_tracks_the_authoritative_lineup(self):
-        p = board(5, [prop(lineup_assumed=True)])
-        a = rc.lineup_mismatches(p, {1: {3: 9}})[0]["fingerprint"]
-        b = rc.lineup_mismatches(p, {1: {3: 77}})[0]["fingerprint"]
-        self.assertNotEqual(a, b, "a different lineup must open a different mismatch")
+# Lineup reconciliation moved to test_lineup_basis.py when it stopped
+# reconstructing the published lineup from candidate rows. The tests that
+# lived here asserted that superseded contract, so they are gone rather
+# than left passing against an API nothing uses.
 
 
 class TestLineMoved(unittest.TestCase):
@@ -112,7 +119,7 @@ class TestPersistenceNotAcknowledgment(unittest.TestCase):
     """The correction that matters most."""
 
     def setUp(self):
-        self.stale = board(200)
+        self.stale = board(250)
 
     def test_requesting_a_rebuild_does_not_clear_the_mismatch(self):
         s = rc.reconcile(self.stale, now=NOW)
@@ -140,7 +147,7 @@ class TestPersistenceNotAcknowledgment(unittest.TestCase):
     def test_a_new_stale_basis_is_a_new_mismatch(self):
         """A rebuild that produced a board which is ITSELF already too old
         must not inherit the old mismatch's bookkeeping."""
-        a = rc.reconcile(board(200), now=NOW)
+        a = rc.reconcile(board(250), now=NOW)
         b = rc.reconcile(board(300), now=NOW + timedelta(minutes=5), prior=a)
         self.assertNotEqual(list(a["open"]), list(b["open"]))
 
@@ -154,20 +161,20 @@ class TestStampedeGuard(unittest.TestCase):
         return lambda args: self._Proc(body, code)
 
     def test_does_not_dispatch_while_one_is_in_progress(self):
-        s = rc.reconcile(board(200), now=NOW)
+        s = rc.reconcile(board(250), now=NOW)
         ok, why = rc.should_dispatch_rebuild(
             s, token="t", runner=self._runner('{"workflow_runs":[{"status":"in_progress"}]}'))
         self.assertFalse(ok)
         self.assertIn("already queued or in progress", why)
 
     def test_does_not_dispatch_while_one_is_queued(self):
-        s = rc.reconcile(board(200), now=NOW)
+        s = rc.reconcile(board(250), now=NOW)
         ok, _ = rc.should_dispatch_rebuild(
             s, token="t", runner=self._runner('{"workflow_runs":[{"status":"queued"}]}'))
         self.assertFalse(ok)
 
     def test_dispatches_when_nothing_is_running(self):
-        s = rc.reconcile(board(200), now=NOW)
+        s = rc.reconcile(board(250), now=NOW)
         ok, _ = rc.should_dispatch_rebuild(
             s, token="t", runner=self._runner('{"workflow_runs":[{"status":"completed"}]}'))
         self.assertTrue(ok)
@@ -175,7 +182,7 @@ class TestStampedeGuard(unittest.TestCase):
     def test_unknown_run_state_fails_closed(self):
         """A duplicate rebuild is worse than a delayed one, and the next
         tick is five minutes away."""
-        s = rc.reconcile(board(200), now=NOW)
+        s = rc.reconcile(board(250), now=NOW)
         ok, why = rc.should_dispatch_rebuild(s, token="t", runner=self._runner("not json"))
         self.assertFalse(ok)
         self.assertIn("cannot determine", why)
@@ -192,9 +199,15 @@ class TestAllThreeKindsRequestARebuild(unittest.TestCase):
         """A price refresh cannot fix a stale basis, a changed lineup, or a
         moved threshold -- which is exactly why the live overlay kept
         looking healthy while the board rotted underneath it."""
+        lineup_board = board(5)
+        lineup_board["lineup_basis"] = [{
+            "game_pk": 1, "side": "away", "team": "T", "matchup": "A @ H",
+            "slots": [{"slot": i, "player_id": 900 + i} for i in range(1, 10)],
+            "provenance": "assumed", "observed_at": NOW.isoformat(),
+            "source": "test"}]
         for payload, lineups in (
-            (board(200), None),
-            (board(5, [prop(lineup_assumed=True)]), {1: {3: 9}}),
+            (board(250), None),
+            (lineup_board, {(1, "away"): {i: 900 + i for i in range(1, 10)}}),
             (board(5, [prop(market_fetch_state="LINE_MOVED", market_posted_line=14.5)]), None),
         ):
             s = rc.reconcile(payload, confirmed_lineups=lineups, now=NOW)

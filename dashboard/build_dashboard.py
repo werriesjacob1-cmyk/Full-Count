@@ -811,6 +811,11 @@ def run_live_fetch():
     out = {"generated_at": board_generated_at, "date": gp.m.TODAY,
           "odds_fetched_at": odds_fetched_at,
           "freshness": freshness,
+          # The exact ordered batting order this board consumed, per game
+          # per side, with its provenance. Reconciliation compares THIS to
+          # MLB rather than reconstructing a lineup from candidate rows --
+          # see generate_picks.build_lineup_basis for why the two differ.
+          "lineup_basis": ctx.get("lineup_basis") or [],
           "_game_schedule": schedule,
           "recommendation_metadata": gprec.build_metadata(odds_fetched_at=odds_fetched_at,
                                                           board_generated_at=board_generated_at),
@@ -868,7 +873,17 @@ def _game_pick_sections(game_picks):
     ranked = sorted(game_picks, key=lambda r: r.get("hit_probability") or 0, reverse=True)
 
     def summarize(r):
-        return {"name": r["name"], "prop": r["prop"], "hit_probability": r["hit_probability"],
+        # `id` is what makes this entry RECONCILABLE (2026-08-28 P0
+        # follow-up). This is the second instance of the frozen-copy bug
+        # the suggested parlay had: a game highlight is written once at
+        # build time and the live overlay then keeps correcting the real
+        # prop underneath it, so without a canonical id the copy goes on
+        # advertising a probability and price nothing can check. The
+        # probability/odds below are kept only as a build-time record --
+        # the frontend resolves this id through PROPS_BY_ID and renders the
+        # CURRENT prop, never these values.
+        return {"id": r.get("id"),
+                "name": r["name"], "prop": r["prop"], "hit_probability": r["hit_probability"],
                 "market_odds": r.get("market_odds"), "price_clears": r.get("price_clears"),
                 "why": (r.get("why") or [None])[0]}
 
@@ -1290,7 +1305,8 @@ def build_payload(result, track_record=None):
     result.pop("home_runs", None)
 
     meta_keys = {"generated_at", "date", "suggested_parlay", "game_context", "streaks",
-                "odds_fetched_at", "freshness", "recommendation_metadata", "_game_schedule"}
+                "odds_fetched_at", "freshness", "lineup_basis",
+                "recommendation_metadata", "_game_schedule"}
     all_rows = []
     family_counts = {}
     for stat, rows in result.items():
@@ -1359,6 +1375,7 @@ def build_payload(result, track_record=None):
             "market_prices_at": result.get("odds_fetched_at"),
             "live_game_observed_at": None,
         },
+        "lineup_basis": result.get("lineup_basis") or [],
         "recommendation_metadata": result.get("recommendation_metadata"),
         "families": families,
         "summary": {"n_props": len(all_rows), "n_top_pick": n_top_pick, "n_lean": n_lean,

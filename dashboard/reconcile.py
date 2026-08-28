@@ -5,13 +5,41 @@ The 2026-08-28 outage was not detected by anything, and the first fix
 attempt added another GitHub-cron watchdog. That was the wrong shape twice
 over.
 
-Wrong shape #1 -- scheduling. GitHub's `schedule` trigger is throttled in
+Wrong shape #1 -- scheduling. GitHub's `schedule` TRIGGER is throttled in
 this repo: Lineup Watch declares */10 and delivered 12.4 runs/day (9%),
-median gap 51 min, worst 11.0 h. A recovery mechanism on that same queue
-cannot bound anything. infra/live-heartbeat already solves this: a
-Cloudflare cron dispatches dashboard-live.yml every 5 minutes, independent
-of GitHub's scheduler. Reconciliation belongs THERE, on the observer that
-already runs reliably -- not in a new cron that inherits the same defect.
+median gap 51 min, worst 11.0 h. A recovery mechanism whose only trigger is
+that queue cannot bound anything. infra/live-heartbeat addresses the
+TRIGGER: a Cloudflare cron dispatches dashboard-live.yml every 5 minutes,
+independent of GitHub's scheduler.
+
+Be precise about what that buys, because the 9% figure describes ONE link
+and is easy to misapply. The full path is:
+
+    Cloudflare cron -> external heartbeat -> workflow_dispatch of
+    dashboard-live.yml -> GitHub Actions EXECUTES it -> reconciliation runs
+    -> possible dashboard-refresh.yml dispatch -> GitHub Actions EXECUTES
+    the full rebuild
+
+Cloudflare materially improves TRIGGER reliability. It does not remove
+GitHub Actions from the execution path. A reliably dispatched run can still
+start late under queueing, and the rebuild it requests is a second, separate
+GitHub Actions execution with its own latency. Four distinct things:
+
+    trigger/dispatch reliability   improved by Cloudflare
+    observer execution latency     still GitHub Actions
+    rebuild execution latency      still GitHub Actions
+    publication reconciliation     the only thing that proves recovery
+
+The 9% statistic is evidence about GitHub's `schedule` trigger for Lineup
+Watch. It is NOT evidence that externally dispatched runs execute 9% of the
+time and must never be quoted that way.
+
+    OBSERVATION IS NOT RECOVERY.
+    DISPATCH IS NOT RECOVERY.
+    RECOVERY IS PROVEN ONLY WHEN THE PUBLISHED CUSTOMER STATE RECONCILES
+    TO THE AUTHORITATIVE CURRENT STATE.
+
+which is why nothing in this module treats a dispatch as closure.
 
 Wrong shape #2 -- event acknowledgment. A watchdog that dispatches a
 rebuild and then considers itself done is acknowledging an EVENT. But the
@@ -51,11 +79,44 @@ REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 if REPO_ROOT not in sys.path:
     sys.path.insert(0, REPO_ROOT)
 
-# Start recovering well before the board stops being actionable. Dashboard
-# Refresh takes ~10-15 minutes end to end, and the heartbeat observes every
-# 5, so 90 minutes leaves several full attempts before recommendation.py's
-# 4-hour actionability limit would suppress anything.
-RECOVERY_BOARD_AGE_MINUTES = 90
+# RECOVERY THRESHOLD -- chosen by calculation, not by "it is less than the
+# actionability limit" (2026-08-28 P0 follow-up).
+#
+# The first pass used 90 minutes on exactly that reasoning. It is wrong.
+# dashboard-refresh.yml declares EIGHT cron windows at 13/15/17/19/21/23/
+# 01/03 UTC -- a nominal 120-minute cadence. A 90-minute threshold fires
+# BEFORE the next scheduled rebuild is even due, so on a perfectly healthy
+# day it would dispatch a recovery rebuild in every single window: up to
+# eight unnecessary full FanGraphs/Statcast/FanDuel pulls a day, each
+# 10-15 minutes, contending with the scheduled build it preempted.
+#
+#   threshold   fires early?   spurious/day   headroom to 240m   attempts
+#   90 min      YES            8              150 min            7
+#   120 min     no (equal)     8              120 min            6
+#   150 min     no             needs a real miss   90 min        4
+#   180 min     no             needs a real miss   60 min        3
+#
+# 120 equals the cadence, so any jitter at all trips it. 150 trips on 30
+# minutes of ordinary GitHub scheduler lateness, which this repo exhibits
+# routinely. 180 fires only once a scheduled window has genuinely been
+# MISSED, and still leaves 60 minutes -- three full observe+rebuild cycles
+# at 5 + 15 minutes -- before recommendation.py's 4-hour actionability
+# limit would suppress anything.
+#
+# One honest caveat found while checking the cadence claim: the eight
+# windows are 13/15/17/19/21/23/01/03 UTC, which is 2-hourly through the
+# ACTIVE window and leaves a 10-hour overnight gap from 03:00 to 13:00.
+# Recovery will therefore fire a few times overnight, when no cron is due
+# at all. That is correct rather than spurious -- a board untouched for
+# three hours is stale no matter why -- and in practice the odds-snapshot
+# and lineup dispatches already rebuild overnight (05:05, 06:26 and 06:32
+# builds all landed in that gap on 2026-08-28). It is called out here so
+# nobody later reads "120-minute cadence" as covering the whole day.
+#
+# The customer-facing rules are untouched: 4h board and 45m price remain
+# recommendation.py's, and nothing here may widen them.
+NOMINAL_REBUILD_CADENCE_MINUTES = 120
+RECOVERY_BOARD_AGE_MINUTES = 180
 
 KIND_BOARD_AGE = "board_age"
 KIND_LINEUP = "lineup"
@@ -114,63 +175,79 @@ def board_age_mismatch(payload, *, now=None, limit_minutes=RECOVERY_BOARD_AGE_MI
     return None
 
 
-def _published_lineup(payload, game_pk):
-    """The batting order this board actually published for a game, as
-    {order: player_id}. Only rows that carry a real slot contribute."""
-    out = {}
-    for row in (payload or {}).get("props") or []:
-        if row.get("game_pk") != game_pk:
-            continue
-        order = row.get("batting_order")
-        pid = row.get("player_id")
-        if order and pid:
-            out[int(order)] = int(pid)
-    return out
+def _basis_by_game_side(payload):
+    return {(e.get("game_pk"), e.get("side")): e
+            for e in ((payload or {}).get("lineup_basis") or [])}
 
 
-def _published_assumed(payload, game_pk):
-    """True when every row we published for this game is lineup_assumed."""
-    rows = [r for r in ((payload or {}).get("props") or []) if r.get("game_pk") == game_pk]
-    if not rows:
-        return False
-    return all(bool(r.get("lineup_assumed")) for r in rows)
+def _slot_map(slots):
+    return {int(x["slot"]): x.get("player_id") for x in (slots or [])
+            if x.get("slot") is not None}
+
+
+def _signature(slot_map):
+    return ",".join(f"{s}:{slot_map[s]}" for s in sorted(slot_map))
 
 
 def lineup_mismatches(payload, confirmed_lineups):
-    """A confirmed MLB lineup that our publication does not reflect.
+    """Compare the EXACT published lineup basis to MLB's current lineup.
 
-    `confirmed_lineups` maps game_pk -> {order: player_id}, and contains an
-    entry ONLY for games MLB has actually posted. A game absent from it is
-    not a mismatch -- nobody has posted yet, and our assumed order is the
-    honest best available.
+    `confirmed_lineups` maps (game_pk, side) -> {slot: player_id}, and
+    carries an entry only for a side MLB has actually posted. A side absent
+    from it is not a mismatch: nobody has posted, and an assumed order is
+    the honest best available.
 
-    Two distinct failures are caught:
-      * we published an ASSUMED lineup and MLB has since confirmed one
-      * we published a confirmed order that no longer matches MLB's
+    This deliberately does NOT reconstruct the published lineup from
+    candidate rows. A prop population is a subset of a batting order, so a
+    candidate-derived view silently misses a starter who generated no prop,
+    a scratch affecting a player with no prop, an order-only change, and --
+    most importantly -- a projected lineup becoming CONFIRMED with the same
+    nine names. That last one is a real state change even when nothing
+    "looks" different, because recommendation eligibility depends on
+    provenance, not on having guessed correctly.
+
+    Sides are compared independently. One team posting says nothing about
+    the other, and merging them would let a confirmed away lineup mask an
+    unconfirmed home one.
     """
     out = []
-    for game_pk, confirmed in sorted((confirmed_lineups or {}).items()):
+    basis = _basis_by_game_side(payload)
+    for (game_pk, side), confirmed in sorted(
+            (confirmed_lineups or {}).items(), key=lambda kv: (str(kv[0][0]), str(kv[0][1]))):
         if not confirmed:
             continue
-        published = _published_lineup(payload, game_pk)
+        entry = basis.get((game_pk, side))
+        if entry is None:
+            # We hold no basis for this side at all -- nothing was published
+            # from it, so there is nothing to be out of date.
+            continue
+        published = _slot_map(entry.get("slots"))
         if not published:
             continue
-        assumed = _published_assumed(payload, game_pk)
-        differs = any(published.get(slot) != pid for slot, pid in confirmed.items()
-                      if slot in published)
-        if not assumed and not differs:
+        provenance = entry.get("provenance")
+        differs = published != {int(k): v for k, v in confirmed.items()}
+        was_assumed = provenance == "assumed"
+        if not differs and not was_assumed:
             continue
-        # Fingerprint the AUTHORITATIVE state, so the mismatch clears only
-        # when publication matches this exact lineup -- and a later lineup
-        # change opens a new, separate mismatch rather than reusing this one.
-        sig = ",".join(f"{s}:{confirmed[s]}" for s in sorted(confirmed))
+        if differs:
+            detail = "published batting order differs from MLB's confirmed lineup"
+        else:
+            detail = ("published lineup was PROJECTED and MLB has since confirmed "
+                      "it; the order is unchanged but its provenance is not")
         out.append({
             "kind": KIND_LINEUP,
-            "fingerprint": f"{KIND_LINEUP}:{game_pk}:{sig}",
-            "detail": ("published lineup is still ASSUMED but MLB has confirmed one"
-                       if assumed else "published batting order differs from MLB's confirmed lineup"),
+            # Fingerprints the AUTHORITATIVE state plus the provenance we
+            # need to reach, so a projected->confirmed transition opens a
+            # mismatch even when the nine ids are identical, and a later
+            # revision opens a distinct new one rather than reusing this.
+            "fingerprint": (f"{KIND_LINEUP}:{game_pk}:{side}:"
+                            f"{_signature({int(k): v for k, v in confirmed.items()})}:confirmed"),
+            "detail": detail,
             "game_pk": game_pk,
-            "authoritative": confirmed,
+            "side": side,
+            "team": entry.get("team"),
+            "published_provenance": provenance,
+            "authoritative": {int(k): v for k, v in confirmed.items()},
             "published": published,
         })
     return out
