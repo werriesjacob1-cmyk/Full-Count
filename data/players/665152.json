@@ -237,9 +237,9 @@
       "date": "2026-08-28",
       "evaluations": [
         {
-          "prop": "Over 3.5 Strikeouts",
+          "prop": "Over 5.5 Strikeouts",
           "type": "pitcher",
-          "score": 44.6,
+          "score": 42.8,
           "notable_signals": 0,
           "matchup": "Chicago White Sox @ Minnesota Twins",
           "game_pk": 823666,
@@ -253,15 +253,15 @@
             "l14_k_pct": 55.2941,
             "env_neutral": 50.0
           },
-          "hit_probability": 0.6219,
-          "raw_hit_probability": 0.7395,
-          "lift": -0.0708,
+          "hit_probability": 0.381,
+          "raw_hit_probability": 0.381,
+          "lift": 0.0257,
           "reliability": "B",
           "sample_n": 11,
           "projection": {
             "stat": "strikeouts",
-            "value": 3.5,
-            "needs": 4
+            "value": 5.5,
+            "needs": 6
           }
         },
         {
