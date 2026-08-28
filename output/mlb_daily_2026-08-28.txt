@@ -1,5 +1,5 @@
 MLB DAILY DATA PACKAGE V5 — 2026-08-28
-Generated : 2026-08-28  00:01:23
+Generated : 2026-08-28  00:40:46
 Season    : 2026
 Windows   : L3 2026-08-25→2026-08-27 | L7 2026-08-21→2026-08-27 | L14 2026-08-14→2026-08-27 | L30 2026-07-29→2026-08-27
 Sources   : FanGraphs | Statcast/Baseball Savant | MLB Stats API | UmpScorecards | FIC | Open-Meteo | Covers.com
@@ -956,7 +956,7 @@ Sources   : FanGraphs | Statcast/Baseball Savant | MLB Stats API | UmpScorecards
   Philadelphia Phillies @ Los Angeles Angels
   Venue   : Angel Stadium  |  Elev: 160ft  |  Surface: grass
   Temp    : 89°F  |  Humidity: 51%
-  Rain%   : 2%  (0.00in expected)
+  Rain%   : 1%  (0.00in expected)
   Wind    : 7mph from WSW (243°)
   vs Field: blowing IN from CF 🔵 pitcher-friendly
   AirDens : 0.9365  →  ball carries 6.3% FARTHER vs sea-level
@@ -1686,11 +1686,11 @@ Sources   : FanGraphs | Statcast/Baseball Savant | MLB Stats API | UmpScorecards
       Pereda                    IP:0.1  Apps:1  Pitches:16  🟢 FRESH
     Toronto Blue Jays relievers (L7):
       Little                    IP:3.2  Apps:4  Pitches:82  🔴 FATIGUED
+      Fisher                    IP:2.3  Apps:4  Pitches:64  🔴 FATIGUED
       Arrighetti                IP:3.1  Apps:1  Pitches:61  🔴 FATIGUED
+      Woods Richardson          IP:2.1  Apps:3  Pitches:54  🟡 MODERATE
       Rogers                    IP:2.2  Apps:3  Pitches:50  🟡 MODERATE
       Sewald                    IP:2.2  Apps:3  Pitches:45  🟡 MODERATE
-      Fisher                    IP:1.3  Apps:3  Pitches:41  🟡 MODERATE
-      Woods Richardson          IP:2.0  Apps:2  Pitches:41  🟡 MODERATE
       Dallas                    IP:2.2  Apps:1  Pitches:37  🟡 MODERATE
       Varland                   IP:2.1  Apps:2  Pitches:36  🟡 MODERATE
       Fluharty                  IP:1.3  Apps:3  Pitches:26  🟢 FRESH
@@ -8875,34 +8875,34 @@ pc_bucket
 
   [FanGraphs unavailable this run — official team batting via MLB Stats API / Statcast instead]
                      Team    PA   AVG   OBP   SLG   OPS   HR    R   SB     K%    BB% BABIP
-0     Los Angeles Dodgers  5101  .258  .335  .425  .760  168  661   54 20.600  9.700  .299
+0     Los Angeles Dodgers  5108  .258  .335  .425  .760  168  661   54 20.600  9.700  .299
 1            Chicago Cubs  5284  .249  .338  .422  .760  177  695  100 21.700 10.700  .292
 2    Washington Nationals  5237  .248  .325  .431  .756  188  704  146 21.600  9.000  .288
 3        Colorado Rockies  5109  .252  .323  .417  .740  151  637   94 22.800  8.500  .304
-4       Milwaukee Brewers  5178  .254  .337  .396  .733  122  664  131 21.500 10.700  .309
+4       Milwaukee Brewers  5185  .254  .338  .397  .735  122  665  132 21.500 10.600  .310
 5      Pittsburgh Pirates  5241  .252  .329  .404  .733  158  657  111 24.400  9.100  .313
 6          Tampa Bay Rays  5016  .260  .329  .402  .731  136  595  128 18.500  8.600  .298
 7       Chicago White Sox  5078  .239  .320  .411  .731  178  641   73 23.900  9.300  .287
 8          Boston Red Sox  5045  .250  .324  .405  .729  136  600   97 21.200  8.500  .297
-9          Houston Astros  5047  .242  .317  .411  .728  177  609   40 21.700  8.800  .280
+9          Houston Astros  5055  .242  .317  .411  .728  178  611   40 21.700  8.800  .280
 10          Miami Marlins  5045  .249  .326  .399  .725  134  582  140 21.700  9.100  .299
 11        Minnesota Twins  5066  .245  .319  .405  .724  155  615   76 21.200  8.500  .287
-12         Atlanta Braves  5001  .247  .311  .412  .723  171  625   71 21.700  7.800  .287
+12         Atlanta Braves  5008  .247  .311  .412  .723  171  625   71 21.700  7.800  .287
 13              Athletics  5087  .245  .319  .402  .721  158  585   68 22.600  8.700  .294
-14       New York Yankees  4931  .231  .311  .409  .720  183  595  129 24.700  9.800  .275
+14       New York Yankees  4937  .231  .310  .408  .718  183  595  130 24.700  9.800  .275
 15         Detroit Tigers  5048  .240  .316  .401  .717  155  592   38 22.500  9.200  .285
 16      Baltimore Orioles  5063  .237  .318  .399  .717  164  609   69 24.400  9.900  .288
 17   Arizona Diamondbacks  5061  .244  .317  .398  .715  131  605   92 19.100  8.900  .281
 18  Philadelphia Phillies  5033  .242  .312  .403  .715  161  608   95 22.300  8.500  .285
 19   San Francisco Giants  4971  .248  .307  .407  .714  149  540   59 21.300  7.100  .291
-20     Kansas City Royals  5037  .246  .315  .398  .713  137  569  109 21.000  8.400  .290
+20     Kansas City Royals  5045  .246  .315  .398  .713  137  570  109 21.000  8.400  .290
 21          Texas Rangers  5007  .243  .317  .396  .713  149  543   63 22.700  8.800  .292
 22       San Diego Padres  4982  .238  .315  .388  .703  148  569  130 21.800  9.400  .280
 23    St. Louis Cardinals  5120  .241  .317  .383  .700  141  600   85 20.700  8.500  .282
 24        Cincinnati Reds  5023  .227  .306  .392  .698  173  548   92 25.300  9.500  .276
-25          New York Mets  5004  .236  .307  .390  .697  163  550   71 22.600  8.500  .278
+25          New York Mets  5011  .236  .307  .390  .697  163  552   71 22.600  8.500  .279
 26    Cleveland Guardians  5064  .237  .315  .371  .686  124  543  129 21.400  9.700  .283
-27      Toronto Blue Jays  5008  .245  .306  .379  .685  125  527   65 19.500  7.300  .284
+27      Toronto Blue Jays  5014  .245  .306  .379  .685  125  527   65 19.500  7.300  .284
 28     Los Angeles Angels  5025  .235  .310  .374  .684  132  548   74 25.100  8.300  .296
 29       Seattle Mariners  5001  .228  .309  .375  .684  155  526   93 23.200  9.000  .272
 
@@ -8912,20 +8912,20 @@ pc_bucket
 
   [FanGraphs unavailable this run — official team pitching via MLB Stats API / Statcast instead]
                      Team   ERA  WHIP      IP    K/9  BB/9  HR/9     K%    BB%  SV  BS  Holds
-0        New York Yankees  3.23  1.18  1183.2   9.02  3.06  1.00 24.200  8.200  39  26     72
-1       Milwaukee Brewers  3.38  1.17  1193.1   9.72  3.18  1.00 26.200  8.600  43  18     68
+0        New York Yankees  3.24  1.18  1185.1   9.02  3.06  1.00 24.200  8.200  39  26     72
+1       Milwaukee Brewers  3.39  1.17  1194.2   9.71  3.18  0.99 26.200  8.600  43  18     68
 2          Boston Red Sox  3.47  1.22  1184.1   8.66  2.90  0.97 23.000  7.700  37  12     80
-3          Atlanta Braves  3.60  1.25  1184.0   8.60  3.46  1.12 22.700  9.100  41  18     95
+3          Atlanta Braves  3.59  1.25  1186.0   8.61  3.45  1.12 22.700  9.100  41  18     95
 4          Detroit Tigers  3.60  1.22  1176.1   8.24  3.12  1.03 21.900  8.300  27  28     62
-5     Los Angeles Dodgers  3.69  1.16  1181.1   9.25  3.16  1.15 24.800  8.500  37  19     86
+5     Los Angeles Dodgers  3.68  1.16  1183.1   9.25  3.16  1.15 24.800  8.500  37  19     86
 6     Cleveland Guardians  3.73  1.26  1188.2   9.46  3.35  1.15 24.900  8.800  40  14    100
 7          Tampa Bay Rays  3.78  1.15  1186.0   8.24  2.50  1.27 22.200  6.700  53  15    102
 8           Miami Marlins  3.88  1.25  1177.0   8.37  3.43  1.01 22.000  9.000  30  18     76
 9        San Diego Padres  3.94  1.29  1187.0   8.21  3.45  1.11 21.600  9.100  40  15     84
-10      Toronto Blue Jays  3.95  1.31  1196.1   8.82  3.73  1.03 23.000  9.700  45  15     88
+10      Toronto Blue Jays  3.95  1.31  1197.2   8.82  3.75  1.03 23.000  9.800  45  15     88
 11           Chicago Cubs  4.09  1.25  1197.2   7.70  3.01  1.49 20.500  8.000  29  22     49
-12          New York Mets  4.10  1.30  1188.2   9.09  3.62  1.11 23.500  9.400  25  15     58
-13       Seattle Mariners  4.10  1.24  1184.0   8.69  2.63  1.19 23.000  7.000  30  21     70
+12       Seattle Mariners  4.10  1.24  1184.0   8.69  2.63  1.19 23.000  7.000  30  21     70
+13          New York Mets  4.10  1.31  1190.0   9.08  3.62  1.11 23.500  9.400  25  15     58
 14  Philadelphia Phillies  4.10  1.30  1188.2  10.00  3.09  1.21 26.000  8.000  35  17     57
 15      Chicago White Sox  4.16  1.31  1188.0   8.48  3.69  1.15 22.000  9.600  35  26     54
 16   Arizona Diamondbacks  4.17  1.29  1190.0   6.89  2.99  1.18 18.100  7.900  33  15     74
@@ -8936,8 +8936,8 @@ pc_bucket
 21     Los Angeles Angels  4.28  1.34  1182.0   9.15  4.19  1.07 23.500 10.700  21  24     73
 22   San Francisco Giants  4.33  1.36  1171.1   7.69  3.80  0.95 19.800  9.800  25  21     67
 23        Cincinnati Reds  4.55  1.41  1189.0   8.17  4.17  1.26 20.600 10.500  34  21     73
-24         Houston Astros  4.67  1.37  1183.2   8.84  4.19  1.35 22.700 10.700  40   9     65
-25     Kansas City Royals  4.69  1.40  1180.1   7.46  3.77  1.25 19.200  9.700  33  23     68
+24         Houston Astros  4.66  1.37  1185.1   8.86  4.19  1.34 22.700 10.800  40   9     65
+25     Kansas City Royals  4.68  1.40  1182.1   7.45  3.77  1.25 19.200  9.700  33  23     68
 26   Washington Nationals  4.69  1.39  1207.0   7.84  3.66  1.39 19.900  9.300  33  33     69
 27        Minnesota Twins  4.69  1.39  1179.2   8.46  3.71  1.17 21.500  9.400  38  16     89
 28              Athletics  5.46  1.50  1185.0   8.52  4.03  1.55 21.200 10.000  34  26     76
@@ -8954,12 +8954,12 @@ pc_bucket
 2     Los Angeles Dodgers  .989  52      25   73  3.92  17          83  20  .194
 3     St. Louis Cardinals  .989  56      22  133  4.05   7          90  21  .189
 4        San Diego Padres  .989  55      29  109  4.00   1          83  41  .331
-5      Kansas City Royals  .988  58      39  117  4.04  11          66  33  .333
+5      Kansas City Royals  .988  58      39  117  4.03  11          66  33  .333
 6           Texas Rangers  .988  56      32   84  3.88   3          83  24  .224
 7          Detroit Tigers  .988  59      28  101  4.01   5          76  28  .269
-8       Milwaukee Brewers  .987  59      26  102  3.87   5          60  29  .326
+8       Milwaukee Brewers  .987  59      26  102  3.88   5          60  29  .326
 9          Atlanta Braves  .987  60      26  109  3.92   4          97  17  .149
-10         Houston Astros  .987  60      32  106  3.84   7         108  36  .250
+10         Houston Astros  .987  60      32  106  3.84   7         109  36  .248
 11        Minnesota Twins  .987  62      28   92  3.87   4         110  20  .154
 12              Athletics  .986  63      32   96  3.85  11          88  34  .279
 13  Philadelphia Phillies  .986  67      35   80  3.92   5          80  34  .298
@@ -8970,10 +8970,10 @@ pc_bucket
 18       New York Yankees  .985  74      34  102  3.98   5          62  18  .225
 19        Cincinnati Reds  .985  73      31   92  3.91   3         126  27  .176
 20     Los Angeles Angels  .983  79      38   86  3.94   8          92  26  .220
-21      Toronto Blue Jays  .983  81      41   90  3.96   3         131  40  .234
+21      Toronto Blue Jays  .983  81      41   90  3.95   3         131  40  .234
 22         Tampa Bay Rays  .983  79      42   87  3.88   5         109  29  .210
 23      Baltimore Orioles  .983  82      38  100  3.96   6          72  33  .314
-24          New York Mets  .983  81      42   82  3.89  11          59  28  .322
+24          New York Mets  .983  81      42   82  3.89  11          60  28  .318
 25     Pittsburgh Pirates  .982  84      48  112  3.88   7          86  28  .246
 26          Miami Marlins  .982  84      43   95  3.95  12         109  34  .238
 27   San Francisco Giants  .982  86      49  121  4.06   8         108  34  .239
@@ -8985,7 +8985,7 @@ pc_bucket
 ════════════════════════════════════════════════════════════════════════
 
   [FanGraphs unavailable this run — real SP/RP splits via MLB Stats API / Statcast instead]
-  Starters (345 pitchers, 25577.8 IP): ERA 4.15  K/9 8.39  BB/9 3.23  WHIP 1.29
+  Starters (345 pitchers, 25591.0 IP): ERA 4.15  K/9 8.39  BB/9 3.23  WHIP 1.29
   Relievers (480 pitchers, 9849.8 IP): ERA 4.28  K/9 8.87  BB/9 4.0  WHIP 1.366
 
   K/9 gap (RP - SP): 0.48 — relievers miss more bats per inning,
@@ -9033,7 +9033,7 @@ pc_bucket
     10. Carter Jensen             ?     638
 
   BATTINGAVERAGE:
-     1. Jacob Misiorowski         ?     .149
+     1. Jacob Misiorowski         ?     .151
      2. Dylan Cease               ?     .175
      3. Yoshinobu Yamamoto        ?     .186
      4. Cam Schlittler            ?     .199
@@ -9081,14 +9081,14 @@ pc_bucket
     10. Logan O'Hoppe             ?     342
 
   STRIKEOUTS:
-     1. Jacob Misiorowski         ?     220
+     1. Jacob Misiorowski         ?     221
      2. Dylan Cease               ?     209
      3. Gavin Williams            ?     204
      4. Jesús Luzardo             ?     203
      5. Cristopher Sánchez        ?     194
      6. Cam Schlittler            ?     193
-     7. Paul Skenes               ?     175
-     8. Chris Sale                ?     173
+     7. Chris Sale                ?     175
+     8. Paul Skenes               ?     175
      9. Reid Detmers              ?     172
     10. Taj Bradley               ?     169
 
@@ -9105,25 +9105,25 @@ pc_bucket
     10. Nick Martinez             ?     13
 
   EARNEDRUNAVERAGE:
-     1. Jacob Misiorowski         ?     1.64
-     2. Chris Sale                ?     2.14
+     1. Jacob Misiorowski         ?     1.74
+     2. Chris Sale                ?     2.10
      3. Cam Schlittler            ?     2.16
      4. Dylan Cease               ?     2.37
      5. Parker Messick            ?     2.50
      6. Eduardo Rodriguez         ?     2.50
-     7. Yoshinobu Yamamoto        ?     2.61
+     7. Yoshinobu Yamamoto        ?     2.57
      8. Cristopher Sánchez        ?     2.62
      9. Chase Burns               ?     2.77
     10. Sonny Gray                ?     2.82
 
   WHIP:
-     1. Jacob Misiorowski         ?     0.75
-     2. Yoshinobu Yamamoto        ?     0.89
+     1. Jacob Misiorowski         ?     0.76
+     2. Yoshinobu Yamamoto        ?     0.88
      3. Drew Rasmussen            ?     0.93
      4. Cam Schlittler            ?     0.96
      5. Keider Montero            ?     1.00
-     6. Parker Messick            ?     1.01
-     7. Chris Sale                ?     1.01
+     6. Chris Sale                ?     1.01
+     7. Parker Messick            ?     1.01
      8. Logan Gilbert             ?     1.02
      9. Dylan Cease               ?     1.06
     10. Reid Detmers              ?     1.06
@@ -9141,8 +9141,8 @@ pc_bucket
     10. Jacob Latz                ?     26
 
   ONBASEPLUSSLUGGING:
-     1. Yordan Alvarez            ?     1.047
-     2. Shohei Ohtani             ?     .931
+     1. Yordan Alvarez            ?     1.045
+     2. Shohei Ohtani             ?     .929
      3. James Wood                ?     .928
      4. Pete Crow-Armstrong       ?     .924
      5. Willson Contreras         ?     .916
@@ -9934,7 +9934,7 @@ San Francisco Giants 54 79 .406 26.0  4
   2026-08-23   PIT    3   0   0   0    1   1   .288
   2026-08-25   ATL    5   1   0   0    0   1   .287
   2026-08-26   ATL    5   2   0   0    0   1   .288
-  2026-08-27   ATL    2   0   0   0    0   1   .287
+  2026-08-27   ATL    3   0   0   0    0   2   .286
 
   Tommy Edman — Game Logs L14:
   Date         Opp    AB  H   HR  RBI  BB  K   AVG
@@ -9945,7 +9945,7 @@ San Francisco Giants 54 79 .406 26.0  4
   2026-08-23   PIT    2   0   0   0    1   0   .267
   2026-08-25   ATL    4   1   0   0    0   0   .266
   2026-08-26   ATL    4   2   1   3    1   2   .271
-  2026-08-27   ATL    2   0   0   0    0   2   .268
+  2026-08-27   ATL    3   0   0   0    0   3   .267
 
   Mookie Betts — Game Logs L14:
   Date         Opp    AB  H   HR  RBI  BB  K   AVG
@@ -9956,7 +9956,7 @@ San Francisco Giants 54 79 .406 26.0  4
   2026-08-23   PIT    4   1   0   0    0   0   .236
   2026-08-25   ATL    5   1   0   0    0   0   .236
   2026-08-26   ATL    3   1   0   1    2   0   .237
-  2026-08-27   ATL    2   2   0   0    0   0   .241
+  2026-08-27   ATL    3   2   0   0    0   0   .240
 
   Freddie Freeman — Game Logs L14:
   Date         Opp    AB  H   HR  RBI  BB  K   AVG
@@ -9967,7 +9967,7 @@ San Francisco Giants 54 79 .406 26.0  4
   2026-08-23   PIT    4   2   0   0    0   0   .302
   2026-08-25   ATL    5   0   0   0    0   1   .299
   2026-08-26   ATL    4   2   0   0    1   0   .301
-  2026-08-27   ATL    2   0   0   0    0   0   .299
+  2026-08-27   ATL    3   0   0   0    0   0   .299
 
   Teoscar Hernandez — Game Logs L14:
   Date         Opp    AB  H   HR  RBI  BB  K   AVG
@@ -9978,7 +9978,7 @@ San Francisco Giants 54 79 .406 26.0  4
   2026-08-22   PIT    4   1   0   1    0   3   .247
   2026-08-23   PIT    4   0   0   0    0   2   .244
   2026-08-26   ATL    3   2   0   0    1   1   .248
-  2026-08-27   ATL    2   0   0   0    0   2   .246
+  2026-08-27   ATL    3   0   0   0    0   2   .246
 
   Miguel Rojas — Game Logs L14:
   Date         Opp    AB  H   HR  RBI  BB  K   AVG
@@ -9997,7 +9997,7 @@ San Francisco Giants 54 79 .406 26.0  4
   2026-08-17   COL    0   0   0   0    0   0   .254
   2026-08-21   PIT    1   0   0   0    0   1   .252
   2026-08-25   ATL    3   2   0   1    1   1   .261
-  2026-08-27   ATL    0   0   0   0    0   0   .261
+  2026-08-27   ATL    1   0   0   0    0   0   .259
 
 
 ════════════════════════════════════════════════════════════════════════
@@ -10026,13 +10026,13 @@ San Francisco Giants 54 79 .406 26.0  4
   Gabriel Arias                     0.375        0.314  +0.061 🔴 DUE DOWN
   Shohei Ohtani                     0.333        0.326  +0.007 🟡 Normal
   Tommy Edman                       0.331        0.293  +0.038 🔴 DUE DOWN
-  Mookie Betts                      0.236        0.296  -0.060 🟢 DUE UP
-  Freddie Freeman                   0.338        0.341  -0.003 🟡 Normal
+  Mookie Betts                      0.235        0.296  -0.061 🟢 DUE UP
+  Freddie Freeman                   0.337        0.341  -0.004 🟡 Normal
   Teoscar Hernandez                 0.322        0.325  -0.003 🟡 Normal
   Miguel Rojas                      0.283        0.286  -0.003 🟡 Normal
-  Alex Call                         0.318        0.288  +0.030 🔴 DUE DOWN
-  Enrique Hernandez                 0.273        0.268  +0.005 🟡 Normal
-  Ben Rortvedt                      0.200        0.246  -0.046 🟢 DUE UP
+  Alex Call                         0.315        0.287  +0.028 🟡 Normal
+  Enrique Hernandez                 0.261        0.268  -0.007 🟡 Normal
+  Ben Rortvedt                      0.250        0.248  +0.002 🟡 Normal
   Brett Callahan                    0.313        0.313  +0.000 🟡 Normal
   Kevin McGonigle                   0.306        0.306  +0.000 🟡 Normal
   Gleyber Torres                    0.301        0.299  +0.002 🟡 Normal
@@ -16859,86 +16859,86 @@ San Francisco Giants 54 79 .406 26.0  4
   [DRS/UZR are proprietary (BIS/FanGraphs) and unavailable — these are MLB's official
    fielding stats. Statcast Outs Above Average in Section 82 is the advanced equivalent.]
                    Name Pos      Inn   Fld%  E   DP  RF/9
-0        Alejandro Kirk   C  441.200   .996  2    5  9.98
-1         Austin Hedges   C  498.200   .993  4    1  9.92
-2        Patrick Bailey   C  690.000   .992  6    6  9.90
-3     Christian Vázquez   C  587.000   .998  1    4  9.89
-4            Will Smith   C  393.000   .993  3    0  9.87
-5         Logan O'Hoppe   C  594.000   .992  5    2  9.82
-6           Ali Sánchez   C  198.000   .982  4    0  9.77
-7           Pavin Smith  1B  113.000  1.000  0   12  9.72
-8     Francisco Alvarez   C  572.000   .994  4    5  9.69
-9       Travis d'Arnaud   C  158.200  1.000  0    1  9.68
-10         Luis Torrens   C  568.200   .997  2    2  9.67
-11           Elias Díaz   C  425.000   .987  6    0  9.64
-12      Shea Langeliers   C  634.000   .996  3    3  9.62
-13        Casey Schmitt  1B  115.200   .984  2   11  9.55
-14            Bo Naylor   C  203.000   .995  1    1  9.49
-15       Endy Rodríguez   C  273.200   .986  4    1  9.49
-16     Sebastián Rivero   C  144.100   .981  3    0  9.44
-17         Alex Jackson   C  148.000   .981  3    0  9.43
-18       Chadwick Tromp   C  132.000   .986  2    1  9.41
-19       Carlos Narváez   C  627.000   .991  6    2  9.40
-20       Dalton Rushing   C  472.100   .998  1    1  9.38
-21         Austin Wells   C  768.100   .994  5    2  9.36
-22         Danny Jansen   C  348.100   .992  3    1  9.36
-23       Jac Caglianone  1B  273.100   .990  3   21  9.33
-24      Victor Caratini   C  539.000   .998  1    0  9.32
+0         Austin Hedges   C  498.200   .993  4    1  9.92
+1        Patrick Bailey   C  690.000   .992  6    6  9.90
+2     Christian Vázquez   C  587.000   .998  1    4  9.89
+3            Will Smith   C  393.000   .993  3    0  9.87
+4         Logan O'Hoppe   C  594.000   .992  5    2  9.82
+5           Ali Sánchez   C  198.000   .982  4    0  9.77
+6           Pavin Smith  1B  113.000  1.000  0   12  9.72
+7     Francisco Alvarez   C  573.200   .994  4    5  9.69
+8       Travis d'Arnaud   C  158.200  1.000  0    1  9.68
+9          Luis Torrens   C  568.200   .997  2    2  9.67
+10           Elias Díaz   C  425.000   .987  6    0  9.64
+11      Shea Langeliers   C  634.000   .996  3    3  9.62
+12        Casey Schmitt  1B  115.200   .984  2   11  9.55
+13            Bo Naylor   C  203.000   .995  1    1  9.49
+14       Endy Rodríguez   C  273.200   .986  4    1  9.49
+15     Sebastián Rivero   C  144.100   .981  3    0  9.44
+16         Alex Jackson   C  148.000   .981  3    0  9.43
+17       Chadwick Tromp   C  132.000   .986  2    1  9.41
+18       Carlos Narváez   C  627.000   .991  6    2  9.40
+19       Dalton Rushing   C  472.100   .998  1    1  9.38
+20         Austin Wells   C  770.100   .994  5    2  9.36
+21         Danny Jansen   C  348.100   .992  3    1  9.36
+22       Jac Caglianone  1B  273.100   .990  3   21  9.33
+23      Victor Caratini   C  539.000   .998  1    0  9.32
+24          Yainer Diaz   C  508.100   .996  2    2  9.32
 25        Rafael Devers  1B  803.000   .992  7   71  9.31
-26          Yainer Diaz   C  507.100   .996  2    2  9.30
-27         J.C. Escarra   C  216.200   .991  2    5  9.29
-28        Jhonny Pereda   C  205.100  1.000  0    0  9.26
-29       Garrett Stubbs   C  125.000   .992  1    0  9.22
-30        Freddy Fermin   C  569.100   .988  7    3  9.22
-31           Sandy León   C  134.200   .993  1    2  9.20
-32            Drew Romo   C  461.000   .985  7    0  9.20
-33         Gary Sánchez   C  280.000   .993  2    1  9.19
-34             Joe Mack   C  628.100   .991  6    3  9.14
-35   Brandon Valenzuela   C  537.000   .984  9    3  9.12
-36         Jose Trevino   C  292.000   .983  5    0  9.12
-37       Samuel Basallo   C  412.000   .998  1    2  9.11
-38       Salvador Perez  1B  160.000   .988  2   16  9.11
-39   Moisés Ballesteros   C  103.000  1.000  0    1  9.09
-40          Curtis Mead  1B  201.000   .981  4   16  9.04
-41        Alec Burleson  1B 1116.000   .993  8  112  9.02
-42          Jake Rogers   C  369.100  1.000  0    2  9.00
-43           Liam Hicks   C  402.000   .995  2    1  9.00
-44          Connor Wong   C  489.100   .992  4    0  8.96
-45    Spencer Torkelson  1B 1109.100   .998  2   92  8.93
-46      Kyle Higashioka   C  388.000   .982  7    3  8.93
-47          TJ Rumfield  1B  948.100   .996  4   82  8.91
-48          Nick Fortes   C  633.200   .987  8    2  8.90
-49       Bryce Eldridge  1B  231.200   .996  1   27  8.88
-50            Joey Bart   C  288.100   .990  3    3  8.88
-51          Cal Raleigh   C  691.200   .996  3    5  8.87
-52     Tyler Stephenson   C  804.000   .995  4    3  8.85
-53      Hunter Feduccia   C  526.100   .990  5    1  8.85
-54      Agustín Ramírez   C  164.200   .976  4    0  8.84
-55        Drake Baldwin   C  595.100   .997  2    1  8.83
-56         Daniel Susac   C  351.000   .994  2    4  8.82
-57       Dillon Dingler   C  830.200   .996  3    2  8.78
-58        Michael Busch  1B 1162.200   .996  4   96  8.75
-59          Edgar Quero   C  438.000   .984  7    0  8.75
-60           Jonah Heim   C  455.100   .991  4    1  8.74
-61        Mickey Gasper   C  101.000  1.000  0    0  8.73
-62             Ben Rice  1B  465.200   .991  4   37  8.71
-63       Jose Fernandez  1B  140.100   .993  1   13  8.68
-64  Adrian Del Castillo   C  136.100   .992  1    0  8.67
-65      Luis García Jr.  1B  813.200   .994  5   71  8.63
-66    Rafael Flores Jr.   C  121.100   .991  1    1  8.63
-67       Salvador Perez   C  377.100   .994  2    1  8.62
-68          Pedro Pagés   C  493.100   .990  5    4  8.62
-69      Ildemaro Vargas  1B  438.100  1.000  0   32  8.61
-70       Luis Campusano   C  362.000   .991  3    2  8.60
-71         Keibert Ruiz   C  698.000   .993  5    5  8.54
-72           Harry Ford   C  145.100  1.000  0    1  8.50
-73          Pete Alonso  1B 1049.100   .997  3   79  8.43
-74    Willson Contreras  1B 1002.100   .995  5   78  8.42
-75         Austin Wynns   C  207.200   .985  3    1  8.39
-76             Tim Tawa  1B  262.000  1.000  0   25  8.38
-77            Ty France  1B  809.000   .996  3   58  8.37
-78         Ryan Jeffers   C  492.200   .996  2    3  8.36
-79    Christopher Morel  1B  111.000   .990  1    8  8.35
+26         J.C. Escarra   C  216.200   .991  2    5  9.29
+27        Jhonny Pereda   C  205.100  1.000  0    0  9.26
+28       Garrett Stubbs   C  125.000   .992  1    0  9.22
+29        Freddy Fermin   C  569.100   .988  7    3  9.22
+30           Sandy León   C  134.200   .993  1    2  9.20
+31            Drew Romo   C  461.000   .985  7    0  9.20
+32         Gary Sánchez   C  281.000   .993  2    1  9.16
+33             Joe Mack   C  628.100   .991  6    3  9.14
+34   Brandon Valenzuela   C  537.000   .984  9    3  9.12
+35         Jose Trevino   C  292.000   .983  5    0  9.12
+36       Samuel Basallo   C  412.000   .998  1    2  9.11
+37       Salvador Perez  1B  160.000   .988  2   16  9.11
+38   Moisés Ballesteros   C  103.000  1.000  0    1  9.09
+39          Curtis Mead  1B  201.000   .981  4   16  9.04
+40        Alec Burleson  1B 1116.000   .993  8  112  9.02
+41          Jake Rogers   C  369.100  1.000  0    2  9.00
+42           Liam Hicks   C  402.000   .995  2    1  9.00
+43          Connor Wong   C  489.100   .992  4    0  8.96
+44    Spencer Torkelson  1B 1109.100   .998  2   92  8.93
+45      Kyle Higashioka   C  388.000   .982  7    3  8.93
+46          TJ Rumfield  1B  948.100   .996  4   82  8.91
+47          Nick Fortes   C  633.200   .987  8    2  8.90
+48       Bryce Eldridge  1B  231.200   .996  1   27  8.88
+49            Joey Bart   C  288.100   .990  3    3  8.88
+50          Cal Raleigh   C  691.200   .996  3    5  8.87
+51     Tyler Stephenson   C  804.000   .995  4    3  8.85
+52      Hunter Feduccia   C  526.100   .990  5    1  8.85
+53      Agustín Ramírez   C  164.200   .976  4    0  8.84
+54        Drake Baldwin   C  597.000   .997  2    1  8.83
+55         Daniel Susac   C  351.000   .994  2    4  8.82
+56       Dillon Dingler   C  830.200   .996  3    2  8.78
+57        Michael Busch  1B 1162.200   .996  4   96  8.75
+58          Edgar Quero   C  438.000   .984  7    0  8.75
+59           Jonah Heim   C  455.100   .991  4    1  8.74
+60        Mickey Gasper   C  101.000  1.000  0    0  8.73
+61             Ben Rice  1B  465.200   .991  4   37  8.71
+62       Jose Fernandez  1B  140.100   .993  1   13  8.68
+63  Adrian Del Castillo   C  136.100   .992  1    0  8.67
+64    Rafael Flores Jr.   C  121.100   .991  1    1  8.63
+65       Salvador Perez   C  377.100   .994  2    1  8.62
+66      Luis García Jr.  1B  815.200   .994  5   71  8.62
+67          Pedro Pagés   C  493.100   .990  5    4  8.62
+68      Ildemaro Vargas  1B  438.100  1.000  0   32  8.61
+69       Luis Campusano   C  362.000   .991  3    2  8.60
+70         Keibert Ruiz   C  698.000   .993  5    5  8.54
+71           Harry Ford   C  145.100  1.000  0    1  8.50
+72          Pete Alonso  1B 1049.100   .997  3   79  8.43
+73    Willson Contreras  1B 1002.100   .995  5   78  8.42
+74         Austin Wynns   C  207.200   .985  3    1  8.39
+75             Tim Tawa  1B  262.000  1.000  0   25  8.38
+76            Ty France  1B  809.000   .996  3   58  8.37
+77         Ryan Jeffers   C  492.200   .996  2    3  8.36
+78    Christopher Morel  1B  111.000   .990  1    8  8.35
+79   Vinnie Pasquantino  1B  743.000   .994  4   75  8.32
 
 ════════════════════════════════════════════════════════════════════════
   SECTION 84: STATCAST SPRINT SPEED 2026
