@@ -18,6 +18,7 @@ still not fix the mismatch. So a mismatch clears only by re-observation,
 never by asking.
 """
 import os
+import re
 import sys
 import unittest
 from datetime import datetime, timedelta, timezone
@@ -46,54 +47,143 @@ def prop(**kw):
     return base
 
 
-class TestBoardAge(unittest.TestCase):
+class TestMissedWindow(unittest.TestCase):
+    """Recovery fires on a MISSED scheduled rebuild, not on raw board age.
+
+    The 180-minute raw-age rule this replaces was documented as "fires only
+    once a scheduled window has genuinely been MISSED". Across the real
+    schedule that was false: the 03:00-13:00 UTC gap has no window at all,
+    so raw age tripped roughly three times a night with nothing missed.
+    """
+
     def test_fresh_board_is_no_mismatch(self):
         self.assertIsNone(rc.board_age_mismatch(board(10), now=NOW))
-
-    def test_stale_board_is_a_mismatch(self):
-        m = rc.board_age_mismatch(board(250), now=NOW)
-        self.assertEqual(m["kind"], rc.KIND_BOARD_AGE)
 
     def test_unknown_age_is_never_treated_as_fresh(self):
         m = rc.board_age_mismatch({"generated_at": None}, now=NOW)
         self.assertIsNotNone(m)
 
-    def test_recovery_fires_before_actionability_is_lost(self):
-        """Recovery earlier than suppression, not stricter than it."""
-        self.assertLess(rc.RECOVERY_BOARD_AGE_MINUTES,
-                        recommendation.MAX_BOARD_AGE_SECONDS / 60)
+    def test_a_genuinely_missed_window_is_a_mismatch(self):
+        """19:00 build never happened; at 20:00 that window is due."""
+        stale = {"generated_at": datetime(2026, 8, 28, 17, 14,
+                                          tzinfo=timezone.utc).isoformat()}
+        m = rc.board_age_mismatch(stale, now=NOW)
+        self.assertIsNotNone(m)
+        self.assertEqual(m["kind"], rc.KIND_BOARD_AGE)
+        self.assertIn("19:00", m["detail"])
 
-    def test_recovery_does_not_preempt_the_scheduled_rebuild(self):
-        """A threshold at or below the nominal cadence dispatches a full
-        rebuild in EVERY healthy window -- eight a day, each preempting the
-        scheduled build it beat to the punch. This is the check that 90
-        minutes failed."""
-        self.assertGreater(rc.RECOVERY_BOARD_AGE_MINUTES,
-                           rc.NOMINAL_REBUILD_CADENCE_MINUTES,
-                           "recovery must require a genuinely MISSED window")
+    def test_a_window_is_not_due_until_grace_has_elapsed(self):
+        """At 19:30 the 19:00 build may simply still be queueing. Firing
+        here would preempt the very rebuild we are waiting for."""
+        stale = {"generated_at": datetime(2026, 8, 28, 17, 14,
+                                          tzinfo=timezone.utc).isoformat()}
+        soon = datetime(2026, 8, 28, 19, 30, tzinfo=timezone.utc)
+        self.assertIsNone(rc.board_age_mismatch(stale, now=soon))
 
-    def test_the_declared_cadence_matches_the_workflow(self):
-        """The calculation is only sound if 120 is really the ACTIVE-window
-        cadence. It also documents the real shape: eight windows 2 hours
-        apart through the evening, then a 10-hour overnight gap."""
-        import os
-        import re
-        path = os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                            ".github", "workflows", "dashboard-refresh.yml")
+    def test_declared_windows_match_the_workflow_exactly(self):
+        """The policy is only sound if these ARE the scheduled windows."""
+        path = os.path.join(ROOT, ".github", "workflows", "dashboard-refresh.yml")
         with open(path, encoding="utf-8") as fh:
-            hours = sorted(int(h) for h in re.findall(r"cron: '0 (\d+) \* \* \*'", fh.read()))
-        self.assertTrue(hours, "no cron windows found")
-        gaps = sorted((b - a) % 24 for a, b in zip(hours, hours[1:] + [hours[0] + 24]))
-        active = rc.NOMINAL_REBUILD_CADENCE_MINUTES // 60
-        self.assertEqual(gaps.count(active), len(hours) - 1,
-                         f"active-window cadence is not {active}h: {hours}")
-        self.assertLessEqual(max(gaps), 10,
-                             f"overnight gap grew beyond the documented 10h: {hours}")
+            hours = sorted(int(h) for h in re.findall(
+                r"cron: '0 (\d+) \* \* \*'", fh.read()))
+        self.assertEqual(hours, sorted(rc.SCHEDULED_REBUILD_HOURS_UTC))
 
-    def test_leaves_room_for_several_recovery_attempts(self):
-        headroom = recommendation.MAX_BOARD_AGE_SECONDS / 60 - rc.RECOVERY_BOARD_AGE_MINUTES
-        self.assertGreaterEqual(headroom // 20, 3,
+    def test_active_window_recovery_precedes_actionability_loss(self):
+        """Inside the 2-hourly active window the worst case is cadence +
+        grace, which must stay under recommendation.py's 4-hour limit with
+        room for several observe+rebuild cycles."""
+        hours = sorted(rc.SCHEDULED_REBUILD_HOURS_UTC)
+        gaps = [(b - a) % 24 for a, b in zip(hours, hours[1:] + [hours[0] + 24])]
+        active_gap = min(gaps) * 60
+        worst = active_gap + rc.REBUILD_GRACE_MINUTES
+        limit = recommendation.MAX_BOARD_AGE_SECONDS / 60
+        self.assertLess(worst, limit)
+        self.assertGreaterEqual((limit - worst) // 20, 3,
                                 "must allow at least three observe+rebuild cycles")
+
+
+class TestHealthyDayDispatches(unittest.TestCase):
+    """A healthy day must produce ZERO recovery rebuilds.
+
+    This is the whole point of the change. Under the raw-age rule the same
+    simulation produced a recovery dispatch every night inside a gap where
+    nothing was scheduled and nothing had failed.
+    """
+
+    @staticmethod
+    def _healthy_boards(hours):
+        """generated_at for a day where every scheduled window built on
+        time (15 minutes to complete), newest-first."""
+        day = datetime(2026, 8, 28, tzinfo=timezone.utc)
+        out = []
+        for offset in (-1, 0):
+            for h in sorted(hours):
+                out.append(day + timedelta(days=offset, hours=h, minutes=15))
+        return sorted(out)
+
+    def _latest_board_at(self, moment, builds):
+        prior = [b for b in builds if b <= moment]
+        return prior[-1] if prior else None
+
+    def test_zero_recovery_dispatches_on_a_perfectly_healthy_day(self):
+        builds = self._healthy_boards(rc.SCHEDULED_REBUILD_HOURS_UTC)
+        fired = []
+        # The live observer runs every 5 minutes from Cloudflare.
+        moment = datetime(2026, 8, 28, tzinfo=timezone.utc)
+        for _ in range(288):
+            built = self._latest_board_at(moment, builds)
+            if built is not None:
+                m = rc.board_age_mismatch({"generated_at": built.isoformat()},
+                                          now=moment)
+                if m:
+                    fired.append((moment.isoformat(), m["detail"]))
+            moment += timedelta(minutes=5)
+        self.assertEqual(fired, [], f"healthy day dispatched recovery: {fired[:3]}")
+
+    def test_the_old_raw_age_rule_would_have_fired_overnight(self):
+        """Locks in WHY this changed: 180 minutes of raw age trips inside
+        the 03:00-13:00 gap, where no window is due and nothing is wrong."""
+        builds = self._healthy_boards(rc.SCHEDULED_REBUILD_HOURS_UTC)
+        raw_age_hits = 0
+        moment = datetime(2026, 8, 28, tzinfo=timezone.utc)
+        for _ in range(288):
+            built = self._latest_board_at(moment, builds)
+            if built is not None:
+                age = (moment - built).total_seconds() / 60.0
+                if age > 180:
+                    raw_age_hits += 1
+            moment += timedelta(minutes=5)
+        self.assertGreater(raw_age_hits, 0,
+                           "the rule this replaces must be shown to misfire")
+
+
+class TestOvernightGap(unittest.TestCase):
+    """The 10-hour gap vs the 4-hour actionability contract.
+
+    Recorded, not silently fixed. Recovery deliberately does nothing here;
+    whether the SCHEDULE should change is a separate product decision.
+    """
+
+    def test_the_gap_exceeds_the_actionability_limit(self):
+        hours = sorted(rc.SCHEDULED_REBUILD_HOURS_UTC)
+        gaps = [(b - a) % 24 for a, b in zip(hours, hours[1:] + [hours[0] + 24])]
+        self.assertGreater(max(gaps) * 3600,
+                           recommendation.MAX_BOARD_AGE_SECONDS,
+                           "gap no longer exceeds the limit -- update this note")
+
+    def test_board_fails_closed_rather_than_being_recovered(self):
+        """At 11:00 UTC the last build was 03:15. The board is ~7.75h old,
+        past the 4-hour limit, so recommendation.py's contract suppresses
+        it -- and reconciliation requests nothing, because no window was
+        missed. Stale-and-fail-closed, not stale-and-served."""
+        moment = datetime(2026, 8, 28, 11, 0, tzinfo=timezone.utc)
+        built = datetime(2026, 8, 28, 3, 15, tzinfo=timezone.utc)
+        payload = {"generated_at": built.isoformat(), "props": []}
+        age_seconds = (moment - built).total_seconds()
+        self.assertGreater(age_seconds, recommendation.MAX_BOARD_AGE_SECONDS)
+        self.assertIsNone(rc.board_age_mismatch(payload, now=moment))
+        state = rc.reconcile(payload, confirmed_lineups={}, now=moment)
+        self.assertFalse(rc.needs_rebuild(state))
 
 
 # Lineup reconciliation moved to test_lineup_basis.py when it stopped

@@ -15,7 +15,10 @@ Uses whatever docs/data.json is currently checked in -- works against both
 the stale pre-fix payload and a freshly regenerated one; assertions are
 written against structure/behavior, not specific player names or exact
 counts, so this suite doesn't need to be re-written every time the slate
-changes.
+changes. The served copy's freshness clocks are rebased to test time so the
+result does not depend on how long ago the fixture was committed -- see
+_CLOCK_REBASED below for why that is required and what still covers the
+fail-closed contract.
 
     python3 test_browser_e2e.py [-v]
 
@@ -33,6 +36,7 @@ import json
 import os
 import sys
 import threading
+from datetime import datetime, timezone
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
@@ -67,9 +71,61 @@ CHROMIUM_PATH = "/opt/pw-browsers/chromium"
 # ── static server for the real docs/ build (the actual deployed output) ──
 
 
+# FRESHNESS CLOCKS ARE REBASED TO TEST TIME (2026-08-28).
+#
+# Found by this suite going 91/98 with no code change at all -- only the
+# clock moving. Before the P0 fail-closed work, a stale fixture still
+# rendered cards, so serving docs/ verbatim was fine. Now it is not: the
+# board fails closed once `prices_updated_at` is more than 45 minutes old
+# (recommendation.py's rule, mirrored in app.js), every card disappears
+# exactly as designed, and the seven card-dependent checks here hard-fail.
+#
+# That made this suite a function of HOW LONG AGO the fixture was committed.
+# It passed in CI at 21:05 UTC with a 20:50 fixture and failed at 21:57 with
+# the same bytes and the same code -- so it would have started failing every
+# PR run for reasons unrelated to the diff, and worse, would have gone green
+# again on a re-run after the next scheduled build refreshed docs/.
+#
+# So the served copy of live.json/data.json gets its `*_at` clocks rebased
+# to now. This suite's job is the INTERACTION contracts -- routing, filters,
+# drill-down, the detail sheet, mobile viewports -- which need a board that
+# is actionable at all in order to be reachable. The fail-closed contract
+# itself is not weakened by this: it is owned by test_fail_closed_surfaces.py
+# and test_route_fail_closed.py, which build their own explicit stale
+# fixtures and assert the suppression directly.
+_CLOCK_REBASED = {"live.json", "data.json"}
+
+
+def _rebased(raw):
+    """Same document, `*_at` timestamps moved to now. Structure untouched."""
+    doc = json.loads(raw)
+    stamp = datetime.now(timezone.utc).isoformat()
+    for key in list(doc):
+        if key.endswith("_at") and isinstance(doc[key], str):
+            doc[key] = stamp
+    return json.dumps(doc).encode("utf-8")
+
+
 class _QuietHandler(http.server.SimpleHTTPRequestHandler):
     def log_message(self, *a, **kw):
         pass
+
+    def do_GET(self):
+        name = os.path.basename(self.path.split("?")[0])
+        if name in _CLOCK_REBASED:
+            path = os.path.join(DOCS_DIR, name)
+            try:
+                with open(path, "rb") as fh:
+                    body = _rebased(fh.read())
+            except (OSError, ValueError):
+                return super().do_GET()
+            self.send_response(200)
+            self.send_header("Content-Type", "application/json")
+            self.send_header("Content-Length", str(len(body)))
+            self.end_headers()
+            self.wfile.write(body)
+            return
+        return super().do_GET()
 
 
 _handler = functools.partial(_QuietHandler, directory=DOCS_DIR)

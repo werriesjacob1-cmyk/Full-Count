@@ -104,36 +104,77 @@ The new-line price is shown as information about the market and never
 paired with this row's probability — that probability was computed for the
 old threshold.
 
-## G. Thresholds unified, and the recovery number justified
+## G. Thresholds unified, and recovery keyed on a missed window
 
 Three conflicting numbers became two, each with one owner:
 
-| 180 min | start recovering (`reconcile.py`) |
+| a missed scheduled window (+60 min grace) | start recovering (`reconcile.py`) |
 |---|---|
 | 4 h board / 45 m price | stop being actionable (`recommendation.py`, unchanged) |
 
-The first pass used **90 minutes**, on the reasoning that 90 < 240. That is
-not a justification. `dashboard-refresh.yml` declares eight windows at
-13/15/17/19/21/23/01/03 UTC — a 120-minute cadence — so a 90-minute
-threshold fires *before the next scheduled rebuild is even due*:
+Two earlier passes both keyed recovery on **raw board age**. The first used
+90 minutes, on the reasoning that 90 < 240 — not a justification, and it
+fires before the next scheduled rebuild is even due. The second used 180
+minutes, justified as *"fires only once a scheduled window has genuinely
+been MISSED."*
 
-| threshold | fires early? | spurious/day | headroom | attempts |
-|---|---|---|---|---|
-| 90 min | **yes** | 8 | 150 min | 7 |
-| 120 min | no (equal) | 8 | 120 min | 6 |
-| 150 min | no | needs a real miss | 90 min | 4 |
-| **180 min** | no | needs a real miss | 60 min | 3 |
+**That second justification was not true, and this section previously
+recorded the disproof and then kept the number anyway.**
+`dashboard-refresh.yml` runs at 13/15/17/19/21/23/01/03 UTC: 2-hourly
+through the active window, then a deliberate **10-hour gap from 03:00 to
+13:00** with no window at all. Any raw-age threshold under 600 minutes
+trips inside that gap with nothing missed and nothing failing. Simulated
+over a perfectly healthy day (every window building on time, 15 minutes to
+complete, observer every 5 minutes):
 
-120 equals the cadence, so any jitter trips it. 150 trips on 30 minutes of
-ordinary scheduler lateness. 180 fires only once a window has genuinely
-been missed and still leaves three full observe+rebuild cycles.
+| policy | full rebuilds on a healthy day | fires on a real miss |
+|---|---|---|
+| raw age 90 min | 8 scheduled + 8 recovery = **16** | yes |
+| raw age 180 min | 8 scheduled + 2 recovery = **10** (06:20, 09:50 UTC) | yes |
+| **missed window + 60 min grace** | 8 scheduled + 0 recovery = **8** | yes |
 
-Checking that claim turned up something worth recording: **the windows are
-not uniform.** They are 2-hourly through the evening and leave a **10-hour
-overnight gap (03:00–13:00)** — which is exactly where the incident
-happened. Recovery will fire a few times overnight when no cron is due.
-That is correct rather than spurious: a board untouched for three hours is
-stale regardless of why.
+Two extra FanGraphs/Statcast/FanDuel pulls every healthy night is not
+recovery. It is a supplemental overnight refresh schedule, implemented
+inside a module labelled recovery — the wrong place for a scheduling
+decision to live, and mislabelled where it did live.
+
+So recovery is now keyed on the thing it claims to detect. A scheduled
+window becomes *due* once it has had `REBUILD_GRACE_MINUTES = 60` to
+produce a board; if the published board still predates that window, the
+window was missed and recovery fires. Grace is 60 minutes because a full
+rebuild takes 10–15 minutes plus GitHub Actions queueing and this repo's
+scheduler runs routinely ~30 minutes late. Inside the active window this
+reproduces the old 180-minute lead time exactly — previous build at T, next
+window at T+120, recovery at T+180 — with 60 minutes of headroom to the
+4-hour limit, three observe+rebuild cycles. Inside the gap it dispatches
+nothing.
+
+`reconcile.py` now declares `SCHEDULED_REBUILD_HOURS_UTC` and
+`test_reconciliation.py::test_declared_windows_match_the_workflow_exactly`
+asserts it equals the workflow's cron hours, so the policy cannot silently
+drift from the schedule it is derived from.
+
+### The gap itself, recorded rather than fixed
+
+The 10-hour gap does conflict with the 4-hour actionability contract.
+From roughly **07:00 UTC until the 13:00 build lands**, the board is
+necessarily older than 4 hours, so `recommendation.py` suppresses it and
+the front end fails closed. About six hours a night with no actionable
+board.
+
+That is a property of the **refresh schedule**, not of recovery, and it is
+left unchanged here for two reasons. First, 03:00–13:00 UTC is 11pm–9am ET:
+no games are in progress and the next slate's lineups are not posted, so a
+rebuild in that window produces a fresh-but-near-empty board —
+`quality_control` rejects candidates without a confirmed lineup. Fresh and
+empty is not more actionable than stale and suppressed. Second, changing
+the schedule is a product decision, and making it covertly by leaving a
+raw-age recovery rule in place is exactly the failure this section is
+fixing. If a continuously actionable overnight board is wanted, the fix is
+to add cron windows to `dashboard-refresh.yml` deliberately.
+`test_reconciliation.py::TestOvernightGap` pins both halves: the gap
+exceeds the limit, and the board fails closed instead of being
+"recovered".
 
 The conflicting 6-hour hard-fail concept and its module are deleted.
 
@@ -229,3 +270,40 @@ withdrawn:
   second frozen-copy surface, and four routes had no fail-closed path.
 - *"secondary surfaces fully audited"* — the audit had covered the
   suggested parlay and missed Games entirely.
+
+Two more, added when the policy pass re-ran everything:
+
+- *"180 minutes fires only once a scheduled window has genuinely been
+  MISSED"* — false across the real schedule. Section G now carries the
+  disproof and the replacement policy. This report had already recorded the
+  10-hour gap that disproves it, in the same paragraph that kept the claim.
+- *"full local suite, 131 files, zero failures"* — true when it was run,
+  and not true an hour later. See section N.
+
+## N. The suite that passed because it ran early
+
+`test_browser_e2e.py` went from 98/98 to 91/98 with **no code change** —
+the same bytes, the same commit, 50 minutes later. Verified by running it
+against an unmodified checkout of the pre-policy HEAD, which failed the
+same seven checks.
+
+Cause: the P0 fail-closed work. `docs/live.json` is a committed fixture
+carrying real timestamps, and once its `prices_updated_at` passes 45
+minutes the board correctly fails closed, every card disappears, and the
+seven checks that need a card to click hard-fail. It passed in CI at 21:05
+UTC against a 20:50 fixture and failed at 21:57 against the same one.
+
+This is the sharper version of a lesson already in this repo: **a suite
+whose result depends on the data rather than the code will go green and red
+on its own.** Left alone it would have failed most PR runs for reasons
+unrelated to the diff, then gone green on a re-run after the next scheduled
+build refreshed `docs/` — the worst possible signal.
+
+The fix is in the suite's static server: `live.json` and `data.json` are
+served with their `*_at` clocks rebased to test time. Nothing on disk is
+mutated and no assertion is relaxed. This suite tests the interaction
+contracts, which need a reachable board; the fail-closed contract is owned
+by `test_fail_closed_surfaces.py` and `test_route_fail_closed.py`, which
+build explicit stale fixtures and assert suppression directly. With the
+rebase, 127/127 (more checks run, because the card-dependent branches are
+reachable again).

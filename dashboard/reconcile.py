@@ -54,18 +54,24 @@ because we asked for a rebuild.
 Three cheap checks, all against data the live observer already has or can
 get for one extra request:
 
-  board age      docs/data.json's own generated_at
+  missed window  docs/data.json's generated_at vs the last due cron window
   lineups        MLB's confirmed lineup vs the one we published
   line moved     a prop whose threshold FanDuel no longer offers
 
-RECOVERY vs ACTIONABILITY. These are different questions and they get
-different thresholds. Recovery asks "should we start rebuilding?" and
-fires EARLY, because rebuilding takes time and a rebuild started at 90
-minutes is finished before the board stops being actionable at 4 hours.
-Actionability asks "may a customer bet this?" and is owned by
-recommendation.py (4h board / 45m price), unchanged here. An earlier
-recovery threshold is not a stricter product rule; it is the lead time
-that keeps the product rule from ever being hit.
+RECOVERY vs ACTIONABILITY. These are different questions with different
+answers. Recovery asks "did a scheduled rebuild fail to happen?" and is
+answered against the declared refresh schedule. Actionability asks "may a
+customer bet this?" and is owned by recommendation.py (4h board / 45m
+price), unchanged here.
+
+Recovery is deliberately NOT "the board is old". A board can be old
+because a window was missed -- recoverable, and this module fires -- or
+because no window was scheduled, which is what the 03:00-13:00 UTC gap in
+dashboard-refresh.yml is. Rebuilding into that gap does not recover
+anything; it just runs the expensive pipeline against a slate whose
+lineups are not posted yet. If a continuously actionable board is wanted
+overnight, the schedule is the thing to change. Reconciliation will not
+quietly act as its scheduler. See REBUILD_GRACE_MINUTES below.
 """
 from __future__ import annotations
 
@@ -73,50 +79,55 @@ import json
 import os
 import subprocess
 import sys
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 if REPO_ROOT not in sys.path:
     sys.path.insert(0, REPO_ROOT)
 
-# RECOVERY THRESHOLD -- chosen by calculation, not by "it is less than the
-# actionability limit" (2026-08-28 P0 follow-up).
+# RECOVERY POLICY -- a missed refresh, not a raw age (2026-08-28 P0 follow-up).
 #
-# The first pass used 90 minutes on exactly that reasoning. It is wrong.
-# dashboard-refresh.yml declares EIGHT cron windows at 13/15/17/19/21/23/
-# 01/03 UTC -- a nominal 120-minute cadence. A 90-minute threshold fires
-# BEFORE the next scheduled rebuild is even due, so on a perfectly healthy
-# day it would dispatch a recovery rebuild in every single window: up to
-# eight unnecessary full FanGraphs/Statcast/FanDuel pulls a day, each
-# 10-15 minutes, contending with the scheduled build it preempted.
+# Two earlier passes both keyed recovery on how old the board is. 90
+# minutes fired before the next scheduled rebuild was even due. 180 minutes
+# was justified as "only fires once a window has genuinely been MISSED" --
+# and that justification was not true. dashboard-refresh.yml runs at
+# 13/15/17/19/21/23/01/03 UTC: 2-hourly through the active window, then a
+# deliberate 10-hour gap from 03:00 to 13:00 when no cron is due at all.
+# Any raw age threshold below 600 minutes fires repeatedly inside that gap
+# with nothing missed, which made reconciliation a de facto overnight
+# rebuild scheduler wearing a recovery label. Roughly three extra full
+# FanGraphs/Statcast/FanDuel pulls a night, on a healthy day.
 #
-#   threshold   fires early?   spurious/day   headroom to 240m   attempts
-#   90 min      YES            8              150 min            7
-#   120 min     no (equal)     8              120 min            6
-#   150 min     no             needs a real miss   90 min        4
-#   180 min     no             needs a real miss   60 min        3
+# So recovery is keyed on the thing it claims to detect. A scheduled
+# window is DUE once it has had REBUILD_GRACE_MINUTES to produce a board.
+# If the published board still predates that window, the window was
+# missed and recovery fires. If no window is due -- which is the entire
+# 03:00-13:00 gap -- there is nothing to recover, and reconciliation
+# dispatches nothing.
 #
-# 120 equals the cadence, so any jitter at all trips it. 150 trips on 30
-# minutes of ordinary GitHub scheduler lateness, which this repo exhibits
-# routinely. 180 fires only once a scheduled window has genuinely been
-# MISSED, and still leaves 60 minutes -- three full observe+rebuild cycles
-# at 5 + 15 minutes -- before recommendation.py's 4-hour actionability
-# limit would suppress anything.
+# Grace is 60 minutes: a full rebuild takes 10-15 minutes plus GitHub
+# Actions queueing, and this repo's scheduler is routinely ~30 minutes
+# late. In the active window that reproduces the old 180-minute lead time
+# exactly (previous build at T, next window T+120, recovery at T+180) while
+# producing zero overnight dispatches.
 #
-# One honest caveat found while checking the cadence claim: the eight
-# windows are 13/15/17/19/21/23/01/03 UTC, which is 2-hourly through the
-# ACTIVE window and leaves a 10-hour overnight gap from 03:00 to 13:00.
-# Recovery will therefore fire a few times overnight, when no cron is due
-# at all. That is correct rather than spurious -- a board untouched for
-# three hours is stale no matter why -- and in practice the odds-snapshot
-# and lineup dispatches already rebuild overnight (05:05, 06:26 and 06:32
-# builds all landed in that gap on 2026-08-28). It is called out here so
-# nobody later reads "120-minute cadence" as covering the whole day.
+#   policy                    healthy dispatches/day   fires on a real miss
+#   raw age 90 min            8 (every window)         yes
+#   raw age 180 min           ~3 (all overnight)       yes
+#   missed window + 60 min    0                        yes
+#
+# WHAT THIS DOES NOT FIX, stated plainly rather than papered over: from
+# roughly 07:00 UTC until the 13:00 build lands, the board is necessarily
+# older than recommendation.py's 4-hour actionability limit, so the product
+# fails closed for about six hours a night. That is a property of the
+# refresh SCHEDULE, not of recovery, and it is left to be decided as a
+# schedule question. Reconciliation must not become its scheduler.
+# See test_reconciliation.py::TestOvernightGap.
 #
 # The customer-facing rules are untouched: 4h board and 45m price remain
 # recommendation.py's, and nothing here may widen them.
-NOMINAL_REBUILD_CADENCE_MINUTES = 120
-RECOVERY_BOARD_AGE_MINUTES = 180
+SCHEDULED_REBUILD_HOURS_UTC = (1, 3, 13, 15, 17, 19, 21, 23)
+REBUILD_GRACE_MINUTES = 60
 
 KIND_BOARD_AGE = "board_age"
 KIND_LINEUP = "lineup"
@@ -151,9 +162,39 @@ def board_age_minutes(payload, *, now=None):
 
 # ── the three checks ─────────────────────────────────────────────────────
 
-def board_age_mismatch(payload, *, now=None, limit_minutes=RECOVERY_BOARD_AGE_MINUTES):
-    age = board_age_minutes(payload, now=now)
-    if age is None:
+def due_window(now, *, grace_minutes=REBUILD_GRACE_MINUTES,
+               hours=SCHEDULED_REBUILD_HOURS_UTC):
+    """The most recent scheduled window that has had time to produce a board.
+
+    A window at 21:00 is not evidence of anything at 21:00 -- the rebuild
+    has not run yet. It becomes evidence at 21:00 + grace, and only then
+    can a board that predates it be called a MISS. Returns None only if no
+    window is declared at all.
+    """
+    deadline = now - timedelta(minutes=grace_minutes)
+    best = None
+    for offset in (0, -1):
+        midnight = (deadline + timedelta(days=offset)).replace(
+            hour=0, minute=0, second=0, microsecond=0)
+        for h in hours:
+            w = midnight + timedelta(hours=h)
+            if w <= deadline and (best is None or w > best):
+                best = w
+    return best
+
+
+def board_age_mismatch(payload, *, now=None, grace_minutes=REBUILD_GRACE_MINUTES):
+    """Fires when a scheduled rebuild window was MISSED -- not on raw age.
+
+    Inside the 03:00-13:00 gap no window is due, so an old board is not a
+    missed window and produces no dispatch. That board may well be past
+    recommendation.py's actionability limit; the product fails closed for
+    it, which is the correct customer outcome and a schedule question, not
+    something recovery can or should paper over.
+    """
+    now = now or _now()
+    built = _parse((payload or {}).get("generated_at"))
+    if built is None:
         return {
             "kind": KIND_BOARD_AGE,
             "fingerprint": f"{KIND_BOARD_AGE}:unknown",
@@ -161,15 +202,19 @@ def board_age_mismatch(payload, *, now=None, limit_minutes=RECOVERY_BOARD_AGE_MI
             "authoritative": None,
             "published": (payload or {}).get("generated_at"),
         }
-    if age > limit_minutes:
+    due = due_window(now, grace_minutes=grace_minutes)
+    if due is not None and built < due:
+        age = (now - built).total_seconds() / 60.0
         return {
             "kind": KIND_BOARD_AGE,
             # Fingerprint carries the STALE basis, so a rebuild that moves
             # generated_at forward produces a different (or no) mismatch
             # rather than silently reusing this one's bookkeeping.
             "fingerprint": f"{KIND_BOARD_AGE}:{payload.get('generated_at')}",
-            "detail": f"board basis is {age:.0f} min old (recovery limit {limit_minutes})",
-            "authoritative": "a board built within the recovery window",
+            "detail": (f"board predates the {due.strftime('%H:%M')} UTC scheduled "
+                       f"window (board is {age:.0f} min old; window had "
+                       f"{grace_minutes} min to land)"),
+            "authoritative": f"a board built at or after {due.isoformat()}",
             "published": payload.get("generated_at"),
         }
     return None
@@ -284,7 +329,7 @@ def line_moved_mismatches(payload):
 # ── the reconciliation pass ──────────────────────────────────────────────
 
 def reconcile(payload, *, confirmed_lineups=None, now=None, prior=None,
-              recovery_limit_minutes=RECOVERY_BOARD_AGE_MINUTES):
+              grace_minutes=REBUILD_GRACE_MINUTES):
     """Re-derive the whole mismatch set from authoritative state.
 
     Deliberately stateless with respect to whether a rebuild was requested.
@@ -295,7 +340,7 @@ def reconcile(payload, *, confirmed_lineups=None, now=None, prior=None,
     """
     now = now or _now()
     found = []
-    age = board_age_mismatch(payload, now=now, limit_minutes=recovery_limit_minutes)
+    age = board_age_mismatch(payload, now=now, grace_minutes=grace_minutes)
     if age:
         found.append(age)
     found.extend(lineup_mismatches(payload, confirmed_lineups))
