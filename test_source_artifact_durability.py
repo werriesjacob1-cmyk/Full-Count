@@ -39,6 +39,19 @@ class SourceArtifactDurabilityE2E(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
+        # Identity must go into os.environ, not a dict handed to our own
+        # helper: push_durable_checkpoint() spawns git from os.environ and
+        # would never see it. Setting it locally passes here (this container
+        # has a global identity) and fails on a runner, where commit-tree
+        # then produces no commit, the push never happens, and the failure
+        # surfaces three steps later as "couldn't find remote ref". That is
+        # exactly the defect a3017bce fixed in test_canonical_durability;
+        # this file repeated it, and CI caught it.
+        cls._env_backup = {k: os.environ.get(k) for k in (
+            "GIT_AUTHOR_NAME", "GIT_AUTHOR_EMAIL",
+            "GIT_COMMITTER_NAME", "GIT_COMMITTER_EMAIL")}
+        os.environ.update(GIT_AUTHOR_NAME="fc-test", GIT_AUTHOR_EMAIL="fc@test",
+                          GIT_COMMITTER_NAME="fc-test", GIT_COMMITTER_EMAIL="fc@test")
         cls.work = tempfile.mkdtemp(prefix="fc-e2e-src-")
         bare = os.path.join(cls.work, "remote.git")
         cls.repo = os.path.join(cls.work, "repo")
@@ -94,6 +107,11 @@ class SourceArtifactDurabilityE2E(unittest.TestCase):
     @classmethod
     def tearDownClass(cls):
         shutil.rmtree(cls.work, ignore_errors=True)
+        for k, v in cls._env_backup.items():
+            if v is None:
+                os.environ.pop(k, None)
+            else:
+                os.environ[k] = v
 
     def test_artifact_is_pushed_with_its_bound_hash(self):
         self.assertTrue(self.first["pushed"], self.first.get("reason"))

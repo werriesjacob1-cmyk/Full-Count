@@ -18,10 +18,21 @@ from backtest import canonical_preflight as pf
 
 
 def _bare_repo(work):
+    """Identity goes into os.environ, not just a local dict.
+
+    check_durable_push_real() spawns git from os.environ, so an identity
+    set only here would pass on a machine with a global git identity and
+    fail on a runner without one -- the same defect a3017bce fixed, which
+    this suite reproduced twice more today. Verified by running the whole
+    suite with HOME redirected and GIT_CONFIG_GLOBAL/SYSTEM at /dev/null.
+    """
+    os.environ.setdefault("GIT_AUTHOR_NAME", "fc-test")
+    os.environ.setdefault("GIT_AUTHOR_EMAIL", "fc@test")
+    os.environ.setdefault("GIT_COMMITTER_NAME", "fc-test")
+    os.environ.setdefault("GIT_COMMITTER_EMAIL", "fc@test")
     bare = os.path.join(work, "r.git")
     repo = os.path.join(work, "repo")
-    env = dict(os.environ, GIT_AUTHOR_NAME="t", GIT_AUTHOR_EMAIL="t@t",
-               GIT_COMMITTER_NAME="t", GIT_COMMITTER_EMAIL="t@t")
+    env = dict(os.environ)
     subprocess.run(["git", "init", "-q", "--bare", bare], check=True)
     subprocess.run(["git", "init", "-q", "-b", "main", repo], check=True)
     with open(os.path.join(repo, "s"), "w") as fh:
