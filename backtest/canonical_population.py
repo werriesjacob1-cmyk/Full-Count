@@ -76,6 +76,12 @@ ELIGIBILITY_DEFINITION_VERSION = "1.0.0"
 
 EVIDENCE_REGIME = "canonical_historical_model_data"
 
+# The generator's own vocabulary -- see canonical_run.VALID_STATUSES.
+STATUS_OK = "ok"
+STATUS_NO_GAMES = "no_games"
+STATUS_ERROR = "error"
+VALID_STATUSES = (STATUS_OK, STATUS_NO_GAMES, STATUS_ERROR)
+
 
 class CanonicalPopulationError(Exception):
     """The canonical rows could not be loaded or are not fit to measure."""
@@ -124,14 +130,23 @@ def load_canonical_rows(run_id, *, ref=CANONICAL_DURABLE_REF,
             f"run {run_id!r} has no durable rows for {unknown!r}; "
             f"available dates are {sorted(available)[0]}..{sorted(available)[-1]}")
 
-    rows, per_date = [], []
+    rows, per_date, report_no_games = [], [], []
     for date in wanted:
         meta = available[date]
-        if meta.get("status") != "ok":
+        status = meta.get("status")
+        if status == STATUS_NO_GAMES:
+            # A legitimately empty date (All-Star break, a scheduling gap),
+            # not an uncertified one. Refusing it -- as a first version did
+            # -- means no population can ever span 2024-07-15, so no
+            # multi-season population is loadable at all. Skipped and
+            # counted, never silently conflated with a failure.
+            report_no_games.append(date)
+            continue
+        if status != STATUS_OK:
             raise CanonicalPopulationError(
-                f"{run_id} date {date} has status {meta.get('status')!r}, not "
-                f"'ok' -- a date the run itself did not certify must not enter "
-                f"a population silently")
+                f"{run_id} date {date} has status {status!r} -- a date the run "
+                f"itself did not certify must not enter a population silently. "
+                f"The run's own vocabulary is {VALID_STATUSES}.")
         blob = _git(["show", f"{ref}:canonical/{run_id}/rows/{date}.jsonl.gz"],
                     repo_root=repo_root, binary=True)
         try:
@@ -171,6 +186,8 @@ def load_canonical_rows(run_id, *, ref=CANONICAL_DURABLE_REF,
         "source_lineage_entries": len(lineage),
         "code_git_sha": (idx.get("identity") or {}).get("code_git_sha"),
         "durable_ref": ref,
+        "dates_no_games": sorted(report_no_games),
+        "n_dates_no_games": len(report_no_games),
         "run_complete": None,  # unknown from the index alone; see below
     }
     return rows, artifact

@@ -285,6 +285,26 @@ class TestFixtureBranchAlwaysRuns(unittest.TestCase):
             with self.assertRaises(cp.CanonicalPopulationError):
                 cp.load_canonical_rows(RUN_ID, ref=ref, repo_root=repo)
 
+    def test_no_games_date_is_skipped_not_refused(self):
+        """2024-07-15 is the All-Star break. The run records it 'no_games'.
+        Refusing it would make any population spanning it unloadable."""
+        with tempfile.TemporaryDirectory() as td:
+            repo, ref = _make_fixture_repo(td, n_dates=3,
+                                           tamper_date="2024-04-02",
+                                           status_override="no_games")
+            rows, art = cp.load_canonical_rows(RUN_ID, ref=ref, repo_root=repo)
+            self.assertEqual(art["n_dates"], 2)
+            self.assertEqual(art["dates_no_games"], ["2024-04-02"])
+            self.assertEqual(len(rows), 8)
+
+    def test_error_status_is_still_refused(self):
+        with tempfile.TemporaryDirectory() as td:
+            repo, ref = _make_fixture_repo(td, n_dates=3,
+                                           tamper_date="2024-04-02",
+                                           status_override="error")
+            with self.assertRaises(cp.CanonicalPopulationError):
+                cp.load_canonical_rows(RUN_ID, ref=ref, repo_root=repo)
+
     def test_unknown_date_raises_instead_of_shrinking(self):
         with tempfile.TemporaryDirectory() as td:
             repo, ref = _make_fixture_repo(td, n_dates=2)
