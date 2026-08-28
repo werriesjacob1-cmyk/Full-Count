@@ -687,6 +687,27 @@ function renderRoute() {
 function marketBlock(p) {
   const marketOdds = fmtOdds(p.market_odds);
   if (marketOdds === null) {
+    // LINE_MOVED before the generic case (2026-08-28 P0 follow-up). Both
+    // states have market_odds == null, so a single branch told the
+    // customer "Not yet posted on FanDuel" for 17 of 23 pitcher-outs props
+    // while FanDuel was actively posting every one of them at a different
+    // number. On a COMPACT card that is worse than on the detail sheet:
+    // the compact card is what people scan, and "not posted yet" reads as
+    // "check back", not as "this number cannot be bet".
+    //
+    // The new-line price is shown as INFORMATION about the market, never
+    // paired with this row's probability or edge -- that probability was
+    // computed for the old threshold and pairing them would invent a read
+    // the model never made.
+    if (p.market_fetch_state === "LINE_MOVED") {
+      const posted = p.market_posted_line != null ? `Over ${p.market_posted_line}` : "a different line";
+      const at = p.market_posted_over != null ? ` ${fmtOdds(p.market_posted_over)}` : "";
+      return `<div class="pc-market pc-market-moved">
+        <div class="m-moved">Line moved</div>
+        <div class="m-detail">FanDuel now ${esc(posted)}${esc(at)}</div>
+        <div class="m-detail">Not bettable at our number</div>
+      </div>`;
+    }
     return `<div class="pc-market"><span class="m-detail">Not yet posted on FanDuel</span></div>`;
   }
   // Real bug, found 2026-08-26 (Part 2 item 5, richer compact cards): this
@@ -901,6 +922,24 @@ function renderToday() {
       <a class="stat-tile" href="#/games"><span class="n">${summary.n_games ?? 0}</span><span class="l">Games tonight</span></a>
     </div>`;
 
+  // FAIL CLOSED before any actionable section (2026-08-28 P0 follow-up).
+  // "Best Bets" and "More Picks" are the two surfaces that assert a
+  // recommendation; when currency cannot be proven they are replaced, not
+  // annotated. Trends, Games and the prop directory below stay visible --
+  // they are context and navigation, and neither claims a price is
+  // current. Suggested Parlay does its own, stricter per-leg check.
+  if (!boardIsActionable() && !SHOW_UNVERIFIED) {
+    html += failClosedPanel();
+    if ((DATA.schedule || []).length) {
+      html += `<section class="section"><div class="section-head"><h2>Tonight's Games</h2>
+        <span class="section-sub">Schedule only — no recommendations while the board is unverified.</span></div>
+        <div class="schedule-strip">${DATA.schedule.map(scheduleChip).join("")}</div></section>`;
+    }
+    el.innerHTML = html;
+    wireCardOpeners(el);
+    return;
+  }
+
   html += `<section class="section"><div class="section-head"><h2>Best Bets</h2>
     <span class="section-sub">Full Count's official Top Picks — probability, evidence, price, and freshness all cleared.</span></div>`;
   if (topPicks.length) {
@@ -1021,10 +1060,81 @@ function scheduleChip(g) {
 // same "computed, then discarded" bug class found repeatedly elsewhere in
 // this project). Fixed field names, and the combined odds line is now
 // explicitly labeled "Estimated" with that real caveat text surfaced.
+// A parlay leg is a FROZEN COPY (2026-08-28 P0 follow-up). The parlay
+// object is built once during full generation and written into the
+// payload; the live overlay then keeps correcting the real props
+// underneath it and never touches this copy. So a leg can go on
+// advertising a price FanDuel moved off hours ago, on a threshold that no
+// longer exists, for a batter who is no longer in the lineup -- and it
+// looks exactly as current as everything else on the page.
+//
+// The fix is to resolve every leg back to the live prop and refuse to
+// render a parlay that cannot be proven current. Legs carry `id` going
+// forward; boards built before that fall back to an exact (name, prop)
+// match, which identifies a prop uniquely on a single board. Anything
+// ambiguous, missing, moved, unpriced or non-actionable suppresses the
+// whole parlay -- a parlay is a single wager, so one bad leg invalidates
+// it entirely rather than degrading it.
+function resolveParlayLeg(leg) {
+  if (leg.id && PROPS_BY_ID.has(leg.id)) return PROPS_BY_ID.get(leg.id);
+  const matches = [...PROPS_BY_ID.values()].filter(
+    p => p.name === leg.name && p.prop === leg.prop);
+  return matches.length === 1 ? matches[0] : null;
+}
+
+function parlaySuppression(parlay) {
+  if (!boardIsActionable()) {
+    return "The board these legs were built from is no longer current, so this parlay is not being shown as a live suggestion.";
+  }
+  for (const leg of (parlay.legs || [])) {
+    const live = resolveParlayLeg(leg);
+    if (!live) {
+      return `A leg (${leg.name} — ${leg.prop}) can no longer be matched to a prop on the current board, so this parlay cannot be shown as current.`;
+    }
+    if (live.market_fetch_state === "LINE_MOVED") {
+      return `FanDuel has moved off the line for ${leg.name} — ${leg.prop}, so this parlay can no longer be placed as built.`;
+    }
+    if (live.market_odds == null) {
+      return `${leg.name} — ${leg.prop} is no longer priced on FanDuel, so this parlay can no longer be placed as built.`;
+    }
+    if (live.lineup_assumed) {
+      return `${leg.name}'s lineup spot is no longer confirmed, so this parlay is not being shown as a live suggestion.`;
+    }
+  }
+  return null;
+}
+
+// American -> decimal -> product -> American. Mirrors parlay_builder.py's
+// own combined-odds math (independent legs, conservative floor); the
+// caveat text the backend supplies about that assumption is rendered
+// alongside it unchanged.
+function combinedAmericanFromLegs(prices) {
+  if (!prices.length || prices.some(p => p == null)) return null;
+  const decimal = prices.reduce((acc, p) =>
+    acc * (p > 0 ? 1 + p / 100 : 1 + 100 / Math.abs(p)), 1);
+  if (!isFinite(decimal) || decimal <= 1) return null;
+  return decimal >= 2 ? Math.round((decimal - 1) * 100)
+                      : -Math.round(100 / (decimal - 1));
+}
+
 function suggestedParlayBlock(parlay) {
-  const legs = (parlay.legs || []).map(l =>
-    `<div class="parlay-leg"><span>${esc(l.name)} — ${esc(l.prop)}</span><span>${fmtOdds(l.market_odds) ?? "—"}</span></div>`).join("");
-  const combined = fmtOdds(parlay.combined_american_odds);
+  const suppressed = parlaySuppression(parlay);
+  if (suppressed) {
+    return `<section class="section"><div class="parlay-card parlay-card-suppressed">
+      <div class="section-head"><h2 style="font-size:16px">Suggested Parlay</h2></div>
+      <p class="parlay-note">${esc(suppressed)}</p>
+    </div></section>`;
+  }
+  // Prices come from the LIVE prop, never from the frozen leg copy.
+  const resolved = (parlay.legs || []).map(l => ({ leg: l, live: resolveParlayLeg(l) }));
+  const legs = resolved.map(({ leg, live }) =>
+    `<div class="parlay-leg"><span>${esc(leg.name)} — ${esc(leg.prop)}</span><span>${fmtOdds(live.market_odds) ?? "—"}</span></div>`).join("");
+  // The combined figure is recomputed from those same live prices. Caught
+  // by its own test: rendering live leg prices under a FROZEN combined
+  // number lets the two disagree on screen, which is a worse failure than
+  // either alone -- the parlay would show prices that no longer multiply
+  // out to the total sitting underneath them.
+  const combined = fmtOdds(combinedAmericanFromLegs(resolved.map(r => r.live.market_odds)));
   const note = parlay.naive_probability_note
     ? `<p class="parlay-note">${esc(parlay.naive_probability_note)}</p>` : "";
   const corrNotes = (parlay.correlation_notes || []).length
@@ -1113,11 +1223,24 @@ const EVIDENCE_FILTER_OPTIONS = [
 ];
 function renderProps() {
   const el = document.getElementById("page-props");
+  // All Props is a research directory rather than a recommendation
+  // surface, but it still prints prices and status chips, so the same
+  // fail-closed rule applies (2026-08-28 P0 follow-up). Unlike Today it
+  // does not hide the rows -- browsing the board is the entire purpose of
+  // this page -- it declares up front that nothing here is verified
+  // current, so a row's price and Lean/Value chip are read as research.
+  const unverifiedNotice = boardIsActionable() ? "" :
+    `<div class="fail-closed fail-closed-inline" role="alert">
+       <p class="fc-why">${esc(failClosedReason())}</p>
+       <p class="fc-what">Prices and status labels below are shown for research and are not
+       being offered as current recommendations.</p>
+     </div>`;
   const families = DATA.families || [];
   const familyOptions = families.map(f => [familyFilterValue(f.stat), `${f.label} (${f.count})`]);
 
   el.innerHTML = `
     <div class="section-head"><h2>All Props</h2><span class="section-sub" id="props-count"></span></div>
+    ${unverifiedNotice}
     <div class="filter-bar">
       <div class="filter-inline" style="display:flex;gap:8px;flex-wrap:wrap;">
         ${filterDropdown("families", "Prop type", familyOptions)}
@@ -2300,6 +2423,77 @@ function _hoursText(seconds) {
 // The board-level banner. Deliberately states the MODEL BASIS age, not the
 // price age -- a fresh price sitting on top of a 10-hour-old projection is
 // the exact combination that made this incident hard to see.
+// FAIL CLOSED (2026-08-28 P0 follow-up). A banner is a description; this
+// is a decision.
+//
+// The first pass added a warning strip and left every card rendering
+// exactly as before -- same prices, same edges, same "Top Pick" chips.
+// That is not failing closed. A customer scanning cards does not
+// re-read a banner before each one, and the cards themselves still
+// asserted currency they could not back. So when currency cannot be
+// PROVEN, the actionable surfaces stop being presented as actionable at
+// all, and the research content stays reachable behind an explicit choice.
+//
+// Three independent ways currency can fail to be proven, all treated the
+// same because a customer cannot act on any of them:
+//   * the model/lineup basis is past its actionability limit
+//   * prices are past theirs, or their age is unknown
+//   * this browser never managed to apply a live overlay, so what is on
+//     screen is the base payload and its real state is unknown
+// Reconciliation adds a fourth once the observer has run: publication
+// provably does not match authoritative state.
+function boardIsActionable() {
+  if (LIVE_OVERLAY_STATE === "unavailable") return false;
+  const fresh = boardFreshnessState(Date.now(), DATA);
+  if (fresh.state !== "fresh") return false;
+  const rec = DATA.reconciliation;
+  if (rec && rec.open && Object.keys(rec.open).length) return false;
+  return true;
+}
+
+function failClosedReason() {
+  if (LIVE_OVERLAY_STATE === "unavailable") {
+    return "This browser couldn't reach the live price feed, so we can't prove these numbers are current.";
+  }
+  const fresh = boardFreshnessState(Date.now(), DATA);
+  if (fresh.state === "stale" && fresh.reason === "price_age_exceeded") {
+    return `Prices were last verified ${_hoursText(fresh.priceAgeSeconds)} ago, past the point where we'll present them as current.`;
+  }
+  if (fresh.state === "stale") {
+    return `The projections below were built ${_hoursText(fresh.ageSeconds)} ago, so lineups and matchups may have changed.`;
+  }
+  if (fresh.state === "unknown") {
+    return "We can't establish how old this board is.";
+  }
+  const rec = DATA.reconciliation;
+  const n = rec && rec.open ? Object.keys(rec.open).length : 0;
+  if (n) {
+    return `${n} thing${n === 1 ? "" : "s"} on this board no longer match live data (a lineup, a line, or the board's own age). A rebuild has been requested.`;
+  }
+  return "We can't prove this board is current.";
+}
+
+// Replaces an actionable section rather than decorating it. The research
+// is still one click away -- withholding it entirely would be its own kind
+// of dishonesty -- but it is never the default presentation, and what the
+// viewer opts into is explicitly labelled as not-current.
+function failClosedPanel() {
+  return `<section class="section"><div class="fail-closed" role="alert">
+    <h2 class="fc-title">Not showing picks as current</h2>
+    <p class="fc-why">${esc(failClosedReason())}</p>
+    <p class="fc-what">Nothing here is being offered as a bet right now. The numbers are still
+    readable as research, but they haven't been verified against FanDuel or tonight's lineups
+    recently enough for us to stand behind them.</p>
+    <button class="btn" type="button" onclick="revealUnverified()">Show anyway (research only)</button>
+  </div></section>`;
+}
+
+let SHOW_UNVERIFIED = false;
+function revealUnverified() {
+  SHOW_UNVERIFIED = true;
+  renderRoute();
+}
+
 function boardStalenessBanner(fresh) {
   if (LIVE_OVERLAY_STATE === "unavailable") {
     return `<div class="board-alert board-alert-stale" role="alert">
@@ -2455,6 +2649,7 @@ function applyFact(target, source, fields, stamp) {
   }
 }
 function ingestLiveDocument(fresh) {
+  if (fresh && fresh.reconciliation) LIVE_CACHE.reconciliation = fresh.reconciliation;
   for (const [id, delta] of Object.entries(fresh.props || {})) {
     const cached = LIVE_CACHE.props[id] || (LIVE_CACHE.props[id] = { _field_updated_at: {} });
     cached._field_updated_at = cached._field_updated_at || {};
@@ -2545,6 +2740,10 @@ function applyCachedLive() {
       if (fieldAt != null) p._field_updated_at[field] = (delta._field_updated_at || {})[field];
     }
   }
+  // Reconciliation is a whole re-derived snapshot, not a per-prop delta --
+  // it is what tells the page that publication provably does not match
+  // authoritative state, which is one of the four fail-closed conditions.
+  if (LIVE_CACHE.reconciliation) DATA.reconciliation = LIVE_CACHE.reconciliation;
   if (LIVE_CACHE.prices_updated_at) DATA.prices_updated_at = LIVE_CACHE.prices_updated_at;
   if (LIVE_CACHE.grades_updated_at) DATA.grades_updated_at = LIVE_CACHE.grades_updated_at;
   if (LIVE_CACHE.grades_checked_at) DATA.grades_checked_at = LIVE_CACHE.grades_checked_at;

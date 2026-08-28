@@ -1086,9 +1086,19 @@ def _build_suggested_parlay(candidates):
     if len(legs) < 2:
         log(f"Suggested parlay: only {len(legs)} real leg(s) available tonight, skipping.")
         return None
+    # `id` is what makes this object RECONCILABLE (2026-08-28 P0 follow-up).
+    # The parlay is built once during full generation and then frozen into
+    # the payload, while the live overlay keeps correcting the real props
+    # underneath it -- so without a stable id, a leg could keep advertising
+    # a price FanDuel had moved off hours ago, and nothing could tell.
+    # Carrying the same canonical id every prop already has lets the
+    # frontend resolve each leg against the live board and refuse to render
+    # a parlay it cannot prove is still current, rather than trusting this
+    # frozen snapshot of the price.
     return {
         "legs": [
-            {"name": l.get("name"), "team": l.get("team"), "prop": l.get("prop"),
+            {"id": l.get("id"), "name": l.get("name"), "team": l.get("team"),
+             "prop": l.get("prop"),
              "market_odds": l.get("market_odds"), "hit_probability": l.get("hit_probability"),
              "confidence": l.get("confidence")}
             for l in legs

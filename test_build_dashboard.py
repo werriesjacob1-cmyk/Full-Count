@@ -1033,9 +1033,11 @@ const window = {matchMedia: () => ({matches:false}), location: {hash:''}, scroll
 const localStorage = {getItem: () => null, setItem(){}};
 const fetch = () => Promise.reject(new Error("no network in test"));
 const setInterval = () => {};
-try { """ + open(APP_JS_PATH, encoding="utf-8").read() + """ } catch (e) {}
 let ok = true;
 function assertTrue(cond, msg) { if (!cond) { console.error("FAIL: " + msg); ok = false; } }
+
+try {
+""" + open(APP_JS_PATH, encoding="utf-8").read() + """
 
 const realParlay = {
   legs: [
@@ -1046,11 +1048,31 @@ const realParlay = {
   naive_probability_note: "Product of each leg's own probability, assuming independence.",
   correlation_notes: ["A + B: same game, positively correlated"],
 };
+// 2026-08-28 P0 follow-up: the parlay is a FROZEN COPY, so rendering it now
+// requires resolving each leg back to a live prop and proving the board is
+// still actionable. Stand up that world explicitly -- a leg price is only
+// allowed on screen when it can be traced to a current prop.
+DATA = { generated_at: new Date().toISOString(), prices_updated_at: new Date().toISOString(),
+         props: [], reconciliation: null };
+LIVE_OVERLAY_STATE = "applied";
+PROPS_BY_ID = new Map([
+  ["idA", { id: "idA", name: "A", prop: "Over 0.5 Hits", market_odds: -150,
+            market_fetch_state: "MATCHED", lineup_assumed: false }],
+  ["idB", { id: "idB", name: "B", prop: "Over 0.5 Total Bases", market_odds: -130,
+            market_fetch_state: "MATCHED", lineup_assumed: false }],
+]);
 const html = suggestedParlayBlock(realParlay);
 assertTrue(html.includes("-150") && html.includes("-130"),
   "each real leg's own market_odds price actually renders on the card, not a blank -- got " + html);
-assertTrue(html.includes("-400"),
-  "the real combined_american_odds figure renders, not the permanent '--' fallback of the field-name bug -- got " + html);
+// 2026-08-28 P0 follow-up: the combined figure is now RECOMPUTED from the
+// live leg prices rather than read from the frozen parlay object. Rendering
+// live leg prices under a frozen total let the two disagree on screen --
+// prices that no longer multiply out to the number beneath them. -150 and
+// -130 are decimal 1.6667 x 1.7692 = 2.949, i.e. +195.
+assertTrue(html.includes("+195"),
+  "the combined figure is recomputed from the live leg prices, not the frozen copy -- got " + html);
+assertTrue(!html.includes("-400"),
+  "the frozen combined_american_odds is never rendered once legs are repriced -- got " + html);
 assertTrue(/Estimated combined odds/i.test(html),
   "the combined figure is explicitly labeled Estimated, not presented as a certain number -- got " + html);
 assertTrue(html.includes("assuming independence"),
@@ -1058,15 +1080,69 @@ assertTrue(html.includes("assuming independence"),
 assertTrue(html.includes("positively correlated"),
   "correlation_notes now reach the page -- got " + html);
 
-// A real parlay whose combined odds genuinely could not be computed (should
-// not happen given build_dashboard.py's own priced_pool filter, but honest
-// degradation matters) must say so, never silently show a stale/blank dash
-// with no explanation.
-const noCombined = { legs: [{ name: "A", prop: "X", market_odds: -110, hit_probability: 0.6 }] };
-const html2 = suggestedParlayBlock(noCombined);
+// The combined figure is derived, so its degradation is tested where it
+// lives. Note the "unavailable" string is now UNREACHABLE from
+// suggestedParlayBlock by construction: a leg with no live price is
+// suppressed by parlaySuppression() before any combining happens. Asserted
+// directly rather than through a fixture that can no longer produce it --
+// a test that quietly stops exercising its subject is worse than no test.
+assertTrue(combinedAmericanFromLegs([-150, -130]) === 195,
+  "combined odds are computed from live leg prices (-150 x -130 = +195) -- got "
+  + combinedAmericanFromLegs([-150, -130]));
+assertTrue(combinedAmericanFromLegs([-150]) === -150,
+  "a single leg's combined figure is just that leg -- got " + combinedAmericanFromLegs([-150]));
+assertTrue(combinedAmericanFromLegs([-150, null]) === null,
+  "an unpriced leg yields no combined figure rather than a fabricated one");
+assertTrue(combinedAmericanFromLegs([]) === null,
+  "no legs yields no combined figure");
+const html2 = suggestedParlayBlock({ legs: [] });
 assertTrue(/unavailable/i.test(html2),
-  "a missing combined_american_odds says 'unavailable' explicitly rather than a bare dash -- got " + html2);
+  "an uncomputable combined figure says 'unavailable', never a bare dash -- got " + html2);
 
+// 2026-08-28 P0 follow-up. The parlay object is FROZEN at generation time
+// while the live overlay keeps correcting the props underneath it, so a leg
+// can advertise a price FanDuel moved off hours ago. Each of these must
+// suppress the whole parlay -- one bad leg invalidates a single wager, it
+// does not merely degrade it.
+const movedLeg = { legs: [{ name: "C", prop: "Over 11.5 Outs Recorded", market_odds: -485 }],
+                   combined_american_odds: -485 };
+PROPS_BY_ID.set("idC", { id: "idC", name: "C", prop: "Over 11.5 Outs Recorded",
+                         market_odds: null, market_fetch_state: "LINE_MOVED",
+                         market_posted_line: 14.5 });
+const htmlMoved = suggestedParlayBlock(movedLeg);
+assertTrue(/moved off the line/i.test(htmlMoved) && !htmlMoved.includes("-485"),
+  "a LINE_MOVED leg suppresses the parlay and never shows its obsolete price -- got " + htmlMoved);
+
+PROPS_BY_ID.set("idD", { id: "idD", name: "D", prop: "Over 0.5 Runs", market_odds: -120,
+                         market_fetch_state: "MATCHED", lineup_assumed: true });
+const assumedLeg = { legs: [{ name: "D", prop: "Over 0.5 Runs", market_odds: -120 }],
+                     combined_american_odds: -120 };
+assertTrue(/no longer confirmed/i.test(suggestedParlayBlock(assumedLeg)),
+  "a leg whose lineup spot is no longer confirmed suppresses the parlay");
+
+const unmatched = { legs: [{ name: "Ghost", prop: "Nothing", market_odds: -110 }],
+                    combined_american_odds: -110 };
+assertTrue(/can no longer be matched/i.test(suggestedParlayBlock(unmatched)),
+  "a leg that cannot be resolved to a current prop suppresses the parlay");
+
+// The live price wins over the frozen copy, so a same-line move is
+// reflected rather than shown at its generation-time number.
+PROPS_BY_ID.set("idA", { id: "idA", name: "A", prop: "Over 0.5 Hits", market_odds: -175,
+                         market_fetch_state: "MATCHED", lineup_assumed: false });
+const repriced = suggestedParlayBlock({ legs: [{ name: "A", prop: "Over 0.5 Hits",
+                                                 market_odds: -150 }],
+                                        combined_american_odds: -150 });
+assertTrue(repriced.includes("-175") && !/>-150</.test(repriced),
+  "a leg renders the LIVE price, not the frozen generation-time copy -- got " + repriced);
+
+// And the whole thing goes away when the board itself is not actionable.
+const wasState = LIVE_OVERLAY_STATE;
+LIVE_OVERLAY_STATE = "unavailable";
+assertTrue(/no longer current/i.test(suggestedParlayBlock(realParlay)),
+  "an unverifiable board suppresses the parlay entirely");
+LIVE_OVERLAY_STATE = wasState;
+
+} catch (e) { console.error("FAIL: harness threw: " + (e && e.stack || e)); ok = false; }
 if (!ok) process.exit(1);
 console.log("suggestedParlayBlock() checks passed");
 """

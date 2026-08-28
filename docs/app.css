@@ -266,6 +266,31 @@ input, select, textarea { font: inherit; color: inherit; }
 }
 .board-alert strong { display: block; margin-bottom: 2px; }
 
+/* FAIL-CLOSED SURFACE (2026-08-28 P0 follow-up). Deliberately looks like a
+   stop, not a note: it REPLACES the picks rather than sitting above them,
+   so there is nothing beside it still styled as a live recommendation. */
+.fail-closed {
+  border: 1px solid var(--warn); background: var(--warn-soft);
+  border-radius: var(--radius); padding: 22px 24px; max-width: 62ch;
+}
+.fail-closed .fc-title { margin: 0 0 10px; font-size: 19px; line-height: 1.25; }
+.fail-closed .fc-why { margin: 0 0 10px; font-weight: 600; }
+.fail-closed .fc-what { margin: 0 0 16px; font-size: 14px; line-height: 1.55; color: var(--ink-soft, inherit); }
+.fail-closed-inline { margin: 0 0 16px; padding: 14px 16px; }
+.fail-closed-inline .fc-why { margin-bottom: 6px; }
+.fail-closed-inline .fc-what { margin-bottom: 0; }
+
+/* A suppressed parlay keeps its heading so the absence is legible -- an
+   empty space would read as "no parlay tonight", which is a different and
+   untrue statement. */
+.parlay-card-suppressed { border-color: var(--warn); background: var(--warn-soft); }
+
+/* LINE_MOVED on a compact card. Shares the stale treatment because both
+   mean "do not read this number as current", which is the affordance a
+   scanner should learn once. */
+.pc-market-moved .m-moved { color: var(--warn); font-weight: 700; font-size: 13px; }
+.pc-market-moved .m-detail { font-size: 12px; }
+
 /* ── Layout ───────────────────────────────────────────────────────── */
 main { max-width: 1180px; margin: 0 auto; padding: 20px 16px 80px; }
 .page { }
