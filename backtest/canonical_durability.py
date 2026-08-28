@@ -559,7 +559,12 @@ def durable_paths(run_id, date=None):
     if date is None:
         return {"base": base,
                 "index": f"{base}/index.json",
-                "manifest": f"{base}/manifest.json"}
+                "manifest": f"{base}/manifest.json",
+                # The source artifact itself, stored RAW. Not gzipped: the
+                # sha256 bound in source_lineage is of the raw file, and a
+                # compress/decompress round trip is one more place bytes can
+                # change between "what we bound" and "what we restored".
+                "source_dir": f"{base}/source"}
     return {"rows_gz": f"{base}/rows/{date}.jsonl.gz",
             "meta": f"{base}/rows/{date}.meta.json"}
 
@@ -567,7 +572,8 @@ def durable_paths(run_id, date=None):
 def push_durable_checkpoint(run_dir, manifest, *, dates=None, environment=None,
                             lineage=None, cache_mode=None, state_summary=None,
                             branch=DURABLE_BRANCH, remote="origin",
-                            repo_root=REPO_ROOT, include_rows=True):
+                            repo_root=REPO_ROOT, include_rows=True,
+                            source_artifact=None):
     """Push per-date rows (gzipped) plus meta plus the recovery index.
 
     This is the function whose absence caused the 2026-08-27 loss. The previous
@@ -586,7 +592,10 @@ def push_durable_checkpoint(run_dir, manifest, *, dates=None, environment=None,
     """
     result = {"pushed": False, "branch": branch, "reason": None,
               "dates_written": 0, "dates_skipped_present": 0, "bytes_written": 0,
-              "commit": None, "at": _now_iso()}
+              "commit": None, "at": _now_iso(),
+              "source_artifact_written": False,
+              "source_artifact_skipped_present": False,
+              "source_artifact_path": None}
 
     git_dir = _git_common_dir(repo_root)
     if git_dir is None:
@@ -665,6 +674,33 @@ def push_durable_checkpoint(run_dir, manifest, *, dates=None, environment=None,
 
         with open(os.path.join(run_dir, "manifest.json"), "rb") as f:
             stage_blob(dp["manifest"], f.read())
+
+        # THE SOURCE ARTIFACT, made as durable as the rows.
+        #
+        # Run canonical-20260827T232203Z-cfb15819 died on 2026-08-28 with 142
+        # dates and 295,999 rows safely on this branch -- and was still
+        # unrecoverable, because /root/.fc-statcast-cache lived in the
+        # container and went with it. Durable rows plus an ephemeral source is
+        # not a durable run: the rows survive and can never be extended,
+        # because extending them under a different artifact is exactly what
+        # the source-identity gate exists to refuse.
+        #
+        # Pushed ONCE. The bound sha256 cannot change within a run -- if it
+        # did, assert_source_identity would already have failed the run -- so
+        # a present blob is never rewritten and the branch grows by one
+        # artifact per run, not one per push.
+        if source_artifact and os.path.exists(source_artifact):
+            src_path = f"{dp['source_dir']}/{os.path.basename(source_artifact)}"
+            if src_path in present:
+                result["source_artifact_skipped_present"] = True
+            else:
+                with open(source_artifact, "rb") as f:
+                    src_bytes = f.read()
+                stage_blob(src_path, src_bytes)
+                result["source_artifact_written"] = True
+                result["source_artifact_bytes"] = len(src_bytes)
+                result["source_artifact_sha256"] = _sha256_bytes(src_bytes)
+            result["source_artifact_path"] = src_path
 
         # ACCUMULATE lineage; never overwrite it. Read whatever is already
         # bound on the branch and merge this invocation's records into it. A
@@ -756,6 +792,32 @@ def durable_date_ledger(run_dir, dates):
 #  RECOVERY
 # ══════════════════════════════════════════════════════════════════════════
 
+def _resolve_durable_ref(*, branch=DURABLE_BRANCH, remote="origin",
+                         repo_root=REPO_ROOT, env=None):
+    """The one place a durable ref is resolved.
+
+    _read_durable_blob resolved remote-then-local; durable_source_artifact
+    originally hardcoded f"{remote}/{branch}". The two could therefore read
+    DIFFERENT refs -- an index found remotely while its artifact was looked
+    for on a ref that did not exist. Recovery is the worst possible place for
+    that kind of disagreement, so both now share this.
+    """
+    if env is None:
+        git_dir = _git_common_dir(repo_root)
+        if git_dir is None:
+            return None
+        env = dict(os.environ, GIT_DIR=git_dir)
+    cands = []
+    if remote:
+        cands.append(f"refs/remotes/{remote}/{branch}")
+    cands.append(f"refs/heads/{branch}")
+    for cand in cands:
+        p = _git(["rev-parse", "--verify", "--quiet", cand], env=env, timeout=15)
+        if p.returncode == 0 and p.stdout.strip():
+            return p.stdout.strip()
+    return None
+
+
 def _read_durable_blob(path_in_tree, *, branch=DURABLE_BRANCH, remote="origin",
                        repo_root=REPO_ROOT, ref=None):
     """Read one file out of the durable branch WITHOUT checking it out.
@@ -769,11 +831,8 @@ def _read_durable_blob(path_in_tree, *, branch=DURABLE_BRANCH, remote="origin",
         return None
     env = dict(os.environ, GIT_DIR=git_dir)
     if ref is None:
-        for cand in (f"refs/remotes/{remote}/{branch}", f"refs/heads/{branch}"):
-            p = _git(["rev-parse", "--verify", "--quiet", cand], env=env, timeout=15)
-            if p.returncode == 0 and p.stdout.strip():
-                ref = p.stdout.strip()
-                break
+        ref = _resolve_durable_ref(branch=branch, remote=remote,
+                                   repo_root=repo_root, env=env)
     if ref is None:
         return None
     p = subprocess.run(["git", "show", f"{ref}:{path_in_tree}"], cwd=repo_root, env=env,
@@ -1229,3 +1288,186 @@ def assert_certifiable_source_lineage(index):
             "CERTIFICATION BLOCKED.")
     return {"certifiable_sources": True, "sources": sorted(have),
             "source_lineage_fingerprint": expected}
+
+
+class SourceArtifactUnavailable(Exception):
+    """The bound source artifact cannot be recovered, so no resume is legal."""
+
+
+def durable_source_artifact(run_id, *, branch=DURABLE_BRANCH, remote="origin",
+                            repo_root=REPO_ROOT):
+    """What source artifact, if any, this run pushed. (path, sha256) or None."""
+    idx_raw = _read_durable_blob(durable_paths(run_id)["index"], branch=branch,
+                                 remote=remote, repo_root=repo_root)
+    if not idx_raw:
+        return None
+    try:
+        index = json.loads(idx_raw)
+    except json.JSONDecodeError:
+        return None
+    bound = bound_source_records(index)
+    if not bound:
+        return None
+    git_dir = _git_common_dir(repo_root)
+    env = dict(os.environ, GIT_DIR=git_dir) if git_dir else None
+    ref = _resolve_durable_ref(branch=branch, remote=remote,
+                               repo_root=repo_root, env=env)
+    if ref is None:
+        return None
+    ls = _git(["ls-tree", "-r", "--name-only", ref,
+               durable_paths(run_id)["source_dir"] + "/"],
+              cwd=repo_root, env=env, timeout=60)
+    if ls.returncode != 0:
+        return None
+    paths = [p for p in ls.stdout.splitlines() if p.strip()]
+    if not paths:
+        return None
+    return paths[0], bound[0].get("content_sha256")
+
+
+def restore_source_artifact(run_id, dest_dir, *, branch=DURABLE_BRANCH,
+                            remote="origin", repo_root=REPO_ROOT,
+                            overwrite=False):
+    """Restore a run's bound source artifact and PROVE it is the same bytes.
+
+    This is the half that makes a durable source worth pushing. It refuses
+    every way of ending up with a plausible-but-different artifact:
+
+      * no artifact on the branch          -> SourceArtifactUnavailable
+      * no bound sha256 in the lineage     -> SourceArtifactUnavailable
+      * restored bytes hash differently    -> SourceVintageMismatch, and the
+                                              partial file is removed rather
+                                              than left where a later run
+                                              could mistake it for the real one
+
+    A resume that cannot restore the exact bound artifact is not a resume. It
+    is a new run wearing the old run's identity, which is precisely what
+    killed canonical-20260827T232203Z-cfb15819's recoverability.
+    """
+    report = {"run_id": run_id, "restored": False, "path": None,
+              "sha256": None, "expected_sha256": None, "bytes": 0,
+              "at": _now_iso()}
+
+    found = durable_source_artifact(run_id, branch=branch, remote=remote,
+                                    repo_root=repo_root)
+    if found is None:
+        raise SourceArtifactUnavailable(
+            f"run {run_id!r} has no durable source artifact on {remote}/{branch}. "
+            f"It cannot be resumed: the artifact its rows were generated from "
+            f"is not recoverable, and substituting another one is the exact "
+            f"substitution the source-identity contract refuses.")
+    path_in_tree, expected = found
+    report["expected_sha256"] = expected
+    if not expected:
+        raise SourceArtifactUnavailable(
+            f"run {run_id!r} pushed a source artifact but bound no sha256 for "
+            f"it, so a restore cannot be proven correct. Refusing rather than "
+            f"trusting the filename.")
+
+    # _read_durable_blob returns raw bytes (git show without text=True),
+    # which is what a parquet needs -- no decode step to corrupt it.
+    blob = _read_durable_blob(path_in_tree, branch=branch, remote=remote,
+                              repo_root=repo_root)
+    if not blob:
+        raise SourceArtifactUnavailable(
+            f"{path_in_tree!r} is listed on {remote}/{branch} but its bytes "
+            f"could not be read")
+
+    actual = _sha256_bytes(blob)
+    report["sha256"] = actual
+    report["bytes"] = len(blob)
+    if actual != expected:
+        raise SourceVintageMismatch(
+            f"restored source artifact for {run_id} hashes {actual[:12]} but "
+            f"the run bound {expected[:12]}. These are different bytes. "
+            f"Continuing would generate rows under a source vintage the "
+            f"earlier rows were not generated from.")
+
+    os.makedirs(dest_dir, exist_ok=True)
+    dest = os.path.join(dest_dir, os.path.basename(path_in_tree))
+    if os.path.exists(dest) and not overwrite:
+        on_disk = _sha256_file(dest)
+        if on_disk != expected:
+            raise SourceVintageMismatch(
+                f"{dest} already exists and hashes {on_disk[:12]}, not the "
+                f"bound {expected[:12]}. Refusing to overwrite implicitly -- "
+                f"pass overwrite=True only if you mean to replace it.")
+        report["restored"] = True
+        report["path"] = dest
+        report["already_present"] = True
+        return report
+
+    tmp = dest + ".partial"
+    try:
+        with open(tmp, "wb") as f:
+            f.write(blob)
+        # Re-hash from DISK, not from memory: this proves what a later reader
+        # will actually see, which is the thing that matters.
+        if _sha256_file(tmp) != expected:
+            raise SourceVintageMismatch(
+                f"source artifact for {run_id} hashed correctly in memory but "
+                f"differs on disk at {tmp} -- refusing to install it")
+        os.replace(tmp, dest)
+    finally:
+        if os.path.exists(tmp):
+            os.remove(tmp)
+
+    report["restored"] = True
+    report["path"] = dest
+    return report
+
+
+def resume_feasibility(run_id, *, cache_dir=None, branch=DURABLE_BRANCH,
+                       remote="origin", repo_root=REPO_ROOT):
+    """Can this run legally be resumed? Answered BEFORE anything is started.
+
+    Returns a report with `resumable` and an explicit `blocker`. The point is
+    to detect an impossible resume in seconds rather than after a warmup, and
+    to make "impossible" a stated finding rather than something discovered
+    when the source gate fires mid-run.
+    """
+    report = {"run_id": run_id, "resumable": False, "blocker": None,
+              "durable_dates": 0, "bound_sha256": None,
+              "artifact_on_branch": False, "artifact_on_disk": False,
+              "at": _now_iso()}
+    try:
+        index = load_durable_index(run_id, branch=branch, remote=remote,
+                                   repo_root=repo_root)
+    except Exception as exc:
+        report["blocker"] = f"durable index unreadable: {exc}"
+        return report
+    if not index:
+        report["blocker"] = "no durable index for this run"
+        return report
+    report["durable_dates"] = len(index.get("dates") or {})
+    bound = bound_source_records(index)
+    if not bound:
+        report["blocker"] = (
+            "run bound no source lineage, so a resume could not prove it is "
+            "using the same source vintage")
+        return report
+    report["bound_sha256"] = bound[0].get("content_sha256")
+
+    found = durable_source_artifact(run_id, branch=branch, remote=remote,
+                                    repo_root=repo_root)
+    report["artifact_on_branch"] = found is not None
+
+    if cache_dir:
+        cand = os.path.join(cache_dir, "") if os.path.isdir(cache_dir) else None
+        if cand:
+            for name in os.listdir(cache_dir):
+                fp = os.path.join(cache_dir, name)
+                if os.path.isfile(fp) and _sha256_file(fp) == report["bound_sha256"]:
+                    report["artifact_on_disk"] = True
+                    break
+
+    if report["artifact_on_disk"] or report["artifact_on_branch"]:
+        report["resumable"] = True
+    else:
+        report["blocker"] = (
+            f"the bound source artifact ({report['bound_sha256'][:12]}...) is "
+            f"neither on disk nor on {remote}/{branch}. This run is "
+            f"PERMANENTLY UNRESUMABLE -- its rows remain valid evidence, but "
+            f"they cannot be extended without substituting a source, which is "
+            f"forbidden.")
+    return report

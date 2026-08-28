@@ -961,6 +961,11 @@ def run(run_dir, manifest, *, use_weather=True, use_bullpen=True,
         environment = _cd.environment_identity()
 
     source_records = []
+    # Initialised here, not only where the Statcast store is built, because
+    # _push_durable() closes over it and can be called on an early-exit path
+    # before the store exists. Leaving it unbound turns any warmup failure
+    # into a NameError that masks the real error.
+    _sc_path = None
     _durable_index = None
     if verify_source_identity:
         try:
@@ -969,10 +974,16 @@ def run(run_dir, manifest, *, use_weather=True, use_bullpen=True,
             _durable_index = None
 
     def _push_durable(final=False):
+        # The bound source artifact rides along with the rows. Without it a
+        # reclaimed run keeps every row and can never be extended, because
+        # extending it under a different artifact is what the source-identity
+        # gate exists to refuse -- exactly how cfb15819 became unrecoverable.
+        # Pushed once; skipped on every later push.
         res = _cd.push_durable_checkpoint(
             run_dir, manifest, environment=environment,
             lineage=(lineage or []) + source_records,
             cache_mode=cache_mode,
+            source_artifact=_sc_path if _sc_path and os.path.exists(_sc_path) else None,
             state_summary=_status_counts(load_run_state(run_dir, requested_dates)))
         durability.note_pushed(res)
         if verbose:
