@@ -207,6 +207,69 @@ separate comment blocks about this exact failure. The two sets are now
 **asserted equal**, so the next omission is a failing test rather than a
 vanishing field.
 
+### End-to-end through the real refresh
+
+`refresh_prices.py` run against the live FanDuel feed on a scratch copy of
+the production payload (production untouched):
+
+```
+2,584 props repriced
+  MATCHED     1,953
+  NOT_POSTED    609   (genuine absences -- ladder rungs FanDuel does not offer)
+  LINE_MOVED     22   (every one carrying its posted-line evidence)
+
+LINE_MOVED rows missing posted-line evidence: 0
+```
+
+All three whitelists cleared. A sample of what customers were being told was
+"not posted":
+
+| Board showed | FanDuel was actually posting |
+|---|---|
+| Drew Anderson Over 11.5 Outs | Over 14.5 at −132 |
+| Dylan Cease Over 5.5 K | Over 7.5 at −138 |
+| Hunter Brown Over 15.5 Outs | Over 17.5 at −102 |
+| Jared Jones Over 13.5 Outs | Over 14.5 at −172 |
+
+## I2. The decisive test — a complete Dashboard Refresh on this branch
+
+The same build that died three times in production, run end to end on this
+branch against the live feed, under the same conditions (FanGraphs 403 →
+Statcast fallback, 826 pitchers, 15 games):
+
+```
+Wrote data.json (6,046,344 bytes, 2,590 props, 1 top pick, 985 leans, 13 value)
+
+QUARANTINED 1 of 270 candidate(s) ... 269 published   (× each affected family)
+  all Walker Jenkins, gamePk 823666, budget 5
+```
+
+Payload integrity on the result:
+
+| Check | Result |
+|---|---|
+| Props / games / families | 2,590 / 15 / 15 |
+| Prop ids unique | yes |
+| Any null id | no |
+| Any Walker Jenkins row published | no |
+
+**Under production code this run produces nothing.**
+
+The freshness block it emitted:
+
+```json
+"model_basis_at":        "2026-08-28T17:13:15Z",
+"lineups_observed_at":   "2026-08-28T17:07:16Z",
+"market_prices_at":      "2026-08-28T17:12:51Z",
+"live_game_observed_at":  null
+```
+
+`lineups_observed_at` is **six minutes earlier** than `model_basis_at`,
+which is the point: it is captured at the real lineup fetch, not at the end
+of the scoring pass. Had it been stamped at the end it would have claimed
+the lineups were fresher than they were — small here, and exactly the error
+that compounds into a ten-hour gap when a build stops happening at all.
+
 ## J. Verification
 
 Every finding above was measured against the **live** FanDuel and MLB feeds
