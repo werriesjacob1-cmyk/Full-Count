@@ -28,6 +28,56 @@ from backtest.equal_volume import (
 RUN_ID = "canonical-20260827T232203Z-cfb15819"
 
 
+
+def _make_fixture_repo(tmpdir, *, n_dates=3, tamper_date=None,
+                       status_override=None):
+    """Build a real git repo carrying a durable-checkpoint-shaped branch.
+
+    Exists because gating these tests on the real branch means they SKIP in
+    CI -- actions/checkout never fetches origin/canonical-durable-
+    checkpoints, so the tampered-sha and bad-status tests, the two that
+    actually guard canonical integrity, would silently not run. A test that
+    does not run is a test that does not exist. This exercises the same
+    load_canonical_rows() code path with no network and no branch state.
+    """
+    repo = os.path.join(tmpdir, "repo")
+    os.makedirs(repo)
+    env = dict(os.environ,
+               GIT_AUTHOR_NAME="t", GIT_AUTHOR_EMAIL="t@t",
+               GIT_COMMITTER_NAME="t", GIT_COMMITTER_EMAIL="t@t")
+    def git(*args):
+        subprocess.run(["git", "-C", repo] + list(args), check=True,
+                       env=env, capture_output=True)
+    git("init", "-q", "-b", "main")
+
+    run_dir = os.path.join(repo, "canonical", RUN_ID, "rows")
+    os.makedirs(run_dir)
+    index = {"run_id": RUN_ID, "dates": {},
+             "identity": {"code_git_sha": "abc123"},
+             "source_lineage": [{"source": "statcast_leaguewide",
+                                 "content_sha256": "c" * 64,
+                                 "row_count": 100, "date_coverage": "x..y"}]}
+    for i in range(n_dates):
+        date = f"2024-04-{i + 1:02d}"
+        rows = [_row(date=date, game_pk=500 + i, player_id=900 + j)
+                for j in range(4)]
+        raw = ("\n".join(json.dumps(r) for r in rows) + "\n").encode()
+        with open(os.path.join(run_dir, f"{date}.jsonl.gz"), "wb") as fh:
+            fh.write(gzip.compress(raw))
+        index["dates"][date] = {
+            "status": status_override if date == tamper_date and status_override
+                      else "ok",
+            "rows": len(rows), "data_bytes": len(raw),
+            "data_sha256": ("0" * 64 if date == tamper_date and not status_override
+                            else hashlib.sha256(raw).hexdigest()),
+        }
+    with open(os.path.join(repo, "canonical", RUN_ID, "index.json"), "w") as fh:
+        json.dump(index, fh)
+    git("add", "-A")
+    git("commit", "-q", "-m", "durable fixture")
+    return repo, "main"
+
+
 def _have_durable_run():
     try:
         cp.read_run_index(RUN_ID)
@@ -201,6 +251,55 @@ class TestCoverageReport(unittest.TestCase):
         self.assertFalse(cov["supports_usable_volume"])
         self.assertEqual(cov["clustering_unit"], "game_pk")
         self.assertGreater(cov["n_games"], 1)
+
+
+
+class TestFixtureBranchAlwaysRuns(unittest.TestCase):
+    """The integrity guarantees, exercised with no network dependency.
+
+    These mirror TestAgainstRealCanonicalRows but cannot skip.
+    """
+
+    def test_loads_and_verifies_every_date(self):
+        with tempfile.TemporaryDirectory() as td:
+            repo, ref = _make_fixture_repo(td, n_dates=3)
+            rows, art = cp.load_canonical_rows(RUN_ID, ref=ref, repo_root=repo)
+            self.assertEqual(len(rows), 12)
+            self.assertEqual(art["artifact_row_count"], 12)
+            self.assertEqual(art["n_dates"], 3)
+            self.assertEqual(art["source_artifact_sha256"], "c" * 64)
+
+    def test_tampered_rows_are_refused(self):
+        with tempfile.TemporaryDirectory() as td:
+            repo, ref = _make_fixture_repo(td, n_dates=3,
+                                           tamper_date="2024-04-02")
+            with self.assertRaises(cp.CanonicalPopulationError) as ctx:
+                cp.load_canonical_rows(RUN_ID, ref=ref, repo_root=repo)
+            self.assertIn("not the bytes the run certified", str(ctx.exception))
+
+    def test_non_ok_status_is_refused(self):
+        with tempfile.TemporaryDirectory() as td:
+            repo, ref = _make_fixture_repo(td, n_dates=3,
+                                           tamper_date="2024-04-03",
+                                           status_override="partial")
+            with self.assertRaises(cp.CanonicalPopulationError):
+                cp.load_canonical_rows(RUN_ID, ref=ref, repo_root=repo)
+
+    def test_unknown_date_raises_instead_of_shrinking(self):
+        with tempfile.TemporaryDirectory() as td:
+            repo, ref = _make_fixture_repo(td, n_dates=2)
+            with self.assertRaises(cp.CanonicalPopulationError):
+                cp.load_canonical_rows(RUN_ID, ref=ref, repo_root=repo,
+                                       dates=["1999-01-01"])
+
+    def test_end_to_end_population_from_fixture_branch(self):
+        with tempfile.TemporaryDirectory() as td:
+            repo, ref = _make_fixture_repo(td, n_dates=3)
+            pop = cp.load_eligible_population(RUN_ID, fair_test_only=False,
+                                              ref=ref, repo_root=repo)
+            cov = cp.describe_population_coverage(pop)
+            self.assertTrue(cov["supports_realized_hit_rate"])
+            self.assertEqual(cov["n_dates"], 3)
 
 
 @unittest.skipUnless(HAVE_REAL, "durable checkpoint branch not fetched")
