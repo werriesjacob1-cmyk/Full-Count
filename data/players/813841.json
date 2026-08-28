@@ -375,6 +375,84 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-27",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 49.1,
+          "notable_signals": 1,
+          "matchup": "Arizona Diamondbacks @ San Francisco Giants",
+          "game_pk": 823179,
+          "team": "San Francisco Giants",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 88.5714,
+            "l7_avg_ev": 100.0,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 26.0,
+            "season_barrel_pct": 43.3333,
+            "lineup_slot": 62.5,
+            "bullpen_fatigue": 15.1515,
+            "park_hand_index": -1.16,
+            "opp_catcher_framing": -0.0,
+            "days_rest": 0.0,
+            "woba_ahead": 46.3636,
+            "woba_behind": 23.6364,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": -1.488,
+            "vs_rp_ops": -0.3,
+            "ump_k_pct": -0.936,
+            "ump_bb_pct": 0.204
+          },
+          "hit_probability": 0.6246,
+          "raw_hit_probability": 0.6193,
+          "lift": 0.0613,
+          "reliability": "D",
+          "sample_n": 23,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 58.4,
+          "notable_signals": 0,
+          "matchup": "Arizona Diamondbacks @ San Francisco Giants",
+          "game_pk": 823179,
+          "team": "San Francisco Giants",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": 3.66,
+            "sprint_speed": 75.0,
+            "catcher_poptime": 0.0,
+            "on_base": 40.499
+          },
+          "hit_probability": 0.3144,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "D",
+          "sample_n": 23,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

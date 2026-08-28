@@ -1734,6 +1734,139 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-27",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 42.2,
+          "notable_signals": 3,
+          "matchup": "Arizona Diamondbacks @ San Francisco Giants",
+          "game_pk": 823179,
+          "team": "Arizona Diamondbacks",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 51.7143,
+            "pitch_exploit": 0.5714,
+            "l7_avg_ev": 97.3611,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 15.0,
+            "park_hr_index": 26.0,
+            "season_barrel_pct": 40.0,
+            "lineup_slot": 25.0,
+            "bullpen_fatigue": 33.3333,
+            "platoon_barrel_pct": 2.0,
+            "platoon_xwoba": 0.6,
+            "park_hand_index": -1.16,
+            "opp_catcher_framing": 1.2,
+            "days_rest": 0.0,
+            "woba_ahead": 38.1818,
+            "woba_behind": 19.0909,
+            "pull_park_synergy": -0.5034,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": -0.488,
+            "vs_rp_ops": -0.576,
+            "ump_k_pct": -0.936,
+            "ump_bb_pct": 0.204
+          },
+          "hit_probability": 0.6394,
+          "raw_hit_probability": 0.6195,
+          "lift": -0.0294,
+          "reliability": "B",
+          "sample_n": 71,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 23.7,
+          "notable_signals": 0,
+          "matchup": "Arizona Diamondbacks @ San Francisco Giants",
+          "game_pk": 823179,
+          "team": "Arizona Diamondbacks",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": 0.66,
+            "sprint_speed": 9.375,
+            "catcher_poptime": 0.0,
+            "on_base": 31.8618
+          },
+          "hit_probability": 0.0905,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "B",
+          "sample_n": 71,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 0.6,
+          "notable_signals": 0,
+          "matchup": "Arizona Diamondbacks @ San Francisco Giants",
+          "game_pk": 823179,
+          "team": "Arizona Diamondbacks",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0313
+          },
+          "hit_probability": 0.0313,
+          "raw_hit_probability": null,
+          "lift": -0.0172,
+          "reliability": "B",
+          "sample_n": 71,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 0.6,
+          "notable_signals": 0,
+          "matchup": "Arizona Diamondbacks @ San Francisco Giants",
+          "game_pk": 823179,
+          "team": "Arizona Diamondbacks",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.015
+          },
+          "hit_probability": 0.015,
+          "raw_hit_probability": null,
+          "lift": -0.0061,
+          "reliability": "B",
+          "sample_n": 71,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }
