@@ -2,7 +2,7 @@
   "schema_version": 1,
   "identity_schema_version": 2,
   "rollout_version": "pre-phase-v-live-lifecycle-v1",
-  "updated_at": "2026-08-28T19:37:50.463002+00:00",
+  "updated_at": "2026-08-28T22:02:38.568556+00:00",
   "migration": {
     "version": "pre-phase-v-live-lifecycle-v1",
     "completed_at": "2026-08-17T23:14:57+00:00",
@@ -4434,6 +4434,105 @@
         "lineup_assumed": null,
         "base_rate": 0.5629,
         "lift": 0.0868,
+        "lift_reference_rate": null,
+        "stable_lift": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "19908f74",
+          "prediction_timestamp": "2026-08-28T19:34:10.583209+00:00",
+          "odds_fetched_at": "2026-08-28T19:33:52.555285+00:00",
+          "board_generated_at": "2026-08-28T19:34:10.552543+00:00"
+        },
+        "qualification_timestamp": "2026-08-28T19:34:10.583209+00:00",
+        "board_timestamp": "2026-08-28T19:34:10.552543+00:00",
+        "slate_date": "2026-08-28"
+      }
+    },
+    "fc2:823583:player-676724:hits:1:over": {
+      "canonical_id": "fc2:823583:player-676724:hits:1:over",
+      "settlement_identity": [
+        "823583",
+        [
+          "player",
+          "676724"
+        ],
+        "hits",
+        "1",
+        "over"
+      ],
+      "slate_date": "2026-08-28",
+      "first_published_at": "2026-08-28T22:02:38.568556+00:00",
+      "publication_provenance": {
+        "artifact_id": "457b053a3b08ef5f7a60b3547465b9ca2057c5d13b28fb4876e7ad9d1e0675e4",
+        "source_commit": "3b7b0aad4047b3917b841bab6ce0630b72e16c79",
+        "workflow_run_id": "33215032407",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-08-28T22:02:25.393655+00:00",
+        "data_hash": "5557ba21531fa2b8116afc62468412c97913b014463b832a3cc31dfe6b257b34",
+        "live_hash": "a50bb3b58aac8ea80418a7d65d9ab9db4a55585895d29e84815ac6b32ba6454c"
+      },
+      "snapshot": {
+        "id": "fc2:823583:player-676724:hits:1:over",
+        "identity_version": 2,
+        "game_pk": 823583,
+        "player_id": 676724,
+        "combo_player_ids": null,
+        "type": "batter",
+        "name": "Jared Young",
+        "team": "New York Mets",
+        "matchup": "Houston Astros @ New York Mets",
+        "game_start": "2026-08-28T23:10:00Z",
+        "stat": "hits",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "hits",
+          "value": 0.5,
+          "needs": 1
+        },
+        "prop": "Over 0.5 Hits",
+        "hit_probability": 0.6158,
+        "market_odds": -130,
+        "market_implied": 0.5652,
+        "market_edge": 0.0506,
+        "market_hold": null,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (A), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (9.2 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "L7 avg EV 88.8mph (league ~88.5)",
+          "L7 barrel% 30.0 \u2014 hot recent contact",
+          "Platoon: L bat vs RHP (favorable)",
+          "Projected 3.92 PA (batting slot 6)",
+          "Pitch-type exploit: RV/100 +3.6 vs CU (opposing SP throws it 19.6% of the time)",
+          "Opposing bullpen fatigue: 3/7 relievers over 60 pitches in L7 (tired pen \u2014 favorable late)"
+        ],
+        "watchouts": [
+          "Opposing SP ERA 3.51 \u2014 elite pitcher, tough matchup",
+          "AVG vs xBA: 0.268 vs 0.241 (+0.027) \u2014 outperforming his contact quality, regression risk",
+          "Team implied for 3.62 runs (league avg 4.245; line 3.5, game total 7.5) \u2014 a weak offensive environment",
+          "Season barrel% 7.5 \u2014 below-average barrel rate",
+          "Hitters batting ahead of him: 0.323 wOBA (league ~.320) \u2014 a weak on-base group ahead of him, fewer runners to drive in",
+          "Hitter batting behind him: 0.274 wOBA (league ~.320) \u2014 little lineup protection, an easier batter to pitch around",
+          "Wind blowing IN (5mph) \u2014 power suppressed"
+        ],
+        "prob_ci": [
+          0.6071,
+          0.6443
+        ],
+        "reliability": "A",
+        "reliability_note": null,
+        "sample_n": 82,
+        "lineup_assumed": null,
+        "base_rate": 0.5629,
+        "lift": 0.0529,
         "lift_reference_rate": null,
         "stable_lift": null,
         "versions": {
