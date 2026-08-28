@@ -1719,6 +1719,21 @@ function weatherText(wx) {
 // A stale/failed price must never look equally current as a verified one.
 function priceFreshnessState(p) {
   if (p.market_odds == null) {
+    // LINE_MOVED before the generic unposted case (2026-08-28 P0). "FanDuel
+    // hasn't posted a price for this line yet" was shown for Drew Anderson's
+    // Over 11.5 Outs Recorded at the same moment FanDuel was posting his
+    // Over 14.5 at -132. Both rows have market_odds == null, so the old
+    // single branch could not tell them apart -- and told the customer the
+    // book was silent when it was not. The number we display cannot be
+    // bought at the line we display, and that is the fact worth saying.
+    if (p.market_fetch_state === "LINE_MOVED") {
+      const posted = p.market_posted_line != null ? `Over ${p.market_posted_line}` : "a different line";
+      const at = p.market_posted_over != null ? ` at ${fmtOdds(p.market_posted_over)}` : "";
+      return { label: `Line moved · FanDuel now ${posted}`, tone: "stale",
+        detail: `FanDuel has moved off this number. They're posting ${posted}${at} for this market, `
+          + `so this projection can't be bet at the line shown. The projection is left at its own line `
+          + `rather than quietly re-pointed at FanDuel's -- a different line is a different bet.` };
+    }
     return { label: "Not posted", tone: "unposted", detail: "FanDuel hasn't posted a price for this line yet." };
   }
   const state = p.market_fetch_state;
@@ -2276,6 +2291,17 @@ const LIVE_PRICE_FIELDS = new Set([
   // dashboard/live_state.py's PRICE_FIELDS by hand, same as every other
   // entry here.
   "posted_implied", "market_fair", "market_fair_method", "edge_vs_fair",
+  // 2026-08-28 P0: what FanDuel posts when it is not posting OUR line.
+  // This hand-synced duplicate of live_state.PRICE_FIELDS is the THIRD
+  // whitelist a new live field has to clear (refresh_prices.LIVE_FIELDS
+  // and live_state.PRICE_FIELDS are the other two), and the only one with
+  // no mechanical link to the source of truth -- missing it here produces
+  // exactly one symptom: the backend computes the field correctly, the
+  // overlay carries it correctly, and the UI silently never sees it.
+  // test_market_line_moved.py now asserts these two sets match, so the
+  // next person adding a live field gets a failing test instead of a
+  // field that vanishes at the browser.
+  "market_posted_line", "market_posted_needs", "market_posted_over",
 ]);
 const LIVE_SETTLEMENT_FIELDS = new Set([
   "settlement_state", "settlement_authority", "settlement_observed_at",

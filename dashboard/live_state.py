@@ -60,6 +60,12 @@ PRICE_FIELDS = frozenset((
     # discarded" failure this field set already exists to prevent for
     # market_odds/market_implied/market_edge/market_hold.
     "posted_implied", "market_fair", "market_fair_method", "edge_vs_fair",
+    # 2026-08-28 P0: what the book posts when it is not posting OUR line.
+    # Registered here for exactly the reason the block above was -- these
+    # are computed by refresh_prices.py on every cycle, and an unregistered
+    # field is silently discarded at this delta boundary, which would leave
+    # a LINE_MOVED row with no evidence of what it actually moved to.
+    "market_posted_line", "market_posted_needs", "market_posted_over",
 ))
 SETTLEMENT_FIELDS = frozenset((
     "settlement_state", "settlement_authority", "settlement_observed_at",

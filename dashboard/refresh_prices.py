@@ -34,7 +34,15 @@ except ImportError:
     from prepare_pages_artifact import normalize_live, normalize_payload
 
 
-OBSERVATION_STATES = frozenset(("MATCHED", "NOT_POSTED", "FETCH_FAILED", "IN_PLAY"))
+OBSERVATION_STATES = frozenset((
+    "MATCHED", "NOT_POSTED", "LINE_MOVED", "FETCH_FAILED", "IN_PLAY",
+))
+# Fields carrying WHAT the book posts when it is not our line. Cleared on
+# every attempt for the same reason as MARKET_VALUE_FIELDS: a line that has
+# since moved back onto ours must not leave a stale mismatch behind.
+LINE_MISMATCH_FIELDS = (
+    "market_posted_line", "market_posted_needs", "market_posted_over",
+)
 MARKET_VALUE_FIELDS = (
     "market_odds", "market_implied", "market_edge", "price_clears", "market_hold",
     # market-edge-semantics fix (P0-6): cleared first for the same reason
@@ -45,7 +53,7 @@ MARKET_VALUE_FIELDS = (
 )
 LIVE_FIELDS = tuple(sorted(PRICE_FIELDS | frozenset((
     "market_fetch_state", "market_fetch_checked_at",
-))))
+)) | frozenset(LINE_MISMATCH_FIELDS)))
 
 
 def _refresh_summary(payload):
@@ -209,6 +217,8 @@ def refresh(data_path, live_path=None, registry_path=DEFAULT_REGISTRY_PATH):
         working = copy.deepcopy(row)
         for field in MARKET_VALUE_FIELDS:
             working[field] = None
+        for field in LINE_MISMATCH_FIELDS:
+            working[field] = None
         working["stale"] = False
         _, matched = fd.attach_market_prices(
             [working], **_family_args(family, evidence["values"]),
@@ -223,7 +233,21 @@ def refresh(data_path, live_path=None, registry_path=DEFAULT_REGISTRY_PATH):
             }, fetched_at)
             failed_families.add(family)
             continue
-        working["market_fetch_state"] = "MATCHED" if matched else "NOT_POSTED"
+        if matched:
+            working["market_fetch_state"] = "MATCHED"
+        else:
+            # Absence is proven at this point, but "absent" has two very
+            # different meanings and reporting both as NOT_POSTED is a lie
+            # the consumer cannot see through. See
+            # odds_fanduel.posted_line_for_subject for the live incident.
+            moved = fd.posted_line_for_subject(family, evidence["values"], row)
+            if moved:
+                working["market_fetch_state"] = "LINE_MOVED"
+                working["market_posted_line"] = moved["posted_line"]
+                working["market_posted_needs"] = moved["posted_needs"]
+                working["market_posted_over"] = moved["posted_over"]
+            else:
+                working["market_fetch_state"] = "NOT_POSTED"
         working["market_observation_state"] = working["market_fetch_state"]
         working["market_fetch_checked_at"] = fetched_at
         working["market_observed_at"] = fetched_at
