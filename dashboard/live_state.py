@@ -373,6 +373,13 @@ def default_live_state():
         # watching" must never be indistinguishable to a viewer.
         "grades_checked_at": None,
         "prices_checked_at": None,
+        # Reconciliation snapshot (2026-08-28 P0). Deliberately NOT a
+        # per-field CRDT like `props`: it is a whole re-derived answer to
+        # "does publication still match authoritative state", so the newest
+        # complete snapshot replaces the older one wholesale. Merging it
+        # field-by-field could resurrect a mismatch a later, better-informed
+        # pass had already found resolved.
+        "reconciliation": None,
         "props": {},
     }
 
@@ -460,6 +467,12 @@ def validate_live_state(live, strict_ids=False):
                 "grades_checked_at", "prices_checked_at"):
         if live.get(key) is not None and parse_utc(live[key]) is None:
             raise ValueError(f"live state has invalid UTC timestamp {key}={live[key]!r}")
+    rec = live.get("reconciliation")
+    if rec is not None:
+        if not isinstance(rec, dict) or not isinstance(rec.get("open"), dict):
+            raise ValueError("live reconciliation must be an object with an open map")
+        if parse_utc(rec.get("checked_at")) is None:
+            raise ValueError("live reconciliation has no valid checked_at")
     for prop_id, delta in live["props"].items():
         if not isinstance(prop_id, str) or not prop_id:
             raise ValueError("live state contains an empty/non-string id")
@@ -755,6 +768,10 @@ def merge_live_state_delta_into(merged, incoming):
     for key in ("updated_at", "prices_updated_at", "grades_updated_at",
                 "grades_checked_at", "prices_checked_at"):
         merged[key] = _newer(merged.get(key), incoming.get(key))
+    # Newest complete snapshot wins outright -- see default_live_state().
+    a, b = merged.get("reconciliation"), incoming.get("reconciliation")
+    if b and (not a or _newer(a.get("checked_at"), b.get("checked_at")) == b.get("checked_at")):
+        merged["reconciliation"] = copy.deepcopy(b)
 
 
 def merge_live_states(base, incoming):

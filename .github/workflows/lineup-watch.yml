@@ -1,26 +1,35 @@
 name: Lineup Watch
 
-# Direct request: "How do we have the board update each time a new lineup
-# comes out?" Dashboard Refresh (dashboard-refresh.yml) does the actual
-# work but is deliberately capped at every 2 hours -- build_dashboard.py's
-# own docstring says a live pass hits real FanGraphs/Statcast/FanDuel and
-# is "not something to run every few minutes." Verified live 2026-08-15:
-# that gap is real -- a lineup can post and sit unreflected on the board
-# for up to 2 hours (worse if a scheduled tick is delayed/dropped, which
-# GitHub Actions does under load and this project has already measured).
+# RETIRED AS A CORRECTNESS DEPENDENCY (2026-08-28 P0 follow-up).
 #
-# Also catches the mirror-image case check_scratches.py's own docstring
-# names directly: a player scratched AFTER his lineup already posted
-# would otherwise sit on the live board looking fully live until the next
-# fixed-window rebuild.
+# This workflow was the only thing that noticed a lineup change between
+# two-hourly Dashboard Refresh windows, and its own header claimed the
+# rebuild would start "within 10 minutes". That claim was never true on
+# this repo. Measured over 29 consecutive runs on 2026-08-28:
 #
-# This is the cheap trigger half of the same split Dashboard Live Update
-# uses for FanDuel odds: a fast, free MLB schedule call every 10 minutes
-# (dashboard/check_lineups.py), and Dashboard Refresh only actually gets
-# triggered when a game's lineup status genuinely changed since the last
-# check -- newly posted OR an already-posted roster changing -- not on a
-# fixed clock, so either event gets a rebuild started within 10 minutes
-# instead of waiting for the next 2-hour window.
+#     declared cadence   */10 * * * *          (144 runs/day)
+#     delivered          12.4 runs/day          9% of declared
+#     median gap         51 minutes
+#     worst observed gap 11.0 hours
+#     intervals near 10 min   0 of 29
+#
+# On the day of the incident it did not run at all for the 9.6 hours
+# covering that evening's lineup postings. GitHub's scheduled-workflow
+# queue is best-effort and drops ticks under load; this is not a bug in
+# the workflow and no amount of tuning inside it can fix it.
+#
+# Correctness now lives in RECONCILIATION (dashboard/reconcile.py), which
+# runs inside dashboard-live.yml -- woken every 5 minutes by
+# infra/live-heartbeat's Cloudflare cron, outside GitHub's scheduler. That
+# path compares MLB's confirmed lineup against what we actually published
+# and keeps requesting a rebuild until publication matches. It cannot be
+# satisfied by a dispatch, only by the board actually being correct.
+#
+# This workflow is KEPT, not deleted, because it is still a useful cheap
+# accelerator: when it does fire it can start a rebuild sooner than the
+# next reconciliation tick. It is simply no longer load-bearing, and its
+# cadence must never again be described as a guarantee. Nothing should be
+# built on the assumption that it ran.
 
 on:
   schedule:

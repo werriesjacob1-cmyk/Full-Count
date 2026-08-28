@@ -12,9 +12,18 @@ The full rebuild (dashboard-refresh.yml) is deliberately capped at every
 FanGraphs/Statcast/FanDuel and is "not something to run every few
 minutes." This is the cheap half of the same split
 dashboard/refresh_prices.py already uses for prices: one fast, free MLB
-schedule call every 10 minutes, paying for a full rebuild only when
-something worth rebuilding for actually happened -- a game's lineup going
+schedule call on whatever cadence GitHub actually delivers, paying for a
+full rebuild only when something worth rebuilding for actually happened -- a game's lineup going
 from unposted to posted, OR an already-posted lineup's roster changing.
+
+NOT LOAD-BEARING (2026-08-28 P0 follow-up). This runs from Lineup Watch,
+whose */10 schedule GitHub delivered at 9% of its declared rate (median
+gap 51 min, worst 11.0 h, and zero runs across the 9.6 hours of the
+2026-08-28 incident). Treat this as an accelerator that MAY start a
+rebuild sooner, never as the thing that guarantees lineups are noticed.
+That guarantee now belongs to dashboard/reconcile.py, which runs inside
+the Cloudflare-driven 5-minute live observer and keeps requesting a
+rebuild until publication actually matches MLB's confirmed lineup.
 
 A game counts as "confirmed" using the same threshold quality_control()
 and check_scratches.py already use: 9+ posted hitters per side (nine is a
