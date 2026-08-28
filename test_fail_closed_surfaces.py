@@ -198,8 +198,25 @@ try:
         payload = json.load(fh)
     ids = [r["id"] for r in payload["props"]]
     check(len(set(ids)) == len(ids) and all(ids), "no synthetic or duplicate prop ids")
-    check(not any(r.get("name") == "Walker Jenkins" for r in payload["props"]),
-          "the identity-quarantined row is still absent from the board")
+    # Deliberately NOT "Walker Jenkins is absent". That was true of the
+    # payload this work started from and is no longer true of any payload:
+    # MLB added him to the roster (player_id 805805), his id now resolves,
+    # and his rows are legitimately published. Asserting his absence would
+    # be asserting a fact about one afternoon's data, and it would go on
+    # "passing" long after it had stopped testing anything.
+    #
+    # The real invariant is that nothing reaches the board without a subject
+    # that can actually settle it. A row with neither a player nor a combo
+    # nor a game-level subject is exactly what canonical_prop_id refuses to
+    # mint an id for, and what the quarantine drops.
+    orphans = [r for r in payload["props"]
+               if not r.get("player_id") and not r.get("combo_player_ids")
+               and not str(r.get("id", "")).startswith("fc2:")]
+    check(not orphans,
+          "no published row lacks a settleable subject (the quarantine invariant)",
+          f"{len(orphans)} orphan row(s), e.g. {orphans[:1]}")
+    check(all(str(r.get("id", "")).startswith("fc2:") for r in payload["props"]),
+          "every published id is a real canonical id, never synthesized")
 finally:
     ctx.close()
 

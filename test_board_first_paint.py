@@ -133,7 +133,12 @@ else:
         page.goto(f"{BASE}/index.html#/today")
         page.wait_for_function("() => window.PROPS_BY_ID !== undefined || document.getElementById('board-alert') !== null",
                                timeout=20000)
-        page.wait_for_selector(".pick-card, .empty-state, .prop-row", timeout=20000, state="attached")
+        # A fail-closed board renders NO pick cards by design, so the panel is
+        # a legitimate terminal render state for this wait (2026-08-28 P0
+        # follow-up). Waiting only for cards made this test depend on the
+        # checked-in payload happening to be fresh.
+        page.wait_for_selector(".pick-card, .empty-state, .prop-row, .fail-closed",
+                               timeout=20000, state="attached")
         got = page.evaluate(
             "(id) => { const p = PROPS_BY_ID.get(id); return p ? p.market_odds : null; }", pid)
         check(got == live_odds,
@@ -151,7 +156,8 @@ ctx, page = new_page()
 try:
     page.route("**/live.json*", lambda route: route.abort())
     page.goto(f"{BASE}/index.html#/today")
-    page.wait_for_selector(".pick-card, .empty-state, .prop-row", timeout=20000, state="attached")
+    page.wait_for_selector(".pick-card, .empty-state, .prop-row, .fail-closed",
+                           timeout=20000, state="attached")
     state = page.evaluate("() => LIVE_OVERLAY_STATE")
     check(state == "unavailable",
           "LIVE_OVERLAY_STATE is 'unavailable' when live.json cannot be fetched",
@@ -173,7 +179,8 @@ print("-- stale board banner")
 ctx, page = new_page()
 try:
     page.goto(f"{BASE}/index.html#/today")
-    page.wait_for_selector(".pick-card, .empty-state, .prop-row", timeout=20000, state="attached")
+    page.wait_for_selector(".pick-card, .empty-state, .prop-row, .fail-closed",
+                           timeout=20000, state="attached")
     fresh = page.evaluate("() => boardFreshnessState(Date.now(), DATA)")
     check(fresh["state"] in ("fresh", "stale", "unknown"),
           "boardFreshnessState returns a declared state", f"got {fresh}")
