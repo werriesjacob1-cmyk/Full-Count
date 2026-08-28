@@ -382,7 +382,10 @@ def _select_market_evidence(items, stat):
 
 def _clean_candidate_rows(rows, schedule):
     out = []
+    quarantined = []
+    considered = 0
     for r in rows:
+        considered += 1
         game_pk = r.get("game_pk")
         proj = r.get("projection") or {}
         stat = proj.get("stat")
@@ -534,9 +537,86 @@ def _clean_candidate_rows(rows, schedule):
             "batting_order": _derive_batting_order(
                 (r.get("signals") or {}).get("lineup_slot")),
         }
-        cleaned["id"] = canonical_prop_id(cleaned)
+        # IDENTITY QUARANTINE BOUNDARY.
+        #
+        # On 2026-08-28 three consecutive Dashboard Refresh runs (07:11,
+        # 12:35, 14:43 UTC) died here with
+        #     ValueError: prop has no stable player/combo/game-level subject
+        # after successfully generating 972 candidates across 15 games. One
+        # unidentifiable row discarded the entire board, and production
+        # served a 06:32 board for nine hours while live prices kept
+        # updating on top of it -- a stale board wearing fresh prices.
+        #
+        # A row without an authoritative player/combo/game subject cannot be
+        # settled, so it must never reach a customer. But it also must not
+        # be able to delete hundreds of rows that ARE identifiable. It is
+        # excluded and recorded.
+        #
+        # Deliberately NOT a blanket try/except continue: identity failure at
+        # scale means the upstream identity source is broken, and publishing
+        # "most of" a corrupt board is worse than publishing none. Past the
+        # threshold below this still fails closed.
+        #
+        # An identity is NEVER synthesized -- not from the display name, not
+        # from a hash, not from position in the list. A fabricated subject
+        # would settle a wager against a player we cannot prove we meant.
+        try:
+            cleaned["id"] = canonical_prop_id(cleaned)
+        except ValueError as exc:
+            quarantined.append({
+                "reason": str(exc),
+                "stat": stat,
+                "type": r.get("type"),
+                "name": r.get("name"),
+                "player_id": r.get("player_id"),
+                "combo_player_ids": r.get("combo_player_ids"),
+                "game_pk": game_pk,
+                "team": r.get("team"),
+                "matchup": r.get("matchup"),
+                "projection": proj,
+                "lineup_assumed": r.get("lineup_assumed"),
+                "market_side": market_side,
+            })
+            continue
         out.append(cleaned)
+
+    _assert_identity_not_systemically_broken(quarantined, considered, out)
     return out
+
+
+# Up to this many unidentifiable rows are treated as isolated data-quality
+# blips and quarantined. Beyond it, the rate test below applies.
+QUARANTINE_ABSOLUTE_FLOOR = 5
+# ...and past the floor, this share of the batch. 2% of a ~970-candidate
+# board is ~19 rows: comfortably above any plausible one-off, far below the
+# scale that would indicate the upstream identity source itself is broken.
+QUARANTINE_MAX_RATE = 0.02
+
+
+class IdentityCorruption(Exception):
+    """Identity failures are widespread enough that the board must not ship."""
+
+
+def quarantine_budget(considered):
+    """The explicit, testable rule. Isolated blips pass; systemic breakage
+    does not."""
+    return max(QUARANTINE_ABSOLUTE_FLOOR, int(considered * QUARANTINE_MAX_RATE))
+
+
+def _assert_identity_not_systemically_broken(quarantined, considered, out):
+    if not quarantined:
+        return
+    budget = quarantine_budget(considered)
+    sample = quarantined[:3]
+    if len(quarantined) > budget:
+        raise IdentityCorruption(
+            f"{len(quarantined)} of {considered} candidate(s) have no stable "
+            f"settlement identity (budget {budget}). This is systemic, not an "
+            f"isolated bad row, so the board fails closed rather than "
+            f"publishing a partially-identified surface. Examples: {sample}")
+    log(f"  QUARANTINED {len(quarantined)} of {considered} candidate(s) with no "
+        f"stable settlement identity (budget {budget}); {len(out)} published. "
+        f"Examples: {sample}")
 
 
 def run_live_fetch():
@@ -706,8 +786,36 @@ def run_live_fetch():
     def clean(rows):
         return _clean_candidate_rows(rows, schedule)
 
+    # FRESHNESS SEMANTICS (2026-08-28 P0). One board carries four different
+    # clocks, and collapsing them into generated_at is what made the incident
+    # invisible: a 10.1-hour-old model basis wearing a 2-minute-old price
+    # overlay reads, through a single timestamp, as either "fresh" or "stale"
+    # depending on which one you happen to print -- and the bar printed the
+    # friendlier one. Each is now stated separately and machine-readably, so
+    # a consumer can ask the specific question it actually cares about
+    # instead of inferring all four from one number.
+    #
+    # lineups_observed_at is the one that had no representation at all before
+    # now. It is currently written only by a full board build, because no
+    # lineup-only refresh exists yet -- so today it equals the build time.
+    # That is a real limitation, not a placeholder: the field exists so the
+    # question is answerable and so a future lineup refresh has somewhere
+    # honest to write, not to imply an independent observation that is not
+    # happening.
+    freshness = {
+        "model_basis_at": board_generated_at,
+        "lineups_observed_at": ctx.get("lineups_observed_at") or board_generated_at,
+        "market_prices_at": odds_fetched_at,
+        "live_game_observed_at": None,
+    }
     out = {"generated_at": board_generated_at, "date": gp.m.TODAY,
           "odds_fetched_at": odds_fetched_at,
+          "freshness": freshness,
+          # The exact ordered batting order this board consumed, per game
+          # per side, with its provenance. Reconciliation compares THIS to
+          # MLB rather than reconstructing a lineup from candidate rows --
+          # see generate_picks.build_lineup_basis for why the two differ.
+          "lineup_basis": ctx.get("lineup_basis") or [],
           "_game_schedule": schedule,
           "recommendation_metadata": gprec.build_metadata(odds_fetched_at=odds_fetched_at,
                                                           board_generated_at=board_generated_at),
@@ -765,7 +873,17 @@ def _game_pick_sections(game_picks):
     ranked = sorted(game_picks, key=lambda r: r.get("hit_probability") or 0, reverse=True)
 
     def summarize(r):
-        return {"name": r["name"], "prop": r["prop"], "hit_probability": r["hit_probability"],
+        # `id` is what makes this entry RECONCILABLE (2026-08-28 P0
+        # follow-up). This is the second instance of the frozen-copy bug
+        # the suggested parlay had: a game highlight is written once at
+        # build time and the live overlay then keeps correcting the real
+        # prop underneath it, so without a canonical id the copy goes on
+        # advertising a probability and price nothing can check. The
+        # probability/odds below are kept only as a build-time record --
+        # the frontend resolves this id through PROPS_BY_ID and renders the
+        # CURRENT prop, never these values.
+        return {"id": r.get("id"),
+                "name": r["name"], "prop": r["prop"], "hit_probability": r["hit_probability"],
                 "market_odds": r.get("market_odds"), "price_clears": r.get("price_clears"),
                 "why": (r.get("why") or [None])[0]}
 
@@ -983,9 +1101,19 @@ def _build_suggested_parlay(candidates):
     if len(legs) < 2:
         log(f"Suggested parlay: only {len(legs)} real leg(s) available tonight, skipping.")
         return None
+    # `id` is what makes this object RECONCILABLE (2026-08-28 P0 follow-up).
+    # The parlay is built once during full generation and then frozen into
+    # the payload, while the live overlay keeps correcting the real props
+    # underneath it -- so without a stable id, a leg could keep advertising
+    # a price FanDuel had moved off hours ago, and nothing could tell.
+    # Carrying the same canonical id every prop already has lets the
+    # frontend resolve each leg against the live board and refuse to render
+    # a parlay it cannot prove is still current, rather than trusting this
+    # frozen snapshot of the price.
     return {
         "legs": [
-            {"name": l.get("name"), "team": l.get("team"), "prop": l.get("prop"),
+            {"id": l.get("id"), "name": l.get("name"), "team": l.get("team"),
+             "prop": l.get("prop"),
              "market_odds": l.get("market_odds"), "hit_probability": l.get("hit_probability"),
              "confidence": l.get("confidence")}
             for l in legs
@@ -1177,7 +1305,8 @@ def build_payload(result, track_record=None):
     result.pop("home_runs", None)
 
     meta_keys = {"generated_at", "date", "suggested_parlay", "game_context", "streaks",
-                "odds_fetched_at", "recommendation_metadata", "_game_schedule"}
+                "odds_fetched_at", "freshness", "lineup_basis",
+                "recommendation_metadata", "_game_schedule"}
     all_rows = []
     family_counts = {}
     for stat, rows in result.items():
@@ -1236,6 +1365,17 @@ def build_payload(result, track_record=None):
         "date": result.get("date"),
         "generated_at": result.get("generated_at"),
         "odds_fetched_at": result.get("odds_fetched_at"),
+        # The four separate clocks (2026-08-28 P0). Carried through to the
+        # served payload -- a field computed in run_live_fetch() and dropped
+        # here would be exactly the "computed, then discarded" failure this
+        # codebase has now hit at three separate boundaries.
+        "freshness": result.get("freshness") or {
+            "model_basis_at": result.get("generated_at"),
+            "lineups_observed_at": result.get("generated_at"),
+            "market_prices_at": result.get("odds_fetched_at"),
+            "live_game_observed_at": None,
+        },
+        "lineup_basis": result.get("lineup_basis") or [],
         "recommendation_metadata": result.get("recommendation_metadata"),
         "families": families,
         "summary": {"n_props": len(all_rows), "n_top_pick": n_top_pick, "n_lean": n_lean,

@@ -31,7 +31,37 @@ import sys
 from datetime import datetime, timezone
 
 SLA_MINUTES = 15
-FRESHNESS_FIELD = "updated_at"
+
+# 2026-08-28 P0 follow-up -- CLOCK MASKING.
+#
+# This module used to gate its health decision on the single global
+# `updated_at`. That was survivable while only the price and grade channels
+# wrote it, because both stall together when dashboard-live.yml stops
+# running. Reconciliation broke that assumption: it runs inside the same
+# workflow, succeeds on its own, and would have advanced `updated_at` every
+# five minutes while sportsbook pricing or game-state observation was dead.
+# A healthy observer must never make an unhealthy source channel look
+# healthy, so the gate is now per-channel and `updated_at` is not it.
+#
+# SEMANTICS, stated once so no field can quietly stand in for another:
+#
+#   prices_checked_at        a real sportsbook observation ATTEMPT completed
+#   grades_checked_at        a real MLB game-state/settlement ATTEMPT completed
+#   reconciliation.checked_at  publication-vs-authoritative reconciliation ran
+#   *_updated_at             the corresponding FACTS actually changed
+#   updated_at               "something in the document changed" -- retained
+#                            for the overlay's own recency ordering, and
+#                            deliberately NOT a health signal
+#
+# Only the first two are REQUIRED for the product to be healthy: they are
+# the two upstreams a customer's price and settlement depend on.
+# Reconciliation is reported, never substituted -- it answers a different
+# question and cannot vouch for either upstream.
+REQUIRED_CHANNELS = {
+    "sportsbook_price": "prices_checked_at",
+    "game_state_and_settlement": "grades_checked_at",
+}
+RECONCILIATION_CHANNEL = "reconciliation"
 
 
 def _parse_iso(ts):
@@ -46,17 +76,38 @@ def _parse_iso(ts):
     return dt
 
 
-def staleness_minutes(live_state, now=None):
-    """Returns (age_minutes: float or None, reason: str). age_minutes is
-    None when the freshness field is missing/unparseable -- an unknown age
-    is treated as a degraded state by the caller, same "unknown is not
-    fresh" convention recommendation.freshness_check() already uses."""
-    now = now or datetime.now(timezone.utc)
-    dt = _parse_iso((live_state or {}).get(FRESHNESS_FIELD))
+def _channel_age(live_state, field, now):
+    """Age of one named channel clock. `reconciliation` is nested."""
+    if field == RECONCILIATION_CHANNEL:
+        raw = ((live_state or {}).get("reconciliation") or {}).get("checked_at")
+    else:
+        raw = (live_state or {}).get(field)
+    dt = _parse_iso(raw)
     if dt is None:
-        return None, f"'{FRESHNESS_FIELD}' missing or unparseable"
-    age = (now - dt).total_seconds() / 60.0
-    return age, f"'{FRESHNESS_FIELD}' is {age:.1f} minutes old"
+        return None
+    return (now - dt).total_seconds() / 60.0
+
+
+def staleness_minutes(live_state, now=None):
+    """Age of the OLDEST required channel -- the honest summary number.
+
+    Deliberately the worst channel rather than the newest write anywhere in
+    the document: a document is only as fresh as the least-recently
+    verified thing a customer depends on. Returns (age_minutes or None,
+    reason); None means at least one required channel has never reported,
+    which the caller treats as degraded, never as fresh.
+    """
+    now = now or datetime.now(timezone.utc)
+    ages = {}
+    for channel, field in REQUIRED_CHANNELS.items():
+        ages[channel] = _channel_age(live_state, field, now)
+    missing = [c for c, a in ages.items() if a is None]
+    if missing:
+        return None, ("required channel(s) never reported: "
+                      + ", ".join(sorted(missing)))
+    worst_channel = max(ages, key=lambda c: ages[c])
+    age = ages[worst_channel]
+    return age, f"oldest required channel {worst_channel!r} is {age:.1f} minutes old"
 
 
 def is_stale(live_state, now=None, sla_minutes=SLA_MINUTES):
@@ -78,10 +129,11 @@ def is_stale(live_state, now=None, sla_minutes=SLA_MINUTES):
 # future automated report looks at *why* something is stale, "grading
 # hasn't checked in 43 minutes, pricing 4 minutes" is a materially
 # different, more actionable fact than one undifferentiated "stale."
-CHANNELS = {
-    "game_state_and_settlement": "grades_checked_at",
-    "sportsbook_price": "prices_checked_at",
-}
+CHANNELS = dict(REQUIRED_CHANNELS)
+# Reported alongside the required channels so a human can see that
+# reconciliation is running -- but it is NOT in REQUIRED_CHANNELS, so it can
+# never make a stale price or grade channel pass the gate.
+CHANNELS[RECONCILIATION_CHANNEL] = RECONCILIATION_CHANNEL
 
 
 def channel_staleness(live_state, now=None, sla_minutes=SLA_MINUTES):
@@ -93,13 +145,28 @@ def channel_staleness(live_state, now=None, sla_minutes=SLA_MINUTES):
     now = now or datetime.now(timezone.utc)
     out = {}
     for channel, field in CHANNELS.items():
-        dt = _parse_iso((live_state or {}).get(field))
-        if dt is None:
-            out[channel] = (None, True)
-        else:
-            age = (now - dt).total_seconds() / 60.0
-            out[channel] = (age, age > sla_minutes)
+        age = _channel_age(live_state, field, now)
+        out[channel] = (None, True) if age is None else (age, age > sla_minutes)
     return out
+
+
+def health(live_state, now=None, sla_minutes=SLA_MINUTES):
+    """Machine-readable health, with the degraded channels NAMED.
+
+    `healthy` is true only when every REQUIRED channel is inside the SLA.
+    Reconciliation's own state is reported but never counted -- it cannot
+    vouch for an upstream it does not observe.
+    """
+    now = now or datetime.now(timezone.utc)
+    channels = channel_staleness(live_state, now=now, sla_minutes=sla_minutes)
+    degraded = sorted(c for c in REQUIRED_CHANNELS if channels[c][1])
+    return {
+        "healthy": not degraded,
+        "degraded_channels": degraded,
+        "channels": {c: {"age_minutes": a, "stale": st} for c, (a, st) in channels.items()},
+        "reconciliation_stale": channels[RECONCILIATION_CHANNEL][1],
+        "sla_minutes": sla_minutes,
+    }
 
 
 def main():

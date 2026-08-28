@@ -687,6 +687,27 @@ function renderRoute() {
 function marketBlock(p) {
   const marketOdds = fmtOdds(p.market_odds);
   if (marketOdds === null) {
+    // LINE_MOVED before the generic case (2026-08-28 P0 follow-up). Both
+    // states have market_odds == null, so a single branch told the
+    // customer "Not yet posted on FanDuel" for 17 of 23 pitcher-outs props
+    // while FanDuel was actively posting every one of them at a different
+    // number. On a COMPACT card that is worse than on the detail sheet:
+    // the compact card is what people scan, and "not posted yet" reads as
+    // "check back", not as "this number cannot be bet".
+    //
+    // The new-line price is shown as INFORMATION about the market, never
+    // paired with this row's probability or edge -- that probability was
+    // computed for the old threshold and pairing them would invent a read
+    // the model never made.
+    if (p.market_fetch_state === "LINE_MOVED") {
+      const posted = p.market_posted_line != null ? `Over ${p.market_posted_line}` : "a different line";
+      const at = p.market_posted_over != null ? ` ${fmtOdds(p.market_posted_over)}` : "";
+      return `<div class="pc-market pc-market-moved">
+        <div class="m-moved">Line moved</div>
+        <div class="m-detail">FanDuel now ${esc(posted)}${esc(at)}</div>
+        <div class="m-detail">Not bettable at our number</div>
+      </div>`;
+    }
     return `<div class="pc-market"><span class="m-detail">Not yet posted on FanDuel</span></div>`;
   }
   // Real bug, found 2026-08-26 (Part 2 item 5, richer compact cards): this
@@ -901,6 +922,24 @@ function renderToday() {
       <a class="stat-tile" href="#/games"><span class="n">${summary.n_games ?? 0}</span><span class="l">Games tonight</span></a>
     </div>`;
 
+  // FAIL CLOSED before any actionable section (2026-08-28 P0 follow-up).
+  // "Best Bets" and "More Picks" are the two surfaces that assert a
+  // recommendation; when currency cannot be proven they are replaced, not
+  // annotated. Trends, Games and the prop directory below stay visible --
+  // they are context and navigation, and neither claims a price is
+  // current. Suggested Parlay does its own, stricter per-leg check.
+  if (!boardIsActionable() && !SHOW_UNVERIFIED) {
+    html += failClosedPanel();
+    if ((DATA.schedule || []).length) {
+      html += `<section class="section"><div class="section-head"><h2>Tonight's Games</h2>
+        <span class="section-sub">Schedule only — no recommendations while the board is unverified.</span></div>
+        <div class="schedule-strip">${DATA.schedule.map(scheduleChip).join("")}</div></section>`;
+    }
+    el.innerHTML = html;
+    wireCardOpeners(el);
+    return;
+  }
+
   html += `<section class="section"><div class="section-head"><h2>Best Bets</h2>
     <span class="section-sub">Full Count's official Top Picks — probability, evidence, price, and freshness all cleared.</span></div>`;
   if (topPicks.length) {
@@ -1021,10 +1060,81 @@ function scheduleChip(g) {
 // same "computed, then discarded" bug class found repeatedly elsewhere in
 // this project). Fixed field names, and the combined odds line is now
 // explicitly labeled "Estimated" with that real caveat text surfaced.
+// A parlay leg is a FROZEN COPY (2026-08-28 P0 follow-up). The parlay
+// object is built once during full generation and written into the
+// payload; the live overlay then keeps correcting the real props
+// underneath it and never touches this copy. So a leg can go on
+// advertising a price FanDuel moved off hours ago, on a threshold that no
+// longer exists, for a batter who is no longer in the lineup -- and it
+// looks exactly as current as everything else on the page.
+//
+// The fix is to resolve every leg back to the live prop and refuse to
+// render a parlay that cannot be proven current. Legs carry `id` going
+// forward; boards built before that fall back to an exact (name, prop)
+// match, which identifies a prop uniquely on a single board. Anything
+// ambiguous, missing, moved, unpriced or non-actionable suppresses the
+// whole parlay -- a parlay is a single wager, so one bad leg invalidates
+// it entirely rather than degrading it.
+function resolveParlayLeg(leg) {
+  if (leg.id && PROPS_BY_ID.has(leg.id)) return PROPS_BY_ID.get(leg.id);
+  const matches = [...PROPS_BY_ID.values()].filter(
+    p => p.name === leg.name && p.prop === leg.prop);
+  return matches.length === 1 ? matches[0] : null;
+}
+
+function parlaySuppression(parlay) {
+  if (!boardIsActionable()) {
+    return "The board these legs were built from is no longer current, so this parlay is not being shown as a live suggestion.";
+  }
+  for (const leg of (parlay.legs || [])) {
+    const live = resolveParlayLeg(leg);
+    if (!live) {
+      return `A leg (${leg.name} — ${leg.prop}) can no longer be matched to a prop on the current board, so this parlay cannot be shown as current.`;
+    }
+    if (live.market_fetch_state === "LINE_MOVED") {
+      return `FanDuel has moved off the line for ${leg.name} — ${leg.prop}, so this parlay can no longer be placed as built.`;
+    }
+    if (live.market_odds == null) {
+      return `${leg.name} — ${leg.prop} is no longer priced on FanDuel, so this parlay can no longer be placed as built.`;
+    }
+    if (live.lineup_assumed) {
+      return `${leg.name}'s lineup spot is no longer confirmed, so this parlay is not being shown as a live suggestion.`;
+    }
+  }
+  return null;
+}
+
+// American -> decimal -> product -> American. Mirrors parlay_builder.py's
+// own combined-odds math (independent legs, conservative floor); the
+// caveat text the backend supplies about that assumption is rendered
+// alongside it unchanged.
+function combinedAmericanFromLegs(prices) {
+  if (!prices.length || prices.some(p => p == null)) return null;
+  const decimal = prices.reduce((acc, p) =>
+    acc * (p > 0 ? 1 + p / 100 : 1 + 100 / Math.abs(p)), 1);
+  if (!isFinite(decimal) || decimal <= 1) return null;
+  return decimal >= 2 ? Math.round((decimal - 1) * 100)
+                      : -Math.round(100 / (decimal - 1));
+}
+
 function suggestedParlayBlock(parlay) {
-  const legs = (parlay.legs || []).map(l =>
-    `<div class="parlay-leg"><span>${esc(l.name)} — ${esc(l.prop)}</span><span>${fmtOdds(l.market_odds) ?? "—"}</span></div>`).join("");
-  const combined = fmtOdds(parlay.combined_american_odds);
+  const suppressed = parlaySuppression(parlay);
+  if (suppressed) {
+    return `<section class="section"><div class="parlay-card parlay-card-suppressed">
+      <div class="section-head"><h2 style="font-size:16px">Suggested Parlay</h2></div>
+      <p class="parlay-note">${esc(suppressed)}</p>
+    </div></section>`;
+  }
+  // Prices come from the LIVE prop, never from the frozen leg copy.
+  const resolved = (parlay.legs || []).map(l => ({ leg: l, live: resolveParlayLeg(l) }));
+  const legs = resolved.map(({ leg, live }) =>
+    `<div class="parlay-leg"><span>${esc(leg.name)} — ${esc(leg.prop)}</span><span>${fmtOdds(live.market_odds) ?? "—"}</span></div>`).join("");
+  // The combined figure is recomputed from those same live prices. Caught
+  // by its own test: rendering live leg prices under a FROZEN combined
+  // number lets the two disagree on screen, which is a worse failure than
+  // either alone -- the parlay would show prices that no longer multiply
+  // out to the total sitting underneath them.
+  const combined = fmtOdds(combinedAmericanFromLegs(resolved.map(r => r.live.market_odds)));
   const note = parlay.naive_probability_note
     ? `<p class="parlay-note">${esc(parlay.naive_probability_note)}</p>` : "";
   const corrNotes = (parlay.correlation_notes || []).length
@@ -1113,11 +1223,24 @@ const EVIDENCE_FILTER_OPTIONS = [
 ];
 function renderProps() {
   const el = document.getElementById("page-props");
+  // All Props is a research directory rather than a recommendation
+  // surface, but it still prints prices and status chips, so the same
+  // fail-closed rule applies (2026-08-28 P0 follow-up). Unlike Today it
+  // does not hide the rows -- browsing the board is the entire purpose of
+  // this page -- it declares up front that nothing here is verified
+  // current, so a row's price and Lean/Value chip are read as research.
+  const unverifiedNotice = boardIsActionable() ? "" :
+    `<div class="fail-closed fail-closed-inline" role="alert">
+       <p class="fc-why">${esc(failClosedReason())}</p>
+       <p class="fc-what">Prices and status labels below are shown for research and are not
+       being offered as current recommendations.</p>
+     </div>`;
   const families = DATA.families || [];
   const familyOptions = families.map(f => [familyFilterValue(f.stat), `${f.label} (${f.count})`]);
 
   el.innerHTML = `
     <div class="section-head"><h2>All Props</h2><span class="section-sub" id="props-count"></span></div>
+    ${unverifiedNotice}
     <div class="filter-bar">
       <div class="filter-inline" style="display:flex;gap:8px;flex-wrap:wrap;">
         ${filterDropdown("families", "Prop type", familyOptions)}
@@ -1290,6 +1413,19 @@ function gameUmpireText(g) {
 // bookmark, or share. selectedGamePk (set by onRouteChange() from
 // #/games?game_pk=X) switches this same route between the list and one
 // game's detail view.
+// A game's lifecycle, read from the props actually attached to it rather
+// than from the frozen schedule entry (2026-08-28 P0 follow-up).
+// DATA.schedule is written once at build time and preserves its pregame
+// shape indefinitely, so a Games list built from it alone keeps presenting
+// pregame research after first pitch.
+function gameLifecycle(game_pk) {
+  const rows = [...PROPS_BY_ID.values()].filter(p => p.game_pk === game_pk);
+  if (!rows.length) return "unknown";
+  if (rows.some(p => LIVE_IN_PROGRESS_GAME_STATES.has(p.game_state))) return "live";
+  if (rows.every(p => p.game_state === "final")) return "final";
+  return "pregame";
+}
+
 function renderGames() {
   const el = document.getElementById("page-games");
   const games = DATA.schedule || [];
@@ -1309,13 +1445,72 @@ function renderGames() {
     el.innerHTML = `<div class="empty-state"><div class="es-icon">🗓️</div><h3>No games with a research breakdown yet</h3><p>Check back once tonight's games are set.</p></div>`;
     return;
   }
-  el.innerHTML = `<div class="section-head"><h2>Games</h2><span class="section-sub">${games.length} games tonight</span></div>
+  // Route-level fail-closed: #/games is deep-linkable and lists game reads
+  // with sportsbook numbers underneath (2026-08-28 P0 follow-up).
+  const gamesUnverified = (boardIsActionable() || SHOW_UNVERIFIED) ? "" :
+    `<div class="fail-closed fail-closed-inline" role="alert">
+       <p class="fc-why">${esc(failClosedReason())}</p>
+       <p class="fc-what">Game reads below are research only, not current recommendations.</p>
+     </div>`;
+  el.innerHTML = gamesUnverified + `<div class="section-head"><h2>Games</h2><span class="section-sub">${games.length} games tonight</span></div>
     <div class="game-list">${games.map(gameCard).join("")}</div>`;
 }
+// A game highlight is a FROZEN COPY, exactly like a parlay leg
+// (2026-08-28 P0 follow-up). build_dashboard's _game_pick_sections()
+// summarize() writes name/prop/hit_probability/market_odds/price_clears/why
+// once at build time; the live overlay then keeps correcting the real prop
+// underneath it and never touches this copy. Rendering the copied numbers
+// meant a game drill-down could advertise a probability and a FanDuel price
+// that had been superseded hours earlier.
+//
+// Same rule as the parlay: ONE canonical prop identity. Resolve the id
+// through PROPS_BY_ID and render the CURRENT prop. Never mutate the copy,
+// never compute a second opinion here.
+function resolveGamePick(p) {
+  if (p.id && PROPS_BY_ID.has(p.id)) return PROPS_BY_ID.get(p.id);
+  const matches = [...PROPS_BY_ID.values()].filter(
+    x => x.name === p.name && x.prop === p.prop);
+  return matches.length === 1 ? matches[0] : null;
+}
+
 function gamePickLine(p) {
+  const live = resolveGamePick(p);
+  if (!live) {
+    // The prop is gone from the canonical board. Say so rather than let the
+    // frozen copy stand in for it.
+    return `<div class="game-pick-line game-pick-void">
+        <span>${esc(p.name)} — ${esc(p.prop)}</span>
+        <span class="gp-note">No longer on the board</span>
+      </div>`;
+  }
+  const started = (live.game_state || "pregame") !== "pregame";
+  if (started) {
+    // Past first pitch this is preserved context, not an opportunity. The
+    // price is deliberately withheld: a sportsbook number beside a live
+    // game reads as something you can still take.
+    return `<div class="game-pick-line game-pick-historical">
+        <span>${esc(p.name)} — ${esc(p.prop)}</span>
+        <span class="gp-note">Pregame read · game underway</span>
+      </div>`;
+  }
+  if (!boardIsActionable() && !SHOW_UNVERIFIED) {
+    return `<div class="game-pick-line game-pick-unverified">
+        <span>${esc(p.name)} — ${esc(p.prop)}</span>
+        <span class="gp-note">Unverified — not a current read</span>
+      </div>`;
+  }
+  if (live.market_fetch_state === "LINE_MOVED") {
+    const posted = live.market_posted_line != null ? `Over ${live.market_posted_line}` : "a different line";
+    return `<div class="game-pick-line game-pick-moved">
+        <span>${esc(p.name)} — ${esc(p.prop)}</span>
+        <span class="gp-note">Line moved · FanDuel now ${esc(posted)}</span>
+      </div>`;
+  }
+  const priceText = live.market_odds != null ? " · " + fmtOdds(live.market_odds)
+                                             : " · not priced";
   return `<div class="game-pick-line">
-      <span>${esc(p.name)} — ${esc(p.prop)}</span>
-      <span>${pctBig(p.hit_probability)}${p.market_odds != null ? " · " + fmtOdds(p.market_odds) : ""}</span>
+      <span>${esc(live.name)} — ${esc(live.prop)}</span>
+      <span>${pctBig(live.hit_probability)}${priceText}</span>
     </div>`;
 }
 // Real bug, found 2026-08-26 (games-drill-down honesty audit): the backend
@@ -1401,6 +1596,22 @@ function bullpenBlock(g) {
 // exists to lead into, reusing the same multi-select-capable applyFilters()
 // engine rather than building a second, parallel prop list here.
 function renderGameDetail(el, g) {
+  // Deep links land here directly, so the fail-closed and lifecycle
+  // banners have to be applied HERE, not inherited from Today
+  // (2026-08-28 P0 follow-up). A direct link must be exactly as safe as
+  // arriving from the home page.
+  const lifecycle = gameLifecycle(g.game_pk);
+  const lifecycleNotice = lifecycle === "pregame" ? "" :
+    `<div class="fail-closed fail-closed-inline" role="alert">
+       <p class="fc-why">${lifecycle === "final" ? "This game is over." : "This game is underway."}</p>
+       <p class="fc-what">Everything below is the pregame research as it stood before first pitch,
+       kept for reference. It is not a current wagering opportunity.</p>
+     </div>`;
+  const unverifiedNotice = (boardIsActionable() || SHOW_UNVERIFIED) ? "" :
+    `<div class="fail-closed fail-closed-inline" role="alert">
+       <p class="fc-why">${esc(failClosedReason())}</p>
+       <p class="fc-what">Nothing on this page is being offered as a current recommendation.</p>
+     </div>`;
   const wxText = gameWeatherText(g);
   const ump = gameUmpireText(g);
   const picks = gamePickSections(g, true);
@@ -1412,6 +1623,7 @@ function renderGameDetail(el, g) {
     <a class="link-btn" href="#/games" style="display:inline-block;margin-bottom:14px;">← All games</a>
     <div class="section-head"><h2>${esc(g.away_team || "")} @ ${esc(g.home_team || "")}</h2>
       <span class="section-sub">${gameTimeLabel(g.game_start)}</span></div>
+    ${lifecycleNotice}${unverifiedNotice}
     <div class="game-meta-row" style="margin-bottom:16px;">
       ${g.away_sp ? `<span>${esc(g.away_sp)} vs ${esc(g.home_sp || "TBD")}</span>` : ""}
       ${wxText ? `<span>${esc(wxText)}</span>` : ""}
@@ -1525,6 +1737,16 @@ const MY_BOARD_SORTERS = {
 };
 function renderWatchlist() {
   const el = document.getElementById("page-watchlist");
+  // My Board is a deep-linkable route showing saved props with prices and
+  // status chips, so it carries the same actionability obligation as Today
+  // (2026-08-28 P0 follow-up). A customer can bookmark #/watchlist and
+  // never pass through the home page.
+  const unverifiedNotice = (boardIsActionable() || SHOW_UNVERIFIED) ? "" :
+    `<div class="fail-closed fail-closed-inline" role="alert">
+       <p class="fc-why">${esc(failClosedReason())}</p>
+       <p class="fc-what">Your saved props are shown for reference. None of them is being
+       offered as a current recommendation.</p>
+     </div>`;
   const items = [...watchlist].map(id => PROPS_BY_ID.get(id)).filter(Boolean);
   if (!items.length) {
     // Real bug, found 2026-08-25: a saved id's canonical prop id bakes in
@@ -1558,7 +1780,7 @@ function renderWatchlist() {
   const rows = items.map(p => ({ p, changes: sinceYouSavedChanges(p) }))
     .sort(MY_BOARD_SORTERS[sortKey] || MY_BOARD_SORTERS.game_time);
 
-  el.innerHTML = `<div class="section-head"><h2>My Board</h2><span class="section-sub">${items.length} saved</span></div>
+  el.innerHTML = unverifiedNotice + `<div class="section-head"><h2>My Board</h2><span class="section-sub">${items.length} saved</span></div>
     <div class="filter-bar">
       <select class="filter-select" id="mb-sort" aria-label="Sort My Board">
         <option value="game_time">Sort: Game time</option>
@@ -1719,6 +1941,21 @@ function weatherText(wx) {
 // A stale/failed price must never look equally current as a verified one.
 function priceFreshnessState(p) {
   if (p.market_odds == null) {
+    // LINE_MOVED before the generic unposted case (2026-08-28 P0). "FanDuel
+    // hasn't posted a price for this line yet" was shown for Drew Anderson's
+    // Over 11.5 Outs Recorded at the same moment FanDuel was posting his
+    // Over 14.5 at -132. Both rows have market_odds == null, so the old
+    // single branch could not tell them apart -- and told the customer the
+    // book was silent when it was not. The number we display cannot be
+    // bought at the line we display, and that is the fact worth saying.
+    if (p.market_fetch_state === "LINE_MOVED") {
+      const posted = p.market_posted_line != null ? `Over ${p.market_posted_line}` : "a different line";
+      const at = p.market_posted_over != null ? ` at ${fmtOdds(p.market_posted_over)}` : "";
+      return { label: `Line moved · FanDuel now ${posted}`, tone: "stale",
+        detail: `FanDuel has moved off this number. They're posting ${posted}${at} for this market, `
+          + `so this projection can't be bet at the line shown. The projection is left at its own line `
+          + `rather than quietly re-pointed at FanDuel's -- a different line is a different bet.` };
+    }
     return { label: "Not posted", tone: "unposted", detail: "FanDuel hasn't posted a price for this line yet." };
   }
   const state = p.market_fetch_state;
@@ -1767,6 +2004,17 @@ function whyNotTopPickReason(p) {
 }
 
 function detailBody(p) {
+  // The detail sheet is the single most recommendation-shaped surface in
+  // the product -- probability hero, FanDuel price, edge, Top Pick
+  // language -- and it opens from search, My Board and game pages, not
+  // only from Today. It gets the notice first, above everything else it
+  // asserts (2026-08-28 P0 follow-up).
+  const unverifiedNotice = (boardIsActionable() || SHOW_UNVERIFIED) ? "" :
+    `<div class="fail-closed fail-closed-inline" role="alert">
+       <p class="fc-why">${esc(failClosedReason())}</p>
+       <p class="fc-what">This is research. The probability and price below are not being
+       offered as a current recommendation.</p>
+     </div>`;
   const eq = evidenceQuality(p);
   const game = gameContextFor(p);
   const freshness = priceFreshnessState(p);
@@ -1854,6 +2102,7 @@ function detailBody(p) {
       <h2 id="detail-title">${esc(p.name)}</h2>
       <div class="d-sub">${esc(p.prop)} · ${esc(p.team || p.matchup || "")}</div>
     </div>
+    ${unverifiedNotice}
     <div class="detail-hero">
       <div>
         <div class="prob-big">${pctBig(p.hit_probability)}</div>
@@ -2104,7 +2353,12 @@ function initSearch() {
     if (!teams.length && !games.length && !players.length && !props.length) {
       results.innerHTML = `<div class="search-empty">No matches for "${esc(query)}"</div>`;
     } else {
-      let html = "";
+      // Search results carry prices and open the detail sheet, so the
+      // notice belongs here too (2026-08-28 P0 follow-up). Search is
+      // reachable from every route, including ones a customer deep-linked
+      // into, so it cannot rely on Today having warned them.
+      let html = (boardIsActionable() || SHOW_UNVERIFIED) ? "" :
+        `<div class="search-unverified">Research only — these numbers aren't verified as current.</div>`;
       if (teams.length) {
         html += `<div class="search-group-label">Teams</div>`;
         html += teams.map(t => `<button class="search-item" data-team="${esc(t.name)}">
@@ -2219,6 +2473,171 @@ function liveFreshnessState(nowMs, doc, props) {
 
 let LIVE_FRESHNESS = { applicable: false, stale: false, ageSeconds: null, reason: null };
 
+// ── BOARD-AGE FRESHNESS (2026-08-28 P0) ──────────────────────────────────
+// liveFreshnessState() above only applies once a game is IN PROGRESS -- it
+// watches the GRADING channel. Nothing watched the thing that actually went
+// wrong on 2026-08-28: the board's own model basis was 10.1 hours old while
+// the price overlay on top of it was 2 minutes old, and the freshness bar
+// reported that as the neutral sentence "Board built 10 hours ago."
+//
+// recommendation.py already fails Top Pick status closed past these limits
+// and had done so correctly all day. The customer was simply never told.
+// Mirrored here by hand (test_board_first_paint.py asserts the numbers
+// match recommendation.py, so they cannot drift apart silently).
+const MAX_BOARD_AGE_SECONDS = 4 * 60 * 60;
+const MAX_PRICE_AGE_SECONDS = 45 * 60;
+
+// Whether this browser has successfully applied a live overlay yet.
+// "pending" is the honest state before the first poll resolves -- it is NOT
+// the same as "fresh", and must never render as though it were.
+let LIVE_OVERLAY_STATE = "pending";
+
+// The four clocks a board actually carries, resolved from whichever source
+// currently owns each (2026-08-28 P0). model basis and lineup observation
+// come from the build; market price and live-game observation are advanced
+// by the live overlay, so those prefer the overlay's own stamps.
+function boardClocks(doc) {
+  const f = (doc && doc.freshness) || {};
+  return {
+    model_basis_at: f.model_basis_at || (doc && doc.generated_at) || null,
+    lineups_observed_at: f.lineups_observed_at || (doc && doc.generated_at) || null,
+    market_prices_at: (doc && doc.prices_updated_at) || f.market_prices_at
+      || (doc && doc.odds_fetched_at) || null,
+    live_game_observed_at: (doc && doc.grades_checked_at) || f.live_game_observed_at || null,
+  };
+}
+
+function boardFreshnessState(nowMs, doc) {
+  const builtMs = timeMs(boardClocks(doc).model_basis_at);
+  if (builtMs == null) {
+    return { state: "unknown", ageSeconds: null, priceAgeSeconds: null,
+             reason: "board generation time unknown" };
+  }
+  const ageSeconds = Math.max(0, Math.round((nowMs - builtMs) / 1000));
+  const pricedMs = timeMs(boardClocks(doc).market_prices_at);
+  const priceAgeSeconds = pricedMs == null ? null : Math.max(0, Math.round((nowMs - pricedMs) / 1000));
+  if (ageSeconds > MAX_BOARD_AGE_SECONDS) {
+    return { state: "stale", ageSeconds, priceAgeSeconds, reason: "board_age_exceeded" };
+  }
+  if (priceAgeSeconds == null) {
+    return { state: "unknown", ageSeconds, priceAgeSeconds: null,
+             reason: "price fetch time unknown" };
+  }
+  if (priceAgeSeconds > MAX_PRICE_AGE_SECONDS) {
+    return { state: "stale", ageSeconds, priceAgeSeconds, reason: "price_age_exceeded" };
+  }
+  return { state: "fresh", ageSeconds, priceAgeSeconds, reason: null };
+}
+
+function _hoursText(seconds) {
+  if (seconds == null) return "an unknown time";
+  const mins = Math.round(seconds / 60);
+  if (mins < 60) return `${mins} minutes`;
+  return `${(seconds / 3600).toFixed(1)} hours`;
+}
+
+// The board-level banner. Deliberately states the MODEL BASIS age, not the
+// price age -- a fresh price sitting on top of a 10-hour-old projection is
+// the exact combination that made this incident hard to see.
+// FAIL CLOSED (2026-08-28 P0 follow-up). A banner is a description; this
+// is a decision.
+//
+// The first pass added a warning strip and left every card rendering
+// exactly as before -- same prices, same edges, same "Top Pick" chips.
+// That is not failing closed. A customer scanning cards does not
+// re-read a banner before each one, and the cards themselves still
+// asserted currency they could not back. So when currency cannot be
+// PROVEN, the actionable surfaces stop being presented as actionable at
+// all, and the research content stays reachable behind an explicit choice.
+//
+// Three independent ways currency can fail to be proven, all treated the
+// same because a customer cannot act on any of them:
+//   * the model/lineup basis is past its actionability limit
+//   * prices are past theirs, or their age is unknown
+//   * this browser never managed to apply a live overlay, so what is on
+//     screen is the base payload and its real state is unknown
+// Reconciliation adds a fourth once the observer has run: publication
+// provably does not match authoritative state.
+function boardIsActionable() {
+  if (LIVE_OVERLAY_STATE === "unavailable") return false;
+  const fresh = boardFreshnessState(Date.now(), DATA);
+  if (fresh.state !== "fresh") return false;
+  const rec = DATA.reconciliation;
+  if (rec && rec.open && Object.keys(rec.open).length) return false;
+  return true;
+}
+
+function failClosedReason() {
+  if (LIVE_OVERLAY_STATE === "unavailable") {
+    return "This browser couldn't reach the live price feed, so we can't prove these numbers are current.";
+  }
+  const fresh = boardFreshnessState(Date.now(), DATA);
+  if (fresh.state === "stale" && fresh.reason === "price_age_exceeded") {
+    return `Prices were last verified ${_hoursText(fresh.priceAgeSeconds)} ago, past the point where we'll present them as current.`;
+  }
+  if (fresh.state === "stale") {
+    return `The projections below were built ${_hoursText(fresh.ageSeconds)} ago, so lineups and matchups may have changed.`;
+  }
+  if (fresh.state === "unknown") {
+    return "We can't establish how old this board is.";
+  }
+  const rec = DATA.reconciliation;
+  const n = rec && rec.open ? Object.keys(rec.open).length : 0;
+  if (n) {
+    return `${n} thing${n === 1 ? "" : "s"} on this board no longer match live data (a lineup, a line, or the board's own age). A rebuild has been requested.`;
+  }
+  return "We can't prove this board is current.";
+}
+
+// Replaces an actionable section rather than decorating it. The research
+// is still one click away -- withholding it entirely would be its own kind
+// of dishonesty -- but it is never the default presentation, and what the
+// viewer opts into is explicitly labelled as not-current.
+function failClosedPanel() {
+  return `<section class="section"><div class="fail-closed" role="alert">
+    <h2 class="fc-title">Not showing picks as current</h2>
+    <p class="fc-why">${esc(failClosedReason())}</p>
+    <p class="fc-what">Nothing here is being offered as a bet right now. The numbers are still
+    readable as research, but they haven't been verified against FanDuel or tonight's lineups
+    recently enough for us to stand behind them.</p>
+    <button class="btn" type="button" onclick="revealUnverified()">Show anyway (research only)</button>
+  </div></section>`;
+}
+
+let SHOW_UNVERIFIED = false;
+function revealUnverified() {
+  SHOW_UNVERIFIED = true;
+  renderRoute();
+}
+
+function boardStalenessBanner(fresh) {
+  if (LIVE_OVERLAY_STATE === "unavailable") {
+    return `<div class="board-alert board-alert-stale" role="alert">
+      <strong>Prices shown may not be current.</strong>
+      This browser could not reach the live price feed, so the numbers below are
+      from the last full board build (${esc(_hoursText(fresh.ageSeconds))} ago) and
+      have not been re-checked against FanDuel. Check FanDuel directly before betting.
+    </div>`;
+  }
+  if (fresh.state === "stale") {
+    const why = fresh.reason === "price_age_exceeded"
+      ? `Prices were last verified ${esc(_hoursText(fresh.priceAgeSeconds))} ago.`
+      : `The projections below were built ${esc(_hoursText(fresh.ageSeconds))} ago, so
+         lineups, scratches and matchups may have changed since.`;
+    return `<div class="board-alert board-alert-stale" role="alert">
+      <strong>This board is out of date.</strong> ${why}
+      Nothing here is being offered as a current recommendation until it rebuilds.
+    </div>`;
+  }
+  if (fresh.state === "unknown") {
+    return `<div class="board-alert board-alert-stale" role="alert">
+      <strong>Board freshness unknown.</strong> ${esc(fresh.reason || "")}. Treat these
+      numbers as unverified rather than current.
+    </div>`;
+  }
+  return "";
+}
+
 function liveFreshnessAgoText(seconds) {
   if (seconds == null) return "unknown";
   const mins = Math.round(seconds / 60);
@@ -2240,9 +2659,16 @@ function liveStaleChip(p) {
 
 function renderFreshness() {
   const bar = document.getElementById("freshness-bar");
+  // Each clock named for what it actually measures (2026-08-28 P0). The
+  // old bar printed "Board built Xh ago · odds updated Ym ago", which is
+  // two of the four and reads as reassuring precision -- the missing one
+  // was lineups, the exact clock that was 10 hours behind reality.
+  const clocks = boardClocks(DATA);
   const parts = [];
-  if (DATA.generated_at) parts.push(`Board built ${_agoText(DATA.generated_at)}`);
-  if (DATA.prices_updated_at) parts.push(`odds updated ${_agoText(DATA.prices_updated_at)}`);
+  if (clocks.model_basis_at) parts.push(`Projections ${_agoText(clocks.model_basis_at)}`);
+  if (clocks.lineups_observed_at) parts.push(`lineups checked ${_agoText(clocks.lineups_observed_at)}`);
+  if (clocks.market_prices_at) parts.push(`odds ${_agoText(clocks.market_prices_at)}`);
+  if (clocks.live_game_observed_at) parts.push(`live scores ${_agoText(clocks.live_game_observed_at)}`);
   const dateLabel = DATA.date ? LOCAL_DATE_FMT.format(new Date(DATA.date + "T12:00:00Z")) : "";
   const wasStale = LIVE_FRESHNESS.applicable && LIVE_FRESHNESS.stale;
   LIVE_FRESHNESS = liveFreshnessState(Date.now(), DATA, [...PROPS_BY_ID.values()]);
@@ -2253,7 +2679,14 @@ function renderFreshness() {
       : `LIVE DATA STALE — last verified ${liveFreshnessAgoText(LIVE_FRESHNESS.ageSeconds)}`;
     staleHtml = ` · <span class="stale-flag">${esc(msg)}</span>`;
   }
+  const boardFresh = boardFreshnessState(Date.now(), DATA);
+  if (boardFresh.state !== "fresh" || LIVE_OVERLAY_STATE === "unavailable") {
+    staleHtml += ` · <span class="stale-flag">${esc(
+      LIVE_OVERLAY_STATE === "unavailable" ? "PRICES UNVERIFIED" : "BOARD OUT OF DATE")}</span>`;
+  }
   bar.innerHTML = `${esc(dateLabel)}${dateLabel ? " · " : ""}${esc(parts.join(" · "))}${staleHtml}`;
+  const alertHost = document.getElementById("board-alert");
+  if (alertHost) alertHost.innerHTML = boardStalenessBanner(boardFresh);
   // Only re-render prop cards when the verdict actually flips -- avoids a
   // needless full re-render every 60s while still guaranteeing per-prop
   // chips (liveStaleChip) never lag more than one tick behind the bar.
@@ -2276,6 +2709,17 @@ const LIVE_PRICE_FIELDS = new Set([
   // dashboard/live_state.py's PRICE_FIELDS by hand, same as every other
   // entry here.
   "posted_implied", "market_fair", "market_fair_method", "edge_vs_fair",
+  // 2026-08-28 P0: what FanDuel posts when it is not posting OUR line.
+  // This hand-synced duplicate of live_state.PRICE_FIELDS is the THIRD
+  // whitelist a new live field has to clear (refresh_prices.LIVE_FIELDS
+  // and live_state.PRICE_FIELDS are the other two), and the only one with
+  // no mechanical link to the source of truth -- missing it here produces
+  // exactly one symptom: the backend computes the field correctly, the
+  // overlay carries it correctly, and the UI silently never sees it.
+  // test_market_line_moved.py now asserts these two sets match, so the
+  // next person adding a live field gets a failing test instead of a
+  // field that vanishes at the browser.
+  "market_posted_line", "market_posted_needs", "market_posted_over",
 ]);
 const LIVE_SETTLEMENT_FIELDS = new Set([
   "settlement_state", "settlement_authority", "settlement_observed_at",
@@ -2321,6 +2765,7 @@ function applyFact(target, source, fields, stamp) {
   }
 }
 function ingestLiveDocument(fresh) {
+  if (fresh && fresh.reconciliation) LIVE_CACHE.reconciliation = fresh.reconciliation;
   for (const [id, delta] of Object.entries(fresh.props || {})) {
     const cached = LIVE_CACHE.props[id] || (LIVE_CACHE.props[id] = { _field_updated_at: {} });
     cached._field_updated_at = cached._field_updated_at || {};
@@ -2411,6 +2856,10 @@ function applyCachedLive() {
       if (fieldAt != null) p._field_updated_at[field] = (delta._field_updated_at || {})[field];
     }
   }
+  // Reconciliation is a whole re-derived snapshot, not a per-prop delta --
+  // it is what tells the page that publication provably does not match
+  // authoritative state, which is one of the four fail-closed conditions.
+  if (LIVE_CACHE.reconciliation) DATA.reconciliation = LIVE_CACHE.reconciliation;
   if (LIVE_CACHE.prices_updated_at) DATA.prices_updated_at = LIVE_CACHE.prices_updated_at;
   if (LIVE_CACHE.grades_updated_at) DATA.grades_updated_at = LIVE_CACHE.grades_updated_at;
   if (LIVE_CACHE.grades_checked_at) DATA.grades_checked_at = LIVE_CACHE.grades_checked_at;
@@ -2418,9 +2867,14 @@ function applyCachedLive() {
   refreshSummary();
   return changed;
 }
-async function pollLive() {
+// `silent` is used for the one boot-time call, which runs BEFORE
+// initRouter() has parsed the route: ingest the overlay, but let boot's own
+// initRouter()/renderFreshness() do the first paint rather than rendering a
+// route that has not been resolved yet.
+async function pollLive({ silent = false } = {}) {
   try {
     const fresh = await fetchJSON("live.json");
+    LIVE_OVERLAY_STATE = "applied";
     // grades_checked_at/prices_checked_at MUST be part of this dedup key,
     // not just the *_updated_at triplet: a heartbeat-only poll (system
     // healthy, nothing else changed this cycle) would otherwise be
@@ -2435,9 +2889,24 @@ async function pollLive() {
     lastPollStamp = stamp;
     ingestLiveDocument(fresh);
     const changed = applyCachedLive();
+    if (silent) return;
     if (changed > 0) { renderRoute(); }
     renderFreshness();
-  } catch (e) { /* a missed poll just tries again next interval */ }
+  } catch (e) {
+    // A missed poll on an ALREADY-OVERLAID board just tries again next
+    // interval -- the numbers on screen are still real, just a cycle old.
+    // Never having applied one at all is a different situation: the board
+    // is showing the base data.json values, which carry prices from the
+    // last full build and no stale/suppression flags whatsoever. On
+    // 2026-08-28 that difference was 1,691 of 2,584 props showing a
+    // different price than the current one, and 1,897 rows rendering as
+    // NOT stale that the overlay marks stale. Say so rather than let the
+    // base payload pass as current.
+    if (LIVE_OVERLAY_STATE === "pending") {
+      LIVE_OVERLAY_STATE = "unavailable";
+      if (!silent) renderFreshness();
+    }
+  }
 }
 
 // Replaces the old forced `location.reload()` every 30 minutes: fetch the
@@ -2498,6 +2967,16 @@ async function boot() {
     return;
   }
   indexProps();
+  // Apply the live overlay BEFORE the first paint (2026-08-28 P0).
+  // data.json alone is the base payload: prices as of the last full build,
+  // stale=false on every row, and no suppression reasons -- all of which
+  // live exclusively in live.json. Rendering first and overlaying later
+  // meant every page load briefly showed a fail-OPEN board, and a browser
+  // that could never reach live.json showed one permanently. Awaited, and
+  // failing closed on error, so the first thing a customer sees is either
+  // the overlaid truth or an explicit warning -- never the base payload
+  // wearing the overlay's credibility.
+  await pollLive({ silent: true });
   updateWatchCount();
   initRouter();
   initSearch();
@@ -2516,7 +2995,6 @@ async function boot() {
   // one small JSON GET, not the multi-minute FanGraphs/Statcast/FanDuel
   // pull Dashboard Refresh itself avoids running too often for.
   setInterval(pollFullBoard, 3 * 60000);
-  pollLive();
 
   document.querySelectorAll("[data-close-detail]").forEach(el => el.addEventListener("click", closeDetail));
   document.addEventListener("keydown", e => { if (e.key === "Escape") closeDetail(); });

@@ -408,6 +408,79 @@ def market_evidence_for_row(observation, row):
     }
 
 
+def posted_line_for_subject(family, values, row):
+    """Does the book post THIS subject's market at a line other than ours?
+
+    ``attach_market_prices`` matches on the exact threshold we published, so
+    a row whose threshold the book does not offer simply fails to match. The
+    caller then has to decide what that means, and until now it only had one
+    answer: ``NOT_POSTED``. That answer is wrong in a specific and expensive
+    way, proven live on 2026-08-28 -- Drew Anderson's board row read "Over
+    11.5 Outs Recorded / NOT_POSTED" at the same moment FanDuel was posting
+    Drew Anderson Outs Recorded Over 14.5 at -132. The row was built at
+    06:31 UTC when no outs market existed for him yet, so the threshold was
+    model-anchored to his average workload; the book later posted a real
+    line three outs higher and nothing ever revisited the row.
+
+    "The book offers nothing here" and "the book offers this, at a number we
+    are not tracking" are different facts with different consequences. The
+    first is a genuine absence. The second means the price we display cannot
+    be bought at the line we display, which is the more dangerous of the two
+    precisely because it looks like ordinary missing data.
+
+    Returns None when the subject is absent from the observation entirely
+    (a true absence), otherwise a dict describing what the book actually
+    posts for it. Deliberately does NOT re-point the row at the book's line:
+    a different threshold is a different prediction with a different
+    probability, and silently migrating one would let the board be graded on
+    a bet it never made.
+    """
+    proj = row.get("projection") or {}
+    stat = STAT_ALIASES.get(proj.get("stat") or row.get("stat"),
+                            proj.get("stat") or row.get("stat"))
+    needs = proj.get("needs")
+    values = values or {}
+    if needs is None:
+        return None
+
+    if family in ("strikeouts", "pitcher_outs"):
+        entry = values.get(normalize_name(row.get("name")))
+        if not entry or entry.get("needs") is None:
+            return None
+        if entry["needs"] == needs:
+            return None
+        return {"subject": entry.get("player") or row.get("name"),
+                "our_needs": needs, "posted_needs": [entry["needs"]],
+                "posted_line": entry.get("line"),
+                "posted_over": entry.get("over"), "posted_under": entry.get("under")}
+
+    if family == "combined_strikeouts":
+        entry = values.get(row.get("matchup"))
+        rungs = (entry or {}).get("rungs") or {}
+        if not rungs or needs in rungs:
+            return None
+        posted = sorted(rungs)
+        return {"subject": row.get("matchup"), "our_needs": needs,
+                "posted_needs": posted, "posted_line": posted[0] - 0.5,
+                "posted_over": rungs[posted[0]], "posted_under": None}
+
+    if family == "general_batter":
+        entry = values.get(normalize_name(row.get("name"))) or {}
+        # Keyed by (stat, needs). Only rungs of the SAME stat are evidence
+        # that this player's market exists -- a posted HITS line says
+        # nothing about whether a DOUBLES line was offered.
+        posted = sorted(n for (s, n) in entry if s == stat and n is not None)
+        if not posted or needs in posted:
+            return None
+        return {"subject": row.get("name"), "our_needs": needs,
+                "posted_needs": posted, "posted_line": posted[0] - 0.5,
+                "posted_over": entry.get((stat, posted[0])), "posted_under": None}
+
+    # first_inning is a fixed 0.5 game-level line with no ladder to move
+    # along, so there is no such thing as a threshold mismatch for it.
+    return None
+
+
 def _market_pages(event_id, tabs):
     markets = []
     failures = []

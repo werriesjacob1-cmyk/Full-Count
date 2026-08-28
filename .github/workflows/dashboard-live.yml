@@ -11,6 +11,9 @@ on:
 
 permissions:
   contents: write
+  # Reconciliation asks for a canonical rebuild when publication stops
+  # matching authoritative state. It never writes docs/data.json itself.
+  actions: write
 
 concurrency:
   # Default single-pending semantics deliberately coalesce obsolete five-
@@ -122,6 +125,19 @@ jobs:
           fi
           python3 dashboard/refresh_prices.py
 
+      - name: Reconcile publication against authoritative state
+        id: reconcile
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+        run: |
+          if [ ! -f docs/data.json ]; then
+            echo "docs/data.json does not exist yet; nothing to reconcile."
+            exit 0
+          fi
+          python3 dashboard/run_reconciliation.py
+
       - name: Commit and push live state
         if: always()
         run: |
@@ -161,4 +177,15 @@ jobs:
         if: always() && (steps.grades.outcome == 'failure' || steps.prices.outcome == 'failure')
         run: |
           echo "::error::At least one live channel failed. Any successful channel was preserved and committed."
+          exit 1
+
+      - name: Report unreconciled publication
+        # Deliberately AFTER the commit step, and deliberately not fatal to
+        # it: a mismatch we could not act on must still be recorded in
+        # live.json so the site can fail closed on it, and must still be
+        # visible in Actions. It re-fires every cycle until publication
+        # actually matches -- asking for a rebuild never clears it.
+        if: always() && steps.reconcile.outcome == 'failure'
+        run: |
+          echo "::error::Published board does not match authoritative state (board age, confirmed lineup, or a moved line) and no rebuild was started this cycle. See the reconciliation step for the open mismatches."
           exit 1
