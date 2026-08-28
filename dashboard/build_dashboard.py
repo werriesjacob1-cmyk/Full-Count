@@ -382,7 +382,10 @@ def _select_market_evidence(items, stat):
 
 def _clean_candidate_rows(rows, schedule):
     out = []
+    quarantined = []
+    considered = 0
     for r in rows:
+        considered += 1
         game_pk = r.get("game_pk")
         proj = r.get("projection") or {}
         stat = proj.get("stat")
@@ -534,9 +537,86 @@ def _clean_candidate_rows(rows, schedule):
             "batting_order": _derive_batting_order(
                 (r.get("signals") or {}).get("lineup_slot")),
         }
-        cleaned["id"] = canonical_prop_id(cleaned)
+        # IDENTITY QUARANTINE BOUNDARY.
+        #
+        # On 2026-08-28 three consecutive Dashboard Refresh runs (07:11,
+        # 12:35, 14:43 UTC) died here with
+        #     ValueError: prop has no stable player/combo/game-level subject
+        # after successfully generating 972 candidates across 15 games. One
+        # unidentifiable row discarded the entire board, and production
+        # served a 06:32 board for nine hours while live prices kept
+        # updating on top of it -- a stale board wearing fresh prices.
+        #
+        # A row without an authoritative player/combo/game subject cannot be
+        # settled, so it must never reach a customer. But it also must not
+        # be able to delete hundreds of rows that ARE identifiable. It is
+        # excluded and recorded.
+        #
+        # Deliberately NOT a blanket try/except continue: identity failure at
+        # scale means the upstream identity source is broken, and publishing
+        # "most of" a corrupt board is worse than publishing none. Past the
+        # threshold below this still fails closed.
+        #
+        # An identity is NEVER synthesized -- not from the display name, not
+        # from a hash, not from position in the list. A fabricated subject
+        # would settle a wager against a player we cannot prove we meant.
+        try:
+            cleaned["id"] = canonical_prop_id(cleaned)
+        except ValueError as exc:
+            quarantined.append({
+                "reason": str(exc),
+                "stat": stat,
+                "type": r.get("type"),
+                "name": r.get("name"),
+                "player_id": r.get("player_id"),
+                "combo_player_ids": r.get("combo_player_ids"),
+                "game_pk": game_pk,
+                "team": r.get("team"),
+                "matchup": r.get("matchup"),
+                "projection": proj,
+                "lineup_assumed": r.get("lineup_assumed"),
+                "market_side": market_side,
+            })
+            continue
         out.append(cleaned)
+
+    _assert_identity_not_systemically_broken(quarantined, considered, out)
     return out
+
+
+# Up to this many unidentifiable rows are treated as isolated data-quality
+# blips and quarantined. Beyond it, the rate test below applies.
+QUARANTINE_ABSOLUTE_FLOOR = 5
+# ...and past the floor, this share of the batch. 2% of a ~970-candidate
+# board is ~19 rows: comfortably above any plausible one-off, far below the
+# scale that would indicate the upstream identity source itself is broken.
+QUARANTINE_MAX_RATE = 0.02
+
+
+class IdentityCorruption(Exception):
+    """Identity failures are widespread enough that the board must not ship."""
+
+
+def quarantine_budget(considered):
+    """The explicit, testable rule. Isolated blips pass; systemic breakage
+    does not."""
+    return max(QUARANTINE_ABSOLUTE_FLOOR, int(considered * QUARANTINE_MAX_RATE))
+
+
+def _assert_identity_not_systemically_broken(quarantined, considered, out):
+    if not quarantined:
+        return
+    budget = quarantine_budget(considered)
+    sample = quarantined[:3]
+    if len(quarantined) > budget:
+        raise IdentityCorruption(
+            f"{len(quarantined)} of {considered} candidate(s) have no stable "
+            f"settlement identity (budget {budget}). This is systemic, not an "
+            f"isolated bad row, so the board fails closed rather than "
+            f"publishing a partially-identified surface. Examples: {sample}")
+    log(f"  QUARANTINED {len(quarantined)} of {considered} candidate(s) with no "
+        f"stable settlement identity (budget {budget}); {len(out)} published. "
+        f"Examples: {sample}")
 
 
 def run_live_fetch():
