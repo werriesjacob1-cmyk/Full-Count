@@ -1,0 +1,37 @@
+{
+  "player_id": "nrfi_824638",
+  "name": "Cincinnati Reds @ Chicago Cubs \u2014 1st Inning (Both Teams)",
+  "snapshots": [
+    {
+      "date": "2026-08-28",
+      "evaluations": [
+        {
+          "prop": "A run scores in the 1st (either team)",
+          "type": "game",
+          "score": 67.5,
+          "notable_signals": 0,
+          "matchup": "Cincinnati Reds @ Chicago Cubs",
+          "game_pk": 824638,
+          "team": null,
+          "side": "both",
+          "lean": "YRFI",
+          "combo_player_ids": null,
+          "signals": {
+            "home_team_scores_p": 0.3096,
+            "away_team_scores_p": 0.3561,
+            "fi_n_starts": 19.0
+          },
+          "hit_probability": 0.5555,
+          "raw_hit_probability": null,
+          "lift": 0.0539,
+          "reliability": "A",
+          "sample_n": 19,
+          "projection": {
+            "stat": "nrfi_combined",
+            "value": 55.5
+          }
+        }
+      ]
+    }
+  ]
+}

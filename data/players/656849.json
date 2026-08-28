@@ -200,6 +200,65 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-28",
+      "evaluations": [
+        {
+          "prop": "Over 4.5 Strikeouts",
+          "type": "pitcher",
+          "score": 27.4,
+          "notable_signals": 0,
+          "matchup": "Cincinnati Reds @ Chicago Cubs",
+          "game_pk": 824638,
+          "team": "Chicago Cubs",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_k_pct": 83.0,
+            "same_hand_ratio": 21.4286,
+            "l14_k_pct": 94.1176,
+            "env_neutral": 50.0
+          },
+          "hit_probability": 0.5439,
+          "raw_hit_probability": 0.5439,
+          "lift": 0.0295,
+          "reliability": "A",
+          "sample_n": 17,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 4.5,
+            "needs": 5
+          }
+        },
+        {
+          "prop": "Over 14.5 Outs Recorded",
+          "type": "pitcher",
+          "score": 68.1,
+          "notable_signals": 0,
+          "matchup": "Cincinnati Reds @ Chicago Cubs",
+          "game_pk": 824638,
+          "team": "Chicago Cubs",
+          "side": "home",
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "outs_rate": 0.7604,
+            "avg_outs_per_start": 15.24
+          },
+          "hit_probability": 0.7604,
+          "raw_hit_probability": null,
+          "lift": 0.0121,
+          "reliability": "A",
+          "sample_n": 17,
+          "projection": {
+            "stat": "pitcher_outs",
+            "value": 14.5,
+            "needs": 15
+          }
+        }
+      ]
     }
   ]
 }
