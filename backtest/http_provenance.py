@@ -115,10 +115,18 @@ def _logical_fingerprint(entries):
 
 
 class ResponseLedger:
-    def __init__(self, root_dir, *, allowed_hosts=None, archive_bodies=False):
+    def __init__(
+        self,
+        root_dir,
+        *,
+        allowed_hosts=None,
+        archive_bodies=False,
+        strict_host_firewall=False,
+    ):
         self.root_dir = os.path.abspath(root_dir)
         self.allowed_hosts = set(allowed_hosts or DEFAULT_ALLOWED_HOSTS)
         self.archive_bodies = bool(archive_bodies)
+        self.strict_host_firewall = bool(strict_host_firewall)
         self._current_date = None
         self._entries = []
         self._sequence = 0
@@ -149,6 +157,19 @@ class ResponseLedger:
         except Exception:
             return False
         return host in self.allowed_hosts
+
+    def assert_request_allowed(self, method, url, kwargs):
+        identity = _prepared_identity(method, url, kwargs)
+        try:
+            host = (urlparse(identity["url"]).hostname or "").lower()
+        except Exception:
+            host = ""
+        if self.strict_host_firewall and host not in self.allowed_hosts:
+            raise HttpProvenanceError(
+                "canonical-v2 source firewall blocked unapproved HTTP host "
+                f"{host!r}: {identity['method']} {identity['url']}"
+            )
+        return identity
 
     def _archive_body(self, content_sha256, content):
         if not self.archive_bodies or not content_sha256:
@@ -278,6 +299,7 @@ class ResponseLedger:
                 "logical_fingerprint": logical,
                 "allowed_hosts": sorted(self.allowed_hosts),
                 "archive_bodies": self.archive_bodies,
+                "strict_host_firewall": self.strict_host_firewall,
             }
             summary_path = os.path.join(self.root_dir, f"{date}.summary.json")
             tmp_summary = summary_path + ".tmp"
@@ -345,6 +367,8 @@ def install_requests_hook():
 
         def wrapped(session, method, url, **kwargs):
             ledger = get_active_ledger()
+            if ledger is not None:
+                ledger.assert_request_allowed(method, url, kwargs)
             try:
                 response = _ORIGINAL_SESSION_REQUEST(session, method, url, **kwargs)
             except Exception as exc:
