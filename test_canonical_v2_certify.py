@@ -850,5 +850,116 @@ class CertificationTests(unittest.TestCase):
             )
 
 
+    def test_missing_preregistered_hr_source_column_is_not_canonical(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            factory = PackageFactory(tmp)
+            factory.build()
+            source_path = os.path.join(
+                tmp,
+                "source",
+                "statcast_2024_through_2026-08-24.parquet",
+            )
+            frame = pd.read_parquet(source_path).drop(columns=["attack_angle"])
+            frame.to_parquet(source_path, index=False)
+            new_sha = cert.sha256_file(source_path)
+            new_cols = sorted(str(column) for column in frame.columns)
+            new_schema_fp = cert.sha256_bytes(",".join(new_cols).encode())
+
+            meta_path = os.path.join(tmp, "date_metadata", f"{factory.day}.json")
+            meta = json.load(open(meta_path, encoding="utf-8"))
+            meta["source_content_sha256"] = new_sha
+            write_json(meta_path, meta)
+
+            def mutate(report):
+                report["statcast_source_sha256"] = new_sha
+                bound = report["identity"]["statcast_source"]
+                bound["content_sha256"] = new_sha
+                bound["row_count"] = len(frame)
+                bound["schema_columns"] = new_cols
+                bound["schema_fingerprint"] = new_schema_fp
+                record = next(
+                    item for item in report["source_lineage"]
+                    if item["source"] == "statcast_leaguewide"
+                )
+                record["content_sha256"] = new_sha
+                record["row_count"] = len(frame)
+                record["schema_columns"] = new_cols
+                record["schema_fingerprint"] = new_schema_fp
+                report["source_lineage_fingerprint"] = (
+                    cert.source_lineage_fingerprint(report["source_lineage"])
+                )
+
+            self._refresh_report(tmp, mutate)
+            result = self.certify(tmp)
+            self.assertEqual(result["verdict"], "NOT CANONICAL")
+            self.assertTrue(
+                any("lacks preregistered HR columns" in f for f in result["failures"])
+            )
+
+    def _init_code_repo(self, root):
+        cert.git("init", cwd=root)
+        cert.git("config", "user.email", "canonical-v2-test@invalid.example", cwd=root)
+        cert.git("config", "user.name", "Canonical V2 Test", cwd=root)
+        for rel in cert.PROTECTED_SCIENTIFIC_FILES:
+            target = os.path.join(root, rel)
+            os.makedirs(os.path.dirname(target) or root, exist_ok=True)
+            with open(target, "w", encoding="utf-8") as handle:
+                handle.write(f"frozen {rel}\n")
+        allowed = os.path.join(root, "backtest", "canonical_v2_shard.py")
+        os.makedirs(os.path.dirname(allowed), exist_ok=True)
+        with open(allowed, "w", encoding="utf-8") as handle:
+            handle.write("v1\n")
+        cert.git("add", ".", cwd=root)
+        cert.git("commit", "-m", "scientific parent", cwd=root)
+        return cert.git("rev-parse", "HEAD", cwd=root)
+
+    def test_generation_checkout_divergence_is_not_canonical(self):
+        with tempfile.TemporaryDirectory() as code_tmp, \
+             tempfile.TemporaryDirectory() as package_tmp:
+            parent = self._init_code_repo(code_tmp)
+            allowed = os.path.join(code_tmp, "backtest", "canonical_v2_shard.py")
+            with open(allowed, "a", encoding="utf-8") as handle:
+                handle.write("v2\n")
+            cert.git("add", ".", cwd=code_tmp)
+            cert.git("commit", "-m", "generation", cwd=code_tmp)
+            generation = cert.git("rev-parse", "HEAD", cwd=code_tmp)
+            cert.git("checkout", parent, cwd=code_tmp)
+            audit = cert.code_audit(code_tmp, parent, generation)
+            self.assertTrue(
+                any("certification checkout HEAD" in f for f in audit["failures"])
+            )
+            PackageFactory(package_tmp).build()
+            with patch.object(cert, "code_audit", return_value=audit):
+                result = cert.certify(
+                    package_tmp,
+                    repo_root=code_tmp,
+                    expected_parent_sha=PARENT_SHA,
+                )
+            self.assertEqual(result["verdict"], "NOT CANONICAL")
+
+    def test_protected_scientific_file_drift_is_not_canonical(self):
+        with tempfile.TemporaryDirectory() as code_tmp, \
+             tempfile.TemporaryDirectory() as package_tmp:
+            parent = self._init_code_repo(code_tmp)
+            target = os.path.join(code_tmp, "recommendation.py")
+            with open(target, "a", encoding="utf-8") as handle:
+                handle.write("scientific drift\n")
+            cert.git("add", ".", cwd=code_tmp)
+            cert.git("commit", "-m", "drift", cwd=code_tmp)
+            generation = cert.git("rev-parse", "HEAD", cwd=code_tmp)
+            audit = cert.code_audit(code_tmp, parent, generation)
+            self.assertTrue(
+                any("protected scientific file changed" in f for f in audit["failures"])
+            )
+            PackageFactory(package_tmp).build()
+            with patch.object(cert, "code_audit", return_value=audit):
+                result = cert.certify(
+                    package_tmp,
+                    repo_root=code_tmp,
+                    expected_parent_sha=PARENT_SHA,
+                )
+            self.assertEqual(result["verdict"], "NOT CANONICAL")
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)
