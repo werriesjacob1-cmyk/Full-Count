@@ -585,6 +585,59 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-29",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 36.7,
+          "notable_signals": 0,
+          "matchup": "Pittsburgh Pirates @ St. Louis Cardinals",
+          "game_pk": 823011,
+          "team": "Pittsburgh Pirates",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 18.0,
+            "l7_avg_ev": 0.0,
+            "l7_barrel_pct": 40.7143,
+            "park_hr_index": 60.1,
+            "season_barrel_pct": 96.0,
+            "lineup_slot": 25.0,
+            "bullpen_fatigue": 37.037,
+            "platoon_barrel_pct": 5.0,
+            "platoon_xwoba": 1.68,
+            "park_hand_index": -2.69,
+            "opp_catcher_framing": -0.6,
+            "days_rest": 0.0,
+            "woba_ahead": 27.2727,
+            "woba_behind": 0.0,
+            "pull_park_synergy": -2.0242,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": 4.232,
+            "vs_rp_ops": 5.0,
+            "ump_k_pct": -0.504,
+            "ump_bb_pct": 0.024
+          },
+          "hit_probability": 0.5665,
+          "raw_hit_probability": 0.5769,
+          "lift": 0.0035,
+          "reliability": "D",
+          "sample_n": 24,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

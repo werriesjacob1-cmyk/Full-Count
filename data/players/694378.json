@@ -786,6 +786,110 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-29",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 41.1,
+          "notable_signals": 1,
+          "matchup": "Pittsburgh Pirates @ St. Louis Cardinals",
+          "game_pk": 823011,
+          "team": "Pittsburgh Pirates",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 18.0,
+            "l7_avg_ev": 68.9583,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 60.1,
+            "season_barrel_pct": 4.0,
+            "lineup_slot": 12.5,
+            "bullpen_fatigue": 37.037,
+            "platoon_barrel_pct": -3.04,
+            "platoon_xwoba": -0.36,
+            "park_hand_index": -3.74,
+            "opp_catcher_framing": -0.6,
+            "days_rest": 0.0,
+            "woba_ahead": 76.3636,
+            "woba_behind": 0.0,
+            "pull_park_synergy": -1.9504,
+            "hard_hit_105_rate": 0.295,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": 3.456,
+            "vs_rp_ops": 3.744,
+            "ump_k_pct": -0.504,
+            "ump_bb_pct": 0.024
+          },
+          "hit_probability": 0.5422,
+          "raw_hit_probability": 0.5596,
+          "lift": -0.0208,
+          "reliability": "B",
+          "sample_n": 65,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 7.5,
+          "notable_signals": 0,
+          "matchup": "Pittsburgh Pirates @ St. Louis Cardinals",
+          "game_pk": 823011,
+          "team": "Pittsburgh Pirates",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0584
+          },
+          "hit_probability": 0.0584,
+          "raw_hit_probability": null,
+          "lift": 0.0101,
+          "reliability": "B",
+          "sample_n": 65,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 4.0,
+          "notable_signals": 0,
+          "matchup": "Pittsburgh Pirates @ St. Louis Cardinals",
+          "game_pk": 823011,
+          "team": "Pittsburgh Pirates",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0285
+          },
+          "hit_probability": 0.0285,
+          "raw_hit_probability": null,
+          "lift": 0.0074,
+          "reliability": "B",
+          "sample_n": 65,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

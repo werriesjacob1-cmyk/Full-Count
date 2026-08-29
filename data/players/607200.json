@@ -8,7 +8,7 @@
         {
           "prop": "Over 3.5 Strikeouts",
           "type": "pitcher",
-          "score": 45.0,
+          "score": 31.9,
           "notable_signals": 0,
           "matchup": "Chicago White Sox @ Minnesota Twins",
           "game_pk": 823665,
@@ -18,13 +18,16 @@
           "combo_player_ids": null,
           "signals": {
             "opp_team_k_pct": 41.0,
-            "same_hand_ratio": 92.8571,
+            "same_hand_ratio": 75.0,
             "l14_k_pct": 32.9412,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 42.7184,
+            "ump_k_pct": -0.444,
+            "ump_bb_pct": 0.144
           },
           "hit_probability": 0.6179,
-          "raw_hit_probability": 0.7191,
-          "lift": -0.0707,
+          "raw_hit_probability": 0.7193,
+          "lift": -0.0712,
           "reliability": "B",
           "sample_n": 12,
           "projection": {
@@ -36,7 +39,7 @@
         {
           "prop": "Over 13.5 Outs Recorded",
           "type": "pitcher",
-          "score": 61.2,
+          "score": 62.3,
           "notable_signals": 0,
           "matchup": "Chicago White Sox @ Minnesota Twins",
           "game_pk": 823665,
@@ -45,18 +48,46 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.7782,
+            "outs_rate": 0.7752,
             "avg_outs_per_start": 14.42
           },
-          "hit_probability": 0.7782,
+          "hit_probability": 0.7752,
           "raw_hit_probability": null,
-          "lift": -0.0565,
+          "lift": -0.0504,
           "reliability": "B",
           "sample_n": 12,
           "projection": {
             "stat": "pitcher_outs",
             "value": 13.5,
             "needs": 14
+          }
+        },
+        {
+          "prop": "Over 6.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 54.9,
+          "notable_signals": 1,
+          "matchup": "Chicago White Sox @ Minnesota Twins",
+          "game_pk": 823665,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            607200,
+            641927
+          ],
+          "signals": {
+            "combined_k_edge": 0.1635
+          },
+          "hit_probability": 0.7287,
+          "raw_hit_probability": null,
+          "lift": 0.1635,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 6.5,
+            "needs": 7
           }
         }
       ]

@@ -8,7 +8,7 @@
         {
           "prop": "Over 3.5 Strikeouts",
           "type": "pitcher",
-          "score": 31.8,
+          "score": 29.1,
           "notable_signals": 0,
           "matchup": "Houston Astros @ New York Mets",
           "game_pk": 823582,
@@ -18,19 +18,50 @@
           "combo_player_ids": null,
           "signals": {
             "opp_team_k_pct": 57.0,
-            "same_hand_ratio": 75.0,
+            "same_hand_ratio": 100.0,
             "l14_k_pct": 22.3529,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 52.7288,
+            "ump_k_pct": 0.504,
+            "ump_bb_pct": -0.036
           },
-          "hit_probability": 0.6084,
-          "raw_hit_probability": 0.672,
-          "lift": -0.0802,
+          "hit_probability": 0.6085,
+          "raw_hit_probability": 0.6722,
+          "lift": -0.0806,
           "reliability": "D",
           "sample_n": 0,
           "projection": {
             "stat": "strikeouts",
             "value": 3.5,
             "needs": 4
+          }
+        },
+        {
+          "prop": "Over 8.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 54.7,
+          "notable_signals": 1,
+          "matchup": "Houston Astros @ New York Mets",
+          "game_pk": 823582,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            656986,
+            690997
+          ],
+          "signals": {
+            "combined_k_edge": 0.4287
+          },
+          "hit_probability": 0.7273,
+          "raw_hit_probability": null,
+          "lift": 0.4287,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 8.5,
+            "needs": 9
           }
         }
       ]

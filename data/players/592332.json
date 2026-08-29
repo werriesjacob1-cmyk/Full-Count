@@ -279,7 +279,7 @@
         {
           "prop": "Over 6.5 Strikeouts",
           "type": "pitcher",
-          "score": 39.6,
+          "score": 25.9,
           "notable_signals": 0,
           "matchup": "Cincinnati Reds @ Chicago Cubs",
           "game_pk": 824637,
@@ -291,11 +291,14 @@
             "opp_team_k_pct": 83.0,
             "same_hand_ratio": 100.0,
             "l14_k_pct": 55.2941,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 54.7405,
+            "ump_k_pct": -0.192,
+            "ump_bb_pct": 0.156
           },
-          "hit_probability": 0.2344,
-          "raw_hit_probability": 0.2344,
-          "lift": 0.0198,
+          "hit_probability": 0.2355,
+          "raw_hit_probability": 0.2355,
+          "lift": 0.0188,
           "reliability": "A",
           "sample_n": 27,
           "projection": {
@@ -305,9 +308,9 @@
           }
         },
         {
-          "prop": "Over 16.5 Outs Recorded",
+          "prop": "Over 17.5 Outs Recorded",
           "type": "pitcher",
-          "score": 65.3,
+          "score": 59.1,
           "notable_signals": 1,
           "matchup": "Cincinnati Reds @ Chicago Cubs",
           "game_pk": 824637,
@@ -316,18 +319,18 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.6086,
+            "outs_rate": 0.5335,
             "avg_outs_per_start": 16.7
           },
-          "hit_probability": 0.6086,
+          "hit_probability": 0.5335,
           "raw_hit_probability": null,
-          "lift": 0.0945,
+          "lift": 0.0994,
           "reliability": "A",
           "sample_n": 27,
           "projection": {
             "stat": "pitcher_outs",
-            "value": 16.5,
-            "needs": 17
+            "value": 17.5,
+            "needs": 18
           }
         }
       ]

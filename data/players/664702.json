@@ -1370,6 +1370,138 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-29",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 41.4,
+          "notable_signals": 2,
+          "matchup": "Seattle Mariners @ Toronto Blue Jays",
+          "game_pk": 822770,
+          "team": "Toronto Blue Jays",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 64.5714,
+            "l7_avg_ev": 66.3636,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 15.0,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 2.6667,
+            "lineup_slot": 0.0,
+            "bullpen_fatigue": 55.5556,
+            "platoon_barrel_pct": -1.36,
+            "platoon_xwoba": -1.98,
+            "park_hand_index": -1.03,
+            "opp_catcher_framing": 0.36,
+            "days_rest": 0.0,
+            "woba_ahead": 38.1818,
+            "woba_behind": 37.2727,
+            "pull_park_synergy": -0.3281,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": -1.6,
+            "vs_rp_ops": -2.388,
+            "ump_k_pct": 0.336,
+            "ump_bb_pct": -0.492
+          },
+          "hit_probability": 0.533,
+          "raw_hit_probability": 0.5531,
+          "lift": -0.03,
+          "reliability": "A",
+          "sample_n": 105,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 59.0,
+          "notable_signals": 0,
+          "matchup": "Seattle Mariners @ Toronto Blue Jays",
+          "game_pk": 822770,
+          "team": "Toronto Blue Jays",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": 1.56,
+            "sprint_speed": 75.0,
+            "catcher_poptime": 28.5714,
+            "on_base": 6.9098
+          },
+          "hit_probability": 0.0638,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 105,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 0.0,
+          "notable_signals": 0,
+          "matchup": "Seattle Mariners @ Toronto Blue Jays",
+          "game_pk": 822770,
+          "team": "Toronto Blue Jays",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0078
+          },
+          "hit_probability": 0.0078,
+          "raw_hit_probability": null,
+          "lift": -0.0405,
+          "reliability": "A",
+          "sample_n": 105,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 0.0,
+          "notable_signals": 0,
+          "matchup": "Seattle Mariners @ Toronto Blue Jays",
+          "game_pk": 822770,
+          "team": "Toronto Blue Jays",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0034
+          },
+          "hit_probability": 0.0034,
+          "raw_hit_probability": null,
+          "lift": -0.0177,
+          "reliability": "A",
+          "sample_n": 105,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

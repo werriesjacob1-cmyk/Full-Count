@@ -204,6 +204,67 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-29",
+      "evaluations": [
+        {
+          "prop": "Over 3.5 Strikeouts",
+          "type": "pitcher",
+          "score": 28.9,
+          "notable_signals": 1,
+          "matchup": "Arizona Diamondbacks @ San Francisco Giants",
+          "game_pk": 823176,
+          "team": "Arizona Diamondbacks",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_k_pct": 44.0,
+            "same_hand_ratio": 61.1111,
+            "l14_k_pct": 0.0,
+            "tto_penalty": 8.0,
+            "env_neutral": 50.0,
+            "ump_accuracy": 51.6776
+          },
+          "hit_probability": 0.5837,
+          "raw_hit_probability": 0.5501,
+          "lift": -0.1054,
+          "reliability": "B",
+          "sample_n": 9,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 3.5,
+            "needs": 4
+          }
+        },
+        {
+          "prop": "Over 12.5 Outs Recorded",
+          "type": "pitcher",
+          "score": 33.2,
+          "notable_signals": 0,
+          "matchup": "Arizona Diamondbacks @ San Francisco Giants",
+          "game_pk": 823176,
+          "team": "Arizona Diamondbacks",
+          "side": "away",
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "outs_rate": 0.6773,
+            "avg_outs_per_start": 13.22
+          },
+          "hit_probability": 0.6773,
+          "raw_hit_probability": null,
+          "lift": -0.1827,
+          "reliability": "B",
+          "sample_n": 9,
+          "projection": {
+            "stat": "pitcher_outs",
+            "value": 12.5,
+            "needs": 13
+          }
+        }
+      ]
     }
   ]
 }

@@ -310,8 +310,8 @@
         {
           "prop": "Over 4.5 Strikeouts",
           "type": "pitcher",
-          "score": 31.2,
-          "notable_signals": 0,
+          "score": 31.8,
+          "notable_signals": 1,
           "matchup": "Miami Marlins @ Washington Nationals",
           "game_pk": 822690,
           "team": "Miami Marlins",
@@ -320,13 +320,16 @@
           "combo_player_ids": null,
           "signals": {
             "opp_team_k_pct": 46.0,
-            "same_hand_ratio": 88.8889,
+            "same_hand_ratio": 21.4286,
             "l14_k_pct": 0.0,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 81.8372,
+            "ump_k_pct": -0.24,
+            "ump_bb_pct": -0.024
           },
-          "hit_probability": 0.4911,
-          "raw_hit_probability": 0.4911,
-          "lift": -0.025,
+          "hit_probability": 0.4914,
+          "raw_hit_probability": 0.4914,
+          "lift": -0.0254,
           "reliability": "A",
           "sample_n": 28,
           "projection": {
@@ -336,9 +339,9 @@
           }
         },
         {
-          "prop": "Over 19.5 Outs Recorded",
+          "prop": "Over 20.5 Outs Recorded",
           "type": "pitcher",
-          "score": 75.1,
+          "score": 70.6,
           "notable_signals": 1,
           "matchup": "Miami Marlins @ Washington Nationals",
           "game_pk": 822690,
@@ -347,18 +350,46 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.4388,
+            "outs_rate": 0.4056,
             "avg_outs_per_start": 19.68
           },
-          "hit_probability": 0.4388,
+          "hit_probability": 0.4056,
           "raw_hit_probability": null,
-          "lift": 0.2856,
+          "lift": 0.2738,
           "reliability": "A",
           "sample_n": 28,
           "projection": {
             "stat": "pitcher_outs",
-            "value": 19.5,
-            "needs": 20
+            "value": 20.5,
+            "needs": 21
+          }
+        },
+        {
+          "prop": "Over 10.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 55.0,
+          "notable_signals": 1,
+          "matchup": "Miami Marlins @ Washington Nationals",
+          "game_pk": 822690,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            645261,
+            676917
+          ],
+          "signals": {
+            "combined_k_edge": 0.0595
+          },
+          "hit_probability": 0.6091,
+          "raw_hit_probability": null,
+          "lift": 0.0595,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 10.5,
+            "needs": 11
           }
         }
       ]

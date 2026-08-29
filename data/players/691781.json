@@ -1330,6 +1330,138 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-29",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 31.6,
+          "notable_signals": 1,
+          "matchup": "Miami Marlins @ Washington Nationals",
+          "game_pk": 822690,
+          "team": "Washington Nationals",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 25.1429,
+            "l7_avg_ev": 100.0,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 40.8,
+            "season_barrel_pct": 54.0,
+            "lineup_slot": 25.0,
+            "bullpen_fatigue": 15.1515,
+            "platoon_barrel_pct": 1.76,
+            "platoon_xwoba": -0.84,
+            "park_hand_index": 1.91,
+            "opp_catcher_framing": 0.6,
+            "days_rest": 0.0,
+            "woba_ahead": 34.5455,
+            "woba_behind": 3.6364,
+            "pull_park_synergy": 0.4412,
+            "hard_hit_105_rate": 0.91,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": 0.72,
+            "vs_rp_ops": 0.276,
+            "ump_k_pct": 0.24,
+            "ump_bb_pct": 0.024
+          },
+          "hit_probability": 0.6759,
+          "raw_hit_probability": 0.6818,
+          "lift": 0.0084,
+          "reliability": "B",
+          "sample_n": 71,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 31.2,
+          "notable_signals": 0,
+          "matchup": "Miami Marlins @ Washington Nationals",
+          "game_pk": 822690,
+          "team": "Washington Nationals",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": 0.72,
+            "sprint_speed": 21.875,
+            "catcher_poptime": 0.0,
+            "on_base": 37.62
+          },
+          "hit_probability": 0.0326,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "B",
+          "sample_n": 71,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 13.6,
+          "notable_signals": 0,
+          "matchup": "Miami Marlins @ Washington Nationals",
+          "game_pk": 822690,
+          "team": "Washington Nationals",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.083
+          },
+          "hit_probability": 0.083,
+          "raw_hit_probability": null,
+          "lift": 0.0347,
+          "reliability": "B",
+          "sample_n": 71,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 5.8,
+          "notable_signals": 0,
+          "matchup": "Miami Marlins @ Washington Nationals",
+          "game_pk": 822690,
+          "team": "Washington Nationals",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0357
+          },
+          "hit_probability": 0.0357,
+          "raw_hit_probability": null,
+          "lift": 0.0146,
+          "reliability": "B",
+          "sample_n": 71,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

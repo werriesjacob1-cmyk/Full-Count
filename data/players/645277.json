@@ -1438,6 +1438,107 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-29",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 49.4,
+          "notable_signals": 1,
+          "matchup": "Colorado Rockies @ Atlanta Braves",
+          "game_pk": 824874,
+          "team": "Atlanta Braves",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "sp_era_weak": 100.0,
+            "l7_avg_ev": 29.4375,
+            "l7_barrel_pct": 92.8571,
+            "bat_speed_trend": 5.85,
+            "park_hr_index": 67.6,
+            "season_barrel_pct": 7.3333,
+            "lineup_slot": 37.5,
+            "bullpen_fatigue": 33.3333,
+            "platoon_barrel_pct": -2.16,
+            "platoon_xwoba": -1.62,
+            "opp_catcher_framing": 0.72,
+            "days_rest": 0.0,
+            "woba_ahead": 51.8182,
+            "woba_behind": 19.0909,
+            "team_total_move": 0.0,
+            "team_total_open": 4.0,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": 0.432,
+            "vs_rp_ops": 0.456,
+            "ump_k_pct": -0.18,
+            "ump_bb_pct": 0.276
+          },
+          "hit_probability": 0.6992,
+          "raw_hit_probability": 0.7235,
+          "lift": 0.0317,
+          "reliability": "A",
+          "sample_n": 135,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 0.0,
+          "notable_signals": 0,
+          "matchup": "Colorado Rockies @ Atlanta Braves",
+          "game_pk": 824874,
+          "team": "Atlanta Braves",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0184
+          },
+          "hit_probability": 0.0184,
+          "raw_hit_probability": null,
+          "lift": -0.0299,
+          "reliability": "A",
+          "sample_n": 135,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 0.0,
+          "notable_signals": 0,
+          "matchup": "Colorado Rockies @ Atlanta Braves",
+          "game_pk": 824874,
+          "team": "Atlanta Braves",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0026
+          },
+          "hit_probability": 0.0026,
+          "raw_hit_probability": null,
+          "lift": -0.0185,
+          "reliability": "A",
+          "sample_n": 135,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

@@ -191,9 +191,9 @@
       "date": "2026-08-29",
       "evaluations": [
         {
-          "prop": "Over 4.5 Strikeouts",
+          "prop": "Over 3.5 Strikeouts",
           "type": "pitcher",
-          "score": 43.4,
+          "score": 41.7,
           "notable_signals": 0,
           "matchup": "Texas Rangers @ Milwaukee Brewers",
           "game_pk": 823741,
@@ -207,21 +207,21 @@
             "l14_k_pct": 43.5294,
             "env_neutral": 50.0
           },
-          "hit_probability": 0.5492,
-          "raw_hit_probability": 0.5492,
-          "lift": 0.0331,
+          "hit_probability": 0.6198,
+          "raw_hit_probability": 0.7291,
+          "lift": -0.0693,
           "reliability": "B",
           "sample_n": 10,
           "projection": {
             "stat": "strikeouts",
-            "value": 4.5,
-            "needs": 5
+            "value": 3.5,
+            "needs": 4
           }
         },
         {
-          "prop": "Over 14.5 Outs Recorded",
+          "prop": "Over 15.5 Outs Recorded",
           "type": "pitcher",
-          "score": 55.8,
+          "score": 37.6,
           "notable_signals": 0,
           "matchup": "Texas Rangers @ Milwaukee Brewers",
           "game_pk": 823741,
@@ -230,18 +230,18 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.7377,
+            "outs_rate": 0.5278,
             "avg_outs_per_start": 15.1
           },
-          "hit_probability": 0.7377,
+          "hit_probability": 0.5278,
           "raw_hit_probability": null,
-          "lift": -0.0627,
+          "lift": -0.0462,
           "reliability": "B",
           "sample_n": 10,
           "projection": {
             "stat": "pitcher_outs",
-            "value": 14.5,
-            "needs": 15
+            "value": 15.5,
+            "needs": 16
           }
         }
       ]

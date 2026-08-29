@@ -1933,6 +1933,137 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-29",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 46.2,
+          "notable_signals": 2,
+          "matchup": "Colorado Rockies @ Atlanta Braves",
+          "game_pk": 824874,
+          "team": "Colorado Rockies",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "sp_era_weak": 17.7143,
+            "pitch_exploit": 1.7143,
+            "l7_avg_ev": 0.0,
+            "l7_barrel_pct": 92.8571,
+            "park_hr_index": 67.6,
+            "season_barrel_pct": 35.3333,
+            "lineup_slot": 37.5,
+            "bullpen_fatigue": 47.619,
+            "bvp_ops": -1.62,
+            "platoon_barrel_pct": -2.08,
+            "platoon_xwoba": -4.92,
+            "opp_catcher_framing": 0.36,
+            "days_rest": 0.0,
+            "woba_ahead": 22.7273,
+            "woba_behind": 48.1818,
+            "hard_hit_105_rate": 0.6275,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": -1.424,
+            "vs_rp_ops": -0.792,
+            "ump_k_pct": -0.18,
+            "ump_bb_pct": 0.276
+          },
+          "hit_probability": 0.7018,
+          "raw_hit_probability": 0.7282,
+          "lift": 0.0343,
+          "reliability": "A",
+          "sample_n": 116,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 44.1,
+          "notable_signals": 0,
+          "matchup": "Colorado Rockies @ Atlanta Braves",
+          "game_pk": 824874,
+          "team": "Colorado Rockies",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": 6.0,
+            "sprint_speed": 28.125,
+            "catcher_poptime": 8.5714,
+            "on_base": 71.2092
+          },
+          "hit_probability": 0.0842,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 116,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 10.8,
+          "notable_signals": 0,
+          "matchup": "Colorado Rockies @ Atlanta Braves",
+          "game_pk": 824874,
+          "team": "Colorado Rockies",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0717
+          },
+          "hit_probability": 0.0717,
+          "raw_hit_probability": null,
+          "lift": 0.0234,
+          "reliability": "A",
+          "sample_n": 116,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 10.3,
+          "notable_signals": 1,
+          "matchup": "Colorado Rockies @ Atlanta Braves",
+          "game_pk": 824874,
+          "team": "Colorado Rockies",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0534
+          },
+          "hit_probability": 0.0534,
+          "raw_hit_probability": null,
+          "lift": 0.0323,
+          "reliability": "A",
+          "sample_n": 116,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

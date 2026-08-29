@@ -2033,6 +2033,138 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-29",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 73.2,
+          "notable_signals": 2,
+          "matchup": "Cincinnati Reds @ Chicago Cubs",
+          "game_pk": 824637,
+          "team": "Chicago Cubs",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 47.1429,
+            "l7_avg_ev": 41.625,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 26.9,
+            "season_barrel_pct": 62.0,
+            "lineup_slot": 100.0,
+            "bullpen_fatigue": 20.8333,
+            "bvp_ops": -3.894,
+            "platoon_barrel_pct": 0.64,
+            "platoon_xwoba": 0.96,
+            "park_hand_index": 4.22,
+            "opp_catcher_framing": -0.0,
+            "days_rest": 0.0,
+            "woba_behind": 68.1818,
+            "pull_park_synergy": 2.9983,
+            "hard_hit_105_rate": 1.045,
+            "team_total_move": 6.0,
+            "team_total_open": 4.0,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": 0.36,
+            "vs_rp_ops": 2.736,
+            "ump_k_pct": 0.192,
+            "ump_bb_pct": -0.156
+          },
+          "hit_probability": 0.6489,
+          "raw_hit_probability": 0.6378,
+          "lift": 0.0859,
+          "reliability": "A",
+          "sample_n": 135,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 76.4,
+          "notable_signals": 1,
+          "matchup": "Cincinnati Reds @ Chicago Cubs",
+          "game_pk": 824637,
+          "team": "Chicago Cubs",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": 4.5,
+            "sprint_speed": 68.75,
+            "catcher_poptime": 28.5714,
+            "on_base": 100.0
+          },
+          "hit_probability": 0.2022,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 135,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 15.0,
+          "notable_signals": 0,
+          "matchup": "Cincinnati Reds @ Chicago Cubs",
+          "game_pk": 824637,
+          "team": "Chicago Cubs",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0884
+          },
+          "hit_probability": 0.0884,
+          "raw_hit_probability": null,
+          "lift": 0.0401,
+          "reliability": "A",
+          "sample_n": 135,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 5.4,
+          "notable_signals": 0,
+          "matchup": "Cincinnati Reds @ Chicago Cubs",
+          "game_pk": 824637,
+          "team": "Chicago Cubs",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0343
+          },
+          "hit_probability": 0.0343,
+          "raw_hit_probability": null,
+          "lift": 0.0132,
+          "reliability": "A",
+          "sample_n": 135,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

@@ -2403,6 +2403,139 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-29",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 65.3,
+          "notable_signals": 3,
+          "matchup": "Chicago White Sox @ Minnesota Twins",
+          "game_pk": 823665,
+          "team": "Chicago White Sox",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 56.8571,
+            "pitch_exploit": 5.7143,
+            "l7_avg_ev": 10.8594,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 76.4,
+            "season_barrel_pct": 76.6667,
+            "lineup_slot": 75.0,
+            "bullpen_fatigue": 0.0,
+            "platoon_barrel_pct": 5.0,
+            "platoon_xwoba": 3.6,
+            "park_hand_index": -1.31,
+            "opp_catcher_framing": -0.6,
+            "days_rest": 0.0,
+            "woba_ahead": 70.9091,
+            "woba_behind": 22.7273,
+            "pull_park_synergy": -0.9032,
+            "hard_hit_105_rate": 0.57,
+            "team_total_move": 0.0,
+            "team_total_open": 0.0,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": -1.224,
+            "vs_rp_ops": 0.564,
+            "ump_k_pct": 0.444,
+            "ump_bb_pct": -0.144
+          },
+          "hit_probability": 0.6998,
+          "raw_hit_probability": 0.7245,
+          "lift": 0.0323,
+          "reliability": "A",
+          "sample_n": 132,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 63.2,
+          "notable_signals": 1,
+          "matchup": "Chicago White Sox @ Minnesota Twins",
+          "game_pk": 823665,
+          "team": "Chicago White Sox",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": 5.82,
+            "sprint_speed": 34.375,
+            "catcher_poptime": 42.8571,
+            "on_base": 100.0
+          },
+          "hit_probability": 0.095,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 132,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 10.2,
+          "notable_signals": 0,
+          "matchup": "Chicago White Sox @ Minnesota Twins",
+          "game_pk": 823665,
+          "team": "Chicago White Sox",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0694
+          },
+          "hit_probability": 0.0694,
+          "raw_hit_probability": null,
+          "lift": 0.0211,
+          "reliability": "A",
+          "sample_n": 132,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 2.3,
+          "notable_signals": 0,
+          "matchup": "Chicago White Sox @ Minnesota Twins",
+          "game_pk": 823665,
+          "team": "Chicago White Sox",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0217
+          },
+          "hit_probability": 0.0217,
+          "raw_hit_probability": null,
+          "lift": 0.0006,
+          "reliability": "A",
+          "sample_n": 132,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

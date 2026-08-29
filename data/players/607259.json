@@ -239,8 +239,8 @@
         {
           "prop": "Over 3.5 Strikeouts",
           "type": "pitcher",
-          "score": 47.3,
-          "notable_signals": 0,
+          "score": 27.0,
+          "notable_signals": 1,
           "matchup": "San Diego Padres @ Tampa Bay Rays",
           "game_pk": 822936,
           "team": "Tampa Bay Rays",
@@ -249,13 +249,16 @@
           "combo_player_ids": null,
           "signals": {
             "opp_team_k_pct": 47.0,
-            "same_hand_ratio": 100.0,
+            "same_hand_ratio": 75.0,
             "l14_k_pct": 41.1765,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 78.3366,
+            "ump_k_pct": -0.06,
+            "ump_bb_pct": 0.084
           },
-          "hit_probability": 0.5873,
-          "raw_hit_probability": 0.5678,
-          "lift": -0.1013,
+          "hit_probability": 0.5874,
+          "raw_hit_probability": 0.5681,
+          "lift": -0.1017,
           "reliability": "A",
           "sample_n": 25,
           "projection": {
@@ -267,7 +270,7 @@
         {
           "prop": "Over 17.5 Outs Recorded",
           "type": "pitcher",
-          "score": 56.5,
+          "score": 59.0,
           "notable_signals": 1,
           "matchup": "San Diego Padres @ Tampa Bay Rays",
           "game_pk": 822936,
@@ -276,12 +279,12 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.5394,
+            "outs_rate": 0.5356,
             "avg_outs_per_start": 17.72
           },
-          "hit_probability": 0.5394,
+          "hit_probability": 0.5356,
           "raw_hit_probability": null,
-          "lift": 0.0858,
+          "lift": 0.1015,
           "reliability": "A",
           "sample_n": 25,
           "projection": {

@@ -1,0 +1,107 @@
+{
+  "player_id": 681807,
+  "name": "David Fry",
+  "snapshots": [
+    {
+      "date": "2026-08-29",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 35.7,
+          "notable_signals": 0,
+          "matchup": "Kansas City Royals @ Cleveland Guardians",
+          "game_pk": 824392,
+          "team": "Cleveland Guardians",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 12.2857,
+            "park_hr_index": 35.7,
+            "season_barrel_pct": 23.3333,
+            "lineup_slot": 37.5,
+            "bullpen_fatigue": 0.0,
+            "platoon_barrel_pct": -1.44,
+            "platoon_xwoba": -2.46,
+            "park_hand_index": 0.59,
+            "opp_catcher_framing": -2.04,
+            "days_rest": 4.0,
+            "woba_ahead": 11.8182,
+            "woba_behind": 31.8182,
+            "pull_park_synergy": 0.6236,
+            "team_total_move": 0.0,
+            "team_total_open": 0.0,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": -1.936,
+            "vs_rp_ops": -2.628,
+            "ump_k_pct": -0.552,
+            "ump_bb_pct": -0.168
+          },
+          "hit_probability": 0.5252,
+          "raw_hit_probability": 0.5252,
+          "lift": -0.0378,
+          "reliability": "B",
+          "sample_n": 71,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 0.0,
+          "notable_signals": 0,
+          "matchup": "Kansas City Royals @ Cleveland Guardians",
+          "game_pk": 824392,
+          "team": "Cleveland Guardians",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0224
+          },
+          "hit_probability": 0.0224,
+          "raw_hit_probability": null,
+          "lift": -0.0259,
+          "reliability": "B",
+          "sample_n": 71,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 0.0,
+          "notable_signals": 0,
+          "matchup": "Kansas City Royals @ Cleveland Guardians",
+          "game_pk": 824392,
+          "team": "Cleveland Guardians",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0048
+          },
+          "hit_probability": 0.0048,
+          "raw_hit_probability": null,
+          "lift": -0.0163,
+          "reliability": "B",
+          "sample_n": 71,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
+    }
+  ]
+}

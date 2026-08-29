@@ -279,8 +279,8 @@
         {
           "prop": "Over 6.5 Strikeouts",
           "type": "pitcher",
-          "score": 39.6,
-          "notable_signals": 0,
+          "score": 40.7,
+          "notable_signals": 1,
           "matchup": "Miami Marlins @ Washington Nationals",
           "game_pk": 822690,
           "team": "Washington Nationals",
@@ -289,13 +289,16 @@
           "combo_player_ids": null,
           "signals": {
             "opp_team_k_pct": 46.0,
-            "same_hand_ratio": 100.0,
+            "same_hand_ratio": 43.75,
             "l14_k_pct": 100.0,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 81.8372,
+            "ump_k_pct": -0.24,
+            "ump_bb_pct": -0.024
           },
-          "hit_probability": 0.3924,
-          "raw_hit_probability": 0.3924,
-          "lift": 0.1778,
+          "hit_probability": 0.3934,
+          "raw_hit_probability": 0.3934,
+          "lift": 0.1767,
           "reliability": "A",
           "sample_n": 28,
           "projection": {
@@ -305,10 +308,10 @@
           }
         },
         {
-          "prop": "Over 15.5 Outs Recorded",
+          "prop": "Over 17.5 Outs Recorded",
           "type": "pitcher",
-          "score": 52.8,
-          "notable_signals": 0,
+          "score": 63.0,
+          "notable_signals": 1,
           "matchup": "Miami Marlins @ Washington Nationals",
           "game_pk": 822690,
           "team": "Washington Nationals",
@@ -316,18 +319,18 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.605,
+            "outs_rate": 0.5472,
             "avg_outs_per_start": 15.93
           },
-          "hit_probability": 0.605,
+          "hit_probability": 0.5472,
           "raw_hit_probability": null,
-          "lift": 0.0102,
+          "lift": 0.1131,
           "reliability": "A",
           "sample_n": 28,
           "projection": {
             "stat": "pitcher_outs",
-            "value": 15.5,
-            "needs": 16
+            "value": 17.5,
+            "needs": 18
           }
         }
       ]

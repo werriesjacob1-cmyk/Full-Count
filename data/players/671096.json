@@ -240,7 +240,7 @@
         {
           "prop": "Over 3.5 Strikeouts",
           "type": "pitcher",
-          "score": 46.1,
+          "score": 24.4,
           "notable_signals": 0,
           "matchup": "Cincinnati Reds @ Chicago Cubs",
           "game_pk": 824637,
@@ -250,13 +250,16 @@
           "combo_player_ids": null,
           "signals": {
             "opp_team_k_pct": 47.0,
-            "same_hand_ratio": 57.1429,
+            "same_hand_ratio": 12.5,
             "l14_k_pct": 47.6471,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 54.7405,
+            "ump_k_pct": -0.192,
+            "ump_bb_pct": 0.156
           },
-          "hit_probability": 0.6124,
-          "raw_hit_probability": 0.6918,
-          "lift": -0.0762,
+          "hit_probability": 0.6125,
+          "raw_hit_probability": 0.6921,
+          "lift": -0.0766,
           "reliability": "A",
           "sample_n": 27,
           "projection": {
@@ -266,9 +269,9 @@
           }
         },
         {
-          "prop": "Over 15.5 Outs Recorded",
+          "prop": "Over 16.5 Outs Recorded",
           "type": "pitcher",
-          "score": 57.3,
+          "score": 45.4,
           "notable_signals": 0,
           "matchup": "Cincinnati Reds @ Chicago Cubs",
           "game_pk": 824637,
@@ -277,18 +280,46 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.6233,
+            "outs_rate": 0.5142,
             "avg_outs_per_start": 16.15
           },
-          "hit_probability": 0.6233,
+          "hit_probability": 0.5142,
           "raw_hit_probability": null,
-          "lift": 0.0285,
+          "lift": 0.0193,
           "reliability": "A",
           "sample_n": 27,
           "projection": {
             "stat": "pitcher_outs",
-            "value": 15.5,
-            "needs": 16
+            "value": 16.5,
+            "needs": 17
+          }
+        },
+        {
+          "prop": "Over 9.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 43.3,
+          "notable_signals": 0,
+          "matchup": "Cincinnati Reds @ Chicago Cubs",
+          "game_pk": 824637,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            671096,
+            592332
+          ],
+          "signals": {
+            "combined_k_edge": -0.0602
+          },
+          "hit_probability": 0.5231,
+          "raw_hit_probability": null,
+          "lift": -0.0602,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 9.5,
+            "needs": 10
           }
         }
       ]
