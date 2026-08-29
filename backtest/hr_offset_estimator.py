@@ -273,18 +273,32 @@ def predict_with_champion_fallback(
     supported_mask,
     fitted,
 ):
-    """Full-population prediction: unsupported rows are EXACT champion."""
-    champion = clip_probabilities(champion_probabilities)
+    """Full-population prediction: unsupported rows are EXACT champion.
+
+    Unsupported rows are allowed to contain missing/NaN feature values by
+    preregistration. Only the supported submatrix is required to be finite.
+    """
+    champion = _as_vector(champion_probabilities, "champion probabilities")
+    if ((champion < 0) | (champion > 1)).any():
+        raise HREstimatorIntegrityError(
+            "champion probabilities must lie in [0,1]"
+        )
+
     mask = np.asarray(supported_mask, dtype=bool)
     if mask.ndim != 1 or mask.size != champion.size:
         raise HREstimatorIntegrityError(
             "supported_mask must be a 1D vector matching population size"
         )
 
-    x_all = _as_matrix(feature_rows, "feature rows")
-    if x_all.shape[0] != champion.size:
+    try:
+        x_all = np.asarray(feature_rows, dtype=float)
+    except (TypeError, ValueError) as exc:
         raise HREstimatorIntegrityError(
-            "feature rows do not match population size"
+            "feature rows must be coercible to a numeric 2D matrix"
+        ) from exc
+    if x_all.ndim != 2 or x_all.shape[0] != champion.size or x_all.shape[1] == 0:
+        raise HREstimatorIntegrityError(
+            "feature rows must be a non-empty 2D matrix matching population size"
         )
 
     result = champion.copy()
