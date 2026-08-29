@@ -998,6 +998,7 @@ def certify(
 
             key = (
                 observed_day,
+                phase,
                 row.get("method"),
                 row.get("url"),
                 row.get("request_body_sha256"),
