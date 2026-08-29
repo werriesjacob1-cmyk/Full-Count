@@ -114,11 +114,22 @@ def _selection_result(per_date, population_rows):
     if not set(challenger_ids).issubset(pop_ids):
         raise ExperimentIntegrityError("challenger selection escaped frozen population")
 
+    champion_set = set(champion_ids)
+    challenger_set = set(challenger_ids)
+    overlap_ids = [cid for cid in champion_ids if cid in challenger_set]
+    removed_ids = [cid for cid in champion_ids if cid not in challenger_set]
+    added_ids = [cid for cid in challenger_ids if cid not in champion_set]
+
     return {
         "dates": dates,
         "population_n": len(pop_ids),
         "champion_ids": champion_ids,
         "challenger_ids": challenger_ids,
+        # Identity-only selection anatomy is frozen BEFORE outcomes. Evaluation
+        # may attach hit/miss truth later but must never change these sets.
+        "overlap_ids": overlap_ids,
+        "removed_ids": removed_ids,
+        "added_ids": added_ids,
     }
 
 
