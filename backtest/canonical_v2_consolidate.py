@@ -74,7 +74,6 @@ def logical_http_entry(entry):
     return {
         "method": entry.get("method"),
         "url": entry.get("url"),
-        "request_headers": entry.get("request_headers"),
         "request_body_sha256": entry.get("request_body_sha256"),
         "status_code": entry.get("status_code"),
         "response_sha256": entry.get("response_sha256"),
