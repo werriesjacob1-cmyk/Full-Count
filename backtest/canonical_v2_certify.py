@@ -213,7 +213,7 @@ def code_audit(repo_root, parent_sha, generation_sha):
     }
 
 
-STATSAPI_SOURCE_SHAPE_POLICY = "canonical-v2-statsapi-v1-20260829"
+STATSAPI_SOURCE_SHAPE_POLICY = "canonical-v2-statsapi-v2-20260829"
 
 
 def _single_query(qs, key):
