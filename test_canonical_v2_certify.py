@@ -82,6 +82,25 @@ class PackageFactory:
         source_sha = cert.sha256_file(source_path)
         schema_fp = cert.sha256_bytes(",".join(SOURCE_COLS).encode())
 
+        outcome_cols = sorted(cert.OUTCOME_ONLY_SOURCE_COLUMNS)
+        outcome_path = os.path.join(
+            source_dir,
+            f"statcast_outcome_{self.day}.parquet",
+        )
+        outcome_frame = pd.DataFrame({
+            "game_date": [self.day],
+            "game_pk": [123],
+            "batter": [10],
+            "events": ["home_run"],
+            "launch_speed": [108.0],
+            "hit_distance_sc": [425.0],
+        })[outcome_cols]
+        outcome_frame.to_parquet(outcome_path, index=False)
+        outcome_sha = cert.sha256_file(outcome_path)
+        outcome_schema_fp = cert.sha256_bytes(
+            ",".join(outcome_cols).encode()
+        )
+
         row = {
             "date": self.day,
             "game_pk": 123,
@@ -144,6 +163,7 @@ class PackageFactory:
         if statsapi_failure:
             stats_rows.append({
                 "observed_date": self.day,
+                "scientific_phase": "predictive_input",
                 "method": "GET",
                 "url": (
                     "https://statsapi.mlb.com/api/v1/schedule"
@@ -158,6 +178,7 @@ class PackageFactory:
         else:
             stats_rows.append({
                 "observed_date": self.day,
+                "scientific_phase": "predictive_input",
                 "method": "GET",
                 "url": (
                     "https://statsapi.mlb.com/api/v1/schedule"
@@ -173,6 +194,7 @@ class PackageFactory:
         if current_team_request:
             stats_rows.append({
                 "observed_date": self.day,
+                "scientific_phase": "predictive_input",
                 "method": "GET",
                 "url": (
                     "https://statsapi.mlb.com/api/v1/teams"
@@ -233,6 +255,16 @@ class PackageFactory:
                 "cache_mode": "frozen_exact_artifact",
             },
             {
+                "source": "statcast_outcome_only",
+                "request_identity": f"statcast:outcome-only:{self.day}",
+                "content_sha256": outcome_sha,
+                "row_count": 1,
+                "schema_columns": outcome_cols,
+                "schema_fingerprint": outcome_schema_fp,
+                "date_coverage": f"{self.day}..{self.day}",
+                "cache_mode": "frozen_exact_artifact_grader_only",
+            },
+            {
                 "source": "mlb_statsapi_request_ledger",
                 "request_identity": "mlb_statsapi_request_ledger:v2-test",
                 "content_sha256": sha(stats_raw),
@@ -282,6 +314,15 @@ class PackageFactory:
             "historical_bullpen_temporal_gate": (
                 "official_date_before_D_and_completed_status_v1"
             ),
+            "outcome_only_date": self.day,
+            "outcome_source_isolation": "grader_only_external_parquet_v1",
+            "outcome_statcast_source": {
+                "content_sha256": outcome_sha,
+                "row_count": 1,
+                "schema_columns": outcome_cols,
+                "schema_fingerprint": outcome_schema_fp,
+                "date_coverage": f"{self.day}..{self.day}",
+            },
             "statsapi_source_shape_policy": cert.STATSAPI_SOURCE_SHAPE_POLICY,
             "statcast_source": {
                 "content_sha256": source_sha,
@@ -298,6 +339,8 @@ class PackageFactory:
             "row_count": 1,
             "generation_code_sha": GEN_SHA,
             "source_content_sha256": source_sha,
+            "outcome_source_content_sha256": outcome_sha,
+            "outcome_source_schema_fingerprint": outcome_schema_fp,
             "ungraded_reasons": {},
             "http_provenance": {
                 "strict_host_firewall": True,
@@ -326,6 +369,8 @@ class PackageFactory:
             "statcast_source_path": (
                 "source/statcast_2024_through_2026-08-24.parquet"
             ),
+            "outcome_statcast_source_sha256": outcome_sha,
+            "outcome_statcast_source_path": f"source/statcast_outcome_{self.day}.parquet",
             "date_metadata_path": "date_metadata",
             "source_lineage": lineage,
             "source_lineage_fingerprint": cert.source_lineage_fingerprint(
@@ -349,6 +394,7 @@ class PackageFactory:
         )
         return {
             "source_sha": source_sha,
+            "outcome_sha": outcome_sha,
             "stats_body_sha": stats_body_sha,
             "mlb_body_sha": mlb_body_sha,
             "team_body_sha": team_body_sha,
