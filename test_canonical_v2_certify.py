@@ -129,6 +129,7 @@ class PackageFactory:
 
         stats_rows = [{
             "observed_date": self.day,
+            "scientific_phase": "predictive_input",
             "method": "GET",
             "url": (
                 "https://statsapi.mlb.com/api/v1/teams"
@@ -193,6 +194,7 @@ class PackageFactory:
         fallback_day = "2025-08-19" if mlbcom_bad_date else self.day
         mlb_rows = [{
             "observed_date": self.day,
+            "scientific_phase": "predictive_input",
             "method": "GET",
             "url": f"https://www.mlb.com/starting-lineups/{fallback_day}",
             "request_body_sha256": None,
@@ -272,9 +274,13 @@ class PackageFactory:
             "strict_historical_lineups": True,
             "http_strict_host_firewall": True,
             "http_response_content_bound": True,
+            "http_scientific_phase_bound": True,
             "http_identical_get_cache": True,
             "historical_team_identity": (
                 "schedule_team_ids_plus_season_directory"
+            ),
+            "historical_bullpen_temporal_gate": (
+                "official_date_before_D_and_completed_status_v1"
             ),
             "statsapi_source_shape_policy": cert.STATSAPI_SOURCE_SHAPE_POLICY,
             "statcast_source": {
