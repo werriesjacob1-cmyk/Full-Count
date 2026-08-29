@@ -5,8 +5,12 @@ from __future__ import annotations
 import os
 import tempfile
 import unittest
+from unittest.mock import patch
 
 import pandas as pd
+
+import mlb_daily as m
+import mlb_sources as msrc
 
 from backtest.canonical_v2_shard import (
     CanonicalV2IntegrityError,
@@ -83,6 +87,126 @@ class RowSerializationTests(unittest.TestCase):
             sha256_bytes(row_blob([a])),
             sha256_bytes(row_blob([b])),
         )
+
+
+
+class FullSeasonGameLogPointInTimeTests(unittest.TestCase):
+    """Future splits in a mutable full-season gameLog must be inert at D-1."""
+
+    @staticmethod
+    def batter_split(day, hits=1):
+        return {
+            "date": day,
+            "stat": {
+                "plateAppearances": 4,
+                "hits": hits,
+                "totalBases": hits,
+                "doubles": 0,
+                "triples": 0,
+                "homeRuns": 0,
+                "runs": 0,
+                "rbi": 0,
+                "stolenBases": 0,
+                "baseOnBalls": 0,
+            },
+        }
+
+    @staticmethod
+    def pitcher_split(day, strikeouts=6, innings="6.0"):
+        return {
+            "date": day,
+            "stat": {
+                "gamesStarted": 1,
+                "strikeOuts": strikeouts,
+                "inningsPitched": innings,
+                "battersFaced": 24,
+                "hits": 5,
+                "baseOnBalls": 2,
+            },
+        }
+
+    def test_empirical_batter_ignores_appended_future_split(self):
+        asof = "2025-08-19"
+        base = [
+            self.batter_split("2025-08-17", 1),
+            self.batter_split("2025-08-19", 0),
+        ]
+        future = self.batter_split("2025-08-20", 4)
+        with patch.object(msrc, "_game_log", return_value=base):
+            expected = msrc._empirical_batter_one((10, 1, asof))
+        with patch.object(msrc, "_game_log", return_value=base + [future]):
+            actual = msrc._empirical_batter_one((10, 1, asof))
+        self.assertEqual(actual, expected)
+
+    def test_empirical_pitcher_k_ignores_appended_future_split(self):
+        asof = "2025-08-19"
+        base = [
+            self.pitcher_split("2025-08-14", 5),
+            self.pitcher_split("2025-08-19", 7),
+        ]
+        future = self.pitcher_split("2025-08-20", 18)
+        with patch.object(msrc, "_game_log", return_value=base):
+            expected = msrc._empirical_pitcher_one((20, 1, asof))
+        with patch.object(msrc, "_game_log", return_value=base + [future]):
+            actual = msrc._empirical_pitcher_one((20, 1, asof))
+        self.assertEqual(actual, expected)
+
+    def test_empirical_pitcher_outs_ignores_appended_future_split(self):
+        asof = "2025-08-19"
+        base = [
+            self.pitcher_split("2025-08-14", innings="5.2"),
+            self.pitcher_split("2025-08-19", innings="6.1"),
+        ]
+        future = self.pitcher_split("2025-08-20", innings="9.0")
+        with patch.object(msrc, "_game_log", return_value=base):
+            expected = msrc._empirical_pitcher_outs_one((20, 1, asof))
+        with patch.object(msrc, "_game_log", return_value=base + [future]):
+            actual = msrc._empirical_pitcher_outs_one((20, 1, asof))
+        self.assertEqual(actual, expected)
+
+    def _rest_response(self, splits):
+        class Response:
+            def raise_for_status(self):
+                return None
+
+            def json(self):
+                return {"stats": [{"splits": splits}]}
+
+        return Response()
+
+    def test_batter_rest_ignores_appended_future_split(self):
+        asof = "2025-08-19"
+        base = [
+            {"date": "2025-08-17", "stat": {}},
+            {"date": "2025-08-19", "stat": {}},
+        ]
+        future = {"date": "2025-08-20", "stat": {}}
+        with patch.object(m, "TODAY", "2025-08-20"), \
+             patch.object(m, "retry_get", return_value=self._rest_response(base)):
+            expected = msrc._rest_batter_one((10, "Batter", asof))
+        with patch.object(m, "TODAY", "2025-08-20"), \
+             patch.object(
+                 m, "retry_get", return_value=self._rest_response(base + [future])
+             ):
+            actual = msrc._rest_batter_one((10, "Batter", asof))
+        self.assertEqual(actual, expected)
+
+    def test_pitcher_rest_ignores_appended_future_start(self):
+        asof = "2025-08-19"
+        base = [
+            self.pitcher_split("2025-08-12"),
+            self.pitcher_split("2025-08-19"),
+        ]
+        future = self.pitcher_split("2025-08-20")
+        with patch.object(m, "TODAY", "2025-08-20"), \
+             patch.object(m, "retry_get", return_value=self._rest_response(base)):
+            expected = msrc._rest_pitcher_one((20, "Pitcher", asof))
+        with patch.object(m, "TODAY", "2025-08-20"), \
+             patch.object(
+                 m, "retry_get", return_value=self._rest_response(base + [future])
+             ):
+            actual = msrc._rest_pitcher_one((20, "Pitcher", asof))
+        self.assertEqual(actual, expected)
 
 
 if __name__ == "__main__":
