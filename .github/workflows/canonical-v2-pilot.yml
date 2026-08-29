@@ -1,4 +1,4 @@
-name: Canonical V2 Pilot
+name: Canonical V2 Full Range
 
 on:
   push:
@@ -11,20 +11,67 @@ permissions:
   contents: read
 
 concurrency:
-  group: canonical-v2-pilot
+  group: canonical-v2-full-range
   cancel-in-progress: false
 
+env:
+  CANONICAL_RUN_ID: canonical-v2-full-${{ github.sha }}
+  CANONICAL_START: "2024-04-01"
+  CANONICAL_END: "2026-08-25"
+  SHARD_COUNT: "4"
+  SCIENTIFIC_PARENT_SHA: fc589447ec157bff9a96071edc3ceb6c7dc734eb
+  PREDICTOR_SHA: 85c41d79570ac25169726419ed2bcb55cbba78139e8786b6005f71f40a877685
+  OUTCOME_SHA: 03fe66c5035b1e139216cf2f56ec276bf82bdea341febbbebc0406f4d3c6b98f
+
 jobs:
-  pilot:
+  preflight:
     runs-on: ubuntu-latest
-    timeout-minutes: 90
+    timeout-minutes: 35
     steps:
-      - name: Checkout provenance runner
+      - name: Wait for exact-head Test Suite
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "Waiting for Test Suite on exact SHA $GITHUB_SHA"
+          for attempt in $(seq 1 46); do
+            payload="$(curl -fsSL -H 'Accept: application/vnd.github+json' "https://api.github.com/repos/$GITHUB_REPOSITORY/actions/runs?head_sha=$GITHUB_SHA&event=push&per_page=100")"
+            row="$(printf '%s' "$payload" | jq -r --arg sha "$GITHUB_SHA" '
+              .workflow_runs[]
+              | select(.name == "Test Suite" and .head_sha == $sha)
+              | [.status, (.conclusion // ""), (.id|tostring)]
+              | @tsv
+            ' | head -n1)"
+            if [ -z "$row" ]; then
+              echo "[$attempt] exact-head Test Suite not visible yet"
+              sleep 45
+              continue
+            fi
+            IFS=$'\t' read -r status conclusion run_id <<<"$row"
+            echo "[$attempt] Test Suite run=$run_id status=$status conclusion=$conclusion"
+            if [ "$status" = "completed" ]; then
+              if [ "$conclusion" = "success" ]; then
+                echo "EXACT_HEAD_TEST_SUITE_GREEN sha=$GITHUB_SHA run=$run_id"
+                exit 0
+              fi
+              echo "Exact-head Test Suite failed: conclusion=$conclusion run=$run_id" >&2
+              exit 1
+            fi
+            sleep 45
+          done
+          echo "Timed out waiting for exact-head Test Suite" >&2
+          exit 1
+
+  prepare-sources:
+    needs: preflight
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - name: Checkout exact generation head
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: Set up Python 3.11
+      - name: Set up exact canonical Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.11.15'
@@ -46,7 +93,7 @@ jobs:
           env = environment_identity()
           if env["python_version"] != EXPECTED_PYTHON:
               raise SystemExit(
-                  f"Python mismatch: {env['python_version']} != {EXPECTED_PYTHON}"
+                  f"Python mismatch {env['python_version']} != {EXPECTED_PYTHON}"
               )
           for name, expected in EXPECTED_CRITICAL_PACKAGES.items():
               actual = env["critical_packages"].get(name)
@@ -57,41 +104,41 @@ jobs:
           print(json.dumps(env, sort_keys=True))
           PY
 
-      - name: Materialize exact bound Statcast source
+      - name: Materialize and bind both Statcast sources once
         shell: bash
         run: |
           set -euo pipefail
-          mkdir -p /tmp/fc-source
+          rm -rf /tmp/canonical-v2-sources
+          mkdir -p             /tmp/canonical-v2-sources/predictor             /tmp/canonical-v2-sources/outcome
+
           git fetch origin canonical-durable-checkpoints
-          git show origin/canonical-durable-checkpoints:canonical/canonical-20260828T153143Z-2b79304f/source/statcast_2024_through_2026-08-24.parquet             > /tmp/fc-source/statcast_2024_through_2026-08-24.parquet
-          actual="$(sha256sum /tmp/fc-source/statcast_2024_through_2026-08-24.parquet | awk '{print $1}')"
-          expected="85c41d79570ac25169726419ed2bcb55cbba78139e8786b6005f71f40a877685"
-          echo "source_sha256=$actual"
-          test "$actual" = "$expected"
+          git show             origin/canonical-durable-checkpoints:canonical/canonical-20260828T153143Z-2b79304f/source/statcast_2024_through_2026-08-24.parquet             > /tmp/canonical-v2-sources/predictor/statcast_2024_through_2026-08-24.parquet
+          predictor_actual="$(sha256sum /tmp/canonical-v2-sources/predictor/statcast_2024_through_2026-08-24.parquet | awk '{print $1}')"
+          test "$predictor_actual" = "$PREDICTOR_SHA"
 
-
-      - name: Materialize isolated outcome-only Statcast source
-        shell: bash
-        run: |
-          set -euo pipefail
-          mkdir -p /tmp/fc-outcome
           python - <<'PY'
           import hashlib
           import json
+          import os
           import pandas as pd
           from pybaseball import statcast
 
+          expected = os.environ["OUTCOME_SHA"]
           day = "2026-08-25"
           columns = [
-              "game_date", "game_pk", "batter", "events",
-              "launch_speed", "hit_distance_sc",
+              "game_date",
+              "game_pk",
+              "batter",
+              "events",
+              "launch_speed",
+              "hit_distance_sc",
           ]
           frame = statcast(start_dt=day, end_dt=day)
           if frame is None or frame.empty:
               raise SystemExit("outcome-only Statcast fetch returned no rows")
-          missing = [column for column in columns if column not in frame.columns]
+          missing = [c for c in columns if c not in frame.columns]
           if missing:
-              raise SystemExit(f"outcome-only Statcast missing columns: {missing}")
+              raise SystemExit(f"outcome-only source missing columns: {missing}")
           out = frame[columns].copy()
           parsed = pd.to_datetime(out["game_date"], errors="coerce")
           coverage = sorted({value.date().isoformat() for value in parsed.dropna()})
@@ -103,207 +150,225 @@ jobs:
               kind="mergesort",
               na_position="last",
           ).reset_index(drop=True)
-          path = f"/tmp/fc-outcome/statcast_outcome_{day}.parquet"
+          path = (
+              "/tmp/canonical-v2-sources/outcome/"
+              "statcast_outcome_2026-08-25.parquet"
+          )
           out.to_parquet(path, index=False)
-          digest = hashlib.sha256(open(path, "rb").read()).hexdigest()
+          actual = hashlib.sha256(open(path, "rb").read()).hexdigest()
+          if actual != expected:
+              raise SystemExit(
+                  f"outcome-only Statcast SHA drift: {actual} != {expected}"
+              )
           manifest = {
-              "source_role": "outcome_only_grading",
-              "date_coverage": f"{day}..{day}",
-              "row_count": int(len(out)),
-              "game_count": int(out["game_pk"].dropna().nunique()),
-              "schema_columns": sorted(columns),
-              "content_sha256": digest,
-              "predictive_feature_columns_present": False,
+              "predictor_sha256": os.environ["PREDICTOR_SHA"],
+              "outcome_sha256": actual,
+              "outcome_rows": int(len(out)),
+              "outcome_game_count": int(out["game_pk"].dropna().nunique()),
+              "outcome_date_coverage": f"{day}..{day}",
+              "outcome_schema_columns": sorted(columns),
+              "generation_sha": os.environ["GITHUB_SHA"],
           }
-          with open("/tmp/fc-outcome/manifest.json", "w", encoding="utf-8") as handle:
+          with open(
+              "/tmp/canonical-v2-sources/source_manifest.json",
+              "w",
+              encoding="utf-8",
+          ) as handle:
               json.dump(manifest, handle, indent=2, sort_keys=True)
               handle.write("\n")
           print(json.dumps(manifest, sort_keys=True))
-          with open("/tmp/fc-outcome/sha.txt", "w", encoding="utf-8") as handle:
-              handle.write(digest + "\n")
           PY
-          echo "OUTCOME_SHA=$(cat /tmp/fc-outcome/sha.txt)" >> "$GITHUB_ENV"
 
-      - name: Run one-date provenance pilot
+      - name: Upload single bound source package
+        uses: actions/upload-artifact@v4
+        with:
+          name: canonical-v2-bound-sources
+          path: /tmp/canonical-v2-sources
+          if-no-files-found: error
+          retention-days: 90
+
+  shard:
+    needs: prepare-sources
+    name: shard-${{ matrix.shard }}
+    strategy:
+      fail-fast: false
+      max-parallel: 4
+      matrix:
+        shard: [0, 1, 2, 3]
+    runs-on: ubuntu-latest
+    timeout-minutes: 350
+    steps:
+      - name: Checkout exact generation head
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up exact canonical Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11.15'
+          cache: pip
+
+      - name: Install exact canonical environment
         shell: bash
         run: |
           set -euo pipefail
-          rm -rf /tmp/canonical-v2-pilot
-          python backtest/canonical_v2_shard.py             --run-id canonical-v2-pilot-20250819             --start 2025-08-19             --end 2025-08-19             --shard-index 0             --shard-count 1             --source-parquet /tmp/fc-source/statcast_2024_through_2026-08-24.parquet             --expected-source-sha256 85c41d79570ac25169726419ed2bcb55cbba78139e8786b6005f71f40a877685             --outcome-parquet /tmp/fc-outcome/statcast_outcome_2026-08-25.parquet             --expected-outcome-sha256 "$OUTCOME_SHA"             --outcome-date 2026-08-25             --scientific-parent-sha fc589447ec157bff9a96071edc3ceb6c7dc734eb             --out-dir /tmp/canonical-v2-pilot             --archive-http-bodies             --verbose
-
-      - name: Preserve outcome source inside pilot evidence
-        if: always()
-        shell: bash
-        run: |
-          if [ -d /tmp/canonical-v2-pilot ] && [ -f /tmp/fc-outcome/statcast_outcome_2026-08-25.parquet ]; then
-            mkdir -p /tmp/canonical-v2-pilot/source
-            cp /tmp/fc-outcome/statcast_outcome_2026-08-25.parquet /tmp/canonical-v2-pilot/source/
-            cp /tmp/fc-outcome/manifest.json /tmp/canonical-v2-pilot/source/outcome_manifest.json
-          fi
-
-
-      - name: Prove August 19 leak is closed
-        shell: bash
-        run: |
-          set -euo pipefail
+          pip install -r requirements.txt
+          pip install --upgrade --force-reinstall             numpy==2.4.6             pandas==3.0.5             pyarrow==25.0.1             pybaseball==2.2.7             python-dateutil==2.9.0.post0             requests==2.34.2             scikit-learn==1.9.0             scipy==1.17.1
           python - <<'PY'
-          import json
-          import os
-          from collections import Counter
-          from urllib.parse import parse_qs, urlparse
-
-          from backtest.canonical_v2_certify import audit_statsapi_request_shapes
-
-          root = "/tmp/canonical-v2-pilot"
-          day = "2025-08-19"
-          meta_path = os.path.join(root, "rows", f"{day}.meta.json")
-          if not os.path.exists(meta_path):
-              raise SystemExit(f"missing date metadata: {meta_path}")
-          meta = json.load(open(meta_path, encoding="utf-8"))
-          if meta.get("status") != "ok":
-              raise SystemExit(f"pilot date not ok: {meta.get('status')} {meta.get('reason')}")
-          if meta.get("source_content_sha256") != (
-              "85c41d79570ac25169726419ed2bcb55cbba78139e8786b6005f71f40a877685"
-          ):
-              raise SystemExit("predictor Statcast SHA drifted")
-
-          hp = meta.get("http_provenance") or {}
-          if hp.get("strict_host_firewall") is not True:
-              raise SystemExit("HTTP source firewall was not active")
-          if int(hp.get("firewall_block_count") or 0):
-              raise SystemExit(f"firewall blocks observed: {hp.get('firewall_blocks')}")
-          if int(hp.get("exceptions") or 0):
-              raise SystemExit(f"HTTP exceptions observed: {hp.get('exceptions')}")
-          if int(hp.get("http_non_2xx") or 0):
-              raise SystemExit(f"HTTP non-2xx observed: {hp.get('http_non_2xx')}")
-
-          access = meta.get("point_in_time_access") or {}
-          if access.get("violations"):
-              raise SystemExit(
-                  f"point-in-time violations observed: {access.get('violations')}"
-              )
-
-          bad_ungraded_tokens = (
-              "grader error",
-              "source",
-              "timeout",
-              "connection",
-              "no batted-ball statcast data",
-              "missing runs data",
-              "couldn't fetch",
-              "unavailable",
+          from backtest.canonical_durability import environment_identity
+          from backtest.canonical_v2_certify import (
+              EXPECTED_CRITICAL_PACKAGES,
+              EXPECTED_PYTHON,
           )
-          bad_ungraded = {
-              reason: count
-              for reason, count in (meta.get("ungraded_reasons") or {}).items()
-              if any(token in reason.lower() for token in bad_ungraded_tokens)
-          }
-          if bad_ungraded:
-              raise SystemExit(
-                  f"source/grader-related ungraded candidates: {bad_ungraded}"
-              )
-
-          ledger_rel = hp.get("ledger_file")
-          if not ledger_rel:
-              raise SystemExit("missing raw HTTP ledger path")
-          ledger_path = os.path.join(root, "http", ledger_rel)
-          rows = [
-              json.loads(line)
-              for line in open(ledger_path, encoding="utf-8")
-              if line.strip()
-          ]
-          if not rows:
-              raise SystemExit("raw HTTP ledger is empty")
-
-          audit = audit_statsapi_request_shapes(rows)
-          if audit["failures"] or audit["blockers"]:
-              raise SystemExit(
-                  "StatsAPI request-shape audit failed: "
-                  + json.dumps(audit, sort_keys=True)
-              )
-
-          phase_counts = Counter(row.get("scientific_phase") for row in rows)
-          if phase_counts["predictive_input"] <= 0:
-              raise SystemExit("no predictive_input HTTP evidence recorded")
-          if phase_counts["outcome_grading"] <= 0:
-              raise SystemExit("no outcome_grading HTTP evidence recorded")
-
-          for row in rows:
-              url = str(row.get("url") or "")
-              phase = row.get("scientific_phase")
-              parsed = urlparse(url)
-              qs = parse_qs(parsed.query)
-
-              if parsed.path == "/api/v1/seasons/all":
-                  raise SystemExit("current-season /seasons/all entered replay")
-              if parsed.path == "/api/v1/teams":
-                  if "activeStatus" in qs or "sportIds" in qs:
-                      raise SystemExit(
-                          f"current/active team directory entered replay: {url}"
-                      )
-                  season = (qs.get("season") or [None])[0]
-                  if season != "2025":
-                      raise SystemExit(
-                          f"historical team directory not season=2025: {url}"
-                      )
-
-              if phase == "predictive_input" and "/feed/live" in parsed.path:
-                  timecode = (qs.get("timecode") or [None])[0]
-                  if not timecode:
-                      raise SystemExit(
-                          f"unbounded predictive game feed observed: {url}"
-                      )
-              if phase == "outcome_grading" and "/feed/live" in parsed.path:
-                  if "timecode" in qs:
-                      raise SystemExit(
-                          f"grading feed incorrectly carries predictive timecode: {url}"
-                      )
-
-              # This exact game caused the real 2025-08-19 leak. The raw
-              # pre-D schedule now sees its officialDate as D, so it must
-              # never reach the predictive box-score/feed layer at all.
-              if (
-                  phase == "predictive_input"
-                  and "/game/776691/" in parsed.path
-              ):
-                  raise SystemExit(
-                      f"known postponed game 776691 reached predictive feed: {url}"
-                  )
-
-          print(json.dumps({
-              "verdict": "AUGUST_19_LEAK_CLOSED",
-              "date": day,
-              "rows": meta.get("row_count"),
-              "candidates": meta.get("n_candidates"),
-              "ungraded": meta.get("n_ungraded"),
-              "http_requests": len(rows),
-              "phase_counts": dict(phase_counts),
-              "request_shape_classes": audit["classes"],
-              "team_directory_seasons": audit["team_directory_seasons"],
-              "game_776691_predictive_feed": False,
-              "firewall_blocks": 0,
-              "point_in_time_violations": 0,
-          }, sort_keys=True))
+          env = environment_identity()
+          assert env["python_version"] == EXPECTED_PYTHON, env
+          for name, expected in EXPECTED_CRITICAL_PACKAGES.items():
+              assert env["critical_packages"].get(name) == expected, (name, env)
+          print(env["environment_fingerprint"])
+          print(env["pip_freeze_sha256"])
           PY
 
-      - name: Inspect pilot evidence
-        if: always()
+      - name: Download the one bound source package
+        uses: actions/download-artifact@v4
+        with:
+          name: canonical-v2-bound-sources
+          path: /tmp/canonical-v2-sources
+
+      - name: Reverify source bytes
         shell: bash
         run: |
           set -euo pipefail
-          if [ -d /tmp/canonical-v2-pilot ]; then
-            du -sh /tmp/canonical-v2-pilot || true
-            find /tmp/canonical-v2-pilot -type f | wc -l
-            if [ -f /tmp/canonical-v2-pilot/shard_summary.json ]; then
-              cat /tmp/canonical-v2-pilot/shard_summary.json
-            fi
-          fi
+          test "$(sha256sum /tmp/canonical-v2-sources/predictor/statcast_2024_through_2026-08-24.parquet | awk '{print $1}')" = "$PREDICTOR_SHA"
+          test "$(sha256sum /tmp/canonical-v2-sources/outcome/statcast_outcome_2026-08-25.parquet | awk '{print $1}')" = "$OUTCOME_SHA"
 
-      - name: Upload complete pilot evidence
+      - name: Generate deterministic shard
+        shell: bash
+        run: |
+          set -euo pipefail
+          out="/tmp/canonical-v2-shard-${{ matrix.shard }}"
+          rm -rf "$out"
+          mkdir -p "$out"
+          python backtest/canonical_v2_shard.py             --run-id "$CANONICAL_RUN_ID"             --start "$CANONICAL_START"             --end "$CANONICAL_END"             --shard-index "${{ matrix.shard }}"             --shard-count "$SHARD_COUNT"             --source-parquet /tmp/canonical-v2-sources/predictor/statcast_2024_through_2026-08-24.parquet             --expected-source-sha256 "$PREDICTOR_SHA"             --outcome-parquet /tmp/canonical-v2-sources/outcome/statcast_outcome_2026-08-25.parquet             --expected-outcome-sha256 "$OUTCOME_SHA"             --outcome-date 2026-08-25             --scientific-parent-sha "$SCIENTIFIC_PARENT_SHA"             --out-dir "$out"             --archive-http-bodies             --sleep 0.25             --verbose
+
+      - name: Upload shard evidence even on failure
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: canonical-v2-pilot-20250819
-          path: /tmp/canonical-v2-pilot
+          name: canonical-v2-shard-${{ matrix.shard }}
+          path: /tmp/canonical-v2-shard-${{ matrix.shard }}
           if-no-files-found: error
           retention-days: 90
+          compression-level: 6
+
+  consolidate:
+    needs: shard
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - name: Checkout exact generation head
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up exact canonical Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11.15'
+          cache: pip
+
+      - name: Install exact canonical environment
+        shell: bash
+        run: |
+          set -euo pipefail
+          pip install -r requirements.txt
+          pip install --upgrade --force-reinstall             numpy==2.4.6             pandas==3.0.5             pyarrow==25.0.1             pybaseball==2.2.7             python-dateutil==2.9.0.post0             requests==2.34.2             scikit-learn==1.9.0             scipy==1.17.1
+
+      - name: Download bound sources
+        uses: actions/download-artifact@v4
+        with:
+          name: canonical-v2-bound-sources
+          path: /tmp/canonical-v2-sources
+
+      - name: Download shard 0
+        uses: actions/download-artifact@v4
+        with:
+          name: canonical-v2-shard-0
+          path: /tmp/canonical-v2-shards/shard-0
+      - name: Download shard 1
+        uses: actions/download-artifact@v4
+        with:
+          name: canonical-v2-shard-1
+          path: /tmp/canonical-v2-shards/shard-1
+      - name: Download shard 2
+        uses: actions/download-artifact@v4
+        with:
+          name: canonical-v2-shard-2
+          path: /tmp/canonical-v2-shards/shard-2
+      - name: Download shard 3
+        uses: actions/download-artifact@v4
+        with:
+          name: canonical-v2-shard-3
+          path: /tmp/canonical-v2-shards/shard-3
+
+      - name: Independently consolidate all four shards
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf /tmp/canonical-v2-consolidated
+          python backtest/canonical_v2_consolidate.py             --shards-root /tmp/canonical-v2-shards             --out-dir /tmp/canonical-v2-consolidated             --run-id "$CANONICAL_RUN_ID"             --start "$CANONICAL_START"             --end "$CANONICAL_END"             --shard-count "$SHARD_COUNT"             --source-parquet /tmp/canonical-v2-sources/predictor/statcast_2024_through_2026-08-24.parquet             --outcome-parquet /tmp/canonical-v2-sources/outcome/statcast_outcome_2026-08-25.parquet             --require-body-archive
+
+      - name: Upload uncertified consolidated package
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: canonical-v2-consolidated-${{ github.sha }}
+          path: /tmp/canonical-v2-consolidated
+          if-no-files-found: error
+          retention-days: 90
+          compression-level: 6
+
+  certify:
+    needs: consolidate
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - name: Checkout exact generation head
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up exact canonical Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11.15'
+          cache: pip
+
+      - name: Install exact canonical environment
+        shell: bash
+        run: |
+          set -euo pipefail
+          pip install -r requirements.txt
+          pip install --upgrade --force-reinstall             numpy==2.4.6             pandas==3.0.5             pyarrow==25.0.1             pybaseball==2.2.7             python-dateutil==2.9.0.post0             requests==2.34.2             scikit-learn==1.9.0             scipy==1.17.1
+
+      - name: Download consolidated package into a fresh job
+        uses: actions/download-artifact@v4
+        with:
+          name: canonical-v2-consolidated-${{ github.sha }}
+          path: /tmp/canonical-v2-final
+
+      - name: Independently certify the transferred package
+        shell: bash
+        run: |
+          set -euo pipefail
+          python backtest/canonical_v2_certify.py             /tmp/canonical-v2-final             --repo-root "$GITHUB_WORKSPACE"             --expected-parent-sha "$SCIENTIFIC_PARENT_SHA"             --expected-source-sha "$PREDICTOR_SHA"             --expected-outcome-source-sha "$OUTCOME_SHA"             --output /tmp/canonical-v2-final/certification_report.json
+
+      - name: Upload final self-contained evidence package
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: canonical-v2-final-${{ github.sha }}
+          path: /tmp/canonical-v2-final
+          if-no-files-found: error
+          retention-days: 90
+          compression-level: 6
