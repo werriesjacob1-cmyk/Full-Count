@@ -101,7 +101,7 @@ def candidate(day, game, player, prob=0.65, outcome=1):
     }
 
 
-def make_run(root, *, incomplete=False, duplicate=False):
+def make_run(root, *, incomplete=False, duplicate=False, include_api_ledger=True):
     run_dir = os.path.join(root, "canonical-test")
     rows_dir = os.path.join(run_dir, "rows")
     source_dir = os.path.join(run_dir, "source")
@@ -159,6 +159,50 @@ def make_run(root, *, incomplete=False, duplicate=False):
         "cache_mode": "fresh_source",
         "notes": "synthetic",
     }]
+
+    if include_api_ledger:
+        ledger_path = os.path.join(source_dir, "mlb_statsapi_request_ledger.jsonl")
+        ledger_rows = [
+            {
+                "date": "2026-04-01",
+                "request_identity": "GET /api/v1/schedule?sportId=1&date=2026-04-01",
+                "retrieved_at": "2026-08-29T00:00:01+00:00",
+                "response_sha256": "1" * 64,
+                "response_bytes": 1234,
+            },
+            {
+                "date": "2026-04-01",
+                "request_identity": "GET /api/v1/stats?stats=byDateRange",
+                "retrieved_at": "2026-08-29T00:00:02+00:00",
+                "response_sha256": "2" * 64,
+                "response_bytes": 5678,
+            },
+        ]
+        with open(ledger_path, "w", encoding="utf-8") as handle:
+            for row in ledger_rows:
+                handle.write(json.dumps(row, sort_keys=True) + "\n")
+        ledger_sha = sha(open(ledger_path, "rb").read())
+        ledger_columns = [
+            "date",
+            "request_identity",
+            "retrieved_at",
+            "response_sha256",
+            "response_bytes",
+        ]
+        lineage.append({
+            "source": "mlb_statsapi_request_ledger",
+            "request_identity": "mlb_statsapi_request_ledger:canonical-test",
+            "retrieval_timestamp": "2026-08-29T00:00:02+00:00",
+            "library": "requests",
+            "library_version": "2.34.2",
+            "row_count": len(ledger_rows),
+            "schema_columns": ledger_columns,
+            "schema_fingerprint": sha(",".join(sorted(ledger_columns)).encode()),
+            "content_sha256": ledger_sha,
+            "date_coverage": "2026-04-01..2026-04-02",
+            "cache_mode": "fresh_source",
+            "notes": "path=source/mlb_statsapi_request_ledger.jsonl synthetic",
+        })
 
     identity = {
         "run_id": manifest["run_id"],
@@ -284,6 +328,19 @@ class CertificationTests(unittest.TestCase):
                 "independent source-schema attestation supplies it additively",
                 report["warnings"],
             )
+
+    def test_missing_generation_time_api_response_ledger_blocks_certification(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            run_dir = make_run(tmp, include_api_ledger=False)
+            report = certify_run(run_dir)
+            self.assertEqual(report["verdict"], "CERTIFICATION BLOCKED")
+            self.assertTrue(
+                any(
+                    "unbound external source lineage" in item
+                    for item in report["blockers"]
+                )
+            )
+            self.assertEqual(report["failures"], [])
 
     def test_incomplete_run_is_blocked_not_condemned(self):
         with tempfile.TemporaryDirectory() as tmp:
