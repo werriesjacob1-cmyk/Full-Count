@@ -122,8 +122,7 @@ class HistoricalTeamIdentityTests(unittest.TestCase):
             return team_name, usage, None
 
         with patch.object(m, "retry_get", side_effect=self.fake_retry_get), \
-             patch.object(m._bullpen_fetch_one.__module__ and m, "_bullpen_fetch_one",
-                          side_effect=fake_fetch), \
+             patch.object(m, "_bullpen_fetch_one", side_effect=fake_fetch), \
              patch.object(gp, "_bullpen_role_classifier", return_value=None), \
              patch.object(gp, "_reliever_detail", return_value=[{"name": "Reliever One"}]), \
              patch.object(m.statsapi, "lookup_team",
