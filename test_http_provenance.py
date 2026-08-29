@@ -88,6 +88,28 @@ class LedgerTests(unittest.TestCase):
             )
             self.assertNotEqual(sa["ledger_file_sha256"], sb["ledger_file_sha256"])
 
+    def test_strict_firewall_blocks_unapproved_host_before_send(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            ledger = hp.ResponseLedger(
+                tmp,
+                strict_host_firewall=True,
+            )
+            ledger.start_date("2026-05-01")
+            with self.assertRaises(hp.HttpProvenanceError):
+                ledger.assert_request_allowed(
+                    "GET",
+                    "https://www.rotowire.com/baseball/daily-lineups.php",
+                    {},
+                )
+            # Allowed historical source still passes.
+            ident = ledger.assert_request_allowed(
+                "GET",
+                "https://statsapi.mlb.com/api/v1/schedule",
+                {"params": {"date": "2026-05-01"}},
+            )
+            self.assertIn("statsapi.mlb.com", ident["url"])
+            ledger.abort_date("2026-05-01", "test complete")
+
     def test_non_allowlisted_hosts_are_ignored(self):
         with tempfile.TemporaryDirectory() as tmp:
             ledger = hp.ResponseLedger(tmp)
