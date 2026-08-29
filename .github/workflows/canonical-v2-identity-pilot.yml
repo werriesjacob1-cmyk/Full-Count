@@ -1,0 +1,115 @@
+name: Canonical V2 Historical Identity Pilot
+
+on:
+  push:
+    branches:
+      - superchad/canonical-v2-provenance-runner-01
+    paths:
+      - engineering/CANONICAL_V2_IDENTITY_PILOT_TRIGGER
+
+permissions:
+  contents: read
+
+concurrency:
+  group: canonical-v2-historical-identity-pilot
+  cancel-in-progress: false
+
+jobs:
+  pilot:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - name: Checkout exact v2 head
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up exact canonical Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11.15'
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Materialize exact bound Statcast source
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/fc-source
+          git fetch origin canonical-durable-checkpoints
+          git show origin/canonical-durable-checkpoints:canonical/canonical-20260828T153143Z-2b79304f/source/statcast_2024_through_2026-08-24.parquet             > /tmp/fc-source/statcast_2024_through_2026-08-24.parquet
+          actual="$(sha256sum /tmp/fc-source/statcast_2024_through_2026-08-24.parquet | awk '{print $1}')"
+          expected="85c41d79570ac25169726419ed2bcb55cbba78139e8786b6005f71f40a877685"
+          echo "source_sha256=$actual"
+          test "$actual" = "$expected"
+
+      - name: Run 2024 historical-identity pilot
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf /tmp/canonical-v2-identity-pilot
+          python backtest/canonical_v2_shard.py             --run-id canonical-v2-identity-pilot-20240820             --start 2024-08-20             --end 2024-08-20             --shard-index 0             --shard-count 1             --source-parquet /tmp/fc-source/statcast_2024_through_2026-08-24.parquet             --expected-source-sha256 85c41d79570ac25169726419ed2bcb55cbba78139e8786b6005f71f40a877685             --scientific-parent-sha fc589447ec157bff9a96071edc3ceb6c7dc734eb             --out-dir /tmp/canonical-v2-identity-pilot             --archive-http-bodies             --verbose
+
+      - name: Prove no current-franchise lookup entered 2024 replay
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json
+          from urllib.parse import urlparse, parse_qs
+
+          path="/tmp/canonical-v2-identity-pilot/http/2024-08-20.ledger.jsonl"
+          entries=[json.loads(line) for line in open(path) if line.strip()]
+          urls=[e.get("url","") for e in entries]
+
+          forbidden=[]
+          season_2024_team_dir=[]
+          for url in urls:
+              if "/api/v1/seasons/all" in url:
+                  forbidden.append(url)
+              if "/api/v1/teams" in url:
+                  q=parse_qs(urlparse(url).query)
+                  if q.get("activeStatus"):
+                      forbidden.append(url)
+                  season=q.get("season",[])
+                  if season and season != ["2024"]:
+                      forbidden.append(url)
+                  if season == ["2024"]:
+                      season_2024_team_dir.append(url)
+
+          if forbidden:
+              raise SystemExit(
+                  "current/non-2024 franchise directory reached historical replay: "
+                  + repr(forbidden[:10])
+              )
+          if not season_2024_team_dir:
+              raise SystemExit("no explicit season=2024 team directory was observed")
+
+          meta=json.load(open(
+              "/tmp/canonical-v2-identity-pilot/rows/2024-08-20.meta.json"
+          ))
+          if meta.get("status") != "ok":
+              raise SystemExit(f"date did not finish cleanly: {meta.get('status')}")
+          if int((meta.get("http_provenance") or {}).get("firewall_block_count") or 0):
+              raise SystemExit("source firewall block occurred")
+          if meta.get("point_in_time_access",{}).get("violations"):
+              raise SystemExit("point-in-time access violation occurred")
+
+          print(json.dumps({
+              "observed_http_requests": len(entries),
+              "season_2024_team_directory_observations": len(season_2024_team_dir),
+              "rows": meta.get("row_count"),
+              "ungraded": meta.get("n_ungraded"),
+          }, sort_keys=True))
+          PY
+
+      - name: Upload complete identity-pilot evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: canonical-v2-identity-pilot-20240820
+          path: /tmp/canonical-v2-identity-pilot
+          if-no-files-found: error
+          retention-days: 90
