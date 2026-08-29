@@ -37,6 +37,7 @@ def population_row(day, game, player, current, challenger, *, team=None, park=No
         "line": 0.5,
         "team": team or f"T{player % 3}",
         "venue_id": park if park is not None else 100 + game,
+        "eligibility_score": 70.0,
         "current_prob": current,
         "challenger_prob": challenger,
         "supported": supported,
@@ -121,6 +122,7 @@ def evaluation_rows():
             "line": 0.5,
             "team": teams[player],
             "predicted_prob": current[player],
+            "score": 70.0,
             "outcome": outcomes[player],
         }
         for player in range(1, 7)
