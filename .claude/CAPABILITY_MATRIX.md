@@ -65,9 +65,15 @@ Access denied: repository "werriesjacob1-cmyk/full-count" is not configured
 for this session. Allowed repositories: werriesjacob1-cmyk/project-gridiron
 ```
 
-The git remote also still uses the old URL; GitHub redirects it transparently,
-which is exactly why the wrong provenance name survived unnoticed in manifests
-for so long. **Provenance name ≠ access name.** Neither is a typo.
+**Provenance name ≠ access name.** Neither is a typo.
+
+`CORRECTED 2026-08-29.` This section used to add: *"the git remote also still
+uses the old URL; GitHub redirects it transparently, which is exactly why the
+wrong provenance name survived unnoticed."* That is no longer true — the remote
+is now `https://github.com/werriesjacob1-cmyk/PROJECT-GRIDIRON`, verified in
+both the primary checkout and every worktree. The two-name distinction still
+holds and still matters; the explanation of how the wrong name went unnoticed
+was describing a remote that no longer exists.
 
 ### Serena — rejected, with reasons
 
@@ -286,3 +292,62 @@ runtime enforcement unproven*. Proving activation needs a fresh session rooted
 on a checkout containing `.claude/`, then confirming an `fc-*` agent is
 actually invocable. Until someone does that, do not describe SuperClaude as
 active.
+
+---
+
+## Independent audit, 2026-08-29 — findings and disposition
+
+A read-only auditor was given this branch and asked to find reasons NOT to
+merge it. Verdict: **DO NOT MERGE**, with a five-item mechanical fix list. It
+found no secrets, no merge/deploy/promote authority granted to any agent, no
+over-broad permission grant, and no product-code contamination — and it
+independently re-checked ten runtime facts in this file, all ten correct.
+
+Recorded here rather than silently absorbed, because a writer that quietly
+fixes its reviewer's findings has not been reviewed.
+
+### Fixed in this branch
+
+| # | Finding | Disposition |
+|---|---|---|
+| 1 | **`.claude/context/` was not gitignored**, while three files here asserted it was (`fc-context-keeper/SKILL.md:14`, this file, `checkpoint.sh:119`). Blocking: an untracked file wedges session end per `worktree-autosave.sh:44-46`, and gets swept into an autosave snapshot and **pushed to origin** carrying worktree paths, PIDs, boot ids and run identifiers. | **FIXED.** Rule added to `.gitignore`, plus a `git check-ignore` assertion in the acceptance suite — verified to FAIL without the rule and PASS with it. Neither test caught this before; that was the real gap. |
+| 3 | `CAPABILITY_MATRIX.md:68` claimed the git remote "still uses the old URL." False — it is `PROJECT-GRIDIRON`. | **FIXED**, with the correction marked rather than the sentence deleted. |
+| 4 | The four read-only reviewers all hold `Bash`, which is a superset of Write and Edit, so "You are READ-ONLY — no Write, no Edit" overstates the guarantee. This file admitted the loophole 80 lines away; the agent files did not. | **FIXED.** Each of the four now states that read-only is enforced at the tool layer and a **convention** at the shell layer. |
+
+### Deliberately NOT decided here — Jacob's call
+
+**2 · `FC_AUTOSAVE_PUSH` defaults to `1` under an automatic hook.**
+`.claude/settings.json` installs a `PostToolUse` hook on `Bash|Write|Edit` that
+`nohup`-launches `worktree-autosave.sh`, which pushes to
+`refs/heads/fc-autosave/<branch>` roughly every 180 seconds of tool activity —
+**outside the permission system, detached, with failures invisible.** It never
+force-pushes and never touches HEAD, the index or the working tree, so it is
+well built. It is still an autonomous network write that no human approves,
+and `Bash(git push:*)` is in neither `deny` nor `ask`, so the interactive path
+prompts while the hook path never does.
+
+The auditor is right that this is a real authority question, and it is exactly
+the kind of default that should be chosen consciously rather than inherited.
+Changing it changes the durability guarantee this whole session has depended
+on, so it is not a call to make inside an activation PR. **Decide it, then
+state the answer in `CLAUDE.md` so the next reader knows the repo pushes on
+its own.**
+
+**5 · `fc-backfill` documents code reachable from no ref.** It is an operating
+manual for `backtest/canonical_run.py`, which per revalidation §2 exists only
+at pinned SHA `fc589447`. Holding the skill until that commit is reachable
+from a ref is reasonable; so is keeping it and fixing the ref. Both are the
+same underlying decision as §2 and should be made together.
+
+### Noted, not actioned
+
+- `CAPABILITY_MATRIX.md:227` ("no agent declares a tool absent from the
+  runtime") is verified **circularly** — `test_superclaude_acceptance.sh:120`
+  checks agent tool lists against a `RUNTIME` set hardcoded in the test file,
+  so it can never catch a phantom tool the test author also believed in. The
+  auditor could not confirm `TaskCreate`/`TaskUpdate`/`TaskGet`/`TaskList`
+  (declared by five agents) from a subagent context. Not called phantom; the
+  claim of verification is simply weaker than it sounds.
+- `fc-context-keeper` (228 lines) is tooling about tooling, and
+  `fc-intelligence-scout` has no companion skill because its output always
+  feeds `fc-experiment`. Both are trim candidates if this should be smaller.

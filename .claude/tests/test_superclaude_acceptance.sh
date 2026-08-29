@@ -287,6 +287,20 @@ info "live MCP calls are not made here: a shell test has no tool access."
 info "Verify with mcp__github__get_me + list_branches(owner=werriesjacob1-cmyk, repo=project-gridiron)."
 
 # ─────────────────────────────────────────────────────── 10. NAVIGATION ──
+
+section "11. Context keeper does not dirty the tree"
+# Regression guard. Three files in .claude/ assert .claude/context/ is
+# gitignored; until 2026-08-29 none of them was true and no test checked.
+# Consequences were concrete: an untracked file wedges session end (see the
+# comment at .claude/worktree-autosave.sh:44-46) and gets swept into an
+# autosave snapshot and PUSHED to origin, carrying worktree paths, PIDs, boot
+# ids and run identifiers. Found by independent audit, not by this suite.
+if git -C "$ROOT" check-ignore -q .claude/context/probe.md 2>/dev/null; then
+  pass ".claude/context/ is gitignored (keeper cannot dirty the tree or reach origin)"
+else
+  fail ".claude/context/ is NOT gitignored -- keeper output would be committed/pushed"
+fi
+
 echo
 echo "== 10. Navigation =="
 if grep -q 'Serena' "$MX" 2>/dev/null && grep -q 'REJECTED' "$MX" 2>/dev/null; then
