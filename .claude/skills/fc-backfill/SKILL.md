@@ -75,40 +75,89 @@ local-only file is gone.
 
 ## Starting a run
 
+**Never copy a cache mode from an example.** Source vintage is part of the run's
+scientific identity.
+
+For a BRAND-NEW run, the operator must explicitly choose and record the source
+contract before generation:
+
+- run id / date range
+- pinned detached code SHA
+- `cache_mode` (`fresh_source` or `frozen_cache`)
+- exact source-cache path / source artifact identity
+- weather mode
+- sleep / durability cadence
+- environment identity
+
+Only then launch from the pinned detached worktree, using the exact recorded
+values. A schematic command is intentionally parameterized:
+
 ```bash
 python3 backtest/canonical_run.py --start <D1> --end <D2> \
-    --no-weather --sleep 1.0 --cache-mode frozen_cache
+    --no-weather --sleep 1.0 --cache-mode <RECORDED_CACHE_MODE>
 ```
 
-Durable push is **on by default here and only here** — `run()` defaults it OFF
-for library callers, because with it on the ordinary test suite pushed 40
-synthetic run ids to the real durable branch in about three minutes.
-
-Run from a **pinned detached worktree** at the SHA you intend to be the
-scientific identity. Never from a branch that will move under you.
+Durable push is **on by default in the CLI path and only there** — library
+callers keep it off so ordinary tests cannot push synthetic scientific state.
 
 ## Resuming after a container loss
 
+Recovery is **restore-then-generate**, never "run the helper and trust its
+defaults."
+
+The helper may be inspected first:
+
 ```bash
-bash backtest/resume_canonical.sh <run_id>
-FC_RESUME_DRY_RUN=1 bash backtest/resume_canonical.sh <run_id>   # inspect first
+FC_RESUME_DRY_RUN=1 bash backtest/resume_canonical.sh <EXPLICIT_RUN_ID>
 ```
 
-It reads the pinned SHA off the durable index, checks it out detached, restores
-checksum-verified checkpoints **from the current checkout** (restoring bytes is
-regime-neutral; only generation must run at the pinned SHA), then generates.
+but do **not** execute it unmodified until its generated command has been checked
+against the durable manifest/source contract.
+
+Standing real example, 2026-08-29:
+
+- `canonical-20260828T153143Z-2b79304f` records `cache_mode=fresh_source`.
+- the current `resume_canonical.sh` appends `--cache-mode frozen_cache` when
+  the pinned runner exposes that flag.
+- running that helper unmodified would therefore change source semantics while
+  preserving the same run id — an identity violation, not a harmless default.
+
+The safe recovery sequence is:
+
+1. require the explicit run id;
+2. fetch the durable branch and verify its run identity;
+3. prove no live owner already exists (PID + starttime + boot id, not `pgrep`
+   text matching alone);
+4. fetch/checkout the exact pinned SHA detached. For the current canonical run,
+   the protected remote ref is
+   `claude/canonical-source-identity-01 -> fc589447ec157bff9a96071edc3ceb6c7dc734eb`;
+5. restore the durable manifest/checkpoints/source material into the run
+   directory **before** invoking the pinned generator;
+6. verify the exact source checksum/fingerprint and environment identity;
+7. derive every generation flag from the restored run contract — especially
+   cache mode. Never substitute a neighboring cache or generic default;
+8. preserve the original full date range. Do not use `--max-dates` or alter
+   `--end` merely to chunk a resume;
+9. launch exactly one generator;
+10. call recovery proven only after at least two new remote durable checkpoints
+    advance consecutively.
+
+On the pinned runner, `load_manifest()` happens before any
+`--resume-from-remote` behavior can bootstrap an empty run directory, so a
+generator flag alone is not a recovery mechanism. Restore first.
 
 ### Known limitations — state these, do not paper over them
 
-The recovery path is directionally right and **not yet hardened for unattended
-use**. Still outstanding:
+The repository helper is useful scaffolding and **not safe as an unattended
+one-command recovery authority**. At minimum:
 
-- targets the newest durable run when no run id is given, rather than requiring one
-- no healthy-owner detection, so it does not cleanly NO-OP against a live run
-- `pgrep` can report success for a process this invocation did not launch
-- run contract comes from CLI arguments, not from the durable manifest
-- concurrent invocations are not proven to yield exactly one owner
-- a completed run's NO-OP path is not proven clean
+- if no run id is supplied it can choose the newest durable run; this skill
+  forbids that and always requires an explicit id;
+- healthy-owner/no-op behavior is not proven strongly enough for blind retries;
+- `pgrep` can mistake a pre-existing process for one this invocation launched;
+- its generated cache mode is not derived from the durable manifest;
+- concurrent invocations are not proven to yield exactly one owner;
+- a completed run's NO-OP path is not proven clean.
 
 **Do not create a scheduled auto-resume Routine.** Not until those are closed
 and a human authorizes it separately.
