@@ -639,6 +639,27 @@ The HR contact-state thread closes if:
   are stricter subsets. The gate may not be switched to a more favorable arm
   after holdout access.
 
+Continuation is evaluated **per arm** for B, C, and D.
+
+An arm earns continuation only if ALL are true:
+
+- the global Arm-B coverage gate is at least 500 holdout candidates;
+- observed added and removed sets are both non-empty;
+- at least 4,750 of 5,000 changed-set bootstrap replicates are valid;
+- the added-minus-removed 95% CI is **strictly positive** (lower bound > 0);
+- every player/team/park/month robustness axis is resolvable;
+- no frozen largest-contributor removal flips a positive effect to non-positive.
+
+A CI wholly below zero is therefore a failure, not a loophole merely because
+zero is excluded.
+
+B/C/D are reported independently. Any surviving arm is a surviving historical
+contact-state result under §16. **Only D survival permits Arm E to be fit and
+evaluated.** If B or C survives while D does not, E remains forbidden; the
+surviving simpler arm may still advance to prospective shadow under §16.
+
+If none of B/C/D survives, the contact-state thread closes without Arm E.
+
 Execution-side aborts before result interpretation:
 
 - any same-day/future pitch enters a feature;
