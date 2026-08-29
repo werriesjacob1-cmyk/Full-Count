@@ -73,6 +73,7 @@ def contiguous_shard(items, shard_index, shard_count):
 
 def logical_http_entry(entry):
     return {
+        "observed_date": entry.get("observed_date"),
         "method": entry.get("method"),
         "url": entry.get("url"),
         "request_body_sha256": entry.get("request_body_sha256"),
@@ -327,10 +328,17 @@ def main():
     ap.add_argument("--start", required=True)
     ap.add_argument("--end", required=True)
     ap.add_argument("--shard-count", type=int, required=True)
+    ap.add_argument("--source-parquet", required=True)
     ap.add_argument("--require-body-archive", action="store_true")
     args = ap.parse_args()
 
     expected_dates = dates(args.start, args.end)
+    if not os.path.exists(args.source_parquet):
+        raise ConsolidationError(
+            f"exact Statcast source parquet missing: {args.source_parquet}"
+        )
+    provided_source_sha = sha256_file(args.source_parquet)
+
     manifests = []
     summaries = []
     shard_dirs = []
@@ -371,6 +379,10 @@ def main():
         raise ConsolidationError(f"mixed generation code SHA across shards: {code_shas!r}")
     if len(source_shas) != 1 or None in source_shas:
         raise ConsolidationError(f"mixed source SHA across shards: {source_shas!r}")
+    if provided_source_sha != next(iter(source_shas)):
+        raise ConsolidationError(
+            "provided exact Statcast parquet differs from shard-bound source SHA"
+        )
 
     env_signatures = {
         scientific_environment_signature(manifest.get("environment") or {})
@@ -383,6 +395,8 @@ def main():
 
     seen_dates = set()
     all_rows_raw = []
+    date_metadata_dir = os.path.join(args.out_dir, "date_metadata")
+    os.makedirs(date_metadata_dir, exist_ok=True)
     global_ids = set()
     all_http_entries = []
     response_blob_sources = {}
@@ -421,6 +435,10 @@ def main():
             if not os.path.exists(meta_path):
                 raise ConsolidationError(f"{day}: missing metadata")
             meta = load_json(meta_path)
+            atomic_json(
+                os.path.join(date_metadata_dir, f"{day}.json"),
+                meta,
+            )
             if meta.get("generation_code_sha") not in code_shas:
                 raise ConsolidationError(f"{day}: generation code SHA mismatch")
             if meta.get("source_content_sha256") not in source_shas:
@@ -475,6 +493,16 @@ def main():
     os.makedirs(args.out_dir, exist_ok=True)
     rows_path = os.path.join(args.out_dir, "rows.jsonl")
     atomic_write(rows_path, assembled)
+
+    final_source_dir = os.path.join(args.out_dir, "source")
+    os.makedirs(final_source_dir, exist_ok=True)
+    final_source_path = os.path.join(
+        final_source_dir,
+        "statcast_2024_through_2026-08-24.parquet",
+    )
+    shutil.copyfile(args.source_parquet, final_source_path)
+    if sha256_file(final_source_path) != provided_source_sha:
+        raise ConsolidationError("copied Statcast source SHA changed")
 
     # Source schema from the common shard identity.
     statcast = identity["statcast_source"]
@@ -578,7 +606,7 @@ def main():
             "content_sha256": stats_ledger["content_sha256"],
             "row_count": stats_ledger["row_count"],
             "schema_columns": sorted([
-                "method", "url", "request_body_sha256", "status_code",
+                "observed_date", "method", "url", "request_body_sha256", "status_code",
                 "response_sha256", "response_bytes", "exception_type",
             ]),
             "schema_fingerprint": sha256_bytes(",".join(sorted([
@@ -656,11 +684,14 @@ def main():
         "generation_code_sha": next(iter(code_shas)),
         "scientific_parent_sha": identity.get("scientific_parent_sha"),
         "scientific_environment_signature": next(iter(env_signatures)),
+        "scientific_environment": manifests[0].get("environment") or {},
         "execution_environment_fingerprints": sorted({
             (manifest.get("environment") or {}).get("environment_fingerprint")
             for manifest in manifests
         }),
         "statcast_source_sha256": next(iter(source_shas)),
+        "statcast_source_path": "source/statcast_2024_through_2026-08-24.parquet",
+        "date_metadata_path": "date_metadata",
         "source_lineage": lineage,
         "source_lineage_fingerprint": lineage_fingerprint,
         "http_totals": {
