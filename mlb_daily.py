@@ -76,6 +76,13 @@ DRY_RUN = os.environ.get("DRY_RUN","0") == "1" or "--dry-run" in sys.argv
 OUTPUT_DIR = os.environ.get("OUTPUT_DIR","output")
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
+# Historical canonical-v2 integrity mode. Default False preserves every live
+# caller exactly. The v2 backtest runner turns this on explicitly so a missing
+# historical lineup can never fall through to TODAY's Rotowire projection or
+# a last-known assumed lineup. Official StatsAPI and dated MLB.com remain
+# allowed historical sources.
+HISTORICAL_REPLAY_STRICT_LINEUPS = False
+
 UA_POOL = [
     "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36",
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36",
@@ -417,7 +424,20 @@ def fetch_lineups(date):
                 lines[miss["idx"]]="\n".join(block)
             else:
                 still_missing.append(miss)
-        if still_missing:
+        if still_missing and HISTORICAL_REPLAY_STRICT_LINEUPS:
+            # CANONICAL V2 FAIL-CLOSED BOUNDARY:
+            # StatsAPI + dated MLB.com are the only admissible historical
+            # lineup authorities. Rotowire's daily page is current-state and
+            # last-known lineups are assumptions; neither may define a
+            # historical canonical candidate. Leave these teams' structured
+            # lineups empty so downstream generation produces no batter
+            # candidates from an unproven batting order.
+            for miss in still_missing:
+                lines[miss["idx"]] = (
+                    f"\n  {miss['name']}: historical lineup unavailable from "
+                    "StatsAPI + dated MLB.com — canonical v2 fails closed"
+                )
+        elif still_missing:
             teams_by_name = {t["name"]:t["abbr"] for t in get_team_ids()}
             ids_by_name = {t["name"]:t["id"] for t in get_team_ids()}
             rotowire = fetch_rotowire_lineups_by_team()
