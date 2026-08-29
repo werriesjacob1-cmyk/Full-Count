@@ -184,11 +184,15 @@ try:
     fresh = page.evaluate("() => boardFreshnessState(Date.now(), DATA)")
     check(fresh["state"] in ("fresh", "stale", "unknown"),
           "boardFreshnessState returns a declared state", f"got {fresh}")
-    # Force a board age past the limit and confirm the banner appears. Uses
-    # the real function, not a re-implementation of its rule.
+    # Force the MODEL BASIS past the limit and confirm the banner appears.
+    # boardFreshnessState() correctly prefers freshness.model_basis_at over
+    # legacy generated_at, so age the canonical clock too. Clone freshness
+    # before editing so this test never mutates the real in-page DATA object.
     forced = page.evaluate(
         "() => { const d = Object.assign({}, DATA);"
-        "  d.generated_at = new Date(Date.now() - 11 * 3600 * 1000).toISOString();"
+        "  const old = new Date(Date.now() - 11 * 3600 * 1000).toISOString();"
+        "  d.generated_at = old;"
+        "  d.freshness = Object.assign({}, d.freshness || {}, {model_basis_at: old});"
         "  return boardFreshnessState(Date.now(), d); }")
     check(forced["state"] == "stale" and forced["reason"] == "board_age_exceeded",
           "an 11-hour-old board is classified stale on board age", f"got {forced}")
