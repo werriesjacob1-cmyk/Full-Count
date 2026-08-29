@@ -368,7 +368,7 @@ The PA/opportunity challenger **SURVIVES** only if ALL are true:
    per-date volume;
 2. 95% paired game-cluster CI for overall hit-rate delta is strictly above zero;
 3. added-minus-removed point estimate is positive;
-4. when the changed-set CI is estimable under §9, its lower bound is strictly
+4. when the changed-set CI is estimable under §10, its lower bound is strictly
    above zero;
 5. no population / timing / identity / per-date-volume assertion failed.
 
