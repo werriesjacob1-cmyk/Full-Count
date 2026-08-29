@@ -26,7 +26,7 @@ from backtest.experiment_primitives import (
     select_top_k_per_date,
     deterministic_sha256,
 )
-from backtest.hr_contact_state_features import extract_contact_state
+from backtest.hr_contact_state_features import ensure_contact_state_index
 from backtest.hr_offset_estimator import (
     apply_standardizer,
     fit_offset_logistic,
@@ -118,11 +118,10 @@ def _state_cache_key(row):
     return (int(row["player_id"]), _date(row))
 
 
-def _extract_state_cached(source_frame, row, cache):
+def _extract_state_cached(source_index, row, cache):
     key = _state_cache_key(row)
     if key not in cache:
-        cache[key] = extract_contact_state(
-            source_frame,
+        cache[key] = source_index.extract(
             batter_id=row["player_id"],
             candidate_date=row["date"],
         )
@@ -237,9 +236,10 @@ def fit_hr_arms(training_rows, source_frame, arms=DEFAULT_ARMS):
             f"initial arm set is locked to {DEFAULT_ARMS!r}, got {tuple(arms)!r}"
         )
 
+    source_index = ensure_contact_state_index(source_frame)
     cache = {}
     states = {
-        candidate_identity(row): _extract_state_cached(source_frame, row, cache)
+        candidate_identity(row): _extract_state_cached(source_index, row, cache)
         for row in rows
     }
     fitted = {}
@@ -399,9 +399,10 @@ def build_hr_prediction_freezes(
             f"venue map unresolved for holdout game_pk(s): {missing_games[:10]!r}"
         )
 
+    source_index = ensure_contact_state_index(source_frame)
     cache = {}
     states = {
-        candidate_identity(row): _extract_state_cached(source_frame, row, cache)
+        candidate_identity(row): _extract_state_cached(source_index, row, cache)
         for row in rows
     }
 
