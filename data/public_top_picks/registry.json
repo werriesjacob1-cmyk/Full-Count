@@ -2,7 +2,7 @@
   "schema_version": 1,
   "identity_schema_version": 2,
   "rollout_version": "pre-phase-v-live-lifecycle-v1",
-  "updated_at": "2026-08-29T07:37:00.563264+00:00",
+  "updated_at": "2026-08-29T09:31:57.908550+00:00",
   "migration": {
     "version": "pre-phase-v-live-lifecycle-v1",
     "completed_at": "2026-08-17T23:14:57+00:00",
@@ -5500,6 +5500,98 @@
         },
         "qualification_timestamp": "2026-08-29T07:31:22.427890+00:00",
         "board_timestamp": "2026-08-29T07:31:22.315846+00:00",
+        "slate_date": "2026-08-29"
+      }
+    },
+    "fc2:823501:player-608331:strikeouts:5:over": {
+      "canonical_id": "fc2:823501:player-608331:strikeouts:5:over",
+      "settlement_identity": [
+        "823501",
+        [
+          "player",
+          "608331"
+        ],
+        "strikeouts",
+        "5",
+        "over"
+      ],
+      "slate_date": "2026-08-29",
+      "first_published_at": "2026-08-29T09:31:57.908550+00:00",
+      "publication_provenance": {
+        "artifact_id": "590ba0c86c924efd132fa8e52eb70eee6edf783e98794d45a9406dafffbcc865",
+        "source_commit": "39d305f3bb83328ab425fdd7cb87dcfbd3975f40",
+        "workflow_run_id": "33245670399",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-08-29T09:31:44.638816+00:00",
+        "data_hash": "a751e4df0ecd13466dd8aa4745ab966abb420f1d3c8461f0a3dfa4b9d4bee779",
+        "live_hash": "e8554a4c0776f1a436c3a2d0a17ec196be43082a04406632c1c33240ec072cad"
+      },
+      "snapshot": {
+        "id": "fc2:823501:player-608331:strikeouts:5:over",
+        "identity_version": 2,
+        "game_pk": 823501,
+        "player_id": 608331,
+        "combo_player_ids": null,
+        "type": "pitcher",
+        "name": "Max Fried",
+        "team": "New York Yankees",
+        "matchup": "Boston Red Sox @ New York Yankees",
+        "game_start": "2026-08-29T23:15:00Z",
+        "stat": "strikeouts",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "strikeouts",
+          "value": 4.5,
+          "needs": 5
+        },
+        "prop": "Over 4.5 Strikeouts",
+        "hit_probability": 0.6092,
+        "market_odds": -120,
+        "market_implied": 0.5146,
+        "market_edge": 0.0946,
+        "market_hold": null,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (B), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (10.4 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "Opposing team K% 21.3",
+          "Expected workload 23.1 batters faced (league average \u2014 no real start found for him in the L14 window)",
+          "Recency-weighted K rate 28.7% (exp. decay, halflife 30d, 15 real starts / 332 BF) \u2014 drives a favorable strikeout-probability read"
+        ],
+        "watchouts": [
+          "L14 Statcast sample too thin \u2014 recent-form read falls back to season K%",
+          "No L14 start found for this pitcher \u2014 workload defaulted to the league average",
+          "Platoon disadvantage: 1 of 7 projected hitters bat left-handed against this LHP (mostly opposite-handed lineup)"
+        ],
+        "prob_ci": [
+          0.5798,
+          0.6978
+        ],
+        "reliability": "B",
+        "reliability_note": null,
+        "sample_n": 15,
+        "lineup_assumed": null,
+        "base_rate": 0.5161,
+        "lift": 0.0931,
+        "lift_reference_rate": null,
+        "stable_lift": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "47a99835",
+          "prediction_timestamp": "2026-08-29T09:30:31.887181+00:00",
+          "odds_fetched_at": "2026-08-29T09:30:25.870794+00:00",
+          "board_generated_at": "2026-08-29T09:30:31.857338+00:00"
+        },
+        "qualification_timestamp": "2026-08-29T09:30:31.887181+00:00",
+        "board_timestamp": "2026-08-29T09:30:31.857338+00:00",
         "slate_date": "2026-08-29"
       }
     }
