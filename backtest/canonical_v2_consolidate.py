@@ -8,6 +8,7 @@ import hashlib
 import json
 import math
 import os
+import shutil
 from collections import Counter
 from datetime import date, timedelta
 from urllib.parse import urlparse
@@ -384,6 +385,7 @@ def main():
     all_rows_raw = []
     global_ids = set()
     all_http_entries = []
+    response_blob_sources = {}
     status_counts = Counter()
     total_requests = 0
     total_response_bytes = 0
@@ -442,6 +444,18 @@ def main():
                 meta,
                 require_body_archive=args.require_body_archive,
             )
+            for entry in entries:
+                response_sha = entry.get("response_sha256")
+                archived = entry.get("archived_body")
+                if response_sha and archived:
+                    source_path = os.path.join(shard_dir, "http", archived)
+                    prior = response_blob_sources.get(response_sha)
+                    if prior is None:
+                        response_blob_sources[response_sha] = source_path
+                    else:
+                        # Content-addressed identity makes either file valid;
+                        # both were independently validated above.
+                        pass
             all_http_entries.extend(entries)
             hp = meta["http_provenance"]
             total_requests += int(hp.get("request_count") or 0)
@@ -468,7 +482,7 @@ def main():
         "row_count": statcast.get("row_count"),
         "schema_fingerprint": statcast.get("schema_fingerprint"),
         "date_coverage": statcast.get("date_coverage"),
-        "schema_columns": None,
+        "schema_columns": statcast.get("schema_columns"),
     }
     # Recover full columns from any manifest's source-independent attestation
     # if a future shard schema adds them; current identity intentionally keeps
@@ -511,33 +525,100 @@ def main():
         mlbcom_rows,
     )
 
+    # Preserve the exact external response bytes in the final canonical
+    # package, deduplicated by content SHA across dates and shards.
+    final_blob_dir = os.path.join(args.out_dir, "http_blobs")
+    os.makedirs(final_blob_dir, exist_ok=True)
+    archive_bytes = 0
+    for response_sha, source_path in sorted(response_blob_sources.items()):
+        target = os.path.join(final_blob_dir, f"{response_sha}.gz")
+        if not os.path.exists(target):
+            shutil.copyfile(source_path, target)
+        with gzip.open(target, "rb") as handle:
+            body = handle.read()
+        if sha256_bytes(body) != response_sha:
+            raise ConsolidationError(
+                f"consolidated response body SHA mismatch: {response_sha}"
+            )
+        archive_bytes += os.path.getsize(target)
+
+    response_shas_in_ledgers = {
+        row.get("response_sha256")
+        for row in stats_rows + mlbcom_rows
+        if row.get("response_sha256")
+    }
+    if args.require_body_archive and response_shas_in_ledgers != set(response_blob_sources):
+        missing = sorted(response_shas_in_ledgers - set(response_blob_sources))
+        extra = sorted(set(response_blob_sources) - response_shas_in_ledgers)
+        raise ConsolidationError(
+            f"response archive coverage mismatch: missing={missing[:5]} extra={extra[:5]}"
+        )
+
     lineage = [
         {
             "source": "statcast_leaguewide",
             "request_identity": "statcast:2024:through=2026-08-24",
             "content_sha256": next(iter(source_shas)),
             "row_count": statcast.get("row_count"),
+            "schema_columns": statcast.get("schema_columns"),
             "schema_fingerprint": statcast.get("schema_fingerprint"),
             "date_coverage": statcast.get("date_coverage"),
             "cache_mode": "frozen_exact_artifact",
+            "library": "pybaseball",
+            "library_version": (
+                (manifests[0].get("environment") or {})
+                .get("critical_packages", {})
+                .get("pybaseball")
+            ),
+            "retrieval_timestamp": None,
         },
         {
             "source": "mlb_statsapi_request_ledger",
             "request_identity": f"mlb_statsapi_request_ledger:{args.run_id}",
             "content_sha256": stats_ledger["content_sha256"],
             "row_count": stats_ledger["row_count"],
+            "schema_columns": sorted([
+                "method", "url", "request_body_sha256", "status_code",
+                "response_sha256", "response_bytes", "exception_type",
+            ]),
+            "schema_fingerprint": sha256_bytes(",".join(sorted([
+                "method", "url", "request_body_sha256", "status_code",
+                "response_sha256", "response_bytes", "exception_type",
+            ])).encode()),
             "date_coverage": f"{args.start}..{args.end}",
             "cache_mode": "generation_time_content_hash_ledger",
-            "notes": f"path={stats_ledger['path']}",
+            "library": "requests",
+            "library_version": (
+                (manifests[0].get("environment") or {})
+                .get("critical_packages", {})
+                .get("requests")
+            ),
+            "retrieval_timestamp": None,
+            "notes": f"path={stats_ledger['path']} bodies=http_blobs/",
         },
         {
             "source": "mlbcom_dated_lineup_request_ledger",
             "request_identity": f"mlbcom_dated_lineup_request_ledger:{args.run_id}",
             "content_sha256": mlbcom_ledger["content_sha256"],
             "row_count": mlbcom_ledger["row_count"],
+            "schema_columns": sorted([
+                "method", "url", "request_body_sha256", "status_code",
+                "response_sha256", "response_bytes", "exception_type",
+            ]),
+            "schema_fingerprint": sha256_bytes(",".join(sorted([
+                "method", "url", "request_body_sha256", "status_code",
+                "response_sha256", "response_bytes", "exception_type",
+            ])).encode()),
             "date_coverage": f"{args.start}..{args.end}",
             "cache_mode": "generation_time_content_hash_ledger",
-            "notes": f"path={mlbcom_ledger['path']}",
+            "library": "requests",
+            "library_version": (
+                (manifests[0].get("environment") or {})
+                .get("critical_packages", {})
+                .get("requests")
+            ),
+            "retrieval_timestamp": None,
+            "notes": f"path={mlbcom_ledger['path']} bodies=http_blobs/",
         },
     ]
     lineage_fingerprint = sha256_bytes(
@@ -589,6 +670,9 @@ def main():
             "non_2xx": total_non_2xx,
             "statsapi_ledger": stats_ledger,
             "mlbcom_ledger": mlbcom_ledger,
+            "archived_unique_response_bodies": len(response_blob_sources),
+            "archived_response_gzip_bytes": archive_bytes,
+            "response_body_directory": "http_blobs",
         },
         "shard_summaries": summaries,
     }
