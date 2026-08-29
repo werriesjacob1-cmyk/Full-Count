@@ -299,8 +299,11 @@ Why five:
 - five remains a small shortlist rather than an attempt to score the entire
   slate;
 - there is **no empirical HR-specific operational volume to recover** from the
-  immutable public ledger at preregistration time: the ledger contains 63
-  published Top Picks across six dates, but zero published `home_run` entries;
+  immutable public ledger at preregistration time. Pinned evidence:
+  `data/public_top_picks/registry.json` blob
+  `e99a7de887c3becf08b599b2a0af23b48fe6caa9`, registry `updated_at=2026-08-29T14:12:28.963169+00:00`,
+  contains 63 published Top Picks across six dates and 0 published
+  `home_run` entries;
 - therefore importing all-market daily Top Pick counts as though they were an HR
   policy would be another fabricated historical selector;
 - the choice is made before holdout access and is not optimized against any
