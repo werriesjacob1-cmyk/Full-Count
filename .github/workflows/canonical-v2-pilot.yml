@@ -30,8 +30,32 @@ jobs:
           python-version: '3.11.15'
           cache: pip
 
-      - name: Install dependencies
-        run: pip install -r requirements.txt
+      - name: Install exact canonical environment
+        shell: bash
+        run: |
+          set -euo pipefail
+          pip install -r requirements.txt
+          pip install --upgrade --force-reinstall             numpy==2.4.6             pandas==3.0.5             pyarrow==25.0.1             pybaseball==2.2.7             python-dateutil==2.9.0.post0             requests==2.34.2             scikit-learn==1.9.0             scipy==1.17.1
+          python - <<'PY'
+          import json
+          from backtest.canonical_durability import environment_identity
+          from backtest.canonical_v2_certify import (
+              EXPECTED_CRITICAL_PACKAGES,
+              EXPECTED_PYTHON,
+          )
+          env = environment_identity()
+          if env["python_version"] != EXPECTED_PYTHON:
+              raise SystemExit(
+                  f"Python mismatch: {env['python_version']} != {EXPECTED_PYTHON}"
+              )
+          for name, expected in EXPECTED_CRITICAL_PACKAGES.items():
+              actual = env["critical_packages"].get(name)
+              if actual != expected:
+                  raise SystemExit(
+                      f"critical package mismatch {name}={actual} expected={expected}"
+                  )
+          print(json.dumps(env, sort_keys=True))
+          PY
 
       - name: Materialize exact bound Statcast source
         shell: bash
@@ -105,7 +129,7 @@ jobs:
         run: |
           set -euo pipefail
           rm -rf /tmp/canonical-v2-pilot
-          python backtest/canonical_v2_shard.py             --run-id canonical-v2-pilot-20250820             --start 2025-08-20             --end 2025-08-20             --shard-index 0             --shard-count 1             --source-parquet /tmp/fc-source/statcast_2024_through_2026-08-24.parquet             --expected-source-sha256 85c41d79570ac25169726419ed2bcb55cbba78139e8786b6005f71f40a877685             --outcome-parquet /tmp/fc-outcome/statcast_outcome_2026-08-25.parquet             --expected-outcome-sha256 "$OUTCOME_SHA"             --outcome-date 2026-08-25             --scientific-parent-sha fc589447ec157bff9a96071edc3ceb6c7dc734eb             --out-dir /tmp/canonical-v2-pilot             --archive-http-bodies             --verbose
+          python backtest/canonical_v2_shard.py             --run-id canonical-v2-pilot-20250819             --start 2025-08-19             --end 2025-08-19             --shard-index 0             --shard-count 1             --source-parquet /tmp/fc-source/statcast_2024_through_2026-08-24.parquet             --expected-source-sha256 85c41d79570ac25169726419ed2bcb55cbba78139e8786b6005f71f40a877685             --outcome-parquet /tmp/fc-outcome/statcast_outcome_2026-08-25.parquet             --expected-outcome-sha256 "$OUTCOME_SHA"             --outcome-date 2026-08-25             --scientific-parent-sha fc589447ec157bff9a96071edc3ceb6c7dc734eb             --out-dir /tmp/canonical-v2-pilot             --archive-http-bodies             --verbose
 
       - name: Preserve outcome source inside pilot evidence
         if: always()
@@ -116,6 +140,151 @@ jobs:
             cp /tmp/fc-outcome/statcast_outcome_2026-08-25.parquet /tmp/canonical-v2-pilot/source/
             cp /tmp/fc-outcome/manifest.json /tmp/canonical-v2-pilot/source/outcome_manifest.json
           fi
+
+
+      - name: Prove August 19 leak is closed
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json
+          import os
+          from collections import Counter
+          from urllib.parse import parse_qs, urlparse
+
+          from backtest.canonical_v2_certify import audit_statsapi_request_shapes
+
+          root = "/tmp/canonical-v2-pilot"
+          day = "2025-08-19"
+          meta_path = os.path.join(root, "rows", f"{day}.meta.json")
+          if not os.path.exists(meta_path):
+              raise SystemExit(f"missing date metadata: {meta_path}")
+          meta = json.load(open(meta_path, encoding="utf-8"))
+          if meta.get("status") != "ok":
+              raise SystemExit(f"pilot date not ok: {meta.get('status')} {meta.get('reason')}")
+          if meta.get("source_content_sha256") != (
+              "85c41d79570ac25169726419ed2bcb55cbba78139e8786b6005f71f40a877685"
+          ):
+              raise SystemExit("predictor Statcast SHA drifted")
+
+          hp = meta.get("http_provenance") or {}
+          if hp.get("strict_host_firewall") is not True:
+              raise SystemExit("HTTP source firewall was not active")
+          if int(hp.get("firewall_block_count") or 0):
+              raise SystemExit(f"firewall blocks observed: {hp.get('firewall_blocks')}")
+          if int(hp.get("exceptions") or 0):
+              raise SystemExit(f"HTTP exceptions observed: {hp.get('exceptions')}")
+          if int(hp.get("http_non_2xx") or 0):
+              raise SystemExit(f"HTTP non-2xx observed: {hp.get('http_non_2xx')}")
+
+          access = meta.get("point_in_time_access") or {}
+          if access.get("violations"):
+              raise SystemExit(
+                  f"point-in-time violations observed: {access.get('violations')}"
+              )
+
+          bad_ungraded_tokens = (
+              "grader error",
+              "source",
+              "timeout",
+              "connection",
+              "no batted-ball statcast data",
+              "missing runs data",
+              "couldn't fetch",
+              "unavailable",
+          )
+          bad_ungraded = {
+              reason: count
+              for reason, count in (meta.get("ungraded_reasons") or {}).items()
+              if any(token in reason.lower() for token in bad_ungraded_tokens)
+          }
+          if bad_ungraded:
+              raise SystemExit(
+                  f"source/grader-related ungraded candidates: {bad_ungraded}"
+              )
+
+          ledger_rel = hp.get("ledger_file")
+          if not ledger_rel:
+              raise SystemExit("missing raw HTTP ledger path")
+          ledger_path = os.path.join(root, "http", ledger_rel)
+          rows = [
+              json.loads(line)
+              for line in open(ledger_path, encoding="utf-8")
+              if line.strip()
+          ]
+          if not rows:
+              raise SystemExit("raw HTTP ledger is empty")
+
+          audit = audit_statsapi_request_shapes(rows)
+          if audit["failures"] or audit["blockers"]:
+              raise SystemExit(
+                  "StatsAPI request-shape audit failed: "
+                  + json.dumps(audit, sort_keys=True)
+              )
+
+          phase_counts = Counter(row.get("scientific_phase") for row in rows)
+          if phase_counts["predictive_input"] <= 0:
+              raise SystemExit("no predictive_input HTTP evidence recorded")
+          if phase_counts["outcome_grading"] <= 0:
+              raise SystemExit("no outcome_grading HTTP evidence recorded")
+
+          for row in rows:
+              url = str(row.get("url") or "")
+              phase = row.get("scientific_phase")
+              parsed = urlparse(url)
+              qs = parse_qs(parsed.query)
+
+              if parsed.path == "/api/v1/seasons/all":
+                  raise SystemExit("current-season /seasons/all entered replay")
+              if parsed.path == "/api/v1/teams":
+                  if "activeStatus" in qs or "sportIds" in qs:
+                      raise SystemExit(
+                          f"current/active team directory entered replay: {url}"
+                      )
+                  season = (qs.get("season") or [None])[0]
+                  if season != "2025":
+                      raise SystemExit(
+                          f"historical team directory not season=2025: {url}"
+                      )
+
+              if phase == "predictive_input" and "/feed/live" in parsed.path:
+                  timecode = (qs.get("timecode") or [None])[0]
+                  if not timecode:
+                      raise SystemExit(
+                          f"unbounded predictive game feed observed: {url}"
+                      )
+              if phase == "outcome_grading" and "/feed/live" in parsed.path:
+                  if "timecode" in qs:
+                      raise SystemExit(
+                          f"grading feed incorrectly carries predictive timecode: {url}"
+                      )
+
+              # This exact game caused the real 2025-08-19 leak. The raw
+              # pre-D schedule now sees its officialDate as D, so it must
+              # never reach the predictive box-score/feed layer at all.
+              if (
+                  phase == "predictive_input"
+                  and "/game/776691/" in parsed.path
+              ):
+                  raise SystemExit(
+                      f"known postponed game 776691 reached predictive feed: {url}"
+                  )
+
+          print(json.dumps({
+              "verdict": "AUGUST_19_LEAK_CLOSED",
+              "date": day,
+              "rows": meta.get("row_count"),
+              "candidates": meta.get("n_candidates"),
+              "ungraded": meta.get("n_ungraded"),
+              "http_requests": len(rows),
+              "phase_counts": dict(phase_counts),
+              "request_shape_classes": audit["classes"],
+              "team_directory_seasons": audit["team_directory_seasons"],
+              "game_776691_predictive_feed": False,
+              "firewall_blocks": 0,
+              "point_in_time_violations": 0,
+          }, sort_keys=True))
+          PY
 
       - name: Inspect pilot evidence
         if: always()
@@ -134,7 +303,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: canonical-v2-pilot-20250820
+          name: canonical-v2-pilot-20250819
           path: /tmp/canonical-v2-pilot
           if-no-files-found: error
           retention-days: 90
