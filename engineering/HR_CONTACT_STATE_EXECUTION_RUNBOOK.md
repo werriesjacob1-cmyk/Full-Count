@@ -58,8 +58,14 @@ not trusted.
 
 ## 2. Explicit authorization record
 
-Copy the repository's authorization template to a NEW file outside the code
-path only after explicit user authorization.
+Copy the repository's authorization template to a NEW **external run-artifact
+file outside the Git-tracked repository/worktree** only after explicit user
+authorization.
+
+Do not commit a live authorization record. In particular, the recommended
+separate Stage-2 approval may require editing/replacing the external
+authorization artifact after Stage 1; doing that in Git would advance HEAD and
+correctly trip the exact-runner-SHA reveal gate.
 
 The runner requires:
 
@@ -83,6 +89,11 @@ Recommended irreversibility discipline:
 If the user explicitly authorizes the full experiment in one instruction,
 the record may list all intended stages. Do not infer that authorization from
 code readiness, a prior merge, or a green CI run.
+
+Once initial Stage 1 has been written, keep the Git checkout pinned to that
+exact commit through Stage 2 and, if D survives, through Stage 1-E / Stage 2-E.
+A code commit, rebase, merge, or checkout change after Stage 1 is an execution
+abort for this holdout.
 
 Conditional E requires `stage1-e` / `stage2-e` and is still impossible
 unless D's immutable Stage-2 report actually survives.
