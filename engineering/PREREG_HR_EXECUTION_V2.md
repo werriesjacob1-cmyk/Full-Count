@@ -294,24 +294,27 @@ On each date `D`:
 
 Why five:
 
-- HR is a rare event, so one selection per slate would produce a very weak
-  historical ranking test;
-- five remains a small shortlist rather than an attempt to score the entire
-  slate;
-- there is **no empirical HR-specific operational volume to recover** from the
-  immutable public ledger at preregistration time. Pinned evidence:
-  `data/public_top_picks/registry.json` blob
-  `e99a7de887c3becf08b599b2a0af23b48fe6caa9`, registry `updated_at=2026-08-29T14:12:28.963169+00:00`,
-  contains 63 published Top Picks across six dates and 0 published
-  `home_run` entries;
-- therefore importing all-market daily Top Pick counts as though they were an HR
-  policy would be another fabricated historical selector;
-- the choice is made before holdout access and is not optimized against any
-  outcome.
+- this is not a newly invented experiment capacity. The pinned scientific
+  generator already defines the dedicated HR product surface as
+  `select_moonshots(candidates, prices, fd, n=5)` and documents it as the
+  **top five home-run bets by hit probability**;
+- therefore `K_PRIMARY = 5` preserves a pre-existing HR-specific shortlist
+  capacity instead of choosing a convenient K after seeing holdout results;
+- the historical canonical regime still cannot replay exact Moonshots
+  eligibility/pricing because sportsbook prices and full historical live
+  eligibility are unavailable;
+- the immutable public Top Pick ledger cannot supply an HR-specific alternative
+  volume either. Pinned evidence: `data/public_top_picks/registry.json` blob
+  `e99a7de887c3becf08b599b2a0af23b48fe6caa9`, registry
+  `updated_at=2026-08-29T14:12:28.963169+00:00`, contains 63 published Top
+  Picks across six dates and 0 published `home_run` entries;
+- importing all-market Top Pick counts as though they were an HR policy would
+  fabricate a historical selector.
 
-This is labeled **historical top-5-per-slate ranking volume**, not "exact
-operational pick volume." It is a fixed diagnostic capacity chosen precisely
-because exact HR operational volume is unobserved historically.
+This is labeled **historical top-5-per-slate HR ranking capacity**, not exact
+historical production eligibility. The number five is operationally anchored
+by the pre-existing Moonshots surface, while the eligibility regime remains
+canonical model-only evidence.
 
 Promotion still requires prospective shadow evidence at the real operational
 volume.
