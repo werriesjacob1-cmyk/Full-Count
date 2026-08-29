@@ -33,7 +33,11 @@ import os
 from collections import Counter
 from datetime import date, datetime, timedelta
 
-from accuracy_lab import manifest_identity_strength
+try:
+    from accuracy_lab import manifest_identity_strength as _accuracy_lab_identity_strength
+except ImportError:
+    _accuracy_lab_identity_strength = None
+
 from backtest import generation_regime as gr
 
 ALLOWED_COMPLETE_STATUSES = {"ok", "no_games"}
@@ -341,6 +345,35 @@ def _validate_rows(day, raw, pinned_sha):
     }
 
 
+def _local_manifest_identity_strength(manifest):
+    """Promotion-grade identity contract used by current accuracy_lab.
+
+    Some historical/pinned trees audited by this certifier predate the helper
+    function itself. The artifact standard is simple and stable, so compute it
+    locally and assert exact parity whenever current accuracy_lab exposes the
+    canonical helper.
+    """
+    version = int(manifest.get("manifest_schema_version", 1) or 1)
+    has_checksum = bool(manifest.get("artifact_sha256"))
+    result = {
+        "manifest_schema_version": version,
+        "has_artifact_checksum": has_checksum,
+        "has_row_count": manifest.get("artifact_row_count") is not None,
+        "has_date_range": manifest.get("artifact_date_range") is not None,
+        "has_code_sha_at_lock": manifest.get("code_git_sha_at_lock") is not None,
+        "promotion_grade": version >= 2 and has_checksum,
+        "can_detect_content_replacement": has_checksum,
+    }
+    if _accuracy_lab_identity_strength is not None:
+        canonical = _accuracy_lab_identity_strength(manifest)
+        if canonical != result:
+            raise RuntimeError(
+                "canonical certification identity-strength logic drifted from "
+                "accuracy_lab.manifest_identity_strength()"
+            )
+    return result
+
+
 def _dataset_identity_strength(assembled_sha, total_rows, start, end, code_sha):
     derived = {
         "manifest_schema_version": 2,
@@ -351,7 +384,8 @@ def _dataset_identity_strength(assembled_sha, total_rows, start, end, code_sha):
     }
     return {
         "derived_manifest": derived,
-        "strength": manifest_identity_strength(derived),
+        "strength": _local_manifest_identity_strength(derived),
+        "accuracy_lab_parity_checked": _accuracy_lab_identity_strength is not None,
     }
 
 
