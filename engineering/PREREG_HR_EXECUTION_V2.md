@@ -298,11 +298,17 @@ Why five:
   historical ranking test;
 - five remains a small shortlist rather than an attempt to score the entire
   slate;
+- there is **no empirical HR-specific operational volume to recover** from the
+  immutable public ledger at preregistration time: the ledger contains 63
+  published Top Picks across six dates, but zero published `home_run` entries;
+- therefore importing all-market daily Top Pick counts as though they were an HR
+  policy would be another fabricated historical selector;
 - the choice is made before holdout access and is not optimized against any
   outcome.
 
 This is labeled **historical top-5-per-slate ranking volume**, not "exact
-operational pick volume."
+operational pick volume." It is a fixed diagnostic capacity chosen precisely
+because exact HR operational volume is unobserved historically.
 
 Promotion still requires prospective shadow evidence at the real operational
 volume.
