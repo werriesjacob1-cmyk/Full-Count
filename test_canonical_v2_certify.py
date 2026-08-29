@@ -51,7 +51,13 @@ class PackageFactory:
         self.root = root
         self.day = "2025-08-20"
 
-    def build(self, *, statsapi_failure=False, mlbcom_bad_date=False):
+    def build(
+        self,
+        *,
+        statsapi_failure=False,
+        mlbcom_bad_date=False,
+        current_team_request=False,
+    ):
         source_dir = os.path.join(self.root, "source")
         meta_dir = os.path.join(self.root, "date_metadata")
         blob_dir = os.path.join(self.root, "http_blobs")
@@ -122,6 +128,21 @@ class PackageFactory:
                 "url": (
                     "https://statsapi.mlb.com/api/v1/schedule"
                     f"?date={self.day}&sportId=1"
+                ),
+                "request_body_sha256": None,
+                "status_code": 200,
+                "response_sha256": stats_body_sha,
+                "response_bytes": len(stats_body),
+                "exception_type": None,
+            })
+
+        if current_team_request:
+            stats_rows.append({
+                "observed_date": self.day,
+                "method": "GET",
+                "url": (
+                    "https://statsapi.mlb.com/api/v1/teams"
+                    "?activeStatus=Y&sportIds=1&season=2026"
                 ),
                 "request_body_sha256": None,
                 "status_code": 200,
@@ -222,6 +243,7 @@ class PackageFactory:
             "historical_team_identity": (
                 "schedule_team_ids_plus_season_directory"
             ),
+            "statsapi_source_shape_policy": cert.STATSAPI_SOURCE_SHAPE_POLICY,
             "statcast_source": {
                 "content_sha256": source_sha,
                 "row_count": 1,
@@ -391,6 +413,77 @@ class CertificationTests(unittest.TestCase):
                 any(
                     "MLB.com fallback URL is not date-bound" in f
                     for f in result["failures"]
+                )
+            )
+
+    def test_current_team_directory_in_historical_replay_is_not_canonical(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            PackageFactory(tmp).build(current_team_request=True)
+            result = self.certify(tmp)
+            self.assertEqual(result["verdict"], "NOT CANONICAL")
+            self.assertTrue(
+                any(
+                    "current/active team directory" in failure
+                    for failure in result["failures"]
+                )
+            )
+
+    def test_unseen_statsapi_shape_blocks_certification(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            factory = PackageFactory(tmp)
+            factory.build()
+            ledger_path = os.path.join(
+                tmp,
+                "mlb_statsapi_request_ledger.jsonl",
+            )
+            rows = [
+                json.loads(line)
+                for line in open(ledger_path, encoding="utf-8")
+                if line.strip()
+            ]
+            extra = dict(rows[0])
+            extra["url"] = (
+                "https://statsapi.mlb.com/api/v1/unknown-scientific-endpoint"
+            )
+            rows.append(extra)
+            raw = b"".join(
+                (
+                    json.dumps(row, sort_keys=True, separators=(",", ":"))
+                    + "\n"
+                ).encode()
+                for row in rows
+            )
+            with open(ledger_path, "wb") as handle:
+                handle.write(raw)
+
+            report_path = os.path.join(tmp, "consolidation_report.json")
+            report = json.load(open(report_path, encoding="utf-8"))
+            record = next(
+                item for item in report["source_lineage"]
+                if item["source"] == "mlb_statsapi_request_ledger"
+            )
+            record["content_sha256"] = sha(raw)
+            record["row_count"] = len(rows)
+            report["source_lineage_fingerprint"] = (
+                cert.source_lineage_fingerprint(report["source_lineage"])
+            )
+            report.pop("report_sha256", None)
+            report["report_sha256"] = cert.sha256_bytes(
+                json.dumps(
+                    report,
+                    sort_keys=True,
+                    separators=(",", ":"),
+                    default=str,
+                ).encode()
+            )
+            write_json(report_path, report)
+
+            result = self.certify(tmp)
+            self.assertEqual(result["verdict"], "CERTIFICATION BLOCKED")
+            self.assertTrue(
+                any(
+                    "previously unseen StatsAPI request shape" in blocker
+                    for blocker in result["blockers"]
                 )
             )
 
