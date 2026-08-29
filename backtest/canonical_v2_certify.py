@@ -490,7 +490,13 @@ def read_jsonl(path):
     return rows
 
 
-def certify(package_dir, repo_root, expected_parent_sha=None, expected_source_sha=None):
+def certify(
+    package_dir,
+    repo_root,
+    expected_parent_sha=None,
+    expected_source_sha=None,
+    expected_outcome_source_sha=None,
+):
     failures = []
     blockers = []
     warnings = []
@@ -550,6 +556,12 @@ def certify(package_dir, repo_root, expected_parent_sha=None, expected_source_sh
     if expected_source_sha and statcast_sha != expected_source_sha:
         failures.append(
             f"Statcast source {statcast_sha!r} != expected {expected_source_sha!r}"
+        )
+    outcome_statcast_sha = report.get("outcome_statcast_source_sha256")
+    if expected_outcome_source_sha and outcome_statcast_sha != expected_outcome_source_sha:
+        failures.append(
+            "outcome-only Statcast source "
+            f"{outcome_statcast_sha!r} != expected {expected_outcome_source_sha!r}"
         )
 
     code = code_audit(
@@ -723,6 +735,8 @@ def certify(package_dir, repo_root, expected_parent_sha=None, expected_source_sh
                 failures.append(f"{day}: generation code SHA mismatch")
             if meta.get("source_content_sha256") != statcast_sha:
                 failures.append(f"{day}: Statcast source SHA mismatch")
+            if meta.get("outcome_source_content_sha256") != outcome_statcast_sha:
+                failures.append(f"{day}: outcome-only Statcast source SHA mismatch")
 
             hp = meta.get("http_provenance") or {}
             if hp.get("strict_host_firewall") is not True:
@@ -814,6 +828,75 @@ def certify(package_dir, repo_root, expected_parent_sha=None, expected_source_sh
         except Exception as exc:
             failures.append(f"cannot independently inspect Statcast parquet: {exc}")
 
+    # Separate final-day outcome-only Statcast source. This parquet is never
+    # eligible to enter the predictor store: certification requires an exact
+    # six-column grading schema and exact D-only coverage, then binds those
+    # facts to both the shard identity and source lineage.
+    outcome_source_rel = report.get("outcome_statcast_source_path") or (
+        f"source/statcast_outcome_{end}.parquet"
+    )
+    outcome_source_path = os.path.join(package_dir, outcome_source_rel)
+    outcome_source_attestation = None
+    if not os.path.exists(outcome_source_path):
+        blockers.append("exact outcome-only Statcast parquet missing from consolidated package")
+    else:
+        outcome_actual_sha = sha256_file(outcome_source_path)
+        if outcome_actual_sha != outcome_statcast_sha:
+            failures.append("consolidated outcome-only Statcast parquet SHA mismatch")
+        if os.path.abspath(outcome_source_path) == os.path.abspath(source_path):
+            failures.append("outcome-only Statcast path aliases predictor Statcast path")
+        if outcome_statcast_sha and outcome_statcast_sha == statcast_sha:
+            failures.append("outcome-only Statcast SHA aliases predictor Statcast SHA")
+        try:
+            import pandas as pd
+            outcome_frame = pd.read_parquet(outcome_source_path)
+            outcome_columns = sorted(str(column) for column in outcome_frame.columns)
+            outcome_column_set = set(outcome_columns)
+            if outcome_column_set != OUTCOME_ONLY_SOURCE_COLUMNS:
+                failures.append(
+                    "outcome-only Statcast schema is not the exact grading-only contract: "
+                    f"observed={outcome_columns} expected={sorted(OUTCOME_ONLY_SOURCE_COLUMNS)}"
+                )
+            if outcome_frame.empty:
+                failures.append("outcome-only Statcast parquet is empty")
+            parsed_outcome_dates = pd.to_datetime(
+                outcome_frame["game_date"], errors="coerce"
+            ).dropna() if "game_date" in outcome_frame.columns else pd.Series(dtype="datetime64[ns]")
+            outcome_coverage = (
+                f"{parsed_outcome_dates.min().date()}..{parsed_outcome_dates.max().date()}"
+                if len(parsed_outcome_dates) else None
+            )
+            if outcome_coverage != f"{end}..{end}":
+                failures.append(
+                    f"outcome-only Statcast date coverage {outcome_coverage!r} != {end}..{end}"
+                )
+            outcome_schema_fingerprint = sha256_bytes(",".join(outcome_columns).encode())
+            outcome_source_attestation = {
+                "available": True,
+                "path": outcome_source_rel,
+                "content_sha256": outcome_actual_sha,
+                "row_count": int(len(outcome_frame)),
+                "schema_columns": outcome_columns,
+                "schema_fingerprint": outcome_schema_fingerprint,
+                "date_coverage": outcome_coverage,
+            }
+            bound_outcome = identity.get("outcome_statcast_source") or {}
+            for key in (
+                "content_sha256",
+                "row_count",
+                "schema_columns",
+                "schema_fingerprint",
+                "date_coverage",
+            ):
+                if bound_outcome.get(key) != outcome_source_attestation.get(key):
+                    failures.append(
+                        f"outcome-only Statcast {key} differs from shard-bound identity"
+                    )
+        except Exception as exc:
+            failures.append(
+                f"cannot independently inspect outcome-only Statcast parquet: {exc}"
+            )
+
     # Source lineage + aggregate ledgers.
     lineage = report.get("source_lineage") or []
     if not lineage:
@@ -826,12 +909,26 @@ def certify(package_dir, repo_root, expected_parent_sha=None, expected_source_sh
     by_source = {record.get("source"): record for record in lineage}
     required_sources = {
         "statcast_leaguewide",
+        "statcast_outcome_only",
         "mlb_statsapi_request_ledger",
         "mlbcom_dated_lineup_request_ledger",
     }
     missing_sources = sorted(required_sources - set(by_source))
     if missing_sources:
         blockers.append(f"missing source-lineage records: {missing_sources}")
+
+    outcome_lineage = by_source.get("statcast_outcome_only")
+    if outcome_lineage:
+        if outcome_lineage.get("content_sha256") != outcome_statcast_sha:
+            failures.append("outcome-only Statcast lineage SHA mismatch")
+        if outcome_source_attestation is not None:
+            for key in ("row_count", "schema_columns", "schema_fingerprint", "date_coverage"):
+                if outcome_lineage.get(key) != outcome_source_attestation.get(key):
+                    failures.append(
+                        f"outcome-only Statcast lineage {key} mismatch"
+                    )
+        if outcome_lineage.get("cache_mode") != "frozen_exact_artifact_grader_only":
+            failures.append("outcome-only Statcast lineage is not grader-only frozen evidence")
 
     all_external_rows = []
     recovered_transients = 0
@@ -1239,6 +1336,7 @@ def certify(package_dir, repo_root, expected_parent_sha=None, expected_source_sh
         "source_lineage": lineage,
         "source_lineage_fingerprint": report.get("source_lineage_fingerprint"),
         "source_schema_attestation": source_attestation,
+        "outcome_source_attestation": outcome_source_attestation,
         "statsapi_source_shape_audit": source_shape_audit,
         "cross_shard_request_consistency": {
             "successful_request_identities": len(response_shas_by_request),
@@ -1276,6 +1374,7 @@ def main():
     ap.add_argument("--repo-root", default=".")
     ap.add_argument("--expected-parent-sha")
     ap.add_argument("--expected-source-sha")
+    ap.add_argument("--expected-outcome-source-sha")
     ap.add_argument("--output")
     args = ap.parse_args()
 
@@ -1284,6 +1383,7 @@ def main():
         os.path.abspath(args.repo_root),
         expected_parent_sha=args.expected_parent_sha,
         expected_source_sha=args.expected_source_sha,
+        expected_outcome_source_sha=args.expected_outcome_source_sha,
     )
     raw = json.dumps(result, indent=2, sort_keys=True, default=str) + "\n"
     print(raw, end="")
