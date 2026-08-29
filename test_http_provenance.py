@@ -59,6 +59,23 @@ class LedgerTests(unittest.TestCase):
             with gzip.open(blob, "rb") as handle:
                 self.assertEqual(handle.read(), b'{"dates":[1]}')
 
+    def test_logical_fingerprint_ignores_randomized_user_agent(self):
+        base = {
+            "method": "GET",
+            "url": "https://statsapi.mlb.com/api/v1/teams?sportId=1",
+            "request_body_sha256": None,
+            "status_code": 200,
+            "response_sha256": "a" * 64,
+            "response_bytes": 10,
+            "exception_type": None,
+        }
+        a = dict(base, request_headers={"user-agent": "UA-A"})
+        b = dict(base, request_headers={"user-agent": "UA-B"})
+        self.assertEqual(
+            hp._logical_fingerprint([a]),
+            hp._logical_fingerprint([b]),
+        )
+
     def test_logical_fingerprint_ignores_thread_arrival_order(self):
         with tempfile.TemporaryDirectory() as a, tempfile.TemporaryDirectory() as b:
             r1 = fake_response(
@@ -140,6 +157,126 @@ class LedgerTests(unittest.TestCase):
             )
             self.assertEqual(entry["exception_type"], "ConnectionError")
             self.assertIn("date=2026-05-01", entry["url"])
+
+
+class ResponseCacheTests(unittest.TestCase):
+    def test_cache_requires_archived_bodies(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            with self.assertRaises(hp.HttpProvenanceError):
+                hp.ResponseLedger(
+                    tmp,
+                    cache_get_responses=True,
+                    archive_bodies=False,
+                )
+
+    def test_identical_get_replays_exact_cached_bytes_without_second_network_call(self):
+        real = requests.sessions.Session.request
+        calls = {"n": 0}
+
+        def fake_request(session, method, url, **kwargs):
+            calls["n"] += 1
+            return fake_response(
+                "https://statsapi.mlb.com/api/v1/teams?sportId=1",
+                b'{"teams":[{"id":1}]}',
+            )
+
+        try:
+            hp.uninstall_requests_hook()
+            requests.sessions.Session.request = fake_request
+            hp.install_requests_hook()
+            with tempfile.TemporaryDirectory() as tmp:
+                ledger = hp.ResponseLedger(
+                    tmp,
+                    archive_bodies=True,
+                    cache_get_responses=True,
+                    strict_host_firewall=True,
+                )
+                ledger.start_date("2026-05-01")
+                hp.set_active_ledger(ledger)
+
+                s = requests.Session()
+                first = s.request(
+                    "GET",
+                    "https://statsapi.mlb.com/api/v1/teams",
+                    params={"sportId": 1},
+                )
+                second = s.request(
+                    "GET",
+                    "https://statsapi.mlb.com/api/v1/teams",
+                    params={"sportId": 1},
+                )
+                summary = ledger.finish_date("2026-05-01")
+
+                self.assertEqual(calls["n"], 1)
+                self.assertEqual(first.content, second.content)
+                self.assertEqual(first.status_code, second.status_code)
+                self.assertEqual(summary["network_request_count"], 1)
+                self.assertEqual(summary["cache_hit_count"], 1)
+
+                entries = [
+                    json.loads(line)
+                    for line in open(
+                        os.path.join(tmp, summary["ledger_file"]),
+                        encoding="utf-8",
+                    )
+                    if line.strip()
+                ]
+                self.assertEqual(
+                    [entry["transport"] for entry in entries],
+                    ["network", "cache"],
+                )
+                self.assertEqual(
+                    entries[0]["response_sha256"],
+                    entries[1]["response_sha256"],
+                )
+        finally:
+            hp.set_active_ledger(None)
+            hp.uninstall_requests_hook()
+            requests.sessions.Session.request = real
+
+    def test_cache_persists_across_date_boundaries_within_one_shard(self):
+        real = requests.sessions.Session.request
+        calls = {"n": 0}
+
+        def fake_request(session, method, url, **kwargs):
+            calls["n"] += 1
+            return fake_response(
+                "https://statsapi.mlb.com/api/v1/seasons/all?sportId=1",
+                b'{"seasons":[{"seasonId":"2026"}]}',
+            )
+
+        try:
+            hp.uninstall_requests_hook()
+            requests.sessions.Session.request = fake_request
+            hp.install_requests_hook()
+            with tempfile.TemporaryDirectory() as tmp:
+                ledger = hp.ResponseLedger(
+                    tmp,
+                    archive_bodies=True,
+                    cache_get_responses=True,
+                    strict_host_firewall=True,
+                )
+                hp.set_active_ledger(ledger)
+                for day in ("2026-05-01", "2026-05-02"):
+                    ledger.start_date(day)
+                    got = requests.Session().request(
+                        "GET",
+                        "https://statsapi.mlb.com/api/v1/seasons/all",
+                        params={"sportId": 1},
+                    )
+                    self.assertEqual(got.status_code, 200)
+                    summary = ledger.finish_date(day)
+                    if day == "2026-05-01":
+                        self.assertEqual(summary["network_request_count"], 1)
+                        self.assertEqual(summary["cache_hit_count"], 0)
+                    else:
+                        self.assertEqual(summary["network_request_count"], 0)
+                        self.assertEqual(summary["cache_hit_count"], 1)
+                self.assertEqual(calls["n"], 1)
+        finally:
+            hp.set_active_ledger(None)
+            hp.uninstall_requests_hook()
+            requests.sessions.Session.request = real
 
 
 class HookTransparencyTests(unittest.TestCase):
