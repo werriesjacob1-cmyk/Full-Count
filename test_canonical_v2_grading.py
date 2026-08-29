@@ -69,7 +69,7 @@ class FrozenOutcomeTests(unittest.TestCase):
         self.assertEqual(result["threshold"], 105)
         self.assertEqual(
             result["canonical_v2_outcome_source"],
-            "bound_statcast_parquet",
+            "bound_predictor_statcast_parquet",
         )
 
     def test_appeared_without_qualifying_event_is_legitimate_miss(self):
@@ -191,6 +191,55 @@ class FrozenOutcomeTests(unittest.TestCase):
 
         self.assertEqual(result, {"ok": True})
         self.assertEqual(ledger.phases, ["outcome_grading"])
+
+
+    def test_final_day_outcome_frame_never_reads_predictor_store(self):
+        class ExplodingPredictorStore:
+            def window(self, *args, **kwargs):
+                raise AssertionError(
+                    "predictor Statcast store must not be asked for outcome-only date"
+                )
+
+        frame = pd.DataFrame([{
+            "game_date": "2026-08-25",
+            "game_pk": 100,
+            "batter": 10,
+            "events": "home_run",
+            "launch_speed": 108.0,
+            "hit_distance_sc": 425.0,
+        }])
+        grader = FrozenOutcomeGrader(
+            ExplodingPredictorStore(),
+            outcome_only_frame=frame,
+            outcome_only_date="2026-08-25",
+        )
+        with patch.object(gr, "get_box_line", return_value=(box_row(), None)), \
+             patch.object(gr, "opportunity_context", return_value={"fair_test": True}):
+            result = grader.grade_pick(
+                pick("moonshot_420"),
+                FINAL,
+                date="2026-08-25",
+            )
+        self.assertEqual(result["grade"], "hit")
+        self.assertEqual(
+            result["canonical_v2_outcome_source"],
+            "bound_outcome_only_statcast_parquet",
+        )
+
+    def test_final_day_without_outcome_only_frame_fails_ungraded(self):
+        grader = FrozenOutcomeGrader(
+            FakeStore(pd.DataFrame()),
+            outcome_only_date="2026-08-25",
+        )
+        with patch.object(gr, "get_box_line", return_value=(box_row(), None)), \
+             patch.object(gr, "opportunity_context", return_value={"fair_test": True}):
+            result = grader.grade_pick(
+                pick("hard_hit_105"),
+                FINAL,
+                date="2026-08-25",
+            )
+        self.assertEqual(result["grade"], "ungraded")
+        self.assertIn("lacks required same-day", result["reason"])
 
 
 if __name__ == "__main__":
