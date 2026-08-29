@@ -157,8 +157,11 @@ class ResponseLedger:
         if os.path.exists(path):
             return os.path.relpath(path, self.root_dir)
         tmp = path + f".{os.getpid()}.{threading.get_ident()}.tmp"
-        with gzip.GzipFile(filename="", mode="wb", fileobj=open(tmp, "wb"), mtime=0) as gz:
-            gz.write(content)
+        with open(tmp, "wb") as raw:
+            with gzip.GzipFile(filename="", mode="wb", fileobj=raw, mtime=0) as gz:
+                gz.write(content)
+            raw.flush()
+            os.fsync(raw.fileno())
         os.replace(tmp, path)
         return os.path.relpath(path, self.root_dir)
 
