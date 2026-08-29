@@ -42,6 +42,8 @@ from backtest import generation_regime as gr
 
 ALLOWED_COMPLETE_STATUSES = {"ok", "no_games"}
 IDENTITY_FIELDS = ("date", "game_pk", "player_id", "prop_type", "line")
+EXTERNAL_REQUEST_LEDGER_SOURCE = "mlb_statsapi_request_ledger"
+
 SOURCE_REQUIRED_FIELDS = (
     "source",
     "request_identity",
@@ -467,6 +469,31 @@ def certify_run(run_dir):
                 "source_lineage_fingerprint does not match stored lineage records"
             )
 
+    # The bound Statcast parquet is only one upstream input. The pinned
+    # generator also consumes MLB StatsAPI responses while building each
+    # historical slate (schedule/lineups, date-bounded season tables,
+    # bullpen/boxscore/game-log inputs, and grading). A bare manifest
+    # source_provider="mlb_statsapi" is not provenance for those response
+    # bytes. Certification therefore requires a generation-time request
+    # ledger that content-binds every such external response. This evidence
+    # cannot be reconstructed after the fact from today's API response.
+    external_ledger_records = [
+        record for record in lineage
+        if record.get("source") == EXTERNAL_REQUEST_LEDGER_SOURCE
+    ]
+    if manifest.get("source_provider") == "mlb_statsapi":
+        if not external_ledger_records:
+            blockers.append(
+                "unbound external source lineage: canonical generation used "
+                "MLB StatsAPI but no mlb_statsapi_request_ledger was recorded "
+                "at generation time"
+            )
+        elif len(external_ledger_records) != 1:
+            failures.append(
+                "expected exactly one aggregate MLB StatsAPI request-ledger "
+                f"lineage record, found {len(external_ledger_records)}"
+            )
+
     for n, record in enumerate(lineage):
         missing = [
             field for field in SOURCE_REQUIRED_FIELDS
@@ -480,6 +507,41 @@ def certify_run(run_dir):
             failures.append(
                 f"source lineage record {n} cache_mode differs from index cache_mode"
             )
+
+    external_request_ledger_attestation = None
+    if external_ledger_records:
+        ledger_record = external_ledger_records[0]
+        ledger_relpath = ledger_record.get("notes")
+        # Future canonical tooling records the durable relative ledger path in
+        # notes as "path=<relative path>". Older runs have no such record and
+        # are blocked above rather than guessed into compliance.
+        ledger_path = None
+        if isinstance(ledger_relpath, str):
+            for token in ledger_relpath.split():
+                if token.startswith("path="):
+                    candidate = token[len("path="):]
+                    ledger_path = (
+                        candidate if os.path.isabs(candidate)
+                        else os.path.join(run_dir, candidate)
+                    )
+                    break
+        if ledger_path is None or not os.path.exists(ledger_path):
+            blockers.append(
+                "MLB StatsAPI request-ledger lineage record exists but its "
+                "durable ledger artifact is unavailable for independent verification"
+            )
+        else:
+            ledger_sha = _sha256_file(ledger_path)
+            external_request_ledger_attestation = {
+                "path": ledger_path,
+                "content_sha256": ledger_sha,
+                "bytes": os.path.getsize(ledger_path),
+            }
+            if ledger_sha != ledger_record.get("content_sha256"):
+                failures.append(
+                    "MLB StatsAPI request-ledger artifact SHA differs from "
+                    "stored lineage content_sha256"
+                )
 
     source_attestation = _find_source_attestation(run_dir, lineage)
     if source_attestation is None:
@@ -742,6 +804,7 @@ def certify_run(run_dir):
         "environment_fingerprint": environment_fingerprint,
         "source_lineage_fingerprint": index.get("source_lineage_fingerprint"),
         "source_schema_attestation": source_attestation,
+        "external_request_ledger_attestation": external_request_ledger_attestation,
         "dataset_identity": dataset_identity,
         "failures": failures,
         "blockers": blockers,
