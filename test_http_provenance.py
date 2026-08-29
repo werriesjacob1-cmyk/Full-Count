@@ -36,6 +36,7 @@ class LedgerTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             ledger = hp.ResponseLedger(tmp, archive_bodies=True)
             ledger.start_date("2026-05-01")
+            ledger.set_phase("predictive_input")
             response = fake_response(
                 "https://statsapi.mlb.com/api/v1/schedule?sportId=1",
                 b'{"dates":[1]}',
@@ -76,6 +77,24 @@ class LedgerTests(unittest.TestCase):
             hp._logical_fingerprint([b]),
         )
 
+    def test_logical_fingerprint_binds_scientific_phase(self):
+        base = {
+            "observed_date": "2026-05-01",
+            "method": "GET",
+            "url": "https://statsapi.mlb.com/api/v1/schedule?sportId=1",
+            "request_body_sha256": None,
+            "status_code": 200,
+            "response_sha256": "a" * 64,
+            "response_bytes": 10,
+            "exception_type": None,
+        }
+        predictive = dict(base, scientific_phase="predictive_input")
+        outcome = dict(base, scientific_phase="outcome_grading")
+        self.assertNotEqual(
+            hp._logical_fingerprint([predictive]),
+            hp._logical_fingerprint([outcome]),
+        )
+
     def test_logical_fingerprint_ignores_thread_arrival_order(self):
         with tempfile.TemporaryDirectory() as a, tempfile.TemporaryDirectory() as b:
             r1 = fake_response(
@@ -89,12 +108,14 @@ class LedgerTests(unittest.TestCase):
 
             la = hp.ResponseLedger(a)
             la.start_date("2026-05-01")
+            la.set_phase("predictive_input")
             la.record_response(r1)
             la.record_response(r2)
             sa = la.finish_date("2026-05-01")
 
             lb = hp.ResponseLedger(b)
             lb.start_date("2026-05-01")
+            lb.set_phase("predictive_input")
             lb.record_response(r2)
             lb.record_response(r1)
             sb = lb.finish_date("2026-05-01")
@@ -112,6 +133,7 @@ class LedgerTests(unittest.TestCase):
                 strict_host_firewall=True,
             )
             ledger.start_date("2026-05-01")
+            ledger.set_phase("predictive_input")
             with self.assertRaises(hp.HttpProvenanceError):
                 ledger.assert_request_allowed(
                     "GET",
@@ -131,6 +153,7 @@ class LedgerTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             ledger = hp.ResponseLedger(tmp)
             ledger.start_date("2026-05-01")
+            ledger.set_phase("predictive_input")
             ledger.record_response(
                 fake_response("https://example.com/anything", b"x")
             )
@@ -141,6 +164,7 @@ class LedgerTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             ledger = hp.ResponseLedger(tmp)
             ledger.start_date("2026-05-01")
+            ledger.set_phase("predictive_input")
             ledger.record_exception(
                 "GET",
                 "https://statsapi.mlb.com/api/v1/schedule",
@@ -192,6 +216,7 @@ class ResponseCacheTests(unittest.TestCase):
                     strict_host_firewall=True,
                 )
                 ledger.start_date("2026-05-01")
+            ledger.set_phase("predictive_input")
                 hp.set_active_ledger(ledger)
 
                 s = requests.Session()
@@ -259,6 +284,7 @@ class ResponseCacheTests(unittest.TestCase):
                 hp.set_active_ledger(ledger)
                 for day in ("2026-05-01", "2026-05-02"):
                     ledger.start_date(day)
+                    ledger.set_phase("predictive_input")
                     got = requests.Session().request(
                         "GET",
                         "https://statsapi.mlb.com/api/v1/seasons/all",
@@ -297,6 +323,7 @@ class HookTransparencyTests(unittest.TestCase):
             with tempfile.TemporaryDirectory() as tmp:
                 ledger = hp.ResponseLedger(tmp)
                 ledger.start_date("2026-05-01")
+            ledger.set_phase("predictive_input")
                 hp.set_active_ledger(ledger)
                 session = requests.Session()
                 got = session.request(
