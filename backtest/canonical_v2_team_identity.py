@@ -177,14 +177,10 @@ class HistoricalTeamIdentity:
                         f"historical bullpen fetch failed for {team_name}: {err}"
                     )
                 if not usage:
-                    # A genuinely empty recent-usage set is valid; preserve an
-                    # explicit zero/tracked-zero record instead of conflating
-                    # it with failed identity resolution.
-                    out[team_name] = {
-                        "fatigued_relievers": 0,
-                        "tracked": 0,
-                        "relievers": [],
-                    }
+                    # Preserve production semantics exactly: a genuinely
+                    # empty recent-usage set contributes no bullpen feature.
+                    # Identity resolution has already succeeded above; do not
+                    # turn "no data" into an invented zero-fatigue signal.
                     continue
                 fatigued = sum(
                     1 for item in usage.values()
@@ -196,17 +192,6 @@ class HistoricalTeamIdentity:
                     "relievers": gp._reliever_detail(usage),
                 }
 
-        expected_names = {
-            str(gm.get(f"{side}_team"))
-            for gm in game_meta
-            for side in ("away", "home")
-            if gm.get(f"{side}_team")
-        }
-        missing = expected_names - set(out)
-        if missing:
-            raise HistoricalTeamIdentityError(
-                f"historical bullpen output omitted team(s): {sorted(missing)}"
-            )
         return out
 
     def install(self):
