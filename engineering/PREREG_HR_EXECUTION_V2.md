@@ -634,6 +634,10 @@ The HR contact-state thread closes if:
 - removing the largest contributor on player/team/park/month flips the positive
   effect to non-positive under §13;
 - fewer than 500 holdout HR candidates carry a real trailing-state feature.
+  This count is locked as **Arm-B support** (>=30 pre-D tracked swings with
+  non-null `bat_speed`): B is the base trailing-state measurement and C/D
+  are stricter subsets. The gate may not be switched to a more favorable arm
+  after holdout access.
 
 Execution-side aborts before result interpretation:
 
