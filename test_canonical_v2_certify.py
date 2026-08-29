@@ -1193,5 +1193,55 @@ class CertificationTests(unittest.TestCase):
             )
 
 
+    def test_cross_phase_success_does_not_recover_predictive_failure(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            PackageFactory(tmp).build()
+
+            def mutate(rows):
+                schedule = next(
+                    row for row in rows
+                    if "/api/v1/schedule" in row["url"]
+                )
+                failed_predictive = dict(schedule)
+                failed_predictive["scientific_phase"] = "predictive_input"
+                failed_predictive["status_code"] = 503
+                failed_predictive["response_sha256"] = None
+                failed_predictive["response_bytes"] = None
+
+                successful_outcome = dict(schedule)
+                successful_outcome["scientific_phase"] = "outcome_grading"
+
+                rows[:] = [
+                    row for row in rows
+                    if row is not schedule
+                ]
+                rows.extend([failed_predictive, successful_outcome])
+
+            self._rewrite_ledger(
+                tmp,
+                "mlb_statsapi_request_ledger",
+                mutate,
+                bind=True,
+            )
+            result = self.certify(tmp)
+            self.assertEqual(
+                result["verdict"],
+                "CERTIFICATION BLOCKED",
+                msg=json.dumps(result, indent=2),
+            )
+            self.assertEqual(
+                result["external_response_archive"][
+                    "recovered_statsapi_transient_identities"
+                ],
+                0,
+            )
+            self.assertEqual(
+                result["external_response_archive"][
+                    "unrecovered_statsapi_request_identities"
+                ],
+                1,
+            )
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)
