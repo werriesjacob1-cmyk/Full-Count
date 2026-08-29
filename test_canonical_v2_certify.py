@@ -647,6 +647,52 @@ class CertificationTests(unittest.TestCase):
                 )
             )
 
+
+    def test_same_url_can_differ_between_prediction_and_grading(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            PackageFactory(tmp).build()
+            blob_dir = os.path.join(tmp, "http_blobs")
+
+            grading_body = (
+                b'{"dates":[{"date":"2025-08-20","games":[]}],'
+                b'"snapshot":"grading"}'
+            )
+            grading_sha = sha(grading_body)
+            write_gzip(
+                os.path.join(blob_dir, f"{grading_sha}.gz"),
+                grading_body,
+            )
+
+            def mutate(rows):
+                schedule = next(
+                    row for row in rows
+                    if "/api/v1/schedule" in row["url"]
+                )
+                outcome = dict(schedule)
+                outcome["scientific_phase"] = "outcome_grading"
+                outcome["response_sha256"] = grading_sha
+                outcome["response_bytes"] = len(grading_body)
+                rows.append(outcome)
+
+            self._rewrite_ledger(
+                tmp,
+                "mlb_statsapi_request_ledger",
+                mutate,
+                bind=True,
+            )
+            result = self.certify(tmp)
+            self.assertEqual(
+                result["verdict"],
+                "CANONICAL CERTIFIED",
+                msg=json.dumps(result, indent=2),
+            )
+            self.assertEqual(
+                result["cross_shard_request_consistency"][
+                    "divergent_request_identities"
+                ],
+                0,
+            )
+
     def test_unrecovered_statsapi_failure_blocks_certification(self):
         with tempfile.TemporaryDirectory() as tmp:
             PackageFactory(tmp).build(statsapi_failure=True)
