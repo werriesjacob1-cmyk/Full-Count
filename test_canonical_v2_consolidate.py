@@ -20,7 +20,6 @@ from backtest.canonical_v2_consolidate import (
 
 
 CODE_SHA = "a" * 40
-SOURCE_SHA = "b" * 64
 SOURCE_SCHEMA = "c" * 64
 
 
@@ -58,7 +57,7 @@ def environment():
     }
 
 
-def identity():
+def identity(source_sha):
     return {
         "run_id": "v2-test",
         "requested_start_date": "2025-01-01",
@@ -66,7 +65,7 @@ def identity():
         "scientific_parent_sha": "f" * 40,
         "generation_code_sha": CODE_SHA,
         "statcast_source": {
-            "content_sha256": SOURCE_SHA,
+            "content_sha256": source_sha,
             "row_count": 10,
             "schema_columns": ["game_date", "batter"],
             "schema_fingerprint": SOURCE_SCHEMA,
@@ -89,7 +88,7 @@ def row(day, game, player):
     }
 
 
-def create_shard(root, index, day, player):
+def create_shard(root, index, day, player, source_sha):
     shard = os.path.join(root, f"shard-{index}")
     rows_dir = os.path.join(shard, "rows")
     http_dir = os.path.join(shard, "http")
@@ -169,7 +168,7 @@ def create_shard(root, index, day, player):
         "row_count": 1,
         "decompressed_rows_sha256": sha256_bytes(raw_rows),
         "generation_code_sha": CODE_SHA,
-        "source_content_sha256": SOURCE_SHA,
+        "source_content_sha256": source_sha,
         "source_schema_fingerprint": SOURCE_SCHEMA,
         "http_provenance": http_summary,
         "point_in_time_access": {
@@ -180,7 +179,7 @@ def create_shard(root, index, day, player):
     }
     atomic_json(os.path.join(rows_dir, f"{day}.meta.json"), meta)
 
-    ident = identity()
+    ident = identity(source_sha)
     manifest = {
         "identity": ident,
         "environment": environment(),
@@ -196,7 +195,7 @@ def create_shard(root, index, day, player):
         "identity_fingerprint": ident["identity_fingerprint"],
         "generation_code_sha": CODE_SHA,
         "scientific_parent_sha": ident["scientific_parent_sha"],
-        "source_content_sha256": SOURCE_SHA,
+        "source_content_sha256": source_sha,
         "source_schema_fingerprint": SOURCE_SCHEMA,
         "shard_index": index,
         "shard_count": 2,
@@ -218,7 +217,16 @@ def create_shard(root, index, day, player):
 
 
 class ConsolidationTests(unittest.TestCase):
-    def run_consolidator(self, shards_root, out_dir):
+    def make_source(self, tmp):
+        path = os.path.join(
+            tmp,
+            "statcast_2024_through_2026-08-24.parquet",
+        )
+        with open(path, "wb") as handle:
+            handle.write(b"synthetic exact statcast source bytes")
+        return path, hashlib.sha256(open(path, "rb").read()).hexdigest()
+
+    def run_consolidator(self, shards_root, out_dir, source_path):
         argv = [
             "canonical_v2_consolidate.py",
             "--shards-root", shards_root,
@@ -227,6 +235,7 @@ class ConsolidationTests(unittest.TestCase):
             "--start", "2025-01-01",
             "--end", "2025-01-02",
             "--shard-count", "2",
+            "--source-parquet", source_path,
             "--require-body-archive",
         ]
         with patch.object(sys, "argv", argv):
@@ -236,10 +245,14 @@ class ConsolidationTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             shards = os.path.join(tmp, "shards")
             out = os.path.join(tmp, "out")
-            create_shard(shards, 0, "2025-01-01", 1)
-            create_shard(shards, 1, "2025-01-02", 2)
+            source_path, source_sha = self.make_source(tmp)
+            create_shard(shards, 0, "2025-01-01", 1, source_sha)
+            create_shard(shards, 1, "2025-01-02", 2, source_sha)
 
-            self.assertEqual(self.run_consolidator(shards, out), 0)
+            self.assertEqual(
+                self.run_consolidator(shards, out, source_path),
+                0,
+            )
             report = json.load(
                 open(
                     os.path.join(out, "consolidation_report.json"),
@@ -275,8 +288,9 @@ class ConsolidationTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             shards = os.path.join(tmp, "shards")
             out = os.path.join(tmp, "out")
-            create_shard(shards, 0, "2025-01-01", 1)
-            create_shard(shards, 1, "2025-01-02", 2)
+            source_path, source_sha = self.make_source(tmp)
+            create_shard(shards, 0, "2025-01-01", 1, source_sha)
+            create_shard(shards, 1, "2025-01-02", 2, source_sha)
             summary_path = os.path.join(
                 shards,
                 "shard-1",
@@ -286,14 +300,15 @@ class ConsolidationTests(unittest.TestCase):
             summary["completed_dates"] = []
             atomic_json(summary_path, summary)
             with self.assertRaises(ConsolidationError):
-                self.run_consolidator(shards, out)
+                self.run_consolidator(shards, out, source_path)
 
     def test_corrupted_archived_response_body_fails(self):
         with tempfile.TemporaryDirectory() as tmp:
             shards = os.path.join(tmp, "shards")
             out = os.path.join(tmp, "out")
-            create_shard(shards, 0, "2025-01-01", 1)
-            create_shard(shards, 1, "2025-01-02", 2)
+            source_path, source_sha = self.make_source(tmp)
+            create_shard(shards, 0, "2025-01-01", 1, source_sha)
+            create_shard(shards, 1, "2025-01-02", 2, source_sha)
             blob_dir = os.path.join(shards, "shard-0", "http", "blobs")
             blob = os.path.join(blob_dir, os.listdir(blob_dir)[0])
             with open(blob, "wb") as handle:
@@ -305,8 +320,9 @@ class ConsolidationTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             shards = os.path.join(tmp, "shards")
             out = os.path.join(tmp, "out")
-            create_shard(shards, 0, "2025-01-01", 1)
-            create_shard(shards, 1, "2025-01-02", 2)
+            source_path, source_sha = self.make_source(tmp)
+            create_shard(shards, 0, "2025-01-01", 1, source_sha)
+            create_shard(shards, 1, "2025-01-02", 2, source_sha)
             path = os.path.join(shards, "shard-1", "shard_manifest.json")
             manifest = json.load(open(path, encoding="utf-8"))
             manifest["identity"]["generation_code_sha"] = "9" * 40
