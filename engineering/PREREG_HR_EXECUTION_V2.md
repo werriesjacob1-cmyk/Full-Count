@@ -82,6 +82,37 @@ winsorized, or substituted after this lock.
 
 ## 3. Point-in-time feature construction
 
+### 3.0 Source artifact and retained columns — LOCKED
+
+No new Statcast pull is permitted for this experiment.
+
+At the pinned canonical scientific SHA
+`fc589447ec157bff9a96071edc3ceb6c7dc734eb`,
+`backtest/engine.py::STATCAST_COLUMNS` explicitly retained, before the
+2026-08-28 canonical source pull:
+
+- `bat_speed`
+- `swing_length`
+- `attack_angle`
+- `swing_path_tilt`
+- `attack_direction`
+- `hit_distance_sc`
+
+as retention-only columns. The source comment is explicit that retaining them
+did **not** authorize using them in the champion. That makes them available for
+this challenger from the already-bound immutable source parquet without a new
+source vintage.
+
+The feature extractor must therefore be a pure read of the certified source
+artifact. It may not call pybaseball, Baseball Savant, or any other network
+endpoint while constructing B/C/D/E features.
+
+For Arm E, the previously underspecified "trailing `hit_distance_sc` state"
+is locked here as the **arithmetic mean** of non-null `hit_distance_sc`
+values inside the same fixed last-100 tracked-swing window used by B/C/D.
+This closes the statistic before holdout access; no max/p90/recent-subwindow
+variant may be substituted later.
+
 For a candidate on date `D`, every contact-state feature uses only Statcast
 swings with:
 
