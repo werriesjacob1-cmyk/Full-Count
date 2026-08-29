@@ -94,10 +94,13 @@ def _prepared_identity(method, url, kwargs):
 
 
 def _logical_entry(entry):
+    # Headers/retrieval time/thread/transport stay in the raw audit ledger but
+    # are excluded from the scientific fingerprint. UA rotation is deliberately
+    # randomized by mlb_daily and must not make identical request+response
+    # scientific content appear different.
     return {
         "method": entry.get("method"),
         "url": entry.get("url"),
-        "request_headers": entry.get("request_headers"),
         "request_body_sha256": entry.get("request_body_sha256"),
         "status_code": entry.get("status_code"),
         "response_sha256": entry.get("response_sha256"),
@@ -250,8 +253,6 @@ class ResponseLedger:
             self._entries = []
             self._sequence = 0
             self._firewall_blocks = []
-            self._network_count = 0
-            self._cache_hit_count = 0
             self._network_count = 0
             self._cache_hit_count = 0
 
