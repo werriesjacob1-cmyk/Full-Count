@@ -259,6 +259,99 @@ class ResponseCacheTests(unittest.TestCase):
             hp.uninstall_requests_hook()
             requests.sessions.Session.request = real
 
+
+    def test_cache_does_not_cross_prediction_to_grading_phase(self):
+        real = requests.sessions.Session.request
+        calls = {"n": 0}
+
+        def fake_request(session, method, url, **kwargs):
+            calls["n"] += 1
+            body = (
+                b'{"status":"pregame"}'
+                if calls["n"] == 1
+                else b'{"status":"final"}'
+            )
+            return fake_response(
+                "https://statsapi.mlb.com/api/v1/schedule"
+                "?date=2026-05-01&sportId=1",
+                body,
+            )
+
+        try:
+            hp.uninstall_requests_hook()
+            requests.sessions.Session.request = fake_request
+            hp.install_requests_hook()
+            with tempfile.TemporaryDirectory() as tmp:
+                ledger = hp.ResponseLedger(
+                    tmp,
+                    archive_bodies=True,
+                    cache_get_responses=True,
+                    strict_host_firewall=True,
+                )
+                ledger.start_date("2026-05-01")
+                ledger.set_phase("predictive_input")
+                hp.set_active_ledger(ledger)
+                session = requests.Session()
+
+                predictive_1 = session.request(
+                    "GET",
+                    "https://statsapi.mlb.com/api/v1/schedule",
+                    params={"date": "2026-05-01", "sportId": 1},
+                )
+                predictive_2 = session.request(
+                    "GET",
+                    "https://statsapi.mlb.com/api/v1/schedule",
+                    params={"date": "2026-05-01", "sportId": 1},
+                )
+                self.assertEqual(predictive_1.content, b'{"status":"pregame"}')
+                self.assertEqual(predictive_2.content, b'{"status":"pregame"}')
+                self.assertEqual(calls["n"], 1)
+
+                ledger.set_phase("outcome_grading")
+                outcome_1 = session.request(
+                    "GET",
+                    "https://statsapi.mlb.com/api/v1/schedule",
+                    params={"date": "2026-05-01", "sportId": 1},
+                )
+                outcome_2 = session.request(
+                    "GET",
+                    "https://statsapi.mlb.com/api/v1/schedule",
+                    params={"date": "2026-05-01", "sportId": 1},
+                )
+                summary = ledger.finish_date("2026-05-01")
+
+                self.assertEqual(outcome_1.content, b'{"status":"final"}')
+                self.assertEqual(outcome_2.content, b'{"status":"final"}')
+                self.assertEqual(calls["n"], 2)
+                self.assertEqual(summary["network_request_count"], 2)
+                self.assertEqual(summary["cache_hit_count"], 2)
+
+                entries = [
+                    json.loads(line)
+                    for line in open(
+                        os.path.join(tmp, summary["ledger_file"]),
+                        encoding="utf-8",
+                    )
+                    if line.strip()
+                ]
+                self.assertEqual(
+                    [entry["scientific_phase"] for entry in entries],
+                    [
+                        "predictive_input",
+                        "predictive_input",
+                        "outcome_grading",
+                        "outcome_grading",
+                    ],
+                )
+                self.assertEqual(
+                    [entry["transport"] for entry in entries],
+                    ["network", "cache", "network", "cache"],
+                )
+        finally:
+            hp.set_active_ledger(None)
+            hp.uninstall_requests_hook()
+            requests.sessions.Session.request = real
+
     def test_cache_persists_across_date_boundaries_within_one_shard(self):
         real = requests.sessions.Session.request
         calls = {"n": 0}
@@ -323,7 +416,7 @@ class HookTransparencyTests(unittest.TestCase):
             with tempfile.TemporaryDirectory() as tmp:
                 ledger = hp.ResponseLedger(tmp)
                 ledger.start_date("2026-05-01")
-            ledger.set_phase("predictive_input")
+                ledger.set_phase("predictive_input")
                 hp.set_active_ledger(ledger)
                 session = requests.Session()
                 got = session.request(
