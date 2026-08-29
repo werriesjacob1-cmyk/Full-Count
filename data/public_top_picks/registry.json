@@ -2,7 +2,7 @@
   "schema_version": 1,
   "identity_schema_version": 2,
   "rollout_version": "pre-phase-v-live-lifecycle-v1",
-  "updated_at": "2026-08-29T03:02:53.076446+00:00",
+  "updated_at": "2026-08-29T07:37:00.563264+00:00",
   "migration": {
     "version": "pre-phase-v-live-lifecycle-v1",
     "completed_at": "2026-08-17T23:14:57+00:00",
@@ -5414,6 +5414,92 @@
         },
         "qualification_timestamp": "2026-08-29T03:01:22.822541+00:00",
         "board_timestamp": "2026-08-29T03:01:22.803826+00:00",
+        "slate_date": "2026-08-29"
+      }
+    },
+    "fc2:824230:player-672456:pitcher_outs:16:over": {
+      "canonical_id": "fc2:824230:player-672456:pitcher_outs:16:over",
+      "settlement_identity": [
+        "824230",
+        [
+          "player",
+          "672456"
+        ],
+        "pitcher_outs",
+        "16",
+        "over"
+      ],
+      "slate_date": "2026-08-29",
+      "first_published_at": "2026-08-29T07:37:00.563264+00:00",
+      "publication_provenance": {
+        "artifact_id": "476b40d58acca55283b9ff43d253ea50c5cc5423419a20b658cd268f6c964ad7",
+        "source_commit": "ad83e7d8d143e78f25a483c6ca9324e31fc569d9",
+        "workflow_run_id": "33241218790",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-08-29T07:36:46.620858+00:00",
+        "data_hash": "6254a0d2867014827f02316d3b5d3b6f2af3daa6ad4a50a1ee573972184fe337",
+        "live_hash": "47fc40681bc615d796b85c11bfd28f74216bbb9714ce4a1e7dd69a1c8f352c1d"
+      },
+      "snapshot": {
+        "id": "fc2:824230:player-672456:pitcher_outs:16:over",
+        "identity_version": 2,
+        "game_pk": 824230,
+        "player_id": 672456,
+        "combo_player_ids": null,
+        "type": "pitcher",
+        "name": "Keider Montero",
+        "team": "Detroit Tigers",
+        "matchup": "Los Angeles Dodgers @ Detroit Tigers",
+        "game_start": "2026-08-29T17:10:00Z",
+        "stat": "pitcher_outs",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "pitcher_outs",
+          "value": 15.5,
+          "needs": 16
+        },
+        "prop": "Over 15.5 Outs Recorded",
+        "hit_probability": 0.6473,
+        "market_odds": -132,
+        "market_implied": 0.5298,
+        "market_edge": 0.1175,
+        "market_hold": 0.0739,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (A), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (12.0 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "Recorded 16+ outs (5.1 IP) in 64.7% of his last 21 real starts (league 58.0%, avg 17.05 outs/start)"
+        ],
+        "watchouts": [],
+        "prob_ci": [
+          0.5788,
+          0.7522
+        ],
+        "reliability": "A",
+        "reliability_note": null,
+        "sample_n": 21,
+        "lineup_assumed": null,
+        "base_rate": 0.5796,
+        "lift": 0.0677,
+        "lift_reference_rate": null,
+        "stable_lift": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "2066a8c9",
+          "prediction_timestamp": "2026-08-29T07:31:22.427890+00:00",
+          "odds_fetched_at": "2026-08-29T07:31:17.461785+00:00",
+          "board_generated_at": "2026-08-29T07:31:22.315846+00:00"
+        },
+        "qualification_timestamp": "2026-08-29T07:31:22.427890+00:00",
+        "board_timestamp": "2026-08-29T07:31:22.315846+00:00",
         "slate_date": "2026-08-29"
       }
     }
