@@ -27,6 +27,7 @@ import subprocess
 from collections import Counter
 
 from backtest.experiment_primitives import deterministic_sha256
+from backtest.hr_contact_state_features import ensure_contact_state_index
 from backtest.hr_contact_state_stage1 import (
     build_hr_prediction_freezes,
     fit_hr_arms,
@@ -517,16 +518,18 @@ def run_stage1(args):
     )
 
     import pandas as pd
-    source_frame = pd.read_parquet(args.source_parquet)
+    source_index = ensure_contact_state_index(
+        pd.read_parquet(args.source_parquet)
+    )
     runner_sha = _git_head()
 
     fitted = fit_hr_arms(
         populations["training"],
-        source_frame,
+        source_index,
     )
     bundle = build_hr_prediction_freezes(
         populations["masked_holdout"],
-        source_frame,
+        source_index,
         fitted,
         venue_map,
         runner_code_sha=runner_sha,
@@ -595,12 +598,14 @@ def run_stage1_e(args):
     training = load_training_only(args.canonical_rows)
 
     import pandas as pd
-    source_frame = pd.read_parquet(args.source_parquet)
+    source_index = ensure_contact_state_index(
+        pd.read_parquet(args.source_parquet)
+    )
     runner_sha = _git_head()
 
     bundle = build_hr_e_prediction_bundle(
         training["training"],
-        source_frame,
+        source_index,
         initial_stage1,
         initial_stage2,
         runner_code_sha=runner_sha,
