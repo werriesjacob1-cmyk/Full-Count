@@ -900,6 +900,38 @@ def certify(package_dir, repo_root, expected_parent_sha=None, expected_source_sh
             f"{recovered_transients} StatsAPI request identities had recovered transient failures"
         )
 
+    # Cross-shard/source-vintage consistency: one logical request identity
+    # may be consumed on many simulated dates or in multiple shards, but every
+    # successful observation must resolve to the same response bytes. A split
+    # brain here means the final dataset mixed external source vintages.
+    response_shas_by_request = defaultdict(set)
+    for row in all_external_rows:
+        status = row.get("status_code")
+        response_sha = row.get("response_sha256")
+        if (
+            isinstance(status, int)
+            and 200 <= status < 300
+            and response_sha
+            and not row.get("exception_type")
+        ):
+            key = (
+                row.get("method"),
+                row.get("url"),
+                row.get("request_body_sha256"),
+            )
+            response_shas_by_request[key].add(response_sha)
+    divergent_request_identities = {
+        key: sorted(shas)
+        for key, shas in response_shas_by_request.items()
+        if len(shas) > 1
+    }
+    if divergent_request_identities:
+        sample = list(divergent_request_identities.items())[:5]
+        failures.append(
+            "identical external request identities returned different "
+            f"successful content SHAs across the canonical run: {sample}"
+        )
+
     statsapi_rows = [
         row for row in all_external_rows
         if (urlparse(str(row.get("url") or "")).hostname or "").lower()
@@ -1087,6 +1119,10 @@ def certify(package_dir, repo_root, expected_parent_sha=None, expected_source_sh
         "source_lineage_fingerprint": report.get("source_lineage_fingerprint"),
         "source_schema_attestation": source_attestation,
         "statsapi_source_shape_audit": source_shape_audit,
+        "cross_shard_request_consistency": {
+            "successful_request_identities": len(response_shas_by_request),
+            "divergent_request_identities": len(divergent_request_identities),
+        },
         "external_response_archive": {
             "unique_response_sha_count": len(response_shas),
             "directory": os.path.relpath(blob_dir, package_dir)
