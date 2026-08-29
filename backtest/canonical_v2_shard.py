@@ -192,8 +192,10 @@ def run_identity(args, code_sha, source):
         "http_allowed_hosts": sorted(DEFAULT_ALLOWED_HOSTS),
         "http_strict_host_firewall": True,
         "http_response_content_bound": True,
+        "http_scientific_phase_bound": True,
         "http_identical_get_cache": True,
         "historical_team_identity": "schedule_team_ids_plus_season_directory",
+        "historical_bullpen_temporal_gate": "official_date_before_D_and_completed_status_v1",
         "statsapi_source_shape_policy": "canonical-v2-statsapi-v1-20260829",
     }
     identity["identity_fingerprint"] = sha256_bytes(
