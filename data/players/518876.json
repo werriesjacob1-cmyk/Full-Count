@@ -282,7 +282,7 @@
         {
           "prop": "Over 4.5 Strikeouts",
           "type": "pitcher",
-          "score": 28.0,
+          "score": 20.0,
           "notable_signals": 0,
           "matchup": "Arizona Diamondbacks @ San Francisco Giants",
           "game_pk": 823177,
@@ -293,16 +293,14 @@
           "signals": {
             "opp_team_k_pct": 44.0,
             "same_hand_ratio": 5.5556,
-            "l14_k_pct": 0.0,
-            "tto_penalty": -8.0,
             "env_neutral": 50.0,
             "ump_accuracy": 51.6776,
             "ump_k_pct": 0.444,
             "ump_bb_pct": -0.012
           },
-          "hit_probability": 0.4034,
-          "raw_hit_probability": 0.4034,
-          "lift": -0.1134,
+          "hit_probability": 0.3972,
+          "raw_hit_probability": 0.3972,
+          "lift": -0.1196,
           "reliability": "A",
           "sample_n": 24,
           "projection": {
@@ -314,7 +312,7 @@
         {
           "prop": "Over 16.5 Outs Recorded",
           "type": "pitcher",
-          "score": 32.9,
+          "score": 29.3,
           "notable_signals": 0,
           "matchup": "Arizona Diamondbacks @ San Francisco Giants",
           "game_pk": 823177,
@@ -323,18 +321,46 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.4657,
+            "outs_rate": 0.4728,
             "avg_outs_per_start": 16.83
           },
-          "hit_probability": 0.4657,
+          "hit_probability": 0.4728,
           "raw_hit_probability": null,
-          "lift": -0.0292,
+          "lift": -0.0581,
           "reliability": "A",
           "sample_n": 24,
           "projection": {
             "stat": "pitcher_outs",
             "value": 16.5,
             "needs": 17
+          }
+        },
+        {
+          "prop": "Over 6.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 0.3,
+          "notable_signals": 0,
+          "matchup": "Arizona Diamondbacks @ San Francisco Giants",
+          "game_pk": 823177,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            518876,
+            683363
+          ],
+          "signals": {
+            "combined_k_edge": -0.4234
+          },
+          "hit_probability": 0.2364,
+          "raw_hit_probability": null,
+          "lift": -0.4234,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 6.5,
+            "needs": 7
           }
         }
       ]
