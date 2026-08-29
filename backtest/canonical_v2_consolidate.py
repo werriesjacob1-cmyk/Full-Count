@@ -330,6 +330,7 @@ def main():
     ap.add_argument("--end", required=True)
     ap.add_argument("--shard-count", type=int, required=True)
     ap.add_argument("--source-parquet", required=True)
+    ap.add_argument("--outcome-parquet", required=True)
     ap.add_argument("--require-body-archive", action="store_true")
     args = ap.parse_args()
 
@@ -339,6 +340,11 @@ def main():
             f"exact Statcast source parquet missing: {args.source_parquet}"
         )
     provided_source_sha = sha256_file(args.source_parquet)
+    if not os.path.exists(args.outcome_parquet):
+        raise ConsolidationError(
+            f"exact outcome-only Statcast parquet missing: {args.outcome_parquet}"
+        )
+    provided_outcome_sha = sha256_file(args.outcome_parquet)
 
     manifests = []
     summaries = []
@@ -376,6 +382,10 @@ def main():
         (identity_item.get("statcast_source") or {}).get("content_sha256")
         for identity_item in identities
     }
+    outcome_shas = {
+        (identity_item.get("outcome_statcast_source") or {}).get("content_sha256")
+        for identity_item in identities
+    }
     if len(code_shas) != 1 or None in code_shas:
         raise ConsolidationError(f"mixed generation code SHA across shards: {code_shas!r}")
     if len(source_shas) != 1 or None in source_shas:
@@ -383,6 +393,14 @@ def main():
     if provided_source_sha != next(iter(source_shas)):
         raise ConsolidationError(
             "provided exact Statcast parquet differs from shard-bound source SHA"
+        )
+    if len(outcome_shas) != 1 or None in outcome_shas:
+        raise ConsolidationError(
+            f"mixed outcome-only source SHA across shards: {outcome_shas!r}"
+        )
+    if provided_outcome_sha != next(iter(outcome_shas)):
+        raise ConsolidationError(
+            "provided outcome-only Statcast parquet differs from shard-bound source SHA"
         )
 
     env_signatures = {
@@ -444,6 +462,8 @@ def main():
                 raise ConsolidationError(f"{day}: generation code SHA mismatch")
             if meta.get("source_content_sha256") not in source_shas:
                 raise ConsolidationError(f"{day}: source SHA mismatch")
+            if meta.get("outcome_source_content_sha256") not in outcome_shas:
+                raise ConsolidationError(f"{day}: outcome-only source SHA mismatch")
 
             raw, rows, ids = validate_rows(shard_dir, day, meta)
             overlap = global_ids.intersection(ids)
@@ -504,6 +524,11 @@ def main():
     shutil.copyfile(args.source_parquet, final_source_path)
     if sha256_file(final_source_path) != provided_source_sha:
         raise ConsolidationError("copied Statcast source SHA changed")
+    outcome_name = os.path.basename(args.outcome_parquet)
+    final_outcome_path = os.path.join(final_source_dir, outcome_name)
+    shutil.copyfile(args.outcome_parquet, final_outcome_path)
+    if sha256_file(final_outcome_path) != provided_outcome_sha:
+        raise ConsolidationError("copied outcome-only Statcast source SHA changed")
 
     # Source schema from the common shard identity.
     statcast = identity["statcast_source"]
@@ -512,6 +537,13 @@ def main():
         "schema_fingerprint": statcast.get("schema_fingerprint"),
         "date_coverage": statcast.get("date_coverage"),
         "schema_columns": statcast.get("schema_columns"),
+    }
+    outcome_statcast = identity["outcome_statcast_source"]
+    outcome_schema = {
+        "row_count": outcome_statcast.get("row_count"),
+        "schema_fingerprint": outcome_statcast.get("schema_fingerprint"),
+        "date_coverage": outcome_statcast.get("date_coverage"),
+        "schema_columns": outcome_statcast.get("schema_columns"),
     }
     # Recover full columns from any manifest's source-independent attestation
     # if a future shard schema adds them; current identity intentionally keeps
@@ -602,12 +634,29 @@ def main():
             "retrieval_timestamp": None,
         },
         {
+            "source": "statcast_outcome_only",
+            "request_identity": f"statcast:outcome-only:{identity.get('outcome_only_date')}",
+            "content_sha256": next(iter(outcome_shas)),
+            "row_count": outcome_statcast.get("row_count"),
+            "schema_columns": outcome_statcast.get("schema_columns"),
+            "schema_fingerprint": outcome_statcast.get("schema_fingerprint"),
+            "date_coverage": outcome_statcast.get("date_coverage"),
+            "cache_mode": "frozen_exact_artifact_grader_only",
+            "library": "pybaseball",
+            "library_version": (
+                (manifests[0].get("environment") or {})
+                .get("critical_packages", {})
+                .get("pybaseball")
+            ),
+            "retrieval_timestamp": None,
+        },
+        {
             "source": "mlb_statsapi_request_ledger",
             "request_identity": f"mlb_statsapi_request_ledger:{args.run_id}",
             "content_sha256": stats_ledger["content_sha256"],
             "row_count": stats_ledger["row_count"],
             "schema_columns": sorted([
-                "observed_date", "method", "url", "request_body_sha256", "status_code",
+                "observed_date", "scientific_phase", "method", "url", "request_body_sha256", "status_code",
                 "response_sha256", "response_bytes", "exception_type",
             ]),
             "schema_fingerprint": sha256_bytes(",".join(sorted([
@@ -692,6 +741,8 @@ def main():
         }),
         "statcast_source_sha256": next(iter(source_shas)),
         "statcast_source_path": "source/statcast_2024_through_2026-08-24.parquet",
+        "outcome_statcast_source_sha256": next(iter(outcome_shas)),
+        "outcome_statcast_source_path": f"source/{outcome_name}",
         "date_metadata_path": "date_metadata",
         "source_lineage": lineage,
         "source_lineage_fingerprint": lineage_fingerprint,
