@@ -165,5 +165,95 @@ class HistoricalTeamIdentityTests(unittest.TestCase):
                 adapter.fetch_bullpen_scores(game_meta)
 
 
+    def test_postponed_game_never_reaches_bullpen_boxscore_schedule(self):
+        adapter = HistoricalTeamIdentity()
+        m.YEAR = 2025
+        game_meta = [{
+            "game_pk": 9000,
+            "away_team": "Team 102",
+            "away_team_id": 102,
+            "home_team": "Team 103",
+            "home_team_id": 103,
+        }]
+
+        schedule_payload = {
+            "dates": [{
+                "date": "2025-08-18",
+                "games": [
+                    {
+                        "gamePk": 7001,
+                        "officialDate": "2025-08-18",
+                        "gameDate": "2025-08-18T18:00:00Z",
+                        "gameNumber": 1,
+                        "status": {
+                            "codedGameState": "F",
+                            "statusCode": "F",
+                            "detailedState": "Final",
+                        },
+                    },
+                    {
+                        # Exact failure shape observed in the real pilot:
+                        # the bounded D-1 date block retained a postponed
+                        # gamePk whose current official date moved to D.
+                        "gamePk": 7002,
+                        "officialDate": "2025-08-19",
+                        "gameDate": "2025-08-19T00:05:00Z",
+                        "gameNumber": 1,
+                        "status": {
+                            "codedGameState": "D",
+                            "statusCode": "DR",
+                            "detailedState": "Postponed",
+                        },
+                    },
+                    {
+                        # Even an old officialDate is insufficient if the
+                        # bounded schedule says the game was not complete.
+                        "gamePk": 7003,
+                        "officialDate": "2025-08-18",
+                        "gameDate": "2025-08-18T20:00:00Z",
+                        "gameNumber": 1,
+                        "status": {
+                            "codedGameState": "S",
+                            "statusCode": "S",
+                            "detailedState": "Suspended",
+                        },
+                    },
+                ],
+            }],
+        }
+
+        def retry_get(url, params=None, **kwargs):
+            if url.endswith("/api/v1/teams"):
+                return FakeResponse({"teams": season_teams(2025)})
+            if url.endswith("/api/v1/schedule"):
+                self.assertEqual(params["endDate"], "2025-08-18")
+                self.assertEqual(params["startDate"], "2025-08-11")
+                return FakeResponse(schedule_payload)
+            raise AssertionError(f"unexpected URL {url}")
+
+        observed_game_ids = []
+
+        def fake_fetch(job, is_rotation_starter=None):
+            team_name, team_id = job
+            games = m.statsapi.schedule(
+                start_date="2025-08-11",
+                end_date="2025-08-18",
+                team=team_id,
+            )
+            observed_game_ids.extend(game["game_id"] for game in games)
+            return team_name, {}, None
+
+        with patch.object(m, "retry_get", side_effect=retry_get), \
+             patch.object(m, "_bullpen_fetch_one", side_effect=fake_fetch), \
+             patch.object(gp, "_bullpen_role_classifier", return_value=None):
+            adapter.prepare_date("2025-08-19")
+            adapter.fetch_bullpen_scores(game_meta, pit_season_df=None)
+
+        self.assertTrue(observed_game_ids)
+        self.assertEqual(set(observed_game_ids), {7001})
+        self.assertNotIn(7002, observed_game_ids)
+        self.assertNotIn(7003, observed_game_ids)
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)
