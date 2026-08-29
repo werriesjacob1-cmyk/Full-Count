@@ -49,6 +49,7 @@ def holdout_row(day, game, player, prob, team="TST"):
         "prop_type": "home_run",
         "line": 0.5,
         "predicted_prob": prob,
+        "score": 70.0,
     }
 
 
@@ -271,6 +272,7 @@ class StageOneTests(unittest.TestCase):
             "prop_type": "home_run",
             "line": 0.5,
             "predicted_prob": 0.20,
+            "score": 70.0,
             "outcome": 1,
         }]
         with self.assertRaises(HRStageIntegrityError):
@@ -284,6 +286,7 @@ class StageOneTests(unittest.TestCase):
             "prop_type": "home_run",
             "line": 0.5,
             "predicted_prob": 0.20,
+            "score": 70.0,
             "outcome": 1,
         }]
         with self.assertRaises(HRStageIntegrityError):
