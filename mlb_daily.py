@@ -347,6 +347,13 @@ def fetch_lineups(date):
                           # today." See real_roof_status()'s own docstring.
                           "mlb_weather_condition":(g.get("weather") or {}).get("condition"),
                           "away_team":at,"home_team":ht,
+                          # Stable MLB team identities come from this DATE'S
+                          # schedule response, not a later active-team-name
+                          # lookup. Additive for live callers; canonical-v2
+                          # uses these IDs to keep bullpen/team resolution
+                          # historically correct across relocations/renames.
+                          "away_team_id":(away.get("team") or {}).get("id"),
+                          "home_team_id":(home.get("team") or {}).get("id"),
                           # Structured lineups (name/id/pos/bats/order), populated below —
                           # kept alongside the human-readable text report so downstream
                           # scoring (generate_picks.py) doesn't have to parse text back out.
