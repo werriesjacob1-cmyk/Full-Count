@@ -314,7 +314,7 @@ class ConsolidationTests(unittest.TestCase):
             with open(blob, "wb") as handle:
                 handle.write(b"not-gzip")
             with self.assertRaises(Exception):
-                self.run_consolidator(shards, out)
+                self.run_consolidator(shards, out, source_path)
 
     def test_mixed_code_sha_fails(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -328,7 +328,7 @@ class ConsolidationTests(unittest.TestCase):
             manifest["identity"]["generation_code_sha"] = "9" * 40
             atomic_json(path, manifest)
             with self.assertRaises(ConsolidationError):
-                self.run_consolidator(shards, out)
+                self.run_consolidator(shards, out, source_path)
 
 
 if __name__ == "__main__":
