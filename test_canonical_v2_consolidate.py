@@ -21,6 +21,7 @@ from backtest.canonical_v2_consolidate import (
 
 CODE_SHA = "a" * 40
 SOURCE_SCHEMA = "c" * 64
+OUTCOME_SCHEMA = "o" * 64
 
 
 def atomic_json(path, payload):
@@ -57,7 +58,7 @@ def environment():
     }
 
 
-def identity(source_sha):
+def identity(source_sha, outcome_sha):
     return {
         "run_id": "v2-test",
         "requested_start_date": "2025-01-01",
@@ -70,6 +71,18 @@ def identity(source_sha):
             "schema_columns": ["game_date", "batter"],
             "schema_fingerprint": SOURCE_SCHEMA,
             "date_coverage": "2024-01-01..2026-01-01",
+        },
+        "outcome_only_date": "2025-01-02",
+        "outcome_source_isolation": "grader_only_external_parquet_v1",
+        "outcome_statcast_source": {
+            "content_sha256": outcome_sha,
+            "row_count": 2,
+            "schema_columns": [
+                "batter", "events", "game_date", "game_pk",
+                "hit_distance_sc", "launch_speed",
+            ],
+            "schema_fingerprint": OUTCOME_SCHEMA,
+            "date_coverage": "2025-01-02..2025-01-02",
         },
         "identity_fingerprint": "identity-fixed",
     }
@@ -88,7 +101,7 @@ def row(day, game, player):
     }
 
 
-def create_shard(root, index, day, player, source_sha):
+def create_shard(root, index, day, player, source_sha, outcome_sha):
     shard = os.path.join(root, f"shard-{index}")
     rows_dir = os.path.join(shard, "rows")
     http_dir = os.path.join(shard, "http")
@@ -117,6 +130,7 @@ def create_shard(root, index, day, player, source_sha):
     entry = {
         "sequence": 1,
         "observed_date": day,
+        "scientific_phase": "predictive_input",
         "retrieved_at": "2026-08-29T00:00:00+00:00",
         "thread_id": 1,
         "method": "GET",
@@ -170,6 +184,8 @@ def create_shard(root, index, day, player, source_sha):
         "generation_code_sha": CODE_SHA,
         "source_content_sha256": source_sha,
         "source_schema_fingerprint": SOURCE_SCHEMA,
+        "outcome_source_content_sha256": outcome_sha,
+        "outcome_source_schema_fingerprint": OUTCOME_SCHEMA,
         "http_provenance": http_summary,
         "point_in_time_access": {
             "reads": [],
@@ -179,7 +195,7 @@ def create_shard(root, index, day, player, source_sha):
     }
     atomic_json(os.path.join(rows_dir, f"{day}.meta.json"), meta)
 
-    ident = identity(source_sha)
+    ident = identity(source_sha, outcome_sha)
     manifest = {
         "identity": ident,
         "environment": environment(),
@@ -197,6 +213,9 @@ def create_shard(root, index, day, player, source_sha):
         "scientific_parent_sha": ident["scientific_parent_sha"],
         "source_content_sha256": source_sha,
         "source_schema_fingerprint": SOURCE_SCHEMA,
+        "outcome_source_content_sha256": outcome_sha,
+        "outcome_source_schema_fingerprint": OUTCOME_SCHEMA,
+        "outcome_only_date": "2025-01-02",
         "shard_index": index,
         "shard_count": 2,
         "requested_dates": [day],
@@ -224,9 +243,14 @@ class ConsolidationTests(unittest.TestCase):
         )
         with open(path, "wb") as handle:
             handle.write(b"synthetic exact statcast source bytes")
-        return path, hashlib.sha256(open(path, "rb").read()).hexdigest()
+        source_sha = hashlib.sha256(open(path, "rb").read()).hexdigest()
+        outcome_path = os.path.join(tmp, "statcast_outcome_2025-01-02.parquet")
+        with open(outcome_path, "wb") as handle:
+            handle.write(b"synthetic exact outcome-only statcast source bytes")
+        outcome_sha = hashlib.sha256(open(outcome_path, "rb").read()).hexdigest()
+        return path, source_sha, outcome_path, outcome_sha
 
-    def run_consolidator(self, shards_root, out_dir, source_path):
+    def run_consolidator(self, shards_root, out_dir, source_path, outcome_path):
         argv = [
             "canonical_v2_consolidate.py",
             "--shards-root", shards_root,
@@ -236,6 +260,7 @@ class ConsolidationTests(unittest.TestCase):
             "--end", "2025-01-02",
             "--shard-count", "2",
             "--source-parquet", source_path,
+            "--outcome-parquet", outcome_path,
             "--require-body-archive",
         ]
         with patch.object(sys, "argv", argv):
@@ -245,12 +270,12 @@ class ConsolidationTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             shards = os.path.join(tmp, "shards")
             out = os.path.join(tmp, "out")
-            source_path, source_sha = self.make_source(tmp)
-            create_shard(shards, 0, "2025-01-01", 1, source_sha)
-            create_shard(shards, 1, "2025-01-02", 2, source_sha)
+            source_path, source_sha, outcome_path, outcome_sha = self.make_source(tmp)
+            create_shard(shards, 0, "2025-01-01", 1, source_sha, outcome_sha)
+            create_shard(shards, 1, "2025-01-02", 2, source_sha, outcome_sha)
 
             self.assertEqual(
-                self.run_consolidator(shards, out, source_path),
+                self.run_consolidator(shards, out, source_path, outcome_path),
                 0,
             )
             report = json.load(
@@ -283,14 +308,23 @@ class ConsolidationTests(unittest.TestCase):
                 report["source_lineage"][0]["schema_columns"],
                 ["game_date", "batter"],
             )
+            self.assertEqual(
+                report["outcome_statcast_source_sha256"],
+                outcome_sha,
+            )
+            self.assertTrue(
+                os.path.exists(
+                    os.path.join(out, "source", "statcast_outcome_2025-01-02.parquet")
+                )
+            )
 
     def test_missing_expected_date_fails(self):
         with tempfile.TemporaryDirectory() as tmp:
             shards = os.path.join(tmp, "shards")
             out = os.path.join(tmp, "out")
-            source_path, source_sha = self.make_source(tmp)
-            create_shard(shards, 0, "2025-01-01", 1, source_sha)
-            create_shard(shards, 1, "2025-01-02", 2, source_sha)
+            source_path, source_sha, outcome_path, outcome_sha = self.make_source(tmp)
+            create_shard(shards, 0, "2025-01-01", 1, source_sha, outcome_sha)
+            create_shard(shards, 1, "2025-01-02", 2, source_sha, outcome_sha)
             summary_path = os.path.join(
                 shards,
                 "shard-1",
@@ -300,35 +334,35 @@ class ConsolidationTests(unittest.TestCase):
             summary["completed_dates"] = []
             atomic_json(summary_path, summary)
             with self.assertRaises(ConsolidationError):
-                self.run_consolidator(shards, out, source_path)
+                self.run_consolidator(shards, out, source_path, outcome_path)
 
     def test_corrupted_archived_response_body_fails(self):
         with tempfile.TemporaryDirectory() as tmp:
             shards = os.path.join(tmp, "shards")
             out = os.path.join(tmp, "out")
-            source_path, source_sha = self.make_source(tmp)
-            create_shard(shards, 0, "2025-01-01", 1, source_sha)
-            create_shard(shards, 1, "2025-01-02", 2, source_sha)
+            source_path, source_sha, outcome_path, outcome_sha = self.make_source(tmp)
+            create_shard(shards, 0, "2025-01-01", 1, source_sha, outcome_sha)
+            create_shard(shards, 1, "2025-01-02", 2, source_sha, outcome_sha)
             blob_dir = os.path.join(shards, "shard-0", "http", "blobs")
             blob = os.path.join(blob_dir, os.listdir(blob_dir)[0])
             with open(blob, "wb") as handle:
                 handle.write(b"not-gzip")
             with self.assertRaises(Exception):
-                self.run_consolidator(shards, out, source_path)
+                self.run_consolidator(shards, out, source_path, outcome_path)
 
     def test_mixed_code_sha_fails(self):
         with tempfile.TemporaryDirectory() as tmp:
             shards = os.path.join(tmp, "shards")
             out = os.path.join(tmp, "out")
-            source_path, source_sha = self.make_source(tmp)
-            create_shard(shards, 0, "2025-01-01", 1, source_sha)
-            create_shard(shards, 1, "2025-01-02", 2, source_sha)
+            source_path, source_sha, outcome_path, outcome_sha = self.make_source(tmp)
+            create_shard(shards, 0, "2025-01-01", 1, source_sha, outcome_sha)
+            create_shard(shards, 1, "2025-01-02", 2, source_sha, outcome_sha)
             path = os.path.join(shards, "shard-1", "shard_manifest.json")
             manifest = json.load(open(path, encoding="utf-8"))
             manifest["identity"]["generation_code_sha"] = "9" * 40
             atomic_json(path, manifest)
             with self.assertRaises(ConsolidationError):
-                self.run_consolidator(shards, out, source_path)
+                self.run_consolidator(shards, out, source_path, outcome_path)
 
 
 if __name__ == "__main__":
