@@ -1403,8 +1403,8 @@
         {
           "prop": "Over 0.5 Hits",
           "type": "batter",
-          "score": 52.2,
-          "notable_signals": 2,
+          "score": 53.3,
+          "notable_signals": 3,
           "matchup": "Colorado Rockies @ Atlanta Braves",
           "game_pk": 824874,
           "team": "Colorado Rockies",
@@ -1417,26 +1417,26 @@
             "pitch_exploit": 1.1429,
             "l7_avg_ev": 25.5469,
             "l7_barrel_pct": 100.0,
-            "park_hr_index": 67.6,
+            "park_hr_index": 72.4,
             "season_barrel_pct": 9.3333,
             "lineup_slot": 62.5,
             "bullpen_fatigue": 47.619,
             "platoon_barrel_pct": -4.24,
             "platoon_xwoba": -0.6,
-            "park_hand_index": 1.04,
-            "opp_catcher_framing": 0.36,
+            "park_hand_index": 1.29,
+            "opp_catcher_framing": 0.24,
             "days_rest": 0.0,
             "woba_ahead": 70.9091,
             "woba_behind": 22.7273,
-            "pull_park_synergy": 0.5314,
-            "hard_hit_105_rate": -0.07,
+            "pull_park_synergy": 0.6592,
+            "hard_hit_105_rate": -0.3325,
             "team_total_move": 0.0,
             "team_total_open": -4.0,
             "getaway_day": 0.0,
             "series_game": 1.0,
             "sp_rp_ops_gap": 1.872,
             "vs_rp_ops": 2.892,
-            "ump_k_pct": -0.18,
+            "ump_k_pct": -0.204,
             "ump_bb_pct": 0.276
           },
           "hit_probability": 0.6387,
@@ -1453,7 +1453,7 @@
         {
           "prop": "To Hit a Laser (105+ MPH)",
           "type": "batter",
-          "score": 3.7,
+          "score": 1.1,
           "notable_signals": 0,
           "matchup": "Colorado Rockies @ Atlanta Braves",
           "game_pk": 824874,
@@ -1462,11 +1462,11 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "hard_hit_rate": 0.0438
+            "hard_hit_rate": 0.0333
           },
-          "hit_probability": 0.0438,
+          "hit_probability": 0.0333,
           "raw_hit_probability": null,
-          "lift": -0.0045,
+          "lift": -0.0151,
           "reliability": "A",
           "sample_n": 131,
           "projection": {
@@ -1478,7 +1478,7 @@
         {
           "prop": "To Hit a Moonshot (420+ FT)",
           "type": "batter",
-          "score": 6.9,
+          "score": 4.2,
           "notable_signals": 0,
           "matchup": "Colorado Rockies @ Atlanta Braves",
           "game_pk": 824874,
@@ -1487,11 +1487,11 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "moonshot_rate": 0.0404
+            "moonshot_rate": 0.0297
           },
-          "hit_probability": 0.0404,
+          "hit_probability": 0.0297,
           "raw_hit_probability": null,
-          "lift": 0.0193,
+          "lift": 0.0082,
           "reliability": "A",
           "sample_n": 131,
           "projection": {
