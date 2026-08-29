@@ -660,7 +660,7 @@ def main():
                 "response_sha256", "response_bytes", "exception_type",
             ]),
             "schema_fingerprint": sha256_bytes(",".join(sorted([
-                "scientific_phase", "method", "url", "request_body_sha256", "status_code",
+                "observed_date", "scientific_phase", "method", "url", "request_body_sha256", "status_code",
                 "response_sha256", "response_bytes", "exception_type",
             ])).encode()),
             "date_coverage": f"{args.start}..{args.end}",
@@ -680,11 +680,11 @@ def main():
             "content_sha256": mlbcom_ledger["content_sha256"],
             "row_count": mlbcom_ledger["row_count"],
             "schema_columns": sorted([
-                "scientific_phase", "method", "url", "request_body_sha256", "status_code",
+                "observed_date", "scientific_phase", "method", "url", "request_body_sha256", "status_code",
                 "response_sha256", "response_bytes", "exception_type",
             ]),
             "schema_fingerprint": sha256_bytes(",".join(sorted([
-                "scientific_phase", "method", "url", "request_body_sha256", "status_code",
+                "observed_date", "scientific_phase", "method", "url", "request_body_sha256", "status_code",
                 "response_sha256", "response_bytes", "exception_type",
             ])).encode()),
             "date_coverage": f"{args.start}..{args.end}",
