@@ -634,7 +634,7 @@ def certify(
             "season-directory historical team identity"
         )
     if identity.get("historical_bullpen_temporal_gate") != (
-        "official_date_before_D_completed_status_plus_team_pregame_timecode_v2"
+        "official_date_before_D_current_terminal_plus_team_pregame_timecode_v2"
     ):
         failures.append(
             "canonical v2 did not declare the full historical bullpen temporal gate"

@@ -208,7 +208,7 @@ def run_identity(args, code_sha, source, outcome_source):
         "http_identical_get_cache": True,
         "historical_team_identity": "schedule_team_ids_plus_season_directory",
         "historical_bullpen_temporal_gate": (
-            "official_date_before_D_completed_status_plus_team_pregame_timecode_v2"
+            "official_date_before_D_current_terminal_plus_team_pregame_timecode_v2"
         ),
         "historical_bullpen_boxscore_cutoff": (
             "earliest_simulated_D_team_first_pitch_minus_1_second_utc"
