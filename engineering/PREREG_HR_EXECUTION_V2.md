@@ -448,8 +448,20 @@ For each of 5,000 bootstrap replicates:
 2. each drawn game contributes all champion and challenger selected rows from
    that game, preserving multiplicity;
 3. compute champion hit rate, challenger hit rate, and their difference;
-4. apply the same sampled-game multiplicities to the added and removed sets and
-   compute added-minus-removed hit-rate difference when both sets are non-empty.
+4. apply the same sampled-game multiplicities to the added and removed sets.
+
+For the changed-set statistic:
+
+- if a bootstrap replicate contains at least one added AND one removed pick,
+  compute added-minus-removed hit-rate difference normally;
+- if either side is empty in that replicate, record that replicate as
+  `changed_stat_unavailable` — never coerce an empty rate to zero and never
+  add a pseudocount;
+- the 95% added-minus-removed CI is computed only from valid changed-set
+  replicates;
+- at least **4,750 of 5,000** replicates must be valid. Fewer means changed-set
+  uncertainty is not estimable robustly enough and the arm does not earn
+  continuation.
 
 Seed:
 
@@ -457,17 +469,20 @@ Seed:
 
 Report:
 
-- 95% percentile CI for overall hit-rate delta;
-- 95% percentile CI for added-minus-removed;
-- `P(delta <= 0)`;
+- 95% percentile CI for overall hit-rate delta using all 5,000 replicates;
+- 95% percentile CI for added-minus-removed using the valid changed-set
+  replicates;
+- valid/invalid changed-set replicate counts;
+- `P(overall_delta <= 0)`;
+- `P(added_minus_removed <= 0)` over valid changed-set replicates;
 - number of unique game clusters.
 
 No row-wise bootstrap.
 No seed redraw.
 No unclustered substitute.
 
-If too few changed selections exist to compute added-minus-removed in the
-observed sample, the arm does not earn continuation.
+If the observed added or removed set is empty, or the 4,750-valid-replicate
+minimum is not met, the arm does not earn continuation.
 
 ---
 
@@ -498,12 +513,16 @@ For every group value `g` on one axis:
 The **largest contributor** is the group with the greatest positive
 `impact_g`.
 Ties break by lexical representation of the group key.
+If every `impact_g <= 0`, that axis has no positive single-group contributor
+and therefore cannot trigger the sign-flip dependency rule.
 
-Fail closed for that axis if removal leaves either added or removed empty.
+Fail closed for that axis if removal of the chosen largest positive contributor
+leaves either added or removed empty.
 
 Frozen dependency stop condition is triggered if, for ANY axis:
 
-`Delta_full > 0` and `Delta_without_largest <= 0`.
+`Delta_full > 0`, a positive contributor exists, and
+`Delta_without_largest <= 0`.
 
 No alternate definition of "largest contributor" is allowed after holdout
 access.
