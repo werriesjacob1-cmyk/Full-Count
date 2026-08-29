@@ -7,7 +7,9 @@ import unittest
 import pandas as pd
 
 from backtest.hr_contact_state_features import (
+    ContactStateIndex,
     ContactStateIntegrityError,
+    ensure_contact_state_index,
     extract_contact_state,
 )
 
@@ -42,6 +44,112 @@ def swing(
         "attack_direction": attack_direction,
         "hit_distance_sc": hit_distance_sc,
     }
+
+
+class IndexedSourceTests(unittest.TestCase):
+    def test_index_reuses_same_object(self):
+        source = frame([swing("2026-05-01", 100, 70.0)])
+        index = ContactStateIndex(source)
+        self.assertIs(ensure_contact_state_index(index), index)
+
+    def test_index_does_not_mutate_input_frame(self):
+        source = frame([
+            swing("2026-05-01", 100, 70.0),
+            swing("2026-05-01", 200, 80.0),
+        ])
+        before = source.copy(deep=True)
+        columns_before = list(source.columns)
+        index = ContactStateIndex(source)
+        self.assertEqual(index.source_row_count, len(source))
+        self.assertEqual(list(source.columns), columns_before)
+        pd.testing.assert_frame_equal(source, before)
+
+    def test_repeated_index_queries_preserve_exact_point_in_time_semantics(self):
+        rows = []
+        for i in range(35):
+            rows.append(
+                swing(
+                    "2026-05-01",
+                    100,
+                    70.0 + i / 100,
+                    attack_angle=10.0 + i / 10,
+                    hit_distance_sc=300.0 + i,
+                    game_pk=10,
+                    at_bat_number=i + 1,
+                )
+            )
+        for i in range(35):
+            rows.append(
+                swing(
+                    "2026-05-02",
+                    100,
+                    90.0 + i / 100,
+                    attack_angle=50.0 + i / 10,
+                    hit_distance_sc=500.0 + i,
+                    game_pk=11,
+                    at_bat_number=i + 1,
+                )
+            )
+        for i in range(35):
+            rows.append(
+                swing(
+                    "2026-05-01",
+                    200,
+                    80.0 + i / 100,
+                    game_pk=12,
+                    at_bat_number=i + 1,
+                )
+            )
+
+        source = frame(rows)
+        index = ContactStateIndex(source)
+
+        pre_may2 = index.extract(100, "2026-05-02")
+        pre_may3 = index.extract(100, "2026-05-03")
+        other_player = index.extract(200, "2026-05-02")
+
+        self.assertEqual(pre_may2["tracked_window_n"], 35)
+        self.assertEqual(pre_may2["window_last_game_date"], "2026-05-01")
+        self.assertLess(pre_may2["features"]["bat_speed_mean"], 71.0)
+
+        self.assertEqual(pre_may3["tracked_window_n"], 70)
+        self.assertEqual(pre_may3["window_last_game_date"], "2026-05-02")
+        self.assertGreater(pre_may3["features"]["bat_speed_mean"], 79.0)
+
+        self.assertEqual(other_player["tracked_window_n"], 35)
+        self.assertAlmostEqual(
+            other_player["features"]["bat_speed_mean"],
+            sum(80.0 + i / 100 for i in range(35)) / 35,
+        )
+
+        # Repeated query must be deterministic; the index is read-only.
+        self.assertEqual(index.extract(100, "2026-05-02"), pre_may2)
+
+    def test_index_and_scalar_api_return_same_result_on_multi_player_fixture(self):
+        rows = []
+        for player, base in ((100, 70.0), (200, 80.0)):
+            for i in range(40):
+                rows.append(
+                    swing(
+                        "2026-05-01",
+                        player,
+                        base + i / 100,
+                        attack_angle=5.0 + i / 5,
+                        swing_length=6.0 + i / 100,
+                        swing_path_tilt=15.0 + i / 10,
+                        attack_direction=-1.0 + i / 20,
+                        hit_distance_sc=310.0 + i,
+                        game_pk=20 + player,
+                        at_bat_number=i + 1,
+                    )
+                )
+
+        source = frame(rows)
+        index = ContactStateIndex(source)
+        for player in (100, 200):
+            indexed = index.extract(player, "2026-05-02")
+            scalar = extract_contact_state(source, player, "2026-05-02")
+            self.assertEqual(indexed, scalar)
 
 
 class TimingTests(unittest.TestCase):
