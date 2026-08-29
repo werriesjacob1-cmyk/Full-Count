@@ -154,6 +154,17 @@ def verify_stage1_bundle(stage1_bundle):
     """Verify all Stage-1 hashes and cross-arm population invariants first."""
     if not isinstance(stage1_bundle, dict):
         raise HRStage2IntegrityError("Stage-1 bundle must be a dict")
+
+    stored_bundle = dict(stage1_bundle)
+    embedded_bundle_sha = stored_bundle.pop("bundle_sha256", None)
+    if embedded_bundle_sha is None:
+        raise HRStage2IntegrityError("Stage-1 bundle_sha256 is absent")
+    recomputed_bundle_sha = deterministic_sha256(stored_bundle)
+    if embedded_bundle_sha != recomputed_bundle_sha:
+        raise HRStage2IntegrityError(
+            "Stage-1 bundle_sha256 no longer matches bundle content"
+        )
+
     arms = stage1_bundle.get("arms") or {}
     if tuple(sorted(arms)) != tuple(sorted(ARMS)):
         raise HRStage2IntegrityError(
@@ -163,6 +174,10 @@ def verify_stage1_bundle(stage1_bundle):
     frozen_hashes = {}
     common_population_ids = None
     common_champion_ids = None
+    common_runner_code_sha = None
+    common_canonical_identity = None
+    common_source_identity = None
+    common_venue_attestation = None
     verified = {}
 
     for arm in ARMS:
@@ -186,6 +201,30 @@ def verify_stage1_bundle(stage1_bundle):
             raise HRStage2IntegrityError(
                 f"arm {arm} freeze does not carry locked K_PRIMARY=5"
             )
+
+        runner_code_sha = metadata.get("runner_code_sha")
+        canonical_identity = metadata.get("canonical_artifact_identity")
+        source_identity = metadata.get("source_artifact_identity")
+        venue_attestation = metadata.get("venue_map_attestation")
+        if not runner_code_sha or not canonical_identity or not source_identity or not venue_attestation:
+            raise HRStage2IntegrityError(
+                f"arm {arm} freeze is missing locked provenance metadata"
+            )
+
+        if common_runner_code_sha is None:
+            common_runner_code_sha = runner_code_sha
+            common_canonical_identity = canonical_identity
+            common_source_identity = source_identity
+            common_venue_attestation = venue_attestation
+        else:
+            if runner_code_sha != common_runner_code_sha:
+                raise HRStage2IntegrityError("runner_code_sha differs across B/C/D")
+            if canonical_identity != common_canonical_identity:
+                raise HRStage2IntegrityError("canonical artifact identity differs across B/C/D")
+            if source_identity != common_source_identity:
+                raise HRStage2IntegrityError("source artifact identity differs across B/C/D")
+            if venue_attestation != common_venue_attestation:
+                raise HRStage2IntegrityError("venue-map attestation differs across B/C/D")
 
         population = payload.get("population") or []
         by_id = require_unique_population(population)
@@ -221,6 +260,16 @@ def verify_stage1_bundle(stage1_bundle):
             "Stage-1 freeze_set_sha256 no longer matches B/C/D freeze hashes"
         )
 
+    outer_venue = stage1_bundle.get("venue_map_attestation") or {}
+    outer_venue_compact = {
+        "row_count": outer_venue.get("row_count"),
+        "sha256": outer_venue.get("sha256"),
+    }
+    if outer_venue_compact != common_venue_attestation:
+        raise HRStage2IntegrityError(
+            "outer Stage-1 venue-map attestation differs from arm freezes"
+        )
+
     # Base contact-state support gate is Arm B by locked prereg.
     b_population = verified["B"]["population_by_id"]
     b_support_count = sum(
@@ -249,6 +298,11 @@ def verify_stage1_bundle(stage1_bundle):
         "arms": verified,
         "freeze_hashes": frozen_hashes,
         "freeze_set_sha256": recomputed_set_sha,
+        "bundle_sha256": embedded_bundle_sha,
+        "runner_code_sha": common_runner_code_sha,
+        "canonical_artifact_identity": common_canonical_identity,
+        "source_artifact_identity": common_source_identity,
+        "venue_map_attestation": outer_venue,
         "population_ids": common_population_ids,
         "b_support_count": b_support_count,
     }
@@ -601,8 +655,16 @@ def evaluate_hr_stage2(evaluation_rows, stage1_bundle):
     report = {
         "experiment": "hr_contact_state",
         "stage": 2,
+        "stage1_bundle_sha256": verified["bundle_sha256"],
         "stage1_freeze_set_sha256": verified["freeze_set_sha256"],
         "stage1_arm_freeze_sha256": verified["freeze_hashes"],
+        "runner_code_sha": verified["runner_code_sha"],
+        "canonical_artifact_identity": verified["canonical_artifact_identity"],
+        "source_artifact_identity": verified["source_artifact_identity"],
+        "venue_map_attestation": {
+            "row_count": verified["venue_map_attestation"].get("row_count"),
+            "sha256": verified["venue_map_attestation"].get("sha256"),
+        },
         "holdout_population_n": len(eval_by_id),
         "arm_b_supported_holdout_n": verified["b_support_count"],
         "coverage_gate_minimum": MIN_BASE_TRAILING_SUPPORT,
@@ -630,6 +692,13 @@ def write_immutable_evaluation_report(path, report):
         )
     directory = os.path.dirname(os.path.abspath(path))
     os.makedirs(directory, exist_ok=True)
+
+    logical = dict(report)
+    embedded = logical.pop("evaluation_report_sha256", None)
+    if embedded != deterministic_sha256(logical):
+        raise HRStage2IntegrityError(
+            "evaluation_report_sha256 does not match report content"
+        )
 
     payload = (
         json.dumps(report, indent=2, sort_keys=True, default=str) + "\n"
