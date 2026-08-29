@@ -15,6 +15,7 @@ from backtest.hr_contact_state_locked_run import (
     build_venue_map_from_schedule_payloads,
     load_stage1_populations,
     load_stage2_holdout_truth,
+    require_runner_sha,
     validate_authorization_record,
     validate_certification_report,
     validate_execution_gate,
@@ -71,6 +72,32 @@ def good_auth(canonical_sha, stages=None):
         "canonical_artifact_sha256": canonical_sha,
         "authorization_reference": "explicit approval in FULL COUNT project conversation",
     }
+
+
+class RunnerShaGateTests(unittest.TestCase):
+    def test_exact_same_runner_sha_passes(self):
+        sha_value = "a" * 40
+        self.assertTrue(
+            require_runner_sha(
+                sha_value,
+                sha_value,
+                "Stage 1 -> Stage 2",
+            )
+        )
+
+    def test_changed_or_missing_runner_sha_fails_closed(self):
+        with self.assertRaises(LockedRunGateError):
+            require_runner_sha(
+                "b" * 40,
+                "a" * 40,
+                "Stage 1 -> Stage 2",
+            )
+        with self.assertRaises(LockedRunGateError):
+            require_runner_sha(
+                "a" * 40,
+                None,
+                "Stage 1 -> Stage 2",
+            )
 
 
 class CertificationGateTests(unittest.TestCase):
