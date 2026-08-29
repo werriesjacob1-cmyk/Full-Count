@@ -706,6 +706,144 @@ class CertificationTests(unittest.TestCase):
             write_json(report_path, report)
         return rows
 
+
+    def _install_timebounded_predictive_feed(
+        self,
+        root,
+        *,
+        timecode="20250820_230459",
+    ):
+        blob_dir = os.path.join(root, "http_blobs")
+
+        current_schedule = {
+            "dates": [{
+                "date": "2025-08-20",
+                "games": [{
+                    "gamePk": 9000,
+                    "officialDate": "2025-08-20",
+                    "gameDate": "2025-08-20T23:05:00Z",
+                    "teams": {
+                        "away": {"team": {"id": 101}},
+                        "home": {"team": {"id": 102}},
+                    },
+                    "status": {
+                        "codedGameState": "S",
+                        "statusCode": "S",
+                        "detailedState": "Scheduled",
+                    },
+                }],
+            }],
+        }
+        current_body = json.dumps(
+            current_schedule,
+            sort_keys=True,
+            separators=(",", ":"),
+        ).encode()
+        current_sha = sha(current_body)
+        write_gzip(
+            os.path.join(blob_dir, f"{current_sha}.gz"),
+            current_body,
+        )
+
+        prior_schedule = {
+            "dates": [{
+                "date": "2025-08-19",
+                "games": [{
+                    "gamePk": 7001,
+                    "officialDate": "2025-08-19",
+                    "gameDate": "2025-08-19T18:10:00Z",
+                    "teams": {
+                        "away": {"team": {"id": 101}},
+                        "home": {"team": {"id": 130}},
+                    },
+                    "status": {
+                        "codedGameState": "F",
+                        "statusCode": "F",
+                        "detailedState": "Final",
+                    },
+                }],
+            }],
+        }
+        prior_body = json.dumps(
+            prior_schedule,
+            sort_keys=True,
+            separators=(",", ":"),
+        ).encode()
+        prior_sha = sha(prior_body)
+        write_gzip(
+            os.path.join(blob_dir, f"{prior_sha}.gz"),
+            prior_body,
+        )
+
+        feed_payload = {
+            "gameData": {
+                "datetime": {"officialDate": "2025-08-19"},
+                "status": {
+                    "codedGameState": "F",
+                    "detailedState": "Final",
+                },
+            },
+            "liveData": {"boxscore": {"teams": {}}},
+        }
+        feed_body = json.dumps(
+            feed_payload,
+            sort_keys=True,
+            separators=(",", ":"),
+        ).encode()
+        feed_sha = sha(feed_body)
+        write_gzip(
+            os.path.join(blob_dir, f"{feed_sha}.gz"),
+            feed_body,
+        )
+
+        def mutate(rows):
+            current = next(
+                row for row in rows
+                if "/api/v1/schedule" in row["url"]
+                and "date=2025-08-20" in row["url"]
+            )
+            current["response_sha256"] = current_sha
+            current["response_bytes"] = len(current_body)
+
+            rows.append({
+                "observed_date": "2025-08-20",
+                "scientific_phase": "predictive_input",
+                "method": "GET",
+                "url": (
+                    "https://statsapi.mlb.com/api/v1/schedule"
+                    "?startDate=2025-08-12&endDate=2025-08-19"
+                    "&teamId=101&sportId=1"
+                ),
+                "request_body_sha256": None,
+                "status_code": 200,
+                "response_sha256": prior_sha,
+                "response_bytes": len(prior_body),
+                "exception_type": None,
+            })
+            feed_url = (
+                "https://statsapi.mlb.com/api/v1.1/game/7001/feed/live"
+            )
+            if timecode is not None:
+                feed_url += f"?timecode={timecode}"
+            rows.append({
+                "observed_date": "2025-08-20",
+                "scientific_phase": "predictive_input",
+                "method": "GET",
+                "url": feed_url,
+                "request_body_sha256": None,
+                "status_code": 200,
+                "response_sha256": feed_sha,
+                "response_bytes": len(feed_body),
+                "exception_type": None,
+            })
+
+        self._rewrite_ledger(
+            root,
+            "mlb_statsapi_request_ledger",
+            mutate,
+            bind=True,
+        )
+
     def test_wrong_rows_sha_is_not_canonical(self):
         with tempfile.TemporaryDirectory() as tmp:
             PackageFactory(tmp).build()
@@ -1244,6 +1382,65 @@ class CertificationTests(unittest.TestCase):
                 ],
                 1,
             )
+
+
+    def test_valid_pregame_timebounded_predictive_feed_certifies(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            PackageFactory(tmp).build()
+            self._install_timebounded_predictive_feed(tmp)
+            result = self.certify(tmp)
+            self.assertEqual(
+                result["verdict"],
+                "CANONICAL CERTIFIED",
+                msg=json.dumps(result, indent=2),
+            )
+            self.assertEqual(
+                result["statsapi_source_shape_audit"]["classes"].get(
+                    "historical_predictive_game_feed"
+                ),
+                1,
+            )
+
+    def test_predictive_feed_at_first_pitch_is_not_canonical(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            PackageFactory(tmp).build()
+            self._install_timebounded_predictive_feed(
+                tmp,
+                timecode="20250820_230500",
+            )
+            result = self.certify(tmp)
+            self.assertEqual(
+                result["verdict"],
+                "NOT CANONICAL",
+                msg=json.dumps(result, indent=2),
+            )
+            self.assertTrue(
+                any(
+                    "not an allowed team pregame cutoff" in failure
+                    for failure in result["failures"]
+                )
+            )
+
+    def test_predictive_feed_without_timecode_is_not_canonical(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            PackageFactory(tmp).build()
+            self._install_timebounded_predictive_feed(
+                tmp,
+                timecode=None,
+            )
+            result = self.certify(tmp)
+            self.assertEqual(
+                result["verdict"],
+                "NOT CANONICAL",
+                msg=json.dumps(result, indent=2),
+            )
+            self.assertTrue(
+                any(
+                    "predictive game feed lacks historical timecode" in failure
+                    for failure in result["failures"]
+                )
+            )
+
 
 
 if __name__ == "__main__":
