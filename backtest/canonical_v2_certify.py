@@ -453,13 +453,38 @@ def audit_statsapi_request_shapes(rows):
             continue
 
         if re.fullmatch(r"/api/v1\.1/game/\d+/feed/live", path):
-            if keys - {"fields"}:
+            if keys - {"fields", "timecode"}:
                 blockers.append(
                     f"{observed}: unrecognized game-feed query shape: "
                     f"{row.get('url')}"
                 )
                 continue
-            classes["immutable_game_feed"] += 1
+            phase = row.get("scientific_phase")
+            timecode = _single_query(qs, "timecode")
+            if phase == "predictive_input":
+                if not timecode:
+                    failures.append(
+                        f"{observed}: predictive game feed lacks historical timecode"
+                    )
+                    continue
+                if not re.fullmatch(r"\d{8}_\d{6}", timecode):
+                    failures.append(
+                        f"{observed}: predictive game feed has malformed timecode={timecode!r}"
+                    )
+                    continue
+                classes["historical_predictive_game_feed"] += 1
+                continue
+            if phase == "outcome_grading":
+                if timecode:
+                    failures.append(
+                        f"{observed}: outcome grading game feed unexpectedly uses predictive timecode"
+                    )
+                    continue
+                classes["outcome_game_feed"] += 1
+                continue
+            failures.append(
+                f"{observed}: game feed has invalid scientific phase {phase!r}"
+            )
             continue
 
         blockers.append(
@@ -609,10 +634,16 @@ def certify(
             "season-directory historical team identity"
         )
     if identity.get("historical_bullpen_temporal_gate") != (
-        "official_date_before_D_and_completed_status_v1"
+        "official_date_before_D_completed_status_plus_team_pregame_timecode_v2"
     ):
         failures.append(
-            "canonical v2 did not declare the postponed/suspended-game bullpen temporal gate"
+            "canonical v2 did not declare the full historical bullpen temporal gate"
+        )
+    if identity.get("historical_bullpen_boxscore_cutoff") != (
+        "earliest_simulated_D_team_first_pitch_minus_1_second_utc"
+    ):
+        failures.append(
+            "canonical v2 did not bind bullpen boxscores to simulated pregame time"
         )
     if identity.get("outcome_source_isolation") != "grader_only_external_parquet_v1":
         failures.append("outcome-only Statcast source is not declared grader-only")
@@ -1177,6 +1208,7 @@ def certify(
         # response proves that exact gamePk was already completed before D.
         # Same-day feeds are legitimate only in outcome_grading.
         schedule_evidence = defaultdict(list)
+        team_pregame_timecodes = {}
         for row in statsapi_rows:
             parsed = urlparse(str(row.get("url") or ""))
             if parsed.path != "/api/v1/schedule":
@@ -1192,6 +1224,7 @@ def certify(
                 continue
             qs = parse_qs(parsed.query)
             observed = str(row.get("observed_date") or "")
+            date_value = _single_query(qs, "date")
             range_end = _single_query(qs, "endDate")
             pre_d_range = False
             if range_end:
@@ -1205,6 +1238,49 @@ def certify(
                     game_pk = game.get("gamePk")
                     if game_pk is None:
                         continue
+                    teams = game.get("teams") or {}
+                    team_ids = []
+                    for side in ("away", "home"):
+                        raw_team_id = ((teams.get(side) or {}).get("team") or {}).get("id")
+                        if raw_team_id is not None:
+                            try:
+                                team_ids.append(int(raw_team_id))
+                            except (TypeError, ValueError):
+                                failures.append(
+                                    f"{observed}: schedule game {game_pk} has invalid team id {raw_team_id!r}"
+                                )
+
+                    # The date-addressed D slate independently proves each
+                    # team's earliest actionable first pitch. Canonical v2
+                    # freezes prior-game boxscores exactly one second before
+                    # that moment, so suspended/resumed innings later than the
+                    # prop's pregame cutoff cannot enter prediction.
+                    if (
+                        row.get("scientific_phase") == "predictive_input"
+                        and date_value == observed
+                    ):
+                        raw_game_start = str(game.get("gameDate") or "")
+                        try:
+                            parsed_start = datetime.fromisoformat(
+                                raw_game_start.replace("Z", "+00:00")
+                            )
+                            if parsed_start.tzinfo is None:
+                                parsed_start = parsed_start.replace(tzinfo=timezone.utc)
+                            expected_timecode = (
+                                parsed_start.astimezone(timezone.utc) - timedelta(seconds=1)
+                            ).strftime("%Y%m%d_%H%M%S")
+                        except Exception:
+                            failures.append(
+                                f"{observed}: schedule game {game_pk} has invalid gameDate {raw_game_start!r}"
+                            )
+                            expected_timecode = None
+                        if expected_timecode:
+                            for team_id in team_ids:
+                                key = (observed, team_id)
+                                prior = team_pregame_timecodes.get(key)
+                                if prior is None or expected_timecode < prior:
+                                    team_pregame_timecodes[key] = expected_timecode
+
                     status = game.get("status") or {}
                     schedule_evidence[(observed, int(game_pk))].append({
                         "phase": row.get("scientific_phase"),
@@ -1217,6 +1293,7 @@ def certify(
                             or ""
                         ),
                         "detailed_state": str(status.get("detailedState") or ""),
+                        "team_ids": sorted(set(team_ids)),
                     })
 
         for row in statsapi_rows:
@@ -1256,6 +1333,8 @@ def certify(
                 )
 
             if phase == "predictive_input":
+                feed_qs = parse_qs(parsed.query)
+                timecode = _single_query(feed_qs, "timecode")
                 safe_schedule_evidence = [
                     item for item in evidence
                     if item["phase"] == "predictive_input"
@@ -1267,6 +1346,21 @@ def certify(
                 if not safe_schedule_evidence:
                     failures.append(
                         f"{observed}: predictive game feed {game_pk} lacks proof of completed pre-D schedule state"
+                    )
+                allowed_timecodes = {
+                    team_pregame_timecodes[(observed, team_id)]
+                    for item in safe_schedule_evidence
+                    for team_id in item.get("team_ids") or []
+                    if (observed, team_id) in team_pregame_timecodes
+                }
+                if not allowed_timecodes:
+                    failures.append(
+                        f"{observed}: predictive game feed {game_pk} cannot be tied to a simulated-D team first pitch"
+                    )
+                elif timecode not in allowed_timecodes:
+                    failures.append(
+                        f"{observed}: predictive game feed {game_pk} timecode={timecode!r} "
+                        f"is not an allowed team pregame cutoff {sorted(allowed_timecodes)!r}"
                     )
                 if feed_official and feed_official >= observed:
                     failures.append(
