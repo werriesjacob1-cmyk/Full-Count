@@ -74,6 +74,7 @@ def contiguous_shard(items, shard_index, shard_count):
 def logical_http_entry(entry):
     return {
         "observed_date": entry.get("observed_date"),
+        "scientific_phase": entry.get("scientific_phase"),
         "method": entry.get("method"),
         "url": entry.get("url"),
         "request_body_sha256": entry.get("request_body_sha256"),
@@ -610,7 +611,7 @@ def main():
                 "response_sha256", "response_bytes", "exception_type",
             ]),
             "schema_fingerprint": sha256_bytes(",".join(sorted([
-                "method", "url", "request_body_sha256", "status_code",
+                "scientific_phase", "method", "url", "request_body_sha256", "status_code",
                 "response_sha256", "response_bytes", "exception_type",
             ])).encode()),
             "date_coverage": f"{args.start}..{args.end}",
@@ -630,11 +631,11 @@ def main():
             "content_sha256": mlbcom_ledger["content_sha256"],
             "row_count": mlbcom_ledger["row_count"],
             "schema_columns": sorted([
-                "method", "url", "request_body_sha256", "status_code",
+                "scientific_phase", "method", "url", "request_body_sha256", "status_code",
                 "response_sha256", "response_bytes", "exception_type",
             ]),
             "schema_fingerprint": sha256_bytes(",".join(sorted([
-                "method", "url", "request_body_sha256", "status_code",
+                "scientific_phase", "method", "url", "request_body_sha256", "status_code",
                 "response_sha256", "response_bytes", "exception_type",
             ])).encode()),
             "date_coverage": f"{args.start}..{args.end}",
