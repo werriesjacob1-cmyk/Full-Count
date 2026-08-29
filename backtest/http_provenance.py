@@ -99,6 +99,7 @@ def _logical_entry(entry):
     # randomized by mlb_daily and must not make identical request+response
     # scientific content appear different.
     return {
+        "observed_date": entry.get("observed_date"),
         "method": entry.get("method"),
         "url": entry.get("url"),
         "request_body_sha256": entry.get("request_body_sha256"),
