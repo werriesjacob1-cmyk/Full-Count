@@ -33,6 +33,7 @@ from backtest.hr_contact_state_stage1 import (
     _jsonable_fitted,
     _validated_training_rows,
 )
+from backtest.hr_contact_state_features import ensure_contact_state_index
 from backtest.hr_offset_estimator import (
     apply_standardizer,
     fit_offset_logistic,
@@ -122,6 +123,7 @@ def frozen_holdout_from_stage1(verified_stage1):
 def fit_hr_arm_e(training_rows, source_frame):
     """Fit locked E only on supported <=2025 training rows."""
     rows = _validated_training_rows(training_rows)
+    source_index = ensure_contact_state_index(source_frame)
     cache = {}
     supported_ids = []
     x = []
@@ -129,7 +131,7 @@ def fit_hr_arm_e(training_rows, source_frame):
     outcomes = []
 
     for row in rows:
-        state = _extract_state_cached(source_frame, row, cache)
+        state = _extract_state_cached(source_index, row, cache)
         values, supported = _arm_vector(state, ARM)
         if not supported:
             continue
@@ -171,7 +173,8 @@ def build_hr_e_prediction_bundle(
         )
 
     holdout = frozen_holdout_from_stage1(verified)
-    spec = fit_hr_arm_e(training_rows, source_frame)
+    source_index = ensure_contact_state_index(source_frame)
+    spec = fit_hr_arm_e(training_rows, source_index)
 
     cache = {}
     raw_matrix = []
@@ -180,7 +183,7 @@ def build_hr_e_prediction_bundle(
     current_probs = []
 
     for row in holdout:
-        state = _extract_state_cached(source_frame, row, cache)
+        state = _extract_state_cached(source_index, row, cache)
         values, supported = _arm_vector(state, ARM)
         raw_vectors.append(values)
         raw_matrix.append([
