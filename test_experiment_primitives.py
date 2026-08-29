@@ -76,6 +76,24 @@ class PerDateSelectionTests(unittest.TestCase):
         self.assertEqual(len(result["champion_ids"]), 2)
         self.assertEqual(len(result["challenger_ids"]), 2)
 
+    def test_identity_anatomy_is_frozen_before_outcomes(self):
+        rows = [
+            row("2026-04-01", 1, 1, 0.90, 0.10),
+            row("2026-04-01", 1, 2, 0.80, 0.99),
+        ]
+        result = select_top_k_per_date(rows, 1)
+        self.assertEqual(len(result["overlap_ids"]), 0)
+        self.assertEqual(len(result["removed_ids"]), 1)
+        self.assertEqual(len(result["added_ids"]), 1)
+        self.assertEqual(
+            set(result["champion_ids"]),
+            set(result["overlap_ids"]) | set(result["removed_ids"]),
+        )
+        self.assertEqual(
+            set(result["challenger_ids"]),
+            set(result["overlap_ids"]) | set(result["added_ids"]),
+        )
+
     def test_tie_break_is_deterministic_across_input_order(self):
         rows = [
             row("2026-04-01", 1, 12, 0.7, 0.7),
