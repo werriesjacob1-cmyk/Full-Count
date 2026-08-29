@@ -1,33 +1,53 @@
 # FULL COUNT — capability matrix
 
 Agent ↔ skill ↔ tool/connector, with scope, reviewer, and fallback for every
-workflow. **Verified against the live runtime on 2026-08-27, not inferred from
-frontmatter.** A tool named in an agent file but absent from the runtime is a
+workflow. **Revalidated against the live runtime on 2026-08-29**, replacing the
+2026-08-27 pass. A tool named in an agent file but absent from the runtime is a
 defect; this document is where that gets caught.
 
-Runtime: Claude Code **2.1.247**. No managed settings. No project `.mcp.json`
-and no installed plugins — every MCP server present comes from the session
-harness, not from this repository.
+Runtime: Claude Code **2.1.251** (was 2.1.247). No managed settings. No project
+`.mcp.json` and no installed plugins — every MCP server present comes from the
+session harness, not from this repository.
+
+**A capability verdict is evidence about ONE runtime, and the harness's MCP
+roster changes between sessions.** Two verdicts below moved on revalidation, one
+of them from available to absent. Re-check before relying on any of them; do not
+carry a verdict forward because it is written down here.
 
 ---
 
 ## Connector verdicts
 
-| Connector / tool | Status | Evidence |
+| Connector / tool | Status | Evidence (2026-08-29) |
 |---|---|---|
-| **GitHub MCP** (`mcp__github__*`) | `VERIFIED ACTIVE` | `get_me` → login `werriesjacob1-cmyk`; `list_branches`, `actions_list`, `get_job_logs` all returned live data |
-| **git over HTTPS** | `VERIFIED ACTIVE` | `ls-remote`, fetch, push all working this session |
-| **`gh` CLI** | `UNAVAILABLE — FALLBACK DEFINED` | not installed; GitHub MCP + git cover every needed operation |
-| **WebSearch / WebFetch** | `VERIFIED AVAILABLE, NOT REQUIRED` | deferred tools, loadable via ToolSearch; only `fc-intelligence-scout` uses them |
-| **Chromium + Playwright** | `VERIFIED ACTIVE` | Chromium 141.0.7390.37 at `/opt/pw-browsers`; `PLAYWRIGHT_BROWSERS_PATH` set; python `playwright` importable |
-| **pyright / mypy / ruff / flake8** | `VERIFIED ACTIVE` | pyright 1.1.408, mypy 1.19.1, ruff 0.16.4, flake8 7.3.0 |
-| **Serena** | `REJECTED — LOW VALUE` | see below |
-| **Cloudflare MCP** | `VERIFIED AVAILABLE, NOT REQUIRED` | harness-provided, **write-capable**; see below |
-| **Google Drive MCP** | `VERIFIED AVAILABLE, NOT REQUIRED` | harness-provided; no Full Count workflow needs it |
-| **Claude Code Remote MCP** | `VERIFIED ACTIVE` | session/trigger management; **no auto-resume Routine may be created** |
+| **GitHub MCP** (`mcp__github__*`) | `VERIFIED ACTIVE` | `get_me` → login `werriesjacob1-cmyk`; `pull_request_read`, `actions_list`, `merge_pull_request` all returned live data this session |
+| **git over HTTPS** | `VERIFIED ACTIVE` | fetch, force-with-lease push, worktree add from a re-fetched SHA all working |
+| **`gh` CLI** | `UNAVAILABLE — FALLBACK DEFINED` | not on `PATH`; GitHub MCP + git cover every needed operation |
+| **WebSearch / WebFetch** | `VERIFIED AVAILABLE, NOT REQUIRED` | deferred tools, loaded via ToolSearch this session; only `fc-intelligence-scout` uses them |
+| **Chromium + Playwright** | `VERIFIED ACTIVE` | `/opt/pw-browsers/{chromium,chromium-1194,chromium_headless_shell-1194}`; python `playwright` **1.62.0**; 127/127 browser E2E + 60 + 24 + 12 Chromium checks passed |
+| **pyright / mypy / ruff / flake8** | `VERIFIED ACTIVE` | pyright 1.1.408 (1.1.411 available), mypy 1.19.1, ruff 0.16.4, flake8 7.3.0 |
+| **Serena** | `REJECTED — LOW VALUE` | still installed (v1.7.0) and still rejected; rationale below unchanged |
+| **Cloudflare MCP** | `UNAVAILABLE — FALLBACK DEFINED` | **CHANGED from `VERIFIED AVAILABLE` on 2026-08-27.** No `cloudflare`/Worker/KV/D1/R2 tool is exposed to this session; a ToolSearch for them returns unrelated tools. No workflow depended on it, so nothing is blocked — but any agent file promising Cloudflare inspection would now be wrong. See below. |
+| **Google Drive MCP** | `VERIFIED AVAILABLE, NOT REQUIRED` | harness-provided (`search_files`, `read_file_content`, `create_file`, …); no Full Count workflow needs it |
+| **Claude Code Remote MCP** | `VERIFIED ACTIVE` | `get_session`, `list_repos`, `create_trigger` exposed; **no auto-resume Routine may be created** |
 | **Tool Search** | `VERIFIED ACTIVE` | deferred-tool schemas loaded on demand throughout this session |
+| **Generic subagents** (`Agent`) | `VERIFIED ACTIVE` | an `Explore` read-only reviewer performed the PR #72 release audit and returned a structured verdict |
 | **Context7 / docs connector** | `UNAVAILABLE — FALLBACK DEFINED` | not configured; WebFetch covers occasional doc lookups |
 | **pylint** | `UNAVAILABLE — FALLBACK DEFINED` | ruff + flake8 + pyright cover linting |
+
+### Project-level agents/skills/settings are NOT active merely by existing
+
+`VERIFIED-RUNTIME`, and the single most important line in this file. The nine
+`fc-*` agents, ten `fc-*` skills, `.claude/settings.json` and its hooks load
+from the **project root at session start**. A session that began before these
+files were on `main` does not have them, no matter what the repository now
+contains. Copying the files in does not activate them; neither does merging.
+
+Activation requires: these files present at the project root **and** a FRESH
+session started afterwards. Until then, the correct description is
+*configuration present, runtime enforcement unproven* — and any claim that an
+`fc-*` agent is running should be treated as false. Generic subagents (`Agent`
+with the built-in types) do work today, and are what the release audit used.
 
 ### The GitHub repository-name trap — read this before writing an agent
 
@@ -58,13 +78,21 @@ plus pyright already resolve symbols and references quickly, and no workflow
 here was ever blocked on navigation. Adding an unused dependency is a cost with
 no measured benefit. **Revisit only if a concrete navigation task proves slow.**
 
-### Cloudflare — inventory only, never used by these workflows
+### Cloudflare — was available, is not any more
 
-The harness exposes write-capable Cloudflare tools (`d1_database_create`,
-`kv_namespace_create`, `r2_bucket_create`, `hyperdrive_config_edit`, …). **No
-Full Count agent or skill declares or may use them.** Any Worker, cron, secret,
-or binding mutation is separately authorized work, out of scope here. The
-existing `infra/live-heartbeat/` Worker is deployed by its own pipeline.
+On 2026-08-27 the harness exposed write-capable Cloudflare tools
+(`d1_database_create`, `kv_namespace_create`, `r2_bucket_create`,
+`hyperdrive_config_edit`, …) and this file recorded them as available but
+forbidden. **On 2026-08-29 they are not exposed at all.**
+
+Nothing breaks, because the prohibition meant no workflow ever depended on them:
+the `infra/live-heartbeat/` Worker is deployed by its own pipeline, and any
+Worker, cron, secret or binding mutation remains separately authorized work
+outside this repository's agents.
+
+The reason to record the change rather than quietly delete the row: it is direct
+evidence that **the harness MCP roster is not stable across sessions**. A matrix
+entry is a dated observation, not a standing fact.
 
 ---
 
@@ -197,3 +225,64 @@ INFO and never as PASS.
 Every agent has a home above. Every skill maps to at least one agent. No skill
 declares a connector that is not `VERIFIED ACTIVE` or does not have a stated
 fallback. No agent declares a tool absent from the runtime.
+
+---
+
+## Revalidation findings, 2026-08-29
+
+Three things this pass established that the 2026-08-27 pass did not.
+
+### 1. Cloudflare MCP moved from available to absent
+
+Recorded in the connector table above. The point is not Cloudflare — no workflow
+used it. The point is that **the harness MCP roster changes between sessions**,
+so a verdict in this file is a dated observation and must be re-checked, never
+inherited.
+
+### 2. The canonical runner exists at no branch tip
+
+`VERIFIED-REPO`, and the most operationally serious finding here.
+
+`backtest/canonical_run.py` and `backtest/canonical_durability.py` — the entire
+canonical generation and durability machinery — are present at **no branch tip
+in this repository**. Not `main`, not
+`claude/recovery-canonical-durability-01`, not
+`accuracy/hr-rare-event-prereg`. They exist only at the pinned canonical SHA
+
+    fc589447ec157bff9a96071edc3ceb6c7dc734eb
+
+and are reachable only via `git fetch origin <sha>`.
+
+This was found the hard way: after a container reclamation, `git worktree add`
+failed with `fatal: invalid reference` because the local object store was gone
+and no branch pointed at that commit. An explicit fetch of the bare SHA restored
+it.
+
+Why it matters: canonical identity **requires** generation at the pinned SHA.
+If that commit ever stops being fetchable, the run cannot be resumed under its
+own identity, and the alternative — resuming at a different SHA — needs
+`--allow-sha-drift`, makes the artifact mixed-regime, and demands a formal
+equivalence proof plus an overlap replay before it could be called canonical
+again. The durable checkpoint branch protects the *rows*; nothing currently
+protects the *code that produced them*.
+
+Not fixed here. Fixing it means creating a ref that pins the commit (a tag, or a
+branch), which is a repository-structure decision for Jacob, not a tooling
+change to slip into an activation PR. `test_superclaude_acceptance.sh` now
+reports the real reason instead of blaming a missing `backtest/` directory.
+
+### 3. Configuration acceptance is not runtime enforcement
+
+`test_superclaude_acceptance.sh`: **50 PASS / 1 WARN / 0 FAIL**.
+`test_worktree_autosave.sh`: **24 passed / 0 failed**.
+
+Both are shell tests. They verify that files exist, declare what they should,
+and behave correctly when invoked directly. **Neither can prove that Claude
+Code loaded any of it**, because a shell test has no tool access and this
+session began before these files were on `main`.
+
+So the honest status after this branch merges is *configuration accepted,
+runtime enforcement unproven*. Proving activation needs a fresh session rooted
+on a checkout containing `.claude/`, then confirming an `fc-*` agent is
+actually invocable. Until someone does that, do not describe SuperClaude as
+active.

@@ -243,9 +243,21 @@ if [ -x "$C/tests/test_worktree_autosave.sh" ]; then
 else
   fail "autosave suite present"
 fi
-grep -q 'enabled=bool(durability)' "$ROOT/backtest/canonical_run.py" 2>/dev/null \
-  && pass "canonical durability is opt-in (tests cannot push scientific state)" \
-  || warn "cannot confirm canonical durability default (backtest/ not on this branch)"
+if [ -f "$ROOT/backtest/canonical_run.py" ]; then
+  grep -q 'enabled=bool(durability)' "$ROOT/backtest/canonical_run.py" 2>/dev/null \
+    && pass "canonical durability is opt-in (tests cannot push scientific state)" \
+    || warn "backtest/canonical_run.py present but the opt-in marker did not match"
+else
+  # Do not report this as "backtest/ is not on this branch" -- backtest/ IS
+  # here. The runner itself is not, and that is the finding worth surfacing.
+  # VERIFIED 2026-08-29: backtest/canonical_run.py and canonical_durability.py
+  # exist at NO branch tip in this repository -- not main, not the recovery
+  # branch, not the prereg branch. They exist only at the pinned canonical SHA
+  # fc589447ec157bff9a96071edc3ceb6c7dc734eb, reachable by `git fetch origin
+  # <sha>`. Canonical recovery therefore depends on that commit staying
+  # fetchable; nothing on a branch keeps it alive.
+  warn "canonical runner absent from this checkout: backtest/canonical_run.py lives only at the pinned SHA, not at any branch tip"
+fi
 
 # ───────────────────────────────────────────────────────── 8. BROWSER ──
 echo
