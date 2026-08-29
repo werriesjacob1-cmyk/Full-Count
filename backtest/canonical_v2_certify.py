@@ -19,10 +19,11 @@ import hashlib
 import json
 import math
 import os
+import re
 import subprocess
 from collections import Counter, defaultdict
 from datetime import date, timedelta
-from urllib.parse import urlparse
+from urllib.parse import parse_qs, urlparse
 
 
 EXPECTED_PYTHON = "3.11.15"
@@ -203,6 +204,265 @@ def code_audit(repo_root, parent_sha, generation_sha):
     }
 
 
+STATSAPI_SOURCE_SHAPE_POLICY = "canonical-v2-statsapi-v1-20260829"
+
+
+def _single_query(qs, key):
+    values = qs.get(key) or []
+    return values[0] if len(values) == 1 else None
+
+
+def audit_statsapi_request_shapes(rows):
+    """Narrow allowlist for scientific StatsAPI traffic.
+
+    Unknown shapes BLOCK certification. Known current-state/wrong-time shapes
+    are NOT CANONICAL. The season-wide gameLog exception is deliberate: the
+    frozen backtest engine/mlb_sources code (protected by code_audit) filters
+    those splits to D-1 before any empirical/rest feature is computed.
+    """
+    failures = []
+    blockers = []
+    classes = Counter()
+
+    for row in rows:
+        observed = str(row.get("observed_date") or "")
+        try:
+            observed_day = date.fromisoformat(observed)
+        except ValueError:
+            failures.append(
+                f"StatsAPI row has invalid observed_date {observed!r}"
+            )
+            continue
+        year = str(observed_day.year)
+
+        parsed = urlparse(str(row.get("url") or ""))
+        path = parsed.path
+        qs = parse_qs(parsed.query)
+        keys = set(qs)
+
+        if (parsed.hostname or "").lower() != "statsapi.mlb.com":
+            failures.append(
+                f"StatsAPI ledger contains non-StatsAPI host {parsed.hostname!r}"
+            )
+            continue
+
+        if path == "/api/v1/seasons/all":
+            failures.append(
+                f"{observed}: current-season helper /api/v1/seasons/all "
+                "entered historical replay"
+            )
+            continue
+
+        if path == "/api/v1/teams":
+            if "activeStatus" in qs or "sportIds" in qs:
+                failures.append(
+                    f"{observed}: current/active team directory entered "
+                    f"historical replay: {row.get('url')}"
+                )
+                continue
+            if keys - {"sportId", "season"}:
+                blockers.append(
+                    f"{observed}: unrecognized historical team-directory "
+                    f"query shape: {row.get('url')}"
+                )
+                continue
+            if _single_query(qs, "sportId") != "1":
+                blockers.append(
+                    f"{observed}: team directory lacks sportId=1"
+                )
+                continue
+            season = _single_query(qs, "season")
+            if season != year:
+                failures.append(
+                    f"{observed}: team directory season={season!r}, "
+                    f"expected {year}"
+                )
+                continue
+            classes["historical_team_directory"] += 1
+            continue
+
+        if re.fullmatch(r"/api/v1/people/\d+/stats", path):
+            allowed = {"stats", "group", "season", "sportId"}
+            if keys - allowed:
+                blockers.append(
+                    f"{observed}: unrecognized player-stats query shape: "
+                    f"{row.get('url')}"
+                )
+                continue
+            stats = _single_query(qs, "stats")
+            group = _single_query(qs, "group")
+            season = _single_query(qs, "season")
+            if stats != "gameLog" or group not in {"hitting", "pitching"}:
+                blockers.append(
+                    f"{observed}: player stats request is not the frozen "
+                    f"gameLog shape: {row.get('url')}"
+                )
+                continue
+            if season != year:
+                failures.append(
+                    f"{observed}: gameLog season={season!r}, expected {year}"
+                )
+                continue
+            sport_id = _single_query(qs, "sportId")
+            if sport_id not in (None, "1"):
+                failures.append(
+                    f"{observed}: gameLog sportId={sport_id!r}"
+                )
+                continue
+            classes[f"season_game_log_{group}"] += 1
+            continue
+
+        if path == "/api/v1/people":
+            if keys != {"personIds"} or not _single_query(qs, "personIds"):
+                blockers.append(
+                    f"{observed}: unrecognized player-metadata query shape: "
+                    f"{row.get('url')}"
+                )
+                continue
+            classes["player_identity_metadata"] += 1
+            continue
+
+        if path == "/api/v1/schedule":
+            sport_id = _single_query(qs, "sportId")
+            if sport_id != "1":
+                blockers.append(
+                    f"{observed}: schedule request lacks sportId=1"
+                )
+                continue
+
+            date_value = _single_query(qs, "date")
+            start_value = _single_query(qs, "startDate")
+            end_value = _single_query(qs, "endDate")
+            if date_value is not None:
+                if keys - {"sportId", "date", "hydrate"}:
+                    blockers.append(
+                        f"{observed}: unrecognized date-schedule query shape: "
+                        f"{row.get('url')}"
+                    )
+                    continue
+                if date_value != observed:
+                    failures.append(
+                        f"{observed}: date-addressed schedule requested "
+                        f"{date_value}"
+                    )
+                    continue
+                classes["schedule_on_D"] += 1
+                continue
+
+            if start_value is not None or end_value is not None:
+                allowed = {
+                    "sportId", "startDate", "endDate", "hydrate",
+                    "teamId", "gameType",
+                }
+                if keys - allowed:
+                    blockers.append(
+                        f"{observed}: unrecognized range-schedule query shape: "
+                        f"{row.get('url')}"
+                    )
+                    continue
+                try:
+                    start_day = date.fromisoformat(start_value or "")
+                    end_day = date.fromisoformat(end_value or "")
+                except ValueError:
+                    failures.append(
+                        f"{observed}: malformed schedule range "
+                        f"{start_value!r}..{end_value!r}"
+                    )
+                    continue
+                if start_day > end_day:
+                    failures.append(
+                        f"{observed}: inverted schedule range"
+                    )
+                    continue
+                if end_day >= observed_day:
+                    failures.append(
+                        f"{observed}: historical input schedule reaches "
+                        f"{end_day.isoformat()} (must end before D)"
+                    )
+                    continue
+                classes["schedule_pre_D_range"] += 1
+                continue
+
+            blockers.append(
+                f"{observed}: schedule request has neither date nor bounded "
+                f"range: {row.get('url')}"
+            )
+            continue
+
+        if path == "/api/v1/stats":
+            allowed = {
+                "group", "season", "sportId", "limit", "playerPool",
+                "stats", "startDate", "endDate", "gameType",
+            }
+            if keys - allowed:
+                blockers.append(
+                    f"{observed}: unrecognized byDateRange stats query shape: "
+                    f"{row.get('url')}"
+                )
+                continue
+            if _single_query(qs, "stats") != "byDateRange":
+                blockers.append(
+                    f"{observed}: /api/v1/stats is not byDateRange"
+                )
+                continue
+            if _single_query(qs, "season") != year:
+                failures.append(
+                    f"{observed}: byDateRange season differs from simulated year"
+                )
+                continue
+            if _single_query(qs, "sportId") != "1":
+                blockers.append(
+                    f"{observed}: byDateRange lacks sportId=1"
+                )
+                continue
+            if _single_query(qs, "group") not in {"hitting", "pitching"}:
+                blockers.append(
+                    f"{observed}: unexpected byDateRange group"
+                )
+                continue
+            try:
+                start_day = date.fromisoformat(
+                    _single_query(qs, "startDate") or ""
+                )
+                end_day = date.fromisoformat(
+                    _single_query(qs, "endDate") or ""
+                )
+            except ValueError:
+                failures.append(
+                    f"{observed}: malformed byDateRange dates"
+                )
+                continue
+            if start_day > end_day or end_day >= observed_day:
+                failures.append(
+                    f"{observed}: byDateRange reaches D or later: "
+                    f"{start_day}..{end_day}"
+                )
+                continue
+            classes["stats_pre_D_range"] += 1
+            continue
+
+        if re.fullmatch(r"/api/v1\.1/game/\d+/feed/live", path):
+            if keys - {"fields"}:
+                blockers.append(
+                    f"{observed}: unrecognized game-feed query shape: "
+                    f"{row.get('url')}"
+                )
+                continue
+            classes["immutable_game_feed"] += 1
+            continue
+
+        blockers.append(
+            f"{observed}: previously unseen StatsAPI request shape: "
+            f"{row.get('url')}"
+        )
+
+    return {
+        "failures": list(dict.fromkeys(failures)),
+        "blockers": list(dict.fromkeys(blockers)),
+        "classes": dict(sorted(classes.items())),
+    }
+
+
 def read_jsonl(path):
     rows = []
     with open(path, encoding="utf-8") as handle:
@@ -319,6 +579,13 @@ def certify(package_dir, repo_root, expected_parent_sha=None, expected_source_sh
         failures.append(
             "canonical v2 did not declare stable schedule-team-ID + "
             "season-directory historical team identity"
+        )
+    if identity.get("statsapi_source_shape_policy") != (
+        STATSAPI_SOURCE_SHAPE_POLICY
+    ):
+        failures.append(
+            "canonical v2 did not declare the frozen StatsAPI historical "
+            "request-shape policy"
         )
 
     rows_sha = sha256_file(rows_path)
@@ -630,6 +897,15 @@ def certify(package_dir, repo_root, expected_parent_sha=None, expected_source_sh
             f"{recovered_transients} StatsAPI request identities had recovered transient failures"
         )
 
+    statsapi_rows = [
+        row for row in all_external_rows
+        if (urlparse(str(row.get("url") or "")).hostname or "").lower()
+        == "statsapi.mlb.com"
+    ]
+    source_shape_audit = audit_statsapi_request_shapes(statsapi_rows)
+    failures.extend(source_shape_audit["failures"])
+    blockers.extend(source_shape_audit["blockers"])
+
     # Every successful external response must be reconstructable from the
     # content-addressed final body archive.
     blob_dir = os.path.join(
@@ -720,6 +996,7 @@ def certify(package_dir, repo_root, expected_parent_sha=None, expected_source_sh
         "source_lineage": lineage,
         "source_lineage_fingerprint": report.get("source_lineage_fingerprint"),
         "source_schema_attestation": source_attestation,
+        "statsapi_source_shape_audit": source_shape_audit,
         "external_response_archive": {
             "unique_response_sha_count": len(response_shas),
             "directory": os.path.relpath(blob_dir, package_dir)
