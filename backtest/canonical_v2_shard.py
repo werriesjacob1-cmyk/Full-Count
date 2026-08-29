@@ -190,6 +190,7 @@ def run_identity(args, code_sha, source):
         "http_allowed_hosts": sorted(DEFAULT_ALLOWED_HOSTS),
         "http_strict_host_firewall": True,
         "http_response_content_bound": True,
+        "http_identical_get_cache": True,
     }
     identity["identity_fingerprint"] = sha256_bytes(
         json.dumps(identity, sort_keys=True, separators=(",", ":")).encode("utf-8")
@@ -360,6 +361,7 @@ def main():
         http_root,
         archive_bodies=args.archive_http_bodies,
         strict_host_firewall=True,
+        cache_get_responses=True,
     )
     install_requests_hook()
     set_active_ledger(ledger)
