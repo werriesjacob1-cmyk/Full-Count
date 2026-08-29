@@ -36,6 +36,11 @@ from backtest.hr_contact_state_stage2 import (
     evaluate_hr_stage2,
     write_immutable_evaluation_report,
 )
+from backtest.hr_contact_state_arm_e import (
+    build_hr_e_prediction_bundle,
+    evaluate_hr_e_stage2,
+    write_immutable_e_bundle,
+)
 
 AUTH_SCOPE = "hr_contact_state_2026_holdout"
 TRAIN_END = "2025-12-31"
@@ -303,6 +308,41 @@ def load_stage1_populations(canonical_rows_path):
     }
 
 
+def load_training_only(canonical_rows_path):
+    """Load only preregistered <=2025 HR training rows for conditional E."""
+    training = []
+    exclusions = Counter()
+    with open(canonical_rows_path, encoding="utf-8") as handle:
+        for line_number, line in enumerate(handle, 1):
+            line = line.strip()
+            if not line:
+                continue
+            try:
+                row = json.loads(line)
+            except json.JSONDecodeError as exc:
+                raise LockedRunGateError(
+                    f"canonical JSONL row {line_number} is invalid: {exc}"
+                ) from exc
+            eligible, reason = _eligible_hr_row(row)
+            if not eligible:
+                if row.get("prop_type") == "home_run":
+                    exclusions[reason] += 1
+                continue
+            day = str(row.get("date") or "")[:10]
+            if day <= TRAIN_END:
+                training.append(row)
+
+    if not training:
+        raise LockedRunGateError("no eligible <=2025 HR training rows")
+    return {
+        "training": training,
+        "counts": {
+            "training_eligible_n": len(training),
+            "excluded_home_run_rows": dict(exclusions),
+        },
+    }
+
+
 def load_stage2_holdout_truth(canonical_rows_path):
     holdout = []
     exclusions = Counter()
@@ -542,6 +582,84 @@ def run_stage2(args):
     print(json.dumps(result, indent=2))
 
 
+def run_stage1_e(args):
+    gate = validate_execution_gate(
+        args.certification,
+        args.authorization,
+        args.canonical_rows,
+        args.source_parquet,
+        stage="stage1-e",
+    )
+    initial_stage1 = _load_json(args.stage1_bundle)
+    initial_stage2 = _load_json(args.stage2_report)
+    training = load_training_only(args.canonical_rows)
+
+    import pandas as pd
+    source_frame = pd.read_parquet(args.source_parquet)
+    runner_sha = _git_head()
+
+    bundle = build_hr_e_prediction_bundle(
+        training["training"],
+        source_frame,
+        initial_stage1,
+        initial_stage2,
+        runner_code_sha=runner_sha,
+    )
+    bundle.pop("bundle_sha256", None)
+    bundle["execution_manifest"] = _execution_manifest(
+        gate,
+        runner_code_sha=runner_sha,
+        stage="stage1-e",
+        extra={
+            "parent_stage1_bundle_byte_sha256": _sha256_file(args.stage1_bundle),
+            "parent_stage1_bundle_sha256": initial_stage1.get("bundle_sha256"),
+            "trigger_stage2_report_byte_sha256": _sha256_file(args.stage2_report),
+            "trigger_stage2_report_sha256": initial_stage2.get("evaluation_report_sha256"),
+            "training_counts": training["counts"],
+        },
+    )
+    bundle["bundle_sha256"] = deterministic_sha256(bundle)
+    result = write_immutable_e_bundle(args.output, bundle)
+    print(json.dumps(result, indent=2))
+
+
+def run_stage2_e(args):
+    gate = validate_execution_gate(
+        args.certification,
+        args.authorization,
+        args.canonical_rows,
+        args.source_parquet,
+        stage="stage2-e",
+    )
+    initial_stage1 = _load_json(args.stage1_bundle)
+    initial_stage2 = _load_json(args.stage2_report)
+    e_bundle = _load_json(args.e_bundle)
+    truth = load_stage2_holdout_truth(args.canonical_rows)
+    runner_sha = _git_head()
+
+    report = evaluate_hr_e_stage2(
+        truth["holdout"],
+        initial_stage1,
+        initial_stage2,
+        e_bundle,
+    )
+    report.pop("evaluation_report_sha256", None)
+    report["execution_manifest"] = _execution_manifest(
+        gate,
+        runner_code_sha=runner_sha,
+        stage="stage2-e",
+        extra={
+            "parent_stage1_bundle_byte_sha256": _sha256_file(args.stage1_bundle),
+            "parent_stage2_report_byte_sha256": _sha256_file(args.stage2_report),
+            "e_bundle_byte_sha256": _sha256_file(args.e_bundle),
+            "population_counts": truth["counts"],
+        },
+    )
+    report["evaluation_report_sha256"] = deterministic_sha256(report)
+    result = write_immutable_evaluation_report(args.output, report)
+    print(json.dumps(result, indent=2))
+
+
 def _common(parser):
     parser.add_argument("--certification", required=True)
     parser.add_argument("--authorization", required=True)
@@ -567,6 +685,19 @@ def main():
     _common(stage2)
     stage2.add_argument("--stage1-bundle", required=True)
     stage2.set_defaults(func=run_stage2)
+
+    stage1e = sub.add_parser("stage1-e")
+    _common(stage1e)
+    stage1e.add_argument("--stage1-bundle", required=True)
+    stage1e.add_argument("--stage2-report", required=True)
+    stage1e.set_defaults(func=run_stage1_e)
+
+    stage2e = sub.add_parser("stage2-e")
+    _common(stage2e)
+    stage2e.add_argument("--stage1-bundle", required=True)
+    stage2e.add_argument("--stage2-report", required=True)
+    stage2e.add_argument("--e-bundle", required=True)
+    stage2e.set_defaults(func=run_stage2_e)
 
     args = parser.parse_args()
     args.func(args)
