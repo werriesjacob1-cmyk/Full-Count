@@ -27,7 +27,7 @@ jobs:
       - name: Set up Python 3.11
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
+          python-version: '3.11.15'
           cache: pip
 
       - name: Install dependencies
@@ -45,12 +45,77 @@ jobs:
           echo "source_sha256=$actual"
           test "$actual" = "$expected"
 
+
+      - name: Materialize isolated outcome-only Statcast source
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/fc-outcome
+          python - <<'PY'
+          import hashlib
+          import json
+          import pandas as pd
+          from pybaseball import statcast
+
+          day = "2026-08-25"
+          columns = [
+              "game_date", "game_pk", "batter", "events",
+              "launch_speed", "hit_distance_sc",
+          ]
+          frame = statcast(start_dt=day, end_dt=day)
+          if frame is None or frame.empty:
+              raise SystemExit("outcome-only Statcast fetch returned no rows")
+          missing = [column for column in columns if column not in frame.columns]
+          if missing:
+              raise SystemExit(f"outcome-only Statcast missing columns: {missing}")
+          out = frame[columns].copy()
+          parsed = pd.to_datetime(out["game_date"], errors="coerce")
+          coverage = sorted({value.date().isoformat() for value in parsed.dropna()})
+          if coverage != [day]:
+              raise SystemExit(f"outcome-only coverage mismatch: {coverage}")
+          out["game_date"] = parsed.dt.date.astype(str)
+          out = out.sort_values(
+              ["game_pk", "batter", "events", "launch_speed", "hit_distance_sc"],
+              kind="mergesort",
+              na_position="last",
+          ).reset_index(drop=True)
+          path = f"/tmp/fc-outcome/statcast_outcome_{day}.parquet"
+          out.to_parquet(path, index=False)
+          digest = hashlib.sha256(open(path, "rb").read()).hexdigest()
+          manifest = {
+              "source_role": "outcome_only_grading",
+              "date_coverage": f"{day}..{day}",
+              "row_count": int(len(out)),
+              "game_count": int(out["game_pk"].dropna().nunique()),
+              "schema_columns": sorted(columns),
+              "content_sha256": digest,
+              "predictive_feature_columns_present": False,
+          }
+          with open("/tmp/fc-outcome/manifest.json", "w", encoding="utf-8") as handle:
+              json.dump(manifest, handle, indent=2, sort_keys=True)
+              handle.write("\n")
+          print(json.dumps(manifest, sort_keys=True))
+          with open("/tmp/fc-outcome/sha.txt", "w", encoding="utf-8") as handle:
+              handle.write(digest + "\n")
+          PY
+          echo "OUTCOME_SHA=$(cat /tmp/fc-outcome/sha.txt)" >> "$GITHUB_ENV"
+
       - name: Run one-date provenance pilot
         shell: bash
         run: |
           set -euo pipefail
           rm -rf /tmp/canonical-v2-pilot
-          python backtest/canonical_v2_shard.py             --run-id canonical-v2-pilot-20250820             --start 2025-08-20             --end 2025-08-20             --shard-index 0             --shard-count 1             --source-parquet /tmp/fc-source/statcast_2024_through_2026-08-24.parquet             --expected-source-sha256 85c41d79570ac25169726419ed2bcb55cbba78139e8786b6005f71f40a877685             --scientific-parent-sha fc589447ec157bff9a96071edc3ceb6c7dc734eb             --out-dir /tmp/canonical-v2-pilot             --archive-http-bodies             --verbose
+          python backtest/canonical_v2_shard.py             --run-id canonical-v2-pilot-20250820             --start 2025-08-20             --end 2025-08-20             --shard-index 0             --shard-count 1             --source-parquet /tmp/fc-source/statcast_2024_through_2026-08-24.parquet             --expected-source-sha256 85c41d79570ac25169726419ed2bcb55cbba78139e8786b6005f71f40a877685             --outcome-parquet /tmp/fc-outcome/statcast_outcome_2026-08-25.parquet             --expected-outcome-sha256 "$OUTCOME_SHA"             --outcome-date 2026-08-25             --scientific-parent-sha fc589447ec157bff9a96071edc3ceb6c7dc734eb             --out-dir /tmp/canonical-v2-pilot             --archive-http-bodies             --verbose
+
+      - name: Preserve outcome source inside pilot evidence
+        if: always()
+        shell: bash
+        run: |
+          if [ -d /tmp/canonical-v2-pilot ] && [ -f /tmp/fc-outcome/statcast_outcome_2026-08-25.parquet ]; then
+            mkdir -p /tmp/canonical-v2-pilot/source
+            cp /tmp/fc-outcome/statcast_outcome_2026-08-25.parquet /tmp/canonical-v2-pilot/source/
+            cp /tmp/fc-outcome/manifest.json /tmp/canonical-v2-pilot/source/outcome_manifest.json
+          fi
 
       - name: Inspect pilot evidence
         if: always()
