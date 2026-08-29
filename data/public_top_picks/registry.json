@@ -2,7 +2,7 @@
   "schema_version": 1,
   "identity_schema_version": 2,
   "rollout_version": "pre-phase-v-live-lifecycle-v1",
-  "updated_at": "2026-08-29T16:32:44.517297+00:00",
+  "updated_at": "2026-08-29T17:13:00.796476+00:00",
   "migration": {
     "version": "pre-phase-v-live-lifecycle-v1",
     "completed_at": "2026-08-17T23:14:57+00:00",
@@ -6264,6 +6264,105 @@
         },
         "qualification_timestamp": "2026-08-29T16:29:52.698552+00:00",
         "board_timestamp": "2026-08-29T16:29:52.662943+00:00",
+        "slate_date": "2026-08-29"
+      }
+    },
+    "fc2:822690:player-665052:hits:1:over": {
+      "canonical_id": "fc2:822690:player-665052:hits:1:over",
+      "settlement_identity": [
+        "822690",
+        [
+          "player",
+          "665052"
+        ],
+        "hits",
+        "1",
+        "over"
+      ],
+      "slate_date": "2026-08-29",
+      "first_published_at": "2026-08-29T17:13:00.796476+00:00",
+      "publication_provenance": {
+        "artifact_id": "9ebbcc66cb01be2d9365799e39c36778e55394ec8315a7d058e5bb85e4c32c2e",
+        "source_commit": "f906b4707b1f139ebe1711427c6c63eb3a4e1b97",
+        "workflow_run_id": "33264974996",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-08-29T17:12:47.990155+00:00",
+        "data_hash": "0a25259782be45ca8e9c61c1d1fe9bbaee9b75da953c3bbb154a03422402aa38",
+        "live_hash": "0c1bae7e6fb869f44ace44e9bea1714ca90653239bffe236658bca52585058cc"
+      },
+      "snapshot": {
+        "id": "fc2:822690:player-665052:hits:1:over",
+        "identity_version": 2,
+        "game_pk": 822690,
+        "player_id": 665052,
+        "combo_player_ids": null,
+        "type": "batter",
+        "name": "Griffin Conine",
+        "team": "Miami Marlins",
+        "matchup": "Miami Marlins @ Washington Nationals",
+        "game_start": "2026-08-29T20:05:00Z",
+        "stat": "hits",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "hits",
+          "value": 0.5,
+          "needs": 1
+        },
+        "prop": "Over 0.5 Hits",
+        "hit_probability": 0.6068,
+        "market_odds": -135,
+        "market_implied": 0.5745,
+        "market_edge": 0.0323,
+        "market_hold": null,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (B), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (7.5 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "L7 barrel% 18.2 \u2014 hot recent contact",
+          "Bat speed trending up L14 (+3.0mph 2nd-half vs 1st-half)",
+          "Platoon: L bat vs RHP (favorable)",
+          "Projected 4.22 PA (batting slot 4)",
+          "Team implied for 4.08 runs (league avg 4.245; line 3.5, game total 8)",
+          "Pitch-type exploit: RV/100 +1.5 vs FF (opposing SP throws it 33.0% of the time)",
+          "Season barrel% 15.2 \u2014 well above-average barrel rate",
+          "Hitters batting ahead of him: 0.330 wOBA (league ~.320)",
+          "Hitter batting behind him: 0.340 wOBA (league ~.320)",
+          "Sharp money backing Miami Marlins (money% +22 pts vs ticket%)"
+        ],
+        "watchouts": [
+          "L7 avg EV 85.2mph (league ~88.5) \u2014 cold recent contact",
+          "Opposing SP ERA 3.21 \u2014 elite pitcher, tough matchup",
+          "Opposing bullpen fatigue: 1/11 relievers over 60 pitches in L7 (fresh pen \u2014 tougher matchup late)"
+        ],
+        "prob_ci": [
+          0.598,
+          0.6354
+        ],
+        "reliability": "B",
+        "reliability_note": null,
+        "sample_n": 66,
+        "lineup_assumed": null,
+        "base_rate": 0.563,
+        "lift": 0.0438,
+        "lift_reference_rate": null,
+        "stable_lift": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "8edc53fe",
+          "prediction_timestamp": "2026-08-29T17:10:46.455163+00:00",
+          "odds_fetched_at": "2026-08-29T17:10:40.405454+00:00",
+          "board_generated_at": "2026-08-29T17:10:46.423329+00:00"
+        },
+        "qualification_timestamp": "2026-08-29T17:10:46.455163+00:00",
+        "board_timestamp": "2026-08-29T17:10:46.423329+00:00",
         "slate_date": "2026-08-29"
       }
     }
