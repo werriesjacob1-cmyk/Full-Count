@@ -605,5 +605,131 @@ class CertificationTests(unittest.TestCase):
             )
 
 
+    def _refresh_report(self, root, mutate=None):
+        path = os.path.join(root, "consolidation_report.json")
+        report = json.load(open(path, encoding="utf-8"))
+        if mutate:
+            mutate(report)
+        report.pop("report_sha256", None)
+        report["report_sha256"] = cert.sha256_bytes(
+            json.dumps(report, sort_keys=True, separators=(",", ":"), default=str).encode()
+        )
+        write_json(path, report)
+        return report
+
+    def _rewrite_ledger(self, root, source_name, mutate_rows, bind=True):
+        report_path = os.path.join(root, "consolidation_report.json")
+        report = json.load(open(report_path, encoding="utf-8"))
+        record = next(item for item in report["source_lineage"] if item["source"] == source_name)
+        ledger_rel = next(
+            token[5:] for token in str(record.get("notes") or "").split()
+            if token.startswith("path=")
+        )
+        ledger_path = os.path.join(root, ledger_rel)
+        rows = [
+            json.loads(line)
+            for line in open(ledger_path, encoding="utf-8")
+            if line.strip()
+        ]
+        mutate_rows(rows)
+        raw = b"".join(
+            (json.dumps(row, sort_keys=True, separators=(",", ":")) + "\n").encode()
+            for row in rows
+        )
+        with open(ledger_path, "wb") as handle:
+            handle.write(raw)
+        if bind:
+            record["content_sha256"] = sha(raw)
+            record["row_count"] = len(rows)
+            report["source_lineage_fingerprint"] = cert.source_lineage_fingerprint(
+                report["source_lineage"]
+            )
+            report.pop("report_sha256", None)
+            report["report_sha256"] = cert.sha256_bytes(
+                json.dumps(report, sort_keys=True, separators=(",", ":"), default=str).encode()
+            )
+            write_json(report_path, report)
+        return rows
+
+    def test_wrong_rows_sha_is_not_canonical(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            PackageFactory(tmp).build()
+            with open(os.path.join(tmp, "rows.jsonl"), "ab") as handle:
+                handle.write(b" ")
+            result = self.certify(tmp)
+            self.assertEqual(result["verdict"], "NOT CANONICAL")
+            self.assertTrue(any("rows.jsonl SHA" in f for f in result["failures"]))
+
+    def test_duplicate_candidate_identity_is_not_canonical(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            PackageFactory(tmp).build()
+            rows_path = os.path.join(tmp, "rows.jsonl")
+            raw = open(rows_path, "rb").read()
+            with open(rows_path, "wb") as handle:
+                handle.write(raw + raw)
+            self._refresh_report(
+                tmp,
+                lambda report: report.update({
+                    "assembled_rows_sha256": cert.sha256_file(rows_path),
+                    "total_rows": 2,
+                }),
+            )
+            result = self.certify(tmp)
+            self.assertEqual(result["verdict"], "NOT CANONICAL")
+            self.assertTrue(any("duplicate candidate identity" in f for f in result["failures"]))
+
+    def test_missing_date_metadata_is_not_canonical(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            factory = PackageFactory(tmp)
+            factory.build()
+            os.remove(os.path.join(tmp, "date_metadata", f"{factory.day}.json"))
+            result = self.certify(tmp)
+            self.assertEqual(result["verdict"], "NOT CANONICAL")
+            self.assertTrue(
+                any("date_metadata does not cover requested dates exactly" in f for f in result["failures"])
+            )
+
+    def test_declared_statcast_source_sha_mismatch_is_not_canonical(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            PackageFactory(tmp).build()
+            self._refresh_report(
+                tmp,
+                lambda report: report.update({"statcast_source_sha256": "0" * 64}),
+            )
+            result = self.certify(tmp)
+            self.assertEqual(result["verdict"], "NOT CANONICAL")
+            self.assertTrue(
+                any("Statcast source SHA mismatch" in f or "Statcast parquet SHA mismatch" in f
+                    for f in result["failures"])
+            )
+
+    def test_missing_external_request_ledger_blocks_certification(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            PackageFactory(tmp).build()
+            os.remove(os.path.join(tmp, "mlb_statsapi_request_ledger.jsonl"))
+            result = self.certify(tmp)
+            self.assertEqual(
+                result["verdict"], "CERTIFICATION BLOCKED", msg=json.dumps(result, indent=2)
+            )
+            self.assertTrue(
+                any("durable ledger artifact missing" in b for b in result["blockers"])
+            )
+
+    def test_ledger_sha_tamper_is_not_canonical(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            PackageFactory(tmp).build()
+            self._rewrite_ledger(
+                tmp,
+                "mlb_statsapi_request_ledger",
+                lambda rows: rows[0].update({
+                    "response_bytes": int(rows[0]["response_bytes"]) + 1
+                }),
+                bind=False,
+            )
+            result = self.certify(tmp)
+            self.assertEqual(result["verdict"], "NOT CANONICAL")
+            self.assertTrue(any("content SHA mismatch" in f for f in result["failures"]))
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)
