@@ -19,15 +19,45 @@ from backtest.http_provenance import get_active_ledger
 
 
 class FrozenOutcomeGrader:
-    def __init__(self, store):
+    def __init__(
+        self,
+        store,
+        *,
+        outcome_only_frame=None,
+        outcome_only_date=None,
+    ):
         self.store = store
+        self.outcome_only_date = str(outcome_only_date) if outcome_only_date else None
+        self.outcome_only_frame = (
+            outcome_only_frame.copy(deep=True)
+            if outcome_only_frame is not None
+            else None
+        )
         self._day_cache = {}
         self._original_grade_pick = gr.grade_pick
         self._original_fetch_game_statuses = gr.fetch_game_statuses
 
     def day_frame(self, day):
+        day = str(day)
         if day not in self._day_cache:
-            self._day_cache[day] = self.store.window(day, day)
+            if day == self.outcome_only_date:
+                if self.outcome_only_frame is None:
+                    self._day_cache[day] = (None, "missing_outcome_only_statcast")
+                else:
+                    frame = self.outcome_only_frame
+                    if "game_date" in frame.columns:
+                        frame = frame[
+                            frame["game_date"].astype(str).str[:10] == day
+                        ]
+                    self._day_cache[day] = (
+                        frame.copy(deep=True),
+                        "bound_outcome_only_statcast_parquet",
+                    )
+            else:
+                self._day_cache[day] = (
+                    self.store.window(day, day),
+                    "bound_predictor_statcast_parquet",
+                )
         return self._day_cache[day]
 
     def _special_grade(self, pick, game_statuses, date, allow_in_progress):
@@ -61,7 +91,7 @@ class FrozenOutcomeGrader:
                 **(gr.opportunity_context(pick, None, game_pk) if final else {}),
             }
 
-        frame = self.day_frame(date)
+        frame, outcome_source = self.day_frame(date)
         required = {"batter", "game_pk", "events", "launch_speed", "hit_distance_sc"}
         if frame is None or frame.empty or not required.issubset(frame.columns):
             return {
@@ -97,7 +127,7 @@ class FrozenOutcomeGrader:
                 "actual": hit,
                 "actual_stat": "hr_at_exit_velocity",
                 "threshold": threshold,
-                "canonical_v2_outcome_source": "bound_statcast_parquet",
+                "canonical_v2_outcome_source": outcome_source,
                 **gr.opportunity_context(pick, row, game_pk),
             }
 
@@ -114,7 +144,7 @@ class FrozenOutcomeGrader:
                 "actual": hit,
                 "actual_stat": "moonshot_420",
                 "threshold": 420,
-                "canonical_v2_outcome_source": "bound_statcast_parquet",
+                "canonical_v2_outcome_source": outcome_source,
                 **gr.opportunity_context(pick, row, game_pk),
             }
 
