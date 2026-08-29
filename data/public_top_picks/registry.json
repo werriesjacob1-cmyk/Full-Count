@@ -2,7 +2,7 @@
   "schema_version": 1,
   "identity_schema_version": 2,
   "rollout_version": "pre-phase-v-live-lifecycle-v1",
-  "updated_at": "2026-08-29T09:31:57.908550+00:00",
+  "updated_at": "2026-08-29T14:12:28.963169+00:00",
   "migration": {
     "version": "pre-phase-v-live-lifecycle-v1",
     "completed_at": "2026-08-17T23:14:57+00:00",
@@ -5592,6 +5592,200 @@
         },
         "qualification_timestamp": "2026-08-29T09:30:31.887181+00:00",
         "board_timestamp": "2026-08-29T09:30:31.857338+00:00",
+        "slate_date": "2026-08-29"
+      }
+    },
+    "fc2:824230:player-701678:hits:1:over": {
+      "canonical_id": "fc2:824230:player-701678:hits:1:over",
+      "settlement_identity": [
+        "824230",
+        [
+          "player",
+          "701678"
+        ],
+        "hits",
+        "1",
+        "over"
+      ],
+      "slate_date": "2026-08-29",
+      "first_published_at": "2026-08-29T14:12:28.963169+00:00",
+      "publication_provenance": {
+        "artifact_id": "2464c63e4e01a1f7d7d65b9ad21c4b4f048bdfaa9ed1be14724eb61f00125fdc",
+        "source_commit": "0efc4b9462add084dc87fd139ded90bb731cbdb6",
+        "workflow_run_id": "33256938191",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-08-29T14:12:14.617386+00:00",
+        "data_hash": "738a10d27c626ac5d9ea2a77b679261ab87b68c3aa7c7caff518fe212e25765d",
+        "live_hash": "c420e52376cfcf5d325ccb8bd3fa1e9986a62c011afab8e9de42bd95c6070e07"
+      },
+      "snapshot": {
+        "id": "fc2:824230:player-701678:hits:1:over",
+        "identity_version": 2,
+        "game_pk": 824230,
+        "player_id": 701678,
+        "combo_player_ids": null,
+        "type": "batter",
+        "name": "Hao-Yu Lee",
+        "team": "Detroit Tigers",
+        "matchup": "Los Angeles Dodgers @ Detroit Tigers",
+        "game_start": "2026-08-29T17:10:00Z",
+        "stat": "hits",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "hits",
+          "value": 0.5,
+          "needs": 1
+        },
+        "prop": "Over 0.5 Hits",
+        "hit_probability": 0.6444,
+        "market_odds": -145,
+        "market_implied": 0.5918,
+        "market_edge": 0.0526,
+        "market_hold": null,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (A), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (9.6 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "L7 avg EV 96.4mph (league ~88.5) \u2014 hot recent contact",
+          "L7 barrel% 50.0 \u2014 hot recent contact",
+          "Bat speed trending up L14 (+2.9mph 2nd-half vs 1st-half)",
+          "Platoon: R bat vs LHP (favorable)",
+          "Projected 4.3 PA (batting slot 2) \u2014 a favorable lineup slot",
+          "Season barrel% 8.8",
+          "Hitters batting ahead of him: 0.336 wOBA (league ~.320)",
+          "Hitter batting behind him: 0.354 wOBA (league ~.320)"
+        ],
+        "watchouts": [
+          "Opposing SP ERA 2.57 \u2014 elite pitcher, tough matchup",
+          "AVG vs xBA: 0.268 vs 0.245 (+0.023) \u2014 outperforming his contact quality, regression risk",
+          "Team implied for 2.87 runs (league avg 4.245; line 2.5, game total 7) \u2014 a weak offensive environment",
+          "Opposing bullpen fatigue: 0/7 relievers over 60 pitches in L7 (fresh pen \u2014 tougher matchup late)"
+        ],
+        "prob_ci": [
+          0.6357,
+          0.6729
+        ],
+        "reliability": "A",
+        "reliability_note": null,
+        "sample_n": 84,
+        "lineup_assumed": null,
+        "base_rate": 0.563,
+        "lift": 0.0814,
+        "lift_reference_rate": null,
+        "stable_lift": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "e2b8a6a2",
+          "prediction_timestamp": "2026-08-29T14:10:03.588345+00:00",
+          "odds_fetched_at": "2026-08-29T14:09:57.705652+00:00",
+          "board_generated_at": "2026-08-29T14:10:03.554779+00:00"
+        },
+        "qualification_timestamp": "2026-08-29T14:10:03.588345+00:00",
+        "board_timestamp": "2026-08-29T14:10:03.554779+00:00",
+        "slate_date": "2026-08-29"
+      }
+    },
+    "fc2:824230:player-679529:hits_runs_rbis:1:over": {
+      "canonical_id": "fc2:824230:player-679529:hits_runs_rbis:1:over",
+      "settlement_identity": [
+        "824230",
+        [
+          "player",
+          "679529"
+        ],
+        "hits_runs_rbis",
+        "1",
+        "over"
+      ],
+      "slate_date": "2026-08-29",
+      "first_published_at": "2026-08-29T14:12:28.963169+00:00",
+      "publication_provenance": {
+        "artifact_id": "2464c63e4e01a1f7d7d65b9ad21c4b4f048bdfaa9ed1be14724eb61f00125fdc",
+        "source_commit": "0efc4b9462add084dc87fd139ded90bb731cbdb6",
+        "workflow_run_id": "33256938191",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-08-29T14:12:14.617386+00:00",
+        "data_hash": "738a10d27c626ac5d9ea2a77b679261ab87b68c3aa7c7caff518fe212e25765d",
+        "live_hash": "c420e52376cfcf5d325ccb8bd3fa1e9986a62c011afab8e9de42bd95c6070e07"
+      },
+      "snapshot": {
+        "id": "fc2:824230:player-679529:hits_runs_rbis:1:over",
+        "identity_version": 2,
+        "game_pk": 824230,
+        "player_id": 679529,
+        "combo_player_ids": null,
+        "type": "batter",
+        "name": "Spencer Torkelson",
+        "team": "Detroit Tigers",
+        "matchup": "Los Angeles Dodgers @ Detroit Tigers",
+        "game_start": "2026-08-29T17:10:00Z",
+        "stat": "hits_runs_rbis",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "hits_runs_rbis",
+          "value": 0.5,
+          "needs": 1
+        },
+        "prop": "Over 0.5 Hits+Runs+RBIs",
+        "hit_probability": 0.6336,
+        "market_odds": -150,
+        "market_implied": 0.6,
+        "market_edge": 0.0336,
+        "market_hold": null,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (A), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (7.8 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "L7 avg EV 91.3mph (league ~88.5) \u2014 hot recent contact",
+          "L7 barrel% 25.0 \u2014 hot recent contact",
+          "Platoon: R bat vs LHP (favorable)",
+          "Projected 3.84 PA (batting slot 6)",
+          "Hitters batting ahead of him: 0.437 wOBA (league ~.320) \u2014 real RBI opportunity on base ahead of him",
+          "Season barrel% 12.3"
+        ],
+        "watchouts": [
+          "Opposing SP ERA 2.57 \u2014 elite pitcher, tough matchup",
+          "Hitter batting behind him: 0.328 wOBA (league ~.320) \u2014 little lineup protection, an easier batter to pitch around",
+          "Team implied for 2.87 runs (league avg 4.245; line 2.5, game total 7) \u2014 a weak offensive environment",
+          "Opposing bullpen fatigue: 0/7 relievers over 60 pitches in L7 (fresh pen \u2014 tougher matchup late)"
+        ],
+        "prob_ci": [
+          0.6203,
+          0.6652
+        ],
+        "reliability": "A",
+        "reliability_note": null,
+        "sample_n": 133,
+        "lineup_assumed": null,
+        "base_rate": 0.6723,
+        "lift": -0.0387,
+        "lift_reference_rate": null,
+        "stable_lift": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "e2b8a6a2",
+          "prediction_timestamp": "2026-08-29T14:10:03.588345+00:00",
+          "odds_fetched_at": "2026-08-29T14:09:57.705652+00:00",
+          "board_generated_at": "2026-08-29T14:10:03.554779+00:00"
+        },
+        "qualification_timestamp": "2026-08-29T14:10:03.588345+00:00",
+        "board_timestamp": "2026-08-29T14:10:03.554779+00:00",
         "slate_date": "2026-08-29"
       }
     }
