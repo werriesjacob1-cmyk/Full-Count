@@ -93,11 +93,21 @@ No arm may change the eligible population.
 
 ## 4. Frozen challenger mechanism
 
-Use the existing mechanism in:
+Use the existing mechanism exactly as inherited from repository state
+`57e0123d6d6fe6203d36c66db7c3a441c8e7335c`.
 
-`backtest/residual_challenger_model.py`
+Pinned source blobs:
 
-with these values locked:
+- `backtest/residual_challenger_model.py` -> `969094d4282b71792db8237b56183cced9eb7827`
+- `backtest/pa_opportunity_model.py` -> `7d33924329ce405c7f81ed2ede9ee21ea8ec8805`
+- `backtest/residual_opportunity_decomposition.py` -> `809ac6ff5fbb47d7cdfe6e93e4c2704b8996f8d4`
+- `backtest/opportunity_decomposition.py` -> `94238167cdce4f27165db18c80142b86db6d2dfc`
+
+These blobs define the inherited mechanism. A future refactor may reimplement
+the same mathematics only if an equivalence test proves identical probabilities
+on a frozen synthetic/reference fixture before holdout outcomes are visible.
+
+Locked values:
 
 - training years: 2024 + 2025 only;
 - holdout year: 2026 only;
@@ -136,7 +146,39 @@ Count and report these exact-fallback rows.
 
 ---
 
-## 5. Train / holdout discipline
+## 5. Player-game consistency gate before dedupe
+
+The inherited helper `dedupe_player_games()` keeps the first market row for a
+`(date, game_pk, player_id)` key. That is safe only if the opportunity fields
+used by this challenger are genuinely identical across that player's market
+rows.
+
+Before fitting anything, verify on the training population that every row for a
+single player-game agrees on:
+
+- `actual_pa`
+- decoded batting order from `signals.lineup_slot`
+- decoded `days_rest_group`
+- decoded `getaway_day_group`
+
+If any player-game contains more than one distinct non-null value for any of
+those fields:
+
+**ABORT BEFORE HOLDOUT EVALUATION.**
+
+Do not resolve the disagreement by taking the first row, majority vote, or a
+market-specific row.
+
+Report:
+- number of player-games checked;
+- number with any disagreement;
+- per-field disagreement counts.
+
+Only after this gate passes may `dedupe_player_games()` be used.
+
+---
+
+## 6. Train / holdout discipline
 
 Training:
 
@@ -163,7 +205,7 @@ No 2026 row may fit:
 
 ---
 
-## 6. Per-date equal volume — primary correction
+## 7. Per-date equal volume — primary correction
 
 The current code defines:
 
@@ -207,7 +249,7 @@ operational pick volume. Historical prices are absent.
 
 ---
 
-## 7. Prediction freeze before outcome reveal
+## 8. Prediction freeze before outcome reveal
 
 Before holdout outcomes are joined into any selection report, persist and hash:
 
@@ -233,7 +275,7 @@ If any identity, population, or construction assertion fails before the freeze:
 
 ---
 
-## 8. Primary evaluation
+## 9. Primary evaluation
 
 After the prediction freeze, join `outcome` by canonical candidate identity.
 
@@ -258,7 +300,7 @@ same-volume comparison.
 
 ---
 
-## 9. Paired game-cluster uncertainty
+## 10. Paired game-cluster uncertainty
 
 Use 5,000 paired bootstrap replicates.
 
@@ -296,7 +338,7 @@ No seed redraw.
 
 ---
 
-## 10. Stability / diagnostics
+## 11. Stability / diagnostics
 
 Required descriptive splits:
 
@@ -316,7 +358,7 @@ They may not rescue a failed primary result or create a new post-hoc variant.
 
 ---
 
-## 11. GO / KILL rule
+## 12. GO / KILL rule
 
 This is intentionally a one-shot close-or-continue decision.
 
@@ -351,7 +393,7 @@ mechanism and move to the preregistered HR contact-state world-model work.
 
 ---
 
-## 12. What a survivor earns
+## 13. What a survivor earns
 
 A survivor does NOT earn production promotion.
 
@@ -368,7 +410,7 @@ No fabricated production eligibility claim.
 
 ---
 
-## 13. Execution gate
+## 14. Execution gate
 
 Do not run until:
 
