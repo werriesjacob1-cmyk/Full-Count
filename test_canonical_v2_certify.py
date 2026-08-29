@@ -731,5 +731,124 @@ class CertificationTests(unittest.TestCase):
             self.assertTrue(any("content SHA mismatch" in f for f in result["failures"]))
 
 
+    def test_missing_archived_response_body_blocks_certification(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            ids = PackageFactory(tmp).build()
+            os.remove(os.path.join(tmp, "http_blobs", f"{ids['team_body_sha']}.gz"))
+            result = self.certify(tmp)
+            self.assertEqual(
+                result["verdict"],
+                "CERTIFICATION BLOCKED",
+                msg=json.dumps(result, indent=2),
+            )
+            self.assertTrue(
+                any("archived external response body missing" in b for b in result["blockers"])
+            )
+
+    def test_unapproved_external_host_is_not_canonical(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            factory = PackageFactory(tmp)
+            factory.build()
+
+            def mutate(rows):
+                rows[0]["url"] = (
+                    f"https://evidence-spoof.invalid/starting-lineups/{factory.day}"
+                )
+
+            self._rewrite_ledger(
+                tmp,
+                "mlbcom_dated_lineup_request_ledger",
+                mutate,
+                bind=True,
+            )
+            result = self.certify(tmp)
+            self.assertEqual(result["verdict"], "NOT CANONICAL")
+            self.assertTrue(
+                any("MLB.com ledger contains unexpected host" in f for f in result["failures"])
+            )
+
+    def test_recovered_transient_is_warning_not_false_failure(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            PackageFactory(tmp).build()
+
+            def mutate(rows):
+                schedule = next(row for row in rows if "/api/v1/schedule" in row["url"])
+                transient = dict(schedule)
+                transient["status_code"] = 503
+                transient["response_sha256"] = None
+                transient["response_bytes"] = None
+                rows.insert(0, transient)
+
+            self._rewrite_ledger(
+                tmp,
+                "mlb_statsapi_request_ledger",
+                mutate,
+                bind=True,
+            )
+            result = self.certify(tmp)
+            self.assertEqual(
+                result["verdict"],
+                "CANONICAL CERTIFIED",
+                msg=json.dumps(result, indent=2),
+            )
+            self.assertEqual(
+                result["external_response_archive"][
+                    "recovered_statsapi_transient_identities"
+                ],
+                1,
+            )
+            self.assertTrue(
+                any("recovered transient failures" in w for w in result["warnings"])
+            )
+
+    def test_mixed_row_code_shas_are_not_canonical(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            PackageFactory(tmp).build()
+            rows_path = os.path.join(tmp, "rows.jsonl")
+            row = json.loads(open(rows_path, encoding="utf-8").read())
+            row["code_git_sha"] = "c" * 40
+            raw = (
+                json.dumps(row, sort_keys=True, separators=(",", ":")) + "\n"
+            ).encode()
+            with open(rows_path, "wb") as handle:
+                handle.write(raw)
+            self._refresh_report(
+                tmp,
+                lambda report: report.update({"assembled_rows_sha256": sha(raw)}),
+            )
+            result = self.certify(tmp)
+            self.assertEqual(result["verdict"], "NOT CANONICAL")
+            self.assertTrue(any("row code SHA regime" in f for f in result["failures"]))
+
+    def test_scientific_environment_mismatch_is_not_canonical(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            PackageFactory(tmp).build()
+            self._refresh_report(
+                tmp,
+                lambda report: report["scientific_environment"].update(
+                    {"python_version": "3.12.0"}
+                ),
+            )
+            result = self.certify(tmp)
+            self.assertEqual(result["verdict"], "NOT CANONICAL")
+            self.assertTrue(
+                any("Python" in f and "expected" in f for f in result["failures"])
+            )
+
+    def test_firewall_block_is_not_canonical(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            factory = PackageFactory(tmp)
+            factory.build()
+            path = os.path.join(tmp, "date_metadata", f"{factory.day}.json")
+            meta = json.load(open(path, encoding="utf-8"))
+            meta["http_provenance"]["firewall_block_count"] = 1
+            write_json(path, meta)
+            result = self.certify(tmp)
+            self.assertEqual(result["verdict"], "NOT CANONICAL")
+            self.assertTrue(
+                any("source firewall blocked" in f for f in result["failures"])
+            )
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)
