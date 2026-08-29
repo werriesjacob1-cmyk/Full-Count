@@ -300,6 +300,46 @@ def _validate_holdout_masked(rows):
     return rows
 
 
+def write_immutable_stage1_bundle(path, bundle):
+    """Persist one Stage-1 prediction bundle exactly once.
+
+    The embedded bundle_sha256 covers every field except itself. A caller
+    cannot silently rewrite coverage, venue provenance, fitted diagnostics,
+    frozen populations, or selection identities after Stage 1.
+    """
+    import json
+    import os
+
+    if os.path.exists(path):
+        raise FileExistsError(
+            f"refusing to overwrite immutable HR Stage-1 bundle at {path!r}"
+        )
+
+    stored = dict(bundle)
+    embedded = stored.pop("bundle_sha256", None)
+    if embedded != deterministic_sha256(stored):
+        raise HRStageIntegrityError(
+            "Stage-1 bundle_sha256 does not match bundle content"
+        )
+
+    directory = os.path.dirname(os.path.abspath(path))
+    os.makedirs(directory, exist_ok=True)
+    payload = (
+        json.dumps(bundle, indent=2, sort_keys=True, default=str) + "\n"
+    ).encode("utf-8")
+    with open(path, "xb") as handle:
+        handle.write(payload)
+        handle.flush()
+        os.fsync(handle.fileno())
+
+    return {
+        "path": path,
+        "byte_sha256": __import__("hashlib").sha256(payload).hexdigest(),
+        "bundle_sha256": embedded,
+        "bytes": len(payload),
+    }
+
+
 def build_hr_prediction_freezes(
     masked_holdout_rows,
     source_frame,
@@ -502,9 +542,11 @@ def build_hr_prediction_freezes(
         arm: freezes[arm]["sha256"]
         for arm in DEFAULT_ARMS
     }
-    return {
+    bundle = {
         "arms": freezes,
         "coverage": coverage,
         "venue_map_attestation": venue_attestation,
         "freeze_set_sha256": deterministic_sha256(freeze_hashes),
     }
+    bundle["bundle_sha256"] = deterministic_sha256(bundle)
+    return bundle
