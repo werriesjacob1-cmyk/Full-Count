@@ -986,6 +986,8 @@ def certify(package_dir, repo_root, expected_parent_sha=None, expected_source_sh
         if row.get("response_sha256")
     }
     decoded_json = {}
+    valid_body_shas = set()
+    non_json_body_shas = set()
     if not os.path.isdir(blob_dir):
         blockers.append("external response body archive is absent")
     else:
@@ -1009,12 +1011,14 @@ def certify(package_dir, repo_root, expected_parent_sha=None, expected_source_sh
                     f"archived external response body SHA mismatch: {response_sha}"
                 )
                 continue
+            valid_body_shas.add(response_sha)
             try:
                 decoded_json[response_sha] = json.loads(body)
             except Exception:
-                # MLB.com HTML and any future non-JSON bodies are still
-                # content-bound; only StatsAPI semantic checks below require
-                # JSON decoding.
+                non_json_body_shas.add(response_sha)
+                # MLB.com HTML is expected. StatsAPI bodies that require
+                # semantic inspection are rejected below only when their
+                # archived bytes actually exist but are non-JSON.
                 pass
 
         # Independently verify each season directory's archived CONTENT, not
@@ -1027,11 +1031,17 @@ def certify(package_dir, repo_root, expected_parent_sha=None, expected_source_sh
             season = _single_query(qs, "season")
             if not season or "activeStatus" in qs:
                 continue
-            payload = decoded_json.get(row.get("response_sha256"))
+            response_sha = row.get("response_sha256")
+            if response_sha not in valid_body_shas:
+                # Missing/unreadable evidence is already a blocker/failure at
+                # the archive layer; do not convert absence into a semantic
+                # contradiction merely because it cannot be decoded.
+                continue
+            payload = decoded_json.get(response_sha)
             if not isinstance(payload, dict):
                 failures.append(
                     f"season {season} historical team directory body is not "
-                    "archived valid JSON"
+                    "valid StatsAPI JSON"
                 )
                 continue
             teams = payload.get("teams") or []
@@ -1048,24 +1058,52 @@ def certify(package_dir, repo_root, expected_parent_sha=None, expected_source_sh
                     f"{len(valid)} valid rows / {len(ids)} unique IDs, expected 30"
                 )
 
-        # Every immutable game-feed fetch must resolve to a game discovered
-        # by one of the archived schedule responses, and never to a game
-        # whose official schedule date is after the simulated date consuming
-        # that feed.
-        game_dates = {}
+        # Bind immutable game-feed use to scientific phase. Predictive
+        # bullpen feeds are only legitimate when an archived PRE-D schedule
+        # response proves that exact gamePk was already completed before D.
+        # Same-day feeds are legitimate only in outcome_grading.
+        schedule_evidence = defaultdict(list)
         for row in statsapi_rows:
             parsed = urlparse(str(row.get("url") or ""))
             if parsed.path != "/api/v1/schedule":
                 continue
-            payload = decoded_json.get(row.get("response_sha256"))
-            if not isinstance(payload, dict):
+            response_sha = row.get("response_sha256")
+            if response_sha not in valid_body_shas:
                 continue
+            payload = decoded_json.get(response_sha)
+            if not isinstance(payload, dict):
+                failures.append(
+                    f"{row.get('observed_date')}: archived schedule body is not valid StatsAPI JSON"
+                )
+                continue
+            qs = parse_qs(parsed.query)
+            observed = str(row.get("observed_date") or "")
+            range_end = _single_query(qs, "endDate")
+            pre_d_range = False
+            if range_end:
+                try:
+                    pre_d_range = date.fromisoformat(range_end) < date.fromisoformat(observed)
+                except ValueError:
+                    pre_d_range = False
             for date_block in payload.get("dates") or []:
-                game_day = date_block.get("date")
+                block_day = str(date_block.get("date") or "")
                 for game in date_block.get("games") or []:
                     game_pk = game.get("gamePk")
-                    if game_pk is not None and game_day:
-                        game_dates[int(game_pk)] = str(game_day)
+                    if game_pk is None:
+                        continue
+                    status = game.get("status") or {}
+                    schedule_evidence[(observed, int(game_pk))].append({
+                        "phase": row.get("scientific_phase"),
+                        "pre_d_range": pre_d_range,
+                        "date_block": block_day,
+                        "official_date": str(game.get("officialDate") or ""),
+                        "coded_state": str(
+                            status.get("codedGameState")
+                            or status.get("statusCode")
+                            or ""
+                        ),
+                        "detailed_state": str(status.get("detailedState") or ""),
+                    })
 
         for row in statsapi_rows:
             parsed = urlparse(str(row.get("url") or ""))
@@ -1074,17 +1112,60 @@ def certify(package_dir, repo_root, expected_parent_sha=None, expected_source_sh
                 continue
             game_pk = int(match.group(1))
             observed = str(row.get("observed_date") or "")
-            game_day = game_dates.get(game_pk)
-            if game_day is None:
+            phase = row.get("scientific_phase")
+            evidence = schedule_evidence.get((observed, game_pk), [])
+            if not evidence:
                 blockers.append(
-                    f"{observed}: game feed {game_pk} cannot be linked to any "
-                    "archived schedule response"
+                    f"{observed}: game feed {game_pk} cannot be linked to any archived schedule response"
                 )
                 continue
-            if game_day > observed:
+
+            response_sha = row.get("response_sha256")
+            feed_payload = (
+                decoded_json.get(response_sha)
+                if response_sha in valid_body_shas
+                else None
+            )
+            feed_official = None
+            if isinstance(feed_payload, dict):
+                feed_official = str(
+                    (
+                        (feed_payload.get("gameData") or {})
+                        .get("datetime", {})
+                        .get("officialDate")
+                    )
+                    or ""
+                )
+            elif response_sha in valid_body_shas:
                 failures.append(
-                    f"{observed}: game feed {game_pk} belongs to future "
-                    f"scheduled date {game_day}"
+                    f"{observed}: game feed {game_pk} archive is not valid StatsAPI JSON"
+                )
+
+            if phase == "predictive_input":
+                safe_schedule_evidence = [
+                    item for item in evidence
+                    if item["phase"] == "predictive_input"
+                    and item["pre_d_range"]
+                    and item["official_date"]
+                    and item["official_date"] < observed
+                    and item["coded_state"] in {"F", "O"}
+                ]
+                if not safe_schedule_evidence:
+                    failures.append(
+                        f"{observed}: predictive game feed {game_pk} lacks proof of completed pre-D schedule state"
+                    )
+                if feed_official and feed_official >= observed:
+                    failures.append(
+                        f"{observed}: predictive game feed {game_pk} has officialDate={feed_official}"
+                    )
+            elif phase == "outcome_grading":
+                if feed_official and feed_official > observed:
+                    failures.append(
+                        f"{observed}: outcome game feed {game_pk} belongs to future officialDate={feed_official}"
+                    )
+            else:
+                failures.append(
+                    f"{observed}: game feed {game_pk} has invalid scientific phase {phase!r}"
                 )
 
     status_counts = report.get("status_counts") or {}
