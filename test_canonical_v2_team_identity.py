@@ -106,6 +106,7 @@ class HistoricalTeamIdentityTests(unittest.TestCase):
             "away_team_id": 133,
             "home_team": "Team 102",
             "home_team_id": 102,
+            "game_start_utc": "2024-05-01T23:05:00Z",
         }]
 
         usage = {
@@ -145,6 +146,7 @@ class HistoricalTeamIdentityTests(unittest.TestCase):
             "away_team_id": None,
             "home_team": "Team 102",
             "home_team_id": 102,
+            "game_start_utc": "2024-05-01T23:05:00Z",
         }]
         with patch.object(m, "retry_get", side_effect=self.fake_retry_get):
             with self.assertRaises(HistoricalTeamIdentityError):
@@ -159,6 +161,7 @@ class HistoricalTeamIdentityTests(unittest.TestCase):
             "away_team_id": 999,
             "home_team": "Team 102",
             "home_team_id": 102,
+            "game_start_utc": "2024-05-01T23:05:00Z",
         }]
         with patch.object(m, "retry_get", side_effect=self.fake_retry_get):
             with self.assertRaises(HistoricalTeamIdentityError):
@@ -174,6 +177,7 @@ class HistoricalTeamIdentityTests(unittest.TestCase):
             "away_team_id": 102,
             "home_team": "Team 103",
             "home_team_id": 103,
+            "game_start_utc": "2025-08-19T23:05:00Z",
         }]
 
         schedule_payload = {
@@ -253,6 +257,140 @@ class HistoricalTeamIdentityTests(unittest.TestCase):
         self.assertEqual(set(observed_game_ids), {7001})
         self.assertNotIn(7002, observed_game_ids)
         self.assertNotIn(7003, observed_game_ids)
+
+
+    def test_scheduled_start_timecode_is_one_second_before_first_pitch(self):
+        self.assertEqual(
+            HistoricalTeamIdentity._scheduled_start_timecode(
+                "2025-08-19T23:05:00Z"
+            ),
+            "20250819_230459",
+        )
+        self.assertEqual(
+            HistoricalTeamIdentity._scheduled_start_timecode(
+                "2025-08-19T19:05:00-04:00"
+            ),
+            "20250819_230459",
+        )
+
+    def test_missing_game_start_fails_closed_for_bullpen_evidence(self):
+        adapter = HistoricalTeamIdentity()
+        m.YEAR = 2025
+        game_meta = [{
+            "game_pk": 9000,
+            "away_team": "Team 102",
+            "away_team_id": 102,
+            "home_team": "Team 103",
+            "home_team_id": 103,
+        }]
+        with patch.object(m, "retry_get", side_effect=self.fake_retry_get):
+            with self.assertRaises(HistoricalTeamIdentityError):
+                adapter.fetch_bullpen_scores(game_meta)
+
+    def test_bullpen_boxscores_are_timebounded_per_team_thread(self):
+        observed = []
+
+        def fake_boxscore(game_pk, *args, **kwargs):
+            observed.append((int(game_pk), kwargs.get("timecode")))
+            return {}
+
+        with patch.object(m.statsapi, "boxscore_data", side_effect=fake_boxscore):
+            adapter = HistoricalTeamIdentity()
+            m.YEAR = 2025
+            game_meta = [
+                {
+                    "game_pk": 9101,
+                    "away_team": "Team 102",
+                    "away_team_id": 102,
+                    "home_team": "Team 103",
+                    "home_team_id": 103,
+                    "game_start_utc": "2025-08-19T17:10:00Z",
+                },
+                {
+                    "game_pk": 9102,
+                    "away_team": "Team 104",
+                    "away_team_id": 104,
+                    "home_team": "Team 105",
+                    "home_team_id": 105,
+                    "game_start_utc": "2025-08-19T23:40:00Z",
+                },
+            ]
+
+            def fake_fetch(job, is_rotation_starter=None):
+                team_name, team_id = job
+                # Exercise the adapter's globally-patched boxscore_data from
+                # the same worker thread that owns this team.
+                m.statsapi.boxscore_data(800000 + team_id)
+                return team_name, {}, None
+
+            with patch.object(
+                m, "retry_get", side_effect=self.fake_retry_get
+            ), patch.object(
+                m, "_bullpen_fetch_one", side_effect=fake_fetch
+            ), patch.object(
+                gp, "_bullpen_role_classifier", return_value=None
+            ):
+                adapter.fetch_bullpen_scores(game_meta, pit_season_df=None)
+
+        by_team_id = {
+            game_pk - 800000: timecode
+            for game_pk, timecode in observed
+        }
+        self.assertEqual(
+            by_team_id,
+            {
+                102: "20250819_170959",
+                103: "20250819_170959",
+                104: "20250819_233959",
+                105: "20250819_233959",
+            },
+        )
+        self.assertIsNotNone(m.statsapi.boxscore_data)
+
+    def test_doubleheader_uses_earliest_team_first_pitch_cutoff(self):
+        observed = {}
+
+        def fake_boxscore(game_pk, *args, **kwargs):
+            observed[int(game_pk) - 800000] = kwargs.get("timecode")
+            return {}
+
+        with patch.object(m.statsapi, "boxscore_data", side_effect=fake_boxscore):
+            adapter = HistoricalTeamIdentity()
+            m.YEAR = 2025
+            game_meta = [
+                {
+                    "game_pk": 9201,
+                    "away_team": "Team 102",
+                    "away_team_id": 102,
+                    "home_team": "Team 103",
+                    "home_team_id": 103,
+                    "game_start_utc": "2025-08-19T17:00:00Z",
+                },
+                {
+                    "game_pk": 9202,
+                    "away_team": "Team 102",
+                    "away_team_id": 102,
+                    "home_team": "Team 104",
+                    "home_team_id": 104,
+                    "game_start_utc": "2025-08-19T23:00:00Z",
+                },
+            ]
+
+            def fake_fetch(job, is_rotation_starter=None):
+                team_name, team_id = job
+                m.statsapi.boxscore_data(800000 + team_id)
+                return team_name, {}, None
+
+            with patch.object(
+                m, "retry_get", side_effect=self.fake_retry_get
+            ), patch.object(
+                m, "_bullpen_fetch_one", side_effect=fake_fetch
+            ), patch.object(
+                gp, "_bullpen_role_classifier", return_value=None
+            ):
+                adapter.fetch_bullpen_scores(game_meta, pit_season_df=None)
+
+        self.assertEqual(observed[102], "20250819_165959")
 
 
 if __name__ == "__main__":
