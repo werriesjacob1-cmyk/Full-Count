@@ -161,7 +161,7 @@ def model_versions():
     }
 
 
-def run_identity(args, code_sha, source):
+def run_identity(args, code_sha, source, outcome_source):
     identity = {
         "canonical_v2_schema_version": V2_SCHEMA_VERSION,
         "run_id": args.run_id,
@@ -189,6 +189,18 @@ def run_identity(args, code_sha, source):
                 "date_coverage",
             )
         },
+        "outcome_statcast_source": {
+            key: outcome_source[key]
+            for key in (
+                "content_sha256",
+                "row_count",
+                "schema_columns",
+                "schema_fingerprint",
+                "date_coverage",
+            )
+        },
+        "outcome_only_date": args.outcome_date,
+        "outcome_source_isolation": "grader_only_external_parquet_v1",
         "http_allowed_hosts": sorted(DEFAULT_ALLOWED_HOSTS),
         "http_strict_host_firewall": True,
         "http_response_content_bound": True,
@@ -248,7 +260,16 @@ def access_log_report(res):
     }
 
 
-def write_date(out_dir, day, res, http_summary, access_report, code_sha, source):
+def write_date(
+    out_dir,
+    day,
+    res,
+    http_summary,
+    access_report,
+    code_sha,
+    source,
+    outcome_source,
+):
     rows_dir = os.path.join(out_dir, "rows")
     raw = row_blob(res.rows if res.status == "ok" else [])
     raw_sha = sha256_bytes(raw)
@@ -270,6 +291,8 @@ def write_date(out_dir, day, res, http_summary, access_report, code_sha, source)
         "generation_code_sha": code_sha,
         "source_content_sha256": source["content_sha256"],
         "source_schema_fingerprint": source["schema_fingerprint"],
+        "outcome_source_content_sha256": outcome_source["content_sha256"],
+        "outcome_source_schema_fingerprint": outcome_source["schema_fingerprint"],
         "generated_at": now_iso(),
         "n_games": res.n_games,
         "n_candidates": res.n_candidates,
@@ -292,6 +315,9 @@ def main():
     ap.add_argument("--shard-count", type=int, required=True)
     ap.add_argument("--source-parquet", required=True)
     ap.add_argument("--expected-source-sha256", required=True)
+    ap.add_argument("--outcome-parquet", required=True)
+    ap.add_argument("--expected-outcome-sha256", required=True)
+    ap.add_argument("--outcome-date", default="2026-08-25")
     ap.add_argument("--scientific-parent-sha", required=True)
     ap.add_argument("--out-dir", required=True)
     ap.add_argument("--archive-http-bodies", action="store_true")
@@ -313,7 +339,30 @@ def main():
         args.source_parquet,
         args.expected_source_sha256,
     )
-    identity = run_identity(args, code_sha, source)
+    outcome_source = source_identity(
+        args.outcome_parquet,
+        args.expected_outcome_sha256,
+    )
+    expected_outcome_coverage = f"{args.outcome_date}..{args.outcome_date}"
+    if outcome_source["date_coverage"] != expected_outcome_coverage:
+        raise CanonicalV2IntegrityError(
+            "outcome-only Statcast coverage mismatch: "
+            f"expected={expected_outcome_coverage} "
+            f"actual={outcome_source['date_coverage']}"
+        )
+    required_outcome_columns = {
+        "game_date", "game_pk", "batter", "events",
+        "launch_speed", "hit_distance_sc",
+    }
+    missing_outcome_columns = required_outcome_columns - set(
+        outcome_source["schema_columns"]
+    )
+    if missing_outcome_columns:
+        raise CanonicalV2IntegrityError(
+            "outcome-only Statcast lacks grading columns: "
+            f"{sorted(missing_outcome_columns)}"
+        )
+    identity = run_identity(args, code_sha, source, outcome_source)
 
     os.makedirs(args.out_dir, exist_ok=True)
     environment = cd.environment_identity()
@@ -341,6 +390,17 @@ def main():
             f"{os.path.basename(args.source_parquet)!r}"
         )
 
+    expected_outcome_name = f"statcast_outcome_{args.outcome_date}.parquet"
+    if os.path.basename(args.outcome_parquet) != expected_outcome_name:
+        raise CanonicalV2IntegrityError(
+            f"outcome parquet must be named {expected_outcome_name!r}, got "
+            f"{os.path.basename(args.outcome_parquet)!r}"
+        )
+    if os.path.dirname(os.path.abspath(args.outcome_parquet)) == cache_dir:
+        raise CanonicalV2IntegrityError(
+            "outcome-only Statcast must be physically separate from predictor cache directory"
+        )
+
     store = StatcastStore(
         2024,
         "2026-08-24",
@@ -353,9 +413,17 @@ def main():
             "StatcastStore row count differs from independently bound source"
         )
 
-    # Outcome families requiring Statcast are graded from this SAME bound
-    # artifact. Never issue a second Savant pull for historical truth.
-    frozen_grader = FrozenOutcomeGrader(store)
+    # Prediction receives ONLY the through-D-1 predictor store above.  The
+    # separately bound D-day outcome frame is loaded here and passed only to
+    # the grading adapter, which is reached after the PointInTime prediction
+    # context exits.
+    import pandas as pd
+    outcome_frame = pd.read_parquet(args.outcome_parquet)
+    frozen_grader = FrozenOutcomeGrader(
+        store,
+        outcome_only_frame=outcome_frame,
+        outcome_only_date=args.outcome_date,
+    )
     frozen_grader.install()
 
     # Canonical-v2 team identity is season-bounded and uses stable team IDs
@@ -439,6 +507,7 @@ def main():
                 access,
                 code_sha,
                 source,
+                outcome_source,
             )
             meta["elapsed_seconds"] = round(time.time() - t0, 3)
             atomic_json(
@@ -471,6 +540,9 @@ def main():
         "scientific_parent_sha": args.scientific_parent_sha,
         "source_content_sha256": source["content_sha256"],
         "source_schema_fingerprint": source["schema_fingerprint"],
+        "outcome_source_content_sha256": outcome_source["content_sha256"],
+        "outcome_source_schema_fingerprint": outcome_source["schema_fingerprint"],
+        "outcome_only_date": args.outcome_date,
         "shard_index": args.shard_index,
         "shard_count": args.shard_count,
         "requested_dates": shard_dates,
@@ -485,6 +557,7 @@ def main():
             {
                 "identity_fingerprint": shard_summary["identity_fingerprint"],
                 "source_content_sha256": shard_summary["source_content_sha256"],
+                "outcome_source_content_sha256": shard_summary["outcome_source_content_sha256"],
                 "date_summaries": shard_summary["date_summaries"],
             },
             sort_keys=True,
