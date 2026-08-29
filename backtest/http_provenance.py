@@ -100,6 +100,7 @@ def _logical_entry(entry):
     # scientific content appear different.
     return {
         "observed_date": entry.get("observed_date"),
+        "scientific_phase": entry.get("scientific_phase"),
         "method": entry.get("method"),
         "url": entry.get("url"),
         "request_body_sha256": entry.get("request_body_sha256"),
@@ -138,6 +139,7 @@ class ResponseLedger:
                 "cache_get_responses requires archive_bodies=True so cached bytes stay auditable"
             )
         self._current_date = None
+        self._current_phase = None
         self._entries = []
         self._sequence = 0
         self._firewall_blocks = []
@@ -251,6 +253,7 @@ class ResponseLedger:
                     f"cannot start {date}: ledger date {self._current_date} is still active"
                 )
             self._current_date = str(date)
+            self._current_phase = None
             self._entries = []
             self._sequence = 0
             self._firewall_blocks = []
@@ -260,6 +263,19 @@ class ResponseLedger:
     def active_date(self):
         with _LOCK:
             return self._current_date
+
+    def set_phase(self, phase):
+        phase = str(phase)
+        if phase not in {"predictive_input", "outcome_grading"}:
+            raise HttpProvenanceError(f"invalid canonical-v2 scientific phase {phase!r}")
+        with _LOCK:
+            if self._current_date is None:
+                raise HttpProvenanceError("cannot set HTTP phase without an active canonical date")
+            self._current_phase = phase
+
+    def active_phase(self):
+        with _LOCK:
+            return self._current_phase
 
     def should_record(self, url):
         try:
@@ -278,6 +294,7 @@ class ResponseLedger:
             with _LOCK:
                 block = {
                     "observed_date": self._current_date,
+                    "scientific_phase": self._current_phase,
                     "blocked_at": _now_iso(),
                     "method": identity["method"],
                     "url": identity["url"],
@@ -317,6 +334,10 @@ class ResponseLedger:
                 raise HttpProvenanceError(
                     f"allow-listed HTTP response observed outside active canonical date: {url}"
                 )
+            if self._current_phase is None:
+                raise HttpProvenanceError(
+                    f"allow-listed HTTP response observed without scientific phase: {url}"
+                )
             content = bytes(getattr(response, "content", b"") or b"")
             response_sha = _sha256(content)
             self._sequence += 1
@@ -331,6 +352,7 @@ class ResponseLedger:
             entry = {
                 "sequence": self._sequence,
                 "observed_date": self._current_date,
+                "scientific_phase": self._current_phase,
                 "retrieved_at": _now_iso(),
                 "thread_id": threading.get_ident(),
                 "method": getattr(request, "method", "GET"),
@@ -361,10 +383,16 @@ class ResponseLedger:
                     "allow-listed HTTP exception observed outside active canonical date: "
                     f"{identity['url']}"
                 )
+            if self._current_phase is None:
+                raise HttpProvenanceError(
+                    "allow-listed HTTP exception observed without scientific phase: "
+                    f"{identity['url']}"
+                )
             self._sequence += 1
             self._entries.append({
                 "sequence": self._sequence,
                 "observed_date": self._current_date,
+                "scientific_phase": self._current_phase,
                 "retrieved_at": _now_iso(),
                 "thread_id": threading.get_ident(),
                 "method": identity["method"],
@@ -427,6 +455,10 @@ class ResponseLedger:
                 "network_request_count": self._network_count,
                 "cache_hit_count": self._cache_hit_count,
                 "cache_get_responses": self.cache_get_responses,
+                "scientific_phase_counts": {
+                    phase: sum(1 for entry in entries if entry.get("scientific_phase") == phase)
+                    for phase in ("predictive_input", "outcome_grading")
+                },
             }
             summary_path = os.path.join(self.root_dir, f"{date}.summary.json")
             tmp_summary = summary_path + ".tmp"
@@ -437,6 +469,7 @@ class ResponseLedger:
                 os.fsync(handle.fileno())
             os.replace(tmp_summary, summary_path)
             self._current_date = None
+            self._current_phase = None
             self._entries = []
             self._sequence = 0
             self._firewall_blocks = []
