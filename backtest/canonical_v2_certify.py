@@ -47,6 +47,15 @@ REQUIRED_HR_SOURCE_COLUMNS = {
     "hit_distance_sc",
 }
 
+OUTCOME_ONLY_SOURCE_COLUMNS = {
+    "game_date",
+    "game_pk",
+    "batter",
+    "events",
+    "launch_speed",
+    "hit_distance_sc",
+}
+
 PROTECTED_SCIENTIFIC_FILES = (
     "recommendation.py",
     "generate_picks.py",
@@ -592,6 +601,13 @@ def certify(package_dir, repo_root, expected_parent_sha=None, expected_source_sh
     ):
         failures.append(
             "canonical v2 did not declare the postponed/suspended-game bullpen temporal gate"
+        )
+    if identity.get("outcome_source_isolation") != "grader_only_external_parquet_v1":
+        failures.append("outcome-only Statcast source is not declared grader-only")
+    outcome_only_date = str(identity.get("outcome_only_date") or "")
+    if outcome_only_date != end:
+        failures.append(
+            f"outcome-only Statcast date {outcome_only_date!r} != requested end date {end!r}"
         )
     if identity.get("statsapi_source_shape_policy") != (
         STATSAPI_SOURCE_SHAPE_POLICY
