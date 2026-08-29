@@ -99,14 +99,47 @@ class PackageFactory:
         with open(rows_path, "wb") as handle:
             handle.write(rows_raw)
 
-        stats_body = b'{"dates":[{"games":[]}]}'
+        stats_body = b'{"dates":[{"date":"2025-08-20","games":[]}]}'
         stats_body_sha = sha(stats_body)
         write_gzip(
             os.path.join(blob_dir, f"{stats_body_sha}.gz"),
             stats_body,
         )
 
-        stats_rows = []
+        team_payload = {
+            "teams": [
+                {
+                    "id": 100 + index,
+                    "name": f"Historical Team {index}",
+                    "abbreviation": f"T{index:02d}",
+                }
+                for index in range(1, 31)
+            ]
+        }
+        team_body = json.dumps(
+            team_payload,
+            sort_keys=True,
+            separators=(",", ":"),
+        ).encode()
+        team_body_sha = sha(team_body)
+        write_gzip(
+            os.path.join(blob_dir, f"{team_body_sha}.gz"),
+            team_body,
+        )
+
+        stats_rows = [{
+            "observed_date": self.day,
+            "method": "GET",
+            "url": (
+                "https://statsapi.mlb.com/api/v1/teams"
+                "?sportId=1&season=2025"
+            ),
+            "request_body_sha256": None,
+            "status_code": 200,
+            "response_sha256": team_body_sha,
+            "response_bytes": len(team_body),
+            "exception_type": None,
+        }]
         if statsapi_failure:
             stats_rows.append({
                 "observed_date": self.day,
@@ -312,6 +345,7 @@ class PackageFactory:
             "source_sha": source_sha,
             "stats_body_sha": stats_body_sha,
             "mlb_body_sha": mlb_body_sha,
+            "team_body_sha": team_body_sha,
         }
 
 
