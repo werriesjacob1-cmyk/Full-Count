@@ -248,15 +248,24 @@ if [ -f "$ROOT/backtest/canonical_run.py" ]; then
     && pass "canonical durability is opt-in (tests cannot push scientific state)" \
     || warn "backtest/canonical_run.py present but the opt-in marker did not match"
 else
-  # Do not report this as "backtest/ is not on this branch" -- backtest/ IS
-  # here. The runner itself is not, and that is the finding worth surfacing.
-  # VERIFIED 2026-08-29: backtest/canonical_run.py and canonical_durability.py
-  # exist at NO branch tip in this repository -- not main, not the recovery
-  # branch, not the prereg branch. They exist only at the pinned canonical SHA
-  # fc589447ec157bff9a96071edc3ceb6c7dc734eb, reachable by `git fetch origin
-  # <sha>`. Canonical recovery therefore depends on that commit staying
-  # fetchable; nothing on a branch keeps it alive.
-  warn "canonical runner absent from this checkout: backtest/canonical_run.py lives only at the pinned SHA, not at any branch tip"
+  # Main does not carry the canonical runner, by design. What matters for
+  # recoverability is whether the scientific identity is protected by a remote
+  # ref. Independent GitHub audit corrected the earlier false claim that no
+  # such ref existed.
+  PIN_SHA="fc589447ec157bff9a96071edc3ceb6c7dc734eb"
+  PIN_REF="refs/heads/claude/canonical-source-identity-01"
+  REMOTE_SHA="$(git ls-remote --heads origin "$PIN_REF" 2>/dev/null | awk 'NR==1 {print $1}')"
+  if [ "$REMOTE_SHA" = "$PIN_SHA" ]; then
+    git fetch -q origin "$PIN_REF" 2>/dev/null || true
+    if git cat-file -e "$PIN_SHA:backtest/canonical_run.py" 2>/dev/null \
+       && git cat-file -e "$PIN_SHA:backtest/canonical_durability.py" 2>/dev/null; then
+      pass "canonical scientific runner protected by claude/canonical-source-identity-01 at exact pinned SHA"
+    else
+      fail "canonical pin ref resolves but expected runner files are absent at $PIN_SHA"
+    fi
+  else
+    fail "canonical pin ref missing or moved: want $PIN_SHA, got ${REMOTE_SHA:-none}"
+  fi
 fi
 
 # ───────────────────────────────────────────────────────── 8. BROWSER ──
