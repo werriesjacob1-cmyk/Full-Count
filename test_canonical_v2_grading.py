@@ -172,5 +172,26 @@ class FrozenOutcomeTests(unittest.TestCase):
         self.assertIn("scratched or DNP", result["reason"])
 
 
+    def test_fetch_game_statuses_switches_http_to_outcome_phase(self):
+        class FakeLedger:
+            def __init__(self):
+                self.phases = []
+
+            def set_phase(self, phase):
+                self.phases.append(phase)
+
+        grader = FrozenOutcomeGrader(FakeStore(pd.DataFrame()))
+        grader._original_fetch_game_statuses = lambda *args, **kwargs: {"ok": True}
+        ledger = FakeLedger()
+        with patch(
+            "backtest.canonical_v2_grading.get_active_ledger",
+            return_value=ledger,
+        ):
+            result = grader.fetch_game_statuses("2025-08-20")
+
+        self.assertEqual(result, {"ok": True})
+        self.assertEqual(ledger.phases, ["outcome_grading"])
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)
