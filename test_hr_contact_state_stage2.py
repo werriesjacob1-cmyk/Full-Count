@@ -57,6 +57,21 @@ def stage1_bundle():
         population_row("2026-05-01", 12, 5, 0.26, 0.26, team="C", park=3),
         population_row("2026-05-01", 12, 6, 0.10, 0.99, team="C", park=3),
     ]
+    venue_records = [
+        {"game_pk": 10, "venue_id": 1, "venue_name": "P1"},
+        {"game_pk": 11, "venue_id": 2, "venue_name": "P2"},
+        {"game_pk": 12, "venue_id": 3, "venue_name": "P3"},
+    ]
+    venue_attestation = {
+        "row_count": len(venue_records),
+        "sha256": deterministic_sha256(venue_records),
+        "records": venue_records,
+    }
+    venue_compact = {
+        "row_count": venue_attestation["row_count"],
+        "sha256": venue_attestation["sha256"],
+    }
+
     arms = {}
     for arm in ("B", "C", "D"):
         selection = select_top_k_per_date(
@@ -71,17 +86,24 @@ def stage1_bundle():
             metadata={
                 "arm": arm,
                 "k_primary": 5,
+                "runner_code_sha": "runner-sha",
+                "canonical_artifact_identity": {"sha256": "canonical-sha"},
+                "source_artifact_identity": {"sha256": "source-sha"},
+                "venue_map_attestation": venue_compact,
                 "coverage": {"supported_n": 6},
             },
         )
     hashes = {arm: arms[arm]["sha256"] for arm in ("B", "C", "D")}
-    return {
+    bundle = {
         "arms": arms,
         "coverage": {
             "per_arm_supported_n": {"B": 6, "C": 6, "D": 6},
         },
+        "venue_map_attestation": venue_attestation,
         "freeze_set_sha256": deterministic_sha256(hashes),
     }
+    bundle["bundle_sha256"] = deterministic_sha256(bundle)
+    return bundle
 
 
 def evaluation_rows():
@@ -126,6 +148,9 @@ class FreezeVerificationTests(unittest.TestCase):
             arm: bundle["arms"][arm]["sha256"]
             for arm in ("B", "C", "D")
         })
+        logical = dict(bundle)
+        logical.pop("bundle_sha256", None)
+        bundle["bundle_sha256"] = deterministic_sha256(logical)
         with self.assertRaises(HRStage2IntegrityError):
             verify_stage1_bundle(bundle)
 
@@ -284,7 +309,8 @@ class SurvivalRuleTests(unittest.TestCase):
 
 class ImmutableWriterTests(unittest.TestCase):
     def test_report_can_be_written_once_only(self):
-        report = {"x": 1, "evaluation_report_sha256": "logical"}
+        report = {"x": 1}
+        report["evaluation_report_sha256"] = deterministic_sha256(report)
         with tempfile.TemporaryDirectory() as tmp:
             path = os.path.join(tmp, "evaluation.json")
             first = write_immutable_evaluation_report(path, report)
