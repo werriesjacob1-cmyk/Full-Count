@@ -566,6 +566,18 @@ def run_stage2(args):
     truth = load_stage2_holdout_truth(args.canonical_rows)
     runner_sha = _git_head()
 
+    stage1_runner_sha = (
+        ((bundle.get("arms") or {}).get("B") or {})
+        .get("payload", {})
+        .get("metadata", {})
+        .get("runner_code_sha")
+    )
+    if not stage1_runner_sha or runner_sha != stage1_runner_sha:
+        raise LockedRunGateError(
+            "runner Git SHA changed between Stage 1 and Stage 2; "
+            f"stage1={stage1_runner_sha!r} current={runner_sha!r}"
+        )
+
     report = evaluate_hr_stage2(truth["holdout"], bundle)
 
     # Bind the revealed report to the exact gate/artifact files used.
@@ -641,6 +653,28 @@ def run_stage2_e(args):
     e_bundle = _load_json(args.e_bundle)
     truth = load_stage2_holdout_truth(args.canonical_rows)
     runner_sha = _git_head()
+
+    initial_runner_sha = (
+        (((initial_stage1.get("arms") or {}).get("B") or {})
+         .get("payload", {})
+         .get("metadata", {})
+         .get("runner_code_sha"))
+    )
+    e_runner_sha = (
+        ((e_bundle.get("freeze") or {}).get("payload", {})
+         .get("metadata", {})
+         .get("runner_code_sha"))
+    )
+    if not initial_runner_sha or runner_sha != initial_runner_sha:
+        raise LockedRunGateError(
+            "runner Git SHA changed between initial Stage 1 and Stage 2-E; "
+            f"initial={initial_runner_sha!r} current={runner_sha!r}"
+        )
+    if not e_runner_sha or runner_sha != e_runner_sha:
+        raise LockedRunGateError(
+            "runner Git SHA changed between Stage 1-E and Stage 2-E; "
+            f"stage1-e={e_runner_sha!r} current={runner_sha!r}"
+        )
 
     report = evaluate_hr_e_stage2(
         truth["holdout"],
