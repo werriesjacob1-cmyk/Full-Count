@@ -81,6 +81,25 @@ In practice:
   cadence, so container loss costs a bounded amount of work.
 - Never rely on the Claude conversation as the recovery mechanism.
 
+### Automatic autosave network writes — explicit behavior
+
+Once this `.claude/settings.json` is actually loaded by a **fresh session**, its
+`PostToolUse` hook checks roughly every 180 seconds after Bash/Write/Edit and
+launches `.claude/worktree-autosave.sh`. That script's default is
+`FC_AUTOSAVE_PUSH=1`: it pushes a backup snapshot to
+`refs/heads/fc-autosave/<current-branch>`.
+
+This is intentionally a **durability backup only**:
+- it refuses `main` / `master` and detached pinned worktrees;
+- it never force-pushes;
+- it never advances the working branch, merges, deploys, or promotes a model;
+- it never makes an autosave snapshot equivalent to a reviewed commit.
+
+Set `FC_AUTOSAVE_PUSH=0` in the session environment to disable remote autosave
+pushes. The default-on network write is stated here because it is an authority
+choice, not something a hook should hide.
+
+
 ---
 
 ## Merge discipline
