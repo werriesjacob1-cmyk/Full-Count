@@ -122,21 +122,123 @@ class ResponseLedger:
         allowed_hosts=None,
         archive_bodies=False,
         strict_host_firewall=False,
+        cache_get_responses=False,
     ):
         self.root_dir = os.path.abspath(root_dir)
         self.allowed_hosts = set(allowed_hosts or DEFAULT_ALLOWED_HOSTS)
         self.archive_bodies = bool(archive_bodies)
         self.strict_host_firewall = bool(strict_host_firewall)
+        self.cache_get_responses = bool(cache_get_responses)
+        if self.cache_get_responses and not self.archive_bodies:
+            raise HttpProvenanceError(
+                "cache_get_responses requires archive_bodies=True so cached bytes stay auditable"
+            )
         self._current_date = None
         self._entries = []
         self._sequence = 0
         self._firewall_blocks = []
+        self._network_count = 0
+        self._cache_hit_count = 0
         os.makedirs(self.root_dir, exist_ok=True)
         if self.archive_bodies:
             os.makedirs(self._blob_dir(), exist_ok=True)
+        if self.cache_get_responses:
+            os.makedirs(self._cache_dir(), exist_ok=True)
 
     def _blob_dir(self):
         return os.path.join(self.root_dir, "blobs")
+
+    def _cache_dir(self):
+        return os.path.join(self.root_dir, "response_cache")
+
+    def _cache_key(self, identity):
+        payload = {
+            "method": identity.get("method"),
+            "url": identity.get("url"),
+            "request_body_sha256": identity.get("request_body_sha256"),
+        }
+        return _sha256(
+            json.dumps(payload, sort_keys=True, separators=(",", ":")).encode("utf-8")
+        )
+
+    def cached_response(self, identity):
+        if not self.cache_get_responses or identity.get("method") != "GET":
+            return None
+        key = self._cache_key(identity)
+        meta_path = os.path.join(self._cache_dir(), f"{key}.json")
+        with _LOCK:
+            if not os.path.exists(meta_path):
+                return None
+            try:
+                with open(meta_path, encoding="utf-8") as handle:
+                    meta = json.load(handle)
+                response_sha = meta["response_sha256"]
+                body_path = os.path.join(self._blob_dir(), f"{response_sha}.gz")
+                with gzip.open(body_path, "rb") as handle:
+                    content = handle.read()
+                if _sha256(content) != response_sha:
+                    raise HttpProvenanceError(
+                        f"cached response body SHA mismatch for key {key}"
+                    )
+            except Exception as exc:
+                raise HttpProvenanceError(
+                    f"cannot load cached response for {identity.get('url')}: {exc}"
+                ) from exc
+
+            prepared = requests.Request(
+                method=identity["method"],
+                url=identity["url"],
+                headers=identity.get("headers") or {},
+            ).prepare()
+            response = requests.Response()
+            response.status_code = int(meta["status_code"])
+            response._content = content
+            response.headers.update(meta.get("response_headers") or {})
+            response.url = identity["url"]
+            response.request = prepared
+            response.encoding = meta.get("encoding")
+            self._cache_hit_count += 1
+            return response
+
+    def cache_response(self, identity, response):
+        if not self.cache_get_responses or identity.get("method") != "GET":
+            return
+        status = int(getattr(response, "status_code", 0) or 0)
+        if not 200 <= status < 300:
+            return
+        content = bytes(getattr(response, "content", b"") or b"")
+        response_sha = _sha256(content)
+        archived = self._archive_body(response_sha, content)
+        if not archived:
+            raise HttpProvenanceError(
+                "response cache requires archived response body"
+            )
+        key = self._cache_key(identity)
+        meta_path = os.path.join(self._cache_dir(), f"{key}.json")
+        with _LOCK:
+            if os.path.exists(meta_path):
+                return
+            payload = {
+                "cache_schema_version": 1,
+                "request_identity": {
+                    "method": identity["method"],
+                    "url": identity["url"],
+                    "request_body_sha256": identity.get("request_body_sha256"),
+                },
+                "status_code": status,
+                "response_sha256": response_sha,
+                "response_headers": dict(getattr(response, "headers", {}) or {}),
+                "encoding": getattr(response, "encoding", None),
+                "archived_body": archived,
+                "first_observed_at": _now_iso(),
+            }
+            tmp = meta_path + f".{os.getpid()}.{threading.get_ident()}.tmp"
+            with open(tmp, "w", encoding="utf-8") as handle:
+                json.dump(payload, handle, indent=2, sort_keys=True)
+                handle.write("\n")
+                handle.flush()
+                os.fsync(handle.fileno())
+            os.replace(tmp, meta_path)
 
     def start_date(self, date):
         with _LOCK:
@@ -148,6 +250,10 @@ class ResponseLedger:
             self._entries = []
             self._sequence = 0
             self._firewall_blocks = []
+            self._network_count = 0
+            self._cache_hit_count = 0
+            self._network_count = 0
+            self._cache_hit_count = 0
 
     def active_date(self):
         with _LOCK:
@@ -199,7 +305,7 @@ class ResponseLedger:
         os.replace(tmp, path)
         return os.path.relpath(path, self.root_dir)
 
-    def record_response(self, response):
+    def record_response(self, response, *, transport="network"):
         request = getattr(response, "request", None)
         url = getattr(request, "url", None) or getattr(response, "url", None)
         if not self.should_record(url):
@@ -236,6 +342,7 @@ class ResponseLedger:
                     getattr(response, "headers", {}) or {}
                 ).get("Content-Type"),
                 "exception_type": None,
+                "transport": transport,
             }
             archived = self._archive_body(response_sha, content)
             if archived:
@@ -315,6 +422,9 @@ class ResponseLedger:
                 "strict_host_firewall": self.strict_host_firewall,
                 "firewall_block_count": len(self._firewall_blocks),
                 "firewall_blocks": list(self._firewall_blocks),
+                "network_request_count": self._network_count,
+                "cache_hit_count": self._cache_hit_count,
+                "cache_get_responses": self.cache_get_responses,
             }
             summary_path = os.path.join(self.root_dir, f"{date}.summary.json")
             tmp_summary = summary_path + ".tmp"
@@ -328,6 +438,8 @@ class ResponseLedger:
             self._entries = []
             self._sequence = 0
             self._firewall_blocks = []
+            self._network_count = 0
+            self._cache_hit_count = 0
             return summary
 
     def abort_date(self, date, reason):
@@ -362,6 +474,8 @@ class ResponseLedger:
             self._entries = []
             self._sequence = 0
             self._firewall_blocks = []
+            self._network_count = 0
+            self._cache_hit_count = 0
 
 
 def set_active_ledger(ledger):
@@ -384,8 +498,13 @@ def install_requests_hook():
 
         def wrapped(session, method, url, **kwargs):
             ledger = get_active_ledger()
+            identity = None
             if ledger is not None:
-                ledger.assert_request_allowed(method, url, kwargs)
+                identity = ledger.assert_request_allowed(method, url, kwargs)
+                cached = ledger.cached_response(identity)
+                if cached is not None:
+                    ledger.record_response(cached, transport="cache")
+                    return cached
             try:
                 response = _ORIGINAL_SESSION_REQUEST(session, method, url, **kwargs)
             except Exception as exc:
@@ -393,7 +512,10 @@ def install_requests_hook():
                     ledger.record_exception(method, url, kwargs, exc)
                 raise
             if ledger is not None:
-                ledger.record_response(response)
+                with _LOCK:
+                    ledger._network_count += 1
+                ledger.record_response(response, transport="network")
+                ledger.cache_response(identity, response)
             return response
 
         requests.sessions.Session.request = wrapped
