@@ -33,6 +33,7 @@ class HistoricalTeamIdentity:
         self._original_fetch_bullpen_scores = gp.fetch_bullpen_scores
         self._installed = False
         self._active_year = None
+        self._active_date = None
 
     def _year(self):
         try:
@@ -105,6 +106,7 @@ class HistoricalTeamIdentity:
             ) from exc
 
         self._active_year = year
+        self._active_date = str(day)
 
         # engine._team_abbr() memoizes name->abbr for speed. That cache must
         # never cross a season boundary because 2024 Oakland Athletics and
@@ -121,6 +123,105 @@ class HistoricalTeamIdentity:
             raise HistoricalTeamIdentityError(
                 f"season {year} team directory lost identity uniqueness"
             )
+
+
+    def _safe_bullpen_schedule(
+        self,
+        date=None,
+        start_date=None,
+        end_date=None,
+        team="",
+        opponent="",
+        sportId=1,
+        game_id=None,
+        leagueId=None,
+        season=None,
+        include_series_status=True,
+    ):
+        """Return only games conclusively completed before simulated D.
+
+        MLB's historical schedule endpoint is mutable around postponements.
+        A request whose date BLOCK ends at D-1 can still contain a gamePk
+        whose current officialDate is D (or later); fetching that gamePk's
+        current box score would then import future bullpen usage.  The public
+        statsapi.schedule() wrapper discards officialDate, so canonical v2
+        reads the same raw schedule response and applies the missing temporal
+        gate before the unchanged bullpen worker sees any game IDs.
+        """
+        if self._active_date is None:
+            raise HistoricalTeamIdentityError(
+                "canonical-v2 bullpen schedule used without active simulated date"
+            )
+        if (
+            date is not None
+            or game_id is not None
+            or opponent not in ("", None)
+            or leagueId is not None
+            or season is not None
+            or not start_date
+            or not end_date
+            or team in ("", None)
+        ):
+            raise HistoricalTeamIdentityError(
+                "canonical-v2 bullpen schedule received unexpected query shape"
+            )
+
+        hydrate = (
+            "decisions,probablePitcher(note),linescore,broadcasts,"
+            "game(content(media(epg))),seriesStatus"
+        )
+        response = m.retry_get(
+            "https://statsapi.mlb.com/api/v1/schedule",
+            params={
+                "startDate": start_date,
+                "endDate": end_date,
+                "teamId": str(team),
+                "sportId": str(sportId),
+                "hydrate": hydrate,
+            },
+            headers={"User-Agent": "Mozilla/5.0"},
+            timeout=20,
+        )
+        response.raise_for_status()
+        payload = response.json() or {}
+
+        games = []
+        for date_block in payload.get("dates") or []:
+            for game in date_block.get("games") or []:
+                official_date = str(game.get("officialDate") or "")
+                if not official_date:
+                    raise HistoricalTeamIdentityError(
+                        f"gamePk {game.get('gamePk')}: historical schedule lacks officialDate"
+                    )
+
+                # Strictly pre-D. This is the decisive guard for a postponed
+                # D-1 schedule entry whose gamePk was ultimately played on D.
+                if official_date >= self._active_date:
+                    continue
+
+                status = game.get("status") or {}
+                final_code = str(
+                    status.get("codedGameState")
+                    or status.get("statusCode")
+                    or ""
+                )
+                if final_code not in {"F", "O"}:
+                    # Never ask today's immutable feed for a game that was
+                    # postponed/suspended/incomplete in the bounded schedule.
+                    continue
+
+                game_pk = game.get("gamePk")
+                if game_pk is None:
+                    raise HistoricalTeamIdentityError(
+                        "historical bullpen schedule contains game without gamePk"
+                    )
+                games.append({
+                    "game_id": int(game_pk),
+                    "game_datetime": game.get("gameDate"),
+                    "game_date": official_date,
+                    "game_num": int(game.get("gameNumber") or 1),
+                })
+        return games
 
     def fetch_bullpen_scores(self, game_meta, pit_season_df=None):
         if not game_meta:
@@ -167,30 +268,35 @@ class HistoricalTeamIdentity:
             m._bullpen_fetch_one,
             is_rotation_starter=role_classifier,
         )
-        with ThreadPoolExecutor(max_workers=min(10, len(jobs))) as pool:
-            for team_name, usage, err in pool.map(fetch_one, jobs):
-                if err:
-                    # The production path degrades here. Canonical evidence
-                    # must not silently erase a feature because its historical
-                    # source failed.
-                    raise HistoricalTeamIdentityError(
-                        f"historical bullpen fetch failed for {team_name}: {err}"
+        original_schedule = m.statsapi.schedule
+        m.statsapi.schedule = self._safe_bullpen_schedule
+        try:
+            with ThreadPoolExecutor(max_workers=min(10, len(jobs))) as pool:
+                for team_name, usage, err in pool.map(fetch_one, jobs):
+                    if err:
+                        # The production path degrades here. Canonical evidence
+                        # must not silently erase a feature because its historical
+                        # source failed.
+                        raise HistoricalTeamIdentityError(
+                            f"historical bullpen fetch failed for {team_name}: {err}"
+                        )
+                    if not usage:
+                        # Preserve production semantics exactly: a genuinely
+                        # empty recent-usage set contributes no bullpen feature.
+                        # Identity resolution has already succeeded above; do not
+                        # turn "no data" into an invented zero-fatigue signal.
+                        continue
+                    fatigued = sum(
+                        1 for item in usage.values()
+                        if item.get("pitches", 0) > 60
                     )
-                if not usage:
-                    # Preserve production semantics exactly: a genuinely
-                    # empty recent-usage set contributes no bullpen feature.
-                    # Identity resolution has already succeeded above; do not
-                    # turn "no data" into an invented zero-fatigue signal.
-                    continue
-                fatigued = sum(
-                    1 for item in usage.values()
-                    if item.get("pitches", 0) > 60
-                )
-                out[team_name] = {
-                    "fatigued_relievers": fatigued,
-                    "tracked": len(usage),
-                    "relievers": gp._reliever_detail(usage),
-                }
+                    out[team_name] = {
+                        "fatigued_relievers": fatigued,
+                        "tracked": len(usage),
+                        "relievers": gp._reliever_detail(usage),
+                    }
+        finally:
+            m.statsapi.schedule = original_schedule
 
         return out
 
