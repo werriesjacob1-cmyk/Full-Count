@@ -1013,5 +1013,185 @@ class CertificationTests(unittest.TestCase):
             self.assertEqual(result["verdict"], "NOT CANONICAL")
 
 
+    def _rebind_outcome_source(self, root, frame):
+        outcome_path = os.path.join(
+            root,
+            "source",
+            "statcast_outcome_2025-08-20.parquet",
+        )
+        frame.to_parquet(outcome_path, index=False)
+        new_sha = cert.sha256_file(outcome_path)
+        columns = sorted(str(column) for column in frame.columns)
+        schema_fp = cert.sha256_bytes(",".join(columns).encode())
+        parsed = pd.to_datetime(frame["game_date"], errors="coerce").dropna()
+        coverage = (
+            f"{parsed.min().date()}..{parsed.max().date()}"
+            if len(parsed) else None
+        )
+
+        meta_path = os.path.join(root, "date_metadata", "2025-08-20.json")
+        meta = json.load(open(meta_path, encoding="utf-8"))
+        meta["outcome_source_content_sha256"] = new_sha
+        meta["outcome_source_schema_fingerprint"] = schema_fp
+        write_json(meta_path, meta)
+
+        def mutate(report):
+            report["outcome_statcast_source_sha256"] = new_sha
+            bound = report["identity"]["outcome_statcast_source"]
+            bound["content_sha256"] = new_sha
+            bound["row_count"] = len(frame)
+            bound["schema_columns"] = columns
+            bound["schema_fingerprint"] = schema_fp
+            bound["date_coverage"] = coverage
+            record = next(
+                item for item in report["source_lineage"]
+                if item["source"] == "statcast_outcome_only"
+            )
+            record["content_sha256"] = new_sha
+            record["row_count"] = len(frame)
+            record["schema_columns"] = columns
+            record["schema_fingerprint"] = schema_fp
+            record["date_coverage"] = coverage
+            report["source_lineage_fingerprint"] = (
+                cert.source_lineage_fingerprint(report["source_lineage"])
+            )
+
+        self._refresh_report(root, mutate)
+
+    def test_outcome_source_with_predictive_feature_is_not_canonical(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            PackageFactory(tmp).build()
+            path = os.path.join(
+                tmp, "source", "statcast_outcome_2025-08-20.parquet"
+            )
+            frame = pd.read_parquet(path)
+            frame["bat_speed"] = 72.0
+            self._rebind_outcome_source(tmp, frame)
+            result = self.certify(tmp)
+            self.assertEqual(
+                result["verdict"], "NOT CANONICAL", msg=json.dumps(result, indent=2)
+            )
+            self.assertTrue(
+                any(
+                    "exact grading-only contract" in failure
+                    for failure in result["failures"]
+                )
+            )
+
+    def test_missing_outcome_source_blocks_certification(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            PackageFactory(tmp).build()
+            os.remove(
+                os.path.join(
+                    tmp, "source", "statcast_outcome_2025-08-20.parquet"
+                )
+            )
+            result = self.certify(tmp)
+            self.assertEqual(
+                result["verdict"],
+                "CERTIFICATION BLOCKED",
+                msg=json.dumps(result, indent=2),
+            )
+            self.assertTrue(
+                any(
+                    "outcome-only Statcast parquet missing" in blocker
+                    for blocker in result["blockers"]
+                )
+            )
+
+    def test_postponed_same_day_predictive_game_feed_is_not_canonical(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            PackageFactory(tmp).build()
+            blob_dir = os.path.join(tmp, "http_blobs")
+
+            schedule_payload = {
+                "dates": [{
+                    "date": "2025-08-19",
+                    "games": [{
+                        "gamePk": 776691,
+                        "officialDate": "2025-08-20",
+                        "gameDate": "2025-08-20T00:05:00Z",
+                        "status": {
+                            "codedGameState": "D",
+                            "statusCode": "DR",
+                            "detailedState": "Postponed",
+                        },
+                    }],
+                }],
+            }
+            schedule_body = json.dumps(
+                schedule_payload, sort_keys=True, separators=(",", ":")
+            ).encode()
+            schedule_sha = sha(schedule_body)
+            write_gzip(
+                os.path.join(blob_dir, f"{schedule_sha}.gz"),
+                schedule_body,
+            )
+
+            feed_payload = {
+                "gameData": {
+                    "datetime": {"officialDate": "2025-08-20"},
+                    "status": {"codedGameState": "F", "detailedState": "Final"},
+                }
+            }
+            feed_body = json.dumps(
+                feed_payload, sort_keys=True, separators=(",", ":")
+            ).encode()
+            feed_sha = sha(feed_body)
+            write_gzip(
+                os.path.join(blob_dir, f"{feed_sha}.gz"),
+                feed_body,
+            )
+
+            def mutate(rows):
+                rows.extend([
+                    {
+                        "observed_date": "2025-08-20",
+                        "scientific_phase": "predictive_input",
+                        "method": "GET",
+                        "url": (
+                            "https://statsapi.mlb.com/api/v1/schedule"
+                            "?startDate=2025-08-12&endDate=2025-08-19"
+                            "&teamId=133&sportId=1"
+                        ),
+                        "request_body_sha256": None,
+                        "status_code": 200,
+                        "response_sha256": schedule_sha,
+                        "response_bytes": len(schedule_body),
+                        "exception_type": None,
+                    },
+                    {
+                        "observed_date": "2025-08-20",
+                        "scientific_phase": "predictive_input",
+                        "method": "GET",
+                        "url": (
+                            "https://statsapi.mlb.com/api/v1.1/game/776691/feed/live"
+                        ),
+                        "request_body_sha256": None,
+                        "status_code": 200,
+                        "response_sha256": feed_sha,
+                        "response_bytes": len(feed_body),
+                        "exception_type": None,
+                    },
+                ])
+
+            self._rewrite_ledger(
+                tmp,
+                "mlb_statsapi_request_ledger",
+                mutate,
+                bind=True,
+            )
+            result = self.certify(tmp)
+            self.assertEqual(
+                result["verdict"], "NOT CANONICAL", msg=json.dumps(result, indent=2)
+            )
+            self.assertTrue(
+                any(
+                    "predictive game feed 776691" in failure
+                    for failure in result["failures"]
+                )
+            )
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)
