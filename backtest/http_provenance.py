@@ -159,6 +159,7 @@ class ResponseLedger:
 
     def _cache_key(self, identity):
         payload = {
+            "scientific_phase": self.active_phase(),
             "method": identity.get("method"),
             "url": identity.get("url"),
             "request_body_sha256": identity.get("request_body_sha256"),
@@ -227,6 +228,7 @@ class ResponseLedger:
             payload = {
                 "cache_schema_version": 1,
                 "request_identity": {
+                    "scientific_phase": self.active_phase(),
                     "method": identity["method"],
                     "url": identity["url"],
                     "request_body_sha256": identity.get("request_body_sha256"),
