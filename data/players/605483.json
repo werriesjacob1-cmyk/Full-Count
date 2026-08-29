@@ -134,6 +134,39 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-29",
+      "evaluations": [
+        {
+          "prop": "Over 6.5 Strikeouts",
+          "type": "pitcher",
+          "score": 31.9,
+          "notable_signals": 0,
+          "matchup": "Los Angeles Dodgers @ Detroit Tigers",
+          "game_pk": 824230,
+          "team": "Los Angeles Dodgers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_k_pct": 55.0,
+            "same_hand_ratio": 5.5556,
+            "l14_k_pct": 49.4118,
+            "env_neutral": 50.0
+          },
+          "hit_probability": 0.3839,
+          "raw_hit_probability": 0.3839,
+          "lift": 0.1693,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 6.5,
+            "needs": 7
+          }
+        }
+      ]
     }
   ]
 }

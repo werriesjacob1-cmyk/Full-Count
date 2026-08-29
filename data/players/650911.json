@@ -204,6 +204,94 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-29",
+      "evaluations": [
+        {
+          "prop": "Over 4.5 Strikeouts",
+          "type": "pitcher",
+          "score": 34.0,
+          "notable_signals": 0,
+          "matchup": "Philadelphia Phillies @ Los Angeles Angels",
+          "game_pk": 823986,
+          "team": "Philadelphia Phillies",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_k_pct": 81.0,
+            "same_hand_ratio": 43.75,
+            "l14_k_pct": 50.5882,
+            "tto_penalty": -8.0,
+            "env_neutral": 50.0
+          },
+          "hit_probability": 0.6101,
+          "raw_hit_probability": 0.6802,
+          "lift": 0.094,
+          "reliability": "A",
+          "sample_n": 27,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 4.5,
+            "needs": 5
+          }
+        },
+        {
+          "prop": "Over 18.5 Outs Recorded",
+          "type": "pitcher",
+          "score": 52.1,
+          "notable_signals": 1,
+          "matchup": "Philadelphia Phillies @ Los Angeles Angels",
+          "game_pk": 823986,
+          "team": "Philadelphia Phillies",
+          "side": "away",
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "outs_rate": 0.3674,
+            "avg_outs_per_start": 18.7
+          },
+          "hit_probability": 0.3674,
+          "raw_hit_probability": null,
+          "lift": 0.1799,
+          "reliability": "A",
+          "sample_n": 27,
+          "projection": {
+            "stat": "pitcher_outs",
+            "value": 18.5,
+            "needs": 19
+          }
+        },
+        {
+          "prop": "Over 11.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 14.0,
+          "notable_signals": 0,
+          "matchup": "Philadelphia Phillies @ Los Angeles Angels",
+          "game_pk": 823986,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            650911,
+            696270
+          ],
+          "signals": {
+            "combined_k_edge": -0.1582
+          },
+          "hit_probability": 0.3767,
+          "raw_hit_probability": null,
+          "lift": -0.1582,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 11.5,
+            "needs": 12
+          }
+        }
+      ]
     }
   ]
 }

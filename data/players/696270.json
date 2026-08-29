@@ -234,6 +234,65 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-29",
+      "evaluations": [
+        {
+          "prop": "Over 3.5 Strikeouts",
+          "type": "pitcher",
+          "score": 31.5,
+          "notable_signals": 0,
+          "matchup": "Philadelphia Phillies @ Los Angeles Angels",
+          "game_pk": 823986,
+          "team": "Los Angeles Angels",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_k_pct": 53.0,
+            "same_hand_ratio": 88.8889,
+            "l14_k_pct": 1.1765,
+            "env_neutral": 50.0
+          },
+          "hit_probability": 0.6003,
+          "raw_hit_probability": 0.6318,
+          "lift": -0.0883,
+          "reliability": "B",
+          "sample_n": 13,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 3.5,
+            "needs": 4
+          }
+        },
+        {
+          "prop": "Over 13.5 Outs Recorded",
+          "type": "pitcher",
+          "score": 36.3,
+          "notable_signals": 0,
+          "matchup": "Philadelphia Phillies @ Los Angeles Angels",
+          "game_pk": 823986,
+          "team": "Los Angeles Angels",
+          "side": "home",
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "outs_rate": 0.6892,
+            "avg_outs_per_start": 14.38
+          },
+          "hit_probability": 0.6892,
+          "raw_hit_probability": null,
+          "lift": -0.1599,
+          "reliability": "B",
+          "sample_n": 13,
+          "projection": {
+            "stat": "pitcher_outs",
+            "value": 13.5,
+            "needs": 14
+          }
+        }
+      ]
     }
   ]
 }

@@ -1,0 +1,37 @@
+{
+  "player_id": "nrfi_824874",
+  "name": "Colorado Rockies @ Atlanta Braves \u2014 1st Inning (Both Teams)",
+  "snapshots": [
+    {
+      "date": "2026-08-29",
+      "evaluations": [
+        {
+          "prop": "A run scores in the 1st (either team)",
+          "type": "game",
+          "score": 63.2,
+          "notable_signals": 0,
+          "matchup": "Colorado Rockies @ Atlanta Braves",
+          "game_pk": 824874,
+          "team": null,
+          "side": "both",
+          "lean": "YRFI",
+          "combo_player_ids": null,
+          "signals": {
+            "home_team_scores_p": 0.3011,
+            "away_team_scores_p": 0.3011,
+            "fi_n_starts": 22.0
+          },
+          "hit_probability": 0.5115,
+          "raw_hit_probability": null,
+          "lift": 0.0099,
+          "reliability": "A",
+          "sample_n": 22,
+          "projection": {
+            "stat": "nrfi_combined",
+            "value": 51.2
+          }
+        }
+      ]
+    }
+  ]
+}
