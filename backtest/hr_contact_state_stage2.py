@@ -61,6 +61,18 @@ def _finite_probability(value, label):
     return number
 
 
+def _finite_score(value, label):
+    if value is None or isinstance(value, bool):
+        raise HRStage2IntegrityError(f"{label} missing/non-numeric")
+    try:
+        number = float(value)
+    except (TypeError, ValueError) as exc:
+        raise HRStage2IntegrityError(f"{label} non-numeric: {value!r}") from exc
+    if not math.isfinite(number):
+        raise HRStage2IntegrityError(f"{label} non-finite: {value!r}")
+    return number
+
+
 def _recompute_selection_identity_sets(selection):
     champion_ids = list(selection.get("champion_ids") or [])
     challenger_ids = list(selection.get("challenger_ids") or [])
@@ -342,6 +354,14 @@ def _validate_evaluation_rows(evaluation_rows, verified_stage1):
         if current != float(frozen["current_prob"]):
             raise HRStage2IntegrityError(
                 f"champion probability changed after Stage-1 freeze for {cid!r}"
+            )
+        score = _finite_score(
+            row.get("score"),
+            f"score for {cid!r}",
+        )
+        if score != float(frozen["eligibility_score"]):
+            raise HRStage2IntegrityError(
+                f"eligibility score changed after Stage-1 freeze for {cid!r}"
             )
         if row.get("team") != frozen.get("team"):
             raise HRStage2IntegrityError(
