@@ -579,8 +579,15 @@ Ties break by lexical representation of the group key.
 If every `impact_g <= 0`, that axis has no positive single-group contributor
 and therefore cannot trigger the sign-flip dependency rule.
 
-Fail closed for that axis if removal of the chosen largest positive contributor
-leaves either added or removed empty.
+If removing ANY single group value leaves either the added set or the removed
+set empty, that axis is immediately **dependency-unresolvable / fail-closed**.
+Do not assign the group a fabricated numeric impact and do not omit it from the
+search for a dominant contributor. This closes the otherwise undefined case
+where the potentially most concentrated group cannot have
+`Delta_without_g` computed at all.
+
+For axes with no such empty-side removal, choose the largest positive
+contributor by the impact rule above.
 
 Frozen dependency stop condition is triggered if, for ANY axis:
 
