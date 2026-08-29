@@ -1,0 +1,106 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+
+  "permissions": {
+    "disableBypassPermissionsMode": "disable",
+
+    "deny": [
+      "Read(./.env)",
+      "Read(./.env.*)",
+      "Read(**/.env)",
+      "Read(**/.env.*)",
+      "Read(**/*.pem)",
+      "Read(**/*.key)",
+      "Read(**/*.p12)",
+      "Read(**/*.pfx)",
+      "Read(**/id_rsa*)",
+      "Read(**/id_ed25519*)",
+      "Read(**/.netrc)",
+      "Read(**/.npmrc)",
+      "Read(**/.pypirc)",
+      "Read(**/credentials)",
+      "Read(**/*secret*)",
+      "Read(**/*token*)",
+      "Read(**/service-account*.json)",
+      "Read(~/.ssh/**)",
+      "Read(~/.aws/**)",
+      "Read(~/.config/gh/**)",
+      "Read(~/.git-credentials)",
+
+      "Write(./.env)",
+      "Write(./.env.*)",
+      "Write(**/.env)",
+      "Write(**/*.pem)",
+      "Write(**/*.key)",
+      "Edit(./.env)",
+      "Edit(**/.env)",
+
+      "Bash(git push --force:*)",
+      "Bash(git push -f:*)",
+      "Bash(rm -rf /:*)"
+    ],
+
+    "ask": [
+      "Edit(./generate_picks.py)",
+      "Edit(./recommendation.py)",
+      "Edit(./recommendation_funnel.py)",
+      "Edit(./prop_probability.py)",
+      "Edit(./stable_base_rate.py)",
+      "Edit(./value_board.py)",
+      "Edit(./grade_results.py)",
+      "Edit(./grade_value.py)",
+      "Edit(./dashboard/settlement_rules.py)",
+      "Edit(./dashboard/refresh_grades.py)",
+      "Edit(./backtest/engine.py)",
+      "Edit(./backtest/signals.py)",
+      "Edit(./backtest/calibration.py)",
+      "Edit(./backtest/refit_calibrators.py)",
+      "Edit(./backtest/calibrators_by_market.json)",
+      "Edit(./backtest/calibrator_oldscorer.json)",
+      "Edit(./backtest/reliability_bands.json)",
+
+      "Write(./generate_picks.py)",
+      "Write(./recommendation.py)",
+      "Write(./prop_probability.py)",
+      "Write(./grade_results.py)",
+      "Write(./dashboard/settlement_rules.py)",
+      "Write(./dashboard/refresh_grades.py)",
+      "Write(./backtest/engine.py)",
+      "Write(./backtest/signals.py)",
+      "Write(./backtest/calibration.py)",
+      "Write(./backtest/calibrators_by_market.json)",
+
+      "Bash(git merge:*)",
+      "Bash(git rebase:*)",
+      "Bash(git reset --hard:*)"
+    ]
+  },
+
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "R=\"$(git rev-parse --show-toplevel 2>/dev/null)\"; [ -n \"$R\" ] || exit 0; [ -x \"$R/.claude/session-context.sh\" ] || exit 0; bash \"$R/.claude/session-context.sh\" 2>/dev/null || true",
+            "timeout": 10,
+            "statusMessage": "Reading worktree state..."
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Bash|Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "R=\"$(git rev-parse --show-toplevel 2>/dev/null)\"; [ -n \"$R\" ] || exit 0; [ -x \"$R/.claude/worktree-autosave.sh\" ] || exit 0; S=\"$(git rev-parse --absolute-git-dir 2>/dev/null)/fc-autosave\"; mkdir -p \"$S\" 2>/dev/null; f=\"$S/last-run\"; now=$(date +%s); last=$(cat \"$f\" 2>/dev/null || echo 0); if [ $((now - last)) -ge 180 ]; then echo \"$now\" > \"$f\"; nohup bash \"$R/.claude/worktree-autosave.sh\" >/dev/null 2>&1 & fi; exit 0",
+            "timeout": 5,
+            "statusMessage": "Autosave check..."
+          }
+        ]
+      }
+    ]
+  }
+}
