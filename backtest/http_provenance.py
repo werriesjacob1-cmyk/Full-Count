@@ -130,6 +130,7 @@ class ResponseLedger:
         self._current_date = None
         self._entries = []
         self._sequence = 0
+        self._firewall_blocks = []
         os.makedirs(self.root_dir, exist_ok=True)
         if self.archive_bodies:
             os.makedirs(self._blob_dir(), exist_ok=True)
@@ -146,6 +147,7 @@ class ResponseLedger:
             self._current_date = str(date)
             self._entries = []
             self._sequence = 0
+            self._firewall_blocks = []
 
     def active_date(self):
         with _LOCK:
@@ -165,6 +167,17 @@ class ResponseLedger:
         except Exception:
             host = ""
         if self.strict_host_firewall and host not in self.allowed_hosts:
+            with _LOCK:
+                block = {
+                    "observed_date": self._current_date,
+                    "blocked_at": _now_iso(),
+                    "method": identity["method"],
+                    "url": identity["url"],
+                    "host": host,
+                    "request_headers": identity["headers"],
+                    "request_body_sha256": identity["request_body_sha256"],
+                }
+                self._firewall_blocks.append(block)
             raise HttpProvenanceError(
                 "canonical-v2 source firewall blocked unapproved HTTP host "
                 f"{host!r}: {identity['method']} {identity['url']}"
@@ -300,6 +313,8 @@ class ResponseLedger:
                 "allowed_hosts": sorted(self.allowed_hosts),
                 "archive_bodies": self.archive_bodies,
                 "strict_host_firewall": self.strict_host_firewall,
+                "firewall_block_count": len(self._firewall_blocks),
+                "firewall_blocks": list(self._firewall_blocks),
             }
             summary_path = os.path.join(self.root_dir, f"{date}.summary.json")
             tmp_summary = summary_path + ".tmp"
@@ -312,6 +327,7 @@ class ResponseLedger:
             self._current_date = None
             self._entries = []
             self._sequence = 0
+            self._firewall_blocks = []
             return summary
 
     def abort_date(self, date, reason):
@@ -345,6 +361,7 @@ class ResponseLedger:
             self._current_date = None
             self._entries = []
             self._sequence = 0
+            self._firewall_blocks = []
 
 
 def set_active_ledger(ledger):
