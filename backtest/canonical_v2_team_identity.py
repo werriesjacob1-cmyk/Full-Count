@@ -15,7 +15,9 @@ Rules:
 from __future__ import annotations
 
 import functools
+import threading
 from concurrent.futures import ThreadPoolExecutor
+from datetime import datetime, timedelta, timezone
 
 import backtest.engine as engine
 import generate_picks as gp
@@ -31,6 +33,8 @@ class HistoricalTeamIdentity:
         self._season_cache = {}
         self._original_get_team_ids = m.get_team_ids
         self._original_fetch_bullpen_scores = gp.fetch_bullpen_scores
+        self._original_boxscore_data = m.statsapi.boxscore_data
+        self._boxscore_context = threading.local()
         self._installed = False
         self._active_year = None
         self._active_date = None
@@ -223,6 +227,43 @@ class HistoricalTeamIdentity:
                 })
         return games
 
+
+    @staticmethod
+    def _scheduled_start_timecode(raw_start):
+        """Return one second before scheduled first pitch as UTC MLB timecode."""
+        raw = str(raw_start or "").strip()
+        if not raw:
+            raise HistoricalTeamIdentityError(
+                "canonical-v2 cannot time-bound bullpen evidence without game_start_utc"
+            )
+        try:
+            if raw.endswith("Z"):
+                parsed = datetime.fromisoformat(raw[:-1] + "+00:00")
+            else:
+                parsed = datetime.fromisoformat(raw)
+            if parsed.tzinfo is None:
+                parsed = parsed.replace(tzinfo=timezone.utc)
+            parsed = parsed.astimezone(timezone.utc) - timedelta(seconds=1)
+        except Exception as exc:
+            raise HistoricalTeamIdentityError(
+                f"invalid canonical game_start_utc {raw!r}"
+            ) from exc
+        return parsed.strftime("%Y%m%d_%H%M%S")
+
+    def _timebounded_boxscore_data(self, game_pk, *args, **kwargs):
+        cutoff = getattr(self._boxscore_context, "timecode", None)
+        if not cutoff:
+            raise HistoricalTeamIdentityError(
+                "canonical-v2 predictive bullpen boxscore requested without "
+                "a simulated pregame timecode"
+            )
+        if kwargs.get("timecode") not in (None, cutoff):
+            raise HistoricalTeamIdentityError(
+                "canonical-v2 predictive bullpen boxscore attempted a different timecode"
+            )
+        kwargs["timecode"] = cutoff
+        return self._original_boxscore_data(game_pk, *args, **kwargs)
+
     def fetch_bullpen_scores(self, game_meta, pit_season_df=None):
         if not game_meta:
             return {}
@@ -233,7 +274,9 @@ class HistoricalTeamIdentity:
 
         jobs = []
         seen_ids = set()
+        team_cutoffs = {}
         for gm in game_meta:
+            game_cutoff = self._scheduled_start_timecode(gm.get("game_start_utc"))
             for side in ("away", "home"):
                 team_name = gm.get(f"{side}_team")
                 raw_team_id = gm.get(f"{side}_team_id")
@@ -254,6 +297,12 @@ class HistoricalTeamIdentity:
                         f"gamePk {gm.get('game_pk')}: team id {team_id} is absent "
                         f"from season {year} MLB directory"
                     )
+                prior_cutoff = team_cutoffs.get(team_id)
+                if prior_cutoff is None or game_cutoff < prior_cutoff:
+                    # A doubleheader uses the earliest scheduled game as the
+                    # shared pregame snapshot. That is conservative for Game 2
+                    # and prevents its later state from contaminating Game 1.
+                    team_cutoffs[team_id] = game_cutoff
                 if team_id in seen_ids:
                     continue
                 seen_ids.add(team_id)
@@ -264,12 +313,30 @@ class HistoricalTeamIdentity:
             return out
 
         role_classifier = gp._bullpen_role_classifier(pit_season_df)
-        fetch_one = functools.partial(
-            m._bullpen_fetch_one,
-            is_rotation_starter=role_classifier,
-        )
+
+        def fetch_one(job):
+            team_name, team_id = job
+            cutoff = team_cutoffs.get(team_id)
+            if not cutoff:
+                raise HistoricalTeamIdentityError(
+                    f"team id {team_id}: missing canonical pregame bullpen timecode"
+                )
+            self._boxscore_context.timecode = cutoff
+            try:
+                return m._bullpen_fetch_one(
+                    job,
+                    is_rotation_starter=role_classifier,
+                )
+            finally:
+                try:
+                    del self._boxscore_context.timecode
+                except AttributeError:
+                    pass
+
         original_schedule = m.statsapi.schedule
+        original_boxscore_data = m.statsapi.boxscore_data
         m.statsapi.schedule = self._safe_bullpen_schedule
+        m.statsapi.boxscore_data = self._timebounded_boxscore_data
         try:
             with ThreadPoolExecutor(max_workers=min(10, len(jobs))) as pool:
                 for team_name, usage, err in pool.map(fetch_one, jobs):
@@ -297,6 +364,7 @@ class HistoricalTeamIdentity:
                     }
         finally:
             m.statsapi.schedule = original_schedule
+            m.statsapi.boxscore_data = original_boxscore_data
 
         return out
 
