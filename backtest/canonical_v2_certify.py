@@ -576,12 +576,22 @@ def certify(package_dir, repo_root, expected_parent_sha=None, expected_source_sh
         failures.append("scientific HTTP host firewall was not enabled")
     if identity.get("http_response_content_bound") is not True:
         failures.append("external responses were not content-bound")
+    if identity.get("http_scientific_phase_bound") is not True:
+        failures.append(
+            "canonical v2 did not bind external requests to scientific phases"
+        )
     if identity.get("historical_team_identity") != (
         "schedule_team_ids_plus_season_directory"
     ):
         failures.append(
             "canonical v2 did not declare stable schedule-team-ID + "
             "season-directory historical team identity"
+        )
+    if identity.get("historical_bullpen_temporal_gate") != (
+        "official_date_before_D_and_completed_status_v1"
+    ):
+        failures.append(
+            "canonical v2 did not declare the postponed/suspended-game bullpen temporal gate"
         )
     if identity.get("statsapi_source_shape_policy") != (
         STATSAPI_SOURCE_SHAPE_POLICY
@@ -810,6 +820,7 @@ def certify(package_dir, repo_root, expected_parent_sha=None, expected_source_sh
     all_external_rows = []
     recovered_transients = 0
     unrecovered_statsapi = []
+    loaded_ledgers = set()
     for source_name, expected_host in (
         ("mlb_statsapi_request_ledger", "statsapi.mlb.com"),
         ("mlbcom_dated_lineup_request_ledger", None),
@@ -833,12 +844,18 @@ def certify(package_dir, repo_root, expected_parent_sha=None, expected_source_sh
         if sha256_file(ledger_path) != record.get("content_sha256"):
             failures.append(f"{source_name} content SHA mismatch")
         rows = read_jsonl(ledger_path)
+        loaded_ledgers.add(source_name)
         if len(rows) != record.get("row_count"):
             failures.append(f"{source_name} row_count mismatch")
 
         groups = defaultdict(list)
         for row in rows:
             all_external_rows.append(row)
+            phase = row.get("scientific_phase")
+            if phase not in {"predictive_input", "outcome_grading"}:
+                failures.append(
+                    f"{source_name}: request lacks valid scientific phase: {phase!r}"
+                )
             observed_day = str(row.get("observed_date") or "")
             if observed_day not in set(dates):
                 failures.append(
@@ -851,6 +868,10 @@ def certify(package_dir, repo_root, expected_parent_sha=None, expected_source_sh
                         f"StatsAPI ledger contains unexpected host {host!r}"
                     )
             else:
+                if phase != "predictive_input":
+                    failures.append(
+                        f"MLB.com historical lineup request appeared outside predictive_input phase: {phase!r}"
+                    )
                 if host not in ("www.mlb.com", "mlb.com"):
                     failures.append(
                         f"MLB.com ledger contains unexpected host {host!r}"
@@ -941,7 +962,10 @@ def certify(package_dir, repo_root, expected_parent_sha=None, expected_source_sh
     failures.extend(source_shape_audit["failures"])
     blockers.extend(source_shape_audit["blockers"])
     expected_team_seasons = sorted({str(date.fromisoformat(day).year) for day in dates})
-    if source_shape_audit.get("team_directory_seasons") != expected_team_seasons:
+    if (
+        "mlb_statsapi_request_ledger" in loaded_ledgers
+        and source_shape_audit.get("team_directory_seasons") != expected_team_seasons
+    ):
         failures.append(
             "archived historical team-directory seasons do not exactly cover "
             f"the dataset years: observed="
