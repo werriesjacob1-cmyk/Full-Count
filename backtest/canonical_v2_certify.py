@@ -223,6 +223,7 @@ def audit_statsapi_request_shapes(rows):
     failures = []
     blockers = []
     classes = Counter()
+    team_directory_seasons = set()
 
     for row in rows:
         observed = str(row.get("observed_date") or "")
@@ -279,6 +280,7 @@ def audit_statsapi_request_shapes(rows):
                 )
                 continue
             classes["historical_team_directory"] += 1
+            team_directory_seasons.add(season)
             continue
 
         if re.fullmatch(r"/api/v1/people/\d+/stats", path):
@@ -460,6 +462,7 @@ def audit_statsapi_request_shapes(rows):
         "failures": list(dict.fromkeys(failures)),
         "blockers": list(dict.fromkeys(blockers)),
         "classes": dict(sorted(classes.items())),
+        "team_directory_seasons": sorted(team_directory_seasons),
     }
 
 
@@ -905,6 +908,14 @@ def certify(package_dir, repo_root, expected_parent_sha=None, expected_source_sh
     source_shape_audit = audit_statsapi_request_shapes(statsapi_rows)
     failures.extend(source_shape_audit["failures"])
     blockers.extend(source_shape_audit["blockers"])
+    expected_team_seasons = sorted({str(date.fromisoformat(day).year) for day in dates})
+    if source_shape_audit.get("team_directory_seasons") != expected_team_seasons:
+        failures.append(
+            "archived historical team-directory seasons do not exactly cover "
+            f"the dataset years: observed="
+            f"{source_shape_audit.get('team_directory_seasons')} "
+            f"expected={expected_team_seasons}"
+        )
 
     # Every successful external response must be reconstructable from the
     # content-addressed final body archive.
@@ -918,6 +929,7 @@ def certify(package_dir, repo_root, expected_parent_sha=None, expected_source_sh
         for row in all_external_rows
         if row.get("response_sha256")
     }
+    decoded_json = {}
     if not os.path.isdir(blob_dir):
         blockers.append("external response body archive is absent")
     else:
@@ -939,6 +951,84 @@ def certify(package_dir, repo_root, expected_parent_sha=None, expected_source_sh
             if sha256_bytes(body) != response_sha:
                 failures.append(
                     f"archived external response body SHA mismatch: {response_sha}"
+                )
+                continue
+            try:
+                decoded_json[response_sha] = json.loads(body)
+            except Exception:
+                # MLB.com HTML and any future non-JSON bodies are still
+                # content-bound; only StatsAPI semantic checks below require
+                # JSON decoding.
+                pass
+
+        # Independently verify each season directory's archived CONTENT, not
+        # merely its URL: exactly 30 unique MLB team IDs with names/abbrs.
+        for row in statsapi_rows:
+            parsed = urlparse(str(row.get("url") or ""))
+            if parsed.path != "/api/v1/teams":
+                continue
+            qs = parse_qs(parsed.query)
+            season = _single_query(qs, "season")
+            if not season or "activeStatus" in qs:
+                continue
+            payload = decoded_json.get(row.get("response_sha256"))
+            if not isinstance(payload, dict):
+                failures.append(
+                    f"season {season} historical team directory body is not "
+                    "archived valid JSON"
+                )
+                continue
+            teams = payload.get("teams") or []
+            valid = [
+                team for team in teams
+                if team.get("id") is not None
+                and team.get("name")
+                and team.get("abbreviation")
+            ]
+            ids = {int(team["id"]) for team in valid}
+            if len(valid) != 30 or len(ids) != 30:
+                failures.append(
+                    f"season {season} historical team directory archive has "
+                    f"{len(valid)} valid rows / {len(ids)} unique IDs, expected 30"
+                )
+
+        # Every immutable game-feed fetch must resolve to a game discovered
+        # by one of the archived schedule responses, and never to a game
+        # whose official schedule date is after the simulated date consuming
+        # that feed.
+        game_dates = {}
+        for row in statsapi_rows:
+            parsed = urlparse(str(row.get("url") or ""))
+            if parsed.path != "/api/v1/schedule":
+                continue
+            payload = decoded_json.get(row.get("response_sha256"))
+            if not isinstance(payload, dict):
+                continue
+            for date_block in payload.get("dates") or []:
+                game_day = date_block.get("date")
+                for game in date_block.get("games") or []:
+                    game_pk = game.get("gamePk")
+                    if game_pk is not None and game_day:
+                        game_dates[int(game_pk)] = str(game_day)
+
+        for row in statsapi_rows:
+            parsed = urlparse(str(row.get("url") or ""))
+            match = re.fullmatch(r"/api/v1\.1/game/(\d+)/feed/live", parsed.path)
+            if not match:
+                continue
+            game_pk = int(match.group(1))
+            observed = str(row.get("observed_date") or "")
+            game_day = game_dates.get(game_pk)
+            if game_day is None:
+                blockers.append(
+                    f"{observed}: game feed {game_pk} cannot be linked to any "
+                    "archived schedule response"
+                )
+                continue
+            if game_day > observed:
+                failures.append(
+                    f"{observed}: game feed {game_pk} belongs to future "
+                    f"scheduled date {game_day}"
                 )
 
     status_counts = report.get("status_counts") or {}
