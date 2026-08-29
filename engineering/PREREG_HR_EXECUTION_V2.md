@@ -93,14 +93,34 @@ Never `<= D`.
 
 Window and support contract, inherited and made executable:
 
-- use the most recent **100 tracked swings** strictly before `D`;
-- minimum **30** tracked swings;
-- an arm is **SUPPORTED** for a row only when every feature required by that
-  arm is present under the 30-swing rule;
-- unsupported row -> `p_challenger = p_champion` exactly;
-- no partial-arm model;
-- no mean/zero imputation;
-- no same-day or future pitch may enter a feature.
+1. Define a **tracked swing** as a pre-`D` Statcast row with non-null
+   `bat_speed`. This uses the exact tracking marker the frozen parent prereg
+   already verified in the real pybaseball frame; it does not infer swings
+   from postgame outcomes.
+2. Sort those tracked swings chronologically and take the most recent **100**
+   for that batter. This one fixed 100-row window is shared by every arm and
+   every feature for that candidate.
+3. For each required feature, compute its statistic from the non-null values
+   for that feature **inside those same 100 tracked-swing rows**.
+4. A feature is available only when it has at least **30 non-null
+   observations** inside the fixed window. Fewer than 30 -> that feature is
+   `None`.
+5. Arm support is then exact:
+   - B: `bat_speed` count >=30 (mean + p90 come from the same values);
+   - C: each of `attack_angle`, `swing_length`, `swing_path_tilt`,
+     `attack_direction` individually has count >=30;
+   - D: B and C are both supported;
+   - E: D is supported and `hit_distance_sc` has count >=30.
+6. Unsupported row -> `p_challenger = p_champion` exactly.
+
+No feature-specific lookback horizon beyond the fixed last-100 tracked-swing
+window.
+No partial-arm model.
+No mean/zero imputation.
+No same-day or future pitch may enter a feature.
+
+Coverage reporting must include the per-feature non-null-count distribution and
+the exact supported-row count for B/C/D/E before any effect size is revealed.
 
 Training uses SUPPORTED rows for that arm.
 Evaluation uses the entire eligible population, with unsupported rows falling
