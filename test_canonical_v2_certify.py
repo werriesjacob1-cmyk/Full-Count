@@ -521,6 +521,77 @@ class CertificationTests(unittest.TestCase):
                 )
             )
 
+    def test_same_request_identity_with_two_successful_bodies_is_not_canonical(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            factory = PackageFactory(tmp)
+            ids = factory.build()
+
+            ledger_path = os.path.join(
+                tmp,
+                "mlb_statsapi_request_ledger.jsonl",
+            )
+            rows = [
+                json.loads(line)
+                for line in open(ledger_path, encoding="utf-8")
+                if line.strip()
+            ]
+            schedule = next(
+                row for row in rows
+                if "/api/v1/schedule" in row["url"]
+            )
+
+            divergent_body = b'{"dates":[{"date":"2025-08-20","games":[{"gamePk":999}]}]}'
+            divergent_sha = sha(divergent_body)
+            write_gzip(
+                os.path.join(tmp, "http_blobs", f"{divergent_sha}.gz"),
+                divergent_body,
+            )
+            duplicate = dict(schedule)
+            duplicate["response_sha256"] = divergent_sha
+            duplicate["response_bytes"] = len(divergent_body)
+            rows.append(duplicate)
+
+            raw = b"".join(
+                (
+                    json.dumps(row, sort_keys=True, separators=(",", ":"))
+                    + "\n"
+                ).encode()
+                for row in rows
+            )
+            with open(ledger_path, "wb") as handle:
+                handle.write(raw)
+
+            report_path = os.path.join(tmp, "consolidation_report.json")
+            report = json.load(open(report_path, encoding="utf-8"))
+            record = next(
+                item for item in report["source_lineage"]
+                if item["source"] == "mlb_statsapi_request_ledger"
+            )
+            record["content_sha256"] = sha(raw)
+            record["row_count"] = len(rows)
+            report["source_lineage_fingerprint"] = (
+                cert.source_lineage_fingerprint(report["source_lineage"])
+            )
+            report.pop("report_sha256", None)
+            report["report_sha256"] = cert.sha256_bytes(
+                json.dumps(
+                    report,
+                    sort_keys=True,
+                    separators=(",", ":"),
+                    default=str,
+                ).encode()
+            )
+            write_json(report_path, report)
+
+            result = self.certify(tmp)
+            self.assertEqual(result["verdict"], "NOT CANONICAL")
+            self.assertTrue(
+                any(
+                    "different successful content SHAs" in failure
+                    for failure in result["failures"]
+                )
+            )
+
     def test_unrecovered_statsapi_failure_blocks_certification(self):
         with tempfile.TemporaryDirectory() as tmp:
             PackageFactory(tmp).build(statsapi_failure=True)
