@@ -213,7 +213,7 @@ def run_identity(args, code_sha, source, outcome_source):
         "historical_bullpen_boxscore_cutoff": (
             "earliest_simulated_D_team_first_pitch_minus_1_second_utc"
         ),
-        "statsapi_source_shape_policy": "canonical-v2-statsapi-v1-20260829",
+        "statsapi_source_shape_policy": "canonical-v2-statsapi-v2-20260829",
     }
     identity["identity_fingerprint"] = sha256_bytes(
         json.dumps(identity, sort_keys=True, separators=(",", ":")).encode("utf-8")
