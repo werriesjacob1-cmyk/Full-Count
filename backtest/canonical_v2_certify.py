@@ -1081,6 +1081,7 @@ def certify(
             and not row.get("exception_type")
         ):
             key = (
+                row.get("scientific_phase"),
                 row.get("method"),
                 row.get("url"),
                 row.get("request_body_sha256"),
