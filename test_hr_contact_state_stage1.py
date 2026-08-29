@@ -14,6 +14,7 @@ from backtest.hr_contact_state_stage1 import (
     build_hr_prediction_freezes,
     fit_hr_arms,
     venue_map_attestation,
+    write_immutable_stage1_bundle,
 )
 
 
@@ -86,6 +87,33 @@ def venue_map(rows):
         }
         for row in rows
     }
+
+
+class ImmutableStageOneWriterTests(unittest.TestCase):
+    def test_bundle_can_be_written_once_only(self):
+        rows = [holdout_row("2026-05-02", 1, 1, 0.20)]
+        bundle = build_hr_prediction_freezes(
+            rows,
+            statcast_for([1]),
+            manual_fitted_arms(),
+            venue_map(rows),
+            runner_code_sha="runner",
+            canonical_artifact_identity={"sha256": "canonical"},
+            source_artifact_identity={"sha256": "source"},
+        )
+        logical = dict(bundle)
+        embedded = logical.pop("bundle_sha256")
+        self.assertEqual(embedded, __import__(
+            "backtest.experiment_primitives",
+            fromlist=["deterministic_sha256"],
+        ).deterministic_sha256(logical))
+
+        with __import__("tempfile").TemporaryDirectory() as tmp:
+            path = __import__("os").path.join(tmp, "stage1.json")
+            first = write_immutable_stage1_bundle(path, bundle)
+            self.assertEqual(first["bundle_sha256"], bundle["bundle_sha256"])
+            with self.assertRaises(FileExistsError):
+                write_immutable_stage1_bundle(path, bundle)
 
 
 class VenueTests(unittest.TestCase):
