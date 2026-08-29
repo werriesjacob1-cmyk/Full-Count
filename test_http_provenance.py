@@ -216,7 +216,7 @@ class ResponseCacheTests(unittest.TestCase):
                     strict_host_firewall=True,
                 )
                 ledger.start_date("2026-05-01")
-            ledger.set_phase("predictive_input")
+                ledger.set_phase("predictive_input")
                 hp.set_active_ledger(ledger)
 
                 s = requests.Session()
