@@ -241,8 +241,8 @@
         {
           "prop": "Over 3.5 Strikeouts",
           "type": "pitcher",
-          "score": 29.4,
-          "notable_signals": 0,
+          "score": 31.6,
+          "notable_signals": 1,
           "matchup": "Philadelphia Phillies @ Los Angeles Angels",
           "game_pk": 823986,
           "team": "Los Angeles Angels",
@@ -253,7 +253,10 @@
             "opp_team_k_pct": 53.0,
             "same_hand_ratio": 33.3333,
             "l14_k_pct": 1.1765,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 72.0342,
+            "ump_k_pct": 0.276,
+            "ump_bb_pct": 0.096
           },
           "hit_probability": 0.6004,
           "raw_hit_probability": 0.632,
@@ -267,9 +270,9 @@
           }
         },
         {
-          "prop": "Over 15.5 Outs Recorded",
+          "prop": "Over 13.5 Outs Recorded",
           "type": "pitcher",
-          "score": 0,
+          "score": 40.5,
           "notable_signals": 0,
           "matchup": "Philadelphia Phillies @ Los Angeles Angels",
           "game_pk": 823986,
@@ -278,18 +281,18 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.3513,
+            "outs_rate": 0.6767,
             "avg_outs_per_start": 14.38
           },
-          "hit_probability": 0.3513,
+          "hit_probability": 0.6767,
           "raw_hit_probability": null,
-          "lift": -0.2611,
+          "lift": -0.1328,
           "reliability": "B",
           "sample_n": 13,
           "projection": {
             "stat": "pitcher_outs",
-            "value": 15.5,
-            "needs": 16
+            "value": 13.5,
+            "needs": 14
           }
         }
       ]

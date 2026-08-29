@@ -193,7 +193,7 @@
         {
           "prop": "Over 3.5 Strikeouts",
           "type": "pitcher",
-          "score": 41.7,
+          "score": 31.2,
           "notable_signals": 0,
           "matchup": "Texas Rangers @ Milwaukee Brewers",
           "game_pk": 823741,
@@ -203,9 +203,12 @@
           "combo_player_ids": null,
           "signals": {
             "opp_team_k_pct": 43.0,
-            "same_hand_ratio": 33.3333,
+            "same_hand_ratio": 43.75,
             "l14_k_pct": 43.5294,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 53.2346,
+            "ump_k_pct": 0.012,
+            "ump_bb_pct": -0.192
           },
           "hit_probability": 0.6198,
           "raw_hit_probability": 0.7291,
@@ -219,9 +222,9 @@
           }
         },
         {
-          "prop": "Over 15.5 Outs Recorded",
+          "prop": "Over 14.5 Outs Recorded",
           "type": "pitcher",
-          "score": 35.4,
+          "score": 57.9,
           "notable_signals": 0,
           "matchup": "Texas Rangers @ Milwaukee Brewers",
           "game_pk": 823741,
@@ -230,18 +233,18 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.5421,
+            "outs_rate": 0.7292,
             "avg_outs_per_start": 15.1
           },
-          "hit_probability": 0.5421,
+          "hit_probability": 0.7292,
           "raw_hit_probability": null,
-          "lift": -0.0703,
+          "lift": -0.0486,
           "reliability": "B",
           "sample_n": 10,
           "projection": {
             "stat": "pitcher_outs",
-            "value": 15.5,
-            "needs": 16
+            "value": 14.5,
+            "needs": 15
           }
         }
       ]

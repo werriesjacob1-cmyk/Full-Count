@@ -36,6 +36,41 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-29",
+      "evaluations": [
+        {
+          "prop": "Over 3.5 Strikeouts",
+          "type": "pitcher",
+          "score": 27.0,
+          "notable_signals": 0,
+          "matchup": "Boston Red Sox @ New York Yankees",
+          "game_pk": 823501,
+          "team": "Boston Red Sox",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_k_pct": 79.0,
+            "same_hand_ratio": 100.0,
+            "env_neutral": 50.0,
+            "ump_accuracy": 59.6274,
+            "ump_k_pct": -0.072,
+            "ump_bb_pct": -0.012
+          },
+          "hit_probability": 0.6023,
+          "raw_hit_probability": 0.6414,
+          "lift": -0.0868,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 3.5,
+            "needs": 4
+          }
+        }
+      ]
     }
   ]
 }

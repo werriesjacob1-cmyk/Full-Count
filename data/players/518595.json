@@ -369,6 +369,60 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-29",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 4.7,
+          "notable_signals": 2,
+          "matchup": "Philadelphia Phillies @ Los Angeles Angels",
+          "game_pk": 823986,
+          "team": "Los Angeles Angels",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 3.4286,
+            "l7_avg_ev": 19.1667,
+            "l7_barrel_pct": 0.0,
+            "bat_speed_trend": 1.275,
+            "park_hr_index": 51.4,
+            "season_barrel_pct": 65.3333,
+            "lineup_slot": 12.5,
+            "bullpen_fatigue": 0.0,
+            "platoon_barrel_pct": 2.8,
+            "platoon_xwoba": -5.0,
+            "park_hand_index": -1.39,
+            "opp_catcher_framing": 0.6,
+            "days_rest": 4.0,
+            "woba_ahead": 0.0,
+            "woba_behind": 39.0909,
+            "pull_park_synergy": -0.1411,
+            "team_total_move": 0.0,
+            "team_total_open": -6.0,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": 0.632,
+            "vs_rp_ops": -2.04,
+            "ump_k_pct": -0.276,
+            "ump_bb_pct": -0.096
+          },
+          "hit_probability": 0.4918,
+          "raw_hit_probability": 0.4918,
+          "lift": -0.0712,
+          "reliability": "D",
+          "sample_n": 24,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

@@ -2371,6 +2371,136 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-29",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 65.1,
+          "notable_signals": 1,
+          "matchup": "Baltimore Orioles @ Athletics",
+          "game_pk": 824961,
+          "team": "Athletics",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 44.0,
+            "l7_avg_ev": 66.4423,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 2.25,
+            "park_hr_index": 51.2,
+            "season_barrel_pct": 27.3333,
+            "lineup_slot": 100.0,
+            "bullpen_fatigue": 20.8333,
+            "platoon_barrel_pct": -2.32,
+            "platoon_xwoba": -1.08,
+            "park_hand_index": 3.53,
+            "opp_catcher_framing": 0.6,
+            "days_rest": 0.0,
+            "woba_behind": 9.0909,
+            "pull_park_synergy": 0.383,
+            "hard_hit_105_rate": -0.035,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": -0.664,
+            "vs_rp_ops": -0.66,
+            "ump_k_pct": 0.216,
+            "ump_bb_pct": -0.096
+          },
+          "hit_probability": 0.6427,
+          "raw_hit_probability": 0.633,
+          "lift": 0.0797,
+          "reliability": "A",
+          "sample_n": 90,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 76.9,
+          "notable_signals": 0,
+          "matchup": "Baltimore Orioles @ Athletics",
+          "game_pk": 824961,
+          "team": "Athletics",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": -3.66,
+            "sprint_speed": 100.0,
+            "catcher_poptime": 5.7143,
+            "on_base": 60.6526
+          },
+          "hit_probability": 0.1526,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 90,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 4.1,
+          "notable_signals": 0,
+          "matchup": "Baltimore Orioles @ Athletics",
+          "game_pk": 824961,
+          "team": "Athletics",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0452
+          },
+          "hit_probability": 0.0452,
+          "raw_hit_probability": null,
+          "lift": -0.0031,
+          "reliability": "A",
+          "sample_n": 90,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 2.3,
+          "notable_signals": 0,
+          "matchup": "Baltimore Orioles @ Athletics",
+          "game_pk": 824961,
+          "team": "Athletics",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.022
+          },
+          "hit_probability": 0.022,
+          "raw_hit_probability": null,
+          "lift": 0.0009,
+          "reliability": "A",
+          "sample_n": 90,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

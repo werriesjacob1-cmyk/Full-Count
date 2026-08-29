@@ -1421,6 +1421,112 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-29",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 71.4,
+          "notable_signals": 3,
+          "matchup": "Boston Red Sox @ New York Yankees",
+          "game_pk": 823501,
+          "team": "New York Yankees",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 0.0,
+            "pitch_exploit": 16.0,
+            "l7_avg_ev": 73.6719,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 12.225,
+            "park_hr_index": 51.1,
+            "season_barrel_pct": 78.6667,
+            "lineup_slot": 87.5,
+            "bullpen_fatigue": 18.5185,
+            "platoon_barrel_pct": 3.2,
+            "platoon_xwoba": 2.22,
+            "park_hand_index": 3.29,
+            "opp_catcher_framing": 0.84,
+            "days_rest": -2.0,
+            "woba_ahead": 29.0909,
+            "woba_behind": 5.4545,
+            "pull_park_synergy": 2.2339,
+            "hard_hit_105_rate": 1.59,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 2.0,
+            "sp_rp_ops_gap": 0.872,
+            "vs_rp_ops": 2.676,
+            "ump_k_pct": 0.072,
+            "ump_bb_pct": 0.012
+          },
+          "hit_probability": 0.6129,
+          "raw_hit_probability": 0.6106,
+          "lift": 0.0499,
+          "reliability": "A",
+          "sample_n": 130,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 20.4,
+          "notable_signals": 1,
+          "matchup": "Boston Red Sox @ New York Yankees",
+          "game_pk": 823501,
+          "team": "New York Yankees",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.1102
+          },
+          "hit_probability": 0.1102,
+          "raw_hit_probability": null,
+          "lift": 0.0619,
+          "reliability": "A",
+          "sample_n": 130,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 8.9,
+          "notable_signals": 0,
+          "matchup": "Boston Red Sox @ New York Yankees",
+          "game_pk": 823501,
+          "team": "New York Yankees",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0482
+          },
+          "hit_probability": 0.0482,
+          "raw_hit_probability": null,
+          "lift": 0.0271,
+          "reliability": "A",
+          "sample_n": 130,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }
