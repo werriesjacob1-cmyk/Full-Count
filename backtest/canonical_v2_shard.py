@@ -183,6 +183,7 @@ def run_identity(args, code_sha, source):
             for key in (
                 "content_sha256",
                 "row_count",
+                "schema_columns",
                 "schema_fingerprint",
                 "date_coverage",
             )
