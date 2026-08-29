@@ -58,12 +58,14 @@ ALLOWED_CHANGED_EXACT = {
     "mlb_daily.py",
     "backtest/http_provenance.py",
     "backtest/canonical_v2_grading.py",
+    "backtest/canonical_v2_team_identity.py",
     "backtest/canonical_v2_shard.py",
     "backtest/canonical_v2_consolidate.py",
     "backtest/canonical_v2_certify.py",
     "test_http_provenance.py",
     "test_historical_lineup_firewall.py",
     "test_canonical_v2_grading.py",
+    "test_canonical_v2_team_identity.py",
     "test_canonical_v2_shard.py",
     "test_canonical_v2_consolidate.py",
     "test_canonical_v2_certify.py",
@@ -311,6 +313,13 @@ def certify(package_dir, repo_root, expected_parent_sha=None, expected_source_sh
         failures.append("scientific HTTP host firewall was not enabled")
     if identity.get("http_response_content_bound") is not True:
         failures.append("external responses were not content-bound")
+    if identity.get("historical_team_identity") != (
+        "schedule_team_ids_plus_season_directory"
+    ):
+        failures.append(
+            "canonical v2 did not declare stable schedule-team-ID + "
+            "season-directory historical team identity"
+        )
 
     rows_sha = sha256_file(rows_path)
     if rows_sha != report.get("assembled_rows_sha256"):
