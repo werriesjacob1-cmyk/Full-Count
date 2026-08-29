@@ -388,6 +388,7 @@ def main():
                     flush=True,
                 )
             ledger.start_date(day)
+            ledger.set_phase("predictive_input")
             t0 = time.time()
             try:
                 team_identity.prepare_date(day)
