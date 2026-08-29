@@ -36,6 +36,7 @@ import mlb_daily as m
 import recommendation
 from backtest import canonical_durability as cd
 from backtest.engine import StatcastStore, date_range, simulate_date
+from backtest.canonical_v2_grading import FrozenOutcomeGrader
 from backtest.http_provenance import (
     DEFAULT_ALLOWED_HOSTS,
     ResponseLedger,
@@ -345,6 +346,11 @@ def main():
             "StatcastStore row count differs from independently bound source"
         )
 
+    # Outcome families requiring Statcast are graded from this SAME bound
+    # artifact. Never issue a second Savant pull for historical truth.
+    frozen_grader = FrozenOutcomeGrader(store)
+    frozen_grader.install()
+
     # Default False in production. Canonical v2 explicitly enables strict
     # historical behavior here and nowhere else.
     m.HISTORICAL_REPLAY_STRICT_LINEUPS = True
@@ -388,6 +394,18 @@ def main():
                 break
 
             access = access_log_report(res)
+
+            if int(http_summary.get("firewall_block_count") or 0) > 0:
+                errors[day] = (
+                    "scientific source firewall blocked request(s): "
+                    + "; ".join(
+                        f"{item.get('method')} {item.get('url')}"
+                        for item in (http_summary.get("firewall_blocks") or [])[:5]
+                    )
+                )
+                res.status = "failed"
+                res.reason = errors[day]
+
             if access["violations"]:
                 errors[day] = (
                     "point-in-time violation: "
@@ -427,6 +445,7 @@ def main():
     finally:
         set_active_ledger(None)
         m.HISTORICAL_REPLAY_STRICT_LINEUPS = False
+        frozen_grader.uninstall()
 
     completed_dates = sorted(summaries)
     shard_summary = {
