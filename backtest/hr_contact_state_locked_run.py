@@ -192,6 +192,15 @@ def validate_authorization_record(record, *, stage, canonical_sha256):
     return True
 
 
+def require_runner_sha(current_sha, expected_sha, boundary):
+    if not expected_sha or current_sha != expected_sha:
+        raise LockedRunGateError(
+            f"runner Git SHA changed across {boundary}; "
+            f"expected={expected_sha!r} current={current_sha!r}"
+        )
+    return True
+
+
 def validate_execution_gate(
     certification_path,
     authorization_path,
@@ -572,11 +581,11 @@ def run_stage2(args):
         .get("metadata", {})
         .get("runner_code_sha")
     )
-    if not stage1_runner_sha or runner_sha != stage1_runner_sha:
-        raise LockedRunGateError(
-            "runner Git SHA changed between Stage 1 and Stage 2; "
-            f"stage1={stage1_runner_sha!r} current={runner_sha!r}"
-        )
+    require_runner_sha(
+        runner_sha,
+        stage1_runner_sha,
+        "Stage 1 -> Stage 2",
+    )
 
     report = evaluate_hr_stage2(truth["holdout"], bundle)
 
@@ -665,16 +674,16 @@ def run_stage2_e(args):
          .get("metadata", {})
          .get("runner_code_sha"))
     )
-    if not initial_runner_sha or runner_sha != initial_runner_sha:
-        raise LockedRunGateError(
-            "runner Git SHA changed between initial Stage 1 and Stage 2-E; "
-            f"initial={initial_runner_sha!r} current={runner_sha!r}"
-        )
-    if not e_runner_sha or runner_sha != e_runner_sha:
-        raise LockedRunGateError(
-            "runner Git SHA changed between Stage 1-E and Stage 2-E; "
-            f"stage1-e={e_runner_sha!r} current={runner_sha!r}"
-        )
+    require_runner_sha(
+        runner_sha,
+        initial_runner_sha,
+        "initial Stage 1 -> Stage 2-E",
+    )
+    require_runner_sha(
+        runner_sha,
+        e_runner_sha,
+        "Stage 1-E -> Stage 2-E",
+    )
 
     report = evaluate_hr_e_stage2(
         truth["holdout"],
