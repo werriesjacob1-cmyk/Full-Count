@@ -90,6 +90,18 @@ def _date(row):
     return value
 
 
+def _finite_score(value, label):
+    if value is None or isinstance(value, bool):
+        raise HRStageIntegrityError(f"{label} missing/non-numeric")
+    try:
+        value = float(value)
+    except (TypeError, ValueError) as exc:
+        raise HRStageIntegrityError(f"{label} non-numeric: {value!r}") from exc
+    if not math.isfinite(value):
+        raise HRStageIntegrityError(f"{label} non-finite: {value!r}")
+    return value
+
+
 def _probability(value, label):
     if value is None or isinstance(value, bool):
         raise HRStageIntegrityError(f"{label} missing/non-numeric")
@@ -206,6 +218,10 @@ def _validated_training_rows(training_rows):
             row.get("predicted_prob"),
             f"predicted_prob for {candidate_identity(row)!r}",
         )
+        _finite_score(
+            row.get("score"),
+            f"score for {candidate_identity(row)!r}",
+        )
     return rows
 
 
@@ -296,6 +312,10 @@ def _validate_holdout_masked(rows):
         _probability(
             row.get("predicted_prob"),
             f"predicted_prob for {candidate_identity(row)!r}",
+        )
+        _finite_score(
+            row.get("score"),
+            f"score for {candidate_identity(row)!r}",
         )
     return rows
 
@@ -466,6 +486,7 @@ def build_hr_prediction_freezes(
                 "line": row["line"],
                 "team": row["team"],
                 "venue_id": venue["venue_id"],
+                "eligibility_score": float(row["score"]),
                 "current_prob": float(row["predicted_prob"]),
                 "challenger_prob": float(challenger_probs[index]),
                 "supported": bool(mask[index]),
