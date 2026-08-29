@@ -15,6 +15,7 @@ For hard-hit/moonshot candidates:
 from __future__ import annotations
 
 import grade_results as gr
+from backtest.http_provenance import get_active_ledger
 
 
 class FrozenOutcomeGrader:
@@ -22,6 +23,7 @@ class FrozenOutcomeGrader:
         self.store = store
         self._day_cache = {}
         self._original_grade_pick = gr.grade_pick
+        self._original_fetch_game_statuses = gr.fetch_game_statuses
 
     def day_frame(self, day):
         if day not in self._day_cache:
@@ -118,6 +120,12 @@ class FrozenOutcomeGrader:
 
         raise AssertionError(f"unsupported special stat {stat!r}")
 
+    def fetch_game_statuses(self, *args, **kwargs):
+        ledger = get_active_ledger()
+        if ledger is not None:
+            ledger.set_phase("outcome_grading")
+        return self._original_fetch_game_statuses(*args, **kwargs)
+
     def grade_pick(
         self,
         pick,
@@ -142,6 +150,8 @@ class FrozenOutcomeGrader:
 
     def install(self):
         gr.grade_pick = self.grade_pick
+        gr.fetch_game_statuses = self.fetch_game_statuses
 
     def uninstall(self):
         gr.grade_pick = self._original_grade_pick
+        gr.fetch_game_statuses = self._original_fetch_game_statuses
