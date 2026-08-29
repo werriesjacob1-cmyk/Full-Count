@@ -441,11 +441,48 @@ Only after Stage 1 is complete and hashed:
 
 - join the canonical `outcome` field by candidate identity;
 - compute every preregistered B/C/D result from the same frozen selections;
-- compute E only if the frozen continuation rule permits it;
-- write one immutable evaluation report.
+- write one immutable B/C/D evaluation report.
 
 No code, parameter, feature, volume, grouping, or band edge may change between
 Stage 1 and Stage 2.
+
+### Conditional Stage 1-E / Stage 2-E — only if D survives
+
+Arm E is **not** fit or predicted during the initial B/C/D Stage 1.
+
+If and only if the immutable B/C/D Stage-2 report says
+`D.survival.earns_continuation == true`, one conditional E pass is permitted.
+
+That conditional pass is deterministic and may consume only:
+
+- the exact B/C/D Stage-1 bundle and its frozen holdout candidate population;
+- the certified canonical artifact for <=2025 training rows only;
+- the exact certified Statcast source artifact already bound in Stage 1;
+- the exact same runner code SHA recorded by initial Stage 1;
+- the already-locked Arm-E feature list, estimator, optimizer, K, seed,
+  robustness axes, band edges, and fallback rules in this document.
+
+The E prediction stage must reconstruct its holdout input from the **already
+frozen Stage-1 candidate population**, not by redefining eligibility from the
+revealed 2026 outcome rows.
+
+The conditional E fitting/prediction code may inspect the B/C/D Stage-2 report
+only to verify the boolean D-survival gate and report identity/hash. It may not
+consume B/C/D outcomes, effect sizes, subgroup results, or any other revealed
+truth as a model input or tuning input.
+
+Any runner-code SHA change between initial Stage 1 and conditional Stage 1-E
+aborts E. Do not "port" the experiment to newer code after seeing B/C/D.
+
+Stage 1-E writes one immutable prediction freeze. Stage 2-E then joins the same
+canonical outcomes by candidate identity and evaluates E once with the exact
+same §10-§15 rules.
+
+E is a pre-specified **conditional sequential arm**, not an independent second
+holdout. Its historical evidence remains conditional/exploratory enough that
+prospective shadow validation is mandatory before any promotion discussion.
+
+E failure does not erase a B/C/D arm that already survived its own frozen gate.
 
 ---
 
