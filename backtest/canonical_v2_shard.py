@@ -37,6 +37,7 @@ import recommendation
 from backtest import canonical_durability as cd
 from backtest.engine import StatcastStore, date_range, simulate_date
 from backtest.canonical_v2_grading import FrozenOutcomeGrader
+from backtest.canonical_v2_team_identity import HistoricalTeamIdentity
 from backtest.http_provenance import (
     DEFAULT_ALLOWED_HOSTS,
     ResponseLedger,
@@ -192,6 +193,7 @@ def run_identity(args, code_sha, source):
         "http_strict_host_firewall": True,
         "http_response_content_bound": True,
         "http_identical_get_cache": True,
+        "historical_team_identity": "schedule_team_ids_plus_season_directory",
     }
     identity["identity_fingerprint"] = sha256_bytes(
         json.dumps(identity, sort_keys=True, separators=(",", ":")).encode("utf-8")
@@ -353,6 +355,12 @@ def main():
     frozen_grader = FrozenOutcomeGrader(store)
     frozen_grader.install()
 
+    # Canonical-v2 team identity is season-bounded and uses stable team IDs
+    # carried by the date-addressed schedule. This prevents current franchise
+    # names/directories from altering historical bullpen features.
+    team_identity = HistoricalTeamIdentity()
+    team_identity.install()
+
     # Default False in production. Canonical v2 explicitly enables strict
     # historical behavior here and nowhere else.
     m.HISTORICAL_REPLAY_STRICT_LINEUPS = True
@@ -381,6 +389,7 @@ def main():
             ledger.start_date(day)
             t0 = time.time()
             try:
+                team_identity.prepare_date(day)
                 res = simulate_date(
                     day,
                     store,
@@ -448,6 +457,7 @@ def main():
     finally:
         set_active_ledger(None)
         m.HISTORICAL_REPLAY_STRICT_LINEUPS = False
+        team_identity.uninstall()
         frozen_grader.uninstall()
 
     completed_dates = sorted(summaries)
