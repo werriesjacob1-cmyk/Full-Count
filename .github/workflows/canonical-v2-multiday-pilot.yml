@@ -268,7 +268,7 @@ jobs:
           if forbidden_feeds:
               raise SystemExit(f"predictive game feeds reached excluded slate: {forbidden_feeds[:5]}")
 
-          body_dir=f"{root}/http/bodies"
+          body_dir=f"{root}/http/blobs"
           observed_types=set()
           observed_games=[]
           for e in schedule_rows:
