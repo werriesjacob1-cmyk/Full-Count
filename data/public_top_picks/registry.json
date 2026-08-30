@@ -2,7 +2,7 @@
   "schema_version": 1,
   "identity_schema_version": 2,
   "rollout_version": "pre-phase-v-live-lifecycle-v1",
-  "updated_at": "2026-08-30T00:12:17.266780+00:00",
+  "updated_at": "2026-08-30T12:17:04.714840+00:00",
   "migration": {
     "version": "pre-phase-v-live-lifecycle-v1",
     "completed_at": "2026-08-17T23:14:57+00:00",
@@ -6857,6 +6857,95 @@
         },
         "qualification_timestamp": "2026-08-30T00:07:17.000778+00:00",
         "board_timestamp": "2026-08-30T00:07:16.987276+00:00",
+        "slate_date": "2026-08-30"
+      }
+    },
+    "fc2:822688:player-676083:pitcher_outs:15:over": {
+      "canonical_id": "fc2:822688:player-676083:pitcher_outs:15:over",
+      "settlement_identity": [
+        "822688",
+        [
+          "player",
+          "676083"
+        ],
+        "pitcher_outs",
+        "15",
+        "over"
+      ],
+      "slate_date": "2026-08-30",
+      "first_published_at": "2026-08-30T12:17:04.714840+00:00",
+      "publication_provenance": {
+        "artifact_id": "5cf603fe1631ba482782ed9811fc1f39a282a829fc2af00457c64ade9c55f9a5",
+        "source_commit": "cccc7d42576a083486ef6ba848e073d492fd620c",
+        "workflow_run_id": "33311020696",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-08-30T12:16:51.117211+00:00",
+        "data_hash": "49e1484d8cd55e24936722831631c90b35ea3f8b6c318326007516b8a243d128",
+        "live_hash": "4a21811d9748c3ec2f05c78aff05e1914b4a9d35e699c84bc75f771ff455e2c7"
+      },
+      "snapshot": {
+        "id": "fc2:822688:player-676083:pitcher_outs:15:over",
+        "identity_version": 2,
+        "game_pk": 822688,
+        "player_id": 676083,
+        "combo_player_ids": null,
+        "type": "pitcher",
+        "name": "Janson Junk",
+        "team": "Miami Marlins",
+        "matchup": "Miami Marlins @ Washington Nationals",
+        "game_start": "2026-08-30T16:15:00Z",
+        "stat": "pitcher_outs",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "pitcher_outs",
+          "value": 14.5,
+          "needs": 15
+        },
+        "prop": "Over 14.5 Outs Recorded",
+        "hit_probability": 0.7471,
+        "market_odds": -112,
+        "market_implied": 0.4901,
+        "market_edge": 0.257,
+        "market_hold": 0.0779,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (A), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (1.5x the market's estimate \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "Recorded 15+ outs (5.0 IP) in 74.7% of his last 19 real starts (league 78.0%, avg 15.37 outs/start)"
+        ],
+        "watchouts": [
+          "No real FanDuel line found for this pitcher yet -- this threshold is model-anchored to his average workload, not a posted market number",
+          "No positive read here: 3.3 pts BELOW the 78% league base rate for this market"
+        ],
+        "prob_ci": [
+          0.6818,
+          0.8638
+        ],
+        "reliability": "A",
+        "reliability_note": null,
+        "sample_n": 19,
+        "lineup_assumed": null,
+        "base_rate": 0.7797,
+        "lift": -0.0326,
+        "lift_reference_rate": null,
+        "stable_lift": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "bfeca02d",
+          "prediction_timestamp": "2026-08-30T12:10:47.280571+00:00",
+          "odds_fetched_at": "2026-08-30T12:10:44.363091+00:00",
+          "board_generated_at": "2026-08-30T12:10:47.250397+00:00"
+        },
+        "qualification_timestamp": "2026-08-30T12:10:47.280571+00:00",
+        "board_timestamp": "2026-08-30T12:10:47.250397+00:00",
         "slate_date": "2026-08-30"
       }
     }
