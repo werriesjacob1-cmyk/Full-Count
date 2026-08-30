@@ -1234,6 +1234,7 @@ def certify(
         # response proves that exact gamePk was already completed before D.
         # Same-day feeds are legitimate only in outcome_grading.
         schedule_evidence = defaultdict(list)
+        d_schedule_evidence_days = set()
         d_schedule_game_types = defaultdict(lambda: defaultdict(set))
         team_pregame_timecodes = {}
         for row in statsapi_rows:
@@ -1259,6 +1260,11 @@ def certify(
                     pre_d_range = date.fromisoformat(range_end) < date.fromisoformat(observed)
                 except ValueError:
                     pre_d_range = False
+            if (
+                row.get("scientific_phase") == "predictive_input"
+                and date_value == observed
+            ):
+                d_schedule_evidence_days.add(observed)
             for date_block in payload.get("dates") or []:
                 block_day = str(date_block.get("date") or "")
                 for game in date_block.get("games") or []:
@@ -1337,6 +1343,13 @@ def certify(
         # archived predictive D-schedule.  The generator's game-type filter is
         # not trusted merely because its identity says it was enabled.
         for day in dates:
+            if day not in d_schedule_evidence_days:
+                blockers.append(
+                    f"{day}: no usable archived predictive D-schedule evidence "
+                    "exists to verify candidate game population"
+                )
+                continue
+
             game_types = d_schedule_game_types.get(day, {})
             for game_pk, observed_types in game_types.items():
                 if len(observed_types) != 1:
