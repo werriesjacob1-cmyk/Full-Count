@@ -83,6 +83,15 @@ os.makedirs(OUTPUT_DIR, exist_ok=True)
 # allowed historical sources.
 HISTORICAL_REPLAY_STRICT_LINEUPS = False
 
+# Canonical-v2 may also constrain the D-slate to a frozen set of competitive
+# MLB game types. Default None preserves live behavior exactly. When set,
+# known-but-excluded game types are skipped before any lineup/team feature
+# assembly; missing or previously unseen gameType values fail closed.
+HISTORICAL_REPLAY_ALLOWED_GAME_TYPES = None
+HISTORICAL_REPLAY_KNOWN_GAME_TYPES = frozenset({
+    "S", "R", "F", "D", "L", "W", "C", "P", "A", "I", "E",
+})
+
 UA_POOL = [
     "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36",
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36",
@@ -297,6 +306,22 @@ def fetch_lineups(date):
     except Exception as e:
         warn(f"MLB API: {e}"); return "  API unavailable.\n", [], {}
 
+    if HISTORICAL_REPLAY_ALLOWED_GAME_TYPES is not None:
+        allowed = frozenset(HISTORICAL_REPLAY_ALLOWED_GAME_TYPES)
+        filtered = []
+        for g in games:
+            game_type = g.get("gameType")
+            if not game_type or game_type not in HISTORICAL_REPLAY_KNOWN_GAME_TYPES:
+                raise RuntimeError(
+                    f"canonical historical replay encountered unknown gameType "
+                    f"{game_type!r} for gamePk {g.get('gamePk')}"
+                )
+            if game_type in allowed:
+                filtered.append(g)
+        games = filtered
+        if not games:
+            return "  No competitive MLB games.\n", [], {}
+
     lines=[]; game_meta=[]; player_ids={}; missing_teams=[]; bats_patch=[]
     for g in games:
         away,home = g["teams"]["away"],g["teams"]["home"]
@@ -332,6 +357,7 @@ def fetch_lineups(date):
                           "series_game":series_num,"series_len":series_len,
                           "is_getaway":is_getaway,"is_opener":is_series_opener,
                           "game_pk":g.get("gamePk"),
+                          "game_type":g.get("gameType"),
                           # Live status and scheduled first pitch, so anything
                           # downstream can tell a game that has not started
                           # from one already underway or finished. Without
