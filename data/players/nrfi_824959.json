@@ -1,6 +1,6 @@
 {
-  "player_id": "nrfi_824232",
-  "name": "Los Angeles Dodgers @ Detroit Tigers \u2014 1st Inning (Both Teams)",
+  "player_id": "nrfi_824959",
+  "name": "Baltimore Orioles @ Athletics \u2014 1st Inning (Both Teams)",
   "snapshots": [
     {
       "date": "2026-08-30",
@@ -8,27 +8,27 @@
         {
           "prop": "A run scores in the 1st (either team)",
           "type": "game",
-          "score": 59.9,
+          "score": 67.0,
           "notable_signals": 0,
-          "matchup": "Los Angeles Dodgers @ Detroit Tigers",
-          "game_pk": 824232,
+          "matchup": "Baltimore Orioles @ Athletics",
+          "game_pk": 824959,
           "team": null,
           "side": "both",
           "lean": "YRFI",
           "combo_player_ids": null,
           "signals": {
-            "home_team_scores_p": 0.295,
-            "away_team_scores_p": 0.3034,
-            "fi_n_starts": 10.0
+            "home_team_scores_p": 0.3074,
+            "away_team_scores_p": 0.35,
+            "fi_n_starts": 14.0
           },
-          "hit_probability": 0.5089,
+          "hit_probability": 0.5498,
           "raw_hit_probability": null,
-          "lift": 0.0073,
+          "lift": 0.0482,
           "reliability": "B",
-          "sample_n": 10,
+          "sample_n": 14,
           "projection": {
             "stat": "nrfi_combined",
-            "value": 50.9
+            "value": 55.0
           }
         }
       ]

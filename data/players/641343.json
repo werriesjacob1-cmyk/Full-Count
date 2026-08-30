@@ -1384,6 +1384,111 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-30",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 59.8,
+          "notable_signals": 1,
+          "matchup": "Texas Rangers @ Milwaukee Brewers",
+          "game_pk": 823740,
+          "team": "Milwaukee Brewers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 54.5714,
+            "pitch_exploit": 0.0,
+            "l7_avg_ev": 0.0,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 60.2,
+            "season_barrel_pct": 72.6667,
+            "lineup_slot": 75.0,
+            "bullpen_fatigue": 18.5185,
+            "platoon_barrel_pct": 5.0,
+            "platoon_xwoba": 3.84,
+            "park_hand_index": -1.07,
+            "opp_catcher_framing": 0.24,
+            "days_rest": 0.0,
+            "woba_ahead": 49.0909,
+            "woba_behind": 49.0909,
+            "pull_park_synergy": -0.6404,
+            "hard_hit_105_rate": 1.74,
+            "team_total_move": 0.0,
+            "team_total_open": 0.0,
+            "getaway_day": -2.0,
+            "series_game": 2.0,
+            "sp_rp_ops_gap": -0.104,
+            "vs_rp_ops": 1.92,
+            "ump_k_pct": -0.012,
+            "ump_bb_pct": -0.204
+          },
+          "hit_probability": 0.6246,
+          "raw_hit_probability": 0.6193,
+          "lift": 0.0616,
+          "reliability": "A",
+          "sample_n": 121,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 21.9,
+          "notable_signals": 1,
+          "matchup": "Texas Rangers @ Milwaukee Brewers",
+          "game_pk": 823740,
+          "team": "Milwaukee Brewers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.1162
+          },
+          "hit_probability": 0.1162,
+          "raw_hit_probability": null,
+          "lift": 0.068,
+          "reliability": "A",
+          "sample_n": 121,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 9.6,
+          "notable_signals": 0,
+          "matchup": "Texas Rangers @ Milwaukee Brewers",
+          "game_pk": 823740,
+          "team": "Milwaukee Brewers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0508
+          },
+          "hit_probability": 0.0508,
+          "raw_hit_probability": null,
+          "lift": 0.0297,
+          "reliability": "A",
+          "sample_n": 121,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

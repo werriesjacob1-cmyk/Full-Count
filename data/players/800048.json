@@ -307,10 +307,10 @@
       "date": "2026-08-30",
       "evaluations": [
         {
-          "prop": "Over 5.5 Strikeouts",
+          "prop": "Over 4.5 Strikeouts",
           "type": "pitcher",
-          "score": 37.8,
-          "notable_signals": 0,
+          "score": 42.5,
+          "notable_signals": 1,
           "matchup": "Kansas City Royals @ Cleveland Guardians",
           "game_pk": 824393,
           "team": "Cleveland Guardians",
@@ -319,25 +319,28 @@
           "combo_player_ids": null,
           "signals": {
             "opp_team_k_pct": 39.0,
-            "same_hand_ratio": 12.5,
+            "same_hand_ratio": 88.8889,
             "l14_k_pct": 87.0588,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 66.704,
+            "ump_k_pct": 0.048,
+            "ump_bb_pct": 0.348
           },
-          "hit_probability": 0.4649,
-          "raw_hit_probability": 0.4649,
-          "lift": 0.1109,
+          "hit_probability": 0.6002,
+          "raw_hit_probability": 0.6314,
+          "lift": 0.0896,
           "reliability": "A",
           "sample_n": 26,
           "projection": {
             "stat": "strikeouts",
-            "value": 5.5,
-            "needs": 6
+            "value": 4.5,
+            "needs": 5
           }
         },
         {
           "prop": "Over 17.5 Outs Recorded",
           "type": "pitcher",
-          "score": 40.0,
+          "score": 36.2,
           "notable_signals": 0,
           "matchup": "Kansas City Royals @ Cleveland Guardians",
           "game_pk": 824393,
@@ -346,12 +349,12 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.4556,
+            "outs_rate": 0.4611,
             "avg_outs_per_start": 17.88
           },
-          "hit_probability": 0.4556,
+          "hit_probability": 0.4611,
           "raw_hit_probability": null,
-          "lift": 0.0259,
+          "lift": 0.0016,
           "reliability": "A",
           "sample_n": 26,
           "projection": {

@@ -282,7 +282,7 @@
         {
           "prop": "Over 3.5 Strikeouts",
           "type": "pitcher",
-          "score": 43.7,
+          "score": 30.0,
           "notable_signals": 0,
           "matchup": "Chicago White Sox @ Minnesota Twins",
           "game_pk": 823662,
@@ -292,13 +292,16 @@
           "combo_player_ids": null,
           "signals": {
             "opp_team_k_pct": 69.0,
-            "same_hand_ratio": 43.75,
+            "same_hand_ratio": 21.4286,
             "l14_k_pct": 41.1765,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 49.129,
+            "ump_k_pct": -0.468,
+            "ump_bb_pct": 0.048
           },
-          "hit_probability": 0.6187,
-          "raw_hit_probability": 0.7233,
-          "lift": -0.0686,
+          "hit_probability": 0.6188,
+          "raw_hit_probability": 0.7236,
+          "lift": -0.069,
           "reliability": "A",
           "sample_n": 18,
           "projection": {
@@ -310,7 +313,7 @@
         {
           "prop": "Over 16.5 Outs Recorded",
           "type": "pitcher",
-          "score": 72.2,
+          "score": 69.3,
           "notable_signals": 1,
           "matchup": "Chicago White Sox @ Minnesota Twins",
           "game_pk": 823662,
@@ -319,12 +322,12 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.625,
+            "outs_rate": 0.6314,
             "avg_outs_per_start": 17.28
           },
-          "hit_probability": 0.625,
+          "hit_probability": 0.6314,
           "raw_hit_probability": null,
-          "lift": 0.125,
+          "lift": 0.1059,
           "reliability": "A",
           "sample_n": 18,
           "projection": {

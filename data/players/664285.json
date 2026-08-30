@@ -240,7 +240,7 @@
         {
           "prop": "Over 3.5 Strikeouts",
           "type": "pitcher",
-          "score": 45.3,
+          "score": 29.5,
           "notable_signals": 0,
           "matchup": "Los Angeles Dodgers @ Detroit Tigers",
           "game_pk": 824232,
@@ -250,13 +250,16 @@
           "combo_player_ids": null,
           "signals": {
             "opp_team_k_pct": 35.0,
-            "same_hand_ratio": 100.0,
+            "same_hand_ratio": 75.0,
             "l14_k_pct": 0.0,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 45.7003,
+            "ump_k_pct": 0.072,
+            "ump_bb_pct": -0.228
           },
           "hit_probability": 0.5943,
-          "raw_hit_probability": 0.6019,
-          "lift": -0.093,
+          "raw_hit_probability": 0.6022,
+          "lift": -0.0935,
           "reliability": "A",
           "sample_n": 26,
           "projection": {
@@ -268,7 +271,7 @@
         {
           "prop": "Over 16.5 Outs Recorded",
           "type": "pitcher",
-          "score": 72.6,
+          "score": 69.2,
           "notable_signals": 1,
           "matchup": "Los Angeles Dodgers @ Detroit Tigers",
           "game_pk": 824232,
@@ -277,12 +280,12 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.625,
+            "outs_rate": 0.6298,
             "avg_outs_per_start": 16.69
           },
-          "hit_probability": 0.625,
+          "hit_probability": 0.6298,
           "raw_hit_probability": null,
-          "lift": 0.125,
+          "lift": 0.1043,
           "reliability": "A",
           "sample_n": 26,
           "projection": {

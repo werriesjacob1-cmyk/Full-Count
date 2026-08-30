@@ -307,10 +307,10 @@
       "date": "2026-08-30",
       "evaluations": [
         {
-          "prop": "Over 4.5 Strikeouts",
+          "prop": "Over 5.5 Strikeouts",
           "type": "pitcher",
-          "score": 41.4,
-          "notable_signals": 0,
+          "score": 42.0,
+          "notable_signals": 1,
           "matchup": "Pittsburgh Pirates @ St. Louis Cardinals",
           "game_pk": 823010,
           "team": "St. Louis Cardinals",
@@ -319,25 +319,28 @@
           "combo_player_ids": null,
           "signals": {
             "opp_team_k_pct": 75.0,
-            "same_hand_ratio": 92.8571,
+            "same_hand_ratio": 57.1429,
             "l14_k_pct": 100.0,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 69.0018,
+            "ump_k_pct": -0.876,
+            "ump_bb_pct": -0.492
           },
-          "hit_probability": 0.6042,
-          "raw_hit_probability": 0.6512,
-          "lift": 0.0904,
+          "hit_probability": 0.4877,
+          "raw_hit_probability": 0.4877,
+          "lift": 0.1345,
           "reliability": "A",
           "sample_n": 26,
           "projection": {
             "stat": "strikeouts",
-            "value": 4.5,
-            "needs": 5
+            "value": 5.5,
+            "needs": 6
           }
         },
         {
-          "prop": "Over 14.5 Outs Recorded",
+          "prop": "Over 16.5 Outs Recorded",
           "type": "pitcher",
-          "score": 59.9,
+          "score": 0,
           "notable_signals": 0,
           "matchup": "Pittsburgh Pirates @ St. Louis Cardinals",
           "game_pk": 823010,
@@ -346,18 +349,18 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.741,
+            "outs_rate": 0.3173,
             "avg_outs_per_start": 14.88
           },
-          "hit_probability": 0.741,
+          "hit_probability": 0.3173,
           "raw_hit_probability": null,
-          "lift": -0.0441,
+          "lift": -0.2082,
           "reliability": "A",
           "sample_n": 26,
           "projection": {
             "stat": "pitcher_outs",
-            "value": 14.5,
-            "needs": 15
+            "value": 16.5,
+            "needs": 17
           }
         }
       ]

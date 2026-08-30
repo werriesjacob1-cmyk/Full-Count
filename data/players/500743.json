@@ -363,6 +363,110 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-30",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 48.8,
+          "notable_signals": 2,
+          "matchup": "Los Angeles Dodgers @ Detroit Tigers",
+          "game_pk": 824232,
+          "team": "Los Angeles Dodgers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 53.1429,
+            "l7_avg_ev": 0.0,
+            "l7_barrel_pct": 87.8571,
+            "bat_speed_trend": 4.5,
+            "park_hr_index": 70.9,
+            "season_barrel_pct": 17.3333,
+            "lineup_slot": 37.5,
+            "bullpen_fatigue": 18.5185,
+            "platoon_barrel_pct": -0.48,
+            "platoon_xwoba": 0.78,
+            "park_hand_index": 0.52,
+            "opp_catcher_framing": -1.08,
+            "days_rest": 0.0,
+            "woba_ahead": 17.2727,
+            "woba_behind": 13.6364,
+            "pull_park_synergy": 0.0983,
+            "team_total_move": 0.0,
+            "team_total_open": 0.0,
+            "getaway_day": -2.0,
+            "series_game": 2.0,
+            "sp_rp_ops_gap": -0.872,
+            "vs_rp_ops": -0.756,
+            "ump_k_pct": -0.072,
+            "ump_bb_pct": 0.228
+          },
+          "hit_probability": 0.6222,
+          "raw_hit_probability": 0.6175,
+          "lift": 0.0592,
+          "reliability": "A",
+          "sample_n": 81,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 0.0,
+          "notable_signals": 0,
+          "matchup": "Los Angeles Dodgers @ Detroit Tigers",
+          "game_pk": 824232,
+          "team": "Los Angeles Dodgers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0094
+          },
+          "hit_probability": 0.0094,
+          "raw_hit_probability": null,
+          "lift": -0.0388,
+          "reliability": "A",
+          "sample_n": 81,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 0.0,
+          "notable_signals": 0,
+          "matchup": "Los Angeles Dodgers @ Detroit Tigers",
+          "game_pk": 824232,
+          "team": "Los Angeles Dodgers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0041
+          },
+          "hit_probability": 0.0041,
+          "raw_hit_probability": null,
+          "lift": -0.017,
+          "reliability": "A",
+          "sample_n": 81,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

@@ -1646,6 +1646,107 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-30",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 56.7,
+          "notable_signals": 1,
+          "matchup": "Chicago White Sox @ Minnesota Twins",
+          "game_pk": 823662,
+          "team": "Minnesota Twins",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "sp_era_weak": 38.0,
+            "l7_avg_ev": 0.0,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 73.8,
+            "season_barrel_pct": 45.3333,
+            "lineup_slot": 50.0,
+            "bullpen_fatigue": 60.6061,
+            "platoon_barrel_pct": 2.64,
+            "platoon_xwoba": 1.8,
+            "opp_catcher_framing": -0.48,
+            "days_rest": 0.0,
+            "woba_ahead": 74.5455,
+            "woba_behind": 45.4545,
+            "hard_hit_105_rate": 0.5925,
+            "team_total_move": 0.0,
+            "team_total_open": 0.0,
+            "getaway_day": -2.0,
+            "series_game": 2.0,
+            "sp_rp_ops_gap": -0.832,
+            "vs_rp_ops": -0.564,
+            "ump_k_pct": 0.468,
+            "ump_bb_pct": -0.048
+          },
+          "hit_probability": 0.6113,
+          "raw_hit_probability": 0.6094,
+          "lift": 0.0483,
+          "reliability": "A",
+          "sample_n": 130,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 10.4,
+          "notable_signals": 0,
+          "matchup": "Chicago White Sox @ Minnesota Twins",
+          "game_pk": 823662,
+          "team": "Minnesota Twins",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0703
+          },
+          "hit_probability": 0.0703,
+          "raw_hit_probability": null,
+          "lift": 0.0221,
+          "reliability": "A",
+          "sample_n": 130,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 5.5,
+          "notable_signals": 0,
+          "matchup": "Chicago White Sox @ Minnesota Twins",
+          "game_pk": 823662,
+          "team": "Minnesota Twins",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0348
+          },
+          "hit_probability": 0.0348,
+          "raw_hit_probability": null,
+          "lift": 0.0137,
+          "reliability": "A",
+          "sample_n": 130,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

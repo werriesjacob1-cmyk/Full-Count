@@ -8,17 +8,17 @@
   "by_category": {},
   "by_recommendation_status": {
     "top_pick": {
-      "hits": 3,
-      "misses": 6,
+      "hits": 6,
+      "misses": 10,
       "voids": 0,
-      "ungraded": 7
+      "ungraded": 0
     }
   },
   "public_top_pick_counts": {
-    "hits": 3,
-    "misses": 6,
+    "hits": 6,
+    "misses": 10,
     "voids": 0,
-    "ungraded": 7
+    "ungraded": 0
   },
   "public_top_picks": [
     {
@@ -384,18 +384,27 @@
       "publication_source_commit": "39d305f3bb83328ab425fdd7cb87dcfbd3975f40",
       "publication_run_id": "33245670399",
       "publication_deployment_id": null,
-      "grade": "ungraded",
-      "settlement_state": "ungraded",
-      "reason": "game_not_authoritatively_final",
+      "grade": "miss",
+      "actual": 4.0,
+      "actual_stat": "strikeouts",
+      "threshold": 4.5,
+      "game_innings": 9,
+      "shortened_game": false,
+      "actual_ip": 3.2,
+      "pitch_count": 63.0,
+      "fair_test": false,
+      "opportunity": "limited \u2014 only 3.2 IP; a strikeout prop can't be judged when the start ended early (injury, blowout, or quick hook)",
       "eligibility": {
-        "eligibility": "ungraded",
-        "reason_code": "game_not_authoritatively_final",
+        "eligibility": "eligible",
+        "reason_code": "listed_pitcher_started",
         "ruleset_version": "fanduel-us-conservative-2026-08-17-v2",
-        "game_state": "live"
+        "scheduled_innings": 9,
+        "innings_played": 9
       },
-      "settlement_authority": "none",
-      "settlement_observed_at": "2026-08-30T01:27:08.620604+00:00",
-      "settlement_source": "durable_morning_status_observation"
+      "settlement_state": "miss",
+      "settlement_authority": "official_final",
+      "settlement_observed_at": "2026-08-30T18:08:20.120121+00:00",
+      "settlement_source": "durable_morning_grader"
     },
     {
       "id": "fc2:823501:player-642201:hits_runs_rbis:1:over",
@@ -478,18 +487,31 @@
       "publication_source_commit": "2902135761ee3286536ea9ecee6d17394872691a",
       "publication_run_id": "33276274811",
       "publication_deployment_id": null,
-      "grade": "ungraded",
-      "settlement_state": "ungraded",
-      "reason": "game_not_authoritatively_final",
+      "grade": "miss",
+      "actual": 0.0,
+      "actual_stat": "hits_runs_rbis",
+      "threshold": 0.5,
+      "game_innings": 9,
+      "shortened_game": false,
+      "actual_ab": 1,
+      "actual_pa_est": 1,
+      "was_substitute": false,
+      "batting_order": 9,
+      "fair_test": false,
+      "opportunity": "limited \u2014 only 1 PA (early exit, shortened game, or removed for a pinch hitter)",
       "eligibility": {
-        "eligibility": "ungraded",
-        "reason_code": "game_not_authoritatively_final",
+        "eligibility": "eligible",
+        "reason_code": "batter_started_and_recorded_plate_appearance",
         "ruleset_version": "fanduel-us-conservative-2026-08-17-v2",
-        "game_state": "live"
+        "plate_appearances": 1,
+        "was_starter": true,
+        "scheduled_innings": 9,
+        "innings_played": 9
       },
-      "settlement_authority": "none",
-      "settlement_observed_at": "2026-08-30T01:27:08.620604+00:00",
-      "settlement_source": "durable_morning_status_observation"
+      "settlement_state": "miss",
+      "settlement_authority": "official_final",
+      "settlement_observed_at": "2026-08-30T18:08:20.120121+00:00",
+      "settlement_source": "durable_morning_grader"
     },
     {
       "id": "fc2:823501:player-676609:hits_runs_rbis:1:over",
@@ -568,18 +590,31 @@
       "publication_source_commit": "a776f63709a0a61d4c3c41638465d229ba952c15",
       "publication_run_id": "33277730497",
       "publication_deployment_id": null,
-      "grade": "ungraded",
-      "settlement_state": "ungraded",
-      "reason": "game_not_authoritatively_final",
+      "grade": "hit",
+      "actual": 3.0,
+      "actual_stat": "hits_runs_rbis",
+      "threshold": 0.5,
+      "game_innings": 9,
+      "shortened_game": false,
+      "actual_ab": 4,
+      "actual_pa_est": 4,
+      "was_substitute": false,
+      "batting_order": 9,
+      "fair_test": true,
+      "opportunity": "full (4 PA)",
       "eligibility": {
-        "eligibility": "ungraded",
-        "reason_code": "game_not_authoritatively_final",
+        "eligibility": "eligible",
+        "reason_code": "batter_started_and_recorded_plate_appearance",
         "ruleset_version": "fanduel-us-conservative-2026-08-17-v2",
-        "game_state": "live"
+        "plate_appearances": 4,
+        "was_starter": true,
+        "scheduled_innings": 9,
+        "innings_played": 9
       },
-      "settlement_authority": "none",
-      "settlement_observed_at": "2026-08-30T01:27:08.620604+00:00",
-      "settlement_source": "durable_morning_status_observation"
+      "settlement_state": "hit",
+      "settlement_authority": "official_final",
+      "settlement_observed_at": "2026-08-30T18:08:20.120121+00:00",
+      "settlement_source": "durable_morning_grader"
     },
     {
       "id": "fc2:823539:player-642201:hits_runs_rbis:1:over",
@@ -862,18 +897,27 @@
       "publication_source_commit": "32f9003a0e80db48ff51fec1cca95bc82e06fd87",
       "publication_run_id": "33258268668",
       "publication_deployment_id": null,
-      "grade": "ungraded",
-      "settlement_state": "ungraded",
-      "reason": "game_not_authoritatively_final",
+      "grade": "hit",
+      "actual": 8.0,
+      "actual_stat": "strikeouts",
+      "threshold": 3.5,
+      "game_innings": 9,
+      "shortened_game": false,
+      "actual_ip": 6.0,
+      "pitch_count": 88.0,
+      "fair_test": true,
+      "opportunity": "full (6.0 IP)",
       "eligibility": {
-        "eligibility": "ungraded",
-        "reason_code": "game_not_authoritatively_final",
+        "eligibility": "eligible",
+        "reason_code": "listed_pitcher_started",
         "ruleset_version": "fanduel-us-conservative-2026-08-17-v2",
-        "game_state": "live"
+        "scheduled_innings": 9,
+        "innings_played": 9
       },
-      "settlement_authority": "none",
-      "settlement_observed_at": "2026-08-30T01:27:08.620604+00:00",
-      "settlement_source": "durable_morning_status_observation"
+      "settlement_state": "hit",
+      "settlement_authority": "official_final",
+      "settlement_observed_at": "2026-08-30T18:08:20.120121+00:00",
+      "settlement_source": "durable_morning_grader"
     },
     {
       "id": "fc2:823986:player-685133:hits:1:over",
@@ -955,18 +999,31 @@
       "publication_source_commit": "2902135761ee3286536ea9ecee6d17394872691a",
       "publication_run_id": "33276274811",
       "publication_deployment_id": null,
-      "grade": "ungraded",
-      "settlement_state": "ungraded",
-      "reason": "game_not_authoritatively_final",
+      "grade": "miss",
+      "actual": 0.0,
+      "actual_stat": "hits",
+      "threshold": 0.5,
+      "game_innings": 10,
+      "shortened_game": false,
+      "actual_ab": 3,
+      "actual_pa_est": 3,
+      "was_substitute": false,
+      "batting_order": 9,
+      "fair_test": true,
+      "opportunity": "full (3 PA)",
       "eligibility": {
-        "eligibility": "ungraded",
-        "reason_code": "game_not_authoritatively_final",
+        "eligibility": "eligible",
+        "reason_code": "batter_started_and_recorded_plate_appearance",
         "ruleset_version": "fanduel-us-conservative-2026-08-17-v2",
-        "game_state": "pregame"
+        "plate_appearances": 4,
+        "was_starter": true,
+        "scheduled_innings": 9,
+        "innings_played": 10
       },
-      "settlement_authority": "none",
-      "settlement_observed_at": "2026-08-30T01:27:08.620604+00:00",
-      "settlement_source": "durable_morning_status_observation"
+      "settlement_state": "miss",
+      "settlement_authority": "official_final",
+      "settlement_observed_at": "2026-08-30T18:08:20.120121+00:00",
+      "settlement_source": "durable_morning_grader"
     },
     {
       "id": "fc2:823986:player-685133:hits_runs_rbis:1:over",
@@ -1048,18 +1105,31 @@
       "publication_source_commit": "2902135761ee3286536ea9ecee6d17394872691a",
       "publication_run_id": "33276274811",
       "publication_deployment_id": null,
-      "grade": "ungraded",
-      "settlement_state": "ungraded",
-      "reason": "game_not_authoritatively_final",
+      "grade": "hit",
+      "actual": 1.0,
+      "actual_stat": "hits_runs_rbis",
+      "threshold": 0.5,
+      "game_innings": 10,
+      "shortened_game": false,
+      "actual_ab": 3,
+      "actual_pa_est": 3,
+      "was_substitute": false,
+      "batting_order": 9,
+      "fair_test": true,
+      "opportunity": "full (3 PA)",
       "eligibility": {
-        "eligibility": "ungraded",
-        "reason_code": "game_not_authoritatively_final",
+        "eligibility": "eligible",
+        "reason_code": "batter_started_and_recorded_plate_appearance",
         "ruleset_version": "fanduel-us-conservative-2026-08-17-v2",
-        "game_state": "pregame"
+        "plate_appearances": 4,
+        "was_starter": true,
+        "scheduled_innings": 9,
+        "innings_played": 10
       },
-      "settlement_authority": "none",
-      "settlement_observed_at": "2026-08-30T01:27:08.620604+00:00",
-      "settlement_source": "durable_morning_status_observation"
+      "settlement_state": "hit",
+      "settlement_authority": "official_final",
+      "settlement_observed_at": "2026-08-30T18:08:20.120121+00:00",
+      "settlement_source": "durable_morning_grader"
     },
     {
       "id": "fc2:823986:player-696270:strikeouts:4:over",
@@ -1132,18 +1202,27 @@
       "publication_source_commit": "ab685a0242af66def299ba65a3ec571abb4688ed",
       "publication_run_id": "33230361233",
       "publication_deployment_id": null,
-      "grade": "ungraded",
-      "settlement_state": "ungraded",
-      "reason": "game_not_authoritatively_final",
+      "grade": "miss",
+      "actual": 2.0,
+      "actual_stat": "strikeouts",
+      "threshold": 3.5,
+      "game_innings": 10,
+      "shortened_game": false,
+      "actual_ip": 5.0,
+      "pitch_count": 88.0,
+      "fair_test": true,
+      "opportunity": "full (5.0 IP)",
       "eligibility": {
-        "eligibility": "ungraded",
-        "reason_code": "game_not_authoritatively_final",
+        "eligibility": "eligible",
+        "reason_code": "listed_pitcher_started",
         "ruleset_version": "fanduel-us-conservative-2026-08-17-v2",
-        "game_state": "pregame"
+        "scheduled_innings": 9,
+        "innings_played": 10
       },
-      "settlement_authority": "none",
-      "settlement_observed_at": "2026-08-30T01:27:08.620604+00:00",
-      "settlement_source": "durable_morning_status_observation"
+      "settlement_state": "miss",
+      "settlement_authority": "official_final",
+      "settlement_observed_at": "2026-08-30T18:08:20.120121+00:00",
+      "settlement_source": "durable_morning_grader"
     },
     {
       "id": "fc2:824230:player-672456:pitcher_outs:16:over",
