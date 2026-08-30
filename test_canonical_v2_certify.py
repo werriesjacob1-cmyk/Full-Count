@@ -1574,6 +1574,47 @@ class CertificationTests(unittest.TestCase):
 
 
 
+
+    def test_excluded_only_schedule_requires_no_games_before_candidate_assembly(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            PackageFactory(tmp).build()
+            self._replace_predictive_d_schedule(
+                tmp,
+                [self._d_schedule_game("S")],
+            )
+
+            rows_path = os.path.join(tmp, "rows.jsonl")
+            with open(rows_path, "wb") as handle:
+                handle.write(b"")
+            empty_sha = sha(b"")
+
+            meta_path = os.path.join(
+                tmp, "date_metadata", "2025-08-20.json"
+            )
+            meta = json.load(open(meta_path, encoding="utf-8"))
+            meta["status"] = "ok"
+            meta["n_games"] = 1
+            meta["n_candidates"] = 1
+            meta["row_count"] = 0
+            write_json(meta_path, meta)
+
+            def mutate(report):
+                report["total_rows"] = 0
+                report["unique_candidate_identities"] = 0
+                report["assembled_rows_sha256"] = empty_sha
+
+            self._refresh_report(tmp, mutate)
+            result = self.certify(tmp)
+            self.assertEqual(result["verdict"], "NOT CANONICAL")
+            self.assertTrue(
+                any(
+                    "zero-eligible D-schedule did not fail closed before "
+                    "candidate assembly" in failure
+                    for failure in result["failures"]
+                ),
+                msg=json.dumps(result, indent=2),
+            )
+
     def test_candidate_from_spring_training_is_not_canonical(self):
         with tempfile.TemporaryDirectory() as tmp:
             PackageFactory(tmp).build()
