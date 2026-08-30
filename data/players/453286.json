@@ -281,7 +281,7 @@
       "date": "2026-08-30",
       "evaluations": [
         {
-          "prop": "Over 3.5 Strikeouts",
+          "prop": "Over 4.5 Strikeouts",
           "type": "pitcher",
           "score": 31.1,
           "notable_signals": 0,
@@ -297,21 +297,21 @@
             "l14_k_pct": 0.0,
             "env_neutral": 50.0
           },
-          "hit_probability": 0.5973,
-          "raw_hit_probability": 0.6168,
-          "lift": -0.09,
+          "hit_probability": 0.4231,
+          "raw_hit_probability": 0.4231,
+          "lift": -0.0907,
           "reliability": "B",
           "sample_n": 12,
           "projection": {
             "stat": "strikeouts",
-            "value": 3.5,
-            "needs": 4
+            "value": 4.5,
+            "needs": 5
           }
         },
         {
           "prop": "Over 11.5 Outs Recorded",
           "type": "pitcher",
-          "score": 29.7,
+          "score": 29.3,
           "notable_signals": 0,
           "matchup": "Seattle Mariners @ Toronto Blue Jays",
           "game_pk": 822766,
@@ -320,12 +320,12 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.6952,
+            "outs_rate": 0.6968,
             "avg_outs_per_start": 12.5
           },
-          "hit_probability": 0.6952,
+          "hit_probability": 0.6968,
           "raw_hit_probability": null,
-          "lift": -0.2238,
+          "lift": -0.2269,
           "reliability": "B",
           "sample_n": 12,
           "projection": {

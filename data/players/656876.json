@@ -308,7 +308,7 @@
       "date": "2026-08-30",
       "evaluations": [
         {
-          "prop": "Over 4.5 Strikeouts",
+          "prop": "Over 5.5 Strikeouts",
           "type": "pitcher",
           "score": 47.5,
           "notable_signals": 0,
@@ -324,22 +324,22 @@
             "l14_k_pct": 45.2941,
             "env_neutral": 50.0
           },
-          "hit_probability": 0.5997,
-          "raw_hit_probability": 0.6285,
-          "lift": 0.0859,
+          "hit_probability": 0.4588,
+          "raw_hit_probability": 0.4588,
+          "lift": 0.1048,
           "reliability": "A",
           "sample_n": 25,
           "projection": {
             "stat": "strikeouts",
-            "value": 4.5,
-            "needs": 5
+            "value": 5.5,
+            "needs": 6
           }
         },
         {
           "prop": "Over 16.5 Outs Recorded",
           "type": "pitcher",
-          "score": 53.5,
-          "notable_signals": 1,
+          "score": 53.3,
+          "notable_signals": 0,
           "matchup": "San Diego Padres @ Tampa Bay Rays",
           "game_pk": 822933,
           "team": "Tampa Bay Rays",
@@ -347,12 +347,12 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.548,
+            "outs_rate": 0.5484,
             "avg_outs_per_start": 16.84
           },
-          "hit_probability": 0.548,
+          "hit_probability": 0.5484,
           "raw_hit_probability": null,
-          "lift": 0.05,
+          "lift": 0.0484,
           "reliability": "A",
           "sample_n": 25,
           "projection": {
