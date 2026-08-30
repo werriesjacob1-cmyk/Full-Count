@@ -252,7 +252,7 @@
       "date": "2026-08-30",
       "evaluations": [
         {
-          "prop": "Over 6.5 Strikeouts",
+          "prop": "Over 5.5 Strikeouts",
           "type": "pitcher",
           "score": 41.9,
           "notable_signals": 0,
@@ -272,22 +272,22 @@
             "ump_k_pct": -0.24,
             "ump_bb_pct": 0.156
           },
-          "hit_probability": 0.3438,
-          "raw_hit_probability": 0.3438,
-          "lift": 0.1269,
+          "hit_probability": 0.5042,
+          "raw_hit_probability": 0.5042,
+          "lift": 0.151,
           "reliability": "A",
           "sample_n": 25,
           "projection": {
             "stat": "strikeouts",
-            "value": 6.5,
-            "needs": 7
+            "value": 5.5,
+            "needs": 6
           }
         },
         {
           "prop": "Over 14.5 Outs Recorded",
           "type": "pitcher",
-          "score": 90.7,
-          "notable_signals": 1,
+          "score": 90.3,
+          "notable_signals": 0,
           "matchup": "Cincinnati Reds @ Chicago Cubs",
           "game_pk": 824636,
           "team": "Cincinnati Reds",
@@ -295,18 +295,46 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.9267,
+            "outs_rate": 0.9488,
             "avg_outs_per_start": 16.76
           },
-          "hit_probability": 0.9267,
+          "hit_probability": 0.9488,
           "raw_hit_probability": null,
-          "lift": 0.1386,
+          "lift": 0.0468,
           "reliability": "A",
           "sample_n": 25,
           "projection": {
             "stat": "pitcher_outs",
             "value": 14.5,
             "needs": 15
+          }
+        },
+        {
+          "prop": "Over 11.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 45.0,
+          "notable_signals": 0,
+          "matchup": "Cincinnati Reds @ Chicago Cubs",
+          "game_pk": 824636,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            695505,
+            684007
+          ],
+          "signals": {
+            "combined_k_edge": -0.0519
+          },
+          "hit_probability": 0.528,
+          "raw_hit_probability": null,
+          "lift": -0.0519,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 11.5,
+            "needs": 12
           }
         }
       ]

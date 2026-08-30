@@ -1638,10 +1638,10 @@
       "date": "2026-08-30",
       "evaluations": [
         {
-          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "prop": "Over 0.5 Hits",
           "type": "batter",
-          "score": 51.6,
-          "notable_signals": 3,
+          "score": 50.5,
+          "notable_signals": 2,
           "matchup": "Cincinnati Reds @ Chicago Cubs",
           "game_pk": 824636,
           "team": "Cincinnati Reds",
@@ -1655,14 +1655,14 @@
             "l7_avg_ev": 0.0,
             "l7_barrel_pct": 100.0,
             "bat_speed_trend": 5.1,
-            "park_hr_index": 72.0,
+            "park_hr_index": 51.7,
             "season_barrel_pct": 49.3333,
             "lineup_slot": 50.0,
             "bullpen_fatigue": 18.5185,
             "platoon_barrel_pct": 5.0,
             "platoon_xwoba": -1.56,
             "park_hand_index": 2.17,
-            "opp_catcher_framing": -0.12,
+            "opp_catcher_framing": 0.48,
             "days_rest": 0.0,
             "woba_ahead": 30.0,
             "woba_behind": 43.6364,
@@ -1677,13 +1677,13 @@
             "ump_k_pct": 0.24,
             "ump_bb_pct": -0.156
           },
-          "hit_probability": 0.6136,
-          "raw_hit_probability": 0.577,
-          "lift": -0.0378,
+          "hit_probability": 0.5466,
+          "raw_hit_probability": 0.5627,
+          "lift": -0.0164,
           "reliability": "A",
           "sample_n": 105,
           "projection": {
-            "stat": "hits_runs_rbis",
+            "stat": "hits",
             "value": 0.5,
             "needs": 1
           }

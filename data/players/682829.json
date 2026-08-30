@@ -2233,10 +2233,10 @@
       "date": "2026-08-30",
       "evaluations": [
         {
-          "prop": "Over 0.5 Hits",
+          "prop": "Over 0.5 Hits+Runs+RBIs",
           "type": "batter",
-          "score": 65.8,
-          "notable_signals": 1,
+          "score": 64.7,
+          "notable_signals": 0,
           "matchup": "Cincinnati Reds @ Chicago Cubs",
           "game_pk": 824636,
           "team": "Cincinnati Reds",
@@ -2247,14 +2247,14 @@
             "sp_era_weak": 36.5714,
             "l7_avg_ev": 100.0,
             "l7_barrel_pct": 100.0,
-            "park_hr_index": 72.0,
+            "park_hr_index": 51.7,
             "season_barrel_pct": 69.3333,
             "lineup_slot": 87.5,
             "bullpen_fatigue": 18.5185,
             "bvp_ops": -1.614,
             "platoon_barrel_pct": 5.0,
             "platoon_xwoba": 2.52,
-            "opp_catcher_framing": -0.12,
+            "opp_catcher_framing": 0.48,
             "days_rest": 0.0,
             "woba_ahead": 31.8182,
             "woba_behind": 50.9091,
@@ -2268,13 +2268,13 @@
             "ump_k_pct": 0.24,
             "ump_bb_pct": -0.156
           },
-          "hit_probability": 0.6386,
-          "raw_hit_probability": 0.6299,
-          "lift": 0.0756,
+          "hit_probability": 0.7037,
+          "raw_hit_probability": 0.7317,
+          "lift": 0.0416,
           "reliability": "A",
           "sample_n": 117,
           "projection": {
-            "stat": "hits",
+            "stat": "hits_runs_rbis",
             "value": 0.5,
             "needs": 1
           }
@@ -2282,7 +2282,7 @@
         {
           "prop": "To Steal a Base",
           "type": "batter",
-          "score": 55.4,
+          "score": 53.8,
           "notable_signals": 1,
           "matchup": "Cincinnati Reds @ Chicago Cubs",
           "game_pk": 824636,
@@ -2293,10 +2293,10 @@
           "signals": {
             "opp_team_cs_pct": -0.42,
             "sprint_speed": 37.5,
-            "catcher_poptime": 17.1429,
+            "catcher_poptime": 11.4286,
             "on_base": 90.4031
           },
-          "hit_probability": 0.1657,
+          "hit_probability": 0.1669,
           "raw_hit_probability": null,
           "lift": null,
           "reliability": "A",
