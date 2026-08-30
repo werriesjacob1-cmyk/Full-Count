@@ -176,6 +176,9 @@ def run_identity(args, code_sha, source, outcome_source):
         "bullpen_mode": "enabled",
         "policy_replay": False,
         "strict_historical_lineups": True,
+        "historical_allowed_game_types": ["C", "D", "F", "L", "P", "R", "W"],
+        "historical_excluded_game_types": ["A", "E", "I", "S"],
+        "historical_unknown_game_types_fail_closed": True,
         "candidate_identity_fields": [
             "date", "game_pk", "player_id", "prop_type", "line"
         ],
@@ -440,6 +443,9 @@ def main():
     # Default False in production. Canonical v2 explicitly enables strict
     # historical behavior here and nowhere else.
     m.HISTORICAL_REPLAY_STRICT_LINEUPS = True
+    m.HISTORICAL_REPLAY_ALLOWED_GAME_TYPES = frozenset(
+        {"R", "F", "D", "L", "W", "C", "P"}
+    )
 
     http_root = os.path.join(args.out_dir, "http")
     ledger = ResponseLedger(
@@ -535,6 +541,7 @@ def main():
     finally:
         set_active_ledger(None)
         m.HISTORICAL_REPLAY_STRICT_LINEUPS = False
+        m.HISTORICAL_REPLAY_ALLOWED_GAME_TYPES = None
         team_identity.uninstall()
         frozen_grader.uninstall()
 
