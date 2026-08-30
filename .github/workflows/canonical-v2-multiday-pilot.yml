@@ -1,4 +1,4 @@
-name: Canonical V2 Multi-Day Pilot
+name: Canonical V2 Failure-Date Replay
 
 on:
   push:
@@ -11,77 +11,299 @@ permissions:
   contents: read
 
 concurrency:
-  group: canonical-v2-multiday-pilot
+  group: canonical-v2-failure-date-replay
   cancel-in-progress: false
 
+env:
+  SCIENTIFIC_PARENT_SHA: fc589447ec157bff9a96071edc3ceb6c7dc734eb
+  PREDICTOR_SHA: 85c41d79570ac25169726419ed2bcb55cbba78139e8786b6005f71f40a877685
+  OUTCOME_SHA: 03fe66c5035b1e139216cf2f56ec276bf82bdea341febbbebc0406f4d3c6b98f
+
 jobs:
-  pilot:
+  preflight:
     runs-on: ubuntu-latest
-    timeout-minutes: 120
+    timeout-minutes: 35
     steps:
-      - name: Checkout provenance runner
-        uses: actions/checkout@v4
+      - name: Wait for exact-head Test Suite
+        shell: bash
+        run: |
+          set -euo pipefail
+          for attempt in $(seq 1 46); do
+            payload="$(curl -fsSL -H 'Accept: application/vnd.github+json' "https://api.github.com/repos/$GITHUB_REPOSITORY/actions/runs?head_sha=$GITHUB_SHA&event=push&per_page=100")"
+            row="$(printf '%s' "$payload" | jq -r --arg sha "$GITHUB_SHA" '
+              .workflow_runs[]
+              | select(.name == "Test Suite" and .head_sha == $sha)
+              | [.status, (.conclusion // ""), (.id|tostring)]
+              | @tsv
+            ' | head -n1)"
+            if [ -z "$row" ]; then
+              sleep 45
+              continue
+            fi
+            IFS=$'\t' read -r status conclusion run_id <<<"$row"
+            echo "Test Suite run=$run_id status=$status conclusion=$conclusion"
+            if [ "$status" = "completed" ]; then
+              test "$conclusion" = "success"
+              echo "EXACT_HEAD_TEST_SUITE_GREEN sha=$GITHUB_SHA run=$run_id"
+              exit 0
+            fi
+            sleep 45
+          done
+          echo "Timed out waiting for exact-head Test Suite" >&2
+          exit 1
+
+  prepare-sources:
+    needs: preflight
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: Set up exact canonical Python
-        uses: actions/setup-python@v5
+      - uses: actions/setup-python@v5
         with:
           python-version: '3.11.15'
           cache: pip
 
-      - name: Install dependencies
-        run: pip install -r requirements.txt
-
-      - name: Materialize exact bound Statcast source
+      - name: Install exact canonical environment
         shell: bash
         run: |
           set -euo pipefail
-          mkdir -p /tmp/fc-source
-          git fetch origin canonical-durable-checkpoints
-          git show origin/canonical-durable-checkpoints:canonical/canonical-20260828T153143Z-2b79304f/source/statcast_2024_through_2026-08-24.parquet             > /tmp/fc-source/statcast_2024_through_2026-08-24.parquet
-          actual="$(sha256sum /tmp/fc-source/statcast_2024_through_2026-08-24.parquet | awk '{print $1}')"
-          expected="85c41d79570ac25169726419ed2bcb55cbba78139e8786b6005f71f40a877685"
-          test "$actual" = "$expected"
-
-      - name: Run three-date cached provenance pilot
-        shell: bash
-        run: |
-          set -euo pipefail
-          rm -rf /tmp/canonical-v2-multiday
-          python backtest/canonical_v2_shard.py             --run-id canonical-v2-multiday-20250818-20             --start 2025-08-18             --end 2025-08-20             --shard-index 0             --shard-count 1             --source-parquet /tmp/fc-source/statcast_2024_through_2026-08-24.parquet             --expected-source-sha256 85c41d79570ac25169726419ed2bcb55cbba78139e8786b6005f71f40a877685             --scientific-parent-sha fc589447ec157bff9a96071edc3ceb6c7dc734eb             --out-dir /tmp/canonical-v2-multiday             --archive-http-bodies             --verbose
-
-      - name: Summarize network/cache evidence
-        if: always()
-        shell: bash
-        run: |
-          set -euo pipefail
-          if [ -d /tmp/canonical-v2-multiday ]; then
-            du -sh /tmp/canonical-v2-multiday || true
-            python - <<'PY'
-          import glob, json, os
-          root="/tmp/canonical-v2-multiday/http"
-          for path in sorted(glob.glob(root+"/*.summary.json")):
-              d=json.load(open(path))
-              print(json.dumps({
-                  "date":d["date"],
-                  "request_count":d["request_count"],
-                  "network_request_count":d.get("network_request_count"),
-                  "cache_hit_count":d.get("cache_hit_count"),
-                  "response_bytes_total":d["response_bytes_total"],
-                  "firewall_block_count":d.get("firewall_block_count"),
-                  "exceptions":d.get("exceptions"),
-                  "non_2xx":d.get("http_non_2xx"),
-              }, sort_keys=True))
+          pip install -r requirements.txt
+          pip install --upgrade --force-reinstall \
+            numpy==2.4.6 \
+            pandas==3.0.5 \
+            pyarrow==25.0.1 \
+            pybaseball==2.2.7 \
+            python-dateutil==2.9.0.post0 \
+            requests==2.34.2 \
+            scikit-learn==1.9.0 \
+            scipy==1.17.1
+          python - <<'PY'
+          from backtest.canonical_durability import environment_identity
+          from backtest.canonical_v2_certify import EXPECTED_CRITICAL_PACKAGES, EXPECTED_PYTHON
+          env=environment_identity()
+          assert env["python_version"] == EXPECTED_PYTHON, env
+          for name, expected in EXPECTED_CRITICAL_PACKAGES.items():
+              assert env["critical_packages"].get(name) == expected, (name, env)
+          print(env["environment_fingerprint"])
+          print(env["pip_freeze_sha256"])
           PY
-            cat /tmp/canonical-v2-multiday/shard_summary.json || true
-          fi
 
-      - name: Upload complete pilot evidence
+      - name: Materialize exact predictor and outcome-only sources once
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf /tmp/fc-failure-replay-sources
+          mkdir -p /tmp/fc-failure-replay-sources/predictor /tmp/fc-failure-replay-sources/outcome
+
+          git fetch origin canonical-durable-checkpoints
+          git show origin/canonical-durable-checkpoints:canonical/canonical-20260828T153143Z-2b79304f/source/statcast_2024_through_2026-08-24.parquet \
+            > /tmp/fc-failure-replay-sources/predictor/statcast_2024_through_2026-08-24.parquet
+          test "$(sha256sum /tmp/fc-failure-replay-sources/predictor/statcast_2024_through_2026-08-24.parquet | awk '{print $1}')" = "$PREDICTOR_SHA"
+
+          python - <<'PY'
+          import hashlib, os, pandas as pd
+          from pybaseball import statcast
+
+          day="2026-08-25"
+          cols=["game_date","game_pk","batter","events","launch_speed","hit_distance_sc"]
+          frame=statcast(start_dt=day,end_dt=day)
+          if frame is None or frame.empty:
+              raise SystemExit("outcome-only Statcast fetch returned no rows")
+          missing=[c for c in cols if c not in frame.columns]
+          if missing:
+              raise SystemExit(f"missing outcome columns: {missing}")
+          out=frame[cols].copy()
+          parsed=pd.to_datetime(out["game_date"],errors="coerce")
+          coverage=sorted({v.date().isoformat() for v in parsed.dropna()})
+          if coverage != [day]:
+              raise SystemExit(f"outcome coverage mismatch: {coverage}")
+          out["game_date"]=parsed.dt.date.astype(str)
+          out=out.sort_values(
+              ["game_pk","batter","events","launch_speed","hit_distance_sc"],
+              kind="mergesort",na_position="last"
+          ).reset_index(drop=True)
+          path="/tmp/fc-failure-replay-sources/outcome/statcast_outcome_2026-08-25.parquet"
+          out.to_parquet(path,index=False)
+          actual=hashlib.sha256(open(path,"rb").read()).hexdigest()
+          expected=os.environ["OUTCOME_SHA"]
+          if actual != expected:
+              raise SystemExit(f"outcome SHA drift: {actual} != {expected}")
+          print(f"outcome_sha256={actual} rows={len(out)}")
+          PY
+
+      - name: Upload one bound source package
+        uses: actions/upload-artifact@v4
+        with:
+          name: canonical-v2-failure-replay-sources
+          path: /tmp/fc-failure-replay-sources
+          if-no-files-found: error
+          retention-days: 90
+
+  replay:
+    needs: prepare-sources
+    strategy:
+      fail-fast: false
+      matrix:
+        day:
+          - "2024-07-16"
+          - "2025-07-15"
+          - "2025-02-21"
+          - "2026-02-20"
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11.15'
+          cache: pip
+
+      - name: Install exact canonical environment
+        shell: bash
+        run: |
+          set -euo pipefail
+          pip install -r requirements.txt
+          pip install --upgrade --force-reinstall \
+            numpy==2.4.6 \
+            pandas==3.0.5 \
+            pyarrow==25.0.1 \
+            pybaseball==2.2.7 \
+            python-dateutil==2.9.0.post0 \
+            requests==2.34.2 \
+            scikit-learn==1.9.0 \
+            scipy==1.17.1
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: canonical-v2-failure-replay-sources
+          path: /tmp/fc-failure-replay-sources
+
+      - name: Reverify source bytes
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(sha256sum /tmp/fc-failure-replay-sources/predictor/statcast_2024_through_2026-08-24.parquet | awk '{print $1}')" = "$PREDICTOR_SHA"
+          test "$(sha256sum /tmp/fc-failure-replay-sources/outcome/statcast_outcome_2026-08-25.parquet | awk '{print $1}')" = "$OUTCOME_SHA"
+
+      - name: Replay exact historical failure date
+        shell: bash
+        run: |
+          set -euo pipefail
+          out="/tmp/fc-failure-replay-${{ matrix.day }}"
+          rm -rf "$out"
+          python backtest/canonical_v2_shard.py \
+            --run-id "canonical-v2-failure-replay-${{ matrix.day }}" \
+            --start "${{ matrix.day }}" \
+            --end "${{ matrix.day }}" \
+            --shard-index 0 \
+            --shard-count 1 \
+            --source-parquet /tmp/fc-failure-replay-sources/predictor/statcast_2024_through_2026-08-24.parquet \
+            --expected-source-sha256 "$PREDICTOR_SHA" \
+            --outcome-parquet /tmp/fc-failure-replay-sources/outcome/statcast_outcome_2026-08-25.parquet \
+            --expected-outcome-sha256 "$OUTCOME_SHA" \
+            --outcome-date 2026-08-25 \
+            --scientific-parent-sha "$SCIENTIFIC_PARENT_SHA" \
+            --out-dir "$out" \
+            --archive-http-bodies \
+            --sleep 0.10 \
+            --verbose
+
+      - name: Prove excluded-population date fails closed as no_games
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json, os
+          from urllib.parse import urlparse, parse_qs
+
+          day="${{ matrix.day }}"
+          root=f"/tmp/fc-failure-replay-{day}"
+          summary=json.load(open(f"{root}/shard_summary.json",encoding="utf-8"))
+          meta=json.load(open(f"{root}/rows/{day}.meta.json",encoding="utf-8"))
+
+          if summary.get("errors"):
+              raise SystemExit(f"replay errors: {summary['errors']}")
+          if summary.get("completed_dates") != [day]:
+              raise SystemExit(f"completed_dates mismatch: {summary.get('completed_dates')}")
+          ds=(summary.get("date_summaries") or {}).get(day) or {}
+          if ds.get("status") != "no_games":
+              raise SystemExit(f"expected no_games, got {ds.get('status')}")
+          if int(ds.get("rows") or 0) != 0:
+              raise SystemExit(f"expected zero rows, got {ds.get('rows')}")
+          if meta.get("status") != "no_games":
+              raise SystemExit(f"metadata status={meta.get('status')}")
+          if int(meta.get("row_count") or 0) != 0:
+              raise SystemExit(f"metadata row_count={meta.get('row_count')}")
+          if int(meta.get("n_candidates") or 0) != 0:
+              raise SystemExit(f"metadata n_candidates={meta.get('n_candidates')}")
+          if meta.get("point_in_time_access",{}).get("violations"):
+              raise SystemExit("point-in-time violation")
+          hp=meta.get("http_provenance") or {}
+          if int(hp.get("firewall_block_count") or 0):
+              raise SystemExit("source firewall block")
+          if int(hp.get("exceptions") or 0):
+              raise SystemExit("HTTP exception")
+
+          ledger_path=f"{root}/http/{day}.ledger.jsonl"
+          entries=[json.loads(line) for line in open(ledger_path,encoding="utf-8") if line.strip()]
+          predictive=[e for e in entries if e.get("scientific_phase")=="predictive_input"]
+          schedule_rows=[]
+          forbidden_feeds=[]
+          for e in predictive:
+              p=urlparse(str(e.get("url") or ""))
+              if p.path == "/api/v1/schedule":
+                  q=parse_qs(p.query)
+                  if q.get("date")==[day]:
+                      schedule_rows.append(e)
+              if p.path.startswith("/api/v1.1/game/") and p.path.endswith("/feed/live"):
+                  forbidden_feeds.append(e.get("url"))
+          if not schedule_rows:
+              raise SystemExit("no predictive date-addressed D-schedule evidence")
+          if forbidden_feeds:
+              raise SystemExit(f"predictive game feeds reached excluded slate: {forbidden_feeds[:5]}")
+
+          body_dir=f"{root}/http/bodies"
+          observed_types=set()
+          observed_games=[]
+          for e in schedule_rows:
+              sha=e.get("response_sha256")
+              if not sha:
+                  continue
+              gz=f"{body_dir}/{sha}.gz"
+              import gzip
+              with gzip.open(gz,"rb") as h:
+                  payload=json.loads(h.read())
+              for block in payload.get("dates") or []:
+                  for g in block.get("games") or []:
+                      observed_types.add(str(g.get("gameType") or ""))
+                      observed_games.append((g.get("gamePk"),g.get("gameType")))
+          allowed={"R","F","D","L","W","C","P"}
+          if not observed_games:
+              raise SystemExit("D-schedule unexpectedly contained no games; replay did not exercise excluded population")
+          if any(t in allowed for _,t in observed_games):
+              raise SystemExit(f"date contains competitive game(s), cannot expect no_games: {observed_games}")
+          print(json.dumps({
+              "day":day,
+              "status":"no_games",
+              "rows":0,
+              "observed_game_types":sorted(observed_types),
+              "observed_games":observed_games,
+              "predictive_http_requests":len(predictive),
+              "predictive_game_feeds":0,
+          },sort_keys=True))
+          PY
+
+      - name: Upload replay evidence
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: canonical-v2-multiday-20250818-20
-          path: /tmp/canonical-v2-multiday
+          name: canonical-v2-failure-replay-${{ matrix.day }}
+          path: /tmp/fc-failure-replay-${{ matrix.day }}
           if-no-files-found: error
           retention-days: 90
