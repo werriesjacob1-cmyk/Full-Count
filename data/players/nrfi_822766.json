@@ -1,0 +1,37 @@
+{
+  "player_id": "nrfi_822766",
+  "name": "Seattle Mariners @ Toronto Blue Jays \u2014 1st Inning (Both Teams)",
+  "snapshots": [
+    {
+      "date": "2026-08-30",
+      "evaluations": [
+        {
+          "prop": "A run scores in the 1st (either team)",
+          "type": "game",
+          "score": 68.0,
+          "notable_signals": 0,
+          "matchup": "Seattle Mariners @ Toronto Blue Jays",
+          "game_pk": 822766,
+          "team": null,
+          "side": "both",
+          "lean": "YRFI",
+          "combo_player_ids": null,
+          "signals": {
+            "home_team_scores_p": 0.337,
+            "away_team_scores_p": 0.3428,
+            "fi_n_starts": 13.0
+          },
+          "hit_probability": 0.5643,
+          "raw_hit_probability": null,
+          "lift": 0.0627,
+          "reliability": "B",
+          "sample_n": 13,
+          "projection": {
+            "stat": "nrfi_combined",
+            "value": 56.4
+          }
+        }
+      ]
+    }
+  ]
+}

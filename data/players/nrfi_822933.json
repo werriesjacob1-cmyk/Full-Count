@@ -1,0 +1,37 @@
+{
+  "player_id": "nrfi_822933",
+  "name": "San Diego Padres @ Tampa Bay Rays \u2014 1st Inning (Both Teams)",
+  "snapshots": [
+    {
+      "date": "2026-08-30",
+      "evaluations": [
+        {
+          "prop": "No runs in the 1st (both teams)",
+          "type": "game",
+          "score": 68.9,
+          "notable_signals": 0,
+          "matchup": "San Diego Padres @ Tampa Bay Rays",
+          "game_pk": 822933,
+          "team": null,
+          "side": "both",
+          "lean": "NRFI",
+          "combo_player_ids": null,
+          "signals": {
+            "home_team_scores_p": 0.2441,
+            "away_team_scores_p": 0.2473,
+            "fi_n_starts": 26.0
+          },
+          "hit_probability": 0.569,
+          "raw_hit_probability": null,
+          "lift": 0.0706,
+          "reliability": "A",
+          "sample_n": 26,
+          "projection": {
+            "stat": "nrfi_combined",
+            "value": 56.9
+          }
+        }
+      ]
+    }
+  ]
+}
