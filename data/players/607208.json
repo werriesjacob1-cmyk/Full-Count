@@ -2101,10 +2101,10 @@
       "date": "2026-08-30",
       "evaluations": [
         {
-          "prop": "Over 0.5 Hits",
+          "prop": "Over 0.5 Hits+Runs+RBIs",
           "type": "batter",
-          "score": 70.8,
-          "notable_signals": 0,
+          "score": 75.7,
+          "notable_signals": 1,
           "matchup": "Philadelphia Phillies @ Los Angeles Angels",
           "game_pk": 823987,
           "team": "Philadelphia Phillies",
@@ -2137,13 +2137,13 @@
             "ump_k_pct": 0.024,
             "ump_bb_pct": -0.252
           },
-          "hit_probability": 0.6239,
-          "raw_hit_probability": 0.6188,
-          "lift": 0.0609,
+          "hit_probability": 0.6923,
+          "raw_hit_probability": 0.7109,
+          "lift": 0.0409,
           "reliability": "A",
           "sample_n": 131,
           "projection": {
-            "stat": "hits",
+            "stat": "hits_runs_rbis",
             "value": 0.5,
             "needs": 1
           }
@@ -2165,7 +2165,7 @@
             "catcher_poptime": 22.8571,
             "on_base": 32.8215
           },
-          "hit_probability": 0.1261,
+          "hit_probability": 0.1258,
           "raw_hit_probability": null,
           "lift": null,
           "reliability": "A",
