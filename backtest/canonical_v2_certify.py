@@ -757,6 +757,7 @@ def certify(
 
     # Per-date evidence.
     date_statuses = {}
+    date_population_meta = {}
     date_meta_dir = os.path.join(
         package_dir,
         report.get("date_metadata_path") or "date_metadata",
@@ -783,6 +784,12 @@ def certify(
             if meta.get("date") != day:
                 failures.append(f"{day}: metadata embeds different date")
             date_statuses[day] = meta.get("status")
+            date_population_meta[day] = {
+                "status": meta.get("status"),
+                "n_games": int(meta.get("n_games") or 0),
+                "n_candidates": int(meta.get("n_candidates") or 0),
+                "row_count": int(meta.get("row_count") or 0),
+            }
             if meta.get("status") not in ("ok", "no_games"):
                 failures.append(
                     f"{day}: unresolved date status {meta.get('status')!r}"
@@ -1373,17 +1380,38 @@ def certify(
                         f"{sorted(observed_types)!r}"
                     )
 
-            if date_statuses.get(day) == "no_games":
-                eligible = sorted(
-                    game_pk
-                    for game_pk, observed_types in game_types.items()
-                    if observed_types
-                    and observed_types.issubset(CANONICAL_ALLOWED_GAME_TYPES)
+            eligible = sorted(
+                game_pk
+                for game_pk, observed_types in game_types.items()
+                if observed_types
+                and observed_types.issubset(CANONICAL_ALLOWED_GAME_TYPES)
+            )
+            if date_statuses.get(day) == "no_games" and eligible:
+                failures.append(
+                    f"{day}: date marked no_games despite competitive "
+                    f"D-schedule gamePk(s) {eligible[:10]!r}"
                 )
-                if eligible:
+
+            # If the archived pregame D-schedule contains no competitive MLB
+            # game at all (off-day or excluded-only slate), replay must have
+            # stopped before candidate assembly. Candidate rows alone are not
+            # sufficient evidence because an invalid candidate could disappear
+            # during grading. Bind the per-date pre-grading counts as well.
+            if not eligible:
+                pop = date_population_meta.get(day) or {}
+                observed = (
+                    pop.get("status"),
+                    int(pop.get("n_games") or 0),
+                    int(pop.get("n_candidates") or 0),
+                    int(pop.get("row_count") or 0),
+                )
+                expected = ("no_games", 0, 0, 0)
+                if observed != expected:
                     failures.append(
-                        f"{day}: date marked no_games despite competitive "
-                        f"D-schedule gamePk(s) {eligible[:10]!r}"
+                        f"{day}: zero-eligible D-schedule did not fail closed "
+                        f"before candidate assembly: observed "
+                        f"(status,n_games,n_candidates,row_count)={observed!r} "
+                        f"expected={expected!r}"
                     )
 
         for row in statsapi_rows:
