@@ -56,6 +56,12 @@ OUTCOME_ONLY_SOURCE_COLUMNS = {
     "hit_distance_sc",
 }
 
+CANONICAL_ALLOWED_GAME_TYPES = frozenset({"R", "F", "D", "L", "W", "C", "P"})
+CANONICAL_EXCLUDED_GAME_TYPES = frozenset({"S", "A", "I", "E"})
+CANONICAL_KNOWN_GAME_TYPES = (
+    CANONICAL_ALLOWED_GAME_TYPES | CANONICAL_EXCLUDED_GAME_TYPES
+)
+
 PROTECTED_SCIENTIFIC_FILES = (
     "recommendation.py",
     "generate_picks.py",
@@ -618,6 +624,16 @@ def certify(
         failures.append("canonical v2 unexpectedly replayed selector policy")
     if identity.get("strict_historical_lineups") is not True:
         failures.append("strict historical lineup firewall was not enabled")
+    if identity.get("historical_allowed_game_types") != sorted(
+        CANONICAL_ALLOWED_GAME_TYPES
+    ):
+        failures.append("canonical v2 competitive game-type allowlist mismatch")
+    if identity.get("historical_excluded_game_types") != sorted(
+        CANONICAL_EXCLUDED_GAME_TYPES
+    ):
+        failures.append("canonical v2 excluded game-type list mismatch")
+    if identity.get("historical_unknown_game_types_fail_closed") is not True:
+        failures.append("canonical v2 does not fail closed on unknown game types")
     if identity.get("http_strict_host_firewall") is not True:
         failures.append("scientific HTTP host firewall was not enabled")
     if identity.get("http_response_content_bound") is not True:
@@ -665,6 +681,7 @@ def certify(
         failures.append("assembled rows.jsonl SHA differs from consolidation report")
 
     identities = set()
+    candidate_game_pks_by_date = defaultdict(set)
     observed_code_shas = set()
     market_counts = Counter()
     year_counts = Counter()
@@ -697,6 +714,12 @@ def certify(
                 if len(day) >= 4:
                     year_counts[day[:4]] += 1
                 market_counts[str(row.get("prop_type"))] += 1
+                try:
+                    candidate_game_pk = int(row.get("game_pk"))
+                except (TypeError, ValueError):
+                    failures.append(f"row {cid!r} has invalid game_pk")
+                else:
+                    candidate_game_pks_by_date[day].add(candidate_game_pk)
 
                 code_sha = row.get("code_git_sha")
                 if code_sha:
@@ -733,6 +756,7 @@ def certify(
         )
 
     # Per-date evidence.
+    date_statuses = {}
     date_meta_dir = os.path.join(
         package_dir,
         report.get("date_metadata_path") or "date_metadata",
@@ -758,6 +782,7 @@ def certify(
             meta = load_json(path)
             if meta.get("date") != day:
                 failures.append(f"{day}: metadata embeds different date")
+            date_statuses[day] = meta.get("status")
             if meta.get("status") not in ("ok", "no_games"):
                 failures.append(
                     f"{day}: unresolved date status {meta.get('status')!r}"
@@ -1209,6 +1234,7 @@ def certify(
         # response proves that exact gamePk was already completed before D.
         # Same-day feeds are legitimate only in outcome_grading.
         schedule_evidence = defaultdict(list)
+        d_schedule_game_types = defaultdict(lambda: defaultdict(set))
         team_pregame_timecodes = {}
         for row in statsapi_rows:
             parsed = urlparse(str(row.get("url") or ""))
@@ -1260,6 +1286,16 @@ def certify(
                         row.get("scientific_phase") == "predictive_input"
                         and date_value == observed
                     ):
+                        game_type = str(game.get("gameType") or "")
+                        if not game_type or game_type not in CANONICAL_KNOWN_GAME_TYPES:
+                            failures.append(
+                                f"{observed}: schedule game {game_pk} has unknown "
+                                f"gameType={game_type!r}"
+                            )
+                        else:
+                            d_schedule_game_types[observed][int(game_pk)].add(
+                                game_type
+                            )
                         raw_game_start = str(game.get("gameDate") or "")
                         try:
                             parsed_start = datetime.fromisoformat(
@@ -1296,6 +1332,46 @@ def certify(
                         "detailed_state": str(status.get("detailedState") or ""),
                         "team_ids": sorted(set(team_ids)),
                     })
+
+        # Independently prove candidate population membership from the
+        # archived predictive D-schedule.  The generator's game-type filter is
+        # not trusted merely because its identity says it was enabled.
+        for day in dates:
+            game_types = d_schedule_game_types.get(day, {})
+            for game_pk, observed_types in game_types.items():
+                if len(observed_types) != 1:
+                    failures.append(
+                        f"{day}: gamePk {game_pk} has conflicting D-schedule "
+                        f"game types {sorted(observed_types)!r}"
+                    )
+
+            for game_pk in sorted(candidate_game_pks_by_date.get(day, set())):
+                observed_types = game_types.get(game_pk)
+                if not observed_types:
+                    failures.append(
+                        f"{day}: candidate gamePk {game_pk} is absent from "
+                        "archived predictive D-schedule evidence"
+                    )
+                    continue
+                if not observed_types.issubset(CANONICAL_ALLOWED_GAME_TYPES):
+                    failures.append(
+                        f"{day}: candidate gamePk {game_pk} originated from "
+                        f"excluded/noncompetitive gameType "
+                        f"{sorted(observed_types)!r}"
+                    )
+
+            if date_statuses.get(day) == "no_games":
+                eligible = sorted(
+                    game_pk
+                    for game_pk, observed_types in game_types.items()
+                    if observed_types
+                    and observed_types.issubset(CANONICAL_ALLOWED_GAME_TYPES)
+                )
+                if eligible:
+                    failures.append(
+                        f"{day}: date marked no_games despite competitive "
+                        f"D-schedule gamePk(s) {eligible[:10]!r}"
+                    )
 
         for row in statsapi_rows:
             parsed = urlparse(str(row.get("url") or ""))
