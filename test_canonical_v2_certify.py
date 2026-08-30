@@ -118,7 +118,31 @@ class PackageFactory:
         with open(rows_path, "wb") as handle:
             handle.write(rows_raw)
 
-        stats_body = b'{"dates":[{"date":"2025-08-20","games":[]}]}'
+        stats_payload = {
+            "dates": [{
+                "date": self.day,
+                "games": [{
+                    "gamePk": 123,
+                    "gameType": "R",
+                    "officialDate": self.day,
+                    "gameDate": f"{self.day}T23:05:00Z",
+                    "teams": {
+                        "away": {"team": {"id": 101}},
+                        "home": {"team": {"id": 102}},
+                    },
+                    "status": {
+                        "codedGameState": "S",
+                        "statusCode": "S",
+                        "detailedState": "Scheduled",
+                    },
+                }],
+            }],
+        }
+        stats_body = json.dumps(
+            stats_payload,
+            sort_keys=True,
+            separators=(",", ":"),
+        ).encode()
         stats_body_sha = sha(stats_body)
         write_gzip(
             os.path.join(blob_dir, f"{stats_body_sha}.gz"),
@@ -304,6 +328,13 @@ class PackageFactory:
             "bullpen_mode": "enabled",
             "policy_replay": False,
             "strict_historical_lineups": True,
+            "historical_allowed_game_types": sorted(
+                cert.CANONICAL_ALLOWED_GAME_TYPES
+            ),
+            "historical_excluded_game_types": sorted(
+                cert.CANONICAL_EXCLUDED_GAME_TYPES
+            ),
+            "historical_unknown_game_types_fail_closed": True,
             "http_strict_host_firewall": True,
             "http_response_content_bound": True,
             "http_scientific_phase_bound": True,
@@ -753,6 +784,59 @@ class CertificationTests(unittest.TestCase):
         return rows
 
 
+
+    def _replace_predictive_d_schedule(self, root, games):
+        body = json.dumps(
+            {
+                "dates": [{
+                    "date": "2025-08-20",
+                    "games": games,
+                }],
+            },
+            sort_keys=True,
+            separators=(",", ":"),
+        ).encode()
+        body_sha = sha(body)
+        write_gzip(
+            os.path.join(root, "http_blobs", f"{body_sha}.gz"),
+            body,
+        )
+
+        def mutate(rows):
+            schedule = next(
+                row for row in rows
+                if "/api/v1/schedule" in row["url"]
+                and "date=2025-08-20" in row["url"]
+                and row.get("scientific_phase") == "predictive_input"
+            )
+            schedule["response_sha256"] = body_sha
+            schedule["response_bytes"] = len(body)
+
+        self._rewrite_ledger(
+            root,
+            "mlb_statsapi_request_ledger",
+            mutate,
+            bind=True,
+        )
+
+    @staticmethod
+    def _d_schedule_game(game_type="R", game_pk=123):
+        return {
+            "gamePk": game_pk,
+            "gameType": game_type,
+            "officialDate": "2025-08-20",
+            "gameDate": "2025-08-20T23:05:00Z",
+            "teams": {
+                "away": {"team": {"id": 101}},
+                "home": {"team": {"id": 102}},
+            },
+            "status": {
+                "codedGameState": "S",
+                "statusCode": "S",
+                "detailedState": "Scheduled",
+            },
+        }
+
     def _install_timebounded_predictive_feed(
         self,
         root,
@@ -765,7 +849,8 @@ class CertificationTests(unittest.TestCase):
             "dates": [{
                 "date": "2025-08-20",
                 "games": [{
-                    "gamePk": 9000,
+                    "gamePk": 123,
+                    "gameType": "R",
                     "officialDate": "2025-08-20",
                     "gameDate": "2025-08-20T23:05:00Z",
                     "teams": {
@@ -1485,6 +1570,87 @@ class CertificationTests(unittest.TestCase):
                     "predictive game feed lacks historical timecode" in failure
                     for failure in result["failures"]
                 )
+            )
+
+
+
+    def test_candidate_from_spring_training_is_not_canonical(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            PackageFactory(tmp).build()
+            self._replace_predictive_d_schedule(
+                tmp,
+                [self._d_schedule_game("S")],
+            )
+            result = self.certify(tmp)
+            self.assertEqual(
+                result["verdict"],
+                "NOT CANONICAL",
+                msg=json.dumps(result, indent=2),
+            )
+            self.assertTrue(
+                any(
+                    "excluded/noncompetitive gameType" in failure
+                    for failure in result["failures"]
+                )
+            )
+
+    def test_candidate_from_exhibition_is_not_canonical(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            PackageFactory(tmp).build()
+            self._replace_predictive_d_schedule(
+                tmp,
+                [self._d_schedule_game("E")],
+            )
+            result = self.certify(tmp)
+            self.assertEqual(result["verdict"], "NOT CANONICAL")
+            self.assertTrue(
+                any(
+                    "excluded/noncompetitive gameType" in failure
+                    for failure in result["failures"]
+                )
+            )
+
+    def test_unknown_d_schedule_game_type_is_not_canonical(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            PackageFactory(tmp).build()
+            self._replace_predictive_d_schedule(
+                tmp,
+                [self._d_schedule_game("X")],
+            )
+            result = self.certify(tmp)
+            self.assertEqual(result["verdict"], "NOT CANONICAL")
+            self.assertTrue(
+                any(
+                    "unknown gameType" in failure
+                    for failure in result["failures"]
+                )
+            )
+
+    def test_candidate_missing_from_predictive_d_schedule_is_not_canonical(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            PackageFactory(tmp).build()
+            self._replace_predictive_d_schedule(tmp, [])
+            result = self.certify(tmp)
+            self.assertEqual(result["verdict"], "NOT CANONICAL")
+            self.assertTrue(
+                any(
+                    "absent from archived predictive D-schedule" in failure
+                    for failure in result["failures"]
+                )
+            )
+
+    def test_postseason_candidate_remains_canonical(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            PackageFactory(tmp).build()
+            self._replace_predictive_d_schedule(
+                tmp,
+                [self._d_schedule_game("W")],
+            )
+            result = self.certify(tmp)
+            self.assertEqual(
+                result["verdict"],
+                "CANONICAL CERTIFIED",
+                msg=json.dumps(result, indent=2),
             )
 
 
