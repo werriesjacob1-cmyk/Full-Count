@@ -2122,6 +2122,137 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-31",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 36.0,
+          "notable_signals": 0,
+          "matchup": "San Francisco Giants @ Atlanta Braves",
+          "game_pk": 824911,
+          "team": "Atlanta Braves",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 11.1429,
+            "l7_avg_ev": 94.1667,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 48.9,
+            "season_barrel_pct": 60.0,
+            "lineup_slot": 12.5,
+            "bullpen_fatigue": 30.303,
+            "platoon_barrel_pct": 4.0,
+            "platoon_xwoba": -1.38,
+            "park_hand_index": -0.97,
+            "opp_catcher_framing": 0.6,
+            "days_rest": 0.0,
+            "woba_ahead": 0.0,
+            "woba_behind": 19.0909,
+            "pull_park_synergy": -0.4074,
+            "hard_hit_105_rate": 0.5375,
+            "team_total_move": 0.0,
+            "team_total_open": 0.0,
+            "getaway_day": -2.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": 0.256,
+            "vs_rp_ops": -0.564,
+            "ump_k_pct": 0.588,
+            "ump_bb_pct": 0.12
+          },
+          "hit_probability": 0.6399,
+          "raw_hit_probability": 0.6203,
+          "lift": -0.0293,
+          "reliability": "A",
+          "sample_n": 135,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 36.2,
+          "notable_signals": 0,
+          "matchup": "San Francisco Giants @ Atlanta Braves",
+          "game_pk": 824911,
+          "team": "Atlanta Braves",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": 0.72,
+            "sprint_speed": 18.75,
+            "on_base": 30.9021
+          },
+          "hit_probability": 0.0651,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 135,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 9.9,
+          "notable_signals": 0,
+          "matchup": "San Francisco Giants @ Atlanta Braves",
+          "game_pk": 824911,
+          "team": "Atlanta Braves",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0681
+          },
+          "hit_probability": 0.0681,
+          "raw_hit_probability": null,
+          "lift": 0.02,
+          "reliability": "A",
+          "sample_n": 135,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 5.3,
+          "notable_signals": 0,
+          "matchup": "San Francisco Giants @ Atlanta Braves",
+          "game_pk": 824911,
+          "team": "Atlanta Braves",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0337
+          },
+          "hit_probability": 0.0337,
+          "raw_hit_probability": null,
+          "lift": 0.0126,
+          "reliability": "A",
+          "sample_n": 135,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

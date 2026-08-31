@@ -302,7 +302,7 @@
         {
           "prop": "Over 4.5 Strikeouts",
           "type": "pitcher",
-          "score": 39.0,
+          "score": 31.5,
           "notable_signals": 0,
           "matchup": "San Diego Padres @ Cincinnati Reds",
           "game_pk": 824473,
@@ -314,11 +314,14 @@
             "opp_team_k_pct": 47.0,
             "same_hand_ratio": 88.8889,
             "l14_k_pct": 0.0,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 52.1797,
+            "ump_k_pct": 0.324,
+            "ump_bb_pct": 0.192
           },
-          "hit_probability": 0.4873,
-          "raw_hit_probability": 0.4873,
-          "lift": -0.0257,
+          "hit_probability": 0.4894,
+          "raw_hit_probability": 0.4894,
+          "lift": -0.0278,
           "reliability": "A",
           "sample_n": 26,
           "projection": {
@@ -328,9 +331,9 @@
           }
         },
         {
-          "prop": "Over 15.5 Outs Recorded",
+          "prop": "Over 17.5 Outs Recorded",
           "type": "pitcher",
-          "score": 44.9,
+          "score": 39.5,
           "notable_signals": 0,
           "matchup": "San Diego Padres @ Cincinnati Reds",
           "game_pk": 824473,
@@ -339,18 +342,18 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.5382,
+            "outs_rate": 0.457,
             "avg_outs_per_start": 15.85
           },
-          "hit_probability": 0.5382,
+          "hit_probability": 0.457,
           "raw_hit_probability": null,
-          "lift": 0.0012,
+          "lift": 0.0195,
           "reliability": "A",
           "sample_n": 26,
           "projection": {
             "stat": "pitcher_outs",
-            "value": 15.5,
-            "needs": 16
+            "value": 17.5,
+            "needs": 18
           }
         }
       ]

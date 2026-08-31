@@ -130,9 +130,9 @@
       "date": "2026-08-31",
       "evaluations": [
         {
-          "prop": "Over 3.5 Strikeouts",
+          "prop": "Over 4.5 Strikeouts",
           "type": "pitcher",
-          "score": 36.1,
+          "score": 32.8,
           "notable_signals": 0,
           "matchup": "Baltimore Orioles @ Colorado Rockies",
           "game_pk": 824314,
@@ -142,25 +142,28 @@
           "combo_player_ids": null,
           "signals": {
             "opp_team_k_pct": 75.0,
-            "same_hand_ratio": 100.0,
+            "same_hand_ratio": 61.1111,
             "l14_k_pct": 0.0,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 55.8292,
+            "ump_k_pct": -0.06,
+            "ump_bb_pct": -0.372
           },
-          "hit_probability": 0.5909,
-          "raw_hit_probability": 0.5854,
-          "lift": -0.1018,
+          "hit_probability": 0.3948,
+          "raw_hit_probability": 0.3948,
+          "lift": -0.1224,
           "reliability": "C",
           "sample_n": 7,
           "projection": {
             "stat": "strikeouts",
-            "value": 3.5,
-            "needs": 4
+            "value": 4.5,
+            "needs": 5
           }
         },
         {
           "prop": "Over 14.5 Outs Recorded",
           "type": "pitcher",
-          "score": 46.5,
+          "score": 46.6,
           "notable_signals": 1,
           "matchup": "Baltimore Orioles @ Colorado Rockies",
           "game_pk": 824314,
@@ -169,12 +172,12 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.7992,
+            "outs_rate": 0.8005,
             "avg_outs_per_start": 15.14
           },
-          "hit_probability": 0.7992,
+          "hit_probability": 0.8005,
           "raw_hit_probability": null,
-          "lift": 0.0677,
+          "lift": 0.0661,
           "reliability": "C",
           "sample_n": 7,
           "projection": {

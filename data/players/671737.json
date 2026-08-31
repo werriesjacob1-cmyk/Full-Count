@@ -284,8 +284,8 @@
         {
           "prop": "Over 5.5 Strikeouts",
           "type": "pitcher",
-          "score": 39.9,
-          "notable_signals": 1,
+          "score": 46.7,
+          "notable_signals": 2,
           "matchup": "Detroit Tigers @ Minnesota Twins",
           "game_pk": 823663,
           "team": "Minnesota Twins",
@@ -294,14 +294,17 @@
           "combo_player_ids": null,
           "signals": {
             "opp_team_k_pct": 56.0,
-            "same_hand_ratio": 88.8889,
+            "same_hand_ratio": 61.1111,
             "l14_k_pct": 100.0,
             "tto_penalty": 8.0,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 78.7065,
+            "ump_k_pct": -0.024,
+            "ump_bb_pct": 0.18
           },
-          "hit_probability": 0.5113,
-          "raw_hit_probability": 0.5113,
-          "lift": 0.1574,
+          "hit_probability": 0.5129,
+          "raw_hit_probability": 0.5129,
+          "lift": 0.1558,
           "reliability": "A",
           "sample_n": 26,
           "projection": {
@@ -311,10 +314,10 @@
           }
         },
         {
-          "prop": "Over 16.5 Outs Recorded",
+          "prop": "Over 17.5 Outs Recorded",
           "type": "pitcher",
-          "score": 48.7,
-          "notable_signals": 0,
+          "score": 54.4,
+          "notable_signals": 1,
           "matchup": "Detroit Tigers @ Minnesota Twins",
           "game_pk": 823663,
           "team": "Minnesota Twins",
@@ -322,18 +325,18 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.53,
+            "outs_rate": 0.5195,
             "avg_outs_per_start": 17.0
           },
-          "hit_probability": 0.53,
+          "hit_probability": 0.5195,
           "raw_hit_probability": null,
-          "lift": 0.0368,
+          "lift": 0.082,
           "reliability": "A",
           "sample_n": 26,
           "projection": {
             "stat": "pitcher_outs",
-            "value": 16.5,
-            "needs": 17
+            "value": 17.5,
+            "needs": 18
           }
         }
       ]

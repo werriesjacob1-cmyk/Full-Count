@@ -6,9 +6,9 @@
       "date": "2026-08-31",
       "evaluations": [
         {
-          "prop": "Over 4.5 Strikeouts",
+          "prop": "Over 3.5 Strikeouts",
           "type": "pitcher",
-          "score": 40.1,
+          "score": 40.8,
           "notable_signals": 0,
           "matchup": "Miami Marlins @ Washington Nationals",
           "game_pk": 822689,
@@ -18,19 +18,22 @@
           "combo_player_ids": null,
           "signals": {
             "opp_team_k_pct": 48.0,
-            "same_hand_ratio": 0.0,
+            "same_hand_ratio": 5.5556,
             "l14_k_pct": 74.1176,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 54.8581,
+            "ump_k_pct": -0.084,
+            "ump_bb_pct": 0.36
           },
-          "hit_probability": 0.6059,
-          "raw_hit_probability": 0.6595,
-          "lift": 0.0929,
+          "hit_probability": 0.8064,
+          "raw_hit_probability": 0.8064,
+          "lift": 0.1093,
           "reliability": "D",
           "sample_n": 0,
           "projection": {
             "stat": "strikeouts",
-            "value": 4.5,
-            "needs": 5
+            "value": 3.5,
+            "needs": 4
           }
         }
       ]

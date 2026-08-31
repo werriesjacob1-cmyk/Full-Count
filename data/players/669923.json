@@ -309,7 +309,7 @@
         {
           "prop": "Over 4.5 Strikeouts",
           "type": "pitcher",
-          "score": 46.7,
+          "score": 47.8,
           "notable_signals": 0,
           "matchup": "Seattle Mariners @ Boston Red Sox",
           "game_pk": 824719,
@@ -321,11 +321,14 @@
             "opp_team_k_pct": 43.0,
             "same_hand_ratio": 92.8571,
             "l14_k_pct": 52.9412,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 60.7194,
+            "ump_k_pct": 0.156,
+            "ump_bb_pct": -0.468
           },
-          "hit_probability": 0.5129,
-          "raw_hit_probability": 0.5129,
-          "lift": -0.0001,
+          "hit_probability": 0.515,
+          "raw_hit_probability": 0.515,
+          "lift": -0.0022,
           "reliability": "A",
           "sample_n": 25,
           "projection": {
@@ -337,7 +340,7 @@
         {
           "prop": "Over 17.5 Outs Recorded",
           "type": "pitcher",
-          "score": 66.8,
+          "score": 66.3,
           "notable_signals": 1,
           "matchup": "Seattle Mariners @ Boston Red Sox",
           "game_pk": 824719,
@@ -346,18 +349,46 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.5677,
+            "outs_rate": 0.5685,
             "avg_outs_per_start": 17.72
           },
-          "hit_probability": 0.5677,
+          "hit_probability": 0.5685,
           "raw_hit_probability": null,
-          "lift": 0.1348,
+          "lift": 0.131,
           "reliability": "A",
           "sample_n": 25,
           "projection": {
             "stat": "pitcher_outs",
             "value": 17.5,
             "needs": 18
+          }
+        },
+        {
+          "prop": "Over 10.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 55.0,
+          "notable_signals": 0,
+          "matchup": "Seattle Mariners @ Boston Red Sox",
+          "game_pk": 824719,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            669923,
+            801139
+          ],
+          "signals": {
+            "combined_k_edge": -0.0007
+          },
+          "hit_probability": 0.637,
+          "raw_hit_probability": null,
+          "lift": -0.0007,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 10.5,
+            "needs": 11
           }
         }
       ]

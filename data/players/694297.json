@@ -274,6 +274,65 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-31",
+      "evaluations": [
+        {
+          "prop": "Over 3.5 Strikeouts",
+          "type": "pitcher",
+          "score": 47.7,
+          "notable_signals": 0,
+          "matchup": "Philadelphia Phillies @ Arizona Diamondbacks",
+          "game_pk": 825040,
+          "team": "Arizona Diamondbacks",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_k_pct": 52.0,
+            "same_hand_ratio": 33.3333,
+            "l14_k_pct": 36.4706,
+            "env_neutral": 50.0
+          },
+          "hit_probability": 0.6035,
+          "raw_hit_probability": 0.6474,
+          "lift": -0.0936,
+          "reliability": "B",
+          "sample_n": 14,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 3.5,
+            "needs": 4
+          }
+        },
+        {
+          "prop": "Over 17.5 Outs Recorded",
+          "type": "pitcher",
+          "score": 56.9,
+          "notable_signals": 1,
+          "matchup": "Philadelphia Phillies @ Arizona Diamondbacks",
+          "game_pk": 825040,
+          "team": "Arizona Diamondbacks",
+          "side": "home",
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "outs_rate": 0.5312,
+            "avg_outs_per_start": 17.93
+          },
+          "hit_probability": 0.5312,
+          "raw_hit_probability": null,
+          "lift": 0.0937,
+          "reliability": "B",
+          "sample_n": 14,
+          "projection": {
+            "stat": "pitcher_outs",
+            "value": 17.5,
+            "needs": 18
+          }
+        }
+      ]
     }
   ]
 }

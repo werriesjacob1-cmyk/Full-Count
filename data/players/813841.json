@@ -532,6 +532,84 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-31",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 49.6,
+          "notable_signals": 1,
+          "matchup": "San Francisco Giants @ Atlanta Braves",
+          "game_pk": 824911,
+          "team": "San Francisco Giants",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 41.4286,
+            "l7_avg_ev": 0.0,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 1.275,
+            "park_hr_index": 48.9,
+            "season_barrel_pct": 82.6667,
+            "lineup_slot": 62.5,
+            "bullpen_fatigue": 23.8095,
+            "park_hand_index": -0.97,
+            "opp_catcher_framing": 0.36,
+            "days_rest": 2.0,
+            "woba_ahead": 48.1818,
+            "woba_behind": 33.6364,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": -2.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": -1.928,
+            "vs_rp_ops": -0.324,
+            "ump_k_pct": 0.588,
+            "ump_bb_pct": 0.12
+          },
+          "hit_probability": 0.6412,
+          "raw_hit_probability": 0.6319,
+          "lift": 0.0768,
+          "reliability": "C",
+          "sample_n": 27,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 73.6,
+          "notable_signals": 0,
+          "matchup": "San Francisco Giants @ Atlanta Braves",
+          "game_pk": 824911,
+          "team": "San Francisco Giants",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": 6.0,
+            "sprint_speed": 75.0,
+            "on_base": 73.1286
+          },
+          "hit_probability": 0.2569,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "C",
+          "sample_n": 27,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }
