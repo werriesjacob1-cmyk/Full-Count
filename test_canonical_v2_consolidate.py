@@ -88,7 +88,7 @@ def identity(source_sha, outcome_sha):
     }
 
 
-def row(day, game, player):
+def row(day, game, player, code_sha=CODE_SHA):
     return {
         "date": day,
         "game_pk": game,
@@ -97,11 +97,19 @@ def row(day, game, player):
         "line": 0.5,
         "predicted_prob": 0.7,
         "outcome": 1,
-        "code_git_sha": CODE_SHA,
+        "code_git_sha": code_sha,
     }
 
 
-def create_shard(root, index, day, player, source_sha, outcome_sha):
+def create_shard(
+    root,
+    index,
+    day,
+    player,
+    source_sha,
+    outcome_sha,
+    row_code_sha=CODE_SHA,
+):
     shard = os.path.join(root, f"shard-{index}")
     rows_dir = os.path.join(shard, "rows")
     http_dir = os.path.join(shard, "http")
@@ -110,7 +118,7 @@ def create_shard(root, index, day, player, source_sha, outcome_sha):
 
     raw_rows = (
         json.dumps(
-            row(day, 100 + index, player),
+            row(day, 100 + index, player, row_code_sha),
             sort_keys=True,
             separators=(",", ":"),
         )
@@ -317,6 +325,64 @@ class ConsolidationTests(unittest.TestCase):
                     os.path.join(out, "source", "statcast_outcome_2025-01-02.parquet")
                 )
             )
+
+
+    def test_short_row_code_sha_matching_generation_passes(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            shards = os.path.join(tmp, "shards")
+            out = os.path.join(tmp, "out")
+            source_path, source_sha, outcome_path, outcome_sha = self.make_source(tmp)
+            short = CODE_SHA[:7]
+            create_shard(
+                shards, 0, "2025-01-01", 1, source_sha, outcome_sha,
+                row_code_sha=short,
+            )
+            create_shard(
+                shards, 1, "2025-01-02", 2, source_sha, outcome_sha,
+                row_code_sha=short,
+            )
+            self.assertEqual(
+                self.run_consolidator(shards, out, source_path, outcome_path),
+                0,
+            )
+
+    def test_wrong_short_row_code_sha_fails(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            shards = os.path.join(tmp, "shards")
+            out = os.path.join(tmp, "out")
+            source_path, source_sha, outcome_path, outcome_sha = self.make_source(tmp)
+            create_shard(
+                shards, 0, "2025-01-01", 1, source_sha, outcome_sha,
+                row_code_sha="b" * 7,
+            )
+            create_shard(
+                shards, 1, "2025-01-02", 2, source_sha, outcome_sha,
+                row_code_sha=CODE_SHA[:7],
+            )
+            with self.assertRaisesRegex(
+                ConsolidationError,
+                "does not identify generation commit",
+            ):
+                self.run_consolidator(shards, out, source_path, outcome_path)
+
+    def test_too_short_row_code_sha_fails(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            shards = os.path.join(tmp, "shards")
+            out = os.path.join(tmp, "out")
+            source_path, source_sha, outcome_path, outcome_sha = self.make_source(tmp)
+            create_shard(
+                shards, 0, "2025-01-01", 1, source_sha, outcome_sha,
+                row_code_sha=CODE_SHA[:6],
+            )
+            create_shard(
+                shards, 1, "2025-01-02", 2, source_sha, outcome_sha,
+                row_code_sha=CODE_SHA[:7],
+            )
+            with self.assertRaisesRegex(
+                ConsolidationError,
+                "does not identify generation commit",
+            ):
+                self.run_consolidator(shards, out, source_path, outcome_path)
 
     def test_missing_expected_date_fails(self):
         with tempfile.TemporaryDirectory() as tmp:
