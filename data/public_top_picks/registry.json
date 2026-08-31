@@ -2,7 +2,7 @@
   "schema_version": 1,
   "identity_schema_version": 2,
   "rollout_version": "pre-phase-v-live-lifecycle-v1",
-  "updated_at": "2026-08-30T17:52:21.811505+00:00",
+  "updated_at": "2026-08-31T09:10:03.748845+00:00",
   "migration": {
     "version": "pre-phase-v-live-lifecycle-v1",
     "completed_at": "2026-08-17T23:14:57+00:00",
@@ -8323,6 +8323,98 @@
         "qualification_timestamp": "2026-08-30T17:49:01.220154+00:00",
         "board_timestamp": "2026-08-30T17:49:01.203583+00:00",
         "slate_date": "2026-08-30"
+      }
+    },
+    "fc2:825040:player-605400:strikeouts:5:over": {
+      "canonical_id": "fc2:825040:player-605400:strikeouts:5:over",
+      "settlement_identity": [
+        "825040",
+        [
+          "player",
+          "605400"
+        ],
+        "strikeouts",
+        "5",
+        "over"
+      ],
+      "slate_date": "2026-08-31",
+      "first_published_at": "2026-08-31T09:10:03.748845+00:00",
+      "publication_provenance": {
+        "artifact_id": "f026a1da83666592d3129c9a339e39a9448286abea28c2025059b6f150d876ce",
+        "source_commit": "9f418b2c252c59ca3a826ede7b9fd06f339e2da4",
+        "workflow_run_id": "33375592034",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-08-31T09:09:53.259977+00:00",
+        "data_hash": "0d193b8fe02114207a337a50eb30bdb2999acba4f76d91fce85d2b290fcee99e",
+        "live_hash": "e9b482f258f2f725aa947f1e7dd042ce2257770cb068504709bd72a6f45d41af"
+      },
+      "snapshot": {
+        "id": "fc2:825040:player-605400:strikeouts:5:over",
+        "identity_version": 2,
+        "game_pk": 825040,
+        "player_id": 605400,
+        "combo_player_ids": null,
+        "type": "pitcher",
+        "name": "Aaron Nola",
+        "team": "Philadelphia Phillies",
+        "matchup": "Philadelphia Phillies @ Arizona Diamondbacks",
+        "game_start": "2026-09-01T01:40:00Z",
+        "stat": "strikeouts",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "strikeouts",
+          "value": 4.5,
+          "needs": 5
+        },
+        "prop": "Over 4.5 Strikeouts",
+        "hit_probability": 0.6067,
+        "market_odds": -136,
+        "market_implied": 0.5428,
+        "market_edge": 0.0639,
+        "market_hold": 0.0617,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (A), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (7.3 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "Expected workload 23.7 batters faced (his own 24.5/start over 2 real starts, shrunk toward the 23.1 league mean)",
+          "Platoon advantage: 4 of 7 projected hitters bat right-handed against this RHP",
+          "L14 K% 30.6 (49 PA) \u2014 hot recent form",
+          "Recency-weighted K rate 27.2% (exp. decay, halflife 30d, 27 real starts / 616 BF) \u2014 drives a favorable strikeout-probability read"
+        ],
+        "watchouts": [
+          "Workload estimate rests on only 2 starts in the L14 window \u2014 most start-to-start variation in batters faced is noise, so this is shrunk heavily toward league average",
+          "Opposing team K% 19.2 \u2014 contact-oriented lineup, tougher matchup"
+        ],
+        "prob_ci": [
+          0.5774,
+          0.6953
+        ],
+        "reliability": "A",
+        "reliability_note": null,
+        "sample_n": 27,
+        "lineup_assumed": null,
+        "base_rate": 0.513,
+        "lift": 0.0937,
+        "lift_reference_rate": null,
+        "stable_lift": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "9a4037ab",
+          "prediction_timestamp": "2026-08-31T08:59:07.070310+00:00",
+          "odds_fetched_at": "2026-08-31T08:59:03.444207+00:00",
+          "board_generated_at": "2026-08-31T08:59:07.049801+00:00"
+        },
+        "qualification_timestamp": "2026-08-31T08:59:07.070310+00:00",
+        "board_timestamp": "2026-08-31T08:59:07.049801+00:00",
+        "slate_date": "2026-08-31"
       }
     }
   }
