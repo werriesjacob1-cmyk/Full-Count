@@ -176,7 +176,7 @@ jobs:
           print('DIAGNOSTIC_VERDICT=BLOCKERS_ISOLATED')
           PY
 
-      - name: Prove resumed-game population identity and map failed feed variants
+      - name: Prove global resumed-game population and map failed feed variants
         run: |
           set -euo pipefail
           python - <<'PY' | tee /tmp/canonical-v2-deep-blocker-map.txt
@@ -187,6 +187,9 @@ jobs:
           from urllib.parse import parse_qs, urlparse
 
           ROOT = "/tmp/canonical-v2-final"
+          LEDGER = os.path.join(ROOT, "mlb_statsapi_request_ledger.jsonl")
+          ROWS = os.path.join(ROOT, "rows.jsonl")
+          BLOBS = os.path.join(ROOT, "http_blobs")
           TARGET_REASON = "bound Statcast source has no rows for this game"
           TARGETS = {
               "2024-05-22": 32,
@@ -199,41 +202,20 @@ jobs:
               "2026-06-17": 34,
           }
           SPECIAL = {"hard_hit_105", "hard_hit_110", "moonshot_420"}
+          BATTER_PROPS = {
+              "hits", "total_bases", "home_run", "home_runs", "walks",
+              "stolen_base", "runs", "rbis", "hits_runs_rbis",
+              "singles", "doubles", "triples",
+              "hard_hit_105", "hard_hit_110", "moonshot_420",
+          }
           FEED_GAME = 746934
           FEED_OBSERVED = "2024-07-11"
           FEED_TIMECODE = "20240711_230959"
 
-          def read_json(path):
-              with open(path, encoding="utf-8") as fh:
-                  return json.load(fh)
-
-          def read_rows(day):
-              path = os.path.join(ROOT, "rows", day + ".jsonl.gz")
-              if not os.path.exists(path):
-                  return []
-              out = []
-              with gzip.open(path, "rt", encoding="utf-8") as fh:
-                  for line in fh:
-                      if line.strip():
-                          out.append(json.loads(line))
-              return out
-
-          def ledger_rows(day):
-              path = os.path.join(ROOT, "http", day + ".ledger.jsonl")
-              if not os.path.exists(path):
-                  return []
-              out = []
-              with open(path, encoding="utf-8") as fh:
-                  for line in fh:
-                      if line.strip():
-                          out.append(json.loads(line))
-              return out
-
-          def archived_json(row):
-              rel = row.get("archived_body")
-              if not rel:
+          def load_blob(response_sha):
+              if not response_sha:
                   return None
-              path = os.path.join(ROOT, "http", rel)
+              path = os.path.join(BLOBS, str(response_sha) + ".gz")
               if not os.path.exists(path):
                   return None
               with gzip.open(path, "rb") as fh:
@@ -243,31 +225,114 @@ jobs:
               except Exception:
                   return {"_raw_utf8": raw.decode("utf-8", errors="replace")}
 
-          def schedule_games(day):
-              found = {}
-              for row in ledger_rows(day):
-                  if row.get("scientific_phase") != "predictive_input":
+          def team_rec(game, side):
+              t = ((((game.get("teams") or {}).get(side) or {}).get("team")) or {})
+              return {"id": t.get("id"), "name": t.get("name")}
+
+          # Reconfirm the exact frozen blocker counts directly from consolidated
+          # per-date metadata. No inferred identity is substituted for these.
+          for day, expected in TARGETS.items():
+              meta_path = os.path.join(ROOT, "date_metadata", day + ".json")
+              with open(meta_path, encoding="utf-8") as fh:
+                  meta = json.load(fh)
+              got = int((meta.get("ungraded_reasons") or {}).get(TARGET_REASON, 0) or 0)
+              if got != expected:
+                  raise SystemExit(f"{day}: frozen blocker count {got} != {expected}")
+
+          # Scan the one immutable StatsAPI ledger once. Date-addressed D
+          # schedules define the replay slate and also let us discover every
+          # prior-date resumption across the full 877-day population.
+          schedule_games = collections.defaultdict(dict)
+          feed_variants = []
+          feed_schedule_hits = {}
+          stats_rows = 0
+          schedule_rows = 0
+          with open(LEDGER, encoding="utf-8") as fh:
+              for line in fh:
+                  if not line.strip():
                       continue
-                  if not isinstance(row.get("status_code"), int) or not 200 <= row["status_code"] < 300:
+                  row = json.loads(line)
+                  stats_rows += 1
+                  url = str(row.get("url") or "")
+                  parsed = urlparse(url)
+                  qs = parse_qs(parsed.query)
+                  phase = row.get("scientific_phase")
+                  success = (
+                      isinstance(row.get("status_code"), int)
+                      and 200 <= row["status_code"] < 300
+                      and not row.get("exception_type")
+                  )
+
+                  if parsed.path == f"/api/v1.1/game/{FEED_GAME}/feed/live":
+                      body = load_blob(row.get("response_sha256"))
+                      game_status = None
+                      box_player_count = None
+                      pitch_event_count = None
+                      if isinstance(body, dict):
+                          game_status = (body.get("gameData") or {}).get("status")
+                          box = (((body.get("liveData") or {}).get("boxscore") or {}).get("teams") or {})
+                          box_player_count = sum(
+                              len((((box.get(side) or {}).get("players")) or {}))
+                              for side in ("away", "home")
+                          )
+                          plays = ((((body.get("liveData") or {}).get("plays") or {}).get("allPlays")) or [])
+                          pitch_event_count = sum(
+                              1
+                              for play in plays if isinstance(play, dict)
+                              for ev in (play.get("playEvents") or [])
+                              if isinstance(ev, dict) and ev.get("isPitch") is True
+                          )
+                      feed_variants.append({
+                          "observed_date": row.get("observed_date"),
+                          "scientific_phase": phase,
+                          "method": row.get("method"),
+                          "status_code": row.get("status_code"),
+                          "exception_type": row.get("exception_type"),
+                          "timecode": (qs.get("timecode") or [None])[0],
+                          "fields": (qs.get("fields") or [None])[0],
+                          "response_sha256": row.get("response_sha256"),
+                          "response_bytes": row.get("response_bytes"),
+                          "game_status": game_status,
+                          "box_player_count": box_player_count,
+                          "pitch_event_count": pitch_event_count,
+                      })
+
+                  if parsed.path != "/api/v1/schedule" or not success:
                       continue
-                  u = urlparse(str(row.get("url") or ""))
-                  if u.path != "/api/v1/schedule":
-                      continue
-                  q = parse_qs(u.query)
-                  if (q.get("date") or [None])[0] != day:
-                      continue
-                  payload = archived_json(row)
+                  payload = load_blob(row.get("response_sha256"))
                   if not isinstance(payload, dict):
                       continue
+                  schedule_rows += 1
+
+                  # Any successful frozen schedule body can identify 746934's
+                  # teams/date. This is descriptive only, not a predictor repair.
+                  for block in payload.get("dates") or []:
+                      for game in block.get("games") or []:
+                          if str(game.get("gamePk")) == str(FEED_GAME):
+                              rec = {
+                                  "game_pk": FEED_GAME,
+                                  "official_date": game.get("officialDate"),
+                                  "game_date": game.get("gameDate"),
+                                  "away": team_rec(game, "away"),
+                                  "home": team_rec(game, "home"),
+                                  "status": game.get("status"),
+                              }
+                              feed_schedule_hits[json.dumps(rec, sort_keys=True, default=str)] = rec
+
+                  # Population identity uses only the schedule explicitly keyed
+                  # to simulated D, not team-history range schedules.
+                  observed = str(row.get("observed_date") or "")
+                  if phase != "predictive_input":
+                      continue
+                  date_value = (qs.get("date") or [None])[0]
+                  if not observed or date_value != observed:
+                      continue
+
                   for block in payload.get("dates") or []:
                       for game in block.get("games") or []:
                           if game.get("gamePk") is None:
                               continue
                           pk = int(game["gamePk"])
-                          teams = game.get("teams") or {}
-                          def team(side):
-                              t = ((teams.get(side) or {}).get("team") or {})
-                              return {"id": t.get("id"), "name": t.get("name")}
                           rec = {
                               "game_pk": pk,
                               "game_type": game.get("gameType"),
@@ -278,170 +343,224 @@ jobs:
                               "double_header": game.get("doubleHeader"),
                               "game_number": game.get("gameNumber"),
                               "status": game.get("status"),
-                              "away": team("away"),
-                              "home": team("home"),
+                              "away": team_rec(game, "away"),
+                              "home": team_rec(game, "home"),
                           }
-                          prior = found.get(pk)
-                          if prior is not None and prior != rec:
-                              raise SystemExit(f"{day} game {pk}: conflicting frozen schedule bodies")
-                          found[pk] = rec
-              return found
+                          prior = schedule_games[observed].get(pk)
+                          if prior is None:
+                              schedule_games[observed][pk] = rec
+                          else:
+                              # Multiple D-addressed schedule hydrates may omit
+                              # optional fields. Merge only non-null facts and
+                              # fail on actual disagreement.
+                              for key, value in rec.items():
+                                  if value is None:
+                                      continue
+                                  old = prior.get(key)
+                                  if old is None:
+                                      prior[key] = value
+                                  elif old != value:
+                                      raise SystemExit(
+                                          f"{observed} game {pk}: conflicting frozen schedule fact "
+                                          f"{key}: {old!r} != {value!r}"
+                                      )
 
-          # Pass 1: prove each blocker day contains exactly one explicitly
-          # resumed game and that this game is the one whose special-market
-          # rows are absent on the resume day.
-          mapped = []
-          for day, expected_ungraded in TARGETS.items():
-              meta_path = os.path.join(ROOT, "rows", day + ".meta.json")
-              meta = read_json(meta_path)
-              observed_ungraded = int((meta.get("ungraded_reasons") or {}).get(TARGET_REASON, 0) or 0)
-              if observed_ungraded != expected_ungraded:
-                  raise SystemExit(
-                      f"{day}: frozen blocker count {observed_ungraded} != expected {expected_ungraded}"
-                  )
+          resumed = []
+          for day, games in sorted(schedule_games.items()):
+              for pk, game in sorted(games.items()):
+                  origin = game.get("resumed_from_date")
+                  if origin and str(origin) < day:
+                      resumed.append({**game, "resume_day": day, "original_day": str(origin)})
 
-              rows = read_rows(day)
-              by_game = collections.defaultdict(list)
-              for row in rows:
+          print("STATSAPI_LEDGER_ROWS=" + str(stats_rows))
+          print("SUCCESSFUL_SCHEDULE_ROWS_DECODED=" + str(schedule_rows))
+          print("SIMULATED_D_SCHEDULE_DATES=" + str(len(schedule_games)))
+          print("GLOBAL_PRIOR_DATE_RESUMED_GAME_COUNT=" + str(len(resumed)))
+          for game in resumed:
+              print("GLOBAL_RESUMED_GAME=" + json.dumps(
+                  game, sort_keys=True, separators=(",", ":"), default=str
+              ))
+
+          target_resumed = {g["resume_day"]: g for g in resumed if g["resume_day"] in TARGETS}
+          missing_target_days = sorted(set(TARGETS) - set(target_resumed))
+          if missing_target_days:
+              raise SystemExit(
+                  "blocker dates lacking explicit prior-date resumption: "
+                  + repr(missing_target_days)
+              )
+
+          # Stream the immutable assembled rows once. Keep only counts/identities
+          # necessary to prove the resumed population and bound the 746934
+          # uncertainty surface.
+          resumed_keys = {(g["resume_day"], int(g["game_pk"])) for g in resumed}
+          original_keys = {(g["original_day"], int(g["game_pk"])) for g in resumed}
+          rows_by_key = collections.Counter()
+          prop_counts_by_key = collections.defaultdict(collections.Counter)
+          july11_rows_by_game = collections.defaultdict(list)
+          with open(ROWS, encoding="utf-8") as fh:
+              for line in fh:
+                  if not line.strip():
+                      continue
+                  row = json.loads(line)
+                  day = str(row.get("date") or "")
                   try:
                       pk = int(row.get("game_pk"))
                   except Exception:
                       continue
-                  by_game[pk].append(row)
+                  key = (day, pk)
+                  if key in resumed_keys or key in original_keys:
+                      rows_by_key[key] += 1
+                      prop_counts_by_key[key][str(row.get("prop_type"))] += 1
+                  if day == FEED_OBSERVED:
+                      july11_rows_by_game[pk].append({
+                          "player_id": row.get("player_id"),
+                          "player_name": row.get("player_name"),
+                          "team": row.get("team"),
+                          "prop_type": row.get("prop_type"),
+                          "line": row.get("line"),
+                      })
 
-              games = schedule_games(day)
-              resumed = [
-                  game for game in games.values()
-                  if game.get("resumed_from_date")
-                  and str(game["resumed_from_date"]) < day
-              ]
-              if len(resumed) != 1:
-                  raise SystemExit(
-                      f"{day}: expected exactly one explicit prior-date resumed game, got "
-                      + json.dumps(resumed, sort_keys=True, default=str)
-                  )
-              game = resumed[0]
-              pk = game["game_pk"]
-              game_rows = by_game.get(pk, [])
-              special_rows = [r for r in game_rows if r.get("prop_type") in SPECIAL]
-              if special_rows:
-                  raise SystemExit(
-                      f"{day} game {pk}: resume-day special rows unexpectedly present"
-                  )
-              if not game_rows:
-                  raise SystemExit(
-                      f"{day} game {pk}: no graded rows at all; cannot bind blocker to candidate population"
-                  )
-
-              original_day = str(game["resumed_from_date"])
-              original_rows = [
-                  r for r in read_rows(original_day)
-                  if str(r.get("game_pk")) == str(pk)
-              ]
-              original_special = [
-                  r for r in original_rows if r.get("prop_type") in SPECIAL
-              ]
-              if len(original_special) != expected_ungraded:
-                  raise SystemExit(
-                      f"{day} game {pk}: original-date special count "
-                      f"{len(original_special)} != blocker count {expected_ungraded}"
-                  )
-
-              item = {
+          total_resume_rows = 0
+          total_resume_special = 0
+          for game in resumed:
+              resume_key = (game["resume_day"], int(game["game_pk"]))
+              original_key = (game["original_day"], int(game["game_pk"]))
+              resume_props = prop_counts_by_key[resume_key]
+              original_props = prop_counts_by_key[original_key]
+              resume_special = sum(resume_props[p] for p in SPECIAL)
+              original_special = sum(original_props[p] for p in SPECIAL)
+              total_resume_rows += rows_by_key[resume_key]
+              total_resume_special += resume_special
+              proof = {
                   **game,
-                  "resume_day": day,
-                  "resume_day_blocker_count": expected_ungraded,
-                  "resume_day_graded_rows": len(game_rows),
-                  "resume_day_special_rows": len(special_rows),
-                  "original_day": original_day,
-                  "original_day_graded_rows": len(original_rows),
-                  "original_day_special_rows": len(original_special),
-                  "original_day_special_market_counts": dict(sorted(collections.Counter(
-                      str(r.get("prop_type")) for r in original_special
-                  ).items())),
+                  "resume_day_graded_rows": rows_by_key[resume_key],
+                  "resume_day_prop_counts": dict(sorted(resume_props.items())),
+                  "resume_day_special_rows": resume_special,
+                  "original_day_graded_rows": rows_by_key[original_key],
+                  "original_day_prop_counts": dict(sorted(original_props.items())),
+                  "original_day_special_rows": original_special,
+                  "formal_blocker_count": TARGETS.get(game["resume_day"], 0),
               }
-              mapped.append(item)
-              print("RESUMED_GAME_PROOF=" + json.dumps(item, sort_keys=True, separators=(",", ":"), default=str))
+              print("RESUMED_GAME_ROW_PROOF=" + json.dumps(
+                  proof, sort_keys=True, separators=(",", ":"), default=str
+              ))
+              if game["resume_day"] in TARGETS:
+                  expected = TARGETS[game["resume_day"]]
+                  if resume_special != 0:
+                      raise SystemExit(
+                          f"{game['resume_day']} game {game['game_pk']}: "
+                          f"resume-day special rows={resume_special}, expected 0"
+                      )
+                  if original_special != expected:
+                      raise SystemExit(
+                          f"{game['resume_day']} game {game['game_pk']}: "
+                          f"original-date special rows={original_special} != blocker {expected}"
+                      )
 
-          if sum(x["resume_day_blocker_count"] for x in mapped) != 256:
-              raise SystemExit("mapped resumed-game blocker count is not 256")
-          print("RESUMED_GAME_COUNT=" + str(len(mapped)))
-          print("RESUMED_GAME_BLOCKER_TOTAL=" + str(sum(x["resume_day_blocker_count"] for x in mapped)))
+          print("GLOBAL_RESUMED_GAME_GRADED_ROWS_ON_RESUME_DATES=" + str(total_resume_rows))
+          print("GLOBAL_RESUMED_GAME_SPECIAL_ROWS_ON_RESUME_DATES=" + str(total_resume_special))
+          print("FORMAL_TARGET_BLOCKER_TOTAL=" + str(sum(TARGETS.values())))
 
-          # Pass 2: scan every frozen day ledger for ANY request to game 746934,
-          # not merely the exact failed URL identity. This can reveal a
-          # successful historically-bound equivalent already inside Run #6.
-          variants = []
-          http_root = os.path.join(ROOT, "http")
-          for name in sorted(os.listdir(http_root)):
-              if not name.endswith(".ledger.jsonl"):
-                  continue
-              path = os.path.join(http_root, name)
-              with open(path, encoding="utf-8") as fh:
-                  for line in fh:
-                      if not line.strip():
-                          continue
-                      row = json.loads(line)
-                      u = urlparse(str(row.get("url") or ""))
-                      if u.path != f"/api/v1.1/game/{FEED_GAME}/feed/live":
-                          continue
-                      q = parse_qs(u.query)
-                      body = archived_json(row)
-                      status = None
-                      box_player_count = None
-                      pitch_event_count = None
-                      if isinstance(body, dict):
-                          status = (body.get("gameData") or {}).get("status")
-                          box = ((body.get("liveData") or {}).get("boxscore") or {}).get("teams") or {}
-                          box_player_count = sum(
-                              len(((box.get(side) or {}).get("players") or {}))
-                              for side in ("away", "home")
-                          )
-                          plays = (((body.get("liveData") or {}).get("plays") or {}).get("allPlays") or [])
-                          pitch_event_count = sum(
-                              1
-                              for play in plays if isinstance(play, dict)
-                              for ev in (play.get("playEvents") or [])
-                              if isinstance(ev, dict) and ev.get("isPitch") is True
-                          )
-                      slim = {
-                          "observed_date": row.get("observed_date"),
-                          "scientific_phase": row.get("scientific_phase"),
-                          "status_code": row.get("status_code"),
-                          "exception_type": row.get("exception_type"),
-                          "timecode": (q.get("timecode") or [None])[0],
-                          "response_sha256": row.get("response_sha256"),
-                          "response_bytes": row.get("response_bytes"),
-                          "transport": row.get("transport"),
-                          "game_status": status,
-                          "box_player_count": box_player_count,
-                          "pitch_event_count": pitch_event_count,
-                      }
-                      variants.append(slim)
-                      print("GAME_746934_VARIANT=" + json.dumps(slim, sort_keys=True, separators=(",", ":"), default=str))
+          # Exact 746934 variants from frozen evidence.
+          for variant in sorted(
+              feed_variants,
+              key=lambda v: (
+                  str(v.get("observed_date") or ""),
+                  str(v.get("scientific_phase") or ""),
+                  str(v.get("timecode") or ""),
+                  int(v.get("status_code") or 0),
+                  str(v.get("response_sha256") or ""),
+              ),
+          ):
+              print("GAME_746934_VARIANT=" + json.dumps(
+                  variant, sort_keys=True, separators=(",", ":"), default=str
+              ))
 
           exact_failed = [
-              v for v in variants
+              v for v in feed_variants
               if v["observed_date"] == FEED_OBSERVED
               and v["scientific_phase"] == "predictive_input"
               and v["timecode"] == FEED_TIMECODE
           ]
           if len(exact_failed) != 2 or any(v["status_code"] != 500 for v in exact_failed):
               raise SystemExit(
-                  "game 746934 exact failed identity no longer matches expected two HTTP 500 attempts"
+                  "746934 exact failure identity differs from expected two HTTP 500 attempts"
               )
-          successes = [
-              v for v in variants
-              if isinstance(v.get("status_code"), int)
+
+          successful_predictive = [
+              v for v in feed_variants
+              if v["scientific_phase"] == "predictive_input"
+              and isinstance(v.get("status_code"), int)
               and 200 <= v["status_code"] < 300
               and not v.get("exception_type")
+              and v.get("timecode")
           ]
-          pre_or_same_day_successes = [
-              v for v in successes if str(v.get("observed_date") or "") <= FEED_OBSERVED
+          historically_admissible_successes = [
+              v for v in successful_predictive
+              if str(v.get("observed_date") or "") <= FEED_OBSERVED
+              and str(v.get("timecode") or "") <= FEED_TIMECODE
           ]
-          print("GAME_746934_VARIANT_COUNT=" + str(len(variants)))
-          print("GAME_746934_SUCCESS_COUNT=" + str(len(successes)))
-          print("GAME_746934_SUCCESS_ON_OR_BEFORE_2024_07_11=" + str(len(pre_or_same_day_successes)))
+          print("GAME_746934_VARIANT_COUNT=" + str(len(feed_variants)))
+          print("GAME_746934_SUCCESSFUL_PREDICTIVE_VARIANTS=" + str(len(successful_predictive)))
+          print(
+              "GAME_746934_HISTORICALLY_ADMISSIBLE_SUCCESS_ON_OR_BEFORE_FAILURE_CUTOFF="
+              + str(len(historically_admissible_successes))
+          )
+          for rec in sorted(feed_schedule_hits.values(), key=lambda x: json.dumps(x, sort_keys=True, default=str)):
+              print("GAME_746934_SCHEDULE_IDENTITY=" + json.dumps(
+                  rec, sort_keys=True, separators=(",", ":"), default=str
+              ))
+
+          # Bound the fail-closed surface if no admissible frozen equivalent
+          # exists. The missing prior box score could alter bullpen-fatigue
+          # context only for the two teams that played game 746934; on D,
+          # that context is consumed by opposing batter candidates.
+          feed_team_ids = set()
+          for rec in feed_schedule_hits.values():
+              for side in ("away", "home"):
+                  tid = (rec.get(side) or {}).get("id")
+                  if tid is not None:
+                      feed_team_ids.add(int(tid))
+
+          affected_games = []
+          affected_rows = []
+          for pk, game in sorted(schedule_games.get(FEED_OBSERVED, {}).items()):
+              away_id = (game.get("away") or {}).get("id")
+              home_id = (game.get("home") or {}).get("id")
+              affected_batter_team_names = set()
+              if away_id is not None and int(away_id) in feed_team_ids:
+                  affected_batter_team_names.add((game.get("home") or {}).get("name"))
+              if home_id is not None and int(home_id) in feed_team_ids:
+                  affected_batter_team_names.add((game.get("away") or {}).get("name"))
+              affected_batter_team_names.discard(None)
+              if not affected_batter_team_names:
+                  continue
+              affected_games.append({
+                  "game_pk": pk,
+                  "away": game.get("away"),
+                  "home": game.get("home"),
+                  "potentially_affected_batter_teams": sorted(affected_batter_team_names),
+              })
+              for row in july11_rows_by_game.get(pk, []):
+                  if (
+                      row.get("team") in affected_batter_team_names
+                      and str(row.get("prop_type")) in BATTER_PROPS
+                  ):
+                      affected_rows.append({"game_pk": pk, **row})
+
+          print("GAME_746934_POTENTIALLY_AFFECTED_D_GAMES=" + json.dumps(
+              affected_games, sort_keys=True, separators=(",", ":"), default=str
+          ))
+          print("GAME_746934_POTENTIALLY_AFFECTED_GRADED_BATTER_ROWS=" + str(len(affected_rows)))
+          affected_prop_counts = collections.Counter(str(r.get("prop_type")) for r in affected_rows)
+          print("GAME_746934_POTENTIALLY_AFFECTED_PROP_COUNTS=" + json.dumps(
+              dict(sorted(affected_prop_counts.items())),
+              sort_keys=True, separators=(",", ":"), default=str
+          ))
+
+          if len(feed_schedule_hits) == 0:
+              raise SystemExit("could not identify game 746934 from any frozen schedule response")
+
           print("DEEP_BLOCKER_MAP_VERDICT=FROZEN_IDENTITIES_PROVEN")
           PY
 
@@ -450,6 +569,8 @@ jobs:
         if: always()
         with:
           name: canonical-v2-blocker-diagnostic-${{ github.sha }}
-          path: /tmp/canonical-v2-blocker-diagnostic.txt
+          path: |
+            /tmp/canonical-v2-blocker-diagnostic.txt
+            /tmp/canonical-v2-deep-blocker-map.txt
           if-no-files-found: warn
           retention-days: 90
