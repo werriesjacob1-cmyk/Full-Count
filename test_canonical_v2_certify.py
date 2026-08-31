@@ -1125,6 +1125,85 @@ class CertificationTests(unittest.TestCase):
                 any("recovered transient failures" in w for w in result["warnings"])
             )
 
+
+    def test_matching_short_row_code_sha_certifies(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            PackageFactory(tmp).build()
+            rows_path = os.path.join(tmp, "rows.jsonl")
+            row = json.loads(open(rows_path, encoding="utf-8").read())
+            row["code_git_sha"] = GEN_SHA[:7]
+            raw = (
+                json.dumps(row, sort_keys=True, separators=(",", ":")) + "\n"
+            ).encode()
+            with open(rows_path, "wb") as handle:
+                handle.write(raw)
+            self._refresh_report(
+                tmp,
+                lambda report: report.update(
+                    {"assembled_rows_sha256": sha(raw)}
+                ),
+            )
+            result = self.certify(tmp)
+            self.assertEqual(
+                result["verdict"],
+                "CANONICAL CERTIFIED",
+                msg=json.dumps(result, indent=2),
+            )
+
+    def test_wrong_short_row_code_sha_is_not_canonical(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            PackageFactory(tmp).build()
+            rows_path = os.path.join(tmp, "rows.jsonl")
+            row = json.loads(open(rows_path, encoding="utf-8").read())
+            row["code_git_sha"] = "c" * 7
+            raw = (
+                json.dumps(row, sort_keys=True, separators=(",", ":")) + "\n"
+            ).encode()
+            with open(rows_path, "wb") as handle:
+                handle.write(raw)
+            self._refresh_report(
+                tmp,
+                lambda report: report.update(
+                    {"assembled_rows_sha256": sha(raw)}
+                ),
+            )
+            result = self.certify(tmp)
+            self.assertEqual(result["verdict"], "NOT CANONICAL")
+            self.assertTrue(
+                any(
+                    "row code SHA regime contains values" in failure
+                    for failure in result["failures"]
+                ),
+                msg=json.dumps(result, indent=2),
+            )
+
+    def test_too_short_row_code_sha_is_not_canonical(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            PackageFactory(tmp).build()
+            rows_path = os.path.join(tmp, "rows.jsonl")
+            row = json.loads(open(rows_path, encoding="utf-8").read())
+            row["code_git_sha"] = GEN_SHA[:6]
+            raw = (
+                json.dumps(row, sort_keys=True, separators=(",", ":")) + "\n"
+            ).encode()
+            with open(rows_path, "wb") as handle:
+                handle.write(raw)
+            self._refresh_report(
+                tmp,
+                lambda report: report.update(
+                    {"assembled_rows_sha256": sha(raw)}
+                ),
+            )
+            result = self.certify(tmp)
+            self.assertEqual(result["verdict"], "NOT CANONICAL")
+            self.assertTrue(
+                any(
+                    "row code SHA regime contains values" in failure
+                    for failure in result["failures"]
+                ),
+                msg=json.dumps(result, indent=2),
+            )
+
     def test_mixed_row_code_shas_are_not_canonical(self):
         with tempfile.TemporaryDirectory() as tmp:
             PackageFactory(tmp).build()
