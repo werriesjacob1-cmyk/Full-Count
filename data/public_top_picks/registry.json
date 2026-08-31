@@ -2,7 +2,7 @@
   "schema_version": 1,
   "identity_schema_version": 2,
   "rollout_version": "pre-phase-v-live-lifecycle-v1",
-  "updated_at": "2026-08-31T19:43:00.055991+00:00",
+  "updated_at": "2026-08-31T20:08:00.205428+00:00",
   "migration": {
     "version": "pre-phase-v-live-lifecycle-v1",
     "completed_at": "2026-08-17T23:14:57+00:00",
@@ -8891,6 +8891,105 @@
         },
         "qualification_timestamp": "2026-08-31T19:39:42.793755+00:00",
         "board_timestamp": "2026-08-31T19:39:42.766722+00:00",
+        "slate_date": "2026-08-31"
+      }
+    },
+    "fc2:822855:player-687231:hits_runs_rbis:1:over": {
+      "canonical_id": "fc2:822855:player-687231:hits_runs_rbis:1:over",
+      "settlement_identity": [
+        "822855",
+        [
+          "player",
+          "687231"
+        ],
+        "hits_runs_rbis",
+        "1",
+        "over"
+      ],
+      "slate_date": "2026-08-31",
+      "first_published_at": "2026-08-31T20:08:00.205428+00:00",
+      "publication_provenance": {
+        "artifact_id": "facbf351e4317774f41a3d8f2f8d973009a34b622703bc2f4a161a330f94d529",
+        "source_commit": "bb1934b06a541c0f47ac34e3032432be84e462a1",
+        "workflow_run_id": "33434236335",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-08-31T20:07:48.866232+00:00",
+        "data_hash": "ac58e33c3d296b8f5f04791db0a65019f1c9ee4722e732486eadfb7536229db5",
+        "live_hash": "3f929cf986e123a6ffe6a7c7e4c1eb5f3ab3ab0fa0668a2f7062710e6c9293d0"
+      },
+      "snapshot": {
+        "id": "fc2:822855:player-687231:hits_runs_rbis:1:over",
+        "identity_version": 2,
+        "game_pk": 822855,
+        "player_id": 687231,
+        "combo_player_ids": null,
+        "type": "batter",
+        "name": "Darell Hernaiz",
+        "team": "Athletics",
+        "matchup": "Athletics @ Texas Rangers",
+        "game_start": "2026-09-01T00:05:00Z",
+        "stat": "hits_runs_rbis",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "hits_runs_rbis",
+          "value": 0.5,
+          "needs": 1
+        },
+        "prop": "Over 0.5 Hits+Runs+RBIs",
+        "hit_probability": 0.647,
+        "market_odds": -150,
+        "market_implied": 0.6,
+        "market_edge": 0.047,
+        "market_hold": null,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (B), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (9.1 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "L7 avg EV 99.0mph (league ~88.5) \u2014 hot recent contact",
+          "L7 barrel% 66.7 \u2014 hot recent contact",
+          "Dome \u2014 weather neutral"
+        ],
+        "watchouts": [
+          "Platoon: R bat vs RHP (unfavorable)",
+          "Projected 3.48 PA (batting slot 9) \u2014 a tough lineup slot for plate appearances",
+          "Hitters batting ahead of him: 0.288 wOBA (league ~.320) \u2014 a weak on-base group ahead of him, fewer runners to drive in",
+          "Hitter batting behind him: 0.323 wOBA (league ~.320) \u2014 little lineup protection, an easier batter to pitch around",
+          "Team implied for 3.03 runs (league avg 4.245; line 2.5, game total 7.5) \u2014 a weak offensive environment",
+          "L7 sample is thin (3 PA) \u2014 treat recent-form read with caution",
+          "Public heavy on Athletics (money% trails tickets% by 14 pts) \u2014 sharp money is fading this side",
+          "Season barrel% 0.9 \u2014 below-average barrel rate",
+          "Opposing bullpen fatigue: 1/9 relievers over 60 pitches in L7 (fresh pen \u2014 tougher matchup late)",
+          "Sharp money fading Athletics (money% -14 pts vs ticket%) \u2014 smart money moving away from this side"
+        ],
+        "prob_ci": [
+          0.6337,
+          0.6786
+        ],
+        "reliability": "B",
+        "reliability_note": null,
+        "sample_n": 46,
+        "lineup_assumed": null,
+        "base_rate": 0.6692,
+        "lift": -0.0222,
+        "lift_reference_rate": null,
+        "stable_lift": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "5632a6c1",
+          "prediction_timestamp": "2026-08-31T20:03:39.149231+00:00",
+          "odds_fetched_at": "2026-08-31T20:03:32.194448+00:00",
+          "board_generated_at": "2026-08-31T20:03:39.123544+00:00"
+        },
+        "qualification_timestamp": "2026-08-31T20:03:39.149231+00:00",
+        "board_timestamp": "2026-08-31T20:03:39.123544+00:00",
         "slate_date": "2026-08-31"
       }
     }
