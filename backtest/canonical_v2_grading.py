@@ -7,10 +7,16 @@ Baseball Savant request during grading.
 
 For hard-hit/moonshot candidates:
 - MLB box score proves the player appeared;
-- the exact bound Statcast day proves whether the game is covered;
+- the exact bound Statcast source proves whether the game is covered;
 - a qualifying HR event is a hit;
 - appearing with no qualifying event is a legitimate miss;
 - missing box/game coverage remains ungraded rather than fabricated.
+
+Suspended/resumed games are keyed by their original game date in Statcast even
+when canonical replay observes the resumed game on a later date.  When the
+same-day slice does not contain the exact game_pk, this adapter may therefore
+fall back only to the exact same game_pk in the already-bound predictor
+Statcast source, searching no later than the canonical observation date.
 """
 from __future__ import annotations
 
@@ -34,6 +40,7 @@ class FrozenOutcomeGrader:
             else None
         )
         self._day_cache = {}
+        self._exact_game_cache = {}
         self._original_grade_pick = gr.grade_pick
         self._original_fetch_game_statuses = gr.fetch_game_statuses
 
@@ -59,6 +66,67 @@ class FrozenOutcomeGrader:
                     "bound_predictor_statcast_parquet",
                 )
         return self._day_cache[day]
+
+    def exact_prior_game_frame(self, game_pk, day):
+        """Return exact-game bound Statcast rows for a resumed game, fail closed.
+
+        The lookup is deliberately narrow in identity rather than date.  It
+        searches only the already-bound predictor Statcast store, never past
+        the canonical observation day, then requires every recovered row to
+        share exactly one original Statcast game_date.  This handles MLB
+        suspended/resumed games without allowing adjacent games or future
+        outcomes to satisfy the grading gate.
+        """
+        day = str(day)[:10]
+        game_pk = int(game_pk)
+        key = (game_pk, day)
+        if key in self._exact_game_cache:
+            return self._exact_game_cache[key]
+
+        if len(day) != 10 or not day[:4].isdigit():
+            result = (None, "invalid canonical date for exact-game fallback")
+            self._exact_game_cache[key] = result
+            return result
+
+        season_start = f"{day[:4]}-01-01"
+        frame = self.store.window(season_start, day)
+        required = {"game_pk", "game_date"}
+        if frame is None or frame.empty or not required.issubset(frame.columns):
+            result = (None, "bound predictor Statcast lacks exact-game fallback coverage")
+            self._exact_game_cache[key] = result
+            return result
+
+        game_rows = frame[frame["game_pk"] == game_pk].copy(deep=True)
+        del frame
+        if game_rows.empty:
+            result = (None, "bound Statcast source has no rows for this game")
+            self._exact_game_cache[key] = result
+            return result
+
+        source_dates = sorted(
+            set(game_rows["game_date"].astype(str).str[:10].dropna().tolist())
+        )
+        if len(source_dates) != 1:
+            result = (
+                None,
+                "bound Statcast exact-game fallback has ambiguous source dates",
+            )
+            self._exact_game_cache[key] = result
+            return result
+        if source_dates[0] > day:
+            result = (
+                None,
+                "bound Statcast exact-game fallback would borrow a future outcome",
+            )
+            self._exact_game_cache[key] = result
+            return result
+
+        result = (
+            game_rows,
+            "bound_predictor_statcast_parquet_exact_game_pk_fallback",
+        )
+        self._exact_game_cache[key] = result
+        return result
 
     def _special_grade(self, pick, game_statuses, date, allow_in_progress):
         game_pk = pick.get("game_pk")
@@ -103,12 +171,15 @@ class FrozenOutcomeGrader:
 
         game_rows = frame[frame["game_pk"] == int(game_pk)]
         if game_rows.empty:
-            return {
-                **pick,
-                "grade": "ungraded",
-                "reason": "bound Statcast source has no rows for this game",
-                **gr.opportunity_context(pick, row, game_pk),
-            }
+            game_rows, fallback_source = self.exact_prior_game_frame(game_pk, date)
+            if game_rows is None or game_rows.empty:
+                return {
+                    **pick,
+                    "grade": "ungraded",
+                    "reason": fallback_source,
+                    **gr.opportunity_context(pick, row, game_pk),
+                }
+            outcome_source = fallback_source
 
         batter_rows = game_rows[game_rows["batter"] == int(player_id)]
         stat = (pick.get("projection") or {}).get("stat")
