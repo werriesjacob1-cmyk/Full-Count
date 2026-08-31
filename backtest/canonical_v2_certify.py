@@ -26,6 +26,22 @@ from datetime import date, datetime, timedelta, timezone
 from urllib.parse import parse_qs, urlparse
 
 
+_GIT_SHA_RE = re.compile(r"^[0-9a-f]{7,40}$")
+_FULL_GIT_SHA_RE = re.compile(r"^[0-9a-f]{40}$")
+
+
+def row_code_sha_matches_generation(row_sha, generation_sha):
+    """Bind a row's intentional git --short stamp to the exact run commit."""
+    if not isinstance(row_sha, str) or not _GIT_SHA_RE.fullmatch(row_sha):
+        return False
+    if (
+        not isinstance(generation_sha, str)
+        or not _FULL_GIT_SHA_RE.fullmatch(generation_sha)
+    ):
+        return False
+    return generation_sha.startswith(row_sha)
+
+
 EXPECTED_PYTHON = "3.11.15"
 EXPECTED_CRITICAL_PACKAGES = {
     "numpy": "2.4.6",
@@ -749,10 +765,15 @@ def certify(
         failures.append(
             "unique candidate identity count differs from consolidation report"
         )
-    if observed_code_shas != {generation_sha}:
+    bad_row_code_shas = sorted(
+        value
+        for value in observed_code_shas
+        if not row_code_sha_matches_generation(value, generation_sha)
+    )
+    if bad_row_code_shas:
         failures.append(
-            f"row code SHA regime is {sorted(observed_code_shas)!r}, "
-            f"expected only {generation_sha!r}"
+            f"row code SHA regime contains values that do not identify "
+            f"generation commit {generation_sha!r}: {bad_row_code_shas!r}"
         )
 
     # Per-date evidence.
