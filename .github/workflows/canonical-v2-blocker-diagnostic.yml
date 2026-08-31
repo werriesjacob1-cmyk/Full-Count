@@ -1,0 +1,186 @@
+name: Canonical V2 Blocker Diagnostic
+
+on:
+  push:
+    branches:
+      - superchad/canonical-v2-provenance-runner-01
+    paths:
+      - '.github/workflows/canonical-v2-blocker-diagnostic.yml'
+      - 'engineering/CANONICAL_V2_BLOCKER_DIAGNOSTIC_TRIGGER'
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  preflight:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - name: Wait for exact-head Test Suite
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          for i in $(seq 1 60); do
+            payload="$(curl -fsSL -H "Authorization: Bearer $GH_TOKEN" -H 'Accept: application/vnd.github+json' "https://api.github.com/repos/${GITHUB_REPOSITORY}/actions/runs?head_sha=${GITHUB_SHA}&per_page=100")"
+            row="$(printf '%s' "$payload" | jq -c '[.workflow_runs[] | select(.name == "Test Suite")][0] // empty')"
+            if [ -n "$row" ]; then
+              status="$(printf '%s' "$row" | jq -r .status)"
+              conclusion="$(printf '%s' "$row" | jq -r '.conclusion // ""')"
+              run_id="$(printf '%s' "$row" | jq -r .id)"
+              echo "exact-head Test Suite run=$run_id status=$status conclusion=$conclusion"
+              if [ "$status" = "completed" ]; then
+                test "$conclusion" = "success"
+                exit 0
+              fi
+            fi
+            sleep 15
+          done
+          echo "Timed out waiting for exact-head Test Suite" >&2
+          exit 1
+
+  diagnose:
+    needs: preflight
+    runs-on: ubuntu-24.04
+    timeout-minutes: 35
+    steps:
+      - name: Checkout exact diagnostic head
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 1
+
+      - name: Download immutable consolidated artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: canonical-v2-consolidated-bbbe4683a2f3b1a43f17a43327ad642d8126f377
+          path: /tmp/canonical-v2-final
+          github-token: ${{ github.token }}
+          repository: werriesjacob1-cmyk/Full-Count
+          run-id: 33363027948
+
+      - name: Isolate frozen blockers without modifying evidence
+        run: |
+          set -euo pipefail
+          python - <<'PY' | tee /tmp/canonical-v2-blocker-diagnostic.txt
+          import collections, json, os
+
+          root = '/tmp/canonical-v2-final'
+          target_reason = 'bound Statcast source has no rows for this game'
+
+          print('DIAGNOSTIC_HEAD=' + os.environ['GITHUB_SHA'])
+          print('SOURCE_RUN_ID=33363027948')
+          print('SOURCE_GENERATION_SHA=bbbe4683a2f3b1a43f17a43327ad642d8126f377')
+
+          # Locate exact dates carrying the frozen ungraded reason.  The certifier
+          # itself reads per-date metadata, so this does not reinterpret outcomes.
+          hits = []
+          all_reason_counts = collections.Counter()
+          for dirpath, _, filenames in os.walk(root):
+              for name in filenames:
+                  if not name.endswith('.json'):
+                      continue
+                  path = os.path.join(dirpath, name)
+                  try:
+                      with open(path, encoding='utf-8') as fh:
+                          obj = json.load(fh)
+                  except Exception:
+                      continue
+                  reasons = obj.get('ungraded_reasons') if isinstance(obj, dict) else None
+                  if not isinstance(reasons, dict):
+                      continue
+                  for reason, count in reasons.items():
+                      try:
+                          all_reason_counts[str(reason)] += int(count)
+                      except Exception:
+                          pass
+                  count = int(reasons.get(target_reason, 0) or 0)
+                  if count:
+                      day = obj.get('date') or obj.get('observed_date') or os.path.splitext(name)[0]
+                      hits.append((str(day), count, os.path.relpath(path, root)))
+
+          print('TARGET_UNGRADED_TOTAL=' + str(sum(x[1] for x in hits)))
+          print('TARGET_UNGRADED_DATES=' + str(len(hits)))
+          for day, count, rel in sorted(hits):
+              print(f'UNGRADED_DATE day={day} count={count} path={rel}')
+
+          # Locate StatsAPI ledgers and reproduce the certifier's logical retry
+          # grouping. A failed identity is printed verbatim with all attempts.
+          ledger_paths = []
+          for dirpath, _, filenames in os.walk(root):
+              for name in filenames:
+                  lower = name.lower()
+                  if name.endswith('.jsonl') and ('statsapi' in lower or 'request_ledger' in lower):
+                      ledger_paths.append(os.path.join(dirpath, name))
+
+          groups = collections.defaultdict(list)
+          rows_seen = 0
+          for path in ledger_paths:
+              with open(path, encoding='utf-8') as fh:
+                  for line in fh:
+                      if not line.strip():
+                          continue
+                      try:
+                          row = json.loads(line)
+                      except Exception:
+                          continue
+                      url = str(row.get('url') or '')
+                      if 'statsapi.mlb.com' not in url:
+                          continue
+                      rows_seen += 1
+                      key = (
+                          row.get('observed_date'),
+                          row.get('scientific_phase'),
+                          row.get('method'),
+                          row.get('url'),
+                          row.get('request_body_sha256'),
+                      )
+                      groups[key].append(row)
+
+          unrecovered = []
+          recovered = []
+          for key, attempts in groups.items():
+              success = any(
+                  isinstance(r.get('status_code'), int)
+                  and 200 <= r['status_code'] < 300
+                  and not r.get('exception_type')
+                  for r in attempts
+              )
+              had_failure = any(
+                  r.get('exception_type')
+                  or (isinstance(r.get('status_code'), int) and not 200 <= r['status_code'] < 300)
+                  for r in attempts
+              )
+              if had_failure and success:
+                  recovered.append((key, attempts))
+              elif had_failure and not success:
+                  unrecovered.append((key, attempts))
+
+          print('STATSAPI_ROWS_SCANNED=' + str(rows_seen))
+          print('RECOVERED_TRANSIENT_IDENTITIES=' + str(len(recovered)))
+          print('UNRECOVERED_IDENTITIES=' + str(len(unrecovered)))
+          for key, attempts in unrecovered:
+              print('UNRECOVERED_KEY=' + json.dumps(key, separators=(',', ':'), default=str))
+              for r in attempts:
+                  slim = {k: r.get(k) for k in (
+                      'observed_date','scientific_phase','method','url','request_body_sha256',
+                      'status_code','exception_type','response_sha256','response_bytes'
+                  )}
+                  print('UNRECOVERED_ATTEMPT=' + json.dumps(slim, sort_keys=True, separators=(',', ':'), default=str))
+
+          if sum(x[1] for x in hits) != 256:
+              raise SystemExit('diagnostic mismatch: expected exactly 256 target ungraded candidates')
+          if len(unrecovered) != 1:
+              raise SystemExit(f'diagnostic mismatch: expected exactly 1 unrecovered StatsAPI identity, got {len(unrecovered)}')
+          print('DIAGNOSTIC_VERDICT=BLOCKERS_ISOLATED')
+          PY
+
+      - name: Upload diagnostic evidence
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: canonical-v2-blocker-diagnostic-${{ github.sha }}
+          path: /tmp/canonical-v2-blocker-diagnostic.txt
+          if-no-files-found: warn
+          retention-days: 90
