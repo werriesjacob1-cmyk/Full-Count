@@ -128,6 +128,19 @@ def load_json(path):
         return json.load(handle)
 
 
+def load_archived_json(blob_dir, response_sha):
+    """Decode one already-SHA-verified archived response, then release it.
+
+    Archive integrity is certified in a separate pass.  Semantic checks should
+    never retain the full response corpus in memory: the real canonical package
+    contains tens of thousands of unique bodies and can exceed hosted-runner
+    memory if every decoded object is cached simultaneously.
+    """
+    path = os.path.join(blob_dir, f"{response_sha}.gz")
+    with gzip.open(path, "rb") as handle:
+        return json.loads(handle.read())
+
+
 def requested_dates(start, end):
     first = date.fromisoformat(start)
     last = date.fromisoformat(end)
@@ -1184,12 +1197,14 @@ def certify(
         for row in all_external_rows
         if row.get("response_sha256")
     }
-    decoded_json = {}
     valid_body_shas = set()
-    non_json_body_shas = set()
     if not os.path.isdir(blob_dir):
         blockers.append("external response body archive is absent")
     else:
+        # Integrity pass only: verify every content-addressed body while
+        # retaining no decompressed/decoded corpus.  Semantic JSON decoding is
+        # performed on demand below for only the response shapes that require
+        # content inspection (team directory, schedule, game feed).
         for response_sha in sorted(response_shas):
             path = os.path.join(blob_dir, f"{response_sha}.gz")
             if not os.path.exists(path):
@@ -1211,14 +1226,6 @@ def certify(
                 )
                 continue
             valid_body_shas.add(response_sha)
-            try:
-                decoded_json[response_sha] = json.loads(body)
-            except Exception:
-                non_json_body_shas.add(response_sha)
-                # MLB.com HTML is expected. StatsAPI bodies that require
-                # semantic inspection are rejected below only when their
-                # archived bytes actually exist but are non-JSON.
-                pass
 
         # Independently verify each season directory's archived CONTENT, not
         # merely its URL: exactly 30 unique MLB team IDs with names/abbrs.
@@ -1236,7 +1243,10 @@ def certify(
                 # the archive layer; do not convert absence into a semantic
                 # contradiction merely because it cannot be decoded.
                 continue
-            payload = decoded_json.get(response_sha)
+            try:
+                payload = load_archived_json(blob_dir, response_sha)
+            except Exception:
+                payload = None
             if not isinstance(payload, dict):
                 failures.append(
                     f"season {season} historical team directory body is not "
@@ -1272,7 +1282,10 @@ def certify(
             response_sha = row.get("response_sha256")
             if response_sha not in valid_body_shas:
                 continue
-            payload = decoded_json.get(response_sha)
+            try:
+                payload = load_archived_json(blob_dir, response_sha)
+            except Exception:
+                payload = None
             if not isinstance(payload, dict):
                 failures.append(
                     f"{row.get('observed_date')}: archived schedule body is not valid StatsAPI JSON"
@@ -1451,11 +1464,12 @@ def certify(
                 continue
 
             response_sha = row.get("response_sha256")
-            feed_payload = (
-                decoded_json.get(response_sha)
-                if response_sha in valid_body_shas
-                else None
-            )
+            feed_payload = None
+            if response_sha in valid_body_shas:
+                try:
+                    feed_payload = load_archived_json(blob_dir, response_sha)
+                except Exception:
+                    feed_payload = None
             feed_official = None
             if isinstance(feed_payload, dict):
                 feed_official = str(

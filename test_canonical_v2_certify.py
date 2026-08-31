@@ -548,6 +548,80 @@ class CertificationTests(unittest.TestCase):
                 )
             )
 
+
+    def test_unrelated_statsapi_body_is_verified_without_semantic_decode(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            PackageFactory(tmp).build()
+
+            # Player metadata is an allowed historical request shape, but its
+            # response content is not one of the bodies certification needs to
+            # interpret semantically.  Make it intentionally large enough that
+            # eager corpus-wide JSON materialization would be the wrong design.
+            unrelated_body = json.dumps({
+                "people": [{"id": 10, "fullName": "Test Player"}],
+                "padding": "x" * (2 * 1024 * 1024),
+            }, sort_keys=True, separators=(",", ":")).encode()
+            unrelated_sha = sha(unrelated_body)
+            write_gzip(
+                os.path.join(tmp, "http_blobs", f"{unrelated_sha}.gz"),
+                unrelated_body,
+            )
+
+            def mutate(rows):
+                rows.append({
+                    "observed_date": "2025-08-20",
+                    "scientific_phase": "predictive_input",
+                    "method": "GET",
+                    "url": "https://statsapi.mlb.com/api/v1/people?personIds=10",
+                    "request_body_sha256": None,
+                    "status_code": 200,
+                    "response_sha256": unrelated_sha,
+                    "response_bytes": len(unrelated_body),
+                    "exception_type": None,
+                })
+
+            self._rewrite_ledger(
+                tmp,
+                "mlb_statsapi_request_ledger",
+                mutate,
+                bind=True,
+            )
+
+            original = cert.load_archived_json
+            semantic_decodes = []
+
+            def audited_decode(blob_dir, response_sha):
+                semantic_decodes.append(response_sha)
+                if response_sha == unrelated_sha:
+                    raise AssertionError(
+                        "unrelated player-metadata body was semantically decoded"
+                    )
+                return original(blob_dir, response_sha)
+
+            with patch.object(
+                cert,
+                "load_archived_json",
+                side_effect=audited_decode,
+            ):
+                result = self.certify(tmp)
+
+            self.assertEqual(
+                result["verdict"],
+                "CANONICAL CERTIFIED",
+                msg=json.dumps(result, indent=2),
+            )
+            self.assertNotIn(unrelated_sha, semantic_decodes)
+            self.assertIn(unrelated_sha, {
+                row["response_sha256"]
+                for row in self._rewrite_ledger(
+                    tmp,
+                    "mlb_statsapi_request_ledger",
+                    lambda rows: None,
+                    bind=False,
+                )
+                if row.get("response_sha256")
+            })
+
     def test_unseen_statsapi_shape_blocks_certification(self):
         with tempfile.TemporaryDirectory() as tmp:
             factory = PackageFactory(tmp)
