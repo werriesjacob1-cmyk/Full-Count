@@ -1810,6 +1810,111 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-31",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 65.7,
+          "notable_signals": 2,
+          "matchup": "Philadelphia Phillies @ Arizona Diamondbacks",
+          "game_pk": 825040,
+          "team": "Philadelphia Phillies",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 28.8571,
+            "pitch_exploit": 13.7143,
+            "l7_avg_ev": 16.4706,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 9.75,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 98.6667,
+            "lineup_slot": 100.0,
+            "bullpen_fatigue": 0.0,
+            "platoon_barrel_pct": 5.0,
+            "platoon_xwoba": 2.4,
+            "park_hand_index": -0.91,
+            "opp_catcher_framing": 1.32,
+            "days_rest": 0.0,
+            "woba_behind": 4.5455,
+            "pull_park_synergy": -0.8217,
+            "hard_hit_105_rate": 2.9125,
+            "team_total_move": 0.0,
+            "team_total_open": 0.0,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": -0.304,
+            "vs_rp_ops": 1.704,
+            "ump_k_pct": -0.276,
+            "ump_bb_pct": 0.048
+          },
+          "hit_probability": 0.6023,
+          "raw_hit_probability": 0.6028,
+          "lift": 0.0379,
+          "reliability": "A",
+          "sample_n": 131,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 33.8,
+          "notable_signals": 1,
+          "matchup": "Philadelphia Phillies @ Arizona Diamondbacks",
+          "game_pk": 825040,
+          "team": "Philadelphia Phillies",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.1631
+          },
+          "hit_probability": 0.1631,
+          "raw_hit_probability": null,
+          "lift": 0.115,
+          "reliability": "A",
+          "sample_n": 131,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 10.7,
+          "notable_signals": 1,
+          "matchup": "Philadelphia Phillies @ Arizona Diamondbacks",
+          "game_pk": 825040,
+          "team": "Philadelphia Phillies",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.055
+          },
+          "hit_probability": 0.055,
+          "raw_hit_probability": null,
+          "lift": 0.0339,
+          "reliability": "A",
+          "sample_n": 131,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

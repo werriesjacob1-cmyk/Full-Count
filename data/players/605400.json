@@ -310,7 +310,7 @@
         {
           "prop": "Over 4.5 Strikeouts",
           "type": "pitcher",
-          "score": 39.0,
+          "score": 38.9,
           "notable_signals": 0,
           "matchup": "Philadelphia Phillies @ Arizona Diamondbacks",
           "game_pk": 825040,
@@ -322,7 +322,10 @@
             "opp_team_k_pct": 22.0,
             "same_hand_ratio": 92.8571,
             "l14_k_pct": 91.7647,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 48.8723,
+            "ump_k_pct": 0.276,
+            "ump_bb_pct": -0.048
           },
           "hit_probability": 0.6071,
           "raw_hit_probability": 0.6653,
@@ -338,7 +341,7 @@
         {
           "prop": "Over 17.5 Outs Recorded",
           "type": "pitcher",
-          "score": 13.1,
+          "score": 19.5,
           "notable_signals": 0,
           "matchup": "Philadelphia Phillies @ Arizona Diamondbacks",
           "game_pk": 825040,
@@ -347,18 +350,46 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.3523,
+            "outs_rate": 0.3412,
             "avg_outs_per_start": 15.89
           },
-          "hit_probability": 0.3523,
+          "hit_probability": 0.3412,
           "raw_hit_probability": null,
-          "lift": -0.0852,
+          "lift": -0.0353,
           "reliability": "A",
           "sample_n": 27,
           "projection": {
             "stat": "pitcher_outs",
             "value": 17.5,
             "needs": 18
+          }
+        },
+        {
+          "prop": "Over 9.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 54.8,
+          "notable_signals": 1,
+          "matchup": "Philadelphia Phillies @ Arizona Diamondbacks",
+          "game_pk": 825040,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            605400,
+            694297
+          ],
+          "signals": {
+            "combined_k_edge": 0.2634
+          },
+          "hit_probability": 0.6311,
+          "raw_hit_probability": null,
+          "lift": 0.2634,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 9.5,
+            "needs": 10
           }
         }
       ]
