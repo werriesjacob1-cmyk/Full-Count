@@ -8,6 +8,9 @@ on:
       - 'backtest/canonical_v2_research_view.py'
       - 'backtest/canonical_v2_research_certify.py'
       - 'test_canonical_v2_research_view.py'
+      - 'backtest/canonical_v2_hits_pa_opportunity_protocol.md'
+      - 'backtest/canonical_v2_hits_pa_opportunity_locked_run.py'
+      - 'test_canonical_v2_hits_pa_opportunity_locked_run.py'
       - '.github/workflows/canonical-v2-research-view-certification.yml'
       - 'engineering/CANONICAL_V2_RESEARCH_VIEW_TRIGGER'
 
@@ -185,6 +188,42 @@ jobs:
           print(json.dumps(payload,sort_keys=True))
           PY
 
+      - name: Run locked Hits PA/opportunity experiment
+        run: |
+          set -euo pipefail
+          PYTHONPATH=auditor python -u auditor/backtest/canonical_v2_hits_pa_opportunity_locked_run.py             /tmp/canonical-v2-research/rows.jsonl             --certification /tmp/canonical-v2-research/research_certification_report.json             --manifest /tmp/canonical-v2-research/research_view_manifest.json             --output /tmp/canonical-v2-research/hits_pa_opportunity_locked_result.json             | tee /tmp/hits-pa-opportunity.log
+          python - <<'PY'
+          import json
+          r=json.load(open("/tmp/canonical-v2-research/hits_pa_opportunity_locked_result.json",encoding="utf-8"))
+          p=r["primary_challenger"]["2026_holdout"]
+          print("PA_PRIMARY_2026_CURRENT_HIT_RATE="+str(p["current_hit_rate"]))
+          print("PA_PRIMARY_2026_CHALLENGER_HIT_RATE="+str(p["challenger_hit_rate"]))
+          print("PA_PRIMARY_2026_DELTA="+str(p["hit_rate_delta"]))
+          print("PA_PRIMARY_2026_ADDED_RATE="+str(p["added_hit_rate"]))
+          print("PA_PRIMARY_2026_REMOVED_RATE="+str(p["removed_hit_rate"]))
+          print("PA_PRIMARY_2026_Z="+str(p["added_vs_removed"]["z"]))
+          print("PA_PRIMARY_2026_BOOTSTRAP="+str(p["date_cluster_bootstrap"]["delta_95pct"]))
+          print("PA_LOCKED_VERDICT="+str(r["promotion_interpretation"]["verdict"]))
+          PY
+
+      - name: Verify and run already-locked disagreement experiment unchanged
+        run: |
+          set -euo pipefail
+          cd auditor
+          sha256sum -c - <<'EOF'
+          55fc0e0e7bfcb323d4ade4767a05b16f853feff7c7799f8c267074351738101f  backtest/disagreement_experiment_protocol.md
+          8b47c221c9c5cf22d790277263a7dc33109d6d7aedaa8ed349ec17dee1ebab07  backtest/disagreement_experiment_runner.py
+          33fef3c1aece84c85fb808c30d03cddcd5a513c7f68c4ec87ea20570315e9411  backtest/disagreement_challenger_model.py
+          EOF
+          cd ..
+          PYTHONPATH=auditor python -u auditor/backtest/disagreement_experiment_runner.py             /tmp/canonical-v2-research/rows.jsonl             > /tmp/canonical-v2-research/disagreement_locked_result.json
+          python - <<'PY'
+          import json
+          r=json.load(open("/tmp/canonical-v2-research/disagreement_locked_result.json",encoding="utf-8"))
+          print("DISAGREEMENT_REPRODUCTION="+str((r.get("reproduction_check") or {}).get("overall")))
+          print("DISAGREEMENT_PROMOTION="+str(r.get("promotion_verdict")))
+          PY
+
       - name: Upload certified research view
         if: always()
         uses: actions/upload-artifact@v4
@@ -195,9 +234,12 @@ jobs:
             /tmp/canonical-v2-research/research_view_manifest.json
             /tmp/canonical-v2-research/research_certification_report.json
             /tmp/canonical-v2-research/research_input_attestation.json
+            /tmp/canonical-v2-research/hits_pa_opportunity_locked_result.json
+            /tmp/canonical-v2-research/disagreement_locked_result.json
             /tmp/raw-parent-certification.json
             /tmp/research-view-materialize.log
             /tmp/research-certifier.log
+            /tmp/hits-pa-opportunity.log
           if-no-files-found: warn
           retention-days: 90
           compression-level: 6
