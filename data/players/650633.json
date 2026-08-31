@@ -304,6 +304,65 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-31",
+      "evaluations": [
+        {
+          "prop": "Over 6.5 Strikeouts",
+          "type": "pitcher",
+          "score": 52.1,
+          "notable_signals": 0,
+          "matchup": "San Diego Padres @ Cincinnati Reds",
+          "game_pk": 824473,
+          "team": "San Diego Padres",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_k_pct": 83.0,
+            "same_hand_ratio": 100.0,
+            "l14_k_pct": 38.8235,
+            "env_neutral": 50.0
+          },
+          "hit_probability": 0.2245,
+          "raw_hit_probability": 0.2245,
+          "lift": 0.0078,
+          "reliability": "A",
+          "sample_n": 27,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 6.5,
+            "needs": 7
+          }
+        },
+        {
+          "prop": "Over 16.5 Outs Recorded",
+          "type": "pitcher",
+          "score": 90.0,
+          "notable_signals": 1,
+          "matchup": "San Diego Padres @ Cincinnati Reds",
+          "game_pk": 824473,
+          "team": "San Diego Padres",
+          "side": "away",
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "outs_rate": 0.6957,
+            "avg_outs_per_start": 17.33
+          },
+          "hit_probability": 0.6957,
+          "raw_hit_probability": null,
+          "lift": 0.2025,
+          "reliability": "A",
+          "sample_n": 27,
+          "projection": {
+            "stat": "pitcher_outs",
+            "value": 16.5,
+            "needs": 17
+          }
+        }
+      ]
     }
   ]
 }

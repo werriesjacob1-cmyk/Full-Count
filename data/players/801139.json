@@ -302,6 +302,65 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-31",
+      "evaluations": [
+        {
+          "prop": "Over 6.5 Strikeouts",
+          "type": "pitcher",
+          "score": 43.0,
+          "notable_signals": 0,
+          "matchup": "Seattle Mariners @ Boston Red Sox",
+          "game_pk": 824719,
+          "team": "Boston Red Sox",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_k_pct": 64.0,
+            "same_hand_ratio": 92.8571,
+            "l14_k_pct": 85.2941,
+            "env_neutral": 50.0
+          },
+          "hit_probability": 0.3799,
+          "raw_hit_probability": 0.3799,
+          "lift": 0.1632,
+          "reliability": "A",
+          "sample_n": 22,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 6.5,
+            "needs": 7
+          }
+        },
+        {
+          "prop": "Over 16.5 Outs Recorded",
+          "type": "pitcher",
+          "score": 58.7,
+          "notable_signals": 1,
+          "matchup": "Seattle Mariners @ Boston Red Sox",
+          "game_pk": 824719,
+          "team": "Boston Red Sox",
+          "side": "home",
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "outs_rate": 0.57,
+            "avg_outs_per_start": 17.09
+          },
+          "hit_probability": 0.57,
+          "raw_hit_probability": null,
+          "lift": 0.0768,
+          "reliability": "A",
+          "sample_n": 22,
+          "projection": {
+            "stat": "pitcher_outs",
+            "value": 16.5,
+            "needs": 17
+          }
+        }
+      ]
     }
   ]
 }

@@ -1,0 +1,37 @@
+{
+  "player_id": "nrfi_824149",
+  "name": "Chicago White Sox @ Houston Astros \u2014 1st Inning (Both Teams)",
+  "snapshots": [
+    {
+      "date": "2026-08-31",
+      "evaluations": [
+        {
+          "prop": "A run scores in the 1st (either team)",
+          "type": "game",
+          "score": 62.2,
+          "notable_signals": 0,
+          "matchup": "Chicago White Sox @ Houston Astros",
+          "game_pk": 824149,
+          "team": null,
+          "side": "both",
+          "lean": "YRFI",
+          "combo_player_ids": null,
+          "signals": {
+            "home_team_scores_p": 0.2947,
+            "away_team_scores_p": 0.2934,
+            "fi_n_starts": 24.0
+          },
+          "hit_probability": 0.5016,
+          "raw_hit_probability": null,
+          "lift": 0.0,
+          "reliability": "A",
+          "sample_n": 24,
+          "projection": {
+            "stat": "nrfi_combined",
+            "value": 50.2
+          }
+        }
+      ]
+    }
+  ]
+}

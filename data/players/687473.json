@@ -294,6 +294,65 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-08-31",
+      "evaluations": [
+        {
+          "prop": "Over 3.5 Strikeouts",
+          "type": "pitcher",
+          "score": 37.8,
+          "notable_signals": 0,
+          "matchup": "Miami Marlins @ Washington Nationals",
+          "game_pk": 822689,
+          "team": "Miami Marlins",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_k_pct": 45.0,
+            "same_hand_ratio": 75.0,
+            "l14_k_pct": 0.0,
+            "env_neutral": 50.0
+          },
+          "hit_probability": 0.5997,
+          "raw_hit_probability": 0.6286,
+          "lift": -0.093,
+          "reliability": "B",
+          "sample_n": 13,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 3.5,
+            "needs": 4
+          }
+        },
+        {
+          "prop": "Over 11.5 Outs Recorded",
+          "type": "pitcher",
+          "score": 47.1,
+          "notable_signals": 0,
+          "matchup": "Miami Marlins @ Washington Nationals",
+          "game_pk": 822689,
+          "team": "Miami Marlins",
+          "side": "away",
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "outs_rate": 0.7601,
+            "avg_outs_per_start": 12.46
+          },
+          "hit_probability": 0.7601,
+          "raw_hit_probability": null,
+          "lift": -0.1467,
+          "reliability": "B",
+          "sample_n": 13,
+          "projection": {
+            "stat": "pitcher_outs",
+            "value": 11.5,
+            "needs": 12
+          }
+        }
+      ]
     }
   ]
 }
