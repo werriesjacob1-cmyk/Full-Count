@@ -7,7 +7,7 @@ Every player below is projected into last night's/his last game's batting slot f
 - **Chandler Simpson** (Tampa Bay Rays) — Over 0.5 Hits+Runs+RBIs — 72.0% [New York Mets @ Tampa Bay Rays]
 - **Fernando Tatis** (San Diego Padres) — Over 0.5 Hits+Runs+RBIs — 71.5% [San Diego Padres @ Cincinnati Reds]
 - **Jackson Chourio** (Milwaukee Brewers) — Over 0.5 Hits+Runs+RBIs — 71.5% [Milwaukee Brewers @ Chicago Cubs]
-- **Brice Turang** (Milwaukee Brewers) — Over 0.5 Hits+Runs+RBIs — 71.5% [Milwaukee Brewers @ Chicago Cubs]
+- **Brice Turang** (Milwaukee Brewers) — Over 0.5 Hits+Runs+RBIs — 71.4% [Milwaukee Brewers @ Chicago Cubs]
 - **Sal Stewart** (Cincinnati Reds) — Over 0.5 Hits+Runs+RBIs — 71.4% [San Diego Padres @ Cincinnati Reds]
 - **Junior Caminero** (Tampa Bay Rays) — Over 0.5 Hits+Runs+RBIs — 71.3% [New York Mets @ Tampa Bay Rays]
 - **Mike Trout** (Los Angeles Angels) — Over 0.5 Hits+Runs+RBIs — 70.8% [New York Yankees @ Los Angeles Angels]
