@@ -8,6 +8,7 @@ import hashlib
 import json
 import math
 import os
+import re
 import shutil
 from collections import Counter
 from datetime import date, timedelta
@@ -16,6 +17,22 @@ from urllib.parse import urlparse
 
 class ConsolidationError(RuntimeError):
     pass
+
+
+_GIT_SHA_RE = re.compile(r"^[0-9a-f]{7,40}$")
+_FULL_GIT_SHA_RE = re.compile(r"^[0-9a-f]{40}$")
+
+
+def row_code_sha_matches_generation(row_sha, generation_sha):
+    """Bind the engine's git --short row stamp to the exact full run SHA."""
+    if not isinstance(row_sha, str) or not _GIT_SHA_RE.fullmatch(row_sha):
+        return False
+    if (
+        not isinstance(generation_sha, str)
+        or not _FULL_GIT_SHA_RE.fullmatch(generation_sha)
+    ):
+        return False
+    return generation_sha.startswith(row_sha)
 
 
 def sha256_bytes(data):
@@ -217,9 +234,15 @@ def validate_rows(shard_dir, day, meta):
             raise ConsolidationError(f"{day}: invalid predicted_prob {probability!r}")
         if not math.isfinite(p) or not 0 <= p <= 1:
             raise ConsolidationError(f"{day}: predicted_prob outside [0,1]")
-        if row.get("code_git_sha") != meta.get("generation_code_sha"):
+        row_code_sha = row.get("code_git_sha")
+        generation_code_sha = meta.get("generation_code_sha")
+        if not row_code_sha_matches_generation(
+            row_code_sha,
+            generation_code_sha,
+        ):
             raise ConsolidationError(
-                f"{day}: row code SHA differs from date metadata"
+                f"{day}: row code SHA {row_code_sha!r} does not identify "
+                f"generation commit {generation_code_sha!r}"
             )
         rows.append(row)
 
