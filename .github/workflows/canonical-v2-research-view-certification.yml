@@ -1,0 +1,203 @@
+name: Canonical V2 Research View Certification
+
+on:
+  push:
+    branches:
+      - superchad/canonical-v2-provenance-runner-01
+    paths:
+      - 'backtest/canonical_v2_research_view.py'
+      - 'backtest/canonical_v2_research_certify.py'
+      - 'test_canonical_v2_research_view.py'
+      - '.github/workflows/canonical-v2-research-view-certification.yml'
+      - 'engineering/CANONICAL_V2_RESEARCH_VIEW_TRIGGER'
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: canonical-v2-research-view-certification
+  cancel-in-progress: false
+
+env:
+  GENERATION_SHA: bbbe4683a2f3b1a43f17a43327ad642d8126f377
+  SCIENTIFIC_PARENT_SHA: fc589447ec157bff9a96071edc3ceb6c7dc734eb
+  PREDICTOR_SHA: 85c41d79570ac25169726419ed2bcb55cbba78139e8786b6005f71f40a877685
+  OUTCOME_SHA: 03fe66c5035b1e139216cf2f56ec276bf82bdea341febbbebc0406f4d3c6b98f
+  SOURCE_RUN_ID: "33363027948"
+  SOURCE_ARTIFACT_NAME: canonical-v2-consolidated-bbbe4683a2f3b1a43f17a43327ad642d8126f377
+  GENERATION_TEST_RUN_ID: "33363027985"
+
+jobs:
+  preflight:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - name: Wait for exact-head Test Suite
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          for i in $(seq 1 80); do
+            payload="$(curl -fsSL -H "Authorization: Bearer $GH_TOKEN" -H 'Accept: application/vnd.github+json' "https://api.github.com/repos/${GITHUB_REPOSITORY}/actions/runs?head_sha=${GITHUB_SHA}&per_page=100")"
+            row="$(printf '%s' "$payload" | jq -c '[.workflow_runs[] | select(.name == "Test Suite")][0] // empty')"
+            if [ -n "$row" ]; then
+              status="$(printf '%s' "$row" | jq -r .status)"
+              conclusion="$(printf '%s' "$row" | jq -r '.conclusion // ""')"
+              run_id="$(printf '%s' "$row" | jq -r .id)"
+              echo "exact-head Test Suite run=$run_id status=$status conclusion=$conclusion"
+              if [ "$status" = "completed" ]; then
+                test "$conclusion" = "success"
+                exit 0
+              fi
+            fi
+            sleep 15
+          done
+          echo "Timed out waiting for exact-head Test Suite" >&2
+          exit 1
+
+  certify:
+    needs: preflight
+    runs-on: ubuntu-24.04
+    timeout-minutes: 140
+    steps:
+      - name: Checkout exact auditor head
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+          path: auditor
+
+      - name: Checkout immutable generation head
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ env.GENERATION_SHA }}
+          fetch-depth: 0
+          path: generation
+
+      - name: Verify checkout and generation test identities
+        run: |
+          set -euo pipefail
+          test "$(git -C auditor rev-parse HEAD)" = "$GITHUB_SHA"
+          test "$(git -C generation rev-parse HEAD)" = "$GENERATION_SHA"
+          payload="$(curl -fsSL -H 'Accept: application/vnd.github+json' "https://api.github.com/repos/$GITHUB_REPOSITORY/actions/runs/$GENERATION_TEST_RUN_ID")"
+          test "$(printf '%s' "$payload" | jq -r .name)" = "Test Suite"
+          test "$(printf '%s' "$payload" | jq -r .head_sha)" = "$GENERATION_SHA"
+          test "$(printf '%s' "$payload" | jq -r .conclusion)" = "success"
+
+      - name: Set up exact canonical Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11.15'
+          cache: pip
+          cache-dependency-path: generation/requirements.txt
+
+      - name: Install exact canonical environment
+        run: |
+          set -euo pipefail
+          pip install -r generation/requirements.txt
+          pip install --upgrade --force-reinstall             numpy==2.4.6             pandas==3.0.5             pyarrow==25.0.1             pybaseball==2.2.7             python-dateutil==2.9.0.post0             requests==2.34.2             scikit-learn==1.9.0             scipy==1.17.1
+
+      - name: Download immutable Run 6 consolidated parent
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ env.SOURCE_ARTIFACT_NAME }}
+          path: /tmp/canonical-v2-parent
+          github-token: ${{ github.token }}
+          repository: ${{ github.repository }}
+          run-id: ${{ env.SOURCE_RUN_ID }}
+
+      - name: Re-run raw parent certifier without relabeling parent
+        run: |
+          set -uo pipefail
+          set +e
+          python -u auditor/backtest/canonical_v2_certify.py             /tmp/canonical-v2-parent             --repo-root generation             --expected-parent-sha "$SCIENTIFIC_PARENT_SHA"             --expected-source-sha "$PREDICTOR_SHA"             --expected-outcome-source-sha "$OUTCOME_SHA"             --output /tmp/raw-parent-certification.json
+          rc=$?
+          set -e
+          echo "RAW_PARENT_CERTIFIER_EXIT=$rc"
+          test "$rc" -eq 0 -o "$rc" -eq 2
+          python - <<'PY'
+          import json
+          r=json.load(open("/tmp/raw-parent-certification.json",encoding="utf-8"))
+          print("RAW_PARENT_VERDICT="+str(r.get("verdict")))
+          print("RAW_PARENT_FAILURES="+str(len(r.get("failures") or [])))
+          print("RAW_PARENT_BLOCKERS="+str(r.get("blockers") or []))
+          if r.get("failures"):
+              raise SystemExit("raw parent has scientific failures; research view cannot repair failures")
+          PY
+
+      - name: Materialize deterministic whole-date research view
+        run: |
+          set -euo pipefail
+          python -u auditor/backtest/canonical_v2_research_view.py             /tmp/canonical-v2-parent             /tmp/canonical-v2-research             > /tmp/research-view-materialize.log
+          python - <<'PY'
+          import json
+          m=json.load(open("/tmp/canonical-v2-research/research_view_manifest.json",encoding="utf-8"))
+          q=m["quarantine"]
+          print("RESEARCH_VIEW_EXCLUDED_DATES="+str(q["excluded_dates"]))
+          print("RESEARCH_VIEW_QUARANTINE_COUNTS="+str(q["counts"]))
+          print("RESEARCH_VIEW_ROW_ACCOUNTING="+str(m["row_accounting"]))
+          print("RESEARCH_VIEW_ROWS_SHA256="+m["research_rows_sha256"])
+          PY
+
+      - name: Independently certify parent plus transform
+        run: |
+          set -euo pipefail
+          PYTHONPATH=auditor python -u auditor/backtest/canonical_v2_research_certify.py             /tmp/canonical-v2-parent             /tmp/canonical-v2-research             --repo-root generation             --expected-parent-sha "$SCIENTIFIC_PARENT_SHA"             --expected-source-sha "$PREDICTOR_SHA"             --expected-outcome-source-sha "$OUTCOME_SHA"             --output /tmp/canonical-v2-research/research_certification_report.json             | tee /tmp/research-certifier.log
+
+      - name: Require literal certified research view
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json
+          r=json.load(open("/tmp/canonical-v2-research/research_certification_report.json",encoding="utf-8"))
+          print("RESEARCH_CERTIFICATION_VERDICT="+str(r.get("verdict")))
+          print("PARENT_RAW_VERDICT="+str(r.get("parent_raw_verdict")))
+          print("INDEPENDENT_QUARANTINE="+str(r.get("independent_quarantine")))
+          if r.get("verdict") != "CANONICAL CERTIFIED":
+              raise SystemExit("derived research view did not certify")
+          PY
+
+      - name: Bind exact research input identity
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import hashlib,json,os
+          root="/tmp/canonical-v2-research"
+          def sh(path):
+              h=hashlib.sha256()
+              with open(path,"rb") as f:
+                  for c in iter(lambda:f.read(1<<20),b""): h.update(c)
+              return h.hexdigest()
+          report=json.load(open(root+"/research_certification_report.json",encoding="utf-8"))
+          payload={
+              "auditor_git_sha":os.environ["GITHUB_SHA"],
+              "parent_generation_sha":os.environ["GENERATION_SHA"],
+              "parent_run_id":int(os.environ["SOURCE_RUN_ID"]),
+              "research_rows_sha256":sh(root+"/rows.jsonl"),
+              "research_manifest_sha256":sh(root+"/research_view_manifest.json"),
+              "research_certification_file_sha256":sh(root+"/research_certification_report.json"),
+              "research_certification_report_sha256":report.get("certification_report_sha256"),
+              "verdict":report.get("verdict"),
+          }
+          with open(root+"/research_input_attestation.json","x",encoding="utf-8") as f:
+              json.dump(payload,f,indent=2,sort_keys=True); f.write("\n")
+          print(json.dumps(payload,sort_keys=True))
+          PY
+
+      - name: Upload certified research view
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: canonical-v2-research-view-${{ github.sha }}
+          path: |
+            /tmp/canonical-v2-research/rows.jsonl
+            /tmp/canonical-v2-research/research_view_manifest.json
+            /tmp/canonical-v2-research/research_certification_report.json
+            /tmp/canonical-v2-research/research_input_attestation.json
+            /tmp/raw-parent-certification.json
+            /tmp/research-view-materialize.log
+            /tmp/research-certifier.log
+          if-no-files-found: warn
+          retention-days: 90
+          compression-level: 6
