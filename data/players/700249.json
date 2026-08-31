@@ -132,6 +132,34 @@
             "value": 13.5,
             "needs": 14
           }
+        },
+        {
+          "prop": "Over 8.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 40.0,
+          "notable_signals": 0,
+          "matchup": "Baltimore Orioles @ Colorado Rockies",
+          "game_pk": 824314,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            700249,
+            685299
+          ],
+          "signals": {
+            "combined_k_edge": -0.0787
+          },
+          "hit_probability": 0.5181,
+          "raw_hit_probability": null,
+          "lift": -0.0787,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 8.5,
+            "needs": 9
+          }
         }
       ]
     }

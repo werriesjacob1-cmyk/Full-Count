@@ -232,7 +232,7 @@
         {
           "prop": "Over 5.5 Strikeouts",
           "type": "pitcher",
-          "score": 37.7,
+          "score": 37.5,
           "notable_signals": 1,
           "matchup": "Milwaukee Brewers @ Chicago Cubs",
           "game_pk": 824635,
@@ -242,7 +242,7 @@
           "combo_player_ids": null,
           "signals": {
             "opp_team_k_pct": 46.0,
-            "same_hand_ratio": 12.5,
+            "same_hand_ratio": 5.5556,
             "l14_k_pct": 100.0,
             "tto_penalty": 8.0,
             "env_neutral": 50.0,
@@ -285,6 +285,34 @@
             "stat": "pitcher_outs",
             "value": 15.5,
             "needs": 16
+          }
+        },
+        {
+          "prop": "Over 8.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 55.0,
+          "notable_signals": 0,
+          "matchup": "Milwaukee Brewers @ Chicago Cubs",
+          "game_pk": 824635,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            690986,
+            605280
+          ],
+          "signals": {
+            "combined_k_edge": -0.0071
+          },
+          "hit_probability": 0.6551,
+          "raw_hit_probability": null,
+          "lift": -0.0071,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 8.5,
+            "needs": 9
           }
         }
       ]

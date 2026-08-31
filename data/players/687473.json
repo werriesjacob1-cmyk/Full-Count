@@ -301,7 +301,7 @@
         {
           "prop": "Over 3.5 Strikeouts",
           "type": "pitcher",
-          "score": 31.1,
+          "score": 31.8,
           "notable_signals": 0,
           "matchup": "Miami Marlins @ Washington Nationals",
           "game_pk": 822689,
@@ -311,7 +311,7 @@
           "combo_player_ids": null,
           "signals": {
             "opp_team_k_pct": 45.0,
-            "same_hand_ratio": 75.0,
+            "same_hand_ratio": 92.8571,
             "l14_k_pct": 0.0,
             "env_neutral": 50.0,
             "ump_accuracy": 54.8581,
@@ -330,7 +330,7 @@
           }
         },
         {
-          "prop": "Over 14.5 Outs Recorded",
+          "prop": "Over 15.5 Outs Recorded",
           "type": "pitcher",
           "score": 0,
           "notable_signals": 0,
@@ -341,18 +341,18 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.3898,
+            "outs_rate": 0.278,
             "avg_outs_per_start": 12.46
           },
-          "hit_probability": 0.3898,
+          "hit_probability": 0.278,
           "raw_hit_probability": null,
-          "lift": -0.3446,
+          "lift": -0.2689,
           "reliability": "B",
           "sample_n": 13,
           "projection": {
             "stat": "pitcher_outs",
-            "value": 14.5,
-            "needs": 15
+            "value": 15.5,
+            "needs": 16
           }
         },
         {
@@ -370,11 +370,11 @@
             702021
           ],
           "signals": {
-            "combined_k_edge": 0.3258
+            "combined_k_edge": 0.3227
           },
           "hit_probability": 0.7195,
           "raw_hit_probability": null,
-          "lift": 0.3258,
+          "lift": 0.3227,
           "reliability": "D",
           "sample_n": 0,
           "projection": {
