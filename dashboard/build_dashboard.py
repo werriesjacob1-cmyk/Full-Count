@@ -85,8 +85,15 @@ def _game_schedule(date):
                         headers={"User-Agent": "Mozilla/5.0"}, timeout=20)
         r.raise_for_status()
         games = r.json().get("dates", [{}])[0].get("games", [])
+        # resumed_from/rescheduled_from are ADDITIVE and inert for existing
+        # consumers (which read only started/start/status). They exist because
+        # a resumption of a game that already commenced on an earlier date is
+        # a continuation of live play, not a pregame opportunity, however
+        # "Preview" the feed may look for it.
         return {g["gamePk"]: {"started": g.get("status", {}).get("abstractGameState") != "Preview",
-                              "start": g.get("gameDate"), "status": g.get("status", {})}
+                              "start": g.get("gameDate"), "status": g.get("status", {}),
+                              "resumed_from": g.get("resumedFrom") or g.get("resumeGameDate"),
+                              "rescheduled_from": g.get("rescheduledFrom")}
                 for g in games}
     except Exception as e:
         log(f"  (couldn't fetch game schedule/status: {e} -- game-start filtering skipped this build)")
@@ -782,6 +789,45 @@ def run_live_fetch():
         all_candidates_for_rec.extend(entries)
     gprec.attach_recommendations(all_candidates_for_rec, odds_fetched_at=odds_fetched_at,
                                  board_generated_at=board_generated_at)
+
+    # ── PROSPECTIVE Hits PA-v1 SHADOW TAP ──────────────────────────────
+    # Protocol section 4's exact capture boundary, and it is a boundary for a
+    # reason: everything the shadow needs exists RIGHT HERE and nowhere else.
+    # Candidates are scored, quality control has partitioned confirmed from
+    # assumed lineups, signal weights are applied, the same FanDuel prices the
+    # board uses are attached, odds_fetched_at is known, the full Hits
+    # expression population is materialized, started games are filtered, and
+    # recommendations are classified -- but clean() below has not yet stripped
+    # the scientific fields (signals, prob_ci, reliability, lineup_assumed)
+    # that PA-v1 scoring and the section 5 gates both depend on.
+    #
+    # OBSERVATIONAL ONLY. It reads combined rows and returns a report nobody
+    # acts on. It never mutates a candidate, never reorders a board, never
+    # touches a price or a recommendation. capture() cannot raise -- it
+    # catches BaseException internally -- so a research failure is loud in the
+    # log and completely invisible in the customer output.
+    try:
+        from backtest import prospective_capture as _shadow
+        _shadow_report = _shadow.capture(
+            (by_category_full.get("hits") or []),
+            slate_date=gp.m.TODAY,
+            board_generated_at=board_generated_at,
+            odds_fetched_at=odds_fetched_at,
+            schedule=schedule,
+            board_metadata=gprec.build_metadata(
+                odds_fetched_at=odds_fetched_at,
+                board_generated_at=board_generated_at),
+            persist=os.environ.get("FULLCOUNT_SHADOW_PERSIST") == "1",
+        )
+        log(f"Prospective shadow: ok={_shadow_report.get('ok')} "
+            f"eligible={_shadow_report.get('eligible_count')} "
+            f"of {_shadow_report.get('raw_count')} raw hits rows"
+            + (f" error={_shadow_report['error']}" if _shadow_report.get("error") else ""))
+    except BaseException as _shadow_exc:      # noqa: BLE001
+        # Second belt on top of capture()'s own braces: even an ImportError or
+        # a bad argument here must not reach the customer build.
+        log(f"Prospective shadow tap unavailable ({type(_shadow_exc).__name__}: "
+            f"{_shadow_exc}) -- production output unaffected.")
 
     def clean(rows):
         return _clean_candidate_rows(rows, schedule)
