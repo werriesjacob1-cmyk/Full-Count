@@ -308,9 +308,9 @@
       "date": "2026-09-01",
       "evaluations": [
         {
-          "prop": "Over 3.5 Strikeouts",
+          "prop": "Over 4.5 Strikeouts",
           "type": "pitcher",
-          "score": 41.6,
+          "score": 35.9,
           "notable_signals": 0,
           "matchup": "San Diego Padres @ Cincinnati Reds",
           "game_pk": 824472,
@@ -320,25 +320,25 @@
           "combo_player_ids": null,
           "signals": {
             "opp_team_k_pct": 48.0,
-            "same_hand_ratio": 61.1111,
+            "same_hand_ratio": 12.5,
             "l14_k_pct": 7.6471,
             "env_neutral": 50.0
           },
-          "hit_probability": 0.6018,
-          "raw_hit_probability": 0.6389,
-          "lift": -0.0974,
+          "hit_probability": 0.44,
+          "raw_hit_probability": 0.44,
+          "lift": -0.0766,
           "reliability": "A",
           "sample_n": 16,
           "projection": {
             "stat": "strikeouts",
-            "value": 3.5,
-            "needs": 4
+            "value": 4.5,
+            "needs": 5
           }
         },
         {
-          "prop": "Over 14.5 Outs Recorded",
+          "prop": "Over 15.5 Outs Recorded",
           "type": "pitcher",
-          "score": 42.1,
+          "score": 12.3,
           "notable_signals": 0,
           "matchup": "San Diego Padres @ Cincinnati Reds",
           "game_pk": 824472,
@@ -347,18 +347,18 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.6634,
+            "outs_rate": 0.4317,
             "avg_outs_per_start": 14.81
           },
-          "hit_probability": 0.6634,
+          "hit_probability": 0.4317,
           "raw_hit_probability": null,
-          "lift": -0.1024,
+          "lift": -0.1511,
           "reliability": "A",
           "sample_n": 16,
           "projection": {
             "stat": "pitcher_outs",
-            "value": 14.5,
-            "needs": 15
+            "value": 15.5,
+            "needs": 16
           }
         }
       ]

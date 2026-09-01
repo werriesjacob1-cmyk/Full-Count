@@ -220,9 +220,9 @@
       "date": "2026-09-01",
       "evaluations": [
         {
-          "prop": "Over 4.5 Strikeouts",
+          "prop": "Over 3.5 Strikeouts",
           "type": "pitcher",
-          "score": 44.1,
+          "score": 44.3,
           "notable_signals": 0,
           "matchup": "Milwaukee Brewers @ Chicago Cubs",
           "game_pk": 824633,
@@ -231,26 +231,26 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "opp_team_k_pct": 45.0,
-            "same_hand_ratio": 5.5556,
+            "opp_team_k_pct": 44.0,
+            "same_hand_ratio": 12.5,
             "l14_k_pct": 48.8235,
             "env_neutral": 50.0
           },
-          "hit_probability": 0.5258,
-          "raw_hit_probability": 0.5258,
-          "lift": 0.0093,
+          "hit_probability": 0.6174,
+          "raw_hit_probability": 0.7168,
+          "lift": -0.083,
           "reliability": "B",
           "sample_n": 15,
           "projection": {
             "stat": "strikeouts",
-            "value": 4.5,
-            "needs": 5
+            "value": 3.5,
+            "needs": 4
           }
         },
         {
-          "prop": "Over 14.5 Outs Recorded",
+          "prop": "Over 15.5 Outs Recorded",
           "type": "pitcher",
-          "score": 49.7,
+          "score": 17.1,
           "notable_signals": 0,
           "matchup": "Milwaukee Brewers @ Chicago Cubs",
           "game_pk": 824633,
@@ -259,18 +259,18 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.695,
+            "outs_rate": 0.4522,
             "avg_outs_per_start": 15.4
           },
-          "hit_probability": 0.695,
+          "hit_probability": 0.4522,
           "raw_hit_probability": null,
-          "lift": -0.0708,
+          "lift": -0.1306,
           "reliability": "B",
           "sample_n": 15,
           "projection": {
             "stat": "pitcher_outs",
-            "value": 14.5,
-            "needs": 15
+            "value": 15.5,
+            "needs": 16
           }
         }
       ]

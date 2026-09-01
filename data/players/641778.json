@@ -179,7 +179,7 @@
         {
           "prop": "Over 3.5 Strikeouts",
           "type": "pitcher",
-          "score": 45.9,
+          "score": 45.1,
           "notable_signals": 0,
           "matchup": "St. Louis Cardinals @ Los Angeles Dodgers",
           "game_pk": 823908,
@@ -189,13 +189,13 @@
           "combo_player_ids": null,
           "signals": {
             "opp_team_k_pct": 37.0,
-            "same_hand_ratio": 33.3333,
+            "same_hand_ratio": 12.5,
             "l14_k_pct": 40.5882,
             "env_neutral": 50.0
           },
-          "hit_probability": 0.6022,
-          "raw_hit_probability": 0.6412,
-          "lift": -0.097,
+          "hit_probability": 0.6024,
+          "raw_hit_probability": 0.6418,
+          "lift": -0.098,
           "reliability": "A",
           "sample_n": 17,
           "projection": {
@@ -205,9 +205,9 @@
           }
         },
         {
-          "prop": "Over 14.5 Outs Recorded",
+          "prop": "Over 15.5 Outs Recorded",
           "type": "pitcher",
-          "score": 56.3,
+          "score": 50.9,
           "notable_signals": 0,
           "matchup": "St. Louis Cardinals @ Los Angeles Dodgers",
           "game_pk": 823908,
@@ -216,18 +216,18 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.7215,
+            "outs_rate": 0.5868,
             "avg_outs_per_start": 15.41
           },
-          "hit_probability": 0.7215,
+          "hit_probability": 0.5868,
           "raw_hit_probability": null,
-          "lift": -0.0443,
+          "lift": 0.004,
           "reliability": "A",
           "sample_n": 17,
           "projection": {
             "stat": "pitcher_outs",
-            "value": 14.5,
-            "needs": 15
+            "value": 15.5,
+            "needs": 16
           }
         }
       ]

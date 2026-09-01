@@ -1,34 +1,34 @@
 {
-  "player_id": "nrfi_823661",
-  "name": "Detroit Tigers @ Minnesota Twins \u2014 1st Inning (Both Teams)",
+  "player_id": "nrfi_822854",
+  "name": "Athletics @ Texas Rangers \u2014 1st Inning (Both Teams)",
   "snapshots": [
     {
       "date": "2026-09-01",
       "evaluations": [
         {
-          "prop": "A run scores in the 1st (either team)",
+          "prop": "No runs in the 1st (both teams)",
           "type": "game",
-          "score": 23.2,
+          "score": 23.0,
           "notable_signals": 0,
-          "matchup": "Detroit Tigers @ Minnesota Twins",
-          "game_pk": 823661,
+          "matchup": "Athletics @ Texas Rangers",
+          "game_pk": 822854,
           "team": null,
           "side": "both",
-          "lean": "YRFI",
+          "lean": "NRFI",
           "combo_player_ids": null,
           "signals": {
-            "home_team_scores_p": 0.2982,
-            "away_team_scores_p": 0.2961,
+            "home_team_scores_p": 0.2961,
+            "away_team_scores_p": 0.2841,
             "fi_n_starts": 3.0
           },
-          "hit_probability": 0.506,
+          "hit_probability": 0.5039,
           "raw_hit_probability": null,
-          "lift": 0.0044,
+          "lift": 0.0055,
           "reliability": "D",
           "sample_n": 3,
           "projection": {
             "stat": "nrfi_combined",
-            "value": 50.6
+            "value": 50.4
           }
         }
       ]

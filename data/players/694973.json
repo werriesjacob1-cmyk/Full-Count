@@ -239,7 +239,7 @@
         {
           "prop": "Over 6.5 Strikeouts",
           "type": "pitcher",
-          "score": 47.4,
+          "score": 45.3,
           "notable_signals": 0,
           "matchup": "San Francisco Giants @ Pittsburgh Pirates",
           "game_pk": 823340,
@@ -249,7 +249,7 @@
           "combo_player_ids": null,
           "signals": {
             "opp_team_k_pct": 44.0,
-            "same_hand_ratio": 61.1111,
+            "same_hand_ratio": 5.5556,
             "l14_k_pct": 41.1765,
             "env_neutral": 50.0
           },
@@ -265,9 +265,9 @@
           }
         },
         {
-          "prop": "Over 15.5 Outs Recorded",
+          "prop": "Over 16.5 Outs Recorded",
           "type": "pitcher",
-          "score": 35.5,
+          "score": 20.8,
           "notable_signals": 0,
           "matchup": "San Francisco Giants @ Pittsburgh Pirates",
           "game_pk": 823340,
@@ -276,18 +276,18 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.53,
+            "outs_rate": 0.4267,
             "avg_outs_per_start": 16.11
           },
-          "hit_probability": 0.53,
+          "hit_probability": 0.4267,
           "raw_hit_probability": null,
-          "lift": -0.0516,
+          "lift": -0.0866,
           "reliability": "A",
           "sample_n": 27,
           "projection": {
             "stat": "pitcher_outs",
-            "value": 15.5,
-            "needs": 16
+            "value": 16.5,
+            "needs": 17
           }
         }
       ]
