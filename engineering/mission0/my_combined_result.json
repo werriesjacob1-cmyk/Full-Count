@@ -1,0 +1,124 @@
+{
+  "2025": {
+    "N_per_arm": 22499,
+    "bootstrap_95_combined_minus_pa": [
+      -0.0009603512141583836,
+      0.0005873847822158718
+    ],
+    "bootstrap_draws": 5000,
+    "candidate_rows": 43476,
+    "champion_hit_rate": 0.645362016089604,
+    "changed_by_disagreement_tiebreak": 167,
+    "combined_hit_rate": 0.6485621583181475,
+    "combined_hits": 14592,
+    "combined_minus_pa": -0.00017778567936355127,
+    "combined_only_hit_rate": 0.5988023952095808,
+    "combined_only_n": 167,
+    "dates_equal": 152,
+    "dates_negative": 30,
+    "dates_positive": 24,
+    "eval_year": "2025",
+    "fallbacks": {
+      "dis_bucket_fallback": 13976,
+      "dis_unseen_bucket_current": 0,
+      "pa_fallback_to_current": 0
+    },
+    "overlap": 22332,
+    "p_value": 0.6535061378738316,
+    "pa_hit_rate": 0.648739943997511,
+    "pa_hits": 14596,
+    "pa_only_hit_rate": 0.6227544910179641,
+    "pa_only_n": 167,
+    "per_date_mismatches": 0,
+    "season_phase": {
+      "April": {
+        "comb_h": 33,
+        "comb_n": 51,
+        "pa_h": 30,
+        "pa_n": 51
+      },
+      "August+": {
+        "comb_h": 32,
+        "comb_n": 50,
+        "pa_h": 31,
+        "pa_n": 50
+      },
+      "May-Jul": {
+        "comb_h": 35,
+        "comb_n": 66,
+        "pa_h": 43,
+        "pa_n": 66
+      }
+    },
+    "wilson_combined_only": [
+      0.5230497337218329,
+      0.6701118104829316
+    ],
+    "wilson_pa_only": [
+      0.5472607265978022,
+      0.6927278586262995
+    ],
+    "z": -0.44889675385988703
+  },
+  "2026": {
+    "N_per_arm": 15096,
+    "bootstrap_95_combined_minus_pa": [
+      -0.0017980991523246503,
+      0.0003370635027638569
+    ],
+    "bootstrap_draws": 5000,
+    "candidate_rows": 35542,
+    "champion_hit_rate": 0.6396396396396397,
+    "changed_by_disagreement_tiebreak": 146,
+    "combined_hit_rate": 0.6476550079491256,
+    "combined_hits": 9777,
+    "combined_minus_pa": -0.0007286698463169206,
+    "combined_only_hit_rate": 0.6301369863013698,
+    "combined_only_n": 146,
+    "dates_equal": 108,
+    "dates_negative": 25,
+    "dates_positive": 17,
+    "eval_year": "2026",
+    "fallbacks": {
+      "dis_bucket_fallback": 12655,
+      "dis_unseen_bucket_current": 1,
+      "pa_fallback_to_current": 0
+    },
+    "overlap": 14950,
+    "p_value": 0.17171171654682582,
+    "pa_hit_rate": 0.6483836777954425,
+    "pa_hits": 9788,
+    "pa_only_hit_rate": 0.7054794520547946,
+    "pa_only_n": 146,
+    "per_date_mismatches": 0,
+    "season_phase": {
+      "April": {
+        "comb_h": 27,
+        "comb_n": 46,
+        "pa_h": 33,
+        "pa_n": 46
+      },
+      "August+": {
+        "comb_h": 16,
+        "comb_n": 25,
+        "pa_h": 16,
+        "pa_n": 25
+      },
+      "May-Jul": {
+        "comb_h": 49,
+        "comb_n": 75,
+        "pa_h": 54,
+        "pa_n": 75
+      }
+    },
+    "wilson_combined_only": [
+      0.5494304054900806,
+      0.7041709695837713
+    ],
+    "wilson_pa_only": [
+      0.6270370073396376,
+      0.7733862164611813
+    ],
+    "z": -1.3667243690390525
+  }
+}

@@ -1,0 +1,63 @@
+{
+  "2025": {
+    "N_per_arm": 22499,
+    "added_hit_rate": 0.6113602391629297,
+    "added_n": 669,
+    "bootstrap_95": [
+      -0.000990589400693409,
+      0.002211918839593374
+    ],
+    "bootstrap_draws": 5000,
+    "candidate_rows": 43476,
+    "current_hit_rate": 0.645362016089604,
+    "delta": 0.0005778034579314584,
+    "disagreement_hit_rate": 0.6459398195475354,
+    "eval_year": "2025",
+    "overlap": 21830,
+    "p_value": 0.46786619009590696,
+    "per_date_mismatches": 0,
+    "removed_hit_rate": 0.5919282511210763,
+    "removed_n": 669,
+    "score_sources": {
+      "missing_component_bucket_fallback": 12401,
+      "sparse_cell_bucket_fallback": 1575,
+      "supported_cell": 29500,
+      "unseen_bucket_current_prob": 0
+    },
+    "train_years": [
+      "2024"
+    ],
+    "z": 0.7259552733677607
+  },
+  "2026": {
+    "N_per_arm": 15096,
+    "added_hit_rate": 0.5928411633109619,
+    "added_n": 447,
+    "bootstrap_95": [
+      -0.0016611295681063787,
+      0.002134398237400137
+    ],
+    "bootstrap_draws": 5000,
+    "candidate_rows": 35542,
+    "current_hit_rate": 0.6396396396396397,
+    "delta": 0.0001987281399046248,
+    "disagreement_hit_rate": 0.6398383677795443,
+    "eval_year": "2026",
+    "overlap": 14649,
+    "p_value": 0.838382308870379,
+    "per_date_mismatches": 0,
+    "removed_hit_rate": 0.5861297539149888,
+    "removed_n": 447,
+    "score_sources": {
+      "missing_component_bucket_fallback": 12552,
+      "sparse_cell_bucket_fallback": 103,
+      "supported_cell": 22886,
+      "unseen_bucket_current_prob": 1
+    },
+    "train_years": [
+      "2024",
+      "2025"
+    ],
+    "z": 0.20396313300305707
+  }
+}

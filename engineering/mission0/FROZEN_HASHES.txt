@@ -1,0 +1,17 @@
+MISSION 0 — INDEPENDENT REPRODUCTION, FROZEN BEFORE ANY COMPARISON
+Frozen 2026-09-01, before inspecting PR #79/#81 or the quarantined SUPERCHAD result JSONs.
+
+df24f05c146980d8ee3cbbeda73bea7e793a3b3ba1e3e9ab99c74f59b4fc6709  pa_reproduce.py
+061fd0b1025733c1b096f429f04b4f53a0a7a683824cf545e88161265b7dd6a8  disagreement_reproduce.py
+26f3ca2c5941f2c623432672c41ae095b0b7d578a69b039bf8696b3100ae22a9  combined_reproduce.py
+eff2baafd79d371645b4d37d035802f70b763ccceb993d2c16f25a2b8168e3cc  my_pa_result.json
+9e7edc2c0b5fd8b7af973ea72481ef20a9fddd38fe1633c42c5b8e1ad9168fdb  my_disagreement_result.json
+e58d4dd8e1604fdb56139c065a653249570a1d432e8567471d66c9e79be001a6  my_combined_result.json
+
+INPUT IDENTITY (independently verified before any experiment):
+  artifact zip sha256   00f04cc42273ca820ca8c6acb656690db2608e8e887edcea2d4a08156534b66c (= GitHub's own digest)
+  rows.jsonl sha256     8ca010641d08008044c8c3b609162d6e5d69f07bb79be6705b2690a51ab2cb34
+  research rows         1,186,300   distinct dates 555
+  quarantined dates     9, zero rows present for any of them
+  parent rows sha256    94f1f13c80a0f2d34a37dc6c52f69481e0642eaa63117d27f4a1f79aa736e4aa
+  parent verdict        CERTIFICATION BLOCKED (unchanged)
