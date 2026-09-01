@@ -2488,6 +2488,135 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-01",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 65.3,
+          "notable_signals": 2,
+          "matchup": "San Diego Padres @ Cincinnati Reds",
+          "game_pk": 824472,
+          "team": "Cincinnati Reds",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "sp_era_weak": 43.4286,
+            "pitch_exploit": 0.0,
+            "l7_avg_ev": 100.0,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 11.55,
+            "park_hr_index": 48.5,
+            "season_barrel_pct": 69.3333,
+            "lineup_slot": 87.5,
+            "bullpen_fatigue": 20.8333,
+            "platoon_barrel_pct": 4.0,
+            "platoon_xwoba": 3.06,
+            "days_rest": 0.0,
+            "woba_ahead": 26.3636,
+            "woba_behind": 50.9091,
+            "hard_hit_105_rate": 1.415,
+            "team_total_move": -6.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": 0.712,
+            "vs_rp_ops": 1.956,
+            "ump_k_pct": 0.168,
+            "ump_bb_pct": -0.18
+          },
+          "hit_probability": 0.6404,
+          "raw_hit_probability": 0.6313,
+          "lift": 0.0749,
+          "reliability": "A",
+          "sample_n": 119,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 58.6,
+          "notable_signals": 1,
+          "matchup": "San Diego Padres @ Cincinnati Reds",
+          "game_pk": 824472,
+          "team": "Cincinnati Reds",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": -4.26,
+            "sprint_speed": 37.5,
+            "on_base": 90.4031
+          },
+          "hit_probability": 0.1656,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 119,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 18.7,
+          "notable_signals": 1,
+          "matchup": "San Diego Padres @ Cincinnati Reds",
+          "game_pk": 824472,
+          "team": "Cincinnati Reds",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.1032
+          },
+          "hit_probability": 0.1032,
+          "raw_hit_probability": null,
+          "lift": 0.0552,
+          "reliability": "A",
+          "sample_n": 119,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 2.8,
+          "notable_signals": 0,
+          "matchup": "San Diego Padres @ Cincinnati Reds",
+          "game_pk": 824472,
+          "team": "Cincinnati Reds",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0236
+          },
+          "hit_probability": 0.0236,
+          "raw_hit_probability": null,
+          "lift": 0.0026,
+          "reliability": "A",
+          "sample_n": 119,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }
