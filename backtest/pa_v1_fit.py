@@ -408,7 +408,7 @@ def score(signals, artifact):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--rows")
-    ap.add_argument("--out", required=True)
+    ap.add_argument("--out")
     ap.add_argument("--effective-from")
     ap.add_argument("--train-cutoff")
     ap.add_argument("--verify", metavar="ARTIFACT",
@@ -425,6 +425,8 @@ def main():
         print(f"recomputed = {actual}")
         print("VERIFIED" if claimed == actual else "MISMATCH")
         return 0 if claimed == actual else 1
+    if not a.rows or not a.out:
+        raise SystemExit("--rows and --out are required unless --verify is used")
     art = build_artifact(a.rows, a.effective_from, a.train_cutoff, a.authoritative)
     payload, file_sha = serialize(art)
     with open(a.out, "wb") as fh:
