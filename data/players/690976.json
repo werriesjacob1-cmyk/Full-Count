@@ -1,0 +1,103 @@
+{
+  "player_id": 690976,
+  "name": "Alex Freeland",
+  "snapshots": [
+    {
+      "date": "2026-09-01",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 28.4,
+          "notable_signals": 0,
+          "matchup": "St. Louis Cardinals @ Los Angeles Dodgers",
+          "game_pk": 823908,
+          "team": "Los Angeles Dodgers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "sp_era_weak": 38.8571,
+            "park_hr_index": 37.6,
+            "season_barrel_pct": 15.3333,
+            "lineup_slot": 0.0,
+            "bullpen_fatigue": 27.7778,
+            "platoon_barrel_pct": -0.56,
+            "platoon_xwoba": -1.14,
+            "days_rest": 4.0,
+            "woba_ahead": 29.0909,
+            "woba_behind": 93.6364,
+            "team_total_move": 0.0,
+            "team_total_open": 0.0,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": 0.728,
+            "vs_rp_ops": -0.612,
+            "ump_k_pct": -0.828,
+            "ump_bb_pct": 0.192
+          },
+          "hit_probability": 0.546,
+          "raw_hit_probability": 0.5623,
+          "lift": -0.0195,
+          "reliability": "B",
+          "sample_n": 71,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 0.0,
+          "notable_signals": 0,
+          "matchup": "St. Louis Cardinals @ Los Angeles Dodgers",
+          "game_pk": 823908,
+          "team": "Los Angeles Dodgers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0204
+          },
+          "hit_probability": 0.0204,
+          "raw_hit_probability": null,
+          "lift": -0.0276,
+          "reliability": "B",
+          "sample_n": 71,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 0.0,
+          "notable_signals": 0,
+          "matchup": "St. Louis Cardinals @ Los Angeles Dodgers",
+          "game_pk": 823908,
+          "team": "Los Angeles Dodgers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0044
+          },
+          "hit_probability": 0.0044,
+          "raw_hit_probability": null,
+          "lift": -0.0166,
+          "reliability": "B",
+          "sample_n": 71,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -475,6 +475,87 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-01",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 32.7,
+          "notable_signals": 0,
+          "matchup": "Atlanta Braves @ Washington Nationals",
+          "game_pk": 822687,
+          "team": "Washington Nationals",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 98.0,
+            "l7_avg_ev": 7.7083,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 60.0,
+            "season_barrel_pct": 43.3333,
+            "lineup_slot": 25.0,
+            "bullpen_fatigue": 0.0,
+            "platoon_barrel_pct": 0.08,
+            "platoon_xwoba": -2.46,
+            "park_hand_index": 1.6,
+            "opp_catcher_framing": 0.36,
+            "days_rest": 2.0,
+            "woba_ahead": 7.2727,
+            "woba_behind": 3.6364,
+            "pull_park_synergy": 0.8344,
+            "team_total_move": 0.0,
+            "team_total_open": 0.0,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": 2.544,
+            "vs_rp_ops": 1.872,
+            "ump_k_pct": 0.048,
+            "ump_bb_pct": 0.144
+          },
+          "hit_probability": 0.5301,
+          "raw_hit_probability": 0.5301,
+          "lift": -0.0354,
+          "reliability": "D",
+          "sample_n": 23,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 25.1,
+          "notable_signals": 0,
+          "matchup": "Atlanta Braves @ Washington Nationals",
+          "game_pk": 822687,
+          "team": "Washington Nationals",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": 6.0,
+            "sprint_speed": 3.125,
+            "catcher_poptime": 8.5714,
+            "on_base": 41.4587
+          },
+          "hit_probability": 0.048,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "D",
+          "sample_n": 23,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

@@ -303,6 +303,34 @@
             "value": 14.5,
             "needs": 15
           }
+        },
+        {
+          "prop": "Over 7.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 54.9,
+          "notable_signals": 1,
+          "matchup": "Miami Marlins @ Kansas City Royals",
+          "game_pk": 824070,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            663969,
+            677976
+          ],
+          "signals": {
+            "combined_k_edge": 0.2042
+          },
+          "hit_probability": 0.6546,
+          "raw_hit_probability": null,
+          "lift": 0.2042,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 7.5,
+            "needs": 8
+          }
         }
       ]
     }

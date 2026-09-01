@@ -2614,6 +2614,140 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-01",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 59.2,
+          "notable_signals": 2,
+          "matchup": "Athletics @ Texas Rangers",
+          "game_pk": 822854,
+          "team": "Texas Rangers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 57.1429,
+            "pitch_exploit": 5.1429,
+            "l7_avg_ev": 8.6667,
+            "l7_barrel_pct": 80.7143,
+            "bat_speed_trend": 4.875,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 26.6667,
+            "lineup_slot": 75.0,
+            "bullpen_fatigue": 0.0,
+            "platoon_barrel_pct": 0.48,
+            "platoon_xwoba": 0.0,
+            "park_hand_index": 0.33,
+            "opp_catcher_framing": 0.36,
+            "days_rest": 0.0,
+            "woba_ahead": 26.3636,
+            "woba_behind": 31.8182,
+            "pull_park_synergy": 0.1398,
+            "hard_hit_105_rate": 1.0775,
+            "team_total_move": 0.0,
+            "team_total_open": 0.0,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": 1.0,
+            "vs_rp_ops": 1.692,
+            "ump_k_pct": 0.24,
+            "ump_bb_pct": -0.048
+          },
+          "hit_probability": 0.6196,
+          "raw_hit_probability": 0.6156,
+          "lift": 0.0541,
+          "reliability": "A",
+          "sample_n": 86,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 53.9,
+          "notable_signals": 1,
+          "matchup": "Athletics @ Texas Rangers",
+          "game_pk": 822854,
+          "team": "Texas Rangers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": -1.68,
+            "sprint_speed": 31.25,
+            "catcher_poptime": 25.7143,
+            "on_base": 86.5643
+          },
+          "hit_probability": 0.1104,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 86,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 15.3,
+          "notable_signals": 0,
+          "matchup": "Athletics @ Texas Rangers",
+          "game_pk": 822854,
+          "team": "Texas Rangers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0897
+          },
+          "hit_probability": 0.0897,
+          "raw_hit_probability": null,
+          "lift": 0.0417,
+          "reliability": "A",
+          "sample_n": 86,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 6.8,
+          "notable_signals": 0,
+          "matchup": "Athletics @ Texas Rangers",
+          "game_pk": 822854,
+          "team": "Texas Rangers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0398
+          },
+          "hit_probability": 0.0398,
+          "raw_hit_probability": null,
+          "lift": 0.0188,
+          "reliability": "A",
+          "sample_n": 86,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

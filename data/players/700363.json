@@ -104,7 +104,7 @@
         {
           "prop": "Over 4.5 Strikeouts",
           "type": "pitcher",
-          "score": 43.2,
+          "score": 42.2,
           "notable_signals": 0,
           "matchup": "Atlanta Braves @ Washington Nationals",
           "game_pk": 822687,
@@ -114,7 +114,7 @@
           "combo_player_ids": null,
           "signals": {
             "opp_team_k_pct": 45.0,
-            "same_hand_ratio": 92.8571,
+            "same_hand_ratio": 88.8889,
             "l14_k_pct": 0.0,
             "env_neutral": 50.0,
             "ump_accuracy": 54.8683,
@@ -130,6 +130,34 @@
             "stat": "strikeouts",
             "value": 4.5,
             "needs": 5
+          }
+        },
+        {
+          "prop": "Over 8.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 29.0,
+          "notable_signals": 0,
+          "matchup": "Atlanta Braves @ Washington Nationals",
+          "game_pk": 822687,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            700363,
+            663623
+          ],
+          "signals": {
+            "combined_k_edge": -0.1011
+          },
+          "hit_probability": 0.4402,
+          "raw_hit_probability": null,
+          "lift": -0.1011,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 8.5,
+            "needs": 9
           }
         }
       ]

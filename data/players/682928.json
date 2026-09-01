@@ -1513,6 +1513,138 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-01",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 65.0,
+          "notable_signals": 1,
+          "matchup": "Atlanta Braves @ Washington Nationals",
+          "game_pk": 822687,
+          "team": "Washington Nationals",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 98.0,
+            "pitch_exploit": 1.7143,
+            "l7_avg_ev": 42.3077,
+            "l7_barrel_pct": 40.7143,
+            "park_hr_index": 60.0,
+            "season_barrel_pct": 46.6667,
+            "lineup_slot": 100.0,
+            "bullpen_fatigue": 0.0,
+            "platoon_barrel_pct": 2.96,
+            "platoon_xwoba": 2.76,
+            "park_hand_index": 2.73,
+            "opp_catcher_framing": 0.36,
+            "days_rest": 2.0,
+            "woba_behind": 1.8182,
+            "pull_park_synergy": 1.4046,
+            "hard_hit_105_rate": 0.12,
+            "team_total_move": 0.0,
+            "team_total_open": 0.0,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": -0.928,
+            "vs_rp_ops": 0.756,
+            "ump_k_pct": 0.048,
+            "ump_bb_pct": 0.144
+          },
+          "hit_probability": 0.6419,
+          "raw_hit_probability": 0.6324,
+          "lift": 0.0764,
+          "reliability": "A",
+          "sample_n": 131,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 55.1,
+          "notable_signals": 1,
+          "matchup": "Atlanta Braves @ Washington Nationals",
+          "game_pk": 822687,
+          "team": "Washington Nationals",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": 6.0,
+            "sprint_speed": 37.5,
+            "catcher_poptime": 8.5714,
+            "on_base": 100.0
+          },
+          "hit_probability": 0.1767,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 131,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 5.8,
+          "notable_signals": 0,
+          "matchup": "Atlanta Braves @ Washington Nationals",
+          "game_pk": 822687,
+          "team": "Washington Nationals",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0514
+          },
+          "hit_probability": 0.0514,
+          "raw_hit_probability": null,
+          "lift": 0.0034,
+          "reliability": "A",
+          "sample_n": 131,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 4.0,
+          "notable_signals": 0,
+          "matchup": "Atlanta Braves @ Washington Nationals",
+          "game_pk": 822687,
+          "team": "Washington Nationals",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0285
+          },
+          "hit_probability": 0.0285,
+          "raw_hit_probability": null,
+          "lift": 0.0075,
+          "reliability": "A",
+          "sample_n": 131,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

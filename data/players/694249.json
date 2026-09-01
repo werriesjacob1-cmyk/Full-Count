@@ -1924,6 +1924,133 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-01",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 42.7,
+          "notable_signals": 1,
+          "matchup": "Baltimore Orioles @ Colorado Rockies",
+          "game_pk": 824313,
+          "team": "Colorado Rockies",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "sp_era_weak": 43.7143,
+            "pitch_exploit": 7.4286,
+            "l7_avg_ev": 100.0,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 56.2,
+            "season_barrel_pct": 12.0,
+            "lineup_slot": 50.0,
+            "bullpen_fatigue": 0.0,
+            "platoon_barrel_pct": -0.96,
+            "platoon_xwoba": 1.92,
+            "opp_catcher_framing": 0.72,
+            "days_rest": 0.0,
+            "woba_ahead": 63.6364,
+            "woba_behind": 22.7273,
+            "team_total_move": 0.0,
+            "team_total_open": 0.0,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": 0.08,
+            "vs_rp_ops": 0.768
+          },
+          "hit_probability": 0.6123,
+          "raw_hit_probability": 0.6102,
+          "lift": 0.0468,
+          "reliability": "B",
+          "sample_n": 66,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 55.7,
+          "notable_signals": 1,
+          "matchup": "Baltimore Orioles @ Colorado Rockies",
+          "game_pk": 824313,
+          "team": "Colorado Rockies",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": -3.54,
+            "sprint_speed": 46.875,
+            "catcher_poptime": 5.7143,
+            "on_base": 84.6449
+          },
+          "hit_probability": 0.1064,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "B",
+          "sample_n": 66,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 0.0,
+          "notable_signals": 0,
+          "matchup": "Baltimore Orioles @ Colorado Rockies",
+          "game_pk": 824313,
+          "team": "Colorado Rockies",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.022
+          },
+          "hit_probability": 0.022,
+          "raw_hit_probability": null,
+          "lift": -0.026,
+          "reliability": "B",
+          "sample_n": 66,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 0.9,
+          "notable_signals": 0,
+          "matchup": "Baltimore Orioles @ Colorado Rockies",
+          "game_pk": 824313,
+          "team": "Colorado Rockies",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.016
+          },
+          "hit_probability": 0.016,
+          "raw_hit_probability": null,
+          "lift": -0.005,
+          "reliability": "B",
+          "sample_n": 66,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

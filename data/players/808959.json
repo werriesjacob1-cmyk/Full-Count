@@ -2075,6 +2075,109 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-01",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 83.8,
+          "notable_signals": 2,
+          "matchup": "Chicago White Sox @ Houston Astros",
+          "game_pk": 824148,
+          "team": "Chicago White Sox",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 100.0,
+            "pitch_exploit": 10.2857,
+            "l7_avg_ev": 100.0,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 100.0,
+            "lineup_slot": 87.5,
+            "bullpen_fatigue": 62.5,
+            "platoon_barrel_pct": 5.0,
+            "platoon_xwoba": 3.6,
+            "park_hand_index": 1.61,
+            "opp_catcher_framing": 1.08,
+            "days_rest": 0.0,
+            "woba_ahead": 48.1818,
+            "woba_behind": 73.6364,
+            "pull_park_synergy": 0.9241,
+            "hard_hit_105_rate": 2.4275,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": 0.032,
+            "vs_rp_ops": 1.644,
+            "ump_k_pct": -0.12,
+            "ump_bb_pct": 0.0
+          },
+          "hit_probability": 0.6945,
+          "raw_hit_probability": 0.715,
+          "lift": 0.0251,
+          "reliability": "A",
+          "sample_n": 102,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 28.8,
+          "notable_signals": 1,
+          "matchup": "Chicago White Sox @ Houston Astros",
+          "game_pk": 824148,
+          "team": "Chicago White Sox",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.1437
+          },
+          "hit_probability": 0.1437,
+          "raw_hit_probability": null,
+          "lift": 0.0957,
+          "reliability": "A",
+          "sample_n": 102,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 15.8,
+          "notable_signals": 1,
+          "matchup": "Chicago White Sox @ Houston Astros",
+          "game_pk": 824148,
+          "team": "Chicago White Sox",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0754
+          },
+          "hit_probability": 0.0754,
+          "raw_hit_probability": null,
+          "lift": 0.0544,
+          "reliability": "A",
+          "sample_n": 102,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

@@ -2078,6 +2078,134 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-01",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 72.9,
+          "notable_signals": 1,
+          "matchup": "St. Louis Cardinals @ Los Angeles Dodgers",
+          "game_pk": 823908,
+          "team": "Los Angeles Dodgers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 38.8571,
+            "pitch_exploit": 13.1429,
+            "l7_avg_ev": 64.0278,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 37.6,
+            "season_barrel_pct": 88.6667,
+            "lineup_slot": 100.0,
+            "bullpen_fatigue": 27.7778,
+            "platoon_barrel_pct": 5.0,
+            "platoon_xwoba": 5.0,
+            "days_rest": 2.0,
+            "woba_behind": 66.3636,
+            "hard_hit_105_rate": 2.9675,
+            "team_total_move": 0.0,
+            "team_total_open": 0.0,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": -1.272,
+            "vs_rp_ops": 1.08,
+            "ump_k_pct": -0.828,
+            "ump_bb_pct": 0.192
+          },
+          "hit_probability": 0.647,
+          "raw_hit_probability": 0.6363,
+          "lift": 0.0815,
+          "reliability": "A",
+          "sample_n": 127,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 48.2,
+          "notable_signals": 1,
+          "matchup": "St. Louis Cardinals @ Los Angeles Dodgers",
+          "game_pk": 823908,
+          "team": "Los Angeles Dodgers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": 3.42,
+            "sprint_speed": 12.5,
+            "on_base": 100.0
+          },
+          "hit_probability": 0.0769,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 127,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 34.3,
+          "notable_signals": 1,
+          "matchup": "St. Louis Cardinals @ Los Angeles Dodgers",
+          "game_pk": 823908,
+          "team": "Los Angeles Dodgers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.1653
+          },
+          "hit_probability": 0.1653,
+          "raw_hit_probability": null,
+          "lift": 0.1173,
+          "reliability": "A",
+          "sample_n": 127,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 10.9,
+          "notable_signals": 1,
+          "matchup": "St. Louis Cardinals @ Los Angeles Dodgers",
+          "game_pk": 823908,
+          "team": "Los Angeles Dodgers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0558
+          },
+          "hit_probability": 0.0558,
+          "raw_hit_probability": null,
+          "lift": 0.0348,
+          "reliability": "A",
+          "sample_n": 127,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

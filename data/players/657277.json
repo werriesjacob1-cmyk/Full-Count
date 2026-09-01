@@ -337,6 +337,34 @@
             "value": 17.5,
             "needs": 18
           }
+        },
+        {
+          "prop": "Over 10.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 20.8,
+          "notable_signals": 0,
+          "matchup": "San Francisco Giants @ Pittsburgh Pirates",
+          "game_pk": 823340,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            657277,
+            694973
+          ],
+          "signals": {
+            "combined_k_edge": -0.1812
+          },
+          "hit_probability": 0.4787,
+          "raw_hit_probability": null,
+          "lift": -0.1812,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 10.5,
+            "needs": 11
+          }
         }
       ]
     }

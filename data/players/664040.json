@@ -1546,9 +1546,9 @@
       "date": "2026-09-01",
       "evaluations": [
         {
-          "prop": "Over 0.5 Hits",
+          "prop": "Over 0.5 Hits+Runs+RBIs",
           "type": "batter",
-          "score": 62.6,
+          "score": 62.9,
           "notable_signals": 2,
           "matchup": "San Francisco Giants @ Pittsburgh Pirates",
           "game_pk": 823340,
@@ -1563,7 +1563,7 @@
             "l7_avg_ev": 53.9583,
             "l7_barrel_pct": 100.0,
             "bat_speed_trend": 7.65,
-            "park_hr_index": 35.7,
+            "park_hr_index": 36.7,
             "season_barrel_pct": 59.3333,
             "lineup_slot": 87.5,
             "bullpen_fatigue": 18.5185,
@@ -1585,13 +1585,13 @@
             "ump_k_pct": 0.756,
             "ump_bb_pct": -0.288
           },
-          "hit_probability": 0.6232,
-          "raw_hit_probability": 0.6183,
-          "lift": 0.0577,
+          "hit_probability": 0.699,
+          "raw_hit_probability": 0.7231,
+          "lift": 0.0296,
           "reliability": "A",
           "sample_n": 128,
           "projection": {
-            "stat": "hits",
+            "stat": "hits_runs_rbis",
             "value": 0.5,
             "needs": 1
           }

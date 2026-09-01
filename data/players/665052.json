@@ -1446,6 +1446,112 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-01",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 62.5,
+          "notable_signals": 3,
+          "matchup": "Miami Marlins @ Kansas City Royals",
+          "game_pk": 824070,
+          "team": "Miami Marlins",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 0.0,
+            "pitch_exploit": 0.0,
+            "l7_avg_ev": 0.0,
+            "l7_barrel_pct": 0.0,
+            "bat_speed_trend": 0.15,
+            "park_hr_index": 81.5,
+            "season_barrel_pct": 81.3333,
+            "lineup_slot": 87.5,
+            "bullpen_fatigue": 0.0,
+            "platoon_barrel_pct": 5.0,
+            "platoon_xwoba": 4.86,
+            "park_hand_index": -1.24,
+            "opp_catcher_framing": -0.36,
+            "days_rest": 0.0,
+            "woba_ahead": 46.3636,
+            "woba_behind": 40.9091,
+            "pull_park_synergy": -0.8289,
+            "hard_hit_105_rate": 1.845,
+            "team_total_move": 0.0,
+            "team_total_open": 0.0,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": 0.704,
+            "vs_rp_ops": 2.088,
+            "ump_k_pct": 0.372,
+            "ump_bb_pct": 0.468
+          },
+          "hit_probability": 0.6179,
+          "raw_hit_probability": 0.6143,
+          "lift": 0.0524,
+          "reliability": "B",
+          "sample_n": 69,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 23.0,
+          "notable_signals": 1,
+          "matchup": "Miami Marlins @ Kansas City Royals",
+          "game_pk": 824070,
+          "team": "Miami Marlins",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.1204
+          },
+          "hit_probability": 0.1204,
+          "raw_hit_probability": null,
+          "lift": 0.0724,
+          "reliability": "B",
+          "sample_n": 69,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 11.9,
+          "notable_signals": 1,
+          "matchup": "Miami Marlins @ Kansas City Royals",
+          "game_pk": 824070,
+          "team": "Miami Marlins",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0596
+          },
+          "hit_probability": 0.0596,
+          "raw_hit_probability": null,
+          "lift": 0.0386,
+          "reliability": "B",
+          "sample_n": 69,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

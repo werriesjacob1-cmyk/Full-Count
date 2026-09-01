@@ -275,6 +275,34 @@
             "value": 15.5,
             "needs": 16
           }
+        },
+        {
+          "prop": "Over 7.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 46.8,
+          "notable_signals": 0,
+          "matchup": "Milwaukee Brewers @ Chicago Cubs",
+          "game_pk": 824633,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            688107,
+            571510
+          ],
+          "signals": {
+            "combined_k_edge": -0.0757
+          },
+          "hit_probability": 0.5819,
+          "raw_hit_probability": null,
+          "lift": -0.0757,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 7.5,
+            "needs": 8
+          }
         }
       ]
     }

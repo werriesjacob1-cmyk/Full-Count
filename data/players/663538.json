@@ -2423,10 +2423,10 @@
       "date": "2026-09-01",
       "evaluations": [
         {
-          "prop": "Over 0.5 Hits",
+          "prop": "Over 0.5 Hits+Runs+RBIs",
           "type": "batter",
-          "score": 67.5,
-          "notable_signals": 3,
+          "score": 63.7,
+          "notable_signals": 2,
           "matchup": "Milwaukee Brewers @ Chicago Cubs",
           "game_pk": 824633,
           "team": "Chicago Cubs",
@@ -2440,7 +2440,7 @@
             "l7_avg_ev": 29.0909,
             "l7_barrel_pct": 100.0,
             "bat_speed_trend": 10.5,
-            "park_hr_index": 82.4,
+            "park_hr_index": 39.7,
             "season_barrel_pct": 0.0,
             "lineup_slot": 50.0,
             "bullpen_fatigue": 37.037,
@@ -2461,13 +2461,13 @@
             "ump_k_pct": -0.348,
             "ump_bb_pct": 0.264
           },
-          "hit_probability": 0.6292,
-          "raw_hit_probability": 0.6228,
-          "lift": 0.0637,
+          "hit_probability": 0.7018,
+          "raw_hit_probability": 0.7283,
+          "lift": 0.0324,
           "reliability": "A",
           "sample_n": 135,
           "projection": {
-            "stat": "hits",
+            "stat": "hits_runs_rbis",
             "value": 0.5,
             "needs": 1
           }
@@ -2489,7 +2489,7 @@
             "catcher_poptime": 8.5714,
             "on_base": 35.7006
           },
-          "hit_probability": 0.1509,
+          "hit_probability": 0.1507,
           "raw_hit_probability": null,
           "lift": null,
           "reliability": "A",
