@@ -110,9 +110,16 @@ check("imported, not redeclared", pe.PUBLICATION_LEAD_SECONDS == 15 * 60)
 inside = verdict(base_row(), now=START - timedelta(minutes=14))
 check("14 min from first pitch rejected",
       not inside["gates"]["before_publication_cutoff"])
+# STRICT, matching production: before_betting_cutoff() is
+# `publication_cutoff_at < game_start`, so exactly 15:00 is REJECTED. An
+# inclusive comparison here would let the shadow hold a wager the site could
+# not have published.
 edge = verdict(base_row(), now=START - timedelta(minutes=15))
-check("exactly 15 min from first pitch accepted",
-      edge["gates"]["before_publication_cutoff"])
+check("exactly 15 min from first pitch REJECTED (strict, as production)",
+      not edge["gates"]["before_publication_cutoff"])
+check("15 min + 1 second accepted",
+      verdict(base_row(), now=START - timedelta(minutes=15, seconds=1)
+              )["gates"]["before_publication_cutoff"])
 check("16 min from first pitch accepted",
       verdict(base_row(), now=START - timedelta(minutes=16))["gates"]["before_publication_cutoff"])
 

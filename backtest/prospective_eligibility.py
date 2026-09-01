@@ -124,6 +124,38 @@ def _parse_ts(value):
     return parsed.astimezone(timezone.utc)
 
 
+def admits_new_top_pick(game_start, prepared_at, *,
+                        lead_seconds=PUBLICATION_LEAD_SECONDS):
+    """Mirror the PRODUCTION publication cutoff exactly, both operands.
+
+    prepare_pages_artifact.py computes
+        publication_cutoff_at = prepared_at + PUBLICATION_DEPLOYMENT_LEAD_SECONDS
+    and admits a new Top Pick only when live_state.before_betting_cutoff()
+    holds, which is the STRICT inequality
+        publication_cutoff_at < game_start.
+
+    Two details are easy to get wrong and both favour the challenger if
+    fumbled, so they are stated here rather than reimplemented per caller:
+
+    STRICTNESS. The comparison is strict. A row exactly 15:00 from first
+    pitch is REJECTED by production. Writing `<=` here would let the shadow
+    hold a wager the site could not have published.
+
+    WHICH CLOCK. `prepared_at` is the PAGES ARTIFACT PREPARATION instant, which
+    happens in the later Dashboard Pages Deploy run -- NOT the build instant
+    inside Dashboard Refresh. Capture necessarily evaluates this at capture
+    time, which is earlier and therefore more permissive, so the captured pool
+    can legitimately contain rows the real artifact later excluded. That gap is
+    closed when the decisive epoch is bound: prospective_epoch.regate_pool()
+    re-applies this same function against the bound deployment's real
+    prepared_at. Skipping that re-gate would hand PA-v1 wagers the champion was
+    structurally unable to take.
+    """
+    if game_start is None or prepared_at is None:
+        return False
+    return prepared_at + timedelta(seconds=lead_seconds) < game_start
+
+
 def wager_expression(row):
     """The four distinct identity-bearing facts, never collapsed into one.
 
@@ -207,9 +239,11 @@ def evaluate_row(row, *, now, schedule, freshness=None, odds_fetched_at=None,
     if game_start is None:
         gates["before_publication_cutoff"] = False
     else:
-        cutoff = game_start - timedelta(seconds=publication_lead_seconds)
-        gates["before_publication_cutoff"] = now <= cutoff
-        notes["publication_cutoff"] = cutoff.isoformat()
+        gates["before_publication_cutoff"] = admits_new_top_pick(
+            game_start, now, lead_seconds=publication_lead_seconds)
+        notes["publication_cutoff_at"] = (
+            now + timedelta(seconds=publication_lead_seconds)).isoformat()
+        notes["publication_cutoff_evaluated_at"] = "capture_time"
 
     # `started` is the production commencement signal: MLB abstractGameState
     # has left "Preview". Absent schedule information is treated as commenced,
