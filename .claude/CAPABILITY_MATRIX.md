@@ -263,41 +263,36 @@ Three flips in six days is the finding. **A capability verdict here is a dated
 observation with a short shelf life.** Re-check before relying on one; never
 inherit it because it is written down.
 
-### 2. The canonical runner exists at no branch tip
+### 2. The canonical runner is protected by an existing branch ref
 
-`VERIFIED-REPO`, and the most operationally serious finding here.
+`CORRECTED 2026-08-29 by independent GitHub audit.`
 
-`backtest/canonical_run.py` and `backtest/canonical_durability.py` — the entire
-canonical generation and durability machinery — are present at **no branch tip
-in this repository**. Not `main`, not
-`claude/recovery-canonical-durability-01`, not
-`accuracy/hr-rare-event-prereg`. They exist only at the pinned canonical SHA
+The earlier version of this file claimed `backtest/canonical_run.py` and
+`backtest/canonical_durability.py` existed at no branch tip and only at the
+bare pinned SHA. That claim was false.
 
-    fc589447ec157bff9a96071edc3ceb6c7dc734eb
+GitHub currently carries a dedicated branch:
 
-and are reachable only via `git fetch origin <sha>`.
+    claude/canonical-source-identity-01
+    -> fc589447ec157bff9a96071edc3ceb6c7dc734eb
 
-This was found the hard way: after a container reclamation, `git worktree add`
-failed with `fatal: invalid reference` because the local object store was gone
-and no branch pointed at that commit. An explicit fetch of the bare SHA restored
-it.
+and both canonical runner files are present at that exact branch tip. The branch
+predates this activation PR, so this is not a newly-created repair ref.
 
-Why it matters: canonical identity **requires** generation at the pinned SHA.
-If that commit ever stops being fetchable, the run cannot be resumed under its
-own identity, and the alternative — resuming at a different SHA — needs
-`--allow-sha-drift`, makes the artifact mixed-regime, and demands a formal
-equivalence proof plus an overlap replay before it could be called canonical
-again. The durable checkpoint branch protects the *rows*; nothing currently
-protects the *code that produced them*.
+Operational consequence: **do not create a second pin ref.** The scientific code
+identity is already protected by a named remote ref. A checkout based on
+`main` still does not contain the runner files, so canonical operations must
+explicitly fetch/checkout the pinned branch/SHA before use; that is a worktree
+placement fact, not an object-retention defect.
 
-Not fixed here. Fixing it means creating a ref that pins the commit (a tag, or a
-branch), which is a repository-structure decision for Jacob, not a tooling
-change to slip into an activation PR. `test_superclaude_acceptance.sh` now
-reports the real reason instead of blaming a missing `backtest/` directory.
+The failed recovery observation that motivated the earlier claim remains useful
+in a narrower form: after container loss, a local object may be absent even
+though the remote ref exists. Recovery must fetch the pinned ref/SHA before
+creating the detached worktree rather than assuming the object is already local.
 
 ### 3. Configuration acceptance is not runtime enforcement
 
-`test_superclaude_acceptance.sh`: **50 PASS / 1 WARN / 0 FAIL**.
+`test_superclaude_acceptance.sh`: the former canonical-runner WARN was based on a false no-ref premise and is replaced by an explicit remote-ref reachability check. Re-run the suite on the final activation head; do not carry the old 50/1/0 count forward.
 `test_worktree_autosave.sh`: **24 passed / 0 failed**.
 
 Both are shell tests. They verify that files exist, declare what they should,
@@ -351,11 +346,14 @@ on, so it is not a call to make inside an activation PR. **Decide it, then
 state the answer in `CLAUDE.md` so the next reader knows the repo pushes on
 its own.**
 
-**5 · `fc-backfill` documents code reachable from no ref.** It is an operating
-manual for `backtest/canonical_run.py`, which per revalidation §2 exists only
-at pinned SHA `fc589447`. Holding the skill until that commit is reachable
-from a ref is reasonable; so is keeping it and fixing the ref. Both are the
-same underlying decision as §2 and should be made together.
+**5 · `fc-backfill` reachability concern — RESOLVED AS A FACTUAL ERROR.**
+The runner is reachable from the existing branch
+`claude/canonical-source-identity-01` at exact pinned SHA `fc589447`.
+No owner decision and no new ref are required. The skill remains useful, but its
+generic cache-mode/resume guidance required a separate correction after the live
+recovery proved this run is `fresh_source` while `resume_canonical.sh`
+defaults to `frozen_cache`; the skill now requires manifest-recorded source
+semantics rather than copying that default.
 
 ### Noted, not actioned
 
