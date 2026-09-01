@@ -1,0 +1,37 @@
+{
+  "player_id": "nrfi_822929",
+  "name": "New York Mets @ Tampa Bay Rays \u2014 1st Inning (Both Teams)",
+  "snapshots": [
+    {
+      "date": "2026-09-01",
+      "evaluations": [
+        {
+          "prop": "A run scores in the 1st (either team)",
+          "type": "game",
+          "score": 63.7,
+          "notable_signals": 0,
+          "matchup": "New York Mets @ Tampa Bay Rays",
+          "game_pk": 822929,
+          "team": null,
+          "side": "both",
+          "lean": "YRFI",
+          "combo_player_ids": null,
+          "signals": {
+            "home_team_scores_p": 0.3027,
+            "away_team_scores_p": 0.3073,
+            "fi_n_starts": 15.0
+          },
+          "hit_probability": 0.517,
+          "raw_hit_probability": null,
+          "lift": 0.0154,
+          "reliability": "B",
+          "sample_n": 15,
+          "projection": {
+            "stat": "nrfi_combined",
+            "value": 51.7
+          }
+        }
+      ]
+    }
+  ]
+}

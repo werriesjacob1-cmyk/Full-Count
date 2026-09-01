@@ -277,6 +277,65 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-01",
+      "evaluations": [
+        {
+          "prop": "Over 4.5 Strikeouts",
+          "type": "pitcher",
+          "score": 43.5,
+          "notable_signals": 0,
+          "matchup": "San Francisco Giants @ Pittsburgh Pirates",
+          "game_pk": 823340,
+          "team": "San Francisco Giants",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_k_pct": 76.0,
+            "same_hand_ratio": 92.8571,
+            "l14_k_pct": 21.1765,
+            "env_neutral": 50.0
+          },
+          "hit_probability": 0.4804,
+          "raw_hit_probability": 0.4804,
+          "lift": -0.0361,
+          "reliability": "A",
+          "sample_n": 24,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 4.5,
+            "needs": 5
+          }
+        },
+        {
+          "prop": "Over 17.5 Outs Recorded",
+          "type": "pitcher",
+          "score": 88.5,
+          "notable_signals": 1,
+          "matchup": "San Francisco Giants @ Pittsburgh Pirates",
+          "game_pk": 823340,
+          "team": "San Francisco Giants",
+          "side": "away",
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "outs_rate": 0.722,
+            "avg_outs_per_start": 18.46
+          },
+          "hit_probability": 0.722,
+          "raw_hit_probability": null,
+          "lift": 0.2786,
+          "reliability": "A",
+          "sample_n": 24,
+          "projection": {
+            "stat": "pitcher_outs",
+            "value": 17.5,
+            "needs": 18
+          }
+        }
+      ]
     }
   ]
 }

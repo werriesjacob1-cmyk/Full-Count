@@ -305,6 +305,65 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-01",
+      "evaluations": [
+        {
+          "prop": "Over 4.5 Strikeouts",
+          "type": "pitcher",
+          "score": 45.4,
+          "notable_signals": 0,
+          "matchup": "Detroit Tigers @ Minnesota Twins",
+          "game_pk": 823661,
+          "team": "Minnesota Twins",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_k_pct": 56.0,
+            "same_hand_ratio": 61.1111,
+            "l14_k_pct": 58.8235,
+            "env_neutral": 50.0
+          },
+          "hit_probability": 0.5999,
+          "raw_hit_probability": 0.6298,
+          "lift": 0.0834,
+          "reliability": "A",
+          "sample_n": 19,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 4.5,
+            "needs": 5
+          }
+        },
+        {
+          "prop": "Over 15.5 Outs Recorded",
+          "type": "pitcher",
+          "score": 27.9,
+          "notable_signals": 0,
+          "matchup": "Detroit Tigers @ Minnesota Twins",
+          "game_pk": 823661,
+          "team": "Minnesota Twins",
+          "side": "home",
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "outs_rate": 0.4996,
+            "avg_outs_per_start": 15.63
+          },
+          "hit_probability": 0.4996,
+          "raw_hit_probability": null,
+          "lift": -0.082,
+          "reliability": "A",
+          "sample_n": 19,
+          "projection": {
+            "stat": "pitcher_outs",
+            "value": 15.5,
+            "needs": 16
+          }
+        }
+      ]
     }
   ]
 }

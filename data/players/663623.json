@@ -313,6 +313,66 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-01",
+      "evaluations": [
+        {
+          "prop": "Over 3.5 Strikeouts",
+          "type": "pitcher",
+          "score": 45.4,
+          "notable_signals": 1,
+          "matchup": "Atlanta Braves @ Washington Nationals",
+          "game_pk": 822687,
+          "team": "Washington Nationals",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_k_pct": 47.0,
+            "same_hand_ratio": 75.0,
+            "l14_k_pct": 31.7647,
+            "tto_penalty": 8.0,
+            "env_neutral": 50.0
+          },
+          "hit_probability": 0.6159,
+          "raw_hit_probability": 0.7091,
+          "lift": -0.0833,
+          "reliability": "A",
+          "sample_n": 17,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 3.5,
+            "needs": 4
+          }
+        },
+        {
+          "prop": "Over 13.5 Outs Recorded",
+          "type": "pitcher",
+          "score": 53.0,
+          "notable_signals": 0,
+          "matchup": "Atlanta Braves @ Washington Nationals",
+          "game_pk": 822687,
+          "team": "Washington Nationals",
+          "side": "home",
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "outs_rate": 0.733,
+            "avg_outs_per_start": 14.41
+          },
+          "hit_probability": 0.733,
+          "raw_hit_probability": null,
+          "lift": -0.077,
+          "reliability": "A",
+          "sample_n": 17,
+          "projection": {
+            "stat": "pitcher_outs",
+            "value": 13.5,
+            "needs": 14
+          }
+        }
+      ]
     }
   ]
 }

@@ -1,0 +1,37 @@
+{
+  "player_id": "nrfi_823340",
+  "name": "San Francisco Giants @ Pittsburgh Pirates \u2014 1st Inning (Both Teams)",
+  "snapshots": [
+    {
+      "date": "2026-09-01",
+      "evaluations": [
+        {
+          "prop": "No runs in the 1st (both teams)",
+          "type": "game",
+          "score": 65.1,
+          "notable_signals": 0,
+          "matchup": "San Francisco Giants @ Pittsburgh Pirates",
+          "game_pk": 823340,
+          "team": null,
+          "side": "both",
+          "lean": "NRFI",
+          "combo_player_ids": null,
+          "signals": {
+            "home_team_scores_p": 0.2635,
+            "away_team_scores_p": 0.2786,
+            "fi_n_starts": 25.0
+          },
+          "hit_probability": 0.5313,
+          "raw_hit_probability": null,
+          "lift": 0.0329,
+          "reliability": "A",
+          "sample_n": 25,
+          "projection": {
+            "stat": "nrfi_combined",
+            "value": 53.1
+          }
+        }
+      ]
+    }
+  ]
+}
