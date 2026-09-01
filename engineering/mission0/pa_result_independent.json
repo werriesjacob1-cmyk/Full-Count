@@ -1,0 +1,139 @@
+{
+  "2025": {
+    "added_hit_rate": 0.6174093742784577,
+    "added_hits": 2674,
+    "added_n": 4331,
+    "bootstrap_95": [
+      -0.0004863598178360684,
+      0.00720896702478957
+    ],
+    "bootstrap_draws": 5000,
+    "candidate_rows": 43476,
+    "challenger_hit_rate": 0.648739943997511,
+    "challenger_hits": 14596,
+    "challenger_selected": 22499,
+    "champion_hit_rate": 0.645362016089604,
+    "champion_hits": 14520,
+    "champion_selected": 22499,
+    "churn_dates_equal": 33,
+    "churn_dates_negative": 82,
+    "churn_dates_positive": 91,
+    "dates": 206,
+    "delta": 0.00337792790790703,
+    "eval_year": "2025",
+    "fallback_to_champion_prob": 0,
+    "joint_cells_fit": 24,
+    "market_mix": {
+      "hits": 43476
+    },
+    "order_cells_fit": 9,
+    "overlap": 18168,
+    "p_value": 0.09429757770766944,
+    "per_date_mismatches": 0,
+    "removed_hit_rate": 0.5998614638651582,
+    "removed_hits": 2598,
+    "removed_n": 4331,
+    "season_phase": {
+      "April": {
+        "added_h": 500,
+        "added_n": 787,
+        "removed_h": 482,
+        "removed_n": 787
+      },
+      "August+": {
+        "added_h": 835,
+        "added_n": 1418,
+        "removed_h": 844,
+        "removed_n": 1418
+      },
+      "May-Jul": {
+        "added_h": 1339,
+        "added_n": 2126,
+        "removed_h": 1272,
+        "removed_n": 2126
+      }
+    },
+    "train_years": [
+      "2024"
+    ],
+    "used_joint_cell": 40423,
+    "wilson_added": [
+      0.6028367290906769,
+      0.631773927299206
+    ],
+    "wilson_removed": [
+      0.5851881795240517,
+      0.6143577573267336
+    ],
+    "z": 1.6731509798220021
+  },
+  "2026": {
+    "added_hit_rate": 0.6362970200293112,
+    "added_hits": 2605,
+    "added_n": 4094,
+    "bootstrap_95": [
+      0.003332462101411471,
+      0.014042668106940326
+    ],
+    "bootstrap_draws": 5000,
+    "candidate_rows": 35542,
+    "challenger_hit_rate": 0.6483836777954425,
+    "challenger_hits": 9788,
+    "challenger_selected": 15096,
+    "champion_hit_rate": 0.6396396396396397,
+    "champion_hits": 9656,
+    "champion_selected": 15096,
+    "churn_dates_equal": 27,
+    "churn_dates_negative": 49,
+    "churn_dates_positive": 74,
+    "dates": 150,
+    "delta": 0.008744038155802825,
+    "eval_year": "2026",
+    "fallback_to_champion_prob": 0,
+    "joint_cells_fit": 35,
+    "market_mix": {
+      "hits": 35542
+    },
+    "order_cells_fit": 9,
+    "overlap": 11002,
+    "p_value": 0.002650265215550727,
+    "per_date_mismatches": 0,
+    "removed_hit_rate": 0.6040547142159257,
+    "removed_hits": 2473,
+    "removed_n": 4094,
+    "season_phase": {
+      "April": {
+        "added_h": 593,
+        "added_n": 893,
+        "removed_h": 558,
+        "removed_n": 893
+      },
+      "August+": {
+        "added_h": 444,
+        "added_n": 676,
+        "removed_h": 399,
+        "removed_n": 676
+      },
+      "May-Jul": {
+        "added_h": 1568,
+        "added_n": 2525,
+        "removed_h": 1516,
+        "removed_n": 2525
+      }
+    },
+    "train_years": [
+      "2024",
+      "2025"
+    ],
+    "used_joint_cell": 34550,
+    "wilson_added": [
+      0.6214396750301278,
+      0.6508988259135301
+    ],
+    "wilson_removed": [
+      0.5889832514791274,
+      0.618931087950977
+    ],
+    "z": 3.0056354572134
+  }
+}
