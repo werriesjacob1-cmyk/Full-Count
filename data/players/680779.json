@@ -1209,6 +1209,138 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-01",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 24.7,
+          "notable_signals": 2,
+          "matchup": "San Francisco Giants @ Pittsburgh Pirates",
+          "game_pk": 823340,
+          "team": "Pittsburgh Pirates",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 34.8571,
+            "l7_avg_ev": 0.0,
+            "l7_barrel_pct": 0.0,
+            "bat_speed_trend": 15.0,
+            "park_hr_index": 35.7,
+            "season_barrel_pct": 37.3333,
+            "lineup_slot": 0.0,
+            "bullpen_fatigue": 18.5185,
+            "platoon_barrel_pct": 2.16,
+            "platoon_xwoba": 0.12,
+            "park_hand_index": -3.11,
+            "opp_catcher_framing": 1.08,
+            "days_rest": 4.0,
+            "woba_ahead": 0.0,
+            "woba_behind": 40.9091,
+            "pull_park_synergy": -2.9172,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": 0.544,
+            "vs_rp_ops": -1.512,
+            "ump_k_pct": 0.756,
+            "ump_bb_pct": -0.288
+          },
+          "hit_probability": 0.6062,
+          "raw_hit_probability": 0.5651,
+          "lift": -0.0651,
+          "reliability": "B",
+          "sample_n": 78,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 24.5,
+          "notable_signals": 0,
+          "matchup": "San Francisco Giants @ Pittsburgh Pirates",
+          "game_pk": 823340,
+          "team": "Pittsburgh Pirates",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": 0.72,
+            "sprint_speed": 25.0,
+            "catcher_poptime": 0.0,
+            "on_base": 0.0
+          },
+          "hit_probability": 0.0307,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "B",
+          "sample_n": 78,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 0.1,
+          "notable_signals": 0,
+          "matchup": "San Francisco Giants @ Pittsburgh Pirates",
+          "game_pk": 823340,
+          "team": "Pittsburgh Pirates",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.029
+          },
+          "hit_probability": 0.029,
+          "raw_hit_probability": null,
+          "lift": -0.019,
+          "reliability": "B",
+          "sample_n": 78,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 0.0,
+          "notable_signals": 0,
+          "matchup": "San Francisco Giants @ Pittsburgh Pirates",
+          "game_pk": 823340,
+          "team": "Pittsburgh Pirates",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0041
+          },
+          "hit_probability": 0.0041,
+          "raw_hit_probability": null,
+          "lift": -0.0169,
+          "reliability": "B",
+          "sample_n": 78,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

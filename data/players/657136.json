@@ -1386,6 +1386,137 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-01",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 17.4,
+          "notable_signals": 0,
+          "matchup": "Seattle Mariners @ Boston Red Sox",
+          "game_pk": 824716,
+          "team": "Boston Red Sox",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 53.1429,
+            "l7_avg_ev": 0.0,
+            "l7_barrel_pct": 45.0,
+            "park_hr_index": 50.5,
+            "season_barrel_pct": 14.0,
+            "lineup_slot": 0.0,
+            "bullpen_fatigue": 0.0,
+            "platoon_barrel_pct": -3.2,
+            "platoon_xwoba": -2.46,
+            "park_hand_index": -2.14,
+            "opp_catcher_framing": 0.48,
+            "days_rest": 0.0,
+            "woba_ahead": 0.0,
+            "woba_behind": 18.1818,
+            "pull_park_synergy": -1.1984,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": 1.728,
+            "vs_rp_ops": 1.176,
+            "ump_k_pct": -0.24,
+            "ump_bb_pct": 0.18
+          },
+          "hit_probability": 0.6526,
+          "raw_hit_probability": 0.6416,
+          "lift": -0.0187,
+          "reliability": "B",
+          "sample_n": 63,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 35.9,
+          "notable_signals": 0,
+          "matchup": "Seattle Mariners @ Boston Red Sox",
+          "game_pk": 824716,
+          "team": "Boston Red Sox",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": 1.5,
+            "sprint_speed": 9.375,
+            "catcher_poptime": 28.5714,
+            "on_base": 51.0557
+          },
+          "hit_probability": 0.0515,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "B",
+          "sample_n": 63,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 1.3,
+          "notable_signals": 0,
+          "matchup": "Seattle Mariners @ Boston Red Sox",
+          "game_pk": 824716,
+          "team": "Boston Red Sox",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.034
+          },
+          "hit_probability": 0.034,
+          "raw_hit_probability": null,
+          "lift": -0.014,
+          "reliability": "B",
+          "sample_n": 63,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 0.0,
+          "notable_signals": 0,
+          "matchup": "Seattle Mariners @ Boston Red Sox",
+          "game_pk": 824716,
+          "team": "Boston Red Sox",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0048
+          },
+          "hit_probability": 0.0048,
+          "raw_hit_probability": null,
+          "lift": -0.0162,
+          "reliability": "B",
+          "sample_n": 63,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

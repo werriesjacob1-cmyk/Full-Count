@@ -803,6 +803,108 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-01",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 64.0,
+          "notable_signals": 2,
+          "matchup": "Seattle Mariners @ Boston Red Sox",
+          "game_pk": 824716,
+          "team": "Boston Red Sox",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "sp_era_weak": 53.1429,
+            "pitch_exploit": 20.0,
+            "l7_avg_ev": 36.5,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 10.5,
+            "park_hr_index": 50.5,
+            "season_barrel_pct": 40.0,
+            "lineup_slot": 87.5,
+            "bullpen_fatigue": 0.0,
+            "platoon_barrel_pct": 2.88,
+            "platoon_xwoba": 4.68,
+            "opp_catcher_framing": 0.48,
+            "days_rest": 0.0,
+            "woba_ahead": 18.1818,
+            "woba_behind": 42.7273,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": -0.136,
+            "vs_rp_ops": 1.488,
+            "ump_k_pct": -0.24,
+            "ump_bb_pct": 0.18
+          },
+          "hit_probability": 0.6352,
+          "raw_hit_probability": 0.6273,
+          "lift": 0.0697,
+          "reliability": "B",
+          "sample_n": 46,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 3.9,
+          "notable_signals": 0,
+          "matchup": "Seattle Mariners @ Boston Red Sox",
+          "game_pk": 824716,
+          "team": "Boston Red Sox",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0442
+          },
+          "hit_probability": 0.0442,
+          "raw_hit_probability": null,
+          "lift": -0.0038,
+          "reliability": "B",
+          "sample_n": 46,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 0.0,
+          "notable_signals": 0,
+          "matchup": "Seattle Mariners @ Boston Red Sox",
+          "game_pk": 824716,
+          "team": "Boston Red Sox",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0063
+          },
+          "hit_probability": 0.0063,
+          "raw_hit_probability": null,
+          "lift": -0.0147,
+          "reliability": "B",
+          "sample_n": 46,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

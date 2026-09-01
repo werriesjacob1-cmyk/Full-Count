@@ -204,8 +204,8 @@
         {
           "prop": "Over 3.5 Strikeouts",
           "type": "pitcher",
-          "score": 38.9,
-          "notable_signals": 2,
+          "score": 30.3,
+          "notable_signals": 1,
           "matchup": "San Diego Padres @ Cincinnati Reds",
           "game_pk": 824472,
           "team": "San Diego Padres",
@@ -218,9 +218,9 @@
             "l14_k_pct": 0.0,
             "tto_penalty": 8.0,
             "env_neutral": 50.0,
-            "ump_accuracy": 68.2349,
-            "ump_k_pct": -0.168,
-            "ump_bb_pct": 0.18
+            "ump_accuracy": 31.3833,
+            "ump_k_pct": 0.12,
+            "ump_bb_pct": -0.288
           },
           "hit_probability": 0.4429,
           "raw_hit_probability": 0.4429,
@@ -257,6 +257,34 @@
             "stat": "pitcher_outs",
             "value": 14.5,
             "needs": 15
+          }
+        },
+        {
+          "prop": "Over 7.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 0.2,
+          "notable_signals": 0,
+          "matchup": "San Diego Padres @ Cincinnati Reds",
+          "game_pk": 824472,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            681190,
+            666157
+          ],
+          "signals": {
+            "combined_k_edge": -0.3381
+          },
+          "hit_probability": 0.2651,
+          "raw_hit_probability": null,
+          "lift": -0.3381,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 7.5,
+            "needs": 8
           }
         }
       ]
