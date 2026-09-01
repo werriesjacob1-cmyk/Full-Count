@@ -27,8 +27,8 @@ carry a verdict forward because it is written down here.
 | **Chromium + Playwright** | `VERIFIED ACTIVE` | `/opt/pw-browsers/{chromium,chromium-1194,chromium_headless_shell-1194}`; python `playwright` **1.62.0**; 127/127 browser E2E + 60 + 24 + 12 Chromium checks passed |
 | **pyright / mypy / ruff / flake8** | `VERIFIED ACTIVE` | pyright 1.1.408 (1.1.411 available), mypy 1.19.1, ruff 0.16.4, flake8 7.3.0 |
 | **Serena** | `REJECTED — LOW VALUE` | still installed (v1.7.0) and still rejected; rationale below unchanged |
-| **Cloudflare MCP** | `UNAVAILABLE — FALLBACK DEFINED` | **CHANGED from `VERIFIED AVAILABLE` on 2026-08-27.** No `cloudflare`/Worker/KV/D1/R2 tool is exposed to this session; a ToolSearch for them returns unrelated tools. No workflow depended on it, so nothing is blocked — but any agent file promising Cloudflare inspection would now be wrong. See below. |
-| **Google Drive MCP** | `VERIFIED AVAILABLE, NOT REQUIRED` | harness-provided (`search_files`, `read_file_content`, `create_file`, …); no Full Count workflow needs it |
+| **Cloudflare MCP** | `AVAILABLE, FORBIDDEN BY POLICY` | **Flipped TWICE inside one mission** — available 08-27, absent 08-29 early, available again 09-01 as TWO servers (`Cloudflare_Developer_Platform`, `Cloudflare_Observability`), both write-capable. Verified by ToolSearch, the same method used to declare it absent. **No Full Count agent or skill may use it**; see below. |
+| **Google Drive MCP** | `AVAILABLE, NOT REQUIRED` | harness-provided. **Its tool PREFIX changed** — was an opaque UUID (`mcp__61c07106-3393-…__*`), now `mcp__Google_Drive__*`. Nothing here referenced the old prefix, but anything that had would have broken silently. No Full Count workflow needs it. |
 | **Claude Code Remote MCP** | `VERIFIED ACTIVE` | `get_session`, `list_repos`, `create_trigger` exposed; **no auto-resume Routine may be created** |
 | **Tool Search** | `VERIFIED ACTIVE` | deferred-tool schemas loaded on demand throughout this session |
 | **Generic subagents** (`Agent`) | `VERIFIED ACTIVE` | an `Explore` read-only reviewer performed the PR #72 release audit and returned a structured verdict |
@@ -84,21 +84,24 @@ plus pyright already resolve symbols and references quickly, and no workflow
 here was ever blocked on navigation. Adding an unused dependency is a cost with
 no measured benefit. **Revisit only if a concrete navigation task proves slow.**
 
-### Cloudflare — was available, is not any more
+### Cloudflare — available again, and still forbidden here
 
-On 2026-08-27 the harness exposed write-capable Cloudflare tools
-(`d1_database_create`, `kv_namespace_create`, `r2_bucket_create`,
-`hyperdrive_config_edit`, …) and this file recorded them as available but
-forbidden. **On 2026-08-29 they are not exposed at all.**
+Both servers expose write-capable tools: `d1_database_create`,
+`d1_database_delete`, `kv_namespace_create`, `kv_namespace_delete`,
+`r2_bucket_create`, `r2_bucket_delete`, `hyperdrive_config_edit`, plus
+`query_worker_observability`.
 
-Nothing breaks, because the prohibition meant no workflow ever depended on them:
-the `infra/live-heartbeat/` Worker is deployed by its own pipeline, and any
-Worker, cron, secret or binding mutation remains separately authorized work
-outside this repository's agents.
+**No Full Count agent or skill declares them, and none may use them.** Any
+Worker, cron, secret, KV, D1, R2 or binding mutation is separately authorized
+work outside this repository's agents. The `infra/live-heartbeat/` Worker is
+deployed by its own pipeline.
 
-The reason to record the change rather than quietly delete the row: it is direct
-evidence that **the harness MCP roster is not stable across sessions**. A matrix
-entry is a dated observation, not a standing fact.
+That prohibition is why the availability flip cost nothing: a capability no
+workflow depends on can disappear and return without breaking anything. The
+read-only observability tools would be genuinely useful to `fc-live-sre` for
+diagnosing a heartbeat outage — but adding that dependency means accepting a
+tool surface that has now proven it can vanish mid-mission, so it stays out
+until someone decides that trade deliberately.
 
 ---
 
@@ -238,12 +241,27 @@ fallback. No agent declares a tool absent from the runtime.
 
 Three things this pass established that the 2026-08-27 pass did not.
 
-### 1. Cloudflare MCP moved from available to absent
+### 1. The MCP roster is not stable — three observations, one mission
 
-Recorded in the connector table above. The point is not Cloudflare — no workflow
-used it. The point is that **the harness MCP roster changes between sessions**,
-so a verdict in this file is a dated observation and must be re-checked, never
-inherited.
+Recorded in the connector table above. The point was never Cloudflare; no
+workflow used it. The point is how *fast* the roster moves.
+
+| when | Cloudflare MCP |
+|---|---|
+| 2026-08-27 | available (one server, write-capable) |
+| 2026-08-29 ~01:00Z | **absent** — ToolSearch returned unrelated tools |
+| 2026-09-01 ~19:00Z | **available again**, now as TWO servers, still write-capable |
+
+And a second, quieter instance: the Google Drive server's tool prefix changed
+from an opaque UUID (`mcp__61c07106-3393-…__*`) to `mcp__Google_Drive__*`. That
+is worse than an outage, because **a renamed tool fails as "unknown tool," not
+as "server down."** Nothing in this repository referenced the old prefix. Had
+an agent file hardcoded it, that agent would have broken silently, and the
+acceptance test would not have caught it — see the circularity note below.
+
+Three flips in six days is the finding. **A capability verdict here is a dated
+observation with a short shelf life.** Re-check before relying on one; never
+inherit it because it is written down.
 
 ### 2. The canonical runner exists at no branch tip
 
@@ -341,13 +359,21 @@ same underlying decision as §2 and should be made together.
 
 ### Noted, not actioned
 
-- `CAPABILITY_MATRIX.md:227` ("no agent declares a tool absent from the
-  runtime") is verified **circularly** — `test_superclaude_acceptance.sh:120`
-  checks agent tool lists against a `RUNTIME` set hardcoded in the test file,
-  so it can never catch a phantom tool the test author also believed in. The
-  auditor could not confirm `TaskCreate`/`TaskUpdate`/`TaskGet`/`TaskList`
-  (declared by five agents) from a subagent context. Not called phantom; the
-  claim of verification is simply weaker than it sounds.
+- **Circular phantom-tool check — now documented in the test itself.** The
+  auditor found that `test_superclaude_acceptance.sh` checks agent tool lists
+  against a `RUNTIME` set hardcoded *in the test file*, so it can never catch a
+  tool the test author also believed in. Recorded as "noted, not actioned" on
+  2026-08-29. **The 2026-09-01 Google Drive prefix rename made it concrete**,
+  so the test now carries the warning inline and its failure message says
+  "absent from this test's hardcoded list" rather than the false "absent from
+  the runtime". The check is not removed — it still catches typos and genuinely
+  invented tool names, which is worth having. It is simply no longer described
+  as runtime verification.
+
+  Still unresolved: the auditor could not confirm
+  `TaskCreate`/`TaskUpdate`/`TaskGet`/`TaskList` (declared by five agents) from
+  a subagent context. Not called phantom — the claim of verification is just
+  weaker than it sounds, and only a session with tool access can settle it.
 - `fc-context-keeper` (228 lines) is tooling about tooling, and
   `fc-intelligence-scout` has no companion skill because its output always
   feeds `fc-experiment`. Both are trim candidates if this should be smaller.

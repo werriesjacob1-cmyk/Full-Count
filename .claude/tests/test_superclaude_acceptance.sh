@@ -117,6 +117,23 @@ echo "== 4. Agents: least privilege, unique, no phantom tools =="
 python3 - "$C" <<'PY'
 import glob, os, re, sys
 C = sys.argv[1]
+# CIRCULARITY WARNING, and it is not theoretical.
+#
+# This set is HARDCODED HERE. It is not read from the live runtime, because a
+# shell test has no tool access. So "no phantom tools" below means only "no
+# agent declares a tool absent from THIS LIST" -- it can never catch a tool
+# that the test author also believed in. Do not read a PASS as runtime proof.
+#
+# What makes this urgent rather than pedantic: between 2026-08-27 and
+# 2026-09-01 the Google Drive MCP server's tool prefix changed from an opaque
+# UUID (mcp__61c07106-3393-...__*) to mcp__Google_Drive__*, and Cloudflare MCP
+# went available -> absent -> available-as-two-servers. A RENAMED tool fails as
+# "unknown tool", not as "server down". Nothing here referenced the old prefix,
+# so nothing broke -- this time.
+#
+# Only MCP-prefixed (mcp__*) declarations are checked against the live runtime
+# by a human or an agent with tool access. Verify with mcp__github__get_me and
+# a ToolSearch for anything else an agent file promises.
 RUNTIME = {"Read","Grep","Glob","Bash","Write","Edit","WebSearch","WebFetch",
            "TaskCreate","TaskUpdate","TaskGet","TaskList","Agent","ToolSearch",
            "NotebookEdit","Monitor"}
@@ -141,7 +158,7 @@ for p in sorted(glob.glob(os.path.join(C, "agents", "*.md"))):
     tools = [x.strip() for x in fm.get("tools", "").split(",") if x.strip()]
     phantom = [x for x in tools if not x.startswith("mcp__") and x not in RUNTIME]
     if phantom:
-        print(f"  FAIL  {stem}: declares tools absent from the runtime: {phantom}"); bad += 1
+        print(f"  FAIL  {stem}: declares tools absent from this test's hardcoded list: {phantom}"); bad += 1
     if n in READONLY:
         if "Write" in tools or "Edit" in tools:
             print(f"  FAIL  {stem}: READ-ONLY reviewer grants Write/Edit"); bad += 1
