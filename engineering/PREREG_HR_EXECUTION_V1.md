@@ -1,6 +1,22 @@
 # PRE-REGISTRATION (COMPANION) — HR Contact-State **EXECUTION** Spec, v1
 
-**Status: PROPOSED AND LOCKED ON AUTHORSHIP. NOT AUTHORIZED TO RUN.**
+**Status: NOT LOCKED. NOT AUTHORIZED TO RUN. REVISION REQUIRED.**
+
+> An independent methodology red team reviewed this draft on 2026-09-01 and
+> returned **PREREG NEEDS REVISION BEFORE LOCK**, with 15 findings and 10
+> must-fix items. Its full report is
+> `engineering/PREREG_HR_EXECUTION_V1_REDTEAM.md`.
+>
+> **Four of its findings are factual errors in this document, corrected inline
+> below and marked `[RED TEAM CORRECTION]`.** One of them — §7's `VERIFIED`
+> label — was a mislabeled evidence claim, which under this project's own
+> labelling discipline is the most serious kind of error here.
+>
+> The remaining findings change the experiment's design (control arms, an
+> underpowered-null verdict, naming a primary arm). Those are scientific
+> decisions for Jacob, recorded as recommendations, **not applied
+> unilaterally.** This document must not be treated as locked until they are
+> resolved.
 
 Companion to the frozen `engineering/PREREG_HR_CONTACT_STATE_V1.md` (branch
 `accuracy/hr-rare-event-prereg`, frozen HEAD
@@ -53,11 +69,29 @@ specifically about improvement *"beyond the existing champion."* Only an offset
 model answers that question. It also makes the null exactly `beta = 0` — a
 point in the parameter space, not an artifact of tuning.
 
-**Fallback, declared in advance:** if the installed scikit-learn cannot accept
-a fixed offset, the substitute is a direct L-BFGS minimization of the identical
-penalized objective, written out explicitly. Same model, same arm. `UNKNOWN`
-until checked in the executing runtime; **must be resolved and recorded before
-holdout access.**
+**[RED TEAM CORRECTION — F6] The `UNKNOWN` is now resolved, and the answer
+invalidates this section as written.** scikit-learn **1.9.0** cannot express
+this model: `LogisticRegression.__init__` exposes no offset/exposure parameter
+and `.fit` accepts only `X, y, sample_weight`. **The hand-written L-BFGS
+"fallback" is therefore the primary and only estimator** — and its objective is
+not specified here, which is fatal to the claim that `C = 1.0` is locked:
+
+- sklearn minimizes `C * sum_i loss_i + 0.5*||w||^2` — loss **summed**, `C`
+  multiplying the **loss**.
+- The natural hand-rolled form is `mean_i loss_i + (1/(2C))*||w||^2`.
+
+These differ in effective shrinkage by a factor of **n** — tens of thousands of
+training rows. Two runs, both truthfully described as "L2, C=1.0, the same
+penalized objective," would produce betas differing by orders of magnitude.
+**The escape hatch is not a hyperparameter sweep; it is the normalization
+convention inside the fallback.** This section is unusable until the objective
+is written in closed form with its exact normalization, plus the L-BFGS
+convergence criterion and a recorded final gradient norm.
+
+Noted by the red team: §0 argues that locking features while leaving the
+estimator free "is not a preregistration." This clause reproduced that exact
+failure one level down — it locked the estimator's *name* while leaving its
+*objective* free.
 
 Explicitly NOT permitted: gradient boosting, random forests, neural networks,
 calibration-on-top, ensembling, cross-family model selection, or "we also
@@ -91,7 +125,32 @@ tried X."
 | penalty | **L2** |
 | inverse strength | **`C = 1.0`**, fixed |
 | solver | **`lbfgs`**, `max_iter=1000`, `tol=1e-6` |
-| intercept | fitted — absorbs constant champion miscalibration on this population, and is not itself a finding |
+| intercept | **[RED TEAM CORRECTION — F2] This row was wrong and is withdrawn.** See below. |
+
+**[RED TEAM CORRECTION — F2] The intercept justification was inverted.** This
+table previously said the intercept "absorbs constant champion miscalibration
+on this population, and is not itself a finding." That would hold only if the
+transform were applied to **every** row: adding a constant to every logit is
+strictly monotone, leaves ranking identical, and cannot change any selected set
+at any volume.
+
+But §5 applies the transform to **SUPPORTED rows only** — unsupported rows take
+`p_champion` exactly, with no intercept. So the intercept is not a global
+constant; it is a **differential shift between two subpopulations.** A positive
+fitted intercept promotes every supported row above unsupported rows of equal
+champion probability, and SUPPORTED means ">=30 tracked swings" — a regular
+starter, not a bench bat or a call-up.
+
+**Consequence: the challenger can beat the champion with `beta = 0`.** The
+entire result could be "the champion under-prices regular starters" — a
+coverage artifact containing zero bat-tracking information — while this
+document pre-emptively disclaimed the intercept as "not itself a finding."
+
+Red team's proposed correction, **not applied unilaterally**: set
+`fit_intercept=False`, and add a mandatory pre-registered control arm
+`A_shift` = champion + intercept only, no features, fitted and evaluated
+identically. If `A_shift` alone moves added-minus-removed, the experiment is
+measuring coverage, not swing state. Both REMOVE degrees of freedom.
 
 **No hyperparameter sweep is preregistered, therefore none may be run.** If
 `C = 1.0` is later argued to be wrong, that is a NEW preregistration with a new
@@ -151,11 +210,37 @@ challenger arm selects **exactly `n_D`** on `D`, ranked by its own
 - Totals match by construction, and so does the per-day distribution.
 - A date where the champion selects zero is a date where every arm selects zero.
 - No arm may borrow volume across dates.
-- `backtest/equal_volume.py` (`EqualVolumeExperiment`, `SelectionPolicy`) is the
-  intended mechanism. The runner must **assert per-date equality and fail
-  closed** on any mismatch, never report a total-only match.
-  `VERIFIED`: that module exists on `accuracy/hr-rare-event-prereg` and is not
-  on `main`.
+**[RED TEAM CORRECTION — F4] The `VERIFIED` label here was mislabeled evidence
+and is withdrawn.** What was verified is that `backtest/equal_volume.py`
+**exists**. What was implied is that it **implements** per-slate volume. It does
+not. `EqualVolumeExperiment` takes a single global integer `volume` and does
+`selected = first[:self.volume]` over the whole population, requiring
+`SelectionPolicy.rank()` to return a **global** total order. There is no date
+parameter, no per-slate slicing, and no per-date assertion anywhere in the file.
+**The module implements exactly the global top-N design this section opens by
+declaring wrong.** The per-slate wrapper is new code that does not exist yet.
+
+Three further code/prereg mismatches the red team found:
+- `_clustered_bootstrap` defaults to `iterations=2000, seed=20260827` — §8
+  requires 5,000 and seed **20260828**. The default seed is off by one day from
+  the required one, and §10 kills on a wrong seed but is silent on iteration
+  count.
+- Its CI is on the **overall hit-rate delta**, not on **added-minus-removed**,
+  which is the primary quantity. No implementation of the primary quantity's CI
+  exists anywhere.
+- Draws where either side ends empty are silently `continue`d and excluded from
+  the denominator.
+
+**[RED TEAM CORRECTION — F5] "the locked selection policy" does not exist.**
+Neither this document nor the frozen parent defines it, and there is no
+`SelectionPolicy(...)` construction in the repository. **`n_D` — the quantity
+this entire equal-volume contract rests on — is undefined and would be chosen
+after reading this prereg.** Worse: the production selector
+(`rank_for_board` → reliability tier, then `market_edge`, then
+`hit_probability`; `select_main_board` keeps only `price_clears is True`) cannot
+be used, because the frozen §5 verifies **no prices exist for this
+population** — so the real board would select zero rows. `n_D` is therefore
+necessarily a synthetic research construct nobody has specified.
 
 Any deviation must be preregistered explicitly as an alternative and justified;
 it may not be adopted after seeing results.
