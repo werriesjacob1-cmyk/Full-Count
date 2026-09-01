@@ -2,7 +2,7 @@
   "schema_version": 1,
   "identity_schema_version": 2,
   "rollout_version": "pre-phase-v-live-lifecycle-v1",
-  "updated_at": "2026-09-01T08:07:54.759932+00:00",
+  "updated_at": "2026-09-01T09:02:46.777917+00:00",
   "migration": {
     "version": "pre-phase-v-live-lifecycle-v1",
     "completed_at": "2026-08-17T23:14:57+00:00",
@@ -9268,6 +9268,95 @@
         },
         "qualification_timestamp": "2026-09-01T07:40:47.272069+00:00",
         "board_timestamp": "2026-09-01T07:40:47.251552+00:00",
+        "slate_date": "2026-09-01"
+      }
+    },
+    "fc2:824472:player-681190:pitcher_outs:15:over": {
+      "canonical_id": "fc2:824472:player-681190:pitcher_outs:15:over",
+      "settlement_identity": [
+        "824472",
+        [
+          "player",
+          "681190"
+        ],
+        "pitcher_outs",
+        "15",
+        "over"
+      ],
+      "slate_date": "2026-09-01",
+      "first_published_at": "2026-09-01T09:02:46.777917+00:00",
+      "publication_provenance": {
+        "artifact_id": "9b9c9b0e121633e2511cd6ae2241f8709bc540336c09df739fe9d43c53fdd455",
+        "source_commit": "d88f13203854d94130b9de4f87640a6d542cb634",
+        "workflow_run_id": "33490044235",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-09-01T09:02:32.249449+00:00",
+        "data_hash": "10f0c1aaef04befe0e1a7b65c8413d5a7cb4cbd7ccd829f3b7c1b08a51741a4d",
+        "live_hash": "ecc3e8b40f0d9a3f41c5c0cc4661b57f68eeacc21e81e02f0e482c90fd998da0"
+      },
+      "snapshot": {
+        "id": "fc2:824472:player-681190:pitcher_outs:15:over",
+        "identity_version": 2,
+        "game_pk": 824472,
+        "player_id": 681190,
+        "combo_player_ids": null,
+        "type": "pitcher",
+        "name": "Randy V\u00e1squez",
+        "team": "San Diego Padres",
+        "matchup": "San Diego Padres @ Cincinnati Reds",
+        "game_start": "2026-09-01T22:40:00Z",
+        "stat": "pitcher_outs",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "pitcher_outs",
+          "value": 14.5,
+          "needs": 15
+        },
+        "prop": "Over 14.5 Outs Recorded",
+        "hit_probability": 0.7255,
+        "market_odds": -122,
+        "market_implied": 0.512,
+        "market_edge": 0.2135,
+        "market_hold": 0.0734,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (A), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (21.7 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "Recorded 15+ outs (5.0 IP) in 72.5% of his last 21 real starts (league 76.5%, avg 15.19 outs/start)"
+        ],
+        "watchouts": [
+          "No real FanDuel line found for this pitcher yet -- this threshold is model-anchored to his average workload, not a posted market number",
+          "No positive read here: 3.9 pts BELOW the 76% league base rate for this market"
+        ],
+        "prob_ci": [
+          0.6602,
+          0.8421
+        ],
+        "reliability": "A",
+        "reliability_note": null,
+        "sample_n": 21,
+        "lineup_assumed": null,
+        "base_rate": 0.7649,
+        "lift": -0.0394,
+        "lift_reference_rate": null,
+        "stable_lift": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "f7ef7ce4",
+          "prediction_timestamp": "2026-09-01T08:46:53.156868+00:00",
+          "odds_fetched_at": "2026-09-01T08:46:47.641265+00:00",
+          "board_generated_at": "2026-09-01T08:46:53.128725+00:00"
+        },
+        "qualification_timestamp": "2026-09-01T08:46:53.156868+00:00",
+        "board_timestamp": "2026-09-01T08:46:53.128725+00:00",
         "slate_date": "2026-09-01"
       }
     }
