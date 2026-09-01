@@ -38,6 +38,26 @@ CERTIFIED_QUARANTINED_DATES = (
     "2025-06-07", "2025-07-02", "2025-08-03", "2026-06-17",
 )
 
+# REQUIRED certified input. The locked protocol section 3 names one specific
+# research view; an authoritative fit must FAIL CLOSED on anything else rather
+# than faithfully recording the digest of whatever --rows happened to point at.
+REQUIRED_ROWS_SHA256 = "8ca010641d08008044c8c3b609162d6e5d69f07bb79be6705b2690a51ab2cb34"
+REQUIRED_ROWS_COUNT = 1186300
+REQUIRED_DATES_WITH_ROWS = 555
+REQUIRED_MAX_DATE = "2026-08-25"
+
+
+class CertifiedInputError(ValueError):
+    """The input is not the certified canonical-v2 research view."""
+
+
+class WorktreeDirtyError(ValueError):
+    """Authoritative fitting may not run from uncommitted fitter changes."""
+
+
+class PlayerGameConflict(ValueError):
+    """One player-game disagrees with itself about a PA-v1 opportunity fact."""
+
 
 def derive_batting_order(lineup_slot):
     if lineup_slot is None:
@@ -92,13 +112,47 @@ def fit(rows, train_cutoff):
     hitter = [r for r in graded if r.get("prop_type") in HITTER_MARKETS
               and (r.get("date") or "") <= train_cutoff]
 
-    seen, player_games = set(), []
+    # PLAYER-GAME CONSISTENCY BEFORE DEDUPE.
+    # The dedupe keeps the FIRST row per (date, game_pk, player_id). That is only
+    # sound if every row of that player-game agrees about the PA-v1 opportunity
+    # facts. If two rows disagree, "first wins" silently resolves a real data
+    # conflict by market/row order. Assert agreement instead and STOP on
+    # conflict -- no majority vote, no market priority, no row-order tiebreak.
+    groups = defaultdict(list)
     for r in hitter:
-        k = (r.get("date"), r.get("game_pk"), r.get("player_id"))
-        if k in seen:
-            continue
-        seen.add(k)
-        player_games.append(r)
+        groups[(r.get("date"), r.get("game_pk"), r.get("player_id"))].append(r)
+
+    conflicts = []
+    player_games = []
+    for k in sorted(groups, key=lambda t: tuple(str(x) for x in t)):
+        rows = groups[k]
+        facts = {}
+        for r in rows:
+            sig = r.get("signals") or {}
+            observed = {
+                "actual_pa": r.get("actual_pa"),
+                "batting_order": derive_batting_order(sig.get("lineup_slot")),
+                "days_rest_group": days_rest_group(sig),
+                "getaway_day_group": getaway_day_group(sig),
+            }
+            for name, value in observed.items():
+                if value is None:
+                    continue  # absent is not a conflict; absent is absent
+                prior = facts.get(name)
+                if prior is None:
+                    facts[name] = value
+                elif prior != value:
+                    conflicts.append({
+                        "player_game": [str(x) for x in k],
+                        "fact": name, "values": sorted({str(prior), str(value)}),
+                        "rows_in_group": len(rows),
+                    })
+        player_games.append(rows[0])
+
+    if conflicts:
+        raise PlayerGameConflict(
+            f"{len(conflicts)} player-game opportunity-fact conflict(s); refusing to "
+            f"resolve by row order. First: {conflicts[0]}")
 
     jc, jt = defaultdict(lambda: defaultdict(int)), defaultdict(int)
     oc, ot = defaultdict(lambda: defaultdict(int)), defaultdict(int)
@@ -154,12 +208,77 @@ def _sha256_file(path, chunk=1 << 20):
     return h.hexdigest()
 
 
-def _code_sha():
+def _git(*args):
     try:
-        return subprocess.run(["git", "rev-parse", "HEAD"], capture_output=True,
-                              text=True, timeout=30).stdout.strip() or None
+        r = subprocess.run(["git", *args], capture_output=True, text=True, timeout=60,
+                           cwd=os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+        return r.stdout.strip() if r.returncode == 0 else None
     except Exception:
         return None
+
+
+def code_identity(authoritative):
+    """Bind the bytes that actually ran, not just a branch pointer.
+
+    `git rev-parse HEAD` on a dirty worktree names a commit whose content is NOT
+    what executed. An authoritative fit therefore also hashes this file's real
+    bytes and requires the fitter to be committed. Fails closed rather than
+    recording a HEAD that does not describe the running code.
+    """
+    me = os.path.abspath(__file__)
+    rel = "backtest/pa_v1_fit.py"
+    with open(me, "rb") as fh:
+        file_sha = hashlib.sha256(fh.read()).hexdigest()
+    head = _git("rev-parse", "HEAD")
+    dirty_fitter = _git("status", "--porcelain", "--", rel)
+    dirty_all = _git("status", "--porcelain")
+    committed_blob = _git("rev-parse", f"HEAD:{rel}")
+    clean_fitter = (dirty_fitter == "")
+    ident = {
+        "file": rel,
+        "fitter_file_sha256": file_sha,
+        "repo_head_sha": head,
+        "committed_blob_id": committed_blob,
+        "fitter_worktree_clean": clean_fitter,
+        "repo_worktree_fully_clean": (dirty_all == ""),
+        "authoritative_run": bool(authoritative),
+    }
+    if authoritative and not clean_fitter:
+        raise WorktreeDirtyError(
+            "authoritative PA-v1 fitting requires a committed, unmodified "
+            f"{rel}; `git status --porcelain -- {rel}` reported: {dirty_fitter!r}. "
+            "Commit the fitter first so repo_head_sha describes the bytes that ran."
+        )
+    return ident
+
+
+def assert_certified_input(rows, dates, rows_sha256, authoritative):
+    """Fail closed unless this really is the certified canonical-v2 research view."""
+    problems = []
+    if rows_sha256 != REQUIRED_ROWS_SHA256:
+        problems.append(f"rows sha256 {rows_sha256} != required {REQUIRED_ROWS_SHA256}")
+    if len(rows) != REQUIRED_ROWS_COUNT:
+        problems.append(f"row count {len(rows)} != required {REQUIRED_ROWS_COUNT}")
+    if len(dates) != REQUIRED_DATES_WITH_ROWS:
+        problems.append(f"dates-with-rows {len(dates)} != required {REQUIRED_DATES_WITH_ROWS}")
+    if dates and max(dates) != REQUIRED_MAX_DATE:
+        problems.append(f"max date {max(dates)} != required {REQUIRED_MAX_DATE}")
+    present = sorted(set(CERTIFIED_QUARANTINED_DATES) & set(dates))
+    if present:
+        problems.append(f"quarantined dates carry rows: {present}")
+    verified = not problems
+    if authoritative and problems:
+        raise CertifiedInputError(
+            "input is not the certified canonical-v2 research view: " + "; ".join(problems))
+    return {
+        "required_rows_sha256": REQUIRED_ROWS_SHA256,
+        "required_rows_count": REQUIRED_ROWS_COUNT,
+        "required_dates_with_rows": REQUIRED_DATES_WITH_ROWS,
+        "required_max_date": REQUIRED_MAX_DATE,
+        "quarantined_dates_required_empty": list(CERTIFIED_QUARANTINED_DATES),
+        "verified": verified,
+        "problems": problems,
+    }
 
 
 def canonical_json(obj):
@@ -167,7 +286,8 @@ def canonical_json(obj):
     return json.dumps(obj, sort_keys=True, separators=(",", ":"), ensure_ascii=True)
 
 
-def build_artifact(rows_path, effective_from=None, train_cutoff=None):
+def build_artifact(rows_path, effective_from=None, train_cutoff=None,
+                   authoritative=False):
     rows, dates = [], set()
     with open(rows_path) as fh:
         for line in fh:
@@ -175,7 +295,10 @@ def build_artifact(rows_path, effective_from=None, train_cutoff=None):
             rows.append(r)
             if r.get("date"):
                 dates.add(r["date"])
-    cutoff = train_cutoff or max(dates)
+    rows_sha = _sha256_file(rows_path)
+    certified = assert_certified_input(rows, dates, rows_sha, authoritative)
+    code_id = code_identity(authoritative)
+    cutoff = train_cutoff or REQUIRED_MAX_DATE
     tables = fit(rows, cutoff)
 
     body = {
@@ -193,7 +316,7 @@ def build_artifact(rows_path, effective_from=None, train_cutoff=None):
         },
         "training_input": {
             "certified_rows_path": os.path.basename(rows_path),
-            "certified_rows_sha256": _sha256_file(rows_path),
+            "certified_rows_sha256": rows_sha,
             "certified_rows_count": len(rows),
             "certified_date_min": min(dates) if dates else None,
             "certified_date_max": max(dates) if dates else None,
@@ -201,21 +324,37 @@ def build_artifact(rows_path, effective_from=None, train_cutoff=None):
             "quarantined_dates_excluded_by_certification": list(CERTIFIED_QUARANTINED_DATES),
             "train_cutoff_inclusive": cutoff,
         },
-        "fitting_code": {
-            "file": "backtest/pa_v1_fit.py",
-            "repo_code_sha": _code_sha(),
-        },
+        "certified_input_contract": certified,
+        "fitting_code": code_id,
         "tables": tables,
+        # effective_from and the immutability contract are part of the SCIENTIFIC
+        # BODY, not metadata bolted on afterwards. Two artifacts that differ only
+        # in when PA-v1 becomes applicable are scientifically different artifacts
+        # and must not be able to advertise the same content hash.
+        "effective_from": effective_from or datetime.now(timezone.utc).isoformat(),
+        "created_at": datetime.now(timezone.utc).isoformat(),
+        "versioning_contract": {
+            "frozen_once_first_eligible_receipt_exists": True,
+            "forward_outcomes_may_refit": False,
+            "later_refit_is": "PA-v2, new effective_from, may not retroactively "
+                              "replace PA-v1 receipts or scores",
+            "statement": (
+                "FROZEN once prospective evaluation begins. No automatic refit "
+                "from forward outcomes. A later refit is PA-v2 with its own "
+                "effective_from and cannot retroactively replace PA-v1 receipts."
+            ),
+        },
     }
-    body["fitted_artifact_sha256"] = hashlib.sha256(
+    # Hash the COMPLETE canonical body, excluding only the self-referential field.
+    body["scientific_content_sha256"] = hashlib.sha256(
         canonical_json(body).encode("utf-8")).hexdigest()
-    body["effective_from"] = effective_from or datetime.now(timezone.utc).isoformat()
-    body["immutability"] = (
-        "FROZEN once prospective evaluation begins. No automatic refit from "
-        "forward outcomes. A later refit is PA-v2 with its own effective_from "
-        "and cannot retroactively replace PA-v1 receipts."
-    )
     return body
+
+
+def serialize(artifact):
+    """The exact bytes written to disk, and their own digest."""
+    payload = canonical_json(artifact).encode("utf-8")
+    return payload, hashlib.sha256(payload).hexdigest()
 
 
 # ---- the pure live scorer: read-only over the frozen artifact ----
@@ -249,11 +388,22 @@ def main():
     ap.add_argument("--out", required=True)
     ap.add_argument("--effective-from")
     ap.add_argument("--train-cutoff")
+    ap.add_argument("--authoritative", action="store_true",
+                    help="enforce the certified-input and clean-fitter gates; "
+                         "required for the one real PA-v1 freeze")
     a = ap.parse_args()
-    art = build_artifact(a.rows, a.effective_from, a.train_cutoff)
-    with open(a.out, "w") as fh:
-        fh.write(canonical_json(art))
-    print(f"fitted_artifact_sha256 = {art['fitted_artifact_sha256']}")
+    art = build_artifact(a.rows, a.effective_from, a.train_cutoff, a.authoritative)
+    payload, file_sha = serialize(art)
+    with open(a.out, "wb") as fh:
+        fh.write(payload)
+    print(f"scientific_content_sha256   = {art['scientific_content_sha256']}")
+    print(f"serialized_file_sha256      = {file_sha}")
+    print(f"authoritative               = {a.authoritative}")
+    print(f"certified input verified    = {art['certified_input_contract']['verified']}")
+    print(f"fitter file sha256          = {art['fitting_code']['fitter_file_sha256']}")
+    print(f"fitter worktree clean       = {art['fitting_code']['fitter_worktree_clean']}")
+    print(f"repo head sha               = {art['fitting_code']['repo_head_sha']}")
+    print(f"effective_from              = {art['effective_from']}")
     print(f"train_cutoff           = {art['training_input']['train_cutoff_inclusive']}")
     print(f"joint cells / order    = {art['tables']['joint_cells_fit']} / {art['tables']['order_cells_fit']}")
     print(f"train player-games     = {art['tables']['train_player_games']}")
