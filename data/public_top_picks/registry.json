@@ -2,7 +2,7 @@
   "schema_version": 1,
   "identity_schema_version": 2,
   "rollout_version": "pre-phase-v-live-lifecycle-v1",
-  "updated_at": "2026-09-01T09:02:46.777917+00:00",
+  "updated_at": "2026-09-01T10:08:04.599925+00:00",
   "migration": {
     "version": "pre-phase-v-live-lifecycle-v1",
     "completed_at": "2026-08-17T23:14:57+00:00",
@@ -9357,6 +9357,95 @@
         },
         "qualification_timestamp": "2026-09-01T08:46:53.156868+00:00",
         "board_timestamp": "2026-09-01T08:46:53.128725+00:00",
+        "slate_date": "2026-09-01"
+      }
+    },
+    "fc2:824391:player-681293:pitcher_outs:15:over": {
+      "canonical_id": "fc2:824391:player-681293:pitcher_outs:15:over",
+      "settlement_identity": [
+        "824391",
+        [
+          "player",
+          "681293"
+        ],
+        "pitcher_outs",
+        "15",
+        "over"
+      ],
+      "slate_date": "2026-09-01",
+      "first_published_at": "2026-09-01T10:08:04.599925+00:00",
+      "publication_provenance": {
+        "artifact_id": "e955dc781c996a3d535b15edf93682b9e0fc42c7daf368cb9ace692891161894",
+        "source_commit": "2e4b3bd0ea4296848fb78a3c6ba0c4e3a0748503",
+        "workflow_run_id": "33495691713",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-09-01T10:07:31.969635+00:00",
+        "data_hash": "f06096116a387620a1e67d078f8e2d0e7fb39edd0754b5660892e22cde1db58f",
+        "live_hash": "463bc5dca0dc800e1e0c895654f5b8632c8465f67ffd4424c5ec9649c3779cf0"
+      },
+      "snapshot": {
+        "id": "fc2:824391:player-681293:pitcher_outs:15:over",
+        "identity_version": 2,
+        "game_pk": 824391,
+        "player_id": 681293,
+        "combo_player_ids": null,
+        "type": "pitcher",
+        "name": "Spencer Arrighetti",
+        "team": "Toronto Blue Jays",
+        "matchup": "Toronto Blue Jays @ Cleveland Guardians",
+        "game_start": "2026-09-01T22:40:00Z",
+        "stat": "pitcher_outs",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "pitcher_outs",
+          "value": 14.5,
+          "needs": 15
+        },
+        "prop": "Over 14.5 Outs Recorded",
+        "hit_probability": 0.7329,
+        "market_odds": -140,
+        "market_implied": 0.5434,
+        "market_edge": 0.1895,
+        "market_hold": 0.0735,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (A), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (19.3 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "Recorded 15+ outs (5.0 IP) in 73.3% of his last 18 real starts (league 76.5%, avg 15.33 outs/start)"
+        ],
+        "watchouts": [
+          "No real FanDuel line found for this pitcher yet -- this threshold is model-anchored to his average workload, not a posted market number",
+          "No positive read here: 3.2 pts BELOW the 76% league base rate for this market"
+        ],
+        "prob_ci": [
+          0.6676,
+          0.8496
+        ],
+        "reliability": "A",
+        "reliability_note": null,
+        "sample_n": 18,
+        "lineup_assumed": null,
+        "base_rate": 0.7649,
+        "lift": -0.032,
+        "lift_reference_rate": null,
+        "stable_lift": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "e85ae0f7",
+          "prediction_timestamp": "2026-09-01T09:40:55.957466+00:00",
+          "odds_fetched_at": "2026-09-01T09:40:49.860945+00:00",
+          "board_generated_at": "2026-09-01T09:40:55.936363+00:00"
+        },
+        "qualification_timestamp": "2026-09-01T09:40:55.957466+00:00",
+        "board_timestamp": "2026-09-01T09:40:55.936363+00:00",
         "slate_date": "2026-09-01"
       }
     }
