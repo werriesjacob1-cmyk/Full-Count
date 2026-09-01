@@ -234,22 +234,30 @@ def code_identity(authoritative):
     dirty_all = _git("status", "--porcelain")
     committed_blob = _git("rev-parse", f"HEAD:{rel}")
     clean_fitter = (dirty_fitter == "")
+    # SCIENTIFIC code identity: facts about the bytes that ran. Deterministic
+    # for a given commit, so it belongs inside the hashed body.
     ident = {
         "file": rel,
         "fitter_file_sha256": file_sha,
         "repo_head_sha": head,
         "committed_blob_id": committed_blob,
         "fitter_worktree_clean": clean_fitter,
+    }
+    # RUN provenance: true of this invocation, not of the science. Hashing it
+    # would make the artifact identity depend on when it ran and on whether
+    # unrelated files happened to be dirty -- so it is recorded OUTSIDE the
+    # hashed body.
+    provenance = {
         "repo_worktree_fully_clean": (dirty_all == ""),
         "authoritative_run": bool(authoritative),
     }
-    if authoritative and not clean_fitter:
+    if authoritative and not clean_fitter:  # noqa: E501
         raise WorktreeDirtyError(
             "authoritative PA-v1 fitting requires a committed, unmodified "
             f"{rel}; `git status --porcelain -- {rel}` reported: {dirty_fitter!r}. "
             "Commit the fitter first so repo_head_sha describes the bytes that ran."
         )
-    return ident
+    return ident, provenance
 
 
 def assert_certified_input(rows, dates, rows_sha256, authoritative):
@@ -297,7 +305,7 @@ def build_artifact(rows_path, effective_from=None, train_cutoff=None,
                 dates.add(r["date"])
     rows_sha = _sha256_file(rows_path)
     certified = assert_certified_input(rows, dates, rows_sha, authoritative)
-    code_id = code_identity(authoritative)
+    code_id, run_provenance = code_identity(authoritative)
     cutoff = train_cutoff or REQUIRED_MAX_DATE
     tables = fit(rows, cutoff)
 
@@ -332,7 +340,6 @@ def build_artifact(rows_path, effective_from=None, train_cutoff=None,
         # in when PA-v1 becomes applicable are scientifically different artifacts
         # and must not be able to advertise the same content hash.
         "effective_from": effective_from or datetime.now(timezone.utc).isoformat(),
-        "created_at": datetime.now(timezone.utc).isoformat(),
         "versioning_contract": {
             "frozen_once_first_eligible_receipt_exists": True,
             "forward_outcomes_may_refit": False,
@@ -345,10 +352,26 @@ def build_artifact(rows_path, effective_from=None, train_cutoff=None,
             ),
         },
     }
-    # Hash the COMPLETE canonical body, excluding only the self-referential field.
+    # Hash the COMPLETE scientific body. Everything that could change what the
+    # model is, what it was fitted on, which bytes produced it, or when it
+    # becomes applicable is inside this hash. Only the self-referential field is
+    # excluded -- run provenance and created_at are siblings, added after.
     body["scientific_content_sha256"] = hashlib.sha256(
         canonical_json(body).encode("utf-8")).hexdigest()
+    # Non-scientific siblings. Deliberately outside the hash: a verifier must be
+    # able to recompute scientific_content_sha256 from an artifact produced on a
+    # different day, on a different machine, with an unrelated file dirty.
+    # Proven by --verify reconstructing the hash exactly.
+    body["run_provenance"] = dict(run_provenance,
+                                  created_at=datetime.now(timezone.utc).isoformat())
     return body
+
+
+def recompute_scientific_sha(artifact):
+    """Recompute the content hash of an existing artifact, for verification."""
+    body = {k: v for k, v in artifact.items()
+            if k not in ("scientific_content_sha256", "run_provenance")}
+    return hashlib.sha256(canonical_json(body).encode("utf-8")).hexdigest()
 
 
 def serialize(artifact):
@@ -384,14 +407,24 @@ def score(signals, artifact):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--rows", required=True)
+    ap.add_argument("--rows")
     ap.add_argument("--out", required=True)
     ap.add_argument("--effective-from")
     ap.add_argument("--train-cutoff")
+    ap.add_argument("--verify", metavar="ARTIFACT",
+                    help="recompute an existing artifact's scientific hash and exit")
     ap.add_argument("--authoritative", action="store_true",
                     help="enforce the certified-input and clean-fitter gates; "
                          "required for the one real PA-v1 freeze")
     a = ap.parse_args()
+    if a.verify:
+        art = json.load(open(a.verify))
+        claimed = art.get("scientific_content_sha256")
+        actual = recompute_scientific_sha(art)
+        print(f"claimed  = {claimed}")
+        print(f"recomputed = {actual}")
+        print("VERIFIED" if claimed == actual else "MISMATCH")
+        return 0 if claimed == actual else 1
     art = build_artifact(a.rows, a.effective_from, a.train_cutoff, a.authoritative)
     payload, file_sha = serialize(art)
     with open(a.out, "wb") as fh:
@@ -404,6 +437,7 @@ def main():
     print(f"fitter worktree clean       = {art['fitting_code']['fitter_worktree_clean']}")
     print(f"repo head sha               = {art['fitting_code']['repo_head_sha']}")
     print(f"effective_from              = {art['effective_from']}")
+    print(f"created_at (not hashed)     = {art['run_provenance']['created_at']}")
     print(f"train_cutoff           = {art['training_input']['train_cutoff_inclusive']}")
     print(f"joint cells / order    = {art['tables']['joint_cells_fit']} / {art['tables']['order_cells_fit']}")
     print(f"train player-games     = {art['tables']['train_player_games']}")
