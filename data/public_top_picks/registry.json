@@ -2,7 +2,7 @@
   "schema_version": 1,
   "identity_schema_version": 2,
   "rollout_version": "pre-phase-v-live-lifecycle-v1",
-  "updated_at": "2026-09-01T20:08:03.060278+00:00",
+  "updated_at": "2026-09-01T20:27:45.676736+00:00",
   "migration": {
     "version": "pre-phase-v-live-lifecycle-v1",
     "completed_at": "2026-08-17T23:14:57+00:00",
@@ -10031,6 +10031,106 @@
         },
         "qualification_timestamp": "2026-09-01T20:02:54.946609+00:00",
         "board_timestamp": "2026-09-01T20:02:54.913763+00:00",
+        "slate_date": "2026-09-01"
+      }
+    },
+    "fc2:822854:player-680869:hits:1:over": {
+      "canonical_id": "fc2:822854:player-680869:hits:1:over",
+      "settlement_identity": [
+        "822854",
+        [
+          "player",
+          "680869"
+        ],
+        "hits",
+        "1",
+        "over"
+      ],
+      "slate_date": "2026-09-01",
+      "first_published_at": "2026-09-01T20:27:45.676736+00:00",
+      "publication_provenance": {
+        "artifact_id": "8250ee9bc3428682e312832f3acf37282db190e1ff753b29e1c884d97268beeb",
+        "source_commit": "eda51cb3a1d24c7435f14f1c0a713811065532d9",
+        "workflow_run_id": "33555318699",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-09-01T20:27:31.730134+00:00",
+        "data_hash": "e6ac7852c12f62cd2f6c623dbbfe1fa7cad67b1e19d882deec4d92cafc74ad75",
+        "live_hash": "00b53710de33893096d59f2f5d59f313ae8816fedb5a541dd37c3e9278c16c38"
+      },
+      "snapshot": {
+        "id": "fc2:822854:player-680869:hits:1:over",
+        "identity_version": 2,
+        "game_pk": 822854,
+        "player_id": 680869,
+        "combo_player_ids": null,
+        "type": "batter",
+        "name": "Zack Gelof",
+        "team": "Athletics",
+        "matchup": "Athletics @ Texas Rangers",
+        "game_start": "2026-09-02T00:05:00Z",
+        "stat": "hits",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "hits",
+          "value": 0.5,
+          "needs": 1
+        },
+        "prop": "Over 0.5 Hits",
+        "hit_probability": 0.6232,
+        "market_odds": -145,
+        "market_implied": 0.5918,
+        "market_edge": 0.0314,
+        "market_hold": null,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (A), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (7.5 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "L7 barrel% 18.8 \u2014 hot recent contact",
+          "Platoon: R bat vs LHP (favorable)",
+          "Projected 4.32 PA (batting slot 2) \u2014 a favorable lineup slot",
+          "Dome \u2014 weather neutral"
+        ],
+        "watchouts": [
+          "L7 avg EV 84.8mph (league ~88.5) \u2014 cold recent contact",
+          "AVG vs xBA: 0.252 vs 0.224 (+0.028) \u2014 outperforming his contact quality, regression risk",
+          "wOBA vs xwOBA: 0.333 vs 0.300 (+0.033) \u2014 outperforming his contact quality, regression risk",
+          "Public heavy on Athletics (money% trails tickets% by 18 pts) \u2014 sharp money is fading this side",
+          "Team implied for 3.07 runs (league avg 4.245; line 2.5, game total 7.5) \u2014 a weak offensive environment",
+          "Season barrel% 7.7 \u2014 below-average barrel rate",
+          "Hitters batting ahead of him: 0.320 wOBA (league ~.320) \u2014 a weak on-base group ahead of him, fewer runners to drive in",
+          "Hitter batting behind him: 0.313 wOBA (league ~.320) \u2014 little lineup protection, an easier batter to pitch around",
+          "Opposing bullpen fatigue: 1/10 relievers over 60 pitches in L7 (fresh pen \u2014 tougher matchup late)",
+          "Sharp money fading Athletics (money% -18 pts vs ticket%) \u2014 smart money moving away from this side"
+        ],
+        "prob_ci": [
+          0.6144,
+          0.6518
+        ],
+        "reliability": "A",
+        "reliability_note": null,
+        "sample_n": 83,
+        "lineup_assumed": null,
+        "base_rate": 0.5655,
+        "lift": 0.0577,
+        "lift_reference_rate": null,
+        "stable_lift": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "5fe4b048",
+          "prediction_timestamp": "2026-09-01T20:21:39.619855+00:00",
+          "odds_fetched_at": "2026-09-01T20:21:27.114500+00:00",
+          "board_generated_at": "2026-09-01T20:21:39.594668+00:00"
+        },
+        "qualification_timestamp": "2026-09-01T20:21:39.619855+00:00",
+        "board_timestamp": "2026-09-01T20:21:39.594668+00:00",
         "slate_date": "2026-09-01"
       }
     }
