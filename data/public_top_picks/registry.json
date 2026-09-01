@@ -2,7 +2,7 @@
   "schema_version": 1,
   "identity_schema_version": 2,
   "rollout_version": "pre-phase-v-live-lifecycle-v1",
-  "updated_at": "2026-09-01T20:27:45.676736+00:00",
+  "updated_at": "2026-09-01T21:12:45.892041+00:00",
   "migration": {
     "version": "pre-phase-v-live-lifecycle-v1",
     "completed_at": "2026-08-17T23:14:57+00:00",
@@ -10131,6 +10131,207 @@
         },
         "qualification_timestamp": "2026-09-01T20:21:39.619855+00:00",
         "board_timestamp": "2026-09-01T20:21:39.594668+00:00",
+        "slate_date": "2026-09-01"
+      }
+    },
+    "fc2:823984:player-685133:hits:1:over": {
+      "canonical_id": "fc2:823984:player-685133:hits:1:over",
+      "settlement_identity": [
+        "823984",
+        [
+          "player",
+          "685133"
+        ],
+        "hits",
+        "1",
+        "over"
+      ],
+      "slate_date": "2026-09-01",
+      "first_published_at": "2026-09-01T21:12:45.892041+00:00",
+      "publication_provenance": {
+        "artifact_id": "bd86fdc3699ad85136b52b7eda3d7314992d4e6976d23aedfe4dc2e479c04656",
+        "source_commit": "1349c7fe2285d06710c58171556c90aba1f1fc47",
+        "workflow_run_id": "33559649448",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-09-01T21:12:32.962046+00:00",
+        "data_hash": "a73d38a142caa86d946206bd60e7d1281d250905b318d1535003be5fa15a7cc6",
+        "live_hash": "648435edb18be0a961c526d9dcae312e99d8dc34427c3e186cbcb28c6ed6750f"
+      },
+      "snapshot": {
+        "id": "fc2:823984:player-685133:hits:1:over",
+        "identity_version": 2,
+        "game_pk": 823984,
+        "player_id": 685133,
+        "combo_player_ids": null,
+        "type": "batter",
+        "name": "Wade Meckler",
+        "team": "Los Angeles Angels",
+        "matchup": "New York Yankees @ Los Angeles Angels",
+        "game_start": "2026-09-02T01:38:00Z",
+        "stat": "hits",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "hits",
+          "value": 0.5,
+          "needs": 1
+        },
+        "prop": "Over 0.5 Hits",
+        "hit_probability": 0.6521,
+        "market_odds": -145,
+        "market_implied": 0.5918,
+        "market_edge": 0.0603,
+        "market_hold": null,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (B), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (10.4 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "L7 barrel% 27.3 \u2014 hot recent contact",
+          "Platoon: L bat vs RHP (favorable)",
+          "Projected 4.21 PA (batting slot 3) \u2014 a favorable lineup slot",
+          "Hitters batting ahead of him: 0.354 wOBA (league ~.320)"
+        ],
+        "watchouts": [
+          "L7 avg EV 82.6mph (league ~88.5) \u2014 cold recent contact",
+          "Opposing SP ERA 3.19 \u2014 elite pitcher, tough matchup",
+          "AVG vs xBA: 0.294 vs 0.255 (+0.039) \u2014 outperforming his contact quality, regression risk",
+          "wOBA vs xwOBA: 0.341 vs 0.311 (+0.030) \u2014 outperforming his contact quality, regression risk",
+          "Activated from the 7-day injured list 4 day(s) ago \u2014 early performance back can be inconsistent",
+          "Public heavy on Los Angeles Angels (money% trails tickets% by 16 pts) \u2014 sharp money is fading this side",
+          "Team implied for 3.07 runs (league avg 4.245; line 2.5, game total 7.5) \u2014 a weak offensive environment",
+          "Season barrel% 3.0 \u2014 below-average barrel rate",
+          "Hitter batting behind him: 0.309 wOBA (league ~.320) \u2014 little lineup protection, an easier batter to pitch around",
+          "Opposing bullpen fatigue: 0/10 relievers over 60 pitches in L7 (fresh pen \u2014 tougher matchup late)",
+          "Sharp money fading Los Angeles Angels (money% -16 pts vs ticket%) \u2014 smart money moving away from this side"
+        ],
+        "prob_ci": [
+          0.6401,
+          0.6642
+        ],
+        "reliability": "B",
+        "reliability_note": null,
+        "sample_n": 71,
+        "lineup_assumed": null,
+        "base_rate": 0.5655,
+        "lift": 0.0866,
+        "lift_reference_rate": null,
+        "stable_lift": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "c0d67bbc",
+          "prediction_timestamp": "2026-09-01T21:05:58.671247+00:00",
+          "odds_fetched_at": "2026-09-01T21:05:51.240496+00:00",
+          "board_generated_at": "2026-09-01T21:05:58.636201+00:00"
+        },
+        "qualification_timestamp": "2026-09-01T21:05:58.671247+00:00",
+        "board_timestamp": "2026-09-01T21:05:58.636201+00:00",
+        "slate_date": "2026-09-01"
+      }
+    },
+    "fc2:823984:player-666139:hits_runs_rbis:1:over": {
+      "canonical_id": "fc2:823984:player-666139:hits_runs_rbis:1:over",
+      "settlement_identity": [
+        "823984",
+        [
+          "player",
+          "666139"
+        ],
+        "hits_runs_rbis",
+        "1",
+        "over"
+      ],
+      "slate_date": "2026-09-01",
+      "first_published_at": "2026-09-01T21:12:45.892041+00:00",
+      "publication_provenance": {
+        "artifact_id": "bd86fdc3699ad85136b52b7eda3d7314992d4e6976d23aedfe4dc2e479c04656",
+        "source_commit": "1349c7fe2285d06710c58171556c90aba1f1fc47",
+        "workflow_run_id": "33559649448",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-09-01T21:12:32.962046+00:00",
+        "data_hash": "a73d38a142caa86d946206bd60e7d1281d250905b318d1535003be5fa15a7cc6",
+        "live_hash": "648435edb18be0a961c526d9dcae312e99d8dc34427c3e186cbcb28c6ed6750f"
+      },
+      "snapshot": {
+        "id": "fc2:823984:player-666139:hits_runs_rbis:1:over",
+        "identity_version": 2,
+        "game_pk": 823984,
+        "player_id": 666139,
+        "combo_player_ids": null,
+        "type": "batter",
+        "name": "Josh Lowe",
+        "team": "Los Angeles Angels",
+        "matchup": "New York Yankees @ Los Angeles Angels",
+        "game_start": "2026-09-02T01:38:00Z",
+        "stat": "hits_runs_rbis",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "hits_runs_rbis",
+          "value": 0.5,
+          "needs": 1
+        },
+        "prop": "Over 0.5 Hits+Runs+RBIs",
+        "hit_probability": 0.6133,
+        "market_odds": -135,
+        "market_implied": 0.5745,
+        "market_edge": 0.0388,
+        "market_hold": null,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (A), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (8.1 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "Bat speed trending up L14 (+4.5mph 2nd-half vs 1st-half)",
+          "Platoon: L bat vs RHP (favorable)"
+        ],
+        "watchouts": [
+          "L7 avg EV 81.2mph (league ~88.5) \u2014 cold recent contact",
+          "L7 barrel% 0.0 \u2014 cold recent contact",
+          "Opposing SP ERA 3.19 \u2014 elite pitcher, tough matchup",
+          "Projected 3.74 PA (batting slot 7) \u2014 a tough lineup slot for plate appearances",
+          "Hitters batting ahead of him: 0.250 wOBA (league ~.320) \u2014 a weak on-base group ahead of him, fewer runners to drive in",
+          "Hitter batting behind him: 0.279 wOBA (league ~.320) \u2014 little lineup protection, an easier batter to pitch around",
+          "Team implied for 3.07 runs (league avg 4.245; line 2.5, game total 7.5) \u2014 a weak offensive environment",
+          "Public heavy on Los Angeles Angels (money% trails tickets% by 16 pts) \u2014 sharp money is fading this side",
+          "Season barrel% 7.6 \u2014 below-average barrel rate",
+          "Opposing bullpen fatigue: 0/10 relievers over 60 pitches in L7 (fresh pen \u2014 tougher matchup late)",
+          "Sharp money fading Los Angeles Angels (money% -16 pts vs ticket%) \u2014 smart money moving away from this side",
+          "BvP: 1-for-12 vs Gerrit Cole (standard error \u00b18 pts on a 12-AB career sample -- weighted lightly on that basis, not just because the count looks small)"
+        ],
+        "prob_ci": [
+          0.6,
+          0.6449
+        ],
+        "reliability": "A",
+        "reliability_note": null,
+        "sample_n": 89,
+        "lineup_assumed": null,
+        "base_rate": 0.6702,
+        "lift": -0.0569,
+        "lift_reference_rate": null,
+        "stable_lift": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "c0d67bbc",
+          "prediction_timestamp": "2026-09-01T21:05:58.671247+00:00",
+          "odds_fetched_at": "2026-09-01T21:05:51.240496+00:00",
+          "board_generated_at": "2026-09-01T21:05:58.636201+00:00"
+        },
+        "qualification_timestamp": "2026-09-01T21:05:58.671247+00:00",
+        "board_timestamp": "2026-09-01T21:05:58.636201+00:00",
         "slate_date": "2026-09-01"
       }
     }
