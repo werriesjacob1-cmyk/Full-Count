@@ -359,7 +359,7 @@
         {
           "prop": "Over 17.5 Outs Recorded",
           "type": "pitcher",
-          "score": 78.7,
+          "score": 79.0,
           "notable_signals": 1,
           "matchup": "Philadelphia Phillies @ Arizona Diamondbacks",
           "game_pk": 825038,
@@ -380,34 +380,6 @@
             "stat": "pitcher_outs",
             "value": 17.5,
             "needs": 18
-          }
-        },
-        {
-          "prop": "Over 10.5 Combined Strikeouts",
-          "type": "pitcher_combo",
-          "score": 54.7,
-          "notable_signals": 1,
-          "matchup": "Philadelphia Phillies @ Arizona Diamondbacks",
-          "game_pk": 825038,
-          "team": null,
-          "side": null,
-          "lean": null,
-          "combo_player_ids": [
-            666200,
-            593958
-          ],
-          "signals": {
-            "combined_k_edge": 0.4979
-          },
-          "hit_probability": 0.7418,
-          "raw_hit_probability": null,
-          "lift": 0.4979,
-          "reliability": "D",
-          "sample_n": 0,
-          "projection": {
-            "stat": "combined_strikeouts",
-            "value": 10.5,
-            "needs": 11
           }
         }
       ]

@@ -308,7 +308,7 @@
         {
           "prop": "Over 16.5 Outs Recorded",
           "type": "pitcher",
-          "score": 76.1,
+          "score": 76.4,
           "notable_signals": 1,
           "matchup": "New York Yankees @ Los Angeles Angels",
           "game_pk": 823984,
@@ -329,34 +329,6 @@
             "stat": "pitcher_outs",
             "value": 16.5,
             "needs": 17
-          }
-        },
-        {
-          "prop": "Over 10.5 Combined Strikeouts",
-          "type": "pitcher_combo",
-          "score": 54.9,
-          "notable_signals": 1,
-          "matchup": "New York Yankees @ Los Angeles Angels",
-          "game_pk": 823984,
-          "team": null,
-          "side": null,
-          "lean": null,
-          "combo_player_ids": [
-            543037,
-            680570
-          ],
-          "signals": {
-            "combined_k_edge": 0.1897
-          },
-          "hit_probability": 0.6484,
-          "raw_hit_probability": null,
-          "lift": 0.1897,
-          "reliability": "D",
-          "sample_n": 0,
-          "projection": {
-            "stat": "combined_strikeouts",
-            "value": 10.5,
-            "needs": 11
           }
         }
       ]
