@@ -1541,6 +1541,137 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-02",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 43.3,
+          "notable_signals": 4,
+          "matchup": "Toronto Blue Jays @ Cleveland Guardians",
+          "game_pk": 824390,
+          "team": "Cleveland Guardians",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "sp_era_weak": 0.0,
+            "pitch_exploit": 0.0,
+            "l7_avg_ev": 100.0,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 10.875,
+            "park_hr_index": 85.2,
+            "season_barrel_pct": 28.6667,
+            "lineup_slot": 37.5,
+            "bullpen_fatigue": 22.2222,
+            "platoon_barrel_pct": 1.04,
+            "platoon_xwoba": -1.86,
+            "opp_catcher_framing": -0.72,
+            "days_rest": 0.0,
+            "woba_ahead": 49.0909,
+            "woba_behind": 22.7273,
+            "hard_hit_105_rate": 1.0,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": 0.104,
+            "vs_rp_ops": 0.18,
+            "ump_k_pct": 0.084,
+            "ump_bb_pct": 0.024
+          },
+          "hit_probability": 0.6042,
+          "raw_hit_probability": 0.6042,
+          "lift": 0.0372,
+          "reliability": "A",
+          "sample_n": 88,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 35.2,
+          "notable_signals": 0,
+          "matchup": "Toronto Blue Jays @ Cleveland Guardians",
+          "game_pk": 824390,
+          "team": "Cleveland Guardians",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": 0.72,
+            "sprint_speed": 12.5,
+            "catcher_poptime": 28.5714,
+            "on_base": 40.499
+          },
+          "hit_probability": 0.1151,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 88,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 14.6,
+          "notable_signals": 0,
+          "matchup": "Toronto Blue Jays @ Cleveland Guardians",
+          "game_pk": 824390,
+          "team": "Cleveland Guardians",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0866
+          },
+          "hit_probability": 0.0866,
+          "raw_hit_probability": null,
+          "lift": 0.0387,
+          "reliability": "A",
+          "sample_n": 88,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 0.0,
+          "notable_signals": 0,
+          "matchup": "Toronto Blue Jays @ Cleveland Guardians",
+          "game_pk": 824390,
+          "team": "Cleveland Guardians",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0123
+          },
+          "hit_probability": 0.0123,
+          "raw_hit_probability": null,
+          "lift": -0.0086,
+          "reliability": "A",
+          "sample_n": 88,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

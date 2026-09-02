@@ -1950,6 +1950,136 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-02",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 32.2,
+          "notable_signals": 2,
+          "matchup": "San Francisco Giants @ Pittsburgh Pirates",
+          "game_pk": 823339,
+          "team": "Pittsburgh Pirates",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "sp_era_weak": 52.5714,
+            "pitch_exploit": 8.0,
+            "l7_avg_ev": 21.8182,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 6.9,
+            "park_hr_index": 39.6,
+            "season_barrel_pct": 0.0,
+            "lineup_slot": 12.5,
+            "bullpen_fatigue": 16.6667,
+            "platoon_barrel_pct": -4.16,
+            "platoon_xwoba": -1.56,
+            "opp_catcher_framing": 1.2,
+            "days_rest": 0.0,
+            "woba_ahead": 76.3636,
+            "woba_behind": 0.0,
+            "team_total_move": 0.0,
+            "team_total_open": 0.0,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": -1.184,
+            "vs_rp_ops": -1.056,
+            "ump_k_pct": -0.876,
+            "ump_bb_pct": -0.048
+          },
+          "hit_probability": 0.6271,
+          "raw_hit_probability": 0.6212,
+          "lift": 0.0601,
+          "reliability": "A",
+          "sample_n": 108,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 58.9,
+          "notable_signals": 0,
+          "matchup": "San Francisco Giants @ Pittsburgh Pirates",
+          "game_pk": 823339,
+          "team": "Pittsburgh Pirates",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": 0.84,
+            "sprint_speed": 68.75,
+            "catcher_poptime": 0.0,
+            "on_base": 56.8138
+          },
+          "hit_probability": 0.1719,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 108,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 0.0,
+          "notable_signals": 0,
+          "matchup": "San Francisco Giants @ Pittsburgh Pirates",
+          "game_pk": 823339,
+          "team": "Pittsburgh Pirates",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0073
+          },
+          "hit_probability": 0.0073,
+          "raw_hit_probability": null,
+          "lift": -0.0406,
+          "reliability": "A",
+          "sample_n": 108,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 0.0,
+          "notable_signals": 0,
+          "matchup": "San Francisco Giants @ Pittsburgh Pirates",
+          "game_pk": 823339,
+          "team": "Pittsburgh Pirates",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0107
+          },
+          "hit_probability": 0.0107,
+          "raw_hit_probability": null,
+          "lift": -0.0102,
+          "reliability": "A",
+          "sample_n": 108,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

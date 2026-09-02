@@ -1069,6 +1069,84 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-02",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 22.3,
+          "notable_signals": 2,
+          "matchup": "Toronto Blue Jays @ Cleveland Guardians",
+          "game_pk": 824390,
+          "team": "Cleveland Guardians",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "sp_era_weak": 0.0,
+            "l7_avg_ev": 58.0769,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 85.2,
+            "season_barrel_pct": 14.6667,
+            "lineup_slot": 0.0,
+            "bullpen_fatigue": 22.2222,
+            "platoon_barrel_pct": -0.64,
+            "platoon_xwoba": -1.56,
+            "opp_catcher_framing": -0.72,
+            "days_rest": 0.0,
+            "woba_ahead": 0.0,
+            "woba_behind": 33.6364,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": 0.008,
+            "vs_rp_ops": -0.144,
+            "ump_k_pct": 0.084,
+            "ump_bb_pct": 0.024
+          },
+          "hit_probability": 0.5878,
+          "raw_hit_probability": 0.5922,
+          "lift": 0.0208,
+          "reliability": "D",
+          "sample_n": 22,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 47.6,
+          "notable_signals": 0,
+          "matchup": "Toronto Blue Jays @ Cleveland Guardians",
+          "game_pk": 824390,
+          "team": "Cleveland Guardians",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": 0.72,
+            "sprint_speed": 28.125,
+            "catcher_poptime": 28.5714,
+            "on_base": 61.6123
+          },
+          "hit_probability": 0.0431,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "D",
+          "sample_n": 22,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

@@ -299,8 +299,8 @@
         {
           "prop": "Over 6.5 Strikeouts",
           "type": "pitcher",
-          "score": 35.6,
-          "notable_signals": 0,
+          "score": 38.8,
+          "notable_signals": 1,
           "matchup": "Toronto Blue Jays @ Cleveland Guardians",
           "game_pk": 824390,
           "team": "Toronto Blue Jays",
@@ -311,7 +311,10 @@
             "opp_team_k_pct": 43.0,
             "same_hand_ratio": 0.0,
             "l14_k_pct": 100.0,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 82.1007,
+            "ump_k_pct": -0.084,
+            "ump_bb_pct": -0.024
           },
           "hit_probability": 0.502,
           "raw_hit_probability": 0.502,
@@ -327,7 +330,7 @@
         {
           "prop": "Over 17.5 Outs Recorded",
           "type": "pitcher",
-          "score": 62.7,
+          "score": 61.6,
           "notable_signals": 1,
           "matchup": "Toronto Blue Jays @ Cleveland Guardians",
           "game_pk": 824390,
@@ -336,12 +339,12 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.5264,
+            "outs_rate": 0.5286,
             "avg_outs_per_start": 18.04
           },
-          "hit_probability": 0.5264,
+          "hit_probability": 0.5286,
           "raw_hit_probability": null,
-          "lift": 0.1399,
+          "lift": 0.1308,
           "reliability": "A",
           "sample_n": 25,
           "projection": {

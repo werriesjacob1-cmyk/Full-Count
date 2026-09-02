@@ -69,7 +69,7 @@
         {
           "prop": "Over 4.5 Strikeouts",
           "type": "pitcher",
-          "score": 31.4,
+          "score": 25.4,
           "notable_signals": 0,
           "matchup": "New York Mets @ Tampa Bay Rays",
           "game_pk": 822931,
@@ -80,7 +80,10 @@
           "signals": {
             "opp_team_k_pct": 58.0,
             "same_hand_ratio": 100.0,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 58.7721,
+            "ump_k_pct": -0.144,
+            "ump_bb_pct": 0.24
           },
           "hit_probability": 0.611,
           "raw_hit_probability": 0.6846,
@@ -96,7 +99,7 @@
         {
           "prop": "Over 13.5 Outs Recorded",
           "type": "pitcher",
-          "score": 56.6,
+          "score": 55.9,
           "notable_signals": 0,
           "matchup": "New York Mets @ Tampa Bay Rays",
           "game_pk": 822931,
@@ -105,12 +108,12 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.7441,
+            "outs_rate": 0.746,
             "avg_outs_per_start": 13.78
           },
-          "hit_probability": 0.7441,
+          "hit_probability": 0.746,
           "raw_hit_probability": null,
-          "lift": -0.0657,
+          "lift": -0.0712,
           "reliability": "A",
           "sample_n": 18,
           "projection": {
