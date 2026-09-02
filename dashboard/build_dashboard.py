@@ -823,6 +823,13 @@ def run_live_fetch():
             f"eligible={_shadow_report.get('eligible_count')} "
             f"of {_shadow_report.get('raw_count')} raw hits rows"
             + (f" error={_shadow_report['error']}" if _shadow_report.get("error") else ""))
+        # The rejection funnel, not just the survivor count. A cohort that
+        # shrank for a good reason and one that shrank for a bad reason look
+        # identical from the eligible count alone.
+        for _gate, _n in sorted((_shadow_report.get("rejection_funnel") or {}).items(),
+                                key=lambda kv: -kv[1]):
+            if _n:
+                log(f"    shadow gate rejected {_n}: {_gate}")
     except BaseException as _shadow_exc:      # noqa: BLE001
         # Second belt on top of capture()'s own braces: even an ImportError or
         # a bad argument here must not reach the customer build.
