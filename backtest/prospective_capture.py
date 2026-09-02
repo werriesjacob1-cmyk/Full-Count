@@ -34,6 +34,7 @@ from datetime import datetime, timezone
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
+from backtest import pa_v1_compat as pac  # noqa: E402
 from backtest.prospective_receipt import receipt_basis  # noqa: E402
 
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -77,7 +78,7 @@ def load_artifact(path=DEFAULT_ARTIFACT, *, expected_sha=None):
     return artifact
 
 
-def score_pool(pool, artifact):
+def score_pool(pool, artifact, rest_index=None):
     """PA-v1 probability per eligible row, plus an explicit fallback state.
 
     The fallback state is recorded rather than collapsed into a null because
@@ -88,12 +89,23 @@ def score_pool(pool, artifact):
     """
     from backtest.pa_v1_fit import derive_batting_order, joint_key, score
 
-    scores, states = {}, {}
+    scores, states, compat = {}, {}, {}
     for row, verdict in pool:
         pid = verdict.get("canonical_prop_id")
         if pid is None:
             continue
-        signals = row.get("signals") or {}
+        raw_signals = row.get("signals") or {}
+        # HISTORICAL-SEMANTICS ADAPTER. PA-v1's days_rest was fitted against a
+        # D-1 reference clock; live measures against D. Scoring the live signal
+        # directly would put the same real circumstance in a different fitted
+        # cell -- proven for D-2 and D-3. The production candidate is NOT
+        # modified; only PA-v1's view of it is.
+        live_rest = ((rest_index or {}).get("batters") or {}).get(
+            row.get("player_id")) or {}
+        signals, compat_note = pac.adapt_signals(
+            raw_signals, live_rest.get("days_since_last_game"))
+        compat[pid] = pac.provenance(live_rest.get("days_since_last_game"))
+        compat[pid]["note"] = compat_note
         value = score(signals, artifact)
         scores[pid] = value
         if value is None:
@@ -104,12 +116,12 @@ def score_pool(pool, artifact):
             states[pid] = "order_marginal_fallback"
         else:
             states[pid] = "unknown"
-    return scores, states
+    return scores, states, compat
 
 
 def build_snapshot(*, slate_date, board_generated_at, odds_fetched_at,
                    eligible, rejected, pa_scores, pa_states, artifact_sha,
-                   protocol_sha, funnel, board_metadata=None,
+                   protocol_sha, funnel, pa_compat=None, board_metadata=None,
                    captured_now=None, source_integrity=None,
                    lineups_observed_at=None):
     """The frozen shadow snapshot: the exact universe this epoch saw.
@@ -124,6 +136,7 @@ def build_snapshot(*, slate_date, board_generated_at, odds_fetched_at,
         "board_generated_at": board_generated_at,
         "odds_fetched_at": odds_fetched_at,
         "pa_v1_artifact_scientific_sha256": artifact_sha,
+        "pa_v1_compat_version": pac.COMPAT_VERSION,
         "protocol_sha256": protocol_sha,
         "raw_hits_universe_count": len(eligible) + len(rejected),
         "eligible_count": len(eligible),
@@ -158,6 +171,7 @@ def build_snapshot(*, slate_date, board_generated_at, odds_fetched_at,
                 "odds_american": r.get("market_odds"),
                 "pa_v1_probability": pa_scores.get(v.get("canonical_prop_id")),
                 "pa_v1_fallback_state": pa_states.get(v.get("canonical_prop_id")),
+                "pa_v1_compat": (pa_compat or {}).get(v.get("canonical_prop_id")),
                 "signals": r.get("signals") or {},
                 # THE COMPLETE RECEIPT BASIS. Everything build_receipt() and
                 # reconstruct_pick() read, allow-listed, so a receipt can be
@@ -191,7 +205,7 @@ def capture(hits_rows, *, slate_date, board_generated_at, odds_fetched_at,
             schedule, board_metadata=None, artifact_path=DEFAULT_ARTIFACT,
             ledger_worktree=DEFAULT_LEDGER_WORKTREE, persist=True,
             source_integrity=None, now=None, lineups_observed_at=None,
-            branch=None):
+            branch=None, rest_index=None):
     """Observe and persist the shadow universe. NEVER RAISES.
 
     Returns a report dict describing exactly what happened, so a caller can log
@@ -248,7 +262,8 @@ def capture(hits_rows, *, slate_date, board_generated_at, odds_fetched_at,
                       rejection_funnel=funnel)
 
         report["stage"] = "score"
-        pa_scores, pa_states = score_pool(eligible, artifact)
+        pa_scores, pa_states, pa_compat = score_pool(eligible, artifact,
+                                                     rest_index=rest_index)
         report["pa_scored"] = sum(1 for v in pa_scores.values() if v is not None)
         report["pa_unscorable"] = sum(1 for v in pa_scores.values() if v is None)
 
@@ -257,6 +272,7 @@ def capture(hits_rows, *, slate_date, board_generated_at, odds_fetched_at,
             slate_date=slate_date, board_generated_at=board_generated_at,
             odds_fetched_at=odds_fetched_at, eligible=eligible,
             rejected=rejected, pa_scores=pa_scores, pa_states=pa_states,
+            pa_compat=pa_compat,
             artifact_sha=artifact_sha, protocol_sha=pe.PROTOCOL_SHA256,
             funnel=funnel, board_metadata=board_metadata,
             captured_now=now.isoformat(), source_integrity=source_integrity,

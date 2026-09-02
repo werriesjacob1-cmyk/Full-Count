@@ -158,7 +158,16 @@ Retry appends only identical missing events; a **changed** settlement under the 
 
 ---
 
-## L. LIVE FEATURE PARITY — **ESTABLISHED**
+## L. LIVE FEATURE PARITY — **SUPERSEDED: DEFECT CONFIRMED, THEN REMEDIED**
+
+> **This section's original verdict was wrong.** Mission 1.2 proved a
+> reference-clock defect: `PointInTime` repoints `m.TODAY` to D-1 during
+> replay, so the historical `days_rest` is measured against a different clock
+> than live. Same circumstance, different fitted cell, for D-2 and D-3.
+> Remedied by `backtest/pa_v1_compat.py` without touching the frozen artifact.
+> See `engineering/mission12/REST_SEMANTICS_PARITY.md`. The structural and
+> measured evidence below is retained as written, superseded in its
+> conclusion.
 
 Structural: both regimes read `signals[name]` written by the same `generate_picks._sig()` call sites and decode through the same `pa_v1_fit` group functions. `backtest/engine.py:1355` calls the same `gp.build_candidates()` the live pipeline uses and copies the bag verbatim at `:1111`. No separate historical feature builder exists to drift.
 

@@ -841,6 +841,10 @@ def run_live_fetch():
             schedule=schedule,
             source_integrity=_shadow_integrity,
             lineups_observed_at=(ctx or {}).get("lineups_observed_at"),
+            # Raw rest, for the PA-v1 historical-semantics adapter. The stored
+            # days_rest signal is clamped and not invertible, so the raw value
+            # is required to reconstruct the frozen artifact's own clock.
+            rest_index=(ctx or {}).get("rest"),
             board_metadata=gprec.build_metadata(
                 odds_fetched_at=odds_fetched_at,
                 board_generated_at=board_generated_at),

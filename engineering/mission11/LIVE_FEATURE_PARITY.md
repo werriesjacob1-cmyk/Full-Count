@@ -1,6 +1,32 @@
 # Mission 1.1 §15 — live/historical PA-v1 feature parity
 
-**VERDICT: PARITY ESTABLISHED. The prospective experiment may proceed.**
+> # ⚠ SUPERSEDED — THIS CONCLUSION WAS WRONG
+>
+> **Original conclusion (2026-09-02): "PARITY ESTABLISHED. The prospective
+> experiment may proceed."** That was incorrect.
+>
+> **Corrected verdict: PARITY DEFECT CONFIRMED, then remedied by an adapter.**
+> See `engineering/mission12/REST_SEMANTICS_PARITY.md`.
+>
+> **Why "same function, same call site" was insufficient.** This document
+> argued structural identity: both regimes call the same `_sig()` site and the
+> same decoding function, so the encoding cannot drift. That is true and it is
+> not enough. Both paths read `m.TODAY` as their reference clock, and
+> `PointInTime.__enter__` **repoints `m.TODAY` to D-1** during replay
+> (`backtest/engine.py:420,476`) while live it is D. Identical code over a
+> different clock produces a different feature. I checked that the code was
+> the same and never checked what the code was measured against.
+>
+> Consequence: the same real circumstance lands in different PA-v1 fitted
+> cells for a last game at D-2 or D-3. D-2 — a single off day — is among the
+> most common circumstances in baseball.
+>
+> The measured evidence below (feature presence, decode domains, cell
+> resolution) remains accurate as far as it goes. It measured that the live
+> features are PRESENT and WELL-FORMED; it did not measure that they MEAN the
+> same thing.
+
+**ORIGINAL (SUPERSEDED) VERDICT: PARITY ESTABLISHED.**
 
 PA-v1 is frozen on three features: batting order, days-rest group, getaway-day
 group. §15 requires proving the LIVE features have the same semantic decoding

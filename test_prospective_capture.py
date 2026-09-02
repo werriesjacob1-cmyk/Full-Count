@@ -41,6 +41,10 @@ ODDS = (NOW - timedelta(minutes=3)).isoformat()
 SCHEDULE = {1: {"started": False, "start": START.isoformat(), "status": {},
                 "resumed_from": None}}
 
+# Live raw rest. n_live=2 (last game D-2) -> historical-equivalent 1 -> stored
+# signal 0 -> 0_days_rest, which is what the frozen artifact was fitted on.
+REST = {"batters": {99001: {"days_since_last_game": 2}}}
+
 
 def row(**over):
     r = {
@@ -159,7 +163,7 @@ _CL = psi.evaluate(schedule=SCHEDULE, live_state=_FRESH_LIVE)
 pool, _rej = _pe.partition([row()], now=NOW, schedule=SCHEDULE,
                            odds_fetched_at=ODDS, board_generated_at=GEN,
                            source_integrity=_CL)
-scores, states = pc.score_pool(pool, art)
+scores, states, _c = pc.score_pool(pool, art, rest_index=REST)
 pid = pool[0][1]["canonical_prop_id"]
 check("a full joint cell is labelled as such", states[pid] == "joint_cell")
 check("the score is a real probability", 0.0 < scores[pid] < 1.0)
@@ -168,7 +172,7 @@ check("the score is a real probability", 0.0 < scores[pid] < 1.0)
 pool2, _ = _pe.partition([row(signals={})], now=NOW, schedule=SCHEDULE,
                          odds_fetched_at=ODDS, board_generated_at=GEN,
                          source_integrity=_CL)
-s2, st2 = pc.score_pool(pool2, art)
+s2, st2, _c2 = pc.score_pool(pool2, art, rest_index=REST)
 pid2 = pool2[0][1]["canonical_prop_id"]
 check("no batting order -> None score", s2[pid2] is None)
 check("no batting order -> labelled unscorable",
@@ -177,7 +181,7 @@ check("no batting order -> labelled unscorable",
 pool3, _ = _pe.partition([row(signals={"lineup_slot": 100.0})], now=NOW,
                          schedule=SCHEDULE, odds_fetched_at=ODDS,
                          board_generated_at=GEN, source_integrity=_CL)
-s3, st3 = pc.score_pool(pool3, art)
+s3, st3, _c3 = pc.score_pool(pool3, art, rest_index=REST)
 pid3 = pool3[0][1]["canonical_prop_id"]
 check("partial signals -> order marginal fallback",
       st3[pid3] == "order_marginal_fallback")
@@ -204,6 +208,33 @@ check("tap does not call select_ or attach_ again",
       "gp.select_" not in tap and "attach_market_prices" not in tap)
 check("persistence is opt-in via env, off by default in a plain build",
       'FULLCOUNT_SHADOW_PERSIST' in tap)
+
+print("\nCheck 13: the PA-v1 rest adapter is applied at capture, and recorded")
+_r = row()
+_cl = psi.evaluate(schedule=SCHEDULE, live_state=_FRESH_LIVE)
+_pl, _ = _pe.partition([_r], now=NOW, schedule=SCHEDULE, odds_fetched_at=ODDS,
+                       board_generated_at=GEN, source_integrity=_cl)
+# last game D-2: live raw 2 -> historical-equivalent 1 -> signal 0 -> 0_days_rest
+_s, _st, _cp = pc.score_pool(_pl, art, rest_index={"batters": {99001: {
+    "days_since_last_game": 2}}})
+_pid = _pl[0][1]["canonical_prop_id"]
+check("scored through the adapter", _s[_pid] is not None)
+check("compat provenance recorded per candidate", _pid in _cp)
+check("records the live raw", _cp[_pid]["live_days_since_last_game"] == 2)
+check("records the historical equivalent", _cp[_pid]["historical_equivalent_raw"] == 1)
+check("records the compat version",
+      _cp[_pid]["compat_version"] == "pa-v1-rest-semantics-compat-v1")
+# Without rest data the adapter cannot reconstruct the frozen clock, so PA-v1
+# must fall back rather than score a wrong-clock cell.
+_s2, _st2, _cp2 = pc.score_pool(_pl, art, rest_index=None)
+check("no rest data -> order-marginal fallback, not a wrong-clock joint cell",
+      _st2[_pid] == "order_marginal_fallback", _st2[_pid])
+check("and the reason is recorded", _cp2[_pid]["note"] == "absent")
+_s3, _st3, _cp3 = pc.score_pool(_pl, art, rest_index={"batters": {99001: {
+    "days_since_last_game": 0}}})
+check("same-day game -> fallback, explicitly named",
+      _st3[_pid] == "order_marginal_fallback"
+      and _cp3[_pid]["note"] == "same_day_game_historically_unobservable")
 
 print("\nCheck 11: a capture with NO integrity evaluation counts nothing")
 no_eval = pc.capture([row()], slate_date="2026-09-03", board_generated_at=GEN,
