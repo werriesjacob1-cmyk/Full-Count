@@ -92,6 +92,10 @@ def build_report(ledger_dir):
             "pa_v1_fallback_state": r.get("pa_v1_fallback_state"),
             "lineup_confirmed": r.get("lineup_confirmed"),
             "source_integrity_state": r.get("source_integrity_state"),
+            "source_integrity_evaluated": ",".join(sorted(
+                (r.get("source_integrity_evaluated_signals") or []))) or None,
+            "pa_v1_rest_index_state": ((r.get("pa_v1_compat") or {})
+                                       .get("rest_index_state")),
             "odds_american": r.get("odds_american"),
             "model_version": r.get("model_version"),
             "selection_policy_version": r.get("selection_policy_version"),
@@ -259,6 +263,13 @@ def build_report(ledger_dir):
         "lineup_confirmed_rate": dist("lineup_confirmed"),
         "pa_v1_fallback_rates": dist("pa_v1_fallback_state"),
         "source_integrity_states": dist("source_integrity_state"),
+        # WHAT "CLEAR" ACTUALLY CERTIFIED. A red team's point stands: the
+        # label alone overstates, because `reconciliation` is None on every
+        # real board today, so the contract can only ever return a whole-slate
+        # freshness verdict. Reporting the label without what was evaluated
+        # lets a reader infer a per-candidate check that did not happen.
+        "source_integrity_evaluated_signals": dist("source_integrity_evaluated"),
+        "pa_v1_rest_index_states": dist("pa_v1_rest_index_state"),
         "odds_distribution": dist("odds_american"),
         "version_strata": strata,
 

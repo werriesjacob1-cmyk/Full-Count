@@ -89,6 +89,17 @@ def score_pool(pool, artifact, rest_index=None):
     """
     from backtest.pa_v1_fit import derive_batting_order, joint_key, score
 
+    # WHETHER THE REST FEED EXISTED AT ALL, recorded once for the slate.
+    # A red team measured that rest_index=None, {} or a player-absent index all
+    # silently produce order_marginal_fallback for every row -- so a single
+    # rest_and_usage fetch failure mutes one of PA-v1's three features for a
+    # whole slate and looks identical, in the evidence, to a slate where the
+    # feature was genuinely unavailable per player. Recorded, not inferred.
+    batters = ((rest_index or {}).get("batters") or {})
+    rest_state = ("rest_index_absent" if not rest_index
+                  else "rest_index_empty" if not batters
+                  else "rest_index_present")
+
     scores, states, compat = {}, {}, {}
     for row, verdict in pool:
         pid = verdict.get("canonical_prop_id")
@@ -100,12 +111,12 @@ def score_pool(pool, artifact, rest_index=None):
         # directly would put the same real circumstance in a different fitted
         # cell -- proven for D-2 and D-3. The production candidate is NOT
         # modified; only PA-v1's view of it is.
-        live_rest = ((rest_index or {}).get("batters") or {}).get(
-            row.get("player_id")) or {}
+        live_rest = batters.get(row.get("player_id")) or {}
         signals, compat_note = pac.adapt_signals(
             raw_signals, live_rest.get("days_since_last_game"))
         compat[pid] = pac.provenance(live_rest.get("days_since_last_game"))
         compat[pid]["note"] = compat_note
+        compat[pid]["rest_index_state"] = rest_state
         value = score(signals, artifact)
         scores[pid] = value
         if value is None:
@@ -116,14 +127,14 @@ def score_pool(pool, artifact, rest_index=None):
             states[pid] = "order_marginal_fallback"
         else:
             states[pid] = "unknown"
-    return scores, states, compat
+    return scores, states, compat, rest_state
 
 
 def build_snapshot(*, slate_date, board_generated_at, odds_fetched_at,
                    eligible, rejected, pa_scores, pa_states, artifact_sha,
                    protocol_sha, funnel, pa_compat=None, board_metadata=None,
                    captured_now=None, source_integrity=None,
-                   lineups_observed_at=None):
+                   lineups_observed_at=None, rest_index_state=None):
     """The frozen shadow snapshot: the exact universe this epoch saw.
 
     Carries BOTH the eligible cohort and the rejection funnel. A snapshot that
@@ -137,6 +148,7 @@ def build_snapshot(*, slate_date, board_generated_at, odds_fetched_at,
         "odds_fetched_at": odds_fetched_at,
         "pa_v1_artifact_scientific_sha256": artifact_sha,
         "pa_v1_compat_version": pac.COMPAT_VERSION,
+        "pa_v1_rest_index_state": rest_index_state,
         "protocol_sha256": protocol_sha,
         "raw_hits_universe_count": len(eligible) + len(rejected),
         "eligible_count": len(eligible),
@@ -267,8 +279,9 @@ def capture(hits_rows, *, slate_date, board_generated_at, odds_fetched_at,
                       rejection_funnel=funnel)
 
         report["stage"] = "score"
-        pa_scores, pa_states, pa_compat = score_pool(eligible, artifact,
-                                                     rest_index=rest_index)
+        pa_scores, pa_states, pa_compat, rest_state = score_pool(
+            eligible, artifact, rest_index=rest_index)
+        report["pa_v1_rest_index_state"] = rest_state
         report["pa_scored"] = sum(1 for v in pa_scores.values() if v is not None)
         report["pa_unscorable"] = sum(1 for v in pa_scores.values() if v is None)
 
@@ -277,7 +290,7 @@ def capture(hits_rows, *, slate_date, board_generated_at, odds_fetched_at,
             slate_date=slate_date, board_generated_at=board_generated_at,
             odds_fetched_at=odds_fetched_at, eligible=eligible,
             rejected=rejected, pa_scores=pa_scores, pa_states=pa_states,
-            pa_compat=pa_compat,
+            pa_compat=pa_compat, rest_index_state=rest_state,
             artifact_sha=artifact_sha, protocol_sha=pe.PROTOCOL_SHA256,
             funnel=funnel, board_metadata=board_metadata,
             captured_now=now.isoformat(), source_integrity=source_integrity,

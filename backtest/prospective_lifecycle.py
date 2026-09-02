@@ -238,7 +238,11 @@ def bind_exposure(deployment, *, worktree, payload, schedule=None,
             source_integrity_state=(snapshot.get("source_integrity") or {}).get("state"),
             repo_git_sha=meta.get("git_sha"),
             pa_compat_version=snapshot.get("pa_v1_compat_version"),
-            pa_compat=entry.get("pa_v1_compat"))
+            pa_compat=entry.get("pa_v1_compat"),
+            source_integrity_evaluated=(snapshot.get("source_integrity") or {})
+                .get("evaluated_signals"),
+            source_integrity_unevaluated=(snapshot.get("source_integrity") or {})
+                .get("unevaluated_signals"))
         out_events.append(pl.make_event(
             pl.EVENT_PREGAME_RECEIPT, receipt["receipt_id"], receipt,
             writer="prospective_lifecycle"))

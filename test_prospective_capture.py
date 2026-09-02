@@ -163,7 +163,7 @@ _CL = psi.evaluate(schedule=SCHEDULE, live_state=_FRESH_LIVE)
 pool, _rej = _pe.partition([row()], now=NOW, schedule=SCHEDULE,
                            odds_fetched_at=ODDS, board_generated_at=GEN,
                            source_integrity=_CL)
-scores, states, _c = pc.score_pool(pool, art, rest_index=REST)
+scores, states, _c, _rs = pc.score_pool(pool, art, rest_index=REST)
 pid = pool[0][1]["canonical_prop_id"]
 check("a full joint cell is labelled as such", states[pid] == "joint_cell")
 check("the score is a real probability", 0.0 < scores[pid] < 1.0)
@@ -172,7 +172,7 @@ check("the score is a real probability", 0.0 < scores[pid] < 1.0)
 pool2, _ = _pe.partition([row(signals={})], now=NOW, schedule=SCHEDULE,
                          odds_fetched_at=ODDS, board_generated_at=GEN,
                          source_integrity=_CL)
-s2, st2, _c2 = pc.score_pool(pool2, art, rest_index=REST)
+s2, st2, _c2, _rs2 = pc.score_pool(pool2, art, rest_index=REST)
 pid2 = pool2[0][1]["canonical_prop_id"]
 check("no batting order -> None score", s2[pid2] is None)
 check("no batting order -> labelled unscorable",
@@ -181,7 +181,7 @@ check("no batting order -> labelled unscorable",
 pool3, _ = _pe.partition([row(signals={"lineup_slot": 100.0})], now=NOW,
                          schedule=SCHEDULE, odds_fetched_at=ODDS,
                          board_generated_at=GEN, source_integrity=_CL)
-s3, st3, _c3 = pc.score_pool(pool3, art, rest_index=REST)
+s3, st3, _c3, _rs3 = pc.score_pool(pool3, art, rest_index=REST)
 pid3 = pool3[0][1]["canonical_prop_id"]
 check("partial signals -> order marginal fallback",
       st3[pid3] == "order_marginal_fallback")
@@ -215,7 +215,7 @@ _cl = psi.evaluate(schedule=SCHEDULE, live_state=_FRESH_LIVE)
 _pl, _ = _pe.partition([_r], now=NOW, schedule=SCHEDULE, odds_fetched_at=ODDS,
                        board_generated_at=GEN, source_integrity=_cl)
 # last game D-2: live raw 2 -> historical-equivalent 1 -> signal 0 -> 0_days_rest
-_s, _st, _cp = pc.score_pool(_pl, art, rest_index={"batters": {99001: {
+_s, _st, _cp, _rs4 = pc.score_pool(_pl, art, rest_index={"batters": {99001: {
     "days_since_last_game": 2}}})
 _pid = _pl[0][1]["canonical_prop_id"]
 check("scored through the adapter", _s[_pid] is not None)
@@ -226,11 +226,11 @@ check("records the compat version",
       _cp[_pid]["compat_version"] == "pa-v1-rest-semantics-compat-v1")
 # Without rest data the adapter cannot reconstruct the frozen clock, so PA-v1
 # must fall back rather than score a wrong-clock cell.
-_s2, _st2, _cp2 = pc.score_pool(_pl, art, rest_index=None)
+_s2, _st2, _cp2, _rs5 = pc.score_pool(_pl, art, rest_index=None)
 check("no rest data -> order-marginal fallback, not a wrong-clock joint cell",
       _st2[_pid] == "order_marginal_fallback", _st2[_pid])
 check("and the reason is recorded", _cp2[_pid]["note"] == "absent")
-_s3, _st3, _cp3 = pc.score_pool(_pl, art, rest_index={"batters": {99001: {
+_s3, _st3, _cp3, _rs6 = pc.score_pool(_pl, art, rest_index={"batters": {99001: {
     "days_since_last_game": 0}}})
 check("same-day game -> fallback, explicitly named",
       _st3[_pid] == "order_marginal_fallback"
@@ -283,6 +283,24 @@ print("\nCheck 10: schedule resumption fields are additive and inert")
 check("resumed_from captured", '"resumed_from": g.get("resumedFrom")' in src)
 check("existing started key preserved", '"started": g.get("status", {})' in src)
 check("existing start key preserved", '"start": g.get("gameDate")' in src)
+
+
+
+print("\nCheck: a MISSING rest feed is recorded, not silently absorbed")
+# A red team measured that rest_index=None, {} and a player-absent index all
+# produce order_marginal_fallback identically, so one rest_and_usage fetch
+# failure mutes a PA-v1 feature for a whole slate and leaves no trace.
+_pl2 = [(dict(_pl[0][0]), dict(_pl[0][1]))]
+for _idx, _expected in ((None, "rest_index_absent"),
+                        ({}, "rest_index_absent"),
+                        ({"batters": {}}, "rest_index_empty"),
+                        ({"batters": {99001: {"days_since_last_game": 2}}},
+                         "rest_index_present")):
+    _r = pc.score_pool(_pl2, art, rest_index=_idx)
+    check(f"rest feed state {_expected!r} is reported", _r[3] == _expected, str(_r[3]))
+    _pid = next(iter(_r[2]))
+    check("and it travels on the per-row compat provenance",
+          _r[2][_pid].get("rest_index_state") == _expected)
 
 print()
 if FAILURES:

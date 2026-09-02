@@ -223,7 +223,9 @@ def build_receipt(row, verdict, *, epoch, snapshot_id, snapshot_sha256,
                   champion_member, champion_rank, pa_member, pa_rank,
                   board_metadata=None, source_integrity_state="none_declared",
                   pa_artifact_sha256=PA_V1_SCIENTIFIC_SHA256,
-                  repo_git_sha=None, pa_compat_version=None, pa_compat=None):
+                  repo_git_sha=None, pa_compat_version=None, pa_compat=None,
+                  source_integrity_evaluated=None,
+                  source_integrity_unevaluated=None):
     """Build one immutable pregame receipt from an already-gated row.
 
     ``verdict`` is prospective_eligibility.evaluate_row()'s output for this

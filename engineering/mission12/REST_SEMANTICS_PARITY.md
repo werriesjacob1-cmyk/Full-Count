@@ -108,3 +108,23 @@ rest data at all. **Fail closed rather than score a wrong-clock cell.**
 carry a superseding header stating the original conclusion, why "same function,
 same call site" was insufficient, the actual reference-clock semantics, and the
 corrected verdict. Nothing was silently rewritten.
+
+## Addendum (2026-09-02): the `n_live == 0` row in the probe artifact
+
+`rest_semantics_result.json` records the `same-day (DH g1)` circumstance with
+`"same_cell": true`, while `pa_v1_compat.adapt_signals()` DROPS `days_rest`
+entirely when the live value is 0. A red team read that as a
+documented-vs-implemented mismatch. It is not one, and the distinction matters:
+
+* the probe table compares what each **raw clock** produces for one specific
+  instance. In that instance the player also played on D-1, so the historical
+  clock gives 0 and the live clock gives 0 after the clamp — the same cell, by
+  coincidence of that instance.
+* the adapter cannot rely on the coincidence. `days_since_last_game == 0` says
+  only "this player already played today"; it is consistent with a previous
+  game on D-1, D-4 or D-11, which are three different historical cells. The
+  live value is not invertible here, so the adapter fails closed and lets PA-v1
+  fall back to the batting-order marginal rather than inventing a cell.
+
+Both statements are true at once. The probe row is an observation about one
+instance; the adapter's rule is about the whole preimage.

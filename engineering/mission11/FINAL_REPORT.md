@@ -185,7 +185,12 @@ Measured on 270 real live Hits candidates: `lineup_slot` 270/270, decoding to ex
 
 Covers: primary slate dates; missing-primary dates with reasons; epochs failed closed; per-arm selected/decided/hit/miss/void/ungraded; hit rate on the **decided** denominator with void/ungraded on the **selected** denominator; exact per-date volume equality with mismatches listed; overlap, PA-only and champion-only; per-date contribution direction; date-cluster bootstrap CI; lineup/fallback/integrity/odds distributions; version strata; settlement pairing mismatches (excluded from counting); and the promotion floor (30 dates AND 100 decided per arm) reporting **INCONCLUSIVE / NOT YET PROMOTABLE** below threshold, explicitly never a PA-v1 failure.
 
-Secondary game/player clustering is reported as **NOT COMPUTED** rather than silently omitted — see §R.
+~~Secondary game/player clustering is reported as **NOT COMPUTED** rather than silently omitted — see §R.~~
+**SUPERSEDED (Mission 1.2, 2026-09-02).** It is now COMPUTED, per arm, with
+`unpaired_fraction` recording how much of the player-level interval rests on
+clusters feeding only one arm. Pooled over both arms it understated PA-v1's
+own concentration ~3x (13.3 vs 4.0 effective on the locked fixture). It
+remains a secondary diagnostic and is not a promotion criterion.
 
 ---
 
