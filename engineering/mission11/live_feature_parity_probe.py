@@ -44,8 +44,10 @@ def main():
         "backtest", "pa_v1_fitted_artifact.json")))
     joint = artifact["tables"]["joint_pa_table"]
 
-    result = gp._build_and_score()
-    candidates = (result.get("candidates") or []) + (result.get("assumed_lineup") or [])
+    # _build_and_score() returns (candidates, ctx). These are pre-quality-
+    # control candidates, which is exactly right here: parity is about how the
+    # three PA-v1 features are ENCODED and DECODED, not about eligibility.
+    candidates, _ctx = gp._build_and_score()
 
     hits = [c for c in candidates
             if (c.get("projection") or {}).get("stat") == "hits"
