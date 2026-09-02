@@ -268,10 +268,10 @@
       "date": "2026-09-02",
       "evaluations": [
         {
-          "prop": "Over 3.5 Strikeouts",
+          "prop": "Over 5.5 Strikeouts",
           "type": "pitcher",
-          "score": 44.9,
-          "notable_signals": 0,
+          "score": 47.2,
+          "notable_signals": 1,
           "matchup": "Seattle Mariners @ Boston Red Sox",
           "game_pk": 824717,
           "team": "Boston Red Sox",
@@ -280,25 +280,28 @@
           "combo_player_ids": null,
           "signals": {
             "opp_team_k_pct": 63.0,
-            "same_hand_ratio": 100.0,
+            "same_hand_ratio": 61.1111,
             "l14_k_pct": 74.7059,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 88.1301,
+            "ump_k_pct": 0.204,
+            "ump_bb_pct": -0.348
           },
-          "hit_probability": 0.6276,
-          "raw_hit_probability": 0.7685,
-          "lift": -0.0713,
+          "hit_probability": 0.419,
+          "raw_hit_probability": 0.419,
+          "lift": 0.0688,
           "reliability": "B",
           "sample_n": 9,
           "projection": {
             "stat": "strikeouts",
-            "value": 3.5,
-            "needs": 4
+            "value": 5.5,
+            "needs": 6
           }
         },
         {
-          "prop": "Over 14.5 Outs Recorded",
+          "prop": "Over 15.5 Outs Recorded",
           "type": "pitcher",
-          "score": 47.1,
+          "score": 14.4,
           "notable_signals": 0,
           "matchup": "Seattle Mariners @ Boston Red Sox",
           "game_pk": 824717,
@@ -307,18 +310,18 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.701,
+            "outs_rate": 0.4119,
             "avg_outs_per_start": 15.0
           },
-          "hit_probability": 0.701,
+          "hit_probability": 0.4119,
           "raw_hit_probability": null,
-          "lift": -0.0516,
+          "lift": -0.1178,
           "reliability": "B",
           "sample_n": 9,
           "projection": {
             "stat": "pitcher_outs",
-            "value": 14.5,
-            "needs": 15
+            "value": 15.5,
+            "needs": 16
           }
         }
       ]

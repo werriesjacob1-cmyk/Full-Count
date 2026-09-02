@@ -301,7 +301,7 @@
         {
           "prop": "Over 4.5 Strikeouts",
           "type": "pitcher",
-          "score": 48.3,
+          "score": 34.4,
           "notable_signals": 0,
           "matchup": "Toronto Blue Jays @ Cleveland Guardians",
           "game_pk": 824390,
@@ -311,14 +311,14 @@
           "combo_player_ids": null,
           "signals": {
             "opp_team_k_pct": 24.0,
-            "same_hand_ratio": 33.3333,
+            "same_hand_ratio": 5.5556,
             "l14_k_pct": 0.0,
             "tto_penalty": -8.0,
             "env_neutral": 50.0
           },
-          "hit_probability": 0.5963,
-          "raw_hit_probability": 0.612,
-          "lift": 0.0825,
+          "hit_probability": 0.5959,
+          "raw_hit_probability": 0.6101,
+          "lift": 0.0859,
           "reliability": "A",
           "sample_n": 28,
           "projection": {
@@ -328,9 +328,9 @@
           }
         },
         {
-          "prop": "Over 14.5 Outs Recorded",
+          "prop": "Over 15.5 Outs Recorded",
           "type": "pitcher",
-          "score": 52.3,
+          "score": 1.2,
           "notable_signals": 0,
           "matchup": "Toronto Blue Jays @ Cleveland Guardians",
           "game_pk": 824390,
@@ -339,18 +339,18 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.6916,
+            "outs_rate": 0.3582,
             "avg_outs_per_start": 14.61
           },
-          "hit_probability": 0.6916,
+          "hit_probability": 0.3582,
           "raw_hit_probability": null,
-          "lift": -0.061,
+          "lift": -0.1715,
           "reliability": "A",
           "sample_n": 28,
           "projection": {
             "stat": "pitcher_outs",
-            "value": 14.5,
-            "needs": 15
+            "value": 15.5,
+            "needs": 16
           }
         }
       ]

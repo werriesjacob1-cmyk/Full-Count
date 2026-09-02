@@ -852,6 +852,61 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-02",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 66.9,
+          "notable_signals": 2,
+          "matchup": "Atlanta Braves @ Washington Nationals",
+          "game_pk": 822686,
+          "team": "Washington Nationals",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 32.5714,
+            "pitch_exploit": 17.7143,
+            "l7_avg_ev": 52.1094,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 12.075,
+            "park_hr_index": 59.8,
+            "season_barrel_pct": 54.0,
+            "lineup_slot": 87.5,
+            "bullpen_fatigue": 20.8333,
+            "platoon_barrel_pct": 1.6,
+            "platoon_xwoba": 0.54,
+            "park_hand_index": 2.79,
+            "opp_catcher_framing": 0.12,
+            "days_rest": -2.0,
+            "woba_ahead": 95.4545,
+            "woba_behind": 1.8182,
+            "pull_park_synergy": 1.6991,
+            "team_total_move": 6.0,
+            "team_total_open": 0.0,
+            "getaway_day": -2.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": -2.472,
+            "vs_rp_ops": -2.976,
+            "ump_k_pct": -0.096,
+            "ump_bb_pct": -0.204
+          },
+          "hit_probability": 0.6517,
+          "raw_hit_probability": 0.6401,
+          "lift": -0.0216,
+          "reliability": "C",
+          "sample_n": 29,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

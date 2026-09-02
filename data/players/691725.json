@@ -322,7 +322,7 @@
         {
           "prop": "Over 3.5 Strikeouts",
           "type": "pitcher",
-          "score": 41.1,
+          "score": 41.5,
           "notable_signals": 0,
           "matchup": "Philadelphia Phillies @ Arizona Diamondbacks",
           "game_pk": 825037,
@@ -334,11 +334,14 @@
             "opp_team_k_pct": 22.0,
             "same_hand_ratio": 100.0,
             "l14_k_pct": 80.0,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 53.4727,
+            "ump_k_pct": -0.24,
+            "ump_bb_pct": 0.012
           },
           "hit_probability": 0.6262,
-          "raw_hit_probability": 0.7613,
-          "lift": -0.0727,
+          "raw_hit_probability": 0.7614,
+          "lift": -0.0729,
           "reliability": "A",
           "sample_n": 18,
           "projection": {
@@ -348,9 +351,9 @@
           }
         },
         {
-          "prop": "Over 14.5 Outs Recorded",
+          "prop": "Over 15.5 Outs Recorded",
           "type": "pitcher",
-          "score": 40.9,
+          "score": 28.1,
           "notable_signals": 0,
           "matchup": "Philadelphia Phillies @ Arizona Diamondbacks",
           "game_pk": 825037,
@@ -359,18 +362,18 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.6465,
+            "outs_rate": 0.4657,
             "avg_outs_per_start": 14.72
           },
-          "hit_probability": 0.6465,
+          "hit_probability": 0.4657,
           "raw_hit_probability": null,
-          "lift": -0.1061,
+          "lift": -0.064,
           "reliability": "A",
           "sample_n": 18,
           "projection": {
             "stat": "pitcher_outs",
-            "value": 14.5,
-            "needs": 15
+            "value": 15.5,
+            "needs": 16
           }
         }
       ]

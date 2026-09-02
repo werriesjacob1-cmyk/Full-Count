@@ -1,38 +1,632 @@
 {
   "date": "2026-09-02",
-  "checked_at": "2026-09-02T01:23:18.890332",
-  "n_scratched": 0,
-  "n_unknown": 7,
+  "checked_at": "2026-09-02T18:09:38.473265",
+  "n_scratched": 2,
+  "n_unknown": 3,
   "rows": [
     {
       "rank": 1,
-      "name": "San Diego Padres @ Cincinnati Reds \u2014 1st Inning (Both Teams)",
-      "prop": "No runs in the 1st (both teams)",
-      "team": null,
-      "matchup": "San Diego Padres @ Cincinnati Reds",
-      "state": "unknown",
-      "note": "lineup not posted yet \u2014 absence proves nothing"
-    },
-    {
-      "rank": 2,
-      "name": "Miami Marlins @ Kansas City Royals \u2014 1st Inning (Both Teams)",
-      "prop": "No runs in the 1st (both teams)",
-      "team": null,
-      "matchup": "Miami Marlins @ Kansas City Royals",
-      "state": "unknown",
-      "note": "lineup not posted yet \u2014 absence proves nothing"
-    },
-    {
-      "rank": 3,
-      "name": "Patrick Sandoval",
-      "prop": "Over 3.5 Strikeouts",
-      "team": "Boston Red Sox",
+      "name": "Bryce Miller",
+      "prop": "Over 15.5 Outs Recorded",
+      "team": "Seattle Mariners",
       "matchup": "Seattle Mariners @ Boston Red Sox",
       "state": "ok",
       "note": "still the listed starter"
     },
     {
+      "rank": 2,
+      "name": "Jacob Misiorowski",
+      "prop": "Over 17.5 Outs Recorded",
+      "team": "Milwaukee Brewers",
+      "matchup": "Milwaukee Brewers @ Chicago Cubs",
+      "state": "ok",
+      "note": "still the listed starter"
+    },
+    {
+      "rank": 3,
+      "name": "Jordan Lawlar",
+      "prop": "To Steal a Base",
+      "team": "Arizona Diamondbacks",
+      "matchup": "Philadelphia Phillies @ Arizona Diamondbacks",
+      "state": "ok",
+      "note": "in the posted lineup"
+    },
+    {
       "rank": 4,
+      "name": "Bryce Miller & Patrick Sandoval",
+      "prop": "Over 9.5 Combined Strikeouts",
+      "team": null,
+      "matchup": "Seattle Mariners @ Boston Red Sox",
+      "state": "ok",
+      "note": "both starters still listed"
+    },
+    {
+      "rank": 5,
+      "name": "Hunter Goodman",
+      "prop": "Home Run",
+      "team": "Colorado Rockies",
+      "matchup": "Baltimore Orioles @ Colorado Rockies",
+      "state": "ok",
+      "note": "in the posted lineup"
+    },
+    {
+      "rank": 6,
+      "name": "Kyle Schwarber",
+      "prop": "Home Run",
+      "team": "Philadelphia Phillies",
+      "matchup": "Philadelphia Phillies @ Arizona Diamondbacks",
+      "state": "ok",
+      "note": "in the posted lineup"
+    },
+    {
+      "rank": 7,
+      "name": "Matt Olson",
+      "prop": "Home Run",
+      "team": "Atlanta Braves",
+      "matchup": "Atlanta Braves @ Washington Nationals",
+      "state": "ok",
+      "note": "in the posted lineup"
+    },
+    {
+      "rank": 8,
+      "name": "James Wood",
+      "prop": "Home Run",
+      "team": "Washington Nationals",
+      "matchup": "Atlanta Braves @ Washington Nationals",
+      "state": "ok",
+      "note": "in the posted lineup"
+    },
+    {
+      "rank": 9,
+      "name": "Pete Alonso",
+      "prop": "Home Run",
+      "team": "Baltimore Orioles",
+      "matchup": "Baltimore Orioles @ Colorado Rockies",
+      "state": "ok",
+      "note": "in the posted lineup"
+    },
+    {
+      "rank": 10,
+      "name": "Hunter Goodman",
+      "prop": "To Hit a Moonshot (420+ FT)",
+      "team": "Colorado Rockies",
+      "matchup": "Baltimore Orioles @ Colorado Rockies",
+      "state": "ok",
+      "note": "in the posted lineup"
+    },
+    {
+      "rank": 11,
+      "name": "Lars Nootbaar",
+      "prop": "To Hit a Moonshot (420+ FT)",
+      "team": "Arizona Diamondbacks",
+      "matchup": "Philadelphia Phillies @ Arizona Diamondbacks",
+      "state": "ok",
+      "note": "in the posted lineup"
+    },
+    {
+      "rank": 12,
+      "name": "Matt Olson",
+      "prop": "To Hit a Moonshot (420+ FT)",
+      "team": "Atlanta Braves",
+      "matchup": "Atlanta Braves @ Washington Nationals",
+      "state": "ok",
+      "note": "in the posted lineup"
+    },
+    {
+      "rank": 13,
+      "name": "Coby Mayo",
+      "prop": "To Hit a Moonshot (420+ FT)",
+      "team": "Baltimore Orioles",
+      "matchup": "Baltimore Orioles @ Colorado Rockies",
+      "state": "ok",
+      "note": "in the posted lineup"
+    },
+    {
+      "rank": 14,
+      "name": "James Wood",
+      "prop": "To Hit a Moonshot (420+ FT)",
+      "team": "Washington Nationals",
+      "matchup": "Atlanta Braves @ Washington Nationals",
+      "state": "ok",
+      "note": "in the posted lineup"
+    },
+    {
+      "rank": 15,
+      "name": "Luis Arraez",
+      "prop": "Over 0.5 Hits+Runs+RBIs",
+      "team": "Philadelphia Phillies",
+      "matchup": "Philadelphia Phillies @ Arizona Diamondbacks",
+      "state": "ok",
+      "note": "in the posted lineup"
+    },
+    {
+      "rank": 16,
+      "name": "Jake McCarthy",
+      "prop": "Over 0.5 Hits+Runs+RBIs",
+      "team": "Colorado Rockies",
+      "matchup": "Baltimore Orioles @ Colorado Rockies",
+      "state": "ok",
+      "note": "in the posted lineup"
+    },
+    {
+      "rank": 17,
+      "name": "Ceddanne Rafaela",
+      "prop": "Over 0.5 Hits+Runs+RBIs",
+      "team": "Boston Red Sox",
+      "matchup": "Seattle Mariners @ Boston Red Sox",
+      "state": "ok",
+      "note": "in the posted lineup"
+    },
+    {
+      "rank": 18,
+      "name": "Matt Olson",
+      "prop": "Over 0.5 Hits+Runs+RBIs",
+      "team": "Atlanta Braves",
+      "matchup": "Atlanta Braves @ Washington Nationals",
+      "state": "ok",
+      "note": "in the posted lineup"
+    },
+    {
+      "rank": 19,
+      "name": "Zack Gelof",
+      "prop": "Over 0.5 Hits+Runs+RBIs",
+      "team": "Athletics",
+      "matchup": "Athletics @ Texas Rangers",
+      "state": "ok",
+      "note": "in the posted lineup"
+    },
+    {
+      "rank": 20,
+      "name": "Jake McCarthy",
+      "prop": "Over 1.5 Total Bases",
+      "team": "Colorado Rockies",
+      "matchup": "Baltimore Orioles @ Colorado Rockies",
+      "state": "ok",
+      "note": "in the posted lineup"
+    },
+    {
+      "rank": 21,
+      "name": "Michael Harris II",
+      "prop": "Over 1.5 Total Bases",
+      "team": "Atlanta Braves",
+      "matchup": "Atlanta Braves @ Washington Nationals",
+      "state": "ok",
+      "note": "in the posted lineup"
+    },
+    {
+      "rank": 22,
+      "name": "Matt Olson",
+      "prop": "Over 1.5 Total Bases",
+      "team": "Atlanta Braves",
+      "matchup": "Atlanta Braves @ Washington Nationals",
+      "state": "ok",
+      "note": "in the posted lineup"
+    },
+    {
+      "rank": 23,
+      "name": "Ceddanne Rafaela",
+      "prop": "Over 1.5 Total Bases",
+      "team": "Boston Red Sox",
+      "matchup": "Seattle Mariners @ Boston Red Sox",
+      "state": "ok",
+      "note": "in the posted lineup"
+    },
+    {
+      "rank": 24,
+      "name": "Hunter Goodman",
+      "prop": "Over 1.5 Total Bases",
+      "team": "Colorado Rockies",
+      "matchup": "Baltimore Orioles @ Colorado Rockies",
+      "state": "ok",
+      "note": "in the posted lineup"
+    },
+    {
+      "rank": 25,
+      "name": "Luis Arraez",
+      "prop": "Over 0.5 Hits",
+      "team": "Philadelphia Phillies",
+      "matchup": "Philadelphia Phillies @ Arizona Diamondbacks",
+      "state": "ok",
+      "note": "in the posted lineup"
+    },
+    {
+      "rank": 26,
+      "name": "Jake McCarthy",
+      "prop": "Over 0.5 Hits",
+      "team": "Colorado Rockies",
+      "matchup": "Baltimore Orioles @ Colorado Rockies",
+      "state": "ok",
+      "note": "in the posted lineup"
+    },
+    {
+      "rank": 27,
+      "name": "Michael Harris II",
+      "prop": "Over 0.5 Hits",
+      "team": "Atlanta Braves",
+      "matchup": "Atlanta Braves @ Washington Nationals",
+      "state": "ok",
+      "note": "in the posted lineup"
+    },
+    {
+      "rank": 28,
+      "name": "Ceddanne Rafaela",
+      "prop": "Over 0.5 Hits",
+      "team": "Boston Red Sox",
+      "matchup": "Seattle Mariners @ Boston Red Sox",
+      "state": "ok",
+      "note": "in the posted lineup"
+    },
+    {
+      "rank": 29,
+      "name": "Drake Baldwin",
+      "prop": "Over 0.5 Hits",
+      "team": "Atlanta Braves",
+      "matchup": "Atlanta Braves @ Washington Nationals",
+      "state": "ok",
+      "note": "in the posted lineup"
+    },
+    {
+      "rank": 30,
+      "name": "Luis Arraez",
+      "prop": "Over 0.5 Singles",
+      "team": "Philadelphia Phillies",
+      "matchup": "Philadelphia Phillies @ Arizona Diamondbacks",
+      "state": "ok",
+      "note": "in the posted lineup"
+    },
+    {
+      "rank": 31,
+      "name": "Jhonny Pereda",
+      "prop": "Over 0.5 Singles",
+      "team": "Seattle Mariners",
+      "matchup": "Seattle Mariners @ Boston Red Sox",
+      "state": "ok",
+      "note": "in the posted lineup"
+    },
+    {
+      "rank": 32,
+      "name": "Cody Freeman",
+      "prop": "Over 0.5 Singles",
+      "team": "Texas Rangers",
+      "matchup": "Athletics @ Texas Rangers",
+      "state": "ok",
+      "note": "in the posted lineup"
+    },
+    {
+      "rank": 33,
+      "name": "Henry Bolte",
+      "prop": "Over 0.5 Singles",
+      "team": "Athletics",
+      "matchup": "Athletics @ Texas Rangers",
+      "state": "ok",
+      "note": "in the posted lineup"
+    },
+    {
+      "rank": 34,
+      "name": "Blaze Alexander",
+      "prop": "Over 0.5 Singles",
+      "team": "Baltimore Orioles",
+      "matchup": "Baltimore Orioles @ Colorado Rockies",
+      "state": "ok",
+      "note": "in the posted lineup"
+    },
+    {
+      "rank": 35,
+      "name": "Gabriel Moreno",
+      "prop": "Over 0.5 RBIs",
+      "team": "Arizona Diamondbacks",
+      "matchup": "Philadelphia Phillies @ Arizona Diamondbacks",
+      "state": "ok",
+      "note": "in the posted lineup"
+    },
+    {
+      "rank": 36,
+      "name": "CJ Abrams",
+      "prop": "Over 0.5 RBIs",
+      "team": "Washington Nationals",
+      "matchup": "Atlanta Braves @ Washington Nationals",
+      "state": "ok",
+      "note": "in the posted lineup"
+    },
+    {
+      "rank": 37,
+      "name": "Pete Alonso",
+      "prop": "Over 0.5 RBIs",
+      "team": "Baltimore Orioles",
+      "matchup": "Baltimore Orioles @ Colorado Rockies",
+      "state": "ok",
+      "note": "in the posted lineup"
+    },
+    {
+      "rank": 38,
+      "name": "Drake Baldwin",
+      "prop": "Over 0.5 RBIs",
+      "team": "Atlanta Braves",
+      "matchup": "Atlanta Braves @ Washington Nationals",
+      "state": "ok",
+      "note": "in the posted lineup"
+    },
+    {
+      "rank": 39,
+      "name": "James Wood",
+      "prop": "Over 0.5 RBIs",
+      "team": "Washington Nationals",
+      "matchup": "Atlanta Braves @ Washington Nationals",
+      "state": "ok",
+      "note": "in the posted lineup"
+    },
+    {
+      "rank": 40,
+      "name": "James Wood",
+      "prop": "Over 0.5 Runs",
+      "team": "Washington Nationals",
+      "matchup": "Atlanta Braves @ Washington Nationals",
+      "state": "ok",
+      "note": "in the posted lineup"
+    },
+    {
+      "rank": 41,
+      "name": "Drake Baldwin",
+      "prop": "Over 0.5 Runs",
+      "team": "Atlanta Braves",
+      "matchup": "Atlanta Braves @ Washington Nationals",
+      "state": "ok",
+      "note": "in the posted lineup"
+    },
+    {
+      "rank": 42,
+      "name": "CJ Abrams",
+      "prop": "Over 0.5 Runs",
+      "team": "Washington Nationals",
+      "matchup": "Atlanta Braves @ Washington Nationals",
+      "state": "ok",
+      "note": "in the posted lineup"
+    },
+    {
+      "rank": 43,
+      "name": "Matt Olson",
+      "prop": "Over 0.5 Runs",
+      "team": "Atlanta Braves",
+      "matchup": "Atlanta Braves @ Washington Nationals",
+      "state": "ok",
+      "note": "in the posted lineup"
+    },
+    {
+      "rank": 44,
+      "name": "Bryce Harper",
+      "prop": "Over 0.5 Runs",
+      "team": "Philadelphia Phillies",
+      "matchup": "Philadelphia Phillies @ Arizona Diamondbacks",
+      "state": "ok",
+      "note": "in the posted lineup"
+    },
+    {
+      "rank": 45,
+      "name": "Corbin Carroll",
+      "prop": "Over 0.5 Triples",
+      "team": "Arizona Diamondbacks",
+      "matchup": "Philadelphia Phillies @ Arizona Diamondbacks",
+      "state": "ok",
+      "note": "in the posted lineup"
+    },
+    {
+      "rank": 46,
+      "name": "Jake McCarthy",
+      "prop": "Over 0.5 Triples",
+      "team": "Colorado Rockies",
+      "matchup": "Baltimore Orioles @ Colorado Rockies",
+      "state": "ok",
+      "note": "in the posted lineup"
+    },
+    {
+      "rank": 47,
+      "name": "Luis Arraez",
+      "prop": "Over 0.5 Triples",
+      "team": "Philadelphia Phillies",
+      "matchup": "Philadelphia Phillies @ Arizona Diamondbacks",
+      "state": "ok",
+      "note": "in the posted lineup"
+    },
+    {
+      "rank": 48,
+      "name": "Bryson Stott",
+      "prop": "Over 0.5 Triples",
+      "team": "Philadelphia Phillies",
+      "matchup": "Philadelphia Phillies @ Arizona Diamondbacks",
+      "state": "ok",
+      "note": "in the posted lineup"
+    },
+    {
+      "rank": 49,
+      "name": "Daylen Lile",
+      "prop": "Over 0.5 Triples",
+      "team": "Washington Nationals",
+      "matchup": "Atlanta Braves @ Washington Nationals",
+      "state": "ok",
+      "note": "in the posted lineup"
+    },
+    {
+      "rank": 50,
+      "name": "Gabriel Moreno",
+      "prop": "Over 0.5 Doubles",
+      "team": "Arizona Diamondbacks",
+      "matchup": "Philadelphia Phillies @ Arizona Diamondbacks",
+      "state": "ok",
+      "note": "in the posted lineup"
+    },
+    {
+      "rank": 51,
+      "name": "Matt Olson",
+      "prop": "Over 0.5 Doubles",
+      "team": "Atlanta Braves",
+      "matchup": "Atlanta Braves @ Washington Nationals",
+      "state": "ok",
+      "note": "in the posted lineup"
+    },
+    {
+      "rank": 52,
+      "name": "Jake McCarthy",
+      "prop": "Over 0.5 Doubles",
+      "team": "Colorado Rockies",
+      "matchup": "Baltimore Orioles @ Colorado Rockies",
+      "state": "ok",
+      "note": "in the posted lineup"
+    },
+    {
+      "rank": 53,
+      "name": "Ceddanne Rafaela",
+      "prop": "Over 0.5 Doubles",
+      "team": "Boston Red Sox",
+      "matchup": "Seattle Mariners @ Boston Red Sox",
+      "state": "ok",
+      "note": "in the posted lineup"
+    },
+    {
+      "rank": 54,
+      "name": "Michael Harris II",
+      "prop": "Over 0.5 Doubles",
+      "team": "Atlanta Braves",
+      "matchup": "Atlanta Braves @ Washington Nationals",
+      "state": "ok",
+      "note": "in the posted lineup"
+    },
+    {
+      "rank": 55,
+      "name": "Brian Serven",
+      "prop": "Over 0.5 Home Runs",
+      "team": "Athletics",
+      "matchup": "Athletics @ Texas Rangers",
+      "state": "ok",
+      "note": "in the posted lineup"
+    },
+    {
+      "rank": 56,
+      "name": "Hunter Goodman",
+      "prop": "Over 0.5 Home Runs",
+      "team": "Colorado Rockies",
+      "matchup": "Baltimore Orioles @ Colorado Rockies",
+      "state": "ok",
+      "note": "in the posted lineup"
+    },
+    {
+      "rank": 57,
+      "name": "Kyle Schwarber",
+      "prop": "Over 0.5 Home Runs",
+      "team": "Philadelphia Phillies",
+      "matchup": "Philadelphia Phillies @ Arizona Diamondbacks",
+      "state": "ok",
+      "note": "in the posted lineup"
+    },
+    {
+      "rank": 58,
+      "name": "Matt Olson",
+      "prop": "Over 0.5 Home Runs",
+      "team": "Atlanta Braves",
+      "matchup": "Atlanta Braves @ Washington Nationals",
+      "state": "ok",
+      "note": "in the posted lineup"
+    },
+    {
+      "rank": 59,
+      "name": "James Wood",
+      "prop": "Over 0.5 Home Runs",
+      "team": "Washington Nationals",
+      "matchup": "Atlanta Braves @ Washington Nationals",
+      "state": "ok",
+      "note": "in the posted lineup"
+    },
+    {
+      "rank": 60,
+      "name": "James Wood",
+      "prop": "To Hit a Laser (105+ MPH)",
+      "team": "Washington Nationals",
+      "matchup": "Atlanta Braves @ Washington Nationals",
+      "state": "ok",
+      "note": "in the posted lineup"
+    },
+    {
+      "rank": 61,
+      "name": "Matt Olson",
+      "prop": "To Hit a Laser (105+ MPH)",
+      "team": "Atlanta Braves",
+      "matchup": "Atlanta Braves @ Washington Nationals",
+      "state": "ok",
+      "note": "in the posted lineup"
+    },
+    {
+      "rank": 62,
+      "name": "Kyle Schwarber",
+      "prop": "To Hit a Laser (105+ MPH)",
+      "team": "Philadelphia Phillies",
+      "matchup": "Philadelphia Phillies @ Arizona Diamondbacks",
+      "state": "ok",
+      "note": "in the posted lineup"
+    },
+    {
+      "rank": 63,
+      "name": "Hunter Goodman",
+      "prop": "To Hit a Laser (105+ MPH)",
+      "team": "Colorado Rockies",
+      "matchup": "Baltimore Orioles @ Colorado Rockies",
+      "state": "ok",
+      "note": "in the posted lineup"
+    },
+    {
+      "rank": 64,
+      "name": "Pete Alonso",
+      "prop": "To Hit a Laser (105+ MPH)",
+      "team": "Baltimore Orioles",
+      "matchup": "Baltimore Orioles @ Colorado Rockies",
+      "state": "ok",
+      "note": "in the posted lineup"
+    },
+    {
+      "rank": 65,
+      "name": "Nasim Nu\u00f1ez",
+      "prop": "To Steal a Base",
+      "team": "Washington Nationals",
+      "matchup": "Atlanta Braves @ Washington Nationals",
+      "state": "ok",
+      "note": "in the posted lineup"
+    },
+    {
+      "rank": 66,
+      "name": "Jake McCarthy",
+      "prop": "To Steal a Base",
+      "team": "Colorado Rockies",
+      "matchup": "Baltimore Orioles @ Colorado Rockies",
+      "state": "ok",
+      "note": "in the posted lineup"
+    },
+    {
+      "rank": 67,
+      "name": "CJ Abrams",
+      "prop": "To Steal a Base",
+      "team": "Washington Nationals",
+      "matchup": "Atlanta Braves @ Washington Nationals",
+      "state": "ok",
+      "note": "in the posted lineup"
+    },
+    {
+      "rank": 68,
+      "name": "Bryson Stott",
+      "prop": "To Steal a Base",
+      "team": "Philadelphia Phillies",
+      "matchup": "Philadelphia Phillies @ Arizona Diamondbacks",
+      "state": "ok",
+      "note": "in the posted lineup"
+    },
+    {
+      "rank": 69,
+      "name": "Jordan Lawlar",
+      "prop": "To Steal a Base",
+      "team": "Arizona Diamondbacks",
+      "matchup": "Philadelphia Phillies @ Arizona Diamondbacks",
+      "state": "ok",
+      "note": "in the posted lineup"
+    },
+    {
+      "rank": 70,
       "name": "Andrew Painter",
       "prop": "Over 3.5 Strikeouts",
       "team": "Philadelphia Phillies",
@@ -41,7 +635,7 @@
       "note": "still the listed starter"
     },
     {
-      "rank": 5,
+      "rank": 71,
       "name": "Justin Hagenman",
       "prop": "Over 3.5 Strikeouts",
       "team": "New York Mets",
@@ -50,34 +644,34 @@
       "note": "still the listed starter"
     },
     {
-      "rank": 6,
-      "name": "Bryce Miller",
-      "prop": "Over 3.5 Strikeouts",
-      "team": "Seattle Mariners",
-      "matchup": "Seattle Mariners @ Boston Red Sox",
+      "rank": 72,
+      "name": "Griffin Jax",
+      "prop": "Over 4.5 Strikeouts",
+      "team": "Tampa Bay Rays",
+      "matchup": "New York Mets @ Tampa Bay Rays",
       "state": "ok",
       "note": "still the listed starter"
     },
     {
-      "rank": 7,
-      "name": "Hayden Wesneski",
+      "rank": 73,
+      "name": "Davis Martin",
       "prop": "Over 3.5 Strikeouts",
-      "team": "Houston Astros",
+      "team": "Chicago White Sox",
       "matchup": "Chicago White Sox @ Houston Astros",
       "state": "ok",
       "note": "still the listed starter"
     },
     {
-      "rank": 8,
-      "name": "David Peterson",
-      "prop": "Over 14.5 Outs Recorded",
-      "team": "Chicago Cubs",
-      "matchup": "Milwaukee Brewers @ Chicago Cubs",
+      "rank": 74,
+      "name": "Taylor Clarke",
+      "prop": "Over 4.5 Strikeouts",
+      "team": "Arizona Diamondbacks",
+      "matchup": "Philadelphia Phillies @ Arizona Diamondbacks",
       "state": "ok",
       "note": "still the listed starter"
     },
     {
-      "rank": 9,
+      "rank": 75,
       "name": "Griffin Jax",
       "prop": "Over 13.5 Outs Recorded",
       "team": "Tampa Bay Rays",
@@ -86,52 +680,70 @@
       "note": "still the listed starter"
     },
     {
-      "rank": 10,
-      "name": "Jacob Lopez",
-      "prop": "Over 13.5 Outs Recorded",
-      "team": "Athletics",
-      "matchup": "Athletics @ Texas Rangers",
-      "state": "ok",
-      "note": "still the listed starter"
-    },
-    {
-      "rank": 11,
-      "name": "Patrick Sandoval",
+      "rank": 76,
+      "name": "Bubba Chandler",
       "prop": "Over 14.5 Outs Recorded",
-      "team": "Boston Red Sox",
-      "matchup": "Seattle Mariners @ Boston Red Sox",
+      "team": "Pittsburgh Pirates",
+      "matchup": "San Francisco Giants @ Pittsburgh Pirates",
       "state": "ok",
       "note": "still the listed starter"
     },
     {
-      "rank": 12,
-      "name": "Drew Anderson",
-      "prop": "Over 12.5 Outs Recorded",
-      "team": "Detroit Tigers",
-      "matchup": "Detroit Tigers @ Minnesota Twins",
+      "rank": 77,
+      "name": "Grant Holmes",
+      "prop": "Over 14.5 Outs Recorded",
+      "team": "Atlanta Braves",
+      "matchup": "Atlanta Braves @ Washington Nationals",
       "state": "ok",
       "note": "still the listed starter"
     },
     {
-      "rank": 13,
-      "name": "Gerrit Cole & Grayson Rodriguez",
-      "prop": "Over 12.5 Combined Strikeouts",
+      "rank": 78,
+      "name": "Jacob Misiorowski",
+      "prop": "Over 17.5 Outs Recorded",
+      "team": "Milwaukee Brewers",
+      "matchup": "Milwaukee Brewers @ Chicago Cubs",
+      "state": "ok",
+      "note": "still the listed starter"
+    },
+    {
+      "rank": 79,
+      "name": "Davis Martin",
+      "prop": "Over 15.5 Outs Recorded",
+      "team": "Chicago White Sox",
+      "matchup": "Chicago White Sox @ Houston Astros",
+      "state": "ok",
+      "note": "still the listed starter"
+    },
+    {
+      "rank": 80,
+      "name": "Bryce Miller & Patrick Sandoval",
+      "prop": "Over 9.5 Combined Strikeouts",
       "team": null,
-      "matchup": "New York Yankees @ Los Angeles Angels",
+      "matchup": "Seattle Mariners @ Boston Red Sox",
       "state": "ok",
       "note": "both starters still listed"
     },
     {
-      "rank": 14,
-      "name": "San Diego Padres @ Cincinnati Reds \u2014 1st Inning (Both Teams)",
-      "prop": "No runs in the 1st (both teams)",
+      "rank": 81,
+      "name": "Trevor Rogers & Tomoyuki Sugano",
+      "prop": "Over 8.5 Combined Strikeouts",
       "team": null,
-      "matchup": "San Diego Padres @ Cincinnati Reds",
-      "state": "unknown",
-      "note": "lineup not posted yet \u2014 absence proves nothing"
+      "matchup": "Baltimore Orioles @ Colorado Rockies",
+      "state": "ok",
+      "note": "both starters still listed"
     },
     {
-      "rank": 15,
+      "rank": 82,
+      "name": "Jacob Lopez & Cody Bradford",
+      "prop": "Over 9.5 Combined Strikeouts",
+      "team": null,
+      "matchup": "Athletics @ Texas Rangers",
+      "state": "ok",
+      "note": "both starters still listed"
+    },
+    {
+      "rank": 83,
       "name": "New York Yankees @ Los Angeles Angels \u2014 1st Inning (Both Teams)",
       "prop": "No runs in the 1st (both teams)",
       "team": null,
@@ -140,7 +752,7 @@
       "note": "lineup not posted yet \u2014 absence proves nothing"
     },
     {
-      "rank": 16,
+      "rank": 84,
       "name": "Miami Marlins @ Kansas City Royals \u2014 1st Inning (Both Teams)",
       "prop": "No runs in the 1st (both teams)",
       "team": null,
@@ -149,7 +761,16 @@
       "note": "lineup not posted yet \u2014 absence proves nothing"
     },
     {
-      "rank": 17,
+      "rank": 85,
+      "name": "Atlanta Braves @ Washington Nationals \u2014 1st Inning (Both Teams)",
+      "prop": "No runs in the 1st (both teams)",
+      "team": null,
+      "matchup": "Atlanta Braves @ Washington Nationals",
+      "state": "scratched",
+      "note": "lineup is posted and complete, and he is not in it"
+    },
+    {
+      "rank": 86,
       "name": "San Francisco Giants @ Pittsburgh Pirates \u2014 1st Inning (Both Teams)",
       "prop": "No runs in the 1st (both teams)",
       "team": null,
@@ -158,13 +779,13 @@
       "note": "lineup not posted yet \u2014 absence proves nothing"
     },
     {
-      "rank": 18,
+      "rank": 87,
       "name": "Athletics @ Texas Rangers \u2014 1st Inning (Both Teams)",
       "prop": "No runs in the 1st (both teams)",
       "team": null,
       "matchup": "Athletics @ Texas Rangers",
-      "state": "unknown",
-      "note": "lineup not posted yet \u2014 absence proves nothing"
+      "state": "scratched",
+      "note": "lineup is posted and complete, and he is not in it"
     }
   ]
 }

@@ -239,10 +239,10 @@
       "date": "2026-09-02",
       "evaluations": [
         {
-          "prop": "Over 3.5 Strikeouts",
+          "prop": "Over 4.5 Strikeouts",
           "type": "pitcher",
-          "score": 47.9,
-          "notable_signals": 0,
+          "score": 49.9,
+          "notable_signals": 1,
           "matchup": "Seattle Mariners @ Boston Red Sox",
           "game_pk": 824717,
           "team": "Seattle Mariners",
@@ -253,24 +253,27 @@
             "opp_team_k_pct": 43.0,
             "same_hand_ratio": 92.8571,
             "l14_k_pct": 45.2941,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 88.1301,
+            "ump_k_pct": 0.204,
+            "ump_bb_pct": -0.348
           },
-          "hit_probability": 0.617,
-          "raw_hit_probability": 0.7146,
-          "lift": -0.0819,
+          "hit_probability": 0.5208,
+          "raw_hit_probability": 0.5208,
+          "lift": 0.0108,
           "reliability": "A",
           "sample_n": 16,
           "projection": {
             "stat": "strikeouts",
-            "value": 3.5,
-            "needs": 4
+            "value": 4.5,
+            "needs": 5
           }
         },
         {
-          "prop": "Over 16.5 Outs Recorded",
+          "prop": "Over 15.5 Outs Recorded",
           "type": "pitcher",
-          "score": 33.0,
-          "notable_signals": 0,
+          "score": 60.3,
+          "notable_signals": 1,
           "matchup": "Seattle Mariners @ Boston Red Sox",
           "game_pk": 824717,
           "team": "Seattle Mariners",
@@ -278,18 +281,46 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.4428,
+            "outs_rate": 0.599,
             "avg_outs_per_start": 16.69
           },
-          "hit_probability": 0.4428,
+          "hit_probability": 0.599,
           "raw_hit_probability": null,
-          "lift": -0.0142,
+          "lift": 0.0693,
           "reliability": "A",
           "sample_n": 16,
           "projection": {
             "stat": "pitcher_outs",
-            "value": 16.5,
-            "needs": 17
+            "value": 15.5,
+            "needs": 16
+          }
+        },
+        {
+          "prop": "Over 9.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 55.0,
+          "notable_signals": 0,
+          "matchup": "Seattle Mariners @ Boston Red Sox",
+          "game_pk": 824717,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            682243,
+            663776
+          ],
+          "signals": {
+            "combined_k_edge": 0.0288
+          },
+          "hit_probability": 0.594,
+          "raw_hit_probability": null,
+          "lift": 0.0288,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 9.5,
+            "needs": 10
           }
         }
       ]

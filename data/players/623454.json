@@ -267,7 +267,7 @@
         {
           "prop": "Over 4.5 Strikeouts",
           "type": "pitcher",
-          "score": 48.9,
+          "score": 48.8,
           "notable_signals": 0,
           "matchup": "Detroit Tigers @ Minnesota Twins",
           "game_pk": 823660,
@@ -276,14 +276,14 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "opp_team_k_pct": 40.0,
+            "opp_team_k_pct": 39.0,
             "same_hand_ratio": 92.8571,
             "l14_k_pct": 37.6471,
             "env_neutral": 50.0
           },
-          "hit_probability": 0.5171,
-          "raw_hit_probability": 0.5171,
-          "lift": 0.0033,
+          "hit_probability": 0.5152,
+          "raw_hit_probability": 0.5152,
+          "lift": 0.0052,
           "reliability": "C",
           "sample_n": 7,
           "projection": {
@@ -293,9 +293,9 @@
           }
         },
         {
-          "prop": "Over 12.5 Outs Recorded",
+          "prop": "Over 14.5 Outs Recorded",
           "type": "pitcher",
-          "score": 41.3,
+          "score": 4.5,
           "notable_signals": 0,
           "matchup": "Detroit Tigers @ Minnesota Twins",
           "game_pk": 823660,
@@ -304,18 +304,18 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.6947,
+            "outs_rate": 0.505,
             "avg_outs_per_start": 12.71
           },
-          "hit_probability": 0.6947,
+          "hit_probability": 0.505,
           "raw_hit_probability": null,
-          "lift": -0.1439,
+          "lift": -0.2557,
           "reliability": "C",
           "sample_n": 7,
           "projection": {
             "stat": "pitcher_outs",
-            "value": 12.5,
-            "needs": 13
+            "value": 14.5,
+            "needs": 15
           }
         }
       ]

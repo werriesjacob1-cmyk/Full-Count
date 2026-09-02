@@ -249,7 +249,7 @@
       "date": "2026-09-02",
       "evaluations": [
         {
-          "prop": "Over 4.5 Strikeouts",
+          "prop": "Over 6.5 Strikeouts",
           "type": "pitcher",
           "score": 39.0,
           "notable_signals": 1,
@@ -266,21 +266,21 @@
             "tto_penalty": 8.0,
             "env_neutral": 50.0
           },
-          "hit_probability": 0.6077,
-          "raw_hit_probability": 0.6681,
-          "lift": 0.0939,
+          "hit_probability": 0.3501,
+          "raw_hit_probability": 0.3501,
+          "lift": 0.141,
           "reliability": "A",
           "sample_n": 24,
           "projection": {
             "stat": "strikeouts",
-            "value": 4.5,
-            "needs": 5
+            "value": 6.5,
+            "needs": 7
           }
         },
         {
           "prop": "Over 19.5 Outs Recorded",
           "type": "pitcher",
-          "score": 49.4,
+          "score": 49.1,
           "notable_signals": 1,
           "matchup": "St. Louis Cardinals @ Los Angeles Dodgers",
           "game_pk": 823906,
@@ -289,12 +289,12 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.3294,
+            "outs_rate": 0.3278,
             "avg_outs_per_start": 19.75
           },
-          "hit_probability": 0.3294,
+          "hit_probability": 0.3278,
           "raw_hit_probability": null,
-          "lift": 0.1826,
+          "lift": 0.1887,
           "reliability": "A",
           "sample_n": 24,
           "projection": {

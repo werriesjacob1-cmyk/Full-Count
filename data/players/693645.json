@@ -267,9 +267,9 @@
             "l14_k_pct": 55.8824,
             "env_neutral": 50.0
           },
-          "hit_probability": 0.3135,
-          "raw_hit_probability": 0.3135,
-          "lift": 0.185,
+          "hit_probability": 0.3119,
+          "raw_hit_probability": 0.3119,
+          "lift": 0.1867,
           "reliability": "A",
           "sample_n": 28,
           "projection": {
@@ -281,7 +281,7 @@
         {
           "prop": "Over 17.5 Outs Recorded",
           "type": "pitcher",
-          "score": 66.6,
+          "score": 66.1,
           "notable_signals": 1,
           "matchup": "New York Yankees @ Los Angeles Angels",
           "game_pk": 823983,
@@ -290,46 +290,18 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.5398,
+            "outs_rate": 0.5388,
             "avg_outs_per_start": 17.54
           },
-          "hit_probability": 0.5398,
+          "hit_probability": 0.5388,
           "raw_hit_probability": null,
-          "lift": 0.1478,
+          "lift": 0.1523,
           "reliability": "A",
           "sample_n": 28,
           "projection": {
             "stat": "pitcher_outs",
             "value": 17.5,
             "needs": 18
-          }
-        },
-        {
-          "prop": "Over 12.5 Combined Strikeouts",
-          "type": "pitcher_combo",
-          "score": 54.9,
-          "notable_signals": 1,
-          "matchup": "New York Yankees @ Los Angeles Angels",
-          "game_pk": 823983,
-          "team": null,
-          "side": null,
-          "lean": null,
-          "combo_player_ids": [
-            693645,
-            672282
-          ],
-          "signals": {
-            "combined_k_edge": 0.2067
-          },
-          "hit_probability": 0.6613,
-          "raw_hit_probability": null,
-          "lift": 0.2067,
-          "reliability": "D",
-          "sample_n": 0,
-          "projection": {
-            "stat": "combined_strikeouts",
-            "value": 12.5,
-            "needs": 13
           }
         }
       ]

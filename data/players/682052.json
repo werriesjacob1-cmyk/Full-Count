@@ -301,9 +301,9 @@
       "date": "2026-09-02",
       "evaluations": [
         {
-          "prop": "Over 4.5 Strikeouts",
+          "prop": "Over 5.5 Strikeouts",
           "type": "pitcher",
-          "score": 39.1,
+          "score": 39.0,
           "notable_signals": 0,
           "matchup": "Athletics @ Texas Rangers",
           "game_pk": 822851,
@@ -313,26 +313,29 @@
           "combo_player_ids": null,
           "signals": {
             "opp_team_k_pct": 57.0,
-            "same_hand_ratio": 33.3333,
+            "same_hand_ratio": 5.5556,
             "l14_k_pct": 100.0,
             "tto_penalty": -8.0,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 59.5874,
+            "ump_k_pct": -0.096,
+            "ump_bb_pct": 0.048
           },
-          "hit_probability": 0.6069,
-          "raw_hit_probability": 0.6644,
-          "lift": 0.0931,
+          "hit_probability": 0.5045,
+          "raw_hit_probability": 0.5045,
+          "lift": 0.1543,
           "reliability": "A",
           "sample_n": 19,
           "projection": {
             "stat": "strikeouts",
-            "value": 4.5,
-            "needs": 5
+            "value": 5.5,
+            "needs": 6
           }
         },
         {
-          "prop": "Over 13.5 Outs Recorded",
+          "prop": "Over 16.5 Outs Recorded",
           "type": "pitcher",
-          "score": 50.0,
+          "score": 0,
           "notable_signals": 0,
           "matchup": "Athletics @ Texas Rangers",
           "game_pk": 822851,
@@ -341,18 +344,46 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.7137,
+            "outs_rate": 0.2294,
             "avg_outs_per_start": 14.26
           },
-          "hit_probability": 0.7137,
+          "hit_probability": 0.2294,
           "raw_hit_probability": null,
-          "lift": -0.0934,
+          "lift": -0.2266,
           "reliability": "A",
           "sample_n": 19,
           "projection": {
             "stat": "pitcher_outs",
-            "value": 13.5,
-            "needs": 14
+            "value": 16.5,
+            "needs": 17
+          }
+        },
+        {
+          "prop": "Over 9.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 16.2,
+          "notable_signals": 0,
+          "matchup": "Athletics @ Texas Rangers",
+          "game_pk": 822851,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            682052,
+            674003
+          ],
+          "signals": {
+            "combined_k_edge": -0.1631
+          },
+          "hit_probability": 0.4059,
+          "raw_hit_probability": null,
+          "lift": -0.1631,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 9.5,
+            "needs": 10
           }
         }
       ]

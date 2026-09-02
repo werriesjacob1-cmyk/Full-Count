@@ -171,6 +171,52 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-02",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 37.4,
+          "notable_signals": 1,
+          "matchup": "Baltimore Orioles @ Colorado Rockies",
+          "game_pk": 824312,
+          "team": "Colorado Rockies",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "sp_era_weak": 46.8571,
+            "l7_avg_ev": 0.0,
+            "l7_barrel_pct": 0.0,
+            "bat_speed_trend": 10.275,
+            "park_hr_index": 47.0,
+            "lineup_slot": 25.0,
+            "bullpen_fatigue": 18.5185,
+            "opp_catcher_framing": 0.72,
+            "days_rest": 0.0,
+            "woba_ahead": 0.0,
+            "woba_behind": 0.0,
+            "team_total_move": 0.0,
+            "team_total_open": 0.0,
+            "getaway_day": -2.0,
+            "series_game": 2.0,
+            "ump_k_pct": 0.084,
+            "ump_bb_pct": -0.528
+          },
+          "hit_probability": 0.5526,
+          "raw_hit_probability": 0.567,
+          "lift": -0.0144,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

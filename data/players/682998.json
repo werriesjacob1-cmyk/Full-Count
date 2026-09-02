@@ -2274,6 +2274,140 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-02",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 74.4,
+          "notable_signals": 3,
+          "matchup": "Philadelphia Phillies @ Arizona Diamondbacks",
+          "game_pk": 825037,
+          "team": "Arizona Diamondbacks",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 100.0,
+            "pitch_exploit": 8.5714,
+            "l7_avg_ev": 50.0694,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 2.175,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 60.0,
+            "lineup_slot": 87.5,
+            "bullpen_fatigue": 20.8333,
+            "platoon_barrel_pct": 5.0,
+            "platoon_xwoba": 1.92,
+            "park_hand_index": -1.07,
+            "opp_catcher_framing": 0.6,
+            "days_rest": 0.0,
+            "woba_ahead": 5.4545,
+            "woba_behind": 71.8182,
+            "pull_park_synergy": -0.7527,
+            "hard_hit_105_rate": 0.6925,
+            "team_total_move": -6.0,
+            "team_total_open": -4.0,
+            "getaway_day": -2.0,
+            "series_game": 2.0,
+            "sp_rp_ops_gap": -0.264,
+            "vs_rp_ops": 0.84,
+            "ump_k_pct": 0.24,
+            "ump_bb_pct": -0.012
+          },
+          "hit_probability": 0.6034,
+          "raw_hit_probability": 0.6036,
+          "lift": 0.0364,
+          "reliability": "A",
+          "sample_n": 136,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 69.8,
+          "notable_signals": 1,
+          "matchup": "Philadelphia Phillies @ Arizona Diamondbacks",
+          "game_pk": 825037,
+          "team": "Arizona Diamondbacks",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": -2.94,
+            "sprint_speed": 75.0,
+            "catcher_poptime": 0.0,
+            "on_base": 92.3225
+          },
+          "hit_probability": 0.1296,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 136,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 11.5,
+          "notable_signals": 0,
+          "matchup": "Philadelphia Phillies @ Arizona Diamondbacks",
+          "game_pk": 825037,
+          "team": "Arizona Diamondbacks",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0743
+          },
+          "hit_probability": 0.0743,
+          "raw_hit_probability": null,
+          "lift": 0.0264,
+          "reliability": "A",
+          "sample_n": 136,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 3.7,
+          "notable_signals": 0,
+          "matchup": "Philadelphia Phillies @ Arizona Diamondbacks",
+          "game_pk": 825037,
+          "team": "Arizona Diamondbacks",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0274
+          },
+          "hit_probability": 0.0274,
+          "raw_hit_probability": null,
+          "lift": 0.0065,
+          "reliability": "A",
+          "sample_n": 136,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }
