@@ -135,6 +135,96 @@ other_after="$(cd "$SANDBOX/other" && git status --porcelain | sha256sum)"
 check "sibling worktree untouched" "$other_after" "$other_before"
 check "no ref for sibling branch" "$(git rev-parse --verify --quiet refs/heads/fc-autosave/other || echo none)" "none"
 
+echo "== 10. the credential shapes a filename DENYLIST misses =="
+# Every one of these was demonstrated by an independent security review to
+# reach origin with no log line at all, because a denylist of filenames can
+# only enumerate the shapes someone thought of. The allowlist inverts that.
+git checkout -q work
+mkdir -p .docker .kube
+for f in .dockercfg .docker/config.json .kube/config kubeconfig prod.kubeconfig \
+         terraform.tfstate prod.tfvars AuthKey_ABC123.p8 server.crt id.jwt \
+         serviceAccountKey.json deploy_key secring.gpg client.ovpn .my.cnf \
+         .rclone.conf .envrc production.env anthropic.conf; do
+  mkdir -p "$(dirname "$f")" 2>/dev/null
+  printf 'CREDENTIAL-MATERIAL\n' > "$f"
+done
+run_autosave
+ref=refs/heads/fc-autosave/work
+leaked=""
+for f in .dockercfg .docker/config.json .kube/config kubeconfig prod.kubeconfig \
+         terraform.tfstate prod.tfvars AuthKey_ABC123.p8 server.crt id.jwt \
+         serviceAccountKey.json deploy_key secring.gpg client.ovpn .my.cnf \
+         .rclone.conf .envrc production.env anthropic.conf; do
+  git cat-file -e "$ref:$f" 2>/dev/null && leaked="$leaked $f"
+done
+check "no credential-shaped file reached the snapshot" "${leaked:-none}" "none"
+remote_leaked=""
+for f in .dockercfg .kube/config serviceAccountKey.json deploy_key; do
+  git --git-dir="$SANDBOX/origin.git" cat-file -e "$ref:$f" 2>/dev/null \
+    && remote_leaked="$remote_leaked $f"
+done
+check "and none reached ORIGIN" "${remote_leaked:-none}" "none"
+rm -rf .docker .kube
+rm -f .dockercfg kubeconfig prod.kubeconfig terraform.tfstate prod.tfvars \
+      AuthKey_ABC123.p8 server.crt id.jwt serviceAccountKey.json deploy_key \
+      secring.gpg client.ovpn .my.cnf .rclone.conf .envrc production.env \
+      anthropic.conf
+
+echo "== 11. credential CONTENT under an innocent name =="
+# The decisive case: `env > notes.txt` produces a .txt the allowlist accepts,
+# and no filename rule can catch it. This environment really does carry
+# AWS_SECRET_ACCESS_KEY and GITHUB_TOKEN in the process environment.
+printf 'AWS_SECRET_ACCESS_KEY=wJalrXUtnFEMIfake/K7MDENGfake+EXAMPLEKEY\n' > notes.txt
+printf -- '-----BEGIN RSA PRIVATE KEY-----\nMIIfake\n' > architecture.md
+printf 'token: ghp_0123456789abcdefghijklmnopqrstuvwx\n' > config.yaml
+run_autosave
+check "env dump under a .txt name is refused"  "$(git cat-file -e $ref:notes.txt 2>/dev/null && echo LEAKED || echo blocked)" "blocked"
+check "private key inside a .md is refused"    "$(git cat-file -e $ref:architecture.md 2>/dev/null && echo LEAKED || echo blocked)" "blocked"
+check "a GitHub token inside a .yaml is refused" "$(git cat-file -e $ref:config.yaml 2>/dev/null && echo LEAKED || echo blocked)" "blocked"
+rm -f notes.txt architecture.md config.yaml
+
+echo "== 12. a NEW UNTRACKED DIRECTORY is actually backed up =="
+# git status --porcelain collapses an untracked directory to `src/`, so every
+# file inside was dropped with no log line while the script reported success.
+# That is the precise failure this script exists to prevent, reported as a win.
+mkdir -p src/newfeature
+echo "print('work in progress')" > src/newfeature/main.py
+echo "notes" > src/newfeature/README.md
+run_autosave
+check "file in a new untracked dir is snapshotted" \
+      "$(git cat-file -p $ref:src/newfeature/main.py 2>/dev/null)" "print('work in progress')"
+check "and so is its sibling" \
+      "$(git cat-file -e $ref:src/newfeature/README.md 2>/dev/null && echo yes || echo no)" "yes"
+rm -rf src
+
+echo "== 13. an included file is LOGGED, not only an excluded one =="
+echo "traceable" > traceable.py
+run_autosave
+check "the log names the file it included" \
+      "$(grep -c 'include: traceable.py' "$(git rev-parse --absolute-git-dir)/fc-autosave/run.log")" "1"
+rm -f traceable.py
+
+echo "== 14. a diverged remote does not silently end durability =="
+# Refusing to force is correct. Stopping there was not: the next snapshot
+# re-parents on the LOCAL ref, so the chain could never re-converge, and the
+# only evidence was a log file inside .git/ that nothing surfaces.
+run_autosave
+# A TRUE divergence, not a rewind: origin's ref must carry a commit that is
+# not in the local ref's history, or the next push is just a fast-forward and
+# nothing is being tested. Built with commit-tree so it shares no history.
+orphan="$(git commit-tree "$(git rev-parse HEAD^{tree})" -m "someone else's snapshot" </dev/null)"
+git push -q --force origin "$orphan:$ref"
+origin_before="$(git --git-dir="$SANDBOX/origin.git" rev-parse "$ref")"
+echo "after divergence" > diverged.py
+run_autosave
+recovered="$(git --git-dir="$SANDBOX/origin.git" for-each-ref \
+             --format='%(refname)' 'refs/heads/fc-autosave/work-*' | head -1)"
+check "a diverged push rolls to an alternate ref on origin" \
+      "$([ -n "$recovered" ] && echo recovered || echo lost)" "recovered"
+check "and the diverged original on origin was NOT overwritten" \
+      "$(git --git-dir="$SANDBOX/origin.git" rev-parse "$ref")" "$origin_before"
+rm -f diverged.py
+
 echo
 echo "passed: $pass   failed: $fail"
 [ "$fail" -eq 0 ]

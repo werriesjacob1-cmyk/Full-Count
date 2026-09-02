@@ -76,6 +76,13 @@ In practice:
 - Commit and push after each coherent unit — not at the end of the session.
 - Push **before** any long command, idle period, context-heavy investigation, or
   multi-hour run.
+- **Push only to this session's own working branch.** Never to `main`, never to
+  `gh-pages`, never to an evidence branch (`prediction-ledger/*`,
+  `prospective/*`, `evidence/*`, `canonical/*`), and never to another session's
+  branch. This standing instruction authorises a routine backup of your own
+  work; it is not authority over shared refs, and a security review was right
+  to note that without this sentence the destination was bounded only by
+  convention. Merging, tagging, releasing and deploying are Jacob's, always.
 - A local ref is not durability. A pushed remote branch is.
 - Long-running generators must persist resumable state *remotely* on a bounded
   cadence, so container loss costs a bounded amount of work.

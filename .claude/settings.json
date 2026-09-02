@@ -35,8 +35,6 @@
       "Edit(./.env)",
       "Edit(**/.env)",
 
-      "Bash(git push --force:*)",
-      "Bash(git push -f:*)",
       "Bash(rm -rf /:*)"
     ],
 
@@ -72,7 +70,10 @@
 
       "Bash(git merge:*)",
       "Bash(git rebase:*)",
-      "Bash(git reset --hard:*)"
+      "Bash(git reset --hard:*)",
+
+      "Bash(git push:*)",
+      "Bash(git tag:*)"
     ]
   },
 
@@ -82,7 +83,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "R=\"$(git rev-parse --show-toplevel 2>/dev/null)\"; [ -n \"$R\" ] || exit 0; [ -x \"$R/.claude/session-context.sh\" ] || exit 0; bash \"$R/.claude/session-context.sh\" 2>/dev/null || true",
+            "command": "R=\"${CLAUDE_PROJECT_DIR:-$(git rev-parse --show-toplevel 2>/dev/null)}\"; [ -n \"$R\" ] || exit 0; [ -x \"$R/.claude/session-context.sh\" ] || exit 0; bash \"$R/.claude/session-context.sh\" 2>/dev/null || true",
             "timeout": 10,
             "statusMessage": "Reading worktree state..."
           }
@@ -95,7 +96,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "R=\"$(git rev-parse --show-toplevel 2>/dev/null)\"; [ -n \"$R\" ] || exit 0; [ -x \"$R/.claude/worktree-autosave.sh\" ] || exit 0; S=\"$(git rev-parse --absolute-git-dir 2>/dev/null)/fc-autosave\"; mkdir -p \"$S\" 2>/dev/null; f=\"$S/last-run\"; now=$(date +%s); last=$(cat \"$f\" 2>/dev/null || echo 0); if [ $((now - last)) -ge 180 ]; then echo \"$now\" > \"$f\"; nohup bash \"$R/.claude/worktree-autosave.sh\" >/dev/null 2>&1 & fi; exit 0",
+            "command": "R=\"${CLAUDE_PROJECT_DIR:-$(git rev-parse --show-toplevel 2>/dev/null)}\"; [ -n \"$R\" ] || exit 0; [ -x \"$R/.claude/worktree-autosave.sh\" ] || exit 0; S=\"$(git rev-parse --absolute-git-dir 2>/dev/null)/fc-autosave\"; mkdir -p \"$S\" 2>/dev/null; f=\"$S/last-run\"; now=$(date +%s); last=$(cat \"$f\" 2>/dev/null || echo 0); if [ $((now - last)) -ge 180 ]; then echo \"$now\" > \"$f\"; nohup bash \"$R/.claude/worktree-autosave.sh\" >/dev/null 2>&1 & fi; exit 0",
             "timeout": 5,
             "statusMessage": "Autosave check..."
           }

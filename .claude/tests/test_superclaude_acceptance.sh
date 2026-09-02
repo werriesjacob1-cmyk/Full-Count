@@ -64,7 +64,18 @@ if python3 -c "import json;json.load(open('$C/settings.json'))" 2>/dev/null; the
   echo "$D" | grep -qi 'credential'    && pass "deny: credentials"     || fail "deny: credentials"
   echo "$D" | grep -qi 'token'         && pass "deny: tokens"          || fail "deny: tokens"
   echo "$D" | grep -q 'ssh'            && pass "deny: ~/.ssh"          || fail "deny: ~/.ssh"
-  echo "$D" | grep -q 'push --force'   && pass "deny: force push"      || fail "deny: force push"
+  # NOT a force-push deny string. A security review force-overwrote remote
+  # history with `git push origin +ref:ref` -- no `--force`, no `-f` -- so a
+  # prefix deny on the flag was theatre, and asserting it here made the suite
+  # certify theatre. What is asserted now is that the DESTINATION is gated:
+  # `git push` and `git tag` must prompt, because the ref being written is the
+  # thing that matters, not the spelling of the command.
+  echo "$A" | grep -q 'Bash(git push' && pass "ask: any git push (destination-gated)" \
+    || fail "ask: any git push (destination-gated)"
+  echo "$A" | grep -q 'Bash(git tag'  && pass "ask: any git tag" || fail "ask: any git tag"
+  echo "$D" | grep -q 'push --force' \
+    && fail "deny lists 'push --force' -- a prefix deny a bare +refspec evades; use ask on the destination" \
+    || pass "no force-push deny string pretending to be a control"
   echo "$A" | grep -q 'git merge'      && pass "ask: merge"            || fail "ask: merge"
   echo "$A" | grep -q 'git rebase'     && pass "ask: rebase"           || fail "ask: rebase"
   echo "$A" | grep -q 'reset --hard'   && pass "ask: reset --hard"     || fail "ask: reset --hard"

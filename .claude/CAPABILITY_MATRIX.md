@@ -131,7 +131,10 @@ entry is a dated observation, not a standing fact.
 ## The matrix
 
 Common to every row unless stated: **secret exposure NO**, **production
-mutation NO**, **merge/deploy authority NO**.
+mutation NO**, **merge/deploy authority NO** — where "NO" means *no tool
+granted for it and no instruction authorising it*, not a capability boundary.
+Every agent holding `Bash` can in principle run git; see "READ-ONLY reviewer
+means no Write and no Edit — not no Bash" above.
 
 ### 1. Predictive research — `fc-scientist` ↔ `fc-experiment`
 - **Purpose** — canonical backtest research, challenger design, signal validation.
@@ -247,6 +250,48 @@ with nothing from hours of qualifying tool calls.
   guardrail against accidental reads by the file tools, never a security
   boundary against shell access.
 
+- **A prefix deny on a command STRING is not a control.** An independent
+  security review force-overwrote remote history in a sandbox using a command
+  containing neither `--force` nor `-f`:
+
+  ```
+  $ git push origin +forcedemo:forcedemo
+   + 61f75c6...eb7768f forcedemo -> forcedemo (forced update)
+  ```
+
+  `git push origin main --force` (flag after the argument), `git -c x=y push`,
+  `env git push`, and any script that calls push all evade a prefix match
+  equally. Those two deny entries were therefore removed rather than left in
+  place looking like protection. What replaced them is `Bash(git push:*)` and
+  `Bash(git tag:*)` in **`ask`** — because the DESTINATION is what matters, not
+  the flag, and an ask rule surfaces the destination to a human. It is still
+  not a boundary: it is a prompt.
+
+- **The real control for `main` is server-side and is NOT set.** The review
+  confirmed `main` is `"protected": false`, and that this session's credential
+  is accepted for `refs/heads/main` and for a `+refspec`. Branch protection on
+  `main` is the one change that would make force-push and direct-push
+  structurally impossible, and it is a repository setting, outside anything
+  this configuration can do.
+
+### "READ-ONLY reviewer" means no Write and no Edit — not no Bash
+
+`fc-canonical-certifier`, `fc-methodology-red-team`,
+`fc-prospective-ledger-auditor` and `fc-release-auditor` are described as
+read-only. Precisely: none of them holds `Write` or `Edit`, and
+`fc-release-auditor`'s GitHub MCP grant contains no `merge_pull_request`, no
+`actions_run_trigger`, no `enable_pr_auto_merge` and no
+`create_or_update_file` — verified by enumeration of every `mcp__*` name in
+this tree.
+
+**All four hold `Bash`.** With `Bash` and a working git credential an agent can
+`sed -i`, `commit` and `push`. They hold it because their work requires it —
+a red team that cannot execute an attack is a proofreader — but that means
+their read-only character is a matter of their instructions and of review, not
+a capability boundary. An earlier revision of this file claimed "no
+merge/deploy/promote authority granted to any agent"; that was overstated and
+is corrected here.
+
 `.claude/tests/test_superclaude_acceptance.sh` therefore reports enforcement as
 INFO and never as PASS.
 
@@ -327,6 +372,16 @@ merge it. Verdict: **DO NOT MERGE**, with a five-item mechanical fix list. It
 found no secrets, no merge/deploy/promote authority granted to any agent, no
 over-broad permission grant, and no product-code contamination — and it
 independently re-checked ten runtime facts in this file, all ten correct.
+
+**Superseded in part, 2026-09-02.** A later security review, working by
+execution rather than by reading, contradicted two of those conclusions and was
+right both times: the credential filter was a filename denylist that let 18
+credential-shaped files reach origin silently, and "no merge/deploy/promote
+authority granted to any agent" understated the fact that four nominally
+read-only reviewers hold `Bash`. Both are addressed above and in
+`.claude/worktree-autosave.sh`. The lesson is recorded rather than smoothed
+over: an audit that reads files will confirm an intent, and only an audit that
+runs them will test it.
 
 Recorded here rather than silently absorbed, because a writer that quietly
 fixes its reviewer's findings has not been reviewed.

@@ -81,7 +81,12 @@ if [ -f "$ctx" ]; then
       fi
       if [ -r "/proc/$p/stat" ]; then
         start="$(awk '{print $22}' "/proc/$p/stat" 2>/dev/null)"
-        cmd="$(tr '\0' ' ' < "/proc/$p/cmdline" 2>/dev/null | cut -c1-100)"
+        # ARGV IS NOT PRINTED. A credential passed on a command line -- a
+        # token in a curl, a password in a connection string -- would
+        # otherwise be echoed into the session transcript by a hook that
+        # exists only to say whether a process is alive. The executable name
+        # answers that question and carries no arguments.
+        cmd="$(tr '\0' '\n' < "/proc/$p/cmdline" 2>/dev/null | head -1 | cut -c1-60)"
         # Same-boot PID recycling: the kernel reuses numbers, so a live /proc
         # entry does NOT prove it is the same process. starttime disambiguates.
         # If the checkpoint recorded one for this pid, it must match.

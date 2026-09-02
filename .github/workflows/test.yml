@@ -15,7 +15,22 @@ name: Test Suite
 # remembering to edit this workflow.
 on:
   push:
-    branches: ['**']
+    # branches-ignore ALONE, not alongside `branches: ['**']` -- GitHub rejects
+    # a workflow that sets both for the same event, and an invalid workflow
+    # does not run at all. Omitting `branches` already means every branch.
+    #
+    # fc-autosave/** are machine-written crash-recovery snapshots of a
+    # MID-EDIT working tree, pushed automatically by .claude/worktree-autosave.sh
+    # roughly every three minutes while a session is active. They are backups,
+    # not proposals: nobody reviewed them and nobody intends them to pass.
+    #
+    # Without this exclusion every snapshot queues a full ~15-minute run --
+    # pip install, Chromium download, the whole test_*.py glob -- against a
+    # half-finished edit, unattended. That is wasted runner time, and worse, it
+    # paints red CI on refs the release-audit discipline is trained to read as
+    # signal. An independent security review flagged the amplification; this is
+    # the one-line close.
+    branches-ignore: ['fc-autosave/**']
   pull_request:
 
 # Read-only by design: this workflow only runs tests, never commits or

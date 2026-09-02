@@ -103,6 +103,20 @@ is_sensitive() {
     *token*|*apikey*|*api_key*|*passwd*|*password*)    return 0 ;;
     *session.json|*auth.json|*.netrc|*.npmrc|*.pypirc) return 0 ;;
     *service-account*.json|*gcloud*.json)              return 0 ;;
+    # Shapes an independent review pushed past the old list. These matter
+    # BECAUSE they carry allowlisted extensions (.json, .conf, .crt), so the
+    # allowlist alone waves them through -- serviceAccountKey.json is the
+    # standard Firebase/GCP private-key filename and the old pattern used a
+    # hyphen, which that name does not contain.
+    *serviceaccount*|*service_account*)                return 0 ;;
+    .docker/*|*/.docker/*|.dockercfg|*/.dockercfg)     return 0 ;;
+    .kube/*|*/.kube/*|*kubeconfig*)                    return 0 ;;
+    *.tfstate|*.tfstate.*|*.tfvars|*.tfvars.*)         return 0 ;;
+    *.p8|*.jwt|*.gpg|*.asc|*.ovpn|*.kdbx)              return 0 ;;
+    *.crt|*.cer|*.der|*.csr)                           return 0 ;;
+    *deploy_key*|*deploy-key*|*.pub)                   return 0 ;;
+    .envrc|*/.envrc|.my.cnf|*/.my.cnf)                 return 0 ;;
+    .rclone.conf|*/.rclone.conf|*.kubeconfig)          return 0 ;;
     *.htpasswd|*cookies.txt|*.pgpass)                  return 0 ;;
     # sensitive local config
     .git-credentials|*/.git-credentials)               return 0 ;;
@@ -127,6 +141,65 @@ is_bulk_artifact() {
   esac
 }
 
+# ════════════════════════════════════════════════════════════════════════
+# THE ALLOWLIST. This is the primary gate; is_sensitive() below it is now a
+# second line of defence rather than the only one.
+#
+# WHY IT WAS INVERTED. An independent security review demonstrated BY
+# EXECUTION that the filename denylist alone let 18 credential-shaped files
+# reach origin with no log line at all: .dockercfg, .docker/config.json,
+# .kube/config, kubeconfig, terraform.tfstate, AuthKey_*.p8, server.crt,
+# id.jwt, serviceAccountKey.json (the standard Firebase name -- the deny
+# pattern used a hyphen), deploy_key and kubeconfig (no dot, so *.key and
+# *.p12 could not match), secring.gpg, client.ovpn, .my.cnf, .rclone.conf,
+# .envrc, production.env, and more. A denylist of filenames can only ever
+# enumerate the shapes someone thought of; the set of credential filenames is
+# open-ended, and a miss was completely silent.
+#
+# An allowlist inverts that: an unrecognised file is NOT snapshotted, and the
+# failure mode becomes "your backup missed a file" instead of "your
+# credentials are on a public remote".
+#
+# A file is eligible if EITHER
+#   (a) git already tracks it -- the repository has already accepted it, so
+#       snapshotting the working copy leaks nothing new; or
+#   (b) its extension/basename is on the source-and-docs list below.
+# Everything eligible then still has to pass is_sensitive(), is_bulk_artifact(),
+# the size cap, and a CONTENT scan.
+is_allowed_kind() {
+  case "$(printf '%s' "$1" | tr '[:upper:]' '[:lower:]')" in
+    *.py|*.pyi|*.ipynb)                                    return 0 ;;
+    *.js|*.mjs|*.cjs|*.ts|*.tsx|*.jsx)                     return 0 ;;
+    *.html|*.htm|*.css|*.scss|*.svg)                       return 0 ;;
+    *.sh|*.bash|*.zsh|*.mk|makefile|*/makefile)            return 0 ;;
+    *.md|*.markdown|*.rst|*.txt)                           return 0 ;;
+    *.json|*.yaml|*.yml|*.toml|*.ini|*.cfg)                return 0 ;;
+    *.sql|*.csv|*.tsv)                                     return 0 ;;
+    *.gitignore|.gitignore|*.gitattributes|.gitattributes) return 0 ;;
+    *) return 1 ;;
+  esac
+}
+
+# CONTENT, not just the name. The reviewer's point that this environment
+# carries AWS_SECRET_ACCESS_KEY / GITHUB_TOKEN / GH_TOKEN in the process
+# environment is the decisive one: an ordinary `env > notes.txt` produces a
+# .txt file that the allowlist accepts and no filename rule could catch.
+# Cheap: only the first 64 KiB is read, and only for files already eligible.
+looks_like_secret_content() {
+  head -c 65536 -- "$1" 2>/dev/null | grep -qE \
+    -e '-----BEGIN [A-Z ]*PRIVATE KEY-----' \
+    -e '-----BEGIN OPENSSH PRIVATE KEY-----' \
+    -e '\bAKIA[0-9A-Z]{16}\b' \
+    -e '\bASIA[0-9A-Z]{16}\b' \
+    -e '\bgh[pousr]_[A-Za-z0-9]{20,}' \
+    -e '\bgithub_pat_[A-Za-z0-9_]{20,}' \
+    -e '\bxox[baprs]-[A-Za-z0-9-]{10,}' \
+    -e '\bsk-[A-Za-z0-9]{20,}' \
+    -e '\bAIza[0-9A-Za-z_-]{30,}' \
+    -e '(AWS_SECRET_ACCESS_KEY|GITHUB_TOKEN|GH_TOKEN|ANTHROPIC_API_KEY)[[:space:]]*[=:][[:space:]]*[^[:space:]]' \
+    2>/dev/null
+}
+
 MAX_BYTES=${FC_AUTOSAVE_MAX_BYTES:-1048576}   # 1 MiB per file
 
 # ------------------------------------------------------------ scratch index --
@@ -141,6 +214,7 @@ export GIT_INDEX_FILE="$tmpindex"
 git read-tree HEAD 2>/dev/null || { log "read-tree failed"; exit 0; }
 
 added=0; skipped_big=0; skipped_secret=0; skipped_bulk=0; removed=0
+skipped_kind=0; skipped_content=0; skipped_nonfile=0
 
 # --porcelain respects .gitignore for untracked files and reports staged,
 # unstaged, and untracked changes in one pass. -z survives spaces in paths.
@@ -158,7 +232,26 @@ while IFS= read -r -d '' entry; do
     git update-index --force-remove -- "$path" 2>/dev/null && removed=$((removed + 1))
     continue
   fi
-  [ -f "$path" ] || continue          # skip dirs, sockets, fifos
+  # A NEW UNTRACKED DIRECTORY used to vanish here. Without
+  # --untracked-files=all, `git status --porcelain` collapses it to `src/`,
+  # `[ -f ]` rejected the directory, and every file inside was dropped with no
+  # log line while the script still reported success -- so work in a
+  # newly-created directory was never backed up at all. That is the exact
+  # failure this script exists to prevent, and it was reported as a success.
+  if [ ! -f "$path" ]; then
+    skipped_nonfile=$((skipped_nonfile + 1))
+    log "  SKIP not a regular file: $path"
+    continue
+  fi
+
+  # ALLOWLIST FIRST. Tracked files are already in the repository's history, so
+  # snapshotting the working copy discloses nothing the repo does not have.
+  if ! git ls-files --error-unmatch -- "$path" >/dev/null 2>&1 \
+     && ! is_allowed_kind "$path"; then
+    skipped_kind=$((skipped_kind + 1))
+    log "  SKIP untracked file of a kind not on the allowlist: $path"
+    continue
+  fi
 
   if is_sensitive "$path"; then
     skipped_secret=$((skipped_secret + 1))
@@ -177,12 +270,22 @@ while IFS= read -r -d '' entry; do
     continue
   fi
 
+  if looks_like_secret_content "$path"; then
+    skipped_content=$((skipped_content + 1))
+    log "  SKIP credential-shaped CONTENT: $path"
+    continue
+  fi
+
   blob="$(git hash-object -w -- "$path" 2>/dev/null)" || continue
   mode=100644
   [ -x "$path" ] && mode=100755
+  # LOG WHAT WENT IN, not only what was kept out. The previous version logged
+  # exclusions only, so a file that silently passed every filter left no trace
+  # anywhere -- which is precisely how the 18 credential files reached origin
+  # unnoticed. An operator can now diff intent against the log.
   git update-index --add --cacheinfo "$mode,$blob,$path" 2>/dev/null \
-    && added=$((added + 1))
-done < <(git status --porcelain -z 2>/dev/null)
+    && { added=$((added + 1)); log "  include: $path"; }
+done < <(git status --porcelain -z --untracked-files=all 2>/dev/null)
 
 if [ "$added" -eq 0 ] && [ "$removed" -eq 0 ]; then
   log "nothing to snapshot on '$branch'"
@@ -239,7 +342,32 @@ fi
 if push_out="$(git push -q origin "$ref:$ref" 2>&1)"; then
   log "  pushed $ref (durable on origin)"
 else
-  log "  push FAILED for $ref -- snapshot is LOCAL ONLY at $ref and will NOT survive container loss"
+  # DIVERGENCE RECOVERY. Refusing to force is correct, but the previous
+  # version stopped there -- and because the next snapshot re-parents on the
+  # LOCAL ref, the chain could never re-converge. Every later run logged
+  # "push FAILED ... LOCAL ONLY" into a file inside .git/ that nothing
+  # surfaces, while the hook discarded stdout and stderr. The end state was
+  # silent, permanent loss of durability: exactly the failure that cost 90
+  # minutes of work on 2026-08-27, reached quietly instead of loudly.
+  #
+  # So: roll to a fresh, unambiguous ref rather than force or give up. The
+  # diverged remote ref is left exactly as it is -- it may be someone else's
+  # snapshot, and overwriting it is the thing we refuse to do.
+  log "  push REJECTED for $ref (diverged from origin) -- not forcing"
   [ -n "$push_out" ] && log "    git said: $(printf '%s' "$push_out" | head -3 | tr '\n' ' ')"
+  n=2
+  while [ "$n" -le 20 ]; do
+    alt="${ref}-$n"
+    if git rev-parse --verify --quiet "refs/remotes/origin/${alt#refs/heads/}" >/dev/null 2>&1; then
+      n=$((n + 1)); continue
+    fi
+    if git update-ref "$alt" "$commit" 2>/dev/null \
+       && git push -q origin "$alt:$alt" 2>/dev/null; then
+      log "  RECOVERED: pushed to $alt instead (durable on origin)"
+      exit 0
+    fi
+    n=$((n + 1))
+  done
+  log "  push FAILED for $ref and for every -2..-20 alternate -- snapshot is LOCAL ONLY and will NOT survive container loss"
 fi
 exit 0
