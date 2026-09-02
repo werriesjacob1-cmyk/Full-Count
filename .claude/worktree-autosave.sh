@@ -88,6 +88,21 @@ esac
 head_sha="$(git rev-parse HEAD 2>/dev/null)" || exit 0
 ref="refs/heads/fc-autosave/$branch"
 
+# ONCE WE HAVE ROLLED TO AN ALTERNATE, STAY ON IT. The first recovery re-derived
+# the alternate every run and its "is this taken?" guard consulted
+# refs/remotes/origin/<alt> -- which `git push` itself updates. So each run saw
+# the previous alternate as taken and burned the next one: a review measured 19
+# junk branches on origin in about an hour at the 180s cadence, ending in
+# permanent silent durability loss. That is the failure the recovery exists to
+# prevent, reached by a different road.
+alt_state="$STATE_DIR/alt-ref"
+if [ -s "$alt_state" ]; then
+  stored="$(cat "$alt_state" 2>/dev/null)"
+  case "$stored" in
+    refs/heads/fc-autosave/*) ref="$stored" ;;
+  esac
+fi
+
 # ------------------------------------------------------------ deny patterns --
 # Case-insensitive basename/path patterns that must NEVER be snapshotted, even
 # if git does not ignore them. `git add -A` would happily stage all of these.
@@ -137,6 +152,18 @@ is_bulk_artifact() {
     *.pkl|*.pickle|*.joblib|*.npy|*.npz)                   return 0 ;;
     *.tar|*.tar.gz|*.tgz|*.zip|*.7z|*.gz|*.bz2|*.xz)       return 0 ;;
     .pybaseball/*|*/.pybaseball/*)                         return 0 ;;
+    # Dependency and build trees. --untracked-files=all enumerates these when
+    # .gitignore happens not to name them; a review measured 4000 untracked
+    # files taking 73.7s, longer than the 180s cadence leaves room for, so runs
+    # would overlap. None of it is work worth recovering.
+    node_modules/*|*/node_modules/*)                       return 0 ;;
+    .venv/*|*/.venv/*|venv/*|*/venv/*)                     return 0 ;;
+    site-packages/*|*/site-packages/*)                     return 0 ;;
+    build/*|*/build/*|dist/*|*/dist/*|target/*|*/target/*) return 0 ;;
+    .next/*|*/.next/*|.tox/*|*/.tox/*)                     return 0 ;;
+    .mypy_cache/*|*/.mypy_cache/*)                         return 0 ;;
+    .pytest_cache/*|*/.pytest_cache/*)                     return 0 ;;
+    __pycache__/*|*/__pycache__/*|*.pyc)                   return 0 ;;
     *) return 1 ;;
   esac
 }
@@ -186,21 +213,57 @@ is_allowed_kind() {
 # .txt file that the allowlist accepts and no filename rule could catch.
 # Cheap: only the first 64 KiB is read, and only for files already eligible.
 looks_like_secret_content() {
-  head -c 65536 -- "$1" 2>/dev/null | grep -qE \
-    -e '-----BEGIN [A-Z ]*PRIVATE KEY-----' \
-    -e '-----BEGIN OPENSSH PRIVATE KEY-----' \
-    -e '\bAKIA[0-9A-Z]{16}\b' \
-    -e '\bASIA[0-9A-Z]{16}\b' \
-    -e '\bgh[pousr]_[A-Za-z0-9]{20,}' \
-    -e '\bgithub_pat_[A-Za-z0-9_]{20,}' \
-    -e '\bxox[baprs]-[A-Za-z0-9-]{10,}' \
-    -e '\bsk-[A-Za-z0-9]{20,}' \
-    -e '\bAIza[0-9A-Za-z_-]{30,}' \
-    -e '(AWS_SECRET_ACCESS_KEY|GITHUB_TOKEN|GH_TOKEN|ANTHROPIC_API_KEY)[[:space:]]*[=:][[:space:]]*[^[:space:]]' \
+  # WHOLE FILE, CASE-INSENSITIVE. The first version read only the first 64 KiB
+  # and matched case-sensitively; a review put a GitHub token at byte 100,001
+  # and a lowercase `aws_secret_access_key = ...` (the literal format of
+  # ~/.aws/credentials) straight past it. The size cap above already bounds
+  # this to 1 MiB, so capping the read as well bought nothing.
+  #
+  # TWO TIERS, because the two error kinds cost differently. A false negative
+  # puts a live credential on a remote. A false positive silently stops backing
+  # up a file someone is actively editing -- and measured against this
+  # repository, one blanket `secret|token|password [=:]` rule flagged 14 tracked
+  # files including dashboard/live_state.py and odds_fanduel.py, whose only sin
+  # is naming an environment variable. Two tiers took that to 2 of 1872, and
+  # both of those really do contain credential literals.
+  #
+  # TIER 1 -- shapes that are credentials wherever they appear.
+  if LC_ALL=C grep -qiE \
+      -e '-----begin [a-z ]*private key-----' \
+      -e '\b(akia|asia)[0-9a-z]{16}\b' \
+      -e '\bgh[pousr]_[a-z0-9]{20,}' \
+      -e '\bgithub_pat_[a-z0-9_]{20,}' \
+      -e '\bglpat-[a-z0-9_-]{16,}' \
+      -e '\bxox[baprs]-[a-z0-9-]{10,}' \
+      -e '\bsk[-_][a-z0-9_-]{16,}' \
+      -e '\b(pk|rk)_live_[a-z0-9]{16,}' \
+      -e '\bsg\.[a-z0-9_-]{20,}\.[a-z0-9_-]{20,}' \
+      -e '\bnpm_[a-z0-9]{20,}' \
+      -e '\bpypi-[a-z0-9_-]{16,}' \
+      -e '\baiza[0-9a-z_-]{30,}' \
+      -e '\bya29\.[a-z0-9_-]{20,}' \
+      -e '\bey[a-z0-9_-]{10,}\.ey[a-z0-9_-]{10,}\.' \
+      -e '://[^/[:space:]:]+:[^/[:space:]@]+@' \
+      -- "$1" 2>/dev/null; then
+    return 0
+  fi
+
+  # TIER 2 -- a secret-ish NAME assigned a literal that actually looks like a
+  # credential: 16+ characters of credential charset. A line that merely
+  # REFERENCES a secret is not a secret, and that is where the false positives
+  # lived: `${{ secrets.X }}`, `os.environ["GITHUB_TOKEN"]`, `process.env.KEY`.
+  LC_ALL=C grep -iE \
+    '(secret|token|passwd|password|api[_-]?key|access[_-]?key|private[_-]?key|client[_-]?secret)[a-z0-9_]*[[:space:]]*[=:][[:space:]]*["'"'"']?[a-z0-9/+=_-]{16,}' \
+    -- "$1" 2>/dev/null \
+    | LC_ALL=C grep -qvE '\$\{\{|\$\(|\$[A-Za-z_]|os\.environ|getenv|process\.env|secrets\.|env\.|input\(|prompt|placeholder|example|xxxx|\.\.\.' \
     2>/dev/null
 }
 
 MAX_BYTES=${FC_AUTOSAVE_MAX_BYTES:-1048576}   # 1 MiB per file
+# A ceiling on how many paths one run stages. Beyond this the tree is a data
+# directory, not a working tree, and hashing it every 180s starves the session.
+# Stopping loudly beats a run that never finishes.
+MAX_FILES=${FC_AUTOSAVE_MAX_FILES:-1500}
 
 # ------------------------------------------------------------ scratch index --
 # Everything below stages into a throwaway index. The real index is never
@@ -238,6 +301,18 @@ while IFS= read -r -d '' entry; do
   # log line while the script still reported success -- so work in a
   # newly-created directory was never backed up at all. That is the exact
   # failure this script exists to prevent, and it was reported as a success.
+  # SYMLINKS ARE NEVER FOLLOWED. This was a total bypass of every other rule:
+  # `[ -f ]` follows the link and `git hash-object -w` dereferences it, so
+  # every path-based check ran against the LINK NAME while the TARGET's bytes
+  # were committed. A security review demonstrated it in one command --
+  # `ln -s ~/.aws/credentials notes.txt` -- and real AWS credentials reached
+  # origin as a mode-100644 blob. A snapshot of a working tree has no business
+  # reading through a link out of the tree at all.
+  if [ -L "$path" ]; then
+    skipped_secret=$((skipped_secret + 1))
+    log "  SKIP symlink (never dereferenced): $path"
+    continue
+  fi
   if [ ! -f "$path" ]; then
     skipped_nonfile=$((skipped_nonfile + 1))
     log "  SKIP not a regular file: $path"
@@ -279,6 +354,12 @@ while IFS= read -r -d '' entry; do
   blob="$(git hash-object -w -- "$path" 2>/dev/null)" || continue
   mode=100644
   [ -x "$path" ] && mode=100755
+  if [ "$added" -ge "$MAX_FILES" ]; then
+    log "  STOPPED: $MAX_FILES files staged, ceiling reached. THIS SNAPSHOT IS"
+    log "    INCOMPLETE -- commit deliberately, or raise FC_AUTOSAVE_MAX_FILES."
+    break
+  fi
+
   # LOG WHAT WENT IN, not only what was kept out. The previous version logged
   # exclusions only, so a file that silently passed every filter left no trace
   # anywhere -- which is precisely how the 18 credential files reached origin
@@ -355,15 +436,22 @@ else
   # snapshot, and overwriting it is the thing we refuse to do.
   log "  push REJECTED for $ref (diverged from origin) -- not forcing"
   [ -n "$push_out" ] && log "    git said: $(printf '%s' "$push_out" | head -3 | tr '\n' ' ')"
+  base="refs/heads/fc-autosave/$branch"
   n=2
   while [ "$n" -le 20 ]; do
-    alt="${ref}-$n"
-    if git rev-parse --verify --quiet "refs/remotes/origin/${alt#refs/heads/}" >/dev/null 2>&1; then
+    alt="${base}-$n"
+    # Never replace a local ref whose tip is not an ancestor of this commit:
+    # branch `work-2` has its own snapshot chain at fc-autosave/work-2, and
+    # discarding it to recover branch `work` trades one lost backup for another.
+    existing="$(git rev-parse --verify --quiet "$alt" 2>/dev/null || true)"
+    if [ -n "$existing" ] && ! git merge-base --is-ancestor "$existing" "$commit" 2>/dev/null; then
       n=$((n + 1)); continue
     fi
     if git update-ref "$alt" "$commit" 2>/dev/null \
        && git push -q origin "$alt:$alt" 2>/dev/null; then
-      log "  RECOVERED: pushed to $alt instead (durable on origin)"
+      printf '%s\n' "$alt" > "$alt_state" 2>/dev/null
+      log "  RECOVERED: pushed to $alt instead (durable on origin); future"
+      log "    snapshots of '$branch' continue on $alt"
       exit 0
     fi
     n=$((n + 1))

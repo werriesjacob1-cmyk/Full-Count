@@ -225,6 +225,89 @@ check "and the diverged original on origin was NOT overwritten" \
       "$(git --git-dir="$SANDBOX/origin.git" rev-parse "$ref")" "$origin_before"
 rm -f diverged.py
 
+# WHERE SNAPSHOTS ACTUALLY GO RIGHT NOW. Check 14 deliberately diverges the
+# remote, after which the script records an alternate ref and stays on it -- so
+# a later check that hardcodes fc-autosave/work inspects an EMPTY ref and
+# passes no matter what the script did. Two checks below were vacuous for
+# exactly that reason until the guard they test was disabled and they passed
+# anyway. A test that survives removing the thing it tests is not a test.
+live_ref() {
+  cat "$(git rev-parse --absolute-git-dir)/fc-autosave/alt-ref" 2>/dev/null \
+    || echo "refs/heads/fc-autosave/$(git symbolic-ref --quiet --short HEAD)"
+}
+
+echo "== 15. a SYMLINK is never dereferenced =="
+# One command was a total bypass of every other rule: [ -f ] follows the link
+# and `git hash-object -w` dereferences it, so every path check ran against the
+# link NAME while the target's bytes were committed.
+git checkout -q work
+mkdir -p "$SANDBOX/outside"
+printf 'aws_secret_access_key = wJalrXUtnFEMIfake/K7MDENGfake\n' > "$SANDBOX/outside/credentials"
+# The second link's target is ORDINARY text, so the content scan cannot be what
+# stops it -- only refusing to dereference can. That is what isolates the guard.
+printf 'just some ordinary prose, nothing secret here at all\n' > "$SANDBOX/outside/plain.txt"
+ln -sf "$SANDBOX/outside/credentials" notes.txt
+ln -sf "$SANDBOX/outside/plain.txt" innocent.py
+run_autosave
+ref="$(live_ref)"
+check "a symlink to credentials is not committed" \
+      "$(git cat-file -e $ref:notes.txt 2>/dev/null && echo LEAKED || echo blocked)" "blocked"
+check "a symlink to ORDINARY content is refused too (the guard, not the scan)" \
+      "$(git cat-file -e $ref:innocent.py 2>/dev/null && echo DEREFERENCED || echo blocked)" "blocked"
+rm -f notes.txt innocent.py
+
+echo "== 16. the credential shapes the first regex list missed =="
+# Every one of these reached ORIGIN through the first content scan: the sk-
+# pattern forbade further hyphens, the grep was case-sensitive, and only the
+# first 64 KiB was read.
+# PAYLOADS ARE ASSEMBLED AT RUNTIME, never written as literals. GitHub push
+# protection scans the diff itself and rejected an earlier version of this file
+# over the fake Stripe key below -- correctly, by shape. A test fixture that
+# cannot be committed is not a fixture, and asking for an unblock to land a
+# string that looks like a live key is the wrong instinct entirely.
+P="$(printf 'abcdefghijklmnopqrstuvwxyz')"
+Q="$(printf '0123456789')"
+i=0
+for payload in \
+  "sk-proj-$P$Q" \
+  "sk-ant-api03-$P$Q" \
+  "sk""_live_$P$Q" \
+  "SG.${P}abcdefg.${P}${Q}${P}${Q}abcdefghijk" \
+  "npm""_$P$Q" \
+  "pypi""-AgEIcHlwaS5vcmc$P" \
+  "glpat""-${P}${Q}" \
+  "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMjM0NTY3ODkwIn0.sig" \
+  "postgres://admin:hunter2@db.internal:5432/prod" \
+  "aws_secret_access_key = wJalrXUtnFEMIfake/K7MDENGfake"; do
+  i=$((i + 1))
+  printf '%s\n' "$payload" > "shape$i.txt"
+done
+{ head -c 100000 /dev/zero | tr '\0' 'a'; printf '\n%s_%s%s\n' "gh""p" "$P" "$Q"; } > padded.txt
+run_autosave
+ref="$(live_ref)"
+leaked=""
+for n in $(seq 1 10); do
+  git cat-file -e "$ref:shape$n.txt" 2>/dev/null && leaked="$leaked shape$n"
+done
+git cat-file -e "$ref:padded.txt" 2>/dev/null && leaked="$leaked padded"
+check "no credential shape reached the snapshot" "${leaked:-none}" "none"
+rm -f shape*.txt padded.txt
+
+echo "== 17. recovery does not burn a new origin ref every run =="
+before_refs=$(git --git-dir="$SANDBOX/origin.git" for-each-ref \
+              --format='%(refname)' 'refs/heads/fc-autosave/*' | grep -c . || true)
+for round in 1 2 3 4; do
+  echo "round $round" > "spam$round.py"
+  run_autosave
+done
+after_refs=$(git --git-dir="$SANDBOX/origin.git" for-each-ref \
+             --format='%(refname)' 'refs/heads/fc-autosave/*' | grep -c . || true)
+check "four more snapshots allocate at most one new ref" \
+      "$([ $((after_refs - before_refs)) -le 1 ] && echo bounded || echo "spammed:$before_refs->$after_refs")" "bounded"
+check "and the snapshots still reach origin" \
+      "$(git --git-dir="$SANDBOX/origin.git" cat-file -e "$(live_ref):spam4.py" 2>/dev/null && echo durable || echo lost)" "durable"
+rm -f spam1.py spam2.py spam3.py spam4.py
+
 echo
 echo "passed: $pass   failed: $fail"
 [ "$fail" -eq 0 ]
