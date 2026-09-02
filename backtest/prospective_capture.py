@@ -190,6 +190,11 @@ def build_snapshot(*, slate_date, board_generated_at, odds_fetched_at,
                 "player_name": r.get("name"),
                 "game_start": v.get("game_start"),
                 "expression": v.get("expression"),
+                # PRODUCTION's own exposure status, recorded for the rejected
+                # cohort too. Without it the snapshot cannot say which rows
+                # production published as Top Picks, so the served payload's
+                # champion set has nothing sealed to be checked against.
+                "recommendation_status": r.get("status"),
                 # A published champion excluded by a shadow gate must be
                 # auditable, not merely countable. Mission 1 kept only the
                 # failed gate names.

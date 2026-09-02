@@ -554,6 +554,95 @@ try:
     check("and the strata key is partitioned by it",
           pac.COMPAT_VERSION in _sk, _sk)
 
+    print("\nCheck 17e: a champion DELETED from the payload is refused")
+    # A methodology red team executed this: verify_payload_binding compared
+    # only generated_at, so a payload with the SAME timestamp and a winning
+    # champion deleted from `props` passed, and the champion arm was scored on
+    # the remainder. The defense uses evidence the attacker does not control --
+    # the pregame snapshot, hash-bound to this build, which records
+    # production's own recommendation_status for every row it saw.
+    L21, _ = seeded_ledger("redteam-d2")
+    tampered = copy.deepcopy(PAYLOAD)
+    victim = tampered["props"].pop()               # delete one champion
+    out21 = plc.bind_exposure(deployment(artifact_id="art-tampered"),
+                              worktree=L21, payload=tampered, schedule=SCHED)
+    check("the tampered payload fails the epoch closed",
+          out21.get("sealed") is False and out21.get("failed_closed"), str(out21))
+    check("and the failure names the ABSENT pick, not a timestamp",
+          "ABSENT from the served champion payload"
+          in (out21.get("failed_closed") or ""), str(out21.get("failed_closed")))
+
+    print("\nCheck 17f: a DEMOTED pick is recorded, not failed closed")
+    # The mirror-image error. Production may legitimately restate a status
+    # between capture and serve, so demotion must not kill the date --
+    # over-correcting here is how a defense starts deleting real evidence.
+    L22, _ = seeded_ledger("redteam-d2b")
+    demoted = copy.deepcopy(PAYLOAD)
+    demoted["props"][0]["recommendation_status"] = "lean"
+    out22 = plc.bind_exposure(deployment(artifact_id="art-demoted"),
+                              worktree=L22, payload=demoted, schedule=SCHED)
+    check("the epoch still seals", out22.get("sealed") is True, str(out22))
+    check("with the demotion recorded and the volume reduced",
+          out22.get("n") == 3, str(out22.get("n")))
+    ev22 = pl.read_events(os.path.join(L22, pl.ledger_relpath(SLATE)))
+    seal22 = [e["body"] for e in ev22
+              if e["event_type"] == pl.EVENT_EPOCH_SELECTION_SEALED]
+    check("the payload-binding check is SEALED into the selection event",
+          (seal22[-1].get("payload_binding") or {}).get("checked") is True
+          and len(seal22[-1]["payload_binding"]["demoted"]) == 1,
+          str(seal22[-1].get("payload_binding")))
+
+    print("\nCheck 17d: a LATE fail-closed deployment does not kill the date")
+    # A methodology red team claimed the primary scoreboard annihilates most
+    # real dates: production is required by section 14 to keep already-exposed
+    # Top Picks visible for settlement, so the LAST refresh of a day carries
+    # them as live/final, champion_hits_picks drops them, and the epoch fails
+    # closed. The inference is wrong, and this proves why by execution:
+    # designate() considers only epochs that actually SEALED, so a late
+    # fail-closed deployment is not a designation candidate at all and the
+    # earlier all-pregame epoch is designated instead.
+    L20, _ = seeded_ledger("redteam-d1")
+    GEN_LATE = (NOW + timedelta(hours=3)).isoformat()
+    late_payload = served(ROWS, generated_at=GEN_LATE)
+    for _p in late_payload["props"]:
+        _p["game_state"] = "final"          # carried for settlement visibility
+    pc.capture(ROWS, slate_date=SLATE, board_generated_at=GEN_LATE,
+               odds_fetched_at=ODDS, schedule=SCHED, now=NOW, persist=True,
+               ledger_worktree=L20, source_integrity=CLEAR,
+               board_metadata={"model_version": "2026.08.15",
+                               "selection_policy_version": "1.0.0",
+                               "calibration_version": "1.0.0",
+                               "feature_version": "1.0.0", "git_sha": "a" * 40,
+                               "odds_fetched_at": ODDS,
+                               "board_generated_at": GEN_LATE})
+    late_prepared = (NOW + timedelta(hours=3, minutes=6)).isoformat()
+    out20 = plc.bind_exposure(
+        deployment(artifact_id="art-late", public_generated_at=GEN_LATE,
+                   prepared_at=late_prepared,
+                   publication_cutoff_at=(datetime.fromisoformat(late_prepared)
+                                          + timedelta(minutes=15)).isoformat(),
+                   converged_at=(NOW + timedelta(hours=3, minutes=11)).isoformat()),
+        worktree=L20, payload=late_payload, schedule=SCHED)
+    check("the late all-final deployment DOES fail closed",
+          out20.get("sealed") is False and out20.get("failed_closed"), str(out20))
+    ev20 = pl.read_events(os.path.join(L20, pl.ledger_relpath(SLATE)))
+    sealed_ids = {e["idempotent_key"] for e in ev20
+                  if e["event_type"] == pl.EVENT_EPOCH_SELECTION_SEALED}
+    check("it contributed NO sealed selection", len(sealed_ids) == 1, str(sealed_ids))
+    designated = [e["body"] for e in ev20
+                  if e["event_type"] == pl.EVENT_DECISIVE_EPOCH_DESIGNATED]
+    check("the EARLIER all-pregame epoch is still the primary",
+          designated[-1]["decisive_epoch_id"] in sealed_ids,
+          str(designated[-1]["decisive_epoch_id"]))
+    check("and it is not the late artifact",
+          "art-late" not in str(designated[-1]["decisive_epoch_id"]))
+    rpt20 = psb.build_report(L20)
+    check("the date survives with its full champion volume",
+          rpt20["primary_slate_dates"] == 1
+          and rpt20["champion"]["selected_n"] == 4, str(rpt20["champion"]))
+    check("and the fail-closed late epoch is REPORTED, not hidden",
+          len(rpt20["epochs_failed_closed"]) >= 1)
+
     print("\nCheck 17: settlement against a wrong receipt hash is refused")
     bad = dict(rcpts[0], receipt_content_sha256="f" * 64)
     ev = pset.settle(rcpts[0], {}, grader=grader_for({1}))

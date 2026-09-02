@@ -303,7 +303,7 @@ def assert_equal_volume(epoch_id, champion_selected, pa_selected):
     return n_champ
 
 
-def verify_payload_binding(payload, epoch):
+def verify_payload_binding(payload, epoch, universe=None, stat="hits"):
     """The champion arm's basis must be PROVEN to be this deployment's payload.
 
     ═══════════════════════════════════════════════════════════════════════
@@ -336,7 +336,72 @@ def verify_payload_binding(payload, epoch):
             f"proven public generated_at {expected!r}. The champion arm must "
             f"be read from the board that actually went public, not from a "
             f"file handed in alongside it.")
-    return True
+
+    # ── the second half: CONTENT, not just a timestamp ──────────────────
+    #
+    # A later red team showed by execution that the timestamp check alone is
+    # not authentication: a payload with the SAME generated_at but a champion
+    # deleted from `props` passed, and deleting a winning champion is a clean
+    # post-outcome lever on the champion hit rate.
+    #
+    # The fix uses evidence the attacker does not control: the shadow snapshot
+    # was captured BEFORE deployment, is hash-bound to this exact build, and
+    # records production's own recommendation_status for every row it saw --
+    # eligible AND rejected. So every Top Pick the snapshot says production
+    # published must still be present in the served payload.
+    #
+    # SUPERSET, not equality, and deliberately so. Production is required by
+    # section 14 to keep already-exposed Top Picks visible for settlement, so a
+    # served board legitimately carries picks the snapshot never saw. Those are
+    # already covered: resolve_champions fails the epoch closed on any champion
+    # that cannot be matched to the frozen universe. DELETION was the open
+    # hole, and deletion is what this closes.
+    #
+    # PRESENCE, not status. Protocol section 6 makes the served artifact
+    # authoritative for WHICH picks were publicly exposed, and production may
+    # legitimately restate a row's recommendation_status between the pregame
+    # capture and the serve (dashboard/live_state.py freezes and restores the
+    # status of registry-backed rows). So a row the snapshot saw as a Top Pick
+    # and the board serves as a Lean is a STATUS fact -- recorded, and left to
+    # section 6 -- while a row that has VANISHED from the payload entirely is
+    # evidence tampering, and only that fails closed. Conflating the two would
+    # kill real dates for a benign reason.
+    if universe is None:
+        return {"checked": False, "missing": [], "demoted": []}
+    expected_ids = set()
+    for row, verdict in universe:
+        if (row or {}).get("status") != "top_pick":
+            continue
+        cid = (verdict or {}).get("canonical_prop_id")
+        if cid is not None:
+            expected_ids.add(cid)
+    if not expected_ids:
+        return {"checked": True, "missing": [], "demoted": []}
+
+    from dashboard.live_state import canonical_prop_id
+
+    present_ids, top_pick_ids = set(), set()
+    for row in (payload or {}).get("props") or []:
+        row_stat = (row.get("projection") or {}).get("stat") or row.get("stat")
+        if row_stat != stat:
+            continue
+        try:
+            cid = canonical_prop_id(row)
+        except (ValueError, KeyError, TypeError):
+            continue
+        present_ids.add(cid)
+        if row.get("recommendation_status") == "top_pick":
+            top_pick_ids.add(cid)
+
+    missing = sorted(expected_ids - present_ids)
+    if missing:
+        raise EpochFailedClosed(
+            f"{len(missing)} Top Pick(s) sealed in the hash-bound pregame "
+            f"snapshot are ABSENT from the served champion payload: {missing}. "
+            f"The payload does not match the build it claims to be. A champion "
+            f"cannot be removed from its own arm after the fact.")
+    return {"checked": True, "missing": [],
+            "demoted": sorted(expected_ids - top_pick_ids)}
 
 
 def build_epoch_selection(*, epoch, payload, universe, pool, pa_scores,
@@ -355,7 +420,7 @@ def build_epoch_selection(*, epoch, payload, universe, pool, pa_scores,
     """
     from backtest.prospective_epoch import regate_pool
 
-    verify_payload_binding(payload, epoch)
+    payload_binding = verify_payload_binding(payload, epoch, universe=universe)
 
     regated, dropped = regate_pool(pool, epoch, schedule=schedule or {})
 
@@ -390,6 +455,8 @@ def build_epoch_selection(*, epoch, payload, universe, pool, pa_scores,
         "slate_date": epoch.get("slate_date"),
         "n": n,
         "payload_generated_at": (payload or {}).get("generated_at"),
+        # Sealed: what the snapshot-vs-payload content check actually saw.
+        "payload_binding": payload_binding,
         "regated_pool_size": len(regated),
         "regate_dropped": len(dropped),
         "regate_drop_reasons": sorted({r for _row, r in dropped}),
