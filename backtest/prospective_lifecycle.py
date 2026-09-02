@@ -108,7 +108,12 @@ def bind_exposure(deployment, *, worktree, payload, schedule=None,
     if bound_epoch is None:
         out = [pl.make_event(
             pl.EVENT_EPOCH_FAILED_CLOSED,
-            f"{slate_date}:deploy-{deployment.get('run_id')}",
+            # Keyed by the DEPLOYMENT's full identity. A run id alone is not
+            # unique enough -- one run can prepare more than one artifact --
+            # and a weak key would make two genuinely different failures
+            # collide as an illegal edit.
+            f"{slate_date}:deploy-{deployment.get('run_id')}"
+            f":{deployment.get('artifact_id')}",
             {"slate_date": slate_date, "stage": "bind",
              "deployment_run_id": deployment.get("run_id"),
              "reason": "no captured snapshot matched this deployment",

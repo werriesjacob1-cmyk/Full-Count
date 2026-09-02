@@ -188,7 +188,16 @@ def bind_deployment(candidate, deployment):
         return {"bound": False, "reasons": reasons}
     bound = dict(candidate)
     bound.update({
-        "decisive_epoch_id": candidate["epoch_candidate_id"],
+        # AN EPOCH IS THE PAIR, not the snapshot. Protocol §7 defines the
+        # decisive unit as a converged DEPLOYMENT whose snapshot is hash-bound
+        # to that exact build -- so the identity must carry both. Keying it on
+        # the snapshot alone made two genuinely different bindings of the same
+        # board (a re-deploy, or a deployment observed twice) collide as an
+        # illegal edit of sealed evidence. Surfaced by the adversarial
+        # end-to-end test, not by reasoning.
+        "decisive_epoch_id": (f"{candidate['epoch_candidate_id']}"
+                              f"@{deployment.get('artifact_id')}"),
+        "epoch_candidate_id": candidate["epoch_candidate_id"],
         "publicly_converged": True,
         "deployment_artifact_id": deployment.get("artifact_id"),
         "deployment_source_commit": deployment.get("source_commit"),
