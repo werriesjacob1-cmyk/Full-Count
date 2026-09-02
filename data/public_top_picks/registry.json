@@ -2,7 +2,7 @@
   "schema_version": 1,
   "identity_schema_version": 2,
   "rollout_version": "pre-phase-v-live-lifecycle-v1",
-  "updated_at": "2026-09-02T05:48:32.000872+00:00",
+  "updated_at": "2026-09-02T07:17:52.282437+00:00",
   "migration": {
     "version": "pre-phase-v-live-lifecycle-v1",
     "completed_at": "2026-08-17T23:14:57+00:00",
@@ -10620,6 +10620,98 @@
         },
         "qualification_timestamp": "2026-09-02T05:45:02.843816+00:00",
         "board_timestamp": "2026-09-02T05:45:02.823414+00:00",
+        "slate_date": "2026-09-02"
+      }
+    },
+    "fc2:822931:player-643377:strikeouts:5:over": {
+      "canonical_id": "fc2:822931:player-643377:strikeouts:5:over",
+      "settlement_identity": [
+        "822931",
+        [
+          "player",
+          "643377"
+        ],
+        "strikeouts",
+        "5",
+        "over"
+      ],
+      "slate_date": "2026-09-02",
+      "first_published_at": "2026-09-02T07:17:52.282437+00:00",
+      "publication_provenance": {
+        "artifact_id": "52dff40dcaad04feb3a7593712b2113e95cb4ba23741571d240d975c5650b2b0",
+        "source_commit": "d66d52b965f90a2b7f59e253a57734d241550228",
+        "workflow_run_id": "33602755203",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-09-02T07:17:38.524003+00:00",
+        "data_hash": "6ffd147516063d381dad70a6bc7b15eb2823e82bc4951f90355359d7d9d826e1",
+        "live_hash": "0d06156f55f946b9c387b4f8427aa8a19cc8ff8ac56fd3316fcf878932287387"
+      },
+      "snapshot": {
+        "id": "fc2:822931:player-643377:strikeouts:5:over",
+        "identity_version": 2,
+        "game_pk": 822931,
+        "player_id": 643377,
+        "combo_player_ids": null,
+        "type": "pitcher",
+        "name": "Griffin Jax",
+        "team": "Tampa Bay Rays",
+        "matchup": "New York Mets @ Tampa Bay Rays",
+        "game_start": "2026-09-02T22:40:00Z",
+        "stat": "strikeouts",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "strikeouts",
+          "value": 4.5,
+          "needs": 5
+        },
+        "prop": "Over 4.5 Strikeouts",
+        "hit_probability": 0.6113,
+        "market_odds": -130,
+        "market_implied": 0.5331,
+        "market_edge": 0.0782,
+        "market_hold": 0.0603,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (A), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (8.8 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "Opposing team K% 22.8",
+          "Expected workload 23.1 batters faced (league average \u2014 no real start found for him in the L14 window)",
+          "Platoon advantage: 5 of 8 projected hitters bat right-handed against this RHP",
+          "Recency-weighted K rate 29.7% (exp. decay, halflife 30d, 18 real starts / 335 BF) \u2014 drives a favorable strikeout-probability read"
+        ],
+        "watchouts": [
+          "L14 Statcast sample too thin \u2014 recent-form read falls back to season K%",
+          "No L14 start found for this pitcher \u2014 workload defaulted to the league average"
+        ],
+        "prob_ci": [
+          0.5819,
+          0.6999
+        ],
+        "reliability": "A",
+        "reliability_note": null,
+        "sample_n": 18,
+        "lineup_assumed": null,
+        "base_rate": 0.5138,
+        "lift": 0.0975,
+        "lift_reference_rate": null,
+        "stable_lift": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "f12bf247",
+          "prediction_timestamp": "2026-09-02T07:13:11.675305+00:00",
+          "odds_fetched_at": "2026-09-02T07:12:57.669791+00:00",
+          "board_generated_at": "2026-09-02T07:13:11.651501+00:00"
+        },
+        "qualification_timestamp": "2026-09-02T07:13:11.675305+00:00",
+        "board_timestamp": "2026-09-02T07:13:11.651501+00:00",
         "slate_date": "2026-09-02"
       }
     }
