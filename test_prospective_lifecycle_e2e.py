@@ -30,6 +30,14 @@ from backtest import prospective_selection as ps
 from backtest import prospective_settlement as pset
 from backtest import prospective_source_integrity as psi
 
+# A live.json with the two REQUIRED freshness channels present and current.
+# reconciliation is deliberately absent, matching every real board measured:
+# it is an enhancer, not a precondition.
+from datetime import datetime as _dt, timezone as _tz
+_FRESH_LIVE = {"prices_checked_at": _dt.now(_tz.utc).isoformat(),
+               "grades_checked_at": _dt.now(_tz.utc).isoformat(),
+               "reconciliation": None}
+
 FAILURES = []
 
 
@@ -65,7 +73,7 @@ PREPARED = (NOW + timedelta(minutes=6)).isoformat()
 CONVERGED = (NOW + timedelta(minutes=11)).isoformat()
 
 CLEAR = psi.evaluate(schedule={1: {}},
-                     live_state={"reconciliation": {"mismatches": []}})
+                     live_state=_FRESH_LIVE)
 
 
 def cand(pid, *, start=FAR, order=100.0, status="top_pick", **over):
@@ -402,7 +410,7 @@ try:
                      persist=False, ledger_worktree=L7)
     check("no evaluation -> UNKNOWN", unk.get("source_integrity_state") == psi.UNKNOWN)
     check("UNKNOWN -> 0 eligible", unk.get("eligible_count") == 0)
-    hold = psi.evaluate(schedule={}, live_state={"reconciliation": {"mismatches": []}})
+    hold = psi.evaluate(schedule={}, live_state=_FRESH_LIVE)
     held = pc.capture(ROWS, slate_date=SLATE, board_generated_at=GEN,
                       odds_fetched_at=ODDS, schedule=SCHED, now=NOW,
                       persist=False, source_integrity=hold)

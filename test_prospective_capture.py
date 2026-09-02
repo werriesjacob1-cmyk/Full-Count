@@ -14,6 +14,14 @@ from datetime import datetime, timedelta, timezone
 from backtest import prospective_capture as pc
 from backtest import prospective_source_integrity as psi
 
+# A live.json with the two REQUIRED freshness channels present and current.
+# reconciliation is deliberately absent, matching every real board measured:
+# it is an enhancer, not a precondition.
+from datetime import datetime as _dt, timezone as _tz
+_FRESH_LIVE = {"prices_checked_at": _dt.now(_tz.utc).isoformat(),
+               "grades_checked_at": _dt.now(_tz.utc).isoformat(),
+               "reconciliation": None}
+
 FAILURES = []
 
 
@@ -61,7 +69,7 @@ def cap(rows, **kw):
     # blocks every row -- asserted separately in check 11.
     kw.setdefault("source_integrity",
                   psi.evaluate(schedule=SCHEDULE,
-                               live_state={"reconciliation": {"mismatches": []}}))
+                               live_state=_FRESH_LIVE))
     return pc.capture(rows, **kw)
 
 
@@ -147,7 +155,7 @@ check("skip is not an error", rep.get("ok") is True)
 
 print("\nCheck 7: PA-v1 fallback state is explicit, never collapsed to null")
 from backtest import prospective_eligibility as _pe
-_CL = psi.evaluate(schedule=SCHEDULE, live_state={"reconciliation": {"mismatches": []}})
+_CL = psi.evaluate(schedule=SCHEDULE, live_state=_FRESH_LIVE)
 pool, _rej = _pe.partition([row()], now=NOW, schedule=SCHEDULE,
                            odds_fetched_at=ODDS, board_generated_at=GEN,
                            source_integrity=_CL)
@@ -211,7 +219,7 @@ check("and the funnel names the integrity gate",
 print("\nCheck 12: the sealed snapshot carries a COMPLETE receipt basis")
 from backtest import prospective_eligibility as _pe2
 from backtest import prospective_receipt as _pr2
-_clear = psi.evaluate(schedule=SCHEDULE, live_state={"reconciliation": {"mismatches": []}})
+_clear = psi.evaluate(schedule=SCHEDULE, live_state=_FRESH_LIVE)
 _el, _rej = _pe2.partition([row()], now=NOW, schedule=SCHEDULE,
                            odds_fetched_at=ODDS, board_generated_at=GEN,
                            source_integrity=_clear)

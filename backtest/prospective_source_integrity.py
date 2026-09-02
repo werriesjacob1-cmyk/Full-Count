@@ -103,76 +103,133 @@ def hold(scope, key, reason_code, *, observed_at=None, authority=None,
     }
 
 
-def evaluate(*, schedule, live_state=None, freshness_health=None,
-             observed_at=None):
+def evaluate(*, schedule, live_state=None, now=None, observed_at=None,
+             sla_minutes=None):
     """Compose the integrity verdict from already-durable pipeline signals.
 
-    ``schedule``          the dict `_game_schedule()` returned. Empty means the
-                          whole-slate MLB fetch failed and game-start filtering
-                          was skipped for the entire build.
-    ``live_state``        parsed `docs/live.json`, for its `reconciliation`
-                          block. None/unreadable => UNKNOWN, not CLEAR.
-    ``freshness_health``  `check_live_freshness.health()`-shaped dict, whose
-                          required channels are the two upstreams a price and a
-                          settlement depend on.
+    WHAT "CLEAR" MEANS HERE, PRECISELY. An evaluation genuinely ran over the
+    signals that EXIST, and none of them raised a hold. The verdict records
+    which signals were evaluated and which could not be, so a reader can see
+    exactly what was and was not checked rather than inferring it.
 
-    Returns a verdict dict. State is HOLD if any hold applies, UNKNOWN if the
-    evaluation could not be completed, CLEAR only when it genuinely ran clean.
+    UNKNOWN is reserved for "we could not look at all": live.json unreadable or
+    absent, or the required freshness channels missing. It fails closed.
+
+    WHY RECONCILIATION IS OPTIONAL RATHER THAN REQUIRED. An earlier version of
+    this contract required the `reconciliation` block and returned UNKNOWN
+    without it. Measured against real committed state, that block is **null on
+    every board**: `live_state.default_live_state()` initialises it to None and
+    only `run_reconciliation.py` ever replaces it, and it is null across twelve
+    consecutive live.json commits on main spanning an hour. Requiring it would
+    therefore have returned UNKNOWN forever and silently nulled the whole
+    experiment -- the same fatal outcome as defaulting to CLEAR, reached from
+    the opposite direction.
+
+    So reconciliation is treated as an ENHANCER: when present its mismatches
+    become holds, and when absent that fact is recorded in
+    `unevaluated_signals` rather than either ignored or fatal. That
+    reconciliation never populates is itself a production defect, reported
+    separately; fixing it strengthens this gate without changing its shape.
     """
-    holds, notes = [], {}
+    from datetime import datetime, timedelta, timezone
 
-    # Whole-slate schedule outage. The per-row gates already fail closed on a
-    # missing schedule entry, but recording it explicitly is what makes
-    # "0 eligible because MLB was down" distinguishable from "0 eligible
-    # because nothing qualified" -- a §12 reporting requirement.
+    holds, notes = [], {}
+    evaluated, unevaluated = [], []
+
+    # --- whole-slate schedule outage -----------------------------------
     if not schedule:
         holds.append(hold(SCOPE_SLATE, "slate", R_SCHEDULE_UNAVAILABLE,
                           observed_at=observed_at))
         notes["schedule"] = "empty schedule: whole-slate fetch failed"
+    evaluated.append("schedule_availability")
 
     if live_state is None:
+        # We could not look at anything live-side at all.
         return _verdict(UNKNOWN, holds,
-                        dict(notes, reason=R_INPUTS_UNREADABLE), False)
+                        dict(notes, reason=R_INPUTS_UNREADABLE,
+                             evaluated_signals=evaluated,
+                             unevaluated_signals=["freshness_channels",
+                                                  "reconciliation"]), False)
 
-    recon = (live_state or {}).get("reconciliation")
+    # --- required freshness channels ------------------------------------
+    try:
+        from dashboard.check_live_freshness import (REQUIRED_CHANNELS,
+                                                    SLA_MINUTES)
+    except Exception:                       # pragma: no cover - import guard
+        REQUIRED_CHANNELS, SLA_MINUTES = {}, 15
+    sla = sla_minutes if sla_minutes is not None else SLA_MINUTES
+    now_dt = now or datetime.now(timezone.utc)
+
+    missing, stale = [], []
+    for channel, field in (REQUIRED_CHANNELS or {}).items():
+        raw = live_state.get(field)
+        stamp = _parse_utc(raw)
+        if stamp is None:
+            missing.append(channel)
+        elif now_dt - stamp > timedelta(minutes=sla):
+            stale.append(channel)
+    if REQUIRED_CHANNELS:
+        evaluated.append("required_freshness_channels")
+    if missing:
+        # A required channel with no timestamp at all is not a stale channel,
+        # it is an unobserved one. Fail closed.
+        return _verdict(UNKNOWN, holds,
+                        dict(notes, reason=R_INPUTS_UNREADABLE,
+                             missing_channels=missing,
+                             evaluated_signals=evaluated,
+                             unevaluated_signals=["reconciliation"]), False)
+    if stale:
+        holds.append(hold(SCOPE_SLATE, "slate", R_REQUIRED_CHANNEL_STALE,
+                          observed_at=observed_at))
+        notes["stale_channels"] = stale
+
+    # --- reconciliation: an ENHANCER, not a precondition -----------------
+    recon = live_state.get("reconciliation")
     if recon is None:
-        # The reconciliation block is the best existing hold source; without it
-        # we genuinely do not know. Not CLEAR.
-        return _verdict(UNKNOWN, holds,
-                        dict(notes, reason="reconciliation block absent"), False)
-
-    for mismatch in (recon.get("mismatches") or []):
-        kind = mismatch.get("kind")
-        if kind == "board_age":
-            holds.append(hold(SCOPE_SLATE, "slate", R_BOARD_AGE_MISMATCH,
-                              observed_at=mismatch.get("observed_at")
-                              or observed_at))
-        elif kind == "lineup":
-            # KIND_LINEUP fingerprints are game_pk:side, which maps directly
-            # onto the hold registry's game key.
-            game_pk = mismatch.get("game_pk")
-            if game_pk is None:
-                fp = str(mismatch.get("fingerprint") or "")
-                parts = fp.split(":")
-                game_pk = parts[1] if len(parts) > 1 else None
-            if game_pk is not None:
-                holds.append(hold(SCOPE_GAME, game_pk, R_LINEUP_MISMATCH,
+        unevaluated.append("reconciliation")
+        notes["reconciliation"] = (
+            "absent on this board (its default value); reconciliation-derived "
+            "holds could not be evaluated")
+    else:
+        evaluated.append("reconciliation")
+        for mismatch in (recon.get("mismatches") or []):
+            kind = mismatch.get("kind")
+            if kind == "board_age":
+                holds.append(hold(SCOPE_SLATE, "slate", R_BOARD_AGE_MISMATCH,
                                   observed_at=mismatch.get("observed_at")
                                   or observed_at))
-        # KIND_LINE_MOVED is deliberately NOT a source-integrity hold: it is a
-        # real successful market observation and is already the price gate's
-        # territory. Double-counting it would corrupt the rejection funnel.
+            elif kind == "lineup":
+                game_pk = mismatch.get("game_pk")
+                if game_pk is None:
+                    parts = str(mismatch.get("fingerprint") or "").split(":")
+                    game_pk = parts[1] if len(parts) > 1 else None
+                if game_pk is not None:
+                    holds.append(hold(SCOPE_GAME, game_pk, R_LINEUP_MISMATCH,
+                                      observed_at=mismatch.get("observed_at")
+                                      or observed_at))
+            # KIND_LINE_MOVED is deliberately NOT a source-integrity hold: it
+            # is a real successful market observation and is already the price
+            # gate's territory. Double-counting corrupts the funnel.
 
-    if freshness_health is not None:
-        stale = [c for c, ok in (freshness_health.get("channels") or {}).items()
-                 if ok is False]
-        if stale:
-            holds.append(hold(SCOPE_SLATE, "slate", R_REQUIRED_CHANNEL_STALE,
-                              observed_at=observed_at))
-            notes["stale_channels"] = stale
-
+    notes["evaluated_signals"] = evaluated
+    notes["unevaluated_signals"] = unevaluated
     state = HOLD if holds else CLEAR
     return _verdict(state, holds, notes, True)
+
+
+def _parse_utc(value):
+    from datetime import datetime, timezone
+    if not value:
+        return None
+    text = str(value).strip()
+    if text.endswith("Z"):
+        text = text[:-1] + "+00:00"
+    try:
+        parsed = datetime.fromisoformat(text)
+    except ValueError:
+        return None
+    return (parsed.replace(tzinfo=timezone.utc) if parsed.tzinfo is None
+            else parsed.astimezone(timezone.utc))
 
 
 def applies_to(verdict, *, game_pk=None, team=None, canonical_prop_id=None):

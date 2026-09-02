@@ -12,6 +12,14 @@ from backtest import prospective_ledger as pl
 from backtest import prospective_receipt as pr
 from backtest import prospective_source_integrity as psi
 
+# A live.json with the two REQUIRED freshness channels present and current.
+# reconciliation is deliberately absent, matching every real board measured:
+# it is an enhancer, not a precondition.
+from datetime import datetime as _dt, timezone as _tz
+_FRESH_LIVE = {"prices_checked_at": _dt.now(_tz.utc).isoformat(),
+               "grades_checked_at": _dt.now(_tz.utc).isoformat(),
+               "reconciliation": None}
+
 FAILURES = []
 
 
@@ -76,7 +84,7 @@ def build(r=None, **over):
                         board_generated_at=META["board_generated_at"],
                         source_integrity=psi.evaluate(
                             schedule=SCHEDULE,
-                            live_state={"reconciliation": {"mismatches": []}}))
+                            live_state=_FRESH_LIVE))
     kw = dict(epoch=EPOCH, snapshot_id="snap-1", snapshot_sha256="b" * 64,
               slate_date="2026-09-02", pa_probability=0.5731,
               pa_fallback_state="joint_cell", champion_member=True,
@@ -259,7 +267,7 @@ _v = pe.evaluate_row(_r, now=NOW, schedule=SCHEDULE,
                      board_generated_at=META["board_generated_at"],
                      source_integrity=psi.evaluate(
                          schedule=SCHEDULE,
-                         live_state={"reconciliation": {"mismatches": []}}))
+                         live_state=_FRESH_LIVE))
 _kw = dict(epoch=EPOCH, snapshot_id="snap-1", snapshot_sha256="b" * 64,
            slate_date="2026-09-02", pa_probability=0.5731,
            pa_fallback_state="joint_cell", champion_member=True,

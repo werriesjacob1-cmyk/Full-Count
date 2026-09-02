@@ -10,10 +10,18 @@ from datetime import datetime, timedelta, timezone
 from backtest import prospective_eligibility as pe
 from backtest import prospective_source_integrity as psi
 
+# A live.json with the two REQUIRED freshness channels present and current.
+# reconciliation is deliberately absent, matching every real board measured:
+# it is an enhancer, not a precondition.
+from datetime import datetime as _dt, timezone as _tz
+_FRESH_LIVE = {"prices_checked_at": _dt.now(_tz.utc).isoformat(),
+               "grades_checked_at": _dt.now(_tz.utc).isoformat(),
+               "reconciliation": None}
+
 # A genuinely-ran, genuinely-clean evaluation. Tests that are not ABOUT source
 # integrity must supply one, because a missing evaluation is now UNKNOWN and
 # correctly fails closed.
-CLEAR = psi.evaluate(schedule={1: {}}, live_state={"reconciliation": {"mismatches": []}})
+CLEAR = psi.evaluate(schedule={1: {}}, live_state=_FRESH_LIVE)
 
 FAILURES = []
 
@@ -203,14 +211,32 @@ check("unreadable live.json -> UNKNOWN", unk["state"] == psi.UNKNOWN)
 check("UNKNOWN blocks",
       not verdict(base_row(), source_integrity=unk)["gates"]["no_source_integrity_hold"])
 check("UNKNOWN is not evaluated", unk["evaluated"] is False)
-missing_recon = psi.evaluate(schedule=SCHEDULE, live_state={})
-check("absent reconciliation block -> UNKNOWN", missing_recon["state"] == psi.UNKNOWN)
-outage = psi.evaluate(schedule={}, live_state={"reconciliation": {"mismatches": []}})
+# An EMPTY live_state has no required freshness channels at all -> UNKNOWN.
+missing_channels = psi.evaluate(schedule=SCHEDULE, live_state={})
+check("no required freshness channels -> UNKNOWN",
+      missing_channels["state"] == psi.UNKNOWN)
+# But a board with the channels and NO reconciliation block is CLEAR, with the
+# gap RECORDED. Requiring reconciliation would return UNKNOWN forever: it is
+# null on every real board measured, so requiring it would null the experiment
+# exactly as defaulting to CLEAR would, from the opposite direction.
+no_recon = psi.evaluate(schedule=SCHEDULE, live_state=_FRESH_LIVE)
+check("absent reconciliation is CLEAR, not UNKNOWN",
+      no_recon["state"] == psi.CLEAR)
+check("and the gap is RECORDED, not ignored",
+      "reconciliation" in (no_recon["notes"].get("unevaluated_signals") or []))
+check("what WAS evaluated is recorded too",
+      "required_freshness_channels" in (no_recon["notes"].get("evaluated_signals") or []))
+stale_live = dict(_FRESH_LIVE,
+                  prices_checked_at="2020-01-01T00:00:00+00:00")
+check("a stale required channel -> HOLD",
+      psi.evaluate(schedule=SCHEDULE, live_state=stale_live)["state"] == psi.HOLD)
+outage = psi.evaluate(schedule={}, live_state=_FRESH_LIVE)
 check("whole-slate schedule outage -> HOLD", outage["state"] == psi.HOLD)
 check("slate HOLD blocks every candidate",
       not verdict(base_row(), source_integrity=outage)["gates"]["no_source_integrity_hold"])
-game_hold = psi.evaluate(schedule=SCHEDULE, live_state={"reconciliation": {
-    "mismatches": [{"kind": "lineup", "game_pk": GAME_PK}]}})
+game_hold = psi.evaluate(schedule=SCHEDULE, live_state=dict(
+    _FRESH_LIVE, reconciliation={
+        "mismatches": [{"kind": "lineup", "game_pk": GAME_PK}]}))
 check("lineup reconciliation mismatch -> HOLD", game_hold["state"] == psi.HOLD)
 check("game-scoped HOLD blocks that game",
       not verdict(base_row(), source_integrity=game_hold)["gates"]["no_source_integrity_hold"])
@@ -220,8 +246,9 @@ check("game-scoped HOLD does NOT block a different game",
               source_integrity=game_hold)["gates"]["no_source_integrity_hold"])
 # LINE_MOVED is a real successful observation and already the price gate's
 # job; counting it twice would attribute one rejection to two gates.
-lm = psi.evaluate(schedule=SCHEDULE, live_state={"reconciliation": {
-    "mismatches": [{"kind": "line_moved", "prop_id": "x"}]}})
+lm = psi.evaluate(schedule=SCHEDULE, live_state=dict(
+    _FRESH_LIVE, reconciliation={
+        "mismatches": [{"kind": "line_moved", "prop_id": "x"}]}))
 check("line_moved is NOT a source-integrity hold", lm["state"] == psi.CLEAR)
 check("every hold carries scope/key/reason/observed_at/authority",
       all({"scope", "key", "reason_code", "observed_at", "authority"} <= set(h)

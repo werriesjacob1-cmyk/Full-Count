@@ -8,7 +8,15 @@ from backtest import prospective_epoch as pep
 from backtest import prospective_selection as ps
 from backtest import prospective_source_integrity as psi
 
-CLEAR = psi.evaluate(schedule={1: {}}, live_state={"reconciliation": {"mismatches": []}})
+# A live.json with the two REQUIRED freshness channels present and current.
+# reconciliation is deliberately absent, matching every real board measured:
+# it is an enhancer, not a precondition.
+from datetime import datetime as _dt, timezone as _tz
+_FRESH_LIVE = {"prices_checked_at": _dt.now(_tz.utc).isoformat(),
+               "grades_checked_at": _dt.now(_tz.utc).isoformat(),
+               "reconciliation": None}
+
+CLEAR = psi.evaluate(schedule={1: {}}, live_state=_FRESH_LIVE)
 
 FAILURES = []
 
