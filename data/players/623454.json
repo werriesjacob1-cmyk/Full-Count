@@ -265,7 +265,7 @@
       "date": "2026-09-02",
       "evaluations": [
         {
-          "prop": "Over 3.5 Strikeouts",
+          "prop": "Over 4.5 Strikeouts",
           "type": "pitcher",
           "score": 48.9,
           "notable_signals": 0,
@@ -281,21 +281,21 @@
             "l14_k_pct": 37.6471,
             "env_neutral": 50.0
           },
-          "hit_probability": 0.6161,
-          "raw_hit_probability": 0.7102,
-          "lift": -0.0828,
+          "hit_probability": 0.5171,
+          "raw_hit_probability": 0.5171,
+          "lift": 0.0033,
           "reliability": "C",
           "sample_n": 7,
           "projection": {
             "stat": "strikeouts",
-            "value": 3.5,
-            "needs": 4
+            "value": 4.5,
+            "needs": 5
           }
         },
         {
           "prop": "Over 12.5 Outs Recorded",
           "type": "pitcher",
-          "score": 41.2,
+          "score": 41.3,
           "notable_signals": 0,
           "matchup": "Detroit Tigers @ Minnesota Twins",
           "game_pk": 823660,
