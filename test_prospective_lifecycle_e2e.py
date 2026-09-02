@@ -20,6 +20,7 @@ import sys
 import tempfile
 from datetime import datetime, timedelta, timezone
 
+from backtest import pa_v1_compat as pac
 from backtest import prospective_capture as pc
 from backtest import prospective_epoch as pep
 from backtest import prospective_ledger as pl
@@ -476,6 +477,82 @@ try:
     check("with the per-deployment reason",
           any("no durably persisted pregame snapshot" in str((e.get("body") or {}).get("reason"))
               for e in ev9))
+
+    print("\nCheck 17a: a NON-FINAL grade is never sealed into the ledger")
+    # REGRESSION (audit D1, 2026-09-02). settle_date appended EVERY settlement
+    # unconditionally, including grade "ungraded" -- which grade_results
+    # returns for "game not final yet". Because the ledger is immutable, the
+    # later run holding the real box score then raised LedgerConflict and the
+    # true grade could NEVER be recorded. Locked here on a fresh date so the
+    # date used by the earlier checks is untouched.
+    LATE = SLATE
+
+    def seeded_ledger(name):
+        """A fresh, independent ledger carried to the designated-epoch state."""
+        wt = new_ledger(name)
+        pc.capture(ROWS, slate_date=SLATE, board_generated_at=GEN,
+                   odds_fetched_at=ODDS, schedule=SCHED, now=NOW, persist=True,
+                   ledger_worktree=wt, source_integrity=CLEAR,
+                   board_metadata={"model_version": "2026.08.15",
+                                   "selection_policy_version": "1.0.0",
+                                   "calibration_version": "1.0.0",
+                                   "feature_version": "1.0.0",
+                                   "git_sha": "a" * 40,
+                                   "odds_fetched_at": ODDS,
+                                   "board_generated_at": GEN})
+        plc.bind_exposure(deployment(), worktree=wt, payload=PAYLOAD,
+                          schedule=SCHED)
+        plc.designate(SLATE, worktree=wt)
+        evs = pl.read_events(os.path.join(wt, pl.ledger_relpath(SLATE)))
+        return wt, [e["body"] for e in evs
+                    if e["event_type"] == pl.EVENT_PREGAME_RECEIPT]
+
+    L17, late_rcpts = seeded_ledger("d1")
+    def ungraded_grader(pick, context, date=None):
+        return {**pick, "grade": "ungraded",
+                "reason": "game not final yet (status: In Progress)"}
+    r1 = plc.settle_date(LATE, worktree=L17, contexts={}, grader=ungraded_grader)
+    check("nothing terminal was settled", r1.get("settled") == 0, str(r1))
+    check("every non-final receipt is counted as skipped",
+          r1.get("skipped") == len(late_rcpts), str(r1))
+    check("and reported as pending with its reason",
+          len(r1.get("pending") or []) == len(late_rcpts)
+          and "not final" in str(r1["pending"][0].get("reason")), str(r1))
+    ev17 = pl.read_events(os.path.join(L17, pl.ledger_relpath(LATE)))
+    check("NO settlement event was appended",
+          not [e for e in ev17 if e["event_type"] == pl.EVENT_SETTLEMENT])
+
+    # THE POINT OF THE FIX: the real grade can still be recorded afterwards.
+    r2 = plc.settle_date(LATE, worktree=L17, contexts={}, grader=grader_for({1, 2}))
+    check("the real grade is recordable on a later pass",
+          r2.get("settled") == len(late_rcpts), str(r2))
+    rpt17 = psb.build_report(L17)
+    check("and it reaches the decided denominator",
+          rpt17["champion"]["decided_n"] == len(late_rcpts), str(rpt17["champion"]))
+
+    print("\nCheck 17b: an unsettled receipt is still counted, as ungraded")
+    L17b, r17b = seeded_ledger("d1b")
+    n17b = len(r17b)
+    plc.settle_date(LATE, worktree=L17b, contexts={}, grader=ungraded_grader)
+    rpt17b = psb.build_report(L17b)
+    check("skipping does not delete evidence: selected_n is unchanged",
+          rpt17b["champion"]["selected_n"] == n17b, str(rpt17b["champion"]))
+    check("it is visible as ungraded, not as a decision",
+          rpt17b["champion"]["ungraded"] == n17b
+          and rpt17b["champion"]["decided_n"] == 0, str(rpt17b["champion"]))
+
+    print("\nCheck 17c: the PA-v1 compat version is SEALED and forms strata")
+    # REGRESSION (audit D2). The adapter version lived only on the snapshot,
+    # so it never reached the version strata -- an adapter change mid-window
+    # would have blended two different challengers into one hit rate.
+    for _r in late_rcpts:
+        check("receipt carries the compat version",
+              _r.get("pa_v1_compat_version") == pac.COMPAT_VERSION,
+              str(_r.get("pa_v1_compat_version")))
+        break
+    _sk = list(rpt17["version_strata"].keys())[0]
+    check("and the strata key is partitioned by it",
+          pac.COMPAT_VERSION in _sk, _sk)
 
     print("\nCheck 17: settlement against a wrong receipt hash is refused")
     bad = dict(rcpts[0], receipt_content_sha256="f" * 64)

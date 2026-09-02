@@ -36,6 +36,12 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 DECIDED = ("hit", "miss")
 ALL_OUTCOMES = ("hit", "miss", "void", "ungraded")
 
+# WHICH OUTCOMES MAY BE WRITTEN TO AN IMMUTABLE LEDGER. `ungraded` is a
+# not-yet-knowable state ("game not final yet"), not a verdict, so appending it
+# would permanently seal a non-answer that the real box score could never
+# afterwards replace. Callers settle terminal outcomes and retry the rest.
+TERMINAL_OUTCOMES = ("hit", "miss", "void")
+
 
 class ReceiptMismatch(ValueError):
     """A settlement was offered for a receipt it does not match."""

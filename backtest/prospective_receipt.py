@@ -37,7 +37,13 @@ from backtest.prospective_eligibility import (  # noqa: E402
     PROTOCOL_VERSION,
 )
 
-RECEIPT_SCHEMA_VERSION = 1
+# v2 (2026-09-02): the PA-v1 historical-semantics compatibility provenance is
+# now SEALED INTO THE RECEIPT. An audit found the adapter's version lived only
+# on the snapshot, so it never reached the §12 version strata -- meaning a
+# mid-window adapter change could silently blend two incomparable PA-v1
+# regimes into one hit rate. The adapter IS part of the challenger's
+# definition, so it is part of the sealed prediction state.
+RECEIPT_SCHEMA_VERSION = 2
 
 # The frozen PA-v1 authoritative artifact this shadow is bound to. Pinned here
 # so a receipt can never silently be produced against a refit model: the
@@ -217,7 +223,7 @@ def build_receipt(row, verdict, *, epoch, snapshot_id, snapshot_sha256,
                   champion_member, champion_rank, pa_member, pa_rank,
                   board_metadata=None, source_integrity_state="none_declared",
                   pa_artifact_sha256=PA_V1_SCIENTIFIC_SHA256,
-                  repo_git_sha=None):
+                  repo_git_sha=None, pa_compat_version=None, pa_compat=None):
     """Build one immutable pregame receipt from an already-gated row.
 
     ``verdict`` is prospective_eligibility.evaluate_row()'s output for this
@@ -312,6 +318,15 @@ def build_receipt(row, verdict, *, epoch, snapshot_id, snapshot_sha256,
         "champion_rank": champion_rank,
         "pa_v1_member": bool(pa_member),
         "pa_v1_rank": pa_rank,
+
+        # -- PA-v1 historical-semantics compatibility -------------------
+        # WHICH transform version the challenger was scored under, and the
+        # exact per-row provenance (both reference clocks, the live raw
+        # value, the historical equivalent, and the note). Sealed pregame,
+        # outcome-free, and strata-forming: two adapter versions are two
+        # different challengers and must never be pooled.
+        "pa_v1_compat_version": pa_compat_version,
+        "pa_v1_compat": pa_compat,
 
         # -- code / model provenance ------------------------------------
         "model_version": meta.get("model_version"),

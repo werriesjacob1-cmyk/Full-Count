@@ -235,7 +235,9 @@ def bind_exposure(deployment, *, worktree, payload, schedule=None,
             pa_rank=pa_rank.get(pid),
             board_metadata=meta,
             source_integrity_state=(snapshot.get("source_integrity") or {}).get("state"),
-            repo_git_sha=meta.get("git_sha"))
+            repo_git_sha=meta.get("git_sha"),
+            pa_compat_version=snapshot.get("pa_v1_compat_version"),
+            pa_compat=entry.get("pa_v1_compat"))
         out_events.append(pl.make_event(
             pl.EVENT_PREGAME_RECEIPT, receipt["receipt_id"], receipt,
             writer="prospective_lifecycle"))
@@ -333,17 +335,42 @@ def settle_date(slate_date, *, worktree, contexts, branch=pl.LEDGER_BRANCH,
         return {"ok": True, "settled": 0,
                 "note": f"no sealed receipts for {epoch_id}"}
 
-    out, skipped = [], 0
+    # NOTE: already-settled receipts are deliberately re-graded rather than
+    # short-circuited. The ledger's own append_events() drops a byte-identical
+    # repeat and RAISES LedgerConflict on a changed settlement under the same
+    # key; skipping them here would silently disarm that check.
+    out, skipped, pending = [], 0, []
     for receipt in receipts:
         ctx = (contexts or {}).get(receipt.get("game_pk")) or {}
         ev = pset.settle(receipt, ctx, date=slate_date, grader=grader)
         pset.verify_pairing(receipt, ev)
+        # ONLY TERMINAL SETTLEMENTS ARE APPENDED. `ungraded` in this codebase
+        # is "not knowable yet" -- "game not final yet (status: In Progress)"
+        # is its single commonest cause -- not a verdict. The ledger is
+        # append-only and immutable, so writing a non-final settlement would
+        # seal a non-answer PERMANENTLY: the later run holding the real box
+        # score raises LedgerConflict instead of recording the true grade, and
+        # the wager is lost from the decided denominator forever.
+        #
+        # A skipped receipt is NOT lost evidence. prospective_scoreboard reads
+        # an unsettled receipt as outcome "ungraded", so it still counts in
+        # selected_n and in ungraded_rate -- it simply stays eligible to be
+        # settled truthfully on a later pass, which is exactly the behaviour
+        # grade_results.dates_needing_grading() already relies on.
+        if ev.get("outcome") not in pset.TERMINAL_OUTCOMES:
+            skipped += 1
+            pending.append({"receipt_id": receipt["receipt_id"],
+                            "canonical_prop_id": receipt.get("canonical_prop_id"),
+                            "reason": ev.get("settlement_reason")})
+            continue
         out.append(pl.make_event(pl.EVENT_SETTLEMENT, receipt["receipt_id"], ev,
                                  writer="prospective_lifecycle"))
-    res = pl.append_and_push(worktree, slate_date, out, branch=branch,
-                             message=f"settle {slate_date} {epoch_id}")
+
+    res = (pl.append_and_push(worktree, slate_date, out, branch=branch,
+                              message=f"settle {slate_date} {epoch_id}")
+           if out else {"appended": 0, "note": "nothing terminal to settle"})
     return {"ok": True, "settled": len(out), "skipped": skipped,
-            "epoch_id": epoch_id, "ledger": res}
+            "pending": pending, "epoch_id": epoch_id, "ledger": res}
 
 
 def main(argv=None):
@@ -355,6 +382,11 @@ def main(argv=None):
     ap.add_argument("--slate-date")
     ap.add_argument("--deployment", help="path to the deployment observation JSON")
     ap.add_argument("--payload", help="path to the deployed data.json")
+    ap.add_argument("--contexts",
+                    help="path to a JSON object mapping game_pk -> the "
+                         "settlement context grade_results.grade_public_pick "
+                         "reads (box score / status). Without it every "
+                         "receipt grades 'ungraded' and nothing is settled.")
     ap.add_argument("--out")
     a = ap.parse_args(argv)
 
@@ -368,7 +400,18 @@ def main(argv=None):
     elif a.stage == "designate":
         report = designate(a.slate_date, worktree=a.ledger, branch=a.branch)
     elif a.stage == "settle":
-        report = settle_date(a.slate_date, worktree=a.ledger, contexts={},
+        contexts = {}
+        if a.contexts:
+            # Keys arrive as JSON object keys (strings); receipts carry game_pk
+            # as an int. Index BOTH so a caller cannot silently settle nothing.
+            raw = json.load(open(a.contexts))
+            for k, v in (raw or {}).items():
+                contexts[k] = v
+                try:
+                    contexts[int(k)] = v
+                except (TypeError, ValueError):
+                    pass
+        report = settle_date(a.slate_date, worktree=a.ledger, contexts=contexts,
                              branch=a.branch)
     else:
         from backtest import prospective_scoreboard as psb

@@ -99,7 +99,14 @@ rec = build()
 check("verify_receipt true", pr.verify_receipt(rec))
 check("has content sha", len(rec["receipt_content_sha256"]) == 64)
 check("has receipt id", len(rec["receipt_id"]) == 64)
-check("schema version pinned", rec["receipt_schema_version"] == 1)
+check("schema version pinned", rec["receipt_schema_version"] == 2)
+# v2 seals the PA-v1 semantics-adapter provenance. A receipt that cannot say
+# WHICH adapter version scored it cannot be stratified, so two incomparable
+# challenger regimes could be pooled into one hit rate.
+check("compat version is a sealed receipt field",
+      "pa_v1_compat_version" in rec)
+check("and the per-row compat provenance travels with it",
+      "pa_v1_compat" in rec)
 check("protocol sha carried", rec["protocol_sha256"] == pe.PROTOCOL_SHA256)
 check("PA artifact sha is the AUTHORITATIVE freeze",
       rec["pa_v1_artifact_scientific_sha256"] ==

@@ -97,6 +97,7 @@ def build_report(ledger_dir):
             "selection_policy_version": r.get("selection_policy_version"),
             "calibration_version": r.get("calibration_version"),
             "feature_version": r.get("feature_version"),
+            "pa_v1_compat_version": r.get("pa_v1_compat_version"),
             "git_sha": r.get("git_sha"),
         })
 
@@ -183,7 +184,11 @@ def build_report(ledger_dir):
     for r in rows:
         k = "|".join(str(r.get(f)) for f in
                      ("model_version", "selection_policy_version",
-                      "calibration_version", "feature_version"))
+                      "calibration_version", "feature_version",
+                      # The PA-v1 semantics adapter is part of the
+                      # challenger's definition: two adapter versions are two
+                      # different challengers and must not be pooled.
+                      "pa_v1_compat_version"))
         strata.setdefault(k, {"n": 0, "dates": set()})
         strata[k]["n"] += 1
         strata[k]["dates"].add(r["slate_date"])
