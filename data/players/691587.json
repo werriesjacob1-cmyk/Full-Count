@@ -329,7 +329,7 @@
         {
           "prop": "Over 15.5 Outs Recorded",
           "type": "pitcher",
-          "score": 42.2,
+          "score": 41.6,
           "notable_signals": 0,
           "matchup": "Miami Marlins @ Kansas City Royals",
           "game_pk": 824068,
@@ -338,18 +338,46 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.5456,
+            "outs_rate": 0.5462,
             "avg_outs_per_start": 16.33
           },
-          "hit_probability": 0.5456,
+          "hit_probability": 0.5462,
           "raw_hit_probability": null,
-          "lift": -0.0157,
+          "lift": -0.0181,
           "reliability": "A",
           "sample_n": 24,
           "projection": {
             "stat": "pitcher_outs",
             "value": 15.5,
             "needs": 16
+          }
+        },
+        {
+          "prop": "Over 9.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 55.0,
+          "notable_signals": 0,
+          "matchup": "Miami Marlins @ Kansas City Royals",
+          "game_pk": 824068,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            691587,
+            702070
+          ],
+          "signals": {
+            "combined_k_edge": 0.0069
+          },
+          "hit_probability": 0.5605,
+          "raw_hit_probability": null,
+          "lift": 0.0069,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 9.5,
+            "needs": 10
           }
         }
       ]
