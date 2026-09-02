@@ -24,3 +24,11 @@ backtest/_sweep_short_windows_state.json
 # Generated daily by dashboard/build_dashboard.py -- fonts_b64.json (static,
 # committed) is the only dashboard/ asset meant to be tracked.
 dashboard/fullcount_board.html
+
+# SuperClaude context keeper: per-branch working memos. Volatile by design --
+# never committed, and specifically never swept into a worktree-autosave
+# snapshot and pushed to origin, since they carry worktree paths, PIDs, boot
+# ids and run identifiers. Three files in .claude/ already ASSERT this is
+# gitignored; until this rule existed, all three were wrong (found by
+# independent audit, 2026-08-29).
+.claude/context/
