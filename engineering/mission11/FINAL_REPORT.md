@@ -194,20 +194,47 @@ Wording correction I owe: in the PR-merge CI context the failing check inside `t
 
 ## O. EXACT-HEAD GITHUB CI
 
-**Head `32ede6a7bcc5a156ddf1b5da9ead57e67e4ec00f`.**
+**Head `bc9c8ce28aeab65338230b8f4a6fdf55b6af923c`. Both runs COMPLETE. Both RED.**
 
-At the previously audited head `87e868d2`, both checks were **RED**, from the two pre-existing failures above — not from anything this branch introduced:
-
-| run | event | conclusion | failing |
+| run | event | status | conclusion |
 |---|---|---|---|
-| 33593742163 | push | **failure** | `test_board_first_paint.py`, `test_browser_e2e.py` |
-| 33593745909 | pull_request | **failure** | `test_board_first_paint.py` only |
+| 33595832763 | `push` | completed | **failure** |
+| 33595836502 | `pull_request` | completed | **failure** |
 
-All 8 new prospective suites pass in CI. `test_build_dashboard.py` passes 147/147 in both runs.
+**I am not calling this green.** No required-status contexts are configured on this repo, so nothing is "required-green" either.
 
-**I am not calling this green.** CI is red at head, from pre-existing failures. No required-status contexts are configured on this repo, so nothing is "required-green" either. CI for the final head `32ede6a7` was still running when this report was written.
+Verified locally at this exact head — inference from the previous head was not accepted as evidence, even though the only delta is one markdown file:
 
----
+```
+AT bc9c8ce2: PASSED=136 FAILED=2
+failing: test_board_first_paint.py test_browser_e2e.py
+```
+
+All **8 prospective suites pass** at this head, individually re-run:
+`capture`, `eligibility`, `epoch`, `ledger_concurrency`, `lifecycle_e2e`,
+`receipt`, `reporting`, `settlement`.
+
+Both failures are the **pre-existing** fixture-clock-aging pair, independently
+reproduced by the release auditor at the base `41369064` in a separate
+worktree, and `test_board_first_paint.py` additionally at the tip of
+`origin/main`. Not introduced by this branch, and deliberately not fixed here
+(§18) — `superchad/fix-board-first-paint-clock-fixture-01` already exists and
+was not cherry-picked.
+
+Wording correction I owe: in the PR-merge CI context the failing assertion
+inside `test_board_first_paint.py` is a *different* one than in the
+branch-content run. Both are pre-existing; my earlier "fail identically"
+phrasing was true only of the branch-content run.
+
+Final safety re-verification at this head:
+
+```
+protocol sha256           5ce1ae95…b2b355de7   MATCHES
+PA-v1 scientific hash     VERIFIED (recomputed)
+PA-v1 file sha256         112517321e56…70750   MATCHES
+.github/ files changed    0
+FULLCOUNT_SHADOW_PERSIST executable occurrences  0
+```
 
 ## P. INDEPENDENT POST-IMPLEMENTATION VERDICTS
 
