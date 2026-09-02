@@ -41,6 +41,8 @@ after the fact:
 
 from __future__ import annotations
 
+import hashlib
+import os
 import random
 
 # ── FROZEN CONSTANTS. Do not change these to obtain a different interval. ──
@@ -52,6 +54,24 @@ BOOTSTRAP_RNG = "python_random_Random_mersenne_twister"
 BOOTSTRAP_STATISTIC = "pa_v1_hit_rate_minus_champion_hit_rate_at_matched_volume"
 BOOTSTRAP_DENOMINATOR = "decided_only_hit_plus_miss"
 SECONDARY_UNITS = ("game_pk", "player_id")
+
+def contract_file_sha256():
+    """Hash of THIS FILE, so the frozen contract is pinned in the evidence.
+
+    The red team's finding: `run()` correctly exposes no seed, replicate or CI
+    argument, so there is no API through which to move an interval -- but the
+    constants above live in an unpinned file, and the LOCKED protocol never
+    states a seed, a replicate count or an RNG. A one-line edit to
+    BOOTSTRAP_SEED would therefore have been undetectable in the evidence
+    record, unlike the PA-v1 artifact, which is hash-verified before every
+    capture.
+
+    This closes that asymmetry: every §12 report carries the hash of the file
+    that produced its interval.
+    """
+    with open(os.path.abspath(__file__), "rb") as fh:
+        return hashlib.sha256(fh.read()).hexdigest()
+
 
 CONTRACT = {
     "unit": BOOTSTRAP_UNIT,
@@ -104,7 +124,9 @@ def run(settlements):
     dates = sorted(d for d in clusters if d is not None)
     observed = point_estimate(settlements)
     if not dates:
-        return {"contract": dict(CONTRACT), "observed": observed,
+        return {"contract": dict(CONTRACT),
+                "contract_file_sha256": contract_file_sha256(),
+                "observed": observed,
                 "successful_replicates": 0, "attempted_replicates": 0,
                 "ci_low": None, "ci_high": None, "n_dates": 0}
 
@@ -123,6 +145,7 @@ def run(settlements):
 
     result = {
         "contract": dict(CONTRACT),
+        "contract_file_sha256": contract_file_sha256(),
         "observed": observed,
         "n_dates": len(dates),
         "attempted_replicates": BOOTSTRAP_REPLICATES,

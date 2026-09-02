@@ -145,6 +145,17 @@ check("unit change after outcomes explicitly not permitted",
       pb.CONTRACT["unit_change_after_outcomes_permitted"] is False)
 check("game/player clustering is SECONDARY only",
       pb.SECONDARY_UNITS == ("game_pk", "player_id"))
+# The contract lives in an unpinned file and the LOCKED protocol never states
+# a seed, a replicate count or an RNG -- so a one-line edit to BOOTSTRAP_SEED
+# would otherwise be undetectable in the evidence record.
+_h = pb.contract_file_sha256()
+check("the contract FILE is pinned by hash", len(_h) == 64)
+check("every result carries that hash", pb.run([])["contract_file_sha256"] == _h)
+check("a populated result carries it too",
+      pb.run([{"slate_date": "d", "champion_member": True, "pa_v1_member": False,
+               "outcome": "hit"},
+              {"slate_date": "d", "champion_member": False, "pa_v1_member": True,
+               "outcome": "hit"}])["contract_file_sha256"] == _h)
 
 print("\nCheck 8: run() offers NO lever to move the interval")
 import inspect
