@@ -1,0 +1,37 @@
+{
+  "player_id": "nrfi_824717",
+  "name": "Seattle Mariners @ Boston Red Sox \u2014 1st Inning (Both Teams)",
+  "snapshots": [
+    {
+      "date": "2026-09-02",
+      "evaluations": [
+        {
+          "prop": "No runs in the 1st (both teams)",
+          "type": "game",
+          "score": 59.1,
+          "notable_signals": 0,
+          "matchup": "Seattle Mariners @ Boston Red Sox",
+          "game_pk": 824717,
+          "team": null,
+          "side": "both",
+          "lean": "NRFI",
+          "combo_player_ids": null,
+          "signals": {
+            "home_team_scores_p": 0.2836,
+            "away_team_scores_p": 0.2834,
+            "fi_n_starts": 9.0
+          },
+          "hit_probability": 0.5134,
+          "raw_hit_probability": null,
+          "lift": 0.015,
+          "reliability": "B",
+          "sample_n": 9,
+          "projection": {
+            "stat": "nrfi_combined",
+            "value": 51.3
+          }
+        }
+      ]
+    }
+  ]
+}

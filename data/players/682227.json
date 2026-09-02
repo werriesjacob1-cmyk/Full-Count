@@ -1,0 +1,64 @@
+{
+  "player_id": 682227,
+  "name": "Brandon Williamson",
+  "snapshots": [
+    {
+      "date": "2026-09-02",
+      "evaluations": [
+        {
+          "prop": "Over 3.5 Strikeouts",
+          "type": "pitcher",
+          "score": 21.9,
+          "notable_signals": 0,
+          "matchup": "San Diego Padres @ Cincinnati Reds",
+          "game_pk": 824470,
+          "team": "Cincinnati Reds",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_k_pct": 48.0,
+            "same_hand_ratio": 0.0,
+            "env_neutral": 50.0
+          },
+          "hit_probability": 0.5915,
+          "raw_hit_probability": 0.5882,
+          "lift": -0.1074,
+          "reliability": "C",
+          "sample_n": 6,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 3.5,
+            "needs": 4
+          }
+        },
+        {
+          "prop": "Over 13.5 Outs Recorded",
+          "type": "pitcher",
+          "score": 34.8,
+          "notable_signals": 0,
+          "matchup": "San Diego Padres @ Cincinnati Reds",
+          "game_pk": 824470,
+          "team": "Cincinnati Reds",
+          "side": "home",
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "outs_rate": 0.6536,
+            "avg_outs_per_start": 14.0
+          },
+          "hit_probability": 0.6536,
+          "raw_hit_probability": null,
+          "lift": -0.1535,
+          "reliability": "C",
+          "sample_n": 6,
+          "projection": {
+            "stat": "pitcher_outs",
+            "value": 13.5,
+            "needs": 14
+          }
+        }
+      ]
+    }
+  ]
+}

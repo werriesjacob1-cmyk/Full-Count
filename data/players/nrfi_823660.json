@@ -1,0 +1,37 @@
+{
+  "player_id": "nrfi_823660",
+  "name": "Detroit Tigers @ Minnesota Twins \u2014 1st Inning (Both Teams)",
+  "snapshots": [
+    {
+      "date": "2026-09-02",
+      "evaluations": [
+        {
+          "prop": "A run scores in the 1st (either team)",
+          "type": "game",
+          "score": 57.3,
+          "notable_signals": 0,
+          "matchup": "Detroit Tigers @ Minnesota Twins",
+          "game_pk": 823660,
+          "team": null,
+          "side": "both",
+          "lean": "YRFI",
+          "combo_player_ids": null,
+          "signals": {
+            "home_team_scores_p": 0.2591,
+            "away_team_scores_p": 0.3428,
+            "fi_n_starts": 7.0
+          },
+          "hit_probability": 0.5131,
+          "raw_hit_probability": null,
+          "lift": 0.0115,
+          "reliability": "C",
+          "sample_n": 7,
+          "projection": {
+            "stat": "nrfi_combined",
+            "value": 51.3
+          }
+        }
+      ]
+    }
+  ]
+}
