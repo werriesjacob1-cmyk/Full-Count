@@ -2,7 +2,7 @@
   "schema_version": 1,
   "identity_schema_version": 2,
   "rollout_version": "pre-phase-v-live-lifecycle-v1",
-  "updated_at": "2026-09-02T10:57:52.749073+00:00",
+  "updated_at": "2026-09-02T12:57:42.297900+00:00",
   "migration": {
     "version": "pre-phase-v-live-lifecycle-v1",
     "completed_at": "2026-08-17T23:14:57+00:00",
@@ -10804,6 +10804,178 @@
         },
         "qualification_timestamp": "2026-09-02T10:49:53.707125+00:00",
         "board_timestamp": "2026-09-02T10:49:53.683483+00:00",
+        "slate_date": "2026-09-02"
+      }
+    },
+    "fc2:824470:player-663554:pitcher_outs:16:over": {
+      "canonical_id": "fc2:824470:player-663554:pitcher_outs:16:over",
+      "settlement_identity": [
+        "824470",
+        [
+          "player",
+          "663554"
+        ],
+        "pitcher_outs",
+        "16",
+        "over"
+      ],
+      "slate_date": "2026-09-02",
+      "first_published_at": "2026-09-02T12:57:42.297900+00:00",
+      "publication_provenance": {
+        "artifact_id": "bc09578adc1992c988113eaf175e65d03ea03ed9ab716abb6d738bc2f5379536",
+        "source_commit": "fe033603f39e0f89291760e439824b5c855199fe",
+        "workflow_run_id": "33632743125",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-09-02T12:57:31.240983+00:00",
+        "data_hash": "7b9f2b71d80d9cd96be4c40fcc0c71a55012c670f3c732f252b534ee65c208df",
+        "live_hash": "a4e0b83350d3585af0976d341327ef107b1206ef2092e09e6e471fa48073265f"
+      },
+      "snapshot": {
+        "id": "fc2:824470:player-663554:pitcher_outs:16:over",
+        "identity_version": 2,
+        "game_pk": 824470,
+        "player_id": 663554,
+        "combo_player_ids": null,
+        "type": "pitcher",
+        "name": "Casey Mize",
+        "team": "San Diego Padres",
+        "matchup": "San Diego Padres @ Cincinnati Reds",
+        "game_start": "2026-09-02T16:40:00Z",
+        "stat": "pitcher_outs",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "pitcher_outs",
+          "value": 15.5,
+          "needs": 16
+        },
+        "prop": "Over 15.5 Outs Recorded",
+        "hit_probability": 0.6009,
+        "market_odds": 104,
+        "market_implied": 0.4581,
+        "market_edge": 0.1428,
+        "market_hold": null,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (A), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (14.7 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "Recorded 16+ outs (5.1 IP) in 60.1% of his last 21 real starts (league 53.7%, avg 15.67 outs/start)"
+        ],
+        "watchouts": [],
+        "prob_ci": [
+          0.5324,
+          0.7058
+        ],
+        "reliability": "A",
+        "reliability_note": null,
+        "sample_n": 21,
+        "lineup_assumed": null,
+        "base_rate": 0.5373,
+        "lift": 0.0636,
+        "lift_reference_rate": null,
+        "stable_lift": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "9ac9d80d",
+          "prediction_timestamp": "2026-09-02T12:55:21.791614+00:00",
+          "odds_fetched_at": "2026-09-02T12:55:17.404670+00:00",
+          "board_generated_at": "2026-09-02T12:55:21.760958+00:00"
+        },
+        "qualification_timestamp": "2026-09-02T12:55:21.791614+00:00",
+        "board_timestamp": "2026-09-02T12:55:21.760958+00:00",
+        "slate_date": "2026-09-02"
+      }
+    },
+    "fc2:824717:player-682243:pitcher_outs:16:over": {
+      "canonical_id": "fc2:824717:player-682243:pitcher_outs:16:over",
+      "settlement_identity": [
+        "824717",
+        [
+          "player",
+          "682243"
+        ],
+        "pitcher_outs",
+        "16",
+        "over"
+      ],
+      "slate_date": "2026-09-02",
+      "first_published_at": "2026-09-02T12:57:42.297900+00:00",
+      "publication_provenance": {
+        "artifact_id": "bc09578adc1992c988113eaf175e65d03ea03ed9ab716abb6d738bc2f5379536",
+        "source_commit": "fe033603f39e0f89291760e439824b5c855199fe",
+        "workflow_run_id": "33632743125",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-09-02T12:57:31.240983+00:00",
+        "data_hash": "7b9f2b71d80d9cd96be4c40fcc0c71a55012c670f3c732f252b534ee65c208df",
+        "live_hash": "a4e0b83350d3585af0976d341327ef107b1206ef2092e09e6e471fa48073265f"
+      },
+      "snapshot": {
+        "id": "fc2:824717:player-682243:pitcher_outs:16:over",
+        "identity_version": 2,
+        "game_pk": 824717,
+        "player_id": 682243,
+        "combo_player_ids": null,
+        "type": "pitcher",
+        "name": "Bryce Miller",
+        "team": "Seattle Mariners",
+        "matchup": "Seattle Mariners @ Boston Red Sox",
+        "game_start": "2026-09-02T20:10:00Z",
+        "stat": "pitcher_outs",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "pitcher_outs",
+          "value": 15.5,
+          "needs": 16
+        },
+        "prop": "Over 15.5 Outs Recorded",
+        "hit_probability": 0.6011,
+        "market_odds": -108,
+        "market_implied": 0.4858,
+        "market_edge": 0.1153,
+        "market_hold": null,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (A), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (12.0 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "Recorded 16+ outs (5.1 IP) in 60.1% of his last 16 real starts (league 53.7%, avg 16.69 outs/start)"
+        ],
+        "watchouts": [],
+        "prob_ci": [
+          0.5326,
+          0.706
+        ],
+        "reliability": "A",
+        "reliability_note": null,
+        "sample_n": 16,
+        "lineup_assumed": null,
+        "base_rate": 0.5373,
+        "lift": 0.0638,
+        "lift_reference_rate": null,
+        "stable_lift": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "9ac9d80d",
+          "prediction_timestamp": "2026-09-02T12:55:21.791614+00:00",
+          "odds_fetched_at": "2026-09-02T12:55:17.404670+00:00",
+          "board_generated_at": "2026-09-02T12:55:21.760958+00:00"
+        },
+        "qualification_timestamp": "2026-09-02T12:55:21.791614+00:00",
+        "board_timestamp": "2026-09-02T12:55:21.760958+00:00",
         "slate_date": "2026-09-02"
       }
     }
