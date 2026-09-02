@@ -1667,6 +1667,107 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-02",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 63.8,
+          "notable_signals": 1,
+          "matchup": "New York Mets @ Tampa Bay Rays",
+          "game_pk": 822931,
+          "team": "New York Mets",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "sp_era_weak": 32.2857,
+            "l7_avg_ev": 69.7794,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 11.775,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 43.3333,
+            "lineup_slot": 100.0,
+            "bullpen_fatigue": 0.0,
+            "platoon_barrel_pct": 1.92,
+            "platoon_xwoba": 1.92,
+            "opp_catcher_framing": 0.12,
+            "days_rest": 0.0,
+            "woba_behind": 100.0,
+            "hard_hit_105_rate": 0.24,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": -2.0,
+            "series_game": 2.0,
+            "sp_rp_ops_gap": 0.544,
+            "vs_rp_ops": 0.828,
+            "ump_k_pct": 0.144,
+            "ump_bb_pct": -0.24
+          },
+          "hit_probability": 0.6017,
+          "raw_hit_probability": 0.6024,
+          "lift": 0.0347,
+          "reliability": "A",
+          "sample_n": 81,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 7.0,
+          "notable_signals": 0,
+          "matchup": "New York Mets @ Tampa Bay Rays",
+          "game_pk": 822931,
+          "team": "New York Mets",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0562
+          },
+          "hit_probability": 0.0562,
+          "raw_hit_probability": null,
+          "lift": 0.0083,
+          "reliability": "A",
+          "sample_n": 81,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 2.6,
+          "notable_signals": 0,
+          "matchup": "New York Mets @ Tampa Bay Rays",
+          "game_pk": 822931,
+          "team": "New York Mets",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0228
+          },
+          "hit_probability": 0.0228,
+          "raw_hit_probability": null,
+          "lift": 0.0019,
+          "reliability": "A",
+          "sample_n": 81,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

@@ -2395,6 +2395,139 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-02",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 71.9,
+          "notable_signals": 2,
+          "matchup": "Miami Marlins @ Kansas City Royals",
+          "game_pk": 824068,
+          "team": "Kansas City Royals",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 19.1429,
+            "l7_avg_ev": 54.3478,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 13.725,
+            "park_hr_index": 85.3,
+            "season_barrel_pct": 56.0,
+            "lineup_slot": 87.5,
+            "bullpen_fatigue": 33.3333,
+            "platoon_barrel_pct": 2.64,
+            "platoon_xwoba": 3.72,
+            "park_hand_index": 0.06,
+            "opp_catcher_framing": -0.48,
+            "days_rest": 0.0,
+            "woba_ahead": 18.1818,
+            "woba_behind": 54.5455,
+            "pull_park_synergy": 0.005,
+            "hard_hit_105_rate": 0.2175,
+            "team_total_move": 0.0,
+            "team_total_open": 0.0,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": 0.048,
+            "vs_rp_ops": 1.116,
+            "ump_k_pct": -0.372,
+            "ump_bb_pct": -0.048
+          },
+          "hit_probability": 0.7216,
+          "raw_hit_probability": 0.7654,
+          "lift": 0.0476,
+          "reliability": "A",
+          "sample_n": 120,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 76.6,
+          "notable_signals": 1,
+          "matchup": "Miami Marlins @ Kansas City Royals",
+          "game_pk": 824068,
+          "team": "Kansas City Royals",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": 0.42,
+            "sprint_speed": 87.5,
+            "catcher_poptime": 2.8571,
+            "on_base": 91.3628
+          },
+          "hit_probability": 0.2702,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 120,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 6.7,
+          "notable_signals": 0,
+          "matchup": "Miami Marlins @ Kansas City Royals",
+          "game_pk": 824068,
+          "team": "Kansas City Royals",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0553
+          },
+          "hit_probability": 0.0553,
+          "raw_hit_probability": null,
+          "lift": 0.0074,
+          "reliability": "A",
+          "sample_n": 120,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 4.5,
+          "notable_signals": 0,
+          "matchup": "Miami Marlins @ Kansas City Royals",
+          "game_pk": 824068,
+          "team": "Kansas City Royals",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0307
+          },
+          "hit_probability": 0.0307,
+          "raw_hit_probability": null,
+          "lift": 0.0098,
+          "reliability": "A",
+          "sample_n": 120,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

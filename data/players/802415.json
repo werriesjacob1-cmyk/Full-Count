@@ -2585,9 +2585,9 @@
       "date": "2026-09-02",
       "evaluations": [
         {
-          "prop": "Over 0.5 Hits",
+          "prop": "Over 0.5 Hits+Runs+RBIs",
           "type": "batter",
-          "score": 27.0,
+          "score": 27.1,
           "notable_signals": 1,
           "matchup": "New York Mets @ Tampa Bay Rays",
           "game_pk": 822931,
@@ -2621,13 +2621,13 @@
             "ump_k_pct": 0.144,
             "ump_bb_pct": -0.24
           },
-          "hit_probability": 0.6765,
-          "raw_hit_probability": 0.6595,
-          "lift": 0.1095,
+          "hit_probability": 0.7236,
+          "raw_hit_probability": 0.7691,
+          "lift": 0.0496,
           "reliability": "A",
           "sample_n": 127,
           "projection": {
-            "stat": "hits",
+            "stat": "hits_runs_rbis",
             "value": 0.5,
             "needs": 1
           }
@@ -2635,7 +2635,7 @@
         {
           "prop": "To Steal a Base",
           "type": "batter",
-          "score": 58.7,
+          "score": 56.3,
           "notable_signals": 0,
           "matchup": "New York Mets @ Tampa Bay Rays",
           "game_pk": 822931,
@@ -2646,10 +2646,10 @@
           "signals": {
             "opp_team_cs_pct": -3.48,
             "sprint_speed": 68.75,
-            "catcher_poptime": 8.5714,
+            "catcher_poptime": 0.0,
             "on_base": 45.2975
           },
-          "hit_probability": 0.2487,
+          "hit_probability": 0.2485,
           "raw_hit_probability": null,
           "lift": null,
           "reliability": "A",

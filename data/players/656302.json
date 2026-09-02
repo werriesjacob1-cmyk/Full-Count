@@ -330,7 +330,7 @@
         {
           "prop": "Over 17.5 Outs Recorded",
           "type": "pitcher",
-          "score": 61.6,
+          "score": 60.0,
           "notable_signals": 1,
           "matchup": "Toronto Blue Jays @ Cleveland Guardians",
           "game_pk": 824390,
@@ -339,18 +339,46 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.5286,
+            "outs_rate": 0.5312,
             "avg_outs_per_start": 18.04
           },
-          "hit_probability": 0.5286,
+          "hit_probability": 0.5312,
           "raw_hit_probability": null,
-          "lift": 0.1308,
+          "lift": 0.1198,
           "reliability": "A",
           "sample_n": 25,
           "projection": {
             "stat": "pitcher_outs",
             "value": 17.5,
             "needs": 18
+          }
+        },
+        {
+          "prop": "Over 12.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 54.8,
+          "notable_signals": 1,
+          "matchup": "Toronto Blue Jays @ Cleveland Guardians",
+          "game_pk": 824390,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            656302,
+            676282
+          ],
+          "signals": {
+            "combined_k_edge": 0.3653
+          },
+          "hit_probability": 0.7009,
+          "raw_hit_probability": null,
+          "lift": 0.3653,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 12.5,
+            "needs": 13
           }
         }
       ]
