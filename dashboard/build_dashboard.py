@@ -808,18 +808,46 @@ def run_live_fetch():
     # log and completely invisible in the customer output.
     try:
         from backtest import prospective_capture as _shadow
+        from backtest import prospective_source_integrity as _psi
+
+        # RUN THE INTEGRITY EVALUATION. An independent post-implementation
+        # audit found this call site was the one thing not updated when the
+        # contract was added: without it capture() substitutes UNKNOWN, which
+        # correctly fails closed -- and so blocked EVERY row on EVERY date,
+        # forever. A contract whose only production caller does not invoke it
+        # is exactly the "uncalled code" defect this mission exists to fix.
+        #
+        # Both inputs are read HERE, at capture, so they are pregame facts.
+        # live.json is the current live state at build time; reading it later
+        # would be late information, reading it now is not.
+        _shadow_live = None
+        try:
+            _lp = os.path.join(os.path.dirname(os.path.dirname(
+                os.path.abspath(__file__))), "docs", "live.json")
+            if os.path.exists(_lp):
+                with open(_lp, "r", encoding="utf-8") as _fh:
+                    _shadow_live = json.load(_fh)
+        except BaseException:
+            _shadow_live = None      # unreadable -> UNKNOWN, never CLEAR
+        _shadow_integrity = _psi.evaluate(
+            schedule=schedule, live_state=_shadow_live,
+            observed_at=board_generated_at)
+
         _shadow_report = _shadow.capture(
             (by_category_full.get("hits") or []),
             slate_date=gp.m.TODAY,
             board_generated_at=board_generated_at,
             odds_fetched_at=odds_fetched_at,
             schedule=schedule,
+            source_integrity=_shadow_integrity,
+            lineups_observed_at=(ctx or {}).get("lineups_observed_at"),
             board_metadata=gprec.build_metadata(
                 odds_fetched_at=odds_fetched_at,
                 board_generated_at=board_generated_at),
             persist=os.environ.get("FULLCOUNT_SHADOW_PERSIST") == "1",
         )
-        log(f"Prospective shadow: ok={_shadow_report.get('ok')} "
+        log(f"Prospective shadow: integrity={_shadow_integrity.get('state')} "
+            f"ok={_shadow_report.get('ok')} "
             f"eligible={_shadow_report.get('eligible_count')} "
             f"of {_shadow_report.get('raw_count')} raw hits rows"
             + (f" error={_shadow_report['error']}" if _shadow_report.get("error") else ""))

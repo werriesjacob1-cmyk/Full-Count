@@ -147,6 +147,16 @@ def build_report(ledger_dir):
             "n": max(c["n"], p["n"]),
         }
 
+    # Verify the frozen contract BEFORE using it. Recording a hash that
+    # nothing checks is not a pin.
+    try:
+        pb.verify_contract_unmodified()
+        contract_verified = True
+        contract_error = None
+    except pb.ContractModified as exc:
+        contract_verified = False
+        contract_error = str(exc)
+
     settle_rows = [{"slate_date": r["slate_date"], "outcome": r["outcome"],
                     "champion_member": r["champion_member"],
                     "pa_v1_member": r["pa_v1_member"]} for r in rows]
@@ -173,7 +183,8 @@ def build_report(ledger_dir):
 
     delta = (None if champ["hit_rate"] is None or pa["hit_rate"] is None
              else round(pa["hit_rate"] - champ["hit_rate"], 6))
-    enough = (len(designated) >= MIN_PRIMARY_DATES
+    enough = (contract_verified
+              and len(designated) >= MIN_PRIMARY_DATES
               and champ["decided_n"] >= MIN_DECIDED_PER_ARM
               and pa["decided_n"] >= MIN_DECIDED_PER_ARM)
 
@@ -184,6 +195,8 @@ def build_report(ledger_dir):
         "receipt_schema_version": pr.RECEIPT_SCHEMA_VERSION,
         "pa_v1_artifact_scientific_sha256": pr.PA_V1_SCIENTIFIC_SHA256,
         "bootstrap_contract": dict(pb.CONTRACT),
+        "bootstrap_contract_verified": contract_verified,
+        "bootstrap_contract_error": contract_error,
 
         "primary_slate_dates": len(designated),
         "primary_dates": sorted(designated),

@@ -96,36 +96,50 @@ def champion_hits_picks(payload, *, publication_cutoff_at, converged_at=None,
     from dashboard.live_state import (before_betting_cutoff, canonical_prop_id,
                                       game_state)
 
-    out = []
+    if not publication_cutoff_at:
+        # NEVER fall back to prepared_at. before_betting_cutoff() is
+        # `now < game_start`, NOT the 15-minute rule, so falling back would
+        # make the champion arm LOOSER than production and admit picks the
+        # site could not have published.
+        raise EpochFailedClosed(
+            "the bound deployment carries no publication_cutoff_at; the "
+            "champion arm cannot be resolved against production's real "
+            "admission rule and this epoch fails closed")
+
+    out, dropped = [], []
     for row in (payload or {}).get("props") or []:
         row_stat = (row.get("projection") or {}).get("stat") or row.get("stat")
         if row_stat != stat:
-            continue
+            continue                      # a different market entirely
+        # From here on the row IS an exposed Hits prop. EVERY exclusion below
+        # is RECORDED, never a bare `continue`. An independent red team found
+        # that silently dropping an exposed champion here reintroduces exactly
+        # the asymmetric replacement resolve_champions exists to prevent --
+        # one function earlier, where resolve_champions can never see it.
         if row.get("recommendation_status") != "top_pick":
-            continue
+            continue                      # never exposed as a Top Pick
         state = row.get("game_state")
         if state is None:
             state = game_state(row.get("status") or {}, row=row)
+        try:
+            cid = canonical_prop_id(row)
+        except (ValueError, KeyError, TypeError):
+            cid = None
         if state not in (None, "pregame"):
+            dropped.append((cid, "not pregame in the served payload"))
             continue
         if not before_betting_cutoff(row, publication_cutoff_at):
+            dropped.append((cid, "inside the publication cutoff"))
             continue
         if converged_at is not None:
             from backtest.prospective_epoch import _parse, publicly_usable
             if not publicly_usable(_parse(row.get("game_start")),
                                    _parse(converged_at)):
+                dropped.append((cid, "not publicly usable before first pitch"))
                 continue
-        try:
-            cid = canonical_prop_id(row)
-        except (ValueError, KeyError, TypeError):
-            # An unidentifiable published row is not silently skipped: it is
-            # surfaced so the epoch fails closed rather than quietly shrinking
-            # the champion.
-            out.append({"canonical_id": None, "row": row,
-                        "identity_error": True})
-            continue
-        out.append({"canonical_id": cid, "row": row, "identity_error": False})
-    return out
+        out.append({"canonical_id": cid, "row": row,
+                    "identity_error": cid is None})
+    return out, dropped
 
 
 def _pool_index(pool):
@@ -289,33 +303,77 @@ def assert_equal_volume(epoch_id, champion_selected, pa_selected):
     return n_champ
 
 
+def verify_payload_binding(payload, epoch):
+    """The champion arm's basis must be PROVEN to be this deployment's payload.
+
+    ═══════════════════════════════════════════════════════════════════════
+    THE DEFECT THIS CLOSES
+    ═══════════════════════════════════════════════════════════════════════
+
+    An independent red team demonstrated by execution that the payload was an
+    unauthenticated, caller-supplied file. Nothing tied it to the bound
+    deployment -- not `generated_at`, not a content digest. So an arbitrary
+    JSON, chosen after outcomes were known, could define the entire champion
+    arm.
+
+    The celebrated `generated_at` hash join binds the SNAPSHOT to the
+    deployment. It said nothing whatsoever about the champion's basis. This
+    closes that half.
+
+    `public_generated_at` is the value the deploy workflow polls the PUBLIC url
+    until it matches, so requiring equality here means the champion arm is read
+    from the same board the public actually served.
+    """
+    expected = epoch.get("public_generated_at")
+    actual = (payload or {}).get("generated_at")
+    if not expected:
+        raise EpochFailedClosed(
+            "bound epoch carries no public_generated_at; the champion payload "
+            "cannot be proven to belong to this deployment")
+    if actual != expected:
+        raise EpochFailedClosed(
+            f"champion payload generated_at {actual!r} != the deployment's "
+            f"proven public generated_at {expected!r}. The champion arm must "
+            f"be read from the board that actually went public, not from a "
+            f"file handed in alongside it.")
+    return True
+
+
 def build_epoch_selection(*, epoch, payload, universe, pool, pa_scores,
                           schedule=None):
     """Full per-epoch selection, sealed from ONE bound state. None when N == 0.
 
     Order matters and every step is required:
+      0. PROVE the champion payload belongs to this deployment;
       1. re-gate the captured pool against the BOUND DEPLOYMENT's real clocks;
-      2. read the champion set from that deployment's SERVED payload;
-      3. resolve every champion, failing closed on any mismatch;
-      4. rank PA-v1 over the SAME re-gated pool;
-      5. take exactly N;
-      6. assert per-epoch equal volume.
-
-    Step 1 is the one Mission 1 shipped as an uncalled helper. Without it the
-    challenger ranks the capture-time pool -- gated at the build instant, 8-15
-    minutes earlier than the artifact's own preparation -- which is a strictly
-    larger opportunity set than the champion ever had, at identical headline
-    volume.
+      2. read the champion set from that proven payload;
+      3. fail closed if ANY exposed champion was dropped by a shadow gate;
+      4. resolve every champion, failing closed on any mismatch;
+      5. rank PA-v1 over the SAME re-gated pool;
+      6. take exactly N;
+      7. assert per-epoch equal volume.
     """
     from backtest.prospective_epoch import regate_pool
 
+    verify_payload_binding(payload, epoch)
+
     regated, dropped = regate_pool(pool, epoch, schedule=schedule or {})
 
-    champions = champion_hits_picks(
+    champions, champ_dropped = champion_hits_picks(
         payload,
-        publication_cutoff_at=epoch.get("deployment_publication_cutoff_at")
-        or epoch.get("deployment_prepared_at"),
+        publication_cutoff_at=epoch.get("deployment_publication_cutoff_at"),
         converged_at=epoch.get("deployment_converged_at"))
+
+    if champ_dropped:
+        # An exposed Hits Top Pick that a SHADOW gate removed is the same
+        # contradiction resolve_champions fails closed on, and it must not be
+        # resolved silently one function earlier.
+        raise EpochFailedClosed(
+            f"{len(champ_dropped)} publicly exposed Hits Top Pick(s) were "
+            f"removed by shadow gates before champion resolution: "
+            f"{champ_dropped}. Dropping them would score the champion on a "
+            f"gate-selected residue of its own picks while the challenger "
+            f"keeps its optimum. This epoch fails closed instead.")
 
     resolved = resolve_champions(champions, universe, regated)
     n = resolved["n"]
@@ -331,6 +389,7 @@ def build_epoch_selection(*, epoch, payload, universe, pool, pa_scores,
         "decisive_epoch_id": epoch.get("decisive_epoch_id"),
         "slate_date": epoch.get("slate_date"),
         "n": n,
+        "payload_generated_at": (payload or {}).get("generated_at"),
         "regated_pool_size": len(regated),
         "regate_dropped": len(dropped),
         "regate_drop_reasons": sorted({r for _row, r in dropped}),

@@ -95,9 +95,9 @@ def schedule_for(rows, start=FAR):
             for r in rows}
 
 
-def served(rows, cutoff_ok=True):
+def served(rows, cutoff_ok=True, generated_at=None):
     """A served data.json-shaped payload for the champion arm."""
-    return {"date": SLATE, "generated_at": GEN, "props": [
+    return {"date": SLATE, "generated_at": generated_at or GEN, "props": [
         {"game_pk": r["game_pk"], "player_id": r["player_id"],
          "name": r["name"], "team": r["team"], "side": r["side"],
          "prop": r["prop"], "projection": r["projection"],
@@ -235,7 +235,8 @@ try:
                       board_metadata={"git_sha": "a" * 40})
     check("second snapshot persisted", rep2.get("persisted") is True)
     out2 = plc.bind_exposure(dep2 | {"public_generated_at": GEN2},
-                             worktree=LEDGER, payload=PAYLOAD, schedule=SCHED)
+                             worktree=LEDGER, payload=served(ROWS, generated_at=GEN2),
+                             schedule=SCHED)
     check("second epoch sealed", out2.get("sealed") is True, str(out2))
     check("it is a DIFFERENT epoch", out2.get("epoch_id") != EPOCH_ID)
 
@@ -433,6 +434,41 @@ try:
               [pl.make_event(pl.EVENT_PREGAME_RECEIPT, rcpts[0]["receipt_id"],
                              dict(rcpts[0], odds_american=-101))]),
               pl.LedgerConflict))
+    print("\nCheck 18: THE RED TEAM'S ATTACK — an unbound payload cannot seal")
+    L8 = new_ledger("ledgerH")
+    pc.capture(ROWS, slate_date=SLATE, board_generated_at=GEN,
+               odds_fetched_at=ODDS, schedule=SCHED, now=NOW, persist=True,
+               ledger_worktree=L8, source_integrity=CLEAR,
+               board_metadata={"git_sha": "a" * 40})
+    # The executed attack: bump the free-string artifact_id to mint a fresh key
+    # space, bump prepared_at to win designation, and hand in an attacker-chosen
+    # payload. Previously this sealed a different champion set and won.
+    evil_payload = served(ROWS[:2], generated_at="2026-01-01T00:00:00+00:00")
+    r8 = plc.bind_exposure(deployment(artifact_id="art-EVIL", run_id="666",
+                                      prepared_at=(datetime.fromisoformat(PREPARED)
+                                                   + timedelta(minutes=45)).isoformat()),
+                           worktree=L8, payload=evil_payload, schedule=SCHED)
+    check("an unbound payload FAILS THE EPOCH CLOSED", r8.get("sealed") is False,
+          str(r8)[:130])
+    check("and the failure names the binding",
+          "generated_at" in (r8.get("failed_closed") or ""), str(r8.get("failed_closed"))[:120])
+    ev8 = pl.read_events(os.path.join(L8, pl.ledger_relpath(SLATE)))
+    check("no receipts were sealed from it",
+          sum(1 for e in ev8 if e["event_type"] == pl.EVENT_PREGAME_RECEIPT) == 0)
+    d8 = plc.designate(SLATE, worktree=L8)
+    check("and it cannot become primary", d8.get("primary") is None, str(d8))
+
+    print("\nCheck 19: a bind with no pregame evidence RECORDS why, per deployment")
+    L9 = new_ledger("ledgerI")
+    plc.bind_exposure(deployment(run_id="777", artifact_id="art-777"),
+                      worktree=L9, payload=PAYLOAD, schedule=SCHED)
+    ev9 = pl.read_events(os.path.join(L9, pl.ledger_relpath(SLATE)))
+    check("epoch_failed_closed recorded for the deployment",
+          any(e["event_type"] == pl.EVENT_EPOCH_FAILED_CLOSED for e in ev9), str(len(ev9)))
+    check("with the per-deployment reason",
+          any("no durably persisted pregame snapshot" in str((e.get("body") or {}).get("reason"))
+              for e in ev9))
+
     print("\nCheck 17: settlement against a wrong receipt hash is refused")
     bad = dict(rcpts[0], receipt_content_sha256="f" * 64)
     ev = pset.settle(rcpts[0], {}, grader=grader_for({1}))

@@ -42,6 +42,7 @@ import argparse
 import json
 import os
 import sys
+from datetime import datetime, timezone
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
@@ -86,10 +87,24 @@ def bind_exposure(deployment, *, worktree, payload, schedule=None,
     events = _read_ledger(worktree, slate_date)
     snapshots = _by_type(events, pl.EVENT_SNAPSHOT_CAPTURED)
     if not snapshots:
-        return {"ok": False, "bound": False,
-                "error": "no durably persisted pregame snapshot for this date; "
-                         "an epoch with no remote pregame evidence can never "
-                         "be counted"}
+        reason = ("no durably persisted pregame snapshot for this date; an "
+                  "epoch with no remote pregame evidence can never be counted")
+        # Recorded, not merely returned. This was the one path that produced
+        # no negative evidence, so the per-deployment reason was lost.
+        try:
+            pl.append_and_push(
+                worktree, slate_date,
+                [pl.make_event(
+                    pl.EVENT_EPOCH_FAILED_CLOSED,
+                    f"{slate_date}:deploy-{deployment.get('run_id')}"
+                    f":{deployment.get('artifact_id')}",
+                    {"slate_date": slate_date, "stage": "bind",
+                     "deployment_run_id": deployment.get("run_id"),
+                     "reason": reason}, writer="prospective_lifecycle")],
+                branch=branch, message=f"no pregame evidence {slate_date}")
+        except pl.LedgerConflict:
+            pass    # already recorded for this exact deployment
+        return {"ok": False, "bound": False, "error": reason}
 
     # Find the snapshot this deployment actually published. The join key is the
     # board's generated_at, which the deploy workflow proves against the PUBLIC
@@ -267,7 +282,17 @@ def designate(slate_date, *, worktree, branch=pl.LEDGER_BRANCH):
     # publication cutoff is measured against. Not convergence time, which
     # varies with CDN propagation and would make the choice depend on
     # infrastructure noise.
-    eligible.sort(key=lambda ep: str(ep.get("deployment_prepared_at") or ""))
+    #
+    # PARSED, never sorted as a string. A red team found this sorting
+    # lexicographically, which orders "+00:00" before "Z" at the SAME instant
+    # ('+' is 0x2B, 'Z' is 0x5A) and mis-orders any mixed-offset stamp. Ties
+    # break on the epoch id so the choice is deterministic per experiment
+    # rather than a function of ledger append order, which depends on the
+    # concurrent-push race.
+    eligible.sort(key=lambda ep: (
+        pep._parse(ep.get("deployment_prepared_at"))
+        or datetime.min.replace(tzinfo=timezone.utc),
+        str(ep.get("decisive_epoch_id") or "")))
     primary = eligible[-1]
     ev = pl.make_event(
         pl.EVENT_DECISIVE_EPOCH_DESIGNATED, slate_date,

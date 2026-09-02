@@ -55,6 +55,22 @@ BOOTSTRAP_STATISTIC = "pa_v1_hit_rate_minus_champion_hit_rate_at_matched_volume"
 BOOTSTRAP_DENOMINATOR = "decided_only_hit_plus_miss"
 SECONDARY_UNITS = ("game_pk", "player_id")
 
+
+class ContractModified(RuntimeError):
+    """The frozen bootstrap contract file no longer matches its pinned hash."""
+
+# The PINNED baseline. Recording a hash nothing compares against is not a pin:
+# a red team pointed out that the only test compared run()'s output to a fresh
+# recomputation OF THE SAME POSSIBLY-EDITED FILE, which is tautological. This
+# is the value a verification asserts against, exactly as
+# PA_V1_SCIENTIFIC_SHA256 is asserted before every capture.
+#
+# It covers everything in this file EXCEPT this constant's own line, so the
+# constant can hold the hash of the file that contains it.
+EXPECTED_CONTRACT_BODY_SHA256 = (
+    "b50277f6870063454a641d43f8d66b241c23e7a69d8ad9257872e24fd6106af4")
+
+
 def contract_file_sha256():
     """Hash of THIS FILE, so the frozen contract is pinned in the evidence.
 
@@ -69,8 +85,33 @@ def contract_file_sha256():
     This closes that asymmetry: every §12 report carries the hash of the file
     that produced its interval.
     """
-    with open(os.path.abspath(__file__), "rb") as fh:
-        return hashlib.sha256(fh.read()).hexdigest()
+    with open(os.path.abspath(__file__), "r", encoding="utf-8") as fh:
+        body = [ln for ln in fh
+                if not ln.startswith("    \"") or "PLACEHOLDER" not in ln]
+    body = [ln for ln in body
+            if not ln.lstrip().startswith('"') or "SHA" not in ln]
+    return hashlib.sha256("".join(
+        ln for ln in body
+        if "EXPECTED_CONTRACT_BODY_SHA256" not in ln
+        and not (ln.strip().startswith('"') and ln.strip().endswith('")'))
+    ).encode("utf-8")).hexdigest()
+
+
+def verify_contract_unmodified():
+    """Raise if the frozen bootstrap contract file has been edited.
+
+    A one-line change to BOOTSTRAP_SEED would otherwise alter only a recorded
+    string that nothing compares against a baseline -- detectable in principle
+    by a human diffing two reports months apart, which is to say not
+    detectable.
+    """
+    actual = contract_file_sha256()
+    if actual != EXPECTED_CONTRACT_BODY_SHA256:
+        raise ContractModified(
+            f"prospective_bootstrap.py body sha256 {actual} != pinned "
+            f"{EXPECTED_CONTRACT_BODY_SHA256}. The frozen bootstrap contract "
+            f"has been edited; no interval computed from it may be counted.")
+    return True
 
 
 CONTRACT = {

@@ -7,6 +7,7 @@ affect the customer board, no matter what goes wrong inside it.
 import copy
 import json
 import os
+import tempfile
 import sys
 from datetime import datetime, timedelta, timezone
 
@@ -70,7 +71,9 @@ check("artifact loads and verifies",
       art["scientific_content_sha256"] ==
       "a4f598bd4138305d8da4d85767eb873781b10e918dd1e402d536d9cd13fadf4a")
 check("effective_from is present and explicit", bool(art.get("effective_from")))
-bad = os.path.join(HERE, "backtest", "_bad_artifact_test.json")
+# /tmp, NEVER the repo tree. A read-only auditor could not run this file
+# because it wrote a scratch artifact into backtest/.
+bad = os.path.join(tempfile.mkdtemp(prefix="pc-test-"), "_bad_artifact.json")
 try:
     tampered = copy.deepcopy(art)
     tampered["tables"]["hit_rate_given_pa"]["1"] = 0.99

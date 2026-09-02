@@ -206,8 +206,18 @@ payload = {"props": [
     prop(6, game_start=(datetime.fromisoformat(PREPARED)
                         + timedelta(minutes=5)).isoformat()),
 ]}
-champs = ps.champion_hits_picks(payload, publication_cutoff_at=CUT)
+champs, champ_dropped = ps.champion_hits_picks(payload, publication_cutoff_at=CUT)
 check("only exposed Hits top picks survive", len(champs) == 2, str(len(champs)))
+# EVERY exclusion of an exposed Hits Top Pick is RECORDED, never a bare
+# `continue`. A red team proved that silently dropping one here reintroduces
+# the asymmetric replacement resolve_champions exists to prevent, one function
+# earlier where resolve_champions can never see it.
+check("the cutoff drop is REPORTED, not silent", len(champ_dropped) >= 1,
+      str(champ_dropped))
+check("no publication_cutoff_at at all fails closed (never falls back to "
+      "prepared_at, which is a LOOSER rule than production)",
+      raises(lambda: ps.champion_hits_picks(payload, publication_cutoff_at=None),
+             ps.EpochFailedClosed))
 check("leans excluded", all(c["row"]["recommendation_status"] == "top_pick"
                            for c in champs))
 check("non-hits excluded",
@@ -300,10 +310,48 @@ check("resolve_champions is called", "resolve_champions" in _calls)
 check("assert_equal_volume is called", "assert_equal_volume" in _calls)
 
 print("\nCheck 12: N == 0 produces no comparison, not a manufactured one")
-empty = ps.build_epoch_selection(epoch=bound, payload={"props": []},
+GEN_OK = {"generated_at": bound["public_generated_at"], "props": []}
+empty = ps.build_epoch_selection(epoch=bound, payload=GEN_OK,
                                  universe=universe, pool=[], pa_scores={},
                                  schedule={})
 check("no exposed champions -> None", empty is None)
+
+print("\nCheck 13: the champion payload must be PROVEN to be this deployment's")
+# A red team demonstrated by execution that payload was an unauthenticated
+# caller-supplied file: an arbitrary JSON chosen after outcomes were known
+# could define the entire champion arm. The generated_at hash join bound the
+# SNAPSHOT and said nothing about the champion's basis.
+check("a matching generated_at binds",
+      ps.verify_payload_binding(GEN_OK, bound))
+check("a DIFFERENT generated_at fails closed",
+      raises(lambda: ps.verify_payload_binding(
+          {"generated_at": "2026-01-01T00:00:00+00:00", "props": []}, bound),
+          ps.EpochFailedClosed))
+check("a missing generated_at fails closed",
+      raises(lambda: ps.verify_payload_binding({"props": []}, bound),
+             ps.EpochFailedClosed))
+check("an epoch with no public_generated_at fails closed",
+      raises(lambda: ps.verify_payload_binding(GEN_OK, {}),
+             ps.EpochFailedClosed))
+_sel_fn = next(n for n in _ast.walk(_ast.parse(src))
+               if isinstance(n, _ast.FunctionDef) and n.name == "build_epoch_selection")
+_sel_calls = {n.func.id for n in _ast.walk(_sel_fn)
+              if isinstance(n, _ast.Call) and isinstance(n.func, _ast.Name)}
+check("build_epoch_selection VERIFIES the binding before anything else",
+      "verify_payload_binding" in _sel_calls, str(sorted(_sel_calls)))
+
+print("\nCheck 14: designate sorts PARSED instants, not strings")
+# '+' is 0x2B and 'Z' is 0x5A, so a lexicographic sort orders "+00:00" before
+# "Z" at the SAME instant and mis-orders any mixed-offset stamp.
+import backtest.prospective_lifecycle as _plc
+_d = next(n for n in _ast.walk(_ast.parse(open(
+    "backtest/prospective_lifecycle.py").read()))
+    if isinstance(n, _ast.FunctionDef) and n.name == "designate")
+_dtxt = _ast.unparse(_d)
+check("uses the parsed comparison", "_parse" in _dtxt)
+check("does not sort raw strings", "str(ep.get('deployment_prepared_at')" not in _dtxt)
+check("ties break deterministically on epoch id",
+      "decisive_epoch_id" in _dtxt.split("sort")[-1][:220])
 
 print()
 if FAILURES:
