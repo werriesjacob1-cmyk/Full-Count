@@ -1,39 +1,65 @@
 # FULL COUNT — capability matrix
 
 Agent ↔ skill ↔ tool/connector, with scope, reviewer, and fallback for every
-workflow. **Revalidated against the live runtime on 2026-08-29**, replacing the
-2026-08-27 pass. A tool named in an agent file but absent from the runtime is a
-defect; this document is where that gets caught.
+workflow.
 
-Runtime: Claude Code **2.1.251** (was 2.1.247). No managed settings. No project
-`.mcp.json` and no installed plugins — every MCP server present comes from the
-session harness, not from this repository.
+**THIS DOCUMENT RECORDS CONFIGURATION INTENT, NOT RUNTIME FACT.** As of
+2026-09-02 every connector row below is stated as what the configuration
+*expects*, together with how a future session must *prove* it. The previous
+revision carried `VERIFIED ACTIVE` verdicts inherited from the 2026-08-29
+session. That was the wrong basis: the harness's MCP roster changes between
+sessions, so a verdict earned in one session is not evidence about the next
+one, and reading it as evidence is exactly how a phantom tool survives review.
 
-**A capability verdict is evidence about ONE runtime, and the harness's MCP
-roster changes between sessions.** Two verdicts below moved on revalidation, one
-of them from available to absent. Re-check before relying on any of them; do not
-carry a verdict forward because it is written down here.
+A tool named in an agent file but absent from the runtime is a defect. This
+document is where that gets caught — but only by a **fresh-session runtime
+certification**, never by this file's own contents and never by the
+configuration acceptance suite, which cannot make a single tool call.
+
+No managed settings. No project `.mcp.json` and no installed plugins — every
+MCP server present in any session comes from the session harness, not from this
+repository, which is precisely why none of it can be asserted here.
 
 ---
 
-## Connector verdicts
+## Connector expectations — CONFIGURED, and how to prove it
 
-| Connector / tool | Status | Evidence (2026-08-29) |
-|---|---|---|
-| **GitHub MCP** (`mcp__github__*`) | `VERIFIED ACTIVE` | `get_me` → login `werriesjacob1-cmyk`; `pull_request_read`, `actions_list`, `merge_pull_request` all returned live data this session |
-| **git over HTTPS** | `VERIFIED ACTIVE` | fetch, force-with-lease push, worktree add from a re-fetched SHA all working |
-| **`gh` CLI** | `UNAVAILABLE — FALLBACK DEFINED` | not on `PATH`; GitHub MCP + git cover every needed operation |
-| **WebSearch / WebFetch** | `VERIFIED AVAILABLE, NOT REQUIRED` | deferred tools, loaded via ToolSearch this session; only `fc-intelligence-scout` uses them |
-| **Chromium + Playwright** | `VERIFIED ACTIVE` | `/opt/pw-browsers/{chromium,chromium-1194,chromium_headless_shell-1194}`; python `playwright` **1.62.0**; 127/127 browser E2E + 60 + 24 + 12 Chromium checks passed |
-| **pyright / mypy / ruff / flake8** | `VERIFIED ACTIVE` | pyright 1.1.408 (1.1.411 available), mypy 1.19.1, ruff 0.16.4, flake8 7.3.0 |
-| **Serena** | `REJECTED — LOW VALUE` | still installed (v1.7.0) and still rejected; rationale below unchanged |
-| **Cloudflare MCP** | `UNAVAILABLE — FALLBACK DEFINED` | **CHANGED from `VERIFIED AVAILABLE` on 2026-08-27.** No `cloudflare`/Worker/KV/D1/R2 tool is exposed to this session; a ToolSearch for them returns unrelated tools. No workflow depended on it, so nothing is blocked — but any agent file promising Cloudflare inspection would now be wrong. See below. |
-| **Google Drive MCP** | `VERIFIED AVAILABLE, NOT REQUIRED` | harness-provided (`search_files`, `read_file_content`, `create_file`, …); no Full Count workflow needs it |
-| **Claude Code Remote MCP** | `VERIFIED ACTIVE` | `get_session`, `list_repos`, `create_trigger` exposed; **no auto-resume Routine may be created** |
-| **Tool Search** | `VERIFIED ACTIVE` | deferred-tool schemas loaded on demand throughout this session |
-| **Generic subagents** (`Agent`) | `VERIFIED ACTIVE` | an `Explore` read-only reviewer performed the PR #72 release audit and returned a structured verdict |
-| **Context7 / docs connector** | `UNAVAILABLE — FALLBACK DEFINED` | not configured; WebFetch covers occasional doc lookups |
-| **pylint** | `UNAVAILABLE — FALLBACK DEFINED` | ruff + flake8 + pyright cover linting |
+Two columns, and the distinction is the point.
+
+* **CONFIGURED** — something in this repository names or depends on it. That is
+  a fact about files, and this file can assert it.
+* **MUST VERIFY IN FRESH SESSION** — the check that turns the expectation into
+  evidence. Nothing below may be described as active until that check is run
+  **in a session started after this configuration is on the project root**.
+
+No row says VERIFIED. That is deliberate and permanent: this document cannot
+observe a runtime.
+
+| Connector / tool | Configured? | Required by | MUST VERIFY IN FRESH SESSION | Fallback if absent |
+|---|---|---|---|---|
+| **Project agents** (`.claude/agents/*.md`) | yes — 9 | the whole control plane | all 9 `fc-*` agents are offered as `Agent` subagent types, by name | generic `Agent` types; the control plane is NOT active |
+| **Project skills** (`.claude/skills/*/SKILL.md`) | yes — 10 | the whole control plane | all 10 `fc-*` skills are listed and `/fc-<name>` invokes them | run the documented steps by hand |
+| **Hooks** (`SessionStart`, `PostToolUse`) | yes | context load, autosave | SessionStart output appears at session start; autosave log gains a line within ~3 min of edits | run `.claude/session-context.sh` and `.claude/worktree-autosave.sh` manually |
+| **Settings / permissions** | yes | least privilege | the `ask` list actually prompts on an edit to a listed science file, and `disableBypassPermissionsMode` is in force | none — treat every guard as advisory |
+| **Subagent / Task support** | yes | every fork-to-agent skill | an `Agent` call returns a structured result | do the work inline |
+| **GitHub MCP** (`mcp__github__*`) | yes | `fc-release-auditor`, release audit | `mcp__github__get_me`, then `list_branches(owner=werriesjacob1-cmyk, repo=project-gridiron)` | `git` over HTTPS for everything except PR/CI metadata |
+| **git over HTTPS** | yes | autosave, every worktree flow | `git fetch origin` and a push to a scratch `fc-autosave/*` ref succeed | none — autosave degrades to local-only |
+| **Web research** (`WebSearch` / `WebFetch`) | yes | `fc-intelligence-scout` only | load via ToolSearch, then one real fetch | scout is inoperable; nothing else is affected |
+| **Chromium + Playwright** | yes | `fc-ux`, `fc-ux-audit` | `/opt/pw-browsers/chromium --version` **and** one real Playwright launch | UX audit is inoperable; do not claim visual verification |
+| **Context keeper** (`.claude/context/`) | yes | long sessions | `checkpoint.sh` writes, and `git status --porcelain` stays clean | manual notes in the PR body |
+| **Autosave** (`fc-autosave/*` refs) | yes | container-loss recovery | a snapshot ref appears locally **and** on origin after an edit | commit deliberately and often |
+| **`gh` CLI** | no | nothing | — | GitHub MCP + git (already the documented path) |
+| **Cloudflare MCP** | no | nothing | — | not needed by any workflow |
+| **Google Drive MCP** | no | nothing | — | not needed by any workflow |
+| **Claude Code Remote MCP** | no | nothing in this control plane | — | not needed; **no auto-resume Routine may be created** |
+| **Serena** | no — `REJECTED — LOW VALUE` | nothing | — | rationale below, unchanged |
+| **Context7 / docs connector** | no | nothing | — | WebFetch |
+| **pylint** | no | nothing | — | ruff + flake8 + pyright |
+
+Local binaries (`pyright`, `mypy`, `ruff`, `flake8`, the Chromium build) are
+properties of the container image, not of this repository. The acceptance suite
+probes the ones it can see on `PATH`; a fresh session must re-probe rather than
+trust a recorded version string.
 
 ### Project-level agents/skills/settings are NOT active merely by existing
 
@@ -228,9 +254,13 @@ INFO and never as PASS.
 
 ## Orphan check
 
-Every agent has a home above. Every skill maps to at least one agent. No skill
-declares a connector that is not `VERIFIED ACTIVE` or does not have a stated
-fallback. No agent declares a tool absent from the runtime.
+Every agent has a home above. Every skill maps to at least one agent. Every
+connector a skill declares appears in the expectations table with a stated
+fallback.
+
+"No agent declares a tool absent from the runtime" is NOT asserted here, and
+cannot be: this document has no runtime to compare against. It is an item on
+the fresh-session certification, not a property of the configuration.
 
 ---
 
