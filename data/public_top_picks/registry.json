@@ -2,7 +2,7 @@
   "schema_version": 1,
   "identity_schema_version": 2,
   "rollout_version": "pre-phase-v-live-lifecycle-v1",
-  "updated_at": "2026-09-02T19:37:46.130962+00:00",
+  "updated_at": "2026-09-02T20:23:14.944341+00:00",
   "migration": {
     "version": "pre-phase-v-live-lifecycle-v1",
     "completed_at": "2026-08-17T23:14:57+00:00",
@@ -11172,6 +11172,204 @@
         },
         "qualification_timestamp": "2026-09-02T19:35:45.597804+00:00",
         "board_timestamp": "2026-09-02T19:35:45.579791+00:00",
+        "slate_date": "2026-09-02"
+      }
+    },
+    "fc2:824634:player-665804:hits_runs_rbis:1:over": {
+      "canonical_id": "fc2:824634:player-665804:hits_runs_rbis:1:over",
+      "settlement_identity": [
+        "824634",
+        [
+          "player",
+          "665804"
+        ],
+        "hits_runs_rbis",
+        "1",
+        "over"
+      ],
+      "slate_date": "2026-09-02",
+      "first_published_at": "2026-09-02T20:23:14.944341+00:00",
+      "publication_provenance": {
+        "artifact_id": "8ead290ea82cdf8164fabfe3169ccde0fcefb4e1a94acbdda908dbb5532c3568",
+        "source_commit": "db30c0f2a099d067c8afefa5e0210b030a6810a9",
+        "workflow_run_id": "33678808432",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-09-02T20:23:03.671487+00:00",
+        "data_hash": "a633767a309fdfd1c72787a10c264df21ce2a4720068bf92e3acee996abf7d53",
+        "live_hash": "919a2e3ac1b60855ad1be243186f576462b779947dd6293879db9f2b66c51045"
+      },
+      "snapshot": {
+        "id": "fc2:824634:player-665804:hits_runs_rbis:1:over",
+        "identity_version": 2,
+        "game_pk": 824634,
+        "player_id": 665804,
+        "combo_player_ids": null,
+        "type": "batter",
+        "name": "Miguel Amaya",
+        "team": "Chicago Cubs",
+        "matchup": "Milwaukee Brewers @ Chicago Cubs",
+        "game_start": "2026-09-02T23:40:00Z",
+        "stat": "hits_runs_rbis",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "hits_runs_rbis",
+          "value": 0.5,
+          "needs": 1
+        },
+        "prop": "Over 0.5 Hits+Runs+RBIs",
+        "hit_probability": 0.6461,
+        "market_odds": -130,
+        "market_implied": 0.5652,
+        "market_edge": 0.0809,
+        "market_hold": null,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (B), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (12.3 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "Bat speed trending up L14 (+10.8mph 2nd-half vs 1st-half)",
+          "Hitters batting ahead of him: 0.366 wOBA (league ~.320) \u2014 real RBI opportunity on base ahead of him",
+          "Hitter batting behind him: 0.400 wOBA (league ~.320) \u2014 real lineup protection, pitchers can't just pitch around him",
+          "Wind blowing OUT (10mph) \u2014 HR boost"
+        ],
+        "watchouts": [
+          "L7 avg EV 81.5mph (league ~88.5) \u2014 cold recent contact",
+          "L7 barrel% 0.0 \u2014 cold recent contact",
+          "Platoon: R bat vs RHP (unfavorable)",
+          "Opposing SP ERA 1.73 \u2014 elite pitcher, tough matchup",
+          "Projected 3.55 PA (batting slot 9) \u2014 a tough lineup slot for plate appearances",
+          "Team implied for 3.71 runs (league avg 4.245; line 3.5, game total 8.5) \u2014 a weak offensive environment",
+          "AVG vs xBA: 0.232 vs 0.203 (+0.029) \u2014 outperforming his contact quality, regression risk",
+          "wOBA vs xwOBA: 0.318 vs 0.292 (+0.026) \u2014 outperforming his contact quality, regression risk",
+          "L7 sample is thin (4 PA) \u2014 treat recent-form read with caution",
+          "Season barrel% 6.8 \u2014 below-average barrel rate",
+          "Opposing bullpen fatigue: 0/10 relievers over 60 pitches in L7 (fresh pen \u2014 tougher matchup late)"
+        ],
+        "prob_ci": [
+          0.6328,
+          0.6777
+        ],
+        "reliability": "B",
+        "reliability_note": null,
+        "sample_n": 68,
+        "lineup_assumed": null,
+        "base_rate": 0.6725,
+        "lift": -0.0264,
+        "lift_reference_rate": null,
+        "stable_lift": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "3e118b98",
+          "prediction_timestamp": "2026-09-02T20:20:44.246698+00:00",
+          "odds_fetched_at": "2026-09-02T20:20:33.058950+00:00",
+          "board_generated_at": "2026-09-02T20:20:44.231631+00:00"
+        },
+        "qualification_timestamp": "2026-09-02T20:20:44.246698+00:00",
+        "board_timestamp": "2026-09-02T20:20:44.231631+00:00",
+        "slate_date": "2026-09-02"
+      }
+    },
+    "fc2:824634:player-683737:hits_runs_rbis:1:over": {
+      "canonical_id": "fc2:824634:player-683737:hits_runs_rbis:1:over",
+      "settlement_identity": [
+        "824634",
+        [
+          "player",
+          "683737"
+        ],
+        "hits_runs_rbis",
+        "1",
+        "over"
+      ],
+      "slate_date": "2026-09-02",
+      "first_published_at": "2026-09-02T20:23:14.944341+00:00",
+      "publication_provenance": {
+        "artifact_id": "8ead290ea82cdf8164fabfe3169ccde0fcefb4e1a94acbdda908dbb5532c3568",
+        "source_commit": "db30c0f2a099d067c8afefa5e0210b030a6810a9",
+        "workflow_run_id": "33678808432",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-09-02T20:23:03.671487+00:00",
+        "data_hash": "a633767a309fdfd1c72787a10c264df21ce2a4720068bf92e3acee996abf7d53",
+        "live_hash": "919a2e3ac1b60855ad1be243186f576462b779947dd6293879db9f2b66c51045"
+      },
+      "snapshot": {
+        "id": "fc2:824634:player-683737:hits_runs_rbis:1:over",
+        "identity_version": 2,
+        "game_pk": 824634,
+        "player_id": 683737,
+        "combo_player_ids": null,
+        "type": "batter",
+        "name": "Michael Busch",
+        "team": "Chicago Cubs",
+        "matchup": "Milwaukee Brewers @ Chicago Cubs",
+        "game_start": "2026-09-02T23:40:00Z",
+        "stat": "hits_runs_rbis",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "hits_runs_rbis",
+          "value": 0.5,
+          "needs": 1
+        },
+        "prop": "Over 0.5 Hits+Runs+RBIs",
+        "hit_probability": 0.6827,
+        "market_odds": -185,
+        "market_implied": 0.6491,
+        "market_edge": 0.0336,
+        "market_hold": null,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (A), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (8.2 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "L7 avg EV 88.3mph (league ~88.5)",
+          "L7 barrel% 22.2 \u2014 hot recent contact",
+          "Platoon: L bat vs RHP (favorable)",
+          "Projected 4.18 PA (batting slot 4)",
+          "Hitters batting ahead of him: 0.343 wOBA (league ~.320)",
+          "Season barrel% 9.1",
+          "Wind blowing OUT (10mph) \u2014 HR boost"
+        ],
+        "watchouts": [
+          "Opposing SP ERA 1.73 \u2014 elite pitcher, tough matchup",
+          "Hitter batting behind him: 0.302 wOBA (league ~.320) \u2014 little lineup protection, an easier batter to pitch around",
+          "Team implied for 3.71 runs (league avg 4.245; line 3.5, game total 8.5) \u2014 a weak offensive environment",
+          "Opposing bullpen fatigue: 0/10 relievers over 60 pitches in L7 (fresh pen \u2014 tougher matchup late)"
+        ],
+        "prob_ci": [
+          0.6719,
+          0.7058
+        ],
+        "reliability": "A",
+        "reliability_note": null,
+        "sample_n": 137,
+        "lineup_assumed": null,
+        "base_rate": 0.6725,
+        "lift": 0.0102,
+        "lift_reference_rate": null,
+        "stable_lift": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "3e118b98",
+          "prediction_timestamp": "2026-09-02T20:20:44.246698+00:00",
+          "odds_fetched_at": "2026-09-02T20:20:33.058950+00:00",
+          "board_generated_at": "2026-09-02T20:20:44.231631+00:00"
+        },
+        "qualification_timestamp": "2026-09-02T20:20:44.246698+00:00",
+        "board_timestamp": "2026-09-02T20:20:44.231631+00:00",
         "slate_date": "2026-09-02"
       }
     }
