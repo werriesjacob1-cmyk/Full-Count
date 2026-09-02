@@ -124,6 +124,29 @@ def _parse_ts(value):
     return parsed.astimezone(timezone.utc)
 
 
+def _jsonable(value):
+    """Deep-convert tuples to lists so a value survives a JSON round-trip AS
+    ITSELF.
+
+    prop_identity_key() returns a tuple whose `subject` element is ITSELF a
+    tuple, e.g. ("776001", ("player", "99001"), "hits", "1", "over"). A shallow
+    list() flattens only the outer level, so the receipt kept a nested tuple.
+    canonical_json serializes tuples and lists identically, so the content hash
+    still matched -- but a receipt READ BACK from the ledger did not compare
+    equal to the one written, because the inner tuple came back as a list.
+
+    That is a silent asymmetry in permanent evidence: any code that compares
+    receipts as objects (a settlement pairing check, a de-duplication pass)
+    would behave differently before and after serialization, while every hash
+    check said everything was fine.
+    """
+    if isinstance(value, (list, tuple)):
+        return [_jsonable(v) for v in value]
+    if isinstance(value, dict):
+        return {k: _jsonable(v) for k, v in value.items()}
+    return value
+
+
 def admits_new_top_pick(game_start, prepared_at, *,
                         lead_seconds=PUBLICATION_LEAD_SECONDS):
     """Mirror the PRODUCTION publication cutoff exactly, both operands.
@@ -184,7 +207,7 @@ def wager_expression(row):
 
 
 def evaluate_row(row, *, now, schedule, freshness=None, odds_fetched_at=None,
-                 board_generated_at=None, source_integrity_holds=frozenset(),
+                 board_generated_at=None, source_integrity=None,
                  shadow_stat=SHADOW_STAT,
                  publication_lead_seconds=PUBLICATION_LEAD_SECONDS):
     """Evaluate one raw captured row against every protocol section 5 gate.
@@ -325,19 +348,19 @@ def evaluate_row(row, *, now, schedule, freshness=None, odds_fetched_at=None,
         notes["board_age_seconds"] = age
 
     # -- source integrity -------------------------------------------------
-    # HONEST STATE OF THE WORLD, recorded rather than papered over: this
-    # repository has NO production mechanism named "source-integrity hold".
-    # The gate is therefore implemented as a real, injectable check against a
-    # hold set that is EMPTY by default. It is a functioning gate over an
-    # empty registry, not a satisfied requirement -- see
-    # engineering/PROSPECTIVE_LIVE_UNIVERSE_AUDIT.md, which records this as an
-    # open gap. A hold may be keyed by game_pk, team, or canonical prop id.
-    holds = set(source_integrity_holds or ())
-    held = [k for k in (game_pk, row.get("team"), prop_id)
-            if k is not None and k in holds]
-    gates["no_source_integrity_hold"] = not held
-    if held:
-        notes["no_source_integrity_hold"] = held
+    # Consumes the versioned CLEAR/HOLD/UNKNOWN contract in
+    # prospective_source_integrity.py. The critical asymmetry: a MISSING
+    # evaluation is UNKNOWN and fails closed. It must never default to CLEAR --
+    # "we did not look" and "we looked and it was fine" are different facts,
+    # and collapsing them is how an integrity gate becomes decorative.
+    from backtest import prospective_source_integrity as _psi
+    blocked, reasons = _psi.applies_to(
+        source_integrity, game_pk=game_pk, team=row.get("team"),
+        canonical_prop_id=prop_id)
+    gates["no_source_integrity_hold"] = not blocked
+    notes["source_integrity_state"] = (source_integrity or {}).get("state")
+    if blocked:
+        notes["no_source_integrity_hold"] = reasons
 
     ordered = {name: bool(gates.get(name, False)) for name in GATES}
     return {
@@ -346,7 +369,7 @@ def evaluate_row(row, *, now, schedule, freshness=None, odds_fetched_at=None,
         "failed_gates": tuple(n for n, ok in ordered.items() if not ok),
         "notes": notes,
         "canonical_prop_id": prop_id,
-        "identity_key": list(identity) if identity else None,
+        "identity_key": _jsonable(identity) if identity else None,
         "expression": expression,
         "game_start": game_start.isoformat() if game_start else None,
     }

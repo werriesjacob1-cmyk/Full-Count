@@ -34,6 +34,8 @@ from datetime import datetime, timezone
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
+from backtest.prospective_receipt import receipt_basis  # noqa: E402
+
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DEFAULT_ARTIFACT = os.path.join(REPO_ROOT, "backtest", "pa_v1_fitted_artifact.json")
 
@@ -107,7 +109,9 @@ def score_pool(pool, artifact):
 
 def build_snapshot(*, slate_date, board_generated_at, odds_fetched_at,
                    eligible, rejected, pa_scores, pa_states, artifact_sha,
-                   protocol_sha, funnel):
+                   protocol_sha, funnel, board_metadata=None,
+                   captured_now=None, source_integrity=None,
+                   lineups_observed_at=None):
     """The frozen shadow snapshot: the exact universe this epoch saw.
 
     Carries BOTH the eligible cohort and the rejection funnel. A snapshot that
@@ -125,6 +129,17 @@ def build_snapshot(*, slate_date, board_generated_at, odds_fetched_at,
         "eligible_count": len(eligible),
         "rejected_count": len(rejected),
         "rejection_funnel": funnel,
+        # THE EPOCH'S OWN CLOCK, sealed. Every later stage that must evaluate a
+        # time-dependent gate uses THIS, never a caller-supplied `now`. Left
+        # free, `now` drives three gates, so moving it moves the pool and
+        # moving the pool moves PA-v1's selected set -- a post-outcome lever.
+        "captured_now": captured_now,
+        "lineups_observed_at": lineups_observed_at,
+        # Version provenance, sealed at the build that produced it. Mission 1
+        # accepted board_metadata and never read it, so all four version fields
+        # and the build's git SHA were lost.
+        "board_metadata": dict(board_metadata or {}),
+        "source_integrity": dict(source_integrity or {}),
         "eligible": [
             {
                 "canonical_prop_id": v.get("canonical_prop_id"),
@@ -144,6 +159,12 @@ def build_snapshot(*, slate_date, board_generated_at, odds_fetched_at,
                 "pa_v1_probability": pa_scores.get(v.get("canonical_prop_id")),
                 "pa_v1_fallback_state": pa_states.get(v.get("canonical_prop_id")),
                 "signals": r.get("signals") or {},
+                # THE COMPLETE RECEIPT BASIS. Everything build_receipt() and
+                # reconstruct_pick() read, allow-listed, so a receipt can be
+                # sealed from this snapshot alone after the build process is
+                # gone -- and so nothing downstream ever needs to re-open a
+                # later board to fill a missing field.
+                "receipt_basis": receipt_basis(r, v),
             }
             for r, v in eligible
         ],
@@ -152,6 +173,13 @@ def build_snapshot(*, slate_date, board_generated_at, odds_fetched_at,
                 "canonical_prop_id": v.get("canonical_prop_id"),
                 "game_pk": r.get("game_pk"),
                 "player_id": r.get("player_id"),
+                "player_name": r.get("name"),
+                "game_start": v.get("game_start"),
+                "expression": v.get("expression"),
+                # A published champion excluded by a shadow gate must be
+                # auditable, not merely countable. Mission 1 kept only the
+                # failed gate names.
+                "gates": v.get("gates"),
                 "failed_gates": list(v.get("failed_gates") or ()),
             }
             for r, v in rejected
@@ -162,7 +190,8 @@ def build_snapshot(*, slate_date, board_generated_at, odds_fetched_at,
 def capture(hits_rows, *, slate_date, board_generated_at, odds_fetched_at,
             schedule, board_metadata=None, artifact_path=DEFAULT_ARTIFACT,
             ledger_worktree=DEFAULT_LEDGER_WORKTREE, persist=True,
-            source_integrity_holds=frozenset(), now=None):
+            source_integrity=None, now=None, lineups_observed_at=None,
+            branch=None):
     """Observe and persist the shadow universe. NEVER RAISES.
 
     Returns a report dict describing exactly what happened, so a caller can log
@@ -175,6 +204,7 @@ def capture(hits_rows, *, slate_date, board_generated_at, odds_fetched_at,
         from backtest import prospective_eligibility as pe
         from backtest import prospective_epoch as pep
         from backtest import prospective_ledger as pl
+        from backtest import prospective_source_integrity as psi
 
         now = now or datetime.now(timezone.utc)
 
@@ -198,12 +228,19 @@ def capture(hits_rows, *, slate_date, board_generated_at, odds_fetched_at,
             _log(report["reason"])
             return report
 
+        report["stage"] = "source_integrity"
+        # Evaluated, never assumed. An absent evaluation is UNKNOWN and fails
+        # closed; it must never default to CLEAR.
+        if source_integrity is None:
+            source_integrity = psi.unknown("no integrity evaluation supplied")
+        report["source_integrity_state"] = source_integrity.get("state")
+
         report["stage"] = "gate"
         eligible, rejected = pe.partition(
             hits_rows, now=now, schedule=schedule,
             odds_fetched_at=odds_fetched_at,
             board_generated_at=board_generated_at,
-            source_integrity_holds=source_integrity_holds)
+            source_integrity=source_integrity)
         funnel = pe.funnel_counts(rejected)
         report.update(raw_count=len(hits_rows or []),
                       eligible_count=len(eligible),
@@ -221,14 +258,17 @@ def capture(hits_rows, *, slate_date, board_generated_at, odds_fetched_at,
             odds_fetched_at=odds_fetched_at, eligible=eligible,
             rejected=rejected, pa_scores=pa_scores, pa_states=pa_states,
             artifact_sha=artifact_sha, protocol_sha=pe.PROTOCOL_SHA256,
-            funnel=funnel)
+            funnel=funnel, board_metadata=board_metadata,
+            captured_now=now.isoformat(), source_integrity=source_integrity,
+            lineups_observed_at=lineups_observed_at)
         snap_sha = pep.snapshot_sha256(snapshot)
         snapshot["snapshot_content_sha256"] = snap_sha
 
         report["stage"] = "epoch_candidate"
         candidate = pep.build_epoch_candidate(
             slate_date=slate_date, board_generated_at=board_generated_at,
-            odds_fetched_at=odds_fetched_at, snapshot_sha=snap_sha)
+            odds_fetched_at=odds_fetched_at, snapshot_sha=snap_sha,
+            lineups_observed_at=lineups_observed_at)
         report["epoch_candidate_id"] = candidate["epoch_candidate_id"]
         report["snapshot_content_sha256"] = snap_sha
 
@@ -239,25 +279,30 @@ def capture(hits_rows, *, slate_date, board_generated_at, odds_fetched_at,
             return report
 
         report["stage"] = "ledger"
-        pl.ensure_ledger_worktree(REPO_ROOT, ledger_worktree)
-        path = os.path.join(ledger_worktree, pl.LEDGER_RELPATH)
+        pl.ensure_ledger_worktree(REPO_ROOT, ledger_worktree,
+                                  branch=branch or pl.LEDGER_BRANCH)
         events = [
-            pl.make_event(pl.EVENT_EPOCH_BOUND,
+            # SNAPSHOT_CAPTURED, not epoch_bound. This snapshot asserts nothing
+            # about public exposure -- that is a later, separate event written
+            # by a different job after the deployment actually converges.
+            pl.make_event(pl.EVENT_SNAPSHOT_CAPTURED,
                           candidate["epoch_candidate_id"],
-                          {"candidate": candidate, "snapshot": snapshot}),
+                          {"candidate": candidate, "snapshot": snapshot},
+                          writer="prospective_capture"),
         ]
-        result = pl.append_events(path, events)
+        result = pl.append_and_push(
+            ledger_worktree, slate_date, events,
+            branch=branch or pl.LEDGER_BRANCH,
+            message=f"shadow snapshot {slate_date} "
+                    f"{candidate['epoch_candidate_id']}")
         report["ledger"] = result
+        if not result.get("durable"):
+            # Loud, and NOT counted. Failed research persistence means NO
+            # COUNTABLE EVIDENCE -- never a silently reconstructed one.
+            _log(f"WARNING: shadow snapshot NOT DURABLE: {result.get('error')}")
 
-        report["stage"] = "push"
-        report["push"] = pl.commit_and_push(
-            ledger_worktree,
-            f"shadow snapshot {slate_date} {candidate['epoch_candidate_id']}")
-        if not report["push"].get("pushed") and report["push"].get("committed"):
-            _log(f"WARNING: ledger committed locally but push failed: "
-                 f"{report['push'].get('error')}")
-
-        report.update(ok=True, persisted=True, stage="done")
+        report.update(ok=True, persisted=bool(result.get("durable")),
+                      stage="done")
         _log(f"captured {len(eligible)}/{len(hits_rows or [])} eligible Hits rows; "
              f"snapshot {snap_sha[:12]}; ledger {result}")
         return report

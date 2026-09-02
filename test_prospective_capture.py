@@ -11,6 +11,7 @@ import sys
 from datetime import datetime, timedelta, timezone
 
 from backtest import prospective_capture as pc
+from backtest import prospective_source_integrity as psi
 
 FAILURES = []
 
@@ -55,6 +56,11 @@ def cap(rows, **kw):
     kw.setdefault("schedule", SCHEDULE)
     kw.setdefault("persist", False)
     kw.setdefault("now", NOW)
+    # A genuinely-ran clean evaluation. Omitting it is UNKNOWN and correctly
+    # blocks every row -- asserted separately in check 11.
+    kw.setdefault("source_integrity",
+                  psi.evaluate(schedule=SCHEDULE,
+                               live_state={"reconciliation": {"mismatches": []}}))
     return pc.capture(rows, **kw)
 
 
@@ -138,8 +144,10 @@ check("skip is not an error", rep.get("ok") is True)
 
 print("\nCheck 7: PA-v1 fallback state is explicit, never collapsed to null")
 from backtest import prospective_eligibility as _pe
+_CL = psi.evaluate(schedule=SCHEDULE, live_state={"reconciliation": {"mismatches": []}})
 pool, _rej = _pe.partition([row()], now=NOW, schedule=SCHEDULE,
-                           odds_fetched_at=ODDS, board_generated_at=GEN)
+                           odds_fetched_at=ODDS, board_generated_at=GEN,
+                           source_integrity=_CL)
 scores, states = pc.score_pool(pool, art)
 pid = pool[0][1]["canonical_prop_id"]
 check("a full joint cell is labelled as such", states[pid] == "joint_cell")
@@ -147,7 +155,8 @@ check("the score is a real probability", 0.0 < scores[pid] < 1.0)
 # No batting order at all -> unscorable, and labelled as unscorable rather
 # than silently indistinguishable from a confident score.
 pool2, _ = _pe.partition([row(signals={})], now=NOW, schedule=SCHEDULE,
-                         odds_fetched_at=ODDS, board_generated_at=GEN)
+                         odds_fetched_at=ODDS, board_generated_at=GEN,
+                         source_integrity=_CL)
 s2, st2 = pc.score_pool(pool2, art)
 pid2 = pool2[0][1]["canonical_prop_id"]
 check("no batting order -> None score", s2[pid2] is None)
@@ -156,7 +165,7 @@ check("no batting order -> labelled unscorable",
 # Order present but a joint dimension missing -> order marginal fallback.
 pool3, _ = _pe.partition([row(signals={"lineup_slot": 100.0})], now=NOW,
                          schedule=SCHEDULE, odds_fetched_at=ODDS,
-                         board_generated_at=GEN)
+                         board_generated_at=GEN, source_integrity=_CL)
 s3, st3 = pc.score_pool(pool3, art)
 pid3 = pool3[0][1]["canonical_prop_id"]
 check("partial signals -> order marginal fallback",
@@ -184,6 +193,49 @@ check("tap does not call select_ or attach_ again",
       "gp.select_" not in tap and "attach_market_prices" not in tap)
 check("persistence is opt-in via env, off by default in a plain build",
       'FULLCOUNT_SHADOW_PERSIST' in tap)
+
+print("\nCheck 11: a capture with NO integrity evaluation counts nothing")
+no_eval = pc.capture([row()], slate_date="2026-09-03", board_generated_at=GEN,
+                     odds_fetched_at=ODDS, schedule=SCHEDULE, persist=False,
+                     now=NOW)
+check("capture still succeeds", no_eval.get("ok") is True)
+check("state is UNKNOWN", no_eval.get("source_integrity_state") == psi.UNKNOWN)
+check("every row is rejected (fail closed, never CLEAR by default)",
+      no_eval.get("eligible_count") == 0)
+check("and the funnel names the integrity gate",
+      (no_eval.get("rejection_funnel") or {}).get("no_source_integrity_hold") == 1)
+
+print("\nCheck 12: the sealed snapshot carries a COMPLETE receipt basis")
+from backtest import prospective_eligibility as _pe2
+from backtest import prospective_receipt as _pr2
+_clear = psi.evaluate(schedule=SCHEDULE, live_state={"reconciliation": {"mismatches": []}})
+_el, _rej = _pe2.partition([row()], now=NOW, schedule=SCHEDULE,
+                           odds_fetched_at=ODDS, board_generated_at=GEN,
+                           source_integrity=_clear)
+_snap = pc.build_snapshot(slate_date="2026-09-03", board_generated_at=GEN,
+                          odds_fetched_at=ODDS, eligible=_el, rejected=_rej,
+                          pa_scores={}, pa_states={}, artifact_sha="x" * 64,
+                          protocol_sha="y" * 64, funnel={},
+                          board_metadata={"model_version": "2026.08.15",
+                                          "git_sha": "c" * 40},
+                          captured_now=NOW.isoformat(),
+                          source_integrity=_clear)
+_row0 = _snap["eligible"][0]
+check("eligible rows carry receipt_basis", "receipt_basis" in _row0)
+check("basis carries every allow-listed row field",
+      set(_row0["receipt_basis"]["row"]) == set(_pr2.RECEIPT_ROW_FIELDS))
+check("basis carries the full positive gate trace",
+      isinstance(_row0["receipt_basis"]["verdict"]["gates"], dict)
+      and len(_row0["receipt_basis"]["verdict"]["gates"]) == 15)
+check("stat is reachable from the basis (Mission 1 lost it, breaking settlement)",
+      (_row0["receipt_basis"]["row"]["projection"] or {}).get("stat") == "hits")
+check("snapshot seals the epoch's own clock", _snap["captured_now"] == NOW.isoformat())
+check("snapshot seals version provenance",
+      _snap["board_metadata"]["model_version"] == "2026.08.15")
+check("snapshot seals the source-integrity verdict",
+      _snap["source_integrity"]["state"] == psi.CLEAR)
+check("rejected rows are auditable, not just countable",
+      "gates" in _snap["rejected"][0] if _snap["rejected"] else True)
 
 print("\nCheck 10: schedule resumption fields are additive and inert")
 check("resumed_from captured", '"resumed_from": g.get("resumedFrom")' in src)

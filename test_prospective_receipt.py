@@ -1,5 +1,6 @@
 """Tests for prospective Hits PA-v1 receipts and the append-only ledger."""
 
+import json
 import os
 import shutil
 import sys
@@ -9,6 +10,7 @@ from datetime import datetime, timedelta, timezone
 from backtest import prospective_eligibility as pe
 from backtest import prospective_ledger as pl
 from backtest import prospective_receipt as pr
+from backtest import prospective_source_integrity as psi
 
 FAILURES = []
 
@@ -71,7 +73,10 @@ def build(r=None, **over):
     r = r if r is not None else row()
     v = pe.evaluate_row(r, now=NOW, schedule=SCHEDULE,
                         odds_fetched_at=META["odds_fetched_at"],
-                        board_generated_at=META["board_generated_at"])
+                        board_generated_at=META["board_generated_at"],
+                        source_integrity=psi.evaluate(
+                            schedule=SCHEDULE,
+                            live_state={"reconciliation": {"mismatches": []}}))
     kw = dict(epoch=EPOCH, snapshot_id="snap-1", snapshot_sha256="b" * 64,
               slate_date="2026-09-02", pa_probability=0.5731,
               pa_fallback_state="joint_cell", champion_member=True,
@@ -193,7 +198,7 @@ try:
 
     print("\nCheck 8: crash safety -- no partial line is ever left behind")
     for i in range(20):
-        pl.append_events(path, [pl.make_event(pl.EVENT_EPOCH_BOUND, f"e{i}", {"i": i})])
+        pl.append_events(path, [pl.make_event(pl.EVENT_SNAPSHOT_CAPTURED, f"e{i}", {"i": i})])
     raw = open(path, "rb").read()
     check("file ends with a newline", raw.endswith(b"\n"))
     check("every line parses", len(pl.read_events(path)) == 22)
@@ -211,12 +216,88 @@ finally:
 print("\nCheck 10: ledger targets a research branch, never main or the registry")
 check("dedicated research branch",
       pl.LEDGER_BRANCH == "research-ledger/prospective-hits-pa-v1")
-check("ledger path is namespaced",
-      pl.LEDGER_RELPATH.startswith("prospective/hits_pa_v1/"))
+check("ledger path is namespaced and per-date",
+      pl.ledger_relpath("2026-09-02") == "prospective/hits_pa_v1/2026-09-02.jsonl")
 src = open(os.path.join(os.path.dirname(os.path.abspath(__file__)),
                         "backtest", "prospective_ledger.py")).read()
 check("never writes public_top_picks/registry.json",
       "public_top_picks" not in src.split('"""', 2)[2])
+
+print("\nCheck 11: the allow-list CANNOT silently drift from build_receipt()")
+# Mission 1's snapshot lost 24 receipt fields because the projection and the
+# consumer were maintained by hand in two places. This re-derives what
+# build_receipt() ACTUALLY reads, from the AST, and asserts coverage.
+import ast as _ast
+_src = open(os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                         "backtest", "prospective_receipt.py")).read()
+_fn = next(n for n in _ast.walk(_ast.parse(_src))
+           if isinstance(n, _ast.FunctionDef) and n.name == "build_receipt")
+_reads = {"row": set(), "verdict": set(), "meta": set()}
+for _n in _ast.walk(_fn):
+    if (isinstance(_n, _ast.Call) and isinstance(_n.func, _ast.Attribute)
+            and _n.func.attr == "get" and isinstance(_n.func.value, _ast.Name)
+            and _n.args and isinstance(_n.args[0], _ast.Constant)):
+        _reads.get(_n.func.value.id, set()).add(_n.args[0].value)
+    if (isinstance(_n, _ast.Subscript) and isinstance(_n.value, _ast.Name)
+            and isinstance(_n.slice, _ast.Constant)):
+        _reads.get(_n.value.id, set()).add(_n.slice.value)
+_missing_row = _reads["row"] - set(pr.RECEIPT_ROW_FIELDS)
+_missing_ver = _reads["verdict"] - set(pr.RECEIPT_VERDICT_FIELDS)
+_missing_meta = _reads["meta"] - set(pr.RECEIPT_META_FIELDS)
+check("every row field build_receipt reads is allow-listed",
+      not _missing_row, f"missing {sorted(_missing_row)}")
+check("every verdict field is allow-listed",
+      not _missing_ver, f"missing {sorted(_missing_ver)}")
+check("every meta field is allow-listed",
+      not _missing_meta, f"missing {sorted(_missing_meta)}")
+check("row allow-list is non-trivial", len(pr.RECEIPT_ROW_FIELDS) >= 28)
+
+print("\nCheck 12: a receipt reconstructs BYTE-FOR-BYTE from sealed evidence alone")
+_r = row()
+_v = pe.evaluate_row(_r, now=NOW, schedule=SCHEDULE,
+                     odds_fetched_at=META["odds_fetched_at"],
+                     board_generated_at=META["board_generated_at"],
+                     source_integrity=psi.evaluate(
+                         schedule=SCHEDULE,
+                         live_state={"reconciliation": {"mismatches": []}}))
+_kw = dict(epoch=EPOCH, snapshot_id="snap-1", snapshot_sha256="b" * 64,
+           slate_date="2026-09-02", pa_probability=0.5731,
+           pa_fallback_state="joint_cell", champion_member=True,
+           champion_rank=1, pa_member=True, pa_rank=2,
+           board_metadata=dict(META, git_sha="c" * 40))
+live_receipt = pr.build_receipt(_r, _v, **_kw)
+
+# Now throw away the live candidate entirely and rebuild from the sealed
+# basis, exactly as a later job with no access to the build process must.
+_basis = pr.receipt_basis(_r, _v)
+_basis = json.loads(json.dumps(_basis))          # force a real serialization round-trip
+_srow, _sverdict = pr.basis_to_inputs(_basis)
+del _r, _v
+sealed_receipt = pr.build_receipt(_srow, _sverdict, **_kw)
+
+check("content SHA is IDENTICAL", 
+      sealed_receipt["receipt_content_sha256"] == live_receipt["receipt_content_sha256"],
+      f"{sealed_receipt['receipt_content_sha256'][:16]} vs {live_receipt['receipt_content_sha256'][:16]}")
+check("the whole receipt is identical", sealed_receipt == live_receipt)
+check("stat survived (Mission 1 lost it, which broke settlement)",
+      sealed_receipt["stat"] == "hits")
+check("the full gate trace survived",
+      isinstance(sealed_receipt["eligibility_gates"], dict)
+      and len(sealed_receipt["eligibility_gates"]) == 15)
+for _f in ("market_implied", "market_fair", "prob_ci_source", "base_rate",
+           "lift", "recommendation_status_reasons", "champion_probability_basis"):
+    check(f"{_f} survived", _f in sealed_receipt)
+check("git_sha is the BUILD's, not this process's",
+      sealed_receipt["git_sha"] == "c" * 40)
+
+print("\nCheck 13: a settlement input reconstructs from the sealed receipt")
+from backtest import prospective_settlement as _ps
+_pick = _ps.reconstruct_pick(sealed_receipt)
+check("stat reaches the grader", _pick["projection"]["stat"] == "hits")
+check("needs reaches the grader", _pick["projection"]["needs"] == 1)
+check("wager direction reaches the grader", _pick["market_side"] == "over")
+check("game_pk reaches the grader", _pick["game_pk"] == GAME_PK)
+check("player_id reaches the grader", _pick["player_id"] == 99001)
 
 print()
 if FAILURES:

@@ -77,6 +77,80 @@ _OUTCOME_TOKEN_EXEMPT = frozenset({
 })
 
 
+# ═══════════════════════════════════════════════════════════════════════
+# RECEIPT BASIS — the exact durable inputs a receipt needs
+# ═══════════════════════════════════════════════════════════════════════
+#
+# THE DEFECT THIS CLOSES. The in-memory raw candidate ceases to exist when the
+# Dashboard Refresh process exits. Mission 1's snapshot stored 17 projected
+# fields per eligible row while build_receipt() reads 28 off the row, 6 off the
+# verdict and 6 off the board metadata -- so 24 fields were destroyed at
+# process exit. One of them was `stat`, which silently BREAKS SETTLEMENT:
+# reconstruct_pick() feeds it to grade_public_pick(), which dispatches on it.
+#
+# The only other way to fill those fields would be to re-open a later board --
+# which is a fatal late-information leak. So the fix is to widen what is
+# sealed, never to add a reader.
+#
+# These allow-lists are the single source of truth, and
+# test_prospective_receipt.py re-derives build_receipt()'s real dependencies
+# from the AST and asserts they are all covered. The lists cannot silently
+# drift out of sync with the function again.
+
+RECEIPT_ROW_FIELDS = (
+    "base_rate", "calibrated_by", "edge_vs_fair", "game_pk", "hit_probability",
+    "lift", "market_edge", "market_fair", "market_fair_method",
+    "market_fetch_state", "market_implied", "market_odds", "matchup", "name",
+    "player_id", "prob_ci", "prob_ci_source", "probability_basis",
+    "projection", "prop", "raw_hit_probability", "reliability", "sample_n",
+    "score", "signals", "status", "status_reasons", "team",
+    # Not read by build_receipt directly, but read by the eligibility gates
+    # when a verdict must be recomputed, and cheap to carry.
+    "side", "lineup_assumed",
+)
+
+RECEIPT_VERDICT_FIELDS = (
+    "canonical_prop_id", "expression", "game_start", "gates", "identity_key",
+    "notes",
+)
+
+RECEIPT_META_FIELDS = (
+    "board_generated_at", "calibration_version", "feature_version",
+    "model_version", "odds_fetched_at", "selection_policy_version",
+    # git_sha is the BUILD's commit. build_receipt must read it from here and
+    # never call git_sha() at receipt-construction time: a receipt sealed in a
+    # later job would otherwise stamp that job's HEAD, silently misattributing
+    # which code produced the prediction.
+    "git_sha",
+)
+
+
+def receipt_basis(row, verdict):
+    """The complete, allow-listed pregame evidence one receipt needs.
+
+    Strictly allow-listed, not a dump of the candidate: an arbitrary mutable
+    object would carry unbounded fields of unknown provenance into permanent
+    evidence, and the protocol forbids exactly that.
+    """
+    return {
+        "row": {k: row.get(k) for k in RECEIPT_ROW_FIELDS},
+        "verdict": {k: verdict.get(k) for k in RECEIPT_VERDICT_FIELDS},
+    }
+
+
+def basis_to_inputs(basis):
+    """(row, verdict) reconstructed from sealed evidence alone.
+
+    This is the adapter that lets every downstream lifecycle stage run from
+    durable evidence instead of from a live in-memory candidate. Without it,
+    the only way to reach a receipt is to re-run evaluate_row() over rows that
+    were never persisted -- after the games are over, through a function whose
+    `now` is caller-chosen. That is a post-outcome reconstruction with a free
+    lever on the pool, and it is precisely what this closes.
+    """
+    return dict(basis.get("row") or {}), dict(basis.get("verdict") or {})
+
+
 def canonical_json(obj):
     """Deterministic serialization: sorted keys, no incidental whitespace."""
     return json.dumps(obj, sort_keys=True, separators=(",", ":"),
@@ -245,7 +319,10 @@ def build_receipt(row, verdict, *, epoch, snapshot_id, snapshot_sha256,
         "calibration_version": meta.get("calibration_version"),
         "feature_version": meta.get("feature_version"),
         "board_generated_at": meta.get("board_generated_at"),
-        "git_sha": repo_git_sha if repo_git_sha is not None else git_sha(),
+        # The BUILD's commit, carried in the sealed basis. Never git_sha()
+        # here: a receipt sealed by a later job would stamp that job's HEAD.
+        "git_sha": (repo_git_sha if repo_git_sha is not None
+                    else meta.get("git_sha")),
     }
 
     receipt["receipt_id"] = receipt_id(receipt["decisive_epoch_id"],

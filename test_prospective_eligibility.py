@@ -8,6 +8,12 @@ import sys
 from datetime import datetime, timedelta, timezone
 
 from backtest import prospective_eligibility as pe
+from backtest import prospective_source_integrity as psi
+
+# A genuinely-ran, genuinely-clean evaluation. Tests that are not ABOUT source
+# integrity must supply one, because a missing evaluation is now UNKNOWN and
+# correctly fails closed.
+CLEAR = psi.evaluate(schedule={1: {}}, live_state={"reconciliation": {"mismatches": []}})
 
 FAILURES = []
 
@@ -53,6 +59,7 @@ def verdict(row, **kw):
     kw.setdefault("schedule", SCHEDULE)
     kw.setdefault("odds_fetched_at", (NOW - timedelta(minutes=3)).isoformat())
     kw.setdefault("board_generated_at", (NOW - timedelta(minutes=8)).isoformat())
+    kw.setdefault("source_integrity", CLEAR)
     return pe.evaluate_row(row, **kw)
 
 
@@ -181,22 +188,53 @@ check("Under prop yields side 'under'",
 check("over and under are different identities",
       verdict(base_row())["canonical_prop_id"] != verdict(under)["canonical_prop_id"])
 
-print("\nCheck 11: source-integrity hold gate is real, over an empty registry")
-check("no hold by default", verdict(base_row())["gates"]["no_source_integrity_hold"])
-check("hold by game_pk blocks",
-      not verdict(base_row(), source_integrity_holds={GAME_PK})["gates"]["no_source_integrity_hold"])
-check("hold by team blocks",
-      not verdict(base_row(), source_integrity_holds={"Testers"})["gates"]["no_source_integrity_hold"])
-pid = verdict(base_row())["canonical_prop_id"]
-check("hold by canonical prop id blocks",
-      not verdict(base_row(), source_integrity_holds={pid})["gates"]["no_source_integrity_hold"])
+print("\nCheck 11: source integrity is CLEAR/HOLD/UNKNOWN and fails closed")
+# THE ASYMMETRY THAT IS THE WHOLE CONTRACT: "we did not look" must never read
+# as "we looked and it was fine".
+check("NO evaluation supplied -> blocked (never defaults to CLEAR)",
+      not pe.evaluate_row(base_row(), now=NOW, schedule=SCHEDULE,
+                          odds_fetched_at=(NOW - timedelta(minutes=3)).isoformat(),
+                          board_generated_at=(NOW - timedelta(minutes=8)).isoformat()
+                          )["gates"]["no_source_integrity_hold"])
+check("an evaluation that RAN clean -> CLEAR", CLEAR["state"] == psi.CLEAR)
+check("CLEAR passes", verdict(base_row())["gates"]["no_source_integrity_hold"])
+unk = psi.evaluate(schedule=SCHEDULE, live_state=None)
+check("unreadable live.json -> UNKNOWN", unk["state"] == psi.UNKNOWN)
+check("UNKNOWN blocks",
+      not verdict(base_row(), source_integrity=unk)["gates"]["no_source_integrity_hold"])
+check("UNKNOWN is not evaluated", unk["evaluated"] is False)
+missing_recon = psi.evaluate(schedule=SCHEDULE, live_state={})
+check("absent reconciliation block -> UNKNOWN", missing_recon["state"] == psi.UNKNOWN)
+outage = psi.evaluate(schedule={}, live_state={"reconciliation": {"mismatches": []}})
+check("whole-slate schedule outage -> HOLD", outage["state"] == psi.HOLD)
+check("slate HOLD blocks every candidate",
+      not verdict(base_row(), source_integrity=outage)["gates"]["no_source_integrity_hold"])
+game_hold = psi.evaluate(schedule=SCHEDULE, live_state={"reconciliation": {
+    "mismatches": [{"kind": "lineup", "game_pk": GAME_PK}]}})
+check("lineup reconciliation mismatch -> HOLD", game_hold["state"] == psi.HOLD)
+check("game-scoped HOLD blocks that game",
+      not verdict(base_row(), source_integrity=game_hold)["gates"]["no_source_integrity_hold"])
+check("game-scoped HOLD does NOT block a different game",
+      verdict(base_row(game_pk=999),
+              schedule={999: {"started": False, "start": START.isoformat(), "status": {}}},
+              source_integrity=game_hold)["gates"]["no_source_integrity_hold"])
+# LINE_MOVED is a real successful observation and already the price gate's
+# job; counting it twice would attribute one rejection to two gates.
+lm = psi.evaluate(schedule=SCHEDULE, live_state={"reconciliation": {
+    "mismatches": [{"kind": "line_moved", "prop_id": "x"}]}})
+check("line_moved is NOT a source-integrity hold", lm["state"] == psi.CLEAR)
+check("every hold carries scope/key/reason/observed_at/authority",
+      all({"scope", "key", "reason_code", "observed_at", "authority"} <= set(h)
+          for h in outage["holds"] + game_hold["holds"]))
+check("contract is versioned", CLEAR["contract_version"] == psi.CONTRACT_VERSION)
 
 print("\nCheck 12: partition/funnel reports the full rejection funnel")
 rows = [base_row(), base_row(lineup_assumed=True), base_row(reliability="C"),
         base_row(market_odds=None), base_row(sample_n=0)]
 ok, bad = pe.partition(rows, now=NOW, schedule=SCHEDULE,
                        odds_fetched_at=(NOW - timedelta(minutes=3)).isoformat(),
-                       board_generated_at=(NOW - timedelta(minutes=8)).isoformat())
+                       board_generated_at=(NOW - timedelta(minutes=8)).isoformat(),
+                       source_integrity=CLEAR)
 check("1 eligible of 5", len(ok) == 1, f"got {len(ok)}")
 check("4 rejected of 5", len(bad) == 4, f"got {len(bad)}")
 counts = pe.funnel_counts(bad)
