@@ -106,6 +106,56 @@ def contract_file_sha256():
     ).encode("utf-8")).hexdigest()
 
 
+# The AST fingerprint of the functions that ACTUALLY compute the interval.
+# Filled in below from the file itself the first time it is computed; pinned
+# here so an implementation swap is a hard failure rather than a diff nobody
+# reads.
+EXPECTED_IMPLEMENTATION_SHA256 = (
+    "b25e764cba3210b41652d1a14d170194f0fe28a482fecdf3999d5bd700b783c4")
+
+PINNED_IMPLEMENTATION = ("run", "group_by_date", "point_estimate", "_rate")
+
+
+def implementation_sha256():
+    """Hash the RESAMPLING CODE, not just the declared contract values.
+
+    ═══════════════════════════════════════════════════════════════════════
+    THE DEFECT THIS CLOSES
+    ═══════════════════════════════════════════════════════════════════════
+
+    A red team swapped run()'s resample from date clusters to individual rows
+    -- leaving CONTRACT untouched -- and verify_contract_unmodified() returned
+    True while the reported CI narrowed from 0.3333 to 0.2726. The pin covered
+    the DECLARATIONS and not the IMPLEMENTATION, so the file could still say
+    `unit: slate_date` while resampling something else entirely. A narrower
+    interval is exactly the direction that flatters a promotion decision.
+
+    Normalized through the AST, so comments, docstrings, formatting and
+    renamed locals do not trip it, while any change to what the code DOES
+    does. Docstrings are stripped explicitly: this module's docstrings are
+    load-bearing prose that will be edited by people who are not changing
+    behaviour, and a pin that fires on prose is a pin that gets disabled.
+    """
+    import ast as _ast
+
+    with open(os.path.abspath(__file__), "r", encoding="utf-8") as fh:
+        tree = _ast.parse(fh.read())
+    parts = []
+    for name in PINNED_IMPLEMENTATION:
+        fn = next((n for n in tree.body
+                   if isinstance(n, _ast.FunctionDef) and n.name == name), None)
+        if fn is None:
+            parts.append(f"{name}:MISSING")
+            continue
+        fn = _ast.parse(_ast.unparse(fn)).body[0]
+        if (fn.body and isinstance(fn.body[0], _ast.Expr)
+                and isinstance(fn.body[0].value, _ast.Constant)
+                and isinstance(fn.body[0].value.value, str)):
+            fn.body.pop(0)
+        parts.append(f"{name}:{_ast.dump(fn)}")
+    return hashlib.sha256("\n".join(parts).encode("utf-8")).hexdigest()
+
+
 def verify_contract_unmodified():
     """Raise if the frozen bootstrap contract file has been edited.
 
@@ -121,6 +171,14 @@ def verify_contract_unmodified():
             f"{EXPECTED_CONTRACT_SHA256}. A contract value (unit, seed, "
             f"replicates, CI, statistic or denominator) has been changed; no "
             f"interval computed from it may be counted.")
+    impl = implementation_sha256()
+    if impl != EXPECTED_IMPLEMENTATION_SHA256:
+        raise ContractModified(
+            f"bootstrap IMPLEMENTATION sha256 {impl} != pinned "
+            f"{EXPECTED_IMPLEMENTATION_SHA256}. The resampling code changed "
+            f"while the declared contract did not, which is how a file keeps "
+            f"claiming `unit: slate_date` while resampling something else. "
+            f"No interval computed from it may be counted.")
     return True
 
 
@@ -186,6 +244,18 @@ def secondary_clustering(settlements, unit):
     if not keys:
         return {"unit": unit, "n_clusters": 0, "ci_low": None, "ci_high": None,
                 "observed": observed, "successful_replicates": 0}
+    # HOW BADLY PAIRING IS BROKEN, measured rather than assumed. The primary
+    # date-level bootstrap relies on each drawn cluster carrying BOTH arms'
+    # selections, so the difference statistic stays paired. A player key does
+    # not: when the arms disagree -- the pa_only / champion_only cases the
+    # whole experiment is about -- a drawn key feeds one arm only. This is why
+    # the interval below can come out NARROWER than the primary one, which
+    # must not be read as "clustering is not a problem".
+    single_arm = sum(
+        1 for k in keys
+        if not (any(r.get("champion_member") for r in clusters[k])
+                and any(r.get("pa_v1_member") for r in clusters[k])))
+
     diffs = []
     for _ in range(BOOTSTRAP_REPLICATES):
         drawn = [rng.choice(keys) for _ in range(len(keys))]
@@ -196,7 +266,9 @@ def secondary_clustering(settlements, unit):
         if value is not None:
             diffs.append(value)
     out = {"unit": unit, "n_clusters": len(keys), "observed": observed,
-           "successful_replicates": len(diffs), "ci_low": None, "ci_high": None}
+           "successful_replicates": len(diffs), "ci_low": None, "ci_high": None,
+           "single_arm_clusters": single_arm,
+           "unpaired_fraction": (single_arm / len(keys)) if keys else None}
     if diffs:
         diffs.sort()
         tail = (1.0 - BOOTSTRAP_CI) / 2.0
@@ -205,12 +277,21 @@ def secondary_clustering(settlements, unit):
     return out
 
 
-def concentration(settlements, unit):
+def concentration(settlements, unit, member_key=None):
     """How concentrated the selections are on repeated units.
 
     A high max share or a low effective count means the date-level interval is
     understating uncertainty for that arm.
+
+    PER ARM when `member_key` is given, and that is the point. A red team
+    measured this pooled over both arms and got effective_n 23.4 where PA-v1's
+    own arm was 7.4 -- a ~3x understatement of exactly the concentration this
+    diagnostic exists to expose, because the champion spreads its picks over
+    many more players than PA-v1, which reselects top-of-order bats. A reader
+    would have read the pooled number as "clustering isn't a problem here".
     """
+    if member_key is not None:
+        settlements = [r for r in settlements if r.get(member_key)]
     counts = {}
     for row in settlements:
         k = row.get(unit)

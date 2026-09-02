@@ -169,8 +169,16 @@ def build_report(ledger_dir):
                  for r in rows]
     psb_game = pb.secondary_clustering(clus_rows, "game_pk")
     psb_player = pb.secondary_clustering(clus_rows, "player_id")
-    conc_game = pb.concentration(clus_rows, "game_pk")
-    conc_player = pb.concentration(clus_rows, "player_id")
+    def conc(unit):
+        # PER ARM. Pooled, the champion's much wider spread masks PA-v1's
+        # reselection of the same top-of-order bats -- which is the entire
+        # quantity this diagnostic exists to surface.
+        return {"pooled": pb.concentration(clus_rows, unit),
+                "champion": pb.concentration(clus_rows, unit, "champion_member"),
+                "pa_v1": pb.concentration(clus_rows, unit, "pa_v1_member")}
+
+    conc_game = conc("game_pk")
+    conc_player = conc("player_id")
 
     def dist(field):
         out = {}
@@ -235,7 +243,14 @@ def build_report(ledger_dir):
             "primary_unit": "slate_date",
             "game_pk": psb_game, "player_id": psb_player,
             "concentration": {"game_pk": conc_game, "player_id": conc_player},
-            "note": "Player is a CROSSED cluster, not nested in date: PA-v1 "
+            "note": "Concentration is reported PER ARM: pooled over both arms "
+                    "the champion's wider spread masks PA-v1's reselection. "
+                    "`unpaired_fraction` says how much of the player-level "
+                    "interval is computed on clusters feeding only one arm, "
+                    "which breaks the pairing the primary bootstrap relies on "
+                    "-- so a NARROWER secondary interval is an artifact, not "
+                    "reassurance. Player is a CROSSED cluster, not nested in "
+                    "date: PA-v1 "
                     "ranks on batting order and reselects the same "
                     "top-of-order hitters, which a date-level resample does "
                     "not absorb. Reported so the understatement is visible; "
