@@ -40,23 +40,91 @@ class EpochFailedClosed(Exception):
     """
 
 
-def champion_hits_picks(manifest, *, stat=SHADOW_STAT):
-    """The champion arm: Hits Top Picks the artifact actually exposed.
+def champion_hits_picks(payload, *, publication_cutoff_at, converged_at=None,
+                        stat=SHADOW_STAT):
+    """The champion arm: Hits Top Picks the decisive artifact ACTUALLY EXPOSED.
 
-    Reads the publication manifest's own candidate list. The manifest already
-    encodes production's exposure decision, so this function filters by market
-    only; it must never add or relax a gate of its own.
-    """
-    out = []
-    for candidate in (manifest or {}).get("candidates") or []:
-        identity = candidate.get("settlement_identity") or {}
-        snapshot = candidate.get("snapshot") or {}
-        candidate_stat = (identity.get("stat")
-                          or (snapshot.get("projection") or {}).get("stat")
-                          or snapshot.get("stat"))
-        if candidate_stat != stat:
+    ═══════════════════════════════════════════════════════════════════════
+    THE DEFECT THIS REPLACES — found independently by two reviewers
+    ═══════════════════════════════════════════════════════════════════════
+
+    Mission 1 read `manifest["candidates"]`. That list is built by
+    dashboard/publication_registry.py, whose FIRST filter is:
+
+        if prop_id in registry["entries"]:
             continue
-        out.append(candidate)
+
+    `registry["entries"]` is a PERMANENT, CUMULATIVE, CROSS-DATE store. So
+    `candidates` is the set of props achieving FIRST PUBLIC EXPOSURE at that
+    exact artifact -- not the set the artifact displays.
+
+    Protocol §7 then mandates the LATEST converged deployment as decisive. By
+    then almost everything is already registered, so the champion list is
+    near-empty. Measured on real committed state: docs/data.json for
+    2026-09-01 displays 2 Hits Top Picks; both were already registered; the
+    manifest would emit ZERO. N(date) would be 0 while the site showed two
+    Hits Top Picks all evening. Across real dates a day's Hits Top Picks are
+    spread over 10-12 distinct publishing artifacts.
+
+    The consequences were all silent and all favoured the challenger: PA-v1
+    ranked the whole gated pool while the champion was confined to
+    first-exposure residue; the denominator collapsed for reasons unrelated to
+    pick quality; and dates dropped non-randomly.
+
+    The registry membership test is LIFECYCLE BOOKKEEPING -- "do not record a
+    first publication twice" -- not an exposure predicate. So the champion set
+    is now read from the artifact's own SERVED PAYLOAD, applying the manifest's
+    real exposure gates MINUS that filter.
+
+    Gates applied here, each matching production:
+      * recommendation_status == "top_pick"   (production's own exposure bar)
+      * stat == hits                          (this experiment's market)
+      * game_state is pregame                 (never a live/final game)
+      * before_betting_cutoff(row, publication_cutoff_at)
+                                              (production's strict admission
+                                               rule, at the artifact's real
+                                               preparation clock)
+      * publicly usable before first pitch    (a prop nobody could see until
+                                               after the game started was
+                                               never a wager -- symmetric,
+                                               applied to the pool too)
+
+    No probability proxy. No ROI/value gate. Those are champion selection
+    policy, and the historical `predicted_prob >= 0.60` reconstruction is
+    explicitly forbidden by the protocol.
+    """
+    from dashboard.live_state import (before_betting_cutoff, canonical_prop_id,
+                                      game_state)
+
+    out = []
+    for row in (payload or {}).get("props") or []:
+        row_stat = (row.get("projection") or {}).get("stat") or row.get("stat")
+        if row_stat != stat:
+            continue
+        if row.get("recommendation_status") != "top_pick":
+            continue
+        state = row.get("game_state")
+        if state is None:
+            state = game_state(row.get("status") or {}, row=row)
+        if state not in (None, "pregame"):
+            continue
+        if not before_betting_cutoff(row, publication_cutoff_at):
+            continue
+        if converged_at is not None:
+            from backtest.prospective_epoch import _parse, publicly_usable
+            if not publicly_usable(_parse(row.get("game_start")),
+                                   _parse(converged_at)):
+                continue
+        try:
+            cid = canonical_prop_id(row)
+        except (ValueError, KeyError, TypeError):
+            # An unidentifiable published row is not silently skipped: it is
+            # surfaced so the epoch fails closed rather than quietly shrinking
+            # the champion.
+            out.append({"canonical_id": None, "row": row,
+                        "identity_error": True})
+            continue
+        out.append({"canonical_id": cid, "row": row, "identity_error": False})
     return out
 
 
@@ -86,30 +154,56 @@ def _universe_index(universe):
 
 
 def resolve_champions(champions, universe, pool):
-    """Match every champion to the frozen capture, failing closed if any misses.
+    """Match every exposed champion to the frozen capture. Fail closed twice.
 
-    Two DIFFERENT memberships, and the difference is the whole rule:
+    ═══════════════════════════════════════════════════════════════════════
+    THE ESCALATED QUESTION, RESOLVED
+    ═══════════════════════════════════════════════════════════════════════
 
-      * Every champion MUST resolve against the frozen raw universe. A champion
-        the shadow never saw means the snapshot is not the build that shipped,
-        so the epoch's identity binding is broken and nothing it produces can
-        be trusted. That raises.
+    Mission 1 applied two different memberships: a champion missing from the
+    frozen universe raised, but a champion that failed a policy-independent
+    OPERATIONAL gate was silently dropped from N, with NO BACKFILL, while PA-v1
+    still took its own best N-1.
 
-      * N(date) counts champions that are ALSO in the gated eligible pool. A
-        champion the site published but which fails a policy-independent
-        operational gate is a real fact about that pick, not a bug -- it is
-        recorded and excluded from the matched volume, not silently kept.
+    The red team's finding: that is ASYMMETRIC REPLACEMENT. The champion is
+    scored on a gate-selected residue of its own picks; the challenger is
+    scored on its own optimum. Worse, WHICH champions fall out is steerable
+    after the fact through the source-integrity verdict and the evaluation
+    clock -- a post-outcome lever pointed at the champion's measured set.
+
+    Resolution adopted: a published-but-ineligible champion now FAILS THE EPOCH
+    CLOSED, exactly as an unresolvable one already did. A pick the site exposed
+    for public wagering, which the shadow's own usability gates say a human
+    could not have placed, is a contradiction between two claims that both
+    purport to describe operational usability. One of them is wrong. Silently
+    deleting the pick resolves that contradiction in the direction that shrinks
+    the champion. Failing closed makes it visible and un-exploitable, and
+    MISSING EVIDENCE is already the protocol's accepted answer for a date that
+    cannot produce a sound comparison.
+
+    It is also self-correcting: if this fires constantly, that is evidence the
+    gates are miscalibrated against production's own exposure bar -- a finding
+    that must surface BEFORE any evidence counts, not be absorbed silently.
     """
+    unidentifiable = [c for c in champions if c.get("identity_error")]
+    if unidentifiable:
+        raise EpochFailedClosed(
+            f"{len(unidentifiable)} exposed Hits Top Pick(s) have no derivable "
+            f"canonical identity; the champion set cannot be resolved and this "
+            f"epoch fails closed rather than comparing a partial champion.")
+
     uni = _universe_index(universe)
     idx = _pool_index(pool)
-    unmatched = [c.get("canonical_id") for c in champions
-                 if c.get("canonical_id") not in uni]
-    if unmatched:
+
+    missing = [c["canonical_id"] for c in champions
+               if c["canonical_id"] not in uni]
+    if missing:
         raise EpochFailedClosed(
-            f"{len(unmatched)} champion Hits Top Pick(s) could not be matched "
-            f"to the frozen shadow universe by canonical identity: "
-            f"{unmatched}. The snapshot is not the build that shipped; this "
-            f"epoch fails closed rather than comparing a different universe.")
+            f"{len(missing)} champion Hits Top Pick(s) could not be matched to "
+            f"the frozen shadow universe by canonical identity: {missing}. The "
+            f"snapshot is not the build that shipped; this epoch fails closed "
+            f"rather than comparing a different universe.")
+
     in_pool, out_of_pool = [], []
     for champion in champions:
         pid = champion["canonical_id"]
@@ -117,8 +211,17 @@ def resolve_champions(champions, universe, pool):
             in_pool.append((pid, idx[pid]))
         else:
             out_of_pool.append((pid, uni[pid][1].get("failed_gates")))
-    return {"in_pool": in_pool, "out_of_pool": out_of_pool,
-            "n": len(in_pool)}
+
+    if out_of_pool:
+        raise EpochFailedClosed(
+            f"{len(out_of_pool)} champion Hits Top Pick(s) were publicly "
+            f"exposed but fail a policy-independent operational gate: "
+            f"{out_of_pool}. Dropping them would score the champion on a "
+            f"gate-selected residue of its own picks while the challenger "
+            f"keeps its optimum, and WHICH ones drop is steerable after the "
+            f"fact. This epoch fails closed instead.")
+
+    return {"in_pool": in_pool, "out_of_pool": out_of_pool, "n": len(in_pool)}
 
 
 def rank_pa_v1(pool, pa_scores):
@@ -186,19 +289,40 @@ def assert_equal_volume(epoch_id, champion_selected, pa_selected):
     return n_champ
 
 
-def build_epoch_selection(*, epoch, manifest, universe, pool, pa_scores):
-    """Full per-epoch selection. Returns None when N(date) == 0.
+def build_epoch_selection(*, epoch, payload, universe, pool, pa_scores,
+                          schedule=None):
+    """Full per-epoch selection, sealed from ONE bound state. None when N == 0.
 
-    None is a real, correct answer: a date on which the site published no
-    exposable Hits Top Pick has no comparison to make, and manufacturing one
-    would invent volume that never existed.
+    Order matters and every step is required:
+      1. re-gate the captured pool against the BOUND DEPLOYMENT's real clocks;
+      2. read the champion set from that deployment's SERVED payload;
+      3. resolve every champion, failing closed on any mismatch;
+      4. rank PA-v1 over the SAME re-gated pool;
+      5. take exactly N;
+      6. assert per-epoch equal volume.
+
+    Step 1 is the one Mission 1 shipped as an uncalled helper. Without it the
+    challenger ranks the capture-time pool -- gated at the build instant, 8-15
+    minutes earlier than the artifact's own preparation -- which is a strictly
+    larger opportunity set than the champion ever had, at identical headline
+    volume.
     """
-    champions = champion_hits_picks(manifest)
-    resolved = resolve_champions(champions, universe, pool)
+    from backtest.prospective_epoch import regate_pool
+
+    regated, dropped = regate_pool(pool, epoch, schedule=schedule or {})
+
+    champions = champion_hits_picks(
+        payload,
+        publication_cutoff_at=epoch.get("deployment_publication_cutoff_at")
+        or epoch.get("deployment_prepared_at"),
+        converged_at=epoch.get("deployment_converged_at"))
+
+    resolved = resolve_champions(champions, universe, regated)
     n = resolved["n"]
     if n == 0:
         return None
-    ranked = rank_pa_v1(pool, pa_scores)
+
+    ranked = rank_pa_v1(regated, pa_scores)
     pa_selected = select_pa_v1(ranked, n)
     assert_equal_volume(epoch.get("decisive_epoch_id"),
                         resolved["in_pool"], pa_selected)
@@ -207,9 +331,12 @@ def build_epoch_selection(*, epoch, manifest, universe, pool, pa_scores):
         "decisive_epoch_id": epoch.get("decisive_epoch_id"),
         "slate_date": epoch.get("slate_date"),
         "n": n,
+        "regated_pool_size": len(regated),
+        "regate_dropped": len(dropped),
+        "regate_drop_reasons": sorted({r for _row, r in dropped}),
+        "champion_exposed_n": len(champions),
         "champion_selected": resolved["in_pool"],
         "champion_ranks": champion_ranks,
-        "champion_published_but_ineligible": resolved["out_of_pool"],
         "pa_v1_selected": pa_selected,
         "pa_v1_ranked": ranked,
     }

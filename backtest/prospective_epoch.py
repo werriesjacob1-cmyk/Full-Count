@@ -167,10 +167,20 @@ def bind_deployment(candidate, deployment):
             f"public data.json generated_at "
             f"{deployment.get('public_generated_at')!r} != captured "
             f"board_generated_at {candidate.get('board_generated_at')!r}")
-    if (candidate.get("build_source_commit")
-            and deployment.get("source_commit")
-            and deployment["source_commit"] != candidate["build_source_commit"]):
-        reasons.append("deployment source_commit != build source_commit")
+    # NO source_commit EQUALITY CHECK. It is provably unsatisfiable in the real
+    # pipeline and would raise NoPrimaryEpoch on every date forever:
+    #   build_source_commit      = the refresh run's GITHUB_SHA, i.e. main HEAD
+    #                              when the refresh STARTED;
+    #   deployment.source_commit = main HEAD at the deploy job's checkout,
+    #                              several commits later -- because Dashboard
+    #                              Refresh itself pushes a commit in between,
+    #                              and Dashboard Live Update pushes every five
+    #                              minutes.
+    # Verified against real state: all 12 deployments recorded in
+    # data/public_top_picks/registry.json carry a `Dashboard live update` head
+    # commit. Protocol §8 requires both to be RECORDED, not equal, and the
+    # load-bearing binding is the generated_at hash join above -- which the
+    # deploy workflow independently proves against the PUBLIC url.
     prepared_at = _parse(deployment.get("prepared_at"))
     if prepared_at is None:
         reasons.append("deployment has no parsable prepared_at")
@@ -182,6 +192,11 @@ def bind_deployment(candidate, deployment):
         "publicly_converged": True,
         "deployment_artifact_id": deployment.get("artifact_id"),
         "deployment_source_commit": deployment.get("source_commit"),
+        "deployment_triggering_workflow_name": deployment.get("triggering_workflow_name"),
+        "deployment_triggering_workflow_run_id": deployment.get("triggering_workflow_run_id"),
+        "deployment_publication_cutoff_at": deployment.get("publication_cutoff_at"),
+        "public_generated_at": deployment.get("public_generated_at"),
+        "public_source_commit": deployment.get("public_source_commit"),
         "deployment_prepared_at": deployment.get("prepared_at"),
         "deployment_converged_at": deployment.get("converged_at"),
         "deployment_run_id": deployment.get("run_id"),
@@ -234,6 +249,29 @@ def select_decisive_epoch(candidates, deployments, slate_date):
     return bound[-1]
 
 
+def publicly_usable(game_start, converged_at):
+    """Was this wager actually placeable by a customer?
+
+    THE QUESTION MISSION 1 DID NOT ASK. `prepared_at + 900s < game_start` is
+    production's admission rule, evaluated at ARTIFACT PREPARATION. But a prop
+    is not wagerable because an artifact was prepared -- it is wagerable when
+    the artifact is PUBLICLY VISIBLE. Real measured preparation-to-convergence
+    latency is minutes, with a tail of tens of minutes.
+
+    So a pick whose game had already started by the time the deployment
+    converged publicly was never a legitimate operational wager, however
+    correctly it cleared the preparation-time cutoff.
+
+    Applied SYMMETRICALLY to both arms and to the champion set. It is not a
+    per-arm gate: it removes wagers that were never in the real opportunity set
+    for anybody. A shadow rule looser than actual customer usability is exactly
+    what the North Star forbids.
+    """
+    if game_start is None or converged_at is None:
+        return False
+    return converged_at < game_start
+
+
 def regate_pool(pool, epoch, *, schedule, lead_seconds=PUBLICATION_LEAD_SECONDS):
     """Re-apply the publication cutoff at the BOUND DEPLOYMENT's real clock.
 
@@ -257,13 +295,17 @@ def regate_pool(pool, epoch, *, schedule, lead_seconds=PUBLICATION_LEAD_SECONDS)
     if prepared_at is None:
         raise NoPrimaryEpoch(
             "cannot re-gate the pool: bound epoch has no deployment_prepared_at")
+    converged_at = _parse(epoch.get("deployment_converged_at"))
     kept, dropped = [], []
     for row, verdict in pool:
         start = _parse((verdict or {}).get("game_start")
                        or ((schedule or {}).get(row.get("game_pk")) or {}).get("start"))
-        if admits_new_top_pick(start, prepared_at, lead_seconds=lead_seconds):
-            kept.append((row, verdict))
-        else:
+        if not admits_new_top_pick(start, prepared_at, lead_seconds=lead_seconds):
             dropped.append((row, "inside the publication cutoff at "
                                  "deployment_prepared_at"))
+        elif not publicly_usable(start, converged_at):
+            dropped.append((row, "game had already started by public "
+                                 "convergence; never a placeable wager"))
+        else:
+            kept.append((row, verdict))
     return kept, dropped

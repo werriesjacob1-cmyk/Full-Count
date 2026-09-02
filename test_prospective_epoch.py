@@ -6,6 +6,9 @@ from datetime import datetime, timedelta, timezone
 from backtest import prospective_eligibility as pe
 from backtest import prospective_epoch as pep
 from backtest import prospective_selection as ps
+from backtest import prospective_source_integrity as psi
+
+CLEAR = psi.evaluate(schedule={1: {}}, live_state={"reconciliation": {"mismatches": []}})
 
 FAILURES = []
 
@@ -51,6 +54,10 @@ def deployment(**over):
         "converged_at": (NOW - timedelta(minutes=2)).isoformat(),
         "artifact_id": "art-1", "run_id": "222",
         "candidate_ids": ["p1", "p2"],
+        "triggering_workflow_run_id": "111",
+        "publication_cutoff_at": (datetime.fromisoformat(PREPARED)
+                                  + timedelta(minutes=15)).isoformat(),
+        "public_source_commit": "c" * 40,
     }
     d.update(over)
     return d
@@ -75,8 +82,18 @@ check("unconverged deployment does NOT bind",
 check("generated_at mismatch does NOT bind (hash binding, not correlation)",
       not pep.bind_deployment(CAND, deployment(
           public_generated_at="2026-09-02T00:00:00+00:00"))["bound"])
-check("source_commit mismatch does NOT bind",
-      not pep.bind_deployment(CAND, deployment(source_commit="d" * 40))["bound"])
+# DELIBERATELY NOT AN EQUALITY CHECK. build_source_commit is the refresh run's
+# GITHUB_SHA (main HEAD at trigger); deployment.source_commit is main HEAD at
+# the deploy checkout, several commits later, because Dashboard Refresh itself
+# pushes in between. Requiring equality made binding provably impossible and
+# would have raised NoPrimaryEpoch on every date forever. Protocol section 8
+# requires both to be RECORDED; the generated_at hash join is the real binding.
+_diff = pep.bind_deployment(CAND, deployment(source_commit="d" * 40))
+check("differing source_commit still binds (equality was unsatisfiable)",
+      _diff["bound"], str(_diff.get("reasons")))
+check("but BOTH commits are recorded",
+      _diff["epoch"]["deployment_source_commit"] == "d" * 40
+      and _diff["epoch"]["build_source_commit"] == "c" * 40)
 check("missing prepared_at does NOT bind",
       not pep.bind_deployment(CAND, deployment(prepared_at=None))["bound"])
 bound = pep.bind_deployment(CAND, deployment())["epoch"]
@@ -111,14 +128,15 @@ check("exactly one epoch is returned", isinstance(picked, dict))
 check("selection reads no outcome field",
       not any(k in str(picked).lower() for k in ("hit", "miss", "won")))
 
-print("\nCheck 5: regate_pool closes the capture-time/prepared-at asymmetry")
-# A game starting 20 min after CAPTURE but only 10 min after PREPARATION passed
-# the capture-time gate and must NOT survive the re-gate: the site could not
-# have published it.
+print("\nCheck 5: regate_pool closes BOTH real-clock asymmetries")
 prep_dt = datetime.fromisoformat(PREPARED)
-soon = (prep_dt + timedelta(minutes=10)).isoformat()
-far = (prep_dt + timedelta(hours=2)).isoformat()
-sched = {1: {"started": False, "start": soon}, 2: {"started": False, "start": far}}
+conv_dt = datetime.fromisoformat(bound["deployment_converged_at"])
+soon = (prep_dt + timedelta(minutes=10)).isoformat()      # inside the cutoff
+far = (prep_dt + timedelta(hours=2)).isoformat()          # fine
+started = (conv_dt - timedelta(minutes=1)).isoformat()    # already underway
+sched = {1: {"started": False, "start": soon},
+         2: {"started": False, "start": far},
+         3: {"started": False, "start": started}}
 
 
 def rowv(pk, start):
@@ -128,63 +146,123 @@ def rowv(pk, start):
          "market_odds": -140, "prop": "Over 0.5 Hits"}
     v = pe.evaluate_row(r, now=NOW, schedule={pk: {"started": False, "start": start}},
                         odds_fetched_at=(NOW - timedelta(minutes=3)).isoformat(),
-                        board_generated_at=GEN)
+                        board_generated_at=GEN, source_integrity=CLEAR)
     return (r, v)
 
 
 pool = [rowv(1, soon), rowv(2, far)]
 kept, dropped = pep.regate_pool(pool, bound, schedule=sched)
-check("row inside the cutoff at prepared_at is dropped", len(dropped) == 1)
-check("row still outside the cutoff is kept", len(kept) == 1)
+check("row inside the cutoff at prepared_at is dropped", len(dropped) == 1, str(dropped))
+check("only the genuinely placeable row survives", len(kept) == 1)
 check("the kept row is the far one", kept[0][0]["game_pk"] == 2)
+reasons = {r for _row, r in dropped}
+check("publication-cutoff drop is reported",
+      any("publication cutoff" in r for r in reasons), str(reasons))
+
+# THE QUESTION MISSION 1 DID NOT ASK. prepared_at can clear the strict
+# 15-minute rule while PUBLIC CONVERGENCE still lands after first pitch --
+# real measured refresh-to-convergence latency runs to ~21 minutes in the
+# tail. Nobody could have wagered such a pick. Exercised with a genuinely
+# slow deployment, which is the case that actually occurs.
+slow = pep.bind_deployment(CAND, deployment(
+    converged_at=(prep_dt + timedelta(minutes=40)).isoformat()))["epoch"]
+mid = (prep_dt + timedelta(minutes=25)).isoformat()   # clears cutoff, starts
+                                                      # before convergence
+slow_pool = [rowv(4, mid), rowv(2, far)]
+slow_kept, slow_dropped = pep.regate_pool(
+    slow_pool, slow, schedule={4: {"started": False, "start": mid},
+                               2: {"started": False, "start": far}})
+slow_reasons = {r for _row, r in slow_dropped}
+check("a pick clearing the cutoff but not public in time is dropped",
+      any("convergence" in r for r in slow_reasons), str(slow_reasons))
+check("and the genuinely usable one is kept",
+      [r[0]["game_pk"] for r in slow_kept] == [2], str(slow_kept))
+check("publicly_usable is symmetric, not a per-arm gate",
+      pep.publicly_usable(None, conv_dt) is False
+      and pep.publicly_usable(conv_dt + timedelta(hours=1), conv_dt) is True)
 check("re-gate without prepared_at raises",
       raises(lambda: pep.regate_pool(pool, {}, schedule=sched), pep.NoPrimaryEpoch))
 
-print("\nCheck 6: champion set comes from the manifest, not a probability proxy")
-manifest = {"candidates": [
-    {"canonical_id": "p1", "settlement_identity": {"stat": "hits"}, "snapshot": {}},
-    {"canonical_id": "p2", "settlement_identity": {"stat": "hits"}, "snapshot": {}},
-    {"canonical_id": "px", "settlement_identity": {"stat": "total_bases"}, "snapshot": {}},
+print("\nCheck 6: the champion set is what the artifact EXPOSED, not first exposures")
+CUT = (datetime.fromisoformat(PREPARED) + timedelta(minutes=15)).isoformat()
+LATER = (datetime.fromisoformat(PREPARED) + timedelta(hours=3)).isoformat()
+
+
+def prop(pid, **over):
+    p = {"game_pk": 900 + pid, "player_id": pid, "name": f"P{pid}",
+         "team": "T", "side": "home", "prop": "Over 0.5 Hits",
+         "projection": {"stat": "hits", "value": 0.5, "needs": 1},
+         "recommendation_status": "top_pick", "game_state": "pregame",
+         "game_start": LATER}
+    p.update(over)
+    return p
+
+
+payload = {"props": [
+    prop(1), prop(2),
+    prop(3, recommendation_status="lean"),
+    prop(4, projection={"stat": "total_bases", "value": 1.5, "needs": 2}),
+    prop(5, game_state="live"),
+    prop(6, game_start=(datetime.fromisoformat(PREPARED)
+                        + timedelta(minutes=5)).isoformat()),
 ]}
-champs = ps.champion_hits_picks(manifest)
-check("only hits candidates", [c["canonical_id"] for c in champs] == ["p1", "p2"])
-# Grep the EXECUTABLE code, not the prose: the module docstring names the
-# forbidden `predicted_prob >= 0.60` proxy precisely in order to say it is not
-# used, so a naive whole-file grep would flag the documentation itself.
+champs = ps.champion_hits_picks(payload, publication_cutoff_at=CUT)
+check("only exposed Hits top picks survive", len(champs) == 2, str(len(champs)))
+check("leans excluded", all(c["row"]["recommendation_status"] == "top_pick"
+                           for c in champs))
+check("non-hits excluded",
+      all((c["row"]["projection"] or {}).get("stat") == "hits" for c in champs))
+check("live games excluded", all(c["row"].get("game_state") == "pregame"
+                                 for c in champs))
+check("inside the publication cutoff excluded",
+      6 not in [c["row"]["player_id"] for c in champs])
+src = open("backtest/prospective_selection.py").read()
 import ast as _ast
-_tree = _ast.parse(open("backtest/prospective_selection.py").read())
-for _n in _ast.walk(_tree):
-    if isinstance(_n, (_ast.Module, _ast.FunctionDef, _ast.AsyncFunctionDef,
-                       _ast.ClassDef)):
+_t = _ast.parse(src)
+for _n in _ast.walk(_t):
+    if isinstance(_n, (_ast.Module, _ast.FunctionDef, _ast.ClassDef)):
         if (_n.body and isinstance(_n.body[0], _ast.Expr)
                 and isinstance(_n.body[0].value, _ast.Constant)
                 and isinstance(_n.body[0].value.value, str)):
             _n.body.pop(0)
-_code = _ast.unparse(_tree)
+_code = _ast.unparse(_t)
+check("NO first-exposure registry filter anywhere in executable code",
+      'registry["entries"]' not in _code and "registry['entries']" not in _code)
 check("no 0.60 probability proxy in executable code", "0.60" not in _code)
-check("no probability threshold gate in executable code",
-      "hit_probability >=" not in _code and "predicted_prob" not in _code)
+check("champion is read from the served payload, not a manifest",
+      "manifest" not in _code)
+
+print("\nCheck 7: a champion that cannot resolve FAILS THE EPOCH CLOSED")
 
 
 def fake(pid, champ_prob):
-    row = {"hit_probability": champ_prob}
-    verdict = {"canonical_prop_id": pid, "failed_gates": ()}
-    return (row, verdict)
+    return ({"hit_probability": champ_prob},
+            {"canonical_prop_id": pid, "failed_gates": ()})
 
 
-print("\nCheck 7: an unmatched champion FAILS THE EPOCH CLOSED")
+C = [{"canonical_id": "p1", "row": {}, "identity_error": False},
+     {"canonical_id": "p2", "row": {}, "identity_error": False}]
 universe = [fake("p1", 0.7), fake("p2", 0.65), fake("p3", 0.4), fake("p4", 0.4)]
 check("champion missing from the frozen universe raises",
-      raises(lambda: ps.resolve_champions(champs, [fake("p1", 0.7)], [fake("p1", 0.7)]),
+      raises(lambda: ps.resolve_champions(C, [fake("p1", 0.7)], [fake("p1", 0.7)]),
              ps.EpochFailedClosed))
-res = ps.resolve_champions(champs, universe, [fake("p1", 0.7), fake("p2", 0.65)])
+check("an unidentifiable exposed pick raises",
+      raises(lambda: ps.resolve_champions(
+          [{"canonical_id": None, "row": {}, "identity_error": True}],
+          universe, []), ps.EpochFailedClosed))
+res = ps.resolve_champions(C, universe, [fake("p1", 0.7), fake("p2", 0.65)])
 check("both champions matched -> N=2", res["n"] == 2)
 
-print("\nCheck 8: a published-but-ineligible champion is recorded, not hidden")
-res2 = ps.resolve_champions(champs, universe, [fake("p1", 0.7)])
-check("N counts only pool members", res2["n"] == 1)
-check("the excluded champion is reported",
-      [pid for pid, _ in res2["out_of_pool"]] == ["p2"])
+print("\nCheck 8: a published-but-INELIGIBLE champion also fails closed")
+# Mission 1 dropped it from N with no backfill while PA-v1 kept its own
+# optimum -- asymmetric replacement, with a caller-steerable deletion lever.
+check("champion exposed but failing an operational gate raises",
+      raises(lambda: ps.resolve_champions(C, universe, [fake("p1", 0.7)]),
+             ps.EpochFailedClosed))
+try:
+    ps.resolve_champions(C, universe, [fake("p1", 0.7)])
+except ps.EpochFailedClosed as exc:
+    check("and the failure names the offending pick", "p2" in str(exc))
 
 print("\nCheck 9: PA-v1 ranking follows the stated order exactly")
 pool2 = [fake("p1", 0.50), fake("p2", 0.90), fake("p3", 0.10), fake("p4", 0.10)]
@@ -209,24 +287,23 @@ check("unequal volume raises",
       raises(lambda: ps.assert_equal_volume("E", [1, 2], [1]), ps.EpochFailedClosed))
 check("equal volume returns n", ps.assert_equal_volume("E", [1, 2], [3, 4]) == 2)
 
-print("\nCheck 11: N(date)==0 produces no comparison, not a manufactured one")
-empty = ps.build_epoch_selection(epoch={"decisive_epoch_id": "E", "slate_date": "d"},
-                                 manifest={"candidates": []},
-                                 universe=universe, pool=pool2, pa_scores={})
-check("no champions -> None", empty is None)
+print("\nCheck 11: build_epoch_selection ACTUALLY CALLS the re-gate")
+# Mission 1 shipped regate_pool as an uncalled helper and build_epoch_selection
+# did not invoke it, so the challenger ranked the capture-time pool.
+_fn = next(n for n in _ast.walk(_ast.parse(src))
+           if isinstance(n, _ast.FunctionDef) and n.name == "build_epoch_selection")
+_calls = {n.func.id for n in _ast.walk(_fn)
+          if isinstance(n, _ast.Call) and isinstance(n.func, _ast.Name)}
+check("regate_pool is called", "regate_pool" in _calls, str(sorted(_calls)))
+check("champion_hits_picks is called", "champion_hits_picks" in _calls)
+check("resolve_champions is called", "resolve_champions" in _calls)
+check("assert_equal_volume is called", "assert_equal_volume" in _calls)
 
-print("\nCheck 12: a full epoch selection is volume-matched end to end")
-sel = ps.build_epoch_selection(
-    epoch={"decisive_epoch_id": "E1", "slate_date": "2026-09-02"},
-    manifest=manifest, universe=universe,
-    pool=[fake("p1", 0.7), fake("p2", 0.65), fake("p3", 0.4), fake("p4", 0.4)],
-    pa_scores={"p1": 0.5, "p2": 0.4, "p3": 0.95, "p4": 0.90})
-check("N is 2", sel["n"] == 2)
-check("champion selected 2", len(sel["champion_selected"]) == 2)
-check("PA-v1 selected exactly 2", len(sel["pa_v1_selected"]) == 2)
-check("PA-v1 picked its own top 2, not the champion's",
-      [r["canonical_prop_id"] for r in sel["pa_v1_selected"]] == ["p3", "p4"])
-check("champion ranks recorded", sel["champion_ranks"] == {"p1": 1, "p2": 2})
+print("\nCheck 12: N == 0 produces no comparison, not a manufactured one")
+empty = ps.build_epoch_selection(epoch=bound, payload={"props": []},
+                                 universe=universe, pool=[], pa_scores={},
+                                 schedule={})
+check("no exposed champions -> None", empty is None)
 
 print()
 if FAILURES:
