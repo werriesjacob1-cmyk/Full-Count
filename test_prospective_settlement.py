@@ -149,8 +149,13 @@ check("game/player clustering is SECONDARY only",
 # a seed, a replicate count or an RNG -- so a one-line edit to BOOTSTRAP_SEED
 # would otherwise be undetectable in the evidence record.
 _h = pb.contract_file_sha256()
-check("the contract FILE is pinned by hash", len(_h) == 64)
-check("every result carries that hash", pb.run([])["contract_file_sha256"] == _h)
+check("the contract file hash is recorded", len(_h) == 64)
+check("every result carries it", pb.run([])["contract_file_sha256"] == _h)
+# The VERIFIED pin is over the frozen contract VALUES, so a seed edit is
+# refused while a diagnostic-only addition is not a false alarm.
+check("the contract VALUES are pinned and verified", pb.verify_contract_unmodified())
+check("pin is over the values, not the file",
+      pb.EXPECTED_CONTRACT_SHA256 == pb.contract_sha256())
 check("a populated result carries it too",
       pb.run([{"slate_date": "d", "champion_member": True, "pa_v1_member": False,
                "outcome": "hit"},

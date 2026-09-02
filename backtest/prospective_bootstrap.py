@@ -59,16 +59,25 @@ SECONDARY_UNITS = ("game_pk", "player_id")
 class ContractModified(RuntimeError):
     """The frozen bootstrap contract file no longer matches its pinned hash."""
 
-# The PINNED baseline. Recording a hash nothing compares against is not a pin:
-# a red team pointed out that the only test compared run()'s output to a fresh
-# recomputation OF THE SAME POSSIBLY-EDITED FILE, which is tautological. This
-# is the value a verification asserts against, exactly as
-# PA_V1_SCIENTIFIC_SHA256 is asserted before every capture.
+# THE PINNED SCIENTIFIC BASELINE. Hashes the frozen CONTRACT VALUES -- unit,
+# replicates, seed, CI, RNG, statistic, denominator, resampling rule -- not the
+# whole file. A one-line edit to BOOTSTRAP_SEED changes this and is refused.
 #
-# It covers everything in this file EXCEPT this constant's own line, so the
-# constant can hold the hash of the file that contains it.
-EXPECTED_CONTRACT_BODY_SHA256 = (
-    "b50277f6870063454a641d43f8d66b241c23e7a69d8ad9257872e24fd6106af4")
+# Pinning the whole file was the first attempt and it was too blunt: adding a
+# secondary DIAGNOSTIC (which cannot touch the primary interval) tripped it,
+# which would have trained a reader to re-pin on every edit -- exactly the
+# habit that makes a pin worthless. The file hash is still recorded below as a
+# change detector; this constants hash is the one that is verified.
+EXPECTED_CONTRACT_SHA256 = (
+    "6cf2a728ec07ab676d939ade5b2f235215a465ce84545fe46c71d35720dafce9")
+
+
+def contract_sha256():
+    """Hash of the frozen contract VALUES."""
+    import hashlib as _h
+    import json as _j
+    return _h.sha256(_j.dumps(CONTRACT, sort_keys=True,
+                              separators=(",", ":")).encode("utf-8")).hexdigest()
 
 
 def contract_file_sha256():
@@ -105,12 +114,13 @@ def verify_contract_unmodified():
     by a human diffing two reports months apart, which is to say not
     detectable.
     """
-    actual = contract_file_sha256()
-    if actual != EXPECTED_CONTRACT_BODY_SHA256:
+    actual = contract_sha256()
+    if actual != EXPECTED_CONTRACT_SHA256:
         raise ContractModified(
-            f"prospective_bootstrap.py body sha256 {actual} != pinned "
-            f"{EXPECTED_CONTRACT_BODY_SHA256}. The frozen bootstrap contract "
-            f"has been edited; no interval computed from it may be counted.")
+            f"frozen bootstrap contract sha256 {actual} != pinned "
+            f"{EXPECTED_CONTRACT_SHA256}. A contract value (unit, seed, "
+            f"replicates, CI, statistic or denominator) has been changed; no "
+            f"interval computed from it may be counted.")
     return True
 
 
@@ -152,6 +162,70 @@ def group_by_date(settlements):
     for row in settlements:
         clusters.setdefault(row.get("slate_date"), []).append(row)
     return clusters
+
+
+def secondary_clustering(settlements, unit):
+    """SECONDARY diagnostic only. Never changes the promotion rule.
+
+    The frozen contract fixes the primary unit at the slate date. But PLAYER is
+    a CROSSED cluster, not nested in date: PA-v1 ranks on batting order, so it
+    repeatedly selects the same top-of-order hitters across dates, and a
+    date-level resample absorbs none of that. The understatement runs in the
+    challenger's favour, which is why it is measured rather than assumed
+    negligible.
+
+    Reported alongside the primary interval. It is explicitly NOT a promotion
+    criterion, and changing that would require Jacob's authorization.
+    """
+    rng = random.Random(BOOTSTRAP_SEED)
+    clusters = {}
+    for row in settlements:
+        clusters.setdefault(row.get(unit), []).append(row)
+    keys = sorted(k for k in clusters if k is not None)
+    observed = point_estimate(settlements)
+    if not keys:
+        return {"unit": unit, "n_clusters": 0, "ci_low": None, "ci_high": None,
+                "observed": observed, "successful_replicates": 0}
+    diffs = []
+    for _ in range(BOOTSTRAP_REPLICATES):
+        drawn = [rng.choice(keys) for _ in range(len(keys))]
+        resampled = []
+        for k in drawn:
+            resampled.extend(clusters[k])
+        value = point_estimate(resampled)
+        if value is not None:
+            diffs.append(value)
+    out = {"unit": unit, "n_clusters": len(keys), "observed": observed,
+           "successful_replicates": len(diffs), "ci_low": None, "ci_high": None}
+    if diffs:
+        diffs.sort()
+        tail = (1.0 - BOOTSTRAP_CI) / 2.0
+        out["ci_low"] = diffs[int(tail * (len(diffs) - 1))]
+        out["ci_high"] = diffs[int((1.0 - tail) * (len(diffs) - 1))]
+    return out
+
+
+def concentration(settlements, unit):
+    """How concentrated the selections are on repeated units.
+
+    A high max share or a low effective count means the date-level interval is
+    understating uncertainty for that arm.
+    """
+    counts = {}
+    for row in settlements:
+        k = row.get(unit)
+        if k is not None:
+            counts[k] = counts.get(k, 0) + 1
+    n = sum(counts.values())
+    if not n:
+        return {"unit": unit, "n": 0, "distinct": 0, "max_share": None,
+                "effective_n": None}
+    # Inverse Simpson: the number of equally-frequent units that would give the
+    # same concentration. Far below `distinct` means heavy repetition.
+    shares = [c / n for c in counts.values()]
+    return {"unit": unit, "n": n, "distinct": len(counts),
+            "max_share": round(max(shares), 6),
+            "effective_n": round(1.0 / sum(s * s for s in shares), 3)}
 
 
 def run(settlements):

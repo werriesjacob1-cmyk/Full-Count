@@ -84,6 +84,8 @@ def build_report(ledger_dir):
         rows.append({
             "slate_date": r.get("slate_date"),
             "canonical_prop_id": r.get("canonical_prop_id"),
+            "game_pk": r.get("game_pk"),
+            "player_id": r.get("player_id"),
             "champion_member": r.get("champion_member"),
             "pa_v1_member": r.get("pa_v1_member"),
             "outcome": (s or {}).get("outcome", "ungraded"),
@@ -161,6 +163,13 @@ def build_report(ledger_dir):
                     "champion_member": r["champion_member"],
                     "pa_v1_member": r["pa_v1_member"]} for r in rows]
     boot = pb.run(settle_rows)
+    # Secondary clustering needs the unit keys on each row.
+    clus_rows = [dict(r, game_pk=r.get("game_pk"), player_id=r.get("player_id"))
+                 for r in rows]
+    psb_game = pb.secondary_clustering(clus_rows, "game_pk")
+    psb_player = pb.secondary_clustering(clus_rows, "player_id")
+    conc_game = pb.concentration(clus_rows, "game_pk")
+    conc_player = pb.concentration(clus_rows, "player_id")
 
     def dist(field):
         out = {}
@@ -216,13 +225,17 @@ def build_report(ledger_dir):
         "date_contribution": contribution,
 
         "date_cluster_bootstrap": boot,
+        # SECONDARY, diagnostic only -- never a promotion criterion.
         "secondary_clustering": {
-            "status": "NOT COMPUTED",
-            "note": "game/player clustering is declared SECONDARY in the "
-                    "frozen contract and is diagnostic only; it is reported "
-                    "as absent rather than silently omitted.",
+            "primary_unit": "slate_date",
+            "game_pk": psb_game, "player_id": psb_player,
+            "concentration": {"game_pk": conc_game, "player_id": conc_player},
+            "note": "Player is a CROSSED cluster, not nested in date: PA-v1 "
+                    "ranks on batting order and reselects the same "
+                    "top-of-order hitters, which a date-level resample does "
+                    "not absorb. Reported so the understatement is visible; "
+                    "the promotion rule is unchanged.",
         },
-
         "lineup_confirmed_rate": dist("lineup_confirmed"),
         "pa_v1_fallback_rates": dist("pa_v1_fallback_state"),
         "source_integrity_states": dist("source_integrity_state"),
