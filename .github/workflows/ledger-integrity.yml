@@ -1,0 +1,75 @@
+name: Public Ledger Integrity
+
+# Fails if a push to main drops a canonical identity from the immutable public
+# evidence estate.
+#
+# WHY THIS EXISTS. On 2026-09-03 main was force-pushed onto an unmerged branch.
+# 153 commits vanished, and with them 12 identities from the graded ledger and 6
+# from the publication registry. It went unnoticed for 20 minutes and was found
+# by accident, not by any check.
+#
+# DETECTION, NOT PREVENTION. This runs AFTER a push is accepted. The only
+# prevention is a server-side ruleset on refs/heads/main blocking force pushes
+# and deletions, configured at GitHub. A push that deletes or edits this
+# workflow cannot be caught by this workflow -- an in-repository check cannot
+# police its own removal. That gap is real and is not engineered around here.
+#
+# NO paths: FILTER, deliberately. The 2026-09-03 force-push introduced commits
+# touching only .claude/, .github/, .gitignore and CLAUDE.md -- verified, zero
+# intersection with results/ or data/public_top_picks/. A paths filter scoped to
+# the ledger would have skipped the run and missed the very incident this
+# exists to catch. The repository is public, so Actions minutes are free and
+# running on every push costs nothing worth optimising.
+on:
+  push:
+    branches: [main]
+
+# Read-only. This job holds no push credential, writes nothing back, opens no
+# issue or PR, and never attempts a repair. A red check is the whole output.
+permissions:
+  contents: read
+
+# Queue, never cancel. cancel-in-progress would coalesce a burst of pipeline
+# pushes and silently skip the intermediate transitions -- which is exactly
+# where a loss could hide.
+concurrency:
+  group: ledger-integrity-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  monotonic:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          # Commits and trees only; the few JSON blobs actually compared are
+          # fetched on demand. Keeps a large-history repo cheap to check.
+          filter: blob:none
+
+      - name: Report whether this push rewrote history
+        run: |
+          if [ "${{ github.event.forced }}" = "true" ]; then
+            echo "::error::This push to main was a FORCE PUSH (history rewrite)."
+            echo "Only Jacob may rewrite main, and the pipeline never needs to."
+            exit 1
+          fi
+          echo "Not a force push."
+
+      - name: Public ledger monotonicity
+        run: |
+          BEFORE='${{ github.event.before }}'
+          AFTER='${{ github.sha }}'
+          # All-zero `before` means the ref was just created; there is no prior
+          # estate to compare against, so there is nothing to verify.
+          if [ "$BEFORE" = "0000000000000000000000000000000000000000" ]; then
+            echo "Branch creation; no prior estate to compare."
+            exit 0
+          fi
+          if ! git cat-file -e "$BEFORE^{commit}" 2>/dev/null; then
+            echo "::error::Cannot read the pre-push commit $BEFORE."
+            echo "The prior estate is unreachable, so no verdict is possible."
+            echo "Missing evidence is not a pass -- failing closed."
+            exit 1
+          fi
+          python3 ledger_integrity.py "$BEFORE" "$AFTER"
