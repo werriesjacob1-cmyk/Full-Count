@@ -2,7 +2,7 @@
   "schema_version": 1,
   "identity_schema_version": 2,
   "rollout_version": "pre-phase-v-live-lifecycle-v1",
-  "updated_at": "2026-09-03T08:37:43.761404+00:00",
+  "updated_at": "2026-09-03T14:22:52.086484+00:00",
   "migration": {
     "version": "pre-phase-v-live-lifecycle-v1",
     "completed_at": "2026-08-17T23:14:57+00:00",
@@ -12427,6 +12427,98 @@
         },
         "qualification_timestamp": "2026-09-03T08:34:07.999034+00:00",
         "board_timestamp": "2026-09-03T08:34:07.983122+00:00",
+        "slate_date": "2026-09-03"
+      }
+    },
+    "fc2:824069:player-645261:strikeouts:4:over": {
+      "canonical_id": "fc2:824069:player-645261:strikeouts:4:over",
+      "settlement_identity": [
+        "824069",
+        [
+          "player",
+          "645261"
+        ],
+        "strikeouts",
+        "4",
+        "over"
+      ],
+      "slate_date": "2026-09-03",
+      "first_published_at": "2026-09-03T14:22:52.086484+00:00",
+      "publication_provenance": {
+        "artifact_id": "8196de4ca0d2adc5f3ff5a613492a68dfaeab9c767abc8b1662c5d6d5fc9780d",
+        "source_commit": "1e77045f8ef56e4ee7b72f10a6850be18ab678fc",
+        "workflow_run_id": "33766351142",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-09-03T14:22:38.457839+00:00",
+        "data_hash": "6c91df6319a75b86220ff5503f7b591083f79a0010b70aacca82b1998468d972",
+        "live_hash": "67f635ef5201987312c623914564c424c51b7861f0507336ee23a8451bd727f7"
+      },
+      "snapshot": {
+        "id": "fc2:824069:player-645261:strikeouts:4:over",
+        "identity_version": 2,
+        "game_pk": 824069,
+        "player_id": 645261,
+        "combo_player_ids": null,
+        "type": "pitcher",
+        "name": "Sandy Alcantara",
+        "team": "Miami Marlins",
+        "matchup": "Miami Marlins @ Kansas City Royals",
+        "game_start": "2026-09-03T23:40:00Z",
+        "stat": "strikeouts",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "strikeouts",
+          "value": 3.5,
+          "needs": 4
+        },
+        "prop": "Over 3.5 Strikeouts",
+        "hit_probability": 0.6081,
+        "market_odds": -130,
+        "market_implied": 0.5331,
+        "market_edge": 0.075,
+        "market_hold": 0.0603,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (A), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (8.5 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "Opposing team K% 20.9",
+          "Expected workload 25.2 batters faced (his own 28.0/start over 2 real starts, shrunk toward the 23.1 league mean)",
+          "3 of 8 projected hitters bat right-handed against this RHP"
+        ],
+        "watchouts": [
+          "Workload estimate rests on only 2 starts in the L14 window \u2014 most start-to-start variation in batters faced is noise, so this is shrunk heavily toward league average",
+          "L14 K% 16.1 (56 PA) \u2014 cold recent form",
+          "Recency-weighted K rate 17.0% (exp. decay, halflife 30d, 29 real starts / 784 BF) \u2014 drives a below-average strikeout-probability read"
+        ],
+        "prob_ci": [
+          0.5872,
+          0.7072
+        ],
+        "reliability": "A",
+        "reliability_note": null,
+        "sample_n": 29,
+        "lineup_assumed": null,
+        "base_rate": 0.7,
+        "lift": -0.0919,
+        "lift_reference_rate": null,
+        "stable_lift": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "62fbf55d",
+          "prediction_timestamp": "2026-09-03T14:19:45.766518+00:00",
+          "odds_fetched_at": "2026-09-03T14:19:41.258949+00:00",
+          "board_generated_at": "2026-09-03T14:19:45.751551+00:00"
+        },
+        "qualification_timestamp": "2026-09-03T14:19:45.766518+00:00",
+        "board_timestamp": "2026-09-03T14:19:45.751551+00:00",
         "slate_date": "2026-09-03"
       }
     }
