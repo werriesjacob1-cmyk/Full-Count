@@ -23,7 +23,7 @@ change masquerade as a free selection win, which is unfalsifiable.
    read. If the two arms read different fields, you are comparing information
    access, not ranking skill — and if either can reach a realized-outcome or
    post-event field, the result is **void, not weakened**.
-3. **Exact N, per operational slate.** `backtest/equal_volume.py` supplies an
+3. **Exact N, per operational slate.** `backtest/equal_volume.py` (NOT on main; lives at `claude/canonical-source-identity-01`) supplies an
    ORDER over the whole eligible population and the framework slices top-N. A
    policy that can shrink its own volume is being rewarded for selectivity.
    Aggregate-equal N is not enough: match N **per date**, or a challenger can

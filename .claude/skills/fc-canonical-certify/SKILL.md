@@ -10,6 +10,11 @@ effort: high
 
 # fc-canonical-certify
 
+> **`background: false` requires Claude Code ≥ v2.1.218.** On an older client the
+> key is ignored, the fork runs in the background, and the calling session
+> continues past it — so a verdict meant to gate an action arrives after the
+> action. Check `claude --version` before treating this skill as a blocking gate.
+
 Runs in a **forked context** via `fc-canonical-certifier`, so the evidence
 sweep stays out of the main conversation and the verdict comes back compact —
 and so the reviewer is genuinely separate from whoever built the artifact.
@@ -50,7 +55,10 @@ fingerprint, content checksum, date coverage. Cache mode declared
 `fresh_source` or `frozen_cache`. A Statcast cache accepted on verified schema,
 checksum, row count and retrieval timestamp — never on a filename.
 
-**Generation regime** — run `backtest/generation_regime.py`.
+**Generation regime** — run `backtest/generation_regime.py` (NOT on main; lives at `claude/canonical-source-identity-01`).
+If the script is not on the branch under certification, the regime is
+UNCLASSIFIED, which is **BLOCKED**, not a pass — say so rather than skipping
+the step silently.
 `MIXED_NON_EQUIVALENT` → NOT CANONICAL, no discussion. `MIXED_UNPROVEN` →
 BLOCKED, name the missing proof. `MIXED_EQUIVALENT` → the equivalence record
 must exist **and the overlap replay must actually have been run**; open it,

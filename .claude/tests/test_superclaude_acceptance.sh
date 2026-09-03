@@ -3,7 +3,7 @@
 # SuperClaude acceptance test.
 #
 # Answers one question: could a FRESH Claude Code session, entering this
-# repository cold, do the thirteen things the SuperClaude definition requires?
+# repository cold, do the eleven things the SuperClaude definition requires?
 #
 #   bash .claude/tests/test_superclaude_acceptance.sh
 #
@@ -162,6 +162,24 @@ C = sys.argv[1]
 RUNTIME = {"Read","Grep","Glob","Bash","Write","Edit","WebSearch","WebFetch",
            "TaskCreate","TaskUpdate","TaskGet","TaskList","Agent","ToolSearch",
            "NotebookEdit","Monitor"}
+# MCP tools were previously exempted from the phantom check with a blanket
+# `not x.startswith("mcp__")`. That made the check tautological: a review
+# proved that renaming a declared tool to
+# `mcp__github__merge_pull_request_and_deploy_TOTALLY_FAKE` still produced
+# VERDICT: PASS. An invented or misspelled MCP tool is exactly the failure the
+# check is for, so MCP names are now held to a curated list like every other.
+#
+# What this proves and what it does not: it proves the config names only tools
+# from this list, so a typo or an invention fails. It does NOT prove these
+# tools exist in any given live session -- MCP servers are attached per
+# session and a shell script cannot enumerate them. Adding a genuinely new
+# MCP tool means adding it here deliberately, which is the point.
+MCP_READONLY = {"mcp__github__pull_request_read","mcp__github__list_pull_requests",
+                "mcp__github__list_commits","mcp__github__get_commit",
+                "mcp__github__search_code","mcp__github__actions_list",
+                "mcp__github__actions_get","mcp__github__get_job_logs",
+                "mcp__github__get_check_run"}
+MCP_ALLOWED = set(MCP_READONLY)
 READONLY = {"fc-methodology-red-team","fc-release-auditor","fc-canonical-certifier",
             "fc-prospective-ledger-auditor","fc-intelligence-scout"}
 names, bad = [], 0
@@ -181,14 +199,24 @@ for p in sorted(glob.glob(os.path.join(C, "agents", "*.md"))):
     if not fm.get("description"):
         print(f"  FAIL  {stem}: no description"); bad += 1
     tools = [x.strip() for x in fm.get("tools", "").split(",") if x.strip()]
-    phantom = [x for x in tools if not x.startswith("mcp__") and x not in RUNTIME]
+    phantom = [x for x in tools
+               if x not in RUNTIME and x not in MCP_ALLOWED]
     if phantom:
-        print(f"  FAIL  {stem}: declares tools absent from the runtime: {phantom}"); bad += 1
+        print(f"  FAIL  {stem}: declares tools outside the acceptance allowlist "
+              f"(typo, invention, or a real tool that must be added deliberately): {phantom}"); bad += 1
     if n in READONLY:
+        # Write/Edit are not the only way to mutate. An MCP tool that opens a
+        # PR or merges one would write to the repository while passing a
+        # Write/Edit-only gate, so a read-only reviewer's MCP grants must all
+        # come from the read-only set.
+        mcp_write = [x for x in tools
+                     if x.startswith("mcp__") and x not in MCP_READONLY]
         if "Write" in tools or "Edit" in tools:
             print(f"  FAIL  {stem}: READ-ONLY reviewer grants Write/Edit"); bad += 1
+        elif mcp_write:
+            print(f"  FAIL  {stem}: READ-ONLY reviewer grants mutating MCP tools: {mcp_write}"); bad += 1
         else:
-            print(f"  PASS  {stem}: read-only (no Write/Edit)")
+            print(f"  PASS  {stem}: read-only (no Write/Edit, no mutating MCP)")
     else:
         print(f"  PASS  {stem}: write-capable, {len(tools)} tools")
     if "Agent" in tools:
@@ -276,15 +304,14 @@ fi
 # ────────────────────────────────────────────────────── 7. DURABILITY ──
 echo
 echo "== 7. Durability =="
-if [ -x "$C/tests/test_worktree_autosave.sh" ]; then
-  if bash "$C/tests/test_worktree_autosave.sh" >/tmp/fc_autosave_out.txt 2>&1; then
-    pass "autosave suite ($(grep -c '^  ok' /tmp/fc_autosave_out.txt) checks)"
-  else
-    fail "autosave suite -- see /tmp/fc_autosave_out.txt"
-  fi
-else
-  fail "autosave suite present"
-fi
+# Autosave is deliberately NOT exercised here. .claude/worktree-autosave.sh
+# exists on main but is dormant: nothing invokes it, and this change set does
+# not add a hook that would. Three review rounds found real defects in the
+# hardened variant faster than they could be closed, so the variant was
+# dropped rather than shipped. There is no durability guarantee from autosave
+# to test, and asserting one would be the false-success reporting this suite's
+# own header warns about. Work is durable here by being committed and pushed.
+info "autosave not exercised: the script is dormant on main and this change set adds no hook"
 if [ -f "$ROOT/backtest/canonical_run.py" ]; then
   grep -q 'enabled=bool(durability)' "$ROOT/backtest/canonical_run.py" 2>/dev/null \
     && pass "canonical durability is opt-in (tests cannot push scientific state)" \
@@ -343,10 +370,9 @@ echo
 echo "== 10. Context keeper does not dirty the tree =="
 # Regression guard. Three files in .claude/ assert .claude/context/ is
 # gitignored; until 2026-08-29 none of them was true and no test checked.
-# Consequences were concrete: an untracked file wedges session end (see the
-# comment at .claude/worktree-autosave.sh:44-46) and gets swept into an
-# autosave snapshot and PUSHED to origin, carrying worktree paths, PIDs, boot
-# ids and run identifiers. Found by independent audit, not by this suite.
+# The keeper writes worktree paths, PIDs, boot ids and run identifiers; while
+# untracked those dirty every status check and can be swept into an unrelated
+# `git add -A` and pushed. Found by independent audit, not by this suite.
 if git -C "$ROOT" check-ignore -q .claude/context/probe.md 2>/dev/null; then
   pass ".claude/context/ is gitignored (keeper cannot dirty the tree or reach origin)"
 else

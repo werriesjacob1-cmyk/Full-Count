@@ -20,9 +20,11 @@ on:
     # does not run at all. Omitting `branches` already means every branch.
     #
     # fc-autosave/** are machine-written crash-recovery snapshots of a
-    # MID-EDIT working tree, pushed automatically by .claude/worktree-autosave.sh
-    # roughly every three minutes while a session is active. They are backups,
-    # not proposals: nobody reviewed them and nobody intends them to pass.
+    # MID-EDIT working tree, written by .claude/worktree-autosave.sh. That
+    # script is dormant -- no hook invokes it -- but two such refs already
+    # exist on origin and anyone can run it by hand, so the exclusion stays.
+    # They are backups, not proposals: nobody reviewed them and nobody
+    # intends them to pass.
     #
     # Without this exclusion every snapshot queues a full ~15-minute run --
     # pip install, Chromium download, the whole test_*.py glob -- against a

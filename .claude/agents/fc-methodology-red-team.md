@@ -27,11 +27,11 @@ auditor who edits the thing under audit is no longer an auditor.
 # The attack list — work it explicitly, every time
 
 1. **Exact N.** Are the arms compared at *identical* volume, structurally? Check
-   `backtest/equal_volume.py` is the path actually taken, not a hand-rolled
+   `backtest/equal_volume.py` (NOT on main; lives at `claude/canonical-source-identity-01`) is the path actually taken, not a hand-rolled
    filter that lets a policy shrink its own volume.
 2. **Same eligible population.** A difference in eligibility masquerades as a
    difference in quality.
-3. **Generation regime.** What does `backtest/generation_regime.py` classify the
+3. **Generation regime.** What does `backtest/generation_regime.py` (NOT on main; lives at `claude/canonical-source-identity-01`) classify the
    dataset as? `MIXED_NON_EQUIVALENT` is disqualifying; `MIXED_UNPROVEN` is not
    evidence; `MIXED_EQUIVALENT` requires the overlap replay to actually exist —
    open it, do not accept the claim.

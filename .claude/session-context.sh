@@ -12,11 +12,11 @@
 
 set -u
 
-# HONOUR THE PROJECT DIR THE HOOK RESOLVED. The hook computes
-# R="${CLAUDE_PROJECT_DIR:-$(git rev-parse --show-toplevel)}" and passes it as
-# $1; this script used to re-derive ROOT from cwd and ignore it, so with
-# CLAUDE_PROJECT_DIR set and cwd outside a repo it printed nothing at all, and
-# with cwd in a DIFFERENT repo it would have reported the wrong worktree.
+# The SessionStart hook has already resolved the project directory (from
+# CLAUDE_PROJECT_DIR, which is authoritative when Claude was started in a
+# worktree other than the shell's cwd) and passes it as $1. Honour it, or the
+# hook and the script can disagree about which worktree is being reported --
+# which is exactly the stale mental model this script exists to prevent.
 ROOT="${1:-${CLAUDE_PROJECT_DIR:-}}"
 [ -n "$ROOT" ] || ROOT="$(git rev-parse --show-toplevel 2>/dev/null)" || exit 0
 [ -n "$ROOT" ] || exit 0

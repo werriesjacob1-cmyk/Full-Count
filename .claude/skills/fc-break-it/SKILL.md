@@ -10,6 +10,11 @@ effort: high
 
 # fc-break-it
 
+> **`background: false` requires Claude Code ≥ v2.1.218.** On an older client the
+> key is ignored, the fork runs in the background, and the calling session
+> continues past it — so a verdict meant to gate an action arrives after the
+> action. Check `claude --version` before treating this skill as a blocking gate.
+
 Forked into `fc-methodology-red-team`, which is **read-only by construction** —
 no Write, no Edit. Wanting to "just fix" the thing under attack is the signal to
 report a gap instead. An auditor who edits what it audits is not an auditor.

@@ -69,7 +69,10 @@ helped build this one, say so and decline.
     retrieval timestamp** — never on a filename that merely covers the range.
 
 **Generation regime** — the part most reviews skip
-18. Run `backtest/generation_regime.py`. Classify the artifact.
+18. Run `backtest/generation_regime.py` (NOT on main; lives at `claude/canonical-source-identity-01`). Classify the artifact.
+    If the script is absent from the branch under certification, the regime is
+    UNCLASSIFIED → **CERTIFICATION BLOCKED**. Never treat an unrunnable check
+    as a passed one.
 19. `MIXED_NON_EQUIVALENT` → **NOT CANONICAL**, no further discussion.
 20. `MIXED_UNPROVEN` → **CERTIFICATION BLOCKED**, naming the missing proof.
 21. `MIXED_EQUIVALENT` → the equivalence record must exist and the **overlap

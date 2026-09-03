@@ -24,7 +24,7 @@ masquerade as a free selection win, which is unfalsifiable.
 
 # Equal volume is structural
 
-`backtest/equal_volume.py` is the contract: a `SelectionPolicy` supplies an ORDER
+`backtest/equal_volume.py` (NOT on main; lives at `claude/canonical-source-identity-01`) is the contract: a `SelectionPolicy` supplies an ORDER
 over the whole eligible population and the framework slices top-N. A policy
 cannot shrink its own volume, because that rewards selectivity rather than skill.
 Never hand-roll a filter that bypasses this. Equal volume is an invariant, never

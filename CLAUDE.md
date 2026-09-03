@@ -12,6 +12,32 @@ they cover: `research.md`, `live.md`, `frontend.md`, `tooling.md`.
 
 ---
 
+## The control plane — configuration intent, not proven runtime
+
+`.claude/` carries 9 subagents, 10 skills, 4 path-scoped rules and
+`.claude/settings.json`. `.claude/CAPABILITY_MATRIX.md` is the index: what each
+one is for, what it may write, and how to verify it is actually working.
+
+Read it as **configuration intent**. It states what a compliant client would do
+with these files; it is not a record of behaviour observed in a running session.
+`bash .claude/tests/test_superclaude_acceptance.sh` checks that the
+configuration is internally consistent — names resolve, fork targets exist,
+read-only reviewers hold no mutating tool — and it deliberately marks runtime
+enforcement `INFO`, never `PASS`, because a shell script cannot prove a session
+honoured a permission rule.
+
+Two limits worth knowing before you rely on any of it:
+
+- **`permissions.ask` is a prompt, not a boundary.** It is prefix matched and
+  hooks bypass the permission system entirely. It cannot substitute for
+  server-side GitHub branch protection, which is **not** configured on this
+  repository.
+- **The five read-only reviewers are read-only by declaration.** They are
+  granted no `Write`/`Edit` and no mutating MCP tool, and the acceptance suite
+  fails if that changes — but the enforcement lives in the client, not here.
+
+---
+
 ## The objective, in priority order
 
 1. **Realized MLB prop hit rate at the same usable pick volume.** This is the
@@ -84,10 +110,6 @@ In practice:
   to note that without this sentence the destination was bounded only by
   convention. Merging, tagging, releasing and deploying are Jacob's, always.
 - A local ref is not durability. A pushed remote branch is.
-- **Autosave writes its log to `.git/fc-autosave/run.log`**, and the hook
-  discards stdout, so that file is the only record of what was included or
-  skipped. If `.git/fc-autosave/NOT-DURABLE` exists, autosave has stopped
-  reaching the remote and your work is local-only.
 - **`Bash(git push:*)` in `ask` is a prompt, not a boundary.** It is prefix
   matched, so `git -c x=y push`, `env git push` or a wrapper script evades it,
   and hooks bypass the permission system entirely. The only real control over
@@ -97,24 +119,16 @@ In practice:
   cadence, so container loss costs a bounded amount of work.
 - Never rely on the Claude conversation as the recovery mechanism.
 
-### Automatic autosave network writes — explicit behavior
+### There is no automatic autosave
 
-Once this `.claude/settings.json` is actually loaded by a **fresh session**, its
-`PostToolUse` hook checks roughly every 180 seconds after Bash/Write/Edit and
-launches `.claude/worktree-autosave.sh`. That script's default is
-`FC_AUTOSAVE_PUSH=1`: it pushes a backup snapshot to
-`refs/heads/fc-autosave/<current-branch>`.
+`.claude/worktree-autosave.sh` exists in the repository but **nothing invokes
+it**. No hook launches it, and this configuration deliberately does not add one.
+A hardened variant was written and reviewed three times; each round found real
+defects faster than they could be closed, so it was dropped rather than shipped
+on the strength of a story about what it would have prevented.
 
-This is intentionally a **durability backup only**:
-- it refuses `main` / `master` and detached pinned worktrees;
-- it never force-pushes;
-- it never advances the working branch, merges, deploys, or promotes a model;
-- it never makes an autosave snapshot equivalent to a reviewed commit.
-
-Set `FC_AUTOSAVE_PUSH=0` in the session environment to disable remote autosave
-pushes. The default-on network write is stated here because it is an authority
-choice, not something a hook should hide.
-
+The consequence is the point: **nothing is backing your work up.** The bullets
+above are the whole mechanism. Commit and push, or lose it.
 
 ---
 
@@ -135,6 +149,7 @@ choice, not something a hook should hide.
 
 - One worktree, one branch, one job. Never mutate another worktree.
 - Never advance a pinned detached HEAD — it is pinning a run's code identity.
+- A long backfill is an OS process, not a Claude agent: `ListAgents` answers a
   different question. Check `ps -p <pid>`, and prefer `/proc/<pid>/stat` field 22
   (`starttime`) plus `/proc/sys/kernel/random/boot_id` — a bare PID is recycled,
   and a changed `boot_id` means the container restarted and everything local died.

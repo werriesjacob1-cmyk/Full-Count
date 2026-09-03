@@ -39,15 +39,15 @@ observe a runtime.
 |---|---|---|---|---|
 | **Project agents** (`.claude/agents/*.md`) | yes — 9 | the whole control plane | all 9 `fc-*` agents are offered as `Agent` subagent types, by name | generic `Agent` types; the control plane is NOT active |
 | **Project skills** (`.claude/skills/*/SKILL.md`) | yes — 10 | the whole control plane | all 10 `fc-*` skills are listed and `/fc-<name>` invokes them | run the documented steps by hand |
-| **Hooks** (`SessionStart`, `PostToolUse`) | yes | context load, autosave | SessionStart output appears at session start; autosave log (`.git/fc-autosave/run.log`) gains a line within ~3 min of edits, and `.git/fc-autosave/NOT-DURABLE` does not exist | run `.claude/session-context.sh` and `.claude/worktree-autosave.sh` manually |
+| **Hooks** (`SessionStart` only) | yes — 1 | re-anchoring a resumed or compacted session to its real worktree | SessionStart output appears at session start and names the CURRENT worktree and branch | run `.claude/session-context.sh <repo-root>` by hand |
 | **Settings / permissions** | yes | least privilege | the `ask` list actually prompts on an edit to a listed science file, and `disableBypassPermissionsMode` is in force | none — treat every guard as advisory |
 | **Subagent / Task support** | yes | every fork-to-agent skill | an `Agent` call returns a structured result | do the work inline |
 | **GitHub MCP** (`mcp__github__*`) | yes | `fc-release-auditor`, release audit | `mcp__github__get_me`, then `list_branches(owner=werriesjacob1-cmyk, repo=project-gridiron)` | `git` over HTTPS for everything except PR/CI metadata |
-| **git over HTTPS** | yes | autosave, every worktree flow | `git fetch origin` and a push to a scratch `fc-autosave/*` ref succeed | none — autosave degrades to local-only |
+| **git over HTTPS** | yes | every worktree flow; the ONLY durability mechanism | `git fetch origin` succeeds and a push to this session's own working branch succeeds | none — work cannot be made durable, so stop and say so |
 | **Web research** (`WebSearch` / `WebFetch`) | yes | `fc-intelligence-scout` only | load via ToolSearch, then one real fetch | scout is inoperable; nothing else is affected |
 | **Chromium + Playwright** | yes | `fc-ux`, `fc-ux-audit` | `/opt/pw-browsers/chromium --version` **and** one real Playwright launch | UX audit is inoperable; do not claim visual verification |
 | **Context keeper** (`.claude/context/`) | yes | long sessions | `checkpoint.sh` writes, and `git status --porcelain` stays clean | manual notes in the PR body |
-| **Autosave** (`fc-autosave/*` refs) | yes | container-loss recovery | a snapshot ref appears locally **and** on origin after an edit | commit deliberately and often |
+| **Autosave** (`fc-autosave/*` refs) | **no — deliberately not configured** | nothing | — | commit and push deliberately and often; nothing else backs work up |
 | **`gh` CLI** | no | nothing | — | GitHub MCP + git (already the documented path) |
 | **Cloudflare MCP** | no | nothing | — | not needed by any workflow |
 | **Google Drive MCP** | no | nothing | — | not needed by any workflow |
@@ -105,7 +105,7 @@ was describing a remote that no longer exists.
 
 On `PATH` and previously smoke-tested (v1.7.0, 21 tools), but rejected for this
 project. It would add a background MCP server, a project index, and a `.serena/`
-directory. Full Count is ~1,600 mostly-flat Python files where Grep/Glob/Read
+directory. Full Count is 226 tracked, mostly-flat Python files where Grep/Glob/Read
 plus pyright already resolve symbols and references quickly, and no workflow
 here was ever blocked on navigation. Adding an unused dependency is a cost with
 no measured benefit. **Revisit only if a concrete navigation task proves slow.**
@@ -150,7 +150,7 @@ means no Write and no Edit — not no Bash" above.
 ### 2. Selector research — `fc-selector-scientist` ↔ `fc-selector-lab`
 - **Purpose** — exact-N ranking, Best Expression, redundancy, refill, portfolio selection, probabilities held fixed.
 - **Tools** — same as (1).
-- **Write scope** — `backtest/equal_volume.py (lives at `claude/canonical-source-identity-01`, NOT on main)`, `backtest/best_expression.py (lives at `claude/canonical-source-identity-01`, NOT on main)`, selector experiments, tests.
+- **Write scope** — `backtest/equal_volume.py` and `backtest/best_expression.py` (both NOT on main; they live at `claude/canonical-source-identity-01`), selector experiments, tests.
 - **Forbidden** — anything that changes a probability. If the result needs one, it is not a selector result → hand to `fc-scientist`.
 - **Reviewer** — `fc-methodology-red-team`.
 - **Acceptance** — identical candidate universe; exact N; `fully_refillable` suppression; overlap/added/removed all reported; game-clustered uncertainty.
@@ -236,9 +236,11 @@ If a session is rooted somewhere else — a different worktree, the repository
 root on another branch — the settings here are inert for that session.
 
 Proven on 2026-08-27, not assumed: a fixture at `.claude/context/.env`, matching
-the deny glob `Read(**/.env)`, was read successfully; and the `PostToolUse`
-autosave hook's state directory held only entries from a manual invocation,
-with nothing from hours of qualifying tool calls.
+the deny glob `Read(**/.env)`, was read successfully; and a `PostToolUse` hook
+configured here left a state directory holding only entries from a manual
+invocation, with nothing from hours of qualifying tool calls. That hook is no
+longer installed, but the demonstration stands: settings and hooks in THIS
+`.claude/` had no effect on a session rooted elsewhere.
 
 **Consequences, stated plainly:**
 
@@ -349,10 +351,16 @@ creating the detached worktree rather than assuming the object is already local.
 
 ### 3. Configuration acceptance is not runtime enforcement
 
-`test_superclaude_acceptance.sh`: the former canonical-runner WARN was based on a false no-ref premise and is replaced by an explicit remote-ref reachability check. Re-run the suite on the final activation head; do not carry the old 50/1/0 count forward.
-`test_worktree_autosave.sh`: **68 passed / 0 failed**.
+`test_superclaude_acceptance.sh` on the current head: **53 passed / 0 warned /
+0 failed.** The former canonical-runner WARN rested on a false no-ref premise
+and is replaced by an explicit remote-ref reachability check. Re-run the suite
+on the exact head under review; do not carry an older count forward.
 
-Both are shell tests. They verify that files exist, declare what they should,
+There is no autosave suite. The hardened autosave variant and its 68-check
+suite were both dropped from this change set — see "Removed rather than
+shipped" below.
+
+It is a shell test. It verifies that files exist, declare what they should,
 and behave correctly when invoked directly. **Neither can prove that Claude
 Code loaded any of it**, because a shell test has no tool access and this
 session began before these files were on `main`.
@@ -378,8 +386,8 @@ execution rather than by reading, contradicted two of those conclusions and was
 right both times: the credential filter was a filename denylist that let 18
 credential-shaped files reach origin silently, and "no merge/deploy/promote
 authority granted to any agent" understated the fact that four nominally
-read-only reviewers hold `Bash`. Both are addressed above and in
-`.claude/worktree-autosave.sh`. The lesson is recorded rather than smoothed
+read-only reviewers hold `Bash`. Both are addressed above. The
+lesson is recorded rather than smoothed
 over: an audit that reads files will confirm an intent, and only an audit that
 runs them will test it.
 
@@ -390,28 +398,47 @@ fixes its reviewer's findings has not been reviewed.
 
 | # | Finding | Disposition |
 |---|---|---|
-| 1 | **`.claude/context/` was not gitignored**, while three files here asserted it was (`fc-context-keeper/SKILL.md:14`, this file, `checkpoint.sh:119`). Blocking: an untracked file wedges session end per `worktree-autosave.sh:44-46`, and gets swept into an autosave snapshot and **pushed to origin** carrying worktree paths, PIDs, boot ids and run identifiers. | **FIXED.** Rule added to `.gitignore`, plus a `git check-ignore` assertion in the acceptance suite — verified to FAIL without the rule and PASS with it. Neither test caught this before; that was the real gap. |
+| 1 | **`.claude/context/` was not gitignored**, while three files here asserted it was (`fc-context-keeper/SKILL.md:14`, this file, `checkpoint.sh:119`). Blocking: the keeper writes worktree paths, PIDs, boot ids and run identifiers, and while untracked those dirty every status check and can be swept into an unrelated `git add -A` and pushed. | **FIXED.** Rule added to `.gitignore`, plus a `git check-ignore` assertion in the acceptance suite — verified to FAIL without the rule and PASS with it. Neither test caught this before; that was the real gap. |
 | 3 | `CAPABILITY_MATRIX.md:68` claimed the git remote "still uses the old URL." False — it is `PROJECT-GRIDIRON`. | **FIXED**, with the correction marked rather than the sentence deleted. |
 | 4 | The four read-only reviewers all hold `Bash`, which is a superset of Write and Edit, so "You are READ-ONLY — no Write, no Edit" overstates the guarantee. This file admitted the loophole 80 lines away; the agent files did not. | **FIXED.** Each of the four now states that read-only is enforced at the tool layer and a **convention** at the shell layer. |
 
+### Removed rather than shipped
+
+Four review rounds ran against this branch. Seventeen of roughly twenty-three
+findings in the final round were against the hardened `worktree-autosave.sh`
+and its test suite — a credential filter, a symlink guard, a hardlink guard, a
+lock, an origin pin, each one closing a hole the previous round had opened
+somewhere else. Defects were being found faster than they were being closed.
+
+So the whole thing was dropped rather than hardened a fifth time:
+
+| Removed | Why |
+|---|---|
+| The hardened `.claude/worktree-autosave.sh` | Reverted to main's dormant version; the diff against main is empty. |
+| `.claude/tests/test_worktree_autosave.sh` (68 checks) | Tested only the hardened variant. |
+| The `PostToolUse` autosave hook in `settings.json` | The only thing that made the script run. |
+
+This costs a real capability: nothing now backs work up automatically, and this
+session has already lost work to container reclamation three times. That cost
+is stated in `CLAUDE.md` rather than papered over. A durability mechanism that
+four reviews could still find holes in is worse than none, because it invites
+reliance it has not earned.
+
 ### Deliberately NOT decided here — Jacob's call
 
-**2 · `FC_AUTOSAVE_PUSH` defaults to `1` under an automatic hook.**
-`.claude/settings.json` installs a `PostToolUse` hook on `Bash|Write|Edit` that
-`nohup`-launches `worktree-autosave.sh`, which pushes to
+**2 · `FC_AUTOSAVE_PUSH` under an automatic hook — RESOLVED BY REMOVAL.**
+An earlier revision of this branch installed a `PostToolUse` hook on
+`Bash|Write|Edit` that `nohup`-launched `worktree-autosave.sh`, pushing to
 `refs/heads/fc-autosave/<branch>` roughly every 180 seconds of tool activity —
-**outside the permission system, detached, with failures invisible.** It never
-force-pushes and never touches HEAD, the index or the working tree, so it is
-well built. It is still an autonomous network write that no human approves,
-and `Bash(git push:*)` is in neither `deny` nor `ask`, so the interactive path
-prompts while the hook path never does.
+outside the permission system, detached, with failures invisible. The auditor
+called it a real authority question. It was, and the answer is no: an
+autonomous network write that no human approves is not something to inherit by
+default, and it is not something an activation PR should decide on Jacob's
+behalf.
 
-The auditor is right that this is a real authority question, and it is exactly
-the kind of default that should be chosen consciously rather than inherited.
-Changing it changes the durability guarantee this whole session has depended
-on, so it is not a call to make inside an activation PR. **Decide it, then
-state the answer in `CLAUDE.md` so the next reader knows the repo pushes on
-its own.**
+Both the hook and the hardened script are gone from this change set. See
+"Removed rather than shipped" above. `.claude/worktree-autosave.sh` is
+byte-identical to main, where it is dormant.
 
 **5 · `fc-backfill` reachability concern — RESOLVED AS A FACTUAL ERROR.**
 The runner is reachable from the existing branch

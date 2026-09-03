@@ -10,6 +10,11 @@ effort: high
 
 # fc-release-audit
 
+> **`background: false` requires Claude Code ≥ v2.1.218.** On an older client the
+> key is ignored, the fork runs in the background, and the calling session
+> continues past it — so a verdict meant to gate an action arrives after the
+> action. Check `claude --version` before treating this skill as a blocking gate.
+
 Forked into `fc-release-auditor` — **read-only**, clean context, so the verdict
 is a direct check of the diff rather than a rewording of the author's summary.
 
