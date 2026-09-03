@@ -369,9 +369,9 @@
       "date": "2026-09-03",
       "evaluations": [
         {
-          "prop": "Over 3.5 Strikeouts",
+          "prop": "Over 4.5 Strikeouts",
           "type": "pitcher",
-          "score": 41.6,
+          "score": 41.2,
           "notable_signals": 1,
           "matchup": "Toronto Blue Jays @ Cleveland Guardians",
           "game_pk": 824388,
@@ -380,21 +380,21 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "opp_team_k_pct": 43.0,
+            "opp_team_k_pct": 44.0,
             "same_hand_ratio": 0.0,
             "l14_k_pct": 47.6471,
             "tto_penalty": 8.0,
             "env_neutral": 50.0
           },
-          "hit_probability": 0.6214,
-          "raw_hit_probability": 0.7369,
-          "lift": -0.0766,
+          "hit_probability": 0.5837,
+          "raw_hit_probability": 0.5503,
+          "lift": 0.0749,
           "reliability": "A",
           "sample_n": 27,
           "projection": {
             "stat": "strikeouts",
-            "value": 3.5,
-            "needs": 4
+            "value": 4.5,
+            "needs": 5
           }
         },
         {
