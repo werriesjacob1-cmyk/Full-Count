@@ -2,7 +2,7 @@
   "schema_version": 1,
   "identity_schema_version": 2,
   "rollout_version": "pre-phase-v-live-lifecycle-v1",
-  "updated_at": "2026-09-03T07:32:43.501570+00:00",
+  "updated_at": "2026-09-03T08:37:43.761404+00:00",
   "migration": {
     "version": "pre-phase-v-live-lifecycle-v1",
     "completed_at": "2026-08-17T23:14:57+00:00",
@@ -12335,6 +12335,98 @@
         },
         "qualification_timestamp": "2026-09-03T07:28:57.256867+00:00",
         "board_timestamp": "2026-09-03T07:28:57.239882+00:00",
+        "slate_date": "2026-09-03"
+      }
+    },
+    "fc2:822853:player-615698:strikeouts:4:over": {
+      "canonical_id": "fc2:822853:player-615698:strikeouts:4:over",
+      "settlement_identity": [
+        "822853",
+        [
+          "player",
+          "615698"
+        ],
+        "strikeouts",
+        "4",
+        "over"
+      ],
+      "slate_date": "2026-09-03",
+      "first_published_at": "2026-09-03T08:37:43.761404+00:00",
+      "publication_provenance": {
+        "artifact_id": "0f0bc2a0e8eaffb5f15730be8e47f24a867685802b647708fa5343d88fe9546c",
+        "source_commit": "d105888811f43c0da9045cebfd80dfb21db70701",
+        "workflow_run_id": "33734252456",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-09-03T08:37:29.116402+00:00",
+        "data_hash": "6bb43ba37018fab1045e072103f506dcde30e308e7c25965ef6ca592b5a1d447",
+        "live_hash": "7d5817ea35cf79d6400066a68604cfcd1374cd0e7dc14bc32639f378504737c9"
+      },
+      "snapshot": {
+        "id": "fc2:822853:player-615698:strikeouts:4:over",
+        "identity_version": 2,
+        "game_pk": 822853,
+        "player_id": 615698,
+        "combo_player_ids": null,
+        "type": "pitcher",
+        "name": "Cal Quantrill",
+        "team": "Texas Rangers",
+        "matchup": "Tampa Bay Rays @ Texas Rangers",
+        "game_start": "2026-09-04T00:05:00Z",
+        "stat": "strikeouts",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "strikeouts",
+          "value": 3.5,
+          "needs": 4
+        },
+        "prop": "Over 3.5 Strikeouts",
+        "hit_probability": 0.6271,
+        "market_odds": -130,
+        "market_implied": 0.5331,
+        "market_edge": 0.094,
+        "market_hold": 0.0603,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (B), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (10.4 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "Expected workload 22.8 batters faced (his own 22.5/start over 2 real starts, shrunk toward the 23.1 league mean)",
+          "L14 K% 31.1 (45 PA) \u2014 hot recent form",
+          "Recency-weighted K rate 24.0% (exp. decay, halflife 30d, 11 real starts / 226 BF) \u2014 drives the strikeout probability model"
+        ],
+        "watchouts": [
+          "Workload estimate rests on only 2 starts in the L14 window \u2014 most start-to-start variation in batters faced is noise, so this is shrunk heavily toward league average",
+          "Opposing team K% 18.5 \u2014 contact-oriented lineup, tougher matchup",
+          "Platoon disadvantage: 2 of 8 projected hitters bat right-handed against this RHP (mostly opposite-handed lineup)"
+        ],
+        "prob_ci": [
+          0.6061,
+          0.7263
+        ],
+        "reliability": "B",
+        "reliability_note": null,
+        "sample_n": 11,
+        "lineup_assumed": null,
+        "base_rate": 0.698,
+        "lift": -0.0709,
+        "lift_reference_rate": null,
+        "stable_lift": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "edebb441",
+          "prediction_timestamp": "2026-09-03T08:34:07.999034+00:00",
+          "odds_fetched_at": "2026-09-03T08:34:05.173653+00:00",
+          "board_generated_at": "2026-09-03T08:34:07.983122+00:00"
+        },
+        "qualification_timestamp": "2026-09-03T08:34:07.999034+00:00",
+        "board_timestamp": "2026-09-03T08:34:07.983122+00:00",
         "slate_date": "2026-09-03"
       }
     }
