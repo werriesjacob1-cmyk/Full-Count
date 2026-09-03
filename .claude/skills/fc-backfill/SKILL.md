@@ -6,7 +6,6 @@ allowed-tools: Read, Grep, Glob, Bash
 
 # fc-backfill
 
-A backfill is an **ordinary OS process**, not a Claude agent. `ListAgents`
 answers a different question and has already caused this exact confusion once.
 Everything below is read-only unless a step says otherwise.
 

@@ -1,5 +1,5 @@
 ---
-globs: ["dashboard/**", "mlb_daily.py", "odds_fanduel.py", "odds_snapshot.py", "check_scratches.py", "grading_sources.py", ".github/workflows/**"]
+paths: ["dashboard/**", "mlb_daily.py", "odds_fanduel.py", "odds_snapshot.py", "check_scratches.py", "grading_sources.py", ".github/workflows/**"]
 ---
 
 # Live rule

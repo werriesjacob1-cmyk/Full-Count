@@ -1,5 +1,5 @@
 ---
-globs: [".claude/**", "CLAUDE.md", "AGENTS.md", "engineering/**"]
+paths: [".claude/**", "CLAUDE.md", "AGENTS.md", "engineering/**"]
 ---
 
 # Tooling rule

@@ -4,6 +4,7 @@ description: Audit the boundary between the three data estates — canonical his
 allowed-tools: Read, Grep, Glob, Bash
 context: fork
 agent: fc-prospective-ledger-auditor
+background: false
 effort: high
 ---
 

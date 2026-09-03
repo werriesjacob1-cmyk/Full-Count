@@ -1,5 +1,5 @@
 ---
-globs: ["dashboard/static/**", "docs/**", "render_board.py", "render_full_board.py", "render_parlay.py", "final_card.py", "test_browser_e2e.py"]
+paths: ["dashboard/static/**", "docs/**", "render_board.py", "render_full_board.py", "render_parlay.py", "final_card.py", "test_browser_e2e.py"]
 ---
 
 # Frontend rule

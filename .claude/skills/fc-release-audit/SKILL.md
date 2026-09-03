@@ -4,6 +4,7 @@ description: Independent pre-merge safety check for a branch or PR. Use before a
 allowed-tools: Read, Grep, Glob, Bash
 context: fork
 agent: fc-release-auditor
+background: false
 effort: high
 ---
 

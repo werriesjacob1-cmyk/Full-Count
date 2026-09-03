@@ -308,6 +308,89 @@ check "and the snapshots still reach origin" \
       "$(git --git-dir="$SANDBOX/origin.git" cat-file -e "$(live_ref):spam4.py" 2>/dev/null && echo durable || echo lost)" "durable"
 rm -f spam1.py spam2.py spam3.py spam4.py
 
+echo "== 18. near-miss protected branch names are refused =="
+# The first guard matched the literal lowercase name and required a slash, so a
+# review pushed snapshots of every one of these. prediction-ledger-2026 is the
+# worst: a hyphen where the guard expected a slash publishes exactly the
+# "second, non-canonical copy of the record" the block exists to prevent.
+for near in Main MASTER GH-Pages main.bak release/main prediction-ledger-2026 \
+            prospective2 evidence-2026 canonical-rows fc-autosave-x; do
+  git checkout -q -B "$near" main 2>/dev/null || continue
+  echo dirty > near-change.txt
+  run_autosave
+  check "refused on near-miss '$near'" \
+        "$(git rev-parse --verify --quiet "refs/heads/fc-autosave/$near" || echo none)" "none"
+  rm -f near-change.txt
+  git checkout -q main
+  git branch -q -D "$near" 2>/dev/null
+done
+
+echo "== 19. a HARDLINK is refused like a symlink =="
+# A hardlink is indistinguishable from a regular file: -L is false, -f is true.
+# `ln /root/key.dat notes.txt` walked past the symlink guard and its bytes
+# reached origin. Target content here is ORDINARY, so only the link-count guard
+# can be what refuses it.
+git checkout -q work
+printf 'ordinary content, no secret at all\n' > "$SANDBOX/outside/hardtarget.txt"
+ln "$SANDBOX/outside/hardtarget.txt" hardlinked.py 2>/dev/null && {
+  run_autosave
+  ref="$(live_ref)"
+  check "a hardlink to ordinary content is refused" \
+        "$(git cat-file -e $ref:hardlinked.py 2>/dev/null && echo LEAKED || echo blocked)" "blocked"
+  rm -f hardlinked.py
+}
+
+echo "== 20. a skipped TRACKED file is removed, not left stale =="
+# The scratch index is seeded from HEAD, so skipping a tracked file silently
+# leaves its OLD blob in the snapshot: the backup looks complete while holding
+# superseded content. Absence is the honest failure mode.
+printf 'KEY=old\n' > secret.env && git add -f secret.env
+git commit -q -m "track an env file"
+printf 'KEY=brand-new-value-not-in-head\n' > secret.env
+run_autosave
+ref="$(live_ref)"
+check "the stale committed blob is NOT carried into the snapshot" \
+      "$(git cat-file -e $ref:secret.env 2>/dev/null && echo STALE_BLOB_KEPT || echo removed)" "removed"
+git rm -q --cached secret.env >/dev/null 2>&1; rm -f secret.env
+git commit -q -m "untrack" >/dev/null 2>&1
+
+echo "== 21. .env.example is a template, and is backed up =="
+printf 'API_KEY=replace-me\n' > .env.example
+run_autosave
+ref="$(live_ref)"
+check "an edited .env.example is snapshotted, not frozen" \
+      "$(git cat-file -p $ref:.env.example 2>/dev/null)" "API_KEY=replace-me"
+rm -f .env.example
+
+echo "== 22. the push destination is pinned, and a change refuses =="
+# One un-prompted `git remote set-url` turned this hook into a continuous
+# exfiltration channel that logged success.
+git init -q --bare "$SANDBOX/attacker.git"
+echo "redirect me" > redirect.py
+run_autosave                                  # pins the real origin
+git remote set-url origin "$SANDBOX/attacker.git"
+echo "after redirect" > redirect2.py
+run_autosave
+check "nothing reached the attacker remote" \
+      "$(git --git-dir="$SANDBOX/attacker.git" for-each-ref --format='%(refname)' | grep -c . || true)" "0"
+check "and the refusal is recorded for the operator" \
+      "$([ -s "$(git rev-parse --absolute-git-dir)/fc-autosave/NOT-DURABLE" ] && echo recorded || echo silent)" "recorded"
+git remote set-url origin "$SANDBOX/origin.git"
+rm -f redirect.py redirect2.py "$(git rev-parse --absolute-git-dir)/fc-autosave/NOT-DURABLE"
+
+echo "== 23. concurrent runs do not both proceed =="
+# Parallel tool calls in one turn fire simultaneous PostToolUse hooks; the
+# rate-limiter is a non-atomic check-then-set, so the mutex is what holds.
+echo "concurrent" > conc.py
+before_refs=$(git --git-dir="$SANDBOX/origin.git" for-each-ref --format='%(refname)' 'refs/heads/fc-autosave/*' | grep -c . || true)
+for i in 1 2 3 4 5 6; do ( run_autosave ) & done; wait
+after_refs=$(git --git-dir="$SANDBOX/origin.git" for-each-ref --format='%(refname)' 'refs/heads/fc-autosave/*' | grep -c . || true)
+check "six concurrent runs allocate no extra refs" \
+      "$([ $((after_refs - before_refs)) -le 0 ] && echo bounded || echo "spammed:$before_refs->$after_refs")" "bounded"
+check "and the lock is released, not leaked" \
+      "$([ -d "$(git rev-parse --absolute-git-dir)/fc-autosave/lock" ] && echo LEAKED || echo released)" "released"
+rm -f conc.py
+
 echo
 echo "passed: $pass   failed: $fail"
 [ "$fail" -eq 0 ]

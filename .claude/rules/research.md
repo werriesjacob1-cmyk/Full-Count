@@ -1,5 +1,5 @@
 ---
-globs: ["backtest/**", "accuracy_lab.py", "measure_signals.py", "champion_challenger.py", "eval_lib.py", "correlation.py", "stable_base_rate.py", "model_health_report.py"]
+paths: ["backtest/**", "accuracy_lab.py", "measure_signals.py", "champion_challenger.py", "eval_lib.py", "correlation.py", "stable_base_rate.py", "model_health_report.py"]
 ---
 
 # Research rule
@@ -13,7 +13,7 @@ challenger that improves Brier while hitting fewer props at the same N has lost.
 ## Equal volume is structural, not advisory
 
 A `SelectionPolicy` supplies an ORDER over the whole eligible population; the
-framework slices top-N (`backtest/equal_volume.py`). A policy that can shrink its
+framework slices top-N (`backtest/equal_volume.py` (NOT on main; lives at `claude/canonical-source-identity-01`)). A policy that can shrink its
 own volume is being rewarded for selectivity rather than skill. Never hand-roll a
 filter that bypasses this. Both arms must see the same eligible population — a
 difference in eligibility masquerades as a difference in quality.
@@ -25,7 +25,7 @@ the result is void.
 
 ## Which data may be called canonical
 
-`backtest/generation_regime.py` classifies the generation regime:
+`backtest/generation_regime.py` (NOT on main; lives at `claude/canonical-source-identity-01`) classifies the generation regime:
 
 - `SINGLE_SHA` — canonical-eligible.
 - `MIXED_EQUIVALENT` — canonical-eligible **only** with a formal equivalence

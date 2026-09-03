@@ -44,8 +44,12 @@ grep -qi 'evidence regime\|three evidence' "$ROOT/CLAUDE.md" && pass "evidence r
 grep -qi 'freeze' "$ROOT/CLAUDE.md" && pass "production-science freeze stated" || fail "freeze stated"
 for r in research live frontend tooling; do
   [ -f "$C/rules/$r.md" ] && pass "rule $r.md exists" || fail "rule $r.md exists"
-  head -5 "$C/rules/$r.md" 2>/dev/null | grep -q 'globs:' \
-    && pass "rule $r.md is path-scoped" || warn "rule $r.md has no globs: frontmatter"
+  # `paths:`, not `globs:`. This check asserted the Cursor field name, so it
+  # PASSED a configuration in which Claude Code silently ignored the scoping and
+  # loaded every rule unconditionally -- the suite was enforcing the bug.
+  head -5 "$C/rules/$r.md" 2>/dev/null | grep -q '^paths:' \
+    && pass "rule $r.md is path-scoped (paths:)" \
+    || fail "rule $r.md is not scoped with paths: (globs: is Cursor syntax and is ignored)"
 done
 [ -d "$C/skills/fc-context-keeper" ] && pass "context keeper present" || fail "context keeper present"
 [ -f "$C/CAPABILITY_MATRIX.md" ] && pass "capability matrix present" || fail "capability matrix present"
@@ -105,7 +109,7 @@ fi
 echo
 echo "== 3. Hooks: declared targets exist and are executable =="
 python3 - "$C" <<'PY'
-import json, os, re, sys
+import glob, json, os, re, sys
 C = sys.argv[1]
 d = json.load(open(os.path.join(C, "settings.json")))
 bad = 0
@@ -117,7 +121,34 @@ for ev, groups in d.get("hooks", {}).items():
                 ok = os.path.exists(p) and os.access(p, os.X_OK)
                 print(f"  {'PASS' if ok else 'FAIL'}  hook {ev} -> {t} {'exists+executable' if ok else 'MISSING/not executable'}")
                 bad += 0 if ok else 1
-print(f"  {'PASS' if 'Stop' not in d.get('hooks',{}) else 'FAIL'}  no project Stop hook (the harness owns one; a second would re-fire on every blocked stop)")
+_stop = 'Stop' in d.get('hooks', {})
+# COUNTED, not merely printed. A review injected hooks.Stop into a copy: this
+# line printed FAIL while the suite reported PASS: 54 / FAIL: 0 and exited 0.
+# A check whose result is not counted certifies whatever it finds.
+print(f"  {'FAIL' if _stop else 'PASS'}  no project Stop hook (the harness owns one; a second would re-fire on every blocked stop)")
+bad += 1 if _stop else 0
+
+# The four independent-reviewer skills are GATES -- "before authorizing a merge
+# to main", "before that result is trusted". A forked skill defaults to
+# background:true, so the invoking turn would continue WITHOUT the verdict.
+for _sk in ("fc-break-it", "fc-canonical-certify", "fc-prospective-audit",
+            "fc-release-audit"):
+    _f = os.path.join(C, "skills", _sk, "SKILL.md")
+    _txt = open(_f).read() if os.path.exists(_f) else ""
+    _blocking = re.search(r'^background:\s*false\s*$', _txt, re.M) is not None
+    print(f"  {'PASS' if _blocking else 'FAIL'}  {_sk} blocks on its verdict (background: false)")
+    bad += 0 if _blocking else 1
+
+# Path-scoped rules must use `paths:` -- `globs:` is Cursor syntax, silently
+# ignored by Claude Code, which loads the rule unconditionally instead.
+for _rf in sorted(glob.glob(os.path.join(C, "rules", "*.md"))):
+    _t = open(_rf).read()
+    _has_paths = re.search(r'^paths:', _t, re.M) is not None
+    _has_globs = re.search(r'^globs:', _t, re.M) is not None
+    _ok = _has_paths and not _has_globs
+    print(f"  {'PASS' if _ok else 'FAIL'}  rules/{os.path.basename(_rf)} scopes with paths:"
+          + ("" if _ok else "  <-- uses globs:, which Claude Code ignores"))
+    bad += 0 if _ok else 1
 sys.exit(1 if bad else 0)
 PY
 [ $? -eq 0 ] && P=$((P+2)) || F=$((F+1))

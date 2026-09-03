@@ -84,6 +84,15 @@ In practice:
   to note that without this sentence the destination was bounded only by
   convention. Merging, tagging, releasing and deploying are Jacob's, always.
 - A local ref is not durability. A pushed remote branch is.
+- **Autosave writes its log to `.git/fc-autosave/run.log`**, and the hook
+  discards stdout, so that file is the only record of what was included or
+  skipped. If `.git/fc-autosave/NOT-DURABLE` exists, autosave has stopped
+  reaching the remote and your work is local-only.
+- **`Bash(git push:*)` in `ask` is a prompt, not a boundary.** It is prefix
+  matched, so `git -c x=y push`, `env git push` or a wrapper script evades it,
+  and hooks bypass the permission system entirely. The only real control over
+  `main`, `gh-pages` and the evidence branches is server-side branch
+  protection, which is NOT currently configured on this repository.
 - Long-running generators must persist resumable state *remotely* on a bounded
   cadence, so container loss costs a bounded amount of work.
 - Never rely on the Claude conversation as the recovery mechanism.
@@ -126,7 +135,6 @@ choice, not something a hook should hide.
 
 - One worktree, one branch, one job. Never mutate another worktree.
 - Never advance a pinned detached HEAD — it is pinning a run's code identity.
-- A long backfill is an OS process, not a Claude agent: `ListAgents` answers a
   different question. Check `ps -p <pid>`, and prefer `/proc/<pid>/stat` field 22
   (`starttime`) plus `/proc/sys/kernel/random/boot_id` — a bare PID is recycled,
   and a changed `boot_id` means the container restarted and everything local died.

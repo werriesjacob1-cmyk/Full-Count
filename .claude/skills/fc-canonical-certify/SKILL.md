@@ -4,6 +4,7 @@ description: Independently certify whether a canonical backtest artifact may be 
 allowed-tools: Read, Grep, Glob, Bash
 context: fork
 agent: fc-canonical-certifier
+background: false
 effort: high
 ---
 

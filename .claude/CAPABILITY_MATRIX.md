@@ -39,7 +39,7 @@ observe a runtime.
 |---|---|---|---|---|
 | **Project agents** (`.claude/agents/*.md`) | yes — 9 | the whole control plane | all 9 `fc-*` agents are offered as `Agent` subagent types, by name | generic `Agent` types; the control plane is NOT active |
 | **Project skills** (`.claude/skills/*/SKILL.md`) | yes — 10 | the whole control plane | all 10 `fc-*` skills are listed and `/fc-<name>` invokes them | run the documented steps by hand |
-| **Hooks** (`SessionStart`, `PostToolUse`) | yes | context load, autosave | SessionStart output appears at session start; autosave log gains a line within ~3 min of edits | run `.claude/session-context.sh` and `.claude/worktree-autosave.sh` manually |
+| **Hooks** (`SessionStart`, `PostToolUse`) | yes | context load, autosave | SessionStart output appears at session start; autosave log (`.git/fc-autosave/run.log`) gains a line within ~3 min of edits, and `.git/fc-autosave/NOT-DURABLE` does not exist | run `.claude/session-context.sh` and `.claude/worktree-autosave.sh` manually |
 | **Settings / permissions** | yes | least privilege | the `ask` list actually prompts on an edit to a listed science file, and `disableBypassPermissionsMode` is in force | none — treat every guard as advisory |
 | **Subagent / Task support** | yes | every fork-to-agent skill | an `Agent` call returns a structured result | do the work inline |
 | **GitHub MCP** (`mcp__github__*`) | yes | `fc-release-auditor`, release audit | `mcp__github__get_me`, then `list_branches(owner=werriesjacob1-cmyk, repo=project-gridiron)` | `git` over HTTPS for everything except PR/CI metadata |
@@ -150,7 +150,7 @@ means no Write and no Edit — not no Bash" above.
 ### 2. Selector research — `fc-selector-scientist` ↔ `fc-selector-lab`
 - **Purpose** — exact-N ranking, Best Expression, redundancy, refill, portfolio selection, probabilities held fixed.
 - **Tools** — same as (1).
-- **Write scope** — `backtest/equal_volume.py`, `backtest/best_expression.py`, selector experiments, tests.
+- **Write scope** — `backtest/equal_volume.py (lives at `claude/canonical-source-identity-01`, NOT on main)`, `backtest/best_expression.py (lives at `claude/canonical-source-identity-01`, NOT on main)`, selector experiments, tests.
 - **Forbidden** — anything that changes a probability. If the result needs one, it is not a selector result → hand to `fc-scientist`.
 - **Reviewer** — `fc-methodology-red-team`.
 - **Acceptance** — identical candidate universe; exact N; `fully_refillable` suppression; overlap/added/removed all reported; game-clustered uncertainty.
@@ -194,7 +194,7 @@ means no Write and no Edit — not no Bash" above.
 - **Connector** — **GitHub MCP required.** Fallback: `git fetch` + `git diff` + `git merge-base` for diff/base; CI status then **UNAVAILABLE — say so explicitly rather than implying green**.
 - **Write scope** — none. **READ-ONLY.**
 - **Acceptance** — real diff read; base re-resolved from a fresh fetch; **CI checked at the exact head SHA**; generated-vs-source decided by path, never by commit message; verdict never implies merge authority.
-- **Live-verified** — this connector found CI red at `1e23a654` and every run since, which a local test sweep had missed.
+- **Observed 2026-08-29, not a standing property** — this connector found CI red at `1e23a654` and every run since, which a local test sweep had missed.
 
 ### 9. Frontend — `fc-ux` ↔ `fc-ux-audit`
 - **Tools** — Read, Grep, Glob, Bash, Write, Edit, Task*.
@@ -350,7 +350,7 @@ creating the detached worktree rather than assuming the object is already local.
 ### 3. Configuration acceptance is not runtime enforcement
 
 `test_superclaude_acceptance.sh`: the former canonical-runner WARN was based on a false no-ref premise and is replaced by an explicit remote-ref reachability check. Re-run the suite on the final activation head; do not carry the old 50/1/0 count forward.
-`test_worktree_autosave.sh`: **24 passed / 0 failed**.
+`test_worktree_autosave.sh`: **68 passed / 0 failed**.
 
 Both are shell tests. They verify that files exist, declare what they should,
 and behave correctly when invoked directly. **Neither can prove that Claude

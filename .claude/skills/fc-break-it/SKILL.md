@@ -4,6 +4,7 @@ description: Adversarially attack a research conclusion, a piece of production l
 allowed-tools: Read, Grep, Glob, Bash
 context: fork
 agent: fc-methodology-red-team
+background: false
 effort: high
 ---
 
