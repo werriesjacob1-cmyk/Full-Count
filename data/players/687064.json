@@ -299,10 +299,10 @@
       "date": "2026-09-03",
       "evaluations": [
         {
-          "prop": "Over 4.5 Strikeouts",
+          "prop": "Over 3.5 Strikeouts",
           "type": "pitcher",
-          "score": 51.2,
-          "notable_signals": 0,
+          "score": 37.7,
+          "notable_signals": 1,
           "matchup": "Boston Red Sox @ Baltimore Orioles",
           "game_pk": 824796,
           "team": "Baltimore Orioles",
@@ -313,23 +313,26 @@
             "opp_team_k_pct": 42.0,
             "same_hand_ratio": 75.0,
             "l14_k_pct": 0.0,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 66.753,
+            "ump_k_pct": -0.012,
+            "ump_bb_pct": 0.36
           },
-          "hit_probability": 0.4744,
-          "raw_hit_probability": 0.4744,
-          "lift": -0.0348,
+          "hit_probability": 0.6091,
+          "raw_hit_probability": 0.6752,
+          "lift": -0.0909,
           "reliability": "A",
           "sample_n": 23,
           "projection": {
             "stat": "strikeouts",
-            "value": 4.5,
-            "needs": 5
+            "value": 3.5,
+            "needs": 4
           }
         },
         {
           "prop": "Over 17.5 Outs Recorded",
           "type": "pitcher",
-          "score": 32.0,
+          "score": 31.9,
           "notable_signals": 0,
           "matchup": "Boston Red Sox @ Baltimore Orioles",
           "game_pk": 824796,

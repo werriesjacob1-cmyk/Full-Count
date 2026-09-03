@@ -218,7 +218,7 @@
         {
           "prop": "Over 4.5 Strikeouts",
           "type": "pitcher",
-          "score": 48.1,
+          "score": 25.4,
           "notable_signals": 1,
           "matchup": "Tampa Bay Rays @ Texas Rangers",
           "game_pk": 822853,
@@ -228,10 +228,13 @@
           "combo_player_ids": null,
           "signals": {
             "opp_team_k_pct": 57.0,
-            "same_hand_ratio": 61.1111,
+            "same_hand_ratio": 5.5556,
             "l14_k_pct": 34.7059,
             "tto_penalty": 8.0,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 60.8893,
+            "ump_k_pct": 0.132,
+            "ump_bb_pct": -0.468
           },
           "hit_probability": 0.5031,
           "raw_hit_probability": 0.5031,
@@ -247,7 +250,7 @@
         {
           "prop": "Over 14.5 Outs Recorded",
           "type": "pitcher",
-          "score": 44.9,
+          "score": 44.8,
           "notable_signals": 0,
           "matchup": "Tampa Bay Rays @ Texas Rangers",
           "game_pk": 822853,
@@ -268,6 +271,34 @@
             "stat": "pitcher_outs",
             "value": 14.5,
             "needs": 15
+          }
+        },
+        {
+          "prop": "Over 8.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 54.9,
+          "notable_signals": 1,
+          "matchup": "Tampa Bay Rays @ Texas Rangers",
+          "game_pk": 822853,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            663556,
+            615698
+          ],
+          "signals": {
+            "combined_k_edge": 0.2178
+          },
+          "hit_probability": 0.6986,
+          "raw_hit_probability": null,
+          "lift": 0.2178,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 8.5,
+            "needs": 9
           }
         }
       ]

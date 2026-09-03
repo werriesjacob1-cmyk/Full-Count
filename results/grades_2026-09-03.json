@@ -25,9 +25,9 @@
     },
     "top_pick": {
       "hits": 0,
-      "misses": 0,
+      "misses": 1,
       "voids": 0,
-      "ungraded": 4
+      "ungraded": 7
     },
     "neutral": {
       "hits": 0,
@@ -37,11 +37,101 @@
   },
   "public_top_pick_counts": {
     "hits": 0,
-    "misses": 0,
+    "misses": 1,
     "voids": 0,
-    "ungraded": 4
+    "ungraded": 7
   },
   "public_top_picks": [
+    {
+      "id": "fc2:822853:player-553869:hits_runs_rbis:1:over",
+      "identity_version": 2,
+      "game_pk": 822853,
+      "player_id": 553869,
+      "combo_player_ids": null,
+      "type": "batter",
+      "name": "Elias D\u00edaz",
+      "team": "Texas Rangers",
+      "matchup": "Tampa Bay Rays @ Texas Rangers",
+      "game_start": "2026-09-04T00:05:00Z",
+      "stat": "hits_runs_rbis",
+      "market_side": "over",
+      "lean": null,
+      "projection": {
+        "stat": "hits_runs_rbis",
+        "value": 0.5,
+        "needs": 1
+      },
+      "prop": "Over 0.5 Hits+Runs+RBIs",
+      "hit_probability": 0.6406,
+      "market_odds": -155,
+      "market_implied": 0.6078,
+      "market_edge": 0.0328,
+      "market_hold": null,
+      "price_clears": true,
+      "recommendation_status": "top_pick",
+      "status_reasons": [
+        "clears the real probability floor (>= 60%), a real evidence grade (B), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+        "note: the market itself disagrees with this read (7.8 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+      ],
+      "why": [
+        "L7 avg EV 95.9mph (league ~88.5) \u2014 hot recent contact",
+        "L7 barrel% 33.3 \u2014 hot recent contact",
+        "Platoon: R bat vs LHP (favorable)",
+        "Hitters batting ahead of him: 0.333 wOBA (league ~.320)",
+        "Hitter batting behind him: 0.344 wOBA (league ~.320)",
+        "Season barrel% 9.4",
+        "Dome \u2014 weather neutral"
+      ],
+      "watchouts": [
+        "Opposing SP ERA 3.19 \u2014 elite pitcher, tough matchup",
+        "Projected 3.54 PA (batting slot 9) \u2014 a tough lineup slot for plate appearances",
+        "Team implied for 3.69 runs (league avg 4.245; line 3.5, game total 8) \u2014 a weak offensive environment",
+        "L7 sample is thin (6 PA) \u2014 treat recent-form read with caution",
+        "Opposing bullpen fatigue: 2/8 relievers over 60 pitches in L7 (fresh pen \u2014 tougher matchup late)"
+      ],
+      "prob_ci": [
+        0.6273,
+        0.6722
+      ],
+      "reliability": "B",
+      "reliability_note": null,
+      "sample_n": 63,
+      "lineup_assumed": null,
+      "base_rate": 0.6728,
+      "lift": -0.0322,
+      "lift_reference_rate": null,
+      "stable_lift": null,
+      "versions": {
+        "model_version": "2026.08.15",
+        "selection_policy_version": "1.0.0",
+        "calibration_version": "1.0.0",
+        "feature_version": "1.0.0",
+        "git_sha": "87346163",
+        "prediction_timestamp": "2026-09-03T20:04:50.550858+00:00",
+        "odds_fetched_at": "2026-09-03T20:04:44.897736+00:00",
+        "board_generated_at": "2026-09-03T20:04:50.535533+00:00"
+      },
+      "qualification_timestamp": "2026-09-03T20:04:50.550858+00:00",
+      "board_timestamp": "2026-09-03T20:04:50.535533+00:00",
+      "slate_date": "2026-09-03",
+      "published_top_pick_at": "2026-09-03T20:08:00.908083+00:00",
+      "publication_artifact_id": "861794bde76ddc5b6e572fc5fd4d44f1ca1ef9c04dd1fc60330d6fe773365095",
+      "publication_source_commit": "96afe2a15f51e1488c25f4f6447d2b74b8b12d9a",
+      "publication_run_id": "33800298169",
+      "publication_deployment_id": null,
+      "grade": "ungraded",
+      "settlement_state": "ungraded",
+      "reason": "game_not_authoritatively_final",
+      "eligibility": {
+        "eligibility": "ungraded",
+        "reason_code": "game_not_authoritatively_final",
+        "ruleset_version": "fanduel-us-conservative-2026-08-17-v2",
+        "game_state": "pregame"
+      },
+      "settlement_authority": "none",
+      "settlement_observed_at": "2026-09-03T22:30:05.094952+00:00",
+      "settlement_source": "durable_morning_status_observation"
+    },
     {
       "id": "fc2:822853:player-615698:strikeouts:4:over",
       "identity_version": 2,
@@ -123,7 +213,277 @@
         "game_state": "pregame"
       },
       "settlement_authority": "none",
-      "settlement_observed_at": "2026-09-03T19:38:51.841109+00:00",
+      "settlement_observed_at": "2026-09-03T22:30:05.094952+00:00",
+      "settlement_source": "durable_morning_status_observation"
+    },
+    {
+      "id": "fc2:822853:player-679822:hits:1:over",
+      "identity_version": 2,
+      "game_pk": 822853,
+      "player_id": 679822,
+      "combo_player_ids": null,
+      "type": "batter",
+      "name": "Justin Foscue",
+      "team": "Texas Rangers",
+      "matchup": "Tampa Bay Rays @ Texas Rangers",
+      "game_start": "2026-09-04T00:05:00Z",
+      "stat": "hits",
+      "market_side": "over",
+      "lean": null,
+      "projection": {
+        "stat": "hits",
+        "value": 0.5,
+        "needs": 1
+      },
+      "prop": "Over 0.5 Hits",
+      "hit_probability": 0.6176,
+      "market_odds": -140,
+      "market_implied": 0.5833,
+      "market_edge": 0.0343,
+      "market_hold": null,
+      "price_clears": true,
+      "recommendation_status": "top_pick",
+      "status_reasons": [
+        "clears the real probability floor (>= 60%), a real evidence grade (A), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+        "note: the market itself disagrees with this read (7.7 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+      ],
+      "why": [
+        "L7 avg EV 91.4mph (league ~88.5) \u2014 hot recent contact",
+        "L7 barrel% 25.0 \u2014 hot recent contact",
+        "Platoon: R bat vs LHP (favorable)",
+        "Projected 4.07 PA (batting slot 5)",
+        "Season barrel% 11.8",
+        "Hitters batting ahead of him: 0.334 wOBA (league ~.320)",
+        "Dome \u2014 weather neutral"
+      ],
+      "watchouts": [
+        "Opposing SP ERA 3.19 \u2014 elite pitcher, tough matchup",
+        "wOBA vs xwOBA: 0.354 vs 0.329 (+0.025) \u2014 outperforming his contact quality, regression risk",
+        "Team implied for 3.69 runs (league avg 4.245; line 3.5, game total 8) \u2014 a weak offensive environment",
+        "Hitter batting behind him: 0.314 wOBA (league ~.320) \u2014 little lineup protection, an easier batter to pitch around",
+        "Opposing bullpen fatigue: 2/8 relievers over 60 pitches in L7 (fresh pen \u2014 tougher matchup late)"
+      ],
+      "prob_ci": [
+        0.6089,
+        0.6462
+      ],
+      "reliability": "A",
+      "reliability_note": null,
+      "sample_n": 80,
+      "lineup_assumed": null,
+      "base_rate": 0.5665,
+      "lift": 0.0511,
+      "lift_reference_rate": null,
+      "stable_lift": null,
+      "versions": {
+        "model_version": "2026.08.15",
+        "selection_policy_version": "1.0.0",
+        "calibration_version": "1.0.0",
+        "feature_version": "1.0.0",
+        "git_sha": "87346163",
+        "prediction_timestamp": "2026-09-03T20:04:50.550858+00:00",
+        "odds_fetched_at": "2026-09-03T20:04:44.897736+00:00",
+        "board_generated_at": "2026-09-03T20:04:50.535533+00:00"
+      },
+      "qualification_timestamp": "2026-09-03T20:04:50.550858+00:00",
+      "board_timestamp": "2026-09-03T20:04:50.535533+00:00",
+      "slate_date": "2026-09-03",
+      "published_top_pick_at": "2026-09-03T20:08:00.908083+00:00",
+      "publication_artifact_id": "861794bde76ddc5b6e572fc5fd4d44f1ca1ef9c04dd1fc60330d6fe773365095",
+      "publication_source_commit": "96afe2a15f51e1488c25f4f6447d2b74b8b12d9a",
+      "publication_run_id": "33800298169",
+      "publication_deployment_id": null,
+      "grade": "ungraded",
+      "settlement_state": "ungraded",
+      "reason": "game_not_authoritatively_final",
+      "eligibility": {
+        "eligibility": "ungraded",
+        "reason_code": "game_not_authoritatively_final",
+        "ruleset_version": "fanduel-us-conservative-2026-08-17-v2",
+        "game_state": "pregame"
+      },
+      "settlement_authority": "none",
+      "settlement_observed_at": "2026-09-03T22:30:05.094952+00:00",
+      "settlement_source": "durable_morning_status_observation"
+    },
+    {
+      "id": "fc2:823095:player-675961:hits:1:over",
+      "identity_version": 2,
+      "game_pk": 823095,
+      "player_id": 675961,
+      "combo_player_ids": null,
+      "type": "batter",
+      "name": "Alika Williams",
+      "team": "Athletics",
+      "matchup": "Athletics @ Seattle Mariners",
+      "game_start": "2026-09-04T01:40:00Z",
+      "stat": "hits",
+      "market_side": "over",
+      "lean": null,
+      "projection": {
+        "stat": "hits",
+        "value": 0.5,
+        "needs": 1
+      },
+      "prop": "Over 0.5 Hits",
+      "hit_probability": 0.6076,
+      "market_odds": -105,
+      "market_implied": 0.5122,
+      "market_edge": 0.0954,
+      "market_hold": null,
+      "price_clears": true,
+      "recommendation_status": "top_pick",
+      "status_reasons": [
+        "clears the real probability floor (>= 60%), a real evidence grade (B), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+        "note: the market itself disagrees with this read (13.3 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+      ],
+      "why": [
+        "L7 barrel% 11.1 \u2014 hot recent contact",
+        "Platoon: R bat vs LHP (favorable)",
+        "Hitters batting ahead of him: 0.330 wOBA (league ~.320)"
+      ],
+      "watchouts": [
+        "L7 avg EV 78.6mph (league ~88.5) \u2014 cold recent contact",
+        "Projected 3.63 PA (batting slot 8) \u2014 a tough lineup slot for plate appearances",
+        "AVG vs xBA: 0.272 vs 0.218 (+0.054) \u2014 outperforming his contact quality, regression risk",
+        "wOBA vs xwOBA: 0.321 vs 0.247 (+0.074) \u2014 outperforming his contact quality, regression risk",
+        "Team implied for 3.08 runs (league avg 4.245; line 2.5, game total 7.5) \u2014 a weak offensive environment",
+        "Season barrel% 0.8 \u2014 below-average barrel rate",
+        "Hitter batting behind him: 0.289 wOBA (league ~.320) \u2014 little lineup protection, an easier batter to pitch around",
+        "Wind blowing IN (2mph) \u2014 power suppressed",
+        "Opposing bullpen fatigue: 1/10 relievers over 60 pitches in L7 (fresh pen \u2014 tougher matchup late)"
+      ],
+      "prob_ci": [
+        0.5989,
+        0.6361
+      ],
+      "reliability": "B",
+      "reliability_note": null,
+      "sample_n": 62,
+      "lineup_assumed": null,
+      "base_rate": 0.5665,
+      "lift": 0.0411,
+      "lift_reference_rate": null,
+      "stable_lift": null,
+      "versions": {
+        "model_version": "2026.08.15",
+        "selection_policy_version": "1.0.0",
+        "calibration_version": "1.0.0",
+        "feature_version": "1.0.0",
+        "git_sha": "ad59dde3",
+        "prediction_timestamp": "2026-09-03T22:09:57.107341+00:00",
+        "odds_fetched_at": "2026-09-03T22:09:50.844073+00:00",
+        "board_generated_at": "2026-09-03T22:09:57.092391+00:00"
+      },
+      "qualification_timestamp": "2026-09-03T22:09:57.107341+00:00",
+      "board_timestamp": "2026-09-03T22:09:57.092391+00:00",
+      "slate_date": "2026-09-03",
+      "published_top_pick_at": "2026-09-03T22:13:10.465507+00:00",
+      "publication_artifact_id": "c12c019935d7d2153ead088840d81b2c68c841214a5626b159fbbe3590f4c25b",
+      "publication_source_commit": "a3fd48918e846033cd59b62b04c52b60894460b5",
+      "publication_run_id": "33811862042",
+      "publication_deployment_id": null,
+      "grade": "ungraded",
+      "settlement_state": "ungraded",
+      "reason": "game_not_authoritatively_final",
+      "eligibility": {
+        "eligibility": "ungraded",
+        "reason_code": "game_not_authoritatively_final",
+        "ruleset_version": "fanduel-us-conservative-2026-08-17-v2",
+        "game_state": "pregame"
+      },
+      "settlement_authority": "none",
+      "settlement_observed_at": "2026-09-03T22:30:05.094952+00:00",
+      "settlement_source": "durable_morning_status_observation"
+    },
+    {
+      "id": "fc2:823095:player-675961:hits_runs_rbis:1:over",
+      "identity_version": 2,
+      "game_pk": 823095,
+      "player_id": 675961,
+      "combo_player_ids": null,
+      "type": "batter",
+      "name": "Alika Williams",
+      "team": "Athletics",
+      "matchup": "Athletics @ Seattle Mariners",
+      "game_start": "2026-09-04T01:40:00Z",
+      "stat": "hits_runs_rbis",
+      "market_side": "over",
+      "lean": null,
+      "projection": {
+        "stat": "hits_runs_rbis",
+        "value": 0.5,
+        "needs": 1
+      },
+      "prop": "Over 0.5 Hits+Runs+RBIs",
+      "hit_probability": 0.6517,
+      "market_odds": -140,
+      "market_implied": 0.5833,
+      "market_edge": 0.0684,
+      "market_hold": null,
+      "price_clears": true,
+      "recommendation_status": "top_pick",
+      "status_reasons": [
+        "clears the real probability floor (>= 60%), a real evidence grade (B), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+        "note: the market itself disagrees with this read (11.2 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+      ],
+      "why": [
+        "L7 barrel% 11.1 \u2014 hot recent contact",
+        "Platoon: R bat vs LHP (favorable)",
+        "Hitters batting ahead of him: 0.330 wOBA (league ~.320)"
+      ],
+      "watchouts": [
+        "L7 avg EV 78.6mph (league ~88.5) \u2014 cold recent contact",
+        "Projected 3.63 PA (batting slot 8) \u2014 a tough lineup slot for plate appearances",
+        "Hitter batting behind him: 0.289 wOBA (league ~.320) \u2014 little lineup protection, an easier batter to pitch around",
+        "Team implied for 3.08 runs (league avg 4.245; line 2.5, game total 7.5) \u2014 a weak offensive environment",
+        "AVG vs xBA: 0.272 vs 0.218 (+0.054) \u2014 outperforming his contact quality, regression risk",
+        "wOBA vs xwOBA: 0.321 vs 0.247 (+0.074) \u2014 outperforming his contact quality, regression risk",
+        "Season barrel% 0.8 \u2014 below-average barrel rate",
+        "Wind blowing IN (2mph) \u2014 power suppressed",
+        "Opposing bullpen fatigue: 1/10 relievers over 60 pitches in L7 (fresh pen \u2014 tougher matchup late)"
+      ],
+      "prob_ci": [
+        0.6408,
+        0.6748
+      ],
+      "reliability": "B",
+      "reliability_note": null,
+      "sample_n": 62,
+      "lineup_assumed": null,
+      "base_rate": 0.6698,
+      "lift": -0.0181,
+      "lift_reference_rate": null,
+      "stable_lift": null,
+      "versions": {
+        "model_version": "2026.08.15",
+        "selection_policy_version": "1.0.0",
+        "calibration_version": "1.0.0",
+        "feature_version": "1.0.0",
+        "git_sha": "ad59dde3",
+        "prediction_timestamp": "2026-09-03T22:09:57.107341+00:00",
+        "odds_fetched_at": "2026-09-03T22:09:50.844073+00:00",
+        "board_generated_at": "2026-09-03T22:09:57.092391+00:00"
+      },
+      "qualification_timestamp": "2026-09-03T22:09:57.107341+00:00",
+      "board_timestamp": "2026-09-03T22:09:57.092391+00:00",
+      "slate_date": "2026-09-03",
+      "published_top_pick_at": "2026-09-03T22:13:10.465507+00:00",
+      "publication_artifact_id": "c12c019935d7d2153ead088840d81b2c68c841214a5626b159fbbe3590f4c25b",
+      "publication_source_commit": "a3fd48918e846033cd59b62b04c52b60894460b5",
+      "publication_run_id": "33811862042",
+      "publication_deployment_id": null,
+      "grade": "ungraded",
+      "settlement_state": "ungraded",
+      "reason": "game_not_authoritatively_final",
+      "eligibility": {
+        "eligibility": "ungraded",
+        "reason_code": "game_not_authoritatively_final",
+        "ruleset_version": "fanduel-us-conservative-2026-08-17-v2",
+        "game_state": "pregame"
+      },
+      "settlement_authority": "none",
+      "settlement_observed_at": "2026-09-03T22:30:05.094952+00:00",
       "settlement_source": "durable_morning_status_observation"
     },
     {
@@ -207,7 +567,7 @@
         "game_state": "pregame"
       },
       "settlement_authority": "none",
-      "settlement_observed_at": "2026-09-03T19:38:51.841109+00:00",
+      "settlement_observed_at": "2026-09-03T22:30:05.094952+00:00",
       "settlement_source": "durable_morning_status_observation"
     },
     {
@@ -289,18 +649,31 @@
       "publication_source_commit": "34aee929f484a1c9244fd8f48ec9ae80343b95d9",
       "publication_run_id": "33773085984",
       "publication_deployment_id": null,
-      "grade": "ungraded",
-      "settlement_state": "ungraded",
-      "reason": "game_not_authoritatively_final",
+      "grade": "miss",
+      "actual": 0.0,
+      "actual_stat": "hits",
+      "threshold": 0.5,
+      "game_innings": 9,
+      "shortened_game": false,
+      "actual_ab": 2,
+      "actual_pa_est": 2,
+      "was_substitute": false,
+      "batting_order": 8,
+      "fair_test": false,
+      "opportunity": "limited \u2014 only 2 PA (early exit, shortened game, or removed for a pinch hitter)",
       "eligibility": {
-        "eligibility": "ungraded",
-        "reason_code": "game_not_authoritatively_final",
+        "eligibility": "eligible",
+        "reason_code": "batter_started_and_recorded_plate_appearance",
         "ruleset_version": "fanduel-us-conservative-2026-08-17-v2",
-        "game_state": "live"
+        "plate_appearances": 2,
+        "was_starter": true,
+        "scheduled_innings": 9,
+        "innings_played": 9
       },
-      "settlement_authority": "none",
-      "settlement_observed_at": "2026-09-03T19:38:51.841109+00:00",
-      "settlement_source": "durable_morning_status_observation"
+      "settlement_state": "miss",
+      "settlement_authority": "official_final",
+      "settlement_observed_at": "2026-09-03T22:30:05.094952+00:00",
+      "settlement_source": "durable_morning_grader"
     },
     {
       "id": "fc2:824796:player-687562:pitcher_outs:17:over",
@@ -377,7 +750,7 @@
         "game_state": "pregame"
       },
       "settlement_authority": "none",
-      "settlement_observed_at": "2026-09-03T19:38:51.841109+00:00",
+      "settlement_observed_at": "2026-09-03T22:30:05.094952+00:00",
       "settlement_source": "durable_morning_status_observation"
     }
   ],
@@ -468,14 +841,14 @@
       "lineup_assumed": null,
       "max_acceptable_price": -130,
       "estimated_odds": -151,
-      "market_odds": -102,
-      "market_implied": 0.4761,
-      "market_hold": 0.0605,
-      "posted_implied": 0.505,
-      "market_fair": 0.4761,
+      "market_odds": 100,
+      "market_implied": 0.4711,
+      "market_hold": 0.0614,
+      "posted_implied": 0.5,
+      "market_fair": 0.4711,
       "market_fair_method": "exact_two_sided",
-      "edge_vs_fair": 0.0897,
-      "market_edge": 0.0897,
+      "edge_vs_fair": 0.0947,
+      "market_edge": 0.0947,
       "price_clears": true,
       "probability_basis": "combined_shrunk",
       "probability_detail": {
@@ -499,12 +872,12 @@
       "selection_policy_version": "1.0.0",
       "calibration_version": "1.0.0",
       "feature_version": "1.0.0",
-      "git_sha": "0e6ebe2",
-      "prediction_timestamp": "2026-09-03T18:57:03.170138+00:00",
-      "odds_timestamp": "2026-09-03T18:57:03.167416+00:00",
-      "lineup_checked_at": "2026-09-03T18:57:03.167416+00:00",
+      "git_sha": "f164158",
+      "prediction_timestamp": "2026-09-03T19:44:29.233503+00:00",
+      "odds_timestamp": "2026-09-03T19:44:29.230782+00:00",
+      "lineup_checked_at": "2026-09-03T19:44:29.230782+00:00",
       "grade": "ungraded",
-      "reason": "game not final yet (status: Scheduled)"
+      "reason": "game not final yet (status: Pre-Game)"
     },
     {
       "rank": 2,
@@ -523,7 +896,7 @@
         "needs": 19
       },
       "lean": null,
-      "score": 58.8,
+      "score": 58.6,
       "confidence": "Medium",
       "notable_signals": 1,
       "category": null,
@@ -589,7 +962,7 @@
         "Recorded 19+ outs (6.1 IP) in 44.7% of his last 29 real starts (league 27.5%, avg 19.62 outs/start)"
       ],
       "watchouts": [],
-      "signal_weight_adjustment": -11.82,
+      "signal_weight_adjustment": -11.97,
       "recommendation_status": "lean",
       "status_reasons": [
         "a real, positive read that doesn't clear every Top Pick requirement"
@@ -599,12 +972,12 @@
       "selection_policy_version": "1.0.0",
       "calibration_version": "1.0.0",
       "feature_version": "1.0.0",
-      "git_sha": "0e6ebe2",
-      "prediction_timestamp": "2026-09-03T18:57:03.170138+00:00",
-      "odds_timestamp": "2026-09-03T18:57:03.167416+00:00",
-      "lineup_checked_at": "2026-09-03T18:57:03.167416+00:00",
+      "git_sha": "f164158",
+      "prediction_timestamp": "2026-09-03T19:44:29.233503+00:00",
+      "odds_timestamp": "2026-09-03T19:44:29.230782+00:00",
+      "lineup_checked_at": "2026-09-03T19:44:29.230782+00:00",
       "grade": "ungraded",
-      "reason": "game not final yet (status: Scheduled)"
+      "reason": "game not final yet (status: Pre-Game)"
     },
     {
       "rank": 3,
@@ -676,12 +1049,12 @@
       "selection_policy_version": "1.0.0",
       "calibration_version": "1.0.0",
       "feature_version": "1.0.0",
-      "git_sha": "0e6ebe2",
-      "prediction_timestamp": "2026-09-03T18:57:03.170138+00:00",
-      "odds_timestamp": "2026-09-03T18:57:03.167416+00:00",
-      "lineup_checked_at": "2026-09-03T18:57:03.167416+00:00",
+      "git_sha": "f164158",
+      "prediction_timestamp": "2026-09-03T19:44:29.233503+00:00",
+      "odds_timestamp": "2026-09-03T19:44:29.230782+00:00",
+      "lineup_checked_at": "2026-09-03T19:44:29.230782+00:00",
       "grade": "ungraded",
-      "reason": "game not final yet (status: Scheduled)"
+      "reason": "game not final yet (status: Pre-Game)"
     },
     {
       "rank": 4,
@@ -805,12 +1178,12 @@
       "selection_policy_version": "1.0.0",
       "calibration_version": "1.0.0",
       "feature_version": "1.0.0",
-      "git_sha": "0e6ebe2",
-      "prediction_timestamp": "2026-09-03T18:57:03.170138+00:00",
-      "odds_timestamp": "2026-09-03T18:57:03.167416+00:00",
-      "lineup_checked_at": "2026-09-03T18:57:03.167416+00:00",
+      "git_sha": "f164158",
+      "prediction_timestamp": "2026-09-03T19:44:29.233503+00:00",
+      "odds_timestamp": "2026-09-03T19:44:29.230782+00:00",
+      "lineup_checked_at": "2026-09-03T19:44:29.230782+00:00",
       "grade": "ungraded",
-      "reason": "game not final yet (status: Scheduled)"
+      "reason": "game not final yet (status: Pre-Game)"
     },
     {
       "rank": 5,
@@ -938,12 +1311,12 @@
       "selection_policy_version": "1.0.0",
       "calibration_version": "1.0.0",
       "feature_version": "1.0.0",
-      "git_sha": "0e6ebe2",
-      "prediction_timestamp": "2026-09-03T18:57:03.170138+00:00",
-      "odds_timestamp": "2026-09-03T18:57:03.167416+00:00",
-      "lineup_checked_at": "2026-09-03T18:57:03.167416+00:00",
+      "git_sha": "f164158",
+      "prediction_timestamp": "2026-09-03T19:44:29.233503+00:00",
+      "odds_timestamp": "2026-09-03T19:44:29.230782+00:00",
+      "lineup_checked_at": "2026-09-03T19:44:29.230782+00:00",
       "grade": "ungraded",
-      "reason": "game not final yet (status: Scheduled)"
+      "reason": "game not final yet (status: Pre-Game)"
     },
     {
       "rank": 6,
@@ -962,7 +1335,7 @@
         "needs": 4
       },
       "lean": null,
-      "score": 43.9,
+      "score": 46.0,
       "confidence": "Low",
       "notable_signals": 0,
       "category": "best_of_category",
@@ -989,14 +1362,14 @@
       "lineup_assumed": null,
       "max_acceptable_price": -155,
       "estimated_odds": -180,
-      "market_odds": -130,
-      "market_implied": 0.5331,
+      "market_odds": -120,
+      "market_implied": 0.5146,
       "market_hold": null,
-      "posted_implied": 0.5652,
-      "market_fair": 0.5331,
+      "posted_implied": 0.5455,
+      "market_fair": 0.5146,
       "market_fair_method": "exact_two_sided",
-      "edge_vs_fair": 0.075,
-      "market_edge": 0.075,
+      "edge_vs_fair": 0.0935,
+      "market_edge": 0.0935,
       "price_clears": true,
       "probability_basis": "modelled_shrunk",
       "probability_detail": {
@@ -1058,19 +1431,19 @@
       "recommendation_status": "top_pick",
       "status_reasons": [
         "clears the real probability floor (>= 60%), a real evidence grade (A), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
-        "note: the market itself disagrees with this read (8.5 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        "note: the market itself disagrees with this read (10.3 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
       ],
       "stale": false,
       "model_version": "2026.08.15",
       "selection_policy_version": "1.0.0",
       "calibration_version": "1.0.0",
       "feature_version": "1.0.0",
-      "git_sha": "0e6ebe2",
-      "prediction_timestamp": "2026-09-03T18:57:03.170138+00:00",
-      "odds_timestamp": "2026-09-03T18:57:03.167416+00:00",
-      "lineup_checked_at": "2026-09-03T18:57:03.167416+00:00",
+      "git_sha": "f164158",
+      "prediction_timestamp": "2026-09-03T19:44:29.233503+00:00",
+      "odds_timestamp": "2026-09-03T19:44:29.230782+00:00",
+      "lineup_checked_at": "2026-09-03T19:44:29.230782+00:00",
       "grade": "ungraded",
-      "reason": "game not final yet (status: Scheduled)"
+      "reason": "game not final yet (status: Pre-Game)"
     },
     {
       "rank": 7,
@@ -1196,12 +1569,12 @@
       "selection_policy_version": "1.0.0",
       "calibration_version": "1.0.0",
       "feature_version": "1.0.0",
-      "git_sha": "0e6ebe2",
-      "prediction_timestamp": "2026-09-03T18:57:03.170138+00:00",
-      "odds_timestamp": "2026-09-03T18:57:03.167416+00:00",
-      "lineup_checked_at": "2026-09-03T18:57:03.167416+00:00",
+      "git_sha": "f164158",
+      "prediction_timestamp": "2026-09-03T19:44:29.233503+00:00",
+      "odds_timestamp": "2026-09-03T19:44:29.230782+00:00",
+      "lineup_checked_at": "2026-09-03T19:44:29.230782+00:00",
       "grade": "ungraded",
-      "reason": "game not final yet (status: Scheduled)"
+      "reason": "game not final yet (status: Pre-Game)"
     },
     {
       "rank": 8,
@@ -1245,15 +1618,15 @@
       "lineup_assumed": null,
       "max_acceptable_price": -142,
       "estimated_odds": -165,
-      "market_odds": -136,
-      "market_implied": 0.5428,
+      "market_odds": -148,
+      "market_implied": 0.5631,
       "market_hold": null,
-      "posted_implied": 0.5763,
-      "market_fair": 0.5428,
+      "posted_implied": 0.5968,
+      "market_fair": 0.5631,
       "market_fair_method": "exact_two_sided",
-      "edge_vs_fair": 0.0443,
-      "market_edge": 0.0443,
-      "price_clears": true,
+      "edge_vs_fair": 0.024,
+      "market_edge": 0.024,
+      "price_clears": false,
       "probability_basis": "modelled_shrunk",
       "probability_detail": {
         "empirical": 0.4853,
@@ -1326,12 +1699,12 @@
       "selection_policy_version": "1.0.0",
       "calibration_version": "1.0.0",
       "feature_version": "1.0.0",
-      "git_sha": "0e6ebe2",
-      "prediction_timestamp": "2026-09-03T18:57:03.170138+00:00",
-      "odds_timestamp": "2026-09-03T18:57:03.167416+00:00",
-      "lineup_checked_at": "2026-09-03T18:57:03.167416+00:00",
+      "git_sha": "f164158",
+      "prediction_timestamp": "2026-09-03T19:44:29.233503+00:00",
+      "odds_timestamp": "2026-09-03T19:44:29.230782+00:00",
+      "lineup_checked_at": "2026-09-03T19:44:29.230782+00:00",
       "grade": "ungraded",
-      "reason": "game not final yet (status: Scheduled)"
+      "reason": "game not final yet (status: Pre-Game)"
     },
     {
       "rank": 9,
@@ -1350,7 +1723,7 @@
         "needs": 14
       },
       "lean": null,
-      "score": 43.9,
+      "score": 43.8,
       "confidence": "Low",
       "notable_signals": 0,
       "category": "best_of_category",
@@ -1429,12 +1802,12 @@
       "selection_policy_version": "1.0.0",
       "calibration_version": "1.0.0",
       "feature_version": "1.0.0",
-      "git_sha": "0e6ebe2",
-      "prediction_timestamp": "2026-09-03T18:57:03.170138+00:00",
-      "odds_timestamp": "2026-09-03T18:57:03.167416+00:00",
-      "lineup_checked_at": "2026-09-03T18:57:03.167416+00:00",
+      "git_sha": "f164158",
+      "prediction_timestamp": "2026-09-03T19:44:29.233503+00:00",
+      "odds_timestamp": "2026-09-03T19:44:29.230782+00:00",
+      "lineup_checked_at": "2026-09-03T19:44:29.230782+00:00",
       "grade": "ungraded",
-      "reason": "game not final yet (status: Scheduled)"
+      "reason": "game not final yet (status: Pre-Game)"
     },
     {
       "rank": 10,
@@ -1453,7 +1826,7 @@
         "needs": 15
       },
       "lean": null,
-      "score": 45.0,
+      "score": 44.9,
       "confidence": "Low",
       "notable_signals": 0,
       "category": "best_of_category",
@@ -1534,12 +1907,12 @@
       "selection_policy_version": "1.0.0",
       "calibration_version": "1.0.0",
       "feature_version": "1.0.0",
-      "git_sha": "0e6ebe2",
-      "prediction_timestamp": "2026-09-03T18:57:03.170138+00:00",
-      "odds_timestamp": "2026-09-03T18:57:03.167416+00:00",
-      "lineup_checked_at": "2026-09-03T18:57:03.167416+00:00",
+      "git_sha": "f164158",
+      "prediction_timestamp": "2026-09-03T19:44:29.233503+00:00",
+      "odds_timestamp": "2026-09-03T19:44:29.230782+00:00",
+      "lineup_checked_at": "2026-09-03T19:44:29.230782+00:00",
       "grade": "ungraded",
-      "reason": "game not final yet (status: Scheduled)"
+      "reason": "game not final yet (status: Pre-Game)"
     },
     {
       "rank": 11,
@@ -1558,7 +1931,7 @@
         "needs": 17
       },
       "lean": null,
-      "score": 53.1,
+      "score": 53.0,
       "confidence": "Low",
       "notable_signals": 0,
       "category": "best_of_category",
@@ -1640,12 +2013,12 @@
       "selection_policy_version": "1.0.0",
       "calibration_version": "1.0.0",
       "feature_version": "1.0.0",
-      "git_sha": "0e6ebe2",
-      "prediction_timestamp": "2026-09-03T18:57:03.170138+00:00",
-      "odds_timestamp": "2026-09-03T18:57:03.167416+00:00",
-      "lineup_checked_at": "2026-09-03T18:57:03.167416+00:00",
+      "git_sha": "f164158",
+      "prediction_timestamp": "2026-09-03T19:44:29.233503+00:00",
+      "odds_timestamp": "2026-09-03T19:44:29.230782+00:00",
+      "lineup_checked_at": "2026-09-03T19:44:29.230782+00:00",
       "grade": "ungraded",
-      "reason": "game not final yet (status: Scheduled)"
+      "reason": "game not final yet (status: Pre-Game)"
     },
     {
       "rank": 12,
@@ -1664,7 +2037,7 @@
         "needs": 17
       },
       "lean": null,
-      "score": 50.3,
+      "score": 50.1,
       "confidence": "Low",
       "notable_signals": 0,
       "category": "best_of_category",
@@ -1745,12 +2118,12 @@
       "selection_policy_version": "1.0.0",
       "calibration_version": "1.0.0",
       "feature_version": "1.0.0",
-      "git_sha": "0e6ebe2",
-      "prediction_timestamp": "2026-09-03T18:57:03.170138+00:00",
-      "odds_timestamp": "2026-09-03T18:57:03.167416+00:00",
-      "lineup_checked_at": "2026-09-03T18:57:03.167416+00:00",
+      "git_sha": "f164158",
+      "prediction_timestamp": "2026-09-03T19:44:29.233503+00:00",
+      "odds_timestamp": "2026-09-03T19:44:29.230782+00:00",
+      "lineup_checked_at": "2026-09-03T19:44:29.230782+00:00",
       "grade": "ungraded",
-      "reason": "game not final yet (status: Scheduled)"
+      "reason": "game not final yet (status: Pre-Game)"
     },
     {
       "rank": 13,
@@ -1769,7 +2142,7 @@
         "needs": 16
       },
       "lean": null,
-      "score": 37.9,
+      "score": 37.8,
       "confidence": "Low",
       "notable_signals": 0,
       "category": "best_of_category",
@@ -1850,12 +2223,12 @@
       "selection_policy_version": "1.0.0",
       "calibration_version": "1.0.0",
       "feature_version": "1.0.0",
-      "git_sha": "0e6ebe2",
-      "prediction_timestamp": "2026-09-03T18:57:03.170138+00:00",
-      "odds_timestamp": "2026-09-03T18:57:03.167416+00:00",
-      "lineup_checked_at": "2026-09-03T18:57:03.167416+00:00",
+      "git_sha": "f164158",
+      "prediction_timestamp": "2026-09-03T19:44:29.233503+00:00",
+      "odds_timestamp": "2026-09-03T19:44:29.230782+00:00",
+      "lineup_checked_at": "2026-09-03T19:44:29.230782+00:00",
       "grade": "ungraded",
-      "reason": "game not final yet (status: Scheduled)"
+      "reason": "game not final yet (status: Pre-Game)"
     },
     {
       "rank": 14,
@@ -1896,14 +2269,14 @@
       "lineup_assumed": null,
       "max_acceptable_price": -130,
       "estimated_odds": -151,
-      "market_odds": -102,
-      "market_implied": 0.4761,
+      "market_odds": 100,
+      "market_implied": 0.4711,
       "market_hold": null,
-      "posted_implied": 0.505,
-      "market_fair": 0.4761,
+      "posted_implied": 0.5,
+      "market_fair": 0.4711,
       "market_fair_method": "exact_two_sided",
-      "edge_vs_fair": 0.0897,
-      "market_edge": 0.0897,
+      "edge_vs_fair": 0.0947,
+      "market_edge": 0.0947,
       "price_clears": true,
       "probability_basis": "combined_shrunk",
       "probability_detail": {
@@ -1927,12 +2300,12 @@
       "selection_policy_version": "1.0.0",
       "calibration_version": "1.0.0",
       "feature_version": "1.0.0",
-      "git_sha": "0e6ebe2",
-      "prediction_timestamp": "2026-09-03T18:57:03.170138+00:00",
-      "odds_timestamp": "2026-09-03T18:57:03.167416+00:00",
-      "lineup_checked_at": "2026-09-03T18:57:03.167416+00:00",
+      "git_sha": "f164158",
+      "prediction_timestamp": "2026-09-03T19:44:29.233503+00:00",
+      "odds_timestamp": "2026-09-03T19:44:29.230782+00:00",
+      "lineup_checked_at": "2026-09-03T19:44:29.230782+00:00",
       "grade": "ungraded",
-      "reason": "game not final yet (status: Scheduled)"
+      "reason": "game not final yet (status: Pre-Game)"
     },
     {
       "rank": 15,
@@ -2004,12 +2377,12 @@
       "selection_policy_version": "1.0.0",
       "calibration_version": "1.0.0",
       "feature_version": "1.0.0",
-      "git_sha": "0e6ebe2",
-      "prediction_timestamp": "2026-09-03T18:57:03.170138+00:00",
-      "odds_timestamp": "2026-09-03T18:57:03.167416+00:00",
-      "lineup_checked_at": "2026-09-03T18:57:03.167416+00:00",
+      "git_sha": "f164158",
+      "prediction_timestamp": "2026-09-03T19:44:29.233503+00:00",
+      "odds_timestamp": "2026-09-03T19:44:29.230782+00:00",
+      "lineup_checked_at": "2026-09-03T19:44:29.230782+00:00",
       "grade": "ungraded",
-      "reason": "game not final yet (status: Scheduled)"
+      "reason": "game not final yet (status: Pre-Game)"
     },
     {
       "rank": 16,
@@ -2081,12 +2454,12 @@
       "selection_policy_version": "1.0.0",
       "calibration_version": "1.0.0",
       "feature_version": "1.0.0",
-      "git_sha": "0e6ebe2",
-      "prediction_timestamp": "2026-09-03T18:57:03.170138+00:00",
-      "odds_timestamp": "2026-09-03T18:57:03.167416+00:00",
-      "lineup_checked_at": "2026-09-03T18:57:03.167416+00:00",
+      "git_sha": "f164158",
+      "prediction_timestamp": "2026-09-03T19:44:29.233503+00:00",
+      "odds_timestamp": "2026-09-03T19:44:29.230782+00:00",
+      "lineup_checked_at": "2026-09-03T19:44:29.230782+00:00",
       "grade": "ungraded",
-      "reason": "game not final yet (status: Scheduled)"
+      "reason": "game not final yet (status: Pre-Game)"
     },
     {
       "rank": 17,
@@ -2158,12 +2531,12 @@
       "selection_policy_version": "1.0.0",
       "calibration_version": "1.0.0",
       "feature_version": "1.0.0",
-      "git_sha": "0e6ebe2",
-      "prediction_timestamp": "2026-09-03T18:57:03.170138+00:00",
-      "odds_timestamp": "2026-09-03T18:57:03.167416+00:00",
-      "lineup_checked_at": "2026-09-03T18:57:03.167416+00:00",
+      "git_sha": "f164158",
+      "prediction_timestamp": "2026-09-03T19:44:29.233503+00:00",
+      "odds_timestamp": "2026-09-03T19:44:29.230782+00:00",
+      "lineup_checked_at": "2026-09-03T19:44:29.230782+00:00",
       "grade": "ungraded",
-      "reason": "game not final yet (status: Scheduled)"
+      "reason": "game not final yet (status: Pre-Game)"
     },
     {
       "rank": 18,
@@ -2237,12 +2610,12 @@
       "selection_policy_version": "1.0.0",
       "calibration_version": "1.0.0",
       "feature_version": "1.0.0",
-      "git_sha": "0e6ebe2",
-      "prediction_timestamp": "2026-09-03T18:57:03.170138+00:00",
-      "odds_timestamp": "2026-09-03T18:57:03.167416+00:00",
-      "lineup_checked_at": "2026-09-03T18:57:03.167416+00:00",
+      "git_sha": "f164158",
+      "prediction_timestamp": "2026-09-03T19:44:29.233503+00:00",
+      "odds_timestamp": "2026-09-03T19:44:29.230782+00:00",
+      "lineup_checked_at": "2026-09-03T19:44:29.230782+00:00",
       "grade": "ungraded",
-      "reason": "game not final yet (status: Scheduled)"
+      "reason": "game not final yet (status: Pre-Game)"
     }
   ],
   "shadow_tracking": [
@@ -2314,12 +2687,12 @@
       "selection_policy_version": "1.0.0",
       "calibration_version": "1.0.0",
       "feature_version": "1.0.0",
-      "git_sha": "0e6ebe2",
-      "prediction_timestamp": "2026-09-03T18:57:03.170138+00:00",
-      "odds_timestamp": "2026-09-03T18:57:03.167416+00:00",
-      "lineup_checked_at": "2026-09-03T18:57:03.167416+00:00",
+      "git_sha": "f164158",
+      "prediction_timestamp": "2026-09-03T19:44:29.233503+00:00",
+      "odds_timestamp": "2026-09-03T19:44:29.230782+00:00",
+      "lineup_checked_at": "2026-09-03T19:44:29.230782+00:00",
       "grade": "ungraded",
-      "reason": "game not final yet (status: Scheduled)"
+      "reason": "game not final yet (status: Pre-Game)"
     },
     {
       "rank": 2,
@@ -2389,12 +2762,12 @@
       "selection_policy_version": "1.0.0",
       "calibration_version": "1.0.0",
       "feature_version": "1.0.0",
-      "git_sha": "0e6ebe2",
-      "prediction_timestamp": "2026-09-03T18:57:03.170138+00:00",
-      "odds_timestamp": "2026-09-03T18:57:03.167416+00:00",
-      "lineup_checked_at": "2026-09-03T18:57:03.167416+00:00",
+      "git_sha": "f164158",
+      "prediction_timestamp": "2026-09-03T19:44:29.233503+00:00",
+      "odds_timestamp": "2026-09-03T19:44:29.230782+00:00",
+      "lineup_checked_at": "2026-09-03T19:44:29.230782+00:00",
       "grade": "ungraded",
-      "reason": "game not final yet (status: Scheduled)"
+      "reason": "game not final yet (status: Pre-Game)"
     },
     {
       "rank": 3,
@@ -2464,12 +2837,12 @@
       "selection_policy_version": "1.0.0",
       "calibration_version": "1.0.0",
       "feature_version": "1.0.0",
-      "git_sha": "0e6ebe2",
-      "prediction_timestamp": "2026-09-03T18:57:03.170138+00:00",
-      "odds_timestamp": "2026-09-03T18:57:03.167416+00:00",
-      "lineup_checked_at": "2026-09-03T18:57:03.167416+00:00",
+      "git_sha": "f164158",
+      "prediction_timestamp": "2026-09-03T19:44:29.233503+00:00",
+      "odds_timestamp": "2026-09-03T19:44:29.230782+00:00",
+      "lineup_checked_at": "2026-09-03T19:44:29.230782+00:00",
       "grade": "ungraded",
-      "reason": "game not final yet (status: Scheduled)"
+      "reason": "game not final yet (status: Pre-Game)"
     },
     {
       "rank": 4,
@@ -2488,7 +2861,7 @@
         "needs": 12
       },
       "lean": null,
-      "score": 58.8,
+      "score": 58.6,
       "confidence": "Medium",
       "notable_signals": 0,
       "category": "shadow",
@@ -2536,12 +2909,12 @@
       "selection_policy_version": "1.0.0",
       "calibration_version": "1.0.0",
       "feature_version": "1.0.0",
-      "git_sha": "0e6ebe2",
-      "prediction_timestamp": "2026-09-03T18:57:03.170138+00:00",
-      "odds_timestamp": "2026-09-03T18:57:03.167416+00:00",
-      "lineup_checked_at": "2026-09-03T18:57:03.167416+00:00",
+      "git_sha": "f164158",
+      "prediction_timestamp": "2026-09-03T19:44:29.233503+00:00",
+      "odds_timestamp": "2026-09-03T19:44:29.230782+00:00",
+      "lineup_checked_at": "2026-09-03T19:44:29.230782+00:00",
       "grade": "ungraded",
-      "reason": "game not final yet (status: Scheduled)"
+      "reason": "game not final yet (status: Pre-Game)"
     },
     {
       "rank": 5,
@@ -2560,7 +2933,7 @@
         "needs": 13
       },
       "lean": null,
-      "score": 58.8,
+      "score": 58.6,
       "confidence": "Medium",
       "notable_signals": 0,
       "category": "shadow",
@@ -2608,12 +2981,12 @@
       "selection_policy_version": "1.0.0",
       "calibration_version": "1.0.0",
       "feature_version": "1.0.0",
-      "git_sha": "0e6ebe2",
-      "prediction_timestamp": "2026-09-03T18:57:03.170138+00:00",
-      "odds_timestamp": "2026-09-03T18:57:03.167416+00:00",
-      "lineup_checked_at": "2026-09-03T18:57:03.167416+00:00",
+      "git_sha": "f164158",
+      "prediction_timestamp": "2026-09-03T19:44:29.233503+00:00",
+      "odds_timestamp": "2026-09-03T19:44:29.230782+00:00",
+      "lineup_checked_at": "2026-09-03T19:44:29.230782+00:00",
       "grade": "ungraded",
-      "reason": "game not final yet (status: Scheduled)"
+      "reason": "game not final yet (status: Pre-Game)"
     },
     {
       "rank": 6,
@@ -2632,7 +3005,7 @@
         "needs": 14
       },
       "lean": null,
-      "score": 50.8,
+      "score": 50.6,
       "confidence": "Low",
       "notable_signals": 0,
       "category": "shadow",
@@ -2680,12 +3053,12 @@
       "selection_policy_version": "1.0.0",
       "calibration_version": "1.0.0",
       "feature_version": "1.0.0",
-      "git_sha": "0e6ebe2",
-      "prediction_timestamp": "2026-09-03T18:57:03.170138+00:00",
-      "odds_timestamp": "2026-09-03T18:57:03.167416+00:00",
-      "lineup_checked_at": "2026-09-03T18:57:03.167416+00:00",
+      "git_sha": "f164158",
+      "prediction_timestamp": "2026-09-03T19:44:29.233503+00:00",
+      "odds_timestamp": "2026-09-03T19:44:29.230782+00:00",
+      "lineup_checked_at": "2026-09-03T19:44:29.230782+00:00",
       "grade": "ungraded",
-      "reason": "game not final yet (status: Scheduled)"
+      "reason": "game not final yet (status: Pre-Game)"
     },
     {
       "rank": 7,
@@ -2754,12 +3127,12 @@
       "selection_policy_version": "1.0.0",
       "calibration_version": "1.0.0",
       "feature_version": "1.0.0",
-      "git_sha": "0e6ebe2",
-      "prediction_timestamp": "2026-09-03T18:57:03.170138+00:00",
-      "odds_timestamp": "2026-09-03T18:57:03.167416+00:00",
-      "lineup_checked_at": "2026-09-03T18:57:03.167416+00:00",
+      "git_sha": "f164158",
+      "prediction_timestamp": "2026-09-03T19:44:29.233503+00:00",
+      "odds_timestamp": "2026-09-03T19:44:29.230782+00:00",
+      "lineup_checked_at": "2026-09-03T19:44:29.230782+00:00",
       "grade": "ungraded",
-      "reason": "game not final yet (status: Scheduled)"
+      "reason": "game not final yet (status: Pre-Game)"
     },
     {
       "rank": 8,
@@ -2778,7 +3151,7 @@
         "needs": 15
       },
       "lean": null,
-      "score": 43.9,
+      "score": 43.8,
       "confidence": "Low",
       "notable_signals": 0,
       "category": "shadow",
@@ -2826,12 +3199,12 @@
       "selection_policy_version": "1.0.0",
       "calibration_version": "1.0.0",
       "feature_version": "1.0.0",
-      "git_sha": "0e6ebe2",
-      "prediction_timestamp": "2026-09-03T18:57:03.170138+00:00",
-      "odds_timestamp": "2026-09-03T18:57:03.167416+00:00",
-      "lineup_checked_at": "2026-09-03T18:57:03.167416+00:00",
+      "git_sha": "f164158",
+      "prediction_timestamp": "2026-09-03T19:44:29.233503+00:00",
+      "odds_timestamp": "2026-09-03T19:44:29.230782+00:00",
+      "lineup_checked_at": "2026-09-03T19:44:29.230782+00:00",
       "grade": "ungraded",
-      "reason": "game not final yet (status: Scheduled)"
+      "reason": "game not final yet (status: Pre-Game)"
     },
     {
       "rank": 9,
@@ -2872,14 +3245,14 @@
       "lineup_assumed": null,
       "max_acceptable_price": -130,
       "estimated_odds": -151,
-      "market_odds": -102,
-      "market_implied": 0.4761,
+      "market_odds": 100,
+      "market_implied": 0.4711,
       "market_hold": null,
-      "posted_implied": 0.505,
-      "market_fair": 0.4761,
+      "posted_implied": 0.5,
+      "market_fair": 0.4711,
       "market_fair_method": "exact_two_sided",
-      "edge_vs_fair": 0.0897,
-      "market_edge": 0.0897,
+      "edge_vs_fair": 0.0947,
+      "market_edge": 0.0947,
       "price_clears": true,
       "probability_basis": "combined_shrunk",
       "probability_detail": {
@@ -2903,12 +3276,12 @@
       "selection_policy_version": "1.0.0",
       "calibration_version": "1.0.0",
       "feature_version": "1.0.0",
-      "git_sha": "0e6ebe2",
-      "prediction_timestamp": "2026-09-03T18:57:03.170138+00:00",
-      "odds_timestamp": "2026-09-03T18:57:03.167416+00:00",
-      "lineup_checked_at": "2026-09-03T18:57:03.167416+00:00",
+      "git_sha": "f164158",
+      "prediction_timestamp": "2026-09-03T19:44:29.233503+00:00",
+      "odds_timestamp": "2026-09-03T19:44:29.230782+00:00",
+      "lineup_checked_at": "2026-09-03T19:44:29.230782+00:00",
       "grade": "ungraded",
-      "reason": "game not final yet (status: Scheduled)"
+      "reason": "game not final yet (status: Pre-Game)"
     }
   ]
 }

@@ -2737,6 +2737,137 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-03",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 54.2,
+          "notable_signals": 1,
+          "matchup": "Athletics @ Seattle Mariners",
+          "game_pk": 823095,
+          "team": "Athletics",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 64.5714,
+            "l7_avg_ev": 0.0,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 45.5,
+            "season_barrel_pct": 34.0,
+            "lineup_slot": 87.5,
+            "bullpen_fatigue": 16.6667,
+            "platoon_barrel_pct": 2.88,
+            "platoon_xwoba": -1.02,
+            "park_hand_index": 0.5,
+            "opp_catcher_framing": 0.48,
+            "days_rest": 0.0,
+            "woba_ahead": 30.9091,
+            "woba_behind": 17.2727,
+            "pull_park_synergy": 0.175,
+            "team_total_move": 0.0,
+            "team_total_open": -6.0,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": 2.04,
+            "vs_rp_ops": 2.484,
+            "ump_k_pct": 0.348,
+            "ump_bb_pct": 0.264
+          },
+          "hit_probability": 0.7045,
+          "raw_hit_probability": 0.7333,
+          "lift": 0.0373,
+          "reliability": "A",
+          "sample_n": 85,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 58.0,
+          "notable_signals": 0,
+          "matchup": "Athletics @ Seattle Mariners",
+          "game_pk": 823095,
+          "team": "Athletics",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": 1.5,
+            "sprint_speed": 43.75,
+            "catcher_poptime": 28.5714,
+            "on_base": 73.1286
+          },
+          "hit_probability": 0.1046,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 85,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 0.0,
+          "notable_signals": 0,
+          "matchup": "Athletics @ Seattle Mariners",
+          "game_pk": 823095,
+          "team": "Athletics",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0276
+          },
+          "hit_probability": 0.0276,
+          "raw_hit_probability": null,
+          "lift": -0.0203,
+          "reliability": "A",
+          "sample_n": 85,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 4.9,
+          "notable_signals": 0,
+          "matchup": "Athletics @ Seattle Mariners",
+          "game_pk": 823095,
+          "team": "Athletics",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0319
+          },
+          "hit_probability": 0.0319,
+          "raw_hit_probability": null,
+          "lift": 0.0111,
+          "reliability": "A",
+          "sample_n": 85,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

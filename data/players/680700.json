@@ -1616,6 +1616,109 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-03",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 21.5,
+          "notable_signals": 0,
+          "matchup": "Tampa Bay Rays @ Texas Rangers",
+          "game_pk": 822853,
+          "team": "Tampa Bay Rays",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 11.4286,
+            "l7_avg_ev": 37.75,
+            "l7_barrel_pct": 57.1429,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 3.3333,
+            "lineup_slot": 12.5,
+            "bullpen_fatigue": 33.3333,
+            "platoon_barrel_pct": -2.24,
+            "platoon_xwoba": 0.3,
+            "park_hand_index": -0.52,
+            "opp_catcher_framing": 0.24,
+            "days_rest": 0.0,
+            "woba_ahead": 0.9091,
+            "woba_behind": 7.2727,
+            "pull_park_synergy": -0.2348,
+            "team_total_move": 0.0,
+            "team_total_open": 0.0,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": -0.272,
+            "vs_rp_ops": -0.936,
+            "ump_k_pct": -0.132,
+            "ump_bb_pct": 0.468
+          },
+          "hit_probability": 0.632,
+          "raw_hit_probability": 0.6072,
+          "lift": -0.0352,
+          "reliability": "A",
+          "sample_n": 101,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 0.0,
+          "notable_signals": 0,
+          "matchup": "Tampa Bay Rays @ Texas Rangers",
+          "game_pk": 822853,
+          "team": "Tampa Bay Rays",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0078
+          },
+          "hit_probability": 0.0078,
+          "raw_hit_probability": null,
+          "lift": -0.0401,
+          "reliability": "A",
+          "sample_n": 101,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 0.0,
+          "notable_signals": 0,
+          "matchup": "Tampa Bay Rays @ Texas Rangers",
+          "game_pk": 822853,
+          "team": "Tampa Bay Rays",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0034
+          },
+          "hit_probability": 0.0034,
+          "raw_hit_probability": null,
+          "lift": -0.0174,
+          "reliability": "A",
+          "sample_n": 101,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

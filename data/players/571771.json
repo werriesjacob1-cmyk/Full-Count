@@ -377,6 +377,57 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-03",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 39.8,
+          "notable_signals": 1,
+          "matchup": "St. Louis Cardinals @ Los Angeles Dodgers",
+          "game_pk": 823907,
+          "team": "Los Angeles Dodgers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 100.0,
+            "l7_avg_ev": 52.5,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 37.4,
+            "season_barrel_pct": 35.3333,
+            "lineup_slot": 0.0,
+            "bullpen_fatigue": 83.3333,
+            "platoon_barrel_pct": 5.0,
+            "platoon_xwoba": -1.68,
+            "opp_catcher_framing": -0.72,
+            "days_rest": 0.0,
+            "woba_ahead": 28.1818,
+            "woba_behind": 47.2727,
+            "team_total_move": 0.0,
+            "team_total_open": 0.0,
+            "getaway_day": -2.0,
+            "series_game": 2.0,
+            "sp_rp_ops_gap": -3.88,
+            "vs_rp_ops": -3.888,
+            "ump_k_pct": -0.456,
+            "ump_bb_pct": 0.048
+          },
+          "hit_probability": 0.5707,
+          "raw_hit_probability": 0.5799,
+          "lift": 0.0042,
+          "reliability": "D",
+          "sample_n": 21,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }
