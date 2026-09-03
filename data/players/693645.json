@@ -253,8 +253,8 @@
         {
           "prop": "Over 7.5 Strikeouts",
           "type": "pitcher",
-          "score": 49.2,
-          "notable_signals": 0,
+          "score": 45.9,
+          "notable_signals": 1,
           "matchup": "New York Yankees @ Los Angeles Angels",
           "game_pk": 823983,
           "team": "New York Yankees",
@@ -265,7 +265,10 @@
             "opp_team_k_pct": 81.0,
             "same_hand_ratio": 100.0,
             "l14_k_pct": 55.8824,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 92.1866,
+            "ump_k_pct": 0.528,
+            "ump_bb_pct": -0.012
           },
           "hit_probability": 0.3119,
           "raw_hit_probability": 0.3119,
@@ -281,7 +284,7 @@
         {
           "prop": "Over 17.5 Outs Recorded",
           "type": "pitcher",
-          "score": 63.3,
+          "score": 61.3,
           "notable_signals": 1,
           "matchup": "New York Yankees @ Los Angeles Angels",
           "game_pk": 823983,
@@ -290,12 +293,12 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.5432,
+            "outs_rate": 0.5459,
             "avg_outs_per_start": 17.54
           },
-          "hit_probability": 0.5432,
+          "hit_probability": 0.5459,
           "raw_hit_probability": null,
-          "lift": 0.1318,
+          "lift": 0.119,
           "reliability": "A",
           "sample_n": 28,
           "projection": {

@@ -1143,6 +1143,137 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-02",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 0,
+          "notable_signals": 1,
+          "matchup": "New York Yankees @ Los Angeles Angels",
+          "game_pk": 823983,
+          "team": "Los Angeles Angels",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 0.0,
+            "l7_avg_ev": 0.0,
+            "l7_barrel_pct": 0.0,
+            "park_hr_index": 51.1,
+            "season_barrel_pct": 25.3333,
+            "lineup_slot": 12.5,
+            "bullpen_fatigue": 0.0,
+            "platoon_barrel_pct": -3.36,
+            "platoon_xwoba": -4.14,
+            "park_hand_index": -1.51,
+            "opp_catcher_framing": -2.16,
+            "days_rest": 0.0,
+            "woba_ahead": 0.0,
+            "woba_behind": 0.0,
+            "pull_park_synergy": -0.6342,
+            "team_total_move": 0.0,
+            "team_total_open": -6.0,
+            "getaway_day": -2.0,
+            "series_game": 2.0,
+            "sp_rp_ops_gap": -0.12,
+            "vs_rp_ops": -1.224,
+            "ump_k_pct": -0.528,
+            "ump_bb_pct": 0.012
+          },
+          "hit_probability": 0.6255,
+          "raw_hit_probability": 0.5964,
+          "lift": -0.0455,
+          "reliability": "A",
+          "sample_n": 101,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 39.0,
+          "notable_signals": 0,
+          "matchup": "New York Yankees @ Los Angeles Angels",
+          "game_pk": 823983,
+          "team": "Los Angeles Angels",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": 1.8,
+            "sprint_speed": 37.5,
+            "catcher_poptime": 17.1429,
+            "on_base": 15.547
+          },
+          "hit_probability": 0.1092,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 101,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 0.0,
+          "notable_signals": 0,
+          "matchup": "New York Yankees @ Los Angeles Angels",
+          "game_pk": 823983,
+          "team": "Los Angeles Angels",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0244
+          },
+          "hit_probability": 0.0244,
+          "raw_hit_probability": null,
+          "lift": -0.0235,
+          "reliability": "A",
+          "sample_n": 101,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 0.0,
+          "notable_signals": 0,
+          "matchup": "New York Yankees @ Los Angeles Angels",
+          "game_pk": 823983,
+          "team": "Los Angeles Angels",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0035
+          },
+          "hit_probability": 0.0035,
+          "raw_hit_probability": null,
+          "lift": -0.0174,
+          "reliability": "A",
+          "sample_n": 101,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

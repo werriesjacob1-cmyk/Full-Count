@@ -597,6 +597,85 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-02",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 48.7,
+          "notable_signals": 1,
+          "matchup": "San Francisco Giants @ Pittsburgh Pirates",
+          "game_pk": 823339,
+          "team": "San Francisco Giants",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 50.2857,
+            "l7_avg_ev": 58.125,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 15.0,
+            "park_hr_index": 38.3,
+            "lineup_slot": 62.5,
+            "bullpen_fatigue": 0.0,
+            "platoon_barrel_pct": -0.08,
+            "platoon_xwoba": 2.88,
+            "park_hand_index": 2.04,
+            "opp_catcher_framing": -0.6,
+            "days_rest": 0.0,
+            "woba_ahead": 48.1818,
+            "woba_behind": 33.6364,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": 0.448,
+            "vs_rp_ops": 2.508,
+            "ump_k_pct": -0.876,
+            "ump_bb_pct": -0.048
+          },
+          "hit_probability": 0.6708,
+          "raw_hit_probability": 0.6549,
+          "lift": 0.1038,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 42.6,
+          "notable_signals": 0,
+          "matchup": "San Francisco Giants @ Pittsburgh Pirates",
+          "game_pk": 823339,
+          "team": "San Francisco Giants",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": 0.54,
+            "sprint_speed": 31.25,
+            "catcher_poptime": 14.2857
+          },
+          "hit_probability": 0.0883,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

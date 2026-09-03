@@ -1,0 +1,37 @@
+{
+  "player_id": "nrfi_824632",
+  "name": "Milwaukee Brewers @ Chicago Cubs \u2014 1st Inning (Both Teams)",
+  "snapshots": [
+    {
+      "date": "2026-09-03",
+      "evaluations": [
+        {
+          "prop": "No runs in the 1st (both teams)",
+          "type": "game",
+          "score": 62.5,
+          "notable_signals": 0,
+          "matchup": "Milwaukee Brewers @ Chicago Cubs",
+          "game_pk": 824632,
+          "team": null,
+          "side": "both",
+          "lean": "NRFI",
+          "combo_player_ids": null,
+          "signals": {
+            "home_team_scores_p": 0.262,
+            "away_team_scores_p": 0.2997,
+            "fi_n_starts": 14.0
+          },
+          "hit_probability": 0.5168,
+          "raw_hit_probability": null,
+          "lift": 0.0184,
+          "reliability": "B",
+          "sample_n": 14,
+          "projection": {
+            "stat": "nrfi_combined",
+            "value": 51.7
+          }
+        }
+      ]
+    }
+  ]
+}

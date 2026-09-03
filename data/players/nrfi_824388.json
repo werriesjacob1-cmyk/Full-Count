@@ -1,0 +1,37 @@
+{
+  "player_id": "nrfi_824388",
+  "name": "Toronto Blue Jays @ Cleveland Guardians \u2014 1st Inning (Both Teams)",
+  "snapshots": [
+    {
+      "date": "2026-09-03",
+      "evaluations": [
+        {
+          "prop": "No runs in the 1st (both teams)",
+          "type": "game",
+          "score": 64.5,
+          "notable_signals": 0,
+          "matchup": "Toronto Blue Jays @ Cleveland Guardians",
+          "game_pk": 824388,
+          "team": null,
+          "side": "both",
+          "lean": "NRFI",
+          "combo_player_ids": null,
+          "signals": {
+            "home_team_scores_p": 0.266,
+            "away_team_scores_p": 0.2841,
+            "fi_n_starts": 28.0
+          },
+          "hit_probability": 0.5255,
+          "raw_hit_probability": null,
+          "lift": 0.0271,
+          "reliability": "A",
+          "sample_n": 28,
+          "projection": {
+            "stat": "nrfi_combined",
+            "value": 52.5
+          }
+        }
+      ]
+    }
+  ]
+}

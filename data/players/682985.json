@@ -414,6 +414,111 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-02",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 51.8,
+          "notable_signals": 1,
+          "matchup": "Detroit Tigers @ Minnesota Twins",
+          "game_pk": 823660,
+          "team": "Detroit Tigers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 77.7143,
+            "pitch_exploit": 10.2857,
+            "l7_avg_ev": 0.0,
+            "l7_barrel_pct": 0.0,
+            "park_hr_index": 60.4,
+            "season_barrel_pct": 77.3333,
+            "lineup_slot": 62.5,
+            "bullpen_fatigue": 16.6667,
+            "platoon_barrel_pct": 5.0,
+            "platoon_xwoba": 4.2,
+            "park_hand_index": -1.68,
+            "opp_catcher_framing": 0.12,
+            "days_rest": 0.0,
+            "woba_ahead": 30.0,
+            "woba_behind": 100.0,
+            "pull_park_synergy": -0.6233,
+            "hard_hit_105_rate": 0.565,
+            "team_total_move": 0.0,
+            "team_total_open": 0.0,
+            "getaway_day": -2.0,
+            "series_game": 2.0,
+            "sp_rp_ops_gap": -1.08,
+            "vs_rp_ops": 0.144,
+            "ump_k_pct": -0.216,
+            "ump_bb_pct": -0.012
+          },
+          "hit_probability": 0.7071,
+          "raw_hit_probability": 0.738,
+          "lift": 0.0361,
+          "reliability": "A",
+          "sample_n": 118,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 10.2,
+          "notable_signals": 0,
+          "matchup": "Detroit Tigers @ Minnesota Twins",
+          "game_pk": 823660,
+          "team": "Detroit Tigers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0692
+          },
+          "hit_probability": 0.0692,
+          "raw_hit_probability": null,
+          "lift": 0.0213,
+          "reliability": "A",
+          "sample_n": 118,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 6.3,
+          "notable_signals": 0,
+          "matchup": "Detroit Tigers @ Minnesota Twins",
+          "game_pk": 823660,
+          "team": "Detroit Tigers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0376
+          },
+          "hit_probability": 0.0376,
+          "raw_hit_probability": null,
+          "lift": 0.0167,
+          "reliability": "A",
+          "sample_n": 118,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }
