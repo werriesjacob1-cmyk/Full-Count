@@ -2,7 +2,7 @@
   "schema_version": 1,
   "identity_schema_version": 2,
   "rollout_version": "pre-phase-v-live-lifecycle-v1",
-  "updated_at": "2026-09-03T15:32:58.320391+00:00",
+  "updated_at": "2026-09-03T20:08:00.908083+00:00",
   "migration": {
     "version": "pre-phase-v-live-lifecycle-v1",
     "completed_at": "2026-08-17T23:14:57+00:00",
@@ -12619,6 +12619,202 @@
         },
         "qualification_timestamp": "2026-09-03T15:29:32.537599+00:00",
         "board_timestamp": "2026-09-03T15:29:32.516424+00:00",
+        "slate_date": "2026-09-03"
+      }
+    },
+    "fc2:822853:player-679822:hits:1:over": {
+      "canonical_id": "fc2:822853:player-679822:hits:1:over",
+      "settlement_identity": [
+        "822853",
+        [
+          "player",
+          "679822"
+        ],
+        "hits",
+        "1",
+        "over"
+      ],
+      "slate_date": "2026-09-03",
+      "first_published_at": "2026-09-03T20:08:00.908083+00:00",
+      "publication_provenance": {
+        "artifact_id": "861794bde76ddc5b6e572fc5fd4d44f1ca1ef9c04dd1fc60330d6fe773365095",
+        "source_commit": "96afe2a15f51e1488c25f4f6447d2b74b8b12d9a",
+        "workflow_run_id": "33800298169",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-09-03T20:07:49.930607+00:00",
+        "data_hash": "93a52f2435138409c6bf6ced34414dc8fdade9b0deae4dfd4fa166f75abab97b",
+        "live_hash": "ce6783ffc3829061d7dc4a5f1174a465390ec7721710c1ce6b7043b0a3b00fa7"
+      },
+      "snapshot": {
+        "id": "fc2:822853:player-679822:hits:1:over",
+        "identity_version": 2,
+        "game_pk": 822853,
+        "player_id": 679822,
+        "combo_player_ids": null,
+        "type": "batter",
+        "name": "Justin Foscue",
+        "team": "Texas Rangers",
+        "matchup": "Tampa Bay Rays @ Texas Rangers",
+        "game_start": "2026-09-04T00:05:00Z",
+        "stat": "hits",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "hits",
+          "value": 0.5,
+          "needs": 1
+        },
+        "prop": "Over 0.5 Hits",
+        "hit_probability": 0.6176,
+        "market_odds": -140,
+        "market_implied": 0.5833,
+        "market_edge": 0.0343,
+        "market_hold": null,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (A), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (7.7 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "L7 avg EV 91.4mph (league ~88.5) \u2014 hot recent contact",
+          "L7 barrel% 25.0 \u2014 hot recent contact",
+          "Platoon: R bat vs LHP (favorable)",
+          "Projected 4.07 PA (batting slot 5)",
+          "Season barrel% 11.8",
+          "Hitters batting ahead of him: 0.334 wOBA (league ~.320)",
+          "Dome \u2014 weather neutral"
+        ],
+        "watchouts": [
+          "Opposing SP ERA 3.19 \u2014 elite pitcher, tough matchup",
+          "wOBA vs xwOBA: 0.354 vs 0.329 (+0.025) \u2014 outperforming his contact quality, regression risk",
+          "Team implied for 3.69 runs (league avg 4.245; line 3.5, game total 8) \u2014 a weak offensive environment",
+          "Hitter batting behind him: 0.314 wOBA (league ~.320) \u2014 little lineup protection, an easier batter to pitch around",
+          "Opposing bullpen fatigue: 2/8 relievers over 60 pitches in L7 (fresh pen \u2014 tougher matchup late)"
+        ],
+        "prob_ci": [
+          0.6089,
+          0.6462
+        ],
+        "reliability": "A",
+        "reliability_note": null,
+        "sample_n": 80,
+        "lineup_assumed": null,
+        "base_rate": 0.5665,
+        "lift": 0.0511,
+        "lift_reference_rate": null,
+        "stable_lift": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "87346163",
+          "prediction_timestamp": "2026-09-03T20:04:50.550858+00:00",
+          "odds_fetched_at": "2026-09-03T20:04:44.897736+00:00",
+          "board_generated_at": "2026-09-03T20:04:50.535533+00:00"
+        },
+        "qualification_timestamp": "2026-09-03T20:04:50.550858+00:00",
+        "board_timestamp": "2026-09-03T20:04:50.535533+00:00",
+        "slate_date": "2026-09-03"
+      }
+    },
+    "fc2:822853:player-553869:hits_runs_rbis:1:over": {
+      "canonical_id": "fc2:822853:player-553869:hits_runs_rbis:1:over",
+      "settlement_identity": [
+        "822853",
+        [
+          "player",
+          "553869"
+        ],
+        "hits_runs_rbis",
+        "1",
+        "over"
+      ],
+      "slate_date": "2026-09-03",
+      "first_published_at": "2026-09-03T20:08:00.908083+00:00",
+      "publication_provenance": {
+        "artifact_id": "861794bde76ddc5b6e572fc5fd4d44f1ca1ef9c04dd1fc60330d6fe773365095",
+        "source_commit": "96afe2a15f51e1488c25f4f6447d2b74b8b12d9a",
+        "workflow_run_id": "33800298169",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-09-03T20:07:49.930607+00:00",
+        "data_hash": "93a52f2435138409c6bf6ced34414dc8fdade9b0deae4dfd4fa166f75abab97b",
+        "live_hash": "ce6783ffc3829061d7dc4a5f1174a465390ec7721710c1ce6b7043b0a3b00fa7"
+      },
+      "snapshot": {
+        "id": "fc2:822853:player-553869:hits_runs_rbis:1:over",
+        "identity_version": 2,
+        "game_pk": 822853,
+        "player_id": 553869,
+        "combo_player_ids": null,
+        "type": "batter",
+        "name": "Elias D\u00edaz",
+        "team": "Texas Rangers",
+        "matchup": "Tampa Bay Rays @ Texas Rangers",
+        "game_start": "2026-09-04T00:05:00Z",
+        "stat": "hits_runs_rbis",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "hits_runs_rbis",
+          "value": 0.5,
+          "needs": 1
+        },
+        "prop": "Over 0.5 Hits+Runs+RBIs",
+        "hit_probability": 0.6406,
+        "market_odds": -155,
+        "market_implied": 0.6078,
+        "market_edge": 0.0328,
+        "market_hold": null,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (B), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (7.8 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "L7 avg EV 95.9mph (league ~88.5) \u2014 hot recent contact",
+          "L7 barrel% 33.3 \u2014 hot recent contact",
+          "Platoon: R bat vs LHP (favorable)",
+          "Hitters batting ahead of him: 0.333 wOBA (league ~.320)",
+          "Hitter batting behind him: 0.344 wOBA (league ~.320)",
+          "Season barrel% 9.4",
+          "Dome \u2014 weather neutral"
+        ],
+        "watchouts": [
+          "Opposing SP ERA 3.19 \u2014 elite pitcher, tough matchup",
+          "Projected 3.54 PA (batting slot 9) \u2014 a tough lineup slot for plate appearances",
+          "Team implied for 3.69 runs (league avg 4.245; line 3.5, game total 8) \u2014 a weak offensive environment",
+          "L7 sample is thin (6 PA) \u2014 treat recent-form read with caution",
+          "Opposing bullpen fatigue: 2/8 relievers over 60 pitches in L7 (fresh pen \u2014 tougher matchup late)"
+        ],
+        "prob_ci": [
+          0.6273,
+          0.6722
+        ],
+        "reliability": "B",
+        "reliability_note": null,
+        "sample_n": 63,
+        "lineup_assumed": null,
+        "base_rate": 0.6728,
+        "lift": -0.0322,
+        "lift_reference_rate": null,
+        "stable_lift": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "87346163",
+          "prediction_timestamp": "2026-09-03T20:04:50.550858+00:00",
+          "odds_fetched_at": "2026-09-03T20:04:44.897736+00:00",
+          "board_generated_at": "2026-09-03T20:04:50.535533+00:00"
+        },
+        "qualification_timestamp": "2026-09-03T20:04:50.550858+00:00",
+        "board_timestamp": "2026-09-03T20:04:50.535533+00:00",
         "slate_date": "2026-09-03"
       }
     }
