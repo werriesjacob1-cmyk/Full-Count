@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Picks Board — 2026-09-03</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+:root {
+  --bg: #f2f5ef; --surface: #ffffff; --surface-2: #e9ede4;
+  --text: #16201a; --text-dim: #5b685e; --line: rgba(22,32,26,0.12);
+  --accent: #2f8f52; --accent-bg: rgba(47,143,82,0.10);
+  --gold: #a9761e; --gold-bg: rgba(169,118,30,0.12);
+  --low: #78877e; --low-bg: rgba(120,135,126,0.12);
+  --bad: #a1432b;
+  --font-display: "Roboto Condensed", "Arial Narrow", "Noto Sans Condensed", sans-serif;
+  --font-body: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", "Cascadia Mono", "Roboto Mono", monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0f1613; --surface: #161e19; --surface-2: #1d2620;
+    --text: #edf1e8; --text-dim: #93a196; --line: rgba(255,255,255,0.10);
+    --accent: #5fbf77; --accent-bg: rgba(95,191,119,0.14);
+    --gold: #e0ac4c; --gold-bg: rgba(224,172,76,0.14);
+    --low: #6f7d73; --low-bg: rgba(111,125,115,0.16);
+    --bad: #d97a5c;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0f1613; --surface: #161e19; --surface-2: #1d2620;
+  --text: #edf1e8; --text-dim: #93a196; --line: rgba(255,255,255,0.10);
+  --accent: #5fbf77; --accent-bg: rgba(95,191,119,0.14);
+  --gold: #e0ac4c; --gold-bg: rgba(224,172,76,0.14);
+  --low: #6f7d73; --low-bg: rgba(111,125,115,0.16);
+  --bad: #d97a5c;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0; background: var(--bg); color: var(--text);
+  font-family: var(--font-body); line-height: 1.45;
+}
+header {
+  position: sticky; top: 0; z-index: 5;
+  background: var(--surface); border-bottom: 1px solid var(--line);
+  padding: 14px clamp(16px, 4vw, 40px);
+  display: flex; align-items: baseline; justify-content: space-between; gap: 16px; flex-wrap: wrap;
+}
+header h1 {
+  font-family: var(--font-display); text-transform: uppercase; letter-spacing: 0.04em;
+  font-size: clamp(20px, 3vw, 26px); margin: 0; font-weight: 700;
+}
+header .stats {
+  font-family: var(--font-mono); font-variant-numeric: tabular-nums;
+  color: var(--text-dim); font-size: 13px;
+}
+main { max-width: 1180px; margin: 0 auto; padding: 28px clamp(16px, 4vw, 40px) 60px; }
+h2 {
+  font-family: var(--font-display); text-transform: uppercase; letter-spacing: 0.05em;
+  font-size: 15px; font-weight: 700; color: var(--text-dim); margin: 0 0 10px;
+}
+section.stack { margin-bottom: 40px; }
+.section-head { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 14px; }
+.section-note { font-size: 12.5px; color: var(--text-dim); }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 12px; }
+.cat-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 14px 12px; }
+.cat-block h2 { margin-bottom: 6px; }
+.card {
+  background: var(--surface); border: 1px solid var(--line); border-radius: 6px;
+  padding: 14px; display: flex; flex-direction: column; gap: 6px;
+}
+.card.hi { border-left: 3px solid var(--accent); }
+.card.md { border-left: 3px solid var(--gold); }
+.card.lo { border-left: 3px solid var(--low); }
+.card.big { background: var(--surface-2); }
+.card-top { display: flex; align-items: center; justify-content: space-between; }
+.pill {
+  font-family: var(--font-display); text-transform: uppercase; letter-spacing: 0.04em;
+  font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 100px;
+}
+.pill.hi { background: var(--accent-bg); color: var(--accent); }
+.pill.md { background: var(--gold-bg); color: var(--gold); }
+.pill.lo { background: var(--low-bg); color: var(--low); }
+.pct {
+  font-family: var(--font-mono); font-variant-numeric: tabular-nums;
+  font-size: 22px; font-weight: 600;
+}
+.player { margin: 2px 0 0; font-size: 16.5px; font-weight: 700; text-wrap: balance; }
+.prop { margin: 0; color: var(--text); font-size: 14px; }
+.matchup { margin: 0; color: var(--text-dim); font-size: 12.5px; }
+.meta {
+  display: flex; flex-wrap: wrap; gap: 6px 12px; margin-top: 4px;
+  font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-size: 12px; color: var(--text-dim);
+}
+.tag { font-family: var(--font-body); font-size: 11px; padding: 1px 6px; border-radius: 4px; margin-left: 4px; }
+.tag.good { background: var(--accent-bg); color: var(--accent); }
+.tag.bad { background: rgba(161,67,43,0.12); color: var(--bad); }
+.lift.pos { color: var(--accent); }
+.lift.neg { color: var(--bad); }
+details.reason { margin-top: 4px; font-size: 13px; }
+details.reason summary {
+  cursor: pointer; color: var(--text-dim); font-size: 12px;
+  text-transform: uppercase; letter-spacing: 0.04em; font-family: var(--font-display); font-weight: 700;
+}
+details.reason summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+ul.why, ul.watch { margin: 6px 0 0; padding-left: 18px; }
+ul.why li { margin-bottom: 3px; }
+ul.watch { color: var(--bad); }
+p.fallback-reason { margin: 6px 0 0; color: var(--text-dim); font-size: 12.5px; }
+p.empty { color: var(--text-dim); font-style: italic; }
+footer { max-width: 1180px; margin: 0 auto; padding: 0 clamp(16px, 4vw, 40px) 40px; color: var(--text-dim); font-size: 12px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Picks Board — 2026-09-03</h1>
+  <div class="stats">8 games · generated 12:32 AM · 2 top board · 3 categories · 0 moonshots</div>
+</header>
+<main>
+  <section class="stack">
+    <div class="section-head"><h2>Best pick in every category</h2><span class="section-note">ranked high → low confidence</span></div>
+    <div class="cat-grid">
+      <section class="cat-block"><h2>Pitcher Outs Recorded</h2>
+    <article class="card lo">
+      <div class="card-top">
+        <span class="pill lo">Low</span>
+        <span class="pct">81.5%</span>
+      </div>
+      <h3 class="player">Blade Tidwell</h3>
+      <p class="prop">Over 14.5 Outs Recorded</p>
+      <p class="matchup">San Francisco Giants · San Francisco Giants @ Pittsburgh Pirates</p>
+      <div class="meta">
+        <span>Fair value ~-566 (no market price found)</span>
+        <span class="lift neg">-1.2 pts vs base rate</span>
+        <span class="sample">5 sample · grade C</span>
+      </div>
+      <details class="reason"><summary>Why</summary><ul class="why"><li>Recorded 15+ outs (5.0 IP) in 81.5% of his last 5 real starts (league 82.7%, avg 15.4 outs/start)</li></ul><ul class="watch"><li>Only 5 real starts of workload history -- shrunk heavily toward league average</li><li>No real FanDuel line found for this pitcher yet -- this threshold is model-anchored to his average workload, not a posted market number</li><li>No positive read here: 1.2 pts BELOW the 83% league base rate for this market</li></ul></details>
+    </article></section>
+<section class="cat-block"><h2>Strikeouts</h2>
+    <article class="card lo">
+      <div class="card-top">
+        <span class="pill lo">Low</span>
+        <span class="pct">62.7%</span>
+      </div>
+      <h3 class="player">Cal Quantrill</h3>
+      <p class="prop">Over 3.5 Strikeouts</p>
+      <p class="matchup">Texas Rangers · Tampa Bay Rays @ Texas Rangers</p>
+      <div class="meta">
+        <span>Fair value ~-196 (no market price found)</span>
+        <span class="lift neg">-7.1 pts vs base rate</span>
+        <span class="sample">11 sample · grade B</span>
+      </div>
+      <details class="reason"><summary>Why</summary><ul class="why"><li>Expected workload 22.8 batters faced (his own 22.5/start over 2 real starts, shrunk toward the 23.1 league mean)</li><li>L14 K% 31.1 (45 PA) — hot recent form</li><li>Recency-weighted K rate 24.0% (exp. decay, halflife 30d, 11 real starts / 226 BF) — drives the strikeout probability model</li></ul><ul class="watch"><li>Workload estimate rests on only 2 starts in the L14 window — most start-to-start variation in batters faced is noise, so this is shrunk heavily toward league average</li><li>Opposing team K% 18.5 — contact-oriented lineup, tougher matchup</li><li>Platoon disadvantage: 2 of 8 projected hitters bat right-handed against this RHP (mostly opposite-handed lineup)</li></ul></details>
+    </article></section>
+<section class="cat-block"><h2>NRFI/YRFI (Both Teams)</h2>
+    <article class="card md">
+      <div class="card-top">
+        <span class="pill md">Medium</span>
+        <span class="pct">56.6%</span>
+      </div>
+      <h3 class="player">Miami Marlins @ Kansas City Royals — 1st Inning (Both Teams)</h3>
+      <p class="prop">No runs in the 1st (both teams)</p>
+      <p class="matchup"> · Miami Marlins @ Kansas City Royals</p>
+      <div class="meta">
+        <span>Market -102 (implied 47.6%) <span class="tag good">clears</span></span>
+        <span class="lift pos">+6.7 pts vs base rate</span>
+        <span class="sample">29 sample · grade A</span>
+      </div>
+      <details class="reason"><summary>Why</summary><ul class="why"><li>Kansas City Royals scores off Sandy Alcantara (away SP) in the bottom 1st: 23.2% (shrunk, 31 starts)</li><li>Miami Marlins scores off Michael Wacha (home SP) in the top 1st: 26.3% (shrunk, 29 starts)</li><li>This is the real both-teams NRFI/YRFI market -- combines both starters&#x27; halves of the 1st, not a one-sided team read.</li></ul></details>
+    </article></section>
+    </div>
+  </section>
+
+  <section class="stack">
+    <div class="section-head"><h2>Top board</h2><span class="section-note">ranked high → low confidence</span></div>
+    <div class="grid">
+      
+    <article class="card md big">
+      <div class="card-top">
+        <span class="pill md">Medium</span>
+        <span class="pct">56.6%</span>
+      </div>
+      <h3 class="player">Miami Marlins @ Kansas City Royals — 1st Inning (Both Teams)</h3>
+      <p class="prop">No runs in the 1st (both teams)</p>
+      <p class="matchup"> · Miami Marlins @ Kansas City Royals</p>
+      <div class="meta">
+        <span>Market -102 (implied 47.6%) <span class="tag good">clears</span></span>
+        <span class="lift pos">+6.7 pts vs base rate</span>
+        <span class="sample">29 sample · grade A</span>
+      </div>
+      <details class="reason"><summary>Why</summary><ul class="why"><li>Kansas City Royals scores off Sandy Alcantara (away SP) in the bottom 1st: 23.2% (shrunk, 31 starts)</li><li>Miami Marlins scores off Michael Wacha (home SP) in the top 1st: 26.3% (shrunk, 29 starts)</li><li>This is the real both-teams NRFI/YRFI market -- combines both starters&#x27; halves of the 1st, not a one-sided team read.</li></ul></details>
+    </article>
+
+    <article class="card md big">
+      <div class="card-top">
+        <span class="pill md">Medium</span>
+        <span class="pct">55.3%</span>
+      </div>
+      <h3 class="player">Tampa Bay Rays @ Texas Rangers — 1st Inning (Both Teams)</h3>
+      <p class="prop">No runs in the 1st (both teams)</p>
+      <p class="matchup"> · Tampa Bay Rays @ Texas Rangers</p>
+      <div class="meta">
+        <span>Market -122 (implied 51.9%) <span class="tag good">clears</span></span>
+        <span class="lift pos">+5.5 pts vs base rate</span>
+        <span class="sample">11 sample · grade B</span>
+      </div>
+      <details class="reason"><summary>Why</summary><ul class="why"><li>Texas Rangers scores off Shane McClanahan (away SP) in the bottom 1st: 23.8% (shrunk, 25 starts)</li><li>Tampa Bay Rays scores off Cal Quantrill (home SP) in the top 1st: 27.4% (shrunk, 11 starts)</li><li>This is the real both-teams NRFI/YRFI market -- combines both starters&#x27; halves of the 1st, not a one-sided team read.</li></ul></details>
+    </article>
+    </div>
+  </section>
+
+  <section class="stack">
+    <div class="section-head"><h2>Moonshots</h2><span class="section-note">home-run bets, ranked high → low confidence</span></div>
+    <div class="grid">
+      <p class="empty">No moonshots today.</p>
+    </div>
+  </section>
+</main>
+<footer>No sportsbook odds were used to generate these probabilities where no market price is shown. Verify current lines and availability before betting.</footer>
+</body>
+</html>
