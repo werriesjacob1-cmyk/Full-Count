@@ -2,7 +2,7 @@
   "schema_version": 1,
   "identity_schema_version": 2,
   "rollout_version": "pre-phase-v-live-lifecycle-v1",
-  "updated_at": "2026-09-03T20:08:00.908083+00:00",
+  "updated_at": "2026-09-03T22:13:10.465507+00:00",
   "migration": {
     "version": "pre-phase-v-live-lifecycle-v1",
     "completed_at": "2026-08-17T23:14:57+00:00",
@@ -12815,6 +12815,202 @@
         },
         "qualification_timestamp": "2026-09-03T20:04:50.550858+00:00",
         "board_timestamp": "2026-09-03T20:04:50.535533+00:00",
+        "slate_date": "2026-09-03"
+      }
+    },
+    "fc2:823095:player-675961:hits:1:over": {
+      "canonical_id": "fc2:823095:player-675961:hits:1:over",
+      "settlement_identity": [
+        "823095",
+        [
+          "player",
+          "675961"
+        ],
+        "hits",
+        "1",
+        "over"
+      ],
+      "slate_date": "2026-09-03",
+      "first_published_at": "2026-09-03T22:13:10.465507+00:00",
+      "publication_provenance": {
+        "artifact_id": "c12c019935d7d2153ead088840d81b2c68c841214a5626b159fbbe3590f4c25b",
+        "source_commit": "a3fd48918e846033cd59b62b04c52b60894460b5",
+        "workflow_run_id": "33811862042",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-09-03T22:12:59.878895+00:00",
+        "data_hash": "6e417eef29bc5dcc8e1265a298b874fadcd6a5f03718650a14700a3fe0e2896e",
+        "live_hash": "19d3713e7ede7d7723873f1836547fc014a4026aeca76ba18b16c3e7be5bcc49"
+      },
+      "snapshot": {
+        "id": "fc2:823095:player-675961:hits:1:over",
+        "identity_version": 2,
+        "game_pk": 823095,
+        "player_id": 675961,
+        "combo_player_ids": null,
+        "type": "batter",
+        "name": "Alika Williams",
+        "team": "Athletics",
+        "matchup": "Athletics @ Seattle Mariners",
+        "game_start": "2026-09-04T01:40:00Z",
+        "stat": "hits",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "hits",
+          "value": 0.5,
+          "needs": 1
+        },
+        "prop": "Over 0.5 Hits",
+        "hit_probability": 0.6076,
+        "market_odds": -105,
+        "market_implied": 0.5122,
+        "market_edge": 0.0954,
+        "market_hold": null,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (B), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (13.3 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "L7 barrel% 11.1 \u2014 hot recent contact",
+          "Platoon: R bat vs LHP (favorable)",
+          "Hitters batting ahead of him: 0.330 wOBA (league ~.320)"
+        ],
+        "watchouts": [
+          "L7 avg EV 78.6mph (league ~88.5) \u2014 cold recent contact",
+          "Projected 3.63 PA (batting slot 8) \u2014 a tough lineup slot for plate appearances",
+          "AVG vs xBA: 0.272 vs 0.218 (+0.054) \u2014 outperforming his contact quality, regression risk",
+          "wOBA vs xwOBA: 0.321 vs 0.247 (+0.074) \u2014 outperforming his contact quality, regression risk",
+          "Team implied for 3.08 runs (league avg 4.245; line 2.5, game total 7.5) \u2014 a weak offensive environment",
+          "Season barrel% 0.8 \u2014 below-average barrel rate",
+          "Hitter batting behind him: 0.289 wOBA (league ~.320) \u2014 little lineup protection, an easier batter to pitch around",
+          "Wind blowing IN (2mph) \u2014 power suppressed",
+          "Opposing bullpen fatigue: 1/10 relievers over 60 pitches in L7 (fresh pen \u2014 tougher matchup late)"
+        ],
+        "prob_ci": [
+          0.5989,
+          0.6361
+        ],
+        "reliability": "B",
+        "reliability_note": null,
+        "sample_n": 62,
+        "lineup_assumed": null,
+        "base_rate": 0.5665,
+        "lift": 0.0411,
+        "lift_reference_rate": null,
+        "stable_lift": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "ad59dde3",
+          "prediction_timestamp": "2026-09-03T22:09:57.107341+00:00",
+          "odds_fetched_at": "2026-09-03T22:09:50.844073+00:00",
+          "board_generated_at": "2026-09-03T22:09:57.092391+00:00"
+        },
+        "qualification_timestamp": "2026-09-03T22:09:57.107341+00:00",
+        "board_timestamp": "2026-09-03T22:09:57.092391+00:00",
+        "slate_date": "2026-09-03"
+      }
+    },
+    "fc2:823095:player-675961:hits_runs_rbis:1:over": {
+      "canonical_id": "fc2:823095:player-675961:hits_runs_rbis:1:over",
+      "settlement_identity": [
+        "823095",
+        [
+          "player",
+          "675961"
+        ],
+        "hits_runs_rbis",
+        "1",
+        "over"
+      ],
+      "slate_date": "2026-09-03",
+      "first_published_at": "2026-09-03T22:13:10.465507+00:00",
+      "publication_provenance": {
+        "artifact_id": "c12c019935d7d2153ead088840d81b2c68c841214a5626b159fbbe3590f4c25b",
+        "source_commit": "a3fd48918e846033cd59b62b04c52b60894460b5",
+        "workflow_run_id": "33811862042",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-09-03T22:12:59.878895+00:00",
+        "data_hash": "6e417eef29bc5dcc8e1265a298b874fadcd6a5f03718650a14700a3fe0e2896e",
+        "live_hash": "19d3713e7ede7d7723873f1836547fc014a4026aeca76ba18b16c3e7be5bcc49"
+      },
+      "snapshot": {
+        "id": "fc2:823095:player-675961:hits_runs_rbis:1:over",
+        "identity_version": 2,
+        "game_pk": 823095,
+        "player_id": 675961,
+        "combo_player_ids": null,
+        "type": "batter",
+        "name": "Alika Williams",
+        "team": "Athletics",
+        "matchup": "Athletics @ Seattle Mariners",
+        "game_start": "2026-09-04T01:40:00Z",
+        "stat": "hits_runs_rbis",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "hits_runs_rbis",
+          "value": 0.5,
+          "needs": 1
+        },
+        "prop": "Over 0.5 Hits+Runs+RBIs",
+        "hit_probability": 0.6517,
+        "market_odds": -140,
+        "market_implied": 0.5833,
+        "market_edge": 0.0684,
+        "market_hold": null,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (B), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (11.2 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "L7 barrel% 11.1 \u2014 hot recent contact",
+          "Platoon: R bat vs LHP (favorable)",
+          "Hitters batting ahead of him: 0.330 wOBA (league ~.320)"
+        ],
+        "watchouts": [
+          "L7 avg EV 78.6mph (league ~88.5) \u2014 cold recent contact",
+          "Projected 3.63 PA (batting slot 8) \u2014 a tough lineup slot for plate appearances",
+          "Hitter batting behind him: 0.289 wOBA (league ~.320) \u2014 little lineup protection, an easier batter to pitch around",
+          "Team implied for 3.08 runs (league avg 4.245; line 2.5, game total 7.5) \u2014 a weak offensive environment",
+          "AVG vs xBA: 0.272 vs 0.218 (+0.054) \u2014 outperforming his contact quality, regression risk",
+          "wOBA vs xwOBA: 0.321 vs 0.247 (+0.074) \u2014 outperforming his contact quality, regression risk",
+          "Season barrel% 0.8 \u2014 below-average barrel rate",
+          "Wind blowing IN (2mph) \u2014 power suppressed",
+          "Opposing bullpen fatigue: 1/10 relievers over 60 pitches in L7 (fresh pen \u2014 tougher matchup late)"
+        ],
+        "prob_ci": [
+          0.6408,
+          0.6748
+        ],
+        "reliability": "B",
+        "reliability_note": null,
+        "sample_n": 62,
+        "lineup_assumed": null,
+        "base_rate": 0.6698,
+        "lift": -0.0181,
+        "lift_reference_rate": null,
+        "stable_lift": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "ad59dde3",
+          "prediction_timestamp": "2026-09-03T22:09:57.107341+00:00",
+          "odds_fetched_at": "2026-09-03T22:09:50.844073+00:00",
+          "board_generated_at": "2026-09-03T22:09:57.092391+00:00"
+        },
+        "qualification_timestamp": "2026-09-03T22:09:57.107341+00:00",
+        "board_timestamp": "2026-09-03T22:09:57.092391+00:00",
         "slate_date": "2026-09-03"
       }
     }
