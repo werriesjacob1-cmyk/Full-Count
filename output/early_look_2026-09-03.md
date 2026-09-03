@@ -24,6 +24,6 @@ Every player below is projected into last night's/his last game's batting slot f
 - **Taylor Walls** (Tampa Bay Rays) — Over 0.5 Hits+Runs+RBIs — 67.7% [Tampa Bay Rays @ Texas Rangers]
 - **Carson Kelly** (Chicago Cubs) — Over 0.5 Hits+Runs+RBIs — 67.5% [Milwaukee Brewers @ Chicago Cubs]
 - **Will Smith** (Los Angeles Dodgers) — Over 0.5 Hits+Runs+RBIs — 66.9% [St. Louis Cardinals @ Los Angeles Dodgers]
+- **Jackson Chourio** (Milwaukee Brewers) — Over 0.5 Hits — 66.9% [Milwaukee Brewers @ Chicago Cubs]
 - **Carter Jensen** (Kansas City Royals) — Over 0.5 Hits+Runs+RBIs — 66.9% [Miami Marlins @ Kansas City Royals]
-- **Jackson Chourio** (Milwaukee Brewers) — Over 0.5 Hits — 66.8% [Milwaukee Brewers @ Chicago Cubs]
 - **Sal Frelick** (Milwaukee Brewers) — Over 0.5 Hits+Runs+RBIs — 66.8% [Milwaukee Brewers @ Chicago Cubs]
