@@ -271,7 +271,7 @@
         {
           "prop": "Over 6.5 Strikeouts",
           "type": "pitcher",
-          "score": 41.4,
+          "score": 42.7,
           "notable_signals": 0,
           "matchup": "Chicago White Sox @ Houston Astros",
           "game_pk": 824144,
@@ -281,13 +281,16 @@
           "combo_player_ids": null,
           "signals": {
             "opp_team_k_pct": 68.0,
-            "same_hand_ratio": 21.4286,
+            "same_hand_ratio": 43.75,
             "l14_k_pct": 80.0,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 54.8113,
+            "ump_k_pct": -0.024,
+            "ump_bb_pct": 0.228
           },
-          "hit_probability": 0.2897,
-          "raw_hit_probability": 0.2897,
-          "lift": 0.0788,
+          "hit_probability": 0.2901,
+          "raw_hit_probability": 0.2901,
+          "lift": 0.0783,
           "reliability": "B",
           "sample_n": 15,
           "projection": {
@@ -297,9 +300,9 @@
           }
         },
         {
-          "prop": "Over 15.5 Outs Recorded",
+          "prop": "Over 17.5 Outs Recorded",
           "type": "pitcher",
-          "score": 47.4,
+          "score": 22.3,
           "notable_signals": 0,
           "matchup": "Chicago White Sox @ Houston Astros",
           "game_pk": 824144,
@@ -308,18 +311,18 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.6095,
+            "outs_rate": 0.4292,
             "avg_outs_per_start": 16.2
           },
-          "hit_probability": 0.6095,
+          "hit_probability": 0.4292,
           "raw_hit_probability": null,
-          "lift": -0.0236,
+          "lift": -0.0729,
           "reliability": "B",
           "sample_n": 15,
           "projection": {
             "stat": "pitcher_outs",
-            "value": 15.5,
-            "needs": 16
+            "value": 17.5,
+            "needs": 18
           }
         }
       ]

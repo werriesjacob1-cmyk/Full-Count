@@ -2373,6 +2373,140 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-03",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 55.1,
+          "notable_signals": 2,
+          "matchup": "Chicago White Sox @ Houston Astros",
+          "game_pk": 824144,
+          "team": "Houston Astros",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 76.8571,
+            "pitch_exploit": 4.5714,
+            "l7_avg_ev": 26.6667,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 8.925,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 11.3333,
+            "lineup_slot": 62.5,
+            "bullpen_fatigue": 37.037,
+            "bvp_ops": -1.824,
+            "platoon_barrel_pct": -1.76,
+            "platoon_xwoba": -2.82,
+            "park_hand_index": 1.95,
+            "opp_catcher_framing": 0.6,
+            "days_rest": 0.0,
+            "woba_ahead": 50.9091,
+            "woba_behind": 5.4545,
+            "pull_park_synergy": 1.4947,
+            "team_total_move": 0.0,
+            "team_total_open": 0.0,
+            "getaway_day": -2.0,
+            "series_game": 3.0,
+            "sp_rp_ops_gap": 0.512,
+            "vs_rp_ops": 0.252,
+            "ump_k_pct": 0.024,
+            "ump_bb_pct": -0.228
+          },
+          "hit_probability": 0.6132,
+          "raw_hit_probability": 0.6108,
+          "lift": 0.0467,
+          "reliability": "A",
+          "sample_n": 113,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 32.5,
+          "notable_signals": 0,
+          "matchup": "Chicago White Sox @ Houston Astros",
+          "game_pk": 824144,
+          "team": "Houston Astros",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": -0.72,
+            "sprint_speed": 9.375,
+            "catcher_poptime": 17.1429,
+            "on_base": 50.096
+          },
+          "hit_probability": 0.033,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 113,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 0.0,
+          "notable_signals": 0,
+          "matchup": "Chicago White Sox @ Houston Astros",
+          "game_pk": 824144,
+          "team": "Houston Astros",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0216
+          },
+          "hit_probability": 0.0216,
+          "raw_hit_probability": null,
+          "lift": -0.0263,
+          "reliability": "A",
+          "sample_n": 113,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 0.0,
+          "notable_signals": 0,
+          "matchup": "Chicago White Sox @ Houston Astros",
+          "game_pk": 824144,
+          "team": "Houston Astros",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.003
+          },
+          "hit_probability": 0.003,
+          "raw_hit_probability": null,
+          "lift": -0.0178,
+          "reliability": "A",
+          "sample_n": 113,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

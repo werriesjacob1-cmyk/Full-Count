@@ -276,9 +276,9 @@
       "date": "2026-09-03",
       "evaluations": [
         {
-          "prop": "Over 3.5 Strikeouts",
+          "prop": "Over 4.5 Strikeouts",
           "type": "pitcher",
-          "score": 45.5,
+          "score": 42.6,
           "notable_signals": 1,
           "matchup": "Boston Red Sox @ Baltimore Orioles",
           "game_pk": 824796,
@@ -288,26 +288,26 @@
           "combo_player_ids": null,
           "signals": {
             "opp_team_k_pct": 73.0,
-            "same_hand_ratio": 88.8889,
+            "same_hand_ratio": 12.5,
             "l14_k_pct": 64.7059,
             "tto_penalty": 8.0,
             "env_neutral": 50.0
           },
-          "hit_probability": 0.6238,
-          "raw_hit_probability": 0.7489,
-          "lift": -0.0742,
+          "hit_probability": 0.5871,
+          "raw_hit_probability": 0.5666,
+          "lift": 0.0779,
           "reliability": "A",
           "sample_n": 16,
           "projection": {
             "stat": "strikeouts",
-            "value": 3.5,
-            "needs": 4
+            "value": 4.5,
+            "needs": 5
           }
         },
         {
-          "prop": "Over 17.5 Outs Recorded",
+          "prop": "Over 16.5 Outs Recorded",
           "type": "pitcher",
-          "score": 39.0,
+          "score": 54.7,
           "notable_signals": 0,
           "matchup": "Boston Red Sox @ Baltimore Orioles",
           "game_pk": 824796,
@@ -316,18 +316,18 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.5,
+            "outs_rate": 0.6164,
             "avg_outs_per_start": 17.56
           },
-          "hit_probability": 0.5,
+          "hit_probability": 0.6164,
           "raw_hit_probability": null,
-          "lift": 0.0,
+          "lift": 0.023,
           "reliability": "A",
           "sample_n": 16,
           "projection": {
             "stat": "pitcher_outs",
-            "value": 17.5,
-            "needs": 18
+            "value": 16.5,
+            "needs": 17
           }
         }
       ]

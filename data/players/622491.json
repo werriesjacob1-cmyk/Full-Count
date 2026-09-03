@@ -332,7 +332,7 @@
         {
           "prop": "Over 4.5 Strikeouts",
           "type": "pitcher",
-          "score": 41.4,
+          "score": 36.9,
           "notable_signals": 0,
           "matchup": "Chicago White Sox @ Houston Astros",
           "game_pk": 824144,
@@ -344,11 +344,14 @@
             "opp_team_k_pct": 47.0,
             "same_hand_ratio": 88.8889,
             "l14_k_pct": 0.0,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 54.8113,
+            "ump_k_pct": -0.024,
+            "ump_bb_pct": 0.228
           },
-          "hit_probability": 0.3925,
-          "raw_hit_probability": 0.3925,
-          "lift": -0.1163,
+          "hit_probability": 0.3927,
+          "raw_hit_probability": 0.3927,
+          "lift": -0.1165,
           "reliability": "A",
           "sample_n": 22,
           "projection": {
@@ -358,9 +361,9 @@
           }
         },
         {
-          "prop": "Over 14.5 Outs Recorded",
+          "prop": "Over 15.5 Outs Recorded",
           "type": "pitcher",
-          "score": 35.9,
+          "score": 18.3,
           "notable_signals": 0,
           "matchup": "Chicago White Sox @ Houston Astros",
           "game_pk": 824144,
@@ -369,18 +372,46 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.6773,
+            "outs_rate": 0.495,
             "avg_outs_per_start": 15.09
           },
-          "hit_probability": 0.6773,
+          "hit_probability": 0.495,
           "raw_hit_probability": null,
-          "lift": -0.15,
+          "lift": -0.1482,
           "reliability": "A",
           "sample_n": 22,
           "projection": {
             "stat": "pitcher_outs",
-            "value": 14.5,
-            "needs": 15
+            "value": 15.5,
+            "needs": 16
+          }
+        },
+        {
+          "prop": "Over 10.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 0.2,
+          "notable_signals": 0,
+          "matchup": "Chicago White Sox @ Houston Astros",
+          "game_pk": 824144,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            622491,
+            686613
+          ],
+          "signals": {
+            "combined_k_edge": -0.2348
+          },
+          "hit_probability": 0.3378,
+          "raw_hit_probability": null,
+          "lift": -0.2348,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 10.5,
+            "needs": 11
           }
         }
       ]

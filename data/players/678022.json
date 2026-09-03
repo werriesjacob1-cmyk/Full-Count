@@ -252,9 +252,9 @@
       "date": "2026-09-03",
       "evaluations": [
         {
-          "prop": "Over 3.5 Strikeouts",
+          "prop": "Over 5.5 Strikeouts",
           "type": "pitcher",
-          "score": 48.1,
+          "score": 45.5,
           "notable_signals": 0,
           "matchup": "Athletics @ Seattle Mariners",
           "game_pk": 823095,
@@ -264,25 +264,25 @@
           "combo_player_ids": null,
           "signals": {
             "opp_team_k_pct": 63.0,
-            "same_hand_ratio": 88.8889,
+            "same_hand_ratio": 21.4286,
             "l14_k_pct": 52.3529,
             "env_neutral": 50.0
           },
-          "hit_probability": 0.6216,
-          "raw_hit_probability": 0.7378,
-          "lift": -0.0764,
+          "hit_probability": 0.3729,
+          "raw_hit_probability": 0.3729,
+          "lift": 0.0216,
           "reliability": "B",
           "sample_n": 12,
           "projection": {
             "stat": "strikeouts",
-            "value": 3.5,
-            "needs": 4
+            "value": 5.5,
+            "needs": 6
           }
         },
         {
           "prop": "Over 13.5 Outs Recorded",
           "type": "pitcher",
-          "score": 44.3,
+          "score": 45.2,
           "notable_signals": 0,
           "matchup": "Athletics @ Seattle Mariners",
           "game_pk": 823095,
@@ -291,12 +291,12 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.7358,
+            "outs_rate": 0.7335,
             "avg_outs_per_start": 13.92
           },
-          "hit_probability": 0.7358,
+          "hit_probability": 0.7335,
           "raw_hit_probability": null,
-          "lift": -0.1383,
+          "lift": -0.1337,
           "reliability": "B",
           "sample_n": 12,
           "projection": {
