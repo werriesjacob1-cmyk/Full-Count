@@ -12,7 +12,13 @@
 
 set -u
 
-ROOT="$(git rev-parse --show-toplevel 2>/dev/null)" || exit 0
+# HONOUR THE PROJECT DIR THE HOOK RESOLVED. The hook computes
+# R="${CLAUDE_PROJECT_DIR:-$(git rev-parse --show-toplevel)}" and passes it as
+# $1; this script used to re-derive ROOT from cwd and ignore it, so with
+# CLAUDE_PROJECT_DIR set and cwd outside a repo it printed nothing at all, and
+# with cwd in a DIFFERENT repo it would have reported the wrong worktree.
+ROOT="${1:-${CLAUDE_PROJECT_DIR:-}}"
+[ -n "$ROOT" ] || ROOT="$(git rev-parse --show-toplevel 2>/dev/null)" || exit 0
 [ -n "$ROOT" ] || exit 0
 cd "$ROOT" || exit 0
 

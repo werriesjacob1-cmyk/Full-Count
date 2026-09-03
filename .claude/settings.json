@@ -68,6 +68,14 @@
       "Write(./backtest/calibration.py)",
       "Write(./backtest/calibrators_by_market.json)",
 
+      "Write(./recommendation_funnel.py)",
+      "Write(./stable_base_rate.py)",
+      "Write(./value_board.py)",
+      "Write(./grade_value.py)",
+      "Write(./backtest/refit_calibrators.py)",
+      "Write(./backtest/calibrator_oldscorer.json)",
+      "Write(./backtest/reliability_bands.json)",
+
       "Bash(git merge:*)",
       "Bash(git rebase:*)",
       "Bash(git reset --hard:*)",
@@ -83,22 +91,9 @@
         "hooks": [
           {
             "type": "command",
-            "command": "R=\"${CLAUDE_PROJECT_DIR:-$(git rev-parse --show-toplevel 2>/dev/null)}\"; [ -n \"$R\" ] || exit 0; [ -x \"$R/.claude/session-context.sh\" ] || exit 0; bash \"$R/.claude/session-context.sh\" 2>/dev/null || true",
+            "command": "R=\"${CLAUDE_PROJECT_DIR:-$(git rev-parse --show-toplevel 2>/dev/null)}\"; [ -n \"$R\" ] || exit 0; [ -x \"$R/.claude/session-context.sh\" ] || exit 0; bash \"$R/.claude/session-context.sh\" \"$R\" 2>/dev/null || true",
             "timeout": 10,
             "statusMessage": "Reading worktree state..."
-          }
-        ]
-      }
-    ],
-    "PostToolUse": [
-      {
-        "matcher": "Bash|Write|Edit",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "R=\"${CLAUDE_PROJECT_DIR:-$(git rev-parse --show-toplevel 2>/dev/null)}\"; [ -n \"$R\" ] || exit 0; [ -x \"$R/.claude/worktree-autosave.sh\" ] || exit 0; S=\"$(git rev-parse --absolute-git-dir 2>/dev/null)/fc-autosave\"; mkdir -p \"$S\" 2>/dev/null; f=\"$S/last-run\"; now=$(date +%s); last=$(cat \"$f\" 2>/dev/null || echo 0); if [ $((now - last)) -ge 180 ]; then echo \"$now\" > \"$f\"; nohup bash \"$R/.claude/worktree-autosave.sh\" >/dev/null 2>&1 & fi; exit 0",
-            "timeout": 5,
-            "statusMessage": "Autosave check..."
           }
         ]
       }
