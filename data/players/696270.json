@@ -303,8 +303,8 @@
         {
           "prop": "Over 3.5 Strikeouts",
           "type": "pitcher",
-          "score": 57.6,
-          "notable_signals": 0,
+          "score": 39.4,
+          "notable_signals": 1,
           "matchup": "Los Angeles Angels @ Pittsburgh Pirates",
           "game_pk": 823338,
           "team": "Los Angeles Angels",
@@ -313,9 +313,12 @@
           "combo_player_ids": null,
           "signals": {
             "opp_team_k_pct": 74.0,
-            "same_hand_ratio": 100.0,
+            "same_hand_ratio": 57.1429,
             "l14_k_pct": 0.0,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 70.1938,
+            "ump_k_pct": -0.408,
+            "ump_bb_pct": -0.12
           },
           "hit_probability": 0.5944,
           "raw_hit_probability": 0.6026,
@@ -331,7 +334,7 @@
         {
           "prop": "Over 14.5 Outs Recorded",
           "type": "pitcher",
-          "score": 32.2,
+          "score": 32.1,
           "notable_signals": 0,
           "matchup": "Los Angeles Angels @ Pittsburgh Pirates",
           "game_pk": 823338,
@@ -352,6 +355,34 @@
             "stat": "pitcher_outs",
             "value": 14.5,
             "needs": 15
+          }
+        },
+        {
+          "prop": "Over 9.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 33.5,
+          "notable_signals": 0,
+          "matchup": "Los Angeles Angels @ Pittsburgh Pirates",
+          "game_pk": 823338,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            696270,
+            683003
+          ],
+          "signals": {
+            "combined_k_edge": -0.0983
+          },
+          "hit_probability": 0.4815,
+          "raw_hit_probability": null,
+          "lift": -0.0983,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 9.5,
+            "needs": 10
           }
         }
       ]

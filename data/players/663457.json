@@ -1329,6 +1329,139 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-04",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 63.9,
+          "notable_signals": 3,
+          "matchup": "Arizona Diamondbacks @ Houston Astros",
+          "game_pk": 824146,
+          "team": "Arizona Diamondbacks",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 100.0,
+            "l7_avg_ev": 100.0,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 14.475,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 42.0,
+            "lineup_slot": 50.0,
+            "bullpen_fatigue": 18.5185,
+            "platoon_barrel_pct": 2.48,
+            "platoon_xwoba": 2.64,
+            "park_hand_index": 1.15,
+            "opp_catcher_framing": 0.96,
+            "days_rest": 2.0,
+            "woba_ahead": 34.5455,
+            "woba_behind": 32.7273,
+            "pull_park_synergy": 0.5635,
+            "hard_hit_105_rate": 0.7675,
+            "team_total_move": 0.0,
+            "team_total_open": 0.0,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": -0.168,
+            "vs_rp_ops": -0.516,
+            "ump_k_pct": 0.096,
+            "ump_bb_pct": -0.384
+          },
+          "hit_probability": 0.6793,
+          "raw_hit_probability": 0.6877,
+          "lift": 0.0091,
+          "reliability": "B",
+          "sample_n": 70,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 29.7,
+          "notable_signals": 0,
+          "matchup": "Arizona Diamondbacks @ Houston Astros",
+          "game_pk": 824146,
+          "team": "Arizona Diamondbacks",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": 0.6,
+            "sprint_speed": 9.375,
+            "catcher_poptime": 20.0,
+            "on_base": 33.7812
+          },
+          "hit_probability": 0.034,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "B",
+          "sample_n": 70,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 12.3,
+          "notable_signals": 0,
+          "matchup": "Arizona Diamondbacks @ Houston Astros",
+          "game_pk": 824146,
+          "team": "Arizona Diamondbacks",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0773
+          },
+          "hit_probability": 0.0773,
+          "raw_hit_probability": null,
+          "lift": 0.0295,
+          "reliability": "B",
+          "sample_n": 70,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 14.8,
+          "notable_signals": 1,
+          "matchup": "Arizona Diamondbacks @ Houston Astros",
+          "game_pk": 824146,
+          "team": "Arizona Diamondbacks",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0713
+          },
+          "hit_probability": 0.0713,
+          "raw_hit_probability": null,
+          "lift": 0.0505,
+          "reliability": "B",
+          "sample_n": 70,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

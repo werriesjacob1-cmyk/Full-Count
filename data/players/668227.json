@@ -2058,6 +2058,109 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-04",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 87.5,
+          "notable_signals": 3,
+          "matchup": "Athletics @ Seattle Mariners",
+          "game_pk": 823093,
+          "team": "Seattle Mariners",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 100.0,
+            "pitch_exploit": 1.7143,
+            "l7_avg_ev": 83.6184,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 15.0,
+            "park_hr_index": 57.5,
+            "season_barrel_pct": 30.6667,
+            "lineup_slot": 100.0,
+            "bullpen_fatigue": 50.0,
+            "platoon_barrel_pct": 1.44,
+            "platoon_xwoba": 2.4,
+            "park_hand_index": 0.47,
+            "opp_catcher_framing": 0.36,
+            "days_rest": 0.0,
+            "woba_behind": 53.6364,
+            "pull_park_synergy": 0.1003,
+            "hard_hit_105_rate": -0.0775,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": 0.352,
+            "vs_rp_ops": 1.716,
+            "ump_k_pct": 0.144,
+            "ump_bb_pct": 0.468
+          },
+          "hit_probability": 0.6414,
+          "raw_hit_probability": 0.632,
+          "lift": 0.074,
+          "reliability": "A",
+          "sample_n": 133,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 3.7,
+          "notable_signals": 0,
+          "matchup": "Athletics @ Seattle Mariners",
+          "game_pk": 823093,
+          "team": "Seattle Mariners",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0435
+          },
+          "hit_probability": 0.0435,
+          "raw_hit_probability": null,
+          "lift": -0.0043,
+          "reliability": "A",
+          "sample_n": 133,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 2.2,
+          "notable_signals": 0,
+          "matchup": "Athletics @ Seattle Mariners",
+          "game_pk": 823093,
+          "team": "Seattle Mariners",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0214
+          },
+          "hit_probability": 0.0214,
+          "raw_hit_probability": null,
+          "lift": 0.0006,
+          "reliability": "A",
+          "sample_n": 133,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

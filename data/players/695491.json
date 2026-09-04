@@ -726,6 +726,85 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-04",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 58.4,
+          "notable_signals": 2,
+          "matchup": "St. Louis Cardinals @ Colorado Rockies",
+          "game_pk": 824311,
+          "team": "St. Louis Cardinals",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 100.0,
+            "l7_avg_ev": 67.8846,
+            "l7_barrel_pct": 95.7143,
+            "park_hr_index": 41.7,
+            "season_barrel_pct": 100.0,
+            "lineup_slot": 37.5,
+            "bullpen_fatigue": 33.3333,
+            "platoon_barrel_pct": 2.8,
+            "platoon_xwoba": -1.74,
+            "park_hand_index": -0.02,
+            "opp_catcher_framing": 0.6,
+            "days_rest": 0.0,
+            "woba_behind": 0.0,
+            "team_total_move": -6.0,
+            "team_total_open": 4.0,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": -2.464,
+            "vs_rp_ops": -0.828,
+            "ump_k_pct": -0.204,
+            "ump_bb_pct": -0.624
+          },
+          "hit_probability": 0.5609,
+          "raw_hit_probability": 0.5729,
+          "lift": -0.0065,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 37.6,
+          "notable_signals": 0,
+          "matchup": "St. Louis Cardinals @ Colorado Rockies",
+          "game_pk": 824311,
+          "team": "St. Louis Cardinals",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": 4.8,
+            "sprint_speed": 37.5,
+            "catcher_poptime": 11.4286,
+            "on_base": 16.5067
+          },
+          "hit_probability": 0.1142,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

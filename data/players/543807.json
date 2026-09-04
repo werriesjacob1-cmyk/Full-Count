@@ -1498,6 +1498,111 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-04",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 76.4,
+          "notable_signals": 2,
+          "matchup": "Toronto Blue Jays @ Kansas City Royals",
+          "game_pk": 824067,
+          "team": "Toronto Blue Jays",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 12.2857,
+            "pitch_exploit": 1.1429,
+            "l7_avg_ev": 99.1964,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 60.9,
+            "season_barrel_pct": 22.0,
+            "lineup_slot": 87.5,
+            "bullpen_fatigue": 0.0,
+            "platoon_barrel_pct": -0.8,
+            "platoon_xwoba": -1.8,
+            "park_hand_index": 0.27,
+            "opp_catcher_framing": -0.36,
+            "days_rest": 2.0,
+            "woba_ahead": 37.2727,
+            "woba_behind": 13.6364,
+            "pull_park_synergy": 0.1389,
+            "hard_hit_105_rate": 0.1525,
+            "team_total_move": 0.0,
+            "team_total_open": 0.0,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": 0.64,
+            "vs_rp_ops": 0.864,
+            "ump_k_pct": 0.156,
+            "ump_bb_pct": 0.384
+          },
+          "hit_probability": 0.6287,
+          "raw_hit_probability": 0.6224,
+          "lift": 0.0613,
+          "reliability": "A",
+          "sample_n": 106,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 6.1,
+          "notable_signals": 0,
+          "matchup": "Toronto Blue Jays @ Kansas City Royals",
+          "game_pk": 824067,
+          "team": "Toronto Blue Jays",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0527
+          },
+          "hit_probability": 0.0527,
+          "raw_hit_probability": null,
+          "lift": 0.0049,
+          "reliability": "A",
+          "sample_n": 106,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 3.4,
+          "notable_signals": 0,
+          "matchup": "Toronto Blue Jays @ Kansas City Royals",
+          "game_pk": 824067,
+          "team": "Toronto Blue Jays",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0259
+          },
+          "hit_probability": 0.0259,
+          "raw_hit_probability": null,
+          "lift": 0.0051,
+          "reliability": "A",
+          "sample_n": 106,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

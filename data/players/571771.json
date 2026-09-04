@@ -428,6 +428,58 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-04",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 27.4,
+          "notable_signals": 1,
+          "matchup": "Washington Nationals @ Los Angeles Dodgers",
+          "game_pk": 823905,
+          "team": "Los Angeles Dodgers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 100.0,
+            "l7_avg_ev": 12.0833,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 15.0,
+            "park_hr_index": 37.2,
+            "season_barrel_pct": 35.3333,
+            "lineup_slot": 0.0,
+            "bullpen_fatigue": 15.1515,
+            "platoon_barrel_pct": 4.8,
+            "platoon_xwoba": -1.92,
+            "opp_catcher_framing": -0.12,
+            "days_rest": 0.0,
+            "woba_ahead": 13.6364,
+            "woba_behind": 47.2727,
+            "team_total_move": 0.0,
+            "team_total_open": 0.0,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": -3.416,
+            "vs_rp_ops": -3.888,
+            "ump_k_pct": 0.144,
+            "ump_bb_pct": 0.288
+          },
+          "hit_probability": 0.5616,
+          "raw_hit_probability": 0.5734,
+          "lift": -0.0058,
+          "reliability": "D",
+          "sample_n": 22,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

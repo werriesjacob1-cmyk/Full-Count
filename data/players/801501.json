@@ -279,6 +279,55 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-04",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 1.1,
+          "notable_signals": 2,
+          "matchup": "San Francisco Giants @ New York Mets",
+          "game_pk": 823579,
+          "team": "San Francisco Giants",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 20.2857,
+            "l7_avg_ev": 0.0,
+            "l7_barrel_pct": 0.0,
+            "park_hr_index": 27.1,
+            "lineup_slot": 12.5,
+            "bullpen_fatigue": 18.5185,
+            "platoon_barrel_pct": -5.0,
+            "platoon_xwoba": -4.32,
+            "park_hand_index": -0.74,
+            "opp_catcher_framing": -0.12,
+            "days_rest": 0.0,
+            "woba_ahead": 0.0,
+            "woba_behind": 0.0,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "ump_k_pct": 0.12,
+            "ump_bb_pct": 0.096
+          },
+          "hit_probability": 0.4856,
+          "raw_hit_probability": 0.4856,
+          "lift": -0.0818,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

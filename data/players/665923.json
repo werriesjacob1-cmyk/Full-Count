@@ -1675,6 +1675,140 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-04",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 37.0,
+          "notable_signals": 3,
+          "matchup": "Chicago Cubs @ Miami Marlins",
+          "game_pk": 823824,
+          "team": "Miami Marlins",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 36.5714,
+            "pitch_exploit": 9.7143,
+            "l7_avg_ev": 0.0,
+            "l7_barrel_pct": 75.0,
+            "bat_speed_trend": 15.0,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 34.0,
+            "lineup_slot": 37.5,
+            "bullpen_fatigue": 37.037,
+            "platoon_barrel_pct": 2.08,
+            "platoon_xwoba": -0.9,
+            "park_hand_index": -3.49,
+            "opp_catcher_framing": -0.24,
+            "days_rest": 2.0,
+            "woba_ahead": 9.0909,
+            "woba_behind": 43.6364,
+            "pull_park_synergy": -3.4691,
+            "hard_hit_105_rate": 0.1125,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": -0.744,
+            "vs_rp_ops": 0.0,
+            "ump_k_pct": -0.024,
+            "ump_bb_pct": -0.156
+          },
+          "hit_probability": 0.5537,
+          "raw_hit_probability": 0.5678,
+          "lift": -0.0137,
+          "reliability": "B",
+          "sample_n": 77,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 77.1,
+          "notable_signals": 1,
+          "matchup": "Chicago Cubs @ Miami Marlins",
+          "game_pk": 823824,
+          "team": "Miami Marlins",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": -1.02,
+            "sprint_speed": 81.25,
+            "catcher_poptime": 17.1429,
+            "on_base": 89.4434
+          },
+          "hit_probability": 0.348,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "B",
+          "sample_n": 77,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 5.7,
+          "notable_signals": 0,
+          "matchup": "Chicago Cubs @ Miami Marlins",
+          "game_pk": 823824,
+          "team": "Miami Marlins",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0511
+          },
+          "hit_probability": 0.0511,
+          "raw_hit_probability": null,
+          "lift": 0.0033,
+          "reliability": "B",
+          "sample_n": 77,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 0.5,
+          "notable_signals": 0,
+          "matchup": "Chicago Cubs @ Miami Marlins",
+          "game_pk": 823824,
+          "team": "Miami Marlins",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0146
+          },
+          "hit_probability": 0.0146,
+          "raw_hit_probability": null,
+          "lift": -0.0062,
+          "reliability": "B",
+          "sample_n": 77,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

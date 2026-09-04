@@ -573,6 +573,107 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-04",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 60.2,
+          "notable_signals": 1,
+          "matchup": "Arizona Diamondbacks @ Houston Astros",
+          "game_pk": 824146,
+          "team": "Arizona Diamondbacks",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "sp_era_weak": 100.0,
+            "l7_avg_ev": 0.0,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 47.3333,
+            "lineup_slot": 62.5,
+            "bullpen_fatigue": 18.5185,
+            "platoon_barrel_pct": 1.6,
+            "platoon_xwoba": 1.32,
+            "opp_catcher_framing": 0.96,
+            "days_rest": 4.0,
+            "woba_ahead": 71.8182,
+            "woba_behind": 5.4545,
+            "hard_hit_105_rate": 1.645,
+            "team_total_move": 0.0,
+            "team_total_open": 0.0,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": 0.144,
+            "vs_rp_ops": 0.624,
+            "ump_k_pct": 0.096,
+            "ump_bb_pct": -0.384
+          },
+          "hit_probability": 0.6177,
+          "raw_hit_probability": 0.6142,
+          "lift": 0.0503,
+          "reliability": "A",
+          "sample_n": 120,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 21.0,
+          "notable_signals": 1,
+          "matchup": "Arizona Diamondbacks @ Houston Astros",
+          "game_pk": 824146,
+          "team": "Arizona Diamondbacks",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.1124
+          },
+          "hit_probability": 0.1124,
+          "raw_hit_probability": null,
+          "lift": 0.0646,
+          "reliability": "A",
+          "sample_n": 120,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 10.0,
+          "notable_signals": 1,
+          "matchup": "Arizona Diamondbacks @ Houston Astros",
+          "game_pk": 824146,
+          "team": "Arizona Diamondbacks",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0522
+          },
+          "hit_probability": 0.0522,
+          "raw_hit_probability": null,
+          "lift": 0.0314,
+          "reliability": "A",
+          "sample_n": 120,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

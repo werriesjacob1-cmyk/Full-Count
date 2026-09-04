@@ -141,6 +141,34 @@
             "value": 3.5,
             "needs": 4
           }
+        },
+        {
+          "prop": "Over 9.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 0.2,
+          "notable_signals": 0,
+          "matchup": "San Francisco Giants @ New York Mets",
+          "game_pk": 823579,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            683363,
+            690997
+          ],
+          "signals": {
+            "combined_k_edge": -0.2338
+          },
+          "hit_probability": 0.346,
+          "raw_hit_probability": null,
+          "lift": -0.2338,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 9.5,
+            "needs": 10
+          }
         }
       ]
     }

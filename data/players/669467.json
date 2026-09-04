@@ -146,7 +146,7 @@
         {
           "prop": "Over 3.5 Strikeouts",
           "type": "pitcher",
-          "score": 23.7,
+          "score": 21.6,
           "notable_signals": 0,
           "matchup": "St. Louis Cardinals @ Colorado Rockies",
           "game_pk": 824311,
@@ -176,7 +176,7 @@
         {
           "prop": "Over 16.5 Outs Recorded",
           "type": "pitcher",
-          "score": 56.5,
+          "score": 56.4,
           "notable_signals": 1,
           "matchup": "St. Louis Cardinals @ Colorado Rockies",
           "game_pk": 824311,
@@ -197,6 +197,34 @@
             "stat": "pitcher_outs",
             "value": 16.5,
             "needs": 17
+          }
+        },
+        {
+          "prop": "Over 6.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 55.0,
+          "notable_signals": 0,
+          "matchup": "St. Louis Cardinals @ Colorado Rockies",
+          "game_pk": 824311,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            669467,
+            663372
+          ],
+          "signals": {
+            "combined_k_edge": 0.0287
+          },
+          "hit_probability": 0.6188,
+          "raw_hit_probability": null,
+          "lift": 0.0287,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 6.5,
+            "needs": 7
           }
         }
       ]
