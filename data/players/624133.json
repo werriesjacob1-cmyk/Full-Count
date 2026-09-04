@@ -325,9 +325,9 @@
       "date": "2026-09-04",
       "evaluations": [
         {
-          "prop": "Over 3.5 Strikeouts",
+          "prop": "Over 5.5 Strikeouts",
           "type": "pitcher",
-          "score": 32.2,
+          "score": 32.1,
           "notable_signals": 0,
           "matchup": "Boston Red Sox @ Baltimore Orioles",
           "game_pk": 824797,
@@ -336,26 +336,26 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "opp_team_k_pct": 73.0,
+            "opp_team_k_pct": 74.0,
             "same_hand_ratio": 12.5,
             "l14_k_pct": 0.0,
             "env_neutral": 50.0
           },
-          "hit_probability": 0.6112,
-          "raw_hit_probability": 0.6857,
-          "lift": -0.0878,
+          "hit_probability": 0.3135,
+          "raw_hit_probability": 0.3135,
+          "lift": -0.0381,
           "reliability": "A",
           "sample_n": 24,
           "projection": {
             "stat": "strikeouts",
-            "value": 3.5,
-            "needs": 4
+            "value": 5.5,
+            "needs": 6
           }
         },
         {
           "prop": "Over 14.5 Outs Recorded",
           "type": "pitcher",
-          "score": 38.4,
+          "score": 37.6,
           "notable_signals": 0,
           "matchup": "Boston Red Sox @ Baltimore Orioles",
           "game_pk": 824797,
@@ -364,12 +364,12 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.6546,
+            "outs_rate": 0.6563,
             "avg_outs_per_start": 15.46
           },
-          "hit_probability": 0.6546,
+          "hit_probability": 0.6563,
           "raw_hit_probability": null,
-          "lift": -0.1185,
+          "lift": -0.1251,
           "reliability": "A",
           "sample_n": 24,
           "projection": {

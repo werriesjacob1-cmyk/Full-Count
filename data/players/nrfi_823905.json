@@ -1,0 +1,37 @@
+{
+  "player_id": "nrfi_823905",
+  "name": "Washington Nationals @ Los Angeles Dodgers \u2014 1st Inning (Both Teams)",
+  "snapshots": [
+    {
+      "date": "2026-09-04",
+      "evaluations": [
+        {
+          "prop": "A run scores in the 1st (either team)",
+          "type": "game",
+          "score": 38.7,
+          "notable_signals": 0,
+          "matchup": "Washington Nationals @ Los Angeles Dodgers",
+          "game_pk": 823905,
+          "team": null,
+          "side": "both",
+          "lean": "YRFI",
+          "combo_player_ids": null,
+          "signals": {
+            "home_team_scores_p": 0.3087,
+            "away_team_scores_p": 0.2858,
+            "fi_n_starts": 4.0
+          },
+          "hit_probability": 0.5063,
+          "raw_hit_probability": null,
+          "lift": 0.0047,
+          "reliability": "D",
+          "sample_n": 4,
+          "projection": {
+            "stat": "nrfi_combined",
+            "value": 50.6
+          }
+        }
+      ]
+    }
+  ]
+}
