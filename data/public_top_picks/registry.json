@@ -2,7 +2,7 @@
   "schema_version": 1,
   "identity_schema_version": 2,
   "rollout_version": "pre-phase-v-live-lifecycle-v1",
-  "updated_at": "2026-09-04T21:52:56.304590+00:00",
+  "updated_at": "2026-09-04T22:07:39.920796+00:00",
   "migration": {
     "version": "pre-phase-v-live-lifecycle-v1",
     "completed_at": "2026-08-17T23:14:57+00:00",
@@ -14178,6 +14178,104 @@
         },
         "qualification_timestamp": "2026-09-04T21:50:43.135732+00:00",
         "board_timestamp": "2026-09-04T21:50:43.100035+00:00",
+        "slate_date": "2026-09-04"
+      }
+    },
+    "fc2:823905:player-500743:hits:1:over": {
+      "canonical_id": "fc2:823905:player-500743:hits:1:over",
+      "settlement_identity": [
+        "823905",
+        [
+          "player",
+          "500743"
+        ],
+        "hits",
+        "1",
+        "over"
+      ],
+      "slate_date": "2026-09-04",
+      "first_published_at": "2026-09-04T22:07:39.920796+00:00",
+      "publication_provenance": {
+        "artifact_id": "0081e1f7e290b53ce5f3826e84561b946d573952dd55a469db461f17dc0a8842",
+        "source_commit": "c55ac0d392a75821b6f7ec62c8d9e3c7d6ea4edb",
+        "workflow_run_id": "33924056840",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-09-04T22:07:29.446581+00:00",
+        "data_hash": "6987ece6f9e5e5ae0655db1b6d0bdeccbe07141b0986f99d06510b9c4a521df8",
+        "live_hash": "3b6f15f43712abeb1dca26ed270d52c519897a6f88809c233b7e9eaefc75cd04"
+      },
+      "snapshot": {
+        "id": "fc2:823905:player-500743:hits:1:over",
+        "identity_version": 2,
+        "game_pk": 823905,
+        "player_id": 500743,
+        "combo_player_ids": null,
+        "type": "batter",
+        "name": "Miguel Rojas",
+        "team": "Los Angeles Dodgers",
+        "matchup": "Washington Nationals @ Los Angeles Dodgers",
+        "game_start": "2026-09-05T02:10:00Z",
+        "stat": "hits",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "hits",
+          "value": 0.5,
+          "needs": 1
+        },
+        "prop": "Over 0.5 Hits",
+        "hit_probability": 0.6323,
+        "market_odds": -130,
+        "market_implied": 0.5652,
+        "market_edge": 0.0671,
+        "market_hold": null,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (A), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (10.9 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "L7 barrel% 33.3 \u2014 hot recent contact",
+          "Bat speed trending up L14 (+2.6mph 2nd-half vs 1st-half)",
+          "Platoon: R bat vs LHP (favorable)",
+          "Opposing SP ERA 5.59 \u2014 shaky matchup for the pitcher",
+          "Projected 4.09 PA (batting slot 6)",
+          "Team implied for 5.32 runs (league avg 4.245; line 4.5, game total 8.5) \u2014 a strong offensive environment",
+          "Hitters batting ahead of him: 0.358 wOBA (league ~.320)"
+        ],
+        "watchouts": [
+          "L7 avg EV 86.1mph (league ~88.5) \u2014 cold recent contact",
+          "Season barrel% 5.1 \u2014 below-average barrel rate",
+          "Hitter batting behind him: 0.317 wOBA (league ~.320) \u2014 little lineup protection, an easier batter to pitch around",
+          "Wind blowing IN (6mph) \u2014 power suppressed",
+          "Opposing bullpen fatigue: 1/11 relievers over 60 pitches in L7 (fresh pen \u2014 tougher matchup late)"
+        ],
+        "prob_ci": [
+          0.6236,
+          0.6608
+        ],
+        "reliability": "A",
+        "reliability_note": null,
+        "sample_n": 84,
+        "lineup_assumed": null,
+        "base_rate": 0.5674,
+        "lift": 0.0649,
+        "lift_reference_rate": null,
+        "stable_lift": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "a0438837",
+          "prediction_timestamp": "2026-09-04T22:05:12.690038+00:00",
+          "odds_fetched_at": "2026-09-04T22:05:03.267721+00:00",
+          "board_generated_at": "2026-09-04T22:05:12.656855+00:00"
+        },
+        "qualification_timestamp": "2026-09-04T22:05:12.690038+00:00",
+        "board_timestamp": "2026-09-04T22:05:12.656855+00:00",
         "slate_date": "2026-09-04"
       }
     }
