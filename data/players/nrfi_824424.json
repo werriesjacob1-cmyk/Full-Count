@@ -1,0 +1,37 @@
+{
+  "player_id": "nrfi_824424",
+  "name": "Detroit Tigers @ Cleveland Guardians \u2014 1st Inning (Both Teams)",
+  "snapshots": [
+    {
+      "date": "2026-09-04",
+      "evaluations": [
+        {
+          "prop": "No runs in the 1st (both teams)",
+          "type": "game",
+          "score": 10.6,
+          "notable_signals": 0,
+          "matchup": "Detroit Tigers @ Cleveland Guardians",
+          "game_pk": 824424,
+          "team": null,
+          "side": "both",
+          "lean": "NRFI",
+          "combo_player_ids": null,
+          "signals": {
+            "home_team_scores_p": 0.247,
+            "away_team_scores_p": 0.2831,
+            "fi_n_starts": 2.0
+          },
+          "hit_probability": 0.5398,
+          "raw_hit_probability": null,
+          "lift": 0.0414,
+          "reliability": "D",
+          "sample_n": 2,
+          "projection": {
+            "stat": "nrfi_combined",
+            "value": 54.0
+          }
+        }
+      ]
+    }
+  ]
+}

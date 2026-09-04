@@ -1,0 +1,37 @@
+{
+  "player_id": "nrfi_823256",
+  "name": "New York Yankees @ San Diego Padres \u2014 1st Inning (Both Teams)",
+  "snapshots": [
+    {
+      "date": "2026-09-04",
+      "evaluations": [
+        {
+          "prop": "No runs in the 1st (both teams)",
+          "type": "game",
+          "score": 65.1,
+          "notable_signals": 0,
+          "matchup": "New York Yankees @ San Diego Padres",
+          "game_pk": 823256,
+          "team": null,
+          "side": "both",
+          "lean": "NRFI",
+          "combo_player_ids": null,
+          "signals": {
+            "home_team_scores_p": 0.2795,
+            "away_team_scores_p": 0.2629,
+            "fi_n_starts": 17.0
+          },
+          "hit_probability": 0.5311,
+          "raw_hit_probability": null,
+          "lift": 0.0327,
+          "reliability": "A",
+          "sample_n": 17,
+          "projection": {
+            "stat": "nrfi_combined",
+            "value": 53.1
+          }
+        }
+      ]
+    }
+  ]
+}

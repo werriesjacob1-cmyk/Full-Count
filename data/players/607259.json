@@ -294,6 +294,65 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-04",
+      "evaluations": [
+        {
+          "prop": "Over 3.5 Strikeouts",
+          "type": "pitcher",
+          "score": 53.4,
+          "notable_signals": 0,
+          "matchup": "Tampa Bay Rays @ Texas Rangers",
+          "game_pk": 822852,
+          "team": "Tampa Bay Rays",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_k_pct": 57.0,
+            "same_hand_ratio": 100.0,
+            "l14_k_pct": 18.8235,
+            "env_neutral": 50.0
+          },
+          "hit_probability": 0.5912,
+          "raw_hit_probability": 0.5869,
+          "lift": -0.1078,
+          "reliability": "A",
+          "sample_n": 26,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 3.5,
+            "needs": 4
+          }
+        },
+        {
+          "prop": "Over 17.5 Outs Recorded",
+          "type": "pitcher",
+          "score": 62.8,
+          "notable_signals": 1,
+          "matchup": "Tampa Bay Rays @ Texas Rangers",
+          "game_pk": 822852,
+          "team": "Tampa Bay Rays",
+          "side": "away",
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "outs_rate": 0.5477,
+            "avg_outs_per_start": 17.73
+          },
+          "hit_probability": 0.5477,
+          "raw_hit_probability": null,
+          "lift": 0.1265,
+          "reliability": "A",
+          "sample_n": 26,
+          "projection": {
+            "stat": "pitcher_outs",
+            "value": 17.5,
+            "needs": 18
+          }
+        }
+      ]
     }
   ]
 }
