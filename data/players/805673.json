@@ -342,9 +342,9 @@
       "date": "2026-09-04",
       "evaluations": [
         {
-          "prop": "Over 3.5 Strikeouts",
+          "prop": "Over 4.5 Strikeouts",
           "type": "pitcher",
-          "score": 49.3,
+          "score": 48.1,
           "notable_signals": 0,
           "matchup": "Minnesota Twins @ Chicago White Sox",
           "game_pk": 824554,
@@ -354,25 +354,25 @@
           "combo_player_ids": null,
           "signals": {
             "opp_team_k_pct": 68.0,
-            "same_hand_ratio": 43.75,
+            "same_hand_ratio": 12.5,
             "l14_k_pct": 35.8824,
             "env_neutral": 50.0
           },
-          "hit_probability": 0.6217,
-          "raw_hit_probability": 0.7383,
-          "lift": -0.0773,
+          "hit_probability": 0.5843,
+          "raw_hit_probability": 0.553,
+          "lift": 0.0736,
           "reliability": "A",
           "sample_n": 19,
           "projection": {
             "stat": "strikeouts",
-            "value": 3.5,
-            "needs": 4
+            "value": 4.5,
+            "needs": 5
           }
         },
         {
           "prop": "Over 17.5 Outs Recorded",
           "type": "pitcher",
-          "score": 70.8,
+          "score": 69.6,
           "notable_signals": 1,
           "matchup": "Minnesota Twins @ Chicago White Sox",
           "game_pk": 824554,
@@ -381,12 +381,12 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.5823,
+            "outs_rate": 0.5842,
             "avg_outs_per_start": 17.68
           },
-          "hit_probability": 0.5823,
+          "hit_probability": 0.5842,
           "raw_hit_probability": null,
-          "lift": 0.1561,
+          "lift": 0.1499,
           "reliability": "A",
           "sample_n": 19,
           "projection": {

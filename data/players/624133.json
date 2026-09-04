@@ -327,7 +327,7 @@
         {
           "prop": "Over 5.5 Strikeouts",
           "type": "pitcher",
-          "score": 32.1,
+          "score": 34.4,
           "notable_signals": 0,
           "matchup": "Boston Red Sox @ Baltimore Orioles",
           "game_pk": 824797,
@@ -341,9 +341,9 @@
             "l14_k_pct": 0.0,
             "env_neutral": 50.0
           },
-          "hit_probability": 0.3135,
-          "raw_hit_probability": 0.3135,
-          "lift": -0.0381,
+          "hit_probability": 0.3148,
+          "raw_hit_probability": 0.3148,
+          "lift": -0.0395,
           "reliability": "A",
           "sample_n": 24,
           "projection": {
@@ -353,9 +353,9 @@
           }
         },
         {
-          "prop": "Over 14.5 Outs Recorded",
+          "prop": "Over 16.5 Outs Recorded",
           "type": "pitcher",
-          "score": 37.6,
+          "score": 0,
           "notable_signals": 0,
           "matchup": "Boston Red Sox @ Baltimore Orioles",
           "game_pk": 824797,
@@ -364,18 +364,18 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.6563,
+            "outs_rate": 0.3328,
             "avg_outs_per_start": 15.46
           },
-          "hit_probability": 0.6563,
+          "hit_probability": 0.3328,
           "raw_hit_probability": null,
-          "lift": -0.1251,
+          "lift": -0.1643,
           "reliability": "A",
           "sample_n": 24,
           "projection": {
             "stat": "pitcher_outs",
-            "value": 14.5,
-            "needs": 15
+            "value": 16.5,
+            "needs": 17
           }
         }
       ]

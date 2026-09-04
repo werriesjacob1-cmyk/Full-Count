@@ -190,7 +190,7 @@
       "date": "2026-09-04",
       "evaluations": [
         {
-          "prop": "Over 3.5 Strikeouts",
+          "prop": "Over 4.5 Strikeouts",
           "type": "pitcher",
           "score": 38.0,
           "notable_signals": 0,
@@ -206,21 +206,21 @@
             "l14_k_pct": 100.0,
             "env_neutral": 50.0
           },
-          "hit_probability": 0.6177,
-          "raw_hit_probability": 0.7182,
-          "lift": -0.0813,
+          "hit_probability": 0.5245,
+          "raw_hit_probability": 0.5245,
+          "lift": 0.0138,
           "reliability": "C",
           "sample_n": 8,
           "projection": {
             "stat": "strikeouts",
-            "value": 3.5,
-            "needs": 4
+            "value": 4.5,
+            "needs": 5
           }
         },
         {
-          "prop": "Over 11.5 Outs Recorded",
+          "prop": "Over 14.5 Outs Recorded",
           "type": "pitcher",
-          "score": 42.9,
+          "score": 0,
           "notable_signals": 0,
           "matchup": "Arizona Diamondbacks @ Houston Astros",
           "game_pk": 824146,
@@ -229,18 +229,18 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.7521,
+            "outs_rate": 0.48,
             "avg_outs_per_start": 11.75
           },
-          "hit_probability": 0.7521,
+          "hit_probability": 0.48,
           "raw_hit_probability": null,
-          "lift": -0.1696,
+          "lift": -0.3067,
           "reliability": "C",
           "sample_n": 8,
           "projection": {
             "stat": "pitcher_outs",
-            "value": 11.5,
-            "needs": 12
+            "value": 14.5,
+            "needs": 15
           }
         }
       ]

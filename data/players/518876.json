@@ -371,9 +371,9 @@
       "date": "2026-09-04",
       "evaluations": [
         {
-          "prop": "Over 3.5 Strikeouts",
+          "prop": "Over 4.5 Strikeouts",
           "type": "pitcher",
-          "score": 49.0,
+          "score": 49.4,
           "notable_signals": 0,
           "matchup": "Arizona Diamondbacks @ Houston Astros",
           "game_pk": 824146,
@@ -383,25 +383,25 @@
           "combo_player_ids": null,
           "signals": {
             "opp_team_k_pct": 46.0,
-            "same_hand_ratio": 88.8889,
+            "same_hand_ratio": 100.0,
             "l14_k_pct": 38.8235,
             "env_neutral": 50.0
           },
-          "hit_probability": 0.6044,
-          "raw_hit_probability": 0.6519,
-          "lift": -0.0946,
+          "hit_probability": 0.4511,
+          "raw_hit_probability": 0.4511,
+          "lift": -0.0596,
           "reliability": "A",
           "sample_n": 25,
           "projection": {
             "stat": "strikeouts",
-            "value": 3.5,
-            "needs": 4
+            "value": 4.5,
+            "needs": 5
           }
         },
         {
-          "prop": "Over 16.5 Outs Recorded",
+          "prop": "Over 15.5 Outs Recorded",
           "type": "pitcher",
-          "score": 36.5,
+          "score": 50.4,
           "notable_signals": 0,
           "matchup": "Arizona Diamondbacks @ Houston Astros",
           "game_pk": 824146,
@@ -410,18 +410,18 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.4819,
+            "outs_rate": 0.5978,
             "avg_outs_per_start": 17.0
           },
-          "hit_probability": 0.4819,
+          "hit_probability": 0.5978,
           "raw_hit_probability": null,
-          "lift": -0.0081,
+          "lift": 0.0092,
           "reliability": "A",
           "sample_n": 25,
           "projection": {
             "stat": "pitcher_outs",
-            "value": 16.5,
-            "needs": 17
+            "value": 15.5,
+            "needs": 16
           }
         }
       ]

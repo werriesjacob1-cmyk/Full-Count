@@ -417,8 +417,8 @@
             "env_neutral": 50.0
           },
           "hit_probability": 0.5937,
-          "raw_hit_probability": 0.599,
-          "lift": -0.1053,
+          "raw_hit_probability": 0.5991,
+          "lift": -0.1055,
           "reliability": "A",
           "sample_n": 20,
           "projection": {
@@ -428,9 +428,9 @@
           }
         },
         {
-          "prop": "Over 14.5 Outs Recorded",
+          "prop": "Over 15.5 Outs Recorded",
           "type": "pitcher",
-          "score": 44.1,
+          "score": 32.5,
           "notable_signals": 0,
           "matchup": "St. Louis Cardinals @ Colorado Rockies",
           "game_pk": 824311,
@@ -439,18 +439,18 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.6803,
+            "outs_rate": 0.5204,
             "avg_outs_per_start": 14.65
           },
-          "hit_probability": 0.6803,
+          "hit_probability": 0.5204,
           "raw_hit_probability": null,
-          "lift": -0.1011,
+          "lift": -0.0682,
           "reliability": "A",
           "sample_n": 20,
           "projection": {
             "stat": "pitcher_outs",
-            "value": 14.5,
-            "needs": 15
+            "value": 15.5,
+            "needs": 16
           }
         }
       ]

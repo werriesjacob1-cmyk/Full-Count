@@ -8,7 +8,7 @@
         {
           "prop": "Over 3.5 Strikeouts",
           "type": "pitcher",
-          "score": 55.4,
+          "score": 43.0,
           "notable_signals": 0,
           "matchup": "Detroit Tigers @ Cleveland Guardians",
           "game_pk": 824387,
@@ -18,19 +18,48 @@
           "combo_player_ids": null,
           "signals": {
             "opp_team_k_pct": 43.0,
-            "same_hand_ratio": 100.0,
+            "same_hand_ratio": 50.0,
             "l14_k_pct": 0.0,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 66.2447
           },
           "hit_probability": 0.5862,
-          "raw_hit_probability": 0.5622,
-          "lift": -0.1128,
+          "raw_hit_probability": 0.5623,
+          "lift": -0.113,
           "reliability": "D",
           "sample_n": 0,
           "projection": {
             "stat": "strikeouts",
             "value": 3.5,
             "needs": 4
+          }
+        },
+        {
+          "prop": "Over 6.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 54.9,
+          "notable_signals": 1,
+          "matchup": "Detroit Tigers @ Cleveland Guardians",
+          "game_pk": 824387,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            808825,
+            656492
+          ],
+          "signals": {
+            "combined_k_edge": 0.1755
+          },
+          "hit_probability": 0.6805,
+          "raw_hit_probability": null,
+          "lift": 0.1755,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 6.5,
+            "needs": 7
           }
         }
       ]

@@ -300,9 +300,9 @@
       "date": "2026-09-04",
       "evaluations": [
         {
-          "prop": "Over 3.5 Strikeouts",
+          "prop": "Over 5.5 Strikeouts",
           "type": "pitcher",
-          "score": 49.6,
+          "score": 53.4,
           "notable_signals": 0,
           "matchup": "Detroit Tigers @ Cleveland Guardians",
           "game_pk": 824387,
@@ -312,25 +312,26 @@
           "combo_player_ids": null,
           "signals": {
             "opp_team_k_pct": 57.0,
-            "same_hand_ratio": 33.3333,
+            "same_hand_ratio": 88.8889,
             "l14_k_pct": 26.4706,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 66.2447
           },
-          "hit_probability": 0.6122,
-          "raw_hit_probability": 0.6907,
-          "lift": -0.0868,
+          "hit_probability": 0.3179,
+          "raw_hit_probability": 0.3179,
+          "lift": -0.0364,
           "reliability": "A",
           "sample_n": 27,
           "projection": {
             "stat": "strikeouts",
-            "value": 3.5,
-            "needs": 4
+            "value": 5.5,
+            "needs": 6
           }
         },
         {
           "prop": "Over 16.5 Outs Recorded",
           "type": "pitcher",
-          "score": 36.7,
+          "score": 35.5,
           "notable_signals": 0,
           "matchup": "Detroit Tigers @ Cleveland Guardians",
           "game_pk": 824387,
@@ -339,12 +340,12 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.483,
+            "outs_rate": 0.4843,
             "avg_outs_per_start": 17.15
           },
-          "hit_probability": 0.483,
+          "hit_probability": 0.4843,
           "raw_hit_probability": null,
-          "lift": -0.007,
+          "lift": -0.0128,
           "reliability": "A",
           "sample_n": 27,
           "projection": {
