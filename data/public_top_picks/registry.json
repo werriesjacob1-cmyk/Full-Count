@@ -2,7 +2,7 @@
   "schema_version": 1,
   "identity_schema_version": 2,
   "rollout_version": "pre-phase-v-live-lifecycle-v1",
-  "updated_at": "2026-09-04T19:37:50.832463+00:00",
+  "updated_at": "2026-09-04T20:22:44.863043+00:00",
   "migration": {
     "version": "pre-phase-v-live-lifecycle-v1",
     "completed_at": "2026-08-17T23:14:57+00:00",
@@ -13879,6 +13879,105 @@
         },
         "qualification_timestamp": "2026-09-04T19:33:20.787974+00:00",
         "board_timestamp": "2026-09-04T19:33:20.758366+00:00",
+        "slate_date": "2026-09-04"
+      }
+    },
+    "fc2:822852:player-553869:hits_runs_rbis:1:over": {
+      "canonical_id": "fc2:822852:player-553869:hits_runs_rbis:1:over",
+      "settlement_identity": [
+        "822852",
+        [
+          "player",
+          "553869"
+        ],
+        "hits_runs_rbis",
+        "1",
+        "over"
+      ],
+      "slate_date": "2026-09-04",
+      "first_published_at": "2026-09-04T20:22:44.863043+00:00",
+      "publication_provenance": {
+        "artifact_id": "b91bb65c2e373450bbc76168699d51dde822c399237d46ca3d10f3ae29bae43b",
+        "source_commit": "7d91bc2420d0c81196f86b4367b848cea7d0babb",
+        "workflow_run_id": "33915785760",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-09-04T20:22:33.067238+00:00",
+        "data_hash": "c1bef81efdf16877535523242180697e6363c4386fbebc701539ef47aaec7f38",
+        "live_hash": "c48995ab8613396f974741db146ec1d31e12493314b77dce073b7d54530f1782"
+      },
+      "snapshot": {
+        "id": "fc2:822852:player-553869:hits_runs_rbis:1:over",
+        "identity_version": 2,
+        "game_pk": 822852,
+        "player_id": 553869,
+        "combo_player_ids": null,
+        "type": "batter",
+        "name": "Elias D\u00edaz",
+        "team": "Texas Rangers",
+        "matchup": "Tampa Bay Rays @ Texas Rangers",
+        "game_start": "2026-09-05T00:05:00Z",
+        "stat": "hits_runs_rbis",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "hits_runs_rbis",
+          "value": 0.5,
+          "needs": 1
+        },
+        "prop": "Over 0.5 Hits+Runs+RBIs",
+        "hit_probability": 0.6392,
+        "market_odds": -155,
+        "market_implied": 0.6078,
+        "market_edge": 0.0314,
+        "market_hold": null,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (B), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (7.6 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "L7 avg EV 94.8mph (league ~88.5) \u2014 hot recent contact",
+          "L7 barrel% 44.4 \u2014 hot recent contact",
+          "Hitter batting behind him: 0.350 wOBA (league ~.320)",
+          "Team implied for 4.21 runs (league avg 4.245; line 3.5, game total 8.5)",
+          "Season barrel% 9.2",
+          "Dome \u2014 weather neutral"
+        ],
+        "watchouts": [
+          "Platoon: R bat vs RHP (unfavorable)",
+          "Opposing SP ERA 2.99 \u2014 elite pitcher, tough matchup",
+          "Projected 3.6 PA (batting slot 9) \u2014 a tough lineup slot for plate appearances",
+          "Hitters batting ahead of him: 0.320 wOBA (league ~.320) \u2014 a weak on-base group ahead of him, fewer runners to drive in",
+          "Public heavy on Texas Rangers (money% trails tickets% by 21 pts) \u2014 sharp money is fading this side",
+          "Opposing bullpen fatigue: 1/8 relievers over 60 pitches in L7 (fresh pen \u2014 tougher matchup late)",
+          "Sharp money fading Texas Rangers (money% -21 pts vs ticket%) \u2014 smart money moving away from this side"
+        ],
+        "prob_ci": [
+          0.6259,
+          0.6708
+        ],
+        "reliability": "B",
+        "reliability_note": null,
+        "sample_n": 64,
+        "lineup_assumed": null,
+        "base_rate": 0.6719,
+        "lift": -0.0327,
+        "lift_reference_rate": null,
+        "stable_lift": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "8db1dbdc",
+          "prediction_timestamp": "2026-09-04T20:19:53.490271+00:00",
+          "odds_fetched_at": "2026-09-04T20:19:46.441304+00:00",
+          "board_generated_at": "2026-09-04T20:19:53.458355+00:00"
+        },
+        "qualification_timestamp": "2026-09-04T20:19:53.490271+00:00",
+        "board_timestamp": "2026-09-04T20:19:53.458355+00:00",
         "slate_date": "2026-09-04"
       }
     }
