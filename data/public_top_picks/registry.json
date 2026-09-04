@@ -2,7 +2,7 @@
   "schema_version": 1,
   "identity_schema_version": 2,
   "rollout_version": "pre-phase-v-live-lifecycle-v1",
-  "updated_at": "2026-09-04T19:07:30.513297+00:00",
+  "updated_at": "2026-09-04T19:37:50.832463+00:00",
   "migration": {
     "version": "pre-phase-v-live-lifecycle-v1",
     "completed_at": "2026-08-17T23:14:57+00:00",
@@ -13778,6 +13778,107 @@
         },
         "qualification_timestamp": "2026-09-04T19:05:57.640638+00:00",
         "board_timestamp": "2026-09-04T19:05:57.611226+00:00",
+        "slate_date": "2026-09-04"
+      }
+    },
+    "fc2:823418:player-547180:hits_runs_rbis:1:over": {
+      "canonical_id": "fc2:823418:player-547180:hits_runs_rbis:1:over",
+      "settlement_identity": [
+        "823418",
+        [
+          "player",
+          "547180"
+        ],
+        "hits_runs_rbis",
+        "1",
+        "over"
+      ],
+      "slate_date": "2026-09-04",
+      "first_published_at": "2026-09-04T19:37:50.832463+00:00",
+      "publication_provenance": {
+        "artifact_id": "76ae7d9698738a331653b20b83ebe1f9ab06253db721b624f8481b7e36085a2d",
+        "source_commit": "067381b53eba6fd9a31a4feb3d1d7654fdf9e649",
+        "workflow_run_id": "33911987448",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-09-04T19:37:36.171424+00:00",
+        "data_hash": "9ea471f9ae8ad299f55b1bbdef63fffffa428ef2ca30d032e2b947024a61c805",
+        "live_hash": "d01c597bf6337bcd5c87f3ac9cd4ea2a4fe2f4ba755b80f4835a0eb8d06e32ab"
+      },
+      "snapshot": {
+        "id": "fc2:823418:player-547180:hits_runs_rbis:1:over",
+        "identity_version": 2,
+        "game_pk": 823418,
+        "player_id": 547180,
+        "combo_player_ids": null,
+        "type": "batter",
+        "name": "Bryce Harper",
+        "team": "Philadelphia Phillies",
+        "matchup": "Atlanta Braves @ Philadelphia Phillies",
+        "game_start": "2026-09-04T22:40:00Z",
+        "stat": "hits_runs_rbis",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "hits_runs_rbis",
+          "value": 0.5,
+          "needs": 1
+        },
+        "prop": "Over 0.5 Hits+Runs+RBIs",
+        "hit_probability": 0.6992,
+        "market_odds": -195,
+        "market_implied": 0.661,
+        "market_edge": 0.0382,
+        "market_hold": null,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (A), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (8.7 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "L7 barrel% 23.5 \u2014 hot recent contact",
+          "Bat speed trending up L14 (+2.5mph 2nd-half vs 1st-half)",
+          "Projected 4.25 PA (batting slot 3) \u2014 a favorable lineup slot",
+          "Hitter batting behind him: 0.335 wOBA (league ~.320)",
+          "Pitch-type exploit: RV/100 +3.8 vs FF (opposing SP throws it 41.3% of the time)",
+          "Season barrel% 11.2"
+        ],
+        "watchouts": [
+          "L7 avg EV 84.4mph (league ~88.5) \u2014 cold recent contact",
+          "Platoon: L bat vs LHP (unfavorable)",
+          "Opposing SP ERA 2.06 \u2014 elite pitcher, tough matchup",
+          "Hitters batting ahead of him: 0.294 wOBA (league ~.320) \u2014 a weak on-base group ahead of him, fewer runners to drive in",
+          "Team implied for 3.48 runs (league avg 4.245; line 3.5, game total 7) \u2014 a weak offensive environment",
+          "Public heavy on Philadelphia Phillies (money% trails tickets% by 17 pts) \u2014 sharp money is fading this side",
+          "Opposing bullpen fatigue: 1/9 relievers over 60 pitches in L7 (fresh pen \u2014 tougher matchup late)",
+          "Sharp money fading Philadelphia Phillies (money% -17 pts vs ticket%) \u2014 smart money moving away from this side",
+          "BvP: 2-for-15 vs Chris Sale (standard error \u00b19 pts on a 15-AB career sample -- weighted lightly on that basis, not just because the count looks small)"
+        ],
+        "prob_ci": [
+          0.6884,
+          0.7224
+        ],
+        "reliability": "A",
+        "reliability_note": null,
+        "sample_n": 139,
+        "lineup_assumed": null,
+        "base_rate": 0.6723,
+        "lift": 0.0269,
+        "lift_reference_rate": null,
+        "stable_lift": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "4ed5e5ee",
+          "prediction_timestamp": "2026-09-04T19:33:20.787974+00:00",
+          "odds_fetched_at": "2026-09-04T19:33:08.136148+00:00",
+          "board_generated_at": "2026-09-04T19:33:20.758366+00:00"
+        },
+        "qualification_timestamp": "2026-09-04T19:33:20.787974+00:00",
+        "board_timestamp": "2026-09-04T19:33:20.758366+00:00",
         "slate_date": "2026-09-04"
       }
     }
