@@ -251,8 +251,8 @@
         {
           "prop": "Over 6.5 Strikeouts",
           "type": "pitcher",
-          "score": 40.2,
-          "notable_signals": 1,
+          "score": 47.6,
+          "notable_signals": 2,
           "matchup": "Atlanta Braves @ Philadelphia Phillies",
           "game_pk": 823418,
           "team": "Atlanta Braves",
@@ -264,7 +264,10 @@
             "same_hand_ratio": 61.1111,
             "l14_k_pct": 81.1765,
             "tto_penalty": 8.0,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 74.0404,
+            "ump_k_pct": 0.24,
+            "ump_bb_pct": 0.06
           },
           "hit_probability": 0.5006,
           "raw_hit_probability": 0.5006,
@@ -280,7 +283,7 @@
         {
           "prop": "Over 17.5 Outs Recorded",
           "type": "pitcher",
-          "score": 86.7,
+          "score": 87.0,
           "notable_signals": 1,
           "matchup": "Atlanta Braves @ Philadelphia Phillies",
           "game_pk": 823418,
@@ -289,18 +292,46 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.6535,
+            "outs_rate": 0.6529,
             "avg_outs_per_start": 18.0
           },
-          "hit_probability": 0.6535,
+          "hit_probability": 0.6529,
           "raw_hit_probability": null,
-          "lift": 0.2192,
+          "lift": 0.2215,
           "reliability": "A",
           "sample_n": 24,
           "projection": {
             "stat": "pitcher_outs",
             "value": 17.5,
             "needs": 18
+          }
+        },
+        {
+          "prop": "Over 13.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 54.9,
+          "notable_signals": 1,
+          "matchup": "Atlanta Braves @ Philadelphia Phillies",
+          "game_pk": 823418,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            519242,
+            650911
+          ],
+          "signals": {
+            "combined_k_edge": 0.2174
+          },
+          "hit_probability": 0.7076,
+          "raw_hit_probability": null,
+          "lift": 0.2174,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 13.5,
+            "needs": 14
           }
         }
       ]

@@ -274,8 +274,8 @@
         {
           "prop": "Over 6.5 Strikeouts",
           "type": "pitcher",
-          "score": 41.1,
-          "notable_signals": 0,
+          "score": 42.3,
+          "notable_signals": 1,
           "matchup": "Atlanta Braves @ Philadelphia Phillies",
           "game_pk": 823418,
           "team": "Philadelphia Phillies",
@@ -284,9 +284,12 @@
           "combo_player_ids": null,
           "signals": {
             "opp_team_k_pct": 48.0,
-            "same_hand_ratio": 43.75,
+            "same_hand_ratio": 12.5,
             "l14_k_pct": 78.2353,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 74.0404,
+            "ump_k_pct": 0.24,
+            "ump_bb_pct": 0.06
           },
           "hit_probability": 0.3773,
           "raw_hit_probability": 0.3773,
@@ -302,7 +305,7 @@
         {
           "prop": "Over 18.5 Outs Recorded",
           "type": "pitcher",
-          "score": 55.9,
+          "score": 56.0,
           "notable_signals": 1,
           "matchup": "Atlanta Braves @ Philadelphia Phillies",
           "game_pk": 823418,
@@ -311,12 +314,12 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.3869,
+            "outs_rate": 0.3866,
             "avg_outs_per_start": 18.79
           },
-          "hit_probability": 0.3869,
+          "hit_probability": 0.3866,
           "raw_hit_probability": null,
-          "lift": 0.1945,
+          "lift": 0.1957,
           "reliability": "A",
           "sample_n": 28,
           "projection": {

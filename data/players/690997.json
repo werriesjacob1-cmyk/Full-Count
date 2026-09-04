@@ -274,8 +274,8 @@
         {
           "prop": "Over 6.5 Strikeouts",
           "type": "pitcher",
-          "score": 47.1,
-          "notable_signals": 0,
+          "score": 38.3,
+          "notable_signals": 1,
           "matchup": "San Francisco Giants @ New York Mets",
           "game_pk": 823579,
           "team": "New York Mets",
@@ -286,7 +286,10 @@
             "opp_team_k_pct": 43.0,
             "same_hand_ratio": 5.5556,
             "l14_k_pct": 29.4118,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 71.7513,
+            "ump_k_pct": -0.12,
+            "ump_bb_pct": -0.096
           },
           "hit_probability": 0.2698,
           "raw_hit_probability": 0.2698,
@@ -302,7 +305,7 @@
         {
           "prop": "Over 17.5 Outs Recorded",
           "type": "pitcher",
-          "score": 80.0,
+          "score": 80.3,
           "notable_signals": 1,
           "matchup": "San Francisco Giants @ New York Mets",
           "game_pk": 823579,
@@ -311,12 +314,12 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.6244,
+            "outs_rate": 0.6239,
             "avg_outs_per_start": 17.3
           },
-          "hit_probability": 0.6244,
+          "hit_probability": 0.6239,
           "raw_hit_probability": null,
-          "lift": 0.1901,
+          "lift": 0.1925,
           "reliability": "A",
           "sample_n": 27,
           "projection": {
