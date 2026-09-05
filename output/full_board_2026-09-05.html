@@ -1,0 +1,1907 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Full Board — 2026-09-05</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+:root {
+  --bg: #f2f5ef; --surface: #ffffff; --surface-2: #e9ede4;
+  --text: #16201a; --text-dim: #5b685e; --line: rgba(22,32,26,0.12);
+  --accent: #2f8f52; --accent-bg: rgba(47,143,82,0.10);
+  --gold: #a9761e; --gold-bg: rgba(169,118,30,0.12);
+  --low: #78877e; --low-bg: rgba(120,135,126,0.12);
+  --bad: #a1432b;
+  --font-display: "Roboto Condensed", "Arial Narrow", "Noto Sans Condensed", sans-serif;
+  --font-body: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", "Cascadia Mono", "Roboto Mono", monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0f1613; --surface: #161e19; --surface-2: #1d2620;
+    --text: #edf1e8; --text-dim: #93a196; --line: rgba(255,255,255,0.10);
+    --accent: #5fbf77; --accent-bg: rgba(95,191,119,0.14);
+    --gold: #e0ac4c; --gold-bg: rgba(224,172,76,0.14);
+    --low: #6f7d73; --low-bg: rgba(111,125,115,0.16);
+    --bad: #d97a5c;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0f1613; --surface: #161e19; --surface-2: #1d2620;
+  --text: #edf1e8; --text-dim: #93a196; --line: rgba(255,255,255,0.10);
+  --accent: #5fbf77; --accent-bg: rgba(95,191,119,0.14);
+  --gold: #e0ac4c; --gold-bg: rgba(224,172,76,0.14);
+  --low: #6f7d73; --low-bg: rgba(111,125,115,0.16);
+  --bad: #d97a5c;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0; background: var(--bg); color: var(--text);
+  font-family: var(--font-body); line-height: 1.45;
+}
+header {
+  position: sticky; top: 0; z-index: 5;
+  background: var(--surface); border-bottom: 1px solid var(--line);
+  padding: 14px clamp(16px, 4vw, 40px) 0;
+}
+header .head-row {
+  display: flex; align-items: baseline; justify-content: space-between; gap: 16px;
+  flex-wrap: wrap; padding-bottom: 12px;
+}
+header h1 {
+  font-family: var(--font-display); text-transform: uppercase; letter-spacing: 0.04em;
+  font-size: clamp(18px, 3vw, 24px); margin: 0; font-weight: 700;
+}
+header .stats {
+  font-family: var(--font-mono); font-variant-numeric: tabular-nums;
+  color: var(--text-dim); font-size: 13px;
+}
+.tabs {
+  display: flex; gap: 6px; overflow-x: auto; padding-bottom: 12px;
+  scrollbar-width: thin;
+}
+.tab {
+  flex: 0 0 auto; font-family: var(--font-display); text-transform: uppercase;
+  letter-spacing: 0.03em; font-size: 12.5px; font-weight: 700; white-space: nowrap;
+  background: var(--surface-2); color: var(--text-dim); border: 1px solid var(--line);
+  border-radius: 100px; padding: 7px 14px; cursor: pointer;
+}
+.tab .cnt { font-family: var(--font-mono); font-weight: 400; opacity: 0.75; margin-left: 3px; }
+.tab.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+.tab:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+main { max-width: 1180px; margin: 0 auto; padding: 20px clamp(16px, 4vw, 40px) 60px; }
+.panel { display: none; }
+.panel.active { display: block; }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 12px; }
+.card {
+  background: var(--surface); border: 1px solid var(--line); border-radius: 6px;
+  padding: 14px; display: flex; flex-direction: column; gap: 6px;
+}
+.card.hi { border-left: 3px solid var(--accent); }
+.card.md { border-left: 3px solid var(--gold); }
+.card.lo { border-left: 3px solid var(--low); }
+.card-top { display: flex; align-items: center; justify-content: space-between; }
+.pill {
+  font-family: var(--font-display); text-transform: uppercase; letter-spacing: 0.04em;
+  font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 100px;
+}
+.pill.hi { background: var(--accent-bg); color: var(--accent); }
+.pill.md { background: var(--gold-bg); color: var(--gold); }
+.pill.lo { background: var(--low-bg); color: var(--low); }
+.pct {
+  font-family: var(--font-mono); font-variant-numeric: tabular-nums;
+  font-size: 22px; font-weight: 600;
+}
+.player { margin: 2px 0 0; font-size: 16px; font-weight: 700; text-wrap: balance; }
+.prop { margin: 0; color: var(--text); font-size: 13.5px; }
+.matchup { margin: 0; color: var(--text-dim); font-size: 12px; }
+.meta {
+  display: flex; flex-wrap: wrap; gap: 6px 12px; margin-top: 4px;
+  font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-size: 11.5px; color: var(--text-dim);
+}
+.lift.pos { color: var(--accent); }
+.lift.neg { color: var(--bad); }
+p.empty { color: var(--text-dim); font-style: italic; padding: 20px 0; }
+</style>
+</head>
+<body>
+<header>
+  <div class="head-row">
+    <h1>Full Board — 2026-09-05</h1>
+    <div class="stats">68 candidates · 4 prop types</div>
+  </div>
+  <div class="tabs" role="tablist">
+    <button class="tab active" data-tab="all">All <span class="cnt">68</span></button>
+<button class="tab" data-tab="combined_strikeouts">Combined Starter Strikeouts <span class="cnt">3</span></button>
+<button class="tab" data-tab="pitcher_outs">Pitcher Outs Recorded <span class="cnt">25</span></button>
+<button class="tab" data-tab="strikeouts">Strikeouts <span class="cnt">28</span></button>
+<button class="tab" data-tab="nrfi_combined">NRFI/YRFI (Both Teams) <span class="cnt">12</span></button>
+  </div>
+</header>
+<main>
+  <div class="panel active" data-panel="all"><div class="grid">
+    <article class="card lo">
+      <div class="card-top">
+        <span class="pill lo">Low</span>
+        <span class="pct">81.0%</span>
+      </div>
+      <h3 class="player">Matthew Liberatore</h3>
+      <p class="prop">Over 9.5 Combined Strikeouts</p>
+      <p class="matchup"> · St. Louis Cardinals @ Colorado Rockies</p>
+      <div class="meta">
+        
+        
+      </div>
+    </article>
+    <article class="card lo">
+      <div class="card-top">
+        <span class="pill lo">Low</span>
+        <span class="pct">77.4%</span>
+      </div>
+      <h3 class="player">Ryan Gusto</h3>
+      <p class="prop">Over 11.5 Outs Recorded</p>
+      <p class="matchup">Miami Marlins · Chicago Cubs @ Miami Marlins</p>
+      <div class="meta">
+        
+        <span class="sample">14 sample · grade B</span>
+      </div>
+    </article>
+    <article class="card md">
+      <div class="card-top">
+        <span class="pill md">Medium</span>
+        <span class="pct">77.2%</span>
+      </div>
+      <h3 class="player">Martín Pérez</h3>
+      <p class="prop">Over 14.5 Outs Recorded</p>
+      <p class="matchup">Atlanta Braves · Atlanta Braves @ Philadelphia Phillies</p>
+      <div class="meta">
+        
+        <span class="sample">22 sample · grade A</span>
+      </div>
+    </article>
+    <article class="card md">
+      <div class="card-top">
+        <span class="pill md">Medium</span>
+        <span class="pct">74.6%</span>
+      </div>
+      <h3 class="player">Matthew Liberatore</h3>
+      <p class="prop">Over 14.5 Outs Recorded</p>
+      <p class="matchup">St. Louis Cardinals · St. Louis Cardinals @ Colorado Rockies</p>
+      <div class="meta">
+        
+        <span class="sample">27 sample · grade A</span>
+      </div>
+    </article>
+    <article class="card lo">
+      <div class="card-top">
+        <span class="pill lo">Low</span>
+        <span class="pct">72.3%</span>
+      </div>
+      <h3 class="player">Yusei Kikuchi</h3>
+      <p class="prop">Over 13.5 Outs Recorded</p>
+      <p class="matchup">Los Angeles Angels · Los Angeles Angels @ Pittsburgh Pirates</p>
+      <div class="meta">
+        
+        <span class="sample">9 sample · grade B</span>
+      </div>
+    </article>
+    <article class="card hi">
+      <div class="card-top">
+        <span class="pill hi">High</span>
+        <span class="pct">68.2%</span>
+      </div>
+      <h3 class="player">Sonny Gray</h3>
+      <p class="prop">Over 16.5 Outs Recorded</p>
+      <p class="matchup">Boston Red Sox · Boston Red Sox @ Baltimore Orioles</p>
+      <div class="meta">
+        
+        <span class="sample">25 sample · grade A</span>
+      </div>
+    </article>
+    <article class="card lo">
+      <div class="card-top">
+        <span class="pill lo">Low</span>
+        <span class="pct">68.2%</span>
+      </div>
+      <h3 class="player">Chris Bassitt</h3>
+      <p class="prop">Over 14.5 Outs Recorded</p>
+      <p class="matchup">Baltimore Orioles · Boston Red Sox @ Baltimore Orioles</p>
+      <div class="meta">
+        
+        <span class="sample">14 sample · grade B</span>
+      </div>
+    </article>
+    <article class="card lo">
+      <div class="card-top">
+        <span class="pill lo">Low</span>
+        <span class="pct">67.6%</span>
+      </div>
+      <h3 class="player">Tyler Glasnow</h3>
+      <p class="prop">Over 16.5 Outs Recorded</p>
+      <p class="matchup">Los Angeles Dodgers · Washington Nationals @ Los Angeles Dodgers</p>
+      <div class="meta">
+        
+        <span class="sample">9 sample · grade B</span>
+      </div>
+    </article>
+    <article class="card lo">
+      <div class="card-top">
+        <span class="pill lo">Low</span>
+        <span class="pct">67.6%</span>
+      </div>
+      <h3 class="player">Dustin May</h3>
+      <p class="prop">Over 14.5 Outs Recorded</p>
+      <p class="matchup">Milwaukee Brewers · Milwaukee Brewers @ Cincinnati Reds</p>
+      <div class="meta">
+        
+        <span class="sample">26 sample · grade A</span>
+      </div>
+    </article>
+    <article class="card lo">
+      <div class="card-top">
+        <span class="pill lo">Low</span>
+        <span class="pct">66.9%</span>
+      </div>
+      <h3 class="player">Cade Cavalli</h3>
+      <p class="prop">Over 12.5 Combined Strikeouts</p>
+      <p class="matchup"> · Washington Nationals @ Los Angeles Dodgers</p>
+      <div class="meta">
+        
+        
+      </div>
+    </article>
+    <article class="card lo">
+      <div class="card-top">
+        <span class="pill lo">Low</span>
+        <span class="pct">64.6%</span>
+      </div>
+      <h3 class="player">Carlos Rodón</h3>
+      <p class="prop">Over 14.5 Outs Recorded</p>
+      <p class="matchup">New York Yankees · New York Yankees @ San Diego Padres</p>
+      <div class="meta">
+        
+        <span class="sample">12 sample · grade B</span>
+      </div>
+    </article>
+    <article class="card lo">
+      <div class="card-top">
+        <span class="pill lo">Low</span>
+        <span class="pct">64.5%</span>
+      </div>
+      <h3 class="player">Anthony Kay</h3>
+      <p class="prop">Over 14.5 Outs Recorded</p>
+      <p class="matchup">Chicago White Sox · Minnesota Twins @ Chicago White Sox</p>
+      <div class="meta">
+        
+        <span class="sample">26 sample · grade A</span>
+      </div>
+    </article>
+    <article class="card hi">
+      <div class="card-top">
+        <span class="pill hi">High</span>
+        <span class="pct">64.0%</span>
+      </div>
+      <h3 class="player">Framber Valdez</h3>
+      <p class="prop">Over 16.5 Outs Recorded</p>
+      <p class="matchup">Detroit Tigers · Detroit Tigers @ Cleveland Guardians</p>
+      <div class="meta">
+        
+        <span class="sample">27 sample · grade A</span>
+      </div>
+    </article>
+    <article class="card lo">
+      <div class="card-top">
+        <span class="pill lo">Low</span>
+        <span class="pct">63.4%</span>
+      </div>
+      <h3 class="player">Max Scherzer</h3>
+      <p class="prop">Over 12.5 Outs Recorded</p>
+      <p class="matchup">Toronto Blue Jays · Toronto Blue Jays @ Kansas City Royals</p>
+      <div class="meta">
+        
+        <span class="sample">13 sample · grade B</span>
+      </div>
+    </article>
+    <article class="card md">
+      <div class="card-top">
+        <span class="pill md">Medium</span>
+        <span class="pct">62.5%</span>
+      </div>
+      <h3 class="player">Zack Wheeler</h3>
+      <p class="prop">Over 16.5 Outs Recorded</p>
+      <p class="matchup">Philadelphia Phillies · Atlanta Braves @ Philadelphia Phillies</p>
+      <div class="meta">
+        
+        <span class="sample">23 sample · grade A</span>
+      </div>
+    </article>
+    <article class="card lo">
+      <div class="card-top">
+        <span class="pill lo">Low</span>
+        <span class="pct">62.3%</span>
+      </div>
+      <h3 class="player">Sonny Gray</h3>
+      <p class="prop">Over 3.5 Strikeouts</p>
+      <p class="matchup">Boston Red Sox · Boston Red Sox @ Baltimore Orioles</p>
+      <div class="meta">
+        
+        <span class="sample">25 sample · grade A</span>
+      </div>
+    </article>
+    <article class="card lo">
+      <div class="card-top">
+        <span class="pill lo">Low</span>
+        <span class="pct">62.3%</span>
+      </div>
+      <h3 class="player">Max Scherzer</h3>
+      <p class="prop">Over 3.5 Strikeouts</p>
+      <p class="matchup">Toronto Blue Jays · Toronto Blue Jays @ Kansas City Royals</p>
+      <div class="meta">
+        
+        <span class="sample">13 sample · grade B</span>
+      </div>
+    </article>
+    <article class="card md">
+      <div class="card-top">
+        <span class="pill md">Medium</span>
+        <span class="pct">62.0%</span>
+      </div>
+      <h3 class="player">Braxton Ashcraft</h3>
+      <p class="prop">Over 3.5 Strikeouts</p>
+      <p class="matchup">Pittsburgh Pirates · Los Angeles Angels @ Pittsburgh Pirates</p>
+      <div class="meta">
+        
+        <span class="sample">27 sample · grade A</span>
+      </div>
+    </article>
+    <article class="card lo">
+      <div class="card-top">
+        <span class="pill lo">Low</span>
+        <span class="pct">61.9%</span>
+      </div>
+      <h3 class="player">Yusei Kikuchi</h3>
+      <p class="prop">Over 3.5 Strikeouts</p>
+      <p class="matchup">Los Angeles Angels · Los Angeles Angels @ Pittsburgh Pirates</p>
+      <div class="meta">
+        
+        <span class="sample">9 sample · grade B</span>
+      </div>
+    </article>
+    <article class="card lo">
+      <div class="card-top">
+        <span class="pill lo">Low</span>
+        <span class="pct">61.3%</span>
+      </div>
+      <h3 class="player">Anthony Kay</h3>
+      <p class="prop">Over 3.5 Strikeouts</p>
+      <p class="matchup">Chicago White Sox · Minnesota Twins @ Chicago White Sox</p>
+      <div class="meta">
+        
+        <span class="sample">26 sample · grade A</span>
+      </div>
+    </article>
+    <article class="card lo">
+      <div class="card-top">
+        <span class="pill lo">Low</span>
+        <span class="pct">61.3%</span>
+      </div>
+      <h3 class="player">Taj Bradley</h3>
+      <p class="prop">Over 4.5 Strikeouts</p>
+      <p class="matchup">Minnesota Twins · Minnesota Twins @ Chicago White Sox</p>
+      <div class="meta">
+        
+        <span class="sample">27 sample · grade A</span>
+      </div>
+    </article>
+    <article class="card lo">
+      <div class="card-top">
+        <span class="pill lo">Low</span>
+        <span class="pct">61.2%</span>
+      </div>
+      <h3 class="player">Anthony Molina</h3>
+      <p class="prop">Over 3.5 Strikeouts</p>
+      <p class="matchup">San Francisco Giants · San Francisco Giants @ New York Mets</p>
+      <div class="meta">
+        
+        
+      </div>
+    </article>
+    <article class="card lo">
+      <div class="card-top">
+        <span class="pill lo">Low</span>
+        <span class="pct">61.2%</span>
+      </div>
+      <h3 class="player">George Kirby</h3>
+      <p class="prop">Over 3.5 Strikeouts</p>
+      <p class="matchup">Seattle Mariners · Athletics @ Seattle Mariners</p>
+      <div class="meta">
+        
+        <span class="sample">26 sample · grade A</span>
+      </div>
+    </article>
+    <article class="card lo">
+      <div class="card-top">
+        <span class="pill lo">Low</span>
+        <span class="pct">61.0%</span>
+      </div>
+      <h3 class="player">Matthew Liberatore</h3>
+      <p class="prop">Over 4.5 Strikeouts</p>
+      <p class="matchup">St. Louis Cardinals · St. Louis Cardinals @ Colorado Rockies</p>
+      <div class="meta">
+        
+        <span class="sample">27 sample · grade A</span>
+      </div>
+    </article>
+    <article class="card lo">
+      <div class="card-top">
+        <span class="pill lo">Low</span>
+        <span class="pct">60.7%</span>
+      </div>
+      <h3 class="player">Zac Thornton</h3>
+      <p class="prop">Over 3.5 Strikeouts</p>
+      <p class="matchup">New York Mets · San Francisco Giants @ New York Mets</p>
+      <div class="meta">
+        
+        <span class="sample">11 sample · grade B</span>
+      </div>
+    </article>
+    <article class="card lo">
+      <div class="card-top">
+        <span class="pill lo">Low</span>
+        <span class="pct">60.6%</span>
+      </div>
+      <h3 class="player">Chris Bassitt</h3>
+      <p class="prop">Over 3.5 Strikeouts</p>
+      <p class="matchup">Baltimore Orioles · Boston Red Sox @ Baltimore Orioles</p>
+      <div class="meta">
+        
+        <span class="sample">14 sample · grade B</span>
+      </div>
+    </article>
+    <article class="card md">
+      <div class="card-top">
+        <span class="pill md">Medium</span>
+        <span class="pct">60.4%</span>
+      </div>
+      <h3 class="player">Ryan Gusto</h3>
+      <p class="prop">Over 3.5 Strikeouts</p>
+      <p class="matchup">Miami Marlins · Chicago Cubs @ Miami Marlins</p>
+      <div class="meta">
+        
+        <span class="sample">14 sample · grade B</span>
+      </div>
+    </article>
+    <article class="card lo">
+      <div class="card-top">
+        <span class="pill lo">Low</span>
+        <span class="pct">60.1%</span>
+      </div>
+      <h3 class="player">Andrew Abbott</h3>
+      <p class="prop">Over 3.5 Strikeouts</p>
+      <p class="matchup">Cincinnati Reds · Milwaukee Brewers @ Cincinnati Reds</p>
+      <div class="meta">
+        
+        <span class="sample">28 sample · grade A</span>
+      </div>
+    </article>
+    <article class="card lo">
+      <div class="card-top">
+        <span class="pill lo">Low</span>
+        <span class="pct">60.1%</span>
+      </div>
+      <h3 class="player">Andrew Abbott</h3>
+      <p class="prop">Over 15.5 Outs Recorded</p>
+      <p class="matchup">Cincinnati Reds · Milwaukee Brewers @ Cincinnati Reds</p>
+      <div class="meta">
+        
+        <span class="sample">28 sample · grade A</span>
+      </div>
+    </article>
+    <article class="card md">
+      <div class="card-top">
+        <span class="pill md">Medium</span>
+        <span class="pct">60.1%</span>
+      </div>
+      <h3 class="player">Dustin May</h3>
+      <p class="prop">Over 3.5 Strikeouts</p>
+      <p class="matchup">Milwaukee Brewers · Milwaukee Brewers @ Cincinnati Reds</p>
+      <div class="meta">
+        
+        <span class="sample">26 sample · grade A</span>
+      </div>
+    </article>
+    <article class="card lo">
+      <div class="card-top">
+        <span class="pill lo">Low</span>
+        <span class="pct">59.8%</span>
+      </div>
+      <h3 class="player">Martín Pérez</h3>
+      <p class="prop">Over 3.5 Strikeouts</p>
+      <p class="matchup">Atlanta Braves · Atlanta Braves @ Philadelphia Phillies</p>
+      <div class="meta">
+        
+        <span class="sample">22 sample · grade A</span>
+      </div>
+    </article>
+    <article class="card lo">
+      <div class="card-top">
+        <span class="pill lo">Low</span>
+        <span class="pct">59.8%</span>
+      </div>
+      <h3 class="player">Framber Valdez</h3>
+      <p class="prop">Over 3.5 Strikeouts</p>
+      <p class="matchup">Detroit Tigers · Detroit Tigers @ Cleveland Guardians</p>
+      <div class="meta">
+        
+        <span class="sample">27 sample · grade A</span>
+      </div>
+    </article>
+    <article class="card lo">
+      <div class="card-top">
+        <span class="pill lo">Low</span>
+        <span class="pct">59.6%</span>
+      </div>
+      <h3 class="player">Parker Messick</h3>
+      <p class="prop">Over 4.5 Strikeouts</p>
+      <p class="matchup">Cleveland Guardians · Detroit Tigers @ Cleveland Guardians</p>
+      <div class="meta">
+        
+        <span class="sample">27 sample · grade A</span>
+      </div>
+    </article>
+    <article class="card lo">
+      <div class="card-top">
+        <span class="pill lo">Low</span>
+        <span class="pct">59.4%</span>
+      </div>
+      <h3 class="player">Mason Adams</h3>
+      <p class="prop">Over 4.5 Strikeouts</p>
+      <p class="matchup">Colorado Rockies · St. Louis Cardinals @ Colorado Rockies</p>
+      <div class="meta">
+        
+        
+      </div>
+    </article>
+    <article class="card lo">
+      <div class="card-top">
+        <span class="pill lo">Low</span>
+        <span class="pct">59.4%</span>
+      </div>
+      <h3 class="player">Seth Lugo</h3>
+      <p class="prop">Over 3.5 Strikeouts</p>
+      <p class="matchup">Kansas City Royals · Toronto Blue Jays @ Kansas City Royals</p>
+      <div class="meta">
+        
+        <span class="sample">28 sample · grade A</span>
+      </div>
+    </article>
+    <article class="card md">
+      <div class="card-top">
+        <span class="pill md">Medium</span>
+        <span class="pct">59.3%</span>
+      </div>
+      <h3 class="player">Brandon Pfaadt</h3>
+      <p class="prop">Over 3.5 Strikeouts</p>
+      <p class="matchup">Arizona Diamondbacks · Arizona Diamondbacks @ Houston Astros</p>
+      <div class="meta">
+        
+        <span class="sample">15 sample · grade B</span>
+      </div>
+    </article>
+    <article class="card md">
+      <div class="card-top">
+        <span class="pill md">Medium</span>
+        <span class="pct">59.0%</span>
+      </div>
+      <h3 class="player">Carlos Rodón</h3>
+      <p class="prop">Over 8.5 Combined Strikeouts</p>
+      <p class="matchup"> · New York Yankees @ San Diego Padres</p>
+      <div class="meta">
+        
+        
+      </div>
+    </article>
+    <article class="card lo">
+      <div class="card-top">
+        <span class="pill lo">Low</span>
+        <span class="pct">58.8%</span>
+      </div>
+      <h3 class="player">Ethan Pecko</h3>
+      <p class="prop">Over 3.5 Strikeouts</p>
+      <p class="matchup">Houston Astros · Arizona Diamondbacks @ Houston Astros</p>
+      <div class="meta">
+        
+        
+      </div>
+    </article>
+    <article class="card lo">
+      <div class="card-top">
+        <span class="pill lo">Low</span>
+        <span class="pct">58.4%</span>
+      </div>
+      <h3 class="player">Cade Cavalli</h3>
+      <p class="prop">Over 15.5 Outs Recorded</p>
+      <p class="matchup">Washington Nationals · Washington Nationals @ Los Angeles Dodgers</p>
+      <div class="meta">
+        
+        <span class="sample">29 sample · grade A</span>
+      </div>
+    </article>
+    <article class="card md">
+      <div class="card-top">
+        <span class="pill md">Medium</span>
+        <span class="pct">57.7%</span>
+      </div>
+      <h3 class="player">Toronto Blue Jays @ Kansas City Royals — 1st Inning (Both Teams)</h3>
+      <p class="prop">A run scores in the 1st (either team)</p>
+      <p class="matchup"> · Toronto Blue Jays @ Kansas City Royals</p>
+      <div class="meta">
+        
+        <span class="sample">14 sample · grade B</span>
+      </div>
+    </article>
+    <article class="card lo">
+      <div class="card-top">
+        <span class="pill lo">Low</span>
+        <span class="pct">57.6%</span>
+      </div>
+      <h3 class="player">Robbie Ray</h3>
+      <p class="prop">Over 15.5 Outs Recorded</p>
+      <p class="matchup">San Diego Padres · New York Yankees @ San Diego Padres</p>
+      <div class="meta">
+        
+        <span class="sample">26 sample · grade A</span>
+      </div>
+    </article>
+    <article class="card lo">
+      <div class="card-top">
+        <span class="pill lo">Low</span>
+        <span class="pct">57.2%</span>
+      </div>
+      <h3 class="player">Seth Lugo</h3>
+      <p class="prop">Over 15.5 Outs Recorded</p>
+      <p class="matchup">Kansas City Royals · Toronto Blue Jays @ Kansas City Royals</p>
+      <div class="meta">
+        
+        <span class="sample">28 sample · grade A</span>
+      </div>
+    </article>
+    <article class="card md">
+      <div class="card-top">
+        <span class="pill md">Medium</span>
+        <span class="pct">56.9%</span>
+      </div>
+      <h3 class="player">Braxton Ashcraft</h3>
+      <p class="prop">Over 17.5 Outs Recorded</p>
+      <p class="matchup">Pittsburgh Pirates · Los Angeles Angels @ Pittsburgh Pirates</p>
+      <div class="meta">
+        
+        <span class="sample">27 sample · grade A</span>
+      </div>
+    </article>
+    <article class="card lo">
+      <div class="card-top">
+        <span class="pill lo">Low</span>
+        <span class="pct">56.7%</span>
+      </div>
+      <h3 class="player">Drew Rasmussen</h3>
+      <p class="prop">Over 16.5 Outs Recorded</p>
+      <p class="matchup">Tampa Bay Rays · Tampa Bay Rays @ Texas Rangers</p>
+      <div class="meta">
+        
+        <span class="sample">26 sample · grade A</span>
+      </div>
+    </article>
+    <article class="card md">
+      <div class="card-top">
+        <span class="pill md">Medium</span>
+        <span class="pct">56.1%</span>
+      </div>
+      <h3 class="player">Brandon Pfaadt</h3>
+      <p class="prop">Over 17.5 Outs Recorded</p>
+      <p class="matchup">Arizona Diamondbacks · Arizona Diamondbacks @ Houston Astros</p>
+      <div class="meta">
+        
+        <span class="sample">15 sample · grade B</span>
+      </div>
+    </article>
+    <article class="card md">
+      <div class="card-top">
+        <span class="pill md">Medium</span>
+        <span class="pct">55.6%</span>
+      </div>
+      <h3 class="player">George Kirby</h3>
+      <p class="prop">Over 17.5 Outs Recorded</p>
+      <p class="matchup">Seattle Mariners · Athletics @ Seattle Mariners</p>
+      <div class="meta">
+        
+        <span class="sample">26 sample · grade A</span>
+      </div>
+    </article>
+    <article class="card lo">
+      <div class="card-top">
+        <span class="pill lo">Low</span>
+        <span class="pct">55.0%</span>
+      </div>
+      <h3 class="player">Taj Bradley</h3>
+      <p class="prop">Over 16.5 Outs Recorded</p>
+      <p class="matchup">Minnesota Twins · Minnesota Twins @ Chicago White Sox</p>
+      <div class="meta">
+        
+        <span class="sample">27 sample · grade A</span>
+      </div>
+    </article>
+    <article class="card md">
+      <div class="card-top">
+        <span class="pill md">Medium</span>
+        <span class="pct">54.6%</span>
+      </div>
+      <h3 class="player">Milwaukee Brewers @ Cincinnati Reds — 1st Inning (Both Teams)</h3>
+      <p class="prop">A run scores in the 1st (either team)</p>
+      <p class="matchup"> · Milwaukee Brewers @ Cincinnati Reds</p>
+      <div class="meta">
+        
+        <span class="sample">27 sample · grade A</span>
+      </div>
+    </article>
+    <article class="card lo">
+      <div class="card-top">
+        <span class="pill lo">Low</span>
+        <span class="pct">54.6%</span>
+      </div>
+      <h3 class="player">Cade Cavalli</h3>
+      <p class="prop">Over 5.5 Strikeouts</p>
+      <p class="matchup">Washington Nationals · Washington Nationals @ Los Angeles Dodgers</p>
+      <div class="meta">
+        
+        <span class="sample">29 sample · grade A</span>
+      </div>
+    </article>
+    <article class="card lo">
+      <div class="card-top">
+        <span class="pill lo">Low</span>
+        <span class="pct">54.5%</span>
+      </div>
+      <h3 class="player">Jacob deGrom</h3>
+      <p class="prop">Over 15.5 Outs Recorded</p>
+      <p class="matchup">Texas Rangers · Tampa Bay Rays @ Texas Rangers</p>
+      <div class="meta">
+        
+        <span class="sample">26 sample · grade A</span>
+      </div>
+    </article>
+    <article class="card md">
+      <div class="card-top">
+        <span class="pill md">Medium</span>
+        <span class="pct">54.2%</span>
+      </div>
+      <h3 class="player">Detroit Tigers @ Cleveland Guardians — 1st Inning (Both Teams)</h3>
+      <p class="prop">No runs in the 1st (both teams)</p>
+      <p class="matchup"> · Detroit Tigers @ Cleveland Guardians</p>
+      <div class="meta">
+        
+        <span class="sample">29 sample · grade A</span>
+      </div>
+    </article>
+    <article class="card lo">
+      <div class="card-top">
+        <span class="pill lo">Low</span>
+        <span class="pct">53.8%</span>
+      </div>
+      <h3 class="player">Zac Thornton</h3>
+      <p class="prop">Over 16.5 Outs Recorded</p>
+      <p class="matchup">New York Mets · San Francisco Giants @ New York Mets</p>
+      <div class="meta">
+        
+        <span class="sample">11 sample · grade B</span>
+      </div>
+    </article>
+    <article class="card md">
+      <div class="card-top">
+        <span class="pill md">Medium</span>
+        <span class="pct">53.3%</span>
+      </div>
+      <h3 class="player">Minnesota Twins @ Chicago White Sox — 1st Inning (Both Teams)</h3>
+      <p class="prop">A run scores in the 1st (either team)</p>
+      <p class="matchup"> · Minnesota Twins @ Chicago White Sox</p>
+      <div class="meta">
+        
+        <span class="sample">28 sample · grade A</span>
+      </div>
+    </article>
+    <article class="card lo">
+      <div class="card-top">
+        <span class="pill lo">Low</span>
+        <span class="pct">53.2%</span>
+      </div>
+      <h3 class="player">Carlos Rodón</h3>
+      <p class="prop">Over 4.5 Strikeouts</p>
+      <p class="matchup">New York Yankees · New York Yankees @ San Diego Padres</p>
+      <div class="meta">
+        
+        <span class="sample">12 sample · grade B</span>
+      </div>
+    </article>
+    <article class="card md">
+      <div class="card-top">
+        <span class="pill md">Medium</span>
+        <span class="pct">53.0%</span>
+      </div>
+      <h3 class="player">New York Yankees @ San Diego Padres — 1st Inning (Both Teams)</h3>
+      <p class="prop">No runs in the 1st (both teams)</p>
+      <p class="matchup"> · New York Yankees @ San Diego Padres</p>
+      <div class="meta">
+        
+        <span class="sample">12 sample · grade B</span>
+      </div>
+    </article>
+    <article class="card md">
+      <div class="card-top">
+        <span class="pill md">Medium</span>
+        <span class="pct">52.5%</span>
+      </div>
+      <h3 class="player">Washington Nationals @ Los Angeles Dodgers — 1st Inning (Both Teams)</h3>
+      <p class="prop">No runs in the 1st (both teams)</p>
+      <p class="matchup"> · Washington Nationals @ Los Angeles Dodgers</p>
+      <div class="meta">
+        
+        <span class="sample">11 sample · grade B</span>
+      </div>
+    </article>
+    <article class="card lo">
+      <div class="card-top">
+        <span class="pill lo">Low</span>
+        <span class="pct">52.4%</span>
+      </div>
+      <h3 class="player">Jacob deGrom</h3>
+      <p class="prop">Over 5.5 Strikeouts</p>
+      <p class="matchup">Texas Rangers · Tampa Bay Rays @ Texas Rangers</p>
+      <div class="meta">
+        
+        <span class="sample">26 sample · grade A</span>
+      </div>
+    </article>
+    <article class="card md">
+      <div class="card-top">
+        <span class="pill md">Medium</span>
+        <span class="pct">51.9%</span>
+      </div>
+      <h3 class="player">Boston Red Sox @ Baltimore Orioles — 1st Inning (Both Teams)</h3>
+      <p class="prop">A run scores in the 1st (either team)</p>
+      <p class="matchup"> · Boston Red Sox @ Baltimore Orioles</p>
+      <div class="meta">
+        
+        <span class="sample">15 sample · grade B</span>
+      </div>
+    </article>
+    <article class="card md">
+      <div class="card-top">
+        <span class="pill md">Medium</span>
+        <span class="pct">51.7%</span>
+      </div>
+      <h3 class="player">Los Angeles Angels @ Pittsburgh Pirates — 1st Inning (Both Teams)</h3>
+      <p class="prop">No runs in the 1st (both teams)</p>
+      <p class="matchup"> · Los Angeles Angels @ Pittsburgh Pirates</p>
+      <div class="meta">
+        
+        <span class="sample">10 sample · grade B</span>
+      </div>
+    </article>
+    <article class="card lo">
+      <div class="card-top">
+        <span class="pill lo">Low</span>
+        <span class="pct">51.4%</span>
+      </div>
+      <h3 class="player">Arizona Diamondbacks @ Houston Astros — 1st Inning (Both Teams)</h3>
+      <p class="prop">No runs in the 1st (both teams)</p>
+      <p class="matchup"> · Arizona Diamondbacks @ Houston Astros</p>
+      <div class="meta">
+        
+        <span class="sample">3 sample · grade D</span>
+      </div>
+    </article>
+    <article class="card md">
+      <div class="card-top">
+        <span class="pill md">Medium</span>
+        <span class="pct">51.3%</span>
+      </div>
+      <h3 class="player">Atlanta Braves @ Philadelphia Phillies — 1st Inning (Both Teams)</h3>
+      <p class="prop">No runs in the 1st (both teams)</p>
+      <p class="matchup"> · Atlanta Braves @ Philadelphia Phillies</p>
+      <div class="meta">
+        
+        <span class="sample">23 sample · grade A</span>
+      </div>
+    </article>
+    <article class="card lo">
+      <div class="card-top">
+        <span class="pill lo">Low</span>
+        <span class="pct">51.0%</span>
+      </div>
+      <h3 class="player">St. Louis Cardinals @ Colorado Rockies — 1st Inning (Both Teams)</h3>
+      <p class="prop">A run scores in the 1st (either team)</p>
+      <p class="matchup"> · St. Louis Cardinals @ Colorado Rockies</p>
+      <div class="meta">
+        
+        <span class="sample">2 sample · grade D</span>
+      </div>
+    </article>
+    <article class="card md">
+      <div class="card-top">
+        <span class="pill md">Medium</span>
+        <span class="pct">50.1%</span>
+      </div>
+      <h3 class="player">Tampa Bay Rays @ Texas Rangers — 1st Inning (Both Teams)</h3>
+      <p class="prop">No runs in the 1st (both teams)</p>
+      <p class="matchup"> · Tampa Bay Rays @ Texas Rangers</p>
+      <div class="meta">
+        
+        <span class="sample">26 sample · grade A</span>
+      </div>
+    </article>
+    <article class="card lo">
+      <div class="card-top">
+        <span class="pill lo">Low</span>
+        <span class="pct">47.8%</span>
+      </div>
+      <h3 class="player">Parker Messick</h3>
+      <p class="prop">Over 17.5 Outs Recorded</p>
+      <p class="matchup">Cleveland Guardians · Detroit Tigers @ Cleveland Guardians</p>
+      <div class="meta">
+        
+        <span class="sample">27 sample · grade A</span>
+      </div>
+    </article>
+    <article class="card lo">
+      <div class="card-top">
+        <span class="pill lo">Low</span>
+        <span class="pct">46.5%</span>
+      </div>
+      <h3 class="player">Drew Rasmussen</h3>
+      <p class="prop">Over 5.5 Strikeouts</p>
+      <p class="matchup">Tampa Bay Rays · Tampa Bay Rays @ Texas Rangers</p>
+      <div class="meta">
+        
+        <span class="sample">26 sample · grade A</span>
+      </div>
+    </article>
+    <article class="card lo">
+      <div class="card-top">
+        <span class="pill lo">Low</span>
+        <span class="pct">38.0%</span>
+      </div>
+      <h3 class="player">Zack Wheeler</h3>
+      <p class="prop">Over 6.5 Strikeouts</p>
+      <p class="matchup">Philadelphia Phillies · Atlanta Braves @ Philadelphia Phillies</p>
+      <div class="meta">
+        
+        <span class="sample">23 sample · grade A</span>
+      </div>
+    </article>
+    <article class="card md">
+      <div class="card-top">
+        <span class="pill md">Medium</span>
+        <span class="pct">30.0%</span>
+      </div>
+      <h3 class="player">Robbie Ray</h3>
+      <p class="prop">Over 5.5 Strikeouts</p>
+      <p class="matchup">San Diego Padres · New York Yankees @ San Diego Padres</p>
+      <div class="meta">
+        
+        <span class="sample">26 sample · grade A</span>
+      </div>
+    </article>
+    <article class="card lo">
+      <div class="card-top">
+        <span class="pill lo">Low</span>
+        <span class="pct">24.1%</span>
+      </div>
+      <h3 class="player">Tyler Glasnow</h3>
+      <p class="prop">Over 7.5 Strikeouts</p>
+      <p class="matchup">Los Angeles Dodgers · Washington Nationals @ Los Angeles Dodgers</p>
+      <div class="meta">
+        
+        <span class="sample">9 sample · grade B</span>
+      </div>
+    </article></div></div>
+<div class="panel" data-panel="combined_strikeouts"><div class="grid">
+    <article class="card lo">
+      <div class="card-top">
+        <span class="pill lo">Low</span>
+        <span class="pct">81.0%</span>
+      </div>
+      <h3 class="player">Matthew Liberatore</h3>
+      <p class="prop">Over 9.5 Combined Strikeouts</p>
+      <p class="matchup"> · St. Louis Cardinals @ Colorado Rockies</p>
+      <div class="meta">
+        
+        
+      </div>
+    </article>
+    <article class="card lo">
+      <div class="card-top">
+        <span class="pill lo">Low</span>
+        <span class="pct">66.9%</span>
+      </div>
+      <h3 class="player">Cade Cavalli</h3>
+      <p class="prop">Over 12.5 Combined Strikeouts</p>
+      <p class="matchup"> · Washington Nationals @ Los Angeles Dodgers</p>
+      <div class="meta">
+        
+        
+      </div>
+    </article>
+    <article class="card md">
+      <div class="card-top">
+        <span class="pill md">Medium</span>
+        <span class="pct">59.0%</span>
+      </div>
+      <h3 class="player">Carlos Rodón</h3>
+      <p class="prop">Over 8.5 Combined Strikeouts</p>
+      <p class="matchup"> · New York Yankees @ San Diego Padres</p>
+      <div class="meta">
+        
+        
+      </div>
+    </article></div></div>
+<div class="panel" data-panel="pitcher_outs"><div class="grid">
+    <article class="card lo">
+      <div class="card-top">
+        <span class="pill lo">Low</span>
+        <span class="pct">77.4%</span>
+      </div>
+      <h3 class="player">Ryan Gusto</h3>
+      <p class="prop">Over 11.5 Outs Recorded</p>
+      <p class="matchup">Miami Marlins · Chicago Cubs @ Miami Marlins</p>
+      <div class="meta">
+        
+        <span class="sample">14 sample · grade B</span>
+      </div>
+    </article>
+    <article class="card md">
+      <div class="card-top">
+        <span class="pill md">Medium</span>
+        <span class="pct">77.2%</span>
+      </div>
+      <h3 class="player">Martín Pérez</h3>
+      <p class="prop">Over 14.5 Outs Recorded</p>
+      <p class="matchup">Atlanta Braves · Atlanta Braves @ Philadelphia Phillies</p>
+      <div class="meta">
+        
+        <span class="sample">22 sample · grade A</span>
+      </div>
+    </article>
+    <article class="card md">
+      <div class="card-top">
+        <span class="pill md">Medium</span>
+        <span class="pct">74.6%</span>
+      </div>
+      <h3 class="player">Matthew Liberatore</h3>
+      <p class="prop">Over 14.5 Outs Recorded</p>
+      <p class="matchup">St. Louis Cardinals · St. Louis Cardinals @ Colorado Rockies</p>
+      <div class="meta">
+        
+        <span class="sample">27 sample · grade A</span>
+      </div>
+    </article>
+    <article class="card lo">
+      <div class="card-top">
+        <span class="pill lo">Low</span>
+        <span class="pct">72.3%</span>
+      </div>
+      <h3 class="player">Yusei Kikuchi</h3>
+      <p class="prop">Over 13.5 Outs Recorded</p>
+      <p class="matchup">Los Angeles Angels · Los Angeles Angels @ Pittsburgh Pirates</p>
+      <div class="meta">
+        
+        <span class="sample">9 sample · grade B</span>
+      </div>
+    </article>
+    <article class="card hi">
+      <div class="card-top">
+        <span class="pill hi">High</span>
+        <span class="pct">68.2%</span>
+      </div>
+      <h3 class="player">Sonny Gray</h3>
+      <p class="prop">Over 16.5 Outs Recorded</p>
+      <p class="matchup">Boston Red Sox · Boston Red Sox @ Baltimore Orioles</p>
+      <div class="meta">
+        
+        <span class="sample">25 sample · grade A</span>
+      </div>
+    </article>
+    <article class="card lo">
+      <div class="card-top">
+        <span class="pill lo">Low</span>
+        <span class="pct">68.2%</span>
+      </div>
+      <h3 class="player">Chris Bassitt</h3>
+      <p class="prop">Over 14.5 Outs Recorded</p>
+      <p class="matchup">Baltimore Orioles · Boston Red Sox @ Baltimore Orioles</p>
+      <div class="meta">
+        
+        <span class="sample">14 sample · grade B</span>
+      </div>
+    </article>
+    <article class="card lo">
+      <div class="card-top">
+        <span class="pill lo">Low</span>
+        <span class="pct">67.6%</span>
+      </div>
+      <h3 class="player">Tyler Glasnow</h3>
+      <p class="prop">Over 16.5 Outs Recorded</p>
+      <p class="matchup">Los Angeles Dodgers · Washington Nationals @ Los Angeles Dodgers</p>
+      <div class="meta">
+        
+        <span class="sample">9 sample · grade B</span>
+      </div>
+    </article>
+    <article class="card lo">
+      <div class="card-top">
+        <span class="pill lo">Low</span>
+        <span class="pct">67.6%</span>
+      </div>
+      <h3 class="player">Dustin May</h3>
+      <p class="prop">Over 14.5 Outs Recorded</p>
+      <p class="matchup">Milwaukee Brewers · Milwaukee Brewers @ Cincinnati Reds</p>
+      <div class="meta">
+        
+        <span class="sample">26 sample · grade A</span>
+      </div>
+    </article>
+    <article class="card lo">
+      <div class="card-top">
+        <span class="pill lo">Low</span>
+        <span class="pct">64.6%</span>
+      </div>
+      <h3 class="player">Carlos Rodón</h3>
+      <p class="prop">Over 14.5 Outs Recorded</p>
+      <p class="matchup">New York Yankees · New York Yankees @ San Diego Padres</p>
+      <div class="meta">
+        
+        <span class="sample">12 sample · grade B</span>
+      </div>
+    </article>
+    <article class="card lo">
+      <div class="card-top">
+        <span class="pill lo">Low</span>
+        <span class="pct">64.5%</span>
+      </div>
+      <h3 class="player">Anthony Kay</h3>
+      <p class="prop">Over 14.5 Outs Recorded</p>
+      <p class="matchup">Chicago White Sox · Minnesota Twins @ Chicago White Sox</p>
+      <div class="meta">
+        
+        <span class="sample">26 sample · grade A</span>
+      </div>
+    </article>
+    <article class="card hi">
+      <div class="card-top">
+        <span class="pill hi">High</span>
+        <span class="pct">64.0%</span>
+      </div>
+      <h3 class="player">Framber Valdez</h3>
+      <p class="prop">Over 16.5 Outs Recorded</p>
+      <p class="matchup">Detroit Tigers · Detroit Tigers @ Cleveland Guardians</p>
+      <div class="meta">
+        
+        <span class="sample">27 sample · grade A</span>
+      </div>
+    </article>
+    <article class="card lo">
+      <div class="card-top">
+        <span class="pill lo">Low</span>
+        <span class="pct">63.4%</span>
+      </div>
+      <h3 class="player">Max Scherzer</h3>
+      <p class="prop">Over 12.5 Outs Recorded</p>
+      <p class="matchup">Toronto Blue Jays · Toronto Blue Jays @ Kansas City Royals</p>
+      <div class="meta">
+        
+        <span class="sample">13 sample · grade B</span>
+      </div>
+    </article>
+    <article class="card md">
+      <div class="card-top">
+        <span class="pill md">Medium</span>
+        <span class="pct">62.5%</span>
+      </div>
+      <h3 class="player">Zack Wheeler</h3>
+      <p class="prop">Over 16.5 Outs Recorded</p>
+      <p class="matchup">Philadelphia Phillies · Atlanta Braves @ Philadelphia Phillies</p>
+      <div class="meta">
+        
+        <span class="sample">23 sample · grade A</span>
+      </div>
+    </article>
+    <article class="card lo">
+      <div class="card-top">
+        <span class="pill lo">Low</span>
+        <span class="pct">60.1%</span>
+      </div>
+      <h3 class="player">Andrew Abbott</h3>
+      <p class="prop">Over 15.5 Outs Recorded</p>
+      <p class="matchup">Cincinnati Reds · Milwaukee Brewers @ Cincinnati Reds</p>
+      <div class="meta">
+        
+        <span class="sample">28 sample · grade A</span>
+      </div>
+    </article>
+    <article class="card lo">
+      <div class="card-top">
+        <span class="pill lo">Low</span>
+        <span class="pct">58.4%</span>
+      </div>
+      <h3 class="player">Cade Cavalli</h3>
+      <p class="prop">Over 15.5 Outs Recorded</p>
+      <p class="matchup">Washington Nationals · Washington Nationals @ Los Angeles Dodgers</p>
+      <div class="meta">
+        
+        <span class="sample">29 sample · grade A</span>
+      </div>
+    </article>
+    <article class="card lo">
+      <div class="card-top">
+        <span class="pill lo">Low</span>
+        <span class="pct">57.6%</span>
+      </div>
+      <h3 class="player">Robbie Ray</h3>
+      <p class="prop">Over 15.5 Outs Recorded</p>
+      <p class="matchup">San Diego Padres · New York Yankees @ San Diego Padres</p>
+      <div class="meta">
+        
+        <span class="sample">26 sample · grade A</span>
+      </div>
+    </article>
+    <article class="card lo">
+      <div class="card-top">
+        <span class="pill lo">Low</span>
+        <span class="pct">57.2%</span>
+      </div>
+      <h3 class="player">Seth Lugo</h3>
+      <p class="prop">Over 15.5 Outs Recorded</p>
+      <p class="matchup">Kansas City Royals · Toronto Blue Jays @ Kansas City Royals</p>
+      <div class="meta">
+        
+        <span class="sample">28 sample · grade A</span>
+      </div>
+    </article>
+    <article class="card md">
+      <div class="card-top">
+        <span class="pill md">Medium</span>
+        <span class="pct">56.9%</span>
+      </div>
+      <h3 class="player">Braxton Ashcraft</h3>
+      <p class="prop">Over 17.5 Outs Recorded</p>
+      <p class="matchup">Pittsburgh Pirates · Los Angeles Angels @ Pittsburgh Pirates</p>
+      <div class="meta">
+        
+        <span class="sample">27 sample · grade A</span>
+      </div>
+    </article>
+    <article class="card lo">
+      <div class="card-top">
+        <span class="pill lo">Low</span>
+        <span class="pct">56.7%</span>
+      </div>
+      <h3 class="player">Drew Rasmussen</h3>
+      <p class="prop">Over 16.5 Outs Recorded</p>
+      <p class="matchup">Tampa Bay Rays · Tampa Bay Rays @ Texas Rangers</p>
+      <div class="meta">
+        
+        <span class="sample">26 sample · grade A</span>
+      </div>
+    </article>
+    <article class="card md">
+      <div class="card-top">
+        <span class="pill md">Medium</span>
+        <span class="pct">56.1%</span>
+      </div>
+      <h3 class="player">Brandon Pfaadt</h3>
+      <p class="prop">Over 17.5 Outs Recorded</p>
+      <p class="matchup">Arizona Diamondbacks · Arizona Diamondbacks @ Houston Astros</p>
+      <div class="meta">
+        
+        <span class="sample">15 sample · grade B</span>
+      </div>
+    </article>
+    <article class="card md">
+      <div class="card-top">
+        <span class="pill md">Medium</span>
+        <span class="pct">55.6%</span>
+      </div>
+      <h3 class="player">George Kirby</h3>
+      <p class="prop">Over 17.5 Outs Recorded</p>
+      <p class="matchup">Seattle Mariners · Athletics @ Seattle Mariners</p>
+      <div class="meta">
+        
+        <span class="sample">26 sample · grade A</span>
+      </div>
+    </article>
+    <article class="card lo">
+      <div class="card-top">
+        <span class="pill lo">Low</span>
+        <span class="pct">55.0%</span>
+      </div>
+      <h3 class="player">Taj Bradley</h3>
+      <p class="prop">Over 16.5 Outs Recorded</p>
+      <p class="matchup">Minnesota Twins · Minnesota Twins @ Chicago White Sox</p>
+      <div class="meta">
+        
+        <span class="sample">27 sample · grade A</span>
+      </div>
+    </article>
+    <article class="card lo">
+      <div class="card-top">
+        <span class="pill lo">Low</span>
+        <span class="pct">54.5%</span>
+      </div>
+      <h3 class="player">Jacob deGrom</h3>
+      <p class="prop">Over 15.5 Outs Recorded</p>
+      <p class="matchup">Texas Rangers · Tampa Bay Rays @ Texas Rangers</p>
+      <div class="meta">
+        
+        <span class="sample">26 sample · grade A</span>
+      </div>
+    </article>
+    <article class="card lo">
+      <div class="card-top">
+        <span class="pill lo">Low</span>
+        <span class="pct">53.8%</span>
+      </div>
+      <h3 class="player">Zac Thornton</h3>
+      <p class="prop">Over 16.5 Outs Recorded</p>
+      <p class="matchup">New York Mets · San Francisco Giants @ New York Mets</p>
+      <div class="meta">
+        
+        <span class="sample">11 sample · grade B</span>
+      </div>
+    </article>
+    <article class="card lo">
+      <div class="card-top">
+        <span class="pill lo">Low</span>
+        <span class="pct">47.8%</span>
+      </div>
+      <h3 class="player">Parker Messick</h3>
+      <p class="prop">Over 17.5 Outs Recorded</p>
+      <p class="matchup">Cleveland Guardians · Detroit Tigers @ Cleveland Guardians</p>
+      <div class="meta">
+        
+        <span class="sample">27 sample · grade A</span>
+      </div>
+    </article></div></div>
+<div class="panel" data-panel="strikeouts"><div class="grid">
+    <article class="card lo">
+      <div class="card-top">
+        <span class="pill lo">Low</span>
+        <span class="pct">62.3%</span>
+      </div>
+      <h3 class="player">Sonny Gray</h3>
+      <p class="prop">Over 3.5 Strikeouts</p>
+      <p class="matchup">Boston Red Sox · Boston Red Sox @ Baltimore Orioles</p>
+      <div class="meta">
+        
+        <span class="sample">25 sample · grade A</span>
+      </div>
+    </article>
+    <article class="card lo">
+      <div class="card-top">
+        <span class="pill lo">Low</span>
+        <span class="pct">62.3%</span>
+      </div>
+      <h3 class="player">Max Scherzer</h3>
+      <p class="prop">Over 3.5 Strikeouts</p>
+      <p class="matchup">Toronto Blue Jays · Toronto Blue Jays @ Kansas City Royals</p>
+      <div class="meta">
+        
+        <span class="sample">13 sample · grade B</span>
+      </div>
+    </article>
+    <article class="card md">
+      <div class="card-top">
+        <span class="pill md">Medium</span>
+        <span class="pct">62.0%</span>
+      </div>
+      <h3 class="player">Braxton Ashcraft</h3>
+      <p class="prop">Over 3.5 Strikeouts</p>
+      <p class="matchup">Pittsburgh Pirates · Los Angeles Angels @ Pittsburgh Pirates</p>
+      <div class="meta">
+        
+        <span class="sample">27 sample · grade A</span>
+      </div>
+    </article>
+    <article class="card lo">
+      <div class="card-top">
+        <span class="pill lo">Low</span>
+        <span class="pct">61.9%</span>
+      </div>
+      <h3 class="player">Yusei Kikuchi</h3>
+      <p class="prop">Over 3.5 Strikeouts</p>
+      <p class="matchup">Los Angeles Angels · Los Angeles Angels @ Pittsburgh Pirates</p>
+      <div class="meta">
+        
+        <span class="sample">9 sample · grade B</span>
+      </div>
+    </article>
+    <article class="card lo">
+      <div class="card-top">
+        <span class="pill lo">Low</span>
+        <span class="pct">61.3%</span>
+      </div>
+      <h3 class="player">Anthony Kay</h3>
+      <p class="prop">Over 3.5 Strikeouts</p>
+      <p class="matchup">Chicago White Sox · Minnesota Twins @ Chicago White Sox</p>
+      <div class="meta">
+        
+        <span class="sample">26 sample · grade A</span>
+      </div>
+    </article>
+    <article class="card lo">
+      <div class="card-top">
+        <span class="pill lo">Low</span>
+        <span class="pct">61.3%</span>
+      </div>
+      <h3 class="player">Taj Bradley</h3>
+      <p class="prop">Over 4.5 Strikeouts</p>
+      <p class="matchup">Minnesota Twins · Minnesota Twins @ Chicago White Sox</p>
+      <div class="meta">
+        
+        <span class="sample">27 sample · grade A</span>
+      </div>
+    </article>
+    <article class="card lo">
+      <div class="card-top">
+        <span class="pill lo">Low</span>
+        <span class="pct">61.2%</span>
+      </div>
+      <h3 class="player">Anthony Molina</h3>
+      <p class="prop">Over 3.5 Strikeouts</p>
+      <p class="matchup">San Francisco Giants · San Francisco Giants @ New York Mets</p>
+      <div class="meta">
+        
+        
+      </div>
+    </article>
+    <article class="card lo">
+      <div class="card-top">
+        <span class="pill lo">Low</span>
+        <span class="pct">61.2%</span>
+      </div>
+      <h3 class="player">George Kirby</h3>
+      <p class="prop">Over 3.5 Strikeouts</p>
+      <p class="matchup">Seattle Mariners · Athletics @ Seattle Mariners</p>
+      <div class="meta">
+        
+        <span class="sample">26 sample · grade A</span>
+      </div>
+    </article>
+    <article class="card lo">
+      <div class="card-top">
+        <span class="pill lo">Low</span>
+        <span class="pct">61.0%</span>
+      </div>
+      <h3 class="player">Matthew Liberatore</h3>
+      <p class="prop">Over 4.5 Strikeouts</p>
+      <p class="matchup">St. Louis Cardinals · St. Louis Cardinals @ Colorado Rockies</p>
+      <div class="meta">
+        
+        <span class="sample">27 sample · grade A</span>
+      </div>
+    </article>
+    <article class="card lo">
+      <div class="card-top">
+        <span class="pill lo">Low</span>
+        <span class="pct">60.7%</span>
+      </div>
+      <h3 class="player">Zac Thornton</h3>
+      <p class="prop">Over 3.5 Strikeouts</p>
+      <p class="matchup">New York Mets · San Francisco Giants @ New York Mets</p>
+      <div class="meta">
+        
+        <span class="sample">11 sample · grade B</span>
+      </div>
+    </article>
+    <article class="card lo">
+      <div class="card-top">
+        <span class="pill lo">Low</span>
+        <span class="pct">60.6%</span>
+      </div>
+      <h3 class="player">Chris Bassitt</h3>
+      <p class="prop">Over 3.5 Strikeouts</p>
+      <p class="matchup">Baltimore Orioles · Boston Red Sox @ Baltimore Orioles</p>
+      <div class="meta">
+        
+        <span class="sample">14 sample · grade B</span>
+      </div>
+    </article>
+    <article class="card md">
+      <div class="card-top">
+        <span class="pill md">Medium</span>
+        <span class="pct">60.4%</span>
+      </div>
+      <h3 class="player">Ryan Gusto</h3>
+      <p class="prop">Over 3.5 Strikeouts</p>
+      <p class="matchup">Miami Marlins · Chicago Cubs @ Miami Marlins</p>
+      <div class="meta">
+        
+        <span class="sample">14 sample · grade B</span>
+      </div>
+    </article>
+    <article class="card lo">
+      <div class="card-top">
+        <span class="pill lo">Low</span>
+        <span class="pct">60.1%</span>
+      </div>
+      <h3 class="player">Andrew Abbott</h3>
+      <p class="prop">Over 3.5 Strikeouts</p>
+      <p class="matchup">Cincinnati Reds · Milwaukee Brewers @ Cincinnati Reds</p>
+      <div class="meta">
+        
+        <span class="sample">28 sample · grade A</span>
+      </div>
+    </article>
+    <article class="card md">
+      <div class="card-top">
+        <span class="pill md">Medium</span>
+        <span class="pct">60.1%</span>
+      </div>
+      <h3 class="player">Dustin May</h3>
+      <p class="prop">Over 3.5 Strikeouts</p>
+      <p class="matchup">Milwaukee Brewers · Milwaukee Brewers @ Cincinnati Reds</p>
+      <div class="meta">
+        
+        <span class="sample">26 sample · grade A</span>
+      </div>
+    </article>
+    <article class="card lo">
+      <div class="card-top">
+        <span class="pill lo">Low</span>
+        <span class="pct">59.8%</span>
+      </div>
+      <h3 class="player">Martín Pérez</h3>
+      <p class="prop">Over 3.5 Strikeouts</p>
+      <p class="matchup">Atlanta Braves · Atlanta Braves @ Philadelphia Phillies</p>
+      <div class="meta">
+        
+        <span class="sample">22 sample · grade A</span>
+      </div>
+    </article>
+    <article class="card lo">
+      <div class="card-top">
+        <span class="pill lo">Low</span>
+        <span class="pct">59.8%</span>
+      </div>
+      <h3 class="player">Framber Valdez</h3>
+      <p class="prop">Over 3.5 Strikeouts</p>
+      <p class="matchup">Detroit Tigers · Detroit Tigers @ Cleveland Guardians</p>
+      <div class="meta">
+        
+        <span class="sample">27 sample · grade A</span>
+      </div>
+    </article>
+    <article class="card lo">
+      <div class="card-top">
+        <span class="pill lo">Low</span>
+        <span class="pct">59.6%</span>
+      </div>
+      <h3 class="player">Parker Messick</h3>
+      <p class="prop">Over 4.5 Strikeouts</p>
+      <p class="matchup">Cleveland Guardians · Detroit Tigers @ Cleveland Guardians</p>
+      <div class="meta">
+        
+        <span class="sample">27 sample · grade A</span>
+      </div>
+    </article>
+    <article class="card lo">
+      <div class="card-top">
+        <span class="pill lo">Low</span>
+        <span class="pct">59.4%</span>
+      </div>
+      <h3 class="player">Mason Adams</h3>
+      <p class="prop">Over 4.5 Strikeouts</p>
+      <p class="matchup">Colorado Rockies · St. Louis Cardinals @ Colorado Rockies</p>
+      <div class="meta">
+        
+        
+      </div>
+    </article>
+    <article class="card lo">
+      <div class="card-top">
+        <span class="pill lo">Low</span>
+        <span class="pct">59.4%</span>
+      </div>
+      <h3 class="player">Seth Lugo</h3>
+      <p class="prop">Over 3.5 Strikeouts</p>
+      <p class="matchup">Kansas City Royals · Toronto Blue Jays @ Kansas City Royals</p>
+      <div class="meta">
+        
+        <span class="sample">28 sample · grade A</span>
+      </div>
+    </article>
+    <article class="card md">
+      <div class="card-top">
+        <span class="pill md">Medium</span>
+        <span class="pct">59.3%</span>
+      </div>
+      <h3 class="player">Brandon Pfaadt</h3>
+      <p class="prop">Over 3.5 Strikeouts</p>
+      <p class="matchup">Arizona Diamondbacks · Arizona Diamondbacks @ Houston Astros</p>
+      <div class="meta">
+        
+        <span class="sample">15 sample · grade B</span>
+      </div>
+    </article>
+    <article class="card lo">
+      <div class="card-top">
+        <span class="pill lo">Low</span>
+        <span class="pct">58.8%</span>
+      </div>
+      <h3 class="player">Ethan Pecko</h3>
+      <p class="prop">Over 3.5 Strikeouts</p>
+      <p class="matchup">Houston Astros · Arizona Diamondbacks @ Houston Astros</p>
+      <div class="meta">
+        
+        
+      </div>
+    </article>
+    <article class="card lo">
+      <div class="card-top">
+        <span class="pill lo">Low</span>
+        <span class="pct">54.6%</span>
+      </div>
+      <h3 class="player">Cade Cavalli</h3>
+      <p class="prop">Over 5.5 Strikeouts</p>
+      <p class="matchup">Washington Nationals · Washington Nationals @ Los Angeles Dodgers</p>
+      <div class="meta">
+        
+        <span class="sample">29 sample · grade A</span>
+      </div>
+    </article>
+    <article class="card lo">
+      <div class="card-top">
+        <span class="pill lo">Low</span>
+        <span class="pct">53.2%</span>
+      </div>
+      <h3 class="player">Carlos Rodón</h3>
+      <p class="prop">Over 4.5 Strikeouts</p>
+      <p class="matchup">New York Yankees · New York Yankees @ San Diego Padres</p>
+      <div class="meta">
+        
+        <span class="sample">12 sample · grade B</span>
+      </div>
+    </article>
+    <article class="card lo">
+      <div class="card-top">
+        <span class="pill lo">Low</span>
+        <span class="pct">52.4%</span>
+      </div>
+      <h3 class="player">Jacob deGrom</h3>
+      <p class="prop">Over 5.5 Strikeouts</p>
+      <p class="matchup">Texas Rangers · Tampa Bay Rays @ Texas Rangers</p>
+      <div class="meta">
+        
+        <span class="sample">26 sample · grade A</span>
+      </div>
+    </article>
+    <article class="card lo">
+      <div class="card-top">
+        <span class="pill lo">Low</span>
+        <span class="pct">46.5%</span>
+      </div>
+      <h3 class="player">Drew Rasmussen</h3>
+      <p class="prop">Over 5.5 Strikeouts</p>
+      <p class="matchup">Tampa Bay Rays · Tampa Bay Rays @ Texas Rangers</p>
+      <div class="meta">
+        
+        <span class="sample">26 sample · grade A</span>
+      </div>
+    </article>
+    <article class="card lo">
+      <div class="card-top">
+        <span class="pill lo">Low</span>
+        <span class="pct">38.0%</span>
+      </div>
+      <h3 class="player">Zack Wheeler</h3>
+      <p class="prop">Over 6.5 Strikeouts</p>
+      <p class="matchup">Philadelphia Phillies · Atlanta Braves @ Philadelphia Phillies</p>
+      <div class="meta">
+        
+        <span class="sample">23 sample · grade A</span>
+      </div>
+    </article>
+    <article class="card md">
+      <div class="card-top">
+        <span class="pill md">Medium</span>
+        <span class="pct">30.0%</span>
+      </div>
+      <h3 class="player">Robbie Ray</h3>
+      <p class="prop">Over 5.5 Strikeouts</p>
+      <p class="matchup">San Diego Padres · New York Yankees @ San Diego Padres</p>
+      <div class="meta">
+        
+        <span class="sample">26 sample · grade A</span>
+      </div>
+    </article>
+    <article class="card lo">
+      <div class="card-top">
+        <span class="pill lo">Low</span>
+        <span class="pct">24.1%</span>
+      </div>
+      <h3 class="player">Tyler Glasnow</h3>
+      <p class="prop">Over 7.5 Strikeouts</p>
+      <p class="matchup">Los Angeles Dodgers · Washington Nationals @ Los Angeles Dodgers</p>
+      <div class="meta">
+        
+        <span class="sample">9 sample · grade B</span>
+      </div>
+    </article></div></div>
+<div class="panel" data-panel="nrfi_combined"><div class="grid">
+    <article class="card md">
+      <div class="card-top">
+        <span class="pill md">Medium</span>
+        <span class="pct">57.7%</span>
+      </div>
+      <h3 class="player">Toronto Blue Jays @ Kansas City Royals — 1st Inning (Both Teams)</h3>
+      <p class="prop">A run scores in the 1st (either team)</p>
+      <p class="matchup"> · Toronto Blue Jays @ Kansas City Royals</p>
+      <div class="meta">
+        
+        <span class="sample">14 sample · grade B</span>
+      </div>
+    </article>
+    <article class="card md">
+      <div class="card-top">
+        <span class="pill md">Medium</span>
+        <span class="pct">54.6%</span>
+      </div>
+      <h3 class="player">Milwaukee Brewers @ Cincinnati Reds — 1st Inning (Both Teams)</h3>
+      <p class="prop">A run scores in the 1st (either team)</p>
+      <p class="matchup"> · Milwaukee Brewers @ Cincinnati Reds</p>
+      <div class="meta">
+        
+        <span class="sample">27 sample · grade A</span>
+      </div>
+    </article>
+    <article class="card md">
+      <div class="card-top">
+        <span class="pill md">Medium</span>
+        <span class="pct">54.2%</span>
+      </div>
+      <h3 class="player">Detroit Tigers @ Cleveland Guardians — 1st Inning (Both Teams)</h3>
+      <p class="prop">No runs in the 1st (both teams)</p>
+      <p class="matchup"> · Detroit Tigers @ Cleveland Guardians</p>
+      <div class="meta">
+        
+        <span class="sample">29 sample · grade A</span>
+      </div>
+    </article>
+    <article class="card md">
+      <div class="card-top">
+        <span class="pill md">Medium</span>
+        <span class="pct">53.3%</span>
+      </div>
+      <h3 class="player">Minnesota Twins @ Chicago White Sox — 1st Inning (Both Teams)</h3>
+      <p class="prop">A run scores in the 1st (either team)</p>
+      <p class="matchup"> · Minnesota Twins @ Chicago White Sox</p>
+      <div class="meta">
+        
+        <span class="sample">28 sample · grade A</span>
+      </div>
+    </article>
+    <article class="card md">
+      <div class="card-top">
+        <span class="pill md">Medium</span>
+        <span class="pct">53.0%</span>
+      </div>
+      <h3 class="player">New York Yankees @ San Diego Padres — 1st Inning (Both Teams)</h3>
+      <p class="prop">No runs in the 1st (both teams)</p>
+      <p class="matchup"> · New York Yankees @ San Diego Padres</p>
+      <div class="meta">
+        
+        <span class="sample">12 sample · grade B</span>
+      </div>
+    </article>
+    <article class="card md">
+      <div class="card-top">
+        <span class="pill md">Medium</span>
+        <span class="pct">52.5%</span>
+      </div>
+      <h3 class="player">Washington Nationals @ Los Angeles Dodgers — 1st Inning (Both Teams)</h3>
+      <p class="prop">No runs in the 1st (both teams)</p>
+      <p class="matchup"> · Washington Nationals @ Los Angeles Dodgers</p>
+      <div class="meta">
+        
+        <span class="sample">11 sample · grade B</span>
+      </div>
+    </article>
+    <article class="card md">
+      <div class="card-top">
+        <span class="pill md">Medium</span>
+        <span class="pct">51.9%</span>
+      </div>
+      <h3 class="player">Boston Red Sox @ Baltimore Orioles — 1st Inning (Both Teams)</h3>
+      <p class="prop">A run scores in the 1st (either team)</p>
+      <p class="matchup"> · Boston Red Sox @ Baltimore Orioles</p>
+      <div class="meta">
+        
+        <span class="sample">15 sample · grade B</span>
+      </div>
+    </article>
+    <article class="card md">
+      <div class="card-top">
+        <span class="pill md">Medium</span>
+        <span class="pct">51.7%</span>
+      </div>
+      <h3 class="player">Los Angeles Angels @ Pittsburgh Pirates — 1st Inning (Both Teams)</h3>
+      <p class="prop">No runs in the 1st (both teams)</p>
+      <p class="matchup"> · Los Angeles Angels @ Pittsburgh Pirates</p>
+      <div class="meta">
+        
+        <span class="sample">10 sample · grade B</span>
+      </div>
+    </article>
+    <article class="card lo">
+      <div class="card-top">
+        <span class="pill lo">Low</span>
+        <span class="pct">51.4%</span>
+      </div>
+      <h3 class="player">Arizona Diamondbacks @ Houston Astros — 1st Inning (Both Teams)</h3>
+      <p class="prop">No runs in the 1st (both teams)</p>
+      <p class="matchup"> · Arizona Diamondbacks @ Houston Astros</p>
+      <div class="meta">
+        
+        <span class="sample">3 sample · grade D</span>
+      </div>
+    </article>
+    <article class="card md">
+      <div class="card-top">
+        <span class="pill md">Medium</span>
+        <span class="pct">51.3%</span>
+      </div>
+      <h3 class="player">Atlanta Braves @ Philadelphia Phillies — 1st Inning (Both Teams)</h3>
+      <p class="prop">No runs in the 1st (both teams)</p>
+      <p class="matchup"> · Atlanta Braves @ Philadelphia Phillies</p>
+      <div class="meta">
+        
+        <span class="sample">23 sample · grade A</span>
+      </div>
+    </article>
+    <article class="card lo">
+      <div class="card-top">
+        <span class="pill lo">Low</span>
+        <span class="pct">51.0%</span>
+      </div>
+      <h3 class="player">St. Louis Cardinals @ Colorado Rockies — 1st Inning (Both Teams)</h3>
+      <p class="prop">A run scores in the 1st (either team)</p>
+      <p class="matchup"> · St. Louis Cardinals @ Colorado Rockies</p>
+      <div class="meta">
+        
+        <span class="sample">2 sample · grade D</span>
+      </div>
+    </article>
+    <article class="card md">
+      <div class="card-top">
+        <span class="pill md">Medium</span>
+        <span class="pct">50.1%</span>
+      </div>
+      <h3 class="player">Tampa Bay Rays @ Texas Rangers — 1st Inning (Both Teams)</h3>
+      <p class="prop">No runs in the 1st (both teams)</p>
+      <p class="matchup"> · Tampa Bay Rays @ Texas Rangers</p>
+      <div class="meta">
+        
+        <span class="sample">26 sample · grade A</span>
+      </div>
+    </article></div></div>
+</main>
+<script>
+document.querySelectorAll('.tab').forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    document.querySelectorAll('.tab').forEach(function(b) { b.classList.remove('active'); });
+    document.querySelectorAll('.panel').forEach(function(p) { p.classList.remove('active'); });
+    btn.classList.add('active');
+    document.querySelector('.panel[data-panel="' + btn.dataset.tab + '"]').classList.add('active');
+  });
+});
+</script>
+</body>
+</html>

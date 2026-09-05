@@ -335,6 +335,65 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-05",
+      "evaluations": [
+        {
+          "prop": "Over 3.5 Strikeouts",
+          "type": "pitcher",
+          "score": 38.4,
+          "notable_signals": 0,
+          "matchup": "Toronto Blue Jays @ Kansas City Royals",
+          "game_pk": 824066,
+          "team": "Toronto Blue Jays",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_k_pct": 38.0,
+            "same_hand_ratio": 43.75,
+            "l14_k_pct": 90.5882,
+            "env_neutral": 50.0
+          },
+          "hit_probability": 0.623,
+          "raw_hit_probability": 0.7448,
+          "lift": -0.0738,
+          "reliability": "B",
+          "sample_n": 13,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 3.5,
+            "needs": 4
+          }
+        },
+        {
+          "prop": "Over 12.5 Outs Recorded",
+          "type": "pitcher",
+          "score": 24.0,
+          "notable_signals": 0,
+          "matchup": "Toronto Blue Jays @ Kansas City Royals",
+          "game_pk": 824066,
+          "team": "Toronto Blue Jays",
+          "side": "away",
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "outs_rate": 0.6342,
+            "avg_outs_per_start": 13.15
+          },
+          "hit_probability": 0.6342,
+          "raw_hit_probability": null,
+          "lift": -0.2074,
+          "reliability": "B",
+          "sample_n": 13,
+          "projection": {
+            "stat": "pitcher_outs",
+            "value": 12.5,
+            "needs": 13
+          }
+        }
+      ]
     }
   ]
 }

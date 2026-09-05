@@ -1,0 +1,37 @@
+{
+  "player_id": "nrfi_823335",
+  "name": "Los Angeles Angels @ Pittsburgh Pirates \u2014 1st Inning (Both Teams)",
+  "snapshots": [
+    {
+      "date": "2026-09-05",
+      "evaluations": [
+        {
+          "prop": "No runs in the 1st (both teams)",
+          "type": "game",
+          "score": 59.1,
+          "notable_signals": 0,
+          "matchup": "Los Angeles Angels @ Pittsburgh Pirates",
+          "game_pk": 823335,
+          "team": null,
+          "side": "both",
+          "lean": "NRFI",
+          "combo_player_ids": null,
+          "signals": {
+            "home_team_scores_p": 0.295,
+            "away_team_scores_p": 0.266,
+            "fi_n_starts": 10.0
+          },
+          "hit_probability": 0.5175,
+          "raw_hit_probability": null,
+          "lift": 0.0191,
+          "reliability": "B",
+          "sample_n": 10,
+          "projection": {
+            "stat": "nrfi_combined",
+            "value": 51.7
+          }
+        }
+      ]
+    }
+  ]
+}

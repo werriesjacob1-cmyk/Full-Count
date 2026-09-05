@@ -1,0 +1,37 @@
+{
+  "player_id": "nrfi_824553",
+  "name": "Minnesota Twins @ Chicago White Sox \u2014 1st Inning (Both Teams)",
+  "snapshots": [
+    {
+      "date": "2026-09-05",
+      "evaluations": [
+        {
+          "prop": "A run scores in the 1st (either team)",
+          "type": "game",
+          "score": 65.3,
+          "notable_signals": 0,
+          "matchup": "Minnesota Twins @ Chicago White Sox",
+          "game_pk": 824553,
+          "team": null,
+          "side": "both",
+          "lean": "YRFI",
+          "combo_player_ids": null,
+          "signals": {
+            "home_team_scores_p": 0.3412,
+            "away_team_scores_p": 0.2912,
+            "fi_n_starts": 28.0
+          },
+          "hit_probability": 0.533,
+          "raw_hit_probability": null,
+          "lift": 0.0314,
+          "reliability": "A",
+          "sample_n": 28,
+          "projection": {
+            "stat": "nrfi_combined",
+            "value": 53.3
+          }
+        }
+      ]
+    }
+  ]
+}

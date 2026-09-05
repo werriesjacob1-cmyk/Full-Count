@@ -1,0 +1,37 @@
+{
+  "player_id": "nrfi_824145",
+  "name": "Arizona Diamondbacks @ Houston Astros \u2014 1st Inning (Both Teams)",
+  "snapshots": [
+    {
+      "date": "2026-09-05",
+      "evaluations": [
+        {
+          "prop": "No runs in the 1st (both teams)",
+          "type": "game",
+          "score": 23.7,
+          "notable_signals": 0,
+          "matchup": "Arizona Diamondbacks @ Houston Astros",
+          "game_pk": 824145,
+          "team": null,
+          "side": "both",
+          "lean": "NRFI",
+          "combo_player_ids": null,
+          "signals": {
+            "home_team_scores_p": 0.2691,
+            "away_team_scores_p": 0.2961,
+            "fi_n_starts": 3.0
+          },
+          "hit_probability": 0.5145,
+          "raw_hit_probability": null,
+          "lift": 0.0161,
+          "reliability": "D",
+          "sample_n": 3,
+          "projection": {
+            "stat": "nrfi_combined",
+            "value": 51.4
+          }
+        }
+      ]
+    }
+  ]
+}

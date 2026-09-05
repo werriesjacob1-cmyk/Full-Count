@@ -1,0 +1,37 @@
+{
+  "player_id": "nrfi_824310",
+  "name": "St. Louis Cardinals @ Colorado Rockies \u2014 1st Inning (Both Teams)",
+  "snapshots": [
+    {
+      "date": "2026-09-05",
+      "evaluations": [
+        {
+          "prop": "A run scores in the 1st (either team)",
+          "type": "game",
+          "score": 7.6,
+          "notable_signals": 0,
+          "matchup": "St. Louis Cardinals @ Colorado Rockies",
+          "game_pk": 824310,
+          "team": null,
+          "side": "both",
+          "lean": "YRFI",
+          "combo_player_ids": null,
+          "signals": {
+            "home_team_scores_p": 0.316,
+            "away_team_scores_p": 0.2831,
+            "fi_n_starts": 2.0
+          },
+          "hit_probability": 0.5096,
+          "raw_hit_probability": null,
+          "lift": 0.008,
+          "reliability": "D",
+          "sample_n": 2,
+          "projection": {
+            "stat": "nrfi_combined",
+            "value": 51.0
+          }
+        }
+      ]
+    }
+  ]
+}

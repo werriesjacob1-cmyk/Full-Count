@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Your Parlay</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+:root {
+  --bg: #f2f5ef; --surface: #ffffff; --surface-2: #e9ede4;
+  --text: #16201a; --text-dim: #5b685e; --line: rgba(22,32,26,0.12);
+  --accent: #2f8f52; --accent-bg: rgba(47,143,82,0.10);
+  --gold: #a9761e; --gold-bg: rgba(169,118,30,0.12);
+  --low: #78877e; --low-bg: rgba(120,135,126,0.12);
+  --bad: #a1432b; --bad-bg: rgba(161,67,43,0.10);
+  --font-display: "Roboto Condensed", "Arial Narrow", "Noto Sans Condensed", sans-serif;
+  --font-body: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", "Cascadia Mono", "Roboto Mono", monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0f1613; --surface: #161e19; --surface-2: #1d2620;
+    --text: #edf1e8; --text-dim: #93a196; --line: rgba(255,255,255,0.10);
+    --accent: #5fbf77; --accent-bg: rgba(95,191,119,0.14);
+    --gold: #e0ac4c; --gold-bg: rgba(224,172,76,0.14);
+    --low: #6f7d73; --low-bg: rgba(111,125,115,0.16);
+    --bad: #d97a5c; --bad-bg: rgba(217,122,92,0.14);
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0f1613; --surface: #161e19; --surface-2: #1d2620;
+  --text: #edf1e8; --text-dim: #93a196; --line: rgba(255,255,255,0.10);
+  --accent: #5fbf77; --accent-bg: rgba(95,191,119,0.14);
+  --gold: #e0ac4c; --gold-bg: rgba(224,172,76,0.14);
+  --low: #6f7d73; --low-bg: rgba(111,125,115,0.16);
+  --bad: #d97a5c; --bad-bg: rgba(217,122,92,0.14);
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0; background: var(--bg); color: var(--text);
+  font-family: var(--font-body); line-height: 1.45;
+  display: flex; justify-content: center; padding: 32px 16px;
+}
+.slip {
+  width: 100%; max-width: 460px; background: var(--surface);
+  border: 1px solid var(--line); border-radius: 10px; overflow: hidden;
+}
+.slip-head {
+  padding: 20px 20px 16px; border-bottom: 2px dashed var(--line);
+  background: var(--surface-2);
+}
+.slip-head .eyebrow {
+  font-family: var(--font-display); text-transform: uppercase; letter-spacing: 0.08em;
+  font-size: 11px; color: var(--text-dim); font-weight: 700; margin: 0 0 4px;
+}
+.slip-head .req { margin: 0 0 10px; font-size: 15px; color: var(--text); text-wrap: balance; }
+.slip-head .tier {
+  display: inline-block; font-family: var(--font-display); text-transform: uppercase;
+  letter-spacing: 0.04em; font-size: 11px; font-weight: 700; color: var(--accent);
+  background: var(--accent-bg); padding: 3px 10px; border-radius: 100px;
+}
+ul.legs { list-style: none; margin: 0; padding: 4px 0; }
+.leg {
+  display: flex; gap: 12px; align-items: flex-start; padding: 14px 20px;
+  border-bottom: 1px solid var(--line);
+}
+.leg:last-child { border-bottom: none; }
+.leg-n {
+  font-family: var(--font-mono); font-variant-numeric: tabular-nums;
+  color: var(--text-dim); font-size: 13px; padding-top: 2px; min-width: 14px;
+}
+.leg-body { flex: 1; min-width: 0; }
+.leg-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 2px; }
+.leg-pct {
+  font-family: var(--font-mono); font-variant-numeric: tabular-nums;
+  font-size: 17px; font-weight: 600; color: var(--accent);
+}
+.tag { font-size: 11px; padding: 1px 7px; border-radius: 4px; font-family: var(--font-mono); }
+.tag.good { background: var(--accent-bg); color: var(--accent); }
+.tag.lo { background: var(--low-bg); color: var(--low); font-family: var(--font-body); }
+.leg-player { margin: 0; font-weight: 700; font-size: 14.5px; }
+.leg-prop { margin: 0; font-size: 13.5px; color: var(--text); }
+.leg-matchup { margin: 2px 0 0; font-size: 12px; color: var(--text-dim); }
+.empty { padding: 24px 20px; color: var(--text-dim); font-style: italic; }
+.panel { padding: 16px 20px; border-top: 1px solid var(--line); }
+.panel h2 {
+  font-family: var(--font-display); text-transform: uppercase; letter-spacing: 0.05em;
+  font-size: 12.5px; color: var(--text-dim); margin: 0 0 8px; font-weight: 700;
+}
+.panel ul { margin: 0; padding-left: 18px; font-size: 13px; }
+.panel ul li { margin-bottom: 4px; }
+.panel.warn { background: var(--bad-bg); }
+.panel.warn h2 { color: var(--bad); }
+.panel.summary { background: var(--surface-2); }
+.sum-row { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6px; font-size: 13.5px; }
+.sum-row .sum-val {
+  font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-weight: 600;
+}
+.sum-row.big { font-size: 16px; padding-top: 8px; border-top: 1px dashed var(--line); margin-top: 4px; }
+.sum-row.big .sum-val { color: var(--accent); font-size: 19px; }
+.sum-note { font-size: 12px; color: var(--text-dim); margin: 6px 0 0; }
+</style>
+</head>
+<body>
+<div class="slip">
+  <div class="slip-head">
+    <p class="eyebrow">Your request</p>
+    <p class="req">“Today&#x27;s best risky 3-leg parlay”</p>
+    <span class="tier">Risk level 100/100 · 3 legs</span>
+  </div>
+  <ul class="legs">
+    
+    <li class="leg">
+      <span class="leg-n">1</span>
+      <div class="leg-body">
+        <div class="leg-top">
+          <span class="leg-pct">38.0%</span>
+          <span class="tag good">-122</span>
+        </div>
+        <p class="leg-player">Zack Wheeler</p>
+        <p class="leg-prop">Over 6.5 Strikeouts</p>
+        <p class="leg-matchup">Atlanta Braves @ Philadelphia Phillies</p>
+      </div>
+    </li>
+
+    <li class="leg">
+      <span class="leg-n">2</span>
+      <div class="leg-body">
+        <div class="leg-top">
+          <span class="leg-pct">30.0%</span>
+          <span class="tag good">-111</span>
+        </div>
+        <p class="leg-player">Robbie Ray</p>
+        <p class="leg-prop">Over 5.5 Strikeouts</p>
+        <p class="leg-matchup">New York Yankees @ San Diego Padres</p>
+      </div>
+    </li>
+
+    <li class="leg">
+      <span class="leg-n">3</span>
+      <div class="leg-body">
+        <div class="leg-top">
+          <span class="leg-pct">24.1%</span>
+          <span class="tag good">+106</span>
+        </div>
+        <p class="leg-player">Tyler Glasnow</p>
+        <p class="leg-prop">Over 7.5 Strikeouts</p>
+        <p class="leg-matchup">Washington Nationals @ Los Angeles Dodgers</p>
+      </div>
+    </li>
+  </ul>
+  
+  
+  
+  <section class="panel summary"><div class="sum-row"><span>Naive combined probability</span><span class="sum-val">2.7%</span></div><p class="sum-note">Product of each leg's own probability, assuming independence — a conservative floor, not a promise. Legs marked positively correlated above are likely somewhat better than this number.</p><div class="sum-row"><span>Combined odds</span><span class="sum-val">7.126x</span></div></section>
+</div>
+</body>
+</html>
