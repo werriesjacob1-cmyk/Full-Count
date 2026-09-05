@@ -2,7 +2,7 @@
   "schema_version": 1,
   "identity_schema_version": 2,
   "rollout_version": "pre-phase-v-live-lifecycle-v1",
-  "updated_at": "2026-09-05T08:43:23.350318+00:00",
+  "updated_at": "2026-09-05T10:18:23.662496+00:00",
   "migration": {
     "version": "pre-phase-v-live-lifecycle-v1",
     "completed_at": "2026-08-17T23:14:57+00:00",
@@ -15433,6 +15433,94 @@
         },
         "qualification_timestamp": "2026-09-05T08:36:47.474629+00:00",
         "board_timestamp": "2026-09-05T08:36:47.443563+00:00",
+        "slate_date": "2026-09-05"
+      }
+    },
+    "fc2:824389:player-664285:pitcher_outs:17:over": {
+      "canonical_id": "fc2:824389:player-664285:pitcher_outs:17:over",
+      "settlement_identity": [
+        "824389",
+        [
+          "player",
+          "664285"
+        ],
+        "pitcher_outs",
+        "17",
+        "over"
+      ],
+      "slate_date": "2026-09-05",
+      "first_published_at": "2026-09-05T10:18:23.662496+00:00",
+      "publication_provenance": {
+        "artifact_id": "8c1f1979f26d1d81f201d86928ec0a4df8be60f6048ab5c7209de0df38b9afe8",
+        "source_commit": "601759dbb0cf83d15da648271811a940a0ac96c0",
+        "workflow_run_id": "33960214798",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-09-05T10:18:09.771277+00:00",
+        "data_hash": "8196a552afc35c36e92beda688636ae30fe6e4bda638dbf0fcccab2b67ad4b89",
+        "live_hash": "cd2b130b71102959827e98e6a1c24c89cdb11af515c5790ba56efafc14a72823"
+      },
+      "snapshot": {
+        "id": "fc2:824389:player-664285:pitcher_outs:17:over",
+        "identity_version": 2,
+        "game_pk": 824389,
+        "player_id": 664285,
+        "combo_player_ids": null,
+        "type": "pitcher",
+        "name": "Framber Valdez",
+        "team": "Detroit Tigers",
+        "matchup": "Detroit Tigers @ Cleveland Guardians",
+        "game_start": "2026-09-05T22:10:00Z",
+        "stat": "pitcher_outs",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "pitcher_outs",
+          "value": 16.5,
+          "needs": 17
+        },
+        "prop": "Over 16.5 Outs Recorded",
+        "hit_probability": 0.6386,
+        "market_odds": -125,
+        "market_implied": 0.5215,
+        "market_edge": 0.1171,
+        "market_hold": 0.0654,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (A), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (12.4 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "Recorded 17+ outs (5.2 IP) in 63.9% of his last 27 real starts (league 51.2%, avg 16.74 outs/start)"
+        ],
+        "watchouts": [
+          "No real FanDuel line found for this pitcher yet -- this threshold is model-anchored to his average workload, not a posted market number"
+        ],
+        "prob_ci": [
+          0.5659,
+          0.7067
+        ],
+        "reliability": "A",
+        "reliability_note": null,
+        "sample_n": 27,
+        "lineup_assumed": null,
+        "base_rate": 0.5121,
+        "lift": 0.1265,
+        "lift_reference_rate": null,
+        "stable_lift": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "765154e5",
+          "prediction_timestamp": "2026-09-05T09:48:06.287630+00:00",
+          "odds_fetched_at": "2026-09-05T09:48:00.014591+00:00",
+          "board_generated_at": "2026-09-05T09:48:06.265883+00:00"
+        },
+        "qualification_timestamp": "2026-09-05T09:48:06.287630+00:00",
+        "board_timestamp": "2026-09-05T09:48:06.265883+00:00",
         "slate_date": "2026-09-05"
       }
     }
