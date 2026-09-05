@@ -2,7 +2,7 @@
   "schema_version": 1,
   "identity_schema_version": 2,
   "rollout_version": "pre-phase-v-live-lifecycle-v1",
-  "updated_at": "2026-09-05T10:18:23.662496+00:00",
+  "updated_at": "2026-09-05T11:38:23.522000+00:00",
   "migration": {
     "version": "pre-phase-v-live-lifecycle-v1",
     "completed_at": "2026-08-17T23:14:57+00:00",
@@ -15521,6 +15521,98 @@
         },
         "qualification_timestamp": "2026-09-05T09:48:06.287630+00:00",
         "board_timestamp": "2026-09-05T09:48:06.265883+00:00",
+        "slate_date": "2026-09-05"
+      }
+    },
+    "fc2:823823:player-665871:strikeouts:4:over": {
+      "canonical_id": "fc2:823823:player-665871:strikeouts:4:over",
+      "settlement_identity": [
+        "823823",
+        [
+          "player",
+          "665871"
+        ],
+        "strikeouts",
+        "4",
+        "over"
+      ],
+      "slate_date": "2026-09-05",
+      "first_published_at": "2026-09-05T11:38:23.522000+00:00",
+      "publication_provenance": {
+        "artifact_id": "82e7edb47493c0ff13a41c11aface1e82bc6f3fcf03c58756d274ccfbf8c8344",
+        "source_commit": "ff96049ed153ea3670ea2d8c60410dc20e612742",
+        "workflow_run_id": "33963797544",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-09-05T11:38:07.537412+00:00",
+        "data_hash": "3e0384d9422e5a18425244b89b2807cb0500bc7e02c8870e1939c679ab7247e5",
+        "live_hash": "83fa982f79833f421a611161cc92b3b7904dd52a0ef01d3872e6ffb5c60e978b"
+      },
+      "snapshot": {
+        "id": "fc2:823823:player-665871:strikeouts:4:over",
+        "identity_version": 2,
+        "game_pk": 823823,
+        "player_id": 665871,
+        "combo_player_ids": null,
+        "type": "pitcher",
+        "name": "Javier Assad",
+        "team": "Chicago Cubs",
+        "matchup": "Chicago Cubs @ Miami Marlins",
+        "game_start": "2026-09-05T20:10:00Z",
+        "stat": "strikeouts",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "strikeouts",
+          "value": 3.5,
+          "needs": 4
+        },
+        "prop": "Over 3.5 Strikeouts",
+        "hit_probability": 0.6096,
+        "market_odds": -102,
+        "market_implied": 0.4761,
+        "market_edge": 0.1335,
+        "market_hold": 0.0605,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (B), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (14.2 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "Opposing team K% 21.8",
+          "Expected workload 23.1 batters faced (league average \u2014 no real start found for him in the L14 window)"
+        ],
+        "watchouts": [
+          "L14 Statcast sample too thin \u2014 recent-form read falls back to season K%",
+          "No L14 start found for this pitcher \u2014 workload defaulted to the league average",
+          "Platoon disadvantage: 3 of 9 projected hitters bat right-handed against this RHP (mostly opposite-handed lineup)",
+          "Recency-weighted K rate 18.8% (exp. decay, halflife 30d, 10 real starts / 207 BF) \u2014 drives a below-average strikeout-probability read"
+        ],
+        "prob_ci": [
+          0.5887,
+          0.7087
+        ],
+        "reliability": "B",
+        "reliability_note": null,
+        "sample_n": 10,
+        "lineup_assumed": null,
+        "base_rate": 0.6988,
+        "lift": -0.0892,
+        "lift_reference_rate": null,
+        "stable_lift": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "585c0f24",
+          "prediction_timestamp": "2026-09-05T11:27:58.546606+00:00",
+          "odds_fetched_at": "2026-09-05T11:27:53.394117+00:00",
+          "board_generated_at": "2026-09-05T11:27:58.513766+00:00"
+        },
+        "qualification_timestamp": "2026-09-05T11:27:58.546606+00:00",
+        "board_timestamp": "2026-09-05T11:27:58.513766+00:00",
         "slate_date": "2026-09-05"
       }
     }
