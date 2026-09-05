@@ -2,7 +2,7 @@
   "schema_version": 1,
   "identity_schema_version": 2,
   "rollout_version": "pre-phase-v-live-lifecycle-v1",
-  "updated_at": "2026-09-05T02:38:47.711778+00:00",
+  "updated_at": "2026-09-05T03:08:33.964094+00:00",
   "migration": {
     "version": "pre-phase-v-live-lifecycle-v1",
     "completed_at": "2026-08-17T23:14:57+00:00",
@@ -15149,6 +15149,98 @@
         "lineup_assumed": null,
         "base_rate": 0.6968,
         "lift": -0.0738,
+        "lift_reference_rate": null,
+        "stable_lift": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "e5c394df",
+          "prediction_timestamp": "2026-09-05T01:35:55.684772+00:00",
+          "odds_fetched_at": "2026-09-05T01:35:44.134380+00:00",
+          "board_generated_at": "2026-09-05T01:35:55.668828+00:00"
+        },
+        "qualification_timestamp": "2026-09-05T01:35:55.684772+00:00",
+        "board_timestamp": "2026-09-05T01:35:55.668828+00:00",
+        "slate_date": "2026-09-05"
+      }
+    },
+    "fc2:824553:player-641743:strikeouts:4:over": {
+      "canonical_id": "fc2:824553:player-641743:strikeouts:4:over",
+      "settlement_identity": [
+        "824553",
+        [
+          "player",
+          "641743"
+        ],
+        "strikeouts",
+        "4",
+        "over"
+      ],
+      "slate_date": "2026-09-05",
+      "first_published_at": "2026-09-05T03:08:33.964094+00:00",
+      "publication_provenance": {
+        "artifact_id": "6898a37d75e654c358e9286079256438bcf6066603713cd2d5bfbd9474897ae4",
+        "source_commit": "9ad3bbcaf718bc8cbf5fd686e4edc25fd2bdf984",
+        "workflow_run_id": "33940962487",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-09-05T03:08:20.592803+00:00",
+        "data_hash": "580c1325dfcda5ba32e203fe1ced52ee181d41ac66cdfc4248adca47431da0ba",
+        "live_hash": "fcf423f0dcc6c8ea8aa1458127e7d31580290fe010021c7e909cc2ab2e6f7cdc"
+      },
+      "snapshot": {
+        "id": "fc2:824553:player-641743:strikeouts:4:over",
+        "identity_version": 2,
+        "game_pk": 824553,
+        "player_id": 641743,
+        "combo_player_ids": null,
+        "type": "pitcher",
+        "name": "Anthony Kay",
+        "team": "Chicago White Sox",
+        "matchup": "Minnesota Twins @ Chicago White Sox",
+        "game_start": "2026-09-05T23:10:00Z",
+        "stat": "strikeouts",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "strikeouts",
+          "value": 3.5,
+          "needs": 4
+        },
+        "prop": "Over 3.5 Strikeouts",
+        "hit_probability": 0.6133,
+        "market_odds": -106,
+        "market_implied": 0.4854,
+        "market_edge": 0.1279,
+        "market_hold": 0.06,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (A), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (13.7 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "Opposing team K% 21.0",
+          "Expected workload 23.1 batters faced (his own 23.0/start over 2 real starts, shrunk toward the 23.1 league mean)",
+          "3 of 7 projected hitters bat left-handed against this LHP"
+        ],
+        "watchouts": [
+          "Workload estimate rests on only 2 starts in the L14 window \u2014 most start-to-start variation in batters faced is noise, so this is shrunk heavily toward league average",
+          "L14 K% 19.6 (46 PA) \u2014 cold recent form",
+          "Recency-weighted K rate 19.8% (exp. decay, halflife 30d, 26 real starts / 578 BF) \u2014 drives a below-average strikeout-probability read"
+        ],
+        "prob_ci": [
+          0.5923,
+          0.7125
+        ],
+        "reliability": "A",
+        "reliability_note": null,
+        "sample_n": 26,
+        "lineup_assumed": null,
+        "base_rate": 0.6968,
+        "lift": -0.0835,
         "lift_reference_rate": null,
         "stable_lift": null,
         "versions": {
