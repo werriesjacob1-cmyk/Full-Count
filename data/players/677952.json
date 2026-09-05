@@ -356,7 +356,7 @@
       "date": "2026-09-05",
       "evaluations": [
         {
-          "prop": "Over 3.5 Strikeouts",
+          "prop": "Over 5.5 Strikeouts",
           "type": "pitcher",
           "score": 58.3,
           "notable_signals": 0,
@@ -372,21 +372,21 @@
             "l14_k_pct": 0.0,
             "env_neutral": 50.0
           },
-          "hit_probability": 0.62,
-          "raw_hit_probability": 0.7298,
-          "lift": -0.0768,
+          "hit_probability": 0.3625,
+          "raw_hit_probability": 0.3625,
+          "lift": 0.0118,
           "reliability": "A",
           "sample_n": 27,
           "projection": {
             "stat": "strikeouts",
-            "value": 3.5,
-            "needs": 4
+            "value": 5.5,
+            "needs": 6
           }
         },
         {
-          "prop": "Over 17.5 Outs Recorded",
+          "prop": "Over 16.5 Outs Recorded",
           "type": "pitcher",
-          "score": 61.1,
+          "score": 70.8,
           "notable_signals": 1,
           "matchup": "Los Angeles Angels @ Pittsburgh Pirates",
           "game_pk": 823335,
@@ -395,18 +395,18 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.5692,
+            "outs_rate": 0.6386,
             "avg_outs_per_start": 17.81
           },
-          "hit_probability": 0.5692,
+          "hit_probability": 0.6386,
           "raw_hit_probability": null,
-          "lift": 0.1051,
+          "lift": 0.1265,
           "reliability": "A",
           "sample_n": 27,
           "projection": {
             "stat": "pitcher_outs",
-            "value": 17.5,
-            "needs": 18
+            "value": 16.5,
+            "needs": 17
           }
         }
       ]

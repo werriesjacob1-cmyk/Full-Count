@@ -2129,6 +2129,139 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-05",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 44.9,
+          "notable_signals": 1,
+          "matchup": "San Francisco Giants @ New York Mets",
+          "game_pk": 823577,
+          "team": "New York Mets",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 36.2857,
+            "l7_avg_ev": 0.0,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 1.5,
+            "park_hr_index": 51.2,
+            "season_barrel_pct": 26.0,
+            "lineup_slot": 50.0,
+            "bullpen_fatigue": 37.037,
+            "platoon_barrel_pct": 1.84,
+            "platoon_xwoba": 0.3,
+            "park_hand_index": -0.66,
+            "opp_catcher_framing": 0.96,
+            "days_rest": 0.0,
+            "woba_ahead": 39.0909,
+            "woba_behind": 0.0,
+            "pull_park_synergy": -0.4158,
+            "hard_hit_105_rate": 0.43,
+            "team_total_move": 0.0,
+            "team_total_open": 0.0,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": -1.024,
+            "vs_rp_ops": -0.42,
+            "ump_k_pct": 0.024,
+            "ump_bb_pct": -0.096
+          },
+          "hit_probability": 0.628,
+          "raw_hit_probability": 0.6219,
+          "lift": 0.0595,
+          "reliability": "A",
+          "sample_n": 89,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 37.3,
+          "notable_signals": 0,
+          "matchup": "San Francisco Giants @ New York Mets",
+          "game_pk": 823577,
+          "team": "New York Mets",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": 1.26,
+            "sprint_speed": 9.375,
+            "catcher_poptime": 20.0,
+            "on_base": 68.3301
+          },
+          "hit_probability": 0.0337,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 89,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 8.9,
+          "notable_signals": 0,
+          "matchup": "San Francisco Giants @ New York Mets",
+          "game_pk": 823577,
+          "team": "New York Mets",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0638
+          },
+          "hit_probability": 0.0638,
+          "raw_hit_probability": null,
+          "lift": 0.016,
+          "reliability": "A",
+          "sample_n": 89,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 2.4,
+          "notable_signals": 0,
+          "matchup": "San Francisco Giants @ New York Mets",
+          "game_pk": 823577,
+          "team": "New York Mets",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0222
+          },
+          "hit_probability": 0.0222,
+          "raw_hit_probability": null,
+          "lift": 0.0014,
+          "reliability": "A",
+          "sample_n": 89,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

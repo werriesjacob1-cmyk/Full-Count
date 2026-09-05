@@ -383,9 +383,9 @@
             "l14_k_pct": 52.3529,
             "env_neutral": 50.0
           },
-          "hit_probability": 0.4646,
-          "raw_hit_probability": 0.4646,
-          "lift": 0.1127,
+          "hit_probability": 0.464,
+          "raw_hit_probability": 0.464,
+          "lift": 0.1133,
           "reliability": "A",
           "sample_n": 26,
           "projection": {
@@ -395,10 +395,10 @@
           }
         },
         {
-          "prop": "Over 16.5 Outs Recorded",
+          "prop": "Over 17.5 Outs Recorded",
           "type": "pitcher",
-          "score": 52.3,
-          "notable_signals": 0,
+          "score": 59.5,
+          "notable_signals": 1,
           "matchup": "Tampa Bay Rays @ Texas Rangers",
           "game_pk": 822850,
           "team": "Tampa Bay Rays",
@@ -406,18 +406,18 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.5668,
+            "outs_rate": 0.5528,
             "avg_outs_per_start": 16.88
           },
-          "hit_probability": 0.5668,
+          "hit_probability": 0.5528,
           "raw_hit_probability": null,
-          "lift": 0.0438,
+          "lift": 0.1047,
           "reliability": "A",
           "sample_n": 26,
           "projection": {
             "stat": "pitcher_outs",
-            "value": 16.5,
-            "needs": 17
+            "value": 17.5,
+            "needs": 18
           }
         }
       ]

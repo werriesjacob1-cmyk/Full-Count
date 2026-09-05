@@ -13,6 +13,67 @@
           "matchup": "Los Angeles Dodgers @ Chicago Cubs"
         }
       ]
+    },
+    {
+      "date": "2026-09-05",
+      "evaluations": [
+        {
+          "prop": "Over 3.5 Strikeouts",
+          "type": "pitcher",
+          "score": 29.4,
+          "notable_signals": 0,
+          "matchup": "Chicago Cubs @ Miami Marlins",
+          "game_pk": 823823,
+          "team": "Chicago Cubs",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_k_pct": 48.0,
+            "same_hand_ratio": 33.3333,
+            "env_neutral": 50.0,
+            "ump_accuracy": 53.32,
+            "ump_k_pct": 0.06,
+            "ump_bb_pct": -0.156
+          },
+          "hit_probability": 0.6096,
+          "raw_hit_probability": 0.6779,
+          "lift": -0.0892,
+          "reliability": "B",
+          "sample_n": 10,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 3.5,
+            "needs": 4
+          }
+        },
+        {
+          "prop": "Over 15.5 Outs Recorded",
+          "type": "pitcher",
+          "score": 35.6,
+          "notable_signals": 0,
+          "matchup": "Chicago Cubs @ Miami Marlins",
+          "game_pk": 823823,
+          "team": "Chicago Cubs",
+          "side": "away",
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "outs_rate": 0.5253,
+            "avg_outs_per_start": 15.6
+          },
+          "hit_probability": 0.5253,
+          "raw_hit_probability": null,
+          "lift": -0.0422,
+          "reliability": "B",
+          "sample_n": 10,
+          "projection": {
+            "stat": "pitcher_outs",
+            "value": 15.5,
+            "needs": 16
+          }
+        }
+      ]
     }
   ]
 }

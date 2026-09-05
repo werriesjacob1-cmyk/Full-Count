@@ -43,8 +43,8 @@
         {
           "prop": "Over 3.5 Strikeouts",
           "type": "pitcher",
-          "score": 51.6,
-          "notable_signals": 0,
+          "score": 52.1,
+          "notable_signals": 1,
           "matchup": "San Francisco Giants @ New York Mets",
           "game_pk": 823577,
           "team": "San Francisco Giants",
@@ -53,13 +53,16 @@
           "combo_player_ids": null,
           "signals": {
             "opp_team_k_pct": 56.0,
-            "same_hand_ratio": 100.0,
+            "same_hand_ratio": 43.75,
             "l14_k_pct": 29.4118,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 78.5764,
+            "ump_k_pct": -0.024,
+            "ump_bb_pct": 0.096
           },
-          "hit_probability": 0.6124,
-          "raw_hit_probability": 0.6916,
-          "lift": -0.0844,
+          "hit_probability": 0.6126,
+          "raw_hit_probability": 0.6926,
+          "lift": -0.0862,
           "reliability": "D",
           "sample_n": 0,
           "projection": {

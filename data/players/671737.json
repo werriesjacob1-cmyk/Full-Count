@@ -345,7 +345,7 @@
       "date": "2026-09-05",
       "evaluations": [
         {
-          "prop": "Over 4.5 Strikeouts",
+          "prop": "Over 6.5 Strikeouts",
           "type": "pitcher",
           "score": 37.8,
           "notable_signals": 0,
@@ -361,22 +361,22 @@
             "l14_k_pct": 100.0,
             "env_neutral": 50.0
           },
-          "hit_probability": 0.613,
-          "raw_hit_probability": 0.695,
-          "lift": 0.104,
+          "hit_probability": 0.4053,
+          "raw_hit_probability": 0.4053,
+          "lift": 0.1924,
           "reliability": "A",
           "sample_n": 27,
           "projection": {
             "stat": "strikeouts",
-            "value": 4.5,
-            "needs": 5
+            "value": 6.5,
+            "needs": 7
           }
         },
         {
-          "prop": "Over 16.5 Outs Recorded",
+          "prop": "Over 17.5 Outs Recorded",
           "type": "pitcher",
-          "score": 47.9,
-          "notable_signals": 0,
+          "score": 55.1,
+          "notable_signals": 1,
           "matchup": "Minnesota Twins @ Chicago White Sox",
           "game_pk": 824553,
           "team": "Minnesota Twins",
@@ -384,18 +384,18 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.5496,
+            "outs_rate": 0.536,
             "avg_outs_per_start": 17.15
           },
-          "hit_probability": 0.5496,
+          "hit_probability": 0.536,
           "raw_hit_probability": null,
-          "lift": 0.0266,
+          "lift": 0.0879,
           "reliability": "A",
           "sample_n": 27,
           "projection": {
             "stat": "pitcher_outs",
-            "value": 16.5,
-            "needs": 17
+            "value": 17.5,
+            "needs": 18
           }
         }
       ]

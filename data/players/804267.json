@@ -341,10 +341,10 @@
       "date": "2026-09-05",
       "evaluations": [
         {
-          "prop": "Over 3.5 Strikeouts",
+          "prop": "Over 4.5 Strikeouts",
           "type": "pitcher",
-          "score": 50.7,
-          "notable_signals": 0,
+          "score": 52.1,
+          "notable_signals": 1,
           "matchup": "San Francisco Giants @ New York Mets",
           "game_pk": 823577,
           "team": "New York Mets",
@@ -353,25 +353,28 @@
           "combo_player_ids": null,
           "signals": {
             "opp_team_k_pct": 43.0,
-            "same_hand_ratio": 100.0,
+            "same_hand_ratio": 61.1111,
             "l14_k_pct": 29.4118,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 78.5764,
+            "ump_k_pct": -0.024,
+            "ump_bb_pct": 0.096
           },
-          "hit_probability": 0.6068,
-          "raw_hit_probability": 0.6641,
-          "lift": -0.09,
+          "hit_probability": 0.462,
+          "raw_hit_probability": 0.462,
+          "lift": -0.044,
           "reliability": "B",
           "sample_n": 11,
           "projection": {
             "stat": "strikeouts",
-            "value": 3.5,
-            "needs": 4
+            "value": 4.5,
+            "needs": 5
           }
         },
         {
           "prop": "Over 16.5 Outs Recorded",
           "type": "pitcher",
-          "score": 45.0,
+          "score": 45.2,
           "notable_signals": 0,
           "matchup": "San Francisco Giants @ New York Mets",
           "game_pk": 823577,
@@ -380,12 +383,12 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.5375,
+            "outs_rate": 0.5337,
             "avg_outs_per_start": 16.73
           },
-          "hit_probability": 0.5375,
+          "hit_probability": 0.5337,
           "raw_hit_probability": null,
-          "lift": 0.0145,
+          "lift": 0.0216,
           "reliability": "B",
           "sample_n": 11,
           "projection": {

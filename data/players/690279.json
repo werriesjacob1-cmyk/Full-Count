@@ -74,9 +74,9 @@
       "date": "2026-09-05",
       "evaluations": [
         {
-          "prop": "Over 4.5 Strikeouts",
+          "prop": "Over 3.5 Strikeouts",
           "type": "pitcher",
-          "score": 43.4,
+          "score": 44.4,
           "notable_signals": 0,
           "matchup": "St. Louis Cardinals @ Colorado Rockies",
           "game_pk": 824310,
@@ -86,19 +86,19 @@
           "combo_player_ids": null,
           "signals": {
             "opp_team_k_pct": 37.0,
-            "same_hand_ratio": 75.0,
+            "same_hand_ratio": 100.0,
             "l14_k_pct": 66.4706,
             "env_neutral": 50.0
           },
-          "hit_probability": 0.5944,
-          "raw_hit_probability": 0.6026,
-          "lift": 0.0854,
+          "hit_probability": 0.6289,
+          "raw_hit_probability": 0.7748,
+          "lift": -0.0699,
           "reliability": "D",
           "sample_n": 0,
           "projection": {
             "stat": "strikeouts",
-            "value": 4.5,
-            "needs": 5
+            "value": 3.5,
+            "needs": 4
           }
         }
       ]

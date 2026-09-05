@@ -129,9 +129,9 @@
       "date": "2026-09-05",
       "evaluations": [
         {
-          "prop": "Over 3.5 Strikeouts",
+          "prop": "Over 5.5 Strikeouts",
           "type": "pitcher",
-          "score": 52.7,
+          "score": 48.5,
           "notable_signals": 0,
           "matchup": "Los Angeles Angels @ Pittsburgh Pirates",
           "game_pk": 823335,
@@ -141,25 +141,25 @@
           "combo_player_ids": null,
           "signals": {
             "opp_team_k_pct": 74.0,
-            "same_hand_ratio": 92.8571,
+            "same_hand_ratio": 21.4286,
             "l14_k_pct": 29.4118,
             "env_neutral": 50.0
           },
-          "hit_probability": 0.6192,
-          "raw_hit_probability": 0.7257,
-          "lift": -0.0776,
+          "hit_probability": 0.3587,
+          "raw_hit_probability": 0.3587,
+          "lift": 0.008,
           "reliability": "B",
           "sample_n": 9,
           "projection": {
             "stat": "strikeouts",
-            "value": 3.5,
-            "needs": 4
+            "value": 5.5,
+            "needs": 6
           }
         },
         {
-          "prop": "Over 13.5 Outs Recorded",
+          "prop": "Over 15.5 Outs Recorded",
           "type": "pitcher",
-          "score": 45.9,
+          "score": 11.8,
           "notable_signals": 0,
           "matchup": "Los Angeles Angels @ Pittsburgh Pirates",
           "game_pk": 823335,
@@ -168,18 +168,18 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.7234,
+            "outs_rate": 0.427,
             "avg_outs_per_start": 14.33
           },
-          "hit_probability": 0.7234,
+          "hit_probability": 0.427,
           "raw_hit_probability": null,
-          "lift": -0.0851,
+          "lift": -0.1405,
           "reliability": "B",
           "sample_n": 9,
           "projection": {
             "stat": "pitcher_outs",
-            "value": 13.5,
-            "needs": 14
+            "value": 15.5,
+            "needs": 16
           }
         }
       ]
