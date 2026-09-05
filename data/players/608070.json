@@ -2475,6 +2475,136 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-05",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 64.0,
+          "notable_signals": 1,
+          "matchup": "Detroit Tigers @ Cleveland Guardians",
+          "game_pk": 824389,
+          "team": "Cleveland Guardians",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "sp_era_weak": 53.1429,
+            "l7_avg_ev": 5.2404,
+            "l7_barrel_pct": 67.8571,
+            "park_hr_index": 51.6,
+            "season_barrel_pct": 8.6667,
+            "lineup_slot": 75.0,
+            "bullpen_fatigue": 33.3333,
+            "bvp_ops": 2.652,
+            "platoon_barrel_pct": -0.24,
+            "platoon_xwoba": 4.62,
+            "opp_catcher_framing": -1.08,
+            "days_rest": 0.0,
+            "woba_ahead": 19.0909,
+            "woba_behind": 12.7273,
+            "hard_hit_105_rate": -0.0375,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 2.0,
+            "sp_rp_ops_gap": -1.328,
+            "vs_rp_ops": -1.248,
+            "ump_k_pct": -0.144,
+            "ump_bb_pct": 0.276
+          },
+          "hit_probability": 0.6882,
+          "raw_hit_probability": 0.7035,
+          "lift": 0.0196,
+          "reliability": "A",
+          "sample_n": 107,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 30.6,
+          "notable_signals": 0,
+          "matchup": "Detroit Tigers @ Cleveland Guardians",
+          "game_pk": 824389,
+          "team": "Cleveland Guardians",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": -0.84,
+            "sprint_speed": 15.625,
+            "catcher_poptime": 0.0,
+            "on_base": 49.1363
+          },
+          "hit_probability": 0.2391,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 107,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 4.1,
+          "notable_signals": 0,
+          "matchup": "Detroit Tigers @ Cleveland Guardians",
+          "game_pk": 824389,
+          "team": "Cleveland Guardians",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0451
+          },
+          "hit_probability": 0.0451,
+          "raw_hit_probability": null,
+          "lift": -0.0027,
+          "reliability": "A",
+          "sample_n": 107,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 0.0,
+          "notable_signals": 0,
+          "matchup": "Detroit Tigers @ Cleveland Guardians",
+          "game_pk": 824389,
+          "team": "Cleveland Guardians",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0032
+          },
+          "hit_probability": 0.0032,
+          "raw_hit_probability": null,
+          "lift": -0.0176,
+          "reliability": "A",
+          "sample_n": 107,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

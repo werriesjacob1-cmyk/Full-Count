@@ -341,7 +341,7 @@
         {
           "prop": "Over 5.5 Strikeouts",
           "type": "pitcher",
-          "score": 37.9,
+          "score": 33.1,
           "notable_signals": 0,
           "matchup": "Washington Nationals @ Los Angeles Dodgers",
           "game_pk": 823904,
@@ -351,9 +351,12 @@
           "combo_player_ids": null,
           "signals": {
             "opp_team_k_pct": 35.0,
-            "same_hand_ratio": 75.0,
+            "same_hand_ratio": 21.4286,
             "l14_k_pct": 100.0,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 22.9892,
+            "ump_k_pct": 0.048,
+            "ump_bb_pct": 0.252
           },
           "hit_probability": 0.5454,
           "raw_hit_probability": 0.5454,
@@ -369,7 +372,7 @@
         {
           "prop": "Over 15.5 Outs Recorded",
           "type": "pitcher",
-          "score": 49.9,
+          "score": 48.7,
           "notable_signals": 0,
           "matchup": "Washington Nationals @ Los Angeles Dodgers",
           "game_pk": 823904,
@@ -378,18 +381,46 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.583,
+            "outs_rate": 0.585,
             "avg_outs_per_start": 15.79
           },
-          "hit_probability": 0.583,
+          "hit_probability": 0.585,
           "raw_hit_probability": null,
-          "lift": 0.0155,
+          "lift": 0.006,
           "reliability": "A",
           "sample_n": 29,
           "projection": {
             "stat": "pitcher_outs",
             "value": 15.5,
             "needs": 16
+          }
+        },
+        {
+          "prop": "Over 12.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 55.0,
+          "notable_signals": 1,
+          "matchup": "Washington Nationals @ Los Angeles Dodgers",
+          "game_pk": 823904,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            676917,
+            607192
+          ],
+          "signals": {
+            "combined_k_edge": 0.0658
+          },
+          "hit_probability": 0.669,
+          "raw_hit_probability": null,
+          "lift": 0.0658,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 12.5,
+            "needs": 13
           }
         }
       ]

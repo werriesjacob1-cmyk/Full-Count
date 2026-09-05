@@ -398,7 +398,7 @@
       "date": "2026-09-05",
       "evaluations": [
         {
-          "prop": "Over 6.5 Strikeouts",
+          "prop": "Over 4.5 Strikeouts",
           "type": "pitcher",
           "score": 50.4,
           "notable_signals": 0,
@@ -417,21 +417,21 @@
             "ump_k_pct": -0.852,
             "ump_bb_pct": 0.204
           },
-          "hit_probability": 0.3798,
-          "raw_hit_probability": 0.3798,
-          "lift": 0.1669,
+          "hit_probability": 0.6093,
+          "raw_hit_probability": 0.6761,
+          "lift": 0.1033,
           "reliability": "A",
-          "sample_n": 23,
+          "sample_n": 24,
           "projection": {
             "stat": "strikeouts",
-            "value": 6.5,
-            "needs": 7
+            "value": 4.5,
+            "needs": 5
           }
         },
         {
-          "prop": "Over 17.5 Outs Recorded",
+          "prop": "Over 15.5 Outs Recorded",
           "type": "pitcher",
-          "score": 65.2,
+          "score": 64.4,
           "notable_signals": 1,
           "matchup": "Atlanta Braves @ Philadelphia Phillies",
           "game_pk": 823419,
@@ -440,18 +440,18 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.5755,
-            "avg_outs_per_start": 17.0
+            "outs_rate": 0.6491,
+            "avg_outs_per_start": 16.29
           },
-          "hit_probability": 0.5755,
+          "hit_probability": 0.6491,
           "raw_hit_probability": null,
-          "lift": 0.1274,
+          "lift": 0.0701,
           "reliability": "A",
-          "sample_n": 23,
+          "sample_n": 24,
           "projection": {
             "stat": "pitcher_outs",
-            "value": 17.5,
-            "needs": 18
+            "value": 15.5,
+            "needs": 16
           }
         }
       ]

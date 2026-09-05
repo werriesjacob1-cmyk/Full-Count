@@ -131,7 +131,7 @@
         {
           "prop": "Over 5.5 Strikeouts",
           "type": "pitcher",
-          "score": 48.5,
+          "score": 26.5,
           "notable_signals": 0,
           "matchup": "Los Angeles Angels @ Pittsburgh Pirates",
           "game_pk": 823335,
@@ -141,9 +141,12 @@
           "combo_player_ids": null,
           "signals": {
             "opp_team_k_pct": 74.0,
-            "same_hand_ratio": 21.4286,
+            "same_hand_ratio": 0.0,
             "l14_k_pct": 29.4118,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 56.768,
+            "ump_k_pct": -0.456,
+            "ump_bb_pct": 0.096
           },
           "hit_probability": 0.3587,
           "raw_hit_probability": 0.3587,
@@ -159,7 +162,7 @@
         {
           "prop": "Over 15.5 Outs Recorded",
           "type": "pitcher",
-          "score": 11.8,
+          "score": 11.2,
           "notable_signals": 0,
           "matchup": "Los Angeles Angels @ Pittsburgh Pirates",
           "game_pk": 823335,
@@ -168,18 +171,46 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.427,
+            "outs_rate": 0.4316,
             "avg_outs_per_start": 14.33
           },
-          "hit_probability": 0.427,
+          "hit_probability": 0.4316,
           "raw_hit_probability": null,
-          "lift": -0.1405,
+          "lift": -0.1474,
           "reliability": "B",
           "sample_n": 9,
           "projection": {
             "stat": "pitcher_outs",
             "value": 15.5,
             "needs": 16
+          }
+        },
+        {
+          "prop": "Over 11.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 0.2,
+          "notable_signals": 0,
+          "matchup": "Los Angeles Angels @ Pittsburgh Pirates",
+          "game_pk": 823335,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            579328,
+            677952
+          ],
+          "signals": {
+            "combined_k_edge": -0.2907
+          },
+          "hit_probability": 0.2629,
+          "raw_hit_probability": null,
+          "lift": -0.2907,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 11.5,
+            "needs": 12
           }
         }
       ]

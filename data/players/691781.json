@@ -1726,6 +1726,135 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-05",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 41.9,
+          "notable_signals": 2,
+          "matchup": "Washington Nationals @ Los Angeles Dodgers",
+          "game_pk": 823904,
+          "team": "Washington Nationals",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 8.2857,
+            "pitch_exploit": 2.2857,
+            "l7_avg_ev": 83.6607,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 37.3,
+            "season_barrel_pct": 50.0,
+            "lineup_slot": 50.0,
+            "bullpen_fatigue": 0.0,
+            "platoon_barrel_pct": 1.2,
+            "platoon_xwoba": -0.78,
+            "opp_catcher_framing": -0.0,
+            "days_rest": 0.0,
+            "woba_ahead": 63.6364,
+            "woba_behind": 10.0,
+            "hard_hit_105_rate": 0.825,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": 0.56,
+            "vs_rp_ops": 0.432,
+            "ump_k_pct": -0.048,
+            "ump_bb_pct": -0.252
+          },
+          "hit_probability": 0.5997,
+          "raw_hit_probability": 0.6009,
+          "lift": 0.0312,
+          "reliability": "B",
+          "sample_n": 76,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 43.2,
+          "notable_signals": 0,
+          "matchup": "Washington Nationals @ Los Angeles Dodgers",
+          "game_pk": 823904,
+          "team": "Washington Nationals",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": 2.7,
+            "sprint_speed": 21.875,
+            "catcher_poptime": 31.4286,
+            "on_base": 52.0154
+          },
+          "hit_probability": 0.0431,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "B",
+          "sample_n": 76,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 12.8,
+          "notable_signals": 0,
+          "matchup": "Washington Nationals @ Los Angeles Dodgers",
+          "game_pk": 823904,
+          "team": "Washington Nationals",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0796
+          },
+          "hit_probability": 0.0796,
+          "raw_hit_probability": null,
+          "lift": 0.0318,
+          "reliability": "B",
+          "sample_n": 76,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 5.4,
+          "notable_signals": 0,
+          "matchup": "Washington Nationals @ Los Angeles Dodgers",
+          "game_pk": 823904,
+          "team": "Washington Nationals",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0342
+          },
+          "hit_probability": 0.0342,
+          "raw_hit_probability": null,
+          "lift": 0.0134,
+          "reliability": "B",
+          "sample_n": 76,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

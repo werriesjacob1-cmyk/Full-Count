@@ -2385,6 +2385,137 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-05",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 46.5,
+          "notable_signals": 2,
+          "matchup": "Tampa Bay Rays @ Texas Rangers",
+          "game_pk": 822850,
+          "team": "Tampa Bay Rays",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 42.8571,
+            "l7_avg_ev": 43.9286,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 9.3333,
+            "lineup_slot": 25.0,
+            "bullpen_fatigue": 33.3333,
+            "platoon_barrel_pct": -1.2,
+            "platoon_xwoba": -1.86,
+            "park_hand_index": -0.41,
+            "opp_catcher_framing": 1.56,
+            "days_rest": 0.0,
+            "woba_ahead": 20.9091,
+            "woba_behind": 10.9091,
+            "pull_park_synergy": -0.2655,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 2.0,
+            "sp_rp_ops_gap": -0.664,
+            "vs_rp_ops": -1.524,
+            "ump_k_pct": -0.228,
+            "ump_bb_pct": 0.168
+          },
+          "hit_probability": 0.6595,
+          "raw_hit_probability": 0.6534,
+          "lift": -0.0091,
+          "reliability": "A",
+          "sample_n": 119,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 34.7,
+          "notable_signals": 0,
+          "matchup": "Tampa Bay Rays @ Texas Rangers",
+          "game_pk": 822850,
+          "team": "Tampa Bay Rays",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": 2.16,
+            "sprint_speed": 18.75,
+            "catcher_poptime": 28.5714,
+            "on_base": 24.1843
+          },
+          "hit_probability": 0.1314,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 119,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 0.0,
+          "notable_signals": 0,
+          "matchup": "Tampa Bay Rays @ Texas Rangers",
+          "game_pk": 822850,
+          "team": "Tampa Bay Rays",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0138
+          },
+          "hit_probability": 0.0138,
+          "raw_hit_probability": null,
+          "lift": -0.034,
+          "reliability": "A",
+          "sample_n": 119,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 0.0,
+          "notable_signals": 0,
+          "matchup": "Tampa Bay Rays @ Texas Rangers",
+          "game_pk": 822850,
+          "team": "Tampa Bay Rays",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.01
+          },
+          "hit_probability": 0.01,
+          "raw_hit_probability": null,
+          "lift": -0.0108,
+          "reliability": "A",
+          "sample_n": 119,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

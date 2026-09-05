@@ -1288,6 +1288,87 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-05",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 52.2,
+          "notable_signals": 1,
+          "matchup": "Toronto Blue Jays @ Kansas City Royals",
+          "game_pk": 824066,
+          "team": "Toronto Blue Jays",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 72.2857,
+            "l7_avg_ev": 0.0,
+            "l7_barrel_pct": 27.8571,
+            "bat_speed_trend": 4.725,
+            "park_hr_index": 61.0,
+            "season_barrel_pct": 0.0,
+            "lineup_slot": 100.0,
+            "bullpen_fatigue": 0.0,
+            "platoon_barrel_pct": -5.0,
+            "platoon_xwoba": -1.32,
+            "park_hand_index": -0.75,
+            "opp_catcher_framing": -0.24,
+            "days_rest": 0.0,
+            "woba_behind": 32.7273,
+            "pull_park_synergy": 0.1181,
+            "team_total_move": 0.0,
+            "team_total_open": 0.0,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": -0.464,
+            "vs_rp_ops": 0.336,
+            "ump_k_pct": -0.192,
+            "ump_bb_pct": 0.132
+          },
+          "hit_probability": 0.6996,
+          "raw_hit_probability": 0.6784,
+          "lift": 0.1311,
+          "reliability": "D",
+          "sample_n": 23,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 54.5,
+          "notable_signals": 1,
+          "matchup": "Toronto Blue Jays @ Kansas City Royals",
+          "game_pk": 824066,
+          "team": "Toronto Blue Jays",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": -4.98,
+            "sprint_speed": 46.875,
+            "catcher_poptime": 0.0,
+            "on_base": 86.5643
+          },
+          "hit_probability": 0.1246,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "D",
+          "sample_n": 23,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

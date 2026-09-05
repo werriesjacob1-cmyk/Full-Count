@@ -852,6 +852,60 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-05",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 25.1,
+          "notable_signals": 2,
+          "matchup": "Tampa Bay Rays @ Texas Rangers",
+          "game_pk": 822850,
+          "team": "Texas Rangers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 12.8571,
+            "l7_avg_ev": 0.0,
+            "l7_barrel_pct": 50.7143,
+            "bat_speed_trend": 3.675,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 0.0,
+            "lineup_slot": 12.5,
+            "bullpen_fatigue": 20.8333,
+            "platoon_barrel_pct": -5.0,
+            "platoon_xwoba": -5.0,
+            "park_hand_index": 0.65,
+            "opp_catcher_framing": -0.0,
+            "days_rest": 0.0,
+            "woba_ahead": 0.0,
+            "woba_behind": 0.0,
+            "pull_park_synergy": 0.4118,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 2.0,
+            "sp_rp_ops_gap": -3.968,
+            "vs_rp_ops": -3.156,
+            "ump_k_pct": -0.228,
+            "ump_bb_pct": 0.168
+          },
+          "hit_probability": 0.6654,
+          "raw_hit_probability": 0.6635,
+          "lift": -0.0032,
+          "reliability": "C",
+          "sample_n": 26,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

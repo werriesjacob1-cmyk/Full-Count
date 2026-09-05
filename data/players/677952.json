@@ -358,7 +358,7 @@
         {
           "prop": "Over 5.5 Strikeouts",
           "type": "pitcher",
-          "score": 58.3,
+          "score": 58.5,
           "notable_signals": 0,
           "matchup": "Los Angeles Angels @ Pittsburgh Pirates",
           "game_pk": 823335,
@@ -368,9 +368,12 @@
           "combo_player_ids": null,
           "signals": {
             "opp_team_k_pct": 83.0,
-            "same_hand_ratio": 100.0,
+            "same_hand_ratio": 88.8889,
             "l14_k_pct": 0.0,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 56.768,
+            "ump_k_pct": -0.456,
+            "ump_bb_pct": 0.096
           },
           "hit_probability": 0.3625,
           "raw_hit_probability": 0.3625,
@@ -386,7 +389,7 @@
         {
           "prop": "Over 16.5 Outs Recorded",
           "type": "pitcher",
-          "score": 70.8,
+          "score": 70.0,
           "notable_signals": 1,
           "matchup": "Los Angeles Angels @ Pittsburgh Pirates",
           "game_pk": 823335,
@@ -395,12 +398,12 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.6386,
+            "outs_rate": 0.64,
             "avg_outs_per_start": 17.81
           },
-          "hit_probability": 0.6386,
+          "hit_probability": 0.64,
           "raw_hit_probability": null,
-          "lift": 0.1265,
+          "lift": 0.1198,
           "reliability": "A",
           "sample_n": 27,
           "projection": {

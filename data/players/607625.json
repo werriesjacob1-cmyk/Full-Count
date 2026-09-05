@@ -372,8 +372,8 @@
         {
           "prop": "Over 3.5 Strikeouts",
           "type": "pitcher",
-          "score": 52.3,
-          "notable_signals": 0,
+          "score": 54.8,
+          "notable_signals": 1,
           "matchup": "Toronto Blue Jays @ Kansas City Royals",
           "game_pk": 824066,
           "team": "Kansas City Royals",
@@ -382,9 +382,12 @@
           "combo_player_ids": null,
           "signals": {
             "opp_team_k_pct": 23.0,
-            "same_hand_ratio": 88.8889,
+            "same_hand_ratio": 100.0,
             "l14_k_pct": 7.6471,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 70.36,
+            "ump_k_pct": 0.192,
+            "ump_bb_pct": -0.132
           },
           "hit_probability": 0.5942,
           "raw_hit_probability": 0.6018,
@@ -400,7 +403,7 @@
         {
           "prop": "Over 17.5 Outs Recorded",
           "type": "pitcher",
-          "score": 59.0,
+          "score": 57.6,
           "notable_signals": 1,
           "matchup": "Toronto Blue Jays @ Kansas City Royals",
           "game_pk": 824066,
@@ -409,12 +412,12 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.5497,
+            "outs_rate": 0.552,
             "avg_outs_per_start": 16.5
           },
-          "hit_probability": 0.5497,
+          "hit_probability": 0.552,
           "raw_hit_probability": null,
-          "lift": 0.1016,
+          "lift": 0.0906,
           "reliability": "A",
           "sample_n": 28,
           "projection": {

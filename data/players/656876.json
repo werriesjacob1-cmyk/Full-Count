@@ -369,8 +369,8 @@
         {
           "prop": "Over 5.5 Strikeouts",
           "type": "pitcher",
-          "score": 47.5,
-          "notable_signals": 0,
+          "score": 49.7,
+          "notable_signals": 1,
           "matchup": "Tampa Bay Rays @ Texas Rangers",
           "game_pk": 822850,
           "team": "Tampa Bay Rays",
@@ -381,7 +381,10 @@
             "opp_team_k_pct": 56.0,
             "same_hand_ratio": 88.8889,
             "l14_k_pct": 52.3529,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 71.8308,
+            "ump_k_pct": 0.228,
+            "ump_bb_pct": -0.168
           },
           "hit_probability": 0.464,
           "raw_hit_probability": 0.464,
@@ -397,7 +400,7 @@
         {
           "prop": "Over 17.5 Outs Recorded",
           "type": "pitcher",
-          "score": 59.5,
+          "score": 58.1,
           "notable_signals": 1,
           "matchup": "Tampa Bay Rays @ Texas Rangers",
           "game_pk": 822850,
@@ -406,18 +409,46 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.5528,
+            "outs_rate": 0.5553,
             "avg_outs_per_start": 16.88
           },
-          "hit_probability": 0.5528,
+          "hit_probability": 0.5553,
           "raw_hit_probability": null,
-          "lift": 0.1047,
+          "lift": 0.0939,
           "reliability": "A",
           "sample_n": 26,
           "projection": {
             "stat": "pitcher_outs",
             "value": 17.5,
             "needs": 18
+          }
+        },
+        {
+          "prop": "Over 11.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 54.9,
+          "notable_signals": 1,
+          "matchup": "Tampa Bay Rays @ Texas Rangers",
+          "game_pk": 822850,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            656876,
+            594798
+          ],
+          "signals": {
+            "combined_k_edge": 0.1659
+          },
+          "hit_probability": 0.6246,
+          "raw_hit_probability": null,
+          "lift": 0.1659,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 11.5,
+            "needs": 12
           }
         }
       ]

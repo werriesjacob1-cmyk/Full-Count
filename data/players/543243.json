@@ -301,7 +301,7 @@
         {
           "prop": "Over 5.5 Strikeouts",
           "type": "pitcher",
-          "score": 49.8,
+          "score": 49.2,
           "notable_signals": 0,
           "matchup": "Boston Red Sox @ Baltimore Orioles",
           "game_pk": 824795,
@@ -311,9 +311,12 @@
           "combo_player_ids": null,
           "signals": {
             "opp_team_k_pct": 73.0,
-            "same_hand_ratio": 61.1111,
+            "same_hand_ratio": 33.3333,
             "l14_k_pct": 39.4118,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 54.9721,
+            "ump_k_pct": 0.048,
+            "ump_bb_pct": -0.168
           },
           "hit_probability": 0.3867,
           "raw_hit_probability": 0.3867,
@@ -329,7 +332,7 @@
         {
           "prop": "Over 17.5 Outs Recorded",
           "type": "pitcher",
-          "score": 88.0,
+          "score": 86.7,
           "notable_signals": 1,
           "matchup": "Boston Red Sox @ Baltimore Orioles",
           "game_pk": 824795,
@@ -338,18 +341,46 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.6674,
+            "outs_rate": 0.6699,
             "avg_outs_per_start": 17.24
           },
-          "hit_probability": 0.6674,
+          "hit_probability": 0.6699,
           "raw_hit_probability": null,
-          "lift": 0.2193,
+          "lift": 0.2085,
           "reliability": "A",
           "sample_n": 25,
           "projection": {
             "stat": "pitcher_outs",
             "value": 17.5,
             "needs": 18
+          }
+        },
+        {
+          "prop": "Over 9.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 28.2,
+          "notable_signals": 0,
+          "matchup": "Boston Red Sox @ Baltimore Orioles",
+          "game_pk": 824795,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            543243,
+            605135
+          ],
+          "signals": {
+            "combined_k_edge": -0.13
+          },
+          "hit_probability": 0.4763,
+          "raw_hit_probability": null,
+          "lift": -0.13,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 9.5,
+            "needs": 10
           }
         }
       ]

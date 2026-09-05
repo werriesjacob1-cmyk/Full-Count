@@ -955,6 +955,137 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-05",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 26.5,
+          "notable_signals": 3,
+          "matchup": "Minnesota Twins @ Chicago White Sox",
+          "game_pk": 824553,
+          "team": "Minnesota Twins",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 50.8571,
+            "pitch_exploit": 1.1429,
+            "l7_avg_ev": 59.375,
+            "l7_barrel_pct": 0.0,
+            "bat_speed_trend": 12.825,
+            "park_hr_index": 26.6,
+            "season_barrel_pct": 33.3333,
+            "lineup_slot": 0.0,
+            "bullpen_fatigue": 16.6667,
+            "platoon_barrel_pct": -2.48,
+            "platoon_xwoba": -1.44,
+            "opp_catcher_framing": 0.6,
+            "days_rest": 4.0,
+            "woba_ahead": 79.0909,
+            "woba_behind": 44.5455,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": -0.104,
+            "vs_rp_ops": -0.888,
+            "ump_k_pct": -0.264,
+            "ump_bb_pct": 0.276
+          },
+          "hit_probability": 0.6161,
+          "raw_hit_probability": 0.5811,
+          "lift": -0.0525,
+          "reliability": "B",
+          "sample_n": 78,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 31.7,
+          "notable_signals": 0,
+          "matchup": "Minnesota Twins @ Chicago White Sox",
+          "game_pk": 824553,
+          "team": "Minnesota Twins",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": -0.6,
+            "sprint_speed": 18.75,
+            "catcher_poptime": 17.1429,
+            "on_base": 25.144
+          },
+          "hit_probability": 0.0511,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "B",
+          "sample_n": 78,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 0.2,
+          "notable_signals": 0,
+          "matchup": "Minnesota Twins @ Chicago White Sox",
+          "game_pk": 824553,
+          "team": "Minnesota Twins",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0293
+          },
+          "hit_probability": 0.0293,
+          "raw_hit_probability": null,
+          "lift": -0.0185,
+          "reliability": "B",
+          "sample_n": 78,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 2.9,
+          "notable_signals": 0,
+          "matchup": "Minnesota Twins @ Chicago White Sox",
+          "game_pk": 824553,
+          "team": "Minnesota Twins",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0239
+          },
+          "hit_probability": 0.0239,
+          "raw_hit_probability": null,
+          "lift": 0.0031,
+          "reliability": "B",
+          "sample_n": 78,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

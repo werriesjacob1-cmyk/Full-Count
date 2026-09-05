@@ -361,7 +361,7 @@
         {
           "prop": "Over 14.5 Outs Recorded",
           "type": "pitcher",
-          "score": 67.9,
+          "score": 66.7,
           "notable_signals": 0,
           "matchup": "Atlanta Braves @ Philadelphia Phillies",
           "game_pk": 823419,
@@ -370,46 +370,18 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.771,
+            "outs_rate": 0.7738,
             "avg_outs_per_start": 15.23
           },
-          "hit_probability": 0.771,
+          "hit_probability": 0.7738,
           "raw_hit_probability": null,
-          "lift": 0.0063,
+          "lift": -0.0038,
           "reliability": "A",
           "sample_n": 22,
           "projection": {
             "stat": "pitcher_outs",
             "value": 14.5,
             "needs": 15
-          }
-        },
-        {
-          "prop": "Over 9.5 Combined Strikeouts",
-          "type": "pitcher_combo",
-          "score": 55.0,
-          "notable_signals": 0,
-          "matchup": "Atlanta Braves @ Philadelphia Phillies",
-          "game_pk": 823419,
-          "team": null,
-          "side": null,
-          "lean": null,
-          "combo_player_ids": [
-            527048,
-            554430
-          ],
-          "signals": {
-            "combined_k_edge": 0.043
-          },
-          "hit_probability": 0.6584,
-          "raw_hit_probability": null,
-          "lift": 0.043,
-          "reliability": "D",
-          "sample_n": 0,
-          "projection": {
-            "stat": "combined_strikeouts",
-            "value": 9.5,
-            "needs": 10
           }
         }
       ]
