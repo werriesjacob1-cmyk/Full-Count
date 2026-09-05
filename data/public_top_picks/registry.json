@@ -2,7 +2,7 @@
   "schema_version": 1,
   "identity_schema_version": 2,
   "rollout_version": "pre-phase-v-live-lifecycle-v1",
-  "updated_at": "2026-09-05T04:28:45.112794+00:00",
+  "updated_at": "2026-09-05T08:43:23.350318+00:00",
   "migration": {
     "version": "pre-phase-v-live-lifecycle-v1",
     "completed_at": "2026-08-17T23:14:57+00:00",
@@ -15347,6 +15347,92 @@
         },
         "qualification_timestamp": "2026-09-05T04:04:59.500053+00:00",
         "board_timestamp": "2026-09-05T04:04:59.476523+00:00",
+        "slate_date": "2026-09-05"
+      }
+    },
+    "fc2:823335:player-677952:pitcher_outs:17:over": {
+      "canonical_id": "fc2:823335:player-677952:pitcher_outs:17:over",
+      "settlement_identity": [
+        "823335",
+        [
+          "player",
+          "677952"
+        ],
+        "pitcher_outs",
+        "17",
+        "over"
+      ],
+      "slate_date": "2026-09-05",
+      "first_published_at": "2026-09-05T08:43:23.350318+00:00",
+      "publication_provenance": {
+        "artifact_id": "46f29a0c457fce4fe302e143cfe274468762d0d8924dc6257a7bba652cd5c67c",
+        "source_commit": "7f56f5a6ef23983eef9f44b214887dc24d9c822c",
+        "workflow_run_id": "33955962958",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-09-05T08:43:08.171334+00:00",
+        "data_hash": "a6eaaef58fd8dc4773785eb143e3d5c729ae2812907a2336d4b79ad6284cc3b1",
+        "live_hash": "e038757ce902e67e9679aa734775c38cc0d3fa1416bc35d21874e75eeff7b6b1"
+      },
+      "snapshot": {
+        "id": "fc2:823335:player-677952:pitcher_outs:17:over",
+        "identity_version": 2,
+        "game_pk": 823335,
+        "player_id": 677952,
+        "combo_player_ids": null,
+        "type": "pitcher",
+        "name": "Braxton Ashcraft",
+        "team": "Pittsburgh Pirates",
+        "matchup": "Los Angeles Angels @ Pittsburgh Pirates",
+        "game_start": "2026-09-05T22:40:00Z",
+        "stat": "pitcher_outs",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "pitcher_outs",
+          "value": 16.5,
+          "needs": 17
+        },
+        "prop": "Over 16.5 Outs Recorded",
+        "hit_probability": 0.6386,
+        "market_odds": -118,
+        "market_implied": 0.504,
+        "market_edge": 0.1346,
+        "market_hold": 0.074,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (A), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (13.7 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "Recorded 17+ outs (5.2 IP) in 63.9% of his last 27 real starts (league 51.2%, avg 17.81 outs/start)"
+        ],
+        "watchouts": [],
+        "prob_ci": [
+          0.5659,
+          0.7067
+        ],
+        "reliability": "A",
+        "reliability_note": null,
+        "sample_n": 27,
+        "lineup_assumed": null,
+        "base_rate": 0.5121,
+        "lift": 0.1265,
+        "lift_reference_rate": null,
+        "stable_lift": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "8725fb09",
+          "prediction_timestamp": "2026-09-05T08:36:47.474629+00:00",
+          "odds_fetched_at": "2026-09-05T08:36:44.454949+00:00",
+          "board_generated_at": "2026-09-05T08:36:47.443563+00:00"
+        },
+        "qualification_timestamp": "2026-09-05T08:36:47.474629+00:00",
+        "board_timestamp": "2026-09-05T08:36:47.443563+00:00",
         "slate_date": "2026-09-05"
       }
     }
