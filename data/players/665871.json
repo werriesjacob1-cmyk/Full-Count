@@ -72,6 +72,34 @@
             "value": 15.5,
             "needs": 16
           }
+        },
+        {
+          "prop": "Over 7.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 54.9,
+          "notable_signals": 1,
+          "matchup": "Chicago Cubs @ Miami Marlins",
+          "game_pk": 823823,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            665871,
+            687473
+          ],
+          "signals": {
+            "combined_k_edge": 0.1144
+          },
+          "hit_probability": 0.6337,
+          "raw_hit_probability": null,
+          "lift": 0.1144,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 7.5,
+            "needs": 8
+          }
         }
       ]
     }
