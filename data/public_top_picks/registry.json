@@ -2,7 +2,7 @@
   "schema_version": 1,
   "identity_schema_version": 2,
   "rollout_version": "pre-phase-v-live-lifecycle-v1",
-  "updated_at": "2026-09-05T19:23:11.538009+00:00",
+  "updated_at": "2026-09-05T19:53:13.973273+00:00",
   "migration": {
     "version": "pre-phase-v-live-lifecycle-v1",
     "completed_at": "2026-08-17T23:14:57+00:00",
@@ -16103,6 +16103,104 @@
         },
         "qualification_timestamp": "2026-09-05T19:16:16.514721+00:00",
         "board_timestamp": "2026-09-05T19:16:16.482569+00:00",
+        "slate_date": "2026-09-05"
+      }
+    },
+    "fc2:824795:player-687637:hits_runs_rbis:1:over": {
+      "canonical_id": "fc2:824795:player-687637:hits_runs_rbis:1:over",
+      "settlement_identity": [
+        "824795",
+        [
+          "player",
+          "687637"
+        ],
+        "hits_runs_rbis",
+        "1",
+        "over"
+      ],
+      "slate_date": "2026-09-05",
+      "first_published_at": "2026-09-05T19:53:13.973273+00:00",
+      "publication_provenance": {
+        "artifact_id": "b01fea221eaff6953762a24e53537cf85546b92cf9b397174a4cdcd2d252cf6c",
+        "source_commit": "ca678673bff4ebea592ad0bf2d47de10e13117c7",
+        "workflow_run_id": "33988365888",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-09-05T19:53:01.402858+00:00",
+        "data_hash": "ceadf317056a76eaa49dfa50a3e55ae6a446607f64fb5d0bb601e9cacdd96bbf",
+        "live_hash": "f5865968f38bbe7592d6811df6efa1088cc910f5ba0405589e36638de939a273"
+      },
+      "snapshot": {
+        "id": "fc2:824795:player-687637:hits_runs_rbis:1:over",
+        "identity_version": 2,
+        "game_pk": 824795,
+        "player_id": 687637,
+        "combo_player_ids": null,
+        "type": "batter",
+        "name": "Dylan Beavers",
+        "team": "Baltimore Orioles",
+        "matchup": "Boston Red Sox @ Baltimore Orioles",
+        "game_start": "2026-09-05T23:05:00Z",
+        "stat": "hits_runs_rbis",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "hits_runs_rbis",
+          "value": 0.5,
+          "needs": 1
+        },
+        "prop": "Over 0.5 Hits+Runs+RBIs",
+        "hit_probability": 0.6679,
+        "market_odds": -170,
+        "market_implied": 0.6296,
+        "market_edge": 0.0383,
+        "market_hold": null,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (A), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (8.5 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "L7 barrel% 18.8 \u2014 hot recent contact",
+          "Platoon: L bat vs RHP (favorable)",
+          "Hitters batting ahead of him: 0.347 wOBA (league ~.320)",
+          "Pitch-type exploit: RV/100 +2.6 vs SI (opposing SP throws it 21.1% of the time)"
+        ],
+        "watchouts": [
+          "L7 avg EV 83.4mph (league ~88.5) \u2014 cold recent contact",
+          "Opposing SP ERA 2.82 \u2014 elite pitcher, tough matchup",
+          "Projected 3.69 PA (batting slot 8) \u2014 a tough lineup slot for plate appearances",
+          "Hitter batting behind him: 0.300 wOBA (league ~.320) \u2014 little lineup protection, an easier batter to pitch around",
+          "Team implied for 3.66 runs (league avg 4.245; line 3.5, game total 8) \u2014 a weak offensive environment",
+          "Season barrel% 7.1 \u2014 below-average barrel rate",
+          "Wind blowing IN (7mph) \u2014 power suppressed",
+          "Opposing bullpen fatigue: 1/11 relievers over 60 pitches in L7 (fresh pen \u2014 tougher matchup late)"
+        ],
+        "prob_ci": [
+          0.6571,
+          0.691
+        ],
+        "reliability": "A",
+        "reliability_note": null,
+        "sample_n": 84,
+        "lineup_assumed": null,
+        "base_rate": 0.6694,
+        "lift": -0.0015,
+        "lift_reference_rate": null,
+        "stable_lift": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "f8f42079",
+          "prediction_timestamp": "2026-09-05T19:50:25.779101+00:00",
+          "odds_fetched_at": "2026-09-05T19:50:16.662808+00:00",
+          "board_generated_at": "2026-09-05T19:50:25.749448+00:00"
+        },
+        "qualification_timestamp": "2026-09-05T19:50:25.779101+00:00",
+        "board_timestamp": "2026-09-05T19:50:25.749448+00:00",
         "slate_date": "2026-09-05"
       }
     }
