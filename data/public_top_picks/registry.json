@@ -2,7 +2,7 @@
   "schema_version": 1,
   "identity_schema_version": 2,
   "rollout_version": "pre-phase-v-live-lifecycle-v1",
-  "updated_at": "2026-09-05T19:53:13.973273+00:00",
+  "updated_at": "2026-09-05T20:39:40.749362+00:00",
   "migration": {
     "version": "pre-phase-v-live-lifecycle-v1",
     "completed_at": "2026-08-17T23:14:57+00:00",
@@ -16201,6 +16201,107 @@
         },
         "qualification_timestamp": "2026-09-05T19:50:25.779101+00:00",
         "board_timestamp": "2026-09-05T19:50:25.749448+00:00",
+        "slate_date": "2026-09-05"
+      }
+    },
+    "fc2:824553:player-671976:hits:1:over": {
+      "canonical_id": "fc2:824553:player-671976:hits:1:over",
+      "settlement_identity": [
+        "824553",
+        [
+          "player",
+          "671976"
+        ],
+        "hits",
+        "1",
+        "over"
+      ],
+      "slate_date": "2026-09-05",
+      "first_published_at": "2026-09-05T20:39:40.749362+00:00",
+      "publication_provenance": {
+        "artifact_id": "b83e28591a1a95cb63ec5f743d4fe8dc13f350588ebdba2cf6ec4dda867d8d0c",
+        "source_commit": "698e304b2980c9b7b2f9301629c5430bade92c27",
+        "workflow_run_id": "33990672148",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-09-05T20:39:27.798944+00:00",
+        "data_hash": "f21451c702eb398378909441644e3cfe71a48f27f3e0110ee96caf8eb8eb26ea",
+        "live_hash": "e9bd854dfb4eded15322c5059aed3e2b2cf3bf7b9a36c1f8af6897136544c737"
+      },
+      "snapshot": {
+        "id": "fc2:824553:player-671976:hits:1:over",
+        "identity_version": 2,
+        "game_pk": 824553,
+        "player_id": 671976,
+        "combo_player_ids": null,
+        "type": "batter",
+        "name": "Tristan Peters",
+        "team": "Chicago White Sox",
+        "matchup": "Minnesota Twins @ Chicago White Sox",
+        "game_start": "2026-09-05T23:10:00Z",
+        "stat": "hits",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "hits",
+          "value": 0.5,
+          "needs": 1
+        },
+        "prop": "Over 0.5 Hits",
+        "hit_probability": 0.6152,
+        "market_odds": -135,
+        "market_implied": 0.5745,
+        "market_edge": 0.0407,
+        "market_hold": null,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (A), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (8.3 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "L7 avg EV 88.3mph (league ~88.5)",
+          "L7 barrel% 37.5 \u2014 hot recent contact",
+          "Platoon: L bat vs RHP (favorable)",
+          "Team implied for 4.04 runs (league avg 4.245; line 4.5, game total 8)",
+          "Pitch-type exploit: RV/100 +2.8 vs FC (opposing SP throws it 24.1% of the time)",
+          "Hitters batting ahead of him: 0.330 wOBA (league ~.320)"
+        ],
+        "watchouts": [
+          "Projected 3.72 PA (batting slot 8) \u2014 a tough lineup slot for plate appearances",
+          "AVG vs xBA: 0.281 vs 0.257 (+0.024) \u2014 outperforming his contact quality, regression risk",
+          "wOBA vs xwOBA: 0.354 vs 0.320 (+0.034) \u2014 outperforming his contact quality, regression risk",
+          "Public heavy on Chicago White Sox (money% trails tickets% by 10 pts) \u2014 sharp money is fading this side",
+          "Season barrel% 5.8 \u2014 below-average barrel rate",
+          "Hitter batting behind him: 0.266 wOBA (league ~.320) \u2014 little lineup protection, an easier batter to pitch around",
+          "Wind blowing IN (14mph) \u2014 power suppressed",
+          "Opposing bullpen fatigue: 1/10 relievers over 60 pitches in L7 (fresh pen \u2014 tougher matchup late)",
+          "Sharp money fading Chicago White Sox (money% -10 pts vs ticket%) \u2014 smart money moving away from this side"
+        ],
+        "prob_ci": [
+          0.6064,
+          0.6438
+        ],
+        "reliability": "A",
+        "reliability_note": null,
+        "sample_n": 131,
+        "lineup_assumed": null,
+        "base_rate": 0.5685,
+        "lift": 0.0467,
+        "lift_reference_rate": null,
+        "stable_lift": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "964e6086",
+          "prediction_timestamp": "2026-09-05T20:36:20.537402+00:00",
+          "odds_fetched_at": "2026-09-05T20:36:10.296454+00:00",
+          "board_generated_at": "2026-09-05T20:36:20.513691+00:00"
+        },
+        "qualification_timestamp": "2026-09-05T20:36:20.537402+00:00",
+        "board_timestamp": "2026-09-05T20:36:20.513691+00:00",
         "slate_date": "2026-09-05"
       }
     }
