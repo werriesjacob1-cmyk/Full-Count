@@ -889,6 +889,86 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-05",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 70.2,
+          "notable_signals": 0,
+          "matchup": "Milwaukee Brewers @ Cincinnati Reds",
+          "game_pk": 824468,
+          "team": "Cincinnati Reds",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 62.5714,
+            "l7_avg_ev": 76.4286,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 60.2,
+            "season_barrel_pct": 40.6667,
+            "lineup_slot": 100.0,
+            "bullpen_fatigue": 16.6667,
+            "platoon_barrel_pct": 1.52,
+            "platoon_xwoba": -0.84,
+            "park_hand_index": 1.71,
+            "opp_catcher_framing": 0.48,
+            "days_rest": 0.0,
+            "woba_behind": 65.4545,
+            "pull_park_synergy": 1.4125,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": -1.856,
+            "vs_rp_ops": -0.876,
+            "ump_k_pct": 0.408,
+            "ump_bb_pct": 0.432
+          },
+          "hit_probability": 0.6099,
+          "raw_hit_probability": 0.6084,
+          "lift": 0.0414,
+          "reliability": "D",
+          "sample_n": 23,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 38.8,
+          "notable_signals": 0,
+          "matchup": "Milwaukee Brewers @ Cincinnati Reds",
+          "game_pk": 824468,
+          "team": "Cincinnati Reds",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": -4.14,
+            "sprint_speed": 18.75,
+            "catcher_poptime": 8.5714,
+            "on_base": 68.3301
+          },
+          "hit_probability": null,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "D",
+          "sample_n": 23,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

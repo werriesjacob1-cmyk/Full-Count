@@ -2309,6 +2309,134 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-05",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 70.7,
+          "notable_signals": 3,
+          "matchup": "St. Louis Cardinals @ Colorado Rockies",
+          "game_pk": 824310,
+          "team": "Colorado Rockies",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "sp_era_weak": 83.1429,
+            "pitch_exploit": 4.5714,
+            "l7_avg_ev": 41.3889,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 55.4,
+            "season_barrel_pct": 18.0,
+            "lineup_slot": 50.0,
+            "bullpen_fatigue": 83.3333,
+            "platoon_barrel_pct": -0.96,
+            "platoon_xwoba": -1.5,
+            "opp_catcher_framing": 4.0,
+            "days_rest": 0.0,
+            "woba_ahead": 75.4545,
+            "woba_behind": 0.0,
+            "team_total_move": 0.0,
+            "team_total_open": 0.0,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": 0.272,
+            "vs_rp_ops": 1.188,
+            "ump_k_pct": -0.204,
+            "ump_bb_pct": 0.06
+          },
+          "hit_probability": 0.6239,
+          "raw_hit_probability": 0.6188,
+          "lift": 0.0554,
+          "reliability": "B",
+          "sample_n": 69,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 61.0,
+          "notable_signals": 1,
+          "matchup": "St. Louis Cardinals @ Colorado Rockies",
+          "game_pk": 824310,
+          "team": "Colorado Rockies",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": 3.9,
+            "sprint_speed": 46.875,
+            "on_base": 79.8464
+          },
+          "hit_probability": 0.1026,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "B",
+          "sample_n": 69,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 0.0,
+          "notable_signals": 0,
+          "matchup": "St. Louis Cardinals @ Colorado Rockies",
+          "game_pk": 824310,
+          "team": "Colorado Rockies",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0213
+          },
+          "hit_probability": 0.0213,
+          "raw_hit_probability": null,
+          "lift": -0.0265,
+          "reliability": "B",
+          "sample_n": 69,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 3.5,
+          "notable_signals": 0,
+          "matchup": "St. Louis Cardinals @ Colorado Rockies",
+          "game_pk": 824310,
+          "team": "Colorado Rockies",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0263
+          },
+          "hit_probability": 0.0263,
+          "raw_hit_probability": null,
+          "lift": 0.0055,
+          "reliability": "B",
+          "sample_n": 69,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

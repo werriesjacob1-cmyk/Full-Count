@@ -330,7 +330,7 @@
         {
           "prop": "Over 3.5 Strikeouts",
           "type": "pitcher",
-          "score": 51.5,
+          "score": 51.9,
           "notable_signals": 0,
           "matchup": "Atlanta Braves @ Philadelphia Phillies",
           "game_pk": 823419,
@@ -342,7 +342,10 @@
             "opp_team_k_pct": 51.0,
             "same_hand_ratio": 61.1111,
             "l14_k_pct": 18.8235,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 53.7847,
+            "ump_k_pct": -0.852,
+            "ump_bb_pct": 0.204
           },
           "hit_probability": 0.5984,
           "raw_hit_probability": 0.6223,
@@ -379,6 +382,34 @@
             "stat": "pitcher_outs",
             "value": 14.5,
             "needs": 15
+          }
+        },
+        {
+          "prop": "Over 9.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 55.0,
+          "notable_signals": 0,
+          "matchup": "Atlanta Braves @ Philadelphia Phillies",
+          "game_pk": 823419,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            527048,
+            554430
+          ],
+          "signals": {
+            "combined_k_edge": 0.043
+          },
+          "hit_probability": 0.6584,
+          "raw_hit_probability": null,
+          "lift": 0.043,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 9.5,
+            "needs": 10
           }
         }
       ]

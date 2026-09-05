@@ -2753,6 +2753,139 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-05",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 59.2,
+          "notable_signals": 1,
+          "matchup": "Atlanta Braves @ Philadelphia Phillies",
+          "game_pk": 823419,
+          "team": "Philadelphia Phillies",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 15.7143,
+            "l7_avg_ev": 8.625,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 2.4,
+            "park_hr_index": 34.2,
+            "season_barrel_pct": 23.3333,
+            "lineup_slot": 87.5,
+            "bullpen_fatigue": 18.5185,
+            "bvp_ops": 1.206,
+            "platoon_barrel_pct": 0.24,
+            "platoon_xwoba": 1.2,
+            "park_hand_index": 0.14,
+            "opp_catcher_framing": 0.24,
+            "days_rest": 0.0,
+            "woba_ahead": 72.7273,
+            "woba_behind": 89.0909,
+            "pull_park_synergy": 0.0309,
+            "team_total_move": 0.0,
+            "team_total_open": 0.0,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": -0.304,
+            "vs_rp_ops": -0.9,
+            "ump_k_pct": 0.852,
+            "ump_bb_pct": -0.204
+          },
+          "hit_probability": 0.6247,
+          "raw_hit_probability": 0.6194,
+          "lift": 0.0562,
+          "reliability": "A",
+          "sample_n": 136,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 60.5,
+          "notable_signals": 0,
+          "matchup": "Atlanta Braves @ Philadelphia Phillies",
+          "game_pk": 823419,
+          "team": "Philadelphia Phillies",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": 6.0,
+            "sprint_speed": 78.125,
+            "catcher_poptime": 8.5714,
+            "on_base": 31.8618
+          },
+          "hit_probability": 0.1231,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 136,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 0.0,
+          "notable_signals": 0,
+          "matchup": "Atlanta Braves @ Philadelphia Phillies",
+          "game_pk": 823419,
+          "team": "Philadelphia Phillies",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0247
+          },
+          "hit_probability": 0.0247,
+          "raw_hit_probability": null,
+          "lift": -0.0231,
+          "reliability": "A",
+          "sample_n": 136,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 2.2,
+          "notable_signals": 0,
+          "matchup": "Atlanta Braves @ Philadelphia Phillies",
+          "game_pk": 823419,
+          "team": "Philadelphia Phillies",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0214
+          },
+          "hit_probability": 0.0214,
+          "raw_hit_probability": null,
+          "lift": 0.0006,
+          "reliability": "A",
+          "sample_n": 136,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

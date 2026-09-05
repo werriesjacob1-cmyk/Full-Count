@@ -2713,9 +2713,9 @@
       "date": "2026-09-05",
       "evaluations": [
         {
-          "prop": "Over 0.5 Hits",
+          "prop": "Over 0.5 Hits+Runs+RBIs",
           "type": "batter",
-          "score": 61.6,
+          "score": 61.5,
           "notable_signals": 1,
           "matchup": "Chicago Cubs @ Miami Marlins",
           "game_pk": 823823,
@@ -2751,13 +2751,13 @@
             "ump_k_pct": -0.06,
             "ump_bb_pct": 0.156
           },
-          "hit_probability": 0.5987,
-          "raw_hit_probability": 0.6002,
-          "lift": 0.0302,
+          "hit_probability": 0.6567,
+          "raw_hit_probability": 0.6485,
+          "lift": -0.0159,
           "reliability": "A",
           "sample_n": 110,
           "projection": {
-            "stat": "hits",
+            "stat": "hits_runs_rbis",
             "value": 0.5,
             "needs": 1
           }
