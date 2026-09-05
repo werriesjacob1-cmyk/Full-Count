@@ -2,7 +2,7 @@
   "schema_version": 1,
   "identity_schema_version": 2,
   "rollout_version": "pre-phase-v-live-lifecycle-v1",
-  "updated_at": "2026-09-05T12:27:45.834905+00:00",
+  "updated_at": "2026-09-05T18:57:38.795957+00:00",
   "migration": {
     "version": "pre-phase-v-live-lifecycle-v1",
     "completed_at": "2026-08-17T23:14:57+00:00",
@@ -15705,6 +15705,106 @@
         },
         "qualification_timestamp": "2026-09-05T11:37:35.483958+00:00",
         "board_timestamp": "2026-09-05T11:37:35.450623+00:00",
+        "slate_date": "2026-09-05"
+      }
+    },
+    "fc2:824145:player-814439:hits_runs_rbis:1:over": {
+      "canonical_id": "fc2:824145:player-814439:hits_runs_rbis:1:over",
+      "settlement_identity": [
+        "824145",
+        [
+          "player",
+          "814439"
+        ],
+        "hits_runs_rbis",
+        "1",
+        "over"
+      ],
+      "slate_date": "2026-09-05",
+      "first_published_at": "2026-09-05T18:57:38.795957+00:00",
+      "publication_provenance": {
+        "artifact_id": "1c14933c13bbd9f963aa84c35b4091d6e056c0171e56563c0c2baa9f44021e6e",
+        "source_commit": "a3b6a92f7266dd11ad7473fe45ba7249df872e0c",
+        "workflow_run_id": "33985576912",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-09-05T18:57:28.363240+00:00",
+        "data_hash": "9eadb41c93f57a12f1db7076876bf5cc928e7efaa051099ec321c3eed58060f5",
+        "live_hash": "12c9cd185785721dc6eb3f9f9ea5aa137cf062e74cfe4d8b85a69e869418ff4d"
+      },
+      "snapshot": {
+        "id": "fc2:824145:player-814439:hits_runs_rbis:1:over",
+        "identity_version": 2,
+        "game_pk": 824145,
+        "player_id": 814439,
+        "combo_player_ids": null,
+        "type": "batter",
+        "name": "Ryan Waldschmidt",
+        "team": "Arizona Diamondbacks",
+        "matchup": "Arizona Diamondbacks @ Houston Astros",
+        "game_start": "2026-09-05T23:15:00Z",
+        "stat": "hits_runs_rbis",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "hits_runs_rbis",
+          "value": 0.5,
+          "needs": 1
+        },
+        "prop": "Over 0.5 Hits+Runs+RBIs",
+        "hit_probability": 0.6687,
+        "market_odds": -165,
+        "market_implied": 0.6226,
+        "market_edge": 0.0461,
+        "market_hold": null,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (B), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (9.2 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "L7 barrel% 18.2 \u2014 hot recent contact",
+          "Bat speed trending up L14 (+1.1mph 2nd-half vs 1st-half)",
+          "Opposing SP ERA 6.23 \u2014 shaky matchup for the pitcher",
+          "Team implied for 4.37 runs (league avg 4.245; line 4.5, game total 8.5)",
+          "Dome \u2014 weather neutral",
+          "Sharp money backing Arizona Diamondbacks (money% +29 pts vs ticket%)"
+        ],
+        "watchouts": [
+          "L7 avg EV 82.5mph (league ~88.5) \u2014 cold recent contact",
+          "Platoon: R bat vs RHP (unfavorable)",
+          "Projected 3.61 PA (batting slot 9) \u2014 a tough lineup slot for plate appearances",
+          "Hitters batting ahead of him: 0.301 wOBA (league ~.320) \u2014 a weak on-base group ahead of him, fewer runners to drive in",
+          "Hitter batting behind him: 0.312 wOBA (league ~.320) \u2014 little lineup protection, an easier batter to pitch around",
+          "AVG vs xBA: 0.270 vs 0.247 (+0.023) \u2014 outperforming his contact quality, regression risk",
+          "Season barrel% 6.9 \u2014 below-average barrel rate",
+          "Opposing bullpen fatigue: 1/8 relievers over 60 pitches in L7 (fresh pen \u2014 tougher matchup late)"
+        ],
+        "prob_ci": [
+          0.6579,
+          0.6918
+        ],
+        "reliability": "B",
+        "reliability_note": null,
+        "sample_n": 72,
+        "lineup_assumed": null,
+        "base_rate": 0.6727,
+        "lift": -0.004,
+        "lift_reference_rate": null,
+        "stable_lift": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "da2b3dc7",
+          "prediction_timestamp": "2026-09-05T18:55:19.300370+00:00",
+          "odds_fetched_at": "2026-09-05T18:55:09.191464+00:00",
+          "board_generated_at": "2026-09-05T18:55:19.269712+00:00"
+        },
+        "qualification_timestamp": "2026-09-05T18:55:19.300370+00:00",
+        "board_timestamp": "2026-09-05T18:55:19.269712+00:00",
         "slate_date": "2026-09-05"
       }
     }
