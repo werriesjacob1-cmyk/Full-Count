@@ -3939,6 +3939,14 @@ def _build_and_score():
         # directly; carried through so main()'s later attach_market_prices
         # pass can reuse it instead of sweeping FanDuel for the same market
         # twice (extras itself is local to this function).
+        # Raw rest/usage, carried through for the PA-v1 historical-semantics
+        # compatibility adapter (backtest/pa_v1_compat.py). PURELY ADDITIVE:
+        # nothing in the scoring or recommendation path reads this key, and
+        # the candidates' own signals are untouched. It is exposed because the
+        # STORED days_rest signal is clamped and therefore not invertible, so
+        # the raw days_since_last_game is required to reconstruct the frozen
+        # artifact's own reference-clock semantics.
+        "rest": extras.get("rest"),
         "po_prices": extras.get("pitcher_outs_prices"),
         # Same reasoning, same fetch-above-reuse-below pattern -- this one
         # was missing until attach_market_prices grew a combined_strikeouts
