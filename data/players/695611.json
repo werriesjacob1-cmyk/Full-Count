@@ -373,7 +373,7 @@
         {
           "prop": "Over 5.5 Strikeouts",
           "type": "pitcher",
-          "score": 47.5,
+          "score": 46.3,
           "notable_signals": 0,
           "matchup": "Athletics @ Seattle Mariners",
           "game_pk": 823091,
@@ -383,7 +383,7 @@
           "combo_player_ids": null,
           "signals": {
             "opp_team_k_pct": 63.0,
-            "same_hand_ratio": 75.0,
+            "same_hand_ratio": 43.75,
             "l14_k_pct": 52.3529,
             "env_neutral": 50.0,
             "ump_accuracy": 49.4524,
@@ -404,7 +404,7 @@
         {
           "prop": "Over 16.5 Outs Recorded",
           "type": "pitcher",
-          "score": 18.4,
+          "score": 19.6,
           "notable_signals": 0,
           "matchup": "Athletics @ Seattle Mariners",
           "game_pk": 823091,
@@ -413,18 +413,46 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.4179,
+            "outs_rate": 0.4146,
             "avg_outs_per_start": 15.44
           },
-          "hit_probability": 0.4179,
+          "hit_probability": 0.4146,
           "raw_hit_probability": null,
-          "lift": -0.087,
+          "lift": -0.0773,
           "reliability": "A",
           "sample_n": 18,
           "projection": {
             "stat": "pitcher_outs",
             "value": 16.5,
             "needs": 17
+          }
+        },
+        {
+          "prop": "Over 11.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 17.0,
+          "notable_signals": 0,
+          "matchup": "Athletics @ Seattle Mariners",
+          "game_pk": 823091,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            695611,
+            693433
+          ],
+          "signals": {
+            "combined_k_edge": -0.167
+          },
+          "hit_probability": 0.4198,
+          "raw_hit_probability": null,
+          "lift": -0.167,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 11.5,
+            "needs": 12
           }
         }
       ]
