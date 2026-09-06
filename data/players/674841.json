@@ -340,7 +340,7 @@
         {
           "prop": "Over 3.5 Strikeouts",
           "type": "pitcher",
-          "score": 41.9,
+          "score": 42.2,
           "notable_signals": 0,
           "matchup": "Washington Nationals @ Los Angeles Dodgers",
           "game_pk": 823903,
@@ -353,7 +353,10 @@
             "same_hand_ratio": 43.75,
             "l14_k_pct": 75.8824,
             "tto_penalty": -8.0,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 52.9924,
+            "ump_k_pct": 0.396,
+            "ump_bb_pct": -0.108
           },
           "hit_probability": 0.6186,
           "raw_hit_probability": 0.7228,
@@ -369,7 +372,7 @@
         {
           "prop": "Over 14.5 Outs Recorded",
           "type": "pitcher",
-          "score": 15.4,
+          "score": 25.0,
           "notable_signals": 0,
           "matchup": "Washington Nationals @ Los Angeles Dodgers",
           "game_pk": 823903,
@@ -378,12 +381,12 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.5548,
+            "outs_rate": 0.5177,
             "avg_outs_per_start": 14.77
           },
-          "hit_probability": 0.5548,
+          "hit_probability": 0.5177,
           "raw_hit_probability": null,
-          "lift": -0.202,
+          "lift": -0.1216,
           "reliability": "B",
           "sample_n": 13,
           "projection": {

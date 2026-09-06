@@ -4542,14 +4542,14 @@
       "date": "2026-09-06",
       "hits": 0,
       "misses": 0,
-      "ungraded": 94,
+      "ungraded": 87,
       "fair_hits": 0,
       "fair_misses": 0,
       "by_category": {
         "main": {
           "hits": 0,
           "misses": 0,
-          "ungraded": 9
+          "ungraded": 4
         },
         "moonshot": {
           "hits": 0,
@@ -4564,35 +4564,35 @@
         "best_of_category": {
           "hits": 0,
           "misses": 0,
-          "ungraded": 75
+          "ungraded": 73
         }
       },
       "by_recommendation_status": {
         "lean": {
           "hits": 0,
           "misses": 0,
-          "ungraded": 67
+          "ungraded": 61
         },
         "neutral": {
           "hits": 0,
           "misses": 0,
-          "ungraded": 24
+          "ungraded": 25
         },
         "top_pick": {
-          "hits": 0,
-          "misses": 0,
+          "hits": 6,
+          "misses": 7,
           "voids": 0,
-          "ungraded": 20
+          "ungraded": 7
         }
       },
       "public_top_pick_counts": {
-        "hits": 0,
-        "misses": 0,
+        "hits": 6,
+        "misses": 7,
         "voids": 0,
-        "ungraded": 20
+        "ungraded": 7
       },
       "shadow_by_category": {
-        "hits@1": {
+        "hits_runs_rbis@1": {
           "hits": 0,
           "misses": 0,
           "ungraded": 1
@@ -4612,17 +4612,27 @@
           "misses": 0,
           "ungraded": 1
         },
-        "hits_runs_rbis@1": {
+        "total_bases@2": {
           "hits": 0,
           "misses": 0,
           "ungraded": 1
         },
-        "runs@1": {
+        "hits@2": {
           "hits": 0,
           "misses": 0,
           "ungraded": 1
         },
-        "strikeouts@4": {
+        "total_bases@3": {
+          "hits": 0,
+          "misses": 0,
+          "ungraded": 1
+        },
+        "hits@1": {
+          "hits": 0,
+          "misses": 0,
+          "ungraded": 1
+        },
+        "strikeouts@5": {
           "hits": 0,
           "misses": 0,
           "ungraded": 1
@@ -4652,41 +4662,6 @@
           "misses": 0,
           "ungraded": 1
         },
-        "combined_strikeouts@10": {
-          "hits": 0,
-          "misses": 0,
-          "ungraded": 1
-        },
-        "combined_strikeouts@11": {
-          "hits": 0,
-          "misses": 0,
-          "ungraded": 1
-        },
-        "combined_strikeouts@12": {
-          "hits": 0,
-          "misses": 0,
-          "ungraded": 1
-        },
-        "total_bases@2": {
-          "hits": 0,
-          "misses": 0,
-          "ungraded": 1
-        },
-        "hits@2": {
-          "hits": 0,
-          "misses": 0,
-          "ungraded": 1
-        },
-        "total_bases@3": {
-          "hits": 0,
-          "misses": 0,
-          "ungraded": 1
-        },
-        "strikeouts@5": {
-          "hits": 0,
-          "misses": 0,
-          "ungraded": 1
-        },
         "combined_strikeouts@7": {
           "hits": 0,
           "misses": 0,
@@ -4697,7 +4672,17 @@
           "misses": 0,
           "ungraded": 1
         },
-        "combined_strikeouts@14": {
+        "combined_strikeouts@10": {
+          "hits": 0,
+          "misses": 0,
+          "ungraded": 1
+        },
+        "runs@1": {
+          "hits": 0,
+          "misses": 0,
+          "ungraded": 1
+        },
+        "strikeouts@4": {
           "hits": 0,
           "misses": 0,
           "ungraded": 1
@@ -4707,17 +4692,17 @@
           "misses": 0,
           "ungraded": 1
         },
-        "triples@1": {
+        "combined_strikeouts@14": {
           "hits": 0,
           "misses": 0,
           "ungraded": 1
         },
-        "home_runs@1": {
+        "combined_strikeouts@15": {
           "hits": 0,
           "misses": 0,
           "ungraded": 1
         },
-        "doubles@1": {
+        "combined_strikeouts@12": {
           "hits": 0,
           "misses": 0,
           "ungraded": 1
@@ -4727,7 +4712,17 @@
           "misses": 0,
           "ungraded": 1
         },
-        "hard_hit_105@1": {
+        "home_runs@1": {
+          "hits": 0,
+          "misses": 0,
+          "ungraded": 1
+        },
+        "triples@1": {
+          "hits": 0,
+          "misses": 0,
+          "ungraded": 1
+        },
+        "doubles@1": {
           "hits": 0,
           "misses": 0,
           "ungraded": 1
@@ -4737,12 +4732,17 @@
           "misses": 0,
           "ungraded": 1
         },
+        "hard_hit_105@1": {
+          "hits": 0,
+          "misses": 0,
+          "ungraded": 1
+        },
         "pitcher_outs@15": {
           "hits": 0,
           "misses": 0,
           "ungraded": 1
         },
-        "combined_strikeouts@8": {
+        "combined_strikeouts@11": {
           "hits": 0,
           "misses": 0,
           "ungraded": 1
@@ -4758,7 +4758,7 @@
   "totals": {
     "hits": 706,
     "misses": 1206,
-    "ungraded": 213
+    "ungraded": 206
   },
   "overall_hit_rate": 0.369,
   "last_14_days_hit_rate": 0.359,
@@ -4771,7 +4771,7 @@
     "main": {
       "hits": 82,
       "misses": 103,
-      "ungraded": 9
+      "ungraded": 4
     },
     "moonshot": {
       "hits": 32,
@@ -4781,7 +4781,7 @@
     "best_of_category": {
       "hits": 566,
       "misses": 969,
-      "ungraded": 111
+      "ungraded": 109
     },
     "moonshot_420": {
       "hits": 7,
@@ -4939,7 +4939,7 @@
     "combined_strikeouts@8": {
       "hits": 3,
       "misses": 5,
-      "ungraded": 2
+      "ungraded": 1
     },
     "combined_strikeouts@9": {
       "hits": 2,
@@ -4964,7 +4964,7 @@
     "combined_strikeouts@15": {
       "hits": 1,
       "misses": 8,
-      "ungraded": 0
+      "ungraded": 1
     },
     "combined_strikeouts@16": {
       "hits": 1,
@@ -4991,29 +4991,29 @@
     "lean": {
       "hits": 453,
       "misses": 639,
-      "ungraded": 145
+      "ungraded": 139
     },
     "neutral": {
       "hits": 86,
       "misses": 266,
-      "ungraded": 42
+      "ungraded": 43
     },
     "top_pick": {
-      "hits": 98,
-      "misses": 85,
-      "ungraded": 20
+      "hits": 104,
+      "misses": 92,
+      "ungraded": 7
     }
   },
-  "top_pick_hit_rate": 0.536,
-  "last_14_days_top_pick_hit_rate": 0.531,
-  "last_14_days_top_pick_n": 177,
-  "modeled_top_pick_hit_rate": 0.536,
+  "top_pick_hit_rate": 0.531,
+  "last_14_days_top_pick_hit_rate": 0.526,
+  "last_14_days_top_pick_n": 190,
+  "modeled_top_pick_hit_rate": 0.531,
   "public_top_pick_totals": {
-    "hits": 98,
-    "misses": 85,
+    "hits": 104,
+    "misses": 92,
     "voids": 5,
-    "ungraded": 20
+    "ungraded": 7
   },
-  "last_14_days_modeled_top_pick_hit_rate": 0.531,
-  "last_14_days_modeled_top_pick_n": 177
+  "last_14_days_modeled_top_pick_hit_rate": 0.526,
+  "last_14_days_modeled_top_pick_n": 190
 }
