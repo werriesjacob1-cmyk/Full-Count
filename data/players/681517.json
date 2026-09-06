@@ -366,6 +366,93 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-06",
+      "evaluations": [
+        {
+          "prop": "Over 3.5 Strikeouts",
+          "type": "pitcher",
+          "score": 47.6,
+          "notable_signals": 0,
+          "matchup": "St. Louis Cardinals @ Colorado Rockies",
+          "game_pk": 824309,
+          "team": "St. Louis Cardinals",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_k_pct": 57.0,
+            "same_hand_ratio": 92.8571,
+            "l14_k_pct": 53.5294,
+            "env_neutral": 50.0
+          },
+          "hit_probability": 0.6209,
+          "raw_hit_probability": 0.7345,
+          "lift": -0.0806,
+          "reliability": "A",
+          "sample_n": 26,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 3.5,
+            "needs": 4
+          }
+        },
+        {
+          "prop": "Over 14.5 Outs Recorded",
+          "type": "pitcher",
+          "score": 68.1,
+          "notable_signals": 0,
+          "matchup": "St. Louis Cardinals @ Colorado Rockies",
+          "game_pk": 824309,
+          "team": "St. Louis Cardinals",
+          "side": "away",
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "outs_rate": 0.7677,
+            "avg_outs_per_start": 14.92
+          },
+          "hit_probability": 0.7677,
+          "raw_hit_probability": null,
+          "lift": 0.0064,
+          "reliability": "A",
+          "sample_n": 26,
+          "projection": {
+            "stat": "pitcher_outs",
+            "value": 14.5,
+            "needs": 15
+          }
+        },
+        {
+          "prop": "Over 8.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 23.6,
+          "notable_signals": 0,
+          "matchup": "St. Louis Cardinals @ Colorado Rockies",
+          "game_pk": 824309,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            681517,
+            685299
+          ],
+          "signals": {
+            "combined_k_edge": -0.142
+          },
+          "hit_probability": 0.4482,
+          "raw_hit_probability": null,
+          "lift": -0.142,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 8.5,
+            "needs": 9
+          }
+        }
+      ]
     }
   ]
 }

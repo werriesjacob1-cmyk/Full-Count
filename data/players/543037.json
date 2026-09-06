@@ -332,6 +332,65 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-06",
+      "evaluations": [
+        {
+          "prop": "Over 4.5 Strikeouts",
+          "type": "pitcher",
+          "score": 51.1,
+          "notable_signals": 0,
+          "matchup": "New York Yankees @ San Diego Padres",
+          "game_pk": 823253,
+          "team": "New York Yankees",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_k_pct": 48.0,
+            "same_hand_ratio": 100.0,
+            "l14_k_pct": 29.4118,
+            "env_neutral": 50.0
+          },
+          "hit_probability": 0.6037,
+          "raw_hit_probability": 0.6485,
+          "lift": 0.0975,
+          "reliability": "A",
+          "sample_n": 18,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 4.5,
+            "needs": 5
+          }
+        },
+        {
+          "prop": "Over 16.5 Outs Recorded",
+          "type": "pitcher",
+          "score": 72.5,
+          "notable_signals": 1,
+          "matchup": "New York Yankees @ San Diego Padres",
+          "game_pk": 823253,
+          "team": "New York Yankees",
+          "side": "away",
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "outs_rate": 0.6175,
+            "avg_outs_per_start": 17.33
+          },
+          "hit_probability": 0.6175,
+          "raw_hit_probability": null,
+          "lift": 0.1476,
+          "reliability": "A",
+          "sample_n": 18,
+          "projection": {
+            "stat": "pitcher_outs",
+            "value": 16.5,
+            "needs": 17
+          }
+        }
+      ]
     }
   ]
 }

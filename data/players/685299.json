@@ -187,6 +187,66 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-06",
+      "evaluations": [
+        {
+          "prop": "Over 3.5 Strikeouts",
+          "type": "pitcher",
+          "score": 50.1,
+          "notable_signals": 1,
+          "matchup": "St. Louis Cardinals @ Colorado Rockies",
+          "game_pk": 824309,
+          "team": "Colorado Rockies",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_k_pct": 37.0,
+            "same_hand_ratio": 75.0,
+            "l14_k_pct": 16.4706,
+            "tto_penalty": 8.0,
+            "env_neutral": 50.0
+          },
+          "hit_probability": 0.5886,
+          "raw_hit_probability": 0.5739,
+          "lift": -0.1129,
+          "reliability": "C",
+          "sample_n": 8,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 3.5,
+            "needs": 4
+          }
+        },
+        {
+          "prop": "Over 14.5 Outs Recorded",
+          "type": "pitcher",
+          "score": 45.3,
+          "notable_signals": 1,
+          "matchup": "St. Louis Cardinals @ Colorado Rockies",
+          "game_pk": 824309,
+          "team": "Colorado Rockies",
+          "side": "home",
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "outs_rate": 0.8263,
+            "avg_outs_per_start": 15.12
+          },
+          "hit_probability": 0.8263,
+          "raw_hit_probability": null,
+          "lift": 0.065,
+          "reliability": "C",
+          "sample_n": 8,
+          "projection": {
+            "stat": "pitcher_outs",
+            "value": 14.5,
+            "needs": 15
+          }
+        }
+      ]
     }
   ]
 }

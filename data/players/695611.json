@@ -366,6 +366,93 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-06",
+      "evaluations": [
+        {
+          "prop": "Over 3.5 Strikeouts",
+          "type": "pitcher",
+          "score": 47.5,
+          "notable_signals": 0,
+          "matchup": "Athletics @ Seattle Mariners",
+          "game_pk": 823091,
+          "team": "Athletics",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_k_pct": 63.0,
+            "same_hand_ratio": 75.0,
+            "l14_k_pct": 52.3529,
+            "env_neutral": 50.0
+          },
+          "hit_probability": 0.6264,
+          "raw_hit_probability": 0.7622,
+          "lift": -0.0751,
+          "reliability": "A",
+          "sample_n": 18,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 3.5,
+            "needs": 4
+          }
+        },
+        {
+          "prop": "Over 14.5 Outs Recorded",
+          "type": "pitcher",
+          "score": 38.0,
+          "notable_signals": 0,
+          "matchup": "Athletics @ Seattle Mariners",
+          "game_pk": 823091,
+          "team": "Athletics",
+          "side": "away",
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "outs_rate": 0.6487,
+            "avg_outs_per_start": 15.44
+          },
+          "hit_probability": 0.6487,
+          "raw_hit_probability": null,
+          "lift": -0.1126,
+          "reliability": "A",
+          "sample_n": 18,
+          "projection": {
+            "stat": "pitcher_outs",
+            "value": 14.5,
+            "needs": 15
+          }
+        },
+        {
+          "prop": "Over 9.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 54.9,
+          "notable_signals": 1,
+          "matchup": "Athletics @ Seattle Mariners",
+          "game_pk": 823091,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            695611,
+            693433
+          ],
+          "signals": {
+            "combined_k_edge": 0.1369
+          },
+          "hit_probability": 0.6905,
+          "raw_hit_probability": null,
+          "lift": 0.1369,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 9.5,
+            "needs": 10
+          }
+        }
+      ]
     }
   ]
 }
