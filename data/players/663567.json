@@ -312,10 +312,10 @@
       "date": "2026-09-06",
       "evaluations": [
         {
-          "prop": "Over 3.5 Strikeouts",
+          "prop": "Over 4.5 Strikeouts",
           "type": "pitcher",
-          "score": 47.5,
-          "notable_signals": 0,
+          "score": 50.7,
+          "notable_signals": 1,
           "matchup": "Arizona Diamondbacks @ Houston Astros",
           "game_pk": 824142,
           "team": "Houston Astros",
@@ -326,24 +326,27 @@
             "opp_team_k_pct": 24.0,
             "same_hand_ratio": 100.0,
             "l14_k_pct": 41.1765,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 81.7338,
+            "ump_k_pct": -0.084,
+            "ump_bb_pct": 0.072
           },
-          "hit_probability": 0.627,
-          "raw_hit_probability": 0.7654,
-          "lift": -0.0745,
+          "hit_probability": 0.5917,
+          "raw_hit_probability": 0.5893,
+          "lift": 0.0792,
           "reliability": "A",
           "sample_n": 24,
           "projection": {
             "stat": "strikeouts",
-            "value": 3.5,
-            "needs": 4
+            "value": 4.5,
+            "needs": 5
           }
         },
         {
-          "prop": "Over 16.5 Outs Recorded",
+          "prop": "Over 15.5 Outs Recorded",
           "type": "pitcher",
-          "score": 50.4,
-          "notable_signals": 1,
+          "score": 51.1,
+          "notable_signals": 0,
           "matchup": "Arizona Diamondbacks @ Houston Astros",
           "game_pk": 824142,
           "team": "Houston Astros",
@@ -351,18 +354,18 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.5273,
+            "outs_rate": 0.5759,
             "avg_outs_per_start": 16.58
           },
-          "hit_probability": 0.5273,
+          "hit_probability": 0.5759,
           "raw_hit_probability": null,
-          "lift": 0.0574,
+          "lift": 0.0299,
           "reliability": "A",
           "sample_n": 24,
           "projection": {
             "stat": "pitcher_outs",
-            "value": 16.5,
-            "needs": 17
+            "value": 15.5,
+            "needs": 16
           }
         }
       ]

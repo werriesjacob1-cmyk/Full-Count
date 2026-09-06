@@ -337,9 +337,9 @@
       "date": "2026-09-06",
       "evaluations": [
         {
-          "prop": "Over 4.5 Strikeouts",
+          "prop": "Over 5.5 Strikeouts",
           "type": "pitcher",
-          "score": 51.1,
+          "score": 52.2,
           "notable_signals": 0,
           "matchup": "New York Yankees @ San Diego Padres",
           "game_pk": 823253,
@@ -349,25 +349,28 @@
           "combo_player_ids": null,
           "signals": {
             "opp_team_k_pct": 49.0,
-            "same_hand_ratio": 100.0,
+            "same_hand_ratio": 88.8889,
             "l14_k_pct": 29.4118,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 64.5321,
+            "ump_k_pct": 0.276,
+            "ump_bb_pct": 0.06
           },
-          "hit_probability": 0.6037,
-          "raw_hit_probability": 0.6485,
-          "lift": 0.0975,
+          "hit_probability": 0.4936,
+          "raw_hit_probability": 0.4936,
+          "lift": 0.133,
           "reliability": "A",
           "sample_n": 18,
           "projection": {
             "stat": "strikeouts",
-            "value": 4.5,
-            "needs": 5
+            "value": 5.5,
+            "needs": 6
           }
         },
         {
-          "prop": "Over 16.5 Outs Recorded",
+          "prop": "Over 17.5 Outs Recorded",
           "type": "pitcher",
-          "score": 72.6,
+          "score": 65.9,
           "notable_signals": 1,
           "matchup": "New York Yankees @ San Diego Padres",
           "game_pk": 823253,
@@ -376,18 +379,18 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.6175,
+            "outs_rate": 0.5647,
             "avg_outs_per_start": 17.33
           },
-          "hit_probability": 0.6175,
+          "hit_probability": 0.5647,
           "raw_hit_probability": null,
-          "lift": 0.1476,
+          "lift": 0.1393,
           "reliability": "A",
           "sample_n": 18,
           "projection": {
             "stat": "pitcher_outs",
-            "value": 16.5,
-            "needs": 17
+            "value": 17.5,
+            "needs": 18
           }
         }
       ]

@@ -231,6 +231,52 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-06",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 26.7,
+          "notable_signals": 0,
+          "matchup": "Toronto Blue Jays @ Kansas City Royals",
+          "game_pk": 824065,
+          "team": "Kansas City Royals",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 66.2857,
+            "park_hr_index": 61.0,
+            "season_barrel_pct": 10.0,
+            "lineup_slot": 12.5,
+            "bullpen_fatigue": 15.1515,
+            "park_hand_index": 0.04,
+            "opp_catcher_framing": -1.92,
+            "days_rest": 2.0,
+            "woba_ahead": 10.0,
+            "woba_behind": 0.0,
+            "team_total_move": 0.0,
+            "team_total_open": 0.0,
+            "getaway_day": -2.0,
+            "series_game": 2.0,
+            "ump_k_pct": -0.168,
+            "ump_bb_pct": -0.06
+          },
+          "hit_probability": 0.5078,
+          "raw_hit_probability": 0.5078,
+          "lift": -0.059,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

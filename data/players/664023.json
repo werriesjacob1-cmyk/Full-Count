@@ -2378,6 +2378,136 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-06",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 55.1,
+          "notable_signals": 1,
+          "matchup": "Chicago Cubs @ Miami Marlins",
+          "game_pk": 823822,
+          "team": "Chicago Cubs",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "sp_era_weak": 26.5714,
+            "pitch_exploit": 2.2857,
+            "l7_avg_ev": 64.1964,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 56.6667,
+            "lineup_slot": 50.0,
+            "bullpen_fatigue": 55.5556,
+            "platoon_barrel_pct": 4.32,
+            "platoon_xwoba": 1.2,
+            "opp_catcher_framing": 0.72,
+            "days_rest": 0.0,
+            "woba_ahead": 51.8182,
+            "woba_behind": 11.8182,
+            "hard_hit_105_rate": 0.6675,
+            "team_total_move": 0.0,
+            "team_total_open": 0.0,
+            "getaway_day": -2.0,
+            "series_game": 2.0,
+            "sp_rp_ops_gap": 0.52,
+            "vs_rp_ops": 0.708,
+            "ump_k_pct": 0.108,
+            "ump_bb_pct": 0.624
+          },
+          "hit_probability": 0.6598,
+          "raw_hit_probability": 0.6538,
+          "lift": -0.0054,
+          "reliability": "A",
+          "sample_n": 137,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 36.9,
+          "notable_signals": 0,
+          "matchup": "Chicago Cubs @ Miami Marlins",
+          "game_pk": 823822,
+          "team": "Chicago Cubs",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": 0.3,
+            "sprint_speed": 21.875,
+            "catcher_poptime": 0.0,
+            "on_base": 63.5317
+          },
+          "hit_probability": 0.0311,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 137,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 11.3,
+          "notable_signals": 0,
+          "matchup": "Chicago Cubs @ Miami Marlins",
+          "game_pk": 823822,
+          "team": "Chicago Cubs",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0733
+          },
+          "hit_probability": 0.0733,
+          "raw_hit_probability": null,
+          "lift": 0.0255,
+          "reliability": "A",
+          "sample_n": 137,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 8.2,
+          "notable_signals": 0,
+          "matchup": "Chicago Cubs @ Miami Marlins",
+          "game_pk": 823822,
+          "team": "Chicago Cubs",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0455
+          },
+          "hit_probability": 0.0455,
+          "raw_hit_probability": null,
+          "lift": 0.0245,
+          "reliability": "A",
+          "sample_n": 137,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

@@ -1,0 +1,77 @@
+{
+  "player_id": 677956,
+  "name": "Rece Hinds",
+  "snapshots": [
+    {
+      "date": "2026-09-06",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 39.7,
+          "notable_signals": 1,
+          "matchup": "Boston Red Sox @ Baltimore Orioles",
+          "game_pk": 824794,
+          "team": "Baltimore Orioles",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 20.8571,
+            "park_hr_index": 51.3,
+            "lineup_slot": 37.5,
+            "bullpen_fatigue": 33.3333,
+            "opp_catcher_framing": -0.72,
+            "days_rest": 4.0,
+            "woba_ahead": 18.1818,
+            "woba_behind": 0.0,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": -2.0,
+            "series_game": 3.0,
+            "ump_k_pct": -0.084,
+            "ump_bb_pct": -0.192
+          },
+          "hit_probability": 0.4581,
+          "raw_hit_probability": 0.4581,
+          "lift": -0.1087,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 43.4,
+          "notable_signals": 0,
+          "matchup": "Boston Red Sox @ Baltimore Orioles",
+          "game_pk": 824794,
+          "team": "Baltimore Orioles",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": 6.0,
+            "sprint_speed": 34.375,
+            "catcher_poptime": 11.4286
+          },
+          "hit_probability": null,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
+    }
+  ]
+}

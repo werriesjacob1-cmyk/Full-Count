@@ -2928,6 +2928,138 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-06",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 62.1,
+          "notable_signals": 0,
+          "matchup": "Toronto Blue Jays @ Kansas City Royals",
+          "game_pk": 824065,
+          "team": "Kansas City Royals",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 66.2857,
+            "l7_avg_ev": 78.8158,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 61.0,
+            "season_barrel_pct": 58.0,
+            "lineup_slot": 87.5,
+            "bullpen_fatigue": 15.1515,
+            "platoon_barrel_pct": 2.8,
+            "platoon_xwoba": 3.9,
+            "park_hand_index": 0.04,
+            "opp_catcher_framing": -1.92,
+            "days_rest": 0.0,
+            "woba_ahead": 30.0,
+            "woba_behind": 19.0909,
+            "pull_park_synergy": 0.0043,
+            "hard_hit_105_rate": 0.3475,
+            "team_total_move": 0.0,
+            "team_total_open": 0.0,
+            "getaway_day": -2.0,
+            "series_game": 2.0,
+            "sp_rp_ops_gap": -0.256,
+            "vs_rp_ops": 0.84,
+            "ump_k_pct": -0.168,
+            "ump_bb_pct": -0.06
+          },
+          "hit_probability": 0.719,
+          "raw_hit_probability": 0.7603,
+          "lift": 0.0538,
+          "reliability": "A",
+          "sample_n": 124,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 74.8,
+          "notable_signals": 1,
+          "matchup": "Toronto Blue Jays @ Kansas City Royals",
+          "game_pk": 824065,
+          "team": "Kansas City Royals",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": 0.72,
+            "sprint_speed": 87.5,
+            "catcher_poptime": 0.0,
+            "on_base": 86.5643
+          },
+          "hit_probability": 0.2685,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 124,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 8.1,
+          "notable_signals": 0,
+          "matchup": "Toronto Blue Jays @ Kansas City Royals",
+          "game_pk": 824065,
+          "team": "Kansas City Royals",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0605
+          },
+          "hit_probability": 0.0605,
+          "raw_hit_probability": null,
+          "lift": 0.0127,
+          "reliability": "A",
+          "sample_n": 124,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 4.3,
+          "notable_signals": 0,
+          "matchup": "Toronto Blue Jays @ Kansas City Royals",
+          "game_pk": 824065,
+          "team": "Kansas City Royals",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0299
+          },
+          "hit_probability": 0.0299,
+          "raw_hit_probability": null,
+          "lift": 0.0089,
+          "reliability": "A",
+          "sample_n": 124,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

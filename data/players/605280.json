@@ -340,10 +340,10 @@
       "date": "2026-09-06",
       "evaluations": [
         {
-          "prop": "Over 3.5 Strikeouts",
+          "prop": "Over 4.5 Strikeouts",
           "type": "pitcher",
-          "score": 43.8,
-          "notable_signals": 0,
+          "score": 45.5,
+          "notable_signals": 1,
           "matchup": "Chicago Cubs @ Miami Marlins",
           "game_pk": 823822,
           "team": "Chicago Cubs",
@@ -354,23 +354,26 @@
             "opp_team_k_pct": 48.0,
             "same_hand_ratio": 33.3333,
             "l14_k_pct": 58.8235,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 66.7396,
+            "ump_k_pct": -0.108,
+            "ump_bb_pct": -0.624
           },
-          "hit_probability": 0.6096,
-          "raw_hit_probability": 0.6777,
-          "lift": -0.0919,
+          "hit_probability": 0.478,
+          "raw_hit_probability": 0.478,
+          "lift": -0.0345,
           "reliability": "B",
           "sample_n": 14,
           "projection": {
             "stat": "strikeouts",
-            "value": 3.5,
-            "needs": 4
+            "value": 4.5,
+            "needs": 5
           }
         },
         {
           "prop": "Over 17.5 Outs Recorded",
           "type": "pitcher",
-          "score": 45.7,
+          "score": 43.9,
           "notable_signals": 1,
           "matchup": "Chicago Cubs @ Miami Marlins",
           "game_pk": 823822,
@@ -379,18 +382,46 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.4707,
+            "outs_rate": 0.4776,
             "avg_outs_per_start": 17.5
           },
-          "hit_probability": 0.4707,
+          "hit_probability": 0.4776,
           "raw_hit_probability": null,
-          "lift": 0.0684,
+          "lift": 0.0522,
           "reliability": "B",
           "sample_n": 14,
           "projection": {
             "stat": "pitcher_outs",
             "value": 17.5,
             "needs": 18
+          }
+        },
+        {
+          "prop": "Over 8.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 48.1,
+          "notable_signals": 0,
+          "matchup": "Chicago Cubs @ Miami Marlins",
+          "game_pk": 823822,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            605280,
+            663969
+          ],
+          "signals": {
+            "combined_k_edge": -0.0257
+          },
+          "hit_probability": 0.5197,
+          "raw_hit_probability": null,
+          "lift": -0.0257,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 8.5,
+            "needs": 9
           }
         }
       ]

@@ -119,6 +119,96 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-06",
+      "evaluations": [
+        {
+          "prop": "Over 3.5 Strikeouts",
+          "type": "pitcher",
+          "score": 53.8,
+          "notable_signals": 1,
+          "matchup": "Toronto Blue Jays @ Kansas City Royals",
+          "game_pk": 824065,
+          "team": "Toronto Blue Jays",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_k_pct": 37.0,
+            "same_hand_ratio": 75.0,
+            "l14_k_pct": 15.2941,
+            "env_neutral": 50.0,
+            "ump_accuracy": 72.0535,
+            "ump_k_pct": 0.168,
+            "ump_bb_pct": 0.06
+          },
+          "hit_probability": 0.6167,
+          "raw_hit_probability": 0.7131,
+          "lift": -0.0848,
+          "reliability": "A",
+          "sample_n": 18,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 3.5,
+            "needs": 4
+          }
+        },
+        {
+          "prop": "Over 14.5 Outs Recorded",
+          "type": "pitcher",
+          "score": 59.0,
+          "notable_signals": 0,
+          "matchup": "Toronto Blue Jays @ Kansas City Royals",
+          "game_pk": 824065,
+          "team": "Toronto Blue Jays",
+          "side": "away",
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "outs_rate": 0.7313,
+            "avg_outs_per_start": 15.33
+          },
+          "hit_probability": 0.7313,
+          "raw_hit_probability": null,
+          "lift": -0.0274,
+          "reliability": "A",
+          "sample_n": 18,
+          "projection": {
+            "stat": "pitcher_outs",
+            "value": 14.5,
+            "needs": 15
+          }
+        },
+        {
+          "prop": "Over 7.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 54.8,
+          "notable_signals": 1,
+          "matchup": "Toronto Blue Jays @ Kansas City Royals",
+          "game_pk": 824065,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            681293,
+            677976
+          ],
+          "signals": {
+            "combined_k_edge": 0.3392
+          },
+          "hit_probability": 0.718,
+          "raw_hit_probability": null,
+          "lift": 0.3392,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 7.5,
+            "needs": 8
+          }
+        }
+      ]
     }
   ]
 }

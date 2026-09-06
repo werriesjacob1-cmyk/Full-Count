@@ -242,8 +242,8 @@
         {
           "prop": "Over 3.5 Strikeouts",
           "type": "pitcher",
-          "score": 53.3,
-          "notable_signals": 0,
+          "score": 36.7,
+          "notable_signals": 1,
           "matchup": "Detroit Tigers @ Cleveland Guardians",
           "game_pk": 824385,
           "team": "Detroit Tigers",
@@ -252,10 +252,13 @@
           "combo_player_ids": null,
           "signals": {
             "opp_team_k_pct": 43.0,
-            "same_hand_ratio": 100.0,
+            "same_hand_ratio": 0.0,
             "l14_k_pct": 21.1765,
             "tto_penalty": -8.0,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 68.456,
+            "ump_k_pct": -0.168,
+            "ump_bb_pct": 0.168
           },
           "hit_probability": 0.6036,
           "raw_hit_probability": 0.6478,
@@ -269,9 +272,9 @@
           }
         },
         {
-          "prop": "Over 13.5 Outs Recorded",
+          "prop": "Over 15.5 Outs Recorded",
           "type": "pitcher",
-          "score": 46.0,
+          "score": 5.9,
           "notable_signals": 0,
           "matchup": "Detroit Tigers @ Cleveland Guardians",
           "game_pk": 824385,
@@ -280,18 +283,46 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.7157,
+            "outs_rate": 0.3887,
             "avg_outs_per_start": 14.0
           },
-          "hit_probability": 0.7157,
+          "hit_probability": 0.3887,
           "raw_hit_probability": null,
-          "lift": -0.0963,
+          "lift": -0.1573,
           "reliability": "C",
           "sample_n": 5,
           "projection": {
             "stat": "pitcher_outs",
-            "value": 13.5,
-            "needs": 14
+            "value": 15.5,
+            "needs": 16
+          }
+        },
+        {
+          "prop": "Over 11.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 51.7,
+          "notable_signals": 0,
+          "matchup": "Detroit Tigers @ Cleveland Guardians",
+          "game_pk": 824385,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            695549,
+            668909
+          ],
+          "signals": {
+            "combined_k_edge": -0.0279
+          },
+          "hit_probability": 0.5589,
+          "raw_hit_probability": null,
+          "lift": -0.0279,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 11.5,
+            "needs": 12
           }
         }
       ]

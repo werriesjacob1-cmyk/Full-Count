@@ -390,10 +390,10 @@
       "date": "2026-09-06",
       "evaluations": [
         {
-          "prop": "Over 3.5 Strikeouts",
+          "prop": "Over 5.5 Strikeouts",
           "type": "pitcher",
-          "score": 50.8,
-          "notable_signals": 0,
+          "score": 47.6,
+          "notable_signals": 1,
           "matchup": "Tampa Bay Rays @ Texas Rangers",
           "game_pk": 822848,
           "team": "Texas Rangers",
@@ -402,25 +402,28 @@
           "combo_player_ids": null,
           "signals": {
             "opp_team_k_pct": 15.0,
-            "same_hand_ratio": 100.0,
+            "same_hand_ratio": 33.3333,
             "l14_k_pct": 16.4706,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 88.4205,
+            "ump_k_pct": 0.024,
+            "ump_bb_pct": -0.336
           },
-          "hit_probability": 0.6287,
-          "raw_hit_probability": 0.7741,
-          "lift": -0.0728,
+          "hit_probability": 0.431,
+          "raw_hit_probability": 0.431,
+          "lift": 0.0704,
           "reliability": "A",
           "sample_n": 29,
           "projection": {
             "stat": "strikeouts",
-            "value": 3.5,
-            "needs": 4
+            "value": 5.5,
+            "needs": 6
           }
         },
         {
-          "prop": "Over 15.5 Outs Recorded",
+          "prop": "Over 17.5 Outs Recorded",
           "type": "pitcher",
-          "score": 47.0,
+          "score": 15.0,
           "notable_signals": 0,
           "matchup": "Tampa Bay Rays @ Texas Rangers",
           "game_pk": 822848,
@@ -429,18 +432,18 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.548,
+            "outs_rate": 0.3586,
             "avg_outs_per_start": 16.0
           },
-          "hit_probability": 0.548,
+          "hit_probability": 0.3586,
           "raw_hit_probability": null,
-          "lift": 0.0179,
+          "lift": -0.0668,
           "reliability": "A",
           "sample_n": 29,
           "projection": {
             "stat": "pitcher_outs",
-            "value": 15.5,
-            "needs": 16
+            "value": 17.5,
+            "needs": 18
           }
         }
       ]

@@ -910,6 +910,135 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-06",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 75.0,
+          "notable_signals": 2,
+          "matchup": "Boston Red Sox @ Baltimore Orioles",
+          "game_pk": 824794,
+          "team": "Baltimore Orioles",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 20.8571,
+            "l7_avg_ev": 78.375,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 12.675,
+            "park_hr_index": 51.3,
+            "season_barrel_pct": 21.3333,
+            "lineup_slot": 100.0,
+            "bullpen_fatigue": 33.3333,
+            "platoon_barrel_pct": -3.36,
+            "platoon_xwoba": -0.12,
+            "opp_catcher_framing": -0.72,
+            "days_rest": 0.0,
+            "woba_behind": 70.0,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": -2.0,
+            "series_game": 3.0,
+            "sp_rp_ops_gap": -0.68,
+            "vs_rp_ops": 0.252,
+            "ump_k_pct": -0.084,
+            "ump_bb_pct": -0.192
+          },
+          "hit_probability": 0.6841,
+          "raw_hit_probability": 0.6656,
+          "lift": 0.1173,
+          "reliability": "A",
+          "sample_n": 80,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 48.8,
+          "notable_signals": 1,
+          "matchup": "Boston Red Sox @ Baltimore Orioles",
+          "game_pk": 824794,
+          "team": "Baltimore Orioles",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": 6.0,
+            "sprint_speed": 31.25,
+            "catcher_poptime": 11.4286,
+            "on_base": 81.7658
+          },
+          "hit_probability": 0.1262,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 80,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 0.0,
+          "notable_signals": 0,
+          "matchup": "Boston Red Sox @ Baltimore Orioles",
+          "game_pk": 824794,
+          "team": "Baltimore Orioles",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0287
+          },
+          "hit_probability": 0.0287,
+          "raw_hit_probability": null,
+          "lift": -0.0191,
+          "reliability": "A",
+          "sample_n": 80,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 0.3,
+          "notable_signals": 0,
+          "matchup": "Boston Red Sox @ Baltimore Orioles",
+          "game_pk": 824794,
+          "team": "Baltimore Orioles",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0138
+          },
+          "hit_probability": 0.0138,
+          "raw_hit_probability": null,
+          "lift": -0.0072,
+          "reliability": "A",
+          "sample_n": 80,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

@@ -2338,6 +2338,138 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-06",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 52.7,
+          "notable_signals": 2,
+          "matchup": "Los Angeles Angels @ Pittsburgh Pirates",
+          "game_pk": 823336,
+          "team": "Los Angeles Angels",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 42.0,
+            "l7_avg_ev": 7.7976,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 15.0,
+            "park_hr_index": 33.2,
+            "season_barrel_pct": 2.0,
+            "lineup_slot": 75.0,
+            "bullpen_fatigue": 13.8889,
+            "platoon_barrel_pct": -2.56,
+            "platoon_xwoba": 0.72,
+            "park_hand_index": 1.74,
+            "opp_catcher_framing": 0.48,
+            "days_rest": 0.0,
+            "woba_ahead": 55.4545,
+            "woba_behind": 18.1818,
+            "pull_park_synergy": 0.6273,
+            "team_total_move": 0.0,
+            "team_total_open": -6.0,
+            "getaway_day": -2.0,
+            "series_game": 2.0,
+            "sp_rp_ops_gap": -2.16,
+            "vs_rp_ops": -1.596,
+            "ump_k_pct": 0.24,
+            "ump_bb_pct": 0.024
+          },
+          "hit_probability": 0.6586,
+          "raw_hit_probability": 0.6453,
+          "lift": 0.0918,
+          "reliability": "B",
+          "sample_n": 75,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 52.6,
+          "notable_signals": 1,
+          "matchup": "Los Angeles Angels @ Pittsburgh Pirates",
+          "game_pk": 823336,
+          "team": "Los Angeles Angels",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": 0.24,
+            "sprint_speed": 46.875,
+            "catcher_poptime": 0.0,
+            "on_base": 77.9271
+          },
+          "hit_probability": 0.0851,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "B",
+          "sample_n": 75,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 0.8,
+          "notable_signals": 0,
+          "matchup": "Los Angeles Angels @ Pittsburgh Pirates",
+          "game_pk": 823336,
+          "team": "Los Angeles Angels",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0318
+          },
+          "hit_probability": 0.0318,
+          "raw_hit_probability": null,
+          "lift": -0.016,
+          "reliability": "B",
+          "sample_n": 75,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 0.0,
+          "notable_signals": 0,
+          "matchup": "Los Angeles Angels @ Pittsburgh Pirates",
+          "game_pk": 823336,
+          "team": "Los Angeles Angels",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0045
+          },
+          "hit_probability": 0.0045,
+          "raw_hit_probability": null,
+          "lift": -0.0165,
+          "reliability": "B",
+          "sample_n": 75,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

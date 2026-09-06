@@ -340,8 +340,8 @@
         {
           "prop": "Over 3.5 Strikeouts",
           "type": "pitcher",
-          "score": 41.4,
-          "notable_signals": 0,
+          "score": 43.1,
+          "notable_signals": 1,
           "matchup": "Chicago Cubs @ Miami Marlins",
           "game_pk": 823822,
           "team": "Miami Marlins",
@@ -352,7 +352,10 @@
             "opp_team_k_pct": 44.0,
             "same_hand_ratio": 92.8571,
             "l14_k_pct": 86.4706,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 66.7396,
+            "ump_k_pct": -0.108,
+            "ump_bb_pct": -0.624
           },
           "hit_probability": 0.6131,
           "raw_hit_probability": 0.6954,
@@ -366,9 +369,9 @@
           }
         },
         {
-          "prop": "Over 13.5 Outs Recorded",
+          "prop": "Over 14.5 Outs Recorded",
           "type": "pitcher",
-          "score": 38.3,
+          "score": 31.2,
           "notable_signals": 0,
           "matchup": "Chicago Cubs @ Miami Marlins",
           "game_pk": 823822,
@@ -377,18 +380,18 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.676,
+            "outs_rate": 0.616,
             "avg_outs_per_start": 13.81
           },
-          "hit_probability": 0.676,
+          "hit_probability": 0.616,
           "raw_hit_probability": null,
-          "lift": -0.136,
+          "lift": -0.1427,
           "reliability": "A",
           "sample_n": 16,
           "projection": {
             "stat": "pitcher_outs",
-            "value": 13.5,
-            "needs": 14
+            "value": 14.5,
+            "needs": 15
           }
         }
       ]

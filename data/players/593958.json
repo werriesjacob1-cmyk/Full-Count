@@ -364,10 +364,10 @@
       "date": "2026-09-06",
       "evaluations": [
         {
-          "prop": "Over 3.5 Strikeouts",
+          "prop": "Over 4.5 Strikeouts",
           "type": "pitcher",
-          "score": 45.1,
-          "notable_signals": 0,
+          "score": 44.5,
+          "notable_signals": 1,
           "matchup": "Arizona Diamondbacks @ Houston Astros",
           "game_pk": 824142,
           "team": "Arizona Diamondbacks",
@@ -376,25 +376,28 @@
           "combo_player_ids": null,
           "signals": {
             "opp_team_k_pct": 46.0,
-            "same_hand_ratio": 33.3333,
+            "same_hand_ratio": 5.5556,
             "l14_k_pct": 50.0,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 81.7338,
+            "ump_k_pct": -0.084,
+            "ump_bb_pct": 0.072
           },
-          "hit_probability": 0.6145,
-          "raw_hit_probability": 0.7023,
-          "lift": -0.087,
+          "hit_probability": 0.5063,
+          "raw_hit_probability": 0.5063,
+          "lift": -0.0062,
           "reliability": "A",
           "sample_n": 28,
           "projection": {
             "stat": "strikeouts",
-            "value": 3.5,
-            "needs": 4
+            "value": 4.5,
+            "needs": 5
           }
         },
         {
           "prop": "Over 17.5 Outs Recorded",
           "type": "pitcher",
-          "score": 78.1,
+          "score": 75.4,
           "notable_signals": 1,
           "matchup": "Arizona Diamondbacks @ Houston Astros",
           "game_pk": 824142,
@@ -403,18 +406,46 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.6004,
+            "outs_rate": 0.6045,
             "avg_outs_per_start": 17.89
           },
-          "hit_probability": 0.6004,
+          "hit_probability": 0.6045,
           "raw_hit_probability": null,
-          "lift": 0.1981,
+          "lift": 0.1791,
           "reliability": "A",
           "sample_n": 28,
           "projection": {
             "stat": "pitcher_outs",
             "value": 17.5,
             "needs": 18
+          }
+        },
+        {
+          "prop": "Over 8.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 54.9,
+          "notable_signals": 1,
+          "matchup": "Arizona Diamondbacks @ Houston Astros",
+          "game_pk": 824142,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            593958,
+            663567
+          ],
+          "signals": {
+            "combined_k_edge": 0.0744
+          },
+          "hit_probability": 0.7013,
+          "raw_hit_probability": null,
+          "lift": 0.0744,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 8.5,
+            "needs": 9
           }
         }
       ]

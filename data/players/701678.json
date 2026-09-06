@@ -2180,6 +2180,139 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-06",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 62.7,
+          "notable_signals": 2,
+          "matchup": "Detroit Tigers @ Cleveland Guardians",
+          "game_pk": 824385,
+          "team": "Detroit Tigers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 37.4286,
+            "pitch_exploit": 10.2857,
+            "l7_avg_ev": 100.0,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 51.7,
+            "season_barrel_pct": 37.3333,
+            "lineup_slot": 87.5,
+            "bullpen_fatigue": 13.8889,
+            "platoon_barrel_pct": 2.0,
+            "platoon_xwoba": -0.12,
+            "park_hand_index": -0.05,
+            "opp_catcher_framing": -0.12,
+            "days_rest": 0.0,
+            "woba_ahead": 53.6364,
+            "woba_behind": 26.3636,
+            "pull_park_synergy": -0.0019,
+            "hard_hit_105_rate": -0.0275,
+            "team_total_move": -6.0,
+            "team_total_open": -6.0,
+            "getaway_day": -2.0,
+            "series_game": 3.0,
+            "sp_rp_ops_gap": 0.232,
+            "vs_rp_ops": 0.252,
+            "ump_k_pct": 0.168,
+            "ump_bb_pct": -0.168
+          },
+          "hit_probability": 0.6403,
+          "raw_hit_probability": 0.6312,
+          "lift": 0.0735,
+          "reliability": "A",
+          "sample_n": 92,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 37.7,
+          "notable_signals": 0,
+          "matchup": "Detroit Tigers @ Cleveland Guardians",
+          "game_pk": 824385,
+          "team": "Detroit Tigers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": 4.92,
+            "sprint_speed": 28.125,
+            "catcher_poptime": 0.0,
+            "on_base": 52.975
+          },
+          "hit_probability": 0.0293,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 92,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 4.2,
+          "notable_signals": 0,
+          "matchup": "Detroit Tigers @ Cleveland Guardians",
+          "game_pk": 824385,
+          "team": "Detroit Tigers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0455
+          },
+          "hit_probability": 0.0455,
+          "raw_hit_probability": null,
+          "lift": -0.0023,
+          "reliability": "A",
+          "sample_n": 92,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 2.4,
+          "notable_signals": 0,
+          "matchup": "Detroit Tigers @ Cleveland Guardians",
+          "game_pk": 824385,
+          "team": "Detroit Tigers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0222
+          },
+          "hit_probability": 0.0222,
+          "raw_hit_probability": null,
+          "lift": 0.0012,
+          "reliability": "A",
+          "sample_n": 92,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

@@ -315,6 +315,86 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-06",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 43.7,
+          "notable_signals": 2,
+          "matchup": "New York Yankees @ San Diego Padres",
+          "game_pk": 823253,
+          "team": "San Diego Padres",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 22.5714,
+            "l7_avg_ev": 1.0714,
+            "l7_barrel_pct": 87.8571,
+            "bat_speed_trend": 15.0,
+            "park_hr_index": 59.6,
+            "season_barrel_pct": 0.0,
+            "lineup_slot": 25.0,
+            "bullpen_fatigue": 41.6667,
+            "platoon_barrel_pct": -5.0,
+            "platoon_xwoba": 0.36,
+            "park_hand_index": -1.54,
+            "opp_catcher_framing": -0.48,
+            "days_rest": 2.0,
+            "woba_ahead": 73.6364,
+            "woba_behind": 1.8182,
+            "pull_park_synergy": -1.7194,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": -2.0,
+            "series_game": 2.0,
+            "ump_k_pct": -0.276,
+            "ump_bb_pct": -0.06
+          },
+          "hit_probability": 0.613,
+          "raw_hit_probability": 0.6107,
+          "lift": 0.0462,
+          "reliability": "D",
+          "sample_n": 24,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 53.0,
+          "notable_signals": 0,
+          "matchup": "New York Yankees @ San Diego Padres",
+          "game_pk": 823253,
+          "team": "San Diego Padres",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": 2.16,
+            "sprint_speed": 43.75,
+            "catcher_poptime": 20.0,
+            "on_base": 61.6123
+          },
+          "hit_probability": 0.304,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "D",
+          "sample_n": 24,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

@@ -373,7 +373,7 @@
         {
           "prop": "Over 3.5 Strikeouts",
           "type": "pitcher",
-          "score": 47.6,
+          "score": 42.6,
           "notable_signals": 0,
           "matchup": "St. Louis Cardinals @ Colorado Rockies",
           "game_pk": 824309,
@@ -383,9 +383,12 @@
           "combo_player_ids": null,
           "signals": {
             "opp_team_k_pct": 57.0,
-            "same_hand_ratio": 92.8571,
+            "same_hand_ratio": 0.0,
             "l14_k_pct": 53.5294,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 63.1109,
+            "ump_k_pct": -0.288,
+            "ump_bb_pct": 0.024
           },
           "hit_probability": 0.6209,
           "raw_hit_probability": 0.7345,
@@ -401,7 +404,7 @@
         {
           "prop": "Over 14.5 Outs Recorded",
           "type": "pitcher",
-          "score": 68.1,
+          "score": 68.3,
           "notable_signals": 0,
           "matchup": "St. Louis Cardinals @ Colorado Rockies",
           "game_pk": 824309,
@@ -410,18 +413,46 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.7677,
+            "outs_rate": 0.7673,
             "avg_outs_per_start": 14.92
           },
-          "hit_probability": 0.7677,
+          "hit_probability": 0.7673,
           "raw_hit_probability": null,
-          "lift": 0.0064,
+          "lift": 0.0086,
           "reliability": "A",
           "sample_n": 26,
           "projection": {
             "stat": "pitcher_outs",
             "value": 14.5,
             "needs": 15
+          }
+        },
+        {
+          "prop": "Over 7.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 54.9,
+          "notable_signals": 1,
+          "matchup": "St. Louis Cardinals @ Colorado Rockies",
+          "game_pk": 824309,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            681517,
+            685299
+          ],
+          "signals": {
+            "combined_k_edge": 0.1973
+          },
+          "hit_probability": 0.6038,
+          "raw_hit_probability": null,
+          "lift": 0.1973,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 7.5,
+            "needs": 8
           }
         }
       ]
