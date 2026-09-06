@@ -2,7 +2,7 @@
   "schema_version": 1,
   "identity_schema_version": 2,
   "rollout_version": "pre-phase-v-live-lifecycle-v1",
-  "updated_at": "2026-09-06T10:12:52.482977+00:00",
+  "updated_at": "2026-09-06T11:27:57.741761+00:00",
   "migration": {
     "version": "pre-phase-v-live-lifecycle-v1",
     "completed_at": "2026-08-17T23:14:57+00:00",
@@ -18340,6 +18340,94 @@
         },
         "qualification_timestamp": "2026-09-06T09:05:47.786806+00:00",
         "board_timestamp": "2026-09-06T09:05:47.757955+00:00",
+        "slate_date": "2026-09-06"
+      }
+    },
+    "fc2:824065:player-681293:pitcher_outs:15:over": {
+      "canonical_id": "fc2:824065:player-681293:pitcher_outs:15:over",
+      "settlement_identity": [
+        "824065",
+        [
+          "player",
+          "681293"
+        ],
+        "pitcher_outs",
+        "15",
+        "over"
+      ],
+      "slate_date": "2026-09-06",
+      "first_published_at": "2026-09-06T11:27:57.741761+00:00",
+      "publication_provenance": {
+        "artifact_id": "74911d4c5edf2ea010e747a712a2cd89b6a0ead505189e5a5f942d003f7b35c6",
+        "source_commit": "8e14eb63b509bfe496696d2237facc21e77badd0",
+        "workflow_run_id": "34030239396",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-09-06T11:27:45.812403+00:00",
+        "data_hash": "36102a4dc1767a05da1315338e6797c90e5ad99d2358371d7850d473f141cba0",
+        "live_hash": "98a699636d314fe4eb4a1f93ab9e743432a4a5571a2c2ca1ba5e769690a44929"
+      },
+      "snapshot": {
+        "id": "fc2:824065:player-681293:pitcher_outs:15:over",
+        "identity_version": 2,
+        "game_pk": 824065,
+        "player_id": 681293,
+        "combo_player_ids": null,
+        "type": "pitcher",
+        "name": "Spencer Arrighetti",
+        "team": "Toronto Blue Jays",
+        "matchup": "Toronto Blue Jays @ Kansas City Royals",
+        "game_start": "2026-09-06T18:10:00Z",
+        "stat": "pitcher_outs",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "pitcher_outs",
+          "value": 14.5,
+          "needs": 15
+        },
+        "prop": "Over 14.5 Outs Recorded",
+        "hit_probability": 0.7297,
+        "market_odds": -128,
+        "market_implied": 0.5218,
+        "market_edge": 0.2079,
+        "market_hold": 0.076,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (A), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (21.0 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "Recorded 15+ outs (5.0 IP) in 73.0% of his last 18 real starts (league 75.2%, avg 15.33 outs/start)"
+        ],
+        "watchouts": [
+          "No positive read here: 2.2 pts BELOW the 75% league base rate for this market"
+        ],
+        "prob_ci": [
+          0.6643,
+          0.8463
+        ],
+        "reliability": "A",
+        "reliability_note": null,
+        "sample_n": 18,
+        "lineup_assumed": null,
+        "base_rate": 0.7521,
+        "lift": -0.0224,
+        "lift_reference_rate": null,
+        "stable_lift": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "787ac47a",
+          "prediction_timestamp": "2026-09-06T11:24:07.181722+00:00",
+          "odds_fetched_at": "2026-09-06T11:24:02.996590+00:00",
+          "board_generated_at": "2026-09-06T11:24:07.158171+00:00"
+        },
+        "qualification_timestamp": "2026-09-06T11:24:07.181722+00:00",
+        "board_timestamp": "2026-09-06T11:24:07.158171+00:00",
         "slate_date": "2026-09-06"
       }
     }
