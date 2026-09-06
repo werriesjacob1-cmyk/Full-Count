@@ -1547,6 +1547,110 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-06",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 27.8,
+          "notable_signals": 1,
+          "matchup": "New York Yankees @ San Diego Padres",
+          "game_pk": 823253,
+          "team": "New York Yankees",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 17.4286,
+            "l7_avg_ev": 100.0,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 59.6,
+            "season_barrel_pct": 25.3333,
+            "lineup_slot": 0.0,
+            "bullpen_fatigue": 18.5185,
+            "platoon_barrel_pct": 0.88,
+            "platoon_xwoba": 0.06,
+            "park_hand_index": -1.54,
+            "opp_catcher_framing": 0.6,
+            "days_rest": 0.0,
+            "woba_ahead": 0.0,
+            "woba_behind": 80.0,
+            "pull_park_synergy": -1.0241,
+            "hard_hit_105_rate": -0.01,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": -2.0,
+            "series_game": 2.0,
+            "sp_rp_ops_gap": 1.672,
+            "vs_rp_ops": -0.216,
+            "ump_k_pct": -0.276,
+            "ump_bb_pct": -0.06
+          },
+          "hit_probability": 0.603,
+          "raw_hit_probability": 0.5599,
+          "lift": -0.0707,
+          "reliability": "A",
+          "sample_n": 106,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 4.4,
+          "notable_signals": 0,
+          "matchup": "New York Yankees @ San Diego Padres",
+          "game_pk": 823253,
+          "team": "New York Yankees",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0462
+          },
+          "hit_probability": 0.0462,
+          "raw_hit_probability": null,
+          "lift": -0.0016,
+          "reliability": "A",
+          "sample_n": 106,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 0.0,
+          "notable_signals": 0,
+          "matchup": "New York Yankees @ San Diego Padres",
+          "game_pk": 823253,
+          "team": "New York Yankees",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.011
+          },
+          "hit_probability": 0.011,
+          "raw_hit_probability": null,
+          "lift": -0.01,
+          "reliability": "A",
+          "sample_n": 106,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

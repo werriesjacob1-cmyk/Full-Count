@@ -303,7 +303,7 @@
         {
           "prop": "Over 6.5 Strikeouts",
           "type": "pitcher",
-          "score": 44.5,
+          "score": 44.9,
           "notable_signals": 0,
           "matchup": "Athletics @ Seattle Mariners",
           "game_pk": 823091,
@@ -313,10 +313,13 @@
           "combo_player_ids": null,
           "signals": {
             "opp_team_k_pct": 55.0,
-            "same_hand_ratio": 75.0,
+            "same_hand_ratio": 88.8889,
             "l14_k_pct": 75.8824,
             "tto_penalty": -8.0,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 49.4524,
+            "ump_k_pct": 0.132,
+            "ump_bb_pct": 0.276
           },
           "hit_probability": 0.2807,
           "raw_hit_probability": 0.2807,
@@ -332,7 +335,7 @@
         {
           "prop": "Over 17.5 Outs Recorded",
           "type": "pitcher",
-          "score": 69.7,
+          "score": 67.3,
           "notable_signals": 1,
           "matchup": "Athletics @ Seattle Mariners",
           "game_pk": 823091,
@@ -341,12 +344,12 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.5798,
+            "outs_rate": 0.5842,
             "avg_outs_per_start": 17.12
           },
-          "hit_probability": 0.5798,
+          "hit_probability": 0.5842,
           "raw_hit_probability": null,
-          "lift": 0.1544,
+          "lift": 0.135,
           "reliability": "A",
           "sample_n": 26,
           "projection": {

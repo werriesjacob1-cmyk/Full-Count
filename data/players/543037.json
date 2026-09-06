@@ -370,7 +370,7 @@
         {
           "prop": "Over 17.5 Outs Recorded",
           "type": "pitcher",
-          "score": 65.9,
+          "score": 63.8,
           "notable_signals": 1,
           "matchup": "New York Yankees @ San Diego Padres",
           "game_pk": 823253,
@@ -379,18 +379,46 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.5647,
+            "outs_rate": 0.5706,
             "avg_outs_per_start": 17.33
           },
-          "hit_probability": 0.5647,
+          "hit_probability": 0.5706,
           "raw_hit_probability": null,
-          "lift": 0.1393,
+          "lift": 0.1214,
           "reliability": "A",
           "sample_n": 18,
           "projection": {
             "stat": "pitcher_outs",
             "value": 17.5,
             "needs": 18
+          }
+        },
+        {
+          "prop": "Over 10.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 55.0,
+          "notable_signals": 0,
+          "matchup": "New York Yankees @ San Diego Padres",
+          "game_pk": 823253,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            543037,
+            650633
+          ],
+          "signals": {
+            "combined_k_edge": 0.0076
+          },
+          "hit_probability": 0.6107,
+          "raw_hit_probability": null,
+          "lift": 0.0076,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 10.5,
+            "needs": 11
           }
         }
       ]

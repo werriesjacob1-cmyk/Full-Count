@@ -588,6 +588,61 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-06",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 17.0,
+          "notable_signals": 3,
+          "matchup": "Athletics @ Seattle Mariners",
+          "game_pk": 823091,
+          "team": "Athletics",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 50.0,
+            "pitch_exploit": 8.5714,
+            "l7_avg_ev": 79.75,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 15.0,
+            "park_hr_index": 33.6,
+            "season_barrel_pct": 56.0,
+            "lineup_slot": 0.0,
+            "bullpen_fatigue": 0.0,
+            "platoon_barrel_pct": 2.8,
+            "platoon_xwoba": 3.06,
+            "park_hand_index": 0.7,
+            "opp_catcher_framing": 0.6,
+            "days_rest": 4.0,
+            "woba_ahead": 36.3636,
+            "woba_behind": 38.1818,
+            "pull_park_synergy": 0.37,
+            "team_total_move": 0.0,
+            "team_total_open": -6.0,
+            "getaway_day": -2.0,
+            "series_game": 3.0,
+            "sp_rp_ops_gap": -1.768,
+            "vs_rp_ops": -1.14,
+            "ump_k_pct": -0.132,
+            "ump_bb_pct": -0.276
+          },
+          "hit_probability": 0.5599,
+          "raw_hit_probability": 0.5722,
+          "lift": -0.0069,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

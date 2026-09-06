@@ -1872,6 +1872,140 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-06",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 50.6,
+          "notable_signals": 2,
+          "matchup": "New York Yankees @ San Diego Padres",
+          "game_pk": 823253,
+          "team": "New York Yankees",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 17.4286,
+            "pitch_exploit": 1.1429,
+            "l7_avg_ev": 34.8958,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 5.25,
+            "park_hr_index": 59.6,
+            "season_barrel_pct": 36.6667,
+            "lineup_slot": 50.0,
+            "bullpen_fatigue": 18.5185,
+            "platoon_barrel_pct": 2.08,
+            "platoon_xwoba": 0.54,
+            "park_hand_index": -1.54,
+            "opp_catcher_framing": 0.6,
+            "days_rest": 2.0,
+            "woba_ahead": 36.3636,
+            "woba_behind": 0.0,
+            "pull_park_synergy": -1.272,
+            "hard_hit_105_rate": 0.625,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": -2.0,
+            "series_game": 2.0,
+            "sp_rp_ops_gap": 0.592,
+            "vs_rp_ops": 0.396,
+            "ump_k_pct": -0.276,
+            "ump_bb_pct": -0.06
+          },
+          "hit_probability": 0.6736,
+          "raw_hit_probability": 0.6777,
+          "lift": -0.0001,
+          "reliability": "A",
+          "sample_n": 131,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 43.2,
+          "notable_signals": 0,
+          "matchup": "New York Yankees @ San Diego Padres",
+          "game_pk": 823253,
+          "team": "New York Yankees",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": -5.28,
+            "sprint_speed": 31.25,
+            "catcher_poptime": 17.1429,
+            "on_base": 49.1363
+          },
+          "hit_probability": 0.2568,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 131,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 10.8,
+          "notable_signals": 0,
+          "matchup": "New York Yankees @ San Diego Padres",
+          "game_pk": 823253,
+          "team": "New York Yankees",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0716
+          },
+          "hit_probability": 0.0716,
+          "raw_hit_probability": null,
+          "lift": 0.0238,
+          "reliability": "A",
+          "sample_n": 131,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 0.0,
+          "notable_signals": 0,
+          "matchup": "New York Yankees @ San Diego Padres",
+          "game_pk": 823253,
+          "team": "New York Yankees",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0027
+          },
+          "hit_probability": 0.0027,
+          "raw_hit_probability": null,
+          "lift": -0.0183,
+          "reliability": "A",
+          "sample_n": 131,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }
