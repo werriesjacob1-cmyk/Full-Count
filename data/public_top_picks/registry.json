@@ -2,7 +2,7 @@
   "schema_version": 1,
   "identity_schema_version": 2,
   "rollout_version": "pre-phase-v-live-lifecycle-v1",
-  "updated_at": "2026-09-06T11:27:57.741761+00:00",
+  "updated_at": "2026-09-06T14:28:01.566786+00:00",
   "migration": {
     "version": "pre-phase-v-live-lifecycle-v1",
     "completed_at": "2026-08-17T23:14:57+00:00",
@@ -18428,6 +18428,202 @@
         },
         "qualification_timestamp": "2026-09-06T11:24:07.181722+00:00",
         "board_timestamp": "2026-09-06T11:24:07.158171+00:00",
+        "slate_date": "2026-09-06"
+      }
+    },
+    "fc2:824385:player-682985:hits_runs_rbis:1:over": {
+      "canonical_id": "fc2:824385:player-682985:hits_runs_rbis:1:over",
+      "settlement_identity": [
+        "824385",
+        [
+          "player",
+          "682985"
+        ],
+        "hits_runs_rbis",
+        "1",
+        "over"
+      ],
+      "slate_date": "2026-09-06",
+      "first_published_at": "2026-09-06T14:28:01.566786+00:00",
+      "publication_provenance": {
+        "artifact_id": "75f3eb358e96f3e7dab825e34ea52c04bfdac8bebe1e535168c31038f6b49cf7",
+        "source_commit": "821479084cfa17650db5563eb832d0b39803575c",
+        "workflow_run_id": "34039146335",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-09-06T14:27:49.274169+00:00",
+        "data_hash": "eabf667d7eae02121b4023f761a7bdb61a26cd2c9e88315c8aad8f6944ddfac2",
+        "live_hash": "16404e1f824b50dc77d2d66a34f42359e693e62db3beebe9a257482581ad31ab"
+      },
+      "snapshot": {
+        "id": "fc2:824385:player-682985:hits_runs_rbis:1:over",
+        "identity_version": 2,
+        "game_pk": 824385,
+        "player_id": 682985,
+        "combo_player_ids": null,
+        "type": "batter",
+        "name": "Riley Greene",
+        "team": "Detroit Tigers",
+        "matchup": "Detroit Tigers @ Cleveland Guardians",
+        "game_start": "2026-09-06T17:40:00Z",
+        "stat": "hits_runs_rbis",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "hits_runs_rbis",
+          "value": 0.5,
+          "needs": 1
+        },
+        "prop": "Over 0.5 Hits+Runs+RBIs",
+        "hit_probability": 0.7077,
+        "market_odds": -185,
+        "market_implied": 0.6491,
+        "market_edge": 0.0586,
+        "market_hold": null,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (A), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (10.7 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "L7 avg EV 91.1mph (league ~88.5) \u2014 hot recent contact",
+          "L7 barrel% 41.7 \u2014 hot recent contact",
+          "Platoon: L bat vs RHP (favorable)",
+          "Projected 4.12 PA (batting slot 4)",
+          "Hitter batting behind him: 0.335 wOBA (league ~.320)",
+          "Pitch-type exploit: RV/100 +2.3 vs SI (opposing SP throws it 16.5% of the time)",
+          "Season barrel% 15.0 \u2014 well above-average barrel rate"
+        ],
+        "watchouts": [
+          "Hitters batting ahead of him: 0.319 wOBA (league ~.320) \u2014 a weak on-base group ahead of him, fewer runners to drive in",
+          "Team implied for 3.09 runs (league avg 4.245; line 2.5, game total 7) \u2014 a weak offensive environment",
+          "Activated from the 10-day injured list 5 day(s) ago \u2014 early performance back can be inconsistent",
+          "Opposing bullpen fatigue: 1/12 relievers over 60 pitches in L7 (fresh pen \u2014 tougher matchup late)",
+          "BvP: 2-for-14 vs Gavin Williams (standard error \u00b19 pts on a 14-AB career sample -- weighted lightly on that basis, not just because the count looks small)"
+        ],
+        "prob_ci": [
+          0.6909,
+          0.7496
+        ],
+        "reliability": "A",
+        "reliability_note": null,
+        "sample_n": 121,
+        "lineup_assumed": null,
+        "base_rate": 0.6731,
+        "lift": 0.0346,
+        "lift_reference_rate": null,
+        "stable_lift": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "54080df0",
+          "prediction_timestamp": "2026-09-06T14:24:24.713959+00:00",
+          "odds_fetched_at": "2026-09-06T14:24:19.988259+00:00",
+          "board_generated_at": "2026-09-06T14:24:24.683680+00:00"
+        },
+        "qualification_timestamp": "2026-09-06T14:24:24.713959+00:00",
+        "board_timestamp": "2026-09-06T14:24:24.683680+00:00",
+        "slate_date": "2026-09-06"
+      }
+    },
+    "fc2:824385:player-682985:hits:1:over": {
+      "canonical_id": "fc2:824385:player-682985:hits:1:over",
+      "settlement_identity": [
+        "824385",
+        [
+          "player",
+          "682985"
+        ],
+        "hits",
+        "1",
+        "over"
+      ],
+      "slate_date": "2026-09-06",
+      "first_published_at": "2026-09-06T14:28:01.566786+00:00",
+      "publication_provenance": {
+        "artifact_id": "75f3eb358e96f3e7dab825e34ea52c04bfdac8bebe1e535168c31038f6b49cf7",
+        "source_commit": "821479084cfa17650db5563eb832d0b39803575c",
+        "workflow_run_id": "34039146335",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-09-06T14:27:49.274169+00:00",
+        "data_hash": "eabf667d7eae02121b4023f761a7bdb61a26cd2c9e88315c8aad8f6944ddfac2",
+        "live_hash": "16404e1f824b50dc77d2d66a34f42359e693e62db3beebe9a257482581ad31ab"
+      },
+      "snapshot": {
+        "id": "fc2:824385:player-682985:hits:1:over",
+        "identity_version": 2,
+        "game_pk": 824385,
+        "player_id": 682985,
+        "combo_player_ids": null,
+        "type": "batter",
+        "name": "Riley Greene",
+        "team": "Detroit Tigers",
+        "matchup": "Detroit Tigers @ Cleveland Guardians",
+        "game_start": "2026-09-06T17:40:00Z",
+        "stat": "hits",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "hits",
+          "value": 0.5,
+          "needs": 1
+        },
+        "prop": "Over 0.5 Hits",
+        "hit_probability": 0.6212,
+        "market_odds": -140,
+        "market_implied": 0.5833,
+        "market_edge": 0.0379,
+        "market_hold": null,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (A), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (8.1 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "L7 avg EV 91.1mph (league ~88.5) \u2014 hot recent contact",
+          "L7 barrel% 41.7 \u2014 hot recent contact",
+          "Platoon: L bat vs RHP (favorable)",
+          "Projected 4.12 PA (batting slot 4)",
+          "Pitch-type exploit: RV/100 +2.3 vs SI (opposing SP throws it 16.5% of the time)",
+          "Season barrel% 15.0 \u2014 well above-average barrel rate",
+          "Hitter batting behind him: 0.335 wOBA (league ~.320)"
+        ],
+        "watchouts": [
+          "Activated from the 10-day injured list 5 day(s) ago \u2014 early performance back can be inconsistent",
+          "Team implied for 3.09 runs (league avg 4.245; line 2.5, game total 7) \u2014 a weak offensive environment",
+          "Hitters batting ahead of him: 0.319 wOBA (league ~.320) \u2014 a weak on-base group ahead of him, fewer runners to drive in",
+          "Opposing bullpen fatigue: 1/12 relievers over 60 pitches in L7 (fresh pen \u2014 tougher matchup late)",
+          "BvP: 2-for-14 vs Gavin Williams (standard error \u00b19 pts on a 14-AB career sample -- weighted lightly on that basis, not just because the count looks small)"
+        ],
+        "prob_ci": [
+          0.6124,
+          0.6498
+        ],
+        "reliability": "A",
+        "reliability_note": null,
+        "sample_n": 121,
+        "lineup_assumed": null,
+        "base_rate": 0.5668,
+        "lift": 0.0544,
+        "lift_reference_rate": null,
+        "stable_lift": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "54080df0",
+          "prediction_timestamp": "2026-09-06T14:24:24.713959+00:00",
+          "odds_fetched_at": "2026-09-06T14:24:19.988259+00:00",
+          "board_generated_at": "2026-09-06T14:24:24.683680+00:00"
+        },
+        "qualification_timestamp": "2026-09-06T14:24:24.713959+00:00",
+        "board_timestamp": "2026-09-06T14:24:24.683680+00:00",
         "slate_date": "2026-09-06"
       }
     }
