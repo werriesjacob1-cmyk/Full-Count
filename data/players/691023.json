@@ -3182,7 +3182,7 @@
         {
           "prop": "Over 0.5 Hits+Runs+RBIs",
           "type": "batter",
-          "score": 61.2,
+          "score": 62.4,
           "notable_signals": 2,
           "matchup": "St. Louis Cardinals @ San Francisco Giants",
           "game_pk": 823175,
@@ -3196,31 +3196,31 @@
             "pitch_exploit": 8.0,
             "l7_avg_ev": 87.0,
             "l7_barrel_pct": 100.0,
-            "park_hr_index": 31.2,
+            "park_hr_index": 32.2,
             "season_barrel_pct": 68.0,
             "lineup_slot": 62.5,
             "bullpen_fatigue": 33.3333,
-            "platoon_barrel_pct": 4.4,
-            "platoon_xwoba": 0.06,
-            "park_hand_index": -1.48,
-            "opp_catcher_framing": 1.2,
+            "platoon_barrel_pct": 4.56,
+            "platoon_xwoba": 0.54,
+            "park_hand_index": -1.24,
+            "opp_catcher_framing": 0.96,
             "days_rest": 0.0,
             "woba_ahead": 55.4545,
             "woba_behind": 98.1818,
-            "pull_park_synergy": -0.5594,
-            "hard_hit_105_rate": 2.6375,
+            "pull_park_synergy": -0.4861,
+            "hard_hit_105_rate": 2.64,
             "team_total_move": 0.0,
             "team_total_open": -4.0,
             "getaway_day": 0.0,
             "series_game": 0.0,
             "sp_rp_ops_gap": 1.304,
             "vs_rp_ops": 2.544,
-            "ump_k_pct": -0.06,
-            "ump_bb_pct": 0.168
+            "ump_k_pct": 0.204,
+            "ump_bb_pct": 0.324
           },
-          "hit_probability": 0.7138,
-          "raw_hit_probability": 0.7505,
-          "lift": 0.0441,
+          "hit_probability": 0.7183,
+          "raw_hit_probability": 0.759,
+          "lift": 0.059,
           "reliability": "A",
           "sample_n": 140,
           "projection": {
@@ -3232,7 +3232,7 @@
         {
           "prop": "To Steal a Base",
           "type": "batter",
-          "score": 62.6,
+          "score": 68.2,
           "notable_signals": 1,
           "matchup": "St. Louis Cardinals @ San Francisco Giants",
           "game_pk": 823175,
@@ -3243,10 +3243,10 @@
           "signals": {
             "opp_team_cs_pct": 0.96,
             "sprint_speed": 59.375,
-            "catcher_poptime": 0.0,
+            "catcher_poptime": 20.0,
             "on_base": 95.2015
           },
-          "hit_probability": 0.1287,
+          "hit_probability": 0.1255,
           "raw_hit_probability": null,
           "lift": null,
           "reliability": "A",
@@ -3260,7 +3260,7 @@
         {
           "prop": "To Hit a Laser (105+ MPH)",
           "type": "batter",
-          "score": 31.0,
+          "score": 31.1,
           "notable_signals": 1,
           "matchup": "St. Louis Cardinals @ San Francisco Giants",
           "game_pk": 823175,
@@ -3269,11 +3269,11 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "hard_hit_rate": 0.1521
+            "hard_hit_rate": 0.1522
           },
-          "hit_probability": 0.1521,
+          "hit_probability": 0.1522,
           "raw_hit_probability": null,
-          "lift": 0.1039,
+          "lift": 0.1045,
           "reliability": "A",
           "sample_n": 140,
           "projection": {
@@ -3285,7 +3285,7 @@
         {
           "prop": "To Hit a Moonshot (420+ FT)",
           "type": "batter",
-          "score": 9.1,
+          "score": 8.1,
           "notable_signals": 0,
           "matchup": "St. Louis Cardinals @ San Francisco Giants",
           "game_pk": 823175,
@@ -3294,11 +3294,11 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "moonshot_rate": 0.0492
+            "moonshot_rate": 0.0452
           },
-          "hit_probability": 0.0492,
+          "hit_probability": 0.0452,
           "raw_hit_probability": null,
-          "lift": 0.0276,
+          "lift": 0.0242,
           "reliability": "A",
           "sample_n": 140,
           "projection": {

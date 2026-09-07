@@ -196,6 +196,106 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-07",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 32.0,
+          "notable_signals": 0,
+          "matchup": "Cincinnati Reds @ Los Angeles Dodgers",
+          "game_pk": 823902,
+          "team": "Los Angeles Dodgers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "sp_era_weak": 8.2857,
+            "l7_avg_ev": 100.0,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 51.9,
+            "season_barrel_pct": 22.0,
+            "lineup_slot": 0.0,
+            "bullpen_fatigue": 37.037,
+            "platoon_barrel_pct": 0.24,
+            "platoon_xwoba": -0.42,
+            "opp_catcher_framing": 0.84,
+            "days_rest": 0.0,
+            "woba_ahead": 25.4545,
+            "woba_behind": 84.5455,
+            "team_total_move": 0.0,
+            "team_total_open": 0.0,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": 0.536,
+            "vs_rp_ops": -0.936,
+            "ump_k_pct": -1.092,
+            "ump_bb_pct": -0.204
+          },
+          "hit_probability": 0.5344,
+          "raw_hit_probability": 0.5541,
+          "lift": -0.0311,
+          "reliability": "B",
+          "sample_n": 77,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 0.0,
+          "notable_signals": 0,
+          "matchup": "Cincinnati Reds @ Los Angeles Dodgers",
+          "game_pk": 823902,
+          "team": "Los Angeles Dodgers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0192
+          },
+          "hit_probability": 0.0192,
+          "raw_hit_probability": null,
+          "lift": -0.0285,
+          "reliability": "B",
+          "sample_n": 77,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 0.0,
+          "notable_signals": 0,
+          "matchup": "Cincinnati Reds @ Los Angeles Dodgers",
+          "game_pk": 823902,
+          "team": "Los Angeles Dodgers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0041
+          },
+          "hit_probability": 0.0041,
+          "raw_hit_probability": null,
+          "lift": -0.0169,
+          "reliability": "B",
+          "sample_n": 77,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }
