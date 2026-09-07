@@ -2,7 +2,7 @@
   "schema_version": 1,
   "identity_schema_version": 2,
   "rollout_version": "pre-phase-v-live-lifecycle-v1",
-  "updated_at": "2026-09-07T14:58:21.626042+00:00",
+  "updated_at": "2026-09-07T15:27:40.027185+00:00",
   "migration": {
     "version": "pre-phase-v-live-lifecycle-v1",
     "completed_at": "2026-08-17T23:14:57+00:00",
@@ -20457,6 +20457,100 @@
         },
         "qualification_timestamp": "2026-09-07T14:54:35.547831+00:00",
         "board_timestamp": "2026-09-07T14:54:35.523335+00:00",
+        "slate_date": "2026-09-07"
+      }
+    },
+    "fc2:824229:player-657746:strikeouts:4:over": {
+      "canonical_id": "fc2:824229:player-657746:strikeouts:4:over",
+      "settlement_identity": [
+        "824229",
+        [
+          "player",
+          "657746"
+        ],
+        "strikeouts",
+        "4",
+        "over"
+      ],
+      "slate_date": "2026-09-07",
+      "first_published_at": "2026-09-07T15:27:40.027185+00:00",
+      "publication_provenance": {
+        "artifact_id": "5cbf9236c51d2158d8c0972af2b4fc66d5105c2bdf9bda097b9f7d28417b3865",
+        "source_commit": "a04541dd5c5b551edaa3ae1d06cee6b6b56c28c3",
+        "workflow_run_id": "34138279163",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-09-07T15:27:29.491869+00:00",
+        "data_hash": "47436ca909fe3b1fe4f741085aa20650224296962a3907da51add0027d61ee93",
+        "live_hash": "77009a2f32bf1f7a2e31794b21f9e84a64ee35b7c47e2c0c1ed0178258ab8546"
+      },
+      "snapshot": {
+        "id": "fc2:824229:player-657746:strikeouts:4:over",
+        "identity_version": 2,
+        "game_pk": 824229,
+        "player_id": 657746,
+        "combo_player_ids": null,
+        "type": "pitcher",
+        "name": "Joe Ryan",
+        "team": "Minnesota Twins",
+        "matchup": "Minnesota Twins @ Detroit Tigers",
+        "game_start": "2026-09-07T19:10:00Z",
+        "stat": "strikeouts",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "strikeouts",
+          "value": 3.5,
+          "needs": 4
+        },
+        "prop": "Over 3.5 Strikeouts",
+        "hit_probability": 0.6259,
+        "market_odds": -118,
+        "market_implied": 0.5104,
+        "market_edge": 0.1155,
+        "market_hold": 0.0605,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (A), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (12.5 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "Opposing team K% 22.9",
+          "Expected workload 23.1 batters faced (league average \u2014 no real start found for him in the L14 window)",
+          "Platoon advantage: 6 of 9 projected hitters bat right-handed against this RHP",
+          "Recency-weighted K rate 23.3% (exp. decay, halflife 30d, 23 real starts / 523 BF) \u2014 drives the strikeout probability model",
+          "HP ump accuracy 94.8% \u2014 tight, accurate zone favors called strikes"
+        ],
+        "watchouts": [
+          "L14 Statcast sample too thin \u2014 recent-form read falls back to season K%",
+          "Activated from the 15-day injured list 0 day(s) ago \u2014 early performance back can be inconsistent",
+          "No L14 start found for this pitcher \u2014 workload defaulted to the league average"
+        ],
+        "prob_ci": [
+          0.605,
+          0.725
+        ],
+        "reliability": "A",
+        "reliability_note": null,
+        "sample_n": 23,
+        "lineup_assumed": null,
+        "base_rate": 0.6979,
+        "lift": -0.072,
+        "lift_reference_rate": null,
+        "stable_lift": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "23ba7e05",
+          "prediction_timestamp": "2026-09-07T15:20:01.605051+00:00",
+          "odds_fetched_at": "2026-09-07T15:19:57.519526+00:00",
+          "board_generated_at": "2026-09-07T15:20:01.581229+00:00"
+        },
+        "qualification_timestamp": "2026-09-07T15:20:01.605051+00:00",
+        "board_timestamp": "2026-09-07T15:20:01.581229+00:00",
         "slate_date": "2026-09-07"
       }
     }
