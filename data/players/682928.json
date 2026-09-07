@@ -1906,6 +1906,137 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-07",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 48.9,
+          "notable_signals": 2,
+          "matchup": "Washington Nationals @ San Diego Padres",
+          "game_pk": 823254,
+          "team": "Washington Nationals",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 57.1429,
+            "pitch_exploit": 2.8571,
+            "l7_avg_ev": 100.0,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 35.2,
+            "season_barrel_pct": 46.6667,
+            "lineup_slot": 62.5,
+            "bullpen_fatigue": 0.0,
+            "platoon_barrel_pct": 2.24,
+            "platoon_xwoba": 2.4,
+            "park_hand_index": -1.89,
+            "days_rest": 0.0,
+            "woba_ahead": 0.0,
+            "woba_behind": 20.0,
+            "pull_park_synergy": -0.9658,
+            "hard_hit_105_rate": 0.18,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": -1.168,
+            "vs_rp_ops": 0.468,
+            "ump_k_pct": 0.06,
+            "ump_bb_pct": -0.096
+          },
+          "hit_probability": 0.6197,
+          "raw_hit_probability": 0.6157,
+          "lift": 0.0542,
+          "reliability": "A",
+          "sample_n": 136,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 60.1,
+          "notable_signals": 1,
+          "matchup": "Washington Nationals @ San Diego Padres",
+          "game_pk": 823254,
+          "team": "Washington Nationals",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": -5.58,
+            "sprint_speed": 37.5,
+            "on_base": 97.1209
+          },
+          "hit_probability": 0.1793,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 136,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 6.3,
+          "notable_signals": 0,
+          "matchup": "Washington Nationals @ San Diego Padres",
+          "game_pk": 823254,
+          "team": "Washington Nationals",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0538
+          },
+          "hit_probability": 0.0538,
+          "raw_hit_probability": null,
+          "lift": 0.0056,
+          "reliability": "A",
+          "sample_n": 136,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 4.3,
+          "notable_signals": 0,
+          "matchup": "Washington Nationals @ San Diego Padres",
+          "game_pk": 823254,
+          "team": "Washington Nationals",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.03
+          },
+          "hit_probability": 0.03,
+          "raw_hit_probability": null,
+          "lift": 0.0084,
+          "reliability": "A",
+          "sample_n": 136,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

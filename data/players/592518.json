@@ -2260,7 +2260,7 @@
         {
           "prop": "Over 0.5 Hits+Runs+RBIs",
           "type": "batter",
-          "score": 62.7,
+          "score": 62.9,
           "notable_signals": 2,
           "matchup": "Washington Nationals @ San Diego Padres",
           "game_pk": 823254,
@@ -2275,31 +2275,31 @@
             "l7_avg_ev": 65.5,
             "l7_barrel_pct": 100.0,
             "bat_speed_trend": 14.1,
-            "park_hr_index": 35.3,
+            "park_hr_index": 35.2,
             "season_barrel_pct": 45.3333,
             "lineup_slot": 75.0,
             "bullpen_fatigue": 0.0,
-            "platoon_barrel_pct": 1.84,
-            "platoon_xwoba": 1.5,
-            "park_hand_index": 0.34,
-            "opp_catcher_framing": -0.0,
+            "platoon_barrel_pct": 1.92,
+            "platoon_xwoba": 1.8,
+            "park_hand_index": 0.49,
+            "opp_catcher_framing": -0.12,
             "days_rest": 0.0,
             "woba_ahead": 0.0,
             "woba_behind": 76.3636,
-            "pull_park_synergy": 0.1488,
-            "hard_hit_105_rate": 0.6675,
+            "pull_park_synergy": 0.1989,
+            "hard_hit_105_rate": 0.65,
             "team_total_move": 0.0,
             "team_total_open": 0.0,
             "getaway_day": 0.0,
             "series_game": 0.0,
             "sp_rp_ops_gap": 0.048,
             "vs_rp_ops": 0.084,
-            "ump_k_pct": 0.168,
-            "ump_bb_pct": -0.072
+            "ump_k_pct": 0.06,
+            "ump_bb_pct": -0.096
           },
-          "hit_probability": 0.6632,
-          "raw_hit_probability": 0.6597,
-          "lift": -0.0074,
+          "hit_probability": 0.6629,
+          "raw_hit_probability": 0.6592,
+          "lift": -0.0068,
           "reliability": "A",
           "sample_n": 139,
           "projection": {
@@ -2311,7 +2311,7 @@
         {
           "prop": "To Hit a Laser (105+ MPH)",
           "type": "batter",
-          "score": 11.3,
+          "score": 11.0,
           "notable_signals": 0,
           "matchup": "Washington Nationals @ San Diego Padres",
           "game_pk": 823254,
@@ -2320,11 +2320,11 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "hard_hit_rate": 0.0733
+            "hard_hit_rate": 0.0726
           },
-          "hit_probability": 0.0733,
+          "hit_probability": 0.0726,
           "raw_hit_probability": null,
-          "lift": 0.0256,
+          "lift": 0.0244,
           "reliability": "A",
           "sample_n": 139,
           "projection": {
@@ -2336,7 +2336,7 @@
         {
           "prop": "To Hit a Moonshot (420+ FT)",
           "type": "batter",
-          "score": 2.1,
+          "score": 0.8,
           "notable_signals": 0,
           "matchup": "Washington Nationals @ San Diego Padres",
           "game_pk": 823254,
@@ -2345,11 +2345,11 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "moonshot_rate": 0.021
+            "moonshot_rate": 0.0161
           },
-          "hit_probability": 0.021,
+          "hit_probability": 0.0161,
           "raw_hit_probability": null,
-          "lift": 0.0,
+          "lift": -0.0055,
           "reliability": "A",
           "sample_n": 139,
           "projection": {
