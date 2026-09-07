@@ -2,7 +2,7 @@
   "schema_version": 1,
   "identity_schema_version": 2,
   "rollout_version": "pre-phase-v-live-lifecycle-v1",
-  "updated_at": "2026-09-07T10:43:13.953755+00:00",
+  "updated_at": "2026-09-07T14:38:21.007898+00:00",
   "migration": {
     "version": "pre-phase-v-live-lifecycle-v1",
     "completed_at": "2026-08-17T23:14:57+00:00",
@@ -20262,6 +20262,104 @@
         },
         "qualification_timestamp": "2026-09-07T10:39:28.028390+00:00",
         "board_timestamp": "2026-09-07T10:39:28.015022+00:00",
+        "slate_date": "2026-09-07"
+      }
+    },
+    "fc2:824793:player-687637:hits_runs_rbis:1:over": {
+      "canonical_id": "fc2:824793:player-687637:hits_runs_rbis:1:over",
+      "settlement_identity": [
+        "824793",
+        [
+          "player",
+          "687637"
+        ],
+        "hits_runs_rbis",
+        "1",
+        "over"
+      ],
+      "slate_date": "2026-09-07",
+      "first_published_at": "2026-09-07T14:38:21.007898+00:00",
+      "publication_provenance": {
+        "artifact_id": "a95bbb46c5ac8a3f60b7be47567521649f425d71e5075ac6db0455b2144a70bd",
+        "source_commit": "26a81a6325c29fcda616388e96204b539940633d",
+        "workflow_run_id": "34133848358",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-09-07T14:38:08.533002+00:00",
+        "data_hash": "eaf3bafe7999ed042204dd4842a3ae2296a85a6d45dfa6c0e930ce05e8c8e363",
+        "live_hash": "8a3746e96e6d02919966e3c4454334525b9a6307b66724d4407a378b64f873f9"
+      },
+      "snapshot": {
+        "id": "fc2:824793:player-687637:hits_runs_rbis:1:over",
+        "identity_version": 2,
+        "game_pk": 824793,
+        "player_id": 687637,
+        "combo_player_ids": null,
+        "type": "batter",
+        "name": "Dylan Beavers",
+        "team": "Baltimore Orioles",
+        "matchup": "Cleveland Guardians @ Baltimore Orioles",
+        "game_start": "2026-09-07T17:35:00Z",
+        "stat": "hits_runs_rbis",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "hits_runs_rbis",
+          "value": 0.5,
+          "needs": 1
+        },
+        "prop": "Over 0.5 Hits+Runs+RBIs",
+        "hit_probability": 0.667,
+        "market_odds": -170,
+        "market_implied": 0.6296,
+        "market_edge": 0.0374,
+        "market_hold": null,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (A), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (8.4 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "L7 barrel% 25.0 \u2014 hot recent contact",
+          "Hitter batting behind him: 0.341 wOBA (league ~.320)",
+          "Team implied for 3.92 runs (league avg 4.245; line 3.5, game total 7.5)",
+          "Pitch-type exploit: RV/100 +2.9 vs CH (opposing SP throws it 24.8% of the time)"
+        ],
+        "watchouts": [
+          "L7 avg EV 84.3mph (league ~88.5) \u2014 cold recent contact",
+          "Platoon: L bat vs LHP (unfavorable)",
+          "Projected 3.57 PA (batting slot 9) \u2014 a tough lineup slot for plate appearances",
+          "Hitters batting ahead of him: 0.180 wOBA (league ~.320) \u2014 a weak on-base group ahead of him, fewer runners to drive in",
+          "Public heavy on Baltimore Orioles (money% trails tickets% by 11 pts) \u2014 sharp money is fading this side",
+          "Season barrel% 7.0 \u2014 below-average barrel rate",
+          "Opposing bullpen fatigue: 0/12 relievers over 60 pitches in L7 (fresh pen \u2014 tougher matchup late)",
+          "Sharp money fading Baltimore Orioles (money% -11 pts vs ticket%) \u2014 smart money moving away from this side"
+        ],
+        "prob_ci": [
+          0.6562,
+          0.6902
+        ],
+        "reliability": "A",
+        "reliability_note": null,
+        "sample_n": 86,
+        "lineup_assumed": null,
+        "base_rate": 0.6714,
+        "lift": -0.0044,
+        "lift_reference_rate": null,
+        "stable_lift": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "c0ffe35a",
+          "prediction_timestamp": "2026-09-07T14:35:46.714357+00:00",
+          "odds_fetched_at": "2026-09-07T14:35:43.145673+00:00",
+          "board_generated_at": "2026-09-07T14:35:46.690140+00:00"
+        },
+        "qualification_timestamp": "2026-09-07T14:35:46.714357+00:00",
+        "board_timestamp": "2026-09-07T14:35:46.690140+00:00",
         "slate_date": "2026-09-07"
       }
     }
