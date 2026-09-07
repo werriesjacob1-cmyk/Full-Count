@@ -401,7 +401,7 @@
         {
           "prop": "Over 3.5 Strikeouts",
           "type": "pitcher",
-          "score": 35.7,
+          "score": 26.6,
           "notable_signals": 1,
           "matchup": "St. Louis Cardinals @ San Francisco Giants",
           "game_pk": 823175,
@@ -411,14 +411,14 @@
           "combo_player_ids": null,
           "signals": {
             "opp_team_k_pct": 44.0,
-            "same_hand_ratio": 33.3333,
+            "same_hand_ratio": 5.5556,
             "l14_k_pct": 0.0,
             "tto_penalty": 8.0,
             "env_neutral": 50.0
           },
-          "hit_probability": 0.6046,
-          "raw_hit_probability": 0.6527,
-          "lift": -0.0981,
+          "hit_probability": 0.6041,
+          "raw_hit_probability": 0.6503,
+          "lift": -0.0938,
           "reliability": "A",
           "sample_n": 27,
           "projection": {
@@ -428,9 +428,9 @@
           }
         },
         {
-          "prop": "Over 15.5 Outs Recorded",
+          "prop": "Over 16.5 Outs Recorded",
           "type": "pitcher",
-          "score": 68.8,
+          "score": 63.0,
           "notable_signals": 1,
           "matchup": "St. Louis Cardinals @ San Francisco Giants",
           "game_pk": 823175,
@@ -439,18 +439,18 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.6489,
+            "outs_rate": 0.6151,
             "avg_outs_per_start": 16.37
           },
-          "hit_probability": 0.6489,
+          "hit_probability": 0.6151,
           "raw_hit_probability": null,
-          "lift": 0.0798,
+          "lift": 0.0656,
           "reliability": "A",
           "sample_n": 27,
           "projection": {
             "stat": "pitcher_outs",
-            "value": 15.5,
-            "needs": 16
+            "value": 16.5,
+            "needs": 17
           }
         }
       ]

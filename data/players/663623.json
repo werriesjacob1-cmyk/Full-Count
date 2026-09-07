@@ -381,9 +381,9 @@
       "date": "2026-09-07",
       "evaluations": [
         {
-          "prop": "Over 3.5 Strikeouts",
+          "prop": "Over 4.5 Strikeouts",
           "type": "pitcher",
-          "score": 45.5,
+          "score": 45.9,
           "notable_signals": 0,
           "matchup": "Washington Nationals @ San Diego Padres",
           "game_pk": 823254,
@@ -396,23 +396,26 @@
             "same_hand_ratio": 88.8889,
             "l14_k_pct": 69.4118,
             "tto_penalty": -8.0,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 53.4266,
+            "ump_k_pct": -0.168,
+            "ump_bb_pct": 0.072
           },
-          "hit_probability": 0.615,
-          "raw_hit_probability": 0.705,
-          "lift": -0.0877,
+          "hit_probability": 0.5073,
+          "raw_hit_probability": 0.5073,
+          "lift": -0.0046,
           "reliability": "A",
           "sample_n": 18,
           "projection": {
             "stat": "strikeouts",
-            "value": 3.5,
-            "needs": 4
+            "value": 4.5,
+            "needs": 5
           }
         },
         {
-          "prop": "Over 13.5 Outs Recorded",
+          "prop": "Over 16.5 Outs Recorded",
           "type": "pitcher",
-          "score": 45.4,
+          "score": 0,
           "notable_signals": 0,
           "matchup": "Washington Nationals @ San Diego Padres",
           "game_pk": 823254,
@@ -421,18 +424,18 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.7073,
+            "outs_rate": 0.2624,
             "avg_outs_per_start": 14.28
           },
-          "hit_probability": 0.7073,
+          "hit_probability": 0.2624,
           "raw_hit_probability": null,
-          "lift": -0.122,
+          "lift": -0.2871,
           "reliability": "A",
           "sample_n": 18,
           "projection": {
             "stat": "pitcher_outs",
-            "value": 13.5,
-            "needs": 14
+            "value": 16.5,
+            "needs": 17
           }
         }
       ]

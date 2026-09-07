@@ -13,6 +13,95 @@
           "matchup": "Minnesota Twins @ Kansas City Royals"
         }
       ]
+    },
+    {
+      "date": "2026-09-07",
+      "evaluations": [
+        {
+          "prop": "Over 3.5 Strikeouts",
+          "type": "pitcher",
+          "score": 26.1,
+          "notable_signals": 1,
+          "matchup": "Minnesota Twins @ Detroit Tigers",
+          "game_pk": 824229,
+          "team": "Minnesota Twins",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_k_pct": 59.0,
+            "same_hand_ratio": 61.1111,
+            "env_neutral": 50.0,
+            "ump_accuracy": 79.9074,
+            "ump_k_pct": 0.684,
+            "ump_bb_pct": -0.036
+          },
+          "hit_probability": 0.6259,
+          "raw_hit_probability": 0.7595,
+          "lift": -0.072,
+          "reliability": "A",
+          "sample_n": 23,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 3.5,
+            "needs": 4
+          }
+        },
+        {
+          "prop": "Over 15.5 Outs Recorded",
+          "type": "pitcher",
+          "score": 67.5,
+          "notable_signals": 1,
+          "matchup": "Minnesota Twins @ Detroit Tigers",
+          "game_pk": 824229,
+          "team": "Minnesota Twins",
+          "side": "away",
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "outs_rate": 0.6825,
+            "avg_outs_per_start": 16.39
+          },
+          "hit_probability": 0.6825,
+          "raw_hit_probability": null,
+          "lift": 0.0506,
+          "reliability": "A",
+          "sample_n": 23,
+          "projection": {
+            "stat": "pitcher_outs",
+            "value": 15.5,
+            "needs": 16
+          }
+        },
+        {
+          "prop": "Over 8.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 54.8,
+          "notable_signals": 1,
+          "matchup": "Minnesota Twins @ Detroit Tigers",
+          "game_pk": 824229,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            657746,
+            675512
+          ],
+          "signals": {
+            "combined_k_edge": 0.2511
+          },
+          "hit_probability": 0.6975,
+          "raw_hit_probability": null,
+          "lift": 0.2511,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 8.5,
+            "needs": 9
+          }
+        }
+      ]
     }
   ]
 }

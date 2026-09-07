@@ -394,7 +394,7 @@
         {
           "prop": "Over 4.5 Strikeouts",
           "type": "pitcher",
-          "score": 43.3,
+          "score": 39.6,
           "notable_signals": 0,
           "matchup": "Toronto Blue Jays @ Athletics",
           "game_pk": 824958,
@@ -404,14 +404,14 @@
           "combo_player_ids": null,
           "signals": {
             "opp_team_k_pct": 22.0,
-            "same_hand_ratio": 100.0,
+            "same_hand_ratio": 5.5556,
             "l14_k_pct": 74.7059,
             "tto_penalty": -8.0,
             "env_neutral": 50.0
           },
-          "hit_probability": 0.6083,
-          "raw_hit_probability": 0.6712,
-          "lift": 0.0932,
+          "hit_probability": 0.608,
+          "raw_hit_probability": 0.6696,
+          "lift": 0.0961,
           "reliability": "A",
           "sample_n": 20,
           "projection": {
@@ -421,9 +421,9 @@
           }
         },
         {
-          "prop": "Over 13.5 Outs Recorded",
+          "prop": "Over 15.5 Outs Recorded",
           "type": "pitcher",
-          "score": 51.1,
+          "score": 11.2,
           "notable_signals": 0,
           "matchup": "Toronto Blue Jays @ Athletics",
           "game_pk": 824958,
@@ -432,18 +432,18 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.7298,
+            "outs_rate": 0.4535,
             "avg_outs_per_start": 14.45
           },
-          "hit_probability": 0.7298,
+          "hit_probability": 0.4535,
           "raw_hit_probability": null,
-          "lift": -0.0995,
+          "lift": -0.1784,
           "reliability": "A",
           "sample_n": 20,
           "projection": {
             "stat": "pitcher_outs",
-            "value": 13.5,
-            "needs": 14
+            "value": 15.5,
+            "needs": 16
           }
         }
       ]
