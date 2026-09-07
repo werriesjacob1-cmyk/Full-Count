@@ -2,7 +2,7 @@
   "schema_version": 1,
   "identity_schema_version": 2,
   "rollout_version": "pre-phase-v-live-lifecycle-v1",
-  "updated_at": "2026-09-07T22:27:28.891236+00:00",
+  "updated_at": "2026-09-07T23:27:45.096667+00:00",
   "migration": {
     "version": "pre-phase-v-live-lifecycle-v1",
     "completed_at": "2026-08-17T23:14:57+00:00",
@@ -21244,6 +21244,104 @@
         },
         "qualification_timestamp": "2026-09-07T22:24:11.073970+00:00",
         "board_timestamp": "2026-09-07T22:24:11.065355+00:00",
+        "slate_date": "2026-09-07"
+      }
+    },
+    "fc2:823902:player-680574:hits_runs_rbis:1:over": {
+      "canonical_id": "fc2:823902:player-680574:hits_runs_rbis:1:over",
+      "settlement_identity": [
+        "823902",
+        [
+          "player",
+          "680574"
+        ],
+        "hits_runs_rbis",
+        "1",
+        "over"
+      ],
+      "slate_date": "2026-09-07",
+      "first_published_at": "2026-09-07T23:27:45.096667+00:00",
+      "publication_provenance": {
+        "artifact_id": "d37f9acf0255749ad585c239eb86369291c892acc6d7625b841499e4a578dfb4",
+        "source_commit": "e21cf41ccf3c56725e4a45128ace7012ac358664",
+        "workflow_run_id": "34170017144",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-09-07T23:27:32.235710+00:00",
+        "data_hash": "6cab136451a2936926a20f8eeb2059930aecc3a1d3f61853e2e898790b21d924",
+        "live_hash": "d8e04ad51a29271744b9a6017339c353b51a49f06344cd1f0f929bedfbe9d389"
+      },
+      "snapshot": {
+        "id": "fc2:823902:player-680574:hits_runs_rbis:1:over",
+        "identity_version": 2,
+        "game_pk": 823902,
+        "player_id": 680574,
+        "combo_player_ids": null,
+        "type": "batter",
+        "name": "Matt McLain",
+        "team": "Cincinnati Reds",
+        "matchup": "Cincinnati Reds @ Los Angeles Dodgers",
+        "game_start": "2026-09-08T01:10:00Z",
+        "stat": "hits_runs_rbis",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "hits_runs_rbis",
+          "value": 0.5,
+          "needs": 1
+        },
+        "prop": "Over 0.5 Hits+Runs+RBIs",
+        "hit_probability": 0.6325,
+        "market_odds": -145,
+        "market_implied": 0.5918,
+        "market_edge": 0.0407,
+        "market_hold": null,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (A), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (8.5 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "L7 avg EV 91.4mph (league ~88.5) \u2014 hot recent contact",
+          "L7 barrel% 33.3 \u2014 hot recent contact",
+          "Bat speed trending up L14 (+4.8mph 2nd-half vs 1st-half)",
+          "Opposing SP ERA 5.29 \u2014 shaky matchup for the pitcher",
+          "AVG vs xBA: 0.190 vs 0.220 (-0.030) \u2014 underperforming his contact quality, positive regression candidate",
+          "Season barrel% 9.6"
+        ],
+        "watchouts": [
+          "Platoon: R bat vs RHP (unfavorable)",
+          "Projected 3.81 PA (batting slot 7) \u2014 a tough lineup slot for plate appearances",
+          "Hitters batting ahead of him: 0.316 wOBA (league ~.320) \u2014 a weak on-base group ahead of him, fewer runners to drive in",
+          "Hitter batting behind him: 0.000 wOBA (league ~.320) \u2014 little lineup protection, an easier batter to pitch around",
+          "Team implied for 3.74 runs (league avg 4.245; line 3.5, game total 8.5) \u2014 a weak offensive environment",
+          "Opposing bullpen fatigue: 0/12 relievers over 60 pitches in L7 (fresh pen \u2014 tougher matchup late)"
+        ],
+        "prob_ci": [
+          0.6192,
+          0.6641
+        ],
+        "reliability": "A",
+        "reliability_note": null,
+        "sample_n": 115,
+        "lineup_assumed": null,
+        "base_rate": 0.6593,
+        "lift": -0.0268,
+        "lift_reference_rate": null,
+        "stable_lift": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "41311396",
+          "prediction_timestamp": "2026-09-07T23:24:34.061162+00:00",
+          "odds_fetched_at": "2026-09-07T23:24:29.741511+00:00",
+          "board_generated_at": "2026-09-07T23:24:34.054526+00:00"
+        },
+        "qualification_timestamp": "2026-09-07T23:24:34.061162+00:00",
+        "board_timestamp": "2026-09-07T23:24:34.054526+00:00",
         "slate_date": "2026-09-07"
       }
     }
