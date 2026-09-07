@@ -2,7 +2,7 @@
   "schema_version": 1,
   "identity_schema_version": 2,
   "rollout_version": "pre-phase-v-live-lifecycle-v1",
-  "updated_at": "2026-09-07T10:17:49.280070+00:00",
+  "updated_at": "2026-09-07T10:43:13.953755+00:00",
   "migration": {
     "version": "pre-phase-v-live-lifecycle-v1",
     "completed_at": "2026-08-17T23:14:57+00:00",
@@ -20176,6 +20176,92 @@
         },
         "qualification_timestamp": "2026-09-07T10:09:41.564931+00:00",
         "board_timestamp": "2026-09-07T10:09:41.551593+00:00",
+        "slate_date": "2026-09-07"
+      }
+    },
+    "fc2:823175:player-700241:pitcher_outs:17:over": {
+      "canonical_id": "fc2:823175:player-700241:pitcher_outs:17:over",
+      "settlement_identity": [
+        "823175",
+        [
+          "player",
+          "700241"
+        ],
+        "pitcher_outs",
+        "17",
+        "over"
+      ],
+      "slate_date": "2026-09-07",
+      "first_published_at": "2026-09-07T10:43:13.953755+00:00",
+      "publication_provenance": {
+        "artifact_id": "e4d735853dd1ad4b8d0665f73ed8dba9ba73fb9a8eefe165f42206b333dd42e6",
+        "source_commit": "6a73208221d1c232903d1b5c7696dde3aaab339e",
+        "workflow_run_id": "34112716110",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-09-07T10:42:58.919746+00:00",
+        "data_hash": "74b8f88ebef109635d06d4dbb4244e4eb677f5b334abf50da3395dde903c1348",
+        "live_hash": "64c8de7519befd5cacc4bb35fb451215fedf4cdfe70d73d61ca7db780346f3f8"
+      },
+      "snapshot": {
+        "id": "fc2:823175:player-700241:pitcher_outs:17:over",
+        "identity_version": 2,
+        "game_pk": 823175,
+        "player_id": 700241,
+        "combo_player_ids": null,
+        "type": "pitcher",
+        "name": "Michael McGreevy",
+        "team": "St. Louis Cardinals",
+        "matchup": "St. Louis Cardinals @ San Francisco Giants",
+        "game_start": "2026-09-08T00:10:00Z",
+        "stat": "pitcher_outs",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "pitcher_outs",
+          "value": 16.5,
+          "needs": 17
+        },
+        "prop": "Over 16.5 Outs Recorded",
+        "hit_probability": 0.6063,
+        "market_odds": -102,
+        "market_implied": 0.4718,
+        "market_edge": 0.1345,
+        "market_hold": 0.0702,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (A), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (13.9 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "Recorded 17+ outs (5.2 IP) in 60.6% of his last 27 real starts (league 50.1%, avg 16.37 outs/start)"
+        ],
+        "watchouts": [],
+        "prob_ci": [
+          0.5336,
+          0.6744
+        ],
+        "reliability": "A",
+        "reliability_note": null,
+        "sample_n": 27,
+        "lineup_assumed": null,
+        "base_rate": 0.5014,
+        "lift": 0.1049,
+        "lift_reference_rate": null,
+        "stable_lift": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "19a82f84",
+          "prediction_timestamp": "2026-09-07T10:39:28.028390+00:00",
+          "odds_fetched_at": "2026-09-07T10:39:22.910561+00:00",
+          "board_generated_at": "2026-09-07T10:39:28.015022+00:00"
+        },
+        "qualification_timestamp": "2026-09-07T10:39:28.028390+00:00",
+        "board_timestamp": "2026-09-07T10:39:28.015022+00:00",
         "slate_date": "2026-09-07"
       }
     }
