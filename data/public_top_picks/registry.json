@@ -2,7 +2,7 @@
   "schema_version": 1,
   "identity_schema_version": 2,
   "rollout_version": "pre-phase-v-live-lifecycle-v1",
-  "updated_at": "2026-09-07T21:58:07.582147+00:00",
+  "updated_at": "2026-09-07T22:27:28.891236+00:00",
   "migration": {
     "version": "pre-phase-v-live-lifecycle-v1",
     "completed_at": "2026-08-17T23:14:57+00:00",
@@ -21143,6 +21143,107 @@
         },
         "qualification_timestamp": "2026-09-07T21:54:03.922588+00:00",
         "board_timestamp": "2026-09-07T21:54:03.916948+00:00",
+        "slate_date": "2026-09-07"
+      }
+    },
+    "fc2:823902:player-571970:hits:1:over": {
+      "canonical_id": "fc2:823902:player-571970:hits:1:over",
+      "settlement_identity": [
+        "823902",
+        [
+          "player",
+          "571970"
+        ],
+        "hits",
+        "1",
+        "over"
+      ],
+      "slate_date": "2026-09-07",
+      "first_published_at": "2026-09-07T22:27:28.891236+00:00",
+      "publication_provenance": {
+        "artifact_id": "2f6381691ca0f5c365e9ceafd2e1923b2b7a812858be57b3213bca1a94946311",
+        "source_commit": "df9d9610ccf1fe60dc2508855ac569e655bc717d",
+        "workflow_run_id": "34166651566",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-09-07T22:27:17.392608+00:00",
+        "data_hash": "78296833fce9f106a43790a07f32fc62e70feb7cf8436d9c7b56e8ae0a9b1f76",
+        "live_hash": "7c923b9dba6dfa7ec92cf1f6d77230ef5818c52594c5a3e9630047997c07fdfc"
+      },
+      "snapshot": {
+        "id": "fc2:823902:player-571970:hits:1:over",
+        "identity_version": 2,
+        "game_pk": 823902,
+        "player_id": 571970,
+        "combo_player_ids": null,
+        "type": "batter",
+        "name": "Max Muncy",
+        "team": "Los Angeles Dodgers",
+        "matchup": "Cincinnati Reds @ Los Angeles Dodgers",
+        "game_start": "2026-09-08T01:10:00Z",
+        "stat": "hits",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "hits",
+          "value": 0.5,
+          "needs": 1
+        },
+        "prop": "Over 0.5 Hits",
+        "hit_probability": 0.6066,
+        "market_odds": -125,
+        "market_implied": 0.5556,
+        "market_edge": 0.051,
+        "market_hold": null,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (A), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (9.2 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "L7 avg EV 89.8mph (league ~88.5)",
+          "L7 barrel% 33.3 \u2014 hot recent contact",
+          "Bat speed trending up L14 (+1.6mph 2nd-half vs 1st-half)",
+          "Platoon: L bat vs RHP (favorable)",
+          "Projected 4.29 PA (batting slot 4)",
+          "Team implied for 4.75 runs (league avg 4.245; line 4.5, game total 8.5) \u2014 a strong offensive environment",
+          "Pitch-type exploit: RV/100 +2.7 vs FF (opposing SP throws it 55.7% of the time)",
+          "Season barrel% 13.2 \u2014 well above-average barrel rate",
+          "Hitters batting ahead of him: 0.344 wOBA (league ~.320)"
+        ],
+        "watchouts": [
+          "Opposing SP ERA 2.79 \u2014 elite pitcher, tough matchup",
+          "Public heavy on Los Angeles Dodgers (money% trails tickets% by 10 pts) \u2014 sharp money is fading this side",
+          "Hitter batting behind him: 0.320 wOBA (league ~.320) \u2014 little lineup protection, an easier batter to pitch around",
+          "Wind blowing IN (5mph) \u2014 power suppressed",
+          "Opposing bullpen fatigue: 2/9 relievers over 60 pitches in L7 (fresh pen \u2014 tougher matchup late)",
+          "Sharp money fading Los Angeles Dodgers (money% -10 pts vs ticket%) \u2014 smart money moving away from this side"
+        ],
+        "prob_ci": [
+          0.5978,
+          0.6352
+        ],
+        "reliability": "A",
+        "reliability_note": null,
+        "sample_n": 130,
+        "lineup_assumed": null,
+        "base_rate": 0.5655,
+        "lift": 0.0411,
+        "lift_reference_rate": null,
+        "stable_lift": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "917ca796",
+          "prediction_timestamp": "2026-09-07T22:24:11.073970+00:00",
+          "odds_fetched_at": "2026-09-07T22:24:05.868097+00:00",
+          "board_generated_at": "2026-09-07T22:24:11.065355+00:00"
+        },
+        "qualification_timestamp": "2026-09-07T22:24:11.073970+00:00",
+        "board_timestamp": "2026-09-07T22:24:11.065355+00:00",
         "slate_date": "2026-09-07"
       }
     }
