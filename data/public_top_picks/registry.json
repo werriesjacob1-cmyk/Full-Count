@@ -2,7 +2,7 @@
   "schema_version": 1,
   "identity_schema_version": 2,
   "rollout_version": "pre-phase-v-live-lifecycle-v1",
-  "updated_at": "2026-09-07T01:17:46.460657+00:00",
+  "updated_at": "2026-09-07T09:47:47.213059+00:00",
   "migration": {
     "version": "pre-phase-v-live-lifecycle-v1",
     "completed_at": "2026-08-17T23:14:57+00:00",
@@ -19991,6 +19991,99 @@
         },
         "qualification_timestamp": "2026-09-07T01:00:06.166763+00:00",
         "board_timestamp": "2026-09-07T01:00:06.155036+00:00",
+        "slate_date": "2026-09-07"
+      }
+    },
+    "fc2:823902:player-695505:strikeouts:5:over": {
+      "canonical_id": "fc2:823902:player-695505:strikeouts:5:over",
+      "settlement_identity": [
+        "823902",
+        [
+          "player",
+          "695505"
+        ],
+        "strikeouts",
+        "5",
+        "over"
+      ],
+      "slate_date": "2026-09-07",
+      "first_published_at": "2026-09-07T09:47:47.213059+00:00",
+      "publication_provenance": {
+        "artifact_id": "6025f0ad7de8e1e2b65552991bbadc197d505f509c56191cd955661e8133c9e5",
+        "source_commit": "834ecebd8565ba2fc2677875ab80c7f18fc6ad6e",
+        "workflow_run_id": "34107865921",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-09-07T09:47:35.787456+00:00",
+        "data_hash": "e36251029e98b8572d9912f145366b5912f680705e4e9f1d364b20a5346fa642",
+        "live_hash": "a5592de2ac21ccd7fa83fb7a87cfb3a5b60e18583f5813deedfe98d38871495e"
+      },
+      "snapshot": {
+        "id": "fc2:823902:player-695505:strikeouts:5:over",
+        "identity_version": 2,
+        "game_pk": 823902,
+        "player_id": 695505,
+        "combo_player_ids": null,
+        "type": "pitcher",
+        "name": "Chase Burns",
+        "team": "Cincinnati Reds",
+        "matchup": "Cincinnati Reds @ Los Angeles Dodgers",
+        "game_start": "2026-09-08T01:10:00Z",
+        "stat": "strikeouts",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "strikeouts",
+          "value": 4.5,
+          "needs": 5
+        },
+        "prop": "Over 4.5 Strikeouts",
+        "hit_probability": 0.6081,
+        "market_odds": -102,
+        "market_implied": 0.4761,
+        "market_edge": 0.132,
+        "market_hold": 0.0605,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (A), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (14.1 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "Opposing team K% 20.6",
+          "Expected workload 22.6 batters faced (his own 22.0/start over 2 real starts, shrunk toward the 23.1 league mean)",
+          "Platoon advantage: 4 of 8 projected hitters bat right-handed against this RHP",
+          "L14 K% 27.3 (44 PA) \u2014 hot recent form",
+          "Recency-weighted K rate 29.0% (exp. decay, halflife 30d, 26 real starts / 592 BF) \u2014 drives a favorable strikeout-probability read"
+        ],
+        "watchouts": [
+          "Significant TTO K% drop-off (TTO1 40.0% -> TTO3 25.0%) \u2014 caution deep into the start",
+          "Workload estimate rests on only 2 starts in the L14 window \u2014 most start-to-start variation in batters faced is noise, so this is shrunk heavily toward league average"
+        ],
+        "prob_ci": [
+          0.5787,
+          0.6966
+        ],
+        "reliability": "A",
+        "reliability_note": null,
+        "sample_n": 26,
+        "lineup_assumed": null,
+        "base_rate": 0.5119,
+        "lift": 0.0962,
+        "lift_reference_rate": null,
+        "stable_lift": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "8be6b68e",
+          "prediction_timestamp": "2026-09-07T09:25:24.988166+00:00",
+          "odds_fetched_at": "2026-09-07T09:25:20.287189+00:00",
+          "board_generated_at": "2026-09-07T09:25:24.968594+00:00"
+        },
+        "qualification_timestamp": "2026-09-07T09:25:24.988166+00:00",
+        "board_timestamp": "2026-09-07T09:25:24.968594+00:00",
         "slate_date": "2026-09-07"
       }
     }
