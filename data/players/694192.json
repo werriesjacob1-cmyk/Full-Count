@@ -2905,6 +2905,140 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-08",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 69.7,
+          "notable_signals": 1,
+          "matchup": "Chicago Cubs @ Milwaukee Brewers",
+          "game_pk": 823738,
+          "team": "Milwaukee Brewers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 82.5714,
+            "pitch_exploit": 2.8571,
+            "l7_avg_ev": 53.287,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 62.0,
+            "lineup_slot": 100.0,
+            "bullpen_fatigue": 20.8333,
+            "bvp_ops": 4.0,
+            "platoon_barrel_pct": 4.0,
+            "platoon_xwoba": 1.2,
+            "park_hand_index": 0.47,
+            "opp_catcher_framing": 0.48,
+            "days_rest": 0.0,
+            "consecutive_games": -1.8,
+            "woba_behind": 46.3636,
+            "pull_park_synergy": 0.0214,
+            "hard_hit_105_rate": 0.32,
+            "team_total_move": 0.0,
+            "team_total_open": 0.0,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": -0.72,
+            "vs_rp_ops": 0.432,
+            "ump_k_pct": 0.624,
+            "ump_bb_pct": 0.192
+          },
+          "hit_probability": 0.7188,
+          "raw_hit_probability": 0.7601,
+          "lift": 0.0467,
+          "reliability": "A",
+          "sample_n": 110,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 57.3,
+          "notable_signals": 1,
+          "matchup": "Chicago Cubs @ Milwaukee Brewers",
+          "game_pk": 823738,
+          "team": "Milwaukee Brewers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": -0.42,
+            "sprint_speed": 46.875,
+            "catcher_poptime": 11.4286,
+            "on_base": 84.6449
+          },
+          "hit_probability": 0.1227,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 110,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 7.8,
+          "notable_signals": 0,
+          "matchup": "Chicago Cubs @ Milwaukee Brewers",
+          "game_pk": 823738,
+          "team": "Milwaukee Brewers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0594
+          },
+          "hit_probability": 0.0594,
+          "raw_hit_probability": null,
+          "lift": 0.0116,
+          "reliability": "A",
+          "sample_n": 110,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 5.1,
+          "notable_signals": 0,
+          "matchup": "Chicago Cubs @ Milwaukee Brewers",
+          "game_pk": 823738,
+          "team": "Milwaukee Brewers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.033
+          },
+          "hit_probability": 0.033,
+          "raw_hit_probability": null,
+          "lift": 0.012,
+          "reliability": "A",
+          "sample_n": 110,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

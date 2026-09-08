@@ -2518,6 +2518,111 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-08",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 73.8,
+          "notable_signals": 1,
+          "matchup": "Tampa Bay Rays @ Atlanta Braves",
+          "game_pk": 824875,
+          "team": "Tampa Bay Rays",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 100.0,
+            "l7_avg_ev": 100.0,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 2.475,
+            "park_hr_index": 39.1,
+            "season_barrel_pct": 28.6667,
+            "lineup_slot": 100.0,
+            "bullpen_fatigue": 37.037,
+            "platoon_barrel_pct": 0.88,
+            "platoon_xwoba": 2.4,
+            "park_hand_index": -0.85,
+            "opp_catcher_framing": -0.0,
+            "days_rest": 2.0,
+            "consecutive_games": -0.6,
+            "woba_behind": 52.7273,
+            "pull_park_synergy": 0.1279,
+            "hard_hit_105_rate": -0.415,
+            "team_total_move": 0.0,
+            "team_total_open": 0.0,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": 0.8,
+            "vs_rp_ops": 2.184,
+            "ump_k_pct": 0.432,
+            "ump_bb_pct": -0.108
+          },
+          "hit_probability": 0.6779,
+          "raw_hit_probability": 0.6606,
+          "lift": 0.1142,
+          "reliability": "A",
+          "sample_n": 138,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 0.3,
+          "notable_signals": 0,
+          "matchup": "Tampa Bay Rays @ Atlanta Braves",
+          "game_pk": 824875,
+          "team": "Tampa Bay Rays",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.03
+          },
+          "hit_probability": 0.03,
+          "raw_hit_probability": null,
+          "lift": -0.0178,
+          "reliability": "A",
+          "sample_n": 138,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 2.0,
+          "notable_signals": 0,
+          "matchup": "Tampa Bay Rays @ Atlanta Braves",
+          "game_pk": 824875,
+          "team": "Tampa Bay Rays",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0207
+          },
+          "hit_probability": 0.0207,
+          "raw_hit_probability": null,
+          "lift": -0.0003,
+          "reliability": "A",
+          "sample_n": 138,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

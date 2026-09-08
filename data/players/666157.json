@@ -372,7 +372,7 @@
         {
           "prop": "Over 3.5 Strikeouts",
           "type": "pitcher",
-          "score": 46.0,
+          "score": 41.4,
           "notable_signals": 0,
           "matchup": "Cincinnati Reds @ Los Angeles Dodgers",
           "game_pk": 823901,
@@ -382,9 +382,12 @@
           "combo_player_ids": null,
           "signals": {
             "opp_team_k_pct": 36.0,
-            "same_hand_ratio": 43.75,
+            "same_hand_ratio": 12.5,
             "l14_k_pct": 42.3529,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 32.6904,
+            "ump_k_pct": -0.12,
+            "ump_bb_pct": -0.012
           },
           "hit_probability": 0.6062,
           "raw_hit_probability": 0.6608,
@@ -400,7 +403,7 @@
         {
           "prop": "Over 15.5 Outs Recorded",
           "type": "pitcher",
-          "score": 17.8,
+          "score": 18.9,
           "notable_signals": 0,
           "matchup": "Cincinnati Reds @ Los Angeles Dodgers",
           "game_pk": 823901,
@@ -409,18 +412,46 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.4597,
+            "outs_rate": 0.4563,
             "avg_outs_per_start": 15.0
           },
-          "hit_probability": 0.4597,
+          "hit_probability": 0.4563,
           "raw_hit_probability": null,
-          "lift": -0.136,
+          "lift": -0.126,
           "reliability": "A",
           "sample_n": 17,
           "projection": {
             "stat": "pitcher_outs",
             "value": 15.5,
             "needs": 16
+          }
+        },
+        {
+          "prop": "Over 11.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 18.2,
+          "notable_signals": 0,
+          "matchup": "Cincinnati Reds @ Los Angeles Dodgers",
+          "game_pk": 823901,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            666157,
+            669373
+          ],
+          "signals": {
+            "combined_k_edge": -0.1889
+          },
+          "hit_probability": 0.4639,
+          "raw_hit_probability": null,
+          "lift": -0.1889,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 11.5,
+            "needs": 12
           }
         }
       ]

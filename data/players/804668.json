@@ -849,6 +849,108 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-08",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 37.6,
+          "notable_signals": 1,
+          "matchup": "Pittsburgh Pirates @ Chicago White Sox",
+          "game_pk": 824551,
+          "team": "Pittsburgh Pirates",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 20.0,
+            "l7_avg_ev": 38.1818,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 74.7,
+            "season_barrel_pct": 75.3333,
+            "lineup_slot": 25.0,
+            "bullpen_fatigue": 55.5556,
+            "platoon_barrel_pct": 3.84,
+            "platoon_xwoba": 1.38,
+            "opp_catcher_framing": 1.8,
+            "days_rest": 4.0,
+            "woba_ahead": 29.0909,
+            "woba_behind": 0.0,
+            "hard_hit_105_rate": 1.265,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": 4.512,
+            "vs_rp_ops": 4.752,
+            "ump_k_pct": -0.432,
+            "ump_bb_pct": 0.096
+          },
+          "hit_probability": 0.6546,
+          "raw_hit_probability": 0.645,
+          "lift": -0.0175,
+          "reliability": "C",
+          "sample_n": 30,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 17.2,
+          "notable_signals": 0,
+          "matchup": "Pittsburgh Pirates @ Chicago White Sox",
+          "game_pk": 824551,
+          "team": "Pittsburgh Pirates",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0972
+          },
+          "hit_probability": 0.0972,
+          "raw_hit_probability": null,
+          "lift": 0.0494,
+          "reliability": "C",
+          "sample_n": 30,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 13.7,
+          "notable_signals": 1,
+          "matchup": "Pittsburgh Pirates @ Chicago White Sox",
+          "game_pk": 824551,
+          "team": "Pittsburgh Pirates",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.067
+          },
+          "hit_probability": 0.067,
+          "raw_hit_probability": null,
+          "lift": 0.046,
+          "reliability": "C",
+          "sample_n": 30,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

@@ -2486,6 +2486,111 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-08",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 55.7,
+          "notable_signals": 1,
+          "matchup": "Chicago Cubs @ Milwaukee Brewers",
+          "game_pk": 823738,
+          "team": "Chicago Cubs",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 0.0,
+            "l7_avg_ev": 36.3095,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 18.0,
+            "lineup_slot": 75.0,
+            "bullpen_fatigue": 41.6667,
+            "platoon_barrel_pct": -0.56,
+            "platoon_xwoba": 0.06,
+            "park_hand_index": 0.47,
+            "opp_catcher_framing": 0.48,
+            "days_rest": 0.0,
+            "consecutive_games": -1.2,
+            "woba_ahead": 70.9091,
+            "woba_behind": 34.5455,
+            "pull_park_synergy": 0.3076,
+            "hard_hit_105_rate": -0.4175,
+            "team_total_move": 0.0,
+            "team_total_open": -6.0,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": 0.288,
+            "vs_rp_ops": 1.14,
+            "ump_k_pct": 0.624,
+            "ump_bb_pct": 0.192
+          },
+          "hit_probability": 0.704,
+          "raw_hit_probability": 0.7323,
+          "lift": 0.0319,
+          "reliability": "A",
+          "sample_n": 142,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 0.3,
+          "notable_signals": 0,
+          "matchup": "Chicago Cubs @ Milwaukee Brewers",
+          "game_pk": 823738,
+          "team": "Chicago Cubs",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0299
+          },
+          "hit_probability": 0.0299,
+          "raw_hit_probability": null,
+          "lift": -0.0179,
+          "reliability": "A",
+          "sample_n": 142,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 0.0,
+          "notable_signals": 0,
+          "matchup": "Chicago Cubs @ Milwaukee Brewers",
+          "game_pk": 823738,
+          "team": "Chicago Cubs",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0025
+          },
+          "hit_probability": 0.0025,
+          "raw_hit_probability": null,
+          "lift": -0.0185,
+          "reliability": "A",
+          "sample_n": 142,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

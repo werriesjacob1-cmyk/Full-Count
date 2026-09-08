@@ -384,8 +384,8 @@
         {
           "prop": "Over 4.5 Strikeouts",
           "type": "pitcher",
-          "score": 46.2,
-          "notable_signals": 1,
+          "score": 43.6,
+          "notable_signals": 0,
           "matchup": "Tampa Bay Rays @ Atlanta Braves",
           "game_pk": 824875,
           "team": "Tampa Bay Rays",
@@ -397,9 +397,9 @@
             "same_hand_ratio": 75.0,
             "l14_k_pct": 65.8824,
             "env_neutral": 50.0,
-            "ump_accuracy": 68.7656,
-            "ump_k_pct": -0.78,
-            "ump_bb_pct": -0.468
+            "ump_accuracy": 42.5943,
+            "ump_k_pct": -0.432,
+            "ump_bb_pct": 0.108
           },
           "hit_probability": 0.5214,
           "raw_hit_probability": 0.5214,
@@ -415,7 +415,7 @@
         {
           "prop": "Over 15.5 Outs Recorded",
           "type": "pitcher",
-          "score": 39.0,
+          "score": 40.4,
           "notable_signals": 0,
           "matchup": "Tampa Bay Rays @ Atlanta Braves",
           "game_pk": 824875,
@@ -424,18 +424,46 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.5463,
+            "outs_rate": 0.5439,
             "avg_outs_per_start": 15.75
           },
-          "hit_probability": 0.5463,
+          "hit_probability": 0.5439,
           "raw_hit_probability": null,
-          "lift": -0.0494,
+          "lift": -0.0384,
           "reliability": "A",
           "sample_n": 28,
           "projection": {
             "stat": "pitcher_outs",
             "value": 15.5,
             "needs": 16
+          }
+        },
+        {
+          "prop": "Over 8.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 53.1,
+          "notable_signals": 0,
+          "matchup": "Tampa Bay Rays @ Atlanta Braves",
+          "game_pk": 824875,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            642547,
+            700363
+          ],
+          "signals": {
+            "combined_k_edge": 0.001
+          },
+          "hit_probability": 0.5293,
+          "raw_hit_probability": null,
+          "lift": 0.001,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 8.5,
+            "needs": 9
           }
         }
       ]

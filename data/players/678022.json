@@ -344,7 +344,7 @@
         {
           "prop": "Over 3.5 Strikeouts",
           "type": "pitcher",
-          "score": 41.7,
+          "score": 41.4,
           "notable_signals": 0,
           "matchup": "Toronto Blue Jays @ Athletics",
           "game_pk": 824957,
@@ -357,7 +357,10 @@
             "same_hand_ratio": 100.0,
             "l14_k_pct": 84.1176,
             "tto_penalty": -8.0,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 47.1621,
+            "ump_k_pct": 0.024,
+            "ump_bb_pct": 0.108
           },
           "hit_probability": 0.6265,
           "raw_hit_probability": 0.7626,
@@ -382,12 +385,12 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.2934,
+            "outs_rate": 0.2891,
             "avg_outs_per_start": 13.54
           },
-          "hit_probability": 0.2934,
+          "hit_probability": 0.2891,
           "raw_hit_probability": null,
-          "lift": -0.3023,
+          "lift": -0.2932,
           "reliability": "B",
           "sample_n": 13,
           "projection": {

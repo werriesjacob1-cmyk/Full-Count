@@ -353,7 +353,7 @@
         {
           "prop": "Over 4.5 Strikeouts",
           "type": "pitcher",
-          "score": 45.7,
+          "score": 36.6,
           "notable_signals": 0,
           "matchup": "Washington Nationals @ San Diego Padres",
           "game_pk": 823250,
@@ -363,9 +363,12 @@
           "combo_player_ids": null,
           "signals": {
             "opp_team_k_pct": 48.0,
-            "same_hand_ratio": 57.1429,
+            "same_hand_ratio": 61.1111,
             "l14_k_pct": 0.0,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 40.2838,
+            "ump_k_pct": 0.06,
+            "ump_bb_pct": 0.624
           },
           "hit_probability": 0.4047,
           "raw_hit_probability": 0.4047,
@@ -381,7 +384,7 @@
         {
           "prop": "Over 15.5 Outs Recorded",
           "type": "pitcher",
-          "score": 50.6,
+          "score": 51.9,
           "notable_signals": 0,
           "matchup": "Washington Nationals @ San Diego Padres",
           "game_pk": 823250,
@@ -390,12 +393,12 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.5919,
+            "outs_rate": 0.5891,
             "avg_outs_per_start": 15.5
           },
-          "hit_probability": 0.5919,
+          "hit_probability": 0.5891,
           "raw_hit_probability": null,
-          "lift": -0.0038,
+          "lift": 0.0068,
           "reliability": "A",
           "sample_n": 22,
           "projection": {

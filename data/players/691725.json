@@ -382,7 +382,7 @@
       "date": "2026-09-08",
       "evaluations": [
         {
-          "prop": "Over 4.5 Strikeouts",
+          "prop": "Over 3.5 Strikeouts",
           "type": "pitcher",
           "score": 44.0,
           "notable_signals": 0,
@@ -401,21 +401,21 @@
             "ump_k_pct": 0.288,
             "ump_bb_pct": 0.06
           },
-          "hit_probability": 0.5903,
-          "raw_hit_probability": 0.5824,
-          "lift": 0.0743,
+          "hit_probability": 0.6256,
+          "raw_hit_probability": 0.7583,
+          "lift": -0.0731,
           "reliability": "A",
-          "sample_n": 19,
+          "sample_n": 20,
           "projection": {
             "stat": "strikeouts",
-            "value": 4.5,
-            "needs": 5
+            "value": 3.5,
+            "needs": 4
           }
         },
         {
-          "prop": "Over 15.5 Outs Recorded",
+          "prop": "Over 13.5 Outs Recorded",
           "type": "pitcher",
-          "score": 28.6,
+          "score": 41.9,
           "notable_signals": 0,
           "matchup": "Houston Astros @ Philadelphia Phillies",
           "game_pk": 823414,
@@ -424,18 +424,18 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.503,
-            "avg_outs_per_start": 15.05
+            "outs_rate": 0.6895,
+            "avg_outs_per_start": 14.35
           },
-          "hit_probability": 0.503,
+          "hit_probability": 0.6895,
           "raw_hit_probability": null,
-          "lift": -0.0927,
+          "lift": -0.1315,
           "reliability": "A",
-          "sample_n": 19,
+          "sample_n": 20,
           "projection": {
             "stat": "pitcher_outs",
-            "value": 15.5,
-            "needs": 16
+            "value": 13.5,
+            "needs": 14
           }
         }
       ]

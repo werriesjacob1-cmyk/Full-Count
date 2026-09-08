@@ -390,7 +390,7 @@
         {
           "prop": "Over 14.5 Outs Recorded",
           "type": "pitcher",
-          "score": 58.4,
+          "score": 58.7,
           "notable_signals": 0,
           "matchup": "Colorado Rockies @ New York Yankees",
           "game_pk": 823500,
@@ -399,18 +399,46 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.7274,
+            "outs_rate": 0.7253,
             "avg_outs_per_start": 14.8
           },
-          "hit_probability": 0.7274,
+          "hit_probability": 0.7253,
           "raw_hit_probability": null,
-          "lift": -0.0458,
+          "lift": -0.0422,
           "reliability": "B",
           "sample_n": 10,
           "projection": {
             "stat": "pitcher_outs",
             "value": 14.5,
             "needs": 15
+          }
+        },
+        {
+          "prop": "Over 11.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 33.8,
+          "notable_signals": 0,
+          "matchup": "Colorado Rockies @ New York Yankees",
+          "game_pk": 823500,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            687312,
+            693645
+          ],
+          "signals": {
+            "combined_k_edge": -0.1102
+          },
+          "hit_probability": 0.5022,
+          "raw_hit_probability": null,
+          "lift": -0.1102,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 11.5,
+            "needs": 12
           }
         }
       ]

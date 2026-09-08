@@ -361,7 +361,7 @@
       "date": "2026-09-08",
       "evaluations": [
         {
-          "prop": "Over 4.5 Strikeouts",
+          "prop": "Over 3.5 Strikeouts",
           "type": "pitcher",
           "score": 26.9,
           "notable_signals": 1,
@@ -381,21 +381,21 @@
             "ump_k_pct": -0.384,
             "ump_bb_pct": 0.156
           },
-          "hit_probability": 0.5246,
-          "raw_hit_probability": 0.5246,
-          "lift": 0.0086,
+          "hit_probability": 0.6171,
+          "raw_hit_probability": 0.7155,
+          "lift": -0.0816,
           "reliability": "B",
           "sample_n": 13,
           "projection": {
             "stat": "strikeouts",
-            "value": 4.5,
-            "needs": 5
+            "value": 3.5,
+            "needs": 4
           }
         },
         {
-          "prop": "Over 15.5 Outs Recorded",
+          "prop": "Over 14.5 Outs Recorded",
           "type": "pitcher",
-          "score": 28.6,
+          "score": 56.1,
           "notable_signals": 0,
           "matchup": "Minnesota Twins @ Detroit Tigers",
           "game_pk": 824228,
@@ -404,46 +404,18 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.5039,
+            "outs_rate": 0.716,
             "avg_outs_per_start": 15.38
           },
-          "hit_probability": 0.5039,
+          "hit_probability": 0.716,
           "raw_hit_probability": null,
-          "lift": -0.0918,
+          "lift": -0.0515,
           "reliability": "B",
           "sample_n": 13,
           "projection": {
             "stat": "pitcher_outs",
-            "value": 15.5,
-            "needs": 16
-          }
-        },
-        {
-          "prop": "Over 8.5 Combined Strikeouts",
-          "type": "pitcher_combo",
-          "score": 55.0,
-          "notable_signals": 0,
-          "matchup": "Minnesota Twins @ Detroit Tigers",
-          "game_pk": 824228,
-          "team": null,
-          "side": null,
-          "lean": null,
-          "combo_player_ids": [
-            665152,
-            623454
-          ],
-          "signals": {
-            "combined_k_edge": -0.0019
-          },
-          "hit_probability": 0.6459,
-          "raw_hit_probability": null,
-          "lift": -0.0019,
-          "reliability": "D",
-          "sample_n": 0,
-          "projection": {
-            "stat": "combined_strikeouts",
-            "value": 8.5,
-            "needs": 9
+            "value": 14.5,
+            "needs": 15
           }
         }
       ]
