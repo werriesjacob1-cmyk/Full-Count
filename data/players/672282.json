@@ -417,6 +417,34 @@
             "value": 17.5,
             "needs": 18
           }
+        },
+        {
+          "prop": "Over 11.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 23.2,
+          "notable_signals": 0,
+          "matchup": "Los Angeles Angels @ Boston Red Sox",
+          "game_pk": 824714,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            672282,
+            663776
+          ],
+          "signals": {
+            "combined_k_edge": -0.1394
+          },
+          "hit_probability": 0.4405,
+          "raw_hit_probability": null,
+          "lift": -0.1394,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 11.5,
+            "needs": 12
+          }
         }
       ]
     }

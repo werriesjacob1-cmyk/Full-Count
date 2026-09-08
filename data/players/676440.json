@@ -414,6 +414,34 @@
             "value": 17.5,
             "needs": 18
           }
+        },
+        {
+          "prop": "Over 8.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 53.3,
+          "notable_signals": 0,
+          "matchup": "Cleveland Guardians @ Baltimore Orioles",
+          "game_pk": 824792,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            676440,
+            687064
+          ],
+          "signals": {
+            "combined_k_edge": -0.0316
+          },
+          "hit_probability": 0.5808,
+          "raw_hit_probability": null,
+          "lift": -0.0316,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 8.5,
+            "needs": 9
+          }
         }
       ]
     }

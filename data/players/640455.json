@@ -386,7 +386,7 @@
         {
           "prop": "Over 5.5 Strikeouts",
           "type": "pitcher",
-          "score": 28.1,
+          "score": 27.5,
           "notable_signals": 0,
           "matchup": "New York Mets @ Miami Marlins",
           "game_pk": 823821,
@@ -396,9 +396,12 @@
           "combo_player_ids": null,
           "signals": {
             "opp_team_k_pct": 48.0,
-            "same_hand_ratio": 5.5556,
+            "same_hand_ratio": 0.0,
             "l14_k_pct": 0.0,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 45.5856,
+            "ump_k_pct": 0.3,
+            "ump_bb_pct": 0.252
           },
           "hit_probability": 0.3583,
           "raw_hit_probability": 0.3583,
@@ -435,6 +438,34 @@
             "stat": "pitcher_outs",
             "value": 17.5,
             "needs": 18
+          }
+        },
+        {
+          "prop": "Over 9.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 5.1,
+          "notable_signals": 0,
+          "matchup": "New York Mets @ Miami Marlins",
+          "game_pk": 823821,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            640455,
+            645261
+          ],
+          "signals": {
+            "combined_k_edge": -0.2077
+          },
+          "hit_probability": 0.3613,
+          "raw_hit_probability": null,
+          "lift": -0.2077,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 9.5,
+            "needs": 10
           }
         }
       ]

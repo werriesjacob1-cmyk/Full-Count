@@ -8,8 +8,8 @@
         {
           "prop": "Over 3.5 Strikeouts",
           "type": "pitcher",
-          "score": 35.5,
-          "notable_signals": 0,
+          "score": 32.0,
+          "notable_signals": 1,
           "matchup": "Arizona Diamondbacks @ Kansas City Royals",
           "game_pk": 824063,
           "team": "Arizona Diamondbacks",
@@ -18,8 +18,11 @@
           "combo_player_ids": null,
           "signals": {
             "opp_team_k_pct": 37.0,
-            "same_hand_ratio": 43.75,
-            "env_neutral": 50.0
+            "same_hand_ratio": 75.0,
+            "env_neutral": 50.0,
+            "ump_accuracy": 68.382,
+            "ump_k_pct": 0.9,
+            "ump_bb_pct": 0.444
           },
           "hit_probability": 0.6236,
           "raw_hit_probability": 0.7479,

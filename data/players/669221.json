@@ -588,6 +588,59 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-08",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 21.2,
+          "notable_signals": 0,
+          "matchup": "Tampa Bay Rays @ Atlanta Braves",
+          "game_pk": 824875,
+          "team": "Atlanta Braves",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 70.2857,
+            "l7_avg_ev": 100.0,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 40.4,
+            "season_barrel_pct": 27.3333,
+            "lineup_slot": 0.0,
+            "bullpen_fatigue": 16.6667,
+            "platoon_barrel_pct": -2.88,
+            "platoon_xwoba": -4.32,
+            "park_hand_index": -0.85,
+            "opp_catcher_framing": -0.0,
+            "days_rest": 2.0,
+            "woba_ahead": 13.6364,
+            "woba_behind": 53.6364,
+            "pull_park_synergy": -0.4403,
+            "team_total_move": 0.0,
+            "team_total_open": 0.0,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": 2.376,
+            "vs_rp_ops": 1.62,
+            "ump_k_pct": 0.78,
+            "ump_bb_pct": 0.468
+          },
+          "hit_probability": 0.5418,
+          "raw_hit_probability": 0.5593,
+          "lift": -0.0219,
+          "reliability": "D",
+          "sample_n": 20,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

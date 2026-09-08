@@ -708,6 +708,84 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-08",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 46.6,
+          "notable_signals": 0,
+          "matchup": "Minnesota Twins @ Detroit Tigers",
+          "game_pk": 824228,
+          "team": "Detroit Tigers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 94.2857,
+            "l7_avg_ev": 100.0,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 51.9,
+            "season_barrel_pct": 35.3333,
+            "lineup_slot": 37.5,
+            "bullpen_fatigue": 33.3333,
+            "platoon_barrel_pct": 1.04,
+            "platoon_xwoba": -0.78,
+            "park_hand_index": -2.85,
+            "opp_catcher_framing": 0.24,
+            "days_rest": 2.0,
+            "woba_ahead": 90.0,
+            "woba_behind": 30.9091,
+            "team_total_move": 0.0,
+            "team_total_open": 0.0,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "ump_k_pct": 0.384,
+            "ump_bb_pct": -0.156
+          },
+          "hit_probability": 0.5777,
+          "raw_hit_probability": 0.5849,
+          "lift": 0.014,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 35.8,
+          "notable_signals": 0,
+          "matchup": "Minnesota Twins @ Detroit Tigers",
+          "game_pk": 824228,
+          "team": "Detroit Tigers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": 6.0,
+            "sprint_speed": 28.125,
+            "catcher_poptime": 14.2857,
+            "on_base": 26.1036
+          },
+          "hit_probability": null,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }
