@@ -356,6 +356,65 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-08",
+      "evaluations": [
+        {
+          "prop": "Over 3.5 Strikeouts",
+          "type": "pitcher",
+          "score": 50.3,
+          "notable_signals": 0,
+          "matchup": "Cleveland Guardians @ Baltimore Orioles",
+          "game_pk": 824792,
+          "team": "Baltimore Orioles",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_k_pct": 43.0,
+            "same_hand_ratio": 100.0,
+            "l14_k_pct": 31.7647,
+            "env_neutral": 50.0
+          },
+          "hit_probability": 0.6168,
+          "raw_hit_probability": 0.7137,
+          "lift": -0.0818,
+          "reliability": "A",
+          "sample_n": 24,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 3.5,
+            "needs": 4
+          }
+        },
+        {
+          "prop": "Over 16.5 Outs Recorded",
+          "type": "pitcher",
+          "score": 63.6,
+          "notable_signals": 1,
+          "matchup": "Cleveland Guardians @ Baltimore Orioles",
+          "game_pk": 824792,
+          "team": "Baltimore Orioles",
+          "side": "home",
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "outs_rate": 0.6065,
+            "avg_outs_per_start": 17.12
+          },
+          "hit_probability": 0.6065,
+          "raw_hit_probability": null,
+          "lift": 0.074,
+          "reliability": "A",
+          "sample_n": 24,
+          "projection": {
+            "stat": "pitcher_outs",
+            "value": 16.5,
+            "needs": 17
+          }
+        }
+      ]
     }
   ]
 }

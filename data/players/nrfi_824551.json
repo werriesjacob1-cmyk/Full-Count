@@ -1,0 +1,37 @@
+{
+  "player_id": "nrfi_824551",
+  "name": "Pittsburgh Pirates @ Chicago White Sox \u2014 1st Inning (Both Teams)",
+  "snapshots": [
+    {
+      "date": "2026-09-08",
+      "evaluations": [
+        {
+          "prop": "No runs in the 1st (both teams)",
+          "type": "game",
+          "score": 63.9,
+          "notable_signals": 0,
+          "matchup": "Pittsburgh Pirates @ Chicago White Sox",
+          "game_pk": 824551,
+          "team": null,
+          "side": "both",
+          "lean": "NRFI",
+          "combo_player_ids": null,
+          "signals": {
+            "home_team_scores_p": 0.2857,
+            "away_team_scores_p": 0.273,
+            "fi_n_starts": 26.0
+          },
+          "hit_probability": 0.5193,
+          "raw_hit_probability": null,
+          "lift": 0.0209,
+          "reliability": "A",
+          "sample_n": 26,
+          "projection": {
+            "stat": "nrfi_combined",
+            "value": 51.9
+          }
+        }
+      ]
+    }
+  ]
+}
