@@ -2,7 +2,7 @@
   "schema_version": 1,
   "identity_schema_version": 2,
   "rollout_version": "pre-phase-v-live-lifecycle-v1",
-  "updated_at": "2026-09-08T00:12:53.008976+00:00",
+  "updated_at": "2026-09-08T07:42:52.668650+00:00",
   "migration": {
     "version": "pre-phase-v-live-lifecycle-v1",
     "completed_at": "2026-08-17T23:14:57+00:00",
@@ -21532,6 +21532,95 @@
         },
         "qualification_timestamp": "2026-09-08T00:06:04.201509+00:00",
         "board_timestamp": "2026-09-08T00:06:04.183869+00:00",
+        "slate_date": "2026-09-08"
+      }
+    },
+    "fc2:823500:player-687312:pitcher_outs:15:over": {
+      "canonical_id": "fc2:823500:player-687312:pitcher_outs:15:over",
+      "settlement_identity": [
+        "823500",
+        [
+          "player",
+          "687312"
+        ],
+        "pitcher_outs",
+        "15",
+        "over"
+      ],
+      "slate_date": "2026-09-08",
+      "first_published_at": "2026-09-08T07:42:52.668650+00:00",
+      "publication_provenance": {
+        "artifact_id": "44fc2ea06837b5cd389e5ca91d58f96ec94282c1b9023f2e2e4255dda36f5363",
+        "source_commit": "42740e3ad62efbc2b9a1a99c825781fbb7fd30c3",
+        "workflow_run_id": "34200571854",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-09-08T07:42:37.972345+00:00",
+        "data_hash": "5eab64054629a2fdc219ded804ef7a819c96f661ff8b6b72b7cf605f8b44ecf8",
+        "live_hash": "c773f4f54381d8fc484ded413f7fdee572a5f0e79d720da6eb7370106b84f018"
+      },
+      "snapshot": {
+        "id": "fc2:823500:player-687312:pitcher_outs:15:over",
+        "identity_version": 2,
+        "game_pk": 823500,
+        "player_id": 687312,
+        "combo_player_ids": null,
+        "type": "pitcher",
+        "name": "Gabriel Hughes",
+        "team": "Colorado Rockies",
+        "matchup": "Colorado Rockies @ New York Yankees",
+        "game_start": "2026-09-08T23:05:00Z",
+        "stat": "pitcher_outs",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "pitcher_outs",
+          "value": 14.5,
+          "needs": 15
+        },
+        "prop": "Over 14.5 Outs Recorded",
+        "hit_probability": 0.7274,
+        "market_odds": -152,
+        "market_implied": 0.5612,
+        "market_edge": 0.1662,
+        "market_hold": 0.0749,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (B), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (16.9 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "Recorded 15+ outs (5.0 IP) in 72.7% of his last 10 real starts (league 77.3%, avg 14.8 outs/start)"
+        ],
+        "watchouts": [
+          "No real FanDuel line found for this pitcher yet -- this threshold is model-anchored to his average workload, not a posted market number",
+          "No positive read here: 4.6 pts BELOW the 77% league base rate for this market"
+        ],
+        "prob_ci": [
+          0.6621,
+          0.844
+        ],
+        "reliability": "B",
+        "reliability_note": null,
+        "sample_n": 10,
+        "lineup_assumed": null,
+        "base_rate": 0.7732,
+        "lift": -0.0458,
+        "lift_reference_rate": null,
+        "stable_lift": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "a040e6b7",
+          "prediction_timestamp": "2026-09-08T07:36:56.323821+00:00",
+          "odds_fetched_at": "2026-09-08T07:36:49.823480+00:00",
+          "board_generated_at": "2026-09-08T07:36:56.295677+00:00"
+        },
+        "qualification_timestamp": "2026-09-08T07:36:56.323821+00:00",
+        "board_timestamp": "2026-09-08T07:36:56.295677+00:00",
         "slate_date": "2026-09-08"
       }
     }
