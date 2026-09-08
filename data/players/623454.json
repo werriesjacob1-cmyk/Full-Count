@@ -371,9 +371,9 @@
             "l14_k_pct": 42.3529,
             "env_neutral": 50.0
           },
-          "hit_probability": 0.5282,
-          "raw_hit_probability": 0.5282,
-          "lift": 0.0159,
+          "hit_probability": 0.5301,
+          "raw_hit_probability": 0.5301,
+          "lift": 0.0141,
           "reliability": "C",
           "sample_n": 8,
           "projection": {
@@ -383,9 +383,9 @@
           }
         },
         {
-          "prop": "Over 12.5 Outs Recorded",
+          "prop": "Over 15.5 Outs Recorded",
           "type": "pitcher",
-          "score": 46.5,
+          "score": 0,
           "notable_signals": 0,
           "matchup": "Minnesota Twins @ Detroit Tigers",
           "game_pk": 824228,
@@ -394,18 +394,18 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.724,
+            "outs_rate": 0.3267,
             "avg_outs_per_start": 13.25
           },
-          "hit_probability": 0.724,
+          "hit_probability": 0.3267,
           "raw_hit_probability": null,
-          "lift": -0.132,
+          "lift": -0.269,
           "reliability": "C",
           "sample_n": 8,
           "projection": {
             "stat": "pitcher_outs",
-            "value": 12.5,
-            "needs": 13
+            "value": 15.5,
+            "needs": 16
           }
         }
       ]

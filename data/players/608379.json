@@ -347,9 +347,9 @@
             "l14_k_pct": 97.0588,
             "env_neutral": 50.0
           },
-          "hit_probability": 0.59,
-          "raw_hit_probability": 0.5808,
-          "lift": 0.0777,
+          "hit_probability": 0.5903,
+          "raw_hit_probability": 0.5826,
+          "lift": 0.0743,
           "reliability": "A",
           "sample_n": 28,
           "projection": {
@@ -359,9 +359,9 @@
           }
         },
         {
-          "prop": "Over 18.5 Outs Recorded",
+          "prop": "Over 17.5 Outs Recorded",
           "type": "pitcher",
-          "score": 56.2,
+          "score": 90.2,
           "notable_signals": 1,
           "matchup": "Arizona Diamondbacks @ Kansas City Royals",
           "game_pk": 824063,
@@ -370,18 +370,18 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.3909,
+            "outs_rate": 0.697,
             "avg_outs_per_start": 18.93
           },
-          "hit_probability": 0.3909,
+          "hit_probability": 0.697,
           "raw_hit_probability": null,
-          "lift": 0.1759,
+          "lift": 0.2473,
           "reliability": "A",
           "sample_n": 28,
           "projection": {
             "stat": "pitcher_outs",
-            "value": 18.5,
-            "needs": 19
+            "value": 17.5,
+            "needs": 18
           }
         }
       ]
