@@ -2599,6 +2599,134 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-09",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 29.2,
+          "notable_signals": 1,
+          "matchup": "Cleveland Guardians @ Baltimore Orioles",
+          "game_pk": 824791,
+          "team": "Cleveland Guardians",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "sp_era_weak": 40.2857,
+            "l7_avg_ev": 0.0,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 34.7,
+            "season_barrel_pct": 0.6667,
+            "lineup_slot": 0.0,
+            "bullpen_fatigue": 16.6667,
+            "platoon_barrel_pct": -3.68,
+            "platoon_xwoba": -0.9,
+            "opp_catcher_framing": -0.0,
+            "days_rest": 0.0,
+            "woba_ahead": 0.0,
+            "woba_behind": 30.9091,
+            "team_total_move": 0.0,
+            "team_total_open": 0.0,
+            "getaway_day": -2.0,
+            "series_game": 2.0,
+            "sp_rp_ops_gap": -0.592,
+            "vs_rp_ops": -0.852,
+            "ump_k_pct": 0.048,
+            "ump_bb_pct": -0.408
+          },
+          "hit_probability": 0.6687,
+          "raw_hit_probability": 0.6693,
+          "lift": -0.0013,
+          "reliability": "A",
+          "sample_n": 139,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 28.3,
+          "notable_signals": 0,
+          "matchup": "Cleveland Guardians @ Baltimore Orioles",
+          "game_pk": 824791,
+          "team": "Cleveland Guardians",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": -3.24,
+            "sprint_speed": 3.125,
+            "catcher_poptime": 20.0,
+            "on_base": 41.4587
+          },
+          "hit_probability": 0.1143,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 139,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 0.0,
+          "notable_signals": 0,
+          "matchup": "Cleveland Guardians @ Baltimore Orioles",
+          "game_pk": 824791,
+          "team": "Cleveland Guardians",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0243
+          },
+          "hit_probability": 0.0243,
+          "raw_hit_probability": null,
+          "lift": -0.0235,
+          "reliability": "A",
+          "sample_n": 139,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 0.0,
+          "notable_signals": 0,
+          "matchup": "Cleveland Guardians @ Baltimore Orioles",
+          "game_pk": 824791,
+          "team": "Cleveland Guardians",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0026
+          },
+          "hit_probability": 0.0026,
+          "raw_hit_probability": null,
+          "lift": -0.0183,
+          "reliability": "A",
+          "sample_n": 139,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

@@ -248,7 +248,7 @@
       "date": "2026-09-09",
       "evaluations": [
         {
-          "prop": "Over 4.5 Strikeouts",
+          "prop": "Over 3.5 Strikeouts",
           "type": "pitcher",
           "score": 47.5,
           "notable_signals": 1,
@@ -267,21 +267,21 @@
             "ump_k_pct": 0.288,
             "ump_bb_pct": 0.348
           },
-          "hit_probability": 0.5191,
-          "raw_hit_probability": 0.5191,
-          "lift": 0.0025,
+          "hit_probability": 0.6164,
+          "raw_hit_probability": 0.7119,
+          "lift": -0.0853,
           "reliability": "C",
           "sample_n": 6,
           "projection": {
             "stat": "strikeouts",
-            "value": 4.5,
-            "needs": 5
+            "value": 3.5,
+            "needs": 4
           }
         },
         {
-          "prop": "Over 15.5 Outs Recorded",
+          "prop": "Over 14.5 Outs Recorded",
           "type": "pitcher",
-          "score": 19.5,
+          "score": 47.0,
           "notable_signals": 0,
           "matchup": "St. Louis Cardinals @ San Francisco Giants",
           "game_pk": 823172,
@@ -290,18 +290,18 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.4435,
+            "outs_rate": 0.8014,
             "avg_outs_per_start": 15.33
           },
-          "hit_probability": 0.4435,
+          "hit_probability": 0.8014,
           "raw_hit_probability": null,
-          "lift": -0.1101,
+          "lift": 0.0318,
           "reliability": "C",
           "sample_n": 6,
           "projection": {
             "stat": "pitcher_outs",
-            "value": 15.5,
-            "needs": 16
+            "value": 14.5,
+            "needs": 15
           }
         }
       ]

@@ -1,0 +1,67 @@
+{
+  "player_id": 625643,
+  "name": "Reynaldo L\u00f3pez",
+  "snapshots": [
+    {
+      "date": "2026-09-09",
+      "evaluations": [
+        {
+          "prop": "Over 3.5 Strikeouts",
+          "type": "pitcher",
+          "score": 20.7,
+          "notable_signals": 1,
+          "matchup": "Tampa Bay Rays @ Atlanta Braves",
+          "game_pk": 824871,
+          "team": "Atlanta Braves",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_k_pct": 14.0,
+            "same_hand_ratio": 33.3333,
+            "env_neutral": 50.0,
+            "ump_accuracy": 68.7656,
+            "ump_k_pct": -0.78,
+            "ump_bb_pct": -0.48
+          },
+          "hit_probability": 0.6264,
+          "raw_hit_probability": 0.7622,
+          "lift": -0.0753,
+          "reliability": "B",
+          "sample_n": 11,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 3.5,
+            "needs": 4
+          }
+        },
+        {
+          "prop": "Over 13.5 Outs Recorded",
+          "type": "pitcher",
+          "score": 60.4,
+          "notable_signals": 0,
+          "matchup": "Tampa Bay Rays @ Atlanta Braves",
+          "game_pk": 824871,
+          "team": "Atlanta Braves",
+          "side": "home",
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "outs_rate": 0.7575,
+            "avg_outs_per_start": 13.55
+          },
+          "hit_probability": 0.7575,
+          "raw_hit_probability": null,
+          "lift": -0.0555,
+          "reliability": "B",
+          "sample_n": 11,
+          "projection": {
+            "stat": "pitcher_outs",
+            "value": 13.5,
+            "needs": 14
+          }
+        }
+      ]
+    }
+  ]
+}

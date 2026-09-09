@@ -361,7 +361,7 @@
         {
           "prop": "Over 3.5 Strikeouts",
           "type": "pitcher",
-          "score": 44.4,
+          "score": 30.7,
           "notable_signals": 0,
           "matchup": "New York Mets @ Miami Marlins",
           "game_pk": 823818,
@@ -373,7 +373,10 @@
             "opp_team_k_pct": 55.0,
             "same_hand_ratio": 43.75,
             "l14_k_pct": 2.3529,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 49.1615,
+            "ump_k_pct": -0.624,
+            "ump_bb_pct": 0.108
           },
           "hit_probability": 0.5459,
           "raw_hit_probability": 0.5459,
@@ -389,7 +392,7 @@
         {
           "prop": "Over 14.5 Outs Recorded",
           "type": "pitcher",
-          "score": 59.2,
+          "score": 58.2,
           "notable_signals": 0,
           "matchup": "New York Mets @ Miami Marlins",
           "game_pk": 823818,
@@ -398,12 +401,12 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.7243,
+            "outs_rate": 0.7266,
             "avg_outs_per_start": 15.29
           },
-          "hit_probability": 0.7243,
+          "hit_probability": 0.7266,
           "raw_hit_probability": null,
-          "lift": -0.035,
+          "lift": -0.043,
           "reliability": "A",
           "sample_n": 21,
           "projection": {

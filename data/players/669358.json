@@ -406,7 +406,7 @@
         {
           "prop": "Over 4.5 Strikeouts",
           "type": "pitcher",
-          "score": 43.4,
+          "score": 29.8,
           "notable_signals": 0,
           "matchup": "Cleveland Guardians @ Baltimore Orioles",
           "game_pk": 824791,
@@ -418,7 +418,10 @@
             "opp_team_k_pct": 42.0,
             "same_hand_ratio": 0.0,
             "l14_k_pct": 29.4118,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 48.45,
+            "ump_k_pct": -0.048,
+            "ump_bb_pct": 0.408
           },
           "hit_probability": 0.5874,
           "raw_hit_probability": 0.5684,
@@ -434,7 +437,7 @@
         {
           "prop": "Over 16.5 Outs Recorded",
           "type": "pitcher",
-          "score": 87.9,
+          "score": 87.8,
           "notable_signals": 1,
           "matchup": "Cleveland Guardians @ Baltimore Orioles",
           "game_pk": 824791,
@@ -443,12 +446,12 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.6713,
+            "outs_rate": 0.6715,
             "avg_outs_per_start": 17.5
           },
-          "hit_probability": 0.6713,
+          "hit_probability": 0.6715,
           "raw_hit_probability": null,
-          "lift": 0.2008,
+          "lift": 0.1998,
           "reliability": "A",
           "sample_n": 28,
           "projection": {

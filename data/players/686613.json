@@ -333,8 +333,8 @@
         {
           "prop": "Over 4.5 Strikeouts",
           "type": "pitcher",
-          "score": 37.4,
-          "notable_signals": 0,
+          "score": 39.5,
+          "notable_signals": 1,
           "matchup": "Houston Astros @ Philadelphia Phillies",
           "game_pk": 823416,
           "team": "Houston Astros",
@@ -345,7 +345,10 @@
             "opp_team_k_pct": 51.0,
             "same_hand_ratio": 33.3333,
             "l14_k_pct": 100.0,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 70.9826,
+            "ump_k_pct": -0.18,
+            "ump_bb_pct": -0.168
           },
           "hit_probability": 0.6016,
           "raw_hit_probability": 0.6383,
@@ -370,12 +373,12 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.6055,
+            "outs_rate": 0.6057,
             "avg_outs_per_start": 16.31
           },
-          "hit_probability": 0.6055,
+          "hit_probability": 0.6057,
           "raw_hit_probability": null,
-          "lift": 0.0519,
+          "lift": 0.0514,
           "reliability": "A",
           "sample_n": 16,
           "projection": {
