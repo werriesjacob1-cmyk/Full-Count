@@ -2914,6 +2914,139 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-09",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 48.4,
+          "notable_signals": 2,
+          "matchup": "Los Angeles Angels @ Boston Red Sox",
+          "game_pk": 824713,
+          "team": "Boston Red Sox",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 76.2857,
+            "l7_avg_ev": 100.0,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 51.1,
+            "season_barrel_pct": 45.3333,
+            "lineup_slot": 25.0,
+            "bullpen_fatigue": 0.0,
+            "platoon_barrel_pct": 2.48,
+            "platoon_xwoba": -1.2,
+            "park_hand_index": -1.62,
+            "opp_catcher_framing": 0.96,
+            "days_rest": 2.0,
+            "consecutive_games": -1.2,
+            "woba_ahead": 23.6364,
+            "woba_behind": 29.0909,
+            "pull_park_synergy": -0.9015,
+            "hard_hit_105_rate": 0.8725,
+            "team_total_move": 0.0,
+            "team_total_open": 4.0,
+            "getaway_day": -2.0,
+            "series_game": 2.0,
+            "sp_rp_ops_gap": 1.016,
+            "vs_rp_ops": -0.264,
+            "ump_k_pct": -0.42,
+            "ump_bb_pct": 0.024
+          },
+          "hit_probability": 0.6659,
+          "raw_hit_probability": 0.6644,
+          "lift": -0.0052,
+          "reliability": "A",
+          "sample_n": 136,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 44.7,
+          "notable_signals": 0,
+          "matchup": "Los Angeles Angels @ Boston Red Sox",
+          "game_pk": 824713,
+          "team": "Boston Red Sox",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": 1.2,
+            "sprint_speed": 53.125,
+            "catcher_poptime": 14.2857,
+            "on_base": 9.7889
+          },
+          "hit_probability": 0.1206,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 136,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 13.3,
+          "notable_signals": 0,
+          "matchup": "Los Angeles Angels @ Boston Red Sox",
+          "game_pk": 824713,
+          "team": "Boston Red Sox",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0815
+          },
+          "hit_probability": 0.0815,
+          "raw_hit_probability": null,
+          "lift": 0.0337,
+          "reliability": "A",
+          "sample_n": 136,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 5.4,
+          "notable_signals": 0,
+          "matchup": "Los Angeles Angels @ Boston Red Sox",
+          "game_pk": 824713,
+          "team": "Boston Red Sox",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0341
+          },
+          "hit_probability": 0.0341,
+          "raw_hit_probability": null,
+          "lift": 0.0132,
+          "reliability": "A",
+          "sample_n": 136,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

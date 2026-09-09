@@ -271,7 +271,7 @@
         {
           "prop": "Over 14.5 Outs Recorded",
           "type": "pitcher",
-          "score": 27.3,
+          "score": 27.4,
           "notable_signals": 0,
           "matchup": "Washington Nationals @ San Diego Padres",
           "game_pk": 823251,
@@ -280,18 +280,46 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.5996,
+            "outs_rate": 0.596,
             "avg_outs_per_start": 14.6
           },
-          "hit_probability": 0.5996,
+          "hit_probability": 0.596,
           "raw_hit_probability": null,
-          "lift": -0.1664,
+          "lift": -0.1633,
           "reliability": "C",
           "sample_n": 5,
           "projection": {
             "stat": "pitcher_outs",
             "value": 14.5,
             "needs": 15
+          }
+        },
+        {
+          "prop": "Over 7.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 55.0,
+          "notable_signals": 1,
+          "matchup": "Washington Nationals @ San Diego Padres",
+          "game_pk": 823251,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            800600,
+            621111
+          ],
+          "signals": {
+            "combined_k_edge": 0.0554
+          },
+          "hit_probability": 0.6766,
+          "raw_hit_probability": null,
+          "lift": 0.0554,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 7.5,
+            "needs": 8
           }
         }
       ]
