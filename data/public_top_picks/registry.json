@@ -2,7 +2,7 @@
   "schema_version": 1,
   "identity_schema_version": 2,
   "rollout_version": "pre-phase-v-live-lifecycle-v1",
-  "updated_at": "2026-09-09T21:58:22.485364+00:00",
+  "updated_at": "2026-09-09T22:13:07.453913+00:00",
   "migration": {
     "version": "pre-phase-v-live-lifecycle-v1",
     "completed_at": "2026-08-17T23:14:57+00:00",
@@ -24994,6 +24994,92 @@
         },
         "qualification_timestamp": "2026-09-09T21:50:48.695556+00:00",
         "board_timestamp": "2026-09-09T21:50:48.671375+00:00",
+        "slate_date": "2026-09-09"
+      }
+    },
+    "fc2:824549:player-663436:pitcher_outs:16:over": {
+      "canonical_id": "fc2:824549:player-663436:pitcher_outs:16:over",
+      "settlement_identity": [
+        "824549",
+        [
+          "player",
+          "663436"
+        ],
+        "pitcher_outs",
+        "16",
+        "over"
+      ],
+      "slate_date": "2026-09-09",
+      "first_published_at": "2026-09-09T22:13:07.453913+00:00",
+      "publication_provenance": {
+        "artifact_id": "2b4c30b3ee2a2fab9df035ebcb3053a567735d9bc858edff5911b9d865969931",
+        "source_commit": "fbb166f16e5b260822e72d535bf2c5705811a9b3",
+        "workflow_run_id": "34410909814",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-09-09T22:12:56.731784+00:00",
+        "data_hash": "384b75c5cddeff9256f0a1b617ec7538d796740dff6260fcbdfaafa440d97b05",
+        "live_hash": "c5e56faac974f5e1082c1c48133803b07f9722b7b42932aecf968e12f61c5974"
+      },
+      "snapshot": {
+        "id": "fc2:824549:player-663436:pitcher_outs:16:over",
+        "identity_version": 2,
+        "game_pk": 824549,
+        "player_id": 663436,
+        "combo_player_ids": null,
+        "type": "pitcher",
+        "name": "Davis Martin",
+        "team": "Chicago White Sox",
+        "matchup": "Pittsburgh Pirates @ Chicago White Sox",
+        "game_start": "2026-09-09T23:40:00Z",
+        "stat": "pitcher_outs",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "pitcher_outs",
+          "value": 15.5,
+          "needs": 16
+        },
+        "prop": "Over 15.5 Outs Recorded",
+        "hit_probability": 0.6253,
+        "market_odds": -114,
+        "market_implied": 0.5,
+        "market_edge": 0.1253,
+        "market_hold": null,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (A), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (13.2 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "Recorded 16+ outs (5.1 IP) in 62.5% of his last 25 real starts (league 56.4%, avg 15.68 outs/start)"
+        ],
+        "watchouts": [],
+        "prob_ci": [
+          0.5568,
+          0.7302
+        ],
+        "reliability": "A",
+        "reliability_note": null,
+        "sample_n": 25,
+        "lineup_assumed": null,
+        "base_rate": 0.5641,
+        "lift": 0.0612,
+        "lift_reference_rate": null,
+        "stable_lift": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "6209a2caa",
+          "prediction_timestamp": "2026-09-09T22:10:59.447923+00:00",
+          "odds_fetched_at": "2026-09-09T22:10:56.149707+00:00",
+          "board_generated_at": "2026-09-09T22:10:59.428591+00:00"
+        },
+        "qualification_timestamp": "2026-09-09T22:10:59.447923+00:00",
+        "board_timestamp": "2026-09-09T22:10:59.428591+00:00",
         "slate_date": "2026-09-09"
       }
     }
