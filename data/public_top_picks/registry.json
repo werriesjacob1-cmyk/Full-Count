@@ -2,7 +2,7 @@
   "schema_version": 1,
   "identity_schema_version": 2,
   "rollout_version": "pre-phase-v-live-lifecycle-v1",
-  "updated_at": "2026-09-09T07:28:34.039049+00:00",
+  "updated_at": "2026-09-09T09:38:29.524867+00:00",
   "migration": {
     "version": "pre-phase-v-live-lifecycle-v1",
     "completed_at": "2026-08-17T23:14:57+00:00",
@@ -23941,6 +23941,94 @@
         },
         "qualification_timestamp": "2026-09-09T07:22:35.447259+00:00",
         "board_timestamp": "2026-09-09T07:22:35.418655+00:00",
+        "slate_date": "2026-09-09"
+      }
+    },
+    "fc2:823818:player-676083:pitcher_outs:15:over": {
+      "canonical_id": "fc2:823818:player-676083:pitcher_outs:15:over",
+      "settlement_identity": [
+        "823818",
+        [
+          "player",
+          "676083"
+        ],
+        "pitcher_outs",
+        "15",
+        "over"
+      ],
+      "slate_date": "2026-09-09",
+      "first_published_at": "2026-09-09T09:38:29.524867+00:00",
+      "publication_provenance": {
+        "artifact_id": "1de4b53f3016b2871e646bf2d08803a6267f68b788b385d6610d9df1ee47d74e",
+        "source_commit": "914198769fb0506bab5606cb2a701a149947ecb5",
+        "workflow_run_id": "34335610251",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-09-09T09:38:14.372358+00:00",
+        "data_hash": "b5d3a15edf0d3f3209be7134a3bfea7ad7b1153bb044a002cff5864d279908e3",
+        "live_hash": "883d090dc9466a331d529617da98f3c3dd9220930d19af4e6f2841448333dc0f"
+      },
+      "snapshot": {
+        "id": "fc2:823818:player-676083:pitcher_outs:15:over",
+        "identity_version": 2,
+        "game_pk": 823818,
+        "player_id": 676083,
+        "combo_player_ids": null,
+        "type": "pitcher",
+        "name": "Janson Junk",
+        "team": "Miami Marlins",
+        "matchup": "New York Mets @ Miami Marlins",
+        "game_start": "2026-09-09T22:40:00Z",
+        "stat": "pitcher_outs",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "pitcher_outs",
+          "value": 14.5,
+          "needs": 15
+        },
+        "prop": "Over 14.5 Outs Recorded",
+        "hit_probability": 0.7258,
+        "market_odds": -114,
+        "market_implied": 0.4941,
+        "market_edge": 0.2317,
+        "market_hold": 0.0782,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (A), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (23.3 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "Recorded 15+ outs (5.0 IP) in 72.6% of his last 21 real starts (league 76.6%, avg 15.29 outs/start)"
+        ],
+        "watchouts": [
+          "No positive read here: 4.0 pts BELOW the 77% league base rate for this market"
+        ],
+        "prob_ci": [
+          0.6604,
+          0.8424
+        ],
+        "reliability": "A",
+        "reliability_note": null,
+        "sample_n": 21,
+        "lineup_assumed": null,
+        "base_rate": 0.766,
+        "lift": -0.0402,
+        "lift_reference_rate": null,
+        "stable_lift": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "ff7f20558",
+          "prediction_timestamp": "2026-09-09T09:34:49.777586+00:00",
+          "odds_fetched_at": "2026-09-09T09:34:45.400291+00:00",
+          "board_generated_at": "2026-09-09T09:34:49.748697+00:00"
+        },
+        "qualification_timestamp": "2026-09-09T09:34:49.777586+00:00",
+        "board_timestamp": "2026-09-09T09:34:49.748697+00:00",
         "slate_date": "2026-09-09"
       }
     }
