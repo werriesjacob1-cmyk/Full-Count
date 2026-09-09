@@ -2,7 +2,7 @@
   "schema_version": 1,
   "identity_schema_version": 2,
   "rollout_version": "pre-phase-v-live-lifecycle-v1",
-  "updated_at": "2026-09-09T17:53:30.923950+00:00",
+  "updated_at": "2026-09-09T18:28:44.959141+00:00",
   "migration": {
     "version": "pre-phase-v-live-lifecycle-v1",
     "completed_at": "2026-08-17T23:14:57+00:00",
@@ -24310,6 +24310,104 @@
         },
         "qualification_timestamp": "2026-09-09T17:49:49.561278+00:00",
         "board_timestamp": "2026-09-09T17:49:49.528845+00:00",
+        "slate_date": "2026-09-09"
+      }
+    },
+    "fc2:823090:player-553869:hits_runs_rbis:1:over": {
+      "canonical_id": "fc2:823090:player-553869:hits_runs_rbis:1:over",
+      "settlement_identity": [
+        "823090",
+        [
+          "player",
+          "553869"
+        ],
+        "hits_runs_rbis",
+        "1",
+        "over"
+      ],
+      "slate_date": "2026-09-09",
+      "first_published_at": "2026-09-09T18:28:44.959141+00:00",
+      "publication_provenance": {
+        "artifact_id": "1be09be30263e8f7e6dd0650e46bf63a51db96f963e322eeafce4b77fa87326e",
+        "source_commit": "afdb7e2d33b7d8792ab6b628addf52e199394802",
+        "workflow_run_id": "34388995520",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-09-09T18:28:30.391806+00:00",
+        "data_hash": "b54bccc890c70868aa3410062f06b4dbcddab70cca1ba9a25b0e384d1fc194f6",
+        "live_hash": "1e1c609cb5a0bf88cb92f443bc9a837ec6fe2ff7a8cc1f7fa1bd6688d673f4cc"
+      },
+      "snapshot": {
+        "id": "fc2:823090:player-553869:hits_runs_rbis:1:over",
+        "identity_version": 2,
+        "game_pk": 823090,
+        "player_id": 553869,
+        "combo_player_ids": null,
+        "type": "batter",
+        "name": "Elias D\u00edaz",
+        "team": "Texas Rangers",
+        "matchup": "Texas Rangers @ Seattle Mariners",
+        "game_start": "2026-09-09T20:10:00Z",
+        "stat": "hits_runs_rbis",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "hits_runs_rbis",
+          "value": 0.5,
+          "needs": 1
+        },
+        "prop": "Over 0.5 Hits+Runs+RBIs",
+        "hit_probability": 0.6404,
+        "market_odds": -155,
+        "market_implied": 0.6078,
+        "market_edge": 0.0326,
+        "market_hold": null,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (B), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (7.8 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "L7 barrel% 45.5 \u2014 hot recent contact",
+          "Platoon: R bat vs LHP (favorable)",
+          "Opposing SP ERA 5.40 \u2014 shaky matchup for the pitcher",
+          "Season barrel% 9.4",
+          "Sharp money backing Texas Rangers (money% +19 pts vs ticket%)"
+        ],
+        "watchouts": [
+          "L7 avg EV 86.5mph (league ~88.5) \u2014 cold recent contact",
+          "Projected 3.69 PA (batting slot 8) \u2014 a tough lineup slot for plate appearances",
+          "Hitters batting ahead of him: 0.259 wOBA (league ~.320) \u2014 a weak on-base group ahead of him, fewer runners to drive in",
+          "Hitter batting behind him: 0.295 wOBA (league ~.320) \u2014 little lineup protection, an easier batter to pitch around",
+          "Team implied for 3.72 runs (league avg 4.245; line 3.5, game total 8) \u2014 a weak offensive environment",
+          "Wind blowing IN (6mph) \u2014 power suppressed",
+          "Opposing bullpen fatigue: 1/9 relievers over 60 pitches in L7 (fresh pen \u2014 tougher matchup late)"
+        ],
+        "prob_ci": [
+          0.6271,
+          0.672
+        ],
+        "reliability": "B",
+        "reliability_note": null,
+        "sample_n": 67,
+        "lineup_assumed": null,
+        "base_rate": 0.6718,
+        "lift": -0.0314,
+        "lift_reference_rate": null,
+        "stable_lift": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "06d2b5dc1",
+          "prediction_timestamp": "2026-09-09T18:23:44.779590+00:00",
+          "odds_fetched_at": "2026-09-09T18:23:37.236850+00:00",
+          "board_generated_at": "2026-09-09T18:23:44.743140+00:00"
+        },
+        "qualification_timestamp": "2026-09-09T18:23:44.779590+00:00",
+        "board_timestamp": "2026-09-09T18:23:44.743140+00:00",
         "slate_date": "2026-09-09"
       }
     }
