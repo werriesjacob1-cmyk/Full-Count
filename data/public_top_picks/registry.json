@@ -2,7 +2,7 @@
   "schema_version": 1,
   "identity_schema_version": 2,
   "rollout_version": "pre-phase-v-live-lifecycle-v1",
-  "updated_at": "2026-09-09T14:35:05.493179+00:00",
+  "updated_at": "2026-09-09T17:53:30.923950+00:00",
   "migration": {
     "version": "pre-phase-v-live-lifecycle-v1",
     "completed_at": "2026-08-17T23:14:57+00:00",
@@ -24209,6 +24209,107 @@
         },
         "qualification_timestamp": "2026-09-09T14:25:20.644559+00:00",
         "board_timestamp": "2026-09-09T14:25:20.609903+00:00",
+        "slate_date": "2026-09-09"
+      }
+    },
+    "fc2:823090:player-679822:hits:1:over": {
+      "canonical_id": "fc2:823090:player-679822:hits:1:over",
+      "settlement_identity": [
+        "823090",
+        [
+          "player",
+          "679822"
+        ],
+        "hits",
+        "1",
+        "over"
+      ],
+      "slate_date": "2026-09-09",
+      "first_published_at": "2026-09-09T17:53:30.923950+00:00",
+      "publication_provenance": {
+        "artifact_id": "d27c9e9ca327c3440e80b7bd3bb37fe2f6c18de43ede704c9041014e6aa80b83",
+        "source_commit": "17b2e24b34c9f92673fee3a9a8a96037aa1f9d78",
+        "workflow_run_id": "34385444607",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-09-09T17:53:17.923942+00:00",
+        "data_hash": "f90cb13e37df3560054a27ad1ea777478c6e9b63b6ad9ac75c8d752cb55cce5d",
+        "live_hash": "3b19968d6bff60419b0d6f79c37b4cea36d1f957f75b9751fb5b806e5746d5c6"
+      },
+      "snapshot": {
+        "id": "fc2:823090:player-679822:hits:1:over",
+        "identity_version": 2,
+        "game_pk": 823090,
+        "player_id": 679822,
+        "combo_player_ids": null,
+        "type": "batter",
+        "name": "Justin Foscue",
+        "team": "Texas Rangers",
+        "matchup": "Texas Rangers @ Seattle Mariners",
+        "game_start": "2026-09-09T20:10:00Z",
+        "stat": "hits",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "hits",
+          "value": 0.5,
+          "needs": 1
+        },
+        "prop": "Over 0.5 Hits",
+        "hit_probability": 0.642,
+        "market_odds": -150,
+        "market_implied": 0.6,
+        "market_edge": 0.042,
+        "market_hold": null,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (A), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (8.6 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "L7 avg EV 91.8mph (league ~88.5) \u2014 hot recent contact",
+          "L7 barrel% 23.1 \u2014 hot recent contact",
+          "Platoon: R bat vs LHP (favorable)",
+          "Opposing SP ERA 5.40 \u2014 shaky matchup for the pitcher",
+          "Projected 4.27 PA (batting slot 3) \u2014 a favorable lineup slot",
+          "Pitch-type exploit: RV/100 +1.7 vs CH (opposing SP throws it 17.6% of the time)",
+          "Season barrel% 11.6",
+          "Sharp money backing Texas Rangers (money% +21 pts vs ticket%)"
+        ],
+        "watchouts": [
+          "AVG vs xBA: 0.271 vs 0.248 (+0.023) \u2014 outperforming his contact quality, regression risk",
+          "wOBA vs xwOBA: 0.361 vs 0.333 (+0.028) \u2014 outperforming his contact quality, regression risk",
+          "Team implied for 3.69 runs (league avg 4.245; line 3.5, game total 8) \u2014 a weak offensive environment",
+          "Hitters batting ahead of him: 0.325 wOBA (league ~.320) \u2014 a weak on-base group ahead of him, fewer runners to drive in",
+          "Hitter batting behind him: 0.324 wOBA (league ~.320) \u2014 little lineup protection, an easier batter to pitch around",
+          "Wind blowing IN (6mph) \u2014 power suppressed",
+          "Opposing bullpen fatigue: 1/9 relievers over 60 pitches in L7 (fresh pen \u2014 tougher matchup late)"
+        ],
+        "prob_ci": [
+          0.6333,
+          0.6705
+        ],
+        "reliability": "A",
+        "reliability_note": null,
+        "sample_n": 85,
+        "lineup_assumed": null,
+        "base_rate": 0.5639,
+        "lift": 0.0781,
+        "lift_reference_rate": null,
+        "stable_lift": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "dedcdf367",
+          "prediction_timestamp": "2026-09-09T17:49:49.561278+00:00",
+          "odds_fetched_at": "2026-09-09T17:49:43.599211+00:00",
+          "board_generated_at": "2026-09-09T17:49:49.528845+00:00"
+        },
+        "qualification_timestamp": "2026-09-09T17:49:49.561278+00:00",
+        "board_timestamp": "2026-09-09T17:49:49.528845+00:00",
         "slate_date": "2026-09-09"
       }
     }
