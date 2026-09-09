@@ -2,7 +2,7 @@
   "schema_version": 1,
   "identity_schema_version": 2,
   "rollout_version": "pre-phase-v-live-lifecycle-v1",
-  "updated_at": "2026-09-09T00:43:41.381155+00:00",
+  "updated_at": "2026-09-09T07:28:34.039049+00:00",
   "migration": {
     "version": "pre-phase-v-live-lifecycle-v1",
     "completed_at": "2026-08-17T23:14:57+00:00",
@@ -23855,6 +23855,92 @@
         },
         "qualification_timestamp": "2026-09-09T00:41:25.288885+00:00",
         "board_timestamp": "2026-09-09T00:41:25.272771+00:00",
+        "slate_date": "2026-09-09"
+      }
+    },
+    "fc2:824226:player-805673:pitcher_outs:17:over": {
+      "canonical_id": "fc2:824226:player-805673:pitcher_outs:17:over",
+      "settlement_identity": [
+        "824226",
+        [
+          "player",
+          "805673"
+        ],
+        "pitcher_outs",
+        "17",
+        "over"
+      ],
+      "slate_date": "2026-09-09",
+      "first_published_at": "2026-09-09T07:28:34.039049+00:00",
+      "publication_provenance": {
+        "artifact_id": "c02db5fcd39b446cccdcf46366b0d24e480ef4886fac41aca55e88f22e3a6d18",
+        "source_commit": "61006824f3d136e63b5df1bddd8d0cb324942e0e",
+        "workflow_run_id": "34323831690",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-09-09T07:28:20.410178+00:00",
+        "data_hash": "e87b1ff6e78d96174c59564b0bd4893d80cb964e3c2ce0045329ca2d11cddac5",
+        "live_hash": "5197e1c9dec0201ab52aa4c92b4644d8a2b68ddd8088f615b78817ea3126d7ab"
+      },
+      "snapshot": {
+        "id": "fc2:824226:player-805673:pitcher_outs:17:over",
+        "identity_version": 2,
+        "game_pk": 824226,
+        "player_id": 805673,
+        "combo_player_ids": null,
+        "type": "pitcher",
+        "name": "Zebby Matthews",
+        "team": "Minnesota Twins",
+        "matchup": "Minnesota Twins @ Detroit Tigers",
+        "game_start": "2026-09-09T17:10:00Z",
+        "stat": "pitcher_outs",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "pitcher_outs",
+          "value": 16.5,
+          "needs": 17
+        },
+        "prop": "Over 16.5 Outs Recorded",
+        "hit_probability": 0.6112,
+        "market_odds": 100,
+        "market_implied": 0.4677,
+        "market_edge": 0.1435,
+        "market_hold": 0.069,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (A), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (14.8 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "Recorded 17+ outs (5.2 IP) in 61.1% of his last 20 real starts (league 48.2%, avg 17.55 outs/start)"
+        ],
+        "watchouts": [],
+        "prob_ci": [
+          0.5385,
+          0.6792
+        ],
+        "reliability": "A",
+        "reliability_note": null,
+        "sample_n": 20,
+        "lineup_assumed": null,
+        "base_rate": 0.482,
+        "lift": 0.1292,
+        "lift_reference_rate": null,
+        "stable_lift": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "9fc94f014",
+          "prediction_timestamp": "2026-09-09T07:22:35.447259+00:00",
+          "odds_fetched_at": "2026-09-09T07:22:30.994431+00:00",
+          "board_generated_at": "2026-09-09T07:22:35.418655+00:00"
+        },
+        "qualification_timestamp": "2026-09-09T07:22:35.447259+00:00",
+        "board_timestamp": "2026-09-09T07:22:35.418655+00:00",
         "slate_date": "2026-09-09"
       }
     }
