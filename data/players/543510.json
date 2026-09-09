@@ -822,6 +822,110 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-09",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 24.7,
+          "notable_signals": 1,
+          "matchup": "Arizona Diamondbacks @ Kansas City Royals",
+          "game_pk": 824064,
+          "team": "Arizona Diamondbacks",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 28.8571,
+            "l7_avg_ev": 100.0,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 15.0,
+            "park_hr_index": 40.2,
+            "season_barrel_pct": 39.3333,
+            "lineup_slot": 25.0,
+            "bullpen_fatigue": 0.0,
+            "platoon_barrel_pct": 5.0,
+            "platoon_xwoba": -2.76,
+            "park_hand_index": -0.18,
+            "opp_catcher_framing": -0.36,
+            "days_rest": 4.0,
+            "woba_ahead": 0.0,
+            "woba_behind": 31.8182,
+            "pull_park_synergy": 0.0025,
+            "team_total_move": 0.0,
+            "team_total_open": 0.0,
+            "getaway_day": -2.0,
+            "series_game": 2.0,
+            "sp_rp_ops_gap": 3.536,
+            "vs_rp_ops": 3.432,
+            "ump_k_pct": -0.252,
+            "ump_bb_pct": 0.096
+          },
+          "hit_probability": 0.6494,
+          "raw_hit_probability": 0.6382,
+          "lift": 0.0855,
+          "reliability": "C",
+          "sample_n": 42,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 8.2,
+          "notable_signals": 0,
+          "matchup": "Arizona Diamondbacks @ Kansas City Royals",
+          "game_pk": 824064,
+          "team": "Arizona Diamondbacks",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0609
+          },
+          "hit_probability": 0.0609,
+          "raw_hit_probability": null,
+          "lift": 0.0131,
+          "reliability": "C",
+          "sample_n": 42,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 6.2,
+          "notable_signals": 0,
+          "matchup": "Arizona Diamondbacks @ Kansas City Royals",
+          "game_pk": 824064,
+          "team": "Arizona Diamondbacks",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0372
+          },
+          "hit_probability": 0.0372,
+          "raw_hit_probability": null,
+          "lift": 0.0163,
+          "reliability": "C",
+          "sample_n": 42,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

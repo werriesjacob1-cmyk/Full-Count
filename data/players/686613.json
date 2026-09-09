@@ -364,8 +364,8 @@
         {
           "prop": "Over 15.5 Outs Recorded",
           "type": "pitcher",
-          "score": 59.6,
-          "notable_signals": 1,
+          "score": 58.5,
+          "notable_signals": 0,
           "matchup": "Houston Astros @ Philadelphia Phillies",
           "game_pk": 823416,
           "team": "Houston Astros",
@@ -373,18 +373,46 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.6057,
+            "outs_rate": 0.6084,
             "avg_outs_per_start": 16.31
           },
-          "hit_probability": 0.6057,
+          "hit_probability": 0.6084,
           "raw_hit_probability": null,
-          "lift": 0.0514,
+          "lift": 0.0443,
           "reliability": "A",
           "sample_n": 16,
           "projection": {
             "stat": "pitcher_outs",
             "value": 15.5,
             "needs": 16
+          }
+        },
+        {
+          "prop": "Over 11.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 54.9,
+          "notable_signals": 1,
+          "matchup": "Houston Astros @ Philadelphia Phillies",
+          "game_pk": 823416,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            686613,
+            650911
+          ],
+          "signals": {
+            "combined_k_edge": 0.1247
+          },
+          "hit_probability": 0.6102,
+          "raw_hit_probability": null,
+          "lift": 0.1247,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 11.5,
+            "needs": 12
           }
         }
       ]

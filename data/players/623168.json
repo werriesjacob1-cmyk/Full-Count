@@ -1109,6 +1109,107 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-09",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 32.0,
+          "notable_signals": 2,
+          "matchup": "Los Angeles Angels @ Boston Red Sox",
+          "game_pk": 824713,
+          "team": "Los Angeles Angels",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "sp_era_weak": 24.0,
+            "l7_avg_ev": 32.5,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 15.0,
+            "park_hr_index": 51.0,
+            "season_barrel_pct": 0.0,
+            "lineup_slot": 0.0,
+            "bullpen_fatigue": 0.0,
+            "platoon_barrel_pct": -5.0,
+            "platoon_xwoba": -5.0,
+            "opp_catcher_framing": 0.48,
+            "days_rest": 2.0,
+            "woba_ahead": 0.0,
+            "woba_behind": 38.1818,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": -2.0,
+            "series_game": 2.0,
+            "sp_rp_ops_gap": 0.672,
+            "vs_rp_ops": -0.144,
+            "ump_k_pct": -0.42,
+            "ump_bb_pct": 0.024
+          },
+          "hit_probability": 0.5463,
+          "raw_hit_probability": 0.5463,
+          "lift": -0.125,
+          "reliability": "B",
+          "sample_n": 59,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 0.0,
+          "notable_signals": 0,
+          "matchup": "Los Angeles Angels @ Boston Red Sox",
+          "game_pk": 824713,
+          "team": "Los Angeles Angels",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0117
+          },
+          "hit_probability": 0.0117,
+          "raw_hit_probability": null,
+          "lift": -0.0361,
+          "reliability": "B",
+          "sample_n": 59,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 0.0,
+          "notable_signals": 0,
+          "matchup": "Los Angeles Angels @ Boston Red Sox",
+          "game_pk": 824713,
+          "team": "Los Angeles Angels",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0051
+          },
+          "hit_probability": 0.0051,
+          "raw_hit_probability": null,
+          "lift": -0.0158,
+          "reliability": "B",
+          "sample_n": 59,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

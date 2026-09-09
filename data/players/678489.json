@@ -127,6 +127,132 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-09",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 6.3,
+          "notable_signals": 1,
+          "matchup": "Houston Astros @ Philadelphia Phillies",
+          "game_pk": 823416,
+          "team": "Houston Astros",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "sp_era_weak": 2.2857,
+            "park_hr_index": 26.5,
+            "season_barrel_pct": 13.3333,
+            "lineup_slot": 0.0,
+            "bullpen_fatigue": 0.0,
+            "platoon_barrel_pct": -1.68,
+            "platoon_xwoba": -3.12,
+            "opp_catcher_framing": 0.48,
+            "days_rest": 4.0,
+            "woba_ahead": 3.6364,
+            "woba_behind": 44.5455,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": 0.744,
+            "vs_rp_ops": -0.624,
+            "ump_k_pct": 0.18,
+            "ump_bb_pct": 0.168
+          },
+          "hit_probability": 0.5399,
+          "raw_hit_probability": 0.5399,
+          "lift": -0.1314,
+          "reliability": "B",
+          "sample_n": 64,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 33.5,
+          "notable_signals": 0,
+          "matchup": "Houston Astros @ Philadelphia Phillies",
+          "game_pk": 823416,
+          "team": "Houston Astros",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": -2.82,
+            "sprint_speed": 34.375,
+            "catcher_poptime": 0.0,
+            "on_base": 19.3858
+          },
+          "hit_probability": 0.0441,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "B",
+          "sample_n": 64,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 0.0,
+          "notable_signals": 0,
+          "matchup": "Houston Astros @ Philadelphia Phillies",
+          "game_pk": 823416,
+          "team": "Houston Astros",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0112
+          },
+          "hit_probability": 0.0112,
+          "raw_hit_probability": null,
+          "lift": -0.0366,
+          "reliability": "B",
+          "sample_n": 64,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 0.0,
+          "notable_signals": 0,
+          "matchup": "Houston Astros @ Philadelphia Phillies",
+          "game_pk": 823416,
+          "team": "Houston Astros",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0049
+          },
+          "hit_probability": 0.0049,
+          "raw_hit_probability": null,
+          "lift": -0.016,
+          "reliability": "B",
+          "sample_n": 64,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

@@ -8,8 +8,8 @@
         {
           "prop": "Over 3.5 Strikeouts",
           "type": "pitcher",
-          "score": 37.6,
-          "notable_signals": 0,
+          "score": 23.0,
+          "notable_signals": 1,
           "matchup": "Arizona Diamondbacks @ Kansas City Royals",
           "game_pk": 824064,
           "team": "Arizona Diamondbacks",
@@ -19,7 +19,10 @@
           "signals": {
             "opp_team_k_pct": 37.0,
             "same_hand_ratio": 43.75,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 71.8315,
+            "ump_k_pct": 0.252,
+            "ump_bb_pct": -0.096
           },
           "hit_probability": 0.5307,
           "raw_hit_probability": 0.5307,
@@ -35,7 +38,7 @@
         {
           "prop": "Over 14.5 Outs Recorded",
           "type": "pitcher",
-          "score": 62.6,
+          "score": 62.1,
           "notable_signals": 0,
           "matchup": "Arizona Diamondbacks @ Kansas City Royals",
           "game_pk": 824064,
@@ -44,12 +47,12 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.7447,
+            "outs_rate": 0.7452,
             "avg_outs_per_start": 15.47
           },
-          "hit_probability": 0.7447,
+          "hit_probability": 0.7452,
           "raw_hit_probability": null,
-          "lift": -0.0249,
+          "lift": -0.0266,
           "reliability": "A",
           "sample_n": 19,
           "projection": {

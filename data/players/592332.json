@@ -403,7 +403,7 @@
         {
           "prop": "Over 5.5 Strikeouts",
           "type": "pitcher",
-          "score": 37.1,
+          "score": 39.4,
           "notable_signals": 0,
           "matchup": "Chicago Cubs @ Milwaukee Brewers",
           "game_pk": 823739,
@@ -413,9 +413,12 @@
           "combo_player_ids": null,
           "signals": {
             "opp_team_k_pct": 46.0,
-            "same_hand_ratio": 33.3333,
+            "same_hand_ratio": 88.8889,
             "l14_k_pct": 100.0,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 52.0073,
+            "ump_k_pct": 0.408,
+            "ump_bb_pct": 0.288
           },
           "hit_probability": 0.474,
           "raw_hit_probability": 0.474,
@@ -431,7 +434,7 @@
         {
           "prop": "Over 17.5 Outs Recorded",
           "type": "pitcher",
-          "score": 63.6,
+          "score": 61.2,
           "notable_signals": 1,
           "matchup": "Chicago Cubs @ Milwaukee Brewers",
           "game_pk": 823739,
@@ -440,18 +443,46 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.5239,
+            "outs_rate": 0.527,
             "avg_outs_per_start": 16.79
           },
-          "hit_probability": 0.5239,
+          "hit_probability": 0.527,
           "raw_hit_probability": null,
-          "lift": 0.1348,
+          "lift": 0.1193,
           "reliability": "A",
           "sample_n": 29,
           "projection": {
             "stat": "pitcher_outs",
             "value": 17.5,
             "needs": 18
+          }
+        },
+        {
+          "prop": "Over 11.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 54.9,
+          "notable_signals": 1,
+          "matchup": "Chicago Cubs @ Milwaukee Brewers",
+          "game_pk": 823739,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            592332,
+            701656
+          ],
+          "signals": {
+            "combined_k_edge": 0.1233
+          },
+          "hit_probability": 0.6331,
+          "raw_hit_probability": null,
+          "lift": 0.1233,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 11.5,
+            "needs": 12
           }
         }
       ]
