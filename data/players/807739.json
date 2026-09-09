@@ -141,10 +141,10 @@
       "date": "2026-09-09",
       "evaluations": [
         {
-          "prop": "Over 3.5 Strikeouts",
+          "prop": "Over 5.5 Strikeouts",
           "type": "pitcher",
-          "score": 53.5,
-          "notable_signals": 0,
+          "score": 31.3,
+          "notable_signals": 1,
           "matchup": "Texas Rangers @ Seattle Mariners",
           "game_pk": 823090,
           "team": "Seattle Mariners",
@@ -152,20 +152,23 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "opp_team_k_pct": 56.0,
-            "same_hand_ratio": 88.8889,
+            "opp_team_k_pct": 57.0,
+            "same_hand_ratio": 5.5556,
             "l14_k_pct": 0.0,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 75.2711,
+            "ump_k_pct": -0.144,
+            "ump_bb_pct": -0.3
           },
-          "hit_probability": 0.5972,
-          "raw_hit_probability": 0.6164,
-          "lift": -0.1072,
+          "hit_probability": 0.2619,
+          "raw_hit_probability": 0.2619,
+          "lift": -0.1043,
           "reliability": "D",
           "sample_n": 0,
           "projection": {
             "stat": "strikeouts",
-            "value": 3.5,
-            "needs": 4
+            "value": 5.5,
+            "needs": 6
           }
         }
       ]

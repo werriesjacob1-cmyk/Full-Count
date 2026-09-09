@@ -1,0 +1,37 @@
+{
+  "player_id": "nrfi_824064",
+  "name": "Arizona Diamondbacks @ Kansas City Royals \u2014 1st Inning (Both Teams)",
+  "snapshots": [
+    {
+      "date": "2026-09-09",
+      "evaluations": [
+        {
+          "prop": "A run scores in the 1st (either team)",
+          "type": "game",
+          "score": 61.7,
+          "notable_signals": 0,
+          "matchup": "Arizona Diamondbacks @ Kansas City Royals",
+          "game_pk": 824064,
+          "team": null,
+          "side": "both",
+          "lean": "YRFI",
+          "combo_player_ids": null,
+          "signals": {
+            "home_team_scores_p": 0.379,
+            "away_team_scores_p": 0.3153,
+            "fi_n_starts": 6.0
+          },
+          "hit_probability": 0.5748,
+          "raw_hit_probability": null,
+          "lift": 0.0732,
+          "reliability": "C",
+          "sample_n": 6,
+          "projection": {
+            "stat": "nrfi_combined",
+            "value": 57.5
+          }
+        }
+      ]
+    }
+  ]
+}

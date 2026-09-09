@@ -369,7 +369,7 @@
         {
           "prop": "Over 4.5 Strikeouts",
           "type": "pitcher",
-          "score": 38.4,
+          "score": 38.6,
           "notable_signals": 0,
           "matchup": "Los Angeles Angels @ Boston Red Sox",
           "game_pk": 824713,
@@ -379,13 +379,13 @@
           "combo_player_ids": null,
           "signals": {
             "opp_team_k_pct": 83.0,
-            "same_hand_ratio": 0.0,
+            "same_hand_ratio": 5.5556,
             "l14_k_pct": 100.0,
             "env_neutral": 50.0
           },
-          "hit_probability": 0.588,
-          "raw_hit_probability": 0.5712,
-          "lift": 0.0673,
+          "hit_probability": 0.5876,
+          "raw_hit_probability": 0.5691,
+          "lift": 0.071,
           "reliability": "A",
           "sample_n": 17,
           "projection": {
@@ -395,9 +395,9 @@
           }
         },
         {
-          "prop": "Over 17.5 Outs Recorded",
+          "prop": "Over 16.5 Outs Recorded",
           "type": "pitcher",
-          "score": 52.0,
+          "score": 69.3,
           "notable_signals": 1,
           "matchup": "Los Angeles Angels @ Boston Red Sox",
           "game_pk": 824713,
@@ -406,18 +406,18 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.5007,
+            "outs_rate": 0.604,
             "avg_outs_per_start": 17.59
           },
-          "hit_probability": 0.5007,
+          "hit_probability": 0.604,
           "raw_hit_probability": null,
-          "lift": 0.0813,
+          "lift": 0.122,
           "reliability": "A",
           "sample_n": 17,
           "projection": {
             "stat": "pitcher_outs",
-            "value": 17.5,
-            "needs": 18
+            "value": 16.5,
+            "needs": 17
           }
         }
       ]

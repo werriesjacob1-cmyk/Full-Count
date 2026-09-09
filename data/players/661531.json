@@ -643,6 +643,58 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-09",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 26.1,
+          "notable_signals": 1,
+          "matchup": "Toronto Blue Jays @ Athletics",
+          "game_pk": 824956,
+          "team": "Athletics",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 20.0,
+            "pitch_exploit": 7.4286,
+            "l7_avg_ev": 88.2812,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 43.0,
+            "season_barrel_pct": 52.6667,
+            "lineup_slot": 12.5,
+            "bullpen_fatigue": 0.0,
+            "platoon_barrel_pct": 2.0,
+            "platoon_xwoba": 1.98,
+            "park_hand_index": 3.5,
+            "opp_catcher_framing": -1.92,
+            "days_rest": 4.0,
+            "woba_ahead": 70.9091,
+            "woba_behind": 20.9091,
+            "pull_park_synergy": 1.5802,
+            "getaway_day": -2.0,
+            "series_game": 2.0,
+            "sp_rp_ops_gap": -1.288,
+            "vs_rp_ops": -1.14,
+            "ump_k_pct": 0.132,
+            "ump_bb_pct": 0.72
+          },
+          "hit_probability": 0.565,
+          "raw_hit_probability": 0.5758,
+          "lift": 0.0011,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

@@ -403,7 +403,7 @@
         {
           "prop": "Over 5.5 Strikeouts",
           "type": "pitcher",
-          "score": 39.6,
+          "score": 37.1,
           "notable_signals": 0,
           "matchup": "Chicago Cubs @ Milwaukee Brewers",
           "game_pk": 823739,
@@ -413,13 +413,13 @@
           "combo_player_ids": null,
           "signals": {
             "opp_team_k_pct": 46.0,
-            "same_hand_ratio": 100.0,
+            "same_hand_ratio": 33.3333,
             "l14_k_pct": 100.0,
             "env_neutral": 50.0
           },
-          "hit_probability": 0.4739,
-          "raw_hit_probability": 0.4739,
-          "lift": 0.1079,
+          "hit_probability": 0.474,
+          "raw_hit_probability": 0.474,
+          "lift": 0.1078,
           "reliability": "A",
           "sample_n": 29,
           "projection": {
@@ -429,9 +429,9 @@
           }
         },
         {
-          "prop": "Over 16.5 Outs Recorded",
+          "prop": "Over 17.5 Outs Recorded",
           "type": "pitcher",
-          "score": 65.2,
+          "score": 62.2,
           "notable_signals": 1,
           "matchup": "Chicago Cubs @ Milwaukee Brewers",
           "game_pk": 823739,
@@ -440,18 +440,18 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.6002,
+            "outs_rate": 0.5261,
             "avg_outs_per_start": 16.79
           },
-          "hit_probability": 0.6002,
+          "hit_probability": 0.5261,
           "raw_hit_probability": null,
-          "lift": 0.0991,
+          "lift": 0.1241,
           "reliability": "A",
           "sample_n": 29,
           "projection": {
             "stat": "pitcher_outs",
-            "value": 16.5,
-            "needs": 17
+            "value": 17.5,
+            "needs": 18
           }
         }
       ]

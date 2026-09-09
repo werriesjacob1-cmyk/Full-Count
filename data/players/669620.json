@@ -109,6 +109,42 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-09",
+      "evaluations": [
+        {
+          "prop": "Over 3.5 Strikeouts",
+          "type": "pitcher",
+          "score": 27.4,
+          "notable_signals": 0,
+          "matchup": "Toronto Blue Jays @ Athletics",
+          "game_pk": 824956,
+          "team": "Athletics",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_k_pct": 21.0,
+            "same_hand_ratio": 12.5,
+            "l14_k_pct": 0.0,
+            "env_neutral": 50.0,
+            "ump_accuracy": 59.3454,
+            "ump_k_pct": -0.132,
+            "ump_bb_pct": -0.72
+          },
+          "hit_probability": 0.4804,
+          "raw_hit_probability": 0.4804,
+          "lift": -0.2213,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 3.5,
+            "needs": 4
+          }
+        }
+      ]
     }
   ]
 }

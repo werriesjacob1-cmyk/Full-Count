@@ -3560,6 +3560,138 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-09",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 44.1,
+          "notable_signals": 2,
+          "matchup": "Minnesota Twins @ Detroit Tigers",
+          "game_pk": 824226,
+          "team": "Minnesota Twins",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 29.1429,
+            "l7_avg_ev": 65.8824,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 78.8,
+            "season_barrel_pct": 56.0,
+            "lineup_slot": 25.0,
+            "bullpen_fatigue": 0.0,
+            "platoon_barrel_pct": 2.48,
+            "platoon_xwoba": -0.72,
+            "park_hand_index": 0.26,
+            "opp_catcher_framing": -0.96,
+            "days_rest": 0.0,
+            "woba_ahead": 44.5455,
+            "woba_behind": 0.0,
+            "pull_park_synergy": 0.1702,
+            "hard_hit_105_rate": 0.105,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": -2.0,
+            "series_game": 2.0,
+            "sp_rp_ops_gap": 0.24,
+            "vs_rp_ops": -0.12,
+            "ump_k_pct": 0.228,
+            "ump_bb_pct": 0.12
+          },
+          "hit_probability": 0.688,
+          "raw_hit_probability": 0.7033,
+          "lift": 0.0165,
+          "reliability": "A",
+          "sample_n": 110,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 27.4,
+          "notable_signals": 0,
+          "matchup": "Minnesota Twins @ Detroit Tigers",
+          "game_pk": 824226,
+          "team": "Minnesota Twins",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": -0.9,
+            "sprint_speed": 12.5,
+            "catcher_poptime": 0.0,
+            "on_base": 41.4587
+          },
+          "hit_probability": 0.114,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 110,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 5.6,
+          "notable_signals": 0,
+          "matchup": "Minnesota Twins @ Detroit Tigers",
+          "game_pk": 824226,
+          "team": "Minnesota Twins",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0508
+          },
+          "hit_probability": 0.0508,
+          "raw_hit_probability": null,
+          "lift": 0.003,
+          "reliability": "A",
+          "sample_n": 110,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 4.9,
+          "notable_signals": 0,
+          "matchup": "Minnesota Twins @ Detroit Tigers",
+          "game_pk": 824226,
+          "team": "Minnesota Twins",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0323
+          },
+          "hit_probability": 0.0323,
+          "raw_hit_probability": null,
+          "lift": 0.0114,
+          "reliability": "A",
+          "sample_n": 110,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

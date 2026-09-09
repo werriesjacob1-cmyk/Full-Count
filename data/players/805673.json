@@ -434,8 +434,8 @@
         {
           "prop": "Over 4.5 Strikeouts",
           "type": "pitcher",
-          "score": 50.1,
-          "notable_signals": 0,
+          "score": 37.6,
+          "notable_signals": 1,
           "matchup": "Minnesota Twins @ Detroit Tigers",
           "game_pk": 824226,
           "team": "Minnesota Twins",
@@ -446,11 +446,14 @@
             "opp_team_k_pct": 60.0,
             "same_hand_ratio": 61.1111,
             "l14_k_pct": 17.6471,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 69.8409,
+            "ump_k_pct": -0.228,
+            "ump_bb_pct": -0.12
           },
-          "hit_probability": 0.5287,
-          "raw_hit_probability": 0.5287,
-          "lift": 0.008,
+          "hit_probability": 0.5266,
+          "raw_hit_probability": 0.5266,
+          "lift": 0.01,
           "reliability": "A",
           "sample_n": 20,
           "projection": {
@@ -462,7 +465,7 @@
         {
           "prop": "Over 17.5 Outs Recorded",
           "type": "pitcher",
-          "score": 66.5,
+          "score": 68.9,
           "notable_signals": 1,
           "matchup": "Minnesota Twins @ Detroit Tigers",
           "game_pk": 824226,
@@ -471,18 +474,46 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.5583,
+            "outs_rate": 0.5543,
             "avg_outs_per_start": 17.55
           },
-          "hit_probability": 0.5583,
+          "hit_probability": 0.5543,
           "raw_hit_probability": null,
-          "lift": 0.1389,
+          "lift": 0.1523,
           "reliability": "A",
           "sample_n": 20,
           "projection": {
             "stat": "pitcher_outs",
             "value": 17.5,
             "needs": 18
+          }
+        },
+        {
+          "prop": "Over 7.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 51.3,
+          "notable_signals": 0,
+          "matchup": "Minnesota Twins @ Detroit Tigers",
+          "game_pk": 824226,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            805673,
+            672456
+          ],
+          "signals": {
+            "combined_k_edge": -0.0269
+          },
+          "hit_probability": 0.5529,
+          "raw_hit_probability": null,
+          "lift": -0.0269,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 7.5,
+            "needs": 8
           }
         }
       ]
