@@ -362,6 +362,65 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-09",
+      "evaluations": [
+        {
+          "prop": "Over 4.5 Strikeouts",
+          "type": "pitcher",
+          "score": 38.4,
+          "notable_signals": 0,
+          "matchup": "Los Angeles Angels @ Boston Red Sox",
+          "game_pk": 824713,
+          "team": "Boston Red Sox",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_k_pct": 83.0,
+            "same_hand_ratio": 0.0,
+            "l14_k_pct": 100.0,
+            "env_neutral": 50.0
+          },
+          "hit_probability": 0.588,
+          "raw_hit_probability": 0.5712,
+          "lift": 0.0673,
+          "reliability": "A",
+          "sample_n": 17,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 4.5,
+            "needs": 5
+          }
+        },
+        {
+          "prop": "Over 17.5 Outs Recorded",
+          "type": "pitcher",
+          "score": 53.1,
+          "notable_signals": 1,
+          "matchup": "Los Angeles Angels @ Boston Red Sox",
+          "game_pk": 824713,
+          "team": "Boston Red Sox",
+          "side": "home",
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "outs_rate": 0.5007,
+            "avg_outs_per_start": 17.59
+          },
+          "hit_probability": 0.5007,
+          "raw_hit_probability": null,
+          "lift": 0.0813,
+          "reliability": "A",
+          "sample_n": 17,
+          "projection": {
+            "stat": "pitcher_outs",
+            "value": 17.5,
+            "needs": 18
+          }
+        }
+      ]
     }
   ]
 }

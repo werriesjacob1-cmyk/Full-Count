@@ -1,0 +1,37 @@
+{
+  "player_id": "nrfi_824791",
+  "name": "Cleveland Guardians @ Baltimore Orioles \u2014 1st Inning (Both Teams)",
+  "snapshots": [
+    {
+      "date": "2026-09-09",
+      "evaluations": [
+        {
+          "prop": "No runs in the 1st (both teams)",
+          "type": "game",
+          "score": 62.7,
+          "notable_signals": 0,
+          "matchup": "Cleveland Guardians @ Baltimore Orioles",
+          "game_pk": 824791,
+          "team": null,
+          "side": "both",
+          "lean": "NRFI",
+          "combo_player_ids": null,
+          "signals": {
+            "home_team_scores_p": 0.2629,
+            "away_team_scores_p": 0.3123,
+            "fi_n_starts": 29.0
+          },
+          "hit_probability": 0.5069,
+          "raw_hit_probability": null,
+          "lift": 0.0085,
+          "reliability": "A",
+          "sample_n": 29,
+          "projection": {
+            "stat": "nrfi_combined",
+            "value": 50.7
+          }
+        }
+      ]
+    }
+  ]
+}

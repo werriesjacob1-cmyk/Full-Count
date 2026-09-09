@@ -326,6 +326,65 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-09",
+      "evaluations": [
+        {
+          "prop": "Over 4.5 Strikeouts",
+          "type": "pitcher",
+          "score": 37.4,
+          "notable_signals": 0,
+          "matchup": "Houston Astros @ Philadelphia Phillies",
+          "game_pk": 823416,
+          "team": "Houston Astros",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_k_pct": 51.0,
+            "same_hand_ratio": 33.3333,
+            "l14_k_pct": 100.0,
+            "env_neutral": 50.0
+          },
+          "hit_probability": 0.602,
+          "raw_hit_probability": 0.6403,
+          "lift": 0.0813,
+          "reliability": "A",
+          "sample_n": 16,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 4.5,
+            "needs": 5
+          }
+        },
+        {
+          "prop": "Over 15.5 Outs Recorded",
+          "type": "pitcher",
+          "score": 57.6,
+          "notable_signals": 0,
+          "matchup": "Houston Astros @ Philadelphia Phillies",
+          "game_pk": 823416,
+          "team": "Houston Astros",
+          "side": "away",
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "outs_rate": 0.6135,
+            "avg_outs_per_start": 16.31
+          },
+          "hit_probability": 0.6135,
+          "raw_hit_probability": null,
+          "lift": 0.0307,
+          "reliability": "A",
+          "sample_n": 16,
+          "projection": {
+            "stat": "pitcher_outs",
+            "value": 15.5,
+            "needs": 16
+          }
+        }
+      ]
     }
   ]
 }
