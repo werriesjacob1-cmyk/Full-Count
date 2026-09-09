@@ -2,7 +2,7 @@
   "schema_version": 1,
   "identity_schema_version": 2,
   "rollout_version": "pre-phase-v-live-lifecycle-v1",
-  "updated_at": "2026-09-09T20:43:27.180011+00:00",
+  "updated_at": "2026-09-09T21:58:22.485364+00:00",
   "migration": {
     "version": "pre-phase-v-live-lifecycle-v1",
     "completed_at": "2026-08-17T23:14:57+00:00",
@@ -24895,6 +24895,105 @@
         },
         "qualification_timestamp": "2026-09-09T20:40:08.613250+00:00",
         "board_timestamp": "2026-09-09T20:40:08.590171+00:00",
+        "slate_date": "2026-09-09"
+      }
+    },
+    "fc2:823739:player-664023:hits_runs_rbis:1:over": {
+      "canonical_id": "fc2:823739:player-664023:hits_runs_rbis:1:over",
+      "settlement_identity": [
+        "823739",
+        [
+          "player",
+          "664023"
+        ],
+        "hits_runs_rbis",
+        "1",
+        "over"
+      ],
+      "slate_date": "2026-09-09",
+      "first_published_at": "2026-09-09T21:58:22.485364+00:00",
+      "publication_provenance": {
+        "artifact_id": "455b7c3e81f60897b38c1ff8e0359ec203c0cabe99ea054464776acaeaa49157",
+        "source_commit": "f34ef030c71613614d24c7f0783d21f1c53049ae",
+        "workflow_run_id": "34409586139",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-09-09T21:58:09.206606+00:00",
+        "data_hash": "841a7737a1b36399855968d5cb95fa626cc8f796320cc02170c7557b0c19b679",
+        "live_hash": "46052b27cf6a7ada79479acb1b80674bdd6143508e544e98799abcdfe0213c6a"
+      },
+      "snapshot": {
+        "id": "fc2:823739:player-664023:hits_runs_rbis:1:over",
+        "identity_version": 2,
+        "game_pk": 823739,
+        "player_id": 664023,
+        "combo_player_ids": null,
+        "type": "batter",
+        "name": "Ian Happ",
+        "team": "Chicago Cubs",
+        "matchup": "Chicago Cubs @ Milwaukee Brewers",
+        "game_start": "2026-09-09T23:40:00Z",
+        "stat": "hits_runs_rbis",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "hits_runs_rbis",
+          "value": 0.5,
+          "needs": 1
+        },
+        "prop": "Over 0.5 Hits+Runs+RBIs",
+        "hit_probability": 0.6565,
+        "market_odds": -165,
+        "market_implied": 0.6226,
+        "market_edge": 0.0339,
+        "market_hold": null,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (A), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (8.0 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "L7 avg EV 93.3mph (league ~88.5) \u2014 hot recent contact",
+          "L7 barrel% 40.0 \u2014 hot recent contact",
+          "Platoon: S bat vs RHP (handedness unknown)",
+          "Projected 4.05 PA (batting slot 5)",
+          "Hitters batting ahead of him: 0.345 wOBA (league ~.320)",
+          "Pitch-type exploit: RV/100 +2.5 vs FC (opposing SP throws it 16.9% of the time)",
+          "Season barrel% 11.4",
+          "Opposing bullpen fatigue: 4/8 relievers over 60 pitches in L7 (tired pen \u2014 favorable late)",
+          "Sharp money backing Chicago Cubs (money% +16 pts vs ticket%)"
+        ],
+        "watchouts": [
+          "Opposing SP ERA 2.48 \u2014 elite pitcher, tough matchup",
+          "Hitter batting behind him: 0.302 wOBA (league ~.320) \u2014 little lineup protection, an easier batter to pitch around",
+          "Team implied for 3.56 runs (league avg 4.245; line 3.5, game total 7.5) \u2014 a weak offensive environment",
+          "Wind blowing IN (6mph) \u2014 power suppressed"
+        ],
+        "prob_ci": [
+          0.6457,
+          0.6796
+        ],
+        "reliability": "A",
+        "reliability_note": null,
+        "sample_n": 139,
+        "lineup_assumed": null,
+        "base_rate": 0.6703,
+        "lift": -0.0138,
+        "lift_reference_rate": null,
+        "stable_lift": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "169748b53",
+          "prediction_timestamp": "2026-09-09T21:50:48.695556+00:00",
+          "odds_fetched_at": "2026-09-09T21:50:41.077808+00:00",
+          "board_generated_at": "2026-09-09T21:50:48.671375+00:00"
+        },
+        "qualification_timestamp": "2026-09-09T21:50:48.695556+00:00",
+        "board_timestamp": "2026-09-09T21:50:48.671375+00:00",
         "slate_date": "2026-09-09"
       }
     }
