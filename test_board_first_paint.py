@@ -186,12 +186,41 @@ try:
           "boardFreshnessState returns a declared state", f"got {fresh}")
     # Force a board age past the limit and confirm the banner appears. Uses
     # the real function, not a re-implementation of its rule.
+    #
+    # Age the clock boardClocks() ACTUALLY RESOLVES, not just generated_at.
+    # boardClocks() reads `freshness.model_basis_at || generated_at`, and the
+    # real docs/data.json carries freshness.model_basis_at -- so the previous
+    # version of this fixture, which set only generated_at, was a silent no-op:
+    # the scoped clock kept winning and the board stayed 17 minutes old while
+    # the test claimed to have made it 11 hours old. It then failed on the
+    # staleness assertion, which reads as "the app does not classify stale
+    # boards" when the truth was "the fixture never aged the board." Set both
+    # the scoped clock and the fallback so this holds whichever one wins.
+    #
+    # freshness is replaced with a fresh object rather than mutated, because
+    # Object.assign({}, DATA) is a SHALLOW copy and mutating d.freshness would
+    # corrupt the page's real DATA for every check after this one.
     forced = page.evaluate(
-        "() => { const d = Object.assign({}, DATA);"
-        "  d.generated_at = new Date(Date.now() - 11 * 3600 * 1000).toISOString();"
+        "() => { const old = new Date(Date.now() - 11 * 3600 * 1000).toISOString();"
+        "  const d = Object.assign({}, DATA, {"
+        "    generated_at: old,"
+        "    freshness: Object.assign({}, DATA.freshness, {model_basis_at: old})});"
         "  return boardFreshnessState(Date.now(), d); }")
+    # Precondition, asserted separately and FIRST. A fixture that fails to
+    # apply must fail as "the fixture did not age the board", never as "the
+    # app does not detect stale boards" -- that mislabelling is what left this
+    # red for a week and had it read as a product defect.
+    check(forced["ageSeconds"] is not None and forced["ageSeconds"] > 10 * 3600,
+          "the fixture actually ages the board past ten hours",
+          f"fixture did not take effect; boardFreshnessState saw {forced}")
     check(forced["state"] == "stale" and forced["reason"] == "board_age_exceeded",
           "an 11-hour-old board is classified stale on board age", f"got {forced}")
+    # Board age must be what tripped it, not price age -- otherwise this check
+    # would still pass for the wrong reason if the price clock drifted.
+    check(forced["priceAgeSeconds"] is not None
+          and forced["priceAgeSeconds"] < 4 * 3600,
+          "board age is what tripped staleness, with prices left fresh",
+          f"got {forced}")
     html = page.evaluate("() => boardStalenessBanner({state:'stale', ageSeconds: 36360,"
                          " priceAgeSeconds: 120, reason:'board_age_exceeded'})")
     check("out of date" in html.lower(),
