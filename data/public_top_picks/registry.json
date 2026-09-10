@@ -2,7 +2,7 @@
   "schema_version": 1,
   "identity_schema_version": 2,
   "rollout_version": "pre-phase-v-live-lifecycle-v1",
-  "updated_at": "2026-09-10T18:44:06.140051+00:00",
+  "updated_at": "2026-09-10T19:29:20.091290+00:00",
   "migration": {
     "version": "pre-phase-v-live-lifecycle-v1",
     "completed_at": "2026-08-17T23:14:57+00:00",
@@ -25764,6 +25764,105 @@
         },
         "qualification_timestamp": "2026-09-10T18:20:07.978713+00:00",
         "board_timestamp": "2026-09-10T18:20:07.970606+00:00",
+        "slate_date": "2026-09-10"
+      }
+    },
+    "fc2:823088:player-668227:hits_runs_rbis:1:over": {
+      "canonical_id": "fc2:823088:player-668227:hits_runs_rbis:1:over",
+      "settlement_identity": [
+        "823088",
+        [
+          "player",
+          "668227"
+        ],
+        "hits_runs_rbis",
+        "1",
+        "over"
+      ],
+      "slate_date": "2026-09-10",
+      "first_published_at": "2026-09-10T19:29:20.091290+00:00",
+      "publication_provenance": {
+        "artifact_id": "baf6d8bc652db8d4d1a64d287738e667158b04e0d87f2607ed9cf7a2f1682d2e",
+        "source_commit": "e81238747aa87ee2e6d688a0b9e45ee5e8e08158",
+        "workflow_run_id": "34520449634",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-09-10T19:29:10.514987+00:00",
+        "data_hash": "b71d697d434cb5d372edb5403348a8e004a673e6e348d69365cc95be239c6745",
+        "live_hash": "8c4926f2db9ed864c55e156fc513ecba305beaec02bdabb4f06e06e2670559c1"
+      },
+      "snapshot": {
+        "id": "fc2:823088:player-668227:hits_runs_rbis:1:over",
+        "identity_version": 2,
+        "game_pk": 823088,
+        "player_id": 668227,
+        "combo_player_ids": null,
+        "type": "batter",
+        "name": "Randy Arozarena",
+        "team": "Seattle Mariners",
+        "matchup": "Texas Rangers @ Seattle Mariners",
+        "game_start": "2026-09-10T20:10:00Z",
+        "stat": "hits_runs_rbis",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "hits_runs_rbis",
+          "value": 0.5,
+          "needs": 1
+        },
+        "prop": "Over 0.5 Hits+Runs+RBIs",
+        "hit_probability": 0.7011,
+        "market_odds": -200,
+        "market_implied": 0.6667,
+        "market_edge": 0.0344,
+        "market_hold": null,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (A), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (8.4 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "L7 barrel% 30.8 \u2014 hot recent contact",
+          "Projected 4.37 PA (batting slot 2) \u2014 a favorable lineup slot",
+          "Hitter batting behind him: 0.345 wOBA (league ~.320)"
+        ],
+        "watchouts": [
+          "L7 avg EV 84.5mph (league ~88.5) \u2014 cold recent contact",
+          "Platoon: R bat vs RHP (unfavorable)",
+          "Hitters batting ahead of him: 0.313 wOBA (league ~.320) \u2014 a weak on-base group ahead of him, fewer runners to drive in",
+          "Team implied for 3.58 runs (league avg 4.245; line 3.5, game total 7) \u2014 a weak offensive environment",
+          "Public heavy on Seattle Mariners (money% trails tickets% by 16 pts) \u2014 sharp money is fading this side",
+          "Season barrel% 7.8 \u2014 below-average barrel rate",
+          "Wind blowing IN (3mph) \u2014 power suppressed",
+          "Opposing bullpen fatigue: 2/9 relievers over 60 pitches in L7 (fresh pen \u2014 tougher matchup late)",
+          "Sharp money fading Seattle Mariners (money% -16 pts vs ticket%) \u2014 smart money moving away from this side",
+          "BvP: 1-for-16 vs Jacob deGrom (standard error \u00b16 pts on a 16-AB career sample -- weighted lightly on that basis, not just because the count looks small)"
+        ],
+        "prob_ci": [
+          0.6844,
+          0.743
+        ],
+        "reliability": "A",
+        "reliability_note": null,
+        "sample_n": 138,
+        "lineup_assumed": null,
+        "base_rate": 0.6659,
+        "lift": 0.0352,
+        "lift_reference_rate": null,
+        "stable_lift": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "a2e5af90f",
+          "prediction_timestamp": "2026-09-10T19:24:48.443042+00:00",
+          "odds_fetched_at": "2026-09-10T19:24:42.786773+00:00",
+          "board_generated_at": "2026-09-10T19:24:48.434861+00:00"
+        },
+        "qualification_timestamp": "2026-09-10T19:24:48.443042+00:00",
+        "board_timestamp": "2026-09-10T19:24:48.434861+00:00",
         "slate_date": "2026-09-10"
       }
     }
