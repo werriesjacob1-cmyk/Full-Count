@@ -111,25 +111,38 @@ with open(os.path.join(DOCS_DIR, "data.json"), encoding="utf-8") as fh:
 with open(os.path.join(DOCS_DIR, "live.json"), encoding="utf-8") as fh:
     LIVE = json.load(fh)
 
-# Pick a prop the overlay actually changes the price of, so "did the
-# overlay apply" is a question with a visibly different answer.
-base_by_id = {r["id"]: r for r in DATA["props"]}
-probe = None
-for pid, delta in (LIVE.get("props") or {}).items():
-    row = base_by_id.get(pid)
-    if not row or "market_odds" not in delta:
-        continue
-    if delta["market_odds"] is not None and delta["market_odds"] != row.get("market_odds"):
-        probe = (pid, row.get("market_odds"), delta["market_odds"])
-        break
+# Build one deterministic in-memory overlay delta. The old test searched
+# committed live.json for a naturally moved price, which made CI depend on
+# the synthetic PR merge ref happening to pair two runtime artifacts with a
+# disagreement. Exercise the same real boot/merge path, but manufacture the
+# visible delta for this request only.
+probe_row = next((r for r in DATA["props"] if r.get("id") and r.get("market_odds") is not None), None)
 
-if probe is None:
-    check(False, "found a prop whose price the overlay changes (fixture precondition)",
-          "no live.json delta changes any market_odds; cannot test the overlay")
+if probe_row is None:
+    check(False, "found a priced prop for deterministic overlay probe",
+          "data.json has no prop with both id and market_odds")
 else:
-    pid, base_odds, live_odds = probe
+    pid = probe_row["id"]
+    base_odds = probe_row.get("market_odds")
+    # Any different valid American price works; choose deterministically.
+    live_odds = -101 if base_odds != -101 else -102
+    synthetic_live = json.loads(json.dumps(LIVE))
+    synthetic_live.setdefault("props", {})
+    delta = dict(synthetic_live["props"].get(pid) or {})
+    delta["market_odds"] = live_odds
+    synthetic_live["props"][pid] = delta
+    synthetic_body = json.dumps(synthetic_live).encode("utf-8")
+
     ctx, page = new_page()
     try:
+        def _serve_synthetic_live(route):
+            route.fulfill(
+                status=200,
+                content_type="application/json",
+                body=synthetic_body,
+            )
+
+        page.route("**/live.json*", _serve_synthetic_live)
         page.goto(f"{BASE}/index.html#/today")
         page.wait_for_function("() => window.PROPS_BY_ID !== undefined || document.getElementById('board-alert') !== null",
                                timeout=20000)
@@ -184,11 +197,15 @@ try:
     fresh = page.evaluate("() => boardFreshnessState(Date.now(), DATA)")
     check(fresh["state"] in ("fresh", "stale", "unknown"),
           "boardFreshnessState returns a declared state", f"got {fresh}")
-    # Force a board age past the limit and confirm the banner appears. Uses
-    # the real function, not a re-implementation of its rule.
+    # Force the MODEL BASIS past the limit and confirm the banner appears.
+    # boardFreshnessState() correctly prefers freshness.model_basis_at over
+    # legacy generated_at, so age the canonical clock too. Clone freshness
+    # before editing so this test never mutates the real in-page DATA object.
     forced = page.evaluate(
         "() => { const d = Object.assign({}, DATA);"
-        "  d.generated_at = new Date(Date.now() - 11 * 3600 * 1000).toISOString();"
+        "  const old = new Date(Date.now() - 11 * 3600 * 1000).toISOString();"
+        "  d.generated_at = old;"
+        "  d.freshness = Object.assign({}, d.freshness || {}, {model_basis_at: old});"
         "  return boardFreshnessState(Date.now(), d); }")
     check(forced["state"] == "stale" and forced["reason"] == "board_age_exceeded",
           "an 11-hour-old board is classified stale on board age", f"got {forced}")

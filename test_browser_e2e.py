@@ -97,13 +97,45 @@ _CLOCK_REBASED = {"live.json", "data.json"}
 
 
 def _rebased(raw):
-    """Same document, `*_at` timestamps moved to now. Structure untouched."""
+    """Same document, customer-actionability clocks moved to now.
+
+    P0 split freshness into scoped clocks. The first version of this helper
+    rebased only top-level *_at fields, so nested freshness.model_basis_at
+    continued aging in real time and the interaction suite eventually hid
+    every card again. Rebase the clock-bearing scopes the frontend actually
+    consumes, without recursively rewriting historical timestamps inside
+    props/publication records.
+    """
     doc = json.loads(raw)
     stamp = datetime.now(timezone.utc).isoformat()
-    for key in list(doc):
-        if key.endswith("_at") and isinstance(doc[key], str):
-            doc[key] = stamp
+
+    def _stamp(mapping):
+        if not isinstance(mapping, dict):
+            return
+        for key in list(mapping):
+            if key.endswith("_at") and isinstance(mapping[key], str):
+                mapping[key] = stamp
+
+    _stamp(doc)
+    _stamp(doc.get("freshness"))
+    _stamp(doc.get("reconciliation"))
     return json.dumps(doc).encode("utf-8")
+
+
+# Pure regression guard for the clock fixture itself. This specifically catches
+# the failure that let freshness.model_basis_at remain old while generated_at
+# was moved forward.
+_probe_old = "2000-01-01T00:00:00+00:00"
+_probe = json.loads(_rebased(json.dumps({
+    "generated_at": _probe_old,
+    "freshness": {"model_basis_at": _probe_old, "lineups_observed_at": _probe_old},
+    "reconciliation": {"checked_at": _probe_old},
+}).encode("utf-8")))
+check(_probe["generated_at"] != _probe_old
+      and _probe["freshness"]["model_basis_at"] != _probe_old
+      and _probe["freshness"]["lineups_observed_at"] != _probe_old
+      and _probe["reconciliation"]["checked_at"] != _probe_old,
+      "interaction fixture rebases top-level and scoped four-clock freshness timestamps")
 
 
 class _QuietHandler(http.server.SimpleHTTPRequestHandler):
