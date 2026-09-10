@@ -33,8 +33,15 @@ on:
   # incident (a user-credentialed force push) and misses the more likely
   # everyday failure: the pipeline itself dropping ledger rows in a bad merge.
   # A schedule fires regardless of who pushed.
+  # Hourly, not six-hourly, for as long as main has NO server-side ruleset.
+  # Detection latency is the only lever left while prevention is missing, and
+  # it is not academic: during the 2026-09-03 incident six pipeline commits
+  # landed on the broken lineage in the twenty minutes before anyone noticed,
+  # so every hour of delay is more state built on top of damage and more to
+  # reconcile. The repository is public, so the runs are free. Widen this back
+  # out once a ruleset actually blocks force pushes and deletions.
   schedule:
-    - cron: '17 */6 * * *'
+    - cron: '17 * * * *'
   workflow_dispatch:
 
 # Read-only. This job holds no push credential, writes nothing back, opens no
@@ -87,7 +94,7 @@ jobs:
             # at both ends is caught. A loss that appeared and was repaired
             # inside the window is missed, which is the accepted cost of a
             # stateless check -- durable damage is the thing worth catching.
-            BEFORE="$(git rev-list -1 --before='6 hours ago' origin/main)"
+            BEFORE="$(git rev-list -1 --before='90 minutes ago' origin/main)"
             echo "schedule mode: baseline $BEFORE"
           fi
           # An unresolvable baseline is the failure mode this guard exists for.
