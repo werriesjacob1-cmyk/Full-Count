@@ -356,6 +356,65 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-10",
+      "evaluations": [
+        {
+          "prop": "Over 3.5 Strikeouts",
+          "type": "pitcher",
+          "score": 53.9,
+          "notable_signals": 0,
+          "matchup": "Tampa Bay Rays @ Atlanta Braves",
+          "game_pk": 824872,
+          "team": "Tampa Bay Rays",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_k_pct": 48.0,
+            "same_hand_ratio": 75.0,
+            "l14_k_pct": 5.8824,
+            "env_neutral": 50.0
+          },
+          "hit_probability": 0.5962,
+          "raw_hit_probability": 0.6112,
+          "lift": -0.1015,
+          "reliability": "A",
+          "sample_n": 27,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 3.5,
+            "needs": 4
+          }
+        },
+        {
+          "prop": "Over 17.5 Outs Recorded",
+          "type": "pitcher",
+          "score": 66.4,
+          "notable_signals": 1,
+          "matchup": "Tampa Bay Rays @ Atlanta Braves",
+          "game_pk": 824872,
+          "team": "Tampa Bay Rays",
+          "side": "away",
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "outs_rate": 0.564,
+            "avg_outs_per_start": 17.78
+          },
+          "hit_probability": 0.564,
+          "raw_hit_probability": null,
+          "lift": 0.1288,
+          "reliability": "A",
+          "sample_n": 27,
+          "projection": {
+            "stat": "pitcher_outs",
+            "value": 17.5,
+            "needs": 18
+          }
+        }
+      ]
     }
   ]
 }

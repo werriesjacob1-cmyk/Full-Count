@@ -457,6 +457,65 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-10",
+      "evaluations": [
+        {
+          "prop": "Over 3.5 Strikeouts",
+          "type": "pitcher",
+          "score": 45.3,
+          "notable_signals": 0,
+          "matchup": "Colorado Rockies @ New York Yankees",
+          "game_pk": 823499,
+          "team": "Colorado Rockies",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_k_pct": 77.0,
+            "same_hand_ratio": 33.3333,
+            "l14_k_pct": 62.3529,
+            "env_neutral": 50.0
+          },
+          "hit_probability": 0.595,
+          "raw_hit_probability": 0.6054,
+          "lift": -0.1027,
+          "reliability": "A",
+          "sample_n": 21,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 3.5,
+            "needs": 4
+          }
+        },
+        {
+          "prop": "Over 14.5 Outs Recorded",
+          "type": "pitcher",
+          "score": 51.3,
+          "notable_signals": 0,
+          "matchup": "Colorado Rockies @ New York Yankees",
+          "game_pk": 823499,
+          "team": "Colorado Rockies",
+          "side": "away",
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "outs_rate": 0.6855,
+            "avg_outs_per_start": 14.67
+          },
+          "hit_probability": 0.6855,
+          "raw_hit_probability": null,
+          "lift": -0.0658,
+          "reliability": "A",
+          "sample_n": 21,
+          "projection": {
+            "stat": "pitcher_outs",
+            "value": 14.5,
+            "needs": 15
+          }
+        }
+      ]
     }
   ]
 }

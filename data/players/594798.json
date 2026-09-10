@@ -430,6 +430,66 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-10",
+      "evaluations": [
+        {
+          "prop": "Over 6.5 Strikeouts",
+          "type": "pitcher",
+          "score": 39.9,
+          "notable_signals": 1,
+          "matchup": "Texas Rangers @ Seattle Mariners",
+          "game_pk": 823088,
+          "team": "Texas Rangers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_k_pct": 63.0,
+            "same_hand_ratio": 75.0,
+            "l14_k_pct": 100.0,
+            "tto_penalty": 8.0,
+            "env_neutral": 50.0
+          },
+          "hit_probability": 0.3732,
+          "raw_hit_probability": 0.3732,
+          "lift": 0.153,
+          "reliability": "A",
+          "sample_n": 27,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 6.5,
+            "needs": 7
+          }
+        },
+        {
+          "prop": "Over 15.5 Outs Recorded",
+          "type": "pitcher",
+          "score": 44.8,
+          "notable_signals": 0,
+          "matchup": "Texas Rangers @ Seattle Mariners",
+          "game_pk": 823088,
+          "team": "Texas Rangers",
+          "side": "away",
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "outs_rate": 0.5601,
+            "avg_outs_per_start": 15.93
+          },
+          "hit_probability": 0.5601,
+          "raw_hit_probability": null,
+          "lift": -0.0202,
+          "reliability": "A",
+          "sample_n": 27,
+          "projection": {
+            "stat": "pitcher_outs",
+            "value": 15.5,
+            "needs": 16
+          }
+        }
+      ]
     }
   ]
 }
