@@ -2,7 +2,7 @@
   "schema_version": 1,
   "identity_schema_version": 2,
   "rollout_version": "pre-phase-v-live-lifecycle-v1",
-  "updated_at": "2026-09-10T19:29:20.091290+00:00",
+  "updated_at": "2026-09-10T20:10:35.250766+00:00",
   "migration": {
     "version": "pre-phase-v-live-lifecycle-v1",
     "completed_at": "2026-08-17T23:14:57+00:00",
@@ -25863,6 +25863,105 @@
         },
         "qualification_timestamp": "2026-09-10T19:24:48.443042+00:00",
         "board_timestamp": "2026-09-10T19:24:48.434861+00:00",
+        "slate_date": "2026-09-10"
+      }
+    },
+    "fc2:823499:player-678662:hits_runs_rbis:1:over": {
+      "canonical_id": "fc2:823499:player-678662:hits_runs_rbis:1:over",
+      "settlement_identity": [
+        "823499",
+        [
+          "player",
+          "678662"
+        ],
+        "hits_runs_rbis",
+        "1",
+        "over"
+      ],
+      "slate_date": "2026-09-10",
+      "first_published_at": "2026-09-10T20:10:35.250766+00:00",
+      "publication_provenance": {
+        "artifact_id": "266ed157f6f766e0958d12db029a058088f4aee93db1d2bb8a36f61cb0f819d8",
+        "source_commit": "3a0d10f705999f89d887c834f8a490589d6664b8",
+        "workflow_run_id": "34524389073",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-09-10T20:10:24.630784+00:00",
+        "data_hash": "d98c1d3b0705fb64f032f05effb7a17abf3b8cab642b64402bb595103ea0c3b3",
+        "live_hash": "8998ef34fe86c74291faec0f13bd054435982798d99f86e7c328cbd5398cb3aa"
+      },
+      "snapshot": {
+        "id": "fc2:823499:player-678662:hits_runs_rbis:1:over",
+        "identity_version": 2,
+        "game_pk": 823499,
+        "player_id": 678662,
+        "combo_player_ids": null,
+        "type": "batter",
+        "name": "Ezequiel Tovar",
+        "team": "Colorado Rockies",
+        "matchup": "Colorado Rockies @ New York Yankees",
+        "game_start": "2026-09-10T23:05:00Z",
+        "stat": "hits_runs_rbis",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "hits_runs_rbis",
+          "value": 0.5,
+          "needs": 1
+        },
+        "prop": "Over 0.5 Hits+Runs+RBIs",
+        "hit_probability": 0.6359,
+        "market_odds": -145,
+        "market_implied": 0.5918,
+        "market_edge": 0.0441,
+        "market_hold": null,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (A), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (8.8 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "Bat speed trending up L14 (+2.8mph 2nd-half vs 1st-half)",
+          "Platoon: R bat vs LHP (favorable)",
+          "Hitter batting behind him: 0.352 wOBA (league ~.320)"
+        ],
+        "watchouts": [
+          "L7 avg EV 84.6mph (league ~88.5) \u2014 cold recent contact",
+          "L7 barrel% 0.0 \u2014 cold recent contact",
+          "Opposing SP ERA 2.73 \u2014 elite pitcher, tough matchup",
+          "Projected 3.49 PA (batting slot 9) \u2014 a tough lineup slot for plate appearances",
+          "Hitters batting ahead of him: 0.245 wOBA (league ~.320) \u2014 a weak on-base group ahead of him, fewer runners to drive in",
+          "Team implied for 3.19 runs (league avg 4.245; line 2.5, game total 8.5) \u2014 a weak offensive environment",
+          "L7 sample is thin (7 PA) \u2014 treat recent-form read with caution",
+          "Season barrel% 6.4 \u2014 below-average barrel rate",
+          "Wind blowing IN (6mph) \u2014 power suppressed",
+          "Opposing bullpen fatigue: 0/7 relievers over 60 pitches in L7 (fresh pen \u2014 tougher matchup late)"
+        ],
+        "prob_ci": [
+          0.6226,
+          0.6675
+        ],
+        "reliability": "A",
+        "reliability_note": null,
+        "sample_n": 129,
+        "lineup_assumed": null,
+        "base_rate": 0.6659,
+        "lift": -0.03,
+        "lift_reference_rate": null,
+        "stable_lift": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "1e59e0693",
+          "prediction_timestamp": "2026-09-10T20:05:12.901769+00:00",
+          "odds_fetched_at": "2026-09-10T20:05:06.996342+00:00",
+          "board_generated_at": "2026-09-10T20:05:12.896358+00:00"
+        },
+        "qualification_timestamp": "2026-09-10T20:05:12.901769+00:00",
+        "board_timestamp": "2026-09-10T20:05:12.896358+00:00",
         "slate_date": "2026-09-10"
       }
     }
