@@ -1425,3 +1425,178 @@ suite: 77/77 files pass.
 Phase V has **not** begun. Scope held strictly to `recommendation.py`/
 `prop_probability.py`/tests -- no `generate_picks.py` calibration, scoring
 weight, model coefficient, calibrator fitting, or threshold change.
+
+---
+
+## 2026-09-03 — P0: `main` force-pushed onto an unmerged branch; public ledger truncated and recovered
+
+**Incident.** At 05:11:33Z `refs/heads/main` was force-pushed onto the head of
+the unmerged SuperClaude tooling branch (`b50f2c78`). 153 pipeline commits left
+main's ancestry, and the immutable public evidence estate was truncated: 12
+canonical identities disappeared from `results/grades_*.json` `public_top_picks`
+and 6 from `data/public_top_picks/registry.json`, whose `updated_at` rolled back
+from 22:52Z to 21:37Z. Because main came to contain the PR head, GitHub
+auto-marked draft PR #86 as merged — nobody clicked merge. Detected ~20 minutes
+later by accident, while cross-checking ledger counts: the same slate returned
+18 picks and then 6.
+
+**Root cause: UNKNOWN, with a bounded suspect set.** GitHub's PR #86 timeline
+records `base_ref_force_pushed` and `merged` in the same second, actor
+`werriesjacob1-cmyk`, `performed_via_github_app: null` — which rules out
+Actions and any installed App, and attributes the write to a user credential.
+Positively excluded by direct verification: the working session issued no push
+between 05:08 and 05:14 (at 05:11:33 it was running read-only `git ls-tree`);
+no force-push, `+refspec` or `update-ref` targeting main appears anywhere in
+its command history; every `--force-with-lease` in it targets a feature branch;
+no autosave variant on disk can reach main (the only one that force-pushes is
+scoped to `refs/heads/autosave/*` and refuses `main`/`master` before committing);
+no workflow triggers on `push`, and the three that write main all
+`checkout --detach origin/main` first so they can only fast-forward. Finishing
+attribution needs the GitHub audit log, which needs owner access.
+
+**Recovery — additive, no history rewrite.** Three forensic refs were pushed
+and verified on GitHub *before* any repair, because the pre-incident main was
+at that moment unreferenced on the remote and eligible for GC:
+
+    incident/2026-09-03-pre-rewrite        c3875b52
+    incident/2026-09-03-broken-main        9686a49e
+    incident/2026-09-03-superclaude-head   b50f2c78
+
+Do not delete these. Repair was a merge of `c3875b52` back into the broken
+lineage, then a revert of PR #86's effective change set (computed as
+`git diff --name-status fab6abc6 b50f2c78`, the real merge-base diff — all 32
+paths restored to their exact `c3875b52` state). `.claude/worktree-autosave.sh`
+was deliberately NOT removed: it existed on pre-incident main as a dormant
+script, so deleting `.claude/` wholesale would have been a second unauthorized
+change. Only `docs/data.json` and `docs/live.json` conflicted; both were
+resolved to the pre-incident build, because the post-incident copies were 15
+minutes newer but generated against the truncated registry, and a scan found no
+terminal settlement state in either version of either file — `docs/` holds no
+settlement authority, which lives in `results/` and the registry.
+
+**Verified after repair:** pre-incident and broken-lineage heads both ancestors
+of main; repaired tree byte-identical to `c3875b52`; zero SuperClaude
+control-plane files on main; no hook declaration anywhere in the repo; zero
+source files differing from pre-incident; and `PRE ⊆ RECOVERED` by canonical
+identity in both estates. **Lost legitimate public records: 0.** The pipeline
+then resumed on its own and has written only fast-forwards since.
+
+**Follow-on control (`ledger_integrity.py`, `.github/workflows/ledger-integrity.yml`).**
+A push moving main may not drop a canonical identity from either estate.
+Identities, never counts — a count is blind to substitution. Proven by
+mutation: against `pre-rewrite → broken-main` it FAILS and names all 18 lost
+identities; across 40 consecutive real transitions it PASSES every time.
+
+The original workflow claimed to run "on every push to main." **That was false.**
+Pipeline commits are pushed with the default `GITHUB_TOKEN`, and GitHub does not
+start workflow runs from those pushes — measured, 3,077 commits landed and it
+ran once. The Test Suite has likewise never run on a pipeline commit. A
+`schedule` trigger was added (2026-09-10) using `git rev-list -1 --before` for
+the baseline, with a guard: on a shallow clone that returns an EMPTY string,
+which the draft would have passed through as a successful comparison.
+
+**STILL OPEN — this is DETECTION, not PREVENTION.** `main` has **zero
+rulesets**; nothing blocks a force push or a deletion. Creating one requires
+repo-admin access not available to the working session (`admin: false`, and the
+API path is refused upstream). A push that deletes the workflow also cannot be
+caught by the workflow. Required action, owner only: Settings → Rules →
+Rulesets → target `refs/heads/main`, enable **Block force pushes** and
+**Restrict deletions**, do NOT require a pull request (it would break the
+pipeline's direct commits), and do NOT grant yourself bypass — the force-push
+came from the owner identity.
+
+---
+
+## 2026-09-10 — Model skill audit: no measurable WITHIN-market ranking, and two retractions
+
+Read this before spending time on calibrators or thresholds. Tooling:
+`engineering/evidence/model_skill_audit.py`,
+`engineering/evidence/band_signal_clustered.py` (branches
+`evidence/model-skill-audit`, `evidence/band-clustered-signal`). All figures
+are date-clustered bootstraps — picks share a slate, so the unit of independent
+evidence is the DATE, not the pick.
+
+**1. No measurable within-market ranking skill.**
+
+    within-market pooled AUC   n=2134   0.492  [0.461, 0.521]
+      main board only          n= 213   0.477  [0.374, 0.578]
+      best_of_category         n=1742   0.514  [0.484, 0.542]
+
+A well-powered null, not an underpowered shrug — the interval is ±0.03 and sits
+on 0.500. This matters because realized hit rate at fixed volume can only
+improve if the ORDERING puts more winners in the top N. Recalibrating shrinks
+probabilities without reordering anything.
+
+**2. The trap: do not quote pooled cross-market AUC as skill.** The same data
+pooled across markets give 0.748 [0.721, 0.776], which reads as strong skill
+and is not — it counts cross-market pairs (a 5% home-run prop against a 65%
+hits prop), so it mostly proves the model knows base rates differ.
+Pair-weighting within market collapses it to 0.492.
+
+**3. Corroborated independently by the `confidence` label**, which is a
+bucketing of the hand-weighted quality `score` (High if score ≥ 70 and sample
+not thin, Medium if ≥ 55, else Low). Within-market AUC **0.513 [0.481, 0.542]**
+on n=2154 — no information — and pooled it is NON-MONOTONIC: Low 0.299,
+Medium 0.442, **High 0.359**. High hits less often than Medium. Per market only
+`stolen_base` (0.039/0.139/0.259) and weakly `home_runs` are monotonic; the
+rest are flat or inverted. Since `confidence` is a monotone function of `score`,
+and `score` gates selection via `MIN_QUALITY_SCORE`, two independent
+measurements now agree that neither the probability nor the quality score
+carries within-market ordering information.
+
+Note both uninformative presentations — moonshot ordering and the confidence
+tier — appear ONLY in the legacy static markdown board. Neither is rendered in
+the live dashboard (`docs/data.json` carries no `category`; `confidence` has
+zero references in `dashboard/static/app.js`), so live customer exposure is
+lower than it first appears. No UI change was made on that basis.
+
+**4. RETRACTED: the `[0.60,0.62)` vs-market finding.** At 10 dates it looked
+solid (−0.179 [−0.332,−0.061], 9/10 slates negative, stable leave-one-out) and
+was reported as the only statistically survivable finding on the project. It did
+not replicate. With thresholds byte-identical across the span, so the
+populations are comparable: original 10 dates −0.195, **new 7 dates +0.022**,
+combined −0.097 [−0.239,+0.027]. At 17 dates NO segment's vs-market interval
+excludes zero. Acting on it would have cut ~a third of pick volume from a band
+that has since performed fine.
+
+**5. Overconfidence is real but is mostly a SELECTION effect.** Against
+predicted, the ledger gap is −0.115 [−0.204,−0.035], and it replicated in
+direction (original 10 dates −0.164, new 7 −0.062). But calibration across the
+full 0.01–0.95 range is decent (decile gaps −0.079..+0.041). The published
+board is the top slice of a distribution with no real within-market ordering, so
+it preferentially selects overstated probabilities and then regresses toward the
+base rate. Recalibrating would not have fixed it.
+
+**6. `home_runs` ranking is inverted and REPLICATES** — AUC 0.371
+[0.280,0.461] full-sample, **0.298** on 13 held-out dates. Its signal table
+looks damning (`season_barrel_pct` weighted +0.573 while correlating −0.220
+with outcome; `pull_park_synergy` +0.204 and `park_hand_index` +0.184 both
+essentially unweighted) but does NOT support action: `hard_hit_105_rate`, the
+dominant driver at +0.767, is NOT established as backwards (−0.142
+[−0.300,+0.018]); 29 signals were tested; this is a selected population where
+collider bias cannot be excluded; and it does not transfer — signals chosen on
+TRAIN dates and z-scored on TRAIN statistics score the held-out dates at
+composite AUC 0.447 against the model's 0.298, difference +0.149 with CI
+[−0.127,+0.364], not distinguishable and not beating chance. **Do not rebuild
+the HR scorer on this evidence.** The moonshot category delivers its advertised
+range (realized 0.196 against a 15–25% design target); only its internal
+ordering is uninformative.
+
+**Where the bottleneck actually is: capture, not modelling.** Within-market
+ranking is measurable at all only because `best_of_category` happens to sit
+below the main board's floor and supplies probability range — luck, not design.
+The full pre-filter candidate universe is never recorded.
+`backtest/candidate_funnel_logger.py` exists on main, builds valid records
+against a real board (verified), and **is wired into nothing** — zero references
+in `generate_picks.py`, `recommendation.py` or `dashboard/build_dashboard.py`,
+zero workflow invocations, zero committed rows. Every day without it loses that
+day's selection evidence irrecoverably. Wiring it touches a frozen file for
+logging only and was NOT done unilaterally; it needs an explicit decision. Note
+its dedup leaks (re-appending 50 identical records wrote 8 again) and record
+size is ~2 KB, so a full universe at ~1,300 rows/day is ~1 GB/year of git —
+size the capture before wiring it.
+
+**Regime discipline.** The skill figures read the `picks` array of
+`results/grades_*.json` — the mutable daily canonical file, NOT the immutable
+public Top Pick ledger. They support claims about model skill; they cannot
+support claims about deployed product performance. Only `public_top_picks` can.
