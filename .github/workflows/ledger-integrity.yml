@@ -33,15 +33,18 @@ on:
   # incident (a user-credentialed force push) and misses the more likely
   # everyday failure: the pipeline itself dropping ledger rows in a bad merge.
   # A schedule fires regardless of who pushed.
-  # Hourly, not six-hourly, for as long as main has NO server-side ruleset.
-  # Detection latency is the only lever left while prevention is missing, and
-  # it is not academic: during the 2026-09-03 incident six pipeline commits
-  # landed on the broken lineage in the twenty minutes before anyone noticed,
-  # so every hour of delay is more state built on top of damage and more to
-  # reconcile. The repository is public, so the runs are free. Widen this back
-  # out once a ruleset actually blocks force pushes and deletions.
+  # Every four hours. It was hourly for the window in which main had NO
+  # server-side ruleset, because detection latency was then the only lever
+  # available. A ruleset is now active (protect-main-and-evidence: blocks force
+  # pushes and deletions on main, prediction-ledger/**, incident/**,
+  # canonical/** and canonical-*, with an empty bypass list), so the failure
+  # this compensated for is prevented at GitHub rather than merely observed
+  # here. Four-hourly still bounds the OTHER failure mode a ruleset does not
+  # touch: the pipeline dropping ledger rows in a bad merge inside
+  # dashboard-live's conflict-resolving retry loop, which is a perfectly
+  # ordinary fast-forward and therefore permitted.
   schedule:
-    - cron: '17 * * * *'
+    - cron: '17 */4 * * *'
   workflow_dispatch:
 
 # Read-only. This job holds no push credential, writes nothing back, opens no
@@ -94,7 +97,7 @@ jobs:
             # at both ends is caught. A loss that appeared and was repaired
             # inside the window is missed, which is the accepted cost of a
             # stateless check -- durable damage is the thing worth catching.
-            BEFORE="$(git rev-list -1 --before='90 minutes ago' origin/main)"
+            BEFORE="$(git rev-list -1 --before='5 hours ago' origin/main)"
             echo "schedule mode: baseline $BEFORE"
           fi
           # An unresolvable baseline is the failure mode this guard exists for.
