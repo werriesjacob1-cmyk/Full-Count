@@ -2,7 +2,7 @@
   "schema_version": 1,
   "identity_schema_version": 2,
   "rollout_version": "pre-phase-v-live-lifecycle-v1",
-  "updated_at": "2026-09-10T20:10:35.250766+00:00",
+  "updated_at": "2026-09-10T20:13:45.784172+00:00",
   "migration": {
     "version": "pre-phase-v-live-lifecycle-v1",
     "completed_at": "2026-08-17T23:14:57+00:00",
@@ -25948,6 +25948,105 @@
         "lineup_assumed": null,
         "base_rate": 0.6659,
         "lift": -0.03,
+        "lift_reference_rate": null,
+        "stable_lift": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "1e59e0693",
+          "prediction_timestamp": "2026-09-10T20:05:12.901769+00:00",
+          "odds_fetched_at": "2026-09-10T20:05:06.996342+00:00",
+          "board_generated_at": "2026-09-10T20:05:12.896358+00:00"
+        },
+        "qualification_timestamp": "2026-09-10T20:05:12.901769+00:00",
+        "board_timestamp": "2026-09-10T20:05:12.896358+00:00",
+        "slate_date": "2026-09-10"
+      }
+    },
+    "fc2:823499:player-681198:hits:1:over": {
+      "canonical_id": "fc2:823499:player-681198:hits:1:over",
+      "settlement_identity": [
+        "823499",
+        [
+          "player",
+          "681198"
+        ],
+        "hits",
+        "1",
+        "over"
+      ],
+      "slate_date": "2026-09-10",
+      "first_published_at": "2026-09-10T20:13:45.784172+00:00",
+      "publication_provenance": {
+        "artifact_id": "7323312881010426361cd5dd078e3c49eaab43bbcbd3a70ded3284bc3274d8cb",
+        "source_commit": "ca2645c111328bdada834a9acb13676d61b0e7e1",
+        "workflow_run_id": "34524891757",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-09-10T20:13:34.827085+00:00",
+        "data_hash": "014d5df58eb04c5d2836f04048356284b09232404ab40697d6e507fd36c82bd3",
+        "live_hash": "f5ecd0a54db414bdfabd17332659b318966530ff82bff3057f66862c91a97332"
+      },
+      "snapshot": {
+        "id": "fc2:823499:player-681198:hits:1:over",
+        "identity_version": 2,
+        "game_pk": 823499,
+        "player_id": 681198,
+        "combo_player_ids": null,
+        "type": "batter",
+        "name": "TJ Rumfield",
+        "team": "Colorado Rockies",
+        "matchup": "Colorado Rockies @ New York Yankees",
+        "game_start": "2026-09-10T23:05:00Z",
+        "stat": "hits",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "hits",
+          "value": 0.5,
+          "needs": 1
+        },
+        "prop": "Over 0.5 Hits",
+        "hit_probability": 0.6461,
+        "market_odds": -155,
+        "market_implied": 0.6078,
+        "market_edge": 0.0383,
+        "market_hold": null,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (A), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (8.3 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "L7 barrel% 18.8 \u2014 hot recent contact",
+          "Projected 4.13 PA (batting slot 4)",
+          "Hitters batting ahead of him: 0.357 wOBA (league ~.320)",
+          "Hitter batting behind him: 0.337 wOBA (league ~.320)"
+        ],
+        "watchouts": [
+          "L7 avg EV 83.8mph (league ~88.5) \u2014 cold recent contact",
+          "Platoon: L bat vs LHP (unfavorable)",
+          "Opposing SP ERA 2.73 \u2014 elite pitcher, tough matchup",
+          "AVG vs xBA: 0.297 vs 0.261 (+0.036) \u2014 outperforming his contact quality, regression risk",
+          "wOBA vs xwOBA: 0.374 vs 0.335 (+0.039) \u2014 outperforming his contact quality, regression risk",
+          "Team implied for 3.19 runs (league avg 4.245; line 2.5, game total 8.5) \u2014 a weak offensive environment",
+          "Season barrel% 5.0 \u2014 below-average barrel rate",
+          "Wind blowing IN (6mph) \u2014 power suppressed",
+          "Opposing bullpen fatigue: 0/7 relievers over 60 pitches in L7 (fresh pen \u2014 tougher matchup late)"
+        ],
+        "prob_ci": [
+          0.6374,
+          0.6746
+        ],
+        "reliability": "A",
+        "reliability_note": null,
+        "sample_n": 141,
+        "lineup_assumed": null,
+        "base_rate": 0.5666,
+        "lift": 0.0795,
         "lift_reference_rate": null,
         "stable_lift": null,
         "versions": {
