@@ -452,8 +452,8 @@
         {
           "prop": "Over 5.5 Strikeouts",
           "type": "pitcher",
-          "score": 38.0,
-          "notable_signals": 0,
+          "score": 41.6,
+          "notable_signals": 1,
           "matchup": "Pittsburgh Pirates @ Chicago White Sox",
           "game_pk": 824550,
           "team": "Pittsburgh Pirates",
@@ -462,9 +462,12 @@
           "combo_player_ids": null,
           "signals": {
             "opp_team_k_pct": 70.0,
-            "same_hand_ratio": 12.5,
+            "same_hand_ratio": 43.75,
             "l14_k_pct": 100.0,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 74.5051,
+            "ump_k_pct": 0.816,
+            "ump_bb_pct": -0.348
           },
           "hit_probability": 0.515,
           "raw_hit_probability": 0.515,
@@ -489,12 +492,12 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.3233,
+            "outs_rate": 0.2972,
             "avg_outs_per_start": 13.88
           },
-          "hit_probability": 0.3233,
+          "hit_probability": 0.2972,
           "raw_hit_probability": null,
-          "lift": -0.2494,
+          "lift": -0.1755,
           "reliability": "A",
           "sample_n": 17,
           "projection": {

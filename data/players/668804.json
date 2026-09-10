@@ -3146,6 +3146,136 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-10",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 67.9,
+          "notable_signals": 2,
+          "matchup": "Pittsburgh Pirates @ Chicago White Sox",
+          "game_pk": 824550,
+          "team": "Pittsburgh Pirates",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "sp_era_weak": 0.0,
+            "pitch_exploit": 4.0,
+            "l7_avg_ev": 100.0,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 51.4,
+            "season_barrel_pct": 57.3333,
+            "lineup_slot": 75.0,
+            "bullpen_fatigue": 66.6667,
+            "platoon_barrel_pct": 2.08,
+            "platoon_xwoba": 2.1,
+            "opp_catcher_framing": 0.24,
+            "days_rest": 0.0,
+            "woba_ahead": 65.4545,
+            "woba_behind": 45.4545,
+            "hard_hit_105_rate": 0.5725,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": -2.0,
+            "series_game": 2.0,
+            "sp_rp_ops_gap": -0.624,
+            "vs_rp_ops": 0.408,
+            "ump_k_pct": -0.816,
+            "ump_bb_pct": 0.348
+          },
+          "hit_probability": 0.707,
+          "raw_hit_probability": 0.7378,
+          "lift": 0.0328,
+          "reliability": "A",
+          "sample_n": 146,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 50.5,
+          "notable_signals": 1,
+          "matchup": "Pittsburgh Pirates @ Chicago White Sox",
+          "game_pk": 824550,
+          "team": "Pittsburgh Pirates",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": -0.42,
+            "sprint_speed": 28.125,
+            "catcher_poptime": 17.1429,
+            "on_base": 89.4434
+          },
+          "hit_probability": 0.0614,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 146,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 10.3,
+          "notable_signals": 0,
+          "matchup": "Pittsburgh Pirates @ Chicago White Sox",
+          "game_pk": 824550,
+          "team": "Pittsburgh Pirates",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0695
+          },
+          "hit_probability": 0.0695,
+          "raw_hit_probability": null,
+          "lift": 0.0216,
+          "reliability": "A",
+          "sample_n": 146,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 7.6,
+          "notable_signals": 0,
+          "matchup": "Pittsburgh Pirates @ Chicago White Sox",
+          "game_pk": 824550,
+          "team": "Pittsburgh Pirates",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0431
+          },
+          "hit_probability": 0.0431,
+          "raw_hit_probability": null,
+          "lift": 0.0222,
+          "reliability": "A",
+          "sample_n": 146,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }
