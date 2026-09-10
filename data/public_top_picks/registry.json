@@ -2,7 +2,7 @@
   "schema_version": 1,
   "identity_schema_version": 2,
   "rollout_version": "pre-phase-v-live-lifecycle-v1",
-  "updated_at": "2026-09-10T20:13:45.784172+00:00",
+  "updated_at": "2026-09-10T20:24:46.542480+00:00",
   "migration": {
     "version": "pre-phase-v-live-lifecycle-v1",
     "completed_at": "2026-08-17T23:14:57+00:00",
@@ -26061,6 +26061,104 @@
         },
         "qualification_timestamp": "2026-09-10T20:05:12.901769+00:00",
         "board_timestamp": "2026-09-10T20:05:12.896358+00:00",
+        "slate_date": "2026-09-10"
+      }
+    },
+    "fc2:824550:player-671976:hits:1:over": {
+      "canonical_id": "fc2:824550:player-671976:hits:1:over",
+      "settlement_identity": [
+        "824550",
+        [
+          "player",
+          "671976"
+        ],
+        "hits",
+        "1",
+        "over"
+      ],
+      "slate_date": "2026-09-10",
+      "first_published_at": "2026-09-10T20:24:46.542480+00:00",
+      "publication_provenance": {
+        "artifact_id": "e4d9974eee4eab327da4c16300c4b71af5d89385650780a10093acfe005ea92c",
+        "source_commit": "f253132e26f9f1ab06db3dbe08790db09adced24",
+        "workflow_run_id": "34525891551",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-09-10T20:24:34.736508+00:00",
+        "data_hash": "11e11df356e9915b864e22133fdf7aa007515d45694b1c4f0236abddf9786df7",
+        "live_hash": "4e9f53288766fa99c82d2bdd0eb08b8a4d65e52e11b18b677de1c604382fddec"
+      },
+      "snapshot": {
+        "id": "fc2:824550:player-671976:hits:1:over",
+        "identity_version": 2,
+        "game_pk": 824550,
+        "player_id": 671976,
+        "combo_player_ids": null,
+        "type": "batter",
+        "name": "Tristan Peters",
+        "team": "Chicago White Sox",
+        "matchup": "Pittsburgh Pirates @ Chicago White Sox",
+        "game_start": "2026-09-10T23:40:00Z",
+        "stat": "hits",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "hits",
+          "value": 0.5,
+          "needs": 1
+        },
+        "prop": "Over 0.5 Hits",
+        "hit_probability": 0.6142,
+        "market_odds": -140,
+        "market_implied": 0.5833,
+        "market_edge": 0.0309,
+        "market_hold": null,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (A), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (7.4 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "L7 avg EV 88.8mph (league ~88.5)",
+          "L7 barrel% 38.9 \u2014 hot recent contact",
+          "Platoon: L bat vs RHP (favorable)",
+          "Pitch-type exploit: RV/100 +1.6 vs SL (opposing SP throws it 34.9% of the time)"
+        ],
+        "watchouts": [
+          "Projected 3.69 PA (batting slot 8) \u2014 a tough lineup slot for plate appearances",
+          "AVG vs xBA: 0.283 vs 0.257 (+0.026) \u2014 outperforming his contact quality, regression risk",
+          "wOBA vs xwOBA: 0.356 vs 0.319 (+0.037) \u2014 outperforming his contact quality, regression risk",
+          "Team implied for 3.66 runs (league avg 4.245; line 3.5, game total 7.5) \u2014 a weak offensive environment",
+          "Season barrel% 5.9 \u2014 below-average barrel rate",
+          "Hitters batting ahead of him: 0.327 wOBA (league ~.320) \u2014 a weak on-base group ahead of him, fewer runners to drive in",
+          "Hitter batting behind him: 0.263 wOBA (league ~.320) \u2014 little lineup protection, an easier batter to pitch around",
+          "Opposing bullpen fatigue: 3/10 relievers over 60 pitches in L7 (fresh pen \u2014 tougher matchup late)"
+        ],
+        "prob_ci": [
+          0.6055,
+          0.6427
+        ],
+        "reliability": "A",
+        "reliability_note": null,
+        "sample_n": 135,
+        "lineup_assumed": null,
+        "base_rate": 0.5666,
+        "lift": 0.0476,
+        "lift_reference_rate": null,
+        "stable_lift": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "9b11b55c1",
+          "prediction_timestamp": "2026-09-10T20:20:59.051500+00:00",
+          "odds_fetched_at": "2026-09-10T20:20:55.065025+00:00",
+          "board_generated_at": "2026-09-10T20:20:59.045167+00:00"
+        },
+        "qualification_timestamp": "2026-09-10T20:20:59.051500+00:00",
+        "board_timestamp": "2026-09-10T20:20:59.045167+00:00",
         "slate_date": "2026-09-10"
       }
     }
