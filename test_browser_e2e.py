@@ -33,6 +33,7 @@ from __future__ import annotations
 import functools
 import http.server
 import json
+import re
 import os
 import sys
 import threading
@@ -97,13 +98,45 @@ _CLOCK_REBASED = {"live.json", "data.json"}
 
 
 def _rebased(raw):
-    """Same document, `*_at` timestamps moved to now. Structure untouched."""
+    """Same document, customer-actionability clocks moved to now.
+
+    P0 split freshness into scoped clocks. The first version of this helper
+    rebased only top-level *_at fields, so nested freshness.model_basis_at
+    continued aging in real time and the interaction suite eventually hid
+    every card again. Rebase the clock-bearing scopes the frontend actually
+    consumes, without recursively rewriting historical timestamps inside
+    props/publication records.
+    """
     doc = json.loads(raw)
     stamp = datetime.now(timezone.utc).isoformat()
-    for key in list(doc):
-        if key.endswith("_at") and isinstance(doc[key], str):
-            doc[key] = stamp
+
+    def _stamp(mapping):
+        if not isinstance(mapping, dict):
+            return
+        for key in list(mapping):
+            if key.endswith("_at") and isinstance(mapping[key], str):
+                mapping[key] = stamp
+
+    _stamp(doc)
+    _stamp(doc.get("freshness"))
+    _stamp(doc.get("reconciliation"))
     return json.dumps(doc).encode("utf-8")
+
+
+# Pure regression guard for the clock fixture itself. This specifically catches
+# the failure that let freshness.model_basis_at remain old while generated_at
+# was moved forward.
+_probe_old = "2000-01-01T00:00:00+00:00"
+_probe = json.loads(_rebased(json.dumps({
+    "generated_at": _probe_old,
+    "freshness": {"model_basis_at": _probe_old, "lineups_observed_at": _probe_old},
+    "reconciliation": {"checked_at": _probe_old},
+}).encode("utf-8")))
+check(_probe["generated_at"] != _probe_old
+      and _probe["freshness"]["model_basis_at"] != _probe_old
+      and _probe["freshness"]["lineups_observed_at"] != _probe_old
+      and _probe["reconciliation"]["checked_at"] != _probe_old,
+      "interaction fixture rebases top-level and scoped four-clock freshness timestamps")
 
 
 class _QuietHandler(http.server.SimpleHTTPRequestHandler):
@@ -474,8 +507,39 @@ try:
          "the combined figure is honestly labeled, not presented as exact.")
     ctx, page = new_page()
     load(page, "#/today")
+    # THREE states, not two. The old version treated "a .parlay-card exists"
+    # as "a priced parlay is on screen", so whenever the card rendered in its
+    # WITHDRAWN form -- app.js emits .parlay-card-suppressed when a leg can no
+    # longer be matched, FanDuel has moved off the line, a leg is unpriced, or
+    # a lineup spot is unconfirmed -- there was no odds figure to inspect and
+    # the test failed as "the combined odds figure lacks honest framing". That
+    # reads as a pricing-honesty defect when the product was in fact doing
+    # exactly the right thing: refusing to show a parlay it cannot stand behind.
+    # It is data-dependent, so it flipped red whenever a suggested leg aged off
+    # the board, which is how it took main's CI down today.
     parlay = page.query_selector(".parlay-card")
-    if parlay:
+    suppressed = page.query_selector(".parlay-card-suppressed")
+    if suppressed:
+        text = suppressed.inner_text()
+        check("undefined" not in text and "NaN" not in text,
+              "the withdrawn parlay renders no literal undefined/NaN",
+              f"text snippet: {text[:200]!r}")
+        # A withdrawal must SAY WHY. A blank suppressed card would be worse
+        # than a wrong price, because the reader learns nothing.
+        check(len(text.strip()) > 40 and ("no longer" in text or "not being shown" in text
+                                          or "cannot be" in text),
+              "the withdrawn parlay explains why it is not being offered",
+              f"text snippet: {text[:300]!r}")
+        # And it must not quietly keep a stale combined price beside the
+        # withdrawal, which would be the genuinely dangerous version of this.
+        # Match an actual American price (+250 / -110), not a bare "+": prop
+        # names legitimately contain one, as in "Hits+Runs+RBIs", and the first
+        # draft of this check tripped on exactly that.
+        stale_price = re.search(r"(?<![\w])[+-]\d{3}(?![\d])", text)
+        check(stale_price is None or "Estimated" in text,
+              "the withdrawal does not present a stale combined price as current",
+              f"matched {stale_price.group(0)!r} in {text[:300]!r}" if stale_price else "")
+    elif parlay:
         text = parlay.inner_text()
         check("undefined" not in text and "NaN" not in text,
               "no leg/combined price renders as literal undefined/NaN", f"text snippet: {text[:200]!r}")

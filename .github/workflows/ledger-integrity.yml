@@ -23,6 +23,29 @@ name: Public Ledger Integrity
 on:
   push:
     branches: [main]
+  # The push trigger alone was NOT ENOUGH, and this is the gap it left.
+  # Every pipeline commit is pushed by GitHub Actions using the default
+  # GITHUB_TOKEN, and GitHub deliberately does not start new workflow runs from
+  # those pushes (it prevents recursion). Measured: 3,077 commits landed on main
+  # after this workflow shipped and it ran ONCE -- on the one push made with a
+  # user credential. The Test Suite has likewise never run on a pipeline commit.
+  # So the push trigger covers exactly the class that caused the 2026-09-03
+  # incident (a user-credentialed force push) and misses the more likely
+  # everyday failure: the pipeline itself dropping ledger rows in a bad merge.
+  # A schedule fires regardless of who pushed.
+  # Every four hours. It was hourly for the window in which main had NO
+  # server-side ruleset, because detection latency was then the only lever
+  # available. A ruleset is now active (protect-main-and-evidence: blocks force
+  # pushes and deletions on main, prediction-ledger/**, incident/**,
+  # canonical/** and canonical-*, with an empty bypass list), so the failure
+  # this compensated for is prevented at GitHub rather than merely observed
+  # here. Four-hourly still bounds the OTHER failure mode a ruleset does not
+  # touch: the pipeline dropping ledger rows in a bad merge inside
+  # dashboard-live's conflict-resolving retry loop, which is a perfectly
+  # ordinary fast-forward and therefore permitted.
+  schedule:
+    - cron: '17 */4 * * *'
+  workflow_dispatch:
 
 # Read-only. This job holds no push credential, writes nothing back, opens no
 # issue or PR, and never attempts a repair. A red check is the whole output.
@@ -48,6 +71,7 @@ jobs:
           filter: blob:none
 
       - name: Report whether this push rewrote history
+        if: github.event_name == 'push'
         run: |
           if [ "${{ github.event.forced }}" = "true" ]; then
             echo "::error::This push to main was a FORCE PUSH (history rewrite)."
@@ -58,16 +82,37 @@ jobs:
 
       - name: Public ledger monotonicity
         run: |
-          BEFORE='${{ github.event.before }}'
           AFTER='${{ github.sha }}'
-          # All-zero `before` means the ref was just created; there is no prior
-          # estate to compare against, so there is nothing to verify.
-          if [ "$BEFORE" = "0000000000000000000000000000000000000000" ]; then
-            echo "Branch creation; no prior estate to compare."
-            exit 0
+          if [ "${{ github.event_name }}" = "push" ]; then
+            BEFORE='${{ github.event.before }}'
+            # All-zero `before` means the ref was just created; there is no
+            # prior estate to compare against, so there is nothing to verify.
+            if [ "$BEFORE" = "0000000000000000000000000000000000000000" ]; then
+              echo "Branch creation; no prior estate to compare."
+              exit 0
+            fi
+          else
+            # Schedule and manual runs get no `before`, so anchor on main as it
+            # stood one window back. Endpoints are what matter: damage present
+            # at both ends is caught. A loss that appeared and was repaired
+            # inside the window is missed, which is the accepted cost of a
+            # stateless check -- durable damage is the thing worth catching.
+            BEFORE="$(git rev-list -1 --before='5 hours ago' origin/main)"
+            echo "schedule mode: baseline $BEFORE"
+          fi
+          # An unresolvable baseline is the failure mode this guard exists for.
+          # A shallow or partial clone makes `git rev-list --before` return an
+          # EMPTY string, which without this check would sail through as a pass.
+          # Found while validating locally against a shallow clone, before this
+          # workflow ever shipped.
+          if [ -z "$BEFORE" ]; then
+            echo "::error::Could not resolve a baseline commit to compare against."
+            echo "Most likely the checkout lacks history (needs fetch-depth: 0)."
+            echo "Missing evidence is not a pass -- failing closed."
+            exit 1
           fi
           if ! git cat-file -e "$BEFORE^{commit}" 2>/dev/null; then
-            echo "::error::Cannot read the pre-push commit $BEFORE."
+            echo "::error::Cannot read baseline commit $BEFORE."
             echo "The prior estate is unreachable, so no verdict is possible."
             echo "Missing evidence is not a pass -- failing closed."
             exit 1

@@ -2,7 +2,7 @@
   "schema_version": 1,
   "identity_schema_version": 2,
   "rollout_version": "pre-phase-v-live-lifecycle-v1",
-  "updated_at": "2026-09-10T14:24:14.882661+00:00",
+  "updated_at": "2026-09-10T15:18:57.207278+00:00",
   "migration": {
     "version": "pre-phase-v-live-lifecycle-v1",
     "completed_at": "2026-08-17T23:14:57+00:00",
@@ -25271,6 +25271,103 @@
         },
         "qualification_timestamp": "2026-09-10T14:20:24.192270+00:00",
         "board_timestamp": "2026-09-10T14:20:24.180107+00:00",
+        "slate_date": "2026-09-10"
+      }
+    },
+    "fc2:823413:player-669016:hits:1:over": {
+      "canonical_id": "fc2:823413:player-669016:hits:1:over",
+      "settlement_identity": [
+        "823413",
+        [
+          "player",
+          "669016"
+        ],
+        "hits",
+        "1",
+        "over"
+      ],
+      "slate_date": "2026-09-10",
+      "first_published_at": "2026-09-10T15:18:57.207278+00:00",
+      "publication_provenance": {
+        "artifact_id": "87d32a88d9c30be73bde900422f077963c1fb9366722f01b73629da8419810e0",
+        "source_commit": "7c2b00d7aca60dfa29e58e38db16545aa75771d0",
+        "workflow_run_id": "34494599553",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-09-10T15:18:42.428980+00:00",
+        "data_hash": "892a25352a4d666ac4be615515222c021d514631edf241ed5710b680118bec08",
+        "live_hash": "8011a3d6c30cf17bcf1f74f6ce1f8369956bee71e349ee07a891848e334dd502"
+      },
+      "snapshot": {
+        "id": "fc2:823413:player-669016:hits:1:over",
+        "identity_version": 2,
+        "game_pk": 823413,
+        "player_id": 669016,
+        "combo_player_ids": null,
+        "type": "batter",
+        "name": "Brandon Marsh",
+        "team": "Philadelphia Phillies",
+        "matchup": "Houston Astros @ Philadelphia Phillies",
+        "game_start": "2026-09-10T17:05:00Z",
+        "stat": "hits",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "hits",
+          "value": 0.5,
+          "needs": 1
+        },
+        "prop": "Over 0.5 Hits",
+        "hit_probability": 0.6251,
+        "market_odds": -145,
+        "market_implied": 0.5918,
+        "market_edge": 0.0333,
+        "market_hold": null,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (A), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (7.7 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "L7 avg EV 93.4mph (league ~88.5) \u2014 hot recent contact",
+          "L7 barrel% 50.0 \u2014 hot recent contact",
+          "Platoon: L bat vs RHP (favorable)",
+          "Opposing SP ERA 5.98 \u2014 shaky matchup for the pitcher",
+          "Team implied for 4.82 runs (league avg 4.245; line 4.5, game total 8.5) \u2014 a strong offensive environment",
+          "Season barrel% 8.3"
+        ],
+        "watchouts": [
+          "Projected 3.92 PA (batting slot 7) \u2014 a tough lineup slot for plate appearances",
+          "Hitters batting ahead of him: 0.319 wOBA (league ~.320) \u2014 a weak on-base group ahead of him, fewer runners to drive in",
+          "Hitter batting behind him: 0.293 wOBA (league ~.320) \u2014 little lineup protection, an easier batter to pitch around",
+          "Opposing bullpen fatigue: 2/9 relievers over 60 pitches in L7 (fresh pen \u2014 tougher matchup late)",
+          "BvP: 5-for-10 vs Cristian Javier (standard error \u00b116 pts on a 10-AB career sample -- weighted lightly on that basis, not just because the count looks small)"
+        ],
+        "prob_ci": [
+          0.6163,
+          0.6537
+        ],
+        "reliability": "A",
+        "reliability_note": null,
+        "sample_n": 138,
+        "lineup_assumed": null,
+        "base_rate": 0.5666,
+        "lift": 0.0585,
+        "lift_reference_rate": null,
+        "stable_lift": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "979d6fc7f",
+          "prediction_timestamp": "2026-09-10T15:14:23.212504+00:00",
+          "odds_fetched_at": "2026-09-10T15:14:20.325800+00:00",
+          "board_generated_at": "2026-09-10T15:14:23.203735+00:00"
+        },
+        "qualification_timestamp": "2026-09-10T15:14:23.212504+00:00",
+        "board_timestamp": "2026-09-10T15:14:23.203735+00:00",
         "slate_date": "2026-09-10"
       }
     }

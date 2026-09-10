@@ -203,6 +203,70 @@ def content_hash(record):
     return hashlib.sha256(canonical.encode("utf-8")).hexdigest()
 
 
+# Fields the full record carries for readability but that are RECOVERABLE from
+# the ids beside them: player_name/team/matchup all follow from player_id and
+# game_pk. On disk they are pure duplication, and they were 21% of the payload.
+_DERIVABLE_IDENTITY = ("player_name", "team", "matchup")
+
+# Floats are rounded on disk. Signal values and probabilities carry nowhere near
+# 17 significant figures of meaning, and repr() of a float is most of a record.
+_ROUND = 6
+
+
+def _shrink(obj):
+    """Drop nulls, round floats, recursively. Absent stays ABSENT.
+
+    Omitting a null key is not the same mistake as coercing it to zero: a
+    reader must treat a missing key as "not observed", which is exactly what
+    `null` meant. See scale()/_sig() in generate_picks.py -- absent is not zero
+    and not neutral, and dropping the key preserves that rather than breaking
+    it."""
+    if isinstance(obj, dict):
+        out = {}
+        for k, v in obj.items():
+            if v is None:
+                continue
+            sv = _shrink(v)
+            if sv is None or sv == {} or sv == []:
+                continue
+            out[k] = sv
+        return out
+    if isinstance(obj, list):
+        return [_shrink(v) for v in obj if v is not None]
+    if isinstance(obj, float):
+        return round(obj, _ROUND)
+    return obj
+
+
+def compact_record(record, drop_reasons=False):
+    """The lean on-disk form of a funnel record.
+
+    Measured on a real 95-row board: 1,743 B/record full, which is 0.77 GiB a
+    year at 1,300 candidates a day and the reason this logger was not simply
+    switched on. Compaction is what makes daily capture of the full pre-filter
+    universe affordable.
+
+    `drop_reasons` also discards the free-prose decision rationale. That prose
+    IS the funnel's own subject -- why a candidate was rejected -- so it is kept
+    by default and dropped only when the capture exists purely to measure
+    ranking, where the predicted probability and the outcome are what matter.
+    """
+    out = {}
+    for section, body in record.items():
+        if not isinstance(body, dict):
+            out[section] = _shrink(body)
+            continue
+        trimmed = dict(body)
+        if section == "identity":
+            for k in _DERIVABLE_IDENTITY:
+                trimmed.pop(k, None)
+        if drop_reasons and section == "decision":
+            trimmed.pop("status_reasons", None)
+            trimmed.pop("gate_trace", None)
+        out[section] = _shrink(trimmed)
+    return out
+
+
 def _read_last_hashes(path):
     """Last content_hash seen per candidate_id, from a real existing file.
     Missing/empty file -> empty index, not an error (first run of the day)."""
@@ -224,23 +288,46 @@ def _read_last_hashes(path):
     return last
 
 
-def append_new_snapshots(records, path):
+def append_new_snapshots(records, path, compact=False, drop_reasons=False):
     """Appends only records whose content_hash differs from the last-seen
     hash for that candidate_id in the existing file (or is new). Returns
     (n_written, n_skipped_duplicate). Deterministic: running this twice in
     a row on the identical `records` list writes on the first call and
-    skips everything on the second."""
+    skips everything on the second -- including when the batch contains two
+    records for one candidate_id, which it really does.
+
+    `compact` writes the lean form (see compact_record); the content hash is
+    then taken over what is actually on disk, so dedup stays consistent."""
     last_hashes = _read_last_hashes(path)
+    if compact:
+        records = [compact_record(r, drop_reasons=drop_reasons) for r in records]
+
+    # COLLAPSE WITHIN-BATCH DUPLICATES FIRST. The same prop legitimately
+    # appears twice in one board -- moonshot and best-of-category overlap on
+    # the same player+prop+game, which dashboard/build_dashboard.py already
+    # documents -- producing two records with ONE candidate_id and DIFFERENT
+    # content. Because the file index keeps only the LAST hash per
+    # candidate_id, those pairs used to alternate and rewrite on every single
+    # run forever: measured 4 duplicated ids on a real board re-appending 8
+    # rows indefinitely, while this function's own docstring promised that a
+    # second identical call skips everything. One snapshot per candidate per
+    # run is the honest unit, so the last occurrence wins -- matching what the
+    # file index would have retained anyway.
+    collapsed = {}
+    for record in records:
+        collapsed[record["identity"]["candidate_id"]] = record
+    n_collapsed = len(records) - len(collapsed)
+
     to_write = []
     n_skipped = 0
-    for record in records:
-        cid = record["identity"]["candidate_id"]
+    for cid, record in collapsed.items():
         h = content_hash(record)
         if last_hashes.get(cid) == h:
             n_skipped += 1
             continue
         to_write.append(record)
         last_hashes[cid] = h
+    n_skipped += n_collapsed
     if to_write:
         with open(path, "a", encoding="utf-8") as fh:
             for record in to_write:
