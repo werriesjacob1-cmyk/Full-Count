@@ -12,6 +12,7 @@ import json
 import os
 import sys
 import tempfile
+import shutil
 import unittest
 
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "backtest"))
@@ -201,6 +202,119 @@ class DefaultPathTests(unittest.TestCase):
     def test_path_is_per_date_and_matches_the_gitignored_backtest_glob(self):
         path = cfl.default_path_for_date("2026-08-25", out_dir="/tmp/x")
         self.assertTrue(path.endswith("candidate_funnel_2026-08-25.jsonl"))
+
+
+class WithinBatchDuplicateRegression(unittest.TestCase):
+    """One board legitimately contains two records for one candidate_id.
+
+    moonshot and best-of-category overlap on the same player+prop+game, which
+    dashboard/build_dashboard.py documents at its own dedup site. Those two
+    records share a candidate_id and differ in content. Because the file index
+    keeps only the LAST hash per candidate_id, the pair used to alternate and
+    rewrite on EVERY run forever, while append_new_snapshots' docstring
+    promised a second identical call skips everything. Measured on a real
+    2026-09-08 board: 4 duplicated ids re-appending 8 rows indefinitely.
+    """
+
+    def setUp(self):
+        self.dir = tempfile.mkdtemp()
+        self.path = os.path.join(self.dir, "funnel.jsonl")
+
+    def tearDown(self):
+        shutil.rmtree(self.dir, ignore_errors=True)
+
+    def _pair(self):
+        """Two records, one candidate_id, different content -- the real case."""
+        a = cfl.funnel_record_from_candidate(candidate(), date="2026-08-25")
+        b = cfl.funnel_record_from_candidate(candidate(), date="2026-08-25")
+        b["decision"]["recommendation_status"] = "lean"
+        self.assertEqual(a["identity"]["candidate_id"], b["identity"]["candidate_id"])
+        self.assertNotEqual(cfl.content_hash(a), cfl.content_hash(b))
+        return [a, b]
+
+    def test_duplicate_pair_does_not_rewrite_forever(self):
+        recs = self._pair()
+        first = cfl.append_new_snapshots(recs, self.path)
+        second = cfl.append_new_snapshots(recs, self.path)
+        third = cfl.append_new_snapshots(recs, self.path)
+        self.assertEqual(first[0], 1, "two records for one candidate collapse to one row")
+        self.assertEqual(second[0], 0, "second identical call must write nothing")
+        self.assertEqual(third[0], 0, "and stay stable")
+        self.assertEqual(sum(1 for _ in open(self.path)), 1)
+
+    def test_last_occurrence_wins(self):
+        recs = self._pair()
+        cfl.append_new_snapshots(recs, self.path)
+        row = json.loads(open(self.path).read().strip())
+        self.assertEqual(row["decision"]["recommendation_status"], "lean")
+
+    def test_collapsed_rows_are_counted_as_skipped(self):
+        written, skipped = cfl.append_new_snapshots(self._pair(), self.path)
+        self.assertEqual(written + skipped, 2, "every input record is accounted for")
+
+
+class CompactRecordTests(unittest.TestCase):
+    """Compaction must shrink the payload without losing anything scientific."""
+
+    def setUp(self):
+        self.full = cfl.funnel_record_from_candidate(candidate(), date="2026-08-25")
+
+    def test_derivable_identity_text_is_dropped(self):
+        lean = cfl.compact_record(self.full)
+        for k in ("player_name", "team", "matchup"):
+            self.assertIn(k, self.full["identity"])
+            self.assertNotIn(k, lean["identity"], f"{k} is recoverable from the ids")
+
+    def test_the_ids_needed_to_recover_them_survive(self):
+        lean = cfl.compact_record(self.full)
+        for k in ("candidate_id", "player_id", "game_pk", "stat", "date"):
+            self.assertIn(k, lean["identity"], f"{k} must survive or nothing is recoverable")
+
+    def test_prediction_and_signals_survive(self):
+        lean = cfl.compact_record(self.full)
+        self.assertEqual(lean["prediction"]["hit_probability"],
+                         self.full["prediction"]["hit_probability"])
+        self.assertEqual(lean["evidence"]["signals"], self.full["evidence"]["signals"])
+
+    def test_nulls_are_dropped_not_coerced(self):
+        rec = {"evidence": {"present": 1.0, "absent": None}}
+        lean = cfl.compact_record(rec)
+        self.assertIn("present", lean["evidence"])
+        self.assertNotIn("absent", lean["evidence"],
+                         "absent must stay absent -- never coerced to 0")
+
+    def test_drop_reasons_is_opt_in(self):
+        # A real rejected candidate carries prose here; the shared fixture's
+        # list is empty, and an empty list is correctly dropped as "nothing
+        # recorded" rather than kept as an empty container.
+        withprose = cfl.funnel_record_from_candidate(
+            candidate(status_reasons=["below the probability floor"]),
+            date="2026-08-25")
+        self.assertIn("status_reasons", cfl.compact_record(withprose)["decision"])
+        self.assertNotIn("status_reasons",
+                         cfl.compact_record(withprose, drop_reasons=True)["decision"])
+
+    def test_empty_containers_are_dropped(self):
+        lean = cfl.compact_record({"decision": {"status_reasons": [], "keep": 1}})
+        self.assertNotIn("status_reasons", lean["decision"])
+        self.assertIn("keep", lean["decision"])
+
+    def test_compaction_actually_shrinks(self):
+        big = len(json.dumps(self.full, default=str))
+        small = len(json.dumps(cfl.compact_record(self.full), default=str))
+        self.assertLess(small, big)
+
+    def test_compact_write_is_idempotent_and_hashes_the_written_form(self):
+        d = tempfile.mkdtemp()
+        try:
+            path = os.path.join(d, "f.jsonl")
+            recs = [self.full]
+            self.assertEqual(cfl.append_new_snapshots(recs, path, compact=True)[0], 1)
+            self.assertEqual(cfl.append_new_snapshots(recs, path, compact=True)[0], 0)
+            row = json.loads(open(path).read().strip())
+            self.assertNotIn("player_name", row["identity"], "the lean form is what landed")
+        finally:
+            shutil.rmtree(d, ignore_errors=True)
 
 
 if __name__ == "__main__":
