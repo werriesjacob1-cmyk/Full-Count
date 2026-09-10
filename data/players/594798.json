@@ -469,7 +469,7 @@
         {
           "prop": "Over 16.5 Outs Recorded",
           "type": "pitcher",
-          "score": 53.2,
+          "score": 53.3,
           "notable_signals": 1,
           "matchup": "Texas Rangers @ Seattle Mariners",
           "game_pk": 823088,
@@ -493,9 +493,9 @@
           }
         },
         {
-          "prop": "Over 12.5 Combined Strikeouts",
+          "prop": "Over 13.5 Combined Strikeouts",
           "type": "pitcher_combo",
-          "score": 36.2,
+          "score": 20.8,
           "notable_signals": 0,
           "matchup": "Texas Rangers @ Seattle Mariners",
           "game_pk": 823088,
@@ -507,17 +507,17 @@
             669302
           ],
           "signals": {
-            "combined_k_edge": -0.1194
+            "combined_k_edge": -0.1352
           },
-          "hit_probability": 0.5405,
+          "hit_probability": 0.4102,
           "raw_hit_probability": null,
-          "lift": -0.1194,
+          "lift": -0.1352,
           "reliability": "D",
           "sample_n": 0,
           "projection": {
             "stat": "combined_strikeouts",
-            "value": 12.5,
-            "needs": 13
+            "value": 13.5,
+            "needs": 14
           }
         }
       ]
