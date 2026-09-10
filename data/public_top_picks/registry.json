@@ -2,7 +2,7 @@
   "schema_version": 1,
   "identity_schema_version": 2,
   "rollout_version": "pre-phase-v-live-lifecycle-v1",
-  "updated_at": "2026-09-10T20:38:44.510415+00:00",
+  "updated_at": "2026-09-10T20:44:17.141490+00:00",
   "migration": {
     "version": "pre-phase-v-live-lifecycle-v1",
     "completed_at": "2026-08-17T23:14:57+00:00",
@@ -26258,6 +26258,105 @@
         },
         "qualification_timestamp": "2026-09-10T20:34:53.164371+00:00",
         "board_timestamp": "2026-09-10T20:34:53.158927+00:00",
+        "slate_date": "2026-09-10"
+      }
+    },
+    "fc2:823499:player-681198:hits_runs_rbis:1:over": {
+      "canonical_id": "fc2:823499:player-681198:hits_runs_rbis:1:over",
+      "settlement_identity": [
+        "823499",
+        [
+          "player",
+          "681198"
+        ],
+        "hits_runs_rbis",
+        "1",
+        "over"
+      ],
+      "slate_date": "2026-09-10",
+      "first_published_at": "2026-09-10T20:44:17.141490+00:00",
+      "publication_provenance": {
+        "artifact_id": "bb33687140a7f8541be3d3888e480211f8d2114c44786d86aaef7372be1732f1",
+        "source_commit": "8eaae6de1fd08343d77a304d79048fe50a2fb955",
+        "workflow_run_id": "34527902318",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-09-10T20:44:05.809296+00:00",
+        "data_hash": "131e674837c24ea864bac6ce4a1d42f46c31bdb087e4e01dd9a88da540328feb",
+        "live_hash": "3da25e541b72d45028adb0acf7175648f7a5766aaa86dc6242ea54f77b92dd4e"
+      },
+      "snapshot": {
+        "id": "fc2:823499:player-681198:hits_runs_rbis:1:over",
+        "identity_version": 2,
+        "game_pk": 823499,
+        "player_id": 681198,
+        "combo_player_ids": null,
+        "type": "batter",
+        "name": "TJ Rumfield",
+        "team": "Colorado Rockies",
+        "matchup": "Colorado Rockies @ New York Yankees",
+        "game_start": "2026-09-10T23:05:00Z",
+        "stat": "hits_runs_rbis",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "hits_runs_rbis",
+          "value": 0.5,
+          "needs": 1
+        },
+        "prop": "Over 0.5 Hits+Runs+RBIs",
+        "hit_probability": 0.698,
+        "market_odds": -190,
+        "market_implied": 0.6552,
+        "market_edge": 0.0428,
+        "market_hold": null,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (A), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (9.1 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "L7 barrel% 18.8 \u2014 hot recent contact",
+          "Projected 4.13 PA (batting slot 4)",
+          "Hitters batting ahead of him: 0.357 wOBA (league ~.320)",
+          "Hitter batting behind him: 0.337 wOBA (league ~.320)"
+        ],
+        "watchouts": [
+          "L7 avg EV 83.8mph (league ~88.5) \u2014 cold recent contact",
+          "Platoon: L bat vs LHP (unfavorable)",
+          "Opposing SP ERA 2.73 \u2014 elite pitcher, tough matchup",
+          "Team implied for 3.16 runs (league avg 4.245; line 2.5, game total 8.5) \u2014 a weak offensive environment",
+          "AVG vs xBA: 0.297 vs 0.261 (+0.036) \u2014 outperforming his contact quality, regression risk",
+          "wOBA vs xwOBA: 0.374 vs 0.335 (+0.039) \u2014 outperforming his contact quality, regression risk",
+          "Season barrel% 5.0 \u2014 below-average barrel rate",
+          "Wind blowing IN (6mph) \u2014 power suppressed",
+          "Opposing bullpen fatigue: 0/7 relievers over 60 pitches in L7 (fresh pen \u2014 tougher matchup late)"
+        ],
+        "prob_ci": [
+          0.6871,
+          0.7211
+        ],
+        "reliability": "A",
+        "reliability_note": null,
+        "sample_n": 141,
+        "lineup_assumed": null,
+        "base_rate": 0.6708,
+        "lift": 0.0272,
+        "lift_reference_rate": null,
+        "stable_lift": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "8b6cace77",
+          "prediction_timestamp": "2026-09-10T20:41:02.925837+00:00",
+          "odds_fetched_at": "2026-09-10T20:41:00.033220+00:00",
+          "board_generated_at": "2026-09-10T20:41:02.918851+00:00"
+        },
+        "qualification_timestamp": "2026-09-10T20:41:02.925837+00:00",
+        "board_timestamp": "2026-09-10T20:41:02.918851+00:00",
         "slate_date": "2026-09-10"
       }
     }
