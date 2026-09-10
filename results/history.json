@@ -5356,14 +5356,14 @@
       "date": "2026-09-10",
       "hits": 0,
       "misses": 0,
-      "ungraded": 83,
+      "ungraded": 82,
       "fair_hits": 0,
       "fair_misses": 0,
       "by_category": {
         "main": {
           "hits": 0,
           "misses": 0,
-          "ungraded": 5
+          "ungraded": 4
         },
         "moonshot": {
           "hits": 0,
@@ -5385,7 +5385,7 @@
         "lean": {
           "hits": 0,
           "misses": 0,
-          "ungraded": 56
+          "ungraded": 53
         },
         "neutral": {
           "hits": 0,
@@ -5396,14 +5396,19 @@
           "hits": 0,
           "misses": 0,
           "voids": 0,
-          "ungraded": 4
+          "ungraded": 7
+        },
+        "value": {
+          "hits": 0,
+          "misses": 0,
+          "ungraded": 1
         }
       },
       "public_top_pick_counts": {
         "hits": 0,
         "misses": 0,
         "voids": 0,
-        "ungraded": 4
+        "ungraded": 7
       },
       "shadow_by_category": {
         "hits_runs_rbis@1": {
@@ -5476,11 +5481,6 @@
           "misses": 0,
           "ungraded": 1
         },
-        "combined_strikeouts@14": {
-          "hits": 0,
-          "misses": 0,
-          "ungraded": 1
-        },
         "combined_strikeouts@15": {
           "hits": 0,
           "misses": 0,
@@ -5491,12 +5491,17 @@
           "misses": 0,
           "ungraded": 1
         },
+        "combined_strikeouts@17": {
+          "hits": 0,
+          "misses": 0,
+          "ungraded": 1
+        },
         "strikeouts@7": {
           "hits": 0,
           "misses": 0,
           "ungraded": 1
         },
-        "rbis@1": {
+        "doubles@1": {
           "hits": 0,
           "misses": 0,
           "ungraded": 1
@@ -5506,12 +5511,12 @@
           "misses": 0,
           "ungraded": 1
         },
-        "triples@1": {
+        "rbis@1": {
           "hits": 0,
           "misses": 0,
           "ungraded": 1
         },
-        "doubles@1": {
+        "triples@1": {
           "hits": 0,
           "misses": 0,
           "ungraded": 1
@@ -5531,7 +5536,7 @@
           "misses": 0,
           "ungraded": 1
         },
-        "combined_strikeouts@13": {
+        "combined_strikeouts@14": {
           "hits": 0,
           "misses": 0,
           "ungraded": 1
@@ -5547,7 +5552,7 @@
   "totals": {
     "hits": 839,
     "misses": 1405,
-    "ungraded": 220
+    "ungraded": 219
   },
   "overall_hit_rate": 0.374,
   "last_14_days_hit_rate": 0.374,
@@ -5560,7 +5565,7 @@
     "main": {
       "hits": 98,
       "misses": 115,
-      "ungraded": 5
+      "ungraded": 4
     },
     "moonshot": {
       "hits": 36,
@@ -5643,7 +5648,7 @@
     "combined_strikeouts@13": {
       "hits": 5,
       "misses": 17,
-      "ungraded": 1
+      "ungraded": 0
     },
     "total_bases@3": {
       "hits": 4,
@@ -5764,6 +5769,11 @@
       "hits": 1,
       "misses": 2,
       "ungraded": 0
+    },
+    "combined_strikeouts@17": {
+      "hits": 0,
+      "misses": 0,
+      "ungraded": 1
     }
   },
   "by_recommendation_status_totals": {
@@ -5775,12 +5785,12 @@
     "value": {
       "hits": 0,
       "misses": 16,
-      "ungraded": 1
+      "ungraded": 2
     },
     "lean": {
       "hits": 552,
       "misses": 783,
-      "ungraded": 149
+      "ungraded": 146
     },
     "neutral": {
       "hits": 110,
@@ -5790,7 +5800,7 @@
     "top_pick": {
       "hits": 140,
       "misses": 118,
-      "ungraded": 4
+      "ungraded": 7
     }
   },
   "top_pick_hit_rate": 0.543,
@@ -5801,7 +5811,7 @@
     "hits": 140,
     "misses": 118,
     "voids": 5,
-    "ungraded": 4
+    "ungraded": 7
   },
   "last_14_days_modeled_top_pick_hit_rate": 0.556,
   "last_14_days_modeled_top_pick_n": 216

@@ -824,10 +824,10 @@
       "date": "2026-09-10",
       "evaluations": [
         {
-          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "prop": "Over 0.5 Hits",
           "type": "batter",
-          "score": 30.0,
-          "notable_signals": 2,
+          "score": 27.1,
+          "notable_signals": 1,
           "matchup": "Texas Rangers @ Seattle Mariners",
           "game_pk": 823088,
           "team": "Texas Rangers",
@@ -839,7 +839,7 @@
             "sp_era_weak": 34.5714,
             "l7_avg_ev": 0.0,
             "l7_barrel_pct": 100.0,
-            "park_hr_index": 39.4,
+            "park_hr_index": 42.6,
             "season_barrel_pct": 0.0,
             "lineup_slot": 12.5,
             "bullpen_fatigue": 0.0,
@@ -861,13 +861,13 @@
             "ump_k_pct": -0.18,
             "ump_bb_pct": -0.276
           },
-          "hit_probability": 0.6349,
-          "raw_hit_probability": 0.6119,
-          "lift": -0.0312,
+          "hit_probability": 0.6002,
+          "raw_hit_probability": 0.6013,
+          "lift": 0.0336,
           "reliability": "A",
           "sample_n": 82,
           "projection": {
-            "stat": "hits_runs_rbis",
+            "stat": "hits",
             "value": 0.5,
             "needs": 1
           }
@@ -889,7 +889,7 @@
             "catcher_poptime": 31.4286,
             "on_base": 21.3052
           },
-          "hit_probability": 0.0698,
+          "hit_probability": 0.0694,
           "raw_hit_probability": null,
           "lift": null,
           "reliability": "A",
