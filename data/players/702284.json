@@ -2955,6 +2955,138 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-10",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 29.6,
+          "notable_signals": 1,
+          "matchup": "Texas Rangers @ Seattle Mariners",
+          "game_pk": 823088,
+          "team": "Seattle Mariners",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 41.7143,
+            "l7_avg_ev": 0.0,
+            "l7_barrel_pct": 40.7143,
+            "park_hr_index": 40.6,
+            "season_barrel_pct": 12.6667,
+            "lineup_slot": 25.0,
+            "bullpen_fatigue": 37.037,
+            "platoon_barrel_pct": -0.64,
+            "platoon_xwoba": 1.08,
+            "park_hand_index": 1.96,
+            "opp_catcher_framing": 1.56,
+            "days_rest": 0.0,
+            "woba_ahead": 12.7273,
+            "woba_behind": 92.7273,
+            "pull_park_synergy": 1.1388,
+            "hard_hit_105_rate": -0.1425,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": -2.0,
+            "series_game": 2.0,
+            "sp_rp_ops_gap": -0.968,
+            "vs_rp_ops": -1.14,
+            "ump_k_pct": -0.18,
+            "ump_bb_pct": -0.276
+          },
+          "hit_probability": 0.684,
+          "raw_hit_probability": 0.6961,
+          "lift": 0.0179,
+          "reliability": "A",
+          "sample_n": 144,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 39.3,
+          "notable_signals": 0,
+          "matchup": "Texas Rangers @ Seattle Mariners",
+          "game_pk": 823088,
+          "team": "Seattle Mariners",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": 2.46,
+            "sprint_speed": 18.75,
+            "catcher_poptime": 28.5714,
+            "on_base": 45.2975
+          },
+          "hit_probability": 0.0232,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 144,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 3.0,
+          "notable_signals": 0,
+          "matchup": "Texas Rangers @ Seattle Mariners",
+          "game_pk": 823088,
+          "team": "Seattle Mariners",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0409
+          },
+          "hit_probability": 0.0409,
+          "raw_hit_probability": null,
+          "lift": -0.007,
+          "reliability": "A",
+          "sample_n": 144,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 0.0,
+          "notable_signals": 0,
+          "matchup": "Texas Rangers @ Seattle Mariners",
+          "game_pk": 823088,
+          "team": "Seattle Mariners",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0083
+          },
+          "hit_probability": 0.0083,
+          "raw_hit_probability": null,
+          "lift": -0.0126,
+          "reliability": "A",
+          "sample_n": 144,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

@@ -1,0 +1,39 @@
+{
+  "player_id": 696146,
+  "name": "Hagen Smith",
+  "snapshots": [
+    {
+      "date": "2026-09-10",
+      "evaluations": [
+        {
+          "prop": "Over 5.5 Strikeouts",
+          "type": "pitcher",
+          "score": 40.5,
+          "notable_signals": 0,
+          "matchup": "Pittsburgh Pirates @ Chicago White Sox",
+          "game_pk": 824550,
+          "team": "Chicago White Sox",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_k_pct": 72.0,
+            "same_hand_ratio": 75.0,
+            "l14_k_pct": 100.0,
+            "env_neutral": 50.0
+          },
+          "hit_probability": 0.6053,
+          "raw_hit_probability": 0.6564,
+          "lift": 0.2486,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 5.5,
+            "needs": 6
+          }
+        }
+      ]
+    }
+  ]
+}

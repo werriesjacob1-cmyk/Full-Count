@@ -2475,6 +2475,111 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-10",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 58.0,
+          "notable_signals": 2,
+          "matchup": "Texas Rangers @ Seattle Mariners",
+          "game_pk": 823088,
+          "team": "Seattle Mariners",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 41.7143,
+            "pitch_exploit": 0.0,
+            "l7_avg_ev": 83.3929,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 40.6,
+            "season_barrel_pct": 60.0,
+            "lineup_slot": 75.0,
+            "bullpen_fatigue": 37.037,
+            "platoon_barrel_pct": 5.0,
+            "platoon_xwoba": 2.4,
+            "park_hand_index": 1.96,
+            "opp_catcher_framing": 1.56,
+            "days_rest": 0.0,
+            "woba_ahead": 70.0,
+            "woba_behind": 9.0909,
+            "pull_park_synergy": 1.1936,
+            "hard_hit_105_rate": 0.8275,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": -2.0,
+            "series_game": 2.0,
+            "sp_rp_ops_gap": 0.304,
+            "vs_rp_ops": 1.212,
+            "ump_k_pct": -0.18,
+            "ump_bb_pct": -0.276
+          },
+          "hit_probability": 0.6185,
+          "raw_hit_probability": 0.6148,
+          "lift": 0.0519,
+          "reliability": "A",
+          "sample_n": 130,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 12.8,
+          "notable_signals": 0,
+          "matchup": "Texas Rangers @ Seattle Mariners",
+          "game_pk": 823088,
+          "team": "Seattle Mariners",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0797
+          },
+          "hit_probability": 0.0797,
+          "raw_hit_probability": null,
+          "lift": 0.0318,
+          "reliability": "A",
+          "sample_n": 130,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 7.6,
+          "notable_signals": 0,
+          "matchup": "Texas Rangers @ Seattle Mariners",
+          "game_pk": 823088,
+          "team": "Seattle Mariners",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0428
+          },
+          "hit_probability": 0.0428,
+          "raw_hit_probability": null,
+          "lift": 0.0219,
+          "reliability": "A",
+          "sample_n": 130,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }
