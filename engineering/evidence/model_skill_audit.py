@@ -42,6 +42,50 @@ date-clustered bootstrap, 4k reps, resampling dates because picks share a slate)
      The pooled 0.492 and these four coexist because the skilled and inverted
      markets roughly cancel, and eleven markets contribute nothing.
 
+  3b. HOME_RUNS DEEP DIVE, and it ends in a negative result worth keeping.
+
+     The inversion REPLICATES out of sample. Splitting the 31 HR dates 60/40
+     (train 2026-08-07..08-25, test 08-26..09-08), the model's AUC on the 13
+     held-out dates is 0.298 -- more inverted than the 0.371 full-sample figure.
+     So this is not one bad stretch.
+
+     Its recorded signals look damning at first glance. The model's dominant
+     input, hard_hit_105_rate, correlates +0.767 with its own output; three
+     signals that DO track outcome are essentially unweighted:
+
+        signal              model weight   corr(signal, outcome)  95% CI
+        season_barrel_pct        +0.573    -0.220  [-0.387,-0.049]
+        series_game              -0.293    +0.166  [+0.036,+0.298]
+        pull_park_synergy        +0.007    +0.204  [+0.061,+0.351]
+        park_hand_index          -0.011    +0.184  [+0.017,+0.353]
+        lineup_slot              +0.001    +0.137  [+0.010,+0.255]
+
+     Do NOT act on that table. Three reasons, and the third is decisive:
+
+       - hard_hit_105_rate, the actual dominant driver, is NOT established as
+         backwards: -0.142 [-0.300,+0.018] spans zero. The headline reading
+         ("the model uses contact quality backwards") is not supported.
+       - 29 signals were tested; at 95% several of the above are expected to be
+         false positives, and these are a SELECTED population, so collider bias
+         from selecting on the composite score cannot be excluded. The negative
+         sign does hold in both selection strata (moonshot and
+         best_of_category), which is evidence against a pure artifact, but not
+         proof.
+       - It does not transfer. Selecting the top three signals on TRAIN dates
+         only, z-scored on TRAIN statistics, and scoring the held-out TEST
+         dates gives composite AUC 0.447 against the model's 0.298 -- a
+         difference of +0.149 with 95% CI [-0.127,+0.364]. Not distinguishable,
+         and the composite does not beat chance either. Per-signal correlations
+         at 18 dates / 147 rows simply do not carry to new dates.
+
+     CONCLUSION. The HR ranking is reliably anti-informative, and no better
+     ranking is recoverable from the recorded signals at this sample size.
+     That argues against rebuilding the HR scorer on this evidence, and for a
+     presentational fix instead: the moonshot CATEGORY delivers its advertised
+     range (realized 0.196 against a 15-25% design target), so the product is
+     not broken in aggregate -- only its internal ordering is, and the board
+     should stop implying the top moonshot is a better bet than the fifth.
+
   4. Calibration across the full 0.01-0.95 range is decent -- decile gaps run
      -0.079..+0.041, mildly overconfident above the middle. That is much better
      than the -0.115 gap measured on the PUBLIC LEDGER alone, and the
