@@ -98,6 +98,7 @@ jobs:
           sources = {"pbp": {}, "team": {}}
 
           for season in SEASONS:
+              missing_binary_counts.clear()
               purl = (
                   "https://github.com/nflverse/nflverse-data/releases/download/"
                   f"pbp/play_by_play_{season}.csv.gz"
