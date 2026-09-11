@@ -221,6 +221,93 @@ def settle(date, min_roi=pp.MIN_ROI):
             "bets": settled}
 
 
+PLUS_MONEY_BANDS = (
+    ("+100_to_+149", 100, 149),
+    ("+150_to_+199", 150, 199),
+    ("+200_to_+299", 200, 299),
+    ("+300_plus", 300, None),
+)
+
+
+def _plus_money_bucket(rows):
+    """Summarize a settled +money population at its ACTUAL captured prices.
+
+    Hit rate is reported, but ROI and price-implied break-even probability are
+    the economically meaningful measures. This is descriptive evidence only:
+    it does not rank, filter, score, or promote a candidate.
+    """
+    rows = list(rows)
+    if not rows:
+        return {
+            "n": 0, "hits": 0, "misses": 0, "hit_rate": None, "roi": None,
+            "avg_implied_probability": None,
+            "hit_rate_minus_avg_implied": None,
+        }
+    hits = sum(1 for row in rows if row.get("won") is True)
+    returned = 0.0
+    implied = []
+    for row in rows:
+        american = row.get("american")
+        if not isinstance(american, (int, float)) or american < 100:
+            raise ValueError("plus-money evidence bucket received a non-plus-money price")
+        decimal = pp.decimal_odds(american)
+        implied.append(1.0 / decimal)
+        if row.get("won") is True:
+            returned += decimal
+    n = len(rows)
+    hit_rate = hits / n
+    avg_implied = sum(implied) / n
+    return {
+        "n": n,
+        "hits": hits,
+        "misses": n - hits,
+        "hit_rate": hit_rate,
+        "roi": (returned - n) / n,
+        "avg_implied_probability": avg_implied,
+        "hit_rate_minus_avg_implied": hit_rate - avg_implied,
+    }
+
+
+def plus_money_breakdown(settled_bets):
+    """Describe realized +money performance by price band AND prop market.
+
+    This intentionally refuses to answer the wrong question. +120 and +450 are
+    different break-even propositions, and home runs / strikeouts / pitcher
+    outs have different base rates. Pooling them can manufacture a misleading
+    hit-rate story. The output therefore keeps both economic price bands and
+    stat families visible. Small samples remain small; this function applies no
+    smoothing and makes no promotion claim.
+    """
+    eligible = [
+        row for row in settled_bets
+        if isinstance(row.get("american"), (int, float))
+        and row["american"] >= 100
+        and row.get("won") in (True, False)
+    ]
+    bands = {}
+    for name, lo, hi in PLUS_MONEY_BANDS:
+        bands[name] = _plus_money_bucket(
+            row for row in eligible
+            if row["american"] >= lo and (hi is None or row["american"] <= hi)
+        )
+    by_stat = {}
+    for stat in sorted({row.get("stat") for row in eligible if row.get("stat")}):
+        stat_rows = [row for row in eligible if row.get("stat") == stat]
+        by_stat[stat] = _plus_money_bucket(stat_rows)
+        by_stat[stat]["bands"] = {
+            name: _plus_money_bucket(
+                row for row in stat_rows
+                if row["american"] >= lo and (hi is None or row["american"] <= hi)
+            )
+            for name, lo, hi in PLUS_MONEY_BANDS
+        }
+    return {
+        "overall": _plus_money_bucket(eligible),
+        "bands": bands,
+        "by_stat": by_stat,
+    }
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -277,7 +364,8 @@ def main():
     with open(out, "w", encoding="utf-8") as f:
         json.dump({"updated": datetime.now().isoformat(), "n_bets": len(all_bets),
                    "hit_rate": hits / len(all_bets), "roi": roi,
-                   "staked": total_staked, "returned": total_returned}, f, indent=2)
+                   "staked": total_staked, "returned": total_returned,
+                   "plus_money": plus_money_breakdown(all_bets)}, f, indent=2)
     print(f"\nWrote {out}")
     return 0
 
