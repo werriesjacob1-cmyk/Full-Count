@@ -1,0 +1,194 @@
+name: NFL V0 B1 Team Opportunity Benchmark
+
+# Research-only. No picks, publication, promotion, or production scoring.
+#
+# PRE-REGISTERED before observing B1 metrics:
+#   rolling window = 5 prior games
+#   minimum player history = 3
+#   minimum team history = 3
+#   2024 = validation report
+#   2025 = first B1 historical test
+#   B1 must be compared against B0 on the exact same comparison rows.
+on:
+  push:
+    branches:
+      - superchad/nfl-foundation-continuation-20260911
+    paths:
+      - .github/workflows/nfl-v0-b1-benchmark.yml
+
+permissions:
+  contents: read
+
+jobs:
+  benchmark:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python3 -m pip install 'requests~=2.34.2'
+
+      - name: Run frozen B1 benchmark
+        env:
+          FULL_COUNT_CODE_SHA: ${{ github.sha }}
+        run: |
+          PYTHONPATH=. python3 - <<'PY'
+          import csv
+          import hashlib
+          import io
+          import json
+          import os
+          from datetime import datetime, timezone
+
+          import requests
+
+          from nfl.research.b1_history import build_b1_rows, TEAM_REQUIRED_COLUMNS
+          from nfl.research.b1_evaluate import compare_first_wave
+          from nfl.research.nflverse_history import REQUIRED_COLUMNS, player_stats_url
+
+          RAW_SEASONS = (2023, 2024, 2025)
+          ROLLING_WINDOW = 5
+          MIN_HISTORY = 3
+          MIN_TEAM_HISTORY = 3
+
+          # Frozen B0 population counts from successful run
+          # 34621247208 @ code 382a1a762c79d26348ea31093876c7207be988cc.
+          EXPECTED_B0_N = {
+              2024: {
+                  "pass_attempts": 611,
+                  "passing_yards": 611,
+                  "receptions": 4689,
+                  "receiving_yards": 4689,
+                  "rush_attempts": 2953,
+                  "rushing_yards": 2953,
+              },
+              2025: {
+                  "pass_attempts": 617,
+                  "passing_yards": 617,
+                  "receptions": 4849,
+                  "receiving_yards": 4849,
+                  "rush_attempts": 3045,
+                  "rushing_yards": 3045,
+              },
+          }
+
+          session = requests.Session()
+          session.headers.update({
+              "User-Agent": "Full-Count NFL V0 B1 research benchmark (read-only)"
+          })
+
+          players = []
+          teams = []
+          sources = {"player": {}, "team": {}}
+
+          for season in RAW_SEASONS:
+              purl = player_stats_url(season)
+              pr = session.get(purl, timeout=60)
+              pr.raise_for_status()
+              prows = list(csv.DictReader(io.StringIO(pr.text)))
+              pheader = set(prows[0].keys()) if prows else set()
+              pmissing = sorted(REQUIRED_COLUMNS - pheader)
+              if pmissing:
+                  raise SystemExit(f"{season}: missing player columns {pmissing}")
+              players.extend(prows)
+              sources["player"][str(season)] = {
+                  "url": purl,
+                  "rows": len(prows),
+                  "bytes": len(pr.content),
+                  "sha256": hashlib.sha256(pr.content).hexdigest(),
+              }
+
+              turl = (
+                  "https://github.com/nflverse/nflverse-data/releases/download/"
+                  f"stats_team/stats_team_week_{season}.csv"
+              )
+              tr = session.get(turl, timeout=60)
+              tr.raise_for_status()
+              trows = list(csv.DictReader(io.StringIO(tr.text)))
+              theader = set(trows[0].keys()) if trows else set()
+              tmissing = sorted(TEAM_REQUIRED_COLUMNS - theader)
+              if tmissing:
+                  raise SystemExit(f"{season}: missing team columns {tmissing}")
+              teams.extend(trows)
+              sources["team"][str(season)] = {
+                  "url": turl,
+                  "rows": len(trows),
+                  "bytes": len(tr.content),
+                  "sha256": hashlib.sha256(tr.content).hexdigest(),
+              }
+
+          built = build_b1_rows(
+              players,
+              teams,
+              rolling_window=ROLLING_WINDOW,
+          )
+
+          reports = {}
+          for season, label in ((2024, "2024_validation"), (2025, "2025_test")):
+              report = compare_first_wave(
+                  built,
+                  test_season=season,
+                  test_season_type="REG",
+                  min_history=MIN_HISTORY,
+                  min_team_history=MIN_TEAM_HISTORY,
+              )
+              for market, metrics in report["markets"].items():
+                  expected = EXPECTED_B0_N[season][market]
+                  if metrics["b0_reference_n"] != expected:
+                      raise SystemExit(
+                          f"{label}/{market}: B0 reference population drifted: "
+                          f"{metrics['b0_reference_n']} != frozen {expected}"
+                      )
+                  if metrics["comparison_n"] <= 0:
+                      raise SystemExit(f"{label}/{market}: no B1 comparison rows")
+                  if metrics["comparison_n"] > metrics["b0_reference_n"]:
+                      raise SystemExit(
+                          f"{label}/{market}: impossible coverage > reference"
+                      )
+              reports[label] = report
+
+          output = {
+              "benchmark": "NFL_V0_B1_TEAM_OPPORTUNITY_SHARE_EFFICIENCY",
+              "status": "research_only",
+              "created_at": datetime.now(timezone.utc).isoformat(),
+              "code_sha": os.environ["FULL_COUNT_CODE_SHA"],
+              "pre_registered": {
+                  "raw_seasons": list(RAW_SEASONS),
+                  "rolling_window_prior_games": ROLLING_WINDOW,
+                  "minimum_player_history": MIN_HISTORY,
+                  "minimum_team_history": MIN_TEAM_HISTORY,
+                  "validation_season": 2024,
+                  "first_b1_test_season": 2025,
+                  "season_type": "REG",
+                  "comparison_rule": (
+                      "B0 and B1 scored on identical B1-comparable rows; "
+                      "B0 reference population and coverage also reported"
+                  ),
+                  "b1_structure": (
+                      "prior team volume x prior player share x prior efficiency"
+                  ),
+              },
+              "frozen_b0_reference_run": {
+                  "run_id": 34621247208,
+                  "code_sha": "382a1a762c79d26348ea31093876c7207be988cc",
+                  "expected_population_n": EXPECTED_B0_N,
+              },
+              "sources": sources,
+              "built_rows": len(built),
+              "reports": reports,
+          }
+
+          path = "/tmp/nfl-v0-b1-benchmark.json"
+          with open(path, "w", encoding="utf-8") as f:
+              json.dump(output, f, indent=2, sort_keys=True)
+          print(json.dumps(output, indent=2, sort_keys=True))
+          print(f"\nWrote {path}")
+          PY
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: nfl-v0-b1-benchmark
+          path: /tmp/nfl-v0-b1-benchmark.json
+          retention-days: 30
