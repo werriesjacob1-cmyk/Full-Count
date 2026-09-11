@@ -112,6 +112,38 @@ def _validate_columns(rows: list[Mapping[str, Any]]) -> None:
             )
 
 
+def _empty_id_row_is_audited_structural_zero(row: Mapping[str, Any]) -> bool:
+    """Return True only for the audited anonymous zero rows in nflverse stats.
+
+    Live source audit on 2026-09-11 found exactly 22 such rows in each of
+    2023/2024/2025: blank player_id, blank display name, blank position, and
+    zero tracked offensive production. Those are source scaffolding, not player
+    games, and may be excluded.
+
+    The exception is intentionally narrow. A future empty-ID row with a name,
+    a position, or any non-zero tracked offense is a source-integrity incident,
+    not something we silently discard.
+    """
+    if str(row.get("player_display_name") or "").strip():
+        return False
+    if str(row.get("position") or "").strip():
+        return False
+    for stat in NUMERIC_STATS:
+        value = row.get(stat)
+        if value in (None, ""):
+            numeric = 0.0
+        else:
+            try:
+                numeric = float(value)
+            except (TypeError, ValueError) as exc:
+                raise ValueError(
+                    f"empty player_id row has non-numeric {stat}: {value!r}"
+                ) from exc
+        if numeric != 0.0:
+            return False
+    return True
+
+
 def _mean(history: Iterable[Mapping[str, float]], stat: str) -> float | None:
     vals = [float(row[stat]) for row in history]
     return (sum(vals) / len(vals)) if vals else None
@@ -148,7 +180,25 @@ def build_prior_only_rows(
     for row in rows:
         player_id = str(row["player_id"]).strip()
         if not player_id:
-            raise ValueError("player_id is empty")
+            if _empty_id_row_is_audited_structural_zero(row):
+                continue
+            has_offense = False
+            for stat in NUMERIC_STATS:
+                value = row.get(stat)
+                if value in (None, ""):
+                    continue
+                try:
+                    if float(value) != 0.0:
+                        has_offense = True
+                        break
+                except (TypeError, ValueError):
+                    has_offense = True
+                    break
+            if has_offense:
+                raise ValueError("empty player_id row carries offense")
+            raise ValueError(
+                "empty player_id row is not an audited structural zero"
+            )
         season = _to_int(row["season"], "season")
         week = _to_int(row["week"], "week")
         if week <= 0:
