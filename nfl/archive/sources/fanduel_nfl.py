@@ -36,12 +36,13 @@ informed the notes above lives in nfl/docs/, not in code.
 from __future__ import annotations
 
 import json
+import re
 from typing import Iterable, Optional
 
 import requests
 
 from nfl.archive.http import fetch
-from nfl.archive.provenance import CHECKED_AND_FOUND, Fetched, NOT_CHECKED
+from nfl.archive.provenance import CHECKED_AND_FOUND, Fetched, NOT_CHECKED, PARTIAL
 
 SOURCE_ID = "fanduel_nfl"
 
@@ -145,6 +146,94 @@ def _market_ids(body: Optional[bytes]) -> frozenset:
     return frozenset(markets) if isinstance(markets, dict) else frozenset()
 
 
+def _slugify_tab_title(value: str) -> str:
+    """Convert FanDuel's visible tab title into the empirically working token.
+
+    Numeric layout ids are deliberately ignored elsewhere. The live feed was
+    measured returning a plausible default payload for tab=217 while the
+    title-derived token passing-props returned the actual passing markets.
+    """
+    slug = re.sub(r"[^a-z0-9]+", "-", (value or "").strip().lower()).strip("-")
+    return slug
+
+
+def _tab_titles(body: Optional[bytes]) -> list[str]:
+    """Read human tab titles from either dict- or list-shaped layout.tabs.
+
+    FanDuel layout is not an identity contract, so this is deliberately
+    tolerant of title/name/label keys. Discovery failure simply returns [] and
+    the verified fallback slugs remain available.
+    """
+    if not body:
+        return []
+    try:
+        payload = json.loads(body)
+    except (json.JSONDecodeError, ValueError):
+        return []
+    tabs = (payload.get("layout") or {}).get("tabs")
+    values = tabs.values() if isinstance(tabs, dict) else tabs if isinstance(tabs, list) else []
+    out = []
+    for tab in values:
+        if isinstance(tab, str):
+            title = tab
+        elif isinstance(tab, dict):
+            title = tab.get("title") or tab.get("name") or tab.get("label")
+        else:
+            title = None
+        if isinstance(title, str) and title.strip():
+            out.append(title.strip())
+    return out
+
+
+def _tab_slugs_for_event(
+    baseline_body: Optional[bytes], fallback_tabs: Iterable[str] = PROP_TABS,
+) -> tuple[str, ...]:
+    """Union layout-discovered title slugs with empirically verified fallbacks.
+
+    This solves two opposite failure modes at once:
+      * hard-coded slugs alone can miss a newly exposed player-prop family;
+      * layout alone is incomplete (d-st and game-specials were observed
+        working while absent from the layout list).
+
+    Numeric layout ids are NEVER emitted as request tokens.
+    """
+    ordered = []
+    seen = set()
+    for token in fallback_tabs:
+        token = str(token).strip()
+        if token and token not in seen:
+            ordered.append(token)
+            seen.add(token)
+    for title in _tab_titles(baseline_body):
+        slug = _slugify_tab_title(title)
+        if slug and not slug.isdigit() and slug not in seen:
+            ordered.append(slug)
+            seen.add(slug)
+    return tuple(ordered)
+
+
+def _classify_tab_payload(record: Fetched, baseline_ids: frozenset) -> Fetched:
+    """Mark FanDuel's silent-default success as PARTIAL, never FOUND.
+
+    HTTP and JSON succeeded, so SOURCE_FAILED would discard useful evidence.
+    But the requested tab's semantic coverage is not established, so
+    CHECKED_AND_FOUND would falsely certify the exact market family we may
+    have missed. PARTIAL is the honest middle state and is non-conclusive.
+    """
+    if record.outcome != CHECKED_AND_FOUND or not baseline_ids:
+        return record
+    echoed = _market_ids(record.body) == baseline_ids
+    record.context["tab_echoed_no_tab_baseline"] = echoed
+    if echoed:
+        record.outcome = PARTIAL
+        record.context["warning"] = (
+            "FanDuel silently returned the no-tab default market set for this "
+            "tab token. Bytes were archived, but requested-tab coverage is "
+            "ambiguous and MUST NOT be treated as CHECKED_AND_FOUND."
+        )
+    return record
+
+
 def capture(
     session: Optional[requests.Session] = None,
     event_limit: Optional[int] = None,
@@ -190,23 +279,17 @@ def capture(
         records.append(baseline)
         baseline_ids = _market_ids(baseline.body)
 
-        for tab in tabs:
+        event_tabs = _tab_slugs_for_event(baseline.body, fallback_tabs=tabs)
+        for tab in event_tabs:
             record = _fetch_first_healthy_host(
                 f"event_{event_id}_tab_{tab}",
                 f"event-page?eventId={event_id}&tab={tab}&_ak={AK}",
                 {**base_context, "tab": tab}, session,
             )
-            if record.outcome == CHECKED_AND_FOUND and baseline_ids:
-                # Loud, recorded, and non-fatal: the payload is still archived.
-                # Interpretation is deferred, but the warning travels with it.
-                echoed = _market_ids(record.body) == baseline_ids
-                record.context["tab_echoed_no_tab_baseline"] = echoed
-                if echoed:
-                    record.context["warning"] = (
-                        "this tab returned the same market set as the no-tab "
-                        "control, which is how FanDuel silently reports an "
-                        "unrecognised tab token. The payload is archived, but "
-                        "it probably does NOT contain this tab's markets."
-                    )
+            record = _classify_tab_payload(record, baseline_ids)
+            record.context["tab_discovery"] = (
+                "layout_or_verified_fallback" if tab not in tuple(tabs)
+                else "verified_fallback_or_layout"
+            )
             records.append(record)
     return records
