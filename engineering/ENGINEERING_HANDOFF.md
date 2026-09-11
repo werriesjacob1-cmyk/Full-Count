@@ -1600,3 +1600,199 @@ size the capture before wiring it.
 `results/grades_*.json` — the mutable daily canonical file, NOT the immutable
 public Top Pick ledger. They support claims about model skill; they cannot
 support claims about deployed product performance. Only `public_top_picks` can.
+
+---
+
+## 2026-09-11 — NFL-01: NFL added as a second sport, archival and research only
+
+**Branch** `claude/practical-maxwell-wgs4l6`, based at `origin/main` =
+`97c3dab64a29cd3146a478895f30a40d9922b510` (2026-09-10 22:01 UTC). Not merged.
+Written for a reader with zero memory of the session that produced it.
+
+**Zero MLB-surface change, verified mechanically:**
+`git diff --stat 97c3dab HEAD -- . ':!nfl'` returns empty except for two added
+`.github/workflows/nfl-*.yml` files. `requirements.txt` is byte-identical
+(sha256 `10c18dbe…`), `identity_schema_version` is still 2, `test.yml` is
+untouched, and no MLB module imports anything under `nfl/`.
+
+### What landed
+
+**`nfl/archive/` — raw prospective world-state archival, the only deadline-bound
+deliverable.** The season had already started (Week 1, 2026-09-09 to 09-14), and
+a price, a Friday practice designation, a pregame inactive state, or a weather
+forecast vintage becomes unreconstructable the moment it passes. One real
+vintage is committed: `nfl/raw/2026-09-11/20260911T020913Z-pre-lock/`, 296
+attempted observations, 285 conclusive, zero source failures, 53.9 MB of raw
+payload preserved as 4.5 MB on disk. Digests are taken over the **uncompressed**
+bytes and were all re-derived and matched at write time
+(`store.verify_capture`).
+
+Archival is decoupled from canonical candidate identity **on purpose**: raw
+archives carry no NFL identity, so no later identity decision can contradict a
+season of already-written archives.
+
+**Sources working:** FanDuel NFL (29 events × no-tab control + 8 prop tabs +
+root feed); NFL.com official injury/practice report, transactions, scores,
+standings as raw unparsed HTML; ESPN league-wide injury feed (carries its own
+server timestamp), scoreboard, per-event summaries with venue/surface, per-team
+injuries, consensus spread and total.
+
+**`nfl/identity.py` + `nfl/docs/IDENTITY_INVESTIGATION.md` — Deliverable 1.**
+Chose a distinct namespace prefix (`fcnfl1:`) over bumping
+`identity_schema_version` 2 → 3. The bump would have required editing
+`dashboard/verify_pages_artifact.py:111`'s hard `!= 2` assertion plus 12 root
+test files, across the six MLB modules that consume the identity functions, for
+no benefit the prefix does not give free. Read the doc for the full coupling
+audit and the two rejected designs. **Not escalated to Jacob because no second
+sound design remained**, which the doc argues explicitly.
+
+Fell out of the audit: **MLB production already rejects NFL ids today with no
+change.** `dashboard/live_state.stable_prop_id` admits a row only when
+`identity_version == 2` or the id starts with `fc2:`, so an `fcnfl1:` id raises
+`unsupported identity version`. Tested.
+
+### Mutation tests — every one OBSERVED failing, not merely written
+
+| Enforcement | Mutation | Observed |
+| --- | --- | --- |
+| 6, archival path isolation | appended a pick to `results/grades_2026-08-04.json` | guard printed `REFUSED … [MLB PUBLIC EVIDENCE (results/)]`, exit 1 |
+| 5, dependency isolation | `requests==1.2.3` added to a scratch copy of root pins | pip `ResolutionImpossible: Cannot install requests==1.2.3 and requests~=2.34.2` |
+| 1, import direction | `from nfl.paths import is_allowed` added to `ledger_integrity.py` | `AssertionError: ['ledger_integrity.py:33 from nfl.paths import ...'] != []` |
+| 3, CI separation | added a deliberately failing `nfl/tests/` test | NFL suite exit 1; root glob file count unchanged at 132, MUTATION file absent from MLB job list |
+| Deliverable 1, identity | set `NFL_NAMESPACE = "fc2"` | `AssertionError: True is not false` in `test_no_nfl_id_can_start_with_an_mlb_prefix` |
+
+All mutations were reverted and every file confirmed byte-identical afterwards.
+
+### Four things this session got WRONG and corrected
+
+Recorded because each would have silently poisoned evidence.
+
+1. **A 403 was misread as a source being unavailable.** An early probe recorded
+   `site.api.espn.com` as refusing automation. It was the probe's bare
+   `User-Agent: Mozilla/5.0`; the same endpoint serves 200 to the archiver's
+   self-identifying UA. Measured both ways in the same minute. Recording that as
+   unavailable would have retired a working feed for a season. Generalise it: a
+   403 gathered under a UA you would not ship is not evidence.
+2. **The first path-guard mutation was a no-op and the "passing" test was
+   meaningless.** The mutation script rewrote a grades file with `indent=2`,
+   producing byte-identical content, so git saw no change and the guard had
+   nothing to refuse — and it committed. The guard was only genuinely exercised
+   after a mutation that actually changed bytes. A check you have not watched
+   fail on a real mutation is not a check.
+3. **`nfl/paths.staged_paths` raised `FileNotFoundError` instead of
+   `PathViolation`** when the working directory was unreadable, so callers
+   guarding on `PathViolation` crashed instead of failing closed. Found by its
+   own test, fixed, regression locked in.
+4. **Two of this session's own checks were false-positive generators.**
+   `test_ci_separation` asserted `"nfl" not in body.lower()` over MLB workflows —
+   which matches the middle of "co**nfl**ict" and failed three unrelated
+   workflows. `test_dependency_isolation` scanned for lines starting with
+   `import`/`from` and flagged a docstring that wrapped onto a line beginning
+   "from odds_fanduel.py". Both now use word-boundary regex / `ast`.
+
+### RESEARCH AGENT: FAILED, NO ARTIFACTS PRODUCED
+
+A background research agent was dispatched first, as required, to produce
+`nfl/research/NFL_SIGNAL_INVENTORY.md` and `nfl/research/nfl_signals.json`
+(≈40–60 admissible signals, 15 mandatory fields each, ranked by expected
+marginal information beyond market price). **It terminated on an API session
+rate limit after completing only its repo-grounding phase. Neither artifact
+exists.** `nfl/research/` is an empty directory. Nothing was substituted for its
+output and no signal claims were invented. **Re-dispatching it is the single
+largest piece of outstanding NFL-01 work.** Its full brief is recoverable from
+the NFL-01 mission prompt, Section 2.
+
+### Open gaps — honestly named, none of them silently absent
+
+- **No authoritative machine-readable source for the official pregame inactive
+  list.** That list is the highest-value NFL information timestamp. Captured
+  only indirectly and non-authoritatively via ESPN's injury feed. Biggest
+  coverage hole.
+- **Weather forecast vintages are blocked** on a verified venue → lat/lon table.
+  NFL-01 refused to invent coordinates: a wrong guess silently attaches another
+  city's forecast, which is worse than no forecast. `weather_nws` returns
+  `NOT_CHECKED` with that reason, and the capture output names it as a source
+  with no conclusive observation.
+- **Press-conference transcripts and captions are not retrieved.** Terms for
+  automated access are `UNKNOWN-REQUIRES-REVIEW`. 10 `UNAVAILABLE_BY_POLICY`
+  rows record this per capture. Jacob's requirement that coach and player press
+  conferences be reviewed daily is therefore **recorded as an unmet blocked
+  requirement, not dropped.**
+- Next Gen Stats API: HTTP 401 under two UAs, requires authentication.
+  pro-football-reference: 403 with a real HTML error body under both UAs — an
+  origin refusing automation.
+
+### Fragility worth knowing before touching `fanduel_nfl.py`
+
+**FanDuel NFL tab tokens are title-derived slugs, not the numeric ids
+`layout.tabs` publishes, and a wrong token does not error.** `tab=217` silently
+returns a 9-market default payload that looks perfectly healthy and contains
+none of the passing props; all eight numeric prop-tab ids returned byte-identical
+market sets. `d-st` works, `dst` and `defense` silently return the default. So
+`capture()` fetches a no-tab control per event and flags any tab echoing it
+(`tab_echoed_no_tab_baseline`). In the committed vintage 14 artifacts carry that
+flag, all the `scoring` tab on Week 2 events, which genuinely has no distinct
+markets posted yet — the flag is reporting real absence, not false-alarming.
+
+### NEEDS JACOB
+
+1. **`refs/heads/nfl-raw-archive` needs ruleset protection** against force
+   pushes and deletions, as `main` has. The capture workflow pushes there and
+   never to main. Until configured, the archive's append-only property is
+   software-guarded only.
+2. **Scheduled workflows only fire from the default branch.** `nfl-raw-capture.yml`
+   will not run on any schedule until this branch is merged, so **every slate
+   until merge is being lost.** Captures so far were run by hand from a session
+   container.
+3. Merge decision on this branch (no merge without Jacob, per the mission).
+
+### Honest statement of what is enforced where
+
+`permissions: contents: write` is **repository-scoped**. There is **no
+path-scoped GitHub write permission**, and any claim otherwise is false — an
+earlier draft of this mission asserted it and was wrong.
+
+- **Server-enforced:** `protect-main-and-evidence` on `refs/heads/main` blocks
+  force pushes and deletions there; a token without `contents: write` cannot
+  commit at all.
+- **Software-guarded (defeatable by editing the repo):** `nfl/paths.py`'s
+  allowlist (`nfl/raw/` only — narrower than `nfl/`, so code changes still need
+  review), `commit_guard.py`'s refusal and post-stage re-check, and the capture
+  job targeting a dedicated branch. A guard living in the repository cannot
+  police its own removal.
+
+### Deliberately NOT built
+
+No NFL scorer, probability, weight, calibrator, candidate, pick, ranking,
+publication, or deploy. No normalized/production NFL pipeline. No NFL skill. No
+MLB science change of any kind. No generic pricing core extracted (Deliverable 3
+— not attempted; it adds risk without helping archival, and nothing yet needs
+it). No frontend sport scoping (Deliverable 4 — deferred, lower priority than
+evidence preservation and not required for any invariant). No per-sport
+`ledger_integrity.py` extension yet (Deliverable 2 — NFL has no estate files to
+protect, so the extension has nothing to guard; see next action).
+
+### Structural prompt claims re-verified against `97c3dab`
+
+- `CLAUDE.md` does **not** exist. Not recreated.
+- `test.yml`'s glob is non-recursive: **132** root `test_*.py` files now, versus
+  the "45 files" the workflow's own comment records as of 2026-08-12.
+- `IDENTITY_SCHEMA_VERSION = 2` at `dashboard/live_state.py:28`, single
+  definition. Confirmed.
+- `ledger_integrity.py` compares identity **sets**, not id structure, so it is
+  namespace-indifferent. Confirmed.
+- MLB signal-count claims (48 signals / 57 `_sig()` sites / 19 AUDIT-MEASURED
+  blocks / 35-25-15-15-10 weights) were **NOT re-verified** — that was the
+  research agent's assignment and it failed before reporting.
+
+### Next concrete action, in order
+
+1. **Re-dispatch the signal research agent** (mission prompt Section 2). Nothing
+   else in NFL-01 is blocked on it, and nothing replaces it.
+2. Ask Jacob for the `nfl-raw-archive` ruleset and the merge, so scheduled
+   capture starts and slates stop being lost.
+3. Build a verified venue → lat/lon table from an authoritative source, then
+   enable `weather_nws`.
+4. Find an authoritative inactives source.
+5. Deliverable 2 (per-sport `ledger_integrity.py`) when NFL first has estate
+   files — not before, since there is nothing to protect yet.
