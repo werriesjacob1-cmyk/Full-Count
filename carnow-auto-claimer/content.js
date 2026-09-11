@@ -1,15 +1,22 @@
 /* =====================================================================
  * CarNow Lead Auto-Claimer — content script
  * ---------------------------------------------------------------------
- * Injected into every frame of https://*.carnow.com/* at document_idle.
+ * CarNow has no "Claim" button: a salesperson claims a lead by TAPPING
+ * THE ROW. That makes a naive sweep dangerous — every unclaimed row on
+ * screen is a claimable target, including months of backlog.
  *
- * Detection runs on three independent paths so a lead is never missed:
- *   1. MutationObserver on the document (and on every open shadow root)
- *      -> synchronous click, typically <2ms after the node lands.
- *   2. A 500ms fallback sweep driven by a Web Worker timer (Worker timers
- *      are exempt from background-tab throttling; setInterval is not).
- *   3. A "SWEEP" push from the service worker alarm, which survives even
- *      when the page's own timers are throttled to 1/min.
+ * So this script never asks "is this row claimable?". It asks "did this
+ * row appear AFTER I started watching?" Everything present at startup is
+ * baselined and permanently ignored.
+ *
+ * Five gates stand between a detected row and a click:
+ *   1. ARMED      — a stable baseline has been captured.
+ *   2. BURST      — at most MAX_NEW_PER_TICK new rows at once. A filter
+ *                   change, sort, page turn or reload makes the whole
+ *                   list look new; this vetoes all of them.
+ *   3. PAGE       — pagination must be on page 1.
+ *   4. FRESHNESS  — the row's timestamp must be recent.
+ *   5. RATE LIMIT — min interval between claims, max claims per session.
  * ===================================================================== */
 
 (() => {
@@ -24,54 +31,55 @@
 
   const DEFAULTS = Object.freeze({
     autoClaim: true,
+    dryRun: true,              // detect + alert, never click
     soundAlert: true,
-    debug: false
+    debug: false,
+    maxLeadAgeMin: 5,
+    minClaimIntervalSec: 10,
+    maxClaimsPerSession: 10
   });
 
-  const POLL_INTERVAL_MS   = 500;             // fallback sweep cadence
-  const SHADOW_SCAN_MS     = 2000;            // deep shadow-root discovery
-  const PURGE_EVERY_MS     = 60 * 1000;       // stale-signature GC cadence
-  const SIGNATURE_TTL_MS   = 10 * 60 * 1000;  // 10 minutes, per spec
-  const WORKER_WATCHDOG_MS = 3000;            // Worker timer health check
-  const MAX_LABEL_LEN      = 60;              // ignore text longer than this
-  const MAX_SHADOW_NODES   = 4000;            // perf guard on deep scans
+  const POLL_INTERVAL_MS   = 500;
+  const SHADOW_SCAN_MS     = 2000;
+  const PURGE_EVERY_MS     = 60 * 1000;
+  const KEY_TTL_MS         = 10 * 60 * 1000;
+  const WORKER_WATCHDOG_MS = 3000;
+  const MAX_SHADOW_NODES   = 4000;
 
-  const CANDIDATE_SELECTOR = [
-    'button',
-    'a',
-    '[role="button"]',
-    '.btn',
-    'input[type="button"]',
-    'input[type="submit"]'
-  ].join(',');
+  /** Baseline settles once the row set stops changing for this long. */
+  const BASELINE_QUIET_MS  = 2000;
+  const BASELINE_MAX_MS    = 15000;
 
-  // Whole-word match. \b keeps "claimed" and "unclaim" from matching, since
-  // there is no word boundary between "claim" and a neighbouring letter.
-  const CLAIM_RE = /\b(claim|accept)\b/i;
+  /** More new rows than this at once means the VIEW changed, not a lead. */
+  const MAX_NEW_PER_TICK   = 3;
 
-  // Hard veto: never click these, even if a claim word is present.
-  const VETO_RE = new RegExp([
-    '\\b(claimed|unclaim|reclaim|decline|reject|dismiss|cancel|history|report|undo)\\b',
-    'cookie', 'consent', 'terms', 'privacy', 'policy', 'agreement',
-    'newsletter', 'subscribe', 'marketing'
-  ].join('|'), 'i');
+  const ROW_SELECTOR = 'tbody tr, [role="row"], [role="listitem"], li[data-id], tr[data-id]';
 
-  const EXCLUDE_SELECTOR = [
-    '[disabled]',
-    '.disabled',
-    '.claimed',
-    '[aria-disabled="true"]',
-    '[data-claimed="true"]',
-    '[data-disabled="true"]'
-  ].join(',');
-
-  // Attributes that tend to carry a stable lead identity on CarNow markup.
   const ID_ATTRS = [
     'data-lead-id', 'data-leadid', 'data-lead',
     'data-conversation-id', 'data-conversationid',
     'data-chat-id', 'data-session-id', 'data-guest-id',
-    'data-id', 'data-key', 'data-testid'
+    'data-id', 'data-key', 'data-row-key'
   ];
+
+  /**
+   * Substrings that change while a row stays the same lead. These are
+   * stripped from the key, not matched whole-cell: CarNow packs a date AND
+   * a time into one "Last Update" cell, and unread-count badges live inside
+   * the name cell. If any of it leaked into the key, an existing row would
+   * get a new key the moment a customer replied — and then look like a
+   * brand-new lead to the baseline check.
+   */
+  const VOLATILE_PATTERNS = [
+    /\d{1,2}\/\d{1,2}\/\d{2,4}/g,                         // 09/09/2026
+    /\d{1,2}:\d{2}(:\d{2})?\s*[ap]\.?m\.?/gi,              // 09:55 am
+    /\d+\s*(seconds?|secs?|minutes?|mins?|hours?|hrs?|days?|weeks?|months?)\s*ago/gi,
+    /\b\d+[smhdw]\s*ago\b/gi,                              // 2d ago
+    /\b\d{1,3}\b/g                                         // unread badges
+  ];
+
+  const ABS_TIME_RE = /(\d{1,2})\/(\d{1,2})\/(\d{4})\s+(\d{1,2}):(\d{2})\s*([ap])\.?m\.?/i;
+  const REL_TIME_RE = /(\d+)\s*(second|sec|minute|min|hour|hr|day)s?\s+ago/i;
 
   /* ---------------------------------------------------------------- */
   /* State                                                             */
@@ -79,45 +87,35 @@
 
   let settings = { ...DEFAULTS };
 
-  /** signature -> timestamp of the claim. Purged after SIGNATURE_TTL_MS. */
-  const claimedSignatures = new Map();
+  /** Row keys present at startup. Never claimed, ever. */
+  const baseline = new Set();
+  let armed = false;
 
-  /** Element identity guard. Weak, so detached nodes cannot leak. */
-  const clickedElements = new WeakSet();
+  /** key -> first time we saw it, for keys seen after arming. */
+  const seen = new Map();
 
-  /** Live MutationObservers (document + one per open shadow root). */
+  /** Keys we have already acted on. */
+  const acted = new Set();
+
+  let claimsThisSession = 0;
+  let lastClaimAt = 0;
+
   const observers = new Set();
-
-  /** Shadow roots we have already attached an observer to. */
   const observedRoots = new WeakSet();
-
-  /** Strong list of known shadow roots, pruned when their hosts detach. */
   let knownRoots = [];
 
-  let pollWorker   = null;
-  let pollTimer    = null;
-  let shadowTimer  = null;
-  let purgeTimer   = null;
-  let watchdogTimer = null;
+  let pollWorker = null, pollTimer = null, shadowTimer = null;
+  let purgeTimer = null, watchdogTimer = null, baselineTimer = null;
   let lastWorkerTick = 0;
   let audioCtx = null;
   let torndown = false;
 
   const FRAME = (() => {
-    try { return window.top === window ? 'top' : 'frame:' + location.pathname; }
-    catch { return 'frame:cross-origin'; }
+    try { return window.top === window ? 'top' : 'frame'; } catch { return 'frame'; }
   })();
 
-  /* ---------------------------------------------------------------- */
-  /* Logging                                                           */
-  /* ---------------------------------------------------------------- */
-
-  function log(...args) {
-    if (settings.debug) console.log('%c[CarNow AC]', 'color:#f97316;font-weight:bold', FRAME, ...args);
-  }
-  function warn(...args) {
-    console.warn('[CarNow AC]', FRAME, ...args);
-  }
+  const log  = (...a) => { if (settings.debug) console.log('%c[CarNow AC]', 'color:#f97316;font-weight:bold', ...a); };
+  const warn = (...a) => console.warn('[CarNow AC]', ...a);
 
   /* ---------------------------------------------------------------- */
   /* Settings                                                          */
@@ -130,48 +128,83 @@
           if (!chrome.runtime.lastError && stored) settings = { ...DEFAULTS, ...stored };
           resolve(settings);
         });
-      } catch {
-        resolve(settings);
-      }
+      } catch { resolve(settings); }
     });
   }
 
   try {
     chrome.storage.onChanged.addListener((changes, area) => {
       if (area !== 'sync') return;
-      for (const [key, { newValue }] of Object.entries(changes)) {
-        if (key in DEFAULTS) settings[key] = newValue;
+      for (const [k, { newValue }] of Object.entries(changes)) {
+        if (k in DEFAULTS) settings[k] = newValue;
       }
       log('settings updated', settings);
     });
-  } catch { /* extension context unavailable */ }
+  } catch { /* no extension context */ }
 
   /* ---------------------------------------------------------------- */
-  /* Element matching                                                  */
+  /* Row identity                                                      */
   /* ---------------------------------------------------------------- */
 
-  /** Short, normalized label for an element: attributes first, then text. */
-  function labelOf(el) {
-    const attrs = [
-      el.getAttribute && el.getAttribute('aria-label'),
-      el.getAttribute && el.getAttribute('title'),
-      el.getAttribute && el.getAttribute('data-action'),
-      el.getAttribute && el.getAttribute('data-testid'),
-      el.tagName === 'INPUT' ? el.value : null
-    ].filter(Boolean).join(' ');
+  const norm = (s) => (s || '').replace(/\s+/g, ' ').trim();
 
-    // innerText reflects rendered text but forces layout; textContent does not.
-    // textContent is enough here and is the cheaper of the two.
-    const raw = (el.textContent || '').replace(/\s+/g, ' ').trim();
-    const text = raw.length <= MAX_LABEL_LEN ? raw : '';
-
-    return (attrs + ' ' + text).replace(/\s+/g, ' ').trim();
+  function stripVolatile(text) {
+    let out = text;
+    for (const re of VOLATILE_PATTERNS) out = out.replace(re, ' ');
+    return out.replace(/\s+/g, ' ').trim();
   }
 
   /**
-   * offsetParent is null for display:none subtrees AND for position:fixed
-   * elements, which CarNow modals commonly are — so fixed gets a rect check.
+   * A key that survives the list's periodic re-render. Timestamps are
+   * excluded: "Last Update" ticks on refresh, and a changing key would
+   * make an existing row look brand new.
    */
+  function rowKey(row) {
+    for (const attr of ID_ATTRS) {
+      const v = row.getAttribute && row.getAttribute(attr);
+      if (v) return attr + '=' + v;
+    }
+    const link = row.querySelector && row.querySelector('a[href]');
+    const href = link && link.getAttribute('href');
+    if (href && href !== '#') return 'href=' + href;
+
+    const cells = Array.from(row.children || [])
+      .map((c) => stripVolatile(norm(c.textContent)))
+      .filter(Boolean);
+
+    if (!cells.length) return null;
+    return 'cells=' + cells.join('|').slice(0, 200);
+  }
+
+  /** Age of the row from its timestamp cell; null when unparseable. */
+  function rowAgeMs(row) {
+    const text = norm(row.textContent);
+
+    const rel = text.match(REL_TIME_RE);
+    if (rel) {
+      const n = parseInt(rel[1], 10);
+      const unit = rel[2].toLowerCase();
+      const mult = unit.startsWith('sec') ? 1e3
+                 : unit.startsWith('min') ? 6e4
+                 : unit.startsWith('hour') || unit.startsWith('hr') ? 36e5
+                 : 864e5;
+      return n * mult;
+    }
+
+    const abs = text.match(ABS_TIME_RE);
+    if (abs) {
+      let hour = parseInt(abs[4], 10) % 12;
+      if (abs[6].toLowerCase() === 'p') hour += 12;
+      const d = new Date(
+        parseInt(abs[3], 10), parseInt(abs[1], 10) - 1, parseInt(abs[2], 10),
+        hour, parseInt(abs[5], 10)
+      );
+      const age = Date.now() - d.getTime();
+      return Number.isFinite(age) ? age : null;
+    }
+    return null;
+  }
+
   function isVisible(el) {
     if (el.offsetParent !== null) return true;
     let cs;
@@ -182,80 +215,97 @@
     return r.width > 0 && r.height > 0;
   }
 
-  function isExcluded(el) {
-    if (el.disabled === true) return true;
-    try {
-      if (el.matches(EXCLUDE_SELECTOR)) return true;
-      if (el.closest(EXCLUDE_SELECTOR)) return true;
-    } catch { /* malformed selector context */ }
-    return false;
+  /* ---------------------------------------------------------------- */
+  /* Row collection                                                    */
+  /* ---------------------------------------------------------------- */
+
+  function collectRows() {
+    const rows = [];
+    const push = (root) => {
+      let found;
+      try { found = root.querySelectorAll(ROW_SELECTOR); } catch { return; }
+      for (const row of found) {
+        // Header rows have no data cells worth keying.
+        if (row.querySelector('th') && !row.querySelector('td')) continue;
+        if (!isVisible(row)) continue;
+        const key = rowKey(row);
+        if (key) rows.push({ row, key });
+      }
+    };
+    push(document);
+    for (const root of knownRoots) {
+      if (root && root.host && root.host.isConnected) push(root);
+    }
+    return rows;
   }
 
-  function isClaimCandidate(el) {
-    if (!el || el.nodeType !== 1) return false;
-    try { if (!el.matches(CANDIDATE_SELECTOR)) return false; } catch { return false; }
+  /* ---------------------------------------------------------------- */
+  /* Gates                                                             */
+  /* ---------------------------------------------------------------- */
 
-    const label = labelOf(el);
-    if (!label) return false;
-    if (VETO_RE.test(label)) return false;
-    if (!CLAIM_RE.test(label)) return false;
-    if (isExcluded(el)) return false;
-    if (!isVisible(el)) return false;
+  /** Pagination must be on page 1, when we can determine it at all. */
+  function onFirstPage() {
+    let current = document.querySelector('[aria-current="page"]');
+    if (!current) {
+      const container = document.querySelector('.pagination, [class*="paginat"], nav[aria-label*="agination" i]');
+      if (container) {
+        current = container.querySelector('.active, .selected, [class*="active"], [class*="current"]');
+      }
+    }
+    if (!current) return true;               // no pagination detected
+    const label = norm(current.textContent);
+    return label === '' || label === '1';
+  }
+
+  function rateLimitOk() {
+    if (claimsThisSession >= settings.maxClaimsPerSession) {
+      warn('session claim cap reached (' + settings.maxClaimsPerSession + ') — standing down');
+      return false;
+    }
+    const since = Date.now() - lastClaimAt;
+    if (lastClaimAt && since < settings.minClaimIntervalSec * 1000) {
+      log('rate limited; ' + Math.round((settings.minClaimIntervalSec * 1000 - since) / 1000) + 's to go');
+      return false;
+    }
     return true;
   }
 
-  /* ---------------------------------------------------------------- */
-  /* Lead signatures (loop prevention)                                 */
-  /* ---------------------------------------------------------------- */
-
-  function domPath(el) {
-    const parts = [];
-    let node = el;
-    for (let depth = 0; node && node.nodeType === 1 && depth < 6; depth++) {
-      const parent = node.parentElement;
-      const index = parent ? Array.prototype.indexOf.call(parent.children, node) : 0;
-      parts.push(node.tagName + ':' + index);
-      node = parent;
+  function freshEnough(row) {
+    const age = rowAgeMs(row);
+    if (age === null) return true;           // unparseable; baseline already gates it
+    const limit = settings.maxLeadAgeMin * 60 * 1000;
+    if (age > limit) {
+      log('row too old (' + Math.round(age / 60000) + 'm) — skipping');
+      return false;
     }
-    return parts.join('>');
-  }
-
-  /**
-   * Identity for a lead. Prefers a real id from the surrounding card so the
-   * same lead re-rendered as a fresh node is still recognized; falls back to
-   * label + DOM position.
-   */
-  function signatureOf(el) {
-    for (const attr of ID_ATTRS) {
-      let holder = null;
-      try { holder = el.closest('[' + attr + ']'); } catch { /* ignore */ }
-      const value = holder && holder.getAttribute(attr);
-      if (value) return attr + '=' + value;
-    }
-    const card = el.closest('[id]');
-    if (card && card.id) return 'id=' + card.id + '|' + labelOf(el);
-    return 'path=' + domPath(el) + '|' + labelOf(el);
-  }
-
-  function alreadyHandled(el, signature) {
-    if (clickedElements.has(el)) return true;
-    const at = claimedSignatures.get(signature);
-    return at !== undefined && (Date.now() - at) < SIGNATURE_TTL_MS;
+    return true;
   }
 
   /* ---------------------------------------------------------------- */
   /* Claiming                                                          */
   /* ---------------------------------------------------------------- */
 
+  /** The tappable element inside the row — the link if there is one. */
+  function clickTargetFor(row) {
+    const link = row.querySelector('a[href]:not([href="#"])');
+    if (link && isVisible(link)) return link;
+    const button = row.querySelector('[role="button"], button');
+    if (button && isVisible(button)) return button;
+    const firstCell = row.querySelector('td, [role="cell"], [role="gridcell"]');
+    if (firstCell && isVisible(firstCell)) return firstCell;
+    return row;
+  }
+
   function fireClick(el) {
     const opts = { bubbles: true, cancelable: true, composed: true, view: window };
-    // Some CarNow widgets bind mousedown/pointerdown rather than click, so
-    // send the full sequence before falling back to the native .click().
     for (const type of ['pointerdown', 'mousedown', 'pointerup', 'mouseup']) {
-      try { el.dispatchEvent(new (type.startsWith('pointer') ? PointerEvent : MouseEvent)(type, opts)); }
-      catch { /* PointerEvent unsupported in this frame */ }
+      try {
+        const Ctor = type.startsWith('pointer') ? PointerEvent : MouseEvent;
+        el.dispatchEvent(new Ctor(type, opts));
+      } catch { /* PointerEvent unsupported */ }
     }
-    el.click();
+    if (typeof el.click === 'function') el.click();
+    else el.dispatchEvent(new MouseEvent('click', opts));
   }
 
   function beep() {
@@ -273,24 +323,17 @@
       osc.connect(gain).connect(audioCtx.destination);
       osc.start();
       osc.stop(audioCtx.currentTime + 0.25);
-    } catch (err) {
-      log('beep unavailable', err && err.message);
-    }
+    } catch (err) { log('beep unavailable', err && err.message); }
   }
 
   function report(record) {
-    // background.js is the single writer for chrome.storage.local so that
-    // claims fired from several frames/tabs at once cannot clobber each other.
     try {
       chrome.runtime.sendMessage({ type: 'LEAD_CLAIMED', payload: record }, () => {
         if (chrome.runtime.lastError) persistLocally(record);
       });
-    } catch {
-      persistLocally(record);
-    }
+    } catch { persistLocally(record); }
   }
 
-  /** Only used if the service worker is unreachable. */
   function persistLocally(record) {
     try {
       chrome.storage.local.get({ claimHistory: [] }, (data) => {
@@ -301,72 +344,109 @@
     } catch { /* context invalidated */ }
   }
 
-  function claim(el, source) {
+  function act(entry, source) {
     const started = performance.now();
-    const signature = signatureOf(el);
+    const { row, key } = entry;
 
-    if (alreadyHandled(el, signature)) return false;
+    acted.add(key);
 
-    // Mark BEFORE clicking: the click can synchronously re-render the DOM and
-    // re-enter this function through the MutationObserver.
-    clickedElements.add(el);
-    claimedSignatures.set(signature, Date.now());
+    const label = norm(row.textContent).slice(0, 80);
+    const dry = settings.dryRun;
 
-    const label = labelOf(el);
-    try {
-      fireClick(el);
-    } catch (err) {
-      warn('click failed', err);
-      return false;
+    if (!dry) {
+      const target = clickTargetFor(row);
+      try {
+        fireClick(target);
+      } catch (err) {
+        warn('click failed', err);
+        return;
+      }
+      claimsThisSession++;
+      lastClaimAt = Date.now();
     }
 
-    const elapsed = performance.now() - started;
     const record = {
       ts: Date.now(),
-      label: label.slice(0, MAX_LABEL_LEN),
-      signature,
+      label,
+      signature: key,
       url: location.href,
       source,
-      elapsedMs: Math.round(elapsed * 100) / 100
+      dryRun: dry,
+      elapsedMs: Math.round((performance.now() - started) * 100) / 100
     };
 
-    log('CLAIMED via ' + source + ' in ' + record.elapsedMs + 'ms —', label);
+    log((dry ? 'WOULD CLAIM (dry run)' : 'CLAIMED') + ' via ' + source +
+        ' in ' + record.elapsedMs + 'ms —', label);
     beep();
     report(record);
-    return true;
   }
 
   /* ---------------------------------------------------------------- */
-  /* Scanning                                                          */
+  /* Detection                                                         */
   /* ---------------------------------------------------------------- */
 
-  function candidatesIn(root) {
-    let found = [];
-    try {
-      if (root.nodeType === 1 && isClaimCandidate(root)) found.push(root);
-      const nested = root.querySelectorAll ? root.querySelectorAll(CANDIDATE_SELECTOR) : [];
-      for (const el of nested) if (isClaimCandidate(el)) found.push(el);
-    } catch { /* root detached mid-scan */ }
+  function evaluate(source) {
+    if (torndown || !settings.autoClaim) return;
 
-    // Prefer the innermost match: a div[role="button"] wrapping a real
-    // <button> would otherwise produce two clicks for one lead.
-    return found.filter((el) => !found.some((other) => other !== el && el.contains(other)));
-  }
+    const rows = collectRows();
+    if (!rows.length) return;
 
-  function scan(root, source) {
-    if (!settings.autoClaim || torndown) return 0;
-    let claims = 0;
-    for (const el of candidatesIn(root)) {
-      if (claim(el, source)) claims++;
+    if (!armed) { captureBaseline(rows); return; }
+
+    const fresh = rows.filter((e) => !baseline.has(e.key) && !acted.has(e.key));
+    if (!fresh.length) return;
+
+    for (const entry of fresh) {
+      if (!seen.has(entry.key)) seen.set(entry.key, Date.now());
     }
-    return claims;
+
+    // GATE 2 — a burst means the view changed (filter, sort, page, reload).
+    // Re-baseline to the new view and claim nothing from it.
+    if (fresh.length > MAX_NEW_PER_TICK) {
+      warn(fresh.length + ' new rows at once — treating as a view change, re-baselining');
+      for (const entry of rows) baseline.add(entry.key);
+      return;
+    }
+
+    // GATE 3
+    if (!onFirstPage()) { log('not on page 1 — standing down'); return; }
+
+    for (const entry of fresh) {
+      if (acted.has(entry.key)) continue;
+      if (!freshEnough(entry.row)) { acted.add(entry.key); continue; }  // GATE 4
+      if (!rateLimitOk()) return;                                       // GATE 5
+      act(entry, source);
+    }
   }
 
-  function sweep(source) {
-    if (!settings.autoClaim || torndown) return;
-    scan(document, source);
-    for (const root of knownRoots) {
-      if (root && root.host && root.host.isConnected) scan(root, source);
+  /* ---------------------------------------------------------------- */
+  /* Baseline                                                          */
+  /* ---------------------------------------------------------------- */
+
+  let baselineStarted = 0;
+  let lastBaselineSize = -1;
+  let lastBaselineChange = 0;
+
+  function captureBaseline(rows) {
+    const now = Date.now();
+    if (!baselineStarted) { baselineStarted = now; lastBaselineChange = now; }
+
+    for (const entry of rows) baseline.add(entry.key);
+
+    if (baseline.size !== lastBaselineSize) {
+      lastBaselineSize = baseline.size;
+      lastBaselineChange = now;
+    }
+
+    const quiet = now - lastBaselineChange >= BASELINE_QUIET_MS;
+    const timedOut = now - baselineStarted >= BASELINE_MAX_MS;
+
+    if (quiet || timedOut) {
+      armed = true;
+      if (baselineTimer) { clearInterval(baselineTimer); baselineTimer = null; }
+      console.log('%c[CarNow AC] ARMED', 'color:#16a34a;font-weight:bold',
+        '— baseline of ' + baseline.size + ' existing rows ignored.' +
+        (settings.dryRun ? ' DRY RUN: will alert only, no clicks.' : ' LIVE: will click new rows.'));
     }
   }
 
@@ -381,90 +461,68 @@
       try { elements = node.querySelectorAll('*'); } catch { return; }
       for (const el of elements) {
         if (++scanned > MAX_SHADOW_NODES) return;
-        const shadow = el.shadowRoot;           // open roots only; closed are unreachable
+        const shadow = el.shadowRoot;
         if (shadow && !observedRoots.has(shadow)) {
           observedRoots.add(shadow);
           knownRoots.push(shadow);
           observe(shadow);
-          scan(shadow, 'shadow-attach');
           walk(shadow);
         }
       }
     };
-    if (root && root.nodeType === 1 && root.shadowRoot && !observedRoots.has(root.shadowRoot)) {
-      observedRoots.add(root.shadowRoot);
-      knownRoots.push(root.shadowRoot);
-      observe(root.shadowRoot);
-      scan(root.shadowRoot, 'shadow-attach');
-    }
     walk(root);
   }
 
-  function pruneShadowRoots() {
+  const pruneShadowRoots = () => {
     knownRoots = knownRoots.filter((r) => r && r.host && r.host.isConnected);
-  }
+  };
 
   /* ---------------------------------------------------------------- */
   /* Observation                                                       */
   /* ---------------------------------------------------------------- */
 
   function onMutations(records) {
-    if (!settings.autoClaim || torndown) return;
-
+    if (torndown || !settings.autoClaim) return;
+    let relevant = false;
     for (const record of records) {
-      if (record.type === 'childList') {
+      if (record.type === 'childList' && record.addedNodes.length) {
         for (const node of record.addedNodes) {
-          if (node.nodeType !== 1) continue;
-          scan(node, 'observer');          // synchronous: no timer in the hot path
-          discoverShadowRoots(node);
+          if (node.nodeType === 1) { relevant = true; discoverShadowRoots(node); }
         }
-      } else if (record.type === 'attributes') {
-        // A card can flip from disabled/hidden to claimable without any node
-        // being added — re-check the element and its subtree.
-        const target = record.target;
-        if (target && target.nodeType === 1) scan(target, 'observer-attr');
       }
     }
+    if (relevant) evaluate('observer');
   }
 
   function observe(root) {
     const observer = new MutationObserver(onMutations);
-    observer.observe(root, {
-      childList: true,
-      subtree: true,
-      attributes: true,
-      attributeFilter: ['class', 'disabled', 'aria-disabled', 'style', 'hidden', 'data-claimed']
-    });
+    observer.observe(root, { childList: true, subtree: true });
     observers.add(observer);
     return observer;
   }
 
   /* ---------------------------------------------------------------- */
-  /* Fallback polling (throttle-resistant)                             */
+  /* Fallback polling                                                  */
   /* ---------------------------------------------------------------- */
 
   function startIntervalPolling() {
     if (pollTimer) return;
-    pollTimer = setInterval(() => sweep('poll'), POLL_INTERVAL_MS);
+    pollTimer = setInterval(() => evaluate('poll'), POLL_INTERVAL_MS);
     log('fallback polling: setInterval');
   }
 
   function startWorkerPolling() {
-    // Timers inside a Worker are NOT subject to background-tab throttling,
-    // so the 500ms sweep keeps its cadence when the tab is hidden.
     try {
-      const source = 'let id=null;self.onmessage=function(e){' +
+      const src = 'let id=null;self.onmessage=function(e){' +
         'if(e.data&&e.data.t==="start"){clearInterval(id);id=setInterval(function(){self.postMessage("tick");},e.data.ms);}' +
         'else if(e.data&&e.data.t==="stop"){clearInterval(id);id=null;}};';
-      const url = URL.createObjectURL(new Blob([source], { type: 'text/javascript' }));
+      const url = URL.createObjectURL(new Blob([src], { type: 'text/javascript' }));
       pollWorker = new Worker(url);
       URL.revokeObjectURL(url);
-      pollWorker.onmessage = () => { lastWorkerTick = Date.now(); sweep('worker-poll'); };
+      pollWorker.onmessage = () => { lastWorkerTick = Date.now(); evaluate('worker-poll'); };
       pollWorker.onerror = () => { teardownWorker(); startIntervalPolling(); };
       pollWorker.postMessage({ t: 'start', ms: POLL_INTERVAL_MS });
       lastWorkerTick = Date.now();
-
-      // If the page CSP silently blocks blob workers, fall back.
       watchdogTimer = setInterval(() => {
         if (Date.now() - lastWorkerTick > WORKER_WATCHDOG_MS) {
           warn('worker timer stalled; switching to setInterval');
@@ -474,7 +532,7 @@
       }, WORKER_WATCHDOG_MS);
       log('fallback polling: Worker timer');
     } catch (err) {
-      log('worker unavailable, using setInterval', err && err.message);
+      log('worker unavailable', err && err.message);
       startIntervalPolling();
     }
   }
@@ -482,7 +540,7 @@
   function teardownWorker() {
     if (watchdogTimer) { clearInterval(watchdogTimer); watchdogTimer = null; }
     if (pollWorker) {
-      try { pollWorker.postMessage({ t: 'stop' }); pollWorker.terminate(); } catch { /* already dead */ }
+      try { pollWorker.postMessage({ t: 'stop' }); pollWorker.terminate(); } catch { /* dead */ }
       pollWorker = null;
     }
   }
@@ -492,27 +550,24 @@
   /* ---------------------------------------------------------------- */
 
   function purge() {
-    const cutoff = Date.now() - SIGNATURE_TTL_MS;
+    const cutoff = Date.now() - KEY_TTL_MS;
     let removed = 0;
-    for (const [signature, ts] of claimedSignatures) {
-      if (ts < cutoff) { claimedSignatures.delete(signature); removed++; }
+    for (const [key, ts] of seen) {
+      if (ts < cutoff) { seen.delete(key); removed++; }
     }
     pruneShadowRoots();
-    if (removed) log('purged ' + removed + ' stale signatures; ' + claimedSignatures.size + ' retained');
+    if (removed) log('purged ' + removed + ' stale keys');
   }
 
   function teardown() {
     if (torndown) return;
     torndown = true;
-    for (const observer of observers) {
-      try { observer.disconnect(); } catch { /* already disconnected */ }
-    }
+    for (const o of observers) { try { o.disconnect(); } catch { /* noop */ } }
     observers.clear();
     teardownWorker();
-    if (pollTimer)   { clearInterval(pollTimer);   pollTimer = null; }
-    if (shadowTimer) { clearInterval(shadowTimer); shadowTimer = null; }
-    if (purgeTimer)  { clearInterval(purgeTimer);  purgeTimer = null; }
-    claimedSignatures.clear();
+    for (const t of [pollTimer, shadowTimer, purgeTimer, baselineTimer]) if (t) clearInterval(t);
+    pollTimer = shadowTimer = purgeTimer = baselineTimer = null;
+    seen.clear();
     knownRoots = [];
     if (audioCtx) { try { audioCtx.close(); } catch { /* noop */ } audioCtx = null; }
     log('torn down');
@@ -525,32 +580,26 @@
   function connectKeepAlive() {
     if (torndown) return;
     let port;
-    try {
-      port = chrome.runtime.connect({ name: 'carnow-keepalive' });
-    } catch {
-      return; // extension reloaded; the page will need a refresh
-    }
+    try { port = chrome.runtime.connect({ name: 'carnow-keepalive' }); } catch { return; }
     port.onDisconnect.addListener(() => {
-      if (chrome.runtime.lastError) { /* expected on SW recycle */ }
+      void chrome.runtime.lastError;
       if (!torndown) setTimeout(connectKeepAlive, 1000);
     });
-    // Ports are severed after 5 minutes; reconnecting resets the SW idle timer.
     setTimeout(() => { try { port.disconnect(); } catch { /* noop */ } }, 4 * 60 * 1000);
   }
 
   try {
     chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
-      if (!message || typeof message !== 'object') return;
+      if (!message || typeof message !== 'object') return false;
       if (message.type === 'SWEEP') {
-        // Pushed by the background alarm; works even when page timers are throttled.
-        sweep('alarm');
-        sendResponse({ ok: true, frame: FRAME });
+        evaluate('alarm');
+        sendResponse({ ok: true, armed, baseline: baseline.size });
       } else if (message.type === 'PING') {
-        sendResponse({ ok: true, frame: FRAME, tracked: claimedSignatures.size });
+        sendResponse({ ok: true, armed, baseline: baseline.size, claims: claimsThisSession });
       }
       return false;
     });
-  } catch { /* context invalidated */ }
+  } catch { /* no context */ }
 
   /* ---------------------------------------------------------------- */
   /* Boot                                                              */
@@ -558,37 +607,52 @@
 
   function boot() {
     torndown = false;
+    armed = false;
+    baseline.clear();
+    baselineStarted = 0;
+    lastBaselineSize = -1;
+
     return loadSettings().then(() => {
       if (torndown) return;
-      log('active on', location.href, settings);
-
       const root = document.documentElement || document;
       observe(root);
       discoverShadowRoots(root);
-      sweep('initial');
+
+      // Poll until the list settles, then arm.
+      baselineTimer = setInterval(() => evaluate('baseline'), 250);
+      evaluate('initial');
 
       startWorkerPolling();
       shadowTimer = setInterval(() => { pruneShadowRoots(); discoverShadowRoots(document.documentElement); }, SHADOW_SCAN_MS);
       purgeTimer  = setInterval(purge, PURGE_EVERY_MS);
-
       connectKeepAlive();
+      log('watching', location.href, settings);
     });
   }
 
   boot();
 
-  // pagehide also fires when the page enters the back/forward cache, so the
-  // teardown has to be undone if the user navigates back to a live page.
   window.addEventListener('pagehide', teardown);
-  window.addEventListener('pageshow', (event) => { if (event.persisted) boot(); });
+  window.addEventListener('pageshow', (e) => { if (e.persisted) boot(); });
 
-  // Exposed for manual poking from the DevTools console.
   window.__carnowAutoClaimer = {
-    sweep,
+    status: () => ({
+      armed,
+      dryRun: settings.dryRun,
+      baselineRows: baseline.size,
+      claimsThisSession,
+      newSinceArmed: Array.from(seen.keys()),
+      onFirstPage: onFirstPage()
+    }),
+    rows: () => collectRows().map((e) => ({
+      key: e.key,
+      ageMin: (() => { const a = rowAgeMs(e.row); return a === null ? null : Math.round(a / 60000); })(),
+      baselined: baseline.has(e.key),
+      text: norm(e.row.textContent).slice(0, 90)
+    })),
     settings: () => ({ ...settings }),
-    tracked: () => Array.from(claimedSignatures.entries()),
-    candidates: () => candidatesIn(document),
-    roots: () => knownRoots.length,
+    rebaseline: () => { armed = false; baseline.clear(); baselineStarted = 0; lastBaselineSize = -1; evaluate('manual'); },
+    evaluate,
     teardown
   };
 })();

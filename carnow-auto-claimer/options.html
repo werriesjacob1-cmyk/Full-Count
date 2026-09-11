@@ -126,6 +126,20 @@
     }
     #saved.show { opacity: 1; }
 
+    .banner {
+      border-radius: 10px; padding: 12px 16px; margin-bottom: 20px;
+      font-weight: 650; font-size: 14px; border: 1px solid;
+    }
+    .banner.live { background: #7f1d1d22; border-color: #ef4444; color: #ef4444; }
+    .banner.dry  { background: #16a34a22; border-color: #16a34a; color: #16a34a; }
+    .banner.idle { background: transparent; border-color: var(--line); color: var(--muted); }
+
+    input[type="number"] {
+      font: inherit; width: 84px; padding: 7px 10px; text-align: right;
+      border: 1px solid var(--line); border-radius: 8px;
+      background: var(--bg); color: var(--ink);
+    }
+
     footer { color: var(--muted); font-size: 12px; text-align: center; padding-top: 8px; }
   </style>
 </head>
@@ -139,6 +153,8 @@
       </div>
     </header>
 
+    <div class="banner idle" id="armState">…</div>
+
     <p class="section-title">Controls</p>
     <div class="card">
       <div class="row">
@@ -148,6 +164,18 @@
         </div>
         <label class="switch">
           <input type="checkbox" id="autoClaim" aria-label="Auto-Claim Active">
+          <span class="track"></span>
+        </label>
+      </div>
+
+      <div class="row">
+        <div>
+          <div class="label">Dry Run (detect only, never click)</div>
+          <div class="hint">Announces a new lead with sound and a notification but does not tap it.
+            Leave this ON until you have watched it flag leads correctly.</div>
+        </div>
+        <label class="switch">
+          <input type="checkbox" id="dryRun" aria-label="Dry Run">
           <span class="track"></span>
         </label>
       </div>
@@ -175,6 +203,31 @@
       </div>
     </div>
 
+    <p class="section-title">Safety limits</p>
+    <div class="card">
+      <div class="row">
+        <div>
+          <div class="label">Maximum lead age</div>
+          <div class="hint">Ignore any row whose last update is older than this. Stops backlog claiming.</div>
+        </div>
+        <input type="number" id="maxLeadAgeMin" min="1" max="120" step="1" aria-label="Maximum lead age in minutes">
+      </div>
+      <div class="row">
+        <div>
+          <div class="label">Minimum seconds between claims</div>
+          <div class="hint">Throttle. A logic error costs one lead, not the whole board.</div>
+        </div>
+        <input type="number" id="minClaimIntervalSec" min="0" max="600" step="1" aria-label="Minimum seconds between claims">
+      </div>
+      <div class="row">
+        <div>
+          <div class="label">Maximum claims per session</div>
+          <div class="hint">Hard stop until the page is reloaded.</div>
+        </div>
+        <input type="number" id="maxClaimsPerSession" min="1" max="200" step="1" aria-label="Maximum claims per session">
+      </div>
+    </div>
+
     <p class="section-title">Status</p>
     <div class="card">
       <div class="status">
@@ -189,7 +242,7 @@
     <div class="card">
       <table>
         <thead>
-          <tr><th>Time</th><th>Button</th><th>Trigger</th><th>Speed</th></tr>
+          <tr><th>Time</th><th>Lead</th><th>Mode</th><th>Speed</th></tr>
         </thead>
         <tbody id="historyBody"></tbody>
       </table>

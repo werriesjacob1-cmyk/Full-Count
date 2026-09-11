@@ -7,11 +7,16 @@
 
 const DEFAULTS = Object.freeze({
   autoClaim: true,
+  dryRun: true,
   soundAlert: true,
-  debug: false
+  debug: false,
+  maxLeadAgeMin: 5,
+  minClaimIntervalSec: 10,
+  maxClaimsPerSession: 10
 });
 
-const TOGGLES = Object.keys(DEFAULTS);
+const TOGGLES = ['autoClaim', 'dryRun', 'soundAlert', 'debug'];
+const NUMBERS = ['maxLeadAgeMin', 'minClaimIntervalSec', 'maxClaimsPerSession'];
 const $ = (id) => document.getElementById(id);
 
 /* -------------------------------------------------------------------- */
@@ -20,9 +25,21 @@ const $ = (id) => document.getElementById(id);
 
 async function loadSettings() {
   const stored = await chrome.storage.sync.get(DEFAULTS);
-  for (const key of TOGGLES) {
-    $(key).checked = Boolean(stored[key]);
-  }
+  for (const key of TOGGLES) $(key).checked = Boolean(stored[key]);
+  for (const key of NUMBERS) $(key).value = stored[key];
+  reflectArmState();
+}
+
+/** The banner has to make the current mode impossible to misread. */
+function reflectArmState() {
+  const live = $('autoClaim').checked && !$('dryRun').checked;
+  const banner = $('armState');
+  banner.textContent = !$('autoClaim').checked
+    ? 'OFF — not watching for leads'
+    : live
+      ? 'LIVE — new leads will be clicked automatically'
+      : 'DRY RUN — new leads are detected and announced, never clicked';
+  banner.className = 'banner ' + (!$('autoClaim').checked ? 'idle' : live ? 'live' : 'dry');
 }
 
 let savedTimer = null;
@@ -37,6 +54,17 @@ function wireToggles() {
   for (const key of TOGGLES) {
     $(key).addEventListener('change', async (event) => {
       await chrome.storage.sync.set({ [key]: event.target.checked });
+      reflectArmState();
+      flashSaved();
+    });
+  }
+
+  for (const key of NUMBERS) {
+    $(key).addEventListener('change', async (event) => {
+      const min = Number(event.target.min);
+      const value = Math.max(min, Number(event.target.value) || min);
+      event.target.value = value;
+      await chrome.storage.sync.set({ [key]: value });
       flashSaved();
     });
   }
@@ -47,6 +75,10 @@ function wireToggles() {
       for (const key of TOGGLES) {
         if (key in changes) $(key).checked = Boolean(changes[key].newValue);
       }
+      for (const key of NUMBERS) {
+        if (key in changes) $(key).value = changes[key].newValue;
+      }
+      reflectArmState();
     } else if (area === 'local' && 'claimHistory' in changes) {
       render(changes.claimHistory.newValue || []);
     }
@@ -103,7 +135,8 @@ function render(history, ports) {
     label.title = entry.signature || '';
 
     const source = document.createElement('td');
-    source.textContent = entry.source || '—';
+    source.textContent = entry.dryRun ? 'dry run' : (entry.source || 'claimed');
+    if (entry.dryRun) source.style.color = '#94a3b8';
 
     const speed = document.createElement('td');
     speed.className = 'mono';

@@ -2,159 +2,175 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <title>Mock CarNow Dashboard — Auto-Claimer test harness</title>
+  <title>Mock CarNow — All Leads test harness</title>
   <style>
-    body { font: 14px system-ui, sans-serif; background: #0f172a; color: #e2e8f0; padding: 24px; margin: 0; }
-    h1 { font-size: 18px; margin: 0 0 4px; }
-    p.sub { color: #94a3b8; margin: 0 0 20px; }
-    .panel { background: #1e293b; border: 1px solid #334155; border-radius: 10px; padding: 16px; margin-bottom: 16px; }
-    .panel h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .05em; color: #94a3b8; margin: 0 0 12px; }
-    .lead { display: flex; align-items: center; justify-content: space-between; gap: 16px;
-            background: #0f172a; border: 1px solid #334155; border-radius: 8px; padding: 12px; margin-bottom: 8px; }
-    .btn { background: #f97316; color: #0f172a; border: none; border-radius: 6px; padding: 8px 14px;
-           font: inherit; font-weight: 700; cursor: pointer; }
-    .btn.disabled, .btn[disabled] { background: #475569; color: #94a3b8; cursor: not-allowed; }
-    .btn.claimed { background: #16a34a; }
-    .modal { position: fixed; right: 20px; bottom: 20px; width: 300px; background: #1e293b;
-             border: 1px solid #f97316; border-radius: 10px; padding: 16px; z-index: 9999; }
-    #log { background: #020617; border: 1px solid #334155; border-radius: 8px; padding: 12px;
-           font: 12px/1.6 ui-monospace, monospace; max-height: 260px; overflow: auto; white-space: pre-wrap; }
-    button.ctl { background: #334155; color: #e2e8f0; border: 1px solid #475569; border-radius: 6px;
-                 padding: 7px 12px; font: inherit; cursor: pointer; margin-right: 8px; }
-    iframe { width: 100%; height: 110px; border: 1px solid #334155; border-radius: 8px; background: #0f172a; }
+    body { font: 14px system-ui, sans-serif; background: #fff; color: #0f172a; padding: 20px; margin: 0; }
+    h1 { font-size: 22px; margin: 0 0 2px; color: #1e3a8a; }
+    p.sub { color: #64748b; margin: 0 0 16px; }
+    table { width: 100%; border-collapse: collapse; }
+    th { text-align: left; font-size: 13px; color: #1e40af; padding: 8px 6px; border-bottom: 2px solid #e2e8f0; }
+    td { padding: 10px 6px; border-bottom: 1px solid #f1f5f9; font-size: 13px; vertical-align: top; }
+    tr.lead:hover { background: #f8fafc; cursor: pointer; }
+    .dot { color: #dc2626; font-size: 16px; line-height: 1; }
+    .name { color: #1d4ed8; font-weight: 600; }
+    .rep { color: #64748b; font-size: 12px; }
+    .rep.none { color: #cbd5e1; font-style: italic; }
+    .ctl { background: #1e40af; color: #fff; border: 0; border-radius: 6px; padding: 8px 13px;
+           font: inherit; font-weight: 600; cursor: pointer; margin: 0 6px 8px 0; }
+    .ctl.warn { background: #b45309; }
+    .ctl.gray { background: #475569; }
+    #log { background: #0f172a; color: #e2e8f0; border-radius: 8px; padding: 12px; margin-top: 16px;
+           font: 12px/1.6 ui-monospace, monospace; max-height: 220px; overflow: auto; white-space: pre-wrap; }
+    .pagination { margin-top: 12px; }
+    .pagination button { border: 1px solid #cbd5e1; background: #fff; padding: 5px 11px;
+                         border-radius: 5px; cursor: pointer; font: inherit; margin-right: 4px; }
+    .pagination button.active { background: #1e40af; color: #fff; border-color: #1e40af; }
   </style>
 </head>
 <body>
-  <h1>Mock CarNow Dashboard</h1>
-  <p class="sub">Test harness for the CarNow Lead Auto-Claimer. Every claim path is represented below.</p>
+  <h1>All Leads</h1>
+  <p class="sub">Mock harness. 10 rows load as the baseline — the extension must ignore every one of them.</p>
 
-  <div class="panel">
-    <h2>Controls</h2>
-    <button class="ctl" id="spawnCard">Spawn dashboard lead</button>
-    <button class="ctl" id="spawnModal">Spawn modal pop-up (position:fixed)</button>
-    <button class="ctl" id="spawnShadow">Spawn lead inside shadow DOM</button>
-    <button class="ctl" id="spawnBurst">Burst: 5 leads at once</button>
-    <button class="ctl" id="spawnDecoys">Spawn decoys (must NOT be clicked)</button>
+  <div>
+    <button class="ctl" id="addNew">Add ONE new lead (should be claimed)</button>
+    <button class="ctl warn" id="addOld">Add stale lead, dated 3 days ago (must be skipped)</button>
+    <button class="ctl warn" id="bumpExisting">Bump an existing lead's timestamp (must NOT re-claim)</button>
+    <button class="ctl gray" id="switchFilter">Switch filter — replace all rows (must re-baseline, claim nothing)</button>
+    <button class="ctl gray" id="refresh">Force full table re-render (must claim nothing)</button>
   </div>
 
-  <div class="panel">
-    <h2>Lead queue</h2>
-    <div id="queue"></div>
+  <table>
+    <thead>
+      <tr><th></th><th>Name</th><th>Vehicle of Interest</th><th>Department</th><th>Last Update</th></tr>
+    </thead>
+    <tbody id="rows"></tbody>
+  </table>
+
+  <div class="pagination">
+    <button class="active" aria-current="page">1</button><button>2</button><button>3</button>
   </div>
 
-  <div class="panel">
-    <h2>Shadow DOM host</h2>
-    <div id="shadowHost"></div>
-  </div>
-
-  <div class="panel">
-    <h2>Nested iframe (about:blank via srcdoc)</h2>
-    <iframe id="frame" srcdoc='<body style="font:14px system-ui;background:#0f172a;color:#e2e8f0;padding:12px;margin:0">
-      <div data-lead-id="iframe-lead-1">Lead in iframe &mdash; <button class="btn" style="background:#f97316;border:0;border-radius:6px;padding:6px 12px;font-weight:700">Claim Lead</button></div>
-      <script>
-        document.addEventListener("click", function (e) {
-          if (e.target.tagName === "BUTTON") {
-            e.target.textContent = "Claimed";
-            e.target.classList.add("claimed");
-            e.target.disabled = true;
-            parent.postMessage({ mock: "claim", where: "iframe" }, "*");
-          }
-        });
-      </script>
-    </body>'></iframe>
-  </div>
-
-  <div class="panel">
-    <h2>Click log <span style="color:#94a3b8;font-weight:400;text-transform:none;letter-spacing:0">(latency measured from DOM insertion)</span></h2>
-    <div id="log">waiting…</div>
-  </div>
+  <div id="log">harness ready — reload the page to re-run the baseline capture</div>
 
 <script>
 (() => {
   'use strict';
-
-  let n = 0;
-  const spawnTimes = new Map();
+  const tbody = document.getElementById('rows');
   const logEl = document.getElementById('log');
-  const queue = document.getElementById('queue');
-  let lines = [];
+  let lines = [], n = 0, spawn = new Map();
+
+  const REPS = ['Jacob Werries', 'Johnson Fabiyi', 'HASAN SAVAS', 'Steve Blank', 'Coleman H'];
+  const CARS = ['2026 Toyota Camry SE', '2024 Toyota Tundra 1794', '2026 Toyota Tacoma SR5', ''];
 
   function log(msg) {
     lines.unshift(new Date().toLocaleTimeString() + '  ' + msg);
-    logEl.textContent = lines.slice(0, 40).join('\n');
+    logEl.textContent = lines.slice(0, 30).join('\n');
   }
 
-  function onClaim(button, id) {
-    const spawned = spawnTimes.get(id);
-    const latency = spawned ? (performance.now() - spawned).toFixed(1) : '?';
-    button.textContent = 'Claimed';
-    button.classList.add('claimed');
-    button.disabled = true;
-    log('CLAIMED ' + id + '  latency=' + latency + 'ms' + (latency !== '?' && +latency < 50 ? '  [PASS <50ms]' : '  [check]'));
+  const pad = (v) => String(v).padStart(2, '0');
+  function stamp(date) {
+    const h = date.getHours() % 12 || 12;
+    return `${pad(date.getMonth() + 1)}/${pad(date.getDate())}/${date.getFullYear()} ` +
+           `${pad(h)}:${pad(date.getMinutes())} ${date.getHours() < 12 ? 'am' : 'pm'}`;
   }
 
-  function makeLead(container, opts) {
+  let model = [];
+
+  function makeLead(opts) {
     opts = opts || {};
-    const id = 'lead-' + (++n);
-    const row = document.createElement('div');
-    row.className = 'lead';
-    row.setAttribute('data-lead-id', id);
-
-    const text = document.createElement('span');
-    text.textContent = id + ' — ' + (opts.note || 'New inbound lead');
-
-    const button = document.createElement(opts.tag || 'button');
-    button.className = 'btn' + (opts.extraClass ? ' ' + opts.extraClass : '');
-    button.textContent = opts.text || 'Claim Lead';
-    if (opts.tag === 'div') button.setAttribute('role', 'button');
-    if (opts.disabled) button.setAttribute('disabled', '');
-    button.addEventListener('click', () => onClaim(button, id));
-
-    row.append(text, button);
-    spawnTimes.set(id, performance.now());
-    container.append(row);   // insertion happens here — the observer fires next microtask
-    return row;
+    const id = ++n;
+    return {
+      id,
+      name: opts.name || `Customer_${100000 + Math.floor(Math.random() * 899999)}`,
+      rep: 'rep' in opts ? opts.rep : REPS[id % REPS.length],
+      car: opts.car !== undefined ? opts.car : CARS[id % CARS.length],
+      dept: id % 4 === 0 ? 'Pre-Owned Sales' : 'New Car Sales',
+      src: ['Mobile Phone', 'SMS', 'Desktop Browser'][id % 3],
+      date: opts.date || new Date(),
+      isNew: Boolean(opts.isNew)
+    };
   }
 
-  document.getElementById('spawnCard').onclick = () => makeLead(queue, {});
+  function render() {
+    tbody.replaceChildren();
+    for (const lead of model) {
+      const tr = document.createElement('tr');
+      tr.className = 'lead';
 
-  document.getElementById('spawnModal').onclick = () => {
-    const modal = document.createElement('div');
-    modal.className = 'modal';
-    document.body.append(modal);
-    makeLead(modal, { note: 'Modal pop-up', text: 'Accept' });
-    setTimeout(() => modal.remove(), 8000);
+      const dot = document.createElement('td');
+      dot.innerHTML = '<span class="dot">&bull;</span>';
+
+      const name = document.createElement('td');
+      const a = document.createElement('a');
+      a.className = 'name';
+      a.href = '/conversations/' + lead.id;
+      a.textContent = lead.name;
+      const rep = document.createElement('div');
+      rep.className = 'rep' + (lead.rep ? '' : ' none');
+      rep.textContent = lead.rep ? `${lead.rep} (Nashville Toyota North)` : '(Nashville Toyota North)';
+      name.append(a, rep);
+
+      const car = document.createElement('td');
+      car.textContent = lead.car;
+
+      const dept = document.createElement('td');
+      dept.innerHTML = `${lead.dept}<div class="rep">${lead.src}</div>`;
+
+      const upd = document.createElement('td');
+      upd.textContent = stamp(lead.date);
+
+      tr.append(dot, name, car, dept, upd);
+      tr.addEventListener('click', (e) => {
+        e.preventDefault();
+        const t = spawn.get(lead.id);
+        const lat = t ? (performance.now() - t).toFixed(1) + 'ms' : 'n/a';
+        const verdict = lead.isNew ? 'CORRECT' : '*** WRONG — this was not a new lead ***';
+        log(`CLICKED "${lead.name}"  latency=${lat}  ${verdict}`);
+        tr.style.background = lead.isNew ? '#dcfce7' : '#fee2e2';
+      });
+      tbody.append(tr);
+    }
+  }
+
+  // Baseline: 10 pre-existing, already-claimed leads spread over past days.
+  for (let i = 0; i < 10; i++) {
+    model.push(makeLead({ date: new Date(Date.now() - (i + 1) * 7.2e6) }));
+  }
+  render();
+  log('10 baseline rows rendered — extension should arm in ~2s and ignore all of them');
+
+  document.getElementById('addNew').onclick = () => {
+    const lead = makeLead({ rep: '', date: new Date(), isNew: true });
+    spawn.set(lead.id, performance.now());
+    model.unshift(lead);
+    render();
+    log(`spawned NEW unclaimed lead "${lead.name}" — expect a claim`);
   };
 
-  document.getElementById('spawnShadow').onclick = () => {
-    const host = document.createElement('div');
-    document.getElementById('shadowHost').append(host);
-    const root = host.attachShadow({ mode: 'open' });
-    const style = document.createElement('style');
-    style.textContent = '.lead{display:flex;justify-content:space-between;gap:12px;padding:10px;border:1px solid #334155;border-radius:8px;margin-bottom:6px;color:#e2e8f0}.btn{background:#f97316;border:0;border-radius:6px;padding:6px 12px;font-weight:700;cursor:pointer}';
-    root.append(style);
-    makeLead(root, { note: 'Inside open shadow root' });
+  document.getElementById('addOld').onclick = () => {
+    const lead = makeLead({ rep: '', date: new Date(Date.now() - 3 * 864e5) });
+    model.unshift(lead);
+    render();
+    log(`spawned STALE lead dated 3 days ago — must be skipped by the freshness gate`);
   };
 
-  document.getElementById('spawnBurst').onclick = () => {
-    for (let i = 0; i < 5; i++) makeLead(queue, { note: 'Burst lead' });
+  document.getElementById('bumpExisting').onclick = () => {
+    model[model.length - 1].date = new Date();
+    render();
+    log('bumped an existing lead’s Last Update — its key must not change, so no claim');
   };
 
-  document.getElementById('spawnDecoys').onclick = () => {
-    makeLead(queue, { note: 'DECOY: disabled', disabled: true, text: 'Claim Lead' });
-    makeLead(queue, { note: 'DECOY: .disabled class', extraClass: 'disabled', text: 'Claim' });
-    makeLead(queue, { note: 'DECOY: already claimed', extraClass: 'claimed', text: 'Claimed' });
-    makeLead(queue, { note: 'DECOY: cookie banner', text: 'Accept all cookies' });
-    makeLead(queue, { note: 'DECOY: unclaim action', text: 'Unclaim' });
-    makeLead(queue, { note: 'DECOY: history link', text: 'Claim history' });
-    log('decoys spawned — none of these should appear as CLAIMED above');
+  document.getElementById('switchFilter').onclick = () => {
+    model = [];
+    for (let i = 0; i < 10; i++) model.push(makeLead({ date: new Date(Date.now() - (i + 1) * 36e5) }));
+    render();
+    log('replaced all 10 rows (filter switch) — burst gate must re-baseline and claim none');
   };
 
-  window.addEventListener('message', (e) => {
-    if (e.data && e.data.mock === 'claim') log('CLAIMED in ' + e.data.where + ' (all_frames injection works)');
-  });
-
-  log('harness ready — open DevTools console and enable Debug Mode in the extension options');
+  document.getElementById('refresh').onclick = () => {
+    render();
+    log('full re-render, same data — keys unchanged, so no claim');
+  };
 })();
 </script>
 </body>

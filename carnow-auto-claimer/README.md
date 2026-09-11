@@ -1,147 +1,139 @@
 # CarNow Lead Auto-Claimer
 
-Manifest V3 Chrome extension that watches CarNow dashboards for incoming leads and
-clicks the claim control automatically.
+Manifest V3 Chrome extension that watches `app.carnow.com` for a lead that **just
+arrived** and claims it by tapping the row.
 
-> **Before you run this on the floor:** automated claiming very likely conflicts with
-> CarNow's terms of service and with your dealership's lead-distribution policy. Confirm
-> with your manager first.
+> **Before running this live:** automated claiming very likely conflicts with CarNow's
+> terms of service and with your dealership's lead-distribution policy. Confirm with your
+> manager first.
+
+## The core problem
+
+CarNow has no "Claim" button. A salesperson claims a lead by **tapping the row** while a
+CarNow rep or the AI is talking to the customer. That makes naive detection dangerous:
+every unclaimed row on screen is a valid target, and the All Leads view holds nine pages
+of history. A sweep-based claimer would grab the entire backlog on its first tick.
+
+So this extension never asks *"is this row claimable?"* It asks *"did this row appear
+**after** I started watching?"* Everything present at startup is baselined and ignored
+permanently.
+
+## The five gates
+
+A detected row must pass all five before anything is clicked:
+
+| # | Gate | Blocks |
+|---|---|---|
+| 1 | **Armed** | Acting before the baseline has settled (2s quiet, 15s hard cap) |
+| 2 | **Burst** | More than 3 new rows at once — a filter switch, sort, page turn or reload |
+| 3 | **Page** | Anything not on page 1 of the pagination |
+| 4 | **Freshness** | Rows whose Last Update is older than `maxLeadAgeMin` (default 5) |
+| 5 | **Rate limit** | Faster than 1 per 10s, or more than 10 per session |
+
+Gate 2 is the important one. Every scenario that makes the whole list look new — changing
+to the Missed tab, re-sorting, turning a page, a hard refresh — produces many new keys at
+once, and all of them get vetoed while the baseline resets to the new view.
+
+## Row identity
+
+Keys prefer a stable identifier and fall back to content:
+
+1. `data-lead-id`, `data-conversation-id`, `data-id`, … if present
+2. the row's `href` (e.g. `/conversations/48812`) — the usual case
+3. otherwise, the row's cell text with volatile substrings stripped
+
+That stripping matters more than it looks. CarNow packs a date **and** a time into one
+Last Update cell, and unread-count badges sit inside the name cell. If either leaked into
+the key, an existing lead would get a new key the moment a customer replied — and then
+look brand new to the baseline check, and get claimed. Dates, times, `2d ago` forms, and
+standalone 1–3 digit badge counts are all removed before keying.
+
+Lead identifiers survive it: `Benton_747335` keeps its digits (no word boundary after the
+underscore), as do 4-digit years and 7-digit stock numbers.
 
 ## Files
 
 ```
 carnow-auto-claimer/
-├── manifest.json          MV3 manifest
-├── content.js             detection + clicking (all frames)
-├── background.js          service worker: keep-alive, notifications, history
-├── options.html           control panel
-├── options.js             control panel logic
-├── icons/                 16 / 48 / 128 px
-└── test/mock-carnow.html  offline test harness
+├── manifest.json          MV3
+├── content.js             row detection + the five gates
+├── background.js          keep-alive, notifications, history
+├── options.html / .js     control panel
+├── icons/
+└── test/mock-carnow.html  offline harness
 ```
 
 ## Install
 
-1. `chrome://extensions` → enable **Developer mode**.
-2. **Load unpacked** → select the `carnow-auto-claimer/` folder.
-3. Click the extension's **Details → Extension options** to open the control panel.
+1. `chrome://extensions` → **Developer mode** on
+2. **Load unpacked** → select `carnow-auto-claimer/`
+3. **Details → Extension options**
 
-## How detection works
+Keep the folder somewhere permanent — Chrome loads unpacked extensions by path.
 
-Three independent paths, because no single one is reliable in a background tab:
+## Settings
 
-| Path | Trigger | Latency | Survives tab throttling |
-|---|---|---|---|
-| `MutationObserver` | node added / attribute changed | < 2 ms | yes (not a timer) |
-| Worker-timer sweep | every 500 ms | ≤ 500 ms | yes (Worker timers are exempt) |
-| Alarm push (`SWEEP`) | every 30 s from the service worker | ≤ 30 s | yes (alarms wake the worker) |
+| Setting | Default | Notes |
+|---|---|---|
+| Auto-Claim Active | ON | Master switch |
+| **Dry Run** | **ON** | Detects and announces, never clicks. Turn off to arm. |
+| Sound Alert | ON | WebAudio tone, no asset shipped |
+| Logging/Debug | OFF | Orange `[CarNow AC]` console output |
+| Maximum lead age | 5 min | Gate 4 |
+| Min seconds between claims | 10 | Gate 5 |
+| Max claims per session | 10 | Gate 5, resets on reload |
 
-The observer is the hot path and clicks **synchronously** inside the callback — no
-`setTimeout`, no debounce — which is what keeps it under the 50 ms budget. The other two
-are safety nets.
+**Dry Run ships ON deliberately.** Run a shift with it on and confirm the extension flags
+exactly the leads you'd have tapped yourself. One toggle arms it.
 
-## Matching rules
+## Testing
 
-Candidates: `button`, `a`, `[role="button"]`, `.btn`, `input[type=button|submit]`.
+### Offline
 
-- **Match:** `\b(claim|accept)\b` against `aria-label`, `title`, `data-action`,
-  `data-testid`, `value`, and text content (text only if ≤ 60 chars, so a whole card's
-  text can't trigger a match).
-- **Veto:** `claimed`, `unclaim`, `reclaim`, `decline`, `reject`, `dismiss`, `cancel`,
-  `history`, `report`, `undo`, plus `cookie`/`consent`/`terms`/`privacy`/`policy`/
-  `agreement`/`newsletter`/`subscribe`/`marketing`.
-- **Excluded:** `[disabled]`, `.disabled`, `.claimed`, `[aria-disabled="true"]`,
-  `[data-claimed="true"]` — on the element *or any ancestor*.
-- **Visible:** `offsetParent !== null`, with a `getBoundingClientRect()` fallback for
-  `position: fixed` modals (which always report a null `offsetParent`).
-- **Innermost wins:** a `div[role="button"]` wrapping a real `<button>` yields one click.
+Open `test/mock-carnow.html`. It renders 10 baseline rows, then gives you five buttons:
 
-Word boundaries do the heavy lifting: `\bclaim\b` does not match `claimed`, `unclaim`,
-`disclaimer`, or `exclaim`.
+- **Add ONE new lead** → should be claimed, and the page logs the latency
+- **Add stale lead (3 days ago)** → must be skipped by gate 4
+- **Bump an existing lead's timestamp** → must *not* re-claim (key stability)
+- **Switch filter (replace all rows)** → must re-baseline via gate 2, claim nothing
+- **Force re-render** → keys unchanged, claim nothing
 
-## Edge cases handled
+Rows turn green when correctly claimed and red when wrongly claimed.
 
-- **iframes** — `all_frames: true` + `match_about_blank: true`; each frame runs its own
-  observer.
-- **Shadow DOM** — open roots are discovered on mutation and re-scanned every 2 s, each
-  getting its own observer. Closed roots are unreachable by design.
-- **Loop prevention** — a `WeakSet` of clicked elements (node identity) *and* a `Map` of
-  lead signatures (survives re-renders). The element is marked **before** the click,
-  because the click can synchronously re-render and re-enter the observer.
-- **Memory** — signatures expire after 10 minutes, swept every 60 s; detached shadow
-  roots are pruned; observers disconnect on `pagehide` and re-attach on bfcache restore.
-- **Storage races** — `background.js` is the single writer for `chrome.storage.local`,
-  with a serialized write chain, so simultaneous claims across frames can't clobber each
-  other. `content.js` writes directly only if the worker is unreachable.
+The content script only matches `*.carnow.com`, so add `"file:///*"` to
+`content_scripts[0].matches` and enable **Allow access to file URLs** to run it — then
+**remove that match before real use**.
 
-## Testing with Chrome DevTools
+### On the live page
 
-### 1. Offline, with the harness
-
-`test/mock-carnow.html` reproduces every claim path. The content script only matches
-`*.carnow.com`, so pick one:
-
-- **Easier:** add `"file:///*"` to `content_scripts[0].matches` in `manifest.json`,
-  reload the extension, and enable **Allow access to file URLs** in its Details page.
-- **Closer to production:** map a hostname in your hosts file and serve the folder over
-  HTTPS.
-
-Then open the file and click the spawn buttons. The harness measures latency from DOM
-insertion and prints `[PASS <50ms]`.
-
-The **Spawn decoys** button is the important one — none of those six rows should ever
-appear as CLAIMED.
-
-**Remove the `file:///*` match before real use.**
-
-### 2. Inspecting the content script
-
-On a CarNow tab: **F12 → Console**, set the frame selector (top of the console) to the
-frame you care about, then:
+Console on `app.carnow.com/conversations`:
 
 ```js
-__carnowAutoClaimer.settings()     // live settings
-__carnowAutoClaimer.candidates()   // what it would click right now
-__carnowAutoClaimer.tracked()      // [signature, timestamp] pairs
-__carnowAutoClaimer.roots()        // open shadow roots under observation
-__carnowAutoClaimer.sweep('manual')// force a scan
+__carnowAutoClaimer.status()      // armed? dryRun? baseline size? claims so far?
+__carnowAutoClaimer.rows()        // every row with its key, age, baselined flag
+__carnowAutoClaimer.rebaseline()  // re-snapshot after changing filters
 ```
 
-Turn on **Logging/Debug Mode** in the options page for orange `[CarNow AC]` logs.
+You want `status().armed === true` and `baselineRows` matching the visible row count
+before you trust anything. Look for the green `[CarNow AC] ARMED` line in the console.
 
-### 3. Inspecting the service worker
+Service worker console: `chrome://extensions` → the **service worker** link.
 
-`chrome://extensions` → the card → **service worker** link. That console shows alarm
-ticks, claim records, and port counts. The worker going idle is normal — the alarm
-restarts it within 30 s. To confirm it is alive:
+## Known unknowns
 
-```js
-chrome.runtime.sendMessage({ type: 'GET_STATUS' }).then(console.log)
-```
+Two things still need confirming against the live site:
 
-### 4. Verifying the 50 ms budget
-
-**Performance** panel → record → spawn a lead → stop. Find the `Recalculate Style` /
-mutation callback and confirm the click dispatch sits in the same task. Each entry in the
-options page's history table also carries the measured `elapsedMs`.
-
-### 5. Storage
-
-**Application → Storage → Extension storage**, or:
-
-```js
-chrome.storage.local.get(console.log)   // claimHistory, lastClaimAt
-chrome.storage.sync.get(console.log)    // autoClaim, soundAlert, debug
-```
+1. **Does tapping the row actually claim it**, or does it open the conversation with
+   claiming as a separate step? `clickTargetFor()` picks the row's link, falling back to
+   a button, then the first cell, then the row itself — if CarNow needs a different
+   target, that's the function to change.
+2. **Can a mistaken claim be released?** If not, keep Dry Run on longer.
 
 ## Notes
 
-- `declarativeNetRequest` is declared because it was requested, but nothing uses it — the
-  extension never touches network requests. Dropping it from `permissions` reduces the
-  install warning and changes no behavior.
-- `alarms` and `notifications` were added beyond the original permission list; they are
-  required for `chrome.alarms` and `chrome.notifications` respectively.
-- No `tabs` permission is needed: the host permission for `*.carnow.com` is enough for
-  `tabs.query({url})` and `tabs.sendMessage` on those tabs.
-- The sound uses a WebAudio oscillator, so there's no asset to ship. Chrome's autoplay
-  policy may keep the `AudioContext` suspended until you interact with the page once.
+- `declarativeNetRequest` is declared because it was requested but nothing uses it.
+  Dropping it removes an install warning and changes no behavior.
+- `alarms` and `notifications` were added beyond the original list; they're required by
+  `chrome.alarms` and `chrome.notifications`.
+- No `tabs` permission needed — the `*.carnow.com` host permission covers
+  `tabs.query({url})` and `tabs.sendMessage`.

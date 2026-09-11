@@ -12,8 +12,12 @@
 
 const DEFAULTS = Object.freeze({
   autoClaim: true,
+  dryRun: true,
   soundAlert: true,
-  debug: false
+  debug: false,
+  maxLeadAgeMin: 5,
+  minClaimIntervalSec: 10,
+  maxClaimsPerSession: 10
 });
 
 const KEEPALIVE_ALARM = 'carnow-keepalive';
@@ -88,8 +92,10 @@ async function notifyClaim(record, tabId) {
     await chrome.notifications.create(id, {
       type: 'basic',
       iconUrl: chrome.runtime.getURL('icons/icon128.png'),
-      title: 'Lead claimed',
-      message: `"${record.label || 'Claim'}" clicked at ${when} (${record.elapsedMs}ms)`,
+      title: record.dryRun ? 'New lead detected (dry run)' : 'Lead claimed',
+      message: record.dryRun
+        ? `Would have claimed: ${record.label || 'new lead'} — tap it yourself`
+        : `${record.label || 'Lead'} claimed at ${when} (${record.elapsedMs}ms)`,
       contextMessage: record.url ? new URL(record.url).hostname : 'carnow.com',
       priority: 2,
       requireInteraction: false
