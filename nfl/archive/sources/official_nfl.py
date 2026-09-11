@@ -15,6 +15,14 @@ extraction is a later, re-runnable step against preserved input. This is the
 "do not let perfect schema design delay raw preservation" rule applied
 literally.
 
+GAME-DAY INACTIVES. NFL Football Operations documents that each club's inactive
+list is part of the Game Day Administration Report exchanged at the 90-minute
+officiating meeting. NFL.com exposes a public /inactives/ surface. We archive
+that official page as raw HTML every capture. A page that is reachable but has
+not yet populated a game's list is evidence of the page state at that instant,
+NOT permission to infer that nobody is inactive. Parsing and per-game semantic
+validation belong downstream.
+
 WHAT IS NOT ATTEMPTED HERE, AND WHY. No press-conference transcript, caption
 track, or audio/video transcription is fetched. Whether automated retrieval of
 those is permitted has NOT been established, and this module will not
@@ -37,6 +45,8 @@ PAGES = (
     # (artifact, url, what it carries)
     ("injuries_report", "https://www.nfl.com/injuries/",
      "official injury/practice report -- DNP/Limited/Full designations"),
+    ("inactives", "https://www.nfl.com/inactives/",
+     "official game-day inactive reports -- highest-value ~90-minute pregame state"),
     ("transactions", "https://www.nfl.com/transactions/",
      "roster-changing events: signings, releases, IR, elevations"),
     ("scores", "https://www.nfl.com/scores/",
