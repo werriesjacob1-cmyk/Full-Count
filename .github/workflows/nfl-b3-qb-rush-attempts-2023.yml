@@ -1,0 +1,359 @@
+name: NFL B3 QB Rush-Attempt Fresh 2023 Audit
+
+# PRIMARY UNSEEN HISTORICAL AUDIT.
+#
+# B3 was designed from 2024/2025 diagnostics. This workflow deliberately tests
+# 2023 for the first time, using 2022 only as prior history.
+#
+# PRE-REGISTERED:
+#   B3 = rolling designed rushes
+#      + rolling kneels
+#      + rolling scrambles * dropback_window_scale
+#
+# where dropback_window_scale =
+#   current team's prior-5 mean QB dropbacks
+#   / team-dropback mean aligned to the QB's prior appearance window.
+#
+# Gate: B3 MAE must beat BOTH B0 and B1 on the exact same QB rush-attempt rows.
+# No fitted parameters. No tuning from 2023. No promotion from this workflow.
+on:
+  push:
+    branches:
+      - superchad/nfl-foundation-continuation-20260911
+    paths:
+      - .github/workflows/nfl-b3-qb-rush-attempts-2023.yml
+      - nfl/research/qb_rushing_components.py
+      - nfl/research/qb_scramble_opportunity_model.py
+      - nfl/research/b1_alignment.py
+      - nfl/research/b1_history.py
+      - nfl/research/b1_evaluate.py
+      - nfl/research/nflverse_history.py
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python3 -m pip install 'requests~=2.34.2'
+
+      - name: Run unseen 2023 B3 audit
+        env:
+          FULL_COUNT_CODE_SHA: ${{ github.sha }}
+        run: |
+          PYTHONPATH=. python3 - <<'PY'
+          import csv, gzip, hashlib, io, json, math, os, statistics
+          from collections import defaultdict, deque
+          from datetime import datetime, timezone
+          import requests
+
+          from nfl.research import b1_alignment as alignment
+          from nfl.research import nflverse_history as nh
+          from nfl.research import qb_scramble_opportunity_model as b3
+          from nfl.research.b1_evaluate import paired_error_rows
+          from nfl.research.b1_history import TEAM_REQUIRED_COLUMNS, build_b1_rows
+          from nfl.research.qb_rushing_components import (
+              aggregate_components, classify_qb_rush,
+          )
+
+          SEASONS=(2022,2023)
+          TEST_SEASON=2023
+          WINDOW=5
+          MIN_HISTORY=3
+          MIN_TEAM_HISTORY=3
+          EPS=1e-10
+
+          PLAYER_SHA={
+            2022:"ad426c3fe5bf1cc30c3f137fdfe96d054e19d400879ee4413129da49fa7b54be",
+            2023:"f19cb71a5de0dce7fd09376026237c9ee9d5a93fe13815a2ea3ec2d37204cb17",
+          }
+          TEAM_SHA={
+            2022:"9803875bd0b74aa49230288d45359c75e45910f1cf1953ea0f07b9d3db35e4d1",
+            2023:"dc5a387daabe8663deaddac492ad7020d47fb1a66048690b355b406cd8e4c454",
+          }
+          PBP_SHA={
+            2022:"0c69a71eb39498956c7b1d5c1ca52ce7fe679934a95d1af249facb5ea9829ea4",
+            2023:"4649804ee0f0a40b41e51ec75a1ce921949d7fab5459213488656b92f78560e8",
+          }
+          REQUIRED_PBP={
+            "season","week","season_type","posteam","qb_dropback",
+            "rusher_player_id","rush_attempt","qb_kneel","qb_scramble",
+            "two_point_attempt","yards_gained",
+          }
+
+          def truth(v):
+              if v in (None,"",0,0.0,"0","0.0",False): return False
+              if v in (1,1.0,"1","1.0",True): return True
+              try: return float(v)==1.0
+              except (TypeError,ValueError): return False
+
+          def pkey(r):
+              return (int(r["season"]),int(r["week"]),str(r["season_type"]),str(r["player_id"]))
+
+          def gkey(r):
+              return (int(r["season"]),int(r["week"]),str(r["season_type"]),str(r["team"]))
+
+          def mean(xs):
+              return statistics.fmean(xs) if xs else None
+
+          def metrics(rows, field):
+              pred=[r[field] for r in rows]; act=[r["actual"] for r in rows]
+              err=[p-a for p,a in zip(pred,act)]
+              return {
+                "n":len(rows),
+                "mae":statistics.fmean(abs(e) for e in err),
+                "rmse":math.sqrt(statistics.fmean(e*e for e in err)),
+                "bias":statistics.fmean(err),
+                "mean_prediction":statistics.fmean(pred),
+                "mean_actual":statistics.fmean(act),
+              }
+
+          s=requests.Session()
+          s.headers.update({"User-Agent":"Full-Count B3 unseen 2023 audit"})
+          players=[]; teams=[]; qbids=defaultdict(set)
+          sources={"player":{},"team":{},"pbp":{}}
+
+          for season in SEASONS:
+              u=nh.player_stats_url(season); r=s.get(u,timeout=60); r.raise_for_status()
+              d=hashlib.sha256(r.content).hexdigest()
+              if d!=PLAYER_SHA[season]: raise SystemExit(f"{season} player SHA drift")
+              rows=list(csv.DictReader(io.StringIO(r.text))); players+=rows
+              for row in rows:
+                  if str(row.get("position") or "").strip().upper()=="QB":
+                      pid=str(row.get("player_id") or "").strip()
+                      if pid: qbids[season].add(pid)
+              sources["player"][str(season)]={"url":u,"rows":len(rows),"sha256":d}
+
+              u=("https://github.com/nflverse/nflverse-data/releases/download/"
+                 f"stats_team/stats_team_week_{season}.csv")
+              r=s.get(u,timeout=60); r.raise_for_status(); d=hashlib.sha256(r.content).hexdigest()
+              if d!=TEAM_SHA[season]: raise SystemExit(f"{season} team SHA drift")
+              rows=list(csv.DictReader(io.StringIO(r.text)))
+              if not rows: raise SystemExit(f"{season} empty team stats")
+              miss=sorted(TEAM_REQUIRED_COLUMNS-set(rows[0]))
+              if miss: raise SystemExit(f"{season} team schema drift {miss}")
+              teams+=rows; sources["team"][str(season)]={"url":u,"rows":len(rows),"sha256":d}
+
+          raw_components=defaultdict(list)
+          team_dropbacks=defaultdict(int)
+          for season in SEASONS:
+              u=("https://github.com/nflverse/nflverse-data/releases/download/"
+                 f"pbp/play_by_play_{season}.csv.gz")
+              r=s.get(u,timeout=120); r.raise_for_status(); d=hashlib.sha256(r.content).hexdigest()
+              if d!=PBP_SHA[season]: raise SystemExit(f"{season} PBP SHA drift")
+              n=0
+              with gzip.GzipFile(fileobj=io.BytesIO(r.content)) as gz:
+                  reader=csv.DictReader(io.TextIOWrapper(gz,encoding="utf-8",newline=""))
+                  if reader.fieldnames is None: raise SystemExit("missing PBP header")
+                  miss=sorted(REQUIRED_PBP-set(reader.fieldnames))
+                  if miss: raise SystemExit(f"{season} PBP schema drift {miss}")
+                  for row in reader:
+                      n+=1
+                      st=str(row.get("season_type") or "")
+                      try: week=int(float(row["week"]))
+                      except (TypeError,ValueError): continue
+                      if truth(row.get("qb_dropback")) and not truth(row.get("two_point_attempt")):
+                          team=str(row.get("posteam") or "").strip()
+                          if not team: raise SystemExit(f"{season} dropback missing posteam")
+                          team_dropbacks[(season,week,st,team)]+=1
+
+                      pid=str(row.get("rusher_player_id") or "").strip()
+                      if not pid or pid not in qbids[season]: continue
+                      if not (truth(row.get("rush_attempt")) or truth(row.get("qb_kneel")) or truth(row.get("qb_scramble"))): continue
+                      obs=classify_qb_rush(row,is_qb=True)
+                      if obs is None: continue
+                      raw_components[(season,week,st,pid)].append(obs)
+              sources["pbp"][str(season)]={"url":u,"rows":n,"bytes":len(r.content),"sha256":d}
+
+          actual={k:aggregate_components(v) for k,v in raw_components.items()}
+          prior=nh.build_prior_only_rows(players,rolling_window=WINDOW)
+
+          # Normalize team games in the same chronology as B1 and attach PBP
+          # dropback counts. A team-game present in weekly stats but absent from
+          # PBP is a source-integrity failure.
+          norm_team=[]; seen=set()
+          for raw in teams:
+              row={
+                "season":int(float(raw["season"])),
+                "week":int(float(raw["week"])),
+                "season_type":str(raw["season_type"]),
+                "team":str(raw["team"]).strip(),
+              }
+              key=gkey(row)
+              if key in seen: raise SystemExit(f"duplicate team game {key}")
+              seen.add(key)
+              if key not in team_dropbacks:
+                  raise SystemExit(f"missing PBP team dropbacks for {key}")
+              row["dropbacks"]=float(team_dropbacks[key])
+              norm_team.append(row)
+          norm_team.sort(key=lambda r:(r["season"],r["week"],r["team"],r["season_type"]))
+
+          team_hist=defaultdict(lambda:deque(maxlen=WINDOW))
+          team_prior_dropbacks={}
+          team_prior_keys={}
+          for row in norm_team:
+              key=gkey(row); h=team_hist[row["team"]]
+              team_prior_dropbacks[key]=mean([float(x["dropbacks"]) for x in h])
+              team_prior_keys[key]=[
+                (x["season"],x["week"],x["season_type"],x["team"]) for x in h
+              ]
+              h.append(row)
+
+          player_hist=defaultdict(lambda:deque(maxlen=WINDOW))
+          component_features={}
+          alignment_map={}
+          reconciled=0
+          for row in prior:
+              if str(row.get("position") or "").strip().upper()!="QB": continue
+              key=pkey(row); game=gkey(row)
+              cur=actual.get(key,aggregate_components([]))
+              if abs(float(cur["carries"])-float(row["target"]["carries"]))>EPS:
+                  raise SystemExit(f"carry reconstruction failed {key}")
+              reconciled+=1
+              if game not in team_dropbacks: raise SystemExit(f"missing current team dropbacks {game}")
+
+              h=player_hist[row["player_id"]]
+              if h:
+                  feat={
+                    "designed":mean([float(x["designed"]) for x in h]),
+                    "scramble":mean([float(x["scramble"]) for x in h]),
+                    "kneel":mean([float(x["kneel"]) for x in h]),
+                    "player_window_team_dropbacks":mean([float(x["team_dropbacks"]) for x in h]),
+                    "history_n":len(h),
+                  }
+              else:
+                  feat={
+                    "designed":None,"scramble":None,"kneel":None,
+                    "player_window_team_dropbacks":None,"history_n":0,
+                  }
+              component_features[key]=feat
+              alignment_map[key]=alignment.classify_history_alignment(
+                  [
+                    (x["season"],x["week"],x["season_type"],x["team"])
+                    for x in h
+                  ],
+                  team_prior_keys[game],
+                  current_team=row["team"],
+              )
+              h.append({
+                "season":row["season"],"week":row["week"],
+                "season_type":row["season_type"],"team":row["team"],
+                "designed":float(cur["designed_rush_attempts"]),
+                "scramble":float(cur["scramble_attempts"]),
+                "kneel":float(cur["kneel_attempts"]),
+                "team_dropbacks":float(team_dropbacks[game]),
+              })
+
+          built=build_b1_rows(players,teams,rolling_window=WINDOW)
+          index={pkey(r):r for r in built}
+          pairs=paired_error_rows(
+              built,"rush_attempts",test_season=TEST_SEASON,
+              test_season_type="REG",min_history=MIN_HISTORY,
+              min_team_history=MIN_TEAM_HISTORY,
+          )
+
+          rows=[]
+          for pair in pairs:
+              key=(int(pair["season"]),int(pair["week"]),"REG",str(pair["player_id"]))
+              row=index[key]
+              if str(row.get("position") or "").strip().upper()!="QB": continue
+              feat=component_features[key]
+              if feat["history_n"]<MIN_HISTORY: raise SystemExit(f"history mismatch {key}")
+              if any(feat[x] is None for x in ("designed","scramble","kneel","player_window_team_dropbacks")):
+                  raise SystemExit(f"missing B3 component {key}")
+              base_sum=float(feat["designed"])+float(feat["scramble"])+float(feat["kneel"])
+              if abs(base_sum-float(pair["b0_prediction"]))>EPS:
+                  raise SystemExit(f"B0 component identity failed {key}")
+              game=gkey(row)
+              projected=team_prior_dropbacks[game]
+              if projected is None: raise SystemExit(f"missing team prior dropbacks {game}")
+              denom=float(feat["player_window_team_dropbacks"])
+              if denom<=0: raise SystemExit(f"nonpositive player-window dropbacks {key}")
+              scale=float(projected)/denom
+              pred=b3.predict_attempts(
+                  rolling_designed_rush_attempts=float(feat["designed"]),
+                  rolling_scramble_attempts=float(feat["scramble"]),
+                  rolling_kneel_attempts=float(feat["kneel"]),
+                  dropback_window_scale=scale,
+              )
+              rows.append({
+                "season":TEST_SEASON,"week":key[1],"player_id":key[3],
+                "team":row["team"],"alignment":alignment_map[key],
+                "dropback_window_scale":scale,
+                "b0_prediction":float(pair["b0_prediction"]),
+                "b1_prediction":float(pair["b1_prediction"]),
+                "b3_prediction":pred,
+                "actual":float(pair["actual"]),
+              })
+
+          if not rows: raise SystemExit("no 2023 QB comparison rows")
+
+          b0m=metrics(rows,"b0_prediction")
+          b1m=metrics(rows,"b1_prediction")
+          b3m=metrics(rows,"b3_prediction")
+          gate={
+            "b3_beats_b0_mae":b3m["mae"]<b0m["mae"],
+            "b3_beats_b1_mae":b3m["mae"]<b1m["mae"],
+          }
+          gate["primary_gate_pass"]=all(gate.values())
+
+          by_alignment={}
+          for cat in ("ALIGNED","MISSED_GAMES","TEAM_CHANGE","WINDOW_LENGTH_MISMATCH","NO_HISTORY"):
+              sub=[r for r in rows if r["alignment"]==cat]
+              if sub:
+                  by_alignment[cat]={
+                    "n":len(sub),
+                    "b0_mae":metrics(sub,"b0_prediction")["mae"],
+                    "b1_mae":metrics(sub,"b1_prediction")["mae"],
+                    "b3_mae":metrics(sub,"b3_prediction")["mae"],
+                  }
+              else:
+                  by_alignment[cat]={"n":0,"b0_mae":None,"b1_mae":None,"b3_mae":None}
+
+          output={
+            "analysis":"NFL_B3_QB_DROPBACK_AWARE_UNSEEN_2023",
+            "status":"research_only_no_promotion",
+            "created_at":datetime.now(timezone.utc).isoformat(),
+            "code_sha":os.environ["FULL_COUNT_CODE_SHA"],
+            "pre_registered":{
+              "test_season":2023,
+              "history_source_season":2022,
+              "rolling_window":WINDOW,
+              "minimum_player_history":MIN_HISTORY,
+              "minimum_team_history":MIN_TEAM_HISTORY,
+              "formula":"rolling designed + rolling kneel + rolling scramble * dropback_window_scale",
+              "fit_parameters":0,
+              "primary_gate":"B3 MAE < B0 MAE AND B3 MAE < B1 MAE",
+              "2023_metrics_unseen_when_formula_was_frozen":True,
+            },
+            "source_integrity":{
+              "qb_weekly_carry_rows_reconciled":reconciled,
+              "team_dropbacks_source":"nflverse PBP qb_dropback, excluding two-point attempts",
+              "component_sum_equals_B0_required":True,
+            },
+            "sources":sources,
+            "population_n":len(rows),
+            "b0":b0m,"b1":b1m,"b3":b3m,
+            "delta_mae_b3_minus_b0":b3m["mae"]-b0m["mae"],
+            "delta_mae_b3_minus_b1":b3m["mae"]-b1m["mae"],
+            "by_alignment":by_alignment,
+            "primary_decision":gate,
+            "next_if_pass":"Run clustered uncertainty, then prospective 2026 shadow. No promotion from historical MAE.",
+            "next_if_fail":"Reject B3. Next feature class is opponent pressure/game-state/coaching, not coefficient tuning.",
+          }
+          path="/tmp/nfl-b3-qb-rush-attempts-2023.json"
+          with open(path,"w",encoding="utf-8") as f: json.dump(output,f,indent=2,sort_keys=True)
+          print(json.dumps(output,indent=2,sort_keys=True))
+          PY
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: nfl-b3-qb-rush-attempts-2023
+          path: /tmp/nfl-b3-qb-rush-attempts-2023.json
+          retention-days: 30
