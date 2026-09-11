@@ -58,6 +58,37 @@ class SamePopulation(unittest.TestCase):
         self.assertAlmostEqual(m["b1_mae"], 0.35)
         self.assertAlmostEqual(m["delta_mae"], -0.65)
 
+    def test_paired_error_rows_are_the_exact_comparison_population(self):
+        rows = [
+            row(
+                b0_rec=4.0,
+                b1_features={
+                    "projected_team_targets": 32.0,
+                    "prior_player_target_share": 0.20,
+                    "prior_player_catch_rate": 0.75,
+                },
+                actual=5.0,
+            ),
+            row(
+                b0_rec=2.0,
+                b1_features={
+                    "projected_team_targets": 30.0,
+                    "prior_player_target_share": 0.10,
+                    "prior_player_catch_rate": 0.50,
+                },
+                actual=1.0,
+            ),
+        ]
+        paired = ev.paired_error_rows(
+            rows, "receptions", test_season=2025,
+            min_history=3, min_team_history=3,
+        )
+        self.assertEqual(len(paired), 2)
+        self.assertEqual(paired[0]["week"], 5)
+        self.assertAlmostEqual(paired[0]["b0_abs_error"], 1.0)
+        self.assertAlmostEqual(paired[0]["b1_abs_error"], 0.2)
+        self.assertAlmostEqual(paired[0]["delta_abs_error"], -0.8)
+
     def test_missing_b1_feature_reduces_coverage_not_b0_reference(self):
         rows = [
             row(
