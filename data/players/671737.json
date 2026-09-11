@@ -452,9 +452,9 @@
             "tto_penalty": 8.0,
             "env_neutral": 50.0
           },
-          "hit_probability": 0.5316,
-          "raw_hit_probability": 0.5316,
-          "lift": 0.1671,
+          "hit_probability": 0.5324,
+          "raw_hit_probability": 0.5324,
+          "lift": 0.1664,
           "reliability": "A",
           "sample_n": 28,
           "projection": {
@@ -464,10 +464,10 @@
           }
         },
         {
-          "prop": "Over 16.5 Outs Recorded",
+          "prop": "Over 17.5 Outs Recorded",
           "type": "pitcher",
-          "score": 46.0,
-          "notable_signals": 0,
+          "score": 52.5,
+          "notable_signals": 1,
           "matchup": "Cleveland Guardians @ Minnesota Twins",
           "game_pk": 823659,
           "team": "Minnesota Twins",
@@ -475,18 +475,18 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.5322,
+            "outs_rate": 0.5211,
             "avg_outs_per_start": 17.07
           },
-          "hit_probability": 0.5322,
+          "hit_probability": 0.5211,
           "raw_hit_probability": null,
-          "lift": 0.0162,
+          "lift": 0.0682,
           "reliability": "A",
           "sample_n": 28,
           "projection": {
             "stat": "pitcher_outs",
-            "value": 16.5,
-            "needs": 17
+            "value": 17.5,
+            "needs": 18
           }
         }
       ]

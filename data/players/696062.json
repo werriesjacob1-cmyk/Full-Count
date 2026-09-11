@@ -1,0 +1,42 @@
+{
+  "player_id": 696062,
+  "name": "Wilber Dotel",
+  "snapshots": [
+    {
+      "date": "2026-09-11",
+      "evaluations": [
+        {
+          "prop": "Over 3.5 Strikeouts",
+          "type": "pitcher",
+          "score": 51.2,
+          "notable_signals": 1,
+          "matchup": "Pittsburgh Pirates @ Chicago Cubs",
+          "game_pk": 824631,
+          "team": "Pittsburgh Pirates",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_k_pct": 44.0,
+            "same_hand_ratio": 92.8571,
+            "l14_k_pct": 29.4118,
+            "env_neutral": 50.0,
+            "ump_accuracy": 88.1452,
+            "ump_k_pct": -0.12,
+            "ump_bb_pct": -0.348
+          },
+          "hit_probability": 0.6138,
+          "raw_hit_probability": 0.699,
+          "lift": -0.0774,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 3.5,
+            "needs": 4
+          }
+        }
+      ]
+    }
+  ]
+}

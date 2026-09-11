@@ -390,9 +390,9 @@
       "date": "2026-09-11",
       "evaluations": [
         {
-          "prop": "Over 3.5 Strikeouts",
+          "prop": "Over 4.5 Strikeouts",
           "type": "pitcher",
-          "score": 36.8,
+          "score": 36.7,
           "notable_signals": 0,
           "matchup": "Colorado Rockies @ Detroit Tigers",
           "game_pk": 824227,
@@ -406,21 +406,21 @@
             "l14_k_pct": 7.6471,
             "env_neutral": 50.0
           },
-          "hit_probability": 0.5936,
-          "raw_hit_probability": 0.5985,
-          "lift": -0.0969,
+          "hit_probability": 0.4054,
+          "raw_hit_probability": 0.4054,
+          "lift": -0.1089,
           "reliability": "A",
           "sample_n": 28,
           "projection": {
             "stat": "strikeouts",
-            "value": 3.5,
-            "needs": 4
+            "value": 4.5,
+            "needs": 5
           }
         },
         {
-          "prop": "Over 16.5 Outs Recorded",
+          "prop": "Over 18.5 Outs Recorded",
           "type": "pitcher",
-          "score": 75.7,
+          "score": 23.0,
           "notable_signals": 1,
           "matchup": "Colorado Rockies @ Detroit Tigers",
           "game_pk": 824227,
@@ -429,18 +429,18 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.6499,
+            "outs_rate": 0.2368,
             "avg_outs_per_start": 16.89
           },
-          "hit_probability": 0.6499,
+          "hit_probability": 0.2368,
           "raw_hit_probability": null,
-          "lift": 0.1339,
+          "lift": 0.0617,
           "reliability": "A",
           "sample_n": 28,
           "projection": {
             "stat": "pitcher_outs",
-            "value": 16.5,
-            "needs": 17
+            "value": 18.5,
+            "needs": 19
           }
         }
       ]

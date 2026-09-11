@@ -429,9 +429,9 @@
       "date": "2026-09-11",
       "evaluations": [
         {
-          "prop": "Over 4.5 Strikeouts",
+          "prop": "Over 6.5 Strikeouts",
           "type": "pitcher",
-          "score": 42.3,
+          "score": 41.3,
           "notable_signals": 1,
           "matchup": "Los Angeles Angels @ Washington Nationals",
           "game_pk": 822684,
@@ -441,27 +441,27 @@
           "combo_player_ids": null,
           "signals": {
             "opp_team_k_pct": 83.0,
-            "same_hand_ratio": 100.0,
+            "same_hand_ratio": 75.0,
             "l14_k_pct": 100.0,
             "tto_penalty": 8.0,
             "env_neutral": 50.0
           },
-          "hit_probability": 0.6126,
-          "raw_hit_probability": 0.6928,
-          "lift": 0.0995,
+          "hit_probability": 0.3966,
+          "raw_hit_probability": 0.3966,
+          "lift": 0.1748,
           "reliability": "A",
           "sample_n": 30,
           "projection": {
             "stat": "strikeouts",
-            "value": 4.5,
-            "needs": 5
+            "value": 6.5,
+            "needs": 7
           }
         },
         {
-          "prop": "Over 15.5 Outs Recorded",
+          "prop": "Over 17.5 Outs Recorded",
           "type": "pitcher",
-          "score": 54.1,
-          "notable_signals": 0,
+          "score": 60.0,
+          "notable_signals": 1,
           "matchup": "Los Angeles Angels @ Washington Nationals",
           "game_pk": 822684,
           "team": "Washington Nationals",
@@ -469,18 +469,18 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.5954,
+            "outs_rate": 0.5477,
             "avg_outs_per_start": 15.87
           },
-          "hit_probability": 0.5954,
+          "hit_probability": 0.5477,
           "raw_hit_probability": null,
-          "lift": 0.0227,
+          "lift": 0.0948,
           "reliability": "A",
           "sample_n": 30,
           "projection": {
             "stat": "pitcher_outs",
-            "value": 15.5,
-            "needs": 16
+            "value": 17.5,
+            "needs": 18
           }
         }
       ]

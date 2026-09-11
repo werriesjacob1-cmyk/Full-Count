@@ -2697,6 +2697,109 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-11",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 55.3,
+          "notable_signals": 0,
+          "matchup": "Pittsburgh Pirates @ Chicago Cubs",
+          "game_pk": 824631,
+          "team": "Chicago Cubs",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 54.5714,
+            "l7_avg_ev": 9.1667,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 32.8,
+            "season_barrel_pct": 18.0,
+            "lineup_slot": 62.5,
+            "bullpen_fatigue": 37.037,
+            "platoon_barrel_pct": -0.64,
+            "platoon_xwoba": 0.0,
+            "park_hand_index": 2.67,
+            "opp_catcher_framing": 0.48,
+            "days_rest": 2.0,
+            "consecutive_games": -2.4,
+            "woba_ahead": 34.5455,
+            "woba_behind": 31.8182,
+            "pull_park_synergy": 1.7662,
+            "hard_hit_105_rate": -0.4275,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": 0.328,
+            "vs_rp_ops": 1.116,
+            "ump_k_pct": 0.12,
+            "ump_bb_pct": 0.348
+          },
+          "hit_probability": 0.7023,
+          "raw_hit_probability": 0.7292,
+          "lift": 0.0349,
+          "reliability": "A",
+          "sample_n": 144,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 0.2,
+          "notable_signals": 0,
+          "matchup": "Pittsburgh Pirates @ Chicago Cubs",
+          "game_pk": 824631,
+          "team": "Chicago Cubs",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0295
+          },
+          "hit_probability": 0.0295,
+          "raw_hit_probability": null,
+          "lift": -0.0184,
+          "reliability": "A",
+          "sample_n": 144,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 0.0,
+          "notable_signals": 0,
+          "matchup": "Pittsburgh Pirates @ Chicago Cubs",
+          "game_pk": 824631,
+          "team": "Chicago Cubs",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0025
+          },
+          "hit_probability": 0.0025,
+          "raw_hit_probability": null,
+          "lift": -0.0184,
+          "reliability": "A",
+          "sample_n": 144,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }
