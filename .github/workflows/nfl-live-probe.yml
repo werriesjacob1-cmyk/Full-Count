@@ -11,6 +11,7 @@ on:
       - .github/workflows/nfl-live-probe.yml
       - nfl/archive/provenance.py
       - nfl/archive/sources/fanduel_nfl.py
+      - nfl/archive/sources/official_nfl.py
 
 permissions:
   contents: read
@@ -82,6 +83,27 @@ jobs:
           print('tab tokens observed:', tokens)
           print('silent-default PARTIAL observations:', len(echoed))
           print('PASS: every observed silent-default payload is non-conclusive PARTIAL')
+          official = [
+              a for a in m.get('artifacts', [])
+              if a.get('source_id') == 'official_nfl'
+              and a.get('artifact') == 'inactives'
+          ]
+          if len(official) != 1:
+              raise SystemExit(
+                  f'expected exactly one official NFL inactives artifact, got {len(official)}'
+              )
+          inactive = official[0]
+          if inactive.get('outcome') != 'CHECKED_AND_FOUND':
+              raise SystemExit(
+                  'official NFL inactives surface was not successfully captured: ' +
+                  json.dumps({
+                      'outcome': inactive.get('outcome'),
+                      'failure_reason': inactive.get('failure_reason'),
+                      'url': inactive.get('url'),
+                  })
+              )
+          print('official NFL inactives outcome:', inactive.get('outcome'))
+          print('PASS: authoritative NFL inactives surface is live-capturable')
           PY
 
       - name: Upload probe evidence
