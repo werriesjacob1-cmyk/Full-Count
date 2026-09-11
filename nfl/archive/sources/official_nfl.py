@@ -17,11 +17,13 @@ literally.
 
 GAME-DAY INACTIVES. NFL Football Operations documents that each club's inactive
 list is part of the Game Day Administration Report exchanged at the 90-minute
-officiating meeting. NFL.com exposes a public /inactives/ surface. We archive
-that official page as raw HTML every capture. A page that is reachable but has
-not yet populated a game's list is evidence of the page state at that instant,
-NOT permission to infer that nobody is inactive. Parsing and per-game semantic
-validation belong downstream.
+officiating meeting. NFL.com exposes a public /inactives/ index whose linked
+game-specific /news/ articles carry the actual player lists. We archive the
+index as raw HTML and, when it exposes same-origin inactive-report links, archive
+each linked article as raw HTML in the same capture. A reachable index with zero
+current report links is evidence of that page state at that instant, NOT
+permission to infer that nobody is inactive. Player/team parsing, game binding,
+and football semantic validation remain downstream.
 
 WHAT IS NOT ATTEMPTED HERE, AND WHY. No press-conference transcript, caption
 track, or audio/video transcription is fetched. Whether automated retrieval of
