@@ -392,7 +392,7 @@
         {
           "prop": "Over 4.5 Strikeouts",
           "type": "pitcher",
-          "score": 36.7,
+          "score": 26.6,
           "notable_signals": 0,
           "matchup": "Colorado Rockies @ Detroit Tigers",
           "game_pk": 824227,
@@ -404,7 +404,10 @@
             "opp_team_k_pct": 60.0,
             "same_hand_ratio": 21.4286,
             "l14_k_pct": 7.6471,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 31.7769,
+            "ump_k_pct": 0.216,
+            "ump_bb_pct": -0.24
           },
           "hit_probability": 0.4054,
           "raw_hit_probability": 0.4054,
@@ -420,7 +423,7 @@
         {
           "prop": "Over 18.5 Outs Recorded",
           "type": "pitcher",
-          "score": 23.0,
+          "score": 23.2,
           "notable_signals": 1,
           "matchup": "Colorado Rockies @ Detroit Tigers",
           "game_pk": 824227,
@@ -429,12 +432,12 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.2368,
+            "outs_rate": 0.2364,
             "avg_outs_per_start": 16.89
           },
-          "hit_probability": 0.2368,
+          "hit_probability": 0.2364,
           "raw_hit_probability": null,
-          "lift": 0.0617,
+          "lift": 0.0633,
           "reliability": "A",
           "sample_n": 28,
           "projection": {

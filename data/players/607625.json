@@ -434,7 +434,7 @@
         {
           "prop": "Over 4.5 Strikeouts",
           "type": "pitcher",
-          "score": 50.0,
+          "score": 30.7,
           "notable_signals": 1,
           "matchup": "Kansas City Royals @ Boston Red Sox",
           "game_pk": 824711,
@@ -447,7 +447,10 @@
             "same_hand_ratio": 75.0,
             "l14_k_pct": 0.0,
             "tto_penalty": 8.0,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 64.4787,
+            "ump_k_pct": 0.24,
+            "ump_bb_pct": 0.06
           },
           "hit_probability": 0.3774,
           "raw_hit_probability": 0.3774,
@@ -463,7 +466,7 @@
         {
           "prop": "Over 15.5 Outs Recorded",
           "type": "pitcher",
-          "score": 43.7,
+          "score": 44.1,
           "notable_signals": 0,
           "matchup": "Kansas City Royals @ Boston Red Sox",
           "game_pk": 824711,
@@ -472,18 +475,46 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.555,
+            "outs_rate": 0.5544,
             "avg_outs_per_start": 16.45
           },
-          "hit_probability": 0.555,
+          "hit_probability": 0.5544,
           "raw_hit_probability": null,
-          "lift": -0.0157,
+          "lift": -0.0127,
           "reliability": "A",
           "sample_n": 29,
           "projection": {
             "stat": "pitcher_outs",
             "value": 15.5,
             "needs": 16
+          }
+        },
+        {
+          "prop": "Over 8.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 41.6,
+          "notable_signals": 0,
+          "matchup": "Kansas City Royals @ Boston Red Sox",
+          "game_pk": 824711,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            607625,
+            543243
+          ],
+          "signals": {
+            "combined_k_edge": -0.0953
+          },
+          "hit_probability": 0.5575,
+          "raw_hit_probability": null,
+          "lift": -0.0953,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 8.5,
+            "needs": 9
           }
         }
       ]
