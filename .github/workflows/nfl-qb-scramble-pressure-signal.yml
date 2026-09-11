@@ -1,0 +1,325 @@
+name: NFL QB Scramble Pressure Signal Audit
+
+# Research-only signal audit. No challenger is created here.
+#
+# Hypothesis: scrambles are pass/dropback outcomes. A QB facing a defense with
+# higher PRIOR pressure proxy rate (QB hit OR sack per opponent dropback) should
+# exceed his own rolling scramble baseline more often.
+#
+# All pressure features are strictly prior-game and point-in-time.
+on:
+  push:
+    branches:
+      - superchad/nfl-foundation-continuation-20260911
+    paths:
+      - .github/workflows/nfl-qb-scramble-pressure-signal.yml
+      - nfl/research/qb_rushing_components.py
+      - nfl/research/b1_history.py
+      - nfl/research/b1_evaluate.py
+      - nfl/research/nflverse_history.py
+
+permissions:
+  contents: read
+
+jobs:
+  signal-audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python3 -m pip install 'requests~=2.34.2'
+
+      - name: Measure prior opponent pressure vs scramble residual
+        env:
+          FULL_COUNT_CODE_SHA: ${{ github.sha }}
+        run: |
+          PYTHONPATH=. python3 - <<'PY'
+          import csv, gzip, hashlib, io, json, math, os, random, statistics
+          from collections import defaultdict, deque
+          from datetime import datetime, timezone
+          import requests
+
+          from nfl.research import nflverse_history as nh
+          from nfl.research.b1_evaluate import paired_error_rows
+          from nfl.research.b1_history import TEAM_REQUIRED_COLUMNS, build_b1_rows
+          from nfl.research.qb_rushing_components import aggregate_components, classify_qb_rush
+
+          SEASONS=(2023,2024,2025)
+          WINDOW=5
+          MIN_HISTORY=3
+          MIN_TEAM_HISTORY=3
+          BOOTSTRAPS=2000
+          SEED=20260911
+          EPS=1e-12
+          PLAYER_SHA={
+            2023:"f19cb71a5de0dce7fd09376026237c9ee9d5a93fe13815a2ea3ec2d37204cb17",
+            2024:"3ddc45a84f759aa348ce465ae001752c530575455717657cdfe1f8abfcdb4759",
+            2025:"e5e0615b3d96a3eaebfaee91e55afb4a4e7fe0caf057454177bcd7d6ad4bcfc2",
+          }
+          TEAM_SHA={
+            2023:"dc5a387daabe8663deaddac492ad7020d47fb1a66048690b355b406cd8e4c454",
+            2024:"b207a1430c2715d03bbf1844c4eae98695f364851ff6025f422febc2c13f5255",
+            2025:"91058a59d894855377b2f39f40c4e7bdbeef96d12144289dc68215209a1c93cb",
+          }
+          PBP_SHA={
+            2023:"4649804ee0f0a40b41e51ec75a1ce921949d7fab5459213488656b92f78560e8",
+            2024:"23370d5d10f8104d80d46a1fc5e61f4f6f5a3263fe96fe2dd629913cfcb08c06",
+            2025:"2f135887790a013fd004e609e37096bb4816d5cc80b9f19122e1bad478961978",
+          }
+          REQUIRED_PBP={
+            "season","week","season_type","defteam","qb_dropback","qb_hit","sack",
+            "rusher_player_id","rush_attempt","qb_kneel","qb_scramble",
+            "two_point_attempt","yards_gained",
+          }
+
+          def truth(v):
+              if v in (None,"",0,0.0,"0","0.0",False): return False
+              if v in (1,1.0,"1","1.0",True): return True
+              try: return float(v)==1.0
+              except (TypeError,ValueError): return False
+
+          def pkey(r):
+              return (int(r["season"]),int(r["week"]),str(r["season_type"]),str(r["player_id"]))
+
+          def pearson(xs,ys):
+              if len(xs)<3: return None
+              mx=statistics.fmean(xs); my=statistics.fmean(ys)
+              dx=[x-mx for x in xs]; dy=[y-my for y in ys]
+              den=math.sqrt(sum(x*x for x in dx)*sum(y*y for y in dy))
+              if den<=0: return None
+              return sum(x*y for x,y in zip(dx,dy))/den
+
+          def percentile(vals,p):
+              vals=sorted(vals)
+              if not vals: return None
+              pos=(len(vals)-1)*p
+              lo=int(math.floor(pos)); hi=int(math.ceil(pos))
+              if lo==hi: return vals[lo]
+              return vals[lo]+(vals[hi]-vals[lo])*(pos-lo)
+
+          def cluster_bootstrap(rows,cluster_field):
+              groups=defaultdict(list)
+              for r in rows: groups[r[cluster_field]].append(r)
+              keys=sorted(groups)
+              rng=random.Random(SEED + (1 if cluster_field=="player_id" else 2))
+              vals=[]
+              for _ in range(BOOTSTRAPS):
+                  sample=[]
+                  for _ in keys:
+                      k=rng.choice(keys); sample.extend(groups[k])
+                  c=pearson(
+                    [r["opponent_pressure_rate"] for r in sample],
+                    [r["scramble_residual"] for r in sample],
+                  )
+                  if c is not None and math.isfinite(c): vals.append(c)
+              return {
+                "cluster_field":cluster_field,"replicates":len(vals),
+                "median":percentile(vals,0.5),
+                "ci95":[percentile(vals,0.025),percentile(vals,0.975)],
+              }
+
+          def quartiles(rows):
+              ordered=sorted(rows,key=lambda r:r["opponent_pressure_rate"])
+              out=[]
+              n=len(ordered)
+              for q in range(4):
+                  lo=(q*n)//4; hi=((q+1)*n)//4
+                  sub=ordered[lo:hi]
+                  if not sub: continue
+                  out.append({
+                    "quartile":q+1,"n":len(sub),
+                    "mean_pressure_rate":statistics.fmean(r["opponent_pressure_rate"] for r in sub),
+                    "mean_scramble_residual":statistics.fmean(r["scramble_residual"] for r in sub),
+                    "mean_actual_scrambles":statistics.fmean(r["actual_scrambles"] for r in sub),
+                    "baseline_scramble_mae":statistics.fmean(abs(r["rolling_scrambles"]-r["actual_scrambles"]) for r in sub),
+                  })
+              return out
+
+          s=requests.Session()
+          s.headers.update({"User-Agent":"Full-Count QB scramble pressure signal audit"})
+          players=[]; teams=[]; qbids=defaultdict(set); sources={"player":{},"team":{},"pbp":{}}
+          for season in SEASONS:
+              u=nh.player_stats_url(season); r=s.get(u,timeout=60); r.raise_for_status()
+              d=hashlib.sha256(r.content).hexdigest()
+              if d!=PLAYER_SHA[season]: raise SystemExit(f"{season} player SHA drift")
+              rows=list(csv.DictReader(io.StringIO(r.text))); players+=rows
+              for row in rows:
+                  if str(row.get("position") or "").strip().upper()=="QB":
+                      pid=str(row.get("player_id") or "").strip()
+                      if pid: qbids[season].add(pid)
+              sources["player"][str(season)]={"url":u,"rows":len(rows),"sha256":d}
+
+              u=("https://github.com/nflverse/nflverse-data/releases/download/"
+                 f"stats_team/stats_team_week_{season}.csv")
+              r=s.get(u,timeout=60); r.raise_for_status(); d=hashlib.sha256(r.content).hexdigest()
+              if d!=TEAM_SHA[season]: raise SystemExit(f"{season} team SHA drift")
+              rows=list(csv.DictReader(io.StringIO(r.text)))
+              miss=sorted(TEAM_REQUIRED_COLUMNS-set(rows[0]))
+              if miss: raise SystemExit(f"{season} team schema drift {miss}")
+              teams+=rows; sources["team"][str(season)]={"url":u,"rows":len(rows),"sha256":d}
+
+          raw_components=defaultdict(list)
+          def_game=defaultdict(lambda:{"dropbacks":0,"pressures":0})
+          for season in SEASONS:
+              u=("https://github.com/nflverse/nflverse-data/releases/download/"
+                 f"pbp/play_by_play_{season}.csv.gz")
+              r=s.get(u,timeout=120); r.raise_for_status(); d=hashlib.sha256(r.content).hexdigest()
+              if d!=PBP_SHA[season]: raise SystemExit(f"{season} PBP SHA drift")
+              n=0
+              with gzip.GzipFile(fileobj=io.BytesIO(r.content)) as gz:
+                  reader=csv.DictReader(io.TextIOWrapper(gz,encoding="utf-8",newline=""))
+                  miss=sorted(REQUIRED_PBP-set(reader.fieldnames or []))
+                  if miss: raise SystemExit(f"{season} PBP schema drift {miss}")
+                  for row in reader:
+                      n+=1
+                      try: week=int(float(row["week"]))
+                      except (TypeError,ValueError): continue
+                      st=str(row.get("season_type") or "")
+                      if truth(row.get("qb_dropback")) and not truth(row.get("two_point_attempt")):
+                          defense=str(row.get("defteam") or "").strip()
+                          if not defense: raise SystemExit("dropback missing defteam")
+                          rec=def_game[(season,week,st,defense)]
+                          rec["dropbacks"]+=1
+                          if truth(row.get("qb_hit")) or truth(row.get("sack")):
+                              rec["pressures"]+=1
+
+                      pid=str(row.get("rusher_player_id") or "").strip()
+                      if not pid or pid not in qbids[season]: continue
+                      if not (truth(row.get("rush_attempt")) or truth(row.get("qb_kneel")) or truth(row.get("qb_scramble"))): continue
+                      obs=classify_qb_rush(row,is_qb=True)
+                      if obs is None: continue
+                      raw_components[(season,week,st,pid)].append(obs)
+              sources["pbp"][str(season)]={"url":u,"rows":n,"sha256":d}
+
+          actual={k:aggregate_components(v) for k,v in raw_components.items()}
+          prior=nh.build_prior_only_rows(players,rolling_window=WINDOW)
+
+          # Player rolling scramble baseline.
+          ph=defaultdict(lambda:deque(maxlen=WINDOW)); pfeat={}
+          for row in prior:
+              if str(row.get("position") or "").strip().upper()!="QB": continue
+              key=pkey(row); cur=actual.get(key,aggregate_components([]))
+              if abs(float(cur["carries"])-float(row["target"]["carries"]))>EPS:
+                  raise SystemExit(f"carry reconciliation failed {key}")
+              h=ph[row["player_id"]]
+              pfeat[key]={
+                "history_n":len(h),
+                "rolling_scrambles":(
+                  statistics.fmean(float(x["scramble_attempts"]) for x in h) if h else None
+                ),
+              }
+              h.append(cur)
+
+          # Prior-five defensive pressure proxy. Use ratio of sums, not mean of
+          # weekly rates, so small-dropback games do not get equal weight.
+          norm=[]
+          seen=set()
+          for raw in teams:
+              row={
+                "season":int(float(raw["season"])),"week":int(float(raw["week"])),
+                "season_type":str(raw["season_type"]),"team":str(raw["team"]).strip(),
+              }
+              key=(row["season"],row["week"],row["season_type"],row["team"])
+              if key in seen: raise SystemExit(f"duplicate team game {key}")
+              seen.add(key)
+              if key not in def_game: raise SystemExit(f"missing defensive PBP game {key}")
+              rec=def_game[key]
+              row.update(rec); norm.append(row)
+          norm.sort(key=lambda r:(r["season"],r["week"],r["team"],r["season_type"]))
+          dh=defaultdict(lambda:deque(maxlen=WINDOW)); prior_pressure={}
+          for row in norm:
+              key=(row["season"],row["week"],row["season_type"],row["team"])
+              h=dh[row["team"]]
+              den=sum(float(x["dropbacks"]) for x in h)
+              num=sum(float(x["pressures"]) for x in h)
+              prior_pressure[key]={
+                "history_n":len(h),
+                "rate":num/den if den>0 else None,
+              }
+              h.append(row)
+
+          built=build_b1_rows(players,teams,rolling_window=WINDOW)
+          index={pkey(r):r for r in built}
+          reports={}
+          for season,label in ((2024,"2024_development"),(2025,"2025_consistency")):
+              pairs=paired_error_rows(
+                built,"rush_attempts",test_season=season,test_season_type="REG",
+                min_history=MIN_HISTORY,min_team_history=MIN_TEAM_HISTORY,
+              )
+              rows=[]
+              for pair in pairs:
+                  key=(int(pair["season"]),int(pair["week"]),"REG",str(pair["player_id"]))
+                  row=index[key]
+                  if str(row.get("position") or "").strip().upper()!="QB": continue
+                  pf=pfeat[key]
+                  if pf["history_n"]<MIN_HISTORY or pf["rolling_scrambles"] is None:
+                      raise SystemExit(f"player scramble history mismatch {key}")
+                  opp=str(row.get("opponent_team") or "").strip()
+                  dk=(season,int(pair["week"]),"REG",opp)
+                  df=prior_pressure.get(dk)
+                  if df is None or df["history_n"]<MIN_TEAM_HISTORY or df["rate"] is None:
+                      raise SystemExit(f"opponent pressure history mismatch {key} {dk}")
+                  cur=actual.get(key,aggregate_components([]))
+                  act=float(cur["scramble_attempts"])
+                  base=float(pf["rolling_scrambles"])
+                  rows.append({
+                    "player_id":key[3],"opponent_team":opp,
+                    "opponent_pressure_rate":float(df["rate"]),
+                    "rolling_scrambles":base,"actual_scrambles":act,
+                    "scramble_residual":act-base,
+                  })
+              xs=[r["opponent_pressure_rate"] for r in rows]
+              ys=[r["scramble_residual"] for r in rows]
+              corr=pearson(xs,ys)
+              reports[label]={
+                "n":len(rows),
+                "pearson_pressure_vs_scramble_residual":corr,
+                "mean_pressure_rate":statistics.fmean(xs),
+                "mean_scramble_residual":statistics.fmean(ys),
+                "quartiles":quartiles(rows),
+                "player_cluster_bootstrap":cluster_bootstrap(rows,"player_id"),
+                "defense_cluster_bootstrap":cluster_bootstrap(rows,"opponent_team"),
+              }
+
+          r24=reports["2024_development"]; r25=reports["2025_consistency"]
+          p24=r24["player_cluster_bootstrap"]["ci95"]
+          d24=r24["defense_cluster_bootstrap"]["ci95"]
+          decision={
+            "positive_point_estimate_2024":r24["pearson_pressure_vs_scramble_residual"]>0,
+            "positive_point_estimate_2025":r25["pearson_pressure_vs_scramble_residual"]>0,
+            "at_least_one_2024_cluster_ci_above_zero":(
+              (p24[0] is not None and p24[0]>0) or (d24[0] is not None and d24[0]>0)
+            ),
+          }
+          decision["signal_gate_pass"]=all(decision.values())
+
+          output={
+            "analysis":"NFL_QB_SCRAMBLE_PRIOR_OPPONENT_PRESSURE_SIGNAL",
+            "status":"research_only_no_model",
+            "created_at":datetime.now(timezone.utc).isoformat(),
+            "code_sha":os.environ["FULL_COUNT_CODE_SHA"],
+            "pre_registered":{
+              "pressure_proxy":"prior-five defense (QB hit OR sack) / qb_dropback",
+              "outcome":"current QB scramble attempts minus prior-five player scramble mean",
+              "development_season":2024,"consistency_season":2025,
+              "bootstrap_replicates":BOOTSTRAPS,
+              "signal_gate":"positive in both seasons AND at least one 2024 clustered 95% CI lower bound > 0",
+              "no_challenger_built_in_this_run":True,
+            },
+            "sources":sources,"reports":reports,"decision":decision,
+            "next_if_pass":"Freeze a pressure-aware scramble challenger, then test it first on still-unseen 2022 using 2021 prior history.",
+            "next_if_fail":"Do not force pressure into B4; move to game-state or coaching/design-run features.",
+          }
+          path="/tmp/nfl-qb-scramble-pressure-signal.json"
+          with open(path,"w",encoding="utf-8") as f: json.dump(output,f,indent=2,sort_keys=True)
+          print(json.dumps(output,indent=2,sort_keys=True))
+          PY
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: nfl-qb-scramble-pressure-signal
+          path: /tmp/nfl-qb-scramble-pressure-signal.json
+          retention-days: 30
