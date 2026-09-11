@@ -55,11 +55,24 @@ class RootRequirementsUntouched(unittest.TestCase):
         )
 
     def test_nfl_code_imports_no_package_outside_the_root_baseline(self):
-        """Every third-party import under nfl/ must already be a root pin.
+        """Every third-party import in NFL PRODUCTION code must be a root pin.
 
         Guards the rule from the other side: the digest test above would still
         pass if nfl/ imported a package nobody had declared anywhere, which
         would fail in CI at runtime instead of here.
+
+        SCOPED TO NON-TEST CODE, DELIBERATELY. nfl/tests/ is exempt because
+        proving MLB is unchanged REQUIRES importing the MLB module that defines
+        the thing being proved unchanged: test_identity_isolation.py imports
+        dashboard/live_state.py to re-derive real MLB ids through the production
+        canonical_prop_id and compare byte for byte. Forbidding that would mean
+        asserting MLB byte-parity against hardcoded strings, which proves
+        nothing about the production function.
+
+        This exemption is narrow and is itself policed:
+        test_nfl_production_code_imports_no_mlb_module below keeps the runtime
+        boundary intact, and the NFL CI job installs no MLB dependency, so a
+        test reaching for one fails there rather than passing quietly.
         """
         allowed = {"requests"}
         offenders = []
@@ -70,7 +83,7 @@ class RootRequirementsUntouched(unittest.TestCase):
         # A scanner that cannot tell code from prose produces exactly the kind
         # of false alarm that gets a check disabled.
         for dirpath, dirs, files in os.walk(os.path.join(REPO, "nfl")):
-            dirs[:] = [d for d in dirs if d != "__pycache__"]
+            dirs[:] = [d for d in dirs if d not in ("__pycache__", "tests")]
             for name in files:
                 if not name.endswith(".py"):
                     continue
@@ -103,6 +116,43 @@ class RootRequirementsUntouched(unittest.TestCase):
             offenders, [],
             "nfl/ imports third-party packages that root requirements.txt does "
             "not already provide:\n  " + "\n  ".join(offenders),
+        )
+
+    def test_nfl_production_code_imports_no_mlb_module(self):
+        """The boundary the tests/ exemption above is allowed to cross, and
+        production code is not. Keeps the exemption from widening silently."""
+        mlb_modules = {
+            "live_state", "publication_registry", "build_dashboard",
+            "prepare_pages_artifact", "verify_pages_artifact", "refresh_prices",
+            "refresh_grades", "generate_picks", "odds_fanduel", "mlb_daily",
+            "mlb_sources", "prop_probability", "recommendation", "ledger_integrity",
+        }
+        offenders = []
+        for dirpath, dirs, files in os.walk(os.path.join(REPO, "nfl")):
+            dirs[:] = [d for d in dirs if d not in ("__pycache__", "tests")]
+            for name in files:
+                if not name.endswith(".py"):
+                    continue
+                path = os.path.join(dirpath, name)
+                rel = os.path.relpath(path, REPO)
+                with open(path, encoding="utf-8") as handle:
+                    try:
+                        tree = ast.parse(handle.read())
+                    except SyntaxError:
+                        continue
+                for node in ast.walk(tree):
+                    names = []
+                    if isinstance(node, ast.Import):
+                        names = [(a.name, node.lineno) for a in node.names]
+                    elif isinstance(node, ast.ImportFrom) and not node.level:
+                        names = [(node.module or "", node.lineno)]
+                    for module, lineno in names:
+                        if module.split(".")[0] in mlb_modules:
+                            offenders.append(f"{rel}:{lineno} imports {module!r}")
+        self.assertEqual(
+            offenders, [],
+            "NFL production code imports MLB modules. Only nfl/tests/ may, and "
+            "only to assert MLB invariance:\n  " + "\n  ".join(offenders),
         )
 
     def test_nfl_requirements_file_exists_and_adds_nothing_new_yet(self):
