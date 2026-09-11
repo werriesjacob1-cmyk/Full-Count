@@ -1153,6 +1153,50 @@ CATEGORY_ORDER = [
 ]
 
 
+def _public_top_pick_by_prop(results_dir):
+    """Aggregate the immutable public Top Pick ledger by prop type.
+
+    Reads ONLY grades_*.json -> public_top_picks. Leans, Value, Neutral and
+    broader modelled rows are never mixed into this customer-facing record.
+    Ungraded/void rows are excluded from the hit-rate denominator.
+    """
+    import eval_lib
+
+    counts = defaultdict(lambda: {"hits": 0, "misses": 0})
+    try:
+        names = sorted(n for n in os.listdir(results_dir)
+                       if n.startswith("grades_") and n.endswith(".json"))
+    except OSError:
+        return {}
+    for name in names:
+        try:
+            with open(os.path.join(results_dir, name), encoding="utf-8") as f:
+                payload = json.load(f)
+        except (OSError, json.JSONDecodeError):
+            continue
+        for pick in payload.get("public_top_picks") or []:
+            grade = pick.get("grade")
+            if grade not in ("hit", "miss"):
+                continue
+            stat = (pick.get("actual_stat") or pick.get("stat") or
+                    (pick.get("projection") or {}).get("stat"))
+            if not stat:
+                continue
+            counts[stat][grade + "s"] += 1
+
+    out = {}
+    for stat, row in sorted(counts.items()):
+        n = row["hits"] + row["misses"]
+        if not n:
+            continue
+        out[stat] = {
+            "hits": row["hits"], "misses": row["misses"], "n": n,
+            "hit_rate": row["hits"] / n,
+            "sample_label": eval_lib.sample_size_label(n),
+        }
+    return out
+
+
 def load_track_record(path=None):
     """PHASE 4: the site's Performance page must show the CURRENT
     (2026-08-15+ recommendation-layer) record and the LEGACY (pre-rebuild)
@@ -1204,6 +1248,7 @@ def load_track_record(path=None):
             "last_14d_hit_rate": h.get("last_14_days_top_pick_hit_rate"),
             "last_14d_n": h.get("last_14_days_top_pick_n"),
             "sample_label": eval_lib.sample_size_label(tp_n),
+            "by_prop": _public_top_pick_by_prop(os.path.dirname(path)),
         }
 
     main = (h.get("by_category_totals") or {}).get("main") or {}
