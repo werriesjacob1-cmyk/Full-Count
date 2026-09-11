@@ -1,0 +1,223 @@
+name: NFL 2026 Roster Source Audit
+
+# Research/data-integrity only. Inspect the pinned nflverse 2026 roster
+# contract before writing any official-inactive -> durable-player-ID binder.
+on:
+  push:
+    branches:
+      - superchad/nfl-foundation-continuation-20260911
+    paths:
+      - .github/workflows/nfl-roster-source-audit.yml
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python3 -m pip install 'requests~=2.34.2'
+
+      - name: Audit pinned 2026 roster identity substrate
+        env:
+          FULL_COUNT_CODE_SHA: ${{ github.sha }}
+        run: |
+          PYTHONPATH=. python3 - <<'PY'
+          import csv
+          import hashlib
+          import io
+          import json
+          import os
+          from collections import Counter, defaultdict
+          from datetime import datetime, timezone
+
+          import requests
+
+          SEASON = 2026
+          URL = (
+              "https://github.com/nflverse/nflverse-data/releases/download/"
+              "rosters/roster_2026.csv"
+          )
+          EXPECTED_SHA256 = (
+              "fb79560b5c4738a284e4b37f49759cdceaa461eee6f41ea0840e7d0d9eb17026"
+          )
+          TARGET_NAMES = (
+              "Behren Morton",
+              "Jalen Milroe",
+              "TreVeyon Henderson",
+              "Nick Emmanwori",
+          )
+
+          response = requests.get(
+              URL,
+              timeout=60,
+              headers={
+                  "User-Agent":
+                      "Full-Count NFL roster source audit (read-only)"
+              },
+          )
+          response.raise_for_status()
+          digest = hashlib.sha256(response.content).hexdigest()
+          if digest != EXPECTED_SHA256:
+              raise SystemExit(
+                  f"2026 roster SHA drift {digest} != {EXPECTED_SHA256}"
+              )
+
+          text = response.content.decode("utf-8-sig")
+          rows = list(csv.DictReader(io.StringIO(text)))
+          if not rows:
+              raise SystemExit("empty 2026 roster")
+          fields = list(rows[0].keys())
+
+          candidate_columns = {
+              "durable_id": [
+                  name for name in (
+                      "gsis_id", "player_id", "esb_id", "nfl_id",
+                      "pfr_id", "pff_id", "sportradar_id",
+                  )
+                  if name in fields
+              ],
+              "name": [
+                  name for name in (
+                      "full_name", "player_name", "display_name",
+                      "football_name", "first_name", "last_name",
+                  )
+                  if name in fields
+              ],
+              "team": [
+                  name for name in (
+                      "team", "team_abbr", "team_name", "club",
+                  )
+                  if name in fields
+              ],
+              "position": [
+                  name for name in (
+                      "position", "position_group", "depth_chart_position",
+                  )
+                  if name in fields
+              ],
+              "status": [
+                  name for name in (
+                      "status", "roster_status", "depth_chart_order",
+                  )
+                  if name in fields
+              ],
+          }
+
+          def normalized(value):
+              return " ".join(
+                  str(value or "").casefold().replace("\xa0", " ").split()
+              )
+
+          target_norm = {normalized(name): name for name in TARGET_NAMES}
+          target_matches = defaultdict(list)
+          for index, row in enumerate(rows):
+              for value in row.values():
+                  key = normalized(value)
+                  if key in target_norm:
+                      target_matches[target_norm[key]].append({
+                          "row_index": index,
+                          "nonempty": {
+                              k: v for k, v in row.items()
+                              if str(v or "").strip()
+                          },
+                      })
+                      break
+
+          # Audit uniqueness for each plausible durable-id field.
+          id_quality = {}
+          for field in candidate_columns["durable_id"]:
+              values = [
+                  str(row.get(field) or "").strip()
+                  for row in rows
+              ]
+              nonempty = [v for v in values if v]
+              counts = Counter(nonempty)
+              duplicate_values = sorted(
+                  value for value, n in counts.items() if n > 1
+              )
+              id_quality[field] = {
+                  "nonempty_n": len(nonempty),
+                  "empty_n": len(rows) - len(nonempty),
+                  "unique_nonempty_n": len(counts),
+                  "duplicate_value_n": len(duplicate_values),
+                  "duplicate_examples": duplicate_values[:20],
+              }
+
+          # Do not assume one name field. Report duplicate structure on every
+          # plausible full-name-like column that actually exists.
+          name_quality = {}
+          for field in candidate_columns["name"]:
+              values = [
+                  normalized(row.get(field))
+                  for row in rows
+                  if normalized(row.get(field))
+              ]
+              counts = Counter(values)
+              dups = sorted(
+                  value for value, n in counts.items() if n > 1
+              )
+              name_quality[field] = {
+                  "nonempty_n": len(values),
+                  "unique_normalized_n": len(counts),
+                  "duplicate_normalized_n": len(dups),
+                  "duplicate_examples": dups[:30],
+              }
+
+          output = {
+              "analysis": "NFL_2026_ROSTER_SOURCE_IDENTITY_AUDIT",
+              "status": "research_only_no_binding",
+              "created_at": datetime.now(timezone.utc).isoformat(),
+              "code_sha": os.environ["FULL_COUNT_CODE_SHA"],
+              "source": {
+                  "season": SEASON,
+                  "url": URL,
+                  "sha256": digest,
+                  "bytes": len(response.content),
+                  "rows": len(rows),
+              },
+              "schema": {
+                  "columns": fields,
+                  "candidate_columns": candidate_columns,
+              },
+              "durable_id_quality": id_quality,
+              "name_quality": name_quality,
+              "official_report_target_matches": {
+                  name: target_matches.get(name, [])
+                  for name in TARGET_NAMES
+              },
+              "decision": {
+                  "all_four_real_targets_found_exactly_once": all(
+                      len(target_matches.get(name, [])) == 1
+                      for name in TARGET_NAMES
+                  ),
+                  "has_candidate_durable_id_field":
+                      bool(candidate_columns["durable_id"]),
+                  "has_candidate_team_field":
+                      bool(candidate_columns["team"]),
+                  "has_candidate_position_field":
+                      bool(candidate_columns["position"]),
+              },
+              "next_if_clean": (
+                  "Define an offline binder against pinned roster rows with "
+                  "strict one-match-or-unresolved semantics. Do not mint "
+                  "canonical prop/game identity."
+              ),
+          }
+
+          path = "/tmp/nfl-2026-roster-source-audit.json"
+          with open(path, "w", encoding="utf-8") as f:
+              json.dump(output, f, indent=2, sort_keys=True)
+          print(json.dumps(output, indent=2, sort_keys=True))
+          PY
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: nfl-2026-roster-source-audit
+          path: /tmp/nfl-2026-roster-source-audit.json
+          retention-days: 30
