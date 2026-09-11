@@ -132,6 +132,13 @@ class EmptyIdentitySourceRows(unittest.TestCase):
             ])
 
 
+    def test_named_zero_row_with_missing_id_still_fails(self):
+        with self.assertRaisesRegex(ValueError, "empty player_id row is not an audited structural zero"):
+            nh.build_prior_only_rows([
+                self._row(player_display_name="Real Player", position="WR")
+            ])
+
+
 class SeasonBoundary(unittest.TestCase):
     def test_prior_season_history_is_allowed_but_future_season_is_not(self):
         rows = [
