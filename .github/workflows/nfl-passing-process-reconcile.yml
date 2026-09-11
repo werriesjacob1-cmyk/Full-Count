@@ -1,0 +1,335 @@
+name: NFL Passing Process Reconciliation
+
+# Research-only source/process audit. Establish whether nflverse play-level
+# dropback components reconstruct official weekly team pass attempts before any
+# causal passing model uses them.
+on:
+  push:
+    branches:
+      - superchad/nfl-foundation-continuation-20260911
+    paths:
+      - .github/workflows/nfl-passing-process-reconcile.yml
+
+permissions:
+  contents: read
+
+jobs:
+  reconcile:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python3 -m pip install 'requests~=2.34.2'
+
+      - name: Reconcile team pass attempts to dropback process
+        env:
+          FULL_COUNT_CODE_SHA: ${{ github.sha }}
+        run: |
+          PYTHONPATH=. python3 - <<'PY'
+          import csv
+          import gzip
+          import hashlib
+          import io
+          import json
+          import math
+          import os
+          import statistics
+          from collections import defaultdict
+          from datetime import datetime, timezone
+
+          import requests
+
+          SEASONS = (2023, 2024, 2025, 2026)
+          PBP_SHA256 = {
+              2023: "4649804ee0f0a40b41e51ec75a1ce921949d7fab5459213488656b92f78560e8",
+              2024: "23370d5d10f8104d80d46a1fc5e61f4f6f5a3263fe96fe2dd629913cfcb08c06",
+              2025: "2f135887790a013fd004e609e37096bb4816d5cc80b9f19122e1bad478961978",
+              2026: "d9e442ae17ba88e70c6df6ed15e4f0ce54c9ff63a607de54f62cb7ed4f016e39",
+          }
+          TEAM_SHA256 = {
+              2023: "dc5a387daabe8663deaddac492ad7020d47fb1a66048690b355b406cd8e4c454",
+              2024: "b207a1430c2715d03bbf1844c4eae98695f364851ff6025f422febc2c13f5255",
+              2025: "91058a59d894855377b2f39f40c4e7bdbeef96d12144289dc68215209a1c93cb",
+              2026: "70858fc4b81fe4e9960ad8ba503502a6a20094bf261287f85c91f1fdb0e6f21f",
+          }
+          REQUIRED_PBP = {
+              "season", "week", "season_type", "game_id", "posteam",
+              "pass_attempt", "qb_dropback", "sack", "qb_scramble",
+              "two_point_attempt", "play_type",
+          }
+          REQUIRED_TEAM = {
+              "season", "week", "season_type", "team", "attempts",
+          }
+          EPS = 1e-12
+
+          def f(value, name):
+              try:
+                  out = float(value)
+              except (TypeError, ValueError) as exc:
+                  raise ValueError(f"invalid {name}: {value!r}") from exc
+              if not math.isfinite(out):
+                  raise ValueError(f"non-finite {name}: {value!r}")
+              return out
+
+          def flag(value, name):
+              out = f(value, name)
+              if out not in (0.0, 1.0):
+                  raise ValueError(f"{name} outside 0/1: {out}")
+              return int(out)
+
+          session = requests.Session()
+          session.headers.update({
+              "User-Agent": "Full-Count NFL passing process reconciliation"
+          })
+
+          reports = {}
+          sources = {"pbp": {}, "team": {}}
+
+          for season in SEASONS:
+              purl = (
+                  "https://github.com/nflverse/nflverse-data/releases/download/"
+                  f"pbp/play_by_play_{season}.csv.gz"
+              )
+              pr = session.get(purl, timeout=120)
+              pr.raise_for_status()
+              psha = hashlib.sha256(pr.content).hexdigest()
+              if psha != PBP_SHA256[season]:
+                  raise SystemExit(f"{season}: PBP SHA drift {psha}")
+
+              process = defaultdict(lambda: {
+                  "pass_attempt": 0,
+                  "dropback": 0,
+                  "sack": 0,
+                  "scramble": 0,
+                  "two_point": 0,
+              })
+              rows_seen = 0
+
+              with gzip.GzipFile(fileobj=io.BytesIO(pr.content)) as gz:
+                  reader = csv.DictReader(
+                      io.TextIOWrapper(gz, encoding="utf-8", newline="")
+                  )
+                  missing = sorted(
+                      REQUIRED_PBP - set(reader.fieldnames or [])
+                  )
+                  if missing:
+                      raise SystemExit(
+                          f"{season}: PBP schema drift {missing}"
+                      )
+                  for row in reader:
+                      rows_seen += 1
+                      if str(row.get("season_type") or "") != "REG":
+                          continue
+                      team = str(row.get("posteam") or "").strip()
+                      if not team:
+                          continue
+                      try:
+                          week = int(float(row["week"]))
+                      except (TypeError, ValueError):
+                          continue
+
+                      key = (season, week, "REG", team)
+                      rec = process[key]
+                      two = flag(
+                          row.get("two_point_attempt"),
+                          "two_point_attempt",
+                      )
+                      rec["two_point"] += two
+
+                      # Two-point attempts are not official player pass attempts
+                      # and are removed from every process count below.
+                      if two:
+                          continue
+
+                      rec["pass_attempt"] += flag(
+                          row.get("pass_attempt"), "pass_attempt"
+                      )
+                      rec["dropback"] += flag(
+                          row.get("qb_dropback"), "qb_dropback"
+                      )
+                      rec["sack"] += flag(row.get("sack"), "sack")
+                      rec["scramble"] += flag(
+                          row.get("qb_scramble"), "qb_scramble"
+                      )
+
+              turl = (
+                  "https://github.com/nflverse/nflverse-data/releases/download/"
+                  f"stats_team/stats_team_week_{season}.csv"
+              )
+              tr = session.get(turl, timeout=60)
+              tr.raise_for_status()
+              tsha = hashlib.sha256(tr.content).hexdigest()
+              if tsha != TEAM_SHA256[season]:
+                  raise SystemExit(f"{season}: team SHA drift {tsha}")
+
+              team_rows = list(csv.DictReader(io.StringIO(tr.text)))
+              if not team_rows:
+                  raise SystemExit(f"{season}: empty team stats")
+              missing = sorted(REQUIRED_TEAM - set(team_rows[0]))
+              if missing:
+                  raise SystemExit(
+                      f"{season}: team stats schema drift {missing}"
+                  )
+
+              comparisons = []
+              missing_pbp = []
+              seen_team_keys = set()
+              for raw in team_rows:
+                  if str(raw.get("season_type") or "") != "REG":
+                      continue
+                  key = (
+                      int(float(raw["season"])),
+                      int(float(raw["week"])),
+                      "REG",
+                      str(raw["team"]).strip(),
+                  )
+                  if key in seen_team_keys:
+                      raise SystemExit(
+                          f"{season}: duplicate official team-week {key}"
+                      )
+                  seen_team_keys.add(key)
+                  official = f(raw["attempts"], "official attempts")
+                  rec = process.get(key)
+                  if rec is None:
+                      missing_pbp.append(key)
+                      continue
+
+                  process_attempts = (
+                      rec["dropback"] - rec["sack"] - rec["scramble"]
+                  )
+                  comparisons.append({
+                      "week": key[1],
+                      "team": key[3],
+                      "official_attempts": official,
+                      "pbp_pass_attempts": rec["pass_attempt"],
+                      "dropbacks": rec["dropback"],
+                      "sacks": rec["sack"],
+                      "scrambles": rec["scramble"],
+                      "process_attempts": process_attempts,
+                      "pbp_delta":
+                          rec["pass_attempt"] - official,
+                      "process_delta":
+                          process_attempts - official,
+                  })
+
+              if missing_pbp:
+                  raise SystemExit(
+                      f"{season}: official team-weeks missing PBP "
+                      f"{missing_pbp[:10]}"
+                  )
+              if not comparisons:
+                  raise SystemExit(
+                      f"{season}: no regular-season team-week comparisons"
+                  )
+
+              pbp_exact = [
+                  r for r in comparisons
+                  if abs(r["pbp_delta"]) <= EPS
+              ]
+              process_exact = [
+                  r for r in comparisons
+                  if abs(r["process_delta"]) <= EPS
+              ]
+              mismatches = [
+                  r for r in comparisons
+                  if abs(r["process_delta"]) > EPS
+              ]
+
+              reports[str(season)] = {
+                  "team_weeks": len(comparisons),
+                  "pbp_pass_attempt_reconciliation": {
+                      "exact_n": len(pbp_exact),
+                      "exact_rate":
+                          len(pbp_exact) / len(comparisons),
+                      "max_abs_delta": max(
+                          abs(r["pbp_delta"]) for r in comparisons
+                      ),
+                      "mean_abs_delta": statistics.fmean(
+                          abs(r["pbp_delta"]) for r in comparisons
+                      ),
+                  },
+                  "dropback_process_reconciliation": {
+                      "formula":
+                          "qb_dropback - sack - qb_scramble",
+                      "exact_n": len(process_exact),
+                      "exact_rate":
+                          len(process_exact) / len(comparisons),
+                      "max_abs_delta": max(
+                          abs(r["process_delta"]) for r in comparisons
+                      ),
+                      "mean_abs_delta": statistics.fmean(
+                          abs(r["process_delta"]) for r in comparisons
+                      ),
+                      "mismatch_n": len(mismatches),
+                      "mismatches": mismatches[:100],
+                      "mismatches_truncated":
+                          len(mismatches) > 100,
+                  },
+              }
+              sources["pbp"][str(season)] = {
+                  "url": purl,
+                  "rows": rows_seen,
+                  "bytes": len(pr.content),
+                  "sha256": psha,
+              }
+              sources["team"][str(season)] = {
+                  "url": turl,
+                  "rows": len(team_rows),
+                  "bytes": len(tr.content),
+                  "sha256": tsha,
+              }
+
+          output = {
+              "analysis": "NFL_TEAM_PASS_ATTEMPT_PROCESS_RECONCILIATION",
+              "status": "research_only",
+              "created_at": datetime.now(timezone.utc).isoformat(),
+              "code_sha": os.environ["FULL_COUNT_CODE_SHA"],
+              "source_contract": {
+                  "seasons": list(SEASONS),
+                  "pbp_sha256": PBP_SHA256,
+                  "team_sha256": TEAM_SHA256,
+                  "two_point_attempts_excluded": True,
+              },
+              "sources": sources,
+              "reports": reports,
+              "decision": {
+                  "pbp_pass_attempts_reconcile_all_seasons":
+                      all(
+                          reports[str(s)][
+                              "pbp_pass_attempt_reconciliation"
+                          ]["exact_rate"] == 1.0
+                          for s in SEASONS
+                      ),
+                  "simple_dropback_process_exact_all_seasons":
+                      all(
+                          reports[str(s)][
+                              "dropback_process_reconciliation"
+                          ]["exact_rate"] == 1.0
+                          for s in SEASONS
+                      ),
+              },
+              "next_if_process_exact": (
+                  "Model team dropbacks from plays and PROE, then convert "
+                  "dropbacks to attempts with explicitly prior-only "
+                  "sack/scramble rates."
+              ),
+              "next_if_process_not_exact": (
+                  "Inspect mismatch semantics before any decomposition model. "
+                  "Do not force an approximate identity into B2-PASS."
+              ),
+          }
+
+          path = "/tmp/nfl-passing-process-reconcile.json"
+          with open(path, "w", encoding="utf-8") as f:
+              json.dump(output, f, indent=2, sort_keys=True)
+          print(json.dumps(output, indent=2, sort_keys=True))
+          PY
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: nfl-passing-process-reconciliation
+          path: /tmp/nfl-passing-process-reconcile.json
+          retention-days: 30
