@@ -1,0 +1,37 @@
+{
+  "player_id": "nrfi_825036",
+  "name": "Texas Rangers @ Arizona Diamondbacks \u2014 1st Inning (Both Teams)",
+  "snapshots": [
+    {
+      "date": "2026-09-11",
+      "evaluations": [
+        {
+          "prop": "No runs in the 1st (both teams)",
+          "type": "game",
+          "score": 62.4,
+          "notable_signals": 0,
+          "matchup": "Texas Rangers @ Arizona Diamondbacks",
+          "game_pk": 825036,
+          "team": null,
+          "side": "both",
+          "lean": "NRFI",
+          "combo_player_ids": null,
+          "signals": {
+            "home_team_scores_p": 0.2772,
+            "away_team_scores_p": 0.3034,
+            "fi_n_starts": 28.0
+          },
+          "hit_probability": 0.5035,
+          "raw_hit_probability": null,
+          "lift": 0.0051,
+          "reliability": "A",
+          "sample_n": 28,
+          "projection": {
+            "stat": "nrfi_combined",
+            "value": 50.4
+          }
+        }
+      ]
+    }
+  ]
+}

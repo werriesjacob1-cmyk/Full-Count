@@ -139,6 +139,53 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-11",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 47.5,
+          "notable_signals": 2,
+          "matchup": "Cincinnati Reds @ Milwaukee Brewers",
+          "game_pk": 823736,
+          "team": "Cincinnati Reds",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 62.5714,
+            "l7_avg_ev": 0.0,
+            "l7_barrel_pct": 65.0,
+            "park_hr_index": 51.5,
+            "lineup_slot": 25.0,
+            "bullpen_fatigue": 74.0741,
+            "park_hand_index": -1.08,
+            "opp_catcher_framing": 0.48,
+            "days_rest": 2.0,
+            "woba_ahead": 23.6364,
+            "woba_behind": 0.0,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "ump_k_pct": 0.192,
+            "ump_bb_pct": -0.108
+          },
+          "hit_probability": 0.5505,
+          "raw_hit_probability": 0.5655,
+          "lift": -0.015,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

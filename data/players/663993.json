@@ -2104,6 +2104,112 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-11",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 42.5,
+          "notable_signals": 1,
+          "matchup": "Cleveland Guardians @ Minnesota Twins",
+          "game_pk": 823659,
+          "team": "Cleveland Guardians",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 41.4286,
+            "pitch_exploit": 20.0,
+            "l7_avg_ev": 92.3864,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 52.1,
+            "season_barrel_pct": 36.6667,
+            "lineup_slot": 37.5,
+            "bullpen_fatigue": 16.6667,
+            "bvp_ops": -0.498,
+            "platoon_barrel_pct": 2.16,
+            "platoon_xwoba": 2.16,
+            "park_hand_index": -1.85,
+            "opp_catcher_framing": 0.24,
+            "days_rest": 2.0,
+            "woba_ahead": 28.1818,
+            "woba_behind": 18.1818,
+            "pull_park_synergy": -0.8029,
+            "hard_hit_105_rate": 0.665,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": -2.088,
+            "vs_rp_ops": -0.78,
+            "ump_k_pct": -0.348,
+            "ump_bb_pct": -0.336
+          },
+          "hit_probability": 0.6,
+          "raw_hit_probability": 0.6011,
+          "lift": 0.0345,
+          "reliability": "A",
+          "sample_n": 111,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 11.2,
+          "notable_signals": 0,
+          "matchup": "Cleveland Guardians @ Minnesota Twins",
+          "game_pk": 823659,
+          "team": "Cleveland Guardians",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0732
+          },
+          "hit_probability": 0.0732,
+          "raw_hit_probability": null,
+          "lift": 0.0253,
+          "reliability": "A",
+          "sample_n": 111,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 5.0,
+          "notable_signals": 0,
+          "matchup": "Cleveland Guardians @ Minnesota Twins",
+          "game_pk": 823659,
+          "team": "Cleveland Guardians",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0325
+          },
+          "hit_probability": 0.0325,
+          "raw_hit_probability": null,
+          "lift": 0.0116,
+          "reliability": "A",
+          "sample_n": 111,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

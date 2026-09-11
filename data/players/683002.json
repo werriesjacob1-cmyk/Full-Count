@@ -3177,6 +3177,139 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-11",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 42.6,
+          "notable_signals": 0,
+          "matchup": "Baltimore Orioles @ Toronto Blue Jays",
+          "game_pk": 822767,
+          "team": "Baltimore Orioles",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 100.0,
+            "l7_avg_ev": 0.0,
+            "l7_barrel_pct": 0.0,
+            "park_hr_index": 38.9,
+            "season_barrel_pct": 26.0,
+            "lineup_slot": 50.0,
+            "bullpen_fatigue": 16.6667,
+            "platoon_barrel_pct": 0.88,
+            "platoon_xwoba": 1.14,
+            "park_hand_index": -0.78,
+            "opp_catcher_framing": -0.72,
+            "days_rest": 4.0,
+            "consecutive_games": -3.6,
+            "woba_ahead": 32.7273,
+            "woba_behind": 18.1818,
+            "pull_park_synergy": -0.5078,
+            "hard_hit_105_rate": 0.615,
+            "team_total_move": -6.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": 0.52,
+            "vs_rp_ops": 0.192,
+            "ump_k_pct": 0.384,
+            "ump_bb_pct": 0.0
+          },
+          "hit_probability": 0.6759,
+          "raw_hit_probability": 0.6818,
+          "lift": 0.0094,
+          "reliability": "A",
+          "sample_n": 144,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 43.8,
+          "notable_signals": 0,
+          "matchup": "Baltimore Orioles @ Toronto Blue Jays",
+          "game_pk": 822767,
+          "team": "Baltimore Orioles",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": 0.84,
+            "sprint_speed": 28.125,
+            "catcher_poptime": 28.5714,
+            "on_base": 44.3378
+          },
+          "hit_probability": 0.0666,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 144,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 10.7,
+          "notable_signals": 0,
+          "matchup": "Baltimore Orioles @ Toronto Blue Jays",
+          "game_pk": 822767,
+          "team": "Baltimore Orioles",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0712
+          },
+          "hit_probability": 0.0712,
+          "raw_hit_probability": null,
+          "lift": 0.0233,
+          "reliability": "A",
+          "sample_n": 144,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 0.0,
+          "notable_signals": 0,
+          "matchup": "Baltimore Orioles @ Toronto Blue Jays",
+          "game_pk": 822767,
+          "team": "Baltimore Orioles",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0025
+          },
+          "hit_probability": 0.0025,
+          "raw_hit_probability": null,
+          "lift": -0.0184,
+          "reliability": "A",
+          "sample_n": 144,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

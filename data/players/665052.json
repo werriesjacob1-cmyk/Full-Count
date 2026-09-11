@@ -2086,8 +2086,8 @@
         {
           "prop": "Over 0.5 Hits+Runs+RBIs",
           "type": "batter",
-          "score": 21.2,
-          "notable_signals": 2,
+          "score": 20.6,
+          "notable_signals": 3,
           "matchup": "Los Angeles Dodgers @ Miami Marlins",
           "game_pk": 823817,
           "team": "Miami Marlins",
@@ -2095,7 +2095,9 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "platoon": 65.0,
+            "platoon": 35.0,
+            "sp_era_weak": 0.0,
+            "pitch_exploit": 10.8571,
             "l7_avg_ev": 100.0,
             "l7_barrel_pct": 100.0,
             "bat_speed_trend": 3.9,
@@ -2103,6 +2105,8 @@
             "season_barrel_pct": 80.0,
             "lineup_slot": 0.0,
             "bullpen_fatigue": 0.0,
+            "platoon_barrel_pct": 2.4,
+            "platoon_xwoba": 0.54,
             "park_hand_index": -0.98,
             "opp_catcher_framing": 0.96,
             "days_rest": 2.0,
@@ -2118,9 +2122,9 @@
             "ump_k_pct": 0.168,
             "ump_bb_pct": 0.336
           },
-          "hit_probability": 0.6498,
-          "raw_hit_probability": 0.6368,
-          "lift": -0.0179,
+          "hit_probability": 0.6495,
+          "raw_hit_probability": 0.6363,
+          "lift": -0.017,
           "reliability": "B",
           "sample_n": 78,
           "projection": {

@@ -2019,6 +2019,113 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-11",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 59.4,
+          "notable_signals": 2,
+          "matchup": "Cincinnati Reds @ Milwaukee Brewers",
+          "game_pk": 823736,
+          "team": "Milwaukee Brewers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 55.1429,
+            "pitch_exploit": 8.5714,
+            "l7_avg_ev": 100.0,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 5.775,
+            "park_hr_index": 51.5,
+            "season_barrel_pct": 70.0,
+            "lineup_slot": 50.0,
+            "bullpen_fatigue": 45.4545,
+            "platoon_barrel_pct": 3.36,
+            "platoon_xwoba": 2.04,
+            "park_hand_index": -1.08,
+            "opp_catcher_framing": 0.84,
+            "days_rest": 4.0,
+            "consecutive_games": -1.8,
+            "woba_ahead": 75.4545,
+            "woba_behind": 16.3636,
+            "pull_park_synergy": -0.6313,
+            "hard_hit_105_rate": 1.7325,
+            "team_total_move": 0.0,
+            "team_total_open": 0.0,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": -0.368,
+            "vs_rp_ops": 1.656,
+            "ump_k_pct": 0.192,
+            "ump_bb_pct": -0.108
+          },
+          "hit_probability": 0.6046,
+          "raw_hit_probability": 0.6045,
+          "lift": 0.0391,
+          "reliability": "A",
+          "sample_n": 131,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 21.9,
+          "notable_signals": 1,
+          "matchup": "Cincinnati Reds @ Milwaukee Brewers",
+          "game_pk": 823736,
+          "team": "Milwaukee Brewers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.1159
+          },
+          "hit_probability": 0.1159,
+          "raw_hit_probability": null,
+          "lift": 0.068,
+          "reliability": "A",
+          "sample_n": 131,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 8.8,
+          "notable_signals": 0,
+          "matchup": "Cincinnati Reds @ Milwaukee Brewers",
+          "game_pk": 823736,
+          "team": "Milwaukee Brewers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0479
+          },
+          "hit_probability": 0.0479,
+          "raw_hit_probability": null,
+          "lift": 0.027,
+          "reliability": "A",
+          "sample_n": 131,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

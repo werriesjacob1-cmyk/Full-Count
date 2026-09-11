@@ -2950,6 +2950,140 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-11",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 51.8,
+          "notable_signals": 1,
+          "matchup": "Cleveland Guardians @ Minnesota Twins",
+          "game_pk": 823659,
+          "team": "Cleveland Guardians",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 41.4286,
+            "l7_avg_ev": 82.5,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 6.525,
+            "park_hr_index": 52.1,
+            "season_barrel_pct": 39.3333,
+            "lineup_slot": 62.5,
+            "bullpen_fatigue": 16.6667,
+            "platoon_barrel_pct": 0.64,
+            "platoon_xwoba": -0.96,
+            "park_hand_index": -1.13,
+            "opp_catcher_framing": 0.24,
+            "days_rest": 2.0,
+            "consecutive_games": -0.6,
+            "woba_ahead": 13.6364,
+            "woba_behind": 28.1818,
+            "pull_park_synergy": -0.4548,
+            "hard_hit_105_rate": 1.035,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": -1.456,
+            "vs_rp_ops": -0.444,
+            "ump_k_pct": -0.348,
+            "ump_bb_pct": -0.336
+          },
+          "hit_probability": 0.605,
+          "raw_hit_probability": 0.6048,
+          "lift": 0.0395,
+          "reliability": "A",
+          "sample_n": 144,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 39.2,
+          "notable_signals": 0,
+          "matchup": "Cleveland Guardians @ Minnesota Twins",
+          "game_pk": 823659,
+          "team": "Cleveland Guardians",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": 6.0,
+            "sprint_speed": 28.125,
+            "catcher_poptime": 14.2857,
+            "on_base": 41.4587
+          },
+          "hit_probability": 0.0307,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 144,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 14.9,
+          "notable_signals": 0,
+          "matchup": "Cleveland Guardians @ Minnesota Twins",
+          "game_pk": 823659,
+          "team": "Cleveland Guardians",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.088
+          },
+          "hit_probability": 0.088,
+          "raw_hit_probability": null,
+          "lift": 0.0401,
+          "reliability": "A",
+          "sample_n": 144,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 10.8,
+          "notable_signals": 1,
+          "matchup": "Cleveland Guardians @ Minnesota Twins",
+          "game_pk": 823659,
+          "team": "Cleveland Guardians",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0554
+          },
+          "hit_probability": 0.0554,
+          "raw_hit_probability": null,
+          "lift": 0.0345,
+          "reliability": "A",
+          "sample_n": 144,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

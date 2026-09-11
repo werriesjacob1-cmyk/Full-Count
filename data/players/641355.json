@@ -1057,9 +1057,9 @@
       "date": "2026-09-11",
       "evaluations": [
         {
-          "prop": "Over 0.5 Hits",
+          "prop": "Over 0.5 Hits+Runs+RBIs",
           "type": "batter",
-          "score": 63.6,
+          "score": 60.7,
           "notable_signals": 0,
           "matchup": "New York Mets @ New York Yankees",
           "game_pk": 823498,
@@ -1072,7 +1072,7 @@
             "sp_era_weak": 16.0,
             "l7_avg_ev": 97.5,
             "l7_barrel_pct": 100.0,
-            "park_hr_index": 36.1,
+            "park_hr_index": 62.3,
             "season_barrel_pct": 21.3333,
             "lineup_slot": 87.5,
             "bullpen_fatigue": 15.1515,
@@ -1094,13 +1094,13 @@
             "ump_k_pct": -0.288,
             "ump_bb_pct": 0.252
           },
-          "hit_probability": 0.635,
-          "raw_hit_probability": 0.6272,
-          "lift": 0.0695,
+          "hit_probability": 0.7018,
+          "raw_hit_probability": 0.7283,
+          "lift": 0.0353,
           "reliability": "A",
           "sample_n": 119,
           "projection": {
-            "stat": "hits",
+            "stat": "hits_runs_rbis",
             "value": 0.5,
             "needs": 1
           }
@@ -1122,7 +1122,7 @@
             "catcher_poptime": 8.5714,
             "on_base": 73.1286
           },
-          "hit_probability": 0.0866,
+          "hit_probability": 0.0867,
           "raw_hit_probability": null,
           "lift": null,
           "reliability": "A",
