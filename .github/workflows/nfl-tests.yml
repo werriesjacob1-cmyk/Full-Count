@@ -1,0 +1,78 @@
+name: NFL Test Suite
+
+# SEPARATE FROM "Test Suite" (test.yml) DELIBERATELY, AND WHY IT COSTS NOTHING
+# TO KEEP IT THAT WAY. test.yml runs `for f in test_*.py` -- a NON-RECURSIVE
+# shell glob in the repository root. Measured on this branch: 132 files match at
+# root, and none of nfl/tests/ does. So NFL tests are already structurally
+# invisible to the MLB job, and test.yml needed no edit at all to achieve that.
+# This workflow is what actually runs them.
+#
+# THE POINT OF THE SEPARATION. The NFL side is immature and will stay immature
+# for a while: sources will change shape mid-season, and an archival test will
+# go red for reasons that say nothing about whether the MLB board is correct. If
+# that turned the MLB suite red, the suite everyone actually relies on would
+# start being ignored, which is worse than having no NFL tests.
+#
+# Anyone adding an NFL test must put it under nfl/tests/ and NOT at the
+# repository root. A root-level test_nfl_*.py would be swept into the MLB job by
+# that glob and re-create the coupling this exists to prevent.
+on:
+  push:
+    branches: ['**']
+  pull_request:
+
+# Read-only. This job runs tests; it never captures, commits, or pushes.
+permissions:
+  contents: read
+
+concurrency:
+  group: nfl-test-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  nfl-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # test_dependency_isolation.py compares requirements.txt against the
+          # branch base by digest, not by resolving a ref, so no history is
+          # needed. Kept shallow on purpose: this repo's history is large.
+          fetch-depth: 1
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      # NFL-01 adds NO dependency to the root requirements.txt, and the NFL
+      # archival layer runs on the standard library plus `requests`. Installing
+      # the NFL file (currently empty of pins) and requests alone -- rather than
+      # the whole root file -- keeps this job honest: if NFL code ever starts
+      # needing an MLB dependency, this job fails instead of silently inheriting
+      # it. requirements-nfl.txt is where a real NFL pin goes.
+      - name: Install NFL dependencies only
+        run: |
+          python3 -m pip install --upgrade pip
+          python3 -m pip install -r nfl/requirements-nfl.txt
+          python3 -m pip install 'requests~=2.34.2'
+
+      - name: Run NFL test suite
+        run: |
+          set -e
+          fail=0
+          shopt -s nullglob
+          files=(nfl/tests/test_*.py)
+          if [ ${#files[@]} -eq 0 ]; then
+            echo "::error::No NFL tests found. An empty suite must never pass."
+            exit 1
+          fi
+          for f in "${files[@]}"; do
+            echo "::group::$f"
+            if ! PYTHONPATH=. python3 "$f"; then
+              fail=1
+            fi
+            echo "::endgroup::"
+          done
+          exit $fail

@@ -17,6 +17,7 @@ This test asserts BYTE identity against the branch base, not "no new lines".
 A reordering, a comment edit, or a loosened pin are all changes to what MLB
 resolves, and all of them fail here.
 """
+import ast
 import hashlib
 import os
 import subprocess
@@ -62,25 +63,42 @@ class RootRequirementsUntouched(unittest.TestCase):
         """
         allowed = {"requests"}
         offenders = []
-        for dirpath, _dirs, files in os.walk(os.path.join(REPO, "nfl")):
+        # Parsed with ast, NOT by scanning for lines starting with
+        # "import"/"from". The line-prefix version of this check reported
+        # test_import_direction.py as importing odds_fanduel, because a
+        # docstring there wrapped onto a line beginning "from odds_fanduel.py".
+        # A scanner that cannot tell code from prose produces exactly the kind
+        # of false alarm that gets a check disabled.
+        for dirpath, dirs, files in os.walk(os.path.join(REPO, "nfl")):
+            dirs[:] = [d for d in dirs if d != "__pycache__"]
             for name in files:
                 if not name.endswith(".py"):
                     continue
                 path = os.path.join(dirpath, name)
+                rel = os.path.relpath(path, REPO)
                 with open(path, encoding="utf-8") as handle:
-                    for lineno, line in enumerate(handle, 1):
-                        stripped = line.strip()
-                        for prefix in ("import ", "from "):
-                            if not stripped.startswith(prefix):
-                                continue
-                            module = stripped[len(prefix):].split()[0].split(".")[0]
-                            if module in ("nfl", "__future__"):
-                                continue
-                            if module in sys.stdlib_module_names:
-                                continue
-                            if module not in allowed:
-                                rel = os.path.relpath(path, REPO)
-                                offenders.append(f"{rel}:{lineno} imports {module!r}")
+                    try:
+                        tree = ast.parse(handle.read())
+                    except SyntaxError as exc:
+                        offenders.append(f"{rel}: does not parse ({exc})")
+                        continue
+                for node in ast.walk(tree):
+                    if isinstance(node, ast.Import):
+                        modules = [(a.name, node.lineno) for a in node.names]
+                    elif isinstance(node, ast.ImportFrom):
+                        # A relative import (level > 0) stays inside nfl/.
+                        modules = ([] if node.level
+                                   else [(node.module or "", node.lineno)])
+                    else:
+                        continue
+                    for module, lineno in modules:
+                        top = module.split(".")[0]
+                        if top in ("nfl", "__future__", ""):
+                            continue
+                        if top in sys.stdlib_module_names:
+                            continue
+                        if top not in allowed:
+                            offenders.append(f"{rel}:{lineno} imports {top!r}")
         self.assertEqual(
             offenders, [],
             "nfl/ imports third-party packages that root requirements.txt does "

@@ -1,0 +1,155 @@
+name: NFL Raw World-State Capture
+
+# PRESERVE WHAT WAS KNOWABLE BEFORE KICKOFF. A sportsbook line, a Friday
+# practice designation, a pregame inactive state, or a weather forecast vintage
+# becomes unreconstructable the moment it passes. Play-by-play does not. So this
+# job runs often, stores raw, and interprets nothing.
+#
+# ISOLATION -- WHAT IS ACTUALLY ENFORCED, WITHOUT INFLATION
+#
+#   SERVER-ENFORCED (at GitHub, not here):
+#     * the existing `protect-main-and-evidence` ruleset on refs/heads/main
+#       blocks force pushes and deletions there.
+#     * this job's token is scoped `contents: write`, which is
+#       REPOSITORY-scoped. There is NO path-scoped GitHub write permission.
+#       This token CAN write results/ and data/public_top_picks/.
+#
+#   SOFTWARE-GUARDED (defeatable by editing the repo):
+#     * nfl/archive/commit_guard.py stages only nfl/raw/, re-checks after
+#       staging, and refuses if any changed path falls outside that prefix.
+#     * this job pushes to a DEDICATED ARCHIVE BRANCH, never to main, so NFL
+#       captures never enter the branch carrying MLB public evidence.
+#
+# Do not describe the path confinement as a permission. It is a refusal.
+#
+# NEEDS RULESET PROTECTION AND DOES NOT YET HAVE IT: refs/heads/nfl-raw-archive
+# should be protected against force pushes and deletions the same way main is.
+# Until Jacob configures that, the append-only property of this archive is
+# software-guarded only.
+on:
+  schedule:
+    # Daily practice/injury trajectory. The Wednesday -> Thursday -> Friday
+    # DNP/Limited/Full progression is only visible on the day: the official
+    # report shows the CURRENT designation and the prior day's is simply gone.
+    - cron: '0 13 * * *'
+    - cron: '0 22 * * *'
+    # Sunday main slate. 16:15Z is inside the pregame inactive window for the
+    # 17:00Z kickoffs -- the highest-value NFL information timestamp -- and
+    # 16:50Z is the last look before those games lock.
+    - cron: '15 16 * * 0'
+    - cron: '50 16 * * 0'
+    - cron: '10 20 * * 0'
+    # After the Thursday, Sunday and Monday night windows.
+    - cron: '0 1 * * 1,2,5'
+  workflow_dispatch:
+    inputs:
+      vintage:
+        description: 'Capture vintage label'
+        required: false
+        default: 'ad-hoc'
+
+permissions:
+  contents: write
+
+# Queue, never cancel. Coalescing captures would silently drop a vintage, and a
+# vintage never taken cannot be taken later.
+concurrency:
+  group: nfl-raw-capture
+  cancel-in-progress: false
+
+jobs:
+  capture:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # The dedicated archive branch. Created from main the first time this
+          # runs if it does not exist yet.
+          ref: nfl-raw-archive
+          fetch-depth: 1
+        continue-on-error: true
+        id: checkout_archive
+
+      - name: Bootstrap the archive branch if it does not exist
+        if: steps.checkout_archive.outcome == 'failure'
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install capture dependencies
+        run: |
+          python3 -m pip install --upgrade pip
+          python3 -m pip install -r nfl/requirements-nfl.txt
+          python3 -m pip install 'requests~=2.34.2'
+
+      - name: Choose the vintage for this firing
+        id: vintage
+        run: |
+          # The schedule cannot pass inputs, so the vintage is derived from the
+          # UTC hour/minute the job actually started. Recorded in the archive
+          # directory name so "which vintage is this?" needs no file read.
+          if [ -n "${{ github.event.inputs.vintage }}" ]; then
+            echo "vintage=${{ github.event.inputs.vintage }}" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          H=$(date -u +%H); M=$(date -u +%M); DOW=$(date -u +%u)
+          V=ad-hoc
+          if [ "$H" = "13" ]; then V=morning
+          elif [ "$H" = "22" ]; then V=midday
+          elif [ "$H" = "16" ] && [ "$M" -lt 30 ]; then V=inactive-window
+          elif [ "$H" = "16" ]; then V=pre-lock
+          elif [ "$H" = "20" ]; then V=pre-lock
+          elif [ "$H" = "01" ] || [ "$H" = "1" ]; then V=post-lock
+          fi
+          echo "vintage=$V" >> "$GITHUB_OUTPUT"
+          echo "chose vintage=$V (UTC ${H}:${M}, dow ${DOW})"
+
+      # FAIL-OPEN. A capture error must never look like an incident, and must
+      # never block anything else in this repository. A partial capture is still
+      # evidence; a missing vintage is permanent. The step reports its own
+      # outcome and the job continues to the guard either way.
+      - name: Capture raw NFL world state
+        id: capture
+        continue-on-error: true
+        run: |
+          PYTHONPATH=. python3 -m nfl.archive.capture \
+            --vintage '${{ steps.vintage.outputs.vintage }}' | tee capture.log
+
+      - name: Commit through the NFL path guard
+        run: |
+          git config user.name  'github-actions[bot]'
+          git config user.email 'github-actions[bot]@users.noreply.github.com'
+          # capture.log is scratch and must not be committed; the guard would
+          # refuse the whole run over it, which is correct but unhelpful.
+          rm -f capture.log
+          PYTHONPATH=. python3 -m nfl.archive.commit_guard --commit \
+            -m "NFL raw capture ${{ steps.vintage.outputs.vintage }} $(date -u +%Y-%m-%dT%H:%MZ)"
+
+      - name: Push to the dedicated archive branch
+        run: |
+          # Never main. NFL captures do not enter the branch holding MLB public
+          # evidence. Non-force only: this archive is append-only.
+          for i in 1 2 3 4; do
+            if git push origin HEAD:refs/heads/nfl-raw-archive; then
+              echo "pushed"; exit 0
+            fi
+            sleep $((2 ** i))
+          done
+          echo "::error::could not push the NFL archive branch"
+          exit 1
+
+      - name: Report the capture outcome
+        if: always()
+        run: |
+          if [ '${{ steps.capture.outcome }}' != 'success' ]; then
+            echo "::warning::capture step reported ${{ steps.capture.outcome }}."
+            echo "Partial or failed capture. This is NOT treated as an incident:"
+            echo "fail-open is deliberate. Check the coverage manifest in the"
+            echo "archive for which sources were CHECKED, FAILED, or NOT_CHECKED."
+          fi
