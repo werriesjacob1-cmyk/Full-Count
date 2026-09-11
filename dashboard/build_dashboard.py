@@ -1182,7 +1182,7 @@ def _public_top_pick_by_prop(results_dir):
                     (pick.get("projection") or {}).get("stat"))
             if not stat:
                 continue
-            counts[stat][grade + "s"] += 1
+            counts[stat]["hits" if grade == "hit" else "misses"] += 1
 
     out = {}
     for stat, row in sorted(counts.items()):
