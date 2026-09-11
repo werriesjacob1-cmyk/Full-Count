@@ -115,6 +115,28 @@ class DynamicTabDiscovery(unittest.TestCase):
             {"receiving-props", "rushing-props", "player-specials"},
         )
 
+    def test_layout_discovery_excludes_ui_and_period_tabs(self):
+        body = payload(
+            {"m": {}},
+            tabs=[
+                {"title": "Passing Props"},
+                {"title": "Team Yards"},
+                {"title": "1st Half"},
+                {"title": "1st Quarter"},
+                {"title": "Quick Bets"},
+                {"title": "Parlays"},
+                {"title": "Same Game Parlay"},
+            ],
+        )
+        slugs = fanduel_nfl._tab_slugs_for_event(body, fallback_tabs=())
+        self.assertIn("passing-props", slugs)
+        self.assertIn("team-yards", slugs)
+        self.assertNotIn("1st-half", slugs)
+        self.assertNotIn("1st-quarter", slugs)
+        self.assertNotIn("quick-bets", slugs)
+        self.assertNotIn("parlays", slugs)
+        self.assertNotIn("same-game-parlay", slugs)
+
     def test_numeric_tab_ids_are_never_used_as_tokens(self):
         body = payload(
             {"m": {}},
