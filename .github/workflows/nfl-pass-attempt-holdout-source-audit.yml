@@ -1,0 +1,157 @@
+name: NFL Pass Attempt Holdout Source Audit
+
+# Source-only audit for the first untouched shrinkage holdout.
+#
+# HOLDOUT IS FROZEN HERE BEFORE ITS PERFORMANCE IS READ:
+#   history-only season: 2018
+#   untouched test season: 2019
+#
+# Challenger formula is also frozen:
+#   B0 = mean official team attempts over prior up-to-5 REG games, min 3.
+#   league_prior = mean official team attempts across all REG team-games from
+#                  weeks strictly before the scored week.
+#   B_SHRINK50 = 0.50 * B0 + 0.50 * league_prior.
+#
+# This workflow MUST NOT calculate prediction errors, MAE, hit rates, deltas,
+# or any other model-performance quantity. It only establishes source identity,
+# schema, and structural coverage so a later commit can pin the exact inputs.
+on:
+  push:
+    branches:
+      - superchad/nfl-foundation-continuation-20260911
+    paths:
+      - .github/workflows/nfl-pass-attempt-holdout-source-audit.yml
+
+permissions:
+  contents: read
+
+jobs:
+  source-audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python3 -m pip install 'requests~=2.34.2'
+
+      - name: Pin untouched 2018-2019 team-stat sources without scoring
+        env:
+          FULL_COUNT_CODE_SHA: ${{ github.sha }}
+        run: |
+          python3 - <<'PY'
+          import csv
+          import hashlib
+          import io
+          import json
+          import os
+          from collections import Counter
+          from datetime import datetime, timezone
+
+          import requests
+
+          SEASONS = (2018, 2019)
+          REQUIRED = {"season", "week", "season_type", "team", "attempts"}
+
+          session = requests.Session()
+          session.headers.update({
+              "User-Agent":
+                  "Full-Count NFL untouched pass-attempt holdout source audit"
+          })
+
+          sources = {}
+          for season in SEASONS:
+              url = (
+                  "https://github.com/nflverse/nflverse-data/releases/download/"
+                  f"stats_team/stats_team_week_{season}.csv"
+              )
+              resp = session.get(url, timeout=60)
+              resp.raise_for_status()
+              sha = hashlib.sha256(resp.content).hexdigest()
+              rows = list(csv.DictReader(io.StringIO(resp.text)))
+              if not rows:
+                  raise SystemExit(f"{season}: empty source")
+              fields = set(rows[0])
+              missing = sorted(REQUIRED - fields)
+              if missing:
+                  raise SystemExit(f"{season}: schema drift {missing}")
+
+              regular = [r for r in rows if str(r["season_type"]) == "REG"]
+              keys = []
+              teams = set()
+              weeks = set()
+              for r in regular:
+                  s = int(float(r["season"]))
+                  if s != season:
+                      raise SystemExit(
+                          f"{season}: row season mismatch {s}"
+                      )
+                  week = int(float(r["week"]))
+                  team = str(r["team"]).strip()
+                  if not team:
+                      raise SystemExit(f"{season}: blank team")
+                  # Structural parse only. Do not aggregate/model attempts.
+                  float(r["attempts"])
+                  key = (s, week, team)
+                  keys.append(key)
+                  teams.add(team)
+                  weeks.add(week)
+
+              dupes = [k for k, n in Counter(keys).items() if n != 1]
+              if dupes:
+                  raise SystemExit(
+                      f"{season}: duplicate REG team-week identities"
+                  )
+
+              sources[str(season)] = {
+                  "url": url,
+                  "sha256": sha,
+                  "bytes": len(resp.content),
+                  "all_rows": len(rows),
+                  "regular_rows": len(regular),
+                  "regular_teams": len(teams),
+                  "regular_weeks": sorted(weeks),
+                  "schema_fields": sorted(fields),
+              }
+
+          output = {
+              "analysis":
+                  "NFL_PASS_ATTEMPT_UNTOUCHED_HOLDOUT_SOURCE_AUDIT",
+              "status": "source_identity_only_no_performance_read",
+              "created_at": datetime.now(timezone.utc).isoformat(),
+              "code_sha": os.environ["FULL_COUNT_CODE_SHA"],
+              "frozen_design": {
+                  "history_only_season": 2018,
+                  "untouched_holdout_season": 2019,
+                  "window": 5,
+                  "minimum_team_history": 3,
+                  "shrinkage_weight_to_league_prior": 0.50,
+                  "candidate_formula":
+                      "0.50*B0 + 0.50*strictly_prior_league_mean",
+                  "performance_was_read_here": False,
+              },
+              "sources": sources,
+              "decision": {
+                  "sources_downloaded": True,
+                  "schema_complete": True,
+                  "unique_regular_team_week_identity": True,
+                  "performance_still_sealed": True,
+              },
+              "next": (
+                  "Commit these exact SHA256 pins and a preregistered holdout "
+                  "gate, then run the 2019 performance exactly once."
+              ),
+          }
+
+          path = "/tmp/nfl-pass-attempt-holdout-source-audit.json"
+          with open(path, "w", encoding="utf-8") as f:
+              json.dump(output, f, indent=2, sort_keys=True)
+          print(json.dumps(output, indent=2, sort_keys=True))
+          PY
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: nfl-pass-attempt-holdout-source-audit
+          path: /tmp/nfl-pass-attempt-holdout-source-audit.json
+          retention-days: 30
